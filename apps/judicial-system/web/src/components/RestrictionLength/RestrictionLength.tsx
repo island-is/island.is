@@ -1,4 +1,5 @@
-import { ChangeEvent, FC, useContext } from 'react'
+import type { ChangeEvent, FC } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Checkbox, Text } from '@island.is/island-ui/core'
@@ -7,19 +8,19 @@ import {
   isAcceptingCaseDecision,
   isCourtOfAppealsUser,
 } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import BlueBox from '@island.is/judicial-system-web/src/components/BlueBox/BlueBox'
+import DateTime from '@island.is/judicial-system-web/src/components/DateTime/DateTime'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
-  Case,
   CaseDecision,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import BlueBox from '../BlueBox/BlueBox'
-import DateTime from '../DateTime/DateTime'
-import { UserContext } from '../UserProvider/UserProvider'
 import { restrictionLength as strings } from './RestrictionLength.strings'
 
 interface Props {
-  workingCase: Case
+  workingCase: WorkingCase
   handleIsolationChange: (event: ChangeEvent<HTMLInputElement>) => void
   handleIsolationDateChange: (date: Date | undefined, valid: boolean) => void
   handleValidToDateChange: (date: Date | undefined, valid: boolean) => void
@@ -41,28 +42,40 @@ const RestrictionLength: FC<Props> = (props) => {
       <Box marginBottom={5}>
         <Text as="h3" variant="h3" marginBottom={3}>
           {capitalize(
-            formatMessage(strings.caseType, {
-              caseType:
-                workingCase.decision ===
-                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                  ? CaseType.TRAVEL_BAN
-                  : workingCase.type,
-            }),
-          )}
-        </Text>
-        <DateTime
-          name="validToDate"
-          datepickerLabel={formatMessage(strings.validToDateLabel, {
-            caseType: capitalize(
-              formatMessage(strings.caseType, {
+            formatMessage(
+              { id: strings.caseType, defaultMessage: strings.caseType },
+              {
                 caseType:
                   workingCase.decision ===
                   CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                     ? CaseType.TRAVEL_BAN
                     : workingCase.type,
-              }),
+              },
             ),
-          })}
+          )}
+        </Text>
+        <DateTime
+          name="validToDate"
+          datepickerLabel={formatMessage(
+            {
+              id: strings.validToDateLabel,
+              defaultMessage: strings.validToDateLabel,
+            },
+            {
+              caseType: capitalize(
+                formatMessage(
+                  { id: strings.caseType, defaultMessage: strings.caseType },
+                  {
+                    caseType:
+                      workingCase.decision ===
+                      CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                        ? CaseType.TRAVEL_BAN
+                        : workingCase.type,
+                  },
+                ),
+              ),
+            },
+          )}
           selectedDate={
             isCOAUser
               ? workingCase.appealCase?.appealValidToDate
@@ -85,14 +98,14 @@ const RestrictionLength: FC<Props> = (props) => {
           >
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
-                {formatMessage(strings.title)}
+                {strings.title}
               </Text>
             </Box>
             <BlueBox>
               <Box marginBottom={3}>
                 <Checkbox
                   name="isCustodyIsolation"
-                  label={formatMessage(strings.isolation)}
+                  label={strings.isolation}
                   checked={
                     isCOAUser
                       ? Boolean(
@@ -107,7 +120,7 @@ const RestrictionLength: FC<Props> = (props) => {
               </Box>
               <DateTime
                 name="isolationToDate"
-                datepickerLabel={formatMessage(strings.isolationDateLable)}
+                datepickerLabel={strings.isolationDateLable}
                 disabled={
                   (isCOAUser &&
                     workingCase.appealCase?.isAppealCustodyIsolation ===

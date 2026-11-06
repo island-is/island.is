@@ -1,7 +1,7 @@
+import type { Offense } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   Gender,
   IndictmentCountOffense,
-  Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { createFormatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers.logic'
 

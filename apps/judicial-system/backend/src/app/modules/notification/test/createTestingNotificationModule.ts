@@ -1,11 +1,8 @@
 import { mock } from 'jest-mock-extended'
 import { v4 as uuid } from 'uuid'
 
-import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
-import { IntlService } from '@island.is/cms-translations'
-import { createTestIntl } from '@island.is/cms-translations/test'
 import { EmailService } from '@island.is/email-service'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigModule, ConfigType } from '@island.is/nest/config'
@@ -15,12 +12,9 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
-import {
-  addMessagesToQueue,
-  Message,
-  MessageService,
-} from '@island.is/judicial-system/message'
+import { Message, MessageService } from '@island.is/judicial-system/message'
 
+import { queueMessagesAfterCommit } from '../../../middleware'
 import { awsS3ModuleConfig, AwsS3Service } from '../../aws-s3'
 import { InternalCaseService } from '../../case'
 import { CourtService } from '../../court'
@@ -28,9 +22,8 @@ import { DefendantService } from '../../defendant'
 import { eventModuleConfig, EventService } from '../../event'
 import { InstitutionService } from '../../institution'
 import {
-  InstitutionContact,
   InstitutionContactRepositoryService,
-  Notification,
+  NotificationRepositoryService,
 } from '../../repository'
 import { UserService } from '../../user'
 import { InternalNotificationController } from '../internalNotification.controller'
@@ -46,6 +39,7 @@ import { NotificationService } from '../services/notification.service'
 import { NotificationDispatchService } from '../services/notificationDispatch.service'
 
 jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../middleware/queueMessagesAfterCommit')
 
 export const createTestUsers = (
   roles: string[],
@@ -70,11 +64,6 @@ export const createTestUsers = (
     }
     return acc
   }, {} as Record<string, { id: string; name: string; email: string; mobile: string; nationalId: string }>)
-
-const formatMessage = createTestIntl({
-  onError: jest.fn(),
-  locale: 'is-IS',
-}).formatMessage
 
 export const createTestingNotificationModule = async () => {
   const notificationModule = await Test.createTestingModule({
@@ -103,10 +92,6 @@ export const createTestingNotificationModule = async () => {
         useValue: { sendEmail: jest.fn(async () => uuid()) },
       },
       {
-        provide: IntlService,
-        useValue: { useIntl: async () => ({ formatMessage }) },
-      },
-      {
         provide: InternalCaseService,
         useValue: {
           countIndictmentsWaitingForConfirmation: jest.fn(),
@@ -129,9 +114,8 @@ export const createTestingNotificationModule = async () => {
           error: jest.fn(),
         },
       },
-      { provide: getModelToken(Notification), useValue: { create: jest.fn() } },
       {
-        provide: getModelToken(InstitutionContact),
+        provide: NotificationRepositoryService,
         useValue: { create: jest.fn() },
       },
       {
@@ -161,14 +145,16 @@ export const createTestingNotificationModule = async () => {
     })
     .compile()
 
-  const queuedMessages: Message[] = []
-  const mockAddMessageToQueue = addMessagesToQueue as jest.Mock
-  mockAddMessageToQueue.mockImplementation((...msgs: Message[]) => {
-    queuedMessages.push(...msgs)
+  // Every message the module queues goes through the helper, so this is the
+  // whole of what a request would send
+  const queuedMessagesAfterCommit: Message[] = []
+  const mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
+  mockQueueMessagesAfterCommit.mockImplementation((...msgs: Message[]) => {
+    queuedMessagesAfterCommit.push(...msgs)
   })
 
   const context = {
-    queuedMessages,
+    queuedMessagesAfterCommit,
     userService: notificationModule.get(UserService),
     internalCaseService: notificationModule.get(InternalCaseService),
     messageService: notificationModule.get(MessageService),
@@ -180,11 +166,8 @@ export const createTestingNotificationModule = async () => {
     notificationConfig: notificationModule.get<
       ConfigType<typeof notificationModuleConfig>
     >(notificationModuleConfig.KEY),
-    notificationModel: notificationModule.get<typeof Notification>(
-      getModelToken(Notification),
-    ),
-    institutionContactModel: notificationModule.get<typeof InstitutionContact>(
-      getModelToken(InstitutionContact),
+    notificationRepositoryService: notificationModule.get(
+      NotificationRepositoryService,
     ),
     notificationController: notificationModule.get(NotificationController),
     internalNotificationController: notificationModule.get(

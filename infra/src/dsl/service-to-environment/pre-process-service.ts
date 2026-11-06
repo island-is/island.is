@@ -8,6 +8,7 @@ import {
   IngressForEnv,
   localFromDev,
   MissingSetting,
+  OpsEnv,
   OpsEnvWithLocal,
   PostgresInfo,
   PostgresInfoForEnv,
@@ -118,6 +119,8 @@ export function prepareServiceForEnv(
     cmds: serviceDef.cmds,
     readiness: serviceDef.readiness,
     podDisruptionBudget: serviceDef.podDisruptionBudget,
+    strategy: resolveByEnv(serviceDef.strategy, env),
+    gracefulShutdown: resolveByEnv(serviceDef.gracefulShutdown, env),
   }
 
   if (serviceDef.postgres) {
@@ -222,6 +225,27 @@ export function prepareServiceForEnv(
   return allErrors.length === 0
     ? { type: 'success', serviceDef: result }
     : { type: 'error', errors: allErrors }
+}
+
+const OPS_ENVS: OpsEnv[] = ['dev', 'staging', 'prod']
+
+/**
+ * Resolves a flat config or a per-env map (keyed by OpsEnv) to the current
+ * env's value. Treated as per-env only when every key is an OpsEnv.
+ */
+function resolveByEnv<T extends object>(
+  value: T | Partial<Record<OpsEnv, T>> | undefined,
+  env: EnvironmentConfig,
+): T | undefined {
+  if (value === undefined) return undefined
+  const keys = Object.keys(value)
+  const isByEnv =
+    keys.length > 0 && keys.every((k) => (OPS_ENVS as string[]).includes(k))
+  if (!isByEnv) {
+    return value as T
+  }
+  const byEnv = value as Partial<Record<OpsEnv, T>>
+  return byEnv[localFromDev(env.type)]
 }
 
 export function getEnvVariables(

@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
+  Pressable,
   SafeAreaView,
   ScrollView,
   Text,
@@ -17,6 +18,7 @@ import {
   DatePickerInput,
   blue400,
   theme,
+  Typography,
 } from '@/ui'
 import { FilteringCheckbox } from '../../../../components/filtering-checkbox'
 import {
@@ -121,14 +123,27 @@ export default function FilterScreen() {
     <SafeAreaView style={{ flex: 1, marginTop: theme.spacing[3] }}>
       <StackScreen
         options={{
-          headerRightItems: [
-            {
-              type: 'button',
-              label: intl.formatMessage({ id: 'inbox.filterClearButton' }),
-              onPress: clearAllFilters,
-              disabled: !isSelected,
-            },
-          ],
+          // Rendered via `headerRight` instead of `headerRightItems`: the
+          // native items API breaks title centering on iOS.
+          headerRight: () => (
+            <Pressable
+              onPress={clearAllFilters}
+              disabled={!isSelected}
+              style={{
+                height: 46,
+                justifyContent: 'center',
+                paddingHorizontal: theme.spacing[1],
+              }}
+            >
+              <Typography
+                size={15}
+                weight="400"
+                color={isSelected ? theme.color.blue400 : theme.color.dark300}
+              >
+                {intl.formatMessage({ id: 'inbox.filterClearButton' })}
+              </Typography>
+            </Pressable>
+          ),
         }}
       />
       <ScrollView style={{ flex: 1, marginBottom: theme.spacing[3] }}>

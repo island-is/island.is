@@ -32,6 +32,7 @@ env:
   DB_NAME: 'user_notification'
   DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
   DB_USER: 'user_notification'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
   EMAIL_DEAD_LETTER_QUEUE_NAME: 'user-notification-email-failure'
   EMAIL_FROM_ADDRESS: 'development@island.is'

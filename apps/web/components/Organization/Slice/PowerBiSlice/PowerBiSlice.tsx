@@ -16,6 +16,17 @@ import { useI18n } from '@island.is/web/i18n'
 import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 import { GET_SINGLE_SHIP } from '@island.is/web/screens/queries/Fiskistofa'
 
+import {
+  applyStyles,
+  DEFAULT_ASPECT_RATIO,
+  DEFAULT_MOBILE_ASPECT_RATIO,
+  getAspectRatio,
+  hasConfiguredSize,
+  hasDimensions,
+  restoreStyles,
+} from './utils'
+import * as styles from './PowerBiSlice.css'
+
 type EventType =
   | 'loaded'
   | 'saved'
@@ -80,10 +91,105 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
     )
   }, [])
   const embedRef = useRef<Embed | null>(null)
+  const pageLayoutRequestRef = useRef(0)
+  const pageStyleKeysRef = useRef<{ element: string[]; iframe: string[] }>({
+    element: [],
+    iframe: [],
+  })
 
   const layoutShouldBeMobilePortrait =
     slice?.powerBiEmbedProps?.displayMobilePortraitLayoutOnSmallScreens &&
     width < theme.breakpoints.lg
+
+  const cmsStyle = slice?.powerBiEmbedProps?.style
+  const sizeIsConfigured =
+    hasConfiguredSize(cmsStyle?.element) || hasConfiguredSize(cmsStyle?.iframe)
+  const fallbackAspectRatio = layoutShouldBeMobilePortrait
+    ? DEFAULT_MOBILE_ASPECT_RATIO
+    : DEFAULT_ASPECT_RATIO
+
+  // Sizes the report after its active page, so that pages don't need any config.
+  // On small screens the mobile layout's own size wins over any CMS style, since
+  // hand-picked heights go stale and differ from what the page needs. Otherwise
+  // sizes set in the CMS take precedence over the size of the page.
+  const applyPageLayout = async () => {
+    const embed = embedRef.current
+    if (!embed) return
+
+    const requestId = ++pageLayoutRequestRef.current
+
+    try {
+      const report = embed as Report
+      const page = await report.getActivePage()
+      const usesMobileLayout =
+        layoutShouldBeMobilePortrait &&
+        (await page.hasLayout(models.LayoutType.MobilePortrait))
+
+      // A newer page change has taken over while we were waiting
+      if (requestId !== pageLayoutRequestRef.current) return
+
+      // Styles specific to the previous page must not carry over to this one
+      restoreStyles(
+        embed.element,
+        pageStyleKeysRef.current.element,
+        cmsStyle?.element,
+      )
+      restoreStyles(
+        embed.iframe,
+        pageStyleKeysRef.current.iframe,
+        cmsStyle?.iframe,
+      )
+      pageStyleKeysRef.current = { element: [], iframe: [] }
+
+      const mobileSizeIsKnown =
+        usesMobileLayout && hasDimensions(page.mobileSize)
+
+      // A max height from the CMS would cap the size of the mobile layout
+      embed.element.style.maxHeight = mobileSizeIsKnown
+        ? ''
+        : cmsStyle?.element?.maxHeight ?? ''
+      embed.iframe.style.maxHeight = mobileSizeIsKnown
+        ? ''
+        : cmsStyle?.iframe?.maxHeight ?? ''
+
+      const pageStyle = layoutShouldBeMobilePortrait
+        ? cmsStyle?.pages?.[page.name]
+        : undefined
+
+      if (!mobileSizeIsKnown && (pageStyle?.element || pageStyle?.iframe)) {
+        embed.element.style.aspectRatio = ''
+        embed.element.style.height = '100%'
+        embed.element.style.minHeight = cmsStyle?.element?.minHeight ?? ''
+        embed.iframe.style.height = cmsStyle?.iframe?.height ?? '100%'
+        pageStyleKeysRef.current = {
+          element: applyStyles(embed.element, pageStyle.element),
+          iframe: applyStyles(embed.iframe, pageStyle.iframe),
+        }
+        return
+      }
+
+      embed.element.style.height = 'auto'
+      embed.iframe.style.height = '100%'
+
+      if (sizeIsConfigured && !layoutShouldBeMobilePortrait) {
+        embed.element.style.aspectRatio = ''
+        applyStyles(embed.element, cmsStyle?.element)
+        applyStyles(embed.iframe, cmsStyle?.iframe)
+        return
+      }
+
+      // A min height from the CMS is meant for the desktop layout
+      if (layoutShouldBeMobilePortrait) {
+        embed.element.style.minHeight = ''
+      }
+
+      embed.element.style.aspectRatio = usesMobileLayout
+        ? getAspectRatio(page.mobileSize, DEFAULT_MOBILE_ASPECT_RATIO)
+        : getAspectRatio(page.defaultSize, DEFAULT_ASPECT_RATIO)
+    } catch {
+      // Keep the current size if the report can't tell us about the page
+    }
+  }
 
   const namespaceResponse = useQuery<
     GetNamespaceQuery,
@@ -119,6 +225,19 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
 
     if (!report || isNaN(nr)) return
 
+    const response = await apolloClient.query({
+      query: GET_SINGLE_SHIP,
+      variables: {
+        input: {
+          shipNumber: nr,
+        },
+      },
+    })
+
+    const ship = response?.data?.fiskistofaGetSingleShip?.fiskistofaSingleShip
+
+    if (!ship?.name) return
+
     const page = await report.getActivePage()
 
     const slicers = await page.getSlicers()
@@ -128,7 +247,14 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
 
       const slicer = visual as VisualDescriptor
 
-      const slicerState = await slicer.getSlicerState()
+      let slicerState: models.ISlicerState
+      try {
+        slicerState = await slicer.getSlicerState()
+      } catch {
+        // A visual can fail to report its state; skip it rather than
+        // aborting the search for the ship slicer.
+        continue
+      }
 
       if (
         !slicerStateContainsExpectedTarget(
@@ -136,42 +262,34 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
           fiskistofaShipSearchTarget,
         )
       )
-        return
+        continue
 
-      const response = await apolloClient.query({
-        query: GET_SINGLE_SHIP,
-        variables: {
-          input: {
-            shipNumber: nr,
-          },
-        },
-      })
-
-      const ship = response?.data?.fiskistofaGetSingleShip?.fiskistofaSingleShip
-
-      if (!ship?.name) return
-      slicer.setSlicerState({
-        ...slicerState,
-        filters: [
-          {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            $schema: 'http://powerbi.com/product/schema#basic',
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            filterType: 1,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            operator: 'In',
-            requireSingleSelection: false,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            target: fiskistofaShipSearchTarget,
-            ...(slicerState.filters?.[0] as IBasicFilter),
-            values: [convertShipNameToSlicerDropdownValue(ship.name, nr)],
-          },
-        ],
-      })
+      try {
+        await slicer.setSlicerState({
+          ...slicerState,
+          filters: [
+            {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              $schema: 'http://powerbi.com/product/schema#basic',
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              filterType: 1,
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              operator: 'In',
+              requireSingleSelection: false,
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              target: fiskistofaShipSearchTarget,
+              ...(slicerState.filters?.[0] as IBasicFilter),
+              values: [convertShipNameToSlicerDropdownValue(ship.name, nr)],
+            },
+          ],
+        })
+      } catch {
+        continue
+      }
     }
   }
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -185,6 +303,8 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
         const report = event?.target?.['powerBiEmbed'] as Report
         if (!report) return
         setEmbeddedReport(report)
+
+        applyPageLayout()
 
         const activePage = await report.getActivePage()
 
@@ -209,30 +329,7 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
         const pageName = event?.detail?.newPage?.name
 
         if (pageName) {
-          if (layoutShouldBeMobilePortrait && embedRef.current) {
-            embedRef.current.element.style.height = '100%'
-
-            const pageElementStyle =
-              slice?.powerBiEmbedProps?.style?.pages?.[pageName]?.element ?? {}
-            for (const key of Object.keys(pageElementStyle)) {
-              const value = pageElementStyle?.[key]
-              if (value) {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
-                embedRef.current.element.style[key] = value
-              }
-            }
-            const pageIframeStyle =
-              slice?.powerBiEmbedProps?.style?.pages?.[pageName]?.iframe ?? {}
-            for (const key of Object.keys(pageIframeStyle)) {
-              const value = pageIframeStyle?.[key]
-              if (value) {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
-                embedRef.current.iframe.style[key] = value
-              }
-            }
-          }
+          applyPageLayout()
 
           const params = new URLSearchParams(window.location.search)
 
@@ -333,42 +430,26 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
 
   const getEmbeddedComponent = (embed: Embed) => {
     // Default styles
-    embed.element.style.height = '600px'
+    embed.element.style.height = 'auto'
     embed.iframe.style.border = 'none'
+
+    // Placeholder until the report tells us the size of its active page
+    if (!sizeIsConfigured) {
+      embed.element.style.aspectRatio = fallbackAspectRatio
+    }
 
     embedRef.current = embed
 
-    // Apply styles to containing element from CMS
-    const elementStyle = slice?.powerBiEmbedProps?.style?.element
-    if (elementStyle) {
-      for (const key of Object.keys(elementStyle)) {
-        const value = elementStyle?.[key]
-        if (value) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          embed.element.style[key] = value
-        }
-      }
-    }
-
-    // Apply styles to iframe child emelement from CMS
-    const iframeStyle = slice?.powerBiEmbedProps?.style?.iframe
-    if (iframeStyle) {
-      for (const key of Object.keys(iframeStyle)) {
-        const value = iframeStyle?.[key]
-        if (value) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          embed.element.style[key] = value
-        }
-      }
-    }
+    // Apply styles to containing element and iframe child element from CMS
+    applyStyles(embed.element, cmsStyle?.element)
+    applyStyles(embed.iframe, cmsStyle?.iframe)
   }
 
   const embedProps = slice?.powerBiEmbedProps?.embedProps ?? {}
 
   return (
     <PowerBIEmbed
+      cssClassName={styles.embed}
       embedConfig={{
         type: 'report',
         ...embedProps,

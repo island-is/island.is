@@ -1,4 +1,3 @@
-/* eslint-disable local-rules/disallow-kennitalas */
 'use strict'
 const uuid = require('uuidv4').uuid
 

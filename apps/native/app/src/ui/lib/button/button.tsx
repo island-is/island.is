@@ -1,23 +1,30 @@
 import React from 'react'
 import {
+  ActivityIndicator,
   ImageSourcePropType,
   ImageStyle,
+  Pressable,
+  PressableProps,
+  StyleProp,
+  StyleSheet,
   TextProps,
   TextStyle,
-  TouchableHighlightProps,
   View,
+  ViewStyle,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
-import { dynamicColor } from '../../utils'
-import { font } from '../../utils/font'
-import { Loader } from '../loader/loader'
+import { TokenSelector, useTokenColor } from '../../utils'
+import { fontByWeight } from '../../utils/font'
 
-interface ButtonBaseProps extends TouchableHighlightProps {
+interface ButtonBaseProps extends Omit<PressableProps, 'style'> {
   isTransparent?: boolean
   isOutlined?: boolean
   isUtilityButton?: boolean
   /** Utility button variant with filled blue background and white text */
   isFilledUtilityButton?: boolean
+  /** Height of primary and outlined buttons: default 48, small 40 */
+  size?: 'default' | 'small'
+  style?: StyleProp<ViewStyle>
   textStyle?: TextStyle
   textProps?: TextProps
   iconStyle?: ImageStyle
@@ -38,89 +45,147 @@ interface TextButtonProps extends ButtonBaseProps {
 
 export type ButtonProps = IconButtonProps | TextButtonProps
 
-type HostProps = Omit<ButtonProps, 'title'>
+type Variant =
+  | 'primary'
+  | 'outlined'
+  | 'transparent'
+  | 'utility'
+  | 'utilityFilled'
+type State = 'default' | 'pressed' | 'disabled'
 
-const Host = styled.TouchableHighlight<HostProps>`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  column-gap: ${({ theme }) => theme.spacing.p1}px;
+type VariantColours = {
+  background?: TokenSelector
+  border?: TokenSelector
+  text: TokenSelector
+}
 
-  padding: ${({ theme, isUtilityButton }) =>
-    isUtilityButton
-      ? `${theme.spacing.p1}px ${theme.spacing.p2}px`
-      : `${theme.spacing.p3}px ${theme.spacing.p4}px`};
-  background-color: ${dynamicColor<HostProps>(
-    ({
-      theme,
-      disabled,
-      isTransparent,
-      isOutlined,
-      isUtilityButton,
-      isFilledUtilityButton,
-    }) =>
-      isTransparent || isOutlined || (isUtilityButton && !isFilledUtilityButton)
-        ? 'transparent'
-        : {
-            dark: disabled ? theme.shades.dark.shade200 : theme.color.blue400,
-            light: disabled ? theme.color.blue300 : theme.color.blue400,
-          },
-  )};
+// Colours per variant and state, from the Figma Button component. Loading
+// uses the disabled colours, with the spinner in the default text colour.
+const colours: Record<Variant, Record<State, VariantColours>> = {
+  primary: {
+    default: {
+      background: (t) => t.interactive.background.primary,
+      text: (t) => t.interactive.foreground.invert,
+    },
+    pressed: {
+      background: (t) => t.interactive.background.primaryActive,
+      text: (t) => t.interactive.foreground.invert,
+    },
+    disabled: {
+      background: (t) => t.interactive.background.primaryDisabled,
+      text: (t) => t.interactive.foreground.invert,
+    },
+  },
+  outlined: {
+    default: {
+      border: (t) => t.interactive.border.borderPrimary,
+      text: (t) => t.interactive.foreground.primary,
+    },
+    pressed: {
+      border: (t) => t.interactive.border.borderActive,
+      text: (t) => t.interactive.foreground.primaryActive,
+    },
+    disabled: {
+      border: (t) => t.interactive.border.borderDisabled,
+      text: (t) => t.interactive.foreground.primaryDisabled,
+    },
+  },
+  transparent: {
+    default: { text: (t) => t.interactive.foreground.primary },
+    pressed: { text: (t) => t.interactive.foreground.primaryActive },
+    disabled: { text: (t) => t.interactive.foreground.primaryDisabled },
+  },
+  utility: {
+    default: {
+      border: (t) => t.interactive.border.borderPrimaryMinimal,
+      text: (t) => t.interactive.foreground.default,
+    },
+    pressed: {
+      background: (t) => t.interactive.background.primaryMinimalActive,
+      border: (t) => t.interactive.border.borderPrimaryMinimal,
+      text: (t) => t.interactive.foreground.default,
+    },
+    disabled: {
+      border: (t) => t.interactive.border.borderPrimaryMinimal,
+      text: (t) => t.interactive.foreground.disabled,
+    },
+  },
+  utilityFilled: {
+    default: {
+      background: (t) => t.interactive.background.primary,
+      text: (t) => t.interactive.foreground.invert,
+    },
+    pressed: {
+      background: (t) => t.interactive.background.primaryActive,
+      text: (t) => t.interactive.foreground.invert,
+    },
+    disabled: {
+      background: (t) => t.interactive.background.primaryDisabled,
+      text: (t) => t.interactive.foreground.invert,
+    },
+  },
+}
 
-  border-color: ${dynamicColor<HostProps>(
-    ({ theme, disabled, isOutlined, isUtilityButton }) =>
-      !isOutlined
-        ? 'transparent'
-        : isUtilityButton
-        ? {
-            dark: '#CCDFFF55',
-            light: theme.color.blue200,
-          }
-        : {
-            dark: disabled ? theme.shades.dark.shade200 : theme.color.blue400,
-            light: disabled ? theme.color.blue300 : theme.color.blue400,
-          },
-  )};
+// Every variant but transparent has a 1 px border (transparent where it isn't
+// drawn), so filled and outlined buttons line up. With the line heights below
+// the paddings give the Figma heights: primary/outlined 48 (small 40),
+// utility 40, transparent 28.
+const layout: Record<Variant, ViewStyle> = {
+  primary: { paddingVertical: 12, paddingHorizontal: 15, minWidth: 192 },
+  outlined: { paddingVertical: 12, paddingHorizontal: 15, minWidth: 192 },
+  transparent: { paddingVertical: 4, paddingHorizontal: 0 },
+  utility: { paddingVertical: 11, paddingHorizontal: 15 },
+  utilityFilled: { paddingVertical: 11, paddingHorizontal: 15 },
+}
 
-  border-radius: ${(props) => props.theme.border.radius.large};
-  min-width: ${(props) => (props.isUtilityButton ? 0 : '192px')};
-  ${(props) =>
-    props.isOutlined &&
-    `
-    border-width: 1px;
-    border-style: solid;
-  `}
+// Transparent buttons are only 28 high, so stretch the touch area to the 44 pt
+// minimum without changing how they look.
+const transparentHitSlop = { top: 8, bottom: 8, left: 8, right: 8 }
+
+const smallPaddingVertical: Partial<Record<Variant, number>> = {
+  primary: 8,
+  outlined: 8,
+}
+
+const textStyles: Record<Variant, TextStyle> = {
+  primary: { fontSize: 16, lineHeight: 22 },
+  outlined: { fontSize: 16, lineHeight: 22 },
+  // body2 · semibold
+  transparent: { fontSize: 15, lineHeight: 20 },
+  // eyebrow
+  utility: { fontSize: 12, lineHeight: 16, letterSpacing: 0.16 },
+  utilityFilled: { fontSize: 12, lineHeight: 16, letterSpacing: 0.16 },
+}
+
+const getVariant = ({
+  isTransparent,
+  isOutlined,
+  isUtilityButton,
+  isFilledUtilityButton,
+}: ButtonBaseProps): Variant => {
+  if (isFilledUtilityButton) {
+    return 'utilityFilled'
+  }
+  if (isUtilityButton) {
+    return 'utility'
+  }
+  // Outlined wins over transparent: some screens pass both and expect a
+  // bordered button.
+  if (isOutlined) {
+    return 'outlined'
+  }
+  if (isTransparent) {
+    return 'transparent'
+  }
+  return 'primary'
+}
+
+const Text = styled.Text<{ isUtility: boolean }>`
+  font-family: ${fontByWeight('600')};
+  text-align: ${({ isUtility }) => (isUtility ? 'left' : 'center')};
 `
 
-const Text = styled.Text<{
-  isTransparent?: boolean
-  isOutlined?: boolean
-  isUtilityButton?: boolean
-  isFilledUtilityButton?: boolean
-  disabled?: boolean
-}>`
-  ${font({
-    fontWeight: '600',
-    color: (props) =>
-      props.isTransparent && props.disabled
-        ? props.theme.color.dark200
-        : props.isUtilityButton && !props.isFilledUtilityButton
-        ? {
-            light: props.theme.color.dark400,
-            dark: props.theme.color.white,
-          }
-        : props.isTransparent || props.isOutlined
-        ? props.theme.color.blue400
-        : props.theme.color.white,
-  })}
-  font-size: ${(props) => (props.isUtilityButton ? '12px' : '16px')};
-  text-align: ${(props) => (props.isUtilityButton ? 'left' : 'center')};
-`
-
-const Icon = styled.Image<{
-  noMargin?: boolean
-}>`
+const Icon = styled.Image`
   width: 16px;
   height: 16px;
 `
@@ -131,88 +196,149 @@ export function Button({
   isOutlined,
   isUtilityButton,
   isFilledUtilityButton,
+  size = 'default',
   icon,
+  style,
   textStyle,
   textProps,
   iconStyle,
   ellipsis,
   iconPosition = 'end',
   loading = false,
+  disabled,
   ...rest
 }: ButtonProps) {
   const theme = useTheme()
+  const tokenColor = useTokenColor()
+  const variant = getVariant({
+    isTransparent,
+    isOutlined,
+    isUtilityButton,
+    isFilledUtilityButton,
+  })
+  const isBordered = variant !== 'transparent'
+  const radius = parseInt(theme.border.radius.large, 10)
+  const isUtility = variant === 'utility' || variant === 'utilityFilled'
+  const smallPadding =
+    size === 'small' ? smallPaddingVertical[variant] : undefined
 
-  if (isFilledUtilityButton) isUtilityButton = true
-
-  const renderIcon = () => {
-    return (
-      <Icon
-        source={icon}
-        resizeMode="center"
-        style={{
-          // If the button is a filledUtilityButton, override icon color to white
-          ...(isFilledUtilityButton && icon
-            ? { tintColor: theme.color.white }
-            : {}),
-          ...iconStyle,
-        }}
-        noMargin={!title}
-      />
-    )
-  }
+  const getColours = (pressed: boolean) =>
+    colours[variant][
+      disabled || loading ? 'disabled' : pressed ? 'pressed' : 'default'
+    ]
 
   return (
-    <Host
-      underlayColor={
-        isTransparent ||
-        isOutlined ||
-        (isUtilityButton && !isFilledUtilityButton)
-          ? theme.shade.shade100
-          : theme.color.blue600
-      }
-      isTransparent={isTransparent}
-      isOutlined={isOutlined}
-      isUtilityButton={isUtilityButton}
-      isFilledUtilityButton={isFilledUtilityButton}
-      {...rest}
-    >
-      {loading ? (
-        <View
-          style={{
+    <Pressable
+      disabled={disabled || loading}
+      accessibilityState={{ disabled: !!(disabled || loading), busy: loading }}
+      hitSlop={variant === 'transparent' ? transparentHitSlop : undefined}
+      style={({ pressed }) => {
+        const { background, border } = getColours(pressed)
+        return [
+          {
+            flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
-            paddingHorizontal: theme.spacing.p3,
-          }}
-        >
-          <Loader />
-        </View>
-      ) : (
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            columnGap: theme.spacing.p1,
-          }}
-        >
-          {icon && iconPosition === 'start' && renderIcon()}
-          {title && (
-            <Text
-              {...textProps}
-              isTransparent={isTransparent}
-              isOutlined={isOutlined}
-              isUtilityButton={isUtilityButton}
-              isFilledUtilityButton={isFilledUtilityButton}
-              disabled={rest.disabled}
-              style={textStyle}
-              numberOfLines={ellipsis ? 1 : undefined}
-              ellipsizeMode={ellipsis ? 'tail' : undefined}
+            borderRadius: radius,
+            backgroundColor: background ? tokenColor(background) : undefined,
+            ...(isBordered
+              ? {
+                  borderWidth: 1,
+                  borderColor: border ? tokenColor(border) : 'transparent',
+                }
+              : {}),
+            ...layout[variant],
+            ...(smallPadding !== undefined
+              ? { paddingVertical: smallPadding }
+              : {}),
+          },
+          style,
+        ]
+      }}
+      {...rest}
+    >
+      {({ pressed }) => {
+        const { border, text } = getColours(pressed)
+        const textColor = tokenColor(text)
+        const renderIcon = () => (
+          <Icon
+            source={icon}
+            resizeMode="center"
+            style={{
+              ...(variant === 'utilityFilled' ? { tintColor: textColor } : {}),
+              ...iconStyle,
+            }}
+          />
+        )
+
+        return (
+          <>
+            {/* The outlined pressed border is 2 px. Drawing it over the 1 px
+                border keeps the button from shifting while pressed. */}
+            {variant === 'outlined' && pressed && border && (
+              <View
+                pointerEvents="none"
+                style={{
+                  position: 'absolute',
+                  top: -1,
+                  right: -1,
+                  bottom: -1,
+                  left: -1,
+                  borderWidth: 2,
+                  borderRadius: radius,
+                  borderColor: tokenColor(border),
+                }}
+              />
+            )}
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                columnGap: theme.spacing.p1,
+                // Let an ellipsized title shrink to the button's width rather
+                // than overflowing it before it is truncated.
+                ...(ellipsis ? { flexShrink: 1 } : {}),
+                // Stays mounted while loading so the button keeps its size;
+                // the spinner is laid over it rather than replacing it.
+                opacity: loading ? 0 : 1,
+              }}
             >
-              {title}
-            </Text>
-          )}
-          {icon && iconPosition === 'end' && renderIcon()}
-        </View>
-      )}
-    </Host>
+              {icon && iconPosition === 'start' && renderIcon()}
+              {title && (
+                <Text
+                  {...textProps}
+                  isUtility={isUtility}
+                  style={[
+                    textStyles[variant],
+                    { color: textColor },
+                    ellipsis ? { flexShrink: 1 } : undefined,
+                    textStyle,
+                  ]}
+                  numberOfLines={ellipsis ? 1 : undefined}
+                  ellipsizeMode={ellipsis ? 'tail' : undefined}
+                >
+                  {title}
+                </Text>
+              )}
+              {icon && iconPosition === 'end' && renderIcon()}
+            </View>
+            {loading && (
+              <View
+                pointerEvents="none"
+                style={[
+                  StyleSheet.absoluteFillObject,
+                  { justifyContent: 'center', alignItems: 'center' },
+                ]}
+              >
+                <ActivityIndicator
+                  color={tokenColor(colours[variant].default.text)}
+                />
+              </View>
+            )}
+          </>
+        )
+      }}
+    </Pressable>
   )
 }

@@ -18,7 +18,6 @@ import {
   CourtDocument,
   CourtSessionType,
   IndictmentDecision,
-  RequestSharedWithDefender,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
@@ -40,9 +39,6 @@ import { Notification } from './notification.model'
 registerEnumType(CaseOrigin, { name: 'CaseOrigin' })
 registerEnumType(CaseType, { name: 'CaseType' })
 registerEnumType(CaseState, { name: 'CaseState' })
-registerEnumType(RequestSharedWithDefender, {
-  name: 'RequestSharedWithDefender',
-})
 registerEnumType(CaseLegalProvisions, { name: 'CaseLegalProvisions' })
 registerEnumType(CaseCustodyRestrictions, { name: 'CaseCustodyRestrictions' })
 registerEnumType(SessionArrangements, { name: 'SessionArrangements' })
@@ -94,21 +90,6 @@ export class Case {
 
   @Field(() => [Defendant], { nullable: true })
   readonly defendants?: Defendant[]
-
-  @Field(() => String, { nullable: true })
-  readonly defenderName?: string
-
-  @Field(() => String, { nullable: true })
-  readonly defenderNationalId?: string
-
-  @Field(() => String, { nullable: true })
-  readonly defenderEmail?: string
-
-  @Field(() => String, { nullable: true })
-  readonly defenderPhoneNumber?: string
-
-  @Field(() => RequestSharedWithDefender, { nullable: true })
-  readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @Field(() => Boolean, { nullable: true })
   isHeightenedSecurityLevel?: boolean
@@ -302,6 +283,10 @@ export class Case {
   @Field(() => String, { nullable: true })
   readonly indictmentIntroduction?: string
 
+  // Set once the generated Ákæra has been frozen to S3; gates replacing it
+  @Field(() => String, { nullable: true })
+  readonly indictmentHash?: string
+
   @Field(() => [IndictmentCount], { nullable: true })
   readonly indictmentCounts?: IndictmentCount[]
 
@@ -347,6 +332,15 @@ export class Case {
   @Field(() => User, { nullable: true })
   readonly indictmentReviewer?: User
 
+  @Field(() => User, { nullable: true })
+  readonly appealProsecutor?: User
+
+  @Field(() => User, { nullable: true })
+  readonly indictmentApprover?: User
+
+  @Field(() => String, { nullable: true })
+  readonly indictmentReviewReturnedExplanation?: string
+
   @Field(() => String, {
     nullable: true,
     description: 'appeal deadline for public prosecutor',
@@ -385,6 +379,9 @@ export class Case {
 
   @Field(() => Boolean, { nullable: true })
   readonly isCompletedWithoutRuling?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isArraignmentSummonsSkipped?: boolean
 
   @Field(() => String, { nullable: true })
   readonly caseSentToCourtDate?: string
@@ -433,6 +430,12 @@ export class Case {
 
   @Field(() => [AppealCase], { nullable: true })
   readonly rulingOrderAppealCases?: AppealCase[]
+
+  // The appeal of an indictment verdict, when one has been filed. One per case
+  // however many defendants have joined it; who appealed and when is in its
+  // event log.
+  @Field(() => AppealCase, { nullable: true })
+  readonly verdictAppealCase?: AppealCase
 
   @Field(() => [AppealDecisionResponse], { nullable: true })
   readonly appealDecisions?: AppealDecisionResponse[]

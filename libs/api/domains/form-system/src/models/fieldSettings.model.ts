@@ -20,10 +20,16 @@ export class FieldSettings {
   maxLength?: number
 
   @Field(() => Date, { nullable: true })
-  minDate?: Date
+  minDate?: Date | null
 
   @Field(() => Date, { nullable: true })
-  maxDate?: Date
+  maxDate?: Date | null
+
+  @Field(() => Int, { nullable: true })
+  minDateDaysFromToday?: number
+
+  @Field(() => Int, { nullable: true })
+  maxDateDaysFromToday?: number
 
   @Field(() => Int, { nullable: true })
   minAmount?: number
@@ -82,8 +88,14 @@ export class FieldSettings {
   @Field(() => String, { nullable: true })
   assetType?: string
 
+  @Field(() => String, { nullable: true })
+  familyType?: string
+
   @Field(() => Boolean, { nullable: true })
   hasDescription?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  isAddressRequired?: boolean
 
   @Field(() => Boolean, { nullable: true })
   isPhoneRequired?: boolean
@@ -93,6 +105,9 @@ export class FieldSettings {
 
   @Field(() => Boolean, { nullable: true })
   fetchEmailFromMyPages?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  fetchBankAccountFromMyPages?: boolean
 
   @Field(() => String, { nullable: true })
   chargeItemCode?: string

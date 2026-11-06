@@ -1,5 +1,3 @@
-import { FormatMessage } from '@island.is/cms-translations'
-
 import {
   capitalize,
   formatDate,
@@ -7,7 +5,7 @@ import {
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 
-import { caseFilesRecord } from '../../messages'
+import { caseFilesRecord, formatIcuMessage } from '../../messages'
 import {
   Case,
   Defendant,
@@ -31,7 +29,6 @@ export const formatDefendant = (defendant: Defendant) => {
 const addPoliceDigitalCaseFilesPage = (
   pdfDocument: PdfDocument,
   files: PoliceDigitalCaseFile[],
-  formatMessage: FormatMessage,
   pageMargin: number,
   textFontSize: number,
   subtitleFontSize: number,
@@ -102,13 +99,17 @@ export const createCaseFilesRecord = async (
   theCase: Case,
   policeCaseNumber: string,
   caseFiles: (() => Promise<{
+    id?: string
     date: Date
     name: string
     chapter: number
     buffer?: Buffer
   }>)[],
   policeDigitalCaseFiles: PoliceDigitalCaseFile[],
-  formatMessage: FormatMessage,
+  onUnreadableFile?: (
+    file: { id?: string; name: string },
+    reason: unknown,
+  ) => void,
 ): Promise<Buffer> => {
   const pageMargin = 70
   const headerMargin = 35
@@ -133,30 +134,44 @@ export const createCaseFilesRecord = async (
 
   // Create the PDF document
   const pdfDocument = await PdfDocument(
-    formatMessage(caseFilesRecord.title, { policeCaseNumber }),
+    formatIcuMessage(caseFilesRecord.title, { policeCaseNumber }),
   )
 
   pdfDocument.setMargins(pageMargin, pageMargin, pageMargin, pageMargin)
 
+  const addPlaceholderPage = (title: string, name: string) => {
+    pdfDocument
+      .addPage()
+      .addText(title, titleFontSize, {
+        alignment: Alignment.Center,
+        bold: true,
+      })
+      .addText(name, subtitleFontSize, {
+        alignment: Alignment.Center,
+        bold: true,
+        maxWidth: 500,
+      })
+  }
+
   // Add each case file to the document
   for (const caseFile of caseFiles) {
-    const { date, name, chapter, buffer } = await caseFile()
+    const { id, date, name, chapter, buffer } = await caseFile()
     const pageNumber = pdfDocument.getPageCount()
 
-    if (buffer) {
-      await pdfDocument.mergeDocument(buffer)
+    if (!buffer) {
+      addPlaceholderPage(caseFilesRecord.missingFile, name)
     } else {
-      pdfDocument
-        .addPage()
-        .addText(formatMessage(caseFilesRecord.missingFile), titleFontSize, {
-          alignment: Alignment.Center,
-          bold: true,
-        })
-        .addText(name, subtitleFontSize, {
-          alignment: Alignment.Center,
-          bold: true,
-          maxWidth: 500,
-        })
+      try {
+        await pdfDocument.mergeDocument(buffer)
+      } catch (reason) {
+        // A file that was fetched but cannot be parsed, for instance an
+        // encrypted PDF or a non-PDF uploaded as one, must not fail the whole
+        // record. It gets a placeholder page like a missing file does, so the
+        // record still generates and the reader sees which file is affected.
+        onUnreadableFile?.({ id, name }, reason)
+
+        addPlaceholderPage('Ólesanlegt skjal', name)
+      }
     }
 
     // Store reference for table of contents
@@ -177,7 +192,6 @@ export const createCaseFilesRecord = async (
     const digitalCaseFilePages = addPoliceDigitalCaseFilesPage(
       pdfDocument,
       sortedFiles,
-      formatMessage,
       pageMargin,
       textFontSize,
       subtitleFontSize,
@@ -202,18 +216,20 @@ export const createCaseFilesRecord = async (
       headerFontSize,
       { bold: true, position: { y: headerMargin } },
     )
-    .addText(formatMessage(caseFilesRecord.heading), titleFontSize, {
+    .addText(caseFilesRecord.heading, titleFontSize, {
       alignment: Alignment.Center,
       bold: true,
       position: { y: headerMargin + pageMargin },
     })
     .addText(
-      formatMessage(caseFilesRecord.policeCaseNumber, { policeCaseNumber }),
+      formatIcuMessage(caseFilesRecord.policeCaseNumber, {
+        policeCaseNumber,
+      }),
       titleFontSize,
       { alignment: Alignment.Center, bold: true },
     )
     .addText(
-      formatMessage(caseFilesRecord.accused, {
+      formatIcuMessage(caseFilesRecord.accused, {
         suffix:
           theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'ur',
       }),
@@ -241,7 +257,7 @@ export const createCaseFilesRecord = async (
 
   // Add charge description
   pdfDocument
-    .addText(formatMessage(caseFilesRecord.accusedOf), textFontSize, {
+    .addText(caseFilesRecord.accusedOf, textFontSize, {
       bold: true,
       marginTop: 4,
       newLine: false,
@@ -257,7 +273,7 @@ export const createCaseFilesRecord = async (
   // Add crime scene
   if (theCase.crimeScenes && theCase.crimeScenes[policeCaseNumber]) {
     pdfDocument
-      .addText(formatMessage(caseFilesRecord.crimeScene), textFontSize, {
+      .addText(caseFilesRecord.crimeScene, textFontSize, {
         bold: true,
         marginTop: 4,
         newLine: false,
@@ -280,7 +296,7 @@ export const createCaseFilesRecord = async (
 
   // Add table of contents heading
   pdfDocument.addText(
-    formatMessage(caseFilesRecord.tableOfContentsHeading),
+    caseFilesRecord.tableOfContentsHeading,
     subtitleFontSize,
     { alignment: Alignment.Center, bold: true, marginTop: 9, marginBottom: 45 },
   )
@@ -296,16 +312,12 @@ export const createCaseFilesRecord = async (
   for (const chapter of chapters) {
     if (chapter === 0) {
       pdfDocument
-        .addText(
-          formatMessage(caseFilesRecord.pageNumberHeading),
-          textFontSize,
-          {
-            bold: true,
-            newLine: false,
-            alignment: Alignment.Right,
-          },
-        )
-        .addText(formatMessage(caseFilesRecord.date), textFontSize, {
+        .addText(caseFilesRecord.pageNumberHeading, textFontSize, {
+          bold: true,
+          newLine: false,
+          alignment: Alignment.Right,
+        })
+        .addText(caseFilesRecord.date, textFontSize, {
           bold: true,
           newLine: false,
           alignment: Alignment.Left,
@@ -315,7 +327,7 @@ export const createCaseFilesRecord = async (
 
     // Add chapter heading
     pdfDocument.addText(
-      formatMessage(caseFilesRecord.chapterName, { chapter }),
+      formatIcuMessage(caseFilesRecord.chapterName, { chapter }),
       textFontSize,
       { bold: true, marginTop: chapter > 0 ? 4 : 0 },
     )

@@ -1,5 +1,4 @@
-import { FC } from 'react'
-import { useIntl } from 'react-intl'
+import type { FC } from 'react'
 
 import RequestRulingSignatureModal from './RequestRulingSignatureModal'
 import { strings } from './JudgeRequestRulingSignatureModal.strings'
@@ -10,13 +9,11 @@ interface Props {
 }
 
 const JudgeRequestRulingSignatureModal: FC<Props> = ({ onYes, onNo }) => {
-  const { formatMessage } = useIntl()
-
   return (
     <RequestRulingSignatureModal
       onYes={onYes}
       onNo={onNo}
-      description={formatMessage(strings.description)}
+      description={strings.description}
     />
   )
 }

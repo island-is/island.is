@@ -5,9 +5,7 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
-import { IntlService } from '@island.is/cms-translations'
 import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
@@ -28,7 +26,7 @@ import {
   formatDefenderRoute,
   formatPostponedCourtDateEmailNotification,
 } from '../../../../formatters'
-import { notifications } from '../../../../messages'
+import { formatIcuMessage, notifications } from '../../../../messages'
 import { CourtService } from '../../../court'
 import { EventService } from '../../../event'
 import {
@@ -36,7 +34,7 @@ import {
   DateLog,
   Defendant,
   InstitutionContactRepositoryService,
-  Notification,
+  NotificationRepositoryService,
   Recipient,
 } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -53,21 +51,18 @@ interface Attachment {
 @Injectable()
 export class IndictmentCaseNotificationService extends BaseNotificationService {
   constructor(
-    @InjectModel(Notification)
-    notificationModel: typeof Notification,
+    notificationRepositoryService: NotificationRepositoryService,
     @Inject(notificationModuleConfig.KEY)
     config: ConfigType<typeof notificationModuleConfig>,
     @Inject(LOGGER_PROVIDER) logger: Logger,
-    intlService: IntlService,
     emailService: EmailService,
     eventService: EventService,
     courtService: CourtService,
     private readonly institutionContactRepositoryService: InstitutionContactRepositoryService,
   ) {
     super(
-      notificationModel,
+      notificationRepositoryService,
       emailService,
-      intlService,
       courtService,
       config,
       eventService,
@@ -107,7 +102,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
   private async sendCriminalRecordFilesUploadedNotification(
     theCase: Case,
   ): Promise<DeliverResponse> {
-    const formattedSubject = this.formatMessage(
+    const formattedSubject = formatIcuMessage(
       strings.criminalRecordFilesUploadedEmail.subject,
       {
         courtCaseNumber: theCase.courtCaseNumber,
@@ -116,7 +111,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     const courtName =
       theCase.court && theCase.court.name ? theCase.court.name : undefined
 
-    const formattedBody = this.formatMessage(
+    const formattedBody = formatIcuMessage(
       strings.criminalRecordFilesUploadedEmail.body,
       {
         courtCaseNumber: theCase.courtCaseNumber,
@@ -133,7 +128,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       formattedBody,
       [
         {
-          name: this.formatMessage(
+          name: formatIcuMessage(
             notifications.emailNames.publicProsecutorCriminalRecords,
           ),
           email: this.config.email.publicProsecutorCriminalRecordsEmail,
@@ -154,9 +149,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       theCase.courtCaseNumber
     } í ${applyDativeCaseToCourtName(
       theCase.court?.name ?? 'héraðsdómi',
-    )}. Einn af dómfelldu í málinu var sviptur ökuréttinda.<br><br>LÖKE númer: ${theCase.policeCaseNumbers.join(
-      ', ',
-    )}.`
+    )}.<br><br>LÖKE númer: ${theCase.policeCaseNumbers.join(', ')}.`
 
     const contactInfo = {
       name: theCase.prosecutorsOffice?.name,
@@ -267,7 +260,6 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     name?: string,
   ): Promise<Recipient> {
     const { subject, body } = formatPostponedCourtDateEmailNotification(
-      this.formatMessage,
       theCase,
       courtDate,
       overviewUrl,
@@ -543,7 +535,6 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     theCase: Case,
     user?: UserDescriptor,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
     try {
       return await this.sendNotification(type, theCase, user)
     } catch (error) {

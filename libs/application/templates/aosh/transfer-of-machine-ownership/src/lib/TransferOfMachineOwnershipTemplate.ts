@@ -16,15 +16,22 @@ import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
   corePendingActionMessages,
+  endOfDayFromCreation,
   getReviewStatePendingAction,
   getValueViaPath,
   pruneAfterDays,
+  schedulePruneReminderBefore,
 } from '@island.is/application/core'
+import { Features } from '@island.is/feature-flags'
 import { Events, States, Roles } from './constants'
 import { ApiActions } from '../shared'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { MachineAnswersSchema } from './dataSchema'
-import { application as applicationMessage, information } from './messages'
+import {
+  application as applicationMessage,
+  information,
+  review,
+} from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import {
@@ -42,13 +49,8 @@ import { getExtraData } from '../utils/getExtraData'
 import { isPaymentRequired } from '../utils/isPaymentRequired'
 import { CodeOwners } from '@island.is/shared/constants'
 
-const pruneInDaysAtMidnight = (application: Application, days: number) => {
-  const date = new Date(application.created)
-  date.setDate(date.getDate() + days)
-  const pruneDate = new Date(date)
-  pruneDate.setUTCHours(23, 59, 59)
-  return pruneDate
-}
+// days until application gets pruned when in review state
+const pruneLifeTimeInReview = 7
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const regNumber = getValueViaPath(
@@ -177,6 +179,13 @@ const template: ApplicationTemplate<
                   (module) =>
                     Promise.resolve(module.TransferOfMachineOwnershipForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Áfram',
+                  type: 'primary',
+                },
+              ],
               write: 'all',
               delete: true,
             },
@@ -253,7 +262,7 @@ const template: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysAtMidnight(application, 7),
+              endOfDayFromCreation(application, pruneLifeTimeInReview),
             shouldDeleteChargeIfPaymentFulfilled: true,
             pruneMessage: (application) => {
               const regNumber = getValueViaPath<string | undefined>(
@@ -270,6 +279,13 @@ const template: ApplicationTemplate<
               }
             },
           },
+          scheduledNotifications: (application) =>
+            schedulePruneReminderBefore(
+              endOfDayFromCreation(application, pruneLifeTimeInReview),
+              2,
+              applicationMessage.pruneReason,
+              Features.transferOfMachineOwnershipScheduledNotifications,
+            ),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -277,6 +293,13 @@ const template: ApplicationTemplate<
                 import('../forms/ReviewSeller').then((module) =>
                   Promise.resolve(module.ReviewSellerForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+              ],
               write: {
                 answers: ['location', 'rejecter'],
               },
@@ -289,6 +312,18 @@ const template: ApplicationTemplate<
                 import('../forms/Review').then((module) =>
                   Promise.resolve(module.ReviewForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: review.buttons.reject,
+                  type: 'reject',
+                },
+              ],
               write: {
                 answers: ['buyer', 'buyerOperator', 'location', 'rejecter'],
               },

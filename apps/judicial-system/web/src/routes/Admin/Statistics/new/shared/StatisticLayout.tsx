@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { AnimatePresence } from 'motion/react'
 
 import { SkeletonLoader } from '@island.is/island-ui/core'

@@ -1,16 +1,15 @@
 import { mock } from 'jest-mock-extended'
 
-import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { Institution } from '../../repository'
+import { InstitutionRepositoryService } from '../../repository'
 import { InstitutionController } from '../institution.controller'
 import { InstitutionService } from '../institution.service'
 
 export const createTestingInstitutionModule = async () => {
-  const fileModule = await Test.createTestingModule({
+  const institutionModule = await Test.createTestingModule({
     controllers: [InstitutionController],
     providers: [
       {
@@ -22,12 +21,10 @@ export const createTestingInstitutionModule = async () => {
         },
       },
       {
-        provide: getModelToken(Institution),
+        provide: InstitutionRepositoryService,
         useValue: {
-          create: jest.fn().mockRejectedValue(new Error('Some found')),
-          findAll: jest.fn().mockRejectedValue(new Error('Some found')),
-          findOne: jest.fn().mockRejectedValue(new Error('Some found')),
-          update: jest.fn().mockRejectedValue(new Error('Some found')),
+          findById: jest.fn().mockRejectedValue(new Error('Some error')),
+          findAllActive: jest.fn().mockRejectedValue(new Error('Some error')),
         },
       },
       InstitutionService,
@@ -40,18 +37,19 @@ export const createTestingInstitutionModule = async () => {
     })
     .compile()
 
-  const institutionModel = await fileModule.resolve<typeof Institution>(
-    getModelToken(Institution),
-  )
+  const institutionRepositoryService =
+    institutionModule.get<InstitutionRepositoryService>(
+      InstitutionRepositoryService,
+    )
 
-  const institutionController = fileModule.get<InstitutionController>(
+  const institutionController = institutionModule.get<InstitutionController>(
     InstitutionController,
   )
 
-  fileModule.close()
+  institutionModule.close()
 
   return {
-    institutionModel,
+    institutionRepositoryService,
     institutionController,
   }
 }

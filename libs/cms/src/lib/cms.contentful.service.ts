@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import { logger } from '@island.is/logging'
 import { GraphQLError } from 'graphql'
 import { Injectable } from '@nestjs/common'
@@ -574,6 +573,7 @@ export class CmsContentfulService {
   async getProjectPage(
     slug: string,
     lang: string,
+    subpageSlug?: string | null,
   ): Promise<ProjectPage | null> {
     const params = {
       ['content_type']: 'projectPage',
@@ -585,9 +585,33 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IProjectPageFields>(lang, params, 5)
       .catch(errorHandler('getProjectPage'))
 
-    return result.items.length
-      ? mapProjectPage(result.items[0] as IProjectPage)
-      : null
+    if (!result.items.length) {
+      return null
+    }
+
+    const projectPage = result.items[0] as IProjectPage
+
+    if (!subpageSlug) {
+      return mapProjectPage(projectPage)
+    }
+
+    const subpageResult = await this.contentfulRepository
+      .getLocalizedEntries<types.IProjectSubpageFields>(
+        lang,
+        {
+          ['content_type']: 'projectSubpage',
+          'fields.projectPage.sys.id': projectPage.sys.id,
+          'fields.slug': subpageSlug,
+          limit: 1,
+        },
+        6,
+      )
+      .catch(errorHandler('getProjectPage'))
+
+    return mapProjectPage(
+      projectPage,
+      subpageResult.items as types.IProjectSubpage[],
+    )
   }
 
   async getArticle(slug: string, lang: string): Promise<Article | null> {
@@ -1190,7 +1214,9 @@ export class CmsContentfulService {
       .filter((category) => category?.title && category?.slug)
   }
 
-  async getOpenDataPage({ lang }: GetOpenDataPageInput): Promise<OpenDataPage> {
+  async getOpenDataPage({
+    lang,
+  }: GetOpenDataPageInput): Promise<OpenDataPage | null> {
     const params = {
       ['content_type']: 'openDataPage',
       include: 10,
@@ -1208,7 +1234,7 @@ export class CmsContentfulService {
 
   async getOpenDataSubpage({
     lang,
-  }: GetOpenDataSubpageInput): Promise<OpenDataSubpage> {
+  }: GetOpenDataSubpageInput): Promise<OpenDataSubpage | null> {
     const params = {
       ['content_type']: 'openDataSubpage',
       include: 10,

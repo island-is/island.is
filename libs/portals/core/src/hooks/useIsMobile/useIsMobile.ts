@@ -10,4 +10,15 @@ export const useIsMobile = () => {
   }
 }
 
+/**
+ * True below the `sm` breakpoint — for UI that only applies at true phone
+ * widths, as opposed to the default `md` cutoff of `useIsMobile`.
+ */
+export const useIsPhoneWidth = () => {
+  const { width } = useWindowSize()
+  const isPhoneWidth = width != null && width < theme.breakpoints.sm
+
+  return { isPhoneWidth }
+}
+
 export default useIsMobile

@@ -13,6 +13,12 @@ export const involvedParty = {
         'Þú hefur aðgang að fleiri en einum lögaðila, veldu þann sem þú vilt senda auglýsingu fyrir.',
       description: 'Intro of the involved party form',
     },
+    introSingle: {
+      id: 'ojoi.application:involvedParty.general.introSingle',
+      defaultMessage: 'Auglýsingin verður send fyrir hönd {party}.',
+      description:
+        'Intro of the involved party form when the user has access to only one party',
+    },
     section: {
       id: 'ojoi.application:involvedParty.general.section',
       defaultMessage: 'Stofnanir',

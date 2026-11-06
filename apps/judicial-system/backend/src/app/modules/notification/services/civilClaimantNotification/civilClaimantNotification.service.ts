@@ -1,13 +1,9 @@
-import { MessageDescriptor } from '@formatjs/intl'
-
 import {
   Inject,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
-import { IntlService } from '@island.is/cms-translations'
 import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
@@ -25,31 +21,31 @@ import { EventService } from '../../../event'
 import {
   Case,
   CivilClaimant,
-  Notification,
+  NotificationRepositoryService,
   Recipient,
 } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
+import {
+  appealAdvocateAssignedBody,
+  appealAdvocateAssignedSubject,
+} from '../appealAdvocateAssigned'
 import { BaseNotificationService } from '../baseNotification.service'
-import { strings } from './civilClaimantNotification.strings'
 
 @Injectable()
 export class CivilClaimantNotificationService extends BaseNotificationService {
   constructor(
-    @InjectModel(Notification)
-    notificationModel: typeof Notification,
+    notificationRepositoryService: NotificationRepositoryService,
     @Inject(notificationModuleConfig.KEY)
     config: ConfigType<typeof notificationModuleConfig>,
     @Inject(LOGGER_PROVIDER) logger: Logger,
-    intlService: IntlService,
     emailService: EmailService,
     eventService: EventService,
     courtService: CourtService,
   ) {
     super(
-      notificationModel,
+      notificationRepositoryService,
       emailService,
-      intlService,
       courtService,
       config,
       eventService,
@@ -61,33 +57,16 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     civilClaimant: CivilClaimant,
     theCase: Case,
     notificationType: TrackedNotificationType,
-    subject: MessageDescriptor,
-    body: MessageDescriptor,
+    subject: string,
+    body: string,
   ) {
-    const courtName = capitalize(theCase.court?.name)
-    const courtCaseNumber = theCase.courtCaseNumber
-    const spokespersonHasAccessToRVG = !!civilClaimant.spokespersonNationalId
-
-    const formattedSubject = this.formatMessage(subject, {
-      courtName,
-      courtCaseNumber,
-    })
-
-    const formattedBody = this.formatMessage(body, {
-      courtName,
-      courtCaseNumber,
-      spokespersonHasAccessToRVG,
-      spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
-      linkStart: `<a href="${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}">`,
-      linkEnd: '</a>',
-    })
     const promises: Promise<Recipient>[] = []
 
     if (civilClaimant.isSpokespersonConfirmed) {
       promises.push(
         this.sendEmail({
-          subject: formattedSubject,
-          html: formattedBody,
+          subject,
+          html: body,
           recipientName: civilClaimant.spokespersonName,
           recipientEmail: civilClaimant.spokespersonEmail,
           attachments: undefined,
@@ -176,17 +155,82 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     )
 
     if (shouldSend) {
+      if (!theCase.court?.name) {
+        this.logger.error(
+          `Missing court name for case ${theCase.id} when sending spokesperson assigned notification`,
+        )
+
+        return { delivered: false }
+      }
+
+      const courtName = capitalize(theCase.court.name)
+      const spokespersonHasAccessToRVG = !!civilClaimant.spokespersonNationalId
+      const role = civilClaimant.spokespersonIsLawyer
+        ? 'lögmann einkaréttarkröfuhafa'
+        : 'réttargæslumann einkaréttarkröfuhafa'
+
+      const subject = `${courtName} - aðgangur að máli`
+
+      const accessInfo = spokespersonHasAccessToRVG
+        ? `Sjá nánar á <a href="${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}">yfirlitssíðu málsins í Réttarvörslugátt</a>`
+        : 'Þú getur nálgast málið hjá dómstólnum'
+      const body = `${courtName} hefur skráð þig sem ${role} í máli ${theCase.courtCaseNumber}.<br /><br />${accessInfo}.`
+
       return this.sendEmails(
         civilClaimant,
         theCase,
         TrackedNotificationType.SPOKESPERSON_ASSIGNED,
-        strings.civilClaimantSpokespersonAssignedSubject,
-        strings.civilClaimantSpokespersonAssignedBody,
+        subject,
+        body,
       )
     }
 
     // Nothing should be sent so we return a successful response
     return { delivered: true }
+  }
+
+  /**
+   * The court of appeals telling a claimant's advocate it has recorded them on
+   * the appeal. A lögmaður gets this too, though no letter of appointment
+   * follows: they are never formally appointed.
+   */
+  private async sendAppealSpokespersonAssignedNotification(
+    theCase: Case,
+    civilClaimant: CivilClaimant,
+  ): Promise<DeliverResponse> {
+    // Sent once per claimant, not once per lawyer: one lawyer may act for
+    // several claimants on the same case, and each appointment is its own and
+    // has to be told. The confirmation that triggers this only crosses from
+    // unconfirmed to confirmed once per party, so there is nothing to suppress
+    // beyond that.
+    if (
+      !civilClaimant.isAppealSpokespersonConfirmed ||
+      !civilClaimant.appealSpokespersonEmail
+    ) {
+      // Nothing should be sent so we return a successful response
+      return { delivered: true }
+    }
+
+    // Not through sendEmails: that one writes to the district court's
+    // spokesperson, and the appeal has its own advocate on its own columns.
+    const recipient = await this.sendEmail({
+      subject: appealAdvocateAssignedSubject(),
+      html: appealAdvocateAssignedBody(
+        civilClaimant.appealSpokespersonIsLawyer
+          ? 'lögmann einkaréttarkröfuhafa'
+          : 'réttargæslumann einkaréttarkröfuhafa',
+        theCase.verdictAppealCase?.appealCaseNumber,
+      ),
+      recipientName: civilClaimant.appealSpokespersonName,
+      recipientEmail: civilClaimant.appealSpokespersonEmail,
+      attachments: undefined,
+    })
+
+    return this.recordNotification(
+      theCase.id,
+      TrackedNotificationType.APPEAL_SPOKESPERSON_ASSIGNED,
+      [recipient],
+    )
   }
 
   private sendNotification(
@@ -198,6 +242,11 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     switch (notificationType) {
       case CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED:
         return this.sendSpokespersonAssignedNotification(civilClaimant, theCase)
+      case CivilClaimantNotificationType.APPEAL_SPOKESPERSON_ASSIGNED:
+        return this.sendAppealSpokespersonAssignedNotification(
+          theCase,
+          civilClaimant,
+        )
       case CivilClaimantNotificationType.SPOKESPERSON_COURT_DATE_FOLLOW_UP:
         return this.sendSpokespersonCourtDateEmailNotification(
           theCase,
@@ -217,8 +266,6 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     theCase: Case,
     user?: User,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
-
     try {
       return await this.sendNotification(type, civilClaimant, theCase, user)
     } catch (error) {

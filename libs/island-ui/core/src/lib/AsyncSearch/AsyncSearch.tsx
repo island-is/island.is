@@ -10,6 +10,7 @@ import React, {
   ReactNode,
   forwardRef,
   useContext,
+  useId,
   useState,
 } from 'react'
 import { Input, InputProps } from './shared/Input/Input'
@@ -61,6 +62,9 @@ export interface AsyncSearchProps {
   errorMessage?: string
   hasError?: boolean
   white?: boolean
+  /** When provided, a clear button is rendered to the left of the search icon while the input has a value */
+  onClear?: () => void
+  clearAriaLabel?: string
   onSubmit?: (
     inputValue: string,
     selectedOption: AsyncSearchOption | null,
@@ -91,6 +95,8 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
       openMenuOnFocus,
       onChange,
       onSubmit,
+      onClear,
+      clearAriaLabel,
       onInputValueChange,
       showDividerIfActive,
       ...props
@@ -138,6 +144,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
             openMenu,
             getToggleButtonProps,
             closeMenu,
+            clearSelection,
             isOpen,
             highlightedIndex,
             getRootProps,
@@ -239,6 +246,15 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                     }
                   : getToggleButtonProps()),
               }}
+              clearAriaLabel={clearAriaLabel}
+              onClear={
+                onClear &&
+                (() => {
+                  clearSelection()
+                  closeMenu()
+                  onClear()
+                })
+              }
               label={label}
               required={required}
               labelProps={getLabelProps()}
@@ -313,6 +329,8 @@ export interface AsyncSearchInputProps {
   loading?: boolean
   children?: ReactNode
   skipContext?: boolean
+  onClear?: () => void
+  clearAriaLabel?: string
 }
 
 export const AsyncSearchInput = forwardRef<
@@ -336,11 +354,15 @@ export const AsyncSearchInput = forwardRef<
       errorMessage,
       skipContext,
       dataTestId,
+      onClear,
+      clearAriaLabel = 'Clear',
     },
     ref,
   ) => {
     const { colorScheme: colorSchemeContext } = useContext(ColorSchemeContext)
+    const fallbackId = useId()
     const {
+      id = fallbackId,
       value,
       inputSize: size,
       format,
@@ -385,6 +407,7 @@ export const AsyncSearchInput = forwardRef<
     }
 
     const normalizedSize = size === 'semi-large' ? 'medium' : size
+    const showClearButton = Boolean(onClear && effectiveValue)
     return (
       <>
         <div
@@ -420,7 +443,9 @@ export const AsyncSearchInput = forwardRef<
               }}
               getInputRef={ref}
               inputSize={size}
+              isClearable={showClearButton}
               {...restInputProps}
+              id={id}
               colored={restInputProps.colored || blueColorScheme}
               data-testid={dataTestId}
               color={inputColor}
@@ -433,8 +458,10 @@ export const AsyncSearchInput = forwardRef<
           ) : (
             <Input
               {...restInputProps}
+              id={id}
               value={value}
               inputSize={size}
+              isClearable={showClearButton}
               onChange={inputOnChange}
               type={inputType}
               defaultValue={_defaultValue}
@@ -448,6 +475,16 @@ export const AsyncSearchInput = forwardRef<
                 effectiveValue ? undefined : restInputProps.placeholder
               }
             />
+          )}
+          {showClearButton && !loading && (
+            <button
+              type="button"
+              className={cn(styles.clear, styles.clearSizes[normalizedSize])}
+              aria-label={clearAriaLabel}
+              onClick={onClear}
+            >
+              <Icon size={normalizedSize} icon="close" color={iconColor} />
+            </button>
           )}
           {!loading ? (
             <button
@@ -491,6 +528,7 @@ export const AsyncSearchInput = forwardRef<
             <label
               className={helperStyles.srOnly}
               id={inputProps['aria-labelledby']}
+              htmlFor={id}
             >
               {inputProps.placeholder}
             </label>

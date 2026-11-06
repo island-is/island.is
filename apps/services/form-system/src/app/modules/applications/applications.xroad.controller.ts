@@ -19,6 +19,7 @@ import {
 import { ApplicationsXRoadService } from './applications.xroad.service'
 import { FileResponseDto } from './models/dto/file.response.dto'
 import { ApplicationJsonDto } from './models/dto/application.json.dto'
+import { ApplicationPdfResponseDto } from './models/dto/applicationPdf.response.dto'
 
 @ApiTags('api')
 @Controller({ path: 'api', version: ['1', VERSION_NEUTRAL] })
@@ -26,6 +27,26 @@ export class ApplicationsXRoadController {
   constructor(
     private readonly applicationsXRoadService: ApplicationsXRoadService,
   ) {}
+
+  @ApiOperation({ summary: 'Get application PDF by id via X-Road' })
+  @ApiOkResponse({
+    type: ApplicationPdfResponseDto,
+    description: 'Get application PDF by id',
+  })
+  @ApiParam({ name: 'id', type: String })
+  @ApiHeader({
+    name: 'X-Road-Client',
+    description: 'X-Road client identifier',
+    required: true,
+  })
+  @Get('application/:id/pdf')
+  async getApplicationPdf(
+    @Param('id') id: string,
+    @Req() req: Request,
+  ): Promise<ApplicationPdfResponseDto> {
+    const xRoadClient = this.getValidatedXRoadClient(req)
+    return this.applicationsXRoadService.getApplicationPdf(id, xRoadClient)
+  }
 
   private getValidatedXRoadClient(req: Request): string {
     const xRoadClientHeader = req.headers['x-road-client']

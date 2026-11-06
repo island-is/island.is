@@ -7,7 +7,9 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
+  DefenderChoice,
   Gender,
+  RequestSharedWithDefender,
   User as TUser,
 } from '@island.is/judicial-system/types'
 
@@ -97,6 +99,11 @@ describe('CaseController - Extend', () => {
       gender: Gender.MALE,
       address: 'House 1',
       citizenship: 'Citizenship 1',
+      defenderName: 'Defender 1',
+      defenderNationalId: '0000000019',
+      defenderEmail: 'defender1@dummy.is',
+      defenderPhoneNumber: '1111111',
+      requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
     }
     const defendantTwo = {
       nationalId: '0000001111',
@@ -104,6 +111,11 @@ describe('CaseController - Extend', () => {
       gender: Gender.FEMALE,
       address: 'House 2',
       citizenship: 'Citizenship 2',
+      defenderName,
+      defenderNationalId,
+      defenderEmail,
+      defenderPhoneNumber,
+      requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
     }
     const theCase = {
       id: caseId,
@@ -111,10 +123,6 @@ describe('CaseController - Extend', () => {
       type,
       description,
       policeCaseNumbers,
-      defenderName,
-      defenderNationalId,
-      defenderEmail,
-      defenderPhoneNumber,
       leadInvestigator,
       courtId,
       translator,
@@ -147,10 +155,6 @@ describe('CaseController - Extend', () => {
           state: CaseState.NEW,
           description,
           policeCaseNumbers,
-          defenderName,
-          defenderNationalId,
-          defenderEmail,
-          defenderPhoneNumber,
           leadInvestigator,
           courtId,
           translator,
@@ -179,6 +183,44 @@ describe('CaseController - Extend', () => {
       expect(mockDefendantService.createForNewCase).toHaveBeenCalledWith(
         extendedCaseId,
         defendantTwo,
+        transaction,
+      )
+    })
+  })
+
+  describe('waived counsel when extending a case', () => {
+    const userId = uuid()
+    const user = {
+      id: userId,
+      institution: { id: uuid() },
+    } as TUser
+    const caseId = uuid()
+    const extendedCaseId = uuid()
+    const extendedCase = { id: extendedCaseId }
+    const theCase = {
+      id: caseId,
+      type: CaseType.CUSTODY,
+      defendantWaivesRightToCounsel: true,
+      defendants: [{ nationalId: '0000000000', name: 'Defendant' }],
+    } as Case
+
+    beforeEach(async () => {
+      const mockCreate = mockCaseRepositoryService.create as jest.Mock
+      mockCreate.mockResolvedValueOnce(extendedCase)
+
+      await givenWhenThen(caseId, user, theCase)
+    })
+
+    it('should set defenderChoice WAIVE on the new defendants and copy waive onto the new case', () => {
+      expect(mockCaseRepositoryService.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          defendantWaivesRightToCounsel: true,
+        }),
+        { transaction },
+      )
+      expect(mockDefendantService.createForNewCase).toHaveBeenCalledWith(
+        extendedCaseId,
+        expect.objectContaining({ defenderChoice: DefenderChoice.WAIVE }),
         transaction,
       )
     })
@@ -216,10 +258,6 @@ describe('CaseController - Extend', () => {
     const type = CaseType.CUSTODY
     const description = 'Some details'
     const policeCaseNumbers = ['007-2021-777']
-    const defenderName = 'John Doe'
-    const defenderNationalId = '0000000009'
-    const defenderEmail = 'john@dummy.is'
-    const defenderPhoneNumber = '1234567'
     const leadInvestigator = 'The Boss'
     const courtId = uuid()
     const translator = 'Bob Smith'
@@ -239,10 +277,6 @@ describe('CaseController - Extend', () => {
       state: CaseState.NEW,
       description,
       policeCaseNumbers,
-      defenderName,
-      defenderNationalId,
-      defenderEmail,
-      defenderPhoneNumber,
       leadInvestigator,
       courtId,
       translator,
@@ -270,10 +304,6 @@ describe('CaseController - Extend', () => {
           state: CaseState.NEW,
           description,
           policeCaseNumbers,
-          defenderName,
-          defenderNationalId,
-          defenderEmail,
-          defenderPhoneNumber,
           leadInvestigator,
           courtId,
           translator,

@@ -12,7 +12,7 @@ import {
 } from '@island.is/application/core'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { information } from '../../../lib/messages'
-import { DeliveryStation } from '../../../shared'
+import { DeliveryStation, VSK_PLATE_TYPE_CODE } from '../../../shared'
 
 export const plateDeliverySubSection = buildSubSection({
   id: 'plateDelivery',
@@ -37,6 +37,16 @@ export const plateDeliverySubSection = buildSubSection({
         }),
         buildRadioField({
           id: 'plateDelivery.deliveryMethodIsDeliveryStation',
+          clearOnChange: ['plateDelivery.deliveryStationTypeCode'],
+          condition: (formValue) => {
+            const plateType = getValueViaPath(
+              formValue,
+              'plateType.regGroup',
+              '',
+            ) as string
+
+            return plateType !== VSK_PLATE_TYPE_CODE
+          },
           options: [
             {
               value: NO,

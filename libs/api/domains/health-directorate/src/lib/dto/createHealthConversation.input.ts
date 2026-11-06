@@ -1,5 +1,13 @@
-import { Field, InputType, Int } from '@nestjs/graphql'
-import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator'
+import { Field, ID, InputType, Int } from '@nestjs/graphql'
+import {
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Matches,
+  MaxLength,
+  ValidateIf,
+} from 'class-validator'
 
 @InputType()
 export class HealthDirectorateCreateConversationInput {
@@ -18,18 +26,35 @@ export class HealthDirectorateCreateConversationInput {
   @IsInt()
   groupId!: number
 
-  @Field()
+  @Field(() => ID, { nullable: true })
+  @IsString()
+  @MaxLength(255)
+  @IsOptional()
+  treatmentId?: string
+
+  @Field({
+    nullable: true,
+    description:
+      'Omitted only for a recipient whose allowsCustomTitle is true.',
+  })
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
-  patientInitiatedTypeCode!: string
+  patientInitiatedTypeCode?: string
 
-  @Field({ nullable: true })
+  @Field({
+    nullable: true,
+    description: 'Required when patientInitiatedTypeCode is omitted.',
+  })
+  @ValidateIf((input) => !input.patientInitiatedTypeCode || !!input.title)
   @IsString()
-  @IsOptional()
+  @Matches(/\S/)
+  @MaxLength(150)
   title?: string
 
   @Field()
   @IsString()
   @IsNotEmpty()
+  @MaxLength(300)
   messageTextContent!: string
 }

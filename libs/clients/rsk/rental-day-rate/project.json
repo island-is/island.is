@@ -19,8 +19,12 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl -H \"Accept: application/json\" -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" \"http://localhost:8081/r1/IS-DEV/GOV/10006/Skatturinn/getOpenAPI?serviceCode=rentaldayrate-v1\" | jq > src/clientConfig.json",
-          "jq '.components.schemas.ProblemDetails.additionalProperties = false' src/{args.apiVersion}/clientConfig.json > _.tmp && mv _.tmp src/{args.apiVersion}/clientConfig.json"
+          "curl --fail --silent --show-error -H \"Accept: application/json\" -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" \"http://localhost:8081/r1/IS-DEV/GOV/10006/Skatturinn/getOpenAPI?serviceCode=rentaldayrate-v1\" -o _raw.tmp",
+          "jq 'if (.openapi and (.paths | length > 0)) then empty else error(\"getOpenAPI did not return an OpenAPI document - is the X-Road proxy running on port 8081?\") end' _raw.tmp",
+          "jq '.paths |= with_entries(([.key | scan(\"[{]([^}]+)[}]\")] | flatten) as $tmpl | .value |= with_entries(if (.key | test(\"^(get|post|put|patch|delete|head|options)$\")) then .value.parameters |= (if . == null then . else map(if .in == \"path\" then (.name) as $n | ([$tmpl[] | select(ascii_downcase == ($n | ascii_downcase))] | first) as $m | if ($m != null and $m != $n) then .name = $m else . end else . end) end) else . end))' _raw.tmp > _.tmp && mv _.tmp _raw.tmp",
+          "jq '.components.schemas.ProblemDetails.additionalProperties = false' _raw.tmp > _.tmp && mv _.tmp _raw.tmp",
+          "jq 'if .paths[\"/api/RentalDays/{EntityId}/periods/{Period}\"].get == null then error(\"GET /api/RentalDays/{EntityId}/periods/{Period} not found in the spec - see README, drop this patch if Skatturinn removed the endpoint\") else . end | .paths[\"/api/RentalDays/{EntityId}/periods/{Period}\"].get.responses[\"200\"] |= (if has(\"content\") then . else .content = {\"application/json\": {\"schema\": {\"type\": \"array\", \"items\": {\"$ref\": \"#/components/schemas/RentalDaysEntry\"}}}} end)' _raw.tmp > _.tmp && mv _.tmp _raw.tmp",
+          "mv _raw.tmp src/clientConfig.json"
         ],
         "parallel": false,
         "cwd": "libs/clients/rsk/rental-day-rate"

@@ -1,13 +1,9 @@
-import { MessageDescriptor } from '@formatjs/intl'
-
 import {
   Inject,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
-import { IntlService } from '@island.is/cms-translations'
 import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
@@ -18,9 +14,14 @@ import {
   TrackedNotificationType,
 } from '@island.is/judicial-system/types'
 
+import { formatIcuMessage } from '../../../../messages'
 import { CourtService } from '../../../court'
 import { EventService } from '../../../event'
-import { Case, Notification, Recipient } from '../../../repository'
+import {
+  Case,
+  NotificationRepositoryService,
+  Recipient,
+} from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
 import { BaseNotificationService } from '../baseNotification.service'
@@ -29,20 +30,17 @@ import { strings } from './subpoenaNotification.strings'
 @Injectable()
 export class SubpoenaNotificationService extends BaseNotificationService {
   constructor(
-    @InjectModel(Notification)
-    notificationModel: typeof Notification,
+    notificationRepositoryService: NotificationRepositoryService,
     @Inject(notificationModuleConfig.KEY)
     config: ConfigType<typeof notificationModuleConfig>,
     @Inject(LOGGER_PROVIDER) logger: Logger,
-    intlService: IntlService,
     emailService: EmailService,
     eventService: EventService,
     courtService: CourtService,
   ) {
     super(
-      notificationModel,
+      notificationRepositoryService,
       emailService,
-      intlService,
       courtService,
       config,
       eventService,
@@ -53,15 +51,15 @@ export class SubpoenaNotificationService extends BaseNotificationService {
   private async sendEmails(
     theCase: Case,
     notificationType: TrackedNotificationType,
-    subject: MessageDescriptor,
-    body: MessageDescriptor,
+    subject: string,
+    body: string,
     to: { name?: string; email?: string }[],
   ) {
-    const formattedSubject = this.formatMessage(subject, {
+    const formattedSubject = formatIcuMessage(subject, {
       courtCaseNumber: theCase.courtCaseNumber,
     })
 
-    const formattedBody = this.formatMessage(body, {
+    const formattedBody = formatIcuMessage(body, {
       courtCaseNumber: theCase.courtCaseNumber,
       linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
       linkEnd: '</a>',
@@ -159,8 +157,6 @@ export class SubpoenaNotificationService extends BaseNotificationService {
     type: SubpoenaNotificationType,
     theCase: Case,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
-
     try {
       return await this.sendNotification(type, theCase)
     } catch (error) {

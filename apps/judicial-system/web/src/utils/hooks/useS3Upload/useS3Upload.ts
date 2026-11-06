@@ -1,60 +1,45 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { v4 as uuid } from 'uuid'
 
-import { FileUploadStatus, toast, UploadFile } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
-import { UserContext } from '@island.is/judicial-system-web/src/components'
-import { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import type { UploadFile } from '@island.is/island-ui/core'
+import { FileUploadStatus } from '@island.is/island-ui/core'
 import {
+  formatDate,
+  stripPdfExtension,
+} from '@island.is/judicial-system/formatters'
+import { UserContext } from '@island.is/judicial-system-web/src/components'
+import type { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import type {
   CaseFile,
-  CaseFileCategory,
   CreateFileInput,
   Defendant,
   PresignedPost,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import { api } from '@island.is/judicial-system-web/src/services'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
-import {
-  CreateCivilClaimantFileMutation,
-  useCreateCivilClaimantFileMutation,
-} from './createCivilClaimantFile.generated'
-import {
-  CreateDefendantFileMutation,
-  useCreateDefendantFileMutation,
-} from './createDefendantFile.generated'
-import {
-  CreateFileMutation,
-  useCreateFileMutation,
-} from './createFile.generated'
-import {
-  CreatePresignedPostMutation,
-  useCreatePresignedPostMutation,
-} from './createPresignedPost.generated'
-import {
-  DeleteFileMutation,
-  useDeleteFileMutation,
-} from './deleteFile.generated'
-import {
-  LimitedAccessCreateCivilClaimantFileMutation,
-  useLimitedAccessCreateCivilClaimantFileMutation,
-} from './limitedAccessCreateCivilClaimantFile.generated'
-import {
-  LimitedAccessCreateDefendantFileMutation,
-  useLimitedAccessCreateDefendantFileMutation,
-} from './limitedAccessCreateDefendantFile.generated'
-import {
-  LimitedAccessCreateFileMutation,
-  useLimitedAccessCreateFileMutation,
-} from './limitedAccessCreateFile.generated'
-import {
-  LimitedAccessCreatePresignedPostMutation,
-  useLimitedAccessCreatePresignedPostMutation,
-} from './limitedAccessCreatePresignedPost.generated'
-import {
-  LimitedAccessDeleteFileMutation,
-  useLimitedAccessDeleteFileMutation,
-} from './limitedAccessDeleteFile.generated'
+import { useAttachRulingOrderDocumentMutation } from './attachRulingOrderDocument.generated'
+import type { CreateCivilClaimantFileMutation } from './createCivilClaimantFile.generated'
+import { useCreateCivilClaimantFileMutation } from './createCivilClaimantFile.generated'
+import type { CreateDefendantFileMutation } from './createDefendantFile.generated'
+import { useCreateDefendantFileMutation } from './createDefendantFile.generated'
+import type { CreateFileMutation } from './createFile.generated'
+import { useCreateFileMutation } from './createFile.generated'
+import type { CreatePresignedPostMutation } from './createPresignedPost.generated'
+import { useCreatePresignedPostMutation } from './createPresignedPost.generated'
+import type { DeleteFileMutation } from './deleteFile.generated'
+import { useDeleteFileMutation } from './deleteFile.generated'
+import type { LimitedAccessCreateCivilClaimantFileMutation } from './limitedAccessCreateCivilClaimantFile.generated'
+import { useLimitedAccessCreateCivilClaimantFileMutation } from './limitedAccessCreateCivilClaimantFile.generated'
+import type { LimitedAccessCreateDefendantFileMutation } from './limitedAccessCreateDefendantFile.generated'
+import { useLimitedAccessCreateDefendantFileMutation } from './limitedAccessCreateDefendantFile.generated'
+import type { LimitedAccessCreateFileMutation } from './limitedAccessCreateFile.generated'
+import { useLimitedAccessCreateFileMutation } from './limitedAccessCreateFile.generated'
+import type { LimitedAccessCreatePresignedPostMutation } from './limitedAccessCreatePresignedPost.generated'
+import { useLimitedAccessCreatePresignedPostMutation } from './limitedAccessCreatePresignedPost.generated'
+import type { LimitedAccessDeleteFileMutation } from './limitedAccessDeleteFile.generated'
+import { useLimitedAccessDeleteFileMutation } from './limitedAccessDeleteFile.generated'
 import { useUploadCriminalRecordFileMutation } from './uploadCriminalRecordFile.generated'
 import { useUploadPoliceCaseFileMutation } from './uploadPoliceCaseFile.generated'
 import { strings } from './useS3Upload.strings'
@@ -142,7 +127,9 @@ export const useUploadFiles = (files?: CaseFile[] | null) => {
       size: file.size,
       percent: 0,
       originalFileObj: file,
-      userGeneratedFilename: setUserGeneratedFilename ? file.name : undefined,
+      userGeneratedFilename: setUserGeneratedFilename
+        ? stripPdfExtension(file.name)
+        : undefined,
       previewUrl: file.previewUrl,
       ...overRides,
     }))
@@ -235,7 +222,6 @@ const useS3Upload = (
   rulingFileId?: string | null,
 ) => {
   const { limitedAccess } = useContext(UserContext)
-  const { formatMessage } = useIntl()
 
   const [createPresignedPost] = useCreatePresignedPostMutation()
   const [limitedAccessCreatePresignedPost] =
@@ -252,7 +238,7 @@ const useS3Upload = (
   const [limitedAccessDeleteFile] = useLimitedAccessDeleteFileMutation()
   const [uploadPoliceCaseFile] = useUploadPoliceCaseFileMutation()
   const [uploadCriminalRecordFile] = useUploadCriminalRecordFileMutation()
-
+  const [attachRulingOrderDocument] = useAttachRulingOrderDocumentMutation()
   const getPresignedPost = useCallback(
     async (file: TUploadFile) => {
       const mutation = limitedAccess
@@ -431,8 +417,8 @@ const useS3Upload = (
           )
 
           return true
-        } catch (e) {
-          toast.error(formatMessage(strings.uploadFailed))
+        } catch {
+          toast.error(strings.uploadFailed)
           updateFile({ ...file, percent: 0, status: FileUploadStatus.error })
 
           return false
@@ -451,7 +437,62 @@ const useS3Upload = (
         return 'NONE_SUCCEEDED'
       })
     },
-    [getPresignedPost, addFileToCaseState, formatMessage],
+    [getPresignedPost, addFileToCaseState],
+  )
+
+  // The district court writes up a ruling order that was pronounced orally and
+  // uploads the document. Unlike every other upload this fills in a case file
+  // that already exists: the court record points at it, and the parties' appeal
+  // decisions and any appeal are keyed on it, so a new file would strand all of
+  // it.
+  const handleUploadRulingOrderDocument = useCallback(
+    async (
+      file: TUploadFile,
+      rulingOrderFileId: string,
+      updateFile: (file: TUploadFile) => void,
+    ) => {
+      try {
+        updateFile({ ...file, status: FileUploadStatus.uploading })
+
+        const presignedPost = await getPresignedPost(file)
+
+        await uploadToS3(file, presignedPost, (percent) => {
+          updateFile({ ...file, percent })
+        })
+
+        const { data } = await attachRulingOrderDocument({
+          variables: {
+            input: {
+              id: rulingOrderFileId,
+              caseId,
+              key: presignedPost.key,
+              size: file.size ?? 0,
+              type: file.type ?? '',
+              userGeneratedFilename: file.userGeneratedFilename,
+            },
+          },
+        })
+
+        if (!data?.attachRulingOrderDocument?.id) {
+          throw Error('Failed to attach the document to the ruling order')
+        }
+
+        updateFile({
+          ...file,
+          key: presignedPost.key,
+          percent: 100,
+          status: FileUploadStatus.done,
+        })
+
+        return true
+      } catch {
+        toast.error(strings.uploadFailed)
+        updateFile({ ...file, percent: 0, status: FileUploadStatus.error })
+
+        return false
+      }
+    },
+    [attachRulingOrderDocument, caseId, getPresignedPost],
   )
 
   const handleUploadCriminalRecord = (
@@ -515,11 +556,13 @@ const useS3Upload = (
             },
             fileId,
           )
-        } catch (error) {
+        } catch {
           if (noNationalId) {
-            toast.error(`Ákærði: ${defendantName} er ekki með kennitölu`)
+            toast.error(`Ákærði: ${defendantName} er ekki með kennitölu`, {
+              logMessage: 'Defendant has no national id',
+            })
           } else {
-            toast.error(formatMessage(strings.uploadFailed))
+            toast.error(strings.uploadFailed)
             updateFile({
               ...commonFileProps,
               percent: 0,
@@ -571,14 +614,14 @@ const useS3Upload = (
             )
           })
           .catch(() => {
-            toast.error(formatMessage(strings.uploadFailed))
+            toast.error(strings.uploadFailed)
             callback(file)
           })
       })
 
       return Promise.all(promises)
     },
-    [uploadPoliceCaseFile, caseId, addFileToCaseState, formatMessage],
+    [uploadPoliceCaseFile, caseId, addFileToCaseState],
   )
 
   const handleRetry = useCallback(
@@ -637,10 +680,10 @@ const useS3Upload = (
           callback && callback(file)
         }
       } catch {
-        toast.error(formatMessage(strings.removeFailed))
+        toast.error(strings.removeFailed)
       }
     },
-    [formatMessage, limitedAccess, remove],
+    [limitedAccess, remove],
   )
 
   return {
@@ -649,6 +692,7 @@ const useS3Upload = (
     handleRemove,
     handleUploadFromPolice,
     handleUploadCriminalRecord,
+    handleUploadRulingOrderDocument,
   }
 }
 

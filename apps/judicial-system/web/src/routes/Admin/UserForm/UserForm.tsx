@@ -1,12 +1,5 @@
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import type { Dispatch, FC, SetStateAction } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { InputMask } from '@react-input/mask'
 
 import {
@@ -37,20 +30,20 @@ import {
   PageTitle,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   Institution,
   User,
-  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
+import { userRoleToString } from '@island.is/judicial-system-web/src/routes/Admin/userRoleToString'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useNationalRegistry } from '@island.is/judicial-system-web/src/utils/hooks'
-
-import { ReactSelectOption } from '../../../types'
+import type { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   isAdminUserFormValid,
   validate,
-  Validation,
-} from '../../../utils/validate'
-import { userRoleToString } from '../userRoleToString'
+} from '@island.is/judicial-system-web/src/utils/validate'
+
 import * as styles from './UserForm.css'
 
 interface UserRoleRadioButtonProps {
@@ -369,24 +362,41 @@ export const UserForm: FC<Props> = ({
               />
             </Box>
           )}
-        {/* Only the super admin may grant the message suspension capability,
-            and it is only meaningful for local admins. */}
+        {/* Only the super admin may grant these capabilities, and they are
+            only meaningful for local admins. */}
         {admin?.role === UserRole.ADMIN && user.role === UserRole.LOCAL_ADMIN && (
-          <Box marginBottom={2}>
-            <Checkbox
-              name="canManageMessageSuspension"
-              label="Notandi getur stjórnað frestun skilaboða"
-              checked={Boolean(user.canManageMessageSuspension)}
-              onChange={({ target }) =>
-                setUser((prevUser) => ({
-                  ...prevUser,
-                  canManageMessageSuspension: target.checked,
-                }))
-              }
-              large
-              filled
-            />
-          </Box>
+          <>
+            <Box marginBottom={2}>
+              <Checkbox
+                name="canManageMessageSuspension"
+                label="Notandi getur stjórnað frestun skilaboða"
+                checked={Boolean(user.canManageMessageSuspension)}
+                onChange={({ target }) =>
+                  setUser((prevUser) => ({
+                    ...prevUser,
+                    canManageMessageSuspension: target.checked,
+                  }))
+                }
+                large
+                filled
+              />
+            </Box>
+            <Box marginBottom={2}>
+              <Checkbox
+                name="canManageServiceInterruptionBanner"
+                label="Notandi getur stjórnað viðvörunar borðanum"
+                checked={Boolean(user.canManageServiceInterruptionBanner)}
+                onChange={({ target }) =>
+                  setUser((prevUser) => ({
+                    ...prevUser,
+                    canManageServiceInterruptionBanner: target.checked,
+                  }))
+                }
+                large
+                filled
+              />
+            </Box>
+          </>
         )}
         <Box marginBottom={2}>
           <Input

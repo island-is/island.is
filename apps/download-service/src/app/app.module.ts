@@ -19,6 +19,7 @@ import {
   FeatureFlagConfig,
   FeatureFlagModule,
 } from '@island.is/nest/feature-flags'
+import { ProblemModule } from '@island.is/nest/problem'
 
 import { DocumentController } from './modules/documents/document.controller'
 import { DocumentsInfraController } from './modules/infra/documentsInfra.controller'
@@ -26,6 +27,7 @@ import { FinanceDocumentController } from './modules/finance-documents/document.
 import { environment } from '../environments'
 import { VehicleController } from './modules/vehicles-documents/vehicle-document.controller'
 import { EducationController } from './modules/education-documents/education-document.controller'
+import { EducationDocumentsConfig } from './modules/education-documents/education-document.config'
 import { RegulationDocumentsController } from './modules/regulation-documents/regulation-documents.controller'
 import { WorkMachinesController } from './modules/work-machines-documents/work-machines-documents.controller'
 import { HealthPaymentsOverviewController } from './modules/health/payment-overview-documents.controller'
@@ -114,6 +116,7 @@ import {
     RightsPortalClientModule,
     HealthDirectorateHealthModule,
     FeatureFlagModule,
+    ProblemModule,
     HmsRentalAgreementClientModule,
     PrimarySchoolClientModule,
     VmstUnemploymentClientModule,
@@ -142,6 +145,7 @@ import {
         HmsRentalAgreementClientConfig,
         PrimarySchoolClientConfig,
         VmstUnemploymentClientConfig,
+        EducationDocumentsConfig,
       ],
     }),
   ],

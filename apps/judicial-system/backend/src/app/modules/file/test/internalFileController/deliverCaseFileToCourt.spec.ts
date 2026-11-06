@@ -14,7 +14,7 @@ import { createTestingFileModule } from '../createTestingFileModule'
 
 import { AwsS3Service } from '../../../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../../../court'
-import { Case, CaseFile } from '../../../repository'
+import { Case, CaseFile, CaseFileRepositoryService } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {
@@ -35,16 +35,20 @@ describe('InternalFileController - Deliver case file to court', () => {
 
   let mockAwsS3Service: AwsS3Service
   let mockCourtService: CourtService
-  let mockFileModel: typeof CaseFile
+  let mockCaseFileRepositoryService: CaseFileRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { awsS3Service, courtService, fileModel, internalFileController } =
-      await createTestingFileModule()
+    const {
+      awsS3Service,
+      courtService,
+      caseFileRepositoryService,
+      internalFileController,
+    } = await createTestingFileModule()
 
     mockAwsS3Service = awsS3Service
     mockCourtService = courtService
-    mockFileModel = fileModel
+    mockCaseFileRepositoryService = caseFileRepositoryService
 
     givenWhenThen = async (
       caseId: string,
@@ -96,8 +100,8 @@ describe('InternalFileController - Deliver case file to court', () => {
       mockGetObject.mockResolvedValueOnce(content)
       const mockCreateDocument = mockCourtService.createDocument as jest.Mock
       mockCreateDocument.mockResolvedValueOnce(documentId)
-      const mockUpdate = mockFileModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1])
+      const mockUpdate = mockCaseFileRepositoryService.updateById as jest.Mock
+      mockUpdate.mockResolvedValueOnce(1)
 
       then = await givenWhenThen(caseId, fileId, theCase, caseFile)
     })
@@ -125,9 +129,9 @@ describe('InternalFileController - Deliver case file to court', () => {
     })
 
     it('should update case file state', () => {
-      expect(mockFileModel.update).toHaveBeenCalledWith(
+      expect(mockCaseFileRepositoryService.updateById).toHaveBeenCalledWith(
+        fileId,
         { state: CaseFileState.STORED_IN_COURT },
-        { where: { id: fileId } },
       )
     })
 
@@ -218,8 +222,8 @@ describe('InternalFileController - Deliver case file to court', () => {
       mockObjectExists.mockResolvedValueOnce(true)
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
       mockGetObject.mockResolvedValueOnce(content)
-      const mockUpdate = mockFileModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([0])
+      const mockUpdate = mockCaseFileRepositoryService.updateById as jest.Mock
+      mockUpdate.mockResolvedValueOnce(0)
 
       then = await givenWhenThen(caseId, fileId, theCase, caseFile)
     })
@@ -281,9 +285,9 @@ describe('InternalFileController - Deliver case file to court', () => {
     })
 
     it('should set isKeyAccessible to false', () => {
-      expect(mockFileModel.update).toHaveBeenCalledWith(
+      expect(mockCaseFileRepositoryService.updateById).toHaveBeenCalledWith(
+        fileId,
         { isKeyAccessible: false },
-        { where: { id: fileId } },
       )
     })
 
@@ -384,7 +388,7 @@ describe('InternalFileController - Deliver case file to court', () => {
     })
 
     it('should not mark the file as stored in court', () => {
-      expect(mockFileModel.update).not.toHaveBeenCalled()
+      expect(mockCaseFileRepositoryService.updateById).not.toHaveBeenCalled()
     })
 
     it('should complete the delivery so that it is not retried', () => {
@@ -406,7 +410,7 @@ describe('InternalFileController - Deliver case file to court', () => {
       mockObjectExists.mockResolvedValueOnce(true)
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
       mockGetObject.mockResolvedValueOnce(content)
-      const mockUpdate = mockFileModel.update as jest.Mock
+      const mockUpdate = mockCaseFileRepositoryService.updateById as jest.Mock
       mockUpdate.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId, fileId, theCase, caseFile)

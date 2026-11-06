@@ -14,12 +14,9 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
-import {
-  addMessagesToQueue,
-  Message,
-  MessageService,
-} from '@island.is/judicial-system/message'
+import { Message, MessageService } from '@island.is/judicial-system/message'
 
+import { queueMessagesAfterCommit } from '../../../middleware'
 import { CaseService, InternalCaseService, PdfService } from '../../case'
 import { CourtService } from '../../court'
 import { DefendantService } from '../../defendant'
@@ -40,6 +37,7 @@ import { SubpoenaController } from '../subpoena.controller'
 import { SubpoenaService } from '../subpoena.service'
 
 jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../user/user.service')
 jest.mock('../../case/case.service')
 jest.mock('../../case/pdf.service')
@@ -155,16 +153,19 @@ export const createTestingSubpoenaModule = async () => {
 
   const messageService = subpoenaModule.get<MessageService>(MessageService)
 
-  const queuedMessages: Message[] = []
-  const mockAddMessageToQueue = addMessagesToQueue as jest.Mock
-  mockAddMessageToQueue.mockImplementation((...msgs: Message[]) => {
-    queuedMessages.push(...msgs)
+  // Every message the module queues goes through the helper, so this is the
+  // whole of what a request would send
+  const queuedMessagesAfterCommit: Message[] = []
+  const mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
+  mockQueueMessagesAfterCommit.mockImplementation((...msgs: Message[]) => {
+    queuedMessagesAfterCommit.push(...msgs)
   })
 
   subpoenaModule.close()
 
   return {
-    queuedMessages,
+    queuedMessagesAfterCommit,
+    mockQueueMessagesAfterCommit,
     userService,
     pdfService,
     fileService,

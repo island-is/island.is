@@ -1,8 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common'
-import { SequelizeModule } from '@nestjs/sequelize'
 
-import { CaseDefendantPoliceCaseNumber, CivilClaimant } from '../repository'
-import { CaseModule, CourtModule, RepositoryModule } from '..'
+import { AppealCaseModule, CaseModule, CourtModule, RepositoryModule } from '..'
 import { CivilClaimantController } from './civilClaimant.controller'
 import { CivilClaimantService } from './civilClaimant.service'
 import { DefendantController } from './defendant.controller'
@@ -15,8 +13,8 @@ import { LimitedAccessDefendantController } from './limitedAccessDefendant.contr
   imports: [
     forwardRef(() => CourtModule),
     forwardRef(() => CaseModule),
+    forwardRef(() => AppealCaseModule),
     forwardRef(() => RepositoryModule),
-    SequelizeModule.forFeature([CaseDefendantPoliceCaseNumber, CivilClaimant]),
   ],
   controllers: [
     DefendantController,

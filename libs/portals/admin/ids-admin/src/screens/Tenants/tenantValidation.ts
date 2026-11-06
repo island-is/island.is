@@ -6,6 +6,11 @@ export const safeTextSchema = z
   .min(1, 'errorRequired')
   .regex(/^[^<>%$]+$/, 'errorUnsafeChars')
 
+export const optionalSafeTextSchema = z
+  .string()
+  .regex(/^[^<>%$]*$/, 'errorUnsafeChars')
+  .optional()
+
 export const nationalIdSchema = z
   .string()
   .min(1, 'errorNationalId')
@@ -17,4 +22,10 @@ export const contactEmailSchema = z
   .string()
   .email('errorEmail')
   .or(z.literal(''))
+  .optional()
+
+export const municipalityCodeSchema = z
+  .string()
+  .trim()
+  .regex(/^(\d{4})?$/, 'errorMunicipalityCode')
   .optional()

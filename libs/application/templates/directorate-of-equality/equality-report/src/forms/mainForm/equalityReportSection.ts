@@ -1,5 +1,4 @@
 import {
-  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildLinkField,
@@ -15,6 +14,46 @@ export const equalityReportSection = buildSection({
   id: 'equalityReport',
   title: messages.equalityReport.section.sectionTitle,
   children: [
+    buildSubSection({
+      id: 'information',
+      title: messages.equalityReport.information.sectionTitle,
+
+      children: [
+        buildMultiField({
+          id: 'informationMultiField',
+          title: messages.equalityReport.information.title,
+          description: messages.equalityReport.information.intro,
+          children: [
+            buildLinkField({
+              id: 'information.link',
+              title: messages.equalityReport.information.detailLinkLabel,
+              link: messages.equalityReport.information.detailLink,
+              variant: 'text',
+              iconProps: { icon: 'open', type: 'outline' },
+            }),
+            buildTitleField({
+              title: messages.equalityReport.information.listTitle,
+              marginBottom: 1,
+            }),
+            buildDescriptionField({
+              id: 'information.placeholder',
+              description: messages.equalityReport.information.list,
+              marginBottom: 3,
+            }),
+            buildTitleField({
+              title: messages.equalityReport.information.implementationTitle,
+              marginBottom: 1,
+            }),
+            buildDescriptionField({
+              id: 'information.implementationPlaceholder',
+              description:
+                messages.equalityReport.information.implementationList,
+              marginBottom: 3,
+            }),
+          ],
+        }),
+      ],
+    }),
     buildSubSection({
       id: 'previousEqualityPlan',
       title: messages.equalityReport.previousEqualityPlan.sectionTitle,
@@ -38,44 +77,6 @@ export const equalityReportSection = buildSection({
       ],
     }),
     buildSubSection({
-      id: 'information',
-      title: messages.equalityReport.information.sectionTitle,
-
-      children: [
-        buildMultiField({
-          id: 'informationMultiField',
-          title: messages.equalityReport.information.title,
-          description: messages.equalityReport.information.intro,
-          children: [
-            buildLinkField({
-              id: 'information.link',
-              title: messages.equalityReport.information.detailLinkLabel,
-              link: messages.equalityReport.information.detailLink,
-              variant: 'text',
-            }),
-            buildTitleField({
-              title: messages.equalityReport.information.listTitle,
-              marginBottom: 1,
-            }),
-            buildDescriptionField({
-              id: 'information.placeholder',
-              description: messages.equalityReport.information.list,
-              marginBottom: 3,
-            }),
-            buildCheckboxField({
-              id: 'information.checkbox',
-              options: [
-                {
-                  label: messages.equalityReport.information.checkboxLabel,
-                  value: 'agree',
-                },
-              ],
-            }),
-          ],
-        }),
-      ],
-    }),
-    buildSubSection({
       id: 'goalsAndActions',
       title: messages.equalityReport.goalsAndActions.sectionTitle,
       children: [
@@ -86,14 +87,18 @@ export const equalityReportSection = buildSection({
           children: [
             buildLinkField({
               id: 'goalsAndActions.link',
-              title: messages.equalityReport.information.detailLinkLabel,
-              link: messages.equalityReport.information.detailLink,
+              title: messages.equalityReport.information.instructionsLabel,
+              link: messages.equalityReport.information.instructionsLink,
               variant: 'text',
+              iconProps: { icon: 'open', type: 'outline' },
             }),
-            buildCustomField({
-              id: 'goalsAndActions.customField',
-              component: 'Editor',
-            }),
+            buildCustomField(
+              {
+                id: 'goalsAndActions.filename',
+                component: 'Editor',
+              },
+              { mode: 'draft' },
+            ),
           ],
         }),
       ],

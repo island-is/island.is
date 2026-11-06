@@ -68,4 +68,9 @@ export class UpdateUserProfileInput {
   @IsOptional()
   @IsString()
   bankInfo?: string
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  onlyActionablePriorityNotifications?: boolean
 }

@@ -31,6 +31,7 @@ interface Props {
     value: string
   }[]
   required?: boolean
+  labelledBy?: string
 }
 
 export const ProgressBar: FC<Props> = ({
@@ -46,6 +47,7 @@ export const ProgressBar: FC<Props> = ({
   selectedValue,
   onOptionClick,
   required = false,
+  labelledBy,
 }) => {
   const ref = useRef<HTMLElement>(null)
   const textContainerRef = useRef<HTMLDivElement>(null)
@@ -178,7 +180,7 @@ export const ProgressBar: FC<Props> = ({
           className={styles.progressContainer}
           role={options ? 'radiogroup' : 'group'}
           width={vertical ? undefined : 'full'}
-          aria-labelledby={label ? labelId : undefined}
+          aria-labelledby={labelledBy ?? (label ? labelId : undefined)}
           aria-describedby={options ? descriptionId : undefined}
           aria-orientation={vertical ? 'vertical' : 'horizontal'}
           style={
@@ -238,6 +240,7 @@ export const ProgressBar: FC<Props> = ({
                 return (
                   <button
                     key={`dot-${option.value}`}
+                    id={`${id}-option-${index}`}
                     ref={(el) => {
                       buttonRefs.current[index] = el
                     }}
@@ -382,13 +385,18 @@ export const ProgressBar: FC<Props> = ({
               return (
                 <Box
                   key={option.value}
+                  component="label"
+                  htmlFor={`${id}-option-${index}`}
                   className={cn(styles.options, styles.textPosition, {
                     [styles.textMiddle]: isMiddle,
                     [styles.textFirst]: isFirst,
                     [styles.textLast]: isLast,
+                    [styles.textClickable]: !!onOptionClick,
                   })}
                   textAlign={isMiddle ? 'center' : textAlign}
                   marginTop={vertical ? undefined : 1}
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onMouseLeave={() => setHoveredIndex(null)}
                   style={
                     vertical
                       ? {

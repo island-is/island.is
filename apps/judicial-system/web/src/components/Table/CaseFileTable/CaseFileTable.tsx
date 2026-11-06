@@ -1,5 +1,5 @@
-import { FC, useContext } from 'react'
-import { useIntl } from 'react-intl'
+import type { FC } from 'react'
+import { useContext } from 'react'
 import { motion } from 'motion/react'
 
 import { Box, Icon, Text, Tooltip } from '@island.is/island-ui/core'
@@ -15,24 +15,22 @@ import {
   InfoBox,
   useRejectCaseFile,
 } from '@island.is/judicial-system-web/src/components'
+import ContextMenu from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
   SortButton,
   TableContainer,
   TableDate,
   TableHeaderText,
 } from '@island.is/judicial-system-web/src/components/Table'
-import {
-  CaseFile,
-  CaseFileState,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import * as tableStyles from '@island.is/judicial-system-web/src/components/Table/Table.css'
+import type { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useFiledCourtDocuments,
   useSort,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { onEnterOrSpace } from '@island.is/judicial-system-web/src/utils/utils'
 
-import ContextMenu from '../../ContextMenu/ContextMenu'
-import * as tableStyles from '../Table.css'
 import * as styles from './CaseFileTable.css'
 
 interface Props {
@@ -48,7 +46,6 @@ const CaseFileTable: FC<Props> = ({
   canRejectFiles,
   loading = false,
 }) => {
-  const { formatMessage } = useIntl()
   const { setWorkingCase, refreshCase } = useContext(FormContext)
   const {
     isFiledInConfirmedCourtSession,
@@ -93,18 +90,14 @@ const CaseFileTable: FC<Props> = ({
               className={tableStyles.th}
               aria-sort={getClassNamesFor('name') ?? 'none'}
             >
-              <SortButton
-                {...createSortProps(formatMessage(tables.caseFileName), 'name')}
-              />
+              <SortButton {...createSortProps(tables.caseFileName, 'name')} />
             </th>
-            <TableHeaderText title={formatMessage(tables.caseFileDate)} />
+            <TableHeaderText title={tables.caseFileDate} />
             <th
               className={tableStyles.th}
               aria-sort={getClassNamesFor('created') ?? 'none'}
             >
-              <SortButton
-                {...createSortProps(formatMessage(tables.received), 'created')}
-              />
+              <SortButton {...createSortProps(tables.received, 'created')} />
             </th>
             <th className={tableStyles.th} />
           </>

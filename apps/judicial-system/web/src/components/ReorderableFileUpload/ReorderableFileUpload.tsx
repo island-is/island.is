@@ -1,27 +1,16 @@
-import {
-  Dispatch,
-  FC,
-  PointerEvent,
-  SetStateAction,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import type { Dispatch, FC, PointerEvent, SetStateAction } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
-import {
-  animate,
-  MotionValue,
-  Reorder,
-  useDragControls,
-  useMotionValue,
-} from 'motion/react'
+import type { MotionValue } from 'motion/react'
+import { animate, Reorder, useDragControls, useMotionValue } from 'motion/react'
 
 import { Box, Button, FileUploadStatus, Text } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
+import { stripPdfExtension } from '@island.is/judicial-system/formatters'
 import { sortCaseFiles } from '@island.is/judicial-system/types'
+import EditableCaseFile from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { TUploadFile } from '../../utils/hooks'
-import EditableCaseFile from '../EditableCaseFile/EditableCaseFile'
 import * as styles from './ReorderableFileUpload.css'
 
 interface ReorderableFileUploadProps {
@@ -136,8 +125,7 @@ const DraggableFileRow: FC<DraggableFileRowProps> = (props) => {
           id: file.id ?? '',
           displayText:
             file.userGeneratedFilename ??
-            file.name?.replace(/\.pdf$/i, '') ??
-            file.name,
+            (file.name ? stripPdfExtension(file.name) : file.name),
           canEdit: ['fileName'],
           canOpen:
             file.status === FileUploadStatus.done &&

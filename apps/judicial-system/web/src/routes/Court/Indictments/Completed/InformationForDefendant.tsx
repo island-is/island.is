@@ -8,7 +8,7 @@ import {
   FormContext,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 
 export const InformationForDefendant = ({

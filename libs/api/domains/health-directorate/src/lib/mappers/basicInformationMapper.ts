@@ -2,6 +2,7 @@ import addMinutes from 'date-fns/addMinutes'
 import subMinutes from 'date-fns/subMinutes'
 import {
   DiseaseVaccinationDtoVaccinationStatusEnum,
+  MeAppointmentControllerGetPatientAppointmentsV2V2Data,
   UserVisibleAppointmentStatuses,
 } from '@island.is/clients/health-directorate'
 import {
@@ -10,9 +11,11 @@ import {
 } from '../constants'
 import {
   AppointmentAssigneeTypeEnum,
+  AppointmentCancelBlockedReasonEnum,
   AppointmentLinkTypeEnum,
   AppointmentModalityEnum,
   AppointmentStatusEnum,
+  AppointmentsOrderEnum,
   ReferralStatusEnum,
   VaccinationStatusEnum,
   WaitlistStatusTagColorEnum,
@@ -45,10 +48,22 @@ export const mapVaccinationStatus = (
 
 export const toAppointmentStatusEnum = (
   status: string,
-): AppointmentStatusEnum | undefined =>
-  Object.values(AppointmentStatusEnum).includes(status as AppointmentStatusEnum)
-    ? (status as AppointmentStatusEnum)
-    : undefined
+): AppointmentStatusEnum | undefined => {
+  switch (status) {
+    case UserVisibleAppointmentStatuses.BOOKED:
+      return AppointmentStatusEnum.BOOKED
+    case UserVisibleAppointmentStatuses.CANCELLED:
+      return AppointmentStatusEnum.CANCELLED
+    case UserVisibleAppointmentStatuses.FULFILLED:
+      return AppointmentStatusEnum.FULFILLED
+    case UserVisibleAppointmentStatuses.ARRIVED:
+      return AppointmentStatusEnum.ARRIVED
+    case UserVisibleAppointmentStatuses.CHECKED_IN:
+      return AppointmentStatusEnum.CHECKED_IN
+    default:
+      return undefined
+  }
+}
 
 export const toAppointmentModalityEnum = (
   modality?: string,
@@ -101,6 +116,21 @@ export const toAppointmentLinkTypeEnum = (
   }
 }
 
+export const toAppointmentCancelBlockedReason = (
+  canCancel: boolean,
+  canCancelBefore?: Date,
+): AppointmentCancelBlockedReasonEnum | undefined => {
+  if (canCancel) {
+    return undefined
+  }
+
+  if (canCancelBefore && canCancelBefore.getTime() < Date.now()) {
+    return AppointmentCancelBlockedReasonEnum.DeadlinePassed
+  }
+
+  return AppointmentCancelBlockedReasonEnum.NotAllowed
+}
+
 /*
  * Only the video call link is currently time-gated. The window is computed
  * here, so web and native both read the same activatesAt/expiresAt instead
@@ -139,6 +169,19 @@ export const mapAppointmentStatus = (
       return UserVisibleAppointmentStatuses.CHECKED_IN
     default:
       return null
+  }
+}
+
+export const mapAppointmentsOrder = (
+  order: AppointmentsOrderEnum,
+): NonNullable<
+  MeAppointmentControllerGetPatientAppointmentsV2V2Data['query']
+>['order'] => {
+  switch (order) {
+    case AppointmentsOrderEnum.ASC:
+      return 'ASC'
+    case AppointmentsOrderEnum.DESC:
+      return 'DESC'
   }
 }
 

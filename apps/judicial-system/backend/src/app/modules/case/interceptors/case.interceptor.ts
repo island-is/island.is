@@ -40,6 +40,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { hasOutOfCourtAppeal } from '../../appeal-case'
+import { getMostPermissiveRequestSharedWithDefenderForNationalId } from '../../defendant/requestSharedWithDefender.logic'
 import { isRulingOrderInConfirmedCourtSession } from '../../file/guards/caseFileCategory'
 import { canDefenceUserViewCivilClaimCaseFile } from '../../file/guards/civilClaimFileVisibility'
 import {
@@ -316,15 +317,14 @@ export const getAppealCaseStatementDates = (
   theCase: Case,
 ): AppealCaseStatementDates => {
   const eventLogs = appealCase.appealEventLogs
-  const prosecutorStatementDate = AppealEventLog.getLatestDateByRole(
-    AppealEventType.APPEAL_STATEMENT_SENT,
-    prosecutionRoles,
-    eventLogs,
-  )
 
   if (isRequestCase(theCase.type)) {
     return {
-      prosecutorStatementDate,
+      prosecutorStatementDate: AppealEventLog.getLatestDateByRole(
+        AppealEventType.APPEAL_STATEMENT_SENT,
+        prosecutionRoles,
+        eventLogs,
+      ),
       defendantStatementDate: AppealEventLog.getLatestDateByRole(
         AppealEventType.APPEAL_STATEMENT_SENT,
         UserRole.DEFENDER,
@@ -333,8 +333,15 @@ export const getAppealCaseStatementDates = (
     }
   }
 
+  // In an indictment case a statement is the party's it names, and the
+  // prosecution's when it names none - the same rule hasFiledAppealStatement
+  // applies - so a statement the court of appeals files on the prosecution's
+  // behalf counts as the prosecution's, whatever role wrote it.
   return {
-    prosecutorStatementDate,
+    prosecutorStatementDate: AppealEventLog.getLatestDateWithoutParty(
+      AppealEventType.APPEAL_STATEMENT_SENT,
+      eventLogs,
+    ),
     defendantStatementDates: AppealEventLog.groupLatestByDefendant(
       AppealEventType.APPEAL_STATEMENT_SENT,
       eventLogs,
@@ -480,8 +487,16 @@ const RequestSharedWithDefenderAllowedStates: {
   [RequestSharedWithDefender.NOT_SHARED]: completedRequestCaseStates,
 }
 
-export const canDefenderViewRequest = (theCase: Case) => {
-  const { requestSharedWithDefender, state } = theCase
+export const canDefenderViewRequest = (
+  theCase: Case,
+  nationalId?: string | null,
+) => {
+  const requestSharedWithDefender =
+    getMostPermissiveRequestSharedWithDefenderForNationalId(
+      theCase.defendants,
+      nationalId,
+    )
+  const { state } = theCase
 
   if (!requestSharedWithDefender) {
     return false
@@ -494,6 +509,7 @@ export const canDefenderViewRequest = (theCase: Case) => {
     state &&
       allowedStates?.includes(state) &&
       (requestSharedWithDefender !== RequestSharedWithDefender.COURT_DATE ||
+        isCompletedCase(state) ||
         Boolean(DateLog.arraignmentDate(theCase.dateLogs)?.date)),
   )
 }
@@ -567,6 +583,12 @@ export const transformDefendants = ({
       sentToPrisonAdminDate: defendant.isSentToPrisonAdmin
         ? DefendantEventLog.getEventLogDateByEventType(
             DefendantEventType.SENT_TO_PRISON_ADMIN,
+            defendant.eventLogs,
+          )
+        : undefined,
+      closedWithoutEnforcementDate: defendant.isClosedWithoutEnforcement
+        ? DefendantEventLog.getEventLogDateByEventType(
+            DefendantEventType.CLOSED_WITHOUT_ENFORCEMENT,
             defendant.eventLogs,
           )
         : undefined,
@@ -646,6 +668,18 @@ const getDefenceUserDefendants = (
   allCancelledOrDismissed: boolean
   latestCancelledOrDismissedDate: Date | undefined
 } => {
+  // Request-case hearings cover all defendants together. Keep every defendant
+  // visible to the logged-in defender (who may only represent one of them).
+  // Indictment filtering below keys off isDefenderChoiceConfirmed, which R-cases
+  // leave null — do not reuse that path for request cases.
+  if (isRequestCase(theCase.type)) {
+    return {
+      defendants: theCase.defendants,
+      allCancelledOrDismissed: false,
+      latestCancelledOrDismissedDate: undefined,
+    }
+  }
+
   const myDefendants = theCase.defendants?.filter(
     (defendant) =>
       defendant.isDefenderChoiceConfirmed &&
@@ -846,6 +880,8 @@ const transformCase = (
         ? CaseString.penalties(theCase.caseStrings)
         : null,
     reopenReason: CaseString.reopenReason(theCase.caseStrings),
+    indictmentReviewReturnedExplanation:
+      CaseString.indictmentReviewReturnedExplanation(theCase.caseStrings),
     caseSentToCourtDate: EventLog.getEventLogDateByEventType(
       [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
       theCase.eventLogs,
@@ -909,7 +945,7 @@ const transformCase = (
     caseResentExplanation:
       isRequestCase(theCase.type) &&
       isLimitedAccess &&
-      !canDefenderViewRequest(theCase)
+      !canDefenderViewRequest(theCase, user?.nationalId)
         ? undefined
         : theCase.caseResentExplanation,
     parentCase: theCase.parentCase && transformCase(theCase.parentCase, user),

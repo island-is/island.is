@@ -1,8 +1,16 @@
+import { theme } from '@island.is/island-ui/theme'
+import { style } from '@vanilla-extract/css'
 import { recipe } from '@vanilla-extract/recipes'
 
 export const saveButtonWrapperStyle = recipe({
   base: {
     position: 'relative',
+    selectors: {
+      '&:focus-within': {
+        opacity: 1,
+        zIndex: 1,
+      },
+    },
   },
   variants: {
     visible: {
@@ -14,6 +22,16 @@ export const saveButtonWrapperStyle = recipe({
         opacity: 0,
         zIndex: -1,
       },
+    },
+  },
+})
+
+export const filterWrapperStyle = style({
+  width: '100%',
+
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      width: '50%',
     },
   },
 })

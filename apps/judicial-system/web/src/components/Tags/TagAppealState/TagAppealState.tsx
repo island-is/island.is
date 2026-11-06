@@ -1,16 +1,16 @@
-import { FC, useContext } from 'react'
-import { useIntl } from 'react-intl'
+import type { FC } from 'react'
+import { useContext } from 'react'
 
-import { Tag, TagVariant } from '@island.is/island-ui/core'
+import type { TagVariant } from '@island.is/island-ui/core'
+import { Tag } from '@island.is/island-ui/core'
 import { getAppealResultTextByValue } from '@island.is/judicial-system/formatters'
 import { tables } from '@island.is/judicial-system-web/messages'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-
-import { UserContext } from '../../UserProvider/UserProvider'
 
 interface Props {
   appealState?: AppealCaseState | null
@@ -23,7 +23,6 @@ const TagAppealState: FC<Props> = ({
   appealState,
   appealCaseNumber,
 }) => {
-  const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 
   const getTagVariantForAppealState = (
@@ -38,13 +37,13 @@ const TagAppealState: FC<Props> = ({
     if (state === AppealCaseState.WITHDRAWN) {
       return {
         color: 'red',
-        text: formatMessage(tables.withdrawnTag),
+        text: tables.withdrawnTag,
       }
     }
     if (state === AppealCaseState.APPEALED) {
       return {
         color: 'red',
-        text: formatMessage(tables.appealDate),
+        text: tables.appealDate,
       }
     }
     if (state === AppealCaseState.RECEIVED) {
@@ -54,12 +53,12 @@ const TagAppealState: FC<Props> = ({
       ) {
         return {
           color: 'purple',
-          text: formatMessage(tables.newTag),
+          text: tables.newTag,
         }
       } else
         return {
           color: 'darkerBlue',
-          text: formatMessage(tables.receivedTag),
+          text: tables.receivedTag,
         }
     }
     if (state === AppealCaseState.COMPLETED) {

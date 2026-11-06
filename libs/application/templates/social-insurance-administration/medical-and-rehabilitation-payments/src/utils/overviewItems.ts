@@ -10,8 +10,8 @@ import {
   KeyValueItem,
   TableData,
 } from '@island.is/application/types'
-import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
 import { Locale } from '@island.is/shared/types'
+import { formatCurrencyWithoutSuffix } from '@island.is/shared/utils'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
@@ -219,6 +219,7 @@ export const questionsItems = (
     isStudying,
     educationalInstitution,
     ectsUnits,
+    studyDocuments,
   } = getApplicationAnswers(answers)
 
   let baseItems: Array<KeyValueItem> = []
@@ -294,6 +295,17 @@ export const questionsItems = (
                 .questionsNumberOfCredits,
             valueText: ectsUnits,
           },
+          ...(studyDocuments.length > 0
+            ? [
+                {
+                  width: 'full' as const,
+                  keyText:
+                    medicalAndRehabilitationPaymentsFormMessage
+                      .generalInformation.questionsStudyDocumentsTitle,
+                  valueText: studyDocuments.map((file) => file.name),
+                },
+              ]
+            : []),
         ]
       : []
 
@@ -437,6 +449,18 @@ export const confirmationOfIllHealthItems = (): Array<KeyValueItem> => [
     valueText:
       medicalAndRehabilitationPaymentsFormMessage.overview
         .confirmationOfIllHealthConfirmed,
+  },
+]
+
+export const confirmationOfJobSearchItems = (): Array<KeyValueItem> => [
+  {
+    width: 'full',
+    keyText:
+      medicalAndRehabilitationPaymentsFormMessage.confirmationOfJobSearch
+        .sectionTitle,
+    valueText:
+      medicalAndRehabilitationPaymentsFormMessage.overview
+        .confirmationOfJobSearchConfirmed,
   },
 ]
 

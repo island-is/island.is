@@ -80,7 +80,6 @@ export const AssetDisplay = ({
 
   return (
     <Box
-      component="form"
       display="flex"
       flexDirection="column"
       justifyContent="spaceBetween"

@@ -8,11 +8,11 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  AppealEventType,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -24,8 +24,10 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
+import type { AppealSummonsPdfDefendant } from '../../formatters'
 import {
   Confirmation,
+  createAppealSummons,
   createCaseFilesRecord,
   createFineSentToPrisonAdminPdf,
   createIndictment,
@@ -40,10 +42,11 @@ import {
   getRequestPdfAsBuffer,
   getRulingPdfAsBuffer,
 } from '../../formatters'
+import { verdictAppellantSide } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import {
+  AppealSummons,
   Case,
-  caseInclude,
   CaseRepositoryService,
   Defendant,
   EventLog,
@@ -55,32 +58,16 @@ import { SubpoenaService } from '../subpoena'
 
 @Injectable()
 export class PdfService {
-  private throttle = Promise.resolve(Buffer.from(''))
+  private throttle: Promise<Buffer> = Promise.resolve(Buffer.from(''))
 
   constructor(
     private readonly awsS3Service: AwsS3Service,
-    private readonly intlService: IntlService,
     private readonly policeDigitalCaseFileRepositoryService: PoliceDigitalCaseFileRepositoryService,
     @Inject(forwardRef(() => SubpoenaService))
     private readonly subpoenaService: SubpoenaService,
     private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
-
-  private formatMessage: FormatMessage = () => {
-    throw new InternalServerErrorException('Format message not initialized')
-  }
-
-  private async refreshFormatMessage(): Promise<void> {
-    return this.intlService
-      .useIntl(['judicial.system.backend'], 'is')
-      .then((res) => {
-        this.formatMessage = res.formatMessage
-      })
-      .catch((reason) => {
-        this.logger.error('Unable to refresh format messages', { reason })
-      })
-  }
 
   private async throttleGetCaseFilesRecordPdf(
     theCase: Case,
@@ -91,8 +78,6 @@ export class PdfService {
     await this.throttle.catch((reason) => {
       this.logger.info('Previous case files pdf generation failed', { reason })
     })
-
-    await this.refreshFormatMessage()
 
     const caseFiles = theCase.caseFiles
       ?.filter(
@@ -124,6 +109,7 @@ export class PdfService {
           })
 
         return {
+          id: caseFile.id,
           chapter: caseFile.chapter as number,
           date: caseFile.displayDate ?? caseFile.created,
           name: caseFile.userGeneratedFilename ?? caseFile.name,
@@ -132,16 +118,23 @@ export class PdfService {
       })
 
     const policeDigitalCaseFiles =
-      await this.policeDigitalCaseFileRepositoryService.findAll({
-        where: { caseId: theCase.id, policeCaseNumber },
-      })
+      await this.policeDigitalCaseFileRepositoryService.findByCaseAndPoliceCaseNumber(
+        theCase.id,
+        policeCaseNumber,
+      )
 
     const generatedPdf = await createCaseFilesRecord(
       theCase,
       policeCaseNumber,
       caseFiles ?? [],
       policeDigitalCaseFiles,
-      this.formatMessage,
+      (file, reason) => {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Unable to merge file ${file.id} of case ${theCase.id} into the case files record`,
+          { reason },
+        )
+      },
     )
 
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
@@ -167,9 +160,7 @@ export class PdfService {
       }
     }
 
-    await this.refreshFormatMessage()
-
-    return getCourtRecordPdfAsBuffer(theCase, this.formatMessage, user)
+    return getCourtRecordPdfAsBuffer(theCase, user)
   }
 
   async getCourtRecordPdfForIndictmentCase(
@@ -238,9 +229,7 @@ export class PdfService {
   }
 
   async getRequestPdf(theCase: Case): Promise<Buffer> {
-    await this.refreshFormatMessage()
-
-    return getRequestPdfAsBuffer(theCase, this.formatMessage)
+    return getRequestPdfAsBuffer(theCase)
   }
 
   async getRulingPdf(theCase: Case): Promise<Buffer> {
@@ -258,15 +247,11 @@ export class PdfService {
       }
     }
 
-    await this.refreshFormatMessage()
-
-    return getRulingPdfAsBuffer(theCase, this.formatMessage)
+    return getRulingPdfAsBuffer(theCase)
   }
 
   async getCustodyNoticePdf(theCase: Case): Promise<Buffer> {
-    await this.refreshFormatMessage()
-
-    return getCustodyNoticePdfAsBuffer(theCase, this.formatMessage)
+    return getCustodyNoticePdfAsBuffer(theCase)
   }
 
   private async tryGetPdfFromS3(
@@ -284,6 +269,23 @@ export class PdfService {
       })
   }
 
+  private async uploadPdfToS3(
+    theCase: Case,
+    key: string,
+    pdf: Buffer,
+  ): Promise<void> {
+    try {
+      await this.awsS3Service.putObject(
+        theCase.type,
+        key,
+        pdf.toString('binary'),
+      )
+    } catch (reason) {
+      this.logger.error(`Failed to upload pdf ${key} to AWS S3`, { reason })
+      throw reason
+    }
+  }
+
   private async getFullOriginalCase(
     theCase: Case,
     transaction?: Transaction,
@@ -293,10 +295,10 @@ export class PdfService {
     }
 
     const parentCase = theCase.splitCaseId
-      ? await this.caseRepositoryService.findById(theCase.splitCaseId, {
-          include: caseInclude,
-          transaction,
-        })
+      ? await this.caseRepositoryService.findSplitSourceById(
+          theCase.splitCaseId,
+          { transaction },
+        )
       : theCase
 
     if (!parentCase) {
@@ -354,8 +356,6 @@ export class PdfService {
       }
     }
 
-    await this.refreshFormatMessage()
-
     const fullOriginalCase = await this.getFullOriginalCase(
       theCase,
       transaction,
@@ -371,11 +371,7 @@ export class PdfService {
     }
 
     // In case of splits, we use the reconstructed full parent case for generation
-    const generatedPdf = await createIndictment(
-      fullOriginalCase,
-      this.formatMessage,
-      confirmation,
-    )
+    const generatedPdf = await createIndictment(fullOriginalCase, confirmation)
 
     if (
       hasIndictmentCaseBeenSubmittedToCourt(fullOriginalCase.state) &&
@@ -470,8 +466,6 @@ export class PdfService {
       }
     }
 
-    await this.refreshFormatMessage()
-
     // For subpoenas created before the split, use the reconstructed full parent
     // case. For subpoenas created after the split, use the current case directly
     // so the correct court case number appears in the PDF.
@@ -482,7 +476,6 @@ export class PdfService {
     const generatedPdf = await createSubpoena(
       caseForPdf,
       defendant,
-      this.formatMessage,
       subpoena,
       arraignmentDate,
       location,
@@ -512,8 +505,6 @@ export class PdfService {
     defendant: Defendant,
     subpoena: Subpoena,
   ): Promise<Buffer> {
-    await this.refreshFormatMessage()
-
     const isSplitSubpoena =
       theCase.splitCaseId && subpoena.created < theCase.created
 
@@ -528,7 +519,6 @@ export class PdfService {
       caseForPdf,
       defendant,
       subpoena,
-      this.formatMessage,
     )
 
     return generatedPdf
@@ -540,14 +530,11 @@ export class PdfService {
     verdict: Verdict,
     deliveredToDefenderName?: string,
   ): Promise<Buffer> {
-    await this.refreshFormatMessage()
-
     const generatedPdf = await createVerdictServiceCertificate({
       theCase,
       defendant,
       verdict,
       deliveredToDefenderName,
-      formatMessage: this.formatMessage,
     })
 
     return generatedPdf
@@ -561,5 +548,145 @@ export class PdfService {
     } else {
       return await createRulingSentToPrisonAdminPdf(theCase)
     }
+  }
+
+  async getAppealSummonsPdf(
+    theCase: Case,
+    user: TUser,
+    summons?: AppealSummons,
+    previewDefendants?: AppealSummonsPdfDefendant[],
+    // Confirm generates inside a DB transaction and uploads after commit so a
+    // rolled-back confirmation cannot leave a PDF in S3. Pass false there.
+    options?: { cacheInS3?: boolean },
+  ): Promise<Buffer> {
+    // Same cache shape as subpoena: once confirmed (hash set), prefer the
+    // frozen object in S3 so later downloads do not drift with case edits.
+    const key = summons ? `${theCase.id}/appealSummons/${summons.id}.pdf` : ''
+
+    if (summons?.hash && key) {
+      const existingPdf = await this.tryGetPdfFromS3(theCase, key)
+
+      if (existingPdf) {
+        return existingPdf
+      }
+
+      // Hash set but S3 miss (e.g. confirm uploaded after commit and failed):
+      // regenerate, serve/upload only if bytes still match the frozen hash.
+    }
+
+    if (!theCase.rulingDate) {
+      throw new BadRequestException(
+        `Case ${theCase.id} has no ruling date; cannot generate an appeal summons PDF`,
+      )
+    }
+
+    const rows = summons?.defendants ?? previewDefendants ?? []
+
+    const defendants: AppealSummonsPdfDefendant[] = rows.map((row) => ({
+      defendantId: row.defendantId,
+      appellantSide: row.appellantSide,
+      claims: row.claims,
+      appealDate: this.getDefenceAppealDate(theCase, row.defendantId),
+    }))
+
+    // Preview / draft: issuer is whoever is generating the PDF. Confirmed:
+    // stamp and issuer must be the recorded confirmer — never the downloader.
+    let generatedPdf: Buffer
+
+    if (summons?.confirmedDate) {
+      const confirmedBy = summons.confirmedBy
+
+      if (!confirmedBy) {
+        throw new InternalServerErrorException(
+          `Appeal summons ${summons.id} is confirmed but confirmedBy was not loaded`,
+        )
+      }
+
+      const issuer = {
+        name: confirmedBy.name ?? '',
+        title: confirmedBy.title,
+      }
+
+      generatedPdf = await createAppealSummons(
+        theCase,
+        defendants,
+        issuer,
+        {
+          actor: issuer.name,
+          title: issuer.title,
+          institution: confirmedBy.institution?.name ?? '',
+          date: summons.confirmedDate,
+        },
+        summons.confirmedDate,
+      )
+    } else {
+      generatedPdf = await createAppealSummons(
+        theCase,
+        defendants,
+        { name: user.name, title: user.title },
+        undefined,
+        undefined,
+      )
+    }
+
+    if (summons?.hash && key) {
+      const { hash } = getCaseFileHash(generatedPdf)
+
+      if (hash !== summons.hash) {
+        throw new InternalServerErrorException(
+          `Appeal summons ${summons.id} has a hash but its PDF was not found in S3`,
+        )
+      }
+
+      // Bytes match the frozen hash — serve them even if re-caching in S3 fails.
+      this.tryUploadPdfToS3(theCase, key, generatedPdf)
+
+      return generatedPdf
+    }
+
+    // Default: cache a confirmed PDF so the next GET can serve the same bytes.
+    // Confirm skips this and uploads after the transaction commits instead.
+    if (summons?.confirmedDate && key && (options?.cacheInS3 ?? true)) {
+      await this.uploadPdfToS3(theCase, key, generatedPdf)
+    }
+
+    return generatedPdf
+  }
+
+  async uploadAppealSummonsPdf(
+    theCase: Case,
+    summonsId: string,
+    pdf: Buffer,
+  ): Promise<void> {
+    await this.uploadPdfToS3(
+      theCase,
+      `${theCase.id}/appealSummons/${summonsId}.pdf`,
+      pdf,
+    )
+  }
+
+  private getDefenceAppealDate(
+    theCase: Case,
+    defendantId: string,
+  ): Date | undefined {
+    const defendant = theCase.defendants?.find(
+      (item) => item.id === defendantId,
+    )
+    const verdictAppealDate = defendant?.verdicts?.[0]?.appealDate
+
+    if (verdictAppealDate) {
+      return verdictAppealDate
+    }
+
+    const logs = (theCase.verdictAppealCase?.appealEventLogs ?? [])
+      .filter(
+        (eventLog) =>
+          eventLog.defendantId === defendantId &&
+          eventLog.eventType === AppealEventType.APPEALED &&
+          verdictAppellantSide(eventLog.userRole) === 'DEFENCE',
+      )
+      .sort((a, b) => b.created.getTime() - a.created.getTime())
+
+    return logs[0]?.created
   }
 }

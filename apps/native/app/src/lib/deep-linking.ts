@@ -48,7 +48,12 @@ const routes: Record<
   '/minarsidur/heilsa/bolusetningar': '/health/vaccinations',
   '/minarsidur/heilsa/spurningalistar': '/health/questionnaires',
   '/minarsidur/heilsa/lyf': '/health/medicine',
-  '/minarsidur/heilsa/lyf/lyfjaskirteini': '/health/medicine/prescriptions',
+  // Both resolve to the standalone screen that renders the content, not to a
+  // tab on the medicine hub: the hub's prescriptions tab sits behind
+  // `isPrescriptionsEnabled`, and a `?tab=` that is flagged off silently falls
+  // back to the first tab instead of failing.
+  '/minarsidur/heilsa/lyf/lyfjaskirteini': '/health/medicine/certificates',
+  '/minarsidur/heilsa/lyf/lyfjaavisanir': '/health/medicine/prescriptions',
   '/minarsidur/heilsa/lyf/lyfjasaga/:id': ({ id }) => ({
     pathname: '/health/medicine/prescriptions/history/[id]',
     params: { id: id as string },
@@ -58,6 +63,12 @@ const routes: Record<
     '/health/medicine/delegation/new',
   '/minarsidur/heilsa/lyf/lyfjaumbod/:id': ({ id }) => ({
     pathname: '/health/medicine/delegation/[id]',
+    params: { id: id as string },
+  }),
+  '/minarsidur/heilsa/skilabod': '/health/messages',
+  '/minarsidur/heilsa/skilabod/nytt': '/health/messages/new',
+  '/minarsidur/heilsa/skilabod/:id': ({ id }) => ({
+    pathname: '/health/messages/[id]',
     params: { id: id as string },
   }),
   // Family
@@ -154,6 +165,11 @@ function adjustedAppRoute(dest: Href, source: Href | undefined): Href {
         dest,
         pathname.replace('/inbox/', '/notifications/document/'),
       )
+    }
+    // Open a health message inside the notifications modal so back returns to
+    // the sheet (mirrors the inbox-document rewrite above).
+    if (pathname === '/health/messages/[id]') {
+      return replacePathname(dest, '/notifications/message/[id]')
     }
   }
   return dest

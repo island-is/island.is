@@ -1,4 +1,4 @@
-import { FindOptions, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
@@ -6,20 +6,6 @@ import { InjectModel } from '@nestjs/sequelize'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { PoliceDigitalCaseFile } from '../models/policeDigitalCaseFile.model'
-
-interface FindAllOptions {
-  where?: FindOptions['where']
-  transaction?: Transaction
-  order?: FindOptions['order']
-}
-
-interface CreateOptions {
-  transaction: Transaction
-}
-
-interface DeleteOptions {
-  transaction?: Transaction
-}
 
 @Injectable()
 export class PoliceDigitalCaseFileRepositoryService {
@@ -31,7 +17,7 @@ export class PoliceDigitalCaseFileRepositoryService {
 
   async create(
     data: Partial<PoliceDigitalCaseFile>,
-    options: CreateOptions,
+    options: { transaction: Transaction },
   ): Promise<PoliceDigitalCaseFile> {
     try {
       this.logger.debug('Creating a new police digital case file')
@@ -48,31 +34,49 @@ export class PoliceDigitalCaseFileRepositoryService {
     }
   }
 
-  async findAll(options?: FindAllOptions): Promise<PoliceDigitalCaseFile[]> {
+  async findByCaseId(caseId: string): Promise<PoliceDigitalCaseFile[]> {
     try {
-      this.logger.debug('Finding all police digital case files')
+      this.logger.debug(`Finding police digital case files for case ${caseId}`)
 
-      const findOptions: FindOptions = {}
+      const results = await this.model.findAll({ where: { caseId } })
 
-      if (options?.where) {
-        findOptions.where = options.where
-      }
-
-      if (options?.transaction) {
-        findOptions.transaction = options.transaction
-      }
-
-      if (options?.order) {
-        findOptions.order = options.order
-      }
-
-      const results = await this.model.findAll(findOptions)
-
-      this.logger.debug(`Found ${results.length} police digital case files`)
+      this.logger.debug(
+        `Found ${results.length} police digital case files for case ${caseId}`,
+      )
 
       return results
     } catch (error) {
-      this.logger.error('Error finding police digital case files', { error })
+      this.logger.error('Error finding police digital case files for case', {
+        error,
+      })
+
+      throw error
+    }
+  }
+
+  async findByCaseAndPoliceCaseNumber(
+    caseId: string,
+    policeCaseNumber: string,
+  ): Promise<PoliceDigitalCaseFile[]> {
+    try {
+      this.logger.debug(
+        `Finding police digital case files for case ${caseId} and police case number ${policeCaseNumber}`,
+      )
+
+      const results = await this.model.findAll({
+        where: { caseId, policeCaseNumber },
+      })
+
+      this.logger.debug(
+        `Found ${results.length} police digital case files for case ${caseId} and police case number ${policeCaseNumber}`,
+      )
+
+      return results
+    } catch (error) {
+      this.logger.error(
+        'Error finding police digital case files for police case number',
+        { error },
+      )
 
       throw error
     }
@@ -110,7 +114,7 @@ export class PoliceDigitalCaseFileRepositoryService {
   async delete(
     caseId: string,
     id: string,
-    options?: DeleteOptions,
+    options?: { transaction?: Transaction },
   ): Promise<boolean> {
     try {
       this.logger.debug(
@@ -137,7 +141,7 @@ export class PoliceDigitalCaseFileRepositoryService {
   async deleteAllForPoliceCaseNumber(
     caseId: string,
     policeCaseNumber: string,
-    options?: DeleteOptions,
+    options?: { transaction?: Transaction },
   ): Promise<void> {
     try {
       this.logger.debug(

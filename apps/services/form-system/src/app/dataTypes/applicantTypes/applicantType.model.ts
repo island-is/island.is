@@ -80,8 +80,8 @@ export const ApplicantTypes: ApplicantType[] = [
   {
     id: ApplicantTypesEnum.WARD_OF_LEGAL_GUARDIAN,
     description: {
-      is: 'Umbjóðandi forsjáraðila',
-      en: 'Ward of legal guardian',
+      is: 'Barn forsjáraðila',
+      en: 'Child of legal guardian',
     },
   },
 ]

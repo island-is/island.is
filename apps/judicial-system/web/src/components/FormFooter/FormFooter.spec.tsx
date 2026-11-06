@@ -1,4 +1,4 @@
-import { ComponentProps } from 'react'
+import type { ComponentProps } from 'react'
 import router from 'next/router'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -90,6 +90,21 @@ describe('FormFooter', () => {
 
     await userEvent.click(screen.getByTestId('previousButton'))
 
+    expect(router.push).not.toHaveBeenCalled()
+  })
+
+  it('should let the back button be renamed and handled', async () => {
+    const onPreviousClick = jest.fn()
+
+    renderFooter({
+      previousUrl: '/prev',
+      previousButtonText: 'Hætta við',
+      onPreviousClick,
+    })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Hætta við' }))
+
+    expect(onPreviousClick).toHaveBeenCalled()
     expect(router.push).not.toHaveBeenCalled()
   })
 

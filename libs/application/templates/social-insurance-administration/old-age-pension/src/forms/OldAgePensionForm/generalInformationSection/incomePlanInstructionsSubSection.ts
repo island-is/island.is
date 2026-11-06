@@ -4,9 +4,11 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { shouldShowIncomePlan } from '../../../utils/conditionUtils'
 
 export const incomePlanInstructionsSubSection = buildSubSection({
   id: 'incomePlanInstructionsSubSection',
+  condition: (answers) => shouldShowIncomePlan(answers),
   title:
     socialInsuranceAdministrationMessage.incomePlan
       .incomePlanInstructionsSubSectionTitle,

@@ -34,7 +34,6 @@ export const FilterDrawerAriakit = ({
     defaultOpen: !!initialVisibility,
     animated: true,
   })
-  const open = store.getState().open
   // Only the “grabber” area listens for swipe-down to close.
   const handlers = useSwipeable({
     onSwipedDown: () => store.setOpen(false),
@@ -49,8 +48,6 @@ export const FilterDrawerAriakit = ({
       render={(props) =>
         React.cloneElement(disclosure, {
           ...props,
-          'aria-haspopup': 'dialog',
-          'aria-expanded': open,
           onClick: (e: React.MouseEvent) => {
             disclosure.props?.onClick?.(e)
             props.onClick?.(e)

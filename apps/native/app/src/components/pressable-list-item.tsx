@@ -70,13 +70,30 @@ export const PressableListItem = memo(
     ])
 
     const onPressIcon = useCallback(() => {
+      // Re-tapping the icon of the only selected item exits select mode, so the
+      // user doesn't have to reach for the top-right Cancel button.
+      if (isSelected && selectedItems.length === 1) {
+        setSelectedItems([])
+        setSelectedState(false)
+        return
+      }
       setSelectedState(true)
       toggleSelectItem()
-    }, [toggleSelectItem, setSelectedState])
+    }, [
+      isSelected,
+      selectedItems.length,
+      toggleSelectItem,
+      setSelectedItems,
+      setSelectedState,
+    ])
 
     return (
       <PressableHighlight
-        highlightColor={theme.shade.shade100}
+        style={
+          !item.opened && {
+            backgroundColor: theme.tokens.background.brandMinimal,
+          }
+        }
         onPress={onPress}
         testID={`${testIDs.INBOX_ITEM}_${item.id}`}
       >
@@ -87,6 +104,7 @@ export const PressableListItem = memo(
             item.publicationDate ? new Date(item.publicationDate) : undefined
           }
           unread={!item.opened}
+          unreadBackground={false}
           urgent={!!item.isUrgent}
           replyable={!!item.replyable}
           starred={!!item.bookmarked}

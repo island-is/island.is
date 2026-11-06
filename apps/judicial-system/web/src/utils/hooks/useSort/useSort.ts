@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 
-import { compareLocaleIS } from '../../sortHelper'
+import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 type SortDirection = 'ascending' | 'descending'
 

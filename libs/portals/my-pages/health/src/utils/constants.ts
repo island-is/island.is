@@ -28,6 +28,12 @@ export const DATE_FORMAT_SHORT = 'd.M.yyyy'
 
 export const ATC_URL_BASE = 'https://www.serlyfjaskra.is/atc?category='
 
-export const DEFAULT_APPOINTMENTS_STATUS = [
+// Everything but CANCELLED. Both tabs use it, the date alone decides which
+// one an appointment lands in, so today's stay under upcoming whatever their
+// status
+export const VISIBLE_APPOINTMENTS_STATUS = [
   HealthDirectorateAppointmentStatus.BOOKED,
+  HealthDirectorateAppointmentStatus.ARRIVED,
+  HealthDirectorateAppointmentStatus.CHECKED_IN,
+  HealthDirectorateAppointmentStatus.FULFILLED,
 ]

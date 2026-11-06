@@ -1,6 +1,5 @@
 import { Sequelize } from 'sequelize-typescript'
 
-import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -12,12 +11,17 @@ import {
 } from '@island.is/judicial-system/auth'
 
 import { CaseService } from '../../case'
-import { IndictmentCount, Offense } from '../../repository'
+import {
+  IndictmentCountRepositoryService,
+  OffenseRepositoryService,
+} from '../../repository'
 import { IndictmentCountController } from '../indictmentCount.controller'
 import { IndictmentCountService } from '../indictmentCount.service'
 
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../case/case.service')
+jest.mock('../../repository/services/indictmentCountRepository.service')
+jest.mock('../../repository/services/offenseRepository.service')
 
 export const createTestingIndictmentCountModule = async () => {
   const indictmentCountModule = await Test.createTestingModule({
@@ -35,37 +39,21 @@ export const createTestingIndictmentCountModule = async () => {
         },
       },
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
-      {
-        provide: getModelToken(IndictmentCount),
-        useValue: {
-          findOne: jest.fn(),
-          findAll: jest.fn(),
-          create: jest.fn(),
-          update: jest.fn(),
-          destroy: jest.fn(),
-          findByPk: jest.fn(),
-          max: jest.fn(),
-        },
-      },
-      {
-        provide: getModelToken(Offense),
-        useValue: {
-          create: jest.fn(),
-          update: jest.fn(),
-          destroy: jest.fn(),
-        },
-      },
+      IndictmentCountRepositoryService,
+      OffenseRepositoryService,
       IndictmentCountService,
     ],
   }).compile()
 
-  const indictmentCountModel = await indictmentCountModule.resolve<
-    typeof IndictmentCount
-  >(getModelToken(IndictmentCount))
+  const indictmentCountRepositoryService =
+    indictmentCountModule.get<IndictmentCountRepositoryService>(
+      IndictmentCountRepositoryService,
+    )
 
-  const offenseModel = await indictmentCountModule.resolve<typeof Offense>(
-    getModelToken(Offense),
-  )
+  const offenseRepositoryService =
+    indictmentCountModule.get<OffenseRepositoryService>(
+      OffenseRepositoryService,
+    )
 
   const sequelize = indictmentCountModule.get<Sequelize>(Sequelize)
 
@@ -81,8 +69,8 @@ export const createTestingIndictmentCountModule = async () => {
 
   return {
     sequelize,
-    offenseModel,
-    indictmentCountModel,
+    indictmentCountRepositoryService,
+    offenseRepositoryService,
     indictmentCountService,
     indictmentCountController,
   }

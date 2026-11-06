@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'nest-feature-flags',
   preset: './jest.preset.js',

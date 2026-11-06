@@ -35,6 +35,7 @@ import { DeprecatedCreateCaseDto } from './dto/deprecatedCreateCase.dto'
 import { UpdatePoliceDocumentDeliveryDto } from './dto/policeDocument.dto'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { Case } from './models/case.model'
+import { CasePoliceStateResponse } from './models/casePoliceState.response'
 import { Groups } from './models/componentDefinitions/groups.model'
 import { PoliceDocumentDelivery } from './models/policeDocumentDelivery.response'
 import { SubpoenaResponse } from './models/subpoena.response'
@@ -63,6 +64,15 @@ export class AppService {
       AuditedAction.CREATE_CASE,
       this.createCase(caseToCreate),
       (theCase) => theCase.id,
+    )
+  }
+
+  async getCasePoliceState(caseId: string): Promise<CasePoliceStateResponse> {
+    return this.auditTrailService.audit(
+      'xrd-api',
+      AuditedAction.GET_CASE_POLICE_STATE,
+      this.fetchCasePoliceState(caseId),
+      caseId,
     )
   }
 
@@ -142,6 +152,44 @@ export class AppService {
           message: 'Failed to create a new case',
         })
       })
+  }
+
+  private async fetchCasePoliceState(
+    caseId: string,
+  ): Promise<CasePoliceStateResponse> {
+    try {
+      const res = await fetch(
+        `${this.config.backend.url}/api/internal/case/${caseId}/state`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.backend.accessToken}`,
+          },
+        },
+      )
+
+      const response = await res.json()
+
+      if (res.ok) {
+        return response as CasePoliceStateResponse
+      }
+
+      if (res.status < 500) {
+        throw new BadRequestException(response?.detail ?? response?.message)
+      }
+
+      throw response
+    } catch (reason) {
+      if (reason instanceof BadRequestException) {
+        throw reason
+      }
+
+      throw new BadGatewayException({
+        ...reason,
+        message: `Failed to get case police state for case ${caseId}`,
+      })
+    }
   }
 
   async updateSubpoena(

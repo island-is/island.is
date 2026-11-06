@@ -1,7 +1,5 @@
 import { CustomField } from '../app/modules/services/models/zendeskCustomField.dto'
 
-export type Instance = keyof typeof fieldMappings
-
 const fieldMappings = {
   haskoliislands: {
     name: 51015877611291,
@@ -44,6 +42,25 @@ const fieldMappings = {
     subject: 123,
   },
 } as const
+
+export type Instance = keyof typeof fieldMappings
+
+export const SUPPORTED_ZENDESK_INSTANCES = Object.freeze(
+  Object.keys(fieldMappings) as Instance[],
+)
+
+export const normalizeZendeskInstance = (
+  zendeskInstance?: string | null,
+): Instance | undefined => {
+  const trimmedZendeskInstance = zendeskInstance?.trim()
+
+  return trimmedZendeskInstance &&
+    (SUPPORTED_ZENDESK_INSTANCES as readonly string[]).includes(
+      trimmedZendeskInstance,
+    )
+    ? (trimmedZendeskInstance as Instance)
+    : undefined
+}
 
 type Input = {
   name?: string | null

@@ -2,6 +2,9 @@ import FinancialStatementIndividualElectionTemplate from './lib/financial-statem
 import { FSIUSERTYPE } from './types/types'
 
 export const getDataProviders = () => import('./dataProviders')
+
+export * from './lib/messages'
+
 export { FSIUSERTYPE }
 
 export default FinancialStatementIndividualElectionTemplate

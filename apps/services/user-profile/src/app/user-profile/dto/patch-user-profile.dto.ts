@@ -59,4 +59,9 @@ export class PatchUserProfileDto {
   @IsOptional()
   @IsBoolean()
   smsNotifications?: boolean
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  onlyActionablePriorityNotifications?: boolean
 }

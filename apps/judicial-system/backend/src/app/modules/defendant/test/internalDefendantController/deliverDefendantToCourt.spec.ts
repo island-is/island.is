@@ -25,18 +25,18 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
   const deliverDefendantToCourtDto = { user }
   const defendantId = uuid()
   const defendantNationalId = '1234567890'
+  const defenderEmail = uuid()
   const defendant = {
     id: defendantId,
     nationalId: defendantNationalId,
+    defenderEmail,
   } as Defendant
   const caseId = uuid()
   const courtId = uuid()
-  const defenderEmail = uuid()
   const theCase = {
     id: caseId,
     courtId,
     courtCaseNumber: uuid(),
-    defenderEmail,
   } as Case
 
   let mockQueuedMessages: Message[]
@@ -44,10 +44,13 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { queuedMessages, courtService, internalDefendantController } =
-      await createTestingDefendantModule()
+    const {
+      queuedMessagesAfterCommit,
+      courtService,
+      internalDefendantController,
+    } = await createTestingDefendantModule()
 
-    mockQueuedMessages = queuedMessages
+    mockQueuedMessages = queuedMessagesAfterCommit
     mockCourtService = courtService
     const mockUpdateCaseWithDefendant =
       mockCourtService.updateCaseWithDefendant as jest.Mock

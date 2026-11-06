@@ -36,7 +36,7 @@ module.exports = {
       throw err
     }
 
-    transaction.commit()
+    await transaction.commit()
   },
 
   down: async () => {

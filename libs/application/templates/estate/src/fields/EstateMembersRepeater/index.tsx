@@ -162,7 +162,6 @@ export const EstateMembersRepeater: FC<
     if (!hasMultipleSpouses) {
       clearErrors(multipleSpousesValidation)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     fields,
     hasMinorWithoutValidAdvocate,

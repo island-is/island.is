@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common'
 
 import { InternalCaseService } from '../internalCase.service'
+import { traceCaseLoad } from './traceCaseLoad'
 
 @Injectable()
 export class IndictmentCaseExistsForDefendantGuard implements CanActivate {
@@ -26,11 +27,16 @@ export class IndictmentCaseExistsForDefendantGuard implements CanActivate {
       throw new BadRequestException('Missing defendant national id')
     }
 
-    request.case =
-      await this.internalCaseService.findByIdAndDefendantNationalId(
-        caseId,
-        defendantNationalId,
-      )
+    request.case = await traceCaseLoad(
+      IndictmentCaseExistsForDefendantGuard.name,
+      'defendantIndictment',
+      request,
+      () =>
+        this.internalCaseService.findByIdAndDefendantNationalId(
+          caseId,
+          defendantNationalId,
+        ),
+    )
 
     return true
   }

@@ -51,8 +51,9 @@ describe('LimitedAccessCaseController - Get by id', () => {
     mockCaseRepositoryService = caseRepositoryService
     const mockUpdate = mockCaseRepositoryService.update as jest.Mock
     mockUpdate.mockResolvedValue(updatedCase)
-    const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-    mockFindOne.mockResolvedValue(updatedCase)
+    const mockFindLimitedAccessById =
+      mockCaseRepositoryService.findLimitedAccessById as jest.Mock
+    mockFindLimitedAccessById.mockResolvedValue(updatedCase)
 
     givenWhenThen = async (
       caseId: string,
@@ -95,7 +96,11 @@ describe('LimitedAccessCaseController - Get by id', () => {
 
   describe('case exists and has not been opened by defender before', () => {
     const theCase = { id: caseId } as Case
-    const user = { ...defaultUser, role: UserRole.DEFENDER } as User
+    const user = {
+      ...defaultUser,
+      role: UserRole.DEFENDER,
+      nationalId: '1234567890',
+    } as User
     let then: Then
 
     beforeEach(async () => {

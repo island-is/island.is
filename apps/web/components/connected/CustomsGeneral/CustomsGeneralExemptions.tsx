@@ -5,8 +5,10 @@ import { useQuery } from '@apollo/client'
 import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { GET_CUSTOMS_GENERAL_EXEMPTIONS } from '@island.is/web/screens/queries/CustomsGeneral'
+import { formatDate } from '@island.is/web/utils/formatDate'
 
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
+import { formatValidityDate } from './customsGeneralUtils'
 import { m } from './translation.strings'
 import { useDetailViewBack } from './useDetailViewBack'
 import * as styles from './CustomsGeneralExemptions.css'
@@ -19,17 +21,6 @@ interface ExemptionItem {
   validFrom: string
   validTo: string
   system: string
-}
-
-const formatIsoDate = (iso?: string | null, fallback?: string): string => {
-  if (!iso) return fallback ?? ''
-  const d = new Date(iso)
-  if (isNaN(d.getTime()) || d.getFullYear() > 9000) return fallback ?? ''
-  return new Intl.DateTimeFormat('is-IS', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  }).format(d)
 }
 
 const LABEL_WIDTH = 160
@@ -50,23 +41,14 @@ const ExemptionDetailView = ({
   const { formatMessage } = useIntl()
   const { activeLocale } = useI18n()
 
-  const queryDate = new Intl.DateTimeFormat('is-IS', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  }).format(date)
+  const queryDate = formatDate(date, activeLocale, 'dd.MM.yyyy') ?? ''
 
   const indefinite = formatMessage(m.exemptionIndefinite)
-  const validFrom = formatIsoDate(item.validFrom, indefinite)
-  const validTo = formatIsoDate(item.validTo, indefinite)
-  const transportDirection =
-    system === 'I'
-      ? activeLocale === 'is'
-        ? 'Innflutningur'
-        : 'Import'
-      : activeLocale === 'is'
-      ? 'Útflutningur'
-      : 'Export'
+  const validFrom = formatValidityDate(item.validFrom, indefinite, activeLocale)
+  const validTo = formatValidityDate(item.validTo, indefinite, activeLocale)
+  const transportDirection = formatMessage(
+    system === 'I' ? m.systemImport : m.systemExport,
+  )
 
   const descriptionParagraphs = item.description
     ? item.description.split(/\n\n+/).filter(Boolean)

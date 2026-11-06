@@ -1,11 +1,11 @@
-import { IntlShape } from 'react-intl'
+import type { IntlShape } from 'react-intl'
 
-import { Substance, SubstanceMap } from '@island.is/judicial-system/types'
-import {
+import type { Substance, SubstanceMap } from '@island.is/judicial-system/types'
+import type {
   Gender,
-  IndictmentCountOffense,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './getIncidentDescriptionReason.strings'
 
@@ -54,14 +54,10 @@ export const getIncidentDescriptionReason = (
             strings.incidentDescriptionDrivingWithoutEverHavingLicenceAutofill
           break
         case IndictmentCountOffense.DRUNK_DRIVING:
-          acc += formatMessage(strings.incidentDescriptionDrunkDrivingAutofill)
+          acc += strings.incidentDescriptionDrunkDrivingAutofill
           break
         case IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING:
-          acc += `${
-            strings.incidentDescriptionDrugsDrivingPrefixAutofill[gender]
-          } ${formatMessage(
-            strings.incidentDescriptionIllegalDrugsDrivingAutofill,
-          )}`
+          acc += `${strings.incidentDescriptionDrugsDrivingPrefixAutofill[gender]} ${strings.incidentDescriptionIllegalDrugsDrivingAutofill}`
           break
         case IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING:
           acc +=
@@ -70,9 +66,7 @@ export const getIncidentDescriptionReason = (
             )
               ? ''
               : `${strings.incidentDescriptionDrugsDrivingPrefixAutofill[gender]} `) +
-            formatMessage(
-              strings.incidentDescriptionPrescriptionDrugsDrivingAutofill,
-            )
+            strings.incidentDescriptionPrescriptionDrugsDrivingAutofill
           break
       }
       return acc
@@ -83,17 +77,21 @@ export const getIncidentDescriptionReason = (
     .flatMap(({ substances }) => Object.entries(substances as SubstanceMap))
   reason += substances.reduce((acc, substance, index) => {
     if (index === 0) {
-      acc += ` (${formatMessage(
-        strings.incidentDescriptionSubstancesPrefixAutofill,
-      )} `
+      acc += ` (${strings.incidentDescriptionSubstancesPrefixAutofill} `
     } else if (index === substances.length - 1) {
       acc += ' og '
     } else {
       acc += ', '
     }
-    acc += formatMessage(strings[substance[0] as Substance], {
-      amount: substance[1],
-    })
+    acc += formatMessage(
+      {
+        id: strings[substance[0] as Substance],
+        defaultMessage: strings[substance[0] as Substance],
+      },
+      {
+        amount: substance[1],
+      },
+    )
     if (index === substances.length - 1) {
       acc += ')'
     }

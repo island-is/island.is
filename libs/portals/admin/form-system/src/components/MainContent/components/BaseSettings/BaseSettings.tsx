@@ -4,12 +4,11 @@ import {
   Box,
   Checkbox,
   GridColumn as Column,
-  DatePicker,
   Input,
   GridRow as Row,
   Stack,
 } from '@island.is/island-ui/core'
-import { useContext, useRef, useState } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ControlContext } from '../../../../context/ControlContext'
 import { convertToSlug } from '../../../../lib/utils/convertToSlug'
@@ -26,8 +25,6 @@ export const BaseSettings = () => {
   const { form, isReadOnly } = control
   const { formatMessage } = useIntl()
   const [errorMsg, setErrorMsg] = useState('')
-  const skipInvalidationDateCloseUpdate = useRef(false)
-  const tomorrowDate = new Date(new Date().setDate(new Date().getDate() + 1))
 
   return (
     <Stack space={2}>
@@ -206,68 +203,6 @@ export const BaseSettings = () => {
               // Restore cursor after React reconciles the value
               requestAnimationFrame(() => {
                 input.setSelectionRange(cursor - removed, cursor - removed)
-              })
-            }}
-          />
-        </Column>
-      </Row>
-      <Box marginTop={5} />
-      <Row>
-        <Column span="6/10">
-          <DatePicker
-            label={formatMessage(m.deadline)}
-            placeholderText={formatMessage(m.chooseDate)}
-            backgroundColor="blue"
-            disabled={isReadOnly}
-            isClearable={true}
-            showTimeInput={true}
-            locale="is"
-            handleClear={() => {
-              const updatedForm = { ...form, invalidationDate: null }
-              skipInvalidationDateCloseUpdate.current = true
-              controlDispatch({
-                type: 'CHANGE_INVALIDATION_DATE',
-                payload: { value: null },
-              })
-              formUpdate(updatedForm)
-            }}
-            minDate={tomorrowDate}
-            selected={
-              form.invalidationDate ? new Date(form.invalidationDate) : null
-            }
-            handleChange={(e) => {
-              const updatedForm = { ...form, invalidationDate: e }
-              skipInvalidationDateCloseUpdate.current = true
-              controlDispatch({
-                type: 'CHANGE_INVALIDATION_DATE',
-                payload: { value: e },
-              })
-              formUpdate(updatedForm)
-            }}
-            handleCloseCalendar={() => {
-              if (skipInvalidationDateCloseUpdate.current) {
-                skipInvalidationDateCloseUpdate.current = false
-                return
-              }
-              formUpdate()
-            }}
-          />
-        </Column>
-      </Row>
-      <Box marginTop={1} />
-      <Row>
-        <Column>
-          <Checkbox
-            label="Loka fyrir aðgengi að umsóknarforminu"
-            disabled={isReadOnly}
-            checked={form.isInaccessible ?? false}
-            onChange={(e) => {
-              controlDispatch({
-                type: 'CHANGE_IS_INACCESSIBLE',
-                payload: {
-                  value: e.target.checked,
-                  update: formUpdate,
-                },
               })
             }}
           />

@@ -1,5 +1,4 @@
 export { BoostChatPanel } from './BoostChatPanel'
 export { LiveChatIncChatPanel } from './LiveChatIncChatPanel'
-export { WatsonChatPanel } from './WatsonChatPanel'
 export { ZendeskChatPanel } from './ZendeskChatPanel/ZendeskChatPanel'
 export * from './types'

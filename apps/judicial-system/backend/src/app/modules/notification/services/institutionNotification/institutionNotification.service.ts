@@ -5,9 +5,7 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
-import { IntlService } from '@island.is/cms-translations'
 import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
@@ -20,10 +18,11 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { InstitutionNotificationType } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../../../factories'
+import { formatIcuMessage } from '../../../../messages'
 import { InternalCaseService } from '../../../case'
 import { CourtService } from '../../../court'
 import { EventService } from '../../../event'
-import { Notification, type User } from '../../../repository'
+import { NotificationRepositoryService, type User } from '../../../repository'
 import { UserService } from '../../../user'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
@@ -33,12 +32,10 @@ import { strings } from './institutionNotification.strings'
 @Injectable()
 export class InstitutionNotificationService extends BaseNotificationService {
   constructor(
-    @InjectModel(Notification)
-    notificationModel: typeof Notification,
+    notificationRepositoryService: NotificationRepositoryService,
     @Inject(notificationModuleConfig.KEY)
     config: ConfigType<typeof notificationModuleConfig>,
     @Inject(LOGGER_PROVIDER) logger: Logger,
-    intlService: IntlService,
     emailService: EmailService,
     eventService: EventService,
     courtService: CourtService,
@@ -46,9 +43,8 @@ export class InstitutionNotificationService extends BaseNotificationService {
     private readonly userService: UserService,
   ) {
     super(
-      notificationModel,
+      notificationRepositoryService,
       emailService,
-      intlService,
       courtService,
       config,
       eventService,
@@ -76,13 +72,11 @@ export class InstitutionNotificationService extends BaseNotificationService {
       return
     }
 
-    await this.refreshFormatMessage()
-
-    const subject = this.formatMessage(strings.waitingForConfirmation.subject)
-    const body = this.formatMessage(strings.waitingForConfirmation.body, {
+    const subject = strings.waitingForConfirmation.subject
+    const body = formatIcuMessage(strings.waitingForConfirmation.body, {
       count,
     })
-    const tail = this.formatMessage(strings.tail, {
+    const tail = formatIcuMessage(strings.tail, {
       linkStart: `<a href="${this.config.clientUrl}">`,
       linkEnd: '</a>',
     })
@@ -102,8 +96,6 @@ export class InstitutionNotificationService extends BaseNotificationService {
   private async sendPublicProsecutorVerdictAppealDeadlineReminderNotification(
     prosecutorsOfficeId: string,
   ) {
-    await this.refreshFormatMessage()
-
     const users = await this.userService.getProsecutorUsers(prosecutorsOfficeId)
     const targetDate = addDays(nowFactory(), 7)
 

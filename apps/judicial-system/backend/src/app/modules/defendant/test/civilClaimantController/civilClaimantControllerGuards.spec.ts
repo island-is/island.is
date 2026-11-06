@@ -2,7 +2,11 @@ import { JwtAuthUserGuard, RolesGuard } from '@island.is/judicial-system/auth'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
 import { verifyGuards } from '../../../../test'
-import { CaseExistsGuard, CaseTypeGuard, CaseWriteGuard } from '../../../case'
+import {
+  CaseExistsForUpdateGuard,
+  CaseTypeGuard,
+  CaseWriteGuard,
+} from '../../../case'
 import { CivilClaimantController } from '../../civilClaimant.controller'
 
 describe('CivilClaimantController - Top-level guards', () => {
@@ -12,7 +16,7 @@ describe('CivilClaimantController - Top-level guards', () => {
     [
       JwtAuthUserGuard,
       RolesGuard,
-      CaseExistsGuard,
+      CaseExistsForUpdateGuard,
       CaseTypeGuard,
       CaseWriteGuard,
     ],

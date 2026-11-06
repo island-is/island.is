@@ -66,5 +66,6 @@ export interface ButtonProps {
   value?: string
   as?: As
   role?: AriaRole
+  'aria-label'?: NativeButtonProps['aria-label']
   truncate?: boolean
 }

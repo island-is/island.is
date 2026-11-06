@@ -9,13 +9,16 @@ import {
   BadGatewayException,
   forwardRef,
   HttpException,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
+  PayloadTooLargeException,
   ServiceUnavailableException,
 } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectConnection } from '@nestjs/sequelize'
 
+import { EmailService } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
@@ -24,6 +27,7 @@ import {
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
 
+import { normalizePersonAddress } from '@island.is/judicial-system/formatters'
 import {
   CaseState,
   CaseType,
@@ -50,6 +54,7 @@ import {
   DateLog,
   Defendant,
   IndictmentSubtype,
+  IndictmentSubtypeRepositoryService,
 } from '../repository'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
@@ -59,6 +64,7 @@ import { PoliceDefendant } from './models/policeDefendant.model'
 import { PoliceSystemDigitalCaseFile } from './models/PoliceSystemDigitalCaseFile.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { policeModuleConfig } from './police.config'
+import { isFileTooLargeForPolice } from './police.helpers'
 
 export enum PoliceDocumentType {
   RVKR = 'RVKR', // Krafa í R-málum
@@ -66,13 +72,15 @@ export enum PoliceDocumentType {
   RVUR = 'RVUR', // Úrskurður í R-málum
   RVVI = 'RVVI', // Vistunarseðill í R-málum
   RVUL = 'RVUL', // Úrskurður Landsréttar í R- og S-málum
-  RVDO = 'RVDO', // Dómur og úrskurður í S-málum
+  RVDO = 'RVDO', // Dómur í S-málum
+  RVSUR = 'RVSUR', // Úrskurður í S-málum
   RVAS = 'RVAS', // Ákæra í S-málum
   RVMG = 'RVMG', // Málsgögn/gagnapakki í S-málum - þetta er svolítil ruslakista
   RVMV = 'RVMV', // Viðbótargögn verjanda í S-málum
   RVVS = 'RVVS', // Viðbótargögn sækjandan í S-málum
   RVFK = 'RVFK', // Fyrirkall í S-málum
-  RVBD = 'BRTNG_RVBD', // Birtingarvottorð dóms í S-málum
+  RVBD = 'RVBD', // Birtingarvottorð fyrirkalls í S-málum
+  BRTNG_RVBD = 'BRTNG_RVBD', // Birtingarvottorð dóms í S-málum
 }
 
 export interface PoliceDocument {
@@ -266,8 +274,8 @@ export class PoliceService {
 
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
-    @InjectModel(IndictmentSubtype)
-    private readonly indictmentSubtypeModel: typeof IndictmentSubtype,
+    @Inject(forwardRef(() => IndictmentSubtypeRepositoryService))
+    private readonly indictmentSubtypeRepositoryService: IndictmentSubtypeRepositoryService,
     @Inject(policeModuleConfig.KEY)
     private readonly config: ConfigType<typeof policeModuleConfig>,
     @Inject(forwardRef(() => EventService))
@@ -280,6 +288,8 @@ export class PoliceService {
     private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(forwardRef(() => IndictmentCountService))
     private readonly indictmentCountService: IndictmentCountService,
+    @Inject(EmailService)
+    private readonly emailService: EmailService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     this.xRoadPath = createXRoadAPIPath(
@@ -341,11 +351,14 @@ export class PoliceService {
     info: { [key: string]: string | boolean | Date | undefined },
     reason: unknown,
   ): void {
+    const errorSummary = (
+      reason instanceof Error ? reason.message : String(reason)
+    ).slice(0, 2000)
+
     this.logger.error(logMessage, {
       ...info,
       error: reason instanceof Error ? reason : undefined,
-      errorSummary:
-        reason instanceof Error ? undefined : String(reason).slice(0, 2000),
+      errorSummary,
     })
   }
 
@@ -362,6 +375,71 @@ export class PoliceService {
       info,
       this.reasonToError(reason),
     )
+  }
+
+  // The police system rejects files that exceed its size limit and no amount of
+  // retrying will change that, so the prosecutor is asked to upload the file by hand.
+  // Returns true only when the email was sent - callers treat 413 as terminal only then.
+  private async notifyProsecutorOfFileTooLarge(
+    caseId: string,
+  ): Promise<boolean> {
+    let theCase: Case | null = null
+
+    try {
+      theCase = await this.caseRepositoryService.findByIdWithProsecutor(caseId)
+    } catch (reason) {
+      this.logger.error(
+        `Failed to look up case ${caseId} when notifying that a file was too large for the police system`,
+        { reason },
+      )
+    }
+
+    const prosecutorEmail = theCase?.prosecutor?.email
+
+    if (!prosecutorEmail) {
+      this.logger.error(
+        `No prosecutor email is available for case ${caseId}, so it cannot be notified that a file was too large for the police system`,
+      )
+
+      return false
+    }
+
+    // Index 0 is the main police case number (first registered / locked in the UI).
+    const policeCaseNumber = theCase?.policeCaseNumbers?.[0] ?? ''
+    const subject = `Ekki tókst að hlaða upp skjali í LÖKE í máli ${policeCaseNumber}`
+    const body =
+      'Ekki tókst að hlaða upp skjali í LÖKE vegna stærðartakmarkana. Vinsamlegast hlaðið skjali upp handvirkt í LÖKE.'
+
+    try {
+      await this.emailService.sendEmail({
+        from: {
+          name: this.config.fromName,
+          address: this.config.fromEmail,
+        },
+        replyTo: {
+          name: this.config.replyToName,
+          address: this.config.replyToEmail,
+        },
+        to: [
+          {
+            name: theCase?.prosecutor?.name ?? '',
+            address: prosecutorEmail,
+          },
+        ],
+        subject,
+        text: body,
+        html: body,
+      })
+
+      return true
+    } catch (reason) {
+      this.logger.error(
+        `Failed to notify that a file was too large for the police system for case ${caseId}`,
+        { reason },
+      )
+
+      return false
+    }
   }
 
   private async throttleUploadPoliceCaseFile(
@@ -495,6 +573,10 @@ export class PoliceService {
     caseId: string,
     user: User,
     source: string,
+    caseNumbers?: {
+      courtCaseNumber?: string | null
+      policeCaseNumbers?: string[]
+    },
   ) {
     const startTime = nowFactory()
     const url = `${this.xRoadPath}/V4/GetRVRafraengogn/${caseId}`
@@ -504,17 +586,6 @@ export class PoliceService {
 
       if (!res.ok) {
         const detail = await res.text()
-        this.logger.error(
-          `Police digital case files request returned error for case ${caseId}`,
-          {
-            caseId,
-            source,
-            status: res.status,
-            detail: detail.slice(0, 2000),
-          },
-        )
-        // The police system does not provide a structured error response.
-        // When a police case does not exist, a stack trace is often returned.
         throw new NotFoundException({
           message: `Police digital case files for case ${caseId} do not exist`,
           detail,
@@ -526,6 +597,22 @@ export class PoliceService {
 
       return this.digitalCaseFilesStructure.parse(response)
     } catch (reason) {
+      this.logPoliceFailureAndNotify(
+        'Failed to get police digital case files',
+        `Failed to get police digital case files for case ${caseId}`,
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          courtCaseNumber: caseNumbers?.courtCaseNumber ?? '',
+          policeCaseNumbers: caseNumbers?.policeCaseNumbers?.join(', ') ?? '',
+          startTime,
+          endTime: nowFactory(),
+          source,
+        },
+        reason,
+      )
+
       if (reason instanceof NotFoundException) {
         throw reason
       }
@@ -537,20 +624,6 @@ export class PoliceService {
           detail: reason.message,
         })
       }
-
-      this.logPoliceFailureAndNotify(
-        'Failed to get police digital case files',
-        `Failed to get police digital case files for case ${caseId}`,
-        {
-          caseId,
-          actor: user.name,
-          institution: user.institution?.name,
-          startTime,
-          endTime: nowFactory(),
-          source,
-        },
-        reason,
-      )
 
       throw new BadGatewayException({
         ...(reason instanceof Error ? reason : {}),
@@ -567,6 +640,10 @@ export class PoliceService {
     policeDigitalFileId: string,
     user: User,
     source: string,
+    caseNumbers?: {
+      courtCaseNumber?: string | null
+      policeCaseNumbers?: string[]
+    },
   ): Promise<string> {
     const startTime = nowFactory()
     const query = new URLSearchParams({
@@ -610,14 +687,36 @@ export class PoliceService {
         detail: reason,
       })
     } catch (reason) {
-      if (reason instanceof NotFoundException) {
-        throw reason
-      }
-
-      if (
+      const is425 =
         reason instanceof HttpException &&
         reason.getStatus() === httpStatusTooEarly
-      ) {
+
+      this.logPoliceFailureAndNotify(
+        'Failed to get token URL for digital case file',
+        is425
+          ? `Police digital case file ${policeDigitalFileId} is not published yet`
+          : `Failed to get token URL for digital case file ${policeDigitalFileId}`,
+        {
+          rvgCaseId,
+          rafraennGagnId: policeDigitalFileId,
+          actor: user.name,
+          institution: user.institution?.name,
+          courtCaseNumber: caseNumbers?.courtCaseNumber ?? '',
+          policeCaseNumbers: caseNumbers?.policeCaseNumbers?.join(', ') ?? '',
+          startTime,
+          endTime: nowFactory(),
+          source,
+          ...(is425
+            ? {
+                status: String(httpStatusTooEarly),
+                errorType: 'PoliceDigitalFileNotPublished',
+              }
+            : {}),
+        },
+        reason,
+      )
+
+      if (reason instanceof NotFoundException || is425) {
         throw reason
       }
 
@@ -628,21 +727,6 @@ export class PoliceService {
           detail: reason.message,
         })
       }
-
-      this.logPoliceFailureAndNotify(
-        'Failed to get token URL for digital case file',
-        `Failed to get token URL for digital case file ${policeDigitalFileId}`,
-        {
-          rvgCaseId,
-          rafraennGagnId: policeDigitalFileId,
-          actor: user.name,
-          institution: user.institution?.name,
-          startTime,
-          endTime: nowFactory(),
-          source,
-        },
-        reason,
-      )
 
       throw new BadGatewayException({
         ...reason,
@@ -684,11 +768,16 @@ export class PoliceService {
   async getAllPoliceSystemDigitalCaseFiles(
     caseId: string,
     user: User,
+    caseNumbers?: {
+      courtCaseNumber?: string | null
+      policeCaseNumbers?: string[]
+    },
   ): Promise<PoliceSystemDigitalCaseFile[]> {
     const caseFiles = await this.getDigitalCaseFiles(
       caseId,
       user,
       'getAllPoliceSystemDigitalCaseFiles',
+      caseNumbers,
     )
 
     const files: PoliceSystemDigitalCaseFile[] = []
@@ -740,7 +829,7 @@ export class PoliceService {
         nationalId: defendant.accusedNationalId,
         name: defendant.accusedName ?? undefined,
         gender: defendant.accusedGender ?? undefined,
-        address: defendant.accusedAddress ?? undefined,
+        address: normalizePersonAddress(defendant.accusedAddress ?? undefined),
         dateOfBirth: defendant.accusedDOB ?? undefined,
         citizenship: defendant.citizenship ?? undefined,
       }))
@@ -799,7 +888,10 @@ export class PoliceService {
       this.getRVMalseiningarResponseSchema.parse(responseJson)
     const caseUnits = await Promise.all(
       parsedCaseUnits.map(async (unit) => {
-        const subtype = await this.getSubtypeByArticle(unit.artalNrGreinLidur)
+        const subtype = await this.getSubtypeByArticle(
+          unit.artalNrGreinLidur,
+          unit.nanar,
+        )
         const key = Object.keys(IndictmentCaseSubtypes).find(
           (k) =>
             IndictmentCaseSubtypes[k as keyof typeof IndictmentCaseSubtypes] ===
@@ -1185,6 +1277,7 @@ export class PoliceService {
     validToDate: Date,
     caseConclusion: string,
     courtDocuments: PoliceDocument[],
+    caseIdForNotification = caseId,
   ): Promise<boolean> {
     const usesLegacyPoliceCaseUpdate = Boolean(defendantNationalId)
     const url = usesLegacyPoliceCaseUpdate
@@ -1202,7 +1295,20 @@ export class PoliceService {
       courtVerdict: caseState,
       expiringDate: validToDate?.toISOString(),
       courtVerdictString: caseConclusion,
-      courtDocuments,
+      courtDocuments: courtDocuments.map(({ type, courtDocument }) => ({
+        type,
+        courtDocument,
+      })),
+    }
+
+    const failureInfo = {
+      caseId,
+      actor: user.name,
+      institution: user.institution?.name,
+      caseType: String(caseType),
+      caseState: String(caseState),
+      policeCaseNumber,
+      courtCaseNumber,
     }
 
     return this.fetchPoliceCaseApi(url, {
@@ -1221,9 +1327,35 @@ export class PoliceService {
           return true
         }
 
-        const response = await res.text()
+        const responseBody = await res.text()
+        const message =
+          responseBody.trim() !== ''
+            ? responseBody
+            : `Police case update failed with empty response body (HTTP ${res.status})`
 
-        throw response
+        if (
+          res.status === HttpStatus.PAYLOAD_TOO_LARGE &&
+          courtDocuments.length > 0
+        ) {
+          // Size limits are expected; email the prosecutor instead of Slack.
+          // Only terminal (no retry) when the prosecutor was actually notified.
+          const notified = await this.notifyProsecutorOfFileTooLarge(
+            caseIdForNotification,
+          )
+
+          if (notified) {
+            throw new PayloadTooLargeException(message)
+          }
+        }
+
+        this.logPoliceFailureAndNotify(
+          'Failed to update police case',
+          `Failed to update police case ${caseId}`,
+          { ...failureInfo, statusCode: String(res.status) },
+          new Error(message),
+        )
+
+        return false
       })
       .catch((reason) => {
         if (reason instanceof ServiceUnavailableException) {
@@ -1232,18 +1364,16 @@ export class PoliceService {
           return true
         }
 
+        // Propagate so callers can complete the delivery without retrying
+        // (only thrown after a successful prosecutor notification).
+        if (isFileTooLargeForPolice(reason)) {
+          throw reason
+        }
+
         this.logPoliceFailureAndNotify(
           'Failed to update police case',
           `Failed to update police case ${caseId}`,
-          {
-            caseId,
-            actor: user.name,
-            institution: user.institution?.name,
-            caseType: String(caseType),
-            caseState: String(caseState),
-            policeCaseNumber,
-            courtCaseNumber,
-          },
+          failureInfo,
           reason,
         )
 
@@ -1301,8 +1431,24 @@ export class PoliceService {
         return { externalPoliceDocumentId: policeResponse.id }
       }
 
-      throw await res.text()
+      const responseBody = await res.text()
+
+      if (res.status === HttpStatus.PAYLOAD_TOO_LARGE) {
+        // Only terminal (no retry) when the prosecutor was actually notified.
+        const notified = await this.notifyProsecutorOfFileTooLarge(caseId)
+
+        if (notified) {
+          throw new PayloadTooLargeException(responseBody)
+        }
+      }
+
+      throw responseBody
     } catch (error) {
+      // Prosecutor emailed; callers complete delivery without retry.
+      if (isFileTooLargeForPolice(error)) {
+        throw error
+      }
+
       // Winston only - VerdictService.deliverVerdictToNationalCommissionersOffice
       // posts the Slack error for a failed delivery, so notifying here too would
       // double-post.
@@ -1469,8 +1615,24 @@ export class PoliceService {
         return { policeSubpoenaId: subpoenaResponse.id }
       }
 
-      throw await res.text()
+      const responseBody = await res.text()
+
+      if (res.status === HttpStatus.PAYLOAD_TOO_LARGE) {
+        // Only terminal (no retry) when the prosecutor was actually notified.
+        const notified = await this.notifyProsecutorOfFileTooLarge(theCase.id)
+
+        if (notified) {
+          throw new PayloadTooLargeException(responseBody)
+        }
+      }
+
+      throw responseBody
     } catch (error) {
+      // Prosecutor emailed; callers complete delivery without retry.
+      if (isFileTooLargeForPolice(error)) {
+        throw error
+      }
+
       // Winston only - SubpoenaService.deliverSubpoenaToNationalCommissionersOffice
       // posts the Slack error for a failed delivery, so notifying here too would
       // double-post.
@@ -1532,9 +1694,11 @@ export class PoliceService {
 
   getSubtypeByArticle(
     article?: string | null,
+    details?: string | null,
   ): Promise<IndictmentSubtype | null> {
-    return this.indictmentSubtypeModel.findOne({
-      where: { article },
-    })
+    return this.indictmentSubtypeRepositoryService.findByArticle(
+      article,
+      details,
+    )
   }
 }

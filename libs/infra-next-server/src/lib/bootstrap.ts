@@ -29,7 +29,10 @@ type BootstrapOptions = {
   port?: number
 
   /**
-   * Proxy configuration. Ignored in production (according to NODE_ENV).
+   * Proxy configuration. Only applied in development (according to NODE_ENV),
+   * or when ENABLE_LOCAL_PROXY=true - which lets a production build running on
+   * localhost forward /api to the local api server the way the ingress does in
+   * deployed environments.
    */
   proxyConfig?: { [context: string]: any }
 
@@ -87,7 +90,12 @@ export const bootstrap = async (options: BootstrapOptions) => {
 
   const expressApp = createExpressApp()
 
-  await setupProxy(expressApp, options.proxyConfig, dev)
+  // A production build on localhost has no ingress in front of it to route
+  // /api to the api server, so allow opting the proxy back on (used when
+  // running e2e tests against a production build). Deployed environments
+  // never set this.
+  const enableProxy = dev || process.env.ENABLE_LOCAL_PROXY === 'true'
+  await setupProxy(expressApp, options.proxyConfig, enableProxy)
 
   const nextConfig = await getNextConfig(options.appDir, dev)
   const nextApp = next(nextConfig)

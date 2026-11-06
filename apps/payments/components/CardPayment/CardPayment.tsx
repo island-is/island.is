@@ -1,14 +1,15 @@
 import { useFormContext, Controller } from 'react-hook-form'
-import { format, InputMask } from '@react-input/mask'
+import { InputMask } from '@react-input/mask'
 
 import { Box, Input, Text, Divider } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { card, cardValidationError } from '../../messages'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { validateCardCVC, validateCardExpiry } from './CardPayment.utils'
 
 const APPLE_PAY_BUTTON_ID = 'apple-pay-button'
+const GOOGLE_PAY_BUTTON_ID = 'google-pay-button'
 
 interface CardPaymentInput {
   cardholderName: string
@@ -18,13 +19,6 @@ interface CardPaymentInput {
 }
 
 const MASK_REPLACEMENT = { _: /\d/ }
-
-// The form stores unmasked digits; the inputs display the masked value.
-const toMaskedValue = (value: string | undefined, mask: string) =>
-  format((value ?? '').replace(/\D/g, ''), {
-    mask,
-    replacement: MASK_REPLACEMENT,
-  })
 
 const CARD_MASK_BY_TYPE = {
   default: '____ ____ ____ ____',
@@ -41,13 +35,18 @@ const getCardType = (cardNumber: string) => {
 export const CardPayment = ({
   supportsApplePay,
   initiateApplePay,
+  supportsGooglePay,
+  createGooglePayButton,
 }: {
   supportsApplePay: boolean
   initiateApplePay: () => void
+  supportsGooglePay: boolean
+  createGooglePayButton: () => HTMLElement | null
 }) => {
   const { control, formState } = useFormContext<CardPaymentInput>()
   const { formatMessage } = useLocale()
   const [cardMask, setCardMask] = useState(CARD_MASK_BY_TYPE['default'])
+  const googlePayButtonRef = useRef<HTMLDivElement>(null)
 
   // add event listener to apple pay button if available
   useEffect(() => {
@@ -64,6 +63,19 @@ export const CardPayment = ({
     }
   }, [supportsApplePay, initiateApplePay])
 
+  // google pay renders its own button into the container
+  useEffect(() => {
+    const container = googlePayButtonRef.current
+    const googlePayButton = supportsGooglePay ? createGooglePayButton() : null
+    if (container && googlePayButton) {
+      container.replaceChildren(googlePayButton)
+
+      return () => {
+        container.replaceChildren()
+      }
+    }
+  }, [supportsGooglePay, createGooglePayButton])
+
   const handleCardChange = (cardNumber: string) => {
     const cardType = getCardType(cardNumber)
 
@@ -72,16 +84,21 @@ export const CardPayment = ({
 
   return (
     <Box display="flex" flexDirection="column" rowGap={[2]}>
-      {supportsApplePay && (
+      {(supportsApplePay || supportsGooglePay) && (
         <>
-          <Box display="flex" flexDirection="row" flexGrow={1}>
-            <apple-pay-button
-              id={APPLE_PAY_BUTTON_ID}
-              buttonstyle="black"
-              type="plain"
-              locale="is-IS" // apple does not support is-IS so this defaults to en-US
-            ></apple-pay-button>
-          </Box>
+          {supportsApplePay && (
+            <Box display="flex" flexDirection="row" flexGrow={1}>
+              <apple-pay-button
+                id={APPLE_PAY_BUTTON_ID}
+                buttonstyle="black"
+                type="plain"
+                locale="is-IS" // apple does not support is-IS so this defaults to en-US
+              ></apple-pay-button>
+            </Box>
+          )}
+          {supportsGooglePay && (
+            <div id={GOOGLE_PAY_BUTTON_ID} ref={googlePayButtonRef} />
+          )}
           <Box display="flex" alignItems="center" wrap="nowrap" columnGap={2}>
             <Box flexGrow={1}>
               <Divider />
@@ -124,7 +141,10 @@ export const CardPayment = ({
           rules={{
             required: formatMessage(cardValidationError.cardNumber),
             validate: (value) => {
-              if (value.length < 15) {
+              if (!/^[\d ]+$/.test(value)) {
+                return formatMessage(cardValidationError.invalidCardNumber)
+              }
+              if (value.replace(/ /g, '').length < 15) {
                 return formatMessage(cardValidationError.cardNumberTooShort)
               }
               return true
@@ -136,11 +156,9 @@ export const CardPayment = ({
               replacement={MASK_REPLACEMENT}
               component={Input}
               {...field}
-              value={toMaskedValue(field.value, cardMask)}
               onChange={(e) => {
-                const cardNumber = e.target.value.replace(/\s/g, '')
-                handleCardChange(cardNumber)
-                field.onChange(cardNumber)
+                handleCardChange(e.target.value.replace(/\D/g, ''))
+                field.onChange(e.target.value)
               }}
               backgroundColor="blue"
               label={formatMessage(card.cardNumber)}
@@ -170,10 +188,6 @@ export const CardPayment = ({
                   replacement={MASK_REPLACEMENT}
                   component={Input}
                   {...field}
-                  value={toMaskedValue(field.value, '__/__')}
-                  onChange={(e) =>
-                    field.onChange(e.target.value.replace(/\s/g, ''))
-                  }
                   backgroundColor="blue"
                   label={formatMessage(card.cardExpiry)}
                   placeholder={formatMessage(card.cardExpiryPlaceholder)}
@@ -197,7 +211,6 @@ export const CardPayment = ({
                   replacement={MASK_REPLACEMENT}
                   component={Input}
                   {...field}
-                  value={toMaskedValue(field.value, '___')}
                   backgroundColor="blue"
                   label={formatMessage(card.cardCVC)}
                   placeholder={formatMessage(card.cardCVCPlaceholder)}

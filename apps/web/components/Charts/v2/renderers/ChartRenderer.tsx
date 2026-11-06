@@ -1,4 +1,5 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useWindowSize } from 'react-use'
 import { ResponsiveContainer } from 'recharts'
 
 import {
@@ -8,6 +9,7 @@ import {
   SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { Chart as IChart } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 
@@ -130,6 +132,11 @@ export const Chart = ({ slice }: ChartProps) => {
   const BaseChartComponent = useGetChartBaseComponent(slice)
   const chartUsesGrid = chartType !== ChartType.pie
   const [expanded, setExpanded] = useState(slice.startExpanded)
+  const { width } = useWindowSize()
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    setIsMobile(width < theme.breakpoints.md)
+  }, [width])
   const cartesianGridComponents = useMemo(
     () =>
       getCartesianGridComponents({
@@ -221,6 +228,7 @@ export const Chart = ({ slice }: ChartProps) => {
                 componentsWithAddedProps,
                 data,
                 customStyleConfig,
+                isMobile,
               })}
               {renderTooltip({
                 slice,
@@ -236,6 +244,7 @@ export const Chart = ({ slice }: ChartProps) => {
                 data,
                 activeLocale,
                 customStyleConfig,
+                isMobile,
               })}
             </BaseChartComponent>
           </ResponsiveContainer>

@@ -10,4 +10,7 @@ export class OrganizationZendeskInstanceInput {
 
   @Field(() => String, { nullable: true })
   organizationId?: string
+
+  @Field(() => String, { nullable: true })
+  formId?: string
 }

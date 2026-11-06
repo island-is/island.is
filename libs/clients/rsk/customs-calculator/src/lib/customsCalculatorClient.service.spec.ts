@@ -1,4 +1,7 @@
-import { postReiknivelUtreikningur } from '../../gen/fetch'
+import {
+  getReiknivelVoruflokkar,
+  postReiknivelUtreikningur,
+} from '../../gen/fetch'
 import {
   CustomsCalculatorClientService,
   parseRskAmount,
@@ -10,6 +13,7 @@ jest.mock('../../gen/fetch', () => ({
   postReiknivelUtreikningur: jest.fn(),
 }))
 
+const getProductCategories = getReiknivelVoruflokkar as jest.Mock
 const postCalculation = postReiknivelUtreikningur as jest.Mock
 
 const logger = {
@@ -215,5 +219,49 @@ describe('CustomsCalculatorClientService.calculate', () => {
     // Empty string is skipped; "0" is a real (zero) charge that is kept.
     expect(result.charges.map((c) => c.code)).toEqual(['B'])
     expect(result.charges[0].amount).toBe(0)
+  })
+})
+
+describe('CustomsCalculatorClientService.getProductCategories', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  const category = (overrides: Record<string, unknown> = {}) => ({
+    Yfirflokkur: 'Tölvur',
+    Voruflokkur: 'Leikjatölvur',
+    Tollnumer: '95045000',
+    Lysing: 'Leikjatölvur',
+    ...overrides,
+  })
+
+  it('maps Lykilord to trimmed, non-empty keywords', async () => {
+    getProductCategories.mockResolvedValue({
+      data: {
+        Response: {
+          Voruflokkar: [
+            category({ Lykilord: [' PS ', 'Playstation', '', '  '] }),
+          ],
+        },
+      },
+    })
+
+    const [result] = await buildService().getProductCategories()
+
+    expect(result.keywords).toEqual(['PS', 'Playstation'])
+  })
+
+  it('returns no keywords when Lykilord is missing or null', async () => {
+    getProductCategories.mockResolvedValue({
+      data: {
+        Response: {
+          Voruflokkar: [category(), category({ Lykilord: null })],
+        },
+      },
+    })
+
+    const result = await buildService().getProductCategories()
+
+    expect(result.map((c) => c.keywords)).toEqual([[], []])
   })
 })

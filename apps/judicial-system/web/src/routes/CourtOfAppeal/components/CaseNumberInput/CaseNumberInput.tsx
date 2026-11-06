@@ -1,4 +1,5 @@
-import { FC, useContext, useState } from 'react'
+import type { FC } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Input } from '@island.is/island-ui/core'
@@ -24,11 +25,17 @@ const CaseNumberInput: FC = () => {
   return (
     <Input
       name="appealCaseNumber"
-      label={formatMessage(strings.caseNumberLabel)}
+      label={strings.caseNumberLabel}
       value={targetAppealCase?.appealCaseNumber ?? ''}
-      placeholder={formatMessage(strings.caseNumberPlaceholder, {
-        year: new Date().getFullYear(),
-      })}
+      placeholder={formatMessage(
+        {
+          id: strings.caseNumberPlaceholder,
+          defaultMessage: strings.caseNumberPlaceholder,
+        },
+        {
+          year: new Date().getFullYear(),
+        },
+      )}
       errorMessage={appealCaseNumberErrorMessage}
       onChange={(event) => {
         const value = replaceTabs(event.target.value)

@@ -15,8 +15,10 @@ import {
   exemptionSectionOverviewAttachments,
   householdMembersOverviewItems,
   householdMembersOverviewAttachments,
+  householdMembersOverviewTitle,
   mainFormAccessAgreementOverviewItems,
   mainFormAccessAgreementOverviewAttachments,
+  mainFormAccessAgreementOverviewTitle,
   incomeSectionOverviewItems,
   incomeNoTaxReturnOverviewItems,
   assetsDeclarationOverviewItems,
@@ -62,14 +64,14 @@ export const overviewSection = buildSection({
         }),
         buildOverviewField({
           id: 'householdMembersOverview',
-          title: m.draftMessages.householdMembersSection.title,
+          title: householdMembersOverviewTitle,
           backId: 'householdMembersMultiField',
           items: householdMembersOverviewItems,
           attachments: householdMembersOverviewAttachments,
         }),
         buildOverviewField({
           id: 'mainFormAccessAgreementOverview',
-          title: m.draftMessages.accessAgreementSection.title,
+          title: mainFormAccessAgreementOverviewTitle,
           backId: 'accessAgreementMultiField',
           condition: (answers, externalData) => {
             if (!getValueViaPath<string>(answers, 'rentalAgreement.answer')) {
@@ -78,17 +80,11 @@ export const overviewSection = buildSection({
             if (!hasNonCustodyMinorsInHousehold(answers, externalData)) {
               return false
             }
-            const items = mainFormAccessAgreementOverviewItems(
-              answers,
-              externalData,
+            return (
+              mainFormAccessAgreementOverviewAttachments(answers, externalData)
+                .length > 0
             )
-            const attachments = mainFormAccessAgreementOverviewAttachments(
-              answers,
-              externalData,
-            )
-            return items.length > 0 || attachments.length > 0
           },
-          items: mainFormAccessAgreementOverviewItems,
           attachments: mainFormAccessAgreementOverviewAttachments,
         }),
         buildOverviewField({

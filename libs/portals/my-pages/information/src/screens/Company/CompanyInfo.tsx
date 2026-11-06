@@ -2,7 +2,7 @@ import format from 'date-fns/format'
 import React from 'react'
 import { defineMessage } from 'react-intl'
 
-import { Divider, Stack } from '@island.is/island-ui/core'
+import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   FootNote,
@@ -47,13 +47,19 @@ const CompanyInfo = () => {
       : ''
 
   const vatDisplay = companyInfo?.vat.filter(
-    (item) => item.dateOfDeregistration === null,
+    (item) => !item.dateOfDeregistration,
   )
-  const vatClassification =
-    vatDisplay?.[0]?.classification?.[0]?.number &&
-    vatDisplay?.[0]?.classification?.[0]?.name
-      ? `${vatDisplay?.[0]?.classification?.[0]?.number} ${vatDisplay?.[0]?.classification?.[0]?.name}`
-      : ''
+
+  // A company can be registered for several ISAT activities (one main number
+  // and any number of secondary ones), so every classification on the active
+  // VAT registrations is listed, not just the first one.
+  const vatClassifications = (vatDisplay ?? [])
+    .flatMap((item) => item.classification ?? [])
+    .filter((item) => item.number && item.name)
+    .filter(
+      (item, index, all) =>
+        all.findIndex((other) => other.number === item.number) === index,
+    )
 
   const emptyData = data?.companyRegistryCompany === null
 
@@ -132,7 +138,19 @@ const CompanyInfo = () => {
           <Divider />
           <UserInfoLine
             label={formatMessage(mCompany.industryClass)}
-            content={vatClassification}
+            content={
+              vatClassifications.length ? (
+                <Box>
+                  {vatClassifications.map((item) => (
+                    <Text key={item.number} variant="default">
+                      {`${item.number} ${item.name}`}
+                    </Text>
+                  ))}
+                </Box>
+              ) : (
+                ''
+              )
+            }
             loading={loading}
           />
           <Divider />

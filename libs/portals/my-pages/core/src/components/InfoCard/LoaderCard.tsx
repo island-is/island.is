@@ -14,7 +14,7 @@ export const LoaderCard: React.FC = () => {
         border="standard"
         borderColor="blue200"
         borderRadius="large"
-        padding={3}
+        padding={[2, 2, 3]}
         height="full"
         overflow="hidden"
       >

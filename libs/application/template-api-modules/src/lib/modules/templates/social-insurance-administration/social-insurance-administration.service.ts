@@ -8,8 +8,10 @@ import {
 import { getApplicationAnswers as getHSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import {
   errorMessages as marpErrorMessages,
+  getApplicationAnswers as getMARPApplicationAnswers,
   getApplicationExternalData as getMARPApplicationExternalData,
   getIncompleteAnswerSections,
+  MedicalAndRehabilitationPaymentsApplicationType,
 } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 import {
   ApplicationType,
@@ -18,10 +20,15 @@ import {
   isEarlyRetirement,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import { getApplicationAnswers as getPSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
-import { Application, ApplicationTypes } from '@island.is/application/types'
+import {
+  Application,
+  ApplicationTypes,
+  PerformActionResult,
+} from '@island.is/application/types'
 import {
   DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
+  SocialInsuranceAdministrationGeneralApplicationService,
   type TrWebContractsExternalDigitalIcelandDocumentsDigitalIcelandDocument as Attachment,
   type ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
   type ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
@@ -39,6 +46,7 @@ import { ConfigType } from '@nestjs/config'
 import * as kennitala from 'kennitala'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
+import { ApplicationApiAction } from '../../template-api.service'
 import { sharedModuleConfig } from '../../shared'
 import {
   getOAPApplicationType,
@@ -51,7 +59,10 @@ import {
   transformApplicationToOldAgePensionDTO,
   transformApplicationToPensionSupplementDTO,
 } from './social-insurance-administration-utils'
-import { ApplicationTypeEnum } from '@island.is/clients/social-insurance-administration'
+import {
+  ApplicationTypeEnum,
+  withApplicationGuidContext,
+} from '@island.is/clients/social-insurance-administration'
 import {
   IndividualDto,
   NationalRegistryV3ApplicationsClientService,
@@ -64,6 +75,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private siaClientService: SocialInsuranceAdministrationClientService,
+    private siaGeneralApplicationService: SocialInsuranceAdministrationGeneralApplicationService,
     private siaOldAgePensionServiceV2: SocialInsuranceAdministrationOldAgePensionService,
     private siaMedicalRehabServiceV2: SocialInsuranceAdministrationMedicalAndRehabilitationService,
     @Inject(sharedModuleConfig.KEY)
@@ -72,6 +84,32 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     private readonly nationalRegistryV3ApplicationsApi: NationalRegistryV3ApplicationsClientService,
   ) {
     super('SocialInsuranceAdministration')
+  }
+
+  /**
+   * SÍ wants the island.is application id on every request made for the
+   * medical and rehabilitation payments application, so run its actions in a
+   * context that the SÍ client reads the id from.
+   */
+  override async performAction(
+    action: ApplicationApiAction,
+    handleError: (
+      action: ApplicationApiAction,
+      error: Error,
+    ) => TemplateApiError,
+  ): Promise<PerformActionResult> {
+    const { application } = action.props
+
+    if (
+      application?.typeId ===
+      ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS
+    ) {
+      return withApplicationGuidContext(application.id, () =>
+        super.performAction(action, handleError),
+      )
+    }
+
+    return super.performAction(action, handleError)
   }
 
   private async initAttachments(
@@ -440,11 +478,12 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       const householdSupplementDTO =
         transformApplicationToHouseholdSupplementDTO(application, attachments)
 
-      const response = await this.siaClientService.sendApplication(
-        auth,
-        householdSupplementDTO,
-        application.typeId.toLowerCase(),
-      )
+      const response =
+        await this.siaGeneralApplicationService.sendApplicationV2(
+          auth,
+          householdSupplementDTO,
+          application.typeId.toLowerCase(),
+        )
 
       return response
     }
@@ -471,11 +510,12 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       const additionalSupportForTheElderlyDTO =
         transformApplicationToAdditionalSupportForTheElderlyDTO(application)
 
-      const response = await this.siaClientService.sendApplication(
-        auth,
-        additionalSupportForTheElderlyDTO,
-        application.typeId.toLowerCase(),
-      )
+      const response =
+        await this.siaGeneralApplicationService.sendApplicationV2(
+          auth,
+          additionalSupportForTheElderlyDTO,
+          application.typeId.toLowerCase(),
+        )
       return response
     }
 
@@ -537,8 +577,12 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         )
       }
 
-      const marpDTO =
-        transformApplicationToMedicalAndRehabilitationPaymentsDTO(application)
+      const attachments = await this.getMARPAttachments(application)
+
+      const marpDTO = transformApplicationToMedicalAndRehabilitationPaymentsDTO(
+        application,
+        attachments,
+      )
 
       const response =
         await this.siaMedicalRehabServiceV2.sendMedicalAndRehabilitationPaymentsApplication(
@@ -561,6 +605,30 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
       return response
     }
+  }
+
+  private async getMARPAttachments(
+    application: Application,
+  ): Promise<Attachment[]> {
+    const { isStudying, studyDocuments } = getMARPApplicationAnswers(
+      application.answers,
+    )
+
+    if (isStudying !== YES || studyDocuments.length === 0) {
+      return []
+    }
+
+    const attachments: Attachment[] = []
+
+    for (const document of studyDocuments) {
+      attachments.push({
+        name: document.name,
+        type: DocumentTypeEnum.MARP_SCHOOL_CONFIRMATION,
+        file: await this.getPdf(`${application.id}/${document.key}`),
+      })
+    }
+
+    return attachments
   }
 
   async sendDocuments({ application, auth }: TemplateApiModuleActionProps) {
@@ -717,18 +785,26 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     application,
     auth,
   }: TemplateApiModuleActionProps) {
-    const { marpApplicationType, isEligible } = getMARPApplicationExternalData(
-      application.externalData,
-    )
+    const { marpApplicationType, isEligible, hasActiveExemption } =
+      getMARPApplicationExternalData(application.externalData)
 
     if (!isEligible?.isEligible) {
       return null
     }
 
-    return await this.siaClientService.getEducationLevels(
-      auth,
-      marpApplicationType || '',
-    )
+    // Exemption cases (ísl. jaðartilvik) have no application type from TR, so
+    // fall back to the first sickness payment type to get the education levels
+    const applicationType = marpApplicationType
+      ? marpApplicationType
+      : hasActiveExemption
+      ? MedicalAndRehabilitationPaymentsApplicationType.SG1
+      : undefined
+
+    if (!applicationType) {
+      return null
+    }
+
+    return await this.siaClientService.getEducationLevels(auth, applicationType)
   }
 
   async getEducationLevelsWithEnum({
@@ -785,9 +861,41 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       return null
     }
 
-    return await this.siaClientService.getMedicalAndRehabilitationApplicationType(
-      auth,
+    try {
+      return await this.siaClientService.getMedicalAndRehabilitationApplicationType(
+        auth,
+      )
+    } catch (error) {
+      // TR fails with a 500 for applicants without a base certificate, which
+      // includes exemption cases. Treat it as "no type" so the exemption check
+      // can decide whether the applicant may continue.
+      if (
+        error?.status === 500 &&
+        error?.body?.detail === 'No document associated with client'
+      ) {
+        return null
+      }
+
+      throw error
+    }
+  }
+
+  // Exemption cases (ísl. jaðartilvik) skip the medical certificate and
+  // rehabilitation/confirmation sections. Only applicants TR returned no
+  // application type for are checked.
+  async getMedicalAndRehabilitationExemption({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const { marpApplicationType, isEligible } = getMARPApplicationExternalData(
+      application.externalData,
     )
+
+    if (!isEligible?.isEligible || marpApplicationType) {
+      return null
+    }
+
+    return await this.siaClientService.getExemption(auth)
   }
 
   async getEmploymentStatusesWithLocale({

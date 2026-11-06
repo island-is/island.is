@@ -1,9 +1,7 @@
 import { render, screen } from '@testing-library/react'
 
-import {
-  Case,
-  CaseType,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import Decision from './Decision'
 
@@ -11,7 +9,7 @@ describe('Decision', () => {
   test('groups the decision radios in a named fieldset', () => {
     render(
       <Decision
-        workingCase={{ type: CaseType.CUSTODY } as Case}
+        workingCase={{ type: CaseType.CUSTODY } as WorkingCase}
         acceptedLabelText="Samþykkja"
         rejectedLabelText="Hafna"
         partiallyAcceptedLabelText="Samþykkja að hluta"

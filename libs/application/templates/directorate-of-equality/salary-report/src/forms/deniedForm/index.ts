@@ -10,6 +10,7 @@ export const deniedForm = buildForm({
   mode: FormModes.REJECTED,
   children: [
     buildFormConclusionSection({
+      multiFieldTitle: messages.rejected.formTitle,
       sectionTitle: messages.rejected.sectionTitle,
       tabTitle: messages.rejected.sectionTitle,
       alertTitle: messages.rejected.title,

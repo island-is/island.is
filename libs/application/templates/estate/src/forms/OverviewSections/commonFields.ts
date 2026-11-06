@@ -12,7 +12,7 @@ import { deceasedInfoFields } from '../Sections/deceasedInfoFields'
 import { applicantOverviewFields } from './applicantInfo'
 import { registrantOverviewFields } from './registrant'
 import { format as formatNationalId } from 'kennitala'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { formatPhoneNumber } from '@island.is/shared/utils'
 import { JA, NEI, YES } from '../../lib/constants'
 import format from 'date-fns/format'
 

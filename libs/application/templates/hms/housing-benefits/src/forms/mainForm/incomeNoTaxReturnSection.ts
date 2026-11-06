@@ -5,6 +5,7 @@ import {
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
 import { isTaxReturnNotFiled } from '../../utils/utils'
+import { MAX_TEXT_LENGTH } from '../../utils/constants'
 
 export const incomeNoTaxReturnSection = buildSection({
   id: 'incomeNoTaxReturnSection',
@@ -25,6 +26,7 @@ export const incomeNoTaxReturnSection = buildSection({
           variant: 'textarea',
           rows: 6,
           required: true,
+          maxLength: MAX_TEXT_LENGTH,
           marginBottom: 4,
         }),
       ],

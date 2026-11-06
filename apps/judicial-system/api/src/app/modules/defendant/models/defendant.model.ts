@@ -7,6 +7,7 @@ import {
   Gender,
   IndictmentCaseReviewDecision,
   PunishmentType,
+  RequestSharedWithDefender,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
 
@@ -21,6 +22,9 @@ registerEnumType(SubpoenaType, { name: 'SubpoenaType' })
 registerEnumType(PunishmentType, { name: 'PunishmentType' })
 registerEnumType(IndictmentCaseReviewDecision, {
   name: 'IndictmentCaseReviewDecision',
+})
+registerEnumType(RequestSharedWithDefender, {
+  name: 'RequestSharedWithDefender',
 })
 
 @ObjectType()
@@ -76,6 +80,9 @@ export class Defendant {
   @Field(() => String, { nullable: true })
   readonly defenderPhoneNumber?: string
 
+  @Field(() => RequestSharedWithDefender, { nullable: true })
+  readonly requestSharedWithDefender?: RequestSharedWithDefender
+
   @Field(() => DefendantPlea, { nullable: true })
   readonly defendantPlea?: DefendantPlea
 
@@ -114,6 +121,27 @@ export class Defendant {
   @Field(() => Boolean, { nullable: true })
   readonly caseFilesSharedWithDefender?: boolean
 
+  // The defender who appealed the verdict, when the public prosecution office
+  // registered the appeal on their letter. Information only; no access follows
+  // until the court of appeals confirms them.
+  @Field(() => String, { nullable: true })
+  readonly appealDefenderName?: string
+
+  @Field(() => String, { nullable: true })
+  readonly appealDefenderNationalId?: string
+
+  @Field(() => String, { nullable: true })
+  readonly appealDefenderEmail?: string
+
+  @Field(() => String, { nullable: true })
+  readonly appealDefenderPhoneNumber?: string
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isAppealDefenderConfirmed?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isAppealDefenderWaived?: boolean
+
   @Field(() => Boolean, { nullable: true })
   readonly isSentToPrisonAdmin?: boolean
 
@@ -143,6 +171,12 @@ export class Defendant {
 
   @Field(() => Boolean, { nullable: true })
   readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isClosedWithoutEnforcement?: boolean
+
+  @Field(() => String, { nullable: true })
+  readonly closedWithoutEnforcementDate?: string
 
   @Field(() => IndictmentCancelledOrDismissedState, { nullable: true })
   readonly indictmentCancelledOrDismissedState?: IndictmentCancelledOrDismissedState

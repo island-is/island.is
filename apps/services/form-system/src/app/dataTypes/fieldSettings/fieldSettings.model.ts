@@ -1,9 +1,14 @@
-import { ListTypesEnum, AssetTypes } from '@island.is/form-system/enums'
+import {
+  ListTypesEnum,
+  AssetTypes,
+  FamilyTypes,
+} from '@island.is/form-system/enums'
 import { ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
   IsBoolean,
   IsDateString,
+  IsInt,
   IsNumber,
   IsOptional,
   IsString,
@@ -39,13 +44,23 @@ export class FieldSettings {
 
   @IsOptional()
   @IsDateString()
-  @ApiPropertyOptional({ type: Date })
-  minDate?: string
+  @ApiPropertyOptional({ type: Date, nullable: true })
+  minDate?: string | null
 
   @IsOptional()
   @IsDateString()
-  @ApiPropertyOptional({ type: Date })
-  maxDate?: string
+  @ApiPropertyOptional({ type: Date, nullable: true })
+  maxDate?: string | null
+
+  @IsOptional()
+  @IsInt()
+  @ApiPropertyOptional({ type: Number })
+  minDateDaysFromToday?: number
+
+  @IsOptional()
+  @IsInt()
+  @ApiPropertyOptional({ type: Number })
+  maxDateDaysFromToday?: number
 
   @IsOptional()
   @IsNumber()
@@ -139,9 +154,19 @@ export class FieldSettings {
   assetType?: string
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ enum: FamilyTypes })
+  familyType?: string
+
+  @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   hasDescription?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  isAddressRequired?: boolean
 
   @IsOptional()
   @IsBoolean()
@@ -157,6 +182,11 @@ export class FieldSettings {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   fetchEmailFromMyPages?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  fetchBankAccountFromMyPages?: boolean
 
   @IsOptional()
   @IsString()

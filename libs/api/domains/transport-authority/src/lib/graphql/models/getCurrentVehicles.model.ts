@@ -41,9 +41,6 @@ export class BasicVehicleInformation {
 
 @ObjectType()
 export class VehicleOwnerchangeChecksByPermno {
-  @Field(() => Boolean, { nullable: true })
-  isDebtLess?: boolean
-
   @Field(() => [VehicleValidationErrorMessage], { nullable: true })
   validationErrorMessages?: VehicleValidationErrorMessage[] | null
 
@@ -53,9 +50,6 @@ export class VehicleOwnerchangeChecksByPermno {
 
 @ObjectType()
 export class VehicleOperatorChangeChecksByPermno {
-  @Field(() => Boolean, { nullable: true })
-  isDebtLess?: boolean
-
   @Field(() => [VehicleValidationErrorMessage], { nullable: true })
   validationErrorMessages?: VehicleValidationErrorMessage[] | null
 

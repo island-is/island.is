@@ -35,6 +35,7 @@ export const ValueFragment = gql`
     phoneNumber
     bankAccount
     time
+    maritalStatus
     registrationNumber
     model
     color {
@@ -43,6 +44,7 @@ export const ValueFragment = gql`
     }
     s3Key
     isLoggedInUser
+    paymentCode
   }
 `
 

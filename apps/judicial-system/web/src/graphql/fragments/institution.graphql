@@ -1,0 +1,5 @@
+fragment InstitutionFields on Institution {
+  id
+  name
+  type
+}

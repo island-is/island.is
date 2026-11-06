@@ -1,4 +1,5 @@
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { SHARED_NAMESPACE } from '../../lib/messages'
 import {
   ActionCard,
   ActionCardLoader,
@@ -6,9 +7,9 @@ import {
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
 import { sharedMessages } from '../../lib/messages/shared'
-import { unemploymentBenefitsMessages as um } from '../../lib/messages/'
 import { AlertMessage, Stack } from '@island.is/island-ui/core'
 import {
+  ActivationAllowancePaths,
   SocialInsuranceMaintenancePaths,
   UnemploymentBenefitsPaths,
 } from '../../lib/paths'
@@ -21,18 +22,26 @@ const getStatusTag = (
   statusName?: string | null,
   status?: VmstApplicationStatus | null,
 ) => ({
-  label: statusName || '',
+  label: statusName?.replace('(VS)', '').trim() || '',
   variant: resolveStatusTagVariant(status),
 })
 
 const SocialBenefitsOverview = () => {
+  useNamespaces(SHARED_NAMESPACE)
   const { formatMessage } = useLocale()
   const { value: vmstEnabled, loading: vmstFlagLoading } = useFeatureFlag(
     Features.isServicePortalUnemploymentBenefitsPageEnabled,
     false,
   )
+  const {
+    value: activationAllowanceEnabled,
+    loading: activationAllowanceFlagLoading,
+  } = useFeatureFlag(
+    Features.isServicePortalActivationAllowancePageEnabled,
+    false,
+  )
   const { data, loading, error } = useGetApplicationsOverviewQuery({
-    skip: !vmstEnabled,
+    skip: !vmstEnabled && !activationAllowanceEnabled,
   })
   const overview = data?.vmstApplicationsOverview
 
@@ -42,7 +51,9 @@ const SocialBenefitsOverview = () => {
       intro={formatMessage(sharedMessages.overviewIntro)}
     >
       <Stack space={3}>
-        {(loading || vmstFlagLoading) && <ActionCardLoader repeat={1} />}
+        {(loading || vmstFlagLoading || activationAllowanceFlagLoading) && (
+          <ActionCardLoader repeat={1} />
+        )}
         {!loading && !!error && (
           <AlertMessage
             type="error"
@@ -54,7 +65,7 @@ const SocialBenefitsOverview = () => {
           !error &&
           overview?.unemploymentApplication?.isVisible && (
             <ActionCard
-              heading={formatMessage(um.unemploymentBenefits)}
+              heading={formatMessage(coreMessages.unemploymentBenefits)}
               text={formatMessage(
                 sharedMessages.unemploymentBenefitsCardDescription,
               )}
@@ -68,6 +79,28 @@ const SocialBenefitsOverview = () => {
               tag={getStatusTag(
                 overview.unemploymentApplication.statusName,
                 overview.unemploymentApplication.status,
+              )}
+            />
+          )}
+        {activationAllowanceEnabled &&
+          !loading &&
+          !error &&
+          overview?.activationGrant?.isVisible && (
+            <ActionCard
+              heading={formatMessage(coreMessages.activationAllowance)}
+              text={formatMessage(
+                sharedMessages.activationGrantCardDescription,
+              )}
+              cta={{
+                label: formatMessage(sharedMessages.overviewCtaLabel),
+                variant: 'text',
+                icon: 'arrowForward',
+                url: ActivationAllowancePaths.Status,
+              }}
+              image={{ type: 'logo', url: './assets/images/vmst-logo.svg' }}
+              tag={getStatusTag(
+                overview.activationGrant.statusName,
+                overview.activationGrant.status,
               )}
             />
           )}

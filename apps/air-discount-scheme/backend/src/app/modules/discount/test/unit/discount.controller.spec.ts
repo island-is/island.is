@@ -12,13 +12,8 @@ import { FlightService } from '../../../flight'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 import { UserService } from '../../../user/user.service'
-import {
-  NationalRegistryClientConfig,
-  NationalRegistryClientModule,
-} from '@island.is/clients/national-registry-v2'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { AirlineUser } from '../../../user/user.model'
 import { createTestUser } from '../../../../../../test/createTestUser'
 
@@ -39,13 +34,6 @@ describe('DiscountController', () => {
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [
-        ConfigModule.forRoot({
-          isGlobal: true,
-          load: [XRoadConfig, NationalRegistryClientConfig],
-        }),
-        NationalRegistryClientModule,
-      ],
       providers: [
         PrivateDiscountController,
         PrivateDiscountAdminController,
@@ -173,7 +161,7 @@ describe('DiscountController', () => {
         )
         expect('This should not happen').toEqual('')
       } catch (e: any) {
-        expect(getUserSpy).toHaveBeenCalledWith(nationalId, auth)
+        expect(getUserSpy).toHaveBeenCalledWith(nationalId)
         expect(createDiscountCodeSpy).not.toHaveBeenCalled()
         expect(e.response).toEqual({
           statusCode: 404,

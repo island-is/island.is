@@ -64,6 +64,16 @@ export const MOCK_USER = {
   userAgent: '',
 } as User
 
+// v6 dropped the `jwttoken`/`ssn` *parameters* from its OpenAPI document, but the
+// service still reads identity from the `jwttoken` *header* — verified against
+// IS-DEV, where the same token in `Authorization` returns 400 "Invalid JWT Token"
+// while `jwttoken` resolves the caller. See apiConfiguration.ts.
+//
+// Caller-scoped handlers below therefore route on `jwttoken`, deliberately: that
+// is the header the real service reads, so dropping it would fail these tests
+// rather than passing them. The v4 handlers stay routed by the SSN in the URL
+// (by-SSN lookups that remain on v4), and the driving-assessment POST stays
+// routed by the instructorSSN in its body.
 export const requestHandlers = [
   rest.get(/api\/drivinglicense\/v4\/\d+$/, (req, res, ctx) => {
     // Possibly questionable given weak matching, should not be a problem in practice
@@ -119,14 +129,14 @@ export const requestHandlers = [
     return res(ctx.status(200), ctx.json(response))
   }),
 
-  rest.post(/api\/drivinglicense\/v5\/drivingassessment/, (req, res, ctx) => {
+  rest.post(/api\/drivinglicense\/v6\/drivingassessment/, (req, res, ctx) => {
     const isTeacher =
       (req.body as { instructorSSN: string }).instructorSSN ===
       MOCK_NATIONAL_ID_TEACHER
     return res(ctx.status(isTeacher ? 200 : 400))
   }),
 
-  rest.get(/api\/drivinglicense\/v5\/drivingassessment/, (req, res, ctx) => {
+  rest.get(/api\/drivinglicense\/v6\/drivingassessment/, (req, res, ctx) => {
     const isFound = req.headers.get('jwttoken') !== MOCK_TOKEN_NO_ASSESSMENT
     if (isFound) {
       return res(ctx.status(200), ctx.json(DrivingAssessment))
@@ -136,7 +146,7 @@ export const requestHandlers = [
   }),
 
   rest.get(
-    /api\/drivinglicense\/v5\/hasfinisheddrivingschool3/,
+    /api\/drivinglicense\/v6\/hasfinisheddrivingschool3/,
     (req, res, ctx) => {
       const isFound = req.headers.get('jwttoken') !== MOCK_TOKEN_EXPIRED
       return res(
@@ -146,7 +156,7 @@ export const requestHandlers = [
     },
   ),
 
-  rest.get(/api\/drivinglicense\/v5\/canapplyfor\/B\/full/, (req, res, ctx) => {
+  rest.get(/api\/drivinglicense\/v6\/canapplyfor\/B\/full/, (req, res, ctx) => {
     const canApply = req.headers.get('jwttoken') === MOCK_TOKEN
     return res(
       ctx.status(200),
@@ -155,7 +165,7 @@ export const requestHandlers = [
   }),
 
   // Ignore calls to this endpoint and mock response in get All Driving Licenses
-  rest.get(/\/api\/drivinglicense\/v5\/deprivation/, (req, res, ctx) => {
+  rest.get(/\/api\/drivinglicense\/v6\/deprivation/, (_req, res, ctx) => {
     return res(
       ctx.status(200),
       ctx.json({
@@ -167,7 +177,7 @@ export const requestHandlers = [
 
   // Error-code catalogue. Deliberately omits 'SOME REASON' so an unknown code
   // resolves to no description (matching the eligibility denial test).
-  rest.get(/api\/codetables\/error-codes/, (_req, res, ctx) => {
+  rest.get(/api\/codetables\/v6\/error-codes/, (_req, res, ctx) => {
     return res(
       ctx.status(200),
       ctx.json([
@@ -188,7 +198,7 @@ export const requestHandlers = [
   }),
 
   rest.get(
-    /api\/drivinglicense\/v5\/canapplyfor\/temporary/,
+    /api\/drivinglicense\/v6\/canapplyfor\/temporary/,
     (req, res, ctx) => {
       const canApply = req.headers.get('jwttoken') === MOCK_TOKEN
       return res(
@@ -201,7 +211,7 @@ export const requestHandlers = [
     },
   ),
 
-  rest.get(/api\/drivinglicense\/v5\/hasteachingrights/, (req, res, ctx) => {
+  rest.get(/api\/drivinglicense\/v6\/hasteachingrights/, (req, res, ctx) => {
     let teachingRights = 0
 
     const token = req.headers.get('jwttoken')
@@ -212,10 +222,13 @@ export const requestHandlers = [
     return res(ctx.status(200), ctx.json(teachingRights))
   }),
 
+  // getTeachersV4 stays on v4 (reference data), so this handler must match v4.
   rest.get(/api\/drivinglicense\/v4\/drivinginstructors/, (_req, res, ctx) => {
     return res(ctx.status(200), ctx.json(Teachers))
   }),
 
+  // B-full submit stays on v5 (see postCreateDrivingLicenseFull), so the
+  // applicant is still identified by personIdNumber in the body.
   rest.post(
     /api\/drivinglicense\/v5\/applications\/new\/B/,
     (req, res, ctx) => {
@@ -230,6 +243,7 @@ export const requestHandlers = [
     },
   ),
 
+  // B-temp submit stays on v5 (see postCreateDrivingLicenseTemporary).
   rest.post(
     /api\/drivinglicense\/v5\/applications\/new\/temporary/,
     (req, res, ctx) => {

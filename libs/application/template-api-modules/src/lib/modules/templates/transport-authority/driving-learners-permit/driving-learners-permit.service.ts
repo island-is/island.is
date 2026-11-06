@@ -31,7 +31,7 @@ export class DrivingLearnersPermitService extends BaseTemplateApiService {
       ) ?? ''
     const practicePermitApplication = await this.drivingLicenseService
       .postPracticePermitApplication({
-        token: auth.authorization.split(' ')[1], // Removes the Bearer prefix
+        auth,
         studentSSN,
       })
       .catch(() => {

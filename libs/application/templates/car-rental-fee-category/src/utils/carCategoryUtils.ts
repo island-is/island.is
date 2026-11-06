@@ -1,5 +1,10 @@
+import format from 'date-fns/format'
 import { EntryModel, ValidVehicle } from '@island.is/clients-rental-day-rate'
-import { isDayRateEntryActive, is15DaysOrMoreFromDate } from './dayRateUtils'
+import {
+  isDayRateEntryActive,
+  is15DaysOrMoreFromDate,
+  getDayRateChangeableFromDate,
+} from './dayRateUtils'
 import { RateCategory } from './constants'
 import { CarCategoryError, CarCategoryRecord, CarMap } from './types'
 import { parseFileToCarCategory } from './UploadCarCategoryFileUtils'
@@ -35,6 +40,24 @@ export const buildCurrentCarMap = (
   }, {} as CarMap)
 }
 
+/**
+ * A vehicle has to sit on the day rate for 15 days before it can be moved back
+ * to the kilometre rate. Vehicles inside that window are still listed - hiding
+ * them made the overview counts look wrong to applicants - but they are marked
+ * as not editable so it is clear why they cannot be changed yet.
+ */
+const getChangeableFrom = (
+  car: CarMap[string],
+  rateToChangeTo: RateCategory | undefined,
+): Date | undefined => {
+  if (rateToChangeTo !== RateCategory.KMRATE) return undefined
+
+  const validFromDate = car.activeDayRate?.validFrom
+  if (!validFromDate || is15DaysOrMoreFromDate(validFromDate)) return undefined
+
+  return getDayRateChangeableFromDate(validFromDate)
+}
+
 export const getManualMileageTableRows = (
   carMap: CarMap | undefined,
   rateToChangeTo: RateCategory | undefined,
@@ -42,27 +65,26 @@ export const getManualMileageTableRows = (
   permno: string
   latestMilage: undefined
   currentMilage: number | null
+  disabled: boolean
+  changeableFrom: string | undefined
 }> => {
   if (!carMap) return []
 
   return Object.entries(carMap)
-    .filter(([, car]) => {
-      if (car.category === rateToChangeTo) return false
+    .filter(([, car]) => car.category !== rateToChangeTo)
+    .map(([permno, car]) => {
+      const changeableFrom = getChangeableFrom(car, rateToChangeTo)
 
-      if (rateToChangeTo === RateCategory.KMRATE) {
-        const validFromDate = car.activeDayRate?.validFrom
-        if (validFromDate && !is15DaysOrMoreFromDate(validFromDate)) {
-          return false
-        }
+      return {
+        permno,
+        latestMilage: undefined,
+        currentMilage: car.mileage,
+        disabled: !!changeableFrom,
+        changeableFrom: changeableFrom
+          ? format(changeableFrom, 'dd.MM.yyyy')
+          : undefined,
       }
-
-      return true
     })
-    .map(([permno, car]) => ({
-      permno,
-      latestMilage: undefined,
-      currentMilage: car.mileage,
-    }))
 }
 
 export const getUploadFileType = (

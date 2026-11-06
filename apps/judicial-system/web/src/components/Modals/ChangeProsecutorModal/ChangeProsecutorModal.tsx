@@ -1,4 +1,5 @@
-import React, { FC, useContext, useState } from 'react'
+import type { FC } from 'react'
+import React, { useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
@@ -53,6 +54,7 @@ const ChangeProsecutorModal: FC<Props> = (props) => {
       title={title}
       text={text}
       onClose={onClose}
+      animateLayout
       buttons={[
         {
           text: 'Loka glugga',

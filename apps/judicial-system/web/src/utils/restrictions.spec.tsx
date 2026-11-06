@@ -1,5 +1,6 @@
-import { FC } from 'react'
-import { IntlFormatters, useIntl } from 'react-intl'
+import type { FC } from 'react'
+import type { IntlFormatters } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { MockedProvider } from '@apollo/client/testing'
 import { getDefaultNormalizer, render, screen } from '@testing-library/react'
 
@@ -9,8 +10,10 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { LocaleProvider } from '@island.is/localization'
 
-import { formatCustodyRestrictions } from './restrictions'
-import { formatRequestedCustodyRestrictions } from './restrictions'
+import {
+  formatCustodyRestrictions,
+  formatRequestedCustodyRestrictions,
+} from './restrictions'
 import { createFormatMessage } from './testHelpers.logic'
 
 interface Props {
@@ -202,7 +205,7 @@ describe('formatCustodyRestrictions', () => {
     const res = formatCustodyRestrictions(formatMessage, caseType, restrictions)
 
     expect(res).toEqual(
-      'Sækjandi kynnir kærða tilhögun gæsluvarðhaldsins, sem sé með takmörkunum skv. c-lið 1. mgr. 99. gr. laga nr. 88/2008.',
+      'Sækjandi kynnir varnaraðila tilhögun gæsluvarðhaldsins, sem sé með takmörkunum skv. c-lið 1. mgr. 99. gr. laga nr. 88/2008.',
     )
   })
 
@@ -216,7 +219,7 @@ describe('formatCustodyRestrictions', () => {
     const res = formatCustodyRestrictions(formatMessage, caseType, restrictions)
 
     expect(res).toEqual(
-      'Sækjandi kynnir kærða tilhögun vistunarinnar, sem sé með takmörkunum skv. a- og c-liðum 1. mgr. 99. gr. laga nr. 88/2008.',
+      'Sækjandi kynnir varnaraðila tilhögun vistunarinnar, sem sé með takmörkunum skv. a- og c-liðum 1. mgr. 99. gr. laga nr. 88/2008.',
     )
   })
 
@@ -231,7 +234,7 @@ describe('formatCustodyRestrictions', () => {
     const res = formatCustodyRestrictions(formatMessage, caseType, restrictions)
 
     expect(res).toEqual(
-      'Sækjandi kynnir kærða tilhögun vistunarinnar, sem sé með takmörkunum skv. a-, c- og e-liðum 1. mgr. 99. gr. laga nr. 88/2008.',
+      'Sækjandi kynnir varnaraðila tilhögun vistunarinnar, sem sé með takmörkunum skv. a-, c- og e-liðum 1. mgr. 99. gr. laga nr. 88/2008.',
     )
   })
 

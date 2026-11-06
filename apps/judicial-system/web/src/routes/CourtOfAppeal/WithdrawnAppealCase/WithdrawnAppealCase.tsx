@@ -18,15 +18,18 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseNumberInput } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components'
 import {
   useFileList,
   useS3Upload,
   useTargetAppealCaseByAppealCaseId,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  appendAppealCaseIdQuery,
+  isMatchingAppealCourtFile,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
-import { CaseNumberInput } from '../components'
 import { strings } from './WithdrawnAppealCase.strings'
 
 const WithdrawnAppealCase = () => {
@@ -55,37 +58,48 @@ const WithdrawnAppealCase = () => {
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
-      <PageHeader title={formatMessage(titles.shared.withdrawAppeal)} />
+      <PageHeader title={titles.shared.withdrawAppeal} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <Box component="section" marginBottom={5}>
-          <SectionHeading title={formatMessage(core.appealCaseNumberHeading)} />
+          <SectionHeading title={core.appealCaseNumberHeading} />
           <CaseNumberInput />
         </Box>
-        <Box component="section" marginBottom={10}>
+        <Box component="section">
           <SectionHeading
-            title={formatMessage(strings.courtRecordFileTitle)}
+            title={strings.courtRecordFileTitle}
             marginBottom={1}
           />
           <Text marginBottom={3}>
-            {formatMessage(strings.courtRecordFileSubtitle)}
+            {strings.courtRecordFileSubtitle}
             {'\n'}
           </Text>
           <InputFileUpload
             name="appealCourtRecord"
-            files={uploadFiles.filter(
-              (file) => file.category === CaseFileCategory.APPEAL_COURT_RECORD,
+            files={uploadFiles.filter((file) =>
+              isMatchingAppealCourtFile(
+                file,
+                CaseFileCategory.APPEAL_COURT_RECORD,
+                targetAppealCase?.rulingFileId,
+              ),
             )}
             accept={'application/pdf'}
-            title={formatMessage(strings.uploadBoxTitle)}
-            description={formatMessage(core.uploadBoxDescription, {
-              fileEndings: '.pdf',
-            })}
-            buttonLabel={formatMessage(strings.uploadBoxButtonLabel)}
+            title={strings.uploadBoxTitle}
+            description={formatMessage(
+              {
+                id: core.uploadBoxDescription,
+                defaultMessage: core.uploadBoxDescription,
+              },
+              {
+                fileEndings: '.pdf',
+              },
+            )}
+            buttonLabel={strings.uploadBoxButtonLabel}
             onChange={(files) =>
               handleUpload(
                 addUploadFiles(files, {
                   category: CaseFileCategory.APPEAL_COURT_RECORD,
+                  rulingFileId: targetAppealCase?.rulingFileId,
                 }),
                 updateUploadFile,
               )
@@ -104,7 +118,7 @@ const WithdrawnAppealCase = () => {
           )}
           actions={[
             {
-              text: formatMessage(strings.continueButton),
+              text: strings.continueButton,
               icon: 'arrowForward',
               onClick: async () => {
                 router.push(

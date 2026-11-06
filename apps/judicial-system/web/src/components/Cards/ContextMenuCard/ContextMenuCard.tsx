@@ -1,10 +1,10 @@
-import { FC, PropsWithChildren, ReactElement } from 'react'
+import type { FC, PropsWithChildren, ReactElement } from 'react'
 
 import { Box } from '@island.is/island-ui/core'
-
-import BlueBox from '../../BlueBox/BlueBox'
-import ContextMenu, { ContextMenuItem } from '../../ContextMenu/ContextMenu'
-import IconButton from '../../IconButton/IconButton'
+import BlueBox from '@island.is/judicial-system-web/src/components/BlueBox/BlueBox'
+import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
+import ContextMenu from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
+import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
 
 interface ContextMenuCardProps {
   title: ReactElement | string

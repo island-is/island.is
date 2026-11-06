@@ -12,11 +12,6 @@ set -euxo pipefail
 # Default to big old-space, and more options for testing, but allow overriding
 NODE_OPTIONS="--max-old-space-size=8193 --unhandled-rejections=warn --trace-warnings --require=dd-trace/ci/init ${NODE_OPTIONS:-}"
 
-# Array of services to skip during testing
-services_to_skip=(
-  "services-user-notification"
-)
-
 export DD_CIVISIBILITY_AGENTLESS_ENABLED \
   DD_SITE \
   DD_ENV \
@@ -36,5 +31,4 @@ yarn nx run-many \
   --ci \
   --coverage \
   --passWithNoTests \
-  --exclude="${services_to_skip[*]}" \
   "$@"

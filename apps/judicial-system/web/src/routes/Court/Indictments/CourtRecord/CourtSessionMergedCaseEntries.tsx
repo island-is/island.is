@@ -1,9 +1,7 @@
-import { useState } from 'react'
-
 import { Box, Input } from '@island.is/island-ui/core'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
-import { CourtSessionString } from '@island.is/judicial-system-web/src/graphql/schema'
-import { validateAndSetErrorMessage } from '@island.is/judicial-system-web/src/utils/formHelper'
+import type { CourtSessionString } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useDebouncedField } from '@island.is/judicial-system-web/src/utils/hooks'
 
 export const CourtSessionMergedCaseEntries = ({
   courtSessionId,
@@ -29,8 +27,21 @@ export const CourtSessionMergedCaseEntries = ({
     },
   ) => void
 }) => {
-  const [mergedEntriesErrorMessage, setMergedEntriesErrorMessage] =
-    useState<string>('')
+  // One instance per merged case, so the caller keys the row by merged case id
+  // - otherwise a removed or reordered row would inherit this edit.
+  const entriesField = useDebouncedField({
+    value: courtSessionString?.value,
+    validations: ['empty'],
+    onChange: (value) =>
+      patchCourtSessionStrings(courtSessionId, mergedCaseId, { value }),
+    onSave: (value) =>
+      patchCourtSessionStrings(
+        courtSessionId,
+        mergedCaseId,
+        { value },
+        { persist: true },
+      ),
+  })
 
   return (
     <Box paddingBottom={3}>
@@ -38,43 +49,12 @@ export const CourtSessionMergedCaseEntries = ({
       <Input
         name="merged-case-entries"
         label={`Bókanir um sameiningu máls ${courtCaseNumber}`}
-        value={courtSessionString?.value ?? ''}
+        value={entriesField.value}
         placeholder="Hér er hægt að bóka um sameiningu máls"
-        onChange={(event) => {
-          setMergedEntriesErrorMessage('')
-
-          const updatedValue = event.target.value
-          const updatedCaseSessionString = {
-            value: updatedValue,
-          }
-
-          patchCourtSessionStrings(
-            courtSessionId,
-            mergedCaseId,
-            updatedCaseSessionString,
-          )
-        }}
-        onBlur={(event) => {
-          const updatedValue = event.target.value
-          validateAndSetErrorMessage(
-            ['empty'],
-            updatedValue,
-            setMergedEntriesErrorMessage,
-          )
-
-          const updatedCaseSessionString = {
-            value: updatedValue,
-          }
-
-          patchCourtSessionStrings(
-            courtSessionId,
-            mergedCaseId,
-            updatedCaseSessionString,
-            { persist: true },
-          )
-        }}
-        hasError={mergedEntriesErrorMessage !== ''}
-        errorMessage={mergedEntriesErrorMessage}
+        onChange={(event) => entriesField.onChange(event.target.value)}
+        onBlur={(event) => entriesField.onBlur(event.target.value)}
+        hasError={entriesField.hasError}
+        errorMessage={entriesField.errorMessage}
         rows={15}
         disabled={disabled}
         textarea

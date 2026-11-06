@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { ApolloError } from '@apollo/client'
-import { Box, Table as T, Text } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   PortalTable,
@@ -31,9 +31,10 @@ const formatDateRange = (from?: string | null, to?: string | null): string => {
 }
 
 const columnHelper = createColumnHelper<FarmerLandBeneficiary>()
+const paymentColumnHelper = createColumnHelper<FarmerLandBeneficiaryPayment>()
 
 export const RightsHolders = ({ beneficiaries, loading, error }: Props) => {
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage } = useLocale()
 
   const columns = useMemo(
     () => [
@@ -54,82 +55,50 @@ export const RightsHolders = ({ beneficiaries, loading, error }: Props) => {
         header: formatMessage(fm.vatNumber),
       }),
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [locale],
+    [formatMessage],
   )
 
   const renderExpandedRow = (row: Row<FarmerLandBeneficiary>) => {
     const payments = row.original.payments ?? []
     if (!payments.length)
       return <EmptyTable message={formatMessage(m.noData)} />
+    const paymentColumns = [
+      paymentColumnHelper.accessor('category', {
+        header: formatMessage(fm.paymentType),
+        enableSorting: false,
+      }),
+      paymentColumnHelper.accessor('share', {
+        header: formatMessage(fm.share),
+        cell: ({ getValue }) => (getValue() != null ? `${getValue()}%` : ''),
+        enableSorting: false,
+      }),
+      paymentColumnHelper.accessor('blocked', {
+        header: formatMessage(fm.pendingPayments),
+        cell: ({ getValue }) => formatMessage(getValue() ? m.yes : m.no),
+        enableSorting: false,
+      }),
+      paymentColumnHelper.accessor('operating', {
+        header: formatMessage(fm.operation),
+        cell: ({ getValue }) =>
+          formatMessage(getValue() ? fm.inOperation : fm.finished),
+        enableSorting: false,
+      }),
+      paymentColumnHelper.display({
+        id: 'date',
+        header: formatMessage(m.date),
+        cell: ({ row }) =>
+          formatDateRange(row.original.dateFrom, row.original.dateTo),
+        enableSorting: false,
+      }),
+    ]
     return (
-      <T.Table>
-        <T.Head>
-          <T.Row>
-            <T.HeadData
-              scope="col"
-              text={{ variant: 'small', fontWeight: 'semiBold' }}
-            >
-              {formatMessage(fm.paymentType)}
-            </T.HeadData>
-            <T.HeadData
-              scope="col"
-              text={{ variant: 'small', fontWeight: 'semiBold' }}
-            >
-              {formatMessage(fm.share)}
-            </T.HeadData>
-            <T.HeadData
-              scope="col"
-              text={{ variant: 'small', fontWeight: 'semiBold' }}
-            >
-              {formatMessage(fm.pendingPayments)}
-            </T.HeadData>
-            <T.HeadData
-              scope="col"
-              text={{ variant: 'small', fontWeight: 'semiBold' }}
-            >
-              {formatMessage(fm.operation)}
-            </T.HeadData>
-            <T.HeadData
-              scope="col"
-              text={{ variant: 'small', fontWeight: 'semiBold' }}
-            >
-              {formatMessage(m.date)}
-            </T.HeadData>
-          </T.Row>
-        </T.Head>
-        <T.Body>
-          {payments.map((p: FarmerLandBeneficiaryPayment, i) => (
-            <T.Row key={`${p.categoryId}-${i}`}>
-              <T.Data box={{ background: 'white' }}>
-                <Text variant="small">{p.category}</Text>
-              </T.Data>
-              <T.Data box={{ background: 'white' }}>
-                <Text variant="small">
-                  {p.share != null ? `${p.share}%` : ''}
-                </Text>
-              </T.Data>
-              <T.Data box={{ background: 'white' }}>
-                <Text variant="small">
-                  {p.blocked ? formatMessage(m.yes) : formatMessage(m.no)}
-                </Text>
-              </T.Data>
-              <T.Data box={{ background: 'white' }}>
-                <Text variant="small">
-                  {p.operating
-                    ? formatMessage(fm.inOperation)
-                    : formatMessage(fm.finished)}
-                </Text>
-              </T.Data>
-              <T.Data box={{ background: 'white' }}>
-                <Text variant="small">
-                  {formatDateRange(p.dateFrom, p.dateTo)}
-                </Text>
-              </T.Data>
-            </T.Row>
-          ))}
-        </T.Body>
-      </T.Table>
+      <PortalTable
+        columns={paymentColumns}
+        data={payments}
+        emptyMessage={m.noData}
+        mobileTitleKey="category"
+        cellBox={{ body: { background: 'white' } }}
+      />
     )
   }
 

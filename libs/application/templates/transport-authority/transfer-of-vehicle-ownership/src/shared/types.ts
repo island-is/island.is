@@ -79,7 +79,6 @@ export type VehiclesCurrentVehicleWithOwnerchangeChecks = {
   role?: string
   requireMileage?: boolean | null
   mileageReading?: string | null
-  isDebtLess?: boolean | null
   validationErrorMessages?: VehicleValidationErrorMessage[] | null
 }
 

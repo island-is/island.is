@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { YesOrNoEnum } from '@island.is/application/core'
 import * as m from '../messages'
+import { isRentalPeriodStartDateTooFarAhead } from '../../utils/utils'
 
 export const rentalPeriodSchema = z
   .object({
@@ -19,21 +20,12 @@ export const rentalPeriodSchema = z
     const end = endDate ? new Date(endDate) : ''
     const isDefiniteChecked = isDefinite?.includes(YesOrNoEnum.YES)
 
-    if (start) {
-      const oneYearFromNow = new Date()
-      oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1)
-
-      if (
-        start instanceof Date &&
-        !isNaN(start.getTime()) &&
-        start.getTime() > oneYearFromNow.getTime()
-      ) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['startDate'],
-          params: m.rentalPeriod.errorStartDateTooFarInFuture,
-        })
-      }
+    if (isRentalPeriodStartDateTooFarAhead(startDate)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['startDate'],
+        params: m.rentalPeriod.errorStartDateTooFarInFuture,
+      })
     }
 
     if (!isDefiniteChecked) {

@@ -4,9 +4,8 @@ import { AlertMessage, Box, LoadingDots, Text } from '@island.is/island-ui/core'
 import { IconAndText } from '@island.is/judicial-system-web/src/components'
 import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
 import { AnimateChildren } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
-import { PoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
-
-import * as styles from '../../../../components/SelectableList/SelectableList.css'
+import * as styles from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList.css'
+import type { PoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export interface PoliceDigitalCaseFilesData {
   files: PoliceDigitalCaseFile[]

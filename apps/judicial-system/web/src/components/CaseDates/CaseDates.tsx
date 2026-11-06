@@ -1,12 +1,13 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Button, IconMapIcon, Text } from '@island.is/island-ui/core'
+import type { IconMapIcon } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { caseDates } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
-  Case,
   CaseDecision,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -14,7 +15,7 @@ import {
 import * as styles from './CaseDates.css'
 
 export interface Props {
-  workingCase: Case
+  workingCase: WorkingCase
   button?: {
     label: string
     onClick: () => void
@@ -35,13 +36,19 @@ const CaseDates: FC<Props> = (props) => {
       <div className={styles.caseDateContainer}>
         {workingCase.isValidToDateInThePast ? (
           <Text variant="h5">
-            {formatMessage(caseDates.restrictionExpired, {
-              caseType: isTravelBan ? CaseType.TRAVEL_BAN : workingCase.type,
-              date: `${formatDate(
-                workingCase.validToDate,
-                'PPP',
-              )} kl. ${formatDate(workingCase.validToDate, TIME_FORMAT)}`,
-            })}
+            {formatMessage(
+              {
+                id: caseDates.restrictionExpired,
+                defaultMessage: caseDates.restrictionExpired,
+              },
+              {
+                caseType: isTravelBan ? CaseType.TRAVEL_BAN : workingCase.type,
+                date: `${formatDate(
+                  workingCase.validToDate,
+                  'PPP',
+                )} kl. ${formatDate(workingCase.validToDate, TIME_FORMAT)}`,
+              },
+            )}
           </Text>
         ) : (
           <Box
@@ -51,27 +58,39 @@ const CaseDates: FC<Props> = (props) => {
           >
             <Box>
               <Text variant="h5">
-                {formatMessage(caseDates.restrictionValidTo, {
-                  caseType: isTravelBan
-                    ? CaseType.TRAVEL_BAN
-                    : workingCase.type,
-                  date: `${formatDate(
-                    workingCase.validToDate,
-                    'PPP',
-                  )} kl. ${formatDate(workingCase.validToDate, TIME_FORMAT)}`,
-                })}
+                {formatMessage(
+                  {
+                    id: caseDates.restrictionValidTo,
+                    defaultMessage: caseDates.restrictionValidTo,
+                  },
+                  {
+                    caseType: isTravelBan
+                      ? CaseType.TRAVEL_BAN
+                      : workingCase.type,
+                    date: `${formatDate(
+                      workingCase.validToDate,
+                      'PPP',
+                    )} kl. ${formatDate(workingCase.validToDate, TIME_FORMAT)}`,
+                  },
+                )}
               </Text>
               {workingCase.isCustodyIsolation && workingCase.isolationToDate && (
                 <Text variant="h5" as="h5">
-                  {formatMessage(caseDates.isolationValidTo, {
-                    date: `${formatDate(
-                      workingCase.isolationToDate,
-                      'PPP',
-                    )} kl. ${formatDate(
-                      workingCase.isolationToDate,
-                      TIME_FORMAT,
-                    )}`,
-                  })}
+                  {formatMessage(
+                    {
+                      id: caseDates.isolationValidTo,
+                      defaultMessage: caseDates.isolationValidTo,
+                    },
+                    {
+                      date: `${formatDate(
+                        workingCase.isolationToDate,
+                        'PPP',
+                      )} kl. ${formatDate(
+                        workingCase.isolationToDate,
+                        TIME_FORMAT,
+                      )}`,
+                    },
+                  )}
                 </Text>
               )}
             </Box>

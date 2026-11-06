@@ -17,8 +17,7 @@ const config: StorybookConfig = {
   },
   stories: [
     '../../core/src/**/*.stories.@(js|jsx|ts|tsx|mdx)',
-    '../../../application/ui-fields/src/lib/AsGuide.mdx',
-    '../../../application/ui-fields/**/*.stories.@(js|jsx|ts|tsx|mdx)',
+    '../../../application/ui-fields/**/*.@(mdx|stories.@(js|jsx|ts|tsx))',
     '../../../application/ui-components/**/*.stories.@(js|jsx|ts|tsx|mdx)',
   ],
   addons: [

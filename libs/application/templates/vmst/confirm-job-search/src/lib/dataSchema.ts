@@ -9,6 +9,9 @@ export const dataSchema = z.object({
       }),
     )
     .optional(),
+  // Required-ness is enforced in Questionnaire's setBeforeSubmitCallback,
+  // so allow empty/null values here to avoid blocking that callback.
+  questionnaire: z.record(z.string(), z.string().nullish()).nullish(),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

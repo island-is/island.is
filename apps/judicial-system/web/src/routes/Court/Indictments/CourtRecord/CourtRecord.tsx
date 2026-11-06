@@ -1,5 +1,5 @@
-import { FC, useCallback, useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
+import type { FC } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import router from 'next/router'
 
 import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
@@ -30,7 +30,6 @@ import CourtSessionAccordionItem from './CourtSessionAccordionItem'
 import { alertContainer } from './CourtRecord.css'
 
 const CourtRecord: FC = () => {
-  const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { workingCase, isLoadingWorkingCase, caseNotFound, refreshCase } =
     useContext(FormContext)
@@ -117,18 +116,16 @@ const CourtRecord: FC = () => {
                 Bæta við þinghaldi
               </Button>
             </Box>
-            <Box marginBottom={10}>
-              <PdfButton
-                caseId={workingCase.id}
-                title="Þingbók - PDF"
-                pdfType="courtRecord"
-                elementId="Þingbók"
-                disabled={!hasGeneratedCourtRecord}
-              />
-            </Box>
+            <PdfButton
+              caseId={workingCase.id}
+              title="Þingbók - PDF"
+              pdfType="courtRecord"
+              elementId="Þingbók"
+              disabled={!hasGeneratedCourtRecord}
+            />
           </>
         ) : (
-          <Box className={alertContainer} marginBottom={10}>
+          <Box className={alertContainer}>
             <AlertMessage
               title="Sjálfvirkni ekki í boði"
               message="Þetta mál var stofnað af sækjanda áður en sjálfvirkni við gerð þingbókar var virkjuð."
@@ -142,7 +139,7 @@ const CourtRecord: FC = () => {
           previousUrl={`${DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

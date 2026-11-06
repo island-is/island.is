@@ -3,8 +3,17 @@ import {
   RatioType,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import {
+  ApplicationWithAttachments as Application,
+  ApplicationStatus,
+  ApplicationTypes,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/types'
+import { NO, YES } from '@island.is/application/core'
+import {
   getMonthNumber,
   getEmployers,
+  transformApplicationToOldAgePensionDTO,
 } from './social-insurance-administration-utils'
 
 describe('Old age pesion utils', () => {
@@ -73,5 +82,61 @@ describe('getEmployers', () => {
     const res = getEmployers(employersAnswers)
 
     expect(res).toEqual(employerInfo)
+  })
+})
+
+describe('transformApplicationToOldAgePensionDTO', () => {
+  const buildApplication = (answers: FormValue): Application => ({
+    id: '12345',
+    assignees: [],
+    applicant: '0101307789',
+    typeId: ApplicationTypes.OLD_AGE_PENSION,
+    created: new Date(),
+    modified: new Date(),
+    attachments: {},
+    applicantActors: [],
+    answers: {
+      period: { year: '2026', month: 'January' },
+      ...answers,
+    },
+    state: 'draft',
+    externalData: {} as ExternalData,
+    status: ApplicationStatus.IN_PROGRESS,
+  })
+
+  it('should omit awarenessOfIncomeDeclaration when the income plan was skipped', () => {
+    // A single yearly payment skips the income plan screens, so the applicant
+    // is never asked to declare anything about other income.
+    const application = buildApplication({
+      onePaymentPerYear: { question: YES },
+      incomePlanTable: [],
+    })
+
+    const res = transformApplicationToOldAgePensionDTO(application, [])
+
+    expect(res.hasOneTimePayment).toBe(true)
+    expect(res.incomePlan.incomeTypes).toEqual([])
+    expect(res).not.toHaveProperty('awarenessOfIncomeDeclaration')
+  })
+
+  it('should send awarenessOfIncomeDeclaration when an all-zero income plan was filled in', () => {
+    const application = buildApplication({
+      onePaymentPerYear: { question: NO },
+      incomePlanTable: [
+        {
+          incomeCategory: 'Atvinnutekjur',
+          incomeType: 'Launatekjur',
+          income: 'yearly',
+          incomePerYear: '0',
+          currency: 'ISK',
+        },
+      ],
+      incomePlan: { noOtherIncomeConfirmation: YES },
+    })
+
+    const res = transformApplicationToOldAgePensionDTO(application, [])
+
+    expect(res.hasOneTimePayment).toBe(false)
+    expect(res.awarenessOfIncomeDeclaration).toBe(true)
   })
 })

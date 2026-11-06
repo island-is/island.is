@@ -1,13 +1,16 @@
-import { Page } from '@playwright/test'
+import { expect, Locator, Page } from '@playwright/test'
 import { verifyRequestCompletion } from '../../../support/api-tools'
 
 export const randomPoliceCaseNumber = () => {
   return `007-${new Date().getFullYear()}-${Math.floor(Math.random() * 100000)}`
 }
 
+// The app validates R-/S- case numbers as 1-5 digits and appeal case
+// numbers as 1-4 digits, so these draw from the full allowed space to
+// minimize collisions with cases left behind by previous runs.
 export const randomCourtCaseNumber = (prefix?: string) => {
   return `${prefix ?? 'R'}-${Math.floor(
-    Math.random() * 1000,
+    Math.random() * 100000,
   )}/${new Date().getFullYear()}`
 }
 
@@ -16,7 +19,7 @@ export const randomIndictmentCourtCaseNumber = () => {
 }
 
 export const randomAppealCaseNumber = () => {
-  return `${Math.floor(Math.random() * 1000)}/${new Date().getFullYear()}`
+  return `${Math.floor(Math.random() * 10000)}/${new Date().getFullYear()}`
 }
 
 export const getDaysFromNow = (days = 0) => {
@@ -24,6 +27,34 @@ export const getDaysFromNow = (days = 0) => {
   const daysAdded = day * days
 
   return new Date(new Date().getTime() + daysAdded).toLocaleDateString('is-IS')
+}
+
+// The defender login fixture, national id 0909090909. The backend seeders
+// put this entry in lawyer_registry (seed_lawyer_registry.js), so it is on the
+// list the advocate comboboxes fetch and no interception is needed.
+export const testDefender = {
+  name: 'Test Verjandi',
+  email: 'testverjandi@dummy.dd',
+  nationalId: '0909090909',
+}
+
+// Picks the test defender in the lawyer registry combobox. A screen with one
+// combobox per defendant passes the defendant's section as the scope.
+export const selectTestDefender = async (
+  page: Page,
+  scope: Page | Locator = page,
+) => {
+  await scope.locator('#advocateName').click()
+  await page.keyboard.type(testDefender.name)
+  await page
+    .locator('[id^="react-select-advocateName-option"]')
+    .filter({ hasText: testDefender.name })
+    .first()
+    .click()
+  // Selecting a lawyer auto-fills email and phone from the registry entry.
+  await expect(scope.getByTestId('defenderEmail')).toHaveValue(
+    testDefender.email,
+  )
 }
 
 const createFakePdf = (title: string) => {
@@ -45,7 +76,6 @@ export const chooseDocument = async (
   await clickButton()
 
   const fileChooser = await fileChooserPromise
-  await page.waitForTimeout(1000)
   await fileChooser.setFiles(createFakePdf(fileName))
 }
 

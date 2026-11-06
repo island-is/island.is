@@ -1,5 +1,6 @@
-import { FC } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import type { FC } from 'react'
+import type { IntlShape } from 'react-intl'
+import { useIntl } from 'react-intl'
 import flatMap from 'lodash/flatMap'
 
 import { Box, Tag, Text } from '@island.is/island-ui/core'
@@ -13,8 +14,8 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
-import {
-  Case,
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type {
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -48,22 +49,31 @@ export const getDefendantLabel = (
   type?: CaseType | null,
 ) => {
   if (!isIndictmentCase(type)) {
-    return formatMessage(core.defendant, {
-      suffix: defendants.length > 1 ? 'ar' : 'i',
-    })
+    return formatMessage(
+      { id: core.defendant, defaultMessage: core.defendant },
+      {
+        suffix: defendants.length > 1 ? 'ar' : 'i',
+      },
+    )
   }
 
   if (defendants.length === 1) {
-    return formatMessage(core.indictmentDefendant, {
-      gender: defendants[0].gender,
-    })
+    return formatMessage(
+      {
+        id: core.indictmentDefendant,
+        defaultMessage: core.indictmentDefendant,
+      },
+      {
+        gender: defendants[0].gender,
+      },
+    )
   }
 
-  return formatMessage(core.indictmentDefendants)
+  return core.indictmentDefendants
 }
 
 interface Props {
-  workingCase: Case
+  workingCase: WorkingCase
 }
 
 const Defendants: FC<Props> = ({ workingCase }) => {
@@ -85,7 +95,7 @@ const Defendants: FC<Props> = ({ workingCase }) => {
       )}
       value={enumerate(
         flatMap(activeDefendants, (d) => (d.name ? [d.name] : [])),
-        formatMessage(core.and),
+        core.and,
       )}
     />
   )
@@ -108,13 +118,12 @@ export const ProsecutorCaseInfo: FC<
   Props & { hideCourt?: boolean; hideDefendants?: boolean }
 > = ({ workingCase, hideCourt = false, hideDefendants = false }) => {
   const { policeCaseNumbers, court } = workingCase
-  const { formatMessage } = useIntl()
 
   return (
     <Box component="section" display="flex" flexDirection="column" rowGap={1}>
       <PoliceCaseNumbersTags policeCaseNumbers={policeCaseNumbers} />
       {!hideCourt && court?.name && (
-        <Entry label={formatMessage(core.court)} value={court?.name} />
+        <Entry label={core.court} value={court?.name} />
       )}
       {!hideDefendants && <Defendants workingCase={workingCase} />}
     </Box>
@@ -124,7 +133,7 @@ export const ProsecutorCaseInfo: FC<
 export const ProsecutorAndDefendantsEntries: FC<Props> = ({
   workingCase,
 }: {
-  workingCase: Case
+  workingCase: WorkingCase
 }) => (
   <Box display="flex" flexDirection="column" rowGap={1}>
     <Prosecutor workingCase={workingCase} />
@@ -140,9 +149,12 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
       {workingCase.courtCaseNumber && (
         <Box marginBottom={1}>
           <Text variant="h2" as="h2">
-            {formatMessage(core.caseNumber, {
-              caseNumber: workingCase.courtCaseNumber,
-            })}
+            {formatMessage(
+              { id: core.caseNumber, defaultMessage: core.caseNumber },
+              {
+                caseNumber: workingCase.courtCaseNumber,
+              },
+            )}
           </Text>
         </Box>
       )}
@@ -150,9 +162,12 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
       isCompletedCase(workingCase.state) ? (
         <Box marginTop={1}>
           <Text as="h5" variant="h5">
-            {formatMessage(strings.rulingDate, {
-              rulingDate: `${formatDate(workingCase.rulingDate, 'PPP')}`,
-            })}
+            {formatMessage(
+              { id: strings.rulingDate, defaultMessage: strings.rulingDate },
+              {
+                rulingDate: formatDate(workingCase.rulingDate, 'PPP') ?? '',
+              },
+            ).trim()}
           </Text>
           {workingCase.hasBeenAppealed && (
             <Box marginBottom={1}>

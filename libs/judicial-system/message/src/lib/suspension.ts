@@ -71,6 +71,8 @@ export const messageTypeToSuspensionCategory: Partial<
   [MessageType.DELIVERY_TO_POLICE_SIGNED_RULING]:
     MessageSuspensionCategory.POLICE,
   [MessageType.DELIVERY_TO_POLICE_APPEAL]: MessageSuspensionCategory.POLICE,
+  [MessageType.DELIVERY_TO_POLICE_SERVICE_CERTIFICATE]:
+    MessageSuspensionCategory.POLICE,
   [MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA]:
     MessageSuspensionCategory.NATIONAL_COMMISSIONERS_OFFICE,
   [MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION]:

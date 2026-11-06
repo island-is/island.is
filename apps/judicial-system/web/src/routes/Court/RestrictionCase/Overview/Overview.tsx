@@ -17,7 +17,6 @@ import {
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   core,
-  laws,
   rcCourtOverview,
   restrictionsV2,
   titles,
@@ -42,19 +41,19 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
+import type { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  CaseLegalProvisions,
   CaseOrigin,
   CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { DraftConclusionModal } from '@island.is/judicial-system-web/src/routes/Court/components'
 import {
   UploadState,
   useCourtUpload,
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { getLegalProvisionTitle } from '@island.is/judicial-system-web/src/utils/laws'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
-
-import { DraftConclusionModal } from '../../components'
 
 export const JudgeOverview = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -90,9 +89,7 @@ export const JudgeOverview = () => {
       isValid={true}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader
-        title={formatMessage(titles.court.restrictionCases.overview)}
-      />
+      <PageHeader title={titles.court.restrictionCases.overview} />
       <FormContentContainer>
         {workingCase.caseResentExplanation && (
           <Box marginBottom={workingCase.openedByDefender ? 3 : 5}>
@@ -104,11 +101,13 @@ export const JudgeOverview = () => {
         {workingCase.openedByDefender && (
           <Box marginBottom={5}>
             <AlertMessage
-              title={formatMessage(
-                rcCourtOverview.sections.openedByDefenderAlert.title,
-              )}
+              title={rcCourtOverview.sections.openedByDefenderAlert.title}
               message={formatMessage(
-                rcCourtOverview.sections.openedByDefenderAlert.text,
+                {
+                  id: rcCourtOverview.sections.openedByDefenderAlert.text,
+                  defaultMessage:
+                    rcCourtOverview.sections.openedByDefenderAlert.text,
+                },
                 { when: formatDate(workingCase.openedByDefender, 'PPPp') },
               )}
               type="info"
@@ -117,9 +116,15 @@ export const JudgeOverview = () => {
           </Box>
         )}
         <PageTitle>
-          {formatMessage(rcCourtOverview.sections.title, {
-            caseType: workingCase.type,
-          })}
+          {formatMessage(
+            {
+              id: rcCourtOverview.sections.title,
+              defaultMessage: rcCourtOverview.sections.title,
+            },
+            {
+              caseType: workingCase.type,
+            },
+          )}
         </PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.state === CaseState.RECEIVED &&
@@ -168,7 +173,7 @@ export const JudgeOverview = () => {
               <AccordionItem
                 labelVariant="h3"
                 id="id_1"
-                label={formatMessage(lawsBrokenAccordion.heading)}
+                label={lawsBrokenAccordion.heading}
               >
                 <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
               </AccordionItem>
@@ -182,9 +187,7 @@ export const JudgeOverview = () => {
                     (legalProvision: CaseLegalProvisions, index: number) => {
                       return (
                         <div key={index}>
-                          <Text>
-                            {formatMessage(laws[legalProvision].title)}
-                          </Text>
+                          <Text>{getLegalProvisionTitle(legalProvision)}</Text>
                         </div>
                       )
                     },
@@ -196,9 +199,15 @@ export const JudgeOverview = () => {
               <AccordionItem
                 labelVariant="h3"
                 id="id_3"
-                label={formatMessage(restrictionsV2.title, {
-                  caseType: workingCase.type,
-                })}
+                label={formatMessage(
+                  {
+                    id: restrictionsV2.title,
+                    defaultMessage: restrictionsV2.title,
+                  },
+                  {
+                    caseType: workingCase.type,
+                  },
+                )}
               >
                 {formatRequestedCustodyRestrictions(
                   formatMessage,
@@ -261,9 +270,9 @@ export const JudgeOverview = () => {
           <Box marginBottom={3}>
             <PdfButton
               caseId={workingCase.id}
-              title={formatMessage(core.pdfButtonRequest)}
+              title={core.pdfButtonRequest}
               pdfType="request"
-              elementId={formatMessage(core.pdfButtonRequest)}
+              elementId={core.pdfButtonRequest}
             />
           </Box>
           <Button
@@ -288,7 +297,7 @@ export const JudgeOverview = () => {
           previousUrl={`${DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(rcCourtOverview.continueButton.label),
+              text: rcCourtOverview.continueButton.label,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

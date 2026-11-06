@@ -65,9 +65,16 @@ const ApplicationsModule = React.memo(
     return (
       <SafeAreaView>
         {loading && !data ? (
-          <Wrapper>
-            <StatusCardSkeleton />
-          </Wrapper>
+          <>
+            <EmptyHeading>
+              <Heading>
+                <FormattedMessage id="home.applicationsStatus" />
+              </Heading>
+            </EmptyHeading>
+            <Wrapper>
+              <StatusCardSkeleton />
+            </Wrapper>
+          </>
         ) : (
           <>
             {count === 0 && (

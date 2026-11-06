@@ -6,10 +6,12 @@ import { User } from '@island.is/auth-nest-tools'
 import { Environment } from '@island.is/shared/types'
 
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
+import { EnvironmentFailure } from '../shared/models/multi-environment-result.model'
 import { CreateScopeInput } from './dto/create-scope.input'
 import { CreateScopeResponse } from './dto/create-scope.response'
 import { CreateScopeUserInput } from './dto/create-scope-user.input'
 import { UpdateScopeUsersInput } from './dto/update-scope-users.input'
+import { UpdateScopeClientsInput } from './dto/update-scope-clients.input'
 import { ScopeInput } from './dto/scope.input'
 import { Scope } from './models/scope.model'
 import { ScopeClient } from './models/scope-client.model'
@@ -22,8 +24,11 @@ import { AdminPatchScopeInput } from './dto/patch-scope.input'
 import { PublishScopeInput } from './dto/publish-scope.input'
 import { PatchScopeResponse } from './models/patch-scope-response.model'
 import { UpdateScopeUsersResponse } from './models/update-scope-users-response.model'
+import { UpdateScopeClientsResponse } from './models/update-scope-clients-response.model'
 
-const SCOPES_BY_TENANTS_FETCH_LIMIT = 100
+// How many tenants to fetch scopes for concurrently. We fetch every tenant,
+// batching only to keep the upstream fan-out bounded.
+const SCOPES_BY_TENANTS_BATCH_SIZE = 25
 
 @Injectable()
 export class ScopeService extends MultiEnvironmentService {
@@ -320,19 +325,20 @@ export class ScopeService extends MultiEnvironmentService {
   ): Promise<ScopesByTenantsPayload> {
     const uniqueIds = Array.from(new Set(tenantIds))
 
-    const limitedIds = uniqueIds.slice(0, SCOPES_BY_TENANTS_FETCH_LIMIT)
-    if (limitedIds.length < uniqueIds.length) {
-      this.logger.warn(
-        `getScopesByTenants truncated request from ${uniqueIds.length} to ${SCOPES_BY_TENANTS_FETCH_LIMIT} tenants`,
+    const settled: PromiseSettledResult<{
+      tenantId: string
+      payload: ScopesPayload
+    }>[] = []
+    for (let i = 0; i < uniqueIds.length; i += SCOPES_BY_TENANTS_BATCH_SIZE) {
+      const batch = uniqueIds.slice(i, i + SCOPES_BY_TENANTS_BATCH_SIZE)
+      const batchResults = await Promise.allSettled(
+        batch.map(async (tenantId) => ({
+          tenantId,
+          payload: await this.getScopes(user, tenantId, environment),
+        })),
       )
+      settled.push(...batchResults)
     }
-
-    const settled = await Promise.allSettled(
-      limitedIds.map(async (tenantId) => ({
-        tenantId,
-        payload: await this.getScopes(user, tenantId, environment),
-      })),
-    )
 
     const data = settled.flatMap((result, index) => {
       if (result.status === 'fulfilled') {
@@ -340,7 +346,7 @@ export class ScopeService extends MultiEnvironmentService {
           { tenantId: result.value.tenantId, data: result.value.payload.data },
         ]
       }
-      this.logger.error(`Failed to get scopes for tenant ${limitedIds[index]}`)
+      this.logger.error(`Failed to get scopes for tenant ${uniqueIds[index]}`)
       return []
     })
 
@@ -423,6 +429,7 @@ export class ScopeService extends MultiEnvironmentService {
 
     return (clients ?? []).map((client) => ({
       clientId: client.clientId,
+      tenantId: client.tenantId,
       clientType: client.clientType,
       displayName: client.displayName,
     }))
@@ -535,6 +542,83 @@ export class ScopeService extends MultiEnvironmentService {
 
     return {
       ...(values.length > 0 && { environments: values }),
+      ...(failures.length > 0 && { failedEnvironments: failures }),
+    }
+  }
+
+  /**
+   * Updates the client access list for a scope
+   */
+  async updateScopeClients(
+    user: User,
+    input: UpdateScopeClientsInput,
+  ): Promise<UpdateScopeClientsResponse> {
+    const { tenantId, scopeName, addedClientIds, removedClientIds } = input
+    const targetEnvironments = input.environments
+
+    const addedSet = new Set(addedClientIds)
+    const dedupedRemovedIds = removedClientIds.filter((id) => !addedSet.has(id))
+
+    const successfulEnvironments: Environment[] = []
+    const failures: EnvironmentFailure[] = []
+
+    const settledPromises = await Promise.allSettled(
+      targetEnvironments.map((environment) =>
+        this.makeRequest(user, environment, async (api) => {
+          const response =
+            await api.meScopeClientsControllerUpdateScopeClientsRaw({
+              tenantId,
+              scopeName,
+              updateScopeClientsDto: {
+                addedClientIds: Array.from(addedSet),
+                removedClientIds: dedupedRemovedIds,
+              },
+            })
+
+          // A successful update answers 200. The admin api answers 204 when the
+          // scope does not belong to the tenant, which handle204 would turn
+          // into a fulfilled null and report as a success.
+          if (response.raw.status === 204) {
+            throw new Error(
+              `Scope ${scopeName} does not belong to tenant ${tenantId}`,
+            )
+          }
+
+          return response
+        }),
+      ),
+    )
+
+    settledPromises.forEach((result, index) => {
+      const environment = targetEnvironments[index]
+
+      if (result.status === 'rejected') {
+        const message =
+          result.reason instanceof Error
+            ? result.reason.message
+            : String(result.reason ?? 'Unknown error')
+        this.logger.error(
+          `Failed to update scope clients for ${scopeName} in environment ${environment}`,
+          result.reason,
+        )
+        failures.push({ environment, message })
+        return
+      }
+
+      if (!this.isEnvironmentConfigured(environment)) {
+        const message = `Failed to update scope clients for ${scopeName}: environment ${environment} not configured`
+        this.logger.error(message)
+        failures.push({ environment, message })
+        return
+      }
+
+      successfulEnvironments.push(environment)
+    })
+
+    return {
+      ...(successfulEnvironments.length > 0 && {
+        environments: successfulEnvironments,
+      }),
       ...(failures.length > 0 && { failedEnvironments: failures }),
     }
   }

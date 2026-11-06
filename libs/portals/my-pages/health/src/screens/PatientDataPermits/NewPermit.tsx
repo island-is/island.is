@@ -1,6 +1,9 @@
 import { toast } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { IntroWrapper } from '@island.is/portals/my-pages/core'
+import {
+  IntroWrapper,
+  STAFRAEN_HEILSA_SLUG,
+} from '@island.is/portals/my-pages/core'
 import React, { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -115,8 +118,8 @@ const NewPermit: React.FC = () => {
         <Markdown>{formatMessage(messages.permitDetailIntroWithLink)}</Markdown>
       }
       serviceProvider={{
-        slug: 'landlaeknir',
-        tooltip: formatMessage(messages.landlaeknirPatientPermitsTooltip),
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(messages.stafraenHeilsaPatientPermitsTooltip),
       }}
       desktopContentSpan="10/12"
     >

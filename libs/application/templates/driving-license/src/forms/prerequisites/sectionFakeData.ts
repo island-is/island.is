@@ -137,7 +137,7 @@ export const sectionFakeData = buildSubSection({
         }),
         buildRadioField({
           id: 'fakeData.hasThjodskraPhoto',
-          title: 'BE / B-temp / 65+ endurnýjun: Mynd úr Þjóðskrá?',
+          title: 'BE / B-full / B-temp / 65+ endurnýjun: Mynd úr Þjóðskrá?',
           width: 'half',
           condition: allowFakeCondition(YES),
           defaultValue: 'real',
@@ -159,7 +159,7 @@ export const sectionFakeData = buildSubSection({
         buildRadioField({
           id: 'fakeData.hasRLSPhoto',
           title:
-            'BE / B-temp / 65+ endurnýjun: Gæðamynd úr ökuskírteinaskrá (RLS)?',
+            'BE / B-full / B-temp / 65+ endurnýjun: Gæðamynd úr ökuskírteinaskrá (RLS)?',
           width: 'half',
           condition: allowFakeCondition(YES),
           defaultValue: 'real',

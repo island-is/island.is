@@ -25,11 +25,20 @@ export class TenantEnvironment {
   nationalId?: string
 
   @Field({ nullable: true })
+  displayNameEn?: string
+
+  @Field({ nullable: true })
   description?: string
+
+  @Field({ nullable: true })
+  descriptionEn?: string
 
   @Field({ nullable: true })
   organisationLogoKey?: string
 
   @Field({ nullable: true })
   contactEmail?: string
+
+  @Field({ nullable: true })
+  municipalityCode?: string
 }

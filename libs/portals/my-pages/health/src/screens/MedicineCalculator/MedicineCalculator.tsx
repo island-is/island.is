@@ -391,7 +391,7 @@ export const MedicineCalulator = () => {
                 <T.Body>
                   {selectedDrugList.map((d, i) => {
                     return (
-                      <tr key={i}>
+                      <tr key={d.nordicCode ?? i}>
                         <DrugRow
                           drug={{
                             ...d,

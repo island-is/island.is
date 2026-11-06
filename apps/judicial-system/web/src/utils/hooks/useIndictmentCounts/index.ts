@@ -1,29 +1,30 @@
-import { Dispatch, SetStateAction, useCallback } from 'react'
-import { useIntl } from 'react-intl'
+import type { Dispatch, SetStateAction } from 'react'
+import { useCallback } from 'react'
 
-import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
-import {
-  Case,
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type {
   Offense,
   UpdateIndictmentCountInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
+import { normalizeBlankStrings } from '../../formatters'
 import { useCreateIndictmentCountMutation } from './createIndictmentCount.generated'
 import { useDeleteIndictmentCountMutation } from './deleteIndictmentCount.generated'
 import { useReorderIndictmentCountsMutation } from './reorderIndictmentCounts.generated'
 import { useUpdateIndictmentCountMutation } from './updateIndictmentCount.generated'
 
-export interface UpdateIndictmentCount
-  extends Omit<UpdateIndictmentCountInput, 'caseId' | 'indictmentCountId'> {}
+export type UpdateIndictmentCount = Omit<
+  UpdateIndictmentCountInput,
+  'caseId' | 'indictmentCountId'
+>
 
 export type UpdateIndictmentCountState = UpdateIndictmentCount & {
   offenses?: Offense[] | null
 }
 
 const useIndictmentCounts = () => {
-  const { formatMessage } = useIntl()
-
   const [createIndictmentCountMutation] = useCreateIndictmentCountMutation()
   const [updateIndictmentCountMutation] = useUpdateIndictmentCountMutation()
   const [deleteIndictmentCountMutation] = useDeleteIndictmentCountMutation()
@@ -37,15 +38,15 @@ const useIndictmentCounts = () => {
         })
 
         if (!data) {
-          toast.error(formatMessage(errors.createIndictmentCount))
+          toast.error(errors.createIndictmentCount)
         }
 
         return data?.createIndictmentCount
-      } catch (e) {
-        toast.error(formatMessage(errors.createIndictmentCount))
+      } catch {
+        toast.error(errors.createIndictmentCount)
       }
     },
-    [createIndictmentCountMutation, formatMessage],
+    [createIndictmentCountMutation],
   )
 
   const deleteIndictmentCount = useCallback(
@@ -56,11 +57,11 @@ const useIndictmentCounts = () => {
         })
 
         return data?.deleteIndictmentCount?.deleted
-      } catch (e) {
-        toast.error(formatMessage(errors.deleteIndictmentCount))
+      } catch {
+        toast.error(errors.deleteIndictmentCount)
       }
     },
-    [deleteIndictmentCountMutation, formatMessage],
+    [deleteIndictmentCountMutation],
   )
 
   const updateIndictmentCount = useCallback(
@@ -71,19 +72,25 @@ const useIndictmentCounts = () => {
     ) => {
       try {
         const { data } = await updateIndictmentCountMutation({
-          variables: { input: { indictmentCountId, caseId, ...update } },
+          variables: {
+            input: {
+              indictmentCountId,
+              caseId,
+              ...normalizeBlankStrings(update),
+            },
+          },
         })
 
         if (!data) {
-          toast.error(formatMessage(errors.updateIndictmentCount))
+          toast.error(errors.updateIndictmentCount)
         }
 
         return data?.updateIndictmentCount
-      } catch (e) {
-        toast.error(formatMessage(errors.updateIndictmentCount))
+      } catch {
+        toast.error(errors.updateIndictmentCount)
       }
     },
-    [updateIndictmentCountMutation, formatMessage],
+    [updateIndictmentCountMutation],
   )
 
   const reorderIndictmentCounts = useCallback(
@@ -110,7 +117,7 @@ const useIndictmentCounts = () => {
     (
       indictmentCountId: string,
       update: UpdateIndictmentCountState,
-      setWorkingCase: Dispatch<SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
     ) => {
       setWorkingCase((prevWorkingCase) => {
         if (!prevWorkingCase.indictmentCounts) {

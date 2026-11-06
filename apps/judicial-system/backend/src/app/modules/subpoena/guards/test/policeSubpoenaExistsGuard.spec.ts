@@ -9,7 +9,6 @@ import {
 import { createTestingSubpoenaModule } from '../../test/createTestingSubpoenaModule'
 
 import { SubpoenaRepositoryService } from '../../../repository'
-import { include } from '../../subpoena.service'
 import { PoliceSubpoenaExistsGuard } from '../policeSubpoenaExists.guard'
 
 interface Then {
@@ -48,28 +47,38 @@ describe('Police Subpoena Exists Guard', () => {
 
   describe('subpoena exists', () => {
     const policeSubpoenaId = uuid()
-    const subpoena = { id: uuid(), policeSubpoenaId }
+    const caseId = uuid()
+    const subpoena = { id: uuid(), caseId, policeSubpoenaId }
     const request = {
-      params: { policeSubpoenaId },
+      params: { policeSubpoenaId } as {
+        policeSubpoenaId: string
+        caseId?: string
+      },
       subpoena: undefined,
     }
     let then: Then
 
     beforeEach(async () => {
       mockRequest.mockReturnValueOnce(request)
-      const mockFindOne = mockSubpoenaRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(subpoena)
+      const mockFindByPoliceSubpoenaId =
+        mockSubpoenaRepositoryService.findByPoliceSubpoenaId as jest.Mock
+      mockFindByPoliceSubpoenaId.mockResolvedValueOnce(subpoena)
 
       then = await givenWhenThen()
     })
 
     it('should activate', () => {
-      expect(mockSubpoenaRepositoryService.findOne).toHaveBeenCalledWith({
-        include,
-        where: { policeSubpoenaId },
-      })
+      expect(
+        mockSubpoenaRepositoryService.findByPoliceSubpoenaId,
+      ).toHaveBeenCalledWith(policeSubpoenaId)
       expect(then.result).toBe(true)
       expect(request.subpoena).toBe(subpoena)
+    })
+
+    // The police name the subpoena, not the case, and the locking case guard
+    // that follows reads the case id from the params.
+    it("should put the subpoena's case id on the params", () => {
+      expect(request.params.caseId).toBe(caseId)
     })
   })
 

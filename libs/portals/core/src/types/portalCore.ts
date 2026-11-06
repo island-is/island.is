@@ -45,6 +45,14 @@ export interface PortalNavigationItem {
   breadcrumbHide?: boolean
 
   /**
+   * The screen takes over the viewport at phone widths (below the `sm`
+   * breakpoint): the layout hides breadcrumbs, the mobile sub-navigation
+   * and the sidebar footer for this route. The screen is expected to
+   * provide its own back navigation.
+   */
+  mobileTakeover?: boolean
+
+  /**
    * Dashboard shortcut configuration.
    * Only use for nested items, not top level modules.
    */
@@ -61,6 +69,8 @@ export interface PortalNavigationItem {
    * Reason why the navigation item is disabled, when enabled is false
    */
   disabledReason?: PortalRouteDisabledReason
+  /** Pre-selected in the request-a-delegation flow when the item is locked. */
+  requiredScopes?: string[]
   /**
    * Subscribes to - get updates from badge context
    */
@@ -153,6 +163,8 @@ export type PortalRoute = Omit<RouteObject, 'children'> & {
    * automatically set to 'notAvailableForActors'.
    */
   notAvailableForActors?: boolean
+  /** Pre-selected in the request-a-delegation flow when the route is locked. */
+  requiredScopes?: string[]
   /**
    * Hides navigation item from navigation
    */
@@ -176,6 +188,11 @@ export type PortalRoute = Omit<RouteObject, 'children'> & {
    * The string shorthand exists for backwards compatibility.
    */
   key?: Features | string
+
+  /**
+   * Overrides the module layout for this route
+   */
+  layout?: PortalModule['layout']
 
   /**
    * Child routes of this route
@@ -228,4 +245,5 @@ export interface PortalModule {
     | 'none' // Full screen
     | 'full' // Full grid, i.e 12 cols
     | 'default' // Narrow grid, i.e. 8 cols
+    | 'workspace' // Fills the viewport below a compact header; inner panes scroll
 }

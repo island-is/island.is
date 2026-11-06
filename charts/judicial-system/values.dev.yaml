@@ -28,8 +28,7 @@ judicial-system-api:
     AUTH_IDS_REDIRECT_URI: 'https://judicial-system.dev01.devland.is/api/auth/callback/identity-server'
     AUTH_IDS_SCOPE: 'openid profile offline_access'
     BACKEND_URL: 'http://web-judicial-system-backend'
-    CONTENTFUL_ENVIRONMENT: 'test'
-    CONTENTFUL_HOST: 'preview.contentful.com'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     HIDDEN_FEATURES: ''
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
@@ -97,7 +96,6 @@ judicial-system-api:
     AUTH_TOKEN_SECRET_BASE64: '/k8s/judicial-system/AUTH_TOKEN_SECRET_BASE64'
     BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN'
     LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY'
   securityContext:
     allowPrivilegeEscalation: false
@@ -115,14 +113,15 @@ judicial-system-backend:
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BLOCKED_API_INTEGRATION: ''
     CLIENT_URL: 'https://judicial-system.dev01.devland.is'
-    CONTENTFUL_ENVIRONMENT: 'test'
-    CONTENTFUL_HOST: 'preview.contentful.com'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'judicial_system'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'judicial_system'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     DOKOBIT_URL: 'https://developers.dokobit.com'
     EMAIL_REGION: 'eu-west-1'
+    EMAIL_USE_WHITELIST: 'true'
+    LAWYER_REGISTRY_INCLUDE_TEST_LAWYERS: 'true'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
     NOVA_SENDER_NAME: 'Island Dev'
@@ -217,7 +216,6 @@ judicial-system-backend:
     AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET'
     BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN'
     COURTS_ASSISTANT_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_ASSISTANT_MOBILE_NUMBERS'
     COURTS_EMAILS: '/k8s/judicial-system/COURTS_EMAILS'
     COURTS_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_MOBILE_NUMBERS'
@@ -263,6 +261,7 @@ judicial-system-digital-mailbox-api:
     AUDIT_TRAIL_REGION: 'eu-west-1'
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BACKEND_URL: 'http://web-judicial-system-backend'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -339,6 +338,7 @@ judicial-system-message-handler:
   enabled: true
   env:
     BACKEND_URL: 'http://web-judicial-system-backend'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
@@ -405,6 +405,7 @@ judicial-system-scheduler:
   enabled: true
   env:
     BACKEND_URL: 'http://web-judicial-system-backend'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
@@ -469,6 +470,8 @@ judicial-system-web:
   enabled: true
   env:
     API_URL: 'https://judicial-system.dev01.devland.is'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
+    ENVIRONMENT: 'dev'
     INTERNAL_API_URL: 'http://web-judicial-system-api'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -523,7 +526,9 @@ judicial-system-web:
       cpu: '100m'
       memory: '256Mi'
   secrets:
+    AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
     LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY'
     NATIONAL_REGISTRY_API_KEY: '/k8s/judicial-system/NATIONAL_REGISTRY_API_KEY'
     SUPPORT_EMAIL: '/k8s/judicial-system/SUPPORT_EMAIL'
@@ -537,6 +542,7 @@ judicial-system-xrd-api:
     AUDIT_TRAIL_REGION: 'eu-west-1'
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BACKEND_URL: 'http://web-judicial-system-backend'
+    DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''

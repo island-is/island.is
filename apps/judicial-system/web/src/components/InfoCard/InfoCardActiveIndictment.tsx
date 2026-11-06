@@ -4,10 +4,10 @@ import {
   isCompletedCase,
   isDefenceUser,
 } from '@island.is/judicial-system/types'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 
-import { isNonEmptyArray } from '../../utils/arrayHelpers'
-import { FormContext } from '../FormProvider/FormProvider'
-import { UserContext } from '../UserProvider/UserProvider'
 import InfoCard from './InfoCard'
 import useInfoCardItems from './useInfoCardItems'
 
@@ -35,15 +35,9 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
     offenses,
     registrar,
     judge,
-    mergedCasePoliceCaseNumbers,
-    mergedCaseCourtCaseNumber,
-    mergedCaseProsecutor,
-    mergedCaseJudge,
-    mergedCaseCourt,
     civilClaimants,
     courtCaseNumber,
-    splitCases,
-    splitCase,
+    linkedCaseSections,
   } = useInfoCardItems()
 
   const excludedDefendants =
@@ -74,6 +68,15 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
           items: [
             indictmentCreated,
             prosecutor(workingCase.type, onProsecutorClick),
+            ...(workingCase.indictmentApprover
+              ? [
+                  {
+                    id: 'indictment-approver-item',
+                    title: 'Yfirlesari',
+                    values: [workingCase.indictmentApprover.name ?? ''],
+                  },
+                ]
+              : []),
             policeCaseNumbers,
             ...(workingCase.judge ? [judge] : []),
             ...(workingCase.registrar ? [registrar] : []),
@@ -83,25 +86,7 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
           ],
           columns: 2,
         },
-        ...(isNonEmptyArray(workingCase.mergedCases)
-          ? workingCase.mergedCases.map((mergedCase) => ({
-              id: mergedCase.id,
-              items: [
-                mergedCasePoliceCaseNumbers(mergedCase),
-                mergedCaseCourtCaseNumber(mergedCase),
-                mergedCaseProsecutor(mergedCase),
-                mergedCaseJudge(mergedCase),
-                mergedCaseCourt(mergedCase),
-              ],
-              columns: 2,
-            }))
-          : []),
-        ...(isNonEmptyArray(workingCase.splitCases)
-          ? [{ id: 'split-cases-section', items: [splitCases], columns: 2 }]
-          : []),
-        ...(workingCase.splitCase
-          ? [{ id: 'split-case-section', items: [splitCase], columns: 2 }]
-          : []),
+        ...linkedCaseSections,
         ...(isNonEmptyArray(excludedDefendants)
           ? [
               {

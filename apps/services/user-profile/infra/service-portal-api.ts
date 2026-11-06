@@ -2,6 +2,7 @@ import {
   CodeOwners,
   json,
   service,
+  scheduledJob,
   ServiceBuilder,
 } from '../../../../infra/src/dsl/dsl'
 import {
@@ -17,6 +18,23 @@ import {
 const namespace = 'service-portal'
 const serviceId = `${namespace}-api`
 const imageId = 'services-user-profile'
+
+export const userProfileMetricsSetup = () =>
+  scheduledJob('service-portal-metrics')
+    .namespace(namespace)
+    .image(imageId)
+    .serviceAccount('service-portal-metrics')
+    .codeOwner(CodeOwners.Aranja)
+    .command('node')
+    .args('metrics-entrypoint.cjs')
+    .db({ name: serviceId })
+    .schedule('10 3 * * *')
+    .concurrencyPolicy('Forbid')
+    .startingDeadlineSeconds(600)
+    .resources({
+      limits: { cpu: '400m', memory: '512Mi' },
+      requests: { cpu: '100m', memory: '256Mi' },
+    })
 
 const envVariables: EnvironmentVariables = {
   SERVICE_PORTAL_BASE_URL: {

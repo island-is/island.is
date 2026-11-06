@@ -2,12 +2,12 @@ import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
+import type { UploadFile } from '@island.is/island-ui/core'
 import {
   Box,
   FileUploadStatus,
   InputFileUpload,
   Text,
-  UploadFile,
 } from '@island.is/island-ui/core'
 import {
   DEFENDER_INDICTMENT_CASE_ROUTE,
@@ -38,8 +38,8 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  TUploadFile,
   useAppealCase,
   useFileList,
   useS3Upload,
@@ -156,7 +156,7 @@ const AppealToCourtOfAppeals = () => {
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
-      <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
+      <PageHeader title={titles.shared.appealToCourtOfAppeals} />
       <FormContentContainer>
         <PageTitle>Kæra til Landsréttar</PageTitle>
         <Box component="section" marginBottom={5}>
@@ -177,11 +177,17 @@ const AppealToCourtOfAppeals = () => {
             name="appealBrief"
             files={appealBriefFiles}
             accept={'application/pdf'}
-            title={formatMessage(core.uploadBoxTitle)}
-            description={formatMessage(core.uploadBoxDescription, {
-              fileEndings: '.pdf',
-            })}
-            buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
+            title={core.uploadBoxTitle}
+            description={formatMessage(
+              {
+                id: core.uploadBoxDescription,
+                defaultMessage: core.uploadBoxDescription,
+              },
+              {
+                fileEndings: '.pdf',
+              },
+            )}
+            buttonLabel={core.uploadBoxButtonLabel}
             onChange={(files) => handleChange(files, appealBriefType)}
             onRemove={(file) => {
               handleRemoveFile(file)
@@ -196,7 +202,7 @@ const AppealToCourtOfAppeals = () => {
           marginBottom={isProsecutionUser(user) ? 5 : 10}
         >
           <SectionHeading title="Gögn" marginBottom={1} />
-          <Text marginBottom={3} whiteSpace="pre">
+          <Text marginBottom={3} whiteSpace="preWrap">
             Ef ný gögn eiga að fylgja kærunni er hægt að hlaða þeim upp hér að
             neðan.
             {'\n'}
@@ -210,11 +216,17 @@ const AppealToCourtOfAppeals = () => {
               filter(file, appealCaseFilesType),
             )}
             accept={'application/pdf'}
-            title={formatMessage(core.uploadBoxTitle)}
-            description={formatMessage(core.uploadBoxDescription, {
-              fileEndings: '.pdf',
-            })}
-            buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
+            title={core.uploadBoxTitle}
+            description={formatMessage(
+              {
+                id: core.uploadBoxDescription,
+                defaultMessage: core.uploadBoxDescription,
+              },
+              {
+                fileEndings: '.pdf',
+              },
+            )}
+            buttonLabel={core.uploadBoxButtonLabel}
             onChange={(files) => handleChange(files, appealCaseFilesType)}
             onRemove={(file) => handleRemoveFile(file)}
             onOpenFile={(file) => onOpenFile(file)}
@@ -223,7 +235,7 @@ const AppealToCourtOfAppeals = () => {
           />
         </Box>
         {!isIndictmentCase(workingCase.type) && isProsecutionUser(user) && (
-          <Box component="section" marginBottom={10}>
+          <Box component="section">
             <RequestAppealRulingNotToBePublishedCheckbox />
           </Box>
         )}
@@ -249,7 +261,7 @@ const AppealToCourtOfAppeals = () => {
           text="Tilkynning um móttöku kæru verður send á aðila máls."
           buttons={[
             {
-              text: formatMessage(core.closeModal),
+              text: core.closeModal,
               onClick: () => {
                 refreshCase()
                 router.push(previousUrl)

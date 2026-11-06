@@ -18,13 +18,10 @@ import {
   Webreader,
 } from '@island.is/web/components'
 import {
-  ContentLanguage,
   EventList as EventListSchema,
-  GetNamespaceQuery,
   OrganizationPage,
   Query,
   QueryGetEventsArgs,
-  QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespaceStrict } from '@island.is/web/hooks'
@@ -34,10 +31,11 @@ import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { fetchEventNamespace } from '@island.is/web/utils/eventPage'
 import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractNamespaceFromOrganization'
 import { getOrganizationSidebarNavigationItems } from '@island.is/web/utils/organization'
 
-import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
+import { GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import { GET_EVENTS_QUERY } from '../../queries/Events'
 
 const PAGE_SIZE = 10
@@ -269,22 +267,7 @@ OrganizationEventList.getProps = async ({ apolloClient, query, locale }) => {
         },
       },
     }),
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            lang: locale as ContentLanguage,
-            namespace: 'OrganizationPages',
-          },
-        },
-      })
-      // map data here to reduce data processing in component
-      .then((variables) =>
-        variables?.data?.getNamespace?.fields
-          ? JSON.parse(variables.data.getNamespace.fields)
-          : {},
-      ),
+    fetchEventNamespace(apolloClient, locale),
   ])
 
   const organizationNamespace = extractNamespaceFromOrganization(

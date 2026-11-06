@@ -3,7 +3,7 @@ import { MenuStateReturn } from 'reakit/Menu'
 
 interface HoverPropsRefState {
   hoverCount: number
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   hideTimeout?: ReturnType<typeof setTimeout>
 }
 
@@ -35,7 +35,6 @@ export const useMenuHoverProps = (
             }, MENU_LEAVE_DELAY)
           }
         },
-        unstable_autofocusOnhide: 'false',
       }
     : undefined
 }

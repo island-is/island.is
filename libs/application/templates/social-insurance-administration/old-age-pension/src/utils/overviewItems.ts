@@ -13,7 +13,7 @@ import {
   KeyValueItem,
   TableData,
 } from '@island.is/application/types'
-import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
+import { formatCurrencyWithoutSuffix } from '@island.is/shared/utils'
 import { getApplicationAnswers } from './oldAgePensionUtils'
 
 export const paymentItems = (answers: FormValue): Array<KeyValueItem> => {

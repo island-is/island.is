@@ -1,4 +1,4 @@
-import { SetStateAction } from 'react'
+import type { SetStateAction } from 'react'
 import compareAsc from 'date-fns/compareAsc'
 
 import {
@@ -8,6 +8,10 @@ import {
   COURT_OF_APPEAL_RESULT_ROUTE,
   COURT_OF_APPEAL_RULING_ROUTE,
   COURT_OF_APPEAL_SUMMARY_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE,
@@ -51,19 +55,18 @@ import {
   PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
   PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE,
 } from '@island.is/judicial-system/consts'
-import {
-  AppealCase,
-  Case,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type { AppealCase } from '@island.is/judicial-system-web/src/graphql/schema'
+import { areAllAppealAdvocatesConfirmed } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/VerdictAppealDefender/VerdictAppealDefender.logic'
 
-import { replaceTabs } from './formatters'
-import { UpdateCase } from './hooks'
+import { normalizeBlankString, replaceTabs } from './formatters'
+import type { UpdateCase } from './hooks'
 import * as validations from './validate'
 
 export const applyUpdateToCase = (
-  prevWorkingCase: Case,
+  prevWorkingCase: WorkingCase,
   updates: Partial<UpdateCase>,
-): Case => {
+): WorkingCase => {
   return {
     ...prevWorkingCase,
     ...updates,
@@ -74,7 +77,7 @@ export const removeTabsValidateAndSet = (
   field: keyof UpdateCase,
   value: string,
   validations: validations.Validation[],
-  setWorkingCase: (value: SetStateAction<Case>) => void,
+  setWorkingCase: (value: SetStateAction<WorkingCase>) => void,
   errorMessage?: string,
   setErrorMessage?: (value: SetStateAction<string>) => void,
 ) => {
@@ -98,9 +101,21 @@ export const removeErrorMessageIfValid = (
   errorMessage?: string,
   errorMessageSetter?: (value: SetStateAction<string>) => void,
 ) => {
-  const isValid = validations.validate([[value, validationsToRun]]).isValid
+  // Nothing is displayed, so there is nothing to clear. An absent
+  // `errorMessage` means the caller does not track one at all.
+  if (!errorMessage || !errorMessageSetter) {
+    return
+  }
 
-  if (errorMessage !== '' && errorMessageSetter && isValid) {
+  const validation = validations.validate([[value, validationsToRun]])
+
+  // Clear as soon as the problem the message describes is fixed, even when the
+  // value is not valid yet. `validate` reports the first failing rule, so a
+  // different message means the displayed one is stale: clearing a required
+  // field and starting to retype would otherwise leave "Reitur má ekki vera
+  // tómur" sitting next to a value that is no longer empty. A newly broken rule
+  // is deliberately not surfaced here — errors appear on blur.
+  if (validation.isValid || validation.errorMessage !== errorMessage) {
     errorMessageSetter('')
   }
 }
@@ -123,7 +138,7 @@ export const validateAndSet = (
   field: keyof UpdateCase,
   value: string,
   validations: validations.Validation[],
-  setWorkingCase: (value: SetStateAction<Case>) => void,
+  setWorkingCase: (value: SetStateAction<WorkingCase>) => void,
   errorMessage?: string,
   setErrorMessage?: (value: SetStateAction<string>) => void,
 ) => {
@@ -138,10 +153,14 @@ export const validateAndSendToServer = (
   field: keyof UpdateCase,
   value: string,
   validations: validations.Validation[],
-  theCase: Case,
+  theCase: WorkingCase,
   updateCase: (id: string, updateCase: UpdateCase) => void,
   setErrorMessage?: (value: SetStateAction<string>) => void,
 ) => {
+  // Whitespace-only input is persisted as '' - a required field then fails
+  // validation and is not sent, an optional field is cleared on the server.
+  value = normalizeBlankString(value)
+
   const isValid = validateAndSetErrorMessage(
     validations,
     value,
@@ -167,11 +186,11 @@ export const toggleInArray = <T>(values: T[] | undefined | null, entry: T) => {
 export const setCheckboxAndSendToServer = (
   field: keyof UpdateCase,
   value: string,
-  theCase: Case,
-  setWorkingCase: (value: SetStateAction<Case>) => void,
+  theCase: WorkingCase,
+  setWorkingCase: (value: SetStateAction<WorkingCase>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
-  const currentValue = theCase[field as keyof Case]
+  const currentValue = theCase[field as keyof WorkingCase]
 
   const checks = currentValue ? [...(currentValue as [])] : ([] as string[])
 
@@ -180,6 +199,32 @@ export const setCheckboxAndSendToServer = (
   } else {
     checks.splice(checks.indexOf(value), 1)
   }
+
+  setWorkingCase((prevWorkingCase) =>
+    applyUpdateToCase(prevWorkingCase, { [field]: checks }),
+  )
+
+  if (theCase.id !== '') {
+    updateCase(theCase.id, { [field]: checks })
+  }
+}
+
+export const setParentCheckboxAndSendToServer = (
+  field: keyof UpdateCase,
+  value: string,
+  childValues: string[],
+  theCase: WorkingCase,
+  setWorkingCase: (value: SetStateAction<WorkingCase>) => void,
+  updateCase: (id: string, updateCase: UpdateCase) => void,
+) => {
+  const currentValue = theCase[field as keyof WorkingCase]
+
+  const currentChecks = currentValue ? [...(currentValue as string[])] : []
+
+  // Unchecking the parent also clears all its children
+  const checks = currentChecks.includes(value)
+    ? currentChecks.filter((v) => v !== value && !childValues.includes(v))
+    : [...currentChecks, value]
 
   setWorkingCase((prevWorkingCase) =>
     applyUpdateToCase(prevWorkingCase, { [field]: checks }),
@@ -204,79 +249,111 @@ export const hasDateChanged = (
 
 export type stepValidationsType = {
   [CASE_TABLE_GROUPS_ROUTE]: () => boolean
-  [PROSECUTION_CREATE_CUSTODY_CASE_ROUTE]: (theCase: Case) => boolean
-  [PROSECUTION_CREATE_TRAVEL_BAN_ROUTE]: (theCase: Case) => boolean
-  [PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE]: (theCase: Case) => boolean
+  [PROSECUTION_CREATE_CUSTODY_CASE_ROUTE]: (theCase: WorkingCase) => boolean
+  [PROSECUTION_CREATE_TRAVEL_BAN_ROUTE]: (theCase: WorkingCase) => boolean
+  [PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE]: (
+    theCase: WorkingCase,
+  ) => boolean
   [PROSECUTION_RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE]: (
-    theCase: Case,
+    theCase: WorkingCase,
   ) => boolean
   [PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: (
-    theCase: Case,
+    theCase: WorkingCase,
   ) => boolean
-  [PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE]: (theCase: Case) => boolean
+  [PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE]: (
+    theCase: WorkingCase,
+  ) => boolean
   [PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE]: () => boolean
   [PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE]: () => boolean
-  [PROSECUTION_CREATE_INVESTIGATION_CASE_ROUTE]: (theCase: Case) => boolean
-  [PROSECUTION_INVESTIGATION_CASE_REGISTRATION_ROUTE]: (
-    theCase: Case,
+  [PROSECUTION_CREATE_INVESTIGATION_CASE_ROUTE]: (
+    theCase: WorkingCase,
   ) => boolean
-  [PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE]: (theCase: Case) => boolean
+  [PROSECUTION_INVESTIGATION_CASE_REGISTRATION_ROUTE]: (
+    theCase: WorkingCase,
+  ) => boolean
+  [PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE]: (
+    theCase: WorkingCase,
+  ) => boolean
   [PROSECUTION_INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE]: (
-    theCase: Case,
+    theCase: WorkingCase,
   ) => boolean
   [PROSECUTION_INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE]: (
-    theCase: Case,
+    theCase: WorkingCase,
   ) => boolean
   [PROSECUTION_INVESTIGATION_CASE_POLICE_REPORT_ROUTE]: (
-    theCase: Case,
+    theCase: WorkingCase,
   ) => boolean
   [PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE]: () => boolean
-  [PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE]: (theCase: Case) => boolean
+  [PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE]: (
+    theCase: WorkingCase,
+  ) => boolean
   [PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE]: () => boolean
   [PROSECUTION_INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE]: () => boolean
   [PROSECUTION_INDICTMENT_CASE_CASE_FILE_ROUTE]: () => boolean
-  [PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE]: (theCase: Case) => boolean
-  [PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE]: (theCase: Case) => boolean
-  [PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE]: (theCase: Case) => boolean
+  [PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE]: (
+    theCase: WorkingCase,
+  ) => boolean
+  [PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE]: (
+    theCase: WorkingCase,
+  ) => boolean
+  [PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE]: (
+    theCase: WorkingCase,
+  ) => boolean
   [DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
-    theCase: Case,
+    theCase: WorkingCase,
   ) => boolean
   [DISTRICT_COURT_RESTRICTION_CASE_COURT_OVERVIEW_ROUTE]: () => boolean
   [DISTRICT_COURT_RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE]: (
-    theCase: Case,
+    theCase: WorkingCase,
   ) => boolean
-  [DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE]: (theCase: Case) => boolean
+  [DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE]: (
+    theCase: WorkingCase,
+  ) => boolean
   [DISTRICT_COURT_RESTRICTION_CASE_COURT_RECORD_ROUTE]: (
-    theCase: Case,
+    theCase: WorkingCase,
   ) => boolean
   [DISTRICT_COURT_RESTRICTION_CASE_CONFIRMATION_ROUTE]: () => boolean
   [DISTRICT_COURT_INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
-    theCase: Case,
+    theCase: WorkingCase,
   ) => boolean
   [DISTRICT_COURT_INVESTIGATION_CASE_OVERVIEW_ROUTE]: () => boolean
   [DISTRICT_COURT_INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE]: (
-    theCase: Case,
+    theCase: WorkingCase,
   ) => boolean
-  [DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE]: (theCase: Case) => boolean
+  [DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE]: (
+    theCase: WorkingCase,
+  ) => boolean
   [DISTRICT_COURT_INVESTIGATION_CASE_COURT_RECORD_ROUTE]: (
-    theCase: Case,
+    theCase: WorkingCase,
   ) => boolean
   [DISTRICT_COURT_INVESTIGATION_CASE_CONFIRMATION_ROUTE]: () => boolean
   [PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE]: () => boolean
   [DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
-    theCase: Case,
+    theCase: WorkingCase,
   ) => boolean
-  [DISTRICT_COURT_INDICTMENT_CASE_SUBPOENA_ROUTE]: (theCase: Case) => boolean
-  [DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE]: (theCase: Case) => boolean
+  [DISTRICT_COURT_INDICTMENT_CASE_SUBPOENA_ROUTE]: (
+    theCase: WorkingCase,
+  ) => boolean
+  [DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE]: (
+    theCase: WorkingCase,
+  ) => boolean
   [DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE]: () => boolean
-  [DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE]: (theCase: Case) => boolean
+  [DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE]: (
+    theCase: WorkingCase,
+  ) => boolean
   [DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE]: () => boolean
   [DISTRICT_COURT_INDICTMENT_CASE_SUMMARY_ROUTE]: () => boolean
   [COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => boolean
-  [COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) => boolean
-  [COURT_OF_APPEAL_RULING_ROUTE]: (theCase: Case) => boolean
-  [COURT_OF_APPEAL_SUMMARY_ROUTE]: (theCase: Case) => boolean
+  [COURT_OF_APPEAL_CASE_ROUTE]: (theCase: WorkingCase) => boolean
+  [COURT_OF_APPEAL_RULING_ROUTE]: (theCase: WorkingCase) => boolean
+  [COURT_OF_APPEAL_SUMMARY_ROUTE]: (theCase: WorkingCase) => boolean
   [COURT_OF_APPEAL_RESULT_ROUTE]: () => boolean
+  [COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE]: (
+    theCase: WorkingCase,
+  ) => boolean
+  [COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE]: () => boolean
+  [COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE]: () => boolean
+  [COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE]: () => boolean
 }
 
 // COA step validations operate on the appeal-case row identified by the
@@ -290,100 +367,121 @@ export const stepValidations = (
 ): stepValidationsType => {
   return {
     [CASE_TABLE_GROUPS_ROUTE]: () => true,
-    [PROSECUTION_CREATE_CUSTODY_CASE_ROUTE]: (theCase: Case) =>
+    [PROSECUTION_CREATE_CUSTODY_CASE_ROUTE]: (theCase: WorkingCase) =>
       validations.isDefendantStepValidRC(theCase, theCase.policeCaseNumbers),
-    [PROSECUTION_CREATE_TRAVEL_BAN_ROUTE]: (theCase: Case) =>
+    [PROSECUTION_CREATE_TRAVEL_BAN_ROUTE]: (theCase: WorkingCase) =>
       validations.isDefendantStepValidRC(theCase, theCase.policeCaseNumbers),
-    [PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE]: (theCase: Case) =>
+    [PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE]: (theCase: WorkingCase) =>
       validations.isDefendantStepValidRC(theCase, theCase.policeCaseNumbers),
     [PROSECUTION_RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE]: (
-      theCase: Case,
+      theCase: WorkingCase,
     ) => validations.isHearingArrangementsStepValidRC(theCase),
-    [PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: (theCase: Case) =>
-      validations.isPoliceDemandsStepValidRC(theCase),
-    [PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE]: (theCase: Case) =>
-      validations.isPoliceReportStepValidRC(theCase),
+    [PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE]: (
+      theCase: WorkingCase,
+    ) => validations.isPoliceDemandsStepValidRC(theCase),
+    [PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE]: (
+      theCase: WorkingCase,
+    ) => validations.isPoliceReportStepValidRC(theCase),
     [PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE]: () => true,
     [PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE]: () => true,
-    [PROSECUTION_CREATE_INVESTIGATION_CASE_ROUTE]: (theCase: Case) =>
+    [PROSECUTION_CREATE_INVESTIGATION_CASE_ROUTE]: (theCase: WorkingCase) =>
       validations.isDefendantStepValidIC(theCase),
-    [PROSECUTION_INVESTIGATION_CASE_REGISTRATION_ROUTE]: (theCase: Case) =>
+    [PROSECUTION_INVESTIGATION_CASE_REGISTRATION_ROUTE]: (
+      theCase: WorkingCase,
+    ) =>
       validations.isRegistrationStepValid(
         theCase,
         theCase.type,
         theCase.policeCaseNumbers,
       ),
-    [PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE]: (theCase: Case) =>
+    [PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE]: (theCase: WorkingCase) =>
       validations.isDefendantStepValidIC(theCase),
     [PROSECUTION_INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE]: (
-      theCase: Case,
+      theCase: WorkingCase,
     ) => validations.isHearingArrangementsStepValidIC(theCase),
-    [PROSECUTION_INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE]: (theCase: Case) =>
-      validations.isPoliceDemandsStepValidIC(theCase),
-    [PROSECUTION_INVESTIGATION_CASE_POLICE_REPORT_ROUTE]: (theCase: Case) =>
-      validations.isPoliceReportStepValidIC(theCase),
+    [PROSECUTION_INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE]: (
+      theCase: WorkingCase,
+    ) => validations.isPoliceDemandsStepValidIC(theCase),
+    [PROSECUTION_INVESTIGATION_CASE_POLICE_REPORT_ROUTE]: (
+      theCase: WorkingCase,
+    ) => validations.isPoliceReportStepValidIC(theCase),
     [PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE]: () => true,
     [PROSECUTION_INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE]: () => true,
-    [PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE]: (theCase: Case) =>
+    [PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE]: (theCase: WorkingCase) =>
       validations.isDefendantStepValidIndictments(theCase),
     [PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE]: () => true,
     [PROSECUTION_INDICTMENT_CASE_CASE_FILE_ROUTE]: () => true,
     [PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE]: () => true,
-    [PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE]: (theCase: Case) =>
+    [PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE]: (theCase: WorkingCase) =>
       validations.isProcessingStepValidIndictments(theCase),
-    [PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE]: (theCase: Case) =>
+    [PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE]: (theCase: WorkingCase) =>
       validations.isIndictmentStepValid(theCase),
     [DISTRICT_COURT_INDICTMENT_CASE_SUMMARY_ROUTE]: () => true,
     [DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
-      theCase: Case,
+      theCase: WorkingCase,
     ) => validations.isReceptionAndAssignmentStepValid(theCase),
     [DISTRICT_COURT_RESTRICTION_CASE_COURT_OVERVIEW_ROUTE]: () => true,
     [DISTRICT_COURT_RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE]: (
-      theCase: Case,
+      theCase: WorkingCase,
     ) => validations.isCourtHearingArrangemenstStepValidRC(theCase),
-    [DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE]: (theCase: Case) =>
+    [DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE]: (theCase: WorkingCase) =>
       validations.isRulingValidRC(theCase),
-    [DISTRICT_COURT_RESTRICTION_CASE_COURT_RECORD_ROUTE]: (theCase: Case) =>
-      validations.isCourtRecordStepValidRC(theCase),
+    [DISTRICT_COURT_RESTRICTION_CASE_COURT_RECORD_ROUTE]: (
+      theCase: WorkingCase,
+    ) => validations.isCourtRecordStepValidRC(theCase),
     [DISTRICT_COURT_RESTRICTION_CASE_CONFIRMATION_ROUTE]: () => true,
     [DISTRICT_COURT_INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
-      theCase: Case,
+      theCase: WorkingCase,
     ) => validations.isReceptionAndAssignmentStepValid(theCase),
     [DISTRICT_COURT_INVESTIGATION_CASE_OVERVIEW_ROUTE]: () => true,
     [DISTRICT_COURT_INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE]: (
-      theCase: Case,
+      theCase: WorkingCase,
     ) => validations.isCourtHearingArrangementsStepValidIC(theCase),
-    [DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE]: (theCase: Case) =>
+    [DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE]: (theCase: WorkingCase) =>
       validations.isRulingValidIC(theCase),
-    [DISTRICT_COURT_INVESTIGATION_CASE_COURT_RECORD_ROUTE]: (theCase: Case) =>
-      validations.isCourtRecordStepValidIC(theCase),
+    [DISTRICT_COURT_INVESTIGATION_CASE_COURT_RECORD_ROUTE]: (
+      theCase: WorkingCase,
+    ) => validations.isCourtRecordStepValidIC(theCase),
     [DISTRICT_COURT_INVESTIGATION_CASE_CONFIRMATION_ROUTE]: () => true,
     [PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE]: () => true,
     [DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
-      theCase: Case,
+      theCase: WorkingCase,
     ) => validations.isReceptionAndAssignmentStepValid(theCase),
-    [DISTRICT_COURT_INDICTMENT_CASE_SUBPOENA_ROUTE]: (theCase: Case) =>
+    [DISTRICT_COURT_INDICTMENT_CASE_SUBPOENA_ROUTE]: (theCase: WorkingCase) =>
       validations.isSubpoenaStepValid(theCase),
-    [DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE]: (theCase: Case) =>
+    [DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE]: (theCase: WorkingCase) =>
       validations.isDefenderStepValid(theCase),
     [DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE]: () => true,
-    [DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE]: (theCase: Case) =>
+    [DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE]: (theCase: WorkingCase) =>
       validations.isConclusionStepValid(theCase),
     [DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE]: () => true,
     [COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => true,
     [COURT_OF_APPEAL_CASE_ROUTE]: () =>
       validations.isCourtOfAppealCaseStepValid(appealCase),
-    [COURT_OF_APPEAL_RULING_ROUTE]: (theCase: Case) =>
+    [COURT_OF_APPEAL_RULING_ROUTE]: (theCase: WorkingCase) =>
       validations.isCourtOfAppealRulingStepValid(theCase, appealCase),
     [COURT_OF_APPEAL_SUMMARY_ROUTE]: () =>
       appealCase?.appealState === 'COMPLETED',
     [COURT_OF_APPEAL_RESULT_ROUTE]: () => true,
+    // The same rule the page itself goes by: the court does not move on until
+    // every party's advocate is confirmed.
+    [COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE]: (theCase: WorkingCase) =>
+      areAllAppealAdvocatesConfirmed(theCase),
+    // A deadline is given when there is a party to give it to, and the court
+    // can come back for the rest, so the step never holds it (owner's
+    // decision).
+    [COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE]: () => true,
+    // The status is not saved, so there is nothing on the case to check; the
+    // page's own isValid is what stops the court leaving it half done.
+    [COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE]: () => true,
+    // Nothing follows the summary, so nothing asks whether it is complete.
+    [COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE]: () => true,
   }
 }
 
 export const findFirstInvalidStep = (
   steps: string[],
-  theCase: Case,
+  theCase: WorkingCase,
   appealCase?: AppealCase | null,
 ) => {
   const validations = stepValidations(appealCase ?? theCase.appealCase)

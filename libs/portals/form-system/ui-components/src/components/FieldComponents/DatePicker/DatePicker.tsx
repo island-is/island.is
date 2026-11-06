@@ -4,8 +4,12 @@ import { Action } from '../../../lib'
 import { m } from '../../../lib/messages'
 import { useIntl } from 'react-intl'
 import { getValue } from '../../../lib/getValue'
+import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
+import max from 'date-fns/max'
+import min from 'date-fns/min'
 import parseISO from 'date-fns/parseISO'
+import startOfDay from 'date-fns/startOfDay'
 import { DatePicker } from '@island.is/island-ui/core'
 import { Controller, useFormContext } from 'react-hook-form'
 
@@ -25,6 +29,23 @@ export const DatePickerField = ({
 }: Props) => {
   const { formatMessage } = useIntl()
   const { control, trigger } = useFormContext()
+  const fieldName = `${item.id}.${valueIndex}`
+  const today = startOfDay(new Date())
+  const settings = item.fieldSettings
+  const fixedMinDate = settings?.minDate
+    ? parseISO(settings.minDate)
+    : undefined
+  const fixedMaxDate = settings?.maxDate
+    ? parseISO(settings.maxDate)
+    : undefined
+  const minDate =
+    settings?.minDateDaysFromToday != null
+      ? addDays(today, settings.minDateDaysFromToday)
+      : fixedMinDate ?? new Date(1970, 0)
+  const maxDate =
+    settings?.maxDateDaysFromToday != null
+      ? addDays(today, settings.maxDateDaysFromToday)
+      : fixedMaxDate
 
   const handleDateChange = (dateString: string) => {
     if (dispatch) {
@@ -47,7 +68,7 @@ export const DatePickerField = ({
   return (
     <Controller
       key={`${item.id}-${valueIndex}`}
-      name={`${item.id}.${valueIndex}`}
+      name={fieldName}
       control={control}
       defaultValue={defaultValue}
       rules={{
@@ -70,15 +91,18 @@ export const DatePickerField = ({
             if (!(date instanceof Date) || isNaN(date.getTime())) {
               onControllerChange('')
               handleDateChange('')
-              trigger(item.id)
+              trigger(fieldName)
               return
             }
             const newVal = format(date, df)
             onControllerChange(newVal)
             handleDateChange(newVal)
-            trigger(item.id)
+            trigger(fieldName)
           }}
-          minDate={new Date(1970, 0)}
+          minDate={fixedMinDate ? max([fixedMinDate, minDate]) : minDate}
+          maxDate={
+            fixedMaxDate && maxDate ? min([fixedMaxDate, maxDate]) : maxDate
+          }
           required={item.isRequired ?? false}
           errorMessage={fieldState.error ? fieldState.error.message : undefined}
           hasError={!!fieldState.error}
@@ -92,10 +116,9 @@ export const DatePickerField = ({
           handleClear={() => {
             onControllerChange('')
             handleDateChange('')
-            trigger(item.id)
+            trigger(fieldName)
           }}
           isClearable={!item.isRequired}
-          readOnly={true}
         />
       )}
     />

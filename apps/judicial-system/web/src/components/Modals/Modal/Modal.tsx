@@ -1,26 +1,12 @@
-import {
-  ChangeEvent,
-  FC,
-  isValidElement,
-  PropsWithChildren,
-  ReactNode,
-  useEffect,
-  useId,
-} from 'react'
+import type { ChangeEvent, FC, PropsWithChildren, ReactNode } from 'react'
+import { isValidElement, useEffect, useId } from 'react'
 import ReactDOM from 'react-dom'
 import FocusLock from 'react-focus-lock'
 import cn from 'classnames'
-import { motion } from 'motion/react'
+import { motion, useIsPresent } from 'motion/react'
 
-import {
-  Box,
-  BoxProps,
-  Button,
-  Checkbox,
-  Icon,
-  IconMapIcon,
-  Text,
-} from '@island.is/island-ui/core'
+import type { BoxProps, IconMapIcon } from '@island.is/island-ui/core'
+import { Box, Button, Checkbox, Icon, Text } from '@island.is/island-ui/core'
 import { useKeyboardCombo } from '@island.is/judicial-system-web/src/utils/hooks/useKeyboardCombo/useKeyboardCombo'
 
 import * as styles from './Modal.css'
@@ -54,6 +40,8 @@ interface ModalProps {
   loading?: boolean
   position?: 'center' | 'top' | 'bottom'
   footerJustifyContent?: BoxProps['justifyContent']
+  // Smooth reposition when content size changes (e.g. select menu expanding)
+  animateLayout?: boolean
 }
 
 export const Modal: FC<PropsWithChildren<ModalProps>> = ({
@@ -66,6 +54,7 @@ export const Modal: FC<PropsWithChildren<ModalProps>> = ({
   children,
   loading,
   footerJustifyContent = 'spaceBetween',
+  animateLayout = false,
 }: ModalProps) => {
   const modalVariants = {
     open: {
@@ -82,6 +71,7 @@ export const Modal: FC<PropsWithChildren<ModalProps>> = ({
   const footerCheckboxId = useId()
   const titleId = useId()
   const lastButtonIndex = buttons ? buttons.length - 1 : -1
+  const isPresent = useIsPresent()
 
   useKeyboardCombo('Escape', () => {
     if (onClose && !loading) {
@@ -99,37 +89,50 @@ export const Modal: FC<PropsWithChildren<ModalProps>> = ({
 
   return (
     <FocusLock autoFocus={false}>
-      <motion.div
-        key="modal"
-        className={styles.container}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+      {/* The backdrop fades through CSS rather than motion. Motion runs an
+          opacity exit through the Web Animations API and cancels it the
+          moment it finishes, writing the final value a frame later - so the
+          backdrop painted at full opacity for one frame before the dialog
+          unmounted, which read as a flash. A class toggled on leaving is
+          already in the DOM when the node goes. */}
+      <div
+        className={cn(styles.container, { [styles.leaving]: !isPresent })}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
         data-testid="modal"
-        layout
-        transition={{
-          layout: {
-            duration: 0.3,
-            ease: 'easeInOut',
-          },
-        }}
       >
+        {/* Clicking outside the panel closes. The click target is a real
+            button under the panel rather than a handler on the dialog, so
+            assistive technology finds a named close control. It is kept out
+            of the tab order; Escape, handled above, is the keyboard's way. */}
+        {onClose && (
+          <button
+            type="button"
+            className={styles.backdropButton}
+            onClick={onClose}
+            disabled={loading}
+            tabIndex={-1}
+            aria-label="Loka glugga"
+          />
+        )}
         <motion.div
           className={styles.modalContainer}
           initial="closed"
           animate="open"
           exit="closed"
-          layout="position"
-          transition={{
-            layout: {
-              duration: 0.3,
-              ease: 'easeInOut',
-              type: 'tween',
-            },
-          }}
+          layout={animateLayout ? 'position' : false}
+          transition={
+            animateLayout
+              ? {
+                  layout: {
+                    duration: 0.3,
+                    ease: 'easeInOut',
+                    type: 'tween',
+                  },
+                }
+              : undefined
+          }
           variants={modalVariants}
         >
           {onClose && (
@@ -226,7 +229,7 @@ export const Modal: FC<PropsWithChildren<ModalProps>> = ({
             </Box>
           )}
         </motion.div>
-      </motion.div>
+      </div>
     </FocusLock>
   )
 }
@@ -248,6 +251,8 @@ export const ModalContainer = ({
     },
   }
 
+  const isPresent = useIsPresent()
+
   useKeyboardCombo('Escape', () => {
     onClose && onClose()
   })
@@ -264,35 +269,36 @@ export const ModalContainer = ({
 
   return (
     <FocusLock autoFocus={false}>
-      <motion.div
-        key="modal"
+      {/* CSS fade for the same reason as in Modal above. */}
+      <div
         className={cn(styles.container, {
           [styles.alignItems[position]]: position,
+          [styles.leaving]: !isPresent,
         })}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
         role="dialog"
         aria-modal="true"
         data-testid="modal"
-        onClick={() => {
-          onClose && onClose()
-        }}
       >
+        {/* Backdrop close button, as in Modal above. */}
+        {onClose && (
+          <button
+            type="button"
+            className={styles.backdropButton}
+            onClick={onClose}
+            tabIndex={-1}
+            aria-label="Loka glugga"
+          />
+        )}
         <motion.div
           className={styles.modalContainerBare}
           initial="closed"
           animate="open"
           exit="closed"
           variants={modalVariants}
-          onClick={(e) => {
-            // Prevent click events from bubbling up to the container
-            e.stopPropagation()
-          }}
         >
           {children}
         </motion.div>
-      </motion.div>
+      </div>
     </FocusLock>
   )
 }
@@ -307,6 +313,7 @@ const ModalPortal = ({
   children,
   loading,
   footerJustifyContent,
+  animateLayout,
 }: ModalProps) => {
   const modalRoot =
     document.getElementById('modal') ?? document.createElement('div')
@@ -322,6 +329,7 @@ const ModalPortal = ({
       children={children}
       loading={loading}
       footerJustifyContent={footerJustifyContent}
+      animateLayout={animateLayout}
     />,
     modalRoot,
   )

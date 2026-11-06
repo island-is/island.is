@@ -6,7 +6,7 @@ import {
   LayoutAnimation,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
-import { dynamicColor } from '../../utils/dynamic-color'
+import { dynamicColor, token } from '../../utils/dynamic-color'
 import { Typography } from '../typography/typography'
 
 const Host = styled.View`
@@ -20,10 +20,7 @@ const Card = styled.TouchableHighlight<{ open?: boolean }>`
     open ? 0 : theme.border.radius.large};
   border-bottom-right-radius: ${({ theme, open }) =>
     open ? 0 : theme.border.radius.large};
-  background-color: ${dynamicColor((props) => ({
-    dark: 'shade100',
-    light: props.theme.color.blue100,
-  }))};
+  background-color: ${token((t) => t.background.brandMinimal)};
 `
 
 const Container = styled.View`
@@ -44,7 +41,7 @@ const TitleText = styled(Typography)`
 const IconWrapper = styled.View`
   width: 24px;
   height: 24px;
-  background-color: white;
+  background-color: ${token((t) => t.background.invert)};
   justify-content: center;
   align-items: center;
   border-radius: ${({ theme }) => theme.border.radius.full};
@@ -69,6 +66,10 @@ const Message = styled(Typography)`
   margin-right: ${({ theme }) => theme.spacing[1]}px;
 `
 
+const Footer = styled.View`
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
+`
+
 const Expanded = styled.View`
   background-color: ${dynamicColor('background')};
   border-bottom-left-radius: ${({ theme }) => theme.border.radius.large};
@@ -83,6 +84,8 @@ interface CardProps {
   icon?: ImageSourcePropType
   value?: React.ReactNode
   topRightValue?: React.ReactNode
+  /** Always-visible content rendered below the message, in both states. */
+  footer?: React.ReactNode
   children?: React.ReactNode
   open?: boolean
   onPress?: () => void
@@ -116,6 +119,7 @@ export const ExpandableCard = ({
   topRightValue,
   message,
   value,
+  footer,
   children,
   open,
   onPress,
@@ -139,8 +143,8 @@ export const ExpandableCard = ({
         shadowOpacity: open ? 0.08 : 0,
         shadowRadius: 16,
         elevation: 1,
-        shadowColor: 'rgb(0, 32, 128)',
-        backgroundColor: theme.color.white,
+        shadowColor: theme.tokens.app.shadow.card,
+        backgroundColor: theme.tokens.background.invert,
       }}
       testID={testID}
     >
@@ -155,7 +159,8 @@ export const ExpandableCard = ({
           LayoutAnimation.configureNext(toggleAnimation)
           onPress?.()
         }}
-        underlayColor={theme.isDark ? theme.shade.shade200 : '#EBEBFA'}
+        underlayColor={theme.tokens.app.background.pressed}
+        activeOpacity={1}
         open={open}
       >
         <Container>
@@ -168,7 +173,7 @@ export const ExpandableCard = ({
                     style={{
                       width: 16,
                       height: 16,
-                      tintColor: titleColor ?? theme.color.blue400,
+                      tintColor: titleColor ?? theme.tokens.foreground.brand,
                       marginRight: theme.spacing.smallGutter,
                     }}
                   />
@@ -205,6 +210,7 @@ export const ExpandableCard = ({
             </IconMessage>
             <Typography variant="heading5">{value}</Typography>
           </Row>
+          {footer && <Footer>{footer}</Footer>}
         </Container>
       </Card>
       {open && <Expanded>{children}</Expanded>}

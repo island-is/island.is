@@ -1,8 +1,7 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 
 import { Text } from '@island.is/island-ui/core'
-
-import { CaseFile } from '../../graphql/schema'
+import type { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Props {
   caseFiles?: CaseFile[] | null

@@ -15,7 +15,14 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
-import { AppealCase } from '../appeal-case'
+import {
+  AppealCase,
+  AppealCourtSession,
+  AppealEventLog,
+  AppealStatementDeadline,
+  DeleteAppealCourtSessionResponse,
+} from '../appeal-case'
+import { AppealSummons } from '../appeal-summons'
 import {
   Case,
   RequestSignatureResponse,
@@ -60,11 +67,13 @@ import {
   PoliceDefendant,
   UploadPoliceCaseFileResponse,
 } from '../police'
+import { ServiceInterruptionBanner } from '../service-interruption-banner'
 import { CaseDataExportInput, CaseStatistics } from '../statistics'
 import { Subpoena } from '../subpoena'
 import { DeliverCaseVerdictResponse, Verdict } from '../verdict'
 import { DeleteVictimResponse, Victim } from '../victim'
 import { backendModuleConfig } from './backend.config'
+import { withTraceContext } from './traceContext'
 
 type Transformer<TResult> = (data: never) => TResult
 
@@ -131,17 +140,18 @@ export class BackendService {
     options: RequestInit,
     transformer?: Transformer<TResult>,
   ): Promise<TResult> {
-    return fetch(`${this.config.backendUrl}/api/${route}`, options).then(
-      async (res) => {
-        const response = await res.json()
+    return fetch(
+      `${this.config.backendUrl}/api/${route}`,
+      withTraceContext(options),
+    ).then(async (res) => {
+      const response = await res.json()
 
-        if (res.ok) {
-          return transformer ? transformer(response as never) : response
-        }
+      if (res.ok) {
+        return transformer ? transformer(response as never) : response
+      }
 
-        throw new ProblemError(response)
-      },
-    )
+      throw new ProblemError(response)
+    })
   }
 
   private get<TResult>(
@@ -231,6 +241,19 @@ export class BackendService {
     updateMessageSuspension: unknown,
   ): Promise<MessageSuspension> {
     return this.patch(`message-suspension/${category}`, updateMessageSuspension)
+  }
+
+  getServiceInterruptionBanner(): Promise<ServiceInterruptionBanner> {
+    return this.get('service-interruption-banner')
+  }
+
+  updateServiceInterruptionBanner(
+    updateServiceInterruptionBanner: unknown,
+  ): Promise<ServiceInterruptionBanner> {
+    return this.patch(
+      'service-interruption-banner',
+      updateServiceInterruptionBanner,
+    )
   }
 
   getCase(caseId: string): Promise<Case> {
@@ -342,6 +365,61 @@ export class BackendService {
     return this.patch(
       `case/${caseId}/appealCase/${appealCaseId}`,
       updateAppealCase,
+    )
+  }
+
+  setAppealStatementDeadline(
+    caseId: string,
+    appealCaseId: string,
+    setAppealStatementDeadline: unknown,
+  ): Promise<AppealStatementDeadline> {
+    return this.post(
+      `case/${caseId}/appealCase/${appealCaseId}/statementDeadline`,
+      setAppealStatementDeadline,
+    )
+  }
+
+  fileAppealStatement(
+    caseId: string,
+    appealCaseId: string,
+    fileAppealStatement: unknown,
+  ): Promise<AppealEventLog> {
+    return this.post(
+      `case/${caseId}/appealCase/${appealCaseId}/statement`,
+      fileAppealStatement,
+    )
+  }
+
+  createAppealCourtSession(
+    caseId: string,
+    appealCaseId: string,
+    createAppealCourtSession: unknown,
+  ): Promise<AppealCourtSession> {
+    return this.post(
+      `case/${caseId}/appealCase/${appealCaseId}/courtSession`,
+      createAppealCourtSession,
+    )
+  }
+
+  updateAppealCourtSession(
+    caseId: string,
+    appealCaseId: string,
+    appealCourtSessionId: string,
+    updateAppealCourtSession: unknown,
+  ): Promise<AppealCourtSession> {
+    return this.patch(
+      `case/${caseId}/appealCase/${appealCaseId}/courtSession/${appealCourtSessionId}`,
+      updateAppealCourtSession,
+    )
+  }
+
+  deleteAppealCourtSession(
+    caseId: string,
+    appealCaseId: string,
+    appealCourtSessionId: string,
+  ): Promise<DeleteAppealCourtSessionResponse> {
+    return this.delete(
+      `case/${caseId}/appealCase/${appealCaseId}/courtSession/${appealCourtSessionId}`,
     )
   }
 
@@ -515,6 +593,14 @@ export class BackendService {
     return this.post(`case/${caseId}/file/${fileId}/confirm`)
   }
 
+  attachRulingOrderDocument(
+    caseId: string,
+    fileId: string,
+    attachDocument: unknown,
+  ): Promise<CaseFile> {
+    return this.post(`case/${caseId}/file/${fileId}/document`, attachDocument)
+  }
+
   deleteCaseFile(caseId: string, fileId: string): Promise<DeleteFileResponse> {
     return this.delete(`case/${caseId}/file/${fileId}`)
   }
@@ -603,6 +689,13 @@ export class BackendService {
     )
   }
 
+  updateDefendants(
+    caseId: string,
+    updateDefendants: unknown,
+  ): Promise<Defendant[]> {
+    return this.patch(`case/${caseId}/defendant`, updateDefendants)
+  }
+
   limitedAccessUpdateDefendant(
     caseId: string,
     defendantId: string,
@@ -640,6 +733,51 @@ export class BackendService {
     },
   ): Promise<Subpoena[]> {
     return this.post(`case/${caseId}/subpoenas`, createSubpoenas)
+  }
+
+  createAppealSummons(
+    caseId: string,
+    createAppealSummons: { defendants: unknown[] },
+  ): Promise<AppealSummons> {
+    return this.post(`case/${caseId}/appealSummons`, createAppealSummons)
+  }
+
+  updateAppealSummons(
+    caseId: string,
+    appealSummonsId: string,
+    updateAppealSummons: { defendants: unknown[] },
+  ): Promise<AppealSummons> {
+    return this.patch(
+      `case/${caseId}/appealSummons/${appealSummonsId}`,
+      updateAppealSummons,
+    )
+  }
+
+  deleteAppealSummons(
+    caseId: string,
+    appealSummonsId: string,
+  ): Promise<{ deleted: boolean }> {
+    return this.delete(`case/${caseId}/appealSummons/${appealSummonsId}`)
+  }
+
+  confirmAppealSummons(
+    caseId: string,
+    appealSummonsId: string,
+  ): Promise<AppealSummons> {
+    return this.patch(
+      `case/${caseId}/appealSummons/${appealSummonsId}/confirm`,
+      {},
+    )
+  }
+
+  sendAppealSummonsToCourtOfAppeals(
+    caseId: string,
+    appealSummonsId: string,
+  ): Promise<AppealSummons> {
+    return this.patch(
+      `case/${caseId}/appealSummons/${appealSummonsId}/sendToCourtOfAppeals`,
+      {},
+    )
   }
 
   createVerdicts(caseId: string, createVerdicts: unknown): Promise<Verdict[]> {
@@ -782,6 +920,16 @@ export class BackendService {
     updateAppealDecision: unknown,
   ): Promise<AppealDecisionResponse> {
     return this.patch(`case/${caseId}/appealDecision`, updateAppealDecision)
+  }
+
+  pronounceRulingOrally(
+    caseId: string,
+    courtSessionId: string,
+  ): Promise<CourtSessionResponse> {
+    return this.post(
+      `case/${caseId}/courtSession/${courtSessionId}/pronounceRulingOrally`,
+      {},
+    )
   }
 
   deleteCourtSession(
@@ -986,16 +1134,6 @@ export class BackendService {
     return this.callBackend<User[]>(`user?${params.toString()}`, {
       headers: this.secretTokenHeaders,
     })
-  }
-
-  findDefenderByNationalId(nationalId: string): Promise<User> {
-    const params = new URLSearchParams()
-    params.append('nationalId', nationalId)
-
-    return this.callBackend<User>(
-      `cases/limitedAccess/defender?${params.toString()}`,
-      { headers: this.secretTokenHeaders },
-    )
   }
 
   getLawyers(lawyerType?: LawyerType): Promise<Lawyer[]> {

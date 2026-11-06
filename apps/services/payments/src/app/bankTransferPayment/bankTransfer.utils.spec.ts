@@ -1,40 +1,37 @@
 import {
   BankTransferFailureReason,
+  BankTransferPayerType,
   BankTransferStatus,
   BankTransferPendingStatus,
 } from './bankTransfer.types'
 import {
+  bankName,
+  bankTransferLogContext,
+  buildBankTransferPayInfo,
   deriveBankTransferFailureReason,
+  getBankTransferDebtor,
+  getBankTransferPayerType,
   isOnboardingRequired,
   mapRawStatusToBankTransferPendingStatus,
+  rowLogContext,
 } from './bankTransfer.utils'
 
 const onboardingOrigin = 'https://light.blikk.tech'
 
 describe('mapRawStatusToBankTransferPendingStatus', () => {
-  const scaUrl = 'https://stage.blikk.tech/sca/p-1'
-
-  it.each<[string, string | undefined, BankTransferPendingStatus]>([
-    ['SCA_REQUIRED', scaUrl, BankTransferPendingStatus.SCA_REQUIRED],
-    ['SCA_REQUIRED', undefined, BankTransferPendingStatus.SCA_REQUIRED],
-    // DRAFT only advances once the payer initiates — with an SCA URL present the payer
-    // must act, so it renders the SCA UI (prevents a dots→QR flicker right after create).
-    ['DRAFT', scaUrl, BankTransferPendingStatus.SCA_REQUIRED],
-    ['DRAFT', undefined, BankTransferPendingStatus.PROCESSING],
-    // …but an onboarding URL is handled via redirect, not the SCA UI.
-    [
-      'DRAFT',
-      'https://light.blikk.tech/onboarding/p-1',
-      BankTransferPendingStatus.PROCESSING,
-    ],
-    ['PENDING', scaUrl, BankTransferPendingStatus.PROCESSING],
-    ['SCA_COMPLETE', scaUrl, BankTransferPendingStatus.PROCESSING],
+  it.each<[string, BankTransferPendingStatus]>([
+    // SCA_REQUIRED is the only status that asks the payer to act — with or without a URL, since
+    // Blikk omits one for back-channel banks that push to the banking app instead.
+    ['SCA_REQUIRED', BankTransferPendingStatus.SCA_REQUIRED],
+    // Everything before it is "waiting": Blikk has not yet decided whether there is an SCA URL,
+    // so a create-time URL must not put the payer into the SCA UI.
+    ['DRAFT', BankTransferPendingStatus.PROCESSING],
+    ['PENDING', BankTransferPendingStatus.PROCESSING],
+    ['SCA_COMPLETE', BankTransferPendingStatus.PROCESSING],
     // Unknown statuses fall back to processing (keep polling, no SCA UI).
-    ['WAT', scaUrl, BankTransferPendingStatus.PROCESSING],
-  ])('maps %s (url: %s) to %s', (rawStatus, url, expected) => {
-    expect(
-      mapRawStatusToBankTransferPendingStatus(rawStatus, url, onboardingOrigin),
-    ).toBe(expected)
+    ['WAT', BankTransferPendingStatus.PROCESSING],
+  ])('maps %s to %s', (rawStatus, expected) => {
+    expect(mapRawStatusToBankTransferPendingStatus(rawStatus)).toBe(expected)
   })
 })
 
@@ -126,5 +123,158 @@ describe('deriveBankTransferFailureReason', () => {
     [BankTransferStatus.PENDING, expired, null],
   ])('derives %s on %o as %s', (status, row, expectedReason) => {
     expect(deriveBankTransferFailureReason(status, row)).toBe(expectedReason)
+  })
+})
+
+describe('getBankTransferDebtor', () => {
+  const person = '0101302129'
+  const company = '6010100890'
+  const temporary = '8123456789'
+
+  it.each([
+    ['an individual payer', person, undefined, { debtorExternalId: person }],
+    // An individual sent alongside a non-company payer does not change who is debited.
+    [
+      'an individual payer with an individual',
+      person,
+      '0101307789',
+      { debtorExternalId: person },
+    ],
+    [
+      'a company payer with an individual',
+      company,
+      person,
+      { debtorExternalId: person, debtorCorpExternalId: company },
+    ],
+    ['a company payer without an individual', company, undefined, null],
+    ['a company payer with a company', company, company, null],
+    ['a company payer with a temporary kennitala', company, temporary, null],
+    ['a temporary-kennitala payer', temporary, undefined, null],
+  ])('resolves %s', (_, payerNationalId, actorNationalId, expected) => {
+    expect(getBankTransferDebtor(payerNationalId, actorNationalId)).toEqual(
+      expected,
+    )
+  })
+})
+
+describe('getBankTransferPayerType', () => {
+  it.each([
+    ['a company', '6010100890', BankTransferPayerType.COMPANY],
+    ['a person', '0101302129', BankTransferPayerType.PERSON],
+    ['a temporary kennitala', '8123456789', undefined],
+  ])('resolves %s', (_, payerNationalId, expected) => {
+    expect(getBankTransferPayerType(payerNationalId)).toBe(expected)
+  })
+})
+
+describe('rowLogContext', () => {
+  const row = {
+    paymentFlowId: 'flow-1',
+    id: 'corr-1',
+    providerPaymentId: 'prov-1',
+  }
+
+  // `create` stores the authorising individual for a company payer only.
+  it.each([
+    ['a company payer', '0101302129', BankTransferPayerType.COMPANY],
+    ['a person payer', null, BankTransferPayerType.PERSON],
+  ])('logs %s', (_, actorNationalId, payerType) => {
+    expect(rowLogContext({ ...row, actorNationalId })).toEqual({
+      paymentFlowId: 'flow-1',
+      correlationId: 'corr-1',
+      rrn: 'prov-1',
+      payerType,
+    })
+  })
+
+  it('logs the bank from the stored bank code', () => {
+    expect(
+      rowLogContext({ ...row, actorNationalId: null, bankCode: '0133' }),
+    ).toMatchObject({ bankCode: '0133', bank: 'Landsbankinn' })
+  })
+
+  // Winston drops undefined fields, so a row from before the column logs neither.
+  it('leaves the bank out for a row without a bank code', () => {
+    const logged = JSON.parse(
+      JSON.stringify(
+        rowLogContext({ ...row, actorNationalId: null, bankCode: null }),
+      ),
+    )
+
+    expect(logged).not.toHaveProperty('bankCode')
+    expect(logged).not.toHaveProperty('bank')
+  })
+})
+
+describe('bankTransferLogContext', () => {
+  it('logs the bank code and the bank it names', () => {
+    expect(
+      bankTransferLogContext(
+        'flow-1',
+        'corr-1',
+        'prov-1',
+        BankTransferPayerType.PERSON,
+        '2200',
+      ),
+    ).toEqual({
+      paymentFlowId: 'flow-1',
+      correlationId: 'corr-1',
+      rrn: 'prov-1',
+      payerType: BankTransferPayerType.PERSON,
+      bankCode: '2200',
+      bank: 'indó',
+    })
+  })
+
+  it('leaves the bank out when the call site has no bank code', () => {
+    const logged = JSON.parse(
+      JSON.stringify(
+        bankTransferLogContext(
+          'flow-1',
+          'corr-1',
+          'prov-1',
+          BankTransferPayerType.PERSON,
+        ),
+      ),
+    )
+
+    expect(logged).not.toHaveProperty('bankCode')
+    expect(logged).not.toHaveProperty('bank')
+  })
+})
+
+describe('bankName', () => {
+  // The first two digits name the bank; the last two are the branch.
+  it.each([
+    ['0101', 'Landsbankinn'],
+    ['0133', 'Landsbankinn'],
+    ['0301', 'Arion banki'],
+    ['0515', 'Íslandsbanki'],
+    ['0701', 'Kvika banki'],
+    ['1135', 'Sparisjóðirnir'],
+    ['2200', 'indó'],
+  ])('names %s as %s', (bankCode, expected) => {
+    expect(bankName(bankCode)).toBe(expected)
+  })
+
+  it('falls back to the code for a bank it does not know', () => {
+    expect(bankName('0999')).toBe('0999')
+  })
+})
+
+describe('buildBankTransferPayInfo', () => {
+  it('carries the provider payment id in RRN and the attempt id as correlation id', () => {
+    expect(
+      buildBankTransferPayInfo({
+        providerPaymentId: 'provider-1',
+        totalPrice: 1500,
+        correlationId: 'btp-1',
+      }),
+    ).toEqual({
+      kind: 'transfer',
+      RRN: 'provider-1',
+      payableAmount: 1500,
+      correlationId: 'btp-1',
+    })
   })
 })

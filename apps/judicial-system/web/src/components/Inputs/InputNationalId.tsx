@@ -1,14 +1,14 @@
-import { ChangeEvent, FC, FocusEvent, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
+import type { ChangeEvent, FC, FocusEvent } from 'react'
+import { useEffect, useState } from 'react'
 import { InputMask } from '@react-input/mask'
 
 import { Input } from '@island.is/island-ui/core'
 import { EDITABLE_DATE, SSN } from '@island.is/judicial-system/consts'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { validate } from '../../utils/validate'
-import { InputProps } from './types'
+import type { InputProps } from './types'
 
 interface Props extends InputProps {
   isDateOfBirth: boolean
@@ -42,8 +42,6 @@ const InputNationalId: FC<Props> = (props) => {
     onChange,
     disabled,
   } = props
-
-  const { formatMessage } = useIntl()
 
   const [errorMessage, setErrorMessage] = useState<string>()
   const [inputValue, setInputValue] = useState<string>(value ?? '')
@@ -96,18 +94,13 @@ const InputNationalId: FC<Props> = (props) => {
       hasError={Boolean(errorMessage)}
       placeholder={
         placeholder ??
-        formatMessage(
-          isDateOfBirth ? core.dateOfBirthPlaceholder : core.nationalId,
-        )
+        (isDateOfBirth ? core.dateOfBirthPlaceholder : core.nationalId)
       }
       required={required}
       name="nationalId"
       id="nationalId"
       autoComplete="off"
-      label={
-        label ??
-        formatMessage(isDateOfBirth ? core.dateOfBirth : core.nationalId)
-      }
+      label={label ?? (isDateOfBirth ? core.dateOfBirth : core.nationalId)}
     />
   )
 }

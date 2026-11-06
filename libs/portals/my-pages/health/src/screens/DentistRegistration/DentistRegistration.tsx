@@ -148,7 +148,7 @@ export const DentistRegistration = () => {
           />
         </Box>
       )}
-      <Box marginBottom={3} display="flex" justifyContent="flexStart">
+      <Box className={styles.filterWrapperStyle} marginBottom={3}>
         <FilterInput
           name="filter"
           placeholder={formatMessage(m.searchPlaceholder)}

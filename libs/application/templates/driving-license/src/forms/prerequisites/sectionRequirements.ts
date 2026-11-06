@@ -12,6 +12,7 @@ import { m } from '../../lib/messages'
 export const sectionRequirements = (
   allow65RenewalRedesign = false,
   allowBTempRedesign = false,
+  allowBFullRedesign = false,
 ) =>
   buildSubSection({
     id: 'requirements',
@@ -29,6 +30,10 @@ export const sectionRequirements = (
           buildHiddenInput({
             id: 'isBTempRedesignEnabled',
             defaultValue: () => allowBTempRedesign,
+          }),
+          buildHiddenInput({
+            id: 'isBFullRedesignEnabled',
+            defaultValue: () => allowBFullRedesign,
           }),
           buildCustomField({
             title: m.eligibilityRequirementTitle,

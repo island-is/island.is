@@ -44,4 +44,5 @@ export const strings = {
   [Substance.ZOLPIDEM]: 'Zolpídem',
   [Substance.ALCOHOL]: 'Áfengi',
   [Substance.OLANZAPIN]: 'Olanzapín',
+  [Substance.ORPHENADRINE]: 'Orfenadrín',
 }

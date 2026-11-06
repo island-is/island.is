@@ -1,5 +1,4 @@
 import React, { useContext } from 'react'
-import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 
 import { Box, RadioButton } from '@island.is/island-ui/core'
@@ -9,13 +8,13 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import VerdictAppealDecisionChoice from '@island.is/judicial-system-web/src/components/VerdictAppealDecisionChoice/VerdictAppealDecisionChoice'
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Defendant,
   InformationForDefendant as InformationForDefendantEnum,
+  ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { ServiceRequirement } from '@island.is/judicial-system-web/src/graphql/schema'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isSentToPublicProsecutor } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { InformationForDefendant } from './InformationForDefendant'
@@ -64,7 +63,6 @@ export const DefendantServiceRequirement = ({
 }: {
   defendant: Defendant
 }) => {
-  const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { setAndSendVerdictToServer } = useVerdict()
   const { verdict } = defendant
@@ -79,8 +77,8 @@ export const DefendantServiceRequirement = ({
 
   return (
     <Box component="section">
-      <BlueBox className={grid({ gap: 3 })}>
-        <div className={grid({ gap: 2 })}>
+      <BlueBox className={stack({ gap: 3 })}>
+        <div className={stack({ gap: 2 })}>
           <SectionHeading
             title={defendant.name || ''}
             marginBottom={0}
@@ -107,7 +105,7 @@ export const DefendantServiceRequirement = ({
             }}
             large
             backgroundColor="white"
-            label={formatMessage(strings.serviceRequirementNotApplicable)}
+            label={strings.serviceRequirementNotApplicable}
           />
           <RadioButton
             id={`defendant-${defendant.id}-service-requirement-required`}
@@ -144,7 +142,7 @@ export const DefendantServiceRequirement = ({
             }}
             large
             backgroundColor="white"
-            label={formatMessage(strings.serviceRequirementRequired)}
+            label={strings.serviceRequirementRequired}
           />
           <RadioButton
             id={`defendant-${defendant.id}-service-requirement-not-required`}
@@ -167,10 +165,8 @@ export const DefendantServiceRequirement = ({
             }}
             large
             backgroundColor="white"
-            label={formatMessage(strings.serviceRequirementNotRequired)}
-            tooltip={formatMessage(
-              strings.serviceRequirementNotRequiredTooltip,
-            )}
+            label={strings.serviceRequirementNotRequired}
+            tooltip={strings.serviceRequirementNotRequiredTooltip}
           />
         </div>
         <AnimatedSection

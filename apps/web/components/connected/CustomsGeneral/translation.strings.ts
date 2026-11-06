@@ -13,6 +13,11 @@ export const m = defineMessages({
     description:
       'Generic error message shown when a customs general query fails',
   },
+  noResults: {
+    id: 'web.customsGeneral:noResults',
+    defaultMessage: 'Engar niðurstöður fundust.',
+    description: 'Shown when a customs general query returns no rows',
+  },
   dateLabel: {
     id: 'web.customsGeneral:dateLabel',
     defaultMessage: 'Viðmiðunardagsetning',
@@ -42,6 +47,16 @@ export const m = defineMessages({
     id: 'web.customsGeneral:columnValidTo',
     defaultMessage: 'Gildir til',
     description: 'Table column header: valid to date',
+  },
+  systemImport: {
+    id: 'web.customsGeneral:systemImport',
+    defaultMessage: 'Innflutningur',
+    description: 'Direction toggle label: import',
+  },
+  systemExport: {
+    id: 'web.customsGeneral:systemExport',
+    defaultMessage: 'Útflutningur',
+    description: 'Direction toggle label: export',
   },
 
   // StorageLocations columns
@@ -191,11 +206,6 @@ export const m = defineMessages({
     id: 'web.customsGeneral:tollarBackToList',
     defaultMessage: 'Sjá lista yfir tolla',
     description: 'Tariffs detail view: back to list button label',
-  },
-  tariffName: {
-    id: 'web.customsGeneral:tollarHeitiTolls',
-    defaultMessage: 'Heiti tolls',
-    description: 'Tariffs detail view label: tariff name',
   },
   tariffDescription: {
     id: 'web.customsGeneral:tollarSkilmalar',

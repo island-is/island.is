@@ -1,10 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const unemploymentBenefitsMessages = defineMessages({
-  unemploymentBenefits: {
-    id: 'sp.social-benefits-unemployment:unemploymentBenefits',
-    defaultMessage: 'Atvinnuleysisbætur',
-  },
   title: {
     id: 'sp.social-benefits-unemployment:title',
     defaultMessage: 'Staðan þín',
@@ -77,18 +73,6 @@ export const unemploymentBenefitsMessages = defineMessages({
     id: 'sp.social-benefits-unemployment:statusTabApplicantMobile',
     defaultMessage: 'Upplýsingar',
   },
-  statusDataLabel: {
-    id: 'sp.social-benefits-unemployment:statusDataLabel',
-    defaultMessage: 'Gögn',
-  },
-  statusDataContent: {
-    id: 'sp.social-benefits-unemployment:statusDataContent',
-    defaultMessage: 'Nánari upplýsingar má finna undir Mín gögn',
-  },
-  statusDataMissing: {
-    id: 'sp.social-benefits-unemployment:statusDataMissing',
-    defaultMessage: 'Vantar gögn',
-  },
   jobSearchConfirmationHeading: {
     id: 'sp.social-benefits-unemployment:jobSearchConfirmationHeading',
     defaultMessage: 'Staðfesta atvinnuleit',
@@ -110,78 +94,6 @@ export const unemploymentBenefitsMessages = defineMessages({
     id: 'sp.social-benefits-unemployment:jobSearchConfirmationNextDate',
     defaultMessage: 'Næst: {dateRange}',
     description: 'Label for next job search confirmation date range',
-  },
-  yes: {
-    id: 'sp.social-benefits-unemployment:yes',
-    defaultMessage: 'Já',
-  },
-  no: {
-    id: 'sp.social-benefits-unemployment:no',
-    defaultMessage: 'Nei',
-  },
-  applicantPassCode: {
-    id: 'sp.social-benefits-unemployment:applicantPassCode',
-    defaultMessage: 'Lykilorð',
-  },
-  applicantPreferredJobs: {
-    id: 'sp.social-benefits-unemployment:applicantPreferredJobs',
-    defaultMessage: 'Óskastörf',
-  },
-  applicantBankAccount: {
-    id: 'sp.social-benefits-unemployment:applicantBankAccount',
-    defaultMessage: 'Innleggsreikningur',
-  },
-  applicantUnion: {
-    id: 'sp.social-benefits-unemployment:applicantUnion',
-    defaultMessage: 'Stéttarfélag',
-  },
-  applicantPensionFund: {
-    id: 'sp.social-benefits-unemployment:applicantPensionFund',
-    defaultMessage: 'Lífeyrissjóður',
-  },
-  applicantUsedPersonalTaxCredit: {
-    id: 'sp.social-benefits-unemployment:applicantUsedPersonalTaxCredit',
-    defaultMessage: 'Nýting persónuafsláttar',
-  },
-  applicantNumberOfChildren: {
-    id: 'sp.social-benefits-unemployment:applicantNumberOfChildren',
-    defaultMessage: 'Börn á framfæri',
-  },
-  applicantEmploymentHistory: {
-    id: 'sp.social-benefits-unemployment:applicantEmploymentHistory',
-    defaultMessage: 'Atvinnuferill',
-  },
-  applicantEducationHistory: {
-    id: 'sp.social-benefits-unemployment:applicantEducationHistory',
-    defaultMessage: 'Menntun',
-  },
-  applicantDrivingLicenses: {
-    id: 'sp.social-benefits-unemployment:applicantDrivingLicenses',
-    defaultMessage: 'Ökuréttindi',
-  },
-  applicantLanguageAbilities: {
-    id: 'sp.social-benefits-unemployment:applicantLanguageAbilities',
-    defaultMessage: 'Tungumál',
-  },
-  applicantServiceArea: {
-    id: 'sp.social-benefits-unemployment:applicantServiceArea',
-    defaultMessage: 'Þjónustuskrifstofa',
-  },
-  applicantCurrentAddressDifferent: {
-    id: 'sp.social-benefits-unemployment:applicantCurrentAddressDifferent',
-    defaultMessage: 'Dvalarstaður annar en lögheimili',
-  },
-  applicantSavedToEures: {
-    id: 'sp.social-benefits-unemployment:applicantSavedToEures',
-    defaultMessage: 'Skráning á EURES svæðinu',
-  },
-  applicantEditInfo: {
-    id: 'sp.social-benefits-unemployment:applicantEditInfo',
-    defaultMessage: 'Breyta upplýsingum',
-  },
-  applicantEditInfoUrl: {
-    id: 'sp.social-benefits-unemployment:applicantEditInfoUrl',
-    defaultMessage: 'https://island.is/umsoknir/breyta-upplysingum',
   },
   myDataTitle: {
     id: 'sp.social-benefits-unemployment:myDataTitle',
@@ -228,5 +140,66 @@ export const unemploymentBenefitsMessages = defineMessages({
   myDataAttachmentError: {
     id: 'sp.social-benefits-unemployment:myDataAttachmentError',
     defaultMessage: 'Ekki tókst að sækja skjal',
+  },
+  incomeTitle: {
+    id: 'sp.social-benefits-unemployment:incomeTitle',
+    defaultMessage: 'Tekjur',
+  },
+  incomeIntro: {
+    id: 'sp.social-benefits-unemployment:incomeIntro',
+    defaultMessage:
+      'Hér fyrir neðan er yfirlit yfir þær tekjur sem þú hefur skráð meðfram atvinnuleysisbótum.',
+  },
+  reportedIncomeTypeHeader: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTypeHeader',
+    defaultMessage: 'Tegund greiðslu',
+  },
+  reportedIncomePayerHeader: {
+    id: 'sp.social-benefits-unemployment:reportedIncomePayerHeader',
+    defaultMessage: 'Greiðandi',
+  },
+  reportedIncomeDateHeader: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeDateHeader',
+    defaultMessage: 'Dagsetning frá',
+  },
+  reportedIncomeDateToHeader: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeDateToHeader',
+    defaultMessage: 'Dagsetning til',
+  },
+  reportedIncomeAmountHeader: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeAmountHeader',
+    defaultMessage: 'Upphæð',
+  },
+  reportedIncomeTypeIrregular: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTypeIrregular',
+    defaultMessage: 'Tilfallandi tekjur',
+  },
+  reportedIncomeTypePartTime: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTypePartTime',
+    defaultMessage: 'Hlutastarf',
+  },
+  reportedIncomeTypePension: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTypePension',
+    defaultMessage: 'Lífeyrir',
+  },
+  reportedIncomeTypeCapital: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTypeCapital',
+    defaultMessage: 'Fjármagnstekjur',
+  },
+  reportedIncomeTypeTR: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTypeTR',
+    defaultMessage: 'Greiðslur frá TR',
+  },
+  reportedIncomeTypeContractor: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTypeContractor',
+    defaultMessage: 'Verktakastarf',
+  },
+  reportedIncomeTRPayer: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTRPayer',
+    defaultMessage: 'Tryggingastofnun',
+  },
+  reportedIncomeEmpty: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeEmpty',
+    defaultMessage: 'Engar tilkynntar tekjur fundust',
   },
 })

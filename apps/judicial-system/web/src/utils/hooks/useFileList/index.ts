@@ -1,24 +1,48 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { validate as validateUuid } from 'uuid'
+import type { ApolloError } from '@apollo/client'
 
-import { toast, UploadFile } from '@island.is/island-ui/core'
+import type { UploadFile } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
+import useIsMobile from '@island.is/judicial-system-web/src/utils/hooks/useIsMobile/useIsMobile'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
-import useIsMobile from '../useIsMobile/useIsMobile'
-import {
-  GetSignedUrlQuery,
-  useGetSignedUrlLazyQuery,
-} from './getSigendUrl.generated'
-import {
-  LimitedAccessGetSignedUrlQuery,
-  useLimitedAccessGetSignedUrlLazyQuery,
-} from './limitedAccessGetSigendUrl.generated'
+import type { GetSignedUrlQuery } from './getSignedUrl.generated'
+import { useGetSignedUrlLazyQuery } from './getSignedUrl.generated'
+import type { LimitedAccessGetSignedUrlQuery } from './limitedAccessGetSignedUrl.generated'
+import { useLimitedAccessGetSignedUrlLazyQuery } from './limitedAccessGetSignedUrl.generated'
+
+type LocalFilePreviewResult =
+  | { action: 'createObjectURL'; blob: Blob }
+  | { action: 'unavailable' }
+
+export const resolveLocalFilePreview = (file: {
+  originalFileObj?: File | Blob | null
+}): LocalFilePreviewResult => {
+  if (!file.originalFileObj) {
+    return { action: 'unavailable' }
+  }
+
+  return { action: 'createObjectURL', blob: file.originalFileObj }
+}
+
+// A file the server reports missing or inaccessible. Consumers show these in
+// the FileNotFoundModal, so they are not toasted as a failed download as well.
+export const isFileNotFoundError = (
+  error: Pick<ApolloError, 'graphQLErrors'>,
+) => {
+  const code = error.graphQLErrors?.[0]?.extensions?.code
+
+  return (
+    code === 'https://httpstatuses.org/404' ||
+    code === 'https://httpstatuses.org/403'
+  )
+}
 
 interface Parameters {
   caseId: string
@@ -28,7 +52,6 @@ interface Parameters {
 const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
   const { limitedAccess } = useContext(UserContext)
   const { setWorkingCase } = useContext(FormContext)
-  const { formatMessage } = useIntl()
   const isMobile = useIsMobile()
   const [fileNotFound, setFileNotFound] = useState<boolean>()
 
@@ -39,18 +62,24 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
     [isMobile],
   )
 
+  const reportOpenFailure = useCallback((error: ApolloError) => {
+    if (!isFileNotFoundError(error)) {
+      toast.error(errors.openDocument)
+    }
+  }, [])
+
   // Lazy queries
   const [getSignedUrl, fullAccessQueryState] = useGetSignedUrlLazyQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
-    onError: () => toast.error(formatMessage(errors.openDocument)),
+    onError: reportOpenFailure,
   })
 
   const [limitedAccessGetSignedUrl, limitedAccessQueryState] =
     useLimitedAccessGetSignedUrlLazyQuery({
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',
-      onError: () => toast.error(formatMessage(errors.openDocument)),
+      onError: reportOpenFailure,
     })
 
   // Error handling
@@ -63,11 +92,7 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
       : fullAccessQueryState.variables
 
     if (error && variables) {
-      const code = error.graphQLErrors?.[0]?.extensions?.code
-      if (
-        code === 'https://httpstatuses.org/404' ||
-        code === 'https://httpstatuses.org/403'
-      ) {
+      if (isFileNotFoundError(error)) {
         setFileNotFound(true)
         setWorkingCase((prev) => ({
           ...prev,
@@ -96,8 +121,16 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
   ])
 
   // Unified helper: get a signed URL
+  // mergedCaseId names the merged case a single file belongs to, for a list
+  // that is mostly this case's own files but holds a few from cases merged into
+  // it - the court record, where a document copied in from a merged case still
+  // points at that case's file. A list that is wholly a merged case's files
+  // says so once, through connectedCaseParentId, and passes nothing here.
   const getFileUrl = useCallback(
-    async (fileId: string): Promise<string | undefined> => {
+    async (
+      fileId: string,
+      mergedCaseId?: string,
+    ): Promise<string | undefined> => {
       const query = limitedAccess ? limitedAccessGetSignedUrl : getSignedUrl
       try {
         const { data } = await query({
@@ -105,17 +138,19 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
             input: {
               id: fileId,
               caseId: connectedCaseParentId ?? caseId,
-              mergedCaseId: connectedCaseParentId && caseId,
+              mergedCaseId: mergedCaseId ?? (connectedCaseParentId && caseId),
             },
           },
         })
 
+        // With errorPolicy 'all' a failed request resolves without data and
+        // is reported by onError, so reading it must not throw into the catch.
         return limitedAccess
-          ? (data as LimitedAccessGetSignedUrlQuery).limitedAccessGetSignedUrl
-              ?.url
-          : (data as GetSignedUrlQuery).getSignedUrl?.url
+          ? (data as LimitedAccessGetSignedUrlQuery | undefined)
+              ?.limitedAccessGetSignedUrl?.url
+          : (data as GetSignedUrlQuery | undefined)?.getSignedUrl?.url
       } catch {
-        toast.error(formatMessage(errors.openDocument))
+        toast.error(errors.openDocument)
         return undefined
       }
     },
@@ -125,14 +160,13 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
       getSignedUrl,
       connectedCaseParentId,
       caseId,
-      formatMessage,
     ],
   )
 
   // Handlers
   const onOpen = useCallback(
-    async (fileId: string) => {
-      const url = await getFileUrl(fileId)
+    async (fileId: string, mergedCaseId?: string) => {
+      const url = await getFileUrl(fileId, mergedCaseId)
 
       if (url) openFile(url)
     },
@@ -144,7 +178,14 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
       if (!file.id) return
 
       if (!validateUuid(file.id)) {
-        const previewUrl = URL.createObjectURL(file.originalFileObj as Blob)
+        const localPreview = resolveLocalFilePreview(file)
+
+        if (localPreview.action === 'unavailable') {
+          toast.warning('Skjalið er ekki tilbúið')
+          return
+        }
+
+        const previewUrl = URL.createObjectURL(localPreview.blob)
         openFile(previewUrl)
         setTimeout(() => URL.revokeObjectURL(previewUrl), 1000 * 60)
       } else {

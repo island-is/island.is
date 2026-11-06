@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   preset: './jest.preset.js',
   rootDir: '../../..',
@@ -11,5 +10,6 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '<rootDir>/coverage/libs/application/ui-fields',
+  setupFilesAfterEnv: [`${__dirname}/jest.setup.ts`],
   displayName: 'application-ui-fields',
 }

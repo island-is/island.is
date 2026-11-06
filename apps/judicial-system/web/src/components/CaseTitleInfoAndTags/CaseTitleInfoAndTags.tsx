@@ -1,20 +1,24 @@
-import { FC, useContext } from 'react'
+import type { FC } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import DateLabel from '@island.is/judicial-system-web/src/components/DateLabel/DateLabel'
+import RulingDateLabel from '@island.is/judicial-system-web/src/components/DateLabel/RulingDateLabel'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import PageTitle from '@island.is/judicial-system-web/src/components/PageTitle/PageTitle'
+import RestrictionTags from '@island.is/judicial-system-web/src/components/RestrictionTags/RestrictionTags'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import {
+  AppealCaseState,
+  InstitutionType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseNumbers } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components'
+import useTargetAppealCaseByAppealCaseId from '@island.is/judicial-system-web/src/utils/hooks/useTargetAppealCaseByAppealCaseId'
+import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
+import { getAppealActorText } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { AppealCaseState, InstitutionType } from '../../graphql/schema'
-import { CaseNumbers } from '../../routes/CourtOfAppeal/components'
-import useTargetAppealCaseByAppealCaseId from '../../utils/hooks/useTargetAppealCaseByAppealCaseId'
-import { titleForCase } from '../../utils/titleForCase/titleForCase'
-import { getAppealActorText } from '../../utils/utils'
-import DateLabel from '../DateLabel/DateLabel'
-import RulingDateLabel from '../DateLabel/RulingDateLabel'
-import { FormContext } from '../FormProvider/FormProvider'
-import PageTitle from '../PageTitle/PageTitle'
-import RestrictionTags from '../RestrictionTags/RestrictionTags'
-import { UserContext } from '../UserProvider/UserProvider'
 import { CaseTitleInfoAndTags as strings } from './CaseTitleInfoAndTags.strings'
 
 const CaseTitleInfoAndTags: FC = () => {
@@ -50,7 +54,7 @@ const CaseTitleInfoAndTags: FC = () => {
           (workingCase.isCompletedWithoutRuling ? (
             <DateLabel
               date={workingCase.rulingDate}
-              text={formatMessage(strings.caseCompletedDatePrefix)}
+              text={strings.caseCompletedDatePrefix}
             />
           ) : (
             <RulingDateLabel rulingDate={workingCase.rulingDate} />
@@ -69,9 +73,18 @@ const CaseTitleInfoAndTags: FC = () => {
                 <Box marginTop={1}>
                   <Text as="h5" variant="h5">
                     {formatMessage(
-                      user.institution.type === InstitutionType.COURT_OF_APPEALS
-                        ? strings.COAAppealReceivedAt
-                        : strings.appealReceivedAt,
+                      {
+                        id:
+                          user.institution.type ===
+                          InstitutionType.COURT_OF_APPEALS
+                            ? strings.COAAppealReceivedAt
+                            : strings.appealReceivedAt,
+                        defaultMessage:
+                          user.institution.type ===
+                          InstitutionType.COURT_OF_APPEALS
+                            ? strings.COAAppealReceivedAt
+                            : strings.appealReceivedAt,
+                      },
                       {
                         appealReceived: formatDate(
                           targetAppealCase.appealReceivedByCourtDate,

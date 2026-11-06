@@ -1,8 +1,10 @@
 import type { Transaction } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
-import { getConnectionToken, getModelToken } from '@nestjs/sequelize'
+import { getConnectionToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
+import { EmailService } from '@island.is/email-service'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigModule, ConfigType } from '@island.is/nest/config'
 
@@ -19,7 +21,7 @@ import { IndictmentCountService } from '../../indictment-count/indictmentCount.s
 import {
   CaseDefendantPoliceCaseNumberRepositoryService,
   CaseRepositoryService,
-  IndictmentSubtype,
+  IndictmentSubtypeRepositoryService,
 } from '../../repository'
 import { SubpoenaService } from '../../subpoena'
 import { policeModuleConfig } from '../police.config'
@@ -51,6 +53,10 @@ export const createTestingPoliceModule = async () => {
       PoliceService,
       SubpoenaService,
       {
+        provide: EmailService,
+        useValue: { sendEmail: jest.fn(async () => uuid()) },
+      },
+      {
         provide: LOGGER_PROVIDER,
         useValue: {
           debug: jest.fn(),
@@ -69,9 +75,9 @@ export const createTestingPoliceModule = async () => {
         },
       },
       {
-        provide: getModelToken(IndictmentSubtype),
+        provide: IndictmentSubtypeRepositoryService,
         useValue: {
-          findOne: jest.fn(),
+          findByArticle: jest.fn(),
         },
       },
       {
@@ -94,6 +100,7 @@ export const createTestingPoliceModule = async () => {
         provide: CaseRepositoryService,
         useValue: {
           findById: jest.fn().mockResolvedValue({}),
+          findByIdWithProsecutor: jest.fn().mockResolvedValue(null),
           update: jest.fn().mockResolvedValue({}),
         },
       },
@@ -110,6 +117,16 @@ export const createTestingPoliceModule = async () => {
 
   const policeController = policeModule.get<PoliceController>(PoliceController)
 
+  const emailService = policeModule.get<EmailService>(EmailService)
+
+  const eventService = policeModule.get<EventService>(EventService)
+
+  const logger = policeModule.get<{
+    debug: jest.Mock
+    info: jest.Mock
+    error: jest.Mock
+  }>(LOGGER_PROVIDER)
+
   const caseDefendantPoliceCaseNumberRepositoryService =
     policeModule.get<CaseDefendantPoliceCaseNumberRepositoryService>(
       CaseDefendantPoliceCaseNumberRepositoryService,
@@ -118,6 +135,10 @@ export const createTestingPoliceModule = async () => {
   const indictmentCountService = policeModule.get<IndictmentCountService>(
     IndictmentCountService,
   )
+  const indictmentSubtypeRepositoryService =
+    policeModule.get<IndictmentSubtypeRepositoryService>(
+      IndictmentSubtypeRepositoryService,
+    )
   const caseRepositoryService = policeModule.get<CaseRepositoryService>(
     CaseRepositoryService,
   )
@@ -129,8 +150,12 @@ export const createTestingPoliceModule = async () => {
     awsS3Service,
     policeService,
     policeController,
+    emailService,
+    eventService,
+    logger,
     caseDefendantPoliceCaseNumberRepositoryService,
     indictmentCountService,
+    indictmentSubtypeRepositoryService,
     caseRepositoryService,
   }
 }

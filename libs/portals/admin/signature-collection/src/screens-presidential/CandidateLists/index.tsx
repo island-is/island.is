@@ -15,7 +15,7 @@ import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { useNavigate, useParams } from 'react-router-dom'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { getTagConfig } from '../../lib/utils'
-import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg?url'
 import ActionDrawer from '../../shared-components/actionDrawer'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import {

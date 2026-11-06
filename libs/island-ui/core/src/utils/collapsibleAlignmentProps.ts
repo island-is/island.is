@@ -71,7 +71,7 @@ export function resolveCollapsibleAlignmentProps({
       ],
       flexDirection: [
         collapseXs ? 'column' : 'row',
-        // eslint-disable-next-line no-nested-ternary
+
         collapseSm ? 'column' : rowReverseSm ? 'rowReverse' : 'row',
         collapseMd ? 'column' : rowReverseMd ? 'rowReverse' : 'row',
         collapseLg ? 'column' : rowReverseLg ? 'rowReverse' : 'row',

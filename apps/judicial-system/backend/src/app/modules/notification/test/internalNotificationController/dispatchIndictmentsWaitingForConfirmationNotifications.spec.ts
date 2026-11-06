@@ -29,12 +29,12 @@ describe('InternalNotificationController - Dispatch indictments waiting for conf
 
   beforeEach(async () => {
     const {
-      queuedMessages,
+      queuedMessagesAfterCommit,
       institutionService,
       internalNotificationController,
     } = await createTestingNotificationModule()
 
-    mockQueuedMessages = queuedMessages
+    mockQueuedMessages = queuedMessagesAfterCommit
     mockInstitutionService = institutionService
 
     const mockGetAll = mockInstitutionService.getAll as jest.Mock

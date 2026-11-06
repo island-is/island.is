@@ -17,7 +17,6 @@ export const FileUploadDisplay = ({ item, requiredMissing = false }: Props) => {
 
   return (
     <Box
-      component="form"
       display="flex"
       flexDirection="column"
       justifyContent="spaceBetween"

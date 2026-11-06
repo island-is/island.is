@@ -7,6 +7,22 @@ export enum AppealCaseState {
   WITHDRAWN = 'WITHDRAWN',
 }
 
+// Which decision an appeal case challenges. Ruling appeal (RULING) covers everything
+// appealed so far: a request case's ruling, an indictment dismissed by
+// ruling, and a ruling order made while an indictment case runs. Verdict appeal
+// (VERDICT) is the appeal of the judgment that concludes an indictment case, and
+// travels a different route - the appellant files a declaration with the public
+// prosecution office, which brings the case before the court of appeals.
+//
+// Every case list built so far is about ruling appeals, so a verdict appeal must not surface in
+// any of them - a verdict appeal in APPEALED would otherwise appear in the district
+// court's "Kærð mál" tab. That is enforced once, by the `appealCase` association
+// scope on the Case model, rather than in each list's where options.
+export enum AppealCaseType {
+  RULING = 'RULING',
+  VERDICT = 'VERDICT',
+}
+
 export enum AppealCaseTransition {
   RECEIVE_APPEAL = 'RECEIVE_APPEAL',
   COMPLETE_APPEAL = 'COMPLETE_APPEAL',
@@ -41,3 +57,111 @@ export enum AppealCaseRulingDecision {
 export const getStatementDeadline = (appealReceived: Date): Date => {
   return addDays(appealReceived, 1)
 }
+
+// Why an appeal has moved beyond what a court-record correction may touch, or
+// null when the record still governs it. Two ways it locks, for different
+// reasons:
+//   - OUT_OF_COURT: a party filed the appeal itself, so the court record never
+//     created it and correcting the record cannot take it away;
+//   - PROGRESSED: the appeal has left the district court, so the decisions
+//     behind it are already part of the record Landsréttur received.
+// While locked, the appeal decisions may not be edited, and the ruling may not
+// be removed from the court record. (Swapping the ruling onto another file stays
+// allowed at every state - the file belongs to the case rather than the appeal,
+// and the appeal moves onto it with everything else.) An in-court appeal that is
+// still APPEALED is not locked: the court record created it, so the correction
+// paths may re-key or delete it.
+//
+// The reason is returned rather than a boolean because each caller words its own
+// rejection - "this case" vs "this ruling" - and the two causes are not
+// interchangeable to the user. Out-of-court is tested first so the message names
+// the appeal the court cannot reach at all, even if it has also progressed.
+//
+// Shared so the backend guards and the UI that disables the same inputs cannot
+// drift apart. Callers pass the appeal's state plus whether any party appealed
+// out of court: the backend derives that from the APPEALED event log
+// (hasOutOfCourtAppeal), the web reads the appealedOutOfCourt field the case
+// interceptor derives the same way.
+export type AppealCorrectionLock = 'OUT_OF_COURT' | 'PROGRESSED'
+
+export const appealCorrectionLock = (
+  appeal:
+    | {
+        appealState?: AppealCaseState | null
+        appealedOutOfCourt?: boolean | null
+      }
+    | null
+    | undefined,
+): AppealCorrectionLock | null => {
+  if (!appeal) {
+    return null
+  }
+
+  if (appeal.appealedOutOfCourt) {
+    return 'OUT_OF_COURT'
+  }
+
+  if (appeal.appealState !== AppealCaseState.APPEALED) {
+    return 'PROGRESSED'
+  }
+
+  return null
+}
+
+// The bench of an appeal case. Judges are stored as ordered rows on the appeal
+// case (appeal_case_judge): the judge at display order 0 is the presiding judge
+// (dómsformaður). Shared between the backend, which reads the Sequelize rows,
+// and the web, which reads the GraphQL rows, so both are typed structurally.
+//
+// Three judges sit on every appeal case today, and an appeal case counts as
+// fully assigned once an assistant and three judges are registered. Benches of
+// more than three are stored and shown as they are.
+export const APPEAL_JUDGE_COUNT = 3
+
+export interface AppealJudgeFields<U> {
+  displayOrder?: number | null
+  userId?: string | null
+  user?: U | null
+}
+
+export interface AppealJudgesFields<U> {
+  appealJudges?: (AppealJudgeFields<U> | null)[] | null
+}
+
+// The judge rows of an appeal case in bench order, presiding judge first. The
+// rows normally arrive ordered from the database; sorting here keeps a caller
+// that built them any other way correct.
+export const getOrderedAppealJudges = <J extends AppealJudgeFields<unknown>>(
+  appealCase?: { appealJudges?: (J | null)[] | null } | null,
+): J[] =>
+  (appealCase?.appealJudges ?? [])
+    .filter((judge): judge is J => Boolean(judge))
+    .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0))
+
+// The judges of an appeal case in bench order, presiding judge first.
+export const getAppealJudges = <U>(
+  appealCase?: AppealJudgesFields<U> | null,
+): U[] =>
+  getOrderedAppealJudges(appealCase)
+    .map((judge) => judge.user)
+    .filter((user): user is U => user !== undefined && user !== null)
+
+export const getPresidingAppealJudge = <U>(
+  appealCase?: AppealJudgesFields<U> | null,
+): U | undefined => getAppealJudges(appealCase)[0]
+
+// The user ids of the judges in bench order, read from the row's user id and
+// falling back to the loaded user.
+export const getAppealJudgeUserIds = (
+  appealCase?: AppealJudgesFields<{ id?: string | null }> | null,
+): string[] =>
+  getOrderedAppealJudges(appealCase)
+    .map((judge) => judge.userId ?? judge.user?.id)
+    .filter((id): id is string => Boolean(id))
+
+// Whether the bench is complete: at least APPEAL_JUDGE_COUNT judges are
+// registered. Counts rows rather than loaded users so an unloaded user
+// association does not read as a missing judge.
+export const hasAllAppealJudges = (
+  appealCase?: AppealJudgesFields<unknown> | null,
+): boolean => getOrderedAppealJudges(appealCase).length >= APPEAL_JUDGE_COUNT

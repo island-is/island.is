@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'clients-judicial-system-sp',
   preset: '../../../jest.preset.js',

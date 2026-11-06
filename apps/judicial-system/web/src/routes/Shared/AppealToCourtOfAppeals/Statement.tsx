@@ -7,7 +7,6 @@ import {
   FileUploadStatus,
   InputFileUpload,
   Text,
-  toast,
 } from '@island.is/island-ui/core'
 import {
   DEFENDER_INDICTMENT_CASE_ROUTE,
@@ -42,14 +41,15 @@ import {
   AppealEventType,
   CaseFileCategory,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  TUploadFile,
   useAppealCase,
   useFileList,
   useS3Upload,
   useTargetAppealCaseByRulingFileId,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import {
   getAppealActorText,
   getDefenceUserPartyIds,
@@ -186,7 +186,7 @@ const Statement = () => {
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
-      <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
+      <PageHeader title={titles.shared.appealToCourtOfAppeals} />
       <FormContentContainer>
         <PageTitle>Greinargerð</PageTitle>
         <Box marginBottom={7}>
@@ -215,11 +215,17 @@ const Statement = () => {
                 name="appealStatement"
                 files={appealStatementFiles}
                 accept={'application/pdf'}
-                title={formatMessage(core.uploadBoxTitle)}
-                description={formatMessage(core.uploadBoxDescription, {
-                  fileEndings: '.pdf',
-                })}
-                buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
+                title={core.uploadBoxTitle}
+                description={formatMessage(
+                  {
+                    id: core.uploadBoxDescription,
+                    defaultMessage: core.uploadBoxDescription,
+                  },
+                  {
+                    fileEndings: '.pdf',
+                  },
+                )}
+                buttonLabel={core.uploadBoxButtonLabel}
                 onChange={(files) => handleChange(files, appealStatementType)}
                 onRemove={(file) => handleRemoveFile(file)}
                 onOpenFile={(file) => onOpenFile(file)}
@@ -232,7 +238,7 @@ const Statement = () => {
               marginBottom={isProsecutionUser(user) ? 5 : 10}
             >
               <SectionHeading title="Gögn" marginBottom={1} />
-              <Text marginBottom={3} whiteSpace="pre">
+              <Text marginBottom={3} whiteSpace="preWrap">
                 Ef ný gögn eiga að fylgja greinargerðinni er hægt að hlaða þeim
                 upp hér að neðan.
                 {'\n'}
@@ -246,11 +252,17 @@ const Statement = () => {
                   filter(file, appealCaseFilesType),
                 )}
                 accept={'application/pdf'}
-                title={formatMessage(core.uploadBoxTitle)}
-                description={formatMessage(core.uploadBoxDescription, {
-                  fileEndings: '.pdf',
-                })}
-                buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
+                title={core.uploadBoxTitle}
+                description={formatMessage(
+                  {
+                    id: core.uploadBoxDescription,
+                    defaultMessage: core.uploadBoxDescription,
+                  },
+                  {
+                    fileEndings: '.pdf',
+                  },
+                )}
+                buttonLabel={core.uploadBoxButtonLabel}
                 onChange={(files) => handleChange(files, appealCaseFilesType)}
                 onRemove={(file) => handleRemoveFile(file)}
                 onOpenFile={(file) => onOpenFile(file)}
@@ -259,7 +271,7 @@ const Statement = () => {
               />
             </Box>
             {!isIndictmentCase(workingCase.type) && isProsecutionUser(user) && (
-              <Box component="section" marginBottom={10}>
+              <Box component="section">
                 <RequestAppealRulingNotToBePublishedCheckbox />
               </Box>
             )}
@@ -290,7 +302,7 @@ const Statement = () => {
           text="Tilkynning um greinargerð hefur verið send Landsrétti og aðilum máls."
           buttons={[
             {
-              text: formatMessage(core.closeModal),
+              text: core.closeModal,
               onClick: () => {
                 refreshCase()
                 router.push(previousUrl)

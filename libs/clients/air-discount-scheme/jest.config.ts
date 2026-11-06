@@ -1,10 +1,10 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'clients-air-discount-scheme',
   preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],
   globals: {},
+  testEnvironment: 'node',
   transform: {
     '^.+\\.[tj]sx?$': [
       'ts-jest',

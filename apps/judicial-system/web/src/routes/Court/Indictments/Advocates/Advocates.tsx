@@ -1,6 +1,6 @@
+import type { FC } from 'react'
 import { useCallback, useContext } from 'react'
-import { useIntl } from 'react-intl'
-import { AnimatePresence, motion } from 'motion/react'
+import { motion } from 'motion/react'
 import { useRouter } from 'next/router'
 import { Tooltip, TooltipAnchor, TooltipProvider } from '@ariakit/react'
 
@@ -20,19 +20,63 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isDefenderStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import SelectCivilClaimantAdvocate from './SelectCivilClaimantAdvocate'
 import SelectDefender from './SelectDefender'
 import { strings } from './Advocates.strings'
 
+// The warning stays mounted and animates via visibility so the lazily
+// loaded icon svg is fetched before the warning is first shown — otherwise
+// the entrance animation plays around an empty placeholder.
+const ConfirmationPendingWarning: FC<{
+  visible: boolean
+  tooltipText: string
+}> = ({ visible, tooltipText }) => (
+  <motion.div
+    initial="hidden"
+    animate={visible ? 'visible' : 'hidden'}
+    variants={{
+      visible: { opacity: 1, scale: 1, visibility: 'visible' },
+      hidden: {
+        opacity: 0,
+        scale: 0,
+        transitionEnd: { visibility: 'hidden' },
+      },
+    }}
+  >
+    <TooltipProvider timeout={0}>
+      <TooltipAnchor
+        tabIndex={0}
+        aria-label={tooltipText}
+        render={
+          <Box display="flex">
+            <Icon icon="warning" size="large" color="red300" type="outline" />
+          </Box>
+        }
+      />
+      <Tooltip unmountOnHide>
+        <motion.div
+          initial={{ opacity: 0, y: 4, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+        >
+          <Box background="dark400" borderRadius="full" padding={1}>
+            <Text color="white" variant="small">
+              {tooltipText}
+            </Text>
+          </Box>
+        </motion.div>
+      </Tooltip>
+    </TooltipProvider>
+  </motion.div>
+)
+
 const Advocates = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const router = useRouter()
-
-  const { formatMessage } = useIntl()
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
@@ -47,6 +91,11 @@ const Advocates = () => {
     workingCase.defendants?.every(
       (defendant) => defendant.isDefenderChoiceConfirmed,
     ) || false
+  const allSpokespersonsHaveBeenConfirmed =
+    workingCase.civilClaimants?.every(
+      (civilClaimant) =>
+        !civilClaimant.hasSpokesperson || civilClaimant.isSpokespersonConfirmed,
+    ) || false
 
   return (
     <PageLayout
@@ -56,59 +105,40 @@ const Advocates = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader title={formatMessage(titles.court.indictments.defender)} />
+      <PageHeader title={titles.court.indictments.defender} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
 
         <Box display="flex" columnGap={1} alignItems="center" marginBottom={3}>
           <SectionHeading title="Verjendur varnaraðila" marginBottom={0} />
-          <AnimatePresence>
-            {!allDefendersHaveBeenConfirmed && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{
-                  opacity: 1,
-                  scale: 1,
-                }}
-                exit={{
-                  opacity: 0,
-                  scale: 0,
-                }}
-              >
-                <TooltipProvider timeout={0}>
-                  <TooltipAnchor
-                    render={
-                      <Box display="flex">
-                        <Icon
-                          icon="warning"
-                          size="large"
-                          color="red300"
-                          type="outline"
-                        />
-                      </Box>
-                    }
-                  />
-                  <Tooltip>
-                    <Box background="dark400" borderRadius="full" padding={1}>
-                      <Text color="white" variant="small">
-                        Ákærunni hefur ekki verið deilt með öllum verjendum
-                      </Text>
-                    </Box>
-                  </Tooltip>
-                </TooltipProvider>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <ConfirmationPendingWarning
+            visible={!allDefendersHaveBeenConfirmed}
+            tooltipText="Ákærunni hefur ekki verið deilt með öllum verjendum"
+          />
         </Box>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           {workingCase.defendants?.map((defendant) => (
             <SelectDefender defendant={defendant} key={defendant.id} />
           ))}
           {hasCivilClaimants && (
             <Box component="section">
-              <SectionHeading title={formatMessage(strings.civilClaimants)} />
-              <div className={grid({ gap: 5 })}>
+              <Box
+                display="flex"
+                columnGap={1}
+                alignItems="center"
+                marginBottom={3}
+              >
+                <SectionHeading
+                  title={strings.civilClaimants}
+                  marginBottom={0}
+                />
+                <ConfirmationPendingWarning
+                  visible={!allSpokespersonsHaveBeenConfirmed}
+                  tooltipText="Ákærunni hefur ekki verið deilt með öllum talsmönnum kröfuhafa"
+                />
+              </Box>
+              <div className={stack({ gap: 5 })}>
                 {workingCase.civilClaimants?.map((civilClaimant) => (
                   <Box component="section" key={civilClaimant.id}>
                     <SelectCivilClaimantAdvocate
@@ -126,7 +156,7 @@ const Advocates = () => {
           previousUrl={`${DISTRICT_COURT_INDICTMENT_CASE_SUBPOENA_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

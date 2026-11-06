@@ -40,20 +40,10 @@ export const serviceSetup = (services: {
       AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false',
       AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log',
       AUDIT_TRAIL_REGION: 'eu-west-1',
-      CONTENTFUL_HOST: {
-        dev: 'preview.contentful.com',
-        staging: 'cdn.contentful.com',
-        prod: 'cdn.contentful.com',
-      },
-      CONTENTFUL_ENVIRONMENT: {
-        dev: 'test',
-        staging: 'test',
-        prod: 'master',
-      },
       HIDDEN_FEATURES: {
         dev: '',
-        staging: 'APPEAL_RULING_ORDER',
-        prod: 'APPEAL_RULING_ORDER',
+        staging: 'INDICTMENT_APPEAL',
+        prod: 'INDICTMENT_APPEAL',
       },
       REDIS_NODES: {
         dev: json([
@@ -70,7 +60,6 @@ export const serviceSetup = (services: {
     .secrets({
       AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET',
       BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN',
-      CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN',
       AUTH_IDS_SECRET: '/k8s/judicial-system/AUTH_IDS_SECRET',
       LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY',
       AUTH_TOKEN_SECRET_BASE64: '/k8s/judicial-system/AUTH_TOKEN_SECRET_BASE64',

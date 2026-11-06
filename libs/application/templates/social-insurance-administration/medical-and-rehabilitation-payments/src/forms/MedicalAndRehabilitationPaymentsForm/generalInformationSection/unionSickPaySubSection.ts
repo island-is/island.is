@@ -102,15 +102,16 @@ export const unionSickPaySubSection = buildSubSection({
               .unionSickPayUnionSelectPlaceholder,
           required: true,
           loadingError: coreErrorMessages.failedDataProvider,
-          loadOptions: async ({ apolloClient }) => {
+          loadOptions: async ({ apolloClient, application }) => {
             const { data } = await apolloClient.query<Query>({
               query: siaUnionsQuery,
+              variables: { applicationId: application.id },
             })
 
             return (
               data?.socialInsuranceGeneral?.unions
                 ?.map(({ name, nationalId }) => ({
-                  value: `${nationalId}::${name}` || '',
+                  value: `${nationalId}::${name}`,
                   label: name || '',
                 }))
                 .sort((a, b) => a.label.localeCompare(b.label)) ?? []

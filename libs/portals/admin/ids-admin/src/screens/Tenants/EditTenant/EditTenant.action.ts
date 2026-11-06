@@ -85,8 +85,11 @@ export const editTenantAction: WrappedActionFn =
             environments,
             nationalId: rest.nationalId,
             displayName: rest.displayName,
+            displayNameEn: rest.displayNameEn ?? '',
             description: rest.description,
+            descriptionEn: rest.descriptionEn ?? '',
             contactEmail: rest.contactEmail || undefined,
+            municipalityCode: rest.municipalityCode || null,
           },
         },
       })

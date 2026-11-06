@@ -52,6 +52,9 @@ export class FormDto {
   submissionServiceUrl!: string
 
   @ApiProperty()
+  zendeskBrandId!: string
+
+  @ApiProperty()
   hasPayment!: boolean
 
   @ApiProperty()
@@ -77,6 +80,12 @@ export class FormDto {
 
   @ApiProperty()
   isInaccessible!: boolean
+
+  @ApiProperty()
+  validateEligibility!: boolean
+
+  @ApiProperty()
+  enableApplicationPdfDownload!: boolean
 
   @ApiProperty()
   hasSummaryScreen!: boolean

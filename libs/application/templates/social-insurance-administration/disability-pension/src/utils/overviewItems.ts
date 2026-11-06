@@ -8,7 +8,7 @@ import {
 import {
   formatCurrencyWithoutSuffix,
   formatPhoneNumber,
-} from '@island.is/application/ui-components'
+} from '@island.is/shared/utils'
 import kennitala from 'kennitala'
 import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {

@@ -12,12 +12,12 @@ import {
   KeyValueItem,
   TableData,
 } from '@island.is/application/types'
+import { Locale } from '@island.is/shared/types'
 import {
   formatPhoneNumber,
+  getLanguageByCode,
   removeCountryCode,
-} from '@island.is/application/ui-components'
-import { Locale } from '@island.is/shared/types'
-import { getLanguageByCode } from '@island.is/shared/utils'
+} from '@island.is/shared/utils'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'

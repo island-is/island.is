@@ -1,24 +1,20 @@
-import { useCallback, useContext } from 'react'
-import React from 'react'
+import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-  FileUploadStatus,
-  InputFileUpload,
-  UploadFile,
-} from '@island.is/island-ui/core'
+import type { UploadFile } from '@island.is/island-ui/core'
+import { FileUploadStatus, InputFileUpload } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import type { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import {
   CaseFileCategory,
   EventType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  TUploadFile,
   useFileList,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -69,13 +65,10 @@ export const CriminalRecordUpdate = ({
         }
 
         // TODO: Make sure to log an event if at least one file was uploaded
-        const eventLogCreated = createEventLog({
+        await createEventLog({
           caseId: workingCase.id,
           eventType: EventType.INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT,
         })
-        if (!eventLogCreated) {
-          return
-        }
       }
       // Otherwise we don't complete uploads until
       // we handle the next button click
@@ -116,11 +109,17 @@ export const CriminalRecordUpdate = ({
           (file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
         )}
         accept="application/pdf"
-        title={formatMessage(core.uploadBoxTitle)}
-        buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-        description={formatMessage(core.uploadBoxDescription, {
-          fileEndings: '.pdf',
-        })}
+        title={core.uploadBoxTitle}
+        buttonLabel={core.uploadBoxButtonLabel}
+        description={formatMessage(
+          {
+            id: core.uploadBoxDescription,
+            defaultMessage: core.uploadBoxDescription,
+          },
+          {
+            fileEndings: '.pdf',
+          },
+        )}
         onChange={handleCriminalRecordUpdateUpload}
         onRemove={handleRemoveFile}
         onOpenFile={(file) => onOpenFile(file)}

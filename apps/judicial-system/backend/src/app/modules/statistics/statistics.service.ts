@@ -3,44 +3,28 @@ import format from 'date-fns/format'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import isEqual from 'date-fns/isEqual'
-import { col, fn, Includeable, literal, Op, WhereOptions } from 'sequelize'
 
 import { Inject, Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import type { User } from '@island.is/judicial-system/types'
 import {
-  CaseState,
-  CaseType,
   DataGroups,
-  dateTypes,
-  defendantEventTypes,
   EventType,
   InstitutionType,
   isCompletedCase,
   isIndictmentCase,
-  ServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import { AwsS3Service } from '../aws-s3'
 import {
-  AppealCase,
-  AppealEventLog,
   Case,
   CaseRepositoryService,
-  DateLog,
-  Defendant,
-  DefendantEventLog,
   EventLog,
-  IndictmentCount,
-  Institution,
-  Offense,
-  Subpoena,
+  InstitutionRepositoryService,
   SubpoenaRepositoryService,
-  Verdict,
 } from '../repository'
 import {
   CaseStatistics,
@@ -118,8 +102,7 @@ export const partition = <T>(
 @Injectable()
 export class StatisticsService {
   constructor(
-    @InjectModel(Institution)
-    private readonly institutionModel: typeof Institution,
+    private readonly institutionRepositoryService: InstitutionRepositoryService,
     private readonly subpoenaRepositoryService: SubpoenaRepositoryService,
     private readonly caseRepositoryService: CaseRepositoryService,
     private readonly awsS3Service: AwsS3Service,
@@ -131,86 +114,42 @@ export class StatisticsService {
     to?: Date,
     institutionId?: string,
   ): Promise<SubpoenaStatistics> {
-    const where: WhereOptions = {
-      policeSubpoenaId: {
-        [Op.ne]: null,
-      },
-    }
+    // The earliest date is the bound of the period that may be asked for, so it
+    // is read across every police subpoena rather than within the period given.
+    const earliestCreated =
+      await this.subpoenaRepositoryService.findEarliestPoliceSubpoenaCreatedDate()
 
-    // fetch only the earliest subpoena with the base filter
-    const earliestCase = await this.subpoenaRepositoryService.findOne({
-      where,
-      order: [['created', 'ASC']],
-      attributes: ['created'],
-    })
+    const filter = { from, to, institutionId }
 
-    if (from || to) {
-      where.created = {}
-      if (from) {
-        where.created[Op.gte] = from
-      }
-      if (to) {
-        where.created[Op.lte] = to
-      }
-    }
-
-    const include: Includeable[] = []
-
-    if (institutionId) {
-      include.push({
-        model: Case,
-        required: true,
-        attributes: [],
-        where: {
-          [Op.or]: [
-            { courtId: institutionId },
-            { prosecutorsOfficeId: institutionId },
-          ],
-        },
-      })
-    }
-
-    const subpoenas = await this.subpoenaRepositoryService.findAll({
-      where,
-      include,
-    })
-
-    const grouped = (await this.subpoenaRepositoryService.findAll({
-      where,
-      include,
-      attributes: [
-        'serviceStatus',
-        [fn('COUNT', col('Subpoena.id')), 'count'],
-        [
-          literal(
-            'AVG(EXTRACT(EPOCH FROM "Subpoena"."service_date" - "Subpoena"."created") * 1000)',
-          ),
-          'averageServiceTimeMs',
-        ],
-      ],
-      group: ['serviceStatus'],
-      raw: true,
-    })) as unknown as {
-      serviceStatus: ServiceStatus | null
-      count: string
-      averageServiceTimeMs: string | null
-    }[]
-
-    const serviceStatusStatistics: ServiceStatusStatistics[] = grouped.map(
-      (row) => ({
-        serviceStatus: row.serviceStatus,
-        count: Number(row.count),
-        averageServiceTimeMs: Math.round(Number(row.averageServiceTimeMs) || 0),
-        averageServiceTimeDays:
-          Math.round(Number(row.averageServiceTimeMs) / 1000 / 60 / 60 / 24) ||
-          0,
-      }),
+    const count = await this.subpoenaRepositoryService.countPoliceSubpoenas(
+      filter,
     )
 
+    const serviceStatusCounts =
+      await this.subpoenaRepositoryService.countPoliceSubpoenasByServiceStatus(
+        filter,
+      )
+
+    const serviceStatusStatistics: ServiceStatusStatistics[] =
+      serviceStatusCounts.map((serviceStatusCount) => {
+        const averageServiceTimeMs = Math.round(
+          serviceStatusCount.averageServiceTimeMs ?? 0,
+        )
+
+        return {
+          serviceStatus: serviceStatusCount.serviceStatus,
+          count: serviceStatusCount.count,
+          averageServiceTimeMs,
+          averageServiceTimeDays: Math.round(
+            averageServiceTimeMs / (1000 * 60 * 60 * 24),
+          ),
+        }
+      })
+
     const stats: SubpoenaStatistics = {
-      count: subpoenas.length,
+      count,
       serviceStatusStatistics,
-      minDate: earliestCase?.created ?? new Date(),
+      minDate: earliestCreated ?? new Date(),
     }
 
     return stats
@@ -221,49 +160,10 @@ export class StatisticsService {
     to?: Date,
     institutionId?: string,
   ): Promise<CaseStatistics> {
-    let where: WhereOptions = {
-      state: {
-        [Op.not]: [
-          CaseState.DELETED,
-          CaseState.DRAFT,
-          CaseState.NEW,
-          CaseState.WAITING_FOR_CONFIRMATION,
-        ],
-      },
-    }
-
-    if (from || to) {
-      where.created = {}
-      if (from) {
-        where.created[Op.gte] = from
-      }
-      if (to) {
-        where.created[Op.lte] = to
-      }
-    }
-
-    if (institutionId) {
-      where = {
-        ...where,
-        [Op.or]: [
-          { courtId: institutionId },
-          { prosecutorsOfficeId: institutionId },
-        ],
-      }
-    }
-
-    const cases = await this.caseRepositoryService.findAll({
-      where,
-      include: [
-        {
-          model: EventLog,
-          required: false,
-          attributes: ['created', 'eventType'],
-          where: {
-            eventType: EventType.INDICTMENT_CONFIRMED,
-          },
-        },
-      ],
+    const cases = await this.caseRepositoryService.findCasesForStatistics({
+      from,
+      to,
+      institutionId,
     })
 
     const [indictments, requests] = partition(cases, (c) =>
@@ -344,47 +244,8 @@ export class StatisticsService {
   }
 
   private async extractAndTransformRequestCases(period?: DateFilter) {
-    const where: WhereOptions = {
-      type: {
-        [Op.not]: [CaseType.INDICTMENT],
-      },
-    }
-
-    const cases = await this.caseRepositoryService.findAll({
-      where,
-      order: [['created', 'ASC']],
-      include: [
-        {
-          model: EventLog,
-          required: false,
-          attributes: ['created', 'eventType'],
-        },
-        { model: Institution, as: 'prosecutorsOffice' },
-        { model: Institution, as: 'court' },
-        {
-          model: DateLog,
-          as: 'dateLogs',
-          required: false,
-          where: { dateType: dateTypes },
-          order: [['created', 'DESC']],
-          separate: true,
-        },
-        {
-          model: AppealCase,
-          as: 'appealCase',
-          required: false,
-          include: [
-            {
-              model: AppealEventLog,
-              as: 'appealEventLogs',
-              required: false,
-              attributes: ['eventType', 'userRole'],
-              separate: true,
-            },
-          ],
-        },
-      ],
-    })
+    const cases =
+      await this.caseRepositoryService.findRequestCasesForEventExport()
 
     // create events for data analytics for each case
     if (!period) return []
@@ -399,89 +260,15 @@ export class StatisticsService {
   }
 
   private async extractAndTransformIndictmentCases(period?: DateFilter) {
-    const where: WhereOptions = {
-      type: CaseType.INDICTMENT,
-    }
-
-    const cases = await this.caseRepositoryService.findAll({
-      where,
-      order: [['created', 'ASC']],
-      include: [
-        {
-          model: EventLog,
-          required: false,
-          attributes: ['created', 'eventType'],
-        },
-        {
-          model: IndictmentCount,
-          as: 'indictmentCounts',
-          required: false,
-          order: [['created', 'ASC']],
-          include: [
-            {
-              model: Offense,
-              as: 'offenses',
-              required: false,
-              order: [['created', 'ASC']],
-              separate: true,
-            },
-          ],
-          separate: true,
-        },
-        { model: Institution, as: 'prosecutorsOffice' },
-        { model: Institution, as: 'court' },
-        {
-          model: DateLog,
-          as: 'dateLogs',
-          required: false,
-          where: { dateType: dateTypes },
-          order: [['created', 'DESC']],
-          separate: true,
-        },
-        {
-          model: Defendant,
-          as: 'defendants',
-          required: false,
-          order: [['created', 'ASC']],
-          include: [
-            {
-              model: Subpoena,
-              as: 'subpoenas',
-              required: false,
-              order: [['created', 'DESC']],
-              separate: true,
-            },
-            {
-              model: DefendantEventLog,
-              as: 'eventLogs',
-              required: false,
-              where: { eventType: defendantEventTypes },
-              separate: true,
-            },
-            {
-              model: Verdict,
-              as: 'verdicts',
-              required: false,
-              order: [['created', 'DESC']],
-              separate: true,
-            },
-          ],
-          separate: true,
-        },
-      ],
-    })
+    const cases =
+      await this.caseRepositoryService.findIndictmentCasesForEventExport()
 
     // get institutions that are not linked directly to a case but
     // are known to handle certain events
-    const institutions = await this.institutionModel.findAll({
-      where: {
-        active: true,
-        type: [
-          InstitutionType.PRISON_ADMIN,
-          InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
-        ],
-      },
-    })
+    const institutions = await this.institutionRepositoryService.findAllActive([
+      InstitutionType.PRISON_ADMIN,
+      InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+    ])
 
     // create events for data analytics for each case
     if (!period) return []
@@ -554,6 +341,8 @@ export class StatisticsService {
               key: 'parentCaseId',
               header: 'Upprunalegt mál',
             },
+            { key: 'isIsolation', header: 'Einangrun' },
+            { key: 'legalProvisions', header: 'Lagaákvæði' },
           ] as Column[],
           key: `krofur_from_${getDateString(
             period?.fromDate,

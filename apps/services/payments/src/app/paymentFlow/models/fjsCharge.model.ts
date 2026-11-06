@@ -19,10 +19,26 @@ import {
 
 @Table({
   tableName: 'fjs_charge',
+  // The unique indexes are declared here as well as in their migrations because the test database
+  // is built by `sequelize.sync()`, not by migrations — without them `createFjsCharge`'s
+  // concurrency handling could only be tested against a mock. Keep both in step with the SQL.
   indexes: [
     {
       name: 'fjs_charge_payment_flow_id_idx',
       fields: ['payment_flow_id'],
+    },
+    {
+      // Never the same reception id twice per flow; soft-deleted rows still occupy this.
+      name: 'idx_fjs_charge_payment_flow_reception',
+      unique: true,
+      fields: ['payment_flow_id', 'reception_id'],
+    },
+    {
+      // Only one *active* charge per flow — what a losing concurrent finalizer trips.
+      name: 'fjs_charge_one_active_per_payment_flow_id',
+      unique: true,
+      fields: ['payment_flow_id'],
+      where: { is_deleted: false },
     },
   ],
 })

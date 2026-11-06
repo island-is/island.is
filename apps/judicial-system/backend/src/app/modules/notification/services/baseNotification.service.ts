@@ -1,8 +1,7 @@
 import { ICalendar } from 'datebook'
 
-import { Injectable, InternalServerErrorException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 
-import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { EmailService } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
@@ -20,10 +19,16 @@ import {
   formatPostponedCourtDateEmailNotification,
   stripHtmlTags,
 } from '../../../formatters'
-import { notifications } from '../../../messages'
+import { formatIcuMessage, notifications } from '../../../messages'
 import { CourtService } from '../../court'
 import { EventService } from '../../event'
-import { Case, DateLog, Notification, Recipient } from '../../repository'
+import {
+  Case,
+  DateLog,
+  Notification,
+  NotificationRepositoryService,
+  Recipient,
+} from '../../repository'
 import { DeliverResponse } from '../models/deliver.response'
 import { notificationModuleConfig } from '../notification.config'
 
@@ -36,33 +41,17 @@ interface Attachment {
 @Injectable()
 export abstract class BaseNotificationService {
   constructor(
-    private readonly notificationModel: typeof Notification,
+    private readonly notificationRepositoryService: NotificationRepositoryService,
     private readonly emailService: EmailService,
-    private readonly intlService: IntlService,
     private readonly courtService: CourtService,
     protected readonly config: ConfigType<typeof notificationModuleConfig>,
     protected readonly eventService: EventService,
     protected readonly logger: Logger,
   ) {}
 
-  protected formatMessage: FormatMessage = () => {
-    throw new InternalServerErrorException('Format message not initialized')
-  }
-
-  protected async refreshFormatMessage(): Promise<void> {
-    return this.intlService
-      .useIntl(['judicial.system.backend'], 'is')
-      .then((res) => {
-        this.formatMessage = res.formatMessage
-      })
-      .catch((reason) => {
-        this.logger.error('Unable to refresh format messages', { reason })
-      })
-  }
-
   private async handleWhitelist(recipients: string[]): Promise<string[]> {
-    const whitelist = this.formatMessage(notifications.emailWhitelist)
-    const whitelistDomains = this.formatMessage(
+    const whitelist = notifications.emailWhitelist
+    const whitelistDomains = formatIcuMessage(
       notifications.emailWhitelistDomains,
     )
 
@@ -110,7 +99,7 @@ export abstract class BaseNotificationService {
       html =
         html.match(/<a/g) || skipTail
           ? html
-          : `${html} ${this.formatMessage(notifications.emailTail, {
+          : `${html} ${formatIcuMessage(notifications.emailTail, {
               linkStart: `<a href="${this.config.clientUrl}">`,
               linkEnd: '</a>',
             })}`
@@ -176,7 +165,7 @@ export abstract class BaseNotificationService {
     type: TrackedNotificationType,
     recipients: Recipient[],
   ): Promise<DeliverResponse> {
-    await this.notificationModel.create({
+    await this.notificationRepositoryService.create({
       caseId,
       type,
       recipients,
@@ -204,11 +193,15 @@ export abstract class BaseNotificationService {
   ) {
     const types = type ? [type].flat() : Object.values(TrackedNotificationType)
 
+    const normalizedAddress = address?.trim().toLowerCase()
+
     return notifications?.some((notification) => {
       return (
         types.includes(notification.type) &&
         notification.recipients.some(
-          (recipient) => recipient.address === address && recipient.success,
+          (recipient) =>
+            recipient.success &&
+            recipient.address?.trim().toLowerCase() === normalizedAddress,
         )
       )
     })
@@ -307,7 +300,6 @@ export abstract class BaseNotificationService {
     recipientEmail: string
   }): Promise<Recipient> {
     const { subject, body } = formatArraignmentDateEmailNotification({
-      formatMessage: this.formatMessage,
       courtName: theCase.court?.name,
       courtCaseNumber: theCase.courtCaseNumber,
       judgeName: theCase.judge?.name,
@@ -356,7 +348,6 @@ export abstract class BaseNotificationService {
       : undefined
 
     const { subject, body } = formatPostponedCourtDateEmailNotification(
-      this.formatMessage,
       theCase,
       courtDate,
       overviewUrl,

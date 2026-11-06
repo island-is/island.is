@@ -40,6 +40,9 @@ import {
   TableViewGroup,
 } from '@/ui'
 import { useBiometricType } from '../../../hooks/use-biometric-type'
+import { NotificationsPermissionAlert } from '@/components/notifications-permission-alert'
+import { useNotificationsPermission } from '@/hooks/use-notifications-permission'
+import { ensureNotificationsPermission } from '@/utils/permissions'
 import { testIDs } from '@/utils/test-ids'
 
 import chevronForward from '@/ui/assets/icons/chevron-forward.png'
@@ -84,6 +87,17 @@ export default function SettingsScreen() {
   const [emailNotifications, setEmailNotifications] = useState(
     !!userProfile.data?.getUserProfile?.canNudge,
   )
+  const {
+    status: osNotificationsStatus,
+    refresh: refreshNotificationsPermission,
+  } = useNotificationsPermission()
+
+  // The toggle is only a preference, so warn when the OS disagrees: `denied` can
+  // only be undone in system settings, `undetermined` can still be prompted for.
+  const notificationsBlockedByOs =
+    !!documentNotifications && osNotificationsStatus === 'denied'
+  const notificationsNotEnabledYet =
+    !!documentNotifications && osNotificationsStatus === 'undetermined'
 
   useEffect(() => {
     if (userProfile) {
@@ -156,6 +170,66 @@ export default function SettingsScreen() {
           }),
         )
       })
+  }
+
+  const onNotificationsBlockedPress = () => {
+    Linking.openSettings()
+  }
+
+  const onAllowNotificationsPress = async () => {
+    try {
+      await ensureNotificationsPermission()
+    } catch {
+      // Nothing to tell the user: the refresh below leaves the banner showing
+      // whatever the OS actually reports.
+    } finally {
+      refreshNotificationsPermission()
+    }
+  }
+
+  const onDocumentNotificationsChange = async (value: boolean) => {
+    updateDocumentNotifications(value)
+    setDocumentNotifications(value)
+
+    // Turning it off cannot revoke the OS permission, so there is nothing to do.
+    if (!value) {
+      return
+    }
+
+    try {
+      const outcome = await ensureNotificationsPermission()
+
+      // No prompt is possible, so offer system settings instead.
+      if (outcome === 'blocked') {
+        RNAlert.alert(
+          intl.formatMessage({
+            id: 'settings.communication.notificationsBlockedAlertTitle',
+          }),
+          intl.formatMessage({
+            id: 'settings.communication.notificationsBlockedAlertDescription',
+          }),
+          [
+            {
+              text: intl.formatMessage({
+                id: 'settings.communication.notificationsBlockedAlertCancelButton',
+              }),
+              style: 'cancel',
+            },
+            {
+              text: intl.formatMessage({
+                id: 'settings.communication.notificationsBlockedAlertOpenSettingsButton',
+              }),
+              onPress: onNotificationsBlockedPress,
+            },
+          ],
+        )
+      }
+    } catch {
+      // Reading or requesting the permission failed; the banner stays in sync
+      // with the OS through the refresh below.
+    } finally {
+      refreshNotificationsPermission()
+    }
   }
 
   const updateEmailNotifications = (value: boolean) => {
@@ -312,6 +386,22 @@ export default function SettingsScreen() {
             id: 'settings.communication.groupTitle',
           })}
         >
+          {notificationsNotEnabledYet && (
+            <NotificationsPermissionAlert
+              titleId="settings.communication.notificationsNotEnabledTitle"
+              messageId="settings.communication.notificationsNotEnabledDescription"
+              linkTextId="settings.communication.notificationsNotEnabledLinkText"
+              onPress={onAllowNotificationsPress}
+            />
+          )}
+          {notificationsBlockedByOs && (
+            <NotificationsPermissionAlert
+              titleId="settings.communication.notificationsBlockedTitle"
+              messageId="settings.communication.notificationsBlockedDescription"
+              linkTextId="settings.communication.notificationsBlockedLinkText"
+              onPress={onNotificationsBlockedPress}
+            />
+          )}
           <TableViewCell
             title={intl.formatMessage({
               id: 'settings.communication.newNotificationsEmailLabel',
@@ -347,10 +437,7 @@ export default function SettingsScreen() {
             accessory={
               <View>
                 <Switch
-                  onValueChange={(value) => {
-                    updateDocumentNotifications(value)
-                    setDocumentNotifications(value)
-                  }}
+                  onValueChange={onDocumentNotificationsChange}
                   disabled={userProfile.loading && !userProfile.data}
                   value={documentNotifications}
                   thumbColor={Platform.select({ android: theme.color.dark100 })}
@@ -411,7 +498,13 @@ export default function SettingsScreen() {
                 <Switch
                   onValueChange={(value) => {
                     if (value && !hasAcceptedBiometrics) {
-                      authenticateAsync().then((result) => {
+                      authenticateAsync({
+                        disableDeviceFallback: true,
+                        fallbackLabel: '',
+                        cancelLabel: intl.formatMessage({
+                          id: 'biometrics.cancel',
+                        }),
+                      }).then((result) => {
                         if (result.success) {
                           setUseBiometrics(true)
                           preferencesStore.setState({

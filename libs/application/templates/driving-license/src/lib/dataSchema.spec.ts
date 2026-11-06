@@ -66,4 +66,17 @@ describe('dataSchema — healthCertificate field-level refine (redesigned-65+ en
     expect(flagIssueOn).toBeUndefined()
     expect(flagIssueOff).toBeUndefined()
   })
+
+  it('defines isBFullRedesignEnabled as an optional boolean field (used by form conditions)', () => {
+    // Test the field schema directly. A whole-object parse can't prove the
+    // field exists: Zod strips unknown keys, so `safeParse({ isBFullRedesignEnabled })`
+    // succeeds (or fails on unrelated required fields) whether or not the field
+    // is declared. Reading it off `.shape` fails loudly if it is ever removed.
+    const fieldSchema = dataSchema.shape.isBFullRedesignEnabled
+    expect(fieldSchema).toBeDefined()
+    expect(fieldSchema.safeParse(true).success).toBe(true)
+    expect(fieldSchema.safeParse(false).success).toBe(true)
+    expect(fieldSchema.safeParse(undefined).success).toBe(true) // optional
+    expect(fieldSchema.safeParse('not-a-boolean').success).toBe(false)
+  })
 })

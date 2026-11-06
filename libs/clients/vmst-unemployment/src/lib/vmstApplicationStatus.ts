@@ -5,12 +5,14 @@ export enum VmstApplicationStatus {
   automaticSuspension = 'automaticSuspension',
   monitoringSuspension = 'monitoringSuspension',
   suspensionMissingData = 'suspensionMissingData',
+  suspensionMissingExplanation = 'suspensionMissingExplanation',
   sanctions = 'sanctions',
   review = 'review',
   newApplication = 'newApplication',
   rejected = 'rejected',
   deregistered = 'deregistered',
   closedInvalid = 'closedInvalid',
+  previousStatus = 'previousStatus',
   unknown = 'unknown',
 }
 
@@ -32,6 +34,15 @@ const statusMap: Record<string, VmstApplicationStatus> = {
   '6C52C17C-1FD6-4288-ED4B-08D68A7CCD0A': VmstApplicationStatus.rejected,
   '698CD995-06E8-464E-AA2C-08D74E4B72AD': VmstApplicationStatus.deregistered,
   'DC21E229-126B-4D22-145A-08D69BC482B7': VmstApplicationStatus.closedInvalid,
+  '1535420D-5EF6-4724-2848-08DD57DBC358': VmstApplicationStatus.approved,
+  '5AE44D0D-73CA-4369-BD79-3FC5FC8DAE1D': VmstApplicationStatus.sanctions,
+  '7BA0D70F-8088-4ECC-B1E0-58959B240483':
+    VmstApplicationStatus.suspensionMissingData,
+  '6D3CFC1E-1226-44BF-BD15-E52C02849DA2': VmstApplicationStatus.rejected,
+  'C145D989-7013-41FA-8396-3A56FE91A8B1': VmstApplicationStatus.deregistered,
+  'BA36BEEB-CF91-472B-41A4-08DDE08F305A': VmstApplicationStatus.previousStatus,
+  '7AADC9DC-A940-4D8F-0E21-08DDF044DFC3':
+    VmstApplicationStatus.suspensionMissingExplanation,
 }
 
 export const resolveApplicationStatus = (

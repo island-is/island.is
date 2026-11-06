@@ -1,11 +1,14 @@
 import {
   AccessModes,
   IngressForEnv,
+  isPerEnvReplicaCount,
   PostgresInfo,
   PostgresInfoForEnv,
+  ReplicaCount,
   Resources,
   ServiceDefinition,
   ServiceDefinitionForEnv,
+  EnvironmentVariableValue,
 } from '../types/input-types'
 import {
   ContainerRunHelm,
@@ -26,6 +29,33 @@ import {
 } from './serialization-helpers'
 
 import { getScaledValue } from '../utils/scale-value'
+
+type ResolvedReplicas = { min: number; max: number; default: number }
+
+// Resolve either replicaCount form to flat bounds for one environment. The
+// flat form applies to all envs; the per-env form uses the matching block,
+// falling back to env defaults when the block (or the whole config) is absent.
+function resolveReplicaCount(
+  rc: ReplicaCount | undefined,
+  env: EnvironmentConfig,
+): ResolvedReplicas {
+  const envDefaults: ResolvedReplicas = {
+    min: env.defaultMinReplicas,
+    max: env.defaultMaxReplicas,
+    default: env.defaultMinReplicas,
+  }
+
+  if (!rc) return envDefaults
+
+  if (!isPerEnvReplicaCount(rc)) {
+    return { min: rc.min, max: rc.max, default: rc.default }
+  }
+
+  const block = rc[env.type as 'dev' | 'staging' | 'prod']
+  if (!block) return envDefaults
+
+  return { min: block.min, max: block.max, default: block.default }
+}
 
 /**
  * Transforms our definition of a service to a Helm values object
@@ -93,6 +123,7 @@ const serializeService: SerializeMethod<HelmService> = async (
   }
   if (!hackListForNonExistentTracer.includes(serviceDef.name)) {
     result.env.NODE_OPTIONS += ' -r dd-trace/init'
+    result.env.DD_TRACE_DISABLED_INSTRUMENTATIONS = 'fetch'
   }
   // add healthCheck port if set in the service
   if (serviceDef.healthPort) {
@@ -108,13 +139,47 @@ const serializeService: SerializeMethod<HelmService> = async (
   if (serviceDef.podDisruptionBudget) {
     result.podDisruptionBudget = serviceDef.podDisruptionBudget
   }
+
+  // rollout strategy
+  if (serviceDef.strategy) {
+    result.strategy = serviceDef.strategy
+  }
+
+  // graceful shutdown
+  if (serviceDef.gracefulShutdown) {
+    const {
+      minReadySeconds,
+      terminationGracePeriodSeconds,
+      preStopSleepSeconds,
+    } = serviceDef.gracefulShutdown
+    if (minReadySeconds !== undefined) {
+      result.minReadySeconds = minReadySeconds
+    }
+    if (terminationGracePeriodSeconds !== undefined) {
+      result.terminationGracePeriodSeconds = terminationGracePeriodSeconds
+    }
+    if (preStopSleepSeconds !== undefined) {
+      result.lifecycle = {
+        preStop: {
+          exec: {
+            command: ['/bin/sh', '-c', `sleep ${preStopSleepSeconds}`],
+          },
+        },
+      }
+    }
+  }
+
   // resources
   result.resources = serviceDef.resources
 
   // replicas
+  const resolved = resolveReplicaCount(serviceDef.replicaCount, env1)
+
   if (
     (env1.type == 'staging' || env1.type == 'dev') &&
-    service.name.indexOf('search-indexer') == -1
+    service.name.indexOf('search-indexer') == -1 &&
+    // bypassReplicaClamp services keep their explicit replicaCount in dev/staging.
+    !serviceDef.replicaCount?.bypassReplicaClamp
   ) {
     result.replicaCount = {
       min: 1,
@@ -122,35 +187,32 @@ const serializeService: SerializeMethod<HelmService> = async (
       default: 1,
     }
   } else {
-    if (serviceDef.replicaCount) {
-      result.replicaCount = {
-        min: serviceDef.replicaCount.min,
-        max: serviceDef.replicaCount.max,
-        default: serviceDef.replicaCount.default,
-      }
-    } else {
-      result.replicaCount = {
-        min: env1.defaultMinReplicas,
-        max: env1.defaultMaxReplicas,
-        default: env1.defaultMinReplicas,
-      }
+    result.replicaCount = {
+      min: resolved.min,
+      max: resolved.max,
+      default: resolved.default,
     }
   }
 
-  result.hpa = {
-    scaling: {
-      replicas: {
-        min: result.replicaCount.min,
-        max: result.replicaCount.max,
+  if (result.replicaCount.max === 0) {
+    // max 0 means scale to zero: no HPA
+    result.replicaCount = { min: 0, max: 0, default: 0 }
+  } else {
+    result.hpa = {
+      scaling: {
+        replicas: {
+          min: result.replicaCount.min,
+          max: result.replicaCount.max,
+        },
+        metric: {
+          cpuAverageUtilization:
+            serviceDef.replicaCount?.cpuAverageUtilization || 90,
+        },
       },
-      metric: {
-        cpuAverageUtilization:
-          serviceDef.replicaCount?.cpuAverageUtilization || 90,
-      },
-    },
+    }
+    result.hpa.scaling.metric.nginxRequestsIrate =
+      serviceDef.replicaCount?.scalingMagicNumber || 5
   }
-  result.hpa.scaling.metric.nginxRequestsIrate =
-    serviceDef.replicaCount?.scalingMagicNumber || 5
 
   if (serviceDef.extraAttributes) {
     result.extra = serviceDef.extraAttributes
@@ -219,7 +281,6 @@ const serializeService: SerializeMethod<HelmService> = async (
     }
   }
 
-  // initContainers
   if (typeof serviceDef.initContainers !== 'undefined') {
     if (serviceDef.initContainers.containers.length > 0) {
       result.initContainer = {
@@ -393,7 +454,7 @@ function serializeVolumes(
     ReadOnly: 'ReadOnlyMany',
     ReadWrite: 'ReadWriteMany',
   }
-  if (volumes.some((v) => typeof v.name === undefined) && volumes.length > 1) {
+  if (volumes.some((v) => v.name === undefined) && volumes.length > 1) {
     return { errors: ['Must set volume name if more than one'], volumes: [] }
   }
 
@@ -503,6 +564,13 @@ function serializeHTTPRoute(
     ingressConf.extraAnnotations?.['nginx.ingress.kubernetes.io/rewrite-target']
   const rewritePrefix = rewriteTarget === '/$2' ? '/' : undefined
 
+  // Carry the legacy global-auth opt-out onto the route so a no-auth
+  // SecurityPolicy is rendered (Cognito wall bypass).
+  const noAuth =
+    ingressConf.extraAnnotations?.[
+      'nginx.ingress.kubernetes.io/enable-global-auth'
+    ] === 'false'
+
   return {
     parentRefs: [
       {
@@ -527,6 +595,7 @@ function serializeHTTPRoute(
         ...(rewritePrefix ? { rewritePrefix } : {}),
       },
     ],
+    ...(noAuth ? { noAuth } : {}),
   }
 }
 
@@ -588,21 +657,257 @@ function getFeatureDeploymentNamespace(env: EnvironmentConfig) {
   return `feature-${env.feature}`
 }
 
-export const HelmOutput: OutputFormat<HelmService> = {
-  featureDeployment(s: ServiceDefinition, env): void {
-    // Set feature-deployment prefix for URLs
-    Object.values(s.ingress).forEach((ingress) => {
-      if (!Array.isArray(ingress.host.dev)) {
-        ingress.host.dev = [ingress.host.dev]
-      }
+const getFeatureIdsHost = (env: EnvironmentConfig) =>
+  `${env.feature}.identity-server.${env.domain}`
+
+const getFeatureIdsUrl = (env: EnvironmentConfig, path = '') =>
+  `https://${getFeatureIdsHost(env)}${path}`
+
+const getFeaturePortalUrl = (env: EnvironmentConfig, path = '') =>
+  `https://${env.feature}-beta.${env.domain}${path}`
+
+const getFeatureInternalUrl = (env: EnvironmentConfig, value: string) => {
+  const url = new URL(value)
+  const internalSuffixes = [
+    `.internal.${env.domain}`,
+    `.internal.identity-server.${env.domain}`,
+  ]
+  const suffix = internalSuffixes.find((candidate) =>
+    url.hostname.endsWith(candidate),
+  )
+
+  if (!suffix || url.hostname.startsWith(`${env.feature}-`)) {
+    return value
+  }
+
+  return `https://${env.feature}-${url.hostname}${url.pathname}${url.search}${url.hash}`
+}
+
+const rewriteDevEnv = (
+  value: EnvironmentVariableValue,
+  rewrite: (value: string) => string,
+): EnvironmentVariableValue => {
+  if (typeof value === 'string') {
+    return rewrite(value)
+  }
+
+  //trigger
+  if (typeof value === 'object' && value !== null && 'dev' in value) {
+    if (typeof value.dev === 'string') {
+      return rewrite(value.dev)
+    }
+
+    if (typeof value.dev === 'function') {
+      return value.dev
+    }
+  }
+
+  return value
+}
+
+/**
+ *
+ * @param s Rewrites sercices parameters for ids feature.
+ * @param env
+ * @returns
+ */
+function rewriteIdsFeatureServiceUrls(
+  s: ServiceDefinition,
+  env: EnvironmentConfig,
+): ServiceDefinition {
+  const featureIdsHost = getFeatureIdsHost(env)
+
+  const idsServices = [
+    'identity-server',
+    'auth-admin-web',
+    'services-auth-admin-api',
+    'services-auth-public-api',
+    'services-auth-ids-api',
+    'services-auth-delegation-api',
+    'services-auth-personal-representative',
+    'services-auth-personal-representative-public',
+  ]
+
+  const serviceName = s.image ?? s.name
+
+  if (s.env.SERVICE_PORTAL_BASE_URL !== undefined) {
+    s.env.SERVICE_PORTAL_BASE_URL = rewriteDevEnv(
+      s.env.SERVICE_PORTAL_BASE_URL,
+      (value) => {
+        const url = new URL(value)
+
+        return `https://${env.feature}-beta.${env.domain}${url.pathname}${url.search}${url.hash}`
+      },
+    )
+  }
+
+  for (const [name, value] of Object.entries(s.env)) {
+    if (
+      typeof value === 'object' &&
+      value !== null &&
+      'dev' in value &&
+      typeof value.dev === 'string' &&
+      value.dev.startsWith('http')
+    ) {
+      s.env[name] = rewriteDevEnv(value, (devValue) =>
+        getFeatureInternalUrl(env, devValue),
+      )
+    }
+  }
+
+  if (s.env.IDENTITY_SERVER_ISSUER_URL_LIST !== undefined) {
+    s.env.IDENTITY_SERVER_ISSUER_URL_LIST = rewriteDevEnv(
+      s.env.IDENTITY_SERVER_ISSUER_URL_LIST,
+      (value) => {
+        const issuers = JSON.parse(value) as string[]
+        const featureIssuer = getFeatureIdsUrl(env)
+
+        return JSON.stringify([
+          featureIssuer,
+          ...issuers.filter((issuer) => issuer !== featureIssuer),
+        ])
+      },
+    )
+  }
+
+  const idsUrlVariables = [
+    'IDENTITY_SERVER_ISSUER_URL',
+    'AUTH_PUBLIC_API_URL',
+    'AUTH_ADMIN_API_PATH',
+    'AUTH_IDS_API_URL',
+  ] as const
+
+  for (const name of idsUrlVariables) {
+    const value = s.env[name]
+
+    if (value === undefined) {
+      continue
+    }
+
+    s.env[name] = rewriteDevEnv(value, (currentValue) => {
+      const url = new URL(currentValue)
+      const path = url.pathname === '/' ? '' : url.pathname
+
+      return getFeatureIdsUrl(env, `${path}${url.search}${url.hash}`)
+    })
+  }
+
+  if (s.env.AUTH_ADMIN_API_PATHS !== undefined) {
+    s.env.AUTH_ADMIN_API_PATHS = rewriteDevEnv(
+      s.env.AUTH_ADMIN_API_PATHS,
+      (value) => {
+        const paths = JSON.parse(value) as Record<string, string>
+        const developmentPath = paths.development
+          ? new URL(paths.development)
+          : null
+
+        return JSON.stringify({
+          ...paths,
+          ...(developmentPath
+            ? {
+                development: getFeatureIdsUrl(
+                  env,
+                  `${developmentPath.pathname}${developmentPath.search}${developmentPath.hash}`,
+                ),
+              }
+            : {}),
+        })
+      },
+    )
+  }
+
+  if (idsServices.includes(serviceName)) {
+    const rewriteIdsUrl = (value: string) => {
+      const url = new URL(value)
+      return getFeatureIdsUrl(env, `${url.pathname}${url.search}${url.hash}`)
+    }
+
+    if (s.env.PUBLIC_URL !== undefined) {
+      s.env.PUBLIC_URL = rewriteDevEnv(s.env.PUBLIC_URL, rewriteIdsUrl)
+    }
+    if (s.env.BASE_URL !== undefined) {
+      s.env.BASE_URL = rewriteDevEnv(s.env.BASE_URL, rewriteIdsUrl)
+    }
+    if (s.env.NEXTAUTH_URL !== undefined) {
+      s.env.NEXTAUTH_URL = rewriteDevEnv(s.env.NEXTAUTH_URL, rewriteIdsUrl)
+    }
+
+    if (s.env.IDENTITYSERVER_DOMAIN !== undefined) {
+      s.env.IDENTITYSERVER_DOMAIN = rewriteDevEnv(
+        s.env.IDENTITYSERVER_DOMAIN,
+        () => featureIdsHost,
+      )
+    }
+  }
+
+  if (s.env.Application__AllowedRedirectUris) {
+    s.env.Application__AllowedRedirectUris = rewriteDevEnv(
+      s.env.Application__AllowedRedirectUris,
+      (value) =>
+        value
+          .split(',')
+          .map((uri) => {
+            const url = new URL(uri)
+            if (url.hostname !== `beta.${env.domain}`) {
+              return uri
+            }
+            return getFeaturePortalUrl(
+              env,
+              `${url.pathname}${url.search}${url.hash}`,
+            )
+          })
+          .join(','),
+    )
+  }
+
+  return s
+}
+
+function prepareFeatureDeployment(
+  s: ServiceDefinition,
+  env: EnvironmentConfig,
+): ServiceDefinition {
+  s = rewriteIdsFeatureServiceUrls(s, env)
+
+  const featureIdsHost = getFeatureIdsHost(env)
+
+  const publicIdsServices = [
+    'identity-server',
+    'auth-admin-web',
+    'services-auth-admin-api',
+    'services-auth-public-api',
+  ]
+  const serviceName = s.image ?? s.name
+  Object.values(s.ingress).forEach((ingress) => {
+    if (!Array.isArray(ingress.host.dev)) {
+      ingress.host.dev = [ingress.host.dev]
+    }
+    if (publicIdsServices.includes(serviceName)) {
+      ingress.host.dev = ingress.host.dev.map(() => featureIdsHost)
+    } else {
       ingress.host.dev = ingress.host.dev.map(
         (host) => `${env.feature}-${host}`,
       )
-    })
-    s.replicaCount = {
-      min: Math.min(1, s.replicaCount?.min ?? 1),
-      max: Math.min(1, s.replicaCount?.max ?? 1),
-      default: Math.min(1, s.replicaCount?.default ?? 1),
+    }
+  })
+  return s
+}
+
+export const HelmOutput: OutputFormat<HelmService> = {
+  featureDeployment(s: ServiceDefinition, env): void {
+    s = prepareFeatureDeployment(s, env)
+
+    // Feature deployments run in dev. Honor a scale-to-zero dev config
+    // verbatim; otherwise keep the existing cap of 1 replica.
+    const featureRc = resolveReplicaCount(s.replicaCount, env)
+    if (featureRc.max === 0) {
+      s.replicaCount = { min: 0, max: 0, default: 0 }
+    } else {
+      s.replicaCount = {
+        min: Math.min(1, featureRc.min),
+        max: Math.min(1, featureRc.max),
+        default: Math.min(1, featureRc.default),
+      }
     }
     s.namespace = getFeatureDeploymentNamespace(env)
     if (s.postgres) {

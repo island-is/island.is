@@ -1,4 +1,4 @@
-import { Includeable, Order } from 'sequelize'
+import { Includeable, Order, OrderItem } from 'sequelize'
 
 import {
   AppealCaseState,
@@ -18,11 +18,22 @@ import {
 import { canWithdrawCaseLevelAppeal } from '../appeal-case/appealCase.helpers'
 import { Case } from '../repository'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
-import { CaseIncludes, modelMap, subModelMap } from './caseTable.types'
+import {
+  AnyModelDef,
+  CaseIncludes,
+  CaseTableRowCase,
+  copyIncludeInto,
+  copyIncludeNode,
+  IncludeTree,
+  IncludeTreeNode,
+  mergeAccessIncludes,
+  modelMapsByDepth,
+} from './caseTable.types'
+import { userAccessIncludes } from './caseTable.whereOptions'
 
 const getIsMyCaseAttributes = (user: User): string[] => {
   if (isProsecutionUser(user)) {
-    return ['creatingProsecutorId', 'prosecutorId']
+    return ['creatingProsecutorId', 'prosecutorId', 'indictmentApproverId']
   }
 
   if (isDistrictCourtUser(user)) {
@@ -42,10 +53,9 @@ const getAvailableActionsAttributes = (user: User): string[] => {
   }
 
   if (isDefenceUser(user)) {
-    // defenderNationalId resolves the collective request-case appellant to the
-    // case's current registered defender (see userIsAppellant); type selects
-    // that request-case branch.
-    return ['type', 'defenderNationalId']
+    // type selects the request-case vs indictment branch of userIsAppellant;
+    // defendant defenderNationalId is loaded via includes below.
+    return ['type']
   }
 
   return []
@@ -94,8 +104,8 @@ const getAvailableActionsIncludes = (user: User): CaseIncludes => {
           },
         },
       },
-      // Needed to resolve a per-party (dismissed indictment) defence appellant to
-      // the current confirmed defender / spokesperson.
+      // Needed to resolve defence appellants: request-case collective defenders
+      // and per-party (dismissed indictment) confirmed defenders / spokespersons.
       defendants: {
         attributes: ['id', 'isDefenderChoiceConfirmed', 'defenderNationalId'],
       },
@@ -117,6 +127,41 @@ const mergeAttributes = <T>(target: T[], source: T[]) => {
   return [...new Set([...target, ...source])]
 }
 
+// Merges one node of an include declaration into another, attributes and
+// nested associations alike, at any depth.
+const mergeIncludeNode = (target: IncludeTreeNode, source: IncludeTreeNode) => {
+  target.attributes = mergeAttributes(target.attributes, source.attributes)
+
+  if (!source.includes) {
+    return
+  }
+
+  if (!target.includes) {
+    target.includes = {}
+  }
+
+  for (const [key, nestedSource] of Object.entries(source.includes)) {
+    if (!nestedSource) {
+      continue
+    }
+
+    const nestedTarget = target.includes[key]
+
+    if (!nestedTarget) {
+      target.includes[key] = copyIncludeNode(nestedSource)
+      continue
+    }
+
+    mergeIncludeNode(nestedTarget, nestedSource)
+  }
+}
+
+// Merges one association's include into the tree being built for a query.
+//
+// Every value that enters the tree is copied first (see copyIncludeInto): the
+// cell generators are module level constants, and the merges below write into
+// whatever object they are handed. Aliasing one in would leave another list's
+// attributes and joins on the generator afterwards.
 const setInclude = <K extends keyof CaseIncludes>(
   target: CaseIncludes,
   source: CaseIncludes,
@@ -127,106 +172,121 @@ const setInclude = <K extends keyof CaseIncludes>(
 
   const targetValue = target[key]
   if (!targetValue) {
-    target[key] = sourceValue
+    copyIncludeInto(target, source, key)
     return
   }
 
-  targetValue.attributes = mergeAttributes(
-    targetValue.attributes,
-    sourceValue.attributes,
+  mergeIncludeNode(
+    targetValue as IncludeTreeNode,
+    sourceValue as IncludeTreeNode,
   )
+}
 
-  if (!sourceValue.includes) {
-    return
-  }
+type OrderPath = { model: AnyModelDef['model']; as: string }[]
 
-  if (!targetValue.includes) {
-    targetValue.includes = sourceValue.includes
-    return
-  }
-
-  for (const nestedKey of Object.keys(sourceValue.includes) as Array<
-    keyof NonNullable<typeof sourceValue.includes>
-  >) {
-    const nestedSource = sourceValue.includes[nestedKey]
-    if (!nestedSource) continue
-
-    const nestedTarget = targetValue.includes[nestedKey]
-    if (!nestedTarget) {
-      targetValue.includes[nestedKey] = nestedSource
-      continue
+// Builds the Sequelize includes for one level of a declaration and recurses
+// into the next, looking each alias up in the model map for its depth.
+const buildIncludes = (
+  tree: IncludeTree,
+  depth: number,
+  parents: OrderPath,
+  globalOrder: OrderItem[],
+): Includeable[] =>
+  Object.entries(tree).flatMap(([as, node]) => {
+    if (!node) {
+      return []
     }
 
-    nestedTarget.attributes = mergeAttributes(
-      nestedTarget.attributes,
-      nestedSource.attributes,
-    )
-  }
-}
+    const modelDef = modelMapsByDepth[depth]?.[as]
+
+    if (!modelDef) {
+      throw new Error(
+        `No model definition for the association ${[
+          ...parents.map((parent) => parent.as),
+          as,
+        ].join('.')} of a case table include`,
+      )
+    }
+
+    const path: OrderPath = [...parents, { model: modelDef.model, as }]
+
+    // Named, not spread. `order` is an array, so spreading it would put the
+    // term under "0" and Sequelize would ignore the include's ordering without
+    // saying so.
+    const order =
+      modelDef.separate && modelDef.order
+        ? { order: modelDef.order }
+        : undefined
+
+    if (!modelDef.separate && modelDef.order) {
+      globalOrder.push([...path, ...modelDef.order[0]] as OrderItem)
+    }
+
+    const include = node.includes
+      ? { include: buildIncludes(node.includes, depth + 1, path, globalOrder) }
+      : undefined
+
+    return [
+      {
+        attributes: mergeAttributes(['id'], node.attributes),
+        required: node.required,
+        where: node.where,
+        model: modelDef.model,
+        as,
+        separate: modelDef.separate,
+        ...order,
+        ...include,
+      } as Includeable,
+    ]
+  })
 
 const getIncludeAndOrder = (
   allIncludes: CaseIncludes,
 ): [Includeable[], Order] => {
-  const globalOrder: Order = []
-
-  const include = Object.entries(allIncludes).map(([k, v]) => {
-    const modelDef = modelMap[k as keyof typeof modelMap]
-    const order =
-      modelDef.separate && modelDef.order ? { ...modelDef.order } : undefined
-    const include = v.includes
-      ? {
-          include: Object.entries(v.includes).map(([sk, sv]) => {
-            const subModelDef = subModelMap[sk as keyof typeof subModelMap]
-            const order =
-              subModelDef.separate && subModelDef.order
-                ? { ...subModelDef.order }
-                : undefined
-
-            if (!subModelDef.separate && subModelDef.order) {
-              globalOrder.push([
-                { model: modelDef.model, as: k },
-                { model: subModelDef.model, as: sk },
-                ...subModelDef.order[0],
-              ])
-            }
-
-            return {
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              attributes: mergeAttributes(['id'], sv!.attributes ?? []),
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              required: sv!.required,
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              where: sv!.where,
-              model: subModelDef.model,
-              as: sk,
-              separate: subModelDef.separate,
-              ...order,
-            }
-          }),
-        }
-      : undefined
-
-    if (!modelDef.separate && modelDef.order) {
-      globalOrder.push([{ model: modelDef.model, as: k }, ...modelDef.order[0]])
-    }
-
-    return {
-      attributes: mergeAttributes(['id'], v.attributes),
-      required: v.required,
-      where: v.where,
-      model: modelDef.model,
-      as: k,
-      separate: modelDef.separate,
-      ...order,
-      ...include,
-    } as Includeable
-  })
+  const globalOrder: OrderItem[] = []
+  const include = buildIncludes(allIncludes as IncludeTree, 0, [], globalOrder)
 
   return [include, globalOrder]
 }
 
+// Every query built here joins whatever the user's access rule reads, on top of
+// what the list asked for. Doing it in one place is the point: a list that had
+// to request those joins itself could forget, and the rule would then compile
+// into SQL that Postgres rejects outright.
+const addAccessIncludes = (allIncludes: CaseIncludes, user: User) =>
+  mergeAccessIncludes(userAccessIncludes(user), allIncludes) ?? allIncludes
+
+/**
+ * The joins a user's access rule needs, for a query that assembles its own
+ * include list instead of going through getGlobalIncludes - searchCases is the
+ * only one. Aliases the caller already joins are left alone, so the caller's
+ * own version wins exactly as it does everywhere else.
+ *
+ * A caller that skips this gets SQL naming an alias it never joined, which
+ * Postgres rejects outright: `missing FROM-clause entry`.
+ */
+export const getAccessIncludes = (
+  user: User,
+  joinedAliases: Array<keyof CaseIncludes>,
+): Includeable[] => {
+  const accessIncludes = mergeAccessIncludes(userAccessIncludes(user), {}) ?? {}
+
+  // Typed rather than loose strings: an alias that does not match deletes
+  // nothing, and the query then carries the same `as` twice, which Postgres
+  // rejects with `table name specified more than once` - the same runtime only
+  // failure this whole change exists to remove.
+  for (const alias of joinedAliases) {
+    delete accessIncludes[alias]
+  }
+
+  const [include] = getIncludeAndOrder(accessIncludes)
+
+  return include
+}
+
 export const getGlobalIncludes = (
   globalIncludes: CaseIncludes,
+  user: User,
 ): [Includeable[], Order] => {
   const allIncludes: CaseIncludes = {}
 
@@ -234,7 +294,7 @@ export const getGlobalIncludes = (
     setInclude(allIncludes, globalIncludes, m)
   }
 
-  return getIncludeAndOrder(allIncludes)
+  return getIncludeAndOrder(addAccessIncludes(allIncludes, user))
 }
 
 export const getAllIncludes = (
@@ -268,20 +328,25 @@ export const getAllIncludes = (
     }
   }
 
-  return getIncludeAndOrder(allIncludes)
+  return getIncludeAndOrder(addAccessIncludes(allIncludes, user))
 }
 
 export const isMyCase = (
   theCase: Pick<
     Case,
-    'creatingProsecutorId' | 'prosecutorId' | 'judgeId' | 'registrarId'
+    | 'creatingProsecutorId'
+    | 'prosecutorId'
+    | 'indictmentApproverId'
+    | 'judgeId'
+    | 'registrarId'
   >,
   user: User,
 ): boolean => {
   if (isProsecutionUser(user)) {
     return (
       theCase.creatingProsecutorId === user.id ||
-      theCase.prosecutorId === user.id
+      theCase.prosecutorId === user.id ||
+      theCase.indictmentApproverId === user.id
     )
   }
 
@@ -327,6 +392,7 @@ export const canDeleteIndictmentCase = (
 ): boolean => {
   return (
     caseToDelete.state === CaseState.DRAFT ||
+    caseToDelete.state === CaseState.WAITING_FOR_REVIEW ||
     caseToDelete.state === CaseState.WAITING_FOR_CONFIRMATION
   )
 }
@@ -352,7 +418,7 @@ export const canDeleteCase = (
 
 // Mirrors the appeal-case module's withdrawal authorization
 // (userAppealedAppealCase in appeal-case/guards/rolesRules.ts) for the appeals
-// shown in the case tables. The tables' appealCase slot only ever holds the
+// shown in the case tables. The row's appeal slot only ever holds the
 // case-level appeal (request case and dismissed indictment appeals) -
 // ruling-order appeals are withdrawn from the ruling order's context menu on the
 // case screen instead. So it shares the guard's case-level eligibility check
@@ -360,16 +426,12 @@ export const canDeleteCase = (
 // log, with request-case prosecution precedence.
 export const canCancelAppeal = (
   theCase: Pick<
-    Case,
-    | 'type'
-    | 'appealCase'
-    | 'defenderNationalId'
-    | 'defendants'
-    | 'civilClaimants'
+    CaseTableRowCase,
+    'type' | 'appeal' | 'defendants' | 'civilClaimants'
   >,
   user: User,
 ): boolean => {
-  const appealCase = theCase.appealCase
+  const appealCase = theCase.appeal
 
   // An appeal can only be withdrawn before the court of appeals has ruled
   if (
@@ -385,13 +447,8 @@ export const canCancelAppeal = (
 
 export const getContextMenuActions = (
   theCase: Pick<
-    Case,
-    | 'type'
-    | 'state'
-    | 'appealCase'
-    | 'defenderNationalId'
-    | 'defendants'
-    | 'civilClaimants'
+    CaseTableRowCase,
+    'type' | 'state' | 'appeal' | 'defendants' | 'civilClaimants'
   >,
   user: User,
 ): ContextMenuCaseActionType[] => {

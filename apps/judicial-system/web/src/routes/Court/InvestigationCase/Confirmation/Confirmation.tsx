@@ -1,5 +1,5 @@
-import { FC, useContext, useState } from 'react'
-import { useIntl } from 'react-intl'
+import type { FC } from 'react'
+import { useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
@@ -29,19 +29,19 @@ import {
   SigningMethodSelectionModal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import type { RequestSignatureResponse } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseDecision,
   CaseTransition,
-  RequestSignatureResponse,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-
 import {
   JudgeRequestRulingSignatureModal,
   RegistrarRequestRulingSignatureModal,
   RulingModifiedModal,
-} from '../../components'
+} from '@island.is/judicial-system-web/src/routes/Court/components'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+
 import { confirmation as strings } from './Confirmation.strings'
 
 type VisibleModal =
@@ -54,7 +54,6 @@ type VisibleModal =
 
 const Confirmation: FC = () => {
   const router = useRouter()
-  const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
@@ -141,43 +140,41 @@ const Confirmation: FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader
-        title={formatMessage(titles.court.investigationCases.conclusion)}
-      />
+      <PageHeader title={titles.court.investigationCases.conclusion} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <Accordion>
             <PoliceRequestAccordionItem workingCase={workingCase} />
             <CourtRecordAccordionItem workingCase={workingCase} />
             <RulingAccordionItem workingCase={workingCase} />
           </Accordion>
-          <BlueBox className={grid({ gap: 2 })}>
+          <BlueBox className={stack({ gap: 2 })}>
             <Text as="h3" variant="h3" textAlign="center">
-              {formatMessage(strings.conclusionTitle)}
+              {strings.conclusionTitle}
             </Text>
             <Text variant="intro">{workingCase.conclusion}</Text>
             <Text variant="h4" textAlign="center">
               {workingCase.judge?.name}
             </Text>
           </BlueBox>
-          <div className={grid({ gap: 2 })}>
+          <div className={stack({ gap: 2 })}>
             <Box>
               <PdfButton
                 caseId={workingCase.id}
-                title={formatMessage(core.pdfButtonRuling)}
+                title={core.pdfButtonRuling}
                 pdfType="ruling"
-                elementId={formatMessage(core.pdfButtonRuling)}
+                elementId={core.pdfButtonRuling}
                 disabled={isCompletedWithoutRuling}
               />
             </Box>
             <Box>
               <PdfButton
                 caseId={workingCase.id}
-                title={formatMessage(core.pdfButtonRulingShortVersion)}
+                title={core.pdfButtonRulingShortVersion}
                 pdfType="courtRecord"
-                elementId={formatMessage(core.pdfButtonRulingShortVersion)}
+                elementId={core.pdfButtonRulingShortVersion}
               />
             </Box>
           </div>
@@ -191,17 +188,15 @@ const Confirmation: FC = () => {
               ? []
               : [
                   {
-                    text: formatMessage(
-                      isCompletedWithoutRuling
-                        ? strings.continueButtonTextCompletedWithoutRuling
-                        : workingCase.decision === CaseDecision.ACCEPTING
-                        ? strings.continueButtonTextAccepting
-                        : workingCase.decision === CaseDecision.REJECTING
-                        ? strings.continueButtonTextRejecting
-                        : workingCase.decision === CaseDecision.DISMISSING
-                        ? strings.continueButtonTextDismissing
-                        : strings.continueButtonTextAcceptingPartially,
-                    ),
+                    text: isCompletedWithoutRuling
+                      ? strings.continueButtonTextCompletedWithoutRuling
+                      : workingCase.decision === CaseDecision.ACCEPTING
+                      ? strings.continueButtonTextAccepting
+                      : workingCase.decision === CaseDecision.REJECTING
+                      ? strings.continueButtonTextRejecting
+                      : workingCase.decision === CaseDecision.DISMISSING
+                      ? strings.continueButtonTextDismissing
+                      : strings.continueButtonTextAcceptingPartially,
                     icon:
                       isAcceptingCaseDecision(workingCase.decision) ||
                       isCompletedWithoutRuling
@@ -219,9 +214,7 @@ const Confirmation: FC = () => {
                 ]
           }
           infoBoxText={
-            hideNextButton
-              ? formatMessage(strings.onlyAssigendJudgeCanSign)
-              : undefined
+            hideNextButton ? strings.onlyAssigendJudgeCanSign : undefined
           }
         />
       </FormContentContainer>

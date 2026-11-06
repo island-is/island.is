@@ -1,19 +1,19 @@
 import { useCallback, useContext, useState } from 'react'
 
-import { Box, toast } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   FormContext,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  Case,
   CaseIndictmentRulingDecision,
   CaseTransition,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CourtCaseNumberInput } from '@island.is/judicial-system-web/src/routes/Court/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-
-import { CourtCaseNumberInput } from '../../Court/components'
 
 export const useCancelCase = (
   onComplete: (caseId: string) => void,
@@ -24,7 +24,7 @@ export const useCancelCase = (
     [
       cancelCaseId: string | undefined,
       isCancelCaseLoading: boolean,
-      theCase: Case | undefined,
+      theCase: WorkingCase | undefined,
     ]
   >([undefined, false, undefined])
   const { updateCase, isUpdatingCase, transitionCase, isTransitioningCase } =

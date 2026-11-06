@@ -8,6 +8,7 @@ import { getModelToken } from '@nestjs/sequelize'
 import { Notification } from '../notification.model'
 import { ActorNotification } from '../actor-notification.model'
 import { NotificationDelivery } from '../notification-delivery.model'
+import { UserNotificationSender } from '../user-notification-sender.model'
 import { DocumentsScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 
@@ -75,6 +76,10 @@ describe('NotificationsService', () => {
           useClass: jest.fn(() => ({})),
         },
         {
+          provide: getModelToken(UserNotificationSender),
+          useClass: jest.fn(() => ({})),
+        },
+        {
           provide: CmsService,
           useValue: {
             fetchData: jest.fn(),
@@ -122,6 +127,9 @@ describe('NotificationsService', () => {
   })
 
   it('should sanitize and return only valid arguments', () => {
+    const warnSpy = jest
+      .spyOn(logger, 'warn')
+      .mockImplementation(() => undefined)
     const argsWithInvalid = [
       { key: 'arg1', value: 'hello' },
       { key: 'arg2', value: 'world' },
@@ -133,6 +141,15 @@ describe('NotificationsService', () => {
       { key: 'arg1', value: 'hello' },
       { key: 'arg2', value: 'world' },
     ])
+    expect(warnSpy).toHaveBeenCalledWith(
+      'Filtering out invalid notification argument',
+      {
+        templateId: mockHnippTemplate.templateId,
+        invalidArgKey: 'invalidArg',
+        validArgKeys: mockHnippTemplate.args,
+      },
+    )
+    warnSpy.mockRestore()
   })
 
   it('should sanitize and return empty array when no valid arguments', () => {

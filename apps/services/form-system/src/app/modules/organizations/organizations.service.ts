@@ -1,4 +1,7 @@
 import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -22,6 +25,7 @@ import { OrganizationDelegationDto } from './models/dto/organizationDelegation.d
 import { Form } from '../forms/models/form.model'
 import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
+import { normalizeZendeskInstance } from '../../../utils/zendeskPartiesCustomFieldIds'
 
 @Injectable()
 export class OrganizationsService {
@@ -32,6 +36,34 @@ export class OrganizationsService {
     private readonly formModel: typeof Form,
     private readonly sequelize: Sequelize,
   ) {}
+
+  async create(user: User, nationalId: string): Promise<void> {
+    const isLocalDevelopment =
+      (!process.env.name || process.env.name === 'local') &&
+      process.env.NODE_ENV === 'development'
+
+    if (process.env.name !== 'dev' && !isLocalDevelopment) {
+      throw new ForbiddenException(
+        'Organization creation is only available in development',
+      )
+    }
+
+    if (!user.scope.includes(AdminPortalScope.formSystemAdmin)) {
+      throw new UnauthorizedException('User does not have admin privileges')
+    }
+
+    if (!/^\d{10}$/.test(nationalId)) {
+      throw new BadRequestException('National ID must contain 10 digits')
+    }
+
+    const [, created] = await this.organizationModel.findOrCreate({
+      where: { nationalId },
+    })
+
+    if (!created) {
+      throw new ConflictException('Organization already exists')
+    }
+  }
 
   async findAdmin(
     user: User,
@@ -110,7 +142,7 @@ export class OrganizationsService {
     user: User,
     organizationZendeskInstanceDto: OrganizationZendeskInstanceDto,
   ): Promise<void> {
-    const { zendeskInstance, zendeskBrandId, organizationId } =
+    const { zendeskInstance, zendeskBrandId, organizationId, formId } =
       organizationZendeskInstanceDto
     const organization = await this.organizationModel.findByPk(organizationId)
 
@@ -125,10 +157,38 @@ export class OrganizationsService {
       throw new UnauthorizedException(`User does not have admin privileges`)
     }
 
-    organization.zendeskInstance = zendeskInstance ? zendeskInstance : ''
-    organization.zendeskBrandId = zendeskBrandId ? zendeskBrandId : ''
+    const supportedZendeskInstance = zendeskInstance
+      ? normalizeZendeskInstance(zendeskInstance)
+      : undefined
 
-    await organization.save()
+    organization.zendeskInstance = supportedZendeskInstance
+      ? supportedZendeskInstance
+      : ''
+
+    await this.sequelize.transaction(async (transaction) => {
+      await organization.save({ transaction })
+
+      if (formId) {
+        const form = await this.formModel.findByPk(formId, { transaction })
+
+        if (!form) {
+          throw new NotFoundException(`Form with ID ${formId} not found`)
+        }
+
+        if (form.organizationId !== organization.id) {
+          throw new UnauthorizedException(
+            `Form does not belong to organization ${organization.id}`,
+          )
+        }
+
+        form.zendeskBrandId = zendeskBrandId ? zendeskBrandId : ''
+        await form.save({ transaction })
+      }
+    })
+
+    if (zendeskInstance && !supportedZendeskInstance) {
+      throw new BadRequestException('Unsupported Zendesk tenant')
+    }
   }
 
   async addDelegation(

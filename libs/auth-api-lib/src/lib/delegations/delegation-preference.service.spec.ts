@@ -1,0 +1,298 @@
+import { BadRequestException } from '@nestjs/common'
+import { getModelToken } from '@nestjs/sequelize'
+import { Test } from '@nestjs/testing'
+import { Op } from 'sequelize'
+
+import { DelegationPreferenceService } from './delegation-preference.service'
+import { DelegationIndex } from './models/delegation-index.model'
+import { DelegationPreference } from './models/delegation-preference.model'
+
+const ACTOR = '0101302399'
+const PARTY = '0101303019'
+const OTHER_PARTY = '5005101370'
+
+const row = (overrides: Partial<DelegationPreference>) =>
+  ({
+    fromNationalId: PARTY,
+    favouritedAt: null,
+    lastUsedAt: null,
+    ...overrides,
+  } as DelegationPreference)
+
+describe('DelegationPreferenceService', () => {
+  let service: DelegationPreferenceService
+  let model: {
+    findAll: jest.Mock
+    upsert: jest.Mock
+    update: jest.Mock
+    destroy: jest.Mock
+    count: jest.Mock
+    sequelize: { query: jest.Mock; transaction: jest.Mock }
+  }
+  let index: { findAll: jest.Mock }
+
+  const indexed = (...ids: string[]) =>
+    index.findAll.mockResolvedValue(
+      ids.map((fromNationalId) => ({ fromNationalId })),
+    )
+
+  beforeEach(async () => {
+    model = {
+      findAll: jest.fn().mockResolvedValue([]),
+      upsert: jest.fn().mockResolvedValue([undefined, true]),
+      update: jest.fn().mockResolvedValue([0]),
+      destroy: jest.fn().mockResolvedValue(0),
+      count: jest.fn().mockResolvedValue(0),
+      sequelize: {
+        query: jest.fn().mockResolvedValue([]),
+        transaction: jest.fn((fn) => fn('tx')),
+      },
+    }
+    index = { findAll: jest.fn().mockResolvedValue([]) }
+
+    const module = await Test.createTestingModule({
+      providers: [
+        DelegationPreferenceService,
+        { provide: getModelToken(DelegationPreference), useValue: model },
+        { provide: getModelToken(DelegationIndex), useValue: index },
+      ],
+    }).compile()
+
+    service = module.get(DelegationPreferenceService)
+  })
+
+  describe('reconciling against the delegation index', () => {
+    it('reads only preferences for parties the actor still holds a delegation for', async () => {
+      indexed(PARTY, OTHER_PARTY)
+
+      await service.findAll(ACTOR)
+
+      for (const [args] of model.findAll.mock.calls) {
+        expect(args.where.fromNationalId).toEqual({
+          [Op.in]: [PARTY, OTHER_PARTY],
+        })
+      }
+    })
+
+    it('lets a party be starred once the index confirms the actor holds it', async () => {
+      await expect(
+        service.setFavourite(ACTOR, PARTY, true),
+      ).resolves.toBeUndefined()
+
+      expect(model.upsert).toHaveBeenCalled()
+    })
+
+    it('leaves preferences alone when the actor has no index rows at all', async () => {
+      // Not indexed yet is not the same as holding nothing, and filtering here
+      // would make every favourite vanish.
+      index.findAll.mockResolvedValue([])
+
+      await service.findAll(ACTOR)
+
+      for (const [args] of model.findAll.mock.calls) {
+        expect(args.where.fromNationalId).toBeUndefined()
+      }
+    })
+
+    it('treats an expired delegation as revoked', async () => {
+      indexed(PARTY)
+
+      await service.findAll(ACTOR)
+
+      const [args] = index.findAll.mock.calls[0]
+
+      expect(args.where.toNationalId).toBe(ACTOR)
+      expect(args.where[Op.or]).toEqual([
+        { validTo: null },
+        { validTo: { [Op.gte]: expect.any(Date) } },
+      ])
+    })
+  })
+
+  describe('findAll', () => {
+    it('reads favourites and recently used separately', async () => {
+      await service.findAll(ACTOR)
+
+      const [favourites, recent] = model.findAll.mock.calls.map(
+        ([args]) => args,
+      )
+
+      expect(favourites).toEqual(
+        expect.objectContaining({
+          where: { toNationalId: ACTOR, favouritedAt: { [Op.ne]: null } },
+          order: [['favouritedAt', 'ASC']],
+        }),
+      )
+      expect(recent).toEqual(
+        expect.objectContaining({
+          where: { toNationalId: ACTOR, lastUsedAt: { [Op.ne]: null } },
+          order: [['lastUsedAt', 'DESC']],
+          limit: expect.any(Number),
+        }),
+      )
+    })
+
+    it('returns a party that is both starred and recently used only once', async () => {
+      const lastUsedAt = new Date('2026-09-17T19:15:29Z')
+
+      model.findAll
+        .mockResolvedValueOnce([row({ favouritedAt: new Date() })])
+        .mockResolvedValueOnce([row({ favouritedAt: new Date(), lastUsedAt })])
+
+      await expect(service.findAll(ACTOR)).resolves.toEqual([
+        { fromNationalId: PARTY, isFavourite: true, lastUsedAt },
+      ])
+    })
+
+    it('reports a missing lastUsedAt as null rather than undefined', async () => {
+      model.findAll.mockResolvedValueOnce([
+        row({ favouritedAt: new Date(), lastUsedAt: undefined }),
+      ])
+
+      const [preference] = await service.findAll(ACTOR)
+
+      expect(preference.lastUsedAt).toBeNull()
+    })
+  })
+
+  describe('a party held through more than one delegation type', () => {
+    it('is still live when one type goes and another remains', async () => {
+      // The picker merges a party into one card with its types listed, and a
+      // preference is keyed on the party, so losing the procuration while
+      // keeping the custom delegation must leave the favourite alone.
+      index.findAll.mockResolvedValue([
+        { fromNationalId: PARTY },
+        { fromNationalId: PARTY },
+      ])
+
+      await service.findAll(ACTOR)
+
+      for (const [args] of model.findAll.mock.calls) {
+        expect(args.where.fromNationalId).toEqual({ [Op.in]: [PARTY] })
+      }
+    })
+
+    it('asks the index about the party, never about the type', async () => {
+      indexed(PARTY)
+
+      await service.findAll(ACTOR)
+
+      const [args] = index.findAll.mock.calls[0]
+
+      expect(args.where.type).toBeUndefined()
+      expect(args.where.provider).toBeUndefined()
+      expect(args.attributes).toEqual(['fromNationalId'])
+    })
+  })
+
+  describe('setFavourite', () => {
+    it('writes only favouritedAt, so a concurrent switch cannot lose its timestamp', async () => {
+      await service.setFavourite(ACTOR, PARTY, true)
+
+      expect(model.upsert).toHaveBeenCalledWith(
+        {
+          toNationalId: ACTOR,
+          fromNationalId: PARTY,
+          favouritedAt: expect.any(Date),
+        },
+        expect.objectContaining({
+          conflictFields: ['to_national_id', 'from_national_id'],
+          fields: ['favouritedAt'],
+        }),
+      )
+    })
+
+    it('records when a party was starred, so favourites keep a predictable order', async () => {
+      // The row may already exist from a switch, so its created date is when
+      // the actor first used the party, not when they starred it.
+      await service.setFavourite(ACTOR, PARTY, true)
+
+      const [values] = model.upsert.mock.calls[0]
+
+      expect(values.favouritedAt).toBeInstanceOf(Date)
+    })
+
+    it('refuses a party the actor holds no delegation for', async () => {
+      // Otherwise the cap, which counts only live parties, would never see
+      // these rows and nothing would bound how many an actor could store.
+      indexed(OTHER_PARTY)
+
+      await expect(service.setFavourite(ACTOR, PARTY, true)).rejects.toThrow(
+        BadRequestException,
+      )
+      expect(model.upsert).not.toHaveBeenCalled()
+      expect(model.sequelize.transaction).not.toHaveBeenCalled()
+    })
+
+    it('allows any party when the actor has no index rows at all', async () => {
+      index.findAll.mockResolvedValue([])
+
+      await expect(
+        service.setFavourite(ACTOR, PARTY, true),
+      ).resolves.toBeUndefined()
+      expect(model.upsert).toHaveBeenCalled()
+    })
+
+    it('creates no row when unstarring something never starred', async () => {
+      await service.setFavourite(ACTOR, OTHER_PARTY, false)
+
+      expect(model.upsert).not.toHaveBeenCalled()
+      expect(model.destroy).toHaveBeenCalledWith({
+        where: {
+          toNationalId: ACTOR,
+          fromNationalId: OTHER_PARTY,
+          lastUsedAt: null,
+        },
+      })
+    })
+
+    it('keeps a row that still records a use, and only clears the star', async () => {
+      await service.setFavourite(ACTOR, PARTY, false)
+
+      expect(model.update).toHaveBeenCalledWith(
+        { favouritedAt: null },
+        { where: { toNationalId: ACTOR, fromNationalId: PARTY } },
+      )
+    })
+  })
+
+  describe('recordUsage', () => {
+    it("drops the actor's oldest unstarred rows, so the table cannot grow without end", async () => {
+      await service.recordUsage(ACTOR, PARTY)
+
+      const [sql, options] = model.sequelize.query.mock.calls[0]
+
+      expect(sql).toContain('DELETE FROM delegation_preference')
+      expect(sql).toContain('favourited_at IS NULL')
+      expect(options.replacements).toEqual({
+        toNationalId: ACTOR,
+        keep: expect.any(Number),
+      })
+    })
+
+    it('never prunes a favourite', async () => {
+      await service.recordUsage(ACTOR, PARTY)
+
+      const [sql] = model.sequelize.query.mock.calls[0]
+
+      expect(sql.match(/favourited_at IS NULL/g)).toHaveLength(2)
+    })
+
+    it('is a single upsert that leaves isFavourite alone', async () => {
+      await service.recordUsage(ACTOR, PARTY)
+
+      expect(model.upsert).toHaveBeenCalledTimes(1)
+      expect(model.upsert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          toNationalId: ACTOR,
+          fromNationalId: PARTY,
+          lastUsedAt: expect.any(Date),
+        }),
+        expect.objectContaining({
+          conflictFields: ['to_national_id', 'from_national_id'],
+          fields: ['lastUsedAt'],
+        }),
+      )
+    })
+  })
+})

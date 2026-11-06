@@ -1,5 +1,5 @@
-import { FC, useContext, useState } from 'react'
-import { useIntl } from 'react-intl'
+import type { FC } from 'react'
+import { useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import { Accordion, Box } from '@island.is/island-ui/core'
@@ -29,18 +29,18 @@ import {
   SigningMethodSelectionModal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import type { RequestSignatureResponse } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseDecision,
   CaseTransition,
-  RequestSignatureResponse,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-
 import {
   JudgeRequestRulingSignatureModal,
   RegistrarRequestRulingSignatureModal,
   RulingModifiedModal,
-} from '../../components'
+} from '@island.is/judicial-system-web/src/routes/Court/components'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+
 import { confirmation as strings } from './Confirmation.strings'
 
 type VisibleModal =
@@ -53,7 +53,6 @@ type VisibleModal =
 
 const Confirmation: FC = () => {
   const router = useRouter()
-  const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
@@ -135,11 +134,9 @@ const Confirmation: FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader
-        title={formatMessage(titles.court.restrictionCases.conclusion)}
-      />
+      <PageHeader title={titles.court.restrictionCases.conclusion} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box marginBottom={9}>
           <Accordion>
@@ -150,7 +147,7 @@ const Confirmation: FC = () => {
         </Box>
         <Box marginBottom={7}>
           <Conclusion
-            title={formatMessage(strings.conclusionTitle)}
+            title={strings.conclusionTitle}
             conclusionText={workingCase.conclusion}
             judgeName={workingCase.judge?.name}
           />
@@ -158,19 +155,17 @@ const Confirmation: FC = () => {
         <Box marginBottom={3}>
           <PdfButton
             caseId={workingCase.id}
-            title={formatMessage(core.pdfButtonRuling)}
+            title={core.pdfButtonRuling}
             pdfType="ruling"
-            elementId={formatMessage(core.pdfButtonRuling)}
+            elementId={core.pdfButtonRuling}
           />
         </Box>
-        <Box marginBottom={15}>
-          <PdfButton
-            caseId={workingCase.id}
-            title={formatMessage(core.pdfButtonRulingShortVersion)}
-            pdfType="courtRecord"
-            elementId={formatMessage(core.pdfButtonRulingShortVersion)}
-          />
-        </Box>
+        <PdfButton
+          caseId={workingCase.id}
+          title={core.pdfButtonRulingShortVersion}
+          pdfType="courtRecord"
+          elementId={core.pdfButtonRulingShortVersion}
+        />
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
@@ -180,7 +175,7 @@ const Confirmation: FC = () => {
               ? []
               : [
                   {
-                    text: formatMessage(
+                    text:
                       workingCase.decision === CaseDecision.ACCEPTING
                         ? strings.continueButtonTextAccepting
                         : workingCase.decision ===
@@ -191,7 +186,6 @@ const Confirmation: FC = () => {
                         : workingCase.decision === CaseDecision.DISMISSING
                         ? strings.continueButtonTextDismissing
                         : strings.continueButtonTextAcceptingAlternativeTravelBan,
-                    ),
                     icon:
                       isAcceptingCaseDecision(workingCase.decision) ||
                       workingCase.decision ===

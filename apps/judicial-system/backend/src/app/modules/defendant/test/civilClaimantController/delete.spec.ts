@@ -1,8 +1,14 @@
+import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import { CivilClaimant } from '../../../repository'
+import { runInRequestContext } from '../../../../test'
+import {
+  AppealStatementDeadlineRepositoryService,
+  CaseFileRepositoryService,
+  CivilClaimantRepositoryService,
+} from '../../../repository'
 import { DeleteCivilClaimantResponse } from '../../models/deleteCivilClaimant.response'
 
 interface Then {
@@ -18,27 +24,46 @@ type GivenWhenThen = (
 describe('CivilClaimantController - Delete', () => {
   const caseId = uuid()
   const civilClaimantId = uuid()
+  const transaction = {} as Transaction
 
-  let mockCivilClaimantModel: typeof CivilClaimant
+  let mockCivilClaimantRepositoryService: CivilClaimantRepositoryService
+  let mockCaseFileRepositoryService: CaseFileRepositoryService
+  let mockAppealStatementDeadlineRepositoryService: AppealStatementDeadlineRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { civilClaimantController, civilClaimantModel } =
-      await createTestingDefendantModule()
+    const {
+      sequelize,
+      civilClaimantController,
+      civilClaimantRepositoryService,
+      caseFileRepositoryService,
+      appealStatementDeadlineRepositoryService,
+    } = await createTestingDefendantModule()
 
-    mockCivilClaimantModel = civilClaimantModel
+    mockCivilClaimantRepositoryService = civilClaimantRepositoryService
+    mockCaseFileRepositoryService = caseFileRepositoryService
+    mockAppealStatementDeadlineRepositoryService =
+      appealStatementDeadlineRepositoryService
 
-    const mockDestroy = mockCivilClaimantModel.destroy as jest.Mock
-    mockDestroy.mockRejectedValue(new Error('Test error'))
+    const mockTransaction = sequelize.transaction as jest.Mock
+    mockTransaction.mockResolvedValue(transaction)
+
+    const mockDelete =
+      mockCivilClaimantRepositoryService.deleteByIdAndCase as jest.Mock
+    mockDelete.mockRejectedValue(new Error('Test error'))
 
     givenWhenThen = async () => {
       const then = {} as Then
 
+      // Guards do not execute in controller unit tests, so the request
+      // context the handler takes its transaction from is set up here.
       try {
-        then.result = await civilClaimantController.delete(
-          caseId,
-          civilClaimantId,
-        )
+        await runInRequestContext(async () => {
+          then.result = await civilClaimantController.delete(
+            caseId,
+            civilClaimantId,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }
@@ -51,16 +76,92 @@ describe('CivilClaimantController - Delete', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockDestroy = mockCivilClaimantModel.destroy as jest.Mock
-      mockDestroy.mockResolvedValue(1)
+      const mockDelete =
+        mockCivilClaimantRepositoryService.deleteByIdAndCase as jest.Mock
+      mockDelete.mockResolvedValue(1)
 
       then = await givenWhenThen(caseId, civilClaimantId)
     })
+
+    it("should delete the civil claimant's case files", () => {
+      expect(
+        mockCaseFileRepositoryService.deleteAllForCivilClaimant,
+      ).toHaveBeenCalledWith(caseId, civilClaimantId, { transaction })
+    })
+
     it('should delete civil claimant', () => {
-      expect(mockCivilClaimantModel.destroy).toHaveBeenCalledWith({
-        where: { caseId, id: civilClaimantId },
-      })
+      expect(
+        mockCivilClaimantRepositoryService.deleteByIdAndCase,
+      ).toHaveBeenCalledWith(civilClaimantId, caseId, { transaction })
       expect(then.result).toEqual({ deleted: true })
+    })
+
+    it('should delete the case files before the civil claimant', () => {
+      const mockDeleteFiles =
+        mockCaseFileRepositoryService.deleteAllForCivilClaimant as jest.Mock
+      const mockDelete =
+        mockCivilClaimantRepositoryService.deleteByIdAndCase as jest.Mock
+
+      expect(mockDeleteFiles.mock.invocationCallOrder[0]).toBeLessThan(
+        mockDelete.mock.invocationCallOrder[0],
+      )
+    })
+
+    // The deadline rows reference the claimant without a cascade, so a
+    // delete that left them behind would fail on the foreign key.
+    it("should delete the civil claimant's statement deadlines before the civil claimant", () => {
+      const mockDeleteDeadlines =
+        mockAppealStatementDeadlineRepositoryService.deleteAllForCivilClaimant as jest.Mock
+      const mockDelete =
+        mockCivilClaimantRepositoryService.deleteByIdAndCase as jest.Mock
+
+      expect(mockDeleteDeadlines).toHaveBeenCalledWith(
+        caseId,
+        civilClaimantId,
+        { transaction },
+      )
+      expect(mockDeleteDeadlines.mock.invocationCallOrder[0]).toBeLessThan(
+        mockDelete.mock.invocationCallOrder[0],
+      )
+    })
+  })
+
+  describe('statement deadline deletion fails', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const mockDeleteDeadlines =
+        mockAppealStatementDeadlineRepositoryService.deleteAllForCivilClaimant as jest.Mock
+      mockDeleteDeadlines.mockRejectedValue(new Error('Deadline error'))
+
+      then = await givenWhenThen(caseId, civilClaimantId)
+    })
+
+    it('should not delete the civil claimant', () => {
+      expect(
+        mockCivilClaimantRepositoryService.deleteByIdAndCase,
+      ).not.toHaveBeenCalled()
+      expect(then.error.message).toBe('Deadline error')
+    })
+  })
+
+  describe('case file deletion fails', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const mockDeleteFiles =
+        mockCaseFileRepositoryService.deleteAllForCivilClaimant as jest.Mock
+      mockDeleteFiles.mockRejectedValue(new Error('Case file error'))
+
+      then = await givenWhenThen(caseId, civilClaimantId)
+    })
+
+    it('should not delete the civil claimant', () => {
+      expect(
+        mockCivilClaimantRepositoryService.deleteByIdAndCase,
+      ).not.toHaveBeenCalled()
+      expect(then.error).toBeInstanceOf(Error)
+      expect(then.error.message).toBe('Case file error')
     })
   })
 

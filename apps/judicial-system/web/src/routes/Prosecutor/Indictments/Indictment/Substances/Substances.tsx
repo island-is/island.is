@@ -1,15 +1,16 @@
-import { FC, useMemo } from 'react'
+import type { FC } from 'react'
+import { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Select } from '@island.is/island-ui/core'
-import {
-  offenseSubstances,
+import type {
   Substance as SubstanceEnum,
   SubstanceMap,
 } from '@island.is/judicial-system/types'
+import { offenseSubstances } from '@island.is/judicial-system/types'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
-import { Offense } from '@island.is/judicial-system-web/src/graphql/schema'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import type { Offense } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
 import { Substance } from './Substance'
 import { strings as sStrings } from './Substance.strings'
@@ -58,9 +59,15 @@ export const Substances: FC<Props> = ({ offense, onChange }) => {
   return (
     <Box marginBottom={2}>
       <SectionHeading
-        title={formatMessage(strings.substanceTitle, {
-          substanceType: offenseType,
-        })}
+        title={formatMessage(
+          {
+            id: strings.substanceTitle,
+            defaultMessage: strings.substanceTitle,
+          },
+          {
+            substanceType: offenseType,
+          },
+        )}
         heading="h4"
         marginBottom={2}
       />
@@ -68,12 +75,24 @@ export const Substances: FC<Props> = ({ offense, onChange }) => {
         <Select
           name={`${offenseType}-offense-type`}
           options={getSubstanceOptions}
-          label={formatMessage(strings.substanceLabel, {
-            substanceType: offenseType,
-          })}
-          placeholder={formatMessage(strings.substancePlaceholder, {
-            substanceType: offenseType,
-          })}
+          label={formatMessage(
+            {
+              id: strings.substanceLabel,
+              defaultMessage: strings.substanceLabel,
+            },
+            {
+              substanceType: offenseType,
+            },
+          )}
+          placeholder={formatMessage(
+            {
+              id: strings.substancePlaceholder,
+              defaultMessage: strings.substancePlaceholder,
+            },
+            {
+              substanceType: offenseType,
+            },
+          )}
           onChange={(selectedOption) => {
             const substance = (selectedOption as ReactSelectOption).value
             if (!substance) {

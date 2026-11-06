@@ -1,7 +1,7 @@
-import { FC } from 'react'
+import type { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import { ApolloError } from '@apollo/client'
+import type { ApolloError } from '@apollo/client'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { SIGNED_VERDICT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
@@ -9,16 +9,14 @@ import {
   core,
   signedVerdictOverview as m,
 } from '@island.is/judicial-system-web/messages'
-import {
-  Case,
-  CaseType,
-  RequestSignatureResponse,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import { Modal } from '@island.is/judicial-system-web/src/components'
+import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import { useRulingSignatureConfirmationQuery } from '@island.is/judicial-system-web/src/components/Modals/SigningMethodSelectionModal/rulingSignatureConfirmation.generated'
+import type { RequestSignatureResponse } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCourtRecordSignatureConfirmationQuery } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/courtRecordSignatureConfirmation.generated'
 
-import { Modal } from '../..'
-import MarkdownWrapper from '../../MarkdownWrapper/MarkdownWrapper'
-import { useRulingSignatureConfirmationQuery } from '../SigningMethodSelectionModal/rulingSignatureConfirmation.generated'
 import { signingModal as signingModalStrings } from './SignatureConfirmationModal.strings'
 
 export type SignatureType = 'ruling' | 'courtRecord'
@@ -26,7 +24,7 @@ export type SignatureType = 'ruling' | 'courtRecord'
 type SigningProgress = 'inProgress' | 'success' | 'error' | 'canceled'
 
 interface SignatureConfirmationModalProps {
-  workingCase: Case
+  workingCase: WorkingCase
   signatureResponse: RequestSignatureResponse
   signatureType: SignatureType
   isAudkenni: boolean
@@ -43,10 +41,16 @@ const ControlCode: FC<{ controlCode?: string }> = ({ controlCode }) => {
     <>
       <Box marginBottom={2}>
         <Text variant="h2" color="blue400">
-          {formatMessage(signingModalStrings.controlCode, { controlCode })}
+          {formatMessage(
+            {
+              id: signingModalStrings.controlCode,
+              defaultMessage: signingModalStrings.controlCode,
+            },
+            { controlCode },
+          )}
         </Text>
       </Box>
-      <Text>{formatMessage(signingModalStrings.controlCodeExplanation)}</Text>
+      <Text>{signingModalStrings.controlCodeExplanation}</Text>
     </>
   )
 }
@@ -137,24 +141,24 @@ export const SignatureConfirmationModal: FC<
   const getTitle = () => {
     if (signatureType === 'ruling') {
       if (signingProgress === 'inProgress') {
-        return formatMessage(signingModalStrings.inProgressTitle)
+        return signingModalStrings.inProgressTitle
       } else if (signingProgress === 'success') {
-        return formatMessage(signingModalStrings.successTitle)
+        return signingModalStrings.successTitle
       } else if (signingProgress === 'canceled') {
-        return formatMessage(signingModalStrings.canceledTitle)
+        return signingModalStrings.canceledTitle
       } else {
-        return formatMessage(signingModalStrings.errorTitle)
+        return signingModalStrings.errorTitle
       }
     } else {
       // courtRecord
       if (signingProgress === 'inProgress') {
-        return formatMessage(m.sections.courtRecordSignatureModal.titleSigning)
+        return m.sections.courtRecordSignatureModal.titleSigning
       } else if (signingProgress === 'success') {
-        return formatMessage(m.sections.courtRecordSignatureModal.titleSuccess)
+        return m.sections.courtRecordSignatureModal.titleSuccess
       } else if (signingProgress === 'canceled') {
-        return formatMessage(m.sections.courtRecordSignatureModal.titleCanceled)
+        return m.sections.courtRecordSignatureModal.titleCanceled
       } else {
-        return formatMessage(m.sections.courtRecordSignatureModal.titleFailure)
+        return m.sections.courtRecordSignatureModal.titleFailure
       }
     }
   }
@@ -166,23 +170,29 @@ export const SignatureConfirmationModal: FC<
       if (signatureType === 'ruling') {
         return (
           <MarkdownWrapper
-            markdown={formatMessage(signingModalStrings.successText, {
-              summarySentToPrison:
-                workingCase.type === CaseType.CUSTODY ||
-                workingCase.type === CaseType.ADMISSION_TO_FACILITY,
-            })}
+            markdown={formatMessage(
+              {
+                id: signingModalStrings.successText,
+                defaultMessage: signingModalStrings.successText,
+              },
+              {
+                summarySentToPrison:
+                  workingCase.type === CaseType.CUSTODY ||
+                  workingCase.type === CaseType.ADMISSION_TO_FACILITY,
+              },
+            )}
           />
         )
       } else {
         // courtRecord
-        return formatMessage(m.sections.courtRecordSignatureModal.completed)
+        return m.sections.courtRecordSignatureModal.completed
       }
     } else {
       // error or canceled
       if (signatureType === 'ruling') {
-        return formatMessage(signingModalStrings.errorText)
+        return signingModalStrings.errorText
       } else {
-        return formatMessage(m.sections.courtRecordSignatureModal.notCompleted)
+        return m.sections.courtRecordSignatureModal.notCompleted
       }
     }
   }
@@ -215,10 +225,8 @@ export const SignatureConfirmationModal: FC<
               {
                 text:
                   signingProgress === 'success'
-                    ? formatMessage(core.closeModal)
-                    : formatMessage(
-                        signingModalStrings.secondaryButtonErrorText,
-                      ),
+                    ? core.closeModal
+                    : signingModalStrings.secondaryButtonErrorText,
                 onClick:
                   signingProgress === 'success' ? handleClose : handleRetry,
                 ...(signingProgress === 'success'
@@ -229,7 +237,7 @@ export const SignatureConfirmationModal: FC<
         ...(signingProgress === 'error' || signingProgress === 'canceled'
           ? [
               {
-                text: formatMessage(signingModalStrings.primaryButtonErrorText),
+                text: signingModalStrings.primaryButtonErrorText,
                 onClick: handleClose,
                 variant: 'ghost' as const,
               },

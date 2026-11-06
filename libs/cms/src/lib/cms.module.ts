@@ -20,6 +20,7 @@ import {
   GenericListResolver,
   FeaturedGenericListItemsResolver,
   OrganizationResolver,
+  SupportQNAResolver,
 } from './cms.resolver'
 import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
@@ -92,6 +93,7 @@ import {
     FeaturedGenericListItemsResolver,
     OrganizationPageResolver,
     OrganizationResolver,
+    SupportQNAResolver,
   ],
   exports: [
     ContentfulRepository,

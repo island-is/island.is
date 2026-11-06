@@ -1,4 +1,3 @@
-import { Op } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import {
@@ -7,12 +6,11 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { CaseState } from '@island.is/judicial-system/types'
+import { type User, UserRole } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 
 import { CaseRepositoryService } from '../../../repository'
-import { attributes, include } from '../../limitedAccessCase.service'
 import { LimitedAccessCaseExistsGuard } from '../limitedAccessCaseExists.guard'
 
 interface Then {
@@ -52,26 +50,33 @@ describe('Restricted Case Exists Guard', () => {
   describe('case exists', () => {
     const caseId = uuid()
     const theCase = { id: caseId }
-    const request = { params: { caseId }, case: undefined }
+    const user = {
+      nationalId: '1234567890',
+      role: UserRole.DEFENDER,
+    } as User
+    const request = {
+      params: { caseId },
+      case: undefined,
+      user: { currentUser: user },
+    }
     let then: Then
 
     beforeEach(async () => {
       mockRequest.mockReturnValueOnce(request)
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(theCase)
+      const mockFindLimitedAccessById =
+        mockCaseRepositoryService.findLimitedAccessById as jest.Mock
+      mockFindLimitedAccessById.mockResolvedValueOnce(theCase)
 
       then = await givenWhenThen()
     })
 
     it('should activate', () => {
-      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-        attributes,
-        include,
-        where: {
-          id: caseId,
-          state: { [Op.not]: CaseState.DELETED },
-          isArchived: false,
-        },
+      expect(
+        mockCaseRepositoryService.findLimitedAccessById,
+      ).toHaveBeenCalledWith(caseId, {
+        // The guard runs for a defence user, so the case is narrowed to them
+        defenceUserNationalId: user.nationalId,
+        transaction: undefined,
       })
       expect(then.result).toBe(true)
       expect(request.case).toBe(theCase)

@@ -9,9 +9,16 @@
  * (signature.regular.records[].institution), not from a separate
  * regulation.signatureText field.
  */
+import isAfter from 'date-fns/isAfter'
+import isBefore from 'date-fns/isBefore'
+import parseISO from 'date-fns/parseISO'
+import startOfDay from 'date-fns/startOfDay'
+import { MessageDescriptor } from 'react-intl'
 import { MinistryList } from '@island.is/regulations'
 import { RegulationImpactSchema } from '../lib/dataSchema'
 import { Routes } from '../lib/constants'
+import { regulation } from '../lib/messages'
+import { getNextWorkday } from '../lib/utils'
 
 // ---------------------------------------------------------------------------
 
@@ -115,6 +122,7 @@ export const collectRegulationWarnings = (answers: {
     effectiveDate?: string
     lawChapters?: Array<{ slug: string; name: string }>
     impacts?: RegulationImpactSchema[]
+    withoutImpacts?: boolean
   }
   applicationType?: string
 }): RegulationWarning[] => {
@@ -282,7 +290,10 @@ export const collectRegulationWarnings = (answers: {
   }
 
   // Impacts section (for amending regulations)
-  if (answers.applicationType === 'amending_regulation') {
+  if (
+    answers.applicationType === 'amending_regulation' &&
+    !answers.regulation?.withoutImpacts
+  ) {
     if (
       !answers.regulation?.impacts ||
       answers.regulation.impacts.length === 0
@@ -332,6 +343,104 @@ export const collectRegulationWarnings = (answers: {
         }
       }
     })
+  }
+
+  return warnings
+}
+
+// ---------------------------------------------------------------------------
+
+/**
+ * Impacts on other regulations not dated on the regulation's effective date,
+ * earlier or later. The general rule is that they take effect the same day,
+ * so the advertiser is warned. Allowed, e.g. for changes taking effect in
+ * stages. Self-impacts are left out, since scheduling later changes to the
+ * regulation itself is the normal case.
+ */
+export const getImpactsOffEffectiveDate = (
+  effectiveDate?: string,
+  impacts?: RegulationImpactSchema[],
+): RegulationImpactSchema[] => {
+  if (!effectiveDate || !impacts) {
+    return []
+  }
+
+  const effective = effectiveDate.slice(0, 10)
+
+  return impacts.filter(
+    (impact) =>
+      impact.name !== 'self' &&
+      !!impact.date &&
+      impact.date.slice(0, 10) !== effective,
+  )
+}
+
+/**
+ * Ported from: libs/portals/admin/regulations-admin/src/utils/index.ts
+ * (hasPublishEffectiveWarning)
+ *
+ * Whether the effective date is on or before the requested publish date.
+ * Allowed, but only done in exceptional cases.
+ */
+export const hasPublishEffectiveWarning = (
+  effective?: Date,
+  publish?: Date,
+  fastTrack?: boolean,
+): boolean => {
+  if (!publish) {
+    return false
+  }
+
+  const nextWorkdayToday = startOfDay(getNextWorkday(new Date()))
+  const startPublish = startOfDay(publish)
+
+  if (effective) {
+    // Warning if effective date is the same day as, or before, the publish date
+    if (!isAfter(startOfDay(effective), startPublish)) {
+      return true
+    }
+
+    const nextWorkdayEffective = startOfDay(getNextWorkday(effective))
+
+    // Warning if effective date is before next workday and fastTrack is active
+    if (fastTrack && isBefore(nextWorkdayEffective, nextWorkdayToday)) {
+      return true
+    }
+  } else {
+    // Warning if no effective date is set and fastTrack is active or publish date is after next workday
+    if (fastTrack || isBefore(nextWorkdayToday, startPublish)) {
+      return true
+    }
+  }
+
+  return false
+}
+
+/**
+ * Ported from: libs/portals/admin/regulations-admin/src/utils/index.ts
+ * (getDateOverviewWarning)
+ *
+ * Advisory effective-date warnings for the summary screen. They don't block
+ * submission. The publish-date warnings from regulations-admin are left out
+ * because the OJOI date picker already prevents past dates and flags
+ * fast-track.
+ */
+export const getEffectiveDateWarnings = (
+  effectiveDate?: string,
+  requestedDate?: string,
+  fastTrack?: boolean,
+): MessageDescriptor[] => {
+  // parseISO reads date-only strings as local dates, new Date() as UTC
+  const effective = effectiveDate ? parseISO(effectiveDate) : undefined
+  const publish = requestedDate ? parseISO(requestedDate) : undefined
+  const warnings: MessageDescriptor[] = []
+
+  if (hasPublishEffectiveWarning(effective, publish, fastTrack)) {
+    warnings.push(regulation.summary.dateWarnings.effectiveOnOrBeforePublish)
+  }
+
+  if (effective && isBefore(startOfDay(effective), startOfDay(new Date()))) {
+    warnings.push(regulation.summary.dateWarnings.effectiveDateEarly)
   }
 
   return warnings

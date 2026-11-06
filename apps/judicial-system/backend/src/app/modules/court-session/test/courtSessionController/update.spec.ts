@@ -3,10 +3,7 @@ import { v4 as uuid } from 'uuid'
 
 import { BadRequestException, NotFoundException } from '@nestjs/common'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   AppealDecisionPartyRole,
   CaseAppealDecision,
@@ -17,6 +14,8 @@ import {
 
 import { createTestingCourtSessionModule } from '../createTestingCourtSessionModule'
 
+import { queueMessagesAfterCommit } from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
 import {
   AppealDecisionRepositoryService,
   Case,
@@ -26,10 +25,7 @@ import {
 } from '../../../repository'
 import { UpdateCourtSessionDto } from '../../dto/updateCourtSession.dto'
 
-jest.mock('@island.is/judicial-system/message', () => ({
-  ...jest.requireActual('@island.is/judicial-system/message'),
-  addMessagesToQueue: jest.fn(),
-}))
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 
 interface Then {
   result: CourtSession | null
@@ -59,6 +55,7 @@ describe('CourtSessionController - Update', () => {
     isConfirmed: boolean | undefined
     rulingType?: CourtSessionRulingType
     rulingFileId?: string | null
+    notifiedRulingFileId?: string
   }
   let caseFiles: Partial<CaseFile>[]
 
@@ -74,9 +71,7 @@ describe('CourtSessionController - Update', () => {
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     mockCourtSessionRepositoryService = courtSessionRepositoryService
     const mockUpdate = mockCourtSessionRepositoryService.update as jest.Mock
@@ -95,14 +90,20 @@ describe('CourtSessionController - Update', () => {
       const user = {} as never
 
       try {
-        then.result = await courtSessionController.update(
-          caseId,
-          courtSessionId,
-          courtSessionToUpdate,
-          user,
-          theCase,
-          existingCourtSession as unknown as CourtSession,
-        )
+        // The routes are guarded by CaseExistsForUpdateGuard, so the request
+        // transaction is already open by the time the handler runs. Guards do
+        // not execute in controller unit tests, so the request context is set
+        // up here instead.
+        await runInRequestContext(async () => {
+          then.result = await courtSessionController.update(
+            caseId,
+            courtSessionId,
+            courtSessionToUpdate,
+            user,
+            theCase,
+            existingCourtSession as unknown as CourtSession,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }
@@ -175,7 +176,7 @@ describe('CourtSessionController - Update', () => {
     })
 
     it('should add a working document delivery message to the queue', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith({
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith({
         type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
         user: {},
         caseId,
@@ -197,9 +198,9 @@ describe('CourtSessionController - Update', () => {
 
       // The case in this spec has no defendants or civil claimants, so a
       // prosecutor decision is all the confirm-time validation requires.
-      const mockFindAll =
-        mockAppealDecisionRepositoryService.findAll as jest.Mock
-      mockFindAll.mockResolvedValue([
+      const mockFindAllForRuling =
+        mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
+      mockFindAllForRuling.mockResolvedValue([
         {
           partyRole: AppealDecisionPartyRole.PROSECUTOR,
           decision: CaseAppealDecision.ACCEPT,
@@ -219,7 +220,7 @@ describe('CourtSessionController - Update', () => {
     })
 
     it('should also notify the parties about the ruling order', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith(
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
         {
           type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
           user: {},
@@ -231,6 +232,141 @@ describe('CourtSessionController - Update', () => {
           caseId,
           body: { type: IndictmentCaseNotificationType.RULING_ORDER_ADDED },
         },
+      )
+    })
+
+    it('should remember the announced ruling order', () => {
+      expect(mockCourtSessionRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        courtSessionId,
+        { ...confirmationUpdate, notifiedRulingFileId: fileId },
+        { transaction },
+      )
+    })
+  })
+
+  // A correction re-runs the confirmation, but the parties have already been
+  // told about this ruling - only what the court record says about it changed.
+  describe('corrected ORDER court session is confirmed again', () => {
+    const fileId = uuid()
+    const confirmationUpdate = {
+      ...courtSessionToUpdate,
+      isConfirmed: true,
+    }
+
+    beforeEach(async () => {
+      existingCourtSession.isConfirmed = false
+      existingCourtSession.rulingType = CourtSessionRulingType.ORDER
+      existingCourtSession.rulingFileId = fileId
+      existingCourtSession.notifiedRulingFileId = fileId
+
+      const mockFindAllForRuling =
+        mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
+      mockFindAllForRuling.mockResolvedValue([
+        {
+          partyRole: AppealDecisionPartyRole.PROSECUTOR,
+          decision: CaseAppealDecision.ACCEPT,
+        },
+      ])
+
+      const mockUpdate = mockCourtSessionRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce({
+        id: courtSessionId,
+        caseId,
+        isConfirmed: true,
+        rulingType: CourtSessionRulingType.ORDER,
+        rulingFileId: fileId,
+        notifiedRulingFileId: fileId,
+      })
+
+      await givenWhenThen(caseId, courtSessionId, confirmationUpdate)
+    })
+
+    it('should not notify the parties about the ruling order again', () => {
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith({
+        type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
+        user: {},
+        caseId,
+      })
+    })
+
+    it('should not touch the announced ruling order', () => {
+      expect(mockCourtSessionRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        courtSessionId,
+        confirmationUpdate,
+        { transaction },
+      )
+    })
+  })
+
+  // The correction swaps in a different ruling document, so the parties are
+  // told about the ruling they can now access.
+  describe('corrected ORDER court session pronounces a different ruling', () => {
+    const previousFileId = uuid()
+    const fileId = uuid()
+    const confirmationUpdate = {
+      ...courtSessionToUpdate,
+      rulingFileId: fileId,
+      isConfirmed: true,
+    }
+
+    beforeEach(async () => {
+      existingCourtSession.isConfirmed = false
+      existingCourtSession.rulingType = CourtSessionRulingType.ORDER
+      existingCourtSession.rulingFileId = previousFileId
+      existingCourtSession.notifiedRulingFileId = previousFileId
+      caseFiles = [
+        {
+          id: fileId,
+          category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+        } as CaseFile,
+      ]
+
+      // No decisions have been recorded against the new ruling file, which
+      // leaves both the confirm-time completeness check and the swap check happy.
+      const mockFindAllForRuling =
+        mockAppealDecisionRepositoryService.findAllForRuling as jest.Mock
+      mockFindAllForRuling.mockResolvedValue([])
+      ;(
+        mockAppealDecisionRepositoryService.existsForRuling as jest.Mock
+      ).mockResolvedValue(false)
+
+      const mockUpdate = mockCourtSessionRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce({
+        id: courtSessionId,
+        caseId,
+        isConfirmed: true,
+        rulingType: CourtSessionRulingType.ORDER,
+        rulingFileId: fileId,
+        notifiedRulingFileId: fileId,
+      })
+
+      await givenWhenThen(caseId, courtSessionId, confirmationUpdate)
+    })
+
+    it('should notify the parties about the new ruling order', () => {
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
+        {
+          type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
+          user: {},
+          caseId,
+        },
+        {
+          type: MessageType.NOTIFICATION,
+          user: {},
+          caseId,
+          body: { type: IndictmentCaseNotificationType.RULING_ORDER_ADDED },
+        },
+      )
+    })
+
+    it('should remember the newly announced ruling order', () => {
+      expect(mockCourtSessionRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        courtSessionId,
+        { ...confirmationUpdate, notifiedRulingFileId: fileId },
+        { transaction },
       )
     })
   })
@@ -255,7 +391,7 @@ describe('CourtSessionController - Update', () => {
     })
 
     it('should add a working document delivery message to the queue', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith({
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith({
         type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
         user: {},
         caseId,
@@ -279,7 +415,7 @@ describe('CourtSessionController - Update', () => {
     })
 
     it('should not add a message to the queue', () => {
-      expect(addMessagesToQueue).not.toHaveBeenCalled()
+      expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
     })
   })
 
@@ -294,7 +430,7 @@ describe('CourtSessionController - Update', () => {
     })
 
     it('should not add a message to the queue', () => {
-      expect(addMessagesToQueue).not.toHaveBeenCalled()
+      expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
     })
   })
 

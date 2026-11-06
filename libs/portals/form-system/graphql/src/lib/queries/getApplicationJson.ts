@@ -26,6 +26,8 @@ export const GET_APPLICATION_JSON_SAMPLE = gql`
           fieldSettings {
             isDecimal
             applicantType
+            assetType
+            familyType
           }
           values {
             order

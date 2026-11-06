@@ -1,16 +1,11 @@
-import { FC } from 'react'
-import { useIntl } from 'react-intl'
+import type { FC } from 'react'
 import router from 'next/router'
 
-import {
-  Box,
-  Button,
-  ButtonTypes,
-  IconMapIcon,
-} from '@island.is/island-ui/core'
+import type { ButtonTypes, IconMapIcon } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
+import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
 
-import InfoBox from '../InfoBox/InfoBox'
 import * as styles from './FormFooter.css'
 
 export interface FormFooterAction {
@@ -28,6 +23,10 @@ export interface FormFooterAction {
 
 interface Props {
   previousUrl?: string
+  /** Replaces the back button's text, e.g. "Hætta við" while a form edits. */
+  previousButtonText?: string
+  /** Runs instead of navigating to previousUrl. */
+  onPreviousClick?: () => void
   hidePreviousButton?: boolean
   actions?: FormFooterAction[]
   infoBoxText?: string
@@ -35,12 +34,12 @@ interface Props {
 
 const FormFooter: FC<Props> = ({
   previousUrl,
+  previousButtonText,
+  onPreviousClick,
   hidePreviousButton,
   actions,
   infoBoxText,
 }) => {
-  const { formatMessage } = useIntl()
-
   const handleActionClick = (action: FormFooterAction) => {
     if (action.onClick) {
       action.onClick()
@@ -57,13 +56,15 @@ const FormFooter: FC<Props> = ({
             variant="ghost"
             data-testid="previousButton"
             onClick={() => {
-              if (previousUrl) {
+              if (onPreviousClick) {
+                onPreviousClick()
+              } else if (previousUrl) {
                 router.push(previousUrl)
               }
             }}
             fluid
           >
-            {formatMessage(core.back)}
+            {previousButtonText ?? core.back}
           </Button>
         </Box>
       )}

@@ -21,6 +21,7 @@ export const GET_VEHICLE_DETAILS_WITH_GRANT_BY_PERMNO = `
       newRegistrationDate
       firstRegistrationDate
       vin
+      vehicleRegistrationCode
     }
   } 
 `

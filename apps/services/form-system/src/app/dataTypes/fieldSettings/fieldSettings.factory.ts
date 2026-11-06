@@ -21,7 +21,13 @@ export class FieldSettingsFactory {
         keys = ['hasLink', 'url', 'buttonText', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.DATE_PICKER:
-        keys = ['minDate', 'maxDate', ...keys]
+        keys = [
+          'minDate',
+          'maxDate',
+          'minDateDaysFromToday',
+          'maxDateDaysFromToday',
+          ...keys,
+        ]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.DROPDOWN_LIST:
         keys = [
@@ -44,12 +50,23 @@ export class FieldSettingsFactory {
       case FieldTypesEnum.TIME_INPUT:
         keys = ['timeInterval', ...keys]
         return this.pickSettings(fieldSettings, keys)
+      case FieldTypesEnum.BANK_ACCOUNT:
+        keys = ['fetchBankAccountFromMyPages', ...keys]
+        return this.pickSettings(
+          {
+            ...fieldSettings,
+            fetchBankAccountFromMyPages:
+              fieldSettings.fetchBankAccountFromMyPages ?? true,
+          },
+          keys,
+        )
       case FieldTypesEnum.HOMESTAY_OVERVIEW:
         keys = ['year', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.APPLICANT:
         keys = [
           'applicantType',
+          'isAddressRequired',
           'isPhoneRequired',
           'isEmailRequired',
           'fetchEmailFromMyPages',
@@ -78,6 +95,9 @@ export class FieldSettingsFactory {
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.ASSETS:
         keys = ['assetType', 'isDropdown', ...keys]
+        return this.pickSettings(fieldSettings, keys)
+      case FieldTypesEnum.FAMILY:
+        keys = ['familyType', ...keys]
         return this.pickSettings(fieldSettings, keys)
       default:
         return this.pickSettings(fieldSettings, keys)

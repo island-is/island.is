@@ -14,7 +14,7 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { formatCurrency } from '@island.is/application/ui-components'
+import { formatCurrency } from '@island.is/shared/utils'
 import { InheritanceReport } from '../../lib/dataSchema'
 import { m } from '../../lib/messages'
 import {

@@ -17,11 +17,15 @@ import {
 
 @Injectable()
 export class PrimarySchoolClientService {
+  // Every GET on this MMS service can return 204 No Content (confirmed in the
+  // prod OpenAPI spec), which `dataOr404Null` does not map to null. Without the
+  // Array.isArray guard a 204 leaves a non-array value that breaks the GraphQL
+  // list resolvers with "Expected Iterable". Guard so callers always get an array.
   async getStudents(user: User): Promise<IslandIsStudentDto[]> {
     const response = await withAuthContext(user, () =>
       dataOr404Null(getV1Islandisstudents()),
     )
-    return response ?? []
+    return Array.isArray(response) ? response : []
   }
 
   async getAssignmentResults(
@@ -38,7 +42,7 @@ export class PrimarySchoolClientService {
         ),
       ),
     )
-    return response ?? []
+    return Array.isArray(response) ? response : []
   }
 
   async getAssignmentResultsSimple(
@@ -55,18 +59,20 @@ export class PrimarySchoolClientService {
         ),
       ),
     )
-    return response ?? []
+    return Array.isArray(response) ? response : []
   }
 
   async getAssignmentResultPdf(
     user: User,
     studentId: string,
     assignmentResultId: string,
+    signal?: AbortSignal,
   ): Promise<Blob | File | null> {
     const response = await withAuthContext(user, () =>
       dataOr404Null(
         getV1IslandisassignmentresultsByStudentIdResultByAssignmentResultIdPdf({
           path: { studentId, assignmentResultId },
+          signal,
         }),
       ),
     )
@@ -84,7 +90,7 @@ export class PrimarySchoolClientService {
         }),
       ),
     )
-    return response ?? []
+    return Array.isArray(response) ? response : []
   }
 
   async getAssessmentTypes(
@@ -99,6 +105,6 @@ export class PrimarySchoolClientService {
         }),
       ),
     )
-    return response ?? []
+    return Array.isArray(response) ? response : []
   }
 }

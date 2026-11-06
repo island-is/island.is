@@ -2,7 +2,12 @@ import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
-import { EnergyFundsAnswers } from '@island.is/application/templates/energy-funds'
+import {
+  EnergyFundsAnswers,
+  error as errorMessages,
+  formatIsk,
+  getPriceCap,
+} from '@island.is/application/templates/energy-funds'
 import { VehicleMiniDto, VehicleSearchApi } from '@island.is/clients/vehicles'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -206,17 +211,37 @@ export class EnergyFundsService extends BaseTemplateApiService {
       )
     }
 
+    const purchasePrice =
+      (applicationAnswers?.vehicleDetails.price &&
+        parseInt(applicationAnswers?.vehicleDetails.price)) ||
+      0
+    const vehicleGroup =
+      vehicleApiDetails.euGroup ||
+      currentvehicleDetails?.vehicleRegistrationCode ||
+      ''
+    const priceCap = getPriceCap(vehicleGroup)
+
+    if (purchasePrice > priceCap) {
+      throw new TemplateApiError(
+        {
+          title: errorMessages.submitApplicationError,
+          summary: {
+            ...errorMessages.priceCapExceeded,
+            values: { priceCap: formatIsk(priceCap) },
+          },
+        },
+        400,
+      )
+    }
+
     const answers = {
       nationalId: auth.nationalId,
       vIN: currentvehicleDetails?.vin || '',
       carNumber: applicationAnswers?.selectVehicle.plate,
       carType: (currentvehicleDetails && currentvehicleDetails.make) || '',
       itemcode: applicationAnswers?.selectVehicle.grantItemCode || '',
-      vehicleGroup: currentvehicleDetails?.vehicleRegistrationCode || '',
-      purchasePrice:
-        (applicationAnswers?.vehicleDetails.price &&
-          parseInt(applicationAnswers?.vehicleDetails.price)) ||
-        0,
+      vehicleGroup,
+      purchasePrice,
       registrationDate: currentvehicleDetails
         ? format(
             new Date(currentvehicleDetails.newRegistrationDate || ''),

@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'api-domains-transport-authority',
   preset: './jest.preset.js',

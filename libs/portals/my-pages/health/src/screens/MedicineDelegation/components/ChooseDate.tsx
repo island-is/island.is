@@ -12,7 +12,7 @@ interface SecondStepProps {
 }
 
 const SecondStep: FC<SecondStepProps> = ({ setFormState, formState }) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
 
   return (
     <Box>
@@ -37,6 +37,7 @@ const SecondStep: FC<SecondStepProps> = ({ setFormState, formState }) => {
             })
           }}
           placeholderText={formatMessage(messages.choosePeriod)}
+          locale={lang}
           range
           displaySelectInput
           minDate={today}

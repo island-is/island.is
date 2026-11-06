@@ -118,7 +118,17 @@ export const SortableTable = (props: SortableTableProps) => {
           {props.title}
         </Text>
       )}
-      {isMobile ? (
+      {isMobile && items.length === 0 ? (
+        <Box background="blue100" padding={3}>
+          <Box background="white">
+            <EmptyTable
+              message={props.emptyTableMessage}
+              background="white"
+              loading={props.tableLoading}
+            />
+          </Box>
+        </Box>
+      ) : isMobile ? (
         <MobileTable
           loading={props.tableLoading}
           inner={props.inner}

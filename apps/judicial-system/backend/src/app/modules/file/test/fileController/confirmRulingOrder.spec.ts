@@ -8,7 +8,7 @@ import { CaseFileCategory } from '@island.is/judicial-system/types'
 
 import { createTestingFileModule } from '../createTestingFileModule'
 
-import { Case, CaseFile } from '../../../repository'
+import { Case, CaseFile, CaseFileRepositoryService } from '../../../repository'
 
 interface Then {
   result: CaseFile
@@ -23,21 +23,21 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('FileController - Confirm ruling order', () => {
-  let mockFileModel: typeof CaseFile
-  let queuedMessages: Message[]
+  let mockCaseFileRepositoryService: CaseFileRepositoryService
+  let queuedMessagesAfterCommit: Message[]
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
-      fileModel,
+      caseFileRepositoryService,
       fileController,
       sequelize,
-      queuedMessages: messages,
+      queuedMessagesAfterCommit: messages,
     } = await createTestingFileModule()
 
-    mockFileModel = fileModel
-    queuedMessages = messages
+    mockCaseFileRepositoryService = caseFileRepositoryService
+    queuedMessagesAfterCommit = messages
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -75,16 +75,24 @@ describe('FileController - Confirm ruling order', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockFileModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedCaseFile]])
+      const mockUpdate =
+        mockCaseFileRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdate.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        caseFiles: [updatedCaseFile],
+      })
 
       then = await givenWhenThen(caseId, fileId, theCase, caseFile)
     })
 
     it('should set the submission date on the file', () => {
-      expect(mockFileModel.update).toHaveBeenCalledWith(
+      expect(
+        mockCaseFileRepositoryService.updateByIdAndCase,
+      ).toHaveBeenCalledWith(
+        fileId,
+        caseId,
         { submissionDate: expect.any(String) },
-        { where: { id: fileId, caseId }, returning: true, transaction },
+        { transaction },
       )
     })
 
@@ -93,7 +101,7 @@ describe('FileController - Confirm ruling order', () => {
     })
 
     it('should not queue any notification', () => {
-      expect(queuedMessages).toHaveLength(0)
+      expect(queuedMessagesAfterCommit).toHaveLength(0)
     })
   })
 
@@ -114,7 +122,9 @@ describe('FileController - Confirm ruling order', () => {
 
     it('should throw a bad request exception', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
-      expect(mockFileModel.update).not.toHaveBeenCalled()
+      expect(
+        mockCaseFileRepositoryService.updateByIdAndCase,
+      ).not.toHaveBeenCalled()
     })
   })
 
@@ -136,7 +146,9 @@ describe('FileController - Confirm ruling order', () => {
 
     it('should throw a bad request exception', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
-      expect(mockFileModel.update).not.toHaveBeenCalled()
+      expect(
+        mockCaseFileRepositoryService.updateByIdAndCase,
+      ).not.toHaveBeenCalled()
     })
   })
 })

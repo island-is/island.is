@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'training-license-on-a-work-machine',
   preset: '../../../../../jest.preset.js',

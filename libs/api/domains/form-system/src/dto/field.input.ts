@@ -45,6 +45,9 @@ export class UpdateFieldsDisplayOrderInput {
 
 @InputType('FormSystemUpdateFieldDtoInput')
 export class UpdateFieldDtoInput {
+  @Field(() => String, { nullable: true })
+  identifier?: string
+
   @Field(() => LanguageTypeInput, { nullable: true })
   name?: LanguageTypeInput
 

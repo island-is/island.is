@@ -14,11 +14,13 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
+import { FeatureService } from '../feature/feature.service'
 import { CreateCivilClaimantInput } from './dto/createCivilClaimant.input'
 import { DeleteCivilClaimantInput } from './dto/deleteCivilClaimant.input'
 import { UpdateCivilClaimantInput } from './dto/updateCivilClaimant.input'
 import { CivilClaimant } from './models/civilClaimant.model'
 import { DeleteCivilClaimantResponse } from './models/deleteCivilClaimant.response'
+import { assertAppealAdvocatesAvailable } from './appealAdvocates'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver(() => CivilClaimant)
@@ -28,6 +30,7 @@ export class CivilClaimantResolver {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     private readonly backendService: BackendService,
+    private readonly featureService: FeatureService,
   ) {}
 
   @Mutation(() => CivilClaimant)
@@ -53,6 +56,10 @@ export class CivilClaimantResolver {
     @CurrentGraphQlUser() user: User,
   ): Promise<CivilClaimant> {
     const { caseId, civilClaimantId, ...updateCivilClaimant } = input
+
+    // The appeal proceeding's advocate belongs to the hidden feature, so the
+    // write path closes with it.
+    assertAppealAdvocatesAvailable(this.featureService, updateCivilClaimant)
 
     return this.auditTrailService.audit(
       user.id,

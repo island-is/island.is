@@ -37,6 +37,7 @@ import {
   OTHER,
   shouldShowCalculatedRemunerationDate,
   shouldShowConfirmationOfIllHealth,
+  shouldShowConfirmationOfJobSearch,
   shouldShowConfirmationOfPendingResolution,
   shouldShowConfirmedTreatment,
   shouldShowIsStudyingFields,
@@ -164,9 +165,13 @@ export const transformApplicationToOldAgePensionDTO = (
       }),
     }),
     uploads,
-    ...(incomePlanHasOnlyZeroIncome(incomePlan) && {
-      awarenessOfIncomeDeclaration: noOtherIncomeConfirmation === YES,
-    }),
+    // incomePlanHasOnlyZeroIncome is vacuously true for an empty plan, so also
+    // require rows: when the applicant asked for a single yearly payment the
+    // income plan screens are skipped and no declaration was ever made.
+    ...(incomePlan.length > 0 &&
+      incomePlanHasOnlyZeroIncome(incomePlan) && {
+        awarenessOfIncomeDeclaration: noOtherIncomeConfirmation === YES,
+      }),
   }
 
   return oldAgePensionDTO
@@ -419,6 +424,7 @@ export const transformApplicationToIncomePlanDTO = (
 
 export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
   application: Application,
+  uploads: Attachment[],
 ): MedicalAndRehabilitationPaymentsDTO => {
   const {
     applicantPhonenumber,
@@ -455,6 +461,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     confirmedTreatmentReferenceId,
     confirmationOfPendingResolutionReferenceId,
     confirmationOfIllHealthReferenceId,
+    confirmationOfJobSearchReferenceId,
     educationalLevel,
     hadAssistance,
     mainProblem,
@@ -475,6 +482,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     },
     comment,
     applicationId: application.id,
+    ...(uploads.length > 0 && { uploads }),
     ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
       domesticBankInfo: {
         bank: formatBank(getBankIsk(paymentInfo)),
@@ -581,6 +589,9 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     }),
     ...(shouldShowConfirmationOfIllHealth(application.externalData) && {
       confirmationOfIllHealthReference: confirmationOfIllHealthReferenceId,
+    }),
+    ...(shouldShowConfirmationOfJobSearch(application.externalData) && {
+      confirmationOfJobSearchReference: confirmationOfJobSearchReferenceId,
     }),
     selfAssessment: {
       hadAssistance: hadAssistance === YES,

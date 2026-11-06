@@ -1,5 +1,4 @@
-import { useContext } from 'react'
-import React from 'react'
+import React, { useContext } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import {
@@ -17,7 +16,7 @@ import {
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
-import { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 
 export const ConfirmationInformation = ({
   uploadFiles,

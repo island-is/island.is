@@ -4,5 +4,6 @@ export { NationalRegistryV3ApplicationsClientService } from './lib/nationalRegis
 export { CitizenshipDto } from './lib/types/citizenship.dto'
 export { CohabitationDto } from './lib/types/cohabitation.dto'
 export { IndividualDto } from './lib/types/individual.dto'
+export { NationalIdTypeDto } from './lib/types/national-id-type.dto'
 export { ResidenceEntryDto } from './lib/types/residence-history-entry.dto'
 export * from '../gen/fetch'

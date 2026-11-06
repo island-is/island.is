@@ -1,8 +1,8 @@
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Case,
   CaseDecision,
   CaseType,
-  Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { createFormatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers.logic'
 
@@ -16,7 +16,7 @@ describe('getConclusionAutofill', () => {
   } as Defendant
 
   const fn = (
-    theCase: Case,
+    theCase: WorkingCase,
     decision: CaseDecision,
     defendant = defendantBase,
     validToDate?: string,
@@ -40,7 +40,7 @@ describe('getConclusionAutofill', () => {
       const theCase = {
         defendants: [{ ...defendantBase }],
         type: CaseType.CUSTODY,
-      } as Case
+      } as WorkingCase
 
       const result = fn(theCase, decision)
 
@@ -54,7 +54,7 @@ describe('getConclusionAutofill', () => {
         defendants: [{ ...defendantBase }],
         type: CaseType.TRAVEL_BAN,
         parentCase: { decision: CaseDecision.ACCEPTING },
-      } as Case
+      } as WorkingCase
 
       const result = fn(theCase, decision)
 
@@ -72,7 +72,7 @@ describe('getConclusionAutofill', () => {
 
       const theCase = {
         type: CaseType.ADMISSION_TO_FACILITY,
-      } as Case
+      } as WorkingCase
 
       const result = fn(theCase, decision, defendant)
 
@@ -89,7 +89,7 @@ describe('getConclusionAutofill', () => {
       const theCase = {
         defendants: [{ ...defendantBase }],
         type: CaseType.CUSTODY,
-      } as Case
+      } as WorkingCase
 
       const result = fn(theCase, decision)
 
@@ -106,7 +106,7 @@ describe('getConclusionAutofill', () => {
       }
       const theCase = {
         type: CaseType.CUSTODY,
-      } as Case
+      } as WorkingCase
 
       const result = fn(theCase, decision, defendant)
 
@@ -124,7 +124,7 @@ describe('getConclusionAutofill', () => {
       const theCase = {
         type: CaseType.ADMISSION_TO_FACILITY,
         parentCase: { decision: CaseDecision.ACCEPTING },
-      } as Case
+      } as WorkingCase
 
       const result = fn(theCase, decision, defendant)
 
@@ -141,7 +141,7 @@ describe('getConclusionAutofill', () => {
     it('should format custody case', () => {
       const theCase = {
         type: CaseType.CUSTODY,
-      } as Case
+      } as WorkingCase
 
       const result = fn(theCase, decision, defendantBase, validToDate)
 
@@ -155,7 +155,7 @@ describe('getConclusionAutofill', () => {
       const isolationToDate = '2020-01-01T12:00:00Z'
       const theCase = {
         type: CaseType.CUSTODY,
-      } as Case
+      } as WorkingCase
 
       const result = fn(
         theCase,
@@ -179,7 +179,7 @@ describe('getConclusionAutofill', () => {
       const isolationToDate = '2020-01-01T12:31:00Z'
       const theCase = {
         type: CaseType.ADMISSION_TO_FACILITY,
-      } as Case
+      } as WorkingCase
 
       const result = fn(
         theCase,
@@ -205,7 +205,7 @@ describe('getConclusionAutofill', () => {
       const isolationToDate = '2020-01-01T12:31:00Z'
       const theCase = {
         type: CaseType.ADMISSION_TO_FACILITY,
-      } as Case
+      } as WorkingCase
 
       const result = fn(
         theCase,
@@ -230,8 +230,8 @@ describe('getConclusionAutofill', () => {
       const defendant = { ...defendantBase }
       const theCase = {
         type: CaseType.CUSTODY,
-        parentCase: { decision: CaseDecision.ACCEPTING } as Case,
-      } as Case
+        parentCase: { decision: CaseDecision.ACCEPTING } as WorkingCase,
+      } as WorkingCase
 
       const result = fn(theCase, decision, defendant, validToDate)
 
@@ -243,7 +243,7 @@ describe('getConclusionAutofill', () => {
     it('should format custody case as travel ban case', () => {
       const theCase = {
         type: CaseType.CUSTODY,
-      } as Case
+      } as WorkingCase
 
       const result = fn(theCase, decision, defendantBase, validToDate)
 

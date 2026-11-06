@@ -1,7 +1,6 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import * as MessageModule from '@island.is/judicial-system/message'
 import {
   IndictmentCaseNotificationType,
   ServiceRequirement,
@@ -9,6 +8,7 @@ import {
 
 import { createTestingVerdictModule } from '../createTestingVerdictModule'
 
+import { queueMessagesAfterCommit } from '../../../../middleware'
 import { Case, Verdict, VerdictRepositoryService } from '../../../repository'
 import { UpdateVerdictDto } from '../../dto/updateVerdict.dto'
 import { VerdictService } from '../../verdict.service'
@@ -32,7 +32,7 @@ describe('VerdictService - update', () => {
 
   let mockVerdictRepositoryService: VerdictRepositoryService
   let transaction: Transaction
-  let mockAddMessagesToQueue: jest.Mock
+  let mockQueueMessagesAfterCommit: jest.Mock
   let verdictService: VerdictService
 
   let givenWhenThen: GivenWhenThen
@@ -46,11 +46,7 @@ describe('VerdictService - update', () => {
     verdictService = service
     mockVerdictRepositoryService = verdictRepositoryService
     transaction = {} as Transaction
-    mockAddMessagesToQueue = (
-      jest.requireMock(
-        '@island.is/judicial-system/message',
-      ) as typeof MessageModule
-    ).addMessagesToQueue as jest.Mock
+    mockQueueMessagesAfterCommit = queueMessagesAfterCommit as jest.Mock
 
     givenWhenThen = async ({ verdict, update, theCase, defendantId }) => {
       const then = {} as Then
@@ -110,7 +106,8 @@ describe('VerdictService - update', () => {
         { transaction },
       )
 
-      expect(mockAddMessagesToQueue).toHaveBeenCalledWith({
+      // Queued for after the commit, so a rollback sends nothing
+      expect(mockQueueMessagesAfterCommit).toHaveBeenCalledWith({
         type: 'INDICTMENT_CASE_NOTIFICATION',
         caseId,
         body: {
@@ -158,7 +155,7 @@ describe('VerdictService - update', () => {
 
     it('should update verdict without enqueuing notification', () => {
       expect(mockVerdictRepositoryService.update).toHaveBeenCalledTimes(1)
-      expect(mockAddMessagesToQueue).not.toHaveBeenCalled()
+      expect(mockQueueMessagesAfterCommit).not.toHaveBeenCalled()
       expect(then.result).toBeDefined()
     })
   })

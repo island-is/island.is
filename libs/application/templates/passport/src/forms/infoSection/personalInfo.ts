@@ -8,7 +8,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { removeCountryCode } from '@island.is/application/ui-components'
+import { removeCountryCode } from '@island.is/shared/utils'
 import { format as formatNationalId } from 'kennitala'
 import { Passport } from '../../lib/constants'
 import { m } from '../../lib/messages'

@@ -1,6 +1,6 @@
-import { FC, useContext, useMemo, useState } from 'react'
-import { useIntl } from 'react-intl'
-import { MultiValue, SingleValue } from 'react-select'
+import type { FC } from 'react'
+import { useContext, useMemo, useState } from 'react'
+import type { MultiValue, SingleValue } from 'react-select'
 import isEmpty from 'lodash/isEmpty'
 
 import { Box, Select } from '@island.is/island-ui/core'
@@ -12,14 +12,13 @@ import {
   FormContext,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   CaseFileCategory,
   CaseRepresentative,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
 import { strings } from './AddFiles.strings'
-import * as styles from './SelectCaseFileRepresentative.css'
 
 type RepresentativeSelectOption = ReactSelectOption & {
   selectedCaseRepresentative: CaseRepresentative | null
@@ -37,7 +36,6 @@ interface SelectRepresentativeProps {
 }
 
 export const SelectRepresentative: FC<SelectRepresentativeProps> = (props) => {
-  const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
 
   const {
@@ -103,17 +101,15 @@ export const SelectRepresentative: FC<SelectRepresentativeProps> = (props) => {
     <BaseSelect
       options={options}
       isLoading={false}
-      placeholder={
-        placeholder ?? formatMessage(strings.caseRepresentativePlaceholder)
-      }
+      placeholder={placeholder ?? strings.caseRepresentativePlaceholder}
       value={representative}
       onChange={handleChange}
     />
   ) : (
     <Select
       name="caseRepresentative"
-      label={formatMessage(strings.caseRepresentativeLabel)}
-      placeholder={formatMessage(strings.caseRepresentativePlaceholder)}
+      label={strings.caseRepresentativeLabel}
+      placeholder={strings.caseRepresentativePlaceholder}
       value={!isEmpty(representative) ? representative : undefined}
       options={options.slice(1)} // Remove 'clear selection' option for default Select
       onChange={(selectedOption) => {
@@ -142,8 +138,6 @@ interface SelectCaseFileRepresentativeProps {
 export const SelectCaseFileRepresentative: FC<
   SelectCaseFileRepresentativeProps
 > = (props) => {
-  const { formatMessage } = useIntl()
-
   const {
     submitterName,
     caseFileCategory,
@@ -155,10 +149,8 @@ export const SelectCaseFileRepresentative: FC<
     useState(submissionDate)
 
   return (
-    <div className={styles.selectCaseFileRepresentative}>
-      <SectionHeading
-        title={formatMessage(strings.uploadFilesRepresentativeSelectionTitle)}
-      />
+    <>
+      <SectionHeading title={strings.uploadFilesRepresentativeSelectionTitle} />
       <BlueBox>
         <Box display="flex" flexDirection="column" rowGap={2}>
           <SelectRepresentative
@@ -192,6 +184,6 @@ export const SelectCaseFileRepresentative: FC<
           />
         </Box>
       </BlueBox>
-    </div>
+    </>
   )
 }

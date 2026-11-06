@@ -1,5 +1,5 @@
-import { FC, useCallback, useContext, useState } from 'react'
-import { useIntl } from 'react-intl'
+import type { FC } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import { Box, FileUploadStatus } from '@island.is/island-ui/core'
@@ -9,11 +9,14 @@ import {
   PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  type InstitutionUser,
   isDefenceUser,
   isDistrictCourtUser,
   isProsecutionUser,
+  isProsecutorUser,
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   CourtCaseInfo,
   FormContentContainer,
@@ -27,14 +30,12 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import UploadFiles, {
-  FileWithPreviewURL,
-} from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import type { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  Case,
   CaseFileCategory,
   TrackedNotificationType,
-  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   formatDateForServer,
@@ -51,8 +52,15 @@ import {
 import { SelectCaseFileRepresentative } from './SelectCaseFileRepresentative'
 import { strings } from './AddFiles.strings'
 
-const getUserProps = (user: User | undefined, workingCase: Case) => {
-  const getCaseInfoNode = (workingCase: Case) => (
+// Mirrors the CASE_FILES_UPDATED entries in notification rolesRules.
+// District court users (and prosecutor representatives) reuse this screen for
+// uploads but are not allowed to send that notification type — calling it
+// produces a swallowed 403 in Datadog.
+const canSendCaseFilesUpdatedNotification = (user?: InstitutionUser): boolean =>
+  isProsecutorUser(user) || isDefenceUser(user)
+
+const getUserProps = (user: User | undefined, workingCase: WorkingCase) => {
+  const getCaseInfoNode = (workingCase: WorkingCase) => (
     <Box marginBottom={5}>
       <ProsecutorCaseInfo workingCase={workingCase} />
     </Box>
@@ -74,7 +82,7 @@ const getUserProps = (user: User | undefined, workingCase: Case) => {
   } else if (isDistrictCourtUser(user)) {
     return {
       previousRoute: DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
-      getCaseInfoNode: (workingCase: Case) => (
+      getCaseInfoNode: (workingCase: WorkingCase) => (
         <CourtCaseInfo workingCase={workingCase} />
       ),
       hasFileRepresentativeSelection: true,
@@ -91,7 +99,6 @@ const getUserProps = (user: User | undefined, workingCase: Case) => {
 const AddFiles: FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { formatMessage } = useIntl()
   const [editCount, setEditCount] = useState(0)
   const [visibleModal, setVisibleModal] = useState<'confirmation'>()
   const router = useRouter()
@@ -187,7 +194,10 @@ const AddFiles: FC = () => {
       updateUploadFile,
     )
 
-    if (uploadResult !== 'NONE_SUCCEEDED') {
+    if (
+      uploadResult !== 'NONE_SUCCEEDED' &&
+      canSendCaseFilesUpdatedNotification(user)
+    ) {
       // Some files were added successfully so we send a notification
       await sendNotification(
         workingCase.id,
@@ -205,6 +215,7 @@ const AddFiles: FC = () => {
     sendNotification,
     updateUploadFile,
     uploadFiles,
+    user,
     workingCase.id,
     router,
     previousRoute,
@@ -225,14 +236,12 @@ const AddFiles: FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.indictments.overview)}
-      />
+      <PageHeader title={titles.prosecutor.indictments.overview} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
+        <PageTitle>{strings.heading}</PageTitle>
         {CaseInfo}
         <SectionHeading
-          title={formatMessage(strings.uploadFilesHeading)}
+          title={strings.uploadFilesHeading}
           description={`Gögnin verða að hafa lýsandi skráarheiti.${
             isProsecutionUser(user)
               ? ' Athugið að viðbótar rafrænum gögnum er bætt við málið í gegnum Réttarvörslugáttargluggann í LÖKE.'
@@ -245,7 +254,6 @@ const AddFiles: FC = () => {
           onDelete={removeUploadFile}
           onRename={handleRename}
           setEditCount={setEditCount}
-          isBottomComponent={!hasFileRepresentativeSelection}
         />
         {hasFileRepresentativeSelection && (
           <SelectCaseFileRepresentative
@@ -264,8 +272,8 @@ const AddFiles: FC = () => {
           actions={[
             {
               text: someFilesError
-                ? formatMessage(strings.tryUploadAgain)
-                : formatMessage(strings.nextButtonText),
+                ? strings.tryUploadAgain
+                : strings.nextButtonText,
               colorScheme: someFilesError ? 'destructive' : 'default',
               onClick: () => setVisibleModal('confirmation'),
               disabled:
@@ -280,16 +288,16 @@ const AddFiles: FC = () => {
       </FormContentContainer>
       {visibleModal === 'confirmation' && (
         <Modal
-          title={formatMessage(strings.filesSentModalTitle)}
-          text={formatMessage(strings.filesSentModalText)}
+          title={strings.filesSentModalTitle}
+          text={strings.filesSentModalText}
           buttons={[
             {
-              text: formatMessage(strings.filesDismissedModalButtonText),
+              text: strings.filesDismissedModalButtonText,
               onClick: () => setVisibleModal(undefined),
               variant: 'ghost',
             },
             {
-              text: formatMessage(strings.filesConfirmedModalButtonText),
+              text: strings.filesConfirmedModalButtonText,
               onClick: async () => {
                 await handleNextButtonClick()
               },

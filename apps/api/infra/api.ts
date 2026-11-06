@@ -7,6 +7,7 @@ import {
   Client,
   CriminalRecord,
   DirectorateOfEquality,
+  DirectorateOfEqualityStatistics,
   DirectorateOfImmigration,
   Disability,
   DistrictCommissionersLicenses,
@@ -55,7 +56,6 @@ import {
   UniversityCareers,
   Vehicles,
   NVSPermits,
-  VehicleServiceFjsV1,
   VehiclesMileage,
   WorkAccidents,
   WorkMachines,
@@ -162,9 +162,16 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.documentsService)}`,
       ),
       DOWNLOAD_SERVICE_BASE_PATH: {
-        prod: 'https://api.island.is',
-        dev: 'https://api.dev01.devland.is',
+        dev: ref(
+          (ctx) =>
+            `https://${
+              ctx.featureDeploymentName
+                ? `${ctx.featureDeploymentName}-api.dev01.devland.is`
+                : 'api.dev01.devland.is'
+            }`,
+        ),
         staging: 'https://api.staging01.devland.is',
+        prod: 'https://api.island.is',
       },
       ENDORSEMENT_SYSTEM_BASE_API_URL: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
@@ -317,6 +324,27 @@ export const serviceSetup = (services: {
         staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
         prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
       },
+      ELFUR_CLIENT_ID: {
+        dev: '@fjs.is/stafraent-island-api-elfur',
+        staging: '@fjs.is/stafraent-island-api-elfur',
+        prod: '@fjs.is/stafraent-island-api-elfur',
+      },
+      ELFUR_BASE_PATH: {
+        dev: 'https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net',
+        staging:
+          'https://fjs-cdn-endpoint-elfur-staging-hhesbzhxabbwbqen.a03.azurefd.net',
+        prod: 'https://fjs-cdn-endpoint-elfur-prod-azescphpe7b5ecf2.a03.azurefd.net',
+      },
+      ELFUR_BASE_IDS_URL: {
+        dev: 'https://identity-server.staging01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
+      RSK_CALCULATORS_BASE_URL: {
+        dev: 'https://reiknivelarapi.rsk.is',
+        staging: 'https://reiknivelarapi.rsk.is',
+        prod: 'https://reiknivelarapi.rsk.is',
+      },
       LYFJASTOFNUN_PHARMACIES_BASE_URL: {
         dev: 'https://api.serlyfjaskra.is',
         staging: 'https://api.serlyfjaskra.is',
@@ -359,6 +387,8 @@ export const serviceSetup = (services: {
         prod: 'hh_env_prod',
       },
       MATILDA_BASE_URL: 'https://matildaplatform.com/api/menu-publication',
+      // Outbound socket cap for enhancedFetch clients; raise to reduce queueing.
+      FETCH_MAX_SOCKETS: { dev: '50', staging: '50', prod: '50' },
     })
     .secrets({
       HH_ZENDESK_SUBDOMAIN:
@@ -401,6 +431,7 @@ export const serviceSetup = (services: {
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENTID_TEST',
       DOCUMENT_PROVIDER_CLIENT_SECRET_TEST:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST',
+      ELFUR_CLIENT_SECRET: '/k8s/api/ELFUR_SI_ACCOUNT_CLIENT_SECRET',
       DOCUMENT_PROVIDER_DASHBOARD_CLIENT_SECRET:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_CLIENT_SECRET',
       DOCUMENT_PROVIDER_DASHBOARD_CLIENTID:
@@ -567,7 +598,6 @@ export const serviceSetup = (services: {
       Vehicles,
       VehiclesMileage,
       Passports,
-      VehicleServiceFjsV1,
       TransportAuthority,
       ChargeFjsV2,
       EnergyFunds,
@@ -581,6 +611,7 @@ export const serviceSetup = (services: {
       HousingBenefitCalculator,
       ShipRegistry,
       DirectorateOfEquality,
+      DirectorateOfEqualityStatistics,
       DirectorateOfImmigration,
       SignatureCollection,
       SocialInsuranceAdministration,
@@ -628,6 +659,38 @@ export const serviceSetup = (services: {
       max: 50,
       min: 3,
       cpuAverageUtilization: 70,
+    })
+    .strategy({
+      // prod: zero-downtime. dev/staging: downtime is fine, roll faster.
+      dev: {
+        type: 'RollingUpdate',
+        rollingUpdate: { maxSurge: '25%', maxUnavailable: '25%' },
+      },
+      staging: {
+        type: 'RollingUpdate',
+        rollingUpdate: { maxSurge: '25%', maxUnavailable: '25%' },
+      },
+      prod: {
+        type: 'RollingUpdate',
+        rollingUpdate: { maxSurge: '25%', maxUnavailable: 0 },
+      },
+    })
+    .gracefulShutdown({
+      // Full drain in prod (long XRoad/GraphQL calls); relaxed elsewhere.
+      // minReadySeconds kept at 0 for now — knob to tune if needed.
+      dev: {
+        minReadySeconds: 0,
+        terminationGracePeriodSeconds: 30,
+      },
+      staging: {
+        minReadySeconds: 0,
+        terminationGracePeriodSeconds: 30,
+      },
+      prod: {
+        minReadySeconds: 0,
+        terminationGracePeriodSeconds: 60,
+        preStopSleepSeconds: 10,
+      },
     })
     .grantNamespaces(
       'nginx-ingress-external',

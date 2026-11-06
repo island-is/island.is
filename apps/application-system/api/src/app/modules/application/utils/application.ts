@@ -2,6 +2,7 @@ import addMilliseconds from 'date-fns/addMilliseconds'
 
 import {
   DefaultStateLifeCycle,
+  getApplicationLink,
   getValueViaPath,
 } from '@island.is/application/core'
 import {
@@ -13,19 +14,25 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationWithAttachments,
-  ScheduledNotificationConfig,
 } from '@island.is/application/types'
 import { Unwrap } from '@island.is/shared/types'
-import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
+import {
+  getApplicationTemplateByTypeId,
+  getApplicationTranslationNamespaces,
+} from '@island.is/application/template-loader'
 import isObject from 'lodash/isObject'
 import { EventObject } from 'xstate'
-import { FormatMessage } from '@island.is/cms-translations'
+import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { ApplicationStatistics } from '../dto/applicationAdmin.response.dto'
 import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 import { expandFieldKeys } from '../lifecycle/application-lifecycle.utils'
 import { IdentityClientService } from '@island.is/clients/identity'
 import { ApplicationTemplateHelper } from '@island.is/application/core'
 import { ApplicationService } from '@island.is/application/api/core'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import type { User } from '@island.is/auth-nest-tools'
+import { logger } from '@island.is/logging'
+import { environment } from '../../../../environments'
 
 export const getApplicationLifecycle = (
   application: Application,
@@ -177,7 +184,7 @@ export const removeObjectWithKeyFromAnswers = (
   depth = 0,
 ): object => {
   if (depth >= MAX_DEPTH) {
-    console.warn(
+    logger.warn(
       'Maximum recursion depth reached while calling removeObjectWithKeyFromAnswers',
     )
     return answers
@@ -364,6 +371,9 @@ export const handleScheduledNotifications = async (
   application: ApplicationWithAttachments,
   template: Unwrap<typeof getApplicationTemplateByTypeId>,
   newState: string,
+  intlService: IntlService,
+  featureFlagService?: FeatureFlagService,
+  user?: User,
 ) => {
   // 1. Clean up any existing scheduled notifications
   await applicationService.cancelScheduledNotifications(application.id)
@@ -380,19 +390,77 @@ export const handleScheduledNotifications = async (
     return
   }
 
-  // 3. Prepare the new schedules with robustness
-  const notificationsToSchedule = []
-  const configArray = (() => {
-    if (typeof configs === 'function') {
-      const result = configs(application)
-      return Array.isArray(result) ? result : [result]
-    }
+  // 3. Resolve configs
+  const resolved =
+    typeof configs === 'function' ? configs(application) : configs
+  const configArray = Array.isArray(resolved) ? resolved : [resolved]
 
-    return Array.isArray(configs) ? configs : [configs]
-  })()
+  // 4. Resolve feature flags once per config, isolated so one flag check
+  // failing doesn't affect the others. Configs gated behind a feature flag
+  // are only scheduled while the flag is enabled.
+  const configsWithEnabled = await Promise.all(
+    configArray.map(async (config) => {
+      if (!config.featureFlag) {
+        return { config, enabled: true }
+      }
+      try {
+        const enabled = await featureFlagService?.getValue(
+          config.featureFlag,
+          false,
+          user,
+        )
+        return { config, enabled: !!enabled }
+      } catch (error) {
+        logger.error(
+          `Failed to evaluate feature flag ${config.featureFlag} for template ${config.template} in state ${newState} for application ${application.id}`,
+          error,
+        )
+        return { config, enabled: false }
+      }
+    }),
+  )
 
-  for (const config of configArray) {
+  // 5. Resolve is/en translations once, only if some enabled config actually
+  // needs them. A failure here degrades gracefully — translation-dependent
+  // args are simply omitted below — rather than aborting scheduling for
+  // every config in this state.
+  const needsTranslation = configsWithEnabled.some(
+    ({ config, enabled }) =>
+      enabled &&
+      (config.includeApplicationName ||
+        (config.args ?? []).some((arg) => 'message' in arg)),
+  )
+
+  let translation:
+    | { formatMessageIs: FormatMessage; formatMessageEn: FormatMessage }
+    | undefined
+
+  if (needsTranslation) {
     try {
+      const namespaces = await getApplicationTranslationNamespaces(application)
+      const [isIntl, enIntl] = await Promise.all([
+        intlService.useIntl(namespaces, 'is'),
+        intlService.useIntl(namespaces, 'en'),
+      ])
+      translation = {
+        formatMessageIs: isIntl.formatMessage,
+        formatMessageEn: enIntl.formatMessage,
+      }
+    } catch (error) {
+      logger.error(
+        `Failed to resolve CMS translations for state ${newState} for application ${application.id}`,
+        error,
+      )
+    }
+  }
+
+  // 6. Prepare the new schedules with robustness
+  const notificationsToSchedule = []
+
+  for (const { config, enabled } of configsWithEnabled) {
+    try {
+      if (!enabled) continue
+
       let time: Date
 
       if ('delayInMs' in config) {
@@ -416,20 +484,70 @@ export const handleScheduledNotifications = async (
         }
       }
 
+      const translatedArgs = (config.args ?? []).flatMap((arg) => {
+        if ('value' in arg) return [arg]
+        if (!translation) return []
+
+        const message =
+          typeof arg.message === 'function'
+            ? arg.message(application)
+            : arg.message
+
+        return [
+          { key: `${arg.key}Is`, value: translation.formatMessageIs(message) },
+          { key: `${arg.key}En`, value: translation.formatMessageEn(message) },
+        ]
+      })
+
+      const args = [
+        ...translatedArgs,
+        ...(config.includeApplicationName && translation
+          ? [
+              {
+                key: 'applicationNameIs',
+                value: getApplicationNameTranslationString(
+                  template,
+                  application,
+                  translation.formatMessageIs,
+                ),
+              },
+              {
+                key: 'applicationNameEn',
+                value: getApplicationNameTranslationString(
+                  template,
+                  application,
+                  translation.formatMessageEn,
+                ),
+              },
+            ]
+          : []),
+        ...(config.includeApplicationLink
+          ? [
+              {
+                key: 'applicationLink',
+                value: getApplicationLink(
+                  application,
+                  environment.templateApi.clientLocationOrigin,
+                ),
+              },
+            ]
+          : []),
+      ]
+
       notificationsToSchedule.push({
         template: config.template,
         schedule_time: time,
-        args: config.args,
+        args,
       })
     } catch (error) {
-      console.error(
+      logger.error(
         `Failed to evaluate schedule configuration for template ${config.template} in state ${newState} for application ${application.id}`,
         error,
       )
     }
   }
 
-  // 4. Save to the database
+  // 7. Save to the database
   if (notificationsToSchedule.length > 0) {
     await applicationService.createScheduledNotifications(
       application.id,

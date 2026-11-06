@@ -2,22 +2,34 @@ import {
   RightsPortalAidOrNutrition,
   RightsPortalAidOrNutritionRenewalStatus,
 } from '@island.is/api/schema'
-import { Box, Button, Inline, Text, toast } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Inline,
+  Text,
+  Tooltip,
+  toast,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   DownloadFileButtons,
   LinkButton,
-  SortableTable,
+  PortalTable,
   amountFormat,
+  createColumnHelper,
   formatDate,
   m,
+  useIsMobile,
 } from '@island.is/portals/my-pages/core'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import MobileLabeledCell from '../../components/MobileLabeledCell/MobileLabeledCell'
 import GenericRenewModal, {
   ModalField,
 } from '../../components/GenericRenewModal/GenericRenewModal'
 import NestedInfoLines from '../../components/NestedInfoLines/NestedInfoLines'
 import { messages } from '../../lib/messages'
+import { tableTextCell } from '../../components/TableTextCell/TableTextCell'
 import { exportAidTable, exportNutritionFile } from '../../utils/FileBreakdown'
 import { useRenewAidsAndNutritionMutation } from './AidsAndNutrition.generated'
 import LocationModal from './LocationModal'
@@ -30,8 +42,14 @@ interface Props {
   refetch: () => void
 }
 
+const columnHelper = createColumnHelper<RightsPortalAidOrNutrition>()
+
+// Tighter than the table default so the columns fit without scrolling sideways
+const CELL_BOX = { paddingLeft: 2, paddingRight: 2 } as const
+
 const AidsAndNutritionWrapper = ({ type, data, refetch }: Props) => {
   const { formatMessage } = useLocale()
+  const { isMobile } = useIsMobile()
   const [showRenewal, setShowRenewal] = useState<boolean>(false)
 
   const [activeItem, setActiveItem] =
@@ -178,117 +196,153 @@ const AidsAndNutritionWrapper = ({ type, data, refetch }: Props) => {
     },
   ]
 
-  const openModal = (item: RightsPortalAidOrNutrition) => {
-    setActiveItem(item)
-    setIsVisible(true)
-  }
-
   const openLocationModal = (item: RightsPortalAidOrNutrition) => {
     setLocationModalItem(item)
     setIsLocationModalVisible(true)
   }
 
-  const labels = {
-    aidsName: formatMessage(messages.name),
-    maxUnitRefund: isAid
-      ? formatMessage(messages.maxUnitRefund)
-      : formatMessage(messages.maxAmountPerMonth),
-    insuranceRatio: isAid
-      ? formatMessage(messages.insuranceRatio)
-      : formatMessage(messages.insuranceRatioOrInitialApplicantPayment),
-    insuranceRatioOrInitialApplicantPayment: formatMessage(
-      messages.insuranceRatioOrInitialApplicantPayment,
-    ),
-    availableRefund: formatMessage(messages.availableRefund),
-    nextAvailableRefund: formatMessage(messages.nextAvailableRefund),
-  }
+  const columns = useMemo(() => {
+    const renewalLabel = formatMessage(messages.renew)
+
+    return [
+      columnHelper.accessor(
+        (item) => (item.name ? item.name.split('/').join(' / ') : ''),
+        {
+          id: 'aidsName',
+          header: formatMessage(messages.name),
+        },
+      ),
+      columnHelper.accessor(
+        (item) =>
+          isAid
+            ? item.maxUnitRefund ?? ''
+            : item.maxMonthlyAmount
+            ? amountFormat(item.maxMonthlyAmount)
+            : '',
+        {
+          id: 'maxUnitRefund',
+          header: isAid
+            ? formatMessage(messages.maxUnitRefund)
+            : formatMessage(messages.maxAmountPerMonth),
+          meta: { type: 'interactive' },
+          cell: ({ getValue }) => tableTextCell(getValue()),
+        },
+      ),
+      columnHelper.accessor(
+        (item) =>
+          item.refund?.value
+            ? item.refund.type === 'amount'
+              ? amountFormat(item.refund.value)
+              : `${item.refund.value}%`
+            : '',
+        {
+          id: 'insuranceRatio',
+          header: isAid
+            ? formatMessage(messages.insuranceRatio)
+            : formatMessage(messages.insuranceRatioOrInitialApplicantPayment),
+          meta: { type: 'interactive' },
+          cell: ({ getValue }) => tableTextCell(getValue()),
+        },
+      ),
+      columnHelper.accessor((item) => item.available ?? '', {
+        id: 'availableRefund',
+        header: formatMessage(messages.availableRefund),
+        meta: { type: 'interactive' },
+        cell: ({ getValue }) => tableTextCell(getValue()),
+      }),
+      columnHelper.accessor((item) => item.nextAllowedMonth ?? '', {
+        id: 'nextAvailableRefund',
+        header: formatMessage(messages.nextAvailableRefund),
+        meta: { type: 'interactive' },
+        cell: ({ getValue }) => tableTextCell(getValue()),
+      }),
+      ...(showRenewal
+        ? [
+            columnHelper.display({
+              id: 'renewal',
+              header: renewalLabel,
+              // span: 2 only applies on mobile, where the cell takes the full card width without a label
+              meta: { type: 'interactive', span: 2 },
+              cell: ({ row }) => {
+                const item = row.original
+                const info = (label: string, text: string) =>
+                  isMobile ? (
+                    <Box marginTop={1}>
+                      <AlertMessage type="info" message={label} />
+                    </Box>
+                  ) : (
+                    <Box display="flex">
+                      <Text variant="medium">{text}</Text>
+                      <Tooltip text={label} />
+                    </Box>
+                  )
+
+                switch (item.renewalStatus) {
+                  case RightsPortalAidOrNutritionRenewalStatus.RENEWAL_IN_PROGRESS:
+                    return info(
+                      formatMessage(messages.renewalInProgress),
+                      formatMessage(messages.renewalInProgress),
+                    )
+                  case RightsPortalAidOrNutritionRenewalStatus.VALID: {
+                    const status = tableTextCell(formatMessage(messages.valid))
+                    return isMobile ? (
+                      <MobileLabeledCell label={renewalLabel}>
+                        {status}
+                      </MobileLabeledCell>
+                    ) : (
+                      status
+                    )
+                  }
+                  case RightsPortalAidOrNutritionRenewalStatus.VALID_FOR_RENEWAL: {
+                    const button = (
+                      <Button
+                        variant={isMobile ? 'ghost' : 'text'}
+                        type="button"
+                        size="small"
+                        icon="arrowForward"
+                        iconType="outline"
+                        fluid={isMobile}
+                        onClick={() => {
+                          setActiveItem(item)
+                          setIsVisible(true)
+                        }}
+                      >
+                        {renewalLabel}
+                      </Button>
+                    )
+                    return isMobile ? <Box marginTop={2}>{button}</Box> : button
+                  }
+                  default:
+                    return info(
+                      formatMessage(messages.notValidForRenewal),
+                      formatMessage(messages.notValidForRenewalDetail),
+                    )
+                }
+              },
+            }),
+          ]
+        : []),
+    ]
+  }, [formatMessage, isMobile, isAid, showRenewal])
+
   return (
     <Box>
       <Box marginTop={2}>
-        <SortableTable
-          expandable
-          labels={{
-            ...labels,
-            ...(showRenewal && { renewal: formatMessage(messages.renew) }),
-          }}
-          defaultSortByKey="aidsName"
+        <PortalTable
+          columns={columns}
+          data={data}
+          emptyMessage={m.noDataFound}
+          getRowId={(item) => item.id}
+          defaultSorting={[{ id: 'aidsName', desc: false }]}
           mobileTitleKey="aidsName"
-          items={data.map((rowItem, idx) => {
-            const baseItem = {
-              id: rowItem.id ?? idx,
-              aidsName: rowItem.name ? rowItem.name.split('/').join(' / ') : '',
-              maxUnitRefund: isAid
-                ? rowItem.maxUnitRefund ?? ''
-                : rowItem.maxMonthlyAmount
-                ? amountFormat(rowItem.maxMonthlyAmount)
-                : '',
-              insuranceRatio: rowItem.refund
-                ? rowItem.refund.type === 'amount'
-                  ? rowItem.refund.value
-                    ? amountFormat(rowItem.refund.value)
-                    : ''
-                  : rowItem.refund.value
-                  ? `${rowItem.refund.value}%`
-                  : ''
-                : '',
-              availableRefund: rowItem.available ?? '',
-              nextAvailableRefund: rowItem.nextAllowedMonth ?? '',
-            }
-
-            // Only add renewal property if showRenewal is true
-            if (showRenewal) {
-              return {
-                ...baseItem,
-                renewal: undefined,
-                lastNode:
-                  rowItem.renewalStatus ===
-                  RightsPortalAidOrNutritionRenewalStatus.RENEWAL_IN_PROGRESS
-                    ? {
-                        type: 'info',
-                        label: formatMessage(messages.renewalInProgress),
-                        text: formatMessage(messages.renewalInProgress),
-                      }
-                    : rowItem.renewalStatus ===
-                      RightsPortalAidOrNutritionRenewalStatus.VALID
-                    ? {
-                        type: 'text',
-                        label: formatMessage(messages.valid),
-                      }
-                    : rowItem.renewalStatus ===
-                      RightsPortalAidOrNutritionRenewalStatus.VALID_FOR_RENEWAL
-                    ? {
-                        type: 'action',
-                        label: formatMessage(messages.renew),
-                        action: () => openModal(rowItem),
-                        icon: { icon: 'arrowForward', type: 'outline' },
-                      }
-                    : {
-                        type: 'info',
-                        label: formatMessage(messages.notValidForRenewal),
-                        text: formatMessage(messages.notValidForRenewalDetail),
-                      },
-                children: (
-                  <NestedInfoLines
-                    data={generateFoldedValues(rowItem)}
-                    width="full"
-                    backgroundColor="blue"
-                  />
-                ),
-              }
-            }
-
-            // Return item without renewal property when showRenewal is false
-            return {
-              ...baseItem,
-              children: (
-                <NestedInfoLines
-                  data={generateFoldedValues(rowItem)}
-                  width="full"
-                  backgroundColor="blue"
-                />
-              ),
-            }
-          })}
+          cellBox={{ header: CELL_BOX, body: CELL_BOX }}
+          renderExpandedRow={(row) => (
+            <NestedInfoLines
+              data={generateFoldedValues(row.original)}
+              width="full"
+              backgroundColor="blue"
+            />
+          )}
         />
 
         <DownloadFileButtons

@@ -102,7 +102,6 @@ export const DocumentsOverview = () => {
         element.focus()
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [focusId])
 
   const rowDirection = error ? 'column' : 'columnReverse'

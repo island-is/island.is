@@ -35,6 +35,7 @@ env:
   DB_NAME: 'application_system_api'
   DB_REPLICAS_HOST: 'postgres-applications.internal'
   DB_USER: 'application_system_api'
+  DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
   EHIC_XROAD_PROVIDER_ID: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/ehic'
   FILE_SERVICE_PRESIGN_BUCKET: 'island-is-staging-fs-presign-bucket'
   FILE_STORAGE_UPLOAD_BUCKET: 'island-is-staging-upload-api'

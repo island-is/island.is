@@ -1,6 +1,6 @@
 import addDays from 'date-fns/addDays'
 import { getValueViaPath } from '@island.is/application/core'
-import { Application, FormValue } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/types'
 
 export const DRAFT_PRUNE_DAYS = 45
 

@@ -2,6 +2,7 @@ import { lazy } from 'react'
 import {
   ApiScope,
   hasNotificationScopes,
+  notificationScopes,
   UserProfileScope,
 } from '@island.is/auth/scopes'
 import { m } from '@island.is/portals/my-pages/core'
@@ -9,6 +10,7 @@ import { PortalModule } from '@island.is/portals/core'
 import { InformationPaths } from './lib/paths'
 import { SignatureCollectionPaths } from '@island.is/portals/my-pages/signature-collection'
 import { Navigate } from 'react-router-dom'
+import { Features } from '@island.is/feature-flags'
 
 const UserInfoOverview = lazy(() =>
   import('./screens/UserInfo/UserInfoOverview/UserInfoOverview'),
@@ -59,50 +61,58 @@ export const informationModule: PortalModule = {
         name: m.userInfo,
         path: InformationPaths.MyInfoRoot,
         enabled: hasUserDetailsAccess,
+        requiredScopes: [ApiScope.meDetails],
         element: <Navigate to={InformationPaths.MyInfoRootOverview} replace />,
       },
       {
         name: m.myInfo,
         path: InformationPaths.MyInfoRootOverview,
         enabled: hasUserDetailsAccess,
+        requiredScopes: [ApiScope.meDetails],
         element: <UserInfoOverview />,
       },
       {
         name: m.contracts,
         path: InformationPaths.MyContracts,
         enabled: scopes.includes(ApiScope.meDetails),
-        key: 'MyContracts',
+        requiredScopes: [ApiScope.meDetails],
+        key: Features.isServicePortalMyContractsPageEnabled,
         element: <UserContractsOverview />,
       },
       {
         name: m.contract,
         path: InformationPaths.MyContractsDetail,
         enabled: scopes.includes(ApiScope.meDetails),
-        key: 'MyContracts',
+        requiredScopes: [ApiScope.meDetails],
+        key: Features.isServicePortalMyContractsPageEnabled,
         element: <UserContract />,
       },
       {
         name: m.userInfo,
         path: InformationPaths.UserInfo,
         enabled: hasUserDetailsAccess,
+        requiredScopes: [ApiScope.meDetails],
         element: <UserInfo />,
       },
       {
         name: m.familyChild,
         path: InformationPaths.BioChild,
         enabled: hasUserDetailsAccess,
+        requiredScopes: [ApiScope.meDetails],
         element: <FamilyMemberBioChild />,
       },
       {
         name: m.familyChild,
         path: InformationPaths.ChildCustody,
         enabled: hasUserDetailsAccess,
+        requiredScopes: [ApiScope.meDetails],
         element: <FamilyMemberChildCustody />,
       },
       {
         name: m.familySpouse,
         path: InformationPaths.Spouse,
         enabled: hasUserDetailsAccess,
+        requiredScopes: [ApiScope.meDetails],
         element: <Spouse />,
       },
       {
@@ -123,6 +133,7 @@ export const informationModule: PortalModule = {
         name: m.notifications,
         path: InformationPaths.Notifications,
         enabled: hasNotificationsAccess,
+        requiredScopes: notificationScopes,
         element: <Notifications />,
       },
       {
@@ -168,6 +179,20 @@ export const companyInformationModule: PortalModule = {
         element: <CompanyInfo />,
       },
       {
+        name: m.contracts,
+        path: InformationPaths.CompanyContracts,
+        enabled: hasCompanyAccess,
+        key: Features.isServicePortalMyContractsPageEnabled,
+        element: <UserContractsOverview />,
+      },
+      {
+        name: m.contract,
+        path: InformationPaths.CompanyContractsDetail,
+        enabled: hasCompanyAccess,
+        key: Features.isServicePortalMyContractsPageEnabled,
+        element: <UserContract />,
+      },
+      {
         name: m.companySettings,
         path: InformationPaths.CompanySettings,
         enabled: hasSettingsAccess,
@@ -183,6 +208,7 @@ export const companyInformationModule: PortalModule = {
         name: m.lists,
         path: InformationPaths.CompanyLists,
         enabled: scopes.includes(ApiScope.signatureCollection),
+        requiredScopes: [ApiScope.signatureCollection],
         element: (
           <Navigate
             to={
@@ -228,6 +254,14 @@ export const companyInformationModule: PortalModule = {
         element: (
           <Navigate to={InformationPaths.CompanyNotifications} replace />
         ),
+      },
+      {
+        name: m.contracts,
+        path: InformationPaths.MyContracts,
+        enabled: true,
+        navHide: true,
+        key: Features.isServicePortalMyContractsPageEnabled,
+        element: <Navigate to={InformationPaths.CompanyContracts} replace />,
       },
     ]
   },

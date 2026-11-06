@@ -8,8 +8,8 @@ import {
   DISTRICT_COURT_INDICTMENT_CASE_SUBPOENA_ROUTE,
   DISTRICT_COURT_INVESTIGATION_CASE_OVERVIEW_ROUTE,
   DISTRICT_COURT_RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
+  getStandardUserDashboardRoute,
 } from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isIndictmentCase,
   isInvestigationCase,
@@ -27,12 +27,12 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { ProsecutorAndDefendantsEntries } from '@island.is/judicial-system-web/src/components/CaseInfo/CaseInfo'
 import { Gender } from '@island.is/judicial-system-web/src/graphql/schema'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import CourtCaseNumber from '@island.is/judicial-system-web/src/routes/Court/components/CourtCaseNumber/CourtCaseNumber'
+import { ProsecutorSection } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { getDefendantPleaText } from '@island.is/judicial-system-web/src/utils/utils'
 import { isReceptionAndAssignmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { ProsecutorSection } from '../../../Prosecutor/components'
-import CourtCaseNumber from '../CourtCaseNumber/CourtCaseNumber'
 import SelectCourtOfficials from './SelectCourtOfficials/SelectCourtOfficials'
 import { receptionAndAssignment as strings } from './ReceptionAndAssignment.strings'
 
@@ -69,13 +69,19 @@ const ReceptionAndAssignment = () => {
             display="block"
             marginBottom={index === workingCase.defendants?.length ? 0 : 1}
           >
-            {formatMessage(strings.defendantPleaAlertMessage, {
-              defendantGender: defendant.gender ?? Gender.MALE,
-              nameAndPlea: getDefendantPleaText(
-                defendant.name,
-                defendant.defendantPlea,
-              ),
-            })}
+            {formatMessage(
+              {
+                id: strings.defendantPleaAlertMessage,
+                defaultMessage: strings.defendantPleaAlertMessage,
+              },
+              {
+                defendantGender: defendant.gender ?? Gender.MALE,
+                nameAndPlea: getDefendantPleaText(
+                  defendant.name,
+                  defendant.defendantPlea,
+                ),
+              },
+            )}
           </Box>
         )
       } else {
@@ -92,16 +98,14 @@ const ReceptionAndAssignment = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader
-        title={formatMessage(titles.court.shared.receptionAndAssignment)}
-      />
+      <PageHeader title={titles.court.shared.receptionAndAssignment} />
       <FormContentContainer>
         {isIndictment && workingCase.comments && (
           <Box
             marginBottom={defendantPleas && defendantPleas.length > 0 ? 2 : 5}
           >
             <AlertMessage
-              title={formatMessage(strings.commentsTitle)}
+              title={strings.commentsTitle}
               message={workingCase.comments}
               type="warning"
             />
@@ -110,16 +114,22 @@ const ReceptionAndAssignment = () => {
         {isIndictment && defendantPleas && defendantPleas.length > 0 && (
           <Box marginBottom={3}>
             <AlertMessage
-              title={formatMessage(strings.defendantPleaAlertTitle, {
-                defendantCount: workingCase.defendants?.length,
-              })}
+              title={formatMessage(
+                {
+                  id: strings.defendantPleaAlertTitle,
+                  defaultMessage: strings.defendantPleaAlertTitle,
+                },
+                {
+                  defendantCount: workingCase.defendants?.length,
+                },
+              )}
               message={defendantPleas}
               type="warning"
             />
           </Box>
         )}
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <PageTitle>{strings.title}</PageTitle>
+        <div className={stack({ gap: 5 })}>
           <Box component="section">
             <ProsecutorAndDefendantsEntries workingCase={workingCase} />
           </Box>
@@ -145,7 +155,7 @@ const ReceptionAndAssignment = () => {
           }
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () => handleNavigationTo(getNextRoute),
               disabled: !stepIsValid,

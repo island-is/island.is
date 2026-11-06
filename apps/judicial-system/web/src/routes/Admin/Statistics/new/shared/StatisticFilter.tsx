@@ -1,7 +1,7 @@
-import { Dispatch, SetStateAction } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
 
 import { Box, DatePicker, Select } from '@island.is/island-ui/core'
-import { DateFilter } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { DateFilter } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { FilterLayout } from './StatisticFilterLayout'

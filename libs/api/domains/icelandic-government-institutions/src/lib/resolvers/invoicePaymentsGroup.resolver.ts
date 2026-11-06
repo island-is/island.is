@@ -1,0 +1,25 @@
+import { CodeOwner } from '@island.is/nest/core'
+import { CodeOwners } from '@island.is/shared/constants'
+import { Args, Query, Resolver } from '@nestjs/graphql'
+import { InvoicesService } from '../services/invoices/invoices.service'
+import { InvoicePaymentsGroup } from '../models/invoicePaymentsGroup.model'
+import { BypassAuth } from '@island.is/auth-nest-tools'
+import { InvoicePaymentsGroupInput } from '../dtos/getInvoicePaymentsGroup.input'
+
+@Resolver(() => InvoicePaymentsGroup)
+@CodeOwner(CodeOwners.Hugsmidjan)
+export class InvoicePaymentsGroupResolver {
+  constructor(private readonly invoiceService: InvoicesService) {}
+
+  @Query(() => InvoicePaymentsGroup, {
+    name: 'icelandicGovernmentInstitutionsInvoicePaymentsGroup',
+    nullable: true,
+  })
+  @BypassAuth()
+  async getInvoicePaymentsGroup(
+    @Args('input', { type: () => InvoicePaymentsGroupInput })
+    input: InvoicePaymentsGroupInput,
+  ): Promise<InvoicePaymentsGroup | null> {
+    return this.invoiceService.getOpenInvoicesPaymentsGroup(input)
+  }
+}

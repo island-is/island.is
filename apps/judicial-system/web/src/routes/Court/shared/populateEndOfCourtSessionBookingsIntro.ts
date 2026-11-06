@@ -1,8 +1,8 @@
 import { formatAppeal } from '@island.is/judicial-system/formatters'
 import { isInvestigationCase } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   AppealDecisionPartyRole,
-  Case,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -11,7 +11,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 export const populateEndOfCourtSessionBookingsIntro = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   endOfSessionBookings: string[],
 ) => {
   const isCaseCompletedWithRuling = !workingCase.isCompletedWithoutRuling

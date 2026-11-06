@@ -24,13 +24,6 @@ export class UpdateCourtDocumentInput {
   readonly documentOrder?: number
 
   @Allow()
-  @Field(() => Int, { nullable: true })
-  @IsOptional()
-  @IsInt()
-  @IsPositive()
-  readonly mergedDocumentOrder?: number
-
-  @Allow()
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()

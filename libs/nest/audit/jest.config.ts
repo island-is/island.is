@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'nest-audit',
   preset: './jest.preset.js',

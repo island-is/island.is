@@ -9,18 +9,11 @@ import { DefendantService } from '../../../defendant'
 import { FileService } from '../../../file'
 import { IndictmentCountService } from '../../../indictment-count'
 import {
-  AppealCase,
-  AppealDecision,
   AppealDecisionRepositoryService,
   CaseArchiveRepositoryService,
-  CaseFile,
   CaseRepositoryService,
-  CaseString,
-  Defendant,
-  IndictmentCount,
-  Offense,
+  CaseStringRepositoryService,
 } from '../../../repository'
-import { archiveFilter } from '../../filters/case.archiveFilter'
 import { ArchiveResponse } from '../../models/archive.response'
 
 interface Then {
@@ -34,7 +27,7 @@ describe('InternalCaseController - Archive', () => {
   let mockFileService: FileService
   let mockDefendantService: DefendantService
   let mockIndictmentCountService: IndictmentCountService
-  let mockCaseStringModel: typeof CaseString
+  let mockCaseStringRepositoryService: CaseStringRepositoryService
   let mockCaseRepositoryService: CaseRepositoryService
   let mockCaseArchiveRepositoryService: CaseArchiveRepositoryService
   let mockAppealDecisionRepositoryService: AppealDecisionRepositoryService
@@ -47,7 +40,7 @@ describe('InternalCaseController - Archive', () => {
       defendantService,
       indictmentCountService,
       sequelize,
-      caseStringModel,
+      caseStringRepositoryService,
       caseRepositoryService,
       caseArchiveRepositoryService,
       appealDecisionRepositoryService,
@@ -57,7 +50,7 @@ describe('InternalCaseController - Archive', () => {
     mockFileService = fileService
     mockDefendantService = defendantService
     mockIndictmentCountService = indictmentCountService
-    mockCaseStringModel = caseStringModel
+    mockCaseStringRepositoryService = caseStringRepositoryService
     mockCaseRepositoryService = caseRepositoryService
     mockCaseArchiveRepositoryService = caseArchiveRepositoryService
     mockAppealDecisionRepositoryService = appealDecisionRepositoryService
@@ -249,10 +242,9 @@ describe('InternalCaseController - Archive', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdateCaseString = mockCaseStringModel.update as jest.Mock
-      mockUpdateCaseString.mockResolvedValueOnce([1])
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(theCase)
+      const mockFindNextCaseToArchive =
+        mockCaseRepositoryService.findNextCaseToArchive as jest.Mock
+      mockFindNextCaseToArchive.mockResolvedValueOnce(theCase)
       const mockUpdate = mockCaseRepositoryService.update as jest.Mock
       mockUpdate.mockResolvedValueOnce(theCase)
 
@@ -260,43 +252,9 @@ describe('InternalCaseController - Archive', () => {
     })
 
     it('should lookup a case', () => {
-      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-        include: [
-          { model: Defendant, as: 'defendants' },
-          {
-            model: IndictmentCount,
-            as: 'indictmentCounts',
-            include: [
-              {
-                model: Offense,
-                as: 'offenses',
-              },
-            ],
-          },
-          { model: CaseFile, as: 'caseFiles' },
-          { model: CaseString, as: 'caseStrings' },
-          { model: AppealCase, as: 'appealCase' },
-          { model: AppealDecision, as: 'appealDecisions' },
-        ],
-        order: [
-          [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
-          [
-            { model: IndictmentCount, as: 'indictmentCounts' },
-            'displayOrder',
-            'ASC',
-          ],
-          [
-            { model: IndictmentCount, as: 'indictmentCounts' },
-            'created',
-            'ASC',
-          ],
-          [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
-          [{ model: CaseString, as: 'caseStrings' }, 'created', 'ASC'],
-          [{ model: AppealDecision, as: 'appealDecisions' }, 'created', 'ASC'],
-        ],
-        where: archiveFilter,
-        transaction,
-      })
+      expect(
+        mockCaseRepositoryService.findNextCaseToArchive,
+      ).toHaveBeenCalledWith(transaction)
       expect(mockDefendantService.updateDatabaseDefendant).toHaveBeenCalledWith(
         caseId,
         defendantId1,
@@ -341,13 +299,21 @@ describe('InternalCaseController - Archive', () => {
         },
         transaction,
       )
-      expect(mockCaseStringModel.update).toHaveBeenCalledWith(
+      expect(
+        mockCaseStringRepositoryService.updateByIdAndCase,
+      ).toHaveBeenCalledWith(
+        caseStringId1,
+        caseId,
         { value: '' },
-        { where: { id: caseStringId1, caseId }, transaction },
+        { transaction },
       )
-      expect(mockCaseStringModel.update).toHaveBeenCalledWith(
+      expect(
+        mockCaseStringRepositoryService.updateByIdAndCase,
+      ).toHaveBeenCalledWith(
+        caseStringId2,
+        caseId,
         { value: '' },
-        { where: { id: caseStringId2, caseId }, transaction },
+        { transaction },
       )
       expect(mockAppealDecisionRepositoryService.update).toHaveBeenCalledWith(
         appealDecisionId,
@@ -399,8 +365,9 @@ describe('InternalCaseController - Archive', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(null)
+      const mockFindNextCaseToArchive =
+        mockCaseRepositoryService.findNextCaseToArchive as jest.Mock
+      mockFindNextCaseToArchive.mockResolvedValueOnce(null)
 
       then = await givenWhenThen()
     })

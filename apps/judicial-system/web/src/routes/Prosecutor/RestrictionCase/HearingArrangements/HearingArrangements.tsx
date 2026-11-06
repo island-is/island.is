@@ -2,7 +2,7 @@ import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Input, toast } from '@island.is/island-ui/core'
+import { Box, Input } from '@island.is/island-ui/core'
 import {
   PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE,
   PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
@@ -29,21 +29,21 @@ import {
   CaseTransition,
   TrackedNotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  ProsecutorSectionHeightenedSecurity,
+  RequestCourtDate,
+  SelectCourt,
+} from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
+import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   formatDateForServer,
   useCase,
   useDebouncedInput,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/utils'
 import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
-import {
-  ProsecutorSectionHeightenedSecurity,
-  RequestCourtDate,
-  SelectCourt,
-} from '../../components'
 import ArrestDate from './ArrestDate'
 
 export const HearingArrangements = () => {
@@ -91,11 +91,9 @@ export const HearingArrangements = () => {
         } else {
           setNavigateTo(destination)
         }
-      } else {
-        toast.error(formatMessage(errors.transitionCase))
       }
     },
-    [formatMessage, router, setWorkingCase, transitionCase, workingCase],
+    [router, setWorkingCase, transitionCase, workingCase],
   )
 
   const stepIsValid = isHearingArrangementsStepValidRC(workingCase)
@@ -109,15 +107,11 @@ export const HearingArrangements = () => {
       onNavigationTo={stepIsValid ? handleNavigationTo : undefined}
     >
       <PageHeader
-        title={formatMessage(
-          titles.prosecutor.restrictionCases.hearingArrangements,
-        )}
+        title={titles.prosecutor.restrictionCases.hearingArrangements}
       />
       <FormContentContainer>
-        <PageTitle>
-          {formatMessage(rcRequestedHearingArrangements.heading)}
-        </PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <PageTitle>{rcRequestedHearingArrangements.heading}</PageTitle>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
           <ProsecutorSectionHeightenedSecurity />
           <Box component="section">
@@ -125,9 +119,7 @@ export const HearingArrangements = () => {
           </Box>
           {!workingCase.parentCase && (
             <ArrestDate
-              title={formatMessage(
-                rcRequestedHearingArrangements.sections.arrestDate.heading,
-              )}
+              title={rcRequestedHearingArrangements.sections.arrestDate.heading}
               workingCase={workingCase}
               setWorkingCase={setWorkingCase}
             />
@@ -153,20 +145,16 @@ export const HearingArrangements = () => {
           </Box>
           <Box component="section">
             <SectionHeading
-              title={formatMessage(
-                rcRequestedHearingArrangements.sections.translator.heading,
-              )}
+              title={rcRequestedHearingArrangements.sections.translator.heading}
             />
             <Input
               data-testid="translator"
               name="translator"
               autoComplete="off"
-              label={formatMessage(
-                rcRequestedHearingArrangements.sections.translator.label,
-              )}
-              placeholder={formatMessage(
-                rcRequestedHearingArrangements.sections.translator.placeholder,
-              )}
+              label={rcRequestedHearingArrangements.sections.translator.label}
+              placeholder={
+                rcRequestedHearingArrangements.sections.translator.placeholder
+              }
               value={translatorInput.value}
               onChange={(evt) => translatorInput.onChange(evt.target.value)}
               onBlur={(event) => translatorInput.onBlur(event.target.value)}
@@ -179,7 +167,7 @@ export const HearingArrangements = () => {
           previousUrl={`${PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: async () =>
                 await handleNavigationTo(
@@ -194,10 +182,16 @@ export const HearingArrangements = () => {
       </FormContentContainer>
       {navigateTo !== undefined && (
         <Modal
-          title={formatMessage(rcRequestedHearingArrangements.modal.heading)}
-          text={formatMessage(rcRequestedHearingArrangements.modal.textV2, {
-            caseType: workingCase.type,
-          })}
+          title={rcRequestedHearingArrangements.modal.heading}
+          text={formatMessage(
+            {
+              id: rcRequestedHearingArrangements.modal.textV2,
+              defaultMessage: rcRequestedHearingArrangements.modal.textV2,
+            },
+            {
+              caseType: workingCase.type,
+            },
+          )}
           buttons={[
             {
               text: 'Halda áfram með kröfu',
@@ -221,9 +215,7 @@ export const HearingArrangements = () => {
           ]}
           onClose={() => setNavigateTo(undefined)}
           errorMessage={
-            sendNotificationError
-              ? formatMessage(errors.sendNotification)
-              : undefined
+            sendNotificationError ? errors.sendNotification : undefined
           }
         />
       )}

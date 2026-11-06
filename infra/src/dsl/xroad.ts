@@ -136,6 +136,11 @@ export const DrivingLicense = new XroadConf({
       staging: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5',
       prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5',
     },
+    XROAD_DRIVING_LICENSE_V6_PATH: {
+      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v6',
+      staging: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v6',
+      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v6',
+    },
   },
   secrets: {
     XROAD_DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET',
@@ -210,6 +215,12 @@ export const Payment = new XroadConf({
   },
 })
 
+const financesV3Path = {
+  dev: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v3',
+  staging: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v3',
+  prod: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v3',
+}
+
 export const Finance = new XroadConf({
   env: {
     XROAD_FINANCES_PATH: {
@@ -222,11 +233,7 @@ export const Finance = new XroadConf({
       staging: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v2',
       prod: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v2',
     },
-    XROAD_FINANCES_V3_PATH: {
-      dev: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v3',
-      staging: 'IS-TEST/GOV/10021/FJS-Public/financeServicesFJS_v3',
-      prod: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v3',
-    },
+    XROAD_FINANCES_V3_PATH: financesV3Path,
     XROAD_HMS_LOANS_PATH: {
       dev: 'IS-DEV/GOV/10033/HMS-Protected/libra-v1',
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/libra-v1',
@@ -237,6 +244,12 @@ export const Finance = new XroadConf({
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/husbot-v1',
       prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/husbot-v1',
     },
+  },
+})
+
+export const FinanceV3 = new XroadConf({
+  env: {
+    XROAD_FINANCES_V3_PATH: financesV3Path,
   },
 })
 
@@ -300,11 +313,6 @@ export const RentalService = new XroadConf({
       dev: 'IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1',
       staging: 'IS-TEST/GOV/5812191480/HMS-Protected/Leigusamningar-v1',
       prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Leigusamningar-v1',
-    },
-    XROAD_HMS_RENTAL_SERVICE_CLIENT_HEADER: {
-      dev: 'IS-DEV/GOV/10000/island-is-client',
-      staging: 'IS-TEST/GOV/5501692829/test-client',
-      prod: 'IS/GOV/5501692829/island-is-client',
     },
   },
 })
@@ -782,16 +790,6 @@ export const EnergyFunds = new XroadConf({
   },
 })
 
-export const VehicleServiceFjsV1 = new XroadConf({
-  env: {
-    XROAD_VEHICLE_SERVICE_FJS_V1_PATH: {
-      dev: 'IS-DEV/GOV/10021/FJS-Public/VehicleServiceFJS_v1',
-      staging: 'IS-TEST/GOV/10021/FJS-Public/VehicleServiceFJS_v1',
-      prod: 'IS/GOV/5402697509/FJS-Public/VehicleServiceFJS_v1',
-    },
-  },
-})
-
 export const TransportAuthority = new XroadConf({
   env: {
     XROAD_VEHICLE_CODETABLES_PATH: {
@@ -842,6 +840,11 @@ export const TransportAuthority = new XroadConf({
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Leyfur-V1',
       staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Leyfur-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Leyfur-V1',
+    },
+    XROAD_TAXI_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/TAXI-ISLANDIS',
+      staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/TAXI-ISLANDIS',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/TAXI-ISLANDIS',
     },
   },
 })
@@ -1054,6 +1057,17 @@ export const DirectorateOfEquality = new XroadConf({
   },
 })
 
+// Placeholder service name until DMR registers the statistics service.
+export const DirectorateOfEqualityStatistics = new XroadConf({
+  env: {
+    XROAD_DIRECTORATE_OF_EQUALITY_STATISTICS_PATH: {
+      dev: 'IS-DEV/GOV/10014/DMR-Protected/jafnretti-statistics',
+      staging: 'IS-TEST/GOV/10014/DMR-Protected/jafnretti-statistics',
+      prod: 'IS/GOV/5804170510/DMR-Protected/jafnretti-statistics',
+    },
+  },
+})
+
 export const OfficialJournalOfIceland = new XroadConf({
   env: {
     XROAD_OFFICIAL_JOURNAL_PATH: {
@@ -1191,6 +1205,16 @@ export const RecyclingFund = new XroadConf({
       staging:
         'IS-TEST/GOV/5308033680/Urvinnslusjodur-Protected/skilavottord-api',
       prod: 'IS/GOV/5308033680/Urvinnslusjodur-Protected/skilavottord-api',
+    },
+  },
+})
+
+export const RVKFinancialAid = new XroadConf({
+  env: {
+    XROAD_RVK_VEITA_PATH: {
+      dev: 'IS-DEV/MUN/10025/rvik-veita-protected/veita-v1',
+      staging: 'IS-TEST/MUN/5302697609/rvik-veita-protected/veita-v1',
+      prod: 'IS/MUN/5302697609/rvik-veita-protected/veita-v1',
     },
   },
 })

@@ -3,13 +3,14 @@ import {
   buildMultiField,
   buildCustomField,
   buildRadioField,
+  buildImageField,
   getValueViaPath,
+  toBase64DataUrl,
   YES,
 } from '@island.is/application/core'
 import { Application, ExternalData } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { requirementsMet } from '../../lib/utils'
-import { createPhotoComponent } from '../../fields/CreatePhoto'
 import { IGNORE } from '../../lib/constants'
 
 interface ThjodskraPhoto {
@@ -59,7 +60,10 @@ export const sectionPhoto = buildSection({
               photoOptions.push({
                 value: 'fakePhoto',
                 label: m.useFakeImage,
-                illustration: createPhotoComponent('fakePhoto'),
+                illustration: buildImageField({
+                  id: 'fakePhoto-illustration',
+                  image: toBase64DataUrl('fakePhoto'),
+                }),
               })
             } else {
               const facialPhotos = getFacialPhotosFromThjodskra(externalData)
@@ -69,12 +73,14 @@ export const sectionPhoto = buildSection({
                   value: photo.biometricId,
                   label: m.usePassportImage,
                   illustration: photo.content
-                    ? createPhotoComponent(photo.content)
+                    ? buildImageField({
+                        id: `photo-${photo.biometricId}`,
+                        image: toBase64DataUrl(photo.content),
+                      })
                     : undefined,
                 })
               })
 
-              // Add quality photo if it exists
               const qualityPhoto = getValueViaPath<string>(
                 externalData,
                 'qualityPhoto.data.qualityPhoto',
@@ -84,7 +90,10 @@ export const sectionPhoto = buildSection({
                 photoOptions.push({
                   value: 'qualityPhoto',
                   label: m.useDriversLicenseImage,
-                  illustration: createPhotoComponent(qualityPhoto),
+                  illustration: buildImageField({
+                    id: 'qualityPhoto-illustration',
+                    image: toBase64DataUrl(qualityPhoto),
+                  }),
                 })
               }
             }

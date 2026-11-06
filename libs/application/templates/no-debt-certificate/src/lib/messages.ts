@@ -55,7 +55,7 @@ export const m = defineMessages({
   },
   institutionName: {
     id: 'ndc.application:institution',
-    defaultMessage: 'Fjársýsla ríkisins',
+    defaultMessage: 'Innheimtumaður',
     description: `Institution's name`,
   },
   draftTitle: {

@@ -355,33 +355,6 @@ export const employmentHistorySubSection = buildSubSection({
                 return isUnemployed(application.answers)
               },
             },
-            startDate: {
-              component: 'date',
-              label:
-                employmentMessages.employmentHistory.labels.lastJobStartDate,
-              width: 'half',
-              required: (application) => {
-                return isUnemployed(application.answers)
-              },
-              maxDate: (_application, activeField) => {
-                const endDateStr = activeField?.endDate
-                return (endDateStr && new Date(endDateStr)) || undefined
-              },
-            },
-            endDate: {
-              component: 'date',
-              required: (application) => {
-                return isUnemployed(application.answers)
-              },
-              label:
-                employmentMessages.employmentHistory.labels.lastOldJobEndDate,
-              width: 'half',
-              minDate: (_application, activeField) => {
-                const startDateStr = activeField?.startDate
-                return (startDateStr && new Date(startDateStr)) || undefined
-              },
-              maxDate: new Date(),
-            },
           },
         }),
         buildRadioField({

@@ -1,9 +1,8 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { validate as validateUuid } from 'uuid'
 
-import { FileUploadStatus, Input, toast } from '@island.is/island-ui/core'
+import { FileUploadStatus, Input } from '@island.is/island-ui/core'
 import {
   PROSECUTION_INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
   PROSECUTION_INVESTIGATION_CASE_POLICE_REPORT_ROUTE,
@@ -12,11 +11,11 @@ import {
 } from '@island.is/judicial-system/consts'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { core, errors } from '@island.is/judicial-system-web/messages'
+import type { Item } from '@island.is/judicial-system-web/src/components'
 import {
   FormContentContainer,
   FormContext,
   FormFooter,
-  Item,
   PageHeader,
   PageLayout,
   PageTitle,
@@ -26,26 +25,25 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { useUpdateFilesReorderableMutation } from '@island.is/judicial-system-web/src/components/ReorderableFileUpload/updateFiles.generated'
+import type { PoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { PoliceCaseFilesData } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
 import {
-  CaseOrigin,
-  PoliceDigitalCaseFile,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+  mapPoliceCaseFileToPoliceCaseFileCheck,
+  PoliceCaseFiles,
+} from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
+import { PoliceDigitalCaseFilesList } from '@island.is/judicial-system-web/src/routes/Prosecutor/components/PoliceCaseFiles/PoliceDigitalCaseFiles'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  TUploadFile,
   useDebouncedInput,
   useFileList,
   usePoliceDigitalCaseFile,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
-import {
-  mapPoliceCaseFileToPoliceCaseFileCheck,
-  PoliceCaseFiles,
-  PoliceCaseFilesData,
-} from '../../components'
-import { PoliceDigitalCaseFilesList } from '../PoliceCaseFiles/PoliceDigitalCaseFiles'
 import { usePoliceCaseFilesQuery } from './policeCaseFiles.generated'
 import { caseFiles as strings } from './CaseFiles.strings'
 
@@ -63,7 +61,6 @@ export const CaseFiles = () => {
     errorPolicy: 'all',
   })
   const router = useRouter()
-  const { formatMessage } = useIntl()
   const [isUploadingPoliceCaseFiles, setIsUploadingPoliceCaseFiles] =
     useState<boolean>(false)
   const [editCount, setEditCount] = useState(0)
@@ -141,14 +138,14 @@ export const CaseFiles = () => {
 
   const uploadErrorMessage = useMemo(() => {
     if (uploadFiles.some((file) => file.status === FileUploadStatus.error)) {
-      return formatMessage(errors.general)
+      return errors.general
     }
     if (uploadFiles.some((file) => file.size === 0)) {
       return 'Villa kom upp. Tómt skjal.'
     } else {
       return undefined
     }
-  }, [uploadFiles, formatMessage])
+  }, [uploadFiles])
 
   const stepIsValid =
     !isUploadingPoliceCaseFiles && allFilesDoneOrError && editCount === 0
@@ -170,7 +167,7 @@ export const CaseFiles = () => {
     })
 
     try {
-      const { errors: mutationErrors } = await updateFilesMutation({
+      await updateFilesMutation({
         variables: {
           input: {
             caseId: workingCase.id,
@@ -181,11 +178,8 @@ export const CaseFiles = () => {
           },
         },
       })
-      if (mutationErrors) {
-        toast.error(formatMessage(errors.general))
-      }
     } catch {
-      toast.error(formatMessage(errors.general))
+      toast.error(errors.general)
     }
   }
 
@@ -200,7 +194,7 @@ export const CaseFiles = () => {
     }
 
     try {
-      const { errors: mutationErrors } = await updateFilesMutation({
+      await updateFilesMutation({
         variables: {
           input: {
             caseId: workingCase.id,
@@ -208,11 +202,8 @@ export const CaseFiles = () => {
           },
         },
       })
-      if (mutationErrors) {
-        toast.error(formatMessage(errors.general))
-      }
     } catch {
-      toast.error(formatMessage(errors.general))
+      toast.error(errors.general)
     }
   }
   const handleNavigationTo = (destination: string) =>
@@ -253,18 +244,18 @@ export const CaseFiles = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader title={formatMessage(strings.title)} />
+      <PageHeader title={strings.title} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <PageTitle>{strings.heading}</PageTitle>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <ParentCaseFiles files={workingCase.parentCase?.caseFiles} />
           <section>
             <SectionHeading
-              title={formatMessage(strings.policeCaseFilesHeading)}
+              title={strings.policeCaseFilesHeading}
               description={
                 workingCase.origin === CaseOrigin.LOKE
-                  ? formatMessage(strings.policeCaseFilesIntroduction)
+                  ? strings.policeCaseFilesIntroduction
                   : undefined
               }
             />
@@ -291,13 +282,13 @@ export const CaseFiles = () => {
           </section>
           <section>
             <SectionHeading
-              title={formatMessage(strings.filesHeading)}
+              title={strings.filesHeading}
               description="Gögnin í pakkanum hér fyrir neðan munu liggja frammi í þinghaldinu. Samkvæmt reglum dómstólasýslunnar skulu skjöl hafa lýsandi heiti."
             />
             <ReorderableFileUpload
               files={uploadFiles.filter((file) => !file.category)}
-              dropzoneTitle={formatMessage(strings.filesLabel)}
-              dropzoneButtonLabel={formatMessage(strings.filesButtonLabel)}
+              dropzoneTitle={strings.filesLabel}
+              dropzoneButtonLabel={strings.filesButtonLabel}
               onFilesChange={(files) =>
                 handleUpload(addUploadFiles(files), updateUploadFile)
               }
@@ -313,13 +304,13 @@ export const CaseFiles = () => {
           </section>
           <section>
             <SectionHeading
-              title={formatMessage(strings.commentsHeading)}
-              tooltip={formatMessage(strings.commentsTooltip)}
+              title={strings.commentsHeading}
+              tooltip={strings.commentsTooltip}
             />
             <Input
               name="caseFilesComments"
-              label={formatMessage(strings.commentsLabel)}
-              placeholder={formatMessage(strings.commentsPlaceholder)}
+              label={strings.commentsLabel}
+              placeholder={strings.commentsPlaceholder}
               value={caseFilesComments.value}
               onChange={(evt) => caseFilesComments.onChange(evt.target.value)}
               textarea
@@ -337,7 +328,7 @@ export const CaseFiles = () => {
           }/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

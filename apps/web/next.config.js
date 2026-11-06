@@ -214,6 +214,12 @@ const nextConfig = {
     return config
   },
 
+  // The prod container's .next/cache is read-only, so Next 16's on-disk image
+  // LRU throws EACCES on mkdir. Disable it; CloudFront caches optimized images.
+  images: {
+    maximumDiskCacheSize: 0,
+  },
+
   // Runtime configuration lives in environments/runtimeEnvironment.ts
   env: {
     API_MOCKS: process.env.API_MOCKS || '',

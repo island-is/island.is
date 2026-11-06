@@ -1,6 +1,5 @@
-import { FC, useCallback, useContext, useState } from 'react'
-import React from 'react'
-import { useIntl } from 'react-intl'
+import type { FC } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import router from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
@@ -41,7 +40,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEventLog'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isSentToPublicProsecutor } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { ConfirmationInformation } from './ConfirmationInformation'
@@ -58,8 +57,6 @@ type modal =
 
 const Completed: FC = () => {
   const { user } = useContext(UserContext)
-
-  const { formatMessage } = useIntl()
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { deliverCaseVerdict } = useVerdict()
@@ -211,9 +208,9 @@ const Completed: FC = () => {
         notFound={caseNotFound}
         onNavigationTo={handleNavigationTo}
       >
-        <PageHeader title={formatMessage(titles.court.indictments.completed)} />
+        <PageHeader title={titles.court.indictments.completed} />
         <FormContentContainer>
-          <PageTitle>{formatMessage(strings.heading)}</PageTitle>
+          <PageTitle>{strings.heading}</PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
           {defendantsWithVerdict?.map(
             (defendant) =>
@@ -229,7 +226,7 @@ const Completed: FC = () => {
                 </Box>
               ),
           )}
-          <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <div className={stack({ gap: 5 })}>
             <AppealRulingModifiedAlert />
             <RulingModifiedAlert />
             <Box component="section">
@@ -280,16 +277,14 @@ const Completed: FC = () => {
             )}
             {isRuling && (
               <Box component="section">
-                <SectionHeading
-                  title={formatMessage(strings.serviceRequirementTitle)}
-                />
-                <div className={grid({ gap: 4 })}>
+                <SectionHeading title={strings.serviceRequirementTitle} />
+                <div className={stack({ gap: 4 })}>
                   {defendantsWithVerdict?.map((defendant) => {
                     const { verdict } = defendant
                     if (!verdict) return null
 
                     return (
-                      <Box key={defendant.id} className={grid({ gap: 3 })}>
+                      <Box key={defendant.id} className={stack({ gap: 3 })}>
                         <DefendantServiceRequirement defendant={defendant} />
                       </Box>
                     )
@@ -326,7 +321,7 @@ const Completed: FC = () => {
                 ? []
                 : [
                     {
-                      text: formatMessage(strings.sendToPublicProsecutor),
+                      text: strings.sendToPublicProsecutor,
                       onClick: () =>
                         setModalVisible(
                           'CONFIRM_AND_SEND_TO_PUBLIC_PROSECUTOR',

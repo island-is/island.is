@@ -1,17 +1,16 @@
-import { Dispatch, FC, SetStateAction } from 'react'
-import { useIntl } from 'react-intl'
+import type { Dispatch, FC, SetStateAction } from 'react'
 import { AnimatePresence } from 'motion/react'
 
 import { core } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   ConclusionDraft,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
 interface Props {
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   isDraftingConclusion: boolean | undefined
   setIsDraftingConclusion: Dispatch<SetStateAction<boolean | undefined>>
 }
@@ -22,8 +21,6 @@ const DraftConclusionModal: FC<Props> = ({
   isDraftingConclusion,
   setIsDraftingConclusion,
 }) => {
-  const { formatMessage } = useIntl()
-
   return (
     <AnimatePresence>
       {isDraftingConclusion && (
@@ -37,7 +34,7 @@ const DraftConclusionModal: FC<Props> = ({
           }
           buttons={[
             {
-              text: formatMessage(core.closeModal),
+              text: core.closeModal,
               onClick: () => setIsDraftingConclusion(false),
             },
           ]}

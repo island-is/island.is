@@ -18,7 +18,6 @@ import {
   EphemeralStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
-import { Features } from '@island.is/feature-flags'
 import { applicationMessages } from './messages'
 import { getSupportDataApi } from '../dataProviders'
 
@@ -34,7 +33,6 @@ const DeregisterUnemploymentBenefitsTemplate: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations.DeregisterUnemploymentBenefits.translation,
   dataSchema: DeregisterUnemploymentBenefitsSchema,
-  featureFlag: Features.isDeregisterUnemploymentBenefitsEnabled,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,

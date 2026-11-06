@@ -1,11 +1,5 @@
-import {
-  FC,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import type { FC } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -20,6 +14,7 @@ import {
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
+  AppealCourtSessionScheduledCard,
   AppealRulingModifiedAlert,
   BlueBox,
   Conclusion,
@@ -38,26 +33,31 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { isVerdictAppealPastReview } from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/prosecutionVerdictAppeal.logic'
+import ReviewerVerdictTimelineCard from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/ReviewerVerdictTimelineCard'
 import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
   AppealCaseState,
   CaseIndictmentRulingDecision,
   CaseState,
-  IndictmentCaseReviewDecision,
   IndictmentDecision,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-
-import { ReviewDecision } from '../../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
+import { ReviewDecision } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/ReviewDecision/ReviewDecision'
+import type { ReviewDecisions } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/ReviewDecision/ReviewDecision.logic'
+import { getChangedReviewDecisions } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/ReviewDecision/ReviewDecision.logic'
+import { ReviewDecisionModal } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/ReviewDecision/ReviewDecisionModal'
+import type { ModalId } from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
 import {
   CONFIRM_PROSECUTOR_DECISION,
   DUPLICATE_INDICTMENT,
+  isConfirmProsecutorDecisionModal,
   isDuplicateIndictmentModal,
-  ModalId,
-} from '../../../PublicProsecutor/components/utils'
+} from '@island.is/judicial-system-web/src/routes/PublicProsecutor/components/utils'
+import { useAppealCaseBanner } from '@island.is/judicial-system-web/src/utils/hooks'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+
 import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview: FC = () => {
@@ -78,8 +78,19 @@ const IndictmentOverview: FC = () => {
   const isFine =
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
 
+  const isRuling =
+    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+
   const indictmentAppealDeadlineIsInThePast =
     workingCase.indictmentVerdictAppealDeadlineExpired ?? false
+
+  // Once the appeal has moved past the reviewer - received by the court of
+  // appeals, and completed after it - the decision that made it is no longer
+  // theirs to change. The backend refuses it too; this keeps the page from
+  // offering what would be refused.
+  const isReviewDecisionLocked = isVerdictAppealPastReview(
+    workingCase.verdictAppealCase,
+  )
 
   // Defendants whose indictment was cancelled or dismissed (completed for some)
   // do not receive a verdict, so no review decision is required for them.
@@ -117,9 +128,8 @@ const IndictmentOverview: FC = () => {
       workingCase.appealCase?.appealState === AppealCaseState.COMPLETED ||
       workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN)
 
-  const [originalReviewDecisions, setOriginalReviewDecisions] = useState<
-    Record<string, IndictmentCaseReviewDecision | null | undefined>
-  >({})
+  const [originalReviewDecisions, setOriginalReviewDecisions] =
+    useState<ReviewDecisions>({})
 
   // Store original review decisions when workingCase loads to see if they change
   useEffect(() => {
@@ -128,19 +138,23 @@ const IndictmentOverview: FC = () => {
       defendantsRequiringReview.every((d) => d.id) &&
       !Object.keys(originalReviewDecisions).length
     ) {
-      const decisions = defendantsRequiringReview.reduce((acc, defendant) => {
-        acc[defendant.id] = defendant.indictmentReviewDecision
-        return acc
-      }, {} as Record<string, IndictmentCaseReviewDecision | null | undefined>)
+      const decisions = defendantsRequiringReview.reduce<ReviewDecisions>(
+        (acc, defendant) => {
+          acc[defendant.id] = defendant.indictmentReviewDecision
+          return acc
+        },
+        {},
+      )
       setOriginalReviewDecisions(decisions)
     }
   }, [defendantsRequiringReview, originalReviewDecisions])
 
-  const hasReviewDecisionChanged = defendantsRequiringReview?.some(
-    (defendant) =>
-      defendant.indictmentReviewDecision !==
-      originalReviewDecisions[defendant.id],
+  // Confirming saves only the decisions that changed since the page loaded.
+  const changedReviewDecisions = getChangedReviewDecisions(
+    defendantsRequiringReview,
+    originalReviewDecisions,
   )
+  const hasReviewDecisionChanged = changedReviewDecisions.length > 0
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -160,17 +174,21 @@ const IndictmentOverview: FC = () => {
         <PageHeader
           title={
             caseIsClosed
-              ? formatMessage(titles.shared.closedCaseOverview, {
-                  courtCaseNumber: workingCase.courtCaseNumber,
-                })
-              : formatMessage(titles.court.indictments.overview)
+              ? formatMessage(
+                  {
+                    id: titles.shared.closedCaseOverview,
+                    defaultMessage: titles.shared.closedCaseOverview,
+                  },
+                  {
+                    courtCaseNumber: workingCase.courtCaseNumber,
+                  },
+                )
+              : titles.court.indictments.overview
           }
         />
         <FormContentContainer>
           <PageTitle>
-            {caseIsClosed
-              ? formatMessage(strings.completedTitle)
-              : formatMessage(strings.inProgressTitle)}
+            {caseIsClosed ? strings.completedTitle : strings.inProgressTitle}
           </PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
           {workingCase.defendants?.map(
@@ -187,7 +205,7 @@ const IndictmentOverview: FC = () => {
                 </Box>
               ),
           )}
-          <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <div className={stack({ gap: 5 })}>
             <AppealRulingModifiedAlert />
             <RulingModifiedAlert />
             {caseHasBeenReceivedByCourt &&
@@ -209,6 +227,25 @@ const IndictmentOverview: FC = () => {
                     courtSessionType={workingCase.courtSessionType}
                   />
                 </Box>
+              )}
+            <AppealCourtSessionScheduledCard
+              verdictAppealCase={workingCase.verdictAppealCase}
+            />
+            {shouldDisplayReviewDecision &&
+              isRuling &&
+              defendantsRequiringReview && (
+                <div className={stack({ gap: 2 })}>
+                  {defendantsRequiringReview.map((defendant) => (
+                    <ReviewerVerdictTimelineCard
+                      key={`${defendant.id}_verdict_timeline`}
+                      defendant={defendant}
+                      verdictAppealCase={workingCase.verdictAppealCase}
+                      indictmentAppealDeadline={
+                        workingCase.indictmentAppealDeadline
+                      }
+                    />
+                  ))}
+                </div>
               )}
             <Box component="section">
               {caseIsClosed ? (
@@ -265,7 +302,7 @@ const IndictmentOverview: FC = () => {
                   }
                 />
                 {defendantsRequiringReview && (
-                  <div className={grid({ gap: 3 })}>
+                  <div className={stack({ gap: 3 })}>
                     {defendantsRequiringReview.map((defendant) => (
                       <BlueBox key={`${defendant.id}_review_decision`}>
                         <SectionHeading
@@ -277,12 +314,8 @@ const IndictmentOverview: FC = () => {
                         <ReviewDecision
                           caseId={workingCase.id}
                           defendant={defendant}
-                          modalVisible={modalVisible}
-                          setModalVisible={setModalVisible}
-                          isFine={
-                            workingCase.indictmentRulingDecision ===
-                            CaseIndictmentRulingDecision.FINE
-                          }
+                          isFine={isFine}
+                          disabled={isReviewDecisionLocked}
                         />
                       </BlueBox>
                     ))}
@@ -296,7 +329,8 @@ const IndictmentOverview: FC = () => {
           <FormFooter
             previousUrl={getStandardUserDashboardRoute(user)}
             actions={
-              !shouldDisplayReviewDecision && !canDuplicateIndictment
+              !canDuplicateIndictment &&
+              (!shouldDisplayReviewDecision || isReviewDecisionLocked)
                 ? []
                 : [
                     {
@@ -322,6 +356,16 @@ const IndictmentOverview: FC = () => {
           />
         </FormContentContainer>
         {appealModals}
+        {isConfirmProsecutorDecisionModal(modalVisible) && (
+          <ReviewDecisionModal
+            caseId={workingCase.id}
+            changedDefendants={changedReviewDecisions}
+            isFine={isFine}
+            indictmentAppealDeadline={workingCase.indictmentAppealDeadline}
+            onClose={() => setModalVisible(undefined)}
+            onConfirmed={() => router.push(getStandardUserDashboardRoute(user))}
+          />
+        )}
         {isDuplicateIndictmentModal(modalVisible) && (
           <DuplicateIndictmentModal
             onClose={() => setModalVisible(undefined)}

@@ -116,6 +116,35 @@ describe('JwtStrategy#validate', () => {
     expect(user.act).toEqual(payload.act)
   })
 
+  it('picks up the authentication event claims', async () => {
+    // Arrange
+    const authTime = 1755600000
+    const payload: JwtPayload = {
+      ...fakePayload,
+      acr: 'eidas-loa-high',
+      idp: 'audkenni_sim',
+      auth_time: authTime,
+    }
+
+    // Act
+    const user = await jwtStrategy.validate(fakeRequest, payload)
+
+    // Assert
+    expect(user.acr).toEqual('eidas-loa-high')
+    expect(user.idp).toEqual('audkenni_sim')
+    expect(user.authTime).toEqual(new Date(authTime * 1000))
+  })
+
+  it('leaves the authentication event claims undefined when absent', async () => {
+    // Act
+    const user = await jwtStrategy.validate(fakeRequest, fakePayload)
+
+    // Assert
+    expect(user.acr).toBeUndefined()
+    expect(user.idp).toBeUndefined()
+    expect(user.authTime).toBeUndefined()
+  })
+
   it('picks up __accessToken field in request body', async () => {
     // Arrange
     const payload: JwtPayload = {

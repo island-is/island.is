@@ -1,8 +1,4 @@
-import {
-  getSlugFromType,
-  getValueViaPath,
-  YES,
-} from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { ApplicationWithAttachments } from '@island.is/application/types'
 import { Contract } from '@island.is/clients/hms-rental-agreement'
 import {
@@ -76,14 +72,6 @@ export const getRentalAddress = (
     .filter(Boolean)
     .join(', ')
 }
-
-export const getApplicationLink = (
-  application: ApplicationWithAttachments,
-  clientLocationOrigin: string,
-): string =>
-  `${clientLocationOrigin}/${getSlugFromType(application.typeId)}/${
-    application.id
-  }`
 
 export const getRequestedExtraDataFiles = (
   application: ApplicationWithAttachments,
@@ -264,9 +252,21 @@ const getAssigneeHouseholdMemberFieldsFromAnswers = (
   }
 }
 
+/**
+ * Contract tenants are shown in the household table via getStaticTableData and are not
+ * stored in householdMembersTableRepeater, so they must be merged in from the contract.
+ */
 const getHouseholdMembersForSubmission = (
   application: ApplicationWithAttachments,
+  applicantKennitala: string,
 ): Array<HouseholdMember> => {
+  const contractTenantIds =
+    getSelectedRentalContract(application)
+      ?.contractParty?.filter(
+        (party) => party.partyTypeUseCode === 'TENANT' && party.kennitala,
+      )
+      .map((party) => party.kennitala as string) ?? []
+
   const rows = getValueViaPath<
     Array<{
       nationalIdWithName?: { nationalId?: string }
@@ -274,9 +274,12 @@ const getHouseholdMembersForSubmission = (
     }>
   >(application.answers, 'householdMembersTableRepeater')
 
-  if (!Array.isArray(rows)) {
-    return []
-  }
+  const repeaterIds = Array.isArray(rows)
+    ? rows
+        .filter((row) => !row.isRemoved)
+        .map((row) => row.nationalIdWithName?.nationalId)
+        .filter((id): id is string => Boolean(id))
+    : []
 
   const rejected = new Set(
     getRejectedAssigneeNationalIdsFromAnswers(application.answers).map(
@@ -284,15 +287,20 @@ const getHouseholdMembersForSubmission = (
     ),
   )
 
-  return rows
-    .filter((row) => !row.isRemoved)
-    .map((row) => row.nationalIdWithName?.nationalId)
-    .filter((id): id is string => Boolean(id))
-    .filter((id) => !rejected.has(normalizeNationalId(id)))
-    .map((id) => ({
-      kennitala: normalizeNationalId(id),
+  const seen = new Set<string>([normalizeNationalId(applicantKennitala)])
+  const members: Array<HouseholdMember> = []
+
+  for (const id of [...contractTenantIds, ...repeaterIds]) {
+    const key = normalizeNationalId(id)
+    if (!key || seen.has(key) || rejected.has(key)) continue
+    seen.add(key)
+    members.push({
+      kennitala: key,
       ...getAssigneeHouseholdMemberFieldsFromAnswers(application.answers, id),
-    }))
+    })
+  }
+
+  return members
 }
 
 const getSelectedLandlordKennitala = (
@@ -516,10 +524,12 @@ export const mapApplicationToHousingBenefitsModel = (
     ) ?? false
 
   return {
+    islandIsApplicationNumber: application.id,
     kennitala: applicantKennitala,
     address: getValueViaPath<string>(answers, 'applicant.address') ?? '',
     municipality: getValueViaPath<string>(answers, 'applicant.city') ?? '',
     postalCode: getValueViaPath<string>(answers, 'applicant.postalCode') ?? '',
+    islandIsDateCreated: new Date(application.created),
     islandIsDateRegistered: new Date(),
 
     phoneNumber: normalizePhoneNumber(
@@ -574,7 +584,7 @@ export const mapApplicationToHousingBenefitsModel = (
             'incomeNoTaxReturnDescription',
           )?.trim() ?? undefined,
       },
-      ...getHouseholdMembersForSubmission(application),
+      ...getHouseholdMembersForSubmission(application, applicantKennitala),
     ],
     propertyTypeNumber: PropertyType.PrivatelyOwned,
     files,

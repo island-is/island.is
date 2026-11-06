@@ -1,5 +1,5 @@
-import { FC, useContext, useEffect, useRef, useState } from 'react'
-import { useIntl } from 'react-intl'
+import type { FC } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import {
@@ -15,20 +15,22 @@ import {
   core,
   signedVerdictOverview as m,
 } from '@island.is/judicial-system-web/messages'
+import type { SignatureType } from '@island.is/judicial-system-web/src/components'
 import {
   FormContext,
   PdfButton,
   SectionHeading,
-  SignatureType,
   SignedDocument,
   SigningMethodSelectionModal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
+import type {
   CaseDecision,
+  RequestSignatureResponse,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
   CaseState,
   CaseType,
-  RequestSignatureResponse,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 const showCustodyNotice = (
@@ -62,7 +64,6 @@ const CaseDocuments: FC<Props> = ({
   retrySignatureType,
   onRetryCleared,
 }) => {
-  const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const [showMethodSelectionModal, setShowMethodSelectionModal] = useState<{
@@ -108,16 +109,16 @@ const CaseDocuments: FC<Props> = ({
 
   return (
     <Box component="section">
-      <SectionHeading title={formatMessage(m.caseDocuments)} marginBottom={1} />
+      <SectionHeading title={m.caseDocuments} marginBottom={1} />
       <Box component="ul">
         {!isPrisonSystemUser(user) && (
           <li>
             <PdfButton
               renderAs="row"
               caseId={workingCase.id}
-              title={formatMessage(core.pdfButtonRequest)}
+              title={core.pdfButtonRequest}
               pdfType="request"
-              elementId={formatMessage(core.pdfButtonRequest)}
+              elementId={core.pdfButtonRequest}
             />
           </li>
         )}
@@ -130,9 +131,9 @@ const CaseDocuments: FC<Props> = ({
             <PdfButton
               renderAs="row"
               caseId={workingCase.id}
-              title={formatMessage(core.pdfButtonCustodyNotice)}
+              title={core.pdfButtonCustodyNotice}
               pdfType="custodyNotice"
-              elementId={formatMessage(core.pdfButtonCustodyNotice)}
+              elementId={core.pdfButtonCustodyNotice}
             />
           </li>
         )}
@@ -140,9 +141,9 @@ const CaseDocuments: FC<Props> = ({
           <PdfButton
             renderAs="row"
             caseId={workingCase.id}
-            title={formatMessage(core.pdfButtonRulingShortVersion)}
+            title={core.pdfButtonRulingShortVersion}
             pdfType="courtRecord"
-            elementId={formatMessage(core.pdfButtonRulingShortVersion)}
+            elementId={core.pdfButtonRulingShortVersion}
           >
             {isInvestigationCase(workingCase.type) &&
               (workingCase.courtRecordSignatory ? (
@@ -159,10 +160,10 @@ const CaseDocuments: FC<Props> = ({
                     setShowMethodSelectionModal({ type: 'courtRecord' })
                   }}
                 >
-                  {formatMessage(m.signButton)}
+                  {m.signButton}
                 </Button>
               ) : isRestrictionCase(workingCase.type) ? null : (
-                <Text>{formatMessage(m.unsignedDocument)}</Text>
+                <Text>{m.unsignedDocument}</Text>
               ))}
           </PdfButton>
         </li>
@@ -171,9 +172,9 @@ const CaseDocuments: FC<Props> = ({
             <PdfButton
               renderAs="row"
               caseId={workingCase.id}
-              title={formatMessage(core.pdfButtonRuling)}
+              title={core.pdfButtonRuling}
               pdfType="ruling"
-              elementId={formatMessage(core.pdfButtonRuling)}
+              elementId={core.pdfButtonRuling}
               disabled={!isRulingRequired}
             >
               {isRulingRequired &&
@@ -190,10 +191,10 @@ const CaseDocuments: FC<Props> = ({
                       setShowMethodSelectionModal({ type: 'ruling' })
                     }}
                   >
-                    {formatMessage(m.signButton)}
+                    {m.signButton}
                   </Button>
                 ) : (
-                  <Text>{formatMessage(m.unsignedDocument)}</Text>
+                  <Text>{m.unsignedDocument}</Text>
                 ))}
             </PdfButton>
           </li>

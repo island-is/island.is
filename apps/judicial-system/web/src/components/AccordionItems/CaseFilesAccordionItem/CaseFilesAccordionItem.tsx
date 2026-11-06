@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction } from 'react'
+import type { Dispatch, FC, SetStateAction } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
@@ -9,18 +9,22 @@ import {
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import { caseFilesAccordion as m } from '@island.is/judicial-system-web/messages'
-import { Case, User } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import {
+  CaseFileList,
+  InfoBox,
+} from '@island.is/judicial-system-web/src/components'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UploadState,
   useCourtUpload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { CaseFileList, InfoBox } from '../..'
 import { UploadStateMessage } from './UploadStateMessage'
 
 interface Props {
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   user: User
 }
 
@@ -64,9 +68,12 @@ const CaseFilesAccordionItem: FC<Props> = (props) => {
           justifyContent="spaceBetween"
         >
           <Text variant="h3">
-            {formatMessage(m.title, {
-              fileCount: caseFiles.length,
-            })}
+            {formatMessage(
+              { id: m.title, defaultMessage: m.title },
+              {
+                fileCount: caseFiles.length,
+              },
+            )}
           </Text>
           {canCaseFilesBeUploaded() && (
             <AnimatePresence>
@@ -76,7 +83,7 @@ const CaseFilesAccordionItem: FC<Props> = (props) => {
                 <UploadStateMessage
                   icon="warning"
                   iconColor="red600"
-                  message={formatMessage(m.someFilesNotUploadedToCourtText)}
+                  message={m.someFilesNotUploadedToCourtText}
                 />
               )}
               {caseFiles.length > 0 &&
@@ -85,7 +92,7 @@ const CaseFilesAccordionItem: FC<Props> = (props) => {
                   <UploadStateMessage
                     icon="checkmark"
                     iconColor="blue400"
-                    message={formatMessage(m.allFilesUploadedToCourtText)}
+                    message={m.allFilesUploadedToCourtText}
                   />
                 )}
             </AnimatePresence>
@@ -112,7 +119,7 @@ const CaseFilesAccordionItem: FC<Props> = (props) => {
             {caseFiles.length === 0 ? null : uploadState ===
                 UploadState.ALL_UPLOADED_NONE_AVAILABLE ||
               uploadState === UploadState.SOME_NOT_UPLOADED_NONE_AVAILABLE ? (
-              <InfoBox text={formatMessage(m.uploadToCourtAllBrokenText)} />
+              <InfoBox text={m.uploadToCourtAllBrokenText} />
             ) : (
               <Button
                 size="small"
@@ -124,11 +131,9 @@ const CaseFilesAccordionItem: FC<Props> = (props) => {
                   uploadState !== UploadState.UPLOAD_ERROR
                 }
               >
-                {formatMessage(
-                  uploadState === UploadState.UPLOAD_ERROR
-                    ? m.retryUploadToCourtButtonText
-                    : m.uploadToCourtButtonText,
-                )}
+                {uploadState === UploadState.UPLOAD_ERROR
+                  ? m.retryUploadToCourtButtonText
+                  : m.uploadToCourtButtonText}
               </Button>
             )}
           </Box>

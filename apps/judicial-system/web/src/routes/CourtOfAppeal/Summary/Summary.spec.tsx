@@ -49,7 +49,6 @@ describe('Summary', () => {
               origin: CaseOrigin.RVG,
               type: CaseType.OTHER,
               created: '',
-              modified: '',
               state: CaseState.ACCEPTED,
               policeCaseNumbers: [],
               appealCase: { id: appealCaseId },
@@ -91,7 +90,6 @@ describe('Summary', () => {
               origin: CaseOrigin.RVG,
               type: CaseType.OTHER,
               created: '',
-              modified: '',
               state: CaseState.ACCEPTED,
               policeCaseNumbers: [],
               appealCase: {

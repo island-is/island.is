@@ -1,11 +1,11 @@
-import { ChangeEvent, FC, FocusEvent, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
+import type { ChangeEvent, FC, FocusEvent } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Input } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { validate } from '../../utils/validate'
-import { InputProps } from './types'
+import type { InputProps } from './types'
 
 /**
  * A reusable input component for names. It handles input validation for names,
@@ -31,8 +31,6 @@ const InputName: FC<InputProps> = (props) => {
     onChange,
   } = props
 
-  const { formatMessage } = useIntl()
-
   const [errorMessage, setErrorMessage] = useState<string>()
   const [inputValue, setInputValue] = useState<string>(value || '')
 
@@ -54,7 +52,10 @@ const InputName: FC<InputProps> = (props) => {
   const handleChange = (
     evt: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    if (evt.target.value) {
+    // Clear the error as soon as the problem it describes is fixed, the same
+    // as removeErrorMessageIfValid does for other inputs - a whitespace-only
+    // value is still empty, so the message stays until real content arrives.
+    if (validate([[evt.target.value, ['empty']]]).isValid) {
       setErrorMessage(undefined)
     }
 
@@ -67,7 +68,13 @@ const InputName: FC<InputProps> = (props) => {
       return
     }
 
-    setErrorMessage(undefined)
+    // The parent echoes every keystroke back through `value`, so apply the
+    // same rule as handleChange: a whitespace-only value is still empty and
+    // keeps its error.
+    if (validate([[value, ['empty']]]).isValid) {
+      setErrorMessage(undefined)
+    }
+
     setInputValue(value)
   }, [value])
 
@@ -76,8 +83,8 @@ const InputName: FC<InputProps> = (props) => {
       data-testid="inputName"
       name="inputName"
       autoComplete="off"
-      label={label ? label : formatMessage(core.fullName)}
-      placeholder={placeholder ? placeholder : formatMessage(core.fullName)}
+      label={label ? label : core.fullName}
+      placeholder={placeholder ? placeholder : core.fullName}
       errorMessage={errorMessage}
       hasError={errorMessage !== undefined}
       onChange={handleChange}

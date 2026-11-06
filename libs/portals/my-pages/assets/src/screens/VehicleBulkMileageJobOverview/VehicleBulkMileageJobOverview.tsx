@@ -1,13 +1,14 @@
-import { Box, Table as T, Tag } from '@island.is/island-ui/core'
+import { Tag } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  IntroHeader,
   SAMGONGUSTOFA_SLUG,
   m,
   LinkButton,
   EmptyTable,
   formatDateWithTime,
   IntroWrapper,
+  createColumnHelper,
+  PortalTable,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useGetRequestsStatusQuery } from './VehicleBulkMileageJobOverview.generated'
@@ -68,6 +69,64 @@ const VehicleBulkMileageUploadJobOverview = () => {
   if (sortedJobs.length > 1) {
     sortedJobs.sort((a, b) => sortJobs(a, b))
   }
+  const columnHelper = createColumnHelper<VehiclesBulkMileageRegistrationJob>()
+  const columns = [
+    columnHelper.accessor('dateRequested', {
+      header: formatMessage(vehicleMessage.jobSubmitted),
+      cell: ({ getValue }) =>
+        getValue() ? formatDateWithTime(getValue()) : '-',
+      enableSorting: false,
+    }),
+    columnHelper.display({
+      id: 'started',
+      header: formatMessage(vehicleMessage.jobStarted),
+      cell: ({ row }) =>
+        row.original.dateStarted ? (
+          formatDateWithTime(row.original.dateStarted)
+        ) : row.original.dateRequested ? (
+          <Tag outlined whiteBackground variant="blue">
+            {formatMessage(vehicleMessage.jobNotStarted)}
+          </Tag>
+        ) : (
+          ''
+        ),
+      meta: { type: 'interactive' },
+      enableSorting: false,
+    }),
+    columnHelper.display({
+      id: 'finished',
+      header: formatMessage(vehicleMessage.jobFinished),
+      cell: ({ row }) =>
+        row.original.dateFinished ? (
+          formatDateWithTime(row.original.dateFinished)
+        ) : row.original.dateStarted ? (
+          <Tag outlined whiteBackground variant="blue">
+            {formatMessage(vehicleMessage.jobInProgress)}
+          </Tag>
+        ) : (
+          ''
+        ),
+      meta: { type: 'interactive' },
+      enableSorting: false,
+    }),
+    columnHelper.display({
+      id: 'action',
+      header: '',
+      cell: ({ row }) => (
+        <LinkButton
+          disabled={!row.original.guid}
+          to={AssetsPaths.AssetsVehiclesBulkMileageJobDetail.replace(
+            ':id',
+            row.original.guid,
+          )}
+          text={formatMessage(vehicleMessage.goToJob)}
+          variant="text"
+        />
+      ),
+      meta: { type: 'interactive', span: 2 },
+      enableSorting: false,
+    }),
+  ]
 
   return (
     <IntroWrapper
@@ -81,65 +140,13 @@ const VehicleBulkMileageUploadJobOverview = () => {
     >
       {error && <Problem error={error} noBorder={false} />}
       {!error && (
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              <T.HeadData>
-                {formatMessage(vehicleMessage.jobSubmitted)}
-              </T.HeadData>
-              <T.HeadData>
-                {formatMessage(vehicleMessage.jobStarted)}
-              </T.HeadData>
-              <T.HeadData>
-                {formatMessage(vehicleMessage.jobFinished)}
-              </T.HeadData>
-              <T.HeadData></T.HeadData>
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            {sortedJobs.map((j) => (
-              <T.Row key={j.guid}>
-                <T.Data>
-                  {j.dateRequested ? formatDateWithTime(j.dateRequested) : '-'}
-                </T.Data>
-                <T.Data>
-                  {j.dateStarted ? (
-                    formatDateWithTime(j.dateStarted)
-                  ) : j.dateRequested ? (
-                    <Tag outlined whiteBackground variant="blue">
-                      {formatMessage(vehicleMessage.jobNotStarted)}
-                    </Tag>
-                  ) : (
-                    ''
-                  )}
-                </T.Data>
-                <T.Data>
-                  {j.dateFinished ? (
-                    formatDateWithTime(j.dateFinished)
-                  ) : j.dateStarted ? (
-                    <Tag outlined whiteBackground variant="blue">
-                      {formatMessage(vehicleMessage.jobInProgress)}
-                    </Tag>
-                  ) : (
-                    ''
-                  )}
-                </T.Data>
-
-                <T.Data>
-                  <LinkButton
-                    disabled={!j.guid}
-                    to={AssetsPaths.AssetsVehiclesBulkMileageJobDetail.replace(
-                      ':id',
-                      j.guid,
-                    )}
-                    text={formatMessage(vehicleMessage.goToJob)}
-                    variant="text"
-                  />
-                </T.Data>
-              </T.Row>
-            ))}
-          </T.Body>
-        </T.Table>
+        <PortalTable
+          columns={columns}
+          data={sortedJobs}
+          emptyMessage=""
+          getRowId={(job) => job.guid}
+          mobileTitleKey="dateRequested"
+        />
       )}
       {!error && (loading || !jobs.length) && (
         <EmptyTable

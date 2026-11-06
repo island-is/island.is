@@ -19,12 +19,14 @@ import {
 } from './getUserProfile.query.generated'
 import { safeAwait } from '@island.is/shared/utils'
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
+import { ActionableOnlySettingsCard } from '../cards/ActionableOnlySettingsCard'
 
 type UserProfileNotificationSettings = {
   documentNotifications: boolean
   canNudge: boolean
   smsNotifications: boolean
   wantsPaper: boolean
+  onlyActionablePriorityNotifications: boolean
 }
 
 export const NotificationSettings = () => {
@@ -45,6 +47,13 @@ export const NotificationSettings = () => {
     Features.isSmsNotificationEnabled,
     false,
   )
+  const { value: isServicePortalOnlyActionablePriorityNotificationsEnabled } =
+    useFeatureFlag(
+      Features.isServicePortalOnlyActionablePriorityNotificationsEnabled,
+      false,
+    )
+  const { value: isOnlyActionablePriorityNotificationsEnabled } =
+    useFeatureFlag(Features.isOnlyActionablePriorityNotificationsEnabled, false)
 
   const [settings, setSettings] = useState<UserProfileNotificationSettings>({
     documentNotifications:
@@ -52,6 +61,8 @@ export const NotificationSettings = () => {
     canNudge: userProfile?.getUserProfile?.canNudge ?? true,
     smsNotifications: userProfile?.getUserProfile?.smsNotifications ?? false,
     wantsPaper: wantsPaper ?? false,
+    onlyActionablePriorityNotifications:
+      userProfile?.getUserProfile?.onlyActionablePriorityNotifications ?? false,
   })
 
   useEffect(() => {
@@ -62,6 +73,9 @@ export const NotificationSettings = () => {
           userProfile?.getUserProfile.documentNotifications,
         canNudge: userProfile?.getUserProfile.canNudge ?? true,
         smsNotifications: userProfile?.getUserProfile.smsNotifications ?? false,
+        onlyActionablePriorityNotifications:
+          userProfile?.getUserProfile?.onlyActionablePriorityNotifications ??
+          false,
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -86,6 +100,8 @@ export const NotificationSettings = () => {
             documentNotifications: newSettings.documentNotifications,
             canNudge: newSettings.canNudge,
             smsNotifications: newSettings.smsNotifications,
+            onlyActionablePriorityNotifications:
+              newSettings.onlyActionablePriorityNotifications,
           },
         },
       }),
@@ -129,6 +145,22 @@ export const NotificationSettings = () => {
   return (
     <NotificationSettingsCard title={userInfo?.profile.name}>
       <Stack space={[3, 4]}>
+        {isServicePortalOnlyActionablePriorityNotificationsEnabled &&
+          isOnlyActionablePriorityNotificationsEnabled && (
+            <ActionableOnlySettingsCard
+              title={formatMessage(mNotifications.actionablePriorityOnlyTitle)}
+              subtitle={formatMessage(
+                mNotifications.actionablePriorityOnlyDescription,
+              )}
+              toggleLabel={formatMessage(
+                mNotifications.actionablePriorityOnlyAriaLabel,
+              )}
+              checked={settings.onlyActionablePriorityNotifications}
+              onChange={(active: boolean) =>
+                onChange({ onlyActionablePriorityNotifications: active })
+              }
+            />
+          )}
         <SettingsCard
           title={formatMessage(mNotifications.emailNotifications)}
           subtitle={formatMessage(mNotifications.emailNotificationsDescription)}

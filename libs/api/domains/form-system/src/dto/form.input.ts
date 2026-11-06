@@ -30,6 +30,24 @@ export class CreateFormInput {
   organizationNationalId?: string
 }
 
+@InputType('FormSystemCopyFormInput')
+export class CopyFormInput {
+  @Field(() => String)
+  id!: string
+
+  @Field(() => String)
+  organizationNationalId!: string
+}
+
+@InputType('FormSystemImportFormInput')
+export class ImportFormInput {
+  @Field(() => String)
+  organizationNationalId!: string
+
+  @Field(() => String)
+  formJson!: string
+}
+
 @InputType('FormSystemGetFormInput')
 export class GetFormInput {
   @Field(() => String, { nullable: true })
@@ -68,6 +86,9 @@ export class UpdateFormDtoInput {
   @Field(() => String, { nullable: true })
   submissionServiceUrl?: string
 
+  @Field(() => String, { nullable: true })
+  zendeskBrandId?: string
+
   @Field(() => Boolean, { nullable: true })
   hasPayment?: boolean
 
@@ -85,6 +106,12 @@ export class UpdateFormDtoInput {
 
   @Field(() => Boolean, { nullable: true })
   isInaccessible?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  validateEligibility?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  enableApplicationPdfDownload?: boolean
 
   @Field(() => Boolean, { nullable: true })
   hasSummaryScreen?: boolean
@@ -157,6 +184,12 @@ export class FormInput {
 
   @Field(() => Boolean, { nullable: true })
   isInaccessible?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  validateEligibility?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  enableApplicationPdfDownload?: boolean
 
   @Field(() => SectionInfoInput, { nullable: true })
   sectionInfo?: SectionInfoInput

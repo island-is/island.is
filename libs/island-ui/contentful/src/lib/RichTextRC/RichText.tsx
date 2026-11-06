@@ -145,17 +145,26 @@ export const richText: RichText = (
     ...opt.renderComponent,
     locale,
   }
+
+  // The same entry can be embedded more than once, so `slice.id` isn't unique.
+  // Key each occurrence by a per-id ordinal (not the array index) so keys stay
+  // stable across reordering; the trailing numeric suffix keeps `id:occurrence`
+  // unambiguous even for ids containing a colon.
+  const occurrenceById = new Map<string, number>()
   return documents.map((slice) => {
+    const occurrence = occurrenceById.get(slice.id) ?? 0
+    occurrenceById.set(slice.id, occurrence + 1)
+    const key = `${slice.id}:${occurrence}`
     if (slice.__typename === 'Html') {
       return (
-        <Fragment key={slice.id}>
+        <Fragment key={key}>
           {documentToReactComponents(slice.document, options)}
         </Fragment>
       )
     }
     return (
       <Box
-        key={slice.id}
+        key={key}
         id={slice.id}
         marginBottom={[5, 5, 5, 6]}
         marginTop={[5, 5, 5, 6]}

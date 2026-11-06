@@ -10,7 +10,7 @@ import {
 import { Application, Field } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../lib/messages'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { formatPhoneNumber } from '@island.is/shared/utils'
 import format from 'date-fns/format'
 import { EstateMember, PropertiesEnum } from '../types'
 import {

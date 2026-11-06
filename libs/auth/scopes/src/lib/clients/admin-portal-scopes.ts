@@ -22,5 +22,6 @@ export const adminPortalScopes = [
   AdminPortalScope.formSystemAdmin,
   AdminPortalScope.delegationSystem,
   AdminPortalScope.delegationSystemAdmin,
+  AdminPortalScope.delegationSystemInstitution,
   AdminPortalScope.payments,
 ]

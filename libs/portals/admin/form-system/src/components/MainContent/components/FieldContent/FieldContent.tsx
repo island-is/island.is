@@ -1,8 +1,16 @@
 import { FormSystemField } from '@island.is/api/schema'
 import { FieldTypesEnum } from '@island.is/form-system/ui'
-import { Box, Input, Stack } from '@island.is/island-ui/core'
+import {
+  Box,
+  Checkbox,
+  Divider,
+  Input,
+  Stack,
+  ToggleSwitchCheckbox,
+} from '@island.is/island-ui/core'
 import { useContext } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
+import * as styles from '../../MainContent.css'
 import { Preview } from '../Preview/Preview'
 import { BaseInput } from './components/BaseInput'
 import { FieldSettings } from './components/FieldSettings/FieldSettings'
@@ -10,8 +18,27 @@ import { ListBuilder } from './components/ListBuilder/ListBuilder'
 import { PaymentField } from './components/PaymentField/PaymentField'
 import { ZendeskSettings } from './components/ZendeskSettings/ZendeskSettings'
 
-export const FieldContent = () => {
-  const { control, inListBuilder, setFocus } = useContext(ControlContext)
+interface Props {
+  identifierEditingEnabled: boolean
+  setIdentifierEditingEnabled: (enabled: boolean) => void
+  fieldPreviewEnabled: boolean
+  setFieldPreviewEnabled: (enabled: boolean) => void
+}
+
+export const FieldContent = ({
+  identifierEditingEnabled,
+  setIdentifierEditingEnabled,
+  fieldPreviewEnabled,
+  setFieldPreviewEnabled,
+}: Props) => {
+  const {
+    control,
+    controlDispatch,
+    inListBuilder,
+    setFocus,
+    focus,
+    updateActiveItem,
+  } = useContext(ControlContext)
   const currentItem = control.activeItem.data as FormSystemField
   const { fieldType } = currentItem
   const hasZendeskSettings = control.form.submissionServiceUrl === 'zendesk'
@@ -26,19 +53,47 @@ export const FieldContent = () => {
       <Stack space={2}>
         <BaseInput />
         <FieldSettings />
-        <Preview data={currentItem} />
+        <Divider />
+        <Box display="flex" alignItems="center">
+          <Checkbox
+            name="enableFieldPreview"
+            label="Sjá sýnishorn"
+            checked={fieldPreviewEnabled}
+            onChange={(event) => setFieldPreviewEnabled(event.target.checked)}
+          />
+        </Box>
+        {fieldPreviewEnabled && (
+          <Preview key={currentItem.id} data={currentItem} />
+        )}
         {hasZendeskSettings && currentItem.fieldSettings && (
           <ZendeskSettings fieldSettings={currentItem.fieldSettings} />
         )}
         {showIdentifier && (
           <Box marginTop={2}>
+            <Box marginBottom={2}>
+              <ToggleSwitchCheckbox
+                className={styles.identifierToggle}
+                name="enableIdentifierEditing"
+                label="Gera breytingu á identifier"
+                checked={identifierEditingEnabled}
+                disabled={control.isReadOnly}
+                onChange={setIdentifierEditingEnabled}
+              />
+            </Box>
             <Input
               label="identifier"
               name="identifier"
               value={currentItem.identifier ?? ''}
               backgroundColor="blue"
+              onChange={(e) =>
+                controlDispatch({
+                  type: 'CHANGE_IDENTIFIER',
+                  payload: { newValue: e.target.value },
+                })
+              }
               onFocus={(e) => setFocus(e.target.value)}
-              readOnly
+              onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+              readOnly={control.isReadOnly || !identifierEditingEnabled}
             />
           </Box>
         )}

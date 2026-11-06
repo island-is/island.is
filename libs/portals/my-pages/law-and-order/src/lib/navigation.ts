@@ -55,5 +55,15 @@ export const lawAndOrderNavigation: PortalNavigationItem = {
         },
       ],
     },
+    {
+      name: m.driversPoints,
+      description: m.driversPointsIntro,
+      path: LawAndOrderPaths.DriversPoints,
+    },
+    {
+      name: m.driversDeprivations,
+      description: m.driversDeprivationsIntro,
+      path: LawAndOrderPaths.DriversDeprivations,
+    },
   ],
 }

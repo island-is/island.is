@@ -35,6 +35,7 @@ export const userWithDelegations: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: true,
+  onlyActionablePriorityNotifications: false,
 }
 
 export const userWithDelegations2: MockUserProfileDto = {
@@ -48,6 +49,7 @@ export const userWithDelegations2: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: true,
+  onlyActionablePriorityNotifications: false,
 }
 
 export const userWithNoDelegations: MockUserProfileDto = {
@@ -61,6 +63,7 @@ export const userWithNoDelegations: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: true,
+  onlyActionablePriorityNotifications: false,
 }
 
 export const userWithNoEmail: MockUserProfileDto = {
@@ -73,6 +76,7 @@ export const userWithNoEmail: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: true,
+  onlyActionablePriorityNotifications: false,
 }
 
 export const userWithEmailNotificationsDisabled: MockUserProfileDto = {
@@ -85,6 +89,7 @@ export const userWithEmailNotificationsDisabled: MockUserProfileDto = {
   emailNotifications: false,
   isRestricted: false,
   smsNotifications: true,
+  onlyActionablePriorityNotifications: false,
 }
 
 export const userWithDocumentNotificationsDisabled: MockUserProfileDto = {
@@ -98,6 +103,66 @@ export const userWithDocumentNotificationsDisabled: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: true,
+  onlyActionablePriorityNotifications: false,
+}
+
+export const userWhoDeclinesInformationalNotifications: MockUserProfileDto = {
+  name: 'userWhoDeclinesInformationalNotifications',
+  nationalId: createNationalId('person'),
+  mobilePhoneNumber: '1234567',
+  email: 'declinesinformational@email.com',
+  emailVerified: true,
+  mobilePhoneNumberVerified: true,
+  documentNotifications: true,
+  emailNotifications: true,
+  isRestricted: false,
+  smsNotifications: true,
+  onlyActionablePriorityNotifications: true,
+}
+
+export const delegateWhoDeclinesInformationalNotifications: MockUserProfileDto =
+  {
+    name: 'delegateWhoDeclinesInformationalNotifications',
+    nationalId: createNationalId('person'),
+    mobilePhoneNumber: '7654321',
+    email: 'delegatedeclinesinformational@email.com',
+    emailVerified: true,
+    mobilePhoneNumberVerified: true,
+    documentNotifications: true,
+    emailNotifications: true,
+    isRestricted: false,
+    smsNotifications: true,
+    onlyActionablePriorityNotifications: true,
+  }
+
+// Unrestricted user whose only delegate is delegateWhoDeclinesInformationalNotifications.
+export const delegatorWithRestrictedDelegate: MockUserProfileDto = {
+  name: 'delegatorWithRestrictedDelegate',
+  nationalId: createNationalId('person'),
+  mobilePhoneNumber: '1234567',
+  email: 'delegatorrestricteddelegate@email.com',
+  emailVerified: true,
+  mobilePhoneNumberVerified: true,
+  documentNotifications: true,
+  emailNotifications: true,
+  isRestricted: false,
+  smsNotifications: true,
+  onlyActionablePriorityNotifications: false,
+}
+
+// Restricted user whose only delegate is userWithNoDelegations.
+export const restrictedDelegatorWithDelegate: MockUserProfileDto = {
+  name: 'restrictedDelegatorWithDelegate',
+  nationalId: createNationalId('person'),
+  mobilePhoneNumber: '1234567',
+  email: 'restricteddelegator@email.com',
+  emailVerified: true,
+  mobilePhoneNumberVerified: true,
+  documentNotifications: true,
+  emailNotifications: true,
+  isRestricted: false,
+  smsNotifications: true,
+  onlyActionablePriorityNotifications: true,
 }
 
 export const userWithFeatureFlagDisabled: MockUserProfileDto = {
@@ -111,6 +176,7 @@ export const userWithFeatureFlagDisabled: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: true,
+  onlyActionablePriorityNotifications: false,
 }
 
 export const userWithSendToDelegationsFeatureFlagDisabled: MockUserProfileDto =
@@ -125,6 +191,7 @@ export const userWithSendToDelegationsFeatureFlagDisabled: MockUserProfileDto =
     emailNotifications: true,
     isRestricted: false,
     smsNotifications: true,
+    onlyActionablePriorityNotifications: false,
   }
 
 export const inactiveCompanyUser: MockUserProfileDto = {
@@ -138,6 +205,7 @@ export const inactiveCompanyUser: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: true,
+  onlyActionablePriorityNotifications: false,
 }
 
 export const inactiveCompanyStatus = INACTIVE_COMPANY_STATUS
@@ -153,6 +221,7 @@ export const companyUser: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: true,
+  onlyActionablePriorityNotifications: false,
 }
 
 export const deceasedUser: MockUserProfileDto = {
@@ -166,6 +235,7 @@ export const deceasedUser: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: true,
+  onlyActionablePriorityNotifications: false,
 }
 
 // Children with controlled ages for the health-notification / legal-guardian flow.
@@ -180,6 +250,7 @@ export const childUnder16: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: false,
+  onlyActionablePriorityNotifications: false,
 }
 
 export const childOver16: MockUserProfileDto = {
@@ -193,6 +264,7 @@ export const childOver16: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: false,
+  onlyActionablePriorityNotifications: false,
 }
 
 // Legal guardians who have NOT opted in to SMS (smsNotifications: false) but have a
@@ -208,6 +280,7 @@ export const legalGuardianOne: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: false,
+  onlyActionablePriorityNotifications: false,
 }
 
 export const legalGuardianTwo: MockUserProfileDto = {
@@ -221,6 +294,7 @@ export const legalGuardianTwo: MockUserProfileDto = {
   emailNotifications: true,
   isRestricted: false,
   smsNotifications: false,
+  onlyActionablePriorityNotifications: false,
 }
 
 export const mockTemplateId = 'HNIPP.DEMO.ID'
@@ -235,6 +309,9 @@ export const getMockHnippTemplate = ({
   scope = '@island.is/documents',
   smsPayer = 'Landlæknir',
   smsDelivery = 'OPT_IN',
+  priorityType,
+  hnippCategory,
+  hnippCategoryIs,
 }: Partial<HnippTemplate>): HnippTemplate => ({
   templateId,
   title,
@@ -245,6 +322,9 @@ export const getMockHnippTemplate = ({
   scope,
   smsPayer,
   smsDelivery,
+  priorityType,
+  hnippCategory,
+  hnippCategoryIs,
 })
 
 export const userProfiles = [
@@ -253,6 +333,10 @@ export const userProfiles = [
   userWithNoDelegations,
   userWithEmailNotificationsDisabled,
   userWithDocumentNotificationsDisabled,
+  userWhoDeclinesInformationalNotifications,
+  delegateWhoDeclinesInformationalNotifications,
+  delegatorWithRestrictedDelegate,
+  restrictedDelegatorWithDelegate,
   userWithFeatureFlagDisabled,
   userWithSendToDelegationsFeatureFlagDisabled,
   userWithNoEmail,
@@ -303,6 +387,26 @@ const delegationsByScope: Record<string, DelegationRecordDTO[]> = {
       toNationalId: legalGuardianOne.nationalId,
       subjectId: null,
       type: AuthDelegationType.Custom,
+      customDelegationScopes: null,
+    },
+  ],
+  // Restricted delegator, unrestricted delegate.
+  [`${restrictedDelegatorWithDelegate.nationalId}:@island.is/documents`]: [
+    {
+      fromNationalId: restrictedDelegatorWithDelegate.nationalId,
+      toNationalId: userWithNoDelegations.nationalId,
+      subjectId: null,
+      type: AuthDelegationType.ProcurationHolder,
+      customDelegationScopes: null,
+    },
+  ],
+  // Unrestricted delegator, restricted delegate.
+  [`${delegatorWithRestrictedDelegate.nationalId}:@island.is/documents`]: [
+    {
+      fromNationalId: delegatorWithRestrictedDelegate.nationalId,
+      toNationalId: delegateWhoDeclinesInformationalNotifications.nationalId,
+      subjectId: null,
+      type: AuthDelegationType.ProcurationHolder,
       customDelegationScopes: null,
     },
   ],

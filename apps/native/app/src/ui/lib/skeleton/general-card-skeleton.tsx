@@ -1,8 +1,15 @@
 import React from 'react'
+import { ViewStyle } from 'react-native'
 import { useTheme } from 'styled-components/native'
 import { Skeleton } from './skeleton'
 
-export const GeneralCardSkeleton = ({ height }: { height: number }) => {
+export const GeneralCardSkeleton = ({
+  height,
+  style,
+}: {
+  height: number
+  style?: ViewStyle
+}) => {
   const theme = useTheme()
   return (
     <Skeleton
@@ -20,6 +27,7 @@ export const GeneralCardSkeleton = ({ height }: { height: number }) => {
       style={{
         borderRadius: 16,
         marginBottom: theme.spacing[2],
+        ...style,
       }}
     />
   )

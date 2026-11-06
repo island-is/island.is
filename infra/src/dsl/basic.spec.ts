@@ -105,6 +105,7 @@ describe('Basic serialization', () => {
       DB_REPLICAS_HOST: 'a',
       NODE_OPTIONS:
         '--max-old-space-size=460 --enable-source-maps -r dd-trace/init',
+      DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch',
       SERVERSIDE_FEATURES_ON: '',
       LOG_LEVEL: 'info',
     })

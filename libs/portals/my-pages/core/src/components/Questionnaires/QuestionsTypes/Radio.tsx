@@ -1,6 +1,12 @@
-import { Box, RadioButton, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  InputError,
+  RadioButton,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import React from 'react'
-import HtmlParser from 'react-html-parser'
+import { renderSanitizedHtml } from '../utils/sanitizeHtml'
 
 export interface RadioOption {
   label: string
@@ -18,6 +24,7 @@ export interface RadioProps {
   disabled?: boolean
   required?: boolean
   direction?: 'horizontal' | 'vertical'
+  labelledBy?: string
 }
 
 export const Radio: React.FC<RadioProps> = ({
@@ -30,7 +37,10 @@ export const Radio: React.FC<RadioProps> = ({
   disabled = false,
   required = false,
   direction = 'vertical',
+  labelledBy,
 }) => {
+  const errorId = `${id}-error`
+  const labelId = `${id}-label`
   const radioButtons = options.map((option) => (
     <Box width="full" key={option.value}>
       <RadioButton
@@ -49,10 +59,16 @@ export const Radio: React.FC<RadioProps> = ({
   ))
 
   return (
-    <Box>
+    <Box
+      role="radiogroup"
+      aria-labelledby={labelledBy ?? (label ? labelId : undefined)}
+      aria-required={required || undefined}
+      aria-invalid={!!error || undefined}
+      aria-describedby={error ? errorId : undefined}
+    >
       {label && (
-        <Text variant="h5" marginBottom={2}>
-          {HtmlParser(label)}
+        <Text id={labelId} variant="h5" marginBottom={2}>
+          {renderSanitizedHtml(label)}
           {required && <span style={{ color: 'red' }}> *</span>}
         </Text>
       )}
@@ -69,11 +85,7 @@ export const Radio: React.FC<RadioProps> = ({
       ) : (
         <Stack space={2}>{radioButtons}</Stack>
       )}
-      {error && (
-        <Text color="red400" variant="small" marginTop={1}>
-          {error}
-        </Text>
-      )}
+      {error && <InputError id={errorId} errorMessage={error} />}
     </Box>
   )
 }

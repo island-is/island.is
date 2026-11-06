@@ -73,6 +73,7 @@ export class CustomsCalculatorClientService {
             Voruflokkur?: string
             Tollnumer?: string
             Lysing?: string
+            Lykilord?: string[] | null
           }[]
         }
       }
@@ -85,6 +86,9 @@ export class CustomsCalculatorClientService {
         label: String(item.Voruflokkur ?? '').trim(),
         tariffNumber: String(item.Tollnumer ?? '').trim(),
         description: String(item.Lysing ?? '').trim(),
+        keywords: (item.Lykilord ?? [])
+          .map((keyword) => String(keyword ?? '').trim())
+          .filter(Boolean),
       }))
   }
 

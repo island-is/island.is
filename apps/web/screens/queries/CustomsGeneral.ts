@@ -67,6 +67,8 @@ export const GET_CUSTOMS_GENERAL_EXEMPTIONS = gql`
       code
       name
       description
+      validFrom
+      validTo
       legalArticle
       system
     }

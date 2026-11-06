@@ -1,5 +1,4 @@
 import { useCallback, useContext, useEffect, useRef } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
@@ -13,8 +12,8 @@ import {
   DISTRICT_COURT_INDICTMENT_CASE_ADD_FILES_IN_COURT_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_ADD_RULING_ORDER_IN_COURT_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
+  getStandardUserDashboardRoute,
 } from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isCompletedCase,
   isDistrictCourtUser,
@@ -43,11 +42,11 @@ import {
   CaseState,
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useCancelCase } from '@island.is/judicial-system-web/src/routes/Shared/CaseTable/CancelCase'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import { useCancelCase } from '../../../Shared/CaseTable/CancelCase'
 import { strings } from './Overview.strings'
 // onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
 
@@ -61,23 +60,21 @@ const OverviewBody = ({
   const router = useRouter()
 
   const { workingCase, isLoadingWorkingCase } = useContext(FormContext)
-
-  const { formatMessage } = useIntl()
   // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
 
   return (
     <>
-      <PageHeader title={formatMessage(titles.court.indictments.overview)} />
+      <PageHeader title={titles.court.indictments.overview} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.inProgressTitle)}</PageTitle>
+        <PageTitle>{strings.inProgressTitle}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <ServiceAnnouncements defendants={workingCase.defendants} />
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           {workingCase.comments && (
             <AlertMessage
-              title={formatMessage(commentsInput.heading)}
+              title={commentsInput.heading}
               message={workingCase.comments}
               type="warning"
             />
@@ -159,7 +156,7 @@ const OverviewBody = ({
               }}
               disabled={workingCase.state === CaseState.CORRECTING}
             >
-              {formatMessage(strings.addFilesButtonText)}
+              {strings.addFilesButtonText}
             </Button>
             {isDistrictCourtUser(user) && (
               <Button
@@ -184,7 +181,7 @@ const OverviewBody = ({
           previousUrl={getStandardUserDashboardRoute(user)}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(
@@ -205,7 +202,7 @@ const IndictmentOverview = () => {
   const { user } = useContext(UserContext)
   const { workingCase, isLoadingWorkingCase, caseNotFound, isCaseUpToDate } =
     useContext(FormContext)
-  const { updateDefendant } = useDefendants()
+  const { updateDefendants } = useDefendants()
 
   // Once the user finishes or dismisses the modal we must not re-open it for the
   // same loaded case — workingCase.state stays WAITING_FOR_CANCELLATION until the
@@ -253,23 +250,21 @@ const IndictmentOverview = () => {
         return
       }
 
-      const promises = defendants.map((defendant) =>
-        updateDefendant({
-          caseId: workingCase.id,
+      const allDataSentToServer = await updateDefendants(
+        workingCase.id,
+        defendants.map((defendant) => ({
           defendantId: defendant.id,
           subpoenaType: defendant.subpoenaType,
-        }),
+        })),
       )
 
-      const allDataSentToServer = await Promise.all(promises)
-
-      if (!allDataSentToServer.every(Boolean)) {
+      if (!allDataSentToServer) {
         return
       }
 
       router.push(`${destination}/${workingCase.id}`)
     },
-    [defendants, router, updateDefendant, workingCase.id],
+    [defendants, router, updateDefendants, workingCase.id],
   )
 
   return (

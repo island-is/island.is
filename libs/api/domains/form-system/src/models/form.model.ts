@@ -96,6 +96,12 @@ export class Form {
   isInaccessible!: boolean
 
   @Field(() => Boolean)
+  validateEligibility!: boolean
+
+  @Field(() => Boolean)
+  enableApplicationPdfDownload!: boolean
+
+  @Field(() => Boolean)
   hasSummaryScreen!: boolean
 
   @Field(() => OrganizationZendeskInstance, { nullable: true })

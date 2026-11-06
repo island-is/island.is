@@ -1,21 +1,19 @@
-import { IntlShape } from 'react-intl'
+import type { IntlShape } from 'react-intl'
 import { applyCase } from 'beygla/addresses'
 
 import {
   formatDate,
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import {
-  CrimeScene,
-  isTrafficViolationIndictmentCount,
-} from '@island.is/judicial-system/types'
-import {
+import type { CrimeScene } from '@island.is/judicial-system/types'
+import { isTrafficViolationIndictmentCount } from '@island.is/judicial-system/types'
+import type {
   Gender,
   IndictmentCount,
-  IndictmentCountOffense,
   IndictmentSubtype,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
 import { textToHtml } from '@island.is/judicial-system-web/src/utils/formatters'
 
 import { getIncidentDescriptionReason } from './getIncidentDescriptionReason'
@@ -89,9 +87,15 @@ export const getIncidentDescription = (
 
     if (hasOnlyOtherOffense) {
       return textToHtml(
-        formatMessage(strings.incidentDescriptionShortAutofill, {
-          incidentDate,
-        }),
+        formatMessage(
+          {
+            id: strings.incidentDescriptionShortAutofill,
+            defaultMessage: strings.incidentDescriptionShortAutofill,
+          },
+          {
+            incidentDate,
+          },
+        ),
       )
     }
 
@@ -109,24 +113,36 @@ export const getIncidentDescription = (
     const speedLimit = indictmentCount.speedLimit ?? '[Leyfilegur hraði]'
 
     return textToHtml(
-      formatMessage(strings.incidentDescriptionAutofill, {
-        incidentDate,
-        vehicleRegistrationNumber: vehicleRegistration,
-        reason,
-        incidentLocation,
-        isSpeeding,
-        recordedSpeed,
-        speedLimit,
-      }),
+      formatMessage(
+        {
+          id: strings.incidentDescriptionAutofill,
+          defaultMessage: strings.incidentDescriptionAutofill,
+        },
+        {
+          incidentDate,
+          vehicleRegistrationNumber: vehicleRegistration,
+          reason,
+          incidentLocation,
+          isSpeeding,
+          recordedSpeed,
+          speedLimit,
+        },
+      ),
     )
   }
 
   if (subtypes.length === 1) {
     return textToHtml(
-      formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
-        subtypes: indictmentSubtypes[subtypes[0]],
-        date: incidentDate,
-      }),
+      formatMessage(
+        {
+          id: strings.indictmentDescriptionSubtypesAutofill,
+          defaultMessage: strings.indictmentDescriptionSubtypesAutofill,
+        },
+        {
+          subtypes: indictmentSubtypes[subtypes[0]],
+          date: incidentDate,
+        },
+      ),
     )
   }
 
@@ -135,9 +151,15 @@ export const getIncidentDescription = (
     .join(', ')
 
   return textToHtml(
-    formatMessage(strings.indictmentDescriptionSubtypesAutofill, {
-      subtypes: allSubtypes,
-      date: incidentDate,
-    }),
+    formatMessage(
+      {
+        id: strings.indictmentDescriptionSubtypesAutofill,
+        defaultMessage: strings.indictmentDescriptionSubtypesAutofill,
+      },
+      {
+        subtypes: allSubtypes,
+        date: incidentDate,
+      },
+    ),
   )
 }

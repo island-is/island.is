@@ -197,3 +197,31 @@ export const isCompanySearch = style({
   paddingBottom: 8,
   fontWeight: theme.typography.medium,
 })
+
+// Extra room for the clear button that renders to the left of the search icon
+export const clearableSizes = styleVariants({
+  medium: {
+    paddingRight: 74,
+    ...themeUtils.responsiveStyle({
+      md: {
+        paddingRight: 78,
+      },
+    }),
+  },
+  'semi-large': {
+    paddingRight: 78,
+    ...themeUtils.responsiveStyle({
+      md: {
+        paddingRight: 82,
+      },
+    }),
+  },
+  large: {
+    paddingRight: 118,
+    ...themeUtils.responsiveStyle({
+      md: {
+        paddingRight: 130,
+      },
+    }),
+  },
+})

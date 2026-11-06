@@ -9,6 +9,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { ApplicationsService } from './applications.service'
 import {
+  ApplicationPdf,
   ApplicationResponse,
   SubmitApplicationResponse,
 } from '../../models/applications.model'
@@ -39,6 +40,17 @@ export class ApplicationsResolver {
     @CurrentUser() user: User,
   ): Promise<ApplicationResponse> {
     return this.applicationsService.getApplication(user, input)
+  }
+
+  @Query(() => ApplicationPdf, {
+    name: 'formSystemApplicationPdf',
+  })
+  async getApplicationPdf(
+    @Args('input', { type: () => GetApplicationInput })
+    input: GetApplicationInput,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationPdf> {
+    return this.applicationsService.getApplicationPdf(user, input)
   }
 
   @Query(() => ApplicationResponse, {

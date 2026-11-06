@@ -71,6 +71,15 @@ export const mapItemToQuestion = (
             required: 'required' in subItem ? subItem.required : false,
             multiline: 'multiline' in subItem ? subItem.multiline : undefined,
             maxLength: 'maxLength' in subItem ? subItem.maxLength : undefined,
+            decimal: 'decimals' in subItem && subItem.decimals ? true : false,
+            min:
+              'min' in subItem && subItem.min !== undefined
+                ? subItem.min.toString()
+                : undefined,
+            max:
+              'max' in subItem && subItem.max !== undefined
+                ? subItem.max.toString()
+                : undefined,
           }))
         : undefined,
   }

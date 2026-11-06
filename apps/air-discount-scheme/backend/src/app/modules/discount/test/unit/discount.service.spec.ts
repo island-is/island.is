@@ -1,21 +1,23 @@
 import { Cache as CacheManager } from 'cache-manager'
-import { Test } from '@nestjs/testing'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
-
-import { DiscountService, DISCOUNT_CODE_LENGTH } from '../../discount.service'
-import { createTestUser } from '../../../../../../test/createTestUser'
 import { getModelToken } from '@nestjs/sequelize'
-import { ExplicitCode } from '../../discount.model'
+import { Test } from '@nestjs/testing'
+
 import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { createTestUser } from '../../../../../../test/createTestUser'
+import { FlightService } from '../../../flight'
+import { Flight } from '../../../flight/flight.model'
 import {
   NationalRegistryService,
   NationalRegistryUser,
 } from '../../../nationalRegistry'
+import { restoreCachedUser, User } from '../../../user/user.model'
 import { UserService } from '../../../user/user.service'
-import { FlightService } from '../../../flight'
-import { Flight } from '../../../flight/flight.model'
+import { ExplicitCode } from '../../discount.model'
+import { DISCOUNT_CODE_LENGTH, DiscountService } from '../../discount.service'
 
 function getAuthUser(nationalId: string): AuthUser {
   return {
@@ -164,9 +166,12 @@ describe('DiscountService', () => {
       const nationalId = '1234567890'
       const discountCode = 'ABCDEFG'
       const ttl = 86400
+      const cachedUser = createTestUser()
       const cacheManagerGetSpy = jest
         .spyOn(cacheManager, 'get')
-        .mockImplementation(() => Promise.resolve({ discountCode }))
+        .mockImplementation(() =>
+          Promise.resolve({ discountCode, user: cachedUser }),
+        )
       const cacheManagerTtlSpy = jest
         .spyOn(cacheManager, 'ttl')
         .mockImplementation(() => Promise.resolve(Date.now() + ttl * 1000))
@@ -180,6 +185,7 @@ describe('DiscountService', () => {
         discountCode,
         nationalId,
         expiresIn: ttl,
+        user: new User(restoreCachedUser(cachedUser), cachedUser.fund),
       })
     })
 
@@ -197,13 +203,35 @@ describe('DiscountService', () => {
   })
 
   describe('getDiscountByDiscountCode', () => {
+    it('should return discount without user if the cached discount has no user', async () => {
+      const nationalId = '1234567890'
+      const discountCode = 'ABCDEFG'
+      const ttl = 86400
+      jest
+        .spyOn(cacheManager, 'get')
+        .mockImplementation(() => Promise.resolve({ nationalId, discountCode }))
+      jest
+        .spyOn(cacheManager, 'ttl')
+        .mockImplementation(() => Promise.resolve(Date.now() + ttl * 1000))
+
+      const result = await discountService.getDiscountByDiscountCode(
+        discountCode,
+      )
+
+      expect(result?.user).toBeUndefined()
+      expect(result?.nationalId).toBe(nationalId)
+    })
+
     it('should return discount if it is cached', async () => {
       const nationalId = '1234567890'
       const discountCode = 'ABCDEFG'
       const ttl = 86400
+      const cachedUser = createTestUser()
       const cacheManagerGetSpy = jest
         .spyOn(cacheManager, 'get')
-        .mockImplementation(() => Promise.resolve({ nationalId, discountCode }))
+        .mockImplementation(() =>
+          Promise.resolve({ nationalId, discountCode, user: cachedUser }),
+        )
       const cacheManagerTtlSpy = jest
         .spyOn(cacheManager, 'ttl')
         .mockImplementation(() => Promise.resolve(Date.now() + ttl * 1000))
@@ -219,6 +247,7 @@ describe('DiscountService', () => {
         discountCode,
         nationalId,
         expiresIn: ttl,
+        user: new User(restoreCachedUser(cachedUser), cachedUser.fund),
       })
     })
 
@@ -342,10 +371,9 @@ describe('DiscountService', () => {
           return Promise.resolve({
             address: '',
             city: '',
-            firstName: '',
+            givenName: '',
+            fullName: '',
             gender: 'kk',
-            lastName: '',
-            middleName: '',
             nationalId: customerId,
             postalcode: 100, // This shall be overridden
           })

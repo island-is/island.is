@@ -1,13 +1,12 @@
-import App, { AppContext, AppProps } from 'next/app'
+import App from 'next/app'
 import Head from 'next/head'
 import { ApolloProvider } from '@apollo/client'
 
-import { Query, QueryGetTranslationsArgs } from '@island.is/api/schema'
 import { Box, ToastContainer } from '@island.is/island-ui/core'
-import { GET_TRANSLATIONS, LocaleProvider } from '@island.is/localization'
-
-import client from '../graphql/client'
+import { getPublicRuntimeEnv } from '@island.is/judicial-system-web/environments/runtimeEnvironment'
+import client from '@island.is/judicial-system-web/graphql/client'
 import {
+  ErrorBoundary,
   FeatureProvider,
   FormProvider,
   Header as HeaderContainer,
@@ -15,57 +14,26 @@ import {
   ServiceInterruptionBanner,
   UserProvider,
   ViewportProvider,
-} from '../src/components'
+} from '@island.is/judicial-system-web/src/components'
+import { LocaleProvider } from '@island.is/localization'
+import { userMonitoring } from '@island.is/user-monitoring'
 
-const getTranslationStrings = (apolloClient: typeof client) => {
-  if (!apolloClient) {
-    return null
+if (typeof window !== 'undefined') {
+  const { ddLogsClientToken, environment, appVersion } = getPublicRuntimeEnv()
+
+  if (ddLogsClientToken) {
+    userMonitoring.initDdLogs({
+      service: 'judicial-system-web',
+      clientToken: ddLogsClientToken,
+      env: environment || 'local',
+      version: appVersion || 'unknown',
+    })
   }
-  return apolloClient
-    .query<Query, QueryGetTranslationsArgs>({
-      query: GET_TRANSLATIONS,
-      variables: {
-        input: {
-          namespaces: [
-            'judicial.system.core',
-            'judicial.system.restriction_cases',
-            'judicial.system.investigation_cases',
-            'judicial.system.indictments',
-          ],
-          lang: 'is',
-        },
-      },
-    })
-    .then((content) => {
-      return content?.data?.getTranslations
-    })
-    .catch((error) => {
-      console.error(`Error fetching translations: ${error}`)
-    })
 }
 
-interface Props extends AppProps {
-  translations: { [key: string]: string }
-}
-
-class JudicialSystemApplication extends App<Props> {
-  static async getInitialProps(appContext: AppContext) {
-    const { ctx } = appContext
-    const pageProps = await App.getInitialProps(appContext)
-    const customContext = {
-      ...ctx,
-      apolloClient: client,
-    }
-    const translations = await getTranslationStrings(customContext.apolloClient)
-
-    return {
-      ...pageProps,
-      translations,
-    }
-  }
-
+class JudicialSystemApplication extends App {
   render() {
-    const { Component, pageProps, translations } = this.props
+    const { Component, pageProps, router } = this.props
 
     return (
       <>
@@ -84,13 +52,18 @@ class JudicialSystemApplication extends App<Props> {
           <ApolloProvider client={client}>
             <FeatureProvider>
               <UserProvider>
-                <LocaleProvider locale="is" messages={translations || {}}>
+                <LocaleProvider locale="is" messages={{}}>
                   <LawyerRegistryProvider>
                     <ServiceInterruptionBanner />
                     <FormProvider>
                       <HeaderContainer />
                       <Box component="main">
-                        <Component {...pageProps} />
+                        {/* Keyed by route so a render error on one page
+                            does not keep the fallback up after the user
+                            navigates client-side to a healthy page */}
+                        <ErrorBoundary key={router.asPath}>
+                          <Component {...pageProps} />
+                        </ErrorBoundary>
                       </Box>
                       <ToastContainer />
                     </FormProvider>
@@ -116,6 +89,18 @@ class JudicialSystemApplication extends App<Props> {
                           url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-regular.woff2')
                             format('woff2'),
                           url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-regular.woff')
+                            format('woff');
+                      }
+                      @font-face {
+                        font-family: 'IBM Plex Sans';
+                        font-style: italic;
+                        font-weight: 300;
+                        font-display: swap;
+                        src: local('IBM Plex Sans Light Italic'),
+                          local('IBMPlexSans-LightItalic'),
+                          url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-300italic.woff2')
+                            format('woff2'),
+                          url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-300italic.woff')
                             format('woff');
                       }
                       @font-face {
@@ -152,6 +137,30 @@ class JudicialSystemApplication extends App<Props> {
                           url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-600.woff2')
                             format('woff2'),
                           url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-600.woff')
+                            format('woff');
+                      }
+                      @font-face {
+                        font-family: 'IBM Plex Sans';
+                        font-style: normal;
+                        font-weight: 700;
+                        font-display: swap;
+                        src: local('IBM Plex Sans Bold'),
+                          local('IBMPlexSans-Bold'),
+                          url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-700.woff2')
+                            format('woff2'),
+                          url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-700.woff')
+                            format('woff');
+                      }
+                      @font-face {
+                        font-family: 'IBM Plex Sans';
+                        font-style: italic;
+                        font-weight: 700;
+                        font-display: swap;
+                        src: local('IBM Plex Sans Bold Italic'),
+                          local('IBMPlexSans-BoldItalic'),
+                          url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-700italic.woff2')
+                            format('woff2'),
+                          url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-700italic.woff')
                             format('woff');
                       }
                     `}</style>

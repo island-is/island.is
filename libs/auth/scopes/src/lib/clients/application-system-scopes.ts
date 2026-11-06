@@ -27,6 +27,8 @@ export const applicationSystemScopes = [
   ApiScope.ojoiAdverts,
   ApiScope.hms,
   ApiScope.directorateOfEquality,
+  ApiScope.directorateOfEqualitySalary,
+  ApiScope.fjsDebts,
   ApplicationScope.read,
   ApplicationScope.write,
   AuthScope.actorDelegations,

@@ -20,6 +20,9 @@ export class CreateScreenInput {
 
 @InputType('FormSystemUpdateScreenDtoInput')
 export class UpdateSectionDtoInput {
+  @Field(() => String, { nullable: true })
+  identifier?: string
+
   @Field(() => LanguageTypeInput, { nullable: true })
   name?: LanguageTypeInput
 

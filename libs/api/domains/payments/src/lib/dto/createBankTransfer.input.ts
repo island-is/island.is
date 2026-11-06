@@ -12,4 +12,11 @@ export class CreateBankTransferInput {
 
   @Field(() => String)
   bankAccountNumber!: string
+
+  @Field(() => String, {
+    nullable: true,
+    description:
+      'National id of the individual with the rights to authorise payments from the company account. Required when the payer is a company.',
+  })
+  actorNationalId?: string
 }

@@ -16,4 +16,9 @@ export class OrganizationZendeskInstanceDto {
   @IsString()
   @IsOptional()
   organizationId?: string
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  formId?: string
 }

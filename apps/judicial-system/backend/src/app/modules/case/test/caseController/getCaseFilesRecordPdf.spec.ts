@@ -50,6 +50,7 @@ describe('CaseController - Get case files record pdf', () => {
   const res = { end: jest.fn() } as unknown as Response
 
   let mockawsS3Service: AwsS3Service
+  let mockFindPoliceDigitalCaseFiles: jest.Mock
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -64,9 +65,9 @@ describe('CaseController - Get case files record pdf', () => {
     mockGetObject.mockRejectedValue(new Error('Some error'))
     const mockPutObject = mockawsS3Service.putObject as jest.Mock
     mockPutObject.mockRejectedValue(new Error('Some error'))
-    const mockFindAll =
-      policeDigitalCaseFileRepositoryService.findAll as jest.Mock
-    mockFindAll.mockResolvedValue([])
+    mockFindPoliceDigitalCaseFiles =
+      policeDigitalCaseFileRepositoryService.findByCaseAndPoliceCaseNumber as jest.Mock
+    mockFindPoliceDigitalCaseFiles.mockResolvedValue([])
 
     givenWhenThen = async (policeCaseNumber: string) => {
       const then = {} as Then
@@ -98,6 +99,10 @@ describe('CaseController - Get case files record pdf', () => {
       expect(mockawsS3Service.getObject).toHaveBeenCalledWith(
         theCase.type,
         `${caseId}/${policeCaseNumber}/caseFilesRecord.pdf`,
+      )
+      expect(mockFindPoliceDigitalCaseFiles).toHaveBeenCalledWith(
+        caseId,
+        policeCaseNumber,
       )
       expect(createCaseFilesRecord).toHaveBeenCalledWith(
         theCase,

@@ -5,6 +5,7 @@ import {
   getValueViaPath,
   pruneAfterDays,
   pruneAfterDaysWithMessage,
+  schedulePruneReminderAfterDays,
 } from '@island.is/application/core'
 import {
   Application,
@@ -23,6 +24,7 @@ import {
   PassportsApi,
   StaticText,
 } from '@island.is/application/types'
+import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
 import {
   DeliveryAddressApi,
@@ -33,12 +35,15 @@ import {
   NationalRegistryUserParentB,
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
-import { application as applicationMessage } from './messages'
+import { application as applicationMessage, review } from './messages'
 import { Events, Roles, States, ApiActions, Routes } from './constants'
 import { IdCardSchema } from './dataSchema'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItems, hasReviewer } from '../utils'
 import { CodeOwners } from '@island.is/shared/constants'
+
+const PARENT_B_PRUNE_AFTER_DAYS = 7
+const PARENT_B_PRUNE_AFTER_MS = PARENT_B_PRUNE_AFTER_DAYS * 24 * 3600 * 1000
 
 export const needsReview = (context: ApplicationContext) => {
   const { answers, externalData } = context.application
@@ -144,6 +149,13 @@ const IdCardTemplate: ApplicationTemplate<
                 import('../forms/IdCardForm').then((module) =>
                   Promise.resolve(module.IdCardForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Áfram',
+                  type: 'primary',
+                },
+              ],
               write: 'all',
               delete: true,
             },
@@ -171,19 +183,29 @@ const IdCardTemplate: ApplicationTemplate<
         meta: {
           name: 'ParentB',
           status: 'inprogress',
-          lifecycle: pruneAfterDaysWithMessage(7, (application) => {
-            const nationalId = getValueViaPath<string>(
-              application.answers,
-              'applicantInformation.nationalId',
-            )
-            return {
-              notificationTemplateId:
-                NotificationConfig[NotificationType.IdCardPruned].templateId,
-              ...(nationalId && {
-                args: [{ key: 'internalBody', value: nationalId }],
-              }),
-            }
-          }),
+          lifecycle: pruneAfterDaysWithMessage(
+            PARENT_B_PRUNE_AFTER_DAYS,
+            (application) => {
+              const nationalId = getValueViaPath<string>(
+                application.answers,
+                'applicantInformation.nationalId',
+              )
+              return {
+                notificationTemplateId:
+                  NotificationConfig[NotificationType.IdCardPruned].templateId,
+                ...(nationalId && {
+                  args: [{ key: 'internalBody', value: nationalId }],
+                }),
+              }
+            },
+          ),
+          scheduledNotifications: () =>
+            schedulePruneReminderAfterDays(
+              PARENT_B_PRUNE_AFTER_MS,
+              2,
+              applicationMessage.pruneReason,
+              Features.idCardScheduledNotifications,
+            ),
           onEntry: defineTemplateApi({
             action: ApiActions.assignParentB,
           }),
@@ -204,6 +226,11 @@ const IdCardTemplate: ApplicationTemplate<
                 ),
               actions: [
                 { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: review.buttons.reject,
+                  type: 'reject',
+                },
               ],
               write: 'all',
               api: [NationalRegistryUserParentB],

@@ -69,11 +69,11 @@ export const contextMenuButton = style({
   cursor: 'pointer',
   transition: 'background-color .2s',
 
-  ':hover': {
-    backgroundColor: theme.color.blue200,
-  },
-
   selectors: {
+    // The open state of the context menu should look the same as hover
+    '&:hover, &[aria-expanded="true"]': {
+      backgroundColor: theme.color.blue200,
+    },
     '&:focus-visible': {
       outline: 'none',
       boxShadow: `0 0 0 ${theme.border.width.large}px ${theme.border.color.focus}`,

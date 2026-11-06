@@ -12,7 +12,7 @@ export const bankInfoSubsection = buildSubSection({
   title: m.bankInfoForm.general.sectionTitle,
   children: [
     buildMultiField({
-      id: 'bankInfoMultiField',
+      id: Routes.BANKINFOMULTIFIELD,
       title: m.bankInfoForm.general.pageTitle,
       children: [
         buildDescriptionField({

@@ -19,6 +19,7 @@ export const HUGVERKASTOFAN_SLUG = 'hugverkastofan'
 export const DOMSMALARADUNEYTID_SLUG = 'domsmalaraduneytid'
 export const LANDLAEKNIR_SLUG = 'landlaeknir'
 export const LANDSPITALI_SLUG = 'landspitali'
+export const STAFRAEN_HEILSA_SLUG = 'stafraen-heilsa'
 export const LANDSKJORSTJORN_SLUG = 'landskjorstjorn'
 export const ATVINNUVEGARADUNEYTID_SLUG = 'atvinnuvegaraduneytid'
 

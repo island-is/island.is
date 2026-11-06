@@ -6,7 +6,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -16,34 +15,32 @@ import {
   isTrafficViolationIndictmentCount,
 } from '@island.is/judicial-system/types'
 
-import { IndictmentCount, Offense } from '../repository'
+import {
+  IndictmentCount,
+  IndictmentCountRepositoryService,
+  Offense,
+  OffenseRepositoryService,
+} from '../repository'
 import { UpdateIndictmentCountDto } from './dto/updateIndictmentCount.dto'
 import { UpdateOffenseDto } from './dto/updateOffense.dto'
 
 @Injectable()
 export class IndictmentCountService {
   constructor(
-    @InjectModel(IndictmentCount)
-    private readonly indictmentCountModel: typeof IndictmentCount,
-    @InjectModel(Offense) private readonly offenseModel: typeof Offense,
+    private readonly indictmentCountRepositoryService: IndictmentCountRepositoryService,
+    private readonly offenseRepositoryService: OffenseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async findById(indictmentCountId: string): Promise<IndictmentCount> {
-    const indictmentCount = await this.indictmentCountModel.findByPk(
-      indictmentCountId,
-      {
-        include: [
-          {
-            model: Offense,
-            as: 'offenses',
-            required: false,
-            separate: true,
-            order: [['created', 'ASC']],
-          },
-        ],
-      },
-    )
+  async findById(
+    indictmentCountId: string,
+    options: { transaction: Transaction },
+  ): Promise<IndictmentCount> {
+    const indictmentCount =
+      await this.indictmentCountRepositoryService.findByIdWithOffenses(
+        indictmentCountId,
+        options,
+      )
 
     if (!indictmentCount) {
       throw new NotFoundException(
@@ -58,15 +55,13 @@ export class IndictmentCountService {
     caseId: string,
     transaction: Transaction,
   ): Promise<number> {
-    const maxDisplayOrder = await this.indictmentCountModel.max(
-      'displayOrder',
-      {
-        where: { caseId },
-        transaction,
-      },
-    )
+    const maxDisplayOrder =
+      await this.indictmentCountRepositoryService.getMaxDisplayOrderForCase(
+        caseId,
+        { transaction },
+      )
 
-    return typeof maxDisplayOrder === 'number' ? maxDisplayOrder : -1
+    return maxDisplayOrder ?? -1
   }
 
   async reorder(
@@ -75,23 +70,21 @@ export class IndictmentCountService {
     transaction: Transaction,
   ): Promise<IndictmentCount[]> {
     const updates = counts.map(async ({ id, displayOrder }) => {
-      const [numberOfAffectedRows, updatedIndictmentCounts] =
-        await this.indictmentCountModel.update(
+      const { numberOfAffectedRows, indictmentCounts } =
+        await this.indictmentCountRepositoryService.updateByIdAndCase(
+          id,
+          caseId,
           { displayOrder },
-          {
-            where: { id, caseId },
-            returning: true,
-            transaction,
-          },
+          { transaction },
         )
 
-      if (numberOfAffectedRows !== 1 || !updatedIndictmentCounts[0]) {
+      if (numberOfAffectedRows !== 1 || !indictmentCounts[0]) {
         throw new NotFoundException(
           `IndictmentCount ${id} not found for case ${caseId}`,
         )
       }
 
-      return updatedIndictmentCounts[0]
+      return indictmentCounts[0]
     })
 
     return Promise.all(updates)
@@ -101,14 +94,11 @@ export class IndictmentCountService {
     caseId: string,
     transaction: Transaction,
   ): Promise<void> {
-    const counts = await this.indictmentCountModel.findAll({
-      where: { caseId },
-      order: [
-        ['displayOrder', 'ASC'],
-        ['created', 'ASC'],
-      ],
-      transaction,
-    })
+    const counts =
+      await this.indictmentCountRepositoryService.findAllForCaseOrdered(
+        caseId,
+        { transaction },
+      )
 
     if (counts.length === 0) {
       return
@@ -128,8 +118,9 @@ export class IndictmentCountService {
     const displayOrder =
       (await this.getMaxDisplayOrder(caseId, transaction)) + 1
 
-    return this.indictmentCountModel.create(
-      { caseId, displayOrder },
+    return this.indictmentCountRepositoryService.create(
+      caseId,
+      { displayOrder },
       { transaction },
     )
   }
@@ -142,8 +133,9 @@ export class IndictmentCountService {
     const displayOrder =
       (await this.getMaxDisplayOrder(caseId, transaction)) + 1
 
-    return this.indictmentCountModel.create(
-      { caseId, policeCaseNumber, displayOrder },
+    return this.indictmentCountRepositoryService.create(
+      caseId,
+      { policeCaseNumber, displayOrder },
       { transaction },
     )
   }
@@ -158,11 +150,12 @@ export class IndictmentCountService {
       const policeCaseNumberSubtypes = update.policeCaseNumberSubtypes
       const updatedSubtypes = update.indictmentCountSubtypes
       if (!policeCaseNumberSubtypes || !updatedSubtypes) {
-        return this.indictmentCountModel.update(update, {
-          where: { id: indictmentCountId, caseId },
-          returning: true,
-          transaction,
-        })
+        return this.indictmentCountRepositoryService.updateByIdAndCase(
+          indictmentCountId,
+          caseId,
+          update,
+          { transaction },
+        )
       }
 
       const isTrafficViolation = isTrafficViolationIndictmentCount(
@@ -186,20 +179,21 @@ export class IndictmentCountService {
       if (!isTrafficViolation) {
         // currently offenses only exist for traffic violation indictment subtype.
         // if we support other offenses per subtype in the future we have to take the subtype into account
-        await this.offenseModel.destroy({
-          where: { indictmentCountId },
-          transaction,
-        })
+        await this.offenseRepositoryService.deleteAllForIndictmentCount(
+          indictmentCountId,
+          { transaction },
+        )
       }
 
-      return this.indictmentCountModel.update(updatedIndictmentCount, {
-        where: { id: indictmentCountId, caseId },
-        returning: true,
-        transaction,
-      })
+      return this.indictmentCountRepositoryService.updateByIdAndCase(
+        indictmentCountId,
+        caseId,
+        updatedIndictmentCount,
+        { transaction },
+      )
     }
 
-    const [numberOfAffectedRows, updatedIndictmentCounts] =
+    const { numberOfAffectedRows, indictmentCounts } =
       await updateIndictmentCount()
 
     if (numberOfAffectedRows > 1) {
@@ -213,7 +207,7 @@ export class IndictmentCountService {
       )
     }
 
-    return updatedIndictmentCounts[0]
+    return indictmentCounts[0]
   }
 
   async delete(
@@ -221,15 +215,17 @@ export class IndictmentCountService {
     indictmentCountId: string,
     transaction: Transaction,
   ): Promise<boolean> {
-    await this.offenseModel.destroy({
-      where: { indictmentCountId },
-      transaction,
-    })
+    await this.offenseRepositoryService.deleteAllForIndictmentCount(
+      indictmentCountId,
+      { transaction },
+    )
 
-    const numberOfAffectedRows = await this.indictmentCountModel.destroy({
-      where: { id: indictmentCountId, caseId },
-      transaction,
-    })
+    const numberOfAffectedRows =
+      await this.indictmentCountRepositoryService.deleteByIdAndCase(
+        indictmentCountId,
+        caseId,
+        { transaction },
+      )
 
     if (numberOfAffectedRows > 1) {
       // Tolerate failure, but log error
@@ -250,22 +246,28 @@ export class IndictmentCountService {
   async createOffense(
     indictmentCountId: string,
     offense: IndictmentCountOffense,
+    options: { transaction: Transaction },
   ): Promise<Offense> {
-    return this.offenseModel.create({ indictmentCountId, offense })
+    return this.offenseRepositoryService.create(
+      indictmentCountId,
+      offense,
+      options,
+    )
   }
 
   async updateOffense(
     indictmentCountId: string,
     offenseId: string,
     update: UpdateOffenseDto,
+    options: { transaction: Transaction },
   ): Promise<Offense> {
-    const [numberOfAffectedRows, offenses] = await this.offenseModel.update(
-      update,
-      {
-        where: { id: offenseId, indictmentCountId },
-        returning: true,
-      },
-    )
+    const { numberOfAffectedRows, offenses } =
+      await this.offenseRepositoryService.updateByIdAndIndictmentCount(
+        offenseId,
+        indictmentCountId,
+        update,
+        options,
+      )
 
     if (numberOfAffectedRows > 1) {
       // Tolerate failure, but log error
@@ -284,10 +286,14 @@ export class IndictmentCountService {
   async deleteOffense(
     indictmentCountId: string,
     offenseId: string,
+    options: { transaction: Transaction },
   ): Promise<boolean> {
-    const numberOfAffectedRows = await this.offenseModel.destroy({
-      where: { id: offenseId, indictmentCountId },
-    })
+    const numberOfAffectedRows =
+      await this.offenseRepositoryService.deleteByIdAndIndictmentCount(
+        offenseId,
+        indictmentCountId,
+        options,
+      )
 
     if (numberOfAffectedRows > 1) {
       // Tolerate failure, but log error

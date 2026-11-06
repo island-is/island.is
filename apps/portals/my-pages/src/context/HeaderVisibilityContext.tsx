@@ -10,6 +10,12 @@ interface HeaderVisibilityContextType {
    */
   headerHeight: number
   setHeaderHeight: (height: number) => void
+  /**
+   * While the mobile search overlay is open, the page content behind it is
+   * made inert so focus and screen readers stay in the header and overlay.
+   */
+  searchMenuOpen: boolean
+  setSearchMenuOpen: (open: boolean) => void
 }
 
 const HeaderVisibilityContext = createContext<
@@ -25,10 +31,18 @@ export const HeaderVisibilityProvider = ({
   const [headerHeight, setHeaderHeight] = useState<number>(
     SERVICE_PORTAL_HEADER_HEIGHT_SM,
   )
+  const [searchMenuOpen, setSearchMenuOpen] = useState<boolean>(false)
 
   const value = useMemo(
-    () => ({ headerVisible, setHeaderVisible, headerHeight, setHeaderHeight }),
-    [headerVisible, headerHeight],
+    () => ({
+      headerVisible,
+      setHeaderVisible,
+      headerHeight,
+      setHeaderHeight,
+      searchMenuOpen,
+      setSearchMenuOpen,
+    }),
+    [headerVisible, headerHeight, searchMenuOpen],
   )
 
   return (

@@ -1,9 +1,8 @@
-import { FC } from 'react'
-import { useIntl } from 'react-intl'
+import type { FC } from 'react'
 
 import { AlertMessage } from '@island.is/island-ui/core'
+import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 
-import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import { caseResentExplanation as strings } from './CaseResentExplanation.strings'
 
 interface Props {
@@ -12,11 +11,9 @@ interface Props {
 
 const CaseResentExplanation: FC<Props> = (props) => {
   const { explanation } = props
-  const { formatMessage } = useIntl()
-
   return (
     <AlertMessage
-      title={formatMessage(strings.title)}
+      title={strings.title}
       message={
         <MarkdownWrapper
           markdown={explanation}

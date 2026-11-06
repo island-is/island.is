@@ -15,15 +15,22 @@ import {
 import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
+  endOfDayFromCreation,
   getReviewStatePendingAction,
   getValueViaPath,
   pruneAfterDays,
+  schedulePruneReminderBefore,
 } from '@island.is/application/core'
+import { Features } from '@island.is/feature-flags'
 import { Events, States, Roles } from './constants'
 import { ApiActions } from '../shared'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { TransferOfVehicleOwnershipSchema } from './dataSchema'
-import { application as applicationMessage, information } from './messages'
+import {
+  application as applicationMessage,
+  information,
+  review,
+} from './messages'
 import { CoOwnerAndOperator, UserInformation } from '../shared'
 import { assign } from 'xstate'
 import set from 'lodash/set'
@@ -45,13 +52,8 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
 import { CodeOwners } from '@island.is/shared/constants'
 
-const pruneInDaysAtMidnight = (application: Application, days: number) => {
-  const date = new Date(application.created)
-  date.setDate(date.getDate() + days)
-  const pruneDate = new Date(date)
-  pruneDate.setUTCHours(23, 59, 59)
-  return pruneDate
-}
+// days until application gets pruned when in review state
+const pruneLifeTimeInReview = 7
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const plate = getValueViaPath(
@@ -251,7 +253,7 @@ const template: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: (application: Application) =>
-              pruneInDaysAtMidnight(application, 7),
+              endOfDayFromCreation(application, pruneLifeTimeInReview),
             shouldDeleteChargeIfPaymentFulfilled: true,
             pruneMessage: (application) => {
               const plate = getValueViaPath(
@@ -268,6 +270,13 @@ const template: ApplicationTemplate<
               }
             },
           },
+          scheduledNotifications: (application) =>
+            schedulePruneReminderBefore(
+              endOfDayFromCreation(application, pruneLifeTimeInReview),
+              2,
+              applicationMessage.pruneReason,
+              Features.transferOfVehicleOwnershipScheduledNotifications,
+            ),
           onEntry: defineTemplateApi({
             action: ApiActions.addReview,
             shouldPersistToExternalData: true,
@@ -286,6 +295,23 @@ const template: ApplicationTemplate<
                 import('../forms/ReviewSeller').then((module) =>
                   Promise.resolve(module.ReviewSellerForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: review.buttons.reject,
+                  type: 'reject',
+                },
+              ],
               write: {
                 answers: [
                   'sellerCoOwner',
@@ -304,6 +330,23 @@ const template: ApplicationTemplate<
                 import('../forms/Review').then((module) =>
                   Promise.resolve(module.ReviewForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: review.buttons.reject,
+                  type: 'reject',
+                },
+              ],
               write: {
                 answers: [
                   'sellerCoOwner',
@@ -322,6 +365,23 @@ const template: ApplicationTemplate<
                 import('../forms/Review').then((module) =>
                   Promise.resolve(module.ReviewForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: review.buttons.reject,
+                  type: 'reject',
+                },
+              ],
               write: {
                 answers: [
                   'sellerCoOwner',

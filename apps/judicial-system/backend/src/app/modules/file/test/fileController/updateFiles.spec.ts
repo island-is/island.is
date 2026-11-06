@@ -5,7 +5,7 @@ import { InternalServerErrorException } from '@nestjs/common'
 
 import { createTestingFileModule } from '../createTestingFileModule'
 
-import { CaseFile } from '../../../repository'
+import { CaseFile, CaseFileRepositoryService } from '../../../repository'
 import { UpdateFileDto } from '../../dto/updateFile.dto'
 
 interface Then {
@@ -19,15 +19,15 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('FileController - Update case file order', () => {
-  let mockFileModel: typeof CaseFile
+  let mockCaseFileRepositoryService: CaseFileRepositoryService
   let givenWhenThen: GivenWhenThen
   let transaction: Transaction
 
   beforeEach(async () => {
-    const { fileModel, fileController, sequelize } =
+    const { caseFileRepositoryService, fileController, sequelize } =
       await createTestingFileModule()
 
-    mockFileModel = fileModel
+    mockCaseFileRepositoryService = caseFileRepositoryService
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
     mockTransaction.mockImplementationOnce(
@@ -76,8 +76,12 @@ describe('FileController - Update case file order', () => {
 
     let then: Then
     beforeEach(async () => {
-      const mockUpdate = mockFileModel.update as jest.Mock
-      mockUpdate.mockResolvedValue([1, [{}] as CaseFile[]])
+      const mockUpdate =
+        mockCaseFileRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdate.mockResolvedValue({
+        numberOfAffectedRows: 1,
+        caseFiles: [{}] as CaseFile[],
+      })
       then = await givenWhenThen(caseId, fileUpdates)
     })
 
@@ -94,8 +98,12 @@ describe('FileController - Update case file order', () => {
 
     let then: Then
     beforeEach(async () => {
-      const mockUpdate = mockFileModel.update as jest.Mock
-      mockUpdate.mockResolvedValue([0, [{}] as CaseFile[]]) // affected rows
+      const mockUpdate =
+        mockCaseFileRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdate.mockResolvedValue({
+        numberOfAffectedRows: 0,
+        caseFiles: [{}] as CaseFile[],
+      }) // affected rows
       then = await givenWhenThen(caseId, fileUpdates)
     })
 
@@ -116,10 +124,20 @@ describe('FileController - Update case file order', () => {
 
     let then: Then
     beforeEach(async () => {
-      const mockUpdate = mockFileModel.update as jest.Mock
-      mockUpdate.mockResolvedValue([1, [{}] as CaseFile[]])
-      mockUpdate.mockResolvedValueOnce([1, [{}] as CaseFile[]]) // first call => 1 affected row
-      mockUpdate.mockResolvedValueOnce([0, [] as CaseFile[]]) // secound call => 0 affected rows
+      const mockUpdate =
+        mockCaseFileRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdate.mockResolvedValue({
+        numberOfAffectedRows: 1,
+        caseFiles: [{}] as CaseFile[],
+      })
+      mockUpdate.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        caseFiles: [{}] as CaseFile[],
+      }) // first call => 1 affected row
+      mockUpdate.mockResolvedValueOnce({
+        numberOfAffectedRows: 0,
+        caseFiles: [] as CaseFile[],
+      }) // secound call => 0 affected rows
       then = await givenWhenThen(caseId, fileUpdates)
     })
 
@@ -140,9 +158,16 @@ describe('FileController - Update case file order', () => {
 
     let then: Then
     beforeEach(async () => {
-      const mockUpdate = mockFileModel.update as jest.Mock
-      mockUpdate.mockResolvedValue([1, [{}] as CaseFile[]])
-      mockUpdate.mockResolvedValueOnce([1, [{}] as CaseFile[]]) // first call => 1 affected row
+      const mockUpdate =
+        mockCaseFileRepositoryService.updateByIdAndCase as jest.Mock
+      mockUpdate.mockResolvedValue({
+        numberOfAffectedRows: 1,
+        caseFiles: [{}] as CaseFile[],
+      })
+      mockUpdate.mockResolvedValueOnce({
+        numberOfAffectedRows: 1,
+        caseFiles: [{}] as CaseFile[],
+      }) // first call => 1 affected row
       mockUpdate.mockRejectedValueOnce(new Error('some error')) // secound call => error
       then = await givenWhenThen(caseId, fileUpdates)
     })

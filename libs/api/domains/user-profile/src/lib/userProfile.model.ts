@@ -58,4 +58,7 @@ export class UserProfile {
 
   @Field(() => Boolean, { nullable: true })
   bankInfoError?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  onlyActionablePriorityNotifications?: boolean
 }

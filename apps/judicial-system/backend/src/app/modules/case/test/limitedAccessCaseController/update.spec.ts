@@ -1,10 +1,13 @@
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import { User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
+import { getOrCreateTransaction } from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
 import { Case, CaseRepositoryService } from '../../../repository'
 
 interface Then {
@@ -28,6 +31,7 @@ describe('LimitedAccessCaseController - Update', () => {
   } as Case
 
   let mockCaseRepositoryService: CaseRepositoryService
+  let mockSequelize: Sequelize
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -36,28 +40,37 @@ describe('LimitedAccessCaseController - Update', () => {
       await createTestingCaseModule()
 
     mockCaseRepositoryService = caseRepositoryService
+    mockSequelize = sequelize
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     const mockUpdate = mockCaseRepositoryService.update as jest.Mock
     mockUpdate.mockResolvedValue(updatedCase)
-    const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-    mockFindOne.mockResolvedValue(updatedCase)
+    const mockFindLimitedAccessById =
+      mockCaseRepositoryService.findLimitedAccessById as jest.Mock
+    mockFindLimitedAccessById.mockResolvedValue(updatedCase)
 
+    // The route is guarded by LimitedAccessCaseExistsForUpdateGuard, so the
+    // request transaction is already open - and holding a lock on this case
+    // row - by the time the handler runs. Guards do not execute in
+    // controller unit tests, so the request context and that transaction are
+    // set up here instead.
     givenWhenThen = async () => {
       const then = {} as Then
 
       try {
-        then.result = await limitedAccessCaseController.update(
-          caseId,
-          user,
-          theCase,
-          updateDto,
-        )
+        then.result = await runInRequestContext(async () => {
+          await getOrCreateTransaction(mockSequelize)
+
+          return limitedAccessCaseController.update(
+            caseId,
+            user,
+            theCase,
+            updateDto,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }
@@ -73,7 +86,11 @@ describe('LimitedAccessCaseController - Update', () => {
       then = await givenWhenThen()
     })
 
-    it('should update the case', () => {
+    it('should update the case in the transaction the guard opened', () => {
+      // Once, by the stand-in for the guard above. A second call would be
+      // the handler opening a transaction of its own, which would block on
+      // the guard's row lock and deadlock the request.
+      expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
       expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
         caseId,
         updateDto,
@@ -81,7 +98,13 @@ describe('LimitedAccessCaseController - Update', () => {
       )
     })
 
-    it('should return the updated case', () => {
+    it('should re-read the case in the same transaction and return it', () => {
+      expect(
+        mockCaseRepositoryService.findLimitedAccessById,
+      ).toHaveBeenCalledWith(caseId, {
+        defenceUserNationalId: undefined,
+        transaction,
+      })
       expect(then.result).toEqual(updatedCase)
     })
   })

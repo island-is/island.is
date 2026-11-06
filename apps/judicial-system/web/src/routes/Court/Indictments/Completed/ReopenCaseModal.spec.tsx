@@ -5,8 +5,11 @@ import {
   CaseType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  mockCase,
+  mockUser,
+} from '@island.is/judicial-system-web/src/utils/mocks'
 
-import { mockCase, mockUser } from '../../../../utils/mocks'
 import { canReopenCase } from './ReopenCaseModal'
 
 describe('canReopenCase', () => {

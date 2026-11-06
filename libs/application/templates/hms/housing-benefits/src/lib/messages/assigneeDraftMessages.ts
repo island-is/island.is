@@ -265,4 +265,9 @@ export const assigneeDraft = defineMessages({
     defaultMessage: 'Vinsamlegast lýstu þínum tekjum og aðstæðum.',
     description: 'Assignee draft income declaration text field description',
   },
+  validationIncomeDeclarationTextFieldRequired: {
+    id: 'hb.application:assigneeDraft.validationIncomeDeclarationTextFieldRequired',
+    defaultMessage: 'Vinsamlegast fylltu út tekjuyfirlýsingu',
+    description: 'Assignee draft income declaration text field required',
+  },
 })

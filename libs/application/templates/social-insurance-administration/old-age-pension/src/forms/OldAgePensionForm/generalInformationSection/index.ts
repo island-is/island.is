@@ -13,9 +13,9 @@ export const generalInformationSection = buildSection({
   children: [
     applicantInfoSubSection,
     paymentInfoSubSection,
+    onePaymentPerYearSubSection,
     incomePlanInstructionsSubSection,
     incomePlanSubSection,
-    onePaymentPerYearSubSection,
     residenceHistorySubSection,
   ],
 })

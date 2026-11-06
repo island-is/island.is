@@ -86,9 +86,6 @@ export class CourtSessionResponse {
   @Field(() => [CourtDocumentResponse], { nullable: true })
   readonly filedDocuments?: CourtDocumentResponse[]
 
-  @Field(() => [CourtDocumentResponse], { nullable: true })
-  readonly mergedFiledDocuments?: CourtDocumentResponse[]
-
   @Field(() => [CourtSessionString], { nullable: true })
   readonly courtSessionStrings?: CourtSessionString[]
 

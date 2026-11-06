@@ -1,34 +1,27 @@
-import {
-  ChangeEvent,
-  FC,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from 'react'
-import { useIntl } from 'react-intl'
-import { SingleValue } from 'react-select'
+import type { ChangeEvent, FC } from 'react'
+import { useCallback, useContext, useMemo, useState } from 'react'
+import type { SingleValue } from 'react-select'
 import { InputMask } from '@react-input/mask'
 
 import { Input, Select } from '@island.is/island-ui/core'
 import { PHONE_NUMBER } from '@island.is/judicial-system/consts'
 import { formatPhoneNumber } from '@island.is/judicial-system/formatters'
 import { type Lawyer } from '@island.is/judicial-system/types'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { LawyerRegistryContext } from '@island.is/judicial-system-web/src/components/LawyerRegistryProvider/LawyerRegistryProvider'
+import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { replaceTabs } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 import {
   emailLabelStrings,
   nameLabelStrings,
   phoneNumberLabelStrings,
   placeholderStrings,
 } from './InputAdvocate.strings'
-import { grid } from '../../utils/styles/recipes.css'
 
 interface Props {
   advocateType:
@@ -87,7 +80,6 @@ const InputAdvocate: FC<Props> = ({
 
   disabled,
 }) => {
-  const { formatMessage } = useIntl()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>('')
   const [phoneNumberErrorMessage, setPhoneNumberErrorMessage] =
     useState<string>('')
@@ -99,9 +91,12 @@ const InputAdvocate: FC<Props> = ({
       return []
     }
 
+    // Options are keyed on the registry row id. Emails are neither unique nor
+    // always present, and the registry can list one national id twice, e.g.
+    // under an old and a new name, and each entry must stay selectable.
     return lawyers?.map((l) => ({
       label: `${l.name}${l.practice ? ` (${l.practice})` : ''}`,
-      value: l.email,
+      value: l.id,
     }))
   }, [lawyers])
 
@@ -115,9 +110,7 @@ const InputAdvocate: FC<Props> = ({
       if (selectedOption) {
         const { label, value } = selectedOption
 
-        const lawyer = lawyers?.find(
-          (l: Lawyer) => l.email === (value as string),
-        )
+        const lawyer = lawyers?.find((l: Lawyer) => l.id === (value as string))
 
         name = lawyer ? lawyer.name : label
         nationalId = lawyer ? lawyer.nationalId : null
@@ -191,16 +184,14 @@ const InputAdvocate: FC<Props> = ({
   )
 
   return (
-    <div className={grid({ gap: 2 })}>
+    <div className={stack({ gap: 2 })}>
       <Select
         name="advocateName"
         icon="search"
         options={options}
-        label={formatMessage(nameLabelStrings[advocateType])}
-        placeholder={formatMessage(placeholderStrings.namePlaceholder)}
-        value={
-          lawyerName ? { label: lawyerName, value: lawyerEmail ?? '' } : null
-        }
+        label={nameLabelStrings[advocateType]}
+        placeholder={placeholderStrings.namePlaceholder}
+        value={lawyerName ? { label: lawyerName, value: '' } : null}
         onChange={handleAdvocateChange}
         noOptionsMessage="Lögmaður fannst ekki í lögmannaskrá LMFÍ."
         isDisabled={Boolean(disabled)}
@@ -210,8 +201,8 @@ const InputAdvocate: FC<Props> = ({
         data-testid="defenderEmail"
         name="defenderEmail"
         autoComplete="off"
-        label={formatMessage(emailLabelStrings[advocateType])}
-        placeholder={formatMessage(placeholderStrings.emailPlaceholder)}
+        label={emailLabelStrings[advocateType]}
+        placeholder={placeholderStrings.emailPlaceholder}
         value={lawyerEmail ?? ''}
         errorMessage={emailErrorMessage}
         hasError={emailErrorMessage !== ''}
@@ -230,8 +221,8 @@ const InputAdvocate: FC<Props> = ({
         data-testid="defenderPhoneNumber"
         name="defenderPhoneNumber"
         autoComplete="off"
-        label={formatMessage(phoneNumberLabelStrings[advocateType])}
-        placeholder={formatMessage(placeholderStrings.phoneNumberPlaceholder)}
+        label={phoneNumberLabelStrings[advocateType]}
+        placeholder={placeholderStrings.phoneNumberPlaceholder}
         errorMessage={phoneNumberErrorMessage}
         hasError={phoneNumberErrorMessage !== ''}
       />

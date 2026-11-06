@@ -1,6 +1,8 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
+import { YES } from '@island.is/application/core'
 import { error } from './messages'
+import { getPriceCap } from '../utils'
 
 const UserSchemaBase = z.object({
   nationalId: z
@@ -25,20 +27,25 @@ export const EnergyFundsSchema = z.object({
     grantItemCode: z.string().optional(),
     type: z.string().optional(),
   }),
-  vehicleDetails: z.object({
-    price: z
-      .string()
-      .min(1)
-      .refine(
-        (x) => {
-          return parseInt(x) <= 10000000
-        },
-        { params: error.priceError },
-      ),
-  }),
+  vehicleDetails: z
+    .object({
+      price: z.string().min(1),
+      vehicleRegistrationCode: z.string().nullish(),
+    })
+    .refine(
+      ({ price, vehicleRegistrationCode }) =>
+        parseInt(price) <= getPriceCap(vehicleRegistrationCode),
+      { params: error.priceError, path: ['price'] },
+    ),
   grant: z.object({
     bankNumber: z.string().min(1),
     grantAmount: z.number().optional(),
+    confirmPriceDefinition: z
+      .array(z.string())
+      .optional()
+      .refine((v) => v?.includes(YES) ?? false, {
+        params: error.confirmPriceDefinitionRequired,
+      }),
   }),
 })
 

@@ -19,7 +19,6 @@ export class SequelizeConfigService implements SequelizeOptionsFactory {
 
   createSequelizeOptions(): SequelizeModuleOptions {
     const env = process.env.NODE_ENV || 'development'
-    // eslint-disable-next-line @typescript-eslint/ban-types
     const config = (dbConfig as { [key: string]: object })[env]
     return {
       ...config,

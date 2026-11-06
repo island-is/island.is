@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import {
   Image,
   ImageSourcePropType,
@@ -13,14 +13,16 @@ import info from '../../assets/alert/info-alert.png'
 import warning from '../../assets/alert/warning.png'
 import check from '../../assets/icons/check.png'
 import error from '../../assets/icons/error.png'
-import { dynamicColor } from '../../utils'
-import { Colors } from '../../utils/theme'
+import { token, TokenSelector } from '../../utils'
 import { Typography } from '../typography/typography'
 
 export type AlertType = 'error' | 'info' | 'success' | 'warning'
 
+export type AlertSize = 'default' | 'small'
+
 interface AlertProps {
   type: AlertType
+  size?: AlertSize
   title?: string
   message?: string
   style?: any
@@ -31,21 +33,23 @@ interface AlertProps {
 
   visible?: boolean
   hideIcon?: boolean
+  /** Action rendered below the message */
+  action?: ReactNode
   sharedAnimatedValue?: any
   hasBorder?: boolean
   hasBottomBorder?: boolean
 }
 
 interface HostProps {
-  backgroundColor: Colors
-  borderColor: Colors
+  colours: VariantStyle
   hasBorder?: boolean
   hasBottomBorder?: boolean
+  size: AlertSize
 }
 
 type VariantStyle = {
-  background: Colors
-  borderColor: Colors
+  background: TokenSelector
+  border: TokenSelector
   icon: ImageSourcePropType
 }
 
@@ -53,40 +57,17 @@ type VariantStyles = {
   [Type in AlertType]: VariantStyle
 }
 
-export const DARK_YELLOW_200 = '#1b1700'
-
-const darkBackgroundColor = (color: string, colors: any) => {
-  if (color === colors.blue100) {
-    return '#001333'
-  }
-  if (color === colors.yellow200) {
-    return DARK_YELLOW_200
-  }
-  return color
-}
-
 const Host = styled.View<HostProps>`
-  padding: ${({ theme }) => theme.spacing[2]}px;
+  padding: ${({ theme, size }) =>
+    size === 'small' ? theme.spacing[1] : theme.spacing[2]}px;
 
   border-style: solid;
-  border-color: ${dynamicColor((props) => ({
-    light: props.theme.color[props.borderColor],
-    dark: darkBackgroundColor(
-      props.theme.color[props.borderColor],
-      props.theme.color,
-    ),
-  }))};
+  border-color: ${(props) => token(props.colours.border)(props)};
   border-width: ${({ hasBorder }) => (hasBorder ? '1px' : 0)};
   ${({ hasBottomBorder }) => hasBottomBorder && 'border-bottom-width: 1px;'}
   border-radius: ${({ hasBorder }) => (hasBorder ? '8px' : 0)};
 
-  background-color: ${dynamicColor((props) => ({
-    light: props.theme.color[props.backgroundColor],
-    dark: darkBackgroundColor(
-      props.theme.color[props.backgroundColor],
-      props.theme.color,
-    ),
-  }))};
+  background-color: ${(props) => token(props.colours.background)(props)};
 `
 
 const Container = styled(SafeAreaView)`
@@ -105,8 +86,14 @@ const Content = styled.View`
   flex: 1;
 `
 
-const Title = styled(Typography)`
-  margin-bottom: 4px;
+// Transient `$size` so it isn't forwarded to Typography's own `size` (fontSize).
+const Title = styled(Typography)<{ $size: AlertSize }>`
+  margin-bottom: ${({ $size }) => ($size === 'small' ? '2px' : '4px')};
+`
+
+const Action = styled.View`
+  margin-top: ${({ theme }) => theme.spacing[1]}px;
+  align-self: flex-start;
 `
 
 const Close = styled(TouchableOpacity)`
@@ -123,23 +110,23 @@ const CloseIcon = styled.Image`
 
 const variantStyles: VariantStyles = {
   error: {
-    background: 'red100',
-    borderColor: 'red200',
+    background: (t) => t.feedback.error.background,
+    border: (t) => t.feedback.error.border,
     icon: error,
   },
   info: {
-    background: 'blue100',
-    borderColor: 'blue200',
+    background: (t) => t.feedback.information.backgroundMinimal,
+    border: (t) => t.feedback.information.border,
     icon: info,
   },
   success: {
-    background: 'mint100',
-    borderColor: 'mint200',
+    background: (t) => t.feedback.success.background,
+    border: (t) => t.feedback.success.border,
     icon: check,
   },
   warning: {
-    background: 'yellow200',
-    borderColor: 'yellow400',
+    background: (t) => t.feedback.warning.background,
+    border: (t) => t.feedback.warning.border,
     icon: warning,
   },
 }
@@ -148,8 +135,10 @@ export function Alert({
   title,
   message,
   type,
+  size = 'default',
   hideIcon = false,
   visible = true,
+  action,
   onClose,
   onClosed,
   sharedAnimatedValue,
@@ -160,6 +149,8 @@ export function Alert({
   const theme = useTheme()
   const [hidden, setHidden] = useState<boolean>()
   const variant = variantStyles[type]
+  const isSmall = size === 'small'
+  const iconSize = isSmall ? 24 : 32
 
   useEffect(() => {
     if (typeof hidden !== 'undefined') {
@@ -180,10 +171,10 @@ export function Alert({
 
   return (
     <Host
-      backgroundColor={variant.background}
-      borderColor={variant.borderColor}
+      colours={variant}
       hasBorder={hasBorder}
       hasBottomBorder={hasBottomBorder}
+      size={size}
       {...rest}
     >
       <Container>
@@ -192,18 +183,23 @@ export function Alert({
             <Image
               source={variant.icon}
               style={{
-                width: 32,
-                height: 32,
-                marginRight: 16,
+                width: iconSize,
+                height: iconSize,
+                marginRight: isSmall ? 8 : 16,
               }}
             />
           </Icon>
         )}
 
-        {(message || title) && (
+        {(message || title || action) && (
           <Content>
-            {title && <Title variant="heading5">{title}</Title>}
+            {title && (
+              <Title variant={isSmall ? 'eyebrow' : 'heading5'} $size={size}>
+                {title}
+              </Title>
+            )}
             {message && <Typography variant="body3">{message}</Typography>}
+            {action && <Action>{action}</Action>}
           </Content>
         )}
 
@@ -212,9 +208,7 @@ export function Alert({
             <CloseIcon
               source={close}
               style={{
-                tintColor: theme.isDark
-                  ? theme.color.white
-                  : theme.color.dark400,
+                tintColor: theme.tokens.foreground.primary,
               }}
             />
           </Close>

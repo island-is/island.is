@@ -18,7 +18,6 @@ import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
 import {
   core,
   errors,
-  laws,
   rcOverview as m,
   restrictionsV2,
   titles,
@@ -45,8 +44,8 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
+import type { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  CaseLegalProvisions,
   CaseOrigin,
   CaseState,
   CaseTransition,
@@ -56,8 +55,9 @@ import {
   useCase,
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { getLegalProvisionTitle } from '@island.is/judicial-system-web/src/utils/laws'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/utils'
 
 export const Overview = () => {
@@ -110,6 +110,12 @@ export const Overview = () => {
         )
       : workingCase.state !== CaseState.NEW
 
+    // transitionCase has already reported the failure, so leave the
+    // "sent to court" modal closed.
+    if (!caseSubmitted) {
+      return
+    }
+
     const notificationSent = caseSubmitted
       ? await sendNotification(
           workingCase.id,
@@ -119,9 +125,9 @@ export const Overview = () => {
 
     // An SMS should have been sent
     if (notificationSent) {
-      setModalText(formatMessage(m.sections.modal.notificationSent))
+      setModalText(m.sections.modal.notificationSent)
     } else {
-      setModalText(formatMessage(m.sections.modal.notificationNotSent))
+      setModalText(m.sections.modal.notificationNotSent)
     }
 
     if (workingCase.state === CaseState.RECEIVED) {
@@ -145,9 +151,7 @@ export const Overview = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.restrictionCases.overview)}
-      />
+      <PageHeader title={titles.prosecutor.restrictionCases.overview} />
       <FormContentContainer>
         {workingCase.state === CaseState.RECEIVED && (
           <Box
@@ -155,8 +159,8 @@ export const Overview = () => {
             data-testid="rc-overview-info-panel"
           >
             <AlertMessage
-              title={formatMessage(m.receivedAlert.title)}
-              message={formatMessage(m.receivedAlert.message)}
+              title={m.receivedAlert.title}
+              message={m.receivedAlert.message}
               type="info"
             />
           </Box>
@@ -164,22 +168,31 @@ export const Overview = () => {
         {workingCase.openedByDefender && (
           <Box marginBottom={5}>
             <AlertMessage
-              title={formatMessage(m.openedByDefenderAlert.title)}
-              message={formatMessage(m.openedByDefenderAlert.text, {
-                when: formatDate(workingCase.openedByDefender, 'PPPp'),
-              })}
+              title={m.openedByDefenderAlert.title}
+              message={formatMessage(
+                {
+                  id: m.openedByDefenderAlert.text,
+                  defaultMessage: m.openedByDefenderAlert.text,
+                },
+                {
+                  when: formatDate(workingCase.openedByDefender, 'PPPp'),
+                },
+              )}
               type="info"
               testid="alertMessageOpenedByDefender"
             />
           </Box>
         )}
         <PageTitle>
-          {formatMessage(m.headingV3, {
-            isExtended: Boolean(workingCase.parentCase),
-            caseType: workingCase.type,
-          })}
+          {formatMessage(
+            { id: m.headingV3, defaultMessage: m.headingV3 },
+            {
+              isExtended: Boolean(workingCase.parentCase),
+              caseType: workingCase.type,
+            },
+          )}
         </PageTitle>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           {workingCase.state === CaseState.RECEIVED &&
             workingCase.arraignmentDate?.date &&
@@ -229,7 +242,7 @@ export const Overview = () => {
               <AccordionItem
                 labelVariant="h3"
                 id="id_1"
-                label={formatMessage(lawsBrokenAccordion.heading)}
+                label={lawsBrokenAccordion.heading}
               >
                 <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
               </AccordionItem>
@@ -243,9 +256,7 @@ export const Overview = () => {
                     (legalProvision: CaseLegalProvisions, index: number) => {
                       return (
                         <div key={index}>
-                          <Text>
-                            {formatMessage(laws[legalProvision].title)}
-                          </Text>
+                          <Text>{getLegalProvisionTitle(legalProvision)}</Text>
                         </div>
                       )
                     },
@@ -257,9 +268,15 @@ export const Overview = () => {
               <AccordionItem
                 labelVariant="h3"
                 id="id_3"
-                label={formatMessage(restrictionsV2.title, {
-                  caseType: workingCase.type,
-                })}
+                label={formatMessage(
+                  {
+                    id: restrictionsV2.title,
+                    defaultMessage: restrictionsV2.title,
+                  },
+                  {
+                    caseType: workingCase.type,
+                  },
+                )}
               >
                 {formatRequestedCustodyRestrictions(
                   formatMessage,
@@ -329,9 +346,9 @@ export const Overview = () => {
           <div>
             <PdfButton
               caseId={workingCase.id}
-              title={formatMessage(core.pdfButtonRequest)}
+              title={core.pdfButtonRequest}
               pdfType="request"
-              elementId={formatMessage(core.pdfButtonRequest)}
+              elementId={core.pdfButtonRequest}
             />
           </div>
         </div>
@@ -375,22 +392,26 @@ export const Overview = () => {
       <AnimatePresence>
         {modal === 'caseSubmittedModal' && (
           <Modal
-            title={formatMessage(m.sections.modal.headingV2, {
-              caseType: workingCase.type,
-            })}
+            title={formatMessage(
+              {
+                id: m.sections.modal.headingV2,
+                defaultMessage: m.sections.modal.headingV2,
+              },
+              {
+                caseType: workingCase.type,
+              },
+            )}
             text={modalText}
             onClose={() => router.push(getStandardUserDashboardRoute(user))}
             buttons={[
               {
-                text: formatMessage(core.closeModal),
+                text: core.closeModal,
                 onClick: () => router.push(getStandardUserDashboardRoute(user)),
                 variant: 'ghost',
               },
             ]}
             errorMessage={
-              sendNotificationError
-                ? formatMessage(errors.sendNotification)
-                : undefined
+              sendNotificationError ? errors.sendNotification : undefined
             }
           />
         )}

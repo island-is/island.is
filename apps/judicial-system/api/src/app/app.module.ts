@@ -7,7 +7,6 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { GraphQLModule } from '@nestjs/graphql'
 
-import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { ProblemModule } from '@island.is/nest/problem'
 
 import {
@@ -21,6 +20,7 @@ import {
 
 import {
   AppealCaseModule,
+  AppealSummonsModule,
   AuthModule,
   authModuleConfig,
   BackendModule,
@@ -39,12 +39,14 @@ import {
   InstitutionModule,
   MessageSuspensionModule,
   PoliceModule,
+  ServiceInterruptionBannerModule,
   StatisticsModule,
   SubpoenaModule,
   UserModule,
   VerdictModule,
   VictimModule,
 } from './modules'
+import { responseSizePlugin } from './responseSize.plugin'
 
 const production = process.env.NODE_ENV === 'production'
 const debug = !production
@@ -62,6 +64,7 @@ const autoSchemaFile = production
       cache: 'bounded',
       path: '/api/graphql',
       context: ({ req }: never) => ({ req }),
+      plugins: [responseSizePlugin],
     }),
     BackendModule,
     SharedAuthModule,
@@ -74,18 +77,19 @@ const autoSchemaFile = production
     DefendantModule,
     DefenderModule,
     SubpoenaModule,
+    AppealSummonsModule,
     IndictmentCountModule,
     CourtSessionModule,
     FileModule,
     InstitutionModule,
     FeatureModule,
-    CmsTranslationsModule,
     PoliceModule,
     EventLogModule,
     VictimModule,
     VerdictModule,
     CaseTableModule,
     MessageSuspensionModule,
+    ServiceInterruptionBannerModule,
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
       isGlobal: true,

@@ -11,6 +11,8 @@ export class ApiScopeListDTO {
     this.domainName = model.domainName
     this.allowsWrite =
       model instanceof ApiScope ? model.allowsWrite ?? false : false
+    this.requiresConfirmation =
+      model instanceof ApiScope ? model.requiresConfirmation ?? false : false
     this.thirdPartyLoginUrl =
       model instanceof ApiScope ? model.thirdPartyLoginUrl ?? '' : ''
     this.group =
@@ -48,6 +50,13 @@ export class ApiScopeListDTO {
     example: false,
   })
   allowsWrite: boolean
+
+  @ApiProperty({
+    description:
+      'Whether granting this scope as a delegation requires a separate high-assurance confirmation (tvöfalt samþykki).',
+    example: false,
+  })
+  requiresConfirmation: boolean
 
   @ApiProperty({
     description: 'URL to redirect to for third party delegation login.',

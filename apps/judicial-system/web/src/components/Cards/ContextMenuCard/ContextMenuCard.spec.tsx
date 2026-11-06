@@ -1,27 +1,31 @@
-import { ReactElement } from 'react'
+import type { ReactElement } from 'react'
 import { fireEvent, render, screen } from '@testing-library/react'
 
-import { ContextMenuItem } from '../../ContextMenu/ContextMenu'
+import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
+
 import ContextMenuCard from './ContextMenuCard'
 
-jest.mock('../../ContextMenu/ContextMenu', () => {
-  const MockContextMenu = ({
-    render,
-    items,
-  }: {
-    render: ReactElement
-    items: ContextMenuItem[]
-  }) => (
-    <div data-testid="context-menu" data-items-count={items.length}>
-      {render}
-    </div>
-  )
+jest.mock(
+  '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu',
+  () => {
+    const MockContextMenu = ({
+      render,
+      items,
+    }: {
+      render: ReactElement
+      items: ContextMenuItem[]
+    }) => (
+      <div data-testid="context-menu" data-items-count={items.length}>
+        {render}
+      </div>
+    )
 
-  return {
-    __esModule: true,
-    default: MockContextMenu,
-  }
-})
+    return {
+      __esModule: true,
+      default: MockContextMenu,
+    }
+  },
+)
 
 describe('ContextMenuCard', () => {
   const renderComponent = (contextMenuItems?: ContextMenuItem[]) =>

@@ -9,12 +9,14 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import defaults from 'lodash/defaults'
+import isEqual from 'lodash/isEqual'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 
 import { SectionInfo } from '@/app/dataTypes/sectionInfo.model'
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { AssetTypes, FamilyTypes } from '@island.is/form-system/enums'
 import {
   FieldTypesEnum,
   FormStatus,
@@ -64,6 +66,7 @@ import { Section } from '../sections/models/section.model'
 import { FormDto } from './models/dto/form.dto'
 import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
+import { CopyFormDto } from './models/dto/copyForm.dto'
 import { Form } from './models/form.model'
 import { OrganizationZendeskInstanceDto } from '../organizations/models/dto/organizationZendeskInstance.dto'
 import {
@@ -73,6 +76,11 @@ import {
   ApplicationJsonValueDto,
 } from '../applications/models/dto/application.json.dto'
 import { FormDelegationDto } from './models/dto/formDelegation.dto'
+import { normalizeZendeskInstance } from '../../../utils/zendeskPartiesCustomFieldIds'
+import { ImportFormDto } from './models/dto/importForm.dto'
+import { formExportSchema } from './formExport.schema'
+
+const MAX_COPY_SLUG_RETRIES = 5
 
 @Injectable()
 export class FormsService {
@@ -143,6 +151,7 @@ export class FormsService {
       'zendeskInternal',
       'useValidate',
       'submissionServiceUrl',
+      'zendeskBrandId',
       'isTranslated',
       'hasPayment',
       'beenPublished',
@@ -151,6 +160,8 @@ export class FormsService {
       'submissionDaysToLive',
       'allowProceedOnValidationFail',
       'isInaccessible',
+      'validateEligibility',
+      'enableApplicationPdfDownload',
       'hasSummaryScreen',
       'sectionInfo',
       'lastModifiedBy',
@@ -218,7 +229,8 @@ export class FormsService {
       )
     }
 
-    const formResponse = await this.buildFormResponse(form)
+    const cleanedForm = await this.cleanDependencies(form)
+    const formResponse = await this.buildFormResponse(cleanedForm)
 
     if (!formResponse) {
       throw new Error('Error generating form response')
@@ -331,47 +343,118 @@ export class FormsService {
       )
     }
 
-    const originalHasPayment = form.hasPayment
-    const originalHasSummary = form.hasSummaryScreen
+    const originalUseValidate = form.useValidate
 
     Object.assign(form, updateFormDto)
 
-    if (originalHasPayment !== form.hasPayment) {
-      if (originalHasPayment) {
-        form.draftTotalSteps--
-      } else {
-        form.draftTotalSteps++
-      }
-    }
-
-    if (originalHasSummary !== form.hasSummaryScreen) {
-      if (originalHasSummary) {
-        form.draftTotalSteps--
-      } else {
-        form.draftTotalSteps++
-      }
+    if (form.useValidate === false) {
+      form.validateEligibility = false
     }
 
     const response = new UpdateFormResponse()
 
     try {
-      await form.save()
+      await this.sequelize.transaction(async (transaction) => {
+        if (updateFormDto.dependencies !== undefined) {
+          const definition = await this.findById(id, transaction)
+          const dependencyIds = this.getDependencyIds(definition)
+          if (
+            !(updateFormDto.dependencies ?? []).every((dependency) =>
+              [dependency.parentProp, ...dependency.childProps].every((prop) =>
+                dependencyIds.has(prop),
+              ),
+            )
+          ) {
+            throw new BadRequestException(
+              'Dependencies reference elements that do not belong to this form',
+            )
+          }
+        }
+        form.draftTotalSteps = await this.countDraftTotalSteps(
+          form,
+          transaction,
+        )
+        await form.save({ transaction })
+
+        if (
+          originalUseValidate === true &&
+          updateFormDto.useValidate === false
+        ) {
+          const sections = await this.sectionModel.findAll({
+            attributes: ['id'],
+            where: { formId: id },
+            transaction,
+          })
+
+          await this.screenModel.update(
+            { shouldValidate: false },
+            {
+              where: {
+                sectionId: { [Op.in]: sections.map((section) => section.id) },
+              },
+              transaction,
+            },
+          )
+          await this.formModel.update(
+            { validateEligibility: false },
+            {
+              where: { id },
+              transaction,
+            },
+          )
+        }
+      })
     } catch (error) {
       if (error instanceof UniqueConstraintError) {
         const slug = updateFormDto.slug
         response.updateSuccess = false
-        response.errors = [
-          {
-            field: 'slug',
-            message: `slug '${slug}' er þegar í notkun. Vinsamlegast veldu annað slug.`,
-          } as UpdateFormError,
-        ]
+        response.errors = [this.getSlugError(slug)]
       } else {
         throw error
       }
     }
 
     return response
+  }
+
+  private async countDraftTotalSteps(
+    form: Form,
+    transaction: Transaction,
+  ): Promise<number> {
+    const inputSections = await this.sectionModel.count({
+      where: { formId: form.id, sectionType: SectionTypes.INPUT },
+      transaction,
+    })
+
+    return (
+      inputSections +
+      1 +
+      Number(form.hasSummaryScreen) +
+      Number(form.hasPayment && !form.hasSummaryScreen)
+    )
+  }
+
+  private getSlugError(slug?: string): UpdateFormError {
+    return {
+      field: 'slug',
+      message: `slug '${slug}' er þegar í notkun. Vinsamlegast veldu annað slug.`,
+    } as UpdateFormError
+  }
+
+  private isSlugUniqueConstraintError(
+    error: unknown,
+  ): error is UniqueConstraintError {
+    return (
+      error instanceof UniqueConstraintError &&
+      Object.keys(error.fields ?? {}).includes('slug')
+    )
+  }
+
+  private throwSlugConflict(slug?: string): never {
+    throw new BadRequestException({
+      updateSuccess: false,
+      errors: [this.getSlugError(slug)],
+    } as UpdateFormResponse)
   }
 
   async addDelegation(
@@ -444,7 +527,153 @@ export class FormsService {
     })
   }
 
-  async copy(user: User, id: string): Promise<FormResponseDto> {
+  async exportForm(user: User, id: string): Promise<string> {
+    const form = await this.findById(id)
+    if (
+      user.nationalId !== form.organizationNationalId &&
+      !user.scope.includes(AdminPortalScope.formSystemAdmin)
+    ) {
+      throw new ForbiddenException(
+        'User does not have permission to export form',
+      )
+    }
+
+    return JSON.stringify({
+      format: 'island.is/form-system',
+      version: 1,
+      form: form.toJSON(),
+    })
+  }
+
+  async importForm(user: User, input: ImportFormDto): Promise<FormResponseDto> {
+    if (
+      user.nationalId !== input.organizationNationalId &&
+      !user.scope.includes(AdminPortalScope.formSystemAdmin)
+    ) {
+      throw new ForbiddenException(
+        'User does not have permission to import to this organization',
+      )
+    }
+
+    let parsed: ReturnType<typeof formExportSchema.parse>
+    try {
+      parsed = formExportSchema.parse(JSON.parse(input.formJson))
+    } catch {
+      throw new BadRequestException('Invalid or unsupported form export')
+    }
+
+    const organization = await this.organizationModel.findOne({
+      where: { nationalId: input.organizationNationalId },
+    })
+    if (!organization) {
+      throw new NotFoundException('Destination organization not found')
+    }
+
+    const source = this.formModel.build(
+      {
+        ...parsed.form,
+        organizationId: organization.id,
+        organizationNationalId: organization.nationalId,
+        organizationDisplayName:
+          parsed.form.organizationNationalId !== organization.nationalId
+            ? { is: '', en: '' }
+            : parsed.form.organizationDisplayName,
+        delegations:
+          parsed.form.organizationNationalId !== organization.nationalId
+            ? []
+            : parsed.form.delegations,
+        status: FormStatus.IN_DEVELOPMENT,
+        isInaccessible: false,
+        invalidationDate: null,
+        lastModifiedBy: undefined,
+      } as unknown as Form,
+      {
+        include: [
+          {
+            model: Section,
+            include: [
+              {
+                model: Screen,
+                include: [{ model: Field, include: [ListItem] }],
+              },
+            ],
+          },
+          FormCertificationType,
+        ],
+      },
+    )
+
+    const ids = new Set<string>()
+    const registerId = (id: string) => {
+      if (ids.has(id))
+        throw new BadRequestException('Duplicate IDs in form export')
+      ids.add(id)
+    }
+    registerId(source.id)
+    for (const section of source.sections) {
+      registerId(section.id)
+      for (const screen of section.screens) {
+        registerId(screen.id)
+        for (const field of screen.fields) {
+          registerId(field.id)
+          for (const item of field.list ?? []) registerId(item.id)
+        }
+      }
+    }
+    for (const dependency of source.dependencies ?? []) {
+      if (
+        ![dependency.parentProp, ...dependency.childProps].every((id) =>
+          ids.has(id),
+        )
+      ) {
+        throw new BadRequestException(
+          'Form export contains an invalid dependency',
+        )
+      }
+    }
+
+    const certifications = new Set(
+      (await this.getCertificationTypes(organization.id)).map(
+        (type) => type.id,
+      ),
+    )
+    if (
+      source.formCertificationTypes?.some(
+        (type) => !certifications.has(type.certificationTypeId),
+      )
+    ) {
+      throw new BadRequestException(
+        'Certification type is not available in the destination organization',
+      )
+    }
+
+    for (let retry = 0; retry < MAX_COPY_SLUG_RETRIES; retry++) {
+      const slug = await this.getUniqueCopySlug(source.slug?.trim() || 'form')
+      try {
+        const imported = await this.copyForm(
+          source.id,
+          false,
+          false,
+          slug,
+          undefined,
+          undefined,
+          source,
+        )
+        return this.buildFormResponse(await this.findById(imported.id))
+      } catch (error) {
+        if (!this.isSlugUniqueConstraintError(error)) throw error
+        if (retry === MAX_COPY_SLUG_RETRIES - 1) this.throwSlugConflict(slug)
+      }
+    }
+    throw new ConflictException('Unable to allocate a unique form slug')
+  }
+
+  async copy(
+    user: User,
+    id: string,
+    copyFormDto: CopyFormDto,
+  ): Promise<FormResponseDto> {
+    const { organizationNationalId } = copyFormDto
     const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
 
     const form = await this.findById(id)
@@ -461,12 +690,62 @@ export class FormsService {
       )
     }
 
-    const copyForm = await this.copyForm(
-      id,
-      false,
-      form.isInaccessible,
-      `${form.slug}-afrit`,
-    )
+    if (!isAdmin && organizationNationalId !== formOwnerNationalId) {
+      throw new ForbiddenException(
+        `User does not have permission to copy form to organization with nationalId '${organizationNationalId}'`,
+      )
+    }
+
+    let destinationOrganization: Organization | undefined
+
+    if (isAdmin && organizationNationalId !== formOwnerNationalId) {
+      const organization = await this.organizationModel.findOne({
+        where: { nationalId: organizationNationalId },
+      })
+      if (!organization) {
+        throw new NotFoundException(
+          `Organization with nationalId ${organizationNationalId} not found`,
+        )
+      }
+
+      destinationOrganization = organization
+    }
+
+    const copyToDifferentOrganization = destinationOrganization !== undefined
+    const newSlugBase = copyToDifferentOrganization
+      ? `${organizationNationalId}-${form.slug}`
+      : `${form.slug}-afrit`
+
+    let copyForm: Form | undefined
+    let newSlug: string | undefined
+
+    for (let retry = 0; retry < MAX_COPY_SLUG_RETRIES; retry++) {
+      newSlug = await this.getUniqueCopySlug(newSlugBase)
+
+      try {
+        copyForm = await this.copyForm(
+          id,
+          false,
+          form.isInaccessible,
+          newSlug,
+          destinationOrganization,
+        )
+        break
+      } catch (error) {
+        if (!this.isSlugUniqueConstraintError(error)) {
+          throw error
+        }
+
+        if (retry === MAX_COPY_SLUG_RETRIES - 1) {
+          this.throwSlugConflict(newSlug)
+        }
+      }
+    }
+
+    if (!copyForm) {
+      this.throwSlugConflict(newSlug)
+    }
+
     const formResponse = await this.buildFormResponse(copyForm)
 
     if (!formResponse) {
@@ -500,6 +779,10 @@ export class FormsService {
     const { newStatus } = updateFormStatusDto
     const currentStatus = form.status
 
+    if (newStatus === FormStatus.PUBLISHED) {
+      await this.validateZendeskSettingsForPublish(form)
+    }
+
     switch (currentStatus) {
       case FormStatus.IN_DEVELOPMENT:
         if (newStatus === FormStatus.PUBLISHED) {
@@ -532,6 +815,41 @@ export class FormsService {
     )
   }
 
+  private async validateZendeskSettingsForPublish(form: Form): Promise<void> {
+    if (form.submissionServiceUrl !== 'zendesk') {
+      return
+    }
+
+    const organization = await this.organizationModel.findByPk(
+      form.organizationId,
+    )
+    const zendeskBrandId = form.zendeskBrandId?.trim()
+    const zendeskInstance = organization?.zendeskInstance?.trim()
+    const supportedZendeskInstance = normalizeZendeskInstance(zendeskInstance)
+
+    if (!zendeskBrandId || !zendeskInstance) {
+      throw new BadRequestException(
+        'Zendesk instance and brand ID must be configured before publishing a Zendesk form.',
+      )
+    }
+
+    if (!supportedZendeskInstance) {
+      throw new BadRequestException('Unsupported Zendesk tenant')
+    }
+  }
+
+  private async getUniqueCopySlug(baseSlug: string): Promise<string> {
+    let slug = baseSlug
+    let suffix = 2
+
+    while (await this.formModel.unscoped().count({ where: { slug } })) {
+      slug = `${baseSlug}-${suffix}`
+      suffix++
+    }
+
+    return slug
+  }
+
   private async publishFormInDevelopment(
     id: string,
     form: Form,
@@ -558,6 +876,7 @@ export class FormsService {
 
         form.status = FormStatus.PUBLISHED
         form.beenPublished = true
+        form.isInaccessible = false
         await form.save({ transaction })
       } catch (error) {
         throw new InternalServerErrorException(
@@ -578,7 +897,14 @@ export class FormsService {
       form.slug = `${form.slug}-archived-${Date.now()}`
       await form.save({ transaction })
 
-      copyForm = await this.copyForm(id, false, true, slug, transaction)
+      copyForm = await this.copyForm(
+        id,
+        false,
+        true,
+        slug,
+        undefined,
+        transaction,
+      )
     })
 
     if (!copyForm) {
@@ -642,6 +968,7 @@ export class FormsService {
             ? slugToBeArchived
             : formToBePublished.slug
         formToBePublished.status = FormStatus.PUBLISHED
+        formToBePublished.isInaccessible = false
         await formToBePublished.save({ transaction })
       } catch (error) {
         throw new InternalServerErrorException(
@@ -668,6 +995,7 @@ export class FormsService {
       true,
       form.isInaccessible,
       `${form.slug}-i-breytingu`,
+      undefined,
     )
     const formResponse = await this.buildFormResponse(copyForm)
 
@@ -983,9 +1311,12 @@ export class FormsService {
       'submissionDaysToLive',
       'allowProceedOnValidationFail',
       'isInaccessible',
+      'validateEligibility',
+      'enableApplicationPdfDownload',
       'zendeskInternal',
       'useValidate',
       'submissionServiceUrl',
+      'zendeskBrandId',
       'hasSummaryScreen',
       'sectionInfo',
       'dependencies',
@@ -1101,7 +1432,7 @@ export class FormsService {
     formDto.organizationZendeskInstance.zendeskInstance =
       organization?.zendeskInstance ?? ''
     formDto.organizationZendeskInstance.zendeskBrandId =
-      organization?.zendeskBrandId ?? ''
+      form.zendeskBrandId ?? ''
 
     return formDto
   }
@@ -1169,6 +1500,59 @@ export class FormsService {
     } as Field)
   }
 
+  private getDependencyIds(form: Form): Set<string> {
+    return new Set(
+      form.sections.flatMap((section) => [
+        section.id,
+        ...section.screens.flatMap((screen) => [
+          screen.id,
+          ...screen.fields.flatMap((field) => [
+            field.id,
+            ...(field.list ?? []).map((item) => item.id),
+          ]),
+        ]),
+      ]),
+    )
+  }
+
+  private filterValidDependencies(form: Form): Dependency[] {
+    const dependencyIds = this.getDependencyIds(form)
+    return (form.dependencies ?? [])
+      .filter((dependency) => dependencyIds.has(dependency.parentProp))
+      .map((dependency) => ({
+        ...dependency,
+        childProps: dependency.childProps.filter((prop) =>
+          dependencyIds.has(prop),
+        ),
+      }))
+      .filter((dependency) => dependency.childProps.length > 0)
+  }
+
+  private async cleanDependencies(form: Form): Promise<Form> {
+    if (isEqual(form.dependencies ?? [], this.filterValidDependencies(form))) {
+      return form
+    }
+
+    return this.sequelize.transaction(async (transaction) => {
+      const lockedForm = await this.formModel.findByPk(form.id, {
+        attributes: ['id'],
+        lock: Transaction.LOCK.UPDATE,
+        transaction,
+      })
+      if (!lockedForm) {
+        throw new NotFoundException(`Form with id '${form.id}' not found`)
+      }
+
+      const currentForm = await this.findById(form.id, transaction)
+      const dependencies = this.filterValidDependencies(currentForm)
+      if (!isEqual(currentForm.dependencies ?? [], dependencies)) {
+        currentForm.dependencies = dependencies
+        await currentForm.save({ fields: ['dependencies'], transaction })
+      }
+      return currentForm
+    })
+  }
+
   private async updateDependencies(
     oldId: string,
     newId: string,
@@ -1189,9 +1573,11 @@ export class FormsService {
     isDerived: boolean,
     isBeingArchived: boolean,
     slug: string,
+    destinationOrganization: Organization | undefined,
     transaction?: Transaction,
+    sourceForm?: Form,
   ): Promise<Form> {
-    const existingForm = await this.findById(id, transaction)
+    const existingForm = sourceForm ?? (await this.findById(id, transaction))
     if (!existingForm) {
       throw new NotFoundException(`Form with id '${id}' not found`)
     }
@@ -1202,7 +1588,9 @@ export class FormsService {
       )
     }
 
-    let deps = existingForm.dependencies || []
+    const copyToDifferentOrganization = destinationOrganization !== undefined
+
+    let deps = this.filterValidDependencies(existingForm)
 
     const newForm = existingForm.toJSON()
     newForm.id = uuidV4()
@@ -1220,6 +1608,33 @@ export class FormsService {
     newForm.invalidationDate = isBeingArchived
       ? undefined
       : existingForm.invalidationDate
+    newForm.organizationNationalId = copyToDifferentOrganization
+      ? destinationOrganization.nationalId
+      : existingForm.organizationNationalId
+    newForm.organizationId = copyToDifferentOrganization
+      ? destinationOrganization.id
+      : existingForm.organizationId
+    newForm.organizationDisplayName = copyToDifferentOrganization
+      ? { is: '', en: '' }
+      : existingForm.organizationDisplayName
+    newForm.submissionServiceUrl = copyToDifferentOrganization
+      ? ''
+      : existingForm.submissionServiceUrl
+    newForm.zendeskBrandId = copyToDifferentOrganization
+      ? ''
+      : existingForm.zendeskBrandId
+    newForm.zendeskInternal = copyToDifferentOrganization
+      ? false
+      : existingForm.zendeskInternal
+    newForm.useValidate = copyToDifferentOrganization
+      ? false
+      : existingForm.useValidate
+    newForm.lastModifiedBy = copyToDifferentOrganization
+      ? undefined
+      : existingForm.lastModifiedBy
+    newForm.delegations = copyToDifferentOrganization
+      ? []
+      : existingForm.delegations
 
     const sections: Section[] = []
     const screens: Screen[] = []
@@ -1275,8 +1690,25 @@ export class FormsService {
     }
     newForm.dependencies = deps
 
+    const destinationCertificationTypeIds = copyToDifferentOrganization
+      ? new Set(
+          (await this.getCertificationTypes(newForm.organizationId)).map(
+            (certificationType) => certificationType.id,
+          ),
+        )
+      : undefined
+
     if (existingForm.formCertificationTypes) {
       for (const certificationType of existingForm.formCertificationTypes) {
+        if (
+          destinationCertificationTypeIds &&
+          !destinationCertificationTypeIds.has(
+            certificationType.certificationTypeId,
+          )
+        ) {
+          continue
+        }
+
         const newFormCertificationType = certificationType.toJSON()
         newFormCertificationType.id = uuidV4()
         newFormCertificationType.formId = newForm.id
@@ -1304,6 +1736,10 @@ export class FormsService {
         await this.sequelize.transaction(createCopy)
       }
     } catch (error) {
+      if (this.isSlugUniqueConstraintError(error)) {
+        throw error
+      }
+
       this.logger.error(`Failed to copy form '${id}'`, error)
       throw new InternalServerErrorException(
         `Unexpected error copying form '${id}'`,
@@ -1339,9 +1775,17 @@ export class FormsService {
         if (field.fieldType === FieldTypesEnum.APPLICANT) {
           settings.applicantType = field.fieldSettings?.applicantType
         }
+        if (field.fieldType === FieldTypesEnum.ASSETS) {
+          settings.assetType = field.fieldSettings?.assetType
+        }
+        if (field.fieldType === FieldTypesEnum.FAMILY) {
+          settings.familyType = field.fieldSettings?.familyType
+        }
         if (
           settings.isDecimal !== undefined ||
-          settings.applicantType !== undefined
+          settings.applicantType !== undefined ||
+          settings.assetType !== undefined ||
+          settings.familyType !== undefined
         ) {
           jsonField.fieldSettings = settings
         }
@@ -1351,7 +1795,18 @@ export class FormsService {
         jsonField.values = [
           {
             order: 0,
-            json: this.fillValueTypeExamples(shaped),
+            json: this.fillValueTypeExamples(
+              shaped,
+              field.fieldType === FieldTypesEnum.ASSETS
+                ? field.fieldSettings?.assetType
+                : undefined,
+              field.fieldType === FieldTypesEnum.NUMBERBOX
+                ? field.fieldSettings?.isDecimal
+                : undefined,
+              field.fieldType === FieldTypesEnum.FAMILY
+                ? field.fieldSettings?.familyType
+                : undefined,
+            ),
           } as ApplicationJsonValueDto,
         ]
         return jsonField
@@ -1369,11 +1824,30 @@ export class FormsService {
     return jsonSample
   }
 
-  private fillValueTypeExamples(partial: Partial<ValueType>): ValueType {
-    const v = partial as any
+  private fillValueTypeExamples(
+    partial: Partial<ValueType>,
+    assetType?: string,
+    isDecimal?: boolean,
+    familyType?: string,
+  ): ValueType {
+    const assetValueTypes =
+      assetType === AssetTypes.REAL_ESTATE
+        ? ['address', 'postalCode', 'municipality', 'propertyNumber']
+        : assetType === AssetTypes.VEHICLE
+        ? ['registrationNumber', 'model', 'color']
+        : undefined
+    const familyValueTypes =
+      familyType === FamilyTypes.SPOUSE
+        ? ['nationalId', 'name', 'maritalStatus']
+        : familyType === FamilyTypes.CHILD ||
+          familyType === FamilyTypes.NATIONAL_ID_ESTATE
+        ? ['nationalId', 'name']
+        : undefined
+    const valueTypes = assetValueTypes ?? familyValueTypes
+    const v = (valueTypes ? pick(partial, valueTypes) : partial) as any
 
     if ('text' in v) v.text = 'Dæmi texti'
-    if ('number' in v) v.number = 123
+    if ('number' in v) v.number = isDecimal ? 17.5 : 17
     if ('date' in v) v.date = new Date('2026-01-01')
     if ('label' in v) v.label = { is: 'Dæmi', en: 'Example' }
     if ('value' in v) v.value = 'example_value'
@@ -1385,9 +1859,14 @@ export class FormsService {
     if ('municipality' in v) v.municipality = 'Reykjavík'
     if ('jobTitle' in v) v.jobTitle = 'Developer'
     if ('altName' in v) v.altName = 'Aukanafn'
+    if ('maritalStatus' in v) v.maritalStatus = 'Gift/ur'
 
     if ('homestayNumber' in v) v.homestayNumber = 'HOMESTAY-123'
     if ('propertyNumber' in v) v.propertyNumber = 'F1234567'
+
+    if ('registrationNumber' in v) v.registrationNumber = 'ABC123'
+    if ('model' in v) v.model = 'Tesla Model S'
+    if ('color' in v) v.color = { is: 'Rauður', en: 'Red' }
 
     if ('totalDays' in v) v.totalDays = 10
     if ('totalAmount' in v) v.totalAmount = 5000

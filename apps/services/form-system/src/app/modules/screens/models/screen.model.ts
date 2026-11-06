@@ -24,7 +24,7 @@ export class Screen extends Model<Screen> {
   id!: string
 
   @Column({
-    type: DataType.UUID,
+    type: DataType.STRING,
     allowNull: false,
     defaultValue: DataType.UUIDV4,
   })

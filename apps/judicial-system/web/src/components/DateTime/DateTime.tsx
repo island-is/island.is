@@ -1,15 +1,13 @@
-import { ChangeEvent, FC, FocusEvent, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
+import type { ChangeEvent, FC, FocusEvent } from 'react'
+import { useEffect, useState } from 'react'
 import { InputMask } from '@react-input/mask'
 
 import { DatePicker, Input } from '@island.is/island-ui/core'
 import { DATE_PICKER_TIME } from '@island.is/judicial-system/consts'
-import {
-  validate,
-  Validation,
-} from '@island.is/judicial-system-web/src/utils/validate'
+import { BlueBox } from '@island.is/judicial-system-web/src/components'
+import type { Validation } from '@island.is/judicial-system-web/src/utils/validate'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { BlueBox } from '../../components'
 import { strings } from './DateTime.strings'
 import * as styles from './DateTime.css'
 
@@ -52,8 +50,6 @@ const DateTime: FC<Props> = ({
   defaultTime = '',
   onChange,
 }) => {
-  const { formatMessage } = useIntl()
-
   const getTimeFromDate = (date: Date | undefined): string =>
     date
       ? `${date.getHours().toString().padStart(2, '0')}:${date
@@ -215,8 +211,8 @@ const DateTime: FC<Props> = ({
             value={currentTime}
             data-testid={`${name}-time`}
             name={`${name}-time`}
-            label={timeLabel ?? formatMessage(strings.timeLabel)}
-            placeholder={formatMessage(strings.timePlaceholder)}
+            label={timeLabel ?? strings.timeLabel}
+            placeholder={strings.timePlaceholder}
             errorMessage={timeErrorMessage}
             hasError={timeErrorMessage !== undefined}
             icon={locked ? { name: 'lockClosed', type: 'outline' } : undefined}

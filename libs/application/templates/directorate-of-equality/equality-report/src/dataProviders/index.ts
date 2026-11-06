@@ -1,5 +1,9 @@
-import { defineTemplateApi } from '@island.is/application/types'
+import { defineTemplateApi, IdentityApi } from '@island.is/application/types'
 import { ApiActions } from '../utils/constants'
+
+export const IdentityApiProvider = IdentityApi.configure({
+  params: { includeActorInfo: true },
+})
 
 // PREREQUISITES providers — independent of each other, order is inconsequential
 export const CompanyRegistryApi = defineTemplateApi({
@@ -32,11 +36,18 @@ export const PreviousEqualityReportContentApi = defineTemplateApi({
   order: 0,
 })
 
-export const EqualityReportTemplateHtmlApi = defineTemplateApi({
-  action: ApiActions.getEqualityReportTemplateHtml,
-  externalDataId: 'equalityReportTemplateHtml',
+// The bytes of a PDF-backed previous plan. Its own on-demand provider rather
+// than part of `PreviousEqualityReportContentApi`, so several megabytes of
+// base64 are fetched only when the applicant asks to see the document — not on
+// every render of the screen that mentions it.
+export const PreviousEqualityReportPdfApi = defineTemplateApi({
+  action: ApiActions.getPreviousEqualityReportPdf,
+  externalDataId: 'previousEqualityReportPdf',
   namespace: 'DirectorateOfEquality',
   order: 0,
+  // The runner returns the bytes on the mutation response either way, so the
+  // download works without parking megabytes of base64 in the application row.
+  shouldPersistToExternalData: false,
 })
 
 export const EqualityReportTemplateDocxApi = defineTemplateApi({
@@ -46,8 +57,37 @@ export const EqualityReportTemplateDocxApi = defineTemplateApi({
   order: 0,
 })
 
-export const SubmitEqualityReportApi = defineTemplateApi({
-  action: ApiActions.submitEqualityReport,
+// On-demand only — triggered manually from the CommentThread field, never
+// wired to a state's onEntry. Listed on a role's `api` array purely so
+// updateApplicationExternalData is permitted to invoke it for that role.
+export const GetReportCommentsApi = defineTemplateApi({
+  action: ApiActions.getReportComments,
+  externalDataId: 'getReportComments',
+  namespace: 'DirectorateOfEquality',
+  order: 0,
+  throwOnError: false,
+})
+
+export const SubmitReportCommentApi = defineTemplateApi({
+  action: ApiActions.submitReportComment,
+  externalDataId: 'submitReportComment',
+  namespace: 'DirectorateOfEquality',
+  order: 0,
+  throwOnError: false,
+})
+
+// Idempotent on providerId — reopening this step returns the same draft.
+export const CreateEqualityDraftApi = defineTemplateApi({
+  action: ApiActions.createEqualityDraft,
+  externalDataId: 'equalityDraft',
+  namespace: 'DirectorateOfEquality',
+  shouldPersistToExternalData: false,
+  throwOnError: true,
+})
+
+export const SubmitEqualityDraftApi = defineTemplateApi({
+  action: ApiActions.submitEqualityDraft,
+  externalDataId: 'submitEqualityDraft',
   namespace: 'DirectorateOfEquality',
   shouldPersistToExternalData: true,
   throwOnError: true,

@@ -9,7 +9,7 @@ import {
   createTestUsers,
 } from '../../createTestingNotificationModule'
 
-import { Case, Notification } from '../../../../repository'
+import { Case, NotificationRepositoryService } from '../../../../repository'
 import { DeliverResponse } from '../../../models/deliver.response'
 
 interface Then {
@@ -31,7 +31,7 @@ describe('IndictmentCaseService - sendDrivingLicenseSuspensionNotifications', ()
   const policeCaseNumbers = ['LÖKE-2024-001', 'LÖKE-2024-002']
 
   let mockEmailService: EmailService
-  let mockNotificationModel: typeof Notification
+  let mockNotificationRepositoryService: NotificationRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -41,7 +41,7 @@ describe('IndictmentCaseService - sendDrivingLicenseSuspensionNotifications', ()
       emailService,
       indictmentCaseNotificationService,
       institutionContactRepositoryService,
-      notificationModel,
+      notificationRepositoryService,
     } = await createTestingNotificationModule()
 
     const getInstitutionContactMock = jest.mocked(
@@ -51,7 +51,7 @@ describe('IndictmentCaseService - sendDrivingLicenseSuspensionNotifications', ()
     getInstitutionContactMock.mockResolvedValue('extra@omnitrix.is')
 
     mockEmailService = emailService
-    mockNotificationModel = notificationModel
+    mockNotificationRepositoryService = notificationRepositoryService
 
     givenWhenThen = async (
       theCase: Case,
@@ -100,7 +100,7 @@ describe('IndictmentCaseService - sendDrivingLicenseSuspensionNotifications', ()
             },
           ],
           subject: `Svipting í máli ${courtCaseNumber}`,
-          html: `Skrá skal sviptingu ökuréttinda í ökuskírteinaskrá vegna máls ${courtCaseNumber} í Héraðsdómi Reykjavíkur. Einn af dómfelldu í málinu var sviptur ökuréttinda.<br><br>LÖKE númer: ${policeCaseNumbers.join(
+          html: `Skrá skal sviptingu ökuréttinda í ökuskírteinaskrá vegna máls ${courtCaseNumber} í Héraðsdómi Reykjavíkur.<br><br>LÖKE númer: ${policeCaseNumbers.join(
             ', ',
           )}.`,
         }),
@@ -108,8 +108,8 @@ describe('IndictmentCaseService - sendDrivingLicenseSuspensionNotifications', ()
     })
 
     it('should record notification', () => {
-      expect(mockNotificationModel.create).toHaveBeenCalledTimes(1)
-      expect(mockNotificationModel.create).toHaveBeenCalledWith({
+      expect(mockNotificationRepositoryService.create).toHaveBeenCalledTimes(1)
+      expect(mockNotificationRepositoryService.create).toHaveBeenCalledWith({
         caseId,
         type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
         recipients: ['extra@omnitrix.is'].map((email) => ({

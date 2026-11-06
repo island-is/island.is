@@ -55,10 +55,5 @@ export const requirements = {
       defaultMessage: 'Veldu aðila',
       description: 'Placeholder for the additional parties select',
     },
-    empty: {
-      id: 'ojoi.application:requirements.additionalParties.empty',
-      defaultMessage: 'Engir aðrir aðilar eru tiltækir.',
-      description: 'Message when no additional parties are available',
-    },
   }),
 }

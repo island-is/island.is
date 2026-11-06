@@ -18,6 +18,7 @@ export const ScopesCategoriesList = ({
   onSelectScope,
   selectedScopes,
   onSelectCategory,
+  canGrantSensitiveScopes,
 }: {
   loading: boolean
   error: boolean
@@ -25,6 +26,7 @@ export const ScopesCategoriesList = ({
   onSelectScope?: (scope: AuthApiScope) => void
   selectedScopes?: AuthApiScope[]
   onSelectCategory?: (scopes: AuthApiScope[]) => void
+  canGrantSensitiveScopes?: boolean
 }) => {
   const { formatMessage } = useLocale()
   return loading ? (
@@ -82,6 +84,7 @@ export const ScopesCategoriesList = ({
                     scopes={cat.scopes as AuthApiScope[]}
                     showCheckbox
                     onSelectScope={onSelectScope}
+                    canGrantSensitiveScopes={canGrantSensitiveScopes}
                   />
                 )}
               </Box>

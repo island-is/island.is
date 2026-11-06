@@ -3,10 +3,8 @@ import { useLocalStorage } from 'react-use'
 import { AnimatePresence, motion } from 'motion/react'
 
 import { Icon } from '@island.is/island-ui/core'
-import {
-  ContextMenu,
-  ContextMenuItem,
-} from '@island.is/judicial-system-web/src/components'
+import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components'
+import { ContextMenu } from '@island.is/judicial-system-web/src/components'
 import { onEnterOrSpace } from '@island.is/judicial-system-web/src/utils/utils'
 
 import SortButton from './SortButton/SortButton'

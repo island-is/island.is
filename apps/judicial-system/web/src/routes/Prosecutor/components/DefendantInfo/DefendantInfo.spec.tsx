@@ -1,10 +1,10 @@
+import type { ReactNode } from 'react'
 import { MockedProvider } from '@apollo/client/testing'
 import { fireEvent, render, screen } from '@testing-library/react'
 
-import {
-  Case,
-  Defendant,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { LocaleProvider } from '@island.is/localization'
 
 import DefendantInfo from './DefendantInfo'
@@ -18,8 +18,15 @@ jest.mock('@island.is/judicial-system-web/src/utils/hooks', () => ({
   useNationalRegistry: (...args: unknown[]) => mockUseNationalRegistry(...args),
 }))
 
-const renderDefendantInfo = (defendant: Partial<Defendant>) => {
-  const workingCase = { id: 'case_id', type: 'CUSTODY' } as Case
+const renderDefendantInfo = (
+  defendant: Partial<Defendant>,
+  {
+    type = CaseType.CUSTODY,
+    children,
+  }: { type?: CaseType; children?: ReactNode } = {},
+) => {
+  const workingCase = { id: 'case_id', type } as WorkingCase
+  const onChange = jest.fn()
 
   render(
     <MockedProvider>
@@ -28,12 +35,16 @@ const renderDefendantInfo = (defendant: Partial<Defendant>) => {
           defendant={{ id: 'def_id', ...defendant } as Defendant}
           workingCase={workingCase}
           setWorkingCase={jest.fn()}
-          onChange={jest.fn()}
+          onChange={onChange}
           updateDefendantState={jest.fn()}
-        />
+        >
+          {children}
+        </DefendantInfo>
       </LocaleProvider>
     </MockedProvider>,
   )
+
+  return { onChange }
 }
 
 const lastSkip = () => {
@@ -88,5 +99,87 @@ describe('DefendantInfo national registry skip behaviour', () => {
     fireEvent.change(input, { target: { value: '0202304499' } })
 
     expect(lastSkip()).toBe(false)
+  })
+})
+
+describe('DefendantInfo address persistence', () => {
+  beforeEach(() => {
+    mockUseNationalRegistry.mockReturnValue({
+      personData: undefined,
+      businessData: undefined,
+      error: undefined,
+      isLoading: false,
+      notFound: false,
+    })
+    mockUseNationalRegistry.mockClear()
+  })
+
+  test('does not persist a whitespace-only address', async () => {
+    const { onChange } = renderDefendantInfo({ address: 'Gata 1' })
+
+    const input = await screen.findByTestId('accusedAddress')
+
+    fireEvent.change(input, { target: { value: '   ' } })
+    fireEvent.blur(input, { target: { value: '   ' } })
+
+    expect(onChange).not.toHaveBeenCalled()
+    expect(screen.getByText('Reitur má ekki vera tómur')).toBeTruthy()
+  })
+
+  test('persists a valid address trimmed', async () => {
+    const { onChange } = renderDefendantInfo({ address: 'Gata 1' })
+
+    const input = await screen.findByTestId('accusedAddress')
+
+    fireEvent.change(input, { target: { value: ' Gata 2 ' } })
+    fireEvent.blur(input, { target: { value: ' Gata 2 ' } })
+
+    expect(onChange).toHaveBeenCalledWith({
+      caseId: 'case_id',
+      defendantId: 'def_id',
+      address: 'Gata 2',
+    })
+  })
+})
+
+describe('DefendantInfo box layout', () => {
+  beforeEach(() => {
+    mockUseNationalRegistry.mockReturnValue({
+      personData: undefined,
+      businessData: undefined,
+      error: undefined,
+      isLoading: false,
+      notFound: false,
+    })
+  })
+
+  test('titles a restriction case defendant as Sakborningur', async () => {
+    renderDefendantInfo({}, { type: CaseType.CUSTODY })
+
+    expect(
+      await screen.findByRole('heading', { name: 'Sakborningur' }),
+    ).toBeTruthy()
+  })
+
+  test('titles an investigation case defendant as Varnaraðili', async () => {
+    renderDefendantInfo({}, { type: CaseType.SEARCH_WARRANT })
+
+    expect(
+      await screen.findByRole('heading', { name: 'Varnaraðili' }),
+    ).toBeTruthy()
+  })
+
+  test('shows no title for an indictment defendant', async () => {
+    renderDefendantInfo({}, { type: CaseType.INDICTMENT })
+
+    await screen.findByTestId('inputNationalId')
+
+    expect(screen.queryByRole('heading')).toBeNull()
+  })
+
+  test('renders children inside the defendant box', async () => {
+    renderDefendantInfo({}, { children: <p>Defender fields</p> })
+
+    expect(await screen.findByText('Defender fields')).toBeTruthy()
   })
 })

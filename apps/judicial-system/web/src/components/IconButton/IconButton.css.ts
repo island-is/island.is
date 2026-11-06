@@ -13,8 +13,11 @@ export const iconButtonContainer = style({
   flexShrink: 0,
   transition: 'filter .2s, background-color .2s',
 
-  ':hover': {
-    filter: 'brightness(0.9)',
+  selectors: {
+    // The open state of a menu the button controls should look the same as hover
+    '&:hover, &[aria-expanded="true"]': {
+      filter: 'brightness(0.9)',
+    },
   },
 })
 
@@ -22,14 +25,18 @@ export const buttonDisabled = style({
   cursor: 'not-allowed',
   opacity: 0.5,
 
-  ':hover': {
-    filter: 'brightness(1)',
+  selectors: {
+    '&:hover, &[aria-expanded="true"]': {
+      filter: 'brightness(1)',
+    },
   },
 })
 
 export const transparent = style({
-  ':hover': {
-    backgroundColor: theme.color.blue200,
-    filter: 'brightness(1)',
+  selectors: {
+    '&:hover, &[aria-expanded="true"]': {
+      backgroundColor: theme.color.blue200,
+      filter: 'brightness(1)',
+    },
   },
 })

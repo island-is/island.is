@@ -2,7 +2,7 @@ import { v4 as uuid } from 'uuid'
 
 import { createTestingInstitutionModule } from './createTestingInstitutionModule'
 
-import { Institution } from '../../repository'
+import { Institution, InstitutionRepositoryService } from '../../repository'
 
 interface Then {
   result: Institution[]
@@ -12,22 +12,23 @@ interface Then {
 type GivenWhenThen = () => Promise<Then>
 
 describe('InstitutionController - Get all', () => {
-  let mockInstitutionModel: typeof Institution
+  let mockInstitutionRepositoryService: InstitutionRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { institutionModel, institutionController } =
+    const { institutionRepositoryService, institutionController } =
       await createTestingInstitutionModule()
 
-    mockInstitutionModel = institutionModel
+    mockInstitutionRepositoryService = institutionRepositoryService
 
     givenWhenThen = async () => {
       const then = {} as Then
 
-      await institutionController
-        .getAll()
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      try {
+        then.result = await institutionController.getAll()
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }
@@ -38,17 +39,17 @@ describe('InstitutionController - Get all', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindAll = mockInstitutionModel.findAll as jest.Mock
-      mockFindAll.mockResolvedValueOnce(institutions)
+      const mockFindAllActive =
+        mockInstitutionRepositoryService.findAllActive as jest.Mock
+      mockFindAllActive.mockResolvedValueOnce(institutions)
 
       then = await givenWhenThen()
     })
 
-    it('should return cases', () => {
-      expect(mockInstitutionModel.findAll).toHaveBeenCalledWith({
-        order: ['name'],
-        where: { active: true },
-      })
+    it('should return the active institutions', () => {
+      expect(
+        mockInstitutionRepositoryService.findAllActive,
+      ).toHaveBeenCalledWith(undefined)
       expect(then.result).toBe(institutions)
     })
   })

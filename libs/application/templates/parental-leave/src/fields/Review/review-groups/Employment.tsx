@@ -4,9 +4,8 @@ import {
   Label,
   RadioValue,
   ReviewGroup,
-  formatPhoneNumber,
-  removeCountryCode,
 } from '@island.is/application/ui-components'
+import { formatPhoneNumber, removeCountryCode } from '@island.is/shared/utils'
 import { StaticTableFormField } from '@island.is/application/ui-fields'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'

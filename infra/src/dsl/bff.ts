@@ -124,6 +124,13 @@ export const bffConfig = ({
       },
       BFF_CACHE_USER_PROFILE_TTL_MS: (60 * 60 * 1000 - 5000).toString(),
       BFF_LOGIN_ATTEMPT_TTL_MS: (60 * 60 * 1000 * 24 * 7).toString(),
+      // Max outbound sockets for the proxy agent; per-env so it's tunable.
+      BFF_PROXY_MAX_SOCKETS: {
+        local: '50',
+        dev: '50',
+        staging: '50',
+        prod: '50',
+      },
     },
     secrets: {
       BFF_TOKEN_SECRET_BASE64: `/k8s/services-bff/${clientName}/BFF_TOKEN_SECRET_BASE64`,

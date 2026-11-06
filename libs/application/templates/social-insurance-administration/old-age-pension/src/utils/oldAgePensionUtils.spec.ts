@@ -17,10 +17,11 @@ import {
   getApplicationExternalData,
   filterValidEmployers,
 } from './oldAgePensionUtils'
-import { isEarlyRetirement } from './conditionUtils'
+import { isEarlyRetirement, shouldShowIncomePlan } from './conditionUtils'
 import { ApplicationType } from './constants'
 import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import * as kennitala from 'kennitala'
+import { NO, YES } from '@island.is/application/core'
 
 const buildApplication = (data?: {
   answers?: FormValue
@@ -308,5 +309,29 @@ describe('filterValidEmployers', () => {
 
     expect(employers).toEqual(filteredList)
     expect(res).toEqual(filteredList)
+  })
+})
+
+describe('shouldShowIncomePlan', () => {
+  it('should show the income plan when a single yearly payment is declined', () => {
+    const application = buildApplication({
+      answers: { onePaymentPerYear: { question: NO } },
+    })
+
+    expect(shouldShowIncomePlan(application.answers)).toBe(true)
+  })
+
+  it('should skip the income plan when a single yearly payment is requested', () => {
+    const application = buildApplication({
+      answers: { onePaymentPerYear: { question: YES } },
+    })
+
+    expect(shouldShowIncomePlan(application.answers)).toBe(false)
+  })
+
+  it('should show the income plan before the question has been answered', () => {
+    const application = buildApplication()
+
+    expect(shouldShowIncomePlan(application.answers)).toBe(true)
   })
 })

@@ -18,9 +18,11 @@ import {
 } from '@nestjs/graphql'
 import { FormsService } from './forms.service'
 import {
+  CopyFormInput,
   CreateFormInput,
   GetFormInput,
   GetFormsInput,
+  ImportFormInput,
   UpdateFormInput,
 } from '../../dto/form.input'
 import {
@@ -44,6 +46,22 @@ import { GetOrganizationAdminInput } from '../../dto/organization.input'
 @CodeOwner(CodeOwners.Advania)
 export class FormsResolver {
   constructor(private readonly formsService: FormsService) {}
+
+  @Query(() => String, { name: 'exportFormSystemForm' })
+  async exportForm(
+    @Args('input', { type: () => GetFormInput }) input: GetFormInput,
+    @CurrentUser() user: User,
+  ): Promise<string> {
+    return this.formsService.exportForm(user, input)
+  }
+
+  @Mutation(() => FormResponse, { name: 'importFormSystemForm' })
+  async importForm(
+    @Args('input', { type: () => ImportFormInput }) input: ImportFormInput,
+    @CurrentUser() user: User,
+  ): Promise<FormResponse> {
+    return this.formsService.importForm(user, input)
+  }
 
   @Mutation(() => FormResponse, {
     name: 'createFormSystemForm',
@@ -72,10 +90,10 @@ export class FormsResolver {
     nullable: true,
   })
   async copyForm(
-    @Args('input', { type: () => GetFormInput }) id: GetFormInput,
+    @Args('input', { type: () => CopyFormInput }) input: CopyFormInput,
     @CurrentUser() user: User,
   ): Promise<FormResponse> {
-    return this.formsService.copyForm(user, id)
+    return this.formsService.copyForm(user, input)
   }
 
   @Query(() => FormResponse, {

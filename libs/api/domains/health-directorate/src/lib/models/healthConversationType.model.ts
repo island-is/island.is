@@ -15,8 +15,29 @@ export class HealthDirectorateHealthConversationType {
   description?: string
 
   @Field({
+    nullable: true,
+    description:
+      'Optional guidance to show once this type is selected, before the user composes. May contain markdown links. Sourced from island.is translations, not Hekla.',
+  })
+  instructions?: string
+
+  @Field({
     description:
       'True for certificate-request types (use POST /certificates); false for regular messages.',
   })
   isCertificate!: boolean
+
+  @Field({
+    nullable: true,
+    description:
+      'Set for entries that link to an external service (e.g. the Heilsuvera web chat). Open this URL instead of creating a conversation.',
+  })
+  externalLinkUrl?: string
+
+  @Field({
+    nullable: true,
+    description:
+      'Whether the external service is open right now. Only set when externalLinkUrl is present.',
+  })
+  isCurrentlyOpen?: boolean
 }

@@ -1,72 +1,142 @@
-import { getMessagingWindowInfo } from './messagingWindow'
+import {
+  formatTimeLabel,
+  getNextOpeningInfo,
+  getOpeningHoursLabels,
+  isClosingSoon,
+} from './messagingWindow'
 
-const setClock = (utcIso: string) => jest.setSystemTime(new Date(utcIso))
+const at = (windowOpen: string, windowClose: string, isAllDay = false) => ({
+  windowOpen,
+  windowClose,
+  isAllDay,
+})
 
-describe('getMessagingWindowInfo', () => {
-  beforeAll(() => {
-    jest.useFakeTimers()
+describe('formatTimeLabel', () => {
+  it('shortens HH:mm:ss to HH:mm and pads the hour', () => {
+    expect(formatTimeLabel('06:00:00')).toBe('06:00')
+    expect(formatTimeLabel('6:05')).toBe('06:05')
   })
 
-  afterAll(() => {
-    jest.useRealTimers()
+  it('is undefined for a missing or unparseable time', () => {
+    expect(formatTimeLabel(undefined)).toBeUndefined()
+    expect(formatTimeLabel(null)).toBeUndefined()
+    expect(formatTimeLabel('soon')).toBeUndefined()
+  })
+})
+
+describe('isClosingSoon', () => {
+  const closesAt = '2026-07-13T22:00:00.000Z'
+
+  it('is true within 30 minutes of closing', () => {
+    expect(isClosingSoon(closesAt, new Date('2026-07-13T21:45:00Z'))).toBe(true)
   })
 
-  const window = { windowOpen: '08:00:00', windowClose: '22:00:00' }
-
-  it('formats window times and current time as HH:mm labels', () => {
-    setClock('2026-07-13T09:05:00Z')
-    const info = getMessagingWindowInfo(window)
-    expect(info.windowOpenLabel).toBe('08:00')
-    expect(info.windowCloseLabel).toBe('22:00')
-    expect(info.currentTimeLabel).toBe('09:05')
+  it('is true exactly 30 minutes before closing', () => {
+    expect(isClosingSoon(closesAt, new Date('2026-07-13T21:30:00Z'))).toBe(true)
   })
 
-  it('is closing soon within 30 minutes of closing', () => {
-    setClock('2026-07-13T21:45:00Z')
-    expect(getMessagingWindowInfo(window).isClosingSoon).toBe(true)
+  it('is false earlier than that', () => {
+    expect(isClosingSoon(closesAt, new Date('2026-07-13T21:29:00Z'))).toBe(
+      false,
+    )
   })
 
-  it('is closing soon exactly 30 minutes before closing', () => {
-    setClock('2026-07-13T21:30:00Z')
-    expect(getMessagingWindowInfo(window).isClosingSoon).toBe(true)
+  it('is false at and after closing time', () => {
+    expect(isClosingSoon(closesAt, new Date('2026-07-13T22:00:00Z'))).toBe(
+      false,
+    )
+    expect(isClosingSoon(closesAt, new Date('2026-07-13T22:10:00Z'))).toBe(
+      false,
+    )
   })
 
-  it('is not closing soon at exactly closing time', () => {
-    setClock('2026-07-13T22:00:00Z')
-    expect(getMessagingWindowInfo(window).isClosingSoon).toBe(false)
+  it('handles a close time past midnight', () => {
+    expect(
+      isClosingSoon(
+        '2026-07-14T00:10:00.000Z',
+        new Date('2026-07-13T23:50:00Z'),
+      ),
+    ).toBe(true)
   })
 
-  it('is not closing soon after closing time', () => {
-    setClock('2026-07-13T22:10:00Z')
-    expect(getMessagingWindowInfo(window).isClosingSoon).toBe(false)
+  it('is false without a closing time', () => {
+    expect(isClosingSoon(undefined)).toBe(false)
+    expect(isClosingSoon(null)).toBe(false)
   })
+})
 
-  it('handles a window that closes just after midnight', () => {
-    setClock('2026-07-13T23:50:00Z')
-    const info = getMessagingWindowInfo({
-      windowOpen: '08:00:00',
-      windowClose: '00:15:00',
+describe('getOpeningHoursLabels', () => {
+  it('formats each day type and leaves closed ones undefined', () => {
+    const labels = getOpeningHoursLabels({
+      weekday: at('06:00:00', '22:00:00'),
+      weekend: at('00:00:00', '23:59:59', true),
+      holiday: null,
     })
-    expect(info.isClosingSoon).toBe(true)
-  })
-
-  it('returns undefined labels for unparseable times', () => {
-    setClock('2026-07-13T21:45:00Z')
-    const info = getMessagingWindowInfo({
-      windowOpen: 'test',
-      windowClose: 'test',
+    expect(labels).toEqual({
+      weekday: { openLabel: '06:00', closeLabel: '22:00', isAllDay: false },
+      weekend: { openLabel: '00:00', closeLabel: '23:59', isAllDay: true },
+      holiday: undefined,
     })
-    expect(info.windowOpenLabel).toBeUndefined()
-    expect(info.windowCloseLabel).toBeUndefined()
-    expect(info.isClosingSoon).toBe(false)
-    expect(info.currentTimeLabel).toBe('21:45')
   })
 
-  it('returns undefined labels when times are missing', () => {
-    setClock('2026-07-13T21:45:00Z')
-    const info = getMessagingWindowInfo({})
-    expect(info.windowOpenLabel).toBeUndefined()
-    expect(info.windowCloseLabel).toBeUndefined()
-    expect(info.isClosingSoon).toBe(false)
+  it('is undefined when the recipient never opens', () => {
+    expect(getOpeningHoursLabels({})).toBeUndefined()
+    expect(getOpeningHoursLabels(null)).toBeUndefined()
+  })
+})
+
+describe('getNextOpeningInfo', () => {
+  const nextOpensAt = {
+    date: '2026-07-14T06:00:00.000Z',
+    windowOpen: '06:00:00',
+  }
+
+  it('says tomorrow when the next opening is the next UTC day', () => {
+    const info = getNextOpeningInfo(
+      nextOpensAt,
+      new Date('2026-07-13T23:14:00Z'),
+    )
+    expect(info).toMatchObject({ when: 'tomorrow', timeLabel: '06:00' })
+  })
+
+  it('says today when the next opening is later the same UTC day', () => {
+    const info = getNextOpeningInfo(
+      { ...nextOpensAt, date: '2026-07-13T06:00:00.000Z' },
+      new Date('2026-07-13T04:00:00Z'),
+    )
+    expect(info?.when).toBe('today')
+  })
+
+  it('says later when the next opening is beyond tomorrow', () => {
+    const info = getNextOpeningInfo(
+      { ...nextOpensAt, date: '2026-07-18T06:00:00.000Z' },
+      new Date('2026-07-13T23:14:00Z'),
+    )
+    expect(info?.when).toBe('later')
+    expect(info?.dateLabel).toBe('18.07.2026')
+  })
+
+  it('formats the date label from the UTC calendar day', () => {
+    const info = getNextOpeningInfo(
+      { ...nextOpensAt, date: '2026-08-01T00:30:00.000Z' },
+      new Date('2026-07-13T23:14:00Z'),
+    )
+    expect(info?.dateLabel).toBe('01.08.2026')
+  })
+
+  it('flags a midnight opening so the time can be left out', () => {
+    const now = new Date('2026-07-13T23:14:00Z')
+    expect(
+      getNextOpeningInfo(
+        { date: '2026-07-14T00:00:00.000Z', windowOpen: '00:00:00' },
+        now,
+      ),
+    ).toMatchObject({ when: 'tomorrow', opensAtMidnight: true })
+    expect(getNextOpeningInfo(nextOpensAt, now)?.opensAtMidnight).toBe(false)
+  })
+
+  it('is undefined without a next opening', () => {
+    expect(getNextOpeningInfo(undefined)).toBeUndefined()
+    expect(getNextOpeningInfo(null)).toBeUndefined()
   })
 })

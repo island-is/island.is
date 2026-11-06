@@ -95,8 +95,8 @@ export const TabPills = ({
       ref={scrollRef}
       horizontal
       showsHorizontalScrollIndicator={false}
-      style={{ marginTop: 16, paddingHorizontal: 16 }}
-      contentContainerStyle={{ gap: 8 }}
+      style={{ marginTop: 16 }}
+      contentContainerStyle={{ gap: 8, paddingHorizontal: EDGE_PADDING }}
       onLayout={onContainerLayout}
       onScroll={onScroll}
       scrollEventThrottle={16}

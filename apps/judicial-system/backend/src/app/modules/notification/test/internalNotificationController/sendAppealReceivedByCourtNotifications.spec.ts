@@ -75,9 +75,13 @@ describe('InternalNotificationController - Send appeal received by court notific
               mobileNumber: prosecutor.mobile,
             },
             court: { name: 'Héraðsdómur Reykjavíkur' },
-            defenderNationalId,
-            defenderName: defender.name,
-            defenderEmail: defender.email,
+            defendants: [
+              {
+                defenderNationalId,
+                defenderName: defender.name,
+                defenderEmail: defender.email,
+              },
+            ],
             courtCaseNumber,
             appealCase,
           } as Case,

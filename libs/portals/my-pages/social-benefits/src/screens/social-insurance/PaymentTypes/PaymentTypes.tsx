@@ -1,5 +1,6 @@
 import { Stack, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { SOCIAL_INSURANCE_NAMESPACE } from '../../../lib/messages'
 import {
   CardLoader,
   formatNationalId,
@@ -16,7 +17,7 @@ import {
 } from './PaymentTypes.generated'
 
 const PaymentTypes = () => {
-  useNamespaces('sp.social-insurance-maintenance')
+  useNamespaces(SOCIAL_INSURANCE_NAMESPACE)
   const { formatMessage, formatDate, lang } = useLocale()
 
   const {

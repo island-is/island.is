@@ -20,7 +20,6 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { applicationMessages } from './messages'
-import { Features } from '@island.is/feature-flags'
 import { getEligibility } from '../dataProviders'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
@@ -37,7 +36,6 @@ const template: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations.UnemploymentConfirmTravel.translation,
   dataSchema: ConfirmTravelUnemploymentBenefitsSchema,
-  featureFlag: Features.isTravelConfirmationEnabled,
   allowMultipleApplicationsInDraft: false,
 
   stateMachineConfig: {

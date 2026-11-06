@@ -27,21 +27,23 @@ import {
   getVerdictServiceStatusText,
 } from '@island.is/judicial-system/formatters'
 import {
-  addMessagesToQueue,
   messageEndpoint,
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
-  CaseIndictmentRulingDecision,
-  getDefendantServiceDate,
-  getIndictmentAppealDeadline,
   IndictmentCaseNotificationType,
   indictmentCases,
   isSuccessfulVerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import {
+  getOrCreateTransaction,
+  queueMessagesAfterCommit,
+  registerAfterCommit,
+} from '../../middleware'
+import {
   CaseCompletedGuard,
+  CaseExistsForUpdateGuard,
   CaseExistsGuard,
   CaseTypeGuard,
   CurrentCase,
@@ -56,57 +58,13 @@ import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
 import { ExternalPoliceVerdictExistsGuard } from './guards/ExternalPoliceVerdictExists.guard'
 import { CurrentVerdict } from './guards/verdict.decorator'
 import { VerdictExistsGuard } from './guards/verdictExists.guard'
+import { VerdictOnCaseGuard } from './guards/verdictOnCase.guard'
 import { DeliverResponse } from './models/deliver.response'
+import { validateVerdictAppealUpdate } from './verdict.helpers'
 import {
   VerdictService,
   VerdictServiceCertificateDelivery,
 } from './verdict.service'
-
-// Deliberately stricter than the web path, which lets the public prosecution
-// office register an appeal date after the deadline has run out. This endpoint
-// is the defendant appealing their own verdict from the app, which is the legal
-// act itself rather than bookkeeping about one, so the deadline is hard. Note
-// that it runs until midnight at the end of its last day - see
-// getIndictmentAppealDeadline.
-const validateVerdictAppealUpdate = ({
-  caseId,
-  indictmentRulingDecision,
-  rulingDate,
-  verdict,
-}: {
-  caseId: string
-  indictmentRulingDecision?: CaseIndictmentRulingDecision
-  rulingDate?: Date
-  verdict: Verdict
-}) => {
-  if (!rulingDate) {
-    throw new BadRequestException(
-      `Cannot register appeal – No ruling date has been set for case ${caseId}`,
-    )
-  }
-
-  const baseDate = getDefendantServiceDate({
-    verdict,
-    fallbackDate: rulingDate,
-  })
-
-  // this can only be thrown if service date is not set
-  if (!baseDate) {
-    throw new BadRequestException(
-      `Cannot register appeal – Service date not set for case ${caseId}`,
-    )
-  }
-  const { deadlineDate, isDeadlineExpired } = getIndictmentAppealDeadline({
-    baseDate: new Date(baseDate),
-    isFine: indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
-  })
-  if (isDeadlineExpired) {
-    throw new BadRequestException(
-      `Appeal deadline has passed for case ${caseId}. Deadline was ${deadlineDate.toISOString()}`,
-    )
-  }
-}
-
 @Controller('api/internal')
 @ApiTags('internal verdict')
 @UseGuards(TokenGuard)
@@ -208,7 +166,21 @@ export class InternalVerdictController {
     }
   }
 
-  @UseGuards(ExternalPoliceVerdictExistsGuard, CaseExistsGuard)
+  // The police name the verdict, not the case: ExternalPoliceVerdictExistsGuard
+  // resolves it by its police document id and puts the case id on the request
+  // params, which is where CaseExistsForUpdateGuard reads it from - so it has
+  // to run first. The case is then read under FOR UPDATE, and VerdictOnCaseGuard
+  // swaps the verdict for the copy the locked case carries: the first read
+  // happened before the lock, so its fields may be stale, and the service
+  // status change below is decided from them. Two deliveries of the same
+  // status at once both read the verdict unserved before either locks; the
+  // second serializes behind the first's commit and then sees the status
+  // already there, so it announces nothing twice.
+  @UseGuards(
+    ExternalPoliceVerdictExistsGuard,
+    CaseExistsForUpdateGuard,
+    VerdictOnCaseGuard,
+  )
   @Patch('verdict/:policeDocumentId')
   async updateVerdict(
     @Param('policeDocumentId') policeDocumentId: string,
@@ -220,9 +192,15 @@ export class InternalVerdictController {
       `Updating verdict by external police document id ${policeDocumentId} of ${theCase.id}`,
     )
 
-    const updatedVerdict = await this.sequelize.transaction(
-      async (transaction) =>
-        this.verdictService.updatePoliceDelivery(verdict, update, transaction),
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    const updatedVerdict = await this.verdictService.updatePoliceDelivery(
+      verdict,
+      update,
+      transaction,
     )
 
     if (
@@ -240,7 +218,7 @@ export class InternalVerdictController {
         isSuccessfulVerdictServiceStatus(updatedVerdict.serviceStatus) &&
         hasDrivingLicenseSuspension
       ) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.INDICTMENT_CASE_NOTIFICATION,
           caseId: theCase.id,
           body: {
@@ -249,19 +227,31 @@ export class InternalVerdictController {
         })
       }
 
-      this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, {
-        Staða: getVerdictServiceStatusText(updatedVerdict.serviceStatus),
-        Birt:
-          formatDate(updatedVerdict.serviceDate, 'dd.MM.y HH:mm') ??
-          'ekki skráð',
-      })
+      // The event announces a service status the database has accepted, so
+      // it is posted after the commit - which TransactionCommitInterceptor
+      // does after this handler has returned - as it was when the handler
+      // committed a transaction of its own. Still fire and forget: a failed
+      // announcement is logged, not returned to the caller. It runs after the
+      // suspension notification above has been queued; nothing depends on the
+      // order between the two.
+      const { serviceStatus, serviceDate } = updatedVerdict
+
+      registerAfterCommit(() =>
+        this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, {
+          Staða: getVerdictServiceStatusText(serviceStatus),
+          Birt: formatDate(serviceDate, 'dd.MM.y HH:mm') ?? 'ekki skráð',
+        }),
+      )
     }
 
     return updatedVerdict
   }
 
+  // The appeal decision is validated against the case's ruling and written to
+  // the verdict the guards found on it, so the case is read under FOR UPDATE
+  // and the guards after the read all decide from that locked row.
   @UseGuards(
-    CaseExistsGuard,
+    CaseExistsForUpdateGuard,
     new CaseTypeGuard(indictmentCases),
     CaseCompletedGuard,
     DefendantNationalIdExistsGuard,
@@ -272,7 +262,7 @@ export class InternalVerdictController {
     type: Verdict,
     description: 'Updates defendant verdict appeal decision',
   })
-  updateVerdictAppeal(
+  async updateVerdictAppeal(
     @Param('caseId') caseId: string,
     @Param('defendantNationalId') _: string,
     @CurrentCase() theCase: Case,
@@ -291,12 +281,13 @@ export class InternalVerdictController {
       verdict,
     })
 
-    return this.sequelize.transaction(async (transaction) =>
-      this.verdictService.updateRestricted(
-        verdict,
-        { appealDecision: verdictAppeal.appealDecision },
-        transaction,
-      ),
+    // The transaction CaseExistsForUpdateGuard opened - see updateVerdict.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.verdictService.updateRestricted(
+      verdict,
+      { appealDecision: verdictAppeal.appealDecision },
+      transaction,
     )
   }
 

@@ -1,4 +1,4 @@
-import { json, service } from './dsl'
+import { json, service, ref } from './dsl'
 import { Kubernetes } from './kubernetes-runtime'
 import { generateOutputOne } from './processing/rendering-pipeline'
 import { EnvironmentConfig } from './types/charts'
@@ -44,7 +44,13 @@ describe('BFF PortalEnv serialization', () => {
     .env({
       BFF_ALLOWED_EXTERNAL_API_URLS: {
         local: json(['http://localhost:3377/download/v1']),
-        dev: json(['https://api.dev01.devland.is']),
+        dev: ref((ctx) =>
+          json([
+            ctx.featureDeploymentName
+              ? `https://${ctx.featureDeploymentName}-api.${ctx.env.domain}`
+              : `https://api.${ctx.env.domain}`,
+          ]),
+        ),
         staging: json(['https://api.staging01.devland.is']),
         prod: json(['https://api.island.is']),
       },
@@ -171,8 +177,10 @@ describe('BFF PortalEnv serialization', () => {
         ONE_HOUR_IN_MS - FIVE_SECONDS_IN_MS
       ).toString(),
       BFF_LOGIN_ATTEMPT_TTL_MS: ONE_WEEK_IN_MS.toString(),
+      BFF_PROXY_MAX_SOCKETS: '50',
       NODE_OPTIONS:
         '--max-old-space-size=460 --enable-source-maps -r dd-trace/init',
+      DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch',
       SERVERSIDE_FEATURES_ON: '',
       LOG_LEVEL: 'info',
       REDIS_URL_NODE_01: 'b',

@@ -1,4 +1,4 @@
-import { Transform } from 'class-transformer'
+import { Type } from 'class-transformer'
 import {
   ArrayMinSize,
   IsArray,
@@ -8,22 +8,21 @@ import {
   IsOptional,
   IsString,
   IsUUID,
-  Length,
+  Matches,
   MaxLength,
+  ValidateNested,
 } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import { POLICE_CASE_NUMBER_REGEX } from '@island.is/judicial-system/consts'
 import type {
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
-import {
-  CaseType,
-  RequestSharedWithDefender,
-} from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system/types'
 
-import { nationalIdTransformer } from '../../../transformers'
+import { CreateCaseDefendantDto } from './createCaseDefendant.dto'
 
 export class CreateCaseDto {
   @IsNotEmpty()
@@ -46,39 +45,9 @@ export class CreateCaseDto {
   @IsArray()
   @ArrayMinSize(1)
   @IsString({ each: true })
-  @MaxLength(255, { each: true })
+  @Matches(POLICE_CASE_NUMBER_REGEX, { each: true })
   @ApiProperty({ type: String, isArray: true })
   readonly policeCaseNumbers!: string[]
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  @ApiPropertyOptional({ type: String })
-  readonly defenderName?: string
-
-  @IsOptional()
-  @IsString()
-  @Length(10, 10)
-  @Transform(nationalIdTransformer)
-  @ApiPropertyOptional({ type: String })
-  readonly defenderNationalId?: string
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  @ApiPropertyOptional({ type: String })
-  readonly defenderEmail?: string
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  @ApiPropertyOptional({ type: String })
-  readonly defenderPhoneNumber?: string
-
-  @IsOptional()
-  @IsEnum(RequestSharedWithDefender)
-  @ApiPropertyOptional({ enum: RequestSharedWithDefender })
-  readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @IsOptional()
   @IsString()
@@ -95,4 +64,14 @@ export class CreateCaseDto {
   @IsUUID()
   @ApiPropertyOptional({ type: String })
   readonly prosecutorId?: string
+
+  // The defendants entered before the case existed, created together with
+  // the case. Left out by the flows that enter the defendant after the case
+  // is created; those start from a single empty defendant.
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateCaseDefendantDto)
+  @ApiPropertyOptional({ type: CreateCaseDefendantDto, isArray: true })
+  readonly defendants?: CreateCaseDefendantDto[]
 }
