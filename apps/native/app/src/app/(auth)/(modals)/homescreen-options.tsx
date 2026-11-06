@@ -158,6 +158,22 @@ export default function HomeOptionsScreen() {
           marginBottom: theme.spacing[3],
         }}
       >
+        {/* Android form sheets have no native header, so the title is shown
+            here instead. */}
+        {Platform.OS === 'android' && (
+          <Typography
+            variant="heading5"
+            style={{
+              marginTop: theme.spacing[3],
+              marginBottom: theme.spacing[1],
+            }}
+          >
+            <FormattedMessage
+              id="homeOptions.heading.title"
+              defaultMessage="Stilla heimaskjá"
+            />
+          </Typography>
+        )}
         <Typography>
           <FormattedMessage
             id="homeOptions.heading.subtitle"
