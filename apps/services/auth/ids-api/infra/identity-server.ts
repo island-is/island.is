@@ -62,6 +62,12 @@ export const serviceSetup = (services: {
         staging: 'false',
         prod: 'false',
       },
+      // Development builds of the app (is.island.app.dev, App Attest's development environment).
+      NativeApp__AllowDevelopmentBuilds: {
+        dev: 'true',
+        staging: 'false',
+        prod: 'false',
+      },
       IdentityServer__ConsentsScope: '@island.is/auth/consents',
       PersistenceSettings__BaseAddress: {
         local: ref((h) => `http://${h.svc(services.authIdsApi)}`),

@@ -122,6 +122,7 @@ identity-server:
     MeUserProfileApiSettings__BaseAddress: 'http://service-portal-api.service-portal.svc.cluster.local'
     NODE_OPTIONS: '--max-old-space-size=1843 --enable-source-maps -r dd-trace/init'
     NativeApp__AllowDevAttestation: 'false'
+    NativeApp__AllowDevelopmentBuilds: 'false'
     PersistenceSettings__BaseAddress: 'http://services-auth-ids-api'
     PersistenceSettings__DelegationsCacheEnabled: 'false'
     RedisSettings__Address: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com'
