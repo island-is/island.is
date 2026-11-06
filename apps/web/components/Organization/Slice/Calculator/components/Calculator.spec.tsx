@@ -38,6 +38,10 @@ const metadata = {
         type: TaxCalculatorInputFieldType.Number,
         required: true,
         semantic: TaxCalculatorInputFieldSemantic.Currency,
+        min: null,
+        max: null,
+        integer: false,
+        defaultValue: null,
         dependsOn: null,
       },
       {
@@ -66,6 +70,10 @@ const metadata = {
         type: TaxCalculatorInputFieldType.Number,
         required: false,
         semantic: TaxCalculatorInputFieldSemantic.Count,
+        min: null,
+        max: null,
+        integer: false,
+        defaultValue: null,
         dependsOn: null,
       },
       {
@@ -175,6 +183,7 @@ const calculationResult = {
           booleanValue: null,
           dateValue: null,
           arrayValue: null,
+          objectValue: null,
         },
         {
           key: 'netTotal',
@@ -184,6 +193,7 @@ const calculationResult = {
           booleanValue: null,
           dateValue: null,
           arrayValue: null,
+          objectValue: null,
         },
       ],
     },
@@ -250,6 +260,105 @@ const gatedConfig = (
     },
   ],
 })
+
+const rangedSalaryMetadata = {
+  taxCalculator: {
+    ...metadata.taxCalculator,
+    inputFields: metadata.taxCalculator.inputFields.map((field) =>
+      field.key === 'salary'
+        ? { ...field, min: 0, max: 100, integer: true }
+        : field,
+    ),
+  },
+}
+
+const fractionalRangedSalaryMetadata = {
+  taxCalculator: {
+    ...metadata.taxCalculator,
+    inputFields: metadata.taxCalculator.inputFields.map((field) =>
+      field.key === 'salary'
+        ? { ...field, min: 0, max: 100, integer: false }
+        : field,
+    ),
+  },
+}
+
+const defaultedYearMetadata = {
+  taxCalculator: {
+    type: TaxCalculatorType.ChildBenefit,
+    inputFields: [
+      {
+        __typename: 'TaxCalculatorNumberInputField',
+        key: 'salary',
+        type: TaxCalculatorInputFieldType.Number,
+        required: true,
+        semantic: TaxCalculatorInputFieldSemantic.Currency,
+        min: null,
+        max: null,
+        integer: false,
+        defaultValue: null,
+        dependsOn: null,
+      },
+      {
+        __typename: 'TaxCalculatorNumberInputField',
+        key: 'taxYear',
+        type: TaxCalculatorInputFieldType.Number,
+        required: true,
+        semantic: TaxCalculatorInputFieldSemantic.Year,
+        min: 2019,
+        max: 2026,
+        integer: true,
+        defaultValue: 2026,
+        dependsOn: null,
+      },
+    ],
+    outputFields: metadata.taxCalculator.outputFields,
+  },
+}
+
+const defaultedYearConfig: CalculatorConfig = {
+  inputSections: [
+    {
+      key: 'income',
+      title: { is: 'Tekjur' },
+      fields: [
+        {
+          uid: 'u1',
+          key: 'salary',
+          kind: 'field',
+          size: 'medium',
+          label: { is: 'Laun' },
+        },
+        {
+          uid: 'u6',
+          key: 'taxYear',
+          kind: 'field',
+          size: 'medium',
+          label: { is: 'Tekjuár' },
+        },
+      ],
+    },
+  ],
+  outputTotal: {
+    uid: 'hero',
+    key: 'total',
+    label: { is: 'Samtals' },
+  },
+  outputSections: [],
+}
+
+const defaultedCalculationRequest = {
+  query: GET_TAX_CALCULATOR_CALCULATION,
+  variables: {
+    input: {
+      type: TaxCalculatorType.ChildBenefit,
+      values: [
+        { key: 'salary', value: { numberValue: 500000 } },
+        { key: 'taxYear', value: { numberValue: 2026 } },
+      ],
+    },
+  },
+}
 
 const slice = (
   configJson: CalculatorSlice['configJson'] = config,
@@ -498,6 +607,152 @@ describe('Calculator', () => {
 
     expect(await screen.findByText('Niðurstaða reiknings')).toBeTruthy()
     expect(screen.getByText('120.000 kr.')).toBeTruthy()
+  })
+
+  it('submits a defaulted field the visitor never touched at its default', async () => {
+    renderSlice(
+      [
+        { request, result: { data: defaultedYearMetadata } },
+        {
+          request: defaultedCalculationRequest,
+          result: { data: calculationResult },
+        },
+      ],
+      slice(defaultedYearConfig),
+    )
+
+    await screen.findByText('Laun')
+    fillSalary()
+
+    const submit = screen.getByRole('button')
+    await waitFor(() => expect(submit.hasAttribute('disabled')).toBe(false))
+    fireEvent.click(submit)
+
+    expect(await screen.findByText('120.000 kr.')).toBeTruthy()
+  })
+
+  it('states the contract range when the calculation rejects a value', async () => {
+    renderSlice([
+      { request, result: { data: rangedSalaryMetadata } },
+      {
+        request: calculationRequest,
+        result: {
+          data: {
+            taxCalculatorCalculate: {
+              calculation: null,
+              errors: [
+                {
+                  code: TaxCalculatorCalculationErrorCode.InvalidValue,
+                  key: 'salary',
+                  message: 'x',
+                },
+              ],
+            },
+          },
+        },
+      },
+    ])
+
+    await screen.findByText('Laun')
+    fillSalary()
+    fireEvent.click(await screen.findByRole('button'))
+
+    expect(
+      await screen.findByText('Sláðu inn heila tölu á bilinu 0 til 100'),
+    ).toBeTruthy()
+    expect(screen.getByRole('status').textContent).toBe(
+      'Leiðréttu villur í reitunum',
+    )
+  })
+
+  it('states a fractional contract range without the whole-number wording', async () => {
+    renderSlice([
+      { request, result: { data: fractionalRangedSalaryMetadata } },
+      {
+        request: calculationRequest,
+        result: {
+          data: {
+            taxCalculatorCalculate: {
+              calculation: null,
+              errors: [
+                {
+                  code: TaxCalculatorCalculationErrorCode.InvalidValue,
+                  key: 'salary',
+                  message: 'x',
+                },
+              ],
+            },
+          },
+        },
+      },
+    ])
+
+    await screen.findByText('Laun')
+    fillSalary()
+    fireEvent.click(await screen.findByRole('button'))
+
+    expect(
+      await screen.findByText('Sláðu inn tölu á bilinu 0 til 100'),
+    ).toBeTruthy()
+  })
+
+  it('states a year range without a thousands separator', async () => {
+    renderSlice(
+      [
+        { request, result: { data: defaultedYearMetadata } },
+        {
+          request: defaultedCalculationRequest,
+          result: {
+            data: {
+              taxCalculatorCalculate: {
+                calculation: null,
+                errors: [
+                  {
+                    code: TaxCalculatorCalculationErrorCode.InvalidValue,
+                    key: 'taxYear',
+                    message: 'x',
+                  },
+                ],
+              },
+            },
+          },
+        },
+      ],
+      slice(defaultedYearConfig),
+    )
+
+    await screen.findByText('Laun')
+    fillSalary()
+
+    const submit = screen.getByRole('button')
+    await waitFor(() => expect(submit.hasAttribute('disabled')).toBe(false))
+    fireEvent.click(submit)
+
+    expect(
+      await screen.findByText('Sláðu inn heila tölu á bilinu 2019 til 2026'),
+    ).toBeTruthy()
+  })
+
+  it('formats the headline total by its configured numberType', async () => {
+    renderSlice(
+      [
+        { request, result: { data: metadata } },
+        { request: calculationRequest, result: { data: calculationResult } },
+      ],
+      slice({
+        ...config,
+        outputTotal: {
+          ...config.outputTotal,
+          numberType: 'percentage',
+        },
+      }),
+    )
+
+    await screen.findByText('Laun')
+    fillSalary()
+    fireEvent.click(await screen.findByRole('button'))
+
+    expect(await screen.findByText('692.762%')).toBeTruthy()
   })
 
   it('renders the total as the result heading, above the sections', async () => {

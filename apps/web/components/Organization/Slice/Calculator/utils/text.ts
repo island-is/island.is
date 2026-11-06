@@ -23,6 +23,18 @@ export const CALCULATOR_MESSAGES: Record<string, CalculatorLocalizedText> = {
     en: 'No result was found for these values',
   },
   invalidValue: { is: 'Ógilt gildi', en: 'Invalid value' },
+  numberInRange: {
+    is: 'Sláðu inn tölu á bilinu {min} til {max}',
+    en: 'Enter a number from {min} to {max}',
+  },
+  wholeNumberInRange: {
+    is: 'Sláðu inn heila tölu á bilinu {min} til {max}',
+    en: 'Enter a whole number from {min} to {max}',
+  },
+  fieldErrors: {
+    is: 'Leiðréttu villur í reitunum',
+    en: 'Correct the errors in the fields',
+  },
   yes: { is: 'Já', en: 'Yes' },
   no: { is: 'Nei', en: 'No' },
 }
