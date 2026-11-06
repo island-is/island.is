@@ -1,5 +1,6 @@
 import {
   extractOrganizationSlugFromPathname,
+  extractProjectSlugFromPathname,
   getHeaderNavigationPropsFromUrl,
   pathIsProjectPage,
 } from './organization'
@@ -60,19 +61,48 @@ describe('extractOrganizationSlugFromPathname', () => {
   })
 })
 
+describe('extractProjectSlugFromPathname', () => {
+  it.each([
+    ['/v/some-project', 'some-project'],
+    ['/en/p/some-project', 'some-project'],
+    ['/v/some-project/some-subpage', 'some-project'],
+    ['/en/p/some-project/some-subpage?foo=bar', 'some-project'],
+    ['/', ''],
+    ['/s/blodbankinn', ''],
+  ])('extracts the slug from %s', (pathname, slug) => {
+    expect(extractProjectSlugFromPathname(pathname)).toBe(slug)
+  })
+})
+
 describe('getHeaderNavigationPropsFromUrl', () => {
   it.each([
-    ['/s/blodbankinn', 'is', 'blodbankinn'],
-    ['/en/o/blodbankinn', 'en', 'blodbankinn'],
-    ['/_next/data/build-id/s/blodbankinn.json', 'is', 'blodbankinn'],
-    ['/v/thjodaratkvaedagreidsla-2026', 'is', ''],
-    ['/en/p/thjodaratkvaedagreidsla-2026', 'en', ''],
-    ['/_next/data/build-id/en/p/thjodaratkvaedagreidsla-2026.json', 'en', ''],
+    ['/s/blodbankinn', 'is', 'blodbankinn', ''],
+    ['/en/o/blodbankinn', 'en', 'blodbankinn', ''],
+    ['/_next/data/build-id/s/blodbankinn.json', 'is', 'blodbankinn', ''],
+    [
+      '/v/thjodaratkvaedagreidsla-2026',
+      'is',
+      '',
+      'thjodaratkvaedagreidsla-2026',
+    ],
+    [
+      '/en/p/thjodaratkvaedagreidsla-2026',
+      'en',
+      '',
+      'thjodaratkvaedagreidsla-2026',
+    ],
+    [
+      '/_next/data/build-id/en/p/thjodaratkvaedagreidsla-2026.json',
+      'en',
+      '',
+      'thjodaratkvaedagreidsla-2026',
+    ],
   ] as const)(
     'hides navigation for %s',
-    (url, locale, organizationSearchFilter) => {
+    (url, locale, organizationSearchFilter, projectSearchFilter) => {
       expect(getHeaderNavigationPropsFromUrl(url, locale)).toEqual({
         organizationSearchFilter,
+        projectSearchFilter,
         showHeaderNavigation: false,
       })
     },
@@ -81,6 +111,7 @@ describe('getHeaderNavigationPropsFromUrl', () => {
   it.each(['/', '/frett/einhver-frett'])('shows navigation for %s', (url) => {
     expect(getHeaderNavigationPropsFromUrl(url, 'is')).toEqual({
       organizationSearchFilter: '',
+      projectSearchFilter: '',
       showHeaderNavigation: true,
     })
   })
