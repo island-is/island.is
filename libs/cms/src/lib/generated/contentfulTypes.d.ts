@@ -4372,6 +4372,46 @@ export interface IProjectPage extends Entry<IProjectPageFields> {
   }
 }
 
+export interface IProjectParentSubpageFields {
+  /** Project Page */
+  projectPage: IProjectPage
+
+  /** Internal Title */
+  internalTitle: string
+
+  /** Displayed Title */
+  title: string
+
+  /** Short Title */
+  shortTitle?: string | undefined
+
+  /** Slug */
+  slug: string
+
+  /** Chapters */
+  pages: IProjectSubpage[]
+}
+
+/** Navigation page for content that belongs in multiple project subpages */
+
+export interface IProjectParentSubpage
+  extends Entry<IProjectParentSubpageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'projectParentSubpage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IProjectSubpageFields {
   /** Project Page */
   projectPage?: IProjectPage | undefined
@@ -5942,6 +5982,7 @@ export type CONTENT_TYPE =
   | 'price'
   | 'processEntry'
   | 'projectPage'
+  | 'projectParentSubpage'
   | 'projectSubpage'
   | 'questionAndAnswer'
   | 'sectionHeading'
