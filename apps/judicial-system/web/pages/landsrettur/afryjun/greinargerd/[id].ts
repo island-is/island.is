@@ -1,0 +1,3 @@
+import VerdictAppealStatementUpload from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/VerdictAppealStatementUpload/VerdictAppealStatementUpload'
+
+export default VerdictAppealStatementUpload
