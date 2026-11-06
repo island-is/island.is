@@ -1,10 +1,13 @@
 import { MockedProvider } from '@apollo/client/testing'
 import { render, screen, within } from '@testing-library/react'
 
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { Feature } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components'
 import {
+  AppealCaseState,
+  AppealCourtSessionType,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
@@ -263,5 +266,68 @@ describe('Defender IndictmentOverview', () => {
       await screen.findByRole('heading', { level: 1, name: 'Máli lokið' }),
     ).toBeInTheDocument()
     expect(screen.queryByText(/Ákæra birt/)).not.toBeInTheDocument()
+  })
+
+  // Once the court of appeals has called its sessions, they are on the
+  // defender's agenda the way a district court session is: every one of them,
+  // with its type, date, time and courtroom.
+  describe('the sessions the court of appeals has called', () => {
+    const daysFromNow = (days: number, hours: number): Date => {
+      const date = new Date()
+      date.setDate(date.getDate() + days)
+      date.setHours(hours, 15, 0, 0)
+
+      return date
+    }
+    const mainHearing = daysFromNow(30, 9)
+    const preparatoryHearing = daysFromNow(10, 13)
+
+    const withSessions = (appealState: AppealCaseState) =>
+      completedCase(CaseIndictmentRulingDecision.RULING, {
+        verdictAppealCase: {
+          id: 'verdict_appeal_case_id',
+          appealState,
+          courtSessions: [
+            {
+              id: 'main_hearing_id',
+              sessionType: AppealCourtSessionType.MAIN_HEARING,
+              sessionDate: mainHearing.toISOString(),
+              courtRoom: '101',
+            },
+            {
+              id: 'preparatory_hearing_id',
+              sessionType: AppealCourtSessionType.PREPARATORY_HEARING,
+              sessionDate: preparatoryHearing.toISOString(),
+              courtRoom: '102',
+            },
+          ],
+        },
+      })
+
+    it('puts every booked session on the one agenda card', async () => {
+      renderOverview(withSessions(AppealCaseState.RECEIVED))
+
+      expect(await screen.findByText('Á dagskrá')).toBeInTheDocument()
+      expect(screen.getAllByText('Á dagskrá')).toHaveLength(1)
+      expect(screen.getByText('Aðalmeðferð')).toBeInTheDocument()
+      expect(
+        screen.getByText(formatDate(mainHearing, 'PPPp') ?? ''),
+      ).toBeInTheDocument()
+      expect(screen.getByText('Dómsalur 101')).toBeInTheDocument()
+      expect(screen.getByText('Undirbúningsþinghald')).toBeInTheDocument()
+      expect(
+        screen.getByText(formatDate(preparatoryHearing, 'PPPp') ?? ''),
+      ).toBeInTheDocument()
+      expect(screen.getByText('Dómsalur 102')).toBeInTheDocument()
+    })
+
+    // A log of what the court called, so the entries stay once it has ruled.
+    it('keeps the entries once the court of appeals has ruled', async () => {
+      renderOverview(withSessions(AppealCaseState.COMPLETED))
+
+      expect(await screen.findByText('Á dagskrá')).toBeInTheDocument()
+      expect(screen.getByText('Aðalmeðferð')).toBeInTheDocument()
+      expect(screen.getByText('Undirbúningsþinghald')).toBeInTheDocument()
+    })
   })
 })

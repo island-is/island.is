@@ -20,12 +20,14 @@ import {
   formatPhoneNumber,
   formatRulingOrderPronouncedOrallyName,
   indictmentSubtypes,
+  isNonBlank,
   normalizeAndFormatNationalId,
   normalizePersonAddress,
   readableIndictmentSubtypes,
   sanitize,
   splitStringByComma,
   stripPdfExtension,
+  trimOrUndefined,
 } from './formatters'
 
 describe('stripPdfExtension', () => {
@@ -550,5 +552,31 @@ describe('formatRulingOrderPronouncedOrallyName', () => {
         new Date('2026-11-12T10:00:00Z'),
       ),
     ).toBe('Úrskurður 12.11.2026')
+  })
+})
+
+describe('isNonBlank', () => {
+  test('rejects nullish and whitespace-only values', () => {
+    expect(isNonBlank(undefined)).toBe(false)
+    expect(isNonBlank(null)).toBe(false)
+    expect(isNonBlank('')).toBe(false)
+    expect(isNonBlank('   ')).toBe(false)
+  })
+
+  test('accepts strings with non-whitespace content', () => {
+    expect(isNonBlank('a')).toBe(true)
+    expect(isNonBlank('  a  ')).toBe(true)
+  })
+})
+
+describe('trimOrUndefined', () => {
+  test('omits nullish values', () => {
+    expect(trimOrUndefined(undefined)).toBeUndefined()
+    expect(trimOrUndefined(null)).toBeUndefined()
+  })
+
+  test('trims provided strings, including to empty', () => {
+    expect(trimOrUndefined('  hello  ')).toBe('hello')
+    expect(trimOrUndefined('   ')).toBe('')
   })
 })

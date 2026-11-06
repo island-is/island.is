@@ -22,6 +22,7 @@ import {
   SocialInsuranceAdministrationEducationService,
   SocialInsuranceAdministrationEmploymentService,
   SocialInsuranceAdministrationProfessionService,
+  withApplicationGuidContext,
 } from '@island.is/clients/social-insurance-administration'
 
 @Resolver(() => General)
@@ -43,8 +44,14 @@ export class GeneralResolver {
   }
 
   @ResolveField('unions', () => [Union], { nullable: true })
-  resolveUnions(@CurrentUser() user: User) {
-    return this.generalService.getUnions(user)
+  resolveUnions(
+    @CurrentUser() user: User,
+    @Args('applicationId', { type: () => String, nullable: true })
+    applicationId?: string,
+  ) {
+    return withApplicationGuidContext(applicationId, () =>
+      this.generalService.getUnions(user),
+    )
   }
 
   @ResolveField('countries', () => [Country], { nullable: true })
@@ -52,15 +59,25 @@ export class GeneralResolver {
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
+    @Args('applicationId', { type: () => String, nullable: true })
+    applicationId?: string,
   ) {
-    return this.service.getCountries(user, locale)
+    return withApplicationGuidContext(applicationId, () =>
+      this.service.getCountries(user, locale),
+    )
   }
 
   @ResolveField('educationalInstitutions', () => [EducationalInstitution], {
     nullable: true,
   })
-  resolveEducationalInstitution(@CurrentUser() user: User) {
-    return this.educationService.getEducationalInstitutions(user)
+  resolveEducationalInstitution(
+    @CurrentUser() user: User,
+    @Args('applicationId', { type: () => String, nullable: true })
+    applicationId?: string,
+  ) {
+    return withApplicationGuidContext(applicationId, () =>
+      this.educationService.getEducationalInstitutions(user),
+    )
   }
 
   @ResolveField('currencies', () => [String], {

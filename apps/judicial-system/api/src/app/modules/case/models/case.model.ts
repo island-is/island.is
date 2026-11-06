@@ -18,7 +18,6 @@ import {
   CourtDocument,
   CourtSessionType,
   IndictmentDecision,
-  RequestSharedWithDefender,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
@@ -40,9 +39,6 @@ import { Notification } from './notification.model'
 registerEnumType(CaseOrigin, { name: 'CaseOrigin' })
 registerEnumType(CaseType, { name: 'CaseType' })
 registerEnumType(CaseState, { name: 'CaseState' })
-registerEnumType(RequestSharedWithDefender, {
-  name: 'RequestSharedWithDefender',
-})
 registerEnumType(CaseLegalProvisions, { name: 'CaseLegalProvisions' })
 registerEnumType(CaseCustodyRestrictions, { name: 'CaseCustodyRestrictions' })
 registerEnumType(SessionArrangements, { name: 'SessionArrangements' })

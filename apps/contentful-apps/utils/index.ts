@@ -101,16 +101,10 @@ export const previewLinkHandler = {
     return `${DEV_WEB_BASE_URL}/v/${entry.fields.slug[DEFAULT_LOCALE]}`
   },
   projectSubpage: async (entry: EntryProps<KeyValueMap>, cma: CMAClient) => {
-    const projectPageResponse = await cma.entry.getMany({
-      query: {
-        content_type: 'projectPage',
-        links_to_entry: entry.sys.id,
-        limit: 1,
-        'sys.archivedVersion[exists]': false,
-      },
-    })
-    const projectPageSlug =
-      projectPageResponse?.items?.[0]?.fields?.slug?.[DEFAULT_LOCALE]
+    const projectPageId = entry.fields.projectPage?.[DEFAULT_LOCALE]?.sys?.id
+    if (!projectPageId) return ''
+    const projectPage = await cma.entry.get({ entryId: projectPageId })
+    const projectPageSlug = projectPage?.fields?.slug?.[DEFAULT_LOCALE]
     if (!projectPageSlug) return ''
     return `${DEV_WEB_BASE_URL}/v/${projectPageSlug}/${entry.fields.slug[DEFAULT_LOCALE]}`
   },

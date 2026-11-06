@@ -48,12 +48,11 @@ Array [
   "case.appealCase.appealCaseNumber",
   "case.appealCase.appealConclusion",
   "case.appealCase.appealIsolationToDate",
-  "case.appealCase.appealJudge1.id",
-  "case.appealCase.appealJudge1.name",
-  "case.appealCase.appealJudge2.id",
-  "case.appealCase.appealJudge2.name",
-  "case.appealCase.appealJudge3.id",
-  "case.appealCase.appealJudge3.name",
+  "case.appealCase.appealJudges.displayOrder",
+  "case.appealCase.appealJudges.id",
+  "case.appealCase.appealJudges.user.id",
+  "case.appealCase.appealJudges.user.name",
+  "case.appealCase.appealJudges.userId",
   "case.appealCase.appealReceivedByCourtDate",
   "case.appealCase.appealRulingDate",
   "case.appealCase.appealRulingDecision",
@@ -488,12 +487,11 @@ Array [
   "case.mergedCases.rulingOrderAppealCases.appealCaseNumber",
   "case.mergedCases.rulingOrderAppealCases.appealConclusion",
   "case.mergedCases.rulingOrderAppealCases.appealIsolationToDate",
-  "case.mergedCases.rulingOrderAppealCases.appealJudge1.id",
-  "case.mergedCases.rulingOrderAppealCases.appealJudge1.name",
-  "case.mergedCases.rulingOrderAppealCases.appealJudge2.id",
-  "case.mergedCases.rulingOrderAppealCases.appealJudge2.name",
-  "case.mergedCases.rulingOrderAppealCases.appealJudge3.id",
-  "case.mergedCases.rulingOrderAppealCases.appealJudge3.name",
+  "case.mergedCases.rulingOrderAppealCases.appealJudges.displayOrder",
+  "case.mergedCases.rulingOrderAppealCases.appealJudges.id",
+  "case.mergedCases.rulingOrderAppealCases.appealJudges.user.id",
+  "case.mergedCases.rulingOrderAppealCases.appealJudges.user.name",
+  "case.mergedCases.rulingOrderAppealCases.appealJudges.userId",
   "case.mergedCases.rulingOrderAppealCases.appealReceivedByCourtDate",
   "case.mergedCases.rulingOrderAppealCases.appealRulingDate",
   "case.mergedCases.rulingOrderAppealCases.appealRulingDecision",
@@ -582,12 +580,11 @@ Array [
   "case.rulingOrderAppealCases.appealCaseNumber",
   "case.rulingOrderAppealCases.appealConclusion",
   "case.rulingOrderAppealCases.appealIsolationToDate",
-  "case.rulingOrderAppealCases.appealJudge1.id",
-  "case.rulingOrderAppealCases.appealJudge1.name",
-  "case.rulingOrderAppealCases.appealJudge2.id",
-  "case.rulingOrderAppealCases.appealJudge2.name",
-  "case.rulingOrderAppealCases.appealJudge3.id",
-  "case.rulingOrderAppealCases.appealJudge3.name",
+  "case.rulingOrderAppealCases.appealJudges.displayOrder",
+  "case.rulingOrderAppealCases.appealJudges.id",
+  "case.rulingOrderAppealCases.appealJudges.user.id",
+  "case.rulingOrderAppealCases.appealJudges.user.name",
+  "case.rulingOrderAppealCases.appealJudges.userId",
   "case.rulingOrderAppealCases.appealReceivedByCourtDate",
   "case.rulingOrderAppealCases.appealRulingDate",
   "case.rulingOrderAppealCases.appealRulingDecision",
@@ -689,12 +686,11 @@ Array [
   "case.verdictAppealCase.appealEventLogs.userName",
   "case.verdictAppealCase.appealEventLogs.userRole",
   "case.verdictAppealCase.appealEventLogs.userTitle",
-  "case.verdictAppealCase.appealJudge1.id",
-  "case.verdictAppealCase.appealJudge1.name",
-  "case.verdictAppealCase.appealJudge2.id",
-  "case.verdictAppealCase.appealJudge2.name",
-  "case.verdictAppealCase.appealJudge3.id",
-  "case.verdictAppealCase.appealJudge3.name",
+  "case.verdictAppealCase.appealJudges.displayOrder",
+  "case.verdictAppealCase.appealJudges.id",
+  "case.verdictAppealCase.appealJudges.user.id",
+  "case.verdictAppealCase.appealJudges.user.name",
+  "case.verdictAppealCase.appealJudges.userId",
   "case.verdictAppealCase.appealState",
   "case.verdictAppealCase.appealSummonses.confirmedDate",
   "case.verdictAppealCase.appealSummonses.created",
@@ -993,6 +989,7 @@ Array [
   "currentUser.eligibleUsers.active",
   "currentUser.eligibleUsers.canConfirmIndictment",
   "currentUser.eligibleUsers.canManageMessageSuspension",
+  "currentUser.eligibleUsers.canManageServiceInterruptionBanner",
   "currentUser.eligibleUsers.created",
   "currentUser.eligibleUsers.email",
   "currentUser.eligibleUsers.id",
@@ -1010,6 +1007,7 @@ Array [
   "currentUser.user.active",
   "currentUser.user.canConfirmIndictment",
   "currentUser.user.canManageMessageSuspension",
+  "currentUser.user.canManageServiceInterruptionBanner",
   "currentUser.user.created",
   "currentUser.user.email",
   "currentUser.user.id",
@@ -1113,6 +1111,16 @@ Array [
 ]
 `;
 
+exports[`GraphQL operations select these field paths FileAppealStatement 1`] = `
+Array [
+  "fileAppealStatement.civilClaimantId",
+  "fileAppealStatement.created",
+  "fileAppealStatement.defendantId",
+  "fileAppealStatement.eventType",
+  "fileAppealStatement.id",
+]
+`;
+
 exports[`GraphQL operations select these field paths FileCourtDocumentInCourtSession 1`] = `
 Array [
   "fileCourtDocumentInCourtSession.caseFileId",
@@ -1170,12 +1178,11 @@ Array [
   "limitedAccessCase.appealCase.appealCaseNumber",
   "limitedAccessCase.appealCase.appealConclusion",
   "limitedAccessCase.appealCase.appealIsolationToDate",
-  "limitedAccessCase.appealCase.appealJudge1.id",
-  "limitedAccessCase.appealCase.appealJudge1.name",
-  "limitedAccessCase.appealCase.appealJudge2.id",
-  "limitedAccessCase.appealCase.appealJudge2.name",
-  "limitedAccessCase.appealCase.appealJudge3.id",
-  "limitedAccessCase.appealCase.appealJudge3.name",
+  "limitedAccessCase.appealCase.appealJudges.displayOrder",
+  "limitedAccessCase.appealCase.appealJudges.id",
+  "limitedAccessCase.appealCase.appealJudges.user.id",
+  "limitedAccessCase.appealCase.appealJudges.user.name",
+  "limitedAccessCase.appealCase.appealJudges.userId",
   "limitedAccessCase.appealCase.appealReceivedByCourtDate",
   "limitedAccessCase.appealCase.appealRulingDate",
   "limitedAccessCase.appealCase.appealRulingDecision",
@@ -1494,12 +1501,11 @@ Array [
   "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealCaseNumber",
   "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealConclusion",
   "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealIsolationToDate",
-  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealJudge1.id",
-  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealJudge1.name",
-  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealJudge2.id",
-  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealJudge2.name",
-  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealJudge3.id",
-  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealJudge3.name",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealJudges.displayOrder",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealJudges.id",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealJudges.user.id",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealJudges.user.name",
+  "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealJudges.userId",
   "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealReceivedByCourtDate",
   "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealRulingDate",
   "limitedAccessCase.mergedCases.rulingOrderAppealCases.appealRulingDecision",
@@ -1560,12 +1566,11 @@ Array [
   "limitedAccessCase.rulingOrderAppealCases.appealCaseNumber",
   "limitedAccessCase.rulingOrderAppealCases.appealConclusion",
   "limitedAccessCase.rulingOrderAppealCases.appealIsolationToDate",
-  "limitedAccessCase.rulingOrderAppealCases.appealJudge1.id",
-  "limitedAccessCase.rulingOrderAppealCases.appealJudge1.name",
-  "limitedAccessCase.rulingOrderAppealCases.appealJudge2.id",
-  "limitedAccessCase.rulingOrderAppealCases.appealJudge2.name",
-  "limitedAccessCase.rulingOrderAppealCases.appealJudge3.id",
-  "limitedAccessCase.rulingOrderAppealCases.appealJudge3.name",
+  "limitedAccessCase.rulingOrderAppealCases.appealJudges.displayOrder",
+  "limitedAccessCase.rulingOrderAppealCases.appealJudges.id",
+  "limitedAccessCase.rulingOrderAppealCases.appealJudges.user.id",
+  "limitedAccessCase.rulingOrderAppealCases.appealJudges.user.name",
+  "limitedAccessCase.rulingOrderAppealCases.appealJudges.userId",
   "limitedAccessCase.rulingOrderAppealCases.appealReceivedByCourtDate",
   "limitedAccessCase.rulingOrderAppealCases.appealRulingDate",
   "limitedAccessCase.rulingOrderAppealCases.appealRulingDecision",
@@ -1648,6 +1653,11 @@ Array [
   "limitedAccessCase.verdictAppealCase.appealEventLogs.userTitle",
   "limitedAccessCase.verdictAppealCase.appealState",
   "limitedAccessCase.verdictAppealCase.appealType",
+  "limitedAccessCase.verdictAppealCase.courtSessions.courtRoom",
+  "limitedAccessCase.verdictAppealCase.courtSessions.created",
+  "limitedAccessCase.verdictAppealCase.courtSessions.id",
+  "limitedAccessCase.verdictAppealCase.courtSessions.sessionDate",
+  "limitedAccessCase.verdictAppealCase.courtSessions.sessionType",
   "limitedAccessCase.verdictAppealCase.id",
   "limitedAccessCase.victims.hasLawyer",
   "limitedAccessCase.victims.hasNationalId",
@@ -1978,6 +1988,15 @@ Array [
 ]
 `;
 
+exports[`GraphQL operations select these field paths ServiceInterruptionBanner 1`] = `
+Array [
+  "serviceInterruptionBanner.courtMessage",
+  "serviceInterruptionBanner.globalMessage",
+  "serviceInterruptionBanner.prosecutorMessage",
+  "serviceInterruptionBanner.title",
+]
+`;
+
 exports[`GraphQL operations select these field paths SetAppealStatementDeadline 1`] = `
 Array [
   "setAppealStatementDeadline.civilClaimantId",
@@ -2037,12 +2056,11 @@ Array [
   "updateAppealCase.appealCaseNumber",
   "updateAppealCase.appealConclusion",
   "updateAppealCase.appealIsolationToDate",
-  "updateAppealCase.appealJudge1.id",
-  "updateAppealCase.appealJudge1.name",
-  "updateAppealCase.appealJudge2.id",
-  "updateAppealCase.appealJudge2.name",
-  "updateAppealCase.appealJudge3.id",
-  "updateAppealCase.appealJudge3.name",
+  "updateAppealCase.appealJudges.displayOrder",
+  "updateAppealCase.appealJudges.id",
+  "updateAppealCase.appealJudges.user.id",
+  "updateAppealCase.appealJudges.user.name",
+  "updateAppealCase.appealJudges.userId",
   "updateAppealCase.appealReceivedByCourtDate",
   "updateAppealCase.appealRulingDecision",
   "updateAppealCase.appealRulingModifiedHistory",
@@ -2251,6 +2269,15 @@ Array [
 ]
 `;
 
+exports[`GraphQL operations select these field paths UpdateServiceInterruptionBanner 1`] = `
+Array [
+  "updateServiceInterruptionBanner.courtMessage",
+  "updateServiceInterruptionBanner.globalMessage",
+  "updateServiceInterruptionBanner.prosecutorMessage",
+  "updateServiceInterruptionBanner.title",
+]
+`;
+
 exports[`GraphQL operations select these field paths UpdateUser 1`] = `
 Array [
   "updateUser.id",
@@ -2296,6 +2323,7 @@ Array [
   "user.active",
   "user.canConfirmIndictment",
   "user.canManageMessageSuspension",
+  "user.canManageServiceInterruptionBanner",
   "user.created",
   "user.email",
   "user.id",

@@ -1,5 +1,4 @@
 import { useCallback, useContext } from 'react'
-import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Box, Button, InputFileUpload } from '@island.is/island-ui/core'
@@ -31,7 +30,6 @@ import * as strings from './CaseFiles.strings'
 const CaseFiles = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { formatMessage } = useIntl()
   const {
     uploadFiles,
     allFilesDoneOrError,
@@ -66,9 +64,7 @@ const CaseFiles = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.indictments.caseFiles)}
-      />
+      <PageHeader title={titles.prosecutor.indictments.caseFiles} />
       <FormContentContainer>
         <PageTitle>{strings.caseFiles.heading}</PageTitle>
         <Box marginBottom={5}>
@@ -174,7 +170,7 @@ const CaseFiles = () => {
           previousUrl={`${PROSECUTION_INDICTMENT_CASE_CASE_FILE_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

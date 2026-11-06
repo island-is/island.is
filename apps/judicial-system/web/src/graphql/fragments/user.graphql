@@ -15,6 +15,7 @@ fragment CurrentUserFields on User {
   nationalId
   canConfirmIndictment
   canManageMessageSuspension
+  canManageServiceInterruptionBanner
   institution {
     ...InstitutionFields
     defaultCourtId

@@ -99,6 +99,13 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       appealState
       appealType
+      courtSessions {
+        id
+        created
+        sessionType
+        sessionDate
+        courtRoom
+      }
       appealEventLogs {
         id
         created

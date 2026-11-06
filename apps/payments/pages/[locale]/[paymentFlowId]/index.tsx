@@ -69,7 +69,6 @@ import { PaymentReceipt } from '../../../components/PaymentReceipt'
 import { ThreeDSecure } from '../../../components/ThreeDSecure/ThreeDSecure'
 import { InvoiceReceipt } from '../../../components/InvoiceReceipt'
 import { usePaymentOrchestration } from '../../../hooks/usePaymentOrchestration'
-import { googlePayAllowedAuthMethods } from '../../../hooks/useGooglePay'
 import {
   BankTransferStatusUpdate,
   useBankTransferStatusPolling,
@@ -245,20 +244,6 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
     } catch (e) {
       console.error('Error getting Google Pay device tokens enabled', e)
     }
-  }
-
-  // TEMPORARY: debug log of the Google Pay auth methods offered while the
-  // flow is tested on production. Remove once the flow is verified there.
-  if (isGooglePayPaymentEnabled) {
-    console.info(
-      `[${paymentFlowId}] [GOOGLEPAY] [TESTING] Google Pay auth methods offered`,
-      {
-        paymentFlowId,
-        allowedAuthMethods: googlePayAllowedAuthMethods(
-          isGooglePayDeviceTokensEnabled,
-        ),
-      },
-    )
   }
 
   return {
