@@ -31,10 +31,9 @@ const AssetItem = React.memo(({ item }: { item: any }) => {
   return (
     <View style={{ paddingHorizontal: 16 }} testID={testIDs.ASSET_ITEM}>
       <TouchableHighlight
-        underlayColor={
-          theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
-        }
-        style={{ marginBottom: 16, borderRadius: 16 }}
+        underlayColor={theme.tokens.app.background.pressed}
+        activeOpacity={1}
+        style={{ marginBottom: 16, borderRadius: 8 }}
         onPress={() => {
           router.push({
             pathname: '/(auth)/(tabs)/more/assets/[id]',

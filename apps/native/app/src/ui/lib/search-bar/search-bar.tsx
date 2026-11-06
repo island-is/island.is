@@ -95,7 +95,7 @@ export function SearchBar(props: SearchBarProps) {
         autoCorrect={false}
         style={[
           {
-            color: theme.shade.foreground,
+            color: theme.tokens.foreground.primary,
             backgroundColor: glassAvailable
               ? 'transparent'
               : pressed.current.interpolate({
@@ -122,7 +122,7 @@ export function SearchBar(props: SearchBarProps) {
           left: 16,
           width: 20,
           height: 20,
-          tintColor: theme.color.blue400,
+          tintColor: theme.tokens.foreground.brand,
         }}
       />
       {props.value?.length ? (

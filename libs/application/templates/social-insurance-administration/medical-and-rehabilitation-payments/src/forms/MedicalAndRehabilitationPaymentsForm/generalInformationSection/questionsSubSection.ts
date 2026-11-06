@@ -2,6 +2,7 @@ import {
   buildAsyncSelectField,
   buildDateField,
   buildDescriptionField,
+  buildFileUploadField,
   buildMultiField,
   buildRadioField,
   buildSelectField,
@@ -9,6 +10,7 @@ import {
   coreErrorMessages,
 } from '@island.is/application/core'
 import { siaEducationalInstitutionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
+import { fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { SiaEducationalInstitutionsQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
 import { Application } from '@island.is/application/types'
@@ -101,10 +103,11 @@ export const questionsSubSection = buildSubSection({
               .questionsSelectSchool,
           width: 'half',
           loadingError: coreErrorMessages.failedDataProvider,
-          loadOptions: async ({ apolloClient }) => {
+          loadOptions: async ({ apolloClient, application }) => {
             const { data } =
               await apolloClient.query<SiaEducationalInstitutionsQuery>({
                 query: siaEducationalInstitutionsQuery,
+                variables: { applicationId: application.id },
               })
 
             return (
@@ -137,6 +140,17 @@ export const questionsSubSection = buildSubSection({
               label: description,
             }))
           },
+          condition: (answers) => shouldShowIsStudyingFields(answers),
+        }),
+        buildFileUploadField({
+          id: 'questions.studyDocuments',
+          marginTop: 4,
+          title:
+            medicalAndRehabilitationPaymentsFormMessage.generalInformation
+              .questionsStudyDocumentsTitle,
+          ...fileUploadSharedProps,
+          uploadMultiple: false,
+          maxFileCount: 1,
           condition: (answers) => shouldShowIsStudyingFields(answers),
         }),
       ],

@@ -51,10 +51,9 @@ const FamilyMember = React.memo(
         testID={testIDs.FAMILY_MEMBER_ITEM}
       >
         <TouchableHighlight
-          underlayColor={
-            theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
-          }
-          style={{ marginBottom: theme.spacing[2], borderRadius: 16 }}
+          underlayColor={theme.tokens.app.background.pressed}
+          activeOpacity={1}
+          style={{ marginBottom: theme.spacing[2], borderRadius: 8 }}
           onPress={() => {
             router.push({
               pathname: '/(auth)/(tabs)/more/family/[type]/[nationalId]',
@@ -190,10 +189,9 @@ export default function FamilyScreen() {
       return (
         <View style={{ paddingHorizontal: theme.spacing[2] }}>
           <TouchableHighlight
-            underlayColor={
-              theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
-            }
-            style={{ marginBottom: theme.spacing[2], borderRadius: 16 }}
+            underlayColor={theme.tokens.app.background.pressed}
+            activeOpacity={1}
+            style={{ marginBottom: theme.spacing[2], borderRadius: 8 }}
             onPress={() => {
               router.navigate('/personal-info')
             }}

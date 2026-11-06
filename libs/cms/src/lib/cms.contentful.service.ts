@@ -573,6 +573,7 @@ export class CmsContentfulService {
   async getProjectPage(
     slug: string,
     lang: string,
+    subpageSlug?: string | null,
   ): Promise<ProjectPage | null> {
     const params = {
       ['content_type']: 'projectPage',
@@ -584,9 +585,33 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IProjectPageFields>(lang, params, 5)
       .catch(errorHandler('getProjectPage'))
 
-    return result.items.length
-      ? mapProjectPage(result.items[0] as IProjectPage)
-      : null
+    if (!result.items.length) {
+      return null
+    }
+
+    const projectPage = result.items[0] as IProjectPage
+
+    if (!subpageSlug) {
+      return mapProjectPage(projectPage)
+    }
+
+    const subpageResult = await this.contentfulRepository
+      .getLocalizedEntries<types.IProjectSubpageFields>(
+        lang,
+        {
+          ['content_type']: 'projectSubpage',
+          'fields.projectPage.sys.id': projectPage.sys.id,
+          'fields.slug': subpageSlug,
+          limit: 1,
+        },
+        6,
+      )
+      .catch(errorHandler('getProjectPage'))
+
+    return mapProjectPage(
+      projectPage,
+      subpageResult.items as types.IProjectSubpage[],
+    )
   }
 
   async getArticle(slug: string, lang: string): Promise<Article | null> {

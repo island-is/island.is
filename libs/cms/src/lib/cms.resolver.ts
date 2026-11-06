@@ -391,7 +391,11 @@ export class CmsResolver {
   getProjectPage(
     @Args('input') input: GetProjectPageInput,
   ): Promise<ProjectPage | null> {
-    return this.cmsContentfulService.getProjectPage(input.slug, input.lang)
+    return this.cmsContentfulService.getProjectPage(
+      input.slug,
+      input.lang,
+      input.subpageSlug,
+    )
   }
 
   // TODO: Add filtering support for hasALandingPage

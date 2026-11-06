@@ -27,7 +27,7 @@ const Wrapper = styled(PressableHighlight)<{
   columnGap: theme.spacing[2],
   ...(hasTopBorder && {
     borderTopWidth: theme.border.width.standard,
-    borderTopColor: theme.color.blue200,
+    borderTopColor: theme.tokens.border.primary,
   }),
 }))
 
@@ -49,7 +49,7 @@ const IconBackground = styled.View`
   justify-content: center;
   width: 40px;
   height: 40px;
-  background-color: ${({ theme }) => theme.color.blue100};
+  background-color: ${({ theme }) => theme.tokens.background.brandMinimal};
   border-radius: ${({ theme }) => theme.border.radius.full};
 `
 
@@ -68,7 +68,7 @@ const MetaRow = styled.View`
 const MetaSeparator = styled.View`
   width: 1px;
   height: 12px;
-  background-color: ${({ theme }) => theme.color.blue200};
+  background-color: ${({ theme }) => theme.tokens.border.primary};
 `
 
 const ICON_SIZE = 16
@@ -98,9 +98,9 @@ const AttachmentChip = styled(TouchableOpacity)`
   padding: ${({ theme }) => theme.spacing[1]}px
     ${({ theme }) => theme.spacing[2]}px;
   border-width: ${({ theme }) => theme.border.width.standard}px;
-  border-color: ${({ theme }) => theme.color.blue200};
+  border-color: ${({ theme }) => theme.tokens.border.primary};
   border-radius: ${({ theme }) => theme.border.radius.large};
-  background-color: ${({ theme }) => theme.color.white};
+  background-color: ${({ theme }) => theme.tokens.background.invert};
 `
 
 export interface DocumentListItemAttachment {
@@ -209,7 +209,7 @@ export const DocumentListItem = ({
     <Animated.View style={containerAnimatedStyle}>
       <Wrapper
         onPress={handlePress}
-        highlightColor={closeable ? theme.shade.shade100 : theme.color.white}
+        disabled={!closeable}
         hasTopBorder={hasTopBorder}
       >
         <View>
@@ -253,7 +253,7 @@ export const DocumentListItem = ({
                 source={attachmentIcon}
                 width={16}
                 height={16}
-                tintColor="dark400"
+                tintColor={theme.tokens.foreground.primary}
               />
             ) : null}
           </Host>
