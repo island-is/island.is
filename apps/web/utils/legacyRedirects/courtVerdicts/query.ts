@@ -9,6 +9,7 @@ export const getQueryValue = (query: ParsedUrlQuery, key: string) => {
   return (Array.isArray(value) ? value[0] : value)?.trim().toLowerCase()
 }
 
-const GUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+const GUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
 export const isGuid = (value: string) => GUID_REGEX.test(value)

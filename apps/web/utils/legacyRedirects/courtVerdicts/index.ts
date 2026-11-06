@@ -36,9 +36,7 @@ const courtVerdictRedirect: LegacyRedirectHandler = async ({
   return { destination: `/domar?${params.toString()}`, permanent: false }
 }
 
-export const courtVerdictRedirects: Record<
-  string,
-  LegacyRedirectHandler
-> = Object.fromEntries(
-  Object.keys(ROUTES).map((host) => [host, courtVerdictRedirect]),
-)
+export const courtVerdictRedirects: Record<string, LegacyRedirectHandler> =
+  Object.fromEntries(
+    Object.keys(ROUTES).map((host) => [host, courtVerdictRedirect]),
+  )
