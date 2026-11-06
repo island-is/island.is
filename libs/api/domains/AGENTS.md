@@ -32,16 +32,12 @@ NestJS modules (resolvers, services, models, mappers) merged into the shared Gra
 - New GraphQL enum values (the TS enum keys) are ALL_CAPS.
 - A kennitala field is named `nationalId`, in the form `##########` (no hyphen).
 - Root `@Query` fields are `nullable: true`, or one failing service nulls the whole response.
-- Model fields use `field?: type`, never `| null`. Dates are `Date` fields, never formatted strings.
+- Dates are `Date` fields, never formatted strings.
 - Types a frontend caches on their own (fetched by id, or updated after a mutation) have a unique, non-nullable `id` built in the domain: composite if needed, never an array index, never a kennitala or anything derived from one (hashes included). If a type's only natural key is a kennitala, ask before choosing an `id`; don't drop the rows.
 - A `@ResolveField` on a type that list queries also return runs once per item: batch it with a DataLoader or keep it off list item types.
 - Anything a consumer branches on is a GraphQL enum with domain-facing values, not a raw string.
 - Bilingual source fields (`{ is, en }` or `name`/`nameEn` pairs) are resolved server-side from a locale argument. Prefer `LocaleEnum` (`@island.is/nest/graphql`) over a `String`/`Locale` argument and string comparisons. Locale goes in `id` only when the mapped data differs per locale.
 - Breaking changes: removing or renaming a field, type or enum value, changing a field's type, making an output field nullable, or making an argument or input field required. Deprecate with a `deprecationReason` naming the replacement instead of removing.
-
-## Mappers
-
-An item missing its identifier maps to `undefined` and is filtered with `isDefined` (`@island.is/shared/utils`); never fill a non-nullable field with `?? ''`/`?? 0`; make it nullable.
 
 ## Messages
 
