@@ -139,6 +139,11 @@ export const CivilClaimantFields = ({
         nationalId: cleanNationalId,
         civilClaimantId,
       })
+    } else {
+      // Drop a pending complete-id update if the user edits mid-lookup.
+      // Otherwise isLoading flipping to false would still save the old id
+      // and reset the input via InputNationalId's value sync.
+      setCivilClaimantNationalIdUpdate(undefined)
     }
   }
 
