@@ -1,7 +1,6 @@
 const devConfig = {
   production: false,
   auth: {
-    audience: '@identityserver.api',
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? 'https://localhost:5001',
   },
   audit: {
@@ -19,7 +18,6 @@ if (process.env.NODE_ENV === 'production') {
 const prodConfig = {
   production: true,
   auth: {
-    audience: '@identityserver.api',
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL!,
   },
