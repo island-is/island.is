@@ -14,7 +14,7 @@ import {
   GetProfileDocument,
   useGetProfileQuery,
 } from '@/graphql/types/schema'
-import { Button, NavigationBarSheet, TextField, Typography } from '@/ui'
+import { Button, TextField, Typography } from '@/ui'
 import { StackScreen } from '@/components/stack-screen'
 import { testIDs } from '@/utils/test-ids'
 
@@ -89,15 +89,8 @@ export default function EditEmailScreen() {
       stickyHeaderIndices={[0]}
     >
       <StackScreen closeable networkStatus={userProfile.networkStatus} />
-      <NavigationBarSheet
-        componentId="edit-email"
-        title={intl.formatMessage({ id: 'edit.email.screenTitle' })}
-        onClosePress={() => router.back()}
-        style={{ marginHorizontal: 16 }}
-        showLoading={userProfile.loading && !!userProfile.data}
-      />
       <View style={{ paddingHorizontal: 16 }}>
-        <View style={{ marginBottom: 32, marginTop: 8 }}>
+        <View style={{ marginBottom: 32 }}>
           <Typography>
             {intl.formatMessage({ id: 'edit.email.description' })}
           </Typography>

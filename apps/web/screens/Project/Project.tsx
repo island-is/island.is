@@ -210,7 +210,7 @@ const ProjectPage: Screen<PageProps> = ({
                   <Text variant="h5" as="h2">
                     {p(
                       'parentSubpageTableOfContentsTitle',
-                      activeLocale === 'is' ? 'Efnisyfirlit' : 'Contents',
+                      activeLocale === 'is' ? 'Á þessari síðu' : 'On this page',
                     )}
                   </Text>
                   <Stack space={1}>
@@ -539,9 +539,9 @@ ProjectPage.getProps = async ({ apolloClient, locale, query }) => {
     }
 
     // Show the first chapter if none is selected
-    const chapterLink = query.genericListItemSlug
+    const chapterLink = query.childSlug
       ? parentSubpage.childLinks.find(
-          (link) => link.href.split('/').pop() === query.genericListItemSlug,
+          (link) => link.href.split('/').pop() === query.childSlug,
         )
       : parentSubpage.childLinks[0]
 

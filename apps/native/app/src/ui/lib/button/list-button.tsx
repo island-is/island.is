@@ -2,7 +2,7 @@ import React from 'react'
 import { Image, StyleSheet, TouchableHighlightProps, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import chevronForward from '../../assets/icons/chevron-forward.png'
-import { dynamicColor } from '../../utils'
+import { token } from '../../utils'
 import { font } from '../../utils/font'
 import { Skeleton } from '../skeleton/skeleton'
 
@@ -37,13 +37,7 @@ const IconCircle = styled.View`
   margin-top: -${({ theme }) => theme.spacing[1]}px;
   margin-bottom: -${({ theme }) => theme.spacing[1]}px;
 
-  background-color: ${dynamicColor(
-    ({ theme }) => ({
-      dark: theme.shades.dark.shade300,
-      light: theme.color.blue100,
-    }),
-    true,
-  )};
+  background-color: ${token((t) => t.background.brandMinimal)};
   border-radius: 30px;
 `
 
@@ -57,10 +51,7 @@ const Arrow = styled.View`
 `
 
 const Divider = styled.View`
-  background-color: ${dynamicColor(({ theme }) => ({
-    dark: theme.shades.dark.shade100,
-    light: theme.color.blue200,
-  }))};
+  background-color: ${token((t) => t.border.primary)};
 `
 
 export function ListButton({
@@ -72,12 +63,7 @@ export function ListButton({
   const theme = useTheme()
   return (
     <View>
-      <Host
-        underlayColor={
-          theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
-        }
-        {...rest}
-      >
+      <Host underlayColor={theme.tokens.app.background.pressed} {...rest}>
         <Content>
           {isLoading ? (
             <View style={{ width: 230 }}>

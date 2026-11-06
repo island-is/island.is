@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 import { Image, Pressable, SafeAreaView, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import { Colors } from '../../utils'
+import { TokenSelector } from '../../utils'
 import { Typography } from '../typography/typography'
 import { useBrowser } from '../../../hooks/use-browser'
 import externalLinkIcon from '../../../assets/icons/external-link.png'
@@ -56,42 +56,42 @@ const getIcon = (variant: Variant) => {
 const getColorsByVariant = (
   variant: Variant,
 ): {
-  borderColor: Colors
-  tagBackgroundColor: Colors
-  tagColor: Colors
+  borderColor: TokenSelector
+  tagBackgroundColor: TokenSelector
+  tagColor: TokenSelector
 } => {
   switch (variant) {
     case 'error':
       return {
-        borderColor: 'red200',
-        tagBackgroundColor: 'red100',
-        tagColor: 'red600',
+        borderColor: (t) => t.feedback.error.border,
+        tagBackgroundColor: (t) => t.feedback.tags.red.background,
+        tagColor: (t) => t.feedback.tags.red.accent,
       }
 
     case 'info':
       return {
-        borderColor: 'blue200',
-        tagBackgroundColor: 'blue100',
-        tagColor: 'blue400',
+        borderColor: (t) => t.feedback.information.border,
+        tagBackgroundColor: (t) => t.feedback.tags.blue.background,
+        tagColor: (t) => t.feedback.tags.blue.accent,
       }
 
     case 'warning':
       return {
-        borderColor: 'yellow400',
-        tagBackgroundColor: 'yellow300',
-        tagColor: 'dark400',
+        borderColor: (t) => t.feedback.warning.border,
+        tagBackgroundColor: (t) => t.feedback.tags.yellow.background,
+        tagColor: (t) => t.feedback.tags.yellow.accent,
       }
   }
 }
 
 const Host = styled.View<{
-  borderColor: Colors
+  borderColor: TokenSelector
   noContainer?: boolean
   size: 'small' | 'large'
   paddingHorizontal?: number
   paddingVertical?: number
 }>`
-  border-color: ${({ borderColor, theme }) => theme.color[borderColor]};
+  border-color: ${({ borderColor, theme }) => borderColor(theme.tokens)};
   border-width: 1px;
   border-radius: ${({ theme }) => theme.border.radius.large};
 
@@ -110,17 +110,17 @@ const Host = styled.View<{
 `
 
 const Tag = styled(View)<{
-  backgroundColor: Colors
+  backgroundColor: TokenSelector
 }>`
   background-color: ${({ backgroundColor, theme }) =>
-    theme.color[backgroundColor]};
+    backgroundColor(theme.tokens)};
   padding: ${({ theme }) => theme.spacing[1]}px;
   border-radius: ${({ theme }) => theme.border.radius.large};
   overflow: hidden;
 `
 
-const TagText = styled(Typography)<{ color?: Colors }>`
-  ${({ color, theme }) => color && `color: ${theme.color[color]};`}
+const TagText = styled(Typography)<{ tokenColor: TokenSelector }>`
+  color: ${({ tokenColor, theme }) => tokenColor(theme.tokens)};
 `
 
 const Icon = styled(Image)(({ theme }) => ({
@@ -161,7 +161,7 @@ export const ProblemTemplate = ({
       >
         {tag && (
           <Tag backgroundColor={tagBackgroundColor}>
-            <TagText variant="eyebrow" color={tagColor}>
+            <TagText variant="eyebrow" tokenColor={tagColor}>
               {tag}
             </TagText>
           </Tag>
@@ -190,7 +190,7 @@ export const ProblemTemplate = ({
                 gap: theme.spacing[1],
                 borderBottomWidth: 1,
                 marginTop: theme.spacing[1],
-                borderBottomColor: theme.color.blue400,
+                borderBottomColor: theme.tokens.interactive.foreground.primary,
               }}
               onPress={() => {
                 if (detailLink.onPress) {
@@ -202,7 +202,7 @@ export const ProblemTemplate = ({
             >
               <Typography
                 variant="body"
-                color={theme.color.blue400}
+                color={theme.tokens.interactive.foreground.primary}
                 weight="600"
               >
                 {detailLink.text}

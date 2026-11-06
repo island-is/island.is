@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native'
 import * as color from './colors'
 import { fontByWeight, fontByWeightItalic, lineHeightByFontSize } from './font'
+import { tokenModes, tokens } from './tokens'
 
 export const UNIT = 8
 
@@ -53,6 +54,8 @@ export const theme = {
     shade200: '#F2F2F5',
     shade100: '#FBFBFB',
   },
+  tokens,
+  tokenModes,
   spacing,
   border: {
     radius: {
