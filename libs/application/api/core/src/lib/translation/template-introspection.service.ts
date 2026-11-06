@@ -16,6 +16,7 @@ import {
   getApplicationTemplateByTypeId,
   getApplicationCustomFieldMessageDescriptors,
   getApplicationMessageRoots,
+  flattenTranslationNamespaces,
 } from '@island.is/application/template-loader'
 import {
   getOwnedTranslationNamespaces,
@@ -142,12 +143,10 @@ export class TemplateIntrospectionService {
       throw new Error(`No configuration found for template ${typeId}`)
     }
 
-    const translationNamespaces = [
-      ...(Array.isArray(config.translation)
-        ? config.translation
-        : [config.translation]),
-      ...(template.translationNamespaces ?? []),
-    ]
+    const translationNamespaces = flattenTranslationNamespaces(
+      config.translation,
+      template.translationNamespaces,
+    )
 
     let customFieldManifest: Record<string, MessageDescriptorInfo[]> = {}
     try {
