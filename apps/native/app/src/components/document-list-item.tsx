@@ -209,9 +209,7 @@ export const DocumentListItem = ({
     <Animated.View style={containerAnimatedStyle}>
       <Wrapper
         onPress={handlePress}
-        highlightColor={
-          closeable ? theme.shade.shade100 : theme.tokens.background.invert
-        }
+        disabled={!closeable}
         hasTopBorder={hasTopBorder}
       >
         <View>
