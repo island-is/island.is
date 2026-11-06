@@ -73,6 +73,11 @@ export class FieldSettings {
   maxAmount?: number
 
   @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  notIncludedInSumbox?: boolean
+
+  @IsOptional()
   @IsNumber()
   @ApiPropertyOptional({ type: Number })
   year?: number
