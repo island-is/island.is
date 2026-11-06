@@ -89,9 +89,7 @@ export const JudgeOverview = () => {
       isValid={true}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader
-        title={formatMessage(titles.court.restrictionCases.overview)}
-      />
+      <PageHeader title={titles.court.restrictionCases.overview} />
       <FormContentContainer>
         {workingCase.caseResentExplanation && (
           <Box marginBottom={workingCase.openedByDefender ? 3 : 5}>
@@ -175,7 +173,7 @@ export const JudgeOverview = () => {
               <AccordionItem
                 labelVariant="h3"
                 id="id_1"
-                label={formatMessage(lawsBrokenAccordion.heading)}
+                label={lawsBrokenAccordion.heading}
               >
                 <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
               </AccordionItem>
@@ -189,12 +187,7 @@ export const JudgeOverview = () => {
                     (legalProvision: CaseLegalProvisions, index: number) => {
                       return (
                         <div key={index}>
-                          <Text>
-                            {getLegalProvisionTitle(
-                              formatMessage,
-                              legalProvision,
-                            )}
-                          </Text>
+                          <Text>{getLegalProvisionTitle(legalProvision)}</Text>
                         </div>
                       )
                     },
@@ -206,9 +199,15 @@ export const JudgeOverview = () => {
               <AccordionItem
                 labelVariant="h3"
                 id="id_3"
-                label={formatMessage(restrictionsV2.title, {
-                  caseType: workingCase.type,
-                })}
+                label={formatMessage(
+                  {
+                    id: restrictionsV2.title,
+                    defaultMessage: restrictionsV2.title,
+                  },
+                  {
+                    caseType: workingCase.type,
+                  },
+                )}
               >
                 {formatRequestedCustodyRestrictions(
                   formatMessage,
@@ -271,9 +270,9 @@ export const JudgeOverview = () => {
           <Box marginBottom={3}>
             <PdfButton
               caseId={workingCase.id}
-              title={formatMessage(core.pdfButtonRequest)}
+              title={core.pdfButtonRequest}
               pdfType="request"
-              elementId={formatMessage(core.pdfButtonRequest)}
+              elementId={core.pdfButtonRequest}
             />
           </Box>
           <Button

@@ -13,7 +13,7 @@ My pages is the user personal pages where it will be able to find all the inform
 
 ## Getting started
 
-Before running the service portal, you will need to setup the user-profile service. Follow [these steps](../services/user-profile/README.md#initial-setup) first.
+Before running the service portal, you will need to setup the user-profile service. Follow [these steps](../../services/user-profile/README.md#initial-setup) first.
 
 You might need to setup x-road service.
 
@@ -21,7 +21,7 @@ You might need to setup x-road service.
 sh ./scripts/run-xroad-proxy.sh
 ```
 
-You can then proceed and start [the GraphQL API](../api/README.md#getting-started) and the service portal:
+You can then proceed and start [the GraphQL API](../../api/README.md#getting-started) and the service portal:
 
 ```bash
 yarn start service-portal
@@ -29,15 +29,15 @@ yarn start service-portal
 
 ## Docs
 
-Start by reading about the [portal module system](../../libs/portals/core/README.md).
+Start by reading about the [portal module system](../../../libs/portals/core/README.md).
 
 ### Adding a module to the service portal
 
-To add a new module to the service-portal, import and add it to the list defined in [modules.ts](./src/store/modules.ts):
+To add a new module to the service-portal, import and add it to the list defined in [modules.ts](./src/lib/modules.ts):
 
 ```tsx
 // other imports...
-import { myNewModule } from '@island.is/service-portal/my-new-module'
+import { myNewModule } from '@island.is/portals/my-pages/my-new-module'
 
 export const modules: PortalModule[] = [
   // other modules...
@@ -55,24 +55,11 @@ Declaring a new route for the service portal involves a few steps:
 
 #### Declaring a path for a library
 
-All Service Portal paths are declared as an enum in [paths.ts](../../libs/service-portal/core/src/lib/navigation/paths.ts)
+Each module declares its paths as an enum in its own `src/lib/paths.ts`. Shared root paths are in [paths.ts](../../../libs/portals/my-pages/core/src/lib/navigation/paths.ts).
 
 #### Declare a route in the master navigation
 
-The master navigation is defined in the service portal core in [masterNavigation.ts](../../libs/service-portal/core/src/lib/navigation/masterNavigation.ts)
-Navigation items are defined as such:
-
-```typescript
-export interface PortalNavigationItem {
-  name: MessageDescriptor | string
-  path?: ServicePortalPath
-  external?: boolean
-  // System routes are always rendered in the navigation
-  systemRoute?: boolean
-  icon?: Pick<IconProps, 'icon' | 'type'>
-  children?: PortalNavigationItem[]
-}
-```
+Each module exports its navigation items from `src/lib/navigation.ts`, and the master navigation in [masterNavigation.ts](./src/lib/masterNavigation.ts) imports them. Navigation items are `PortalNavigationItem`s, defined in [portalCore.ts](../../../libs/portals/core/src/types/portalCore.ts).
 
 #### Implement the route
 

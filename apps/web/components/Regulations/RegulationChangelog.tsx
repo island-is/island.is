@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import cn from 'classnames'
 
-import { Icon, Text } from '@island.is/island-ui/core'
+import { Icon, Text, Tooltip, VisuallyHidden } from '@island.is/island-ui/core'
 import {
   interpolate,
   ISODate,
@@ -32,6 +32,13 @@ export const useRegulationEffectPrepper = (
   const { formatDate } = useDateUtils()
   const { linkToRegulation } = useRegulationLinkResolver()
   const today = new Date().toISOString().substr(0, 10) as ISODate
+  // Falls back on missing keys (`txt` fallback) and on empty Contentful
+  // values (`||`): an empty string would make Tooltip render nothing and
+  // hide the warning icon itself.
+  const pendingWarningDefault =
+    'Þessi breyting hefur ekki verið færð í stofnreglugerðina'
+  const pendingWarning =
+    txt('historyPendingWarning', pendingWarningDefault) || pendingWarningDefault
 
   const { effects, isViewingCurrentVersion } = useMemo(() => {
     const effects = regulation.history.reduce<
@@ -136,7 +143,17 @@ export const useRegulationEffectPrepper = (
             <>
               <strong>{formatDate(item.date)}</strong>{' '}
               {item.status === 'pending' && (
-                <Icon icon="warning" type="outline" size="small" />
+                <>
+                  {/* Hover-only tooltip: the span stays out of the tab order
+                      because it sits inside a link. Screen readers get the
+                      VisuallyHidden text instead. */}
+                  <Tooltip text={pendingWarning}>
+                    <span tabIndex={-1} aria-hidden="true">
+                      <Icon icon="warning" type="outline" size="small" />
+                    </span>
+                  </Tooltip>
+                  <VisuallyHidden>{pendingWarning}</VisuallyHidden>
+                </>
               )}
               <br />
               <span className={className} title={label + ' ' + item.title}>

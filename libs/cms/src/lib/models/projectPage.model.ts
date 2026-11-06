@@ -3,7 +3,11 @@ import GraphQLJSON from 'graphql-type-json'
 import { CacheField } from '@island.is/nest/graphql'
 import { getProjectPageUrlPrefix } from '@island.is/shared/utils'
 
-import { ILinkFields, IProjectPage } from '../generated/contentfulTypes'
+import {
+  ILinkFields,
+  IProjectPage,
+  IProjectSubpage,
+} from '../generated/contentfulTypes'
 import {
   mapDocument,
   safelyMapSliceUnion,
@@ -22,6 +26,7 @@ import {
   OrganizationTheme,
 } from './organizationTheme.model'
 import { AlertBanner, mapAlertBanner } from './alertBanner.model'
+import { mapSidebarCard, SidebarCard } from './sidebarCard.model'
 
 @ObjectType()
 class ProjectPageThemeProperties extends OrganizationTheme {}
@@ -54,6 +59,9 @@ export class ProjectPage {
   @CacheField(() => LinkGroup, { nullable: true })
   secondarySidebar?: LinkGroup | null
 
+  @CacheField(() => [SidebarCard], { nullable: true })
+  sidebarCards?: Array<SidebarCard> | null
+
   @Field()
   subtitle!: string
 
@@ -74,6 +82,9 @@ export class ProjectPage {
 
   @CacheField(() => GenericTag, { nullable: true })
   newsTag!: GenericTag | null
+
+  @CacheField(() => [GenericTag], { nullable: true })
+  secondaryNewsTags?: GenericTag[] | null
 
   @CacheField(() => [ProjectSubpage])
   projectSubpages!: Array<ProjectSubpage>
@@ -112,6 +123,11 @@ export class ProjectPage {
   alertBanner?: AlertBanner
 }
 
+const belongsToProjectPage = (
+  subpage: { fields?: { projectPage?: { sys?: { id?: string } } } } | undefined,
+  projectPage: IProjectPage,
+) => subpage?.fields?.projectPage?.sys?.id === projectPage.sys.id
+
 const processSidebarLinks = (projectPage: IProjectPage) => {
   let hasFrontpageLink = false
 
@@ -143,12 +159,13 @@ const processSidebarLinks = (projectPage: IProjectPage) => {
       return true
     }
 
-    // Filter out links that are not present in the projectSubpages array (since those links will result in a 404)
+    // Filter out subpages that belong to a different project page (since those links will result in a 404)
     return (
       linkGroupContentTypeId === 'projectSubpage' &&
-      projectPage.fields.projectSubpages?.some((subpage) => {
-        return subpage.sys.id === linkGroup.fields.primaryLink?.sys.id
-      })
+      belongsToProjectPage(
+        linkGroup.fields.primaryLink as IProjectSubpage,
+        projectPage,
+      )
     )
   })
 
@@ -206,9 +223,7 @@ const processSidebarLinks = (projectPage: IProjectPage) => {
         }
         return (
           childLinkContentTypeId === 'projectSubpage' &&
-          projectPage.fields.projectSubpages?.some(
-            (subpage) => subpage.sys.id === childLink.sys.id,
-          )
+          belongsToProjectPage(childLink as IProjectSubpage, projectPage)
         )
       }) ?? []
   }
@@ -216,7 +231,10 @@ const processSidebarLinks = (projectPage: IProjectPage) => {
   return filteredItems
 }
 
-export const mapProjectPage = (projectPage: IProjectPage): ProjectPage => {
+export const mapProjectPage = (
+  projectPage: IProjectPage,
+  projectSubpages: IProjectSubpage[] = [],
+): ProjectPage => {
   const { sys, fields } = projectPage
 
   return {
@@ -233,6 +251,9 @@ export const mapProjectPage = (projectPage: IProjectPage): ProjectPage => {
     secondarySidebar: fields.secondarySidebar
       ? mapLinkGroup(fields.secondarySidebar)
       : null,
+    sidebarCards: (fields.sidebarCards ?? [])
+      .filter((card) => card.fields)
+      .map(mapSidebarCard),
     subtitle: fields.subtitle ?? '',
     intro: fields.intro ?? '',
     content: fields.content
@@ -244,7 +265,10 @@ export const mapProjectPage = (projectPage: IProjectPage): ProjectPage => {
       .map(safelyMapSliceUnion)
       .filter(Boolean),
     newsTag: fields.newsTag ? mapGenericTag(fields.newsTag) : null,
-    projectSubpages: (fields.projectSubpages ?? [])
+    secondaryNewsTags: (fields.secondaryNewsTags ?? [])
+      .filter((tag) => tag.fields)
+      .map(mapGenericTag),
+    projectSubpages: projectSubpages
       .filter((p) => p.fields?.title)
       .map(mapProjectSubpage),
     featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,

@@ -386,6 +386,7 @@ export default function VehicleMileageScreen() {
                 }
                 isTransparent
                 textStyle={{ fontSize: 12, lineHeight: 16 }}
+                style={{ marginVertical: 8 }}
               />
             </View>
             <Divider style={{ marginLeft: 0, marginRight: 0 }} />

@@ -222,25 +222,9 @@ export class AppealCaseController {
       )
     }
 
-    if (updateDto.appealJudge1Id) {
+    for (const appealJudgeId of updateDto.appealJudgeIds ?? []) {
       await this.validateAssignedUser(
-        updateDto.appealJudge1Id,
-        [UserRole.COURT_OF_APPEALS_JUDGE],
-        transaction,
-      )
-    }
-
-    if (updateDto.appealJudge2Id) {
-      await this.validateAssignedUser(
-        updateDto.appealJudge2Id,
-        [UserRole.COURT_OF_APPEALS_JUDGE],
-        transaction,
-      )
-    }
-
-    if (updateDto.appealJudge3Id) {
-      await this.validateAssignedUser(
-        updateDto.appealJudge3Id,
+        appealJudgeId,
         [UserRole.COURT_OF_APPEALS_JUDGE],
         transaction,
       )

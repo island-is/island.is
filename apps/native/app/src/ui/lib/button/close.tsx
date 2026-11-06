@@ -2,7 +2,7 @@ import React from 'react'
 import { Image } from 'react-native'
 import styled from 'styled-components/native'
 import close from '../../assets/alert/close.png'
-import { dynamicColor } from '../../utils'
+import { token } from '../../utils'
 
 const Host = styled.View`
   display: flex;
@@ -12,10 +12,7 @@ const Host = styled.View`
   width: 24px;
   height: 24px;
   border-radius: 24px;
-  background-color: ${dynamicColor((props) => ({
-    dark: props.theme.shades.dark.shade100,
-    light: props.theme.color.blue100,
-  }))};
+  background-color: ${token((t) => t.interactive.background.primaryMinimal)};
 `
 
 export function Close() {

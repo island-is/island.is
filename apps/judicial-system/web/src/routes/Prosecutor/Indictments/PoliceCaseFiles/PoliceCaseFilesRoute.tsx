@@ -251,7 +251,6 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
 )
 
 const PoliceCaseFilesRoute = () => {
-  const { formatMessage } = useIntl()
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
@@ -298,9 +297,7 @@ const PoliceCaseFilesRoute = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.indictments.policeCaseFiles)}
-      />
+      <PageHeader title={titles.prosecutor.indictments.policeCaseFiles} />
       <FormContentContainer>
         <PageTitle>{strings.heading}</PageTitle>
         <div className={stack({ gap: 5 })}>
@@ -323,7 +320,7 @@ const PoliceCaseFilesRoute = () => {
           previousUrl={`${PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(PROSECUTION_INDICTMENT_CASE_CASE_FILE_ROUTE),

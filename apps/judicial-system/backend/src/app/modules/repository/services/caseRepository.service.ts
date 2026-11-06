@@ -188,6 +188,40 @@ export class CaseRepositoryService {
   }
 
   /**
+   * A case with its assigned prosecutor - so the prosecutor can be notified
+   * about a delivery that the police system rejected.
+   */
+  async findByIdWithProsecutor(
+    id: string,
+    options?: { transaction?: Transaction },
+  ): Promise<Case | null> {
+    try {
+      this.logger.debug(`Finding case ${id} with its prosecutor`)
+
+      const result = await this.caseModel.findByPk(id, {
+        include: [{ model: User, as: 'prosecutor' }],
+        transaction: options?.transaction,
+      })
+
+      this.logger.debug(`Case ${id} ${result ? 'found' : 'not found'}`)
+
+      if (result) {
+        await this.resolvePoliceCaseNumbersForCaseGraph([result], {
+          transaction: options?.transaction,
+        })
+      }
+
+      return result
+    } catch (error) {
+      this.logger.error(`Error finding case ${id} with its prosecutor:`, {
+        error,
+      })
+
+      throw error
+    }
+  }
+
+  /**
    * The case an indictment was split from, with the full case graph - what a
    * document about the split case renders the original case from. Unlike
    * findLiveById this applies no state filter: the source case is read on

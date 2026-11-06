@@ -287,7 +287,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
     }
 
     if (!valid) {
-      toast.error(formatMessage(errors.invalidDate))
+      toast.error(errors.invalidDate)
       return
     }
 
@@ -298,7 +298,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
     const date = dates[type]
 
     if (!date) {
-      toast.error(formatMessage(errors.invalidDate))
+      toast.error(errors.invalidDate)
       return
     }
 
@@ -687,7 +687,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
           text={`Mál ${workingCase.courtCaseNumber} verður afturkallað.\nÁkærði: ${modalVisible.defendant.name}.`}
           buttons={[
             {
-              text: formatMessage(core.cancel),
+              text: core.cancel,
               onClick: () => setModalVisible(undefined),
               variant: 'ghost',
             },
@@ -716,7 +716,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
           text={`Máli ${workingCase.courtCaseNumber} verður lokið án fullnustu gagnvart ákærða ${modalVisible.defendant.name}.\nAthugið að ekki er hægt að afturkalla þessa aðgerð.`}
           buttons={[
             {
-              text: formatMessage(core.cancel),
+              text: core.cancel,
               onClick: () => setModalVisible(undefined),
               variant: 'ghost',
             },
@@ -766,7 +766,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
           } verður afturkölluð.`}
           buttons={[
             {
-              text: formatMessage(core.cancel),
+              text: core.cancel,
               onClick: () => setModalVisible(undefined),
               variant: 'ghost',
             },
@@ -789,7 +789,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
           )}.\nViltu skrá áfrýjunina?`}
           buttons={[
             {
-              text: formatMessage(core.cancel),
+              text: core.cancel,
               onClick: () => setModalVisible(undefined),
               variant: 'ghost',
             },

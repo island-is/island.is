@@ -37,6 +37,10 @@ class MyDocument extends Document<Props> {
             strategy="beforeInteractive"
             crossOrigin="anonymous"
           />
+          <Script
+            src="https://pay.google.com/gp/p/js/pay.js"
+            strategy="beforeInteractive"
+          />
         </Head>
         <body>
           <Main />
