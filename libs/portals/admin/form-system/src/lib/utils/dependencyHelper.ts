@@ -1,5 +1,5 @@
 import { FormSystemDependency, FormSystemField } from '@island.is/api/schema'
-import { FieldTypesEnum } from '@island.is/form-system/ui'
+import { FieldTypesEnum } from '@island.is/form-system/shared'
 
 export const hasDependency = (
   dependencyArray:
@@ -118,7 +118,10 @@ export const removeAllDependencies = (
   ) {
     const listItemIds = getListItemIds(field)
 
-    return removeIdsFromDependencies(dependencies, listItemIds)
+    return removeIdsFromDependencies(dependencies, [
+      ...getIdsToRemove(field),
+      ...listItemIds,
+    ])
   }
 
   if (fieldType === FieldTypesEnum.PAYMENT) {

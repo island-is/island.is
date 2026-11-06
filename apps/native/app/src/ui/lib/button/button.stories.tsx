@@ -5,7 +5,6 @@ import { Image, View } from 'react-native'
 import familyIcon from '../../assets/icons/family.png'
 import { Button } from './button'
 import { CancelButton } from './cancel-button'
-import { Close } from './close'
 import { IconButton } from './icon-button'
 import { ListButton } from './list-button'
 
@@ -32,9 +31,6 @@ storiesOf('Button', module)
         onPress={() => void 0}
       />
     )
-  })
-  .add('Close', () => {
-    return <Close />
   })
   .add('Icon Button', () => {
     return (

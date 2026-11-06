@@ -8,6 +8,7 @@ import {
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE,
@@ -300,6 +301,41 @@ describe('useSections getSections', () => {
       expect(
         appealSections(confirmed, coaUser)[0].children[4].onClick,
       ).toBeDefined()
+    })
+
+    // The upload page belongs to the deadlines step: it is reached from a
+    // card there and goes back there, so the panel keeps that step lit.
+    it('keeps the deadlines step active on the statement upload page', () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE
+
+      const sections = appealSections(caseWithBothAppeals, coaUser)
+
+      expect(sections[0].isActive).toBe(true)
+      expect(sections[0].children[3].isActive).toBe(true)
+      // And the step's own link leads back to the list.
+      expect(sections[0].children[3].href).toBe(
+        `${COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
+      )
+    })
+
+    // The panel renders the active step's href for nothing, so going back
+    // to the list is offered as a click, and asks nothing of the case.
+    it('offers the way back to the deadlines from the statement upload page', async () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE
+      onNavigationTo.mockClear()
+
+      const { onClick } = appealSections(caseWithBothAppeals, coaUser)[0]
+        .children[3]
+
+      expect(onClick).toBeDefined()
+
+      await onClick?.()
+
+      expect(onNavigationTo).toHaveBeenCalledWith(
+        COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
+      )
     })
 
     it('marks the section active on the status step', () => {

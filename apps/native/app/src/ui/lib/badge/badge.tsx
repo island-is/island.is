@@ -1,5 +1,6 @@
 import React from 'react'
-import styled, { useTheme, DefaultTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
+import { Tokens } from '../../utils'
 import { Typography } from '../typography/typography'
 
 const Host = styled.View`
@@ -8,68 +9,41 @@ const Host = styled.View`
   padding: ${({ theme }) => theme.spacing[1]}px;
 `
 
-export const badgeColorSchemes = {
-  blue: {
-    color: 'blue400',
-    backgroundColor: 'blue100',
-    borderColor: 'blue200',
-  },
-  mint: {
-    color: 'mint800',
-    backgroundColor: 'mint200',
-    borderColor: 'mint300',
-  },
-  blueberry: {
-    color: 'blueberry400',
-    backgroundColor: 'blueberry100',
-    borderColor: 'blueberry200',
-  },
-  darkerBlue: {
-    color: 'blue600',
-    backgroundColor: 'blue200',
-    borderColor: 'blue300',
-  },
-  white: {
-    color: 'blue400',
-    backgroundColor: 'white',
-    borderColor: 'blue100',
-  },
-  purple: {
-    color: 'purple400',
-    backgroundColor: 'purple100',
-    borderColor: 'purple200',
-  },
-  red: {
-    color: 'red600',
-    backgroundColor: 'red100',
-    borderColor: 'red200',
-  },
-  rose: {
-    color: 'roseTinted400',
-    backgroundColor: 'roseTinted100',
-    borderColor: 'roseTinted200',
-  },
-  dark: {
-    color: 'dark400',
-    backgroundColor: 'dark200',
-    borderColor: 'dark300',
-  },
-  yellow: {
-    color: 'dark400',
-    backgroundColor: 'yellow400',
-    borderColor: 'yellow400',
-  },
-  disabled: {
-    color: 'dark200',
-    backgroundColor: 'dark100',
-    borderColor: 'dark200',
-  },
-  warn: {
-    color: 'dark400',
-    backgroundColor: 'yellow200',
-    borderColor: 'yellow300',
-  },
-} as const
+type BadgeColours = { background: string; accent: string; border: string }
+
+// The Brand Guide tag tokens, plus the app's own white, dark, disabled and warn
+// schemes.
+type BadgeVariant =
+  | 'blue'
+  | 'mint'
+  | 'blueberry'
+  | 'darkerBlue'
+  | 'white'
+  | 'purple'
+  | 'red'
+  | 'rose'
+  | 'dark'
+  | 'yellow'
+  | 'disabled'
+  | 'warn'
+
+export const badgeColorSchemes: Record<
+  BadgeVariant,
+  (tokens: Tokens) => BadgeColours
+> = {
+  blue: (t) => t.feedback.tags.blue,
+  mint: (t) => t.feedback.tags.mint,
+  blueberry: (t) => t.feedback.tags.blueberry,
+  darkerBlue: (t) => t.feedback.tags.darkerBlue,
+  white: (t) => t.app.tags.white,
+  purple: (t) => t.feedback.tags.purple,
+  red: (t) => t.feedback.tags.red,
+  rose: (t) => t.feedback.tags.rose,
+  dark: (t) => t.app.tags.dark,
+  yellow: (t) => t.feedback.tags.yellow,
+  disabled: (t) => t.app.tags.disabled,
+  warn: (t) => t.app.tags.warn,
+}
 
 interface BadgeProps {
   title: string
@@ -85,22 +59,22 @@ export function Badge({
   fill = false,
 }: BadgeProps) {
   const theme = useTheme()
-  const badgeVariant = badgeColorSchemes[variant] ?? 'blue'
+  const colours = (badgeColorSchemes[variant] ?? badgeColorSchemes.blue)(
+    theme.tokens,
+  )
   return (
     <Host
       style={{
         backgroundColor: fill
-          ? theme.color[badgeVariant.backgroundColor]
+          ? colours.background
           : outlined
           ? 'transparent'
-          : theme.color[badgeVariant.backgroundColor],
-        borderColor: outlined
-          ? theme.color[badgeVariant.borderColor]
-          : 'transparent',
+          : colours.background,
+        borderColor: outlined ? colours.border : 'transparent',
         borderWidth: outlined ? 1 : 0,
       }}
     >
-      <Typography variant="eyebrow" color={theme.color[badgeVariant.color]}>
+      <Typography variant="eyebrow" color={colours.accent}>
         {title}
       </Typography>
     </Host>

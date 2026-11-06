@@ -16,7 +16,6 @@ import { router } from 'expo-router'
 import { StackScreen } from '@/components/stack-screen'
 import {
   Button,
-  NavigationBarSheet,
   NotificationCard,
   Problem,
   ListItemSkeleton,

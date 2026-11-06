@@ -1,6 +1,7 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { UserNotificationApi } from '@island.is/clients/user-notification'
 import { V2MeApi } from '@island.is/clients/user-profile'
+import type { OrganizationTitleByNationalIdDataLoader } from '@island.is/cms'
 import type { Locale } from '@island.is/shared/types'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import {
@@ -9,6 +10,7 @@ import {
   NotificationSettings,
 } from './notificationSettings.model'
 import {
+  filterAndSortSenders,
   isValidSenderId,
   normalizeSenderId,
   toCategoryKey,
@@ -89,8 +91,12 @@ export class NotificationSettingsService {
   async getNotificationSettings(
     user: User,
     locale: Locale,
+    titleLoader: OrganizationTitleByNationalIdDataLoader,
   ): Promise<NotificationSettings> {
-    const settings = await this.findCategorySettings(user)
+    const [settings, userProfile] = await Promise.all([
+      this.findCategorySettings(user),
+      this.v2MeApiWAuth(user).meUserProfileControllerFindUserProfile(),
+    ])
 
     const senders = new Map<string, NotificationSenderSetting>()
     for (const setting of settings.values()) {
@@ -110,7 +116,35 @@ export class NotificationSettingsService {
       senders.set(setting.senderId, sender)
     }
 
-    return { senders: [...senders.values()] }
+    const senderIds = [...senders.keys()]
+    const titleList = await Promise.all(
+      senderIds.map((id) => titleLoader.load(id)),
+    )
+    const titles = Object.fromEntries(
+      senderIds.map((id, i) => [id, titleList[i]]),
+    )
+
+    return {
+      senders: filterAndSortSenders([...senders.values()], titles).map(
+        (sender) => ({
+          ...sender,
+          categories: [...sender.categories].sort((a, b) =>
+            a.label.localeCompare(b.label, 'is'),
+          ),
+        }),
+      ),
+      onlyActionablePriorityNotifications:
+        userProfile.onlyActionablePriorityNotifications,
+    }
+  }
+
+  async updateOnlyActionablePriorityNotifications(
+    user: User,
+    onlyActionablePriorityNotifications: boolean,
+  ): Promise<void> {
+    await this.v2MeApiWAuth(user).meUserProfileControllerPatchUserProfile({
+      patchUserProfileDto: { onlyActionablePriorityNotifications },
+    })
   }
 
   /**
@@ -120,6 +154,10 @@ export class NotificationSettingsService {
     user: User,
     categories: NotificationCategoryInput[],
   ): Promise<void> {
+    if (categories.length === 0) {
+      return
+    }
+
     for (const { senderId } of categories) {
       if (!isValidSenderId(normalizeSenderId(senderId))) {
         throw new BadRequestException(`Sender id ${senderId} is not valid`)

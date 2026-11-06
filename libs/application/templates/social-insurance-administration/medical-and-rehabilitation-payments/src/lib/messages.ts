@@ -303,6 +303,13 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         '* An unexpected error occurred while fetching data or confirming that you fulfil all conditions to be eligible for medical and rehabilitation payments.\n\nPlease try again later as an external connection could be temporarily unavailable.\n\nIf this error occurs again, please copy this text, sign into minarsidur.tr.is and navigate to “Hafa samband”, press the "Sjúkra- og endurhæfingargreiðslur" box and paste the error text into your message and send it.',
     },
+    noApplicationTypeDescription: {
+      id: 'marp.application:not.eligible.no.application.type.description#markdown',
+      defaultMessage:
+        'Ástæðan fyrir því er eftirfarandi:\n* TR fann hvorki vottorð né undanþágu sem gerir þér kleift að sækja um sjúkra- og endurhæfingargreiðslur rafrænt.\n\nÞetta er ekki tengingarvilla. Vinsamlegast hafðu samband við TR í gegnum Mínar síður TR undir Hafa samband eða í síma 560 4400 og fáðu frekari leiðbeiningar.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+      description:
+        'The reason for this is the following:\n* TR found neither a certificate nor an exemption that allows you to apply for medical and rehabilitation payments electronically.\n\nThis is not a connection error. Please contact TR through My Pages under Contact Us or by phone at 560 4400 for further instructions.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+    },
   }),
 
   generalInformation: defineMessages({
@@ -404,6 +411,11 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       id: 'marp.application:general.information.questions.select.number.of.credits',
       defaultMessage: 'Veldu fjölda eininga',
       description: 'Select number of credits',
+    },
+    questionsStudyDocumentsTitle: {
+      id: 'marp.application:general.information.questions.study.documents.title',
+      defaultMessage: 'Hlaða inn staðfestingarskjali',
+      description: 'Upload confirmation document',
     },
 
     // Employee sick pay
@@ -1000,6 +1012,31 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
   }),
 
+  confirmationOfJobSearch: defineMessages({
+    sectionTitle: {
+      id: 'marp.application:confirmation.of.job.search.section.title',
+      defaultMessage: 'Staðfesting á atvinnuleit',
+      description: 'Confirmation of job search',
+    },
+    description: {
+      id: 'marp.application:confirmation.of.job.search.description',
+      defaultMessage:
+        'Forsenda fyrir áframhaldandi greiðslum er að staðfesting á atvinnuleit í kjölfar endurhæfingar eða viðurkenndri meðferð er lokið.',
+      description:
+        'A prerequisite for ongoing payments is a confirmation of job search',
+    },
+    applicationStartOfJobSearch: {
+      id: 'marp.application:confirmation.of.job.search.application.start.of.job.search',
+      defaultMessage: 'Upphaf atvinnuleitar',
+      description: 'Start of job search',
+    },
+    applicationEstimatedEnd: {
+      id: 'marp.application:confirmation.of.job.search.application.estimated.end',
+      defaultMessage: 'Áætluð lok',
+      description: 'Estimated end',
+    },
+  }),
+
   selfAssessment: defineMessages({
     sectionTitle: {
       id: 'marp.application:self.assessment.section.title',
@@ -1147,6 +1184,11 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       id: 'marp.application:overiew.confirmation.of.ill.health.confirmed',
       defaultMessage: 'Þú hefur staðfest staðfestingu á heilsubresti',
       description: 'You have confirmed your confirmation of ill health',
+    },
+    confirmationOfJobSearchConfirmed: {
+      id: 'marp.application:overiew.confirmation.of.job.search.confirmed',
+      defaultMessage: 'Þú hefur staðfest staðfestingu á atvinnuleit',
+      description: 'You have confirmed your confirmation of job search',
     },
     selfAssessmentQuestionnaire: {
       id: 'marp.application:overiew.self.assessment.questionnaire',

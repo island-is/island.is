@@ -60,7 +60,7 @@ type SliceLike = { __typename?: string; organizationSlug?: string | null }
 
 /**
  * Events shown on a project page belong to the organization selected on the
- * first LatestEventsSlice found on the project page or one of its subpages
+ * first LatestEventsSlice found on the project page
  */
 export const getProjectEventsOrganizationSlug = (
   projectPage?: ProjectPage | null,
@@ -69,10 +69,6 @@ export const getProjectEventsOrganizationSlug = (
   const sliceLists: Array<SliceLike[] | null | undefined> = [
     projectPage.slices as SliceLike[],
     projectPage.bottomSlices as SliceLike[],
-    ...(projectPage.projectSubpages ?? []).flatMap((subpage) => [
-      subpage.slices as SliceLike[],
-      subpage.bottomSlices as SliceLike[],
-    ]),
   ]
   for (const slices of sliceLists) {
     const slice = slices?.find(

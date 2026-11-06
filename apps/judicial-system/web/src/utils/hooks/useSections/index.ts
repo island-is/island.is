@@ -12,6 +12,7 @@ import {
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE,
@@ -1549,6 +1550,7 @@ const useSections = (
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE) ||
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE) ||
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE) ||
+        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE) ||
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE) ||
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE),
       children: [
@@ -1610,29 +1612,36 @@ const useSections = (
         },
         {
           name: 'Greinargerðarfrestir',
-          isActive: isActive(
-            COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
-          ),
+          // The upload page is the deadlines step's own: it is reached from a
+          // card there and goes back there, so the step stays lit on it.
+          isActive:
+            isActive(
+              COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
+            ) || isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE),
           href: appendAppealCaseIdQuery(
             `${COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE}/${workingCase.id}`,
             targetAppealCase?.id,
           ),
           // Going forward to it runs through the steps before it, in practice
           // the defender step's validation: a deadline is given to a party's
-          // advocate, so the court settles who that is first.
+          // advocate, so the court settles who that is first. From the upload
+          // page it is a step back, and the href does not carry it (the panel
+          // links only to earlier steps), so the way back is offered as a
+          // click with nothing asked.
           onClick:
-            !isActive(
-              COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
-            ) &&
-            validateFormStepper(
-              isValid,
-              [
-                COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
-                COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
-              ],
-              workingCase,
-            ) &&
-            onNavigationTo
+            onNavigationTo &&
+            (isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE) ||
+              (!isActive(
+                COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
+              ) &&
+                validateFormStepper(
+                  isValid,
+                  [
+                    COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
+                    COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+                  ],
+                  workingCase,
+                )))
               ? async () =>
                   await onNavigationTo(
                     COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,

@@ -1113,6 +1113,16 @@ Array [
 ]
 `;
 
+exports[`GraphQL operations select these field paths FileAppealStatement 1`] = `
+Array [
+  "fileAppealStatement.civilClaimantId",
+  "fileAppealStatement.created",
+  "fileAppealStatement.defendantId",
+  "fileAppealStatement.eventType",
+  "fileAppealStatement.id",
+]
+`;
+
 exports[`GraphQL operations select these field paths FileCourtDocumentInCourtSession 1`] = `
 Array [
   "fileCourtDocumentInCourtSession.caseFileId",
@@ -1645,6 +1655,11 @@ Array [
   "limitedAccessCase.verdictAppealCase.appealEventLogs.userTitle",
   "limitedAccessCase.verdictAppealCase.appealState",
   "limitedAccessCase.verdictAppealCase.appealType",
+  "limitedAccessCase.verdictAppealCase.courtSessions.courtRoom",
+  "limitedAccessCase.verdictAppealCase.courtSessions.created",
+  "limitedAccessCase.verdictAppealCase.courtSessions.id",
+  "limitedAccessCase.verdictAppealCase.courtSessions.sessionDate",
+  "limitedAccessCase.verdictAppealCase.courtSessions.sessionType",
   "limitedAccessCase.verdictAppealCase.id",
   "limitedAccessCase.victims.hasLawyer",
   "limitedAccessCase.victims.hasNationalId",

@@ -5,7 +5,6 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { Label } from '../label/label'
 import CopyIcon from '../../assets/icons/copy.png'
-import { dynamicColor } from '../../utils'
 import { Skeleton } from '../skeleton/skeleton'
 import { Typography } from '../typography/typography'
 
@@ -16,17 +15,12 @@ const Host = styled.SafeAreaView<{
 }>`
   flex: 1;
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
-  border-bottom-color: ${dynamicColor(
-    ({ theme, noBorder, darkBorder }) => ({
-      light: noBorder
-        ? 'transparent'
-        : darkBorder
-        ? theme.color.blueberry200
-        : theme.color.blue200,
-      dark: noBorder ? 'transparent' : theme.shades.dark.shade200,
-    }),
-    true,
-  )};
+  border-bottom-color: ${({ theme, noBorder, darkBorder }) =>
+    noBorder
+      ? 'transparent'
+      : darkBorder
+      ? theme.tokens.feedback.tags.blueberry.border
+      : theme.tokens.border.primary};
   margin-left: ${({ theme }) => theme.spacing[2]}px;
   margin-right: ${({ theme }) => theme.spacing[2]}px;
 `

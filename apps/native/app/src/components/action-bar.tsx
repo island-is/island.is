@@ -72,7 +72,8 @@ export const ActionBar = ({
         <>
           <ActionBarItem
             onPress={onClickStar}
-            underlayColor={theme.shade.shade400}
+            underlayColor={theme.tokens.app.background.pressed}
+            activeOpacity={1}
             accessibilityRole="button"
             accessibilityLabel={intl.formatMessage({
               id: 'inbox.bulkSelectActionStar',
@@ -99,7 +100,8 @@ export const ActionBar = ({
           </ActionBarItem>
           <ActionBarItem
             onPress={onClickArchive}
-            underlayColor={theme.shade.shade400}
+            underlayColor={theme.tokens.app.background.pressed}
+            activeOpacity={1}
             accessibilityRole="button"
             accessibilityLabel={intl.formatMessage({
               id: 'inbox.bulkSelectActionArchive',
@@ -126,7 +128,8 @@ export const ActionBar = ({
           </ActionBarItem>
           <ActionBarItem
             onPress={onClickMarkAsRead}
-            underlayColor={theme.shade.shade400}
+            underlayColor={theme.tokens.app.background.pressed}
+            activeOpacity={1}
             accessibilityRole="button"
             accessibilityLabel={intl.formatMessage({
               id: 'inbox.bulkSelectActionRead',

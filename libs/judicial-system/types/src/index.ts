@@ -108,6 +108,7 @@ export type {
 export {
   AppealCourtSessionType,
   appealCourtSessionTypeNames,
+  sortAppealCourtSessionsByDate,
 } from './lib/appealCourtSession'
 export {
   findAppealStatementDeadline,
