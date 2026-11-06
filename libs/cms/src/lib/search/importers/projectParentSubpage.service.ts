@@ -24,7 +24,7 @@ const getChapters = (entry: IProjectParentSubpage) =>
       // Chapters should belong to the same project page, the same rule as on the web
       page?.fields?.projectPage?.sys?.id ===
         entry.fields.projectPage?.sys?.id &&
-      Boolean(page.fields.title) &&
+      Boolean(page.fields.title?.trim()) &&
       Boolean(page.fields.slug?.trim()),
   )
 
@@ -42,7 +42,7 @@ export class ProjectParentSubpageSyncService
       }
 
       if (
-        Boolean(entry.fields.title) &&
+        Boolean(entry.fields.title?.trim()) &&
         Boolean(entry.fields.slug?.trim()) &&
         Boolean(entry.fields.projectPage?.sys?.id) &&
         getChapters(entry as IProjectParentSubpage).length > 0
