@@ -1,5 +1,7 @@
 import { defineMessages } from 'react-intl'
 
+// Note that no translations exist for this namespace, thus no namespace exists in Contentful.
+// Default messages are displayed to users as is.
 export const m = defineMessages({
   // General
   applicationSystem: {
