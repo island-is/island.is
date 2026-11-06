@@ -1,5 +1,6 @@
 import { CacheField } from '@island.is/nest/graphql'
 import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { CourtOfAppealAppealsInput } from './courtOfAppealAppeals.input'
 
 @ObjectType('WebCourtOfAppealAppealsItem')
 class Item {
@@ -13,10 +14,10 @@ class Item {
   caseNumber!: string
 
   @Field(() => String, { nullable: true })
-  appealDate?: string | null
+  status?: string | null
 
   @Field(() => String, { nullable: true })
-  verdictDate?: string | null
+  appealDate?: string | null
 }
 
 @ObjectType('WebCourtOfAppealAppealsResponse')
@@ -26,4 +27,7 @@ export class CourtOfAppealAppealsResponse {
 
   @Field(() => Int)
   total!: number
+
+  @CacheField(() => CourtOfAppealAppealsInput)
+  input!: CourtOfAppealAppealsInput
 }
