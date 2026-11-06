@@ -79,6 +79,12 @@ export class SaveDeviceRegistrationDto {
   @ApiProperty()
   loginIdp!: string
 
+  @IsOptional()
+  @IsString()
+  @MaxLength(20)
+  @ApiPropertyOptional({ nullable: true, type: String })
+  audkenniSimNumber?: string | null
+
   @Type(() => Date)
   @IsDate()
   @ApiProperty()
