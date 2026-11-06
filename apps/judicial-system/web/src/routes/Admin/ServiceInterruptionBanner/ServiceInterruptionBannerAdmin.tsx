@@ -219,7 +219,7 @@ export const ServiceInterruptionBannerAdmin = () => {
                   />
                   <Input
                     name="courtMessage"
-                    label="Skilaboð fyrir dómstóla og Landsrétt"
+                    label="Skilaboð fyrir dómstóla"
                     textarea
                     rows={3}
                     value={form.courtMessage}
