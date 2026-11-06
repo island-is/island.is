@@ -307,9 +307,8 @@ const PreviewStepOrGroupContent = ({ setOpenPreview }: Props) => {
                                               !!field && !field.isHidden,
                                           )
                                           .map((field) => field.id) ?? []
-                                      if (await methods.trigger(fieldNames)) {
-                                        setScreenIndex(screenIndex + 1)
-                                      }
+                                      await methods.trigger(fieldNames)
+                                      setScreenIndex(screenIndex + 1)
                                     }}
                                   >
                                     {formatMessage(m.continue)}
