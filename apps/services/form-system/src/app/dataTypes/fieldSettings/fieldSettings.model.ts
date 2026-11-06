@@ -184,6 +184,11 @@ export class FieldSettings {
   fetchEmailFromMyPages?: boolean
 
   @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  fetchBankAccountFromMyPages?: boolean
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
   chargeItemCode?: string

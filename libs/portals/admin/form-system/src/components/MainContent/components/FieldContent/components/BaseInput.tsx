@@ -307,6 +307,29 @@ export const BaseInput = () => {
             </Column>
           </Row>
         )}
+      {currentItem.fieldType === FieldTypesEnum.BANK_ACCOUNT && (
+        <Row>
+          <Column span="10/10">
+            <Checkbox
+              label="Sækja bankareikning af Mínum síðum"
+              checked={
+                currentItem.fieldSettings?.fetchBankAccountFromMyPages ?? true
+              }
+              disabled={isReadOnly}
+              onChange={(e) =>
+                controlDispatch({
+                  type: 'SET_FIELD_SETTINGS',
+                  payload: {
+                    property: 'fetchBankAccountFromMyPages',
+                    value: e.target.checked,
+                    update: updateActiveItem,
+                  },
+                })
+              }
+            />
+          </Column>
+        </Row>
+      )}
       {currentItem.fieldType !== FieldTypesEnum.ISK_SUMBOX && (
         <Row>
           <Column span="5/10">
