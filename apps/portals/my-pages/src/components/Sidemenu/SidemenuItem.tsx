@@ -32,10 +32,13 @@ const SidemenuItem = ({
         justifyContent="center"
         alignItems="center"
         border="standard"
-        borderColor={isHovered ? 'blue400' : 'blue200'}
+        // Active reuses the island-ui focus border
+        borderColor={
+          item.active ? 'mint400' : isHovered ? 'blue400' : 'blue200'
+        }
         borderRadius="standard"
         className={cn(styles.itemBlock, {
-          [`${styles.item}`]: item.active,
+          [styles.itemActive]: item.active,
         })}
         background="white"
         onMouseEnter={(value) => toggleIsHovered(value)}

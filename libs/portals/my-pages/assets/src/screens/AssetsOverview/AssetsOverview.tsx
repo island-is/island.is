@@ -74,7 +74,7 @@ export const AssetsOverview = () => {
 
   return (
     <IntroWrapper
-      title={m.assets}
+      title={m.realEstate}
       intro={{
         id: 'sp.assets:intro',
         defaultMessage:
