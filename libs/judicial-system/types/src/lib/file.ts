@@ -34,6 +34,7 @@ export enum CaseFileCategory {
   INDEPENDENT_DEFENDANT_CASE_FILE = 'INDEPENDENT_DEFENDANT_CASE_FILE', // Varnaraðili: Innsend gögn í dómssal
   CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE = 'CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE', // Lögmaður: Innsend gögn í dómssal
   CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE = 'CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE', // Réttargæslumaður: Innsend gögn í dómssal
+  COURT_CASE_FILE = 'COURT_CASE_FILE', // Dómari: Viðbótargögn í dómssal
   APPEAL_COURT_RECORD = 'APPEAL_COURT_RECORD',
   APPEAL_RULING = 'APPEAL_RULING',
   CIVIL_CLAIM = 'CIVIL_CLAIM',
@@ -41,6 +42,16 @@ export enum CaseFileCategory {
   COURT_INDICTMENT_RULING_ORDER = 'COURT_INDICTMENT_RULING_ORDER', // dómari: úrskurðarskjal undir rekstri máls
   DEFENDANT_RULING = 'DEFENDANT_RULING', // dómari: dómur (vísað frá eða niðurfelling) á einstakling
 }
+
+// Viðbótargögn filed in indictment court sessions (party or court).
+export const indictmentAdditionalCaseFileCategories = [
+  CaseFileCategory.PROSECUTOR_CASE_FILE,
+  CaseFileCategory.DEFENDANT_CASE_FILE,
+  CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+  CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+  CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+  CaseFileCategory.COURT_CASE_FILE,
+]
 
 // Appeal files submitted by the parties (kærugögn) - as opposed to the court of
 // appeals' own documents (APPEAL_RULING, APPEAL_COURT_RECORD)
