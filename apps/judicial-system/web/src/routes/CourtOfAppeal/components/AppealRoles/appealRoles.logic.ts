@@ -44,13 +44,46 @@ export const setBenchSeat = (
   judge: BenchSlot,
 ): BenchSlot[] => judges.map((slot, index) => (index === seat ? judge : slot))
 
+// A seat as a page that lets seats come and go keeps it. The key stays with
+// the seat while seats are added and removed around it, which is what lets
+// the page animate the row that left rather than the last one.
+export type BenchSeat = { key: string; judge: BenchSlot }
+
+let seatKeySequence = 0
+
+const nextSeatKey = (): string => `seat-${++seatKeySequence}`
+
+// The seats for a bench. A seat that was already there keeps its key, so a
+// bench read back after a save does not play its rows in again; a seat
+// beyond what was there gets a new one.
+export const getBenchSeats = (
+  slots: BenchSlot[],
+  previous: BenchSeat[] = [],
+): BenchSeat[] =>
+  slots.map((judge, seat) => ({
+    key: previous[seat]?.key ?? nextSeatKey(),
+    judge,
+  }))
+
+export const getBenchJudges = (seats: BenchSeat[]): BenchSlot[] =>
+  seats.map(({ judge }) => judge)
+
+export const setBenchSeatJudge = (
+  seats: BenchSeat[],
+  key: string,
+  judge: BenchSlot,
+): BenchSeat[] =>
+  seats.map((seat) => (seat.key === key ? { key, judge } : seat))
+
 export const canAddBenchSeat = (judges: BenchSlot[]): boolean =>
   judges.length < MAX_APPEAL_JUDGE_COUNT
 
 // Adds an empty seat at the end of the bench, up to the most judges the court
 // seats on one case.
-export const addBenchSeat = (judges: BenchSlot[]): BenchSlot[] =>
-  canAddBenchSeat(judges) ? [...judges, null] : judges
+export const addBenchSeat = (seats: BenchSeat[]): BenchSeat[] =>
+  canAddBenchSeat(getBenchJudges(seats))
+    ? [...seats, { key: nextSeatKey(), judge: null }]
+    : seats
 
 // A seat can be taken away while the bench has more than the default number
 // of seats. The presiding seat always stays.
@@ -59,13 +92,18 @@ export const canRemoveBenchSeat = (
   seat: number,
 ): boolean => judges.length > APPEAL_JUDGE_COUNT && seat > 0
 
+// A key no longer on the bench, as from a row still playing out, changes
+// nothing.
 export const removeBenchSeat = (
-  judges: BenchSlot[],
-  seat: number,
-): BenchSlot[] =>
-  canRemoveBenchSeat(judges, seat)
-    ? judges.filter((_, index) => index !== seat)
-    : judges
+  seats: BenchSeat[],
+  key: string,
+): BenchSeat[] => {
+  const seat = seats.findIndex((candidate) => candidate.key === key)
+
+  return seat >= 0 && canRemoveBenchSeat(getBenchJudges(seats), seat)
+    ? seats.filter((candidate) => candidate.key !== key)
+    : seats
+}
 
 // The ids of the chosen judges in seat order; empty seats are skipped.
 export const getSelectedJudgeIds = (judges: BenchSlot[]): string[] =>

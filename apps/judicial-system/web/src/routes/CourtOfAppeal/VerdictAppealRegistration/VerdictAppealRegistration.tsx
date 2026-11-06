@@ -11,6 +11,7 @@ import {
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  ExpandingList,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -19,6 +20,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  PopIn,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -27,11 +29,13 @@ import { useAppealCaseUsersQuery } from '@island.is/judicial-system-web/src/rout
 import {
   addBenchSeat,
   type AssistantSelectOption,
-  type BenchSlot,
+  type BenchSeat,
   buildAppealCaseUpdate,
   canAddBenchSeat,
   canRemoveBenchSeat,
   getAssistantOptions,
+  getBenchJudges,
+  getBenchSeats,
   getBenchSlots,
   getJudgeOptions,
   getNewlyAssignedUserIds,
@@ -39,7 +43,7 @@ import {
   hasUnsavedRoleChanges,
   type JudgeSelectOption,
   removeBenchSeat,
-  setBenchSeat,
+  setBenchSeatJudge,
   toPreviewAppealCase,
 } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components/AppealRoles/appealRoles.logic'
 import { useAppealCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -78,8 +82,8 @@ const VerdictAppealRegistration = () => {
   const [appealAssistant, setAppealAssistant] = useState<
     User | null | undefined
   >(() => verdictAppealCase?.appealAssistant)
-  const [judges, setJudges] = useState<BenchSlot[]>(() =>
-    getBenchSlots(verdictAppealCase),
+  const [seats, setSeats] = useState<BenchSeat[]>(() =>
+    getBenchSeats(getBenchSlots(verdictAppealCase)),
   )
 
   const savedAssistant = verdictAppealCase?.appealAssistant
@@ -87,8 +91,12 @@ const VerdictAppealRegistration = () => {
 
   useEffect(() => {
     setAppealAssistant(savedAssistant)
-    setJudges(getBenchSlots({ appealJudges: savedJudges }))
+    setSeats((prev) =>
+      getBenchSeats(getBenchSlots({ appealJudges: savedJudges }), prev),
+    )
   }, [savedAssistant, savedJudges])
+
+  const judges = getBenchJudges(seats)
 
   const { data: usersData } = useAppealCaseUsersQuery({
     fetchPolicy: 'no-cache',
@@ -202,55 +210,61 @@ const VerdictAppealRegistration = () => {
               <Text as="h4" variant="h4" marginBottom={2}>
                 {core.appealJudgesHeading}
               </Text>
-              {judges.map((judge, seat) => (
-                <Box
-                  key={`${seat}`}
-                  display="flex"
-                  alignItems="center"
-                  columnGap={2}
-                  marginBottom={2}
-                >
-                  <Box flexGrow={1}>
-                    <Select
-                      name={`judge-${seat}`}
-                      label={seat === 0 ? 'Veldu dómsformann' : 'Veldu dómara'}
-                      placeholder="Velja dómara"
-                      value={
-                        judge
-                          ? { label: judge.name ?? '', value: judge.id }
-                          : null
-                      }
-                      options={judgeOptions}
-                      onChange={(selectedOption) => {
-                        setJudges((prev) =>
-                          setBenchSeat(
-                            prev,
-                            seat,
-                            (selectedOption as JudgeSelectOption | null)?.judge,
-                          ),
-                        )
-                      }}
-                      isClearable
-                    />
+              <ExpandingList
+                items={seats}
+                getKey={({ key }) => key}
+                renderItem={({ key, judge }, seat) => (
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    columnGap={2}
+                    marginBottom={2}
+                  >
+                    <Box flexGrow={1}>
+                      <Select
+                        name={`judge-${seat}`}
+                        label={
+                          seat === 0 ? 'Veldu dómsformann' : 'Veldu dómara'
+                        }
+                        placeholder="Velja dómara"
+                        value={
+                          judge
+                            ? { label: judge.name ?? '', value: judge.id }
+                            : null
+                        }
+                        options={judgeOptions}
+                        onChange={(selectedOption) => {
+                          setSeats((prev) =>
+                            setBenchSeatJudge(
+                              prev,
+                              key,
+                              (selectedOption as JudgeSelectOption | null)
+                                ?.judge,
+                            ),
+                          )
+                        }}
+                        isClearable
+                      />
+                    </Box>
+                    <PopIn show={canRemoveBenchSeat(judges, seat)}>
+                      <IconButton
+                        icon="trash"
+                        colorScheme="transparent"
+                        ariaLabel="Fjarlægja dómara"
+                        onClick={() =>
+                          setSeats((prev) => removeBenchSeat(prev, key))
+                        }
+                      />
+                    </PopIn>
                   </Box>
-                  {canRemoveBenchSeat(judges, seat) && (
-                    <IconButton
-                      icon="trash"
-                      colorScheme="transparent"
-                      ariaLabel="Fjarlægja dómara"
-                      onClick={() =>
-                        setJudges((prev) => removeBenchSeat(prev, seat))
-                      }
-                    />
-                  )}
-                </Box>
-              ))}
+                )}
+              />
               <Box display="flex" justifyContent="flexEnd" columnGap={3}>
                 <Button
                   variant="text"
                   size="small"
                   disabled={!canAddBenchSeat(judges)}
-                  onClick={() => setJudges((prev) => addBenchSeat(prev))}
+                  onClick={() => setSeats((prev) => addBenchSeat(prev))}
                 >
                   Bæta við dómara
                 </Button>

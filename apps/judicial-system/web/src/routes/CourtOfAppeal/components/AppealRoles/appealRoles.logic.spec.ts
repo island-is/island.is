@@ -10,6 +10,8 @@ import {
   canAddBenchSeat,
   canRemoveBenchSeat,
   getAssistantOptions,
+  getBenchJudges,
+  getBenchSeats,
   getBenchSlots,
   getJudgeOptions,
   getNewlyAssignedUserIds,
@@ -18,6 +20,7 @@ import {
   isAnyRoleUnfilled,
   removeBenchSeat,
   setBenchSeat,
+  setBenchSeatJudge,
   toPreviewAppealCase,
 } from './appealRoles.logic'
 
@@ -78,28 +81,66 @@ describe('bench seats', () => {
     ])
   })
 
+  it('gives every seat its own key and keeps the keys of seats still there', () => {
+    const seats = getBenchSeats([anna, null, null])
+    const keys = seats.map(({ key }) => key)
+
+    expect(getBenchJudges(seats)).toEqual([anna, null, null])
+    expect(new Set(keys).size).toBe(3)
+
+    const saved = getBenchSeats([anna, bjorn, null, null], seats)
+
+    expect(saved.slice(0, 3).map(({ key }) => key)).toEqual(keys)
+    expect(keys).not.toContain(saved[3].key)
+    expect(getBenchJudges(saved)).toEqual([anna, bjorn, null, null])
+  })
+
+  it('sets the judge of the seat with the key', () => {
+    const seats = getBenchSeats([anna, null, null])
+
+    const filled = setBenchSeatJudge(seats, seats[1].key, bjorn)
+
+    expect(getBenchJudges(filled)).toEqual([anna, bjorn, null])
+    expect(filled.map(({ key }) => key)).toEqual(seats.map(({ key }) => key))
+    expect(
+      getBenchJudges(setBenchSeatJudge(filled, seats[0].key, null)),
+    ).toEqual([null, bjorn, null])
+  })
+
   it('adds empty seats up to five', () => {
-    const four = addBenchSeat([anna, bjorn, dora])
+    const three = getBenchSeats([anna, bjorn, dora])
+    const four = addBenchSeat(three)
     const five = addBenchSeat(four)
 
-    expect(four).toEqual([anna, bjorn, dora, null])
-    expect(canAddBenchSeat(four)).toBe(true)
+    expect(getBenchJudges(four)).toEqual([anna, bjorn, dora, null])
+    expect(four.slice(0, 3)).toEqual(three)
+    expect(canAddBenchSeat(getBenchJudges(four))).toBe(true)
     expect(five).toHaveLength(5)
-    expect(canAddBenchSeat(five)).toBe(false)
+    expect(new Set(five.map(({ key }) => key)).size).toBe(5)
+    expect(canAddBenchSeat(getBenchJudges(five))).toBe(false)
     expect(addBenchSeat(five)).toBe(five)
   })
 
   it('only lets a seat go while there are more than three, never the presiding one', () => {
-    const three = [anna, bjorn, dora]
-    const four = [anna, bjorn, dora, einar]
+    const three = getBenchSeats([anna, bjorn, dora])
+    const four = getBenchSeats([anna, bjorn, dora, einar])
 
-    expect(canRemoveBenchSeat(three, 1)).toBe(false)
-    expect(removeBenchSeat(three, 1)).toBe(three)
-    expect(canRemoveBenchSeat(four, 0)).toBe(false)
-    expect(removeBenchSeat(four, 0)).toBe(four)
-    expect(canRemoveBenchSeat(four, 1)).toBe(true)
-    expect(removeBenchSeat(four, 1)).toEqual([anna, dora, einar])
-    expect(removeBenchSeat(four, 3)).toEqual([anna, bjorn, dora])
+    expect(canRemoveBenchSeat(getBenchJudges(three), 1)).toBe(false)
+    expect(removeBenchSeat(three, three[1].key)).toBe(three)
+    expect(canRemoveBenchSeat(getBenchJudges(four), 0)).toBe(false)
+    expect(removeBenchSeat(four, four[0].key)).toBe(four)
+    expect(canRemoveBenchSeat(getBenchJudges(four), 1)).toBe(true)
+    expect(removeBenchSeat(four, four[1].key)).toEqual([
+      four[0],
+      four[2],
+      four[3],
+    ])
+    expect(getBenchJudges(removeBenchSeat(four, four[3].key))).toEqual([
+      anna,
+      bjorn,
+      dora,
+    ])
+    expect(removeBenchSeat(four, 'gone')).toBe(four)
   })
 
   it('reports a filled seat after an empty one as a gap', () => {

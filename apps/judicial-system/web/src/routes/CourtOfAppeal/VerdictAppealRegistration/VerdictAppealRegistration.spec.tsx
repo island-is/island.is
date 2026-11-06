@@ -250,11 +250,15 @@ describe('VerdictAppealRegistration', () => {
     expect(judgeSeats()).toHaveLength(5)
     expect(isDisabled(addButton())).toBe(true)
 
+    // A removed row plays out before it leaves the page, so each removal is
+    // waited for before the next one is picked.
     await userEvent.click(removeButtons()[0])
-    await userEvent.click(removeButtons()[0])
+    await waitFor(() => expect(judgeSeats()).toHaveLength(4))
 
-    expect(judgeSeats()).toHaveLength(3)
-    expect(removeButtons()).toHaveLength(0)
+    await userEvent.click(removeButtons()[0])
+    await waitFor(() => expect(judgeSeats()).toHaveLength(3))
+
+    await waitFor(() => expect(removeButtons()).toHaveLength(0))
     expect(isDisabled(addButton())).toBe(false)
   })
 
