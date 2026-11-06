@@ -9,14 +9,26 @@ jest.mock('@island.is/form-system/ui', () => ({
   ...jest.requireActual<typeof import('@island.is/form-system/enums')>(
     '@island.is/form-system/enums',
   ),
+  hasFieldValueError: jest.requireActual<
+    typeof import('../../../../../../../../form-system/ui-components/src/lib/hasFieldValueError')
+  >(
+    '../../../../../../../../form-system/ui-components/src/lib/hasFieldValueError',
+  ).hasFieldValueError,
   m: { reviewApplication2: 'Review', edit: 'Edit' },
   DefaultDisplay: ({
     item,
     valueIndex,
+    requiredMissing,
   }: {
     item: FormSystemField
     valueIndex: number
-  }) => <output>{`${item.id}:${valueIndex}`}</output>,
+    requiredMissing?: boolean
+  }) => (
+    <output>
+      {`${item.id}:${valueIndex}`}
+      {requiredMissing && <span>Vantar gildi</span>}
+    </output>
+  ),
 }))
 jest.mock('@island.is/localization', () => ({
   useLocale: () => ({
@@ -86,3 +98,74 @@ it.each([true, false])(
     )
   },
 )
+
+it('marks invalid standalone and repeated values without marking valid or hidden fields', () => {
+  const sections = [
+    {
+      id: 'section',
+      sectionType: SectionTypes.INPUT,
+      screens: [
+        {
+          id: 'screen',
+          isMulti: true,
+          fields: [
+            field('leading', false),
+            field('repeated', true, 2),
+            field('trailing', false),
+            { ...field('hidden', false), isHidden: true },
+          ],
+        },
+      ],
+    },
+  ] as unknown as FormSystemSection[]
+  render(
+    <PreviewSummary
+      sections={sections}
+      onNavigate={jest.fn()}
+      hasValidationError={(item, index) =>
+        item.id !== 'repeated' || index === 1
+      }
+    />,
+  )
+  const outputs = screen.getAllByRole('status')
+  expect(outputs.map((output) => output.textContent)).toEqual([
+    'leading:0Vantar gildi',
+    'repeated:0',
+    'repeated:1Vantar gildi',
+    'trailing:0Vantar gildi',
+  ])
+})
+
+it('uses application missing-value validation for required fields even without captured errors', () => {
+  const sections = [
+    {
+      id: 'section',
+      sectionType: SectionTypes.INPUT,
+      screens: [
+        {
+          id: 'screen',
+          fields: [
+            { ...field('required', false), isRequired: true, values: [] },
+            {
+              ...field('email', false),
+              isRequired: true,
+              fieldType: FieldTypesEnum.EMAIL,
+              values: [{ json: { email: 'invalid' } }],
+            },
+            { ...field('optional', false), values: [] },
+            { ...field('valid', false), isRequired: true },
+          ],
+        },
+      ],
+    },
+  ] as unknown as FormSystemSection[]
+  render(<PreviewSummary sections={sections} onNavigate={jest.fn()} />)
+  expect(
+    screen.getAllByRole('status').map((output) => output.textContent),
+  ).toEqual([
+    'required:0Vantar gildi',
+    'email:0Vantar gildi',
+    'optional:0',
+    'valid:0',
+  ])
+})

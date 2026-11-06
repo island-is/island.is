@@ -3,6 +3,7 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { NumberInput } from './NumberInput'
+import { hasFieldValueError } from '../../../lib/hasFieldValueError'
 
 jest.mock('@island.is/localization', () => ({
   useLocale: () => ({
@@ -42,6 +43,23 @@ const item = {
   name: { is: 'Number' },
   values: [],
 } as unknown as FormSystemField
+
+it.each([
+  { fieldType: 'TEXTBOX', json: { text: '' }, invalid: true },
+  { fieldType: 'TEXTBOX', json: { text: 'value' }, invalid: false },
+  { fieldType: 'EMAIL', json: { email: 'invalid' }, invalid: true },
+  { fieldType: 'EMAIL', json: { email: 'name@example.is' }, invalid: false },
+  { fieldType: 'NUMBERBOX', json: { number: 123 }, invalid: false },
+  { fieldType: 'CHECKBOX', json: { checkboxValue: false }, invalid: true },
+  { fieldType: 'CHECKBOX', json: { checkboxValue: true }, invalid: false },
+])(
+  'shares application summary validation for $fieldType with $json',
+  ({ fieldType, json, invalid }) => {
+    const field = { ...item, fieldType, values: [{ json }] } as FormSystemField
+    expect(hasFieldValueError(field)).toBe(invalid)
+    expect(hasFieldValueError(field, 1)).toBe(true)
+  },
+)
 
 const Wrapper = ({ children }: { children: ReactNode }) => {
   const methods = useForm()

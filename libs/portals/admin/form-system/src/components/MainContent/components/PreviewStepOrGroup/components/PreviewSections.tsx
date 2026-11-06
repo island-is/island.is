@@ -13,6 +13,7 @@ import {
   DefaultDisplay,
   FieldTypesEnum,
   FileUploadDisplay,
+  hasFieldValueError,
   IndividualApplicant,
   LegalEntity,
   m,
@@ -132,14 +133,23 @@ const displays: Partial<Record<string, ElementType>> = {
 const SummaryField = ({
   field,
   valueIndex,
+  requiredMissing = false,
 }: {
   field: FormSystemField
   valueIndex: number
+  requiredMissing?: boolean
 }) => {
   const Display = displays[field.fieldType ?? ''] ?? DefaultDisplay
   return (
     <Box paddingLeft={2} marginTop={1}>
-      <Display item={field} valueIndex={valueIndex} />
+      <Display
+        item={field}
+        valueIndex={valueIndex}
+        requiredMissing={
+          requiredMissing ||
+          (Boolean(field.isRequired) && hasFieldValueError(field, valueIndex))
+        }
+      />
     </Box>
   )
 }
@@ -147,9 +157,11 @@ const SummaryField = ({
 export const PreviewSummary = ({
   sections,
   onNavigate,
+  hasValidationError,
 }: {
   sections: FormSystemSection[]
   onNavigate: (sectionId: string, screenId?: string) => void
+  hasValidationError?: (field: FormSystemField, valueIndex: number) => boolean
 }) => {
   const { lang, formatMessage } = useLocale()
   return (
@@ -214,6 +226,7 @@ export const PreviewSummary = ({
                           key={field.id}
                           field={field}
                           valueIndex={0}
+                          requiredMissing={hasValidationError?.(field, 0)}
                         />
                       ))}
                       {Array.from({ length: itemCount }).map(
@@ -233,6 +246,10 @@ export const PreviewSummary = ({
                                 key={field.id}
                                 field={field}
                                 valueIndex={valueIndex}
+                                requiredMissing={hasValidationError?.(
+                                  field,
+                                  valueIndex,
+                                )}
                               />
                             ))}
                           </Box>
@@ -243,6 +260,7 @@ export const PreviewSummary = ({
                           key={field.id}
                           field={field}
                           valueIndex={0}
+                          requiredMissing={hasValidationError?.(field, 0)}
                         />
                       ))}
                     </GridColumn>

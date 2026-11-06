@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  previewWithRestrictions: {
+    id: 'form.system:preview-with-restrictions',
+    defaultMessage: 'Skoða með tengingum',
+    description: 'Preview with dependencies enabled',
+  },
   exactNumberLength: {
     id: 'form.system:exact-number-length',
     defaultMessage: 'Talan verður að innihalda {length} tölustafi',
