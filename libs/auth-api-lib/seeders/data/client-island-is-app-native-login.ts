@@ -24,32 +24,29 @@ const CLIENT_ID = '@island.is/app'
 /** The testing app's own client in production; configured where it exists. */
 const TESTING_CLIENT_ID = '@island.is/island.dev-appid'
 
-const configureNativeLogin = (clientId: string) => async (
-  queryInterface: QueryInterface,
-) => {
-  const [
-    clients,
-  ] = await queryInterface.sequelize.query(
-    'select 1 from client where client_id = :clientId',
-    { replacements: { clientId } },
-  )
-  if (clients.length === 0) {
-    console.log(`Skipping "${clientId}": the client does not exist here.`)
-    return
-  }
+const configureNativeLogin =
+  (clientId: string) => async (queryInterface: QueryInterface) => {
+    const [clients] = await queryInterface.sequelize.query(
+      'select 1 from client where client_id = :clientId',
+      { replacements: { clientId } },
+    )
+    if (clients.length === 0) {
+      console.log(`Skipping "${clientId}": the client does not exist here.`)
+      return
+    }
 
-  await safeBulkInsert(
-    queryInterface,
-    'client_grant_type',
-    [CIBA_GRANT_TYPE, DEVICE_KEY_GRANT_TYPE].map((grantType) => ({
-      client_id: clientId,
-      grant_type: grantType,
-    })),
-    ({ grant_type }) => `adding grant type "${grant_type}" to "${clientId}"`,
-  )
+    await safeBulkInsert(
+      queryInterface,
+      'client_grant_type',
+      [CIBA_GRANT_TYPE, DEVICE_KEY_GRANT_TYPE].map((grantType) => ({
+        client_id: clientId,
+        grant_type: grantType,
+      })),
+      ({ grant_type }) => `adding grant type "${grant_type}" to "${clientId}"`,
+    )
 
-  await queryInterface.sequelize.query(
-    `
+    await queryInterface.sequelize.query(
+      `
         update client
         set allowed_acr = array(
               select distinct unnest(allowed_acr || array['islandis-app-biometrics']::varchar[])
@@ -57,9 +54,9 @@ const configureNativeLogin = (clientId: string) => async (
             allow_offline_access = true
         where client_id = :clientId
       `,
-    { replacements: { clientId } },
-  )
-}
+      { replacements: { clientId } },
+    )
+  }
 
 export const up = compose(
   createCibaGrantType,
