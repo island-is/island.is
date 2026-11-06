@@ -195,6 +195,16 @@ export const RskCarRentalRate = new XroadConf({
   },
 })
 
+export const RskKilometerFee = new XroadConf({
+  env: {
+    XROAD_RSK_KILOMETER_FEE_PATH: {
+      dev: 'IS-DEV/GOV/10006/Skatturinn/Kilometragjald-kilometer-fee',
+      staging: 'IS-TEST/GOV/5402696029/Skatturinn/Kilometragjald-kilometer-fee',
+      prod: 'IS/GOV/5402696029/Skatturinn/Kilometragjald-kilometer-fee',
+    },
+  },
+})
+
 export const Payment = new XroadConf({
   env: {
     XROAD_PAYMENT_PROVIDER_ID: {

@@ -98,6 +98,9 @@ export enum Features {
   //Is vehicle bulk mileage graph enabled?
   isServicePortalVehicleBulkMileageSubdataPageEnabled = 'isServicePortalVehicleBulkMileageSubdataPageEnabled',
 
+  //Is vehicle mileage fee (kílómetragjald) tab enabled?
+  isServicePortalVehicleMileageFeePageEnabled = 'isServicePortalVehicleMileageFeePageEnabled',
+
   //Enable sailors page
   isServicePortalSailorsPageEnabled = 'isServicePortalSailorsPageEnabled',
 
