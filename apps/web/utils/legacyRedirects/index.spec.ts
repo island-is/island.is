@@ -87,6 +87,38 @@ describe('resolveLegacyRedirect', () => {
     })
   })
 
+  it('checks the GoPro id when the case number lookup fails', async () => {
+    mockQuery.mockImplementation(async ({ variables: { input } }) => {
+      if (input.caseNumber) throw new Error('API down')
+      return { data: { webVerdictById: { item: { caseNumber: 'S-73/2019' } } } }
+    })
+    expect(
+      await resolve(
+        'heradsdomstolar.is/domar/domur?id=001edf71-c2e3-4953-a118-87c04e8dc27e',
+      ),
+    ).toEqual({
+      destination: '/domar/g-001edf71-c2e3-4953-a118-87c04e8dc27e',
+      permanent: true,
+    })
+  })
+
+  it('falls back to the verdict list when the lookup takes too long', async () => {
+    jest.useFakeTimers()
+    try {
+      mockQuery.mockReturnValue(new Promise(() => undefined))
+      const result = resolve(
+        'heradsdomstolar.is/domar/domur?id=1079d456-805f-4ac2-9b25-f362c9a18011',
+      )
+      await jest.advanceTimersByTimeAsync(3000)
+      expect(await result).toEqual({
+        destination: '/domar?court=H%C3%A9ra%C3%B0sd%C3%B3mst%C3%B3lar',
+        permanent: false,
+      })
+    } finally {
+      jest.useRealTimers()
+    }
+  })
+
   it('falls back to the verdict list by case number for district court searches', async () => {
     expect(await resolve('domstolar.is/domaleit/nanar?id=E200500321')).toEqual({
       destination:

@@ -15,6 +15,24 @@ import {
 import { getQueryValue, isGuid } from './query'
 import type { LegacyVerdict, Rule } from './types'
 
+/** The server-side API client has no timeout, so bound each lookup */
+const LOOKUP_TIMEOUT_MS = 3000
+
+/** Resolves to null when the lookup fails or takes too long */
+const withTimeout = async <T>(lookup: () => Promise<T>): Promise<T | null> => {
+  let timer: ReturnType<typeof setTimeout> | undefined
+  const timeout = new Promise<null>((resolve) => {
+    timer = setTimeout(() => resolve(null), LOOKUP_TIMEOUT_MS)
+  })
+  try {
+    return await Promise.race([lookup(), timeout])
+  } catch {
+    return null
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
 const goproVerdictExists = async (id: string) => {
   const apolloClient = initApollo({}, 'is')
   const response = await apolloClient.query<
@@ -84,20 +102,21 @@ export const resolveVerdictId = async (
   verdict?: LegacyVerdict,
 ) => {
   if (verdict?.id) return verdict.id
-  try {
-    if (verdict) {
-      const id = await findVerdictIdByCaseNumber(verdict, rule.courts)
-      if (id) return id
-    }
-    const oldId = rule.goproIdParam
-      ? getQueryValue(query, rule.goproIdParam)
-      : undefined
-    if (oldId && isGuid(oldId)) {
-      const goproId = `g-${oldId}`
-      if (await goproVerdictExists(goproId)) return goproId
-    }
-  } catch {
-    // Fall through to the verdict list
+
+  if (verdict) {
+    const id = await withTimeout(() =>
+      findVerdictIdByCaseNumber(verdict, rule.courts),
+    )
+    if (id) return id
   }
+
+  const oldId = rule.goproIdParam
+    ? getQueryValue(query, rule.goproIdParam)
+    : undefined
+  if (oldId && isGuid(oldId)) {
+    const goproId = `g-${oldId}`
+    if (await withTimeout(() => goproVerdictExists(goproId))) return goproId
+  }
+
   return null
 }
