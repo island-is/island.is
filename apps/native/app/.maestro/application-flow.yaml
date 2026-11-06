@@ -23,4 +23,25 @@ appId: ${APP_ID}
 - assertVisible:
     id: 'SCREEN_PASSKEY'
 - tapOn: 'Sleppa'
+# Skipping the passkey screen opens the application in the in-app browser
+# after a short delay, so wait for it and dismiss it before going back.
+- runFlow:
+    when:
+      platform: 'android'
+    commands:
+      - extendedWaitUntil:
+          notVisible:
+            id: 'SCREEN_APPLICATIONS_DETAILS'
+          timeout: 10000
+      - back
+- runFlow:
+    when:
+      platform: 'ios'
+    commands:
+      - extendedWaitUntil:
+          visible: 'Done|Lokið'
+          timeout: 10000
+      - tapOn: 'Done|Lokið'
+- assertVisible:
+    id: 'SCREEN_APPLICATIONS_DETAILS'
 - runFlow: 'utils/back.yaml'
