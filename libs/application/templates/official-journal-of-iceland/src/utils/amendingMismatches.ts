@@ -100,6 +100,12 @@ export const getAmendingMismatches = ({
       places.set(`${i}`, { regulation })
       regulations.push({ name: `${i}`, diff: impact.diff as HTMLText })
     }
+    // An appendix diff is only here in the session that made the change:
+    // `useRegulationImpacts` saves appendixes without it, so after a reload
+    // changes to a base regulation's appendixes go unchecked (as in
+    // `BaseChanges`). Diffing appendixes awaits a decision from the
+    // stakeholders. When appendix diffs are stored or rebuilt on load, they
+    // reach this check as they are, with no change needed here.
     impact.appendixes?.forEach((apx, j) => {
       if (apx.diff) {
         places.set(`${i}.${j}`, {
