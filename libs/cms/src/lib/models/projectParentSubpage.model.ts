@@ -68,8 +68,8 @@ export const mapProjectParentSubpage = ({
               // Child pages should belong to the same project page
               page?.fields?.projectPage?.sys?.id ===
                 fields.projectPage?.sys?.id &&
-              Boolean(page.fields.slug) &&
-              Boolean(page.fields.title),
+              Boolean(page.fields.slug?.trim()) &&
+              Boolean(page.fields.title?.trim()),
           )
           .map((page) => ({
             id: page.sys.id,
