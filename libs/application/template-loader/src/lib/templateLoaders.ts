@@ -315,6 +315,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/pay-debts'),
   [ApplicationTypes.U2_CERTIFICATE]: () =>
     import('@island.is/application/templates/vmst/u2-certificate'),
+  [ApplicationTypes.OVERNIGHT_STAYS_REGISTRATION]: () =>
+    import(
+      '@island.is/application/templates/district-commissioners/overnight-stays-registration'
+    ),
 }
 
 export default templates

@@ -423,6 +423,9 @@
       "@island.is/application/templates/district-commissioners/driving-license-additional": [
         "libs/application/templates/district-commissioners/driving-license-additional/src/index.ts"
       ],
+      "@island.is/application/templates/district-commissioners/overnight-stays-registration": [
+        "libs/application/templates/district-commissioners/overnight-stays-registration/src/index.ts"
+      ],
       "@island.is/application/templates/document-provider-onboarding": [
         "libs/application/templates/document-provider-onboarding/src/index.ts"
       ],
@@ -726,6 +729,12 @@
       "@island.is/application/types": ["libs/application/types/src/index.ts"],
       "@island.is/application/ui-components": [
         "libs/application/ui-components/src/index.ts"
+      ],
+      "@island.is/application/ui-components/annual-multi-range-calendar": [
+        "libs/application/ui-components/src/components/AnnualMultiRangeCalendar/index.ts"
+      ],
+      "@island.is/application/ui-components/annual-multi-range-calendar/utils": [
+        "libs/application/ui-components/src/components/AnnualMultiRangeCalendar/utils.ts"
       ],
       "@island.is/application/ui-fields": [
         "libs/application/ui-fields/src/index.ts"

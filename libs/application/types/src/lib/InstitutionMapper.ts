@@ -566,4 +566,9 @@ export const institutionMapper = {
     slug: InstitutionTypes.VINNUMALASTOFNUN,
     contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
   },
+  [ApplicationTypes.OVERNIGHT_STAYS_REGISTRATION]: {
+    nationalId: InstitutionNationalIds.SYSLUMENN,
+    slug: InstitutionTypes.SYSLUMENN,
+    contentfulId: InstitutionContentfulIds.SYSLUMENN,
+  },
 }

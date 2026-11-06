@@ -111,6 +111,7 @@ export enum ApplicationTypes {
   SALARY_REPORT = 'SalaryReport',
   PAY_DEBTS = 'PayDebts',
   U2_CERTIFICATE = 'U2Certificate',
+  OVERNIGHT_STAYS_REGISTRATION = 'OvernightStaysRegistration',
 }
 
 export const ApplicationConfigurations = {
@@ -565,5 +566,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.U2_CERTIFICATE]: {
     slug: 'u2-vottord',
     translation: ['vmst.u2c.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.OVERNIGHT_STAYS_REGISTRATION]: {
+    slug: 'skraning-a-nytingu-gistinatta',
+    translation: ['osr.application', 'uiForms.application'],
   },
 }
