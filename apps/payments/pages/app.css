@@ -16,3 +16,9 @@ apple-pay-button {
   --apple-pay-button-border-radius: 8px;
   --apple-pay-button-padding: 8px 0px;
 }
+
+/* Google's button fills its container, so the container matches Apple's */
+#google-pay-button {
+  width: 100%;
+  height: 50px;
+}

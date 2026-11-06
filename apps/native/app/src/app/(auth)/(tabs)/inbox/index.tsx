@@ -624,6 +624,7 @@ export default function InboxScreen() {
               selectState ? (
                 <Pressable
                   onPress={resetSelectState}
+                  accessibilityRole="button"
                   style={{
                     height: 46,
                     justifyContent: 'center',
@@ -689,7 +690,7 @@ export default function InboxScreen() {
           <Stack.Toolbar.Button
             tintColor={blue400}
             icon="envelope.open"
-            onPress={onMarkAllAsReadPress}
+            onPress={onMarkAsReadPress}
           >
             {intl.formatMessage({
               id: 'inbox.bulkSelectActionRead',

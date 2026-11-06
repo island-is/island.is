@@ -22,6 +22,12 @@ const GrantAccess = lazy(() => import('./screens/GrantAccess/GrantAccess'))
 const GrantAccessNew = lazy(() =>
   import('./screens/GrantAccessNew/GrantAccessNew'),
 )
+const RequestDelegation = lazy(() =>
+  import('./screens/RequestDelegation/RequestDelegation'),
+)
+const DelegationRequests = lazy(() =>
+  import('./screens/DelegationRequests/DelegationRequests'),
+)
 
 const AccessOutgoing = lazy(() =>
   import('./screens/AccessOutgoing/AccessOutgoing'),
@@ -53,9 +59,19 @@ export const createDelegationsModule = (
         },
       ))
 
+    const delegationRequestsEnabled = await featureFlagClient.getValue(
+      Features.isDelegationRequestsEnabled,
+      false,
+      {
+        id: userInfo.profile.nationalId,
+        attributes: {},
+      },
+    )
+
     const hasAccess = delegationScopes.some((scope) =>
       userInfo.scopes.includes(scope),
     )
+    const canRequestDelegation = !userInfo.profile.actor
     const commonProps = {
       name: coreMessages.accessControlDelegations,
       navHide: !hasAccess || useNewRoutes,
@@ -88,6 +104,24 @@ export const createDelegationsModule = (
             enabled: hasAccess,
             element: <GrantAccessNew />,
           },
+          {
+            name: m.delegationRequestsNavTitle,
+            path: DelegationPaths.DelegationRequestsList,
+            navHide: !delegationRequestsEnabled,
+            enabled: hasAccess && Boolean(delegationRequestsEnabled),
+            element: <DelegationRequests />,
+          },
+          ...(canRequestDelegation
+            ? [
+                {
+                  name: m.requestDelegationNavTitle,
+                  path: DelegationPaths.DelegationRequest,
+                  navHide: !delegationRequestsEnabled,
+                  enabled: hasAccess && Boolean(delegationRequestsEnabled),
+                  element: <RequestDelegation />,
+                },
+              ]
+            : []),
           {
             name: m.editAccessTitle,
             path: DelegationPaths.DelegationsEdit,

@@ -322,6 +322,7 @@ const ProjectPage: Screen<PageProps> = ({
         withSidebar={projectPage?.sidebar}
         backLink={backLink}
         isSubpage={(subpage && p('smallerSubpageHeader', false)) ?? false}
+        isFrontpage={!subpage}
       >
         {customContent ? customContent : mainContent}
       </ProjectWrapper>
@@ -402,6 +403,7 @@ ProjectPage.getProps = async ({ apolloClient, locale, query }) => {
         input: {
           slug: query.slug as string,
           lang: locale as ContentLanguage,
+          subpageSlug: query.subSlug as string | undefined,
         },
       },
     }),

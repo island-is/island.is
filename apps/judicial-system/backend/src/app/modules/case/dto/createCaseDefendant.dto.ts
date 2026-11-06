@@ -10,13 +10,15 @@ import {
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import { Gender } from '@island.is/judicial-system/types'
+import {
+  Gender,
+  RequestSharedWithDefender,
+} from '@island.is/judicial-system/types'
 
 import { nationalIdTransformer } from '../../../transformers'
 
-// A defendant created together with its case: only the fields a prosecutor
-// can enter for a defendant before the case exists. Defender details are
-// deliberately left out, since those go through the defendant update path.
+// A defendant created together with its case. Request cases may include
+// defender contact and sharing on this defendant at create time.
 export class CreateCaseDefendantDto {
   @IsOptional()
   @IsBoolean()
@@ -52,4 +54,34 @@ export class CreateCaseDefendantDto {
   @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly citizenship?: string
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  @ApiPropertyOptional({ type: String })
+  readonly defenderName?: string
+
+  @IsOptional()
+  @IsString()
+  @Length(10, 10)
+  @Transform(nationalIdTransformer)
+  @ApiPropertyOptional({ type: String })
+  readonly defenderNationalId?: string
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  @ApiPropertyOptional({ type: String })
+  readonly defenderEmail?: string
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  @ApiPropertyOptional({ type: String })
+  readonly defenderPhoneNumber?: string
+
+  @IsOptional()
+  @IsEnum(RequestSharedWithDefender)
+  @ApiPropertyOptional({ enum: RequestSharedWithDefender })
+  readonly requestSharedWithDefender?: RequestSharedWithDefender
 }

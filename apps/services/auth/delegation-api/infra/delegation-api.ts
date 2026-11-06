@@ -44,6 +44,11 @@ export const serviceSetup = (services: {
       },
       XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true',
       XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true',
+      DELEGATION_REQUEST_MAX_PENDING: '2',
+      DELEGATION_REQUEST_MAX_PER_DAY: '5',
+      DELEGATION_REQUEST_MAX_PER_GRANTOR_PER_DAY: '1',
+      DELEGATION_REQUEST_REJECTION_LOCK_THRESHOLD: '2',
+      DELEGATION_REQUEST_REJECTION_LOCK_DAYS: '365',
       XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
         dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1',
         staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1',
@@ -72,6 +77,11 @@ export const serviceSetup = (services: {
         prod: 'digitaliceland',
         staging: 'digitaliceland',
         dev: 'digitaliceland',
+      },
+      DELEGATION_CONFIRMATION_ALLOW_FAKE_LOGIN: {
+        dev: 'true',
+        staging: 'false',
+        prod: 'false',
       },
       CONTENTFUL_HOST: {
         dev: 'preview.contentful.com',

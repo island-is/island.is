@@ -2,7 +2,7 @@ import { text, withKnobs } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { View } from 'react-native'
-import { Close } from '../button/close'
+import { Button } from '../button/button'
 import { Heading } from './heading'
 
 const CenterView = ({ children }: any) => (
@@ -28,5 +28,13 @@ storiesOf('Heading', module)
   })
   .add('Heading With Button', () => {
     const heading = text('Heading Text with Button', 'Tilkynningar')
-    return <Heading button={<Close />}>{heading}</Heading>
+    return (
+      <Heading
+        button={
+          <Button title="Sjá allt" isTransparent onPress={() => void 0} />
+        }
+      >
+        {heading}
+      </Heading>
+    )
   })

@@ -16,9 +16,6 @@ export enum TaxCalculatorInputFieldType {
 registerEnumType(TaxCalculatorInputFieldType, {
   name: 'TaxCalculatorInputFieldType',
   valuesMap: {
-    DATE: {
-      description: 'Calendar date encoded as `yyyy-MM-dd`.',
-    },
     SELECT: {
       description: 'One of the field’s `options` values.',
     },
@@ -60,9 +57,6 @@ export enum TaxCalculatorOutputFieldType {
 registerEnumType(TaxCalculatorOutputFieldType, {
   name: 'TaxCalculatorOutputFieldType',
   valuesMap: {
-    DATE: {
-      description: 'Calendar date encoded as `yyyy-MM-dd`.',
-    },
     ARRAY: {
       description: 'Sequence of rows.',
     },

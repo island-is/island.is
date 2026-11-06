@@ -29,7 +29,8 @@ import {
 import type { SelRegOption as BaseSelRegOption } from '../components/regulations/ImpactBaseSelection'
 import type { SelRegOption as AmendingSelRegOption } from '../components/regulations/ImpactAmendingSelection'
 import { findAffectedRegulationsInText } from '../utils/regulationGuessers'
-import type { HTMLText, PlainText } from '@island.is/regulations'
+import { prettyName } from '@island.is/regulations'
+import type { HTMLText, PlainText, RegName } from '@island.is/regulations'
 import { useAmendingText } from '../hooks/useAmendingText'
 import { useRegulationDraft } from '../hooks/useRegulationDraft'
 import {
@@ -39,6 +40,8 @@ import {
 } from '../graphql/queries'
 import type { Regulation, LawChapter } from '@island.is/regulations'
 import { Routes } from '../lib/constants'
+import { InputFields } from '../lib/types'
+import { useApplication } from '../hooks/useUpdateApplication'
 
 export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
@@ -46,10 +49,27 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
   const applicationType = application.answers?.applicationType
   const isAmending = applicationType === 'amending_regulation'
 
-  const { draftId, ensureDraft } = useRegulationDraft({
-    applicationId: application.id,
-    answers: application.answers as unknown as Record<string, unknown>,
-  })
+  const { draftId, ensureDraft, draftData, draftLoaded, loadDraft } =
+    useRegulationDraft({
+      applicationId: application.id,
+      answers: application.answers as unknown as Record<string, unknown>,
+    })
+
+  // The effective date is set on a later step. Once it is, impacts take it
+  // by default, so impacts aren't edited before it has loaded. A failed load
+  // shows an error and falls back to no default; the meta and summary steps
+  // still warn about dates that differ from the effective date.
+  // loadDraft changes with the answers, so load once per draft: a failed
+  // load would otherwise fetch and show its error again on each change.
+  const [draftLoadDone, setDraftLoadDone] = useState(false)
+  const loadedDraftIdRef = useRef<string | undefined>(undefined)
+  useEffect(() => {
+    if (draftId && !draftLoaded && loadedDraftIdRef.current !== draftId) {
+      loadedDraftIdRef.current = draftId
+      loadDraft().finally(() => setDraftLoadDone(true))
+    }
+  }, [draftId, draftLoaded, loadDraft])
+  const effectiveDateReady = !draftId || draftLoaded || draftLoadDone
 
   // Impacts are loaded from DB (single source of truth)
   const {
@@ -109,15 +129,44 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
     'cancel' | 'change' | undefined
   >()
 
+  // A regulation not moved to island.is can't take impacts, so the user may
+  // continue without any and write the amending text by hand
+  const { updateApplicationV2 } = useApplication({
+    applicationId: application.id,
+  })
+  const [withoutImpacts, setWithoutImpacts] = useState(
+    !!application.answers?.regulation?.withoutImpacts,
+  )
+  const continueWithoutImpacts = async () => {
+    try {
+      await updateApplicationV2({
+        path: InputFields.regulation.withoutImpacts,
+        value: true,
+      })
+      setWithoutImpacts(true)
+    } catch (error) {
+      console.error('Failed to continue without impacts:', error)
+    }
+  }
+
   // Gate the "Next" button: amending regulations must have at least one
-  // impact before the user can advance. Base regulations pass through.
-  const nextDisabledReason = isAmending && impactsLoaded && impacts.length === 0
+  // impact before the user can advance, unless they chose to continue
+  // without any. Base regulations pass through.
+  const hasNoImpacts = isAmending && impactsLoaded && impacts.length === 0
+  const nextDisabledReason = hasNoImpacts && !withoutImpacts
   useEffect(() => {
     if (!setSubmitButtonDisabled) return
     setSubmitButtonDisabled(
-      isAmending && (!impactsLoaded || impacts.length === 0),
+      isAmending &&
+        (!impactsLoaded || (impacts.length === 0 && !withoutImpacts)),
     )
-  }, [setSubmitButtonDisabled, isAmending, impactsLoaded, impacts.length])
+  }, [
+    setSubmitButtonDisabled,
+    isAmending,
+    impactsLoaded,
+    impacts.length,
+    withoutImpacts,
+  ])
 
   // Reset on unmount so the next screen starts with Next enabled.
   useEffect(() => {
@@ -427,25 +476,63 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
             <Text variant="h4" as="h4" marginBottom={[2, 2, 3, 4]}>
               {f(regulation.impacts.alerts.whatToDo)}
             </Text>
-            <Inline space={[2, 2, 3, 4]} align="center" alignY="center">
-              <Button
-                variant="ghost"
-                icon="document"
-                iconType="outline"
-                onClick={() => setChooseType('change')}
-              >
-                {f(regulation.impacts.alerts.makeTextChanges)}
-              </Button>
-              <span>{f(regulation.impacts.alerts.or)}</span>
-              <Button
-                variant="ghost"
-                icon="fileTrayFull"
-                iconType="outline"
-                onClick={() => setChooseType('cancel')}
-              >
-                {f(regulation.impacts.alerts.revokeRegulation)}
-              </Button>
-            </Inline>
+            {!selRegOption.migrated ? (
+              <AlertMessage
+                type="warning"
+                message={
+                  <Stack space={2}>
+                    <Text variant="small">
+                      {f(regulation.impacts.alerts.notMigrated, {
+                        name: prettyName(selRegOption.value as RegName),
+                      })}
+                    </Text>
+                    {isAmending && !withoutImpacts && (
+                      <Text variant="small">
+                        {f(regulation.impacts.alerts.notMigratedAmending)}
+                      </Text>
+                    )}
+                    {isAmending && !withoutImpacts && (
+                      <Button
+                        variant="text"
+                        size="small"
+                        onClick={continueWithoutImpacts}
+                      >
+                        {f(regulation.impacts.alerts.continueWithoutImpacts)}
+                      </Button>
+                    )}
+                  </Stack>
+                }
+              />
+            ) : groupedImpacts[selRegOption.value as string]?.some(
+                (impact) => impact.type === 'repeal',
+              ) ? (
+              <AlertMessage
+                type="warning"
+                message={f(regulation.impacts.alerts.hasRepeal)}
+              />
+            ) : (
+              <Inline space={[2, 2, 3, 4]} align="center" alignY="center">
+                <Button
+                  variant="ghost"
+                  icon="document"
+                  iconType="outline"
+                  disabled={!effectiveDateReady}
+                  onClick={() => setChooseType('change')}
+                >
+                  {f(regulation.impacts.alerts.makeTextChanges)}
+                </Button>
+                <span>{f(regulation.impacts.alerts.or)}</span>
+                <Button
+                  variant="ghost"
+                  icon="fileTrayFull"
+                  iconType="outline"
+                  disabled={!effectiveDateReady}
+                  onClick={() => setChooseType('cancel')}
+                >
+                  {f(regulation.impacts.alerts.revokeRegulation)}
+                </Button>
+              </Inline>
+            )}
 
             {chooseType === 'cancel' && (
               <EditCancellation
@@ -459,6 +546,7 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
                       : '',
                 }}
                 impacts={groupedImpacts[selRegOption.value as string]}
+                regulationEffectiveDate={draftData.effectiveDate}
                 onSave={handleSaveNewImpact}
                 onClose={closeModal}
               />
@@ -479,6 +567,7 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
                 draftTitle={application.answers?.advert?.title}
                 draftHtml={application.answers?.advert?.html as string}
                 isBase={applicationType === 'base_regulation'}
+                regulationEffectiveDate={draftData.effectiveDate}
                 applicationId={application.id}
                 onSave={handleSaveNewImpact}
                 onClose={closeModal}
@@ -488,7 +577,7 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
         )}
 
         {/* Impact list */}
-        {!impactsLoaded ? (
+        {!impactsLoaded || !effectiveDateReady ? (
           <SkeletonLoader height={80} borderRadius="large" />
         ) : (
           <ImpactList
@@ -496,6 +585,7 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
             draftTitle={application.answers?.advert?.title}
             draftHtml={application.answers?.advert?.html as string}
             isBase={applicationType === 'base_regulation'}
+            regulationEffectiveDate={draftData.effectiveDate}
             applicationId={application.id}
             onSaveImpact={handleSaveExistingImpact}
             onDeleteImpact={handleDeleteImpact}
@@ -516,6 +606,13 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
           <Text variant="small" color="red600">
             {f(regulation.impacts.alerts.requireImpact)}
           </Text>
+        )}
+
+        {hasNoImpacts && withoutImpacts && (
+          <AlertMessage
+            type="info"
+            message={f(regulation.impacts.alerts.withoutImpactsNote)}
+          />
         )}
       </Stack>
     </FormScreen>

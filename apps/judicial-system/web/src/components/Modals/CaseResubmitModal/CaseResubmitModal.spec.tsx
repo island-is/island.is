@@ -9,11 +9,16 @@ describe('getCaseResubmittedText', () => {
   const fn = (theCase: WorkingCase) =>
     getCaseResubmittedText(formatMessage, theCase)
 
-  test('should format correctly when court date has been set and defender is set to receive access when the court date is set', () => {
+  test('should format correctly when court date has been set and a defender receives access when the court date is set', () => {
     const theCase = {
       id: 'abc',
-      requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
       arraignmentDate: { date: '2022-06-13T13:37:00Z' },
+      defendants: [
+        {
+          id: 'd1',
+          requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+        },
+      ],
     } as WorkingCase
 
     const res = fn(theCase)
@@ -34,7 +39,7 @@ describe('getCaseResubmittedText', () => {
       const theCase = {
         id,
         arraignmentDate,
-        requestSharedWithDefender,
+        defendants: [{ id: 'd1', requestSharedWithDefender }],
       } as WorkingCase
 
       const res = fn(theCase)

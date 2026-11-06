@@ -1,7 +1,13 @@
 import { JwtAuthUserGuard, RolesGuard } from '@island.is/judicial-system/auth'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
-import { prosecutorRule, publicProsecutorStaffRule } from '../../../guards'
+import {
+  courtOfAppealsAssistantRule,
+  courtOfAppealsJudgeRule,
+  courtOfAppealsRegistrarRule,
+  prosecutorRule,
+  publicProsecutorStaffRule,
+} from '../../../guards'
 import { verifyGuards, verifyRolesRules } from '../../../test'
 import {
   CaseExistsForUpdateGuard,
@@ -17,7 +23,7 @@ const indictmentCaseType = [
   { guard: CaseTypeGuard, prop: { allowedCaseTypes: indictmentCases } },
 ]
 
-// The exists guard sits on each route rather than on the class: the three
+// The exists guard sits on each route rather than on the class: the four
 // routes that change a summons lock the case row, and the three that do not
 // must not. The declared order is pinned here; appealSummonsGuardChain.spec.ts
 // runs it.
@@ -77,6 +83,20 @@ describe('AppealSummonsController - confirm guards', () => {
   )
 })
 
+describe('AppealSummonsController - sendToCourtOfAppeals guards', () => {
+  verifyGuards(
+    AppealSummonsController,
+    'sendToCourtOfAppeals',
+    [
+      CaseExistsForUpdateGuard,
+      CaseTypeGuard,
+      CaseWriteGuard,
+      AppealSummonsExistsGuard,
+    ],
+    indictmentCaseType,
+  )
+})
+
 // A read: no lock.
 describe('AppealSummonsController - getPdf guards', () => {
   verifyGuards(
@@ -119,10 +139,19 @@ describe('AppealSummonsController - confirm roles', () => {
   verifyRolesRules(AppealSummonsController, 'confirm', [prosecutorRule])
 })
 
+describe('AppealSummonsController - sendToCourtOfAppeals roles', () => {
+  verifyRolesRules(AppealSummonsController, 'sendToCourtOfAppeals', [
+    publicProsecutorStaffRule,
+  ])
+})
+
 describe('AppealSummonsController - getPdf roles', () => {
   verifyRolesRules(AppealSummonsController, 'getPdf', [
     publicProsecutorStaffRule,
     prosecutorRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   ])
 })
 

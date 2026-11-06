@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { Animated, Easing } from 'react-native'
 import styled from 'styled-components/native'
-import { Alert, DARK_YELLOW_200, dynamicColor } from '../../ui'
+import { Alert, token } from '../../ui'
 import { getIntl } from '@/components/providers/locale-provider'
 import { useOfflineActions, useOfflineStore } from '../../stores/offline-store'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -20,10 +20,7 @@ const Overlay = styled(SafeAreaView)`
   position: relative;
   left: 0;
   right: 0;
-  background-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.yellow200,
-    dark: DARK_YELLOW_200,
-  }))};
+  background-color: ${token((t) => t.feedback.warning.background)};
 `
 
 export const OfflineBanner = () => {

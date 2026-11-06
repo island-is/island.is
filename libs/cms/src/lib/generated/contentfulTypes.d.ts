@@ -1090,6 +1090,9 @@ export interface ICustomPageFields {
 
   /** Open Graph Image */
   ogImage?: Asset | undefined
+
+  /** Hide from external search engines */
+  hideFromExternalSearchEngines?: boolean | undefined
 }
 
 /** This content type is meant to represent a custom made page. Examples include (/starfatorg, /reglugerdir and many more).
@@ -4260,6 +4263,9 @@ export interface IProjectPageFields {
   /** Secondary Sidebar */
   secondarySidebar?: ILinkGroup | undefined
 
+  /** Sidebar Cards */
+  sidebarCards?: ISidebarCard[] | undefined
+
   /** Subtitle */
   subtitle?: string | undefined
 
@@ -4367,6 +4373,9 @@ export interface IProjectPage extends Entry<IProjectPageFields> {
 }
 
 export interface IProjectSubpageFields {
+  /** Project Page */
+  projectPage?: IProjectPage | undefined
+
   /** Title */
   title: string
 

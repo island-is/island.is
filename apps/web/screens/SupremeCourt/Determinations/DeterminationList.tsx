@@ -38,7 +38,6 @@ import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { getLanguageToggleDialogConfig } from '@island.is/web/utils/languageToggleDialog'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import {
@@ -285,12 +284,7 @@ const Determinations: CustomScreen<DeterminationsProps> = ({
   )
 }
 
-Determinations.getProps = async ({
-  apolloClient,
-  query,
-  locale,
-  customPageData,
-}) => {
+Determinations.getProps = async ({ apolloClient, query, locale }) => {
   const page = parseAsInteger.parseServerSide(query.page) ?? 1
   const initialCaseType =
     typeof query.caseType === 'string' ? query.caseType : undefined
@@ -355,9 +349,6 @@ Determinations.getProps = async ({
       is: '',
       en: '',
     },
-    languageToggleDialog: getLanguageToggleDialogConfig(
-      customPageData?.configJson,
-    ),
   }
 }
 

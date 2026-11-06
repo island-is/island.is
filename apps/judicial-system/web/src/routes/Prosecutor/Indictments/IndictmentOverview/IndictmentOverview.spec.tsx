@@ -15,6 +15,7 @@ import { FeatureContext } from '@island.is/judicial-system-web/src/components/Fe
 import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
+  AppealCourtSessionType,
   AppealEventType,
   CaseIndictmentRulingDecision,
   CaseState,
@@ -60,15 +61,14 @@ jest.mock('next/router', () => ({
 }))
 
 // The radios only change the working case; confirming saves through
-// updateDefendant. The state update is kept real so a click is visible to the
+// updateDefendants. The state update is kept real so a click is visible to the
 // page, the server call is recorded.
-const mockUpdateDefendant = jest.fn()
+const mockUpdateDefendants = jest.fn()
 
 jest.mock('../../../../utils/hooks/useDefendants', () => ({
   __esModule: true,
   default: () => ({
-    updateDefendant: mockUpdateDefendant,
-    isUpdatingDefendant: false,
+    updateDefendants: mockUpdateDefendants,
     updateDefendantState: (
       update: { defendantId: string; indictmentReviewDecision: unknown },
       setWorkingCase: (fn: (prev: WorkingCase) => WorkingCase) => void,
@@ -217,9 +217,9 @@ describe('Prosecutor IndictmentOverview', () => {
       )
 
     beforeEach(() => {
-      mockUpdateDefendant.mockReset()
+      mockUpdateDefendants.mockReset()
       mockPush.mockReset()
-      mockUpdateDefendant.mockResolvedValue({ id: 'updated' })
+      mockUpdateDefendants.mockResolvedValue(true)
     })
 
     it('opens one confirmation for the case and saves only the decisions that changed', async () => {
@@ -250,24 +250,20 @@ describe('Prosecutor IndictmentOverview', () => {
 
       await userEvent.click(screen.getByRole('button', { name: 'Staðfesta' }))
 
-      await waitFor(() => expect(mockUpdateDefendant).toHaveBeenCalledTimes(1))
-      expect(mockUpdateDefendant).toHaveBeenCalledWith({
-        caseId: 'test_id',
-        defendantId: 'undecided_defendant_id',
-        indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
-      })
+      await waitFor(() => expect(mockUpdateDefendants).toHaveBeenCalledTimes(1))
+      expect(mockUpdateDefendants).toHaveBeenCalledWith('test_id', [
+        {
+          defendantId: 'undecided_defendant_id',
+          indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
+        },
+      ])
       await waitFor(() => expect(mockPush).toHaveBeenCalled())
     })
 
-    // The saves are independent requests; one that succeeded must not be sent
-    // again when the reviewer retries after another failed.
-    it('retries only the decision whose save failed', async () => {
-      mockUpdateDefendant.mockImplementation(
-        async ({ defendantId }: { defendantId: string }) =>
-          defendantId === 'reviewed_defendant_id'
-            ? { id: defendantId }
-            : undefined,
-      )
+    // The decisions are saved together, so a failed save saved none of them
+    // and a retry sends them all again.
+    it('saves every changed decision in one request and resends them all after a failure', async () => {
+      mockUpdateDefendants.mockResolvedValue(false)
       const { container } = renderReview()
 
       await waitFor(() =>
@@ -295,21 +291,38 @@ describe('Prosecutor IndictmentOverview', () => {
         await screen.findByRole('button', { name: 'Staðfesta' }),
       )
 
-      await waitFor(() => expect(mockUpdateDefendant).toHaveBeenCalledTimes(2))
+      const bothDecisions = [
+        {
+          defendantId: 'reviewed_defendant_id',
+          indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
+        },
+        {
+          defendantId: 'undecided_defendant_id',
+          indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
+        },
+      ]
+
+      await waitFor(() => expect(mockUpdateDefendants).toHaveBeenCalledTimes(1))
+      expect(mockUpdateDefendants).toHaveBeenCalledWith(
+        'test_id',
+        bothDecisions,
+      )
       expect(mockPush).not.toHaveBeenCalled()
 
-      // Retry: only the failed defendant is sent.
-      mockUpdateDefendant.mockClear()
+      mockUpdateDefendants.mockClear()
+      mockUpdateDefendants.mockResolvedValue(true)
       await userEvent.click(screen.getByRole('button', { name: 'Staðfesta' }))
 
-      await waitFor(() => expect(mockUpdateDefendant).toHaveBeenCalledTimes(1))
-      expect(mockUpdateDefendant).toHaveBeenCalledWith(
-        expect.objectContaining({ defendantId: 'undecided_defendant_id' }),
+      await waitFor(() => expect(mockUpdateDefendants).toHaveBeenCalledTimes(1))
+      expect(mockUpdateDefendants).toHaveBeenCalledWith(
+        'test_id',
+        bothDecisions,
       )
+      await waitFor(() => expect(mockPush).toHaveBeenCalled())
     })
 
     it('stays on the page when a save fails', async () => {
-      mockUpdateDefendant.mockResolvedValue(undefined)
+      mockUpdateDefendants.mockResolvedValue(false)
       const { container } = renderReview()
 
       await waitFor(() =>
@@ -331,7 +344,7 @@ describe('Prosecutor IndictmentOverview', () => {
         await screen.findByRole('button', { name: 'Staðfesta' }),
       )
 
-      await waitFor(() => expect(mockUpdateDefendant).toHaveBeenCalledTimes(1))
+      await waitFor(() => expect(mockUpdateDefendants).toHaveBeenCalledTimes(1))
       expect(mockPush).not.toHaveBeenCalled()
     })
   })
@@ -391,9 +404,9 @@ describe('Prosecutor IndictmentOverview', () => {
       )
 
     beforeEach(() => {
-      mockUpdateDefendant.mockReset()
+      mockUpdateDefendants.mockReset()
       mockPush.mockReset()
-      mockUpdateDefendant.mockResolvedValue({ id: 'updated' })
+      mockUpdateDefendants.mockResolvedValue(true)
     })
 
     // The card the reviewer reads before deciding: where the defendant stands,
@@ -541,5 +554,73 @@ describe('Prosecutor IndictmentOverview', () => {
         ).toBeInTheDocument()
       },
     )
+
+    // Once the court of appeals has called its sessions, they are on the
+    // prosecutor's agenda the way a district court session is: every one of
+    // them, with its type, date, time and courtroom.
+    describe('the sessions the court of appeals has called', () => {
+      const daysFromNow = (days: number, hours: number): Date => {
+        const date = new Date()
+        date.setDate(date.getDate() + days)
+        date.setHours(hours, 15, 0, 0)
+
+        return date
+      }
+      const mainHearing = daysFromNow(30, 9)
+      const preparatoryHearing = daysFromNow(10, 13)
+
+      const withSessions = (appealState: AppealCaseState) =>
+        appealCase({
+          verdictAppealCase: {
+            id: 'verdict_appeal_case_id',
+            appealState,
+            appealEventLogs: [],
+            courtSessions: [
+              {
+                id: 'main_hearing_id',
+                sessionType: AppealCourtSessionType.MAIN_HEARING,
+                sessionDate: mainHearing.toISOString(),
+                courtRoom: '101',
+              },
+              {
+                id: 'preparatory_hearing_id',
+                sessionType: AppealCourtSessionType.PREPARATORY_HEARING,
+                sessionDate: preparatoryHearing.toISOString(),
+                courtRoom: '102',
+              },
+            ],
+          },
+        })
+
+      it('puts every booked session on the one agenda card', async () => {
+        renderCase(withSessions(AppealCaseState.RECEIVED), [
+          Feature.INDICTMENT_APPEAL,
+        ])
+
+        expect(await screen.findByText('Á dagskrá')).toBeInTheDocument()
+        expect(screen.getAllByText('Á dagskrá')).toHaveLength(1)
+        expect(screen.getByText('Aðalmeðferð')).toBeInTheDocument()
+        expect(
+          screen.getByText(formatDate(mainHearing, 'PPPp') ?? ''),
+        ).toBeInTheDocument()
+        expect(screen.getByText('Dómsalur 101')).toBeInTheDocument()
+        expect(screen.getByText('Undirbúningsþinghald')).toBeInTheDocument()
+        expect(
+          screen.getByText(formatDate(preparatoryHearing, 'PPPp') ?? ''),
+        ).toBeInTheDocument()
+        expect(screen.getByText('Dómsalur 102')).toBeInTheDocument()
+      })
+
+      // A log of what the court called, so the entries stay once it has ruled.
+      it('keeps the entries once the court of appeals has ruled', async () => {
+        renderCase(withSessions(AppealCaseState.COMPLETED), [
+          Feature.INDICTMENT_APPEAL,
+        ])
+
+        expect(await screen.findByText('Á dagskrá')).toBeInTheDocument()
+        expect(screen.getByText('Aðalmeðferð')).toBeInTheDocument()
+        expect(screen.getByText('Undirbúningsþinghald')).toBeInTheDocument()
+      })
+    })
   })
 })

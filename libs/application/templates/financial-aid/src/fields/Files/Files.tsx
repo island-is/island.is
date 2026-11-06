@@ -6,7 +6,7 @@ import {
 
 import { useIntl } from 'react-intl'
 import { filesText } from '../../lib/messages'
-import { FileUploadContainer } from '..'
+import FileUploadContainer from '../FileUploadContainer/FileUploadContainer'
 import { UploadFileType } from '../../lib/types'
 import { useFormContext } from 'react-hook-form'
 import { useFileUpload } from '../../lib/hooks/useFileUpload'

@@ -42,6 +42,7 @@ import {
 import { m } from './messages'
 import { getCodes, hasCompletedPrerequisitesStep } from './utils/formUtils'
 import {
+  DrivingLicensePhotoLookupCheckApi,
   GlassesCheckApi,
   MockableSyslumadurPaymentCatalogApi,
   SyslumadurPaymentCatalogApi,
@@ -150,6 +151,7 @@ const DrivingLicenseTemplate: ApplicationTemplate<
                 QualityPhotoApi,
                 QualityPhotoAndSignatureApi,
                 AllPhotosFromThjodskraApi,
+                DrivingLicensePhotoLookupCheckApi,
               ],
             },
           ],

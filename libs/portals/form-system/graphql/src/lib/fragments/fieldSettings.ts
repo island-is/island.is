@@ -11,6 +11,8 @@ export const FieldSettingsFragment = gql`
     maxLength
     minDate
     maxDate
+    minDateDaysFromToday
+    maxDateDaysFromToday
     minAmount
     maxAmount
     year
@@ -40,6 +42,7 @@ export const FieldSettingsFragment = gql`
     isPhoneRequired
     isEmailRequired
     fetchEmailFromMyPages
+    fetchBankAccountFromMyPages
     chargeItemCode
     chargeItemName
     chargeType

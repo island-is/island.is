@@ -116,10 +116,7 @@ describe('CaseController - Get ruling pdf', () => {
     })
 
     it('should return pdf', () => {
-      expect(getRulingPdfAsBuffer).toHaveBeenCalledWith(
-        theCase,
-        expect.any(Function),
-      )
+      expect(getRulingPdfAsBuffer).toHaveBeenCalledWith(theCase)
       expect(res.end).toHaveBeenCalledWith(pdf)
     })
   })
@@ -134,10 +131,7 @@ describe('CaseController - Get ruling pdf', () => {
     })
 
     it('should generate pdf', () => {
-      expect(getRulingPdfAsBuffer).toHaveBeenCalledWith(
-        theCase,
-        expect.any(Function),
-      )
+      expect(getRulingPdfAsBuffer).toHaveBeenCalledWith(theCase)
     })
   })
 

@@ -9,6 +9,7 @@
  * (signature.regular.records[].institution), not from a separate
  * regulation.signatureText field.
  */
+import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import parseISO from 'date-fns/parseISO'
 import startOfDay from 'date-fns/startOfDay'
@@ -121,6 +122,7 @@ export const collectRegulationWarnings = (answers: {
     effectiveDate?: string
     lawChapters?: Array<{ slug: string; name: string }>
     impacts?: RegulationImpactSchema[]
+    withoutImpacts?: boolean
   }
   applicationType?: string
 }): RegulationWarning[] => {
@@ -288,7 +290,10 @@ export const collectRegulationWarnings = (answers: {
   }
 
   // Impacts section (for amending regulations)
-  if (answers.applicationType === 'amending_regulation') {
+  if (
+    answers.applicationType === 'amending_regulation' &&
+    !answers.regulation?.withoutImpacts
+  ) {
     if (
       !answers.regulation?.impacts ||
       answers.regulation.impacts.length === 0
@@ -346,12 +351,13 @@ export const collectRegulationWarnings = (answers: {
 // ---------------------------------------------------------------------------
 
 /**
- * Impacts on other regulations dated after the regulation's effective date.
- * Allowed, but uncommon enough that the advertiser should be warned.
- * Self-impacts are left out, since scheduling later changes to the
+ * Impacts on other regulations not dated on the regulation's effective date,
+ * earlier or later. The general rule is that they take effect the same day,
+ * so the advertiser is warned. Allowed, e.g. for changes taking effect in
+ * stages. Self-impacts are left out, since scheduling later changes to the
  * regulation itself is the normal case.
  */
-export const getImpactsAfterEffectiveDate = (
+export const getImpactsOffEffectiveDate = (
   effectiveDate?: string,
   impacts?: RegulationImpactSchema[],
 ): RegulationImpactSchema[] => {
@@ -365,7 +371,7 @@ export const getImpactsAfterEffectiveDate = (
     (impact) =>
       impact.name !== 'self' &&
       !!impact.date &&
-      impact.date.slice(0, 10) > effective,
+      impact.date.slice(0, 10) !== effective,
   )
 }
 
@@ -373,8 +379,8 @@ export const getImpactsAfterEffectiveDate = (
  * Ported from: libs/portals/admin/regulations-admin/src/utils/index.ts
  * (hasPublishEffectiveWarning)
  *
- * Whether the effective date comes before the requested publish date.
- * Allowed, but a regulation normally takes effect after it is published.
+ * Whether the effective date is on or before the requested publish date.
+ * Allowed, but only done in exceptional cases.
  */
 export const hasPublishEffectiveWarning = (
   effective?: Date,
@@ -389,12 +395,12 @@ export const hasPublishEffectiveWarning = (
   const startPublish = startOfDay(publish)
 
   if (effective) {
-    const nextWorkdayEffective = startOfDay(getNextWorkday(effective))
-
-    // Warning if effective date is before publish date
-    if (isBefore(nextWorkdayEffective, startPublish)) {
+    // Warning if effective date is the same day as, or before, the publish date
+    if (!isAfter(startOfDay(effective), startPublish)) {
       return true
     }
+
+    const nextWorkdayEffective = startOfDay(getNextWorkday(effective))
 
     // Warning if effective date is before next workday and fastTrack is active
     if (fastTrack && isBefore(nextWorkdayEffective, nextWorkdayToday)) {
@@ -430,7 +436,7 @@ export const getEffectiveDateWarnings = (
   const warnings: MessageDescriptor[] = []
 
   if (hasPublishEffectiveWarning(effective, publish, fastTrack)) {
-    warnings.push(regulation.summary.dateWarnings.effectiveBeforePublish)
+    warnings.push(regulation.summary.dateWarnings.effectiveOnOrBeforePublish)
   }
 
   if (effective && isBefore(startOfDay(effective), startOfDay(new Date()))) {

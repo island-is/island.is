@@ -3,7 +3,9 @@ import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import type { CaseFilesListCase } from './IndictmentCaseFilesList.logic'
 import {
+  getIndictmentPdfDisplayName,
   getVisibleSubpoenas,
+  shouldHideCaseFilesRecordFromDefender,
   shouldShowPoliceDigitalCaseFilesSection,
 } from './IndictmentCaseFilesList.logic'
 
@@ -149,5 +151,66 @@ describe('getVisibleSubpoenas', () => {
 
   it('shows nothing to a defender without a national id', () => {
     expect(subpoenaIds(user(UserRole.DEFENDER))).toEqual([])
+  })
+})
+
+describe('shouldHideCaseFilesRecordFromDefender', () => {
+  const hiddenCaseId = 'hidden-case-id'
+  const otherCaseId = 'other-case-id'
+  const hiddenCaseIds = [hiddenCaseId]
+
+  it('hides the case files record from a defender on a listed case', () => {
+    expect(
+      shouldHideCaseFilesRecordFromDefender(
+        hiddenCaseId,
+        user(UserRole.DEFENDER),
+        hiddenCaseIds,
+      ),
+    ).toBe(true)
+  })
+
+  it('keeps the case files record for a defender on an unlisted case', () => {
+    expect(
+      shouldHideCaseFilesRecordFromDefender(
+        otherCaseId,
+        user(UserRole.DEFENDER),
+        hiddenCaseIds,
+      ),
+    ).toBe(false)
+  })
+
+  it('keeps the case files record for non-defence users on a listed case', () => {
+    expect(
+      shouldHideCaseFilesRecordFromDefender(
+        hiddenCaseId,
+        user(UserRole.PROSECUTOR, InstitutionType.POLICE_PROSECUTORS_OFFICE),
+        hiddenCaseIds,
+      ),
+    ).toBe(false)
+  })
+})
+
+describe('getIndictmentPdfDisplayName', () => {
+  it('keeps the sent-to-court date for a generated indictment', () => {
+    expect(
+      getIndictmentPdfDisplayName({
+        id: 'case-id',
+        caseSentToCourtDate: '2026-10-21T12:00:00.000Z',
+        indictmentHash: JSON.stringify({ hash: 'frozen' }),
+      } as CaseFilesListCase),
+    ).toBe('Ákæra 21.10.2026.pdf')
+  })
+
+  it('drops the date after the indictment has been replaced', () => {
+    expect(
+      getIndictmentPdfDisplayName({
+        id: 'case-id',
+        caseSentToCourtDate: '2026-10-21T12:00:00.000Z',
+        indictmentHash: JSON.stringify({
+          hash: 'replaced',
+          replaced: true,
+        }),
+      } as CaseFilesListCase),
+    ).toBe('Ákæra.pdf')
   })
 })

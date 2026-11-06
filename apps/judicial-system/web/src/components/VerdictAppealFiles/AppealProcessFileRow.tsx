@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from 'react'
 
+import type { IconMapIcon } from '@island.is/island-ui/core'
 import { Box } from '@island.is/island-ui/core'
 import {
   ContextMenu,
@@ -12,6 +13,8 @@ import * as styles from './AppealProcessFileRow.css'
 
 interface Props {
   title: string
+  titleIcon?: IconMapIcon
+  titleIconTooltip?: string
   onOpen?: () => void
   disabled?: boolean
   meta?: ReactNode
@@ -26,6 +29,8 @@ interface Props {
  */
 const AppealProcessFileRow: FC<Props> = ({
   title,
+  titleIcon,
+  titleIconTooltip,
   onOpen,
   disabled,
   meta,
@@ -36,6 +41,8 @@ const AppealProcessFileRow: FC<Props> = ({
   <PdfButton
     renderAs="row"
     title={title}
+    titleIcon={titleIcon}
+    titleIconTooltip={titleIconTooltip}
     disabled={disabled}
     handleClick={onOpen}
     className={styles.flushPdfRow}

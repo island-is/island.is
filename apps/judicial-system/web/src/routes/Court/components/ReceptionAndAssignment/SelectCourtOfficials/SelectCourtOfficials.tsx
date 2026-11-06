@@ -1,5 +1,4 @@
 import { useContext } from 'react'
-import { useIntl } from 'react-intl'
 
 import { Select, Tooltip } from '@island.is/island-ui/core'
 import {
@@ -94,8 +93,6 @@ const SelectCourtOfficials = () => {
     }))
   }
 
-  const { formatMessage } = useIntl()
-
   const defaultJudge = judges?.find(
     (judge) => judge.value === workingCase.judge?.id,
   )
@@ -107,16 +104,14 @@ const SelectCourtOfficials = () => {
   return (
     <>
       <SectionHeading
-        title={formatMessage(strings.title)}
-        tooltip={
-          <Tooltip text={formatMessage(strings.tooltip)} placement="right" />
-        }
+        title={strings.title}
+        tooltip={<Tooltip text={strings.tooltip} placement="right" />}
       />
       <BlueBox className={stack({ gap: 2 })}>
         <Select
           name="judge"
-          label={formatMessage(strings.setJudgeLabel)}
-          placeholder={formatMessage(strings.setJudgePlaceholder)}
+          label={strings.setJudgeLabel}
+          placeholder={strings.setJudgePlaceholder}
           value={defaultJudge}
           options={judges}
           onChange={(selectedOption) => setJudge(selectedOption?.value)}
@@ -127,8 +122,8 @@ const SelectCourtOfficials = () => {
         />
         <Select
           name="registrar"
-          label={formatMessage(strings.setRegistrarLabel)}
-          placeholder={formatMessage(strings.setRegistrarPlaceholder)}
+          label={strings.setRegistrarLabel}
+          placeholder={strings.setRegistrarPlaceholder}
           value={defaultRegistrar}
           options={registrars}
           onChange={(selectedOption) => setRegistrar(selectedOption?.value)}

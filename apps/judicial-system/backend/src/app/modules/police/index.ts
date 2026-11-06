@@ -1,3 +1,4 @@
+export { isFileTooLargeForPolice } from './police.helpers'
 export {
   PoliceDocumentType,
   PoliceDocument,

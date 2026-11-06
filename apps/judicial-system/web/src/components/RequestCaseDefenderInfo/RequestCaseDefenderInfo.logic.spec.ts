@@ -5,7 +5,6 @@ import {
 
 import {
   anyDefendantHasDefender,
-  buildCaseDefenderMirrorUpdate,
   canDefenderViewRequest,
   getDefendantRequestSharingUpdate,
   getRequestCaseDefenderNames,
@@ -163,37 +162,6 @@ describe('RequestCaseDefenderInfo.logic', () => {
     })
   })
 
-  describe('buildCaseDefenderMirrorUpdate', () => {
-    const contact = {
-      defenderName: 'Lögmaður',
-      defenderNationalId: '0101010101',
-      defenderEmail: 'logmadur@example.com',
-      defenderPhoneNumber: '1234567',
-    }
-
-    test('mirrors contact fields with force', () => {
-      expect(buildCaseDefenderMirrorUpdate(contact)).toEqual({
-        ...contact,
-        force: true,
-      })
-    })
-
-    test('never writes the case-level sharing timing', () => {
-      expect(buildCaseDefenderMirrorUpdate(contact)).not.toHaveProperty(
-        'requestSharedWithDefender',
-      )
-    })
-
-    test('omits contact fields that were not provided', () => {
-      expect(
-        buildCaseDefenderMirrorUpdate({ defenderEmail: 'new@example.com' }),
-      ).toEqual({
-        defenderEmail: 'new@example.com',
-        force: true,
-      })
-    })
-  })
-
   describe('getRequestSharedWithDefenderForNationalId', () => {
     const defendants = [
       {
@@ -253,7 +221,7 @@ describe('RequestCaseDefenderInfo.logic', () => {
       ).toBe(true)
     })
 
-    test('requires an arraignment date for COURT_DATE sharing', () => {
+    test('requires an arraignment date for COURT_DATE sharing only while RECEIVED', () => {
       expect(
         canDefenderViewRequest({
           defendants,
@@ -269,6 +237,15 @@ describe('RequestCaseDefenderInfo.logic', () => {
           nationalId: '111',
           state: CaseState.RECEIVED,
           hasArraignmentDate: true,
+        }),
+      ).toBe(true)
+
+      expect(
+        canDefenderViewRequest({
+          defendants,
+          nationalId: '111',
+          state: CaseState.ACCEPTED,
+          hasArraignmentDate: false,
         }),
       ).toBe(true)
     })

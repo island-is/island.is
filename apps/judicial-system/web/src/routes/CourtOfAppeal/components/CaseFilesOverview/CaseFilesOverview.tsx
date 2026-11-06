@@ -1,5 +1,4 @@
 import { useContext } from 'react'
-import { useIntl } from 'react-intl'
 
 import { Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -16,36 +15,31 @@ import { strings } from './CaseFilesOverview.strings'
 const CaseFilesOverview = () => {
   const { workingCase } = useContext(FormContext)
 
-  const { formatMessage } = useIntl()
-
   return (
     <>
       <AppealCaseFilesOverview />
       <section>
-        <SectionHeading
-          title={formatMessage(strings.courtCaseFilesTitle)}
-          marginBottom={1}
-        />
+        <SectionHeading title={strings.courtCaseFilesTitle} marginBottom={1} />
         <PdfButton
           renderAs="row"
           caseId={workingCase.id}
-          title={formatMessage(core.pdfButtonRequest)}
+          title={core.pdfButtonRequest}
           pdfType="request"
-          elementId={formatMessage(core.pdfButtonRequest)}
+          elementId={core.pdfButtonRequest}
         />
         <PdfButton
           renderAs="row"
           caseId={workingCase.id}
-          title={formatMessage(core.pdfButtonRulingShortVersion)}
+          title={core.pdfButtonRulingShortVersion}
           pdfType="courtRecord"
-          elementId={formatMessage(core.pdfButtonRulingShortVersion)}
+          elementId={core.pdfButtonRulingShortVersion}
         />
         <PdfButton
           renderAs="row"
           caseId={workingCase.id}
-          title={formatMessage(core.pdfButtonRuling)}
+          title={core.pdfButtonRuling}
           pdfType="ruling"
-          elementId={formatMessage(core.pdfButtonRuling)}
+          elementId={core.pdfButtonRuling}
         >
           {workingCase.rulingSignatureDate ? (
             <SignedDocument
@@ -53,7 +47,7 @@ const CaseFilesOverview = () => {
               signingDate={workingCase.rulingSignatureDate}
             />
           ) : (
-            <Text>{formatMessage(strings.unsignedDocument)}</Text>
+            <Text>{strings.unsignedDocument}</Text>
           )}
         </PdfButton>
       </section>

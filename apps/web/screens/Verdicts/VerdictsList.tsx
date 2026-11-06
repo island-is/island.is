@@ -30,10 +30,12 @@ import {
   Stack,
   Tag,
   Text,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import {
   FilterTag,
   HeadWithSocialSharing,
+  MarkdownText,
   Webreader,
 } from '@island.is/web/components'
 import {
@@ -52,7 +54,6 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { parseCommaSeparatedListFromQuery } from '@island.is/web/units/parseCourtQueryParam'
-import { getLanguageToggleDialogConfig } from '@island.is/web/utils/languageToggleDialog'
 
 import {
   type CustomScreen,
@@ -628,6 +629,25 @@ interface FiltersProps {
     | 'supremeCourt'
     | 'districtCourt'
     | 'retrialCourt'
+  selectedCourts: string[]
+  selectedDistrictCourts: string[]
+}
+
+const getKeywordCourtScope = (
+  courts: string[],
+  districtCourts: string[],
+): 'all' | 'supremeCourt' | 'otherCourts' => {
+  const topLevels = new Set<VerdictTopLevelCourt>()
+  for (const court of courts) {
+    const topLevel = mapCourtValueToTopLevelCourt(court)
+    if (topLevel !== 'all') topLevels.add(topLevel)
+  }
+  if (districtCourts.length > 0) topLevels.add('districtCourt')
+
+  if (topLevels.size === 0) return 'all'
+  if (!topLevels.has('supremeCourt')) return 'otherCourts'
+  if (topLevels.size === 1) return 'supremeCourt'
+  return 'all'
 }
 
 const Filters = ({
@@ -640,19 +660,42 @@ const Filters = ({
   updateRenderKey,
   whiteBackground = false,
   selectedCourtLevel,
+  selectedCourts,
+  selectedDistrictCourts,
 }: FiltersProps) => {
   const { formatMessage } = useIntl()
   const [expandedItemIds, setExpandedItemIds] = useState<string[]>(
     startExpanded ? FILTER_ACCORDION_ITEM_IDS : [],
   )
   const [openFiltersToggle, setOpenFiltersToggle] = useState(!startExpanded)
+  const supremeCourtCaseTypeTooltip = formatMessage(
+    m.listPage.supremeCourtCaseTypeTooltip,
+  ).trim()
+  const showSupremeCourtCaseTypeTooltip = (courtId: string) =>
+    courtId === 'supremeCourt' && Boolean(supremeCourtCaseTypeTooltip)
+
+  const keywordCourtScope = getKeywordCourtScope(
+    selectedCourts,
+    selectedDistrictCourts,
+  )
+  const selectedKeywords = queryState[QueryParam.KEYWORD]
 
   const keywordOptions = useMemo(() => {
-    return keywords.map((keyword) => ({
-      label: keyword.label,
-      value: keyword.label,
-    }))
-  }, [keywords])
+    return keywords
+      .filter((keyword) => {
+        // Always keep already selected keywords so they can be deselected
+        if (selectedKeywords?.includes(keyword.label)) return true
+        if (keywordCourtScope === 'supremeCourt')
+          return keyword.belongsToSupremeCourt
+        if (keywordCourtScope === 'otherCourts')
+          return keyword.belongsToOtherCourts
+        return true
+      })
+      .map((keyword) => ({
+        label: keyword.label,
+        value: keyword.label,
+      }))
+  }, [keywordCourtScope, keywords, selectedKeywords])
 
   const caseFilterOptionsByCourt = useMemo(() => {
     const courtConfig = [
@@ -719,9 +762,12 @@ const Filters = ({
     : {}
 
   return (
-    <Stack space={2}>
+    <Stack space={3}>
       {whiteBackground && (
-        <Box display="flex" justifyContent="flexEnd">
+        <Inline justifyContent="spaceBetween" alignY="center" space={2}>
+          <Text variant="h5">
+            {formatMessage(m.listPage.sidebarFilterHeading)}
+          </Text>
           <Button
             variant="text"
             icon={openFiltersToggle ? 'add' : 'remove'}
@@ -739,7 +785,7 @@ const Filters = ({
                 : m.listPage.closeAllFiltersLabel,
             )}
           </Button>
-        </Box>
+        </Inline>
       )}
       <Box {...boxProps}>
         <Accordion
@@ -875,9 +921,22 @@ const Filters = ({
               <Stack space={3} key={renderKey}>
                 {caseFilterOptionsByCourt.map((courtGroup) => (
                   <Stack key={courtGroup.id} space={2}>
-                    {selectedCourtLevel === 'all' && (
+                    <Inline space={1} alignY="center">
                       <Text variant="eyebrow">{courtGroup.label}</Text>
-                    )}
+                      {showSupremeCourtCaseTypeTooltip(courtGroup.id) && (
+                        <Tooltip
+                          text={
+                            <MarkdownText
+                              variant="small"
+                              fontWeight="regular"
+                              replaceNewLinesWithBreaks={false}
+                            >
+                              {supremeCourtCaseTypeTooltip}
+                            </MarkdownText>
+                          }
+                        />
+                      )}
+                    </Inline>
                     <Stack space={2}>
                       {courtGroup.options.map(({ label, typeOfOption }) => {
                         const queryParamKey =
@@ -1958,42 +2017,21 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
             hiddenOnTablet={true}
             isSticky={false}
             sidebarContent={
-              <Stack space={3}>
-                <Text variant="h5">
-                  {formatMessage(m.listPage.sidebarFilterHeading)}
-                </Text>
-                <Filters
-                  selectedCourtLevel={mapCourtsToTopLevelCourt(
-                    selectedCourts,
-                    selectedDistrictCourts,
-                  )}
-                  renderKey={renderKey}
-                  caseFilterOptions={caseFilterOptions}
-                  keywords={keywords}
-                  queryState={queryState}
-                  updateQueryState={updateQueryState}
-                  updateRenderKey={updateRenderKey}
-                  whiteBackground={true}
-                />
-                <Box
-                  background="blue100"
-                  width="full"
-                  display="flex"
-                  flexDirection="row"
-                  alignItems="center"
-                  justifyContent="center"
-                  style={{ height: 72 }}
-                >
-                  <Button
-                    variant="text"
-                    icon="reload"
-                    size="small"
-                    onClick={resetQueryState}
-                  >
-                    {formatMessage(m.listPage.clearAllFiltersLabel)}
-                  </Button>
-                </Box>
-              </Stack>
+              <Filters
+                selectedCourtLevel={mapCourtsToTopLevelCourt(
+                  selectedCourts,
+                  selectedDistrictCourts,
+                )}
+                selectedCourts={selectedCourts}
+                selectedDistrictCourts={selectedDistrictCourts}
+                renderKey={renderKey}
+                caseFilterOptions={caseFilterOptions}
+                keywords={keywords}
+                queryState={queryState}
+                updateQueryState={updateQueryState}
+                updateRenderKey={updateRenderKey}
+                whiteBackground={true}
+              />
             }
           >
             <Stack space={3}>
@@ -2011,16 +2049,33 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                 </Inline>
               )}
               <Inline justifyContent="spaceBetween" alignY="center" space={2}>
-                <Text>
-                  <strong>{data.total}</strong>{' '}
-                  {formatMessage(
-                    m.listPage[
-                      data.total === 1
-                        ? 'verdictsFoundSingular'
-                        : 'verdictsFoundPlural'
-                    ],
+                <Inline alignY="center" space={3}>
+                  <Text>
+                    <strong>{data.total}</strong>{' '}
+                    {formatMessage(
+                      m.listPage[
+                        data.total === 1
+                          ? 'verdictsFoundSingular'
+                          : 'verdictsFoundPlural'
+                      ],
+                    )}
+                  </Text>
+                  {(filterTags.length > 0 ||
+                    selectedCourts.length > 0 ||
+                    selectedDistrictCourts.length > 0 ||
+                    Boolean(queryState[QueryParam.SEARCH_TERM])) && (
+                    <Hidden below="lg">
+                      <Button
+                        variant="text"
+                        icon="reload"
+                        size="small"
+                        onClick={resetQueryState}
+                      >
+                        {formatMessage(m.listPage.clearAllFiltersLabel)}
+                      </Button>
+                    </Hidden>
                   )}
-                </Text>
+                </Inline>
                 <Hidden above="md">
                   <Filter
                     resultCount={data.total}
@@ -2042,6 +2097,8 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                           selectedCourts,
                           selectedDistrictCourts,
                         )}
+                        selectedCourts={selectedCourts}
+                        selectedDistrictCourts={selectedDistrictCourts}
                         renderKey={renderKey}
                         updateRenderKey={updateRenderKey}
                         caseFilterOptions={caseFilterOptions}
@@ -2236,9 +2293,6 @@ VerdictsList.getProps = async ({ apolloClient, query, customPageData }) => {
       is: '/domar',
       en: customPageData?.configJson?.englishFallbackUrl ?? '',
     },
-    languageToggleDialog: getLanguageToggleDialogConfig(
-      customPageData?.configJson,
-    ),
   }
 }
 

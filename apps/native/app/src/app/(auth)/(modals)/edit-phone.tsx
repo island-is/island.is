@@ -14,7 +14,7 @@ import {
   GetProfileDocument,
   useGetProfileQuery,
 } from '@/graphql/types/schema'
-import { Button, NavigationBarSheet, TextField, Typography } from '@/ui'
+import { Button, TextField, Typography } from '@/ui'
 import { StackScreen } from '@/components/stack-screen'
 import { testIDs } from '@/utils/test-ids'
 
@@ -108,13 +108,6 @@ export default function EditPhoneScreen() {
       stickyHeaderIndices={[0]}
     >
       <StackScreen closeable networkStatus={userProfile.networkStatus} />
-      <NavigationBarSheet
-        componentId="edit-phone"
-        title={intl.formatMessage({ id: 'edit.phone.screenTitle' })}
-        onClosePress={() => router.back()}
-        style={{ marginHorizontal: 16 }}
-        showLoading={userProfile.loading && !!userProfile.data}
-      />
       <View style={{ paddingHorizontal: 16 }}>
         <View style={{ marginBottom: 32, marginTop: 8 }}>
           <Typography>

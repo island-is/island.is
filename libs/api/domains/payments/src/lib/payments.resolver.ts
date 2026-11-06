@@ -37,6 +37,11 @@ import { ValidateApplePayMerchantResponse } from './dto/validateApplePayMerchant
 import { ValidateApplePayMerchantInput } from './dto/validateApplePayMerchant.input'
 import { ApplePayChargeInput } from './dto/applePayCharge.input'
 import { ApplePayChargeResponse } from './dto/applePayCharge.response'
+import {
+  GooglePayChargeInput,
+  GooglePayChargeVerifiedInput,
+} from './dto/googlePayCharge.input'
+import { GooglePayChargeResponse } from './dto/googlePayCharge.response'
 import { CreateBankTransferInput } from './dto/createBankTransfer.input'
 import { CreateBankTransferResponse } from './dto/createBankTransfer.response'
 import { VerifyBankTransferInput } from './dto/verifyBankTransfer.input'
@@ -219,6 +224,36 @@ export class PaymentsResolver {
   ): Promise<ApplePayChargeResponse> {
     try {
       return this.paymentsService.chargeApplePay(input)
+    } catch (e) {
+      throw new ApolloError(e.message)
+    }
+  }
+
+  @Mutation(() => GooglePayChargeResponse, { name: 'paymentsChargeGooglePay' })
+  async chargeGooglePay(
+    @Args('input', { type: () => GooglePayChargeInput })
+    input: GooglePayChargeInput,
+    @Context('req') req: GraphQLContext['req'],
+  ): Promise<GooglePayChargeResponse> {
+    try {
+      return this.paymentsService.chargeGooglePay(
+        input,
+        getPayerRequestInfo(req),
+      )
+    } catch (e) {
+      throw new ApolloError(e.message)
+    }
+  }
+
+  @Mutation(() => ChargeCardResponse, {
+    name: 'paymentsChargeGooglePayVerified',
+  })
+  async chargeGooglePayVerified(
+    @Args('input', { type: () => GooglePayChargeVerifiedInput })
+    input: GooglePayChargeVerifiedInput,
+  ): Promise<ChargeCardResponse> {
+    try {
+      return this.paymentsService.chargeGooglePayVerified(input)
     } catch (e) {
       throw new ApolloError(e.message)
     }

@@ -17,10 +17,16 @@ export class UpdateFieldSettingsInput {
   maxLength?: number
 
   @Field(() => Date, { nullable: true })
-  minDate?: Date
+  minDate?: Date | null
 
   @Field(() => Date, { nullable: true })
-  maxDate?: Date
+  maxDate?: Date | null
+
+  @Field(() => Int, { nullable: true })
+  minDateDaysFromToday?: number
+
+  @Field(() => Int, { nullable: true })
+  maxDateDaysFromToday?: number
 
   @Field(() => Int, { nullable: true })
   minAmount?: number
@@ -96,6 +102,9 @@ export class UpdateFieldSettingsInput {
 
   @Field(() => Boolean, { nullable: true })
   fetchEmailFromMyPages?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  fetchBankAccountFromMyPages?: boolean
 
   @Field(() => String, { nullable: true })
   chargeItemCode?: string

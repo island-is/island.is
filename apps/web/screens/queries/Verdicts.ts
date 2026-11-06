@@ -94,6 +94,8 @@ export const GET_VERDICT_KEYWORDS_QUERY = gql`
     webVerdictKeywords {
       keywords {
         label
+        belongsToSupremeCourt
+        belongsToOtherCourts
       }
     }
   }

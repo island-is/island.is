@@ -1,6 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common'
 
-import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { EmailModule } from '@island.is/email-service'
 import { SmsModule } from '@island.is/nova-sms'
 
@@ -30,7 +29,6 @@ import { NotificationController } from './notification.controller'
   imports: [
     EmailModule,
     SmsModule,
-    CmsTranslationsModule,
     InstitutionModule,
     UserModule,
     forwardRef(() => SubpoenaModule),

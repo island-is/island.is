@@ -23,7 +23,7 @@ const CaseScheduledCard: FC<Props> = (props) => {
     <IconCard
       data={[
         {
-          title: title ?? formatMessage(strings.scheduled),
+          title: title ?? strings.scheduled,
           value: (
             <>
               <Text variant="eyebrow" marginBottom={1} marginTop={2}>
@@ -31,9 +31,12 @@ const CaseScheduledCard: FC<Props> = (props) => {
               </Text>
               {<Text>{court.name}</Text>}
               <Text>
-                {formatMessage(strings.courtRoom, {
-                  courtRoom: courtRoom || 'NONE', // Must use || because courtRoom can be an empty string
-                })}
+                {formatMessage(
+                  { id: strings.courtRoom, defaultMessage: strings.courtRoom },
+                  {
+                    courtRoom: courtRoom || 'NONE', // Must use || because courtRoom can be an empty string
+                  },
+                )}
               </Text>
             </>
           ),
