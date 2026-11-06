@@ -258,7 +258,9 @@ export default function VehicleMileageScreen() {
     <>
       <StackScreen
         closeable
-        options={{ title: '' }}
+        options={{
+          title: intl.formatMessage({ id: 'vehicles.registerMileage' }),
+        }}
         networkStatus={[res.networkStatus, info.networkStatus]}
       />
       <FlatList
@@ -292,12 +294,6 @@ export default function VehicleMileageScreen() {
         keyExtractor={(item, index) => String(item.internalId ?? index)}
         ListHeaderComponent={
           <View key="list-header">
-            <Typography
-              variant="heading3"
-              style={{ marginTop: 8, marginBottom: 16 }}
-            >
-              {intl.formatMessage({ id: 'vehicles.registerMileage' })}
-            </Typography>
             <View style={{ marginBottom: 16 }}>
               <Typography variant="heading5">{vehicle.type}</Typography>
               <Typography variant="body">

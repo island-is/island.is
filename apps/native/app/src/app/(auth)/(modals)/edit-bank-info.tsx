@@ -47,7 +47,7 @@ export default function EditBankInfoScreen() {
     >
       <StackScreen closeable networkStatus={userProfile.networkStatus} />
       <View style={{ paddingHorizontal: 16 }}>
-        <View style={{ marginBottom: 32, marginTop: 8 }}>
+        <View style={{ marginBottom: 32 }}>
           <Typography>
             {intl.formatMessage({ id: 'edit.bankinfo.description' })}
           </Typography>
