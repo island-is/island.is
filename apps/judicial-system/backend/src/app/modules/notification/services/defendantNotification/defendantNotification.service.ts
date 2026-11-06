@@ -304,9 +304,10 @@ export class DefendantNotificationService extends BaseNotificationService {
       return { delivered: true }
     }
 
-    const caseUrl = defendant.appealDefenderNationalId
-      ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}`
-      : undefined
+    const caseUrl =
+      defendant.appealDefenderNationalId && !defendant.isAppealDefenderWaived
+        ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}`
+        : undefined
 
     // Not through sendEmails: that one drops a recipient with no name, and an
     // advocate the court typed in by hand may have only an address. The

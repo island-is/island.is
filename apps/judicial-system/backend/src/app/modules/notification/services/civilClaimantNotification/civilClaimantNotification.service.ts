@@ -211,9 +211,11 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
       return { delivered: true }
     }
 
-    const caseUrl = civilClaimant.appealSpokespersonNationalId
-      ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}`
-      : undefined
+    const caseUrl =
+      civilClaimant.hasAppealSpokesperson !== false &&
+      civilClaimant.appealSpokespersonNationalId
+        ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}`
+        : undefined
 
     // Not through sendEmails: that one writes to the district court's
     // spokesperson, and the appeal has its own advocate on its own columns.

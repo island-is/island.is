@@ -178,6 +178,52 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
     })
   })
 
+  describe('appeal-confirmed defender does not have access to another police case number', () => {
+    const otherPoliceCaseNumber = theCase.policeCaseNumbers[0]
+    let then: Then
+
+    beforeEach(async () => {
+      const caseWithAppealDefender = {
+        ...theCase,
+        defendants: [
+          {
+            appealDefenderNationalId: user.nationalId,
+            isAppealDefenderConfirmed: true,
+            policeCaseNumbers: [policeCaseNumber],
+          },
+          {
+            appealDefenderNationalId: '9999999999',
+            isAppealDefenderConfirmed: true,
+            policeCaseNumbers: [otherPoliceCaseNumber],
+          },
+        ],
+      } as Case
+
+      const then2 = {} as Then
+
+      try {
+        await limitedAccessCaseController.getCaseFilesRecordPdf(
+          caseId,
+          otherPoliceCaseNumber,
+          user,
+          caseWithAppealDefender,
+          res,
+        )
+      } catch (error) {
+        then2.error = error as Error
+      }
+
+      then = then2
+    })
+
+    it('should return ForbiddenException', () => {
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+      expect(then.error.message).toEqual(
+        `Defence user does not have access to police case number ${otherPoliceCaseNumber}`,
+      )
+    })
+  })
+
   describe('defender does not have access to police case number', () => {
     const otherDefenderPoliceCaseNumber = theCase.policeCaseNumbers[0]
     let then: Then

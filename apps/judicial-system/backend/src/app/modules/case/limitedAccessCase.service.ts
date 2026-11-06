@@ -18,6 +18,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import {
+  canLimitedAccessUserViewCaseFile,
   FileService,
   getConfirmedDefendantsForDefender,
   getDefenceUserCaseFileCategories,
@@ -68,10 +69,7 @@ export class LimitedAccessCaseService {
       throw new NotFoundException(`Case ${caseId} does not exist`)
     }
 
-    return this.restrictCaseFilesToDefenceCategories(
-      theCase,
-      defenceUserNationalId,
-    )
+    return this.restrictCaseFilesForDefenceUser(theCase, options?.user)
   }
 
   /**
@@ -96,10 +94,7 @@ export class LimitedAccessCaseService {
       throw new NotFoundException(`Case ${caseId} does not exist`)
     }
 
-    return this.restrictCaseFilesToDefenceCategories(
-      theCase,
-      defenceUserNationalId,
-    )
+    return this.restrictCaseFilesForDefenceUser(theCase, user)
   }
 
   // Only a defence user has their view of the linked cases narrowed
@@ -109,26 +104,33 @@ export class LimitedAccessCaseService {
 
   // The limited-access include loads a broad caseFiles allowlist; strip rows
   // the defence user may not see (including on merged/split cases) before the
-  // payload leaves the service.
-  private restrictCaseFilesToDefenceCategories(
+  // payload leaves the service. Uses the same per-file rules as downloads /
+  // LimitedAccessCaseFileInterceptor (category, submitter, cutoff, defendant,
+  // confirmed ruling order).
+  private restrictCaseFilesForDefenceUser(
     theCase: Case,
-    defenceUserNationalId?: string,
+    user?: TUser,
   ): Case {
-    if (!defenceUserNationalId) {
+    if (!user || !isDefenceUser(user)) {
       return theCase
     }
 
-    const allowed = new Set(
-      getDefenceUserCaseFileCategories(
-        defenceUserNationalId,
-        theCase.type,
-        theCase.defendants,
-        theCase.civilClaimants,
-      ),
-    )
-
     const keepAllowed = (file: CaseFile) =>
-      Boolean(file.category && allowed.has(file.category))
+      canLimitedAccessUserViewCaseFile({
+        user,
+        caseType: theCase.type,
+        caseState: theCase.state,
+        submittedBy: file.submittedBy,
+        fileRepresentative: file.fileRepresentative,
+        caseFileCategory: file.category,
+        defendants: theCase.defendants,
+        civilClaimants: theCase.civilClaimants,
+        defendantId: file.defendantId,
+        fileCreated: file.created,
+        civilClaimantId: file.civilClaimantId,
+        isRulingOrderInConfirmedCourtSession:
+          isRulingOrderInConfirmedCourtSession(file.id, theCase.courtSessions),
+      })
 
     if (theCase.caseFiles) {
       theCase.caseFiles = theCase.caseFiles.filter(keepAllowed)
@@ -281,10 +283,20 @@ export class LimitedAccessCaseService {
             file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE) &&
           file.defendantId
         ) {
-          return Defendant.isConfirmedDefenderOfSpecificDefendantWithCaseFileAccess(
-            user.nationalId,
-            file.defendantId,
-            theCase.defendants,
+          const defendant = theCase.defendants?.find(
+            (d) => d.id === file.defendantId,
+          )
+
+          return (
+            Defendant.isConfirmedDefenderOfSpecificDefendantWithCaseFileAccess(
+              user.nationalId,
+              file.defendantId,
+              theCase.defendants,
+            ) ||
+            Defendant.isConfirmedAppealDefenderOfDefendant(
+              user.nationalId,
+              defendant ? [defendant] : undefined,
+            )
           )
         }
 
@@ -325,17 +337,25 @@ export class LimitedAccessCaseService {
       }
     }
 
-    if (
-      isIndictmentCase(theCase.type) &&
-      (Defendant.isConfirmedDefenderOfDefendantWithCaseFileAccess(
+    const hasIndictmentFileAccess =
+      Defendant.isConfirmedDefenderOfDefendantWithCaseFileAccess(
         user.nationalId,
         theCase.defendants,
       ) ||
-        CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
-          user.nationalId,
-          theCase.civilClaimants,
-        ))
-    ) {
+      CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+        user.nationalId,
+        theCase.civilClaimants,
+      ) ||
+      Defendant.isConfirmedAppealDefenderOfDefendant(
+        user.nationalId,
+        theCase.defendants,
+      ) ||
+      CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
+        user.nationalId,
+        theCase.civilClaimants,
+      )
+
+    if (isIndictmentCase(theCase.type) && hasIndictmentFileAccess) {
       promises.push(
         this.tryAddGeneratedPdfToFilesToZip(
           this.pdfService.getIndictmentPdf(theCase, transaction),
@@ -344,22 +364,12 @@ export class LimitedAccessCaseService {
         ),
       )
 
-      const policeCaseNumbersForZip =
-        Defendant.isConfirmedDefenderOfDefendant(
-          user.nationalId,
-          theCase.defendants,
-        ) ||
-        CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
-          user.nationalId,
-          theCase.civilClaimants,
-        )
-          ? getDefenceUserVisiblePoliceCaseNumbers(
-              user.nationalId,
-              theCase.defendants,
-              theCase.civilClaimants,
-              theCase.policeCaseNumbers,
-            )
-          : theCase.policeCaseNumbers
+      const policeCaseNumbersForZip = getDefenceUserVisiblePoliceCaseNumbers(
+        user.nationalId,
+        theCase.defendants,
+        theCase.civilClaimants,
+        theCase.policeCaseNumbers,
+      )
 
       policeCaseNumbersForZip.forEach((policeCaseNumber) => {
         promises.push(
@@ -371,10 +381,24 @@ export class LimitedAccessCaseService {
         )
       })
 
-      const myDefendants = getConfirmedDefendantsForDefender(
-        user.nationalId,
-        theCase.defendants,
+      const myDefendantsById = new Map(
+        getConfirmedDefendantsForDefender(
+          user.nationalId,
+          theCase.defendants,
+        ).map((defendant) => [defendant.id, defendant]),
       )
+
+      for (const defendant of theCase.defendants ?? []) {
+        if (
+          Defendant.isConfirmedAppealDefenderOfDefendant(user.nationalId, [
+            defendant,
+          ])
+        ) {
+          myDefendantsById.set(defendant.id, defendant)
+        }
+      }
+
+      const myDefendants = [...myDefendantsById.values()]
 
       myDefendants.forEach((defendant) =>
         defendant.subpoenas?.forEach((subpoena) =>
