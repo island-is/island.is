@@ -221,3 +221,9 @@ export const StatusMessageTemplate = ({
 
 /** @deprecated Use `StatusMessageTemplate`. */
 export const ProblemTemplate = StatusMessageTemplate
+
+/** @deprecated Use `StatusMessageTemplateBaseProps`. */
+export type ProblemTemplateBaseProps = StatusMessageTemplateBaseProps
+
+/** @deprecated Use `StatusMessageTemplateProps`. */
+export type ProblemTemplateProps = StatusMessageTemplateProps
