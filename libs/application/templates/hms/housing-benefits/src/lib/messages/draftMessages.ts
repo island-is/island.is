@@ -105,26 +105,6 @@ export const draftMessages = {
       id: 'hb.application:draft.exemptionSection.checkboxLabelWork',
       defaultMessage: 'Vegna starfs',
     },
-    fileUploadStudiesTitle: {
-      id: 'hb.application:draft.exemptionSection.fileUploadStudiesTitle',
-      defaultMessage: 'Staðfesting á skólavist',
-      description: 'Studies - confirmation of enrollment',
-    },
-    fileUploadHealthTitle: {
-      id: 'hb.application:draft.exemptionSection.fileUploadHealthTitle',
-      defaultMessage: 'Læknisvottorð',
-      description: "Health - doctor's note",
-    },
-    fileUploadHousingTitle: {
-      id: 'hb.application:draft.exemptionSection.fileUploadHousingTitle',
-      defaultMessage: 'Staðfesting frá áfangaheimili',
-      description: 'Halfway housing - confirmation from housing',
-    },
-    fileUploadWorkTitle: {
-      id: 'hb.application:draft.exemptionSection.fileUploadWorkTitle',
-      defaultMessage: 'Ráðningarsamningur',
-      description: 'Work - confirmation of employment',
-    },
     validationCheckboxRequired: {
       id: 'hb.application:draft.exemptionSection.validationCheckboxRequired',
       defaultMessage: 'Þú verður að staðfesta að þú sækir um undanþágu',
