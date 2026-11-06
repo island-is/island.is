@@ -79,10 +79,7 @@ export const getConnectedRange = (
   return new Set(range)
 }
 
-export const getDateConnections = (
-  date: string,
-  dates: Set<string>,
-) => {
+export const getDateConnections = (date: string, dates: Set<string>) => {
   const parsedDate = parseISO(date)
   const previousDate = shiftDate(date, -1)
   const nextDate = shiftDate(date, 1)
@@ -96,10 +93,8 @@ export const getDateConnections = (
   const weekday = (getDay(parsedDate) + 6) % 7
 
   return {
-    connectsLeft:
-      weekday > 0 && hasPreviousDate && !continuesFromPreviousMonth,
-    connectsRight:
-      weekday < 6 && hasNextDate && !continuesIntoNextMonth,
+    connectsLeft: weekday > 0 && hasPreviousDate && !continuesFromPreviousMonth,
+    connectsRight: weekday < 6 && hasNextDate && !continuesIntoNextMonth,
     continuesFromPreviousMonth,
     continuesIntoNextMonth,
   }

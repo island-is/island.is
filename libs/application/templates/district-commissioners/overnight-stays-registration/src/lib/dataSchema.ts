@@ -107,14 +107,11 @@ export const dataSchema = z.object({
       )
       .optional(),
   ),
-  noActiveAdvertisement: z.preprocess(
-    (value) => {
-      if (value === true) return ['true']
-      if (value === false) return []
-      return value
-    },
-    z.array(z.string()).default([]),
-  ),
+  noActiveAdvertisement: z.preprocess((value) => {
+    if (value === true) return ['true']
+    if (value === false) return []
+    return value
+  }, z.array(z.string()).default([])),
   noOvernightStays: z.array(z.string()).default([]),
   overnightDates: z.array(z.string()).default([]),
   pricing: pricingSchema,

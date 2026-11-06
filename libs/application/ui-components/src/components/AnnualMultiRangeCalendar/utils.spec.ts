@@ -39,14 +39,7 @@ describe('AnnualMultiRangeCalendar utils', () => {
         '2026-08-03',
         '2026-08-10',
       ]),
-    ).toEqual(
-      new Set([
-        '2026-07-31',
-        '2026-08-01',
-        '2026-08-02',
-        '2026-08-03',
-      ]),
-    )
+    ).toEqual(new Set(['2026-07-31', '2026-08-01', '2026-08-02', '2026-08-03']))
   })
 
   it('connects within a week and fades continuations between months', () => {

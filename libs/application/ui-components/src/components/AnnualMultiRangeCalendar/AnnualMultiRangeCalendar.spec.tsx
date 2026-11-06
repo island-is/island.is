@@ -12,13 +12,8 @@ jest.mock('@island.is/island-ui/core', () => {
       React.createElement('span', null, children),
     Text: ({ children, id }: { children?: ReactNode; id?: string }) =>
       React.createElement('div', { id }, children),
-    VisuallyHidden: ({
-      children,
-      id,
-    }: {
-      children?: ReactNode
-      id?: string
-    }) => React.createElement('span', { id }, children),
+    VisuallyHidden: ({ children, id }: { children?: ReactNode; id?: string }) =>
+      React.createElement('span', { id }, children),
   }
 })
 
@@ -62,8 +57,7 @@ const labels = {
   keyboardInstructions: 'Use arrow keys',
   formatDayAriaLabel: (date: Date) =>
     `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`,
-  formatRangeStartSelected: (date: Date) =>
-    `Start ${date.toISOString()}`,
+  formatRangeStartSelected: (date: Date) => `Start ${date.toISOString()}`,
   formatRangeSelected: (from: Date, to: Date) =>
     `Selected ${from.toISOString()} to ${to.toISOString()}`,
   rangeRemoved: 'Range removed',
@@ -74,9 +68,7 @@ const CalendarHarness = () => {
 
   return (
     <>
-      <output data-testid="selected-dates">
-        {selectedDates.join(',')}
-      </output>
+      <output data-testid="selected-dates">{selectedDates.join(',')}</output>
       <AnnualMultiRangeCalendar
         id="test-calendar"
         year={2026}

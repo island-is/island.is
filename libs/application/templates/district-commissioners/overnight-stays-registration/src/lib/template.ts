@@ -55,11 +55,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [
-                NationalRegistryV3UserApi,
-                UserProfileApi,
-                HomeLodgingsApi,
-              ],
+              api: [NationalRegistryV3UserApi, UserProfileApi, HomeLodgingsApi],
               delete: true,
             },
           ],

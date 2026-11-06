@@ -101,10 +101,8 @@ export const getOvernightDates = (dates: string[]): string[] => {
 }
 
 /** Creates the stable answer key used to associate an amount with a date range. */
-export const getDateRangeKey = ({
-  from,
-  to,
-}: OvernightStayDateRange): string => `${from}_${to}`
+export const getDateRangeKey = ({ from, to }: OvernightStayDateRange): string =>
+  `${from}_${to}`
 
 /**
  * Counts how many overnight stays of a visit fall in each month, keyed by
@@ -193,7 +191,10 @@ export const getMonthlyRentalIncome = ({
         const amount = parseAmount(perVisitAmounts[getDateRangeKey(range)])
 
         return (
-          total + (amount ? splitVisitAmountByMonth(range, amount).get(monthIndex) ?? 0 : 0)
+          total +
+          (amount
+            ? splitVisitAmountByMonth(range, amount).get(monthIndex) ?? 0
+            : 0)
         )
       }, 0)
 
@@ -242,8 +243,9 @@ export const buildSubmissionPayload = (
   application: Application,
 ): OvernightStaySubmission => {
   const { answers } = application
-  const dates =
-    [...(getValueViaPath<string[]>(answers, 'overnightDates') ?? [])].sort()
+  const dates = [
+    ...(getValueViaPath<string[]>(answers, 'overnightDates') ?? []),
+  ].sort()
   const pricingMethod =
     getValueViaPath<'monthly' | 'perVisit'>(answers, 'pricing.method') ??
     'monthly'

@@ -23,9 +23,7 @@ const months = [
 
 const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
-export const ExampleAnnualMultiRangeCalendar = ({
-  error,
-}: FieldBaseProps) => {
+export const ExampleAnnualMultiRangeCalendar = ({ error }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
   const { setValue, watch } = useFormContext()
   const year = new Date().getFullYear()
@@ -45,11 +43,15 @@ export const ExampleAnnualMultiRangeCalendar = ({
         `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`,
       formatRangeStartSelected: (date) =>
         formatMessage(m.annualMultiRangeCalendarRangeStartSelected, {
-          date: `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`,
+          date: `${date.getDate()} ${
+            months[date.getMonth()]
+          } ${date.getFullYear()}`,
         }),
       formatRangeSelected: (from, to) =>
         formatMessage(m.annualMultiRangeCalendarRangeSelected, {
-          from: `${from.getDate()} ${months[from.getMonth()]} ${from.getFullYear()}`,
+          from: `${from.getDate()} ${
+            months[from.getMonth()]
+          } ${from.getFullYear()}`,
           to: `${to.getDate()} ${months[to.getMonth()]} ${to.getFullYear()}`,
         }),
       rangeRemoved: formatMessage(m.annualMultiRangeCalendarRangeRemoved),

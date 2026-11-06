@@ -1,22 +1,11 @@
 import React, { FC } from 'react'
-import {
-  Box,
-  GridColumn,
-  GridRow,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
-import {
-  Label,
-  ReviewGroup,
-} from '@island.is/application/ui-components'
+import { Label, ReviewGroup } from '@island.is/application/ui-components'
 import { getDateRanges } from '@island.is/application/ui-components/annual-multi-range-calendar/utils'
 import { useLocale } from '@island.is/localization'
-import {
-  applicationMessages as m,
-  monthMessages,
-} from '../lib/messages'
+import { applicationMessages as m, monthMessages } from '../lib/messages'
 import {
   getAdvertisementUrls,
   getMonthlyRentalIncome,
@@ -53,10 +42,8 @@ export const OvernightStaysOverview: FC<FieldBaseProps> = ({
       'pricing.perVisitAmounts',
     ) ?? {}
   const pricingMethod =
-    getValueViaPath<'monthly' | 'perVisit'>(
-      answers,
-      'pricing.method',
-    ) ?? 'monthly'
+    getValueViaPath<'monthly' | 'perVisit'>(answers, 'pricing.method') ??
+    'monthly'
   const visitRanges = getDateRanges(dates)
   const comments = getValueViaPath<string>(answers, 'comments')
   const advertisementUrls = getAdvertisementUrls(answers)
@@ -108,9 +95,7 @@ export const OvernightStaysOverview: FC<FieldBaseProps> = ({
               <Text>{registration.name}</Text>
             </GridColumn>
             <GridColumn span={['12/12', '6/12']}>
-              <Label>
-                {formatMessage(m.registrationNumberLabel)}
-              </Label>
+              <Label>{formatMessage(m.registrationNumberLabel)}</Label>
               <Text>{registration.id}</Text>
             </GridColumn>
             <GridColumn span={['12/12', '6/12']}>
@@ -118,9 +103,7 @@ export const OvernightStaysOverview: FC<FieldBaseProps> = ({
               <Text>{registration.address}</Text>
             </GridColumn>
             <GridColumn span={['12/12', '6/12']}>
-              <Label>
-                {formatMessage(m.postalCodeAndCityLabel)}
-              </Label>
+              <Label>{formatMessage(m.postalCodeAndCityLabel)}</Label>
               <Text>
                 {registration.postalCode} {registration.city}
               </Text>
@@ -177,9 +160,7 @@ export const OvernightStaysOverview: FC<FieldBaseProps> = ({
         </GridRow>
         <Box className={styles.totalBox} marginTop={4}>
           <Text variant="h4">{formatMessage(m.overviewTotal)}</Text>
-          <Text>
-            {formatMessage(m.overviewNights, { count: totalNights })}
-          </Text>
+          <Text>{formatMessage(m.overviewNights, { count: totalNights })}</Text>
           <Text color="blue400" fontWeight="semiBold">
             {formatMessage(m.overviewAmount, {
               amount: currencyFormatter.format(totalAmount),

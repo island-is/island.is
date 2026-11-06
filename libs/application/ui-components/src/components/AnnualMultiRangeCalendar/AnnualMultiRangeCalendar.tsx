@@ -84,8 +84,7 @@ export const AnnualMultiRangeCalendar = ({
     [hoveredDate, rangeStart],
   )
 
-  const updateSelection = (dates: string[]) =>
-    onChange([...dates].sort())
+  const updateSelection = (dates: string[]) => onChange([...dates].sort())
 
   const selectDate = (date: string) => {
     if (rangeStart) {
@@ -290,9 +289,7 @@ export const AnnualMultiRangeCalendar = ({
                           setHoveredDate(dateValue)
                         }
                       }}
-                      onKeyDown={(event) =>
-                        handleDayKeyDown(event, dateValue)
-                      }
+                      onKeyDown={(event) => handleDayKeyDown(event, dateValue)}
                       onMouseEnter={() =>
                         rangeStart && setHoveredDate(dateValue)
                       }

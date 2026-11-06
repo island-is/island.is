@@ -162,8 +162,7 @@ export const applicationMessages = defineMessages({
     id: 'osr.application:pricingPrefillMessage',
     defaultMessage:
       'Upphæðum á heimsókn verður breytt í heildarupphæðir á mánuði. Skráðar upphæðir á heimsókn verða fjarlægðar og ekki er hægt að breyta mánaðarupphæðum sjálfkrafa aftur í upphæðir á heimsókn.',
-    description:
-      'Explanation of the one-way conversion from per-visit amounts',
+    description: 'Explanation of the one-way conversion from per-visit amounts',
   },
   pricingConvertTitle: {
     id: 'osr.application:pricingConvertTitle',
@@ -238,7 +237,8 @@ export const applicationMessages = defineMessages({
   pricingAmountInvalid: {
     id: 'osr.application:pricingAmountInvalid',
     defaultMessage: 'Leigutekjur mega ekki vera neikvæðar.',
-    description: 'Error shown when a rental income amount is not a valid number',
+    description:
+      'Error shown when a rental income amount is not a valid number',
   },
   pricingNoStays: {
     id: 'osr.application:pricingNoStays',
@@ -394,8 +394,7 @@ export const applicationMessages = defineMessages({
   },
   noActiveAdvertisementOverview: {
     id: 'osr.application:noActiveAdvertisementOverview',
-    defaultMessage:
-      'Enginn virkur hlekkur er til fyrir eignina að svo stöddu.',
+    defaultMessage: 'Enginn virkur hlekkur er til fyrir eignina að svo stöddu.',
     description: 'Shown in the overview when no advertisement URL exists',
   },
   noStaysOverview: {
@@ -515,8 +514,7 @@ export const applicationMessages = defineMessages({
   },
   completionHelpDescription: {
     id: 'osr.application:completionHelpDescription',
-    defaultMessage:
-      'Skoðaðu nánari upplýsingar á upplýsingasíðu Sýslumanns.',
+    defaultMessage: 'Skoðaðu nánari upplýsingar á upplýsingasíðu Sýslumanns.',
     description: 'Completion help description',
   },
   completionContinueButton: {
