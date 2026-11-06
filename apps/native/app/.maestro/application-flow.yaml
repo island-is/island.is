@@ -22,6 +22,5 @@ appId: ${APP_ID}
     text: 'Opna umsókn'
 - assertVisible:
     id: 'SCREEN_PASSKEY'
-- tapOn:
-    id: 'NAVBAR_SHEET_CLOSE_BUTTON'
+- tapOn: 'Sleppa'
 - runFlow: 'utils/back.yaml'
