@@ -406,10 +406,6 @@ const indictmentCountFieldChecks = (
       warningMessage: 'Vantar atvikalýsingu',
     },
     {
-      isMissing: (count) => !count.legalArguments,
-      warningMessage: 'Vantar heimfærslu',
-    },
-    {
       isMissing: (count) =>
         isTrafficViolation(count) &&
         isSpeedingIndictmentCount(count) &&
