@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   rootName: {
     id: 'form.system:application-builder',
-    defaultMessage: 'Umsóknarsmiður',
+    defaultMessage: 'Umsóknasmiður',
     description: 'Form builder',
   },
   showSidebar: {

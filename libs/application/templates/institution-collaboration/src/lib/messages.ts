@@ -371,7 +371,7 @@ export const institutionApplicationMessages = {
     },
     constraintsApplyingLabel: {
       id: 'ia.application:applicant.constraints.applying.label',
-      defaultMessage: 'Umsóknarkerfi',
+      defaultMessage: 'Umsóknakerfi',
       description: 'Form label for constraints other formfield',
     },
     constraintsApplyingPlaceholder: {
