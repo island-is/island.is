@@ -123,6 +123,7 @@ identity-server:
     NODE_OPTIONS: '--max-old-space-size=1843 --enable-source-maps -r dd-trace/init'
     NativeApp__AllowDevAttestation: 'false'
     NativeApp__AllowDevelopmentBuilds: 'false'
+    NativeApp__DebugSigningCertificateDigests__0: ''
     PersistenceSettings__BaseAddress: 'http://services-auth-ids-api'
     PersistenceSettings__DelegationsCacheEnabled: 'false'
     RedisSettings__Address: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com'
