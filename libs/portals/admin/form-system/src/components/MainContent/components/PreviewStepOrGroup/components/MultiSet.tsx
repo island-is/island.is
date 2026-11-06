@@ -41,10 +41,14 @@ export const MultiSet = ({ screen, dispatch, state }: Props) => {
         field.fieldType === FieldTypesEnum.ISK_NUMBERBOX &&
         field.isPartOfMultiset !== false,
     )
-      ? fields.find((field) => field.fieldType === FieldTypesEnum.ISK_SUMBOX)
+      ? fields.find(
+          (field) =>
+            field.fieldType === FieldTypesEnum.ISK_SUMBOX &&
+            field.isPartOfMultiset !== true,
+        )
       : undefined
   const repeatedFields = currencySumField
-    ? fields.filter((field) => field.fieldType !== FieldTypesEnum.ISK_SUMBOX)
+    ? fields.filter((field) => field.id !== currencySumField.id)
     : fields
   const anchorFieldIndex = repeatedFields.findIndex(
     (field) => field.isPartOfMultiset !== false,

@@ -4,6 +4,35 @@ import { FieldSettingsFactory } from './fieldSettings.factory'
 import { FieldSettings } from './fieldSettings.model'
 
 it.each([true, false])(
+  'preserves notIncludedInSumbox=%s only for currency number fields',
+  (notIncludedInSumbox) => {
+    const settings = Object.assign(new FieldSettings(), { notIncludedInSumbox })
+
+    expect(
+      FieldSettingsFactory.getClass(FieldTypesEnum.ISK_NUMBERBOX, settings)
+        ?.notIncludedInSumbox,
+    ).toBe(notIncludedInSumbox)
+    expect(validateSync(settings)).toEqual([])
+    expect(
+      FieldSettingsFactory.getClass(FieldTypesEnum.TEXTBOX, settings),
+    ).not.toHaveProperty('notIncludedInSumbox')
+  },
+)
+
+it('rejects non-boolean sum exclusion settings', () => {
+  const settings = Object.assign(new FieldSettings(), {
+    notIncludedInSumbox: 'true',
+  })
+
+  expect(validateSync(settings)).toEqual([
+    expect.objectContaining({
+      property: 'notIncludedInSumbox',
+      constraints: { isBoolean: expect.any(String) },
+    }),
+  ])
+})
+
+it.each([true, false])(
   'preserves fetchBankAccountFromMyPages=%s for bank account fields',
   (fetchBankAccountFromMyPages) => {
     const settings = Object.assign(new FieldSettings(), {

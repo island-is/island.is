@@ -72,12 +72,16 @@ export const Screen = () => {
       visibleFields.some((f) => f.isPartOfMultiset !== false))
 
   const currencySumField = shouldMoveCurrencySumBox
-    ? visibleFields.find((f) => f.fieldType === FieldTypesEnum.ISK_SUMBOX)
+    ? visibleFields.find(
+        (f) =>
+          f.fieldType === FieldTypesEnum.ISK_SUMBOX &&
+          f.isPartOfMultiset !== true,
+      )
     : undefined
 
   const fieldsForMultisetLoop =
     shouldMoveCurrencySumBox && currencySumField
-      ? visibleFields.filter((f) => f.fieldType !== FieldTypesEnum.ISK_SUMBOX)
+      ? visibleFields.filter((f) => f.id !== currencySumField.id)
       : visibleFields
 
   const screenTitle =
