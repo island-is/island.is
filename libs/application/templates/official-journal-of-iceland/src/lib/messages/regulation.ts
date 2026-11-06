@@ -142,6 +142,69 @@ export const regulation = {
         description: 'Shown for an amend impact whose diff has no changes',
       },
     }),
+    mismatches: defineMessages({
+      title: {
+        id: 'ojoi.application:regulation.content.mismatches.title',
+        defaultMessage: 'Mögulegt ósamræmi',
+        description:
+          'Title of the warning listing possible mismatches between the amending text and the base regulation changes',
+      },
+      intro: {
+        id: 'ojoi.application:regulation.content.mismatches.intro',
+        defaultMessage:
+          'Texti breytingareglugerðarinnar og breytingarnar á stofnreglugerð virðast ekki passa saman á eftirfarandi stöðum. Farðu yfir þá. Þetta eru ábendingar, ekki villur, og þær koma ekki í veg fyrir að hægt sé að senda inn.',
+        description:
+          'Explains that the listed mismatches are hints to review, not errors',
+      },
+      missingFromText: {
+        id: 'ojoi.application:regulation.content.mismatches.missingFromText',
+        defaultMessage:
+          '„{text}“ er í breytingu á {place} en kemur ekki fram í textanum.',
+        description:
+          'An amount or date a base change brings in that the amending text never mentions',
+      },
+      notInChanges: {
+        id: 'ojoi.application:regulation.content.mismatches.notInChanges',
+        defaultMessage:
+          '„{text}“ í {section} textans er hvergi í breytingum á stofnreglugerð.',
+        description:
+          'An amount or date in an article of the amending text that no base change holds',
+      },
+      notInChangesNoSection: {
+        id: 'ojoi.application:regulation.content.mismatches.notInChangesNoSection',
+        defaultMessage:
+          '„{text}“ í textanum er hvergi í breytingum á stofnreglugerð.',
+        description:
+          'An amount or date in the amending text that no base change holds',
+      },
+      wordingHeading: {
+        id: 'ojoi.application:regulation.content.mismatches.wordingHeading',
+        defaultMessage:
+          'Orðalag í breytingum á stofnreglugerð sem kemur ekki fram í textanum:',
+        description:
+          'Heading above wording that base changes bring in and the amending text never mentions',
+      },
+      placeSection: {
+        id: 'ojoi.application:regulation.content.mismatches.placeSection',
+        defaultMessage: '{section} reglugerðar nr. {regulation}',
+        description: 'Where a change is: an article of a base regulation',
+      },
+      placeRegulation: {
+        id: 'ojoi.application:regulation.content.mismatches.placeRegulation',
+        defaultMessage: 'reglugerð nr. {regulation}',
+        description: 'Where a change is: a base regulation',
+      },
+      placeAppendix: {
+        id: 'ojoi.application:regulation.content.mismatches.placeAppendix',
+        defaultMessage: '„{appendix}“ við reglugerð nr. {regulation}',
+        description: 'Where a change is: an appendix of a base regulation',
+      },
+      more: {
+        id: 'ojoi.application:regulation.content.mismatches.more',
+        defaultMessage: 'og {count} til viðbótar',
+        description: 'Ends a shortened list of mismatches',
+      },
+    }),
   },
   meta: {
     general: defineMessages({
