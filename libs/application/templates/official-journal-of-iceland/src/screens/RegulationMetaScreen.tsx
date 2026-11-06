@@ -3,6 +3,7 @@ import { useLocale } from '@island.is/localization'
 import { FormScreen } from '../components/form/FormScreen'
 import { regulation } from '../lib/messages'
 import { OJOIFieldBaseProps } from '../lib/types'
+import { parseLocalISODate, toLocalISODate } from '../lib/utils'
 import {
   Box,
   DatePicker,
@@ -16,6 +17,8 @@ import {
 import { FormGroup } from '../components/form/FormGroup'
 import { useLawChapters } from '../hooks/useLawChapters'
 import { useRegulationDraft } from '../hooks/useRegulationDraft'
+import { useRegulationImpacts } from '../hooks/useRegulationImpacts'
+import { ImpactDateWarning } from '../components/regulations/ImpactDateWarning'
 import { useLazyQuery, useMutation } from '@apollo/client'
 import {
   REGULATION_FROM_API_QUERY,
@@ -41,6 +44,10 @@ export const RegulationMetaScreen = (props: OJOIFieldBaseProps) => {
 
   const isAmending =
     application.answers?.applicationType === 'amending_regulation'
+
+  // Impacts are registered before the effective date is picked, so their
+  // dates are checked against it here
+  const { impacts } = useRegulationImpacts({ draftId })
 
   const [fetchRegulation] = useLazyQuery<{
     OJOIAGetRegulationFromApi: Regulation | null
@@ -224,28 +231,35 @@ export const RegulationMetaScreen = (props: OJOIFieldBaseProps) => {
     >
       <Stack space={[2, 2, 3]}>
         <FormGroup title={regulation.meta.headings.effectiveDate}>
-          <DatePicker
-            id="regulation-effective-date"
-            label={f(regulation.meta.inputs.effectiveDate.label)}
-            placeholderText={f(
-              regulation.meta.inputs.effectiveDate.placeholder,
-            )}
-            size="sm"
-            locale="is"
-            backgroundColor="blue"
-            selected={
-              draftData.effectiveDate
-                ? new Date(draftData.effectiveDate)
-                : undefined
-            }
-            handleChange={(date) => {
-              updateDraftField(
-                'effectiveDate',
-                date ? date.toISOString().split('T')[0] : undefined,
-              )
-              saveDraftNow()
-            }}
-          />
+          <Stack space={2}>
+            <DatePicker
+              id="regulation-effective-date"
+              label={f(regulation.meta.inputs.effectiveDate.label)}
+              placeholderText={f(
+                regulation.meta.inputs.effectiveDate.placeholder,
+              )}
+              size="sm"
+              locale="is"
+              backgroundColor="blue"
+              selected={
+                draftData.effectiveDate
+                  ? parseLocalISODate(draftData.effectiveDate)
+                  : undefined
+              }
+              handleChange={(date) => {
+                updateDraftField(
+                  'effectiveDate',
+                  date ? toLocalISODate(date) : undefined,
+                )
+                saveDraftNow()
+              }}
+            />
+            <ImpactDateWarning
+              effectiveDate={draftData.effectiveDate}
+              impacts={impacts}
+              goToScreen={handleNavigate}
+            />
+          </Stack>
         </FormGroup>
 
         <FormGroup title={regulation.meta.headings.lawChapters}>

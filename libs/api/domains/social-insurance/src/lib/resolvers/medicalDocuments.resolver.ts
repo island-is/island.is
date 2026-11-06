@@ -11,13 +11,17 @@ import { UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { CertificateForSicknessAndRehabilitation } from '../models/medicalDocuments/certificateForSicknessAndRehabilitation.model'
 import { ConfirmationOfIllHealth } from '../models/medicalDocuments/confirmationOfIllHealth.model'
+import { ConfirmationOfJobSearch } from '../models/medicalDocuments/confirmationOfJobSearch.model'
 import { ConfirmationOfPendingResolution } from '../models/medicalDocuments/confirmationOfPendingResolution.model'
 import { ConfirmedTreatment } from '../models/medicalDocuments/confirmedTreatment.model'
 import { RehabilitationPlan } from '../models/medicalDocuments/rehabilitationPlan.model'
 import { SocialInsuranceService } from '../socialInsurance.service'
 import type { Locale } from '@island.is/shared/types'
 import { DisabilityPensionCertificate } from '../models/medicalDocuments/disabilityPensionCertificate.model'
-import { SocialInsuranceAdministrationMedicalDocumentsService } from '@island.is/clients/social-insurance-administration'
+import {
+  SocialInsuranceAdministrationMedicalDocumentsService,
+  withApplicationGuidContext,
+} from '@island.is/clients/social-insurance-administration'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -32,8 +36,14 @@ export class MedicalDocumentsResolver {
   @Query(() => RehabilitationPlan, {
     name: 'socialInsuranceRehabilitationPlan',
   })
-  async siaGetRehabilitationPlan(@CurrentUser() user: User) {
-    return this.medicalDocumentsService.getRehabilitationPlan(user)
+  async siaGetRehabilitationPlan(
+    @CurrentUser() user: User,
+    @Args('applicationId', { type: () => String, nullable: true })
+    applicationId?: string,
+  ) {
+    return withApplicationGuidContext(applicationId, () =>
+      this.medicalDocumentsService.getRehabilitationPlan(user),
+    )
   }
 
   @Query(() => CertificateForSicknessAndRehabilitation, {
@@ -41,9 +51,13 @@ export class MedicalDocumentsResolver {
   })
   async siaGetCertificateForSicknessAndRehabilitation(
     @CurrentUser() user: User,
+    @Args('applicationId', { type: () => String, nullable: true })
+    applicationId?: string,
   ) {
-    return this.medicalDocumentsService.getCertificateForSicknessAndRehabilitation(
-      user,
+    return withApplicationGuidContext(applicationId, () =>
+      this.medicalDocumentsService.getCertificateForSicknessAndRehabilitation(
+        user,
+      ),
     )
   }
 
@@ -61,21 +75,65 @@ export class MedicalDocumentsResolver {
   @Query(() => ConfirmedTreatment, {
     name: 'socialInsuranceConfirmedTreatment',
   })
-  async siaGetConfirmedTreatment(@CurrentUser() user: User) {
-    return this.medicalDocumentsService.getConfirmedTreatment(user)
+  async siaGetConfirmedTreatment(
+    @CurrentUser() user: User,
+    @Args('applicationId', { type: () => String, nullable: true })
+    applicationId?: string,
+  ) {
+    return withApplicationGuidContext(applicationId, () =>
+      this.medicalDocumentsService.getConfirmedTreatment(user),
+    )
   }
 
   @Query(() => ConfirmationOfPendingResolution, {
     name: 'socialInsuranceConfirmationOfPendingResolution',
   })
-  async siaGetConfirmationOfPendingResolution(@CurrentUser() user: User) {
-    return this.medicalDocumentsService.getConfirmationOfPendingResolution(user)
+  async siaGetConfirmationOfPendingResolution(
+    @CurrentUser() user: User,
+    @Args('applicationId', { type: () => String, nullable: true })
+    applicationId?: string,
+  ) {
+    return withApplicationGuidContext(applicationId, () =>
+      this.medicalDocumentsService.getConfirmationOfPendingResolution(user),
+    )
   }
 
   @Query(() => ConfirmationOfIllHealth, {
     name: 'socialInsuranceConfirmationOfIllHealth',
   })
-  async siaGetConfirmationOfIllHealth(@CurrentUser() user: User) {
-    return this.medicalDocumentsService.getConfirmationOfIllHealth(user)
+  async siaGetConfirmationOfIllHealth(
+    @CurrentUser() user: User,
+    @Args('applicationId', { type: () => String, nullable: true })
+    applicationId?: string,
+  ) {
+    return withApplicationGuidContext(applicationId, () =>
+      this.medicalDocumentsService.getConfirmationOfIllHealth(user),
+    )
+  }
+
+  @Query(() => ConfirmationOfJobSearch, {
+    name: 'socialInsuranceConfirmationOfJobSearch',
+  })
+  async siaGetConfirmationOfJobSearch(
+    @CurrentUser() user: User,
+    @Args('applicationId', { type: () => String, nullable: true })
+    applicationId?: string,
+  ) {
+    const confirmation = await withApplicationGuidContext(applicationId, () =>
+      this.medicalDocumentsService.getConfirmationOfJobSearch(user),
+    )
+
+    // The phone number is not shown to the applicant, only that one exists, so
+    // the real number never leaves the API.
+    return {
+      ...confirmation,
+      serviceProvider: confirmation.serviceProvider && {
+        ...confirmation.serviceProvider,
+        phoneNumber: confirmation.serviceProvider.phoneNumber?.replace(
+          /\d/g,
+          '*',
+        ),
+      },
+    }
   }
 }

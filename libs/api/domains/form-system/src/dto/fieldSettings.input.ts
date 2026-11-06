@@ -106,6 +106,9 @@ export class FieldSettingsInput {
   @Field(() => Boolean, { nullable: true })
   fetchEmailFromMyPages?: boolean
 
+  @Field(() => Boolean, { nullable: true })
+  fetchBankAccountFromMyPages?: boolean
+
   @Field(() => String, { nullable: true })
   chargeItemCode?: string
 

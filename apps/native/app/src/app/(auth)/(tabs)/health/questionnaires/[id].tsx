@@ -14,14 +14,7 @@ import {
 } from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'
 import { useBrowser } from '@/hooks/use-browser'
-import {
-  Button,
-  Input,
-  InputRow,
-  NavigationBarSheet,
-  Problem,
-  Typography,
-} from '@/ui'
+import { Button, Input, InputRow, Problem, Typography } from '@/ui'
 import { questionnaireUrls } from '@/utils/url-builder'
 import {
   getQuestionnaireOrganizationLabelId,

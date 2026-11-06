@@ -2,12 +2,10 @@ import { useCallback, useMemo, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
 import { Alert, FlatList, Keyboard, View } from 'react-native'
 import { useLocalSearchParams } from 'expo-router'
-import { router } from 'expo-router'
 
 import {
   Button,
   Divider,
-  NavigationBarSheet,
   Problem,
   TextField,
   Typography,
@@ -121,6 +119,7 @@ export default function VehicleMileageScreen() {
       color:
         params.vehicleColor ??
         info.data?.vehiclesDetail?.registrationInfo?.color,
+      regno: info.data?.vehiclesDetail?.mainInfo?.regno,
     }
   }, [info.data, params])
 
@@ -295,26 +294,12 @@ export default function VehicleMileageScreen() {
         keyExtractor={(item, index) => String(item.internalId ?? index)}
         ListHeaderComponent={
           <View key="list-header">
-            <NavigationBarSheet
-              componentId="vehicle-mileage"
-              title={
-                <View
-                  style={{
-                    flexDirection: 'column',
-                    marginTop: 8,
-                    marginBottom: 16,
-                  }}
-                >
-                  <Typography variant="heading4">{vehicle.type}</Typography>
-                  <Typography variant="body">
-                    {vehicle.color} - {id}
-                  </Typography>
-                </View>
-              }
-              onClosePress={() => router.back()}
-              style={{ marginHorizontal: 16 }}
-              showLoading={res.loading && !!res.data}
-            />
+            <View style={{ marginBottom: 16 }}>
+              <Typography variant="heading5">{vehicle.type}</Typography>
+              <Typography variant="body">
+                {[vehicle.color, vehicle.regno].filter(Boolean).join(' - ')}
+              </Typography>
+            </View>
             <View style={{ flexDirection: 'column', gap: 16 }}>
               <TextField
                 editable={!shouldDisableMileageForm}
@@ -382,6 +367,7 @@ export default function VehicleMileageScreen() {
                 }
                 isTransparent
                 textStyle={{ fontSize: 12, lineHeight: 16 }}
+                style={{ marginVertical: 8 }}
               />
             </View>
             <Divider style={{ marginLeft: 0, marginRight: 0 }} />

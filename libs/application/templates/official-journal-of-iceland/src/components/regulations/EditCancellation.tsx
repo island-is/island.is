@@ -25,7 +25,10 @@ import { LayoverModal } from './LayoverModal'
 import { ImpactModalTitle } from './ImpactModalTitle'
 import { RegulationImpactSchema } from '../../lib/dataSchema'
 import { useRegulationFetch } from '../../hooks/useRegulationFetch'
-import { getImpactChain } from '../../utils/getImpactChain'
+import {
+  getDefaultImpactDate,
+  getImpactChain,
+} from '../../utils/getImpactChain'
 import { ImpactHistory } from './ImpactHistory'
 
 // ---------------------------------------------------------------------------
@@ -35,13 +38,21 @@ type EditCancellationProps = {
   cancellation: RegulationImpactSchema
   /** This draft's impacts on the same regulation */
   impacts?: RegulationImpactSchema[]
+  /** The regulation's effective date, which the repeal takes by default */
+  regulationEffectiveDate?: string
   /** Called when the modal should close. If impact was updated, passes the updated impact. */
   onSave: (impact: RegulationImpactSchema) => void | Promise<void>
   onClose: () => void
 }
 
 export const EditCancellation = (props: EditCancellationProps) => {
-  const { cancellation, impacts = [], onSave, onClose } = props
+  const {
+    cancellation,
+    impacts = [],
+    regulationEffectiveDate,
+    onSave,
+    onClose,
+  } = props
   const today = useMemo(() => new Date(), [])
   const isSelf = cancellation.name === 'self'
   const { regulation, done } = useRegulationFetch(
@@ -63,11 +74,23 @@ export const EditCancellation = (props: EditCancellationProps) => {
   const [activeDate, setActiveDate] = useState<Date | undefined>(
     cancellation.date ? new Date(cancellation.date) : undefined,
   )
-  const effectiveDate =
-    activeDate && activeDate > minDate ? activeDate : minDate
+  // The regulation's effective date, if the repeal can take effect then
+  const defaultDate = getDefaultImpactDate(regulationEffectiveDate, minDate)
+  const effectiveDate = activeDate
+    ? activeDate > minDate
+      ? activeDate
+      : minDate
+    : defaultDate
+    ? new Date(defaultDate)
+    : minDate
+  // A new repeal that can't take the default date gets the earliest one
+  // it can, shown as a specific date
   const shownDate =
     cancellation.date ??
-    (toISODate(minDate) > toISODate(today) ? toISODate(minDate) : undefined)
+    (!defaultDate &&
+    (regulationEffectiveDate || toISODate(minDate) > toISODate(today))
+      ? toISODate(minDate)
+      : undefined)
   const [saving, setSaving] = useState(false)
   // Without the regulation's history, scheduled changes can't be checked
   const fetchFailed = !isSelf && done && !regulation
@@ -111,6 +134,8 @@ export const EditCancellation = (props: EditCancellationProps) => {
                   : cancellation.regTitle || cancellation.name
               }
               date={shownDate}
+              defaultDate={defaultDate}
+              regulationEffectiveDate={regulationEffectiveDate}
               minDate={minDate}
               onChangeDate={changeCancelDate}
               tag={{

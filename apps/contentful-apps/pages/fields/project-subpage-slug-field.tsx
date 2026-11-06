@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
-import type { EntryProps } from 'contentful-management'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import { Stack, Text, TextInput } from '@contentful/f36-components'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
@@ -14,7 +13,11 @@ const ProjectSubpageSlugField = () => {
   const cma = useCMA()
   const [value, setValue] = useState(sdk.field?.getValue() ?? '')
   const [isValid, setIsValid] = useState(true)
-  const [projectPage, setProjectPage] = useState<EntryProps | null>(null)
+  const [projectPageId, setProjectPageId] = useState<string | undefined>(
+    sdk.entry.fields.projectPage?.getValue()?.sys?.id,
+  )
+  const latestFieldValues = useRef({ value, projectPageId })
+  latestFieldValues.current = { value, projectPageId }
   const initialTitleChange = useRef(true)
   const [hasEntryBeenPublished, setHasEntryBeenPublished] = useState(
     Boolean(sdk.entry.getSys()?.firstPublishedAt),
@@ -22,22 +25,12 @@ const ProjectSubpageSlugField = () => {
 
   const defaultLocale = sdk.locales.default
 
+  // Store in state what project page id is being referenced
   useEffect(() => {
-    const fetchProjectPage = async () => {
-      const response = await cma.entry.getMany({
-        query: {
-          links_to_entry: sdk.entry.getSys().id,
-          content_type: 'projectPage',
-          'sys.archivedVersion[exists]': false,
-          limit: 1,
-        },
-      })
-      if (response.items.length > 0) {
-        setProjectPage(response.items[0])
-      }
-    }
-    fetchProjectPage()
-  }, [cma.entry, sdk.entry])
+    return sdk.entry.fields.projectPage?.onValueChanged((newProjectPage) => {
+      setProjectPageId(newProjectPage?.sys?.id)
+    })
+  }, [sdk.entry.fields.projectPage])
 
   useEffect(() => {
     sdk.entry.onSysChanged((newSys) => {
@@ -73,42 +66,36 @@ const ProjectSubpageSlugField = () => {
   // Validate the user input
   useDebounce(
     async () => {
-      if (!projectPage) {
+      if (!projectPageId || !value) {
         setIsValid(true)
         return
       }
 
-      const subpageIds: string[] =
-        projectPage?.fields?.projectSubpages?.[defaultLocale]?.map(
-          (subpage) => subpage.sys.id,
-        ) ?? []
+      const subpagesWithSameSlug = await cma.entry.getMany({
+        query: {
+          locale: sdk.field.locale,
+          content_type: 'projectSubpage',
+          'fields.slug': value,
+          'sys.id[ne]': sdk.entry.getSys().id,
+          'sys.archivedVersion[exists]': false,
+          'fields.projectPage.sys.id': projectPageId,
+          limit: 1,
+          select: 'sys',
+        },
+      })
 
-      const subpagesWithSameSlug = (
-        await cma.entry.getMany({
-          query: {
-            locale: sdk.field.locale,
-            content_type: 'projectSubpage',
-            'fields.slug': value,
-            'sys.id[ne]': sdk.entry.getSys().id,
-            'sys.archivedVersion[exists]': false,
-            limit: 1000,
-            select: 'sys',
-          },
-        })
-      ).items
-
-      const subpageExistsWithSameSlug = subpagesWithSameSlug.some((subpage) =>
-        subpageIds.includes(subpage.sys.id),
-      )
-
-      if (subpageExistsWithSameSlug) {
-        setIsValid(false)
+      // Discard the result if the slug or project page changed during the query
+      if (
+        latestFieldValues.current.value !== value ||
+        latestFieldValues.current.projectPageId !== projectPageId
+      ) {
         return
       }
-      setIsValid(true)
+
+      setIsValid(subpagesWithSameSlug.items.length === 0)
     },
     DEBOUNCE_TIME,
-    [value, projectPage],
+    [value, projectPageId],
   )
 
   useDebounce(

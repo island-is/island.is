@@ -18,7 +18,7 @@ type VehicleListItem = NonNullable<
 
 const Cell = styled(TouchableHighlight)`
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
-  border-radius: ${({ theme }) => theme.border.radius.extraLarge};
+  border-radius: ${({ theme }) => theme.border.radius.large};
 `
 
 export const VehicleItem = React.memo(
@@ -51,9 +51,8 @@ export const VehicleItem = React.memo(
         testID={testIDs.VEHICLE_ITEM}
       >
         <Cell
-          underlayColor={
-            theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
-          }
+          underlayColor={theme.tokens.app.background.pressed}
+          activeOpacity={1}
           onPress={() => {
             if (!item.permno) {
               return
