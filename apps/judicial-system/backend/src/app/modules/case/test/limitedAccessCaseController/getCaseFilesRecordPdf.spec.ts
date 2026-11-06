@@ -148,6 +148,36 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
     })
   })
 
+  describe('appeal-confirmed defender can get the case files record', () => {
+    beforeEach(async () => {
+      const getMock = createCaseFilesRecord as jest.Mock
+      getMock.mockResolvedValueOnce(pdf)
+
+      const caseWithAppealDefender = {
+        ...theCase,
+        defendants: [
+          {
+            appealDefenderNationalId: user.nationalId,
+            isAppealDefenderConfirmed: true,
+            policeCaseNumbers: [policeCaseNumber],
+          },
+        ],
+      } as Case
+
+      await limitedAccessCaseController.getCaseFilesRecordPdf(
+        caseId,
+        policeCaseNumber,
+        user,
+        caseWithAppealDefender,
+        res,
+      )
+    })
+
+    it('should return pdf', () => {
+      expect(res.end).toHaveBeenCalledWith(pdf)
+    })
+  })
+
   describe('defender does not have access to police case number', () => {
     const otherDefenderPoliceCaseNumber = theCase.policeCaseNumbers[0]
     let then: Then

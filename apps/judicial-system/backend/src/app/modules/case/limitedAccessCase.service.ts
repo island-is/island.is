@@ -55,10 +55,11 @@ export class LimitedAccessCaseService {
     caseId: string,
     options?: { transaction?: Transaction; user?: TUser },
   ): Promise<Case> {
+    const defenceUserNationalId = this.defenceUserNationalId(options?.user)
     const theCase = await this.caseRepositoryService.findLimitedAccessById(
       caseId,
       {
-        defenceUserNationalId: this.defenceUserNationalId(options?.user),
+        defenceUserNationalId,
         transaction: options?.transaction,
       },
     )
@@ -67,7 +68,10 @@ export class LimitedAccessCaseService {
       throw new NotFoundException(`Case ${caseId} does not exist`)
     }
 
-    return theCase
+    return this.restrictCaseFilesToDefenceCategories(
+      theCase,
+      defenceUserNationalId,
+    )
   }
 
   /**
@@ -81,9 +85,10 @@ export class LimitedAccessCaseService {
     transaction: Transaction,
     user?: TUser,
   ): Promise<Case> {
+    const defenceUserNationalId = this.defenceUserNationalId(user)
     const theCase =
       await this.caseRepositoryService.findLimitedAccessByIdForUpdate(caseId, {
-        defenceUserNationalId: this.defenceUserNationalId(user),
+        defenceUserNationalId,
         transaction,
       })
 
@@ -91,12 +96,57 @@ export class LimitedAccessCaseService {
       throw new NotFoundException(`Case ${caseId} does not exist`)
     }
 
-    return theCase
+    return this.restrictCaseFilesToDefenceCategories(
+      theCase,
+      defenceUserNationalId,
+    )
   }
 
   // Only a defence user has their view of the linked cases narrowed
   private defenceUserNationalId(user?: TUser): string | undefined {
     return user && isDefenceUser(user) ? user.nationalId : undefined
+  }
+
+  // The limited-access include loads a broad caseFiles allowlist; strip rows
+  // the defence user may not see (including on merged/split cases) before the
+  // payload leaves the service.
+  private restrictCaseFilesToDefenceCategories(
+    theCase: Case,
+    defenceUserNationalId?: string,
+  ): Case {
+    if (!defenceUserNationalId) {
+      return theCase
+    }
+
+    const allowed = new Set(
+      getDefenceUserCaseFileCategories(
+        defenceUserNationalId,
+        theCase.type,
+        theCase.defendants,
+        theCase.civilClaimants,
+      ),
+    )
+
+    const keepAllowed = (file: CaseFile) =>
+      Boolean(file.category && allowed.has(file.category))
+
+    if (theCase.caseFiles) {
+      theCase.caseFiles = theCase.caseFiles.filter(keepAllowed)
+    }
+
+    for (const merged of theCase.mergedCases ?? []) {
+      if (merged.caseFiles) {
+        merged.caseFiles = merged.caseFiles.filter(keepAllowed)
+      }
+    }
+
+    for (const split of theCase.splitCases ?? []) {
+      if (split.caseFiles) {
+        split.caseFiles = split.caseFiles.filter(keepAllowed)
+      }
+    }
+
+    return theCase
   }
 
   async update(

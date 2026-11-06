@@ -281,11 +281,8 @@ export class DefendantNotificationService extends BaseNotificationService {
 
   /**
    * The court of appeals telling an advocate it has recorded them on the
-   * appeal.
-   *
-   * Deliberately not a link to the case: confirming an advocate grants them
-   * no access yet, so a link would lead to a refusal. The text is the one on
-   * the ticket.
+   * appeal. When a national id is recorded, the mail links to the defender
+   * indictment overview — confirmation is what opens limited access.
    *
    * Dedupe is per recipient address, so replacing a defender tells the new one
    * without telling the old one twice.
@@ -307,14 +304,21 @@ export class DefendantNotificationService extends BaseNotificationService {
       return { delivered: true }
     }
 
+    const caseUrl = defendant.appealDefenderNationalId
+      ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}`
+      : undefined
+
     // Not through sendEmails: that one drops a recipient with no name, and an
     // advocate the court typed in by hand may have only an address. The
     // address is what the mail needs.
+    // When caseUrl is set the body already carries an <a>, so the base
+    // service skips its portal closing line; without one it appends as usual.
     const recipient = await this.sendEmail({
       subject: appealAdvocateAssignedSubject(),
       html: appealAdvocateAssignedBody(
         'verjanda',
         theCase.verdictAppealCase?.appealCaseNumber,
+        caseUrl,
       ),
       recipientName: defendant.appealDefenderName,
       recipientEmail: defendant.appealDefenderEmail,
