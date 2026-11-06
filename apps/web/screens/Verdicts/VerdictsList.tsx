@@ -629,6 +629,25 @@ interface FiltersProps {
     | 'supremeCourt'
     | 'districtCourt'
     | 'retrialCourt'
+  selectedCourts: string[]
+  selectedDistrictCourts: string[]
+}
+
+const getKeywordCourtScope = (
+  courts: string[],
+  districtCourts: string[],
+): 'all' | 'supremeCourt' | 'otherCourts' => {
+  const topLevels = new Set<VerdictTopLevelCourt>()
+  for (const court of courts) {
+    const topLevel = mapCourtValueToTopLevelCourt(court)
+    if (topLevel !== 'all') topLevels.add(topLevel)
+  }
+  if (districtCourts.length > 0) topLevels.add('districtCourt')
+
+  if (topLevels.size === 0) return 'all'
+  if (!topLevels.has('supremeCourt')) return 'otherCourts'
+  if (topLevels.size === 1) return 'supremeCourt'
+  return 'all'
 }
 
 const Filters = ({
@@ -641,6 +660,8 @@ const Filters = ({
   updateRenderKey,
   whiteBackground = false,
   selectedCourtLevel,
+  selectedCourts,
+  selectedDistrictCourts,
 }: FiltersProps) => {
   const { formatMessage } = useIntl()
   const [expandedItemIds, setExpandedItemIds] = useState<string[]>(
@@ -653,12 +674,28 @@ const Filters = ({
   const showSupremeCourtCaseTypeTooltip = (courtId: string) =>
     courtId === 'supremeCourt' && Boolean(supremeCourtCaseTypeTooltip)
 
+  const keywordCourtScope = getKeywordCourtScope(
+    selectedCourts,
+    selectedDistrictCourts,
+  )
+  const selectedKeywords = queryState[QueryParam.KEYWORD]
+
   const keywordOptions = useMemo(() => {
-    return keywords.map((keyword) => ({
-      label: keyword.label,
-      value: keyword.label,
-    }))
-  }, [keywords])
+    return keywords
+      .filter((keyword) => {
+        // Always keep already selected keywords so they can be deselected
+        if (selectedKeywords?.includes(keyword.label)) return true
+        if (keywordCourtScope === 'supremeCourt')
+          return keyword.belongsToSupremeCourt
+        if (keywordCourtScope === 'otherCourts')
+          return keyword.belongsToOtherCourts
+        return true
+      })
+      .map((keyword) => ({
+        label: keyword.label,
+        value: keyword.label,
+      }))
+  }, [keywordCourtScope, keywords, selectedKeywords])
 
   const caseFilterOptionsByCourt = useMemo(() => {
     const courtConfig = [
@@ -1985,6 +2022,8 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                   selectedCourts,
                   selectedDistrictCourts,
                 )}
+                selectedCourts={selectedCourts}
+                selectedDistrictCourts={selectedDistrictCourts}
                 renderKey={renderKey}
                 caseFilterOptions={caseFilterOptions}
                 keywords={keywords}
@@ -2058,6 +2097,8 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                           selectedCourts,
                           selectedDistrictCourts,
                         )}
+                        selectedCourts={selectedCourts}
+                        selectedDistrictCourts={selectedDistrictCourts}
                         renderKey={renderKey}
                         updateRenderKey={updateRenderKey}
                         caseFilterOptions={caseFilterOptions}

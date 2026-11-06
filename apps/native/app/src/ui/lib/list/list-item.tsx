@@ -20,15 +20,15 @@ const styles = StyleSheet.create({
   host: {
     flexDirection: 'row',
     borderBottomWidth: theme.border.width.standard,
-    borderBottomColor: theme.color.blue200,
+    borderBottomColor: theme.tokens.border.primary,
   },
   hostUnread: {
-    backgroundColor: theme.color.blue100,
+    backgroundColor: theme.tokens.background.brandMinimal,
   },
   icon: {
     marginVertical: theme.spacing[3],
     marginHorizontal: theme.spacing[2],
-    backgroundColor: theme.color.blue100,
+    backgroundColor: theme.tokens.background.brandMinimal,
     height: 42,
     width: 42,
     alignItems: 'center',
@@ -37,11 +37,11 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   iconUnread: {
-    backgroundColor: theme.color.white,
+    backgroundColor: theme.tokens.background.invert,
   },
   iconSelectable: {
     borderWidth: theme.border.width.standard,
-    borderColor: theme.color.blue200,
+    borderColor: theme.tokens.border.primary,
   },
   iconImage: {
     width: 24,
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   starImage: {
     width: 16,
     height: 16,
-    tintColor: theme.color.blue400,
+    tintColor: theme.tokens.foreground.brand,
   },
 })
 
@@ -182,7 +182,7 @@ export function ListItem({
                   source={require('../../../assets/icons/reply.png')}
                   width={12}
                   height={12}
-                  tintColor="dark400"
+                  tintColor={theme.tokens.foreground.primary}
                 />
               )}
               {attachment && (
@@ -190,7 +190,7 @@ export function ListItem({
                   source={require('../../../assets/icons/attachment.png')}
                   width={16}
                   height={16}
-                  tintColor="dark400"
+                  tintColor={theme.tokens.foreground.primary}
                 />
               )}
             </View>

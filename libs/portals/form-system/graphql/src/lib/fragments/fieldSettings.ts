@@ -42,6 +42,7 @@ export const FieldSettingsFragment = gql`
     isPhoneRequired
     isEmailRequired
     fetchEmailFromMyPages
+    fetchBankAccountFromMyPages
     chargeItemCode
     chargeItemName
     chargeType

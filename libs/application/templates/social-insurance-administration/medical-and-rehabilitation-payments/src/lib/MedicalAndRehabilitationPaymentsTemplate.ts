@@ -55,14 +55,15 @@ import {
   SocialInsuranceAdministrationIsApplicantEligibleApi,
   SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationMARPApplicationTypeApi,
+  SocialInsuranceAdministrationMARPExemptionApi,
   SocialInsuranceAdministrationMARPQuestionnairesApi,
   SocialInsuranceAdministrationProfessionsApi,
   SocialInsuranceAdministrationResidenceInformationApi,
 } from '../dataProviders'
 import {
+  canStartApplication,
   getApplicationAnswers,
   getApplicationExternalData,
-  isEligible,
 } from '../utils/medicalAndRehabilitationPaymentsUtils'
 import { dataSchema } from './dataSchema'
 import {
@@ -141,6 +142,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
                 SocialInsuranceAdministrationEctsUnitsApi,
                 SocialInsuranceAdministrationResidenceInformationApi,
                 SocialInsuranceAdministrationMARPApplicationTypeApi,
+                SocialInsuranceAdministrationMARPExemptionApi,
                 SocialInsuranceAdministrationEducationLevelsApi,
                 SocialInsuranceAdministrationEmploymentStatusesApi,
                 SocialInsuranceAdministrationProfessionsApi,
@@ -155,7 +157,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
             {
               target: States.DRAFT,
               cond: (application) =>
-                isEligible(application?.application?.externalData),
+                canStartApplication(application?.application?.externalData),
             },
             {
               target: States.NOT_ELIGIBLE,

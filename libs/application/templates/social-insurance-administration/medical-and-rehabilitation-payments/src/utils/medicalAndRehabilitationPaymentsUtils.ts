@@ -159,6 +159,16 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'confirmationOfIllHealth.referenceId',
   )
 
+  const confirmationOfJobSearchConfirmation = getValueViaPath<string[]>(
+    answers,
+    'confirmationOfJobSearch.confirmation',
+  )
+
+  const confirmationOfJobSearchReferenceId = getValueViaPath<string>(
+    answers,
+    'confirmationOfJobSearch.referenceId',
+  )
+
   const hadAssistance = getValueViaPath<YesOrNo>(
     answers,
     'selfAssessmentQuestionsOne.hadAssistance',
@@ -272,6 +282,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     confirmationOfPendingResolutionReferenceId,
     confirmationOfIllHealthConfirmation,
     confirmationOfIllHealthReferenceId,
+    confirmationOfJobSearchConfirmation,
+    confirmationOfJobSearchReferenceId,
     hadAssistance,
     educationalLevel,
     comment,
@@ -424,6 +436,11 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationIsApplicantEligible.data',
   )
 
+  const hasActiveExemption = !!getValueViaPath<boolean>(
+    externalData,
+    'socialInsuranceAdministrationMARPExemption.data.hasActiveExemption',
+  )
+
   const professions =
     getValueViaPath<LabeledValue[]>(
       externalData,
@@ -465,6 +482,7 @@ export const getApplicationExternalData = (
     isEligible,
     professions,
     activitiesOfProfessions,
+    hasActiveExemption,
   }
 }
 
@@ -525,8 +543,26 @@ export const isEligible = (externalData: ExternalData): boolean => {
   return !!isEligible && isEligible.isEligible
 }
 
+// Applicants without an application type from TR are only let through when
+// they have an active exemption (ísl. jaðartilvik)
+export const canStartApplication = (externalData: ExternalData): boolean => {
+  const { marpApplicationType, hasActiveExemption } =
+    getApplicationExternalData(externalData)
+
+  return (
+    isEligible(externalData) && (!!marpApplicationType || hasActiveExemption)
+  )
+}
+
 export const eligibleText = (externalData: ExternalData) => {
   const { isEligible } = getApplicationExternalData(externalData)
+
+  // Eligible applicants only end up here when TR returned neither an
+  // application type nor an active exemption (see canStartApplication)
+  if (isEligible?.isEligible) {
+    return medicalAndRehabilitationPaymentsFormMessage.notEligible
+      .noApplicationTypeDescription
+  }
 
   switch (isEligible?.reasonCode) {
     case EligibleReasonCodes.APPLICANT_ALREADY_HAS_PENDING_APPLICATION:
