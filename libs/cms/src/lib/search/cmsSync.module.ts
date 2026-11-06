@@ -23,6 +23,8 @@ import { SubArticleSyncService } from './importers/subArticle.service'
 import { SupportQNASyncService } from './importers/supportQNA.service'
 import { LinkSyncService } from './importers/link.service'
 import { ProjectPageSyncService } from './importers/projectPage.service'
+import { ProjectSubpageSyncService } from './importers/projectSubpage.service'
+import { ProjectParentSubpageSyncService } from './importers/projectParentSubpage.service'
 import { EnhancedAssetSyncService } from './importers/enhancedAsset.service'
 import { VacancySyncService } from './importers/vacancy.service'
 import { ServiceWebPageSyncService } from './importers/serviceWebPage.service'
@@ -62,6 +64,8 @@ import { CourseSyncService } from './importers/course.service'
     OrganizationSubpageSyncService,
     OrganizationParentSubpageSyncService,
     ProjectPageSyncService,
+    ProjectSubpageSyncService,
+    ProjectParentSubpageSyncService,
     FrontpageSyncService,
     SupportQNASyncService,
     LinkSyncService,

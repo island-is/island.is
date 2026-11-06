@@ -4,7 +4,7 @@ import { getProjectPageUrlPrefix } from '@island.is/shared/utils'
 import type { IProjectParentSubpage } from '../generated/contentfulTypes'
 
 @ObjectType()
-class ProjectSubpageLink {
+export class ProjectSubpageLink {
   @Field(() => String, { nullable: true })
   id?: string | null
 
@@ -37,6 +37,11 @@ export class ProjectParentSubpage {
 
   @Field(() => String, { nullable: true })
   projectPageTitle?: string
+
+  // Only populated on search results, where a parent subpage has to link to itself
+  // without the surrounding project page
+  @Field(() => String, { nullable: true })
+  projectSlug?: string
 }
 
 export const mapProjectParentSubpage = ({
@@ -63,8 +68,8 @@ export const mapProjectParentSubpage = ({
               // Child pages should belong to the same project page
               page?.fields?.projectPage?.sys?.id ===
                 fields.projectPage?.sys?.id &&
-              Boolean(page.fields.slug) &&
-              Boolean(page.fields.title),
+              Boolean(page.fields.slug?.trim()) &&
+              Boolean(page.fields.title?.trim()),
           )
           .map((page) => ({
             id: page.sys.id,

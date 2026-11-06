@@ -6,6 +6,7 @@ import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { autocompleteTermQuery } from '../queries/autocomplete'
 import { searchQuery } from '../queries/search'
+import { groupedByTagSearchQuery } from '../queries/groupedByTag'
 import { documentByMetaDataQuery } from '../queries/documentByMetaData'
 import {
   AutocompleteTermInput,
@@ -18,6 +19,8 @@ import {
   TagAggregationInput,
   SyncRequest,
   TypeAggregationInput,
+  GroupedByTagSearchInput,
+  GroupedByTagSearchResponse,
   TypeAggregationResponse,
   RankEvaluationInput,
   GroupedRankEvaluationResponse,
@@ -324,6 +327,17 @@ export class ElasticService {
       >,
       typeof requestBody
     >(index, requestBody)
+  }
+
+  async searchGroupedByTag(index: string, input: GroupedByTagSearchInput) {
+    const requestBody = groupedByTagSearchQuery(input)
+
+    const data = await this.findByQuery<
+      SearchResponse<MappedData, GroupedByTagSearchResponse>,
+      typeof requestBody
+    >(index, requestBody)
+
+    return data.body.aggregations?.tags?.filtered?.groups?.buckets ?? []
   }
 
   async fetchAutocompleteTerm(
