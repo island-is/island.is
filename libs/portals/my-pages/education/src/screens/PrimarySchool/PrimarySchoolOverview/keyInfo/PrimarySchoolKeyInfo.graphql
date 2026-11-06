@@ -1,0 +1,176 @@
+fragment PrimarySchoolAgentFields on EducationPrimarySchoolAgent {
+  id
+  person {
+    nationalId
+    name
+  }
+  relationType {
+    id
+    title {
+      is
+      en
+    }
+  }
+  createdBy {
+    kind
+    displayName
+    at
+  }
+  canEdit
+}
+
+fragment PrimarySchoolLanguageProfileFields on EducationPrimarySchoolLanguageProfile {
+  languageEnvironment {
+    id
+    code
+    title {
+      is
+      en
+    }
+  }
+  preferredLanguage
+  languages
+  interpreter
+  signLanguage
+  updatedAt
+  updatedBy {
+    kind
+    displayName
+  }
+}
+
+fragment PrimarySchoolHealthProfileFields on EducationPrimarySchoolHealthProfile {
+  epipen
+  medicalDiagnoses
+  medicationAssistance
+  allergies {
+    id
+    code
+    type
+    title {
+      is
+      en
+    }
+  }
+  updatedAt
+  updatedBy {
+    kind
+    displayName
+  }
+}
+
+# The key-information reads hang off the student, so they are addressed by the
+# routed studentId and the api resolves the MMS child behind it. One query per
+# section, so a section that fails shows its own error without blanking the rest.
+query PrimarySchoolAgents($studentId: String!) {
+  primarySchoolStudent(studentId: $studentId) {
+    id
+    emergencyContacts {
+      ...PrimarySchoolAgentFields
+    }
+  }
+}
+
+query PrimarySchoolLanguageProfile($studentId: String!) {
+  primarySchoolStudent(studentId: $studentId) {
+    id
+    languageProfile {
+      ...PrimarySchoolLanguageProfileFields
+    }
+  }
+}
+
+query PrimarySchoolHealthProfile($studentId: String!) {
+  primarySchoolStudent(studentId: $studentId) {
+    id
+    healthProfile {
+      ...PrimarySchoolHealthProfileFields
+    }
+  }
+}
+
+query PrimarySchoolContactIdentity($input: IdentityInput!) {
+  identity(input: $input) {
+    nationalId
+    name
+  }
+}
+
+query PrimarySchoolAgentRelationTypes {
+  primarySchoolAgentRelationTypes {
+    id
+    relation
+    title {
+      is
+      en
+    }
+  }
+}
+
+query PrimarySchoolAllergies {
+  primarySchoolAllergies {
+    id
+    code
+    type
+    title {
+      is
+      en
+    }
+  }
+}
+
+query PrimarySchoolLanguageEnvironments {
+  primarySchoolLanguageEnvironments {
+    id
+    code
+    title {
+      is
+      en
+    }
+  }
+}
+
+mutation PrimarySchoolAddAgent($input: EducationPrimarySchoolAddAgentInput!) {
+  primarySchoolAddAgent(input: $input) {
+    ...PrimarySchoolAgentFields
+  }
+}
+
+mutation PrimarySchoolUpdateAgent(
+  $input: EducationPrimarySchoolUpdateAgentInput!
+) {
+  primarySchoolUpdateAgent(input: $input) {
+    ...PrimarySchoolAgentFields
+  }
+}
+
+mutation PrimarySchoolDeleteAgent(
+  $input: EducationPrimarySchoolDeleteAgentInput!
+) {
+  primarySchoolDeleteAgent(input: $input)
+}
+
+mutation PrimarySchoolUpdateLanguageProfile(
+  $input: EducationPrimarySchoolUpdateLanguageProfileInput!
+) {
+  primarySchoolUpdateLanguageProfile(input: $input) {
+    ...PrimarySchoolLanguageProfileFields
+  }
+}
+
+mutation PrimarySchoolUpdateHealthProfile(
+  $input: EducationPrimarySchoolUpdateHealthProfileInput!
+) {
+  primarySchoolUpdateHealthProfile(input: $input) {
+    ...PrimarySchoolHealthProfileFields
+  }
+}
+
+# Whether the child exists in the frigg key-info database at all — the student
+# hub uses it to decide whether the overview tab has anything to show.
+query PrimarySchoolStudentHasKeyInfo($studentId: String!) {
+  primarySchoolStudent(studentId: $studentId) {
+    id
+    hasKeyInfo
+  }
+}

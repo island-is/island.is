@@ -100,6 +100,10 @@ export const primarySchoolMessages = defineMessages({
     id: 'sp.education-primary-school:school-label',
     defaultMessage: 'Grunnskóli',
   },
+  changeSchool: {
+    id: 'sp.education-primary-school:change-school',
+    defaultMessage: 'Breyta skólavist',
+  },
   contactTeacher: {
     id: 'sp.education-primary-school:contact-teacher',
     defaultMessage: 'Umsjónarkennari',
@@ -141,6 +145,254 @@ export const primarySchoolMessages = defineMessages({
     id: 'sp.education-primary-school:assessment-no-data',
     defaultMessage:
       'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
+  },
+})
+
+/**
+ * Lykilupplýsingar skólabarns — Aðstandendur, Tungumálaumhverfi,
+ * Heilsufarsupplýsingar. Labels follow the MMS contract v0.2 ticket; final copy
+ * to be confirmed against Figma.
+ */
+export const primarySchoolKeyInfoMessages = defineMessages({
+  // Shared
+  saveSuccess: {
+    id: 'sp.education-primary-school:key-info-save-success',
+    defaultMessage: 'Skólinn sér þessa breytingu.',
+  },
+  requestId: {
+    id: 'sp.education-primary-school:key-info-request-id',
+    defaultMessage: 'Villunúmer: {requestId}',
+  },
+  add: {
+    id: 'sp.education-primary-school:key-info-add',
+    defaultMessage: 'Bæta við',
+  },
+  remove: {
+    id: 'sp.education-primary-school:key-info-remove',
+    defaultMessage: 'Fjarlægja',
+  },
+  save: {
+    id: 'sp.education-primary-school:key-info-save',
+    defaultMessage: 'Vista',
+  },
+  cancel: {
+    id: 'sp.education-primary-school:key-info-cancel',
+    defaultMessage: 'Hætta við',
+  },
+  confirm: {
+    id: 'sp.education-primary-school:key-info-confirm',
+    defaultMessage: 'Staðfesta',
+  },
+  yes: {
+    id: 'sp.education-primary-school:key-info-yes',
+    defaultMessage: 'Já',
+  },
+  no: {
+    id: 'sp.education-primary-school:key-info-no',
+    defaultMessage: 'Nei',
+  },
+
+  // 1. Aðstandendur
+  emergencyContactsTitle: {
+    id: 'sp.education-primary-school:key-info-emergency-contacts-title',
+    defaultMessage: 'Aðstandendur',
+  },
+  contactAdd: {
+    id: 'sp.education-primary-school:key-info-contact-add',
+    defaultMessage: 'Bæta við aðstandanda',
+  },
+  contactAddTitle: {
+    id: 'sp.education-primary-school:key-info-contact-add-title',
+    defaultMessage: 'Bæta við aðstandendum barns',
+  },
+  contactAddIntro: {
+    id: 'sp.education-primary-school:key-info-contact-add-intro',
+    defaultMessage: 'Leitaðu eftir aðstandenda með kennitölu',
+  },
+  contactEditTitle: {
+    id: 'sp.education-primary-school:key-info-contact-edit-title',
+    defaultMessage: 'Breyta tengslum',
+  },
+  contactEditIntro: {
+    id: 'sp.education-primary-school:key-info-contact-edit-intro',
+    defaultMessage: 'Hér getur þú uppfært tengsl aðstandanda við barnið.',
+  },
+  contactName: {
+    id: 'sp.education-primary-school:key-info-contact-name',
+    defaultMessage: 'Nafn',
+  },
+  contactFullName: {
+    id: 'sp.education-primary-school:key-info-contact-full-name',
+    defaultMessage: 'Fullt nafn',
+  },
+  contactNationalId: {
+    id: 'sp.education-primary-school:key-info-contact-national-id',
+    defaultMessage: 'Kennitala',
+  },
+  contactNationalIdInvalid: {
+    id: 'sp.education-primary-school:key-info-contact-national-id-invalid',
+    defaultMessage: 'Ógild kennitala',
+  },
+  contactPersonNotFound: {
+    id: 'sp.education-primary-school:key-info-contact-person-not-found',
+    defaultMessage: 'Einstaklingur fannst ekki í þjóðskrá',
+  },
+  contactRelationType: {
+    id: 'sp.education-primary-school:key-info-contact-relation-type',
+    defaultMessage: 'Tengsl',
+  },
+  contactRelationPrompt: {
+    id: 'sp.education-primary-school:key-info-contact-relation-prompt',
+    defaultMessage: 'Skráðu tengsl við barn',
+  },
+  contactRegisteredBy: {
+    id: 'sp.education-primary-school:key-info-contact-registered-by',
+    defaultMessage: 'Skráð af',
+  },
+  contactRegisteredDate: {
+    id: 'sp.education-primary-school:key-info-contact-registered-date',
+    defaultMessage: 'Skráð þann',
+  },
+  contactRegisteredNote: {
+    id: 'sp.education-primary-school:key-info-contact-registered-note',
+    defaultMessage:
+      'Skráð af hinum forsjáraðila. Aðeins sá sem skráði getur breytt.',
+  },
+  contactEditableNote: {
+    id: 'sp.education-primary-school:key-info-contact-editable-note',
+    defaultMessage:
+      'Þú skráðir þennan aðstandanda og getur breytt eða fjarlægt.',
+  },
+  contactsEmpty: {
+    id: 'sp.education-primary-school:key-info-contacts-empty',
+    defaultMessage: 'Engir aðstandendur eru skráðir.',
+  },
+  contactsEmptyDescription: {
+    id: 'sp.education-primary-school:key-info-contacts-empty-description',
+    defaultMessage: 'Þú getur bætt við aðstandanda barnsins hér fyrir neðan.',
+  },
+  languageProfileEmpty: {
+    id: 'sp.education-primary-school:key-info-language-profile-empty',
+    defaultMessage: 'Engar upplýsingar um tungumálaumhverfi eru skráðar.',
+  },
+  languageProfileEmptyDescription: {
+    id: 'sp.education-primary-school:key-info-language-profile-empty-description',
+    defaultMessage: 'Þú getur skráð upplýsingarnar með því að smella á Breyta.',
+  },
+  healthProfileEmpty: {
+    id: 'sp.education-primary-school:key-info-health-profile-empty',
+    defaultMessage: 'Engar heilsufarsupplýsingar eru skráðar.',
+  },
+  healthProfileEmptyDescription: {
+    id: 'sp.education-primary-school:key-info-health-profile-empty-description',
+    defaultMessage: 'Þú getur skráð upplýsingarnar með því að smella á Breyta.',
+  },
+  contactInfoNotice: {
+    id: 'sp.education-primary-school:key-info-contact-info-notice',
+    defaultMessage:
+      'Aðstandendur uppfæra sjálfir símanúmer og netfang á Mínum síðum.',
+  },
+  contactRemoveTitle: {
+    id: 'sp.education-primary-school:key-info-contact-remove-title',
+    defaultMessage: 'Fjarlægja aðstandanda',
+  },
+  contactRemoveText: {
+    id: 'sp.education-primary-school:key-info-contact-remove-text',
+    defaultMessage:
+      'Ertu viss um að þú viljir fjarlægja {name} sem aðstandanda? Þú getur bætt honum við aftur ef þörf er á.',
+  },
+
+  // 2. Tungumálaumhverfi
+  languageProfileTitle: {
+    id: 'sp.education-primary-school:key-info-language-title',
+    defaultMessage: 'Tungumálaumhverfi',
+  },
+  languageEditTitle: {
+    id: 'sp.education-primary-school:key-info-language-edit-title',
+    defaultMessage: 'Breyta tungumálaumhverfi',
+  },
+  languageEditIntro: {
+    id: 'sp.education-primary-school:key-info-language-edit-intro',
+    defaultMessage: 'Skráðu tungumálaumhverfi fyrir barn',
+  },
+  languageEnvironment: {
+    id: 'sp.education-primary-school:key-info-language-environment',
+    defaultMessage: 'Tungumálaumhverfi',
+  },
+  childLanguages: {
+    id: 'sp.education-primary-school:key-info-child-languages',
+    defaultMessage: 'Tungumál barns',
+  },
+  preferredLanguage: {
+    id: 'sp.education-primary-school:key-info-preferred-language',
+    defaultMessage: 'Aðaltungumál barns',
+  },
+  interpreter: {
+    id: 'sp.education-primary-school:key-info-interpreter',
+    defaultMessage: 'Túlkur í samskiptum við skóla',
+  },
+  interpreterInfo: {
+    id: 'sp.education-primary-school:key-info-interpreter-info',
+    defaultMessage: 'Forsjáaraðili þarf túlk í samskiptum við skóla',
+  },
+  signLanguage: {
+    id: 'sp.education-primary-school:key-info-sign-language',
+    defaultMessage: 'Táknmál',
+  },
+  signLanguageInfo: {
+    id: 'sp.education-primary-school:key-info-sign-language-info',
+    defaultMessage: 'Barn notar táknmál',
+  },
+
+  // 3. Heilsufarsupplýsingar
+  healthProfileTitle: {
+    id: 'sp.education-primary-school:key-info-health-title',
+    defaultMessage: 'Heilsufarsupplýsingar',
+  },
+  healthEditTitle: {
+    id: 'sp.education-primary-school:key-info-health-edit-title',
+    defaultMessage: 'Breyta heilsufarsupplýsingum',
+  },
+  healthEditIntro: {
+    id: 'sp.education-primary-school:key-info-health-edit-intro',
+    defaultMessage: 'Skráðu heilsufarsupplýsingar fyrir barn',
+  },
+  foodAllergies: {
+    id: 'sp.education-primary-school:key-info-food-allergies',
+    defaultMessage: 'Fæðuofnæmi og óþol',
+  },
+  otherAllergies: {
+    id: 'sp.education-primary-school:key-info-other-allergies',
+    defaultMessage: 'Annað ofnæmi',
+  },
+  foodAllergyChoose: {
+    id: 'sp.education-primary-school:key-info-allergy-choose',
+    defaultMessage: 'Veldu ofnæmi og óþol',
+  },
+  otherAllergyChoose: {
+    id: 'sp.education-primary-school:key-info-other-allergy-choose',
+    defaultMessage: 'Veldu annað ofnæmi',
+  },
+  epipen: {
+    id: 'sp.education-primary-school:key-info-epipen',
+    defaultMessage: 'Adrenalínpenni',
+  },
+  medicalDiagnoses: {
+    id: 'sp.education-primary-school:key-info-medical-diagnoses',
+    defaultMessage: 'Sjúkdómsgreiningar sem skipta máli í skóla',
+  },
+  medicationAssistance: {
+    id: 'sp.education-primary-school:key-info-medication-assistance',
+    defaultMessage: 'Aðstoð við lyfjagjöf á skólatíma',
+  },
+  healthEditDisabledNotice: {
+    id: 'sp.education-primary-school:key-info-health-edit-disabled',
+    defaultMessage:
+      'Ekki er hægt að breyta heilsufarsupplýsingum að svo stöddu.',
+  },
+  saveError: {
+    id: 'sp.education-primary-school:key-info-save-error',
+    defaultMessage: 'Ekki tókst að vista breytingar. Reyndu aftur.',
   },
 })
 
