@@ -105,6 +105,11 @@ export const caseInclude: Includeable[] = [
     as: 'verdictAppealCase',
     required: false,
     include: [
+      {
+        model: User,
+        as: 'appealAssistant',
+        include: [{ model: Institution, as: 'institution' }],
+      },
       appealJudgesInclude,
       {
         model: AppealEventLog,
@@ -1186,6 +1191,11 @@ export const getLimitedAccessCaseInclude = (
       as: 'verdictAppealCase',
       required: false,
       include: [
+        {
+          model: User,
+          as: 'appealAssistant',
+          include: [{ model: Institution, as: 'institution' }],
+        },
         appealJudgesInclude,
         {
           model: AppealEventLog,

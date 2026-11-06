@@ -257,6 +257,10 @@ query Case($input: CaseQueryInput!) {
       appealType
       appealCaseNumber
       appealConclusion
+      appealAssistant {
+        id
+        name
+      }
       courtSessions {
         id
         created
