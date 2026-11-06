@@ -175,12 +175,23 @@ export const PreviewSummary = ({
                   !field.isHidden &&
                   field.fieldType !== FieldTypesEnum.MESSAGE,
               )
-              const nonRepeating = fields.filter(
-                (field) => field.isPartOfMultiset === false,
-              )
-              const repeating = fields.filter(
-                (field) => field.isPartOfMultiset !== false,
-              )
+              const firstMultisetFieldIndex = screen?.isMulti
+                ? fields.findIndex((field) => field.isPartOfMultiset !== false)
+                : -1
+              const leadingFields =
+                firstMultisetFieldIndex === -1
+                  ? fields
+                  : fields.slice(0, firstMultisetFieldIndex)
+              const repeating =
+                firstMultisetFieldIndex === -1
+                  ? []
+                  : fields.filter((field) => field.isPartOfMultiset !== false)
+              const trailingFields =
+                firstMultisetFieldIndex === -1
+                  ? []
+                  : fields
+                      .slice(firstMultisetFieldIndex)
+                      .filter((field) => field.isPartOfMultiset === false)
               const itemCount = Math.max(
                 1,
                 ...repeating.map((field) => field.values?.length ?? 0),
@@ -198,7 +209,7 @@ export const PreviewSummary = ({
                             : screen?.name?.[lang]}
                         </Text>
                       </Box>
-                      {nonRepeating.map((field) => (
+                      {leadingFields.map((field) => (
                         <SummaryField
                           key={field.id}
                           field={field}
@@ -227,6 +238,13 @@ export const PreviewSummary = ({
                           </Box>
                         ),
                       )}
+                      {trailingFields.map((field) => (
+                        <SummaryField
+                          key={field.id}
+                          field={field}
+                          valueIndex={0}
+                        />
+                      ))}
                     </GridColumn>
                     <GridColumn span={['12/12', '2/12']}>
                       <Box

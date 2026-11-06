@@ -40,13 +40,21 @@ jest.mock('../../Preview/Preview', () => ({
   ),
 }))
 
-it('keeps multiset sums in each preview row and renders the aggregate sum once', () => {
+it('keeps multiset fields contiguous and moves interleaved standalone fields below the controls', () => {
   const previewScreen: FormSystemScreen = {
     id: 'screen',
     sectionId: 'section',
     isMulti: true,
     multiMax: 3,
     fields: [
+      {
+        id: 'top-message',
+        screenId: 'screen',
+        name: { is: 'Top message' },
+        isRequired: false,
+        fieldType: FieldTypesEnum.MESSAGE,
+        isPartOfMultiset: false,
+      },
       {
         id: 'currency',
         screenId: 'screen',
@@ -58,6 +66,14 @@ it('keeps multiset sums in each preview row and renders the aggregate sum once',
           { json: { iskNumber: '1.000' } },
           { json: { iskNumber: '2.000' } },
         ],
+      },
+      {
+        id: 'interleaved-message',
+        screenId: 'screen',
+        name: { is: 'Interleaved message' },
+        isRequired: false,
+        fieldType: FieldTypesEnum.MESSAGE,
+        isPartOfMultiset: false,
       },
       {
         id: 'row-sum',
@@ -73,6 +89,14 @@ it('keeps multiset sums in each preview row and renders the aggregate sum once',
         name: { is: 'Aggregate sum' },
         isRequired: false,
         fieldType: FieldTypesEnum.ISK_SUMBOX,
+        isPartOfMultiset: false,
+      },
+      {
+        id: 'bottom-message',
+        screenId: 'screen',
+        name: { is: 'Bottom message' },
+        isRequired: false,
+        fieldType: FieldTypesEnum.MESSAGE,
         isPartOfMultiset: false,
       },
     ],
@@ -93,7 +117,32 @@ it('keeps multiset sums in each preview row and renders the aggregate sum once',
     screen
       .getAllByRole('status')
       .map((output) => output.getAttribute('data-testid')),
-  ).toEqual(['currency', 'row-sum', 'currency', 'row-sum', 'aggregate-sum'])
+  ).toEqual([
+    'top-message',
+    'currency',
+    'row-sum',
+    'currency',
+    'row-sum',
+    'interleaved-message',
+    'aggregate-sum',
+    'bottom-message',
+  ])
+  expect(
+    Array.from(document.querySelectorAll('output, button')).map(
+      (element) => element.getAttribute('data-testid') ?? element.textContent,
+    ),
+  ).toEqual([
+    'top-message',
+    'currency',
+    'row-sum',
+    'currency',
+    'row-sum',
+    'Remove',
+    'Add',
+    'interleaved-message',
+    'aggregate-sum',
+    'bottom-message',
+  ])
   expect(
     screen
       .getAllByTestId('row-sum')
