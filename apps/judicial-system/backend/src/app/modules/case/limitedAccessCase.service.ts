@@ -107,10 +107,7 @@ export class LimitedAccessCaseService {
   // payload leaves the service. Uses the same per-file rules as downloads /
   // LimitedAccessCaseFileInterceptor (category, submitter, cutoff, defendant,
   // confirmed ruling order).
-  private restrictCaseFilesForDefenceUser(
-    theCase: Case,
-    user?: TUser,
-  ): Case {
+  private restrictCaseFilesForDefenceUser(theCase: Case, user?: TUser): Case {
     if (!user || !isDefenceUser(user)) {
       return theCase
     }
