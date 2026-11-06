@@ -116,6 +116,11 @@ interface ListItemProps {
   attachment?: boolean
   selectable?: boolean
   selected?: boolean
+  /**
+   * Fill the row when unread. Turn off when a PressableHighlight parent paints
+   * the fill instead, so its pressed colour can replace it.
+   */
+  unreadBackground?: boolean
   onPressIcon?: () => void
 }
 
@@ -132,6 +137,7 @@ export function ListItem({
   selected = false,
   replyable = false,
   attachment = false,
+  unreadBackground = true,
   onPressIcon,
 }: ListItemProps) {
   const intl = useIntl()
@@ -147,7 +153,9 @@ export function ListItem({
     />
   )
   return (
-    <SafeAreaView style={[styles.host, unread && styles.hostUnread]}>
+    <SafeAreaView
+      style={[styles.host, unread && unreadBackground && styles.hostUnread]}
+    >
       <View
         style={[
           styles.icon,
