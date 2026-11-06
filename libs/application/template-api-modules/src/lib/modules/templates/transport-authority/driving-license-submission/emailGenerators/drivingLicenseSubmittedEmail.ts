@@ -28,22 +28,13 @@ export const generateDrivingLicenseSubmittedEmail: EmailTemplateGenerator = (
       'applicationFor',
     ) ?? 'B-full'
 
-  const is65RenewalRedesignEnabled =
-    getValueViaPath<boolean>(
-      application.answers,
-      'is65RenewalRedesignEnabled',
-    ) === true
-
-  // BE and the redesigned 65+ renewal don't have any in-person document
-  // handoff — photos are selected from existing biometric records, and the
-  // health certificate (when required) is uploaded with the application.
-  // The legacy in-person requirements / pickup footer describe a flow that
-  // doesn't apply, so show the digital-flow next-steps prose instead.
-  // Legacy 65+ keeps the old email until the redesign flag has been fully
-  // rolled out.
+  // BE and the 65+ renewal don't have any in-person document handoff — photos
+  // are selected from existing biometric records, and the health certificate
+  // (when required) is uploaded with the application. The legacy in-person
+  // requirements / pickup footer describe a flow that doesn't apply, so show
+  // the digital-flow next-steps prose instead.
   const isDigitalDocumentFlow =
-    applicationFor === 'BE' ||
-    (applicationFor === 'B-full-renewal-65' && is65RenewalRedesignEnabled)
+    applicationFor === 'BE' || applicationFor === 'B-full-renewal-65'
 
   const applicantEmail =
     getValueViaPath<string>(application.answers, 'email') ||

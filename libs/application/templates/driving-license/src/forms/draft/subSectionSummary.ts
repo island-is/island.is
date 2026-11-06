@@ -36,9 +36,9 @@ import {
 import { formatPhoneNumber } from '@island.is/shared/utils'
 import { Pickup } from '../../lib/types'
 
+// 65+ always runs the redesigned flow (digital certificate upload).
 const isRedesigned65 = (answers: FormValue) =>
-  answers.applicationFor === B_FULL_RENEWAL_65 &&
-  getValueViaPath(answers, 'is65RenewalRedesignEnabled') === true
+  answers.applicationFor === B_FULL_RENEWAL_65
 
 /**
  * The legacy "bring the certificate to the district office" checkbox. Only for

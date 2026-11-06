@@ -692,32 +692,11 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     }
 
     if (applicationFor === 'B-full-renewal-65') {
-      const is65RenewalRedesignEnabled = getValueViaPath<boolean>(
-        answers,
-        'is65RenewalRedesignEnabled',
-      )
-
-      if (!is65RenewalRedesignEnabled) {
-        // Legacy 65+ submit path. Used while the redesign flag is OFF in
-        // prod and during the post-deploy rollout window. Removed once the
-        // flag has been ON in prod long enough that no flag-OFF submissions
-        // reach this branch.
-        return this.drivingLicenseService.renewDrivingLicense65AndOver(
-          auth.authorization,
-          {
-            jurisdiction: jurisdictionId
-              ? jurisdictionId
-              : setJurisdictionToKopavogur,
-            ...(deliveryMethod
-              ? {
-                  pickupPlasticAtDistrict: deliveryMethod === Pickup.DISTRICT,
-                  sendPlasticToPerson: deliveryMethod === Pickup.POST,
-                }
-              : {}),
-          },
-        )
-      }
-
+      // 65+ has a single path: RLS removed the legacy 65+ submit endpoint, so
+      // the old `is65RenewalRedesignEnabled` flag is no longer read. A draft
+      // that froze the flag as off and never uploaded a certificate is stopped
+      // by readHealthCertificateContentList below with a clear "certificate
+      // required" error, before anything is sent to RLS.
       const renewalEmail = getValueViaPath<string>(answers, 'email')
       const renewalPhone = formatPhoneNumber(
         getValueViaPath<string>(answers, 'phone') ?? '',

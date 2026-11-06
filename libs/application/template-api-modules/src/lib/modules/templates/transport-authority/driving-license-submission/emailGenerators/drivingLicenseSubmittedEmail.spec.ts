@@ -139,14 +139,13 @@ describe('driving license submission', () => {
     expect(result?.template?.body).toEqual(generated)
   })
 
-  it('generates a redesigned 65+ renewal email with next-steps prose', () => {
+  it('generates the 65+ renewal email with next-steps prose', () => {
     const result = generateDrivingLicenseSubmittedEmail({
       application: {
         ...application,
         answers: {
           ...application.answers,
           applicationFor: 'B-full-renewal-65',
-          is65RenewalRedesignEnabled: true,
         },
       },
       options,
@@ -172,7 +171,6 @@ describe('driving license submission', () => {
         answers: {
           ...application.answers,
           applicationFor: 'B-full-renewal-65',
-          is65RenewalRedesignEnabled: true,
         },
       },
       options,
@@ -233,7 +231,9 @@ describe('driving license submission', () => {
     })
   })
 
-  it('keeps the legacy 65+ renewal email without next-steps prose', () => {
+  it('sends the 65+ next-steps email even for a draft that froze the old redesign flag off', () => {
+    // The legacy 65+ flow (and its in-person requirements email) is gone; a
+    // draft that saved `is65RenewalRedesignEnabled: false` gets the same email.
     const result = generateDrivingLicenseSubmittedEmail({
       application: {
         ...application,
@@ -246,24 +246,12 @@ describe('driving license submission', () => {
       options,
     })
 
-    const willBringQualityPhoto = true
-    const willBringHealthCert = true
-
-    const generated = [
+    expect(result?.template?.body).toEqual([
       ...EmailHeader({
         applicationFor: 'B-full-renewal-65',
         firstName: 'Jón',
       }),
-      ...EmailRequirements(
-        'B-full-renewal-65',
-        willBringQualityPhoto,
-        willBringHealthCert,
-      ),
-      ...(willBringQualityPhoto || willBringHealthCert
-        ? []
-        : EmailComplete({ selectedDistrictCommissioner: 'Sýslumaðurinn' })),
-    ]
-
-    expect(result?.template?.body).toEqual(generated)
+      ...EmailNextSteps('B-full-renewal-65'),
+    ])
   })
 })

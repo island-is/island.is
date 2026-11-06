@@ -137,12 +137,6 @@ export const m = defineMessages({
     defaultMessage: 'Læknisvottorð',
     description: 'Health declaration',
   },
-  healthDeclarationMultiField65Description: {
-    id: 'dl.application:healthDeclarationMultiField65Description#markdown',
-    defaultMessage:
-      'Þú þarft að skila inn læknisvottorði vegna ökuleyfis til að endurnýja ökuskírteini þitt. Læknisvottorðið þarf að vera frá **heimilislækni** og vegna ökuleyfis. Þegar búið er að ljúka umsókn þarf að skila inn læknisvottorði á valið sýslumannsembætti til að hægt sé að panta skírteinið.  **Athugið að skírteinið verður ekki pantað fyrr en búið er að skila inn vottorði.**',
-    description: 'Health declaration',
-  },
   healthDeclarationMultiField65DescriptionRedesigned: {
     id: 'dl.application:healthDeclarationMultiField65DescriptionRedesigned#markdown',
     defaultMessage:
@@ -543,12 +537,6 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn þín um fullnaðarskírteini hefur verið móttekin.',
     description: 'Application received',
   },
-  applicationDoneAlertMessage65Renewal: {
-    id: 'dl.application:applicationDoneAlertMessage65Renewal',
-    defaultMessage:
-      'Umsókn þín um endurnýjun ökuskírteina fyrir 65 og eldra hefur verið móttekin.',
-    description: 'Application received',
-  },
   applicationDoneAlertMessage65RenewalRedesigned: {
     id: 'dl.application:applicationDoneAlertMessage65RenewalRedesigned',
     defaultMessage:
@@ -602,14 +590,7 @@ export const m = defineMessages({
   },
   // Legacy 65+ flow: user submits the application here, then must take a
   // health certificate to a district office before the license can be ordered.
-  nextStepsDescription65Renewal: {
-    id: 'dl.application:nextStepsDescription65Renewal#markdown',
-    defaultMessage:
-      'Umsókn þín hefur verið send. Til þess að nýtt ökuskírteini verði pantað þarftu að skila inn læknisvottorði á valið sýslumannsembætti. Skírteinið verður ekki pantað fyrr en vottorðinu hefur verið skilað inn.',
-    description: '',
-  },
-  // Redesigned 65+ flow (flag is65RenewalRedesignEnabled = true): user has
-  // already uploaded the health certificate; an employee reviews it and the
+  // 65+ flow: the user has already uploaded the health certificate; an employee reviews it and the
   // license is ordered automatically once approved.
   nextStepsDescription65RenewalRedesigned: {
     id: 'dl.application:nextStepsDescription65RenewalRedesigned#markdown',

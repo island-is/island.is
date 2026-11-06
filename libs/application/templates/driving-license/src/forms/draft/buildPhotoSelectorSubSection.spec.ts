@@ -12,8 +12,8 @@ import { B_FULL, B_FULL_RENEWAL_65, B_TEMP, BE } from '../../lib/constants'
 // `buildPhotoSelectorSubSection` builder. This spec pins the behaviour that must
 // stay identical after collapsing the three former copies into one builder:
 //   - each still gates on the right product,
-//   - 65+ and B-temp stay hidden unless their redesign flag is on (they are off
-//     in prod), while BE has no flag and is always shown for BE,
+//   - B-temp and B-full stay hidden unless their redesign flag is on, while BE
+//     and 65+ have no flag and are always shown for their product,
 //   - the warning banner shows for 65+/B-temp but not BE,
 //   - the inner form-node ids are unchanged (so in-flight drafts are unaffected).
 
@@ -63,28 +63,27 @@ describe('buildPhotoSelectorSubSection', () => {
     })
   })
 
-  describe('65+ — gated on is65RenewalRedesignEnabled', () => {
-    it('is hidden when the redesign flag is off (prod default)', () => {
+  describe('65+ — no flag, always shown for 65+', () => {
+    it('shows for 65+', () => {
       expect(
         evalCondition(subSectionQualityPhoto65, {
           applicationFor: B_FULL_RENEWAL_65,
-        }),
-      ).toBe(false)
-    })
-    it('shows when the redesign flag is on', () => {
-      expect(
-        evalCondition(subSectionQualityPhoto65, {
-          applicationFor: B_FULL_RENEWAL_65,
-          is65RenewalRedesignEnabled: true,
         }),
       ).toBe(true)
     })
-    it('is hidden for the wrong product even with the flag on', () => {
+    it('shows even for a draft that froze the old redesign flag as off', () => {
+      // Drafts started before the legacy 65+ path was removed carry
+      // `is65RenewalRedesignEnabled: false`; it must no longer hide the step.
       expect(
         evalCondition(subSectionQualityPhoto65, {
-          applicationFor: B_TEMP,
-          is65RenewalRedesignEnabled: true,
+          applicationFor: B_FULL_RENEWAL_65,
+          is65RenewalRedesignEnabled: false,
         }),
+      ).toBe(true)
+    })
+    it('is hidden for other products', () => {
+      expect(
+        evalCondition(subSectionQualityPhoto65, { applicationFor: B_TEMP }),
       ).toBe(false)
     })
   })

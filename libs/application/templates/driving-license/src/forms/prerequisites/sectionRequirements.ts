@@ -10,7 +10,6 @@ import { DefaultEvents } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 
 export const sectionRequirements = (
-  allow65RenewalRedesign = false,
   allowBTempRedesign = false,
   allowBFullRedesign = false,
 ) =>
@@ -23,10 +22,6 @@ export const sectionRequirements = (
         title: m.applicationEligibilityTitle,
         description: m.eligibilityRequirementTitle,
         children: [
-          buildHiddenInput({
-            id: 'is65RenewalRedesignEnabled',
-            defaultValue: () => allow65RenewalRedesign,
-          }),
           buildHiddenInput({
             id: 'isBTempRedesignEnabled',
             defaultValue: () => allowBTempRedesign,

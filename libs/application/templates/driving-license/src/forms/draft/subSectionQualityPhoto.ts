@@ -22,19 +22,10 @@ export const subSectionQualityPhoto = buildSubSection({
   id: 'photoStep',
   title: m.applicationQualityPhotoTitle,
   condition: isVisible((answers) => {
-    const matchesType = isApplicationForCondition([B_FULL, B_FULL_RENEWAL_65])(
-      answers,
-    )
-    if (!matchesType) return false
-    // When a redesign flag is on, the new photoStep* subsection takes over for
-    // that product — suppress this old subsection for those cases.
-    const isRedesigned65 =
-      answers.applicationFor === B_FULL_RENEWAL_65 &&
-      getValueViaPath(answers, 'is65RenewalRedesignEnabled') === true
-    const isRedesignedBFull =
-      answers.applicationFor === B_FULL &&
-      getValueViaPath(answers, 'isBFullRedesignEnabled') === true
-    return !isRedesigned65 && !isRedesignedBFull
+    // Legacy B-full photo step. 65+ always uses the photo selector
+    // (photoStep65), and redesigned B-full uses photoStepBFull.
+    if (!isApplicationForCondition([B_FULL])(answers)) return false
+    return getValueViaPath(answers, 'isBFullRedesignEnabled') !== true
   }, hasNoDrivingLicenseInOtherCountry),
   children: [
     buildMultiField({

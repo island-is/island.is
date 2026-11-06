@@ -11,13 +11,12 @@ export const fakeEligibility = (
   applicationFor: DrivingLicenseApplicationFor,
   daysOfResidency = 365,
   hasPhoto = true,
-  is65RenewalRedesignEnabled = false,
   isBTempRedesignEnabled = false,
   isBFullRedesignEnabled = false,
 ): ApplicationEligibility => {
   const usesPhotoGate =
     applicationFor === BE ||
-    (applicationFor === B_FULL_RENEWAL_65 && is65RenewalRedesignEnabled) ||
+    applicationFor === B_FULL_RENEWAL_65 ||
     (applicationFor === B_TEMP && isBTempRedesignEnabled) ||
     (applicationFor === B_FULL && isBFullRedesignEnabled)
 
