@@ -4,7 +4,9 @@ import styled from 'styled-components/native'
 const Host = styled.View<{ background: boolean }>`
   flex-direction: row;
   background-color: ${({ theme, background }) =>
-    background ? theme.color.blueberry100 : 'transparent'};
+    background
+      ? theme.tokens.feedback.tags.blueberry.background
+      : 'transparent'};
   border-radius: ${({ theme }) => theme.border.radius.standard};
 `
 

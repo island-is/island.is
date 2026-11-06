@@ -4,7 +4,7 @@ import { SelectionMenu } from 'react-native-platform-components'
 import styled, { css } from 'styled-components/native'
 
 import chevronDown from '../../assets/icons/chevron-down.png'
-import { dynamicColor } from '../../utils'
+import { token } from '../../utils'
 import { Typography } from '../typography/typography'
 
 const Wrapper = styled.View``
@@ -16,22 +16,13 @@ const Host = styled.Pressable`
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: 1px;
   border-style: solid;
-  border-color: ${dynamicColor(
-    (props) => ({
-      dark: 'shade500',
-      light: props.theme.color.blue200,
-    }),
-    true,
-  )};
+  border-color: ${token((t) => t.border.primary)};
   /* Left padding matches TextField so the label lines up with the fields this
      sits next to in a form; the chevron keeps its wider inset on the right. */
   padding: ${({ theme }) => theme.spacing[1]}px
     ${({ theme }) => theme.spacing[2]}px ${({ theme }) => theme.spacing[1]}px
     ${({ theme }) => theme.spacing[1]}px;
-  background-color: ${dynamicColor((props) => ({
-    dark: 'shade300',
-    light: props.theme.color.blue100,
-  }))};
+  background-color: ${token((t) => t.background.brandMinimal)};
 `
 
 const Content = styled.View`
@@ -39,10 +30,7 @@ const Content = styled.View`
 `
 
 const Label = styled(Typography)`
-  color: ${dynamicColor((props) => ({
-    dark: 'foreground',
-    light: props.theme.color.blue400,
-  }))};
+  color: ${token((t) => t.foreground.brand)};
 `
 
 const Value = styled(Typography)<{ isPlaceholder: boolean }>`
@@ -51,10 +39,7 @@ const Value = styled(Typography)<{ isPlaceholder: boolean }>`
   ${({ isPlaceholder }) =>
     isPlaceholder &&
     css`
-      color: ${dynamicColor((props) => ({
-        dark: 'rgba(255, 255, 255, 0.6)',
-        light: props.theme.color.dark300,
-      }))};
+      color: ${token((t) => t.foreground.primaryMinimal)};
     `}
 `
 
@@ -62,10 +47,7 @@ const Chevron = styled.Image`
   width: 24px;
   height: 24px;
   margin-left: ${({ theme }) => theme.spacing[1]}px;
-  tint-color: ${dynamicColor((props) => ({
-    dark: 'foreground',
-    light: props.theme.color.blue400,
-  }))};
+  tint-color: ${token((t) => t.interactive.foreground.primary)};
 `
 
 interface SelectOption {

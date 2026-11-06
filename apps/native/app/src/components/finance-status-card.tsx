@@ -276,7 +276,7 @@ export function FinanceStatusCard({
                   key={index}
                   style={(p) => ({
                     backgroundColor: p.pressed
-                      ? 'rgba(128,128,128,0.1)'
+                      ? theme.tokens.app.background.pressed
                       : index % 2 === 0
                       ? theme.color.blue100
                       : theme.color.white,

@@ -1184,6 +1184,7 @@ export default function HealthOverviewScreen() {
             isTransparent
             loading={refetching}
             disabled={refetching}
+            style={{ marginVertical: theme.spacing.p1 }}
           />
         </RefreshButtonContainer>
       </Animated.ScrollView>

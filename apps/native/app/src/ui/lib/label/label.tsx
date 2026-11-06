@@ -1,7 +1,6 @@
 import { Image } from 'react-native'
 import styled, { DefaultTheme } from 'styled-components/native'
 
-import { dynamicColor } from '../../utils'
 import dangerIcon from '../../assets/alert/danger.png'
 import infoIcon from '../../assets/alert/info-alert.png'
 import warningIcon from '../../assets/alert/warning.png'
@@ -30,15 +29,15 @@ const getBorderColor = ({ theme, color }: HelperProps) => {
   switch (color) {
     case 'urgent':
     case 'danger':
-      return { light: theme.color.red200, dark: theme.shades.dark.shade300 }
+      return theme.tokens.feedback.error.border
     case 'warning':
-      return { light: theme.color.yellow400, dark: theme.color.yellow400 }
+      return theme.tokens.feedback.warning.border
     case 'primary':
-      return { light: theme.color.blue200, dark: theme.shades.dark.shade300 }
+      return theme.tokens.feedback.information.border
     case 'pending':
-      return { light: theme.color.purple200, dark: theme.color.purple300 }
+      return theme.tokens.feedback.tags.purple.border
     default:
-      return { light: theme.shade.shade400, dark: theme.shades.dark.shade300 }
+      return theme.tokens.app.border.muted
   }
 }
 
@@ -46,26 +45,26 @@ const getBackgroundColor = ({ theme, color }: HelperProps) => {
   switch (color) {
     case 'urgent':
     case 'danger':
-      return { light: theme.color.red100, dark: 'transparent' }
+      return theme.tokens.feedback.error.background
     case 'warning':
-      return { light: theme.color.yellow200, dark: 'transparent' }
+      return theme.tokens.feedback.warning.background
     default:
-      return { light: 'transparent', dark: 'transparent' }
+      return 'transparent'
   }
 }
 
 const getTextColor = ({ theme, color }: HelperProps) => {
   switch (color) {
     case 'urgent':
-      return { light: theme.color.dark400, dark: theme.color.dark100 }
+      return theme.tokens.foreground.primary
     case 'danger':
-      return { light: theme.color.red600, dark: theme.color.red400 }
+      return theme.tokens.feedback.error.foregroundContrast
     case 'primary':
-      return { light: theme.color.blue400, dark: theme.shades.dark.shade700 }
+      return theme.tokens.feedback.information.foreground
     case 'pending':
-      return { light: theme.color.purple400, dark: theme.color.purple300 }
+      return theme.tokens.feedback.tags.purple.accent
     default:
-      return { light: theme.shade.foreground, dark: theme.shade.foreground }
+      return theme.tokens.foreground.primary
   }
 }
 
@@ -93,8 +92,8 @@ const LabelHost = styled.View<{ color: LabelColor; fullWidth?: boolean }>`
   border-width: ${({ theme }) => theme.border.width.standard}px;
   border-style: solid;
   border-radius: ${({ theme }) => theme.border.radius.large};
-  border-color: ${dynamicColor(getBorderColor, true)};
-  background-color: ${dynamicColor(getBackgroundColor)};
+  border-color: ${getBorderColor};
+  background-color: ${getBackgroundColor};
   ${({ fullWidth }) => fullWidth && 'flex: 1'};
 `
 
@@ -102,7 +101,7 @@ const LabelText = styled(Typography)<{
   color: LabelColor
   fullWidth?: boolean
 }>`
-  color: ${dynamicColor(getTextColor, true)};
+  color: ${getTextColor};
   ${({ fullWidth }) => fullWidth && 'flex: 1'};
 `
 

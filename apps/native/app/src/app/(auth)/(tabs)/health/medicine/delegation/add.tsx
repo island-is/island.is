@@ -34,11 +34,6 @@ const FormContainer = styled(View)`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
 `
 
-const Title = styled(Typography)`
-  margin-top: ${({ theme }) => theme.spacing[1]}px;
-  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
-`
-
 const Header = styled(View)`
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
 `
@@ -220,7 +215,7 @@ export default function MedicineDelegationFormScreen() {
 
   return (
     <Host>
-      <StackScreen options={{ title: '' }} closeable />
+      <StackScreen closeable />
       <Content
         keyboardShouldPersistTaps="handled"
         // The kennitala field opens a number pad, which has no return key to
@@ -236,11 +231,6 @@ export default function MedicineDelegationFormScreen() {
         }}
       >
         <FormContainer>
-          <Title variant="heading3">
-            {intl.formatMessage({
-              id: 'health.medicineDelegation.form.title',
-            })}
-          </Title>
           <Header>
             <Typography variant="heading5">
               {intl.formatMessage({
