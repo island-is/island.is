@@ -141,32 +141,38 @@ export const OvernightStaysOverview: FC<FieldBaseProps> = ({
         {noOvernightStays && (
           <Text marginBottom={3}>{formatMessage(m.noStaysOverview)}</Text>
         )}
-        <GridRow rowGap={3}>
-          {monthlySummary.map(({ monthName, numberOfNights, amount }) => (
-            <GridColumn key={monthName} span={['12/12', '6/12']}>
-              <Text variant="h5">{monthName}</Text>
-              <Text variant="small">
-                {formatMessage(m.overviewNights, {
-                  count: numberOfNights,
-                })}
+        {!noOvernightStays && (
+          <>
+            <GridRow rowGap={3}>
+              {monthlySummary.map(({ monthName, numberOfNights, amount }) => (
+                <GridColumn key={monthName} span={['12/12', '6/12']}>
+                  <Text variant="h5">{monthName}</Text>
+                  <Text variant="small">
+                    {formatMessage(m.overviewNights, {
+                      count: numberOfNights,
+                    })}
+                  </Text>
+                  <Text variant="small">
+                    {formatMessage(m.overviewAmount, {
+                      amount: currencyFormatter.format(amount),
+                    })}
+                  </Text>
+                </GridColumn>
+              ))}
+            </GridRow>
+            <Box className={styles.totalBox} marginTop={4}>
+              <Text variant="h4">{formatMessage(m.overviewTotal)}</Text>
+              <Text>
+                {formatMessage(m.overviewNights, { count: totalNights })}
               </Text>
-              <Text variant="small">
+              <Text color="blue400" fontWeight="semiBold">
                 {formatMessage(m.overviewAmount, {
-                  amount: currencyFormatter.format(amount),
+                  amount: currencyFormatter.format(totalAmount),
                 })}
               </Text>
-            </GridColumn>
-          ))}
-        </GridRow>
-        <Box className={styles.totalBox} marginTop={4}>
-          <Text variant="h4">{formatMessage(m.overviewTotal)}</Text>
-          <Text>{formatMessage(m.overviewNights, { count: totalNights })}</Text>
-          <Text color="blue400" fontWeight="semiBold">
-            {formatMessage(m.overviewAmount, {
-              amount: currencyFormatter.format(totalAmount),
-            })}
-          </Text>
-        </Box>
+            </Box>
+          </>
+        )}
         {comments && (
           <Box marginTop={4}>
             <Text variant="h4">{formatMessage(m.overviewComment)}</Text>

@@ -21,7 +21,7 @@ const months = [
   'December',
 ]
 
-const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 export const ExampleAnnualMultiRangeCalendar = ({ error }: FieldBaseProps) => {
   const { formatMessage } = useLocale()

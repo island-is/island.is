@@ -147,14 +147,17 @@ export const Pricing: FC<FieldBaseProps> = () => {
       perVisitAmounts,
       visitRanges: selectedVisits,
     })
-    const formattedAmounts = Object.fromEntries(
+    // Write back the same integer numeric string the amount inputs produce.
+    // They run with `isNumericString`, so a grouped value such as "175.000"
+    // would be read back as 175.
+    const convertedAmountValues = Object.fromEntries(
       Object.entries(convertedAmounts).map(([key, amount]) => [
         key,
-        amount.toLocaleString('is-IS'),
+        String(amount),
       ]),
     )
 
-    setValue('pricing.monthlyAmounts', formattedAmounts, {
+    setValue('pricing.monthlyAmounts', convertedAmountValues, {
       shouldDirty: true,
       shouldValidate: true,
     })
@@ -376,7 +379,10 @@ export const Pricing: FC<FieldBaseProps> = () => {
                     label={formatMessage(m.pricingAmountLabel)}
                     backgroundColor="blue"
                     placeholder="kr."
-                    currency
+                    type="number"
+                    thousandSeparator
+                    decimalScale={0}
+                    suffix=" kr."
                     rightAlign
                     size="sm"
                     required
@@ -420,7 +426,10 @@ export const Pricing: FC<FieldBaseProps> = () => {
                       label={formatMessage(m.pricingAmountLabel)}
                       backgroundColor="blue"
                       placeholder="kr."
-                      currency
+                      type="number"
+                      thousandSeparator
+                      decimalScale={0}
+                      suffix=" kr."
                       rightAlign
                       size="sm"
                       required

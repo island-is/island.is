@@ -41,6 +41,20 @@ export const homeLodgingSection = buildSection({
           width: 'full',
           marginBottom: 4,
           clearOnChange: ['homeLodgingId'],
+          setOnChange: [
+            {
+              key: 'overnightDates',
+              value: [],
+            },
+            {
+              key: 'pricing',
+              value: {
+                method: 'monthly',
+                monthlyAmounts: {},
+                perVisitAmounts: {},
+              },
+            },
+          ],
           options: ({ externalData }: Application) => {
             const registrations = getHomeLodgings(externalData)
             const years = registrations.map((registration) => registration.year)

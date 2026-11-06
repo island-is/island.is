@@ -7,10 +7,37 @@ import {
   getMonthlyAmountsFromVisits,
   getOvernightDates,
   hasActiveAdvertisement,
+  parseAmount,
   splitVisitAmountByMonth,
 } from './homeLodgings'
 
 describe('homeLodgings', () => {
+  it('parses whole-króna answers in every stored and formatted shape', () => {
+    // Canonical shape: `decimalScale={0}` makes the inputs emit integer strings.
+    expect(parseAmount('175000')).toBe(175000)
+    expect(parseAmount(175000)).toBe(175000)
+    // A dot is always thousand grouping, never a decimal separator.
+    expect(parseAmount('10.500')).toBe(10500)
+    expect(parseAmount('175.000')).toBe(175000)
+    expect(parseAmount('175.000 kr.')).toBe(175000)
+    expect(parseAmount('1.234.567')).toBe(1234567)
+    expect(parseAmount('')).toBe(0)
+    expect(parseAmount(undefined)).toBe(0)
+  })
+
+  it('round-trips converted monthly amounts through the amount inputs', () => {
+    const visit = { from: '2026-08-01', to: '2026-08-03' }
+    const monthlyAmounts = getMonthlyAmountsFromVisits({
+      perVisitAmounts: { [getDateRangeKey(visit)]: '175000' },
+      visitRanges: [visit],
+    })
+
+    // Pricing writes `String(amount)` back as the input answer, so what the
+    // conversion produces has to survive being parsed again unchanged.
+    expect(monthlyAmounts).toEqual({ month7: 175000 })
+    expect(parseAmount(String(monthlyAmounts.month7))).toBe(175000)
+  })
+
   it('supports persisted advertisement answers from before the repeater migration', () => {
     const answers = {
       noActiveAdvertisement: false,
@@ -187,6 +214,26 @@ describe('homeLodgings', () => {
         rentalIncome: 250000,
       },
     ])
+  })
+
+  it('reports no nights when the applicant declared no overnight stays', () => {
+    // The calendar and pricing screens are only hidden by `condition`, so an
+    // earlier edit can leave dates and amounts behind in the answers.
+    const application = createApplication({
+      answers: {
+        year: '2026',
+        homeLodgingId: 'HG-00004822',
+        noOvernightStays: ['true'],
+        overnightDates: ['2026-08-01', '2026-08-02'],
+        pricing: {
+          method: 'monthly',
+          monthlyAmounts: { month7: '175000' },
+          perVisitAmounts: {},
+        },
+      },
+    })
+
+    expect(buildSubmissionPayload(application).nights).toEqual([])
   })
 
   it('splits a cross-month visit amount proportionally by nights', () => {

@@ -74,7 +74,14 @@ export const getAdvertisementUrls = (answers: FormValue): string[] => {
   return urls.map((url) => url.trim()).filter((url) => url.length > 0)
 }
 
-/** Converts a formatted currency answer to a finite numeric amount. */
+/**
+ * Converts a currency answer to a finite numeric amount.
+ *
+ * Rental income is registered in whole krónur: both amount inputs use
+ * `decimalScale={0}`, so an answer is always an integer numeric string
+ * ("175000"). A dot can therefore only be Icelandic thousand grouping, which
+ * keeps formatted values such as "175.000 kr." unambiguous.
+ */
 export const parseAmount = (value: string | number | undefined): number => {
   if (typeof value === 'number') {
     return Number.isFinite(value) ? value : 0
@@ -84,8 +91,7 @@ export const parseAmount = (value: string | number | undefined): number => {
     return 0
   }
 
-  const normalized = value.replace(/[^\d-]/g, '')
-  return Number(normalized) || 0
+  return Number(value.replace(/[^\d-]/g, '')) || 0
 }
 
 /**
@@ -243,9 +249,13 @@ export const buildSubmissionPayload = (
   application: Application,
 ): OvernightStaySubmission => {
   const { answers } = application
-  const dates = [
-    ...(getValueViaPath<string[]>(answers, 'overnightDates') ?? []),
-  ].sort()
+  // A year declared as having no overnight stays must never report nights or
+  // rental income, even when dates and prices from an earlier edit are still
+  // stored: the calendar and pricing screens are only hidden by `condition`,
+  // which leaves their answers behind.
+  const dates = hasNoOvernightStays(answers)
+    ? []
+    : [...(getValueViaPath<string[]>(answers, 'overnightDates') ?? [])].sort()
   const pricingMethod =
     getValueViaPath<'monthly' | 'perVisit'>(answers, 'pricing.method') ??
     'monthly'

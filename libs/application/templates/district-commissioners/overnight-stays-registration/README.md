@@ -33,8 +33,6 @@ all registrations for the applicant. Each item contains:
 - postal code and city
 - property and unit numbers
 - guest and room counts
-- optional mocked stay records with source, listing name, date range, night
-  count and rental income
 
 The form derives its year options from this list. Every year that has at least
 one registration is selectable; registrations where `hasBeenSubmitted` is
@@ -44,8 +42,9 @@ filtered out.
 The mock data contains two selectable addresses for 2025 and 2026, and one
 selectable address for 2024. Both 2023 registrations have already been
 submitted, so the year is visible but disabled in the selector. The
-registration `HG-00004822` includes two Airbnb stay records for 2026. They are
-backend fixture data only and do not prefill the Tímabil or Verð screens.
+service mock includes registrations for `HG-00004822`, but no stay records.
+The Tímabil and Verð screens are therefore populated only from the applicant's
+answers.
 
 `submitApplication` represents `POST - Skila inn yfirliti`. The submitted
 payload contains the selected registration and year, advertisement data,
@@ -66,13 +65,14 @@ The answers are defined in `src/lib/dataSchema.ts`. The non-obvious parts:
 | `noOvernightStays` | `string[]` | Checkbox answers are arrays, so "no stays" is `['true']`. Use `hasNoOvernightStays()` from `src/utils/homeLodgings.ts` instead of reading it directly. When set, the Tímabil and Verð sub sections are skipped. |
 | `noActiveAdvertisement` | `string[]` | Checkbox answers are arrays, so "no active link" is `['true']`. Use `hasActiveAdvertisement()` from `src/utils/homeLodgings.ts` instead of reading it directly. |
 | `advertisements` | `{ url: string }[]` | One object per "Hlekkur á gistingu" row, produced by `buildFieldsRepeaterField`. The field is optional so that `clearOnChange` on the checkbox can drop it entirely; when present, every row must contain an `http(s)` URL. Use `getAdvertisementUrls()` to read the trimmed, non empty URLs. |
-| `pricing.monthlyAmounts` | `Record<string, string>` | Keyed `month0`…`month11`. Numeric keys must be avoided: react-hook-form turns paths such as `monthlyAmounts.1` into arrays, which silently fails the schema. |
-| `pricing.perVisitAmounts` | `Record<string, string>` | Keyed by the visit's ISO start and end dates. Used when “Heildarupphæð á heimsókn” is selected. |
+| `pricing.monthlyAmounts` | `Record<string, string>` | Keyed `month0`…`month11`. Numeric keys must be avoided: react-hook-form turns paths such as `monthlyAmounts.1` into arrays, which silently fails the schema. Amounts are whole krónur held as integer numeric strings (`'175000'`); read them with `parseAmount()`. |
+| `pricing.perVisitAmounts` | `Record<string, string>` | Keyed by the visit's ISO start and end dates. Used when “Heildarupphæð á heimsókn” is selected. Same amount format as `monthlyAmounts`. |
 
 When pricing by visit, each contiguous date range selected in the calendar is
 shown as a separate pricing row. A visit crossing a month boundary keeps one
-amount: it is included in the rental income of the month in which the visit
-starts and is not duplicated in the following month.
+amount, which is split proportionally between the months based on the number of
+overnight stays in each month. Any rounding remainder is assigned to the first
+month so the monthly shares add up to the entered amount.
 
 The annual multi-range UI comes from `AnnualMultiRangeCalendar` in
 `@island.is/application/ui-components`. `OvernightStayCalendar` is only the
@@ -81,7 +81,7 @@ application-system adapter that provides localized labels, binds
 validation callback.
 
 Prefer the built-in field builders. The advertisement links are a plain
-`buildFieldsRepeaterField` with `minRows: 1`, `hideRemoveButton: true` and an
+`buildFieldsRepeaterField` with `minRows: 1`, `hideRemoveButton: false` and an
 `addItemButtonText`, and the "no active link" checkbox clears the repeater
 through `clearOnChange: ['advertisements']` so the schema stops validating it.
 
