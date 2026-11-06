@@ -18,3 +18,10 @@ export * from './hooks/useDeleteApplication'
 export * from './hooks/useOpenApplication'
 export { NationalIdWithName } from './components/NationalIdWithName/NationalIdWithName'
 export { default as Slider } from './components/Slider/Slider'
+export {
+  AnnualMultiRangeCalendar,
+  type AnnualMultiRangeCalendarLabels,
+  type AnnualMultiRangeCalendarProps,
+  getDateRanges,
+  type CalendarDateRange,
+} from './components/AnnualMultiRangeCalendar'

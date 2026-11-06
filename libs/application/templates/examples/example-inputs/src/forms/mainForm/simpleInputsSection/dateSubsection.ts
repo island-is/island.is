@@ -1,4 +1,5 @@
 import {
+  buildCustomField,
   buildDateField,
   buildDescriptionField,
   buildMultiField,
@@ -54,6 +55,11 @@ export const dateSubsection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: '2024-01-01',
+        }),
+        buildCustomField({
+          id: 'annualMultiRangeCalendar',
+          title: 'Annual multi-range calendar',
+          component: 'ExampleAnnualMultiRangeCalendar',
         }),
         buildDescriptionField({
           id: 'Common date picker pattern',
