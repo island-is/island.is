@@ -1,7 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import { ProblemTemplate } from './problem-template'
+import { StatusMessageTemplate } from './status-message-template'
 import { useOrganizationsStore } from '../../../stores/organizations-store'
 
 type ThirdPartyServiceErrorProps = {
@@ -19,7 +19,7 @@ export const ThirdPartyServiceError = ({
   const organizationName = getOrganizationNameBySlug(organizationSlug)
 
   return (
-    <ProblemTemplate
+    <StatusMessageTemplate
       variant="warning"
       {...(organizationName ? { tag: organizationName } : { showIcon: true })}
       title={intl.formatMessage({ id: 'problem.thirdParty.title' })}

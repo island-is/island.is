@@ -23,7 +23,7 @@ const Text = styled.Text`
   })}
 `
 
-interface TagProps {
+interface FilterChipProps {
   title: string
   onClose?(): void
   closable?: boolean
@@ -31,7 +31,13 @@ interface TagProps {
   active?: boolean
 }
 
-export function Tag({ title, closable, onClose, onPress, active }: TagProps) {
+export function FilterChip({
+  title,
+  closable,
+  onClose,
+  onPress,
+  active,
+}: FilterChipProps) {
   const tokenColor = useTokenColor()
   return (
     <Host
@@ -66,3 +72,6 @@ export function Tag({ title, closable, onClose, onPress, active }: TagProps) {
     </Host>
   )
 }
+
+/** @deprecated Use `FilterChip`. */
+export const Tag = FilterChip

@@ -6,7 +6,7 @@ import { ApolloError } from '@apollo/client'
 
 import {
   Typography,
-  Heading,
+  SectionHeader,
   ChevronRight,
   ListItemSkeleton,
   EmptyCard,
@@ -72,7 +72,7 @@ const InboxModule = React.memo(({ data, loading, error }: InboxModuleProps) => {
           onPress={() => router.navigate(`/inbox`)}
           style={{ marginHorizontal: theme.spacing[2] }}
         >
-          <Heading
+          <SectionHeader
             button={
               documents.length === 0 ? null : (
                 <TouchableOpacity
@@ -91,7 +91,7 @@ const InboxModule = React.memo(({ data, loading, error }: InboxModuleProps) => {
             }
           >
             <FormattedMessage id="homeOptions.inbox" />
-          </Heading>
+          </SectionHeader>
         </TouchableOpacity>
         {loading && !data ? (
           Array.from({ length: 3 })
