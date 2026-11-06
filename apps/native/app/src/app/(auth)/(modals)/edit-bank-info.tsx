@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { Alert, ScrollView, View } from 'react-native'
 import { router } from 'expo-router'
 
-import { Button, NavigationBarSheet, TextField, Typography } from '@/ui'
+import { Button, TextField, Typography } from '@/ui'
 import { StackScreen } from '@/components/stack-screen'
 import { useGetProfileQuery } from '@/graphql/types/schema'
 import { bankInfoObject, stringifyBankData } from '@/lib/bank-info-helper'
@@ -46,13 +46,6 @@ export default function EditBankInfoScreen() {
       stickyHeaderIndices={[0]}
     >
       <StackScreen closeable networkStatus={userProfile.networkStatus} />
-      <NavigationBarSheet
-        componentId="edit-bank-info"
-        title={intl.formatMessage({ id: 'edit.bankinfo.screenTitle' })}
-        onClosePress={() => router.back()}
-        style={{ marginHorizontal: 16 }}
-        showLoading={userProfile.loading && !!userProfile.data}
-      />
       <View style={{ paddingHorizontal: 16 }}>
         <View style={{ marginBottom: 32, marginTop: 8 }}>
           <Typography>
