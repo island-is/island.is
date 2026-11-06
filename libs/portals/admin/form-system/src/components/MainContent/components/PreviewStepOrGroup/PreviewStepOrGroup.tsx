@@ -299,9 +299,18 @@ const PreviewStepOrGroupContent = ({ setOpenPreview }: Props) => {
                                 {screenIndex < previewSteps.length - 1 ? (
                                   <Button
                                     icon="arrowForward"
-                                    onClick={() =>
-                                      setScreenIndex(screenIndex + 1)
-                                    }
+                                    onClick={async () => {
+                                      const fieldNames =
+                                        currentScreen?.fields
+                                          ?.filter(
+                                            (field): field is FormSystemField =>
+                                              !!field && !field.isHidden,
+                                          )
+                                          .map((field) => field.id) ?? []
+                                      if (await methods.trigger(fieldNames)) {
+                                        setScreenIndex(screenIndex + 1)
+                                      }
+                                    }}
                                   >
                                     {formatMessage(m.continue)}
                                   </Button>

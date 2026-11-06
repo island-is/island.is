@@ -15,7 +15,8 @@ export const NumberSettings = () => {
 
   const { activeItem, isReadOnly } = control
   const currentItem = activeItem.data as FormSystemField
-  const { minValue, maxValue, isDecimal } = currentItem.fieldSettings ?? {}
+  const { minValue, maxValue, minLength, maxLength, isDecimal } =
+    currentItem.fieldSettings ?? {}
 
   return (
     <Stack space={2}>
@@ -77,6 +78,56 @@ export const NumberSettings = () => {
                 type: 'SET_ANY_FIELD_SETTING',
                 payload: {
                   property: 'maxValue',
+                  value:
+                    e.target.value === '' ? undefined : Number(e.target.value),
+                },
+              })
+            }
+            onFocus={(e) => setFocus(e.target.value)}
+            onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+          />
+        </Column>
+      </Row>
+      <Row>
+        <Column span="4/12">
+          <Input
+            name="minLength"
+            backgroundColor="blue"
+            label="Lágmarksfjöldi tölustafa"
+            type="number"
+            min={0}
+            step="1"
+            value={minLength ?? ''}
+            readOnly={isReadOnly}
+            onChange={(e) =>
+              controlDispatch({
+                type: 'SET_ANY_FIELD_SETTING',
+                payload: {
+                  property: 'minLength',
+                  value:
+                    e.target.value === '' ? undefined : Number(e.target.value),
+                },
+              })
+            }
+            onFocus={(e) => setFocus(e.target.value)}
+            onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+          />
+        </Column>
+        <Column span="4/12">
+          <Input
+            name="maxLength"
+            backgroundColor="blue"
+            label="Hámarksfjöldi tölustafa"
+            type="number"
+            min={0}
+            step="1"
+            value={maxLength ?? ''}
+            readOnly={isReadOnly}
+            onChange={(e) =>
+              controlDispatch({
+                type: 'SET_ANY_FIELD_SETTING',
+                payload: {
+                  property: 'maxLength',
                   value:
                     e.target.value === '' ? undefined : Number(e.target.value),
                 },
