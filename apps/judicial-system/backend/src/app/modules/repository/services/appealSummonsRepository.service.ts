@@ -1,4 +1,4 @@
-import { Op, Transaction } from 'sequelize'
+import { Op, Transaction, UniqueConstraintError } from 'sequelize'
 
 import {
   ConflictException,
@@ -13,10 +13,12 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   AppealSummonsAppellantSide,
   HashAlgorithm,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import { AppealSummons } from '../models/appealSummons.model'
 import { AppealSummonsDefendant } from '../models/appealSummonsDefendant.model'
+import { AppealSummonsServiceRecipient } from '../models/appealSummonsServiceRecipient.model'
 import { Institution } from '../models/institution.model'
 import { User } from '../models/user.model'
 
@@ -40,6 +42,21 @@ export type UpdateAppealSummons = {
   hashAlgorithm?: HashAlgorithm | null
 }
 
+export type CreateAppealSummonsServiceRecipient = {
+  appealSummonsId: string
+  defendantId?: string
+  civilClaimantId?: string
+  sentToServiceDate: Date
+}
+
+export type UpdateAppealSummonsServiceRecipient = {
+  externalPoliceDocumentId?: string
+  serviceStatus?: VerdictServiceStatus | null
+  serviceDate?: Date | null
+  servedBy?: string | null
+  comment?: string | null
+}
+
 @Injectable()
 export class AppealSummonsRepositoryService {
   constructor(
@@ -47,6 +64,8 @@ export class AppealSummonsRepositoryService {
     private readonly appealSummonsModel: typeof AppealSummons,
     @InjectModel(AppealSummonsDefendant)
     private readonly appealSummonsDefendantModel: typeof AppealSummonsDefendant,
+    @InjectModel(AppealSummonsServiceRecipient)
+    private readonly appealSummonsServiceRecipientModel: typeof AppealSummonsServiceRecipient,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -95,6 +114,13 @@ export class AppealSummonsRepositoryService {
           {
             model: AppealSummonsDefendant,
             as: 'defendants',
+            required: false,
+            separate: true,
+            order: [['created', 'ASC']],
+          },
+          {
+            model: AppealSummonsServiceRecipient,
+            as: 'services',
             required: false,
             separate: true,
             order: [['created', 'ASC']],
@@ -243,6 +269,132 @@ export class AppealSummonsRepositoryService {
     } catch (error) {
       this.logger.error(
         `Error updating appeal summons ${id} of case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  async createServiceRecipient(
+    data: CreateAppealSummonsServiceRecipient,
+    options: { transaction: Transaction },
+  ): Promise<AppealSummonsServiceRecipient> {
+    try {
+      this.logger.debug(
+        `Creating an appeal summons service recipient for summons ${data.appealSummonsId}`,
+      )
+
+      const result = await this.appealSummonsServiceRecipientModel.create(
+        data,
+        {
+          transaction: options.transaction,
+        },
+      )
+
+      this.logger.debug(
+        `Created appeal summons service recipient ${result.id} for summons ${data.appealSummonsId}`,
+      )
+
+      return result
+    } catch (error) {
+      if (error instanceof UniqueConstraintError) {
+        throw new ConflictException(
+          `Appeal summons service recipient already exists for summons ${data.appealSummonsId}`,
+        )
+      }
+
+      this.logger.error(
+        `Error creating an appeal summons service recipient for summons ${data.appealSummonsId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  async findServiceRecipientById(
+    id: string,
+    appealSummonsId: string,
+    options?: { transaction?: Transaction; lock?: boolean },
+  ): Promise<AppealSummonsServiceRecipient | null> {
+    try {
+      return await this.appealSummonsServiceRecipientModel.findOne({
+        where: { id, appealSummonsId },
+        transaction: options?.transaction,
+        ...(options?.lock ? { lock: Transaction.LOCK.UPDATE } : {}),
+      })
+    } catch (error) {
+      this.logger.error(
+        `Error finding appeal summons service recipient ${id} for summons ${appealSummonsId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  async findServiceRecipientByExternalPoliceDocumentId(
+    externalPoliceDocumentId: string,
+  ): Promise<AppealSummonsServiceRecipient | null> {
+    try {
+      this.logger.debug(
+        `Finding appeal summons service recipient with police document id ${externalPoliceDocumentId}`,
+      )
+
+      return await this.appealSummonsServiceRecipientModel.findOne({
+        where: { externalPoliceDocumentId },
+        include: [{ model: AppealSummons, as: 'appealSummons' }],
+      })
+    } catch (error) {
+      this.logger.error(
+        `Error finding appeal summons service recipient with police document id ${externalPoliceDocumentId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  async updateServiceRecipient(
+    id: string,
+    appealSummonsId: string,
+    data: UpdateAppealSummonsServiceRecipient,
+    options: { transaction: Transaction },
+  ): Promise<AppealSummonsServiceRecipient> {
+    try {
+      this.logger.debug(
+        `Updating appeal summons service recipient ${id} of summons ${appealSummonsId}`,
+      )
+
+      const [numberOfAffectedRows] =
+        await this.appealSummonsServiceRecipientModel.update(data, {
+          where: { id, appealSummonsId },
+          transaction: options.transaction,
+        })
+
+      if (numberOfAffectedRows < 1) {
+        throw new InternalServerErrorException(
+          `Could not update appeal summons service recipient ${id} of summons ${appealSummonsId}`,
+        )
+      }
+
+      const updated = await this.findServiceRecipientById(
+        id,
+        appealSummonsId,
+        options,
+      )
+
+      if (!updated) {
+        throw new InternalServerErrorException(
+          `Appeal summons service recipient ${id} of summons ${appealSummonsId} was not found after update`,
+        )
+      }
+
+      return updated
+    } catch (error) {
+      this.logger.error(
+        `Error updating appeal summons service recipient ${id} of summons ${appealSummonsId}:`,
         { error },
       )
 

@@ -1,0 +1,16 @@
+mutation SyncAppealSummonsServiceStatuses($caseId: String!) {
+  syncAppealSummonsServiceStatuses(caseId: $caseId) {
+    id
+    services {
+      id
+      defendantId
+      civilClaimantId
+      sentToServiceDate
+      externalPoliceDocumentId
+      serviceStatus
+      serviceDate
+      servedBy
+      comment
+    }
+  }
+}

@@ -700,6 +700,15 @@ Array [
   "case.verdictAppealCase.appealSummonses.defendants.id",
   "case.verdictAppealCase.appealSummonses.id",
   "case.verdictAppealCase.appealSummonses.sentToCourtOfAppealsDate",
+  "case.verdictAppealCase.appealSummonses.services.civilClaimantId",
+  "case.verdictAppealCase.appealSummonses.services.comment",
+  "case.verdictAppealCase.appealSummonses.services.defendantId",
+  "case.verdictAppealCase.appealSummonses.services.externalPoliceDocumentId",
+  "case.verdictAppealCase.appealSummonses.services.id",
+  "case.verdictAppealCase.appealSummonses.services.sentToServiceDate",
+  "case.verdictAppealCase.appealSummonses.services.servedBy",
+  "case.verdictAppealCase.appealSummonses.services.serviceDate",
+  "case.verdictAppealCase.appealSummonses.services.serviceStatus",
   "case.verdictAppealCase.appealType",
   "case.verdictAppealCase.courtSessions.courtRoom",
   "case.verdictAppealCase.courtSessions.created",
@@ -715,6 +724,15 @@ Array [
   "case.verdictAppealCase.sentAppealSummonses.defendants.id",
   "case.verdictAppealCase.sentAppealSummonses.id",
   "case.verdictAppealCase.sentAppealSummonses.sentToCourtOfAppealsDate",
+  "case.verdictAppealCase.sentAppealSummonses.services.civilClaimantId",
+  "case.verdictAppealCase.sentAppealSummonses.services.comment",
+  "case.verdictAppealCase.sentAppealSummonses.services.defendantId",
+  "case.verdictAppealCase.sentAppealSummonses.services.externalPoliceDocumentId",
+  "case.verdictAppealCase.sentAppealSummonses.services.id",
+  "case.verdictAppealCase.sentAppealSummonses.services.sentToServiceDate",
+  "case.verdictAppealCase.sentAppealSummonses.services.servedBy",
+  "case.verdictAppealCase.sentAppealSummonses.services.serviceDate",
+  "case.verdictAppealCase.sentAppealSummonses.services.serviceStatus",
   "case.verdictAppealCase.statementDeadlines.civilClaimantId",
   "case.verdictAppealCase.statementDeadlines.created",
   "case.verdictAppealCase.statementDeadlines.deadline",
@@ -1972,6 +1990,21 @@ Array [
 ]
 `;
 
+exports[`GraphQL operations select these field paths SendAppealSummonsToService 1`] = `
+Array [
+  "sendAppealSummonsToService.id",
+  "sendAppealSummonsToService.services.civilClaimantId",
+  "sendAppealSummonsToService.services.comment",
+  "sendAppealSummonsToService.services.defendantId",
+  "sendAppealSummonsToService.services.externalPoliceDocumentId",
+  "sendAppealSummonsToService.services.id",
+  "sendAppealSummonsToService.services.sentToServiceDate",
+  "sendAppealSummonsToService.services.servedBy",
+  "sendAppealSummonsToService.services.serviceDate",
+  "sendAppealSummonsToService.services.serviceStatus",
+]
+`;
+
 exports[`GraphQL operations select these field paths SendNotification 1`] = `
 Array [
   "sendNotification.notificationSent",
@@ -2017,6 +2050,21 @@ Array [
   "subpoena.servedBy",
   "subpoena.serviceDate",
   "subpoena.serviceStatus",
+]
+`;
+
+exports[`GraphQL operations select these field paths SyncAppealSummonsServiceStatuses 1`] = `
+Array [
+  "syncAppealSummonsServiceStatuses.id",
+  "syncAppealSummonsServiceStatuses.services.civilClaimantId",
+  "syncAppealSummonsServiceStatuses.services.comment",
+  "syncAppealSummonsServiceStatuses.services.defendantId",
+  "syncAppealSummonsServiceStatuses.services.externalPoliceDocumentId",
+  "syncAppealSummonsServiceStatuses.services.id",
+  "syncAppealSummonsServiceStatuses.services.sentToServiceDate",
+  "syncAppealSummonsServiceStatuses.services.servedBy",
+  "syncAppealSummonsServiceStatuses.services.serviceDate",
+  "syncAppealSummonsServiceStatuses.services.serviceStatus",
 ]
 `;
 

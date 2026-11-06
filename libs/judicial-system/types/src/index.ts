@@ -29,6 +29,7 @@ export { CourtSessionStringType } from './lib/courtSessionString'
 export {
   isSubpoenaInfoChanged,
   isVerdictInfoChanged,
+  DocumentDeliveryReceiverType,
   DocumentDeliverySupplementCode,
   DocumentDeliveryMethod,
   getServiceDateFromSupplements,
