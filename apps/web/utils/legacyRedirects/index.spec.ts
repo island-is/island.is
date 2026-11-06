@@ -1,6 +1,6 @@
 import { parse } from 'querystring'
 
-import { resolveLegacyRedirect } from '.'
+import { resolveLegacyRedirect } from './index'
 
 const mockExistingVerdicts = ['g-1079d456-805f-4ac2-9b25-f362c9a18011']
 const mockQuery = jest.fn()
