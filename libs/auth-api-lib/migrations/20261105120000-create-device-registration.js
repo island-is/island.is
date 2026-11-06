@@ -25,6 +25,7 @@ module.exports = {
           app_attest_counter: { type: Sequelize.BIGINT, allowNull: true },
           device_name: { type: Sequelize.STRING, allowNull: true },
           login_idp: { type: Sequelize.STRING, allowNull: false },
+          audkenni_sim_number: { type: Sequelize.STRING, allowNull: true },
           last_used: { type: Sequelize.DATE, allowNull: false },
           created: {
             type: Sequelize.DATE,

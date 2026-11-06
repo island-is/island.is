@@ -28,6 +28,7 @@ const registration = (overrides: Record<string, unknown> = {}) => ({
   installKeyThumbprint: 'install-1',
   platform: 'apple',
   loginIdp: 'audkenni_sim',
+  audkenniSimNumber: '7771234',
   lastUsed: new Date('2026-11-05T12:00:00Z').toISOString(),
   ...overrides,
 })
@@ -72,6 +73,7 @@ describe('DeviceRegistrationsController', () => {
         installKeyThumbprint: 'install-1',
         biometricKeyJwk: null,
         loginIdp: 'audkenni_sim',
+        audkenniSimNumber: '7771234',
       })
     })
 

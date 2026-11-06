@@ -101,6 +101,11 @@ export class DeviceRegistration extends Model<
   @ApiProperty()
   loginIdp!: string
 
+  /** SIM logins: the number logged in with. Electronic ID unlocks go there. */
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ nullable: true, type: String })
+  audkenniSimNumber!: string | null
+
   @Column({ type: DataType.DATE, allowNull: false })
   @ApiProperty()
   lastUsed!: Date
@@ -128,6 +133,7 @@ export class DeviceRegistration extends Model<
       appAttestCounter: this.appAttestCounter,
       deviceName: this.deviceName,
       loginIdp: this.loginIdp,
+      audkenniSimNumber: this.audkenniSimNumber,
       lastUsed: this.lastUsed,
       created: this.created,
     }
