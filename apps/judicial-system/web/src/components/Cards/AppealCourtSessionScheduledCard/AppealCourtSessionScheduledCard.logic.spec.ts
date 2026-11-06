@@ -36,13 +36,11 @@ describe('getBookedAppealCourtSessions', () => {
     ...overrides,
   })
 
-  // The backend hands the sessions over most recently booked first, the order
-  // the court's own list shows them in, and the card keeps it.
-  it('lists every booked session in the order given, held ones included', () => {
+  it('lists every booked session, newest first, held ones included', () => {
     expect(getBookedAppealCourtSessions(appeal())).toEqual([
       mainHearing,
-      held,
       preparatoryHearing,
+      held,
     ])
   })
 
@@ -51,8 +49,8 @@ describe('getBookedAppealCourtSessions', () => {
     (appealState) => {
       expect(getBookedAppealCourtSessions(appeal({ appealState }))).toEqual([
         mainHearing,
-        held,
         preparatoryHearing,
+        held,
       ])
     },
   )

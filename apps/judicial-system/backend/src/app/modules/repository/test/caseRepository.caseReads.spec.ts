@@ -120,11 +120,10 @@ describe('CaseRepositoryService - case reads', () => {
       ).toBeDefined()
     })
 
-    // The parties' agenda card lists the sessions in the order this include
-    // hands them over, and so does the court's own list: most recently booked
-    // first, under either load.
-    it('should read the court sessions of the verdict appeal most recently booked first', () => {
-      const order = [['created', 'DESC']]
+    // The court's list and the parties' agenda card both read latest session
+    // first, so that is the order either load hands the sessions over in.
+    it('should read the court sessions of the verdict appeal latest first', () => {
+      const order = [['sessionDate', 'DESC']]
       const fullAccessSessions = included(
         included(findOneOptions().include, 'verdictAppealCase')?.include,
         'courtSessions',
