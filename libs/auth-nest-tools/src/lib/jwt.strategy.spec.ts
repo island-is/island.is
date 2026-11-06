@@ -16,7 +16,7 @@ describe('JwtStrategy#validate', () => {
 
     fakeRequest = {
       headers: {
-        authorization: 'authorization',
+        authorization: 'Bearer authorization',
         'user-agent': 'test user agent',
       },
       ip: '1.1.1.1',
@@ -94,7 +94,7 @@ describe('JwtStrategy#validate', () => {
     }
     const request = {
       headers: {
-        authorization: 'authorization',
+        authorization: 'Bearer authorization',
         'user-agent': 'test user agent',
         'x-forwarded-for': '2.2.2.2, 3.3.3.3',
       },

@@ -427,6 +427,17 @@ export class Client extends Model {
   })
   requireClientSecret!: boolean
 
+  /** Every token request must carry a DPoP proof, and tokens are bound to its key. */
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: false,
+  })
+  requireDpop!: boolean
+
   @Column({
     type: DataType.DATE,
     allowNull: true,
