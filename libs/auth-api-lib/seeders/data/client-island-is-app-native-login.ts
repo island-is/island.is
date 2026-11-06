@@ -16,10 +16,10 @@ const CLIENT_ID = '@island.is/app'
  * Native login for the Ísland.is app: CIBA authenticated by the install key,
  * and biometric unlock with the device-key grant.
  *
- * The client stays public with DPoP optional, so installed versions using the
- * browser login keep working. IdentityServer requires DPoP of every attested
- * install itself. Switching require_client_secret and require_dpop on is a
- * later migration, once every version in use logs in natively.
+ * The client stays public, so installed versions using the browser login keep
+ * working. IdentityServer requires DPoP of every attested install itself, so
+ * require_dpop stays off. A later migration retires the browser login (grant
+ * and redirect URIs) and sets require_client_secret.
  */
 /** The testing app's own client in production; configured where it exists. */
 const TESTING_CLIENT_ID = '@island.is/island.dev-appid'
