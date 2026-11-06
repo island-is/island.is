@@ -2049,6 +2049,12 @@ export interface IGenericListFields {
 
   /** Show Search Input */
   showSearchInput?: boolean | undefined
+
+  /** Show Year Filter */
+  showYearFilter?: boolean | undefined
+
+  /** Year Filter Label */
+  yearFilterLabel?: string | undefined
 }
 
 /** A list of items which can be embedded into rich text */

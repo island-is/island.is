@@ -46,6 +46,12 @@ export class GenericList {
   @Field(() => Boolean, { nullable: true })
   alphabeticallyOrderFilterTags?: boolean
 
+  @Field(() => Boolean, { nullable: true })
+  showYearFilter?: boolean
+
+  @Field(() => String, { nullable: true })
+  yearFilterLabel?: string
+
   @CacheField(() => TextSearchOrder, { nullable: true })
   textSearchOrder?: TextSearchOrder
 }
@@ -93,4 +99,6 @@ export const mapGenericList = ({
   showSearchInput: fields.showSearchInput ?? true,
   alphabeticallyOrderFilterTags: fields.alphabeticallyOrderFilterTags ?? false,
   textSearchOrder: mapTextSearchOrder(fields.textSearchOrder),
+  showYearFilter: fields.showYearFilter ?? false,
+  yearFilterLabel: fields.yearFilterLabel,
 })
