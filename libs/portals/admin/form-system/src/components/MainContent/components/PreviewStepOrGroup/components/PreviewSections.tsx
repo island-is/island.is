@@ -145,6 +145,7 @@ const SummaryField = ({
       <Display
         item={field}
         valueIndex={valueIndex}
+        labelsOnly={field.fieldType === FieldTypesEnum.APPLICANT}
         requiredMissing={
           requiredMissing ||
           (Boolean(field.isRequired) && hasFieldValueError(field, valueIndex))

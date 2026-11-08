@@ -1,5 +1,9 @@
 import { FormSystemField, FormSystemSection } from '@island.is/api/schema'
-import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/enums'
+import {
+  ApplicantTypesEnum,
+  FieldTypesEnum,
+  SectionTypes,
+} from '@island.is/form-system/enums'
 import { expect, it, jest } from '@jest/globals'
 import { render, screen } from '@testing-library/react'
 import { ReactNode } from 'react'
@@ -14,6 +18,11 @@ jest.mock('@island.is/form-system/ui', () => ({
   >(
     '../../../../../../../../form-system/ui-components/src/lib/hasFieldValueError',
   ).hasFieldValueError,
+  ApplicantDisplay: jest.requireActual<
+    typeof import('../../../../../../../../form-system/ui-components/src/components/DisplayComponents/ApplicantDisplay/ApplicantDisplay')
+  >(
+    '../../../../../../../../form-system/ui-components/src/components/DisplayComponents/ApplicantDisplay/ApplicantDisplay',
+  ).ApplicantDisplay,
   m: { reviewApplication2: 'Review', edit: 'Edit' },
   DefaultDisplay: ({
     item,
@@ -42,6 +51,7 @@ jest.mock('@island.is/island-ui/core', () => ({
   GridRow: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   GridColumn: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   Text: ({ children }: { children: ReactNode }) => <span>{children}</span>,
+  Stack: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   Button: ({ children }: { children: ReactNode }) => (
     <button>{children}</button>
   ),
@@ -61,6 +71,56 @@ const field = (
   isPartOfMultiset,
   values: Array.from({ length: count }, () => ({ json: { text: 'value' } })),
 })
+
+it.each([
+  { applicantType: ApplicantTypesEnum.INDIVIDUAL, isPhoneRequired: true },
+  { applicantType: ApplicantTypesEnum.INDIVIDUAL, isPhoneRequired: false },
+  { applicantType: ApplicantTypesEnum.LEGAL_ENTITY, isPhoneRequired: true },
+])(
+  'renders only applicant property labels for $applicantType with phone required=$isPhoneRequired',
+  ({ applicantType, isPhoneRequired }) => {
+    const applicant: FormSystemField = {
+      ...field('applicant', false),
+      fieldType: FieldTypesEnum.APPLICANT,
+      fieldSettings: {
+        applicantType,
+        isPhoneRequired,
+        isAddressRequired: true,
+      },
+      values: [
+        {
+          json: {
+            name: 'Existing Name',
+            email: 'existing@example.com',
+            phoneNumber: '+3546111111',
+          },
+        },
+      ],
+    }
+    const sections = [
+      {
+        id: 'section',
+        sectionType: SectionTypes.PARTIES,
+        screens: [{ id: 'screen', fields: [applicant] }],
+      },
+    ] as unknown as FormSystemSection[]
+    render(<PreviewSummary sections={sections} onNavigate={jest.fn()} />)
+
+    expect(screen.getByText('Kennitala')).toBeTruthy()
+    expect(screen.getByText('Nafn')).toBeTruthy()
+    expect(screen.getByText('Heimilisfang')).toBeTruthy()
+    expect(screen.getByText('Póstnúmer')).toBeTruthy()
+    expect(screen.queryByText('Existing Name')).toBeNull()
+    expect(screen.queryByText('existing@example.com')).toBeNull()
+    expect(screen.queryByText('+354 611 1111')).toBeNull()
+    expect(screen.queryByText('Netfang') !== null).toBe(
+      applicantType === ApplicantTypesEnum.INDIVIDUAL,
+    )
+    expect(screen.queryByText('Símanúmer') !== null).toBe(
+      applicantType === ApplicantTypesEnum.INDIVIDUAL && isPhoneRequired,
+    )
+  },
+)
 
 it.each([true, false])(
   'matches preview screen ordering with multiset=%s',
