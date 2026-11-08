@@ -683,7 +683,7 @@ export const m = defineMessages({
   },
   preview: {
     id: 'form.system:preview',
-    defaultMessage: 'Skoða',
+    defaultMessage: 'Skoða skjá',
     description: 'Preview',
   },
   lastModified: {
