@@ -3,9 +3,13 @@ import {
   FormSystemForm,
   FormSystemSection,
 } from '@island.is/api/schema'
-import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/enums'
+import {
+  ApplicantTypesEnum,
+  FieldTypesEnum,
+  SectionTypes,
+} from '@island.is/form-system/enums'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { ButtonHTMLAttributes, ReactNode } from 'react'
+import { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
 import { PreviewStepOrGroup } from './PreviewStepOrGroup'
 
@@ -30,11 +34,37 @@ jest.mock('react-intl', () => ({
 }))
 jest.mock('@island.is/form-system/ui', () => ({
   SectionTypes: jest.requireActual('@island.is/form-system/enums').SectionTypes,
-  FormStepper: () => null,
+  FormStepper: ({ sections }: { sections: FormSystemSection[] }) => (
+    <div data-testid="applicant-steps">
+      {sections
+        .filter(
+          (section) =>
+            section.sectionType ===
+            jest.requireActual('@island.is/form-system/enums').SectionTypes
+              .PARTIES,
+        )
+        .flatMap((section) => section.screens ?? [])
+        .map((step) => (
+          <span key={step?.id}>{step?.id}</span>
+        ))}
+    </div>
+  ),
   m: {
     continue: { defaultMessage: 'Continue' },
     back: { defaultMessage: 'Back' },
     preview: { defaultMessage: 'Preview' },
+    relevantParties: { defaultMessage: 'Applicants' },
+    individual: { defaultMessage: 'Einstaklingur (innskráður)' },
+    individualWithPowerOfAttorney: {
+      defaultMessage: 'Einstaklingur með prókúru',
+    },
+    individualOnBehalfPerson: {
+      defaultMessage: 'Einstaklingur í umboði annars einstaklings',
+    },
+    individualOnBehalfLegalEntity: {
+      defaultMessage: 'Einstaklingur í umboði lögaðila',
+    },
+    legalGuardian: { defaultMessage: 'Forsjáraðili' },
   },
 }))
 jest.mock('@island.is/island-ui/core', () => {
@@ -47,7 +77,23 @@ jest.mock('@island.is/island-ui/core', () => {
     GridContainer: Container,
     GridRow: Container,
     Text: Container,
+    Stack: Container,
     Header: () => null,
+    RadioButton: ({
+      label,
+      ...props
+    }: InputHTMLAttributes<HTMLInputElement> & { label: string }) => (
+      <label>
+        {label}
+        <input
+          type="radio"
+          name={props.name}
+          value={props.value}
+          checked={props.checked}
+          onChange={props.onChange}
+        />
+      </label>
+    ),
     ModalBase: ({
       children,
     }: {
@@ -79,7 +125,9 @@ jest.mock('./components/PreviewSections', () => ({
       {sections.flatMap((section) =>
         (section.screens ?? []).flatMap((step) =>
           (step?.fields ?? []).map((field) =>
-            field && hasValidationError(field, 0) ? (
+            field?.fieldType === 'APPLICANT' ? (
+              <span key={field.id}>{field.id}</span>
+            ) : field && hasValidationError(field, 0) ? (
               <span key={field.id}>Vantar gildi</span>
             ) : null,
           ),
@@ -87,6 +135,9 @@ jest.mock('./components/PreviewSections', () => ({
       )}
       <button onClick={() => onNavigate('input', 'first')}>
         Edit first screen
+      </button>
+      <button onClick={() => onNavigate('applicants', 'applicant-screen')}>
+        Edit applicants
       </button>
     </>
   ),
@@ -323,3 +374,118 @@ it.each([false, true, undefined])(
     expect(screen.queryByText('Vantar gildi')).toBeNull()
   },
 )
+
+const loginForm = {
+  ...form,
+  sections: [
+    {
+      id: 'applicants',
+      sectionType: SectionTypes.PARTIES,
+      name: { is: 'Applicants' },
+    },
+    {
+      id: 'summary',
+      sectionType: SectionTypes.SUMMARY,
+      name: { is: 'Summary' },
+    },
+  ],
+  screens: Object.values(ApplicantTypesEnum).map((applicantType) => ({
+    id: `screen-${applicantType}`,
+    sectionId: 'applicants',
+  })),
+  fields: Object.values(ApplicantTypesEnum).map((applicantType) => ({
+    id: `applicant-${applicantType}`,
+    screenId: `screen-${applicantType}`,
+    fieldType: FieldTypesEnum.APPLICANT,
+    fieldSettings: { applicantType },
+  })),
+  dependencies: [],
+} as unknown as FormSystemForm
+
+it.each([
+  {
+    label: 'Einstaklingur (innskráður)',
+    types: [ApplicantTypesEnum.INDIVIDUAL],
+  },
+  {
+    label: 'Einstaklingur með prókúru',
+    types: [
+      ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION,
+      ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER,
+    ],
+  },
+  {
+    label: 'Einstaklingur í umboði annars einstaklings',
+    types: [
+      ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL,
+      ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION,
+    ],
+  },
+  {
+    label: 'Einstaklingur í umboði lögaðila',
+    types: [
+      ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY,
+      ApplicantTypesEnum.LEGAL_ENTITY,
+    ],
+  },
+  {
+    label: 'Forsjáraðili',
+    types: [
+      ApplicantTypesEnum.LEGAL_GUARDIAN,
+      ApplicantTypesEnum.WARD_OF_LEGAL_GUARDIAN,
+    ],
+  },
+])(
+  'shows one login screen and only the $label applicants in summary',
+  async ({ label, types }) => {
+    renderPreview(true, undefined, loginForm)
+    expect(screen.getAllByRole('radio')).toHaveLength(5)
+    expect(screen.queryByRole('textbox')).toBeNull()
+    expect(screen.getByTestId('applicant-steps').textContent).toBe(
+      'preview-applicant-login',
+    )
+    fireEvent.click(screen.getByRole('radio', { name: label }))
+    fireEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    await waitFor(() => expect(screen.getByText('Summary')).toBeTruthy())
+    for (const applicantType of Object.values(ApplicantTypesEnum)) {
+      if ((types as string[]).includes(applicantType)) {
+        expect(screen.getByText(`applicant-${applicantType}`)).toBeTruthy()
+      } else {
+        expect(screen.queryByText(`applicant-${applicantType}`)).toBeNull()
+      }
+    }
+    fireEvent.click(screen.getByRole('button', { name: 'Edit applicants' }))
+    expect(screen.getByRole('radio', { name: label })).toHaveProperty(
+      'checked',
+      true,
+    )
+    fireEvent.click(
+      screen.getByRole('radio', { name: 'Einstaklingur (innskráður)' }),
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    await waitFor(() =>
+      expect(
+        screen.getByText(`applicant-${ApplicantTypesEnum.INDIVIDUAL}`),
+      ).toBeTruthy(),
+    )
+    expect(
+      screen.queryByText(
+        `applicant-${ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER}`,
+      ),
+    ).toBeNull()
+  },
+)
+
+it('only offers login groups enabled in the form', () => {
+  renderPreview(true, undefined, {
+    ...loginForm,
+    fields: loginForm.fields?.filter(
+      (field) =>
+        field?.fieldSettings?.applicantType === ApplicantTypesEnum.INDIVIDUAL,
+    ),
+  })
+  expect(screen.getAllByRole('radio')).toHaveLength(1)
+  expect(
+    screen.getByRole('radio', { name: 'Einstaklingur (innskráður)' }),
+  ).toHaveProperty('checked', true)
+})

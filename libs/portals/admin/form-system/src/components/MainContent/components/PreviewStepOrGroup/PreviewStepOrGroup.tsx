@@ -8,6 +8,8 @@ import {
   GridRow,
   Header,
   ModalBase,
+  RadioButton,
+  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client/react'
@@ -27,6 +29,7 @@ import {
 import { ControlContext } from '../../../../context/ControlContext'
 import { FormProvider, useForm } from 'react-hook-form'
 import { NavbarSelectStatus } from '../../../../lib/utils/interfaces'
+import { applicantTypeGroups } from '../../../../lib/utils/applicantTypeGroups'
 import { Preview } from '../Preview/Preview'
 import { MultiSet } from './components/MultiSet'
 import { PreviewCompleted } from './components/PreviewCompleted'
@@ -36,6 +39,7 @@ import {
   getPreviewSections,
   getPreviewSteps,
   getRestrictedPreviewStart,
+  PREVIEW_APPLICANT_SCREEN_ID,
   updatePreviewFields,
   updateRestrictedPreview,
 } from './previewState'
@@ -122,7 +126,76 @@ const PreviewStepOrGroupContent = ({
     return () => setSelectStatus(NavbarSelectStatus.OFF)
   }, [setSelectStatus])
 
-  const sections = getPreviewSections(previewData, enforceRestrictions)
+  const loginOptions = [
+    {
+      id: 'individual',
+      types: applicantTypeGroups.individual,
+      label: m.individual,
+    },
+    {
+      id: 'procuration',
+      types: applicantTypeGroups.procuration,
+      label: m.individualWithPowerOfAttorney,
+    },
+    {
+      id: 'individualDelegation',
+      types: applicantTypeGroups.individualDelegation,
+      label: m.individualOnBehalfPerson,
+    },
+    {
+      id: 'legalEntityDelegation',
+      types: applicantTypeGroups.legalEntityDelegation,
+      label: m.individualOnBehalfLegalEntity,
+    },
+    {
+      id: 'legalGuardian',
+      types: applicantTypeGroups.legalGuardian,
+      label: m.legalGuardian,
+    },
+  ].filter((option) =>
+    previewData.fields.some(
+      (field) =>
+        field.fieldType === 'APPLICANT' &&
+        option.types.includes(field.fieldSettings?.applicantType ?? ''),
+    ),
+  )
+  const [selectedLogin, setSelectedLogin] = useState(loginOptions[0]?.id)
+  const selectedApplicantTypes = loginOptions.find(
+    (option) => option.id === selectedLogin,
+  )?.types
+  const summarySections = getPreviewSections(
+    previewData,
+    enforceRestrictions,
+    selectedApplicantTypes,
+  ).map((section) =>
+    enforceRestrictions &&
+    selectedApplicantTypes &&
+    section.sectionType === SectionTypes.PARTIES
+      ? {
+          ...section,
+          screens: section.screens?.filter(
+            (screen) => (screen?.fields?.length ?? 0) > 0,
+          ),
+        }
+      : section,
+  )
+  const sections = summarySections.map((section) =>
+    enforceRestrictions &&
+    loginOptions.length > 0 &&
+    section.sectionType === SectionTypes.PARTIES
+      ? {
+          ...section,
+          screens: [
+            {
+              id: PREVIEW_APPLICANT_SCREEN_ID,
+              sectionId: section.id,
+              name: section.name,
+              fields: [],
+            },
+          ],
+        }
+      : section,
+  )
 
   const previewSteps = getPreviewSteps(sections)
   const [stepId, setStepId] = useState(() => {
@@ -260,14 +333,22 @@ const PreviewStepOrGroupContent = ({
                           )}
                           {sectionType === SectionTypes.SUMMARY && (
                             <PreviewSummary
-                              sections={sections}
+                              sections={summarySections}
                               hasValidationError={(field, valueIndex) =>
                                 validationErrors[`${field.id}.${valueIndex}`] ??
                                 false
                               }
                               onNavigate={(sectionId, screenId) => {
+                                const isApplicantSection =
+                                  enforceRestrictions &&
+                                  sections.some(
+                                    (section) =>
+                                      section.id === sectionId &&
+                                      section.sectionType ===
+                                        SectionTypes.PARTIES,
+                                  )
                                 const index = previewSteps.findIndex((step) =>
-                                  screenId
+                                  screenId && !isApplicantSection
                                     ? step.screen?.id === screenId
                                     : step.section.id === sectionId,
                                 )
@@ -275,7 +356,30 @@ const PreviewStepOrGroupContent = ({
                               }}
                             />
                           )}
+                          {currentScreen?.id ===
+                            PREVIEW_APPLICANT_SCREEN_ID && (
+                            <Stack space={2}>
+                              <Text variant="h2" as="h2">
+                                {currentSection?.name?.[lang] ??
+                                  formatMessage(m.relevantParties)}
+                              </Text>
+                              {loginOptions.map((option) => (
+                                <RadioButton
+                                  key={option.id}
+                                  id={`preview-applicant-login-${option.id}`}
+                                  name="previewApplicantLogin"
+                                  value={option.id}
+                                  label={formatMessage(option.label)}
+                                  checked={selectedLogin === option.id}
+                                  onChange={() => setSelectedLogin(option.id)}
+                                  large
+                                  backgroundColor="blue"
+                                />
+                              ))}
+                            </Stack>
+                          )}
                           {currentScreen &&
+                            currentScreen.id !== PREVIEW_APPLICANT_SCREEN_ID &&
                             sectionType !== SectionTypes.PREMISES &&
                             sectionType !== SectionTypes.SUMMARY &&
                             sectionType !== SectionTypes.COMPLETED &&

@@ -8,6 +8,8 @@ import type {
 import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/enums'
 import type { Action } from '@island.is/form-system/ui'
 
+export const PREVIEW_APPLICANT_SCREEN_ID = 'preview-applicant-login'
+
 const valueKeys: Record<string, string> = {
   SET_BANK_ACCOUNT: 'bankAccount',
   SET_CHECKBOX_VALUE: 'checkboxValue',
@@ -107,6 +109,7 @@ export const createPreviewState = (form: FormSystemForm): PreviewState => ({
 export const getPreviewSections = (
   state: PreviewState,
   enforceRestrictions: boolean,
+  applicantTypes?: readonly string[],
 ): FormSystemSection[] => {
   const isHidden = (id: string | null | undefined) => {
     const dependencies = state.dependencies.filter((dependency) =>
@@ -139,6 +142,15 @@ export const getPreviewSections = (
           isHidden: screenHidden,
           fields: state.fields
             .filter((field) => field.screenId === screen.id)
+            .filter(
+              (field) =>
+                !enforceRestrictions ||
+                section.sectionType !== SectionTypes.PARTIES ||
+                !applicantTypes ||
+                applicantTypes.includes(
+                  field.fieldSettings?.applicantType ?? '',
+                ),
+            )
             .map((field) => ({
               ...field,
               isHidden: applyDependencies
@@ -223,6 +235,11 @@ export const updateRestrictedPreview = (
 }
 
 export const getRestrictedPreviewStart = (steps: PreviewStep[]): number => {
+  const loginIndex = steps.findIndex(
+    (step) => step.screen?.id === PREVIEW_APPLICANT_SCREEN_ID,
+  )
+  if (loginIndex >= 0) return loginIndex
+
   const applicantsIndex = steps.reduce(
     (lastIndex, step, index) =>
       step.section.sectionType === SectionTypes.PARTIES ? index : lastIndex,
