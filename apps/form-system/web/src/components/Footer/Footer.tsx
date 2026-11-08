@@ -88,11 +88,13 @@ const stripFieldListsFromSections = (
 interface Props {
   externalDataAgreement: boolean
   isValidateEligibilityError: boolean
+  onConfirmPremises?: () => Promise<boolean>
 }
 
 export const Footer = ({
   externalDataAgreement,
   isValidateEligibilityError,
+  onConfirmPremises,
 }: Props) => {
   const { state, dispatch } = useApplicationContext()
   const { formatMessage } = useLocale()
@@ -243,6 +245,14 @@ export const Footer = ({
     if (hasInvalidNumber) return
     if (!isValid && (isParties || !allowProceed)) return
     if ((state.errors?.length ?? 0) > 0) return
+
+    if (
+      currentSectionType === SectionTypes.PREMISES &&
+      onConfirmPremises &&
+      !(await onConfirmPremises())
+    ) {
+      return
+    }
 
     if (isCompletedSection) {
       window.open('/minarsidur', '_blank', 'noopener,noreferrer')

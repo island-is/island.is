@@ -20,7 +20,11 @@ jest.mock('@island.is/form-system/graphql', () => ({
 jest.mock('@island.is/form-system/ui', () => ({
   FieldTypesEnum: { NUMBERBOX: 'NUMBERBOX' },
   SectionTypes: jest.requireActual('@island.is/form-system/enums').SectionTypes,
-  m: { continue: 'Continue', back: 'Back' },
+  m: {
+    continue: 'Continue',
+    back: 'Back',
+    externalDataConfirmation: 'Confirm',
+  },
 }))
 jest.mock('@island.is/localization', () => ({
   useLocale: () => ({ formatMessage: (message: string) => message }),
@@ -121,5 +125,49 @@ it.each([
     await waitFor(() =>
       expect(dispatch).toHaveBeenCalledWith({ type: 'INCREMENT' }),
     )
+  },
+)
+
+it.each([true, false])(
+  'checks premises eligibility only after confirmation and proceeds when successful=%s',
+  async (successful) => {
+    const section = { id: 'premises', sectionType: SectionTypes.PREMISES }
+    const onConfirmPremises = jest.fn().mockResolvedValue(successful)
+    jest.mocked(useApplicationContext).mockReturnValue({
+      state: {
+        currentScreen: { data: { id: 'screen', fields: [] } },
+        currentSection: { index: 0, data: section },
+        sections: [section],
+        application: { id: 'application' },
+      },
+      dispatch,
+    } as unknown as ReturnType<typeof useApplicationContext>)
+
+    const Wrapper = () => {
+      const methods = useForm()
+      return (
+        <FormProvider {...methods}>
+          <Footer
+            externalDataAgreement
+            isValidateEligibilityError={false}
+            onConfirmPremises={onConfirmPremises}
+          />
+        </FormProvider>
+      )
+    }
+    render(<Wrapper />)
+    expect(onConfirmPremises).not.toHaveBeenCalled()
+    expect(mutate).not.toHaveBeenCalled()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm' }))
+    await waitFor(() => expect(onConfirmPremises).toHaveBeenCalledTimes(1))
+    if (successful) {
+      await waitFor(() =>
+        expect(dispatch).toHaveBeenCalledWith({ type: 'INCREMENT' }),
+      )
+    } else {
+      expect(mutate).not.toHaveBeenCalled()
+      expect(dispatch).not.toHaveBeenCalledWith({ type: 'INCREMENT' })
+    }
   },
 )
