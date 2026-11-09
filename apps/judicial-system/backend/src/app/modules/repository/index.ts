@@ -1,10 +1,12 @@
 export { AppealCase } from './models/appealCase.model'
+export { AppealCaseJudge } from './models/appealCaseJudge.model'
 export { AppealDecision } from './models/appealDecision.model'
 export { AppealEventLog } from './models/appealEventLog.model'
 export { AppealCourtSession } from './models/appealCourtSession.model'
 export { AppealStatementDeadline } from './models/appealStatementDeadline.model'
 export { AppealSummons } from './models/appealSummons.model'
 export { AppealSummonsDefendant } from './models/appealSummonsDefendant.model'
+export { AppealSummonsServiceRecipient } from './models/appealSummonsServiceRecipient.model'
 export { Case } from './models/case.model'
 export { CaseArchive } from './models/caseArchive.model'
 export { CaseFile } from './models/caseFile.model'
@@ -25,6 +27,7 @@ export { InstitutionContact } from './models/institutionContact.model'
 export { LawyerRegistry } from './models/lawyerRegistry.model'
 export { MessageSuspension } from './models/messageSuspension.model'
 export { Notification, Recipient } from './models/notification.model'
+export { ServiceInterruptionBanner } from './models/serviceInterruptionBanner.model'
 export { Offense } from './models/offense.model'
 export { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
 export { RobotLog } from './models/robotLog.model'
@@ -34,6 +37,7 @@ export { Verdict } from './models/verdict.model'
 export { Victim } from './models/victim.model'
 
 export { AppealCaseRepositoryService } from './services/appealCaseRepository.service'
+export { AppealCaseJudgeRepositoryService } from './services/appealCaseJudgeRepository.service'
 export {
   AppealDecisionRepositoryService,
   AppealDecisionPartyKey,
@@ -51,7 +55,9 @@ export {
 } from './services/appealStatementDeadlineRepository.service'
 export {
   AppealSummonsRepositoryService,
+  CreateAppealSummonsServiceRecipient,
   UpdateAppealSummons,
+  UpdateAppealSummonsServiceRecipient,
 } from './services/appealSummonsRepository.service'
 export { CaseRepositoryService } from './services/caseRepository.service'
 export { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'
@@ -113,6 +119,10 @@ export {
   NotificationRepositoryService,
   CreateNotification,
 } from './services/notificationRepository.service'
+export {
+  ServiceInterruptionBannerRepositoryService,
+  SERVICE_INTERRUPTION_BANNER_ID,
+} from './services/serviceInterruptionBannerRepository.service'
 export {
   OffenseRepositoryService,
   UpdateOffense,

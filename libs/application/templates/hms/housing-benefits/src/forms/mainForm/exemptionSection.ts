@@ -1,7 +1,6 @@
 import {
   buildAlertMessageField,
   buildDescriptionField,
-  buildFileUploadField,
   buildMultiField,
   buildSection,
   buildCheckboxField,
@@ -9,8 +8,7 @@ import {
 } from '@island.is/application/core'
 import { doesAddressMatchRentalContract } from '../../utils/rentalAgreementUtils'
 import * as m from '../../lib/messages'
-import { UPLOAD_ACCEPT } from '../../utils/constants'
-import { isExemptionReason, isExemptionRequested } from '../../utils/utils'
+import { isExemptionRequested } from '../../utils/utils'
 
 export const exemptionSection = buildSection({
   condition: (answers, externalData) =>
@@ -48,11 +46,6 @@ export const exemptionSection = buildSection({
           id: 'exemptionReason',
           title: m.draftMessages.exemptionSection.checkboxTitle,
           marginBottom: 4,
-          clearOnChange: [
-            'exemptionDocuments.studies',
-            'exemptionDocuments.health',
-            'exemptionDocuments.work',
-          ],
           options: [
             {
               value: 'studies',
@@ -71,24 +64,6 @@ export const exemptionSection = buildSection({
               label: m.draftMessages.exemptionSection.checkboxLabelWork,
             },
           ],
-        }),
-        buildFileUploadField({
-          condition: (answers) => isExemptionReason(answers, 'studies'),
-          id: 'exemptionDocuments.studies',
-          title: m.draftMessages.exemptionSection.fileUploadStudiesTitle,
-          uploadAccept: UPLOAD_ACCEPT,
-        }),
-        buildFileUploadField({
-          condition: (answers) => isExemptionReason(answers, 'health'),
-          id: 'exemptionDocuments.health',
-          title: m.draftMessages.exemptionSection.fileUploadHealthTitle,
-          uploadAccept: UPLOAD_ACCEPT,
-        }),
-        buildFileUploadField({
-          condition: (answers) => isExemptionReason(answers, 'work'),
-          id: 'exemptionDocuments.work',
-          title: m.draftMessages.exemptionSection.fileUploadWorkTitle,
-          uploadAccept: UPLOAD_ACCEPT,
         }),
       ],
     }),

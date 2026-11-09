@@ -57,7 +57,9 @@ import type { CaseFilesListCase } from './IndictmentCaseFilesList.logic'
 import {
   getIndictmentPdfDisplayName,
   getVisibleSubpoenas,
+  shouldHideCaseFilesRecordFromDefender,
   shouldShowPoliceDigitalCaseFilesSection,
+  shouldShowUploadedCaseFilesSection,
 } from './IndictmentCaseFilesList.logic'
 import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
 import RulingOrderFileRow from './RulingOrderFileRow'
@@ -338,6 +340,7 @@ const useFilteredCaseFiles = (
         CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE, // ákærði
         CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE, //réttargæslumaður
         CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE, // lögmaður
+        CaseFileCategory.COURT_CASE_FILE, // dómari
       ]),
       civilClaims: filterByCategories(CaseFileCategory.CIVIL_CLAIM),
       sentToPrisonAdminFiles: filterByCategories(
@@ -446,6 +449,11 @@ const IndictmentCaseFilesList: FC<Props> = ({
   )
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
+  const hideCaseFilesRecord = shouldHideCaseFilesRecordFromDefender(
+    workingCase.id,
+    user,
+  )
+
   const visiblePoliceCaseNumbers = useMemo(
     () =>
       isDefenceUser(user)
@@ -547,7 +555,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
             />
           </>
         )}
-        {displayGeneratedPDFs && (
+        {displayGeneratedPDFs && !hideCaseFilesRecord && (
           <Box>
             <SectionHeading
               title={strings.caseFileTitle}
@@ -884,23 +892,28 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 />
               )}
             </FileSection>
-            <Box>
-              <SectionHeading
-                title={strings.uploadedCaseFiles}
-                marginBottom={3}
-                heading="h4"
-                variant="h4"
-              />
-              <CaseFileTable
-                caseFiles={filteredFiles.uploadedCaseFiles}
-                onOpenFile={onOpen}
-                canRejectFiles={
-                  isDistrictCourtUser(user) &&
-                  !connectedCaseParentId &&
-                  workingCase.state !== CaseState.CORRECTING
-                }
-              />
-            </Box>
+            {shouldShowUploadedCaseFilesSection(
+              filteredFiles.uploadedCaseFiles.length,
+              forceDisplayAdditionalFiles,
+            ) && (
+              <Box>
+                <SectionHeading
+                  title={strings.uploadedCaseFiles}
+                  marginBottom={3}
+                  heading="h4"
+                  variant="h4"
+                />
+                <CaseFileTable
+                  caseFiles={filteredFiles.uploadedCaseFiles}
+                  onOpenFile={onOpen}
+                  canRejectFiles={
+                    isDistrictCourtUser(user) &&
+                    !connectedCaseParentId &&
+                    workingCase.state !== CaseState.CORRECTING
+                  }
+                />
+              </Box>
+            )}
             <AnimatePresence>
               {fileNotFound && (
                 <FileNotFoundModal dismiss={dismissFileNotFound} />

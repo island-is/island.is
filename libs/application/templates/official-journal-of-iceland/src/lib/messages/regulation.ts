@@ -493,12 +493,12 @@ export const regulation = {
       },
     }),
     dateWarnings: defineMessages({
-      effectiveBeforePublish: {
-        id: 'ojoi.application:regulation.summary.dateWarnings.effectiveBeforePublish',
+      effectiveOnOrBeforePublish: {
+        id: 'ojoi.application:regulation.summary.dateWarnings.effectiveOnOrBeforePublish',
         defaultMessage:
-          'Valinn gildistökudagur er á undan útgáfudegi. Almennt er miðað við að reglugerð öðlist gildi eftir birtingu.',
+          'Gildistökudagur er sami dagur og útgáfudagur eða fyrr. Slíkt tíðkast aðeins í sérstökum undantekningartilvikum. Vinsamlegast gangið úr skugga um að dagsetningin sé rétt.',
         description:
-          'Warning when the effective date is before the requested publish date',
+          'Warning when the effective date is on or before the requested publish date',
       },
       effectiveDateEarly: {
         id: 'ojoi.application:regulation.summary.dateWarnings.effectiveDateEarly',
@@ -506,19 +506,24 @@ export const regulation = {
         description: 'Warning when the effective date is in the past',
       },
     }),
-    impactsAfterEffectiveDate: defineMessages({
+    impactsOffEffectiveDate: defineMessages({
       title: {
-        id: 'ojoi.application:regulation.summary.impactsAfterEffectiveDate.title',
-        defaultMessage: 'Gildistökudagur er á undan dagsetningu áhrifa',
+        id: 'ojoi.application:regulation.summary.impactsOffEffectiveDate.title',
+        defaultMessage: 'Dagsetning áhrifa passar ekki við gildistökudag',
         description:
-          'Title of the warning when the effective date is before an impact date',
+          'Title of the warning when an impact is not dated on the effective date',
       },
       message: {
-        id: 'ojoi.application:regulation.summary.impactsAfterEffectiveDate.message',
+        id: 'ojoi.application:regulation.summary.impactsOffEffectiveDate.message',
         defaultMessage:
-          'Reglugerðin tekur gildi {effectiveDate} en áhrif hennar á {regulations} eru dagsett síðar. Slíkt tíðkast aðeins í undantekningartilvikum. Gakktu úr skugga um að dagsetningarnar séu réttar.',
+          'Reglugerðin tekur gildi {effectiveDate} en áhrif hennar á {regulations} eru dagsett annan dag. Almenna reglan er að breytingar taki gildi sama dag og reglugerðin. Gakktu úr skugga um að dagsetningarnar séu réttar.',
         description:
-          'Message of the warning when the effective date is before an impact date',
+          'Message of the warning when an impact is not dated on the effective date',
+      },
+      openImpacts: {
+        id: 'ojoi.application:regulation.summary.impactsOffEffectiveDate.openImpacts',
+        defaultMessage: 'Opna áhrif',
+        description: 'Link back to the impacts step from the warning',
       },
     }),
     textComparison: defineMessages({

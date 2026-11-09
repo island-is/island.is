@@ -6,6 +6,7 @@ import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   BreadCrumbItem,
+  LinkV2,
   Stack,
   TableOfContents,
   Text,
@@ -26,18 +27,24 @@ import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
   OneColumnText,
+  ProjectParentSubpage,
   Query,
   QueryGetNamespaceArgs,
   QueryGetProjectPageArgs,
+  QueryGetProjectParentSubpageArgs,
   Slice,
   Stepper as StepperSchema,
 } from '@island.is/web/graphql/schema'
 import { linkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { GET_PROJECT_PAGE_QUERY } from '@island.is/web/screens/queries/Project'
+import {
+  GET_PROJECT_PAGE_QUERY,
+  GET_PROJECT_PARENT_SUBPAGE_QUERY,
+} from '@island.is/web/screens/queries/Project'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
 
@@ -63,6 +70,9 @@ export interface PageProps {
   customContentfulIds?: (string | undefined)[]
   customBreadcrumbItems?: BreadCrumbItem[]
   customContent?: React.ReactNode
+  parentSubpage?: ProjectParentSubpage | null
+  // Slug of the parent subpage chapter being viewed
+  chapterSlug?: string
 }
 const ProjectPage: Screen<PageProps> = ({
   projectPage,
@@ -75,6 +85,8 @@ const ProjectPage: Screen<PageProps> = ({
   customContentfulIds,
   customBreadcrumbItems,
   customContent,
+  parentSubpage,
+  chapterSlug,
 }) => {
   const n = useNamespace(namespace)
   const p = useNamespace(projectNamespace)
@@ -83,19 +95,24 @@ const ProjectPage: Screen<PageProps> = ({
 
   const router = useRouter()
 
+  const subpageSlug = parentSubpage ? chapterSlug : router.query.subSlug
+
   const subpage = useMemo(
     () =>
       projectPage?.projectSubpages.find((x) => {
-        return x.slug === router.query.subSlug
+        return x.slug === subpageSlug
       }),
-    [router.query.subSlug, projectPage?.projectSubpages],
+    [subpageSlug, projectPage?.projectSubpages],
   )
 
   const contentfulIds = customContentfulIds
     ? customContentfulIds
-    : [projectPage?.id, subpage?.id]
+    : [projectPage?.id, parentSubpage?.id, subpage?.id]
 
   useContentfulId(...contentfulIds)
+  useLocalLinkTypeResolver(
+    parentSubpage ? 'projectparentsubpagechild' : undefined,
+  )
 
   // Only link events to the project event routes when they can resolve an organization
   const eventLinkParams = getProjectEventsOrganizationSlug(projectPage)
@@ -176,9 +193,55 @@ const ProjectPage: Screen<PageProps> = ({
           readClass="rs_read"
         />
       )}
+      {!!parentSubpage && (
+        <Box marginBottom={4} className="rs_read">
+          <Stack space={4}>
+            <Text as="h1" variant="h1">
+              {parentSubpage.title}
+            </Text>
+            {parentSubpage.childLinks.length > 1 && (
+              <Box
+                paddingX={4}
+                paddingY={2}
+                borderLeftWidth="standard"
+                borderColor="blue200"
+              >
+                <Stack space={1}>
+                  <Text variant="h5" as="h2">
+                    {p(
+                      'parentSubpageTableOfContentsTitle',
+                      activeLocale === 'is' ? 'Á þessari síðu' : 'On this page',
+                    )}
+                  </Text>
+                  <Stack space={1}>
+                    {parentSubpage.childLinks.map((link) => {
+                      const isSelected =
+                        link.href.split('/').pop() === chapterSlug
+                      return (
+                        <LinkV2 key={link.href} href={link.href}>
+                          <Text
+                            variant="small"
+                            fontWeight={isSelected ? 'semiBold' : 'regular'}
+                            color={isSelected ? 'blue400' : 'blue600'}
+                          >
+                            {link.label}
+                          </Text>
+                        </LinkV2>
+                      )
+                    })}
+                  </Stack>
+                </Stack>
+              </Box>
+            )}
+          </Stack>
+        </Box>
+      )}
       {!!subpage && (
         <Box marginBottom={1} className="rs_read">
-          <Text as="h1" variant="h1">
+          <Text
+            as={parentSubpage ? 'h2' : 'h1'}
+            variant={parentSubpage ? 'h2' : 'h1'}
+          >
             {subpage.title}
           </Text>
           {shouldDisplayWebReader && (
@@ -306,7 +369,11 @@ const ProjectPage: Screen<PageProps> = ({
   return (
     <>
       <HeadWithSocialSharing
-        title={`${subpage?.title ?? projectPage?.title} | Ísland.is`}
+        title={`${
+          parentSubpage && subpage
+            ? `${parentSubpage.title} - ${subpage.title}`
+            : subpage?.title ?? projectPage?.title
+        } | Ísland.is`}
         description={projectPage?.featuredDescription || projectPage?.intro}
         imageUrl={projectPage?.featuredImage?.url}
         imageContentType={projectPage?.featuredImage?.contentType}
@@ -322,6 +389,7 @@ const ProjectPage: Screen<PageProps> = ({
         withSidebar={projectPage?.sidebar}
         backLink={backLink}
         isSubpage={(subpage && p('smallerSubpageHeader', false)) ?? false}
+        isFrontpage={!subpage}
       >
         {customContent ? customContent : mainContent}
       </ProjectWrapper>
@@ -402,6 +470,7 @@ ProjectPage.getProps = async ({ apolloClient, locale, query }) => {
         input: {
           slug: query.slug as string,
           lang: locale as ContentLanguage,
+          subpageSlug: query.subSlug as string | undefined,
         },
       },
     }),
@@ -437,36 +506,106 @@ ProjectPage.getProps = async ({ apolloClient, locale, query }) => {
       ),
   ])
 
-  const subpage = getProjectPage?.projectSubpages.find(
+  if (!getProjectPage) {
+    throw new CustomNextError(404, 'Project page not found')
+  }
+
+  let projectPage = getProjectPage
+  let parentSubpage: ProjectParentSubpage | null = null
+  let chapterSlug: string | undefined = undefined
+
+  const subpage = getProjectPage.projectSubpages.find(
     (x) => x.slug === query.subSlug,
   )
 
-  if (!getProjectPage || (query.subSlug && !subpage)) {
-    throw new CustomNextError(404, 'Project page not found')
+  if (query.subSlug && !subpage) {
+    // The slug might belong to a parent subpage that groups several subpages (chapters) together
+    parentSubpage =
+      (
+        await apolloClient.query<Query, QueryGetProjectParentSubpageArgs>({
+          query: GET_PROJECT_PARENT_SUBPAGE_QUERY,
+          variables: {
+            input: {
+              slug: query.subSlug as string,
+              projectPageSlug: query.slug as string,
+              lang: locale as ContentLanguage,
+            },
+          },
+        })
+      ).data.getProjectParentSubpage ?? null
+
+    if (!parentSubpage) {
+      throw new CustomNextError(404, 'Project subpage not found')
+    }
+
+    // Show the first chapter if none is selected
+    const chapterLink = query.childSlug
+      ? parentSubpage.childLinks.find(
+          (link) => link.href.split('/').pop() === query.childSlug,
+        )
+      : parentSubpage.childLinks[0]
+
+    chapterSlug = chapterLink?.href.split('/').pop()
+
+    if (!chapterSlug) {
+      throw new CustomNextError(
+        404,
+        'Subpage belonging to a project parent subpage was not found',
+      )
+    }
+
+    const chapterResponse = await apolloClient.query<
+      Query,
+      QueryGetProjectPageArgs
+    >({
+      query: GET_PROJECT_PAGE_QUERY,
+      variables: {
+        input: {
+          slug: query.slug as string,
+          lang: locale as ContentLanguage,
+          subpageSlug: chapterSlug,
+        },
+      },
+    })
+
+    const chapterProjectPage = chapterResponse.data.getProjectPage
+
+    if (
+      !chapterProjectPage?.projectSubpages.some((x) => x.slug === chapterSlug)
+    ) {
+      throw new CustomNextError(
+        404,
+        'Subpage belonging to a project parent subpage was not found',
+      )
+    }
+
+    projectPage = chapterProjectPage
   }
 
   let stepOptionsFromNamespace: any = []
 
-  if (getProjectPage.stepper) {
+  if (projectPage.stepper) {
     stepOptionsFromNamespace =
       await stepperUtils.getStepOptionsFromUIConfiguration(
-        getProjectPage.stepper as StepperSchema,
+        projectPage.stepper as StepperSchema,
         apolloClient,
       )
   }
 
-  const projectNamespace = JSON.parse(getProjectPage.namespace?.fields || '{}')
+  const projectNamespace = JSON.parse(projectPage.namespace?.fields || '{}')
 
   return {
-    projectPage: getProjectPage,
+    projectPage,
+    parentSubpage,
+    chapterSlug,
     stepOptionsFromNamespace,
     namespace,
     projectNamespace,
     stepperNamespace,
     showSearchInHeader: false,
     locale: locale as Locale,
-    customAlertBanner: getProjectPage?.alertBanner,
-    ...getThemeConfig(getProjectPage),
+    customAlertBanner: projectPage?.alertBanner,
+    ...getThemeConfig(projectPage),
   }
 }
 

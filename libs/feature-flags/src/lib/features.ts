@@ -137,6 +137,7 @@ export enum Features {
 
   // Userprofile Collection
   isIASSpaPagesEnabled = 'isiasspapagesenabled',
+  notificationSettingsMetricsEnabled = 'notificationSettingsMetricsEnabled',
 
   // Disable new login restrictions
   disableNewDeviceLogins = 'disableNewDeviceLogins',
@@ -164,6 +165,9 @@ export enum Features {
   isIslandisInvoicePaymentEnabled = 'isIslandisInvoicePaymentEnabled',
   isIslandisApplePayPaymentEnabled = 'isIslandisApplePayPaymentEnabled',
   isIslandisApplePayStrictSignatureVerificationEnabled = 'isIslandisApplePayStrictSignatureVerificationEnabled',
+  isIslandisGooglePayPaymentEnabled = 'isIslandisGooglePayPaymentEnabled',
+  isIslandisGooglePayPaymentAllowedForUser = 'isIslandisGooglePayPaymentAllowedForUser',
+  isIslandisGooglePayDeviceTokensEnabled = 'isIslandisGooglePayDeviceTokensEnabled',
   isIslandisBankTransferPaymentEnabled = 'isIslandisBankTransferPaymentEnabled',
   isIslandisBankTransferPaymentAllowedForCompany = 'isIslandisBankTransferPaymentAllowedForCompany',
   isIslandisDebtPaymentEnabled = 'isIslandisDebtPaymentEnabled',
@@ -201,6 +205,9 @@ export enum Features {
   // Use new delegation system
   useNewDelegationSystem = 'useNewDelegationSystem',
 
+  isDelegationRequestsEnabled = 'isDelegationRequestsEnabled',
+  isDelegationRequestNotificationEnabled = 'isDelegationRequestNotificationEnabled',
+
   // Validate Personal representative delegations at syslumenn
   usePersonalRepresentativesFromSyslumenn = 'usePersonalRepresentativesFromSyslumenn',
   // SMS Notifications
@@ -209,6 +216,8 @@ export enum Features {
 
   // Notifications settings
   isOnlyActionablePriorityNotificationsEnabled = 'isOnlyActionablePriorityNotificationsEnabled',
+  // Should user-notification skip notifications in categories the user has blocked
+  isNotificationBlockedCategoriesEnabled = 'isNotificationBlockedCategoriesEnabled',
 
   // Primary school (guardian-facing)
   isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',

@@ -46,7 +46,9 @@ export const ConfirmedTreatment: FC<FieldBaseProps> = ({
     data,
     loading,
     error: confirmedTreatmentError,
-  } = useQuery<Query>(siaConfirmedTreatmentQuery)
+  } = useQuery<Query>(siaConfirmedTreatmentQuery, {
+    variables: { applicationId: application.id },
+  })
 
   setBeforeSubmitCallback?.(async () => {
     const { confirmedTreatmentConfirmation } = getApplicationAnswers(

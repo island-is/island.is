@@ -4,6 +4,7 @@ import { Contract } from '@island.is/clients/hms-rental-agreement'
 import {
   ApplicationFile,
   ApplicationFileType,
+  ExemptionType,
   HouseholdMember,
   HousingBenefitsApplicationModel,
   PropertyType,
@@ -123,13 +124,32 @@ export type ApplicationFileEntry = {
   fileType?: ApplicationFileType
 }
 
-const EXEMPTION_REASON_TO_FILE_TYPE: Record<string, ApplicationFileType> = {
-  studies: ApplicationFileType.SchoolCertificate,
-  health: ApplicationFileType.MedicalCertificate,
-  work: ApplicationFileType.EmploymentContract,
+const ATTACHMENT_URL_EXPIRY_SECONDS = 3600
+
+const EXEMPTION_REASON_TO_EXEMPTION_TYPE: Record<string, ExemptionType> = {
+  studies: ExemptionType.Education,
+  health: ExemptionType.Illness,
+  housing: ExemptionType.HalfwayHouse,
+  work: ExemptionType.Employment,
 }
 
-const ATTACHMENT_URL_EXPIRY_SECONDS = 3600
+/**
+ * The exemption section is only shown to the applicant (when their legal domicile
+ * does not match the lease), so this is only ever set on the applicant's entry.
+ * Returns undefined when no exemption was requested.
+ */
+export const getApplicantExemptionNumber = (
+  answers: ApplicationWithAttachments['answers'],
+): ExemptionType | undefined => {
+  const exemptionRequested =
+    getValueViaPath<string[]>(answers, 'exemptionCheckbox')?.includes(YES) ??
+    false
+  if (!exemptionRequested) {
+    return undefined
+  }
+  const reason = getValueViaPath<string>(answers, 'exemptionReason')
+  return reason ? EXEMPTION_REASON_TO_EXEMPTION_TYPE[reason] : undefined
+}
 
 const addUploadedFiles = (
   files: UploadedFile[] | undefined,
@@ -252,9 +272,21 @@ const getAssigneeHouseholdMemberFieldsFromAnswers = (
   }
 }
 
+/**
+ * Contract tenants are shown in the household table via getStaticTableData and are not
+ * stored in householdMembersTableRepeater, so they must be merged in from the contract.
+ */
 const getHouseholdMembersForSubmission = (
   application: ApplicationWithAttachments,
+  applicantKennitala: string,
 ): Array<HouseholdMember> => {
+  const contractTenantIds =
+    getSelectedRentalContract(application)
+      ?.contractParty?.filter(
+        (party) => party.partyTypeUseCode === 'TENANT' && party.kennitala,
+      )
+      .map((party) => party.kennitala as string) ?? []
+
   const rows = getValueViaPath<
     Array<{
       nationalIdWithName?: { nationalId?: string }
@@ -262,9 +294,12 @@ const getHouseholdMembersForSubmission = (
     }>
   >(application.answers, 'householdMembersTableRepeater')
 
-  if (!Array.isArray(rows)) {
-    return []
-  }
+  const repeaterIds = Array.isArray(rows)
+    ? rows
+        .filter((row) => !row.isRemoved)
+        .map((row) => row.nationalIdWithName?.nationalId)
+        .filter((id): id is string => Boolean(id))
+    : []
 
   const rejected = new Set(
     getRejectedAssigneeNationalIdsFromAnswers(application.answers).map(
@@ -272,15 +307,20 @@ const getHouseholdMembersForSubmission = (
     ),
   )
 
-  return rows
-    .filter((row) => !row.isRemoved)
-    .map((row) => row.nationalIdWithName?.nationalId)
-    .filter((id): id is string => Boolean(id))
-    .filter((id) => !rejected.has(normalizeNationalId(id)))
-    .map((id) => ({
-      kennitala: normalizeNationalId(id),
+  const seen = new Set<string>([normalizeNationalId(applicantKennitala)])
+  const members: Array<HouseholdMember> = []
+
+  for (const id of [...contractTenantIds, ...repeaterIds]) {
+    const key = normalizeNationalId(id)
+    if (!key || seen.has(key) || rejected.has(key)) continue
+    seen.add(key)
+    members.push({
+      kennitala: key,
       ...getAssigneeHouseholdMemberFieldsFromAnswers(application.answers, id),
-    }))
+    })
+  }
+
+  return members
 }
 
 const getSelectedLandlordKennitala = (
@@ -325,19 +365,6 @@ export const collectApplicationFileEntries = (
 ): ApplicationFileEntry[] => {
   const { answers } = application
   const collected = new Map<string, ApplicationFileEntry>()
-
-  const exemptionReason = getValueViaPath<string>(answers, 'exemptionReason')
-  if (exemptionReason && exemptionReason !== 'housing') {
-    addUploadedFiles(
-      getValueViaPath<UploadedFile[]>(
-        answers,
-        `exemptionDocuments.${exemptionReason}`,
-      ),
-      applicantKennitala,
-      EXEMPTION_REASON_TO_FILE_TYPE[exemptionReason],
-      collected,
-    )
-  }
 
   addAccessAgreementRepeaterFiles(
     answers,
@@ -414,14 +441,6 @@ export const collectApplicationFileEntries = (
       collected,
     )
     addUploadedFiles(
-      extraDataAttachments.exemptionReason,
-      applicantKennitala,
-      exemptionReason
-        ? EXEMPTION_REASON_TO_FILE_TYPE[exemptionReason]
-        : undefined,
-      collected,
-    )
-    addUploadedFiles(
       extraDataAttachments.changedCircumstances,
       applicantKennitala,
       undefined,
@@ -456,6 +475,56 @@ export const resolveApplicationFilesForSubmission = async (
       ...(fileType ? { fileType } : {}),
     })),
   )
+}
+
+type NationalRegistryAddress = {
+  streetAddress?: string | null
+  postalCode?: string | null
+  locality?: string | null
+  city?: string | null
+}
+
+const getSuccessfulNationalRegistryAddress = (
+  application: ApplicationWithAttachments,
+  externalDataKey: string,
+): NationalRegistryAddress | undefined => {
+  const entry = getValueViaPath<{
+    status?: string
+    data?: { address?: NationalRegistryAddress | null }
+  }>(application.externalData, externalDataKey)
+  if (entry?.status !== 'success') {
+    return undefined
+  }
+  return entry.data?.address ?? undefined
+}
+
+/**
+ * Applicant address sent to HMS. Prefers the National Registry entry in externalData
+ * (which can be re-fetched during the application) over the prefilled answers, which
+ * are set once from the prerequisite data and never refreshed.
+ */
+export const getApplicantAddressForSubmission = (
+  application: ApplicationWithAttachments,
+): { address: string; postalCode: string; municipality: string } => {
+  const { answers } = application
+  const registryAddress = getSuccessfulNationalRegistryAddress(
+    application,
+    'nationalRegistry',
+  )
+
+  if (registryAddress) {
+    return {
+      address: registryAddress.streetAddress ?? '',
+      postalCode: registryAddress.postalCode ?? '',
+      municipality: registryAddress.city ?? registryAddress.locality ?? '',
+    }
+  }
+
+  return {
+    address: getValueViaPath<string>(answers, 'applicant.address') ?? '',
+    postalCode: getValueViaPath<string>(answers, 'applicant.postalCode') ?? '',
+    municipality: getValueViaPath<string>(answers, 'applicant.city') ?? '',
+  }
 }
 
 export const mapApplicationToHousingBenefitsModel = (
@@ -506,9 +575,7 @@ export const mapApplicationToHousingBenefitsModel = (
   return {
     islandIsApplicationNumber: application.id,
     kennitala: applicantKennitala,
-    address: getValueViaPath<string>(answers, 'applicant.address') ?? '',
-    municipality: getValueViaPath<string>(answers, 'applicant.city') ?? '',
-    postalCode: getValueViaPath<string>(answers, 'applicant.postalCode') ?? '',
+    ...getApplicantAddressForSubmission(application),
     islandIsDateCreated: new Date(application.created),
     islandIsDateRegistered: new Date(),
 
@@ -563,8 +630,9 @@ export const mapApplicationToHousingBenefitsModel = (
             answers,
             'incomeNoTaxReturnDescription',
           )?.trim() ?? undefined,
+        exemptionNumber: getApplicantExemptionNumber(answers),
       },
-      ...getHouseholdMembersForSubmission(application),
+      ...getHouseholdMembersForSubmission(application, applicantKennitala),
     ],
     propertyTypeNumber: PropertyType.PrivatelyOwned,
     files,

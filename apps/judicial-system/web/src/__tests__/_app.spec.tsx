@@ -1,4 +1,6 @@
 import type { PropsWithChildren } from 'react'
+import type { AppContext } from 'next/app'
+import App from 'next/app'
 import type { Router } from 'next/router'
 import { render, screen } from '@testing-library/react'
 
@@ -26,7 +28,6 @@ jest.mock('@island.is/judicial-system-web/src/components', () => {
 
 jest.mock('@island.is/localization', () => ({
   LocaleProvider: ({ children }: PropsWithChildren) => children,
-  GET_TRANSLATIONS: {},
 }))
 
 jest.mock('@island.is/judicial-system-web/graphql/client', () => {
@@ -58,7 +59,6 @@ const renderApp = (
     Component={Component}
     pageProps={{}}
     router={{ asPath } as Router}
-    translations={{}}
   />
 )
 
@@ -71,6 +71,25 @@ describe('JudicialSystemApplication', () => {
 
   afterEach(() => {
     consoleError.mockRestore()
+  })
+
+  test('should render pages per request by resolving the page props itself', async () => {
+    // Next only renders pages per request when the custom App has its own
+    // getInitialProps; the one inherited from App leaves pages statically
+    // exported at build time, with the runtime env baked into the build
+    expect(JudicialSystemApplication.getInitialProps).not.toBe(
+      App.origGetInitialProps,
+    )
+
+    const PageWithProps = () => null
+    PageWithProps.getInitialProps = async () => ({ caseId: 'case-id' })
+
+    const props = await JudicialSystemApplication.getInitialProps({
+      Component: PageWithProps,
+      ctx: {},
+    } as unknown as AppContext)
+
+    expect(props).toEqual({ pageProps: { caseId: 'case-id' } })
   })
 
   test('should recover from a page render error when navigating to a healthy page', () => {

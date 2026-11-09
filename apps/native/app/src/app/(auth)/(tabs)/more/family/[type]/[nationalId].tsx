@@ -12,7 +12,7 @@ import {
   NationalRegistryChildCustodyQuery,
   NationalRegistrySpouseQuery,
 } from '@/graphql/types/schema'
-import { Input, InputRow, NavigationBarSheet, Typography } from '@/ui'
+import { Input, InputRow, Typography } from '@/ui'
 import { formatNationalId } from '@/lib/format-national-id'
 import { testIDs } from '@/utils/test-ids'
 import { StackScreen } from '../../../../../../components/stack-screen'
@@ -158,7 +158,9 @@ export default function FamilyDetailScreen() {
             })}
             value={
               'postalCode' in person.housing.address &&
-              'city' in person.housing.address
+              person.housing.address.postalCode &&
+              'city' in person.housing.address &&
+              person.housing.address.city
                 ? `${person?.housing.address?.streetAddress}, ${person?.housing.address?.postalCode} ${person?.housing.address?.city}`
                 : person?.housing.address?.streetAddress
             }

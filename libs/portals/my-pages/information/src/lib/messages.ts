@@ -146,6 +146,15 @@ export const spmm = defineMessages({
     id: 'sp.family:legal-residence-tooltip',
     defaultMessage: 'Götuheiti, Húsnúmer, Íbúðarnúmer, Póstnúmer, Sveitarfélag',
   },
+  temporaryResidence: {
+    id: 'sp.family:temporary-residence',
+    defaultMessage: 'Tímabundið aðsetur',
+  },
+  temporaryResidenceTooltip: {
+    id: 'sp.family:temporary-residence-tooltip',
+    defaultMessage:
+      'Athugið að tímabundið aðsetur er ekki það sama og lögheimili.',
+  },
 })
 
 export const mInformationNotifications = defineMessages({
@@ -355,6 +364,10 @@ export const urls = defineMessages({
     id: 'sp.family:url-edit-residence-adult',
     defaultMessage:
       'https://www.skra.is/umsoknir/rafraen-skil/flutningstilkynning/',
+  },
+  editTemporaryResidence: {
+    id: 'sp.family:url-edit-temporary-residence',
+    defaultMessage: 'https://www.skra.is/folk/flutningur/timabundid-adsetur/',
   },
   editReligion: {
     id: 'sp.family:url-edit-religion-adult',

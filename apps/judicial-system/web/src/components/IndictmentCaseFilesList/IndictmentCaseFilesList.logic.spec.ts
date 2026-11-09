@@ -5,7 +5,9 @@ import type { CaseFilesListCase } from './IndictmentCaseFilesList.logic'
 import {
   getIndictmentPdfDisplayName,
   getVisibleSubpoenas,
+  shouldHideCaseFilesRecordFromDefender,
   shouldShowPoliceDigitalCaseFilesSection,
+  shouldShowUploadedCaseFilesSection,
 } from './IndictmentCaseFilesList.logic'
 
 const user = (role: UserRole, type?: InstitutionType): User =>
@@ -14,6 +16,20 @@ const user = (role: UserRole, type?: InstitutionType): User =>
     role,
     ...(type ? { institution: { id: 'institution-id', type } } : {}),
   } as User)
+
+describe('shouldShowUploadedCaseFilesSection', () => {
+  it('hides the empty section when display is not forced', () => {
+    expect(shouldShowUploadedCaseFilesSection(0, false)).toBe(false)
+  })
+
+  it('shows the empty section when display is forced after send to court', () => {
+    expect(shouldShowUploadedCaseFilesSection(0, true)).toBe(true)
+  })
+
+  it('shows the section when there are uploaded case files', () => {
+    expect(shouldShowUploadedCaseFilesSection(1, false)).toBe(true)
+  })
+})
 
 describe('shouldShowPoliceDigitalCaseFilesSection', () => {
   const files = [{ id: '1' }]
@@ -150,6 +166,42 @@ describe('getVisibleSubpoenas', () => {
 
   it('shows nothing to a defender without a national id', () => {
     expect(subpoenaIds(user(UserRole.DEFENDER))).toEqual([])
+  })
+})
+
+describe('shouldHideCaseFilesRecordFromDefender', () => {
+  const hiddenCaseId = 'hidden-case-id'
+  const otherCaseId = 'other-case-id'
+  const hiddenCaseIds = [hiddenCaseId]
+
+  it('hides the case files record from a defender on a listed case', () => {
+    expect(
+      shouldHideCaseFilesRecordFromDefender(
+        hiddenCaseId,
+        user(UserRole.DEFENDER),
+        hiddenCaseIds,
+      ),
+    ).toBe(true)
+  })
+
+  it('keeps the case files record for a defender on an unlisted case', () => {
+    expect(
+      shouldHideCaseFilesRecordFromDefender(
+        otherCaseId,
+        user(UserRole.DEFENDER),
+        hiddenCaseIds,
+      ),
+    ).toBe(false)
+  })
+
+  it('keeps the case files record for non-defence users on a listed case', () => {
+    expect(
+      shouldHideCaseFilesRecordFromDefender(
+        hiddenCaseId,
+        user(UserRole.PROSECUTOR, InstitutionType.POLICE_PROSECUTORS_OFFICE),
+        hiddenCaseIds,
+      ),
+    ).toBe(false)
   })
 })
 

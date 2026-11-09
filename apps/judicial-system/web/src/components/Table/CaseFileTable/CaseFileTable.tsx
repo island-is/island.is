@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { useContext } from 'react'
-import { useIntl } from 'react-intl'
 import { motion } from 'motion/react'
 
 import { Box, Icon, Text, Tooltip } from '@island.is/island-ui/core'
@@ -25,7 +24,10 @@ import {
 } from '@island.is/judicial-system-web/src/components/Table'
 import * as tableStyles from '@island.is/judicial-system-web/src/components/Table/Table.css'
 import type { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
-import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseFileCategory,
+  CaseFileState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useFiledCourtDocuments,
   useSort,
@@ -47,7 +49,6 @@ const CaseFileTable: FC<Props> = ({
   canRejectFiles,
   loading = false,
 }) => {
-  const { formatMessage } = useIntl()
   const { setWorkingCase, refreshCase } = useContext(FormContext)
   const {
     isFiledInConfirmedCourtSession,
@@ -92,18 +93,14 @@ const CaseFileTable: FC<Props> = ({
               className={tableStyles.th}
               aria-sort={getClassNamesFor('name') ?? 'none'}
             >
-              <SortButton
-                {...createSortProps(formatMessage(tables.caseFileName), 'name')}
-              />
+              <SortButton {...createSortProps(tables.caseFileName, 'name')} />
             </th>
-            <TableHeaderText title={formatMessage(tables.caseFileDate)} />
+            <TableHeaderText title={tables.caseFileDate} />
             <th
               className={tableStyles.th}
               aria-sort={getClassNamesFor('created') ?? 'none'}
             >
-              <SortButton
-                {...createSortProps(formatMessage(tables.received), 'created')}
-              />
+              <SortButton {...createSortProps(tables.received, 'created')} />
             </th>
             <th className={tableStyles.th} />
           </>
@@ -162,11 +159,13 @@ const CaseFileTable: FC<Props> = ({
                       : formatDate(file.created, "dd.MM.yyyy 'kl.' HH:mm")}
                   </Text>
                   <Text variant="small">
-                    {`${getRoleTitleFromCaseFileCategory(
-                      file.category ?? null,
-                    )} ${initials ? `(${initials})` : ''} ${
-                      file.fileRepresentative ? 'lagði fram' : 'sendi inn'
-                    }`}
+                    {file.category === CaseFileCategory.COURT_CASE_FILE
+                      ? 'Dómari leggur fram'
+                      : `${getRoleTitleFromCaseFileCategory(
+                          file.category ?? null,
+                        )} ${initials ? `(${initials})` : ''} ${
+                          file.fileRepresentative ? 'lagði fram' : 'sendi inn'
+                        }`}
                   </Text>
                 </Box>
               </td>

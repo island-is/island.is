@@ -1,5 +1,4 @@
 import { useCallback, useContext, useEffect } from 'react'
-import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 import { v4 as uuid } from 'uuid'
@@ -55,7 +54,6 @@ const Defendant = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { createVictimAndSetState, deleteVictimAndSetState } = useVictim()
-  const { formatMessage } = useIntl()
 
   const showPoliceDefendantsUI = isLokeCaseWithId(
     workingCase.origin,
@@ -190,9 +188,7 @@ const Defendant = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.investigationCases.defendant)}
-      />
+      <PageHeader title={titles.prosecutor.investigationCases.defendant} />
       <FormContentContainer>
         <PageTitle>{m.heading}</PageTitle>
         <div className={stack({ gap: 5 })}>
@@ -325,9 +321,7 @@ const Defendant = () => {
           previousUrl={`${PROSECUTION_INVESTIGATION_CASE_REGISTRATION_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(
-                workingCase.id === '' ? core.createCase : core.continue,
-              ),
+              text: workingCase.id === '' ? core.createCase : core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

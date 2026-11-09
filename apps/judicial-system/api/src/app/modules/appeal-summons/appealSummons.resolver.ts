@@ -1,9 +1,4 @@
-import {
-  ForbiddenException,
-  Inject,
-  ParseUUIDPipe,
-  UseGuards,
-} from '@nestjs/common'
+import { ForbiddenException, Inject, UseGuards } from '@nestjs/common'
 import { Args, Mutation, Parent, ResolveField, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
@@ -33,6 +28,8 @@ import {
   CreateAppealSummonsInput,
   DeleteAppealSummonsInput,
   SendAppealSummonsToCourtOfAppealsInput,
+  SendAppealSummonsToServiceInput,
+  SyncAppealSummonsServiceStatusesInput,
   UpdateAppealSummonsInput,
 } from './dto/appealSummons.input'
 import { AppealSummons } from './models/appealSummons.model'
@@ -57,28 +54,26 @@ export class AppealSummonsResolver {
 
   @Mutation(() => AppealSummons)
   createAppealSummons(
-    @Args('caseId', new ParseUUIDPipe()) caseId: string,
     @Args('input', { type: () => CreateAppealSummonsInput })
     input: CreateAppealSummonsInput,
     @CurrentGraphQlUser() user: User,
   ): Promise<AppealSummons> {
     this.assertVerdictAppealsAvailable()
 
-    this.logger.debug(`Creating an appeal summons for case ${caseId}`)
+    this.logger.debug(`Creating an appeal summons for case ${input.caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_APPEAL_SUMMONS,
-      this.backendService.createAppealSummons(caseId, {
+      this.backendService.createAppealSummons(input.caseId, {
         defendants: input.defendants,
       }),
-      caseId,
+      input.caseId,
     )
   }
 
   @Mutation(() => AppealSummons)
   updateAppealSummons(
-    @Args('caseId', new ParseUUIDPipe()) caseId: string,
     @Args('input', { type: () => UpdateAppealSummonsInput })
     input: UpdateAppealSummonsInput,
     @CurrentGraphQlUser() user: User,
@@ -86,16 +81,20 @@ export class AppealSummonsResolver {
     this.assertVerdictAppealsAvailable()
 
     this.logger.debug(
-      `Updating appeal summons ${input.appealSummonsId} of case ${caseId}`,
+      `Updating appeal summons ${input.appealSummonsId} of case ${input.caseId}`,
     )
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_APPEAL_SUMMONS,
-      this.backendService.updateAppealSummons(caseId, input.appealSummonsId, {
-        defendants: input.defendants,
-      }),
-      caseId,
+      this.backendService.updateAppealSummons(
+        input.caseId,
+        input.appealSummonsId,
+        {
+          defendants: input.defendants,
+        },
+      ),
+      input.caseId,
     )
   }
 
@@ -124,7 +123,6 @@ export class AppealSummonsResolver {
 
   @Mutation(() => AppealSummons)
   confirmAppealSummons(
-    @Args('caseId', new ParseUUIDPipe()) caseId: string,
     @Args('input', { type: () => ConfirmAppealSummonsInput })
     input: ConfirmAppealSummonsInput,
     @CurrentGraphQlUser() user: User,
@@ -132,20 +130,22 @@ export class AppealSummonsResolver {
     this.assertVerdictAppealsAvailable()
 
     this.logger.debug(
-      `Confirming appeal summons ${input.appealSummonsId} of case ${caseId}`,
+      `Confirming appeal summons ${input.appealSummonsId} of case ${input.caseId}`,
     )
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CONFIRM_APPEAL_SUMMONS,
-      this.backendService.confirmAppealSummons(caseId, input.appealSummonsId),
-      caseId,
+      this.backendService.confirmAppealSummons(
+        input.caseId,
+        input.appealSummonsId,
+      ),
+      input.caseId,
     )
   }
 
   @Mutation(() => AppealSummons)
   sendAppealSummonsToCourtOfAppeals(
-    @Args('caseId', new ParseUUIDPipe()) caseId: string,
     @Args('input', { type: () => SendAppealSummonsToCourtOfAppealsInput })
     input: SendAppealSummonsToCourtOfAppealsInput,
     @CurrentGraphQlUser() user: User,
@@ -153,17 +153,61 @@ export class AppealSummonsResolver {
     this.assertVerdictAppealsAvailable()
 
     this.logger.debug(
-      `Sending appeal summons ${input.appealSummonsId} of case ${caseId} to the court of appeals`,
+      `Sending appeal summons ${input.appealSummonsId} of case ${input.caseId} to the court of appeals`,
     )
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.SEND_APPEAL_SUMMONS_TO_COURT_OF_APPEALS,
       this.backendService.sendAppealSummonsToCourtOfAppeals(
-        caseId,
+        input.caseId,
         input.appealSummonsId,
       ),
-      caseId,
+      input.caseId,
+    )
+  }
+
+  @Mutation(() => AppealSummons)
+  sendAppealSummonsToService(
+    @Args('input', { type: () => SendAppealSummonsToServiceInput })
+    input: SendAppealSummonsToServiceInput,
+    @CurrentGraphQlUser() user: User,
+  ): Promise<AppealSummons> {
+    this.assertVerdictAppealsAvailable()
+
+    this.logger.debug(
+      `Sending appeal summons ${input.appealSummonsId} of case ${input.caseId} to service`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.SEND_APPEAL_SUMMONS_TO_SERVICE,
+      this.backendService.sendAppealSummonsToService(
+        input.caseId,
+        input.appealSummonsId,
+        { recipients: input.recipients },
+      ),
+      input.caseId,
+    )
+  }
+
+  @Mutation(() => [AppealSummons])
+  syncAppealSummonsServiceStatuses(
+    @Args('input', { type: () => SyncAppealSummonsServiceStatusesInput })
+    input: SyncAppealSummonsServiceStatusesInput,
+    @CurrentGraphQlUser() user: User,
+  ): Promise<AppealSummons[]> {
+    this.assertVerdictAppealsAvailable()
+
+    this.logger.debug(
+      `Syncing appeal summons service statuses for case ${input.caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.SYNC_APPEAL_SUMMONS_SERVICE_STATUSES,
+      this.backendService.syncAppealSummonsServiceStatuses(input.caseId),
+      input.caseId,
     )
   }
 }

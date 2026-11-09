@@ -1,5 +1,4 @@
 import type { FC } from 'react'
-import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import type { ButtonTypes, IconMapIcon } from '@island.is/island-ui/core'
@@ -41,8 +40,6 @@ const FormFooter: FC<Props> = ({
   actions,
   infoBoxText,
 }) => {
-  const { formatMessage } = useIntl()
-
   const handleActionClick = (action: FormFooterAction) => {
     if (action.onClick) {
       action.onClick()
@@ -67,7 +64,7 @@ const FormFooter: FC<Props> = ({
             }}
             fluid
           >
-            {previousButtonText ?? formatMessage(core.back)}
+            {previousButtonText ?? core.back}
           </Button>
         </Box>
       )}

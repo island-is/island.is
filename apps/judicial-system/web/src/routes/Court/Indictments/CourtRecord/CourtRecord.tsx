@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { useCallback, useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
@@ -31,7 +30,6 @@ import CourtSessionAccordionItem from './CourtSessionAccordionItem'
 import { alertContainer } from './CourtRecord.css'
 
 const CourtRecord: FC = () => {
-  const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { workingCase, isLoadingWorkingCase, caseNotFound, refreshCase } =
     useContext(FormContext)
@@ -141,7 +139,7 @@ const CourtRecord: FC = () => {
           previousUrl={`${DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

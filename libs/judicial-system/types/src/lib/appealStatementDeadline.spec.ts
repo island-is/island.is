@@ -5,6 +5,7 @@ import {
   isSameAppealStatementParty,
 } from './appealStatementDeadline'
 import { AppealEventType } from './eventLog'
+import { UserRole } from './user'
 
 describe('isSameAppealStatementParty', () => {
   it('matches a defendant to itself', () => {
@@ -97,6 +98,26 @@ describe('hasFiledAppealStatement', () => {
 
   it('does not count another party filing', () => {
     expect(hasFiledAppealStatement([filed], {})).toBe(false)
+  })
+
+  it("counts a statement the court filed on the prosecution's behalf", () => {
+    const courtFiled = {
+      eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+      userRole: UserRole.COURT_OF_APPEALS_ASSISTANT,
+    }
+
+    expect(hasFiledAppealStatement([courtFiled], {})).toBe(true)
+  })
+
+  // The events backfilled from the appeal case's legacy statement dates name
+  // no party; the defender's is told by its role.
+  it("does not count a legacy defender statement as the prosecution's", () => {
+    const legacyDefender = {
+      eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+      userRole: UserRole.DEFENDER,
+    }
+
+    expect(hasFiledAppealStatement([legacyDefender], {})).toBe(false)
   })
 
   it('is false without any events', () => {

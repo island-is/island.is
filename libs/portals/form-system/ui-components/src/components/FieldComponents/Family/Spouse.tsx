@@ -20,13 +20,21 @@ interface Props {
   item: FormSystemField
   valueIndex?: number
   dispatch?: Dispatch<Action>
+  isPreview?: boolean
 }
 
-export const Spouse = ({ item, valueIndex = 0, dispatch }: Props) => {
+export const Spouse = ({
+  item,
+  valueIndex = 0,
+  dispatch,
+  isPreview = false,
+}: Props) => {
   const { formatMessage } = useIntl()
   const { lang } = useLocale()
   const { control, setValue } = useFormContext()
-  const { data, loading } = useQuery(GET_FAMILY_MEMBERS)
+  const { data, loading } = useQuery(GET_FAMILY_MEMBERS, {
+    skip: isPreview,
+  })
   const nationalIdField = `${item.id}.${valueIndex}`
   const nameField = `${item.id}.${valueIndex}_name`
   const maritalStatusField = `${item.id}.${valueIndex}_maritalStatus`
@@ -36,7 +44,7 @@ export const Spouse = ({ item, valueIndex = 0, dispatch }: Props) => {
   const maritalStatus = spouse?.maritalStatus ?? ''
 
   useEffect(() => {
-    if (loading) {
+    if (isPreview || loading) {
       return
     }
 
@@ -58,6 +66,7 @@ export const Spouse = ({ item, valueIndex = 0, dispatch }: Props) => {
   }, [
     dispatch,
     item.id,
+    isPreview,
     loading,
     maritalStatus,
     maritalStatusField,

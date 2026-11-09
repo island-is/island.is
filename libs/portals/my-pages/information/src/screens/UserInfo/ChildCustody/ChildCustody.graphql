@@ -25,6 +25,12 @@ query NationalRegistryChildCustody(
             postalCode
             city
           }
+          residence {
+            streetAddress
+            postalCode
+            city
+            apartment
+          }
         }
         custodians {
           fullName

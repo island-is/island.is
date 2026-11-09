@@ -2,6 +2,7 @@
 import { DynamicColorIOS, DynamicColorIOSTuple, Platform } from 'react-native'
 import { StyledProps, useTheme } from 'styled-components'
 import { Shade } from '@/ui'
+import { TokenSelector } from './tokens'
 
 type DynamicShade = keyof Shade
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -108,4 +109,24 @@ export function useDynamicColor() {
   }
   res.theme = theme
   return res
+}
+
+// Styled-components interpolation for a semantic token, e.g.
+// `color: ${token((t) => t.foreground.primary)};`
+export function token<T>(selector: TokenSelector) {
+  return dynamicColor<T>(({ theme }) => ({
+    light: selector(theme.tokenModes.light),
+    dark: selector(theme.tokenModes.dark),
+  }))
+}
+
+// Resolves a semantic token to a colour value for style props.
+export function useTokenColor() {
+  const dynamic = useDynamicColor()
+  const { tokenModes } = dynamic.theme
+  return (selector: TokenSelector) =>
+    dynamic({
+      light: selector(tokenModes.light),
+      dark: selector(tokenModes.dark),
+    })
 }
