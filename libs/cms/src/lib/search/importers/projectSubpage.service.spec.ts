@@ -106,10 +106,11 @@ describe('ProjectSubpageSyncService', () => {
       key: 'project',
       type: 'project',
     })
-    // The project page is the parent, not a child
+    // Only the project page itself is a dependency, so a new slug updates the project tag,
+    // but the entries it links to, like its sidebar links, are not
     expect(
       document.tags?.filter((tag) => tag.type === 'hasChildEntryWithId'),
-    ).toEqual([])
+    ).toEqual([{ key: 'project', type: 'hasChildEntryWithId' }])
   })
 })
 
@@ -158,6 +159,6 @@ describe('ProjectParentSubpageSyncService', () => {
       document.tags
         ?.filter((tag) => tag.type === 'hasChildEntryWithId')
         .map((tag) => tag.key),
-    ).toEqual(['first', 'foreign', 'untitled', 'second'])
+    ).toEqual(['project', 'first', 'foreign', 'untitled', 'second'])
   })
 })

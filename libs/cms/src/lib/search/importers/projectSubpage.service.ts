@@ -100,10 +100,12 @@ export class ProjectSubpageSyncService
             projectSlug,
           }
 
-          // Tag the document with the ids of its children so we can later look up what document a child belongs to
-          const childEntryIds = extractChildEntryIds(
-            withoutProjectPageReference(entry),
-          )
+          // Tag the document with the ids of its children so we can later look up what document a child belongs to.
+          // The project page is only added by its id, not traversed, so changing its slug updates the project tag
+          const childEntryIds = [
+            projectPageId,
+            ...extractChildEntryIds(withoutProjectPageReference(entry)),
+          ]
 
           return {
             _id: entry.sys.id,

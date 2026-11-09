@@ -112,6 +112,8 @@ export default {
     'fund',
     // Chapter changes need to update the project parent subpages they belong to
     'projectSubpage',
+    // Project page changes, like a new slug, need to update the project tag of its subpages
+    'projectPage',
   ],
   // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article', 'organizationPage'],
