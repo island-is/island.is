@@ -611,7 +611,10 @@ export const transformCivilClaimants = ({
   return civilClaimants?.map((civilClaimant) => civilClaimant.toJSON())
 }
 
-const transformCaseRepresentatives = (theCase: Case) => {
+const transformCaseRepresentatives = (
+  theCase: Case,
+  user: User | undefined,
+) => {
   const { prosecutor, civilClaimants } = theCase
   const prosecutorRepresentativeProps =
     prosecutor?.name && prosecutor?.nationalId
@@ -654,10 +657,19 @@ const transformCaseRepresentatives = (theCase: Case) => {
     return defendantAndDefender
   })
 
+  // Only district court users may attribute viðbótargögn to the court.
+  const courtRepresentative = isDistrictCourtUser(user)
+    ? {
+        name: 'Dómari',
+        caseFileCategory: CaseFileCategory.COURT_CASE_FILE,
+      }
+    : undefined
+
   return [
     prosecutorRepresentativeProps,
     ...(civilClaimantSpokespersons ? civilClaimantSpokespersons : []),
     ...(defendantsAndDefenders ? defendantsAndDefenders : []),
+    courtRepresentative,
   ].filter((representative) => !!representative)
 }
 
@@ -847,7 +859,9 @@ const transformCase = (
               CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
                 user.nationalId,
                 theCase.civilClaimants,
-              ))),
+              )) ||
+            (file.category === CaseFileCategory.COURT_CASE_FILE &&
+              isDistrictCourtUser(user))),
       )
       .filter(
         (file) =>
@@ -872,7 +886,7 @@ const transformCase = (
         ...file.toJSON(),
         ...getRulingOrderAppealInfo(file, theCase),
       })),
-    caseRepresentatives: transformCaseRepresentatives(theCase),
+    caseRepresentatives: transformCaseRepresentatives(theCase, user),
     postponedIndefinitelyExplanation:
       CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),
     civilDemands: CaseString.civilDemands(theCase.caseStrings),
