@@ -4004,6 +4004,9 @@ export interface IOrganizationSubpageFields {
 
   /** Show date of the last review */
   showDateOfTheLastReview?: boolean | undefined
+
+  /** Hide from external search engines */
+  hideFromExternalSearchEngines?: boolean | undefined
 }
 
 export interface IOrganizationSubpage
