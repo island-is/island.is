@@ -75,8 +75,9 @@ returns, so adding or changing a category or question needs no change here.
 select switches between categories, each question is an accordion item with a
 checkmark when answered, a tooltip from the API, a radio group and a remark
 field. A progress meter tracks the selected category, and answering a question
-collapses it and scrolls to the next one. Answers are saved as the applicant
-goes, and the screen blocks moving on while anything is unanswered.
+collapses it and scrolls to the next one. Answers are saved when the applicant
+presses "Halda áfram", and the screen blocks moving on while anything is
+unanswered.
 
 **Overview** (`AssessmentOverview`). Company name plus every
 question grouped under its category with the chosen answer. Edit buttons jump
@@ -85,13 +86,14 @@ see `utils/focusQuestion.ts`, so it is not persisted as application data). The
 applicant must tick the confirmation checkbox before submitting.
 
 **Results** (`AssessmentResults`). Rendered from the scoring the submit call
-returns (`externalData.selfAssessmentResult`): overall score, Fjarskiptastofa's
-interpretation of it, a spider chart with one axis per category, a table of
-category scores, and the submitted answers. `AssessmentResultsPdf` builds the
-same content as a PDF in the browser with `@react-pdf/renderer`
-(`PdfSpiderChart` draws the chart as plain SVG for the PDF), so the download
-always matches what is on screen. The reference number is shown only when the
-API returns one.
+returns (`externalData.selfAssessmentResult`): overall score, a spider chart
+with one axis per category, a table of category scores, Fjarskiptastofa's
+interpretation of the score and the next steps. `AssessmentResultsPdf` builds a
+PDF of the same scoring in the browser with `@react-pdf/renderer`
+(`PdfSpiderChart` draws the chart as plain SVG for the PDF). The two are close
+but not identical: the PDF also lists every submitted answer with its remark,
+which the screen does not show, and it leaves out `scoreInterpretation` and the
+next steps. The reference number is shown only when the API returns one.
 
 ## Backend
 
