@@ -47,6 +47,7 @@ import {
   toPreviewAppealCase,
 } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components/AppealRoles/appealRoles.logic'
 import { useAppealCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import {
   appendAppealCaseIdQuery,
@@ -176,110 +177,113 @@ const VerdictAppealRegistration = () => {
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>
           <PageTitle>Skráning og úthlutun</PageTitle>
-          <Box component="section" marginBottom={5}>
-            <SectionHeading title={core.appealCaseNumberHeading} />
-            <CaseNumberInput appealCase={verdictAppealCase} />
-          </Box>
-          <Box component="section" marginBottom={8}>
-            <SectionHeading title="Úthlutun" />
-            <BlueBox>
-              <Text as="h4" variant="h4" marginBottom={2}>
-                {core.appealAssistantHeading}
-              </Text>
-              <Box marginBottom={3}>
-                <Select
-                  name="assistant"
-                  label="Veldu aðstoðarmann"
-                  placeholder="Velja aðstoðarmann"
-                  value={
-                    appealAssistant
-                      ? {
-                          label: appealAssistant.name ?? '',
-                          value: appealAssistant.id,
-                        }
-                      : null
-                  }
-                  options={assistantOptions}
-                  onChange={(selectedOption) => {
-                    setAppealAssistant(
-                      (selectedOption as AssistantSelectOption).assistant,
-                    )
-                  }}
-                />
-              </Box>
-              <Text as="h4" variant="h4" marginBottom={2}>
-                {core.appealJudgesHeading}
-              </Text>
-              <ExpandingList
-                items={seats}
-                getKey={({ key }) => key}
-                renderItem={({ key, judge }, seat) => (
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    columnGap={2}
-                    marginBottom={2}
-                  >
-                    <Box flexGrow={1}>
-                      <Select
-                        name={`judge-${seat}`}
-                        label={
-                          seat === 0 ? 'Veldu dómsformann' : 'Veldu dómara'
-                        }
-                        placeholder="Velja dómara"
-                        value={
-                          judge
-                            ? { label: judge.name ?? '', value: judge.id }
-                            : null
-                        }
-                        options={judgeOptions}
-                        onChange={(selectedOption) => {
-                          setSeats((prev) =>
-                            setBenchSeatJudge(
-                              prev,
-                              key,
-                              (selectedOption as JudgeSelectOption | null)
-                                ?.judge,
-                            ),
-                          )
-                        }}
-                        isClearable
-                      />
+          <div className={stack({ gap: 5 })}>
+            <Box component="section">
+              <SectionHeading title={core.appealCaseNumberHeading} />
+              <CaseNumberInput appealCase={verdictAppealCase} />
+            </Box>
+            <Box component="section">
+              <SectionHeading title="Úthlutun" />
+              <BlueBox>
+                <div className={stack({ gap: 3 })}>
+                  <div className={stack({ gap: 2 })}>
+                    <Text as="h4" variant="h4">
+                      {core.appealAssistantHeading}
+                    </Text>
+                    <Select
+                      name="assistant"
+                      label="Veldu aðstoðarmann"
+                      placeholder="Velja aðstoðarmann"
+                      value={
+                        appealAssistant
+                          ? {
+                              label: appealAssistant.name ?? '',
+                              value: appealAssistant.id,
+                            }
+                          : null
+                      }
+                      options={assistantOptions}
+                      onChange={(selectedOption) => {
+                        setAppealAssistant(
+                          (selectedOption as AssistantSelectOption).assistant,
+                        )
+                      }}
+                    />
+                  </div>
+                  <div className={stack({ gap: 2 })}>
+                    <Text as="h4" variant="h4">
+                      {core.appealJudgesHeading}
+                    </Text>
+                    <ExpandingList
+                      items={seats}
+                      getKey={({ key }) => key}
+                      renderItem={({ key, judge }, seat) => (
+                        <Box display="flex" alignItems="center" columnGap={2}>
+                          <Box flexGrow={1}>
+                            <Select
+                              name={`judge-${seat}`}
+                              label={
+                                seat === 0
+                                  ? 'Veldu dómsformann'
+                                  : 'Veldu dómara'
+                              }
+                              placeholder="Velja dómara"
+                              value={
+                                judge
+                                  ? { label: judge.name ?? '', value: judge.id }
+                                  : null
+                              }
+                              options={judgeOptions}
+                              onChange={(selectedOption) => {
+                                setSeats((prev) =>
+                                  setBenchSeatJudge(
+                                    prev,
+                                    key,
+                                    (selectedOption as JudgeSelectOption | null)
+                                      ?.judge,
+                                  ),
+                                )
+                              }}
+                              isClearable
+                            />
+                          </Box>
+                          <PopIn show={canRemoveBenchSeat(judges, seat)}>
+                            <IconButton
+                              icon="trash"
+                              colorScheme="transparent"
+                              ariaLabel="Fjarlægja dómara"
+                              onClick={() =>
+                                setSeats((prev) => removeBenchSeat(prev, key))
+                              }
+                            />
+                          </PopIn>
+                        </Box>
+                      )}
+                    />
+                    <Box display="flex" justifyContent="flexEnd" columnGap={3}>
+                      <Button
+                        variant="text"
+                        size="small"
+                        disabled={!canAddBenchSeat(judges)}
+                        onClick={() => setSeats((prev) => addBenchSeat(prev))}
+                      >
+                        Bæta við dómara
+                      </Button>
+                      <Button
+                        variant="text"
+                        size="small"
+                        disabled={!canConfirmRoles}
+                        loading={isUpdatingAppealCase}
+                        onClick={handleConfirmRoles}
+                      >
+                        Staðfesta val
+                      </Button>
                     </Box>
-                    <PopIn show={canRemoveBenchSeat(judges, seat)}>
-                      <IconButton
-                        icon="trash"
-                        colorScheme="transparent"
-                        ariaLabel="Fjarlægja dómara"
-                        onClick={() =>
-                          setSeats((prev) => removeBenchSeat(prev, key))
-                        }
-                      />
-                    </PopIn>
-                  </Box>
-                )}
-              />
-              <Box display="flex" justifyContent="flexEnd" columnGap={3}>
-                <Button
-                  variant="text"
-                  size="small"
-                  disabled={!canAddBenchSeat(judges)}
-                  onClick={() => setSeats((prev) => addBenchSeat(prev))}
-                >
-                  Bæta við dómara
-                </Button>
-                <Button
-                  variant="text"
-                  size="small"
-                  disabled={!canConfirmRoles}
-                  loading={isUpdatingAppealCase}
-                  onClick={handleConfirmRoles}
-                >
-                  Staðfesta val
-                </Button>
-              </Box>
-            </BlueBox>
-          </Box>
+                  </div>
+                </div>
+              </BlueBox>
+            </Box>
+          </div>
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter
