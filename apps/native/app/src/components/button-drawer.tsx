@@ -9,8 +9,8 @@ export const ButtonDrawer = styled.View(({ theme }) => ({
     paddingBottom: theme.spacing.p2,
   }),
 
-  backgroundColor: theme.color.white,
-  shadowColor: theme.color.blue400,
+  backgroundColor: theme.tokens.background.invert,
+  shadowColor: theme.tokens.app.shadow.brand,
   shadowOffsetWidth: 0,
   shadowOffsetHeight: -4,
   shadowOpacity: '0.08',

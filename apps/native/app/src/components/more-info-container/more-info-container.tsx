@@ -22,7 +22,7 @@ export const MoreInfoContiner = ({ externalLinks }: MoreInfoConteinerProps) => {
   return (
     <View
       style={{
-        borderTopColor: theme.color.blue200,
+        borderTopColor: theme.tokens.border.primary,
       }}
     >
       <Typography variant="heading5">
