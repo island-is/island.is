@@ -263,7 +263,11 @@ export class AppealSummonsController {
       `Syncing appeal summons service statuses for case ${caseId}`,
     )
 
-    return this.appealSummonsService.syncServiceStatusesForCase(theCase, user)
+    return this.appealSummonsService.syncServiceStatusesForCase(
+      theCase,
+      user,
+      () => getOrCreateTransaction(this.sequelize),
+    )
   }
 
   @UseGuards(

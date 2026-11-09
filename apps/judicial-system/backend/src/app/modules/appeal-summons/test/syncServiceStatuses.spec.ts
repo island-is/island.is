@@ -11,6 +11,7 @@ import {
 
 import { createTestingAppealSummonsModule } from './createTestingAppealSummonsModule'
 
+import { runInRequestContext } from '../../../test'
 import { PoliceService } from '../../police'
 import {
   AppealCase,
@@ -66,6 +67,11 @@ describe('AppealSummonsController - Sync service statuses', () => {
   let transaction: Transaction
   let appealSummonsController: AppealSummonsController
 
+  const syncServiceStatuses = (caseToSync: Case) =>
+    runInRequestContext(() =>
+      appealSummonsController.syncServiceStatuses(caseId, caseToSync, user),
+    )
+
   beforeEach(async () => {
     const {
       appealSummonsRepositoryService,
@@ -81,10 +87,7 @@ describe('AppealSummonsController - Sync service statuses', () => {
 
     transaction = {} as Transaction
     const mockTransaction = mockSequelize.transaction as jest.Mock
-    mockTransaction.mockImplementation(
-      async (callback: (transaction: Transaction) => Promise<unknown>) =>
-        callback(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
   })
 
   it('updates waiting service rows when LOKE reports a change', async () => {
@@ -117,11 +120,7 @@ describe('AppealSummonsController - Sync service statuses', () => {
       mockAppealSummonsRepositoryService.findByIdAndCaseId as jest.Mock
     mockFind.mockResolvedValue(reloadedSummons)
 
-    const result = await appealSummonsController.syncServiceStatuses(
-      caseId,
-      theCase,
-      user,
-    )
+    const result = await syncServiceStatuses(theCase)
 
     expect(mockGetStatus).toHaveBeenCalledWith(policeDocumentId, user)
     expect(mockUpdate).toHaveBeenCalledWith(
@@ -162,11 +161,7 @@ describe('AppealSummonsController - Sync service statuses', () => {
     const mockGetStatus =
       mockPoliceService.getVerdictDocumentStatus as jest.Mock
 
-    const result = await appealSummonsController.syncServiceStatuses(
-      caseId,
-      servedCase,
-      user,
-    )
+    const result = await syncServiceStatuses(servedCase)
 
     expect(mockGetStatus).not.toHaveBeenCalled()
     expect(result).toEqual([])
@@ -180,11 +175,7 @@ describe('AppealSummonsController - Sync service statuses', () => {
     const mockUpdate =
       mockAppealSummonsRepositoryService.updateServiceRecipient as jest.Mock
 
-    const result = await appealSummonsController.syncServiceStatuses(
-      caseId,
-      theCase,
-      user,
-    )
+    const result = await syncServiceStatuses(theCase)
 
     expect(mockGetStatus).toHaveBeenCalledWith(policeDocumentId, user)
     expect(mockUpdate).not.toHaveBeenCalled()
@@ -245,11 +236,7 @@ describe('AppealSummonsController - Sync service statuses', () => {
       mockAppealSummonsRepositoryService.findByIdAndCaseId as jest.Mock
     mockFind.mockResolvedValue(reloadedSummons)
 
-    const result = await appealSummonsController.syncServiceStatuses(
-      caseId,
-      multiServiceCase,
-      user,
-    )
+    const result = await syncServiceStatuses(multiServiceCase)
 
     expect(mockGetStatus).toHaveBeenCalledTimes(2)
     expect(mockUpdate).toHaveBeenCalledTimes(1)

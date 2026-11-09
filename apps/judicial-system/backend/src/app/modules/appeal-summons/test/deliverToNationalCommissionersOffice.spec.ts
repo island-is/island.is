@@ -44,7 +44,7 @@ describe('AppealSummonsService - Deliver to national commissioners office', () =
       {
         id: defendantId,
         nationalId: '0000000000',
-        name: 'Jón Jónsson',
+        name: 'Gervimaður Afrýjunar',
       },
     ],
   } as Case

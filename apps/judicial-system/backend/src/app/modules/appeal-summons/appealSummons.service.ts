@@ -1,6 +1,5 @@
 import { Base64 } from 'js-base64'
 import { Transaction } from 'sequelize'
-import { Sequelize } from 'sequelize-typescript'
 
 import {
   BadRequestException,
@@ -9,7 +8,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectConnection } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -57,7 +55,6 @@ export class AppealSummonsService {
     private readonly pdfService: PdfService,
     private readonly awsS3Service: AwsS3Service,
     private readonly policeService: PoliceService,
-    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -905,6 +902,7 @@ export class AppealSummonsService {
   async syncServiceStatusesForCase(
     theCase: Case,
     user: User,
+    getTransaction: () => Promise<Transaction>,
   ): Promise<AppealSummons[]> {
     const pulls: Array<{
       summons: AppealSummons
@@ -960,35 +958,37 @@ export class AppealSummonsService {
       return []
     }
 
-    return this.sequelize.transaction(async (transaction) => {
-      const updatedSummonsIds = new Set<string>()
+    // Opened only after the LOKE round-trips so the write window stays short.
+    // CaseExistsGuard does not claim a request transaction, so this is the
+    // first getOrCreateTransaction call on the route.
+    const transaction = await getTransaction()
+    const updatedSummonsIds = new Set<string>()
 
-      for (const pull of pulls) {
-        await this.appealSummonsRepositoryService.updateServiceRecipient(
-          pull.service.id,
-          pull.summons.id,
-          pull.update,
+    for (const pull of pulls) {
+      await this.appealSummonsRepositoryService.updateServiceRecipient(
+        pull.service.id,
+        pull.summons.id,
+        pull.update,
+        { transaction },
+      )
+      updatedSummonsIds.add(pull.summons.id)
+    }
+
+    const results: AppealSummons[] = []
+
+    for (const summonsId of updatedSummonsIds) {
+      const reloaded =
+        await this.appealSummonsRepositoryService.findByIdAndCaseId(
+          summonsId,
+          theCase.id,
           { transaction },
         )
-        updatedSummonsIds.add(pull.summons.id)
+
+      if (reloaded) {
+        results.push(reloaded)
       }
+    }
 
-      const results: AppealSummons[] = []
-
-      for (const summonsId of updatedSummonsIds) {
-        const reloaded =
-          await this.appealSummonsRepositoryService.findByIdAndCaseId(
-            summonsId,
-            theCase.id,
-            { transaction },
-          )
-
-        if (reloaded) {
-          results.push(reloaded)
-        }
-      }
-
-      return results
-    })
+    return results
   }
 }
