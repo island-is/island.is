@@ -34,9 +34,6 @@ export class LawyerRegistryService {
   ) {}
 
   async getLawyersFromLFMI(lawyerType?: LawyerType): Promise<LawyerFull[]> {
-    // TODO(LMFÍ): If LMFÍ exposes a filter for Landsréttur rights (like
-    // ?verjendur=1 for litigators), prefer fetching that list here instead of
-    // deriving rights from Title / HrlLicense in populate().
     const response = await fetch(
       `${this.config.lawyerRegistryAPI}/lawyers${
         lawyerType && lawyerType === LawyerType.LITIGATORS ? '?verjendur=1' : ''
