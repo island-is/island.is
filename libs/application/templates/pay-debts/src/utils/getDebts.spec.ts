@@ -4,6 +4,7 @@ import {
   DEBTS_MAX_AGE_MS,
   debtsAreStale,
   debtsSignature,
+  getSelectedSalaryPayerNames,
   hasFetchedDebts,
 } from './getDebts'
 
@@ -101,5 +102,25 @@ describe('debtsSignature', () => {
     expect(debtsSignature([debt({ timePeriod: '202601' })])).not.toBe(
       debtsSignature([debt({ timePeriod: '202603' })]),
     )
+  })
+})
+
+describe('getSelectedSalaryPayerNames', () => {
+  const debts = [
+    debt({ payID: '1', salaryPayerName: 'A ehf.' }),
+    debt({ payID: '2' }),
+    debt({ payID: '3', salaryPayerName: 'A ehf.' }),
+    debt({ payID: '4', salaryPayerName: 'B ehf.' }),
+  ]
+
+  it('names only the payers of selected debts, once each', () => {
+    expect(
+      getSelectedSalaryPayerNames(debts, [true, true, true, false]),
+    ).toEqual(['A ehf.'])
+  })
+
+  it('is empty once the flagged debts are deselected', () => {
+    expect(getSelectedSalaryPayerNames(debts, [false, true])).toEqual([])
+    expect(getSelectedSalaryPayerNames(debts)).toEqual([])
   })
 })

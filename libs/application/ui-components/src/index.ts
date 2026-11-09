@@ -18,3 +18,7 @@ export * from './hooks/useDeleteApplication'
 export * from './hooks/useOpenApplication'
 export { NationalIdWithName } from './components/NationalIdWithName/NationalIdWithName'
 export { default as Slider } from './components/Slider/Slider'
+export {
+  FormAlertBanner,
+  FormAlertBannerSlotContext,
+} from './components/FormAlertBanner/FormAlertBanner'

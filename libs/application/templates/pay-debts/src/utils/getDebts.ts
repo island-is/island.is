@@ -42,6 +42,17 @@ export const hasMoreDebts = (externalData: ExternalData): boolean =>
 export const getDebts = (application: Application): CustomerDebt[] =>
   getDebtsFromExternalData(application.externalData)
 
+export const getSelectedSalaryPayerNames = (
+  debts: CustomerDebt[],
+  selected: (boolean | null | undefined)[] = [],
+): string[] => [
+  ...new Set(
+    debts.flatMap((debt, index) =>
+      selected[index] && debt.salaryPayerName ? [debt.salaryPayerName] : [],
+    ),
+  ),
+]
+
 export const getDownloadServiceURL = (
   application: Application,
 ): string | undefined =>
