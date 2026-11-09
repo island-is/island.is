@@ -119,10 +119,7 @@ describe('InternalCaseController - Deliver court record to police', () => {
     })
 
     it('should deliver the generated court record to police', async () => {
-      expect(getCourtRecordPdfAsString).toHaveBeenCalledWith(
-        theCase,
-        expect.any(Function),
-      )
+      expect(getCourtRecordPdfAsString).toHaveBeenCalledWith(theCase)
       expect(
         mockPdfService.getCourtRecordPdfForIndictmentCase,
       ).not.toHaveBeenCalled()

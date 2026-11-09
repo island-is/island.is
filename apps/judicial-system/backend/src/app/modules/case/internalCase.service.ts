@@ -13,11 +13,9 @@ import {
   forwardRef,
   Inject,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
 
-import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
@@ -190,8 +188,6 @@ export class InternalCaseService {
     private readonly config: ConfigType<typeof caseModuleConfig>,
     @Inject(forwardRef(() => CaseRepositoryService))
     private readonly caseRepositoryService: CaseRepositoryService,
-    @Inject(forwardRef(() => IntlService))
-    private readonly intlService: IntlService,
     @Inject(forwardRef(() => EventService))
     private readonly eventService: EventService,
     @Inject(forwardRef(() => AwsS3Service))
@@ -216,21 +212,6 @@ export class InternalCaseService {
     private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
-
-  private formatMessage: FormatMessage = () => {
-    throw new InternalServerErrorException('Format message not initialized')
-  }
-
-  private async refreshFormatMessage(): Promise<void> {
-    return this.intlService
-      .useIntl(['judicial.system.backend'], 'is')
-      .then((res) => {
-        this.formatMessage = res.formatMessage
-      })
-      .catch((reason) => {
-        this.logger.error('Unable to refresh format messages', { reason })
-      })
-  }
 
   private async uploadSignedRulingPdfToCourt(
     theCase: Case,
@@ -284,7 +265,7 @@ export class InternalCaseService {
             transaction,
           )
         } else {
-          pdf = await getCourtRecordPdfAsBuffer(theCase, this.formatMessage)
+          pdf = await getCourtRecordPdfAsBuffer(theCase)
         }
       }
 
@@ -321,7 +302,7 @@ export class InternalCaseService {
     theCase: Case,
     user: TUser,
   ): Promise<boolean> {
-    return getRequestPdfAsBuffer(theCase, this.formatMessage)
+    return getRequestPdfAsBuffer(theCase)
       .then((pdf) => {
         const fileName = formatIcuMessage(courtUpload.request, {
           caseType: formatCaseType(theCase.type),
@@ -372,7 +353,7 @@ export class InternalCaseService {
             transaction,
           )
         } else {
-          pdf = await getCourtRecordPdfAsBuffer(theCase, this.formatMessage)
+          pdf = await getCourtRecordPdfAsBuffer(theCase)
         }
       }
 
@@ -822,8 +803,6 @@ export class InternalCaseService {
     return this.pdfService
       .getIndictmentPdf(theCase, transaction)
       .then(async (pdf) => {
-        await this.refreshFormatMessage()
-
         const fileName = formatIcuMessage(courtUpload.indictment, {
           courtCaseNumber: theCase.courtCaseNumber,
         })
@@ -967,8 +946,6 @@ export class InternalCaseService {
     withCourtCaseNumber: boolean,
     user: TUser,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
-
     const courtCaseNumber = withCourtCaseNumber && theCase.courtCaseNumber
     const caseNumber = courtCaseNumber || theCase.policeCaseNumbers.join(', ')
 
@@ -1157,8 +1134,6 @@ export class InternalCaseService {
     return this.pdfService
       .getCaseFilesRecordPdf(theCase, policeCaseNumber)
       .then(async (pdf) => {
-        await this.refreshFormatMessage()
-
         const fileName = formatIcuMessage(courtUpload.caseFilesRecord, {
           policeCaseNumber,
         })
@@ -1192,8 +1167,6 @@ export class InternalCaseService {
     theCase: Case,
     user: TUser,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
-
     return this.uploadRequestPdfToCourt(theCase, user).then((delivered) => ({
       delivered,
     }))
@@ -1204,8 +1177,6 @@ export class InternalCaseService {
     user: TUser,
     transaction: Transaction,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
-
     return this.uploadCourtRecordPdfToCourt(theCase, user, transaction).then(
       (delivered) => ({ delivered }),
     )
@@ -1216,8 +1187,6 @@ export class InternalCaseService {
     user: TUser,
     transaction: Transaction,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
-
     return this.uploadCourtRecordWorkingDocumentToCourt(
       theCase,
       user,
@@ -1229,8 +1198,6 @@ export class InternalCaseService {
     theCase: Case,
     user: TUser,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
-
     return this.deliverSignedRulingPdfToCourt(theCase, user).then(
       (delivered) => ({ delivered }),
     )
@@ -1241,8 +1208,6 @@ export class InternalCaseService {
     user: TUser,
     transaction: Transaction,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
-
     return this.deliverSignedCourtRecordPdfToCourt(
       theCase,
       user,
@@ -1443,9 +1408,7 @@ export class InternalCaseService {
     user: TUser,
   ): Promise<DeliverResponse> {
     try {
-      await this.refreshFormatMessage()
-
-      const request = await getRequestPdfAsString(theCase, this.formatMessage)
+      const request = await getRequestPdfAsString(theCase)
 
       const delivered = await this.deliverCaseToPoliceWithFiles(theCase, user, [
         {
@@ -1483,12 +1446,7 @@ export class InternalCaseService {
 
         courtRecord = pdf.toString('binary')
       } else {
-        await this.refreshFormatMessage()
-
-        courtRecord = await getCourtRecordPdfAsString(
-          theCase,
-          this.formatMessage,
-        )
+        courtRecord = await getCourtRecordPdfAsString(theCase)
       }
 
       const delivered = await this.deliverCaseToPoliceWithFiles(theCase, user, [
@@ -1515,12 +1473,7 @@ export class InternalCaseService {
     user: TUser,
   ): Promise<DeliverResponse> {
     try {
-      await this.refreshFormatMessage()
-
-      const custodyNotice = await getCustodyNoticePdfAsString(
-        theCase,
-        this.formatMessage,
-      )
+      const custodyNotice = await getCustodyNoticePdfAsString(theCase)
 
       const delivered = await this.deliverCaseToPoliceWithFiles(theCase, user, [
         {

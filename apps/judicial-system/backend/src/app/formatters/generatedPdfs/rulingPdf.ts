@@ -1,7 +1,5 @@
 import PDFDocument from 'pdfkit'
 
-import { FormatMessage } from '@island.is/cms-translations'
-
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 
 import { nowFactory } from '../../factories'
@@ -20,10 +18,7 @@ import {
   setTitle,
 } from '../pdfHelpers'
 
-const constructRulingPdf = (
-  theCase: Case,
-  formatMessage: FormatMessage,
-): Promise<Buffer> => {
+const constructRulingPdf = (theCase: Case): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -39,7 +34,7 @@ const constructRulingPdf = (
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
-  const title = formatMessage(ruling.title)
+  const title = ruling.title
 
   setTitle(doc, title)
   addCoatOfArms(doc)
@@ -47,7 +42,7 @@ const constructRulingPdf = (
   setLineGap(doc, 4)
   addLargeHeading(
     doc,
-    theCase.court?.name ?? formatMessage(ruling.missingCourt),
+    theCase.court?.name ?? ruling.missingCourt,
     'Times-Roman',
   )
   setLineGap(doc, 2)
@@ -65,12 +60,12 @@ const constructRulingPdf = (
   setLineGap(doc, 1)
   addNormalJustifiedText(
     doc,
-    theCase.introduction ?? formatMessage(ruling.missingIntroduction),
+    theCase.introduction ?? ruling.missingIntroduction,
   )
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    `${formatMessage(ruling.prosecutorIs)} ${
+    `${ruling.prosecutorIs} ${
       theCase.prosecutorsOffice?.name ?? ruling.missingDistrict
     }.`,
   )
@@ -97,59 +92,47 @@ const constructRulingPdf = (
     }.`,
   )
   addEmptyLines(doc)
-  addNormalText(
-    doc,
-    formatMessage(ruling.prosecutorDemandsHeading),
-    'Times-Bold',
-  )
+  addNormalText(doc, ruling.prosecutorDemandsHeading, 'Times-Bold')
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    theCase.prosecutorDemands ?? formatMessage(ruling.missingProsecutorDemands),
+    theCase.prosecutorDemands ?? ruling.missingProsecutorDemands,
     'Times-Roman',
   )
   addEmptyLines(doc)
-  addNormalText(doc, formatMessage(ruling.courtCaseFactsHeading), 'Times-Bold')
+  addNormalText(doc, ruling.courtCaseFactsHeading, 'Times-Bold')
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    theCase.courtCaseFacts ?? formatMessage(ruling.missingCourtCaseFacts),
+    theCase.courtCaseFacts ?? ruling.missingCourtCaseFacts,
     'Times-Roman',
   )
   addEmptyLines(doc)
-  addNormalText(
-    doc,
-    formatMessage(ruling.courtLegalArgumentsHeading),
-    'Times-Bold',
-  )
+  addNormalText(doc, ruling.courtLegalArgumentsHeading, 'Times-Bold')
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    theCase.courtLegalArguments ??
-      formatMessage(ruling.missingCourtLegalArguments),
+    theCase.courtLegalArguments ?? ruling.missingCourtLegalArguments,
     'Times-Roman',
   )
   addEmptyLines(doc)
-  addNormalText(doc, formatMessage(ruling.rulingHeading), 'Times-Bold')
+  addNormalText(doc, ruling.rulingHeading, 'Times-Bold')
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    theCase.ruling ?? formatMessage(ruling.missingRuling),
+    theCase.ruling ?? ruling.missingRuling,
     'Times-Roman',
   )
   setLineGap(doc, 3)
   addEmptyLines(doc, 2)
   setLineGap(doc, 16)
-  addMediumHeading(doc, formatMessage(ruling.conclusionHeading))
+  addMediumHeading(doc, ruling.conclusionHeading)
   setLineGap(doc, 1)
-  addNormalJustifiedText(
-    doc,
-    theCase.conclusion ?? formatMessage(ruling.missingConclusion),
-  )
+  addNormalJustifiedText(doc, theCase.conclusion ?? ruling.missingConclusion)
   addEmptyLines(doc)
   addNormalCenteredText(
     doc,
-    theCase.judge?.name ?? formatMessage(ruling.missingJudge),
+    theCase.judge?.name ?? ruling.missingJudge,
     'Times-Bold',
   )
   addFooter(doc)
@@ -161,18 +144,10 @@ const constructRulingPdf = (
   )
 }
 
-export const getRulingPdfAsString = (
-  theCase: Case,
-  formatMessage: FormatMessage,
-): Promise<string> => {
-  return constructRulingPdf(theCase, formatMessage).then((buffer) =>
-    buffer.toString('binary'),
-  )
+export const getRulingPdfAsString = (theCase: Case): Promise<string> => {
+  return constructRulingPdf(theCase).then((buffer) => buffer.toString('binary'))
 }
 
-export const getRulingPdfAsBuffer = (
-  theCase: Case,
-  formatMessage: FormatMessage,
-): Promise<Buffer> => {
-  return constructRulingPdf(theCase, formatMessage)
+export const getRulingPdfAsBuffer = (theCase: Case): Promise<Buffer> => {
+  return constructRulingPdf(theCase)
 }

@@ -1,12 +1,13 @@
 import { useMutation } from '@apollo/client'
-import { FormSystemScreen } from '@island.is/api/schema'
+import { FormSystemScreen, FormSystemSection } from '@island.is/api/schema'
+import { SectionTypes } from '@island.is/form-system/enums'
 import {
   DELETE_FIELD,
   DELETE_SCREEN,
   DELETE_SECTION,
 } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
-import { Box, DialogPrompt } from '@island.is/island-ui/core'
+import { Box, Button, DialogPrompt } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -36,6 +37,30 @@ export const MainContentColumn = () => {
       (section) =>
         section?.id === (activeItem?.data as FormSystemScreen)?.sectionId,
     )?.sectionType === 'PAYMENT'
+
+  const showPreview =
+    !!activeItem.data &&
+    (type === 'Field' ||
+      type === 'Screen' ||
+      (type === 'Section' &&
+        !['BaseSettings', 'Urls', 'Lifetime', 'Deadline'].includes(
+          activeItem.data.id,
+        ) &&
+        ![
+          SectionTypes.PREMISES,
+          SectionTypes.PARTIES,
+          SectionTypes.COMPLETED,
+          SectionTypes.PAYMENT,
+        ].some(
+          (sectionType) =>
+            sectionType === (activeItem.data as FormSystemSection).sectionType,
+        )))
+  const showDelete =
+    !isReadOnly &&
+    !inSettings &&
+    !staticSection &&
+    !staticScreen &&
+    !inListBuilder
 
   const containsGroupOrInput = (): boolean => {
     if (type === 'Section') {
@@ -91,32 +116,46 @@ export const MainContentColumn = () => {
 
   return (
     <Box className={cn(styles.mainColumn)} padding={2}>
-      {!openPreview &&
-      !isReadOnly &&
-      !inSettings &&
-      !staticSection &&
-      !staticScreen &&
-      !inListBuilder ? (
-        containsGroupOrInput() ? (
-          <DialogPrompt
-            baseId="remove"
-            title={formatMessage(m.areYouSure)}
-            description={formatMessage(m.completelySure)}
-            ariaLabel="Remove item"
-            buttonTextConfirm={formatMessage(m.confirm)}
-            buttonTextCancel={formatMessage(m.cancel)}
-            onConfirm={remove}
-            disclosureElement={
-              <DeleteButton
-                label={formatMessage(m.delete)}
-                onClick={() => null}
+      {!openPreview && (showPreview || showDelete) && (
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          alignItems="center"
+          marginBottom={2}
+        >
+          <Box>
+            {showPreview && (
+              <Button
+                variant="ghost"
+                size="small"
+                onClick={() => setOpenPreview(true)}
+              >
+                {formatMessage(m.preview)}
+              </Button>
+            )}
+          </Box>
+          {showDelete &&
+            (containsGroupOrInput() ? (
+              <DialogPrompt
+                baseId="remove"
+                title={formatMessage(m.areYouSure)}
+                description={formatMessage(m.completelySure)}
+                ariaLabel="Remove item"
+                buttonTextConfirm={formatMessage(m.confirm)}
+                buttonTextCancel={formatMessage(m.cancel)}
+                onConfirm={remove}
+                disclosureElement={
+                  <DeleteButton
+                    label={formatMessage(m.delete)}
+                    onClick={() => null}
+                  />
+                }
               />
-            }
-          />
-        ) : (
-          <DeleteButton onClick={remove} label={formatMessage(m.delete)} />
-        )
-      ) : null}
+            ) : (
+              <DeleteButton onClick={remove} label={formatMessage(m.delete)} />
+            ))}
+        </Box>
+      )}
 
       <Box
         width="full"

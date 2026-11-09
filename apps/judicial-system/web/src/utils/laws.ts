@@ -3,8 +3,6 @@ import { laws } from '@island.is/judicial-system-web/messages'
 import type { CheckboxInfo } from '@island.is/judicial-system-web/src/components'
 import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
 
-// New user-facing text is hardcoded rather than added to the Contentful-backed
-// messages (see apps/judicial-system/AGENTS.md).
 const legalProvisionTooltips: Partial<Record<CaseLegalProvisions, string>> = {
   [CaseLegalProvisions._115_1]:
     'Heimilt er að handtaka erlendan ríkisborgara á Íslandi og færa í gæsluvarðhald skv. lið a-h í 1. mgr. 115. gr. útlendingalaga.',

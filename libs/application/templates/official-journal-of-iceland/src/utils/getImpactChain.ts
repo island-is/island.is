@@ -164,3 +164,20 @@ export const getImpactChain = ({
     upcoming,
   }
 }
+
+/**
+ * The date an impact takes when no specific date is picked: the regulation's
+ * own effective date, since changes to other regulations take effect the same
+ * day as a rule. Undefined while the regulation has no effective date, or
+ * when the impact can't take effect that early (minDate).
+ */
+export const getDefaultImpactDate = (
+  regulationEffectiveDate: string | undefined,
+  minDate: Date,
+): string | undefined => {
+  if (!regulationEffectiveDate) {
+    return undefined
+  }
+  const effective = regulationEffectiveDate.slice(0, 10)
+  return effective >= toISODate(minDate) ? effective : undefined
+}
