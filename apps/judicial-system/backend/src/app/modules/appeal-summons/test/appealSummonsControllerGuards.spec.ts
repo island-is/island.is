@@ -83,6 +83,20 @@ describe('AppealSummonsController - confirm guards', () => {
   )
 })
 
+describe('AppealSummonsController - sendToService guards', () => {
+  verifyGuards(
+    AppealSummonsController,
+    'sendToService',
+    [
+      CaseExistsForUpdateGuard,
+      CaseTypeGuard,
+      CaseWriteGuard,
+      AppealSummonsExistsGuard,
+    ],
+    indictmentCaseType,
+  )
+})
+
 describe('AppealSummonsController - sendToCourtOfAppeals guards', () => {
   verifyGuards(
     AppealSummonsController,
@@ -137,6 +151,12 @@ describe('AppealSummonsController - delete roles', () => {
 
 describe('AppealSummonsController - confirm roles', () => {
   verifyRolesRules(AppealSummonsController, 'confirm', [prosecutorRule])
+})
+
+describe('AppealSummonsController - sendToService roles', () => {
+  verifyRolesRules(AppealSummonsController, 'sendToService', [
+    publicProsecutorStaffRule,
+  ])
 })
 
 describe('AppealSummonsController - sendToCourtOfAppeals roles', () => {
