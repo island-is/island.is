@@ -37,6 +37,41 @@ describe('resolveLegacyRedirect', () => {
     expect(mockQuery).not.toHaveBeenCalled()
   })
 
+  it('redirects old court of appeal verdict page aliases, ids and documents', async () => {
+    const destination = {
+      destination: '/domar/g-ace72905-4493-4845-98c4-539b440bfdb7',
+      permanent: false,
+    }
+    expect(
+      await resolve(
+        'landsrettur.is?PageId=347c3bb1-8926-11e5-80c6-005056bc6a40&Id=9c738c6d-e995-4cb6-98f6-bb1553ae138c&verdictid=de7e5954-51b6-406b-a1eb-863b9323e66d',
+      ),
+    ).toEqual(destination)
+    expect(
+      await resolve(
+        'landsrettur.is/domar-og-urskurdir/domur-urskurdur?Id=9c738c6d-e995-4cb6-98f6-bb1553ae138c',
+      ),
+    ).toEqual(destination)
+    expect(
+      await resolve(
+        'landsrettur.is/domar-og-urskurdir/domur-urskurdur/$Verdict/Download?docId=cc7092af-1853-418e-8bc8-5e4a8e61af43',
+      ),
+    ).toEqual(destination)
+    expect(mockQuery).not.toHaveBeenCalled()
+  })
+
+  it('redirects district court ids that are not GoPro ids', async () => {
+    expect(
+      await resolve(
+        'heradsdomstolar.is/domar/domur?id=8c6deda8-a73c-4764-be7e-aa475db8cb8e',
+      ),
+    ).toEqual({
+      destination: '/domar/g-78b5e567-eb3e-440a-9f88-afaee7178710',
+      permanent: false,
+    })
+    expect(mockQuery).not.toHaveBeenCalled()
+  })
+
   it('redirects supreme court ids directly', async () => {
     expect(
       await resolve(
