@@ -122,6 +122,31 @@ response body logging and strips `problem+json` bodies out of log entries
   `statusPill` props, used by the question accordion.
 - `pruneAfterHours` was added to `@island.is/application/core`.
 
+## Test data
+
+Fjarskiptastofa's test environment has gervimaður (test) companies with a known
+verdict from `isRegulated`, so both paths through the prerequisites screen can
+be tried end to end. The application is only reachable on a company delegation
+(see [Who can apply](#who-can-apply)), so testing one of them means logging in
+to dev/staging as a gervimaður who holds procuration for the company and then
+switching to that company's delegation.
+
+| Company | `accessWindowOpen` | Log in as |
+| --- | --- | --- |
+| 65° ARTIC ehf. (`5005101370`) | open | Gervimaður Ameríka (`0101302989`) or Gervimaður Færeyjar (`0101302399`) |
+| `4703013920` | open | Gervimaður Færeyjar (`0101302399`) |
+| `6211170100` | open | Gervimaður Færeyjar (`0101302399`) |
+| `5105160160` | closed | Gervimaður Færeyjar (`0101302399`) |
+| `6203170390` | closed | Gervimaður Færeyjar (`0101302399`) |
+
+An open access window continues to the assessment; a closed one stays in
+`prerequisites` and shows the "not eligible" alert. 65° ARTIC ehf. is the one
+company both gervimenn can act for, so it is the easier starting point.
+
+Logging in as a person with no company delegation is worth a look too: that is
+the `notAllowed` role, which shows the "this application is for companies"
+screen instead.
+
 ## Running unit tests
 
 Run `nx test application-templates-fjarskiptastofa-self-assessment` to execute
