@@ -65,11 +65,15 @@ export const getProjectPageSearchChildLinks = (
   const baseUrl = `/${getProjectPageUrlPrefix(locale)}/${slug}`
   const links: ProjectPageSearchChildLink[] = []
 
+  // Parent subpages whose chapters are already shown
+  const shownParentHrefs = new Set<string>()
+
   const addLink = (link: ProjectPageSearchChildLink) => {
     if (
       links.length < maxLinks &&
       link.label &&
       link.href !== baseUrl &&
+      !shownParentHrefs.has(link.href) &&
       !links.some(
         (existing) => existing.href === link.href || existing.id === link.id,
       )
@@ -95,9 +99,29 @@ export const getProjectPageSearchChildLinks = (
     }
   }
 
+  // A parent subpage is left out when one of its chapters matches,
+  // the chapter already links to its place under the parent
+  const parentIdsWithMatchingChapters = new Set(
+    children
+      .map((child) => parentByChapterId.get(child.id)?.id)
+      .filter(Boolean),
+  )
+
   // Subpages that match the search query come first, best match first
   for (const child of children) {
     if (child.typename === 'ProjectParentSubpage') {
+      if (!parentIdsWithMatchingChapters.has(child.id)) {
+        addLink({
+          id: child.id,
+          label: child.title,
+          href: `${baseUrl}/${child.slug}`,
+        })
+      }
+      continue
+    }
+
+    const parent = parentByChapterId.get(child.id)
+    if (!parent) {
       addLink({
         id: child.id,
         label: child.title,
@@ -106,14 +130,15 @@ export const getProjectPageSearchChildLinks = (
       continue
     }
 
-    const parent = parentByChapterId.get(child.id)
+    const linkCount = links.length
     addLink({
       id: child.id,
       label: child.title,
-      href: parent
-        ? `${baseUrl}/${parent.slug}/${child.slug}`
-        : `${baseUrl}/${child.slug}`,
+      href: `${baseUrl}/${parent.slug}/${child.slug}`,
     })
+    if (links.length > linkCount) {
+      shownParentHrefs.add(`${baseUrl}/${parent.slug}`)
+    }
   }
 
   // Then the project page's own navigation, in the order editors put it in

@@ -111,7 +111,7 @@ describe('getProjectPageSearchChildLinks', () => {
     ).toEqual(['nav-1', 'a', 'nav-2', 'nav-3'])
   })
 
-  it('links chapters under their parent subpage', () => {
+  it('shows matching chapters under their parent subpage instead of the parent itself', () => {
     const [matches] = mapProjectPageChildMatches([
       group('p1', 5, [
         subpage('chapter', 'chapter'),
@@ -120,13 +120,44 @@ describe('getProjectPageSearchChildLinks', () => {
     ])
 
     expect(
-      getProjectPageSearchChildLinks({ slug: 'project' }, matches, 'is'),
+      getProjectPageSearchChildLinks(
+        {
+          slug: 'project',
+          // The parent is not added again from the navigation
+          sidebarLinks: [
+            {
+              primaryLink: {
+                id: 'guide-nav',
+                text: 'Guide',
+                url: '/v/project/guide',
+              },
+            },
+          ],
+        },
+        matches,
+        'is',
+      ),
     ).toEqual([
       {
         id: 'chapter',
         label: 'Title chapter',
         href: '/v/project/guide/chapter',
       },
+    ])
+  })
+
+  it('shows a matching parent subpage when none of its chapters match', () => {
+    const [matches] = mapProjectPageChildMatches([
+      group('p1', 5, [
+        subpage('other', 'other'),
+        parent('parent', 'guide', [{ id: 'chapter', slug: 'chapter' }]),
+      ]),
+    ])
+
+    expect(
+      getProjectPageSearchChildLinks({ slug: 'project' }, matches, 'is'),
+    ).toEqual([
+      { id: 'other', label: 'Title other', href: '/v/project/other' },
       { id: 'parent', label: 'Title parent', href: '/v/project/guide' },
     ])
   })
