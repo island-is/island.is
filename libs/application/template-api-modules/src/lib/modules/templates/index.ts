@@ -1,3 +1,5 @@
+import { OvernightStaysRegistrationModule } from './district-commissioner/overnight-stays-registration/overnight-stays-registration.module'
+import { OvernightStaysRegistrationService } from './district-commissioner/overnight-stays-registration/overnight-stays-registration.service'
 import { PayDebtsModule } from './pay-debts/pay-debts.module'
 import { PayDebtsService } from './pay-debts/pay-debts.service'
 import { ConfirmJobOrIncomeModule } from './vmst/confirm-job-or-income/confirm-job-or-income.module'
@@ -306,6 +308,7 @@ export const modules = [
   DirectorateOfEqualityModule,
   PayDebtsModule,
   U2CertificateModule,
+  OvernightStaysRegistrationModule,
 ]
 
 export const services = [
@@ -410,4 +413,5 @@ export const services = [
   DirectorateOfEqualityService,
   PayDebtsService,
   U2CertificateService,
+  OvernightStaysRegistrationService,
 ]

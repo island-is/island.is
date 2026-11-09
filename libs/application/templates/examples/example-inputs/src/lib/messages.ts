@@ -58,4 +58,35 @@ export const m = defineMessages({
     defaultMessage: 'Number 1',
     description: 'key for number 1',
   },
+  annualMultiRangeCalendarTitle: {
+    id: 'exi.application:annualMultiRangeCalendarTitle',
+    defaultMessage: 'Annual multi-range calendar',
+    description: 'Annual multi-range calendar title',
+  },
+  annualMultiRangeCalendarDescription: {
+    id: 'exi.application:annualMultiRangeCalendarDescription',
+    defaultMessage: 'Select one or more date ranges.',
+    description: 'Annual multi-range calendar description',
+  },
+  annualMultiRangeCalendarKeyboardInstructions: {
+    id: 'exi.application:annualMultiRangeCalendarKeyboardInstructions',
+    defaultMessage:
+      'Use the arrow keys to move between dates. Select a start and end date to add a range.',
+    description: 'Annual multi-range calendar keyboard instructions',
+  },
+  annualMultiRangeCalendarRangeStartSelected: {
+    id: 'exi.application:annualMultiRangeCalendarRangeStartSelected',
+    defaultMessage: 'Selected {date} as the start of the range.',
+    description: 'Annual multi-range calendar range start announcement',
+  },
+  annualMultiRangeCalendarRangeSelected: {
+    id: 'exi.application:annualMultiRangeCalendarRangeSelected',
+    defaultMessage: 'Selected a range from {from} to {to}.',
+    description: 'Annual multi-range calendar range announcement',
+  },
+  annualMultiRangeCalendarRangeRemoved: {
+    id: 'exi.application:annualMultiRangeCalendarRangeRemoved',
+    defaultMessage: 'Date range removed.',
+    description: 'Annual multi-range calendar range removal announcement',
+  },
 })
