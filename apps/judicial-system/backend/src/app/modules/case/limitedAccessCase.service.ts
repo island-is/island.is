@@ -106,9 +106,11 @@ export class LimitedAccessCaseService {
   // the defence user may not see (including on merged/split cases) before the
   // payload leaves the service. Uses the same per-file rules as downloads /
   // LimitedAccessCaseFileInterceptor (category, submitter, cutoff, defendant,
-  // confirmed ruling order). Each linked case supplies its own type, state,
-  // parties and court sessions so defendant-scoped and ruling-order checks
-  // resolve against the case that owns the file.
+  // confirmed ruling order). Merged-case downloads use the parent for access
+  // control (LimitedAccessViewCaseFileGuard), and the merged include omits
+  // sharing / appeal fields the filter needs — so merged files are judged
+  // against the parent. Split cases own their defendant and files, so they
+  // supply their own context.
   private restrictCaseFilesForDefenceUser(theCase: Case, user?: TUser): Case {
     if (!user || !isDefenceUser(user)) {
       return theCase
@@ -143,7 +145,7 @@ export class LimitedAccessCaseService {
     for (const merged of theCase.mergedCases ?? []) {
       if (merged.caseFiles) {
         merged.caseFiles = merged.caseFiles.filter((file) =>
-          keepAllowed(file, merged),
+          keepAllowed(file, theCase),
         )
       }
     }

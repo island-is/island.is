@@ -1,11 +1,22 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { type User, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  CaseState,
+  CaseType,
+  type User,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
-import { Case, CaseRepositoryService } from '../../../repository'
+import {
+  Case,
+  CaseFile,
+  CaseRepositoryService,
+  Defendant,
+} from '../../../repository'
 import { LimitedAccessCaseService } from '../../limitedAccessCase.service'
 
 // The repository decides what a defence user sees of the linked cases from the
@@ -79,5 +90,60 @@ describe('LimitedAccessCaseService - findById', () => {
     await expect(limitedAccessCaseService.findById(caseId)).rejects.toThrow(
       `Case ${caseId} does not exist`,
     )
+  })
+
+  // Merged-case includes omit appeal / sharing fields; filtering those files
+  // against the merged case alone would drop categories the download guard
+  // allows via the parent. Keep judging merged files with the parent context.
+  it('should filter merged case files with the parent case access context', async () => {
+    const user = {
+      nationalId,
+      name: 'Appeal Defender',
+      role: UserRole.DEFENDER,
+    } as User
+    const mergedCaseFileId = uuid()
+    const mergedCaseFile = {
+      id: mergedCaseFileId,
+      category: CaseFileCategory.CASE_FILE,
+      created: new Date('2024-01-01'),
+    } as CaseFile
+
+    const mockFindLimitedAccessById =
+      mockCaseRepositoryService.findLimitedAccessById as jest.Mock
+    mockFindLimitedAccessById.mockResolvedValueOnce({
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      state: CaseState.COMPLETED,
+      defendants: [
+        {
+          id: uuid(),
+          appealDefenderNationalId: nationalId,
+          isAppealDefenderConfirmed: true,
+        } as Defendant,
+      ],
+      civilClaimants: [],
+      caseFiles: [],
+      mergedCases: [
+        {
+          id: uuid(),
+          type: CaseType.INDICTMENT,
+          state: CaseState.COMPLETED,
+          // Shape mirrors the limited-access merged include: no appeal fields.
+          defendants: [
+            {
+              id: uuid(),
+              defenderNationalId: '9999999999',
+              isDefenderChoiceConfirmed: true,
+            } as Defendant,
+          ],
+          civilClaimants: [],
+          caseFiles: [mergedCaseFile],
+        } as Case,
+      ],
+    } as Case)
+
+    const result = await limitedAccessCaseService.findById(caseId, { user })
+
+    expect(result.mergedCases?.[0].caseFiles).toEqual([mergedCaseFile])
   })
 })
