@@ -8,6 +8,7 @@ export interface Lawyer {
   phoneNr: string
   nationalId: string
   isLitigator: boolean
+  hasCourtOfAppealsRights: boolean
 }
 
 export type LawyerFull = {
@@ -56,6 +57,7 @@ export type LawyerRegistry = {
   phoneNumber: string
   practice: string
   isLitigator: boolean
+  hasCourtOfAppealsRights: boolean
 }
 
 export const mapToLawyer = (lawyer: LawyerRegistry): Lawyer => {
@@ -67,9 +69,15 @@ export const mapToLawyer = (lawyer: LawyerRegistry): Lawyer => {
     phoneNr: lawyer.phoneNumber,
     nationalId: lawyer.nationalId.replace(/\D/g, ''), // Remove all non-numeric characters
     isLitigator: lawyer.isLitigator,
+    hasCourtOfAppealsRights: lawyer.hasCourtOfAppealsRights,
   }
 }
 
 export enum LawyerType {
   LITIGATORS = 'LITIGATORS',
+  /**
+   * Litigators who may appear before Landsréttur (court of appeals).
+   * Used by the XRD defender list for appealed criminal cases.
+   */
+  COURT_OF_APPEALS_LITIGATORS = 'COURT_OF_APPEALS_LITIGATORS',
 }

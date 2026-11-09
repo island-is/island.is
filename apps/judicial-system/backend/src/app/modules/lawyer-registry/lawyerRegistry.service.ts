@@ -20,6 +20,7 @@ import {
   LawyerRegistryData,
   LawyerRegistryRepositoryService,
 } from '../repository'
+import { hasCourtOfAppealsRights } from './hasCourtOfAppealsRights'
 import { lawyerRegistryConfig } from './lawyerRegistry.config'
 import { testLawyers } from './testLawyers'
 
@@ -33,6 +34,9 @@ export class LawyerRegistryService {
   ) {}
 
   async getLawyersFromLFMI(lawyerType?: LawyerType): Promise<LawyerFull[]> {
+    // TODO(LMFÍ): If LMFÍ exposes a filter for Landsréttur rights (like
+    // ?verjendur=1 for litigators), prefer fetching that list here instead of
+    // deriving rights from Title / HrlLicense in populate().
     const response = await fetch(
       `${this.config.lawyerRegistryAPI}/lawyers${
         lawyerType && lawyerType === LawyerType.LITIGATORS ? '?verjendur=1' : ''
@@ -97,6 +101,7 @@ export class LawyerRegistryService {
       phoneNumber: lawyer.GSM ?? lawyer.Phone,
       practice: lawyer.Practice,
       isLitigator: litigatorNationalIds.has(lawyer.SSN),
+      hasCourtOfAppealsRights: hasCourtOfAppealsRights(lawyer),
     }))
 
     // Test environments keep the e2e lawyers across replacements, otherwise
@@ -115,10 +120,16 @@ export class LawyerRegistryService {
   }
 
   async getAll(lawyerType: LawyerType) {
-    const lawyers =
-      lawyerType === LawyerType.LITIGATORS
-        ? await this.lawyerRegistryRepositoryService.findAllLitigators()
-        : await this.lawyerRegistryRepositoryService.findAll()
+    let lawyers: LawyerRegistry[]
+
+    if (lawyerType === LawyerType.LITIGATORS) {
+      lawyers = await this.lawyerRegistryRepositoryService.findAllLitigators()
+    } else if (lawyerType === LawyerType.COURT_OF_APPEALS_LITIGATORS) {
+      lawyers =
+        await this.lawyerRegistryRepositoryService.findAllCourtOfAppealsLitigators()
+    } else {
+      lawyers = await this.lawyerRegistryRepositoryService.findAll()
+    }
 
     if (!lawyers || lawyers.length === 0) {
       this.logger.error('No lawyers found in the lawyer registry')
