@@ -106,42 +106,53 @@ export class LimitedAccessCaseService {
   // the defence user may not see (including on merged/split cases) before the
   // payload leaves the service. Uses the same per-file rules as downloads /
   // LimitedAccessCaseFileInterceptor (category, submitter, cutoff, defendant,
-  // confirmed ruling order).
+  // confirmed ruling order). Each linked case supplies its own type, state,
+  // parties and court sessions so defendant-scoped and ruling-order checks
+  // resolve against the case that owns the file.
   private restrictCaseFilesForDefenceUser(theCase: Case, user?: TUser): Case {
     if (!user || !isDefenceUser(user)) {
       return theCase
     }
 
-    const keepAllowed = (file: CaseFile) =>
+    const keepAllowed = (file: CaseFile, caseContext: Case) =>
       canLimitedAccessUserViewCaseFile({
         user,
-        caseType: theCase.type,
-        caseState: theCase.state,
+        caseType: caseContext.type,
+        caseState: caseContext.state,
         submittedBy: file.submittedBy,
         fileRepresentative: file.fileRepresentative,
         caseFileCategory: file.category,
-        defendants: theCase.defendants,
-        civilClaimants: theCase.civilClaimants,
+        defendants: caseContext.defendants,
+        civilClaimants: caseContext.civilClaimants,
         defendantId: file.defendantId,
         fileCreated: file.created,
         civilClaimantId: file.civilClaimantId,
         isRulingOrderInConfirmedCourtSession:
-          isRulingOrderInConfirmedCourtSession(file.id, theCase.courtSessions),
+          isRulingOrderInConfirmedCourtSession(
+            file.id,
+            caseContext.courtSessions,
+          ),
       })
 
     if (theCase.caseFiles) {
-      theCase.caseFiles = theCase.caseFiles.filter(keepAllowed)
+      theCase.caseFiles = theCase.caseFiles.filter((file) =>
+        keepAllowed(file, theCase),
+      )
     }
 
     for (const merged of theCase.mergedCases ?? []) {
       if (merged.caseFiles) {
-        merged.caseFiles = merged.caseFiles.filter(keepAllowed)
+        merged.caseFiles = merged.caseFiles.filter((file) =>
+          keepAllowed(file, merged),
+        )
       }
     }
 
     for (const split of theCase.splitCases ?? []) {
       if (split.caseFiles) {
-        split.caseFiles = split.caseFiles.filter(keepAllowed)
+        split.caseFiles = split.caseFiles.filter((file) =>
+          keepAllowed(file, split),
+        )
       }
     }
 
