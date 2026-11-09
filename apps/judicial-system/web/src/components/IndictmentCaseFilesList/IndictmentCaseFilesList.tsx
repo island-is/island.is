@@ -340,6 +340,7 @@ const useFilteredCaseFiles = (
         CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE, // ákærði
         CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE, //réttargæslumaður
         CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE, // lögmaður
+        CaseFileCategory.COURT_CASE_FILE, // dómari
       ]),
       civilClaims: filterByCategories(CaseFileCategory.CIVIL_CLAIM),
       sentToPrisonAdminFiles: filterByCategories(

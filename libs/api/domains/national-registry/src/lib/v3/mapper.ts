@@ -306,15 +306,11 @@ export const formatUser = (
 }
 
 const formatLegalResidence = (address?: EinstaklingurDTOHeimili) => {
-  if (
-    !address ||
-    !address.husHeiti ||
-    !address.postnumer ||
-    !address.poststod
-  ) {
+  if (!address?.husHeiti) {
     return null
   }
-  return `${address.husHeiti}, ${address.postnumer} ${address.poststod}`
+  const postal = formatPostal(address)
+  return postal ? `${address.husHeiti}, ${postal}` : address.husHeiti
 }
 
 const formatPostal = (address?: EinstaklingurDTOHeimili) => {

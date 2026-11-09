@@ -53,6 +53,25 @@ describe('getFiledBy', () => {
 
     expect(result).toBe('Verjandi Jane Doe lagði fram:')
   })
+
+  it('attributes court-owned additional files to the judge without a name', () => {
+    const result = getFiledBy(
+      {
+        documentType: CourtDocumentType.UPLOADED_DOCUMENT,
+        caseFileId: 'file-1',
+      } as never,
+      [
+        {
+          id: 'file-1',
+          category: CaseFileCategory.COURT_CASE_FILE,
+          fileRepresentative: 'Dómari',
+          submittedBy: 'Jane Doe',
+        } as never,
+      ],
+    )
+
+    expect(result).toBe('Dómari leggur fram:')
+  })
 })
 
 describe('groupFiledDocuments', () => {

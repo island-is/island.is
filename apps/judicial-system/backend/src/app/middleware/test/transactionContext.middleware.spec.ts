@@ -8,6 +8,7 @@ import type { Logger } from '@island.is/logging'
 
 import {
   getOrCreateTransaction,
+  getRequestTransaction,
   getTransactionContext,
   registerAfterCommit,
   TransactionContextMiddleware,
@@ -84,6 +85,10 @@ describe('TransactionContextMiddleware', () => {
       )
       expect(sequelize.transaction).not.toHaveBeenCalled()
     })
+
+    it('should have no request transaction', async () => {
+      await expect(getRequestTransaction()).resolves.toBeUndefined()
+    })
   })
 
   describe('inside a request', () => {
@@ -96,6 +101,67 @@ describe('TransactionContextMiddleware', () => {
           afterCommit: [],
         })
       })
+    })
+
+    describe('the request transaction', () => {
+      it('should be undefined when nothing has opened one', async () => {
+        await givenARequest(async () => {
+          await expect(getRequestTransaction()).resolves.toBeUndefined()
+        })
+      })
+
+      it('should be the open transaction without opening another', async () => {
+        const transaction = createTransaction()
+        const sequelize = {
+          transaction: jest.fn().mockResolvedValue(transaction),
+        } as unknown as Sequelize
+
+        await givenARequest(async () => {
+          await getOrCreateTransaction(sequelize)
+
+          await expect(getRequestTransaction()).resolves.toBe(transaction)
+          expect(sequelize.transaction).toHaveBeenCalledTimes(1)
+        })
+      })
+
+      it('should be the transaction still opening', async () => {
+        // An interceptor reading while the guard's open is in flight joins
+        // that same transaction rather than reading outside it.
+        const transaction = createTransaction()
+        const sequelize = {
+          transaction: jest.fn().mockResolvedValue(transaction),
+        } as unknown as Sequelize
+
+        await givenARequest(async () => {
+          const opening = getOrCreateTransaction(sequelize)
+
+          await expect(getRequestTransaction()).resolves.toBe(transaction)
+
+          await opening
+        })
+      })
+
+      it.each(['settling', 'committed', 'settled'] as const)(
+        'should be undefined once the slot is %s',
+        async (settlement) => {
+          const transaction = createTransaction()
+          const sequelize = {
+            transaction: jest.fn().mockResolvedValue(transaction),
+          } as unknown as Sequelize
+
+          await givenARequest(async () => {
+            await getOrCreateTransaction(sequelize)
+
+            const context = getTransactionContext()
+            if (!context) {
+              throw new Error('Expected a transaction context')
+            }
+            context.settlement = settlement
+
+            await expect(getRequestTransaction()).resolves.toBeUndefined()
+          })
+        },
+      )
     })
 
     it('should open one transaction and reuse it', async () => {
