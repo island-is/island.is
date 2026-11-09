@@ -330,6 +330,10 @@ export const BaseInput = () => {
       {currentItem.fieldType === FieldTypesEnum.BANK_ACCOUNT && (
         <Row>
           <Column span="10/10">
+            <Text marginBottom={2}>
+              ATH. Bankareikningsnúmer getur aðeins verið sótt af Mínum síðum
+              innskráðs einstaklings.
+            </Text>
             <Checkbox
               label="Sækja bankareikning af Mínum síðum"
               checked={

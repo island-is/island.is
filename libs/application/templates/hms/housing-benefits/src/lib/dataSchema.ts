@@ -101,26 +101,6 @@ const baseSchema = z
       .union([z.enum(exemptionReasons), z.literal('')])
       .optional()
       .transform((v) => (v === '' ? undefined : v)),
-    exemptionDocuments: z
-      .object({
-        studies: z
-          .union([z.array(fileSchema), z.literal('')])
-          .optional()
-          .transform((v) => (v === '' ? undefined : v)),
-        health: z
-          .union([z.array(fileSchema), z.literal('')])
-          .optional()
-          .transform((v) => (v === '' ? undefined : v)),
-        housing: z
-          .union([z.array(fileSchema), z.literal('')])
-          .optional()
-          .transform((v) => (v === '' ? undefined : v)),
-        work: z
-          .union([z.array(fileSchema), z.literal('')])
-          .optional()
-          .transform((v) => (v === '' ? undefined : v)),
-      })
-      .optional(),
     householdMembersTableRepeater: z
       .array(householdMemberRowSchema)
       .optional()
@@ -263,22 +243,6 @@ export const dataSchema = baseSchema
         path: ['exemptionReason'],
         params: m.draftMessages.exemptionSection.validationReasonRequired,
       })
-      return
-    }
-
-    if (data.exemptionReason === 'housing') return
-
-    const reasonFiles = data.exemptionDocuments?.[data.exemptionReason]
-    if (
-      !reasonFiles ||
-      !Array.isArray(reasonFiles) ||
-      reasonFiles.length === 0
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['exemptionDocuments', data.exemptionReason],
-        params: m.draftMessages.exemptionSection.validationFileRequired,
-      })
     }
   })
   .superRefine((data, ctx) => {
@@ -320,7 +284,9 @@ export const dataSchema = baseSchema
     if (!bucket || typeof bucket !== 'object') return
 
     const repeater = (
-      bucket as { applicantSubmitAccessAgreementRepeater?: unknown }
+      bucket as {
+        applicantSubmitAccessAgreementRepeater?: unknown
+      }
     ).applicantSubmitAccessAgreementRepeater
     if (!Array.isArray(repeater) || repeater.length === 0) return
 

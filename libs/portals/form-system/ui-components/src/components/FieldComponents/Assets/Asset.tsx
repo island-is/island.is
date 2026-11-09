@@ -9,8 +9,15 @@ interface Props {
   item: FormSystemField
   valueIndex?: number
   dispatch?: Dispatch<Action>
+  isPreview?: boolean
 }
-export const Asset = ({ state, item, valueIndex, dispatch }: Props) => {
+export const Asset = ({
+  state,
+  item,
+  valueIndex,
+  dispatch,
+  isPreview = false,
+}: Props) => {
   if (item?.fieldSettings?.assetType === 'VEHICLE') {
     return (
       <Vehicle
@@ -18,6 +25,7 @@ export const Asset = ({ state, item, valueIndex, dispatch }: Props) => {
         item={item}
         valueIndex={valueIndex}
         dispatch={dispatch}
+        isPreview={isPreview}
       />
     )
   } else if (item?.fieldSettings?.assetType === 'REAL_ESTATE') {
@@ -27,6 +35,7 @@ export const Asset = ({ state, item, valueIndex, dispatch }: Props) => {
         item={item}
         valueIndex={valueIndex}
         dispatch={dispatch}
+        isPreview={isPreview}
       />
     )
   }

@@ -1,4 +1,10 @@
+import { useMutation } from '@apollo/client'
 import { FormSystemField } from '@island.is/api/schema'
+import { NotificationCommands } from '@island.is/form-system/enums'
+import {
+  NOTIFY_EXTERNAL_SERVICE,
+  removeTypename,
+} from '@island.is/form-system/graphql'
 import { m, SectionTypes } from '@island.is/form-system/ui'
 import {
   AlertMessage,
@@ -8,7 +14,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Fragment, useEffect, useMemo, useState } from 'react'
+import { ComponentProps, Fragment, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { Footer } from '../Footer/Footer'
@@ -103,6 +109,63 @@ export const Screen = () => {
     (state.screenError?.hasError === true ||
       hasValidateEligibilityNotificationError ||
       isValidateEligibilityNotificationLoading)
+
+  const [notifyExternal] = useMutation(NOTIFY_EXTERNAL_SERVICE)
+  const [notificationError, setNotificationError] =
+    useState<ComponentProps<typeof ExternalData>['notificationError']>()
+  const [operationSuccessful, setOperationSuccessful] = useState<boolean>()
+
+  const confirmPremises = async () => {
+    const { application } = state
+    if (
+      !validateEligibility ||
+      application.submissionServiceUrl === 'zendesk'
+    ) {
+      return true
+    }
+    if (isValidateEligibilityNotificationLoading) return false
+
+    setHasValidateEligibilityNotificationError(false)
+    setIsValidateEligibilityNotificationLoading(true)
+    try {
+      const { data } = await notifyExternal({
+        variables: {
+          input: {
+            applicationId: application.id,
+            nationalId: '',
+            actorNationalId: '',
+            organizationNationalId: application.organizationNationalId ?? '',
+            slug: application.slug,
+            isTest: application.isTest,
+            command: NotificationCommands.VALIDATE_ELIGIBILITY,
+            screenDto: undefined,
+          },
+        },
+      })
+      const screenError = removeTypename(
+        data?.notifyFormSystemExternalSystem?.screenError,
+      )
+      const successful =
+        data?.notifyFormSystemExternalSystem?.operationSuccessful === true
+      setOperationSuccessful(successful)
+      setNotificationError(screenError)
+      setHasValidateEligibilityNotificationError(
+        successful && screenError?.hasError === true,
+      )
+      return successful && screenError?.hasError !== true
+    } catch (error) {
+      console.error('Error notifying external service:', error)
+      setOperationSuccessful(false)
+      setNotificationError({
+        hasError: true,
+        title: { [lang]: formatMessage(m.basicErrorMessage) },
+      })
+      setHasValidateEligibilityNotificationError(false)
+      return false
+    } finally {
+      setIsValidateEligibilityNotificationLoading(false)
+    }
+  }
 
   const handleNewItem = () => {
     setNumberOfItems(numberOfItems + 1)
@@ -245,12 +308,8 @@ export const Screen = () => {
         {currentSectionType === SectionTypes.PREMISES && (
           <ExternalData
             disabled={hasValidateEligibilityError}
-            setHasValidateEligibilityNotificationError={
-              setHasValidateEligibilityNotificationError
-            }
-            setIsValidateEligibilityNotificationLoading={
-              setIsValidateEligibilityNotificationLoading
-            }
+            notificationError={notificationError}
+            operationSuccessful={operationSuccessful}
             setExternalDataAgreement={setExternalDataAgreement}
           />
         )}
@@ -278,6 +337,7 @@ export const Screen = () => {
       <Footer
         externalDataAgreement={externalDataAgreement}
         isValidateEligibilityError={hasValidateEligibilityError}
+        onConfirmPremises={confirmPremises}
       />
     </Box>
   )
