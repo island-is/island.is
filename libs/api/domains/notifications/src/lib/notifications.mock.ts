@@ -29,6 +29,10 @@ function generateKey(user: User | null, locale: Locale): MockKey {
   return key
 }
 
+/**
+ * Generates a random `Notification` for mocked GraphQL responses.
+ * @param user The recipient, or null for a notification without a recipient.
+ */
 export function generateMockNotification(user: User | null): Notification {
   const uuid = faker.datatype.uuid()
   const isRead = faker.datatype.boolean()
@@ -42,12 +46,16 @@ export function generateMockNotification(user: User | null): Notification {
     metadata: {
       sent,
       read: isRead,
+      wasSent: true,
       // status: isRead
       //   ? RenderedNotificationDtoStatusEnum.Read
       //   : RenderedNotificationDtoStatusEnum.Unread,
     },
     sender: {
       id: senderId,
+    },
+    category: {
+      label: 'Almennt',
     },
     recipient: {
       nationalId: user?.nationalId ?? '0000000000',
