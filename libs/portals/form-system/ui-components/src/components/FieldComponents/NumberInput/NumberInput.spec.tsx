@@ -50,6 +50,10 @@ it.each([
   { fieldType: 'EMAIL', json: { email: 'invalid' }, invalid: true },
   { fieldType: 'EMAIL', json: { email: 'name@example.is' }, invalid: false },
   { fieldType: 'NUMBERBOX', json: { number: 123 }, invalid: false },
+  { fieldType: 'NUMBERBOX', json: { number: 0 }, invalid: false },
+  { fieldType: 'NUMBERBOX', json: { number: null }, invalid: true },
+  { fieldType: 'NUMBERBOX', json: { number: undefined }, invalid: true },
+  { fieldType: 'NUMBERBOX', json: { number: NaN }, invalid: true },
   { fieldType: 'CHECKBOX', json: { checkboxValue: false }, invalid: true },
   { fieldType: 'CHECKBOX', json: { checkboxValue: true }, invalid: false },
 ])(

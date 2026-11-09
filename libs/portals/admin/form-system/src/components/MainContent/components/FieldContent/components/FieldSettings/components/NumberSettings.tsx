@@ -123,13 +123,20 @@ export const NumberSettings = () => {
             step="1"
             value={maxLength ?? ''}
             readOnly={isReadOnly}
+            errorMessage={
+              minLength != null && maxLength != null && minLength > maxLength
+                ? 'Lágmarksfjöldi tölustafa má ekki vera meiri en hámarksfjöldi tölustafa'
+                : undefined
+            }
             onChange={(e) =>
               controlDispatch({
                 type: 'SET_ANY_FIELD_SETTING',
                 payload: {
                   property: 'maxLength',
                   value:
-                    e.target.value === '' ? undefined : Number(e.target.value),
+                    e.target.value === '' || Number(e.target.value) < 0
+                      ? undefined
+                      : Number(e.target.value),
                 },
               })
             }

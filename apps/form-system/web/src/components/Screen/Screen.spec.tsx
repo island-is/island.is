@@ -25,7 +25,11 @@ jest.mock('@island.is/form-system/ui', () => ({
   SectionTypes: jest.requireActual<
     typeof import('@island.is/form-system/enums')
   >('@island.is/form-system/enums').SectionTypes,
-  m: { addMulti: 'Add', removeMulti: 'Remove' },
+  m: {
+    addMulti: 'Add',
+    removeMulti: 'Remove',
+    basicErrorMessage: 'Generic error',
+  },
 }))
 jest.mock('@island.is/localization', () => ({
   useLocale: () => ({
@@ -40,7 +44,20 @@ jest.mock('@island.is/island-ui/core', () => ({
   Box: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   GridColumn: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   Text: ({ children }: { children: ReactNode }) => <span>{children}</span>,
-  AlertMessage: () => null,
+  AlertMessage: ({
+    type,
+    title,
+    message,
+  }: {
+    type: string
+    title?: ReactNode
+    message?: ReactNode
+  }) => (
+    <div role="alert" data-type={type}>
+      {title}
+      {message}
+    </div>
+  ),
   Icon: () => null,
   Stack: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   Checkbox: ({ onChange, disabled }: ComponentProps<'input'>) => (
@@ -272,6 +289,69 @@ it.each([false, true])(
       fireEvent.click(button)
       await waitFor(() => expect(mockConfirmation).toHaveBeenCalledWith(true))
       expect(notifyExternal).toHaveBeenCalledTimes(2)
+    }
+  },
+)
+
+it.each([false, true])(
+  'replaces previous notification state with a generic error and permits retry when a request throws after operationSuccessful=%s',
+  async (operationSuccessful) => {
+    const consoleError = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
+    try {
+      notifyExternal
+        .mockResolvedValueOnce({
+          data: {
+            notifyFormSystemExternalSystem: {
+              operationSuccessful,
+              screenError: {
+                hasError: !operationSuccessful,
+                title: { is: 'Previous error' },
+                message: { is: 'Previous details' },
+              },
+            },
+          },
+        })
+        .mockRejectedValueOnce(new Error('Connection failed'))
+      const section = { sectionType: SectionTypes.PREMISES, isCompleted: false }
+      jest.mocked(useApplicationContext).mockReturnValue({
+        state: {
+          currentScreen: { data: { id: 'screen', fields: [] } },
+          currentSection: { index: 0, data: section },
+          sections: [section],
+          application: { id: 'application', submissionServiceUrl: 'service' },
+        },
+        dispatch,
+        validateEligibility: true,
+      } as unknown as ReturnType<typeof useApplicationContext>)
+
+      render(<Screen />)
+      const checkbox = screen.getByRole('checkbox')
+      fireEvent.click(checkbox)
+      const button = screen.getByRole('button', { name: 'Confirm' })
+      fireEvent.click(button)
+      await waitFor(() => expect(mockConfirmation).toHaveBeenCalledTimes(1))
+      fireEvent.click(button)
+      await waitFor(() => expect(mockConfirmation).toHaveBeenCalledTimes(2))
+
+      expect(mockConfirmation).toHaveBeenLastCalledWith(false)
+      expect(screen.getByRole('alert').getAttribute('data-type')).toBe('error')
+      expect(screen.getByText('Generic error')).toBeTruthy()
+      expect(screen.queryByText('Previous error')).toBeNull()
+      expect(screen.queryByText('Previous details')).toBeNull()
+      expect(button.hasAttribute('disabled')).toBe(false)
+      expect(checkbox.hasAttribute('disabled')).toBe(false)
+      expect(dispatch).not.toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'SAVE_FAILED' }),
+      )
+
+      fireEvent.click(button)
+      await waitFor(() => expect(mockConfirmation).toHaveBeenCalledTimes(3))
+      expect(mockConfirmation).toHaveBeenLastCalledWith(true)
+      expect(screen.queryByRole('alert')).toBeNull()
+    } finally {
+      consoleError.mockRestore()
     }
   },
 )

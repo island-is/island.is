@@ -21,7 +21,7 @@ export const hasFieldValueError = (
     case FieldTypesEnum.TEXTBOX:
       return value.text === '' || !value.text
     case FieldTypesEnum.NUMBERBOX:
-      return !value?.number || isNaN(value.number)
+      return value.number == null || isNaN(value.number)
     case FieldTypesEnum.EMAIL:
       return !validateEmail(value?.email ?? '')
     case FieldTypesEnum.PHONE_NUMBER:

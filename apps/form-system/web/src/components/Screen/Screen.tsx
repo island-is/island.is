@@ -155,6 +155,11 @@ export const Screen = () => {
       return successful && screenError?.hasError !== true
     } catch (error) {
       console.error('Error notifying external service:', error)
+      setOperationSuccessful(false)
+      setNotificationError({
+        hasError: true,
+        title: { [lang]: formatMessage(m.basicErrorMessage) },
+      })
       setHasValidateEligibilityNotificationError(false)
       return false
     } finally {
