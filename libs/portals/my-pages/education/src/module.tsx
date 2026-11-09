@@ -169,6 +169,7 @@ export const educationModule: PortalModule = {
       path: EducationPaths.PrimarySchoolContactAdd,
       key: KEY_INFO_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       loader: primarySchoolStudentLoader({ userInfo, ...rest }),
       element: (
         <PrimarySchoolStudentWrapper
@@ -185,6 +186,7 @@ export const educationModule: PortalModule = {
       path: EducationPaths.PrimarySchoolContactEdit,
       key: KEY_INFO_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       loader: primarySchoolStudentLoader({ userInfo, ...rest }),
       element: (
         <PrimarySchoolStudentWrapper
@@ -201,6 +203,7 @@ export const educationModule: PortalModule = {
       path: EducationPaths.PrimarySchoolLanguageEdit,
       key: KEY_INFO_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       loader: primarySchoolStudentLoader({ userInfo, ...rest }),
       element: (
         <PrimarySchoolStudentWrapper
@@ -217,6 +220,7 @@ export const educationModule: PortalModule = {
       path: EducationPaths.PrimarySchoolHealthEdit,
       key: KEY_INFO_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       loader: primarySchoolStudentLoader({ userInfo, ...rest }),
       element: (
         <PrimarySchoolStudentWrapper
