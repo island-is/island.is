@@ -29,15 +29,9 @@ export const getSelectedHomeLodging = (
   const year = Number(getValueViaPath<string>(answers, 'year'))
   const registrations = getHomeLodgings(externalData)
 
-  return (
-    registrations.find(
-      (registration) =>
-        registration.id === selectedId && registration.year === year,
-    ) ??
-    registrations.find(
-      (registration) =>
-        registration.id === selectedId || registration.year === year,
-    )
+  return registrations.find(
+    (registration) =>
+      registration.id === selectedId && registration.year === year,
   )
 }
 
@@ -230,6 +224,20 @@ export const getMonthlyAmountsFromVisits = ({
 
     return monthlyAmounts
   }, {})
+
+/** Returns the selected visit keys whose rental income is negative. */
+export const getNegativePerVisitAmountKeys = ({
+  perVisitAmounts,
+  visitRanges,
+}: {
+  perVisitAmounts: Record<string, string | number>
+  visitRanges: OvernightStayDateRange[]
+}): string[] =>
+  visitRanges.flatMap((range) => {
+    const key = getDateRangeKey(range)
+
+    return parseAmount(perVisitAmounts[key]) < 0 ? [key] : []
+  })
 
 /** Formats an ISO date range for display using Icelandic day-month-year order. */
 export const formatDateRange = ({

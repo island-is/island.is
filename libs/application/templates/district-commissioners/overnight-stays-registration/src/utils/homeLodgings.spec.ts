@@ -5,13 +5,55 @@ import {
   getAdvertisementUrls,
   getDateRangeKey,
   getMonthlyAmountsFromVisits,
+  getNegativePerVisitAmountKeys,
   getOvernightDates,
+  getSelectedHomeLodging,
   hasActiveAdvertisement,
   parseAmount,
   splitVisitAmountByMonth,
 } from './homeLodgings'
 
 describe('homeLodgings', () => {
+  it('only selects a lodging matching both the id and year', () => {
+    const registration = {
+      id: 'HG-00004822',
+      year: 2026,
+      hasBeenSubmitted: false,
+      name: 'Example lodging',
+      address: 'Example address',
+      postalCode: '101',
+      city: 'Reykjavík',
+      propertyNumber: '0101',
+      unitNumber: '01',
+      guestCount: 2,
+      roomCount: 1,
+    }
+    const externalData = {
+      homeLodgings: {
+        data: [registration],
+      },
+    }
+
+    expect(
+      getSelectedHomeLodging(
+        { homeLodgingId: registration.id, year: '2026' },
+        externalData,
+      ),
+    ).toEqual(registration)
+    expect(
+      getSelectedHomeLodging(
+        { homeLodgingId: registration.id, year: '2025' },
+        externalData,
+      ),
+    ).toBeUndefined()
+    expect(
+      getSelectedHomeLodging(
+        { homeLodgingId: 'HG-00000000', year: '2026' },
+        externalData,
+      ),
+    ).toBeUndefined()
+  })
+
   it('parses whole-króna answers in every stored and formatted shape', () => {
     // Canonical shape: `decimalScale={0}` makes the inputs emit integer strings.
     expect(parseAmount('175000')).toBe(175000)
@@ -36,6 +78,21 @@ describe('homeLodgings', () => {
     // conversion produces has to survive being parsed again unchanged.
     expect(monthlyAmounts).toEqual({ month7: 175000 })
     expect(parseAmount(String(monthlyAmounts.month7))).toBe(175000)
+  })
+
+  it('identifies negative per-visit amounts before monthly conversion', () => {
+    const negativeVisit = { from: '2026-07-01', to: '2026-07-02' }
+    const positiveVisit = { from: '2026-07-10', to: '2026-07-11' }
+
+    expect(
+      getNegativePerVisitAmountKeys({
+        perVisitAmounts: {
+          [getDateRangeKey(negativeVisit)]: '-100',
+          [getDateRangeKey(positiveVisit)]: '200',
+        },
+        visitRanges: [negativeVisit, positiveVisit],
+      }),
+    ).toEqual([getDateRangeKey(negativeVisit)])
   })
 
   it('supports persisted advertisement answers from before the repeater migration', () => {

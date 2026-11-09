@@ -22,6 +22,7 @@ import {
   formatDateRange,
   getDateRangeKey,
   getMonthlyAmountsFromVisits,
+  getNegativePerVisitAmountKeys,
   getOvernightDates,
   hasNoOvernightStays,
   parseAmount,
@@ -32,7 +33,7 @@ type PricingMethod = 'monthly' | 'perVisit'
 
 export const Pricing: FC<FieldBaseProps> = () => {
   const { formatMessage } = useLocale()
-  const { clearErrors, formState, unregister, watch, setValue } =
+  const { clearErrors, formState, setError, unregister, watch, setValue } =
     useFormContext()
   const { errors } = formState
   const [pendingPricingMethod, setPendingPricingMethod] =
@@ -143,6 +144,21 @@ export const Pricing: FC<FieldBaseProps> = () => {
   }
 
   const convertVisitsToMonthlyAmounts = () => {
+    const negativeAmountKeys = getNegativePerVisitAmountKeys({
+      perVisitAmounts,
+      visitRanges: selectedVisits,
+    })
+
+    if (negativeAmountKeys.length > 0) {
+      negativeAmountKeys.forEach((key) => {
+        setError(`pricing.perVisitAmounts.${key}`, {
+          type: 'manual',
+          message: formatMessage(m.pricingAmountInvalid),
+        })
+      })
+      return
+    }
+
     const convertedAmounts = getMonthlyAmountsFromVisits({
       perVisitAmounts,
       visitRanges: selectedVisits,
@@ -430,6 +446,7 @@ export const Pricing: FC<FieldBaseProps> = () => {
                       thousandSeparator
                       decimalScale={0}
                       suffix=" kr."
+                      allowNegative={false}
                       rightAlign
                       size="sm"
                       required
