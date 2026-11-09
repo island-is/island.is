@@ -24,12 +24,13 @@ interface Props {
 /**
  * 3. Heilsufarsupplýsingar — GET/PATCH /me/children/{childId}/health-profile
  *
- * Display rules (ticket §3): do not render empty allergy rows; the adrenaline
- * pen is only shown when at least one allergy exists; allergies are grouped from
- * `allergies[].type` into food / other, the two categories MMS serves.
+ * Display rules (contract §4.5): do not render empty allergy rows; the
+ * adrenaline pen is only shown when at least one allergy exists; allergies are
+ * grouped from `allergies[].type` into food / other, the two categories MMS
+ * serves.
  *
  * Editing lives on its own screen (PrimarySchoolHealthEdit) rather than an
- * inline toggle. Saving there stays disabled until MMS opens the health PATCH.
+ * inline toggle.
  */
 export const HealthProfileSection = ({ profile, loading, error }: Props) => {
   const { formatMessage } = useLocale()

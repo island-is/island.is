@@ -7,13 +7,10 @@ import type { MmsError } from './types'
 
 /**
  * Lookup lists for the key-information sections, resolved to `{ value, label }`
- * in the active locale:
- *   - agent relation types → GET /agent-relation-types (contract §4.1)
- *   - language environments → GET /language-environments (contract §4.1)
- *
- * These replace the earlier Frigg `key-options` guesses: the MMS contract v0.2
- * serves them from their own endpoints, not from Frigg. Allergies have their
- * own hook (useAllergyOptions) because callers also need `code` / `type`.
+ * in the active locale. Both come from Frigg `GET /key-options`, one key-option
+ * type each (`relation` and `languageEnvironment`); the api resolves the type
+ * and hands back a flat list. Allergies have their own hook (useAllergyOptions)
+ * because callers also need `code` / `type`.
  */
 export interface KeyInfoSelectOption {
   value: string

@@ -1,24 +1,13 @@
 /**
- * PROVISIONAL types for the primary-school "Lykilupplýsingar" (key information)
+ * View models for the primary-school "Lykilupplýsingar" (key information)
  * sections shown on Mínar síður → Menntun → Grunnskóli → Nemandi → Yfirlit.
  *
- * These are derived from the MMS contract v0.2 ticket (10.09.2026), NOT from a
- * machine-readable OpenAPI spec. They exist only so the UI can be scaffolded
- * against a typed data seam.
- *
- * TODO(MMS v0.2): once the MMS contract lands and the endpoints are added to
- * libs/clients/mms/primary-school (clientConfig.json → codegen) and exposed via
- * the education GraphQL resolver, REPLACE every type here with the generated
- * GraphQL types and delete this file. Do not treat these field names/enum
- * values as authoritative — flag mismatches against the contract rather than
- * silently adapting.
+ * The generated GraphQL types are locale-neutral (every title arrives as
+ * `{ is, en }`) and nest their lookups, which every section and form would
+ * otherwise have to unpack for itself. These are what the sections read after
+ * usePrimarySchoolKeyInfo has resolved the active locale and flattened the
+ * lookups; the generated types stay the source of truth for the wire shape.
  */
-
-/** GET /key-options?type=... — a single lookup option. */
-export interface KeyOption {
-  id: string
-  label: string
-}
 
 /* -------------------------------------------------------------------------- */
 /* 1. Aðstandendur (emergency contacts)                                        */
@@ -26,7 +15,7 @@ export interface KeyOption {
 
 /**
  * Who registered a contact. When `kind === 'unknown'` the UI must NOT render the
- * "Skráð af" line (per ticket).
+ * "Skráð af" line (contract §4.1).
  */
 export interface EmergencyContactCreatedBy {
   kind: string
@@ -110,23 +99,6 @@ export interface Allergy {
   label: string
 }
 
-/**
- * The selectable allergy reference list (not per-child), from
- * `GET /key-options`. One flat list; `type` splits it into food / other (values
- * match AllergyCategory).
- */
-export interface AllergyOption {
-  id: string
-  code: string
-  /** one of AllergyCategory; kept as string so an unknown value never crashes */
-  type: string
-  /** localised label, one entry per supported UI language */
-  title: {
-    is: string
-    en: string
-  }
-}
-
 /** GET /me/children/{childId}/health-profile */
 export interface HealthProfile {
   allergies: Allergy[]
@@ -136,7 +108,7 @@ export interface HealthProfile {
   medicationAssistance?: boolean
 }
 
-/** PATCH body — a whole document (per ticket). */
+/** PATCH body — a whole document (contract §4.1). */
 export interface HealthProfileUpdateInput {
   allergies: Allergy[]
   epipen: boolean
@@ -159,7 +131,8 @@ export interface SectionState<T> {
 /* Errors                                                                      */
 /* -------------------------------------------------------------------------- */
 
-/** MMS error codes to handle explicitly (per ticket §5). */
+/** MMS error codes (contract §5). The api forwards whatever code MMS reported;
+ * {@link mmsErrorMessage} turns the ones we can explain into a message. */
 export enum MmsErrorCode {
   Validation = 'VALIDATION',
   NotAGuardian = 'NOT_A_GUARDIAN',
@@ -176,6 +149,7 @@ export enum MmsErrorCode {
 export interface MmsError {
   code?: string
   message?: string
-  /** must be preserved/surfaced so failures can be traced with MMS (ticket §5) */
+  /** Request id MMS sent with the failure, when it sent one — surfaced so a
+   * failure can be traced with MMS (contract §5). */
   requestId?: string
 }
