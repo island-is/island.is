@@ -1,9 +1,10 @@
 import { Field, ID, InputType } from '@nestjs/graphql'
 
-/** Every key-info write is addressed by the routed nemendagrunnur student id;
- * the resolver translates it to the frigg child id the endpoints take. */
+/** Every key-info write is addressed by the routed nemendagrunnur student id,
+ * which is also the frigg child id the endpoints take (contract v0.3 §4.3), so
+ * the resolver passes it straight through. */
 const STUDENT_ID_DESCRIPTION =
-  'The nemendagrunnur student id the primary-school screens route on (not the MMS key-information child id).'
+  'The nemendagrunnur student id the primary-school screens route on, which is also the MMS key-information child id.'
 
 /** POST /me/children/{childId}/emergency-contacts — name is resolved from
  * Þjóðskrá by MMS. */

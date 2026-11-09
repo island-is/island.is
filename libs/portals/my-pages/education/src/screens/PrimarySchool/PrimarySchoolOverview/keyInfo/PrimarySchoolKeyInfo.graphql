@@ -72,9 +72,12 @@ fragment PrimarySchoolHealthProfileFields on EducationPrimarySchoolHealthProfile
 #
 # Read with errorPolicy 'all' so a section that fails comes back as a null field
 # plus an error keyed on its path, and the sections that succeeded still render
-# (see usePrimarySchoolKeyInfo). `hasKeyInfo` is non-nullable, so when the
-# child-id lookup itself fails the whole student is nulled and the overview
-# shows one error rather than silently hiding the sections.
+# (see usePrimarySchoolKeyInfo). Every field selected here is nullable, so a
+# failure never nulls `primarySchoolStudent` itself: that null would be written
+# to the cache under the root field this query shares with the base info and
+# assessment reads, and would blank those too. A failed child-id lookup shows up
+# as an error on `hasKeyInfo`, which the hook reports as the one read-level
+# error.
 query PrimarySchoolKeyInfoSections(
   $studentId: String!
   $withEmergencyContacts: Boolean!

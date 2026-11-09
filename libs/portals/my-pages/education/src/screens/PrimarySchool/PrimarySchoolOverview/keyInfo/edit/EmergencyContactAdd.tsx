@@ -35,8 +35,10 @@ export const EmergencyContactAdd = () => {
   const { studentId } = useParams<{ studentId: string }>()
   // The screen shows no contacts, but it has to name the section it writes:
   // that is what the save refetches, so the overview reads the new contact from
-  // the cache when it comes back. The read itself costs nothing — the overview
-  // this screen is reached from has already filled that cache entry.
+  // the cache when it comes back. It does cost one read of its own — the hook
+  // re-reads the section behind the cache the overview filled (see the
+  // 'cache-and-network' fetch policy in usePrimarySchoolKeyInfo) — but nothing
+  // on this screen waits for it.
   const { addAgent, saving } = usePrimarySchoolKeyInfo(studentId, [
     'emergencyContacts',
   ])

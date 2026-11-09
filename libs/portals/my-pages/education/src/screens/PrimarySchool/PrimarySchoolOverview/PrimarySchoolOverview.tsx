@@ -64,6 +64,12 @@ export const PrimarySchoolOverview = () => {
     keyInfoEnabled ? KEY_INFO_SECTIONS : [],
   )
 
+  // `hasKeyInfo` keeps its last known answer when a read fails (see the
+  // EducationPrimarySchoolStudent type policy in the my-pages Apollo client),
+  // so the failure is what decides here: one error instead of three sections
+  // that would all be empty.
+  const showKeyInfo = hasKeyInfo && !keyInfoError && !keyInfoLoading
+
   return (
     <>
       {loading && <CardLoader />}
@@ -89,7 +95,7 @@ export const PrimarySchoolOverview = () => {
             <SectionError error={keyInfoError} />
           )}
 
-          {hasKeyInfo && (
+          {showKeyInfo && (
             <EmergencyContactsSection
               contacts={emergencyContacts.data}
               loading={emergencyContacts.loading}
@@ -99,7 +105,7 @@ export const PrimarySchoolOverview = () => {
             />
           )}
 
-          {hasKeyInfo && (
+          {showKeyInfo && (
             <LanguageProfileSection
               profile={languageProfile.data}
               loading={languageProfile.loading}
@@ -107,7 +113,7 @@ export const PrimarySchoolOverview = () => {
             />
           )}
 
-          {hasKeyInfo && (
+          {showKeyInfo && (
             <HealthProfileSection
               profile={healthProfile.data}
               loading={healthProfile.loading}

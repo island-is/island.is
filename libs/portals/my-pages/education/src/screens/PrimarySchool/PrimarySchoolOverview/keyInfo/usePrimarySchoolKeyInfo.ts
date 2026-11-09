@@ -57,15 +57,17 @@ const ALL_SECTIONS: KeyInfoSectionName[] = [
 
 export interface PrimarySchoolKeyInfo {
   /** Whether the child has a counterpart in the frigg key-info database.
-   * `false` while the read is still in flight or the sections are skipped. */
+   * `false` while the read is still in flight or the sections are skipped.
+   * Stale rather than `false` when the read fails, so check `error` first. */
   hasKeyInfo: boolean
-  /** true while the key-info read is in flight */
+  /** true while the key-info read is in flight and there is nothing to show
+   * yet. A background refresh over cached data does not raise it. */
   loading: boolean
   /**
-   * Set when the read failed outright — frigg unreachable, the token refused,
-   * the child-id lookup down — so no section resolved and `hasKeyInfo` cannot
-   * be trusted. A failure confined to one section is reported on that section
-   * instead, and the others still carry their data.
+   * Set when the child-id lookup failed — frigg unreachable, the token refused
+   * — so no section could resolve and `hasKeyInfo` is unknown. A failure
+   * confined to one section is reported on that section instead, and the
+   * others still carry their data.
    */
   error: MmsError | undefined
   emergencyContacts: SectionState<EmergencyContact[]>
@@ -102,9 +104,17 @@ export const usePrimarySchoolKeyInfo = (
   // errorPolicy 'all' keeps the sections that resolved: a section that failed
   // comes back null with an error of its own, which toMmsFieldError picks out
   // by path below.
+  //
+  // That same null is written to the cache, and the portal client is
+  // cache-first, so a section that failed once would read back as "no
+  // information" — with no error and no request — every later time the screen
+  // mounts, until the page is reloaded. 'cache-and-network' renders what the
+  // cache has and re-reads frigg behind it, so a failure lasts no longer than
+  // the outage did.
   const sectionsQuery = usePrimarySchoolKeyInfoSectionsQuery({
     variables,
     errorPolicy: 'all',
+    fetchPolicy: 'cache-and-network',
     skip: !studentId || sections.length === 0,
   })
 
@@ -184,14 +194,24 @@ export const usePrimarySchoolKeyInfo = (
   const languageProfileData = student?.languageProfile
   const healthProfileData = student?.healthProfile
 
-  // `hasKeyInfo` is non-nullable, so a failed child-id lookup nulls the whole
-  // student and takes every section with it. That is the only case the caller
-  // cannot render around, so it is reported as one read-level error rather than
-  // three identical section errors.
+  // 'cache-and-network' re-reads frigg on every mount, so `loading` would be
+  // true over perfectly good cached data and flash a loader in place of the
+  // sections each time. It is only a loading state while there is nothing to
+  // show.
+  const loading = sectionsQuery.loading && !sectionsQuery.data
+
+  // Every section resolver has to translate the student into a frigg child id
+  // first, so when that lookup fails all three fail with it — and so does
+  // `hasKeyInfo`, which is the field that failure is named on. That is the one
+  // case the caller cannot render around, so it is reported as a single
+  // read-level error rather than three identical section errors.
   const readError =
-    !sectionsQuery.loading && sectionsQuery.error && !student
+    toMmsFieldError(sectionsQuery.error, 'hasKeyInfo') ??
+    // A transport failure never reached a resolver, so it carries no field
+    // path to be found under — and brings back no student at all.
+    (sectionsQuery.error && !student
       ? toMmsError(sectionsQuery.error)
-      : undefined
+      : undefined)
 
   /** A section fails either on its own or with the read that carried it. The
    * overview reports the read-level failure once and leaves the sections out;
@@ -276,23 +296,23 @@ export const usePrimarySchoolKeyInfo = (
 
   return {
     hasKeyInfo: student?.hasKeyInfo ?? false,
-    loading: sectionsQuery.loading,
+    loading,
     error: readError,
     emergencyContacts: {
       data: agents?.map(mapAgent),
-      loading: sectionsQuery.loading,
+      loading,
       error: sectionError('emergencyContacts'),
     },
     languageProfile: {
       data: languageProfileData
         ? mapLanguageProfile(languageProfileData)
         : undefined,
-      loading: sectionsQuery.loading,
+      loading,
       error: sectionError('languageProfile'),
     },
     healthProfile: {
       data: healthProfileData ? mapHealthProfile(healthProfileData) : undefined,
-      loading: sectionsQuery.loading,
+      loading,
       error: sectionError('healthProfile'),
     },
     saving:

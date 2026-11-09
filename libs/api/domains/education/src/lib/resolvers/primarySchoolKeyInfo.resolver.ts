@@ -66,9 +66,17 @@ import { withMmsKeyInfoProblem } from '../errors/mmsKeyInfoProblem'
 export class PrimarySchoolKeyInfoResolver {
   constructor(private readonly keyInfoClient: FriggKeyInfoClientService) {}
 
+  /** Nullable on purpose: this is the one key-info field every other one
+   * depends on, and a non-nullable field that throws takes the whole
+   * `primarySchoolStudent` down with it — which, with errorPolicy 'all' on the
+   * portal side, is written into the Apollo cache as a null root field and
+   * blanks the base info and the assessment tab too. Null here means "the
+   * lookup failed", told apart from `false` ("frigg does not have this child")
+   * by the error GraphQL reports on this field. */
   @ResolveField(() => Boolean, {
+    nullable: true,
     description:
-      'Whether the student exists in the MMS key-information database, i.e. whether the key-information sections have anything to show.',
+      'Whether the student exists in the MMS key-information database, i.e. whether the key-information sections have anything to show. Null when the lookup itself failed; the failure is reported as an error on this field.',
   })
   async hasKeyInfo(
     @Parent() student: PrimarySchoolStudent,
