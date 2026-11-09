@@ -5,8 +5,9 @@ import { primarySchoolKeyInfoMessages as kim } from '../../../../lib/messages'
 import type { MmsError } from './types'
 
 /**
- * Standard error block for a key-info section. Surfaces the MMS `requestId` so a
- * failure can be traced with MMS (ticket §5) — `Problem` itself does not show it.
+ * Standard error block for a key-info section. Surfaces the MMS request id, when
+ * MMS sent one with the failure, so it can be traced with MMS (contract §5) —
+ * `Problem` itself does not show it. See mmsError.ts for where it comes from.
  */
 export const SectionError = ({ error }: { error: MmsError }) => {
   const { formatMessage } = useLocale()

@@ -163,10 +163,6 @@ export const primarySchoolKeyInfoMessages = defineMessages({
     id: 'sp.education-primary-school:key-info-request-id',
     defaultMessage: 'Villunúmer: {requestId}',
   },
-  add: {
-    id: 'sp.education-primary-school:key-info-add',
-    defaultMessage: 'Bæta við',
-  },
   remove: {
     id: 'sp.education-primary-school:key-info-remove',
     defaultMessage: 'Fjarlægja',
@@ -217,14 +213,6 @@ export const primarySchoolKeyInfoMessages = defineMessages({
     id: 'sp.education-primary-school:key-info-contact-edit-intro',
     defaultMessage: 'Hér getur þú uppfært tengsl aðstandanda við barnið.',
   },
-  contactName: {
-    id: 'sp.education-primary-school:key-info-contact-name',
-    defaultMessage: 'Nafn',
-  },
-  contactFullName: {
-    id: 'sp.education-primary-school:key-info-contact-full-name',
-    defaultMessage: 'Fullt nafn',
-  },
   contactNationalId: {
     id: 'sp.education-primary-school:key-info-contact-national-id',
     defaultMessage: 'Kennitala',
@@ -237,10 +225,6 @@ export const primarySchoolKeyInfoMessages = defineMessages({
     id: 'sp.education-primary-school:key-info-contact-person-not-found',
     defaultMessage: 'Einstaklingur fannst ekki í þjóðskrá',
   },
-  contactRelationType: {
-    id: 'sp.education-primary-school:key-info-contact-relation-type',
-    defaultMessage: 'Tengsl',
-  },
   contactRelationPrompt: {
     id: 'sp.education-primary-school:key-info-contact-relation-prompt',
     defaultMessage: 'Skráðu tengsl við barn',
@@ -249,19 +233,10 @@ export const primarySchoolKeyInfoMessages = defineMessages({
     id: 'sp.education-primary-school:key-info-contact-registered-by',
     defaultMessage: 'Skráð af',
   },
-  contactRegisteredDate: {
-    id: 'sp.education-primary-school:key-info-contact-registered-date',
-    defaultMessage: 'Skráð þann',
-  },
   contactRegisteredNote: {
     id: 'sp.education-primary-school:key-info-contact-registered-note',
     defaultMessage:
       'Skráð af hinum forsjáraðila. Aðeins sá sem skráði getur breytt.',
-  },
-  contactEditableNote: {
-    id: 'sp.education-primary-school:key-info-contact-editable-note',
-    defaultMessage:
-      'Þú skráðir þennan aðstandanda og getur breytt eða fjarlægt.',
   },
   contactsEmpty: {
     id: 'sp.education-primary-school:key-info-contacts-empty',
@@ -385,14 +360,20 @@ export const primarySchoolKeyInfoMessages = defineMessages({
     id: 'sp.education-primary-school:key-info-medication-assistance',
     defaultMessage: 'Aðstoð við lyfjagjöf á skólatíma',
   },
-  healthEditDisabledNotice: {
-    id: 'sp.education-primary-school:key-info-health-edit-disabled',
-    defaultMessage:
-      'Ekki er hægt að breyta heilsufarsupplýsingum að svo stöddu.',
-  },
   saveError: {
     id: 'sp.education-primary-school:key-info-save-error',
     defaultMessage: 'Ekki tókst að vista breytingar. Reyndu aftur.',
+  },
+  // Specific failures MMS reports with a code (contract v0.2 §5); anything else
+  // falls back to saveError.
+  errorAgentExists: {
+    id: 'sp.education-primary-school:key-info-error-agent-exists',
+    defaultMessage: 'Þessi einstaklingur er þegar skráður sem aðstandandi.',
+  },
+  errorIsGuardian: {
+    id: 'sp.education-primary-school:key-info-error-is-guardian',
+    defaultMessage:
+      'Forsjáraðilar barnsins eru skráðir hjá skólanum og þarf ekki að skrá sem aðstandendur.',
   },
 })
 

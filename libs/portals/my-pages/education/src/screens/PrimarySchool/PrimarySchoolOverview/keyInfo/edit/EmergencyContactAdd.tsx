@@ -18,6 +18,7 @@ import { usePrimarySchoolContactIdentityLazyQuery } from '../PrimarySchoolKeyInf
 import { SectionError } from '../SectionError'
 import { useAgentRelationTypeOptions } from '../useKeyInfoOptions'
 import { usePrimarySchoolKeyInfo } from '../usePrimarySchoolKeyInfo'
+import { mmsErrorMessage } from '../mmsError'
 
 /**
  * Dedicated add screen for Aðstandendur (emergency contacts).
@@ -79,8 +80,8 @@ export const EmergencyContactAdd = () => {
       await addAgent({ nationalId: sanitizedNationalId, relationTypeId })
       toast.success(formatMessage(kim.saveSuccess))
       navigate(overviewPath)
-    } catch {
-      toast.error(formatMessage(kim.saveError))
+    } catch (error) {
+      toast.error(formatMessage(mmsErrorMessage(error)))
     }
   }
 

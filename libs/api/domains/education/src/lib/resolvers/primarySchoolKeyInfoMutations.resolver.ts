@@ -34,6 +34,7 @@ import {
   UpdateLanguageProfileInput,
 } from '../dto/primarySchoolKeyInfo.input'
 import { PrimarySchoolKeyInfoService } from '../services/primarySchoolKeyInfo.service'
+import { withMmsKeyInfoProblem } from '../errors/mmsKeyInfoProblem'
 
 /**
  * Writes for the key-information sections (contract v0.2, §4). Every input
@@ -43,9 +44,15 @@ import { PrimarySchoolKeyInfoService } from '../services/primarySchoolKeyInfo.se
  *
  * The matching reads are field resolvers on the student, see
  * {@link PrimarySchoolKeyInfoResolver}.
+ *
+ * Every frigg call goes through {@link withMmsKeyInfoProblem} so a rejection
+ * reaches the client as its MMS code rather than an unclassified 500 — the
+ * add/edit screens show a specific message per code.
+ *
+ * Gated on the key-information feature flag, like the matching reads.
  */
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@FeatureFlag(Features.isServicePortalPrimarySchoolPageEnabled)
+@FeatureFlag(Features.isServicePortalPrimarySchoolKeyInfoEnabled)
 @Scopes(ApiScope.education)
 @Resolver()
 export class PrimarySchoolKeyInfoMutationsResolver {
@@ -61,13 +68,15 @@ export class PrimarySchoolKeyInfoMutationsResolver {
     @CurrentUser() user: User,
     @Args('input') input: AddAgentInput,
   ): Promise<PrimarySchoolAgent> {
-    const contact = await this.keyInfoClient.addEmergencyContact(
+    const childId = await this.keyInfo.requireChildIdForStudent(
       user,
-      await this.keyInfo.requireChildIdForStudent(user, input.studentId),
-      {
+      input.studentId,
+    )
+    const contact = await withMmsKeyInfoProblem(() =>
+      this.keyInfoClient.addEmergencyContact(user, childId, {
         nationalId: input.nationalId,
         relationTypeId: input.relationTypeId,
-      },
+      }),
     )
     return mapAgent(contact)
   }
@@ -77,11 +86,14 @@ export class PrimarySchoolKeyInfoMutationsResolver {
     @CurrentUser() user: User,
     @Args('input') input: UpdateAgentInput,
   ): Promise<PrimarySchoolAgent> {
-    const contact = await this.keyInfoClient.updateEmergencyContact(
+    const childId = await this.keyInfo.requireChildIdForStudent(
       user,
-      await this.keyInfo.requireChildIdForStudent(user, input.studentId),
-      input.agentId,
-      { relationTypeId: input.relationTypeId },
+      input.studentId,
+    )
+    const contact = await withMmsKeyInfoProblem(() =>
+      this.keyInfoClient.updateEmergencyContact(user, childId, input.agentId, {
+        relationTypeId: input.relationTypeId,
+      }),
     )
     return mapAgent(contact)
   }
@@ -91,10 +103,12 @@ export class PrimarySchoolKeyInfoMutationsResolver {
     @CurrentUser() user: User,
     @Args('input') input: DeleteAgentInput,
   ): Promise<boolean> {
-    await this.keyInfoClient.deleteEmergencyContact(
+    const childId = await this.keyInfo.requireChildIdForStudent(
       user,
-      await this.keyInfo.requireChildIdForStudent(user, input.studentId),
-      input.agentId,
+      input.studentId,
+    )
+    await withMmsKeyInfoProblem(() =>
+      this.keyInfoClient.deleteEmergencyContact(user, childId, input.agentId),
     )
     return true
   }
@@ -106,16 +120,18 @@ export class PrimarySchoolKeyInfoMutationsResolver {
     @CurrentUser() user: User,
     @Args('input') input: UpdateLanguageProfileInput,
   ): Promise<LanguageProfile> {
-    const profile = await this.keyInfoClient.updateLanguageProfile(
+    const childId = await this.keyInfo.requireChildIdForStudent(
       user,
-      await this.keyInfo.requireChildIdForStudent(user, input.studentId),
-      {
+      input.studentId,
+    )
+    const profile = await withMmsKeyInfoProblem(() =>
+      this.keyInfoClient.updateLanguageProfile(user, childId, {
         languageEnvironmentId: input.languageEnvironmentId,
         preferredLanguage: input.preferredLanguage ?? null,
         languages: input.languages,
         interpreter: input.interpreter,
         signLanguage: input.signLanguage,
-      },
+      }),
     )
     return mapLanguageProfile(profile)
   }
@@ -127,15 +143,17 @@ export class PrimarySchoolKeyInfoMutationsResolver {
     @CurrentUser() user: User,
     @Args('input') input: UpdateHealthProfileInput,
   ): Promise<HealthProfile> {
-    const profile = await this.keyInfoClient.updateHealthProfile(
+    const childId = await this.keyInfo.requireChildIdForStudent(
       user,
-      await this.keyInfo.requireChildIdForStudent(user, input.studentId),
-      {
+      input.studentId,
+    )
+    const profile = await withMmsKeyInfoProblem(() =>
+      this.keyInfoClient.updateHealthProfile(user, childId, {
         epipen: input.epipen,
         medicalDiagnoses: input.medicalDiagnoses,
         medicationAssistance: input.medicationAssistance,
         allergies: input.allergies,
-      },
+      }),
     )
     return mapHealthProfile(profile)
   }

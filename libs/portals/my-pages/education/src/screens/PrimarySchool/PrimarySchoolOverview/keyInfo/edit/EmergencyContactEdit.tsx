@@ -19,6 +19,7 @@ import { EducationPaths } from '../../../../../lib/paths'
 import { SectionError } from '../SectionError'
 import { useAgentRelationTypeOptions } from '../useKeyInfoOptions'
 import { usePrimarySchoolKeyInfo } from '../usePrimarySchoolKeyInfo'
+import { mmsErrorMessage } from '../mmsError'
 
 /**
  * Dedicated edit screen for a single aðstandandi (emergency contact).
@@ -71,8 +72,8 @@ export const EmergencyContactEdit = () => {
       await updateAgent(agentId, { relationTypeId })
       toast.success(formatMessage(kim.saveSuccess))
       navigate(overviewPath)
-    } catch {
-      toast.error(formatMessage(kim.saveError))
+    } catch (error) {
+      toast.error(formatMessage(mmsErrorMessage(error)))
     }
   }
 

@@ -1,5 +1,4 @@
 import { useCallback } from 'react'
-import type { ApolloError } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import {
   PrimarySchoolAgentsDocument,
@@ -17,6 +16,7 @@ import {
   type PrimarySchoolHealthProfileFieldsFragment,
   type PrimarySchoolLanguageProfileFieldsFragment,
 } from './PrimarySchoolKeyInfo.generated'
+import { toMmsError } from './mmsError'
 import type {
   EmergencyContact,
   EmergencyContactCreateInput,
@@ -25,7 +25,6 @@ import type {
   HealthProfileUpdateInput,
   LanguageProfile,
   LanguageProfileUpdateInput,
-  MmsError,
   SectionState,
 } from './types'
 
@@ -34,10 +33,6 @@ import type {
  * Tungumálaumhverfi, Heilsufarsupplýsingar). It runs the education GraphQL
  * queries/mutations and maps the (locale-neutral) GraphQL shapes onto the
  * section view models in ./types.
- *
- * The backend currently answers from mocked MMS payloads — see
- * libs/clients/mms/primary-school. Connecting the X-Road client there is the
- * only remaining step; nothing in this hook or the section components changes.
  *
  * Each section is its own query, so a caller passes the sections it actually
  * reads and the rest are skipped — an edit screen needs one of the three. The
@@ -76,20 +71,6 @@ export interface PrimarySchoolKeyInfo {
   removeAgent: (agentId: string) => Promise<void>
   saveLanguageProfile: (input: LanguageProfileUpdateInput) => Promise<void>
   saveHealthProfile: (input: HealthProfileUpdateInput) => Promise<void>
-}
-
-/** ApolloError → MmsError, preserving the MMS requestId so a failure can be
- * traced (ticket §5). */
-const toMmsError = (error: ApolloError | undefined): MmsError | undefined => {
-  if (!error) return undefined
-  const extensions = error.graphQLErrors?.[0]?.extensions as
-    | { code?: string; requestId?: string }
-    | undefined
-  return {
-    code: extensions?.code,
-    message: error.message,
-    requestId: extensions?.requestId,
-  }
 }
 
 export const usePrimarySchoolKeyInfo = (
