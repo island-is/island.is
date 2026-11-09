@@ -32,7 +32,13 @@ export const NumberTypeSelect = ({
     <FormControl.Label>Number type</FormControl.Label>
     <Select
       aria-label={`Number type for ${fieldKey}`}
-      value={value ?? ''}
+      value={
+        value ??
+        calculatorNumberTypes.find(
+          (option) => option === inferred?.toLowerCase(),
+        ) ??
+        'plain'
+      }
       isDisabled={isDisabled}
       onChange={(ev) =>
         onChange(
@@ -40,11 +46,6 @@ export const NumberTypeSelect = ({
         )
       }
     >
-      <Select.Option value="">{`Default (${
-        inferred
-          ? inferred.charAt(0) + inferred.slice(1).toLowerCase()
-          : numberTypeLabels.plain
-      })`}</Select.Option>
       {calculatorNumberTypes.map((option) => (
         <Select.Option key={option} value={option}>
           {numberTypeLabels[option]}
