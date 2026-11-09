@@ -1,4 +1,6 @@
 import {
+  Box,
+  Button,
   Checkbox,
   FormControl,
   IconButton,
@@ -15,6 +17,7 @@ import {
 
 import { TaxCalculatorInputFieldType } from '../../../../graphql/schema'
 import type { InputFieldContract } from '../contract'
+import { MONTH_COUNT, monthOptionLabels } from '../utils'
 import {
   controlForField,
   isSameText,
@@ -166,43 +169,6 @@ export const InputFieldRow = ({
         </Text>
       )}
 
-      {contractField?.options && contractField.options.length > 0 && (
-        <Checkbox
-          isChecked={hasOptionLabels}
-          isDisabled={isDisabled}
-          helpText={`Options: ${contractField.options.join(', ')}`}
-          onChange={() => onChange({ optionLabelsEnabled: !hasOptionLabels })}
-        >
-          Translate the options
-        </Checkbox>
-      )}
-
-      {hasOptionLabels &&
-        contractField?.options?.map((option) => (
-          <LocalizedTextFields
-            key={option}
-            label={`${field.key}: option "${option}"`}
-            value={field.optionLabels?.[option]}
-            isDisabled={isDisabled}
-            isInvalid={!isLoading && !field.optionLabels?.[option]?.is?.trim()}
-            isRequired
-            onChange={(next) =>
-              onChange({
-                optionLabels: { ...field.optionLabels, [option]: next },
-              })
-            }
-            clearWhenEmpty
-          />
-        ))}
-
-      {contractField?.dependsOn && (
-        <Text fontColor="gray600" fontSize="fontSizeS">
-          Shown only when &quot;{contractField.dependsOn.fieldKey}&quot; is{' '}
-          {String(contractField.dependsOn.equals)} — set by the calculator, not
-          editable here.
-        </Text>
-      )}
-
       {field.key && (
         <>
           <LocalizedTextFields
@@ -249,6 +215,61 @@ export const InputFieldRow = ({
             />
           )}
         </>
+      )}
+
+      {contractField?.options && contractField.options.length > 0 && (
+        <Checkbox
+          isChecked={hasOptionLabels}
+          isDisabled={isDisabled}
+          helpText={`Options: ${contractField.options.join(', ')}`}
+          onChange={() => onChange({ optionLabelsEnabled: !hasOptionLabels })}
+        >
+          Translate the options
+        </Checkbox>
+      )}
+
+      {hasOptionLabels && contractField?.options?.length === MONTH_COUNT && (
+        <Box>
+          <Button
+            size="small"
+            variant="secondary"
+            aria-label={`Fill in month names: ${field.key}`}
+            isDisabled={isDisabled}
+            onClick={() =>
+              onChange({
+                optionLabels: monthOptionLabels(contractField.options),
+              })
+            }
+          >
+            Fill in month names
+          </Button>
+        </Box>
+      )}
+
+      {hasOptionLabels &&
+        contractField?.options?.map((option) => (
+          <LocalizedTextFields
+            key={option}
+            label={`${field.key}: option "${option}"`}
+            value={field.optionLabels?.[option]}
+            isDisabled={isDisabled}
+            isInvalid={!isLoading && !field.optionLabels?.[option]?.is?.trim()}
+            isRequired
+            onChange={(next) =>
+              onChange({
+                optionLabels: { ...field.optionLabels, [option]: next },
+              })
+            }
+            clearWhenEmpty
+          />
+        ))}
+
+      {contractField?.dependsOn && (
+        <Text fontColor="gray600" fontSize="fontSizeS">
+          Shown only when &quot;{contractField.dependsOn.fieldKey}&quot; is{' '}
+          {String(contractField.dependsOn.equals)} — set by the calculator, not
+          editable here.
+        </Text>
       )}
     </Stack>
   )
