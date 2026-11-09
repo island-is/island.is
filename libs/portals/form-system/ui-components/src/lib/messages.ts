@@ -1,9 +1,30 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  previewWithRestrictions: {
+    id: 'form.system:preview-with-restrictions',
+    defaultMessage: 'Skoða með tengingum',
+    description: 'Preview with dependencies enabled',
+  },
+  exactNumberLength: {
+    id: 'form.system:exact-number-length',
+    defaultMessage: 'Talan verður að innihalda {length} tölustafi',
+    description: 'Exact number of digits validation message',
+  },
+  minNumberLength: {
+    id: 'form.system:min-number-length',
+    defaultMessage:
+      'Talan verður að innihalda að minnsta kosti {minLength} tölustafi',
+    description: 'Minimum number of digits validation message',
+  },
+  maxNumberLength: {
+    id: 'form.system:max-number-length',
+    defaultMessage: 'Talan má að hámarki innihalda {maxLength} tölustafi',
+    description: 'Maximum number of digits validation message',
+  },
   rootName: {
     id: 'form.system:application-builder',
-    defaultMessage: 'Umsóknarsmiður',
+    defaultMessage: 'Umsóknasmiður',
     description: 'Form builder',
   },
   showSidebar: {
@@ -662,7 +683,7 @@ export const m = defineMessages({
   },
   preview: {
     id: 'form.system:preview',
-    defaultMessage: 'Skoða',
+    defaultMessage: 'Skoða skjá',
     description: 'Preview',
   },
   lastModified: {

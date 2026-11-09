@@ -59,6 +59,7 @@ import {
   getVisibleSubpoenas,
   shouldHideCaseFilesRecordFromDefender,
   shouldShowPoliceDigitalCaseFilesSection,
+  shouldShowUploadedCaseFilesSection,
 } from './IndictmentCaseFilesList.logic'
 import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
 import RulingOrderFileRow from './RulingOrderFileRow'
@@ -890,23 +891,28 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 />
               )}
             </FileSection>
-            <Box>
-              <SectionHeading
-                title={strings.uploadedCaseFiles}
-                marginBottom={3}
-                heading="h4"
-                variant="h4"
-              />
-              <CaseFileTable
-                caseFiles={filteredFiles.uploadedCaseFiles}
-                onOpenFile={onOpen}
-                canRejectFiles={
-                  isDistrictCourtUser(user) &&
-                  !connectedCaseParentId &&
-                  workingCase.state !== CaseState.CORRECTING
-                }
-              />
-            </Box>
+            {shouldShowUploadedCaseFilesSection(
+              filteredFiles.uploadedCaseFiles.length,
+              forceDisplayAdditionalFiles,
+            ) && (
+              <Box>
+                <SectionHeading
+                  title={strings.uploadedCaseFiles}
+                  marginBottom={3}
+                  heading="h4"
+                  variant="h4"
+                />
+                <CaseFileTable
+                  caseFiles={filteredFiles.uploadedCaseFiles}
+                  onOpenFile={onOpen}
+                  canRejectFiles={
+                    isDistrictCourtUser(user) &&
+                    !connectedCaseParentId &&
+                    workingCase.state !== CaseState.CORRECTING
+                  }
+                />
+              </Box>
+            )}
             <AnimatePresence>
               {fileNotFound && (
                 <FileNotFoundModal dismiss={dismissFileNotFound} />

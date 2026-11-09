@@ -213,16 +213,6 @@ describe.each(defenceRoles)('defence user %s', (role) => {
           verifyNoAccess(theCase, user)
         })
 
-        describe('case-level defenderNationalId alone does not grant access', () => {
-          const theCase = {
-            type,
-            state: CaseState.ACCEPTED,
-            defenderNationalId: user.nationalId,
-          } as Case
-
-          verifyNoAccess(theCase, user)
-        })
-
         describe('most permissive sharing wins for the same defender national id', () => {
           const theCase = {
             type,

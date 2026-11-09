@@ -1,6 +1,6 @@
 import React from 'react'
 import { Text, TextProps, TextStyle } from 'react-native'
-import { fontByWeight, useDynamicColor } from '../../utils'
+import { fontByWeight, useTokenColor } from '../../utils'
 
 export const variants = {
   heading1: { fontSize: 32, lineHeight: 38, fontWeight: '600' },
@@ -40,7 +40,7 @@ export function Typography({
   lineHeight: overwriteLineHeight,
   ...rest
 }: TypographyProps) {
-  const dynamicColor = useDynamicColor()
+  const tokenColor = useTokenColor()
   const styles = (variants as Record<string, TextStyle>)[variant]
   const fontFamily = fontByWeight(weight || styles.fontWeight || '400')
   const fontSize = size ?? styles.fontSize ?? 15
@@ -49,12 +49,7 @@ export function Typography({
     overwriteLineHeight ?? size
       ? fontSize * variantLineHeight
       : styles.lineHeight
-  const textColor =
-    color ??
-    dynamicColor({
-      light: dynamicColor.theme.shades.light.foreground,
-      dark: dynamicColor.theme.shades.dark.foreground,
-    })
+  const textColor = color ?? tokenColor((t) => t.foreground.primary)
 
   return (
     <Text

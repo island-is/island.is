@@ -55,12 +55,15 @@ const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
       AppealDecisionPartyRole.DEFENDANT,
     ),
     capitalize(
-      formatMessage(core.defendant, {
-        suffix:
-          workingCase.defendants && workingCase.defendants?.length > 1
-            ? 'ar'
-            : 'i',
-      }),
+      formatMessage(
+        { id: core.defendant, defaultMessage: core.defendant },
+        {
+          suffix:
+            workingCase.defendants && workingCase.defendants?.length > 1
+              ? 'ar'
+              : 'i',
+        },
+      ),
     ),
   )
 

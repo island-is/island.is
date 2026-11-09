@@ -51,10 +51,7 @@ describe('LimitedAccessCaseController - Get request pdf', () => {
     })
 
     it('should generate pdf', () => {
-      expect(getRequestPdfAsBuffer).toHaveBeenCalledWith(
-        theCase,
-        expect.any(Function),
-      )
+      expect(getRequestPdfAsBuffer).toHaveBeenCalledWith(theCase)
       expect(res.end).toHaveBeenCalledWith(pdf)
     })
   })

@@ -132,6 +132,54 @@ export const formatDate = (date?: string, df = 'dd.MM.yyyy') => {
   }
 }
 
+// Publication numbers are only unique within an advert type, so the number is cited
+// with its type, the way the advert itself is referred to: `REGLUGERÐ nr. 760/2026 um …`
+export const getAdvertCitationTitle = ({
+  type,
+  publicationNumber,
+  subject,
+}: {
+  type?: string
+  publicationNumber?: string
+  subject?: string
+}) =>
+  [type, publicationNumber ? `nr. ${publicationNumber}` : undefined, subject]
+    .map((part) => part?.trim())
+    .filter(Boolean)
+    .join(' ')
+
+export const getAdvertMetaDescription = ({
+  citationTitle,
+  department,
+  involvedParty,
+  publicationDateLabel,
+  publicationDate,
+}: {
+  citationTitle: string
+  department?: string
+  involvedParty?: string
+  publicationDateLabel: string
+  publicationDate?: string
+}) => {
+  const withPeriod = (text: string) => (text.endsWith('.') ? text : `${text}.`)
+  const origin = [department, involvedParty]
+    .map((part) => part?.trim())
+    .filter(Boolean)
+    .join(', ')
+
+  return [
+    citationTitle && withPeriod(citationTitle),
+    origin && withPeriod(origin),
+    publicationDate &&
+      `${publicationDateLabel}: ${formatDate(
+        publicationDate,
+        'd. MMMM yyyy',
+      )}.`,
+  ]
+    .filter(Boolean)
+    .join(' ')
+}
+
 export const getStringArrayFromQueryString = (
   value?: string | string[],
 ): string[] => {

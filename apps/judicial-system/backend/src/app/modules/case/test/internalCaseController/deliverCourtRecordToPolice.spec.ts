@@ -119,10 +119,7 @@ describe('InternalCaseController - Deliver court record to police', () => {
     })
 
     it('should deliver the generated court record to police', async () => {
-      expect(getCourtRecordPdfAsString).toHaveBeenCalledWith(
-        theCase,
-        expect.any(Function),
-      )
+      expect(getCourtRecordPdfAsString).toHaveBeenCalledWith(theCase)
       expect(
         mockPdfService.getCourtRecordPdfForIndictmentCase,
       ).not.toHaveBeenCalled()
@@ -142,6 +139,7 @@ describe('InternalCaseController - Deliver court record to police', () => {
             courtDocument: Base64.btoa(courtRecordPdf),
           },
         ],
+        caseId,
       )
       expect(then.result.delivered).toEqual(true)
     })
@@ -198,6 +196,7 @@ describe('InternalCaseController - Deliver court record to police', () => {
             courtDocument: Base64.btoa(courtRecordPdf.toString('binary')),
           },
         ],
+        caseId,
       )
       expect(then.result.delivered).toEqual(true)
     })

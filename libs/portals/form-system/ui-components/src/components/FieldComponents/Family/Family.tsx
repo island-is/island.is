@@ -11,14 +11,35 @@ interface Props {
   item: FormSystemField
   valueIndex?: number
   dispatch?: Dispatch<Action>
+  isPreview?: boolean
 }
 
-export const Family = ({ state, item, valueIndex, dispatch }: Props) => {
+export const Family = ({
+  state,
+  item,
+  valueIndex,
+  dispatch,
+  isPreview = false,
+}: Props) => {
   switch (item.fieldSettings?.familyType) {
     case FamilyTypes.CHILD:
-      return <Child item={item} valueIndex={valueIndex} dispatch={dispatch} />
+      return (
+        <Child
+          item={item}
+          valueIndex={valueIndex}
+          dispatch={dispatch}
+          isPreview={isPreview}
+        />
+      )
     case FamilyTypes.SPOUSE:
-      return <Spouse item={item} valueIndex={valueIndex} dispatch={dispatch} />
+      return (
+        <Spouse
+          item={item}
+          valueIndex={valueIndex}
+          dispatch={dispatch}
+          isPreview={isPreview}
+        />
+      )
     case FamilyTypes.NATIONAL_ID_ESTATE:
       return <Estate item={item} valueIndex={valueIndex} dispatch={dispatch} />
     default:

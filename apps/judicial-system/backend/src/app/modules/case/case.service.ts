@@ -13,7 +13,6 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import {
   DokobitError,
   SigningService,
@@ -171,7 +170,6 @@ export class CaseService {
     private readonly awsS3Service: AwsS3Service,
     private readonly courtService: CourtService,
     private readonly signingService: SigningService,
-    private readonly intlService: IntlService,
     private readonly eventService: EventService,
     private readonly eventLogService: EventLogService,
     private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
@@ -185,21 +183,6 @@ export class CaseService {
     private readonly caseCloningService: CaseCloningService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
-
-  private formatMessage: FormatMessage = () => {
-    throw new InternalServerErrorException('Format message not initialized')
-  }
-
-  private async refreshFormatMessage(): Promise<void> {
-    return this.intlService
-      .useIntl(['judicial.system.backend'], 'is')
-      .then((res) => {
-        this.formatMessage = res.formatMessage
-      })
-      .catch((reason) => {
-        this.logger.error('Unable to refresh format messages', { reason })
-      })
-  }
 
   private async uploadSignedRulingPdfToS3(
     theCase: Case,
@@ -2598,9 +2581,7 @@ export class CaseService {
     user: TUser,
     method: 'audkenni' | 'mobile',
   ): Promise<SigningServiceResponse> {
-    await this.refreshFormatMessage()
-
-    const pdf = await getCourtRecordPdfAsString(theCase, this.formatMessage)
+    const pdf = await getCourtRecordPdfAsString(theCase)
 
     if (method === 'audkenni') {
       return this.signingService
@@ -2729,8 +2710,7 @@ export class CaseService {
       )
     }
 
-    await this.refreshFormatMessage()
-    const pdf = await getRulingPdfAsString(theCase, this.formatMessage)
+    const pdf = await getRulingPdfAsString(theCase)
     if (method === 'audkenni') {
       return this.signingService
         .requestSignatureAudkenni(

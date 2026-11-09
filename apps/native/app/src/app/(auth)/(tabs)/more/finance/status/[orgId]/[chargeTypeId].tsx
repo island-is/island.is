@@ -2,7 +2,7 @@ import { useIntl } from 'react-intl'
 import { ScrollView, View } from 'react-native'
 import { router, Stack, useLocalSearchParams } from 'expo-router'
 
-import { Input, InputRow, NavigationBarSheet } from '@/ui'
+import { Input, InputRow } from '@/ui'
 import { useGetFinanceStatusDetailsQuery } from '@/graphql/types/schema'
 import { testIDs } from '@/utils/test-ids'
 import { StackScreen } from '../../../../../../../components/stack-screen'

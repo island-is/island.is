@@ -61,7 +61,8 @@ const MapLink = styled.TouchableOpacity`
   gap: ${({ theme }) => theme.spacing.smallGutter}px;
   margin-left: ${({ theme }) => 16 + theme.spacing[1]}px;
   border-bottom-width: 1px;
-  border-bottom-color: ${({ theme }) => theme.color.blue400};
+  border-bottom-color: ${({ theme }) =>
+    theme.tokens.interactive.border.borderPrimary};
 `
 
 const LocationItem = styled.View`
@@ -73,7 +74,8 @@ const InlineLink = styled.TouchableOpacity`
   align-items: center;
   gap: ${({ theme }) => theme.spacing.smallGutter}px;
   border-bottom-width: 1px;
-  border-bottom-color: ${({ theme }) => theme.color.blue400};
+  border-bottom-color: ${({ theme }) =>
+    theme.tokens.interactive.border.borderPrimary};
 `
 
 const MoreInfoRow = styled.View`
@@ -81,7 +83,7 @@ const MoreInfoRow = styled.View`
   padding-vertical: ${({ theme }) => theme.spacing[3]}px;
   gap: ${({ theme }) => theme.spacing[1]}px;
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
-  border-bottom-color: ${({ theme }) => theme.color.blue200};
+  border-bottom-color: ${({ theme }) => theme.tokens.border.primary};
 `
 
 const EyebrowContainer = styled.View`
@@ -103,7 +105,7 @@ const CancelSection = styled.View`
 const StickyFooter = styled.View`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
   padding-top: ${({ theme }) => theme.spacing[2]}px;
-  background-color: ${({ theme }) => theme.color.white};
+  background-color: ${({ theme }) => theme.tokens.background.invert};
 `
 
 type VideoCallPhase = 'before' | 'active' | 'expired'
@@ -212,7 +214,10 @@ export default function AppointmentDetailScreen() {
     alignSelf: 'center' | 'flex-start' = 'center',
   ) => (
     <InlineLink style={{ alignSelf }} onPress={() => void openExternalUrl(url)}>
-      <Typography variant="eyebrow" color={theme.color.blue400}>
+      <Typography
+        variant="eyebrow"
+        color={theme.tokens.interactive.foreground.primary}
+      >
         {intl.formatMessage({ id: 'health.appointments.seeMore' })}
       </Typography>
       <Icon
@@ -473,7 +478,7 @@ export default function AppointmentDetailScreen() {
                       source={calendarIcon as ImageSourcePropType}
                       width={16}
                       height={16}
-                      tintColor="blue400"
+                      tintColor={theme.tokens.foreground.brand}
                       resizeMode="contain"
                     />
                     <Typography variant="body">
@@ -488,7 +493,7 @@ export default function AppointmentDetailScreen() {
                       source={clockIcon as ImageSourcePropType}
                       width={16}
                       height={16}
-                      tintColor="blue400"
+                      tintColor={theme.tokens.foreground.brand}
                     />
                     <Typography variant="body">{time}</Typography>
                   </IconRow>
@@ -500,7 +505,7 @@ export default function AppointmentDetailScreen() {
                       source={hourglassIcon as ImageSourcePropType}
                       width={16}
                       height={16}
-                      tintColor="blue400"
+                      tintColor={theme.tokens.foreground.brand}
                     />
                     <Typography variant="body">
                       {intl.formatMessage(
@@ -517,7 +522,7 @@ export default function AppointmentDetailScreen() {
                       source={videoCameraIcon as ImageSourcePropType}
                       width={16}
                       height={16}
-                      tintColor="blue400"
+                      tintColor={theme.tokens.foreground.brand}
                     />
                     <Typography variant="body">
                       {intl.formatMessage({
@@ -534,7 +539,7 @@ export default function AppointmentDetailScreen() {
                         source={locationIcon as ImageSourcePropType}
                         width={16}
                         height={16}
-                        tintColor="blue400"
+                        tintColor={theme.tokens.foreground.brand}
                         style={{ marginTop: 4 }}
                       />
                       <View style={{ flex: 1 }}>
@@ -558,7 +563,7 @@ export default function AppointmentDetailScreen() {
                       <MapLink onPress={handleOpenMap}>
                         <Typography
                           variant="eyebrow"
-                          color={theme.color.blue400}
+                          color={theme.tokens.interactive.foreground.primary}
                         >
                           {intl.formatMessage({
                             id: 'health.appointments.openMap',
@@ -581,7 +586,7 @@ export default function AppointmentDetailScreen() {
                         source={infoIcon as ImageSourcePropType}
                         width={16}
                         height={16}
-                        tintColor="blue400"
+                        tintColor={theme.tokens.foreground.brand}
                       />
                       <Typography variant="body">
                         {intl.formatMessage({
@@ -590,7 +595,10 @@ export default function AppointmentDetailScreen() {
                       </Typography>
                     </IconRow>
                     <MapLink onPress={() => void openExternalUrl(locationLink)}>
-                      <Typography variant="eyebrow" color={theme.color.blue400}>
+                      <Typography
+                        variant="eyebrow"
+                        color={theme.tokens.interactive.foreground.primary}
+                      >
                         {intl.formatMessage({
                           id: 'health.appointments.seeMore',
                         })}
@@ -646,7 +654,10 @@ export default function AppointmentDetailScreen() {
 
             {hasMoreInfo && (
               <EyebrowContainer>
-                <Typography variant="eyebrow" color={theme.color.purple400}>
+                <Typography
+                  variant="eyebrow"
+                  color={theme.tokens.foreground.brandSecondary}
+                >
                   {intl.formatMessage({
                     id: 'health.appointments.moreInfo',
                   })}
