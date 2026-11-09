@@ -12,11 +12,9 @@ import {
   personalInformationOverviewItems,
   rentalAgreementOverviewItems,
   exemptionSectionOverviewItems,
-  exemptionSectionOverviewAttachments,
   householdMembersOverviewItems,
   householdMembersOverviewAttachments,
   householdMembersOverviewTitle,
-  mainFormAccessAgreementOverviewItems,
   mainFormAccessAgreementOverviewAttachments,
   mainFormAccessAgreementOverviewTitle,
   incomeSectionOverviewItems,
@@ -60,7 +58,6 @@ export const overviewSection = buildSection({
           condition: (answers, externalData) =>
             !doesAddressMatchRentalContract(answers, externalData),
           items: exemptionSectionOverviewItems,
-          attachments: exemptionSectionOverviewAttachments,
         }),
         buildOverviewField({
           id: 'householdMembersOverview',
