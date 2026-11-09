@@ -101,7 +101,8 @@ export function AppointmentCard({
   return (
     <Host
       onPress={() => onPress(id)}
-      underlayColor={theme.shade.shade400}
+      underlayColor={theme.tokens.app.background.pressed}
+      activeOpacity={1}
       testID={`appointment-card-${id}`}
     >
       <Container>

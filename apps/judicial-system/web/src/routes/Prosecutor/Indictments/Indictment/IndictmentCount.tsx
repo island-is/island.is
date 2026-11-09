@@ -238,8 +238,6 @@ export const IndictmentCount: FC<Props> = ({
   ] = useState<string>('')
   const [incidentDescriptionErrorMessage, setIncidentDescriptionErrorMessage] =
     useState<string>('')
-  const [legalArgumentsErrorMessage, setLegalArgumentsErrorMessage] =
-    useState<string>('')
 
   const subtypes: IndictmentSubtype[] = indictmentCount.policeCaseNumber
     ? workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber]
@@ -282,12 +280,6 @@ export const IndictmentCount: FC<Props> = ({
       setIncidentDescriptionErrorMessage('')
     }
   }, [indictmentCount.incidentDescription])
-
-  useEffect(() => {
-    if (indictmentCount.legalArguments) {
-      setLegalArgumentsErrorMessage('')
-    }
-  }, [indictmentCount.legalArguments])
 
   useEffect(() => {
     if (indictmentCount.policeCaseNumber !== originalPoliceCaseNumber) {
@@ -695,17 +687,8 @@ export const IndictmentCount: FC<Props> = ({
           autoComplete="off"
           label={strings.legalArgumentsLabel}
           placeholder={strings.legalArgumentsPlaceholder}
-          errorMessage={legalArgumentsErrorMessage}
-          hasError={legalArgumentsErrorMessage !== ''}
           value={indictmentCount.legalArguments ?? ''}
           onChange={(event) => {
-            removeErrorMessageIfValid(
-              ['empty'],
-              event.target.value,
-              legalArgumentsErrorMessage,
-              setLegalArgumentsErrorMessage,
-            )
-
             updateIndictmentCountState(
               indictmentCount.id,
               { legalArguments: event.target.value },
@@ -713,17 +696,10 @@ export const IndictmentCount: FC<Props> = ({
             )
           }}
           onBlur={(event) => {
-            validateAndSetErrorMessage(
-              ['empty'],
-              event.target.value,
-              setLegalArgumentsErrorMessage,
-            )
-
             onChange(indictmentCount.id, {
               legalArguments: event.target.value.trim(),
             })
           }}
-          required
           rows={7}
           textarea
         />

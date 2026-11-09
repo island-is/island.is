@@ -20,3 +20,4 @@ export { TextComparison } from './TextComparison'
 
 export { ReviewWarnings } from './ReviewWarnings'
 export { ReviewOverview } from './ReviewOverview'
+export { ImpactDateWarning } from './ImpactDateWarning'
