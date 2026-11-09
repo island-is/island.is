@@ -22,3 +22,8 @@ export {
   FormAlertBanner,
   FormAlertBannerSlotContext,
 } from './components/FormAlertBanner/FormAlertBanner'
+export { SpiderChart } from './components/SpiderChart/SpiderChart'
+export type {
+  SpiderChartProps,
+  SpiderChartDataPoint,
+} from './components/SpiderChart/SpiderChart'

@@ -1,8 +1,4 @@
-import {
-  FormSystemField,
-  FormSystemScreen,
-  FormSystemSection,
-} from '@island.is/api/schema'
+import { FormSystemField } from '@island.is/api/schema'
 import { FormStepper, m, SectionTypes } from '@island.is/form-system/ui'
 import {
   Box,
@@ -12,6 +8,8 @@ import {
   GridRow,
   Header,
   ModalBase,
+  RadioButton,
+  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client/react'
@@ -31,15 +29,25 @@ import {
 import { ControlContext } from '../../../../context/ControlContext'
 import { FormProvider, useForm } from 'react-hook-form'
 import { NavbarSelectStatus } from '../../../../lib/utils/interfaces'
+import { applicantTypeGroups } from '../../../../lib/utils/applicantTypeGroups'
 import { Preview } from '../Preview/Preview'
 import { MultiSet } from './components/MultiSet'
 import { PreviewCompleted } from './components/PreviewCompleted'
 import { PreviewPremises, PreviewSummary } from './components/PreviewSections'
-import { getPreviewSteps, updatePreviewFields } from './previewState'
+import {
+  createPreviewState,
+  getPreviewSections,
+  getPreviewSteps,
+  getRestrictedPreviewStart,
+  PREVIEW_APPLICANT_SCREEN_ID,
+  updatePreviewFields,
+  updateRestrictedPreview,
+} from './previewState'
 import * as styles from './PreviewStepOrGroup.css'
 
 interface Props {
   setOpenPreview: Dispatch<SetStateAction<boolean>>
+  enforceRestrictions?: boolean
 }
 
 const focusPreviewHeading = (element: HTMLDivElement | null) => {
@@ -85,15 +93,32 @@ export const PreviewStepOrGroup = (props: Props) => {
   )
 }
 
-const PreviewStepOrGroupContent = ({ setOpenPreview }: Props) => {
+const PreviewStepOrGroupContent = ({
+  setOpenPreview,
+  enforceRestrictions = false,
+}: Props) => {
   const { control, setSelectStatus } = useContext(ControlContext)
   const { lang, formatMessage, changeLanguage } = useLocale()
   const { activeItem, form } = control
-  const { screens, fields } = form
-  const methods = useForm()
-  const [previewFields, previewDispatch] = useReducer(
-    updatePreviewFields,
-    (fields ?? []).filter((field): field is FormSystemField => !!field),
+  const methods = useForm({ shouldUnregister: enforceRestrictions })
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, boolean>
+  >({})
+  const [previewData, previewDispatch] = useReducer(
+    (
+      state: ReturnType<typeof createPreviewState>,
+      action: Parameters<typeof updatePreviewFields>[1],
+    ) =>
+      enforceRestrictions
+        ? updateRestrictedPreview(state, action)
+        : { ...state, fields: updatePreviewFields(state.fields, action) },
+    form,
+    (initialForm) =>
+      enforceRestrictions
+        ? updateRestrictedPreview(createPreviewState(initialForm), {
+            type: 'INITIALIZE',
+          })
+        : createPreviewState(initialForm),
   )
 
   useEffect(() => {
@@ -101,23 +126,79 @@ const PreviewStepOrGroupContent = ({ setOpenPreview }: Props) => {
     return () => setSelectStatus(NavbarSelectStatus.OFF)
   }, [setSelectStatus])
 
-  const sections: FormSystemSection[] = (form.sections ?? [])
-    .filter((section): section is FormSystemSection => !!section)
-    .map((section) => ({
-      ...section,
-      screens: (screens ?? [])
-        .filter(
-          (screen): screen is FormSystemScreen =>
-            !!screen && screen.sectionId === section.id,
-        )
-        .map((screen) => ({
-          ...screen,
-          fields: previewFields.filter((field) => field.screenId === screen.id),
-        })),
-    }))
+  const loginOptions = [
+    {
+      id: 'individual',
+      types: applicantTypeGroups.individual,
+      label: m.individual,
+    },
+    {
+      id: 'procuration',
+      types: applicantTypeGroups.procuration,
+      label: m.individualWithPowerOfAttorney,
+    },
+    {
+      id: 'individualDelegation',
+      types: applicantTypeGroups.individualDelegation,
+      label: m.individualOnBehalfPerson,
+    },
+    {
+      id: 'legalEntityDelegation',
+      types: applicantTypeGroups.legalEntityDelegation,
+      label: m.individualOnBehalfLegalEntity,
+    },
+    {
+      id: 'legalGuardian',
+      types: applicantTypeGroups.legalGuardian,
+      label: m.legalGuardian,
+    },
+  ].filter((option) =>
+    previewData.fields.some(
+      (field) =>
+        field.fieldType === 'APPLICANT' &&
+        option.types.includes(field.fieldSettings?.applicantType ?? ''),
+    ),
+  )
+  const [selectedLogin, setSelectedLogin] = useState(loginOptions[0]?.id)
+  const selectedApplicantTypes = loginOptions.find(
+    (option) => option.id === selectedLogin,
+  )?.types
+  const summarySections = getPreviewSections(
+    previewData,
+    enforceRestrictions,
+    selectedApplicantTypes,
+  ).map((section) =>
+    enforceRestrictions &&
+    selectedApplicantTypes &&
+    section.sectionType === SectionTypes.PARTIES
+      ? {
+          ...section,
+          screens: section.screens?.filter(
+            (screen) => (screen?.fields?.length ?? 0) > 0,
+          ),
+        }
+      : section,
+  )
+  const sections = summarySections.map((section) =>
+    enforceRestrictions &&
+    loginOptions.length > 0 &&
+    section.sectionType === SectionTypes.PARTIES
+      ? {
+          ...section,
+          screens: [
+            {
+              id: PREVIEW_APPLICANT_SCREEN_ID,
+              sectionId: section.id,
+              name: section.name,
+              fields: [],
+            },
+          ],
+        }
+      : section,
+  )
 
   const previewSteps = getPreviewSteps(sections)
-  const [screenIndex, setScreenIndex] = useState(() => {
+  const [stepId, setStepId] = useState(() => {
     const selectedScreenId =
       activeItem.type === 'Field'
         ? (activeItem.data as FormSystemField | undefined)?.screenId
@@ -127,8 +208,21 @@ const PreviewStepOrGroupContent = ({ setOpenPreview }: Props) => {
         ? step.section.id === activeItem.data?.id
         : step.screen?.id === selectedScreenId,
     )
-    return Math.max(0, selectedIndex)
+    const index = enforceRestrictions
+      ? getRestrictedPreviewStart(previewSteps)
+      : Math.max(0, selectedIndex)
+    const step = previewSteps[index]
+    return step?.screen?.id ?? step?.section.id
   })
+  const selectedIndex = previewSteps.findIndex(
+    (step) => (step.screen?.id ?? step.section.id) === stepId,
+  )
+  const screenIndex =
+    selectedIndex >= 0 ? selectedIndex : getRestrictedPreviewStart(previewSteps)
+  const setScreenIndex = (index: number) => {
+    const step = previewSteps[index]
+    setStepId(step?.screen?.id ?? step?.section.id)
+  }
   const currentStep = previewSteps[screenIndex]
   const currentScreen = currentStep?.screen
   const previewState = {
@@ -239,10 +333,22 @@ const PreviewStepOrGroupContent = ({ setOpenPreview }: Props) => {
                           )}
                           {sectionType === SectionTypes.SUMMARY && (
                             <PreviewSummary
-                              sections={sections}
+                              sections={summarySections}
+                              hasValidationError={(field, valueIndex) =>
+                                validationErrors[`${field.id}.${valueIndex}`] ??
+                                false
+                              }
                               onNavigate={(sectionId, screenId) => {
+                                const isApplicantSection =
+                                  enforceRestrictions &&
+                                  sections.some(
+                                    (section) =>
+                                      section.id === sectionId &&
+                                      section.sectionType ===
+                                        SectionTypes.PARTIES,
+                                  )
                                 const index = previewSteps.findIndex((step) =>
-                                  screenId
+                                  screenId && !isApplicantSection
                                     ? step.screen?.id === screenId
                                     : step.section.id === sectionId,
                                 )
@@ -250,7 +356,30 @@ const PreviewStepOrGroupContent = ({ setOpenPreview }: Props) => {
                               }}
                             />
                           )}
+                          {currentScreen?.id ===
+                            PREVIEW_APPLICANT_SCREEN_ID && (
+                            <Stack space={2}>
+                              <Text variant="h2" as="h2">
+                                {currentSection?.name?.[lang] ??
+                                  formatMessage(m.relevantParties)}
+                              </Text>
+                              {loginOptions.map((option) => (
+                                <RadioButton
+                                  key={option.id}
+                                  id={`preview-applicant-login-${option.id}`}
+                                  name="previewApplicantLogin"
+                                  value={option.id}
+                                  label={formatMessage(option.label)}
+                                  checked={selectedLogin === option.id}
+                                  onChange={() => setSelectedLogin(option.id)}
+                                  large
+                                  backgroundColor="blue"
+                                />
+                              ))}
+                            </Stack>
+                          )}
                           {currentScreen &&
+                            currentScreen.id !== PREVIEW_APPLICANT_SCREEN_ID &&
                             sectionType !== SectionTypes.PREMISES &&
                             sectionType !== SectionTypes.SUMMARY &&
                             sectionType !== SectionTypes.COMPLETED &&
@@ -299,9 +428,51 @@ const PreviewStepOrGroupContent = ({ setOpenPreview }: Props) => {
                                 {screenIndex < previewSteps.length - 1 ? (
                                   <Button
                                     icon="arrowForward"
-                                    onClick={() =>
+                                    onClick={async () => {
+                                      const visibleFields =
+                                        currentScreen?.fields?.filter(
+                                          (field): field is FormSystemField =>
+                                            !!field && !field.isHidden,
+                                        ) ?? []
+                                      const fieldNames = visibleFields.map(
+                                        (field) => field.id,
+                                      )
+                                      await methods.trigger(fieldNames)
+                                      const errors: Record<string, boolean> = {}
+                                      const repeatedValueCount = Math.max(
+                                        1,
+                                        ...visibleFields
+                                          .filter(
+                                            (field) =>
+                                              field.isPartOfMultiset !== false,
+                                          )
+                                          .map(
+                                            (field) =>
+                                              field.values?.length ?? 0,
+                                          ),
+                                      )
+                                      for (const field of visibleFields) {
+                                        const valueCount =
+                                          currentScreen?.isMulti &&
+                                          field.isPartOfMultiset !== false
+                                            ? repeatedValueCount
+                                            : 1
+                                        for (
+                                          let valueIndex = 0;
+                                          valueIndex < valueCount;
+                                          valueIndex++
+                                        ) {
+                                          const name = `${field.id}.${valueIndex}`
+                                          errors[name] =
+                                            methods.getFieldState(name).invalid
+                                        }
+                                      }
+                                      setValidationErrors((previous) => ({
+                                        ...previous,
+                                        ...errors,
+                                      }))
                                       setScreenIndex(screenIndex + 1)
-                                    }
+                                    }}
                                   >
                                     {formatMessage(m.continue)}
                                   </Button>

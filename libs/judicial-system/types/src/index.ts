@@ -29,6 +29,7 @@ export { CourtSessionStringType } from './lib/courtSessionString'
 export {
   isSubpoenaInfoChanged,
   isVerdictInfoChanged,
+  DocumentDeliveryReceiverType,
   DocumentDeliverySupplementCode,
   DocumentDeliveryMethod,
   getServiceDateFromSupplements,
@@ -127,6 +128,7 @@ export {
   CaseFileCategory,
   HashAlgorithm,
   partyAppealFileCategories,
+  indictmentAdditionalCaseFileCategories,
   verdictAppealDeclarationFileCategories,
   verdictAppealStatementFileCategories,
   verdictAppealFileCategories,
