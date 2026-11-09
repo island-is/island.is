@@ -28,7 +28,9 @@ describe('toInputField', () => {
       type: expected,
       required: true,
       dependsOn: undefined,
-      ...(clientType === 'number' ? { semantic: undefined, integer: false } : {}),
+      ...(clientType === 'number'
+        ? { semantic: undefined, integer: false }
+        : {}),
     })
   })
 

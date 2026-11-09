@@ -633,7 +633,9 @@ describe('calculatorConfigSchema', () => {
     it('rejects a numberType outside the declared list on an input field', () => {
       const result = calculatorConfigSchema.safeParse(
         config({
-          inputSections: [section({ fields: [field({ numberType: 'month' })] })],
+          inputSections: [
+            section({ fields: [field({ numberType: 'month' })] }),
+          ],
         }),
       )
       expect(result.success).toBe(false)
