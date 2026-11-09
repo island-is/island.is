@@ -89,9 +89,14 @@ Read the gaps from the matrix.
   kennitala to `application.applicant`, an assignee, or another explicit
   party.
 - **Why:** it is the authorisation boundary for everyone who is not the
-  applicant or an assignee.
-- **Severity:** high.
-- **Precedent:** #20427.
+  applicant or an assignee. `findOneByIdAndNationalId` falls back to it for
+  any caller who knows the application id (framework-rules, Access), so a
+  company-only template that returns the applicant role for every company
+  kennitala admits every other company.
+- **Severity:** high. Do not lower it because the access service or an
+  unguessable id "already protects" the application: that fallback is the
+  path this check covers.
+- **Precedent:** #20427, #24051.
 
 ## S3. Delete permissions
 

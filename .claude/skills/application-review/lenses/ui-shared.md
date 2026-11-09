@@ -177,7 +177,9 @@ lost, or a file reaches an institution unchecked. It is medium otherwise.
     was updated; once uploaded, the default is only a fallback.
   - New or edited copy that states a rule: who to contact, who can send or
     edit, what happens next. Check it against the template's roles,
-    transitions and README decisions, for every role that sees it.
+    transitions and README decisions, for every role that sees it. Leave
+    claims about delegation (who may act on a company's behalf) to the FYI
+    in SKILL.md step 2.
 - **Severity:** low; medium when the copy sends a user to the wrong party
   or promises an action their role cannot take.
 - **Precedent:** #23253, #23537, #22299, #24257.

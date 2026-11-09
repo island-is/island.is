@@ -47,8 +47,16 @@ volume. It is medium otherwise.
     shows the generic message. `values` are read only from `summary`.
   - **A message from a namespace the template does not load.** Shared
     modules must use `coreErrorMessages`.
+  - **A user-fixable failure in a later state's `onEntry`.** A provider such
+    as `UserProfileApiWithValidation` on a non-initial state's `onEntry`,
+    for something the user can fix (a missing email or phone), instead of on
+    the prerequisites data-provider screen. A failing onEntry fails the
+    previous screen's SUBMIT (framework-rules, State machine), so the error
+    reaches the user as that submit's error and not beside a provider. This
+    is not the usual pattern: report it as medium and ask the developer to
+    justify the placement or move it.
 - **Severity:** medium; high when a payment or deletion path breaks.
-- **Precedent:** #20532, #22085, #22372, #23542, #21838, #21841, #22020.
+- **Precedent:** #20532, #22085, #22372, #23542, #21838, #21841, #22020, #24051.
 
 ## T4. Personal data in logs and URLs
 
