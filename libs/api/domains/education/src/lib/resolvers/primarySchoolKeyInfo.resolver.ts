@@ -44,9 +44,12 @@ import { withMmsKeyInfoProblem } from '../errors/mmsKeyInfoProblem'
  * overview still renders; the mutations in
  * {@link PrimarySchoolKeyInfoMutationsResolver} fail instead.
  *
- * Every field here needs the frigg child id behind the student, so it is
- * resolved through {@link PrimarySchoolChildIdLoader} — one `listChildren` call
- * per request rather than one per field.
+ * Frigg keys children on the same id these screens route on (contract v0.3
+ * §4.3), so no id translation is needed. What every field here does need is to
+ * know whether frigg has the child at all, which {@link PrimarySchoolChildIdLoader}
+ * answers from one `listChildren` call per request rather than one per field.
+ * Splitting the fields across requests costs one per request, which is why the
+ * portal reads all three sections in a single query.
  *
  * The lookup lists these sections pick from live in
  * {@link PrimarySchoolKeyInfoOptionsResolver} — they are per-user, not
@@ -121,15 +124,13 @@ export class PrimarySchoolKeyInfoResolver {
     return mapHealthProfile(profile)
   }
 
-  /** The frigg child id behind a student, or null when it has no counterpart
-   * there. Students carry no national id for an unknown child, which frigg can
-   * never match either. */
+  /** The frigg child id for a student, or null when frigg has no counterpart
+   * for it. Frigg keys children on the id we route on (contract v0.3 §4.3), so
+   * this answers whether the child exists there rather than translating. */
   private childId(
     student: PrimarySchoolStudent,
     childIdLoader: PrimarySchoolChildIdDataLoader,
   ): Promise<string | null> {
-    return student.nationalId
-      ? childIdLoader.load(student.nationalId)
-      : Promise.resolve(null)
+    return childIdLoader.load(student.id)
   }
 }

@@ -6,11 +6,11 @@ import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { useParams } from 'react-router-dom'
 import { primarySchoolMessages as psm } from '../../../lib/messages'
 import { usePrimarySchoolStudentOverviewQuery } from './PrimarySchoolStudentOverview.generated'
-import { usePrimarySchoolStudentHasKeyInfoQuery } from './keyInfo/PrimarySchoolKeyInfo.generated'
 import {
   usePrimarySchoolKeyInfo,
   type KeyInfoSectionName,
 } from './keyInfo/usePrimarySchoolKeyInfo'
+import { SectionError } from './keyInfo/SectionError'
 import { BaseInfoSection } from './keyInfo/BaseInfoSection'
 import { EmergencyContactsSection } from './keyInfo/EmergencyContactsSection'
 import { LanguageProfileSection } from './keyInfo/LanguageProfileSection'
@@ -42,28 +42,27 @@ export const PrimarySchoolOverview = () => {
     false,
   )
 
-  // Whether the child exists in the frigg key-info database at all. Without a
-  // counterpart there every key-info read answers "no information" and every
-  // write is rejected, so the sections are left out rather than shown with
-  // actions that cannot succeed. The student wrapper runs the same query, so
-  // this is served from the Apollo cache.
-  const { data: keyInfoData, loading: keyInfoLoading } =
-    usePrimarySchoolStudentHasKeyInfoQuery({
-      variables: { studentId: studentId ?? '' },
-      skip: !studentId || !keyInfoEnabled,
-    })
-  const hasKeyInfo =
-    keyInfoEnabled && (keyInfoData?.primarySchoolStudent?.hasKeyInfo ?? false)
-
-  // Lykilupplýsingar (key information) sections. Each section owns its own
-  // loading/error/save state and PATCH — there is no shared page-level save.
+  // Lykilupplýsingar (key information). One read brings back whether the child
+  // exists in the frigg key-info database and all three sections; each section
+  // still owns its own error and PATCH, so there is no shared page-level save.
+  //
+  // Without a counterpart in frigg every key-info read answers "no information"
+  // and every write is rejected, so the sections are left out rather than shown
+  // with actions that cannot succeed. When the read itself fails that answer is
+  // unknown, and the failure is shown instead of quietly hiding the sections.
   const {
+    hasKeyInfo,
+    loading: keyInfoLoading,
+    error: keyInfoError,
     emergencyContacts,
     languageProfile,
     healthProfile,
     removeAgent,
     saving,
-  } = usePrimarySchoolKeyInfo(studentId, hasKeyInfo ? KEY_INFO_SECTIONS : [])
+  } = usePrimarySchoolKeyInfo(
+    studentId,
+    keyInfoEnabled ? KEY_INFO_SECTIONS : [],
+  )
 
   return (
     <>
@@ -85,6 +84,10 @@ export const PrimarySchoolOverview = () => {
           <BaseInfoSection student={student} loading={loading} />
 
           {(keyInfoFlagLoading || keyInfoLoading) && <CardLoader />}
+
+          {!keyInfoLoading && keyInfoError && (
+            <SectionError error={keyInfoError} />
+          )}
 
           {hasKeyInfo && (
             <EmergencyContactsSection

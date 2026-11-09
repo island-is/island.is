@@ -8,11 +8,21 @@ import { GraphQLContext, NestDataLoader } from '@island.is/nest/dataloader'
 export type PrimarySchoolChildIdDataLoader = DataLoader<string, string | null>
 
 /**
- * National id → frigg child id, resolved from a single `listChildren` call per
- * request. The key-info field resolvers each need the child id, so without this
- * one overview load would ask frigg for the guardian's children once per field.
- * DataLoader is instantiated per request, so the call is also cached for the
- * rest of that request.
+ * Whether frigg knows a child, resolved from a single `listChildren` call per
+ * request: the student id back when frigg has the child, null when it does not.
+ *
+ * Frigg keys children on the same id the primary-school screens route on
+ * (`base.users.id`, the id the data gateway returns — contract v0.3 §4.3,
+ * confirmed against dev), so this is an existence check rather than a
+ * translation. It is still a call worth making: without it `hasKeyInfo` cannot
+ * be answered, and each section resolver would ask frigg for a child it does
+ * not have and get a 404 instead of returning "no information".
+ *
+ * DataLoader is instantiated per request, so the saving is per request too: a
+ * client that splits the key-info fields across several requests pays for a
+ * `listChildren` call in each. My-pages therefore reads all three sections in
+ * one query (see PrimarySchoolKeyInfo.graphql); it posts with a plain
+ * HttpLink, so separate queries would be separate requests.
  */
 @Injectable()
 export class PrimarySchoolChildIdLoader
@@ -22,16 +32,16 @@ export class PrimarySchoolChildIdLoader
 
   async loadChildIds(
     user: User | undefined,
-    nationalIds: readonly string[],
+    studentIds: readonly string[],
   ): Promise<Array<string | null>> {
     if (!user) {
       throw new UnauthorizedException()
     }
 
     const children = await this.keyInfoClient.getChildren(user)
-    return nationalIds.map(
-      (nationalId) =>
-        children.find((child) => child.nationalId === nationalId)?.id ?? null,
+    return studentIds.map(
+      (studentId) =>
+        children.find((child) => child.id === studentId)?.id ?? null,
     )
   }
 

@@ -1,14 +1,10 @@
 import { useCallback } from 'react'
 import { useLocale } from '@island.is/localization'
 import {
-  PrimarySchoolAgentsDocument,
-  PrimarySchoolHealthProfileDocument,
-  PrimarySchoolLanguageProfileDocument,
+  PrimarySchoolKeyInfoSectionsDocument,
   usePrimarySchoolAddAgentMutation,
-  usePrimarySchoolAgentsQuery,
   usePrimarySchoolDeleteAgentMutation,
-  usePrimarySchoolHealthProfileQuery,
-  usePrimarySchoolLanguageProfileQuery,
+  usePrimarySchoolKeyInfoSectionsQuery,
   usePrimarySchoolUpdateAgentMutation,
   usePrimarySchoolUpdateHealthProfileMutation,
   usePrimarySchoolUpdateLanguageProfileMutation,
@@ -16,7 +12,7 @@ import {
   type PrimarySchoolHealthProfileFieldsFragment,
   type PrimarySchoolLanguageProfileFieldsFragment,
 } from './PrimarySchoolKeyInfo.generated'
-import { toMmsError } from './mmsError'
+import { toMmsError, toMmsFieldError } from './mmsError'
 import type {
   EmergencyContact,
   EmergencyContactCreateInput,
@@ -25,6 +21,7 @@ import type {
   HealthProfileUpdateInput,
   LanguageProfile,
   LanguageProfileUpdateInput,
+  MmsError,
   SectionState,
 } from './types'
 
@@ -34,10 +31,11 @@ import type {
  * queries/mutations and maps the (locale-neutral) GraphQL shapes onto the
  * section view models in ./types.
  *
- * Each section is its own query, so a caller passes the sections it actually
- * reads and the rest are skipped — an edit screen needs one of the three. The
- * mutations are always available; their refetches run whether or not the
- * matching read is active.
+ * The three sections are read in one query, so one request resolves the frigg
+ * child id once for all of them (see PrimarySchoolKeyInfo.graphql). A caller
+ * passes the sections it actually reads and the rest are left out of the
+ * selection set — an edit screen needs one of the three. The mutations are
+ * always available and refetch exactly what the caller reads.
  */
 
 interface LocalizedTitle {
@@ -58,6 +56,18 @@ const ALL_SECTIONS: KeyInfoSectionName[] = [
 ]
 
 export interface PrimarySchoolKeyInfo {
+  /** Whether the child has a counterpart in the frigg key-info database.
+   * `false` while the read is still in flight or the sections are skipped. */
+  hasKeyInfo: boolean
+  /** true while the key-info read is in flight */
+  loading: boolean
+  /**
+   * Set when the read failed outright — frigg unreachable, the token refused,
+   * the child-id lookup down — so no section resolved and `hasKeyInfo` cannot
+   * be trusted. A failure confined to one section is reported on that section
+   * instead, and the others still carry their data.
+   */
+  error: MmsError | undefined
   emergencyContacts: SectionState<EmergencyContact[]>
   languageProfile: SectionState<LanguageProfile>
   healthProfile: SectionState<HealthProfile>
@@ -78,33 +88,30 @@ export const usePrimarySchoolKeyInfo = (
   sections: KeyInfoSectionName[] = ALL_SECTIONS,
 ): PrimarySchoolKeyInfo => {
   const { lang } = useLocale()
-  const skipSection = (section: KeyInfoSectionName) =>
-    !studentId || !sections.includes(section)
 
   const localize = (title: LocalizedTitle | undefined | null) =>
     title ? (lang === 'en' ? title.en : title.is) : undefined
 
-  const agentsQuery = usePrimarySchoolAgentsQuery({
-    variables: { studentId },
-    skip: skipSection('emergencyContacts'),
-  })
-  const languageQuery = usePrimarySchoolLanguageProfileQuery({
-    variables: { studentId },
-    skip: skipSection('languageProfile'),
-  })
-  const healthQuery = usePrimarySchoolHealthProfileQuery({
-    variables: { studentId },
-    skip: skipSection('healthProfile'),
+  const variables = {
+    studentId,
+    withEmergencyContacts: sections.includes('emergencyContacts'),
+    withLanguageProfile: sections.includes('languageProfile'),
+    withHealthProfile: sections.includes('healthProfile'),
+  }
+
+  // errorPolicy 'all' keeps the sections that resolved: a section that failed
+  // comes back null with an error of its own, which toMmsFieldError picks out
+  // by path below.
+  const sectionsQuery = usePrimarySchoolKeyInfoSectionsQuery({
+    variables,
+    errorPolicy: 'all',
+    skip: !studentId || sections.length === 0,
   })
 
+  // Every mutation refetches the same selection the caller reads, so a save
+  // refreshes exactly the sections on screen and nothing else.
   const refetchQueries = [
-    { query: PrimarySchoolAgentsDocument, variables: { studentId } },
-  ]
-  const refetchLanguage = [
-    { query: PrimarySchoolLanguageProfileDocument, variables: { studentId } },
-  ]
-  const refetchHealth = [
-    { query: PrimarySchoolHealthProfileDocument, variables: { studentId } },
+    { query: PrimarySchoolKeyInfoSectionsDocument, variables },
   ]
 
   const [addAgentMutation, addAgentState] = usePrimarySchoolAddAgentMutation({
@@ -122,9 +129,15 @@ export const usePrimarySchoolKeyInfo = (
       awaitRefetchQueries: true,
     })
   const [updateLanguageMutation, updateLanguageState] =
-    usePrimarySchoolUpdateLanguageProfileMutation()
+    usePrimarySchoolUpdateLanguageProfileMutation({
+      refetchQueries,
+      awaitRefetchQueries: true,
+    })
   const [updateHealthMutation, updateHealthState] =
-    usePrimarySchoolUpdateHealthProfileMutation()
+    usePrimarySchoolUpdateHealthProfileMutation({
+      refetchQueries,
+      awaitRefetchQueries: true,
+    })
 
   const mapAgent = (
     agent: PrimarySchoolAgentFieldsFragment,
@@ -166,11 +179,25 @@ export const usePrimarySchoolKeyInfo = (
     medicationAssistance: profile.medicationAssistance,
   })
 
-  const agents = agentsQuery.data?.primarySchoolStudent?.emergencyContacts
-  const languageProfileData =
-    languageQuery.data?.primarySchoolStudent?.languageProfile
-  const healthProfileData =
-    healthQuery.data?.primarySchoolStudent?.healthProfile
+  const student = sectionsQuery.data?.primarySchoolStudent
+  const agents = student?.emergencyContacts
+  const languageProfileData = student?.languageProfile
+  const healthProfileData = student?.healthProfile
+
+  // `hasKeyInfo` is non-nullable, so a failed child-id lookup nulls the whole
+  // student and takes every section with it. That is the only case the caller
+  // cannot render around, so it is reported as one read-level error rather than
+  // three identical section errors.
+  const readError =
+    !sectionsQuery.loading && sectionsQuery.error && !student
+      ? toMmsError(sectionsQuery.error)
+      : undefined
+
+  /** A section fails either on its own or with the read that carried it. The
+   * overview reports the read-level failure once and leaves the sections out;
+   * an edit screen reads only its own section, so it has to see it here. */
+  const sectionError = (field: KeyInfoSectionName) =>
+    toMmsFieldError(sectionsQuery.error, field) ?? readError
 
   const addAgent = useCallback(
     async (input: EmergencyContactCreateInput) => {
@@ -224,11 +251,8 @@ export const usePrimarySchoolKeyInfo = (
             signLanguage: input.signLanguage,
           },
         },
-        refetchQueries: refetchLanguage,
-        awaitRefetchQueries: true,
       })
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [updateLanguageMutation, studentId],
   )
 
@@ -245,31 +269,31 @@ export const usePrimarySchoolKeyInfo = (
             allergies: input.allergies.map((allergy) => allergy.id),
           },
         },
-        refetchQueries: refetchHealth,
-        awaitRefetchQueries: true,
       })
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [updateHealthMutation, studentId],
   )
 
   return {
+    hasKeyInfo: student?.hasKeyInfo ?? false,
+    loading: sectionsQuery.loading,
+    error: readError,
     emergencyContacts: {
       data: agents?.map(mapAgent),
-      loading: agentsQuery.loading,
-      error: toMmsError(agentsQuery.error),
+      loading: sectionsQuery.loading,
+      error: sectionError('emergencyContacts'),
     },
     languageProfile: {
       data: languageProfileData
         ? mapLanguageProfile(languageProfileData)
         : undefined,
-      loading: languageQuery.loading,
-      error: toMmsError(languageQuery.error),
+      loading: sectionsQuery.loading,
+      error: sectionError('languageProfile'),
     },
     healthProfile: {
       data: healthProfileData ? mapHealthProfile(healthProfileData) : undefined,
-      loading: healthQuery.loading,
-      error: toMmsError(healthQuery.error),
+      loading: sectionsQuery.loading,
+      error: sectionError('healthProfile'),
     },
     saving:
       addAgentState.loading ||

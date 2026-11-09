@@ -59,19 +59,25 @@ export const PrimarySchoolStudentWrapper = ({
     false,
   )
 
-  const { data: keyInfoData, loading: keyInfoLoading } =
-    usePrimarySchoolStudentHasKeyInfoQuery({
-      variables: { studentId: studentId ?? '' },
-      skip: !studentId || hideTabs || !keyInfoEnabled,
-    })
+  const {
+    data: keyInfoData,
+    loading: keyInfoLoading,
+    error: keyInfoError,
+  } = usePrimarySchoolStudentHasKeyInfoQuery({
+    variables: { studentId: studentId ?? '' },
+    skip: !studentId || hideTabs || !keyInfoEnabled,
+  })
   const hasKeyInfoChild =
     keyInfoEnabled && (keyInfoData?.primarySchoolStudent?.hasKeyInfo ?? false)
 
   // Show the student hub only when there is something to show: the child exists
   // in the frigg key-info database, or has assessment history. Either answer on
-  // its own is enough, so the tabs are not held back waiting for the other —
-  // in particular the assessment tab does not wait on a frigg round trip.
-  const hasContent = hasAssessment || hasKeyInfoChild
+  // its own is enough to have content, but the assessment query is also what
+  // decides whether there is a tab bar — so the hub waits for that one answer
+  // rather than rendering the page and dropping a tab bar in above it a moment
+  // later. It does not wait on the frigg round trip: a student with assessment
+  // history gets its tabs without it.
+  const hasContent = (hasAssessment || hasKeyInfoChild) && !assessmentLoading
   const stillChecking =
     assessmentLoading || keyInfoLoading || keyInfoFlagLoading
 
@@ -120,6 +126,11 @@ export const PrimarySchoolStudentWrapper = ({
         </>
       ) : stillChecking ? (
         <CardLoader />
+      ) : keyInfoError ? (
+        // A child whose only content is key information looks exactly like a
+        // child with nothing to show once the frigg read fails, so the failure
+        // is reported rather than answered with "no data".
+        <Problem error={keyInfoError} noBorder={false} />
       ) : (
         <Problem
           type="no_data"

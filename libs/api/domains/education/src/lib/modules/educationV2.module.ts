@@ -9,7 +9,6 @@ import { PrimarySchoolResolver } from '../resolvers/primarySchool.resolver'
 import { PrimarySchoolKeyInfoResolver } from '../resolvers/primarySchoolKeyInfo.resolver'
 import { PrimarySchoolKeyInfoOptionsResolver } from '../resolvers/primarySchoolKeyInfoOptions.resolver'
 import { PrimarySchoolKeyInfoMutationsResolver } from '../resolvers/primarySchoolKeyInfoMutations.resolver'
-import { PrimarySchoolKeyInfoService } from '../services/primarySchoolKeyInfo.service'
 import { PrimarySchoolChildIdLoader } from '../loaders/primarySchoolChildId.loader'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
@@ -28,7 +27,6 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
     PrimarySchoolKeyInfoResolver,
     PrimarySchoolKeyInfoOptionsResolver,
     PrimarySchoolKeyInfoMutationsResolver,
-    PrimarySchoolKeyInfoService,
     PrimarySchoolChildIdLoader,
   ],
 })

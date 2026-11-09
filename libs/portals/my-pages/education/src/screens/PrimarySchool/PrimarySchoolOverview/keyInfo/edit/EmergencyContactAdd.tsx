@@ -33,8 +33,13 @@ export const EmergencyContactAdd = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const { studentId } = useParams<{ studentId: string }>()
-  // Reads no section, only writes — so no key-info queries are needed here.
-  const { addAgent, saving } = usePrimarySchoolKeyInfo(studentId, [])
+  // The screen shows no contacts, but it has to name the section it writes:
+  // that is what the save refetches, so the overview reads the new contact from
+  // the cache when it comes back. The read itself costs nothing — the overview
+  // this screen is reached from has already filled that cache entry.
+  const { addAgent, saving } = usePrimarySchoolKeyInfo(studentId, [
+    'emergencyContacts',
+  ])
 
   const {
     options: relationOptions,

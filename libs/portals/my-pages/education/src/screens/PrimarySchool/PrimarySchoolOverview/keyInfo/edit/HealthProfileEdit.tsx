@@ -22,7 +22,7 @@ import type { AllergySelectOption } from '../useAllergyOptions'
 import { usePrimarySchoolKeyInfo } from '../usePrimarySchoolKeyInfo'
 import { mmsErrorMessage } from '../mmsError'
 import { AllergyCategory } from '../types'
-import type { Allergy, HealthProfileUpdateInput } from '../types'
+import type { HealthProfileUpdateInput } from '../types'
 
 /**
  * Dedicated edit screen for Heilsufarsupplýsingar (health profile). Save/cancel return to the overview.
@@ -64,10 +64,14 @@ export const HealthProfileEdit = () => {
       .filter((allergy) => allergy.type === category)
       .map((allergy) => allergy.id)
 
-  // An allergy the child has registered but the lookup list no longer carries
-  // would otherwise sit in state without appearing in the select: the guardian
-  // sees an empty field under "Já" and drops the allergy the moment they touch
-  // it. Keep it selectable, labelled with whatever MMS stored it under.
+  // An allergy the child has registered but this category's lookup list does
+  // not carry would otherwise sit in state without appearing in the select: the
+  // guardian sees an empty field under "Já" and drops the allergy the moment
+  // they touch it. Keep it selectable, labelled with whatever MMS stored it
+  // under. The lookup is per category, not across both: a stored allergy takes
+  // its category from the three-value AllergyOutput.type enum while an option
+  // takes its own from the key-option list it was served in, so the same id can
+  // be registered under one category and listed under the other.
   const storedOptionsInCategory = (
     category: AllergyCategory,
   ): AllergySelectOption[] =>
@@ -77,7 +81,9 @@ export const HealthProfileEdit = () => {
           .filter(
             (allergy) =>
               allergy.type === category &&
-              !allergyOptions.some((option) => option.value === allergy.id),
+              !optionsInCategory(category).some(
+                (option) => option.value === allergy.id,
+              ),
           )
           .map((allergy) => ({
             value: allergy.id,
@@ -172,12 +178,20 @@ export const HealthProfileEdit = () => {
   // registered (contract §4.5).
   const hasAnyAllergy = foodAllergyIds.length + otherAllergyIds.length > 0
 
+  // The selected ids across both categories, each once. An id MMS stored under
+  // one category but lists under the other is offered in both selects, since
+  // there is no telling which it belongs to, so the guardian can tick it twice
+  // — but it is one allergy and the PATCH sends one id.
+  const selectedAllergyIds = [
+    ...new Set([...foodAllergyIds, ...otherAllergyIds]),
+  ]
+
   // Value-based signature of the current form state, built the same way as
   // `profileSignature` (and normalized like the payload). Save stays disabled
   // until this diverges from the loaded profile, i.e. the guardian has actually
   // changed something.
   const currentSignature = JSON.stringify({
-    allergies: [...foodAllergyIds, ...otherAllergyIds].sort(),
+    allergies: [...selectedAllergyIds].sort(),
     epipen: hasAnyAllergy ? epipen : false,
     medicalDiagnoses,
     medicationAssistance,
@@ -212,18 +226,15 @@ export const HealthProfileEdit = () => {
         option,
       ]),
     )
-    const toAllergies = (ids: string[], category: AllergyCategory): Allergy[] =>
-      ids.map((id) => ({
-        id,
-        type: category,
-        label: optionById.get(id)?.label ?? '',
-      }))
+    const categoryOf = (id: string) =>
+      foodAllergyIds.includes(id) ? AllergyCategory.Food : AllergyCategory.Other
 
     const payload: HealthProfileUpdateInput = {
-      allergies: [
-        ...toAllergies(foodAllergyIds, AllergyCategory.Food),
-        ...toAllergies(otherAllergyIds, AllergyCategory.Other),
-      ],
+      allergies: selectedAllergyIds.map((id) => ({
+        id,
+        type: categoryOf(id),
+        label: optionById.get(id)?.label ?? '',
+      })),
       // When no allergy is selected, epipen must be sent as false (§4.5).
       epipen: hasAnyAllergy ? epipen : false,
       medicalDiagnoses,

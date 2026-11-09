@@ -27,10 +27,10 @@ import { mmsErrorMessage } from '../mmsError'
  * Dedicated edit screen for Tungumálaumhverfi (language profile).
  * Save/cancel return to the overview.
  *
- * The language-environment options are loaded from MMS (Frigg) via
- * `friggOptions(type: languageEnvironment)` — the same source the
- * new-primary-school application uses. The child's languages / preferred
- * language come from the ISO 639-1 list (getAllLanguageCodes), not MMS.
+ * The language-environment options come from the `primarySchoolLanguageEnvironments`
+ * query, which reads Frigg `GET /key-options?type=languageEnvironment`. The
+ * child's languages / preferred language come from the Ísland.is language list
+ * (getAllLanguageCodes), not MMS.
  *
  */
 export const LanguageProfileEdit = () => {

@@ -1,4 +1,5 @@
-import type { ApolloError } from '@apollo/client'
+import { ApolloError } from '@apollo/client'
+import type { GraphQLError } from 'graphql'
 import type { MessageDescriptor } from 'react-intl'
 import { findProblemInApolloError } from '@island.is/shared/problem'
 import { primarySchoolKeyInfoMessages as kim } from '../../../../lib/messages'
@@ -37,6 +38,28 @@ export const toMmsError = (
     message: problem?.detail ?? error.message,
     requestId: problem?.mmsRequestId,
   }
+}
+
+/**
+ * The error on one field of a multi-section read, or undefined when that field
+ * resolved. The sections are read in one query (see PrimarySchoolKeyInfo.graphql),
+ * so a failure is told apart from the others by the `path` GraphQL reports it
+ * under — `['primarySchoolStudent', 'healthProfile']` for the health profile.
+ */
+export const toMmsFieldError = (
+  error: ApolloError | undefined,
+  field: string,
+): MmsError | undefined => {
+  const graphQLError = error?.graphQLErrors?.find((candidate) =>
+    candidate.path?.includes(field),
+  )
+  if (!graphQLError) return undefined
+
+  // findProblemInApolloError only reads whole ApolloErrors, so the one error
+  // this field failed with is wrapped back up on its own.
+  return toMmsError(
+    new ApolloError({ graphQLErrors: [graphQLError as GraphQLError] }),
+  )
 }
 
 /** The messages we can explain a failure with, by MMS code. */

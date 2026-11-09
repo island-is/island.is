@@ -15,8 +15,9 @@ import { SectionError } from './SectionError'
 import * as styles from './keyInfoEmpty.css'
 import type { LanguageProfile, MmsError } from './types'
 
-/** MMS stores languages as ISO 639-1 codes; show the name, falling back to the
- * raw code for anything the shared list does not know. */
+/** MMS stores the codes the Ísland.is language list uses (BCP 47, contract
+ * v0.3 §4.6); show the name, falling back to the raw code for anything the
+ * shared list does not know. */
 const languageName = (code: string) => getLanguageByCode(code)?.name ?? code
 
 interface Props {

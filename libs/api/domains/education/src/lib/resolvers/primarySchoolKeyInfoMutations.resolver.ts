@@ -33,14 +33,19 @@ import {
   UpdateHealthProfileInput,
   UpdateLanguageProfileInput,
 } from '../dto/primarySchoolKeyInfo.input'
-import { PrimarySchoolKeyInfoService } from '../services/primarySchoolKeyInfo.service'
 import { withMmsKeyInfoProblem } from '../errors/mmsKeyInfoProblem'
 
 /**
- * Writes for the key-information sections (contract v0.2, §4). Every input
- * carries the routed nemendagrunnur `studentId`, which
- * {@link PrimarySchoolKeyInfoService.requireChildIdForStudent} translates into
- * the frigg child id — and rejects when the child does not exist there.
+ * Writes for the key-information sections (contract v0.3, §4). Every input
+ * carries the routed nemendagrunnur `studentId`, which is also the frigg child
+ * id (`base.users.id` — contract v0.3 §4.3), so it is passed straight through.
+ *
+ * Nothing is looked up first to check the child exists or belongs to the
+ * caller: frigg verifies guardianship and active enrolment on every call and
+ * answers 404 `NOT_FOUND` otherwise (§3, §6), without distinguishing "no such
+ * child" from "not your child". Checking it here as well would mean two extra
+ * round trips to reach the same answer, and a worse one, since ours would be a
+ * guess at frigg's rule rather than frigg's own.
  *
  * The matching reads are field resolvers on the student, see
  * {@link PrimarySchoolKeyInfoResolver}.
@@ -56,10 +61,7 @@ import { withMmsKeyInfoProblem } from '../errors/mmsKeyInfoProblem'
 @Scopes(ApiScope.education)
 @Resolver()
 export class PrimarySchoolKeyInfoMutationsResolver {
-  constructor(
-    private readonly keyInfoClient: FriggKeyInfoClientService,
-    private readonly keyInfo: PrimarySchoolKeyInfoService,
-  ) {}
+  constructor(private readonly keyInfoClient: FriggKeyInfoClientService) {}
 
   /* -- Emergency contacts (agents) ----------------------------------------- */
 
@@ -68,10 +70,7 @@ export class PrimarySchoolKeyInfoMutationsResolver {
     @CurrentUser() user: User,
     @Args('input') input: AddAgentInput,
   ): Promise<PrimarySchoolAgent> {
-    const childId = await this.keyInfo.requireChildIdForStudent(
-      user,
-      input.studentId,
-    )
+    const childId = input.studentId
     const contact = await withMmsKeyInfoProblem(() =>
       this.keyInfoClient.addEmergencyContact(user, childId, {
         nationalId: input.nationalId,
@@ -86,10 +85,7 @@ export class PrimarySchoolKeyInfoMutationsResolver {
     @CurrentUser() user: User,
     @Args('input') input: UpdateAgentInput,
   ): Promise<PrimarySchoolAgent> {
-    const childId = await this.keyInfo.requireChildIdForStudent(
-      user,
-      input.studentId,
-    )
+    const childId = input.studentId
     const contact = await withMmsKeyInfoProblem(() =>
       this.keyInfoClient.updateEmergencyContact(user, childId, input.agentId, {
         relationTypeId: input.relationTypeId,
@@ -103,10 +99,7 @@ export class PrimarySchoolKeyInfoMutationsResolver {
     @CurrentUser() user: User,
     @Args('input') input: DeleteAgentInput,
   ): Promise<boolean> {
-    const childId = await this.keyInfo.requireChildIdForStudent(
-      user,
-      input.studentId,
-    )
+    const childId = input.studentId
     await withMmsKeyInfoProblem(() =>
       this.keyInfoClient.deleteEmergencyContact(user, childId, input.agentId),
     )
@@ -120,10 +113,7 @@ export class PrimarySchoolKeyInfoMutationsResolver {
     @CurrentUser() user: User,
     @Args('input') input: UpdateLanguageProfileInput,
   ): Promise<LanguageProfile> {
-    const childId = await this.keyInfo.requireChildIdForStudent(
-      user,
-      input.studentId,
-    )
+    const childId = input.studentId
     const profile = await withMmsKeyInfoProblem(() =>
       this.keyInfoClient.updateLanguageProfile(user, childId, {
         languageEnvironmentId: input.languageEnvironmentId,
@@ -143,10 +133,7 @@ export class PrimarySchoolKeyInfoMutationsResolver {
     @CurrentUser() user: User,
     @Args('input') input: UpdateHealthProfileInput,
   ): Promise<HealthProfile> {
-    const childId = await this.keyInfo.requireChildIdForStudent(
-      user,
-      input.studentId,
-    )
+    const childId = input.studentId
     const profile = await withMmsKeyInfoProblem(() =>
       this.keyInfoClient.updateHealthProfile(user, childId, {
         epipen: input.epipen,

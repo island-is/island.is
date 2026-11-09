@@ -5,7 +5,8 @@ import { Field, ID, InputType } from '@nestjs/graphql'
 const STUDENT_ID_DESCRIPTION =
   'The nemendagrunnur student id the primary-school screens route on (not the MMS key-information child id).'
 
-/** POST /me/children/{childId}/agents — name is resolved from Þjóðskrá by MMS. */
+/** POST /me/children/{childId}/emergency-contacts — name is resolved from
+ * Þjóðskrá by MMS. */
 @InputType('EducationPrimarySchoolAddAgentInput')
 export class AddAgentInput {
   @Field(() => ID, { description: STUDENT_ID_DESCRIPTION })
@@ -18,7 +19,8 @@ export class AddAgentInput {
   relationTypeId!: string
 }
 
-/** PATCH /me/children/{childId}/agents/{agentId} — only the relation type. */
+/** PATCH /me/children/{childId}/emergency-contacts/{agentId} — only the
+ * relation type. */
 @InputType('EducationPrimarySchoolUpdateAgentInput')
 export class UpdateAgentInput {
   @Field(() => ID, { description: STUDENT_ID_DESCRIPTION })
@@ -31,7 +33,7 @@ export class UpdateAgentInput {
   relationTypeId!: string
 }
 
-/** DELETE /me/children/{childId}/agents/{agentId}. */
+/** DELETE /me/children/{childId}/emergency-contacts/{agentId}. */
 @InputType('EducationPrimarySchoolDeleteAgentInput')
 export class DeleteAgentInput {
   @Field(() => ID, { description: STUDENT_ID_DESCRIPTION })
@@ -70,11 +72,11 @@ export class UpdateLanguageProfileInput {
   @Field(() => ID)
   languageEnvironmentId!: string
 
-  /** ISO 639-1 */
+  /** Language code from the Ísland.is list (BCP 47, see getAllLanguageCodes) */
   @Field({ nullable: true })
   preferredLanguage?: string
 
-  /** ISO 639-1 */
+  /** Language code from the Ísland.is list (BCP 47, see getAllLanguageCodes) */
   @Field(() => [String])
   languages!: string[]
 

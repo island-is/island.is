@@ -60,30 +60,37 @@ fragment PrimarySchoolHealthProfileFields on EducationPrimarySchoolHealthProfile
 }
 
 # The key-information reads hang off the student, so they are addressed by the
-# routed studentId and the api resolves the MMS child behind it. One query per
-# section, so a section that fails shows its own error without blanking the rest.
-query PrimarySchoolAgents($studentId: String!) {
+# routed studentId and the api resolves the MMS child behind it.
+#
+# All three sections are read in one request. Every key-info field resolver has
+# to translate the student into a frigg child id, and that translation is a
+# `listChildren` call deduplicated by a per-request DataLoader — so splitting
+# the sections across requests costs one extra `listChildren` per request
+# (my-pages uses a plain HttpLink, with no query batching). The caller selects
+# the sections it actually reads with the three flags: the overview takes all
+# three, an edit screen takes one.
+#
+# Read with errorPolicy 'all' so a section that fails comes back as a null field
+# plus an error keyed on its path, and the sections that succeeded still render
+# (see usePrimarySchoolKeyInfo). `hasKeyInfo` is non-nullable, so when the
+# child-id lookup itself fails the whole student is nulled and the overview
+# shows one error rather than silently hiding the sections.
+query PrimarySchoolKeyInfoSections(
+  $studentId: String!
+  $withEmergencyContacts: Boolean!
+  $withLanguageProfile: Boolean!
+  $withHealthProfile: Boolean!
+) {
   primarySchoolStudent(studentId: $studentId) {
     id
-    emergencyContacts {
+    hasKeyInfo
+    emergencyContacts @include(if: $withEmergencyContacts) {
       ...PrimarySchoolAgentFields
     }
-  }
-}
-
-query PrimarySchoolLanguageProfile($studentId: String!) {
-  primarySchoolStudent(studentId: $studentId) {
-    id
-    languageProfile {
+    languageProfile @include(if: $withLanguageProfile) {
       ...PrimarySchoolLanguageProfileFields
     }
-  }
-}
-
-query PrimarySchoolHealthProfile($studentId: String!) {
-  primarySchoolStudent(studentId: $studentId) {
-    id
-    healthProfile {
+    healthProfile @include(if: $withHealthProfile) {
       ...PrimarySchoolHealthProfileFields
     }
   }

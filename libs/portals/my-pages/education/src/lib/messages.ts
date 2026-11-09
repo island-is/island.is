@@ -157,7 +157,11 @@ export const primarySchoolKeyInfoMessages = defineMessages({
   // Shared
   saveSuccess: {
     id: 'sp.education-primary-school:key-info-save-success',
-    defaultMessage: 'Skólinn sér þessa breytingu.',
+    // Wording fixed by contract v0.3 §2.5/§7.6: the change is live immediately
+    // and the school has access to it, but no notification is sent, so nothing
+    // here may imply the school is told.
+    defaultMessage:
+      'Breytingin er vistuð strax og skólinn hefur aðgang að henni.',
   },
   requestId: {
     id: 'sp.education-primary-school:key-info-request-id',

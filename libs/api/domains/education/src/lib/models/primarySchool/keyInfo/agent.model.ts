@@ -35,7 +35,8 @@ export class AgentCreatedBy {
   at?: string
 }
 
-/** An emergency contact — GET /me/children/{childId}/agents (contract §4.4). */
+/** An emergency contact — GET /me/children/{childId}/emergency-contacts
+ * (contract §4.4). */
 @ObjectType('EducationPrimarySchoolAgent')
 export class PrimarySchoolAgent {
   @Field(() => ID)

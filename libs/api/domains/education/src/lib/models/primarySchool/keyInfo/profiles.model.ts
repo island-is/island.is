@@ -39,11 +39,11 @@ export class LanguageProfile {
   @Field(() => LanguageEnvironment, { nullable: true })
   languageEnvironment?: LanguageEnvironment
 
-  /** ISO 639-1 */
+  /** Language code from the Ísland.is list (BCP 47, see getAllLanguageCodes) */
   @Field({ nullable: true })
   preferredLanguage?: string
 
-  /** ISO 639-1 */
+  /** Language code from the Ísland.is list (BCP 47, see getAllLanguageCodes) */
   @Field(() => [String])
   languages!: string[]
 

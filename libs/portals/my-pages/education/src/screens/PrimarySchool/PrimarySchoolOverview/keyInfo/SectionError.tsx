@@ -6,7 +6,7 @@ import type { MmsError } from './types'
 
 /**
  * Standard error block for a key-info section. Surfaces the MMS request id, when
- * MMS sent one with the failure, so it can be traced with MMS (contract §5) —
+ * MMS sent one with the failure, so it can be traced with MMS (contract §6) —
  * `Problem` itself does not show it. See mmsError.ts for where it comes from.
  */
 export const SectionError = ({ error }: { error: MmsError }) => {

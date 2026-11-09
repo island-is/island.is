@@ -15,7 +15,7 @@
 
 /**
  * Who registered a contact. When `kind === 'unknown'` the UI must NOT render the
- * "Skráð af" line (contract §4.1).
+ * "Skráð af" line (contract §7.2).
  */
 export interface EmergencyContactCreatedBy {
   kind: string
@@ -61,9 +61,9 @@ export interface LanguageProfile {
   /** id into key-options?type=languageEnvironment */
   languageEnvironmentId?: string
   languageEnvironmentLabel?: string
-  /** ISO 639-1 two-letter code */
+  /** Language code from the Ísland.is list (BCP 47; `is`, `fil`, `zh-CN`) */
   preferredLanguage?: string
-  /** ISO 639-1 two-letter codes */
+  /** Language codes from the Ísland.is list (BCP 47; not all two-letter) */
   languages: string[]
   interpreter: boolean
   signLanguage: boolean
@@ -108,7 +108,7 @@ export interface HealthProfile {
   medicationAssistance?: boolean
 }
 
-/** PATCH body — a whole document (contract §4.1). */
+/** PATCH body — a whole document (contract §4.5). */
 export interface HealthProfileUpdateInput {
   allergies: Allergy[]
   epipen: boolean
@@ -131,12 +131,16 @@ export interface SectionState<T> {
 /* Errors                                                                      */
 /* -------------------------------------------------------------------------- */
 
-/** MMS error codes (contract §5). The api forwards whatever code MMS reported;
- * {@link mmsErrorMessage} turns the ones we can explain into a message. */
+/** MMS error codes (contract v0.3 §6). The api forwards whatever code MMS
+ * reported; {@link mmsErrorMessage} turns the ones we can explain into a
+ * message and leaves the rest to the generic one. */
 export enum MmsErrorCode {
   Validation = 'VALIDATION',
   NotAGuardian = 'NOT_A_GUARDIAN',
   DelegationNotSupported = 'DELEGATION_NOT_SUPPORTED',
+  /** Token is missing a scope the route requires — all four are asked for in
+   * one token exchange, so this takes the reads down with the writes. */
+  InsufficientScope = 'INSUFFICIENT_SCOPE',
   NotEditable = 'NOT_EDITABLE',
   FeatureDisabled = 'FEATURE_DISABLED',
   NotFound = 'NOT_FOUND',
@@ -150,6 +154,6 @@ export interface MmsError {
   code?: string
   message?: string
   /** Request id MMS sent with the failure, when it sent one — surfaced so a
-   * failure can be traced with MMS (contract §5). */
+   * failure can be traced with MMS (contract §6). */
   requestId?: string
 }

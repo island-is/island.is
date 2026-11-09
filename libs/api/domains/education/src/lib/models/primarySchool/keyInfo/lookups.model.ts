@@ -1,7 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { LocalizedText } from './localizedText.model'
 
-/** GET /agent-relation-types (contract §4.1). */
+/** Relation-type lookup option, from `GET /key-options?type=relation`
+ * (contract §4.1). */
 @ObjectType('EducationPrimarySchoolRelationType')
 export class RelationType {
   @Field(() => ID)
@@ -31,7 +32,8 @@ export class Allergy {
   title!: LocalizedText
 }
 
-/** GET /language-environments (contract §4.1). */
+/** Language-environment lookup option, from
+ * `GET /key-options?type=languageEnvironment` (contract §4.1). */
 @ObjectType('EducationPrimarySchoolLanguageEnvironment')
 export class LanguageEnvironment {
   @Field(() => ID)
