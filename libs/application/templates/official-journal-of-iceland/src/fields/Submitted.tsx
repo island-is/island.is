@@ -10,7 +10,6 @@ import {
   Stack,
   Tag,
 } from '@island.is/island-ui/core'
-import { useState } from 'react'
 import { submitted } from '../lib/messages/submitted'
 import { useLocale } from '@island.is/localization'
 import { useApplication } from '../hooks/useUpdateApplication'
@@ -34,41 +33,17 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
   const slug =
     ApplicationConfigurations[ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND].slug
 
-  const {
-    createApplication,
-    postApplication,
-    postApplicationError,
-    postApplicationLoading,
-  } = useApplication({
+  const { createApplication } = useApplication({
     applicationId: props.application.id,
   })
-
-  // Check if the onEntry postApplication action failed during state transition
-  const externalPostStatus = (
-    props.application.externalData as Record<string, { status?: string }>
-  )?.successfullyPosted?.status
-  const onEntryPostFailed = externalPostStatus === 'failure'
-
-  const [resubmitted, setResubmitted] = useState(false)
 
   const {
     caseData,
     loading,
     error: caseError,
-    refetch: refetchCase,
   } = useApplicationCase({
     applicationId: props.application.id,
   })
-
-  const handleResubmit = async () => {
-    await postApplication(props.application.id, () => {
-      setResubmitted(true)
-      refetchCase()
-    })
-  }
-
-  const showPostError =
-    (onEntryPostFailed && !resubmitted) || postApplicationError
 
   const [updateApplicationMutation, { loading: updateLoading }] =
     useMutation(UPDATE_APPLICATION)
@@ -107,24 +82,7 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
   return (
     <FormGroup>
       <Box>
-        {showPostError ? (
-          <Stack space={[2, 2, 3]}>
-            <AlertMessage
-              type="error"
-              title={formatMessage(submitted.errors.postApplicationErrorTitle)}
-              message={formatMessage(
-                submitted.errors.postApplicationErrorMessage,
-              )}
-            />
-            <Button
-              loading={postApplicationLoading}
-              onClick={handleResubmit}
-              variant="primary"
-            >
-              {formatMessage(submitted.buttons.resubmit)}
-            </Button>
-          </Stack>
-        ) : loading ? (
+        {loading ? (
           <SkeletonLoader
             borderRadius="large"
             repeat={1}

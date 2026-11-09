@@ -14,7 +14,7 @@ export const studentSubsection = buildSubSection({
   title: m.studentForm.general.sectionTitle,
   children: [
     buildMultiField({
-      id: 'studentMultiField',
+      id: Routes.STUDENTMULTIFIELD,
       title: m.studentForm.general.pageTitle,
       children: [
         buildRadioField({

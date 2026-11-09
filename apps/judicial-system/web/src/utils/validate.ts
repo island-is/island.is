@@ -1,5 +1,6 @@
 import { POLICE_CASE_NUMBER_REGEX } from '@island.is/judicial-system/consts'
 import {
+  hasAllAppealJudges,
   isIndictmentCase,
   isTrafficViolationIndictmentCount,
 } from '@island.is/judicial-system/types'
@@ -403,10 +404,6 @@ const indictmentCountFieldChecks = (
     {
       isMissing: (count) => !count.incidentDescription,
       warningMessage: 'Vantar atvikalýsingu',
-    },
-    {
-      isMissing: (count) => !count.legalArguments,
-      warningMessage: 'Vantar heimfærslu',
     },
     {
       isMissing: (count) =>
@@ -888,10 +885,7 @@ export const isCourtOfAppealCaseStepValid = (
 ): boolean => {
   return Boolean(
     (appealCase?.appealState === AppealCaseState.WITHDRAWN ||
-      (appealCase?.appealJudge1 &&
-        appealCase?.appealJudge2 &&
-        appealCase?.appealJudge3 &&
-        appealCase?.appealAssistant)) &&
+      (hasAllAppealJudges(appealCase) && appealCase?.appealAssistant)) &&
       validate([
         [appealCase?.appealCaseNumber, ['empty', 'appeal-case-number-format']],
       ]).isValid,

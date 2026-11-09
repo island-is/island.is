@@ -31,6 +31,13 @@ export const confirmation = {
         '* Þú hleður upp nauðsynlegum gögnum í gegnum stöðusíðu umsóknar.',
       description: 'Confirmation first step if missing files',
     },
+    contentMissingFilesVeita: {
+      id: 'fa.application:section.confirmation.nextSteps.contentMissingFilesVeita#markdown',
+      defaultMessage:
+        '* Vinnsluaðili sveitarfélagsins hefur samband við þig til að fá þau gögn sem vantar.',
+      description:
+        'Confirmation first step if missing files, when the municipality handles files outside of island.is',
+    },
     contentSpouseMissingFiles: {
       id: 'fa.application:section.confirmation.nextSteps.contentSpouseMissingFiles#markdown',
       defaultMessage:
@@ -42,6 +49,13 @@ export const confirmation = {
       defaultMessage:
         '* Þú og maki þinn hlaðið upp nauðsynlegum gögnum sem þarf til úrvinnslu umsóknar.',
       description: 'Confirmation first step if both are missing files',
+    },
+    contentBothMissingFilesVeita: {
+      id: 'fa.application:section.confirmation.nextSteps.contentBothMissingFilesVeita#markdown',
+      defaultMessage:
+        '* Maki þinn hleður upp nauðsynlegum gögnum sem þarf til úrvinnslu umsóknar og vinnsluaðili sveitarfélagsins hefur samband við þig til að fá þau gögn sem vantar.',
+      description:
+        'Confirmation first step if both are missing files, when the municipality handles files outside of island.is',
     },
   }),
   links: defineMessages({
@@ -73,6 +87,13 @@ export const confirmation = {
       defaultMessage:
         'Á stöðusíðu umsóknar getur þú hlaðið upp þeim gögnum sem vantar',
       description: 'Alert message when files are needed for the application',
+    },
+    dataNeededTextVeita: {
+      id: 'fa.application:section.confirmation.alertMessages.dataNeededTextVeita',
+      defaultMessage:
+        'Vinnsluaðili sveitarfélagsins hefur samband við þig til að fá þau gögn sem vantar',
+      description:
+        'Alert message when files are needed and the municipality handles files outside of island.is',
     },
   }),
   alertMessagesInRelationship: defineMessages({

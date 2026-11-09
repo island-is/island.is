@@ -153,7 +153,13 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
         <Box display="flex" justifyContent="spaceBetween">
           <Text variant="h4">
             {`${capitalize(
-              formatMessage(core.indictmentDefendant, { gender }),
+              formatMessage(
+                {
+                  id: core.indictmentDefendant,
+                  defaultMessage: core.indictmentDefendant,
+                },
+                { gender },
+              ),
             )} ${defendant.name}`}
           </Text>
           {defendant.isDefenderChoiceConfirmed && (
@@ -179,7 +185,13 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
                 defaultMessage: strings.defendantWaivesRightToCounsel,
               },
               {
-                accused: formatMessage(core.indictmentDefendant, { gender }),
+                accused: formatMessage(
+                  {
+                    id: core.indictmentDefendant,
+                    defaultMessage: core.indictmentDefendant,
+                  },
+                  { gender },
+                ),
               },
             ),
           )}

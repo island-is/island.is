@@ -2,7 +2,7 @@ import { useIntl } from 'react-intl'
 import { ScrollView, View } from 'react-native'
 import { router, Stack, useLocalSearchParams } from 'expo-router'
 
-import { Divider, Input, InputRow, NavigationBarSheet, Problem } from '@/ui'
+import { Divider, Input, InputRow, Problem } from '@/ui'
 import { useGetAssetQuery } from '@/graphql/types/schema'
 import { testIDs } from '@/utils/test-ids'
 import { StackScreen } from '../../../../../components/stack-screen'

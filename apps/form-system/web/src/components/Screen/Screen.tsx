@@ -1,5 +1,4 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { FieldTypesEnum } from '@island.is/form-system/enums'
 import { m, SectionTypes } from '@island.is/form-system/ui'
 import {
   AlertMessage,
@@ -9,7 +8,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { Footer } from '../Footer/Footer'
@@ -38,12 +37,34 @@ export const Screen = () => {
   )
 
   const [numberOfItems, setNumberOfItems] = useState(1)
+  const multisetFields = isMulti
+    ? visibleFields.filter((field) => field.isPartOfMultiset !== false)
+    : []
+  const firstMultisetFieldIndex = visibleFields.findIndex(
+    (field) => isMulti && field.isPartOfMultiset !== false,
+  )
+  const orderedFields =
+    firstMultisetFieldIndex === -1
+      ? visibleFields
+      : [
+          ...visibleFields.slice(0, firstMultisetFieldIndex),
+          ...multisetFields,
+          ...visibleFields
+            .slice(firstMultisetFieldIndex)
+            .filter((field) => field.isPartOfMultiset === false),
+        ]
+  const lastMultisetFieldIndex =
+    firstMultisetFieldIndex === -1
+      ? -1
+      : firstMultisetFieldIndex + multisetFields.length - 1
 
   const calculatedMaxItems = useMemo(() => {
     if (isMulti && multiMax > 1) {
       return Math.max(
         1,
-        ...visibleFields.map((f) => (f.values?.length as number) ?? 1),
+        ...visibleFields
+          .filter((field) => field.isPartOfMultiset !== false)
+          .map((field) => field.values?.length ?? 1),
       )
     }
     return 1
@@ -55,30 +76,8 @@ export const Screen = () => {
     )
   }, [currentScreen?.data?.id, calculatedMaxItems])
 
-  const shouldMoveCurrencySumBox =
-    numberOfItems > 1 &&
-    isMulti &&
-    multiMax > 1 &&
-    visibleFields.some(
-      (f) =>
-        f.fieldType === FieldTypesEnum.ISK_NUMBERBOX &&
-        f.isPartOfMultiset !== false,
-    )
-
   const displayMultiButtons =
-    numberOfItems > 1 ||
-    (isMulti &&
-      multiMax > 1 &&
-      visibleFields.some((f) => f.isPartOfMultiset !== false))
-
-  const currencySumField = shouldMoveCurrencySumBox
-    ? visibleFields.find((f) => f.fieldType === FieldTypesEnum.ISK_SUMBOX)
-    : undefined
-
-  const fieldsForMultisetLoop =
-    shouldMoveCurrencySumBox && currencySumField
-      ? visibleFields.filter((f) => f.fieldType !== FieldTypesEnum.ISK_SUMBOX)
-      : visibleFields
+    isMulti && multiMax > 1 && multisetFields.length > 0
 
   const screenTitle =
     currentScreen?.data?.name?.[lang] ??
@@ -105,11 +104,6 @@ export const Screen = () => {
       hasValidateEligibilityNotificationError ||
       isValidateEligibilityNotificationLoading)
 
-  const anchorFieldIndex = useMemo(
-    () => fieldsForMultisetLoop.findIndex((f) => f.isPartOfMultiset !== false),
-    [fieldsForMultisetLoop],
-  )
-
   const handleNewItem = () => {
     setNumberOfItems(numberOfItems + 1)
     dispatch({
@@ -128,63 +122,90 @@ export const Screen = () => {
     }
   }
 
+  const renderMultisetField = (
+    field: FormSystemField,
+    fieldIndex: number,
+    itemIndex: number,
+  ) => {
+    const showRowGutter =
+      isMulti && field.isPartOfMultiset !== false && numberOfItems > 1
+    return (
+      <Box
+        key={`${field.id}-${itemIndex}`}
+        display="flex"
+        alignItems="flexStart"
+      >
+        {showRowGutter && (
+          <Box
+            marginRight={2}
+            flexShrink={0}
+            marginTop={4}
+            style={{ width: '2ch' }}
+            display="flex"
+            justifyContent="flexEnd"
+          >
+            {fieldIndex === 0 && <Text variant="h4">{itemIndex + 1}.</Text>}
+          </Box>
+        )}
+        <Box flexGrow={1} marginLeft={showRowGutter ? 2 : 0}>
+          <Field field={field} valueIndex={itemIndex} />
+        </Box>
+      </Box>
+    )
+  }
+
+  const multiSetControls = displayMultiButtons && (
+    <Box
+      display="flex"
+      justifyContent="flexEnd"
+      marginTop={numberOfItems === 1 ? 3 : 0}
+    >
+      <Box marginRight={2}>
+        {numberOfItems > 1 && (
+          <Button
+            variant="ghost"
+            colorScheme="destructive"
+            type="button"
+            onClick={handleRemoveItem}
+          >
+            {formatMessage(m.removeMulti)}
+          </Button>
+        )}
+      </Box>
+      <Button
+        variant="ghost"
+        type="button"
+        onClick={handleNewItem}
+        icon="add"
+        disabled={numberOfItems >= multiMax}
+      >
+        {formatMessage(m.addMulti)}
+      </Button>
+    </Box>
+  )
+
   const multiSetContent = currentScreen ? (
     <Box>
-      {Array.from({ length: numberOfItems }).map((_, itemIndex) => (
-        <Box key={`multiset-item-${itemIndex}`} marginBottom={3}>
-          {fieldsForMultisetLoop
-            .filter(
-              (field) => field.isPartOfMultiset !== false || itemIndex === 0,
-            )
-            .map((field, fieldIndex) => {
-              const key = `${field.id ?? 'field'}-${itemIndex}`
-              const valueIndex =
-                field.isPartOfMultiset === false ? 0 : itemIndex
-
-              const isRepeatingField = field.isPartOfMultiset !== false
-
-              const showRowGutter =
-                isRepeatingField &&
-                numberOfItems > 1 &&
-                (itemIndex !== 0 ||
-                  anchorFieldIndex === -1 ||
-                  fieldIndex >= anchorFieldIndex)
-
-              let gutterLabel: string | null = null
-              if (isRepeatingField && numberOfItems > 1) {
-                if (itemIndex === 0) {
-                  if (anchorFieldIndex === -1) {
-                    if (fieldIndex === 0) gutterLabel = '1.'
-                  } else {
-                    if (fieldIndex === anchorFieldIndex) gutterLabel = '1.'
-                  }
-                } else {
-                  if (fieldIndex === 0) gutterLabel = `${itemIndex + 1}.`
-                }
-              }
-
-              return (
-                <Box key={key} display="flex" alignItems="flexStart">
-                  {showRowGutter && (
-                    <Box
-                      marginRight={2}
-                      flexShrink={0}
-                      marginTop={4}
-                      style={{ width: '2ch' }}
-                      display="flex"
-                      justifyContent="flexEnd"
-                    >
-                      {gutterLabel && <Text variant="h4">{gutterLabel}</Text>}
-                    </Box>
+      {orderedFields.map((field, fieldIndex) => (
+        <Fragment key={field.id}>
+          {renderMultisetField(field, multisetFields.indexOf(field), 0)}
+          {fieldIndex === lastMultisetFieldIndex && (
+            <>
+              {Array.from({ length: numberOfItems - 1 }).map((_, index) => (
+                <Box key={`multiset-item-${index + 1}`} marginBottom={3}>
+                  {multisetFields.map((repeatedField, repeatedIndex) =>
+                    renderMultisetField(
+                      repeatedField,
+                      repeatedIndex,
+                      index + 1,
+                    ),
                   )}
-
-                  <Box flexGrow={1} marginLeft={showRowGutter ? 2 : 0}>
-                    <Field field={field} valueIndex={valueIndex} />
-                  </Box>
                 </Box>
-              )
-            })}
-        </Box>
+              ))}
+              {multiSetControls}
+            </>
+          )}
+        </Fragment>
       ))}
     </Box>
   ) : null
@@ -252,41 +273,6 @@ export const Screen = () => {
           <Payment />
         )}
         {multiSetContent}
-        {shouldMoveCurrencySumBox && currencySumField && (
-          <Box marginBottom={4}>
-            <Field
-              field={currencySumField}
-              valueIndex={0}
-              key={`${currencySumField.id ?? 'currency-sum'}-sum`}
-            />
-          </Box>
-        )}
-
-        {isMulti && multiMax > 1 && displayMultiButtons && (
-          <Box display="flex" justifyContent="flexEnd">
-            <Box marginRight={2}>
-              {numberOfItems > 1 && (
-                <Button
-                  variant="ghost"
-                  colorScheme="destructive"
-                  type="button"
-                  onClick={handleRemoveItem}
-                >
-                  {formatMessage(m.removeMulti)}
-                </Button>
-              )}
-            </Box>
-            <Button
-              variant="ghost"
-              type="button"
-              onClick={handleNewItem}
-              icon="add"
-              disabled={numberOfItems >= multiMax}
-            >
-              {formatMessage(m.addMulti)}
-            </Button>
-          </Box>
-        )}
       </GridColumn>
 
       <Footer

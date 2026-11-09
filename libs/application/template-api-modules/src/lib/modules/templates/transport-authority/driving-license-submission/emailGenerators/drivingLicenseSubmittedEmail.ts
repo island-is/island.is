@@ -1,15 +1,20 @@
 import includes from 'lodash/includes'
 import { Message } from '@island.is/email-service'
-import { DrivingLicenseApplicationFor } from '@island.is/application/templates/driving-license'
+import {
+  DrivingLicenseApplicationFor,
+  isRedesignedBTempOrBFull,
+  needsHealthCertificateCondition,
+} from '@island.is/application/templates/driving-license'
 import { EmailTemplateGenerator } from '../../../../../types'
 import { m } from './messages'
 import {
   EmailComplete,
   EmailHeader,
   EmailNextSteps,
+  EmailDigitalFlow,
   EmailRequirements,
 } from './EmailUi'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { ExternalDataNationalRegistry } from '@island.is/application/templates/iceland-health/health-insurance'
 
 type YesOrNoAnswer = Record<string, string> | string | string[]
@@ -93,25 +98,39 @@ export const generateDrivingLicenseSubmittedEmail: EmailTemplateGenerator = (
     (x) => x.id == selectedJurisdictionId,
   )
 
-  const body = isDigitalDocumentFlow
-    ? [
-        ...EmailHeader({ applicationFor, firstName }),
-        ...EmailNextSteps(applicationFor),
-      ]
-    : [
-        ...EmailHeader({ applicationFor, firstName }),
-        ...EmailRequirements(
+  const body =
+    isRedesignedBTempOrBFull(application.answers) &&
+    (applicationFor === 'B-temp' || applicationFor === 'B-full')
+      ? EmailDigitalFlow({
           applicationFor,
-          willBringQualityPhoto,
-          willBringHealthCert,
-        ),
-        ...(willBringQualityPhoto || willBringHealthCert
-          ? []
-          : EmailComplete({
-              selectedDistrictCommissioner: jurisdictionInfo?.name,
-              isHomeDelivery,
-            })),
-      ]
+          needsHealthCertificate: needsHealthCertificateCondition(YES)(
+            application.answers,
+            application.externalData,
+          ),
+          firstName,
+          selectedDistrictCommissioner: isHomeDelivery
+            ? undefined
+            : jurisdictionInfo?.name,
+        })
+      : isDigitalDocumentFlow
+      ? [
+          ...EmailHeader({ applicationFor, firstName }),
+          ...EmailNextSteps(applicationFor),
+        ]
+      : [
+          ...EmailHeader({ applicationFor, firstName }),
+          ...EmailRequirements(
+            applicationFor,
+            willBringQualityPhoto,
+            willBringHealthCert,
+          ),
+          ...(willBringQualityPhoto || willBringHealthCert
+            ? []
+            : EmailComplete({
+                selectedDistrictCommissioner: jurisdictionInfo?.name,
+                isHomeDelivery,
+              })),
+        ]
 
   return {
     from: {

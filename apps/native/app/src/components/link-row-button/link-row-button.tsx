@@ -29,7 +29,7 @@ const Host = styled(View)<{ $hasBorder: boolean }>(({ theme, $hasBorder }) => ({
   flexDirection: 'column',
   width: '100%',
   ...($hasBorder && {
-    borderBottomColor: theme.color.blue200,
+    borderBottomColor: theme.tokens.border.primary,
     borderBottomWidth: 1,
   }),
 }))
@@ -40,7 +40,7 @@ const SubLinksContainer = styled(View)(({ theme }) => ({
   marginLeft: theme.spacing[2] + ICON_SIZE / 2,
   borderLeftWidth: 1,
   paddingLeft: theme.spacing[2] + ICON_SIZE / 2,
-  borderLeftColor: theme.color.blue200,
+  borderLeftColor: theme.tokens.border.primary,
   gap: theme.spacing[2],
 }))
 
@@ -72,7 +72,7 @@ const IconWrapper = styled(View)(({ theme }) => ({
   height: ICON_SIZE,
   width: ICON_SIZE,
   borderRadius: ICON_SIZE / 2,
-  backgroundColor: theme.color.blue100,
+  backgroundColor: theme.tokens.background.brandMinimal,
   alignItems: 'center',
   justifyContent: 'center',
 }))
@@ -112,7 +112,7 @@ export const LinkRowButton = ({
           <Typography
             lineHeight={ICON_SIZE}
             weight={fontWeight}
-            color={theme.color.dark400}
+            color={theme.tokens.foreground.primary}
             size={fontSize}
           >
             {link.title}
@@ -120,7 +120,7 @@ export const LinkRowButton = ({
         </Content>
         <Icon
           source={link.isExternal ? externalLinkIcon : cheveronForwardIcon}
-          tintColor="dark300"
+          tintColor={theme.tokens.foreground.primaryMinimal}
           width={20}
           height={20}
         />

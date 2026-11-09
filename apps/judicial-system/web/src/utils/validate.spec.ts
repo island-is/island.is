@@ -90,7 +90,19 @@ describe('isIndictmentCountComplete', () => {
     const indictmentCount = {
       policeCaseNumber: POLICE_CASE_NUMBER,
       incidentDescription: 'Incident description',
-      legalArguments: 'Legal arguments',
+    } as IndictmentCount
+
+    expect(isIndictmentCountComplete(indictmentCount, workingCase)).toBe(true)
+  })
+
+  test('returns true for a non-traffic count without legal arguments', () => {
+    const workingCase = createWorkingCase({
+      [POLICE_CASE_NUMBER]: [IndictmentSubtype.THEFT],
+    })
+    const indictmentCount = {
+      policeCaseNumber: POLICE_CASE_NUMBER,
+      incidentDescription: 'Incident description',
+      legalArguments: undefined,
     } as IndictmentCount
 
     expect(isIndictmentCountComplete(indictmentCount, workingCase)).toBe(true)
@@ -102,7 +114,6 @@ describe('isIndictmentCountComplete', () => {
     })
     const indictmentCount = {
       policeCaseNumber: POLICE_CASE_NUMBER,
-      legalArguments: 'Legal arguments',
     } as IndictmentCount
 
     expect(isIndictmentCountComplete(indictmentCount, workingCase)).toBe(false)
@@ -117,7 +128,6 @@ describe('isIndictmentCountComplete', () => {
       vehicleRegistrationNumber: 'ABC123',
       lawsBroken: [[1]],
       incidentDescription: 'Incident description',
-      legalArguments: 'Legal arguments',
       offenses: [{ offense: IndictmentCountOffense.DRUNK_DRIVING }],
     } as IndictmentCount
 
@@ -132,7 +142,6 @@ describe('isIndictmentCountComplete', () => {
       policeCaseNumber: POLICE_CASE_NUMBER,
       lawsBroken: [[1]],
       incidentDescription: 'Incident description',
-      legalArguments: 'Legal arguments',
       offenses: [{ offense: IndictmentCountOffense.DRUNK_DRIVING }],
     } as IndictmentCount
 
@@ -147,7 +156,6 @@ describe('getIndictmentCountWarningMessage', () => {
     })
     const indictmentCount = {
       policeCaseNumber: POLICE_CASE_NUMBER,
-      legalArguments: 'Legal arguments',
     } as IndictmentCount
 
     expect(getIndictmentCountWarningMessage(indictmentCount, workingCase)).toBe(
@@ -155,7 +163,7 @@ describe('getIndictmentCountWarningMessage', () => {
     )
   })
 
-  test('returns legal arguments when incident description is filled', () => {
+  test('returns undefined when only legal arguments are missing', () => {
     const workingCase = createWorkingCase({
       [POLICE_CASE_NUMBER]: [IndictmentSubtype.THEFT],
     })
@@ -164,9 +172,9 @@ describe('getIndictmentCountWarningMessage', () => {
       incidentDescription: 'Incident description',
     } as IndictmentCount
 
-    expect(getIndictmentCountWarningMessage(indictmentCount, workingCase)).toBe(
-      'Vantar heimfærslu',
-    )
+    expect(
+      getIndictmentCountWarningMessage(indictmentCount, workingCase),
+    ).toBeUndefined()
   })
 
   test('returns first missing field for traffic count', () => {
@@ -177,7 +185,6 @@ describe('getIndictmentCountWarningMessage', () => {
       policeCaseNumber: POLICE_CASE_NUMBER,
       lawsBroken: [[1]],
       incidentDescription: 'Incident description',
-      legalArguments: 'Legal arguments',
       offenses: [{ offense: IndictmentCountOffense.DRUNK_DRIVING }],
     } as IndictmentCount
 
@@ -193,7 +200,6 @@ describe('getIndictmentCountWarningMessage', () => {
     const indictmentCount = {
       policeCaseNumber: POLICE_CASE_NUMBER,
       incidentDescription: 'Incident description',
-      legalArguments: 'Legal arguments',
     } as IndictmentCount
 
     expect(
@@ -1670,13 +1676,25 @@ describe('isIndictmentStepValid', () => {
     },
   )
 
-  test('is false when any indictment count is incomplete', () => {
+  test('is true when indictment counts omit legal arguments', () => {
     expect(
       isIndictmentStepValid({
         ...validCase,
         indictmentCounts: [
           completeCount,
           { ...completeCount, legalArguments: undefined },
+        ],
+      } as WorkingCase),
+    ).toBe(true)
+  })
+
+  test('is false when any indictment count is incomplete', () => {
+    expect(
+      isIndictmentStepValid({
+        ...validCase,
+        indictmentCounts: [
+          completeCount,
+          { ...completeCount, incidentDescription: undefined },
         ],
       } as WorkingCase),
     ).toBe(false)
@@ -2736,9 +2754,11 @@ describe('isCourtOfAppealCaseStepValid', () => {
   const validAppealCase = {
     appealState: AppealCaseState.RECEIVED,
     appealCaseNumber: '1/2024',
-    appealJudge1: { id: 'j1' },
-    appealJudge2: { id: 'j2' },
-    appealJudge3: { id: 'j3' },
+    appealJudges: [
+      { displayOrder: 0, userId: 'j1', user: { id: 'j1' } },
+      { displayOrder: 1, userId: 'j2', user: { id: 'j2' } },
+      { displayOrder: 2, userId: 'j3', user: { id: 'j3' } },
+    ],
     appealAssistant: { id: 'a1' },
   } as AppealCase
 
@@ -2746,18 +2766,40 @@ describe('isCourtOfAppealCaseStepValid', () => {
     expect(isCourtOfAppealCaseStepValid(validAppealCase)).toBe(true)
   })
 
-  test.each([
-    'appealJudge1',
-    'appealJudge2',
-    'appealJudge3',
-    'appealAssistant',
-  ] as const)('is false when %s is missing', (field) => {
+  test('is false when the assistant is missing', () => {
     expect(
       isCourtOfAppealCaseStepValid({
         ...validAppealCase,
-        [field]: undefined,
+        appealAssistant: undefined,
       } as AppealCase),
     ).toBe(false)
+  })
+
+  test('is false when the bench has fewer than three judges', () => {
+    expect(
+      isCourtOfAppealCaseStepValid({
+        ...validAppealCase,
+        appealJudges: validAppealCase.appealJudges?.slice(0, 2),
+      } as AppealCase),
+    ).toBe(false)
+    expect(
+      isCourtOfAppealCaseStepValid({
+        ...validAppealCase,
+        appealJudges: [],
+      } as AppealCase),
+    ).toBe(false)
+  })
+
+  test('is true for a bench of more than three judges', () => {
+    expect(
+      isCourtOfAppealCaseStepValid({
+        ...validAppealCase,
+        appealJudges: [
+          ...(validAppealCase.appealJudges ?? []),
+          { displayOrder: 3, userId: 'j4', user: { id: 'j4' } },
+        ],
+      } as AppealCase),
+    ).toBe(true)
   })
 
   test('does not require judges or an assistant when the appeal is withdrawn', () => {

@@ -163,11 +163,7 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
     })
 
     it('should return pdf', () => {
-      expect(getCourtRecordPdfAsBuffer).toHaveBeenCalledWith(
-        theCase,
-        expect.any(Function),
-        user,
-      )
+      expect(getCourtRecordPdfAsBuffer).toHaveBeenCalledWith(theCase, user)
       expect(res.end).toHaveBeenCalledWith(pdf)
     })
   })
