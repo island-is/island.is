@@ -132,10 +132,45 @@ describe('AppealSummonsController - Sync service statuses', () => {
         servedBy: 'Lögreglumaður',
         comment: undefined,
       },
-      { transaction },
+      { transaction, where: { serviceStatus: null } },
     )
     expect(mockFind).toHaveBeenCalledWith(summonsId, caseId, { transaction })
     expect(result).toEqual([reloadedSummons])
+  })
+
+  it('skips a poll update when the recipient was served during the LOKE round-trip', async () => {
+    const serviceDate = new Date('2026-06-06T10:00:00.000Z')
+
+    const mockGetStatus =
+      mockPoliceService.getVerdictDocumentStatus as jest.Mock
+    mockGetStatus.mockResolvedValue({
+      serviceStatus: VerdictServiceStatus.IN_PERSON,
+      serviceDate,
+      servedBy: 'Lögreglumaður',
+    })
+
+    const mockUpdate =
+      mockAppealSummonsRepositoryService.updateServiceRecipient as jest.Mock
+    mockUpdate.mockResolvedValue(null)
+
+    const mockFind =
+      mockAppealSummonsRepositoryService.findByIdAndCaseId as jest.Mock
+
+    const result = await syncServiceStatuses(theCase)
+
+    expect(mockUpdate).toHaveBeenCalledWith(
+      serviceId,
+      summonsId,
+      {
+        serviceStatus: VerdictServiceStatus.IN_PERSON,
+        serviceDate,
+        servedBy: 'Lögreglumaður',
+        comment: undefined,
+      },
+      { transaction, where: { serviceStatus: null } },
+    )
+    expect(mockFind).not.toHaveBeenCalled()
+    expect(result).toEqual([])
   })
 
   it('skips rows that already have a service status', async () => {

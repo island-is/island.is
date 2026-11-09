@@ -5,7 +5,10 @@ import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { AppealSummonsAppellantSide } from '@island.is/judicial-system/types'
+import {
+  AppealSummonsAppellantSide,
+  VerdictServiceStatus,
+} from '@island.is/judicial-system/types'
 
 import { AppealSummons } from '../models/appealSummons.model'
 import { AppealSummonsDefendant } from '../models/appealSummonsDefendant.model'
@@ -187,6 +190,57 @@ describe('AppealSummonsRepositoryService', () => {
         { where: { id: 'summons_id', caseId: 'case_id' }, transaction },
       )
       expect(result).toBe(updated)
+    })
+  })
+
+  describe('updateServiceRecipient', () => {
+    it('updates the recipient and reloads it', async () => {
+      const updated = {
+        id: 'service_id',
+        serviceStatus: VerdictServiceStatus.IN_PERSON,
+      }
+      serviceRecipientModel.update.mockResolvedValueOnce([1])
+      serviceRecipientModel.findOne.mockResolvedValueOnce(updated)
+
+      const result = await service.updateServiceRecipient(
+        'service_id',
+        'summons_id',
+        { serviceStatus: VerdictServiceStatus.IN_PERSON },
+        { transaction },
+      )
+
+      expect(serviceRecipientModel.update).toHaveBeenCalledWith(
+        { serviceStatus: VerdictServiceStatus.IN_PERSON },
+        {
+          where: { id: 'service_id', appealSummonsId: 'summons_id' },
+          transaction,
+        },
+      )
+      expect(result).toBe(updated)
+    })
+
+    it('returns null when a conditional where matches no row', async () => {
+      serviceRecipientModel.update.mockResolvedValueOnce([0])
+
+      const result = await service.updateServiceRecipient(
+        'service_id',
+        'summons_id',
+        { serviceStatus: VerdictServiceStatus.IN_PERSON },
+        { transaction, where: { serviceStatus: null } },
+      )
+
+      expect(serviceRecipientModel.update).toHaveBeenCalledWith(
+        { serviceStatus: VerdictServiceStatus.IN_PERSON },
+        {
+          where: {
+            id: 'service_id',
+            appealSummonsId: 'summons_id',
+            serviceStatus: null,
+          },
+          transaction,
+        },
+      )
+      expect(result).toBeNull()
     })
   })
 

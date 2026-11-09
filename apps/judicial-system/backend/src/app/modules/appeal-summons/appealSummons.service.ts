@@ -6,6 +6,7 @@ import {
   ForbiddenException,
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
 
@@ -886,17 +887,26 @@ export class AppealSummonsService {
     update: PoliceUpdateAppealSummonsServiceDto,
     transaction: Transaction,
   ): Promise<AppealSummonsServiceRecipient> {
-    return this.appealSummonsRepositoryService.updateServiceRecipient(
-      service.id,
-      service.appealSummonsId,
-      {
-        serviceStatus: update.serviceStatus,
-        serviceDate: update.serviceDate,
-        servedBy: update.servedBy,
-        comment: update.comment,
-      },
-      { transaction },
-    )
+    const updated =
+      await this.appealSummonsRepositoryService.updateServiceRecipient(
+        service.id,
+        service.appealSummonsId,
+        {
+          serviceStatus: update.serviceStatus,
+          serviceDate: update.serviceDate,
+          servedBy: update.servedBy,
+          comment: update.comment,
+        },
+        { transaction },
+      )
+
+    if (!updated) {
+      throw new InternalServerErrorException(
+        `Could not update appeal summons service recipient ${service.id} of summons ${service.appealSummonsId}`,
+      )
+    }
+
+    return updated
   }
 
   async syncServiceStatusesForCase(
@@ -965,13 +975,25 @@ export class AppealSummonsService {
     const updatedSummonsIds = new Set<string>()
 
     for (const pull of pulls) {
-      await this.appealSummonsRepositoryService.updateServiceRecipient(
-        pull.service.id,
-        pull.summons.id,
-        pull.update,
-        { transaction },
-      )
+      // Only apply the poll while the row is still waiting. A police push that
+      // landed during the LOKE round-trip owns the row; do not overwrite it.
+      const updated =
+        await this.appealSummonsRepositoryService.updateServiceRecipient(
+          pull.service.id,
+          pull.summons.id,
+          pull.update,
+          { transaction, where: { serviceStatus: null } },
+        )
+
+      if (!updated) {
+        continue
+      }
+
       updatedSummonsIds.add(pull.summons.id)
+    }
+
+    if (updatedSummonsIds.size === 0) {
+      return []
     }
 
     const results: AppealSummons[] = []

@@ -360,8 +360,15 @@ export class AppealSummonsRepositoryService {
     id: string,
     appealSummonsId: string,
     data: UpdateAppealSummonsServiceRecipient,
-    options: { transaction: Transaction },
-  ): Promise<AppealSummonsServiceRecipient> {
+    options: {
+      transaction: Transaction
+      // Optional extra predicates so a concurrent write that matches no row
+      // can be skipped (e.g. poll sync after a police push already served it).
+      where?: {
+        serviceStatus?: null
+      }
+    },
+  ): Promise<AppealSummonsServiceRecipient | null> {
     try {
       this.logger.debug(
         `Updating appeal summons service recipient ${id} of summons ${appealSummonsId}`,
@@ -369,11 +376,15 @@ export class AppealSummonsRepositoryService {
 
       const [numberOfAffectedRows] =
         await this.appealSummonsServiceRecipientModel.update(data, {
-          where: { id, appealSummonsId },
+          where: { id, appealSummonsId, ...options.where },
           transaction: options.transaction,
         })
 
       if (numberOfAffectedRows < 1) {
+        if (options.where) {
+          return null
+        }
+
         throw new InternalServerErrorException(
           `Could not update appeal summons service recipient ${id} of summons ${appealSummonsId}`,
         )
