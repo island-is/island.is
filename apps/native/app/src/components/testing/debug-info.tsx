@@ -13,6 +13,22 @@ import {
 import { Button, dynamicColor } from '@/ui'
 import { SelectionMenu } from 'react-native-platform-components'
 import { cognitoAuthUrl } from '../../graphql/client'
+import {
+  GERVIMENN_PHONES,
+  runBiometricUnlockTest,
+  runNativeLoginTest,
+} from './native-login-test'
+
+// The feature deployment for native login: IAS and the API that trusts it.
+// The switcher doesn't list it, so this is what it would have given.
+const FEATURE_ENVIRONMENT: EnvironmentConfig = {
+  ...environments.dev,
+  id: 'featnative-app-login',
+  label: 'featnative-app-login',
+  apiUrl: 'https://featnative-app-login-beta.dev01.devland.is/api',
+  baseUrl: 'https://featnative-app-login-beta.dev01.devland.is',
+  iasIssuer: 'https://featnative-app-login.identity-server.dev01.devland.is',
+}
 
 const DebugHost = styled.SafeAreaView`
   background-color: ${dynamicColor((props) => ({
@@ -116,6 +132,42 @@ export function DebugInfo() {
 
   const [showEnvPicker, setShowEnvPicker] = React.useState(false)
   const [envs, setEnvs] = React.useState<EnvironmentConfig[]>([])
+  const iasIssuer = useEnvironmentStore((state) => state.environment.iasIssuer)
+  const [nativeTestStatus, setNativeTestStatus] = React.useState<string>()
+  const [nativeTestRunning, setNativeTestRunning] = React.useState(false)
+  // A different gervimaður per platform, so a test on one phone doesn't end
+  // the other phone's app login.
+  const [nativeTestPhone, setNativeTestPhone] = React.useState(
+    GERVIMENN_PHONES[Platform.OS === 'ios' ? 1 : 0],
+  )
+
+  const onNextTestUserPress = () => {
+    const index = GERVIMENN_PHONES.indexOf(nativeTestPhone)
+    setNativeTestPhone(GERVIMENN_PHONES[(index + 1) % GERVIMENN_PHONES.length])
+  }
+
+  const runNativeTest = async (
+    test: (report: (line: string) => void) => Promise<boolean>,
+  ) => {
+    setNativeTestRunning(true)
+    const lines: string[] = []
+    const passed = await test((line) => {
+      lines.push(line)
+      console.log(`[ias-test] ${line}`)
+      setNativeTestStatus(line)
+    })
+    setNativeTestRunning(false)
+    setNativeTestStatus(passed ? 'Passed' : 'Failed')
+    Alert.alert(
+      passed ? 'Native login test passed' : 'Native login test failed',
+      lines.join('\n'),
+    )
+  }
+
+  const onNativeLoginTestPress = (keepLogin: boolean) =>
+    runNativeTest((report) =>
+      runNativeLoginTest(report, { keepLogin, phone: nativeTestPhone }),
+    )
 
   const onEnvironmentPress = () => {
     if (loading) return
@@ -182,6 +234,63 @@ export function DebugInfo() {
       <DebugRow title="Bundle" value={config.bundleId} />
       <DebugRow title="IDS" value={environment?.idsIssuer ?? 'N/A'} />
       <DebugRow title="API" value={environment?.apiUrl ?? 'N/A'} />
+      <DebugRow
+        title="IAS"
+        value={iasIssuer?.replace(/^https:\/\//, '') ?? 'Same as IDS'}
+        actions={[
+          iasIssuer
+            ? {
+                title: '(Reset)',
+                onPress: () => actions.setEnvironment(environments.dev),
+              }
+            : {
+                title: '(Feature)',
+                onPress: () => actions.setEnvironment(FEATURE_ENVIRONMENT),
+              },
+        ]}
+      />
+      {__DEV__ ? (
+        <>
+          <DebugRow
+            title="User"
+            value={`Gervimaður ${nativeTestPhone}`}
+            actions={[
+              {
+                title: '(Next)',
+                disabled: nativeTestRunning,
+                onPress: onNextTestUserPress,
+              },
+            ]}
+          />
+          <DebugRow
+            title="Native"
+            value={nativeTestStatus ?? 'Login test'}
+            actions={[
+              {
+                title: '(Run)',
+                disabled: nativeTestRunning,
+                onPress: () => onNativeLoginTestPress(false),
+              },
+              {
+                title: '(Keep)',
+                disabled: nativeTestRunning,
+                onPress: () => onNativeLoginTestPress(true),
+              },
+            ]}
+          />
+          <DebugRow
+            title="Unlock"
+            value="Kept biometric key"
+            actions={[
+              {
+                title: '(Run)',
+                disabled: nativeTestRunning,
+                onPress: () => runNativeTest(runBiometricUnlockTest),
+              },
+            ]}
+          />
+        </>
+      ) : null}
       <DebugRow
         title="Cognito"
         value={isCognitoAuth ? `Yes (exp ${cognitoMinutes}m)` : 'No'}

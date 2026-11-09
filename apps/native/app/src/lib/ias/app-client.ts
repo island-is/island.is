@@ -46,8 +46,9 @@ let current: { key: string; client: IasClient } | undefined
 
 /** The client for the selected environment. */
 export function getIasClient(): IasClient {
-  const { id, idsIssuer, idsClientId, idsScopes } = getConfig()
-  const key = `${id} ${idsIssuer} ${idsClientId}`
+  const { id, idsIssuer, iasIssuer, idsClientId, idsScopes } = getConfig()
+  const issuer = iasIssuer ?? idsIssuer
+  const key = `${id} ${issuer} ${idsClientId}`
   if (current?.key !== key) {
     current = {
       key,
@@ -55,7 +56,7 @@ export function getIasClient(): IasClient {
         id === 'mock'
           ? createMockIasClient()
           : createIasClient({
-              issuer: idsIssuer,
+              issuer,
               clientId: idsClientId,
               scopes: idsScopes,
               appVersion: toSemver(
@@ -71,6 +72,14 @@ export function getIasClient(): IasClient {
                     )
                   }
                 : undefined,
+              onAttestationRenewed: __DEV__
+                ? () => {
+                    console.log('[ias] Renewed the attestation')
+                  }
+                : undefined,
+              onBrowserFallback: (error) => {
+                console.warn('[ias] Falling back to the browser login', error)
+              },
             }),
     }
   }

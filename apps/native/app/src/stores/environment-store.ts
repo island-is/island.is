@@ -8,6 +8,8 @@ export interface EnvironmentConfig {
   id: string
   label: string
   idsIssuer: string
+  /** Testing app only: native login against another IAS, e.g. a feature deploy */
+  iasIssuer?: string
   apiUrl: string
   baseUrl: string
   datadog: string | null
