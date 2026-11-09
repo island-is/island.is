@@ -110,8 +110,8 @@
       "court": "hd-reykjanes"
     },
     "00c0bb50-557e-4920-b532-122a22353597": {
-      "caseNumber": "E-1163/2020",
-      "verdictDate": "2023-11-21",
+      "id": "g-8979b596-cc40-49bb-94fd-b41161ca1a17",
+      "caseNumber": "E-1163/2021",
       "court": "hd-reykjanes"
     },
     "00c1d8dc-99ad-4120-aac4-9a3ce117ae9c": {
@@ -2445,8 +2445,8 @@
       "court": "hd-sudurland"
     },
     "0f1151a9-8556-4b7b-a482-69ad4073ec9f": {
-      "caseNumber": "932/2024",
-      "verdictDate": "2025-06-12",
+      "id": "g-56076206-2718-4de3-8db7-51a51fcb892c",
+      "caseNumber": "S-3202/2024",
       "court": "hd-reykjanes"
     },
     "0f12f88e-2e40-42a3-89f5-a53da50dba67": {
@@ -3040,11 +3040,6 @@
       "caseNumber": "E-2113/2021",
       "court": "hd-reykjavik"
     },
-    "128f0c48-7c4d-49e7-84c3-e761da8c84f4": {
-      "caseNumber": "S-28/2016",
-      "verdictDate": "2016-10-06",
-      "court": "hd-sudurland"
-    },
     "1293e827-8b2a-47e7-8740-3e97f32fd2f3": {
       "id": "g-90f3175d-865e-4172-9875-6e6d6f2c0626",
       "caseNumber": "S-315/2020",
@@ -3287,11 +3282,6 @@
     "140f1a64-423a-4c07-994f-ebd45c19458e": {
       "id": "g-7dd353a2-caf5-4ab5-8917-4b0bbafe90b0",
       "caseNumber": "E-742/2023",
-      "court": "hd-reykjavik"
-    },
-    "140f8bdb-aa1f-45b4-9e6b-eab0c3eb226d": {
-      "caseNumber": "E-7124/2007",
-      "verdictDate": "2008-03-13",
       "court": "hd-reykjavik"
     },
     "1438edf8-56b8-4a8e-b3b0-aa0ed529e12c": {
@@ -4418,8 +4408,9 @@
       "court": "hd-reykjanes"
     },
     "1abc37b6-581b-49ac-b66b-795c5870143b": {
-      "caseNumber": "S-336/2018",
-      "verdictDate": "2019-06-04"
+      "id": "g-5fa3ac98-bb16-4cc6-8486-f87f404d09bb",
+      "caseNumber": "S-336/2019",
+      "court": "hd-reykjanes"
     },
     "1ac1d2b4-5f39-4d52-bebd-44f9d5c0a13b": {
       "id": "g-0f857baf-8907-4977-9711-68717bd99f6d",
@@ -4811,7 +4802,8 @@
     },
     "1cf3aea0-a1e9-48c4-86c0-2c0b34bf4c39": {
       "caseNumber": "S-211/2016",
-      "verdictDate": "2016-04-06"
+      "verdictDate": "2019-08-12",
+      "court": "hd-reykjavik"
     },
     "1cf8bdb3-1d6a-40df-afad-b5f2e4576b5d": {
       "id": "g-81d24383-4489-4918-9ec5-9432a19f92c5",
@@ -6091,8 +6083,8 @@
       "court": "hd-austurland"
     },
     "2536c1b9-290c-4e9a-8412-e371253f52ee": {
-      "caseNumber": "31/2021",
-      "verdictDate": "2021-10-13"
+      "id": "g-0a5375d3-c073-45a7-9489-1f0dfd0c34fe",
+      "caseNumber": "31/2021"
     },
     "2538a7a6-dd6c-41c4-9785-479a399b23e5": {
       "id": "g-63c9316b-1327-4764-858e-4ac2f7f7def3",
@@ -7778,11 +7770,6 @@
       "caseNumber": "E-318/2025",
       "court": "hd-reykjanes"
     },
-    "2eed6c79-ef3b-4531-b713-2d52eebc7041": {
-      "caseNumber": "S-577/2010",
-      "verdictDate": "2011-06-09",
-      "court": "hd-sudurland"
-    },
     "2ef22303-65a1-46e1-86b5-e26b22a8d8b8": {
       "id": "g-a5a771ad-4aad-4016-8375-2fc93ca55afd",
       "caseNumber": "S-2272/2025",
@@ -7966,11 +7953,6 @@
       "id": "g-ea5a0296-922b-4329-9669-a1b96875dfcd",
       "caseNumber": "S-472/2020",
       "court": "hd-sudurland"
-    },
-    "30721e94-da03-4896-bd4d-eefabe4b23c9": {
-      "caseNumber": "E-1580/2013",
-      "verdictDate": "2014-03-25",
-      "court": "hd-reykjavik"
     },
     "307debf3-978d-457e-899f-89fc4ef4cf4e": {
       "id": "g-fb523d43-acf6-44a8-8c00-13fc724e1dca",
@@ -9030,8 +9012,8 @@
       "court": "hd-sudurland"
     },
     "3637560f-1df3-4e8f-9471-333c5dcbfb6b": {
+      "id": "g-97567cc1-51a4-4913-a153-9785e97423c7",
       "caseNumber": "E-1542/2024",
-      "verdictDate": "2025-08-25",
       "court": "hd-reykjavik"
     },
     "3641b9f1-9d05-438e-8e2f-4278df48c7be": {
@@ -9264,8 +9246,8 @@
       "caseNumber": "E-4891/2025"
     },
     "376dba47-0f02-4cf5-bf3a-ae5550ed1ead": {
-      "caseNumber": "S-1254/2025",
-      "verdictDate": "2026-03-26",
+      "id": "g-e1080633-e698-4690-90b8-5d65191f683e",
+      "caseNumber": "S-1254/2026",
       "court": "hd-reykjavik"
     },
     "377a773d-4646-4776-9737-856e8481fb9b": {
@@ -10858,8 +10840,8 @@
       "court": "hd-reykjavik"
     },
     "40c439d5-69b5-4781-a6f7-398b3c2fba67": {
-      "caseNumber": "216/2008",
-      "verdictDate": "2008-10-30",
+      "id": "g-dfb6e9af-4935-4d06-8623-b9114fc38936",
+      "caseNumber": "S-42/2024",
       "court": "hd-reykjanes"
     },
     "40c6f93e-b6e7-4ea7-924c-94b3086e9ce4": {
@@ -11160,11 +11142,6 @@
       "id": "g-553003c8-1cef-486a-b24c-8e611eae6db3",
       "caseNumber": "S-951/2024",
       "court": "hd-reykjanes"
-    },
-    "42ea3bf2-290c-408d-837e-17712cf8c927": {
-      "caseNumber": "S-658/2013",
-      "verdictDate": "2013-10-21",
-      "court": "hd-reykjavik"
     },
     "42ebe152-4eb6-4b4c-9cfb-70c642a4fbe3": {
       "id": "g-c62220f9-ea27-4d1a-8c48-a8822362f505",
@@ -11963,11 +11940,6 @@
       "caseNumber": "S-1179/2022",
       "court": "hd-reykjavik"
     },
-    "480bf0ce-7eef-41dc-8fc7-2d5d8e1906e4": {
-      "caseNumber": "E-822/2013",
-      "verdictDate": "2014-02-04",
-      "court": "hd-reykjavik"
-    },
     "483971db-77cf-421f-ac40-40f29c202e6a": {
       "id": "g-f574b4de-b1ee-43a9-bd59-66ecd7b14d31",
       "caseNumber": "S-1361/2023",
@@ -12481,8 +12453,8 @@
       "court": "hd-reykjavik"
     },
     "4b5d36c3-bf9d-4052-9de6-673bd81a46bb": {
-      "caseNumber": "6/2024",
-      "verdictDate": "2024-10-14",
+      "id": "g-21878f47-4b42-4b36-aa1f-82498c1a5fe0",
+      "caseNumber": "E-2661/2024",
       "court": "hd-reykjanes"
     },
     "4b63d5c1-4af5-4122-888c-1075b3dfc7f5": {
@@ -12778,11 +12750,6 @@
       "id": "g-c9cd7280-026a-4e05-ac56-498a3a197589",
       "caseNumber": "S-5981/2021",
       "court": "hd-reykjavik"
-    },
-    "4d0574de-3e22-4646-9414-98bcfb2bfbe4": {
-      "caseNumber": "S-33/2017",
-      "verdictDate": "2018-05-23",
-      "court": "hd-sudurland"
     },
     "4d24fe36-bceb-4941-9bc0-55c34b01983b": {
       "id": "g-21ce23b8-9d74-48f0-be85-e903738a79d3",
@@ -13939,8 +13906,8 @@
       "court": "hd-reykjavik"
     },
     "542f8363-232d-4d4f-adb1-d74e76e8cd7b": {
-      "caseNumber": "16/2021",
-      "verdictDate": "2021-09-08"
+      "id": "g-60060784-21bf-4673-b38a-dac8a2f3c6fd",
+      "caseNumber": "16/2021"
     },
     "543b388d-56ef-4333-a356-705d5acb4046": {
       "id": "g-e3e30408-154a-4534-9807-daf7bb9498fe",
@@ -14987,8 +14954,8 @@
       "court": "hd-reykjavik"
     },
     "5a32e1a2-3f3c-45b0-bf1e-49470af786e0": {
-      "caseNumber": "485/2025",
-      "verdictDate": "2025-06-23",
+      "id": "g-6f640ab8-8d6b-4295-8804-446600ef107e",
+      "caseNumber": "S-1684/2025",
       "court": "hd-reykjanes"
     },
     "5a382620-4cd5-4de5-9f65-c19b35965ed0": {
@@ -16103,11 +16070,6 @@
       "caseNumber": "S-5277/2022",
       "court": "hd-reykjavik"
     },
-    "61e63cec-30d7-4787-b0a7-2501ff6b18a0": {
-      "caseNumber": "S-441/2012",
-      "verdictDate": "2013-04-02",
-      "court": "hd-sudurland"
-    },
     "61f1af54-c1e9-4843-8d29-7ba53f10d007": {
       "id": "g-b469a16a-6a6f-4d17-afab-38ac608fe3f4",
       "caseNumber": "E-3165/2020",
@@ -16274,8 +16236,8 @@
       "court": "hd-nordurland-eystra"
     },
     "6309525d-97f2-4a41-9dca-15746c6203b9": {
+      "id": "g-5e34f40d-cb38-4f89-a5b0-c888f2be12f3",
       "caseNumber": "S-6842/2023",
-      "verdictDate": "2024-10-08",
       "court": "hd-reykjavik"
     },
     "6313f546-dd1e-4204-bb15-2952854cbba2": {
@@ -17252,11 +17214,6 @@
       "id": "g-01d776f3-c9d9-4493-95a8-de6e8db8d21f",
       "caseNumber": "S-2014/2025",
       "court": "hd-reykjanes"
-    },
-    "69010636-ae83-4fa0-b3ce-32b2bbf6841e": {
-      "caseNumber": "S-947/2013",
-      "verdictDate": "2014-06-26",
-      "court": "hd-reykjavik"
     },
     "690344db-468a-4c55-95bd-881f77491916": {
       "id": "g-02c01ed3-b272-47fd-b680-479ad262ab35",
@@ -19922,8 +19879,8 @@
       "court": "hd-reykjanes"
     },
     "7a91d9c7-0a33-4f5d-ab3a-35423ad6a428": {
-      "caseNumber": "E-1548/2022",
-      "verdictDate": "2022-11-05",
+      "id": "g-f657d70f-e9ea-4899-93aa-4209837cb458",
+      "caseNumber": "E-1568/2022",
       "court": "hd-reykjavik"
     },
     "7a925013-884c-48c3-a084-0f7281353960": {
@@ -20171,8 +20128,8 @@
       "court": "hd-reykjanes"
     },
     "7bfe7d5a-efad-4606-8ce0-76d2e4f985b9": {
+      "id": "g-6a2d74c3-e3c1-4c67-8688-2e11741f78b6",
       "caseNumber": "S-1764/2007",
-      "verdictDate": "2008-01-07",
       "court": "hd-reykjavik"
     },
     "7c013dff-befd-4123-9788-90fda149d6be": {
@@ -23405,11 +23362,6 @@
       "caseNumber": "E-3628/2022",
       "court": "hd-reykjavik"
     },
-    "903d3590-dab6-49f9-9b88-c2947b12aeaa": {
-      "caseNumber": "E-41/2013",
-      "verdictDate": "2014-10-02",
-      "court": "hd-reykjanes"
-    },
     "90422096-cfa6-4596-ae22-d989149d58aa": {
       "id": "g-788b36b0-c498-4dda-a234-0ecff7205ff2",
       "caseNumber": "S-342/2013",
@@ -23973,14 +23925,10 @@
       "caseNumber": "E-3259/2025",
       "court": "hd-reykjavik"
     },
-    "939b0d9c-6200-4dab-ae5c-c566f684d9a7": {
-      "caseNumber": "E-12/2016",
-      "verdictDate": "2016-11-29",
-      "court": "hd-sudurland"
-    },
     "939da589-3bb0-4b7b-807b-bc09c4fe0d73": {
-      "caseNumber": "41/2018",
-      "verdictDate": "2019-03-22"
+      "id": "g-15e397bf-f7e6-4ead-bfb1-035afaf33c53",
+      "caseNumber": "S-125/2025",
+      "court": "hd-nordurland-eystra"
     },
     "93b3bbb0-2b0c-442e-aa99-86d2ff41fe58": {
       "id": "g-786f3d8f-7195-4828-8db8-4b5c530aaad7",
@@ -25059,8 +25007,8 @@
       "court": "hd-reykjavik"
     },
     "9a062d91-63f4-4ee7-82f6-b812a2d49a64": {
-      "caseNumber": "131/2019",
-      "verdictDate": "2021-01-29",
+      "id": "g-6b20f7cb-c031-42b7-bb1a-183c0b4f635c",
+      "caseNumber": "S-1532/2022",
       "court": "hd-reykjanes"
     },
     "9a0e5b71-c884-402f-9789-6eb6081515c9": {
@@ -25952,8 +25900,8 @@
       "court": "hd-reykjanes"
     },
     "9fce4b58-726c-4e01-bc59-23e607f901d6": {
+      "id": "g-8b7abc14-e0ce-4567-a568-595b1cdf3d1a",
       "caseNumber": "S-566/2022",
-      "verdictDate": "2023-01-23",
       "court": "hd-sudurland"
     },
     "9fd1ec5a-0c4a-42b1-a347-48bf77df5fca": {
@@ -26650,8 +26598,8 @@
       "court": "hd-reykjavik"
     },
     "a417a88e-166a-4e2e-a638-86d231297654": {
+      "id": "g-204e87ef-df0f-468c-968e-04d7c641cbd3",
       "caseNumber": "S-21/2018",
-      "verdictDate": "2018-11-07",
       "court": "hd-vestfirdir"
     },
     "a428c91c-95f6-4922-8ae0-c181ba957bf2": {
@@ -26668,11 +26616,6 @@
       "id": "g-8d8ade8d-33a4-4dc5-93c3-d85aa70a5798",
       "caseNumber": "S-483/2020",
       "court": "hd-nordurland-eystra"
-    },
-    "a439f912-8ffc-444e-abbc-0b9c8d5aadce": {
-      "caseNumber": "S-68/2017",
-      "verdictDate": "2017-11-10",
-      "court": "hd-sudurland"
     },
     "a43d387b-9116-4ae5-baa3-553fd6e45113": {
       "id": "g-7d48c268-3c7d-45e0-8b9e-732c813e0336",
@@ -28250,7 +28193,8 @@
       "court": "hd-austurland"
     },
     "ad754c9d-c978-4de8-9164-7af19e91675f": {
-      "caseNumber": "40/2006",
+      "id": "g-83a67ed3-54cf-4ccb-b8b9-1a7236b93a0c",
+      "caseNumber": "S-2201/2025",
       "court": "hd-reykjanes"
     },
     "ad80c776-79b2-4e86-a375-3a764fc6a1b8": {
@@ -28544,14 +28488,9 @@
       "court": "hd-reykjavik"
     },
     "af30859e-00ef-4e52-b13d-ba3f8d75a5d8": {
-      "caseNumber": "13/2021",
-      "verdictDate": "2021-06-28",
+      "id": "g-cba64af6-6b70-4afe-89e6-8f50ca8e7ff1",
+      "caseNumber": "S-1845/2021",
       "court": "hd-reykjanes"
-    },
-    "af31c3db-ddf0-4bf2-b692-2763628e7ffb": {
-      "caseNumber": "S-125/2016",
-      "verdictDate": "2017-03-16",
-      "court": "hd-sudurland"
     },
     "af3c7186-2b80-4899-b7f0-7492ba338623": {
       "id": "g-f65faeea-bcf5-459f-a607-50240330d83e",
@@ -28821,11 +28760,6 @@
       "id": "g-505998a1-4b67-4938-a879-0b01ee15ef30",
       "caseNumber": "E-2495/2023",
       "court": "hd-reykjavik"
-    },
-    "b0ca120d-fbc9-4b9a-9cc8-40f2d969981f": {
-      "caseNumber": "S-73/2017",
-      "verdictDate": "2018-03-19",
-      "court": "hd-sudurland"
     },
     "b0d49aab-dbc6-4f5e-b32f-696d1967b030": {
       "id": "g-3102ccfa-2ccd-4100-8c81-11e14973ee20",
@@ -30149,8 +30083,8 @@
       "court": "hd-reykjanes"
     },
     "b94d186c-3ded-4493-aa3c-ce4042cb27f5": {
-      "caseNumber": "33/2021",
-      "verdictDate": "2021-10-12"
+      "id": "g-eb72d29f-2886-4227-8074-3d04fd3eee7a",
+      "caseNumber": "33/2021"
     },
     "b955cff0-5aa6-44f3-979c-6da4b2b44220": {
       "id": "g-8c7fed75-a4a2-47e9-922f-271e6d99babe",
@@ -30313,8 +30247,8 @@
       "court": "hd-reykjavik"
     },
     "bab5d942-d5aa-43a9-9c85-024f89cc6a28": {
+      "id": "g-0a6aeb51-9589-442f-af7b-1ad6c4d44f95",
       "caseNumber": "S-7568/2024",
-      "verdictDate": "2025-07-02",
       "court": "hd-reykjavik"
     },
     "babb9036-708d-429a-be60-f53d8f76659b": {
@@ -30627,8 +30561,8 @@
       "court": "hd-reykjanes"
     },
     "bc76e7b2-5152-4dfa-816e-ad0dddbda04b": {
-      "caseNumber": "28/2021",
-      "verdictDate": "2021-10-06"
+      "id": "g-9000d854-54a5-4641-a97a-3ad2aa0e131f",
+      "caseNumber": "28/2021"
     },
     "bc81074b-7809-42e1-9419-a0c9cd4d81fe": {
       "id": "g-e3755d43-7b6c-4126-8ffe-d8c44c1c84be",
@@ -31820,7 +31754,8 @@
       "court": "hd-reykjavik"
     },
     "c3d4c87c-461f-406d-a740-e52f05499eec": {
-      "caseNumber": "108/1981",
+      "id": "g-e53021a5-9689-4eff-afcb-c99939726798",
+      "caseNumber": "E-576/2024",
       "court": "hd-reykjanes"
     },
     "c3dfbc55-0fbe-4675-98ed-0a482ebd9011": {
@@ -33430,8 +33365,8 @@
       "court": "hd-sudurland"
     },
     "cd6b733a-e4ed-47c6-9239-336bfa77793b": {
-      "caseNumber": "26/2024",
-      "verdictDate": "2025-01-29",
+      "id": "g-9472d977-1651-4a91-b338-af3d7e18edc3",
+      "caseNumber": "E-529/2025",
       "court": "hd-reykjanes"
     },
     "cd7e3500-c763-4caa-af0c-33f1d10dbf63": {
@@ -33592,11 +33527,6 @@
       "id": "g-89cfc298-3175-4a8a-adce-9d2dfa7f39af",
       "caseNumber": "S-1299/2019",
       "court": "hd-reykjanes"
-    },
-    "ce9287a2-f9f4-4835-8f27-fe9b317e32d7": {
-      "caseNumber": "S-109/2018",
-      "verdictDate": "2018-05-23",
-      "court": "hd-reykjavik"
     },
     "ce9fc392-82f6-43ea-b33f-1ca0e9abfb14": {
       "id": "g-7c82b764-c4dd-4cc7-80cf-63223f2ff204",
@@ -33966,7 +33896,9 @@
       "court": "hd-nordurland-eystra"
     },
     "d09f4d63-6f93-4713-a080-8040fb53759d": {
-      "caseNumber": "S-284/2019"
+      "id": "g-221cfe92-e23d-4d85-870a-93ff553e7194",
+      "caseNumber": "S-284/2019",
+      "court": "hd-sudurland"
     },
     "d0a51f52-6277-42e6-aafa-b0a61c12eae6": {
       "id": "g-4b6db377-dc00-416d-91c9-d2e6f69b6a43",
@@ -34373,11 +34305,6 @@
     "d3655714-e261-49cc-aa5b-5423dc200d46": {
       "id": "g-ac27d23c-8dd0-4717-a992-db081267aaae",
       "caseNumber": "S-1270/2022",
-      "court": "hd-reykjavik"
-    },
-    "d36cf768-3c8c-425d-84bd-fcfcce7b190a": {
-      "caseNumber": "E-7124/2007",
-      "verdictDate": "2008-03-13",
       "court": "hd-reykjavik"
     },
     "d377c3ee-db41-4893-8623-2a17597e4c81": {
@@ -35987,16 +35914,6 @@
       "caseNumber": "S-4132/2024",
       "court": "hd-reykjavik"
     },
-    "dd59bd9d-4a29-455b-be77-451f3a789002": {
-      "caseNumber": "S-278/2018",
-      "verdictDate": "2018-12-20",
-      "court": "hd-sudurland"
-    },
-    "dd666b92-c648-4440-bd1b-96438eaa263c": {
-      "caseNumber": "E-3267/2012",
-      "verdictDate": "2013-06-21",
-      "court": "hd-reykjavik"
-    },
     "dd6a1fc3-bda1-436d-9b1b-6ccecb5d6631": {
       "caseNumber": "E-5551/2024",
       "verdictDate": "2025-12-17",
@@ -36353,11 +36270,6 @@
       "id": "g-8fff157c-bf59-40da-ae6f-d3cc1b02debe",
       "caseNumber": "S-2689/2020",
       "court": "hd-reykjavik"
-    },
-    "dfcc7c43-08d6-457a-ae87-2f3ab22b3e70": {
-      "caseNumber": "S-460/2012",
-      "verdictDate": "2013-03-11",
-      "court": "hd-sudurland"
     },
     "dfce1642-91b0-43a0-9b74-d18781aea955": {
       "id": "g-0e530195-614b-40e0-8f1e-734dd65bde4c",
@@ -38228,7 +38140,8 @@
       "court": "hd-sudurland"
     },
     "ebd5e0b1-7b88-408f-b6db-eff67c99136d": {
-      "caseNumber": "S-299/2018",
+      "id": "g-3d507bc1-362e-4be2-8922-1d5bd192f67b",
+      "caseNumber": "S-292/2018",
       "court": "hd-sudurland"
     },
     "ebdd076f-b1da-46cb-9cee-51aed3a7b095": {
@@ -38444,11 +38357,6 @@
       "id": "g-69717355-362c-4386-aae8-fe710500bb1c",
       "caseNumber": "S-2293/2019",
       "court": "hd-reykjanes"
-    },
-    "ed03c5f3-9321-4713-b52c-6aa4a40a36db": {
-      "caseNumber": "S-295/2010",
-      "verdictDate": "2010-12-15",
-      "court": "hd-sudurland"
     },
     "ed10ca1a-ec7d-4000-8c44-9f010809f7d2": {
       "id": "g-fca925e9-2c1d-4311-a8ef-592fda4b138d",
@@ -38822,11 +38730,6 @@
       "id": "g-e3901ea5-145e-48b2-9cf6-5ab498b8197d",
       "caseNumber": "S-271/2019",
       "court": "hd-vesturland"
-    },
-    "ef1a1f29-4397-4d37-a362-65f63cf67461": {
-      "caseNumber": "E-682/2009",
-      "verdictDate": "2010-12-29",
-      "court": "hd-sudurland"
     },
     "ef1e6818-c827-4d92-8385-fe5993f333ce": {
       "id": "g-2753fb3f-8ae7-41e9-a9f1-037d50ac5617",
@@ -39331,11 +39234,6 @@
       "caseNumber": "S-3205/2022",
       "court": "hd-reykjavik"
     },
-    "f1ef7867-08ca-45cf-9ad7-293fba966073": {
-      "caseNumber": "E-4463/2013",
-      "verdictDate": "2016-05-18",
-      "court": "hd-reykjavik"
-    },
     "f1f5dec6-6d6f-4fd0-97f6-6038aad4ab49": {
       "id": "g-e4fcd0ce-4dc2-4586-a597-9bc8a9017c19",
       "caseNumber": "K-287/2021",
@@ -39627,8 +39525,8 @@
       "court": "hd-reykjavik"
     },
     "f3bdb931-0645-4a91-8be0-89002b8dd311": {
+      "id": "g-f9ebaef7-2c91-4aef-95f6-b59b5e61b57d",
       "caseNumber": "S-39/2019",
-      "verdictDate": "2019-03-26",
       "court": "hd-sudurland"
     },
     "f3c2ba32-3e19-4a50-8c3e-80d9dc4a4899": {
