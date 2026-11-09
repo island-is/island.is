@@ -136,6 +136,7 @@ describe('ProjectParentSubpageSyncService', () => {
       parentSubpage('guide', project, [
         subpage('first', project),
         subpage('foreign', otherProject),
+        subpage('untitled', project, { title: '  ' }),
         subpage('second', project),
       ]),
     ] as never)
@@ -145,16 +146,18 @@ describe('ProjectParentSubpageSyncService', () => {
     expect(document.content).toContain('Subpage first')
     expect(document.content).toContain('This is the content of subpage second')
     expect(document.content).not.toContain('foreign')
+    expect(document.content).not.toContain('untitled')
 
     const response = JSON.parse(document.response ?? '')
     expect(response.chapters).toEqual([
       { id: 'first', title: 'Subpage first', slug: 'first' },
       { id: 'second', title: 'Subpage second', slug: 'second' },
     ])
+    // Pages left out of the chapters are still dependencies, so fixing them reindexes the parent
     expect(
       document.tags
         ?.filter((tag) => tag.type === 'hasChildEntryWithId')
         .map((tag) => tag.key),
-    ).toEqual(['first', 'second'])
+    ).toEqual(['first', 'foreign', 'untitled', 'second'])
   })
 })

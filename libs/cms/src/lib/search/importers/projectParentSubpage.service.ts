@@ -97,13 +97,17 @@ export class ProjectParentSubpageSyncService
             })),
           }
 
-          // Tag the document with the ids of its children so we can later look up what document a child belongs to
+          // Tag the document with the ids of its children so we can later look up what document a child belongs to.
+          // All linked pages are included, also the ones left out of the chapters,
+          // so that fixing a page's title, slug or project page reindexes this document
           const childEntryIds = extractChildEntryIds({
             ...withoutProjectPageReference(entry),
             fields: {
               ...entry.fields,
               projectPage: undefined,
-              pages: chapters.map(withoutProjectPageReference),
+              pages: (entry.fields.pages ?? [])
+                .filter(Boolean)
+                .map(withoutProjectPageReference),
             },
           })
 
