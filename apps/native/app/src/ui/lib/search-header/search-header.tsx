@@ -1,7 +1,7 @@
 import React from 'react'
 import { Animated } from 'react-native'
 import styled from 'styled-components/native'
-import { dynamicColor } from '../../utils'
+import { token } from '../../utils'
 import { font } from '../../utils/font'
 
 const Host = styled(Animated.View)<{ isAndroid?: boolean }>`
@@ -9,15 +9,9 @@ const Host = styled(Animated.View)<{ isAndroid?: boolean }>`
   height: ${({ theme }) => theme.spacing[8]}px;
   align-items: center;
   justify-content: center;
-  border-bottom-color: ${dynamicColor(
-    ({ theme }) => ({
-      dark: theme.shades.dark.shade200,
-      light: theme.color.blue200,
-    }),
-    true,
-  )};
+  border-bottom-color: ${token((t) => t.border.primary)};
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
-  background-color: ${dynamicColor('background')};
+  background-color: ${token((t) => t.background.invert)};
   ${(props) => props.isAndroid && 'margin-top: -16px;'}
 `
 
