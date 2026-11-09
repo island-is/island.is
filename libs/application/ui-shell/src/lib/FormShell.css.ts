@@ -37,12 +37,13 @@ export const shellContainer = style({
 export const sidebarContainer = style({
   order: 1,
   position: 'sticky',
-  top: 0,
+  top: 'var(--form-alert-banner-height, 0)',
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       order: 2,
       position: 'relative',
+      top: 0,
     },
   },
 })

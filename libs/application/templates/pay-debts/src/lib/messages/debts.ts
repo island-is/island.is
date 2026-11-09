@@ -22,7 +22,7 @@ export const debts = {
   salaryWithholding: defineMessages({
     title: {
       id: 'pd.application:debts.salaryWithholding.title',
-      defaultMessage: 'Athugaðu!',
+      defaultMessage: 'Athugið!',
       description:
         'Title of the banner shown when a debt is withheld from the applicant salary',
     },

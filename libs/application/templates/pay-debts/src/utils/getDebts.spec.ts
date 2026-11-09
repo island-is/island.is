@@ -4,7 +4,6 @@ import {
   DEBTS_MAX_AGE_MS,
   debtsAreStale,
   debtsSignature,
-  getSelectedSalaryPayerName,
   hasFetchedDebts,
 } from './getDebts'
 
@@ -102,21 +101,5 @@ describe('debtsSignature', () => {
     expect(debtsSignature([debt({ timePeriod: '202601' })])).not.toBe(
       debtsSignature([debt({ timePeriod: '202603' })]),
     )
-  })
-})
-
-describe('getSelectedSalaryPayerName', () => {
-  const debts = [
-    debt({ payID: '1' }),
-    debt({ payID: '2', salaryPayerName: 'A ehf.' }),
-  ]
-
-  it('names the payer once a withheld debt is selected', () => {
-    expect(getSelectedSalaryPayerName(debts, [false, true])).toBe('A ehf.')
-  })
-
-  it('is undefined while no withheld debt is selected', () => {
-    expect(getSelectedSalaryPayerName(debts, [true, false])).toBeUndefined()
-    expect(getSelectedSalaryPayerName(debts)).toBeUndefined()
   })
 })
