@@ -1,5 +1,11 @@
 import React from 'react'
-import { Image, ImageSourcePropType, ViewStyle } from 'react-native'
+import {
+  DynamicColorIOS,
+  Image,
+  ImageSourcePropType,
+  Platform,
+  ViewStyle,
+} from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import gridDotSmallSrc from '../../assets/illustrations/grid-dot-small.png'
 import { dynamicColor } from '../../utils'
@@ -77,7 +83,13 @@ export function WelcomeCard({
             style={{
               width: '100%',
               height: '100%',
-              tintColor: theme.tokens.background.brandSecondaryLighter,
+              tintColor:
+                Platform.OS === 'android'
+                  ? theme.color.purple200
+                  : DynamicColorIOS({
+                      light: theme.color.purple200,
+                      dark: '#401c60',
+                    }),
             }}
             resizeMode="repeat"
           />
