@@ -15,11 +15,6 @@
       "caseNumber": "S-3188/2025",
       "court": "hd-reykjanes"
     },
-    "001edf71-c2e3-4953-a118-87c04e8dc27e": {
-      "caseNumber": "S-73/2019",
-      "verdictDate": "2019-11-28",
-      "court": "hd-vestfirdir"
-    },
     "002b33de-1602-458c-ac8b-54431c72e30e": {
       "id": "g-5b4a3e1b-61e4-4289-a5ae-e262b3e1fc7b",
       "caseNumber": "S-523/2023",
@@ -84,10 +79,6 @@
       "id": "g-feaf9a23-f4de-4cd8-b2a9-4d535207c6ee",
       "caseNumber": "S-81/2025",
       "court": "hd-reykjanes"
-    },
-    "008aa393-0fea-4fcf-b7f6-163de2ca0f69": {
-      "caseNumber": "732/2009",
-      "verdictDate": "2009-11-25"
     },
     "0093cbc3-4ffa-49f5-9e58-5a8adc6111fe": {
       "id": "g-842fec7f-e81e-4571-9e54-e7e6f0e24f01",
@@ -601,7 +592,8 @@
     },
     "0390efb2-93ff-4cd8-b071-4592b7793cd6": {
       "id": "g-4b0a3610-e678-45ab-a9d1-73e6cc0693e1",
-      "caseNumber": "E-5178/2019"
+      "caseNumber": "E-5178/2019",
+      "court": "hd-reykjavik"
     },
     "0392e376-bc5a-4d4f-9282-4be50ca67104": {
       "id": "g-037a4c06-269f-459f-8985-d9365d1e3ede",
@@ -895,7 +887,8 @@
     },
     "052312a6-dc23-4c1b-b7d5-d2f4380e4609": {
       "id": "g-00f0f42e-c7dc-4b16-8c2d-e77746a9ef8b",
-      "caseNumber": "S-197/2024"
+      "caseNumber": "S-197/2024",
+      "court": "hd-vesturland"
     },
     "0528fbe1-62c5-4ea5-a4a2-8d4f3ec1c3f0": {
       "id": "g-e81c62a5-4acb-451b-8376-386a3fc41192",
@@ -1204,11 +1197,13 @@
     },
     "06f28f8e-0cd5-4d69-9bd4-0a6efc012a70": {
       "id": "g-aa1a5215-3bb8-4c87-a973-590ea9cabff0",
-      "caseNumber": "E-1620/2017"
+      "caseNumber": "E-1620/2017",
+      "court": "hd-reykjavik"
     },
     "06ffff39-1874-4f5e-809e-f3c4d176bb66": {
       "id": "g-519023d4-bd40-46ee-9c13-ced1540b5caf",
-      "caseNumber": "E-777/2021"
+      "caseNumber": "E-777/2021",
+      "court": "hd-reykjavik"
     },
     "07074de7-baf2-420d-a9ae-fc458288237a": {
       "id": "g-667f5b1f-0cf3-4776-bee3-6f3d6132d1cf",
@@ -1427,7 +1422,8 @@
     },
     "0826d77e-9ce4-40f6-9da2-327c546a2b60": {
       "id": "g-0b83a7f5-4b6e-4678-b0d2-a1082b958792",
-      "caseNumber": "E-78/2017"
+      "caseNumber": "E-78/2017",
+      "court": "hd-vesturland"
     },
     "082bc1de-83ee-477b-9c97-2e18b019ee4a": {
       "id": "g-ea26e20e-f10c-43cf-b606-7d193e2050d5",
@@ -1681,7 +1677,8 @@
     },
     "0a303fa6-f979-4a83-a4a7-a4af7fb5e32a": {
       "id": "g-5d4e953f-cd4a-40d7-a07f-1163219b3f09",
-      "caseNumber": "E-7533/2023"
+      "caseNumber": "E-7533/2023",
+      "court": "hd-reykjavik"
     },
     "0a35fb90-9f11-496a-8b9b-bd25eda19ad2": {
       "id": "g-7be930d8-beb4-4041-9ab3-48e90cf6aade",
@@ -1830,7 +1827,8 @@
     },
     "0b29a3c2-56fc-4048-98b6-1a1ba2d3623a": {
       "id": "g-5398385b-f8f8-4f44-ab47-bb6b70f0a533",
-      "caseNumber": "E-2516/2016"
+      "caseNumber": "E-2516/2016",
+      "court": "hd-reykjavik"
     },
     "0b2e0aa9-a711-45f4-9916-12f82b020291": {
       "id": "g-a67151f6-2d96-4c47-9bde-666e91a22c27",
@@ -1859,7 +1857,8 @@
     },
     "0b5347ce-b74b-4f0e-ad19-3475da3ef4b0": {
       "id": "g-36fa6677-089d-4ac3-a1ca-90205128490f",
-      "caseNumber": "E-3026/2019"
+      "caseNumber": "E-3026/2019",
+      "court": "hd-reykjavik"
     },
     "0b58ded2-1a93-4a86-9a1f-f2788df9f081": {
       "id": "g-87eb6931-86f5-4a34-a4a8-0e4c5b6bd249",
@@ -2028,7 +2027,8 @@
     },
     "0c56d2a4-9bd1-460c-b01f-89356b8c7d08": {
       "id": "g-de04eba7-b6bc-4efd-8275-e7e1080b9943",
-      "caseNumber": "E-7631/2020"
+      "caseNumber": "E-7631/2020",
+      "court": "hd-reykjavik"
     },
     "0c5e8396-888d-4d66-910e-80e11cc5e585": {
       "id": "g-41088275-c254-4c68-af9e-b646856855ca",
@@ -2397,7 +2397,8 @@
     },
     "0ecb84bf-2486-41b1-add8-334e0705141d": {
       "id": "g-c84ccd20-aebf-4792-99d3-f3dfc2e18cb4",
-      "caseNumber": "E-6009/2020"
+      "caseNumber": "E-6009/2020",
+      "court": "hd-reykjavik"
     },
     "0edec87c-17ec-4958-8342-23e6434e4433": {
       "id": "g-92e3ab45-5cd9-49e8-88f4-f33cf70c07b7",
@@ -2626,7 +2627,8 @@
     },
     "103de90c-83c1-494c-98a4-20f9febf8247": {
       "id": "g-25f7711b-e301-4784-b12b-aa7f49f62adc",
-      "caseNumber": "E-466/2020"
+      "caseNumber": "E-466/2020",
+      "court": "hd-reykjavik"
     },
     "10411c83-26c8-4856-ab8e-40fbb58c358d": {
       "id": "g-e9b4a58f-0bb2-438a-a9c9-eb865becfee3",
@@ -2682,11 +2684,6 @@
       "id": "g-6c095944-af37-4328-8564-bea2c1202672",
       "caseNumber": "S-3742/2019",
       "court": "hd-reykjavik"
-    },
-    "1089c118-6b48-49b4-95bd-a6d934184aa0": {
-      "caseNumber": "S-1758/2021",
-      "verdictDate": "2022-03-25",
-      "court": "hd-reykjanes"
     },
     "108c61ea-2cac-4ffb-bf11-b902ac66ec4f": {
       "id": "g-e9b52f81-8f37-47c5-8233-a51eca0b69d9",
@@ -2765,7 +2762,8 @@
     },
     "10ccbfd7-c8a4-482e-af9d-4fbc1fecf56f": {
       "id": "g-e032f7c1-d0cf-4031-b13e-9329dbea15e8",
-      "caseNumber": "E-3384/2023"
+      "caseNumber": "E-3384/2023",
+      "court": "hd-reykjavik"
     },
     "10cd98ac-5bef-4d78-9327-c8178c89688d": {
       "id": "g-ef90c672-9a46-4860-8416-78266dbbffcb",
@@ -2844,7 +2842,8 @@
     },
     "11668efa-2ae0-492c-96c6-3bbd1e4bbca2": {
       "id": "g-281c736f-17b3-4391-8f36-ca2da46fe0b4",
-      "caseNumber": "E-5369/2020"
+      "caseNumber": "E-5369/2020",
+      "court": "hd-reykjavik"
     },
     "116f0b36-284b-43db-a72b-73b50ae90364": {
       "id": "g-a56c479a-1a4d-403c-a7b0-b62b805671cc",
@@ -2883,7 +2882,8 @@
     },
     "11b5381c-8153-4af8-b7fe-373b8ceca5d6": {
       "id": "g-2aba391d-dcbc-4910-894d-9e1cdb539de1",
-      "caseNumber": "S-2983/2020"
+      "caseNumber": "S-2983/2020",
+      "court": "hd-reykjanes"
     },
     "11bc494c-ee03-4db4-bd27-88e9537c6f3c": {
       "id": "g-7bd71204-a827-48a1-9895-e28908c0fbfc",
@@ -3286,7 +3286,8 @@
     },
     "1438edf8-56b8-4a8e-b3b0-aa0ed529e12c": {
       "id": "g-e2f7b79e-4056-41ef-902b-d7aebd3e1524",
-      "caseNumber": "E-6026/2023"
+      "caseNumber": "E-6026/2023",
+      "court": "hd-reykjavik"
     },
     "143f9aed-afc7-4950-9397-7dd0c04d8340": {
       "id": "g-89958e42-b4ce-4fa7-823b-432d1d688501",
@@ -3615,7 +3616,8 @@
     },
     "15e3a9ef-34cd-4f74-8eeb-cc9f81abd4f6": {
       "id": "g-7fc3c0d3-5367-4958-a874-820b13dd06e1",
-      "caseNumber": "E-3035/2018"
+      "caseNumber": "E-3035/2018",
+      "court": "hd-reykjavik"
     },
     "15e61785-ddb1-45ea-971f-03826dbeeff3": {
       "id": "g-55125a26-51dd-49a9-81ae-59074a68dbaf",
@@ -3699,7 +3701,8 @@
     },
     "166a2bd8-e44d-44c1-a367-0ddafb0a453f": {
       "id": "g-430c2e60-bba9-49bd-888f-8a07a028a87e",
-      "caseNumber": "E-1236/2018"
+      "caseNumber": "E-1236/2018",
+      "court": "hd-reykjanes"
     },
     "1671fb86-5bb1-4400-9b8c-abeba6e6f14d": {
       "id": "g-6558a2a0-9bdc-4207-8543-d1cb20042d18",
@@ -3758,7 +3761,8 @@
     },
     "16b01891-31ab-49b5-b1b8-9efac8b4c645": {
       "id": "g-e704e434-ef74-4cf5-9638-7594e49b3e01",
-      "caseNumber": "S-193/2019"
+      "caseNumber": "S-193/2019",
+      "court": "hd-reykjavik"
     },
     "16c91cfc-d59a-4006-a662-13d70cf7a310": {
       "id": "g-95e57488-1083-4332-b233-c4aa6b579e90",
@@ -3802,7 +3806,8 @@
     },
     "16ed575f-11c4-4df1-8391-47fea086a09b": {
       "id": "g-5e44898e-ee26-4d83-8c72-e07a15d9575f",
-      "caseNumber": "E-59/2018"
+      "caseNumber": "E-59/2018",
+      "court": "hd-vestfirdir"
     },
     "16ee1090-27c3-467c-a942-80d9f6a649f3": {
       "id": "g-3376e7a3-b9f8-48e4-ae7c-6a3d2b65d58a",
@@ -4295,7 +4300,8 @@
     },
     "1a2f1bf2-7cb4-48dc-b2e5-762555e6a576": {
       "id": "g-59bc0a7b-5555-477f-a074-28cd6d410291",
-      "caseNumber": "E-7764/2023"
+      "caseNumber": "E-7764/2023",
+      "court": "hd-reykjavik"
     },
     "1a3cc800-c5a3-494b-b476-067e9e390d19": {
       "id": "g-745a5a15-d518-4595-9278-46978ae77f43",
@@ -4484,7 +4490,8 @@
     },
     "1b5742e5-2e37-43b6-9fea-689d48e1ff69": {
       "id": "g-e9a459f6-6800-4552-b951-a5ca49fe34b2",
-      "caseNumber": "E-3373/2018"
+      "caseNumber": "E-3373/2018",
+      "court": "hd-reykjavik"
     },
     "1b5b29c0-740f-49f3-9608-ff5152d9f23f": {
       "id": "g-0b649811-67c2-4043-8cb8-968853cd608d",
@@ -4543,7 +4550,8 @@
     },
     "1bd03b24-90fd-4d91-bab3-fc09058bec40": {
       "id": "g-71347b02-a471-4299-b77a-791e448afc28",
-      "caseNumber": "E-4055/2023"
+      "caseNumber": "E-4055/2023",
+      "court": "hd-reykjavik"
     },
     "1bd7e798-45ed-45fa-b664-3bda3c9377d8": {
       "id": "g-26b56fb0-2352-4fe9-922c-6719cc558145",
@@ -4801,8 +4809,8 @@
       "court": "hd-nordurland-eystra"
     },
     "1cf3aea0-a1e9-48c4-86c0-2c0b34bf4c39": {
+      "id": "g-8431c1e6-dff2-40f5-a898-463ff2908a66",
       "caseNumber": "S-211/2016",
-      "verdictDate": "2019-08-12",
       "court": "hd-reykjavik"
     },
     "1cf8bdb3-1d6a-40df-afad-b5f2e4576b5d": {
@@ -4947,7 +4955,8 @@
     },
     "1dfc4243-7d4f-4889-ab7e-ef0c489672a3": {
       "id": "g-c0ebfe39-2a26-4e4a-a468-6cad61123d0b",
-      "caseNumber": "E-18/2018"
+      "caseNumber": "E-18/2018",
+      "court": "hd-nordurland-vestra"
     },
     "1e04f6a8-7f00-4e15-a4b4-cf76049333d4": {
       "id": "g-bbf128a1-2400-4244-b089-a0d1db5d0db0",
@@ -5067,16 +5076,6 @@
     "1eedb390-ad6e-4f1d-873c-6bb062bfb2a0": {
       "id": "g-21ed5ba5-908d-4d58-b43f-edf88c73c698",
       "caseNumber": "E-118/2023",
-      "court": "hd-reykjavik"
-    },
-    "1ef114b0-d0a3-4d00-911f-01682efc1d2a": {
-      "caseNumber": "S-431/2021",
-      "verdictDate": "2022-02-17",
-      "court": "hd-nordurland-eystra"
-    },
-    "1ef4bc28-65a7-4f54-8de4-b840799e40de": {
-      "caseNumber": "S-5105/2023",
-      "verdictDate": "2023-11-15",
       "court": "hd-reykjavik"
     },
     "1efd7e1b-415b-4982-9d62-7e1ca7a902f7": {
@@ -5714,11 +5713,6 @@
       "caseNumber": "S-608/2023",
       "court": "hd-nordurland-eystra"
     },
-    "22dfba91-e083-4c69-8f2a-d0ebbb5375f5": {
-      "id": "g-fbcb23e0-f426-4fef-b7b2-1955bb94d30e",
-      "caseNumber": "S-208/2017",
-      "court": "hd-reykjavik"
-    },
     "22e25079-6dbe-4761-bf73-c5daa33f6345": {
       "id": "g-1b18b3e9-b612-4c3a-ab70-42a2287331dc",
       "caseNumber": "S-257/2022",
@@ -5921,7 +5915,8 @@
     },
     "2404c928-8eb6-471d-aa53-38042af04409": {
       "id": "g-9ac9777d-41ae-487c-8b1d-f4c3275e2cf1",
-      "caseNumber": "S-350/2019"
+      "caseNumber": "S-350/2019",
+      "court": "hd-reykjanes"
     },
     "240d23ad-41b8-4371-956d-40605bcbcfae": {
       "id": "g-917351d9-044b-404c-a3be-ea319ff98eda",
@@ -6005,7 +6000,8 @@
     },
     "2499006b-5010-44f6-900a-cf4e61e8a176": {
       "id": "g-36451ca1-e93f-4d2b-bad9-c25232d6d115",
-      "caseNumber": "E-4662/2021"
+      "caseNumber": "E-4662/2021",
+      "court": "hd-reykjavik"
     },
     "24af91da-6866-497f-b06f-615d5f0306c8": {
       "id": "g-13fd95cf-4e3d-4ea7-b1d8-1df3052a9252",
@@ -6082,10 +6078,6 @@
       "caseNumber": "S-12/2019",
       "court": "hd-austurland"
     },
-    "2536c1b9-290c-4e9a-8412-e371253f52ee": {
-      "id": "g-0a5375d3-c073-45a7-9489-1f0dfd0c34fe",
-      "caseNumber": "31/2021"
-    },
     "2538a7a6-dd6c-41c4-9785-479a399b23e5": {
       "id": "g-63c9316b-1327-4764-858e-4ac2f7f7def3",
       "caseNumber": "E-1343/2024",
@@ -6118,7 +6110,8 @@
     },
     "25804df5-ab77-4b03-8af7-f3b11015114e": {
       "id": "g-619be16c-b1f5-41cc-9f8a-dc184aac7ffb",
-      "caseNumber": "E-3064/2023"
+      "caseNumber": "E-3064/2023",
+      "court": "hd-reykjavik"
     },
     "2588ff8e-3132-477a-ac3d-7a836ad8d847": {
       "id": "g-ebbc9abb-1030-4111-8224-502cf991a117",
@@ -6132,7 +6125,8 @@
     },
     "258d3087-7186-4043-a808-734f937a0979": {
       "id": "g-3bc46b7f-0b54-46e1-b6b4-8afbb2862263",
-      "caseNumber": "E-2410/2018"
+      "caseNumber": "E-2410/2018",
+      "court": "hd-reykjavik"
     },
     "258f59f2-45a4-4080-8862-e17374a3e634": {
       "id": "g-91dc50e0-d9f6-4227-9f96-152defa717b2",
@@ -6810,7 +6804,8 @@
     },
     "2a1ddafc-8da4-4785-8e7f-a65c88484379": {
       "id": "g-b24d0fe5-caec-49ed-a43e-a392d9196e32",
-      "caseNumber": "E-1133/2019"
+      "caseNumber": "E-1133/2019",
+      "court": "hd-reykjavik"
     },
     "2a236f10-dcab-4bd1-ad6b-d454d14e754a": {
       "id": "g-aa8d6cb1-1a0f-4ea5-b0e5-1eef3e5c04e0",
@@ -6949,16 +6944,12 @@
     },
     "2a7dfa5b-a9b1-4070-a1b3-bb1e6c06950e": {
       "id": "g-439c360a-22d0-47a8-ac35-515aab9e880d",
-      "caseNumber": "E-905/2018"
+      "caseNumber": "E-905/2018",
+      "court": "hd-reykjavik"
     },
     "2a9e7117-e138-4e3a-9dce-794fc4ad0ec1": {
       "id": "g-57400fcc-5a15-4ca2-afd9-7273f2d87e23",
       "caseNumber": "S-6710/2020",
-      "court": "hd-reykjavik"
-    },
-    "2aa2d1d2-e280-4681-b6dd-85d0614b53c3": {
-      "id": "g-80639f4e-84fe-47ae-9dda-009e50bd52eb",
-      "caseNumber": "S-98/2014",
       "court": "hd-reykjavik"
     },
     "2aa3004b-fdd6-4de5-b444-e51dc5da0952": {
@@ -7153,7 +7144,8 @@
     },
     "2b92a7bf-573c-4761-9ea0-bfd82c2d0ead": {
       "id": "g-ec278182-e16b-42d1-bbc1-51ca2681ad5f",
-      "caseNumber": "S-270/2019"
+      "caseNumber": "S-270/2019",
+      "court": "hd-reykjanes"
     },
     "2ba23096-0bcb-4d68-900c-8ec475be574c": {
       "id": "g-f3e5cd12-1323-47b0-865b-7136e1f5ba99",
@@ -8196,7 +8188,8 @@
     },
     "31b3ed73-3f65-4693-803c-4b1e8c0e88da": {
       "id": "g-dd07e3a0-35a0-42ee-97e3-2965cb5a9583",
-      "caseNumber": "E-2409/2018"
+      "caseNumber": "E-2409/2018",
+      "court": "hd-reykjavik"
     },
     "31b6c866-51df-4a5e-a544-f7092f81c86d": {
       "id": "g-783e129e-48f3-4887-9089-43cbc1a30925",
@@ -8550,7 +8543,8 @@
     },
     "33d692ee-5304-42f5-a319-60b778de3ab5": {
       "id": "g-8f879d8e-4aec-4609-afa0-b0905e59b84c",
-      "caseNumber": "E-4881/2021"
+      "caseNumber": "E-4881/2021",
+      "court": "hd-reykjavik"
     },
     "33da2169-5ca2-4111-b4cf-b21990f91882": {
       "id": "g-dcc02665-808b-4c5f-bc67-dc7d975d968b",
@@ -8899,7 +8893,8 @@
     },
     "35bae7f8-a375-4026-af21-2aff75be5897": {
       "id": "g-9a7a390b-97b4-435c-9cc8-711ffdcbc42e",
-      "caseNumber": "E-4629/2021"
+      "caseNumber": "E-4629/2021",
+      "court": "hd-reykjavik"
     },
     "35c13f09-34af-4596-bb00-5b0d0f2d31ed": {
       "id": "g-b2f16f41-a62c-450b-8779-d095817c5cdb",
@@ -9000,11 +8995,6 @@
       "id": "g-a1f568be-8804-4b63-9463-12192eac4f12",
       "caseNumber": "E-2154/2024",
       "court": "hd-reykjavik"
-    },
-    "3632fbd1-5d45-4538-985d-247614589cb0": {
-      "caseNumber": "485/2025",
-      "verdictDate": "2025-06-23",
-      "court": "hd-reykjanes"
     },
     "3633257f-afda-4d4e-8c81-65d758f93abc": {
       "id": "g-96fbb51b-af77-4974-b893-09c81e5cb87f",
@@ -9243,7 +9233,8 @@
     },
     "376cb3e5-ed73-4f6e-8a71-cbaee09b5f43": {
       "id": "g-ee51a9f7-e003-46e7-87ae-20afa832700f",
-      "caseNumber": "E-4891/2025"
+      "caseNumber": "E-4891/2025",
+      "court": "hd-reykjavik"
     },
     "376dba47-0f02-4cf5-bf3a-ae5550ed1ead": {
       "id": "g-e1080633-e698-4690-90b8-5d65191f683e",
@@ -9437,7 +9428,8 @@
     },
     "3880824c-751c-4f2a-aead-a3768f65ffac": {
       "id": "g-beefebf7-b180-4ae9-92f7-388a84e38bcd",
-      "caseNumber": "E-7128/2024"
+      "caseNumber": "E-7128/2024",
+      "court": "hd-reykjavik"
     },
     "38843273-3b61-4a5c-9c57-bc65899ef034": {
       "id": "g-6404e12f-1f6c-461d-a6e6-d368b021add6",
@@ -9636,7 +9628,8 @@
     },
     "39b5e074-54a0-452a-92ba-df903457eb37": {
       "id": "g-9fe1f8e3-0583-4c60-abab-e34dd029e1e0",
-      "caseNumber": "E-3065/2019"
+      "caseNumber": "E-3065/2019",
+      "court": "hd-reykjavik"
     },
     "39b75f8d-3ca3-4f68-87cd-81b6cb605efb": {
       "id": "g-7febed73-f1ac-4f6d-90f2-d97feb834c8c",
@@ -9855,7 +9848,8 @@
     },
     "3aec279b-5f59-47a1-b413-a2cc9d0231be": {
       "id": "g-c42076cd-b28f-4685-9baf-073ec31ec7d3",
-      "caseNumber": "E-60/2022"
+      "caseNumber": "E-60/2022",
+      "court": "hd-vesturland"
     },
     "3af56779-d6f5-431c-ad48-9c52e6d70ad3": {
       "id": "g-26e73c41-a36c-44cd-9b19-16f7f3b84099",
@@ -10039,7 +10033,8 @@
     },
     "3c44a774-dd2a-4f4a-899b-8482924c4fff": {
       "id": "g-57907e82-79b1-48c8-8ccb-31a58b420698",
-      "caseNumber": "E-5130/2021"
+      "caseNumber": "E-5130/2021",
+      "court": "hd-reykjavik"
     },
     "3c511c49-f6c6-46d4-8f98-143c097f3005": {
       "id": "g-26492e12-2555-4f16-b66b-a469e7ec3783",
@@ -10628,7 +10623,8 @@
     },
     "3f735ea5-e614-4cc0-9941-3d307f84079e": {
       "id": "g-db7b0c38-c13e-4e98-a337-7dfe083e40f1",
-      "caseNumber": "S-51/2019"
+      "caseNumber": "S-51/2019",
+      "court": "hd-sudurland"
     },
     "3f75c0f5-9b23-4209-9a94-54bff4cad165": {
       "id": "g-1542f7b7-03fb-4dba-bd69-4e61057e848c",
@@ -10652,7 +10648,8 @@
     },
     "3f805a3b-3ec6-4292-8981-b833911e3deb": {
       "id": "g-abf6207c-3302-4ef6-b673-a29addebcf62",
-      "caseNumber": "S-975/2019"
+      "caseNumber": "S-975/2019",
+      "court": "hd-reykjanes"
     },
     "3f83b6bd-4eaa-4057-9940-8f241c0b1261": {
       "id": "g-120eeb98-333b-4132-9de0-1a09998111e2",
@@ -11014,11 +11011,6 @@
       "caseNumber": "S-3300/2024",
       "court": "hd-reykjavik"
     },
-    "41e674ac-3ffb-470f-a766-e7d0068d4a1e": {
-      "id": "g-ff18f542-518b-4df1-8668-6a20203fd8b5",
-      "caseNumber": "E-243/2017",
-      "court": "hd-reykjavik"
-    },
     "41e6e23f-e6a8-47e4-b56c-fe04d5e1b46c": {
       "id": "g-5863acae-7cf9-4fd3-bc1a-69320f76970d",
       "caseNumber": "S-484/2020",
@@ -11056,7 +11048,8 @@
     },
     "424e3de4-5464-4023-a86c-cc6ac2cb4ae6": {
       "id": "g-2a0914b5-c2eb-41dd-bd0b-9e103527a046",
-      "caseNumber": "E-6374/2020"
+      "caseNumber": "E-6374/2020",
+      "court": "hd-reykjavik"
     },
     "42543a67-702f-4522-9d4f-bccae37f7805": {
       "id": "g-fbd82a98-0502-4a27-abf9-7def69969071",
@@ -11799,7 +11792,8 @@
     },
     "4730ace6-144d-4e13-a806-f2a7ab889910": {
       "id": "g-22aaddc6-e217-4f91-97ab-026e880bc50c",
-      "caseNumber": "S-97/2019"
+      "caseNumber": "S-97/2019",
+      "court": "hd-austurland"
     },
     "4744c0b5-8b35-46ae-abe8-c1a1de456585": {
       "id": "g-833358f2-0c7e-4279-9608-79e5dd998efe",
@@ -11853,7 +11847,8 @@
     },
     "478db67a-c22b-4df0-bfd5-5449f74668e2": {
       "id": "g-901f4493-9f7f-4e81-bda4-4c33bdfcb713",
-      "caseNumber": "S-1291/2019"
+      "caseNumber": "S-1291/2019",
+      "court": "hd-reykjanes"
     },
     "479eebe2-a591-4b94-9319-2b6c533124f0": {
       "id": "g-a626c309-9df0-44cd-bf86-a977aeef3b03",
@@ -12117,7 +12112,8 @@
     },
     "494d7850-1a57-4584-a9ab-ac7c246b69c5": {
       "id": "g-98748bb0-0ad8-4f95-a93e-e2a78301b83e",
-      "caseNumber": "E-3514/2021"
+      "caseNumber": "E-3514/2021",
+      "court": "hd-reykjavik"
     },
     "4957f390-3389-4f09-9764-5e8e585bf082": {
       "id": "g-35451afa-56f9-4c4e-9a97-2a3b1e7216fa",
@@ -12271,7 +12267,8 @@
     },
     "4a0c4ab0-463d-43ca-b0e1-aef60250ce6d": {
       "id": "g-973eef12-d118-405a-8010-8257c18225ae",
-      "caseNumber": "E-4668/2024"
+      "caseNumber": "E-4668/2024",
+      "court": "hd-reykjavik"
     },
     "4a0c6bca-971f-4b98-a984-55dbdb85bf9f": {
       "id": "g-181add32-bf88-415d-a175-515cb7ad4046",
@@ -12459,15 +12456,13 @@
     },
     "4b63d5c1-4af5-4122-888c-1075b3dfc7f5": {
       "id": "g-09fd2340-86a2-49a8-b82b-8c4db5991c73",
-      "caseNumber": "E-6583/2024"
+      "caseNumber": "E-6583/2024",
+      "court": "hd-reykjavik"
     },
     "4b6598e7-4433-4f89-a63d-d68559912e06": {
       "id": "g-9fdd98a6-e0a9-42a0-b224-e9ffa37703cc",
       "caseNumber": "E-2431/2018",
       "court": "hd-reykjavik"
-    },
-    "4b6a18c9-aebb-4653-a7ed-fa29bcb2500e": {
-      "caseNumber": "S-190/2019"
     },
     "4b6c0591-4b2c-4be0-b40b-1d1e530f6959": {
       "id": "g-b5b75c5f-73be-427e-814f-0730977379e2",
@@ -12710,7 +12705,8 @@
     },
     "4cd0fd22-60c7-498c-b5cc-79a613da6cab": {
       "id": "g-45bb65c0-7364-4086-940c-1aac272ce341",
-      "caseNumber": "E-967/2019"
+      "caseNumber": "E-967/2019",
+      "court": "hd-reykjavik"
     },
     "4cd1d901-a868-4d23-84af-4676bb5f0424": {
       "id": "g-c91059c9-c396-47fd-86a1-a52b0c96a0f4",
@@ -12734,7 +12730,8 @@
     },
     "4cf4611c-7a77-4ad2-903a-5e48b6c7c21e": {
       "id": "g-1662d654-c914-44c3-bda3-5e935500375a",
-      "caseNumber": "S-1468/2019"
+      "caseNumber": "S-1468/2019",
+      "court": "hd-reykjanes"
     },
     "4cf674f0-c7b5-4eb6-ba92-9165235d3e29": {
       "id": "g-185f224e-dce3-48e0-b1c5-9716af8d531f",
@@ -12930,11 +12927,6 @@
       "id": "g-d7c80d97-9357-4ace-bbcb-0953b50837da",
       "caseNumber": "S-99/2025",
       "court": "hd-vestfirdir"
-    },
-    "4e649123-ab0a-4a9c-9f9e-f9723d4a0efa": {
-      "id": "g-a4fed109-675e-4676-83b6-ae16bc9c3e39",
-      "caseNumber": "S-10/2017",
-      "court": "hd-reykjavik"
     },
     "4e68b586-9bd3-4323-a95e-44ee8436a408": {
       "id": "g-81eeefab-34c3-4edf-b021-166309d8f23f",
@@ -13313,7 +13305,8 @@
     },
     "50dcb783-4100-47fe-9b85-e99fbadf01ee": {
       "id": "g-61e96153-cadb-41b0-8380-a09566e7062f",
-      "caseNumber": "E-3760/2022"
+      "caseNumber": "E-3760/2022",
+      "court": "hd-reykjavik"
     },
     "50e5a363-8bf8-471f-baa9-23c561cd695b": {
       "id": "g-6395bc46-f87a-40f9-a8bf-c089cc9f5bdd",
@@ -13489,11 +13482,6 @@
       "id": "g-7d04f00b-af54-4f6d-86d0-cb2a75502d66",
       "caseNumber": "S-3433/2020",
       "court": "hd-reykjanes"
-    },
-    "52209ee2-d1a2-494a-8255-c7e42dba8fee": {
-      "caseNumber": "S-5578/2023",
-      "verdictDate": "2024-09-18",
-      "court": "hd-reykjavik"
     },
     "5222a1bc-0e2f-4be2-aa70-12ca49157dbe": {
       "id": "g-d2e1cef5-ecfe-4895-89d4-f71cc881b65b",
@@ -13905,10 +13893,6 @@
       "caseNumber": "E-7/2019",
       "court": "hd-reykjavik"
     },
-    "542f8363-232d-4d4f-adb1-d74e76e8cd7b": {
-      "id": "g-60060784-21bf-4673-b38a-dac8a2f3c6fd",
-      "caseNumber": "16/2021"
-    },
     "543b388d-56ef-4333-a356-705d5acb4046": {
       "id": "g-e3e30408-154a-4534-9807-daf7bb9498fe",
       "caseNumber": "E-44/2019",
@@ -14130,8 +14114,8 @@
       "court": "hd-vesturland"
     },
     "5574d17d-2bb4-4b81-8a4a-84bbadd578fc": {
-      "id": "g-2fd4cf7e-9e8e-45c9-a104-1863702ea397",
       "caseNumber": "S-6389/2025",
+      "verdictDate": "2026-01-14",
       "court": "hd-reykjavik"
     },
     "5578c861-3d81-4958-b778-6afd4f00f993": {
@@ -14296,7 +14280,8 @@
     },
     "56216ad9-d72d-4e7e-b34e-88e680831264": {
       "id": "g-53da878f-f405-4925-8a63-f1598dc430aa",
-      "caseNumber": "E-7441/2019"
+      "caseNumber": "E-7441/2019",
+      "court": "hd-reykjavik"
     },
     "5621d00d-5008-401b-ab1c-2bffead0869e": {
       "id": "g-a093c90a-97fe-410e-9657-a0ebb59e5f8f",
@@ -15120,7 +15105,8 @@
     },
     "5b18b3b1-6db4-43d8-bee2-89d6d18e5db3": {
       "id": "g-360975a5-9f64-4783-b0ff-88978a6f5336",
-      "caseNumber": "S-8/2019"
+      "caseNumber": "S-8/2019",
+      "court": "hd-reykjavik"
     },
     "5b1a5a7b-72a0-4d70-ae8b-ed2667a0bba6": {
       "id": "g-4b34a3bf-6542-4bc7-b94b-0bf63454c766",
@@ -15189,7 +15175,8 @@
     },
     "5bb874d5-442b-4b7a-9365-c4b75b0a5027": {
       "id": "g-1c42048d-2040-41ec-a76f-0774318ff584",
-      "caseNumber": "E-3259/2020"
+      "caseNumber": "E-3259/2020",
+      "court": "hd-reykjavik"
     },
     "5bb8e5c5-836c-4765-b7f4-2a42230f06c4": {
       "id": "g-4f078ab8-bde9-4b57-bfd9-ce3ea6cef45e",
@@ -15303,7 +15290,8 @@
     },
     "5c577b1a-8d7b-4a11-879f-904d002a3300": {
       "id": "g-d3cf25e2-67a5-4c88-a91c-716e4ae8c4a2",
-      "caseNumber": "E-7617/2020"
+      "caseNumber": "E-7617/2020",
+      "court": "hd-reykjavik"
     },
     "5c57a8fd-0c38-4fd4-933c-364e21f454e7": {
       "id": "g-48d29fc0-45e4-4839-860a-7a02465a6817",
@@ -16250,11 +16238,6 @@
       "caseNumber": "S-7541/2019",
       "court": "hd-reykjavik"
     },
-    "63167bfa-d3d5-42de-8cc4-ef4449cc33fa": {
-      "caseNumber": "S-69/2014",
-      "verdictDate": "2016-02-24",
-      "court": "hd-reykjavik"
-    },
     "632061e7-a6f4-493c-89bd-20328b1ef326": {
       "id": "g-1e6cd2a6-340a-48e7-9400-3180826ed8e8",
       "caseNumber": "E-5926/2019",
@@ -16522,7 +16505,8 @@
     },
     "64abc772-eaa4-40c9-aea0-4caeab8453a8": {
       "id": "g-85ff7619-a89a-4f57-811f-2b2854bac718",
-      "caseNumber": "E-2574/2024"
+      "caseNumber": "E-2574/2024",
+      "court": "hd-reykjavik"
     },
     "64ad49c1-b05d-4d91-aef5-d6f3e1aeba72": {
       "id": "g-1c2a7203-982f-4ec5-89e1-1ce966b72e3f",
@@ -16586,7 +16570,8 @@
     },
     "651a2272-4de1-45d4-8a20-610461630155": {
       "id": "g-b7b7e5f5-1dac-4416-8dd0-eaef4be1ea7f",
-      "caseNumber": "S-301/2019"
+      "caseNumber": "S-301/2019",
+      "court": "hd-reykjavik"
     },
     "652395ac-52ab-47b2-8151-46805c3e181f": {
       "id": "g-d2144523-63e0-4eb9-9631-f6e92838078e",
@@ -16760,7 +16745,8 @@
     },
     "6653e8bb-ea95-4d0b-b375-fb585a1a5f04": {
       "id": "g-30e694cc-19d8-4f1c-afdb-b53a46dec40c",
-      "caseNumber": "E-2920/2023"
+      "caseNumber": "E-2920/2023",
+      "court": "hd-reykjavik"
     },
     "665f8ad0-072b-46a9-b070-42e69e1f4203": {
       "id": "g-165f45e7-97d2-4ca1-9620-8967f2404c3a",
@@ -16808,7 +16794,8 @@
     },
     "66b7acb9-bdba-4b88-827e-1730d3ed8218": {
       "id": "g-7047d14f-35a9-4eba-92b8-9620375e3781",
-      "caseNumber": "E-3701/2018"
+      "caseNumber": "E-3701/2018",
+      "court": "hd-reykjavik"
     },
     "66b954d9-707b-40dc-a0ff-78c5012bf1d8": {
       "id": "g-4b85b325-2289-4de8-bb69-2804df260c2d",
@@ -17237,7 +17224,8 @@
     },
     "694572d3-2a8e-43a3-9661-3a1d81e912ca": {
       "id": "g-46560273-2d05-4d87-9fe4-1541647fc67c",
-      "caseNumber": "E-2226/2021"
+      "caseNumber": "E-2226/2021",
+      "court": "hd-reykjavik"
     },
     "6955e4e8-a004-48c7-8896-a8df9c418b47": {
       "id": "g-24e99c62-9c9c-4cb0-bb4f-44f9c67ef7bd",
@@ -17446,7 +17434,8 @@
     },
     "6ab1048f-2985-4ced-b08f-6f524ecdda1c": {
       "id": "g-7e0b89ec-222a-429d-9a27-048e6dd1071e",
-      "caseNumber": "E-4104/2023"
+      "caseNumber": "E-4104/2023",
+      "court": "hd-reykjavik"
     },
     "6ab1c92d-60ee-4eb2-ae98-5c4dc1a8b998": {
       "id": "g-1f4de465-c1f9-4393-aeeb-6b89a46dfbbd",
@@ -17595,7 +17584,8 @@
     },
     "6b89ad74-837a-4cc9-a857-b6b3e73f3960": {
       "id": "g-7b48e643-bb42-41b7-8ee6-18a157f41295",
-      "caseNumber": "E-4288/2020"
+      "caseNumber": "E-4288/2020",
+      "court": "hd-reykjavik"
     },
     "6b929fe4-207c-4dca-80bf-4bb51932e06e": {
       "id": "g-cf20321e-46a6-48ca-b9cf-d8361aa6fd51",
@@ -17629,7 +17619,8 @@
     },
     "6bd4c8a4-c944-49a0-aea5-d4b13e73b0a3": {
       "id": "g-67a0ae5b-ee42-4454-98ff-491678b25f3c",
-      "caseNumber": "S-1257/2019"
+      "caseNumber": "S-1257/2019",
+      "court": "hd-reykjanes"
     },
     "6beb1f8d-7663-4f82-97c8-593a2fe3bffb": {
       "id": "g-fffef4ec-b266-40cf-8275-f3ba8786b320",
@@ -17783,11 +17774,13 @@
     },
     "6ccb98fe-46b7-4a7f-8c6b-fe6cedeaac4f": {
       "id": "g-e2580d7e-e2df-4cac-9a97-6a93d93ea774",
-      "caseNumber": "E-4824/2024"
+      "caseNumber": "E-4824/2024",
+      "court": "hd-reykjavik"
     },
     "6cdaccf3-b0af-450f-9e28-7107029e4e63": {
       "id": "g-aa1c24a1-0d6a-40c1-98f8-89e6272a64f5",
-      "caseNumber": "E-1944/2024"
+      "caseNumber": "E-1944/2024",
+      "court": "hd-reykjavik"
     },
     "6cdde816-43a9-404f-8b76-8b834fe2fba4": {
       "id": "g-83084928-964b-4e32-8630-70aad6f27e17",
@@ -17857,10 +17850,6 @@
     "6d5c6a41-277f-413e-a75f-c739e25a8eb3": {
       "id": "g-b3c744ba-4aad-408b-94eb-1b297d2cbc77",
       "caseNumber": "E-2711/2020",
-      "court": "hd-reykjavik"
-    },
-    "6d61ce33-e40c-41bc-9576-b6de713a2afd": {
-      "caseNumber": "S-214/2018",
       "court": "hd-reykjavik"
     },
     "6d6549e4-0f56-425b-9735-967094abc74f": {
@@ -18415,7 +18404,8 @@
     },
     "71adb007-ac0a-4be0-8687-352e2f188cbf": {
       "id": "g-1d76f346-e939-4177-b4c8-242f38cd2af0",
-      "caseNumber": "E-3364/2021"
+      "caseNumber": "E-3364/2021",
+      "court": "hd-reykjavik"
     },
     "71ae8e2d-6cf7-4f23-89a0-ff20ca6e6cba": {
       "id": "g-1116662e-b4a9-4bd0-b5a9-d7535defca1a",
@@ -18824,7 +18814,8 @@
     },
     "74904c7e-0600-420f-87e5-2eae0f1e1eb7": {
       "id": "g-316501b2-8a59-4b19-878e-176d85568fcf",
-      "caseNumber": "E-34/2021"
+      "caseNumber": "E-34/2021",
+      "court": "hd-reykjavik"
     },
     "749114d7-aba5-4cab-ae3d-6f241bb7d99f": {
       "id": "g-71dd10a4-ae0d-49a2-974f-ffe89e0eedcd",
@@ -19418,7 +19409,8 @@
     },
     "77fe28a8-7f29-40dd-8607-7a9b26a3ad4e": {
       "id": "g-84adbaa8-5d5d-4358-aabb-e7b6c7f2c4cb",
-      "caseNumber": "E-2263/2019"
+      "caseNumber": "E-2263/2019",
+      "court": "hd-reykjavik"
     },
     "78007c46-57f5-4103-bfb9-761a112c42ab": {
       "id": "g-a523bd45-8226-47d0-8b1d-4584b3f8f52f",
@@ -19492,7 +19484,8 @@
     },
     "784b77b3-7581-4e85-8a96-08df38f34694": {
       "id": "g-c459248a-3d04-4b61-85b7-ff3201f241c8",
-      "caseNumber": "E-5746/2024"
+      "caseNumber": "E-5746/2024",
+      "court": "hd-reykjavik"
     },
     "78587523-b670-440f-a88e-82ee3b625301": {
       "id": "g-ef226a42-10bb-497f-83d8-9fac114d480d",
@@ -19696,7 +19689,8 @@
     },
     "79a28db0-0135-4819-bb14-b77ce0f300a6": {
       "id": "g-67bc57af-20e2-4d01-bd12-70cf2e881693",
-      "caseNumber": "E-3116/2020"
+      "caseNumber": "E-3116/2020",
+      "court": "hd-reykjavik"
     },
     "79a441b9-195e-4ab9-aa9c-af8eb79f4028": {
       "id": "g-a18766b9-61c2-454c-a5fe-0e3573459aa3",
@@ -20003,11 +19997,6 @@
       "caseNumber": "S-2463/2020",
       "court": "hd-reykjanes"
     },
-    "7b412c6d-d7a1-457c-a9bf-6e10bad4449e": {
-      "caseNumber": "Q-2174/2020",
-      "verdictDate": "2021-04-13",
-      "court": "hd-reykjavik"
-    },
     "7b48398e-7f9d-4771-9b12-138cc9c63686": {
       "id": "g-c9759c54-57e8-429d-a1fe-0cfc32f8e9cd",
       "caseNumber": "S-2040/2025",
@@ -20120,7 +20109,8 @@
     },
     "7bfceda7-877d-4ee2-868e-5ef708a3211e": {
       "id": "g-932fba7e-7141-41a7-92f6-86a75f075af3",
-      "caseNumber": "E-264/2022"
+      "caseNumber": "E-264/2022",
+      "court": "hd-reykjavik"
     },
     "7bfe09c7-ebd3-472e-8a7f-a20ec6ec56db": {
       "id": "g-6733d2d6-c93e-4bea-9e7b-0c396453d287",
@@ -20453,7 +20443,8 @@
     },
     "7dc8b0f4-3119-4816-b62f-307a85811e99": {
       "id": "g-60040a57-534f-4ed7-9d53-504a929b1994",
-      "caseNumber": "E-3339/2023"
+      "caseNumber": "E-3339/2023",
+      "court": "hd-reykjavik"
     },
     "7dce674d-f6d0-4417-bcb9-f669b874d242": {
       "id": "g-434c8f3d-e8c6-4bcf-81c0-2b3b60c20772",
@@ -20462,7 +20453,8 @@
     },
     "7dd5816c-c326-4f42-8b14-1bbd6e164ca8": {
       "id": "g-84c8b01c-d35f-4c29-9afd-0f4cf3849913",
-      "caseNumber": "E-1562/2024"
+      "caseNumber": "E-1562/2024",
+      "court": "hd-reykjavik"
     },
     "7dd66015-729c-48d5-8004-10f68baeebf8": {
       "id": "g-2343d089-701c-425f-a8d3-1465b3220e12",
@@ -20996,7 +20988,8 @@
     },
     "8121b891-a542-4bb2-80e2-55e277f71ea6": {
       "id": "g-426441c2-cd15-45fc-bf8a-4f8f06c5a06c",
-      "caseNumber": "E-3247/2018"
+      "caseNumber": "E-3247/2018",
+      "court": "hd-reykjavik"
     },
     "8132e5f8-cd67-43b5-bb69-c7e41db8a28e": {
       "id": "g-5f6a2bb5-fdca-4c02-a704-689255ffdb7a",
@@ -21150,7 +21143,8 @@
     },
     "8223fb56-8d4a-4fba-bb31-1680226092d2": {
       "id": "g-87689468-a4a5-4938-9bf0-8bbaa6fa7bf6",
-      "caseNumber": "E-6512/2020"
+      "caseNumber": "E-6512/2020",
+      "court": "hd-reykjavik"
     },
     "82244124-1ada-414d-8da9-6c2542916886": {
       "id": "g-4b97e9dc-d29f-4c86-bf5c-92711290f6cb",
@@ -21289,7 +21283,8 @@
     },
     "82efb1c9-f622-416c-9242-d72524867f04": {
       "id": "g-2851eeec-fc54-4fa4-bd9c-e2e6472afc59",
-      "caseNumber": "E-1085/2020"
+      "caseNumber": "E-1085/2020",
+      "court": "hd-reykjavik"
     },
     "830eb2a6-2b1b-4b88-9666-b97cfc962397": {
       "id": "g-f4ea5c9d-f648-4e62-8336-aaed3245a926",
@@ -21553,7 +21548,8 @@
     },
     "84518968-fa86-4556-bc05-e43778efc785": {
       "id": "g-e1cd000e-0c58-4462-bff9-cd3f9ab8b806",
-      "caseNumber": "S-408/2014"
+      "caseNumber": "S-408/2014",
+      "court": "hd-reykjavik"
     },
     "84607c0b-c483-4699-88bd-31d987124b64": {
       "id": "g-bca82122-37a2-4dcd-9161-ad192b5c2df8",
@@ -21629,10 +21625,6 @@
       "id": "g-bebdbcdd-d420-4c00-9361-3971c559e1e6",
       "caseNumber": "S-5231/2023",
       "court": "hd-reykjavik"
-    },
-    "84c91487-59ae-4e57-b464-813d401771fc": {
-      "caseNumber": "40/2006",
-      "court": "hd-reykjanes"
     },
     "84cad479-962d-4eeb-b521-fa4ea5e4157d": {
       "id": "g-0e8e7cd6-5a5a-4963-bb9a-f455d5c862af",
@@ -22699,10 +22691,6 @@
       "caseNumber": "S-4244/2023",
       "court": "hd-reykjavik"
     },
-    "8c350934-f928-4c32-81c9-12a6a10cc25f": {
-      "caseNumber": "E-237/2015",
-      "court": "hd-reykjavik"
-    },
     "8c394b7a-ade6-4e0d-b5f8-1e4e1e7b6418": {
       "id": "g-f97b818b-421c-4b02-a26e-108fc22723f2",
       "caseNumber": "E-3214/2019",
@@ -23315,7 +23303,8 @@
     },
     "8ff20f1b-75aa-495a-8001-3eb76927d615": {
       "id": "g-75ea330e-48f0-4f7b-b540-fbb31e2053ad",
-      "caseNumber": "S-1031/2019"
+      "caseNumber": "S-1031/2019",
+      "court": "hd-reykjanes"
     },
     "8ff882c4-c849-4fb9-8fe0-a00c2831d49c": {
       "id": "g-9fccc315-329d-4e39-bd88-f744a748eaf4",
@@ -23394,7 +23383,8 @@
     },
     "9077a379-727f-4d40-a0d1-125542cddd21": {
       "id": "g-766b34cd-8228-4139-9c68-51ee4ac130c5",
-      "caseNumber": "S-2/2019"
+      "caseNumber": "S-2/2019",
+      "court": "hd-austurland"
     },
     "907a9129-e58d-48b3-97c0-d82a27220363": {
       "id": "g-f1bdf520-38e7-41eb-a03c-b5dd26ac8e87",
@@ -23593,7 +23583,8 @@
     },
     "91b3b82c-ffc7-4f53-8d41-5aee874dfc26": {
       "id": "g-43b16efc-2d56-4cd5-9020-dcf703d68c97",
-      "caseNumber": "E-7316/2020"
+      "caseNumber": "E-7316/2020",
+      "court": "hd-reykjavik"
     },
     "91bb995b-fdfc-4b74-8dbb-2f614534a032": {
       "id": "g-7e6f7fb5-3403-45ab-b471-696c16820b52",
@@ -23992,7 +23983,8 @@
     },
     "945928e8-cdf3-4445-a410-f930f03839cd": {
       "id": "g-b5612f19-da3c-408a-9854-7b89dd104f2e",
-      "caseNumber": "S-102/2024"
+      "caseNumber": "S-102/2024",
+      "court": "hd-austurland"
     },
     "947a5e41-e318-4af3-9aae-1e7d6a641213": {
       "id": "g-ce1361b0-89c1-42f4-9cca-4b8b7bfccafa",
@@ -24048,11 +24040,6 @@
       "id": "g-57fb7ae3-9b6f-4f8a-a07d-adfa6e137f21",
       "caseNumber": "S-5021/2025",
       "court": "hd-reykjavik"
-    },
-    "94be23bd-7801-443c-b98a-d39d93fb1397": {
-      "caseNumber": "S-401/2019",
-      "verdictDate": "2020-10-27",
-      "court": "hd-sudurland"
     },
     "94c93277-e6a5-44ab-853a-baee0997c266": {
       "id": "g-d8c698ff-e6f7-4eed-92ba-f88ae1b56936",
@@ -24312,7 +24299,7 @@
     "962f7180-54d5-4614-a5a8-13bb311e4772": {
       "id": "g-574ac3bb-536b-410e-8f18-d29673f546e6",
       "caseNumber": "M-6498/2020",
-      "court": "hd-reykjavik"
+      "court": "hd-reykjanes"
     },
     "96340a69-de11-4705-a862-f4a5d781f7e1": {
       "id": "g-1c4aaf0b-d73f-4c81-887b-f28b12a4e010",
@@ -24466,7 +24453,8 @@
     },
     "96c96b53-bdd9-4351-bdf6-60fd51a88c5e": {
       "id": "g-9cf01e4c-b6da-405d-8bed-5a8b73f8ac0e",
-      "caseNumber": "E-6235/2019"
+      "caseNumber": "E-6235/2019",
+      "court": "hd-reykjavik"
     },
     "96cee26d-ce39-433f-b6e3-accc10265b06": {
       "id": "g-17dcb005-8955-4215-b4b4-4bf4b6b33690",
@@ -24535,7 +24523,8 @@
     },
     "976026dc-96e1-468d-b5e6-36f994efef5c": {
       "id": "g-6d7a6865-bec6-48a2-a0e1-183fb326eab7",
-      "caseNumber": "E-69/2022"
+      "caseNumber": "E-69/2022",
+      "court": "hd-reykjavik"
     },
     "97672f46-5046-4b01-85ff-c313f3566a5d": {
       "id": "g-c39cab9b-93dc-4e2c-ba2e-58c25366ca48",
@@ -24889,7 +24878,8 @@
     },
     "997d41b1-6dc5-4603-aba2-696d568d3d24": {
       "id": "g-2574fc20-7121-4d21-a107-6a718849c24e",
-      "caseNumber": "S-1110/2020"
+      "caseNumber": "S-1110/2020",
+      "court": "hd-reykjanes"
     },
     "998f8fc0-a242-44cd-bd51-1ac752629812": {
       "id": "g-2a96d20c-0263-40c4-a982-3444057ff7b7",
@@ -25121,9 +25111,6 @@
       "caseNumber": "S-2437/2024",
       "court": "hd-reykjavik"
     },
-    "9ab7329a-c6b1-4e0a-8aeb-7dd2fb6eeaa8": {
-      "caseNumber": "E-19/2018"
-    },
     "9ab8c62c-da01-4bd7-92d1-44fee0e2adf5": {
       "id": "g-e60c2212-596d-4e2f-8642-049c5d632389",
       "caseNumber": "E-1364/2020",
@@ -25311,7 +25298,8 @@
     },
     "9be41c97-836b-4b53-8f14-382ad1a91494": {
       "id": "g-cd4ec4f0-dfcd-4fb7-972c-66abe90b49d8",
-      "caseNumber": "E-1412/2021"
+      "caseNumber": "E-1412/2021",
+      "court": "hd-reykjavik"
     },
     "9bf58dcf-ed16-42e7-a125-7596213d8421": {
       "id": "g-f290dc7e-dd44-4cab-9406-65fc8f8a6815",
@@ -25604,7 +25592,8 @@
     },
     "9de3673a-fa4b-4097-861c-24a4559c4cff": {
       "id": "g-8010110b-e1e4-4437-b337-0d5a7e8e8236",
-      "caseNumber": "E-7353/2019"
+      "caseNumber": "E-7353/2019",
+      "court": "hd-reykjavik"
     },
     "9de451d2-3566-49cd-b793-dba710b0e016": {
       "id": "g-dfa901bc-298e-4060-8d12-d128798e330e",
@@ -25868,7 +25857,8 @@
     },
     "9f73229b-7ca1-4f69-8947-b545e83183d9": {
       "id": "g-da035a9b-3246-4227-a1ec-cb6b9953a955",
-      "caseNumber": "E-3387/2020"
+      "caseNumber": "E-3387/2020",
+      "court": "hd-reykjavik"
     },
     "9f84ce8e-bc2a-4e6f-b230-3694ecd365d4": {
       "id": "g-1bb8a5d7-542a-4254-81a3-43bd6f9329d7",
@@ -25877,7 +25867,8 @@
     },
     "9f883984-053d-46da-8a2f-04483e143853": {
       "id": "g-7f20611b-5e7e-4f57-8c11-9c8a990a5257",
-      "caseNumber": "E-5408/2025"
+      "caseNumber": "E-5408/2025",
+      "court": "hd-reykjavik"
     },
     "9f9b1590-1a20-4baa-9be1-15d2f210d6c8": {
       "id": "g-7a5a7dc2-5539-430d-abd0-f326569a5a7c",
@@ -26156,7 +26147,8 @@
     },
     "a1739c4b-24dc-4eef-a37f-243beac1ae9d": {
       "id": "g-62a1f918-1022-4515-88a6-7afb38f532ea",
-      "caseNumber": "E-3983/2021"
+      "caseNumber": "E-3983/2021",
+      "court": "hd-reykjavik"
     },
     "a17e8ab8-a260-45f8-bd4d-047f32b76d6c": {
       "id": "g-6a1f83d8-e385-42ca-a3ad-ee8d54f67e64",
@@ -26408,11 +26400,6 @@
       "caseNumber": "E-7037/2023",
       "court": "hd-reykjavik"
     },
-    "a3105906-05a7-4b9e-941c-5866a7964c23": {
-      "caseNumber": "S-2460/2025",
-      "verdictDate": "2025-10-14",
-      "court": "hd-reykjanes"
-    },
     "a317b216-849e-4176-9d99-eb1c615e12e3": {
       "id": "g-4cf7436d-cdfc-465e-b9ca-f8a0397afbd8",
       "caseNumber": "S-1014/2023",
@@ -26490,7 +26477,8 @@
     },
     "a3b553a5-9589-449c-8ae0-fbaf0791f8c9": {
       "id": "g-a7879ba2-830a-4f1e-a657-570209bf52b1",
-      "caseNumber": "E-4335/2020"
+      "caseNumber": "E-4335/2020",
+      "court": "hd-reykjavik"
     },
     "a3b64364-8425-4f48-b57a-681644601ce9": {
       "id": "g-e2d59de8-09b3-4ba1-842f-e94c8c5bc1a1",
@@ -26629,7 +26617,8 @@
     },
     "a44d6539-5dc8-49f9-ae38-9e89e9879281": {
       "id": "g-6fac3ddc-02cd-4150-a840-caa01beeb4ba",
-      "caseNumber": "E-7288/2023"
+      "caseNumber": "E-7288/2023",
+      "court": "hd-reykjavik"
     },
     "a455903e-e07b-488b-96a8-a7f82165b036": {
       "id": "g-44ffa861-fddf-4190-bc9e-c08c5708fffe",
@@ -26643,7 +26632,8 @@
     },
     "a4680a0a-ae98-4572-a3a4-feca449c1da6": {
       "id": "g-85b63f29-aa61-41a7-8f5b-152149b22def",
-      "caseNumber": "S-735/2019"
+      "caseNumber": "S-735/2019",
+      "court": "hd-reykjanes"
     },
     "a4820ca6-ec2b-4d4c-bfaf-fdba510761e6": {
       "id": "g-6448dbdb-fde0-44b5-a39a-a51d58b982ca",
@@ -27192,7 +27182,8 @@
     },
     "a7b6076c-e3c6-4222-90ec-b961a5a0dd36": {
       "id": "g-407fed1b-9ab3-449d-8809-43f362071028",
-      "caseNumber": "E-3161/2022"
+      "caseNumber": "E-3161/2022",
+      "court": "hd-reykjavik"
     },
     "a7b7b09f-081e-4ff2-8003-406998ad3764": {
       "id": "g-3966b529-53b4-4db3-9dc4-b653ee7307b7",
@@ -27574,11 +27565,6 @@
       "caseNumber": "S-300/2023",
       "court": "hd-reykjanes"
     },
-    "a9f1c93a-7b87-4b5f-995c-e0099c099d63": {
-      "id": "g-107f196c-36ef-403a-96de-c04c59a7db83",
-      "caseNumber": "S-46/2021",
-      "court": "hd-nordurland-eystra"
-    },
     "aa01546d-0c0b-4030-bf17-221a6635b152": {
       "id": "g-d76c252a-269d-404f-988e-d60cf0ce7b3c",
       "caseNumber": "S-423/2024",
@@ -27632,7 +27618,7 @@
     "aa68e505-b9e5-4221-aa1d-15732986d297": {
       "id": "g-5d5c295f-3a8b-47fb-94d6-8bfb5638f724",
       "caseNumber": "E-3223/2019",
-      "court": "hd-reykjavik"
+      "court": "hd-reykjanes"
     },
     "aa7453ef-c1cb-4800-b45a-2d0b055cf3d7": {
       "id": "g-5c48ea54-308a-4716-96f1-a27e9b97795b",
@@ -28594,7 +28580,8 @@
     },
     "afd3fe17-577f-4efe-abba-b31235c6066c": {
       "id": "g-85101127-50b5-4109-900f-c24a03c85948",
-      "caseNumber": "E-977/2018"
+      "caseNumber": "E-977/2018",
+      "court": "hd-reykjanes"
     },
     "afdfd380-4213-4c46-ae0b-f3b70b789ebf": {
       "id": "g-f89aba1c-4003-4949-b7b9-b0b726af97ae",
@@ -28853,7 +28840,8 @@
     },
     "b149e9c2-0b8f-458b-97fa-f3f0d45cc18d": {
       "id": "g-a8e43b8e-1d8a-462e-97b3-2658cbbc5d7d",
-      "caseNumber": "E-4334/2018"
+      "caseNumber": "E-4334/2018",
+      "court": "hd-reykjavik"
     },
     "b14ba43c-9b6e-438e-8cfa-4fc594b2f2bf": {
       "id": "g-ab2159e1-2679-4581-84c7-b02399705043",
@@ -29652,7 +29640,8 @@
     },
     "b628a876-24b9-498f-9966-337717c75be4": {
       "id": "g-512a9afd-3e61-4e5a-b676-03ed5c1bbc0f",
-      "caseNumber": "E-6078/2020"
+      "caseNumber": "E-6078/2020",
+      "court": "hd-reykjavik"
     },
     "b63fc9cb-301e-4bfe-b5f4-80de28746601": {
       "id": "g-4bffcd76-3465-4b68-817b-07cf47084d5b",
@@ -30070,7 +30059,8 @@
     },
     "b9346406-4493-4513-b8ed-0ddb2144bf5a": {
       "id": "g-8cfdbc14-b86f-4ce4-b332-7f3696c81015",
-      "caseNumber": "S-418/2019"
+      "caseNumber": "S-418/2019",
+      "court": "hd-reykjavik"
     },
     "b93b14cf-624b-4918-8150-c1215fccba81": {
       "id": "g-e901285a-2917-484d-9b43-e26b4b953989",
@@ -30081,10 +30071,6 @@
       "id": "g-f58887ee-3a9f-4f1b-a928-3385a1ae0d9d",
       "caseNumber": "E-2185/2022",
       "court": "hd-reykjanes"
-    },
-    "b94d186c-3ded-4493-aa3c-ce4042cb27f5": {
-      "id": "g-eb72d29f-2886-4227-8074-3d04fd3eee7a",
-      "caseNumber": "33/2021"
     },
     "b955cff0-5aa6-44f3-979c-6da4b2b44220": {
       "id": "g-8c7fed75-a4a2-47e9-922f-271e6d99babe",
@@ -30318,7 +30304,8 @@
     },
     "bb448c76-582b-452f-af6f-18c3f4af2cf2": {
       "id": "g-3fd97761-0db3-4b92-9516-ea910c013e7e",
-      "caseNumber": "E-7989/2020"
+      "caseNumber": "E-7989/2020",
+      "court": "hd-reykjavik"
     },
     "bb49c3d9-fd08-472a-a7f1-bfefa794d00e": {
       "id": "g-d6530085-027d-45d5-90d1-d7dc6af34d23",
@@ -30560,10 +30547,6 @@
       "caseNumber": "S-3132/2024",
       "court": "hd-reykjanes"
     },
-    "bc76e7b2-5152-4dfa-816e-ad0dddbda04b": {
-      "id": "g-9000d854-54a5-4641-a97a-3ad2aa0e131f",
-      "caseNumber": "28/2021"
-    },
     "bc81074b-7809-42e1-9419-a0c9cd4d81fe": {
       "id": "g-e3755d43-7b6c-4126-8ffe-d8c44c1c84be",
       "caseNumber": "S-5281/2024",
@@ -30711,11 +30694,13 @@
     },
     "bd2b7499-34b2-406c-8fd3-e5a61f049f29": {
       "id": "g-5ab2fe1c-4c32-494f-8d86-cfa149dad42c",
-      "caseNumber": "E-598/2024"
+      "caseNumber": "E-598/2024",
+      "court": "hd-reykjavik"
     },
     "bd2ca595-e938-406e-92ad-7a731f1dcd19": {
       "id": "g-fc9e536e-4055-4b35-aa10-e7b8d9d64f49",
-      "caseNumber": "S-7553/2019"
+      "caseNumber": "S-7553/2019",
+      "court": "hd-reykjavik"
     },
     "bd345947-93a2-46c4-b1a2-12638f7007d2": {
       "id": "g-ab023a4d-184f-4c7d-b62f-9df055ccfdd2",
@@ -30832,11 +30817,6 @@
       "caseNumber": "S-3133/2024",
       "court": "hd-reykjanes"
     },
-    "bde9c054-263b-4d98-99c7-b8c536982f42": {
-      "caseNumber": "13/2021",
-      "verdictDate": "2021-06-28",
-      "court": "hd-reykjanes"
-    },
     "bdfa760b-05f5-4d3a-a438-85e1d3103bcd": {
       "id": "g-3dcf4857-b0d1-4e2d-b6de-c3444e2ada43",
       "caseNumber": "S-4855/2023",
@@ -30854,7 +30834,8 @@
     },
     "be0c0cbe-04c9-43d2-8de2-9e478ad18803": {
       "id": "g-c8b33473-38db-491c-8e79-3e8ac3268e85",
-      "caseNumber": "E-5197/2020"
+      "caseNumber": "E-5197/2020",
+      "court": "hd-reykjavik"
     },
     "be14e8c2-1da5-4557-8acd-e0fe46d2cc5e": {
       "id": "g-fc0b30ac-29f0-41d8-a283-2b9799e72f61",
@@ -31038,7 +31019,8 @@
     },
     "bf45546f-d5d6-4bee-ae9d-06c7a26d264a": {
       "id": "g-b020777f-1cbd-4ce6-b130-9850a7cff8dd",
-      "caseNumber": "E-6101/2024"
+      "caseNumber": "E-6101/2024",
+      "court": "hd-reykjavik"
     },
     "bf570938-4a59-43e8-b43c-96f2197c8751": {
       "id": "g-f8dd0cbf-1a39-42de-a550-af40ab6da4dd",
@@ -31187,7 +31169,8 @@
     },
     "c05c72ac-43fc-46e1-84bd-bfeda2733379": {
       "id": "g-98d370e4-77e2-4db8-baa4-4a5c7063e13a",
-      "caseNumber": "E-3557/2021"
+      "caseNumber": "E-3557/2021",
+      "court": "hd-reykjavik"
     },
     "c0625583-30ce-40ac-8779-214293768436": {
       "id": "g-a740731d-0a4d-47b7-8f74-8680b9360aec",
@@ -31196,7 +31179,8 @@
     },
     "c06b8e9a-ff83-4d11-bc96-159cbb71bd20": {
       "id": "g-f85ff6c8-0b5c-42d3-b4d4-ba0eeea18dba",
-      "caseNumber": "E-252/2016"
+      "caseNumber": "E-252/2016",
+      "court": "hd-sudurland"
     },
     "c07e84a8-4345-41b2-b617-9a839b9289e3": {
       "id": "g-86e677f5-c7de-48e6-86b7-5e003f6e4991",
@@ -31940,7 +31924,8 @@
     },
     "c508be5c-e77d-4524-9550-beb89345bdc1": {
       "id": "g-09ae6a2f-6442-4e75-8f00-64bf8d9cb135",
-      "caseNumber": "E-7630/2020"
+      "caseNumber": "E-7630/2020",
+      "court": "hd-reykjavik"
     },
     "c509232e-b6a7-4fda-b831-503209bebc67": {
       "id": "g-7b462aae-7fd2-42c4-81dd-788bf1aff768",
@@ -32242,11 +32227,6 @@
       "caseNumber": "S-488/2023",
       "court": "hd-sudurland"
     },
-    "c6d6910f-f624-4624-ad1d-9ab8a06bbec4": {
-      "caseNumber": "E-628/2023",
-      "verdictDate": "2024-10-31",
-      "court": "hd-nordurland-eystra"
-    },
     "c6d91686-32f3-4feb-bcc6-5b6d18c80036": {
       "id": "g-1dab9f5c-0092-4ae7-ab61-21b6f857d783",
       "caseNumber": "S-1295/2024",
@@ -32284,7 +32264,8 @@
     },
     "c714fbbd-089d-4a90-8811-e373d80c638b": {
       "id": "g-df98db7c-49c3-4656-bdac-9fc889aeb002",
-      "caseNumber": "S-23/2019"
+      "caseNumber": "S-23/2019",
+      "court": "hd-nordurland-vestra"
     },
     "c71a2189-af8e-4120-a7ab-3a9a5dce9888": {
       "id": "g-8fc61093-7351-49dd-9f42-e4b1c11a7a2f",
@@ -32688,7 +32669,8 @@
     },
     "c96f775b-2e37-4ab9-84ba-2efb9085c37a": {
       "id": "g-cb9767ec-57d7-4e52-85c0-7ff88c753c29",
-      "caseNumber": "E-4147/2019"
+      "caseNumber": "E-4147/2019",
+      "court": "hd-reykjavik"
     },
     "c97733a3-a55f-4d97-a257-7c0f25ff1ac6": {
       "id": "g-80a8b56c-4490-4ce9-b05d-61d6a5183e97",
@@ -33107,7 +33089,8 @@
     },
     "cbde7a25-5c50-405c-b2aa-93f60068b1cd": {
       "id": "g-76ce585b-bb06-449b-861f-18c1cabca3e0",
-      "caseNumber": "E-4067/2023"
+      "caseNumber": "E-4067/2023",
+      "court": "hd-reykjavik"
     },
     "cbe5355e-521e-4149-b381-5f57982c5f28": {
       "id": "g-d75741d5-d932-4a09-99bc-89075b3ea794",
@@ -33118,11 +33101,6 @@
       "id": "g-b9e095e0-5a86-4ef6-8cc8-96c169728090",
       "caseNumber": "S-1159/2022",
       "court": "hd-reykjanes"
-    },
-    "cc0f7f03-2771-400f-834e-d8ca13d37d74": {
-      "caseNumber": "S-3715/2022",
-      "verdictDate": "2022-09-08",
-      "court": "hd-reykjavik"
     },
     "cc16ba29-6f89-4335-bb6b-715bbd8efeac": {
       "id": "g-de9fb223-cd33-4ebd-a6e7-3b16b54d7e4d",
@@ -33436,7 +33414,8 @@
     },
     "ce042c82-a73b-4393-8ce1-bb48e09e2fa1": {
       "id": "g-c0259a70-f06d-40e6-9a90-e4ac3c1018c9",
-      "caseNumber": "S-1301/2020"
+      "caseNumber": "S-1301/2020",
+      "court": "hd-reykjanes"
     },
     "ce09f341-1b9f-4029-958e-1e4bc8c3a3a5": {
       "id": "g-4aeb6c16-077d-48cc-8349-6a98d3445533",
@@ -33538,11 +33517,6 @@
       "caseNumber": "S-775/2024",
       "court": "hd-reykjanes"
     },
-    "cea1b341-b7ea-4765-9250-00a8cf72fa44": {
-      "id": "g-6fbf38bd-7cdb-4758-877e-cadf68ff1481",
-      "caseNumber": "S-1/2017",
-      "court": "hd-reykjavik"
-    },
     "cea3e461-8639-4a48-838b-623758967582": {
       "id": "g-61766573-6417-42dd-a945-102d4ce33cba",
       "caseNumber": "S-1075/2022",
@@ -33565,7 +33539,8 @@
     },
     "ceabea07-34f4-46c1-bfd3-1d9401ae2917": {
       "id": "g-445ffbeb-0a89-441c-8e87-9d8d3e7dcd40",
-      "caseNumber": "E-3667/2017"
+      "caseNumber": "E-3667/2017",
+      "court": "hd-reykjavik"
     },
     "ceaf1413-804f-4aa8-91c7-53212b9a2edf": {
       "id": "g-7d23b44d-caf6-4412-86d2-173cc82d8b81",
@@ -33774,7 +33749,8 @@
     },
     "cfcc33e5-29b2-4da7-8e14-599b103e8a78": {
       "id": "g-ecf5a635-ef93-4754-94fe-7f64940314ca",
-      "caseNumber": "E-1855/2021"
+      "caseNumber": "E-1855/2021",
+      "court": "hd-reykjavik"
     },
     "cfea8c0c-d661-4bb0-adbb-7dad7890ac24": {
       "id": "g-d9da1991-def2-40a2-9bad-96a1de1977ca",
@@ -33823,7 +33799,8 @@
     },
     "d01c7653-5267-424e-bdcb-b3cd8df23598": {
       "id": "g-89632353-4fb0-40aa-818c-2ba695bb11fe",
-      "caseNumber": "E-2665/2023"
+      "caseNumber": "E-2665/2023",
+      "court": "hd-reykjavik"
     },
     "d0222f70-81ff-498e-8b9b-6c095f673848": {
       "id": "g-4641ff7e-bdcb-4adc-85a6-ec8990dd0107",
@@ -34026,7 +34003,8 @@
     },
     "d1876561-8c9c-4ed4-ac3d-d6c462a10b70": {
       "id": "g-884c9b65-d841-41ee-8bfc-341f3a0f6193",
-      "caseNumber": "E-1853/2021"
+      "caseNumber": "E-1853/2021",
+      "court": "hd-reykjavik"
     },
     "d19a0d8b-0e1a-4c3d-b8d7-37601ca81e72": {
       "id": "g-0d96b5e1-6095-45df-b29e-a8feff7a10d8",
@@ -34215,7 +34193,8 @@
     },
     "d2ddd9e1-fb4e-4b5a-9be4-486a98267120": {
       "id": "g-42748ed0-57ee-4c84-aa1a-e790d5154547",
-      "caseNumber": "E-6110/2025"
+      "caseNumber": "E-6110/2025",
+      "court": "hd-reykjavik"
     },
     "d2e9f23d-c2b6-4ad2-8376-abca54ae9495": {
       "id": "g-6818c413-298b-46e0-a9f0-7b769e9c2faf",
@@ -35112,11 +35091,6 @@
       "caseNumber": "S-652/2020",
       "court": "hd-reykjanes"
     },
-    "d848bde4-bc38-4200-96ce-9340b3249cef": {
-      "id": "g-4853cbb5-c0da-4595-8a76-5359298012b5",
-      "caseNumber": "S-53/2017",
-      "court": "hd-reykjavik"
-    },
     "d855a10c-4a46-4a6f-a1ea-334e3413fcf0": {
       "id": "g-821c2c3c-116a-4549-b8b3-f81667340fb7",
       "caseNumber": "E-232/2022",
@@ -35464,7 +35438,8 @@
     },
     "dacd9b38-5073-44a9-9336-7c0264025639": {
       "id": "g-f7446e56-9ee4-4a40-addf-6362a736ade1",
-      "caseNumber": "S-1303/2020"
+      "caseNumber": "S-1303/2020",
+      "court": "hd-reykjanes"
     },
     "dad21878-162e-4c3b-a184-f36efb5ff12e": {
       "id": "g-bd68205d-8a93-42b6-978d-6d85b2899bb8",
@@ -35480,11 +35455,6 @@
       "id": "g-b252c4eb-ae10-4684-b67b-658372be3eee",
       "caseNumber": "E-718/2023",
       "court": "hd-reykjanes"
-    },
-    "dae6b666-1c86-4810-bfcd-34cb19b4a357": {
-      "id": "g-dfa70e6f-0449-4c35-be08-7c2d72384dd3",
-      "caseNumber": "S-134/2016",
-      "court": "hd-reykjavik"
     },
     "dae9adfe-6c30-4f43-ace2-25c93ccfff3c": {
       "id": "g-c5599a28-e3c4-42de-85a0-6022cf6972ea",
@@ -35758,7 +35728,8 @@
     },
     "dc7376fc-6729-45c2-9120-22849bb9bcef": {
       "id": "g-a1794de7-5bb0-4f55-889c-f32b6fdeab97",
-      "caseNumber": "E-6196/2023"
+      "caseNumber": "E-6196/2023",
+      "court": "hd-reykjavik"
     },
     "dc749a73-dd96-4e70-bea9-481d99b0b322": {
       "id": "g-ed7a08f1-1aa2-450e-a0ce-3a6470bcdeee",
@@ -35827,7 +35798,8 @@
     },
     "dcb1db3b-2239-4f06-8345-4c0df8dbf903": {
       "id": "g-a04afea7-5b65-403c-909c-53f0c2374c99",
-      "caseNumber": "S-651/2020"
+      "caseNumber": "S-651/2020",
+      "court": "hd-reykjanes"
     },
     "dcb5ca09-fe58-4ab4-9192-611ad87d5ec7": {
       "id": "g-498780b9-006d-4a18-8657-c08dfe5e3d36",
@@ -36066,7 +36038,8 @@
     },
     "de3d89d4-8dd2-43ef-a009-38217dc9c064": {
       "id": "g-252a0339-4ff4-44df-88fc-458fc5b693dd",
-      "caseNumber": "E-7632/2020"
+      "caseNumber": "E-7632/2020",
+      "court": "hd-reykjavik"
     },
     "de47bc54-f4bf-43b5-96d1-54f9b26c3ceb": {
       "id": "g-4485a777-22d0-4a90-832d-7f17176755b6",
@@ -36110,7 +36083,8 @@
     },
     "de876fb0-f7dc-4f04-a692-7f7b313af63a": {
       "id": "g-a54988db-625c-470c-82d3-c0f4d52d4d7b",
-      "caseNumber": "S-1569/2019"
+      "caseNumber": "S-1569/2019",
+      "court": "hd-reykjanes"
     },
     "de8ae61d-38f7-4f5f-a924-637ade58c971": {
       "id": "g-a58d13e5-e534-4850-b4e1-741c243d85d2",
@@ -36273,7 +36247,8 @@
     },
     "dfce1642-91b0-43a0-9b74-d18781aea955": {
       "id": "g-0e530195-614b-40e0-8f1e-734dd65bde4c",
-      "caseNumber": "E-3197/2023"
+      "caseNumber": "E-3197/2023",
+      "court": "hd-reykjavik"
     },
     "dfdb8424-27f2-4bec-aefb-6ca966c0845f": {
       "id": "g-c044132a-f310-4c3b-a9dd-a1af21944909",
@@ -36339,10 +36314,6 @@
       "id": "g-465397dd-5583-4dd2-ae4a-65fd764c0fac",
       "caseNumber": "S-80/2023",
       "court": "hd-nordurland-vestra"
-    },
-    "e041ea60-0548-4350-8732-f3be4240cc13": {
-      "caseNumber": "S-33/2018",
-      "verdictDate": "2018-10-30"
     },
     "e0569e51-5904-4698-ae6a-162423c8ba0b": {
       "id": "g-5c5d9237-c3b1-497d-8f11-51a50872342c",
@@ -37300,7 +37271,8 @@
     },
     "e6a2c883-8d67-43b5-807f-29fbbe3a84af": {
       "id": "g-f6db5ccf-52cb-42ca-9084-00f601e0e4ba",
-      "caseNumber": "E-7354/2019"
+      "caseNumber": "E-7354/2019",
+      "court": "hd-reykjavik"
     },
     "e6a9958e-7bf2-403b-ba8b-204089d63bde": {
       "id": "g-1190dd8b-b0fa-4b61-8332-c75a0869fb1a",
@@ -37329,7 +37301,8 @@
     },
     "e6de2ee6-499f-4ab0-9fd6-cb79f0a33ba4": {
       "id": "g-a821d559-02d5-4e7c-a78d-10d05b63c148",
-      "caseNumber": "E-2877/2021"
+      "caseNumber": "E-2877/2021",
+      "court": "hd-reykjavik"
     },
     "e6e20062-9f14-4f2e-bdfb-0df6d2a57d56": {
       "id": "g-9937fce4-9b98-4132-a1d8-17f763e3c323",
@@ -37613,7 +37586,8 @@
     },
     "e876506b-b71e-4393-b33e-2611a198a9bd": {
       "id": "g-8b6137c0-b8b3-490b-b72a-86a3e00e0f78",
-      "caseNumber": "S-1105/2019"
+      "caseNumber": "S-1105/2019",
+      "court": "hd-reykjanes"
     },
     "e87dd3a1-877c-43db-8ccf-e67f5c8dc810": {
       "id": "g-e2e11cdd-333b-4fa9-947b-b2941e8b982e",
@@ -37692,7 +37666,8 @@
     },
     "e91d8776-871b-476e-8bb8-488f64d2fbed": {
       "id": "g-59418354-2cbc-42a0-98a6-533a38a81806",
-      "caseNumber": "E-6251/2023"
+      "caseNumber": "E-6251/2023",
+      "court": "hd-reykjavik"
     },
     "e9227904-212e-45d0-84e5-dc1360c59699": {
       "id": "g-4d423b78-e94c-48c6-a382-f8232bbb64e8",
@@ -38211,7 +38186,8 @@
     },
     "ec4a8226-704f-44e3-aa35-a9b8b66b5607": {
       "id": "g-d50322e7-0a8c-469f-9784-bb022ef62eb6",
-      "caseNumber": "E-4499/2024"
+      "caseNumber": "E-4499/2024",
+      "court": "hd-reykjavik"
     },
     "ec4badd5-7767-4ce3-8b3e-d7835caa9cb5": {
       "id": "g-9831929f-a86f-4be1-addc-246ce902e26b",
@@ -38257,11 +38233,6 @@
       "id": "g-49631717-df44-42b0-a1b4-e95c8c82dfc1",
       "caseNumber": "E-2190/2019",
       "court": "hd-reykjavik"
-    },
-    "ec88ea5a-5c8e-4baa-a93f-26f7939efc85": {
-      "caseNumber": "S-646/2026",
-      "verdictDate": "2026-04-15",
-      "court": "hd-reykjanes"
     },
     "ec891835-aa5d-4e8a-aa5f-7f423a9e59a9": {
       "id": "g-fa15833b-6407-469e-b866-e2ce0f261f79",
@@ -38360,7 +38331,8 @@
     },
     "ed10ca1a-ec7d-4000-8c44-9f010809f7d2": {
       "id": "g-fca925e9-2c1d-4311-a8ef-592fda4b138d",
-      "caseNumber": "E-109/2018"
+      "caseNumber": "E-109/2018",
+      "court": "hd-sudurland"
     },
     "ed121c69-d11f-48b1-b419-9ecb5efe2cee": {
       "id": "g-39a9e448-b868-4eab-9e16-e0546b663bd9",
@@ -38624,7 +38596,8 @@
     },
     "ee8da163-b345-41c5-b936-bcb0f8484a98": {
       "id": "g-fed0ae19-3047-45e3-a8dc-fee7b29ea5c4",
-      "caseNumber": "E-4860/2019"
+      "caseNumber": "E-4860/2019",
+      "court": "hd-reykjavik"
     },
     "ee979b67-3b11-4bcf-9a30-953d78889574": {
       "id": "g-cc192f51-6571-4afe-8b03-0c57d1e30817",
@@ -38898,7 +38871,8 @@
     },
     "eff201bc-0e05-49f3-a7a4-c69f5e49f9e0": {
       "id": "g-c5a8eb8c-35e1-4245-a984-1454ea59eb3b",
-      "caseNumber": "S-265/2024"
+      "caseNumber": "S-265/2024",
+      "court": "hd-sudurland"
     },
     "f0063521-30ae-4aaa-84d1-9a96409214b9": {
       "id": "g-d3677a07-c2ec-4854-bd7c-2cd8a61aa3d3",
@@ -38982,7 +38956,8 @@
     },
     "f05e5fca-1609-48e7-bf8e-b4645a154b39": {
       "id": "g-81c90a90-63e4-4b1a-a28c-4490bee48833",
-      "caseNumber": "S-601/2019"
+      "caseNumber": "S-601/2019",
+      "court": "hd-sudurland"
     },
     "f06118e8-d9ac-4ceb-bc61-71269971f972": {
       "id": "g-5ca9dec2-c992-4b18-985e-bb2dc1f8c638",
@@ -40306,7 +40281,8 @@
     },
     "f8c3c4de-8489-45d5-b03d-a55d0dd63016": {
       "id": "g-7f9cf34c-9ebc-4ade-b140-2e13dada1df0",
-      "caseNumber": "E-4081/2023"
+      "caseNumber": "E-4081/2023",
+      "court": "hd-reykjavik"
     },
     "f8caa7c9-11ae-4260-a317-848c2ab082f1": {
       "id": "g-1bbe40dd-7865-43ec-a9bf-9cd4c32ec7ef",
@@ -40435,7 +40411,8 @@
     },
     "f9d376b8-f74b-4f6d-903c-b0373bffb44b": {
       "id": "g-225058b8-1ef3-4e9c-b568-5fea86d30dbd",
-      "caseNumber": "E-3603/2020"
+      "caseNumber": "E-3603/2020",
+      "court": "hd-reykjavik"
     },
     "f9d3af41-c30b-4daa-8da2-b03401abd55f": {
       "id": "g-9a886aaf-f2cf-4e38-a5fd-f53305ebeb72",
@@ -40459,7 +40436,8 @@
     },
     "f9f95611-174a-43d2-8f57-91b54985e9f0": {
       "id": "g-55fa2ec5-48e0-432e-bf8a-f5cc7cd17b5b",
-      "caseNumber": "S-1453/2019"
+      "caseNumber": "S-1453/2019",
+      "court": "hd-reykjanes"
     },
     "f9fdb780-711f-41fd-9bcd-8961f022e454": {
       "id": "g-64dfdc65-99d7-47b3-ab3f-327447b7f995",
@@ -40878,7 +40856,8 @@
     },
     "fc836fce-b5f7-4904-9b3a-c4b15e97091c": {
       "id": "g-b5abd38f-1149-45ff-82c2-d267916fec73",
-      "caseNumber": "E-2174/2023"
+      "caseNumber": "E-2174/2023",
+      "court": "hd-reykjavik"
     },
     "fc893fcb-2110-46df-8491-d90c39f39360": {
       "id": "g-afd54a21-3708-4e3d-8805-8356f6489c7b",
@@ -40917,7 +40896,8 @@
     },
     "fcc41912-2a17-43b3-a8b3-c138fe2d099d": {
       "id": "g-d1778773-1181-42b6-a01a-c9e4e34c2f14",
-      "caseNumber": "E-1304/2018"
+      "caseNumber": "E-1304/2018",
+      "court": "hd-reykjavik"
     },
     "fcc45995-623d-4a87-ac7d-4fb07835242d": {
       "id": "g-5f832dac-db4a-485c-b8a4-293d6a5beb66",
@@ -41036,7 +41016,8 @@
     },
     "fd683aed-8901-4032-9671-6ceb9cd11337": {
       "id": "g-0c190431-4025-4c3f-a337-f7bd3a8f0b79",
-      "caseNumber": "E-6749/2024"
+      "caseNumber": "E-6749/2024",
+      "court": "hd-reykjavik"
     },
     "fd6b24ee-8578-418d-a300-9720971ab694": {
       "id": "g-4ad0f5c2-a661-4440-a840-15b8661ac71a",
@@ -41419,7 +41400,8 @@
     },
     "ff83512b-7b0c-47e4-acf5-5e0fce349295": {
       "id": "g-84cfd3ca-94d7-42e1-b6f9-bd3881b0b462",
-      "caseNumber": "E-718/2025"
+      "caseNumber": "E-718/2025",
+      "court": "hd-reykjavik"
     },
     "ff9dbf5c-bf58-40cc-8583-7aba4cec4143": {
       "id": "g-9eade511-7a7e-4719-8672-44562c630880",
@@ -41438,7 +41420,8 @@
     },
     "ffb1a365-6297-4716-88fd-ca0db611c9f8": {
       "id": "g-6168bbb2-87c9-4278-b0de-14592cfa25b3",
-      "caseNumber": "S-1480/2019"
+      "caseNumber": "S-1480/2019",
+      "court": "hd-reykjanes"
     },
     "ffb5b7ae-5971-4f36-bbdd-7715584c0760": {
       "id": "g-334f770f-3871-41de-843d-592e7c8367a6",
@@ -41452,7 +41435,8 @@
     },
     "ffb8dd53-14e1-4075-9e48-c1f80be15e4a": {
       "id": "g-31eaf193-b13e-422b-ab5b-9891592fb859",
-      "caseNumber": "E-1932/2020"
+      "caseNumber": "E-1932/2020",
+      "court": "hd-reykjavik"
     },
     "ffbab57c-ca99-479c-bd95-7e546fc106ba": {
       "id": "g-422bd9dc-cf63-4149-9c03-af434a63521e",
