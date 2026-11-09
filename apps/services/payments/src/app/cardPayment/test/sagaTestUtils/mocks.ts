@@ -48,6 +48,26 @@ export const mockPaymentResult = {
   correlationID: 'corr-123',
 }
 
+/** The card Valitor decrypts from a Google Pay token of a card saved in the Google account */
+export const mockGooglePayCard = {
+  pan: '4111111111111111',
+  expirationMonth: 12,
+  expirationYear: 2030,
+}
+
+/** A 3-D Secure verification the gateway started */
+export const mockCardVerification = {
+  isSuccess: true as const,
+  responseCode: '00',
+  responseDescription: 'Success',
+  responseTime: '12:00:00',
+  correlationID: 'verification-corr-123',
+  cardVerificationRawResponse: 'raw',
+  postUrl: 'https://acs.example.com',
+  verificationFields: [{ name: 'MD', value: 'md' }],
+  additionalFields: [],
+}
+
 export const mockPaymentFulfillmentWithFjs = {
   id: uuid(),
   paymentFlowId: PAYMENT_FLOW_ID,

@@ -1,5 +1,0 @@
-mutation ReplaceIndictmentPdf($input: ReplaceIndictmentPdfInput!) {
-  replaceIndictmentPdf(input: $input) {
-    success
-  }
-}

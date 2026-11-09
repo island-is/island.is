@@ -23,13 +23,7 @@ export const rentalAgreementSection = buildSection({
         }),
         buildRadioField({
           id: 'rentalAgreement.answer',
-          clearOnChange: [
-            'exemptionCheckbox',
-            'exemptionReason',
-            'exemptionDocuments.studies',
-            'exemptionDocuments.health',
-            'exemptionDocuments.work',
-          ],
+          clearOnChange: ['exemptionCheckbox', 'exemptionReason'],
           options: rentalContractOptions,
         }),
       ],

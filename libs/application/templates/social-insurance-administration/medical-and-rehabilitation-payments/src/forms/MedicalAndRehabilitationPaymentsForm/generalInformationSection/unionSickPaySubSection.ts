@@ -102,9 +102,10 @@ export const unionSickPaySubSection = buildSubSection({
               .unionSickPayUnionSelectPlaceholder,
           required: true,
           loadingError: coreErrorMessages.failedDataProvider,
-          loadOptions: async ({ apolloClient }) => {
+          loadOptions: async ({ apolloClient, application }) => {
             const { data } = await apolloClient.query<Query>({
               query: siaUnionsQuery,
+              variables: { applicationId: application.id },
             })
 
             return (

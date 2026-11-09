@@ -790,16 +790,6 @@ export const EnergyFunds = new XroadConf({
   },
 })
 
-export const VehicleServiceFjsV1 = new XroadConf({
-  env: {
-    XROAD_VEHICLE_SERVICE_FJS_V1_PATH: {
-      dev: 'IS-DEV/GOV/10021/FJS-Public/VehicleServiceFJS_v1',
-      staging: 'IS-TEST/GOV/10021/FJS-Public/VehicleServiceFJS_v1',
-      prod: 'IS/GOV/5402697509/FJS-Public/VehicleServiceFJS_v1',
-    },
-  },
-})
-
 export const TransportAuthority = new XroadConf({
   env: {
     XROAD_VEHICLE_CODETABLES_PATH: {
@@ -1190,6 +1180,16 @@ export const RecyclingFund = new XroadConf({
       staging:
         'IS-TEST/GOV/5308033680/Urvinnslusjodur-Protected/skilavottord-api',
       prod: 'IS/GOV/5308033680/Urvinnslusjodur-Protected/skilavottord-api',
+    },
+  },
+})
+
+export const RVKFinancialAid = new XroadConf({
+  env: {
+    XROAD_RVK_VEITA_PATH: {
+      dev: 'IS-DEV/MUN/10025/rvik-veita-protected/veita-v1',
+      staging: 'IS-TEST/MUN/5302697609/rvik-veita-protected/veita-v1',
+      prod: 'IS/MUN/5302697609/rvik-veita-protected/veita-v1',
     },
   },
 })

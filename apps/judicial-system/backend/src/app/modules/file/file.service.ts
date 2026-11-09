@@ -980,6 +980,8 @@ export class FileService {
           ? PoliceDocumentType.RVVS
           : file.category === CaseFileCategory.COURT_RECORD
           ? PoliceDocumentType.RVTB
+          : file.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER
+          ? PoliceDocumentType.RVSUR
           : // Should not happen, but we would rather deliver the file than throw an error
             PoliceDocumentType.RVMG
 

@@ -12,7 +12,7 @@ import {
   NationalRegistryChildCustodyQuery,
   NationalRegistrySpouseQuery,
 } from '@/graphql/types/schema'
-import { Input, InputRow, NavigationBarSheet, Typography } from '@/ui'
+import { Input, InputRow, Typography } from '@/ui'
 import { formatNationalId } from '@/lib/format-national-id'
 import { testIDs } from '@/utils/test-ids'
 import { StackScreen } from '../../../../../../components/stack-screen'

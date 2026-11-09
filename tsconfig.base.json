@@ -588,6 +588,9 @@
       "@island.is/application/templates/passport-annulment": [
         "libs/application/templates/passport-annulment/src/index.ts"
       ],
+      "@island.is/application/templates/pay-debts": [
+        "libs/application/templates/pay-debts/src/index.ts"
+      ],
       "@island.is/application/templates/public-debt-payment-plan": [
         "libs/application/templates/public-debt-payment-plan/src/index.ts"
       ],
@@ -980,6 +983,9 @@
       "@island.is/clients/rsk/personal-tax-return": [
         "libs/clients/rsk/personal-tax-return/src/index.ts"
       ],
+      "@island.is/clients/rvk-financial-aid": [
+        "libs/clients/rvk-financial-aid/src/index.ts"
+      ],
       "@island.is/clients/secondary-school": [
         "libs/clients/secondary-school/src/index.ts"
       ],
@@ -1075,9 +1081,6 @@
       ],
       "@island.is/clients/user-profile": [
         "libs/clients/user-profile/src/index.ts"
-      ],
-      "@island.is/clients/vehicle-service-fjs-v1": [
-        "libs/clients/vehicle-service-fjs-v1/src/index.ts"
       ],
       "@island.is/clients/vehicles": ["libs/clients/vehicles/src/index.ts"],
       "@island.is/clients/vehicles-mileage": [

@@ -29,6 +29,9 @@ export class NotificationSenderSetting {
 export class NotificationSettings {
   @Field(() => [NotificationSenderSetting])
   senders!: NotificationSenderSetting[]
+
+  @Field(() => Boolean, { nullable: true })
+  onlyActionablePriorityNotifications?: boolean
 }
 
 @InputType()
@@ -45,6 +48,9 @@ export class NotificationCategoryInput {
 
 @InputType()
 export class UpdateNotificationCategoriesInput {
-  @Field(() => [NotificationCategoryInput])
-  categories!: NotificationCategoryInput[]
+  @Field(() => [NotificationCategoryInput], { nullable: true })
+  categories?: NotificationCategoryInput[]
+
+  @Field(() => Boolean, { nullable: true })
+  onlyActionablePriorityNotifications?: boolean
 }

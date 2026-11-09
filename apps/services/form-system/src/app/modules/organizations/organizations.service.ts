@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -34,6 +36,34 @@ export class OrganizationsService {
     private readonly formModel: typeof Form,
     private readonly sequelize: Sequelize,
   ) {}
+
+  async create(user: User, nationalId: string): Promise<void> {
+    const isLocalDevelopment =
+      (!process.env.name || process.env.name === 'local') &&
+      process.env.NODE_ENV === 'development'
+
+    if (process.env.name !== 'dev' && !isLocalDevelopment) {
+      throw new ForbiddenException(
+        'Organization creation is only available in development',
+      )
+    }
+
+    if (!user.scope.includes(AdminPortalScope.formSystemAdmin)) {
+      throw new UnauthorizedException('User does not have admin privileges')
+    }
+
+    if (!/^\d{10}$/.test(nationalId)) {
+      throw new BadRequestException('National ID must contain 10 digits')
+    }
+
+    const [, created] = await this.organizationModel.findOrCreate({
+      where: { nationalId },
+    })
+
+    if (!created) {
+      throw new ConflictException('Organization already exists')
+    }
+  }
 
   async findAdmin(
     user: User,

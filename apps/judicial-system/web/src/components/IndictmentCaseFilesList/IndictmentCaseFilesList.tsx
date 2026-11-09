@@ -57,10 +57,10 @@ import type { CaseFilesListCase } from './IndictmentCaseFilesList.logic'
 import {
   getIndictmentPdfDisplayName,
   getVisibleSubpoenas,
+  shouldHideCaseFilesRecordFromDefender,
   shouldShowPoliceDigitalCaseFilesSection,
-  shouldShowReplaceIndictmentPdf,
+  shouldShowUploadedCaseFilesSection,
 } from './IndictmentCaseFilesList.logic'
-import ReplaceIndictmentPdf from './ReplaceIndictmentPdf'
 import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
 import RulingOrderFileRow from './RulingOrderFileRow'
 import { strings } from './IndictmentCaseFilesList.strings'
@@ -448,6 +448,11 @@ const IndictmentCaseFilesList: FC<Props> = ({
   )
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
+  const hideCaseFilesRecord = shouldHideCaseFilesRecordFromDefender(
+    workingCase.id,
+    user,
+  )
+
   const visiblePoliceCaseNumbers = useMemo(
     () =>
       isDefenceUser(user)
@@ -506,9 +511,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
       {displayHeading && (
         <SectionHeading
           title={
-            isCourtOfAppealsUser(user)
-              ? 'Skjöl héraðsdómsmáls'
-              : formatMessage(strings.title)
+            isCourtOfAppealsUser(user) ? 'Skjöl héraðsdómsmáls' : strings.title
           }
         />
       )}
@@ -516,7 +519,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
         {displayGeneratedPDFs && (
           <Box>
             <SectionHeading
-              title={formatMessage(caseFiles.indictmentSection)}
+              title={caseFiles.indictmentSection}
               marginBottom={1}
               heading="h4"
               variant="h4"
@@ -534,38 +537,37 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 renderAs="row"
                 elementId="Ákæra"
               />
-              {!connectedCaseParentId &&
-                shouldShowReplaceIndictmentPdf(workingCase, user) && (
-                  <ReplaceIndictmentPdf caseId={workingCase.id} />
-                )}
             </Box>
           </Box>
         )}
         {showFiles && (
           <>
             <FileSection
-              title={formatMessage(caseFiles.criminalRecordSection)}
+              title={caseFiles.criminalRecordSection}
               files={filteredFiles.criminalRecords}
               onOpenFile={onOpen}
             />
             <FileSection
-              title={formatMessage(caseFiles.costBreakdownSection)}
+              title={caseFiles.costBreakdownSection}
               files={filteredFiles.costBreakdowns}
               onOpenFile={onOpen}
             />
           </>
         )}
-        {displayGeneratedPDFs && (
+        {displayGeneratedPDFs && !hideCaseFilesRecord && (
           <Box>
             <SectionHeading
-              title={formatMessage(strings.caseFileTitle)}
+              title={strings.caseFileTitle}
               marginBottom={1}
               heading="h4"
               variant="h4"
             />
             {visiblePoliceCaseNumbers.map((policeCaseNumber, index) => {
               const caseFilesRecordFileName = formatMessage(
-                strings.caseFileButtonText,
+                {
+                  id: strings.caseFileButtonText,
+                  defaultMessage: strings.caseFileButtonText,
+                },
                 {
                   policeCaseNumber,
                 },
@@ -591,7 +593,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
         )}
         {showFiles && (
           <FileSection
-            title={formatMessage(caseFiles.otherDocumentsSection)}
+            title={caseFiles.otherDocumentsSection}
             files={filteredFiles.others}
             onOpenFile={onOpen}
           />
@@ -599,21 +601,27 @@ const IndictmentCaseFilesList: FC<Props> = ({
         {displayGeneratedPDFs && showSubpoenaPdf && (
           <Box>
             <SectionHeading
-              title={formatMessage(strings.subpoenaTitle)}
+              title={strings.subpoenaTitle}
               marginBottom={1}
               heading="h4"
               variant="h4"
             />
             {visibleSubpoenas.map(({ defendant, subpoena, caseId }) => {
               const subpoenaFileName = formatMessage(
-                strings.subpoenaButtonText,
+                {
+                  id: strings.subpoenaButtonText,
+                  defaultMessage: strings.subpoenaButtonText,
+                },
                 {
                   name: defendant.name,
                   date: formatDate(subpoena.created),
                 },
               )
               const serviceCertificateFileName = formatMessage(
-                strings.serviceCertificateButtonText,
+                {
+                  id: strings.serviceCertificateButtonText,
+                  defaultMessage: strings.serviceCertificateButtonText,
+                },
                 { name: defendant.name },
               )
 
@@ -658,7 +666,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
           showDigitalCaseFilesSection) && (
           <>
             <FileSection
-              title={formatMessage(strings.civilClaimsTitle)}
+              title={strings.civilClaimsTitle}
               files={filteredFiles.civilClaims}
               onOpenFile={onOpen}
               shouldRender={permissions.canViewCivilClaims}
@@ -742,7 +750,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
               filteredFiles.rulingOrders.length > 0) && (
               <div>
                 <SectionHeading
-                  title={formatMessage(strings.rulingAndCourtRecordsTitle)}
+                  title={strings.rulingAndCourtRecordsTitle}
                   marginBottom={1}
                   heading="h4"
                   variant="h4"
@@ -799,7 +807,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
                     }
 
                     const serviceCertificateFileName = formatMessage(
-                      strings.serviceCertificateButtonText,
+                      {
+                        id: strings.serviceCertificateButtonText,
+                        defaultMessage: strings.serviceCertificateButtonText,
+                      },
                       {
                         name: defendant.name,
                       },
@@ -859,13 +870,13 @@ const IndictmentCaseFilesList: FC<Props> = ({
               </Box>
             )}
             <FileSection
-              title={formatMessage(caseFiles.criminalRecordUpdateSection)}
+              title={caseFiles.criminalRecordUpdateSection}
               files={filteredFiles.criminalRecordUpdate}
               onOpenFile={onOpen}
               shouldRender={permissions.canViewCriminalRecordUpdate}
             />
             <FileSection
-              title={formatMessage(strings.sentToPrisonAdmin)}
+              title={strings.sentToPrisonAdmin}
               files={filteredFiles.sentToPrisonAdminFiles}
               onOpenFile={onOpen}
               shouldRender={permissions.canViewSentToPrisonAdminFiles}
@@ -880,23 +891,28 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 />
               )}
             </FileSection>
-            <Box>
-              <SectionHeading
-                title={formatMessage(strings.uploadedCaseFiles)}
-                marginBottom={3}
-                heading="h4"
-                variant="h4"
-              />
-              <CaseFileTable
-                caseFiles={filteredFiles.uploadedCaseFiles}
-                onOpenFile={onOpen}
-                canRejectFiles={
-                  isDistrictCourtUser(user) &&
-                  !connectedCaseParentId &&
-                  workingCase.state !== CaseState.CORRECTING
-                }
-              />
-            </Box>
+            {shouldShowUploadedCaseFilesSection(
+              filteredFiles.uploadedCaseFiles.length,
+              forceDisplayAdditionalFiles,
+            ) && (
+              <Box>
+                <SectionHeading
+                  title={strings.uploadedCaseFiles}
+                  marginBottom={3}
+                  heading="h4"
+                  variant="h4"
+                />
+                <CaseFileTable
+                  caseFiles={filteredFiles.uploadedCaseFiles}
+                  onOpenFile={onOpen}
+                  canRejectFiles={
+                    isDistrictCourtUser(user) &&
+                    !connectedCaseParentId &&
+                    workingCase.state !== CaseState.CORRECTING
+                  }
+                />
+              </Box>
+            )}
             <AnimatePresence>
               {fileNotFound && (
                 <FileNotFoundModal dismiss={dismissFileNotFound} />

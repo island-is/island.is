@@ -203,18 +203,22 @@ describe('InfoCardClosedIndictment', () => {
       id: 'case-level-appeal',
       appealCaseNumber: 'L-100/2026',
       appealAssistant: { name: 'Case Level Assistant' },
-      appealJudge1: { name: 'Case Level Judge One' },
-      appealJudge2: { name: 'Case Level Judge Two' },
-      appealJudge3: { name: 'Case Level Judge Three' },
+      appealJudges: [
+        { displayOrder: 0, user: { name: 'Case Level Judge One' } },
+        { displayOrder: 1, user: { name: 'Case Level Judge Two' } },
+        { displayOrder: 2, user: { name: 'Case Level Judge Three' } },
+      ],
     }
 
     const rulingOrderAppeal = {
       id: 'ruling-order-appeal',
       appealCaseNumber: 'L-200/2026',
       appealAssistant: { name: 'Ruling Order Assistant' },
-      appealJudge1: { name: 'Ruling Order Judge One' },
-      appealJudge2: { name: 'Ruling Order Judge Two' },
-      appealJudge3: { name: 'Ruling Order Judge Three' },
+      appealJudges: [
+        { displayOrder: 0, user: { name: 'Ruling Order Judge One' } },
+        { displayOrder: 1, user: { name: 'Ruling Order Judge Two' } },
+        { displayOrder: 2, user: { name: 'Ruling Order Judge Three' } },
+      ],
     }
 
     const caseWithBothAppeals = () =>
@@ -249,9 +253,20 @@ describe('InfoCardClosedIndictment', () => {
           id: 'verdict-appeal',
           appealCaseNumber: 'L-300/2026',
           appealAssistant: { id: 'assistant', name: 'Verdict Assistant' },
-          appealJudge1: { id: 'judge-1', name: 'Verdict Judge One' },
-          appealJudge2: { id: 'judge-2', name: 'Verdict Judge Two' },
-          appealJudge3: { id: 'judge-3', name: 'Verdict Judge Three' },
+          appealJudges: [
+            {
+              displayOrder: 0,
+              user: { id: 'judge-1', name: 'Verdict Judge One' },
+            },
+            {
+              displayOrder: 1,
+              user: { id: 'judge-2', name: 'Verdict Judge Two' },
+            },
+            {
+              displayOrder: 2,
+              user: { id: 'judge-3', name: 'Verdict Judge Three' },
+            },
+          ],
         },
       } as unknown as WorkingCase)
 

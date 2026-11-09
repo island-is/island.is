@@ -30,15 +30,10 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         staging: 'true',
         prod: 'false',
       },
-      CONTENTFUL_HOST: {
-        dev: 'preview.contentful.com',
-        staging: 'cdn.contentful.com',
-        prod: 'cdn.contentful.com',
-      },
-      CONTENTFUL_ENVIRONMENT: {
-        dev: 'test',
-        staging: 'test',
-        prod: 'master',
+      EMAIL_USE_WHITELIST: {
+        dev: 'true',
+        staging: 'true',
+        prod: 'false',
       },
       CLIENT_URL: {
         dev: ref((h) => `https://judicial-system.${h.env.domain}`),
@@ -103,7 +98,6 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET',
       ADMIN_USERS: '/k8s/judicial-system/ADMIN_USERS',
       BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN',
-      CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN',
       EVENT_URL: '/k8s/judicial-system/EVENT_URL',
       ERROR_EVENT_URL: '/k8s/judicial-system/ERROR_EVENT_URL',
       ARCHIVE_ENCRYPTION_KEY: '/k8s/judicial-system/ARCHIVE_ENCRYPTION_KEY',

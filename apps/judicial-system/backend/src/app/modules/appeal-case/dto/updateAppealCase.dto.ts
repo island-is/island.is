@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer'
 import {
+  ArrayUnique,
   IsArray,
   IsBoolean,
   IsDate,
@@ -26,20 +27,15 @@ export class UpdateAppealCaseDto {
   @ApiPropertyOptional({ type: String })
   readonly appealAssistantId?: string
 
+  // The whole bench, in order: when present it replaces the judges of the
+  // appeal case, the first id is the presiding judge and an empty list clears
+  // the bench.
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  readonly appealJudge1Id?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  readonly appealJudge2Id?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  readonly appealJudge3Id?: string
+  @IsArray()
+  @ArrayUnique()
+  @IsString({ each: true })
+  @ApiPropertyOptional({ type: String, isArray: true })
+  readonly appealJudgeIds?: string[]
 
   @IsOptional()
   @IsString()

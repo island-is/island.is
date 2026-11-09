@@ -63,7 +63,7 @@ duplicating calculator rules.
 ## Public conventions
 
 - Percentages are whole percentages: `37`, not `0.37`.
-- Dates use `yyyy-MM-dd`.
+- Dates travel as `DateTime` in `dateValue`, on input and output.
 - `percentage`, `month`, and `count` bounds are declared once in
   `shared/numericSemanticRange.ts` and used for both metadata and validation.
 - An invalid input or failed calculation returns `errors` and no calculation.

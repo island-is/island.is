@@ -1,9 +1,24 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const clickable = style({
   cursor: 'pointer',
 })
+
+export const actionsMenu = style({})
+
+globalStyle(`${actionsMenu} button[aria-expanded="true"]`, {
+  backgroundColor: theme.color.mint400,
+  color: theme.color.dark400,
+})
+
+globalStyle(
+  `${actionsMenu} button[aria-expanded="false"]:focus:not(:focus-visible)`,
+  {
+    backgroundColor: theme.color.white,
+    color: theme.color.blue400,
+  },
+)
 
 export const capitalizeText = style({
   textTransform: 'capitalize',

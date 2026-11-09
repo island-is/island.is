@@ -1,225 +1,61 @@
-import { defineMessage, defineMessages } from 'react-intl'
-
 // Strings on signed verdict overview screen
 export const signedVerdictOverview = {
-  caseDocuments: defineMessage({
-    id: 'judicial.system.core:signed_verdict_overview.case_documents',
-    defaultMessage: 'Skjöl málsins',
-    description:
-      'Notaður sem titill í "Skjöl málsins" hlutanum á úrskurðar skrefi á yfirlitsskjá afgreiddra mála.',
-  }),
-  unsignedDocument: defineMessage({
-    id: 'judicial.system.core:signed_verdict_overview.unsigned_document',
-    defaultMessage: 'Bíður undirritunar',
-    description:
-      'Notaður sem texti fyrir óundirritað í "Skjöl málsins" hlutanum á úrskurðar skrefi á yfirlitsskjá afgreiddra mála.',
-  }),
-  signButton: defineMessage({
-    id: 'judicial.system.core:signed_verdict_overview.sign_button',
-    defaultMessage: 'Undirrita',
-    description:
-      'Notaður sem texti fyrir undirritunarhnapp í "Skjöl málsins" hlutanum á úrskurðar skrefi á yfirlitsskjá afgreiddra mála.',
-  }),
+  caseDocuments: 'Skjöl málsins',
+  unsignedDocument: 'Bíður undirritunar',
+  signButton: 'Undirrita',
   sections: {
-    courtRecordSignatureModal: defineMessages({
-      titleSigning: {
-        id: 'judicial.system.core:signed_verdict_overview.court_record_signature.title_signing',
-        defaultMessage: 'Rafræn undirritun',
-        description:
-          'Notaður sem titill í "undirritun þingbókar" skrefi á meðan á undirritun stendur á yfirlitsskjá afgreiddra mála.',
-      },
-      titleSuccess: {
-        id: 'judicial.system.core:signed_verdict_overview.court_record_signature.title_success',
-        defaultMessage: 'Þingbók hefur verið undirrituð',
-        description:
-          'Notaður sem titill í "undirritun þingbókar" skrefi að undirritun lokinni á yfirlitsskjá afgreiddra mála.',
-      },
-      titleCanceled: {
-        id: 'judicial.system.core:signed_verdict_overview.court_record_signature.title_canceled',
-        defaultMessage: 'Notandi hætti við undirritun',
-        description:
-          'Notaður sem titill í "undirritun þingbókar" skrefi eftir að notandi hættir við á yfirlitsskjá afgreiddra mála.',
-      },
-      titleFailure: {
-        id: 'judicial.system.core:signed_verdict_overview.court_record_signature.title_failure',
-        defaultMessage: 'Undirritun tókst ekki',
-        description:
-          'Notaður sem titill í "undirritun þingbókar" skrefi eftir misheppnaða undirritun á yfirlitsskjá afgreiddra mála.',
-      },
-      completed: {
-        id: 'judicial.system.core:signed_verdict_overview.court_record_signature.completed',
-        defaultMessage:
-          'Undirrituð þingbók er aðgengileg undir "Skjöl málsins".',
-        description:
-          'Notaður sem texti í "undirritun þingbókar" skrefi að undirritun lokinni á yfirlitsskjá afgreiddra mála.',
-      },
-      notCompleted: {
-        id: 'judicial.system.core:signed_verdict_overview.court_record_signature.not_completed',
-        defaultMessage: 'Vinsamlega reynið aftur.',
-        description:
-          'Notaður sem texti í "undirritun þingbókar" skrefi ef undirritun var ekki lokið á yfirlitsskjá afgreiddra mála.',
-      },
-    }),
-    modifyDatesModal: defineMessages({
-      reasonForChangeTitle: {
-        id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.reason_for_change_title',
-        defaultMessage: 'Ástæða breytingar',
-        description:
-          'Notaður sem titill fyrir "Ástæða breytingar" hlutann í "Breyting á lengd gæsluvarðhalds/vistunar" glugga.',
-      },
-      reasonForChangeLabel: {
-        id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.reason_for_change_label',
-        defaultMessage: 'Ástæða breytingar',
-        description:
-          'Notaður sem titill í "Ástæða breytingar" textaboxi í "Breyting á lengd gæsluvarðhalds/vistunar" glugga.',
-      },
-      reasonForChangePlaceholder: {
-        id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.reason_for_change_placeholder_v3',
-        defaultMessage:
-          'Bóka þarf ástæðu fyrir breytingu á skráðri lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæsluvarðhalds}}.',
-        description:
-          'Notaður sem skýritexti í "Ástæða breytingar" textaboxi í "Breyting á lengd gæsluvarðhalds/vistunar" glugga.',
-      },
-      validToDateAndIsolationToDateAreTheSame: {
-        id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.valid_to_date_and_isolation_to_date_are_the_same',
-        defaultMessage:
-          '{caseType, select, ADMISSION_TO_FACILITY {Vistun á viðeigandi stofnun} other {Gælsuvarðhald}} og einangrun til {date}',
-        description:
-          'Notaður sem texti í "Lengd gæsluvarðhalds breytt" glugga á yfirlitsskjá afgreiddra mála.',
-      },
-      validToDateChanged: {
-        id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.valid_to_date_changed',
-        defaultMessage:
-          '{caseType, select, ADMISSION_TO_FACILITY {Vistun á viðeigandi stofnun} other {Gælsuvarðhald}} til {date}.',
-        description:
-          'Notaður sem texti "Lengd gæsluvarðhalds breytt" glugga á yfirlitsskjá afgreiddra mála.',
-      },
-      isolationDateChanged: {
-        id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.isolation_date_changed',
-        defaultMessage: 'Einangrun til {date}.',
-        description:
-          'Notaður sem texti "Lengd gæsluvarðhalds breytt/vistunar" glugga á yfirlitsskjá afgreiddra mála.',
-      },
-      successText: {
-        id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.success_text_v1',
-        defaultMessage: '{modification}\nTilkynning verður send aðilum máls.',
-        description:
-          'Notaður sem texti í "Lengd gæsluvarðhalds/vistunar breytt" glugga á yfirlitsskjá afgreiddra mála.',
-      },
-      travelBanSuccessText: {
-        id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.travel_ban_success_text',
-        defaultMessage:
-          'Farbann til {date}. Tilkynning verður send á ábyrgðaraðila málsins hjá {userRole, select, PROSECUTOR {héraðsdómstól} other {saksóknaraembætti}}.',
-        description:
-          'Notaður sem texti í "Lengd farbanns breytt" glugga á yfirlitsskjá afgreiddra mála.',
-      },
-      modifiedValidToDateLabel: {
-        id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.modified_valid_to_date_label_v3',
-        defaultMessage:
-          '{caseType, select, ADMISSION_TO_FACILITY {Vistun á viðeigandi stofnun} TRAVEL_BAN {Farbann} other {Gæsluvarðhald}} til',
-        description:
-          'Notaður sem texti í  "Breyting á lengd gæsluvarðhalds/vistunar" glugga á yfirlitsskjá afgreiddra mála.',
-      },
-      modifiedIsolationToDateLabel: {
-        id: 'judicial.system.core:signed_verdict_overview.modify_dates_modal.modified_isolation_to_date_label',
-        defaultMessage: 'Einangrun til',
-        description:
-          'Notaður sem texti í "Einangrun til" í  "Breyting á lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
-      },
-    }),
-    modifyDatesInfo: defineMessages({
-      title: {
-        id: 'judicial.system.core:signed_verdict_overview.modify_dates_info.title_V3',
-        defaultMessage:
-          'Lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæslu}} uppfærð',
-        description:
-          'Notaður sem titill í upplýsingaboxi um uppfærða lengd gæslu á yfirlitsskjá afgreiddra mála.',
-      },
-      explanation: {
-        id: 'judicial.system.core:signed_verdict_overview.modify_dates_info.explanantion',
-        defaultMessage:
-          '{date} kl. {time} - {userName} {userTitle}, {institutionName}<br/>Ástæða: {explanation}',
-        description:
-          'Notaður sem beinagrind af texta í upplýsingaboxi um uppfærða lengd gæslu á yfirlitsskjá afgreiddra mála..',
-      },
-    }),
-    shareCase: defineMessages({
-      title: {
-        id: 'judicial.system.core:signed_verdict_overview.share_case.title',
-        defaultMessage: 'Opna mál fyrir öðru embætti',
-        description: 'Notaður sem titill í "deila með öðru embætti" kafla',
-      },
-      info: {
-        id: 'judicial.system.core:signed_verdict_overview.share_case.info',
-        defaultMessage:
-          'Hægt er að gefa öðru embætti aðgang að málinu. Viðkomandi embætti getur skoðað málið og farið fram á framlengingu. Sé málið opnað fyrir öðru embætti er slökkt á hækkuðu öryggisstigi.',
-        description: 'Notaður sem upplýsingatexti í info búbblu',
-      },
-      label: {
-        id: 'judicial.system.core:signed_verdict_overview.share_case.label',
-        defaultMessage: 'Veldu embætti',
-        description: 'Notaður sem label í embætti drop-down',
-      },
-      placeholder: {
-        id: 'judicial.system.core:signed_verdict_overview.share_case.placeholder',
-        defaultMessage: 'Velja embætti sem tekur við málinu',
-        description: 'Notaður sem placeholder í embætti drop-down',
-      },
-      open: {
-        id: 'judicial.system.core:signed_verdict_overview.share_case.open',
-        defaultMessage: 'Opna mál',
-        description: 'Notaður sem label á opna takka',
-      },
-      close: {
-        id: 'judicial.system.core:signed_verdict_overview.share_case.close',
-        defaultMessage: 'Loka aðgangi',
-        description: 'Notaður sem label á loka takka',
-      },
-    }),
-    shareCaseModal: defineMessages({
-      openTitle: {
-        id: 'judicial.system.core:signed_verdict_overview.share_case_modal.open_title',
-        defaultMessage:
-          'Mál {courtCaseNumber} hefur verið opnað fyrir öðru embætti',
-        description:
-          'Notaður sem titill í modal glugga þegar mál hefur verið opnað fyrir öðru embætti',
-      },
-      closeTitle: {
-        id: 'judicial.system.core:signed_verdict_overview.share_case_modal.close_title',
-        defaultMessage:
-          'Mál {courtCaseNumber} er nú lokað öðrum en upprunalegu embætti',
-        description:
-          'Notaður sem titill í modal glugga þegar máli hefur verið lokað fyrir öðru embætti',
-      },
-      openText: {
-        id: 'judicial.system.core:signed_verdict_overview.share_case_modal.open_text#markdown',
-        defaultMessage:
-          '**{prosecutorsOffice}** hefur nú fengið aðgang að málinu. Hafi málið verið með hækkuðu öryggisstigi hefur nú verið slökkt á því.',
-        description:
-          'Notaður sem texti í modal glugga þegar mál hefur verið opnað fyrir öðru embætti',
-      },
-      closeText: {
-        id: 'judicial.system.core:signed_verdict_overview.share_case_modal.close_text#markdown',
-        defaultMessage:
-          '**{prosecutorsOffice}** hefur ekki lengur aðgang að málinu.',
-        description:
-          'Notaður sem texti í modal glugga þegar máli hefur verið lokað fyrir öðru embætti',
-      },
-    }),
-    caseExtension: defineMessages({
-      buttonLabel: {
-        id: 'judicial.system.core:signed_verdict_overview.case_extension.button_label',
-        defaultMessage:
-          'Framlengja {caseType, select, ADMISSION_TO_FACILITY {vistun} TRAVEL_BAN {farbann} CUSTODY {gæslu} other {heimild}}',
-        description: 'Notaður sem label á framlengja mál takka',
-      },
-      extensionInfo: {
-        id: 'judicial.system.core:signed_verdict_overview.case_extension.button_v2',
-        defaultMessage:
-          '{hasChildCase, select, true {Framlengingarkrafa hefur þegar verið útbúin} other {Ekki hægt að framlengja {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} TRAVEL_BAN {farbann} CUSTODY {gæsluvarðhald} other {kröfu}} {rejectReason, select, rejected {sem var hafnað} dismissed {sem var vísað frá} isValidToDateInThePast {sem er lokið} acceptingAlternativeTravelBan {þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um} other {}}}}.',
-        description:
-          'Notaður sem upplýsingatexti á info búbblu hjá framlengja mál takka',
-      },
-    }),
+    courtRecordSignatureModal: {
+      titleSigning: 'Rafræn undirritun',
+      titleSuccess: 'Þingbók hefur verið undirrituð',
+      titleCanceled: 'Notandi hætti við undirritun',
+      titleFailure: 'Undirritun tókst ekki',
+      completed: 'Undirrituð þingbók er aðgengileg undir "Skjöl málsins".',
+      notCompleted: 'Vinsamlega reynið aftur.',
+    },
+    modifyDatesModal: {
+      reasonForChangeTitle: 'Ástæða breytingar',
+      reasonForChangeLabel: 'Ástæða breytingar',
+      reasonForChangePlaceholder:
+        'Bóka þarf ástæðu fyrir breytingu á skráðri lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæsluvarðhalds}}.',
+      validToDateAndIsolationToDateAreTheSame:
+        '{caseType, select, ADMISSION_TO_FACILITY {Vistun á viðeigandi stofnun} other {Gæsluvarðhald}} og einangrun til {date}',
+      validToDateChanged:
+        '{caseType, select, ADMISSION_TO_FACILITY {Vistun á viðeigandi stofnun} other {Gæsluvarðhald}} til {date}.',
+      isolationDateChanged: 'Einangrun til {date}.',
+      successText: '{modification} Tilkynning verður send aðilum máls.',
+      travelBanSuccessText:
+        'Farbann til {date}. Tilkynning verður send á ábyrgðaraðila málsins hjá {userRole, select, PROSECUTOR {héraðsdómstól} other {saksóknaraembætti}} og verjanda, hafi hann verið skráður.',
+      modifiedValidToDateLabel:
+        '{caseType, select, ADMISSION_TO_FACILITY {Vistun á viðeigandi stofnun} TRAVEL_BAN {Farbann} other {Gæsluvarðhald}} til',
+      modifiedIsolationToDateLabel: 'Einangrun til',
+    },
+    modifyDatesInfo: {
+      title:
+        'Lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæslu}} uppfærð',
+      explanation:
+        '{date} kl. {time} - {userName} {userTitle}, {institutionName}<br/>Ástæða: {explanation}',
+    },
+    shareCase: {
+      title: 'Opna mál fyrir öðru embætti',
+      info: 'Hægt er að gefa öðru saksóknaraembætti aðgang að málinu. Viðkomandi embætti getur þá skoðað málið og farið fram á framlengingu. Hafi öryggisstig verið hækkað á meðan málið var í vinnslu verður það lækkað aftur við þessa breytingu, þ.a. allir sækjendur hjá báðum embættum munu geta séð málið.',
+      label: 'Veldu embætti',
+      placeholder: 'Velja embætti sem tekur við málinu',
+      open: 'Opna mál',
+      close: 'Loka aðgangi',
+    },
+    shareCaseModal: {
+      openTitle: 'Mál {courtCaseNumber} hefur verið opnað fyrir öðru embætti',
+      closeTitle:
+        'Mál {courtCaseNumber} er nú lokað öðrum en upprunalegu embætti',
+      openText:
+        '_{prosecutorsOffice}_ hefur nú fengið aðgang að málinu. Allir sækjendur hjá því embætti og hjá þínu embætti geta séð málið.',
+      closeText: '*{prosecutorsOffice}* hefur ekki lengur aðgang að málinu.',
+    },
+    caseExtension: {
+      buttonLabel:
+        'Framlengja {caseType, select, ADMISSION_TO_FACILITY {vistun} TRAVEL_BAN {farbann} CUSTODY {gæslu} other {heimild}}',
+      extensionInfo:
+        '{hasChildCase, select, true {Framlengingarkrafa hefur þegar verið útbúin} other {Ekki er hægt að framlengja {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} TRAVEL_BAN {farbann} CUSTODY {gæsluvarðhald} other {kröfu}} {rejectReason, select, rejected {sem var hafnað} dismissed {sem var vísað frá} isValidToDateInThePast {sem er lokið} acceptingAlternativeTravelBan {þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um} other {}}}}.',
+    },
   },
 }

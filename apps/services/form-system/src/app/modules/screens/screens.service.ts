@@ -14,13 +14,11 @@ import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 import { Section } from '../sections/models/section.model'
 import { Form } from '../forms/models/form.model'
-import {
-  filterArrayDependency,
-  filterDependency,
-} from '../../../utils/dependenciesHelper'
+import { filterArrayDependency } from '../../../utils/dependenciesHelper'
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { Field } from '../fields/models/field.model'
+import { ListItem } from '../listItems/models/listItem.model'
 
 @Injectable()
 export class ScreensService {
@@ -189,21 +187,15 @@ export class ScreensService {
     }
 
     const { dependencies } = form
-    if (screen.fields) {
-      const fields = await screen.$get('fields', {
-        attributes: ['id'],
-      })
-      if (Array.isArray(fields) && fields.length) {
-        const fieldIds = fields.map((field: { id: string }) => field.id)
-        const newDependencies = filterArrayDependency(dependencies, [
-          ...fieldIds,
-          id,
-        ])
-        form.dependencies = newDependencies
-      }
-    } else {
-      form.dependencies = filterDependency(dependencies, id)
-    }
+    const fields = await screen.$get('fields', { include: [ListItem] })
+    const idsToRemove = [
+      id,
+      ...fields.flatMap((field) => [
+        field.id,
+        ...(field.list ?? []).map((item) => item.id),
+      ]),
+    ]
+    form.dependencies = filterArrayDependency(dependencies, idsToRemove)
     await form.save()
 
     await screen.destroy()

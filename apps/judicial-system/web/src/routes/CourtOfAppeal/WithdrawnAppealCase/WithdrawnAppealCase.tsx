@@ -58,20 +58,20 @@ const WithdrawnAppealCase = () => {
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
-      <PageHeader title={formatMessage(titles.shared.withdrawAppeal)} />
+      <PageHeader title={titles.shared.withdrawAppeal} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <Box component="section" marginBottom={5}>
-          <SectionHeading title={formatMessage(core.appealCaseNumberHeading)} />
+          <SectionHeading title={core.appealCaseNumberHeading} />
           <CaseNumberInput />
         </Box>
         <Box component="section">
           <SectionHeading
-            title={formatMessage(strings.courtRecordFileTitle)}
+            title={strings.courtRecordFileTitle}
             marginBottom={1}
           />
           <Text marginBottom={3}>
-            {formatMessage(strings.courtRecordFileSubtitle)}
+            {strings.courtRecordFileSubtitle}
             {'\n'}
           </Text>
           <InputFileUpload
@@ -84,11 +84,17 @@ const WithdrawnAppealCase = () => {
               ),
             )}
             accept={'application/pdf'}
-            title={formatMessage(strings.uploadBoxTitle)}
-            description={formatMessage(core.uploadBoxDescription, {
-              fileEndings: '.pdf',
-            })}
-            buttonLabel={formatMessage(strings.uploadBoxButtonLabel)}
+            title={strings.uploadBoxTitle}
+            description={formatMessage(
+              {
+                id: core.uploadBoxDescription,
+                defaultMessage: core.uploadBoxDescription,
+              },
+              {
+                fileEndings: '.pdf',
+              },
+            )}
+            buttonLabel={strings.uploadBoxButtonLabel}
             onChange={(files) =>
               handleUpload(
                 addUploadFiles(files, {
@@ -112,7 +118,7 @@ const WithdrawnAppealCase = () => {
           )}
           actions={[
             {
-              text: formatMessage(strings.continueButton),
+              text: strings.continueButton,
               icon: 'arrowForward',
               onClick: async () => {
                 router.push(

@@ -65,6 +65,7 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.nationalId),
             value: t.socialSecurityNumber ? format(t.socialSecurityNumber) : '',
+            hideFromServicePortal: true,
           },
           {
             type: GenericLicenseDataFieldType.Value,
