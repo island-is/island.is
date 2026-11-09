@@ -888,7 +888,10 @@ const Search: Screen<CategoryProps> = ({
                   {q.length &&
                   searchResultsItems.length === 0 &&
                   activeLocale === 'is' ? (
-                    <EnglishResultsLink q={q} />
+                    <EnglishResultsLink
+                      q={q}
+                      project={state.query.project?.[0]}
+                    />
                   ) : null}
                 </>
               ) : (
@@ -1168,11 +1171,12 @@ const useRouterReplace = (): NextRouter['replace'] => {
 
 interface EnglishResultsLinkProps {
   q: string
+  project?: string
 }
 
 const EnglishResultsLink: FC<
   React.PropsWithChildren<EnglishResultsLinkProps>
-> = ({ q }) => {
+> = ({ q, project }) => {
   const { linkResolver } = useLinkResolver()
   const [getCount, { data }] = useLazyQuery<
     GetSearchResultsTotalQuery,
@@ -1185,12 +1189,18 @@ const EnglishResultsLink: FC<
         query: {
           queryString: q,
           language: 'en' as ContentLanguage,
-          types: ALL_TYPES as SearchableContentTypes[],
+          // Within a project only its English results are counted
+          types: (project
+            ? [...ALL_TYPES, ...PROJECT_SCOPED_TYPES]
+            : ALL_TYPES) as SearchableContentTypes[],
+          ...(project && {
+            tags: [{ type: 'project' as SearchableTags, key: project }],
+          }),
         },
       },
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [q])
+  }, [q, project])
 
   const total = data?.searchResults?.total ?? 0
 
@@ -1206,7 +1216,12 @@ const EnglishResultsLink: FC<
         }}
       >
         <Text variant="intro" as="p">
-          <a href={linkResolver('search', [], 'en').href + `?q=${q}`}>
+          <a
+            href={
+              linkResolver('search', [], 'en').href +
+              `?${new URLSearchParams({ q, ...(project && { project }) })}`
+            }
+          >
             {total} {total === 1 ? 'niðurstaða' : 'niðurstöður'}
           </a>{' '}
           {total === 1 ? 'fannst' : 'fundust'} á ensku.
