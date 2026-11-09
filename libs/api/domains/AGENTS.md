@@ -41,7 +41,7 @@ NestJS modules (resolvers, services, models, mappers) merged into the shared Gra
 
 ## Messages
 
-Text from a module's `messages.ts` goes through `IntlService` (`CmsTranslationsModule`). Messages reach Contentful through the module's `extract-strings` target, which writes to Contentful, so a person runs it, not an agent. When extraction creates a namespace or changes its strings, a person must add translations as needed, review pending changes, and publish the namespace in Contentful. Changing an existing `defaultMessage` does not replace its Contentful translation; update that translation in Contentful as needed.
+Text from a module's `messages.ts` goes through `IntlService` (`CmsTranslationsModule`). Messages reach Contentful through the module's `extract-strings` target, which writes to Contentful, so a person runs it, not an agent. After extraction creates a namespace or changes its strings, or an existing translation is manually updated, a person must add translations as needed, review pending changes, and publish the namespace in Contentful. Changing an existing `defaultMessage` does not replace its Contentful translation; update that translation in Contentful as needed.
 
 ## Schema output
 
