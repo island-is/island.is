@@ -42,16 +42,12 @@ export const hasMoreDebts = (externalData: ExternalData): boolean =>
 export const getDebts = (application: Application): CustomerDebt[] =>
   getDebtsFromExternalData(application.externalData)
 
-export const getSelectedSalaryPayerNames = (
+export const getSelectedSalaryPayerName = (
   debts: CustomerDebt[],
   selected: (boolean | null | undefined)[] = [],
-): string[] => [
-  ...new Set(
-    debts.flatMap((debt, index) =>
-      selected[index] && debt.salaryPayerName ? [debt.salaryPayerName] : [],
-    ),
-  ),
-]
+): string | undefined =>
+  debts.find((debt, index) => selected[index] && debt.salaryPayerName)
+    ?.salaryPayerName
 
 export const getDownloadServiceURL = (
   application: Application,

@@ -4,7 +4,7 @@ import {
   DEBTS_MAX_AGE_MS,
   debtsAreStale,
   debtsSignature,
-  getSelectedSalaryPayerNames,
+  getSelectedSalaryPayerName,
   hasFetchedDebts,
 } from './getDebts'
 
@@ -105,22 +105,18 @@ describe('debtsSignature', () => {
   })
 })
 
-describe('getSelectedSalaryPayerNames', () => {
+describe('getSelectedSalaryPayerName', () => {
   const debts = [
-    debt({ payID: '1', salaryPayerName: 'A ehf.' }),
-    debt({ payID: '2' }),
-    debt({ payID: '3', salaryPayerName: 'A ehf.' }),
-    debt({ payID: '4', salaryPayerName: 'B ehf.' }),
+    debt({ payID: '1' }),
+    debt({ payID: '2', salaryPayerName: 'A ehf.' }),
   ]
 
-  it('names only the payers of selected debts, once each', () => {
-    expect(
-      getSelectedSalaryPayerNames(debts, [true, true, true, false]),
-    ).toEqual(['A ehf.'])
+  it('names the payer once a withheld debt is selected', () => {
+    expect(getSelectedSalaryPayerName(debts, [false, true])).toBe('A ehf.')
   })
 
-  it('is empty once the flagged debts are deselected', () => {
-    expect(getSelectedSalaryPayerNames(debts, [false, true])).toEqual([])
-    expect(getSelectedSalaryPayerNames(debts)).toEqual([])
+  it('is undefined while no withheld debt is selected', () => {
+    expect(getSelectedSalaryPayerName(debts, [true, false])).toBeUndefined()
+    expect(getSelectedSalaryPayerName(debts)).toBeUndefined()
   })
 })

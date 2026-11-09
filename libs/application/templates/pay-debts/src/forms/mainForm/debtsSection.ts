@@ -131,6 +131,12 @@ export const debtsSection = buildSection({
                 ],
               ])
             },
+            info: (application) =>
+              getDebts(application).map((debt) =>
+                debt.salaryPayerName
+                  ? messages.table.salaryWithholdingInfo
+                  : undefined,
+              ),
           },
           rowIds: {
             id: 'selectedDebtIds',

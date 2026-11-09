@@ -29,7 +29,7 @@ export const debts = {
     message: {
       id: 'pd.application:debts.salaryWithholding.message',
       defaultMessage:
-        'Valin skuld er merkt til frádráttar frá launum. Launagreiðandi er: {payerName}. Viltu halda áfram með greiðsluferlið?',
+        'Valið inniheldur skuldir sem eru merktar til frádráttar af launum. Launagreiðandi er: {payerName}. Viltu halda áfram með greiðsluferlið?',
       description:
         'Body of the banner shown when a debt is withheld from the applicant salary',
     },
@@ -152,6 +152,12 @@ export const debts = {
       defaultMessage: 'Reikningur',
       description:
         'Invoice document link header of the expanded charge type sub-table',
+    },
+    salaryWithholdingInfo: {
+      id: 'pd.application:debts.table.salaryWithholdingInfo',
+      defaultMessage: 'Þessi skuld er merkt til frádráttar af launum.',
+      description:
+        'Shown in the expanded row of a debt that is withheld from the applicant salary',
     },
     noDateLabel: {
       id: 'pd.application:debts.table.noDateLabel',
