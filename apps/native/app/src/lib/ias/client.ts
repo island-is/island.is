@@ -32,6 +32,10 @@ export interface IasClientOptions {
   configTimeoutMs?: number
   /** For dev builds: IAS's verifier tests need real request bodies. */
   onAttestationRequest?: (body: Record<string, unknown>) => void
+  /** For dev builds: an expired attestation was renewed. */
+  onAttestationRenewed?: () => void
+  /** Why getLoginMode chose the browser login, when it was an error. */
+  onBrowserFallback?: (error: unknown) => void
 }
 
 interface RequestOptions {
@@ -215,10 +219,12 @@ export function createIasClient(options: IasClientOptions): IasClient {
     const response = await send('POST', '/app/attestation/renew', {
       attested: true,
     })
-    return saveAttestation(
+    const attestation = await saveAttestation(
       await parse<AttestationResponse>(response, 'POST /app/attestation/renew'),
       key,
     )
+    options.onAttestationRenewed?.()
+    return attestation
   })
 
   async function ensureAttested(
@@ -448,7 +454,8 @@ export function createIasClient(options: IasClientOptions): IasClient {
       return (await isNativeLoginOn(attestation.thumbprint))
         ? 'native'
         : 'browser'
-    } catch {
+    } catch (error) {
+      options.onBrowserFallback?.(error)
       return 'browser'
     }
   })
