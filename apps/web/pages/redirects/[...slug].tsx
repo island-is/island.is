@@ -1,6 +1,7 @@
 import type { GetServerSideProps } from 'next'
 
 import initApollo from '@island.is/web/graphql/client'
+import { CustomNextError } from '@island.is/web/units/errors'
 import { fetch404RedirectUrl } from '@island.is/web/utils/fetch404RedirectUrl'
 import { resolveLegacyRedirect } from '@island.is/web/utils/legacyRedirects'
 
@@ -15,12 +16,19 @@ export default LegacyRedirect
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { slug, ...query } = ctx.query
-  const redirect = await resolveLegacyRedirect(
+  const result = await resolveLegacyRedirect(
     Array.isArray(slug) ? slug : [],
     query,
   )
-  if (redirect) {
-    return { redirect }
+  if (result) {
+    if ('destination' in result) {
+      return { redirect: result }
+    }
+    if ('notFound' in result) {
+      return { notFound: true }
+    }
+    // Renders the error page with 503, so the url is tried again later
+    throw new CustomNextError(503, 'Legacy redirect lookup failed')
   }
 
   const apolloClient = initApollo({}, 'is', ctx)

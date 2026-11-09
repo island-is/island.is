@@ -1,11 +1,12 @@
 import type { LegacyRedirectHandler } from '../types'
-import { findLegacyVerdict, resolveVerdictId } from './lookup'
+import { findLegacyVerdict, hasOldId, resolveVerdictId } from './lookup'
 import { getQueryValue, isGuid } from './query'
 import { findRule, ROUTES } from './routes'
 
 /**
  * Redirects verdict urls from old court websites to the corresponding
- * verdict on island.is, or to the verdict list if it can't be found.
+ * verdict on island.is. Urls without an old id go to the verdict list, and
+ * old ids that can't be found are not found.
  */
 const courtVerdictRedirect: LegacyRedirectHandler = async ({
   host,
@@ -31,17 +32,28 @@ const courtVerdictRedirect: LegacyRedirectHandler = async ({
     }
   }
 
-  const newId = await resolveVerdictId(rule, query, verdict)
-
-  if (newId) {
-    return { destination: toPath(newId), permanent: false }
+  const verdictList = (caseNumber?: string) => {
+    const params = new URLSearchParams(rule.fallbackQuery(verdict))
+    if (caseNumber) params.set('number', caseNumber)
+    return { destination: `/domar?${params.toString()}`, permanent: false }
   }
 
-  const params = new URLSearchParams(rule.fallbackQuery(verdict))
-  if (verdict?.caseNumber) {
-    params.set('number', verdict.caseNumber)
+  // Links to the old verdict lists rather than a verdict
+  if (!verdict && !hasOldId(rule, query)) {
+    return verdictList()
   }
-  return { destination: `/domar?${params.toString()}`, permanent: false }
+
+  const result = await resolveVerdictId(rule, query, verdict)
+  switch (result.status) {
+    case 'found':
+      return { destination: toPath(result.id), permanent: false }
+    case 'ambiguous':
+      return verdictList(verdict?.caseNumber)
+    case 'failed':
+      return { unavailable: true }
+    case 'notFound':
+      return { notFound: true }
+  }
 }
 
 export const courtVerdictRedirects: Record<string, LegacyRedirectHandler> =

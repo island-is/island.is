@@ -144,16 +144,60 @@ describe('resolveLegacyRedirect', () => {
     })
   })
 
-  it('falls back to the verdict list when the lookup fails', async () => {
+  it('is not found when the old id is unknown', async () => {
+    expect(
+      await resolve(
+        'heradsdomstolar.is/domar/domur?id=00000000-0000-0000-0000-000000000000',
+      ),
+    ).toEqual({ notFound: true })
+    expect(
+      await resolve(
+        'landsrettur.is/domar-og-urskurdir/domur-urskurdur?verdictid=00000000-0000-0000-0000-000000000000',
+      ),
+    ).toEqual({ notFound: true })
+  })
+
+  it('is not found when no verdict has the case number', async () => {
+    expect(
+      await resolve(
+        'heradsdomstolar.is/domar/domur?id=acaac419-53b5-441d-b269-68fff8ff1109',
+      ),
+    ).toEqual({ notFound: true })
+  })
+
+  it('goes to the verdict list by case number when several verdicts match', async () => {
+    mockQuery.mockResolvedValue({
+      data: {
+        webVerdicts: {
+          items: [
+            { id: 'g-1', caseNumber: 'E-321/2005' },
+            { id: 'g-2', caseNumber: 'E-321/2005' },
+          ],
+          total: 2,
+        },
+      },
+    })
+    expect(await resolve('domstolar.is/domaleit/nanar?id=E200500321')).toEqual({
+      destination:
+        '/domar?court=H%C3%A9ra%C3%B0sd%C3%B3mst%C3%B3lar&number=E-321%2F2005',
+      permanent: false,
+    })
+  })
+
+  it('goes to the verdict list for links to the old verdict lists', async () => {
+    expect(await resolve('haestirettur.is/domar')).toEqual({
+      destination: '/domar?court=H%C3%A6stir%C3%A9ttur',
+      permanent: false,
+    })
+  })
+
+  it('is unavailable when the lookup fails', async () => {
     mockQuery.mockRejectedValue(new Error('API down'))
     expect(
       await resolve(
         'heradsdomstolar.is/domar/domur?id=1079d456-805f-4ac2-9b25-f362c9a18011',
       ),
-    ).toEqual({
-      destination: '/domar?court=H%C3%A9ra%C3%B0sd%C3%B3mst%C3%B3lar',
-      permanent: false,
-    })
+    ).toEqual({ unavailable: true })
   })
 
   it('checks the GoPro id when the case number lookup fails', async () => {
@@ -173,35 +217,28 @@ describe('resolveLegacyRedirect', () => {
     })
   })
 
-  it('falls back to the verdict list when the lookup takes too long', async () => {
+  it('is unavailable when the lookup takes too long', async () => {
     jest.useFakeTimers()
     try {
       mockQuery.mockReturnValue(new Promise(() => undefined))
       const result = resolve(
         'heradsdomstolar.is/domar/domur?id=1079d456-805f-4ac2-9b25-f362c9a18011',
       )
-      await jest.advanceTimersByTimeAsync(3000)
-      expect(await result).toEqual({
-        destination: '/domar?court=H%C3%A9ra%C3%B0sd%C3%B3mst%C3%B3lar',
-        permanent: false,
-      })
+      await jest.advanceTimersByTimeAsync(9999)
+      let settled = false
+      result.then(() => (settled = true))
+      await Promise.resolve()
+      expect(settled).toBe(false)
+      await jest.advanceTimersByTimeAsync(1)
+      expect(await result).toEqual({ unavailable: true })
     } finally {
       jest.useRealTimers()
     }
   })
 
-  it('falls back to the verdict list by case number for district court searches', async () => {
-    expect(await resolve('domstolar.is/domaleit/nanar?id=E200500321')).toEqual({
-      destination:
-        '/domar?court=H%C3%A9ra%C3%B0sd%C3%B3mst%C3%B3lar&number=E-321%2F2005',
-      permanent: false,
-    })
-  })
-
   it('does not treat object prototype keys as old ids', async () => {
     expect(await resolve('haestirettur.is/domar?nr=constructor')).toEqual({
-      destination: '/domar?court=H%C3%A6stir%C3%A9ttur',
-      permanent: false,
+      notFound: true,
     })
   })
 
