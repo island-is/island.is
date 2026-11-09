@@ -1,5 +1,6 @@
 import { lazy } from 'react'
 import { ApiScope } from '@island.is/auth/scopes'
+import { Features } from '@island.is/react/feature-flags'
 import { UniversityCareersStudyType } from '@island.is/api/schema'
 import { PortalModule } from '@island.is/portals/core'
 import { EducationPaths } from './lib/paths'
@@ -98,6 +99,9 @@ const PrimarySchoolHealthEdit = lazy(() =>
 )
 
 const PRIMARY_SCHOOL_FLAG = 'PrimarySchool'
+// Key information (lykilupplýsingar) has its own flag, so the edit screens can
+// stay unreachable while the rest of the primary-school page is live.
+const KEY_INFO_FLAG = Features.isServicePortalPrimarySchoolKeyInfoEnabled
 const MICRO_CREDENTIALS_FLAG = 'UniversityMicroCredentials'
 
 export const educationModule: PortalModule = {
@@ -157,7 +161,7 @@ export const educationModule: PortalModule = {
     {
       name: 'Bæta við aðstandanda',
       path: EducationPaths.PrimarySchoolContactAdd,
-      key: PRIMARY_SCHOOL_FLAG,
+      key: KEY_INFO_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
       loader: primarySchoolStudentLoader({ userInfo, ...rest }),
       element: (
@@ -173,7 +177,7 @@ export const educationModule: PortalModule = {
     {
       name: 'Breyta tengslum',
       path: EducationPaths.PrimarySchoolContactEdit,
-      key: PRIMARY_SCHOOL_FLAG,
+      key: KEY_INFO_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
       loader: primarySchoolStudentLoader({ userInfo, ...rest }),
       element: (
@@ -189,7 +193,7 @@ export const educationModule: PortalModule = {
     {
       name: 'Breyta tungumálaumhverfi',
       path: EducationPaths.PrimarySchoolLanguageEdit,
-      key: PRIMARY_SCHOOL_FLAG,
+      key: KEY_INFO_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
       loader: primarySchoolStudentLoader({ userInfo, ...rest }),
       element: (
@@ -205,7 +209,7 @@ export const educationModule: PortalModule = {
     {
       name: 'Breyta heilsufarsupplýsingum',
       path: EducationPaths.PrimarySchoolHealthEdit,
-      key: PRIMARY_SCHOOL_FLAG,
+      key: KEY_INFO_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
       loader: primarySchoolStudentLoader({ userInfo, ...rest }),
       element: (

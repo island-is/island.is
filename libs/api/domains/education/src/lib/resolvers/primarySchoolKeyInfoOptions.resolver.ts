@@ -31,9 +31,11 @@ import {
  * The lookup lists the key-information sections pick from (frigg
  * `/key-options`). They are reference data, the same for every child, so they
  * stay at the root rather than hanging off a student.
+ *
+ * Gated on the key-information feature flag, like the sections that use them.
  */
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@FeatureFlag(Features.isServicePortalPrimarySchoolPageEnabled)
+@FeatureFlag(Features.isServicePortalPrimarySchoolKeyInfoEnabled)
 @Scopes(ApiScope.education)
 @Resolver()
 export class PrimarySchoolKeyInfoOptionsResolver {
