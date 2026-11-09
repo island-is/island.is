@@ -92,7 +92,7 @@ export const PrerequisitesForm: Form = buildForm({
                         title:
                           parentalLeaveFormMessages.shared.mockDataRelationship,
                         width: 'half',
-                        condition: (answers) => {
+                        condition: (answers, externalData) => {
                           const useMockData =
                             getValueViaPath(answers, 'mock.useMockData') === YES
 
@@ -326,20 +326,6 @@ export const PrerequisitesForm: Form = buildForm({
             ]
           : []),
         buildSubSection({
-          id: 'applicationType',
-          title: parentalLeaveFormMessages.shared.applicationTypeTitle,
-          children: [
-            buildRadioField({
-              id: 'applicationType.option',
-              title: parentalLeaveFormMessages.shared.applicationTypeTitle,
-              description:
-                parentalLeaveFormMessages.shared
-                  .applicationParentalLeaveDescription,
-              options: getApplicationTypeOptions(),
-            }),
-          ],
-        }),
-        buildSubSection({
           id: 'externalData',
           title: parentalLeaveFormMessages.shared.introductionProvider,
           children: [
@@ -427,14 +413,23 @@ export const PrerequisitesForm: Form = buildForm({
         buildSubSection({
           id: 'fosterCareOrAdoptionApplication',
           title: parentalLeaveFormMessages.selectChild.screenTitle,
-          condition: (answers) => {
+          condition: (answers, externalData) => {
             const { noChildrenFoundTypeOfApplication } =
               getApplicationAnswers(answers)
 
-            return (
+            if (
               noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ||
               noChildrenFoundTypeOfApplication === ADOPTION
-            )
+            ) {
+              return true
+            }
+
+            if (!noChildrenFoundTypeOfApplication) {
+              const { children } = getApplicationExternalData(externalData)
+              return children.length === 0
+            }
+
+            return false
           },
           children: [
             buildMultiField({
@@ -638,6 +633,30 @@ export const PrerequisitesForm: Form = buildForm({
                     return hasMultipleBirths === YES && selectedChild
                   },
                 }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'applicationType',
+          title: parentalLeaveFormMessages.shared.applicationTypeTitle,
+          condition: (_, externalData) => {
+            const { children } = getApplicationExternalData(externalData)
+            return children.length > 0
+          },
+          children: [
+            buildMultiField({
+              id: 'applicationTypeScreen',
+              title: parentalLeaveFormMessages.shared.applicationTypeTitle,
+              children: [
+                buildRadioField({
+                  id: 'applicationType.option',
+                  title: parentalLeaveFormMessages.shared.applicationTypeTitle,
+                  description:
+                    parentalLeaveFormMessages.shared
+                      .applicationParentalLeaveDescription,
+                  options: getApplicationTypeOptions(),
+                }),
                 buildSubmitField({
                   id: 'toDraft',
                   refetchApplicationAfterSubmit: true,
@@ -655,7 +674,7 @@ export const PrerequisitesForm: Form = buildForm({
             // Has to be here so that the submit button appears (does not appear if no screen is left).
             // Tackle that as AS task.
             buildDescriptionField({
-              id: 'unused',
+              id: 'applicationType.unused',
               description: '',
             }),
           ],
