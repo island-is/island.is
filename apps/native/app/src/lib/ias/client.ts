@@ -3,6 +3,7 @@ import {
   getIasErrorCode,
   IasError,
   isAppLoginRemoved,
+  isBiometricKeyInvalidated,
   isNativeLoginDisabled,
 } from './errors'
 import { attestationPop, deviceKeyAssertion, dpopProof } from './jwt'
@@ -505,7 +506,16 @@ export function createIasClient(options: IasClientOptions): IasClient {
     },
 
     isBiometricsEnabled() {
-      return device.getBiometricKey() !== null
+      try {
+        return device.getBiometricKey() !== null
+      } catch (error) {
+        // Some Android devices report an invalidated key as soon as it's read.
+        if (!isBiometricKeyInvalidated(error)) {
+          throw error
+        }
+        device.deleteBiometricKey()
+        return false
+      }
     },
 
     async enableBiometrics(accessToken) {
@@ -557,15 +567,23 @@ export function createIasClient(options: IasClientOptions): IasClient {
         '/app/device/challenge',
         { attested: true, json: { purpose: 'unlock' } },
       )
-      const assertion = await deviceKeyAssertion(
-        (data) => device.signWithBiometricKey(data, prompt),
-        {
-          clientId,
-          issuer,
-          nonce: challenge,
-          installJkt: requireInstallKey().thumbprint,
-        },
-      )
+      let assertion: string
+      try {
+        assertion = await deviceKeyAssertion(
+          (data) => device.signWithBiometricKey(data, prompt),
+          {
+            clientId,
+            issuer,
+            nonce: challenge,
+            installJkt: requireInstallKey().thumbprint,
+          },
+        )
+      } catch (error) {
+        if (isBiometricKeyInvalidated(error)) {
+          device.deleteBiometricKey()
+        }
+        throw error
+      }
       return toTokens(
         await token({
           grant_type: DEVICE_KEY_GRANT,

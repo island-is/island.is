@@ -5,6 +5,7 @@ export {
   getIasErrorCode,
   IasError,
   isAppLoginRemoved,
+  isBiometricKeyInvalidated,
   isNativeLoginDisabled,
 } from './errors'
 export type { IasErrorCode } from './errors'

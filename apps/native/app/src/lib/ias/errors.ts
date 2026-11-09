@@ -1,3 +1,5 @@
+import type { DeviceKeyErrorCode } from '../../../modules/device-keys'
+
 /**
  * IAS puts some reasons at the start of `error_description` (on /connect/*)
  * instead of in `error`, e.g. "sms_code_required: …". These become the code.
@@ -73,4 +75,13 @@ export function isAppLoginRemoved(error: unknown) {
     error.endpoint === 'POST /app/attestation/renew' &&
     error.code === 'invalid_grant'
   )
+}
+
+/**
+ * The enrolled biometrics changed, so the biometric key can never sign
+ * again. The client deletes it: biometrics are off until enabled again.
+ */
+export function isBiometricKeyInvalidated(error: unknown) {
+  const code: DeviceKeyErrorCode = 'ERR_DEVICE_KEY_INVALIDATED'
+  return (error as { code?: unknown } | null)?.code === code
 }

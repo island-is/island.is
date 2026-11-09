@@ -44,7 +44,10 @@ export interface IasClient {
   /** Within 10 minutes of an electronic ID login or unlock. */
   enableBiometrics(accessToken: string): Promise<void>
   disableBiometrics(): Promise<void>
-  /** Shows the biometric prompt. */
+  /**
+   * Shows the biometric prompt. After a biometric enrolment change it fails
+   * without one (isBiometricKeyInvalidated), and biometrics are off.
+   */
   unlockWithBiometrics(prompt: BiometricPromptOptions): Promise<IasTokens>
 
   refresh(refreshToken: string): Promise<IasTokens>
