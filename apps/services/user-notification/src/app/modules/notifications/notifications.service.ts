@@ -127,6 +127,12 @@ export class NotificationsService {
     }
   }
 
+  /**
+   * Renders a stored notification using its Hnipp template, including its
+   * priority type (falling back to the template's) and category key and label.
+   * Fetches the template when it is not provided.
+   * @throws InternalServerErrorException if the template cannot be rendered.
+   */
   async formatAndMapNotification(
     notification: Notification,
     templateId: string,

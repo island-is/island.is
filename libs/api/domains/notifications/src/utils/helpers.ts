@@ -20,6 +20,11 @@ const cleanString = (str?: string) => {
   return str.replace(/\s+/g, ' ').trim()
 }
 
+/**
+ * Maps a rendered notification from the user-notification service to the
+ * GraphQL `Notification` model, including `wasSent`, `priorityType` and
+ * `category`.
+ */
 export const notificationMapper = (
   notification: RenderedNotificationDto,
 ): Notification => ({

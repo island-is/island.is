@@ -3,6 +3,7 @@
 // Postgres cannot add enum values inside a transaction block on older
 // versions, so this migration deliberately runs without one.
 module.exports = {
+  /** Adds the `Important` value to both priority type enums. */
   async up(queryInterface) {
     await queryInterface.sequelize.query(
       `ALTER TYPE "enum_user_notification_priority_type" ADD VALUE IF NOT EXISTS 'Important';`,
@@ -12,6 +13,7 @@ module.exports = {
     )
   },
 
+  /** No-op: Postgres does not support removing a value from an enum type. */
   async down() {
     // Postgres does not support removing a value from an enum type.
   },
