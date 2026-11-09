@@ -16,6 +16,7 @@ import {
   FormModes,
 } from '@island.is/application/types'
 import { ProjectBasePath } from '@island.is/shared/constants'
+import { FjarskiptastofaLogo } from '@island.is/application/assets/institution-logos'
 import { CoFundedByEU } from '../../assets/CoFundedByEU'
 import { m } from '../../lib/messages'
 import { getEligibilityState } from '../../utils/eligibility'
@@ -26,6 +27,7 @@ import { getEligibilityState } from '../../utils/eligibility'
 // state, so this screen only has to inform the applicant and collect consent.
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
+  logo: FjarskiptastofaLogo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   children: [
