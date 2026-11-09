@@ -22,15 +22,13 @@ import {
 } from '@island.is/clients/vmst'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
-import addDays from 'date-fns/addDays'
-import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
-import formatISO from 'date-fns/formatISO'
 import {
   applicationsToChildInformation,
   getChildren,
   getChildrenFromMockData,
 } from './children-utils'
+import { MockPregnancyApi } from './mock-pregnancy.api'
 
 import { ApplicationService as ApplicationApiService } from '@island.is/application/api/core'
 import type { Logger } from '@island.is/logging'
@@ -47,6 +45,7 @@ export class ChildrenService {
     private readonly applicationApiService: ApplicationApiService,
     private parentalLeaveApi: ParentalLeaveApi,
     private pregnancyApi: PregnancyApi,
+    private mockPregnancyApi: MockPregnancyApi,
   ) {}
 
   async provideChildren(
@@ -356,30 +355,15 @@ export class ChildrenService {
   async getPregnancyStatus(
     nationalId: string,
   ): Promise<PregnancyStatus | null> {
-    if (this.isRunningInDevelopment) {
-      /**
-       * VMST does not really support cleaning up of applications, but with the help of a developer who is working for them
-       * we got to relax a limitation on Dev which allows us to have more applications then we would ordinarily be able to create.
-       * The limitation in question is that VMST allows only one application at a time for a given parent(or something like that).
-       * On Dev however we can create as many as we want as long as the baby birth date is not on the same day.
-       */
-      const babyBDayRandomFactor = Math.ceil(Math.random() * 85)
-      return {
-        hasActivePregnancy: true,
-        expectedDateOfBirth: formatISO(
-          addDays(addMonths(new Date(), 6), babyBDayRandomFactor),
-          {
-            representation: 'date',
-          },
-        ),
-      }
-    }
+    // VMST pregnancy status only exists in production, so mocked pregnancies are used elsewhere
+    const pregnancyApi = this.isRunningOnProduction
+      ? this.pregnancyApi
+      : this.mockPregnancyApi
 
     try {
-      const pregnancyStatus =
-        await this.pregnancyApi.pregnancyGetPregnancyStatus({
-          nationalRegistryId: nationalId,
-        })
+      const pregnancyStatus = await pregnancyApi.pregnancyGetPregnancyStatus({
+        nationalRegistryId: nationalId,
+      })
 
       if (pregnancyStatus.hasError) {
         throw new Error(
