@@ -12,6 +12,14 @@
 // the new code has superseded its columns, which nothing updated afterwards,
 // and merging the two would seat a stale judge on a live bench.
 //
+// An empty bench is the only marker available, and it is not a perfect one:
+// an update that passes an empty judge list clears the bench, leaves the
+// columns as they were, and the rerun would seat those judges again. The web
+// never sends an empty bench (a seat can be swapped, never emptied), and
+// nothing in the data tells a cleared bench from one an old pod wrote: a
+// bench-only update skips the appeal_case row, so its modified timestamp does
+// not move, and the columns carry no timestamp. The risk is accepted.
+//
 // Rolling back recreates the columns and hands the bench back to them the way
 // the earlier migration's down does: the first three judges in bench order,
 // so the old code finds the bench where it looks for it.
