@@ -120,11 +120,14 @@ describe('AppealCaseController - Update', () => {
       const mockUpdate = mockAppealCaseRepositoryService.update as jest.Mock
       mockUpdate.mockResolvedValueOnce(updatedAppealCase)
 
-      // The reload after a bench change returns the bench as stored.
+      // The reload after a change returns the appeal case as stored, with
+      // the bench when it was replaced.
       const mockFindById = mockAppealCaseRepositoryService.findById as jest.Mock
       mockFindById.mockResolvedValueOnce({
         ...updatedAppealCase,
-        appealJudges: bench(appealJudgeIds ?? []),
+        appealJudges: appealJudgeIds
+          ? bench(appealJudgeIds)
+          : appealCase.appealJudges,
       })
 
       // The route is guarded by CaseExistsForUpdateGuard, so the request
@@ -173,6 +176,15 @@ describe('AppealCaseController - Update', () => {
       expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
         appealCaseId,
         { appealConclusion: 'Conclusion' },
+        { transaction },
+      )
+    })
+
+    // The row the update returns carries ids only, so the response is read
+    // back with its associations.
+    it('should return the appeal case as stored', () => {
+      expect(mockAppealCaseRepositoryService.findById).toHaveBeenCalledWith(
+        appealCaseId,
         { transaction },
       )
       expect(then.result).toEqual({ ...appealCase, ...update })

@@ -56,6 +56,14 @@ import { Verdict } from '../models/verdict.model'
 import { Victim } from '../models/victim.model'
 import { UpdateDateLog } from '../services/dateLogRepository.service'
 
+// The assistant of an appeal case, as a user. Every appeal case include loads
+// it along with the bench, so an appeal case read anywhere carries both.
+export const appealAssistantInclude: Includeable = {
+  model: User,
+  as: 'appealAssistant',
+  include: [{ model: Institution, as: 'institution' }],
+}
+
 // The bench of an appeal case, presiding judge first. Every appeal case include
 // loads it, whatever kind of appeal the case is.
 export const appealJudgesInclude: Includeable = {
@@ -85,11 +93,7 @@ export const caseInclude: Includeable[] = [
     as: 'appealCase',
     required: false,
     include: [
-      {
-        model: User,
-        as: 'appealAssistant',
-        include: [{ model: Institution, as: 'institution' }],
-      },
+      appealAssistantInclude,
       appealJudgesInclude,
       {
         model: AppealEventLog,
@@ -105,11 +109,7 @@ export const caseInclude: Includeable[] = [
     as: 'verdictAppealCase',
     required: false,
     include: [
-      {
-        model: User,
-        as: 'appealAssistant',
-        include: [{ model: Institution, as: 'institution' }],
-      },
+      appealAssistantInclude,
       appealJudgesInclude,
       {
         model: AppealEventLog,
@@ -185,11 +185,7 @@ export const caseInclude: Includeable[] = [
     required: false,
     separate: true,
     include: [
-      {
-        model: User,
-        as: 'appealAssistant',
-        include: [{ model: Institution, as: 'institution' }],
-      },
+      appealAssistantInclude,
       appealJudgesInclude,
       {
         model: AppealEventLog,
@@ -1171,11 +1167,7 @@ export const getLimitedAccessCaseInclude = (
       as: 'appealCase',
       required: false,
       include: [
-        {
-          model: User,
-          as: 'appealAssistant',
-          include: [{ model: Institution, as: 'institution' }],
-        },
+        appealAssistantInclude,
         appealJudgesInclude,
         {
           model: AppealEventLog,
@@ -1191,11 +1183,7 @@ export const getLimitedAccessCaseInclude = (
       as: 'verdictAppealCase',
       required: false,
       include: [
-        {
-          model: User,
-          as: 'appealAssistant',
-          include: [{ model: Institution, as: 'institution' }],
-        },
+        appealAssistantInclude,
         appealJudgesInclude,
         {
           model: AppealEventLog,
@@ -1219,11 +1207,7 @@ export const getLimitedAccessCaseInclude = (
       required: false,
       separate: true,
       include: [
-        {
-          model: User,
-          as: 'appealAssistant',
-          include: [{ model: Institution, as: 'institution' }],
-        },
+        appealAssistantInclude,
         appealJudgesInclude,
         {
           model: AppealEventLog,
