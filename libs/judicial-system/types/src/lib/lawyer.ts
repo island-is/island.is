@@ -75,9 +75,5 @@ export const mapToLawyer = (lawyer: LawyerRegistry): Lawyer => {
 
 export enum LawyerType {
   LITIGATORS = 'LITIGATORS',
-  /**
-   * Litigators who may appear before Landsréttur (court of appeals).
-   * Used by the XRD defender list for appealed criminal cases.
-   */
   COURT_OF_APPEALS_LITIGATORS = 'COURT_OF_APPEALS_LITIGATORS',
 }
