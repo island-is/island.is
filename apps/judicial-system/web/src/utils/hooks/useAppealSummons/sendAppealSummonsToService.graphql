@@ -1,8 +1,5 @@
-mutation SendAppealSummonsToService(
-  $caseId: String!
-  $input: SendAppealSummonsToServiceInput!
-) {
-  sendAppealSummonsToService(caseId: $caseId, input: $input) {
+mutation SendAppealSummonsToService($input: SendAppealSummonsToServiceInput!) {
+  sendAppealSummonsToService(input: $input) {
     id
     services {
       id

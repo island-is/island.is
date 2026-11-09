@@ -55,6 +55,11 @@ export class AppealSummonsDefendantInput {
 @InputType()
 export class CreateAppealSummonsInput {
   @Allow()
+  @IsUUID()
+  @Field(() => ID)
+  readonly caseId!: string
+
+  @Allow()
   @IsArray()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
@@ -65,6 +70,11 @@ export class CreateAppealSummonsInput {
 
 @InputType()
 export class UpdateAppealSummonsInput {
+  @Allow()
+  @IsUUID()
+  @Field(() => ID)
+  readonly caseId!: string
+
   @Allow()
   @IsUUID()
   @Field(() => ID)
@@ -97,11 +107,21 @@ export class ConfirmAppealSummonsInput {
   @Allow()
   @IsUUID()
   @Field(() => ID)
+  readonly caseId!: string
+
+  @Allow()
+  @IsUUID()
+  @Field(() => ID)
   readonly appealSummonsId!: string
 }
 
 @InputType()
 export class SendAppealSummonsToCourtOfAppealsInput {
+  @Allow()
+  @IsUUID()
+  @Field(() => ID)
+  readonly caseId!: string
+
   @Allow()
   @IsUUID()
   @Field(() => ID)
@@ -135,6 +155,11 @@ export class SendAppealSummonsToServiceInput {
   @Allow()
   @IsUUID()
   @Field(() => ID)
+  readonly caseId!: string
+
+  @Allow()
+  @IsUUID()
+  @Field(() => ID)
   readonly appealSummonsId!: string
 
   @Allow()
@@ -144,4 +169,12 @@ export class SendAppealSummonsToServiceInput {
   @Type(() => AppealSummonsServiceRecipientInput)
   @Field(() => [AppealSummonsServiceRecipientInput])
   readonly recipients!: AppealSummonsServiceRecipientInput[]
+}
+
+@InputType()
+export class SyncAppealSummonsServiceStatusesInput {
+  @Allow()
+  @IsUUID()
+  @Field(() => ID)
+  readonly caseId!: string
 }

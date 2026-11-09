@@ -54,8 +54,7 @@ const useAppealSummons = () => {
 
         const { data, errors } = await createAppealSummonsMutation({
           variables: {
-            caseId,
-            input: { defendants },
+            input: { caseId, defendants },
           },
         })
 
@@ -85,8 +84,7 @@ const useAppealSummons = () => {
 
         const { data, errors } = await updateAppealSummonsMutation({
           variables: {
-            caseId,
-            input: { appealSummonsId, defendants },
+            input: { caseId, appealSummonsId, defendants },
           },
         })
 
@@ -134,8 +132,7 @@ const useAppealSummons = () => {
 
         const { data, errors } = await confirmAppealSummonsMutation({
           variables: {
-            caseId,
-            input: { appealSummonsId },
+            input: { caseId, appealSummonsId },
           },
         })
 
@@ -162,8 +159,7 @@ const useAppealSummons = () => {
         const { data, errors } =
           await sendAppealSummonsToCourtOfAppealsMutation({
             variables: {
-              caseId,
-              input: { appealSummonsId },
+              input: { caseId, appealSummonsId },
             },
           })
 
@@ -198,8 +194,7 @@ const useAppealSummons = () => {
 
         const { data, errors } = await sendAppealSummonsToServiceMutation({
           variables: {
-            caseId,
-            input: { appealSummonsId, recipients },
+            input: { caseId, appealSummonsId, recipients },
           },
         })
 
@@ -225,7 +220,7 @@ const useAppealSummons = () => {
 
         const { data, errors } = await syncAppealSummonsServiceStatusesMutation(
           {
-            variables: { caseId },
+            variables: { input: { caseId } },
           },
         )
 

@@ -1,5 +1,7 @@
-mutation SyncAppealSummonsServiceStatuses($caseId: String!) {
-  syncAppealSummonsServiceStatuses(caseId: $caseId) {
+mutation SyncAppealSummonsServiceStatuses(
+  $input: SyncAppealSummonsServiceStatusesInput!
+) {
+  syncAppealSummonsServiceStatuses(input: $input) {
     id
     services {
       id
