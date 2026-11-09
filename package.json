@@ -426,6 +426,7 @@
     "@types/escape-html": "1.0.0",
     "@types/express": "5.0.6",
     "@types/folder-hash": "3.3.0",
+    "@types/googlepay": "0.7.13",
     "@types/http-cache-semantics": "4.0.1",
     "@types/identicon.js": "2.3.0",
     "@types/imap-simple": "4.2.5",
