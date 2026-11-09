@@ -18,7 +18,7 @@ const courtVerdictRedirect: LegacyRedirectHandler = async ({
   if (rule.directPath) {
     const oldId = getQueryValue(query, rule.directPath.param)
     if (oldId && isGuid(oldId)) {
-      return { destination: rule.directPath.path(oldId), permanent: true }
+      return { destination: rule.directPath.path(oldId), permanent: false }
     }
   }
 
@@ -26,7 +26,7 @@ const courtVerdictRedirect: LegacyRedirectHandler = async ({
   const newId = await resolveVerdictId(rule, query, verdict)
 
   if (newId) {
-    return { destination: `/domar/${newId}`, permanent: true }
+    return { destination: `/domar/${newId}`, permanent: false }
   }
 
   const params = new URLSearchParams(rule.fallbackQuery(verdict))

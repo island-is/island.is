@@ -32,7 +32,7 @@ describe('resolveLegacyRedirect', () => {
       ),
     ).toEqual({
       destination: '/domar/g-ddd4223d-1624-4592-af53-80cbd967273d',
-      permanent: true,
+      permanent: false,
     })
     expect(mockQuery).not.toHaveBeenCalled()
   })
@@ -44,7 +44,7 @@ describe('resolveLegacyRedirect', () => {
       ),
     ).toEqual({
       destination: '/domar/s-AB5C9564-375F-40DF-8F1F-DF1DED4E3E0B',
-      permanent: true,
+      permanent: false,
     })
   })
 
@@ -61,7 +61,7 @@ describe('resolveLegacyRedirect', () => {
       await resolve(
         'heradsdomstolar.is/domar/domur?id=001edf71-c2e3-4953-a118-87c04e8dc27e',
       ),
-    ).toEqual({ destination: '/domar/g-new', permanent: true })
+    ).toEqual({ destination: '/domar/g-new', permanent: false })
   })
 
   it('falls back to a GoPro id when the old id is unknown', async () => {
@@ -71,7 +71,7 @@ describe('resolveLegacyRedirect', () => {
       ),
     ).toEqual({
       destination: '/domar/g-1079d456-805f-4ac2-9b25-f362c9a18011',
-      permanent: true,
+      permanent: false,
     })
   })
 
@@ -98,7 +98,7 @@ describe('resolveLegacyRedirect', () => {
       ),
     ).toEqual({
       destination: '/domar/g-001edf71-c2e3-4953-a118-87c04e8dc27e',
-      permanent: true,
+      permanent: false,
     })
   })
 
