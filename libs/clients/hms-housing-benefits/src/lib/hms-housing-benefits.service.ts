@@ -10,12 +10,8 @@ import {
 import { handle204 } from '@island.is/clients/middlewares'
 import { CalculationTypes, TransactionTypes } from './enums'
 
-/**
- * The tax endpoints return a bare boolean body, which openapi-generator deserializes with
- * `TextApiResponse` (a string) while typing it as `boolean` via an `as any` cast — see
- * https://github.com/OpenAPITools/openapi-generator/issues/2870. Without this coercion
- * `"false"` would be truthy and every caller would read it as `true`.
- */
+// Generated client returns boolean bodies as strings despite the `boolean` type:
+// https://github.com/OpenAPITools/openapi-generator/issues/2870
 const toBoolean = (value: boolean | string): boolean =>
   typeof value === 'string'
     ? value.trim().toLowerCase() === 'true'
