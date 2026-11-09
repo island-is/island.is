@@ -595,6 +595,41 @@ describe('Calculator', () => {
     await waitFor(() => expect(submit.hasAttribute('disabled')).toBe(false))
   })
 
+  it('explains why submit is disabled when a required field is not configured', async () => {
+    renderSlice([
+      {
+        request,
+        result: {
+          data: {
+            taxCalculator: {
+              ...metadata.taxCalculator,
+              inputFields: [
+                ...metadata.taxCalculator.inputFields,
+                {
+                  __typename: 'TaxCalculatorStringInputField',
+                  key: 'missingRequiredField',
+                  type: TaxCalculatorInputFieldType.String,
+                  required: true,
+                  dependsOn: null,
+                },
+              ],
+            },
+          },
+        },
+      },
+    ])
+
+    await screen.findByText('Laun')
+    fillSalary()
+
+    expect(
+      await screen.findByText(
+        'Ekki er hægt að reikna þar sem nauðsynlega reiti vantar í reiknivélina.',
+      ),
+    ).toBeTruthy()
+    expect(screen.getByRole('button').hasAttribute('disabled')).toBe(true)
+  })
+
   it('renders the calculation through the configured output sections', async () => {
     renderSlice([
       { request, result: { data: metadata } },

@@ -14,6 +14,10 @@ export const CALCULATOR_MESSAGES: Record<string, CalculatorLocalizedText> = {
     is: 'Ekki tókst að sækja reiknivélina',
     en: 'Could not load the calculator',
   },
+  incompleteConfig: {
+    is: 'Ekki er hægt að reikna þar sem nauðsynlega reiti vantar í reiknivélina.',
+    en: 'Calculation is unavailable because required fields are missing from the calculator.',
+  },
   calculationError: {
     is: 'Ekki tókst að reikna',
     en: 'The calculation could not be completed',

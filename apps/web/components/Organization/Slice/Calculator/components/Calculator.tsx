@@ -371,6 +371,19 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
               />
             ))}
             <Box>
+              {hasUnplacedRequiredFields && (
+                <Box marginBottom={3}>
+                  <AlertMessage
+                    type="error"
+                    title={
+                      localized(
+                        CALCULATOR_MESSAGES.incompleteConfig,
+                        activeLocale,
+                      ) ?? ''
+                    }
+                  />
+                </Box>
+              )}
               <Button
                 type="submit"
                 loading={calculating}
