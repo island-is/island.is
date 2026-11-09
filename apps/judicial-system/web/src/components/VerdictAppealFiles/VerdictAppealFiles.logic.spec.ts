@@ -110,6 +110,36 @@ describe('getVerdictAppealFileGroups', () => {
     ).toEqual([])
   })
 
+  it('should include files for an appeal-confirmed defendant without district confirmation', () => {
+    const appealOnlyCase = {
+      id: 'case_id',
+      type: CaseType.INDICTMENT,
+      defendants: [
+        {
+          id: 'appeal_client_id',
+          name: 'Áfrýjunarverjandi',
+          isAppealDefenderConfirmed: true,
+          appealDefenderNationalId: defenderNationalId,
+        },
+      ],
+      caseFiles: [
+        file(
+          'declaration',
+          'appeal_client_id',
+          CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+          '2026-06-04T13:34:00.000Z',
+        ),
+      ],
+    } as WorkingCase
+
+    expect(getVerdictAppealFileGroups(appealOnlyCase, user)).toEqual([
+      {
+        defendant: appealOnlyCase.defendants?.[0],
+        files: appealOnlyCase.caseFiles,
+      },
+    ])
+  })
+
   it('should group the declaration and its files under the defendant, oldest first', () => {
     const groups = getVerdictAppealFileGroups(
       theCase([
@@ -737,9 +767,8 @@ describe('getAppealAppointmentLetters', () => {
   })
 
   describe('for a defence user', () => {
-    // Access to the case is the district court's confirmation, so that is
-    // what ties a defence user to a party here too - not the appeal advocate
-    // fields, which the court of appeals may fill with somebody else.
+    // A defence user is tied to a party by district confirmation or by the
+    // court of appeals' confirmed appeal appointment for that party.
     const defender = {
       ...mockUser(UserRole.DEFENDER),
       nationalId: '0101302989',
@@ -788,7 +817,7 @@ describe('getAppealAppointmentLetters', () => {
       ).toEqual(['defendant-own_client_id', 'civilClaimant-own_claimant_id'])
     })
 
-    it('offers nothing to a defender the district court has not confirmed', () => {
+    it('offers nothing to a defender neither court has confirmed for the party', () => {
       expect(
         getAppealAppointmentLetters(
           appealedCase({
@@ -799,6 +828,7 @@ describe('getAppealAppointmentLetters', () => {
                 defenderNationalId: '0101302989',
                 isAppealDefenderConfirmed: true,
                 appealDefenderName: 'Þórður Már Jónsson',
+                appealDefenderNationalId: '0909713459',
               },
             ],
           } as Partial<WorkingCase>),
@@ -811,7 +841,7 @@ describe('getAppealAppointmentLetters', () => {
       ['not confirmed', { isSpokespersonConfirmed: false }],
       ['not recorded', { hasSpokesperson: false }],
     ])(
-      'offers nothing to a spokesperson the district court has %s',
+      'offers nothing to a spokesperson the district court has %s without an appeal appointment',
       (_name, fields) => {
         expect(
           getAppealAppointmentLetters(
@@ -823,7 +853,7 @@ describe('getAppealAppointmentLetters', () => {
                   hasSpokesperson: true,
                   isSpokespersonConfirmed: true,
                   spokespersonNationalId: '0101302989',
-                  isAppealSpokespersonConfirmed: true,
+                  isAppealSpokespersonConfirmed: false,
                   appealSpokespersonName: 'Brynjar Sveinsson',
                   ...fields,
                 },
@@ -835,9 +865,7 @@ describe('getAppealAppointmentLetters', () => {
       },
     )
 
-    // Being the one the court of appeals appointed is not, by itself, access
-    // to the case - that comes with the district court's confirmation.
-    it('offers nothing on the appeal appointment alone', () => {
+    it('offers the letter on the court of appeals appointment alone', () => {
       expect(
         getAppealAppointmentLetters(
           appealedCase({
@@ -853,8 +881,27 @@ describe('getAppealAppointmentLetters', () => {
             ],
           } as Partial<WorkingCase>),
           defender,
-        ),
-      ).toEqual([])
+        ).map((row) => row.key),
+      ).toEqual(['defendant-defendant_id'])
+    })
+
+    it('offers the letter to a confirmed appeal spokesperson alone', () => {
+      expect(
+        getAppealAppointmentLetters(
+          appealedCase({
+            defendants: [],
+            civilClaimants: [
+              {
+                id: 'claimant_id',
+                isAppealSpokespersonConfirmed: true,
+                appealSpokespersonNationalId: '0101302989',
+                appealSpokespersonName: 'Brynjar Sveinsson',
+              },
+            ],
+          } as Partial<WorkingCase>),
+          defender,
+        ).map((row) => row.key),
+      ).toEqual(['civilClaimant-claimant_id'])
     })
   })
 

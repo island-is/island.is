@@ -261,11 +261,12 @@ export const isCaseCivilClaimantLegalSpokesperson = (
  * appeal files with the correct party.
  *
  * Only confirmed defenders / spokespersons are resolved — an unconfirmed
- * pick has no authority to act on behalf of the party.
+ * pick has no authority to act on behalf of the party. Confirmation may be
+ * the district court's or the court of appeals' on the same party.
  *
  * Resolution order:
- * 1. First matching confirmed defendant (by defenderNationalId)
- * 2. First matching confirmed civil claimant (by spokespersonNationalId)
+ * 1. First matching confirmed defendant (district or appeal)
+ * 2. First matching confirmed civil claimant (district or appeal)
  * 3. Empty object (prosecutor or no match)
  */
 export const getDefenceUserPartyIds = (
@@ -280,9 +281,13 @@ export const getDefenceUserPartyIds = (
 
   const defendant = workingCase.defendants?.find(
     (d) =>
-      d.isDefenderChoiceConfirmed &&
-      d.defenderNationalId &&
-      normalizedId.includes(d.defenderNationalId),
+      (d.isDefenderChoiceConfirmed &&
+        d.defenderNationalId &&
+        normalizedId.includes(d.defenderNationalId)) ||
+      (d.isAppealDefenderConfirmed &&
+        !d.isAppealDefenderWaived &&
+        d.appealDefenderNationalId &&
+        normalizedId.includes(d.appealDefenderNationalId)),
   )
 
   if (defendant) {
@@ -291,9 +296,13 @@ export const getDefenceUserPartyIds = (
 
   const civilClaimant = workingCase.civilClaimants?.find(
     (cc) =>
-      cc.isSpokespersonConfirmed &&
-      cc.spokespersonNationalId &&
-      normalizedId.includes(cc.spokespersonNationalId),
+      (cc.isSpokespersonConfirmed &&
+        cc.spokespersonNationalId &&
+        normalizedId.includes(cc.spokespersonNationalId)) ||
+      (cc.hasAppealSpokesperson !== false &&
+        cc.isAppealSpokespersonConfirmed &&
+        cc.appealSpokespersonNationalId &&
+        normalizedId.includes(cc.appealSpokespersonNationalId)),
   )
 
   if (civilClaimant) {
@@ -1070,15 +1079,19 @@ export const isMatchingAppealCaseFile = (
     return false
   }
 
+  const ownIds = normalizeAndFormatNationalId(user.nationalId)
+
   if (file.defendantId && workingCase.defendants) {
     return workingCase.defendants.some(
       (defendant) =>
         defendant.id === file.defendantId &&
-        defendant.isDefenderChoiceConfirmed &&
-        defendant.defenderNationalId &&
-        normalizeAndFormatNationalId(user.nationalId).includes(
-          defendant.defenderNationalId,
-        ),
+        ((defendant.isDefenderChoiceConfirmed &&
+          defendant.defenderNationalId &&
+          ownIds.includes(defendant.defenderNationalId)) ||
+          (defendant.isAppealDefenderConfirmed &&
+            !defendant.isAppealDefenderWaived &&
+            defendant.appealDefenderNationalId &&
+            ownIds.includes(defendant.appealDefenderNationalId))),
     )
   }
 
@@ -1086,12 +1099,14 @@ export const isMatchingAppealCaseFile = (
     return workingCase.civilClaimants.some(
       (cc) =>
         cc.id === file.civilClaimantId &&
-        cc.hasSpokesperson &&
-        cc.isSpokespersonConfirmed &&
-        cc.spokespersonNationalId &&
-        normalizeAndFormatNationalId(user.nationalId).includes(
-          cc.spokespersonNationalId,
-        ),
+        ((cc.hasSpokesperson &&
+          cc.isSpokespersonConfirmed &&
+          cc.spokespersonNationalId &&
+          ownIds.includes(cc.spokespersonNationalId)) ||
+          (cc.hasAppealSpokesperson !== false &&
+            cc.isAppealSpokespersonConfirmed &&
+            cc.appealSpokespersonNationalId &&
+            ownIds.includes(cc.appealSpokespersonNationalId))),
     )
   }
 
