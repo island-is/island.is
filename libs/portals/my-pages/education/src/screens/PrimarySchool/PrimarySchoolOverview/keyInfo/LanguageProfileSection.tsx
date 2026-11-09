@@ -48,7 +48,7 @@ export const LanguageProfileSection = ({ profile, loading, error }: Props) => {
     <KeyInfoSection
       title={kim.languageProfileTitle}
       action={
-        !loading && !error ? (
+        !loading && !error && profile ? (
           <Button
             variant="text"
             icon="pencil"

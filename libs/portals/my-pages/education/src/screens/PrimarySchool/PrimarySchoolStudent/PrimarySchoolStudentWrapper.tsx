@@ -16,6 +16,7 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
+import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { EducationPaths } from '../../../lib/paths'
 import { primarySchoolMessages as psm } from '../../../lib/messages'
 import type { PrimarySchoolStudentLoaderData } from './PrimarySchoolStudent.loader'
@@ -50,17 +51,29 @@ export const PrimarySchoolStudentWrapper = ({
   const hasAssessment =
     (assessmentData?.primarySchoolStudent?.assessmentHistory?.length ?? 0) > 0
 
+  // Key information sits behind its own flag, separate from the one gating the
+  // primary-school page, so it can stay dark after the assessment screens go
+  // live. While it is off the frigg read is never made.
+  const { value: keyInfoEnabled, loading: keyInfoFlagLoading } = useFeatureFlag(
+    Features.isServicePortalPrimarySchoolKeyInfoEnabled,
+    false,
+  )
+
   const { data: keyInfoData, loading: keyInfoLoading } =
     usePrimarySchoolStudentHasKeyInfoQuery({
       variables: { studentId: studentId ?? '' },
-      skip: !studentId || hideTabs,
+      skip: !studentId || hideTabs || !keyInfoEnabled,
     })
-  const hasKeyInfoChild = keyInfoData?.primarySchoolStudent?.hasKeyInfo ?? false
+  const hasKeyInfoChild =
+    keyInfoEnabled && (keyInfoData?.primarySchoolStudent?.hasKeyInfo ?? false)
 
   // Show the student hub only when there is something to show: the child exists
-  // in the frigg key-info database, or has assessment history.
-  const checking = assessmentLoading || keyInfoLoading
-  const hasContent = hasKeyInfoChild || hasAssessment
+  // in the frigg key-info database, or has assessment history. Either answer on
+  // its own is enough, so the tabs are not held back waiting for the other —
+  // in particular the assessment tab does not wait on a frigg round trip.
+  const hasContent = hasAssessment || hasKeyInfoChild
+  const stillChecking =
+    assessmentLoading || keyInfoLoading || keyInfoFlagLoading
 
   const overviewPath = generatePath(EducationPaths.PrimarySchoolOverview, {
     studentId: studentId ?? '',
@@ -78,8 +91,6 @@ export const PrimarySchoolStudentWrapper = ({
     >
       {hideTabs ? (
         children
-      ) : checking ? (
-        <CardLoader />
       ) : hasContent ? (
         <>
           {/* The assessment tab only exists when the student has assessment
@@ -107,6 +118,8 @@ export const PrimarySchoolStudentWrapper = ({
           )}
           <Box paddingTop={hasAssessment ? 2 : 0}>{children}</Box>
         </>
+      ) : stillChecking ? (
+        <CardLoader />
       ) : (
         <Problem
           type="no_data"

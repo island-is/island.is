@@ -18,6 +18,7 @@ import { primarySchoolKeyInfoMessages as kim } from '../../../../lib/messages'
 import { EducationPaths } from '../../../../lib/paths'
 import { KeyInfoSection } from './KeyInfoSection'
 import { SectionError } from './SectionError'
+import { mmsErrorMessage } from './mmsError'
 import * as styles from './keyInfoEmpty.css'
 import type { EmergencyContact, MmsError } from './types'
 
@@ -70,8 +71,8 @@ export const EmergencyContactsSection = ({
     if (!contactToRemove) return
     try {
       await onRemove?.(contactToRemove.id)
-    } catch {
-      toast.error(formatMessage(kim.saveError))
+    } catch (error) {
+      toast.error(formatMessage(mmsErrorMessage(error)))
       return
     }
     setContactToRemove(undefined)
@@ -186,16 +187,20 @@ export const EmergencyContactsSection = ({
           {formatMessage(kim.contactInfoNotice)}
         </Text>
       </Box>
-      <Box paddingTop={2}>
-        <Button
-          variant="text"
-          icon="add"
-          size="small"
-          onClick={() => navigate(addPath)}
-        >
-          {formatMessage(kim.contactAdd)}
-        </Button>
-      </Box>
+      {/* Adding needs the list to have loaded: MMS rejects a duplicate contact,
+          so the guardian has to be able to see who is already registered. */}
+      {!loading && !error && (
+        <Box paddingTop={2}>
+          <Button
+            variant="text"
+            icon="add"
+            size="small"
+            onClick={() => navigate(addPath)}
+          >
+            {formatMessage(kim.contactAdd)}
+          </Button>
+        </Box>
+      )}
       {contactToRemove && (
         <Modal
           id="key-info-contact-remove-modal"

@@ -2,14 +2,25 @@ import { CardLoader, m } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Stack } from '@island.is/island-ui/core'
 import { Problem } from '@island.is/react-spa/shared'
+import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { useParams } from 'react-router-dom'
 import { primarySchoolMessages as psm } from '../../../lib/messages'
 import { usePrimarySchoolStudentOverviewQuery } from './PrimarySchoolStudentOverview.generated'
-import { usePrimarySchoolKeyInfo } from './keyInfo/usePrimarySchoolKeyInfo'
+import { usePrimarySchoolStudentHasKeyInfoQuery } from './keyInfo/PrimarySchoolKeyInfo.generated'
+import {
+  usePrimarySchoolKeyInfo,
+  type KeyInfoSectionName,
+} from './keyInfo/usePrimarySchoolKeyInfo'
 import { BaseInfoSection } from './keyInfo/BaseInfoSection'
 import { EmergencyContactsSection } from './keyInfo/EmergencyContactsSection'
 import { LanguageProfileSection } from './keyInfo/LanguageProfileSection'
 import { HealthProfileSection } from './keyInfo/HealthProfileSection'
+
+const KEY_INFO_SECTIONS: KeyInfoSectionName[] = [
+  'emergencyContacts',
+  'languageProfile',
+  'healthProfile',
+]
 
 export const PrimarySchoolOverview = () => {
   useNamespaces('sp.education-primary-school')
@@ -23,6 +34,27 @@ export const PrimarySchoolOverview = () => {
 
   const student = data?.primarySchoolStudent
 
+  // Key information has its own feature flag, separate from the one gating the
+  // primary-school page. While it is off the sections below are left out and
+  // their reads are never made.
+  const { value: keyInfoEnabled, loading: keyInfoFlagLoading } = useFeatureFlag(
+    Features.isServicePortalPrimarySchoolKeyInfoEnabled,
+    false,
+  )
+
+  // Whether the child exists in the frigg key-info database at all. Without a
+  // counterpart there every key-info read answers "no information" and every
+  // write is rejected, so the sections are left out rather than shown with
+  // actions that cannot succeed. The student wrapper runs the same query, so
+  // this is served from the Apollo cache.
+  const { data: keyInfoData, loading: keyInfoLoading } =
+    usePrimarySchoolStudentHasKeyInfoQuery({
+      variables: { studentId: studentId ?? '' },
+      skip: !studentId || !keyInfoEnabled,
+    })
+  const hasKeyInfo =
+    keyInfoEnabled && (keyInfoData?.primarySchoolStudent?.hasKeyInfo ?? false)
+
   // Lykilupplýsingar (key information) sections. Each section owns its own
   // loading/error/save state and PATCH — there is no shared page-level save.
   const {
@@ -31,7 +63,7 @@ export const PrimarySchoolOverview = () => {
     healthProfile,
     removeAgent,
     saving,
-  } = usePrimarySchoolKeyInfo(studentId)
+  } = usePrimarySchoolKeyInfo(studentId, hasKeyInfo ? KEY_INFO_SECTIONS : [])
 
   return (
     <>
@@ -52,25 +84,33 @@ export const PrimarySchoolOverview = () => {
         <Stack space={10}>
           <BaseInfoSection student={student} loading={loading} />
 
-          <EmergencyContactsSection
-            contacts={emergencyContacts.data}
-            loading={emergencyContacts.loading}
-            error={emergencyContacts.error}
-            saving={saving}
-            onRemove={removeAgent}
-          />
+          {(keyInfoFlagLoading || keyInfoLoading) && <CardLoader />}
 
-          <LanguageProfileSection
-            profile={languageProfile.data}
-            loading={languageProfile.loading}
-            error={languageProfile.error}
-          />
+          {hasKeyInfo && (
+            <EmergencyContactsSection
+              contacts={emergencyContacts.data}
+              loading={emergencyContacts.loading}
+              error={emergencyContacts.error}
+              saving={saving}
+              onRemove={removeAgent}
+            />
+          )}
 
-          <HealthProfileSection
-            profile={healthProfile.data}
-            loading={healthProfile.loading}
-            error={healthProfile.error}
-          />
+          {hasKeyInfo && (
+            <LanguageProfileSection
+              profile={languageProfile.data}
+              loading={languageProfile.loading}
+              error={languageProfile.error}
+            />
+          )}
+
+          {hasKeyInfo && (
+            <HealthProfileSection
+              profile={healthProfile.data}
+              loading={healthProfile.loading}
+              error={healthProfile.error}
+            />
+          )}
         </Stack>
       )}
     </>
