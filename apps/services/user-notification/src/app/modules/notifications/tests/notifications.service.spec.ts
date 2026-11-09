@@ -175,7 +175,7 @@ describe('NotificationsService', () => {
   })
 
   describe('formatAndMapNotification', () => {
-    const baseNotification = ({
+    const baseNotification = {
       id: 1,
       messageId: 'message-uuid',
       senderId: '5555555555',
@@ -190,7 +190,7 @@ describe('NotificationsService', () => {
         { key: 'arg1', value: 'hello' },
         { key: 'arg2', value: 'world' },
       ],
-    } as unknown) as Notification
+    } as unknown as Notification
 
     const format = (
       notification: Notification,
@@ -219,10 +219,10 @@ describe('NotificationsService', () => {
 
     it('falls back to the template priorityType when none is stored', async () => {
       const result = await format(
-        ({
+        {
           ...baseNotification,
           priorityType: null,
-        } as unknown) as Notification,
+        } as unknown as Notification,
         { priorityType: 'Informative' },
       )
       expect(result.priorityType).toBe('Informative')
