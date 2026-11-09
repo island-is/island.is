@@ -280,7 +280,11 @@ type InputSettingsActions =
   | {
       type: 'SET_FIELD_SETTINGS'
       payload: {
-        property: 'isLarge' | 'hasDescription' | 'fetchBankAccountFromMyPages'
+        property:
+          | 'isLarge'
+          | 'hasDescription'
+          | 'fetchBankAccountFromMyPages'
+          | 'notIncludedInSumbox'
         value: boolean
         update: (updatedActiveItem?: ActiveItem) => void
       }
