@@ -52,6 +52,18 @@ export const educationNavigation: PortalNavigationItem = {
                   children: [
                     {
                       // Edit screens — breadcrumb only
+                      name: kim.contactAddTitle,
+                      navHide: true,
+                      searchHide: true,
+                      path: EducationPaths.PrimarySchoolContactAdd,
+                    },
+                    {
+                      name: kim.contactEditTitle,
+                      navHide: true,
+                      searchHide: true,
+                      path: EducationPaths.PrimarySchoolContactEdit,
+                    },
+                    {
                       name: kim.languageEditTitle,
                       navHide: true,
                       searchHide: true,

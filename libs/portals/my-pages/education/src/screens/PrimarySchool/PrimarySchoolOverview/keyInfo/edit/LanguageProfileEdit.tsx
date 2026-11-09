@@ -21,6 +21,7 @@ import { EducationPaths } from '../../../../../lib/paths'
 import { SectionError } from '../SectionError'
 import { useLanguageEnvironmentOptions } from '../useKeyInfoOptions'
 import { usePrimarySchoolKeyInfo } from '../usePrimarySchoolKeyInfo'
+import { mmsErrorMessage } from '../mmsError'
 
 /**
  * Dedicated edit screen for Tungumálaumhverfi (language profile).
@@ -136,8 +137,8 @@ export const LanguageProfileEdit = () => {
       })
       toast.success(formatMessage(kim.saveSuccess))
       navigate(overviewPath)
-    } catch {
-      toast.error(formatMessage(kim.saveError))
+    } catch (error) {
+      toast.error(formatMessage(mmsErrorMessage(error)))
     }
   }
 
@@ -223,7 +224,8 @@ export const LanguageProfileEdit = () => {
                     size="sm"
                     required
                     label={formatMessage(kim.preferredLanguage)}
-                    isLoading={optionsLoading}
+                    // Picked from the languages chosen above, so there is
+                    // nothing to wait for.
                     options={selectedLanguages}
                     value={preferredLanguageOption}
                     onChange={(option) =>
@@ -257,7 +259,7 @@ export const LanguageProfileEdit = () => {
             </Box>
             <Box>
               <Text variant="h5" fontWeight="semiBold" marginBottom={1}>
-                {formatMessage(kim.signLanguage)}
+                {formatMessage(kim.signLanguage)}{' '}
                 <Tooltip text={formatMessage(kim.signLanguageInfo)} />
               </Text>
               <Box display="flex" flexDirection="column" rowGap={2}>

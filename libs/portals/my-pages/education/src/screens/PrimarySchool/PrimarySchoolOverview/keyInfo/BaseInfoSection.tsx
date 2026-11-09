@@ -29,14 +29,12 @@ export const BaseInfoSection = ({ student, loading }: Props) => {
         loading={loading}
         paddingY={3}
         button={{
-          type: 'action',
+          type: 'link',
           label: psm.changeSchool,
-          icon: 'arrowForward',
-          // Leaves Mínar síður for the application system, so this is a real
-          // page load rather than a router link: /umsoknir is a separate app
-          // and react-router would only look for the path inside this SPA.
-          action: () =>
-            window.open(`${document.location.origin}/umsoknir/grunnskoli`),
+          // Leaves Mínar síður for the application system. The origin makes it
+          // an absolute url, which LinkResolver opens as an external link —
+          // a relative path would be routed inside this SPA instead.
+          to: `${document.location.origin}/umsoknir/grunnskoli`,
         }}
       />
       <Divider />

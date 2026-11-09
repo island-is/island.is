@@ -18,7 +18,9 @@ import { primarySchoolKeyInfoMessages as kim } from '../../../../../lib/messages
 import { EducationPaths } from '../../../../../lib/paths'
 import { SectionError } from '../SectionError'
 import { useAllergyOptions } from '../useAllergyOptions'
+import type { AllergySelectOption } from '../useAllergyOptions'
 import { usePrimarySchoolKeyInfo } from '../usePrimarySchoolKeyInfo'
+import { mmsErrorMessage } from '../mmsError'
 import { AllergyCategory } from '../types'
 import type { Allergy, HealthProfileUpdateInput } from '../types'
 
@@ -31,20 +33,19 @@ import type { Allergy, HealthProfileUpdateInput } from '../types'
  * `type` into food / other, the two categories MMS actually serves (values
  * match AllergyCategory). See useAllergyOptions.
  *
- * handleSave already assembles the whole HealthProfileUpdateInput (allergies
- * rebuilt from the three id lists tagged by category, epipen forced false when
- * no allergy is selected).
- *
- * TODO(MMS v0.2): wire the PATCH — replace the `void payload` in handleSave with
- * the generated mutation and surface error.requestId on failure.
+ * handleSave assembles the whole HealthProfileUpdateInput (allergies rebuilt
+ * from the two id lists tagged by category, epipen forced false when no allergy
+ * is selected) and replaces the profile in one PATCH.
  */
 export const HealthProfileEdit = () => {
   useNamespaces('sp.education-primary-school')
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const { studentId } = useParams<{ studentId: string }>()
-  const { healthProfile, saveHealthProfile, saving } =
-    usePrimarySchoolKeyInfo(studentId, ['healthProfile'])
+  const { healthProfile, saveHealthProfile, saving } = usePrimarySchoolKeyInfo(
+    studentId,
+    ['healthProfile'],
+  )
   const { data: profile, loading, error } = healthProfile
 
   // Allergy options come from MMS `GET /key-options`; `type` splits them into
@@ -57,13 +58,42 @@ export const HealthProfileEdit = () => {
 
   const optionsInCategory = (category: AllergyCategory) =>
     allergyOptions.filter((option) => option.type === category)
-  const foodAllergyOptions = optionsInCategory(AllergyCategory.Food)
-  const otherAllergyOptions = optionsInCategory(AllergyCategory.Other)
 
   const allergyIdsInCategory = (category: AllergyCategory) =>
     (profile?.allergies ?? [])
       .filter((allergy) => allergy.type === category)
       .map((allergy) => allergy.id)
+
+  // An allergy the child has registered but the lookup list no longer carries
+  // would otherwise sit in state without appearing in the select: the guardian
+  // sees an empty field under "Já" and drops the allergy the moment they touch
+  // it. Keep it selectable, labelled with whatever MMS stored it under.
+  const storedOptionsInCategory = (
+    category: AllergyCategory,
+  ): AllergySelectOption[] =>
+    allergyOptionsLoading
+      ? []
+      : (profile?.allergies ?? [])
+          .filter(
+            (allergy) =>
+              allergy.type === category &&
+              !allergyOptions.some((option) => option.value === allergy.id),
+          )
+          .map((allergy) => ({
+            value: allergy.id,
+            label: allergy.label || allergy.id,
+            code: '',
+            type: category,
+          }))
+
+  const foodAllergyOptions = [
+    ...optionsInCategory(AllergyCategory.Food),
+    ...storedOptionsInCategory(AllergyCategory.Food),
+  ]
+  const otherAllergyOptions = [
+    ...optionsInCategory(AllergyCategory.Other),
+    ...storedOptionsInCategory(AllergyCategory.Other),
+  ]
 
   const [foodAllergyIds, setFoodAllergyIds] = useState<string[]>(
     allergyIdsInCategory(AllergyCategory.Food),
@@ -139,7 +169,7 @@ export const HealthProfileEdit = () => {
   )
 
   // The adrenaline pen is only meaningful when at least one allergy is
-  // registered (ticket §3).
+  // registered (contract §4.5).
   const hasAnyAllergy = foodAllergyIds.length + otherAllergyIds.length > 0
 
   // Value-based signature of the current form state, built the same way as
@@ -172,12 +202,15 @@ export const HealthProfileEdit = () => {
   const handleSave = async () => {
     if (!isValid) return
 
-    // Rebuild allergies[] (whole document, per ticket) from the two id lists.
-    // The hook reduces these to ids for the PATCH body (contract §4.5), so an
-    // id is sent whether or not the lookup list still carries a label for it —
+    // Rebuild allergies[] (the whole document, per contract §4.5) from the two
+    // id lists. The hook reduces these to ids for the PATCH body, so an id is
+    // sent whether or not the lookup list still carries a label for it —
     // filtering on the lookup would silently drop a registered allergy.
     const optionById = new Map(
-      allergyOptions.map((option) => [option.value, option]),
+      [...foodAllergyOptions, ...otherAllergyOptions].map((option) => [
+        option.value,
+        option,
+      ]),
     )
     const toAllergies = (ids: string[], category: AllergyCategory): Allergy[] =>
       ids.map((id) => ({
@@ -191,7 +224,7 @@ export const HealthProfileEdit = () => {
         ...toAllergies(foodAllergyIds, AllergyCategory.Food),
         ...toAllergies(otherAllergyIds, AllergyCategory.Other),
       ],
-      // When no allergy is selected, epipen must be sent as false (ticket §3).
+      // When no allergy is selected, epipen must be sent as false (§4.5).
       epipen: hasAnyAllergy ? epipen : false,
       medicalDiagnoses,
       medicationAssistance,
@@ -201,8 +234,8 @@ export const HealthProfileEdit = () => {
       await saveHealthProfile(payload)
       toast.success(formatMessage(kim.saveSuccess))
       navigate(overviewPath)
-    } catch {
-      toast.error(formatMessage(kim.saveError))
+    } catch (error) {
+      toast.error(formatMessage(mmsErrorMessage(error)))
     }
   }
 
