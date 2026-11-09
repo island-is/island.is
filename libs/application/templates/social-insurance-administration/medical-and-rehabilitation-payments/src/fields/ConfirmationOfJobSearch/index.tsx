@@ -64,11 +64,6 @@ export const ConfirmationOfJobSearch: FC<FieldBaseProps> = ({
       return [false, '']
     }
 
-    // Without a reference ID there is nothing to attach the confirmation to
-    if (!data?.socialInsuranceConfirmationOfJobSearch?.referenceId) {
-      return [false, '']
-    }
-
     // In all other cases, allow submission
     return [true, null]
   })
