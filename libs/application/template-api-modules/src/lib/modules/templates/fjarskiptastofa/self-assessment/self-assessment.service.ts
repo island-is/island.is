@@ -1,4 +1,6 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ApplicationTypes, StaticText } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -27,6 +29,7 @@ export class FjarskiptastofaSelfAssessmentService extends BaseTemplateApiService
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly selfAssessmentClient: FjarskiptastofaSelfAssessmentClientService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     super(ApplicationTypes.FJARSKIPTASTOFA_SELF_ASSESSMENT)
   }
@@ -39,6 +42,7 @@ export class FjarskiptastofaSelfAssessmentService extends BaseTemplateApiService
     const ssn = application.applicant
 
     const { isSupervisedEntity, accessWindowOpen } = await this.callUpstream(
+      'getIsRegulated',
       () => this.selfAssessmentClient.isRegulated(auth, ssn),
       m.apiErrors.isRegulatedTitle,
       m.apiErrors.isRegulatedSummary,
@@ -55,6 +59,7 @@ export class FjarskiptastofaSelfAssessmentService extends BaseTemplateApiService
     currentUserLocale,
   }: TemplateApiModuleActionProps) {
     const [categoriesResponse, questionsResponse] = await this.callUpstream(
+      'getQuestionsAndCategories',
       () =>
         Promise.all([
           this.selfAssessmentClient.getQuestionCategories(
@@ -139,6 +144,7 @@ export class FjarskiptastofaSelfAssessmentService extends BaseTemplateApiService
     }
 
     return this.callUpstream(
+      'submitSelfAssessment',
       () => this.selfAssessmentClient.submitAnswers(auth, payload),
       m.apiErrors.submitTitle,
       m.apiErrors.submitSummary,
@@ -156,18 +162,39 @@ export class FjarskiptastofaSelfAssessmentService extends BaseTemplateApiService
    * to the applicant. Fjarskiptastofa's problem bodies can quote the submitted
    * answers and remarks, which is exactly the data this application must keep
    * out of the logs - the same reason the client's logger is wrapped in
-   * redactProblemBody. Swallowing the cause here is deliberate: enhanced fetch
-   * has already logged the request failure (with the problem field redacted).
+   * redactProblemBody.
+   *
+   * The failure is logged by shape only (which call, what kind of error, and
+   * the HTTP status when there is one) so a problem is still traceable. Enhanced
+   * fetch already logs HTTP failures with the problem field redacted; what it
+   * does not cover is everything else, such as a malformed response or a parse
+   * error, which would otherwise disappear without a trace. `problem`, `body`
+   * and the request payload are never logged.
    */
   private async callUpstream<T>(
+    action: string,
     request: () => Promise<T>,
     title: StaticText,
     summary: StaticText,
   ): Promise<T> {
     try {
       return await request()
-    } catch {
+    } catch (error) {
+      this.logger.warn('Fjarskiptastofa self-assessment request failed', {
+        action,
+        errorName: error instanceof Error ? error.name : typeof error,
+        // Present on a FetchError; absent for a non-HTTP failure.
+        status: getErrorStatus(error),
+      })
+
       throw new TemplateApiError({ title, summary }, 500)
     }
   }
+}
+
+// Reads the HTTP status off a FetchError without widening the error type, so a
+// non-HTTP failure simply has no status rather than leaking other fields.
+const getErrorStatus = (error: unknown): number | undefined => {
+  const status = (error as { status?: unknown } | null)?.status
+  return typeof status === 'number' ? status : undefined
 }

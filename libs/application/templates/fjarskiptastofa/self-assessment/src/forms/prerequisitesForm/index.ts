@@ -9,7 +9,13 @@ import {
   buildSubmitField,
   buildTitleField,
 } from '@island.is/application/core'
-import { DefaultEvents, FormModes } from '@island.is/application/types'
+import {
+  ApplicationConfigurations,
+  ApplicationTypes,
+  DefaultEvents,
+  FormModes,
+} from '@island.is/application/types'
+import { ProjectBasePath } from '@island.is/shared/constants'
 import { CoFundedByEU } from '../../assets/CoFundedByEU'
 import { m } from '../../lib/messages'
 import { getEligibilityState } from '../../utils/eligibility'
@@ -46,11 +52,29 @@ export const Prerequisites = buildForm({
             }),
             // A failed lookup is a separate message: we do not know whether the
             // company is eligible, so telling it that it is not would be wrong.
+            //
+            // The link matters. getIsRegulated only runs as onEntry when the
+            // application is created, so reloading this page just shows the
+            // same stored failure and there is nothing to retry. Prerequisites
+            // applications are unlisted (EphemeralStateLifeCycle), so the entry
+            // page finds no application to resume, creates a fresh one and runs
+            // the lookup again. That is the only way back from a failure here.
             buildAlertMessageField({
               id: 'eligibilityLookupError',
               alertType: 'error',
               title: m.eligibilityLookup.errorTitle,
               message: m.eligibilityLookup.errorDescription,
+              links: [
+                {
+                  title: m.eligibilityLookup.startOver,
+                  url: `${ProjectBasePath.ApplicationSystem}/${
+                    ApplicationConfigurations[
+                      ApplicationTypes.FJARSKIPTASTOFA_SELF_ASSESSMENT
+                    ].slug
+                  }`,
+                  isExternal: false,
+                },
+              ],
               condition: (_answers, externalData) =>
                 getEligibilityState(externalData) === 'lookupFailed',
             }),

@@ -44,12 +44,18 @@ const buildApplication = (data: {
   answers?: FormValue
   externalData?: ExternalData
   state?: string
+  applicant?: string
 }): Application => {
-  const { answers = {}, externalData = {}, state = States.DRAFT } = data
+  const {
+    answers = {},
+    externalData = {},
+    state = States.DRAFT,
+    applicant = COMPANY,
+  } = data
   return {
     id: '12345',
     assignees: [],
-    applicant: COMPANY,
+    applicant,
     typeId: ApplicationTypes.FJARSKIPTASTOFA_SELF_ASSESSMENT,
     created: new Date(),
     status: ApplicationStatus.IN_PROGRESS,
@@ -164,11 +170,21 @@ describe('Fjarskiptastofa self-assessment template', () => {
   })
 
   describe('mapUserToRole', () => {
-    it('should map an individual national id to the notAllowed role', () => {
-      const application = buildApplication({})
+    it('should map an individual applicant to the notAllowed role', () => {
+      const application = buildApplication({ applicant: INDIVIDUAL })
       expect(template.mapUserToRole(INDIVIDUAL, application)).toBe(
         Roles.NOTALLOWED,
       )
+    })
+
+    // The applicant check has to run before the isCompany check. The access
+    // service grants access to anyone mapUserToRole hands a role to, and
+    // NOTALLOWED has read: 'all' in the prerequisites state, so returning it
+    // for a stranger would expose another company's self-assessment.
+    it('should not give a role to an individual who is not the applicant', () => {
+      expect(
+        template.mapUserToRole(INDIVIDUAL, buildApplication({})),
+      ).toBeUndefined()
     })
 
     it('should map a company to the applicant role so it can open the prerequisites screen', () => {

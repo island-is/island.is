@@ -198,22 +198,24 @@ const template: ApplicationTemplate<
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    // Only companies (or delegated actors) may access the application; everyone
-    // else gets the "not allowed" screen. Every company can open the
-    // prerequisites screen regardless of whether it is a supervised entity; the
-    // regulation/access-window check runs in the isRegulated data provider on
-    // entry and surfaces an error on that screen when the company is not eligible.
-    if (!isCompany(nationalId)) {
-      return Roles.NOTALLOWED
-    }
-
-    // Defence in depth: the access service falls back to mapUserToRole for
-    // users who do not own the application, so this is the only place that ties
-    // the applicant role to the company the application belongs to. A
-    // self-assessment contains the company's own security posture and must not
-    // be readable by another company that happens to be logged in.
+    // This check has to come first. ApplicationAccessService falls back to
+    // mapUserToRole for users who do not own the application and grants access
+    // to anyone it hands a role to, so returning any role here - including
+    // NOTALLOWED, which has read: 'all' in the prerequisites state - would let
+    // a stranger read someone else's self-assessment. A self-assessment
+    // contains the company's own security posture, so no role for anyone but
+    // the applicant.
     if (nationalId !== application.applicant) {
       return undefined
+    }
+
+    // Only companies (or delegated actors) may fill this out; an applicant that
+    // is not a company gets the "not allowed" screen. Every company can open
+    // the prerequisites screen regardless of whether it is a supervised entity;
+    // the regulation/access-window check runs in the isRegulated data provider
+    // on entry and surfaces an error on that screen when it is not eligible.
+    if (!isCompany(nationalId)) {
+      return Roles.NOTALLOWED
     }
 
     return Roles.APPLICANT

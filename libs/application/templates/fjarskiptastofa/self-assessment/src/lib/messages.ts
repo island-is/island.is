@@ -120,8 +120,14 @@ export const m = {
     errorDescription: {
       id: 'fjs.sa.application:eligibilityLookup.error.description',
       defaultMessage:
-        'Ekki náðist samband við Fjarskiptastofu til að athuga hvort fyrirtækið sé á lista yfir rekstraraðila nauðsynlegrar þjónustu. Þetta þýðir ekki að fyrirtækið hafi ekki aðgang að sjálfsmatinu. Vinsamlegast reyndu aftur síðar.',
+        'Ekki náðist samband við Fjarskiptastofu til að athuga hvort fyrirtækið sé á lista yfir rekstraraðila nauðsynlegrar þjónustu. Þetta þýðir ekki að fyrirtækið hafi ekki aðgang að sjálfsmatinu. Uppflettingin fer aðeins fram þegar umsóknin er stofnuð, svo það dugar ekki að endurhlaða þessa síðu. Hefjið nýja umsókn til að reyna aftur.',
       description: 'Eligibility lookup failure description',
+    },
+    startOver: {
+      id: 'fjs.sa.application:eligibilityLookup.error.startOver',
+      defaultMessage: 'Hefja nýja umsókn',
+      description:
+        'Link on the eligibility lookup failure alert back to the application entry page, which creates a new application and runs the check again',
     },
   }),
   // Messages for errors raised by the template api service. They replace the

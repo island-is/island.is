@@ -7,6 +7,7 @@ import { createApplication } from '@island.is/application/testing'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { Test, TestingModule } from '@nestjs/testing'
 import { FjarskiptastofaSelfAssessmentClientService } from '@island.is/clients/fjarskiptastofa/self-assessment'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { m } from '@island.is/application/templates/fjarskiptastofa/self-assessment'
 import { SharedTemplateApiService } from '../../../shared'
@@ -21,12 +22,16 @@ const ACCESS_WINDOW_CLOSED = ['5105160160', '6203170390']
 describe('FjarskiptastofaSelfAssessmentService', () => {
   let service: FjarskiptastofaSelfAssessmentService
   let client: FjarskiptastofaSelfAssessmentClientService
+  let logger: { warn: jest.Mock; error: jest.Mock; info: jest.Mock }
 
   beforeEach(async () => {
+    logger = { warn: jest.fn(), error: jest.fn(), info: jest.fn() }
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         FjarskiptastofaSelfAssessmentService,
         { provide: SharedTemplateApiService, useValue: {} },
+        { provide: LOGGER_PROVIDER, useValue: logger },
         {
           provide: FjarskiptastofaSelfAssessmentClientService,
           useValue: {
@@ -270,6 +275,24 @@ describe('FjarskiptastofaSelfAssessmentService', () => {
           title: m.apiErrors.submitTitle,
           summary: m.apiErrors.submitSummary,
         })
+      })
+
+      it('should log the failure by shape only, never its contents', async () => {
+        await submit(ACCESS_WINDOW_OPEN[0]).catch(() => undefined)
+
+        expect(logger.warn).toHaveBeenCalledWith(
+          'Fjarskiptastofa self-assessment request failed',
+          {
+            action: 'submitSelfAssessment',
+            errorName: 'FetchError',
+            status: 500,
+          },
+        )
+
+        // Whatever was logged must not quote the applicant's answers.
+        const logged = JSON.stringify(logger.warn.mock.calls)
+        expect(logged).not.toContain('MFA on the admin VPN')
+        expect(logged).not.toContain('Could not store remark')
       })
 
       it('should not carry the upstream problem body on the thrown error', async () => {
