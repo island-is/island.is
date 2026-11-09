@@ -1,4 +1,5 @@
 import { FormSystemField } from '@island.is/api/schema'
+import { ApplicantTypesEnum } from '@island.is/form-system/enums'
 import { getValues } from '../../../lib/getValue'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -6,7 +7,15 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 interface Props {
   item: FormSystemField
+  labelsOnly?: boolean
 }
+
+const applicantTypesWithoutContactDetails = new Set([
+  ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION,
+  ApplicantTypesEnum.LEGAL_ENTITY,
+  ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER,
+  ApplicantTypesEnum.WARD_OF_LEGAL_GUARDIAN,
+])
 
 const baseApplicantValues = [
   'nationalId',
@@ -51,7 +60,10 @@ const valueTranslations: Record<ApplicantKey, { is: string; en: string }> = {
   },
 }
 
-export const ApplicantDisplay = ({ item }: Props) => {
+export const ApplicantDisplay = ({ item, labelsOnly = false }: Props) => {
+  const hideContactDetails = applicantTypesWithoutContactDetails.has(
+    item.fieldSettings?.applicantType ?? '',
+  )
   const displayValues = item.fieldSettings?.isAddressRequired
     ? applicantValues
     : baseApplicantValues
@@ -67,9 +79,17 @@ export const ApplicantDisplay = ({ item }: Props) => {
       height="full"
     >
       {displayValues.map((key) => {
+        if (hideContactDetails && (key === 'email' || key === 'phoneNumber'))
+          return null
+        if (
+          key === 'phoneNumber' &&
+          item.fieldSettings?.isPhoneRequired === false
+        )
+          return null
         let value = rawValues[key]
-        if (typeof value === 'undefined' || value === null) return null
-        if (key === 'phoneNumber')
+        if (!labelsOnly && (typeof value === 'undefined' || value === null))
+          return null
+        if (!labelsOnly && key === 'phoneNumber')
           value =
             parsePhoneNumberFromString(
               value as string,
@@ -79,9 +99,11 @@ export const ApplicantDisplay = ({ item }: Props) => {
             <Text as="p" fontWeight="semiBold">
               {valueTranslations[key][lang]}
             </Text>
-            <Box marginLeft={2}>
-              <Text fontWeight="light">{String(value)}</Text>
-            </Box>
+            {!labelsOnly && (
+              <Box marginLeft={2}>
+                <Text fontWeight="light">{String(value)}</Text>
+              </Box>
+            )}
           </Stack>
         )
       })}
