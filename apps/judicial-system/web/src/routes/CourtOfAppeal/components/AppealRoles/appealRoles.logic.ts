@@ -2,6 +2,7 @@ import {
   APPEAL_JUDGE_COUNT,
   getAppealJudges,
   getAppealJudgeUserIds,
+  isSameAppealBench,
   MAX_APPEAL_JUDGE_COUNT,
 } from '@island.is/judicial-system/types'
 import type {
@@ -146,9 +147,6 @@ export const getJudgeOptions = (
     .map((judge) => ({ label: judge.name ?? '', value: judge.id, judge }))
 }
 
-const isSameBench = (a: string[], b: string[]): boolean =>
-  a.length === b.length && a.every((id, index) => id === b[index])
-
 export const isAnyRoleUnfilled = ({
   appealAssistant,
   judges,
@@ -162,7 +160,10 @@ export const hasUnsavedRoleChanges = (
   { appealAssistant, judges }: AppealRoles,
 ): boolean =>
   appealAssistant?.id !== appealCase?.appealAssistant?.id ||
-  !isSameBench(getSelectedJudgeIds(judges), getAppealJudgeUserIds(appealCase))
+  !isSameAppealBench(
+    getSelectedJudgeIds(judges),
+    getAppealJudgeUserIds(appealCase),
+  )
 
 // The update to send: only the roles that changed. The bench is sent whole,
 // in order, whenever any seat changed.
@@ -181,7 +182,7 @@ export const buildAppealCaseUpdate = (
 
   const judgeIds = getSelectedJudgeIds(judges)
 
-  if (!isSameBench(judgeIds, getAppealJudgeUserIds(appealCase))) {
+  if (!isSameAppealBench(judgeIds, getAppealJudgeUserIds(appealCase))) {
     update.appealJudgeIds = judgeIds
   }
 

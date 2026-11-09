@@ -162,6 +162,11 @@ export const getAppealJudgeUserIds = (
     .map((judge) => judge.userId ?? judge.user?.id)
     .filter((id): id is string => Boolean(id))
 
+// Whether two benches are the same judges in the same order. A reordered
+// bench changes who presides, so it counts as a change.
+export const isSameAppealBench = (a: string[], b: string[]): boolean =>
+  a.length === b.length && a.every((id, index) => id === b[index])
+
 // Whether the bench is complete: at least APPEAL_JUDGE_COUNT judges are
 // registered. Counts rows rather than loaded users so an unloaded user
 // association does not read as a missing judge.

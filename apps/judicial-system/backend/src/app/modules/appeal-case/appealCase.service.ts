@@ -37,6 +37,7 @@ import {
   isProsecutionUser,
   isPublicProsecutionOfficeUser,
   isPublicProsecutionUser,
+  isSameAppealBench,
   verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
 
@@ -1120,7 +1121,7 @@ export class AppealCaseService {
     const previousJudgeIds = getAppealJudgeUserIds(appealCase)
     const judgesChanged =
       Array.isArray(appealJudgeIds) &&
-      !this.isSameBench(appealJudgeIds, previousJudgeIds)
+      !isSameAppealBench(appealJudgeIds, previousJudgeIds)
     const nextJudgeIds = judgesChanged ? appealJudgeIds : previousJudgeIds
 
     if (judgesChanged) {
@@ -1195,12 +1196,6 @@ export class AppealCaseService {
     }
 
     return updatedAppealCase
-  }
-
-  // The same judges in the same order: a reordered bench changes who presides,
-  // so it counts as a change.
-  private isSameBench(a: string[], b: string[]): boolean {
-    return a.length === b.length && a.every((id, index) => id === b[index])
   }
 
   async createEventLog(
