@@ -37,6 +37,9 @@ export class FieldSettingsInput {
   @Field(() => Int, { nullable: true })
   maxAmount?: number
 
+  @Field(() => Boolean, { nullable: true })
+  notIncludedInSumbox?: boolean
+
   @Field(() => Int, { nullable: true })
   year?: number
 
