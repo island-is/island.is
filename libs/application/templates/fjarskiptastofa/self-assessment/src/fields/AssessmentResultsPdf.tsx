@@ -2,6 +2,7 @@ import { FC } from 'react'
 import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer'
 import { getValueViaPath } from '@island.is/application/core'
 import { Application, FormatMessage } from '@island.is/application/types'
+import { theme } from '@island.is/island-ui/theme'
 import { m } from '../lib/messages'
 import {
   getAnswerLabel,
@@ -154,41 +155,42 @@ export const AssessmentResultsPdf: FC<AssessmentResultsPdfProps> = ({
             <Text style={styles.sectionTitle}>
               {formatMessage(m.resultsPdf.answersSectionTitle)}
             </Text>
-            {groupQuestionsByCategory(questionsData).map(
-              ({ category, questions }) => {
-                if (questions.length === 0) return null
-                return (
-                  <View key={category.id} style={styles.categoryBlock}>
-                    <Text style={styles.categoryTitle}>{category.label}</Text>
-                    {questions.map((question) => {
-                      const answer = answers[`q${question.id}`]
-                      const answerText = getAnswerLabel(answer?.answerValue)
-                      return (
-                        <View key={question.id} style={styles.question}>
-                          <Text style={styles.questionText}>
-                            {question.questionText}
+            {groupQuestionsByCategory(
+              questionsData,
+              formatMessage(m.assessment.otherCategory),
+            ).map(({ category, questions }) => {
+              if (questions.length === 0) return null
+              return (
+                <View key={category.id} style={styles.categoryBlock}>
+                  <Text style={styles.categoryTitle}>{category.label}</Text>
+                  {questions.map((question) => {
+                    const answer = answers[`q${question.id}`]
+                    const answerText = getAnswerLabel(answer?.answerValue)
+                    return (
+                      <View key={question.id} style={styles.question}>
+                        <Text style={styles.questionText}>
+                          {question.questionText}
+                        </Text>
+                        <Text style={styles.fieldLabel}>
+                          {`${formatMessage(m.resultsPdf.answerColumn)}: `}
+                          <Text style={styles.fieldValue}>
+                            {answerText ? formatMessage(answerText) : '-'}
                           </Text>
+                        </Text>
+                        {answer?.remark ? (
                           <Text style={styles.fieldLabel}>
-                            {`${formatMessage(m.resultsPdf.answerColumn)}: `}
+                            {`${formatMessage(m.resultsPdf.remarkColumn)}: `}
                             <Text style={styles.fieldValue}>
-                              {answerText ? formatMessage(answerText) : '-'}
+                              {answer.remark}
                             </Text>
                           </Text>
-                          {answer?.remark ? (
-                            <Text style={styles.fieldLabel}>
-                              {`${formatMessage(m.resultsPdf.remarkColumn)}: `}
-                              <Text style={styles.fieldValue}>
-                                {answer.remark}
-                              </Text>
-                            </Text>
-                          ) : null}
-                        </View>
-                      )
-                    })}
-                  </View>
-                )
-              },
-            )}
+                        ) : null}
+                      </View>
+                    )
+                  })}
+                </View>
+              )
+            })}
           </View>
         )}
       </Page>
@@ -207,11 +209,6 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: 20,
   },
-  institution: {
-    fontSize: 11,
-    color: '#595959',
-    marginBottom: 4,
-  },
   title: {
     fontSize: 20,
     fontWeight: 600,
@@ -220,14 +217,9 @@ const styles = StyleSheet.create({
   meta: {
     marginTop: 6,
   },
-  metaStrong: {
-    fontSize: 12,
-    fontWeight: 600,
-    marginBottom: 2,
-  },
   metaLine: {
     fontSize: 11,
-    color: '#595959',
+    color: theme.color.dark300,
   },
   section: {
     marginBottom: 24,
@@ -244,13 +236,13 @@ const styles = StyleSheet.create({
   tableHeaderRow: {
     flexDirection: 'row',
     borderBottomWidth: 1,
-    borderBottomColor: '#000000',
+    borderBottomColor: theme.color.dark400,
     paddingBottom: 4,
   },
   tableRow: {
     flexDirection: 'row',
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e5e5',
+    borderBottomColor: theme.color.dark200,
     paddingVertical: 4,
   },
   cell: {
@@ -286,10 +278,10 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   fieldLabel: {
-    color: '#595959',
+    color: theme.color.dark300,
   },
   fieldValue: {
-    color: '#000000',
+    color: theme.color.dark400,
   },
 })
 

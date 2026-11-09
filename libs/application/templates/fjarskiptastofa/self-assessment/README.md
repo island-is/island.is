@@ -78,7 +78,7 @@ field. A progress meter tracks the selected category, and answering a question
 collapses it and scrolls to the next one. Answers are saved as the applicant
 goes, and the screen blocks moving on while anything is unanswered.
 
-**Overview** (`AssessmentOverview`, `getOverviewItems`). Company name plus every
+**Overview** (`AssessmentOverview`). Company name plus every
 question grouped under its category with the chosen answer. Edit buttons jump
 back to a specific question (the target id is passed through `sessionStorage`,
 see `utils/focusQuestion.ts`, so it is not persisted as application data). The

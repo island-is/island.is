@@ -28,6 +28,11 @@ export enum AssessmentAnswer {
 // Key in externalData where the API-driven categories and questions are stored.
 export const QUESTIONS_EXTERNAL_DATA_ID = 'selfAssessmentQuestions'
 
+// Synthetic category the fallback group uses for questions whose categoryId is
+// not in the API's category list. Negative so it can never collide with a real
+// category id from Fjarskiptastofa.
+export const UNCATEGORISED_CATEGORY_ID = -1
+
 // Key in externalData where the Fjarskiptastofa "is regulated" check is stored.
 // Fetched on entry to the prerequisites state so the company's access window can
 // gate who is allowed to continue.

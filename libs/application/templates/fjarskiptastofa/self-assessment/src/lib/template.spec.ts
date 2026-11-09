@@ -29,6 +29,17 @@ const regulatedExternalData = (
   },
 })
 
+// How the action runner stores an onEntry provider that threw: the flags are
+// missing rather than false, so this is an unknown verdict, not a "no".
+const failedLookupExternalData = (): ExternalData => ({
+  [IS_REGULATED_EXTERNAL_DATA_ID]: {
+    data: {},
+    date: new Date(),
+    status: 'failure',
+    statusCode: 500,
+  },
+})
+
 const buildApplication = (data: {
   answers?: FormValue
   externalData?: ExternalData
@@ -84,6 +95,26 @@ describe('Fjarskiptastofa self-assessment template', () => {
               accessWindowOpen,
             ),
           }),
+          template,
+        )
+
+        const [hasChanged, newState] = helper.changeState({
+          type: DefaultEvents.SUBMIT,
+        })
+
+        expect(hasChanged).toBe(false)
+        expect(newState).toBe(States.PREREQUISITES)
+      },
+    )
+
+    it.each([
+      ['the isRegulated lookup failed', failedLookupExternalData()],
+      ['the isRegulated provider never ran', {} as ExternalData],
+    ])(
+      'should NOT transition from prerequisites to draft when %s',
+      (_label, externalData) => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({ state: States.PREREQUISITES, externalData }),
           template,
         )
 
@@ -163,6 +194,22 @@ describe('Fjarskiptastofa self-assessment template', () => {
       expect(template.mapUserToRole(COMPANY, notSupervised)).toBe(
         Roles.APPLICANT,
       )
+    })
+
+    // The access service falls back to mapUserToRole for users who do not own
+    // the application, so this is what keeps one company out of another
+    // company's self-assessment.
+    it('should not give a role to a company that is not the applicant', () => {
+      // createNationalId is random, so keep drawing until it differs from the
+      // applicant rather than letting a collision make the test flaky.
+      let otherCompany = createNationalId('company')
+      while (otherCompany === COMPANY) {
+        otherCompany = createNationalId('company')
+      }
+
+      expect(
+        template.mapUserToRole(otherCompany, buildApplication({})),
+      ).toBeUndefined()
     })
   })
 })

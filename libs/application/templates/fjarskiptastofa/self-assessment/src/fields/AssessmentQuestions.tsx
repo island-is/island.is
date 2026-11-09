@@ -89,8 +89,14 @@ export const AssessmentQuestions: FC<FieldBaseProps> = ({
   )
 
   const groups = useMemo(
-    () => (questionsData ? groupQuestionsByCategory(questionsData) : []),
-    [questionsData],
+    () =>
+      questionsData
+        ? groupQuestionsByCategory(
+            questionsData,
+            formatMessage(m.assessment.otherCategory),
+          )
+        : [],
+    [questionsData, formatMessage],
   )
 
   // The "Halda áfram" button steps through categories one at a time: it advances

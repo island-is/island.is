@@ -111,6 +111,59 @@ export const m = {
       description: 'Not eligible description',
     },
   }),
+  eligibilityLookup: defineMessages({
+    errorTitle: {
+      id: 'fjs.sa.application:eligibilityLookup.error.title',
+      defaultMessage: 'Ekki tókst að sannreyna aðgang að sjálfsmati',
+      description: 'Eligibility lookup failure title',
+    },
+    errorDescription: {
+      id: 'fjs.sa.application:eligibilityLookup.error.description',
+      defaultMessage:
+        'Ekki náðist samband við Fjarskiptastofu til að athuga hvort fyrirtækið sé á lista yfir rekstraraðila nauðsynlegrar þjónustu. Þetta þýðir ekki að fyrirtækið hafi ekki aðgang að sjálfsmatinu. Vinsamlegast reyndu aftur síðar.',
+      description: 'Eligibility lookup failure description',
+    },
+  }),
+  // Messages for errors raised by the template api service. They replace the
+  // generic "data provider error" with something the applicant can act on, and
+  // they are deliberately the only thing we surface from a failed request to
+  // Fjarskiptastofa: the upstream problem body can quote submitted answers, so
+  // it must not reach the client or the logs.
+  apiErrors: defineMessages({
+    isRegulatedTitle: {
+      id: 'fjs.sa.application:apiErrors.isRegulated.title',
+      defaultMessage: 'Ekki tókst að sannreyna aðgang að sjálfsmati',
+      description: 'isRegulated request failure title',
+    },
+    isRegulatedSummary: {
+      id: 'fjs.sa.application:apiErrors.isRegulated.summary',
+      defaultMessage:
+        'Ekki náðist samband við Fjarskiptastofu. Vinsamlegast reyndu aftur síðar.',
+      description: 'isRegulated request failure summary',
+    },
+    questionsTitle: {
+      id: 'fjs.sa.application:apiErrors.questions.title',
+      defaultMessage: 'Ekki tókst að sækja spurningalista',
+      description: 'Questions request failure title',
+    },
+    questionsSummary: {
+      id: 'fjs.sa.application:apiErrors.questions.summary',
+      defaultMessage:
+        'Ekki tókst að sækja spurningar sjálfsmatsins frá Fjarskiptastofu. Vinsamlegast reyndu aftur síðar.',
+      description: 'Questions request failure summary',
+    },
+    submitTitle: {
+      id: 'fjs.sa.application:apiErrors.submit.title',
+      defaultMessage: 'Ekki tókst að senda sjálfsmatið',
+      description: 'Submit request failure title',
+    },
+    submitSummary: {
+      id: 'fjs.sa.application:apiErrors.submit.summary',
+      defaultMessage:
+        'Ekki tókst að senda sjálfsmatið til Fjarskiptastofu. Svörin þín eru vistuð, vinsamlegast reyndu aftur síðar.',
+      description: 'Submit request failure summary',
+    },
+  }),
   shared: defineMessages({
     answerYes: {
       id: 'fjs.sa.application:shared.answer.yes',
@@ -203,6 +256,12 @@ export const m = {
       defaultMessage:
         'Ekki tókst að vista svörin þín. Reyndu aftur eða endurhladdu síðuna.',
       description: 'Assessment save error text',
+    },
+    otherCategory: {
+      id: 'fjs.sa.application:assessment.otherCategory',
+      defaultMessage: 'Aðrar spurningar',
+      description:
+        'Heading for questions whose category is missing from the API response',
     },
     requiredError: {
       id: 'fjs.sa.application:assessment.requiredError',

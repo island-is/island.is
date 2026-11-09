@@ -1,4 +1,5 @@
 import {
+  Application,
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
@@ -48,7 +49,7 @@ const template: ApplicationTemplate<
   dataSchema,
   // Gate the application's visibility behind a feature flag so it can be rolled
   // out gradually (hidden until the flag is enabled per environment).
-  featureFlag: Features.fjarskiptastofaSelfAssessment,
+  featureFlag: Features.isFjarskiptastofaSelfAssessmentEnabled,
   // Only companies (or actors acting on their behalf) may apply
   allowedDelegations: [
     {
@@ -66,9 +67,10 @@ const template: ApplicationTemplate<
           status: FormModes.DRAFT,
           lifecycle: EphemeralStateLifeCycle,
           // Check whether the company is a supervised entity with an open access
-          // window on entry. The isRegulated provider throws when the company is
-          // not eligible, so the error shows on this prerequisites screen and the
-          // company cannot continue to the draft.
+          // window on entry. The provider returns both flags (it does not throw
+          // when the company is ineligible); the prerequisites screen reads them
+          // to show the matching alert, and canStartApplication below is what
+          // actually stops the company from continuing to the draft.
           onEntry: [SelfAssessmentIsRegulatedApi],
           roles: [
             {
@@ -192,7 +194,10 @@ const template: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(nationalId: string): ApplicationRole | undefined {
+  mapUserToRole(
+    nationalId: string,
+    application: Application,
+  ): ApplicationRole | undefined {
     // Only companies (or delegated actors) may access the application; everyone
     // else gets the "not allowed" screen. Every company can open the
     // prerequisites screen regardless of whether it is a supervised entity; the
@@ -200,6 +205,15 @@ const template: ApplicationTemplate<
     // entry and surfaces an error on that screen when the company is not eligible.
     if (!isCompany(nationalId)) {
       return Roles.NOTALLOWED
+    }
+
+    // Defence in depth: the access service falls back to mapUserToRole for
+    // users who do not own the application, so this is the only place that ties
+    // the applicant role to the company the application belongs to. A
+    // self-assessment contains the company's own security posture and must not
+    // be readable by another company that happens to be logged in.
+    if (nationalId !== application.applicant) {
+      return undefined
     }
 
     return Roles.APPLICANT

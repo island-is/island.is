@@ -120,7 +120,10 @@ export const AssessmentOverview: FC<FieldBaseProps> = ({
     return null
   }
 
-  const groups = groupQuestionsByCategory(questionsData)
+  const groups = groupQuestionsByCategory(
+    questionsData,
+    formatMessage(m.assessment.otherCategory),
+  )
 
   // Categories that still have at least one unanswered question, each paired with
   // its first unanswered question so the "go to category" button can jump there.

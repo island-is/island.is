@@ -7,6 +7,8 @@ import { createApplication } from '@island.is/application/testing'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { Test, TestingModule } from '@nestjs/testing'
 import { FjarskiptastofaSelfAssessmentClientService } from '@island.is/clients/fjarskiptastofa/self-assessment'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { m } from '@island.is/application/templates/fjarskiptastofa/self-assessment'
 import { SharedTemplateApiService } from '../../../shared'
 import { FjarskiptastofaSelfAssessmentService } from './self-assessment.service'
 
@@ -233,6 +235,55 @@ describe('FjarskiptastofaSelfAssessmentService', () => {
       await expect(submitWith(ACCESS_WINDOW_OPEN[0], answers)).rejects.toThrow()
 
       expect(client.submitAnswers).not.toHaveBeenCalled()
+    })
+
+    // The submitted answers and remarks are the sensitive part of this
+    // application. Fjarskiptastofa answers a failed request with problem+json
+    // that can quote them, and a FetchError carries that body on `.problem`.
+    // Because `problem` is what makes TemplateAPIService.handleError treat an
+    // error as a TemplateApiError, letting the FetchError through would both
+    // show it to the applicant and log it verbatim (`{ ...error }`) on 5xx.
+    describe('when the submit call fails', () => {
+      // Shaped like the FetchError enhanced fetch throws for a 5xx problem+json.
+      const upstreamError = () =>
+        Object.assign(new Error('Request failed with status code 500'), {
+          name: 'FetchError',
+          status: 500,
+          problem: {
+            type: 'https://fjarskiptastofa.is/problem',
+            title: 'Internal Server Error',
+            status: 500,
+            detail: "Could not store remark 'we have no MFA on the admin VPN'",
+          },
+          body: { remark: 'we have no MFA on the admin VPN' },
+        })
+
+      beforeEach(() => {
+        ;(client.submitAnswers as jest.Mock).mockRejectedValue(upstreamError())
+      })
+
+      it('should throw a TemplateApiError with our own message', async () => {
+        const error = await submit(ACCESS_WINDOW_OPEN[0]).catch((e) => e)
+
+        expect(error).toBeInstanceOf(TemplateApiError)
+        expect(error.problem.errorReason).toEqual({
+          title: m.apiErrors.submitTitle,
+          summary: m.apiErrors.submitSummary,
+        })
+      })
+
+      it('should not carry the upstream problem body on the thrown error', async () => {
+        const error = await submit(ACCESS_WINDOW_OPEN[0]).catch((e) => e)
+
+        // Nothing the applicant wrote may survive onto the error, including
+        // through the `{ ...error }` spread that handleError logs on 5xx.
+        const serialised = JSON.stringify({ ...error, problem: error.problem })
+
+        expect(serialised).not.toContain('MFA on the admin VPN')
+        expect(serialised).not.toContain('Could not store remark')
+        expect(error.body).toBeUndefined()
+        expect(error.problem.detail).toBeUndefined()
+      })
     })
 
     it('should not submit when the questions are missing from external data', async () => {

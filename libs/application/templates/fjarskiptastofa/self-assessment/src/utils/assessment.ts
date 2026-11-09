@@ -9,6 +9,7 @@ import {
   AssessmentAnswer,
   QUESTIONS_EXTERNAL_DATA_ID,
   SUBMIT_EXTERNAL_DATA_ID,
+  UNCATEGORISED_CATEGORY_ID,
 } from './constants'
 import { m } from '../lib/messages'
 import {
@@ -61,11 +62,45 @@ export const getAssessmentAnswers = (answers: FormValue): AssessmentAnswers =>
   getValueViaPath<AssessmentAnswers>(answers, ASSESSMENT_ANSWERS_ID) ?? {}
 
 // Questions grouped under their category, preserving the API's category order.
-export const groupQuestionsByCategory = (data: AssessmentQuestionsData) =>
-  data.categories.map((category) => ({
+//
+// Fjarskiptastofa's contract is that every question's categoryId refers to a
+// category in categoryList, but a question whose category is missing is still
+// grouped - under a fallback heading - rather than dropped. The overview
+// requires an answer for every question in externalData and the submit api
+// rejects an incomplete assessment, so a dropped question would be one the
+// applicant can never answer and never see listed as missing, leaving the
+// application stuck. Grouping the orphans keeps the set that is rendered and
+// the set that is required identical.
+export const groupQuestionsByCategory = (
+  data: AssessmentQuestionsData,
+  uncategorisedLabel: string,
+) => {
+  const groups = data.categories.map((category) => ({
     category,
     questions: data.questions.filter((q) => q.categoryId === category.id),
   }))
+
+  const knownCategoryIds = new Set(data.categories.map(({ id }) => id))
+  const uncategorised = data.questions.filter(
+    (q) => !knownCategoryIds.has(q.categoryId),
+  )
+
+  if (uncategorised.length === 0) {
+    return groups
+  }
+
+  return [
+    ...groups,
+    {
+      category: {
+        id: UNCATEGORISED_CATEGORY_ID,
+        label: uncategorisedLabel,
+        shortLabel: uncategorisedLabel,
+      },
+      questions: uncategorised,
+    },
+  ]
+}
 
 export const getAllQuestions = (
   data: AssessmentQuestionsData | undefined,

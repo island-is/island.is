@@ -17,6 +17,7 @@ import {
   AssessmentAnswer,
   QUESTIONS_EXTERNAL_DATA_ID,
   SUBMIT_EXTERNAL_DATA_ID,
+  UNCATEGORISED_CATEGORY_ID,
 } from './constants'
 import { m } from '../lib/messages'
 import { AssessmentQuestionsData, SelfAssessmentResult } from './types'
@@ -32,6 +33,9 @@ const questionsData: AssessmentQuestionsData = {
     { id: 20, categoryId: 2, questionText: 'Q20', tooltip: '' },
   ],
 }
+
+// Stands in for the translated "Aðrar spurningar" heading the fields pass in.
+const FALLBACK = 'Other questions'
 
 describe('assessment utils', () => {
   describe('answerKey', () => {
@@ -141,7 +145,7 @@ describe('assessment utils', () => {
 
   describe('groupQuestionsByCategory', () => {
     it('should group questions under their category preserving order', () => {
-      const grouped = groupQuestionsByCategory(questionsData)
+      const grouped = groupQuestionsByCategory(questionsData, FALLBACK)
       expect(grouped).toHaveLength(2)
       expect(grouped[0].category.id).toBe(1)
       expect(grouped[0].questions.map((q) => q.id)).toEqual([10, 11])
@@ -150,11 +154,64 @@ describe('assessment utils', () => {
     })
 
     it('should return an empty question list for a category with no questions', () => {
-      const grouped = groupQuestionsByCategory({
-        categories: [{ id: 3, label: 'Empty', shortLabel: 'E' }],
-        questions: [],
-      })
+      const grouped = groupQuestionsByCategory(
+        {
+          categories: [{ id: 3, label: 'Empty', shortLabel: 'E' }],
+          questions: [],
+        },
+        FALLBACK,
+      )
       expect(grouped[0].questions).toEqual([])
+    })
+
+    it('should not add a fallback group when every question has a known category', () => {
+      const grouped = groupQuestionsByCategory(questionsData, FALLBACK)
+      expect(
+        grouped.some((g) => g.category.id === UNCATEGORISED_CATEGORY_ID),
+      ).toBe(false)
+    })
+
+    // A question whose categoryId is missing from categoryList must stay
+    // answerable: the overview and the submit api both require an answer for
+    // every question in externalData, so dropping it would leave the applicant
+    // unable to finish with no category to go to.
+    it('should group questions with an unknown categoryId under a fallback category', () => {
+      const grouped = groupQuestionsByCategory(
+        {
+          ...questionsData,
+          questions: [
+            ...questionsData.questions,
+            { id: 99, categoryId: 404, questionText: 'Q99', tooltip: '' },
+          ],
+        },
+        FALLBACK,
+      )
+
+      expect(grouped).toHaveLength(3)
+      const fallback = grouped[grouped.length - 1]
+      expect(fallback.category.id).toBe(UNCATEGORISED_CATEGORY_ID)
+      expect(fallback.category.label).toBe(FALLBACK)
+      expect(fallback.questions.map((q) => q.id)).toEqual([99])
+    })
+
+    it('should render every question that getAllQuestions requires an answer for', () => {
+      const data: AssessmentQuestionsData = {
+        ...questionsData,
+        questions: [
+          ...questionsData.questions,
+          { id: 99, categoryId: 404, questionText: 'Q99', tooltip: '' },
+        ],
+      }
+
+      const renderedIds = groupQuestionsByCategory(data, FALLBACK)
+        .flatMap(({ questions }) => questions.map((q) => q.id))
+        .sort()
+
+      expect(renderedIds).toEqual(
+        getAllQuestions(data)
+          .map((q) => q.id)
+          .sort(),
+      )
     })
   })
 

@@ -19,8 +19,9 @@ export const UserProfileApiWithValidation = UserProfileApi.configure({
 })
 
 // Checks with Fjarskiptastofa whether the company is a supervised entity with an
-// open access window. Stored in externalData so the template can route a company
-// whose window is closed to the "not allowed" screen.
+// open access window. Both flags are stored in externalData: the prerequisites
+// screen shows an alert there when the company is ineligible (or when the lookup
+// itself failed), and canStartApplication blocks the transition to the draft.
 export const SelfAssessmentIsRegulatedApi = defineTemplateApi({
   action: 'getIsRegulated',
   externalDataId: IS_REGULATED_EXTERNAL_DATA_ID,

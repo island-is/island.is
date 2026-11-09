@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { ApplicationTypes } from '@island.is/application/types'
+import { ApplicationTypes, StaticText } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { m } from '@island.is/application/templates/fjarskiptastofa/self-assessment'
@@ -38,8 +38,11 @@ export class FjarskiptastofaSelfAssessmentService extends BaseTemplateApiService
   async getIsRegulated({ auth, application }: TemplateApiModuleActionProps) {
     const ssn = application.applicant
 
-    const { isSupervisedEntity, accessWindowOpen } =
-      await this.selfAssessmentClient.isRegulated(auth, ssn)
+    const { isSupervisedEntity, accessWindowOpen } = await this.callUpstream(
+      () => this.selfAssessmentClient.isRegulated(auth, ssn),
+      m.apiErrors.isRegulatedTitle,
+      m.apiErrors.isRegulatedSummary,
+    )
 
     return { isSupervisedEntity, accessWindowOpen }
   }
@@ -51,10 +54,18 @@ export class FjarskiptastofaSelfAssessmentService extends BaseTemplateApiService
     auth,
     currentUserLocale,
   }: TemplateApiModuleActionProps) {
-    const [categoriesResponse, questionsResponse] = await Promise.all([
-      this.selfAssessmentClient.getQuestionCategories(auth, currentUserLocale),
-      this.selfAssessmentClient.getQuestions(auth, currentUserLocale),
-    ])
+    const [categoriesResponse, questionsResponse] = await this.callUpstream(
+      () =>
+        Promise.all([
+          this.selfAssessmentClient.getQuestionCategories(
+            auth,
+            currentUserLocale,
+          ),
+          this.selfAssessmentClient.getQuestions(auth, currentUserLocale),
+        ]),
+      m.apiErrors.questionsTitle,
+      m.apiErrors.questionsSummary,
+    )
 
     return {
       categories: categoriesResponse.categoryList,
@@ -127,6 +138,36 @@ export class FjarskiptastofaSelfAssessmentService extends BaseTemplateApiService
       assessmentResponses,
     }
 
-    return this.selfAssessmentClient.submitAnswers(auth, payload)
+    return this.callUpstream(
+      () => this.selfAssessmentClient.submitAnswers(auth, payload),
+      m.apiErrors.submitTitle,
+      m.apiErrors.submitSummary,
+    )
+  }
+
+  /**
+   * Runs a request to Fjarskiptastofa and replaces any failure with a
+   * TemplateApiError carrying only our own message.
+   *
+   * Nothing from the upstream error is passed on. A FetchError keeps the parsed
+   * `application/problem+json` body on `error.problem`, and because that
+   * property makes TemplateAPIService.handleError treat it as a TemplateApiError
+   * it would be logged verbatim (`{ ...error }`) for any status >= 500 and shown
+   * to the applicant. Fjarskiptastofa's problem bodies can quote the submitted
+   * answers and remarks, which is exactly the data this application must keep
+   * out of the logs - the same reason the client's logger is wrapped in
+   * redactProblemBody. Swallowing the cause here is deliberate: enhanced fetch
+   * has already logged the request failure (with the problem field redacted).
+   */
+  private async callUpstream<T>(
+    request: () => Promise<T>,
+    title: StaticText,
+    summary: StaticText,
+  ): Promise<T> {
+    try {
+      return await request()
+    } catch {
+      throw new TemplateApiError({ title, summary }, 500)
+    }
   }
 }
