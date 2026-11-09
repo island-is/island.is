@@ -104,6 +104,17 @@ export const searchQuery = (
                   type: 'best_fields',
                 },
               },
+              // The last word can be partly typed, e.g. 'strandsv' finds titles with 'strandsvæðisskipulag'.
+              // Boosted well below full matches on the title so it mostly adds results instead of reordering them
+              {
+                match_bool_prefix: {
+                  title: {
+                    query: queryString,
+                    operator: 'and',
+                    boost: 10,
+                  },
+                },
+              },
               {
                 nested: {
                   path: 'tags',
