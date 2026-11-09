@@ -10,6 +10,7 @@ import { PrimarySchoolKeyInfoResolver } from '../resolvers/primarySchoolKeyInfo.
 import { PrimarySchoolKeyInfoOptionsResolver } from '../resolvers/primarySchoolKeyInfoOptions.resolver'
 import { PrimarySchoolKeyInfoMutationsResolver } from '../resolvers/primarySchoolKeyInfoMutations.resolver'
 import { PrimarySchoolKeyInfoService } from '../services/primarySchoolKeyInfo.service'
+import { PrimarySchoolChildIdLoader } from '../loaders/primarySchoolChildId.loader'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 @Module({
@@ -28,6 +29,7 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
     PrimarySchoolKeyInfoOptionsResolver,
     PrimarySchoolKeyInfoMutationsResolver,
     PrimarySchoolKeyInfoService,
+    PrimarySchoolChildIdLoader,
   ],
 })
 export class EducationV2Module {}

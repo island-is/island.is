@@ -10,6 +10,11 @@ import { PrimarySchoolClientService } from '@island.is/clients/mms/primary-schoo
  * student list, overview and assessments), while frigg — which backs key
  * information — keys children on its own id (base.users.id from the data
  * gateway). The only field the two backends share is the national id.
+ *
+ * The reads hang off {@link PrimarySchoolStudent} and already have the national
+ * id from the parent, so they translate it through
+ * {@link PrimarySchoolChildIdLoader} instead. This service is what the mutations
+ * use, which start from a routed student id and have to look the national id up.
  */
 @Injectable()
 export class PrimarySchoolKeyInfoService {
@@ -20,9 +25,7 @@ export class PrimarySchoolKeyInfoService {
 
   /**
    * The frigg child id for a national id, or null when the child has no
-   * counterpart in frigg (e.g. not yet registered in MMS). The key-info reads
-   * hang off {@link PrimarySchoolStudent}, so they take the national id straight
-   * off the parent student and treat null as "no information".
+   * counterpart in frigg (e.g. not yet registered in MMS).
    */
   async findChildId(
     user: User,
