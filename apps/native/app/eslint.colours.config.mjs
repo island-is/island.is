@@ -15,6 +15,8 @@ export default [
       '**/ui/utils/theme.ts',
       '**/ui/utils/dynamic-color.ts',
       '**/graphql/**',
+      // skeletons keep their own colours
+      '**/ui/lib/skeleton/**',
     ],
     languageOptions: {
       parser: tsParser,
