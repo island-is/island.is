@@ -119,12 +119,16 @@ export const NumberSettings = () => {
             backgroundColor="blue"
             label="Hámarksfjöldi tölustafa"
             type="number"
-            min={0}
+            min={1}
             step="1"
             value={maxLength ?? ''}
             readOnly={isReadOnly}
             errorMessage={
-              minLength != null && maxLength != null && minLength > maxLength
+              maxLength != null && maxLength <= 0
+                ? 'Hámarksfjöldi tölustafa verður að vera stærri en núll'
+                : minLength != null &&
+                  maxLength != null &&
+                  minLength > maxLength
                 ? 'Lágmarksfjöldi tölustafa má ekki vera meiri en hámarksfjöldi tölustafa'
                 : undefined
             }
@@ -134,7 +138,7 @@ export const NumberSettings = () => {
                 payload: {
                   property: 'maxLength',
                   value:
-                    e.target.value === '' || Number(e.target.value) < 0
+                    e.target.value === '' || Number(e.target.value) <= 0
                       ? undefined
                       : Number(e.target.value),
                 },

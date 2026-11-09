@@ -298,7 +298,7 @@ it.each([false, true])(
   async (operationSuccessful) => {
     const consoleError = jest
       .spyOn(console, 'error')
-      .mockImplementation(() => {})
+      .mockImplementation(() => undefined)
     try {
       notifyExternal
         .mockResolvedValueOnce({
