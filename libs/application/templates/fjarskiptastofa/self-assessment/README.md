@@ -133,7 +133,7 @@ switching to that company's delegation.
 
 | Company | `accessWindowOpen` | Log in as |
 | --- | --- | --- |
-| 65° ARTIC ehf. (`5005101370`) | open | Gervimaður Ameríka (`0101302989`) or Gervimaður Færeyjar (`0101302399`) |
+| 65° ARTIC ehf. (`5005101370`) | open | Gervimaður Ameríku (`0101302989`) or Gervimaður Færeyjar (`0101302399`) |
 | `4703013920` | open | Gervimaður Færeyjar (`0101302399`) |
 | `6211170100` | open | Gervimaður Færeyjar (`0101302399`) |
 | `5105160160` | closed | Gervimaður Færeyjar (`0101302399`) |
