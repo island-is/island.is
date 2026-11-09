@@ -105,6 +105,7 @@ export async function runBiometricUnlockTest(
     return true
   } catch (error) {
     report(`✗ Unlock with biometrics: ${describeError(error)}`)
+    report(`Biometrics ${ias.isBiometricsEnabled() ? 'still on' : 'now off'}`)
     return false
   }
 }

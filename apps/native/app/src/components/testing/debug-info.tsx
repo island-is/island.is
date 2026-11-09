@@ -1,6 +1,7 @@
 import * as WebBrowser from 'expo-web-browser'
 import React from 'react'
-import { Alert, AlertButton, Platform, View } from 'react-native'
+import { Alert, AlertButton, Platform, ScrollView, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
 import { config, useConfig } from '@/config'
@@ -30,15 +31,13 @@ const FEATURE_ENVIRONMENT: EnvironmentConfig = {
   iasIssuer: 'https://featnative-app-login.identity-server.dev01.devland.is',
 }
 
-const DebugHost = styled.SafeAreaView`
+const DebugHost = styled.View`
   background-color: ${dynamicColor((props) => ({
     light: props.theme.color.blue100,
     dark: props.theme.shades.dark.background,
   }))};
   height: 360px;
   max-height: 40%;
-  align-items: center;
-  justify-content: center;
 `
 
 const Text = styled.Text`
@@ -117,6 +116,7 @@ export function DebugInfo() {
     loading,
   } = useEnvironmentStore()
   const cfg = useConfig()
+  const insets = useSafeAreaInsets()
 
   const isCognitoAuth = cognito?.accessToken && cognito?.expiresAt > Date.now()
   const cognitoMinutes = Math.floor(
@@ -183,124 +183,136 @@ export function DebugInfo() {
 
   return (
     <DebugHost>
-      <DebugRow
-        title="Label"
-        value={environment?.label ?? 'N/A'}
-        actions={[
-          {
-            title: '(Switch)',
-            disabled: loading,
-            onPress: onEnvironmentPress,
-          },
-        ]}
-      />
-      <SelectionMenu
-        visible={showEnvPicker}
-        options={envs.map((env) => ({ label: env.label, data: env.id }))}
-        selected={environment?.id ?? null}
-        onSelect={(data) => {
-          setShowEnvPicker(false)
-          console.log('emvs', envs)
-          const selectedEnv = envs.find((env) => env.id === data)
-          if (!selectedEnv) return
-
-          const canSkipCognito =
-            selectedEnv.id === 'mock' || selectedEnv.id === 'prod'
-          environmentStore.getState().actions.setEnvironment(selectedEnv)
-
-          if (!isCognitoAuth && !canSkipCognito) {
-            return Alert.alert(
-              'Cognito Required',
-              'You can use production without cognito login, but you need it for other environments.',
-              [
-                selectedEnv.id !== 'prod' && {
-                  text: 'Switch to Production',
-                  onPress: () => actions.setEnvironment(environments.prod),
-                },
-                {
-                  text: 'Login with cognito',
-                  onPress: onCognitoLoginPress,
-                },
-                {
-                  text: 'Cancel',
-                  style: 'cancel',
-                },
-              ].filter(Boolean) as AlertButton[],
-            )
-          }
+      {/* Scrolls when the rows don't fit; the inset keeps the last rows
+          above Android's navigation bar and iOS's home indicator. */}
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingTop: 8,
+          paddingBottom: insets.bottom + 8,
         }}
-        onRequestClose={() => setShowEnvPicker(false)}
-      />
-      <DebugRow title="Bundle" value={config.bundleId} />
-      <DebugRow title="IDS" value={environment?.idsIssuer ?? 'N/A'} />
-      <DebugRow title="API" value={environment?.apiUrl ?? 'N/A'} />
-      <DebugRow
-        title="IAS"
-        value={iasIssuer?.replace(/^https:\/\//, '') ?? 'Same as IDS'}
-        actions={[
-          iasIssuer
-            ? {
-                title: '(Reset)',
-                onPress: () => actions.setEnvironment(environments.dev),
-              }
-            : {
-                title: '(Feature)',
-                onPress: () => actions.setEnvironment(FEATURE_ENVIRONMENT),
-              },
-        ]}
-      />
-      {__DEV__ ? (
-        <>
-          <DebugRow
-            title="User"
-            value={`Gervimaður ${nativeTestPhone}`}
-            actions={[
-              {
-                title: '(Next)',
-                disabled: nativeTestRunning,
-                onPress: onNextTestUserPress,
-              },
-            ]}
-          />
-          <DebugRow
-            title="Native"
-            value={nativeTestStatus ?? 'Login test'}
-            actions={[
-              {
-                title: '(Run)',
-                disabled: nativeTestRunning,
-                onPress: () => onNativeLoginTestPress(false),
-              },
-              {
-                title: '(Keep)',
-                disabled: nativeTestRunning,
-                onPress: () => onNativeLoginTestPress(true),
-              },
-            ]}
-          />
-          <DebugRow
-            title="Unlock"
-            value="Kept biometric key"
-            actions={[
-              {
-                title: '(Run)',
-                disabled: nativeTestRunning,
-                onPress: () => runNativeTest(runBiometricUnlockTest),
-              },
-            ]}
-          />
-        </>
-      ) : null}
-      <DebugRow
-        title="Cognito"
-        value={isCognitoAuth ? `Yes (exp ${cognitoMinutes}m)` : 'No'}
-        actions={[
-          {
-            title: '(Login)',
-            onPress: onCognitoLoginPress,
-          },
-        ]}
-      />
+      >
+        <DebugRow
+          title="Label"
+          value={environment?.label ?? 'N/A'}
+          actions={[
+            {
+              title: '(Switch)',
+              disabled: loading,
+              onPress: onEnvironmentPress,
+            },
+          ]}
+        />
+        <SelectionMenu
+          visible={showEnvPicker}
+          options={envs.map((env) => ({ label: env.label, data: env.id }))}
+          selected={environment?.id ?? null}
+          onSelect={(data) => {
+            setShowEnvPicker(false)
+            console.log('emvs', envs)
+            const selectedEnv = envs.find((env) => env.id === data)
+            if (!selectedEnv) return
+
+            const canSkipCognito =
+              selectedEnv.id === 'mock' || selectedEnv.id === 'prod'
+            environmentStore.getState().actions.setEnvironment(selectedEnv)
+
+            if (!isCognitoAuth && !canSkipCognito) {
+              return Alert.alert(
+                'Cognito Required',
+                'You can use production without cognito login, but you need it for other environments.',
+                [
+                  selectedEnv.id !== 'prod' && {
+                    text: 'Switch to Production',
+                    onPress: () => actions.setEnvironment(environments.prod),
+                  },
+                  {
+                    text: 'Login with cognito',
+                    onPress: onCognitoLoginPress,
+                  },
+                  {
+                    text: 'Cancel',
+                    style: 'cancel',
+                  },
+                ].filter(Boolean) as AlertButton[],
+              )
+            }
+          }}
+          onRequestClose={() => setShowEnvPicker(false)}
+        />
+        <DebugRow title="Bundle" value={config.bundleId} />
+        <DebugRow title="IDS" value={environment?.idsIssuer ?? 'N/A'} />
+        <DebugRow title="API" value={environment?.apiUrl ?? 'N/A'} />
+        <DebugRow
+          title="IAS"
+          value={iasIssuer?.replace(/^https:\/\//, '') ?? 'Same as IDS'}
+          actions={[
+            iasIssuer
+              ? {
+                  title: '(Reset)',
+                  onPress: () => actions.setEnvironment(environments.dev),
+                }
+              : {
+                  title: '(Feature)',
+                  onPress: () => actions.setEnvironment(FEATURE_ENVIRONMENT),
+                },
+          ]}
+        />
+        {__DEV__ ? (
+          <>
+            <DebugRow
+              title="User"
+              value={`Gervimaður ${nativeTestPhone}`}
+              actions={[
+                {
+                  title: '(Next)',
+                  disabled: nativeTestRunning,
+                  onPress: onNextTestUserPress,
+                },
+              ]}
+            />
+            <DebugRow
+              title="Native"
+              value={nativeTestStatus ?? 'Login test'}
+              actions={[
+                {
+                  title: '(Run)',
+                  disabled: nativeTestRunning,
+                  onPress: () => onNativeLoginTestPress(false),
+                },
+                {
+                  title: '(Keep)',
+                  disabled: nativeTestRunning,
+                  onPress: () => onNativeLoginTestPress(true),
+                },
+              ]}
+            />
+            <DebugRow
+              title="Unlock"
+              value="Kept biometric key"
+              actions={[
+                {
+                  title: '(Run)',
+                  disabled: nativeTestRunning,
+                  onPress: () => runNativeTest(runBiometricUnlockTest),
+                },
+              ]}
+            />
+          </>
+        ) : null}
+        <DebugRow
+          title="Cognito"
+          value={isCognitoAuth ? `Yes (exp ${cognitoMinutes}m)` : 'No'}
+          actions={[
+            {
+              title: '(Login)',
+              onPress: onCognitoLoginPress,
+            },
+          ]}
+        />
+      </ScrollView>
     </DebugHost>
   )
 }
