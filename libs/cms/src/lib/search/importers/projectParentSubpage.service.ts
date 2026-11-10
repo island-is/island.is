@@ -30,8 +30,7 @@ const getChapters = (entry: IProjectParentSubpage) =>
 
 @Injectable()
 export class ProjectParentSubpageSyncService
-  implements CmsSyncProvider<IProjectParentSubpage>
-{
+  implements CmsSyncProvider<IProjectParentSubpage> {
   processSyncData(entries: processSyncDataInput<IProjectParentSubpage>) {
     const entriesToUpdate: IProjectParentSubpage[] = []
     const entriesToDelete: string[] = []
@@ -77,7 +76,10 @@ export class ProjectParentSubpageSyncService
           // The parent subpage is found through the titles and content of its chapters
           const content = chapters
             .map((chapter) =>
-              [chapter.fields.title, extractProjectSubpageContent(chapter)]
+              [
+                chapter.fields.title.trim(),
+                extractProjectSubpageContent(chapter),
+              ]
                 .filter(Boolean)
                 .join(' '),
             )
@@ -86,13 +88,13 @@ export class ProjectParentSubpageSyncService
           const response: ProjectPageSearchChild = {
             typename: 'ProjectParentSubpage',
             id: entry.sys.id,
-            title: entry.fields.title,
+            title: entry.fields.title.trim(),
             slug: entry.fields.slug.trim(),
             projectPageId,
             projectSlug,
             chapters: chapters.map((chapter) => ({
               id: chapter.sys.id,
-              title: chapter.fields.title,
+              title: chapter.fields.title.trim(),
               slug: chapter.fields.slug.trim(),
             })),
           }
@@ -117,7 +119,7 @@ export class ProjectParentSubpageSyncService
 
           return {
             _id: entry.sys.id,
-            title: entry.fields.title,
+            title: entry.fields.title.trim(),
             content,
             contentWordCount: content ? content.split(/\s+/).length : 0,
             type: PROJECT_PARENT_SUBPAGE_SEARCH_TYPE,

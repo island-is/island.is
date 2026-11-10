@@ -77,15 +77,23 @@ describe('ProjectSubpageSyncService', () => {
       subpage('no-project', undefined),
       subpage('no-slug', project, { slug: '  ' }),
       subpage('no-title', project, { title: '' }),
+      subpage('blank-title', project, { title: '   ' }),
       projectPage('other-type'),
     ] as never)
 
     expect(entriesToUpdate.map((entry) => entry.sys.id)).toEqual(['valid'])
-    expect(entriesToDelete).toEqual(['no-project', 'no-slug', 'no-title'])
+    expect(entriesToDelete).toEqual([
+      'no-project',
+      'no-slug',
+      'no-title',
+      'blank-title',
+    ])
   })
 
   it('maps a subpage to an internal document tagged with its project page', () => {
-    const [document] = service.doMapping([subpage('valid', project)] as never)
+    const [document] = service.doMapping([
+      subpage('valid', project, { title: '  Subpage valid ' }),
+    ] as never)
 
     expect(document.type).toBe('webProjectSubpage')
     expect(document.content).toContain('This is the content of subpage valid')
