@@ -58,23 +58,39 @@ export type CallToAction<T extends EventObject = AnyEventObject> = {
   condition?: Condition
 } & TestSupport
 
-export type StateLifeCycle =
+/**
+ * `shouldBeListed` is the master switch; `false` hides the application everywhere
+ * (my pages, native app, /umsoknir/:type). `hideFromApplicationSystemOverview`
+ * can only hide it further. See the application core README for details.
+ */
+export type StateLifeCycleListing =
   | {
-      // Controls visibility from my pages + /umsoknir/:type when in current state
-      shouldBeListed: boolean
-      shouldBePruned: false
-      shouldDeleteChargeIfPaymentFulfilled?: boolean | null
+      // Persisted (`isListed`) on state transitions
+      shouldBeListed: false
+      hideFromApplicationSystemOverview?: never
     }
   | {
-      shouldBeListed: boolean
-      shouldBePruned: true
-      // If set to a number prune date will equal current timestamp + whenToPrune (ms)
-      whenToPrune: number | ((application: Application) => Date)
-      shouldDeleteChargeIfPaymentFulfilled?: boolean | null
-      pruneMessage?:
-        | PruningNotification
-        | ((application: PruningApplication) => PruningNotification)
+      shouldBeListed: true
+      /** Hides from /umsoknir/:type only, still listed in my pages. Evaluated per request. */
+      hideFromApplicationSystemOverview?: true
     }
+
+export type StateLifeCycle = StateLifeCycleListing &
+  (
+    | {
+        shouldBePruned: false
+        shouldDeleteChargeIfPaymentFulfilled?: boolean | null
+      }
+    | {
+        shouldBePruned: true
+        // If set to a number prune date will equal current timestamp + whenToPrune (ms)
+        whenToPrune: number | ((application: Application) => Date)
+        shouldDeleteChargeIfPaymentFulfilled?: boolean | null
+        pruneMessage?:
+          | PruningNotification
+          | ((application: PruningApplication) => PruningNotification)
+      }
+  )
 
 export type PendingActionDisplayType = 'warning' | 'success' | 'info' | 'error'
 

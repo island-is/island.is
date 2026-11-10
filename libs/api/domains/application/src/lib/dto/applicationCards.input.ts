@@ -18,6 +18,14 @@ class FiltersInput {
   @Field(() => Boolean, { nullable: true })
   @IsOptional()
   showPruned?: boolean
+
+  @Field(() => Boolean, {
+    nullable: true,
+    description:
+      'Exclude applications whose current state sets lifecycle.hideFromApplicationSystemOverview. Intended for the application overview (/umsoknir/:type), not my pages.',
+  })
+  @IsOptional()
+  excludeHiddenFromApplicationSystemOverview?: boolean
 }
 
 @InputType()
