@@ -16,6 +16,7 @@ import { useRegulationDraft } from '../hooks/useRegulationDraft'
 import { useRegulationImpacts } from '../hooks/useRegulationImpacts'
 import { useAmendingText } from '../hooks/useAmendingText'
 import { useApplication } from '../hooks/useUpdateApplication'
+import { Addition } from '../utils/amendingMismatches'
 
 export const RegulationContentScreen = (props: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
@@ -38,10 +39,12 @@ export const RegulationContentScreen = (props: OJOIFieldBaseProps) => {
   // The text as the form holds it: updated when the editor loses focus and
   // when the text is regenerated, so the warnings follow without rerunning
   // on every keystroke
-  const advertHtml = useWatch({ name: InputFields.advert.html }) as
-    | string
-    | undefined
-  const additions = useWatch({ name: InputFields.advert.additions })
+  const advertHtml: string | undefined = useWatch({
+    name: InputFields.advert.html,
+  })
+  const additions: Addition[] | undefined = useWatch({
+    name: InputFields.advert.additions,
+  })
   const { refetchApplication } = useApplication({
     applicationId: application.id,
   })
@@ -117,7 +120,7 @@ export const RegulationContentScreen = (props: OJOIFieldBaseProps) => {
       )}
       <Advert key={advertKey} {...props} />
       {isAmending && impacts.length > 0 && (
-        <Box marginBottom={4}>
+        <Box marginBottom={4} aria-live="polite">
           <AmendingMismatches
             impacts={impacts}
             html={advertHtml}

@@ -9,6 +9,7 @@ import { useLocale } from '@island.is/localization'
 import { HTMLDump, HTMLText } from '@island.is/regulations'
 import { RegulationImpactSchema } from '../../lib/dataSchema'
 import { regulation } from '../../lib/messages'
+import { Addition } from '../../utils/amendingMismatches'
 import { AmendingMismatches } from './AmendingMismatches'
 import { BaseChanges } from './BaseChanges'
 import * as s from './TextComparison.css'
@@ -20,11 +21,7 @@ type TextComparisonProps = {
   /** Base64-encoded advert HTML */
   advertHtml?: string
   /** The advert's appendixes, content base64-encoded */
-  additions?: Array<{
-    title?: string
-    content?: string
-    type?: 'html' | 'file'
-  }>
+  additions?: Addition[]
   confirmed: boolean
   onConfirmedChange: (confirmed: boolean) => void
 }

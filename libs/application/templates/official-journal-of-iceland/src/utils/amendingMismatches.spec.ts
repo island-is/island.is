@@ -1,7 +1,7 @@
 import getStructuredDiff from '@dmr.is/regulations-tools/structuredDiff-browser'
 import { HTMLText } from '@island.is/regulations'
 import { RegulationImpactSchema } from '../lib/dataSchema'
-import { getAmendingMismatches } from './amendingMismatches'
+import { Addition, getAmendingMismatches } from './amendingMismatches'
 import { formatAmendingBodyWithArticlePrefix } from './formatAmendingRegulation'
 
 const base64 = (html: string) => Buffer.from(html).toString('base64')
@@ -31,11 +31,7 @@ const text = (amount: string) =>
 const check = (
   html: string,
   impacts: RegulationImpactSchema[],
-  additions?: Array<{
-    title?: string
-    content?: string
-    type?: 'html' | 'file'
-  }>,
+  additions?: Addition[],
 ) => getAmendingMismatches({ html: base64(html), additions, impacts })
 
 describe('getAmendingMismatches', () => {
@@ -151,6 +147,19 @@ describe('getAmendingMismatches', () => {
         place: { regulation: '123/2020', section: '5. gr.' },
       },
     ])
+  })
+
+  it('names only an article of the text, not an appendix title', () => {
+    const lead =
+      '<h3 class="article__title">1. gr.</h3><p>5. gr. reglugerðarinnar breytist.</p>'
+    const appendix = base64('<p>Gjald: kr. 9.999.</p>')
+    expect(
+      check(
+        lead,
+        [raised],
+        [{ title: 'Viðauki við 3. gr. reglugerðarinnar', content: appendix }],
+      ).values.filter((v) => v.type === 'notInChanges'),
+    ).toEqual([{ type: 'notInChanges', text: '9.999', section: undefined }])
   })
 
   it('needs a change with a diff and some text', () => {

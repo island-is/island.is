@@ -11,7 +11,8 @@ import findAmendingMismatches, {
   type AmendedRegulation,
 } from '@dmr.is/regulations-tools/amendingMismatches-browser'
 import { HTMLText, prettyName, RegName } from '@island.is/regulations'
-import { RegulationImpactSchema } from '../lib/dataSchema'
+import { z } from 'zod'
+import { additionSchema, RegulationImpactSchema } from '../lib/dataSchema'
 
 /** Where a change is recorded: a base regulation, or one of its appendixes. */
 export type MismatchPlace = {
@@ -52,11 +53,15 @@ export type AmendingMismatches = {
   wording: WordingMismatches[]
 }
 
-type Addition = {
-  title?: string
-  content?: string
-  type?: 'html' | 'file'
-}
+/** One of the advert's appendixes, content base64-encoded */
+export type Addition = z.infer<typeof additionSchema>[number]
+
+/**
+ * An article of the text, "1. gr." or "6. gr. a.", rather than an
+ * appendix's title, which may cite one ("Viðauki við 3. gr. …")
+ */
+const isArticle = (section?: string) =>
+  !!section && /^\d+\.\s*gr\.(\s|$)/.test(section)
 
 const decode = (base64?: string) =>
   Buffer.from(base64 ?? '', 'base64').toString('utf-8')
@@ -137,7 +142,11 @@ export const getAmendingMismatches = ({
   for (const m of findAmendingMismatches(text, regulations)) {
     if (m.type === 'notInChanges') {
       if (unknownChanges) continue
-      values.push({ type: m.type, text: m.text, section: m.section })
+      values.push({
+        type: m.type,
+        text: m.text,
+        section: isArticle(m.section) ? m.section : undefined,
+      })
       continue
     }
     const base = m.regulation ? places.get(m.regulation) : undefined
