@@ -10,7 +10,10 @@ import {
   buildPersistedByKey,
   hasDraftChangesInRows,
 } from '../utils/translationWorkspaceEditing'
-import { isNamespaceNotExtractedError } from '../utils/translationWorkspaceErrors'
+import {
+  isNamespaceNotExtractedError,
+  isTranslationAccessForbiddenError,
+} from '../utils/translationWorkspaceErrors'
 import { useTemplateCustomFields } from './useTemplateCustomFields'
 
 export const useTranslationWorkspaceData = (typeId: string | undefined) => {
@@ -73,10 +76,17 @@ export const useTranslationWorkspaceData = (typeId: string | undefined) => {
     loading ||
     customFieldsLoading ||
     Boolean(introspection && translationsLoading)
+  const translationsForbidden = Boolean(
+    translationsError && isTranslationAccessForbiddenError(translationsError),
+  )
   const loadError =
     error ??
-    (translationsNotExtracted ? undefined : translationsError) ??
+    (translationsForbidden ? translationsError : undefined) ??
     customFieldsError
+  const translationsLoadError =
+    translationsNotExtracted || translationsForbidden
+      ? undefined
+      : translationsError
 
   return {
     introspection,
@@ -88,6 +98,7 @@ export const useTranslationWorkspaceData = (typeId: string | undefined) => {
     hasDraftChanges,
     isLoading,
     loadError,
+    translationsLoadError,
     translationsNotExtracted,
     refetchTranslations,
   }
