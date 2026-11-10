@@ -124,7 +124,10 @@ const AirDiscountModule = React.memo(
                       alignItems: 'center',
                     }}
                   >
-                    <Typography variant="heading5" color={theme.color.blue400}>
+                    <Typography
+                      variant="heading5"
+                      color={theme.tokens.interactive.foreground.primary}
+                    >
                       <FormattedMessage id="button.seeAll" />
                     </Typography>
                     <ChevronRight />

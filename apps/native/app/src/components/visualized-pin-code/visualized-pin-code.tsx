@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef } from 'react'
 import { Animated, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
-import { dynamicColor } from '../../ui'
 
 interface VisualizedPinCodeProps {
   code: string
@@ -25,20 +24,12 @@ const Dot = styled(Animated.View)<{ state?: 'active' | 'inactive' | 'error' }>`
 
   border-radius: 8px;
 
-  background-color: ${dynamicColor((props) => ({
-    dark:
-      props.state === 'active'
-        ? props.theme.color.blue400
-        : props.state === 'inactive'
-        ? props.theme.shades.dark.shade400
-        : props.theme.color.red400,
-    light:
-      props.state === 'active'
-        ? props.theme.color.blue400
-        : props.state === 'inactive'
-        ? props.theme.color.blue100
-        : props.theme.color.red400,
-  }))};
+  background-color: ${({ state, theme }) =>
+    state === 'active'
+      ? theme.tokens.background.brand
+      : state === 'inactive'
+      ? theme.tokens.background.brandMinimal
+      : theme.tokens.feedback.error.foreground};
   z-index: ${(props) =>
     props.state === 'inactive' ? 2 : props.state === 'active' ? 3 : 4};
 `

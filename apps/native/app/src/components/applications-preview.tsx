@@ -146,7 +146,10 @@ export const ApplicationsPreview = ({
                     alignItems: 'center',
                   }}
                 >
-                  <Typography variant="heading5" color={theme.color.blue400}>
+                  <Typography
+                    variant="heading5"
+                    color={theme.tokens.interactive.foreground.primary}
+                  >
                     {intl.formatMessage({ id: 'button.seeAll' })}
                   </Typography>
                   <ChevronRight />
