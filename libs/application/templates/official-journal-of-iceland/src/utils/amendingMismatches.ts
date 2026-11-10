@@ -101,18 +101,21 @@ export const getAmendingMismatches = ({
       regulations.push({ name: `${i}`, diff: impact.diff as HTMLText })
     }
     // An appendix diff is only here in the session that made the change:
-    // `useRegulationImpacts` saves appendixes without it, so after a reload
-    // changes to a base regulation's appendixes go unchecked (as in
-    // `BaseChanges`). Diffing appendixes awaits a decision from the
-    // stakeholders. When appendix diffs are stored or rebuilt on load, they
-    // reach this check as they are, with no change needed here.
+    // `useRegulationImpacts` saves appendixes without it. After a reload the
+    // appendix's text stands in, counted as changed throughout, so amounts
+    // in a replaced fee table are found there and not reported as missing
+    // from the changes, but nothing in it is reported as missing from the
+    // text. Diffing appendixes awaits a decision from the stakeholders. When
+    // appendix diffs are stored or rebuilt on load, they reach this check as
+    // they are, with no change needed here.
     impact.appendixes?.forEach((apx, j) => {
-      if (apx.diff) {
+      const changes = apx.diff || (!apx.revoked && apx.text)
+      if (changes) {
         places.set(`${i}.${j}`, {
           regulation,
           appendix: apx.title || `Viðauki ${j + 1}`,
         })
-        regulations.push({ name: `${i}.${j}`, diff: apx.diff as HTMLText })
+        regulations.push({ name: `${i}.${j}`, diff: changes as HTMLText })
       }
     })
   })

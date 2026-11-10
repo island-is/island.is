@@ -119,6 +119,29 @@ describe('getAmendingMismatches', () => {
     ).toEqual(['1.300'])
   })
 
+  it('compares a replaced appendix with its text after a reload, without a diff', () => {
+    const tariff = '<p>Skoðun: kr. 2.000.</p><p>Endurskoðun: kr. 3.500.</p>'
+    const html = `${text(
+      '1.800',
+    )}<h3 class="article__title">2. gr.</h3><p>Viðauki I við reglugerðina orðast svo:</p>${tariff}`
+    const impact = {
+      ...raised,
+      appendixes: [{ title: 'Viðauki I', text: tariff }],
+    }
+    expect(check(html, [impact])).toEqual({ values: [], wording: [] })
+    expect(check(html.replace('3.500', '3.600'), [impact]).values).toEqual([
+      { type: 'notInChanges', text: '3.600', section: '2. gr.' },
+    ])
+    const revoked = {
+      ...raised,
+      appendixes: [{ title: 'Viðauki I', text: tariff, revoked: true }],
+    }
+    expect(check(html, [revoked]).values.map((v) => v.text)).toEqual([
+      '2.000',
+      '3.500',
+    ])
+  })
+
   it('needs a change with a diff and some text', () => {
     expect(check(text('1.900'), [{ ...raised, diff: undefined }])).toEqual({
       values: [],
