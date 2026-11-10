@@ -1,17 +1,10 @@
-import {
-  ContentTypeProps,
-  Role,
-  RoleProps,
-  TagProps,
-} from 'contentful-management'
+import { ContentTypeProps, RoleProps, TagProps } from 'contentful-management'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import slugify from '@sindresorhus/slugify'
 
 import type { CheckboxState } from '../../types'
 import {
-  applyAssetPolicies,
-  applyEntryEditPolicies,
-  applyEntryGlobalReadPolicies,
+  buildRolePolicies,
   getAllContentTypesInAscendingOrder,
   getAllRoles,
   getContentfulManagementApiClient,
@@ -64,8 +57,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const tagId = tagsMap.get(tagName)
 
-    const policies: Role['policies'] = []
-
     const globallyReadableContentTypeIds = new Set<string>()
 
     // Gather all content types we want the user to be able to read globally
@@ -92,20 +83,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       scopedEditableContentTypeIds.add(contentType.sys.id)
     }
 
-    applyEntryEditPolicies(
-      policies,
+    const policies = buildRolePolicies({
       scopedEditableContentTypeIds,
-      tagId,
       globallyReadableContentTypeIds,
-    )
-
-    applyEntryGlobalReadPolicies(policies, globallyReadableContentTypeIds)
-
-    applyAssetPolicies(
-      policies,
-      roleNamesThatCanReadAllAssetsSet.has(role.name),
+      canReadAllAssets: roleNamesThatCanReadAllAssetsSet.has(role.name),
       tagId,
-    )
+    })
 
     const updateQuery = client.role.update(
       { roleId: role.sys.id },

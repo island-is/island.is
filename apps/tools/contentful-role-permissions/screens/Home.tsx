@@ -13,6 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import { sortAlpha } from '@island.is/shared/utils'
 
+import { BulkAddEditableContentType } from '../components/BulkAddEditableContentType'
 import { RoleCard } from '../components/RoleCard'
 import {
   getAllContentTypesInAscendingOrder,
@@ -25,10 +26,11 @@ const INITIAL_PAGE_SIZE = 2
 const DEBOUNCE_TIME = 300
 
 const Home = ({
-  roles,
+  roles: initialRoles,
   contentTypes,
   tags,
 }: InferGetServerSidePropsType<typeof getProps>) => {
+  const [roles, setRoles] = useState(initialRoles)
   const [pageSize, setPageSize] = useState(INITIAL_PAGE_SIZE)
 
   const [nameSearch, setNameSearch] = useState('')
@@ -52,6 +54,18 @@ const Home = ({
     <Box className={styles.container}>
       <GridContainer>
         <Stack space={2}>
+          <BulkAddEditableContentType
+            roles={roles}
+            contentTypes={contentTypes}
+            tags={tags}
+            onRoleUpdated={(updatedRole) =>
+              setRoles((prev) =>
+                prev.map((role) =>
+                  role.sys.id === updatedRole.sys.id ? updatedRole : role,
+                ),
+              )
+            }
+          />
           <Input
             name="name-search"
             label="Role name search"
@@ -61,7 +75,8 @@ const Home = ({
           <Stack space={2}>
             {filteredRoles.slice(0, pageSize).map((role) => (
               <RoleCard
-                key={role.name}
+                // Remount with fresh state when the role is updated elsewhere
+                key={`${role.name}-${role.sys.version}`}
                 role={role}
                 contentTypes={contentTypes}
                 tags={tags}

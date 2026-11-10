@@ -79,7 +79,7 @@ export const getTagNameToTagIdMap = (tags: TagProps[]) => {
   return new Map(tags.map((tag) => [tag.name, tag.sys.id]))
 }
 
-const policiesAreEditable = (
+export const policiesAreEditable = (
   role: RoleProps,
   contentType: ContentTypeProps,
 ) => {
@@ -90,7 +90,7 @@ const policiesAreEditable = (
   )
 }
 
-const policiesAreReadOnlyEntries = (
+export const policiesAreReadOnlyEntries = (
   role: RoleProps,
   contentType: ContentTypeProps,
 ) => {
@@ -318,6 +318,33 @@ export const applyEntryEditPolicies = (
       },
     })
   }
+}
+
+export const buildRolePolicies = ({
+  scopedEditableContentTypeIds,
+  globallyReadableContentTypeIds,
+  canReadAllAssets,
+  tagId,
+}: {
+  scopedEditableContentTypeIds: Set<string>
+  globallyReadableContentTypeIds: Set<string>
+  canReadAllAssets: boolean
+  tagId: string
+}) => {
+  const policies: Role['policies'] = []
+
+  applyEntryEditPolicies(
+    policies,
+    scopedEditableContentTypeIds,
+    tagId,
+    globallyReadableContentTypeIds,
+  )
+
+  applyEntryGlobalReadPolicies(policies, globallyReadableContentTypeIds)
+
+  applyAssetPolicies(policies, canReadAllAssets, tagId)
+
+  return policies
 }
 
 export const narrowDownCheckboxState = (
