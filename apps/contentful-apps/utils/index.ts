@@ -132,11 +132,7 @@ export const previewLinkHandler = {
     const projectPageId = entry.fields.projectPage?.[DEFAULT_LOCALE]?.sys?.id
     const slug = entry.fields.slug?.[DEFAULT_LOCALE]
     if (!projectPageId || !slug) return ''
-    const projectPage = await cma.entry.get({
-      entryId: projectPageId,
-      environmentId: CONTENTFUL_ENVIRONMENT,
-      spaceId: CONTENTFUL_SPACE,
-    })
+    const projectPage = await cma.entry.get({ entryId: projectPageId })
     const projectPageSlug = projectPage?.fields?.slug?.[DEFAULT_LOCALE]
     if (!projectPageSlug) return ''
     return `${DEV_WEB_BASE_URL}/v/${projectPageSlug}/${slug}`
