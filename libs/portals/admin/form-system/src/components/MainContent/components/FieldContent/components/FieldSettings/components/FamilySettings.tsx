@@ -6,6 +6,7 @@ import { useContext } from 'react'
 import { ControlContext } from '../../../../../../../context/ControlContext'
 
 const familyTypeOptions = [
+  { label: 'Umsækjandi', value: FamilyTypes.APPLICANT_INFO },
   { label: 'Barn', value: FamilyTypes.CHILD },
   { label: 'Maki', value: FamilyTypes.SPOUSE },
   { label: 'Dánarbú', value: FamilyTypes.NATIONAL_ID_ESTATE },
