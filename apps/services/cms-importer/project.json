@@ -75,6 +75,16 @@
         "args": ["--job", "cms-cleanup"]
       }
     },
+    "ad-staff-import": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-cms-importer:build",
+        "buildTargetOptions": {
+          "outputPath": "dist/apps/services/cms-importer"
+        },
+        "args": ["--job", "ad-staff-import"]
+      }
+    },
     "lint": {
       "executor": "@nx/eslint:lint"
     },

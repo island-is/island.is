@@ -21,6 +21,7 @@ export const processJob = () =>
         'fsre-buildings-import',
         'web-sitemap',
         'cms-cleanup',
+        'ad-staff-import',
       ] as const,
       description: 'Indicate what import application should run',
     })
