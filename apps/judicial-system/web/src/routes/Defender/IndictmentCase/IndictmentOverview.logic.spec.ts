@@ -94,6 +94,8 @@ describe('getVerdictAppealOverviewBanner', () => {
       description:
         'Frestur til að skila greinargerð rennur út 15. nóvember 2026 kl. 15:00',
       statementSentText: undefined,
+      showStatementButton: true,
+      statementParty: { defendantId: 'defendant_id' },
     })
   })
 
@@ -145,6 +147,69 @@ describe('getVerdictAppealOverviewBanner', () => {
         now,
       )?.statementSentText,
     ).toBe('Greinargerð send 9. nóvember 2026 kl. 10:30')
+    expect(
+      getVerdictAppealOverviewBanner(
+        workingCase({
+          id: 'appeal_id',
+          appealState: AppealCaseState.RECEIVED,
+          statementDeadlines: [
+            {
+              id: 'own_deadline',
+              defendantId: 'defendant_id',
+              deadline: '2026-11-15T15:00:00.000Z',
+            },
+          ],
+          appealEventLogs: [
+            {
+              id: 'log_id',
+              created: '2026-11-09T10:30:00.000Z',
+              eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+              defendantId: 'defendant_id',
+            },
+          ],
+        }),
+        defender,
+        now,
+      )?.showStatementButton,
+    ).toBe(false)
+  })
+
+  it('hides the statement CTA for a district-only confirmed defender', () => {
+    expect(
+      getVerdictAppealOverviewBanner(
+        {
+          type: CaseType.INDICTMENT,
+          defendants: [
+            {
+              id: 'defendant_id',
+              isDefenderChoiceConfirmed: true,
+              defenderNationalId: defender.nationalId,
+            },
+          ],
+          civilClaimants: [],
+          verdictAppealCase: {
+            id: 'appeal_id',
+            appealState: AppealCaseState.RECEIVED,
+            statementDeadlines: [
+              {
+                id: 'own_deadline',
+                defendantId: 'defendant_id',
+                deadline: '2026-11-15T15:00:00.000Z',
+              },
+            ],
+          },
+        },
+        defender,
+        now,
+      ),
+    ).toEqual({
+      title: 'Dómur áfrýjaður',
+      description:
+        'Frestur til að skila greinargerð rennur út 15. nóvember 2026 kl. 15:00',
+      statementSentText: undefined,
+      showStatementButton: false,
+      statementParty: undefined,
+    })
   })
 
   it('returns undefined when the party has no statement deadline yet', () => {
@@ -240,6 +305,8 @@ describe('getVerdictAppealOverviewBanner', () => {
       description:
         'Frestur til að skila greinargerð rennur út 12. nóvember 2026 kl. 15:00',
       statementSentText: undefined,
+      showStatementButton: true,
+      statementParty: { defendantId: 'second_defendant' },
     })
   })
 
@@ -258,9 +325,9 @@ describe('getVerdictAppealOverviewBanner', () => {
           civilClaimants: [
             {
               id: 'claimant_id',
-              hasSpokesperson: true,
-              isSpokespersonConfirmed: true,
-              spokespersonNationalId: defender.nationalId,
+              hasAppealSpokesperson: true,
+              isAppealSpokespersonConfirmed: true,
+              appealSpokespersonNationalId: defender.nationalId,
             },
           ],
           verdictAppealCase: {
@@ -288,6 +355,8 @@ describe('getVerdictAppealOverviewBanner', () => {
       description:
         'Frestur til að skila greinargerð rennur út 11. nóvember 2026 kl. 15:00',
       statementSentText: undefined,
+      showStatementButton: true,
+      statementParty: { civilClaimantId: 'claimant_id' },
     })
   })
 

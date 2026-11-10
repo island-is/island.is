@@ -37,6 +37,7 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import DateLabel from '@island.is/judicial-system-web/src/components/DateLabel/DateLabel'
 import {
   AppealEventType,
   CaseFileCategory,
@@ -51,22 +52,75 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import {
+  type DefenceUserPartyIds,
   getAppealActorText,
+  getDefenceUserAppealConfirmedPartyIds,
   getDefenceUserPartyIds,
+  getVerdictAppealStatementParty,
   isMatchingAppealCaseFile,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
-const Statement = () => {
+interface Props {
+  /**
+   * When true, target the case's verdictAppealCase and use verdict-appeal
+   * statement categories instead of the kæra appeal-case row.
+   */
+  isVerdictAppeal?: boolean
+}
+
+const resolveVerdictAppealParty = (
+  workingCase: Parameters<typeof getVerdictAppealStatementParty>[0],
+  user: Parameters<typeof getVerdictAppealStatementParty>[1],
+  query: {
+    defendantId?: string | string[]
+    civilClaimantId?: string | string[]
+  },
+): DefenceUserPartyIds => {
+  const queryDefendantId = Array.isArray(query.defendantId)
+    ? query.defendantId[0]
+    : query.defendantId
+  const queryCivilClaimantId = Array.isArray(query.civilClaimantId)
+    ? query.civilClaimantId[0]
+    : query.civilClaimantId
+
+  const appealParties = getDefenceUserAppealConfirmedPartyIds(workingCase, user)
+
+  if (queryDefendantId) {
+    const match = appealParties.find(
+      (party) => party.defendantId === queryDefendantId,
+    )
+
+    if (match) {
+      return match
+    }
+  }
+
+  if (queryCivilClaimantId) {
+    const match = appealParties.find(
+      (party) => party.civilClaimantId === queryCivilClaimantId,
+    )
+
+    if (match) {
+      return match
+    }
+  }
+
+  // Stay on appeal-confirmed parties only. Do not fall back to
+  // getDefenceUserPartyIds (district-or-appeal, first match) — that can
+  // pick the wrong client when the route is opened without query params.
+  return getVerdictAppealStatementParty(workingCase, user) ?? {}
+}
+
+const Statement = ({ isVerdictAppeal = false }: Props) => {
   const { workingCase, refreshCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { createAppealEventLog, isCreatingAppealEventLog } = useAppealCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
   const [visibleModal, setVisibleModal] = useState<'STATEMENT_SENT'>()
-  const { defendantId, civilClaimantId } = getDefenceUserPartyIds(
-    workingCase,
-    user,
-  )
+  const { defendantId, civilClaimantId } = isVerdictAppeal
+    ? resolveVerdictAppealParty(workingCase, user, router.query)
+    : getDefenceUserPartyIds(workingCase, user)
   const {
     uploadFiles,
     allFilesDoneOrError,
@@ -80,8 +134,12 @@ const Statement = () => {
     caseId: workingCase.id,
   })
 
-  // Statement events target the specific appeal-case row.
-  const targetAppealCase = useTargetAppealCaseByRulingFileId()
+  // Statement events target the specific appeal-case row. Verdict appeals
+  // have no rulingFileId — use the case-level verdictAppealCase instead.
+  const rulingFileAppealCase = useTargetAppealCaseByRulingFileId()
+  const targetAppealCase = isVerdictAppeal
+    ? workingCase.verdictAppealCase
+    : rulingFileAppealCase
   const targetAppealCaseId = targetAppealCase?.id
 
   const { handleUpload, handleRemove } = useS3Upload(
@@ -91,13 +149,21 @@ const Statement = () => {
     targetAppealCase?.rulingFileId,
   )
 
-  const appealStatementType = !isDefenceUser(user)
-    ? CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT
-    : CaseFileCategory.DEFENDANT_APPEAL_STATEMENT
+  const appealStatementType = isVerdictAppeal
+    ? isDefenceUser(user)
+      ? CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT
+      : CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT
+    : isDefenceUser(user)
+    ? CaseFileCategory.DEFENDANT_APPEAL_STATEMENT
+    : CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT
 
-  const appealCaseFilesType = !isDefenceUser(user)
-    ? CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE
-    : CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE
+  const appealCaseFilesType = isVerdictAppeal
+    ? isDefenceUser(user)
+      ? CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE
+      : CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE
+    : isDefenceUser(user)
+    ? CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE
+    : CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE
 
   const previousUrl = `${
     isDefenceUser(user)
@@ -125,10 +191,15 @@ const Statement = () => {
       return
     }
 
+    if (isVerdictAppeal && !defendantId && !civilClaimantId) {
+      return
+    }
+
     const sent = await createAppealEventLog(
       workingCase.id,
       targetAppealCaseId,
       AppealEventType.APPEAL_STATEMENT_SENT,
+      isVerdictAppeal ? { defendantId, civilClaimantId } : undefined,
     )
 
     if (sent) {
@@ -141,6 +212,9 @@ const Statement = () => {
     targetAppealCaseId,
     createAppealEventLog,
     workingCase.id,
+    isVerdictAppeal,
+    defendantId,
+    civilClaimantId,
   ])
 
   const handleRemoveFile = (file: TUploadFile) => {
@@ -186,7 +260,13 @@ const Statement = () => {
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
-      <PageHeader title={titles.shared.appealToCourtOfAppeals} />
+      <PageHeader
+        title={
+          isVerdictAppeal
+            ? 'Greinargerð - Réttarvörslugátt'
+            : titles.shared.appealToCourtOfAppeals
+        }
+      />
       <FormContentContainer>
         <PageTitle>Greinargerð</PageTitle>
         <Box marginBottom={7}>
@@ -195,16 +275,29 @@ const Statement = () => {
               Mál nr. {workingCase.courtCaseNumber}
             </Text>
           )}
-          {workingCase.rulingDate && (
-            <RulingDateLabel rulingDate={workingCase.rulingDate} />
+          {isVerdictAppeal ? (
+            workingCase.rulingDate && (
+              <DateLabel
+                text="Máli lokið"
+                date={workingCase.rulingDate}
+                hideTime
+                as="h3"
+              />
+            )
+          ) : (
+            <>
+              {workingCase.rulingDate && (
+                <RulingDateLabel rulingDate={workingCase.rulingDate} />
+              )}
+              <RulingFileLabel
+                caseFiles={workingCase.caseFiles}
+                rulingFileId={targetAppealCase?.rulingFileId}
+              />
+              <Text variant="h5" as="h5">
+                {getAppealActorText(workingCase, targetAppealCase)}
+              </Text>
+            </>
           )}
-          <RulingFileLabel
-            caseFiles={workingCase.caseFiles}
-            rulingFileId={targetAppealCase?.rulingFileId}
-          />
-          <Text variant="h5" as="h5">
-            {getAppealActorText(workingCase, targetAppealCase)}
-          </Text>
         </Box>
         {user && (
           <>
@@ -289,7 +382,8 @@ const Statement = () => {
               disabled:
                 !targetAppealCaseId ||
                 appealStatementFiles.length === 0 ||
-                isCreatingAppealEventLog,
+                isCreatingAppealEventLog ||
+                (isVerdictAppeal && !defendantId && !civilClaimantId),
               loading: !allFilesDoneOrError || isCreatingAppealEventLog,
               testId: 'continueButton',
             },

@@ -7,6 +7,7 @@ import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import {
   DEFENDER_INDICTMENT_CASE_ADD_FILES_ROUTE,
   DEFENDER_INDICTMENT_CASE_APPEAL_ROUTE,
+  DEFENDER_INDICTMENT_CASE_STATEMENT_ROUTE,
   getStandardUserDashboardRoute,
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -251,6 +252,25 @@ const IndictmentOverview: FC = () => {
             <Text variant="small" color="mint800" fontWeight="semiBold">
               {verdictAppealBanner.statementSentText}
             </Text>
+          ) : verdictAppealBanner.showStatementButton ? (
+            <Button
+              variant="text"
+              size="small"
+              onClick={() => {
+                const party = verdictAppealBanner.statementParty
+                const partyQuery = party?.defendantId
+                  ? `?defendantId=${party.defendantId}`
+                  : party?.civilClaimantId
+                  ? `?civilClaimantId=${party.civilClaimantId}`
+                  : ''
+
+                router.push(
+                  `${DEFENDER_INDICTMENT_CASE_STATEMENT_ROUTE}/${workingCase.id}${partyQuery}`,
+                )
+              }}
+            >
+              Senda greinargerð
+            </Button>
           ) : null}
         </AlertBanner>
       )}

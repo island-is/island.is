@@ -68,7 +68,8 @@ export class LimitedAccessAppealCaseResolver {
     @Args('input', { type: () => CreateAppealEventLogInput })
     input: CreateAppealEventLogInput,
   ): Promise<AppealCase> {
-    const { caseId, appealCaseId, eventType } = input
+    const { caseId, appealCaseId, eventType, defendantId, civilClaimantId } =
+      input
 
     this.logger.debug(
       `Creating appeal event log ${eventType} on limited access appeal case ${appealCaseId} of case ${caseId}`,
@@ -78,6 +79,8 @@ export class LimitedAccessAppealCaseResolver {
       caseId,
       appealCaseId,
       eventType,
+      defendantId,
+      civilClaimantId,
     )
   }
 
