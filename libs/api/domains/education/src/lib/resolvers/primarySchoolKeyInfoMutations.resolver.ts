@@ -9,6 +9,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
+import type { Locale } from '@island.is/shared/types'
 import {
   FeatureFlag,
   FeatureFlagGuard,
@@ -42,13 +43,12 @@ import { withMmsKeyInfoProblem } from '../errors/mmsKeyInfoProblem'
  *
  * Nothing is looked up first to check the child exists or belongs to the
  * caller: frigg verifies guardianship and active enrolment on every call and
- * answers 404 `NOT_FOUND` otherwise (§3, §6), without distinguishing "no such
- * child" from "not your child". Checking it here as well would mean two extra
- * round trips to reach the same answer, and a worse one, since ours would be a
- * guess at frigg's rule rather than frigg's own.
+ * answers 404 `NOT_FOUND` otherwise (§3, §6). Checking it here too would cost
+ * two extra round trips to reach the same answer by guessing at frigg's rule.
  *
  * The matching reads are field resolvers on the student, see
- * {@link PrimarySchoolKeyInfoResolver}.
+ * {@link PrimarySchoolKeyInfoResolver}; each mutation returns the record it
+ * wrote, so it takes the same `locale` they do.
  *
  * Every frigg call goes through {@link withMmsKeyInfoProblem} so a rejection
  * reaches the client as its MMS code rather than an unclassified 500 — the
@@ -69,6 +69,8 @@ export class PrimarySchoolKeyInfoMutationsResolver {
   async primarySchoolAddAgent(
     @CurrentUser() user: User,
     @Args('input') input: AddAgentInput,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
   ): Promise<PrimarySchoolAgent> {
     const childId = input.studentId
     const contact = await withMmsKeyInfoProblem(() =>
@@ -77,13 +79,15 @@ export class PrimarySchoolKeyInfoMutationsResolver {
         relationTypeId: input.relationTypeId,
       }),
     )
-    return mapAgent(contact)
+    return mapAgent(contact, locale)
   }
 
   @Mutation(() => PrimarySchoolAgent)
   async primarySchoolUpdateAgent(
     @CurrentUser() user: User,
     @Args('input') input: UpdateAgentInput,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
   ): Promise<PrimarySchoolAgent> {
     const childId = input.studentId
     const contact = await withMmsKeyInfoProblem(() =>
@@ -91,7 +95,7 @@ export class PrimarySchoolKeyInfoMutationsResolver {
         relationTypeId: input.relationTypeId,
       }),
     )
-    return mapAgent(contact)
+    return mapAgent(contact, locale)
   }
 
   @Mutation(() => Boolean)
@@ -112,6 +116,8 @@ export class PrimarySchoolKeyInfoMutationsResolver {
   async primarySchoolUpdateLanguageProfile(
     @CurrentUser() user: User,
     @Args('input') input: UpdateLanguageProfileInput,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
   ): Promise<LanguageProfile> {
     const childId = input.studentId
     const profile = await withMmsKeyInfoProblem(() =>
@@ -123,7 +129,7 @@ export class PrimarySchoolKeyInfoMutationsResolver {
         signLanguage: input.signLanguage,
       }),
     )
-    return mapLanguageProfile(profile)
+    return mapLanguageProfile(profile, locale)
   }
 
   /* -- Health profile ------------------------------------------------------ */
@@ -132,6 +138,8 @@ export class PrimarySchoolKeyInfoMutationsResolver {
   async primarySchoolUpdateHealthProfile(
     @CurrentUser() user: User,
     @Args('input') input: UpdateHealthProfileInput,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
   ): Promise<HealthProfile> {
     const childId = input.studentId
     const profile = await withMmsKeyInfoProblem(() =>
@@ -142,6 +150,6 @@ export class PrimarySchoolKeyInfoMutationsResolver {
         allergies: input.allergies,
       }),
     )
-    return mapHealthProfile(profile)
+    return mapHealthProfile(profile, locale)
   }
 }

@@ -1,5 +1,4 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { LocalizedText } from './localizedText.model'
 
 /** The person behind an emergency contact. Email / phone are never exposed
  * here — they are the contact's own (contract §4.4). */
@@ -17,8 +16,8 @@ export class AgentRelationType {
   @Field(() => ID)
   id!: string
 
-  @Field(() => LocalizedText)
-  title!: LocalizedText
+  @Field()
+  title!: string
 }
 
 /** Who registered the contact. `kind` is guardian | organization | unknown;

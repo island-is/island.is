@@ -6,10 +6,7 @@ fragment PrimarySchoolAgentFields on EducationPrimarySchoolAgent {
   }
   relationType {
     id
-    title {
-      is
-      en
-    }
+    title
   }
   createdBy {
     kind
@@ -23,10 +20,7 @@ fragment PrimarySchoolLanguageProfileFields on EducationPrimarySchoolLanguagePro
   languageEnvironment {
     id
     code
-    title {
-      is
-      en
-    }
+    title
   }
   preferredLanguage
   languages
@@ -47,10 +41,7 @@ fragment PrimarySchoolHealthProfileFields on EducationPrimarySchoolHealthProfile
     id
     code
     type
-    title {
-      is
-      en
-    }
+    title
   }
   updatedAt
   updatedBy {
@@ -59,27 +50,18 @@ fragment PrimarySchoolHealthProfileFields on EducationPrimarySchoolHealthProfile
   }
 }
 
-# The key-information reads hang off the student, so they are addressed by the
-# routed studentId and the api resolves the MMS child behind it.
+# All three sections in one request: every key-info field resolver translates
+# the student into a frigg child id first, so splitting them costs an extra
+# `listChildren` per request (my-pages uses a plain HttpLink, no batching). The
+# three flags select the sections the caller actually reads.
 #
-# All three sections are read in one request. Every key-info field resolver has
-# to translate the student into a frigg child id, and that translation is a
-# `listChildren` call deduplicated by a per-request DataLoader — so splitting
-# the sections across requests costs one extra `listChildren` per request
-# (my-pages uses a plain HttpLink, with no query batching). The caller selects
-# the sections it actually reads with the three flags: the overview takes all
-# three, an edit screen takes one.
-#
-# Read with errorPolicy 'all' so a section that fails comes back as a null field
-# plus an error keyed on its path, and the sections that succeeded still render
-# (see usePrimarySchoolKeyInfo). Every field selected here is nullable, so a
-# failure never nulls `primarySchoolStudent` itself: that null would be written
-# to the cache under the root field this query shares with the base info and
-# assessment reads, and would blank those too. A failed child-id lookup shows up
-# as an error on `hasKeyInfo`, which the hook reports as the one read-level
-# error.
+# Every field selected here is nullable on purpose. Read with errorPolicy 'all'
+# (see usePrimarySchoolKeyInfo), a failing non-nullable field would null
+# `primarySchoolStudent` itself — and that null is cached under the root field
+# this query shares with the base info and assessment reads, blanking those too.
 query PrimarySchoolKeyInfoSections(
   $studentId: String!
+  $locale: String!
   $withEmergencyContacts: Boolean!
   $withLanguageProfile: Boolean!
   $withHealthProfile: Boolean!
@@ -87,13 +69,13 @@ query PrimarySchoolKeyInfoSections(
   primarySchoolStudent(studentId: $studentId) {
     id
     hasKeyInfo
-    emergencyContacts @include(if: $withEmergencyContacts) {
+    emergencyContacts(locale: $locale) @include(if: $withEmergencyContacts) {
       ...PrimarySchoolAgentFields
     }
-    languageProfile @include(if: $withLanguageProfile) {
+    languageProfile(locale: $locale) @include(if: $withLanguageProfile) {
       ...PrimarySchoolLanguageProfileFields
     }
-    healthProfile @include(if: $withHealthProfile) {
+    healthProfile(locale: $locale) @include(if: $withHealthProfile) {
       ...PrimarySchoolHealthProfileFields
     }
   }
@@ -106,50 +88,45 @@ query PrimarySchoolContactIdentity($input: IdentityInput!) {
   }
 }
 
-query PrimarySchoolAgentRelationTypes {
-  primarySchoolAgentRelationTypes {
+query PrimarySchoolAgentRelationTypes($locale: String!) {
+  primarySchoolAgentRelationTypes(locale: $locale) {
     id
     relation
-    title {
-      is
-      en
-    }
+    title
   }
 }
 
-query PrimarySchoolAllergies {
-  primarySchoolAllergies {
+query PrimarySchoolAllergies($locale: String!) {
+  primarySchoolAllergies(locale: $locale) {
     id
     code
     type
-    title {
-      is
-      en
-    }
+    title
   }
 }
 
-query PrimarySchoolLanguageEnvironments {
-  primarySchoolLanguageEnvironments {
+query PrimarySchoolLanguageEnvironments($locale: String!) {
+  primarySchoolLanguageEnvironments(locale: $locale) {
     id
     code
-    title {
-      is
-      en
-    }
+    title
   }
 }
 
-mutation PrimarySchoolAddAgent($input: EducationPrimarySchoolAddAgentInput!) {
-  primarySchoolAddAgent(input: $input) {
+mutation PrimarySchoolAddAgent(
+  $input: EducationPrimarySchoolAddAgentInput!
+  $locale: String!
+) {
+  primarySchoolAddAgent(input: $input, locale: $locale) {
     ...PrimarySchoolAgentFields
   }
 }
 
 mutation PrimarySchoolUpdateAgent(
   $input: EducationPrimarySchoolUpdateAgentInput!
+  $locale: String!
 ) {
-  primarySchoolUpdateAgent(input: $input) {
+  primarySchoolUpdateAgent(input: $input, locale: $locale) {
     ...PrimarySchoolAgentFields
   }
 }
@@ -162,16 +139,18 @@ mutation PrimarySchoolDeleteAgent(
 
 mutation PrimarySchoolUpdateLanguageProfile(
   $input: EducationPrimarySchoolUpdateLanguageProfileInput!
+  $locale: String!
 ) {
-  primarySchoolUpdateLanguageProfile(input: $input) {
+  primarySchoolUpdateLanguageProfile(input: $input, locale: $locale) {
     ...PrimarySchoolLanguageProfileFields
   }
 }
 
 mutation PrimarySchoolUpdateHealthProfile(
   $input: EducationPrimarySchoolUpdateHealthProfileInput!
+  $locale: String!
 ) {
-  primarySchoolUpdateHealthProfile(input: $input) {
+  primarySchoolUpdateHealthProfile(input: $input, locale: $locale) {
     ...PrimarySchoolHealthProfileFields
   }
 }

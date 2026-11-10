@@ -4,8 +4,7 @@ import type { MmsError } from './types'
 
 /**
  * The selectable allergy reference list, served by MMS as two `GET /key-options`
- * lists. Callers split by `type` (values match AllergyCategory). Each entry
- * resolves to a `{ value, label, code, type }` pair in the active locale.
+ * lists. Callers split by `type` (values match AllergyCategory).
  *
  * `code` is not unique across types: `code: "other"` exists in both the food
  * and the other list, so always key selections off `value` (the id).
@@ -13,7 +12,6 @@ import type { MmsError } from './types'
 export interface AllergySelectOption {
   /** allergy id — what HealthProfile.allergies[].id / a PATCH stores */
   value: string
-  /** title resolved to the active UI locale */
   label: string
   code: string
   /** food | other (AllergyCategory) */
@@ -26,16 +24,16 @@ export const useAllergyOptions = (): {
   error: MmsError | undefined
 } => {
   const { lang } = useLocale()
-  const { data, loading, error } = usePrimarySchoolAllergiesQuery()
+  const { data, loading, error } = usePrimarySchoolAllergiesQuery({
+    variables: { locale: lang },
+  })
 
-  const options: AllergySelectOption[] = (data?.primarySchoolAllergies ?? [])
-    .map((allergy) => ({
-      value: allergy.id,
-      label: lang === 'en' ? allergy.title.en : allergy.title.is,
-      code: allergy.code,
-      type: allergy.type,
-    }))
-    .sort((a, b) => a.label.localeCompare(b.label))
+  const options = (data?.primarySchoolAllergies ?? []).map((allergy) => ({
+    value: allergy.id,
+    label: allergy.title,
+    code: allergy.code,
+    type: allergy.type,
+  }))
 
   return {
     options,

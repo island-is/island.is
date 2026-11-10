@@ -7,6 +7,9 @@ import { MessageDescriptor } from 'react-intl'
  * Lightweight card wrapper for a key-info section. Mirrors the purple eyebrow
  * title of InfoLineStack but without its forced dividers / array-of-children
  * constraint, so sections with conditional read/edit content render predictably.
+ *
+ * The title is an `h2`: it names a section of the page, under the `h1` the
+ * student wrapper renders.
  */
 export const KeyInfoSection = ({
   title,
@@ -29,7 +32,7 @@ export const KeyInfoSection = ({
         rowGap={1}
         paddingBottom={2}
       >
-        <Text variant="eyebrow" color="purple400">
+        <Text variant="eyebrow" color="purple400" as="h2">
           {formatMessage(title)}
         </Text>
         {action}

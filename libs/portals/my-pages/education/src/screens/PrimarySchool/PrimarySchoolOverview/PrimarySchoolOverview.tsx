@@ -34,22 +34,19 @@ export const PrimarySchoolOverview = () => {
 
   const student = data?.primarySchoolStudent
 
-  // Key information has its own feature flag, separate from the one gating the
-  // primary-school page. While it is off the sections below are left out and
-  // their reads are never made.
+  // While the key-info flag is off the sections below are left out and their
+  // reads are never made.
   const { value: keyInfoEnabled, loading: keyInfoFlagLoading } = useFeatureFlag(
     Features.isServicePortalPrimarySchoolKeyInfoEnabled,
     false,
   )
 
-  // Lykilupplýsingar (key information). One read brings back whether the child
-  // exists in the frigg key-info database and all three sections; each section
-  // still owns its own error and PATCH, so there is no shared page-level save.
-  //
-  // Without a counterpart in frigg every key-info read answers "no information"
-  // and every write is rejected, so the sections are left out rather than shown
-  // with actions that cannot succeed. When the read itself fails that answer is
-  // unknown, and the failure is shown instead of quietly hiding the sections.
+  // Lykilupplýsingar (key information). One read brings back all three sections
+  // and whether the child exists in frigg at all; each section owns its own
+  // error and PATCH, so there is no page-level save. Without a counterpart in
+  // frigg every read answers "no information" and every write is rejected, so
+  // the sections are left out rather than shown with actions that cannot
+  // succeed.
   const {
     hasKeyInfo,
     loading: keyInfoLoading,

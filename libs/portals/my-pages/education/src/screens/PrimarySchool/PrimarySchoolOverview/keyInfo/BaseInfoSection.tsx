@@ -1,16 +1,17 @@
 import { InfoLine, m } from '@island.is/portals/my-pages/core'
 import { Divider } from '@island.is/island-ui/core'
 
+import type { EducationPrimarySchoolStudent } from '@island.is/api/schema'
 import { primarySchoolMessages as psm } from '../../../../lib/messages'
 import { KeyInfoSection } from './KeyInfoSection'
-import type { PrimarySchoolStudentOverviewQuery } from '../PrimarySchoolStudentOverview.generated'
-
-type Student = NonNullable<
-  PrimarySchoolStudentOverviewQuery['primarySchoolStudent']
->
 
 interface Props {
-  student: Student
+  /** Only the fields this section renders, so the overview can pass its own
+   * narrower query result. */
+  student: Pick<
+    EducationPrimarySchoolStudent,
+    'schoolName' | 'contactTeacherName' | 'homeRoomName'
+  >
   loading: boolean
 }
 

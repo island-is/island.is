@@ -26,22 +26,15 @@ import type {
 } from './types'
 
 /**
- * Data hook for the primary-school key-information sections (Aðstandendur,
- * Tungumálaumhverfi, Heilsufarsupplýsingar). It runs the education GraphQL
- * queries/mutations and maps the (locale-neutral) GraphQL shapes onto the
- * section view models in ./types.
+ * Data hook for the key-information sections (Aðstandendur, Tungumálaumhverfi,
+ * Heilsufarsupplýsingar). It runs the education GraphQL queries/mutations and
+ * flattens them onto the section view models in ./types.
  *
- * The three sections are read in one query, so one request resolves the frigg
- * child id once for all of them (see PrimarySchoolKeyInfo.graphql). A caller
- * passes the sections it actually reads and the rest are left out of the
- * selection set — an edit screen needs one of the three. The mutations are
+ * A caller passes the sections it reads — the overview takes all three, an edit
+ * screen one — and the rest are left out of the selection set; see
+ * PrimarySchoolKeyInfo.graphql for why they share one query. The mutations are
  * always available and refetch exactly what the caller reads.
  */
-
-interface LocalizedTitle {
-  is: string
-  en: string
-}
 
 /** The three key-info sections, as named on {@link PrimarySchoolKeyInfo}. */
 export type KeyInfoSectionName =
@@ -63,12 +56,9 @@ export interface PrimarySchoolKeyInfo {
   /** true while the key-info read is in flight and there is nothing to show
    * yet. A background refresh over cached data does not raise it. */
   loading: boolean
-  /**
-   * Set when the child-id lookup failed — frigg unreachable, the token refused
-   * — so no section could resolve and `hasKeyInfo` is unknown. A failure
-   * confined to one section is reported on that section instead, and the
-   * others still carry their data.
-   */
+  /** Set when the child-id lookup failed, so no section could resolve and
+   * `hasKeyInfo` is unknown. A failure confined to one section is reported on
+   * that section instead. */
   error: MmsError | undefined
   emergencyContacts: SectionState<EmergencyContact[]>
   languageProfile: SectionState<LanguageProfile>
@@ -91,26 +81,19 @@ export const usePrimarySchoolKeyInfo = (
 ): PrimarySchoolKeyInfo => {
   const { lang } = useLocale()
 
-  const localize = (title: LocalizedTitle | undefined | null) =>
-    title ? (lang === 'en' ? title.en : title.is) : undefined
-
   const variables = {
     studentId,
+    locale: lang,
     withEmergencyContacts: sections.includes('emergencyContacts'),
     withLanguageProfile: sections.includes('languageProfile'),
     withHealthProfile: sections.includes('healthProfile'),
   }
 
-  // errorPolicy 'all' keeps the sections that resolved: a section that failed
-  // comes back null with an error of its own, which toMmsFieldError picks out
-  // by path below.
-  //
-  // That same null is written to the cache, and the portal client is
-  // cache-first, so a section that failed once would read back as "no
-  // information" — with no error and no request — every later time the screen
-  // mounts, until the page is reloaded. 'cache-and-network' renders what the
-  // cache has and re-reads frigg behind it, so a failure lasts no longer than
-  // the outage did.
+  // errorPolicy 'all' keeps the sections that resolved; a failed one comes back
+  // null with an error of its own, which toMmsFieldError picks out by path.
+  // That null is cached, and the portal client is cache-first, so without
+  // 'cache-and-network' a section that failed once would read back as "no
+  // information" on every later mount until the page is reloaded.
   const sectionsQuery = usePrimarySchoolKeyInfoSectionsQuery({
     variables,
     errorPolicy: 'all',
@@ -156,7 +139,7 @@ export const usePrimarySchoolKeyInfo = (
     name: agent.person.name,
     nationalId: agent.person.nationalId,
     relationTypeId: agent.relationType.id,
-    relationTypeLabel: localize(agent.relationType.title),
+    relationTypeLabel: agent.relationType.title,
     createdBy: {
       kind: agent.createdBy.kind,
       name: agent.createdBy.displayName ?? undefined,
@@ -169,7 +152,7 @@ export const usePrimarySchoolKeyInfo = (
     profile: PrimarySchoolLanguageProfileFieldsFragment,
   ): LanguageProfile => ({
     languageEnvironmentId: profile.languageEnvironment?.id,
-    languageEnvironmentLabel: localize(profile.languageEnvironment?.title),
+    languageEnvironmentLabel: profile.languageEnvironment?.title,
     preferredLanguage: profile.preferredLanguage ?? undefined,
     languages: profile.languages ?? [],
     interpreter: profile.interpreter,
@@ -182,7 +165,7 @@ export const usePrimarySchoolKeyInfo = (
     allergies: (profile.allergies ?? []).map((allergy) => ({
       id: allergy.id,
       type: allergy.type,
-      label: localize(allergy.title) ?? '',
+      label: allergy.title,
     })),
     epipen: profile.epipen,
     medicalDiagnoses: profile.medicalDiagnoses,
@@ -194,17 +177,14 @@ export const usePrimarySchoolKeyInfo = (
   const languageProfileData = student?.languageProfile
   const healthProfileData = student?.healthProfile
 
-  // 'cache-and-network' re-reads frigg on every mount, so `loading` would be
-  // true over perfectly good cached data and flash a loader in place of the
-  // sections each time. It is only a loading state while there is nothing to
-  // show.
+  // Only a loading state while there is nothing to show: 'cache-and-network'
+  // re-reads on every mount, which would otherwise flash a loader over cached
+  // sections each time.
   const loading = sectionsQuery.loading && !sectionsQuery.data
 
-  // Every section resolver has to translate the student into a frigg child id
-  // first, so when that lookup fails all three fail with it — and so does
-  // `hasKeyInfo`, which is the field that failure is named on. That is the one
-  // case the caller cannot render around, so it is reported as a single
-  // read-level error rather than three identical section errors.
+  // The child-id lookup is what every section starts from, so when it fails all
+  // three fail with it. The failure is named on `hasKeyInfo` and reported once
+  // here rather than as three identical section errors.
   const readError =
     toMmsFieldError(sectionsQuery.error, 'hasKeyInfo') ??
     // A transport failure never reached a resolver, so it carries no field
@@ -223,6 +203,7 @@ export const usePrimarySchoolKeyInfo = (
     async (input: EmergencyContactCreateInput) => {
       await addAgentMutation({
         variables: {
+          locale: lang,
           input: {
             studentId,
             nationalId: input.nationalId,
@@ -231,13 +212,14 @@ export const usePrimarySchoolKeyInfo = (
         },
       })
     },
-    [addAgentMutation, studentId],
+    [addAgentMutation, lang, studentId],
   )
 
   const updateAgent = useCallback(
     async (agentId: string, input: EmergencyContactUpdateInput) => {
       await updateAgentMutation({
         variables: {
+          locale: lang,
           input: {
             studentId,
             agentId,
@@ -246,7 +228,7 @@ export const usePrimarySchoolKeyInfo = (
         },
       })
     },
-    [updateAgentMutation, studentId],
+    [updateAgentMutation, lang, studentId],
   )
 
   const removeAgent = useCallback(
@@ -262,6 +244,7 @@ export const usePrimarySchoolKeyInfo = (
     async (input: LanguageProfileUpdateInput) => {
       await updateLanguageMutation({
         variables: {
+          locale: lang,
           input: {
             studentId,
             languageEnvironmentId: input.languageEnvironmentId,
@@ -273,13 +256,14 @@ export const usePrimarySchoolKeyInfo = (
         },
       })
     },
-    [updateLanguageMutation, studentId],
+    [updateLanguageMutation, lang, studentId],
   )
 
   const saveHealthProfile = useCallback(
     async (input: HealthProfileUpdateInput) => {
       await updateHealthMutation({
         variables: {
+          locale: lang,
           input: {
             studentId,
             epipen: input.epipen,
@@ -291,7 +275,7 @@ export const usePrimarySchoolKeyInfo = (
         },
       })
     },
-    [updateHealthMutation, studentId],
+    [updateHealthMutation, lang, studentId],
   )
 
   return {

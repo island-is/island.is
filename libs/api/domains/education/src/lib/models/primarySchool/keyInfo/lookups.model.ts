@@ -1,5 +1,4 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { LocalizedText } from './localizedText.model'
 
 /** Relation-type lookup option, from `GET /key-options?type=relation`
  * (contract §4.1). */
@@ -11,8 +10,8 @@ export class RelationType {
   @Field({ nullable: true })
   relation?: string
 
-  @Field(() => LocalizedText)
-  title!: LocalizedText
+  @Field()
+  title!: string
 }
 
 /** Allergy lookup option, from `GET /key-options`. `type` splits the list into
@@ -28,8 +27,8 @@ export class Allergy {
   @Field()
   type!: string
 
-  @Field(() => LocalizedText)
-  title!: LocalizedText
+  @Field()
+  title!: string
 }
 
 /** Language-environment lookup option, from
@@ -42,6 +41,6 @@ export class LanguageEnvironment {
   @Field()
   code!: string
 
-  @Field(() => LocalizedText)
-  title!: LocalizedText
+  @Field()
+  title!: string
 }

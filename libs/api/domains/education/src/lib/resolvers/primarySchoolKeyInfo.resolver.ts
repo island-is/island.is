@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common'
-import { Parent, ResolveField, Resolver } from '@nestjs/graphql'
+import { Args, Parent, ResolveField, Resolver } from '@nestjs/graphql'
 
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -9,6 +9,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
+import type { Locale } from '@island.is/shared/types'
 import {
   FeatureFlag,
   FeatureFlagGuard,
@@ -38,26 +39,23 @@ import { withMmsKeyInfoProblem } from '../errors/mmsKeyInfoProblem'
  * form-api (contract v0.2, §4).
  *
  * They hang off {@link PrimarySchoolStudent} rather than sitting at the root,
- * so the hierarchy is explicit and each read gets the child's national id from
- * the parent instead of looking the student up again. A child with no
- * counterpart in frigg reads as "no information" (an empty list / null) so the
- * overview still renders; the mutations in
+ * so the hierarchy is explicit and each read takes the child from its parent
+ * instead of looking the student up again. Frigg keys children on the same id
+ * these screens route on (contract v0.3 §4.3), so nothing is translated — but
+ * every field still has to know whether frigg has the child at all, which
+ * {@link PrimarySchoolChildIdLoader} answers from one `listChildren` call per
+ * request. A child frigg does not have reads as "no information" (an empty
+ * list / null) so the overview still renders; the mutations in
  * {@link PrimarySchoolKeyInfoMutationsResolver} fail instead.
  *
- * Frigg keys children on the same id these screens route on (contract v0.3
- * §4.3), so no id translation is needed. What every field here does need is to
- * know whether frigg has the child at all, which {@link PrimarySchoolChildIdLoader}
- * answers from one `listChildren` call per request rather than one per field.
- * Splitting the fields across requests costs one per request, which is why the
- * portal reads all three sections in a single query.
- *
- * The lookup lists these sections pick from live in
- * {@link PrimarySchoolKeyInfoOptionsResolver} — they are per-user, not
- * per-student.
+ * Frigg serves titles as per-language key-option translations, so each field
+ * takes a `locale` and resolves them here. The lookup lists these sections pick
+ * from are per-user rather than per-student and live in
+ * {@link PrimarySchoolKeyInfoOptionsResolver}.
  *
  * Key information has its own feature flag, separate from the one gating the
  * rest of the primary-school page, so it can stay dark after the assessment
- * screens go live. The portal skips these reads entirely while it is off.
+ * screens go live.
  */
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.isServicePortalPrimarySchoolKeyInfoEnabled)
@@ -91,6 +89,8 @@ export class PrimarySchoolKeyInfoResolver {
   async emergencyContacts(
     @CurrentUser() user: User,
     @Parent() student: PrimarySchoolStudent,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
     @Loader(PrimarySchoolChildIdLoader)
     childIdLoader: PrimarySchoolChildIdDataLoader,
   ): Promise<PrimarySchoolAgent[]> {
@@ -99,13 +99,15 @@ export class PrimarySchoolKeyInfoResolver {
     const contacts = await withMmsKeyInfoProblem(() =>
       this.keyInfoClient.getEmergencyContacts(user, childId),
     )
-    return contacts.map(mapAgent)
+    return contacts.map((contact) => mapAgent(contact, locale))
   }
 
   @ResolveField(() => LanguageProfile, { nullable: true })
   async languageProfile(
     @CurrentUser() user: User,
     @Parent() student: PrimarySchoolStudent,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
     @Loader(PrimarySchoolChildIdLoader)
     childIdLoader: PrimarySchoolChildIdDataLoader,
   ): Promise<LanguageProfile | null> {
@@ -114,13 +116,15 @@ export class PrimarySchoolKeyInfoResolver {
     const profile = await withMmsKeyInfoProblem(() =>
       this.keyInfoClient.getLanguageProfile(user, childId),
     )
-    return mapLanguageProfile(profile)
+    return mapLanguageProfile(profile, locale)
   }
 
   @ResolveField(() => HealthProfile, { nullable: true })
   async healthProfile(
     @CurrentUser() user: User,
     @Parent() student: PrimarySchoolStudent,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
     @Loader(PrimarySchoolChildIdLoader)
     childIdLoader: PrimarySchoolChildIdDataLoader,
   ): Promise<HealthProfile | null> {
@@ -129,7 +133,7 @@ export class PrimarySchoolKeyInfoResolver {
     const profile = await withMmsKeyInfoProblem(() =>
       this.keyInfoClient.getHealthProfile(user, childId),
     )
-    return mapHealthProfile(profile)
+    return mapHealthProfile(profile, locale)
   }
 
   /** The frigg child id for a student, or null when frigg has no counterpart

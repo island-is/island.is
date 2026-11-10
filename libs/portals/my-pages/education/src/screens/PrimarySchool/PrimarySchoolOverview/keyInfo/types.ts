@@ -2,11 +2,10 @@
  * View models for the primary-school "Lykilupplýsingar" (key information)
  * sections shown on Mínar síður → Menntun → Grunnskóli → Nemandi → Yfirlit.
  *
- * The generated GraphQL types are locale-neutral (every title arrives as
- * `{ is, en }`) and nest their lookups, which every section and form would
- * otherwise have to unpack for itself. These are what the sections read after
- * usePrimarySchoolKeyInfo has resolved the active locale and flattened the
- * lookups; the generated types stay the source of truth for the wire shape.
+ * The generated GraphQL types nest their lookups, which every section and form
+ * would otherwise unpack for itself. These are what the sections read once
+ * usePrimarySchoolKeyInfo has flattened them; the generated types stay the
+ * source of truth for the wire shape.
  */
 
 /* -------------------------------------------------------------------------- */
@@ -84,8 +83,7 @@ export interface LanguageProfileUpdateInput {
 
 /**
  * Categorisation of an allergy, taken from `allergies[].type`. MMS serves one
- * key-option list per category, so these are the only two that exist. The api
- * folds MMS's `medicine` and `environmental` into `other`.
+ * key-option list per category, so these are the only two that exist.
  */
 export enum AllergyCategory {
   Food = 'food',
@@ -132,8 +130,8 @@ export interface SectionState<T> {
 /* -------------------------------------------------------------------------- */
 
 /** MMS error codes (contract v0.3 §6). The api forwards whatever code MMS
- * reported; {@link mmsErrorMessage} turns the ones we can explain into a
- * message and leaves the rest to the generic one. */
+ * reported; {@link mmsErrorMessage} explains the ones we can and leaves the
+ * rest to the generic message. */
 export enum MmsErrorCode {
   Validation = 'VALIDATION',
   NotAGuardian = 'NOT_A_GUARDIAN',
@@ -153,7 +151,7 @@ export enum MmsErrorCode {
 export interface MmsError {
   code?: string
   message?: string
-  /** Request id MMS sent with the failure, when it sent one — surfaced so a
-   * failure can be traced with MMS (contract §6). */
+  /** Request id MMS sent with the failure, so it can be traced with them
+   * (contract §6). */
   requestId?: string
 }

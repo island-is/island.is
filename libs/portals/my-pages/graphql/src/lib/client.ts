@@ -81,15 +81,12 @@ export const client = new ApolloClient({
       EducationPrimarySchoolStudent: {
         fields: {
           hasKeyInfo: {
-            // The primary-school key-info sections are read with errorPolicy
-            // 'all', which writes a failed field to the cache as null. This
-            // field is also what the student hub decides on, and it is read
-            // there by a query of its own: a failure on one of the two reads
-            // must not turn the other one's "yes, MMS has this child" into
-            // "no child, nothing to show". Null means unknown, so it is
-            // dropped; a real `false` still overwrites. The trailing `null`
-            // keeps the field present in the cache when there is nothing to
-            // fall back to, so the read stays complete rather than partial.
+            // Read by two queries (the overview sections and the student hub)
+            // with errorPolicy 'all', which caches a failed field as null. Null
+            // means unknown, so it is dropped rather than letting one failed
+            // read turn the other's "MMS has this child" into "nothing to
+            // show"; a real `false` still overwrites. The trailing `null` keeps
+            // the field present so the read stays complete.
             merge: (existing, incoming) => incoming ?? existing ?? null,
           },
         },
