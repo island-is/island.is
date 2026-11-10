@@ -6,7 +6,7 @@ import {
 import { Label, ReviewGroup } from '@island.is/application/ui-components'
 import { formatPhoneNumber, removeCountryCode } from '@island.is/shared/utils'
 import { StaticTableFormField } from '@island.is/application/ui-fields'
-import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Tag } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import {
@@ -15,7 +15,11 @@ import {
   PARENTAL_LEAVE,
 } from '../../../constants'
 import { parentalLeaveFormMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../lib/parentalLeaveUtils'
+import {
+  employersHaveChanged,
+  getApplicationAnswers,
+  getChangeBaseline,
+} from '../../../lib/parentalLeaveUtils'
 import { YES } from '@island.is/application/core'
 
 interface ReviewScreenProps {
@@ -31,15 +35,20 @@ const Employers: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
 
   const {
     employers,
-    addEmployer,
-    tempEmployers,
     applicationType,
     isReceivingUnemploymentBenefits,
     isSelfEmployed,
     employerLastSixMonths,
   } = getApplicationAnswers(application.answers)
 
-  const employersArray = addEmployer === YES ? employers : tempEmployers
+  const baseline = getChangeBaseline(application.externalData)
+  const previousEmployers = baseline?.employers ?? []
+
+  const employersArray = employers?.length > 0 ? employers : previousEmployers
+
+  const hasChanges =
+    isSelfEmployed !== YES &&
+    employersHaveChanged(previousEmployers, employers ?? [])
 
   const hasEmployer =
     (applicationType === PARENTAL_LEAVE &&
@@ -60,12 +69,29 @@ const Employers: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
   return (
     hasEmployer &&
     employers.length !== 0 && (
-      <ReviewGroup isEditable editAction={() => goToScreen?.('addEmployer')}>
+      <ReviewGroup
+        isEditable
+        editAction={() => goToScreen?.('editEmployersFields')}
+      >
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-            <Label>
-              {formatMessage(parentalLeaveFormMessages.employer.title)}
-            </Label>
+            <Box
+              display="flex"
+              alignItems="center"
+              columnGap={1}
+              marginBottom={2}
+            >
+              <Label>
+                {formatMessage(parentalLeaveFormMessages.employer.title)}
+              </Label>
+              {hasChanges && (
+                <Tag variant="purple">
+                  {formatMessage(
+                    parentalLeaveFormMessages.shared.changesMadeTag,
+                  )}
+                </Tag>
+              )}
+            </Box>
             {employersArray?.length > 0 && (
               <Box paddingTop={3}>
                 <StaticTableFormField

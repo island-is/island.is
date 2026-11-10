@@ -18,6 +18,21 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Umsókn um fæðingarstyrk',
       description: 'Application for parental grant',
     },
+    nameChange: {
+      id: 'plv2.application:name.change',
+      defaultMessage: 'Breyting á fæðingarorlofi',
+      description: 'Change to an existing parental leave',
+    },
+    nameChangeGrant: {
+      id: 'plv2.application:name.changeGrant',
+      defaultMessage: 'Breyting á fæðingarstyrk',
+      description: 'Change to an existing parental grant',
+    },
+    nameResidenceGrant: {
+      id: 'plv2.application:name.residenceGrant',
+      defaultMessage: 'Umsókn um dvalarstyrk',
+      description: 'Application for residence grant',
+    },
     formTitle: {
       id: 'plv2.application:form.title',
       defaultMessage: 'Umsókn',
@@ -392,6 +407,13 @@ export const parentalLeaveFormMessages = {
         'Fæðingarorlofsréttur eru 12 mánuðir sem skiptast jafnt milli foreldra, en þó má færa allt að 45 daga frá einu foreldri til hins. ',
       description: `The right to parental leave is 12 months, they  are equally divided between parents, but 45 days can be moved from one parent to the other.`,
     },
+    rightsInfoAlert: {
+      id: 'plv2.application:rights.info.alert',
+      defaultMessage:
+        '{months} mánuðir miðast við 100% nýtingu orlofsréttinda. Þú getur dreift tímabilum eða lengt þau en það hefur áhrif á hlutfall greiðslna.',
+      description:
+        '{months} months are based on 100% use of parental leave rights. You can spread out or extend periods but it affects the payment ratio.',
+    },
     grantRightsDescription: {
       id: 'plv2.application:grant.rights.description',
       defaultMessage:
@@ -591,6 +613,42 @@ export const parentalLeaveFormMessages = {
         ' * The other parent has to approve if you requested extra month from\n' +
         '            their share. If they reject your request, you will have to change\n' +
         '            your application.',
+    },
+    requestDaysInputLabel: {
+      id: 'plv2.application:request.days.input.label',
+      defaultMessage: 'Fjöldi daga sem óskað er eftir',
+      description: 'Number of days requested',
+    },
+    giveDaysInputLabel: {
+      id: 'plv2.application:give.days.input.label',
+      defaultMessage: 'Fjöldi daga sem gefnir eru',
+      description: 'Number of days given',
+    },
+    totalTimeOnLeave: {
+      id: 'plv2.application:total.time.on.leave',
+      defaultMessage: 'Samtals tími í orlofi',
+      description: 'Total time on leave',
+    },
+    requestDaysInputDescription: {
+      id: 'plv2.application:request.days.input.description',
+      defaultMessage:
+        'Vinsamlegast sláðu inn hversu marga daga þú vilt óska eftir. Þú getur óskað eftir allt að {maxDays} dögum.',
+      description:
+        'Please enter how many days you want to request. You can request up to {maxDays} days.',
+    },
+    giveDaysInputDescription: {
+      id: 'plv2.application:give.days.input.description',
+      defaultMessage:
+        'Vinsamlegast sláðu inn hversu marga daga þú vilt gefa. Þú getur gefið allt að {maxDays} daga.',
+      description:
+        'Please enter how many days you want to give. You can give up to {maxDays} days.',
+    },
+    giveDaysInfoAlert: {
+      id: 'plv2.application:give.days.info.alert',
+      defaultMessage:
+        'Þegar þú gefur daga yfir á hitt foreldrið minnkar réttur þinn til fæðingarorlofs sem þeim dögum nemur. Ekki er hægt að taka þá daga til baka eftir að umsókn hefur verið samþykkt.',
+      description:
+        'When you give days to the other parent, your parental leave entitlement is reduced by that number of days. These days cannot be taken back after the application has been approved.',
     },
     requestRightsDescription: {
       id: 'plv2.application:request.rights.description',
@@ -924,6 +982,37 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Engar breytingar fundust.',
       description: 'No changes were found.',
     },
+    changesMadeTag: {
+      id: 'plv2.application:changes.made.tag',
+      defaultMessage: 'Breytingar gerðar. Þarfnast staðfestingar.',
+      description: 'Changes made. Needs confirmation.',
+    },
+    changesMadeNoApprovalTag: {
+      id: 'plv2.application:changes.made.no.approval.tag',
+      defaultMessage: 'Breytingar gerðar',
+      description: 'Changes made (no approval needed)',
+    },
+    infoTooltip: {
+      id: 'plv2.application:edit.info.tooltip',
+      defaultMessage:
+        'Í þessum hluta er hægt að breyta netfangi, símanúmeri og tungumáli',
+      description:
+        'In this section you can change email, phone number and language',
+    },
+    rightsTooltip: {
+      id: 'plv2.application:edit.rights.tooltip',
+      defaultMessage:
+        'Hér getur þú ráðstafað notkunina á réttindum þínum. Þú getur gefið allt að 45 daga eða fengið 45 daga frá hinu foreldrinu.',
+      description:
+        'Here you can manage the use of your rights. You can give up to 45 days or receive 45 days from the other parent.',
+    },
+    periodsTooltip: {
+      id: 'plv2.application:edit.periods.tooltip',
+      defaultMessage:
+        'Hér er hægt að ráðstafa þínum réttindum. Hægt er að dreifa tímabilum og nýtingarhlutfalli. Orlofstímabilið er 24 mánuðir í heildina.',
+      description:
+        'Here you can manage your rights. You can distribute periods and usage ratio. The leave period is 24 months in total.',
+    },
     deletePeriod: {
       id: 'plv2.application:delete.period',
       defaultMessage: 'Eyða tímabili',
@@ -966,6 +1055,12 @@ export const parentalLeaveFormMessages = {
       id: 'plv2.application:selectChild.adoption',
       defaultMessage: 'Barn frumættleidd {dateOfBirth}',
       description: 'Child copy radio button',
+    },
+    adoptionOrFosterCare: {
+      id: 'plv2.application:selectChild.adoptionOrFosterCare',
+      defaultMessage: 'Barn ættleitt eða tekið í fóstur {dateOfBirth}',
+      description:
+        "Child copy radio button for the applicant's own adopted or foster child",
     },
     fosterCareOrAdoption: {
       id: 'plv2.application:selectChild.foster.care.or.adoption',
@@ -1036,6 +1131,96 @@ export const parentalLeaveFormMessages = {
       defaultMessage:
         'Þú ert efri foreldri barnsins. Aðalforeldri er {nationalId}',
       description: 'Secondary parent copy',
+    },
+    existingApplication: {
+      id: 'plv2.application:selectChild.existingApplication',
+      defaultMessage: 'Breyting á umsókn',
+      description:
+        'Change application - shown when child already has an application',
+    },
+    inProgressTitle: {
+      id: 'plv2.application:selectChild.inProgress.title',
+      defaultMessage: 'Umsókn í vinnslu',
+      description: 'Application in progress',
+    },
+    inProgressDescription: {
+      id: 'plv2.application:selectChild.inProgress.description',
+      defaultMessage:
+        'Ekki er hægt að sækja aftur um fyrir barn sem er með umsókn í vinnslu. Opnaðu umsóknina til að halda áfram með hana, breyta henni eða eyða henni. Ef hún bíður afgreiðslu hjá Vinnumálastofnun þarftu að hafa samband við Vinnumálastofnun.',
+      description:
+        'You cannot apply again for a child with an application in progress. Open the application to continue, edit or delete it. If it is waiting for the Directorate of Labour, contact the Directorate of Labour.',
+    },
+    inProgressApplicationFor: {
+      id: 'plv2.application:selectChild.inProgress.applicationFor',
+      defaultMessage: '{child}: umsókn í vinnslu',
+      description: '{child}: application in progress',
+    },
+    inProgressChangeFor: {
+      id: 'plv2.application:selectChild.inProgress.changeFor',
+      defaultMessage: '{child}: breyting í vinnslu',
+      description: '{child}: change in progress',
+    },
+    openApplication: {
+      id: 'plv2.application:selectChild.inProgress.open',
+      defaultMessage: 'Opna umsókn',
+      description: 'Open application',
+    },
+    applicationInProgress: {
+      id: 'plv2.application:selectChild.applicationInProgress',
+      defaultMessage: 'Umsókn í vinnslu',
+      description:
+        'Application in progress - shown when the child already has an unfinished application',
+    },
+    childInProgressError: {
+      id: 'plv2.application:selectChild.childInProgressError',
+      defaultMessage:
+        'Umsókn fyrir þetta barn er þegar í vinnslu. Kláraðu hana eða bíddu eftir afgreiðslu áður en þú sækir um aftur.',
+      description:
+        'An application for this child is already in progress. Finish it or wait for it to be processed before applying again.',
+    },
+    existingApplicationInProgress: {
+      id: 'plv2.application:selectChild.existingApplicationInProgress',
+      defaultMessage: 'Breyting í vinnslu',
+      description:
+        'Change application in progress - shown when a follow-up is pending',
+    },
+    bornChild: {
+      id: 'plv2.application:selectChild.bornChild',
+      defaultMessage: 'Barn fætt {dateOfBirth}',
+      description:
+        'Born child label - shown for existing application with born child',
+    },
+    newApplication: {
+      id: 'plv2.application:selectChild.newApplication',
+      defaultMessage: 'Ný umsókn',
+      description: 'New application - shown when child is not found in list',
+    },
+    newApplicationDescription: {
+      id: 'plv2.application:selectChild.newApplicationDescription',
+      defaultMessage:
+        'Fóstur, frumættleiðing eða barn án skráðs fæðingarforeldris',
+      description:
+        'Sub label for the option covering children that are not in the registry data',
+    },
+    followUpDescription: {
+      id: 'plv2.application:selectChild.followUpDescription',
+      defaultMessage:
+        'Upplýsingarnar úr fyrri umsókn þinni verða notaðar. Haltu áfram til að gera breytingar.',
+      description:
+        'Description shown in prerequisites of a follow-up application',
+    },
+    startChangeErrorTitle: {
+      id: 'plv2.application:selectChild.startChangeErrorTitle',
+      defaultMessage: 'Ekki tókst að hefja breytingu',
+      description:
+        'Error title - shown when creating the change application failed',
+    },
+    startChangeErrorMessage: {
+      id: 'plv2.application:selectChild.startChangeErrorMessage',
+      defaultMessage:
+        'Villa kom upp við að hefja breytingu á umsókninni. Reyndu aftur síðar.',
+      description:
+        'Error message - shown when creating the change application failed',
     },
   }),
 
@@ -1212,6 +1397,42 @@ export const parentalLeaveFormMessages = {
       description:
         'There is no need to submit a separate request to the Parental Leave Fund for the use of personal allowance when applying through Ísland.is',
     },
+    editTitle: {
+      id: 'plv2.application:personal.allowance.editTitle',
+      defaultMessage: 'Breyting persónuafsláttar',
+      description: 'Change personal allowance',
+    },
+    editDescription: {
+      id: 'plv2.application:personal.allowance.editDescription',
+      defaultMessage:
+        'Þú getur valið að nýta allan persónuafsláttinn þinn eða ákveðið hlutfall. Þú getur einnig valið að nýta ekki persónuafsláttinn þinn.',
+      description:
+        'You can choose to use all your personal allowance or a specific percentage. You can also choose not to use your personal allowance.',
+    },
+    usageSubtitle: {
+      id: 'plv2.application:personal.allowance.usageSubtitle',
+      defaultMessage:
+        'Skrifaðu það hlutfall (%) sem þú vilt nýta af persónuafslættinum',
+      description:
+        'Write the percentage (%) you want to use of the personal allowance',
+    },
+    doNotUseCheckbox: {
+      id: 'plv2.application:personal.allowance.doNotUseCheckbox',
+      defaultMessage: 'Ég ætla ekki að nýta persónuafsláttinn minn',
+      description: 'I do not intend to use my personal allowance',
+    },
+    editAlertTitle: {
+      id: 'plv2.application:personal.allowance.editAlertTitle',
+      defaultMessage: 'Athugaðu',
+      description: 'Attention',
+    },
+    editAlertDescription: {
+      id: 'plv2.application:personal.allowance.editAlertDescription',
+      defaultMessage:
+        'Það hlutfall sem þú velur gildir um öll tímabil sem eru send inn í þessari umsókn.',
+      description:
+        'The percentage you choose applies to all periods submitted in this application.',
+    },
   }),
 
   leavePlan: defineMessages({
@@ -1281,6 +1502,41 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Ekkert tímabil valið',
       description: 'Copy when no period has been added',
     },
+    periodTitle: {
+      id: 'plv2.application:period.table.title',
+      defaultMessage: 'Tímabil',
+      description: 'Table header: Period',
+    },
+    periodFrom: {
+      id: 'plv2.application:period.table.from',
+      defaultMessage: 'Tími frá',
+      description: 'Table header: Time from',
+    },
+    periodTo: {
+      id: 'plv2.application:period.table.to',
+      defaultMessage: 'Tími til',
+      description: 'Table header: Time to',
+    },
+    periodRatio: {
+      id: 'plv2.application:period.table.ratio',
+      defaultMessage: 'Nýting í %',
+      description: 'Table header: Usage in %',
+    },
+    periodParent: {
+      id: 'plv2.application:period.table.parent',
+      defaultMessage: 'Foreldri',
+      description: 'Table header: Parent',
+    },
+    periodYou: {
+      id: 'plv2.application:period.table.you',
+      defaultMessage: 'Þú',
+      description: 'Table cell: You (current applicant)',
+    },
+    deletePeriod: {
+      id: 'plv2.application:period.table.delete',
+      defaultMessage: 'Eyða tímabili',
+      description: 'Delete period button aria label',
+    },
   }),
 
   firstPeriodStart: defineMessages({
@@ -1336,6 +1592,13 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Ég vil byrja frá raunverulegum fæðingardegi',
       description:
         'When a user first picks the period start date, they will have three options (estimated dob, actual dob, and certain a date)',
+    },
+    dateOfBirthOptionDescription: {
+      id: 'plv2.application:periods.first.period.actualDateOfBirth.description',
+      defaultMessage:
+        'Tímabilið hefst þann dag sem barnið fæðist. Áætlaður fæðingardagur er {expectedDateOfBirth}.',
+      description:
+        'The period starts on the day the child is born. The expected date of birth is {expectedDateOfBirth}.',
     },
     specificDateOption: {
       id: 'plv2.application:periods.first.period.specificDate',
@@ -1414,6 +1677,31 @@ export const parentalLeaveFormMessages = {
       id: 'plv2.application:start.date.placeholder',
       defaultMessage: 'Veldu upphafsdaginn',
       description: 'Pick the start date',
+    },
+  }),
+
+  dateRange: defineMessages({
+    title: {
+      id: 'plv2.application:date.range.title',
+      defaultMessage: 'Tilhögun - Tímabil',
+      description: 'Arrangement - Time period',
+    },
+    description: {
+      id: 'plv2.application:date.range.description',
+      defaultMessage:
+        'Veldu upphafs- og lokadag tímabilsins. Athugaðu að ekki er hægt að nýta réttindi til fæðingarorlofs 24 mánuðum eftir fæðingu barnsins. Fæðingarorlof getur styst verið 14 dagar.',
+      description:
+        'Pick the start and end date of the period. Please note that parental leave rights end 24 months after date of birth. A period must be at least 14 days.',
+    },
+    label: {
+      id: 'plv2.application:date.range.label',
+      defaultMessage: 'Tímabil',
+      description: 'Time period',
+    },
+    placeholder: {
+      id: 'plv2.application:date.range.placeholder',
+      defaultMessage: 'Veldu tímabil',
+      description: 'Pick a time period',
     },
   }),
 
@@ -1715,6 +2003,13 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Veldu þitt hlutfall',
       description: 'Pick your percent',
     },
+    maxPercentageWarning: {
+      id: 'plv2.application:ratio.maxPercentageWarning',
+      defaultMessage:
+        'Miðað við það tímabil sem þú hefur valið og þá daga sem þú átt eftir ónotaða nærðu ekki 100% nýtingarhlutfalli.',
+      description:
+        'Warning shown when the selected period exceeds remaining rights at 100% usage ratio',
+    },
   }),
 
   paymentPlan: defineMessages({
@@ -1862,6 +2157,61 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Breyta umsókn',
       description: 'Edit application',
     },
+    editConfirmTitle: {
+      id: 'plv2.application:review.editConfirm.title',
+      defaultMessage: 'Viltu draga umsóknina til baka?',
+      description: 'Do you want to take the application back?',
+    },
+    editConfirmTitleEdits: {
+      id: 'plv2.application:review.editConfirm.titleEdits',
+      defaultMessage: 'Viltu draga breytingarnar til baka?',
+      description: 'Do you want to take your changes back?',
+    },
+    editConfirmDescription: {
+      id: 'plv2.application:review.editConfirm.description',
+      defaultMessage:
+        'Umsóknin verður dregin til baka svo þú getir breytt henni. Þú þarft að senda hana inn aftur og þá fer hún aftur til samþykktar hjá {approvers}{hasOtherApprovers, select, true {, líka hjá þeim sem hafa þegar samþykkt hana} other {}}.',
+      description:
+        'The application will be taken back so you can edit it. You will need to submit it again, and it will then need to be approved again by {approvers}{hasOtherApprovers, select, true {, including anyone who has already approved it} other {}}.',
+    },
+    editConfirmDescriptionEdits: {
+      id: 'plv2.application:review.editConfirm.descriptionEdits',
+      defaultMessage:
+        'Breytingarnar verða dregnar til baka svo þú getir haldið áfram að breyta þeim. Þú þarft að senda þær inn aftur og þá fara þær aftur til samþykktar hjá Vinnumálastofnun og, ef breytingarnar snerta þau, hjá hinu foreldrinu og vinnuveitanda þínum.',
+      description:
+        'Your changes will be taken back so you can keep editing them. You will need to submit them again, and they will then be reviewed again by the Directorate of Labour and, where the changes affect them, by the other parent and your employer.',
+    },
+    editConfirmButton: {
+      id: 'plv2.application:review.editConfirm.button',
+      defaultMessage: 'Draga til baka og breyta',
+      description: 'Take back and edit',
+    },
+    editConfirmCancel: {
+      id: 'plv2.application:review.editConfirm.cancel',
+      defaultMessage: 'Hætta við',
+      description: 'Cancel',
+    },
+    approverOtherParent: {
+      id: 'plv2.application:review.approver.otherParent',
+      defaultMessage: 'hinu foreldrinu',
+      description:
+        'the other parent (dative, as in "approved by the other parent")',
+    },
+    approverEmployer: {
+      id: 'plv2.application:review.approver.employer',
+      defaultMessage: 'vinnuveitanda þínum',
+      description: 'your employer (dative)',
+    },
+    approverVMST: {
+      id: 'plv2.application:review.approver.vmst',
+      defaultMessage: 'Vinnumálastofnun',
+      description: 'the Directorate of Labour (dative)',
+    },
+    listAnd: {
+      id: 'plv2.application:review.listAnd',
+      defaultMessage: 'og',
+      description: 'and',
+    },
     otherParentTitle: {
       id: 'plv2.application:review.otherParent.title',
       defaultMessage: 'Annað foreldri samþykkir umsóknina',
@@ -1882,7 +2232,8 @@ export const parentalLeaveFormMessages = {
         'The other parent will need to approve the extra days you’ve requested.',
     },
     otherParentDescRequestingPersonalDiscount: {
-      id: 'plv2.application:review.otherParent.otherParentDescRequestingPersonalDiscount',
+      id:
+        'plv2.application:review.otherParent.otherParentDescRequestingPersonalDiscount',
       defaultMessage:
         'Hitt foreldrið þarf að samþykkja notkun persónuafsláttar síns.',
       description:
@@ -1916,9 +2267,14 @@ export const parentalLeaveFormMessages = {
         'Vinnumálastofnun mun fara yfir og samþykkja umsókn þína.',
       description: 'Vinnumálastofnun will review and approve your application.',
     },
+    rightsSubHeader: {
+      id: 'plv2.application:review.rights.sub.header',
+      defaultMessage: 'Þín réttindi',
+      description: 'Sub-header for rights summary',
+    },
     rightsTotal: {
       id: 'plv2.application:review.rights.total',
-      defaultMessage: 'Samtals: {months}',
+      defaultMessage: 'Samtals: {months} mánuðir',
       description:
         'Copy for the total of months for the parental leave on the review screen',
     },
@@ -1939,13 +2295,16 @@ export const parentalLeaveFormMessages = {
     },
     rightsAllowanceRequested: {
       id: 'plv2.application:review.rights.allowance.requested',
-      defaultMessage: '{requested} mánuður veittur af öðru foreldri',
-      description: 'Requested months from other parent',
+      defaultMessage:
+        'Tilfærsla réttinda: Óskað eftir {requestDays} dögum frá hinu foreldrinu. Þarfnast staðfestingar.',
+      description:
+        'Transfer of rights: Requested days from the other parent. Needs confirmation.',
     },
     rightsAllowanceGiven: {
       id: 'plv2.application:review.rights.allowance.given',
-      defaultMessage: '{given} mánuður gefinn hinu foreldrinu',
-      description: 'Given months to the other parent',
+      defaultMessage:
+        'Tilfærsla réttinda: {giveDays} dagar gefnir hinu foreldrinu',
+      description: 'Transfer of rights: Days given to the other parent',
     },
     period: {
       id: 'plv2.application:review.period',
@@ -1983,6 +2342,11 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Tungumál fyrir samskipti við sjóðinn',
       description:
         'Language to use in communication with the Parental Leave Fund',
+    },
+    additionalInfo: {
+      id: 'plv2.application:review.additionalInfo',
+      defaultMessage: 'Viðbótarupplýsingar',
+      description: 'Additional information',
     },
     benefits: {
       id: 'plv2.application:review.benefits',
@@ -2062,10 +2426,27 @@ export const parentalLeaveFormMessages = {
       description:
         'Your edits were not approved by the Directorate of Labour. You can choose to discard your previous edits or edit the application and resend it for review.',
     },
-    editsNotApprovedDiscardButton: {
-      id: 'plv2.application:editFlow.requiresAction.discardButtonLabel',
-      defaultMessage: 'Eyða breytingum',
-      description: 'Discard my edits',
+    backToOverview: {
+      id: 'plv2.application:editFlow.backToOverview',
+      defaultMessage: 'Til baka í yfirlit',
+      description: 'Back to overview',
+    },
+    overviewTitle: {
+      id: 'plv2.application:editFlow.overviewTitle',
+      defaultMessage: 'Yfirlit breytinga',
+      description: 'Changes overview',
+    },
+    overviewDescription: {
+      id: 'plv2.application:editFlow.overviewDescription',
+      defaultMessage:
+        'Hér getur þú séð yfirlit yfir umsóknina þína og gert breytingar á einstökum hlutum.',
+      description:
+        'Here you can see an overview of your application and make changes to individual sections.',
+    },
+    submitChanges: {
+      id: 'plv2.application:editFlow.submitChanges',
+      defaultMessage: 'Senda breytingar',
+      description: 'Submit changes',
     },
   }),
 
@@ -2195,7 +2576,8 @@ export const parentalLeaveFormMessages = {
       description: 'Confirmation',
     },
     parentWithoutBirthParentDescription: {
-      id: 'plv2.application:attachmentscreen.parent.without.birth.parent.description',
+      id:
+        'plv2.application:attachmentscreen.parent.without.birth.parent.description',
       defaultMessage:
         'Vottorð um áætlaðan fæðingardag þarf að berast frá viðkomandi landi. Eftir að barn er fætt þarf að berast fæðingarvottorð þess ásamt staðfestingu á faðerni ef foreldrar eru ekki gift eða í sambúð. Ef foreldrar eru gift eða í sambúð má senda afrit af staðfestingu þess lútandi með vottorði um áætlaðan fæðingardag. Athugaðu að skjalið þarf að vera á .pdf formi',
       description: 'father without mother description',
@@ -2456,6 +2838,32 @@ export const otherParentApprovalFormMessages = defineMessages({
 })
 
 export const errorMessages = defineMessages({
+  parentalLeavesUnavailableTitle: {
+    id: 'plv2.application:error.parentalLeavesUnavailable.title',
+    defaultMessage: 'Ekki tókst að sækja fæðingarorlof',
+    description:
+      'Title when the applicant’s parental leaves could not be fetched from VMST',
+  },
+  parentalLeavesUnavailableSummary: {
+    id: 'plv2.application:error.parentalLeavesUnavailable.summary',
+    defaultMessage:
+      'Ekki tókst að sækja upplýsingar um fæðingarorlof frá Vinnumálastofnun. Vinsamlegast reyndu aftur síðar.',
+    description:
+      'Shown when VMST’s parental-leaves list could not be fetched, so it is not known which children already have a leave',
+  },
+  followUpLeaveNotFoundTitle: {
+    id: 'plv2.application:error.followUpLeaveNotFound.title',
+    defaultMessage: 'Fæðingarorlofið fannst ekki',
+    description:
+      'Title when VMST does not list the leave a change or residence grant continues',
+  },
+  followUpLeaveNotFoundSummary: {
+    id: 'plv2.application:error.followUpLeaveNotFound.summary',
+    defaultMessage:
+      'Vinnumálastofnun er ekki með skráð fæðingarorlofið sem þessi umsókn byggir á. Ef þú telur að það eigi að vera skráð skaltu hafa samband við Vinnumálastofnun.',
+    description:
+      'Shown when VMST does not list the leave a change or residence grant continues',
+  },
   phoneNumber: {
     id: 'plv2.application:dataSchema.phoneNumber',
     defaultMessage: 'Símanúmerið þarf að vera gilt.',
@@ -2502,6 +2910,11 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Ekkert hlutfall hefur verið valið',
     description: 'Copy when days to be used by period is missing',
   },
+  employersRatioInvalid: {
+    id: 'plv2.application:answerValidators.employersRatioInvalid',
+    defaultMessage: 'Starfshlutfall þarf að vera á bilinu 1 til 100%',
+    description: 'Employer ratio is outside the allowed 1-100% range',
+  },
   employersStillEmployedMissing: {
     id: 'plv2.application:answerValidators.employersStillEmployedMissing',
     defaultMessage: 'Vinsamlegast veldu annan hvorn möguleikann',
@@ -2534,14 +2947,16 @@ export const errorMessages = defineMessages({
     description: 'Could not fetch child data',
   },
   periodsFirstPeriodStartDateDefinitionMissing: {
-    id: 'plv2.application:answerValidators.periodsFirstPeriodStartDateDefinitionMissing',
+    id:
+      'plv2.application:answerValidators.periodsFirstPeriodStartDateDefinitionMissing',
     defaultMessage:
       'Ekki er búið að skilgreina hvernig á að hefja fyrsta tímabil.',
     description:
       'Copy for when user has not chosen how to start the first period (expected dob, dob, specific date)',
   },
   periodsFirstPeriodStartDateDefinitionInvalid: {
-    id: 'plv2.application:answerValidators.periodsFirstPeriodStartDateDefinitionInvalid',
+    id:
+      'plv2.application:answerValidators.periodsFirstPeriodStartDateDefinitionInvalid',
     defaultMessage: 'Skilgreining á upphafi fyrsta tímabils ógild.',
     description:
       'Copy for when user has chosen how to start the period but it is invalid',
@@ -2766,10 +3181,18 @@ export const errorMessages = defineMessages({
     description: 'Unable to request days!',
   },
   notAllowedToGiveRightsOtherParentNotAllowed: {
-    id: 'plv2.application:errors.not.allowed.to.give.rights.other.parent.not.allowed',
+    id:
+      'plv2.application:errors.not.allowed.to.give.rights.other.parent.not.allowed',
     defaultMessage:
       'Ekki er hægt að færa daga ef forsjárlausa foreldrið hefur ekki samþykki fyrir umgengni í þessu fæðingarorlofi. Vinsamlegast veljið annan möguleika.',
     description: 'Unable to transfer days!',
+  },
+  rightsDaysOutOfRange: {
+    id: 'plv2.application:errors.rights.days.out.of.range',
+    defaultMessage:
+      'Fjöldi daga þarf að vera heil tala sem er ekki hærri en leyfilegt hámark',
+    description:
+      'Number of days to give/request is negative, not a whole number or above the maximum',
   },
 })
 
@@ -2838,11 +3261,6 @@ export const statesMessages = defineMessages({
     id: 'plv2.application:employerAction.description',
     defaultMessage: 'Vinnuveitandi krefst aðgerða vegna umsóknar þinnar.',
     description: 'Description of the state - employerAction',
-  },
-  employerActionDeleteChanges: {
-    id: 'plv2.application:employerAction.delete.changes',
-    defaultMessage: 'Umsækjandi eyddi ósamþykktu tímabili.',
-    description: 'Applicant deleted unapproved period.',
   },
 
   vinnumalastofnunApprovalTitle: {
@@ -3063,7 +3481,8 @@ export const statesMessages = defineMessages({
   },
 
   vinnumalastofnunApproveEditsRejectHistoryLogMessage: {
-    id: 'plv2.application:vinnumalastofnunApproveEdits.reject.historyLogMessage',
+    id:
+      'plv2.application:vinnumalastofnunApproveEdits.reject.historyLogMessage',
     defaultMessage: 'Vinnumálastofnun hafnaði breytingunum þínum',
     description: 'Vinnumálastofnun rejected your edits',
   },

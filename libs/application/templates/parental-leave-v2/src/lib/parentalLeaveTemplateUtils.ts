@@ -1,6 +1,8 @@
-import { getValueViaPath, NO, YES, YesOrNo } from '@island.is/application/core'
-import { ApplicationContext } from '@island.is/application/types'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
+import { Application, ApplicationContext } from '@island.is/application/types'
 import {
+  ApplicationAction,
+  MOCK_APPLICATION_FUND_ID,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
@@ -9,8 +11,14 @@ import {
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  employersHaveChanged,
+  getChangeBaseline,
+  normalize,
+  periodsHaveChanged,
   requiresOtherParentApproval,
+  requiresOtherParentApprovalForEdits,
   residentGrantIsOpenForApplication,
+  vmstFirstPeriodStartToAnswer,
 } from '../lib/parentalLeaveUtils'
 import { EmployerRow, Period } from '../types'
 
@@ -33,14 +41,15 @@ export const allEmployersHaveApproved = (context: ApplicationContext) => {
 
 export const hasEmployer = (context: ApplicationContext) => {
   const { application } = context
-  const { isReceivingUnemploymentBenefits, isSelfEmployed, employers } =
-    getApplicationAnswers(application.answers)
+  const {
+    isReceivingUnemploymentBenefits,
+    isSelfEmployed,
+    employers,
+  } = getApplicationAnswers(application.answers)
 
-  const applicationType = (
-    application.answers as {
-      applicationType: { option: string }
-    }
-  )?.applicationType
+  const applicationType = (application.answers as {
+    applicationType: { option: string }
+  })?.applicationType
 
   // Added this check for applications that is in the db already so they can go through to next state
   if (applicationType === undefined) {
@@ -70,9 +79,67 @@ export const needsOtherParentApproval = (context: ApplicationContext) => {
   )
 }
 
-export const currentDateStartTime = () => {
-  const date = new Date().toDateString()
-  return new Date(date).getTime()
+const EDIT_FLOW_REVIEW_STATES: string[] = [
+  States.OTHER_PARENT_APPROVAL_FOR_EDITS,
+  States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+  States.EMPLOYER_APPROVE_EDITS,
+  States.VINNUMALASTOFNUN_APPROVE_EDITS,
+]
+
+/**
+ * What the applicant is told before taking an application back from review.
+ *
+ * A first-time application goes back to DRAFT. On resubmit every approval is
+ * asked for again, because `clearEmployers` resets employer approvals. In the
+ * edit flow, only the parties the new changes concern review them again, and
+ * that is not known until the applicant has made them.
+ */
+export const getReapprovalAfterEdit = (application: Application) => {
+  if (EDIT_FLOW_REVIEW_STATES.includes(application.state)) {
+    return { isEditFlow: true, otherParent: false, employer: false }
+  }
+
+  const context = { application } as ApplicationContext
+  return {
+    isEditFlow: false,
+    otherParent: needsOtherParentApproval(context),
+    employer: hasEmployer(context),
+  }
+}
+
+export const needsOtherParentApprovalForEdits = (
+  context: ApplicationContext,
+) => {
+  return requiresOtherParentApprovalForEdits(
+    context.application.answers,
+    context.application.externalData,
+  )
+}
+
+export const hasEmployerRelevantChange = (context: ApplicationContext) => {
+  if (!hasEmployer(context)) {
+    return false
+  }
+
+  const { application } = context
+  const baseline = getChangeBaseline(application.externalData)
+
+  if (!baseline) {
+    return true
+  }
+
+  const { employers, isSelfEmployed, periods } = getApplicationAnswers(
+    application.answers,
+  )
+
+  const employersChanged =
+    isSelfEmployed !== YES &&
+    employersHaveChanged(baseline.employers, employers ?? [])
+  const selfEmployedChanged =
+    normalize(baseline.employment.isSelfEmployed) !== normalize(isSelfEmployed)
+  const periodsChanged = periodsHaveChanged(baseline.periods, periods ?? [])
+
+  return employersChanged || selfEmployedChanged || periodsChanged
 }
 
 export const disableResidenceGrantApplication = (dateOfBirth: string) => {
@@ -86,52 +153,91 @@ export const hasDateOfBirth = (context: ApplicationContext) => {
   return disableResidenceGrantApplication(dateOfBirth?.data?.dateOfBirth || '')
 }
 
-export const goToState = (
-  applicationContext: ApplicationContext,
-  state: States,
-) => {
-  const { previousState } = getApplicationAnswers(
-    applicationContext.application.answers,
+/**
+ * True when this application was created to change an already submitted one.
+ * Drives the prerequisites routing straight into the change form instead of the
+ * full draft form.
+ */
+export const isChangeApplication = (context: ApplicationContext) => {
+  const { applicationAction } = getApplicationAnswers(
+    context.application.answers,
   )
-  if (previousState === state) return true
-  return false
+  return applicationAction === ApplicationAction.CHANGE
 }
 
-export const restructureVMSTPeriods = (context: ApplicationContext) => {
-  const { application } = context
-  const { VMSTPeriods } = getApplicationExternalData(application.externalData)
-  const { periods } = getApplicationAnswers(application.answers)
+/**
+ * True once VMST has a record of this application: its own `sendApplication`
+ * returned an id, or `setApplicationFundId` stored one for a first-time
+ * application. Used to hide the delete button from states like DRAFT that can
+ * be re-entered after VMST approval — once VMST has the application, deleting
+ * it from our side would leave the two systems out of sync.
+ */
+export const hasBeenSubmittedToVMST = (application: Application) => {
+  const navIdData = getValueViaPath<string>(
+    application.externalData,
+    'navId.data',
+  )
+  const rawNavId = getValueViaPath<string>(application.externalData, 'navId')
+  const sendApplicationId = getValueViaPath<string>(
+    application.externalData,
+    'sendApplication.data.id',
+  )
+  // The mock fund id is handed out without ever contacting VMST.
+  const isRealId = (id: unknown): id is string =>
+    typeof id === 'string' && !!id && id !== MOCK_APPLICATION_FUND_ID
 
-  const today = new Date()
+  if (isRealId(sendApplicationId)) {
+    return true
+  }
+
+  // A change application inherits its predecessor's fund id into `navId` before
+  // its own `sendApplication` runs. That id is not evidence VMST has this row.
+  const { applicationAction } = getApplicationAnswers(application.answers)
+  if (applicationAction === ApplicationAction.CHANGE) {
+    return false
+  }
+
+  return isRealId(navIdData) || isRealId(rawNavId)
+}
+
+export const isInPlaceRewind = (context: ApplicationContext) =>
+  getValueViaPath<boolean>(
+    context.application.externalData,
+    'inPlaceRewind.data.value',
+  ) === true
+
+/** True when this application was created to apply for the residence grant. */
+export const isResidenceGrantApplication = (context: ApplicationContext) => {
+  const { applicationAction } = getApplicationAnswers(
+    context.application.answers,
+  )
+  return applicationAction === ApplicationAction.RESIDENCE_GRANT
+}
+
+/** True when the application uses mock data and should bypass VMST approval. */
+export const isMockApplication = (context: ApplicationContext) => {
+  return (
+    getValueViaPath(context.application.answers, 'mock.useMockData') === YES &&
+    !isChangeApplication(context)
+  )
+}
+
+export const restructureVMSTPeriods = (
+  externalData: Application['externalData'],
+): Period[] => {
+  const { VMSTPeriods } = getApplicationExternalData(externalData)
+
   const newPeriods: Period[] = []
   VMSTPeriods?.forEach((period, index) => {
-    /*
-     ** VMST could change startDate but still return 'date_of_birth'
-     ** Make sure if period is in the past then we use the date they sent
-     */
-    let firstPeriodStart =
-      period.firstPeriodStart === 'date_of_birth'
-        ? 'actualDateOfBirth'
-        : 'specificDate'
-    if (new Date(period.from).getTime() <= today.getTime()) {
-      firstPeriodStart = 'specificDate'
-    }
-
-    let useLength = NO
-    if (firstPeriodStart === 'actualDateOfBirth') {
-      useLength = periods[0].useLength ?? NO
-    }
-
-    const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
+    const rightsCodePeriod = (period.rightsCodePeriod ?? '').split(',')[0]
     const obj = {
       startDate: period.from,
       endDate: period.to,
       ratio: period.ratio.split(',')[0],
       rawIndex: index,
-      firstPeriodStart: firstPeriodStart,
-      useLength: useLength as YesOrNo,
+      firstPeriodStart: vmstFirstPeriodStartToAnswer(period),
       rightCodePeriod: rightsCodePeriod,
-      daysToUse: period.days,
+      daysToUse: period.days ?? undefined,
       paid: period.paid,
       approved: period.approved,
     }

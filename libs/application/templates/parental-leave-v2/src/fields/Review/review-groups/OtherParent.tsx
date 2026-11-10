@@ -11,14 +11,13 @@ import { MANUAL, ParentalRelations, SINGLE, SPOUSE } from '../../../constants'
 import { parentalLeaveFormMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
-  getApplicationExternalData,
   getOtherParentId,
   getOtherParentName,
   getSelectedChild,
   requiresOtherParentApproval,
 } from '../../../lib/parentalLeaveUtils'
 import { ReviewGroupProps } from './props'
-import { NO } from '@island.is/application/core'
+import { NO, YES } from '@island.is/application/core'
 
 export const OtherParent = ({
   application,
@@ -26,11 +25,14 @@ export const OtherParent = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const { otherParent, otherParentEmail, otherParentPhoneNumber } =
-    getApplicationAnswers(application.answers)
-  const { VMSTOtherParent } = getApplicationExternalData(
-    application.externalData,
-  )
+  const {
+    otherParent,
+    otherParentEmail,
+    otherParentPhoneNumber,
+    otherParentRightOfAccess,
+    otherParentName: otherParentNameFromAnswers,
+    otherParentId: otherParentIdFromAnswers,
+  } = getApplicationAnswers(application.answers)
 
   const selectedChild = getSelectedChild(
     application.answers,
@@ -39,8 +41,11 @@ export const OtherParent = ({
   const isPrimaryParent =
     selectedChild?.parentalRelation === ParentalRelations.primary
 
-  const otherParentName = getOtherParentName(application)
-  const otherParentId = getOtherParentId(application)
+  const otherParentName =
+    getOtherParentName(application) || otherParentNameFromAnswers
+  const otherParentId =
+    getOtherParentId(application) || otherParentIdFromAnswers
+
   const otherParentWillApprove = requiresOtherParentApproval(
     application.answers,
     application.externalData,
@@ -48,7 +53,7 @@ export const OtherParent = ({
 
   return (
     <ReviewGroup
-      isEditable={editable && isPrimaryParent}
+      isEditable={editable && isPrimaryParent && otherParent !== SINGLE}
       editAction={() =>
         goToScreen?.(
           otherParent === SPOUSE ? 'otherParentSpouse' : 'otherParentObj',
@@ -56,27 +61,22 @@ export const OtherParent = ({
       }
     >
       <Stack space={2}>
-        {(otherParent === NO || otherParent === SINGLE) &&
-          !VMSTOtherParent.otherParentId && (
-            <RadioValue
-              label={formatMessage(
-                parentalLeaveFormMessages.shared.otherParentTitle,
-              )}
-              value={NO}
-            />
-          )}
-        {(otherParent === SPOUSE ||
-          otherParent === MANUAL ||
-          VMSTOtherParent.otherParentId) && (
+        {(otherParent === NO || otherParent === SINGLE) && (
+          <RadioValue
+            label={formatMessage(
+              parentalLeaveFormMessages.shared.otherParentTitle,
+            )}
+            value={NO}
+          />
+        )}
+        {(otherParent === SPOUSE || otherParent === MANUAL) && (
           <GridRow rowGap={2}>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
               <DataValue
                 label={formatMessage(
                   parentalLeaveFormMessages.shared.otherParentName,
                 )}
-                value={
-                  VMSTOtherParent?.otherParentName ?? otherParentName ?? ''
-                }
+                value={otherParentName || ''}
               />
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -84,16 +84,24 @@ export const OtherParent = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.shared.otherParentID,
                 )}
-                value={
-                  VMSTOtherParent?.otherParentId
-                    ? formatKennitala(VMSTOtherParent.otherParentId)
-                    : otherParentId
-                    ? formatKennitala(otherParentId)
-                    : ''
-                }
+                value={otherParentId ? formatKennitala(otherParentId) : ''}
               />
             </GridColumn>
           </GridRow>
+        )}
+        {otherParent === MANUAL && otherParentRightOfAccess && (
+          <DataValue
+            label={formatMessage(parentalLeaveFormMessages.rightOfAccess.title)}
+            value={
+              otherParentRightOfAccess === YES
+                ? formatMessage(
+                    parentalLeaveFormMessages.rightOfAccess.yesOption,
+                  )
+                : formatMessage(
+                    parentalLeaveFormMessages.rightOfAccess.noOption,
+                  )
+            }
+          />
         )}
         {otherParentWillApprove && (
           <GridRow rowGap={2}>

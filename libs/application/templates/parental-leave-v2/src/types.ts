@@ -56,10 +56,11 @@ export interface VMSTPeriod {
   from: string
   to: string
   ratio: string
-  firstPeriodStart: string
+  firstPeriodStart?: string | null
   paid: boolean
-  rightsCodePeriod: string
-  days: string
+  rightsCodePeriod?: string | null
+  // No longer returned by VMST; only present on mocked/legacy external data.
+  days?: string | null
   approved: boolean
 }
 
@@ -127,6 +128,25 @@ interface BaseChildInformation {
   multipleBirthsDays?: number
   adoptionDate?: string
   dateOfBirth?: string
+  /**
+   * Stable identity of the child within the children list; the value the
+   * select-child screen stores in `selectedChild`. See `getChildKey`.
+   */
+  key?: string
+  /**
+   * The VMST application id of the applicant's leave for this child. Selecting
+   * the child then starts a change application for that leave instead of a new
+   * first-time application.
+   */
+  vmstApplicationId?: string
+  /**
+   * The applicant's unfinished island.is application for this child. The child
+   * cannot be selected for another application until that one ends; the
+   * select-child screen links to it instead.
+   */
+  inProgressApplicationId?: string
+  // True when that unfinished application is itself a change.
+  inProgressIsChange?: boolean
 }
 
 export type ChildInformation =
@@ -140,15 +160,43 @@ export type ChildInformation =
       parentalRelation: ParentalRelations.primary
     })
 
+/**
+ * Something the applicant already has for a child: a leave VMST holds (both
+ * flags false, `applicationId` is the VMST application id) or an unfinished
+ * island.is application (`applicationId` is that application's id).
+ */
 export interface ExistingChildApplication {
   expectedDateOfBirth: string
   applicationId: string
+  adoptionDate?: string
+  dateOfBirth?: string
+  // True when the application is itself a change already in flight.
+  isChangeInProgress: boolean
+  // True when the application is an unfinished application that is not a change.
+  isApplicationInProgress?: boolean
+}
+
+/**
+ * Durable link between a child and the applicant's VMST parental-leave record,
+ * keyed by `childKey = vmst:<vmstApplicationId>`. Links VMST momentarily omits
+ * are kept, and a link's `childKey` never changes once assigned, so the child it
+ * identifies survives due-date revisions and the birth.
+ */
+export interface ChildApplicationLink {
+  childKey: string
+  vmstApplicationId: string
+  applicationFundId?: string
+  expectedDateOfBirth?: string
+  dateOfBirth?: string
   adoptionDate?: string
 }
 
 export interface PregnancyStatus {
   hasActivePregnancy: boolean
   expectedDateOfBirth: string
+  // A made-up pregnancy in development. It is never an unborn child already
+  // applied for under an earlier due date.
+  isSimulated?: boolean
 }
 
 // Has rights and remaining rights is calculated at the end
@@ -180,4 +228,17 @@ export interface EmployerRow {
 export type SelectOption = {
   label: string
   value: string
+}
+
+export interface FormattedPeriod {
+  actualDob?: boolean
+  startDate: string
+  endDate: string
+  ratio: string
+  duration: string
+  title: string
+  color?: string
+  canDelete?: boolean
+  rawIndex: number
+  paid?: boolean
 }

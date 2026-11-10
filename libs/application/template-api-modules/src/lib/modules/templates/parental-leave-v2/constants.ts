@@ -1,3 +1,5 @@
+export { MOCK_APPLICATION_FUND_ID } from '@island.is/application/templates/parental-leave-v2'
+
 export const apiConstants = {
   actualDateOfBirth: 'date_of_birth',
   actualDateOfBirthMonths: 'date_of_birth_months',
@@ -30,6 +32,8 @@ export const apiConstants = {
     changeEmployer: 'ChangeEmployer',
   },
 }
+
+export const isRunningInProduction = process.env.NODE_ENV === 'production'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 export const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
