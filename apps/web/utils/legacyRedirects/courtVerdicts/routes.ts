@@ -65,6 +65,7 @@ const RULES: Record<string, Record<string, Rule>> = {
   },
   supremeCourt: {
     verdict: {
+      lookups: [{ param: 'id', table: supremeCourtVerdicts.verdict }],
       directPath: {
         param: 'id',
         path: (id) => `/domar/s-${id.toUpperCase()}`,
@@ -73,6 +74,8 @@ const RULES: Record<string, Record<string, Rule>> = {
       fallbackQuery: () => ({ court: SUPREME_COURT }),
     },
     determination: {
+      lookups: [{ param: 'id', table: supremeCourtVerdicts.determination }],
+      path: (id) => `/s/haestirettur/akvardanir/${id}`,
       directPath: {
         param: 'id',
         path: (id) => `/s/haestirettur/akvardanir/${id.toUpperCase()}`,
