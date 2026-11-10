@@ -19,7 +19,7 @@ import {
   Button,
   Container,
   Icon,
-  Problem,
+  StatusMessage,
   Spacing,
   TextField,
   Typography,
@@ -153,7 +153,7 @@ export default function DocumentReplyScreen() {
         {loading ? (
           <LoadingIcon />
         ) : error ? (
-          <Problem type="error" error={error} withContainer />
+          <StatusMessage type="error" error={error} withContainer />
         ) : (
           <ScrollView
             contentContainerStyle={{ flexGrow: 1 }}

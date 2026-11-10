@@ -3,34 +3,34 @@ import { useEffect } from 'react'
 import { useTranslate } from '../../../hooks/use-translate'
 import { useOfflineStore } from '../../../stores/offline-store'
 import {
-  ProblemTemplate,
-  ProblemTemplateBaseProps,
+  StatusMessageTemplate,
+  StatusMessageTemplateBaseProps,
   DetailLink,
-} from './problem-template'
+} from './status-message-template'
 import { getOrganizationSlugFromError } from '../../../utils/get-organization-slug-from-error'
 import { ThirdPartyServiceError } from './third-party-service-error'
 
-enum ProblemTypes {
+enum StatusMessageTypes {
   error = 'error',
   noData = 'no_data',
 }
 
-type ProblemBaseProps = {
+type StatusMessageBaseProps = {
   /**
-   * Type of problem
+   * Type of status message
    * @default 'error'
    * 'error' is a generic error that is not caused by the user
    * 'no_data' is a 200 response, i.e. no data
    */
-  type?: `${ProblemTypes}`
+  type?: `${StatusMessageTypes}`
   error?: Error
   title?: string
   message?: string
   detailLink?: DetailLink
   logError?: boolean
-} & Pick<ProblemTemplateBaseProps, 'withContainer' | 'size'>
+} & Pick<StatusMessageTemplateBaseProps, 'withContainer' | 'size'>
 
-interface ErrorProps extends ProblemBaseProps {
+interface ErrorProps extends StatusMessageBaseProps {
   type?: 'error'
   showIcon?: never
   error?: Error
@@ -39,7 +39,7 @@ interface ErrorProps extends ProblemBaseProps {
   tag?: string
 }
 
-interface NoDataBaseProps extends ProblemBaseProps {
+interface NoDataBaseProps extends StatusMessageBaseProps {
   type: 'no_data'
   error?: never
   title?: string
@@ -59,10 +59,10 @@ interface NoDataWithTagProps extends NoDataBaseProps {
 
 type NoDataProps = NoDataWithIconProps | NoDataWithTagProps
 
-type ProblemProps = ErrorProps | NoDataProps
+type StatusMessageProps = ErrorProps | NoDataProps
 
-export const Problem = ({
-  type = ProblemTypes.error,
+export const StatusMessage = ({
+  type = StatusMessageTypes.error,
   error,
   title,
   message,
@@ -72,7 +72,7 @@ export const Problem = ({
   showIcon,
   size = 'large',
   detailLink,
-}: ProblemProps) => {
+}: StatusMessageProps) => {
   const t = useTranslate()
   const { isConnected } = useOfflineStore()
 
@@ -96,7 +96,7 @@ export const Problem = ({
   // When offline prioritize showing offline template
   if (!isConnected) {
     return (
-      <ProblemTemplate
+      <StatusMessageTemplate
         {...defaultProps}
         showIcon
         variant="warning"
@@ -111,7 +111,7 @@ export const Problem = ({
     showIcon || !tag ? { showIcon: !tag ? true : showIcon } : { tag }
 
   switch (type) {
-    case ProblemTypes.error:
+    case StatusMessageTypes.error:
       if (error) {
         const organizationSlug = getOrganizationSlugFromError(error)
 
@@ -124,11 +124,11 @@ export const Problem = ({
           )
         }
       }
-      return <ProblemTemplate {...fallbackProps} />
+      return <StatusMessageTemplate {...fallbackProps} />
 
-    case ProblemTypes.noData:
+    case StatusMessageTypes.noData:
       return (
-        <ProblemTemplate
+        <StatusMessageTemplate
           {...defaultProps}
           {...noDataProps}
           variant="info"
@@ -140,6 +140,9 @@ export const Problem = ({
       )
 
     default:
-      return <ProblemTemplate {...fallbackProps} />
+      return <StatusMessageTemplate {...fallbackProps} />
   }
 }
+
+/** @deprecated Use `StatusMessage`. */
+export const Problem = StatusMessage

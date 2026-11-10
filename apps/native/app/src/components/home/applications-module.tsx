@@ -4,7 +4,7 @@ import styled from 'styled-components/native'
 import { Image, SafeAreaView, View } from 'react-native'
 import { ApolloError } from '@apollo/client'
 
-import { EmptyCard, StatusCardSkeleton, Heading } from '@/ui'
+import { EmptyCard, StatusCardSkeleton, SectionHeader } from '@/ui'
 import leJobss3 from '@/assets/illustrations/le-jobs-s3.png'
 import {
   Application,
@@ -67,9 +67,9 @@ const ApplicationsModule = React.memo(
         {loading && !data ? (
           <>
             <EmptyHeading>
-              <Heading>
+              <SectionHeader>
                 <FormattedMessage id="home.applicationsStatus" />
-              </Heading>
+              </SectionHeader>
             </EmptyHeading>
             <Wrapper>
               <StatusCardSkeleton />
@@ -80,9 +80,9 @@ const ApplicationsModule = React.memo(
             {count === 0 && (
               <Host>
                 <EmptyHeading>
-                  <Heading>
+                  <SectionHeader>
                     <FormattedMessage id="homeOptions.applications" />
-                  </Heading>
+                  </SectionHeader>
                 </EmptyHeading>
                 <Wrapper>
                   <EmptyCard

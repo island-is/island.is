@@ -6,7 +6,7 @@ import { ApolloError } from '@apollo/client'
 
 import {
   Typography,
-  Heading,
+  SectionHeader,
   ChevronRight,
   ViewPager,
   EmptyCard,
@@ -121,7 +121,7 @@ const VehiclesModule = React.memo(
             disabled={count === 0}
             onPress={() => router.navigate('/more/vehicles')}
           >
-            <Heading
+            <SectionHeader
               button={
                 count === 0 ? null : (
                   <TouchableOpacity
@@ -131,7 +131,10 @@ const VehiclesModule = React.memo(
                       alignItems: 'center',
                     }}
                   >
-                    <Typography variant="heading5" color={theme.color.blue400}>
+                    <Typography
+                      variant="heading5"
+                      color={theme.tokens.interactive.foreground.primary}
+                    >
                       <FormattedMessage id="button.seeAll" />
                     </Typography>
                     <ChevronRight />
@@ -140,7 +143,7 @@ const VehiclesModule = React.memo(
               }
             >
               <FormattedMessage id="homeOptions.vehicles" />
-            </Heading>
+            </SectionHeader>
           </TouchableOpacity>
           {loading && !data ? (
             <GeneralCardSkeleton height={156} />

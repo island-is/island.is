@@ -40,7 +40,7 @@ const WarningMessage = styled.View`
   flex-direction: row;
 `
 
-interface InputProps {
+interface InfoLineProps {
   label: string
   value?: string | null
   loading?: boolean
@@ -61,7 +61,7 @@ interface InputProps {
   style?: ViewStyle
 }
 
-export function Input({
+export function InfoLine({
   label,
   value,
   loading,
@@ -79,7 +79,7 @@ export function Input({
   hideWhenEmpty = false,
   fullWidthWarning = false,
   style,
-}: InputProps) {
+}: InfoLineProps) {
   const theme = useTheme()
   const tvalue =
     value !== undefined && typeof value === 'string' && value.trim()
@@ -157,3 +157,6 @@ export function Input({
     </Host>
   )
 }
+
+/** @deprecated Use `InfoLine`. */
+export const Input = InfoLine

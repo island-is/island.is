@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components/native'
 import { getInitials } from '../../../utils/get-initials'
-import { dynamicColor } from '../../utils'
+import { token } from '../../utils'
 import { font } from '../../utils/font'
 
 const Host = styled.View<{ isSmall?: boolean }>`
@@ -13,10 +13,7 @@ const Host = styled.View<{ isSmall?: boolean }>`
   width: ${(props) => (props.isSmall ? '40px' : '48px')};
   overflow: hidden;
   border-radius: ${(props) => (props.isSmall ? '40px' : '48px')};
-  background-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blue100,
-    dark: theme.shades.dark.shade300,
-  }))};
+  background-color: ${token((t) => t.background.brandMinimal)};
 `
 
 const Text = styled.Text<{ isSmall?: boolean }>`
@@ -24,10 +21,7 @@ const Text = styled.Text<{ isSmall?: boolean }>`
     fontSize: (props) => (props.isSmall ? 16 : 20),
     fontWeight: '600',
     lineHeight: (props) => (props.isSmall ? 20 : 26),
-    color: ({ theme }) => ({
-      light: theme.color.blue400,
-      dark: theme.color.roseTinted200,
-    }),
+    color: ({ theme }) => theme.tokens.foreground.brand,
   })}
 `
 

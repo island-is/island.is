@@ -17,6 +17,8 @@ export default [
       // licence artwork
       '**/ui/utils/licence-colours.ts',
       '**/graphql/**',
+      // skeletons keep their own colours
+      '**/ui/lib/skeleton/**',
     ],
     languageOptions: {
       parser: tsParser,
