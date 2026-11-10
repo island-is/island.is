@@ -174,9 +174,9 @@ export const caseInclude: Includeable[] = [
         model: AppealCourtSession,
         as: 'courtSessions',
         required: false,
-        // Latest session first, the order the court's list and the parties'
-        // agenda card both read in.
-        order: [['sessionDate', 'DESC']],
+        // Earliest session first, like a calendar, the order the court's list
+        // and the parties' agenda card both read in.
+        order: [['sessionDate', 'ASC']],
         separate: true,
       },
       {
@@ -1214,9 +1214,9 @@ export const getLimitedAccessCaseInclude = (
           model: AppealCourtSession,
           as: 'courtSessions',
           required: false,
-          // Latest session first, the order the court's list and the parties'
-          // agenda card both read in.
-          order: [['sessionDate', 'DESC']],
+          // Earliest session first, like a calendar, the order the court's list
+          // and the parties' agenda card both read in.
+          order: [['sessionDate', 'ASC']],
           separate: true,
         },
       ],
