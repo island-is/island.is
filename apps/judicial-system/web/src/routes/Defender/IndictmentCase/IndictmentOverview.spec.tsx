@@ -380,6 +380,9 @@ describe('Defender IndictmentOverview', () => {
           }`,
         ),
       ).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: 'Senda greinargerð' }),
+      ).toBeInTheDocument()
     })
 
     it('shows Landsréttur’s written conclusion for a verdict appeal', async () => {

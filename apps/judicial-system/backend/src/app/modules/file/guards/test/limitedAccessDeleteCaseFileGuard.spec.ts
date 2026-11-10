@@ -175,6 +175,81 @@ describe('LimitedAccess Delete Case File Guard', () => {
       },
     )
 
+    describe.each([
+      CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+      CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE,
+    ])(
+      'a confirmed appeal defender can delete their defendant %s',
+      (category) => {
+        let then: Then
+
+        beforeEach(() => {
+          const nationalId = uuid()
+          const defendantId = uuid()
+          mockRequest.mockImplementationOnce(() => ({
+            user: {
+              currentUser: { role: UserRole.DEFENDER, nationalId },
+            },
+            case: {
+              type,
+              defendants: [
+                {
+                  id: defendantId,
+                  isAppealDefenderConfirmed: true,
+                  appealDefenderNationalId: nationalId,
+                },
+              ],
+            },
+            caseFile: { category, defendantId },
+          }))
+
+          then = givenWhenThen()
+        })
+
+        it('should activate', () => {
+          expect(then.result).toBe(true)
+        })
+      },
+    )
+
+    describe.each([
+      CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+      CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE,
+    ])(
+      'a confirmed appeal spokesperson can delete their civil claimant %s',
+      (category) => {
+        let then: Then
+
+        beforeEach(() => {
+          const nationalId = uuid()
+          const civilClaimantId = uuid()
+          mockRequest.mockImplementationOnce(() => ({
+            user: {
+              currentUser: { role: UserRole.DEFENDER, nationalId },
+            },
+            case: {
+              type,
+              civilClaimants: [
+                {
+                  id: civilClaimantId,
+                  hasAppealSpokesperson: true,
+                  isAppealSpokespersonConfirmed: true,
+                  appealSpokespersonNationalId: nationalId,
+                },
+              ],
+            },
+            caseFile: { category, civilClaimantId },
+          }))
+
+          then = givenWhenThen()
+        })
+
+        it('should activate', () => {
+          expect(then.result).toBe(true)
+        })
+      },
+    )
+
     describe.each(allowedCaseFileCategories)(
       'a defender that does not control the case file can not delete %s',
       (category) => {

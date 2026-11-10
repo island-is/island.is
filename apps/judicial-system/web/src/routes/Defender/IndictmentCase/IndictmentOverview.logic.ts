@@ -13,6 +13,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   type DefenceUserPartyIds,
+  getDefenceUserAppealConfirmedPartyIds,
   getDefenceUserMatchingPartyIds,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
@@ -23,6 +24,13 @@ export interface VerdictAppealOverviewBanner {
   appealRulingDecision?: AppealCaseRulingDecision | null
   /** Shown when this party has already filed its statement. */
   statementSentText?: string
+  /** CTA to open the greinargerð upload page when the party has not filed yet. */
+  showStatementButton?: boolean
+  /**
+   * Party the CTA / sent-state refers to. Pass as a query param on the
+   * statement route so upload and event log target the same party as the banner.
+   */
+  statementParty?: DefenceUserPartyIds
 }
 
 export interface VerdictAppealOverviewConclusion {
@@ -96,15 +104,26 @@ export const getVerdictAppealOverviewBanner = (
     }
   }
 
-  const parties = getDefenceUserMatchingPartyIds(workingCase, user)
+  const matchingParties = getDefenceUserMatchingPartyIds(workingCase, user)
+  const appealParties = getDefenceUserAppealConfirmedPartyIds(workingCase, user)
+
+  // Prefer appeal-confirmed parties for the open banner so the deadline, CTA
+  // and statement-sent state describe the same party the upload page will use.
+  // Fall back to any matching party so a district-only defender still sees the
+  // frestur, without a CTA they cannot complete.
+  const partiesForBanner =
+    appealParties.length > 0 ? appealParties : matchingParties
 
   // An empty party matches the prosecution deadline row (null/null). Never
   // look up a deadline until we know which party the user acts for.
-  if (parties.length === 0) {
+  if (partiesForBanner.length === 0) {
     return undefined
   }
 
-  const match = findEarliestPartyDeadline(appeal.statementDeadlines, parties)
+  const match = findEarliestPartyDeadline(
+    appeal.statementDeadlines,
+    partiesForBanner,
+  )
 
   if (!match) {
     return undefined
@@ -112,6 +131,9 @@ export const getVerdictAppealOverviewBanner = (
 
   const { party, deadline } = match
   const isExpired = new Date(deadline).getTime() < now.getTime()
+  const canFileStatement = appealParties.length > 0
+  const hasSentStatement =
+    canFileStatement && hasFiledAppealStatement(appeal.appealEventLogs, party)
   const statementEvent = appeal.appealEventLogs?.find(
     (eventLog) =>
       eventLog.eventType === AppealEventType.APPEAL_STATEMENT_SENT &&
@@ -124,10 +146,11 @@ export const getVerdictAppealOverviewBanner = (
       isExpired ? 'rann' : 'rennur'
     } út ${formatDate(deadline, 'PPPp')}`,
     statementSentText:
-      hasFiledAppealStatement(appeal.appealEventLogs, party) &&
-      statementEvent?.created
+      hasSentStatement && statementEvent?.created
         ? `Greinargerð send ${formatDate(statementEvent.created, 'PPPp')}`
         : undefined,
+    showStatementButton: canFileStatement && !hasSentStatement,
+    statementParty: canFileStatement ? party : undefined,
   }
 }
 
