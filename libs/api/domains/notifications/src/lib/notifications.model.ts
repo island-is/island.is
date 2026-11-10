@@ -17,6 +17,16 @@ export enum NotificationChannel {
 
 registerEnumType(NotificationChannel, { name: 'NotificationChannel' })
 
+export enum NotificationPriorityType {
+  Informative = 'Informative',
+  Actionable = 'Actionable',
+  Important = 'Important',
+}
+
+registerEnumType(NotificationPriorityType, {
+  name: 'NotificationPriorityType',
+})
+
 @ObjectType()
 export class NotificationMetadata {
   @Field(() => GraphQLISODateTime)
@@ -33,6 +43,21 @@ export class NotificationMetadata {
 
   @Field({ nullable: true })
   seen?: boolean
+
+  @Field({ nullable: true })
+  wasSent?: boolean
+
+  @Field(() => NotificationPriorityType, { nullable: true })
+  priorityType?: NotificationPriorityType
+}
+
+@ObjectType()
+export class NotificationCategory {
+  @Field(() => String, { nullable: true })
+  key?: string
+
+  @Field()
+  label!: string
 }
 
 @ObjectType()
@@ -99,6 +124,9 @@ export class Notification {
 
   @Field(() => NotificationMessage)
   message!: NotificationMessage
+
+  @Field(() => NotificationCategory)
+  category!: NotificationCategory
 }
 
 @ObjectType()

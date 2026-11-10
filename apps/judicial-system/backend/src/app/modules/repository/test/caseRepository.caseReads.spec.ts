@@ -120,6 +120,23 @@ describe('CaseRepositoryService - case reads', () => {
       ).toBeDefined()
     })
 
+    // The court's list and the parties' agenda card both read latest session
+    // first, so that is the order either load hands the sessions over in.
+    it('should read the court sessions of the verdict appeal latest first', () => {
+      const order = [['sessionDate', 'DESC']]
+      const fullAccessSessions = included(
+        included(findOneOptions().include, 'verdictAppealCase')?.include,
+        'courtSessions',
+      )
+      const limitedAccessSessions = included(
+        included(getLimitedAccessCaseInclude(), 'verdictAppealCase')?.include,
+        'courtSessions',
+      )
+
+      expect(fullAccessSessions?.order).toEqual(order)
+      expect(limitedAccessSessions?.order).toEqual(order)
+    })
+
     describe('no live case', () => {
       beforeEach(async () => {
         mockCaseModel.findOne.mockReset()

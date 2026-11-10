@@ -1,4 +1,6 @@
 import { firstValueFrom, of } from 'rxjs'
+import type { Transaction } from 'sequelize'
+import type { Sequelize } from 'sequelize-typescript'
 
 import { CallHandler, ExecutionContext } from '@nestjs/common'
 
@@ -12,7 +14,10 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { getOrCreateTransaction } from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
 import {
+  Case,
   CaseRepositoryService,
   Defendant,
   DefendantEventLog,
@@ -695,5 +700,70 @@ describe('CaseInterceptor - rulingModifiedHistory', () => {
     it('returns undefined for rulingModifiedHistory', () => {
       expect(then.result.rulingModifiedHistory).toBeUndefined()
     })
+  })
+})
+
+// The interceptor runs after the handler and before the global commit
+// interceptor, so on a route whose guard locked the case row the request
+// transaction is still open and holding that lock. The ancestor read has to
+// join it: outside it, it needs a pool connection that concurrent updates of
+// the same case, blocked on the lock, are holding.
+describe('CaseInterceptor - original ancestor read', () => {
+  const mockFindOriginalAncestorId = jest.fn()
+  const theCase = makeCase([]) as unknown as Case
+  const originalAncestorId = 'original-ancestor-id'
+
+  const intercept = async () => {
+    const interceptor = new CaseInterceptor({
+      findOriginalAncestorId: mockFindOriginalAncestorId,
+    } as unknown as CaseRepositoryService)
+
+    return firstValueFrom(
+      interceptor.intercept(
+        {
+          switchToHttp: () => ({
+            getRequest: () => ({
+              user: { currentUser: { role: UserRole.PROSECUTOR, nationalId } },
+            }),
+          }),
+        } as unknown as ExecutionContext,
+        { handle: () => of(theCase) } as unknown as CallHandler,
+      ),
+    ) as Promise<{ originalAncestorId?: string }>
+  }
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+    mockFindOriginalAncestorId.mockResolvedValue(originalAncestorId)
+  })
+
+  it('reads outside a transaction on a route that opened none', async () => {
+    const result = await runInRequestContext(intercept)
+
+    expect(mockFindOriginalAncestorId).toHaveBeenCalledWith(theCase, {
+      transaction: undefined,
+    })
+    expect(result.originalAncestorId).toBe(originalAncestorId)
+  })
+
+  it('reads in the request transaction without opening another', async () => {
+    const transaction = {} as Transaction
+    const sequelize = {
+      transaction: jest.fn().mockResolvedValue(transaction),
+    } as unknown as Sequelize
+
+    // The guard that locked the case row opened the request transaction
+    // before the handler ran; guards do not run here, so it is set up by hand.
+    const result = await runInRequestContext(async () => {
+      await getOrCreateTransaction(sequelize)
+
+      return intercept()
+    })
+
+    expect(mockFindOriginalAncestorId).toHaveBeenCalledWith(theCase, {
+      transaction,
+    })
+    expect(sequelize.transaction).toHaveBeenCalledTimes(1)
+    expect(result.originalAncestorId).toBe(originalAncestorId)
   })
 })

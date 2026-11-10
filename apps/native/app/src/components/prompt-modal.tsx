@@ -58,12 +58,17 @@ export function PromptModal() {
       statusBarTranslucent
     >
       <TouchableWithoutFeedback onPress={handleDismiss}>
-        <View style={styles.overlay}>
+        <View
+          style={[
+            styles.overlay,
+            { backgroundColor: theme.tokens.app.overlay.scrim },
+          ]}
+        >
           <TouchableWithoutFeedback>
             <View
               style={[
                 styles.dialog,
-                { backgroundColor: theme.shade.background },
+                { backgroundColor: theme.tokens.background.invert },
               ]}
             >
               <View style={styles.content}>
@@ -80,16 +85,17 @@ export function PromptModal() {
                   style={[
                     styles.input,
                     {
-                      color: theme.shade.foreground,
-                      borderColor: theme.color.blue400,
-                      backgroundColor: theme.shade.background,
+                      color: theme.tokens.foreground.primary,
+                      borderColor:
+                        theme.tokens.interactive.border.borderPrimary,
+                      backgroundColor: theme.tokens.background.invert,
                     },
                   ]}
                   value={text}
                   onChangeText={setText}
                   keyboardType={options.keyboardType ?? 'default'}
                   placeholder={options.placeholder}
-                  placeholderTextColor={theme.color.dark300}
+                  placeholderTextColor={theme.tokens.foreground.primaryMinimal}
                   returnKeyType="done"
                   onSubmitEditing={handlePositive}
                   autoCorrect={false}
@@ -98,7 +104,7 @@ export function PromptModal() {
               <View
                 style={[
                   styles.buttonRow,
-                  { borderTopColor: theme.color.dark200 },
+                  { borderTopColor: theme.tokens.app.border.neutral },
                 ]}
               >
                 <TouchableOpacity
@@ -107,7 +113,9 @@ export function PromptModal() {
                 >
                   <Typography
                     variant="body"
-                    style={{ color: theme.color.dark400 }}
+                    style={{
+                      color: theme.tokens.interactive.foreground.default,
+                    }}
                   >
                     {negativeText}
                   </Typography>
@@ -115,7 +123,7 @@ export function PromptModal() {
                 <View
                   style={[
                     styles.buttonDivider,
-                    { backgroundColor: theme.color.dark200 },
+                    { backgroundColor: theme.tokens.app.border.neutral },
                   ]}
                 />
                 <TouchableOpacity
@@ -124,7 +132,10 @@ export function PromptModal() {
                 >
                   <Typography
                     variant="body"
-                    style={{ color: theme.color.blue400, fontWeight: '600' }}
+                    style={{
+                      color: theme.tokens.interactive.foreground.primary,
+                      fontWeight: '600',
+                    }}
                   >
                     {positiveText}
                   </Typography>
@@ -141,7 +152,6 @@ export function PromptModal() {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,

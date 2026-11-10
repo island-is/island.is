@@ -10,6 +10,7 @@ import {
   CaseType,
   InstitutionType,
   UserRole,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { mockUser } from '@island.is/judicial-system-web/src/utils/mocks'
 
@@ -22,6 +23,8 @@ import {
   getAppealAppointmentLetters,
   getAppealSummonsMenuItems,
   getAppealSummonsRows,
+  getAppealSummonsServiceBanners,
+  getAppealSummonsServiceRecipientOptions,
   getVerdictAppealFileGroups,
   hasStandingVerdictAppeal,
   showsAppealSummonses,
@@ -519,7 +522,7 @@ describe('getAppealSummonsMenuItems', () => {
     ).toEqual(['Breyta', 'Opna í nýjum flipa', 'Eyða'])
   })
 
-  it('offers send, edit, open and delete on a confirmed summons for staff', () => {
+  it('offers send to service, send to CoA, edit, open and delete on a confirmed summons for staff', () => {
     expect(
       getAppealSummonsMenuItems(
         { confirmedDate: '2026-06-05T09:15:00.000Z' },
@@ -528,8 +531,15 @@ describe('getAppealSummonsMenuItems', () => {
         jest.fn(),
         jest.fn(),
         jest.fn(),
+        jest.fn(),
       ).map((item) => item.title),
-    ).toEqual(['Senda til Landsréttar', 'Breyta', 'Opna í nýjum flipa', 'Eyða'])
+    ).toEqual([
+      'Senda í birtingu',
+      'Senda til Landsréttar',
+      'Breyta',
+      'Opna í nýjum flipa',
+      'Eyða',
+    ])
   })
 
   it('hides edit and delete once the summons has been sent to the court of appeals', () => {
@@ -541,8 +551,9 @@ describe('getAppealSummonsMenuItems', () => {
         jest.fn(),
         jest.fn(),
         jest.fn(),
+        jest.fn(),
       ).map((item) => item.title),
-    ).toEqual(['Opna í nýjum flipa'])
+    ).toEqual(['Senda í birtingu', 'Opna í nýjum flipa'])
   })
 
   it('offers only open to a public prosecution prosecutor', () => {
@@ -569,6 +580,198 @@ describe('getAppealSummonsMenuItems', () => {
         jest.fn(),
       ).map((item) => item.title),
     ).toEqual(['Opna í nýjum flipa'])
+  })
+})
+
+describe('getAppealSummonsServiceRecipientOptions', () => {
+  it('lists defendants on the summons and civil claimants on the case', () => {
+    expect(
+      getAppealSummonsServiceRecipientOptions(
+        {
+          defendants: [{ defendantId: 'd1' } as never],
+          services: [{ civilClaimantId: 'c1' } as never],
+        },
+        [{ id: 'd1', name: 'Jón Jónsson', nationalId: '0000000000' } as never],
+        [
+          {
+            id: 'c1',
+            name: 'Binni',
+            nationalId: '1111111111',
+          } as never,
+          { id: 'c2', name: 'Bína', nationalId: '2222222222' } as never,
+        ],
+      ),
+    ).toEqual([
+      {
+        key: 'defendant-d1',
+        label: 'Dómfelldi Jón Jónsson',
+        defendantId: 'd1',
+        alreadySent: false,
+        missingNationalId: false,
+      },
+      {
+        key: 'civilClaimant-c1',
+        label: 'Binni',
+        civilClaimantId: 'c1',
+        alreadySent: true,
+        missingNationalId: false,
+      },
+      {
+        key: 'civilClaimant-c2',
+        label: 'Bína',
+        civilClaimantId: 'c2',
+        alreadySent: false,
+        missingNationalId: false,
+      },
+    ])
+  })
+
+  it('marks recipients without a national id as ineligible', () => {
+    expect(
+      getAppealSummonsServiceRecipientOptions(
+        {
+          defendants: [
+            { defendantId: 'd1' } as never,
+            { defendantId: 'd2' } as never,
+          ],
+          services: [],
+        },
+        [
+          { id: 'd1', name: 'Jón', nationalId: '0000000000' } as never,
+          { id: 'd2', name: 'Gunna', noNationalId: true } as never,
+        ],
+        [{ id: 'c1', name: 'Binni' } as never],
+      ),
+    ).toEqual([
+      {
+        key: 'defendant-d1',
+        label: 'Dómfelldi Jón',
+        defendantId: 'd1',
+        alreadySent: false,
+        missingNationalId: false,
+      },
+      {
+        key: 'defendant-d2',
+        label: 'Dómfelldi Gunna (vantar kennitölu)',
+        defendantId: 'd2',
+        alreadySent: false,
+        missingNationalId: true,
+      },
+      {
+        key: 'civilClaimant-c1',
+        label: 'Binni (vantar kennitölu)',
+        civilClaimantId: 'c1',
+        alreadySent: false,
+        missingNationalId: true,
+      },
+    ])
+  })
+})
+
+describe('getAppealSummonsServiceBanners', () => {
+  it('returns an info banner per service row that is still waiting', () => {
+    expect(
+      getAppealSummonsServiceBanners({
+        defendants: [{ id: 'd1', name: 'Jón Jónsson' }],
+        civilClaimants: [{ id: 'c1', name: 'Binni' }],
+        verdictAppealCase: {
+          appealSummonses: [
+            {
+              id: 'summons',
+              services: [
+                {
+                  id: 's1',
+                  defendantId: 'd1',
+                  sentToServiceDate: '2026-06-05T09:20:00.000Z',
+                },
+                {
+                  id: 's2',
+                  civilClaimantId: 'c1',
+                  sentToServiceDate: '2026-06-05T09:20:00.000Z',
+                  serviceDate: '2026-06-06T10:00:00.000Z',
+                  serviceStatus: VerdictServiceStatus.IN_PERSON,
+                },
+              ],
+            },
+          ],
+        },
+      } as WorkingCase),
+    ).toEqual([
+      {
+        key: 's1',
+        type: 'info',
+        title: 'Áfrýjunarstefna bíður birtingar – Jón Jónsson',
+        message: expect.stringContaining('Send í birtingu'),
+      },
+      {
+        key: 's2',
+        type: 'success',
+        title: 'Áfrýjunarstefna birt – Binni',
+        message: expect.stringContaining('Birt'),
+      },
+    ])
+  })
+
+  it('uses legal-paper wording when served via Lögbirtingablaðið', () => {
+    expect(
+      getAppealSummonsServiceBanners({
+        defendants: [{ id: 'd1', name: 'Jón Jónsson' }],
+        verdictAppealCase: {
+          appealSummonses: [
+            {
+              id: 'summons',
+              services: [
+                {
+                  id: 's1',
+                  defendantId: 'd1',
+                  sentToServiceDate: '2026-06-05T09:20:00.000Z',
+                  serviceDate: '2026-06-10T00:00:00.000Z',
+                  serviceStatus: VerdictServiceStatus.LEGAL_PAPER,
+                },
+              ],
+            },
+          ],
+        },
+      } as WorkingCase),
+    ).toEqual([
+      {
+        key: 's1',
+        type: 'success',
+        title: 'Áfrýjunarstefna birt í Lögbirtingablaðinu – Jón Jónsson',
+        message: expect.stringContaining('Birt í Lögbirtingablaðinu'),
+      },
+    ])
+  })
+
+  it('shows an error banner when service failed', () => {
+    expect(
+      getAppealSummonsServiceBanners({
+        defendants: [{ id: 'd1', name: 'Jón Jónsson' }],
+        verdictAppealCase: {
+          appealSummonses: [
+            {
+              id: 'summons',
+              services: [
+                {
+                  id: 's1',
+                  defendantId: 'd1',
+                  sentToServiceDate: '2026-06-05T09:20:00.000Z',
+                  serviceStatus: VerdictServiceStatus.FAILED,
+                  comment: 'Fannst ekki',
+                },
+              ],
+            },
+          ],
+        },
+      } as WorkingCase),
+    ).toEqual([
+      {
+        key: 's1',
+        type: 'error',
+        title: 'Birting áfrýjunarstefnu mistókst – Jón Jónsson',
+        message: 'Fannst ekki',
+      },
+    ])
   })
 })
 

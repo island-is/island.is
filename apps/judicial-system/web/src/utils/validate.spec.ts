@@ -90,7 +90,19 @@ describe('isIndictmentCountComplete', () => {
     const indictmentCount = {
       policeCaseNumber: POLICE_CASE_NUMBER,
       incidentDescription: 'Incident description',
-      legalArguments: 'Legal arguments',
+    } as IndictmentCount
+
+    expect(isIndictmentCountComplete(indictmentCount, workingCase)).toBe(true)
+  })
+
+  test('returns true for a non-traffic count without legal arguments', () => {
+    const workingCase = createWorkingCase({
+      [POLICE_CASE_NUMBER]: [IndictmentSubtype.THEFT],
+    })
+    const indictmentCount = {
+      policeCaseNumber: POLICE_CASE_NUMBER,
+      incidentDescription: 'Incident description',
+      legalArguments: undefined,
     } as IndictmentCount
 
     expect(isIndictmentCountComplete(indictmentCount, workingCase)).toBe(true)
@@ -102,7 +114,6 @@ describe('isIndictmentCountComplete', () => {
     })
     const indictmentCount = {
       policeCaseNumber: POLICE_CASE_NUMBER,
-      legalArguments: 'Legal arguments',
     } as IndictmentCount
 
     expect(isIndictmentCountComplete(indictmentCount, workingCase)).toBe(false)
@@ -117,7 +128,6 @@ describe('isIndictmentCountComplete', () => {
       vehicleRegistrationNumber: 'ABC123',
       lawsBroken: [[1]],
       incidentDescription: 'Incident description',
-      legalArguments: 'Legal arguments',
       offenses: [{ offense: IndictmentCountOffense.DRUNK_DRIVING }],
     } as IndictmentCount
 
@@ -132,7 +142,6 @@ describe('isIndictmentCountComplete', () => {
       policeCaseNumber: POLICE_CASE_NUMBER,
       lawsBroken: [[1]],
       incidentDescription: 'Incident description',
-      legalArguments: 'Legal arguments',
       offenses: [{ offense: IndictmentCountOffense.DRUNK_DRIVING }],
     } as IndictmentCount
 
@@ -147,7 +156,6 @@ describe('getIndictmentCountWarningMessage', () => {
     })
     const indictmentCount = {
       policeCaseNumber: POLICE_CASE_NUMBER,
-      legalArguments: 'Legal arguments',
     } as IndictmentCount
 
     expect(getIndictmentCountWarningMessage(indictmentCount, workingCase)).toBe(
@@ -155,7 +163,7 @@ describe('getIndictmentCountWarningMessage', () => {
     )
   })
 
-  test('returns legal arguments when incident description is filled', () => {
+  test('returns undefined when only legal arguments are missing', () => {
     const workingCase = createWorkingCase({
       [POLICE_CASE_NUMBER]: [IndictmentSubtype.THEFT],
     })
@@ -164,9 +172,9 @@ describe('getIndictmentCountWarningMessage', () => {
       incidentDescription: 'Incident description',
     } as IndictmentCount
 
-    expect(getIndictmentCountWarningMessage(indictmentCount, workingCase)).toBe(
-      'Vantar heimfærslu',
-    )
+    expect(
+      getIndictmentCountWarningMessage(indictmentCount, workingCase),
+    ).toBeUndefined()
   })
 
   test('returns first missing field for traffic count', () => {
@@ -177,7 +185,6 @@ describe('getIndictmentCountWarningMessage', () => {
       policeCaseNumber: POLICE_CASE_NUMBER,
       lawsBroken: [[1]],
       incidentDescription: 'Incident description',
-      legalArguments: 'Legal arguments',
       offenses: [{ offense: IndictmentCountOffense.DRUNK_DRIVING }],
     } as IndictmentCount
 
@@ -193,7 +200,6 @@ describe('getIndictmentCountWarningMessage', () => {
     const indictmentCount = {
       policeCaseNumber: POLICE_CASE_NUMBER,
       incidentDescription: 'Incident description',
-      legalArguments: 'Legal arguments',
     } as IndictmentCount
 
     expect(
@@ -1670,13 +1676,25 @@ describe('isIndictmentStepValid', () => {
     },
   )
 
-  test('is false when any indictment count is incomplete', () => {
+  test('is true when indictment counts omit legal arguments', () => {
     expect(
       isIndictmentStepValid({
         ...validCase,
         indictmentCounts: [
           completeCount,
           { ...completeCount, legalArguments: undefined },
+        ],
+      } as WorkingCase),
+    ).toBe(true)
+  })
+
+  test('is false when any indictment count is incomplete', () => {
+    expect(
+      isIndictmentStepValid({
+        ...validCase,
+        indictmentCounts: [
+          completeCount,
+          { ...completeCount, incidentDescription: undefined },
         ],
       } as WorkingCase),
     ).toBe(false)

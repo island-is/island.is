@@ -15,7 +15,15 @@ export class FieldSettingsFactory {
         keys = ['minLength', 'maxLength', 'isLarge', 'hasDescription', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.NUMBERBOX:
-        keys = ['minValue', 'maxValue', 'hasDescription', 'isDecimal', ...keys]
+        keys = [
+          'minValue',
+          'maxValue',
+          'minLength',
+          'maxLength',
+          'hasDescription',
+          'isDecimal',
+          ...keys,
+        ]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.MESSAGE:
         keys = ['hasLink', 'url', 'buttonText', ...keys]
@@ -39,7 +47,7 @@ export class FieldSettingsFactory {
         ]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.ISK_NUMBERBOX:
-        keys = ['minAmount', 'maxAmount', ...keys]
+        keys = ['minAmount', 'maxAmount', 'notIncludedInSumbox', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.PROPERTY_NUMBER:
         keys = ['hasPropertyInput', 'hasPropertyList', ...keys]

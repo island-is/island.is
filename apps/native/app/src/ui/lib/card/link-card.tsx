@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components/native'
-import { dynamicColor } from '../../utils'
+import { token } from '../../utils'
 import { font } from '../../utils/font'
 
 const Host = styled.View`
@@ -8,10 +8,7 @@ const Host = styled.View`
   padding: 18px 16px;
   margin-top: ${({ theme }) => theme.spacing[1]}px;
   margin-bottom: ${({ theme }) => theme.spacing[1]}px;
-  background-color: ${dynamicColor((props) => ({
-    dark: 'shade100',
-    light: props.theme.color.blue100,
-  }))};
+  background-color: ${token((t) => t.background.brandMinimal)};
   border-radius: ${(props) => props.theme.border.radius.large};
 `
 
@@ -21,10 +18,7 @@ const Text = styled.Text`
     lineHeight: 20,
     fontSize: 16,
   })}
-  color: ${dynamicColor((props) => ({
-    dark: 'foreground',
-    light: props.theme.color.blue400,
-  }))};
+  color: ${token((t) => t.interactive.foreground.primary)};
 `
 
 interface LinkCardProps {
