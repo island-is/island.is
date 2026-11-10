@@ -41,15 +41,14 @@ export const allEmployersHaveApproved = (context: ApplicationContext) => {
 
 export const hasEmployer = (context: ApplicationContext) => {
   const { application } = context
-  const {
-    isReceivingUnemploymentBenefits,
-    isSelfEmployed,
-    employers,
-  } = getApplicationAnswers(application.answers)
+  const { isReceivingUnemploymentBenefits, isSelfEmployed, employers } =
+    getApplicationAnswers(application.answers)
 
-  const applicationType = (application.answers as {
-    applicationType: { option: string }
-  })?.applicationType
+  const applicationType = (
+    application.answers as {
+      applicationType: { option: string }
+    }
+  )?.applicationType
 
   // Added this check for applications that is in the db already so they can go through to next state
   if (applicationType === undefined) {

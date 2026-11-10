@@ -74,11 +74,11 @@ const createApplication = (
     },
   ])
 
-  return ({
+  return {
     id: 'application',
     answers: { selectedChild: '0', periods },
     externalData,
-  } as unknown) as Application
+  } as unknown as Application
 }
 
 const savedPeriod = {
@@ -92,14 +92,14 @@ const savedPeriod = {
 const renderPeriod = (application: Application, index: number) => {
   let form: UseFormReturn | undefined
 
-  const props = ({
+  const props = {
     application,
     field: { id: `periods[${index}].endDate` },
-  } as unknown) as React.ComponentProps<typeof PeriodDateRange>
-  const actualDobProps = ({
+  } as unknown as React.ComponentProps<typeof PeriodDateRange>
+  const actualDobProps = {
     application,
     field: { id: `periods[${index}].actualDateOfBirth` },
-  } as unknown) as React.ComponentProps<typeof PeriodActualDateOfBirth>
+  } as unknown as React.ComponentProps<typeof PeriodActualDateOfBirth>
 
   const Harness = () => {
     const methods = useForm({ defaultValues: application.answers })

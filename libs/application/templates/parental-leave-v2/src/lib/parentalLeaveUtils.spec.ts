@@ -1508,7 +1508,7 @@ describe('multiple births questions on the select-child screen', () => {
   // They must not be asked for a child that already has an application: the
   // answer is prefilled from VMST for the leave being changed and asking again
   // could contradict it.
-  const screen = (SelectChildSubSection.children[0] as unknown) as {
+  const screen = SelectChildSubSection.children[0] as unknown as {
     children: {
       id: string
       condition?: (a: FormValue, e: ExternalData) => boolean
@@ -1654,10 +1654,12 @@ describe('no-children-found prerequisites', () => {
     section: { condition?: unknown },
     answers: FormValue,
   ): boolean =>
-    (section.condition as (
-      answers: FormValue,
-      externalData: ExternalData,
-    ) => boolean)(answers, externalData)
+    (
+      section.condition as (
+        answers: FormValue,
+        externalData: ExternalData,
+      ) => boolean
+    )(answers, externalData)
 
   it('should come after child selection, which is where "Ný umsókn" is picked', () => {
     // The shell only moves forward through the form's order. Before child
@@ -1764,7 +1766,7 @@ describe('no-children-found prerequisites', () => {
     expect(
       validateAnswers({
         dataSchema,
-        answers: ({
+        answers: {
           noChildrenFound: { typeOfApplication: 'birth' },
           noPrimaryParent: {
             questionOne: undefined,
@@ -1775,7 +1777,7 @@ describe('no-children-found prerequisites', () => {
             birthDate: undefined,
             adoptionDate: undefined,
           },
-        } as unknown) as FormValue,
+        } as unknown as FormValue,
         formatMessage: (message) => String(message),
         currentScreenFields,
       }),
@@ -2015,7 +2017,7 @@ describe('getApplicationExternalData', () => {
 
   it('should map VMST application information to follow-up answers', () => {
     const application = buildApplication({
-      externalData: ({
+      externalData: {
         VMSTApplicationInformation: {
           data: {
             email: 'applicant@island.is',
@@ -2069,7 +2071,7 @@ describe('getApplicationExternalData', () => {
           status: 'success',
           date: new Date(),
         },
-      } as unknown) as ExternalData,
+      } as unknown as ExternalData,
     })
 
     expect(getVMSTApplicationAnswers(application.externalData)).toMatchObject({
@@ -2137,7 +2139,7 @@ describe('getApplicationExternalData', () => {
 
   it('should not build a change baseline from null VMST data on first-time applications', () => {
     const application = buildApplication({
-      externalData: ({
+      externalData: {
         VMSTApplicationInformation: {
           data: null,
           status: 'success',
@@ -2158,7 +2160,7 @@ describe('getApplicationExternalData', () => {
           status: 'success',
           date: new Date(),
         },
-      } as unknown) as ExternalData,
+      } as unknown as ExternalData,
     })
 
     expect(getVMSTApplicationAnswers(application.externalData)).toEqual({})
@@ -2167,7 +2169,7 @@ describe('getApplicationExternalData', () => {
 
   it('should ignore failed VMST provider object payloads on mock applications', () => {
     const application = buildApplication({
-      externalData: ({
+      externalData: {
         VMSTApplicationInformation: {
           data: null,
           status: 'success',
@@ -2201,7 +2203,7 @@ describe('getApplicationExternalData', () => {
           status: 'success',
           date: new Date(),
         },
-      } as unknown) as ExternalData,
+      } as unknown as ExternalData,
     })
 
     expect(getVMSTApplicationAnswers(application.externalData)).toEqual({})
@@ -2269,7 +2271,7 @@ describe('getApplicationExternalData', () => {
 
   it('should pick the first phone number from a semicolon-separated VMST list', () => {
     const application = buildApplication({
-      externalData: ({
+      externalData: {
         VMSTApplicationInformation: {
           data: {
             email: 'applicant@island.is',
@@ -2278,7 +2280,7 @@ describe('getApplicationExternalData', () => {
           status: 'success',
           date: new Date(),
         },
-      } as unknown) as ExternalData,
+      } as unknown as ExternalData,
     })
 
     expect(getVMSTApplicationAnswers(application.externalData)).toMatchObject({
@@ -2290,7 +2292,7 @@ describe('getApplicationExternalData', () => {
 
   it('should prefill what only the VMST parental-leaves list returns', () => {
     const application = buildApplication({
-      externalData: ({
+      externalData: {
         VMSTApplicationInformation: {
           data: {
             otherParentId: '0101307789',
@@ -2306,7 +2308,7 @@ describe('getApplicationExternalData', () => {
           status: 'success',
           date: new Date(),
         },
-      } as unknown) as ExternalData,
+      } as unknown as ExternalData,
     })
 
     expect(getVMSTApplicationAnswers(application.externalData)).toMatchObject({
@@ -2858,31 +2860,31 @@ describe('getApplicationExternalData applicationFundId', () => {
   // compare against '' — the other-parent filter in ChildrenService among them —
   // so a null quietly defeated them.
   it('should be an empty string, not null, when nothing has reached VMST', () => {
-    const { applicationFundId } = getApplicationExternalData(({
+    const { applicationFundId } = getApplicationExternalData({
       navId: { data: null, date: new Date(), status: 'success' },
       sendApplication: { data: null, date: new Date(), status: 'success' },
-    } as unknown) as ExternalData)
+    } as unknown as ExternalData)
 
     expect(applicationFundId).toBe('')
   })
 
   it('should be an empty string when no provider has run at all', () => {
     const { applicationFundId } = getApplicationExternalData(
-      ({} as unknown) as ExternalData,
+      {} as unknown as ExternalData,
     )
 
     expect(applicationFundId).toBe('')
   })
 
   it('should take the fund id from sendApplication once the application is sent', () => {
-    const { applicationFundId } = getApplicationExternalData(({
+    const { applicationFundId } = getApplicationExternalData({
       navId: { data: null, date: new Date(), status: 'success' },
       sendApplication: {
         data: { id: '2017-05140' },
         date: new Date(),
         status: 'success',
       },
-    } as unknown) as ExternalData)
+    } as unknown as ExternalData)
 
     expect(applicationFundId).toBe('2017-05140')
   })

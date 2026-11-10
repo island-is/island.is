@@ -759,9 +759,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.APPROVE,
-                  name:
-                    parentalLeaveFormMessages.attachmentScreen
-                      .additionalDocumentsEditSubmit,
+                  name: parentalLeaveFormMessages.attachmentScreen
+                    .additionalDocumentsEditSubmit,
                   type: 'primary',
                 },
               ],
@@ -821,9 +820,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.APPROVE,
-                  name:
-                    parentalLeaveFormMessages.attachmentScreen
-                      .additionalDocumentsEditSubmit,
+                  name: parentalLeaveFormMessages.attachmentScreen
+                    .additionalDocumentsEditSubmit,
                   type: 'primary',
                 },
               ],
@@ -883,9 +881,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 },
                 {
                   event: DefaultEvents.APPROVE,
-                  name:
-                    parentalLeaveFormMessages.residenceGrantMessage
-                      .residenceGrantApplyTitle,
+                  name: parentalLeaveFormMessages.residenceGrantMessage
+                    .residenceGrantApplyTitle,
                   type: 'primary',
                 },
               ],
@@ -965,9 +962,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 },
                 {
                   event: DefaultEvents.APPROVE,
-                  name:
-                    parentalLeaveFormMessages.residenceGrantMessage
-                      .residenceGrantSubmit,
+                  name: parentalLeaveFormMessages.residenceGrantMessage
+                    .residenceGrantSubmit,
                   type: 'primary',
                 },
               ],
@@ -2125,9 +2121,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       setIsApprovedOnEmployer: assign((context) => {
         const { application } = context
         const { answers } = application
-        const { employerNationalRegistryId, employers } = getApplicationAnswers(
-          answers,
-        )
+        const { employerNationalRegistryId, employers } =
+          getApplicationAnswers(answers)
 
         // Multiple employers and we mark first 'available' employer
         let isAlreadyDone = false
@@ -2515,10 +2510,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
        */
       clearAnswersIncompatibleWithUnemploymentBenefits: assign((context) => {
         const { application } = context
-        const {
-          isReceivingUnemploymentBenefits,
-          unemploymentBenefits,
-        } = getApplicationAnswers(application.answers)
+        const { isReceivingUnemploymentBenefits, unemploymentBenefits } =
+          getApplicationAnswers(application.answers)
 
         if (isReceivingUnemploymentBenefits === NO) {
           unset(application.answers, 'employment.unemploymentBenefits')

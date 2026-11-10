@@ -192,10 +192,8 @@ const applicationToChildInformation = (
   const { applicantGenderCode } = getApplicationExternalData(
     application.externalData,
   )
-  const {
-    noChildrenFoundTypeOfApplication,
-    otherParentRightOfAccess,
-  } = getApplicationAnswers(application.answers)
+  const { noChildrenFoundTypeOfApplication, otherParentRightOfAccess } =
+    getApplicationAnswers(application.answers)
 
   const selectedChild = getSelectedChild(
     application.answers,

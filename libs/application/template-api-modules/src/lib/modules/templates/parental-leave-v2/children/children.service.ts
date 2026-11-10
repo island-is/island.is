@@ -64,9 +64,10 @@ export class ChildrenService {
     existingApplications: ExistingChildApplication[]
     childApplicationLinks: ChildApplicationLink[]
   }> {
-    const customTemplateFindQuery = this.applicationApiService.customTemplateFindQuery(
-      application.typeId,
-    ) as CustomTemplateFindQuery
+    const customTemplateFindQuery =
+      this.applicationApiService.customTemplateFindQuery(
+        application.typeId,
+      ) as CustomTemplateFindQuery
     const shouldUseMockData =
       getValueViaPath<string>(application.answers, 'mock.useMockData', NO) ===
         YES && !this.isRunningOnProduction
@@ -75,9 +76,8 @@ export class ChildrenService {
       return await this.getMockData(application, customTemplateFindQuery)
     }
 
-    const parentalLeavesAndPregnancyStatus = await this.queryParentalLeavesAndPregnancyStatus(
-      nationalId,
-    )
+    const parentalLeavesAndPregnancyStatus =
+      await this.queryParentalLeavesAndPregnancyStatus(nationalId)
 
     // Without VMST's list it is not known which children already have a leave,
     // so a child could be offered as new and applied for twice. Development
@@ -95,26 +95,24 @@ export class ChildrenService {
       )
     }
 
-    const {
-      children,
-      existingApplications,
-      childApplicationLinks,
-    } = await this.childrenAndExistingApplications(
-      application,
-      customTemplateFindQuery,
-      parentalLeavesAndPregnancyStatus.getPregnancyStatus,
-      parentalLeavesAndPregnancyStatus.getParentalLeaves,
-    )
+    const { children, existingApplications, childApplicationLinks } =
+      await this.childrenAndExistingApplications(
+        application,
+        customTemplateFindQuery,
+        parentalLeavesAndPregnancyStatus.getPregnancyStatus,
+        parentalLeavesAndPregnancyStatus.getParentalLeaves,
+      )
 
     const childrenResult: ChildInformation[] = []
 
     for (const child of children) {
-      const parentalLeavesEntitlements = await this.getParentalLeavesEntitlements(
-        child.expectedDateOfBirth === ''
-          ? new Date(child.adoptionDate!)
-          : new Date(child.expectedDateOfBirth),
-        nationalId,
-      )
+      const parentalLeavesEntitlements =
+        await this.getParentalLeavesEntitlements(
+          child.expectedDateOfBirth === ''
+            ? new Date(child.adoptionDate!)
+            : new Date(child.expectedDateOfBirth),
+          nationalId,
+        )
 
       if (
         child.parentalRelation === ParentalRelations.secondary &&
@@ -407,9 +405,7 @@ export class ChildrenService {
     return Array.from(byId.values())
   }
 
-  async queryParentalLeavesAndPregnancyStatus(
-    nationalId: string,
-  ): Promise<{
+  async queryParentalLeavesAndPregnancyStatus(nationalId: string): Promise<{
     getParentalLeaves: ParentalLeave[] | null
     getPregnancyStatus: PregnancyStatus | null
   }> {
@@ -426,11 +422,10 @@ export class ChildrenService {
     // Called in every environment, development included: a follow-up can only
     // continue a leave this list contains (`getPreviousVmstLeave`).
     try {
-      const results = await this.parentalLeaveApi.parentalLeaveGetParentalLeaves(
-        {
+      const results =
+        await this.parentalLeaveApi.parentalLeaveGetParentalLeaves({
           nationalRegistryId: nationalId,
-        },
-      )
+        })
 
       return results.parentalLeaves ?? []
     } catch (e) {

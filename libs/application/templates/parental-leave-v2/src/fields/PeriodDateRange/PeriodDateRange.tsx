@@ -64,9 +64,8 @@ export const PeriodDateRange: FC<
     (watchedFirstPeriodStart ?? currentPeriod?.firstPeriodStart) ===
       StartDateOptions.ACTUAL_DATE_OF_BIRTH
 
-  const expectedDob = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(
-    application,
-  )
+  const expectedDob =
+    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
 
   const getFirstPeriodStart = (startDate?: string) =>
     isFirstPeriod

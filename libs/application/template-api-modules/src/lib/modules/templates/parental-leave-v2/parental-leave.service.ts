@@ -239,11 +239,10 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
   private async getVmstApplication(
     application: Application,
   ): Promise<NewApplication | null> {
-    const {
-      application: vmstApplication,
-    } = await this.applicationApi.applicationGetApplication({
-      applicationId: getVmstApplicationId(application),
-    })
+    const { application: vmstApplication } =
+      await this.applicationApi.applicationGetApplication({
+        applicationId: getVmstApplicationId(application),
+      })
 
     return vmstApplication ?? null
   }
@@ -254,11 +253,10 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
     application: Application,
   ): Promise<VmstFollowUpFields> {
     try {
-      const {
-        parentalLeaves,
-      } = await this.parentalLeaveApi.parentalLeaveGetParentalLeaves({
-        nationalRegistryId: application.applicant,
-      })
+      const { parentalLeaves } =
+        await this.parentalLeaveApi.parentalLeaveGetParentalLeaves({
+          nationalRegistryId: application.applicant,
+        })
       const vmstApplicationId = getVmstApplicationId(application)
       const match = parentalLeaves?.find(
         ({ applicationId }) => applicationId === vmstApplicationId,
@@ -353,11 +351,8 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
     // This replaces the whole `children` external data, so the VMST links the
     // children provider stored are passed on: they are how a follow-up proves
     // which leave it continues (`getPreviousVmstLeave`).
-    const {
-      applicantGenderCode,
-      children,
-      childApplicationLinks,
-    } = getApplicationExternalData(application.externalData)
+    const { applicantGenderCode, children, childApplicationLinks } =
+      getApplicationExternalData(application.externalData)
 
     // The applicant picked a registry child after answering the
     // no-children-found screens: keep that child, not one built from them.
@@ -595,7 +590,8 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
       selfEmployedFiles: selfEmployedPdfs,
       studentFiles: studentPdfs,
       singleParentFiles: singleParentPdfs,
-      employmentTerminationCertificateFiles: employmentTerminationCertificatePdfs,
+      employmentTerminationCertificateFiles:
+        employmentTerminationCertificatePdfs,
       additionalDocuments,
       noChildrenFoundTypeOfApplication,
       employerLastSixMonths,
@@ -849,12 +845,8 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
   }
 
   async createRightsDTO(application: Application): Promise<ApplicationRight[]> {
-    const {
-      applicationType,
-      otherParent,
-      isRequestingRights,
-      periods,
-    } = getApplicationAnswers(application.answers)
+    const { applicationType, otherParent, isRequestingRights, periods } =
+      getApplicationAnswers(application.answers)
 
     const { VMSTApplicationRights } = getApplicationExternalData(
       application.externalData,
@@ -874,13 +866,11 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
       return rights
     }
 
-    const maximumPersonalDaysToSpend = getAvailablePersonalRightsInDays(
-      application,
-    )
+    const maximumPersonalDaysToSpend =
+      getAvailablePersonalRightsInDays(application)
     const maximumMultipleBirthsDaysToSpend = getMultipleBirthsDays(application)
-    const maximumAdditionalSingleParentDaysToSpend = getAdditionalSingleParentRightsInDays(
-      application,
-    )
+    const maximumAdditionalSingleParentDaysToSpend =
+      getAdditionalSingleParentRightsInDays(application)
     const usedDays = calculateDaysUsedByPeriods(periods)
 
     const selectedChild = getSelectedChild(
@@ -1103,12 +1093,11 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
         rightsDTO,
       )
 
-      const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
-        {
+      const response =
+        await this.parentalLeaveApi.parentalLeaveSetParentalLeave({
           nationalRegistryId,
           parentalLeave: parentalLeaveDTO,
-        },
-      )
+        })
 
       if (!response.id) {
         throw new Error(

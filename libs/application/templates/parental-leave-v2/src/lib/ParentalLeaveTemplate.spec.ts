@@ -247,13 +247,10 @@ describe('Parental Leave Application Template', () => {
         newApplication,
         ParentalLeaveTemplate,
       )
-      const [
-        hasChangedAgain,
-        finalState,
-        finalApplication,
-      ] = finalHelper.changeState({
-        type: DefaultEvents.APPROVE,
-      })
+      const [hasChangedAgain, finalState, finalApplication] =
+        finalHelper.changeState({
+          type: DefaultEvents.APPROVE,
+        })
       expect(hasChangedAgain).toBe(true)
       expect(finalState).toBe(ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN)
       expect(finalApplication.assignees).toEqual([])
@@ -371,9 +368,11 @@ describe('Parental Leave Application Template', () => {
           const [hasChanged, newState, newApplication] = helper.changeState({
             type: DefaultEvents.SUBMIT,
           })
-          const newApplicationOtherParentId = (newApplication.answers as {
-            otherParentObj: { otherParentId: string }
-          })?.otherParentObj?.otherParentId
+          const newApplicationOtherParentId = (
+            newApplication.answers as {
+              otherParentObj: { otherParentId: string }
+            }
+          )?.otherParentObj?.otherParentId
 
           expect(hasChanged).toBe(true)
           expect(newState).toBe(ApplicationStates.VINNUMALASTOFNUN_APPROVAL)
@@ -1356,13 +1355,10 @@ describe('Parental Leave Application Template', () => {
         ParentalLeaveTemplate,
       )
 
-      const [
-        ,
-        additionalDocumentsState,
-        additionalDocumentsApplication,
-      ] = helper.changeState({
-        type: PLEvents.ADDITIONALDOCUMENTSREQUIRED,
-      })
+      const [, additionalDocumentsState, additionalDocumentsApplication] =
+        helper.changeState({
+          type: PLEvents.ADDITIONALDOCUMENTSREQUIRED,
+        })
 
       expect(additionalDocumentsState).toBe(
         ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED,
@@ -1444,13 +1440,10 @@ describe('Parental Leave Application Template', () => {
         ParentalLeaveTemplate,
       )
 
-      const [
-        ,
-        additionalDocumentsState,
-        additionalDocumentsApplication,
-      ] = helper.changeState({
-        type: PLEvents.ADDITIONALDOCUMENTSREQUIRED,
-      })
+      const [, additionalDocumentsState, additionalDocumentsApplication] =
+        helper.changeState({
+          type: PLEvents.ADDITIONALDOCUMENTSREQUIRED,
+        })
 
       expect(additionalDocumentsState).toBe(
         ApplicationStates.ADDITIONAL_DOCUMENTS_REQUIRED_FOR_EDITS,
@@ -1486,10 +1479,12 @@ describe('Parental Leave Application Template', () => {
         type: DefaultEvents.EDIT,
       })
 
-      const snapshottedPeriods = ((newApplication.externalData as unknown) as Record<
-        string,
-        { data?: { answers?: { periods?: unknown[] } } }
-      >).rewindBaseline?.data?.answers?.periods
+      const snapshottedPeriods = (
+        newApplication.externalData as unknown as Record<
+          string,
+          { data?: { answers?: { periods?: unknown[] } } }
+        >
+      ).rewindBaseline?.data?.answers?.periods
 
       expect(newApplication.state).toBe(ApplicationStates.DRAFT)
       expect(snapshottedPeriods).toBeUndefined()
@@ -3083,9 +3078,9 @@ test.each([
 ])(
   'should identify the action an application was created for',
   ({ answers, isChange, isResidenceGrant }) => {
-    const context = ({
+    const context = {
       application: { answers },
-    } as unknown) as ApplicationContext
+    } as unknown as ApplicationContext
 
     expect(isChangeApplication(context)).toBe(isChange)
     expect(isResidenceGrantApplication(context)).toBe(isResidenceGrant)

@@ -453,9 +453,11 @@ describe('ParentalLeaveV2Service', () => {
         applicationGetApplication.mockResolvedValue({})
 
         await expect(
-          (parentalLeaveService[action] as (
-            props: TemplateApiModuleActionProps,
-          ) => Promise<unknown>)({
+          (
+            parentalLeaveService[action] as (
+              props: TemplateApiModuleActionProps,
+            ) => Promise<unknown>
+          )({
             application: followUpApplication(),
           } as TemplateApiModuleActionProps),
         ).resolves.not.toThrow()
@@ -719,10 +721,7 @@ describe('ParentalLeaveV2Service', () => {
         startDate: '2025-03-12',
         endDate: '2025-09-11',
       })
-      const periods = (get(
-        application.answers,
-        'periods',
-      ) as object) as Period[]
+      const periods = get(application.answers, 'periods') as object as Period[]
       const rights = 'M-S-GR,ORLOF-FBF'
 
       const res = parentalLeaveService.createPeriodsDTO(periods, false, rights)
@@ -766,10 +765,7 @@ describe('ParentalLeaveV2Service', () => {
           firstPeriodStart: 'specificDate',
         },
       ])
-      const periods = (get(
-        application.answers,
-        'periods',
-      ) as object) as Period[]
+      const periods = get(application.answers, 'periods') as object as Period[]
       const rights = 'M-S-GR,ORLOF-FBF'
 
       const res = parentalLeaveService.createPeriodsDTO(periods, true, rights)
@@ -814,10 +810,7 @@ describe('ParentalLeaveV2Service', () => {
           firstPeriodStart: 'specificDate',
         },
       ])
-      const periods = (get(
-        application.answers,
-        'periods',
-      ) as object) as Period[]
+      const periods = get(application.answers, 'periods') as object as Period[]
       const rights = 'M-S-GR,ORLOF-FBF'
 
       const res = parentalLeaveService.createPeriodsDTO(periods, true, rights)

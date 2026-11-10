@@ -25,14 +25,12 @@ const PersonalAllowance: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
   goToScreen,
 }) => {
   const { formatMessage } = useLocale()
-  const {
-    usePersonalAllowance,
-    personalUseAsMuchAsPossible,
-    personalUsage,
-  } = getApplicationAnswers(application.answers)
+  const { usePersonalAllowance, personalUseAsMuchAsPossible, personalUsage } =
+    getApplicationAnswers(application.answers)
 
-  const previous = getChangeBaseline(application.externalData)
-    ?.personalAllowance
+  const previous = getChangeBaseline(
+    application.externalData,
+  )?.personalAllowance
 
   const hasChanges =
     !!previous &&

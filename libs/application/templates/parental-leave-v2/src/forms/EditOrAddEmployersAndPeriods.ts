@@ -170,18 +170,21 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
               id: 'applicant.email',
               variant: 'email',
               defaultValue: (application: Application) =>
-                (application.externalData.userProfile?.data as {
-                  email?: string
-                })?.email,
+                (
+                  application.externalData.userProfile?.data as {
+                    email?: string
+                  }
+                )?.email,
             }),
             buildTextField({
               width: 'half',
               title: parentalLeaveFormMessages.applicant.phoneNumber,
               defaultValue: (application: Application) => {
-                const phoneNumber = (application.externalData.userProfile
-                  ?.data as {
-                  mobilePhoneNumber?: string
-                })?.mobilePhoneNumber
+                const phoneNumber = (
+                  application.externalData.userProfile?.data as {
+                    mobilePhoneNumber?: string
+                  }
+                )?.mobilePhoneNumber
 
                 return formatPhoneNumber(removeCountryCode(phoneNumber ?? ''))
               },
@@ -378,9 +381,11 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
               format: '####-##-######',
               placeholder: '0000-00-000000',
               defaultValue: (application: Application) =>
-                (application.externalData.userProfile?.data as {
-                  bankInfo?: string
-                })?.bankInfo,
+                (
+                  application.externalData.userProfile?.data as {
+                    bankInfo?: string
+                  }
+                )?.bankInfo,
             }),
             buildAsyncSelectField({
               condition: (answers) => {
@@ -430,9 +435,8 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
             }),
             buildAsyncSelectField({
               condition: (answers) => {
-                const { applicationType, useUnion } = getApplicationAnswers(
-                  answers,
-                )
+                const { applicationType, useUnion } =
+                  getApplicationAnswers(answers)
                 return applicationType === PARENTAL_LEAVE && useUnion === YES
               },
               title: parentalLeaveFormMessages.shared.union,
@@ -481,10 +485,8 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
             }),
             buildAsyncSelectField({
               condition: (answers) => {
-                const {
-                  applicationType,
-                  usePrivatePensionFund,
-                } = getApplicationAnswers(answers)
+                const { applicationType, usePrivatePensionFund } =
+                  getApplicationAnswers(answers)
                 return (
                   applicationType === PARENTAL_LEAVE &&
                   usePrivatePensionFund === YES
@@ -511,10 +513,8 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
             }),
             buildSelectField({
               condition: (answers) => {
-                const {
-                  applicationType,
-                  usePrivatePensionFund,
-                } = getApplicationAnswers(answers)
+                const { applicationType, usePrivatePensionFund } =
+                  getApplicationAnswers(answers)
                 return (
                   applicationType === PARENTAL_LEAVE &&
                   usePrivatePensionFund === YES
@@ -560,11 +560,13 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
               titleVariant: 'h4',
               condition: (answers) => {
                 const doNotUse =
-                  (answers as {
-                    personalAllowance: {
-                      doNotUsePersonalAllowance: string[]
+                  (
+                    answers as {
+                      personalAllowance: {
+                        doNotUsePersonalAllowance: string[]
+                      }
                     }
-                  })?.personalAllowance?.doNotUsePersonalAllowance ?? []
+                  )?.personalAllowance?.doNotUsePersonalAllowance ?? []
                 return !doNotUse.includes(YES)
               },
             }),
@@ -579,11 +581,13 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
               required: true,
               condition: (answers) => {
                 const doNotUse =
-                  (answers as {
-                    personalAllowance: {
-                      doNotUsePersonalAllowance: string[]
+                  (
+                    answers as {
+                      personalAllowance: {
+                        doNotUsePersonalAllowance: string[]
+                      }
                     }
-                  })?.personalAllowance?.doNotUsePersonalAllowance ?? []
+                  )?.personalAllowance?.doNotUsePersonalAllowance ?? []
                 return !doNotUse.includes(YES)
               },
               setOnChange: async () => [
@@ -669,9 +673,8 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
             const canTransferRights =
               getSelectedChild(answers, externalData)?.parentalRelation ===
               ParentalRelations.primary
-            const { hasMultipleBirths, otherParent } = getApplicationAnswers(
-              answers,
-            )
+            const { hasMultipleBirths, otherParent } =
+              getApplicationAnswers(answers)
 
             return (
               canTransferRights &&
@@ -703,18 +706,16 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
             'giveRights.giveDays',
           ],
           condition: (answers, externalData) => {
-            const { hasMultipleBirths, otherParent } = getApplicationAnswers(
-              answers,
-            )
+            const { hasMultipleBirths, otherParent } =
+              getApplicationAnswers(answers)
 
             const canTransferRights =
               getSelectedChild(answers, externalData)?.parentalRelation ===
                 ParentalRelations.primary &&
               (otherParent === SPOUSE || otherParent === MANUAL)
 
-            const multipleBirthsRequestDays = getMultipleBirthRequestDays(
-              answers,
-            )
+            const multipleBirthsRequestDays =
+              getMultipleBirthRequestDays(answers)
 
             return (
               canTransferRights &&
@@ -737,18 +738,16 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
             values: { maxDays: maxDaysToGiveOrReceive },
           }),
           condition: (answers, externalData) => {
-            const { hasMultipleBirths, otherParent } = getApplicationAnswers(
-              answers,
-            )
+            const { hasMultipleBirths, otherParent } =
+              getApplicationAnswers(answers)
 
             const canTransferRights =
               getSelectedChild(answers, externalData)?.parentalRelation ===
                 ParentalRelations.primary &&
               (otherParent === SPOUSE || otherParent === MANUAL)
 
-            const multipleBirthsRequestDays = getMultipleBirthRequestDays(
-              answers,
-            )
+            const multipleBirthsRequestDays =
+              getMultipleBirthRequestDays(answers)
 
             return (
               canTransferRights &&
@@ -782,9 +781,8 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
 
             const { hasMultipleBirths } = getApplicationAnswers(answers)
 
-            const multipleBirthsRequestDays = getMultipleBirthRequestDays(
-              answers,
-            )
+            const multipleBirthsRequestDays =
+              getMultipleBirthRequestDays(answers)
 
             return (
               canTransferRights &&
@@ -1028,10 +1026,8 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
                       ],
                       displayInTable: false,
                       condition: (application) => {
-                        const {
-                          applicationType,
-                          employerLastSixMonths,
-                        } = getApplicationAnswers(application.answers)
+                        const { applicationType, employerLastSixMonths } =
+                          getApplicationAnswers(application.answers)
 
                         return (
                           (applicationType === PARENTAL_GRANT ||

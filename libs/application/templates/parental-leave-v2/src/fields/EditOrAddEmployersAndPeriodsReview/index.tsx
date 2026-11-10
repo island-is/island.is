@@ -28,11 +28,8 @@ const EditOrAddEmployersAndPeriodsReview: FC<
   React.PropsWithChildren<ReviewScreenProps>
 > = ({ application, goToScreen }) => {
   const { formatMessage } = useLocale()
-  const {
-    changeEmployerFile,
-    applicationType,
-    employerLastSixMonths,
-  } = getApplicationAnswers(application.answers)
+  const { changeEmployerFile, applicationType, employerLastSixMonths } =
+    getApplicationAnswers(application.answers)
 
   const reviewProps = {
     application,

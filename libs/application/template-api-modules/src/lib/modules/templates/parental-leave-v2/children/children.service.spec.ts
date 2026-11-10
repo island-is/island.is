@@ -14,7 +14,6 @@ import type { Logger } from '@island.is/logging'
 
 import { ChildrenService } from './children.service'
 
- 
 const APPLICANT_ID = '0101302129'
 
 let id = 0
@@ -61,11 +60,11 @@ const childBornOn = (
 
 describe('ChildrenService.getMockData', () => {
   const service = new ChildrenService(
-    ({
+    {
       info: jest.fn(),
       warn: jest.fn(),
       error: jest.fn(),
-    } as unknown) as Logger,
+    } as unknown as Logger,
     {} as never,
     {} as never,
     {} as never,
@@ -144,11 +143,11 @@ describe('ChildrenService.provideChildren', () => {
   }
   const createService = () =>
     new ChildrenService(
-      ({
+      {
         info: jest.fn(),
         warn: jest.fn(),
         error: jest.fn(),
-      } as unknown) as Logger,
+      } as unknown as Logger,
       { customTemplateFindQuery: () => async () => [] } as never,
       failingParentalLeaveApi as never,
       {} as never,
@@ -182,11 +181,11 @@ describe('ChildrenService.provideChildren', () => {
 
 describe('ChildrenService.childrenAndExistingApplications', () => {
   const service = new ChildrenService(
-    ({
+    {
       info: jest.fn(),
       warn: jest.fn(),
       error: jest.fn(),
-    } as unknown) as Logger,
+    } as unknown as Logger,
     {} as never,
     {} as never,
     {} as never,
