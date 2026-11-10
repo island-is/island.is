@@ -5,7 +5,6 @@ import { overviewSection } from './overviewSection'
 import { HmsLogo } from '@island.is/application/assets/institution-logos'
 import { rentalAgreementSection } from './rentalAgreementSection'
 import { householdMembersSection } from './householdMembersSection'
-import { exemptionSection } from './exemptionSection'
 import { paymentSection } from './paymentSection'
 import { incomeSection } from './incomeSection'
 import { incomeNoTaxReturnSection } from './incomeNoTaxReturnSection'
@@ -21,7 +20,6 @@ export const MainForm = buildForm({
   children: [
     personalInformationSection,
     rentalAgreementSection,
-    exemptionSection,
     householdMembersSection,
     accessAgreementSection,
     incomeSection,

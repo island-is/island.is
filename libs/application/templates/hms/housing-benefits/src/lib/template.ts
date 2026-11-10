@@ -175,6 +175,9 @@ const template: ApplicationTemplate<
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
+              // Allows the applicant to refetch their legal domicile from the
+              // legal domicile sub section (RefetchLegalDomicile field)
+              api: [NationalRegistryApi],
               write: 'all',
               read: 'all',
               delete: true,
