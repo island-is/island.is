@@ -17,8 +17,10 @@ import { cognitoAuthUrl } from '../../graphql/client'
 import {
   GERVIMENN_PHONES,
   runBiometricUnlockTest,
+  runNativeAppLogin,
   runNativeLoginTest,
 } from './native-login-test'
+import { nextOnboardingStep } from '@/utils/onboarding'
 
 // The feature deployment for native login: IAS and the API that trusts it.
 // The switcher doesn't list it, so this is what it would have given.
@@ -164,6 +166,15 @@ export function DebugInfo() {
     )
   }
 
+  const onNativeAppLoginPress = () =>
+    runNativeTest(async (report) => {
+      const passed = await runNativeAppLogin(report, { phone: nativeTestPhone })
+      if (passed) {
+        await nextOnboardingStep()
+      }
+      return passed
+    })
+
   const onNativeLoginTestPress = (keepLogin: boolean) =>
     runNativeTest((report) =>
       runNativeLoginTest(report, { keepLogin, phone: nativeTestPhone }),
@@ -286,6 +297,17 @@ export function DebugInfo() {
                   title: '(Keep)',
                   disabled: nativeTestRunning,
                   onPress: () => onNativeLoginTestPress(true),
+                },
+              ]}
+            />
+            <DebugRow
+              title="App"
+              value="Native login"
+              actions={[
+                {
+                  title: '(Log in)',
+                  disabled: nativeTestRunning,
+                  onPress: onNativeAppLoginPress,
                 },
               ]}
             />

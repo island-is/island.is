@@ -4,6 +4,7 @@ import {
 } from '../../../modules/device-keys'
 import { getConfig } from '@/config'
 import { getIasClient, IasClient, IasError } from '@/lib/ias'
+import { authStore } from '@/stores/auth-store'
 import { environmentStore } from '@/stores/environment-store'
 
 // Gervimenn: approval is automatic outside production. IAS allows one app
@@ -73,6 +74,48 @@ async function queryWithDpop(ias: IasClient, accessToken: string) {
   }
   // Past authentication, the profile service may still fail for gervimaður.
   return error ? `token accepted, then: ${error.message}` : 'token accepted'
+}
+
+/**
+ * Logs the app itself in with native login, as the login screen will. The
+ * rest of the app then runs on the DPoP-bound tokens.
+ */
+export async function runNativeAppLogin(
+  report: (line: string) => void,
+  { phone = GERVIMENN_PHONES[0] }: { phone?: string } = {},
+): Promise<boolean> {
+  if (getConfig().id === 'mock') {
+    report('✗ The Mock environment uses the mock client: switch to Dev')
+    return false
+  }
+  const ias = getIasClient()
+  try {
+    if ((await ias.getLoginMode()) !== 'native') {
+      report('✗ Browser login: Metro has the reason')
+      return false
+    }
+    const tokens = await ias.waitForApproval(await ias.startLogin(phone))
+    report(
+      `✓ Log in as gervimaður ${phone} (acr ${
+        tokenClaims(tokens.accessToken).acr
+      })`,
+    )
+    // The app logs out at startup when a required scope is missing.
+    const missing = getConfig().idsScopes.filter(
+      (scope) => !tokens.scopes.includes(scope),
+    )
+    if (missing.length > 0) {
+      report(`Scopes IAS left out: ${missing.join(' ')}`)
+    }
+    const { loginNative, fetchUserInfo } = authStore.getState()
+    await loginNative(tokens)
+    const userInfo = await fetchUserInfo()
+    report(`✓ User info (${userInfo?.name})`)
+    return true
+  } catch (error) {
+    report(`✗ ${describeError(error)}`)
+    return false
+  }
 }
 
 /**
