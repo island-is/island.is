@@ -44,6 +44,7 @@ export const formatOutputValue = (
       return value.stringValue ?? undefined
 
     case TaxCalculatorOutputFieldType.Array:
+    case TaxCalculatorOutputFieldType.Object:
       return undefined
 
     default: {

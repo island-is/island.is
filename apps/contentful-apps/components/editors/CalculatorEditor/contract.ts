@@ -115,6 +115,7 @@ export const toOutputContractField = (
     case 'TaxCalculatorNumberOutputField':
       return { ...base, semantic: orUndefined(field.semantic) }
     case 'TaxCalculatorArrayOutputField':
+    case 'TaxCalculatorObjectOutputField':
       return {
         ...base,
         itemFields: field.itemFields.map(toOutputContractItemField),
