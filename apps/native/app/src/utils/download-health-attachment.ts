@@ -1,7 +1,7 @@
 import * as FileSystem from 'expo-file-system'
 import * as Share from 'expo-sharing'
 
-import { getAndRefreshToken } from '@/graphql/client'
+import { getAuthHeaders } from '@/graphql/client'
 import {
   clearLockScreenSuppression,
   suppressLockScreen,
@@ -21,7 +21,7 @@ interface DownloadHealthAttachmentProps {
  * download service and opens the OS share sheet, like the inbox does for
  * PDF documents. Unlike inbox documents the content isn't available through
  * GraphQL, so the bytes are fetched from the download service with the same
- * bearer token the API client uses.
+ * authorization the API client uses.
  */
 export const downloadHealthAttachment = async ({
   url,
@@ -37,10 +37,9 @@ export const downloadHealthAttachment = async ({
   const timeout = setTimeout(() => controller.abort(), DOWNLOAD_TIMEOUT_MS)
 
   try {
-    const token = await getAndRefreshToken()
     const response = await fetch(url, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${token}` },
+      headers: await getAuthHeaders('POST', url),
       signal: controller.signal,
     })
     if (!response.ok) {

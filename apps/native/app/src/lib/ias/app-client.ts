@@ -1,6 +1,6 @@
 import * as Application from 'expo-application'
 import Keychain from 'react-native-keychain'
-import { getConfig } from '../../config'
+import { getClientId, getConfig } from '../../config'
 import { createIasClient } from './client'
 import { deviceKeysIasDevice } from './device'
 import { createMockIasClient } from './mock'
@@ -42,13 +42,25 @@ export function toSemver(version: string) {
   return parts.join('.')
 }
 
+/** The IAS for native login, which testing builds can point elsewhere. */
+export function getIasIssuer() {
+  const { iasIssuer, idsIssuer } = getConfig()
+  return iasIssuer ?? idsIssuer
+}
+
+/** Native login tokens are DPoP-bound to the install key; browser ones aren't. */
+export function isNativeLogin(tokens: { tokenType?: string } | undefined) {
+  return tokens?.tokenType === 'DPoP'
+}
+
 let current: { key: string; client: IasClient } | undefined
 
 /** The client for the selected environment. */
 export function getIasClient(): IasClient {
-  const { id, idsIssuer, iasIssuer, idsClientId, idsScopes } = getConfig()
-  const issuer = iasIssuer ?? idsIssuer
-  const key = `${id} ${issuer} ${idsClientId}`
+  const { id, idsScopes } = getConfig()
+  const issuer = getIasIssuer()
+  const clientId = getClientId()
+  const key = `${id} ${issuer} ${clientId}`
   if (current?.key !== key) {
     current = {
       key,
@@ -57,7 +69,7 @@ export function getIasClient(): IasClient {
           ? createMockIasClient()
           : createIasClient({
               issuer,
-              clientId: idsClientId,
+              clientId,
               scopes: idsScopes,
               appVersion: toSemver(
                 Application.nativeApplicationVersion ?? '0.0.0',

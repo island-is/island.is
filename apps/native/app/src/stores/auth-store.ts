@@ -9,7 +9,7 @@ import {
 } from 'react-native-app-auth'
 import Keychain from 'react-native-keychain'
 
-import { bundleId, getConfig } from '../config'
+import { bundleId, getClientId, getConfig } from '../config'
 import { LOCK_SCREEN_SUPPRESS_MAX_MS } from '../constants/auth'
 import { getIntl } from '../components/providers/locale-provider'
 import { getApolloClientAsync } from '../graphql/client-instance'
@@ -18,6 +18,8 @@ import { offlineStore } from './offline-store'
 import { preferencesStore } from './preferences-store'
 import { notificationsStore } from './notifications-store'
 import { getFeatureFlagValue } from '../lib/feature-flag-client'
+import { getIasClient, getIasIssuer, isNativeLogin } from '../lib/ias'
+import type { IasTokens } from '../lib/ias'
 import {
   DeletePasskeyDocument,
   DeletePasskeyMutation,
@@ -69,21 +71,18 @@ interface AuthStore {
   ): Promise<UserInfo>
   refresh(skipLogout?: boolean): Promise<void | null>
   login(): Promise<boolean>
+  /** Stores a native login's tokens, as login() does the browser login's. */
+  loginNative(tokens: IasTokens): Promise<void>
   logout(skipPasskeyDeletion?: boolean): Promise<boolean>
 }
 
 const getAppAuthConfig = () => {
   const config = getConfig()
   const android = isAndroid ? '.auth' : ''
-  const clientId =
-    config.isTestingApp && config.id === 'prod'
-      ? // Use this custom client ID for testing on prod.
-        '@island.is/island.dev-appid'
-      : config.idsClientId
 
   return {
     issuer: config.idsIssuer,
-    clientId,
+    clientId: getClientId(),
     redirectUrl: `${config.bundleId}${android}://oauth`,
     scopes: config.idsScopes,
   }
@@ -131,6 +130,20 @@ const clearPasskey = async (userNationalId?: string) => {
   }
 }
 
+const storeAuthorizeResult = (
+  authorizeResult: AuthorizeResult | RefreshResult,
+) =>
+  Keychain.setGenericPassword(
+    KEYCHAIN_AUTH_KEY,
+    JSON.stringify(authorizeResult),
+    {
+      service: KEYCHAIN_AUTH_KEY,
+      accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+    },
+  )
+
+// IasError's code is invalid_grant too when IAS refuses a native login's
+// refresh token or no longer has its app login.
 const isLogoutError = (e: Error & { code?: string }) => {
   return (
     e.code === INVALID_REFRESH_TOKEN_ERROR ||
@@ -152,7 +165,11 @@ export const authStore = create<AuthStore>((set, get) => ({
   cognitoAuthUrl: undefined,
   cookies: '',
   async fetchUserInfo(skipRefresh = false, skipLogoutIfRefreshFailed = false) {
-    const appAuthConfig = getAppAuthConfig()
+    // A native login's tokens come from IAS, which testing builds can point
+    // elsewhere. Its userinfo still only reads Bearer, even for DPoP tokens.
+    const issuer = isNativeLogin(get().authorizeResult)
+      ? getIasIssuer()
+      : getAppAuthConfig().issuer
     // Detect expired token
     const expiresAt = get().authorizeResult?.accessTokenExpirationDate ?? 0
 
@@ -160,14 +177,11 @@ export const authStore = create<AuthStore>((set, get) => ({
       await get().refresh(skipLogoutIfRefreshFailed)
     }
 
-    const res = await fetch(
-      `${appAuthConfig.issuer.replace(/\/$/, '')}/connect/userinfo`,
-      {
-        headers: {
-          Authorization: `Bearer ${get().authorizeResult?.accessToken}`,
-        },
+    const res = await fetch(`${issuer.replace(/\/$/, '')}/connect/userinfo`, {
+      headers: {
+        Authorization: `Bearer ${get().authorizeResult?.accessToken}`,
       },
-    )
+    })
 
     if (res.status === 401) {
       // Attempt to refresh the access token
@@ -195,9 +209,9 @@ export const authStore = create<AuthStore>((set, get) => ({
 
     let newAuthorizeResult
     try {
-      newAuthorizeResult = await authRefresh(appAuthConfig, {
-        refreshToken,
-      })
+      newAuthorizeResult = isNativeLogin(get().authorizeResult)
+        ? await getIasClient().refresh(refreshToken)
+        : await authRefresh(appAuthConfig, { refreshToken })
     } catch (e) {
       if (!skipLogout && isLogoutError(e as Error & { code?: string })) {
         Alert.alert(
@@ -217,14 +231,7 @@ export const authStore = create<AuthStore>((set, get) => ({
       ...newAuthorizeResult,
     }
 
-    await Keychain.setGenericPassword(
-      KEYCHAIN_AUTH_KEY,
-      JSON.stringify(authorizeResult),
-      {
-        service: KEYCHAIN_AUTH_KEY,
-        accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
-      },
-    )
+    await storeAuthorizeResult(authorizeResult)
     set({ authorizeResult })
   }),
   async login() {
@@ -241,18 +248,15 @@ export const authStore = create<AuthStore>((set, get) => ({
     })
 
     if (authorizeResult) {
-      await Keychain.setGenericPassword(
-        KEYCHAIN_AUTH_KEY,
-        JSON.stringify(authorizeResult),
-        {
-          service: KEYCHAIN_AUTH_KEY,
-          accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
-        },
-      )
+      await storeAuthorizeResult(authorizeResult)
       set({ authorizeResult })
       return true
     }
     return false
+  },
+  async loginNative(tokens) {
+    await storeAuthorizeResult(tokens)
+    set({ authorizeResult: tokens })
   },
   async logout(skipPasskeyDeletion = false) {
     // Clear all MMKV storages
@@ -275,10 +279,14 @@ export const authStore = create<AuthStore>((set, get) => ({
     }
 
     const appAuthConfig = getAppAuthConfig()
+    const { authorizeResult } = get()
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const tokenToRevoke = get().authorizeResult?.accessToken
+    const tokenToRevoke = authorizeResult?.accessToken
     try {
-      if (tokenToRevoke) {
+      if (isNativeLogin(authorizeResult)) {
+        // Ends the app login on IAS, not just this session.
+        await getIasClient().logout(authorizeResult?.refreshToken ?? undefined)
+      } else if (tokenToRevoke) {
         await revoke(appAuthConfig, {
           tokenToRevoke,
           includeBasicAuth: true,

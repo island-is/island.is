@@ -15,6 +15,7 @@ import { MMKVStorageWrapper, persistCache } from 'apollo3-cache-persist'
 import { config, getConfig } from '../config'
 import { LOCK_SCREEN_SUPPRESS_MAX_MS } from '../constants/auth'
 import { environments } from '../constants/environments'
+import { getIasClient, isNativeLogin } from '../lib/ias'
 import { setInitializer } from './client-instance'
 import { getAuthStoreRef } from '../stores/auth-store-ref'
 import { environmentStore } from '../stores/environment-store'
@@ -43,10 +44,10 @@ export const useApolloNetworkStatus =
 
 const apolloMMKVStorage = createMMKVStorage({ withEncryption: true })
 
+const getGraphqlUrl = () => `${getConfig().apiUrl.replace(/\/$/, '')}/graphql`
+
 const httpLink = new HttpLink({
-  uri() {
-    return `${getConfig().apiUrl.replace(/\/$/, '')}/graphql`
-  },
+  uri: getGraphqlUrl,
   fetch,
 })
 
@@ -181,13 +182,30 @@ export const getAndRefreshToken = async () => {
   return authorizeResult?.accessToken
 }
 
-const authLink = setContext(async (_, { headers }) => {
+/**
+ * Authorization for a request: a browser login's token as Bearer, or a native
+ * login's token, which is bound to the install key, as DPoP with a proof for
+ * this method and URL.
+ */
+export const getAuthHeaders = async (
+  method: string,
+  url: string,
+): Promise<Record<string, string>> => {
   const token = await getAndRefreshToken()
+  if (token && isNativeLogin(getAuthStoreRef().getState().authorizeResult)) {
+    return {
+      authorization: `DPoP ${token}`,
+      dpop: await getIasClient().createDpopProof(method, url, token),
+    }
+  }
+  return { authorization: `Bearer ${token}` }
+}
 
+const authLink = setContext(async (_, { headers }) => {
   return {
     headers: {
       ...headers,
-      authorization: `Bearer ${token}`,
+      ...(await getAuthHeaders('POST', getGraphqlUrl())),
       'X-Cognito-Token': `Bearer ${
         environmentStore.getState().cognito?.accessToken
       }`,

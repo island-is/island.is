@@ -21,3 +21,11 @@ export function getConfig() {
     ...environmentStore.getState().environment,
   }
 }
+
+/** The testing app logs in to production with a client of its own. */
+export function getClientId() {
+  const { isTestingApp, id, idsClientId } = getConfig()
+  return isTestingApp && id === 'prod'
+    ? '@island.is/island.dev-appid'
+    : idsClientId
+}
