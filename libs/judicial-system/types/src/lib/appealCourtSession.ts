@@ -17,10 +17,11 @@ export const appealCourtSessionTypeNames = {
 }
 
 /**
- * Every booked session with a date, newest first, the way a log reads. The
- * parties' card is a log of what the court has called, so nothing is dropped
- * for being over. Sessions without a usable date are left out - the backend
- * requires one, but the web's generated type does not.
+ * Every booked session with a date, latest first, the way a log reads. The
+ * court's list and the parties' card are both logs of what the court has
+ * called, so nothing is dropped for being over. Sessions without a usable
+ * date are left out - the backend requires one, but the web's generated type
+ * does not.
  */
 export const sortAppealCourtSessionsByDate = <
   T extends { sessionDate?: Date | string | null },

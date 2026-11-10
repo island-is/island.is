@@ -163,6 +163,7 @@ const routes: [string, boolean, boolean, AllowedRow[]][] = [
   ['update', true, true, [staffRow]],
   ['delete', true, true, [staffRow]],
   ['confirm', false, true, [unassignedProsecutorRow]],
+  ['sendToService', true, true, [staffRow]],
   ['sendToCourtOfAppeals', true, true, [staffRow]],
   [
     'getPdf',

@@ -319,10 +319,6 @@ export const isExemptionRequested = (answers: FormValue) => {
   return Array.isArray(exemptionCheckbox) && exemptionCheckbox.includes(YES)
 }
 
-export const isExemptionReason = (answers: FormValue, reason: string) =>
-  isExemptionRequested(answers) &&
-  getValueViaPath<string>(answers, 'exemptionReason') === reason
-
 type PersonalTaxReturnData = {
   handedInLastYear?: boolean
   handedInLastFiveYears?: boolean

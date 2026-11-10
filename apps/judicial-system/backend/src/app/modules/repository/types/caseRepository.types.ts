@@ -34,6 +34,7 @@ import { AppealEventLog } from '../models/appealEventLog.model'
 import { AppealStatementDeadline } from '../models/appealStatementDeadline.model'
 import { AppealSummons } from '../models/appealSummons.model'
 import { AppealSummonsDefendant } from '../models/appealSummonsDefendant.model'
+import { AppealSummonsServiceRecipient } from '../models/appealSummonsServiceRecipient.model'
 import { Case } from '../models/case.model'
 import { CaseDefendantPoliceCaseNumber } from '../models/caseDefendantPoliceCaseNumber.model'
 import { CaseFile } from '../models/caseFile.model'
@@ -132,6 +133,13 @@ export const caseInclude: Includeable[] = [
             order: [['created', 'ASC']],
             separate: true,
           },
+          {
+            model: AppealSummonsServiceRecipient,
+            as: 'services',
+            required: false,
+            order: [['created', 'ASC']],
+            separate: true,
+          },
         ],
       },
       {
@@ -153,16 +161,22 @@ export const caseInclude: Includeable[] = [
             order: [['created', 'ASC']],
             separate: true,
           },
+          {
+            model: AppealSummonsServiceRecipient,
+            as: 'services',
+            required: false,
+            order: [['created', 'ASC']],
+            separate: true,
+          },
         ],
       },
       {
         model: AppealCourtSession,
         as: 'courtSessions',
         required: false,
-        // Most recently booked first, so the session the court has just
-        // called is at the top of the list rather than wherever its date
-        // falls.
-        order: [['created', 'DESC']],
+        // Latest session first, the order the court's list and the parties'
+        // agenda card both read in.
+        order: [['sessionDate', 'DESC']],
         separate: true,
       },
       {
@@ -530,6 +544,7 @@ export const caseInclude: Includeable[] = [
               CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
               CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
               CaseFileCategory.DEFENDANT_CASE_FILE,
+              CaseFileCategory.COURT_CASE_FILE,
               CaseFileCategory.CIVIL_CLAIM,
             ],
           },
@@ -609,6 +624,7 @@ export const caseInclude: Includeable[] = [
               CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
               CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
               CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+              CaseFileCategory.COURT_CASE_FILE,
             ],
           },
           created: { [Op.lt]: col('Case.created') },
@@ -1198,7 +1214,9 @@ export const getLimitedAccessCaseInclude = (
           model: AppealCourtSession,
           as: 'courtSessions',
           required: false,
-          order: [['sessionDate', 'ASC']],
+          // Latest session first, the order the court's list and the parties'
+          // agenda card both read in.
+          order: [['sessionDate', 'DESC']],
           separate: true,
         },
       ],
@@ -1367,6 +1385,7 @@ export const getLimitedAccessCaseInclude = (
           CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
           CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
           CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+          CaseFileCategory.COURT_CASE_FILE,
           CaseFileCategory.CIVIL_CLAIM,
           CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
           CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
@@ -1436,6 +1455,7 @@ export const getLimitedAccessCaseInclude = (
                 CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
                 CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
                 CaseFileCategory.DEFENDANT_CASE_FILE,
+                CaseFileCategory.COURT_CASE_FILE,
                 CaseFileCategory.CIVIL_CLAIM,
                 CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
               ],
@@ -1548,6 +1568,7 @@ export const getLimitedAccessCaseInclude = (
                 CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
                 CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
                 CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+                CaseFileCategory.COURT_CASE_FILE,
               ],
             },
             created: { [Op.lt]: col('Case.created') },
