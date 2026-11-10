@@ -2342,7 +2342,7 @@ export const m = defineMessages({
   },
   equality: {
     id: 'service.portal:equality',
-    defaultMessage: 'Jafnrétti',
+    defaultMessage: 'Jafnrétti á vinnumarkaði',
   },
   equalityDescription: {
     id: 'service.portal:equality-description',
