@@ -603,6 +603,22 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Hversu mörgum dögum viltu óska eftir?',
       description: 'How many days do you want to request?',
     },
+    rightsAlertTitle: {
+      id: 'plv2.application:months.total.alertTitle',
+      defaultMessage: 'Athugaðu',
+      description: 'Title of the note under the rights transfer inputs',
+    },
+    rightsTotalMonths: {
+      id: 'plv2.application:months.total.months',
+      defaultMessage: '{months, plural, one {# mánuður} other {# mánuðir}}',
+      description: 'Total time on leave in whole months',
+    },
+    rightsTotalMonthsAndDays: {
+      id: 'plv2.application:months.total.monthsAndDays',
+      defaultMessage:
+        '{months, plural, one {# mánuður} other {# mánuðir}} og {days, plural, one {# dagur} other {# dagar}}',
+      description: 'Total time on leave in months and days',
+    },
     rightsTotalSmallPrint: {
       id: 'plv2.application:months.total.smallprint',
       defaultMessage:
@@ -1218,19 +1234,6 @@ export const parentalLeaveFormMessages = {
         'Upplýsingarnar úr fyrri umsókn þinni verða notaðar. Haltu áfram til að gera breytingar.',
       description:
         'Description shown in prerequisites of a follow-up application',
-    },
-    startChangeErrorTitle: {
-      id: 'plv2.application:selectChild.startChangeErrorTitle',
-      defaultMessage: 'Ekki tókst að hefja breytingu',
-      description:
-        'Error title - shown when creating the change application failed',
-    },
-    startChangeErrorMessage: {
-      id: 'plv2.application:selectChild.startChangeErrorMessage',
-      defaultMessage:
-        'Villa kom upp við að hefja breytingu á umsókninni. Reyndu aftur síðar.',
-      description:
-        'Error message - shown when creating the change application failed',
     },
   }),
 
@@ -2871,6 +2874,37 @@ export const errorMessages = defineMessages({
       'Vinnumálastofnun er ekki með skráð fæðingarorlofið sem þessi umsókn byggir á. Ef þú telur að það eigi að vera skráð skaltu hafa samband við Vinnumálastofnun.',
     description:
       'Shown when VMST does not list the leave a change or residence grant continues',
+  },
+  vmstErrorTitle: {
+    id: 'plv2.application:error.vmst.title',
+    defaultMessage: 'Villa í samskiptum við Vinnumálastofnun',
+    description: 'Title when a request to VMST fails',
+  },
+  vmstSendApplicationFailed: {
+    id: 'plv2.application:error.vmst.sendApplicationFailed',
+    defaultMessage:
+      'Ekki tókst að senda umsóknina til Vinnumálastofnunar. Reyndu aftur síðar. Ef villan endurtekur sig skaltu hafa samband við Vinnumálastofnun.',
+    description: 'Shown when sending the application to VMST fails',
+  },
+  vmstValidateApplicationFailed: {
+    id: 'plv2.application:error.vmst.validateApplicationFailed',
+    defaultMessage:
+      'Vinnumálastofnun gat ekki yfirfarið umsóknina. Reyndu aftur síðar. Ef villan endurtekur sig skaltu hafa samband við Vinnumálastofnun.',
+    description: 'Shown when VMST rejects or fails the validation request',
+  },
+  vmstFollowUpUnavailable: {
+    id: 'plv2.application:error.vmst.followUpUnavailable',
+    defaultMessage:
+      'Ekki tókst að sækja upplýsingar um fæðingarorlofið frá Vinnumálastofnun. Reyndu aftur síðar.',
+    description:
+      'Shown when the VMST record a change or residence grant continues cannot be fetched',
+  },
+  vmstApplicationNotFound: {
+    id: 'plv2.application:error.vmst.applicationNotFound',
+    defaultMessage:
+      'Umsóknin fannst ekki hjá Vinnumálastofnun. Hafðu samband við Vinnumálastofnun.',
+    description:
+      'Shown when an application VMST should already hold has no VMST id',
   },
   phoneNumber: {
     id: 'plv2.application:dataSchema.phoneNumber',

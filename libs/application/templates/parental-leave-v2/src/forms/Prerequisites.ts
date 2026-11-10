@@ -9,6 +9,8 @@ import {
   buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
+  buildHiddenInput,
+  buildHiddenInputWithWatchedValue,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -19,6 +21,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import {
+  Application,
   DefaultEvents,
   ExternalData,
   Form,
@@ -31,12 +34,17 @@ import { DirectorateOfLabourLogo } from '@island.is/application/assets/instituti
 import { defaultMultipleBirthsMonths } from '../config'
 import {
   ADOPTION,
+  ApplicationAction,
   BIRTH,
   OTHER_NO_CHILDREN_FOUND,
   PERMANENT_FOSTER_CARE,
   ParentalRelations,
 } from '../constants'
-import { ChildrenApi, GetPersonInformation } from '../dataProviders'
+import {
+  ChildrenApi,
+  GetPersonInformation,
+  VMSTParentalLeavesApi,
+} from '../dataProviders'
 import { errorMessages, parentalLeaveFormMessages } from '../lib/messages'
 import {
   getApplicationAnswers,
@@ -63,9 +71,25 @@ const NEW_CHILD_DETAIL_ANSWERS = [
   'noPrimaryParent',
 ]
 
+const MULTIPLE_BIRTHS_ANSWERS = [
+  'multipleBirths.hasMultipleBirths',
+  'multipleBirths.multipleBirths',
+  'multipleBirths.isAsked',
+]
+
 const buildMultipleBirthsFields = (
   condition: (answers: FormValue, externalData: ExternalData) => boolean,
 ) => [
+  // Tells the schema the question was shown, so it can require an answer while
+  // telling it apart from one cleared with the child or type. Set again after
+  // every child change, which clears it with the answer.
+  buildHiddenInputWithWatchedValue({
+    id: 'multipleBirths.isAsked',
+    watchValue: 'selectedChild',
+    valueModifier: () => YES,
+    defaultValue: YES,
+    condition,
+  }),
   buildRadioField({
     id: 'multipleBirths.hasMultipleBirths',
     title: parentalLeaveFormMessages.selectChild.multipleBirthsName,
@@ -330,6 +354,10 @@ export const ExternalDataSubSection = buildSubSection({
           title: parentalLeaveFormMessages.shared.familyInformationTitle,
           subTitle: parentalLeaveFormMessages.shared.familyInformationSubTitle,
         }),
+        // Shown as part of the children's information below
+        buildDataProviderItem({
+          provider: VMSTParentalLeavesApi,
+        }),
         buildDataProviderItem({
           provider: ChildrenApi,
           title: parentalLeaveFormMessages.shared.childrenInformationTitle,
@@ -375,8 +403,7 @@ export const NoChildrenFoundSubSection = buildSubSection({
           id: 'noChildrenFound.typeOfApplication',
           clearOnChange: [
             ...NEW_CHILD_DETAIL_ANSWERS,
-            'multipleBirths.hasMultipleBirths',
-            'multipleBirths.multipleBirths',
+            ...MULTIPLE_BIRTHS_ANSWERS,
           ],
           options: [
             {
@@ -598,6 +625,13 @@ export const NoPrimaryParentSubSection = buildSubSection({
   ],
 })
 
+const isStartingChangeApplication = (
+  answers: FormValue,
+  externalData: ExternalData,
+) =>
+  !isFollowUpApplication(answers) &&
+  !!getSelectedChild(answers, externalData)?.vmstApplicationId
+
 export const SelectChildSubSection = buildSubSection({
   id: 'selectChild',
   title: parentalLeaveFormMessages.selectChild.screenTitle,
@@ -619,7 +653,13 @@ export const SelectChildSubSection = buildSubSection({
           id: 'selectedChild',
           description: parentalLeaveFormMessages.selectChild.screenDescription,
           required: true,
-          clearOnChange: NEW_CHILD_DETAIL_ANSWERS,
+          clearOnChange: [
+            ...NEW_CHILD_DETAIL_ANSWERS,
+            ...MULTIPLE_BIRTHS_ANSWERS,
+            // Set by the change-application screen for a child already applied for
+            'applicationAction',
+            'initialQuery',
+          ],
           options: (application) => {
             return getChildrenOptions(application)
           },
@@ -650,25 +690,51 @@ export const SelectChildSubSection = buildSubSection({
         }),
       ],
     }),
-    // The applicant picked a child they have already applied for. This screen
-    // creates a new application for the same VMST leave and navigates there,
-    // so a change is its own application rather than a re-entry into that one.
+    // The applicant picked a child they have already applied for. Submitting
+    // makes this application a change of that VMST leave, prefilled from what
+    // was gathered with the external data, so VMST is not asked again.
     buildMultiField({
       id: 'startChangeApplicationScreen',
-      title: '',
+      title: parentalLeaveFormMessages.selectChild.screenTitle,
+      description: parentalLeaveFormMessages.selectChild.followUpDescription,
       // `isFollowUpApplication` is what stops this from looping: the child keeps its
       // `vmstApplicationId` in the change application too, so without the guard
       // selecting it here would start yet another change application.
-      condition: (answers, externalData) =>
-        !isFollowUpApplication(answers) &&
-        !!getSelectedChild(answers, externalData)?.vmstApplicationId,
+      condition: isStartingChangeApplication,
       children: [
-        buildCustomField({
-          id: 'startChangeApplication',
-          component: 'StartChangeApplication',
-          title: '',
+        // Sent only with the submit, which persists answers on success alone,
+        // so a failed start can still go back and pick another child. Picking
+        // another child clears them.
+        buildHiddenInput({
+          id: 'applicationAction',
+          defaultValue: ApplicationAction.CHANGE,
+        }),
+        buildHiddenInput({
+          id: 'initialQuery',
+          defaultValue: (application: Application) =>
+            getSelectedChild(application.answers, application.externalData)
+              ?.vmstApplicationId,
+        }),
+        buildSubmitField({
+          id: 'toChangeForm',
+          refetchApplicationAfterSubmit: true,
+          actions: [
+            {
+              event: DefaultEvents.SUBMIT,
+              dataTestId: 'start-change-application',
+              name: parentalLeaveFormMessages.selectChild.choose,
+              type: 'primary',
+            },
+          ],
         }),
       ],
+    }),
+    // Sibling of the multiField, not a child of it: the submit button does not
+    // render unless a screen follows. Same workaround as ApplicationTypeSubSection.
+    buildDescriptionField({
+      id: 'startChangeApplication.unused',
+      condition: isStartingChangeApplication,
+      description: '',
     }),
   ],
 })

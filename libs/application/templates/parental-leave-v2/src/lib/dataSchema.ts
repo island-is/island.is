@@ -117,14 +117,18 @@ export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   selectedChild: z.string().min(1),
   // What this application is for. Optional so applications created before
-  // one-application-per-action still validate; readers default to APPLY.
-  applicationAction: z
-    .enum([
-      ApplicationAction.APPLY,
-      ApplicationAction.CHANGE,
-      ApplicationAction.RESIDENCE_GRANT,
-    ])
-    .optional(),
+  // one-application-per-action still validate; readers default to APPLY, as
+  // they do for the '' left when the applicant picks another child.
+  applicationAction: z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z
+      .enum([
+        ApplicationAction.APPLY,
+        ApplicationAction.CHANGE,
+        ApplicationAction.RESIDENCE_GRANT,
+      ])
+      .optional(),
+  ),
   applicationType: z.object({
     option: z.enum([PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE]),
   }),
@@ -375,7 +379,20 @@ export const dataSchema = z.object({
         z.enum([YES, NO]).optional(),
       ),
       multipleBirths: z.string().optional(),
+      // Set while the question is shown; '' once cleared with the child or type
+      isAsked: z.preprocess(
+        (value) => (value === '' ? undefined : value),
+        z.enum([YES]).optional(),
+      ),
     })
+    .refine(
+      ({ hasMultipleBirths, isAsked }) =>
+        isAsked === YES ? hasMultipleBirths !== undefined : true,
+      {
+        path: ['hasMultipleBirths'],
+        params: coreErrorMessages.missingAnswer,
+      },
+    )
     .refine(
       ({ hasMultipleBirths, multipleBirths }) =>
         hasMultipleBirths === YES ? !!multipleBirths : true,
@@ -498,11 +515,17 @@ export const dataSchema = z.object({
               { params: errorMessages.phoneNumber },
             )
             .optional(),
-          ratio: z.string().refine((v) => isNumberInRange(v, 1, 100), {
-            params: errorMessages.employersRatioInvalid,
-          }),
+          ratio: z.string(),
           stillEmployed: z.enum([YES, NO]).optional(),
+          isFromVMST: z.boolean().optional(),
         })
+        // A row prefilled from VMST has no ratio until the applicant edits it
+        .refine(
+          ({ ratio, isFromVMST }) =>
+            (isFromVMST === true && ratio === '') ||
+            isNumberInRange(ratio, 1, 100),
+          { path: ['ratio'], params: errorMessages.employersRatioInvalid },
+        )
         .refine((e) => ('stillEmployed' in e ? !!e.stillEmployed : true), {
           path: ['stillEmployed'],
         }),

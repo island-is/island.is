@@ -37,8 +37,16 @@ const GiveDaysInput: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   const totalDisplay =
     remainingDays > 0
-      ? `${totalMonths} mánuðir og ${remainingDays} dagar`
-      : `${totalMonths} mánuðir`
+      ? formatMessage(
+          parentalLeaveFormMessages.shared.rightsTotalMonthsAndDays,
+          {
+            months: totalMonths,
+            days: remainingDays,
+          },
+        )
+      : formatMessage(parentalLeaveFormMessages.shared.rightsTotalMonths, {
+          months: totalMonths,
+        })
 
   return (
     <Box marginBottom={6} marginTop={3}>
@@ -76,7 +84,9 @@ const GiveDaysInput: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       <Box marginTop={3}>
         <AlertMessage
           type="info"
-          title="Athugaðu"
+          title={formatMessage(
+            parentalLeaveFormMessages.shared.rightsAlertTitle,
+          )}
           message={formatMessage(
             parentalLeaveFormMessages.shared.giveDaysInfoAlert,
           )}

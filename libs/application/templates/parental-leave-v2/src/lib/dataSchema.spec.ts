@@ -1,4 +1,4 @@
-import { validateAnswers } from '@island.is/application/core'
+import { NO, validateAnswers, YES } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import {
   ADOPTION,
@@ -99,6 +99,28 @@ describe('dataSchema noChildrenFound', () => {
 
 describe('dataSchema multipleBirths', () => {
   const multipleBirthsSchema = dataSchema.shape.multipleBirths
+
+  it('should require an answer while the question is shown', () => {
+    expect(multipleBirthsSchema.safeParse({ isAsked: YES }).success).toBe(false)
+    expect(
+      multipleBirthsSchema.safeParse({ isAsked: YES, hasMultipleBirths: '' })
+        .success,
+    ).toBe(false)
+    expect(
+      multipleBirthsSchema.safeParse({ isAsked: YES, hasMultipleBirths: NO })
+        .success,
+    ).toBe(true)
+  })
+
+  it('should not require an answer cleared with the child or type', () => {
+    expect(
+      multipleBirthsSchema.safeParse({
+        isAsked: '',
+        hasMultipleBirths: '',
+        multipleBirths: '',
+      }).success,
+    ).toBe(true)
+  })
 
   it('should accept an empty object', () => {
     // The question is conditional — not asked of a secondary parent, nor for a
@@ -233,5 +255,21 @@ describe('dataSchema employers ratio', () => {
 
   it.each(['1', '50', '100'])('should accept a ratio of %p', (ratio) => {
     expect(employersSchema.safeParse(withRatio(ratio)).success).toBe(true)
+  })
+
+  it('should accept an employer prefilled from VMST, which sends no ratio', () => {
+    expect(
+      employersSchema.safeParse([
+        { email: 'employer@island.is', ratio: '', isFromVMST: true },
+      ]).success,
+    ).toBe(true)
+  })
+
+  it('should still check a ratio entered for an employer from VMST', () => {
+    expect(
+      employersSchema.safeParse([
+        { email: 'employer@island.is', ratio: '101', isFromVMST: true },
+      ]).success,
+    ).toBe(false)
   })
 })

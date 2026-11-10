@@ -11,6 +11,15 @@ export const ChildrenApi = defineTemplateApi({
   order: 1,
 })
 
+/**
+ * What VMST holds for the applicant, so a follow-up can start without asking
+ * VMST again. Runs before `ChildrenApi`, which reads its list.
+ */
+export const VMSTParentalLeavesApi = defineTemplateApi({
+  action: 'getVMSTParentalLeaves',
+  externalDataId: 'VMSTParentalLeaves',
+})
+
 export const GetPersonInformation = defineTemplateApi({
   action: 'getPerson',
   externalDataId: 'person',

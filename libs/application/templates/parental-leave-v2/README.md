@@ -33,6 +33,8 @@ The purpose of this state is to be a guard into the actual application. There is
 
 Applicants choose which application type ( parental-leave, parental-grant or parental-grant-students ) they are applying for. Primary parents of a born or expected child are asked if they are expecting multiple births.
 
+The external data step also gathers what VMST holds for the applicant (`VMSTParentalLeaves`): their list of parental leaves and the VMST application of each listed leave. Picking a child that already has a leave turns the application into a change of that leave with a single submit, prefilled from this data without asking VMST again. It is kept out of `children`, which the employer can read, and cleared when the applicant leaves prerequisites.
+
 #### Draft
 
 Valid applicants will be able to advance to this state where they can start the actual application and fill in all the relevant data.

@@ -29,6 +29,7 @@ import {
   ParentalRelations,
   RejectedBy,
   SINGLE,
+  States,
 } from '@island.is/application/templates/parental-leave-v2'
 import { EmailService } from '@island.is/email-service'
 
@@ -528,17 +529,17 @@ describe('ParentalLeaveV2Service', () => {
       const application = createApplication()
       application.state = 'editOrAddEmployersAndPeriods'
 
-      // The reason has to reach the client, not just the server log — otherwise
-      // this surfaces as a bare "Villa kom upp" with no way to tell what failed.
+      // The applicant gets a translated reason; the detail stays in the log.
       await expect(
         parentalLeaveService.validateApplication({
           application,
         } as TemplateApiModuleActionProps),
       ).rejects.toMatchObject({
         problem: {
-          errorReason: expect.objectContaining({
-            summary: expect.stringContaining('Missing applicationFundId'),
-          }),
+          errorReason: {
+            title: errorMessages.vmstErrorTitle,
+            summary: errorMessages.vmstApplicationNotFound,
+          },
         },
       })
     })
@@ -1065,6 +1066,203 @@ describe('ParentalLeaveV2Service', () => {
 
       // No email should be sent since applicant is aware of their own approval
       expect(mockedSendEmail.mock.calls.length).toBe(0)
+    })
+  })
+
+  describe('VMST failures', () => {
+    const vmstApi = () =>
+      (
+        parentalLeaveService as unknown as {
+          parentalLeaveApi: ParentalLeaveApi
+        }
+      ).parentalLeaveApi
+
+    it("should give a translated reason, not VMST's raw response, when sending fails", async () => {
+      const application = createApplication()
+      set(application.answers, 'employment.isSelfEmployed', YES)
+      // In production the generated client rejects with the raw Response
+      jest.spyOn(vmstApi(), 'parentalLeaveSetParentalLeave').mockRejectedValue(
+        new Response('{"errors":{"bank":["invalid"]}}', {
+          status: 400,
+          statusText: 'Bad Request',
+        }),
+      )
+
+      await expect(
+        parentalLeaveService.sendApplication({
+          application,
+        } as TemplateApiModuleActionProps),
+      ).rejects.toMatchObject({
+        problem: {
+          errorReason: {
+            title: errorMessages.vmstErrorTitle,
+            summary: errorMessages.vmstSendApplicationFailed,
+          },
+        },
+      })
+    })
+
+    it.each([
+      ['fails', () => Promise.reject(new Error('503 Service Unavailable'))],
+      ['returns nothing', () => Promise.resolve({})],
+    ])(
+      'should refuse a follow-up leaving prerequisites when VMST %s',
+      async (_, lookup) => {
+        const application = asVmstFollowUp(createApplication())
+        application.state = States.PREREQUISITES
+        applicationGetApplication.mockImplementation(lookup)
+
+        await expect(
+          parentalLeaveService.setVMSTPeriods({
+            application,
+          } as TemplateApiModuleActionProps),
+        ).rejects.toMatchObject({
+          problem: {
+            errorReason: {
+              title: errorMessages.vmstErrorTitle,
+              summary: errorMessages.vmstFollowUpUnavailable,
+            },
+          },
+        })
+      },
+    )
+
+    it('should keep a later re-sync best effort', async () => {
+      const application = asVmstFollowUp(createApplication())
+      application.state = States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
+      applicationGetApplication.mockRejectedValue(new Error('503'))
+
+      await expect(
+        parentalLeaveService.setVMSTPeriods({
+          application,
+        } as TemplateApiModuleActionProps),
+      ).resolves.toBeNull()
+    })
+  })
+
+  describe('setSentToVMST', () => {
+    it('should keep the first VMST id after a failed resend', async () => {
+      const application = createApplication()
+      application.externalData.sentToVMST = {
+        data: { id: '2026-00001' },
+        date: new Date(),
+        status: 'success',
+      }
+      application.externalData.sendApplication = {
+        data: {},
+        date: new Date(),
+        status: 'failure',
+      }
+
+      await expect(
+        parentalLeaveService.setSentToVMST({
+          application,
+        } as TemplateApiModuleActionProps),
+      ).resolves.toEqual({ id: '2026-00001' })
+    })
+
+    it('should store the id of the first successful send', async () => {
+      const application = createApplication()
+      application.externalData.sendApplication = {
+        data: { id: '2026-00002' },
+        date: new Date(),
+        status: 'success',
+      }
+
+      await expect(
+        parentalLeaveService.setSentToVMST({
+          application,
+        } as TemplateApiModuleActionProps),
+      ).resolves.toEqual({ id: '2026-00002' })
+    })
+  })
+
+  describe('gathering VMST data with the external data', () => {
+    const auth = {
+      authorization: '',
+      client: '',
+      nationalId,
+      scope: [],
+    } as TemplateApiModuleActionProps['auth']
+
+    it('should fetch the list once and each listed leave once', async () => {
+      parentalLeaveGetParentalLeaves.mockResolvedValue({
+        parentalLeaves: [
+          { applicationId: 'leave-1' },
+          { applicationId: 'leave-2' },
+        ],
+      })
+      applicationGetApplication.mockImplementation(({ applicationId }) =>
+        Promise.resolve({ application: { applicationId } }),
+      )
+
+      const res = await parentalLeaveService.getVMSTParentalLeaves({
+        application: createApplication(),
+        auth,
+      } as TemplateApiModuleActionProps)
+
+      expect(parentalLeaveGetParentalLeaves).toHaveBeenCalledTimes(1)
+      expect(parentalLeaveGetParentalLeaves).toHaveBeenCalledWith({
+        nationalRegistryId: nationalId,
+      })
+      expect(applicationGetApplication).toHaveBeenCalledTimes(2)
+      expect(res).toEqual({
+        parentalLeaves: [
+          { applicationId: 'leave-1' },
+          { applicationId: 'leave-2' },
+        ],
+        applications: {
+          'leave-1': { applicationId: 'leave-1' },
+          'leave-2': { applicationId: 'leave-2' },
+        },
+      })
+    })
+
+    it('should store no list when VMST cannot be reached', async () => {
+      parentalLeaveGetParentalLeaves.mockRejectedValue(new Error('503'))
+
+      const res = await parentalLeaveService.getVMSTParentalLeaves({
+        application: createApplication(),
+        auth,
+      } as TemplateApiModuleActionProps)
+
+      expect(res).toEqual({ parentalLeaves: null, applications: {} })
+      expect(applicationGetApplication).not.toHaveBeenCalled()
+    })
+
+    it('should start a follow-up from the gathered data without asking VMST again', async () => {
+      const application = asVmstFollowUp(createApplication())
+      application.state = States.PREREQUISITES
+      application.externalData.VMSTParentalLeaves = {
+        data: {
+          parentalLeaves: [
+            { applicationId: 'root-application-id', language: 'EN' },
+          ],
+          applications: {
+            'root-application-id': {
+              applicationId: 'root-application-id',
+              periods: [{ from: '2027-01-01', to: '2027-03-01' }],
+              otherParentName: 'Hitt Foreldrið',
+            },
+          },
+        },
+        date: new Date(),
+        status: 'success',
+      }
+
+      const props = { application } as TemplateApiModuleActionProps
+      const periods = await parentalLeaveService.setVMSTPeriods(props)
+      const information = await parentalLeaveService.setApplicationInformation(
+        props,
+      )
+
+      expect(periods).toEqual([{ from: '2027-01-01', to: '2027-03-01' }])
+      expect(information).toMatchObject({
+        otherParentName: 'Hitt Foreldrið',
+        language: 'EN',
+      })
+      expect(applicationGetApplication).not.toHaveBeenCalled()
+      expect(parentalLeaveGetParentalLeaves).not.toHaveBeenCalled()
     })
   })
 })

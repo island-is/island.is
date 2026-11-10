@@ -66,6 +66,13 @@ export enum ApiModuleActions {
   assignEmployers = 'assignEmployers',
   assignEmployer = 'assignEmployer',
   sendApplication = 'sendApplication',
+  /**
+   * Keeps the first id VMST returned for this application in `sentToVMST`. A
+   * failed resend overwrites `sendApplication`, but VMST still holds the case.
+   */
+  setSentToVMST = 'setSentToVMST',
+  /** Drops the VMST data gathered in prerequisites once it has been used. */
+  clearVMSTParentalLeaves = 'clearVMSTParentalLeaves',
   notifyApplicantOfRejection = 'notifyApplicantOfRejection',
   validateApplication = 'validateApplication',
   setChildrenInformation = 'setChildrenInformation',

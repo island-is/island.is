@@ -222,3 +222,31 @@ describe('ChildrenService.childrenAndExistingApplications', () => {
     ])
   })
 })
+
+describe('ChildrenService.queryParentalLeavesAndPregnancyStatus', () => {
+  it('should use the parental leaves gathered by the VMST provider', async () => {
+    const parentalLeaveApi = { parentalLeaveGetParentalLeaves: jest.fn() }
+    const service = new ChildrenService(
+      {
+        info: jest.fn(),
+        warn: jest.fn(),
+        error: jest.fn(),
+      } as unknown as Logger,
+      {} as never,
+      parentalLeaveApi as never,
+      {} as never,
+      {} as never,
+    )
+    const parentalLeaves = [{ applicationId: 'leave-1' }]
+
+    const res = await service.queryParentalLeavesAndPregnancyStatus(
+      APPLICANT_ID,
+      { parentalLeaves, applications: {} } as never,
+    )
+
+    expect(res.getParentalLeaves).toBe(parentalLeaves)
+    expect(
+      parentalLeaveApi.parentalLeaveGetParentalLeaves,
+    ).not.toHaveBeenCalled()
+  })
+})

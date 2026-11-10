@@ -554,6 +554,10 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
               id: 'changeApplicationInfo',
               component: 'ChangeApplicationInfoFlag',
             }),
+            // Written by the fields' `setOnChange`; a value is saved on Continue
+            // only when the screen has a field with its id.
+            buildHiddenInput({ id: 'personalAllowance.usePersonalAllowance' }),
+            buildHiddenInput({ id: 'personalAllowance.useAsMuchAsPossible' }),
             buildDescriptionField({
               id: 'personalAllowance.usageSubtitle',
               title: parentalLeaveFormMessages.personalAllowance.usageSubtitle,
@@ -910,6 +914,21 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
                   : parentalLeaveFormMessages.employer.description
               },
               children: [
+                // Written by the checkbox's `setOnChange`; a value is saved on
+                // Continue only when the screen has a field with its id. Both go
+                // together, as the schema needs the second when not self-employed.
+                buildHiddenInput({
+                  id: 'employment.isSelfEmployed',
+                  defaultValue: (application: Application) =>
+                    getApplicationAnswers(application.answers).isSelfEmployed ||
+                    NO,
+                }),
+                buildHiddenInput({
+                  id: 'employment.isReceivingUnemploymentBenefits',
+                  defaultValue: (application: Application) =>
+                    getApplicationAnswers(application.answers)
+                      .isReceivingUnemploymentBenefits || NO,
+                }),
                 buildCheckboxField({
                   id: 'selfEmployedCheckbox',
                   title: '',

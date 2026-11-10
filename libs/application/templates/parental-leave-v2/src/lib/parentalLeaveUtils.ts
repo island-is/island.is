@@ -668,7 +668,8 @@ export const getApplicationExternalData = (
 
   const applicationFundId =
     navId ||
-    (getValueViaPath<string>(externalData, 'sendApplication.data.id') ?? '')
+    getValueViaPath<string>(externalData, 'sendApplication.data.id') ||
+    (getValueViaPath<string>(externalData, 'sentToVMST.data.id') ?? '')
 
   const VMSTPeriods = getValueViaPath(
     externalData,
@@ -833,6 +834,7 @@ const vmstEmployersToAnswers = (employers: unknown): EmployerRow[] => {
         email: employer.email ?? '',
         ratio: employer.ratio === undefined ? '' : String(employer.ratio ?? ''),
         companyNationalRegistryId: employer.nationalRegistryId ?? undefined,
+        isFromVMST: true,
       }
 
       if (employer.phoneNumber) {
@@ -1574,8 +1576,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   // one of them), the synthesized child replaces them with `selectedChild`
   // pointed at it on the way out, and a registry child picked later wins.
   const isFirstTimeApplication =
-    getValueViaPath(answers, 'applicationAction', ApplicationAction.APPLY) ===
-    ApplicationAction.APPLY
+    (getValueViaPath<string>(answers, 'applicationAction') ||
+      ApplicationAction.APPLY) === ApplicationAction.APPLY
   const answeredSelectedChild = getValueViaPath<string>(
     answers,
     'selectedChild',
@@ -1719,11 +1721,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   // Applications created before one-application-per-action have no
   // applicationAction and are all first-time applications.
-  const applicationAction = getValueViaPath(
+  // '' is left when the applicant picks another child
+  const applicationAction = (getValueViaPath<string>(
     answers,
     'applicationAction',
-    ApplicationAction.APPLY,
-  ) as ApplicationAction
+  ) || ApplicationAction.APPLY) as ApplicationAction
 
   const addEmployer = getValueViaPath(answers, 'addEmployer') as YesOrNo
 

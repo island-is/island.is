@@ -9,9 +9,11 @@ import {
   ApplicationContext,
 } from '@island.is/application/types'
 import ParentalLeaveTemplate from './ParentalLeaveTemplate'
+import { dataSchema } from './dataSchema'
 import {
   ADOPTION,
   ApplicationAction,
+  MOCK_APPLICATION_FUND_ID,
   PARENTAL_LEAVE,
   SPOUSE,
   States as ApplicationStates,
@@ -92,6 +94,15 @@ describe('Parental Leave Application Template', () => {
             selectedChild: '0',
             applicationType: { option: PARENTAL_LEAVE },
           },
+          externalData: {
+            ...buildApplication({}).externalData,
+            // Written by the server for mock applications, never in production
+            navId: {
+              data: MOCK_APPLICATION_FUND_ID,
+              date: new Date(),
+              status: 'success',
+            },
+          },
           state: ApplicationStates.DRAFT,
         }),
         ParentalLeaveTemplate,
@@ -103,6 +114,26 @@ describe('Parental Leave Application Template', () => {
 
       expect(hasChanged).toBe(true)
       expect(newState).toBe(ApplicationStates.APPROVED)
+    })
+
+    it('should not auto-approve on the mock answer alone', () => {
+      // The applicant can write `mock.useMockData` through the API, so it must
+      // not skip sending the application to VMST.
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            mock: { useMockData: YES },
+            selectedChild: '0',
+            applicationType: { option: PARENTAL_LEAVE },
+          },
+          state: ApplicationStates.DRAFT,
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [, newState] = helper.changeState({ type: DefaultEvents.SUBMIT })
+
+      expect(newState).not.toBe(ApplicationStates.APPROVED)
     })
     it('should transition from draft to other parent if applicant is asking for shared rights', () => {
       const helper = new ApplicationTemplateHelper(
@@ -1490,6 +1521,52 @@ describe('Parental Leave Application Template', () => {
       expect(snapshottedPeriods).toBeUndefined()
     })
 
+    it('should assign the other parent when a change requests days from them', () => {
+      // A change application inherits a fund id from the leave it continues,
+      // which made the first-time approval check skip the assignment.
+      const otherParentId = createNationalId('person')
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            ...CHANGE_ANSWERS,
+            selectedChild: '0',
+            applicationType: { option: PARENTAL_LEAVE },
+            employment: { isSelfEmployed: YES },
+            otherParentObj: { chooseOtherParent: 'manual', otherParentId },
+            requestRights: { isRequestingRights: YES, requestDays: '45' },
+          },
+          externalData: {
+            children: {
+              data: {
+                children: [
+                  {
+                    hasRights: true,
+                    remainingDays: 180,
+                    parentalRelation: 'primary',
+                    expectedDateOfBirth: '2027-03-04',
+                  },
+                ],
+                existingApplications: [],
+              },
+              date: new Date(),
+              status: 'success',
+            },
+            navId: { data: '2026-01234', date: new Date(), status: 'success' },
+          },
+          state: ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: DefaultEvents.SUBMIT,
+      })
+
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(ApplicationStates.OTHER_PARENT_APPROVAL_FOR_EDITS)
+      expect(newApplication.assignees).toEqual([otherParentId])
+    })
+
     it('should assign the application to the employer when the user submits their edits', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
@@ -2260,6 +2337,79 @@ describe('Parental Leave Application Template', () => {
     })
   })
 
+  describe('a change started and then abandoned in prerequisites', () => {
+    it('should go on as a first-time application for the child picked instead', () => {
+      // Picking another child clears what the change-application screen set
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            selectedChild: '0',
+            applicationAction: '',
+            initialQuery: '',
+            applicationType: { option: PARENTAL_LEAVE },
+          },
+          state: ApplicationStates.PREREQUISITES,
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [, newState, newApplication] = helper.changeState({
+        type: DefaultEvents.SUBMIT,
+      })
+
+      expect(newState).toBe(ApplicationStates.DRAFT)
+      expect(newApplication.answers.applicationAction).toBe(
+        ApplicationAction.APPLY,
+      )
+    })
+  })
+
+  describe('rights transferred by the primary parent', () => {
+    it('should seed the days a secondary parent gives as a positive count', () => {
+      // The children provider stores the days the primary parent requested as
+      // negative for the secondary parent; the schema only accepts 0-45.
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: { selectedChild: '0' },
+          externalData: {
+            children: {
+              data: {
+                children: [
+                  {
+                    hasRights: true,
+                    remainingDays: 180,
+                    parentalRelation: 'secondary',
+                    expectedDateOfBirth: '2027-03-04',
+                    primaryParentNationalRegistryId: createNationalId('person'),
+                    transferredDays: -45,
+                  },
+                ],
+                existingApplications: [],
+              },
+              date: new Date(),
+              status: 'success',
+            },
+          },
+          state: ApplicationStates.PREREQUISITES,
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [, , newApplication] = helper.changeState({
+        type: DefaultEvents.SUBMIT,
+      })
+
+      expect(newApplication.answers.giveRights).toEqual({
+        isGivingRights: YES,
+        giveDays: '45',
+      })
+      expect(
+        dataSchema.shape.giveRights.safeParse(newApplication.answers.giveRights)
+          .success,
+      ).toBe(true)
+    })
+  })
+
   describe('data provider ordering', () => {
     it('should run the children provider after the ones it reads from', () => {
       // getChildren reads `person` (applicant gender). Providers default to
@@ -2307,6 +2457,29 @@ describe('Parental Leave Application Template', () => {
       expect(canApplicantDelete(ApplicationStates.EMPLOYER_APPROVE_EDITS)).toBe(
         true,
       )
+    })
+
+    it('should not let the applicant delete after a failed resend', () => {
+      // A failed resend overwrites `sendApplication`; VMST still holds the case.
+      const application = buildApplication({
+        answers: { selectedChild: '0' },
+        externalData: {
+          ...buildApplication({}).externalData,
+          sendApplication: { data: {}, date: new Date(), status: 'failure' },
+          sentToVMST: {
+            data: { id: '2026-00001' },
+            date: new Date(),
+            status: 'success',
+          },
+        },
+        state: ApplicationStates.DRAFT,
+      })
+      const del = new ApplicationTemplateHelper(
+        application,
+        ParentalLeaveTemplate,
+      ).getRoleInState(Roles.APPLICANT)?.delete
+
+      expect(typeof del === 'function' ? del(application) : del).toBe(false)
     })
 
     it('should not let the applicant delete once the record is with VMST', () => {

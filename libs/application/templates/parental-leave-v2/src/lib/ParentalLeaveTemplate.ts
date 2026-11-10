@@ -49,7 +49,11 @@ import {
   TransferRightsOption,
   UnEmployedBenefitTypes,
 } from '../constants'
-import { ChildrenApi, GetPersonInformation } from '../dataProviders'
+import {
+  ChildrenApi,
+  GetPersonInformation,
+  VMSTParentalLeavesApi,
+} from '../dataProviders'
 import {
   determineNameFromApplicationAnswers,
   draftStateDescription,
@@ -148,34 +152,36 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               throwOnError: true,
               order: 1,
             }),
+            // These VMST lookups return null for a first-time application, and
+            // throw for a follow-up whose VMST record cannot be fetched.
             defineTemplateApi({
               action: ApiModuleActions.setApplicationInformation,
               externalDataId: 'VMSTApplicationInformation',
-              throwOnError: false,
+              throwOnError: true,
               order: 2,
             }),
             defineTemplateApi({
               action: ApiModuleActions.setApplicationFundId,
               externalDataId: 'navId',
-              throwOnError: false,
+              throwOnError: true,
               order: 3,
             }),
             defineTemplateApi({
               action: ApiModuleActions.setVMSTPeriods,
               externalDataId: 'VMSTPeriods',
-              throwOnError: false,
+              throwOnError: true,
               order: 4,
             }),
             defineTemplateApi({
               action: ApiModuleActions.setApplicationRights,
               externalDataId: 'VMSTApplicationRights',
-              throwOnError: false,
+              throwOnError: true,
               order: 5,
             }),
             defineTemplateApi({
               action: ApiModuleActions.setOtherParent,
               externalDataId: 'VMSTOtherParent',
-              throwOnError: false,
+              throwOnError: true,
               order: 6,
             }),
             // Seeds externalData.dateOfBirth: period validation and the residence
@@ -185,6 +191,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               externalDataId: 'dateOfBirth',
               throwOnError: false,
               order: 7,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.clearVMSTParentalLeaves,
+              externalDataId: 'VMSTParentalLeaves',
+              throwOnError: false,
+              order: 8,
             }),
           ],
           roles: [
@@ -202,7 +214,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
-              api: [UserProfileApi, GetPersonInformation, ChildrenApi],
+              api: [
+                UserProfileApi,
+                GetPersonInformation,
+                VMSTParentalLeavesApi,
+                ChildrenApi,
+              ],
             },
           ],
         },
@@ -633,6 +650,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               action: ApiModuleActions.sendApplication,
               shouldPersistToExternalData: true,
               throwOnError: true,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.setSentToVMST,
+              externalDataId: 'sentToVMST',
+              throwOnError: false,
+              order: 1,
             }),
           ],
           onExit: [
@@ -1158,7 +1181,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.OTHER_PARENT_APPROVAL_FOR_EDITS]: {
-        entry: ['assignToOtherParent'],
+        entry: ['assignToOtherParentForEdits'],
         exit: ['clearAssignees'],
         meta: {
           name: States.OTHER_PARENT_APPROVAL_FOR_EDITS,
@@ -1238,6 +1261,16 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.ORGANISATION_REVIEWER,
+              actions: [
+                {
+                  event: PLEvents.CLOSED,
+                  name: 'Close',
+                  type: 'primary',
+                },
+              ],
+            },
           ],
         },
         on: {
@@ -1267,6 +1300,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               'setRejectedBy',
             ],
           },
+          CLOSED: { target: States.CLOSED },
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
@@ -1565,6 +1599,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               action: ApiModuleActions.sendApplication,
               shouldPersistToExternalData: true,
               throwOnError: true,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.setSentToVMST,
+              externalDataId: 'sentToVMST',
+              throwOnError: false,
+              order: 1,
             }),
           ],
           onExit: [
@@ -2242,6 +2282,25 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         return context
       }),
       /**
+       * A change application always inherits a fund id, which makes
+       * `needsOtherParentApproval` false, so approval of a change is decided by
+       * the same predicate that routed the application into this state.
+       */
+      assignToOtherParentForEdits: assign((context) => {
+        const { application } = context
+        const otherParentId = getOtherParentId(application)
+
+        if (
+          otherParentId !== undefined &&
+          otherParentId !== '' &&
+          needsOtherParentApprovalForEdits(context)
+        ) {
+          set(application, 'assignees', [otherParentId])
+        }
+
+        return context
+      }),
+      /**
        * Ensure VMST is assigned, preserving existing assignees when VMST is
        * added for the first time.
        */
@@ -2377,7 +2436,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           set(answers, 'requestRights.requestDays', days.toString())
         } else if (days !== undefined && days < 0) {
           set(answers, 'giveRights.isGivingRights', YES)
-          set(answers, 'giveRights.giveDays', days.toString())
+          // Stored as a positive count, like the days a primary parent gives
+          set(answers, 'giveRights.giveDays', Math.abs(days).toString())
         } else {
           set(answers, 'requestRights.isRequestingRights', NO)
           set(answers, 'giveRights.isGivingRights', NO)

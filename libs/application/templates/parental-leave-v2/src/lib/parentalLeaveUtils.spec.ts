@@ -1754,6 +1754,74 @@ describe('no-children-found prerequisites', () => {
     }
   })
 
+  it('should start a change from the gathered data with one submit', () => {
+    // No custom field that submits on mount: the answers that make this a
+    // change go only with the screen's own submit.
+    const screen = SelectChildSubSection.children.find(
+      ({ id }) => id === 'startChangeApplicationScreen',
+    ) as MultiField
+    const answersOf = (application: Application) =>
+      Object.fromEntries(
+        screen.children
+          .filter(({ type }) => type === FieldTypes.HIDDEN_INPUT)
+          .map((field) => {
+            const { defaultValue } = field as {
+              defaultValue?: unknown | ((application: Application) => unknown)
+            }
+            return [
+              field.id,
+              typeof defaultValue === 'function'
+                ? defaultValue(application)
+                : defaultValue,
+            ]
+          }),
+      )
+    const application = buildApplication({
+      answers: { selectedChild: '0' },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2027-03-04',
+                vmstApplicationId: 'previous-leave',
+              },
+            ],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(answersOf(application)).toEqual({
+      applicationAction: ApplicationAction.CHANGE,
+      initialQuery: 'previous-leave',
+    })
+    expect(screen.children.some(({ type }) => type === FieldTypes.SUBMIT)).toBe(
+      true,
+    )
+  })
+
+  it('should clear a started change when another child is picked', () => {
+    const selectedChild = (SelectChildSubSection.children[0] as MultiField)
+      .children[0] as Field
+
+    expect(selectedChild.id).toBe('selectedChild')
+    expect(selectedChild.clearOnChange).toEqual(
+      expect.arrayContaining(['applicationAction', 'initialQuery']),
+    )
+  })
+
+  it('should read a cleared application action as a first-time application', () => {
+    expect(
+      getApplicationAnswers({ applicationAction: '' }).applicationAction,
+    ).toBe(ApplicationAction.APPLY)
+  })
+
   it('should let the applicant change type after backing out of a type screen', () => {
     // The form keeps one react-hook-form instance across screens, so a type
     // screen that was opened leaves its fields behind as empty answers. The

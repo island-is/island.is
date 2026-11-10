@@ -37,6 +37,10 @@ import {
   vmstParentalLeavesToChildApplicationLinks,
 } from './children-utils'
 import { MockPregnancyApi } from './mock-pregnancy.api'
+import {
+  getStoredVmstParentalLeaves,
+  VmstParentalLeavesData,
+} from '../vmst-parental-leaves'
 
 import { ApplicationService as ApplicationApiService } from '@island.is/application/api/core'
 import type { Logger } from '@island.is/logging'
@@ -77,7 +81,10 @@ export class ChildrenService {
     }
 
     const parentalLeavesAndPregnancyStatus =
-      await this.queryParentalLeavesAndPregnancyStatus(nationalId)
+      await this.queryParentalLeavesAndPregnancyStatus(
+        nationalId,
+        getStoredVmstParentalLeaves(application),
+      )
 
     // Without VMST's list it is not known which children already have a leave,
     // so a child could be offered as new and applied for twice. Development
@@ -405,11 +412,17 @@ export class ChildrenService {
     return Array.from(byId.values())
   }
 
-  async queryParentalLeavesAndPregnancyStatus(nationalId: string): Promise<{
+  async queryParentalLeavesAndPregnancyStatus(
+    nationalId: string,
+    // Gathered by the VMST provider, which runs first; fetched here otherwise
+    storedVmstParentalLeaves?: VmstParentalLeavesData,
+  ): Promise<{
     getParentalLeaves: ParentalLeave[] | null
     getPregnancyStatus: PregnancyStatus | null
   }> {
-    const parentalLeaves = await this.getParentalLeaves(nationalId)
+    const parentalLeaves = storedVmstParentalLeaves
+      ? storedVmstParentalLeaves.parentalLeaves
+      : await this.getParentalLeaves(nationalId)
     const pregnancyStatus = await this.getPregnancyStatus(nationalId)
 
     return {

@@ -223,6 +223,8 @@ export interface EmployerRow {
   reviewerNationalRegistryId?: string
   companyNationalRegistryId?: string
   stillEmployed?: YesOrNo
+  // Prefilled from VMST, which does not send the employment ratio
+  isFromVMST?: boolean
 }
 
 export type SelectOption = {

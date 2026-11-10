@@ -3,13 +3,11 @@ import { useMutation } from '@apollo/client'
 import { useNavigate } from 'react-router-dom'
 import {
   CREATE_APPLICATION,
-  SUBMIT_APPLICATION,
   UPDATE_APPLICATION,
 } from '@island.is/application/graphql'
 import {
   ApplicationConfigurations,
   ApplicationTypes,
-  DefaultEvents,
 } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { ApplicationAction } from '../constants'
@@ -22,10 +20,6 @@ type Options = {
    * `getVmstApplicationId`). It becomes the new application's `initialQuery`.
    */
   previousApplicationId: string
-  /** Use the application currently open in the prerequisite flow. */
-  applicationId?: string
-  /** Refresh the current application after an in-place state transition. */
-  refetch?: () => void
   /**
    * Answers to write back onto the island.is application the follow-up was
    * started from. Needed where it tracks that a follow-up was started — e.g.
@@ -53,45 +47,14 @@ export const useStartFollowUpApplication = (action: ApplicationAction) => {
   const { locale } = useLocale()
   const [error, setError] = useState<Error | null>(null)
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
-  const [submitApplication] = useMutation(SUBMIT_APPLICATION)
 
   const [createApplication, { loading }] = useMutation(CREATE_APPLICATION)
 
   const start = useCallback(
-    async ({
-      previousApplicationId,
-      applicationId,
-      refetch,
-      previousAnswersPatch,
-    }: Options) => {
+    async ({ previousApplicationId, previousAnswersPatch }: Options) => {
       setError(null)
 
       try {
-        if (applicationId) {
-          const answers = {
-            applicationAction: action,
-            initialQuery: previousApplicationId,
-          }
-
-          // Sent only with the submit, which persists answers on success alone.
-          // Saving them beforehand would leave a failed start (e.g. VMST not
-          // listing the leave) stuck as a follow-up with no way back to
-          // selecting a child.
-          await submitApplication({
-            variables: {
-              input: {
-                id: applicationId,
-                event: DefaultEvents.SUBMIT,
-                answers,
-              },
-              locale,
-            },
-          })
-
-          refetch?.()
-          return
-        }
-
         const { data } = await createApplication({
           variables: {
             input: {
@@ -141,14 +104,7 @@ export const useStartFollowUpApplication = (action: ApplicationAction) => {
         setError(e as Error)
       }
     },
-    [
-      action,
-      createApplication,
-      locale,
-      navigate,
-      submitApplication,
-      updateApplication,
-    ],
+    [action, createApplication, locale, navigate, updateApplication],
   )
 
   return { start, loading, error }

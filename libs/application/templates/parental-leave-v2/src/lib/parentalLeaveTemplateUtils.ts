@@ -181,11 +181,16 @@ export const hasBeenSubmittedToVMST = (application: Application) => {
     application.externalData,
     'sendApplication.data.id',
   )
+  // Survives a failed resend, which overwrites `sendApplication`
+  const sentToVMSTId = getValueViaPath<string>(
+    application.externalData,
+    'sentToVMST.data.id',
+  )
   // The mock fund id is handed out without ever contacting VMST.
   const isRealId = (id: unknown): id is string =>
     typeof id === 'string' && !!id && id !== MOCK_APPLICATION_FUND_ID
 
-  if (isRealId(sendApplicationId)) {
+  if (isRealId(sendApplicationId) || isRealId(sentToVMSTId)) {
     return true
   }
 
@@ -213,10 +218,18 @@ export const isResidenceGrantApplication = (context: ApplicationContext) => {
   return applicationAction === ApplicationAction.RESIDENCE_GRANT
 }
 
-/** True when the application uses mock data and should bypass VMST approval. */
+/**
+ * True when the application uses mock data and should bypass VMST approval.
+ * Read from the fund id the server writes, which it never does in production,
+ * not from the `mock.useMockData` answer, which the applicant can write.
+ */
 export const isMockApplication = (context: ApplicationContext) => {
+  const { applicationFundId } = getApplicationExternalData(
+    context.application.externalData,
+  )
+
   return (
-    getValueViaPath(context.application.answers, 'mock.useMockData') === YES &&
+    applicationFundId === MOCK_APPLICATION_FUND_ID &&
     !isChangeApplication(context)
   )
 }

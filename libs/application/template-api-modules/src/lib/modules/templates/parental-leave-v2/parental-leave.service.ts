@@ -1,11 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { S3Service } from '@island.is/nest/aws'
-import {
-  coreErrorMessages,
-  getValueViaPath,
-  NO,
-  YES,
-} from '@island.is/application/core'
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import {
   ADOPTION,
   ChildInformation,
@@ -53,6 +48,7 @@ import {
   ApplicationTypes,
   NationalRegistrySpouseV3,
   NotificationType,
+  StaticTextObject,
 } from '@island.is/application/types'
 import type {
   ApplicationRight,
@@ -74,12 +70,16 @@ import { SharedTemplateApiService, sharedModuleConfig } from '../../shared'
 import { getConfigValue } from '../../shared/shared.utils'
 import { ChildrenService } from './children/children.service'
 import {
+  getStoredVmstParentalLeaves,
+  VmstParentalLeavesData,
+} from './vmst-parental-leaves'
+import {
   MOCK_APPLICATION_FUND_ID,
   SIX_MONTHS_IN_SECONDS_EXPIRES,
   apiConstants,
-  isRunningInProduction,
   rightsDescriptions,
 } from './constants'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import {
   generateApplicationApprovedByEmployerEmail,
   generateApplicationApprovedByEmployerToEmployerEmail,
@@ -102,14 +102,6 @@ import parseISO from 'date-fns/parseISO'
 import { NationalRegistryV3Service } from '../../shared/api/national-registry-v3/national-registry-v3.service'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { NotificationsService } from '../../../notification/notifications.service'
-
-interface VMSTError {
-  type: string
-  title: string
-  status: number
-  traceId: string
-  errors: Record<string, string[]>
-}
 
 // Only on VMST's per-applicant parental-leaves list, not on
 // `GET /applications/{id}`.
@@ -149,7 +141,9 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
   }
 
   private shouldUseMockData(application: Application): boolean {
-    if (isRunningInProduction) {
+    // The deployed environment, not NODE_ENV: every deployed image sets
+    // NODE_ENV to production, which kept mock applications out of dev and staging.
+    if (isRunningOnEnvironment('production')) {
       return false
     }
 
@@ -171,39 +165,40 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
   }
 
   /**
-   * Wraps an internal failure so the reason survives to the client.
-   *
-   * A plain `throw new Error(...)` — or throwing the string that `parseErrors`
-   * returns — leaves the template api runner with no structured `errorReason`, so
-   * it falls back to `coreErrorMessages.defaultTemplateApiError` ("Villa kom upp")
-   * and the actual cause is only visible in the server log. These are internal
-   * invariants that should not fire in production, so when they do the detail is
-   * worth more than a tidy message.
+   * Logs a failure with its full detail and returns a translated error for the
+   * applicant. The detail stays in the log: it is English, may hold VMST's
+   * reasons about the applicant's data, and is shown to whoever triggered the
+   * action, who can be the employer.
    */
-  private internalError(context: string, detail: unknown): TemplateApiError {
-    const message = detail instanceof Error ? detail.message : String(detail)
-
-    this.logger.error(`Parental leave: ${context}: ${message}`, detail)
+  private internalError(
+    context: string,
+    detail: string,
+    summary: StaticTextObject,
+  ): TemplateApiError {
+    this.logger.error(`Parental leave: ${context}: ${detail}`)
 
     return new TemplateApiError(
       {
-        title: coreErrorMessages.defaultTemplateApiError,
-        summary: `${context}: ${message}`,
+        title: errorMessages.vmstErrorTitle,
+        summary,
       },
       500,
     )
   }
 
-  private parseErrors(e: Error | VMSTError) {
-    if (e instanceof Error) {
-      return e.message
+  /**
+   * The reason a VMST call failed. In production the generated client rejects
+   * with the raw `Response`, whose body holds VMST's reason.
+   */
+  private async describeError(error: unknown): Promise<string> {
+    if (error instanceof Response) {
+      const body = await error.text().catch(() => '')
+      return `${error.status} ${error.statusText}${
+        body ? `: ${body.slice(0, 1000)}` : ''
+      }`
     }
 
-    return {
-      message: e.errors
-        ? Object.entries(e.errors).map(([, values]) => values.join(', '))
-        : e.status,
-    }
+    return error instanceof Error ? error.message : String(error)
   }
 
   private assertExistingApplicationHasFundId(application: Application) {
@@ -228,6 +223,7 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
       throw this.internalError(
         'Missing applicationFundId',
         `application ${application.id} is in ${application.state} but has no fund id from navId or sendApplication`,
+        errorMessages.vmstApplicationNotFound,
       )
     }
   }
@@ -247,16 +243,149 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
     return vmstApplication ?? null
   }
 
+  /**
+   * Data provider. Gathers what VMST holds for the applicant with the other
+   * external data, so starting a follow-up needs no further VMST requests: the
+   * per-applicant list, which the children provider reads instead of fetching
+   * it again, and each listed leave's VMST application, which the list lacks
+   * fields of (the other parent's name, how the first period starts).
+   */
+  async getVMSTParentalLeaves({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<VmstParentalLeavesData | null> {
+    if (this.shouldUseMockData(application)) {
+      return null
+    }
+
+    let parentalLeaves: ParentalLeave[] | null
+    try {
+      const response =
+        await this.parentalLeaveApi.parentalLeaveGetParentalLeaves({
+          nationalRegistryId: auth.nationalId,
+        })
+      parentalLeaves = response.parentalLeaves ?? []
+    } catch (e) {
+      this.logger.warn(
+        `Parental leave: could not fetch parental leaves for application ${
+          application.id
+        }: ${await this.describeError(e)}`,
+      )
+      return { parentalLeaves: null, applications: {} }
+    }
+
+    const applications: Record<string, NewApplication> = {}
+    await Promise.all(
+      parentalLeaves.map(async ({ applicationId }) => {
+        try {
+          const response = await this.applicationApi.applicationGetApplication({
+            applicationId,
+          })
+          if (response.application) {
+            applications[applicationId] = response.application
+          }
+        } catch (e) {
+          // A follow-up of this leave fetches it again on leaving prerequisites
+          this.logger.warn(
+            `Parental leave: could not fetch VMST application ${applicationId}: ${await this.describeError(
+              e,
+            )}`,
+          )
+        }
+      }),
+    )
+
+    return { parentalLeaves, applications }
+  }
+
+  /** Stops keeping the gathered VMST data once prerequisites is left. */
+  async clearVMSTParentalLeaves() {
+    return null
+  }
+
+  /** The follow-up's VMST application as gathered with the external data. */
+  private getStoredVmstApplication(
+    application: Application,
+  ): NewApplication | undefined {
+    return getStoredVmstParentalLeaves(application)?.applications?.[
+      getVmstApplicationId(application)
+    ]
+  }
+
+  /**
+   * The VMST application a follow-up continues. Throws when VMST fails or does
+   * not return it: without it the change form would open without the periods,
+   * payments and rights it is prefilled from, and prerequisites never re-runs.
+   */
+  private async getFollowUpVmstApplication(
+    application: Application,
+  ): Promise<NewApplication> {
+    let vmstApplication: NewApplication | null
+    try {
+      vmstApplication = await this.getVmstApplication(application)
+    } catch (e) {
+      throw this.internalError(
+        `Could not fetch VMST application ${getVmstApplicationId(
+          application,
+        )} for application ${application.id}`,
+        await this.describeError(e),
+        errorMessages.vmstFollowUpUnavailable,
+      )
+    }
+
+    if (!vmstApplication) {
+      throw this.internalError(
+        `Could not fetch VMST application ${getVmstApplicationId(
+          application,
+        )} for application ${application.id}`,
+        'VMST returned no application',
+        errorMessages.vmstFollowUpUnavailable,
+      )
+    }
+
+    return vmstApplication
+  }
+
+  /**
+   * The VMST application for a lookup. Strict when a follow-up leaves
+   * prerequisites, where it gets the data its change form is built from.
+   * Best effort when a later state re-syncs: a failure keeps the data stored.
+   */
+  private async lookupVmstApplication(
+    application: Application,
+  ): Promise<NewApplication | null> {
+    if (application.state === States.PREREQUISITES) {
+      return (
+        this.getStoredVmstApplication(application) ??
+        this.getFollowUpVmstApplication(application)
+      )
+    }
+
+    try {
+      return await this.getVmstApplication(application)
+    } catch (e) {
+      this.logger.warn(
+        `Could not fetch VMST application for application ${
+          application.id
+        }: ${await this.describeError(e)}`,
+      )
+      return null
+    }
+  }
+
   // VMST only returns these on the per-applicant list, not on the application
   // itself. Best effort: a failed lookup must not lose the application data.
   private async getVmstFollowUpFields(
     application: Application,
   ): Promise<VmstFollowUpFields> {
     try {
-      const { parentalLeaves } =
-        await this.parentalLeaveApi.parentalLeaveGetParentalLeaves({
-          nationalRegistryId: application.applicant,
-        })
+      const parentalLeaves =
+        getStoredVmstParentalLeaves(application)?.parentalLeaves ??
+        (
+          await this.parentalLeaveApi.parentalLeaveGetParentalLeaves({
+            nationalRegistryId: application.applicant,
+          })
+        ).parentalLeaves
       const vmstApplicationId = getVmstApplicationId(application)
       const match = parentalLeaves?.find(
         ({ applicationId }) => applicationId === vmstApplicationId,
@@ -419,6 +548,17 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
       dateOfBirth: newValue,
     }
     */
+    if (application.state === States.PREREQUISITES) {
+      const storedVmstApplication = this.getStoredVmstApplication(application)
+      if (storedVmstApplication) {
+        return { dateOfBirth: storedVmstApplication.dateOfBirth ?? '' }
+      }
+      // A first-time application is not at VMST yet
+      if (!hasPreviousApplication(application)) {
+        return { dateOfBirth: '' }
+      }
+    }
+
     try {
       const vmstApplication = await this.getVmstApplication(application)
       return {
@@ -1159,9 +1299,28 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
     } catch (e) {
       throw this.internalError(
         'Failed to send the parental leave application',
-        e,
+        await this.describeError(e),
+        errorMessages.vmstSendApplicationFailed,
       )
     }
+  }
+
+  /**
+   * Runs after `sendApplication` on the same entry. Keeps the first id VMST
+   * returned, so a later failed resend, which overwrites `sendApplication`,
+   * cannot make the application look unsent.
+   */
+  async setSentToVMST({ application }: TemplateApiModuleActionProps) {
+    const previousId = getValueViaPath<string>(
+      application.externalData,
+      'sentToVMST.data.id',
+    )
+    const sentId = getValueViaPath<string>(
+      application.externalData,
+      'sendApplication.data.id',
+    )
+
+    return { id: previousId || sentId || null }
   }
 
   async validateApplication({ application }: TemplateApiModuleActionProps) {
@@ -1208,7 +1367,8 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
     } catch (e) {
       throw this.internalError(
         'Failed to validate the parental leave application',
-        e,
+        await this.describeError(e),
+        errorMessages.vmstValidateApplicationFailed,
       )
     }
   }
@@ -1234,17 +1394,9 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
       return null
     }
 
-    try {
-      const vmstApplication = await this.getVmstApplication(application)
+    const vmstApplication = await this.lookupVmstApplication(application)
 
-      return vmstApplication?.periods ?? null
-    } catch (e) {
-      this.logger.warn(
-        `Could not fetch applicationInformation on applicationId: ${application.id} with error: ${e}`,
-      )
-    }
-
-    return null
+    return vmstApplication?.periods ?? null
   }
 
   async setApplicationInformation({
@@ -1257,20 +1409,12 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
       return null
     }
 
-    try {
-      const [vmstApplication, followUpFields] = await Promise.all([
-        this.getVmstApplication(application),
-        this.getVmstFollowUpFields(application),
-      ])
+    const [vmstApplication, followUpFields] = await Promise.all([
+      this.lookupVmstApplication(application),
+      this.getVmstFollowUpFields(application),
+    ])
 
-      return vmstApplication ? { ...vmstApplication, ...followUpFields } : null
-    } catch (e) {
-      this.logger.warn(
-        `Could not fetch applicationInformation on applicationId: ${application.id} with error: ${e}`,
-      )
-    }
-
-    return null
+    return vmstApplication ? { ...vmstApplication, ...followUpFields } : null
   }
 
   async setApplicationFundId({ application }: TemplateApiModuleActionProps) {
@@ -1290,17 +1434,9 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
       return null
     }
 
-    try {
-      const vmstApplication = await this.getVmstApplication(application)
+    const vmstApplication = await this.lookupVmstApplication(application)
 
-      return vmstApplication?.applicationFundId || null
-    } catch (e) {
-      this.logger.warn(
-        `Could not fetch applicationFundId on applicationId: ${application.id} with error: ${e}`,
-      )
-    }
-
-    return applicationFundId || null
+    return vmstApplication?.applicationFundId || null
   }
 
   async setApplicationRights({ application }: TemplateApiModuleActionProps) {
@@ -1312,17 +1448,9 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
       return null
     }
 
-    try {
-      const vmstApplication = await this.getVmstApplication(application)
+    const vmstApplication = await this.lookupVmstApplication(application)
 
-      return vmstApplication?.applicationRights ?? null
-    } catch (e) {
-      this.logger.warn(
-        `Could not fetch applicationRights on nationalId with error: ${e}`,
-      )
-    }
-
-    return null
+    return vmstApplication?.applicationRights ?? null
   }
 
   async setOtherParent({ application }: TemplateApiModuleActionProps) {
@@ -1340,22 +1468,14 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
       return null
     }
 
-    try {
-      const vmstApplication = await this.getVmstApplication(application)
+    const vmstApplication = await this.lookupVmstApplication(application)
 
-      if (!vmstApplication) {
-        return null
-      }
-
-      const { otherParentId, otherParentName } = vmstApplication
-
-      return { otherParentId, otherParentName }
-    } catch (e) {
-      this.logger.warn(
-        `Could not fetch otherParent on applicationId: ${application.id} with error: ${e}`,
-      )
+    if (!vmstApplication) {
+      return null
     }
 
-    return null
+    const { otherParentId, otherParentName } = vmstApplication
+
+    return { otherParentId, otherParentName }
   }
 }

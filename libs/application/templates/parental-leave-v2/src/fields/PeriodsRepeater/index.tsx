@@ -241,6 +241,10 @@ const PeriodsRepeater: FC<React.PropsWithChildren<ScreenProps>> = ({
                           >
                             <button
                               type="button"
+                              aria-label={formatMessage(
+                                parentalLeaveFormMessages.leavePlan
+                                  .deletePeriod,
+                              )}
                               onClick={() => onDeletePeriod(period.startDate)}
                             >
                               <Icon

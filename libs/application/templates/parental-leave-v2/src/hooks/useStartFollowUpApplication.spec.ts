@@ -1,12 +1,11 @@
 import { act, renderHook } from '@testing-library/react'
-import { DefaultEvents } from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/application/types'
 
 import { ApplicationAction } from '../constants'
 import { useStartFollowUpApplication } from './useStartFollowUpApplication'
 
 const mockNavigate = jest.fn()
 const mockUpdateApplication = jest.fn()
-const mockSubmitApplication = jest.fn()
 const mockCreateApplication = jest.fn()
 
 jest.mock('react-router-dom', () => ({
@@ -25,8 +24,6 @@ jest.mock('@apollo/client', () => {
     useMutation: (document: unknown) => {
       if (document === documents.UPDATE_APPLICATION)
         return [mockUpdateApplication]
-      if (document === documents.SUBMIT_APPLICATION)
-        return [mockSubmitApplication]
       if (document === documents.CREATE_APPLICATION)
         return [mockCreateApplication, { loading: false }]
       throw new Error('Unexpected mutation')
@@ -34,58 +31,73 @@ jest.mock('@apollo/client', () => {
   }
 })
 
-describe('useStartFollowUpApplication – in place', () => {
+describe('useStartFollowUpApplication', () => {
   const previousApplicationId = 'previous-application'
-  const applicationId = 'current-application'
 
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
-  const startChange = async (refetch = jest.fn()) => {
+  it('creates the follow-up for the leave, marks its action and opens it', async () => {
+    mockCreateApplication.mockResolvedValue({
+      data: { createApplication: { id: 'new-application' } },
+    })
     const { result } = renderHook(() =>
-      useStartFollowUpApplication(ApplicationAction.CHANGE),
+      useStartFollowUpApplication(ApplicationAction.RESIDENCE_GRANT),
     )
 
     await act(() =>
-      result.current.start({ previousApplicationId, applicationId, refetch }),
+      result.current.start({
+        previousApplicationId,
+        previousAnswersPatch: {
+          applicationId: 'current-application',
+          answers: { hasAppliedForReidenceGrant: 'yes' },
+        },
+      }),
     )
 
-    return { result, refetch }
-  }
-
-  it('sends the follow-up answers only with the submit', async () => {
-    mockSubmitApplication.mockResolvedValue({ data: {} })
-
-    const { refetch } = await startChange()
-
-    expect(mockUpdateApplication).not.toHaveBeenCalled()
-    expect(mockSubmitApplication).toHaveBeenCalledWith({
+    expect(mockCreateApplication).toHaveBeenCalledWith({
       variables: {
         input: {
-          id: applicationId,
-          event: DefaultEvents.SUBMIT,
-          answers: {
-            applicationAction: ApplicationAction.CHANGE,
-            initialQuery: previousApplicationId,
-          },
+          typeId: ApplicationTypes.PARENTAL_LEAVE_V2,
+          initialQuery: previousApplicationId,
+        },
+      },
+    })
+    expect(mockUpdateApplication).toHaveBeenCalledWith({
+      variables: {
+        input: {
+          id: 'new-application',
+          answers: { applicationAction: ApplicationAction.RESIDENCE_GRANT },
         },
         locale: 'is',
       },
     })
-    expect(refetch).toHaveBeenCalled()
+    expect(mockUpdateApplication).toHaveBeenCalledWith({
+      variables: {
+        input: {
+          id: 'current-application',
+          answers: { hasAppliedForReidenceGrant: 'yes' },
+        },
+        locale: 'is',
+      },
+    })
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/faedingarorlof-v2/new-application',
+    )
+    expect(result.current.error).toBeNull()
   })
 
-  it('leaves the application untouched when the submit fails', async () => {
-    const failure = new Error('VMST does not list the leave')
-    mockSubmitApplication.mockRejectedValue(failure)
+  it('reports an error and stays put when the application is not created', async () => {
+    mockCreateApplication.mockResolvedValue({ data: {} })
+    const { result } = renderHook(() =>
+      useStartFollowUpApplication(ApplicationAction.RESIDENCE_GRANT),
+    )
 
-    const { result, refetch } = await startChange()
+    await act(() => result.current.start({ previousApplicationId }))
 
-    // Nothing saved before the submit, so the application is still a regular
-    // one and the applicant can go back and pick another child.
     expect(mockUpdateApplication).not.toHaveBeenCalled()
-    expect(refetch).not.toHaveBeenCalled()
-    expect(result.current.error).toBe(failure)
+    expect(mockNavigate).not.toHaveBeenCalled()
+    expect(result.current.error).toBeInstanceOf(Error)
   })
 })
