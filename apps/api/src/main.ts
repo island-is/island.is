@@ -6,6 +6,7 @@ import 'csv-parse'
 import { bootstrap } from '@island.is/infra-nest-server'
 import { AppModule } from './app/app.module'
 
+// test
 bootstrap({
   appModule: AppModule,
   name: 'api',
