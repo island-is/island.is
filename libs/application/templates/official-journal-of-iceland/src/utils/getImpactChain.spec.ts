@@ -1,6 +1,6 @@
 import type { RegulationHistoryItem } from '@island.is/regulations'
 import { RegulationImpactSchema } from '../lib/dataSchema'
-import { getImpactChain } from './getImpactChain'
+import { getDefaultImpactDate, getImpactChain } from './getImpactChain'
 
 const today = new Date('2026-09-30')
 const defaultMinDate = new Date('2026-10-05')
@@ -243,5 +243,33 @@ describe('getImpactChain', () => {
     it('allows a new change that starts from the dated text', () => {
       expect(withHistory(newImpact, [])).toBeUndefined()
     })
+  })
+})
+
+describe('getDefaultImpactDate', () => {
+  it("uses the regulation's effective date", () => {
+    expect(getDefaultImpactDate('2026-10-20', defaultMinDate)).toBe(
+      '2026-10-20',
+    )
+  })
+
+  it('uses the effective date when it is the earliest allowed date', () => {
+    expect(getDefaultImpactDate('2026-10-05', defaultMinDate)).toBe(
+      '2026-10-05',
+    )
+  })
+
+  it('has no default when the effective date is before the earliest allowed date', () => {
+    expect(getDefaultImpactDate('2026-10-02', defaultMinDate)).toBeUndefined()
+  })
+
+  it('has no default before an effective date is set', () => {
+    expect(getDefaultImpactDate(undefined, defaultMinDate)).toBeUndefined()
+  })
+
+  it('ignores a time part on the effective date', () => {
+    expect(
+      getDefaultImpactDate('2026-10-20T00:00:00.000Z', defaultMinDate),
+    ).toBe('2026-10-20')
   })
 })

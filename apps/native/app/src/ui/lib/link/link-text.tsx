@@ -6,7 +6,8 @@ import { fontByWeight } from '../../utils'
 
 const Host = styled.View<{ underlined: boolean }>`
   border-bottom-width: ${({ underlined }) => (underlined ? 1 : 0)}px;
-  border-bottom-color: ${(props) => props.theme.color.blue400};
+  border-bottom-color: ${({ theme }) =>
+    theme.tokens.interactive.border.borderPrimary};
   padding-bottom: 2px;
   align-items: center;
   flex-direction: row;
@@ -45,7 +46,7 @@ export function LinkText({
           lineHeight,
           fontSize: styles.fontSize,
           fontFamily,
-          color: theme.color.blue400,
+          color: theme.tokens.interactive.foreground.primary,
           fontWeight: styles.fontWeight,
         }}
       >

@@ -17,7 +17,7 @@ export const SettingsLink = ({ children, variant }: SettingsLinkProps) => {
     <Typography
       variant={variant}
       weight="600"
-      color={theme.color.blue400}
+      color={theme.tokens.interactive.foreground.primary}
       style={{ textDecorationLine: 'underline' }}
       accessibilityRole="link"
       onPress={() => router.navigate('/settings')}

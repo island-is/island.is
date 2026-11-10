@@ -1,16 +1,22 @@
 import { useEffect, useRef, useState } from 'react'
+import { useWatch } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { Box, Button, DialogPrompt } from '@island.is/island-ui/core'
 import { FormScreen } from '../components/form/FormScreen'
 import { regulation } from '../lib/messages'
-import { OJOIFieldBaseProps } from '../lib/types'
+import { InputFields, OJOIFieldBaseProps } from '../lib/types'
 import { Advert } from '../fields/Advert'
 import { SignaturesField } from '../fields/Signatures'
-import { BaseChanges, ReferenceText } from '../components/regulations'
+import {
+  AmendingMismatches,
+  BaseChanges,
+  ReferenceText,
+} from '../components/regulations'
 import { useRegulationDraft } from '../hooks/useRegulationDraft'
 import { useRegulationImpacts } from '../hooks/useRegulationImpacts'
 import { useAmendingText } from '../hooks/useAmendingText'
 import { useApplication } from '../hooks/useUpdateApplication'
+import { Addition } from '../utils/amendingMismatches'
 
 export const RegulationContentScreen = (props: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
@@ -29,6 +35,16 @@ export const RegulationContentScreen = (props: OJOIFieldBaseProps) => {
     draftId: isAmending ? draftId : undefined,
   })
   const { generateText } = useAmendingText({ applicationId: application.id })
+
+  // The text as the form holds it: updated when the editor loses focus and
+  // when the text is regenerated, so the warnings follow without rerunning
+  // on every keystroke
+  const advertHtml: string | undefined = useWatch({
+    name: InputFields.advert.html,
+  })
+  const additions: Addition[] | undefined = useWatch({
+    name: InputFields.advert.additions,
+  })
   const { refetchApplication } = useApplication({
     applicationId: application.id,
   })
@@ -103,6 +119,15 @@ export const RegulationContentScreen = (props: OJOIFieldBaseProps) => {
         </>
       )}
       <Advert key={advertKey} {...props} />
+      {isAmending && impacts.length > 0 && (
+        <Box marginBottom={4} aria-live="polite">
+          <AmendingMismatches
+            impacts={impacts}
+            html={advertHtml}
+            additions={additions}
+          />
+        </Box>
+      )}
       <SignaturesField {...props} />
     </FormScreen>
   )

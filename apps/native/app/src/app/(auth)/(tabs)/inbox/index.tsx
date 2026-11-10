@@ -41,7 +41,7 @@ import {
   fontByWeight,
   ListItemSkeleton,
   SearchBar,
-  Tag,
+  FilterChip,
   TopLine,
   Typography,
 } from '@/ui'
@@ -690,7 +690,7 @@ export default function InboxScreen() {
           <Stack.Toolbar.Button
             tintColor={blue400}
             icon="envelope.open"
-            onPress={onMarkAllAsReadPress}
+            onPress={onMarkAsReadPress}
           >
             {intl.formatMessage({
               id: 'inbox.bulkSelectActionRead',
@@ -723,7 +723,7 @@ export default function InboxScreen() {
             {isFilterApplied ? (
               <TagsWrapper>
                 {opened && (
-                  <Tag
+                  <FilterChip
                     title={intl.formatMessage({
                       id: 'inbox.filterOpenedTagTitle',
                     })}
@@ -732,7 +732,7 @@ export default function InboxScreen() {
                   />
                 )}
                 {archived && (
-                  <Tag
+                  <FilterChip
                     title={intl.formatMessage({
                       id: 'inbox.filterArchivedTagTitle',
                     })}
@@ -743,7 +743,7 @@ export default function InboxScreen() {
                   />
                 )}
                 {bookmarked && (
-                  <Tag
+                  <FilterChip
                     title={intl.formatMessage({
                       id: 'inbox.filterStarredTagTitle',
                     })}
@@ -762,7 +762,7 @@ export default function InboxScreen() {
                         ?.name?.trim() ??
                       senderId
                     return (
-                      <Tag
+                      <FilterChip
                         key={senderId}
                         title={name}
                         closable
@@ -785,7 +785,7 @@ export default function InboxScreen() {
                       )?.name ??
                       categoryId
                     return (
-                      <Tag
+                      <FilterChip
                         key={categoryId}
                         title={name}
                         closable
@@ -800,7 +800,7 @@ export default function InboxScreen() {
                     )
                   })}
                 {dateFrom && (
-                  <Tag
+                  <FilterChip
                     title={`${intl.formatMessage({
                       id: 'inbox.filterDateFromLabel',
                     })} - ${intl.formatDate(dateFrom)}`}
@@ -811,7 +811,7 @@ export default function InboxScreen() {
                   />
                 )}
                 {dateTo && (
-                  <Tag
+                  <FilterChip
                     title={`${intl.formatMessage({
                       id: 'inbox.filterDateToLabel',
                     })} - ${intl.formatDate(dateTo)}`}

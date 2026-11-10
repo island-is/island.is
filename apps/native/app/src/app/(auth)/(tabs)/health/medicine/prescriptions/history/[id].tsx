@@ -10,16 +10,10 @@ import {
   HealthDirectorateMedicineHistoryDispensation,
   useGetMedicineDispensationForAtcQuery,
 } from '@/graphql/types/schema'
-import { Badge, Problem, Typography } from '@/ui'
+import { Badge, StatusMessage, Typography } from '@/ui'
 
 const Host = styled.View`
   flex: 1;
-`
-
-const Title = styled(Typography)`
-  margin-top: ${({ theme }) => theme.spacing[1]}px;
-  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
-  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const DispensationRow = styled.View`
@@ -118,14 +112,15 @@ export default function MedicineHistoryScreen() {
       <StackScreen
         closeable
         networkStatus={atcNetworkStatus}
-        options={{ title: '' }}
+        options={{
+          title: intl.formatMessage({
+            id: 'health.prescriptions.dispensations',
+          }),
+        }}
       />
-      <Title variant="heading3">
-        {intl.formatMessage({ id: 'health.prescriptions.dispensations' })}
-      </Title>
       {atcError && !atcData ? (
         <ProblemContainer>
-          <Problem error={atcError} />
+          <StatusMessage error={atcError} />
         </ProblemContainer>
       ) : atcLoading && !dispensations.length ? (
         <>

@@ -10,7 +10,7 @@ import {
   LinkText,
   Skeleton,
   Typography,
-  dynamicColor,
+  token,
 } from '@/ui'
 import chevronDown from '@/assets/icons/chevron-down.png'
 import clockIcon from '@/assets/icons/clock.png'
@@ -23,10 +23,7 @@ import { testIDs } from '../utils/test-ids'
 const Row = styled.View<{ border?: boolean }>`
   flex-direction: row;
   flex-wrap: wrap;
-  border-bottom-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blue100,
-    dark: theme.shades.dark.shade300,
-  }))};
+  border-bottom-color: ${token((t) => t.border.primary)};
   border-bottom-width: ${({ border }) => (border ? 1 : 0)}px;
 `
 
@@ -42,10 +39,7 @@ const TableRow = styled.View`
   flex-wrap: wrap;
   padding-top: ${({ theme }) => theme.spacing[2]}px;
   padding-bottom: ${({ theme }) => theme.spacing[2]}px;
-  border-bottom-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blue200,
-    dark: theme.shades.dark.shade300,
-  }))};
+  border-bottom-color: ${token((t) => t.border.primary)};
   border-bottom-width: 1px;
 `
 
@@ -55,7 +49,7 @@ const NoVaccinations = styled.View`
   align-items: center;
   gap: ${({ theme }) => theme.spacing[1]}px;
   border-width: ${({ theme }) => theme.border.width.standard}px;
-  border-color: ${({ theme }) => theme.color.blue200};
+  border-color: ${({ theme }) => theme.tokens.border.primary};
   border-radius: ${({ theme }) => theme.border.radius.large};
 `
 
@@ -70,10 +64,7 @@ const TableHeading = styled.View`
   flex: 1;
   margin-top: ${({ theme }) => theme.spacing[1]}px;
   padding-bottom: ${({ theme }) => theme.spacing[1]}px;
-  border-bottom-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blue200,
-    dark: theme.shades.dark.shade300,
-  }))};
+  border-bottom-color: ${token((t) => t.border.primary)};
   border-bottom-width: 1px;
 `
 const CommentWrapper = styled.View`
@@ -238,7 +229,9 @@ export function VaccinationsCard({
                 key={index}
                 style={{
                   backgroundColor:
-                    index % 2 === 0 ? theme.color.blue100 : theme.color.white,
+                    index % 2 === 0
+                      ? theme.tokens.background.brandMinimal
+                      : theme.tokens.background.invert,
                 }}
               >
                 <RowItem style={{ maxWidth: '6%' }}>

@@ -17,6 +17,8 @@ export { ReferenceText } from './ReferenceText'
 export { BaseChanges } from './BaseChanges'
 export { UpdateTextModal } from './UpdateTextModal'
 export { TextComparison } from './TextComparison'
+export { AmendingMismatches } from './AmendingMismatches'
 
 export { ReviewWarnings } from './ReviewWarnings'
 export { ReviewOverview } from './ReviewOverview'
+export { ImpactDateWarning } from './ImpactDateWarning'

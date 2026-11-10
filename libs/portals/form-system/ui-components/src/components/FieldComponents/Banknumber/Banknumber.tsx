@@ -20,7 +20,7 @@ interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
   valueIndex?: number
-  state?: ApplicationState
+  state?: Partial<ApplicationState>
 }
 
 export const Banknumber = ({
@@ -45,8 +45,10 @@ export const Banknumber = ({
   const accountField = `${item.id}.${valueIndex}_account`
   const savedBankAccount = getValue(item, 'bankAccount', valueIndex) ?? ''
   const bankAccountValue = savedBankAccount === '--' ? '' : savedBankAccount
+  const fetchBankAccountFromMyPages =
+    item.fieldSettings?.fetchBankAccountFromMyPages ?? true
   const hasDelegationApplicant =
-    state?.screens.some((screen) =>
+    state?.screens?.some((screen) =>
       screen.fields?.some((field) =>
         Object.values(ApplicantTypesEnum).some(
           (type) =>
@@ -59,7 +61,10 @@ export const Banknumber = ({
     USER_PROFILE,
     {
       fetchPolicy: 'cache-first',
-      skip: hasDelegationApplicant || !!bankAccountValue,
+      skip:
+        !fetchBankAccountFromMyPages ||
+        hasDelegationApplicant ||
+        !!bankAccountValue,
     },
   )
 
@@ -91,7 +96,7 @@ export const Banknumber = ({
   }, [bank, ledger, account, dispatch, item.id, valueIndex])
 
   useEffect(() => {
-    if (hasDelegationApplicant) return
+    if (!fetchBankAccountFromMyPages || hasDelegationApplicant) return
     if (didHydrateFromProfile.current) return
 
     const fields = [bankField, ledgerField, accountField]
@@ -126,6 +131,7 @@ export const Banknumber = ({
     ledgerField,
     accountField,
     bankAccountValue,
+    fetchBankAccountFromMyPages,
     hasDelegationApplicant,
     userProfileData,
     userProfileError,

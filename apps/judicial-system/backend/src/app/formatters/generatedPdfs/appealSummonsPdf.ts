@@ -44,10 +44,10 @@ export const createAppealSummons = (
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
-      top: 40,
-      bottom: 60,
-      left: 50,
-      right: 50,
+      top: 70,
+      bottom: 70,
+      left: 70,
+      right: 70,
     },
     bufferPages: true,
   })

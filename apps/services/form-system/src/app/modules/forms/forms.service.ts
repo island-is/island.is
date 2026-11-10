@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import defaults from 'lodash/defaults'
+import isEqual from 'lodash/isEqual'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 
@@ -228,7 +229,8 @@ export class FormsService {
       )
     }
 
-    const formResponse = await this.buildFormResponse(form)
+    const cleanedForm = await this.cleanDependencies(form)
+    const formResponse = await this.buildFormResponse(cleanedForm)
 
     if (!formResponse) {
       throw new Error('Error generating form response')
@@ -353,6 +355,21 @@ export class FormsService {
 
     try {
       await this.sequelize.transaction(async (transaction) => {
+        if (updateFormDto.dependencies !== undefined) {
+          const definition = await this.findById(id, transaction)
+          const dependencyIds = this.getDependencyIds(definition)
+          if (
+            !(updateFormDto.dependencies ?? []).every((dependency) =>
+              [dependency.parentProp, ...dependency.childProps].every((prop) =>
+                dependencyIds.has(prop),
+              ),
+            )
+          ) {
+            throw new BadRequestException(
+              'Dependencies reference elements that do not belong to this form',
+            )
+          }
+        }
         form.draftTotalSteps = await this.countDraftTotalSteps(
           form,
           transaction,
@@ -859,6 +876,7 @@ export class FormsService {
 
         form.status = FormStatus.PUBLISHED
         form.beenPublished = true
+        form.isInaccessible = false
         await form.save({ transaction })
       } catch (error) {
         throw new InternalServerErrorException(
@@ -950,6 +968,7 @@ export class FormsService {
             ? slugToBeArchived
             : formToBePublished.slug
         formToBePublished.status = FormStatus.PUBLISHED
+        formToBePublished.isInaccessible = false
         await formToBePublished.save({ transaction })
       } catch (error) {
         throw new InternalServerErrorException(
@@ -1481,6 +1500,59 @@ export class FormsService {
     } as Field)
   }
 
+  private getDependencyIds(form: Form): Set<string> {
+    return new Set(
+      form.sections.flatMap((section) => [
+        section.id,
+        ...section.screens.flatMap((screen) => [
+          screen.id,
+          ...screen.fields.flatMap((field) => [
+            field.id,
+            ...(field.list ?? []).map((item) => item.id),
+          ]),
+        ]),
+      ]),
+    )
+  }
+
+  private filterValidDependencies(form: Form): Dependency[] {
+    const dependencyIds = this.getDependencyIds(form)
+    return (form.dependencies ?? [])
+      .filter((dependency) => dependencyIds.has(dependency.parentProp))
+      .map((dependency) => ({
+        ...dependency,
+        childProps: dependency.childProps.filter((prop) =>
+          dependencyIds.has(prop),
+        ),
+      }))
+      .filter((dependency) => dependency.childProps.length > 0)
+  }
+
+  private async cleanDependencies(form: Form): Promise<Form> {
+    if (isEqual(form.dependencies ?? [], this.filterValidDependencies(form))) {
+      return form
+    }
+
+    return this.sequelize.transaction(async (transaction) => {
+      const lockedForm = await this.formModel.findByPk(form.id, {
+        attributes: ['id'],
+        lock: Transaction.LOCK.UPDATE,
+        transaction,
+      })
+      if (!lockedForm) {
+        throw new NotFoundException(`Form with id '${form.id}' not found`)
+      }
+
+      const currentForm = await this.findById(form.id, transaction)
+      const dependencies = this.filterValidDependencies(currentForm)
+      if (!isEqual(currentForm.dependencies ?? [], dependencies)) {
+        currentForm.dependencies = dependencies
+        await currentForm.save({ fields: ['dependencies'], transaction })
+      }
+      return currentForm
+    })
+  }
+
   private async updateDependencies(
     oldId: string,
     newId: string,
@@ -1518,10 +1590,7 @@ export class FormsService {
 
     const copyToDifferentOrganization = destinationOrganization !== undefined
 
-    let deps = (existingForm.dependencies ?? []).map((dependency) => ({
-      ...dependency,
-      childProps: [...dependency.childProps],
-    }))
+    let deps = this.filterValidDependencies(existingForm)
 
     const newForm = existingForm.toJSON()
     newForm.id = uuidV4()
@@ -1770,7 +1839,8 @@ export class FormsService {
     const familyValueTypes =
       familyType === FamilyTypes.SPOUSE
         ? ['nationalId', 'name', 'maritalStatus']
-        : familyType === FamilyTypes.CHILD ||
+        : familyType === FamilyTypes.APPLICANT_INFO ||
+          familyType === FamilyTypes.CHILD ||
           familyType === FamilyTypes.NATIONAL_ID_ESTATE
         ? ['nationalId', 'name']
         : undefined

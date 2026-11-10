@@ -48,7 +48,9 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
     data,
     loading,
     error: rehabilitationPlanError,
-  } = useQuery<Query>(siaRehabilitationPlanQuery)
+  } = useQuery<Query>(siaRehabilitationPlanQuery, {
+    variables: { applicationId: application.id },
+  })
 
   setBeforeSubmitCallback?.(async () => {
     const { rehabilitationPlanConfirmation } = getApplicationAnswers(

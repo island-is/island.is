@@ -4,6 +4,7 @@ import { LocaleProvider } from '@island.is/localization'
 import {
   ApplicationErrorBoundary,
   PortalRouter,
+  clearDelegationRequestGrantor,
   isMockMode,
 } from '@island.is/portals/core'
 import { ServicePortalPaths } from '@island.is/portals/my-pages/core'
@@ -28,6 +29,7 @@ export const App = () => (
         <BffProvider
           applicationBasePath={ServicePortalPaths.Base}
           mockedInitialState={mockedInitialState}
+          onSignOut={clearDelegationRequestGrantor}
         >
           <ApplicationErrorBoundary>
             <FeatureFlagProvider>

@@ -6,6 +6,7 @@ import { AppealEventLog } from './models/appealEventLog.model'
 import { AppealStatementDeadline } from './models/appealStatementDeadline.model'
 import { AppealSummons } from './models/appealSummons.model'
 import { AppealSummonsDefendant } from './models/appealSummonsDefendant.model'
+import { AppealSummonsServiceRecipient } from './models/appealSummonsServiceRecipient.model'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
 import { CaseDefendantPoliceCaseNumber } from './models/caseDefendantPoliceCaseNumber.model'
@@ -29,6 +30,7 @@ import { Notification } from './models/notification.model'
 import { Offense } from './models/offense.model'
 import { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
 import { RobotLog } from './models/robotLog.model'
+import { ServiceInterruptionBanner } from './models/serviceInterruptionBanner.model'
 import { Subpoena } from './models/subpoena.model'
 import { User } from './models/user.model'
 import { Verdict } from './models/verdict.model'
@@ -51,6 +53,7 @@ export const repositoryModels = [
   AppealStatementDeadline,
   AppealSummons,
   AppealSummonsDefendant,
+  AppealSummonsServiceRecipient,
   Case,
   CaseArchive,
   CaseDefendantPoliceCaseNumber,
@@ -71,6 +74,7 @@ export const repositoryModels = [
   LawyerRegistry,
   MessageSuspension,
   Notification,
+  ServiceInterruptionBanner,
   Offense,
   PoliceDigitalCaseFile,
   RobotLog,

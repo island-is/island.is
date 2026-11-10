@@ -1,5 +1,7 @@
 import addDays from 'date-fns/addDays'
 import addYears from 'date-fns/addYears'
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 import startOfDay from 'date-fns/startOfDay'
 import { z } from 'zod'
 import { additionSchema, baseEntitySchema } from './dataSchema'
@@ -9,7 +11,6 @@ import { FAST_TRACK_DAYS, MINIMUM_WEEKDAYS } from './constants'
 import { MessageDescriptor } from 'react-intl'
 import { v4 as uuid } from 'uuid'
 import { getHolidays, Holiday } from 'fridagar'
-import { toISODate } from '@island.is/regulations'
 
 export const countDaysAgo = (date: Date) => {
   const now = new Date()
@@ -17,6 +18,17 @@ export const countDaysAgo = (date: Date) => {
 
   return Math.floor(diff / (1000 * 3600 * 24))
 }
+
+/**
+ * A date's calendar day in the browser's timezone, as an ISO day string.
+ * Date pickers and fridagar give local midnight, which toISOString (UTC)
+ * turns into the previous day in browsers ahead of UTC.
+ */
+export const toLocalISODate = (date: Date) => format(date, 'yyyy-MM-dd')
+
+/** A stored ISO day as local midnight, the form date pickers work in */
+export const parseLocalISODate = (isoDate: string) =>
+  parseISO(isoDate.slice(0, 10))
 
 const isWeekday = (date: Date) => {
   const day = date.getDay()
@@ -31,7 +43,7 @@ const getHolidayMap = (year: number): IsHolidayMap => {
   if (!yearHolidays) {
     const holidayMap: IsHolidayMap = {}
     getHolidays(year).forEach((holiday) => {
-      holidayMap[toISODate(holiday.date)] = true
+      holidayMap[toLocalISODate(holiday.date)] = true
     })
     yearHolidays = holidayCache[year] = holidayMap
   }
@@ -44,7 +56,7 @@ export const isWorkday = (date: Date): boolean => {
     return false
   }
   const holidays = getHolidayMap(date.getFullYear())
-  return holidays[toISODate(date)] !== true
+  return holidays[toLocalISODate(date)] !== true
 }
 export const getNextWorkday = (date: Date) => {
   // Returns the next workday.
@@ -113,18 +125,14 @@ const getWeekendDates = (
   return weekdays
 }
 
-const getDateString = (date: Date) => {
-  return date.toISOString().split('T')[0]
-}
-
 // Get default date, but push it to the next workday if it is a weekend or holiday
 export const getDefaultDate = (requestedDate?: string) => {
   if (!requestedDate) {
     const date = getNextWorkday(addWorkDays(new Date(), MINIMUM_WEEKDAYS))
-    return getDateString(date)
+    return toLocalISODate(date)
   }
-  const date = new Date(requestedDate)
-  return getDateString(getNextWorkday(date))
+  const date = parseLocalISODate(requestedDate)
+  return toLocalISODate(getNextWorkday(date))
 }
 
 export const getExcludedDates = (

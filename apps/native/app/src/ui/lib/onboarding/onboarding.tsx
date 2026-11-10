@@ -3,14 +3,14 @@ import React from 'react'
 import { ImageSourcePropType, Pressable, ViewProps } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
-import { dynamicColor, font } from '../../utils'
+import { font, token } from '../../utils'
 
 const logo = require('../../../assets/logo/logo-64w.png')
 const externalLink = require('../../../assets/icons/external-link.png')
 
 const Host = styled(SafeAreaView)`
   flex: 1;
-  background-color: ${dynamicColor('background')};
+  background-color: ${token((t) => t.background.invert)};
 `
 
 const Content = styled.View`
@@ -56,7 +56,7 @@ const LinkRow = styled.View`
   justify-content: center;
   margin-bottom: 12px;
   border-bottom-width: 1px;
-  border-bottom-color: ${dynamicColor(({ theme }) => theme.color.blue400)};
+  border-bottom-color: ${token((t) => t.interactive.border.borderPrimary)};
   padding-bottom: 2px;
   gap: ${({ theme }) => theme.spacing.smallGutter};
 `
@@ -65,7 +65,7 @@ const LinkText = styled.Text`
   ${font({
     fontWeight: '600',
     fontSize: 14,
-    color: ({ theme }) => theme.color.blue400,
+    color: ({ theme }) => theme.tokens.interactive.foreground.primary,
   })}
   margin-right: 6px;
 `
@@ -128,7 +128,11 @@ export function Onboarding({
         {link && (
           <Pressable onPress={link.onPress}>
             <LinkRow>
-              <Typography weight="600" size={14} color={theme.color.blue400}>
+              <Typography
+                weight="600"
+                size={14}
+                color={theme.tokens.interactive.foreground.primary}
+              >
                 {link.title}
               </Typography>
               <LinkIcon source={externalLink} resizeMode="contain" />

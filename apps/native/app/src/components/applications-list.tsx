@@ -15,7 +15,7 @@ import {
   Badge,
   badgeColorSchemes,
   EmptyList,
-  Problem,
+  StatusMessage,
   StatusCard,
   StatusCardSkeleton,
   TopLine,
@@ -193,7 +193,7 @@ export const ApplicationsList = ({
   return (
     <View testID={testIDs.SCREEN_APPLICATIONS_DETAILS}>
       {showError ? (
-        <Problem withContainer />
+        <StatusMessage withContainer />
       ) : (
         <SafeAreaView>
           <Animated.FlatList

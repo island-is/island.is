@@ -33,9 +33,9 @@ import { useOrganizationsStore } from '@/stores/organizations-store'
 import {
   Alert,
   Button,
-  Header,
+  DetailHeader,
   Loader,
-  Problem,
+  StatusMessage,
   blue400,
   dynamicColor,
 } from '@/ui'
@@ -335,7 +335,7 @@ export default function DocumentScreen() {
         }}
       />
       <Host>
-        <Header
+        <DetailHeader
           title={document.sender?.name ?? ''}
           date={document.publicationDate ?? undefined}
           message={document.subject}
@@ -367,7 +367,7 @@ export default function DocumentScreen() {
       <Border />
       <ContentArea>
         {error ? (
-          <Problem type="error" withContainer />
+          <StatusMessage type="error" withContainer />
         ) : !ready || !querySettled ? (
           <Loader
             text={intl.formatMessage({ id: 'documentDetail.loadingText' })}

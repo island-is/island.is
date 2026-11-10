@@ -200,9 +200,7 @@ export const PoliceDemands = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.restrictionCases.policeDemands)}
-      />
+      <PageHeader title={titles.prosecutor.restrictionCases.policeDemands} />
       <FormContentContainer>
         <PageTitle>{rcDemands.heading}</PageTitle>
         <div className={stack({ gap: 5 })}>
@@ -532,7 +530,7 @@ export const PoliceDemands = () => {
           previousUrl={`${PROSECUTION_RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

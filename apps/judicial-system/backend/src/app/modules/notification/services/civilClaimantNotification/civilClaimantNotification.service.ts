@@ -4,7 +4,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { IntlService } from '@island.is/cms-translations'
 import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
@@ -40,7 +39,6 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     @Inject(notificationModuleConfig.KEY)
     config: ConfigType<typeof notificationModuleConfig>,
     @Inject(LOGGER_PROVIDER) logger: Logger,
-    intlService: IntlService,
     emailService: EmailService,
     eventService: EventService,
     courtService: CourtService,
@@ -48,7 +46,6 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     super(
       notificationRepositoryService,
       emailService,
-      intlService,
       courtService,
       config,
       eventService,
@@ -214,8 +211,16 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
       return { delivered: true }
     }
 
+    const caseUrl =
+      civilClaimant.hasAppealSpokesperson !== false &&
+      civilClaimant.appealSpokespersonNationalId
+        ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}`
+        : undefined
+
     // Not through sendEmails: that one writes to the district court's
     // spokesperson, and the appeal has its own advocate on its own columns.
+    // When caseUrl is set the body already carries an <a>, so the base
+    // service skips its portal closing line; without one it appends as usual.
     const recipient = await this.sendEmail({
       subject: appealAdvocateAssignedSubject(),
       html: appealAdvocateAssignedBody(
@@ -223,6 +228,7 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
           ? 'lögmann einkaréttarkröfuhafa'
           : 'réttargæslumann einkaréttarkröfuhafa',
         theCase.verdictAppealCase?.appealCaseNumber,
+        caseUrl,
       ),
       recipientName: civilClaimant.appealSpokespersonName,
       recipientEmail: civilClaimant.appealSpokespersonEmail,
@@ -269,8 +275,6 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     theCase: Case,
     user?: User,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
-
     try {
       return await this.sendNotification(type, civilClaimant, theCase, user)
     } catch (error) {

@@ -7,28 +7,17 @@ import {
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import { dynamicColor } from '../../utils'
 import { Typography } from '../typography/typography'
 
 const Host = styled.View<{ small?: boolean; filled?: boolean }>`
   display: flex;
   flex: 1;
-  background-color: ${({ theme, filled }) =>
-    filled ? theme.color.blue100 : 'transparent'};
   padding: ${({ theme, small }) =>
     small ? theme.spacing[1] : theme.spacing[2]}px;
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: ${({ theme }) => theme.border.width.standard}px;
-  border-color: ${dynamicColor(
-    ({ theme, filled }) =>
-      filled
-        ? 'transparent'
-        : {
-            light: theme.color.blue200,
-            dark: theme.shades.dark.shade300,
-          },
-    true,
-  )};
+  border-color: ${({ theme, filled }) =>
+    filled ? 'transparent' : theme.tokens.border.primary};
   align-items: center;
   justify-content: center;
 `
@@ -60,10 +49,19 @@ export const MoreCard = ({
   const theme = useTheme()
   return (
     <TouchableHighlight
-      underlayColor={
-        theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
-      }
-      style={[{ flex: 1, minHeight: small ? 70 : 90 }, style]}
+      underlayColor={theme.tokens.app.background.pressed}
+      activeOpacity={1}
+      style={[
+        {
+          flex: 1,
+          minHeight: small ? 70 : 90,
+          borderRadius: 8,
+          backgroundColor: filled
+            ? theme.tokens.background.brandMinimal
+            : undefined,
+        },
+        style,
+      ]}
       testID={testID}
       onPress={onPress}
     >

@@ -188,6 +188,40 @@ export class CaseRepositoryService {
   }
 
   /**
+   * A case with its assigned prosecutor - so the prosecutor can be notified
+   * about a delivery that the police system rejected.
+   */
+  async findByIdWithProsecutor(
+    id: string,
+    options?: { transaction?: Transaction },
+  ): Promise<Case | null> {
+    try {
+      this.logger.debug(`Finding case ${id} with its prosecutor`)
+
+      const result = await this.caseModel.findByPk(id, {
+        include: [{ model: User, as: 'prosecutor' }],
+        transaction: options?.transaction,
+      })
+
+      this.logger.debug(`Case ${id} ${result ? 'found' : 'not found'}`)
+
+      if (result) {
+        await this.resolvePoliceCaseNumbersForCaseGraph([result], {
+          transaction: options?.transaction,
+        })
+      }
+
+      return result
+    } catch (error) {
+      this.logger.error(`Error finding case ${id} with its prosecutor:`, {
+        error,
+      })
+
+      throw error
+    }
+  }
+
+  /**
    * The case an indictment was split from, with the full case graph - what a
    * document about the split case renders the original case from. Unlike
    * findLiveById this applies no state filter: the source case is read on
@@ -259,14 +293,25 @@ export class CaseRepositoryService {
     }
   }
 
-  async findParentCaseId(id: string): Promise<string | null | undefined> {
+  // The ancestor reads take the request's transaction where the route has
+  // one: they run from interceptors after a guard may have locked the case
+  // row in it, and a read outside it would need a second pool connection
+  // while that lock blocks the requests holding the others.
+  async findParentCaseId(
+    id: string,
+    options?: { transaction?: Transaction },
+  ): Promise<string | null | undefined> {
     const result = await this.caseModel.findByPk(id, {
       attributes: ['parentCaseId'],
+      transaction: options?.transaction,
     })
     return result?.parentCaseId
   }
 
-  async findOriginalAncestorId(theCase: Case): Promise<string> {
+  async findOriginalAncestorId(
+    theCase: Case,
+    options?: { transaction?: Transaction },
+  ): Promise<string> {
     // Split indictment continuations point back to the original via splitCaseId
     if (isIndictmentCase(theCase.type) && theCase.splitCaseId) {
       return theCase.splitCaseId
@@ -279,7 +324,7 @@ export class CaseRepositoryService {
 
     while (parentCaseId) {
       originalAncestorId = parentCaseId
-      parentCaseId = await this.findParentCaseId(parentCaseId)
+      parentCaseId = await this.findParentCaseId(parentCaseId, options)
     }
 
     return originalAncestorId
@@ -288,14 +333,20 @@ export class CaseRepositoryService {
   // The case the police files of a case family live under: the split origin of
   // a split indictment, otherwise the root of the parentCaseId chain. Returns
   // the given case itself when it is its own original ancestor.
-  async findOriginalAncestor(theCase: Case): Promise<Case> {
-    const originalAncestorId = await this.findOriginalAncestorId(theCase)
+  async findOriginalAncestor(
+    theCase: Case,
+    options?: { transaction?: Transaction },
+  ): Promise<Case> {
+    const originalAncestorId = await this.findOriginalAncestorId(
+      theCase,
+      options,
+    )
 
     if (originalAncestorId === theCase.id) {
       return theCase
     }
 
-    const originalAncestor = await this.findById(originalAncestorId)
+    const originalAncestor = await this.findById(originalAncestorId, options)
 
     if (!originalAncestor) {
       throw new InternalServerErrorException(
