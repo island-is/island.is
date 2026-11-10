@@ -142,6 +142,17 @@ describe('getAmendingMismatches', () => {
     ])
   })
 
+  it('reports nothing as missing from changes when a change has no diff', () => {
+    const unknown = { ...raised, id: '2', diff: undefined }
+    expect(check(text('1.900'), [raised, unknown]).values).toEqual([
+      {
+        type: 'missingFromText',
+        text: '1.800',
+        place: { regulation: '123/2020', section: '5. gr.' },
+      },
+    ])
+  })
+
   it('needs a change with a diff and some text', () => {
     expect(check(text('1.900'), [{ ...raised, diff: undefined }])).toEqual({
       values: [],

@@ -105,9 +105,12 @@ export const getAmendingMismatches = ({
     // appendix's text stands in, counted as changed throughout, so amounts
     // in a replaced fee table are found there and not reported as missing
     // from the changes, but nothing in it is reported as missing from the
-    // text. Diffing appendixes awaits a decision from the stakeholders. When
-    // appendix diffs are stored or rebuilt on load, they reach this check as
-    // they are, with no change needed here.
+    // text. An impact holds every appendix of the base regulation, so an
+    // amount in one left as it was can hide a slip in the text, and an
+    // amount the text quotes as replaced in an appendix ("Í stað „kr. 1.200“
+    // í viðauka …") is reported. Diffing appendixes awaits a decision from
+    // the stakeholders. When appendix diffs are stored or rebuilt on load,
+    // they reach this check as they are, with no change needed here.
     impact.appendixes?.forEach((apx, j) => {
       const changes = apx.diff || (!apx.revoked && apx.text)
       if (changes) {
@@ -120,6 +123,10 @@ export const getAmendingMismatches = ({
     })
   })
 
+  // A change with no diff can't be compared, so the text may state
+  // anything it brings in
+  const unknownChanges = impacts.some((i) => i.type === 'amend' && !i.diff)
+
   const text = amendingHtml(html, additions)
   if (!regulations.length || !text.trim()) {
     return { values: [], wording: [] }
@@ -129,6 +136,7 @@ export const getAmendingMismatches = ({
   const wording: WordingMismatches[] = []
   for (const m of findAmendingMismatches(text, regulations)) {
     if (m.type === 'notInChanges') {
+      if (unknownChanges) continue
       values.push({ type: m.type, text: m.text, section: m.section })
       continue
     }

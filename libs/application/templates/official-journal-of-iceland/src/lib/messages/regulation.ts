@@ -199,6 +199,18 @@ export const regulation = {
         defaultMessage: '„{appendix}“ við reglugerð nr. {regulation}',
         description: 'Where a change is: an appendix of a base regulation',
       },
+      failedTitle: {
+        id: 'ojoi.application:regulation.content.mismatches.failedTitle',
+        defaultMessage: 'Ekki tókst að leita að ósamræmi',
+        description: 'Title of the warning shown when the mismatch check fails',
+      },
+      failed: {
+        id: 'ojoi.application:regulation.content.mismatches.failed',
+        defaultMessage:
+          'Texti breytingareglugerðarinnar var ekki borinn saman við breytingarnar á stofnreglugerð. Farðu yfir hvort þau passi saman.',
+        description:
+          'Shown when the mismatch check fails, so it is not taken for a check that found nothing',
+      },
       more: {
         id: 'ojoi.application:regulation.content.mismatches.more',
         defaultMessage: 'og {count} til viðbótar',

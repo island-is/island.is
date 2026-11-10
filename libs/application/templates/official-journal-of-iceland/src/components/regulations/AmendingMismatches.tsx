@@ -31,6 +31,13 @@ const MAX_LENGTH = 120
 const capitalize = (text: string) =>
   text.charAt(0).toUpperCase() + text.slice(1)
 
+/**
+ * An article of the text, "1. gr." or "6. gr. a.", rather than an
+ * appendix's title, which may cite one ("Viðauki við 3. gr. …")
+ */
+const isArticle = (section?: string) =>
+  !!section && /^\d+\.\s*gr\.(\s|$)/.test(section)
+
 const shorten = (text: string) =>
   text.length > MAX_LENGTH ? `${text.slice(0, MAX_LENGTH).trimEnd()}…` : text
 
@@ -54,11 +61,27 @@ export const AmendingMismatches = ({
   const { formatMessage: f } = useLocale()
   const msg = regulation.content.mismatches
 
-  const { values, wording } = useMemo(
-    () => getAmendingMismatches({ html, additions, impacts }),
-    [html, additions, impacts],
-  )
+  const result = useMemo(() => {
+    try {
+      return getAmendingMismatches({ html, additions, impacts })
+    } catch (error) {
+      // A hint, so a failure must not break the screen
+      console.error('Failed to check the amending text for mismatches', error)
+      return undefined
+    }
+  }, [html, additions, impacts])
 
+  // Shown, so a failed check isn't taken for one that found nothing
+  if (!result) {
+    return (
+      <AlertMessage
+        type="warning"
+        title={f(msg.failedTitle)}
+        message={f(msg.failed)}
+      />
+    )
+  }
+  const { values, wording } = result
   if (!values.length && !wording.length) {
     return null
   }
@@ -89,7 +112,7 @@ export const AmendingMismatches = ({
                         text: v.text,
                         place: placeOf(v.place),
                       })
-                    : v.section
+                    : v.section && isArticle(v.section)
                     ? f(msg.notInChanges, { text: v.text, section: v.section })
                     : f(msg.notInChangesNoSection, { text: v.text })}
                 </Bullet>
