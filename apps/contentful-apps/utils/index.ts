@@ -102,11 +102,42 @@ export const previewLinkHandler = {
   },
   projectSubpage: async (entry: EntryProps<KeyValueMap>, cma: CMAClient) => {
     const projectPageId = entry.fields.projectPage?.[DEFAULT_LOCALE]?.sys?.id
-    if (!projectPageId) return ''
+    const slug = entry.fields.slug?.[DEFAULT_LOCALE]
+    if (!projectPageId || !slug) return ''
+    const [projectPage, projectParentSubpageResponse] = await Promise.all([
+      cma.entry.get({ entryId: projectPageId }),
+      cma.entry.getMany({
+        query: {
+          content_type: 'projectParentSubpage',
+          include: 1,
+          links_to_entry: entry.sys.id,
+          'fields.projectPage.sys.id': projectPageId,
+          'sys.archivedAt[exists]': false,
+        },
+      }),
+    ])
+    const projectPageSlug = projectPage?.fields?.slug?.[DEFAULT_LOCALE]
+    if (!projectPageSlug) return ''
+    // A subpage can be a chapter of a parent subpage, in which case it lives under the parent's slug
+    const parentSubpage = projectParentSubpageResponse?.items?.[0]
+    if (parentSubpage) {
+      const parentSubpageSlug = parentSubpage.fields?.slug?.[DEFAULT_LOCALE]
+      if (!parentSubpageSlug) return ''
+      return `${DEV_WEB_BASE_URL}/v/${projectPageSlug}/${parentSubpageSlug}/${slug}`
+    }
+    return `${DEV_WEB_BASE_URL}/v/${projectPageSlug}/${slug}`
+  },
+  projectParentSubpage: async (
+    entry: EntryProps<KeyValueMap>,
+    cma: CMAClient,
+  ) => {
+    const projectPageId = entry.fields.projectPage?.[DEFAULT_LOCALE]?.sys?.id
+    const slug = entry.fields.slug?.[DEFAULT_LOCALE]
+    if (!projectPageId || !slug) return ''
     const projectPage = await cma.entry.get({ entryId: projectPageId })
     const projectPageSlug = projectPage?.fields?.slug?.[DEFAULT_LOCALE]
     if (!projectPageSlug) return ''
-    return `${DEV_WEB_BASE_URL}/v/${projectPageSlug}/${entry.fields.slug[DEFAULT_LOCALE]}`
+    return `${DEV_WEB_BASE_URL}/v/${projectPageSlug}/${slug}`
   },
   organizationSubpage: async (
     entry: EntryProps<KeyValueMap>,
