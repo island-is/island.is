@@ -100,25 +100,46 @@ const errorText = (code: TaxCalculatorCalculationErrorCode) => {
   }
 }
 
+const INT32_MIN = -2147483648
+const INT32_MAX = 2147483647
+
+const rangeMessage = (
+  min: number | undefined,
+  max: number | undefined,
+  integer: boolean | undefined,
+) => {
+  if (min !== undefined && max !== undefined) {
+    return integer
+      ? CALCULATOR_MESSAGES.wholeNumberInRange
+      : CALCULATOR_MESSAGES.numberInRange
+  }
+  if (min !== undefined) {
+    return integer
+      ? CALCULATOR_MESSAGES.wholeNumberAtLeast
+      : CALCULATOR_MESSAGES.numberAtLeast
+  }
+  return integer
+    ? CALCULATOR_MESSAGES.wholeNumberAtMost
+    : CALCULATOR_MESSAGES.numberAtMost
+}
+
 const rangeText = (
   { field, contractField }: ApplicableField,
   locale: Locale,
 ) => {
-  const { min, max, integer } = contractField
-  if (min === undefined || max === undefined) return undefined
+  const min = contractField.min === INT32_MIN ? undefined : contractField.min
+  const max = contractField.max === INT32_MAX ? undefined : contractField.max
+  if (min === undefined && max === undefined) return undefined
 
   const number = new Intl.NumberFormat(LOCALE_TAG[locale], {
     useGrouping:
       inputSemantic(contractField, field.numberType) !==
       TaxCalculatorInputFieldSemantic.Year,
   })
-  const message = integer
-    ? CALCULATOR_MESSAGES.wholeNumberInRange
-    : CALCULATOR_MESSAGES.numberInRange
 
-  return localized(message, locale)
-    ?.replace('{min}', number.format(min))
-    .replace('{max}', number.format(max))
+  return localized(rangeMessage(min, max, contractField.integer), locale)
+    ?.replace('{min}', min === undefined ? '' : number.format(min))
+    .replace('{max}', max === undefined ? '' : number.format(max))
 }
 
 const resolvePrimaryResult = (

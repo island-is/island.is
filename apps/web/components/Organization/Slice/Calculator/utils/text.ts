@@ -35,6 +35,22 @@ export const CALCULATOR_MESSAGES: Record<string, CalculatorLocalizedText> = {
     is: 'Sláðu inn heila tölu á bilinu {min} til {max}',
     en: 'Enter a whole number from {min} to {max}',
   },
+  numberAtLeast: {
+    is: 'Sláðu inn tölu sem er {min} eða hærri',
+    en: 'Enter a number of {min} or more',
+  },
+  wholeNumberAtLeast: {
+    is: 'Sláðu inn heila tölu sem er {min} eða hærri',
+    en: 'Enter a whole number of {min} or more',
+  },
+  numberAtMost: {
+    is: 'Sláðu inn tölu sem er {max} eða lægri',
+    en: 'Enter a number of {max} or less',
+  },
+  wholeNumberAtMost: {
+    is: 'Sláðu inn heila tölu sem er {max} eða lægri',
+    en: 'Enter a whole number of {max} or less',
+  },
   fieldErrors: {
     is: 'Leiðréttu villur í reitunum',
     en: 'Correct the errors in the fields',

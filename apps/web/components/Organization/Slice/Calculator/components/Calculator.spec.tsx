@@ -283,6 +283,39 @@ const fractionalRangedSalaryMetadata = {
   },
 }
 
+const int32SalaryMetadata = {
+  taxCalculator: {
+    ...metadata.taxCalculator,
+    inputFields: metadata.taxCalculator.inputFields.map((field) =>
+      field.key === 'salary'
+        ? { ...field, min: 0, max: 2147483647, integer: true }
+        : field,
+    ),
+  },
+}
+
+const maxOnlySalaryMetadata = {
+  taxCalculator: {
+    ...metadata.taxCalculator,
+    inputFields: metadata.taxCalculator.inputFields.map((field) =>
+      field.key === 'salary'
+        ? { ...field, min: null, max: 100, integer: true }
+        : field,
+    ),
+  },
+}
+
+const unboundedInt32SalaryMetadata = {
+  taxCalculator: {
+    ...metadata.taxCalculator,
+    inputFields: metadata.taxCalculator.inputFields.map((field) =>
+      field.key === 'salary'
+        ? { ...field, min: -2147483648, max: 2147483647, integer: true }
+        : field,
+    ),
+  },
+}
+
 const defaultedYearMetadata = {
   taxCalculator: {
     type: TaxCalculatorType.ChildBenefit,
@@ -729,6 +762,97 @@ describe('Calculator', () => {
     expect(
       await screen.findByText('Sláðu inn tölu á bilinu 0 til 100'),
     ).toBeTruthy()
+  })
+
+  it('leaves the int32 upper bound out of the range message', async () => {
+    renderSlice([
+      { request, result: { data: int32SalaryMetadata } },
+      {
+        request: calculationRequest,
+        result: {
+          data: {
+            taxCalculatorCalculate: {
+              calculation: null,
+              errors: [
+                {
+                  code: TaxCalculatorCalculationErrorCode.InvalidValue,
+                  key: 'salary',
+                  message: 'x',
+                },
+              ],
+            },
+          },
+        },
+      },
+    ])
+
+    await screen.findByText('Laun')
+    fillSalary()
+    fireEvent.click(await screen.findByRole('button'))
+
+    expect(
+      await screen.findByText('Sláðu inn heila tölu sem er 0 eða hærri'),
+    ).toBeTruthy()
+  })
+
+  it('states an upper bound alone', async () => {
+    renderSlice([
+      { request, result: { data: maxOnlySalaryMetadata } },
+      {
+        request: calculationRequest,
+        result: {
+          data: {
+            taxCalculatorCalculate: {
+              calculation: null,
+              errors: [
+                {
+                  code: TaxCalculatorCalculationErrorCode.InvalidValue,
+                  key: 'salary',
+                  message: 'x',
+                },
+              ],
+            },
+          },
+        },
+      },
+    ])
+
+    await screen.findByText('Laun')
+    fillSalary()
+    fireEvent.click(await screen.findByRole('button'))
+
+    expect(
+      await screen.findByText('Sláðu inn heila tölu sem er 100 eða lægri'),
+    ).toBeTruthy()
+  })
+
+  it('falls back to the invalid-value message when both bounds are int32 limits', async () => {
+    renderSlice([
+      { request, result: { data: unboundedInt32SalaryMetadata } },
+      {
+        request: calculationRequest,
+        result: {
+          data: {
+            taxCalculatorCalculate: {
+              calculation: null,
+              errors: [
+                {
+                  code: TaxCalculatorCalculationErrorCode.InvalidValue,
+                  key: 'salary',
+                  message: 'x',
+                },
+              ],
+            },
+          },
+        },
+      },
+    ])
+
+    await screen.findByText('Laun')
+    fillSalary()
+    fireEvent.click(await screen.findByRole('button'))
+
+    expect(await screen.findByText('Ógilt gildi')).toBeTruthy()
   })
 
   it('states a year range without a thousands separator', async () => {

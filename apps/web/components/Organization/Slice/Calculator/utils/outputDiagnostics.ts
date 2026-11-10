@@ -20,7 +20,7 @@ export interface OutputConfigIssues {
   nonScalarTotal: boolean
 }
 
-const hasItemFields = (type: TaxCalculatorOutputFieldType) =>
+export const hasItemFields = (type: TaxCalculatorOutputFieldType) =>
   type === TaxCalculatorOutputFieldType.Array ||
   type === TaxCalculatorOutputFieldType.Object
 

@@ -8,6 +8,7 @@ import { TaxCalculatorOutputFieldType } from '@island.is/web/graphql/schema'
 import type { OutputContractField } from '../contract'
 import { formatOutputValue } from '../utils/format'
 import { outputSemantic } from '../utils/numberType'
+import { hasItemFields } from '../utils/outputDiagnostics'
 import { itemValue, type OutputValue } from '../utils/outputValues'
 import { localized } from '../utils/text'
 
@@ -29,10 +30,7 @@ export const CalculatorOutputField = ({
   const labelId = useId()
   const emphasis = field.variant === 'emphasis'
 
-  if (
-    contractField.type === TaxCalculatorOutputFieldType.Array ||
-    contractField.type === TaxCalculatorOutputFieldType.Object
-  ) {
+  if (hasItemFields(contractField.type)) {
     const rows =
       contractField.type === TaxCalculatorOutputFieldType.Array
         ? value.arrayValue ?? []
