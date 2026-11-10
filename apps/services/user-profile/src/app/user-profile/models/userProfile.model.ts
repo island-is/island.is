@@ -11,6 +11,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { Locale } from '../types/localeTypes'
 import { Emails } from '../models/emails.model'
 import { BlockedNotification } from './blockedNotification.model'
+import { BlockedNotificationSender } from './blockedNotificationSender.model'
 @Table({
   tableName: 'user_profile',
   timestamps: true,
@@ -131,6 +132,13 @@ export class UserProfile extends Model {
     as: 'blockedNotifications',
   })
   blockedNotifications?: BlockedNotification[]
+
+  @HasMany(() => BlockedNotificationSender, {
+    foreignKey: 'nationalId',
+    sourceKey: 'nationalId',
+    as: 'blockedNotificationSenders',
+  })
+  blockedNotificationSenders?: BlockedNotificationSender[]
 
   @Column({
     type: DataType.BOOLEAN,

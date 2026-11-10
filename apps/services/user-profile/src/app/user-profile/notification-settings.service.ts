@@ -7,11 +7,13 @@ import {
   CategoryLabelDto,
   UpdateNotificationCategoryDto,
 } from './dto/blocked-category.dto'
+import { UpdateNotificationSenderDto } from './dto/blocked-sender.dto'
 import { ActorNotificationSettingsDto } from './dto/actor-notification-settings.dto'
 import { NotificationSettingsDto } from './dto/notification-settings.dto'
 import { ActorBlockedNotification } from './models/actorBlockedNotification.model'
 import { ActorProfile } from './models/actor-profile.model'
 import { BlockedNotification } from './models/blockedNotification.model'
+import { BlockedNotificationSender } from './models/blockedNotificationSender.model'
 import {
   getDefaultActorEmailNotifications,
   UserProfileService,
@@ -26,6 +28,8 @@ export class NotificationSettingsService {
   constructor(
     @InjectModel(BlockedNotification)
     private readonly blockedNotificationModel: typeof BlockedNotification,
+    @InjectModel(BlockedNotificationSender)
+    private readonly blockedNotificationSenderModel: typeof BlockedNotificationSender,
     @InjectModel(ActorBlockedNotification)
     private readonly actorBlockedNotificationModel: typeof ActorBlockedNotification,
     @InjectModel(ActorProfile)
@@ -35,15 +39,25 @@ export class NotificationSettingsService {
   ) {}
 
   async findSettings(nationalId: string): Promise<NotificationSettingsDto> {
-    const blockedNotifications = await this.blockedNotificationModel.findAll({
-      where: { nationalId },
-      attributes: ['senderId', 'category', 'categoryLabel'],
-      order: [
-        ['created', 'ASC'],
-        ['senderId', 'ASC'],
-        ['category', 'ASC'],
-      ],
-    })
+    const [blockedNotifications, blockedSenders] = await Promise.all([
+      this.blockedNotificationModel.findAll({
+        where: { nationalId },
+        attributes: ['senderId', 'category', 'categoryLabel'],
+        order: [
+          ['created', 'ASC'],
+          ['senderId', 'ASC'],
+          ['category', 'ASC'],
+        ],
+      }),
+      this.blockedNotificationSenderModel.findAll({
+        where: { nationalId },
+        attributes: ['senderId'],
+        order: [
+          ['created', 'ASC'],
+          ['senderId', 'ASC'],
+        ],
+      }),
+    ])
 
     return {
       nationalId,
@@ -55,32 +69,50 @@ export class NotificationSettingsService {
           categoryLabel,
         }),
       ),
+      blockedSenders: blockedSenders.map(({ senderId }) => ({ senderId })),
     }
   }
 
   /**
-   * Blocks or unblocks the given sender categories in a single transaction.
-   * If a category is given more than once, the last entry wins.
+   * Blocks or unblocks the given senders and sender categories in a single
+   * transaction. If a sender or category is given more than once, the last
+   * entry wins. Sender blocks leave category blocks untouched.
    */
-  async updateCategories(
+  async updateSettings(
     nationalId: string,
-    categories: UpdateNotificationCategoryDto[],
+    {
+      categories = [],
+      senders = [],
+    }: {
+      categories?: UpdateNotificationCategoryDto[]
+      senders?: UpdateNotificationSenderDto[]
+    },
   ): Promise<void> {
-    const { toBlock, toUnblock } = this.splitUpdates(categories)
+    const { toBlock: categoriesToBlock, toUnblock: categoriesToUnblock } =
+      this.splitCategoryUpdates(categories)
+    const { toBlock: sendersToBlock, toUnblock: sendersToUnblock } =
+      this.splitSenderUpdates(senders)
 
-    if (toBlock.length === 0 && toUnblock.length === 0) {
+    if (
+      categoriesToBlock.length === 0 &&
+      categoriesToUnblock.length === 0 &&
+      sendersToBlock.length === 0 &&
+      sendersToUnblock.length === 0
+    ) {
       return
     }
 
     await this.sequelize.transaction(async (transaction) => {
-      if (toBlock.length > 0) {
+      if (categoriesToBlock.length > 0 || sendersToBlock.length > 0) {
         await this.userProfileService.findOrCreateUserProfile(
           nationalId,
           transaction,
         )
+      }
 
+      if (categoriesToBlock.length > 0) {
         await this.blockedNotificationModel.bulkCreate(
-          toBlock.map(({ senderId, category, categoryLabel }) => ({
+          categoriesToBlock.map(({ senderId, category, categoryLabel }) => ({
             nationalId,
             senderId,
             category,
@@ -90,14 +122,31 @@ export class NotificationSettingsService {
         )
       }
 
-      if (toUnblock.length > 0) {
+      if (categoriesToUnblock.length > 0) {
         await this.blockedNotificationModel.destroy({
           where: {
             nationalId,
-            [Op.or]: toUnblock.map(({ senderId, category }) => ({
+            [Op.or]: categoriesToUnblock.map(({ senderId, category }) => ({
               senderId,
               category,
             })),
+          },
+          transaction,
+        })
+      }
+
+      if (sendersToBlock.length > 0) {
+        await this.blockedNotificationSenderModel.bulkCreate(
+          sendersToBlock.map(({ senderId }) => ({ nationalId, senderId })),
+          { ignoreDuplicates: true, transaction },
+        )
+      }
+
+      if (sendersToUnblock.length > 0) {
+        await this.blockedNotificationSenderModel.destroy({
+          where: {
+            nationalId,
+            senderId: sendersToUnblock.map(({ senderId }) => senderId),
           },
           transaction,
         })
@@ -164,7 +213,7 @@ export class NotificationSettingsService {
       fromNationalId,
     )
 
-    const { toBlock, toUnblock } = this.splitUpdates(categories)
+    const { toBlock, toUnblock } = this.splitCategoryUpdates(categories)
 
     if (toBlock.length === 0 && toUnblock.length === 0) {
       return
@@ -223,12 +272,13 @@ export class NotificationSettingsService {
   }
 
   /** Normalizes and dedupes (last wins), then splits into block/unblock */
-  private splitUpdates(categories: UpdateNotificationCategoryDto[]) {
+  private splitCategoryUpdates(categories: UpdateNotificationCategoryDto[]) {
     const updates = this.dedupe(
       categories.map((category) => ({
         ...category,
         senderId: this.normalizeSenderId(category.senderId),
       })),
+      ({ senderId, category }) => toCategoryKey(senderId, category),
     )
 
     // UpdateNotificationCategoryDto requires a categoryLabel when blocking
@@ -241,12 +291,26 @@ export class NotificationSettingsService {
     return { toBlock, toUnblock }
   }
 
-  private dedupe<T extends { senderId: string; category: string }>(
-    items: T[],
-  ): T[] {
+  /** Normalizes and dedupes (last wins), then splits into block/unblock */
+  private splitSenderUpdates(senders: UpdateNotificationSenderDto[]) {
+    const updates = this.dedupe(
+      senders.map((sender) => ({
+        ...sender,
+        senderId: this.normalizeSenderId(sender.senderId),
+      })),
+      ({ senderId }) => senderId,
+    )
+
+    return {
+      toBlock: updates.filter(({ blocked }) => blocked),
+      toUnblock: updates.filter(({ blocked }) => !blocked),
+    }
+  }
+
+  private dedupe<T>(items: T[], toKey: (item: T) => string): T[] {
     const byKey = new Map<string, T>()
     for (const item of items) {
-      byKey.set(toCategoryKey(item.senderId, item.category), item)
+      byKey.set(toKey(item), item)
     }
 
     return [...byKey.values()]

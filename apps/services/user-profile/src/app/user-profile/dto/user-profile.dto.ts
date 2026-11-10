@@ -10,6 +10,7 @@ import {
 
 import { Locale } from '../types/localeTypes'
 import { BlockedCategoryDto } from './blocked-category.dto'
+import { BlockedSenderDto } from './blocked-sender.dto'
 
 export class UserProfileDto {
   @ApiProperty()
@@ -95,4 +96,12 @@ export class UserProfileDto {
   })
   @IsOptional()
   blockedCategories?: BlockedCategoryDto[]
+
+  @ApiPropertyOptional({
+    type: [BlockedSenderDto],
+    description:
+      'Senders the user has blocked. Only returned when include=notificationSettings is requested.',
+  })
+  @IsOptional()
+  blockedSenders?: BlockedSenderDto[]
 }

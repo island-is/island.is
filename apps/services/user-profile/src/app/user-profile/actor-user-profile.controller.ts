@@ -348,8 +348,9 @@ export class ActorUserProfileController {
     @Headers('X-Param-From-National-Id') fromNationalId: string,
     @Body() input: UpdateNotificationSettingsDto,
   ): Promise<void> {
+    const categories = input.categories ?? []
     const keysWhere = (blocked: boolean) =>
-      input.categories
+      categories
         .filter((category) => category.blocked === blocked)
         .map(({ senderId, category }) => toCategoryKey(senderId, category))
 
@@ -368,7 +369,7 @@ export class ActorUserProfileController {
       this.notificationSettingsService.updateActorCategories(
         actor.nationalId,
         fromNationalId,
-        input.categories,
+        categories,
       ),
     )
   }

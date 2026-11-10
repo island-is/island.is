@@ -6,6 +6,7 @@ import type { Locale } from '@island.is/shared/types'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import {
   NotificationCategoryInput,
+  NotificationSenderInput,
   NotificationSenderSetting,
   NotificationSettings,
 } from './notificationSettings.model'
@@ -34,6 +35,12 @@ interface CategorySetting {
   blocked: boolean
 }
 
+interface Settings {
+  categories: Map<string, CategorySetting>
+  /** Normalized ids of the blocked senders */
+  blockedSenders: Set<string>
+}
+
 @Injectable()
 export class NotificationSettingsService {
   constructor(
@@ -57,12 +64,14 @@ export class NotificationSettingsService {
   /**
    * Combines the sender categories received with the categories blocked.
    * Blocked categories are included even if none were received, e.g. after a
-   * category was renamed, so they can be unblocked.
+   * category was renamed, so they can be unblocked. Blocked senders are
+   * returned whether they have been received from recently or not.
    */
-  private mergeCategorySettings(
+  private mergeSettings(
     categories: CategoryEntry[],
     blockedCategories: CategoryEntry[],
-  ): Map<string, CategorySetting> {
+    blockedSenders: { senderId: string }[],
+  ): Settings {
     const settings = new Map<string, CategorySetting>()
 
     for (const { senderId, category, categoryLabel } of categories) {
@@ -89,26 +98,32 @@ export class NotificationSettingsService {
       })
     }
 
-    return settings
+    return {
+      categories: settings,
+      blockedSenders: new Set(
+        blockedSenders.map(({ senderId }) => normalizeSenderId(senderId)),
+      ),
+    }
   }
 
-  private async findCategorySettings(
-    user: User,
-  ): Promise<Map<string, CategorySetting>> {
-    const [{ categories }, { blockedCategories }] = await Promise.all([
-      this.userNotificationsWAuth(
-        user,
-      ).meNotificationsControllerFindCategories(),
-      this.v2MeApiWAuth(user).meUserProfileControllerFindNotificationSettings(),
-    ])
-    return this.mergeCategorySettings(categories, blockedCategories)
+  private async findSettings(user: User): Promise<Settings> {
+    const [{ categories }, { blockedCategories, blockedSenders }] =
+      await Promise.all([
+        this.userNotificationsWAuth(
+          user,
+        ).meNotificationsControllerFindCategories(),
+        this.v2MeApiWAuth(
+          user,
+        ).meUserProfileControllerFindNotificationSettings(),
+      ])
+    return this.mergeSettings(categories, blockedCategories, blockedSenders)
   }
 
-  private async findActorCategorySettings(
+  private async findActorSettings(
     user: User,
     fromNationalId: string,
   ): Promise<{
-    settings: Map<string, CategorySetting>
+    settings: Settings
     onlyActionablePriorityNotifications: boolean
   }> {
     const [{ categories }, actorSettings] = await Promise.all([
@@ -124,9 +139,10 @@ export class NotificationSettingsService {
       }),
     ])
     return {
-      settings: this.mergeCategorySettings(
+      settings: this.mergeSettings(
         categories,
         actorSettings.blockedCategories,
+        [],
       ),
       onlyActionablePriorityNotifications:
         actorSettings.onlyActionablePriorityNotifications,
@@ -137,16 +153,17 @@ export class NotificationSettingsService {
    * Groups the settings by sender, looks up sender titles and sorts.
    */
   private async toNotificationSettings(
-    settings: Map<string, CategorySetting>,
+    { categories, blockedSenders }: Settings,
     locale: Locale,
     titleLoader: OrganizationTitleByNationalIdDataLoader,
     onlyActionablePriorityNotifications: boolean,
   ): Promise<NotificationSettings> {
     const senders = new Map<string, NotificationSenderSetting>()
-    for (const setting of settings.values()) {
+    for (const setting of categories.values()) {
       const sender = senders.get(setting.senderId) ?? {
         sender: { id: setting.senderId },
         categories: [],
+        blocked: blockedSenders.has(setting.senderId),
       }
       sender.categories.push({
         key: setting.key,
@@ -158,6 +175,18 @@ export class NotificationSettingsService {
         blocked: setting.blocked,
       })
       senders.set(setting.senderId, sender)
+    }
+
+    // Keep blocked senders without categories received or blocked, so they
+    // can still be unblocked
+    for (const senderId of blockedSenders) {
+      if (!senders.has(senderId)) {
+        senders.set(senderId, {
+          sender: { id: senderId },
+          categories: [],
+          blocked: true,
+        })
+      }
     }
 
     const senderIds = [...senders.keys()]
@@ -187,7 +216,7 @@ export class NotificationSettingsService {
     titleLoader: OrganizationTitleByNationalIdDataLoader,
   ): Promise<NotificationSettings> {
     const [settings, userProfile] = await Promise.all([
-      this.findCategorySettings(user),
+      this.findSettings(user),
       this.v2MeApiWAuth(user).meUserProfileControllerFindUserProfile(),
     ])
     return this.toNotificationSettings(
@@ -205,7 +234,7 @@ export class NotificationSettingsService {
     titleLoader: OrganizationTitleByNationalIdDataLoader,
   ): Promise<NotificationSettings> {
     const { settings, onlyActionablePriorityNotifications } =
-      await this.findActorCategorySettings(user, fromNationalId)
+      await this.findActorSettings(user, fromNationalId)
     return this.toNotificationSettings(
       settings,
       locale,
@@ -237,55 +266,91 @@ export class NotificationSettingsService {
   }
 
   /**
-   * Validates the requested changes and resolves blocked categories against
-   * the known ones. Returns undefined when there is nothing to update.
+   * Validates the requested changes and resolves them against the known
+   * senders and categories: only senders and categories that were received,
+   * or are already blocked, can be blocked. Returns undefined when there is
+   * nothing to update.
    */
-  private async buildCategoryUpdates(
-    categories: NotificationCategoryInput[],
-    findSettings: () => Promise<Map<string, CategorySetting>>,
+  private async buildUpdates(
+    {
+      categories = [],
+      senders = [],
+    }: {
+      categories?: NotificationCategoryInput[]
+      senders?: NotificationSenderInput[]
+    },
+    findSettings: () => Promise<Settings>,
   ) {
-    if (categories.length === 0) {
+    if (categories.length === 0 && senders.length === 0) {
       return undefined
     }
 
-    for (const { senderId } of categories) {
+    for (const { senderId } of [...categories, ...senders]) {
       if (!isValidSenderId(normalizeSenderId(senderId))) {
         throw new BadRequestException(`Sender id ${senderId} is not valid`)
       }
     }
 
-    const settings = categories.some(({ blocked }) => blocked)
-      ? await findSettings()
-      : new Map<string, CategorySetting>()
+    const settings: Settings =
+      categories.some(({ blocked }) => blocked) ||
+      senders.some(({ blocked }) => blocked)
+        ? await findSettings()
+        : { categories: new Map(), blockedSenders: new Set() }
 
-    return categories.map(({ senderId, category, blocked }) => {
-      if (!blocked) {
-        return { senderId, category, blocked }
-      }
-      const setting = settings.get(toCategoryKey(senderId, category))
-      if (!setting) {
+    const categoryUpdates = categories.map(
+      ({ senderId, category, blocked }) => {
+        if (!blocked) {
+          return { senderId, category, blocked }
+        }
+        const setting = settings.categories.get(
+          toCategoryKey(senderId, category),
+        )
+        if (!setting) {
+          throw new BadRequestException(
+            `Unknown notification category ${toCategoryKey(
+              senderId,
+              category,
+            )}`,
+          )
+        }
+        return {
+          senderId: setting.senderId,
+          category: setting.category,
+          categoryLabel: setting.categoryLabel,
+          blocked,
+        }
+      },
+    )
+
+    const knownSenders = new Set([
+      ...[...settings.categories.values()].map(({ senderId }) => senderId),
+      ...settings.blockedSenders,
+    ])
+    const senderUpdates = senders.map(({ senderId, blocked }) => {
+      const normalizedSenderId = normalizeSenderId(senderId)
+      if (blocked && !knownSenders.has(normalizedSenderId)) {
         throw new BadRequestException(
-          `Unknown notification category ${toCategoryKey(senderId, category)}`,
+          `Unknown notification sender ${normalizedSenderId}`,
         )
       }
-      return {
-        senderId: setting.senderId,
-        category: setting.category,
-        categoryLabel: setting.categoryLabel,
-        blocked,
-      }
+      return { senderId: normalizedSenderId, blocked }
     })
+
+    return { categories: categoryUpdates, senders: senderUpdates }
   }
 
   /**
-   * Blocks or unblocks the given sender categories.
+   * Blocks or unblocks the given senders and sender categories in one call.
    */
-  async updateCategories(
+  async updateSettings(
     user: User,
-    categories: NotificationCategoryInput[],
+    input: {
+      categories?: NotificationCategoryInput[]
+      senders?: NotificationSenderInput[]
+    },
   ): Promise<void> {
-    const updates = await this.buildCategoryUpdates(categories, () =>
-      this.findCategorySettings(user),
+    const updates = await this.buildUpdates(input, () =>
+      this.findSettings(user),
     )
     if (!updates) {
       return
@@ -294,7 +359,7 @@ export class NotificationSettingsService {
     await this.v2MeApiWAuth(
       user,
     ).meUserProfileControllerUpdateNotificationSettings({
-      updateNotificationSettingsDto: { categories: updates },
+      updateNotificationSettingsDto: updates,
     })
   }
 
@@ -306,12 +371,9 @@ export class NotificationSettingsService {
     fromNationalId: string,
     categories: NotificationCategoryInput[],
   ): Promise<void> {
-    const updates = await this.buildCategoryUpdates(
-      categories,
-      async () =>
-        (
-          await this.findActorCategorySettings(user, fromNationalId)
-        ).settings,
+    const updates = await this.buildUpdates(
+      { categories },
+      async () => (await this.findActorSettings(user, fromNationalId)).settings,
     )
     if (!updates) {
       return
@@ -321,7 +383,7 @@ export class NotificationSettingsService {
       user,
     ).actorUserProfileControllerUpdateActorNotificationSettings({
       xParamFromNationalId: fromNationalId,
-      updateNotificationSettingsDto: { categories: updates },
+      updateNotificationSettingsDto: { categories: updates.categories },
     })
   }
 }

@@ -14,6 +14,11 @@ import {
   ValidateNested,
 } from 'class-validator'
 
+import {
+  MAX_SENDERS_PER_REQUEST,
+  UpdateNotificationSenderDto,
+} from './blocked-sender.dto'
+
 export const MAX_CATEGORIES_PER_REQUEST = 500
 
 const CATEGORY_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/
@@ -90,10 +95,24 @@ export class UpdateNotificationCategoryDto {
 }
 
 export class UpdateNotificationSettingsDto {
+  // At least one of categories and senders is required
+  @ValidateIf(
+    (dto: UpdateNotificationSettingsDto) =>
+      dto.categories !== undefined || dto.senders === undefined,
+  )
+  @IsDefined({ message: 'categories or senders is required' })
   @IsArray()
   @ArrayMaxSize(MAX_CATEGORIES_PER_REQUEST)
   @ValidateNested({ each: true })
   @Type(() => UpdateNotificationCategoryDto)
-  @ApiProperty({ type: [UpdateNotificationCategoryDto] })
-  categories!: UpdateNotificationCategoryDto[]
+  @ApiPropertyOptional({ type: [UpdateNotificationCategoryDto] })
+  categories?: UpdateNotificationCategoryDto[]
+
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(MAX_SENDERS_PER_REQUEST)
+  @ValidateNested({ each: true })
+  @Type(() => UpdateNotificationSenderDto)
+  @ApiPropertyOptional({ type: [UpdateNotificationSenderDto] })
+  senders?: UpdateNotificationSenderDto[]
 }
