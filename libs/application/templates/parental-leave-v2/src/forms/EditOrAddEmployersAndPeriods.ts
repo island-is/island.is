@@ -52,6 +52,12 @@ import {
 } from '../graphql/queries'
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {
+  buildGiveDaysFields,
+  buildMultipleBirthsDaysFields,
+  buildRequestDaysFields,
+  buildRightsIntroFields,
+} from './rightsFields'
+import {
   allowOtherParent,
   employersHaveChanged,
   getApplicationAnswers,
@@ -160,9 +166,9 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
           id: 'editInfoSection',
           title: parentalLeaveFormMessages.applicant.subSection,
           children: [
-            buildCustomField({
+            buildHiddenInput({
               id: 'changeApplicationInfo',
-              component: 'ChangeApplicationInfoFlag',
+              defaultValue: YES,
             }),
             buildTextField({
               width: 'half',
@@ -237,9 +243,9 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
           title: parentalLeaveFormMessages.shared.otherParentTitle,
           description: parentalLeaveFormMessages.shared.otherParentSpouse,
           children: [
-            buildCustomField({
+            buildHiddenInput({
               id: 'changeApplicationInfo',
-              component: 'ChangeApplicationInfoFlag',
+              defaultValue: YES,
             }),
             buildTextField({
               id: 'otherParentSpouse.otherParentName',
@@ -274,9 +280,9 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
           title: parentalLeaveFormMessages.shared.otherParentTitle,
           description: parentalLeaveFormMessages.shared.otherParentDescription,
           children: [
-            buildCustomField({
+            buildHiddenInput({
               id: 'changeApplicationInfo',
-              component: 'ChangeApplicationInfoFlag',
+              defaultValue: YES,
             }),
             buildHiddenInput({
               id: 'otherParentObj.chooseOtherParent',
@@ -371,9 +377,9 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
           title: parentalLeaveFormMessages.shared.paymentInformationName,
           id: 'editPayments',
           children: [
-            buildCustomField({
+            buildHiddenInput({
               id: 'changeApplicationInfo',
-              component: 'ChangeApplicationInfoFlag',
+              defaultValue: YES,
             }),
             buildTextField({
               title: parentalLeaveFormMessages.shared.paymentInformationBank,
@@ -550,9 +556,9 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
           description:
             parentalLeaveFormMessages.personalAllowance.editDescription,
           children: [
-            buildCustomField({
+            buildHiddenInput({
               id: 'changeApplicationInfo',
-              component: 'ChangeApplicationInfoFlag',
+              defaultValue: YES,
             }),
             // Written by the fields' `setOnChange`; a value is saved on Continue
             // only when the screen has a field with its id.
@@ -657,15 +663,11 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
           title: parentalLeaveFormMessages.shared.theseAreYourRights,
           description: getRightsDescTitle,
           children: [
-            buildCustomField({
+            buildHiddenInput({
               id: 'changeApplicationInfo',
-              component: 'ChangeApplicationInfoFlag',
+              defaultValue: YES,
             }),
-            buildCustomField({
-              id: 'rightsIntro',
-              doesNotRequireAnswer: true,
-              component: 'Rights',
-            }),
+            ...buildRightsIntroFields(),
           ],
         }),
         buildMultiField({
@@ -686,19 +688,7 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
               otherParent !== SINGLE
             )
           },
-          children: [
-            buildCustomField({
-              id: 'multipleBirthsRequestDays',
-              childInputIds: [
-                'multipleBirthsRequestDays',
-                'requestRights.isRequestingRights',
-                'requestRights.requestDays',
-                'giveRights.isGivingRights',
-                'giveRights.giveDays',
-              ],
-              component: 'MultipleBirthsDaysInput',
-            }),
-          ],
+          children: [...buildMultipleBirthsDaysFields()],
         }),
         buildCustomField({
           id: 'editTransferRights',
@@ -760,16 +750,7 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
                 multipleBirthsRequestDays === getMaxMultipleBirthsDays(answers))
             )
           },
-          children: [
-            buildCustomField({
-              id: 'requestRights.isRequestingRights',
-              childInputIds: [
-                'requestRights.isRequestingRights',
-                'requestRights.requestDays',
-              ],
-              component: 'RequestDaysInput',
-            }),
-          ],
+          children: [...buildRequestDaysFields()],
         }),
         buildMultiField({
           id: 'editGiveRights',
@@ -794,16 +775,7 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
               (hasMultipleBirths === NO || multipleBirthsRequestDays === 0)
             )
           },
-          children: [
-            buildCustomField({
-              id: 'giveRights.isGivingRights',
-              childInputIds: [
-                'giveRights.isGivingRights',
-                'giveRights.giveDays',
-              ],
-              component: 'GiveDaysInput',
-            }),
-          ],
+          children: [...buildGiveDaysFields()],
         }),
         buildMultiField({
           id: 'redirectAfterEditRights',

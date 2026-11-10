@@ -56,6 +56,12 @@ import {
 } from '../graphql/queries'
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {
+  buildGiveDaysFields,
+  buildMultipleBirthsDaysFields,
+  buildRequestDaysFields,
+  buildRightsIntroFields,
+} from './rightsFields'
+import {
   allowOtherParent,
   allowOtherParentToUsePersonalAllowance,
   getApplicationAnswers,
@@ -1168,13 +1174,7 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'rightsIntro',
               title: parentalLeaveFormMessages.shared.theseAreYourRights,
               description: getRightsDescTitle,
-              children: [
-                buildCustomField({
-                  id: 'rightsIntro',
-                  doesNotRequireAnswer: true,
-                  component: 'Rights',
-                }),
-              ],
+              children: [...buildRightsIntroFields()],
             }),
             buildMultiField({
               id: 'multipleBirthsRequestDaysMultiField',
@@ -1194,19 +1194,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   otherParent !== SINGLE
                 )
               },
-              children: [
-                buildCustomField({
-                  id: 'multipleBirthsRequestDays',
-                  childInputIds: [
-                    'multipleBirthsRequestDays',
-                    'requestRights.isRequestingRights',
-                    'requestRights.requestDays',
-                    'giveRights.isGivingRights',
-                    'giveRights.giveDays',
-                  ],
-                  component: 'MultipleBirthsDaysInput',
-                }),
-              ],
+              children: [...buildMultipleBirthsDaysFields()],
             }),
             buildCustomField({
               id: 'transferRights',
@@ -1270,16 +1258,7 @@ export const ParentalLeaveForm: Form = buildForm({
                       getMaxMultipleBirthsDays(answers))
                 )
               },
-              children: [
-                buildCustomField({
-                  id: 'requestRights.isRequestingRights',
-                  childInputIds: [
-                    'requestRights.isRequestingRights',
-                    'requestRights.requestDays',
-                  ],
-                  component: 'RequestDaysInput',
-                }),
-              ],
+              children: [...buildRequestDaysFields()],
             }),
             buildMultiField({
               id: 'giveRights',
@@ -1304,16 +1283,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   (hasMultipleBirths === NO || multipleBirthsRequestDays === 0)
                 )
               },
-              children: [
-                buildCustomField({
-                  id: 'giveRights.isGivingRights',
-                  childInputIds: [
-                    'giveRights.isGivingRights',
-                    'giveRights.giveDays',
-                  ],
-                  component: 'GiveDaysInput',
-                }),
-              ],
+              children: [...buildGiveDaysFields()],
             }),
           ],
         }),
