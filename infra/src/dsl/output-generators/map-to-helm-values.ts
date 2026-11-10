@@ -893,6 +893,49 @@ function prepareFeatureDeployment(
   return s
 }
 
+// Feature deployments idle at ~5–30m CPU per service (30-day Datadog data,
+// dev-cluster02) and never autoscale, so prod-sized CPU requests only reserve
+// idle capacity and drive the dev node count. Cap the CPU *request*; limits
+// are left untouched so bursts (startup, heavy requests) behave as before.
+export const FEATURE_DEPLOYMENT_MAX_CPU_REQUEST_MILLICORES = 100
+
+/**
+ * Parses a Kubernetes CPU quantity ('250m', '1', '0.5') into millicores.
+ * Returns undefined for values it does not understand so callers can leave
+ * them untouched.
+ */
+export function cpuToMillicores(cpu: string): number | undefined {
+  const value = cpu.trim()
+  const match = /^(\d+(?:\.\d+)?)(m?)$/.exec(value)
+  if (!match) {
+    return undefined
+  }
+  const amount = Number(match[1])
+  return match[2] === 'm' ? amount : amount * 1000
+}
+
+function capFeatureCpuRequest(s: ServiceDefinition): void {
+  const requestedCpu = s.resources?.requests?.cpu
+  if (!requestedCpu) {
+    return
+  }
+  const millicores = cpuToMillicores(requestedCpu)
+  if (
+    millicores === undefined ||
+    millicores <= FEATURE_DEPLOYMENT_MAX_CPU_REQUEST_MILLICORES
+  ) {
+    return
+  }
+  // Build a new object: resources may be a shared constant across services.
+  s.resources = {
+    ...s.resources,
+    requests: {
+      ...s.resources.requests,
+      cpu: `${FEATURE_DEPLOYMENT_MAX_CPU_REQUEST_MILLICORES}m`,
+    },
+  }
+}
+
 export const HelmOutput: OutputFormat<HelmService> = {
   featureDeployment(s: ServiceDefinition, env): void {
     s = prepareFeatureDeployment(s, env)
@@ -909,6 +952,7 @@ export const HelmOutput: OutputFormat<HelmService> = {
         default: Math.min(1, featureRc.default),
       }
     }
+    capFeatureCpuRequest(s)
     s.namespace = getFeatureDeploymentNamespace(env)
     if (s.postgres) {
       s.postgres = getPostgresInfoForFeature(env.feature!, s.postgres)
