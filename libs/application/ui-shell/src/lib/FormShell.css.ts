@@ -6,9 +6,13 @@ import { escapeGrid } from '@island.is/island-ui/utils'
 const headerHeight = 112
 
 export const alertBannerSlot = style({
-  position: 'sticky',
-  top: 0,
-  zIndex: theme.zIndex.header,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      position: 'sticky',
+      top: 0,
+      zIndex: theme.zIndex.header,
+    },
+  },
 })
 
 export const root = style({
@@ -37,13 +41,12 @@ export const shellContainer = style({
 export const sidebarContainer = style({
   order: 1,
   position: 'sticky',
-  top: 'var(--form-alert-banner-height, 0)',
+  top: 0,
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       order: 2,
       position: 'relative',
-      top: 0,
     },
   },
 })

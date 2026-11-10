@@ -9,40 +9,42 @@ export const FormAlertBannerSlotContext = createContext<HTMLElement | null>(
 
 interface Props extends Omit<AlertBannerProps, 'dismissable' | 'onDismiss'> {
   visible: boolean
-  showAgainKey?: string
+  showAgainKeys?: string[]
 }
 
 export const FormAlertBanner: FC<Props> = ({
   visible,
-  showAgainKey = '',
+  showAgainKeys = [],
   ...bannerProps
 }) => {
-  const [dismissedKey, setDismissedKey] = useState<string | null>(null)
-  const [dismissals, setDismissals] = useState(0)
+  const [dismissedKeys, setDismissedKeys] = useState<string[] | null>(null)
 
   const slot = useContext(FormAlertBannerSlotContext)
 
-  if (dismissedKey !== null && (!visible || dismissedKey !== showAgainKey)) {
-    setDismissedKey(null)
+  if (dismissedKeys !== null) {
+    const stillShown = dismissedKeys.filter((key) =>
+      showAgainKeys.includes(key),
+    )
+    if (!visible || stillShown.length !== dismissedKeys.length) {
+      setDismissedKeys(visible && stillShown.length > 0 ? stillShown : null)
+    }
   }
+
+  const dismissed =
+    dismissedKeys !== null &&
+    showAgainKeys.every((key) => dismissedKeys.includes(key))
 
   if (!slot) {
     return null
   }
 
   return createPortal(
-    <Box
-      display={visible && dismissedKey === null ? 'block' : 'none'}
-      role="alert"
-    >
+    <Box display={visible && !dismissed ? 'block' : 'none'} role="alert">
       <AlertBanner
-        key={dismissals}
+        key={String(dismissed)}
         {...bannerProps}
         dismissable
-        onDismiss={() => {
-          setDismissedKey(showAgainKey)
-          setDismissals((count) => count + 1)
-        }}
+        onDismiss={() => setDismissedKeys(showAgainKeys)}
       />
     </Box>,
     slot,

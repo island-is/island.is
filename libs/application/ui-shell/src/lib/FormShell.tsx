@@ -1,10 +1,4 @@
-import React, {
-  CSSProperties,
-  FC,
-  useEffect,
-  useReducer,
-  useState,
-} from 'react'
+import React, { FC, useEffect, useReducer, useState } from 'react'
 import {
   Application,
   Form,
@@ -47,7 +41,6 @@ export const FormShell: FC<
   const [alertBannerSlot, setAlertBannerSlot] = useState<HTMLElement | null>(
     null,
   )
-  const [alertBannerHeight, setAlertBannerHeight] = useState(0)
   const user = useUserInfo()
   const [state, dispatch] = useReducer(
     ApplicationReducer,
@@ -107,17 +100,6 @@ export const FormShell: FC<
     })
   }, [setInfo, application])
 
-  useEffect(() => {
-    if (!alertBannerSlot) return
-
-    const observer = new ResizeObserver(() =>
-      setAlertBannerHeight(alertBannerSlot.offsetHeight),
-    )
-    observer.observe(alertBannerSlot)
-
-    return () => observer.disconnect()
-  }, [alertBannerSlot])
-
   if (updateForbidden) {
     return <ErrorShell errorType="lost" applicationType={application.typeId} />
   }
@@ -126,14 +108,7 @@ export const FormShell: FC<
     <>
       <Box className={styles.alertBannerSlot} ref={setAlertBannerSlot} />
       <FormAlertBannerSlotContext.Provider value={alertBannerSlot}>
-        <Box
-          className={styles.root}
-          style={
-            {
-              '--form-alert-banner-height': `${alertBannerHeight}px`,
-            } as CSSProperties
-          }
-        >
+        <Box className={styles.root}>
           <Box
             paddingTop={[0, 4]}
             paddingBottom={[0, 5]}
