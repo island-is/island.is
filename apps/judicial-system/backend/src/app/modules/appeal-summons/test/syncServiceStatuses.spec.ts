@@ -113,7 +113,7 @@ describe('AppealSummonsController - Sync service statuses', () => {
     } as AppealSummons
 
     const mockUpdate =
-      mockAppealSummonsRepositoryService.updateServiceRecipient as jest.Mock
+      mockAppealSummonsRepositoryService.recordServiceStatusIfUnset as jest.Mock
     mockUpdate.mockResolvedValue(updatedService)
 
     const mockFind =
@@ -132,7 +132,7 @@ describe('AppealSummonsController - Sync service statuses', () => {
         servedBy: 'Lögreglumaður',
         comment: undefined,
       },
-      { transaction, where: { serviceStatus: null } },
+      { transaction },
     )
     expect(mockFind).toHaveBeenCalledWith(summonsId, caseId, { transaction })
     expect(result).toEqual([reloadedSummons])
@@ -150,7 +150,7 @@ describe('AppealSummonsController - Sync service statuses', () => {
     })
 
     const mockUpdate =
-      mockAppealSummonsRepositoryService.updateServiceRecipient as jest.Mock
+      mockAppealSummonsRepositoryService.recordServiceStatusIfUnset as jest.Mock
     mockUpdate.mockResolvedValue(null)
 
     const mockFind =
@@ -167,7 +167,7 @@ describe('AppealSummonsController - Sync service statuses', () => {
         servedBy: 'Lögreglumaður',
         comment: undefined,
       },
-      { transaction, where: { serviceStatus: null } },
+      { transaction },
     )
     expect(mockFind).not.toHaveBeenCalled()
     expect(result).toEqual([])
@@ -208,7 +208,7 @@ describe('AppealSummonsController - Sync service statuses', () => {
     mockGetStatus.mockResolvedValue({})
 
     const mockUpdate =
-      mockAppealSummonsRepositoryService.updateServiceRecipient as jest.Mock
+      mockAppealSummonsRepositoryService.recordServiceStatusIfUnset as jest.Mock
 
     const result = await syncServiceStatuses(theCase)
 
@@ -264,7 +264,7 @@ describe('AppealSummonsController - Sync service statuses', () => {
     } as AppealSummons
 
     const mockUpdate =
-      mockAppealSummonsRepositoryService.updateServiceRecipient as jest.Mock
+      mockAppealSummonsRepositoryService.recordServiceStatusIfUnset as jest.Mock
     mockUpdate.mockResolvedValue(updatedService)
 
     const mockFind =
