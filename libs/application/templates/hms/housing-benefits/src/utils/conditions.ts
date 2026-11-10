@@ -20,9 +20,9 @@ import { isNationalRegistryRefetchSelected } from './utils'
 export const shouldShowLegalDomicileSection = (
   answers: FormValue,
   externalData: ExternalData,
-) => true
-//!doesAddressMatchRentalContract(answers, externalData) ||
-//isNationalRegistryRefetchSelected(answers)
+) =>
+  !doesAddressMatchRentalContract(answers, externalData) ||
+  isNationalRegistryRefetchSelected(answers)
 
 export const shouldShowRefetchNationalRegistrySection = (
   answers: FormValue,
