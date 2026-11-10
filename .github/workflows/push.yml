@@ -258,15 +258,22 @@ jobs:
             echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
           fi
 
-      # The images of a feature deployment are built by Nx Agents (the `docker-agents` and
-      # `docker-main` jobs), everything else by the `docker-build` matrix. The pull request pipeline
-      # does not run with the `deploy-feature` label, so its checks (lint, test, ...) run here too
+      # The images of a feature deployment and of a pre-release are built by Nx Agents (the
+      # `docker-agents` and `docker-main` jobs), everything else by the `docker-build` matrix. The
+      # pull request pipeline does not run with the `deploy-feature` label, so the checks of a
+      # feature deployment (lint, test, ...) run here too. A pre-release only builds images.
+      # Setting the repository variable NX_AGENTS_PRE_RELEASE to `false` builds the images of a
+      # pre-release in the matrix again
       - name: Plan the Nx Agents that build the images and run the checks
         id: docker_agents
-        if: ${{ needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && needs.pre-checks.outputs.PRE_RELEASE == 'false' && steps.build_map.outputs.BUILD_CHUNKS }}
+        if: ${{ needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && steps.build_map.outputs.BUILD_CHUNKS && (needs.pre-checks.outputs.PRE_RELEASE == 'false' || vars.NX_AGENTS_PRE_RELEASE != 'false') }}
         env:
-          PLAN_MODE: deploy
+          PLAN_MODE: ${{ needs.pre-checks.outputs.PRE_RELEASE == 'true' && 'images' || 'deploy' }}
           BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
+          MAX_AGENTS: '10'
+          # A pre-release runs on the runners of the merge queue, like the rest of its jobs
+          SHARED_RUNNER: ${{ needs.pre-checks.outputs.PRE_RELEASE == 'true' && 'arc-mergequeue' || 'arc-shared' }}
+          JUDICIAL_RUNNER: ${{ needs.pre-checks.outputs.PRE_RELEASE == 'true' && 'arc-mergequeue' || 'arc-shared' }}
         run: |
           node scripts/ci/nx-agents/plan.mjs
           echo "use-agents=true" >> "$GITHUB_OUTPUT"
@@ -455,8 +462,9 @@ jobs:
             target: ${{ env.JSON_target }}
             imageName: ${{ env.JSON_imageName }}
             imageTag: ${{ env.JSON_imageTag }}
-  # The images of a feature deployment as one distributed Nx Cloud CI run, like the checks of a
-  # pull request: every image is a `docker-build` task, see `scripts/ci/nx-agents/README.md`
+  # The images of a feature deployment or a pre-release as one distributed Nx Cloud CI run, like
+  # the checks of a pull request: every image is a `docker-build` task, see
+  # `scripts/ci/nx-agents/README.md`
   docker-agents:
     name: Nx agent ${{ matrix.agent }}
     needs:
@@ -582,7 +590,7 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.USE_AGENTS == 'true'
-    runs-on: arc-shared
+    runs-on: ${{ startsWith(github.ref, 'refs/heads/pre-release/') && 'arc-mergequeue' || 'arc-shared' }}
     timeout-minutes: 120
     permissions:
       actions: read
@@ -629,7 +637,7 @@ jobs:
 
       # Two Nx commands at the same time, on the same agents: the checks of the pull request
       # pipeline (which does not run with the `deploy-feature` label) and the images.
-      # The feature is only deployed when both succeed
+      # The feature is only deployed when both succeed. A pre-release only has the images
       - name: Run the checks and build the Docker images on the agents
         id: run
         run: ./scripts/ci/nx-agents/run.sh

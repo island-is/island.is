@@ -4,7 +4,7 @@ set -euo pipefail
 # Runs the Nx command(s) planned by `plan.mjs` on the main job. With a distributed
 # CI run started, the tasks are executed by the agents and this job only orchestrates.
 #
-# The quick workspace checks that need no agent run first. For a pull request, when one of them
+# The quick workspace checks that need no agent run first, when there are checks in the run. For a pull request, when one of them
 # fails the job fails right away, instead of at the end of the distributed run.
 #
 # NX_AGENTS_ARGS: JSON list of args for `nx`: lint, typecheck, (build,) test and e2e
@@ -119,12 +119,15 @@ has_args() {
   [[ "$(jq 'length' <<<"$1")" != "0" ]]
 }
 
-run_bg check-tags ./scripts/ci/20_lint-workspace.sh
-run_bg license-audit ./scripts/ci/20_license-audit.sh
-if [[ -n "$UNICORN_PROJECTS" ]]; then
-  run_bg unicorn-tests "$DIR/check-unicorn-tests.sh"
+# Part of the checks, so not for a run that only builds images (a pre-release)
+if has_args "$NX_AGENTS_ARGS"; then
+  run_bg check-tags ./scripts/ci/20_lint-workspace.sh
+  run_bg license-audit ./scripts/ci/20_license-audit.sh
+  if [[ -n "$UNICORN_PROJECTS" ]]; then
+    run_bg unicorn-tests "$DIR/check-unicorn-tests.sh"
+  fi
+  wait_all
 fi
-wait_all
 
 if [[ ${#failed[@]} -gt 0 ]]; then
   echo "failed-checks=${failed[*]}" >>"$GITHUB_OUTPUT"

@@ -1,6 +1,6 @@
 // @ts-check
 /**
- * Plans a distributed (Nx Agents) CI run for a pull request.
+ * Plans a distributed (Nx Agents) CI run.
  *
  * Decides the single Nx command the main job should run and how many agents to
  * start, based on the tasks in the run. All targets go in one command so Nx
@@ -20,10 +20,17 @@
  * because they need two configurations: `ci` for the tests, and `production` for the builds since
  * that is what the Docker builds do. Both run at the same time, on the same agents.
  *
+ * PLAN_MODE (see CHECK_TARGETS):
+ * - `pull-request` (default): the checks of a pull request, no images
+ * - `deploy`: a feature deployment, the checks and the images
+ * - `images`: a pre-release, only the images (it never ran the checks)
+ * - `merge-queue`: typecheck, test and e2e, and the images (the jobs `merge-queue.yml` had before)
+ *
  * Usage: node scripts/ci/nx-agents/plan.mjs
- * BUILD_CHUNKS (deploy): the images to build, a JSON list of JSON strings from `generate-docker-chunks.sh`
+ * BUILD_CHUNKS (every mode but `pull-request`): the images to build, a JSON list of JSON strings
+ * from `generate-docker-chunks.sh`
  * Writes `agents`, `agent-count`, `nx-args`, `targets`, `unicorn-projects` and `ci-config-hash`,
- * and for a deploy `image-nx-args` and `image-projects`, to $GITHUB_OUTPUT.
+ * and with images `image-nx-args` and `image-projects`, to $GITHUB_OUTPUT.
  */
 import { execFileSync } from 'child_process'
 import { appendFileSync, mkdtempSync, readFileSync } from 'fs'
@@ -73,7 +80,25 @@ const TARGET_WEIGHTS = {
   // Not cached, so an agent runs one at a time
   'docker-build': 8,
 }
-const DEPLOY = env.PLAN_MODE === 'deploy'
+/**
+ * The checks of each mode. `build` is only a check without images: with images the builds are in
+ * the run as what `docker-build` depends on, as `production` (see above)
+ *
+ * @type {Record<string, string[]>}
+ */
+const CHECK_TARGETS = {
+  'pull-request': ['lint', 'typecheck', 'build', 'test', 'e2e'],
+  deploy: ['lint', 'typecheck', 'test', 'e2e'],
+  images: [],
+  'merge-queue': ['typecheck', 'test', 'e2e'],
+}
+const MODE = env.PLAN_MODE || 'pull-request'
+if (!(MODE in CHECK_TARGETS)) {
+  throw new Error(`Unknown PLAN_MODE: ${MODE}`)
+}
+const WITH_IMAGES = MODE !== 'pull-request'
+// What `SKIP_TESTS` (the `test nothing` label) leaves out
+const TEST_TARGETS = ['build', 'test', 'e2e']
 // Targets without a `ci` configuration fall back to their default one, so this only
 // turns on `ci` and `codeCoverage` for the jest targets (see `targetDefaults` in nx.json).
 // CLI args like `--coverage` are not an option since they would go to every target.
@@ -176,8 +201,13 @@ const agentCount = (type, units) =>
 
 const main = () => {
   // Has to be in the environment before Nx is asked for the tasks below, and the main job and
-  // the agents get it from the output so all of them agree on the hashes of the tasks
-  const configHash = ciConfigHash(env.NX_BASE ?? '', env.NX_HEAD ?? '')
+  // the agents get it from the output so all of them agree on the hashes of the tasks.
+  // Only for pull requests: the pre-releases and the merge queue build what is deployed, from
+  // the same cache as everything else, and their images are built without it
+  const configHash =
+    MODE === 'pull-request' || MODE === 'deploy'
+      ? ciConfigHash(env.NX_BASE ?? '', env.NX_HEAD ?? '')
+      : ''
   env.CI_CONFIG_HASH = configHash
 
   const projectTargets = getProjectTargets()
@@ -209,14 +239,9 @@ const main = () => {
   const withTarget = (/** @type {string} */ target) =>
     projects.filter((p) => projectTargets[p]?.includes(target))
 
-  // The images of a deploy depend on the builds, as `production` (see above)
-  const targets = [
-    'lint',
-    'typecheck',
-    ...(isTrue(env.SKIP_TESTS)
-      ? []
-      : [...(DEPLOY ? [] : ['build']), 'test', 'e2e']),
-  ].filter((target) => withTarget(target).length > 0)
+  const targets = CHECK_TARGETS[MODE].filter(
+    (target) => !(isTrue(env.SKIP_TESTS) && TEST_TARGETS.includes(target)),
+  ).filter((target) => withTarget(target).length > 0)
   const nxArgs =
     targets.length === 0
       ? []
@@ -230,7 +255,7 @@ const main = () => {
         ]
 
   /** @type {string[]} */
-  const imageProjects = DEPLOY
+  const imageProjects = WITH_IMAGES
     ? JSON.parse(env.BUILD_CHUNKS || '[]')
         .map((/** @type {string} */ chunk) => JSON.parse(chunk).projects)
         .sort()
@@ -289,7 +314,7 @@ const main = () => {
     ].join(','),
     'unicorn-projects': unicornProjects.join(','),
     'ci-config-hash': configHash,
-    ...(DEPLOY
+    ...(WITH_IMAGES
       ? {
           'image-nx-args': JSON.stringify(imageNxArgs),
           'image-projects': imageProjects.join(','),

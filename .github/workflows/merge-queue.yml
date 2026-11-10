@@ -37,6 +37,9 @@ env:
   SERVERSIDE_FEATURES_ON: ''
   GENERATED_FILES: ${{ github.sha }}.tar.gz
   YARN_ENABLE_HARDENED_MODE: '0'
+  # Ties the main job and the agents of this attempt together, see `pullrequest.yml`
+  NX_AGENTS_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-agents
+  NX_BRANCH: ${{ github.ref_name }}
 
 jobs:
   pre-checks:
@@ -57,12 +60,258 @@ jobs:
       runner_label: arc-mergequeue
     needs:
       - pre-checks
+  # Typecheck, test, e2e and the Docker images as one distributed Nx Cloud CI run on Nx Agents,
+  # see `scripts/ci/nx-agents/README.md`. Instead of the `tests`, `typecheck`, `e2e` and
+  # `docker-build` jobs, which only run when this job is skipped: when a release reuses every image
+  # of its pre-release, or when the repository variable NX_AGENTS_MERGE_QUEUE is `false`
+  plan:
+    needs:
+      - prepare
+    if: ${{ vars.NX_AGENTS_MERGE_QUEUE != 'false' && needs.prepare.outputs.MQ_ALL_IMAGES_REUSED != 'true' }}
+    runs-on: arc-mergequeue
+    timeout-minutes: 30
+    permissions:
+      contents: 'read'
+      actions: 'read'
+    env:
+      NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-plan
+    outputs:
+      agents: ${{ steps.plan.outputs.agents }}
+      agent-count: ${{ steps.plan.outputs.agent-count }}
+      nx-args: ${{ steps.plan.outputs.nx-args }}
+      image-nx-args: ${{ steps.plan.outputs.image-nx-args }}
+      image-projects: ${{ steps.plan.outputs.image-projects }}
+      targets: ${{ steps.plan.outputs.targets }}
+      unicorn-projects: ${{ steps.plan.outputs.unicorn-projects }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          # Need full repo for Nx to find the commits at NX_*
+          fetch-depth: 0
+          filter: blob:none
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      - name: test-everything
+        uses: ./.github/actions/test-everything
+
+      - name: Plan Nx command and agents
+        id: plan
+        run: node scripts/ci/nx-agents/plan.mjs
+        env:
+          PLAN_MODE: merge-queue
+          NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+          NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
+          # Same as `force_all_to_be_affected` of the `prepare` job
+          NX_AFFECTED_ALL: ${{ github.event_name == 'workflow_dispatch' }}
+          # Without the images a release reuses from its pre-release
+          BUILD_CHUNKS: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS || '[]' }}
+          # Same as the pull request pipeline
+          MAX_AGENTS: '10'
+          SHARED_RUNNER: arc-mergequeue
+          JUDICIAL_RUNNER: arc-mergequeue
+
+  agents:
+    name: Nx agent ${{ matrix.agent }}
+    needs:
+      - pre-checks
+      - prepare
+      - plan
+    if: ${{ needs.plan.outputs.agent-count != '0' }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 120
+    permissions:
+      actions: read
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        # agent (name), type (shared/judicial), runner, test and e2e (does the agent run such tasks)
+        include: ${{ fromJson(needs.plan.outputs.agents) }}
+    env:
+      NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-agent-${{ matrix.agent }}-setup
+      # Not the one of this workflow: `start-agent.sh` adds it to what the tests get, and it would
+      # lower their memory limit
+      NODE_OPTIONS: ''
+      # The environment of the `docker-build` tasks, see `scripts/ci/nx-agents/docker-build.sh`.
+      # Same as the `docker-build` job
+      AFFECTED_ALL: ''
+      DOCKER_TAG: ${{ needs.prepare.outputs.MQ_DOCKER_TAG }}
+      GIT_BRANCH: ${{ needs.prepare.outputs.MQ_GIT_BRANCH }}
+      NODE_IMAGE_VERSION: ${{ needs.pre-checks.outputs.NODE_IMAGE_VERSION }}
+      PUBLISH: true
+      NX_PARALLEL: 1
+      S3_DOCKER_CACHE_BUCKET: ${{ vars.S3_DOCKER_CACHE_BUCKET }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      - name: Docker login to ECR repo
+        run: ./scripts/ci/docker-login-ecr.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Configure Datadog Test Optimization
+        if: ${{ matrix.test }}
+        uses: datadog/test-visibility-github-action@v2
+        with:
+          languages: 'js'
+          api_key: ${{ secrets.DD_API_KEY }}
+          site: datadoghq.eu
+
+      - name: Setup Playwright
+        if: ${{ matrix.e2e }}
+        uses: ./.github/actions/setup-playwright
+
+      - name: Prepare Docker build arguments
+        env:
+          GIT_COMMIT_SHA: ${{ github.sha }}
+          NX_CLOUD_ACCESS_TOKEN_FILE_CONTENT: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+        run: |
+          # Strip protocol prefix and .git postfix
+          SERVER_URL="${{ github.server_url }}/${{ github.repository }}"
+          SERVER_URL="${SERVER_URL#*://}"
+          SERVER_URL="${SERVER_URL%.git}"
+          build_args=(
+            --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
+            --build-arg="NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION}"
+            --build-arg="GIT_BRANCH=${GIT_BRANCH}"
+            --build-arg="GIT_COMMIT_SHA=${GIT_COMMIT_SHA}"
+            --build-arg="GIT_REPOSITORY_URL=${SERVER_URL}"
+            --build-arg="NX_PARALLEL=${NX_PARALLEL}"
+            --build-arg="NX_MAX_PARALLEL=${NX_MAX_PARALLEL}"
+            --build-arg="NX_TASKS_RUNNER=ci"
+          )
+          echo "EXTRA_DOCKER_BUILD_ARGS=${build_args[*]}" >> "${GITHUB_ENV}"
+          # The secret of the Docker builds, see `scripts/ci/_docker.sh`
+          echo "$NX_CLOUD_ACCESS_TOKEN_FILE_CONTENT" > nx_cloud_access_token.txt
+
+      - name: Start Nx agent
+        run: ./scripts/ci/nx-agents/start-agent.sh
+        env:
+          NX_CI_EXECUTION_ID: ${{ env.NX_AGENTS_EXECUTION_ID }}
+          NX_AGENT_NAME: ${{ matrix.agent }}
+          # To see what the main job does in this attempt, for "Re-run failed jobs" (see `start-agent.sh`)
+          GH_TOKEN: ${{ github.token }}
+          # The agent type in `scripts/ci/nx-agents/assignment-rules.yaml`
+          NX_AGENT_LAUNCH_TEMPLATE: ${{ matrix.type }}
+          DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          CYPRESS_PROJECT_ID: 4q7jz8
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+
+      - name: Upload coverage reports to Datadog
+        if: ${{ !cancelled() && matrix.test }}
+        run: |
+          if [[ -d coverage ]]; then
+            yarn datadog-ci coverage upload .
+          else
+            echo "No tests with coverage ran on this agent"
+          fi
+        env:
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_SITE: datadoghq.eu
+
+      # What the tasks wrote about the images they built, for the `success` job
+      - name: Upload image data
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
+        with:
+          name: docker-build-data-${{ matrix.agent }}
+          path: dist/docker-build-data/
+          retention-days: 1
+          if-no-files-found: ignore
+          # "Re-run failed jobs" runs an agent of the same name again
+          overwrite: true
+
+  main:
+    name: Nx main job
+    needs:
+      - prepare
+      - plan
+    runs-on: arc-mergequeue
+    timeout-minutes: 120
+    permissions:
+      contents: 'read'
+      actions: 'read'
+    env:
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
+      NX_CLOUD_DISTRIBUTED_EXECUTION_AGENT_COUNT: ${{ needs.plan.outputs.agent-count }}
+      NX_CI_EXECUTION_ID: ${{ github.run_id }}-${{ github.run_attempt }}-main-setup
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          # Need full repo for Nx to find the commits at NX_*
+          fetch-depth: 0
+          filter: blob:none
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      # "Re-run failed jobs" only re-runs the agents that failed, the run continues with those
+      - name: Check which agents are part of this attempt
+        if: ${{ github.run_attempt > 1 && needs.plan.outputs.agent-count != '0' }}
+        run: ./scripts/ci/nx-agents/check-agents.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_AGENTS: ${{ needs.plan.outputs.agent-count }}
+
+      # Completion is explicit (see the last step), like in the pull request pipeline
+      - name: Start distributed CI run
+        if: ${{ needs.plan.outputs.agent-count != '0' }}
+        run: >-
+          npx nx-cloud start-ci-run
+          --distribute-on="manual"
+          --assignment-rules="scripts/ci/nx-agents/assignment-rules.yaml"
+          --stop-agents-after="$TARGETS"
+          --require-explicit-completion
+        env:
+          NX_CI_EXECUTION_ID: ${{ env.NX_AGENTS_EXECUTION_ID }}
+          TARGETS: ${{ needs.plan.outputs.targets }}
+
+      # Two Nx commands at the same time, on the same agents: typecheck, test and e2e, and the
+      # images. Nothing is deployed unless both succeed
+      - name: Run the checks and build the Docker images on the agents
+        id: run
+        run: ./scripts/ci/nx-agents/run.sh
+        env:
+          NX_CI_EXECUTION_ID: ${{ env.NX_AGENTS_EXECUTION_ID }}
+          NX_AGENTS_ARGS: ${{ needs.plan.outputs.nx-args }}
+          NX_IMAGE_ARGS: ${{ needs.plan.outputs.image-nx-args }}
+          GH_TOKEN: ${{ github.token }}
+          UNICORN_PROJECTS: ${{ needs.plan.outputs.unicorn-projects }}
+
+      # Agents wait for work until the run is completed, also when this job fails or is cancelled
+      - name: Complete CI run
+        if: ${{ always() && needs.plan.outputs.agent-count != '0' }}
+        run: npx nx-cloud complete-ci-run
+        env:
+          NX_CI_EXECUTION_ID: ${{ env.NX_AGENTS_EXECUTION_ID }}
+
   docker-build:
     needs:
       - prepare
       - pre-checks
+      - plan
     runs-on: arc-mergequeue
-    if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+    if: ${{ !cancelled() && needs.pre-checks.result == 'success' && needs.prepare.result == 'success' && needs.plan.result == 'skipped' && needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
     permissions:
       actions: read
       contents: read
@@ -196,8 +445,9 @@ jobs:
     uses: ./.github/workflows/e2e.yml
     needs:
       - prepare
+      - plan
     # Not run again for a release that reuses every image of its pre-release
-    if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' && needs.prepare.outputs.MQ_ALL_IMAGES_REUSED != 'true' }}
+    if: ${{ !cancelled() && needs.prepare.result == 'success' && needs.plan.result == 'skipped' && needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' && needs.prepare.outputs.MQ_ALL_IMAGES_REUSED != 'true' }}
     secrets: inherit
     with:
       e2e_build_id: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
@@ -212,8 +462,9 @@ jobs:
   tests:
     needs:
       - prepare
+      - plan
     # Not run again for a release that reuses every image of its pre-release
-    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' && needs.prepare.outputs.MQ_ALL_IMAGES_REUSED != 'true' }}
+    if: ${{ !cancelled() && needs.prepare.result == 'success' && needs.plan.result == 'skipped' && needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' && needs.prepare.outputs.MQ_ALL_IMAGES_REUSED != 'true' }}
     runs-on: arc-mergequeue
     timeout-minutes: 45
     env:
@@ -244,8 +495,9 @@ jobs:
   typecheck:
     needs:
       - prepare
+      - plan
     # Not run again for a release that reuses every image of its pre-release
-    if: ${{ needs.prepare.outputs.MQ_ALL_IMAGES_REUSED != 'true' }}
+    if: ${{ !cancelled() && needs.prepare.result == 'success' && needs.plan.result == 'skipped' && needs.prepare.outputs.MQ_ALL_IMAGES_REUSED != 'true' }}
     permissions:
       contents: 'read'
     runs-on: arc-mergequeue
@@ -279,7 +531,12 @@ jobs:
       - tests
       - typecheck
       - docker-build
+      - plan
+      - agents
+      - main
     env:
+      # The checks and the images ran on Nx Agents
+      USED_AGENTS: ${{ needs.plan.result == 'success' }}
       # There is something to deploy: images were built and/or reused
       HAS_DOCKER_DATA: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && ((needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]') || (needs.prepare.outputs.MQ_REUSED_DOCKER_DATA && needs.prepare.outputs.MQ_REUSED_DOCKER_DATA != '[]')) }}
     steps:
@@ -292,8 +549,15 @@ jobs:
           RESULT: ${{ needs.typecheck.result }}
           ALL_IMAGES_REUSED: ${{ needs.prepare.outputs.MQ_ALL_IMAGES_REUSED }}
         run: |
-          # Must succeed, and may only be skipped when every image is reused
-          [[ "$RESULT" == "success" || ( "$RESULT" == "skipped" && "$ALL_IMAGES_REUSED" == "true" ) ]] || exit 1
+          # Must succeed, and may only be skipped when every image is reused or it ran on Nx Agents
+          [[ "$RESULT" == "success" || ( "$RESULT" == "skipped" && ( "$ALL_IMAGES_REUSED" == "true" || "$USED_AGENTS" == "true" ) ) ]] || exit 1
+      - name: Check Nx Agents success
+        env:
+          PLAN: ${{ needs.plan.result }}
+          MAIN: ${{ needs.main.result }}
+        run: |
+          # Either not used (skipped), or the main job succeeded. The agents fail with the main job
+          [[ "$PLAN" == "skipped" || ( "$PLAN" == "success" && "$MAIN" == "success" ) ]] || exit 1
       - name: Check build success
         run: '[[ ${{ needs.docker-build.result }} != "failure" && ${{ needs.docker-build.result }} != "abandoned" && ${{ needs.docker-build.result }} != "cancelled" ]] || exit 1'
       - name: Summary of reused release
@@ -305,7 +569,7 @@ jobs:
       - name: Get docker-build output
         uses: cloudposse/github-action-matrix-outputs-read@v1
         id: read
-        if: ${{ needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        if: ${{ env.USED_AGENTS != 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
         with:
           matrix-step-name: docker-build
       - name: checkout
@@ -327,12 +591,29 @@ jobs:
         uses: ./.github/actions/load-deps
         if: ${{ env.HAS_DOCKER_DATA == 'true' }}
       - name: Prepare artifact to be uploaded
-        if: ${{ env.HAS_DOCKER_DATA == 'true' }}
+        if: ${{ env.HAS_DOCKER_DATA == 'true' && env.USED_AGENTS != 'true' }}
         env:
           JSON_DATA: ${{ steps.read.outputs.result }}
           REUSED_DOCKER_DATA: ${{ needs.prepare.outputs.MQ_REUSED_DOCKER_DATA }}
         run: |
           node scripts/ci/docker/write-data.mjs
+
+      - name: Get the image data of the Nx agents
+        if: ${{ env.HAS_DOCKER_DATA == 'true' && env.USED_AGENTS == 'true' && needs.plan.outputs.image-projects != '' }}
+        uses: actions/download-artifact@v4
+        with:
+          pattern: docker-build-data-*
+          path: docker-build-data
+          merge-multiple: true
+
+      # Fails if an image is missing, the agents only upload what was built
+      - name: Prepare artifact to be uploaded (Nx agents)
+        if: ${{ env.HAS_DOCKER_DATA == 'true' && env.USED_AGENTS == 'true' }}
+        env:
+          PROJECTS: ${{ needs.plan.outputs.image-projects }}
+          REUSED_DOCKER_DATA: ${{ needs.prepare.outputs.MQ_REUSED_DOCKER_DATA }}
+        run: |
+          node scripts/ci/nx-agents/merge-docker-build-data.mjs "$GITHUB_WORKSPACE/docker-build-data" "$PROJECTS"
       - name: Get manifest data
         id: manifest
         if: ${{ env.HAS_DOCKER_DATA == 'true' }}
