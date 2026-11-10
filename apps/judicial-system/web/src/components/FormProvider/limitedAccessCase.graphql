@@ -99,6 +99,10 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       appealState
       appealType
+      appealCaseNumber
+      appealConclusion
+      appealRulingDate
+      appealRulingDecision
       courtSessions {
         id
         created
@@ -106,12 +110,21 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         sessionDate
         courtRoom
       }
+      statementDeadlines {
+        id
+        created
+        modified
+        defendantId
+        civilClaimantId
+        deadline
+      }
       appealEventLogs {
         id
         created
         eventType
         appealOrigin
         defendantId
+        civilClaimantId
         userRole
         userName
         userTitle

@@ -5,6 +5,7 @@ import type { Sequelize } from 'sequelize-typescript'
 import { CallHandler, ExecutionContext } from '@nestjs/common'
 
 import {
+  AppealEventType,
   CaseIndictmentRulingDecision,
   CaseType,
   DefendantEventType,
@@ -829,5 +830,157 @@ describe('CaseInterceptor - original ancestor read', () => {
     })
     expect(sequelize.transaction).toHaveBeenCalledTimes(1)
     expect(result.originalAncestorId).toBe(originalAncestorId)
+  })
+})
+
+describe('CaseInterceptor - verdictAppealCase party filter', () => {
+  const mockRequest = jest.fn()
+  const mockHandle = jest.fn()
+
+  const ownDeadline = {
+    id: 'own_deadline',
+    defendantId: 'own_defendant',
+    deadline: new Date('2026-11-15'),
+  }
+  const otherDeadline = {
+    id: 'other_deadline',
+    defendantId: 'other_defendant',
+    deadline: new Date('2026-11-20'),
+  }
+  const prosecutionDeadline = {
+    id: 'prosecution_deadline',
+    deadline: new Date('2026-11-18'),
+  }
+  const ownEvent = {
+    id: 'own_event',
+    defendantId: 'own_defendant',
+    eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+  }
+  const otherStatementEvent = {
+    id: 'other_statement_event',
+    defendantId: 'other_defendant',
+    eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+  }
+  const coDefendantProsecutionAppeal = {
+    id: 'co_defendant_prosecution_appeal',
+    defendantId: 'other_defendant',
+    eventType: AppealEventType.APPEALED,
+    userRole: UserRole.PROSECUTOR,
+  }
+
+  const makeVerdictAppealCase = () => {
+    const statementDeadlines = [
+      ownDeadline,
+      otherDeadline,
+      prosecutionDeadline,
+    ]
+    const appealEventLogs = [
+      ownEvent,
+      otherStatementEvent,
+      coDefendantProsecutionAppeal,
+    ]
+
+    return {
+      toJSON: () => ({
+        id: 'verdict_appeal_case_id',
+        statementDeadlines,
+        appealEventLogs,
+      }),
+      id: 'verdict_appeal_case_id',
+      statementDeadlines,
+      appealEventLogs,
+    }
+  }
+
+  const makeIndictmentWithVerdictAppeal = () => ({
+    ...makeCase([
+      {
+        ...makeDefendant(nationalId),
+        id: 'own_defendant',
+        isAppealDefenderConfirmed: true,
+        appealDefenderNationalId: nationalId,
+      },
+      {
+        ...makeDefendant(otherNationalId),
+        id: 'other_defendant',
+        isAppealDefenderConfirmed: true,
+        appealDefenderNationalId: otherNationalId,
+      },
+    ]),
+    verdictAppealCase: makeVerdictAppealCase(),
+  })
+
+  beforeEach(() => {
+    mockRequest.mockReset()
+    mockHandle.mockReset()
+  })
+
+  it('keeps own-party rows and co-defendant prosecution appeal events', async () => {
+    const theCase = makeIndictmentWithVerdictAppeal()
+    mockRequest.mockImplementationOnce(() => ({
+      user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+    }))
+    mockHandle.mockReturnValueOnce(of(theCase))
+
+    const interceptor = new CaseInterceptor({
+      findOriginalAncestorId: (c: { id?: string }) => Promise.resolve(c.id),
+    } as unknown as CaseRepositoryService)
+
+    const result = (await firstValueFrom(
+      interceptor.intercept(
+        {
+          switchToHttp: () => ({ getRequest: mockRequest }),
+        } as unknown as ExecutionContext,
+        { handle: mockHandle } as unknown as CallHandler,
+      ),
+    )) as {
+      verdictAppealCase: {
+        statementDeadlines: { id: string }[]
+        appealEventLogs: { id: string }[]
+      }
+    }
+
+    expect(
+      result.verdictAppealCase.statementDeadlines.map((d) => d.id),
+    ).toEqual(['own_deadline'])
+    expect(result.verdictAppealCase.appealEventLogs.map((e) => e.id)).toEqual([
+      'own_event',
+      'co_defendant_prosecution_appeal',
+    ])
+  })
+
+  it('leaves verdict-appeal deadlines unfiltered for non-defence users', async () => {
+    const theCase = makeIndictmentWithVerdictAppeal()
+    mockRequest.mockImplementationOnce(() => ({
+      user: { currentUser: { role: UserRole.PROSECUTOR, nationalId } },
+    }))
+    mockHandle.mockReturnValueOnce(of(theCase))
+
+    const interceptor = new CaseInterceptor({
+      findOriginalAncestorId: (c: { id?: string }) => Promise.resolve(c.id),
+    } as unknown as CaseRepositoryService)
+
+    const result = (await firstValueFrom(
+      interceptor.intercept(
+        {
+          switchToHttp: () => ({ getRequest: mockRequest }),
+        } as unknown as ExecutionContext,
+        { handle: mockHandle } as unknown as CallHandler,
+      ),
+    )) as {
+      verdictAppealCase: {
+        statementDeadlines: { id: string }[]
+        appealEventLogs: { id: string }[]
+      }
+    }
+
+    expect(
+      result.verdictAppealCase.statementDeadlines.map((d) => d.id),
+    ).toEqual(['own_deadline', 'other_deadline', 'prosecution_deadline'])
+    expect(result.verdictAppealCase.appealEventLogs.map((e) => e.id)).toEqual([
+      'own_event',
+      'other_statement_event',
+      'co_defendant_prosecution_appeal',
+    ])
   })
 })

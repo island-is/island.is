@@ -673,6 +673,118 @@ const transformCaseRepresentatives = (
   ].filter((representative) => !!representative)
 }
 
+const getDefenceUserVerdictAppealPartyIds = (
+  theCase: Case,
+  nationalId: string,
+): { defendantIds: Set<string>; civilClaimantIds: Set<string> } => {
+  const defendantIds = new Set(
+    (theCase.defendants ?? [])
+      .filter(
+        (defendant) =>
+          (defendant.isDefenderChoiceConfirmed &&
+            defendant.defenderNationalId === nationalId) ||
+          (defendant.isAppealDefenderConfirmed &&
+            !defendant.isAppealDefenderWaived &&
+            defendant.appealDefenderNationalId === nationalId),
+      )
+      .map((defendant) => defendant.id),
+  )
+
+  const civilClaimantIds = new Set(
+    (theCase.civilClaimants ?? [])
+      .filter(
+        (civilClaimant) =>
+          (civilClaimant.hasSpokesperson &&
+            civilClaimant.isSpokespersonConfirmed &&
+            civilClaimant.spokespersonNationalId === nationalId) ||
+          (civilClaimant.hasAppealSpokesperson !== false &&
+            civilClaimant.isAppealSpokespersonConfirmed &&
+            civilClaimant.appealSpokespersonNationalId === nationalId),
+      )
+      .map((civilClaimant) => civilClaimant.id),
+  )
+
+  return { defendantIds, civilClaimantIds }
+}
+
+const isVerdictAppealPartyRow = (
+  row: { defendantId?: string | null; civilClaimantId?: string | null },
+  partyIds: { defendantIds: Set<string>; civilClaimantIds: Set<string> },
+): boolean =>
+  Boolean(
+    (row.defendantId && partyIds.defendantIds.has(row.defendantId)) ||
+      (row.civilClaimantId && partyIds.civilClaimantIds.has(row.civilClaimantId)),
+  )
+
+// Prosecution APPEALED / APPEAL_WITHDRAWN rows for defendants still on the
+// case — DefenderVerdictTimelineCard shows every defendant and needs these
+// for the “Ákæruvaldið áfrýjaði …” bullet on co-defendants too.
+const isProsecutionVerdictAppealTimelineEvent = (
+  eventLog: AppealEventLog,
+  theCase: Case,
+): boolean => {
+  if (
+    (eventLog.eventType !== AppealEventType.APPEALED &&
+      eventLog.eventType !== AppealEventType.APPEAL_WITHDRAWN) ||
+    !eventLog.userRole ||
+    !prosecutionRoles.includes(eventLog.userRole) ||
+    !eventLog.defendantId
+  ) {
+    return false
+  }
+
+  return Boolean(
+    theCase.defendants?.some(
+      (defendant) => defendant.id === eventLog.defendantId,
+    ),
+  )
+}
+
+const shouldKeepVerdictAppealEventLogForDefenceUser = (
+  eventLog: AppealEventLog,
+  theCase: Case,
+  partyIds: { defendantIds: Set<string>; civilClaimantIds: Set<string> },
+): boolean =>
+  isVerdictAppealPartyRow(eventLog, partyIds) ||
+  isProsecutionVerdictAppealTimelineEvent(eventLog, theCase)
+
+const transformVerdictAppealCaseForUser = (
+  appealCase: AppealCase,
+  theCase: Case,
+  defenceUser: User | undefined,
+): Record<string, unknown> => {
+  const json = appealCase.toJSON() as Record<string, unknown>
+
+  if (!defenceUser) {
+    return json
+  }
+
+  const partyIds = getDefenceUserVerdictAppealPartyIds(
+    theCase,
+    defenceUser.nationalId,
+  )
+
+  return {
+    ...json,
+    statementDeadlines: (appealCase.statementDeadlines ?? [])
+      .filter((deadline) => isVerdictAppealPartyRow(deadline, partyIds))
+      .map((deadline) =>
+        typeof deadline.toJSON === 'function' ? deadline.toJSON() : deadline,
+      ),
+    appealEventLogs: (appealCase.appealEventLogs ?? [])
+      .filter((eventLog) =>
+        shouldKeepVerdictAppealEventLogForDefenceUser(
+          eventLog,
+          theCase,
+          partyIds,
+        ),
+      )
+      .map((eventLog) =>
+        typeof eventLog.toJSON === 'function' ? eventLog.toJSON() : eventLog,
+      ),
+  }
+}
+
 const getDefenceUserDefendants = (
   theCase: Case,
   user: User,
@@ -828,6 +940,19 @@ const transformCase = (
       }
     : {}
 
+  // Defence users only see their own parties' verdict-appeal deadlines and
+  // event logs. An empty party filter would otherwise match prosecution rows
+  // (null/null), and other defendants' greinargerðarfrest is not theirs.
+  const verdictAppealCaseOverride = theCase.verdictAppealCase
+    ? {
+        verdictAppealCase: transformVerdictAppealCaseForUser(
+          theCase.verdictAppealCase,
+          theCase,
+          isDefence ? user : undefined,
+        ),
+      }
+    : {}
+
   const caseLevelAppealInfo = getCaseLevelAppealInfo(theCase)
 
   return {
@@ -856,6 +981,7 @@ const transformCase = (
     )?.announcement,
     ...appealCaseOverride,
     ...rulingOrderAppealCasesOverride,
+    ...verdictAppealCaseOverride,
     defendants: transformDefendants({
       defendants: transformedDefendants,
       indictmentRulingDecision: theCase.indictmentRulingDecision,

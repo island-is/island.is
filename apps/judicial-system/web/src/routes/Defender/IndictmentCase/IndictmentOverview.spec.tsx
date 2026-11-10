@@ -6,6 +6,7 @@ import { Feature } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components'
 import {
+  AppealCaseRulingDecision,
   AppealCaseState,
   AppealCourtSessionType,
   CaseIndictmentRulingDecision,
@@ -328,6 +329,81 @@ describe('Defender IndictmentOverview', () => {
       expect(await screen.findByText('Á dagskrá')).toBeInTheDocument()
       expect(screen.getByText('Aðalmeðferð')).toBeInTheDocument()
       expect(screen.getByText('Undirbúningsþinghald')).toBeInTheDocument()
+    })
+  })
+
+  describe('verdict appeal deadline and conclusion', () => {
+    const daysFromNow = (days: number, hours: number): Date => {
+      const date = new Date()
+      date.setDate(date.getDate() + days)
+      date.setHours(hours, 0, 0, 0)
+
+      return date
+    }
+
+    it('shows the statement deadline for a confirmed appeal defender', async () => {
+      const deadline = daysFromNow(5, 15)
+      const theCase = completedCase(CaseIndictmentRulingDecision.RULING, {
+        verdictAppealCase: {
+          id: 'verdict_appeal_case_id',
+          appealState: AppealCaseState.RECEIVED,
+          statementDeadlines: [
+            {
+              id: 'deadline_id',
+              defendantId: 'own_client_id',
+              deadline: deadline.toISOString(),
+            },
+          ],
+        },
+      })
+      const [ownClient, ...others] = theCase.defendants ?? []
+
+      renderOverview({
+        ...theCase,
+        defendants: ownClient
+          ? [
+              {
+                ...ownClient,
+                isAppealDefenderConfirmed: true,
+                appealDefenderNationalId: defenderNationalId,
+              },
+              ...others,
+            ]
+          : [],
+      })
+
+      expect(await screen.findByText('Dómur áfrýjaður')).toBeInTheDocument()
+      expect(
+        screen.getByText(
+          `Frestur til að skila greinargerð rennur út ${
+            formatDate(deadline, 'PPPp') ?? ''
+          }`,
+        ),
+      ).toBeInTheDocument()
+    })
+
+    it('shows Landsréttur’s written conclusion for a verdict appeal', async () => {
+      renderOverview(
+        completedCase(CaseIndictmentRulingDecision.RULING, {
+          verdictAppealCase: {
+            id: 'verdict_appeal_case_id',
+            appealState: AppealCaseState.COMPLETED,
+            appealRulingDate: '2026-12-01T12:00:00.000Z',
+            appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+            appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+          },
+        }),
+      )
+
+      expect(
+        await screen.findByText('Dómsorð Landsréttar'),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText('Hinn áfrýjaði dómur skal vera óraskaður.'),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText('Niðurstaða Landsréttar 1. desember 2026'),
+      ).toBeInTheDocument()
     })
   })
 })
