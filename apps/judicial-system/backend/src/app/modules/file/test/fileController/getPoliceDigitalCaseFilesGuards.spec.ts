@@ -15,7 +15,7 @@ describe('FileController - Get police digital case files guards', () => {
     CaseReadGuard,
   ])
 
-  // The guard above runs against the case in the url. The interceptor then
+  // The guards above run against the case in the url. The interceptor then
   // swaps in the original ancestor, where the police digital case files live.
   verifyInterceptors(FileController, 'getPoliceDigitalCaseFiles', [
     CaseOriginalAncestorInterceptor,
