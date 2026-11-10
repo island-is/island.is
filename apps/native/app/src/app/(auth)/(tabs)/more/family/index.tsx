@@ -12,7 +12,13 @@ import {
 import { useRouter } from 'expo-router'
 import { useTheme } from 'styled-components/native'
 
-import { EmptyList, FamilyMemberCard, Skeleton, TopLine, Problem } from '@/ui'
+import {
+  EmptyList,
+  FamilyMemberCard,
+  Skeleton,
+  TopLine,
+  StatusMessage,
+} from '@/ui'
 import illustrationSrc from '@/assets/illustrations/hero_spring.png'
 import {
   NationalRegistryChildCustody,
@@ -253,7 +259,7 @@ export default function FamilyScreen() {
           renderItem={renderItem}
         />
       )}
-      {familyRes.error && !familyRes.data && <Problem withContainer />}
+      {familyRes.error && !familyRes.data && <StatusMessage withContainer />}
       <TopLine scrollY={scrollY} />
     </>
   )

@@ -21,8 +21,10 @@ export type Rule = {
   lookups?: { param: string; table: LegacyVerdictTable }[]
   /** Old ids that may still be valid GoPro ids (g-{id}) */
   goproIdParam?: string
-  /** Old ids that map directly to an island.is path */
+  /** Old ids that map directly to an island.is path, unless found in lookups */
   directPath?: { param: string; path: (id: string) => string }
+  /** The island.is path for an id found in lookups, defaults to /domar/{id} */
+  path?: (id: string) => string
   /** Legacy verdict that can be read from the url itself */
   fromQuery?: (query: ParsedUrlQuery) => LegacyVerdict | undefined
   /** Courts to look case numbers up in, unless the legacy verdict has one */

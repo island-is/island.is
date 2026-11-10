@@ -15,18 +15,26 @@ const courtVerdictRedirect: LegacyRedirectHandler = async ({
   const rule = findRule(host, path, query)
   if (!rule) return null
 
-  if (rule.directPath) {
+  const toPath = rule.path ?? ((id: string) => `/domar/${id}`)
+  const verdict = findLegacyVerdict(rule, query)
+
+  // Ids that changed on island.is are listed in the lookups
+  if (verdict?.id) {
+    return { destination: toPath(verdict.id), permanent: false }
+  }
+
+  // Known verdicts without an island.is id are looked up by case number instead
+  if (rule.directPath && !verdict) {
     const oldId = getQueryValue(query, rule.directPath.param)
     if (oldId && isGuid(oldId)) {
       return { destination: rule.directPath.path(oldId), permanent: false }
     }
   }
 
-  const verdict = findLegacyVerdict(rule, query)
   const newId = await resolveVerdictId(rule, query, verdict)
 
   if (newId) {
-    return { destination: `/domar/${newId}`, permanent: false }
+    return { destination: toPath(newId), permanent: false }
   }
 
   const params = new URLSearchParams(rule.fallbackQuery(verdict))
