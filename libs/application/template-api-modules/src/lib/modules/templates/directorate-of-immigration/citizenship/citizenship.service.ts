@@ -26,7 +26,7 @@ import {
   TravelDocumentViewModel,
 } from '@island.is/clients/directorate-of-immigration'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { YES } from '@island.is/application/core'
+import { NO, YES } from '@island.is/application/core'
 import { Auth } from '@island.is/auth-nest-tools'
 import { ApplicantInformation } from './types'
 import { NationalRegistryV3ApplicationsClientService } from '@island.is/clients/national-registry-v3-applications'
@@ -278,7 +278,9 @@ export class CitizenshipService extends BaseTemplateApiService {
           })
       }
     }
-    const nonNullPassports = answers.childrenPassport?.filter((x) => !!x)
+    const nonNullPassports = answers.childrenPassport?.filter(
+      (x) => !!x && x.hasPassport !== NO,
+    )
 
     // Submit the application
     await this.directorateOfImmigrationClient.submitApplicationForCitizenship(
