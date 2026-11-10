@@ -26,6 +26,7 @@ export type DirectorateOfEqualityCompany = {
   nextEqualityPlanDeadline: string | null
   salaryReportRequired: boolean
   nextSalaryReportDeadline: string | null
+  serviceProviderApprovedAt: string | null
 }
 
 export type DirectorateOfEqualitySubmission = {
@@ -117,4 +118,41 @@ export type DirectorateOfEqualityReport = {
   distribution: DirectorateOfEqualityDistribution
   payComponents: DirectorateOfEqualityPayComponents
   improvementPlan: DirectorateOfEqualityImprovementAction[]
+}
+
+export enum DirectorateOfEqualityApiKeyType {
+  COMPANY = 'COMPANY',
+  SERVICE_PROVIDER = 'SERVICE_PROVIDER',
+}
+
+export type DirectorateOfEqualityApiKey = {
+  id: string
+  keyId: string
+  type: DirectorateOfEqualityApiKeyType
+  label: string | null
+  createdAt: string
+  createdByNationalId: string | null
+  expiresAt: string | null
+  lastUsedAt: string | null
+  revokedAt: string | null
+}
+
+export type DirectorateOfEqualityIssuedApiKey = DirectorateOfEqualityApiKey & {
+  key: string
+}
+
+export type DirectorateOfEqualityServiceProvider = {
+  nationalId: string
+  name: string
+  grantedAt: string
+  grantedByNationalId: string
+}
+
+export type DirectorateOfEqualityAvailableServiceProvider = {
+  nationalId: string
+  name: string
+}
+
+export type DirectorateOfEqualityMutationResult = {
+  success: boolean
 }

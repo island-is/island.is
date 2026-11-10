@@ -13,6 +13,7 @@ const EqualityPlanDetail = lazy(() =>
   import('./screens/EqualityPlanDetail/EqualityPlanDetail'),
 )
 const ReportDetail = lazy(() => import('./screens/ReportDetail/ReportDetail'))
+const ApiKeys = lazy(() => import('./screens/ApiKeys/ApiKeys'))
 
 export const directorateOfEqualityModule: PortalModule = {
   name: m.equality,
@@ -56,6 +57,15 @@ export const directorateOfEqualityModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.directorateOfEqualitySalary),
       requiredScopes: [ApiScope.directorateOfEqualitySalary],
       element: <ReportDetail />,
+    },
+    {
+      name: m.equalityApiKeys,
+      path: DirectorateOfEqualityPaths.ApiKeys,
+      // TODO: restore together with ApiScope.directorateOfEqualityApiKeys in servicePortalScopes
+      // enabled: userInfo.scopes.includes(ApiScope.directorateOfEqualityApiKeys),
+      // requiredScopes: [ApiScope.directorateOfEqualityApiKeys],
+      enabled: true,
+      element: <ApiKeys />,
     },
   ],
 }

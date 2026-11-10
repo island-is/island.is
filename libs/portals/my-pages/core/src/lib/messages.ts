@@ -2346,7 +2346,8 @@ export const m = defineMessages({
   },
   equalityDescription: {
     id: 'service.portal:equality-description',
-    defaultMessage: 'Jafnréttisáætlanir, skýrslur og veflykill fyrirtækisins',
+    defaultMessage:
+      'Jafnréttisáætlanir, skýrslur og aðgangslyklar fyrirtækisins',
   },
   equalitySubmissions: {
     id: 'service.portal:equality-submissions',
@@ -2372,6 +2373,10 @@ export const m = defineMessages({
     id: 'service.portal:equality-tooltip',
     defaultMessage:
       'Jafnréttisstofa hefur umsjón með gögnum um jafnréttisáætlanir og skýrslur fyrirtækisins.',
+  },
+  equalityApiKeys: {
+    id: 'service.portal:equality-api-keys',
+    defaultMessage: 'Aðgangslyklar',
   },
 })
 

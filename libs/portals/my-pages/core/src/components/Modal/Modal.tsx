@@ -7,7 +7,9 @@ import {
   ResponsiveProp,
   Text,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import React, { FC, ReactElement, useEffect, useState } from 'react'
+import { m } from '../../lib/messages'
 import * as styles from './Modal.css'
 
 interface Props {
@@ -57,6 +59,7 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
   iconSrc,
   buttonsSpacing,
 }) => {
+  const { formatMessage } = useLocale()
   const [closing, setClosing] = useState(false)
   const [startClosing, setStartClosing] = useState(false)
 
@@ -115,6 +118,7 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
                 circle
                 colorScheme="negative"
                 icon="close"
+                aria-label={formatMessage(m.close)}
                 onClick={() => {
                   closeModal()
                 }}
@@ -124,7 +128,7 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
             <Box width="full">
               <Box marginBottom={4} paddingRight={[7, 7, 0, 0]}>
                 {title && (
-                  <Text variant="h3" marginBottom={1}>
+                  <Text variant="h3" as="h2" marginBottom={1}>
                     <Hyphen>{title}</Hyphen>
                   </Text>
                 )}

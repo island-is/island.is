@@ -58,6 +58,8 @@ export const Select = <
   hideSelectedOptions,
   onMenuOpen,
   onMenuClose,
+  menuPosition,
+  closeMenuOnScroll,
 }: SelectProps<OptionType<Value>, IsMulti, Group>) => {
   const errorId = `${id}-error`
   const ariaError = hasError
@@ -128,6 +130,8 @@ export const Select = <
         isClearable
         backspaceRemovesValue
         menuShouldScrollIntoView={false}
+        menuPosition={menuPosition}
+        closeMenuOnScroll={closeMenuOnScroll}
         onMenuOpen={onMenuOpen}
         onMenuClose={onMenuClose}
       />
@@ -195,6 +199,8 @@ export const Select = <
         isClearable={isClearable}
         backspaceRemovesValue={isClearable}
         menuShouldScrollIntoView={false}
+        menuPosition={menuPosition}
+        closeMenuOnScroll={closeMenuOnScroll}
         onMenuOpen={onMenuOpen}
         onMenuClose={onMenuClose}
       />

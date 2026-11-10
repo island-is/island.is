@@ -4,7 +4,6 @@ import { AlertMessage, Box, LinkV2, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   formatDate,
-  formatNationalId,
   InfoLine,
   InfoLineStack,
   IntroWrapper,
@@ -35,7 +34,11 @@ export const SubmissionsWrapper = ({
   const tabs =
     directorateOfEqualityNavigation.children
       ?.find((item) => item.path === DirectorateOfEqualityPaths.Submissions)
-      ?.children?.filter((item) => !item.navHide) ?? []
+      ?.children?.filter(
+        (item) =>
+          item.path === DirectorateOfEqualityPaths.Plans ||
+          item.path === DirectorateOfEqualityPaths.Reports,
+      ) ?? []
 
   return (
     <IntroWrapper
@@ -48,27 +51,7 @@ export const SubmissionsWrapper = ({
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && (
-        <InfoLineStack label={messages.companyInfo}>
-          <InfoLine
-            label={messages.companyName}
-            content={company?.name}
-            loading={loading}
-          />
-          <InfoLine
-            label={messages.companyNationalId}
-            content={company ? formatNationalId(company.nationalId) : undefined}
-            loading={loading}
-          />
-          <InfoLine
-            label={messages.employeeCount}
-            content={company?.employeeCountRange}
-            loading={loading}
-          />
-          <InfoLine
-            label={messages.isatCategory}
-            content={company?.isatCategory}
-            loading={loading}
-          />
+        <InfoLineStack label={messages.submissionObligations}>
           <InfoLine
             label={messages.equalityPlanRequired}
             content={formatMessage(

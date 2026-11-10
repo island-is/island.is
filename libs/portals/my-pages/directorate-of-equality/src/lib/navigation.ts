@@ -12,9 +12,18 @@ export const directorateOfEqualityNavigation: PortalNavigationItem = {
     {
       name: m.equalitySubmissions,
       path: DirectorateOfEqualityPaths.Submissions,
+      searchTags: [m.equalityPlans, m.equalityReports],
       children: [
-        { name: m.equalityPlans, path: DirectorateOfEqualityPaths.Plans },
-        { name: m.equalityReports, path: DirectorateOfEqualityPaths.Reports },
+        {
+          name: m.equalityPlans,
+          path: DirectorateOfEqualityPaths.Plans,
+          navHide: true,
+        },
+        {
+          name: m.equalityReports,
+          path: DirectorateOfEqualityPaths.Reports,
+          navHide: true,
+        },
         {
           name: m.equalityPlan,
           path: DirectorateOfEqualityPaths.PlanDetail,
@@ -28,6 +37,10 @@ export const directorateOfEqualityNavigation: PortalNavigationItem = {
           searchHide: true,
         },
       ],
+    },
+    {
+      name: m.equalityApiKeys,
+      path: DirectorateOfEqualityPaths.ApiKeys,
     },
   ],
 }

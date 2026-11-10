@@ -1,4 +1,7 @@
 import {
+  DirectorateOfEqualityApiKey,
+  DirectorateOfEqualityApiKeyType,
+  DirectorateOfEqualityAvailableServiceProvider,
   DirectorateOfEqualityCompany,
   DirectorateOfEqualityDistribution,
   DirectorateOfEqualityEqualityPlan,
@@ -9,6 +12,7 @@ import {
   DirectorateOfEqualityReport,
   DirectorateOfEqualitySubmission,
   DirectorateOfEqualitySubmissionStatus,
+  DirectorateOfEqualityServiceProvider,
   DirectorateOfEqualitySubmissionType,
 } from './types'
 
@@ -17,6 +21,7 @@ export type MockScenario =
   | 'planOnly'
   | 'notObliged'
   | 'noSubmissions'
+  | 'notServiceProvider'
 export const MOCK_SCENARIO = 'default' as MockScenario
 
 export const MOCK_COMPANY: DirectorateOfEqualityCompany = {
@@ -33,6 +38,8 @@ export const MOCK_COMPANY: DirectorateOfEqualityCompany = {
     MOCK_SCENARIO === 'default' || MOCK_SCENARIO === 'noSubmissions'
       ? '2027-02-28'
       : null,
+  serviceProviderApprovedAt:
+    MOCK_SCENARIO === 'notServiceProvider' ? null : '2026-10-20',
 }
 
 export const MOCK_PLAN_SUBMISSIONS: DirectorateOfEqualitySubmission[] =
@@ -241,3 +248,55 @@ export const MOCK_REPORTS: DirectorateOfEqualityReport[] = [
     improvementPlan: [],
   },
 ]
+
+export const MOCK_GRANTED_BY_NATIONAL_ID = '0101302399'
+
+export const MOCK_SERVICE_PROVIDERS: DirectorateOfEqualityServiceProvider[] = [
+  {
+    nationalId: '4507231690',
+    name: 'Kjarni',
+    grantedAt: '2026-10-28',
+    grantedByNationalId: MOCK_GRANTED_BY_NATIONAL_ID,
+  },
+  {
+    nationalId: '5402697509',
+    name: 'Orri',
+    grantedAt: '2026-10-26',
+    grantedByNationalId: MOCK_GRANTED_BY_NATIONAL_ID,
+  },
+]
+
+export const MOCK_APPROVED_SERVICE_PROVIDERS: DirectorateOfEqualityAvailableServiceProvider[] = [
+  { nationalId: '4507231690', name: 'Kjarni' },
+  { nationalId: '5402697509', name: 'Orri' },
+  { nationalId: '5005101370', name: 'Prufulykill' },
+  { nationalId: '6905120350', name: 'Bókhaldsstofan ehf.' },
+]
+
+export const MOCK_API_KEYS: DirectorateOfEqualityApiKey[] =
+  MOCK_SCENARIO === 'notServiceProvider'
+    ? []
+    : [
+        {
+          id: 'key-e4b4b1f931b0230d',
+          keyId: 'e4b4b1f931b0230d',
+          type: DirectorateOfEqualityApiKeyType.SERVICE_PROVIDER,
+          label: 'Framleiðsluumhverfi',
+          createdAt: '2026-10-28',
+          createdByNationalId: MOCK_GRANTED_BY_NATIONAL_ID,
+          expiresAt: '2027-10-28',
+          lastUsedAt: null,
+          revokedAt: null,
+        },
+        {
+          id: 'key-7c1d9e04a6f2b358',
+          keyId: '7c1d9e04a6f2b358',
+          type: DirectorateOfEqualityApiKeyType.SERVICE_PROVIDER,
+          label: 'Prófunarumhverfi',
+          createdAt: '2026-03-02',
+          createdByNationalId: MOCK_GRANTED_BY_NATIONAL_ID,
+          expiresAt: '2027-03-02',
+          lastUsedAt: '2026-10-27',
+          revokedAt: '2026-10-28',
+        },
+      ]
