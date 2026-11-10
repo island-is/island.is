@@ -13,7 +13,7 @@ import { useRouter } from 'expo-router'
 import { useTheme } from 'styled-components/native'
 
 import illustrationSrc from '@/assets/illustrations/le-moving-s1.png'
-import { MoreInfoContiner } from '@/components/more-info-container/more-info-container'
+import { MoreInfoContainer } from '@/components/more-info-container/more-info-container'
 import { useListAssetsQuery } from '@/graphql/types/schema'
 import { useMyPagesLinks } from '@/lib/my-pages-links'
 import { AssetCard, EmptyList, Skeleton, TopLine } from '@/ui'
@@ -217,7 +217,7 @@ export default function AssetsOverviewScreen() {
         ListFooterComponent={
           isEmpty ? null : (
             <View style={{ paddingHorizontal: 16, paddingVertical: 12 }}>
-              <MoreInfoContiner externalLinks={externalLinks} />
+              <MoreInfoContainer externalLinks={externalLinks} />
             </View>
           )
         }

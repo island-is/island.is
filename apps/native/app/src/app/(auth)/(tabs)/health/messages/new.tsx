@@ -30,8 +30,8 @@ import { useLocale } from '@/hooks/use-locale'
 import {
   Button,
   GeneralCardSkeleton,
-  Problem,
-  ProblemTemplate,
+  StatusMessage,
+  StatusMessageTemplate,
   Select,
   TextField,
   Typography,
@@ -391,7 +391,7 @@ export default function HealthMessageComposeScreen() {
             <GeneralCardSkeleton height={176} />
           </View>
         ) : recipientsError ? (
-          <Problem
+          <StatusMessage
             type="error"
             error={recipientsRes.error}
             title={intl.formatMessage({ id: 'problem.error.title' })}
@@ -524,7 +524,7 @@ export default function HealthMessageComposeScreen() {
                 {/* Certificate requests aren't supported here — link to My
                 Pages instead of a send form. */}
                 {isCertificateSelected && (
-                  <ProblemTemplate
+                  <StatusMessageTemplate
                     variant="info"
                     showIcon
                     title={intl.formatMessage({
@@ -544,7 +544,7 @@ export default function HealthMessageComposeScreen() {
                 {/* External services (the Heilsuvera web chat) are opened, not
                 messaged. The server-side description covers opening hours. */}
                 {!!externalLinkUrl && (
-                  <ProblemTemplate
+                  <StatusMessageTemplate
                     variant="info"
                     showIcon
                     title={selectedType?.title ?? ''}

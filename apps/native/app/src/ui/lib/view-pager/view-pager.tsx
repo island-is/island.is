@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { Animated } from 'react-native'
 import styled from 'styled-components/native'
-import { dynamicColor } from '../../utils'
+import { token } from '../../utils'
 
 const Dots = styled.View`
   flex-direction: row;
@@ -18,21 +18,21 @@ const DotContainer = styled(Animated.View)`
 const DotLeft = styled(Animated.View)`
   width: 8px;
   height: 8px;
-  background-color: ${(props) => props.theme.color.red400};
+  background-color: ${({ theme }) => theme.tokens.feedback.error.foreground};
   border-radius: 4px;
 `
 
 const DotCenter = styled(Animated.View)`
   width: 1px;
   height: 8px;
-  background-color: ${(props) => props.theme.color.red400};
+  background-color: ${({ theme }) => theme.tokens.feedback.error.foreground};
 `
 
 const DotRight = styled(Animated.View)`
   width: 8px;
   height: 8px;
   margin-left: -1px;
-  background-color: ${(props) => props.theme.color.red400};
+  background-color: ${({ theme }) => theme.tokens.feedback.error.foreground};
   border-radius: 4px;
 `
 
@@ -40,7 +40,7 @@ const DotOver = styled(Animated.View)`
   position: absolute;
   width: 1px;
   height: 8px;
-  background-color: ${dynamicColor('background')};
+  background-color: ${token((t) => t.background.invert)};
 `
 
 interface ViewPagerProps {

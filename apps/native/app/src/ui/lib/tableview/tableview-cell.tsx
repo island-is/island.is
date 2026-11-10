@@ -1,7 +1,7 @@
 import React from 'react'
 import { SafeAreaView, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
-import { dynamicColor } from '../../utils'
+import { token } from '../../utils'
 import { font } from '../../utils/font'
 import { Typography } from '../typography/typography'
 
@@ -43,13 +43,7 @@ const Cell = styled.View<{ border: boolean; disabled: boolean }>`
   flex-direction: row;
   min-height: 56px;
   border-bottom-width: ${(props) => (props.border ? 1 : 0)}px;
-  border-bottom-color: ${dynamicColor(
-    ({ theme }) => ({
-      dark: theme.shades.dark.shade200,
-      light: theme.color.blue200,
-    }),
-    true,
-  )};
+  border-bottom-color: ${token((t) => t.border.primary)};
 
   opacity: ${(props) => (props.disabled ? 0.5 : 1)};
 `
@@ -93,7 +87,7 @@ const Subtitle = styled.View`
 const SubtitleText = styled.Text`
   ${font({
     fontSize: 15,
-    color: (props) => ({ light: props.theme.color.dark400, dark: '#e0e0e0' }),
+    color: ({ theme }) => theme.tokens.foreground.primary,
     fontWeight: '300',
   })}
 `
@@ -101,10 +95,7 @@ const SubtitleText = styled.Text`
 export const TableViewAccessory = styled.Text`
   ${font({
     fontSize: 14,
-    color: ({ theme }) => ({
-      light: theme.color.dark400,
-      dark: theme.color.white,
-    }),
+    color: ({ theme }) => theme.tokens.foreground.primary,
   })}
 `
 

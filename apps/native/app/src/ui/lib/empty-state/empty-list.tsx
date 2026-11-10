@@ -2,7 +2,7 @@ import React from 'react'
 import { View } from 'react-native'
 import styled from 'styled-components/native'
 
-import { dynamicColor } from '../../utils'
+import { token } from '../../utils'
 import { Typography } from '../typography/typography'
 
 const Host = styled.View`
@@ -24,13 +24,7 @@ const HostWithBorder = styled.View`
 
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: ${({ theme }) => theme.border.width.standard}px;
-  border-color: ${dynamicColor(
-    ({ theme }) => ({
-      light: theme.color.blue200,
-      dark: theme.shades.dark.shade300,
-    }),
-    true,
-  )};
+  border-color: ${token((t) => t.border.primary)};
 `
 
 const ImageWrap = styled.View`

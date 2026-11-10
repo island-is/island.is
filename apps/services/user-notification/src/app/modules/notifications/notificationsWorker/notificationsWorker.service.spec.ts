@@ -2010,9 +2010,11 @@ describe('NotificationsWorkerService', () => {
     }>([
       { isUrgent: true, priorityType: 'Informative', shouldSend: true },
       { isUrgent: true, priorityType: 'Actionable', shouldSend: true },
+      { isUrgent: true, priorityType: 'Important', shouldSend: true },
       { isUrgent: true, priorityType: undefined, shouldSend: true },
       { isUrgent: false, priorityType: 'Informative', shouldSend: false },
       { isUrgent: false, priorityType: 'Actionable', shouldSend: true },
+      { isUrgent: false, priorityType: 'Important', shouldSend: false },
       { isUrgent: false, priorityType: undefined, shouldSend: false },
     ])(
       'and given notification urgency is $isUrgent and template priority is $priorityType',

@@ -8,18 +8,12 @@ import IconC from '../../assets/licenece-type/icon-c.png'
 import IconCE from '../../assets/licenece-type/icon-ce.png'
 import IconD from '../../assets/licenece-type/icon-d.png'
 import IconDE from '../../assets/licenece-type/icon-de.png'
-import { dynamicColor } from '../../utils'
+import { token } from '../../utils'
 import { font } from '../../utils/font'
 
 const Host = styled.View`
   border-width: ${({ theme }) => theme.border.width.standard}px;
-  border-color: ${dynamicColor(
-    ({ theme }) => ({
-      dark: theme.shades.dark.shade500,
-      light: theme.color.blue200,
-    }),
-    true,
-  )};
+  border-color: ${token((t) => t.border.primary)};
   border-radius: ${({ theme }) => theme.spacing[2]}px;
   margin-top: ${({ theme }) => theme.spacing[1]}px;
   margin-bottom: ${({ theme }) => theme.spacing[1]}px;
@@ -30,13 +24,7 @@ const Header = styled.View<{ hideBorder?: boolean }>`
   flex-direction: row;
   border-bottom-width: ${({ theme, hideBorder }) =>
     hideBorder ? 0 : theme.border.width.standard}px;
-  border-bottom-color: ${dynamicColor(
-    ({ theme }) => ({
-      dark: theme.shades.dark.shade500,
-      light: theme.color.blue200,
-    }),
-    true,
-  )};
+  border-bottom-color: ${token((t) => t.border.primary)};
   padding: ${({ theme }) => theme.spacing[2]}px;
 `
 const HeaderTextBold = styled.Text<{ rightSpacing: boolean }>`
@@ -67,7 +55,7 @@ const IconWrap = styled.View`
 `
 
 const IconImage = styled.Image`
-  tint-color: ${dynamicColor('foreground')};
+  tint-color: ${token((t) => t.foreground.primary)};
 `
 
 interface FieldCardProps {

@@ -13,7 +13,7 @@ interface EmptyStateProps {
 const Host = styled.View`
   margin-top: ${({ theme }) => theme.spacing[3]}px;
   border-width: 1px;
-  border-color: ${({ theme }) => theme.color.blue200};
+  border-color: ${({ theme }) => theme.tokens.border.primary};
   border-radius: ${({ theme }) => theme.border.radius.large};
   padding-vertical: ${({ theme }) => theme.spacing[8]}px;
   padding-top: ${({ theme }) => theme.spacing[8]}px;
