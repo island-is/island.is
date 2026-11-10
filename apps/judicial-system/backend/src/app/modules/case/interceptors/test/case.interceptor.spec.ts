@@ -194,6 +194,50 @@ describe('CaseInterceptor - getDefenceUserDefendants', () => {
     })
   })
 
+  describe('when the defence user is only confirmed as an appeal advocate', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const theCase = makeCase([
+        {
+          ...makeDefendant(undefined),
+          id: 'own_defendant',
+          isDefenderChoiceConfirmed: false,
+          isAppealDefenderConfirmed: true,
+          isAppealDefenderWaived: false,
+          appealDefenderNationalId: nationalId,
+          toJSON: () => ({
+            id: 'own_defendant',
+            appealDefenderNationalId: nationalId,
+          }),
+        },
+        {
+          ...makeDefendant(otherNationalId),
+          id: 'other_defendant',
+          toJSON: () => ({
+            id: 'other_defendant',
+            defenderNationalId: otherNationalId,
+          }),
+        },
+      ])
+
+      mockRequest.mockImplementationOnce(() => ({
+        user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+      }))
+      mockHandle.mockReturnValueOnce(of(theCase))
+
+      then = await givenWhenThen(theCase)
+    })
+
+    it('returns only the appeal-confirmed defendant', () => {
+      expect(then.result.defendants).toHaveLength(1)
+      expect(then.result.defendants[0]).toMatchObject({
+        id: 'own_defendant',
+        appealDefenderNationalId: nationalId,
+      })
+    })
+  })
+
   describe('when the defence user has confirmed defendants but none are dismissed or cancelled', () => {
     let then: Then
 

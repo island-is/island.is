@@ -680,11 +680,20 @@ const getDefenceUserDefendants = (
     }
   }
 
+  const isDistrictDefendant = (defendant: Defendant) =>
+    Boolean(
+      defendant.isDefenderChoiceConfirmed &&
+        defendant.defenderNationalId &&
+        defendant.defenderNationalId === user.nationalId,
+    )
+
+  const myDistrictDefendants = theCase.defendants?.filter(isDistrictDefendant)
   const myDefendants = theCase.defendants?.filter(
     (defendant) =>
-      defendant.isDefenderChoiceConfirmed &&
-      defendant.defenderNationalId &&
-      defendant.defenderNationalId === user.nationalId,
+      isDistrictDefendant(defendant) ||
+      Defendant.isConfirmedAppealDefenderOfDefendant(user.nationalId, [
+        defendant,
+      ]),
   )
 
   if (!myDefendants?.length) {
@@ -695,7 +704,18 @@ const getDefenceUserDefendants = (
     }
   }
 
-  const cancelledOrDismissedEventLogs = myDefendants.map((defendant) =>
+  // Appeal-only advocates must not see co-defendant rows. District defenders
+  // keep the full list until every defendant they represent is cancelled or
+  // dismissed.
+  if (!myDistrictDefendants?.length) {
+    return {
+      defendants: myDefendants,
+      allCancelledOrDismissed: false,
+      latestCancelledOrDismissedDate: undefined,
+    }
+  }
+
+  const cancelledOrDismissedEventLogs = myDistrictDefendants.map((defendant) =>
     DefendantEventLog.getEventLogByEventType(
       [
         DefendantEventType.INDICTMENT_CANCELLED,
@@ -715,7 +735,9 @@ const getDefenceUserDefendants = (
     : undefined
 
   return {
-    defendants: allCancelledOrDismissed ? myDefendants : theCase.defendants,
+    defendants: allCancelledOrDismissed
+      ? myDistrictDefendants
+      : theCase.defendants,
     allCancelledOrDismissed,
     latestCancelledOrDismissedDate,
   }
