@@ -11,6 +11,7 @@ import {
   ChildInformation,
   FileType,
   OTHER_NO_CHILDREN_FOUND,
+  BIRTH,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
@@ -337,12 +338,13 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
     )
   }
 
-  // If no children information from Heilsuvera
-  // and the application is adoption | foster care | without primary parent
-  // we make a children data
+  // If no children information from Heilsuvera, or the applicant picked
+  // "Ný umsókn", and the application is birth | adoption | foster care |
+  // without primary parent we make a children data
   async setChildrenInformation({ application }: TemplateApiModuleActionProps) {
     const {
       noPrimaryParentBirthDate,
+      newChildBirthDate,
       noChildrenFoundTypeOfApplication,
       fosterCareOrAdoptionDate,
       fosterCareOrAdoptionBirthDate,
@@ -363,7 +365,16 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
       return { children, childApplicationLinks }
     }
 
-    if (noChildrenFoundTypeOfApplication === OTHER_NO_CHILDREN_FOUND) {
+    if (noChildrenFoundTypeOfApplication === BIRTH) {
+      const child: ChildInformation = {
+        hasRights: true,
+        remainingDays: 180,
+        expectedDateOfBirth: newChildBirthDate,
+        parentalRelation: ParentalRelations.primary,
+      }
+
+      return { children: [child], childApplicationLinks }
+    } else if (noChildrenFoundTypeOfApplication === OTHER_NO_CHILDREN_FOUND) {
       const child: ChildInformation = {
         hasRights: true,
         remainingDays: 180,

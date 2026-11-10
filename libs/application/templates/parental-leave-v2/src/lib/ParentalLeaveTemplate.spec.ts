@@ -2199,6 +2199,70 @@ describe('Parental Leave Application Template', () => {
       expect(newApplication.answers.noChildrenFound).toBeUndefined()
       expect(newApplication.answers.fosterCareOrAdoption).toBeUndefined()
     })
+
+    it('should not store the cleared "Ný umsókn" answers for a registry child', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            selectedChild: '2',
+            noPrimaryParent: '',
+            fosterCareOrAdoption: '',
+            newChildBirth: '',
+          },
+          state: ApplicationStates.PREREQUISITES,
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [, , newApplication] = helper.changeState({
+        type: DefaultEvents.SUBMIT,
+      })
+
+      expect(newApplication.answers.selectedChild).toBe('2')
+      expect(newApplication.answers).not.toHaveProperty('noPrimaryParent')
+      expect(newApplication.answers).not.toHaveProperty('fosterCareOrAdoption')
+      expect(newApplication.answers).not.toHaveProperty('newChildBirth')
+    })
+
+    it('should drop answers given for another "Ný umsókn" type', () => {
+      // Answering the parent-without-birth-parent questions and then switching
+      // to birth must not make the draft ask for that certificate.
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            selectedChild: 'new',
+            noChildrenFound: { typeOfApplication: 'birth' },
+            newChildBirth: { birthDate: '2027-03-04' },
+            multipleBirths: { hasMultipleBirths: 'no' },
+            noPrimaryParent: {
+              questionOne: 'yes',
+              questionTwo: 'yes',
+              questionThree: 'no',
+              birthDate: '2027-02-01',
+            },
+            fosterCareOrAdoption: {
+              birthDate: '2027-01-01',
+              adoptionDate: '2027-06-01',
+            },
+          },
+          state: ApplicationStates.PREREQUISITES,
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [, , newApplication] = helper.changeState({
+        type: DefaultEvents.SUBMIT,
+      })
+
+      expect(newApplication.answers.newChildBirth).toEqual({
+        birthDate: '2027-03-04',
+      })
+      expect(newApplication.answers.multipleBirths).toMatchObject({
+        hasMultipleBirths: 'no',
+      })
+      expect(newApplication.answers.noPrimaryParent).toBeUndefined()
+      expect(newApplication.answers.fosterCareOrAdoption).toBeUndefined()
+    })
   })
 
   describe('data provider ordering', () => {

@@ -26,6 +26,7 @@ import {
   getApplicationExternalData,
   PARENTAL_LEAVE,
   PARENTAL_GRANT,
+  ParentalRelations,
   RejectedBy,
   SINGLE,
 } from '@island.is/application/templates/parental-leave-v2'
@@ -667,6 +668,26 @@ describe('ParentalLeaveV2Service', () => {
 
       expect(res).toMatchObject({
         children: [{ expectedDateOfBirth: '', adoptionDate: '2026-11-15' }],
+      })
+    })
+
+    it('should build a primary parent child from a new birth after "Ný umsókn"', async () => {
+      const application = createApplication()
+      set(application, 'answers.selectedChild', 'new')
+      set(application, 'answers.noChildrenFound.typeOfApplication', 'birth')
+      set(application, 'answers.newChildBirth.birthDate', '2027-03-04')
+
+      const res = await parentalLeaveService.setChildrenInformation({
+        application,
+      } as TemplateApiModuleActionProps)
+
+      expect(res).toMatchObject({
+        children: [
+          {
+            expectedDateOfBirth: '2027-03-04',
+            parentalRelation: ParentalRelations.primary,
+          },
+        ],
       })
     })
 

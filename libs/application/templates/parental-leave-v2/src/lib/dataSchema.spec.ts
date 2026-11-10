@@ -1,3 +1,11 @@
+import { validateAnswers } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
+import {
+  ADOPTION,
+  BIRTH,
+  OTHER_NO_CHILDREN_FOUND,
+  PERMANENT_FOSTER_CARE,
+} from '../constants'
 import { dataSchema } from './dataSchema'
 
 describe('dataSchema fosterCareOrAdoption', () => {
@@ -37,6 +45,55 @@ describe('dataSchema fosterCareOrAdoption', () => {
         adoptionDate: '',
       }).success,
     ).toBe(false)
+  })
+})
+
+describe('dataSchema noChildrenFound', () => {
+  // The application system API validates every saved answer like this, with
+  // no notion of which screen it came from.
+  const validateOnServer = (answers: FormValue) =>
+    validateAnswers({
+      dataSchema,
+      answers,
+      isFullSchemaValidation: false,
+      formatMessage: (message) => String(message),
+    })
+
+  it.each([BIRTH, PERMANENT_FOSTER_CARE, ADOPTION, OTHER_NO_CHILDREN_FOUND])(
+    'should accept picking %s before its own screen is answered',
+    (typeOfApplication) => {
+      expect(
+        validateOnServer({ noChildrenFound: { typeOfApplication } }),
+      ).toBeUndefined()
+    },
+  )
+
+  it('should accept a registry child submitted after trying "Ný umsókn"', () => {
+    // Submit sends every answer the form holds, including those of screens the
+    // applicant backed out of; switching child clears them to ''.
+    expect(
+      validateOnServer({
+        selectedChild: '0',
+        noChildrenFound: { typeOfApplication: OTHER_NO_CHILDREN_FOUND },
+        noPrimaryParent: '',
+        fosterCareOrAdoption: '',
+        newChildBirth: '',
+      }),
+    ).toBeUndefined()
+  })
+
+  it('should still reject an uncleared, unanswered parent without birth parent screen', () => {
+    expect(validateOnServer({ noPrimaryParent: {} })).toBeDefined()
+  })
+
+  it('should require a birth date on the new birth screen', () => {
+    const newChildBirthSchema = dataSchema.shape.newChildBirth
+
+    expect(newChildBirthSchema.safeParse({ birthDate: '' }).success).toBe(false)
+    expect(newChildBirthSchema.safeParse({}).success).toBe(false)
+    expect(
+      newChildBirthSchema.safeParse({ birthDate: '2027-01-15' }).success,
+    ).toBe(true)
   })
 })
 

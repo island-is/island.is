@@ -20,8 +20,10 @@ import {
 } from '@island.is/application/core'
 import {
   DefaultEvents,
+  ExternalData,
   Form,
   FormModes,
+  FormValue,
   UserProfileApi,
 } from '@island.is/application/types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
@@ -29,6 +31,7 @@ import { DirectorateOfLabourLogo } from '@island.is/application/assets/instituti
 import { defaultMultipleBirthsMonths } from '../config'
 import {
   ADOPTION,
+  BIRTH,
   OTHER_NO_CHILDREN_FOUND,
   PERMANENT_FOSTER_CARE,
   ParentalRelations,
@@ -50,6 +53,54 @@ import {
   isNotEligibleForParentWithoutBirthParent,
   isParentWithoutBirthParent,
 } from '../lib/parentalLeaveUtils'
+
+// Answers of the screens behind each "Ný umsókn" type. The form keeps answers
+// of screens the applicant backed out of and sends them all on submit, where
+// they would fail validation, so switching child or type clears them.
+const NEW_CHILD_DETAIL_ANSWERS = [
+  'fosterCareOrAdoption',
+  'newChildBirth',
+  'noPrimaryParent',
+]
+
+const buildMultipleBirthsFields = (
+  condition: (answers: FormValue, externalData: ExternalData) => boolean,
+) => [
+  buildRadioField({
+    id: 'multipleBirths.hasMultipleBirths',
+    title: parentalLeaveFormMessages.selectChild.multipleBirthsName,
+    description:
+      parentalLeaveFormMessages.selectChild.multipleBirthsDescription,
+    space: 6,
+    width: 'half',
+    required: true,
+    options: [
+      {
+        label: parentalLeaveFormMessages.shared.yesOptionLabel,
+        dataTestId: 'has-multiple-births',
+        value: YES,
+      },
+      {
+        label: parentalLeaveFormMessages.shared.noOptionLabel,
+        dataTestId: 'dont-has-multiple-births',
+        value: NO,
+      },
+    ],
+    condition,
+  }),
+  buildSelectField({
+    id: 'multipleBirths.multipleBirths',
+    title: parentalLeaveFormMessages.selectChild.multipleBirths,
+    options: new Array(defaultMultipleBirthsMonths).fill(0).map((_, index) => ({
+      value: `${index + 2}`,
+      label: `${index + 2}`,
+    })),
+    width: 'half',
+    condition: (answers, externalData) =>
+      condition(answers, externalData) &&
+      getApplicationAnswers(answers).hasMultipleBirths === YES,
+  }),
+]
 
 export const MockDataSubSection = buildSubSection({
   id: 'mockData',
@@ -313,22 +364,43 @@ export const NoChildrenFoundSubSection = buildSubSection({
     return children.length === 0
   },
   children: [
-    buildRadioField({
-      id: 'noChildrenFound.typeOfApplication',
+    // A multi-field, not a bare radio screen: the client validates a screen
+    // without child fields against every answer, so empty answers left behind
+    // by a type screen the applicant backed out of would silently block "Next".
+    buildMultiField({
+      id: 'noChildrenFoundScreen',
       title: parentalLeaveFormMessages.shared.noChildrenFoundTypeOfApplication,
-      options: [
-        {
-          value: PERMANENT_FOSTER_CARE,
-          label: parentalLeaveFormMessages.shared.noChildrenFoundFosterCare,
-        },
-        {
-          value: ADOPTION,
-          label: parentalLeaveFormMessages.shared.noChildrenFoundAdoption,
-        },
-        {
-          value: OTHER_NO_CHILDREN_FOUND,
-          label: parentalLeaveFormMessages.shared.noChildrenFoundOther,
-        },
+      children: [
+        buildRadioField({
+          id: 'noChildrenFound.typeOfApplication',
+          clearOnChange: [
+            ...NEW_CHILD_DETAIL_ANSWERS,
+            'multipleBirths.hasMultipleBirths',
+            'multipleBirths.multipleBirths',
+          ],
+          options: [
+            {
+              value: BIRTH,
+              dataTestId: 'new-child-birth',
+              label: parentalLeaveFormMessages.shared.noChildrenFoundBirth,
+            },
+            {
+              value: PERMANENT_FOSTER_CARE,
+              dataTestId: 'new-child-foster-care',
+              label: parentalLeaveFormMessages.shared.noChildrenFoundFosterCare,
+            },
+            {
+              value: ADOPTION,
+              dataTestId: 'new-child-adoption',
+              label: parentalLeaveFormMessages.shared.noChildrenFoundAdoption,
+            },
+            {
+              value: OTHER_NO_CHILDREN_FOUND,
+              dataTestId: 'new-child-other',
+              label: parentalLeaveFormMessages.shared.noChildrenFoundOther,
+            },
+          ],
+        }),
       ],
     }),
   ],
@@ -377,6 +449,47 @@ export const FosterCareOrAdoptionSubSection = buildSubSection({
           description: '',
           placeholder: parentalLeaveFormMessages.startDate.placeholder,
         }),
+        buildSubmitField({
+          id: 'toDraft',
+          refetchApplicationAfterSubmit: true,
+          actions: [
+            {
+              event: DefaultEvents.SUBMIT,
+              name: parentalLeaveFormMessages.selectChild.choose,
+              type: ParentalRelations.primary,
+            },
+          ],
+        }),
+      ],
+    }),
+    // Has to be here so that the submit button appears (does not appear if no screen is left).
+    // Tackle that as AS task.
+    buildDescriptionField({
+      id: 'unused',
+      description: '',
+    }),
+  ],
+})
+
+export const NewChildBirthSubSection = buildSubSection({
+  id: 'newChildBirth',
+  title: parentalLeaveFormMessages.selectChild.screenTitle,
+  condition: (answers) =>
+    isNoChildrenFoundPath(answers) &&
+    getApplicationAnswers(answers).noChildrenFoundTypeOfApplication === BIRTH,
+  children: [
+    buildMultiField({
+      id: 'newChildBirthScreen',
+      title: parentalLeaveFormMessages.selectChild.screenTitle,
+      children: [
+        buildDateField({
+          id: 'newChildBirth.birthDate',
+          title: parentalLeaveFormMessages.selectChild.newApplicationBirthDate,
+          description: '',
+          placeholder: parentalLeaveFormMessages.startDate.placeholder,
+        }),
+        // The applicant is the birth parent of a child created from these answers
+        ...buildMultipleBirthsFields(() => true),
         buildSubmitField({
           id: 'toDraft',
           refetchApplicationAfterSubmit: true,
@@ -506,6 +619,7 @@ export const SelectChildSubSection = buildSubSection({
           id: 'selectedChild',
           description: parentalLeaveFormMessages.selectChild.screenDescription,
           required: true,
+          clearOnChange: NEW_CHILD_DETAIL_ANSWERS,
           options: (application) => {
             return getChildrenOptions(application)
           },
@@ -522,59 +636,17 @@ export const SelectChildSubSection = buildSubSection({
           condition: (_answers, externalData) =>
             getChildrenInProgress(externalData).length > 0,
         }),
-        buildRadioField({
-          id: 'multipleBirths.hasMultipleBirths',
-          title: parentalLeaveFormMessages.selectChild.multipleBirthsName,
-          description:
-            parentalLeaveFormMessages.selectChild.multipleBirthsDescription,
-          space: 6,
-          width: 'half',
-          required: true,
-          options: [
-            {
-              label: parentalLeaveFormMessages.shared.yesOptionLabel,
-              dataTestId: 'has-multiple-births',
-              value: YES,
-            },
-            {
-              label: parentalLeaveFormMessages.shared.noOptionLabel,
-              dataTestId: 'dont-has-multiple-births',
-              value: NO,
-            },
-          ],
-          // Not asked for a child that already has an application: that answer
-          // is prefilled from VMST for the leave being changed and must not be
-          // contradicted here. See `getVMSTApplicationAnswers`.
-          condition: (answers, externalData) => {
-            const selectedChild = getSelectedChild(answers, externalData)
+        // Not asked for a child that already has an application: that answer
+        // is prefilled from VMST for the leave being changed and must not be
+        // contradicted here. See `getVMSTApplicationAnswers`.
+        ...buildMultipleBirthsFields((answers, externalData) => {
+          const selectedChild = getSelectedChild(answers, externalData)
 
-            return (
-              !!answers.selectedChild &&
-              !selectedChild?.vmstApplicationId &&
-              selectedChild?.parentalRelation === ParentalRelations.primary
-            )
-          },
-        }),
-        buildSelectField({
-          id: 'multipleBirths.multipleBirths',
-          title: parentalLeaveFormMessages.selectChild.multipleBirths,
-          options: new Array(defaultMultipleBirthsMonths)
-            .fill(0)
-            .map((_, index) => ({
-              value: `${index + 2}`,
-              label: `${index + 2}`,
-            })),
-          width: 'half',
-          condition: (answers, externalData) => {
-            const selectedChild = getSelectedChild(answers, externalData)
-            const { hasMultipleBirths } = getApplicationAnswers(answers)
-
-            return (
-              hasMultipleBirths === YES &&
-              !selectedChild?.vmstApplicationId &&
-              selectedChild?.parentalRelation === ParentalRelations.primary
-            )
-          },
+          return (
+            !!answers.selectedChild &&
+            !selectedChild?.vmstApplicationId &&
+            selectedChild?.parentalRelation === ParentalRelations.primary
+          )
         }),
       ],
     }),
@@ -622,7 +694,6 @@ export const ApplicationTypeSubSection = buildSubSection({
       children: [
         buildRadioField({
           id: 'applicationType.option',
-          title: parentalLeaveFormMessages.shared.applicationTypeTitle,
           description:
             parentalLeaveFormMessages.shared
               .applicationParentalLeaveDescription,
@@ -712,6 +783,7 @@ export const PrerequisitesForm: Form = buildForm({
         SelectChildSubSection,
         NoChildrenFoundSubSection,
         FosterCareOrAdoptionSubSection,
+        NewChildBirthSubSection,
         NoPrimaryParentSubSection,
         ApplicationTypeSubSection,
         FollowUpSubSection,

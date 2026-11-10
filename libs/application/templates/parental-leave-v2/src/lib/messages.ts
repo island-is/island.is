@@ -925,6 +925,11 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Sækja um',
       description: 'Apply for',
     },
+    noChildrenFoundBirth: {
+      id: 'plv2.application:no.children.found.birth',
+      defaultMessage: 'Vegna fæðingar barns',
+      description: 'Due to the birth of a child',
+    },
     noChildrenFoundFosterCare: {
       id: 'plv2.application:no.children.found.foster.care',
       defaultMessage: 'Vegna töku barns í varanlegt fóstur',
@@ -1201,6 +1206,11 @@ export const parentalLeaveFormMessages = {
         'Fóstur, frumættleiðing eða barn án skráðs fæðingarforeldris',
       description:
         'Sub label for the option covering children that are not in the registry data',
+    },
+    newApplicationBirthDate: {
+      id: 'plv2.application:selectChild.new.application.birth.date',
+      defaultMessage: 'Fæðingardagur eða áætlaður fæðingardagur barns',
+      description: 'Date of birth or expected date of birth of the child',
     },
     followUpDescription: {
       id: 'plv2.application:selectChild.followUpDescription',

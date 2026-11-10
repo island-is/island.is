@@ -13,6 +13,7 @@ import {
   SINGLE,
   PERMANENT_FOSTER_CARE,
   OTHER_NO_CHILDREN_FOUND,
+  BIRTH,
   ADOPTION,
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
@@ -106,6 +107,12 @@ const rightsDays = z
 const maxMultipleBirthsRequestDays =
   defaultMultipleBirthsMonths * multipleBirthsDefaultDays
 
+// `clearOnChange` leaves '' behind when the applicant switches to another
+// child or "Ný umsókn" type, and the final submit sends it along. It means the
+// path was left, so it is treated as not answered.
+const answerOfAlternativePath = <T extends z.ZodTypeAny>(schema: T) =>
+  z.preprocess((value) => (value === '' ? undefined : value), schema.optional())
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   selectedChild: z.string().min(1),
@@ -123,46 +130,64 @@ export const dataSchema = z.object({
   }),
   noChildrenFound: z.object({
     typeOfApplication: z.enum([
+      BIRTH,
       PERMANENT_FOSTER_CARE,
       ADOPTION,
       OTHER_NO_CHILDREN_FOUND,
     ]),
   }),
-  fosterCareOrAdoption: z
-    .object({
-      birthDate: z.string().optional(),
-      adoptionDate: z.string().optional(),
-    })
-    .refine(({ birthDate }) => !!birthDate?.trim(), {
-      path: ['birthDate'],
-      params: coreErrorMessages.missingAnswer,
-    })
-    .refine(({ adoptionDate }) => !!adoptionDate?.trim(), {
-      path: ['adoptionDate'],
-      params: coreErrorMessages.missingAnswer,
-    })
-    .refine(
-      ({ birthDate, adoptionDate }) => {
-        if (!birthDate?.trim() || !adoptionDate?.trim()) return true
-        // Eligibility is "child was under 8 on the placement date", a stable
-        // historical fact — not a sliding window against today. Otherwise an
-        // already-approved application becomes uneditable the day the child
-        // turns 8 (zendesk #461551).
-        const referenceDate = new Date(adoptionDate)
-        const minimumStartDate = new Date(referenceDate)
-        minimumStartDate.setMonth(
-          referenceDate.getMonth() - yearFosterCareOrAdoption * yearInMonths,
-        )
-        return new Date(birthDate) >= minimumStartDate
-      },
-      { path: ['birthDate'], params: errorMessages.fosterCare },
-    ),
-  noPrimaryParent: z.object({
-    questionOne: z.enum([YES, NO]),
-    questionTwo: z.enum([YES, NO]),
-    questionThree: z.enum([YES, NO]),
-    birthDate: z.string(),
-  }),
+  // Its own key, not part of `noChildrenFound`: the server validates every
+  // answer it saves, so a rule tying the two would reject picking "birth"
+  // before the birth date screen is reached.
+  newChildBirth: answerOfAlternativePath(
+    z
+      .object({
+        birthDate: z.string().optional(),
+      })
+      .refine(({ birthDate }) => !!birthDate?.trim(), {
+        path: ['birthDate'],
+        params: coreErrorMessages.missingAnswer,
+      }),
+  ),
+  fosterCareOrAdoption: answerOfAlternativePath(
+    z
+      .object({
+        birthDate: z.string().optional(),
+        adoptionDate: z.string().optional(),
+      })
+      .refine(({ birthDate }) => !!birthDate?.trim(), {
+        path: ['birthDate'],
+        params: coreErrorMessages.missingAnswer,
+      })
+      .refine(({ adoptionDate }) => !!adoptionDate?.trim(), {
+        path: ['adoptionDate'],
+        params: coreErrorMessages.missingAnswer,
+      })
+      .refine(
+        ({ birthDate, adoptionDate }) => {
+          if (!birthDate?.trim() || !adoptionDate?.trim()) return true
+          // Eligibility is "child was under 8 on the placement date", a stable
+          // historical fact — not a sliding window against today. Otherwise an
+          // already-approved application becomes uneditable the day the child
+          // turns 8 (zendesk #461551).
+          const referenceDate = new Date(adoptionDate)
+          const minimumStartDate = new Date(referenceDate)
+          minimumStartDate.setMonth(
+            referenceDate.getMonth() - yearFosterCareOrAdoption * yearInMonths,
+          )
+          return new Date(birthDate) >= minimumStartDate
+        },
+        { path: ['birthDate'], params: errorMessages.fosterCare },
+      ),
+  ),
+  noPrimaryParent: answerOfAlternativePath(
+    z.object({
+      questionOne: z.enum([YES, NO]),
+      questionTwo: z.enum([YES, NO]),
+      questionThree: z.enum([YES, NO]),
+      birthDate: z.string(),
+    }),
+  ),
   applicant: z.object({
     email: z.string().email(),
     phoneNumber: z.string().refine(

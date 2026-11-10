@@ -10,6 +10,7 @@ export const PARENTAL_GRANT = 'parentalGrant'
 export const PARENTAL_GRANT_STUDENTS = 'parentalGrantStudents'
 export const PERMANENT_FOSTER_CARE = 'foster_care'
 export const ADOPTION = 'primary_adoption'
+export const BIRTH = 'birth'
 export const OTHER_NO_CHILDREN_FOUND = 'other'
 
 /**

@@ -10,6 +10,7 @@ import {
   FieldComponents,
   FieldTypes,
   FormValue,
+  MultiField,
 } from '@island.is/application/types'
 
 import {
@@ -80,7 +81,8 @@ import {
 } from './parentalLeaveUtils'
 import { hasBeenSubmittedToVMST } from './parentalLeaveTemplateUtils'
 import { PersonInformation } from '../types'
-import { NO, YES } from '@island.is/application/core'
+import { NO, YES, validateAnswers } from '@island.is/application/core'
+import { dataSchema } from './dataSchema'
 import {
   ApplicationTypeSubSection,
   FollowUpSubSection,
@@ -88,6 +90,7 @@ import {
   MockDataSubSection,
   NoChildrenFoundSubSection,
   NoPrimaryParentSubSection,
+  NewChildBirthSubSection,
   PrerequisitesForm,
   SelectChildSubSection,
 } from '../forms/Prerequisites'
@@ -1666,6 +1669,7 @@ describe('no-children-found prerequisites', () => {
     for (const section of [
       NoChildrenFoundSubSection,
       FosterCareOrAdoptionSubSection,
+      NewChildBirthSubSection,
       NoPrimaryParentSubSection,
     ]) {
       expect(ids?.indexOf(section.id)).toBeGreaterThan(selectChild)
@@ -1680,6 +1684,27 @@ describe('no-children-found prerequisites', () => {
 
     expect(isShown(NoChildrenFoundSubSection, answers)).toBe(true)
     expect(isShown(FosterCareOrAdoptionSubSection, answers)).toBe(true)
+  })
+
+  it('should follow a new birth with the birth date screen only', () => {
+    const answers = {
+      selectedChild: 'new',
+      noChildrenFound: { typeOfApplication: 'birth' },
+    }
+
+    expect(isShown(NewChildBirthSubSection, answers)).toBe(true)
+    expect(isShown(FosterCareOrAdoptionSubSection, answers)).toBe(false)
+    expect(isShown(NoPrimaryParentSubSection, answers)).toBe(false)
+  })
+
+  it('should follow "Annað" with the parent without birth parent screen only', () => {
+    const answers = {
+      selectedChild: 'new',
+      noChildrenFound: { typeOfApplication: 'other' },
+    }
+
+    expect(isShown(NoPrimaryParentSubSection, answers)).toBe(true)
+    expect(isShown(NewChildBirthSubSection, answers)).toBe(false)
   })
 
   it('should keep a screen after "Umsókn vegna" before a type is picked', () => {
@@ -1701,6 +1726,60 @@ describe('no-children-found prerequisites', () => {
 
     expect(isShown(FosterCareOrAdoptionSubSection, adoption)).toBe(false)
     expect(isShown(NoPrimaryParentSubSection, other)).toBe(false)
+    expect(
+      isShown(NewChildBirthSubSection, {
+        selectedChild: '0',
+        noChildrenFound: { typeOfApplication: 'birth' },
+      }),
+    ).toBe(false)
+  })
+
+  it('should clear the "Ný umsókn" screens when the child or type changes', () => {
+    const findRadio = (id: string) =>
+      [
+        ...(SelectChildSubSection.children[0] as MultiField).children,
+        ...(NoChildrenFoundSubSection.children[0] as MultiField).children,
+      ].find((field) => field.id === id) as Field
+
+    for (const id of ['selectedChild', 'noChildrenFound.typeOfApplication']) {
+      expect(findRadio(id).clearOnChange).toEqual(
+        expect.arrayContaining([
+          'fosterCareOrAdoption',
+          'newChildBirth',
+          'noPrimaryParent',
+        ]),
+      )
+    }
+  })
+
+  it('should let the applicant change type after backing out of a type screen', () => {
+    // The form keeps one react-hook-form instance across screens, so a type
+    // screen that was opened leaves its fields behind as empty answers. The
+    // client validates only the current screen's field ids, which a bare radio
+    // screen does not have, and then every one of those empty answers failed.
+    const typeScreen = NoChildrenFoundSubSection.children[0] as MultiField
+    const currentScreenFields = typeScreen.children.map(({ id }) => String(id))
+
+    expect(currentScreenFields).toEqual(['noChildrenFound.typeOfApplication'])
+    expect(
+      validateAnswers({
+        dataSchema,
+        answers: ({
+          noChildrenFound: { typeOfApplication: 'birth' },
+          noPrimaryParent: {
+            questionOne: undefined,
+            questionTwo: undefined,
+            questionThree: undefined,
+          },
+          fosterCareOrAdoption: {
+            birthDate: undefined,
+            adoptionDate: undefined,
+          },
+        } as unknown) as FormValue,
+        formatMessage: (message) => String(message),
+        currentScreenFields,
+      }),
+    ).toBeUndefined()
   })
 })
 

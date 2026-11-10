@@ -50,6 +50,7 @@ import {
   NO_PRIVATE_PENSION_FUND,
   NO_UNION,
   OTHER_NO_CHILDREN_FOUND,
+  BIRTH,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
@@ -1357,6 +1358,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'noPrimaryParent.birthDate',
   ) as string
 
+  const newChildBirthDate = getValueViaPath(
+    answers,
+    'newChildBirth.birthDate',
+  ) as string
+
   const hasMultipleBirths = getValueViaPath(
     answers,
     'multipleBirths.hasMultipleBirths',
@@ -1588,6 +1594,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     answeredSelectedChild === undefined &&
     (noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ||
       noChildrenFoundTypeOfApplication === ADOPTION ||
+      noChildrenFoundTypeOfApplication === BIRTH ||
       noChildrenFoundTypeOfApplication === OTHER_NO_CHILDREN_FOUND)
       ? '0'
       : (answeredSelectedChild as string)
@@ -1746,6 +1753,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     fosterCareOrAdoptionBirthDate,
     fosterCareOrAdoptionDate,
     noPrimaryParentBirthDate,
+    newChildBirthDate,
     hasMultipleBirths,
     multipleBirths,
     multipleBirthsRequestDays: Number(multipleBirthsRequestDays),

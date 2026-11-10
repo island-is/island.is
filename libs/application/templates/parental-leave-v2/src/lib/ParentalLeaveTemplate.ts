@@ -28,14 +28,18 @@ import {
 } from '@island.is/application/types'
 
 import {
+  ADOPTION,
   ApiModuleActions,
   ApplicationAction,
+  BIRTH,
   Events,
   MANUAL,
   NO_MULTIPLE_BIRTHS,
+  OTHER_NO_CHILDREN_FOUND,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
+  PERMANENT_FOSTER_CARE,
   PLEvents,
   ParentalRelations,
   Roles,
@@ -1763,19 +1767,40 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           application.answers,
         )
 
-        if (
-          !noChildrenFoundTypeOfApplication ||
-          isFollowUpApplication(application.answers)
-        ) {
+        if (isFollowUpApplication(application.answers)) {
           return context
         }
 
+        // Also when no "Ný umsókn" type was picked: switching child clears the
+        // answers of those screens to '', which should not be stored.
         if (!isNoChildrenFoundPath(application.answers)) {
           unset(application.answers, 'noChildrenFound')
+          unset(application.answers, 'newChildBirth')
           unset(application.answers, 'fosterCareOrAdoption')
           unset(application.answers, 'noPrimaryParent')
 
           return context
+        }
+
+        if (!noChildrenFoundTypeOfApplication) {
+          return context
+        }
+
+        // Drop answers given for another type before the applicant changed
+        // their mind, e.g. so a birth application does not ask for the
+        // parent-without-birth-parent certificate.
+        if (noChildrenFoundTypeOfApplication !== BIRTH) {
+          unset(application.answers, 'newChildBirth')
+          unset(application.answers, 'multipleBirths')
+        }
+        if (
+          noChildrenFoundTypeOfApplication !== PERMANENT_FOSTER_CARE &&
+          noChildrenFoundTypeOfApplication !== ADOPTION
+        ) {
+          unset(application.answers, 'fosterCareOrAdoption')
+        }
+        if (noChildrenFoundTypeOfApplication !== OTHER_NO_CHILDREN_FOUND) {
+          unset(application.answers, 'noPrimaryParent')
         }
 
         // The synthesized list holds exactly one child, and the context may not

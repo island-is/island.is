@@ -29,9 +29,9 @@ This section assumes that you are familiar with [states](../../core/README.md#st
 
 This state is a temporary state that all new applications will be created in. It has a short lifespan and is unlisted.
 
-The purpose of this state is to be a guard into the actual application. There is an external data step which fetches data from VMST and Þjóðskrá to check if the applicant is expecting a child. If no child is found we ask the applicant if they are applying for parental-leave / parental-grant due to adoption, foster care or father-without-mother. If they are not they cannot advance to the next step and make an application.
+The purpose of this state is to be a guard into the actual application. There is an external data step which fetches data from VMST and Þjóðskrá. The applicant then picks the child to apply for from the children found, or picks "Ný umsókn" for a child that is not in the list. If no child is found, or "Ný umsókn" is picked, we ask whether the application is due to birth (with the date or expected date of birth), adoption or permanent foster care (with the child's birth date and placement date), or "Annað" for a parent without a birth parent in Iceland (the child is born abroad, or the birth parent lives abroad without an Icelandic national id and is not entitled to parental leave in Iceland; the applicant gives the expected date of birth and uploads a certificate in the draft). The child is created from these answers by `setChildrenInformation` when the prerequisites are submitted, with the applicant as the primary parent, or as the secondary parent for "Annað".
 
-Applicants choose which application type ( parental-leave, parental-grant or parental-grant-students ) they are applying for. How many children will give birth.
+Applicants choose which application type ( parental-leave, parental-grant or parental-grant-students ) they are applying for. Primary parents of a born or expected child are asked if they are expecting multiple births.
 
 #### Draft
 
