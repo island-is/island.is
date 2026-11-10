@@ -14,7 +14,7 @@ import type { Logger } from '@island.is/logging'
 
 import { ChildrenService } from './children.service'
 
-// eslint-disable-next-line local-rules/disallow-kennitalas
+ 
 const APPLICANT_ID = '0101302129'
 
 let id = 0
