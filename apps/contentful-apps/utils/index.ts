@@ -111,6 +111,7 @@ export const previewLinkHandler = {
           content_type: 'projectParentSubpage',
           include: 1,
           links_to_entry: entry.sys.id,
+          'fields.projectPage.sys.id': projectPageId,
           'sys.archivedAt[exists]': false,
         },
       }),
@@ -118,9 +119,10 @@ export const previewLinkHandler = {
     const projectPageSlug = projectPage?.fields?.slug?.[DEFAULT_LOCALE]
     if (!projectPageSlug) return ''
     // A subpage can be a chapter of a parent subpage, in which case it lives under the parent's slug
-    const parentSubpageSlug =
-      projectParentSubpageResponse?.items?.[0]?.fields?.slug?.[DEFAULT_LOCALE]
-    if (parentSubpageSlug) {
+    const parentSubpage = projectParentSubpageResponse?.items?.[0]
+    if (parentSubpage) {
+      const parentSubpageSlug = parentSubpage.fields?.slug?.[DEFAULT_LOCALE]
+      if (!parentSubpageSlug) return ''
       return `${DEV_WEB_BASE_URL}/v/${projectPageSlug}/${parentSubpageSlug}/${slug}`
     }
     return `${DEV_WEB_BASE_URL}/v/${projectPageSlug}/${slug}`
