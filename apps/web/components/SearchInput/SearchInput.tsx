@@ -184,7 +184,7 @@ const useSearch = (
 
     return () => clearTimeout(thisTimerId)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [client, locale, term, dispatch])
+  }, [client, locale, term, dispatch, organization, project])
 
   return state
 }
