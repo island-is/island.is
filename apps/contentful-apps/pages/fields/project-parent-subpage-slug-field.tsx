@@ -33,7 +33,7 @@ const ProjectParentSubpageSlugField = () => {
   }, [sdk.entry.fields.projectPage])
 
   useEffect(() => {
-    sdk.entry.onSysChanged((newSys) => {
+    return sdk.entry.onSysChanged((newSys) => {
       setHasEntryBeenPublished(Boolean(newSys?.firstPublishedAt))
     })
   }, [sdk.entry])
