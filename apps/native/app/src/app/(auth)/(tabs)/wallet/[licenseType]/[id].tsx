@@ -196,6 +196,13 @@ export default function WalletPassScreen() {
     data?.license?.pkpass &&
     data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available
   const allowLicenseBarcode = pkPassAllowed && !isExpired
+  // Whether this licence can be scanned at all. A passport, identity
+  // document, EHIC card or P-card carries no barcode (`pkpass: false` in
+  // AVAILABLE_LICENSES), so there is no scan to defer to and withholding the
+  // fields would only remove the licence. Deliberately the capability rather
+  // than `pkPassAllowed`: a pkpass outage must not spill a scannable
+  // licence's details onto the screen.
+  const isScannable = !!data?.license?.pkpass
   const licenseType = data?.license?.type
   const barcodeWidth = isTablet
     ? BARCODE_MAX_WIDTH // For tablets - make sure barcode is not huge
@@ -306,7 +313,14 @@ export default function WalletPassScreen() {
             }
             loading={res.loading}
             error={res.error}
-            logo={data?.payload?.metadata.photo ?? undefined}
+            // For a scannable licence, deliberately not the holder's photo: a
+            // face on this screen is the thing a checker would read instead
+            // of scanning.
+            logo={
+              isScannable
+                ? undefined
+                : data?.payload?.metadata?.photo ?? undefined
+            }
             date={
               shouldShowExpireDate
                 ? new Date(expireDate)
@@ -343,6 +357,28 @@ export default function WalletPassScreen() {
               marginBottom: theme.spacing[2],
             }}
           >
+            {/*
+              A scannable licence shows nothing but the barcode and whether it
+              is valid. Name, number, categories and the rest are revealed to
+              whoever scans it — showing them here invites a checker to read
+              the screen and skip the scan, which is the thing that proves
+              anything.
+            */}
+            {isScannable && (
+              <View style={{ paddingTop: theme.spacing[2] }}>
+                <InfoAlert
+                  title={intl.formatMessage({
+                    id: 'walletPass.scanReminderTitle',
+                  })}
+                  message={intl.formatMessage({
+                    id: 'walletPass.scanReminderDescription',
+                  })}
+                  type="info"
+                  hasBorder
+                />
+              </View>
+            )}
+
             {/* Show info alert if PCard, Ehic, Passport or IdentityDocument */}
             {showInfoAlert && !isInfoAlertDismissed(licenseType) && (
               <View
@@ -392,17 +428,19 @@ export default function WalletPassScreen() {
                 />
               </View>
             ) : null}
-            {!data?.payload?.data && loading ? (
-              <ActivityIndicator
-                size="large"
-                color="#0061FF"
-                style={{ marginTop: theme.spacing[4] }}
-              />
-            ) : (
-              <View testID={testIDs.LICENSE_FIELDS}>
-                <LicenseFieldRender data={fields} licenseType={licenseType} />
-              </View>
-            )}
+            {/* Nothing to scan: the licence has to show itself. */}
+            {!isScannable &&
+              (!data?.payload?.data && loading ? (
+                <ActivityIndicator
+                  size="large"
+                  color="#0061FF"
+                  style={{ marginTop: theme.spacing[4] }}
+                />
+              ) : (
+                <View testID={testIDs.LICENSE_FIELDS}>
+                  <LicenseFieldRender data={fields} licenseType={licenseType} />
+                </View>
+              ))}
           </SafeAreaView>
 
           {isAndroid && <Spacer />}
