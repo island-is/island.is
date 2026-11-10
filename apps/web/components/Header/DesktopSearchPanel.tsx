@@ -18,6 +18,7 @@ import * as styles from './DesktopSearchPanel.css'
 
 interface DesktopSearchPanelProps {
   organizationSearchFilter?: string
+  projectSearchFilter?: string
   searchPlaceholder?: string
   onOpenChange?: (isOpen: boolean) => void
   /**
@@ -31,6 +32,7 @@ interface DesktopSearchPanelProps {
 
 export const DesktopSearchPanel = ({
   organizationSearchFilter,
+  projectSearchFilter,
   searchPlaceholder,
   onOpenChange,
   alwaysOpen = false,
@@ -158,6 +160,7 @@ export const DesktopSearchPanel = ({
           autocomplete={true}
           autosuggest={true}
           organization={organizationSearchFilter}
+          project={projectSearchFilter}
         />
       </div>
     </div>
