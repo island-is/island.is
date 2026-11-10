@@ -13,4 +13,7 @@ export class GenericListItemResponse {
 
   @Field(() => Int)
   total!: number
+
+  @Field(() => [Int], { nullable: true })
+  years?: number[]
 }
