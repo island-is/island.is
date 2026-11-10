@@ -713,7 +713,8 @@ const isVerdictAppealPartyRow = (
 ): boolean =>
   Boolean(
     (row.defendantId && partyIds.defendantIds.has(row.defendantId)) ||
-      (row.civilClaimantId && partyIds.civilClaimantIds.has(row.civilClaimantId)),
+      (row.civilClaimantId &&
+        partyIds.civilClaimantIds.has(row.civilClaimantId)),
   )
 
 // Prosecution APPEALED / APPEAL_WITHDRAWN rows for defendants still on the

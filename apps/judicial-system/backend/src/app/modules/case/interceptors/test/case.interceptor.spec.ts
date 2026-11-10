@@ -869,11 +869,7 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
   }
 
   const makeVerdictAppealCase = () => {
-    const statementDeadlines = [
-      ownDeadline,
-      otherDeadline,
-      prosecutionDeadline,
-    ]
+    const statementDeadlines = [ownDeadline, otherDeadline, prosecutionDeadline]
     const appealEventLogs = [
       ownEvent,
       otherStatementEvent,

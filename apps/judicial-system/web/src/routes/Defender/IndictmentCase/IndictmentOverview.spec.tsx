@@ -395,9 +395,7 @@ describe('Defender IndictmentOverview', () => {
         }),
       )
 
-      expect(
-        await screen.findByText('Dómsorð Landsréttar'),
-      ).toBeInTheDocument()
+      expect(await screen.findByText('Dómsorð Landsréttar')).toBeInTheDocument()
       expect(
         screen.getByText('Hinn áfrýjaði dómur skal vera óraskaður.'),
       ).toBeInTheDocument()
