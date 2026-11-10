@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { ApolloError } from '@apollo/client'
 
 import { PaymentsGooglePayChargeStatus } from '@island.is/api/schema'
@@ -31,26 +31,19 @@ const BASE_REQUEST = {
  * The cards the sheet offers. A card saved in the Google account (PAN_ONLY)
  * passes 3-D Secure and is then charged with the same token. A device token
  * (CRYPTOGRAM_3DS) is charged by the gateway when it decrypts it, so the
- * charge answers paid at once; it is offered behind its own flag until the
- * gateway's handling of it has been seen on production.
+ * charge answers paid at once.
  */
-const googlePayAllowedAuthMethods = (
-  allowDeviceTokens: boolean,
-): google.payments.api.CardAuthMethod[] =>
-  allowDeviceTokens ? ['PAN_ONLY', 'CRYPTOGRAM_3DS'] : ['PAN_ONLY']
-
-const cardPaymentMethod = (
-  allowDeviceTokens: boolean,
-): google.payments.api.IsReadyToPayPaymentMethodSpecification => ({
-  type: 'CARD',
-  parameters: {
-    allowedAuthMethods: googlePayAllowedAuthMethods(allowDeviceTokens),
-    allowedCardNetworks: ['VISA', 'MASTERCARD'],
-    // The name is the cardholder for 3-D Secure of a saved card
-    billingAddressRequired: true,
-    billingAddressParameters: { format: 'MIN' },
-  },
-})
+const baseCardPaymentMethod: google.payments.api.IsReadyToPayPaymentMethodSpecification =
+  {
+    type: 'CARD',
+    parameters: {
+      allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+      allowedCardNetworks: ['VISA', 'MASTERCARD'],
+      // The name is the cardholder for 3-D Secure of a saved card
+      billingAddressRequired: true,
+      billingAddressParameters: { format: 'MIN' },
+    },
+  }
 
 const getErrorCode = (e: unknown): CardErrorCode => {
   const problem = findProblemInApolloError(e as ApolloError)
@@ -72,8 +65,6 @@ const throwOnGraphQLErrors = (errors?: ReadonlyArray<unknown>) => {
 
 interface UseGooglePayProps {
   isEnabled: boolean
-  /** Whether device tokens (CRYPTOGRAM_3DS) are offered besides saved cards */
-  allowDeviceTokens: boolean
   paymentFlow: GetPaymentFlowQuery['paymentsGetFlow'] | null
   productInformation: {
     amount: number
@@ -95,7 +86,6 @@ interface UseGooglePayReturn {
 
 export const useGooglePay = ({
   isEnabled,
-  allowDeviceTokens,
   paymentFlow,
   productInformation,
   onPaymentSuccess,
@@ -105,10 +95,6 @@ export const useGooglePay = ({
 }: UseGooglePayProps): UseGooglePayReturn => {
   const clientRef = useRef<google.payments.api.PaymentsClient | null>(null)
   const isProcessingRef = useRef(false)
-  const baseCardPaymentMethod = useMemo(
-    () => cardPaymentMethod(allowDeviceTokens),
-    [allowDeviceTokens],
-  )
   const [supportsGooglePay, setSupportsGooglePay] = useState(false)
   // The sheet closes as soon as the payer confirms, so the page shows the
   // charge in progress until it succeeds or fails
@@ -157,7 +143,7 @@ export const useGooglePay = ({
     return () => {
       isCurrent = false
     }
-  }, [isEnabled, paymentFlow, baseCardPaymentMethod])
+  }, [isEnabled, paymentFlow])
 
   // click handler for google pay button
   const initiateGooglePay = useCallback(async () => {
@@ -298,7 +284,7 @@ export const useGooglePay = ({
       buttonRadius: 8,
       allowedPaymentMethods: [baseCardPaymentMethod],
     })
-  }, [supportsGooglePay, initiateGooglePay, baseCardPaymentMethod])
+  }, [supportsGooglePay, initiateGooglePay])
 
   return {
     supportsGooglePay,
