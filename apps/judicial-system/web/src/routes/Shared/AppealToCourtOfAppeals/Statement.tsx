@@ -71,7 +71,10 @@ interface Props {
 const resolveVerdictAppealParty = (
   workingCase: Parameters<typeof getVerdictAppealStatementParty>[0],
   user: Parameters<typeof getVerdictAppealStatementParty>[1],
-  query: { defendantId?: string | string[]; civilClaimantId?: string | string[] },
+  query: {
+    defendantId?: string | string[]
+    civilClaimantId?: string | string[]
+  },
 ): DefenceUserPartyIds => {
   const queryDefendantId = Array.isArray(query.defendantId)
     ? query.defendantId[0]
@@ -196,9 +199,7 @@ const Statement = ({ isVerdictAppeal = false }: Props) => {
       workingCase.id,
       targetAppealCaseId,
       AppealEventType.APPEAL_STATEMENT_SENT,
-      isVerdictAppeal
-        ? { defendantId, civilClaimantId }
-        : undefined,
+      isVerdictAppeal ? { defendantId, civilClaimantId } : undefined,
     )
 
     if (sent) {

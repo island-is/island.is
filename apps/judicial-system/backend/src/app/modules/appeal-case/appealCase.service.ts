@@ -1226,7 +1226,11 @@ export class AppealCaseService {
     // never fall back to writing one row for every party the defence user
     // represents.
     if (requiresScopedParty || party?.defendantId || party?.civilClaimantId) {
-      if (requiresScopedParty && !party?.defendantId && !party?.civilClaimantId) {
+      if (
+        requiresScopedParty &&
+        !party?.defendantId &&
+        !party?.civilClaimantId
+      ) {
         throw new BadRequestException(
           'Verdict appeal statement events require defendantId or civilClaimantId',
         )
@@ -1247,7 +1251,13 @@ export class AppealCaseService {
         transaction,
       )
     } else {
-      await this.writeEventLog(theCase, appealCase, eventType, user, transaction)
+      await this.writeEventLog(
+        theCase,
+        appealCase,
+        eventType,
+        user,
+        transaction,
+      )
     }
 
     this.dispatchEventNotifications(eventType, theCase, appealCase, user)
