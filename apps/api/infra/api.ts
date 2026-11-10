@@ -197,12 +197,12 @@ export const serviceSetup = (services: {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
-      // The app's DPoP-bound tokens need a proof here. Only native-login
-      // tokens are bound, so this changes nothing for anyone else.
+      // The app's DPoP-bound tokens need a proof here. On in dev so the app is
+      // built to it; staging and prod follow later.
       AUTH_REQUIRE_DPOP: {
         dev: 'true',
-        staging: 'true',
-        prod: 'true',
+        staging: 'false',
+        prod: 'false',
       },
       MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: {
         dev: 'http://financial-aid-backend',
