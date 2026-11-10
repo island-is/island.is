@@ -30,7 +30,8 @@ const getChapters = (entry: IProjectParentSubpage) =>
 
 @Injectable()
 export class ProjectParentSubpageSyncService
-  implements CmsSyncProvider<IProjectParentSubpage> {
+  implements CmsSyncProvider<IProjectParentSubpage>
+{
   processSyncData(entries: processSyncDataInput<IProjectParentSubpage>) {
     const entriesToUpdate: IProjectParentSubpage[] = []
     const entriesToDelete: string[] = []

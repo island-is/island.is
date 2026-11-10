@@ -19,7 +19,7 @@ import {
 
 // The project page is the parent of a subpage, not a child, so it shouldn't be traversed when finding child entries
 export const withoutProjectPageReference = <
-  T extends { sys: { id: string }; fields: { projectPage?: unknown } }
+  T extends { sys: { id: string }; fields: { projectPage?: unknown } },
 >(
   entry: T,
 ): T => ({
@@ -47,7 +47,8 @@ export const extractProjectSubpageContent = (entry: IProjectSubpage) => {
 
 @Injectable()
 export class ProjectSubpageSyncService
-  implements CmsSyncProvider<IProjectSubpage> {
+  implements CmsSyncProvider<IProjectSubpage>
+{
   processSyncData(entries: processSyncDataInput<IProjectSubpage>) {
     const entriesToUpdate: IProjectSubpage[] = []
     const entriesToDelete: string[] = []
