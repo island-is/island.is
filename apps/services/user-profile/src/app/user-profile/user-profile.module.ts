@@ -19,6 +19,7 @@ import { ActorProfile } from './models/actor-profile.model'
 import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegation-api'
 import { Emails } from './models/emails.model'
 import { BlockedNotification } from './models/blockedNotification.model'
+import { BlockedNotificationSender } from './models/blockedNotificationSender.model'
 import { EmailsController } from './emails.controller'
 import { EmailsService } from './emails.service'
 import { ActorUserProfileController } from './actor-user-profile.controller'
@@ -34,6 +35,7 @@ import { NotificationSettingsService } from './notification-settings.service'
       ActorProfile,
       Emails,
       BlockedNotification,
+      BlockedNotificationSender,
     ]),
     EmailModule,
     SmsModule,
