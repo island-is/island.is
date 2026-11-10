@@ -66,7 +66,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.HOUSING_BENEFITS,
   name: m.miscMessages.applicationName,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: m.miscMessages.institutionName,
   translationNamespaces: ApplicationConfigurations.HousingBenefits.translation,
   featureFlag: Features.isHousingBenefitsEnabled,
