@@ -48,7 +48,7 @@ const Row = styled.View<{ rowGap?: Spacing }>`
   ${({ rowGap, theme }) => rowGap && `row-gap: ${theme.spacing[rowGap]}px`}
 `
 
-interface HeaderProps {
+interface DetailHeaderProps {
   title?: string
   logo?: ImageSourcePropType
   category?: string
@@ -59,7 +59,7 @@ interface HeaderProps {
   label?: string
 }
 
-export function Header({
+export function DetailHeader({
   title,
   logo,
   category,
@@ -67,7 +67,7 @@ export function Header({
   message,
   isLoading,
   label,
-}: HeaderProps) {
+}: DetailHeaderProps) {
   const formatDate = useDateTimeFormatter()
 
   const renderSkeleton = ({

@@ -21,7 +21,7 @@ import {
   EmptyState,
   GeneralCardSkeleton,
   Label,
-  Problem,
+  StatusMessage,
   Typography,
 } from '@/ui'
 import { NetworkStatus } from '@apollo/client'
@@ -195,7 +195,7 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
 
         {hasError ? (
           <View style={{ marginTop: theme.spacing[3] }}>
-            <Problem error={medicineDelegationsRes.error} />
+            <StatusMessage error={medicineDelegationsRes.error} />
           </View>
         ) : isInitialLoading ? (
           <View style={{ paddingVertical: theme.spacing[2] }}>
