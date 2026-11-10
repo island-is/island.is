@@ -747,10 +747,18 @@ const getDefenceUserDefendants = (
       }, undefined)
     : undefined
 
+  // A mixed district + appeal portfolio must keep every represented defendant
+  // and drop co-defendants the user does not act for. District-only lawyers
+  // still see the full list until their own clients are all cancelled.
+  const hasAppealOnlyClients = myDefendants.some(
+    (defendant) => !isDistrictDefendant(defendant),
+  )
+
   return {
-    defendants: allCancelledOrDismissed
-      ? myDistrictDefendants
-      : theCase.defendants,
+    defendants:
+      allCancelledOrDismissed || hasAppealOnlyClients
+        ? myDefendants
+        : theCase.defendants,
     allCancelledOrDismissed,
     latestCancelledOrDismissedDate,
   }

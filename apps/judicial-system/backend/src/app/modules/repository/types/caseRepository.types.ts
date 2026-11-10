@@ -1572,15 +1572,11 @@ export const getLimitedAccessCaseInclude = (
         {
           // A split case takes the civil claimants that applied to the defendant
           // who left with it, so a spokesperson can be a confirmed party here.
-          // The attributes are the ones that decide whether they may open it.
+          // The attributes are the ones that decide whether they may open it
+          // (district or Landsréttur confirmation).
           model: CivilClaimant,
           as: 'civilClaimants',
-          attributes: [
-            'id',
-            'hasSpokesperson',
-            'spokespersonNationalId',
-            'isSpokespersonConfirmed',
-          ],
+          attributes: linkedCaseCivilClaimantAccessAttributes,
           required: false,
           order: [['created', 'ASC']],
           separate: true,

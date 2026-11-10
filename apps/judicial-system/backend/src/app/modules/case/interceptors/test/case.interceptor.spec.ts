@@ -243,6 +243,70 @@ describe('CaseInterceptor - getDefenceUserDefendants', () => {
     })
   })
 
+  describe('when the defence user has one district and one appeal defendant', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const theCase = makeCase([
+        {
+          ...makeDefendant(nationalId, [
+            makeEventLog(DefendantEventType.INDICTMENT_DISMISSED, dismissedAt),
+          ]),
+          id: 'district_defendant',
+          toJSON: () => ({
+            id: 'district_defendant',
+            defenderNationalId: nationalId,
+          }),
+        },
+        {
+          ...makeDefendant(undefined),
+          id: 'appeal_defendant',
+          isDefenderChoiceConfirmed: false,
+          isAppealDefenderConfirmed: true,
+          isAppealDefenderWaived: false,
+          appealDefenderNationalId: nationalId,
+          toJSON: () => ({
+            id: 'appeal_defendant',
+            appealDefenderNationalId: nationalId,
+          }),
+        },
+        {
+          ...makeDefendant(otherNationalId),
+          id: 'other_defendant',
+          toJSON: () => ({
+            id: 'other_defendant',
+            defenderNationalId: otherNationalId,
+          }),
+        },
+      ])
+
+      mockRequest.mockImplementationOnce(() => ({
+        user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+      }))
+      mockHandle.mockReturnValueOnce(of(theCase))
+
+      then = await givenWhenThen(theCase)
+    })
+
+    it('returns both represented defendants and excludes co-defendants', () => {
+      expect(then.result.defendants).toHaveLength(2)
+      expect(then.result.defendants).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ id: 'district_defendant' }),
+          expect.objectContaining({
+            id: 'appeal_defendant',
+            appealDefenderNationalId: nationalId,
+          }),
+        ]),
+      )
+      expect(then.result.defendants).not.toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ id: 'other_defendant' }),
+        ]),
+      )
+    })
+  })
+
   describe('when the defence user has confirmed defendants but none are dismissed or cancelled', () => {
     let then: Then
 
