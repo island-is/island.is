@@ -20,6 +20,7 @@ import LogoAOSH from '../../assets/card/vinnueftirlitid-logo.png'
 import BackgroundVinnuvelar from '../../assets/card/vinnuvelar-bg.png'
 import BackgroundHuntingCard from '../../assets/card/veidikort-bg.png'
 import { font } from '../../utils'
+import { licenceColours, scanResultColours } from '../../utils/licence-colours'
 
 const Host = styled.View<{ backgroundColor: string }>`
   border-radius: 16px;
@@ -58,7 +59,7 @@ const SubtitleText = styled.Text`
     fontWeight: '600',
     fontSize: 13,
     lineHeight: 15,
-    color: '#000',
+    color: ({ theme }) => theme.tokens.foreground.primary,
   })}
 `
 
@@ -70,7 +71,7 @@ const Title = styled.Text`
   margin-bottom: 4px;
   ${font({
     fontWeight: '600',
-    color: '#000',
+    color: ({ theme }) => theme.tokens.foreground.primary,
   })}
 `
 
@@ -97,14 +98,14 @@ const Splitter = styled.View`
   margin-right: 24px;
   margin-left: 24px;
   margin-bottom: 20px;
-  background-color: rgba(98, 80, 88, 1);
+  background-color: ${scanResultColours.divider};
   opacity: 0.1;
 `
 
 const Label = styled.Text`
   ${font({
     fontSize: 12,
-    color: '#8D6679',
+    color: scanResultColours.label,
   })}
   margin-bottom: 8px;
 `
@@ -114,7 +115,7 @@ const Value = styled.Text`
     fontWeight: '600',
     fontSize: 13,
     lineHeight: 15,
-    color: '#000',
+    color: ({ theme }) => theme.tokens.foreground.primary,
   })}
 `
 
@@ -151,7 +152,7 @@ const Background = styled.Image`
   bottom: 0;
   width: 100%;
   height: 100%;
-  background-color: #e2c4d1;
+  background-color: ${scanResultColours.imageBackground};
 `
 
 const Normal = styled.Text``
@@ -161,7 +162,7 @@ const Copy = styled.Text`
     fontSize: 14,
     lineHeight: 18,
     fontWeight: '300',
-    color: '#000',
+    color: ({ theme }) => theme.tokens.foreground.primary,
   })}
   margin-bottom: 8px;
 `
@@ -196,44 +197,37 @@ const ScanResultCardPresets: Record<
     title: string
     logo: ImageSourcePropType
     backgroundImage?: ImageSourcePropType
-    backgroundColor?: string
   }
 > = {
   DriversLicense: {
     title: 'Ökuskírteini (IS)',
     logo: LogoCoatOfArms,
     backgroundImage: BackgroundDriversLicense,
-    backgroundColor: '#F5E4EC',
   },
   AdrLicense: {
     title: 'ADR skírteini',
     logo: LogoAOSH,
     backgroundImage: BackgroundADR,
-    backgroundColor: '#F2FAEC',
   },
   MachineLicense: {
     title: 'Vinnuvélaskírteini',
     logo: LogoAOSH,
     backgroundImage: BackgroundVinnuvelar,
-    backgroundColor: '#C5E6AF',
   },
   FirearmLicense: {
     title: 'Skotvopnaskírteini',
     logo: CoatOfArms,
     backgroundImage: BackgroundWeaponLicense,
-    backgroundColor: '#EBEBF2',
   },
   DisabilityLicense: {
     title: 'Örorkuskírteini',
     logo: DisabilityLicenseLogo,
     backgroundImage: DisabilityLicenseBg,
-    backgroundColor: '#C5D5C8',
   },
   HuntingLicense: {
     title: 'Veiðikort',
     logo: LogoNatureConservationAgency,
     backgroundImage: BackgroundHuntingCard,
-    backgroundColor: '#E2EDFF',
   },
   Unknown: {
     title: 'Ekki þekkt',
@@ -264,7 +258,9 @@ export function ScanResultCard({
     : ScanResultCardPresets.Unknown
   const cardTitle = title ?? preset?.title
   const backgroundImage = preset?.backgroundImage
-  const backgroundColor = preset?.backgroundColor ?? theme.color.blue100
+  const colours = type !== 'Unknown' ? licenceColours[type] : undefined
+  const backgroundColor =
+    colours?.background ?? theme.tokens.background.brandMinimal
   const logo = preset?.logo
 
   return (
@@ -279,7 +275,7 @@ export function ScanResultCard({
             <SubtitleIcon>
               {loading ? (
                 <ActivityIndicator
-                  color="#0061FF"
+                  color={theme.tokens.foreground.brand}
                   animating
                   size="small"
                   style={{ transform: [{ scale: 0.8 }] }}
