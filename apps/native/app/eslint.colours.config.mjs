@@ -14,6 +14,8 @@ export default [
       '**/ui/utils/tokens.ts',
       '**/ui/utils/theme.ts',
       '**/ui/utils/dynamic-color.ts',
+      // licence artwork
+      '**/ui/utils/licence-colours.ts',
       '**/graphql/**',
     ],
     languageOptions: {
