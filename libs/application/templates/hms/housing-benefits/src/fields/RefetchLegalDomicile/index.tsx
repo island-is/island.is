@@ -60,7 +60,13 @@ export const RefetchLegalDomicile: FC<FieldBaseProps> = ({
           NATIONAL_REGISTRY_EXTERNAL_DATA_ID
         ]
 
-      if (!nationalRegistry) {
+      // Keep the previously fetched registry data in the form on failure, so the
+      // card, address check and other consumers aren't wiped by a failed refetch.
+      if (nationalRegistry?.status !== 'success') {
+        console.error('National registry refetch did not succeed', {
+          status: nationalRegistry?.status,
+          reason: nationalRegistry?.reason,
+        })
         setStatus('error')
         return
       }
@@ -69,11 +75,6 @@ export const RefetchLegalDomicile: FC<FieldBaseProps> = ({
         [NATIONAL_REGISTRY_EXTERNAL_DATA_ID]: nationalRegistry,
       }
       addExternalData?.(refetchedData)
-
-      if (nationalRegistry.status !== 'success') {
-        setStatus('error')
-        return
-      }
 
       const matchesAfterRefetch = doesAddressMatchRentalContract(
         application.answers,
