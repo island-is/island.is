@@ -34,7 +34,9 @@ const localize = (
   value: Array<{ content: string; language: string }> | undefined,
   locale: Locale,
 ): string =>
-  value?.find((v) => v.language === locale)?.content ?? value?.[0]?.content ?? ''
+  value?.find((v) => v.language === locale)?.content ??
+  value?.[0]?.content ??
+  ''
 
 /** Orders a lookup list by its resolved title, so the client renders it in the
  * order the active locale reads in rather than frigg's insertion order. */
@@ -114,7 +116,10 @@ export const mapAgent = (
   // MMS allows a contact with no relation type (legacy / unknown records). The
   // GraphQL field is required, so fall back to an empty label rather than null.
   relationType: dto.relationType
-    ? { id: dto.relationType.id, title: localize(dto.relationType.value, locale) }
+    ? {
+        id: dto.relationType.id,
+        title: localize(dto.relationType.value, locale),
+      }
     : { id: '', title: '' },
   createdBy: {
     kind: dto.createdBy.kind,
