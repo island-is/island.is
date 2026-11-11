@@ -175,12 +175,19 @@ export const Navbar = () => {
 
   const addSection = async () => {
     try {
+      const summaryIndex = sections?.findIndex(
+        (section) => section?.sectionType === SectionTypes.SUMMARY,
+      )
+      const insertionIndex =
+        summaryIndex !== undefined && summaryIndex !== -1
+          ? summaryIndex
+          : sections?.length ?? 0
       const newSection = await createSection({
         variables: {
           input: {
             createSectionDto: {
               formId: form.id,
-              displayOrder: sections?.length ?? 0,
+              displayOrder: insertionIndex,
             },
           },
         },
@@ -196,18 +203,18 @@ export const Navbar = () => {
           },
         })
 
-        const updatedSections = sections?.map((s) => ({
+        const updatedSections = (sections ?? []).map((s) => ({
           id: s?.id,
         }))
+        updatedSections.splice(insertionIndex, 0, {
+          id: newSection.data?.createFormSystemSection.id,
+        })
 
         updateDisplayOrder({
           variables: {
             input: {
               updateSectionsDisplayOrderDto: {
-                sectionsDisplayOrderDto: [
-                  ...(updatedSections ?? []),
-                  { id: newSection.data?.createFormSystemSection.id },
-                ],
+                sectionsDisplayOrderDto: updatedSections,
               },
             },
           },
