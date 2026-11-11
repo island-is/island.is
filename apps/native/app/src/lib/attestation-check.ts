@@ -94,8 +94,11 @@ async function check() {
     'Content-Type': 'application/json',
     'X-App-Version': Application.nativeApplicationVersion ?? '',
     'X-OS-Version': Device.osVersion ?? '',
-    'X-Device-Model':
-      (Platform.OS === 'ios' ? Device.modelId : Device.modelName) ?? '',
+    // IAS counts only letters, digits, space and , . _ - in the model, and
+    // some Android names have parentheses: "moto g(7) plus" → "moto g7 plus".
+    'X-Device-Model': (
+      (Platform.OS === 'ios' ? Device.modelId : Device.modelName) ?? ''
+    ).replace(/[()]/g, ''),
   }
 
   // Error reports need a challenge too. No cookies on either request, so
