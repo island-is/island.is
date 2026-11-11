@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import type { GridColumnProps } from '@island.is/island-ui/core'
@@ -18,6 +19,7 @@ import {
 } from '@island.is/web/graphql/schema'
 
 import type { InputContractField } from '../contract'
+import { inputSemantic } from '../utils/numberType'
 import { monthOptions, yearOptions } from '../utils/optionSources'
 import { localized } from '../utils/text'
 
@@ -44,8 +46,22 @@ export const CalculatorField = ({
   disabled,
   error,
 }: Props) => {
-  const { control } = useFormContext()
-  const { key, type, semantic, required } = contractField
+  const { control, getValues, setValue } = useFormContext()
+  const { key, type, required, min, max, integer } = contractField
+  const semantic = inputSemantic(contractField, field.numberType)
+  const defaultValue = contractField.defaultValue?.toString()
+
+  const limits = {
+    min,
+    allowNegative: min === undefined || min < 0,
+    ...(integer && { decimalScale: 0 }),
+  }
+
+  useEffect(() => {
+    if (defaultValue !== undefined && getValues(key) === undefined) {
+      setValue(key, defaultValue)
+    }
+  }, [key, defaultValue, getValues, setValue])
 
   const placeholder = localized(field.placeholder, locale)
 
@@ -111,7 +127,9 @@ export const CalculatorField = ({
       case TaxCalculatorInputFieldType.Number:
         switch (semantic) {
           case TaxCalculatorInputFieldSemantic.Year:
-            return <SelectController {...select} options={yearOptions()} />
+            return (
+              <SelectController {...select} options={yearOptions(min, max)} />
+            )
 
           case TaxCalculatorInputFieldSemantic.Month:
             return (
@@ -119,35 +137,23 @@ export const CalculatorField = ({
             )
 
           case TaxCalculatorInputFieldSemantic.Currency:
-            return <InputController {...input} type="number" currency />
+            return (
+              <InputController {...input} {...limits} type="number" currency />
+            )
 
           case TaxCalculatorInputFieldSemantic.Percentage:
-            /* Percentage values use whole percents. */
             return (
               <InputController
                 {...input}
+                {...limits}
                 type="number"
                 suffix="%"
-                min={0}
-                max={100}
-                allowNegative={false}
               />
             )
 
-          /* NumberFormat enforces whole, non-negative count values. */
           case TaxCalculatorInputFieldSemantic.Count:
-            return (
-              <InputController
-                {...input}
-                type="number"
-                min={0}
-                decimalScale={0}
-                allowNegative={false}
-              />
-            )
-
           default:
-            return <InputController {...input} type="number" />
+            return <InputController {...input} {...limits} type="number" />
         }
 
       default: {

@@ -3,7 +3,7 @@ import { FormattedDate } from 'react-intl'
 import { Image, ImageSourcePropType, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import timeOutlineIcon from '../../assets/card/time-outline.png'
-import { dynamicColor } from '../../utils/dynamic-color'
+import { token } from '../../utils/dynamic-color'
 import { Typography } from '../typography/typography'
 import { useOrganizationsStore } from '../../../stores/organizations-store'
 import { ProgressMeter } from '../progress-meter/progress-meter'
@@ -12,13 +12,7 @@ const Host = styled.View`
   min-height: 180px;
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: ${({ theme }) => theme.border.width.standard}px;
-  border-color: ${dynamicColor(
-    ({ theme }) => ({
-      dark: theme.shades.dark.shade300,
-      light: theme.color.blue200,
-    }),
-    true,
-  )};
+  border-color: ${token((t) => t.border.primary)};
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
 `
 
@@ -26,23 +20,15 @@ const ActionsContainer = styled.View`
   justify-content: center;
   align-items: center;
   border-top-width: ${({ theme }) => theme.border.width.standard}px;
-  border-top-color: ${dynamicColor(
-    (props) => ({
-      light: props.theme.color.blue200,
-      dark: 'shade300',
-    }),
-    true,
-  )};
+  border-top-color: ${token((t) => t.border.primary)};
   flex-direction: row;
 `
 
 const ActionButton = styled.TouchableOpacity<{ border: boolean }>`
   padding: ${({ theme }) => theme.spacing[2]}px;
   border-left-width: ${({ theme }) => theme.border.width.standard}px;
-  border-left-color: ${dynamicColor(
-    ({ theme, border }) => (!border ? 'transparent' : theme.color.blue200),
-    true,
-  )};
+  border-left-color: ${({ theme, border }) =>
+    !border ? 'transparent' : theme.tokens.border.primary};
 `
 
 const Title = styled.View`
@@ -146,7 +132,10 @@ export function StatusCard({
         <ActionsContainer>
           {actions.map(({ text, onPress }, i) => (
             <ActionButton onPress={onPress} key={i} border={i !== 0}>
-              <Typography variant="heading5" color={theme.color.blue400}>
+              <Typography
+                variant="heading5"
+                color={theme.tokens.interactive.foreground.primary}
+              >
                 {text}
               </Typography>
             </ActionButton>

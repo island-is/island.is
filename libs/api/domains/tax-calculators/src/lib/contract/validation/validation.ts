@@ -138,26 +138,21 @@ const assertOutputFieldShape = (
     return
   }
 
+  const label = `${field.kind} output field "${field.name}"`
+
   if (field.itemFields.length === 0) {
-    fail(
-      calculatorKey,
-      `array output field "${field.name}" publishes no item fields`,
-    )
+    fail(calculatorKey, `${label} publishes no item fields`)
     return
   }
 
   assertKeySet(
     calculatorKey,
     field.itemFields.map((itemField) => itemField.name),
-    `array output field "${field.name}"`,
+    label,
   )
 
   field.itemFields.forEach((itemField) =>
-    assertOutputScalarShape(
-      calculatorKey,
-      itemField,
-      `array output field "${field.name}" item`,
-    ),
+    assertOutputScalarShape(calculatorKey, itemField, `${label} item`),
   )
 }
 

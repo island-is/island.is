@@ -3,7 +3,7 @@ import { useContext, useState } from 'react'
 import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Checkbox, Text } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE } from '@island.is/judicial-system/consts'
 import { formatDate, getInitials } from '@island.is/judicial-system/formatters'
 import { Feature } from '@island.is/judicial-system/types'
@@ -30,6 +30,7 @@ import {
   getAppealAppointmentLetters,
   getAppealSummonsMenuItems,
   getAppealSummonsRows,
+  getAppealSummonsServiceRecipientOptions,
   getVerdictAppealFileGroups,
   showsAppealSummonses,
 } from './VerdictAppealFiles.logic'
@@ -66,6 +67,8 @@ const VerdictAppealFiles: FC = () => {
     isConfirmingAppealSummons,
     sendAppealSummonsToCourtOfAppeals,
     isSendingAppealSummonsToCourtOfAppeals,
+    sendAppealSummonsToService,
+    isSendingAppealSummonsToService,
   } = useAppealSummons()
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
@@ -73,6 +76,10 @@ const VerdictAppealFiles: FC = () => {
   const [summonsIdToDelete, setSummonsIdToDelete] = useState<string>()
   const [summonsIdToConfirm, setSummonsIdToConfirm] = useState<string>()
   const [summonsIdToSend, setSummonsIdToSend] = useState<string>()
+  const [summonsIdToSendToService, setSummonsIdToSendToService] =
+    useState<string>()
+  const [selectedServiceRecipientKeys, setSelectedServiceRecipientKeys] =
+    useState<string[]>([])
 
   const groups = getVerdictAppealFileGroups(workingCase, user)
   const isIndictmentAppealEnabled = features.includes(Feature.INDICTMENT_APPEAL)
@@ -188,6 +195,87 @@ const VerdictAppealFiles: FC = () => {
     setSummonsIdToSend(undefined)
   }
 
+  const summonsToSendToService = summonses.find(
+    (summons) => summons.id === summonsIdToSendToService,
+  )
+  const serviceRecipientOptions = summonsToSendToService
+    ? getAppealSummonsServiceRecipientOptions(
+        summonsToSendToService,
+        workingCase.defendants,
+        workingCase.civilClaimants,
+      )
+    : []
+
+  const openSendToServiceModal = (summonsId: string) => {
+    const summons = summonses.find((item) => item.id === summonsId)
+
+    if (!summons) {
+      return
+    }
+
+    const options = getAppealSummonsServiceRecipientOptions(
+      summons,
+      workingCase.defendants,
+      workingCase.civilClaimants,
+    )
+
+    setSelectedServiceRecipientKeys(
+      options
+        .filter((option) => !option.alreadySent && !option.missingNationalId)
+        .map((option) => option.key),
+    )
+    setSummonsIdToSendToService(summonsId)
+  }
+
+  const handleSendAppealSummonsToService = async () => {
+    if (!summonsIdToSendToService) {
+      return
+    }
+
+    const recipients = serviceRecipientOptions
+      .filter(
+        (option) =>
+          !option.alreadySent &&
+          !option.missingNationalId &&
+          selectedServiceRecipientKeys.includes(option.key),
+      )
+      .map((option) => ({
+        defendantId: option.defendantId,
+        civilClaimantId: option.civilClaimantId,
+      }))
+
+    if (recipients.length === 0) {
+      return
+    }
+
+    const sent = await sendAppealSummonsToService(
+      workingCase.id,
+      summonsIdToSendToService,
+      recipients,
+    )
+
+    if (!sent) {
+      return
+    }
+
+    setWorkingCase((prev) => ({
+      ...prev,
+      verdictAppealCase: prev.verdictAppealCase
+        ? {
+            ...prev.verdictAppealCase,
+            appealSummonses: prev.verdictAppealCase.appealSummonses?.map(
+              (summons) =>
+                summons.id === sent.id
+                  ? { ...summons, services: sent.services }
+                  : summons,
+            ),
+          }
+        : prev.verdictAppealCase,
+    }))
+    setSummonsIdToSendToService(undefined)
+    setSelectedServiceRecipientKeys([])
+  }
+
   return (
     <Box component="section" dataTestId="verdictAppealFiles">
       <SectionHeading title="Áfrýjunarferli" marginBottom={2} />
@@ -274,6 +362,13 @@ const VerdictAppealFiles: FC = () => {
                     }
 
                     setSummonsIdToDelete(summons.id)
+                  },
+                  () => {
+                    if (summonsIdToSendToService) {
+                      return
+                    }
+
+                    openSendToServiceModal(summons.id)
                   },
                   () => {
                     if (summonsIdToSend) {
@@ -414,6 +509,73 @@ const VerdictAppealFiles: FC = () => {
             },
           ]}
         />
+      )}
+      {summonsIdToSendToService && (
+        <Modal
+          title="Viltu senda áfrýjunarstefnu í birtingu?"
+          text="Hverjum þarf að birta áfrýjunarstefnuna?"
+          onClose={() => {
+            setSummonsIdToSendToService(undefined)
+            setSelectedServiceRecipientKeys([])
+          }}
+          loading={isSendingAppealSummonsToService}
+          buttons={[
+            {
+              text: 'Hætta við',
+              onClick: () => {
+                setSummonsIdToSendToService(undefined)
+                setSelectedServiceRecipientKeys([])
+              },
+              variant: 'ghost',
+            },
+            {
+              text: 'Senda í birtingu',
+              onClick: () => {
+                void handleSendAppealSummonsToService()
+              },
+              isLoading: isSendingAppealSummonsToService,
+              isDisabled:
+                selectedServiceRecipientKeys.filter((key) =>
+                  serviceRecipientOptions.some(
+                    (option) =>
+                      option.key === key &&
+                      !option.alreadySent &&
+                      !option.missingNationalId,
+                  ),
+                ).length === 0,
+            },
+          ]}
+        >
+          <Box marginTop={2}>
+            {serviceRecipientOptions.map((option) => (
+              <Box key={option.key} marginBottom={1}>
+                <Checkbox
+                  id={option.key}
+                  name={option.key}
+                  label={option.label}
+                  checked={
+                    option.alreadySent ||
+                    selectedServiceRecipientKeys.includes(option.key)
+                  }
+                  disabled={
+                    option.alreadySent ||
+                    option.missingNationalId ||
+                    isSendingAppealSummonsToService
+                  }
+                  onChange={(event) => {
+                    const { checked } = event.target
+
+                    setSelectedServiceRecipientKeys((prev) =>
+                      checked
+                        ? [...prev, option.key]
+                        : prev.filter((key) => key !== option.key),
+                    )
+                  }}
+                />
+              </Box>
+            ))}
+          </Box>
+        </Modal>
       )}
     </Box>
   )

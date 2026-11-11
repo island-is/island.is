@@ -1839,7 +1839,8 @@ export class FormsService {
     const familyValueTypes =
       familyType === FamilyTypes.SPOUSE
         ? ['nationalId', 'name', 'maritalStatus']
-        : familyType === FamilyTypes.CHILD ||
+        : familyType === FamilyTypes.APPLICANT_INFO ||
+          familyType === FamilyTypes.CHILD ||
           familyType === FamilyTypes.NATIONAL_ID_ESTATE
         ? ['nationalId', 'name']
         : undefined

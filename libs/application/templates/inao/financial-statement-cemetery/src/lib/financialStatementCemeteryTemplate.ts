@@ -38,7 +38,7 @@ const FinancialStatementCemeteryTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY,
   name: m.applicationTitle,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: m.institutionName,
   translationNamespaces: [configuration.translation],
   featureFlag: Features.FinancialStatementCemetery,

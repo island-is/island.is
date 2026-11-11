@@ -31,6 +31,8 @@ interface ProjectWrapperProps {
   backLink?: { url: string; text: string }
   isSubpage?: boolean // Only controls the header size (smallerSubpageHeader in the project namespace), use isFrontpage to check if the page is a subpage
   isFrontpage?: boolean
+  /** Path used to mark the active sidebar item, defaults to the current path */
+  activeNavigationPath?: string
 }
 
 export const ProjectWrapper: React.FC<
@@ -44,6 +46,7 @@ export const ProjectWrapper: React.FC<
   children,
   isSubpage,
   isFrontpage = false,
+  activeNavigationPath,
 }) => {
   const router = useRouter()
 
@@ -54,7 +57,8 @@ export const ProjectWrapper: React.FC<
   const mobileNavigationButtonCloseLabel =
     activeLocale === 'is' ? 'Loka' : 'Close'
 
-  const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
+  const baseRouterPath =
+    activeNavigationPath ?? router.asPath.split('?')[0].split('#')[0]
   const projectPageSidebarNavigationComponent = useMemo(
     () =>
       getSidebarNavigationComponent(

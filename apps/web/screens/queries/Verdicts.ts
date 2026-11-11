@@ -52,6 +52,16 @@ export const GET_VERDICT_BY_ID_QUERY = gql`
   }
 `
 
+export const GET_VERDICT_EXISTS_QUERY = gql`
+  query GetVerdictExists($input: WebVerdictByIdInput!) {
+    webVerdictById(input: $input) {
+      item {
+        caseNumber
+      }
+    }
+  }
+`
+
 export const GET_VERDICT_CASE_FILTER_OPTIONS_PER_COURT_QUERY = gql`
   query GetVerdictCaseFilterOptionsPerCourt {
     webVerdictCaseFilterOptionsPerCourt {

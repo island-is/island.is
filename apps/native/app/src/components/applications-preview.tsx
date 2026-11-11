@@ -7,7 +7,7 @@ import {
   Badge,
   badgeColorSchemes,
   ChevronRight,
-  Heading,
+  SectionHeader,
   StatusCard,
   Typography,
   ViewPager,
@@ -136,7 +136,7 @@ export const ApplicationsPreview = ({
           onPress={() => router.navigate(headingTitleNavigationLink)}
           style={{ marginHorizontal: theme.spacing[2] }}
         >
-          <Heading
+          <SectionHeader
             button={
               applications.length > numberOfItems ? (
                 <TouchableOpacity
@@ -146,7 +146,10 @@ export const ApplicationsPreview = ({
                     alignItems: 'center',
                   }}
                 >
-                  <Typography variant="heading5" color={theme.color.blue400}>
+                  <Typography
+                    variant="heading5"
+                    color={theme.tokens.interactive.foreground.primary}
+                  >
                     {intl.formatMessage({ id: 'button.seeAll' })}
                   </Typography>
                   <ChevronRight />
@@ -155,7 +158,7 @@ export const ApplicationsPreview = ({
             }
           >
             {intl.formatMessage({ id: `${headingTitleId}` })}
-          </Heading>
+          </SectionHeader>
         </TouchableOpacity>
       ) : null}
       {!slider || count === 1 ? (

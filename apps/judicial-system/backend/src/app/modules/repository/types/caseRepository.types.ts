@@ -34,6 +34,7 @@ import { AppealEventLog } from '../models/appealEventLog.model'
 import { AppealStatementDeadline } from '../models/appealStatementDeadline.model'
 import { AppealSummons } from '../models/appealSummons.model'
 import { AppealSummonsDefendant } from '../models/appealSummonsDefendant.model'
+import { AppealSummonsServiceRecipient } from '../models/appealSummonsServiceRecipient.model'
 import { Case } from '../models/case.model'
 import { CaseDefendantPoliceCaseNumber } from '../models/caseDefendantPoliceCaseNumber.model'
 import { CaseFile } from '../models/caseFile.model'
@@ -132,6 +133,13 @@ export const caseInclude: Includeable[] = [
             order: [['created', 'ASC']],
             separate: true,
           },
+          {
+            model: AppealSummonsServiceRecipient,
+            as: 'services',
+            required: false,
+            order: [['created', 'ASC']],
+            separate: true,
+          },
         ],
       },
       {
@@ -153,16 +161,22 @@ export const caseInclude: Includeable[] = [
             order: [['created', 'ASC']],
             separate: true,
           },
+          {
+            model: AppealSummonsServiceRecipient,
+            as: 'services',
+            required: false,
+            order: [['created', 'ASC']],
+            separate: true,
+          },
         ],
       },
       {
         model: AppealCourtSession,
         as: 'courtSessions',
         required: false,
-        // Most recently booked first, so the session the court has just
-        // called is at the top of the list rather than wherever its date
-        // falls.
-        order: [['created', 'DESC']],
+        // Earliest session first, like a calendar, the order the court's list
+        // and the parties' agenda card both read in.
+        order: [['sessionDate', 'ASC']],
         separate: true,
       },
       {
@@ -1200,6 +1214,8 @@ export const getLimitedAccessCaseInclude = (
           model: AppealCourtSession,
           as: 'courtSessions',
           required: false,
+          // Earliest session first, like a calendar, the order the court's list
+          // and the parties' agenda card both read in.
           order: [['sessionDate', 'ASC']],
           separate: true,
         },

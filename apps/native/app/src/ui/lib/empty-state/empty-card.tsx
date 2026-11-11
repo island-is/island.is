@@ -1,7 +1,7 @@
 import React from 'react'
 import { View } from 'react-native'
 import styled from 'styled-components/native'
-import { dynamicColor } from '../../utils'
+import { token } from '../../utils'
 import { Typography } from '../typography/typography'
 
 const Host = styled.View`
@@ -12,13 +12,7 @@ const Host = styled.View`
   min-height: 130px;
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: 1px;
-  border-color: ${dynamicColor(
-    ({ theme }) => ({
-      light: theme.color.blue200,
-      dark: theme.shades.dark.shade300,
-    }),
-    true,
-  )};
+  border-color: ${token((t) => t.border.primary)};
   column-gap: ${({ theme }) => theme.spacing[4]}px;
   align-items: center;
 `

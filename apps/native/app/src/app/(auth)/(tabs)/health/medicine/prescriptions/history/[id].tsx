@@ -10,7 +10,7 @@ import {
   HealthDirectorateMedicineHistoryDispensation,
   useGetMedicineDispensationForAtcQuery,
 } from '@/graphql/types/schema'
-import { Badge, Problem, Typography } from '@/ui'
+import { Badge, StatusMessage, Typography } from '@/ui'
 
 const Host = styled.View`
   flex: 1;
@@ -120,7 +120,7 @@ export default function MedicineHistoryScreen() {
       />
       {atcError && !atcData ? (
         <ProblemContainer>
-          <Problem error={atcError} />
+          <StatusMessage error={atcError} />
         </ProblemContainer>
       ) : atcLoading && !dispensations.length ? (
         <>

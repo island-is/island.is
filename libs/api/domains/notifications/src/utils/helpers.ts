@@ -10,6 +10,7 @@ import {
   ActorNotification,
   NotificationChannel,
   NotificationDelivery,
+  NotificationPriorityType,
 } from '../lib/notifications.model'
 
 const cleanString = (str?: string) => {
@@ -19,6 +20,11 @@ const cleanString = (str?: string) => {
   return str.replace(/\s+/g, ' ').trim()
 }
 
+/**
+ * Maps a rendered notification from the user-notification service to the
+ * GraphQL `Notification` model, including `wasSent`, `priorityType` and
+ * `category`.
+ */
 export const notificationMapper = (
   notification: RenderedNotificationDto,
 ): Notification => ({
@@ -30,12 +36,20 @@ export const notificationMapper = (
     updated: notification.updated,
     read: notification.read,
     seen: notification.seen,
+    wasSent: notification.wasSent,
+    priorityType: notification.priorityType as
+      | NotificationPriorityType
+      | undefined,
   },
   sender: {
     id: notification.senderId,
   },
   recipient: {
     nationalId: undefined,
+  },
+  category: {
+    key: notification.category ?? undefined,
+    label: notification.categoryLabel,
   },
   message: {
     title: cleanString(notification.title),

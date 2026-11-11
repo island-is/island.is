@@ -1,3 +1,5 @@
+import { FjarskiptastofaSelfAssessmentModule } from './fjarskiptastofa/self-assessment/self-assessment.module'
+import { FjarskiptastofaSelfAssessmentService } from './fjarskiptastofa/self-assessment/self-assessment.service'
 import { PayDebtsModule } from './pay-debts/pay-debts.module'
 import { PayDebtsService } from './pay-debts/pay-debts.service'
 import { ConfirmJobOrIncomeModule } from './vmst/confirm-job-or-income/confirm-job-or-income.module'
@@ -309,6 +311,7 @@ export const modules = [
   DirectorateOfEqualityModule,
   PayDebtsModule,
   U2CertificateModule,
+  FjarskiptastofaSelfAssessmentModule,
 ]
 
 export const services = [
@@ -414,4 +417,5 @@ export const services = [
   DirectorateOfEqualityService,
   PayDebtsService,
   U2CertificateService,
+  FjarskiptastofaSelfAssessmentService,
 ]

@@ -6,7 +6,23 @@ import {
 } from '@island.is/application/types'
 import { BffUser } from '@island.is/shared/types'
 import { getNationalIdPrefix, nationalIdPreface } from './assigneeUtils'
-import { doesAssigneeAddressMatchRentalContract } from './rentalAgreementUtils'
+import {
+  doesAddressMatchRentalContract,
+  doesAssigneeAddressMatchRentalContract,
+} from './rentalAgreementUtils'
+import { isNationalRegistryRefetchSelected } from './utils'
+
+/**
+ * Shown when the applicant's legal domicile does not match the selected lease. Stays visible
+ * after a successful national registry refetch (address now matches) so the applicant sees
+ * the success state instead of the screen disappearing under them.
+ */
+export const shouldShowLegalDomicileSection = (
+  answers: FormValue,
+  externalData: ExternalData,
+) =>
+  !doesAddressMatchRentalContract(answers, externalData) ||
+  isNationalRegistryRefetchSelected(answers)
 
 export const shouldShowRefetchNationalRegistrySection = (
   answers: FormValue,

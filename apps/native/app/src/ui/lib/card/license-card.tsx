@@ -19,6 +19,7 @@ import IconStatusNonVerified from '../../assets/card/danger.png'
 import IconStatusVerified from '../../assets/card/is-verified.png'
 import { LicenseCardPresets } from './license-list-card'
 import { dynamicColor } from '../../utils/dynamic-color'
+import { licenceColours } from '../../utils/licence-colours'
 import { Typography } from '../typography/typography'
 import { screenWidth } from '../../../utils/dimensions'
 import { BARCODE_MAX_WIDTH } from '@/constants/wallet.constants'
@@ -156,11 +157,12 @@ export function LicenseCard({
   const preset = type
     ? LicenseCardPresets[type]
     : LicenseCardPresets.DriversLicense
+  const colours = type ? licenceColours[type] : licenceColours.DriversLicense
   const title = props.title ?? preset?.title
   const isTablet = screenWidth > 760
   const logo = props.logo ?? preset?.logo
   const backgroundImage = props.backgroundImage ?? preset?.backgroundImage
-  const backgroundColor = props.backgroundColor ?? preset?.backgroundColor
+  const backgroundColor = props.backgroundColor ?? colours?.background
   const textColor = theme.shades.light.foreground
   const showExpireDate =
     type === GenericLicenseType.Passport ||
@@ -295,9 +297,9 @@ export function LicenseCard({
             <Skeleton
               active
               backgroundColor={
-                preset.barcode?.background ?? theme.color.blue100
+                colours?.barcode?.background ?? theme.color.blue100
               }
-              overlayColor={preset.barcode?.overlay ?? theme.color.blue200}
+              overlayColor={colours?.barcode?.overlay ?? theme.color.blue200}
               overlayOpacity={1}
               style={{ flex: 1 }}
             />

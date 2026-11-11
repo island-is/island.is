@@ -30,16 +30,23 @@ export const appealAdvocateAssignedSubject = () =>
   `${COURT_NAME} - aðgangur að máli`
 
 /**
- * The sentence that records the advocate, and nothing else.
- *
- * How to reach the case is left to the tail the base notification service
- * appends to every mail that carries no link of its own - the same closing
- * line and the same link the rest of the portal's mail ends with.
+ * The sentence that records the advocate, and — when the recipient has a
+ * national id and can open the case — a link to the defender indictment
+ * overview. Without a link, the base notification service appends its usual
+ * portal closing line.
  */
 export const appealAdvocateAssignedBody = (
   role: AppealAdvocateRole,
   appealCaseNumber?: string | null,
-) =>
-  `${COURT_NAME} hefur skráð þig sem ${role} í máli ${getAppealCaseNumberOrPlaceholder(
+  caseUrl?: string,
+) => {
+  const assignment = `${COURT_NAME} hefur skráð þig sem ${role} í máli ${getAppealCaseNumberOrPlaceholder(
     appealCaseNumber,
   )}.`
+
+  if (!caseUrl) {
+    return assignment
+  }
+
+  return `${assignment}<br/><br/>Hægt er að nálgast gögn málsins á <a href="${caseUrl}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`
+}
