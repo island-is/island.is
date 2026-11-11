@@ -53,6 +53,7 @@ export class DeviceRegistrationsService {
           appAttestCounter: input.appAttestCounter ?? null,
           deviceName: input.deviceName ?? null,
           audkenniSimNumber: input.audkenniSimNumber ?? null,
+          developmentBuild: input.developmentBuild ?? false,
         }
 
         const existing = await this.deviceRegistrationModel.findOne({
