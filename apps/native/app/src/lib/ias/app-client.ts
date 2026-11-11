@@ -89,9 +89,6 @@ export function getIasClient(): IasClient {
                     console.log('[ias] Renewed the attestation')
                   }
                 : undefined,
-              onBrowserFallback: (error) => {
-                console.warn('[ias] Falling back to the browser login', error)
-              },
             }),
     }
   }

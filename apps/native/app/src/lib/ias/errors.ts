@@ -5,7 +5,6 @@ import type { DeviceKeyErrorCode } from '../../../modules/device-keys'
  * instead of in `error`, e.g. "sms_code_required: …". These become the code.
  */
 const DESCRIPTION_REASONS = [
-  'native_login_disabled',
   'sms_code_required',
   'invalid_sms_code',
   'new_login_restricted',
@@ -58,11 +57,6 @@ export function getIasErrorCode(
   error: unknown,
 ): IasErrorCode | (string & {}) | undefined {
   return error instanceof IasError ? error.code : undefined
-}
-
-/** IAS's kill switch is on: use the browser login. Refresh still works. */
-export function isNativeLoginDisabled(error: unknown) {
-  return getIasErrorCode(error) === 'native_login_disabled'
 }
 
 /**

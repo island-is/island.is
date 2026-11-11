@@ -1,9 +1,8 @@
 import { IasError } from './errors'
 import { sleep } from './sleep'
-import type { IasClient, IasTokens, LoginMode } from './types'
+import type { IasClient, IasTokens } from './types'
 
 export interface MockIasClientOptions {
-  loginMode?: LoginMode
   /** How long the person takes to approve on their phone */
   approvalDelayMs?: number
 }
@@ -17,7 +16,6 @@ const MOCK_SMS_CODE = '123456'
  * - anything else: approved after `approvalDelayMs`
  */
 export function createMockIasClient({
-  loginMode = 'native',
   approvalDelayMs = 3000,
 }: MockIasClientOptions = {}): IasClient {
   let biometrics = false
@@ -33,11 +31,6 @@ export function createMockIasClient({
   })
 
   return {
-    async getLoginMode() {
-      await sleep(300)
-      return loginMode
-    },
-
     getInstallThumbprint: () => 'mock-install-thumbprint',
 
     async startLogin(loginHint, { smsCode } = {}) {

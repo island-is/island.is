@@ -90,10 +90,6 @@ export async function runNativeAppLogin(
   }
   const ias = getIasClient()
   try {
-    if ((await ias.getLoginMode()) !== 'native') {
-      report('✗ Browser login: Metro has the reason')
-      return false
-    }
     const tokens = await ias.waitForApproval(await ias.startLogin(phone))
     report(
       `✓ Log in as gervimaður ${phone} (acr ${
@@ -199,20 +195,14 @@ export async function runNativeLoginTest(
   }
 
   try {
-    const mode = await step(
-      'Config and attestation',
-      () => ias.getLoginMode(),
-      (result) => `${result}, ${getDeviceKey('install')?.securityLevel}`,
-    )
-    if (mode !== 'native') {
-      report('Browser login: Metro has the reason')
-      return false
-    }
-
+    // The first login attests the install key.
     const login = await step(
       `Log in as gervimaður ${phone}`,
       async () => ias.waitForApproval(await ias.startLogin(phone)),
-      (tokens) => `acr ${tokenClaims(tokens.accessToken).acr}`,
+      (tokens) =>
+        `acr ${tokenClaims(tokens.accessToken).acr}, ${
+          getDeviceKey('install')?.securityLevel
+        }`,
     )
     loggedIn = true
     refreshToken = login.refreshToken

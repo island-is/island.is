@@ -6,7 +6,6 @@ export {
   IasError,
   isAppLoginRemoved,
   isBiometricKeyInvalidated,
-  isNativeLoginDisabled,
 } from './errors'
 export type { IasErrorCode } from './errors'
 export { createMockIasClient } from './mock'
@@ -17,6 +16,5 @@ export type {
   IasDevice,
   IasStorage,
   IasTokens,
-  LoginMode,
   StoredAttestation,
 } from './types'

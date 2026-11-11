@@ -11,16 +11,7 @@ import type {
  * store owns those.
  */
 export interface IasClient {
-  /**
-   * Whether this install should log in natively or in the browser
-   * (spec section 0). Creates and attests the install key on the way when
-   * native login is on. Never throws: any failure means the browser login.
-   */
-  getLoginMode(): Promise<LoginMode>
-  /**
-   * The install key's thumbprint, which IAS's feature flag can target.
-   * Null before the first getLoginMode.
-   */
+  /** The install key's thumbprint. Null before the first login. */
   getInstallThumbprint(): string | null
 
   /**
@@ -67,8 +58,6 @@ export interface IasClient {
   ): Promise<string>
 }
 
-export type LoginMode = 'native' | 'browser'
-
 export interface CibaRequest {
   authReqId: string
   /** Öryggistala, shown while the person approves */
@@ -93,7 +82,7 @@ export interface IasTokens {
 
 /** What the client needs from the device: keys, attestation and hashing. */
 export interface IasDevice {
-  /** For GET /app/config */
+  /** Android puts the attestation challenge in the key's certificate. */
   os: 'ios' | 'android'
   getInstallKey(): DeviceKey | null
   /**
