@@ -40,9 +40,11 @@ const validAnswers = {
 const errorPaths = (result: { success: boolean; error?: unknown }) =>
   result.success
     ? []
-    : (result as {
-        error: { issues: { path: (string | number)[] }[] }
-      }).error.issues.map((issue) => issue.path.join('.'))
+    : (
+        result as {
+          error: { issues: { path: (string | number)[] }[] }
+        }
+      ).error.issues.map((issue) => issue.path.join('.'))
 
 describe('MachineLicenseCardReissueAnswersSchema', () => {
   it('accepts valid answers with delivery to current address', () => {

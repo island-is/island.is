@@ -9,13 +9,13 @@ import {
 } from './getOverviewItems'
 
 const createExternalData = (address?: Record<string, string>): ExternalData =>
-  (({
+  ({
     identity: {
       data: { address },
       date: new Date(),
       status: 'success',
     },
-  } as unknown) as ExternalData)
+  } as unknown as ExternalData)
 
 describe('getLegalDomicileAddress', () => {
   it('returns street, postal code and city', () => {
