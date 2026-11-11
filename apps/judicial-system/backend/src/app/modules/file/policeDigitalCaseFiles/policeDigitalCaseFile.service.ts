@@ -29,6 +29,7 @@ import {
 import { UpdatePoliceDigitalCaseFileDto } from '../dto/updatePoliceDigitalCaseFiles.dto'
 import { PoliceDigitalCaseFileSyncResult } from '../models/policeDigitalCaseFileSyncResult.model'
 import { getFilesToCreate } from './getFilesToCreate'
+import { truncateToVarchar } from './truncateToVarchar'
 
 @Injectable()
 export class PoliceDigitalCaseFileService {
@@ -49,6 +50,7 @@ export class PoliceDigitalCaseFileService {
     withCourtSessions: boolean,
     submittedBy: string | undefined,
     file: PoliceSystemDigitalCaseFile,
+    displayName: string,
     transaction: Transaction,
   ): Promise<void> {
     const existingFile =
@@ -71,25 +73,28 @@ export class PoliceDigitalCaseFileService {
           policeCaseNumber: file.policeCaseNumber,
           policeExternalVendorId: file.policeExternalVendorId,
           displayDate: file.displayDate,
-          metadataFileName: file.name,
+          metadataFileName: displayName,
         },
       )
 
       const pdfBuffer = await createDigitalCaseFileMetadataPdf({
-        name: file.name,
+        name: displayName,
         policeDigitalFileId: file.id,
         policeExternalVendorId: file.policeExternalVendorId,
         displayDate: file.displayDate,
       })
 
       const fileId = uuid()
-      const key = `${caseId}/${fileId}/${file.name}.pdf`
+      // Keep the S3/DB key short and independent of the police display name so
+      // an overlong title cannot overflow case_file.key (varchar 255).
+      const key = `${caseId}/${fileId}/metadata.pdf`
+      const caseFileName = truncateToVarchar(`${displayName}.pdf`)
 
       const metadataCaseFile = await this.caseFileRepositoryService.create(
         caseId,
         {
           id: fileId,
-          name: `${file.name}.pdf`,
+          name: caseFileName,
           type: 'application/pdf',
           category: CaseFileCategory.PROSECUTOR_CASE_FILE,
           state: CaseFileState.STORED_IN_RVG,
@@ -98,7 +103,7 @@ export class PoliceDigitalCaseFileService {
           policeCaseNumber: file.policeCaseNumber,
           policeFileId: file.id,
           displayDate: file.displayDate,
-          userGeneratedFilename: file.name,
+          userGeneratedFilename: displayName,
           submittedBy,
         },
         { transaction },
@@ -112,8 +117,9 @@ export class PoliceDigitalCaseFileService {
           caseId,
           {
             documentType: CourtDocumentType.UPLOADED_DOCUMENT,
-            name:
+            name: truncateToVarchar(
               metadataCaseFile.userGeneratedFilename ?? metadataCaseFile.name,
+            ),
             caseFileId: metadataCaseFile.id,
           },
           { transaction },
@@ -190,36 +196,35 @@ export class PoliceDigitalCaseFileService {
     if (filesToCreate.length > 0) {
       await this.sequelize.transaction(async (transaction) => {
         await Promise.all(
-          filesToCreate.map((f) =>
-            this.policeDigitalCaseFileRepositoryService.create(
+          filesToCreate.map(async (f) => {
+            const displayName = truncateToVarchar(f.name)
+
+            await this.policeDigitalCaseFileRepositoryService.create(
               {
                 caseId,
                 policeCaseNumber: f.policeCaseNumber,
                 policeDigitalFileId: f.id,
                 policeExternalVendorId: f.policeExternalVendorId,
-                name: f.name,
+                name: displayName,
                 displayDate: f.displayDate,
               },
               { transaction },
-            ),
-          ),
-        )
+            )
 
-        if (shouldCreateMetadataCaseFiles) {
-          await Promise.all(
-            filesToCreate.map((f) =>
-              this.createMetadataCaseFile(
+            if (shouldCreateMetadataCaseFiles) {
+              await this.createMetadataCaseFile(
                 caseId,
                 caseType,
                 caseState,
                 withCourtSessions,
                 submittedBy,
                 f,
+                displayName,
                 transaction,
-              ),
-            ),
-          )
-        }
+              )
+            }
+          }),
+        )
       })
     }
 
