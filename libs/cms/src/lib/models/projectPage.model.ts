@@ -6,6 +6,7 @@ import { getProjectPageUrlPrefix } from '@island.is/shared/utils'
 import {
   ILinkFields,
   IProjectPage,
+  IProjectParentSubpage,
   IProjectSubpage,
 } from '../generated/contentfulTypes'
 import {
@@ -123,6 +124,11 @@ export class ProjectPage {
   alertBanner?: AlertBanner
 }
 
+const PROJECT_SUBPAGE_CONTENT_TYPE_IDS: string[] = [
+  'projectSubpage',
+  'projectParentSubpage',
+]
+
 const belongsToProjectPage = (
   subpage: { fields?: { projectPage?: { sys?: { id?: string } } } } | undefined,
   projectPage: IProjectPage,
@@ -161,9 +167,9 @@ const processSidebarLinks = (projectPage: IProjectPage) => {
 
     // Filter out subpages that belong to a different project page (since those links will result in a 404)
     return (
-      linkGroupContentTypeId === 'projectSubpage' &&
+      PROJECT_SUBPAGE_CONTENT_TYPE_IDS.includes(linkGroupContentTypeId) &&
       belongsToProjectPage(
-        linkGroup.fields.primaryLink as IProjectSubpage,
+        linkGroup.fields.primaryLink as IProjectSubpage | IProjectParentSubpage,
         projectPage,
       )
     )
@@ -222,8 +228,11 @@ const processSidebarLinks = (projectPage: IProjectPage) => {
           return true
         }
         return (
-          childLinkContentTypeId === 'projectSubpage' &&
-          belongsToProjectPage(childLink as IProjectSubpage, projectPage)
+          PROJECT_SUBPAGE_CONTENT_TYPE_IDS.includes(childLinkContentTypeId) &&
+          belongsToProjectPage(
+            childLink as IProjectSubpage | IProjectParentSubpage,
+            projectPage,
+          )
         )
       }) ?? []
   }

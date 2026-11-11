@@ -35,7 +35,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.TERMINATE_RENTAL_AGREEMENT,
   name: m.miscMessages.applicationName,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: 'HMS',
   featureFlag: Features.TerminateRentalAgreementEnabled,
   translationNamespaces:

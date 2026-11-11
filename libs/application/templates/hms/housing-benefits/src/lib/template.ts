@@ -66,7 +66,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.HOUSING_BENEFITS,
   name: m.miscMessages.applicationName,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: m.miscMessages.institutionName,
   translationNamespaces: ApplicationConfigurations.HousingBenefits.translation,
   featureFlag: Features.isHousingBenefitsEnabled,
@@ -175,6 +175,9 @@ const template: ApplicationTemplate<
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
+              // Allows the applicant to refetch their legal domicile from the
+              // legal domicile sub section (RefetchLegalDomicile field)
+              api: [NationalRegistryApi],
               write: 'all',
               read: 'all',
               delete: true,
