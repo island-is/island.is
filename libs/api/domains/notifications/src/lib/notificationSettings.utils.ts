@@ -5,6 +5,10 @@ export const normalizeSenderId = (senderId: string): string =>
 export const isValidSenderId = (normalizedSenderId: string): boolean =>
   /^\d{10}$/.test(normalizedSenderId)
 
+/** National ids are accepted with or without a hyphen */
+export const normalizeNationalId = (nationalId: string): string =>
+  nationalId.replace(/\D/g, '')
+
 export const toCategoryKey = (senderId: string, category: string): string =>
   `${normalizeSenderId(senderId)}-${category}`
 

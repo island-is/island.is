@@ -62,6 +62,14 @@ export class ActorNotification extends Model<
   })
   recipient!: string
 
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: true,
+    field: 'was_sent',
+  })
+  wasSent!: CreationOptional<boolean>
+
   @CreatedAt
   @Column({
     type: DataType.DATE,

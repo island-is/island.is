@@ -13,8 +13,10 @@ import {
   NationalRegistryV3ClientService,
 } from '@island.is/clients/national-registry-v3'
 import {
+  ActorProfileDto,
   UserProfileDto,
   UserProfileControllerFindUserProfileIncludeEnum as UserProfileInclude,
+  UserProfileControllerGetActorProfileIncludeEnum as ActorProfileInclude,
   V2UsersApi,
 } from '@island.is/clients/user-profile'
 import type { Logger } from '@island.is/logging'
@@ -143,7 +145,8 @@ export class NotificationsWorkerService {
   ) {}
 
   // Stopgap: lets users ignore notifications that are neither urgent nor
-  // actionable. Only the receiving user's own profile is consulted.
+  // actionable. Only the receiving profile's own preferences are consulted (the
+  // user's profile, or the actor profile for delegations).
   private shouldDeliverByPriority({
     profile,
     priorityType,
@@ -219,7 +222,7 @@ export class NotificationsWorkerService {
     category,
     messageId,
   }: {
-    userProfile?: UserProfileDto
+    userProfile?: Pick<UserProfileDto, 'blockedCategories'>
     senderId?: string
     category: string | null
     messageId: string
@@ -264,11 +267,44 @@ export class NotificationsWorkerService {
       return
     }
 
-    const actorProfile =
-      await this.userProfileApi.userProfileControllerGetActorProfile({
-        xParamToNationalId: args.recipient,
-        xParamFromNationalId: args.onBehalfOf.nationalId,
-      })
+    // Blocked categories are the actor profile's own, and the feature flag is
+    // evaluated for the delegate (the recipient).
+    const includeBlockedCategories = await this.shouldIncludeBlockedCategories({
+      nationalId: args.recipient,
+      senderId: args.senderId,
+      urgent: args.urgent,
+      messageId,
+    })
+
+    let actorProfile: ActorProfileDto | undefined
+    if (includeBlockedCategories) {
+      try {
+        actorProfile =
+          await this.userProfileApi.userProfileControllerGetActorProfile({
+            xParamToNationalId: args.recipient,
+            xParamFromNationalId: args.onBehalfOf.nationalId,
+            include: [ActorProfileInclude.NotificationSettings],
+          })
+      } catch {
+        // Fail open: blocked categories are optional, so retry without them
+        // rather than dropping the notification.
+        this.logger.warn(
+          'Failed to fetch actor profile with notification settings, retrying without',
+          { messageId },
+        )
+        actorProfile =
+          await this.userProfileApi.userProfileControllerGetActorProfile({
+            xParamToNationalId: args.recipient,
+            xParamFromNationalId: args.onBehalfOf.nationalId,
+          })
+      }
+    } else {
+      actorProfile =
+        await this.userProfileApi.userProfileControllerGetActorProfile({
+          xParamToNationalId: args.recipient,
+          xParamFromNationalId: args.onBehalfOf.nationalId,
+        })
+    }
 
     if (!actorProfile) {
       this.logger.info('No actor profile found for user', { messageId })
@@ -336,7 +372,26 @@ export class NotificationsWorkerService {
           : Promise.resolve(undefined),
       ])
 
-    const dbRecord = await this.createActorNotificationDbRecord(args)
+    // Email only: the actor profile's preferences never affect SMS, which uses
+    // the delegate's own profile. Urgent notifications bypass both filters.
+    const shouldSendNotification =
+      this.shouldDeliverByPriority({
+        profile: actorProfile,
+        priorityType: template.priorityType,
+        urgent: args.urgent,
+        messageId,
+      }) &&
+      !this.isCategoryBlocked({
+        userProfile: actorProfile,
+        senderId: args.senderId,
+        category: toTemplateCategory(template.hnippCategoryIs),
+        messageId,
+      })
+
+    const dbRecord = await this.createActorNotificationDbRecord(
+      args,
+      shouldSendNotification,
+    )
 
     // Phase 1: collect all payloads (data fetching only, no queue side effects)
     const [emailPayload, smsPayload] = await Promise.all([
@@ -345,7 +400,8 @@ export class NotificationsWorkerService {
             messageId,
             nationalId: args.recipient,
             email: actorProfile.email,
-            emailNotifications: actorProfile.emailNotifications,
+            emailNotifications:
+              actorProfile.emailNotifications && shouldSendNotification,
             fullName:
               args.onBehalfOf?.name ||
               onBehalfOfNames?.fullName ||
@@ -392,6 +448,7 @@ export class NotificationsWorkerService {
 
   private async createActorNotificationDbRecord(
     args: InternalCreateHnippNotificationDto & { messageId: string },
+    wasSent = true,
   ) {
     const { messageId, ...message } = args
 
@@ -436,6 +493,7 @@ export class NotificationsWorkerService {
         messageId,
         userNotificationId: userNotification.id,
         recipient: message.recipient,
+        wasSent,
       })
       this.logger.info('actor notification written to db', {
         messageId,

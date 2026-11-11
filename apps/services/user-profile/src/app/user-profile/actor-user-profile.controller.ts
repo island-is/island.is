@@ -40,6 +40,12 @@ import {
 import { CreateVerificationDto } from './dto/create-verification.dto'
 import { PostNudgeDto } from './dto/post-nudge.dto'
 import { SetActorProfileEmailDto } from './dto/set-actor-profile-email.dto'
+import { ActorNotificationSettingsDto } from './dto/actor-notification-settings.dto'
+import { UpdateNotificationSettingsDto } from './dto/blocked-category.dto'
+import {
+  NotificationSettingsService,
+  toCategoryKey,
+} from './notification-settings.service'
 import { UserProfileService } from './user-profile.service'
 
 const namespace = '@island.is/user-profile/v2/actor'
@@ -56,6 +62,7 @@ export class ActorUserProfileController {
   constructor(
     private readonly auditService: AuditService,
     private readonly userProfileService: UserProfileService,
+    private readonly notificationSettingsService: NotificationSettingsService,
   ) {}
   @Get('/locale')
   @ApiOkResponse({ type: ActorLocale })
@@ -288,7 +295,81 @@ export class ActorUserProfileController {
         fromNationalId,
         emailNotifications: actorProfile.emailNotifications,
         emailsId: actorProfile.emailsId,
+        onlyActionablePriorityNotifications:
+          actorProfile.onlyActionablePriorityNotifications,
       }),
+    )
+  }
+
+  @Get('/actor-profiles/.from-national-id/notification-settings')
+  @Documentation({
+    description:
+      'Get notification settings for the delegation from the given user, including the sender categories blocked for it.',
+    request: {
+      header: {
+        'X-Param-From-National-Id': {
+          required: true,
+          description: 'National id of the user that granted the delegation',
+        },
+      },
+    },
+    response: { status: 200, type: ActorNotificationSettingsDto },
+  })
+  @Audit<ActorNotificationSettingsDto>({
+    resources: (settings) =>
+      settings.blockedCategories.map((blockedCategory) => blockedCategory.key),
+  })
+  findActorNotificationSettings(
+    @CurrentActor() actor: User,
+    @Headers('X-Param-From-National-Id') fromNationalId: string,
+  ): Promise<ActorNotificationSettingsDto> {
+    return this.notificationSettingsService.findActorSettings(
+      actor.nationalId,
+      fromNationalId,
+    )
+  }
+
+  @Post('/actor-profiles/.from-national-id/notification-settings')
+  @Documentation({
+    description:
+      'Blocks or unblocks notifications in the given sender categories for the delegation from the given user.',
+    request: {
+      header: {
+        'X-Param-From-National-Id': {
+          required: true,
+          description: 'National id of the user that granted the delegation',
+        },
+      },
+    },
+    response: { status: 204 },
+  })
+  updateActorNotificationSettings(
+    @CurrentActor() actor: User,
+    @Headers('X-Param-From-National-Id') fromNationalId: string,
+    @Body() input: UpdateNotificationSettingsDto,
+  ): Promise<void> {
+    const keysWhere = (blocked: boolean) =>
+      input.categories
+        .filter((category) => category.blocked === blocked)
+        .map(({ senderId, category }) => toCategoryKey(senderId, category))
+
+    return this.auditService.auditPromise(
+      {
+        auth: actor,
+        namespace,
+        action: 'updateActorNotificationSettings',
+        resources: actor.nationalId,
+        meta: {
+          fromNationalId,
+          blocked: keysWhere(true),
+          unblocked: keysWhere(false),
+        },
+      },
+      this.notificationSettingsService.updateActorCategories(
+        actor.nationalId,
+        fromNationalId,
+        input.categories,
+      ),
     )
   }
 

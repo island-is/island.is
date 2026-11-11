@@ -25,6 +25,7 @@ import { VerificationService } from '../verification.service'
 import { formatPhoneNumber } from '../utils/format-phone-number'
 import { ActorProfile } from '../models/actor-profile.model'
 import { Emails } from '../models/emails.model'
+import { BlockedNotification } from '../models/blockedNotification.model'
 import { NUDGE_INTERVAL, SKIP_INTERVAL } from '../user-profile.service'
 import { notificationScopes } from '@island.is/auth/scopes'
 
@@ -2023,5 +2024,154 @@ describe('PATCH v2/actor/actor-profiles/.from-national-id', () => {
 
     // Assert
     expect(res.status).toEqual(204)
+  })
+})
+
+describe('GET/POST v2/actor/actor-profiles/.from-national-id/notification-settings', () => {
+  const path =
+    '/v2/actor/actor-profiles/.from-national-id/notification-settings'
+  const toNationalId = createNationalId('person')
+  const fromNationalId = createNationalId('company')
+  const senderId = createNationalId('company')
+  const categoryLabel = { is: 'Almennt', en: 'General' }
+
+  let app: TestApp
+  let server: SuperTest<Test>
+  let fixtureFactory: FixtureFactory
+  let delegationsApi: DelegationsApi
+  let userProfileModel: typeof UserProfile
+  let actorProfileModel: typeof ActorProfile
+
+  const mockDelegations = (fromNationalIds: string[]) =>
+    jest
+      .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+      .mockResolvedValue({
+        data: fromNationalIds.map((from) => ({
+          toNationalId,
+          fromNationalId: from,
+          subjectId: null,
+          type: 'delegation',
+          customDelegationScopes: null,
+        })),
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: '',
+          endCursor: '',
+        },
+        totalCount: fromNationalIds.length,
+      })
+
+  beforeAll(async () => {
+    app = await setupApp({
+      AppModule,
+      SequelizeConfigService,
+      user: createCurrentUser({
+        nationalId: toNationalId,
+        scope: [UserProfileScope.read],
+      }),
+    })
+
+    server = request(app.getHttpServer())
+    fixtureFactory = new FixtureFactory(app)
+    delegationsApi = app.get(DelegationsApi)
+    userProfileModel = app.get(getModelToken(UserProfile))
+    actorProfileModel = app.get(getModelToken(ActorProfile))
+  })
+
+  beforeEach(async () => {
+    await userProfileModel.destroy({
+      truncate: true,
+      force: true,
+      cascade: true,
+    })
+    await actorProfileModel.destroy({
+      truncate: true,
+      force: true,
+      cascade: true,
+    })
+  })
+
+  afterAll(async () => {
+    await app.cleanUp()
+  })
+
+  it('should block and unblock a category on a new actor profile without touching the delegate own blocks', async () => {
+    mockDelegations([fromNationalId])
+    await fixtureFactory.createUserProfile({
+      nationalId: toNationalId,
+      emails: [],
+    })
+    await fixtureFactory.createBlockedNotification({
+      nationalId: toNationalId,
+      senderId,
+    })
+
+    const category = { senderId, category: 'almennt' }
+
+    const blockRes = await server
+      .post(path)
+      .set('X-Param-From-National-Id', fromNationalId)
+      .send({ categories: [{ ...category, blocked: true, categoryLabel }] })
+
+    expect(blockRes.status).toEqual(204)
+
+    const actorProfile = await actorProfileModel.findOne({
+      where: { toNationalId, fromNationalId },
+    })
+    // Company delegations default to email notifications off
+    expect(actorProfile?.emailNotifications).toBe(false)
+
+    const getRes = await server
+      .get(path)
+      .set('X-Param-From-National-Id', fromNationalId)
+
+    expect(getRes.status).toEqual(200)
+    expect(getRes.body).toEqual({
+      fromNationalId,
+      onlyActionablePriorityNotifications: false,
+      blockedCategories: [
+        {
+          key: `${senderId}-almennt`,
+          senderId,
+          category: 'almennt',
+          categoryLabel,
+        },
+      ],
+    })
+
+    // The delegate's own settings are separate
+    await expect(
+      app
+        .get<typeof BlockedNotification>(getModelToken(BlockedNotification))
+        .count({ where: { nationalId: toNationalId } }),
+    ).resolves.toBe(1)
+
+    await server
+      .post(path)
+      .set('X-Param-From-National-Id', fromNationalId)
+      .send({ categories: [{ ...category, blocked: false }] })
+      .expect(204)
+
+    const afterRes = await server
+      .get(path)
+      .set('X-Param-From-National-Id', fromNationalId)
+
+    expect(afterRes.body.blockedCategories).toEqual([])
+  })
+
+  it('should return 400 when the delegation does not exist', async () => {
+    mockDelegations([])
+
+    const res = await server
+      .post(path)
+      .set('X-Param-From-National-Id', fromNationalId)
+      .send({
+        categories: [
+          { senderId, category: 'almennt', blocked: true, categoryLabel },
+        ],
+      })
+
+    expect(res.status).toEqual(400)
   })
 })
