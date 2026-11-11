@@ -14,7 +14,7 @@ export const conclusion = {
     },
     alertTitle: {
       id: 'aosh.mlcr.application:conclusion.general.alertTitle',
-      defaultMessage: 'Umsókn um endurnýjun vinnuvélaréttinda móttekin.',
+      defaultMessage: 'Umsókn um endurútgáfu plastkorts móttekin.',
       description: 'Conclusion alert title',
     },
     accordionTitle: {
@@ -25,7 +25,7 @@ export const conclusion = {
     accordionText: {
       id: 'aosh.mlcr.application:conclusion.general.accordionText#markdown',
       defaultMessage:
-        'Skírteinin verða bæði aðgengileg á mínum síðum Ísland.is, í appinu og einnig send á heimilisfang ef óskað var eftir því. Tilkynningin verður send þegar skírteini hafa verið gerð aðgengileg.',
+        'Skirteinið mun vera sett í framleiðslu og verður sent til þín á næstu dögum.',
       description: 'Conclusion accordion text',
     },
   }),
