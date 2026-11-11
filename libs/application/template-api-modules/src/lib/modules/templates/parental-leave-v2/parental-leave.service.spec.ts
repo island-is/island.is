@@ -24,6 +24,7 @@ import {
   calculatePeriodLength,
   errorMessages,
   getApplicationExternalData,
+  MANUAL,
   PARENTAL_LEAVE,
   PARENTAL_GRANT,
   ParentalRelations,
@@ -521,6 +522,59 @@ describe('ParentalLeaveV2Service', () => {
   })
 
   describe('validateApplication from the change form', () => {
+    const sentOtherParentId = async (application: Application) => {
+      const vmstApi = (
+        parentalLeaveService as unknown as {
+          parentalLeaveApi: ParentalLeaveApi
+        }
+      ).parentalLeaveApi
+      const setParentalLeave = jest
+        .spyOn(vmstApi, 'parentalLeaveSetParentalLeave')
+        .mockResolvedValue({} as never)
+
+      await parentalLeaveService.validateApplication({
+        application,
+      } as TemplateApiModuleActionProps)
+
+      const otherParentId =
+        setParentalLeave.mock.calls[0][0].parentalLeave.otherParentId
+      setParentalLeave.mockRestore()
+      return otherParentId
+    }
+
+    const changeApplication = () => {
+      const application = createApplication()
+      application.state = 'editOrAddEmployersAndPeriods'
+      set(application, 'externalData.navId', {
+        data: '2025-03076',
+        date: new Date(),
+        status: 'success',
+      })
+      set(application, 'externalData.VMSTOtherParent', {
+        data: { otherParentId: '0101303019', otherParentName: 'Fyrra' },
+        date: new Date(),
+        status: 'success',
+      })
+      return application
+    }
+
+    it('should send the other parent the applicant changed to, not the one VMST holds', async () => {
+      const application = changeApplication()
+      set(application, 'answers.otherParentObj', {
+        chooseOtherParent: MANUAL,
+        otherParentId: '0101302399',
+        otherParentName: 'Nýja',
+      })
+
+      expect(await sentOtherParentId(application)).toBe('0101302399')
+    })
+
+    it("should fall back to VMST's other parent when the answers have none", async () => {
+      const application = changeApplication()
+      set(application, 'answers.otherParentObj', undefined)
+
+      expect(await sentOtherParentId(application)).toBe('0101303019')
+    })
     it('should reject a change application that has no fund id anywhere', async () => {
       // This is the plain Error behind the generic 500 that was reported. It is
       // correct to reject here; the fix was making sure a change application
@@ -897,6 +951,74 @@ describe('ParentalLeaveV2Service', () => {
   })
 
   describe('createRightsDTO', () => {
+    it('should send the days a change application requests along with the rights VMST holds', async () => {
+      const application = createApplication()
+      set(application, 'externalData.VMSTApplicationRights', {
+        data: [
+          {
+            rightsUnit: 'M-L-GR',
+            rightsDescription: 'Grunnréttur móður',
+            days: '180',
+            months: '6.0',
+            daysLeft: '180',
+          },
+        ],
+        date: new Date(),
+        status: 'success',
+      })
+      set(application, 'answers.otherParentObj', {
+        chooseOtherParent: MANUAL,
+        otherParentId: '0101302399',
+      })
+      set(application, 'answers.transferRights', 'REQUEST')
+      set(application, 'answers.requestRights', {
+        isRequestingRights: YES,
+        requestDays: '45',
+      })
+
+      const res = await parentalLeaveService.createRightsDTO(application)
+
+      expect(res).toEqual([
+        expect.objectContaining({ rightsUnit: 'M-L-GR', days: '180' }),
+        expect.objectContaining({
+          rightsUnit: 'FSAL-GR',
+          days: '45',
+          months: '1.5',
+        }),
+      ])
+    })
+
+    it('should send fewer days of the personal right when a change application gives days', async () => {
+      const application = createApplication()
+      set(application, 'externalData.VMSTApplicationRights', {
+        data: [
+          { rightsUnit: 'M-L-GR', days: '180', months: '6.0' },
+          { rightsUnit: 'FSAL-GR', days: '30', months: '1.0' },
+        ],
+        date: new Date(),
+        status: 'success',
+      })
+      set(application, 'answers.otherParentObj', {
+        chooseOtherParent: MANUAL,
+        otherParentId: '0101302399',
+      })
+      set(application, 'answers.transferRights', 'GIVE')
+      set(application, 'answers.requestRights', {
+        isRequestingRights: NO,
+        requestDays: '0',
+      })
+      set(application, 'answers.giveRights', {
+        isGivingRights: YES,
+        giveDays: '15',
+      })
+
+      const res = await parentalLeaveService.createRightsDTO(application)
+
+      expect(res).toEqual([
+        expect.objectContaining({ rightsUnit: 'M-L-GR', days: '165' }),
+      ])
+    })
+
     it('should return 2 applicationRights, basic rights, single parent rights, and multiple Birth', async () => {
       const application = createApplication()
 
@@ -1159,6 +1281,34 @@ describe('ParentalLeaveV2Service', () => {
           },
         },
       })
+    })
+
+    it('should log only the safe parts of a VMST error body', async () => {
+      const application = createApplication()
+      set(application.answers, 'employment.isSelfEmployed', YES)
+      const logError = jest.spyOn(logger, 'error').mockImplementation()
+      jest.spyOn(vmstApi(), 'parentalLeaveSetParentalLeave').mockRejectedValue(
+        new Response(
+          JSON.stringify({
+            errorCode: 'PL-1234',
+            message: 'Applicant 0102993019 already has an application',
+            errors: { bank: ['0123-26-004567 is not a valid account'] },
+          }),
+          { status: 400, statusText: 'Bad Request' },
+        ),
+      )
+
+      await expect(
+        parentalLeaveService.sendApplication({
+          application,
+        } as TemplateApiModuleActionProps),
+      ).rejects.toBeDefined()
+
+      const logged = logError.mock.calls.flat().map(String).join('\n')
+      expect(logged).toContain('400 Bad Request: PL-1234; fields: bank')
+      expect(logged).not.toContain('0102993019')
+      expect(logged).not.toContain('0123-26-004567')
+      logError.mockRestore()
     })
 
     it.each([

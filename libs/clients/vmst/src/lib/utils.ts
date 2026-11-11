@@ -78,33 +78,33 @@ const collapse = (text: string): string => {
 }
 
 /**
- * Pull a human-readable reason out of a VMST error body: the known fields of a
- * JSON body (including ASP.NET ProblemDetails field errors), or the raw text
- * when the body is not JSON (e.g. an HTML 500 from X-Road).
+ * What is safe to log about a VMST error body: its error code and the names of
+ * the fields it rejected. VMST's messages are left out because they may repeat
+ * the submitted values, such as national ids or bank accounts, and so is a body
+ * that is not JSON.
  */
-const describeErrorBody = (parsed: unknown, rawBody: string): string => {
-  if (isRecord(parsed)) {
-    const parts: string[] = []
-    for (const key of ['errorCode', 'title', 'detail', 'message']) {
-      const value = parsed[key]
-      if (typeof value === 'string' && value) {
-        parts.push(value)
-      }
-    }
-    if (isRecord(parsed.errors)) {
-      for (const [field, messages] of Object.entries(parsed.errors)) {
-        const text = Array.isArray(messages)
-          ? messages.join(', ')
-          : String(messages)
-        parts.push(`${field}: ${text}`)
-      }
-    }
-    if (parts.length > 0) {
-      return collapse(parts.join('; '))
-    }
+export const describeVmstErrorBody = (rawBody: string): string => {
+  const parsed = parseJson(rawBody)
+
+  if (!isRecord(parsed)) {
+    return ''
   }
 
-  return collapse(rawBody)
+  const parts: string[] = []
+  const { errorCode, errors } = parsed
+
+  if (
+    (typeof errorCode === 'string' && errorCode) ||
+    typeof errorCode === 'number'
+  ) {
+    parts.push(String(errorCode))
+  }
+
+  if (isRecord(errors) && Object.keys(errors).length > 0) {
+    parts.push(`fields: ${Object.keys(errors).join(', ')}`)
+  }
+
+  return collapse(parts.join('; '))
 }
 
 export const createWrappedFetchWithLogging = (
@@ -190,7 +190,7 @@ export const createWrappedFetchWithLogging = (
           // Previously rejected with `requestBody`, which handed callers back
           // their own request as the "error". Reject with a real Error so the
           // response fields are what surfaces upstream.
-          const reason = describeErrorBody(parsedBody, rawBody)
+          const reason = describeVmstErrorBody(rawBody)
           return reject(
             Object.assign(
               new Error(

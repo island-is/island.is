@@ -72,41 +72,47 @@ describe('createWrappedFetchWithLogging', () => {
     expect(error.status).toBe(400)
   })
 
-  it('should spell out the field errors of a ProblemDetails body', async () => {
+  it('should name the rejected fields of a ProblemDetails body', async () => {
     const error = await failWith(
       400,
       'Bad Request',
       JSON.stringify({
         title: 'One or more validation errors occurred.',
         status: 400,
-        errors: { employers: ['The employers field is required.'] },
+        errors: {
+          employers: ['The employers field is required.'],
+          bank: ['0123-26-004567 is not a valid account'],
+        },
       }),
     )
 
-    expect(error.message).toContain('One or more validation errors occurred.')
-    expect(error.message).toContain(
-      'employers: The employers field is required.',
-    )
+    expect(error.message).toBe('400 Bad Request: fields: employers, bank')
   })
 
-  // A 500 from X-Road in front of VMST arrives as HTML, and used to be dropped
-  // on the floor, leaving a bare status with no reason at all.
-  it('should fall back to the body text when the error is not JSON', async () => {
+  // VMST's messages can repeat what was submitted
+  it('should keep VMST messages and submitted values out of the error', async () => {
+    const error = await failWith(
+      400,
+      'Bad Request',
+      JSON.stringify({
+        errorCode: 'PL-1234',
+        message: 'Applicant 0102993019 already has an application',
+        detail: 'Bank account 0123-26-004567 is closed',
+      }),
+    )
+
+    expect(error.message).toBe('400 Bad Request: PL-1234')
+  })
+
+  // A 500 from X-Road in front of VMST arrives as HTML, which can hold anything
+  it('should leave out a body that is not JSON', async () => {
     const error = await failWith(
       500,
       'Server Error',
       '<html><body><h1>Server Error</h1>\n  <p>Object reference not set</p></body></html>',
     )
 
-    expect(error.message).toContain('500 Server Error')
-    expect(error.message).toContain('Object reference not set')
-  })
-
-  it('should collapse and cap a long body', async () => {
-    const error = await failWith(500, 'Server Error', 'x'.repeat(1000))
-
-    expect(error.message.length).toBeLessThan(400)
-    expect(error.message).toContain('…')
+    expect(error.message).toBe('500 Server Error')
   })
 
   it('should still report the status when there is no body at all', async () => {

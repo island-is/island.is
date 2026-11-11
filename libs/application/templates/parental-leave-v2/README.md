@@ -189,9 +189,9 @@ When investigating errors on our enviornments we have two logging services. `Dat
 
 When the application is opened/refreshed by a user that was an assignee but no longer is, we might want to show them something - we get their national registry id so we could see if it is the other parent visting or the employer, even though they are not an assignee anymore and show them something relevant like "The application is no longer in a state you can interact with". This is too specific for the application system to know and handle, although the application system should show some message to a user visiting an application that is not an assignee.
 
-### Localisation in emails
+### Localisation in emails and SMS
 
-Emails are currently hardcoded, need to pass in localisation functions to be able to use translation strings. Also need to sync with service-portal to know what locale the user prefers.
+Emails and SMS messages are currently hardcoded in Icelandic, as in V1. They need localisation functions passed in to be able to use translation strings, and need to sync with service-portal to know what locale the user prefers.
 
 ### Other parent asks for personal allowance
 

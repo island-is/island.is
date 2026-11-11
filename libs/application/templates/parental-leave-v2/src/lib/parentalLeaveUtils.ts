@@ -34,6 +34,7 @@ import {
   additionalSingleParentMonths,
   daysInMonth,
   defaultMonths,
+  maxDaysToGiveOrReceive,
   minimumPeriodStartBeforeExpectedDateOfBirth,
   multipleBirthsDefaultDays,
 } from '../config'
@@ -102,7 +103,13 @@ export const currentDateStartTime = () => {
 }
 
 const multipleBirthRightsUnits = ['ORLOF-FBF', 'ST-FBF']
-const addOnRightsUnits = [...multipleBirthRightsUnits, 'EITTFOR', 'FSAL-GR']
+// Days the applicant received from the other parent
+const RECEIVED_RIGHTS_UNIT = 'FSAL-GR'
+const addOnRightsUnits = [
+  ...multipleBirthRightsUnits,
+  'EITTFOR',
+  RECEIVED_RIGHTS_UNIT,
+]
 
 // `GET /applications/{id}` does not return these; they are merged in from
 // VMST's per-applicant parental-leaves list (`setApplicationInformation`).
@@ -378,12 +385,10 @@ export const getAvailableRightsInDays = (application: Application) => {
     application.externalData,
   )
   if (VMSTApplicationRights) {
-    const VMSTDays = VMSTApplicationRights.reduce(
+    return (getVMSTRightsWithTransfer(application) ?? []).reduce(
       (acc, right) => acc + Number(right.days),
       0,
     )
-
-    return VMSTDays
   }
 
   const selectedChild = getSelectedChild(
@@ -891,17 +896,27 @@ const getMultipleBirthsFromRights = (
   }
 }
 
-const getBaseRightFromRights = (rights: unknown): string | undefined => {
+const getBaseRightRow = (rights: unknown): ApplicationRight | undefined => {
   if (!Array.isArray(rights)) {
     return undefined
   }
 
   return rights.find(
     (right) =>
-      typeof right.rightsUnit === 'string' &&
+      typeof right?.rightsUnit === 'string' &&
       !addOnRightsUnits.includes(right.rightsUnit),
-  )?.rightsUnit
+  )
 }
+
+const getBaseRightFromRights = (rights: unknown): string | undefined =>
+  getBaseRightRow(rights)?.rightsUnit ?? undefined
+
+/**
+ * A parent who is both employed and self-employed ("launþ./sjálfst.") has a
+ * code of its own: M-L-GR-SJ, F-FL-L-GRS, FO-FL-L-GS, M-Æ-L-GRSJ, ...
+ */
+const isEmployedAndSelfEmployedRight = (baseRight: string) =>
+  /-(GR-SJ|GR-S|GRSJ|GRS|GS)$/.test(baseRight)
 
 const getApplicationTypeFromRights = (rights: unknown): string | undefined => {
   const baseRight = getBaseRightFromRights(rights)
@@ -918,7 +933,7 @@ const getApplicationTypeFromRights = (rights: unknown): string | undefined => {
     return PARENTAL_GRANT
   }
 
-  if (baseRight.endsWith('-GR')) {
+  if (baseRight.endsWith('-GR') || isEmployedAndSelfEmployedRight(baseRight)) {
     return PARENTAL_LEAVE
   }
 
@@ -932,7 +947,138 @@ const getIsSelfEmployedFromRights = (rights: unknown): YesOrNo | undefined => {
     return undefined
   }
 
+  // A parent who is also employed (M-L-GR-SJ, ...) gets NO: they have
+  // employers, and the employer flow (approval of changes) has to apply.
   return baseRight.includes('-S-GR') ? YES : NO
+}
+
+/**
+ * The days the applicant requested from or gave to the other parent, read off
+ * the rights VMST holds. Requested days are a row of their own. Given days are
+ * not: a first application sends the full personal right less the days given,
+ * so they are the difference to the full right. A larger difference than can
+ * be given is not a transfer, and is left alone.
+ */
+export const getTransferFromRights = (
+  rights: unknown,
+): { requestDays: number; giveDays: number } => {
+  if (!Array.isArray(rights)) {
+    return { requestDays: 0, giveDays: 0 }
+  }
+
+  const received = rights.find(
+    (right) => right?.rightsUnit === RECEIVED_RIGHTS_UNIT,
+  )
+  const requestDays = Number(received?.days) || 0
+
+  if (requestDays > 0) {
+    return { requestDays, giveDays: 0 }
+  }
+
+  const baseDays = Number(getBaseRightRow(rights)?.days)
+  const giveDays = monthsToDays(defaultMonths) - baseDays
+
+  return {
+    requestDays: 0,
+    giveDays:
+      Number.isFinite(giveDays) &&
+      giveDays > 0 &&
+      giveDays <= maxDaysToGiveOrReceive
+        ? giveDays
+        : 0,
+  }
+}
+
+const getTransferAnswersFromRights = (rights: unknown): FormValue => {
+  const { requestDays, giveDays } = getTransferFromRights(rights)
+
+  return {
+    transferRights:
+      requestDays > 0
+        ? TransferRightsOption.REQUEST
+        : giveDays > 0
+        ? TransferRightsOption.GIVE
+        : TransferRightsOption.NONE,
+    requestRights: {
+      isRequestingRights: requestDays > 0 ? YES : NO,
+      requestDays: String(requestDays),
+    },
+    giveRights: {
+      isGivingRights: giveDays > 0 ? YES : NO,
+      giveDays: String(giveDays),
+    },
+  }
+}
+
+/**
+ * The rights VMST holds, changed by the days a primary parent now requests or
+ * gives in a change application. Unchanged until the transfer has been
+ * answered, so an application started before the transfer was prefilled keeps
+ * what VMST holds.
+ */
+export const getVMSTRightsWithTransfer = (
+  application: Application,
+): ApplicationRight[] | undefined => {
+  const { VMSTApplicationRights } = getApplicationExternalData(
+    application.externalData,
+  )
+
+  if (
+    !VMSTApplicationRights ||
+    getValueViaPath(application.answers, 'transferRights') === undefined
+  ) {
+    return VMSTApplicationRights
+  }
+
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+
+  if (selectedChild?.parentalRelation !== ParentalRelations.primary) {
+    return VMSTApplicationRights
+  }
+
+  const before = getTransferFromRights(VMSTApplicationRights)
+  const transferredDays = getTransferredDays(application, selectedChild)
+  const requestDays = Math.max(transferredDays, 0)
+  const giveDays = Math.max(-transferredDays, 0)
+
+  if (requestDays === before.requestDays && giveDays === before.giveDays) {
+    return VMSTApplicationRights
+  }
+
+  const baseRight = getBaseRightRow(VMSTApplicationRights)
+  const rights = VMSTApplicationRights.filter(
+    (right) => right.rightsUnit !== RECEIVED_RIGHTS_UNIT,
+  ).map((right) => {
+    if (right !== baseRight) {
+      return right
+    }
+
+    const days = Number(right.days) + before.giveDays - giveDays
+    return {
+      ...right,
+      days: String(days),
+      months: daysToMonths(days).toFixed(1),
+    }
+  })
+
+  if (requestDays > 0) {
+    const received = VMSTApplicationRights.find(
+      (right) => right.rightsUnit === RECEIVED_RIGHTS_UNIT,
+    )
+    rights.push({
+      ...received,
+      rightsUnit: RECEIVED_RIGHTS_UNIT,
+      rightsDescription: received?.rightsDescription ?? 'Framsal grunnréttur',
+      days: String(requestDays),
+      months: daysToMonths(requestDays).toFixed(1),
+      daysLeft: String(requestDays),
+    })
+  }
+
+  return rights
 }
 
 /**
@@ -1033,6 +1179,10 @@ export const getVMSTApplicationAnswers = (
   const isSelfEmployed = getIsSelfEmployedFromRights(rights)
   if (isSelfEmployed) {
     set(answers, 'employment.isSelfEmployed', isSelfEmployed)
+  }
+
+  if (Array.isArray(rights) && rights.length > 0) {
+    Object.assign(answers, getTransferAnswersFromRights(rights))
   }
 
   if (applicationInformation?.paymentInfo) {

@@ -21,6 +21,7 @@ import {
   getAdditionalSingleParentRightsInDays,
   getApplicationAnswers,
   getShortPeriodWithoutPredecessorError,
+  getVMSTRightsWithTransfer,
   getApplicationExternalData,
   getAvailablePersonalRightsInDays,
   getMultipleBirthsDays,
@@ -58,7 +59,11 @@ import type {
   ParentalLeave,
   Period,
 } from '@island.is/clients/vmst'
-import { ApplicationApi, ParentalLeaveApi } from '@island.is/clients/vmst'
+import {
+  ApplicationApi,
+  describeVmstErrorBody,
+  ParentalLeaveApi,
+} from '@island.is/clients/vmst'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigService, ConfigType } from '@nestjs/config'
@@ -189,14 +194,14 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
 
   /**
    * The reason a VMST call failed. In production the generated client rejects
-   * with the raw `Response`, whose body holds VMST's reason.
+   * with the raw `Response`; only the parts of its body that are safe to log
+   * are kept.
    */
   private async describeError(error: unknown): Promise<string> {
     if (error instanceof Response) {
       const body = await error.text().catch(() => '')
-      return `${error.status} ${error.statusText}${
-        body ? `: ${body.slice(0, 1000)}` : ''
-      }`
+      const reason = describeVmstErrorBody(body)
+      return `${error.status} ${error.statusText}${reason ? `: ${reason}` : ''}`
     }
 
     return error instanceof Error ? error.message : String(error)
@@ -989,9 +994,9 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
     const { applicationType, otherParent, isRequestingRights, periods } =
       getApplicationAnswers(application.answers)
 
-    const { VMSTApplicationRights } = getApplicationExternalData(
-      application.externalData,
-    )
+    // In a change application these are the rights VMST holds, with the days
+    // the applicant now requests or gives
+    const VMSTApplicationRights = getVMSTRightsWithTransfer(application)
 
     if (VMSTApplicationRights) {
       let usedDays = calculateDaysUsedByPeriods(periods)

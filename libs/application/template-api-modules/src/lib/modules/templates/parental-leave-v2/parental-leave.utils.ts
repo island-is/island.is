@@ -397,8 +397,10 @@ export const transformApplicationToParentalLeaveDTO = (
     applicationId: getVmstApplicationId(application),
     applicationFundId: applicationFundId,
     applicant: application.applicant,
+    // The answers win: a change application can replace the other parent, and
+    // a follow-up's answers are prefilled from VMST.
     otherParentId:
-      VMSTOtherParent?.otherParentId ?? getOtherParentId(application),
+      getOtherParentId(application) || VMSTOtherParent?.otherParentId,
     expectedDateOfBirth: isFosterCareOrAdoption
       ? isDateInTheFuture(selectedChild.dateOfBirth!)
         ? selectedChild.dateOfBirth!

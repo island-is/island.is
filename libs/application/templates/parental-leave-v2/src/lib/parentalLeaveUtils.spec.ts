@@ -25,6 +25,7 @@ import {
   FileType,
   StartDateOptions,
   MOCK_APPLICATION_FUND_ID,
+  TransferRightsOption,
 } from '../constants'
 import { ChildInformation } from '../dataProviders/Children/types'
 import {
@@ -72,6 +73,8 @@ import {
   setTestBirthAndExpectedDate,
   getActionName,
   getVMSTApplicationAnswers,
+  getVMSTRightsWithTransfer,
+  getTransferFromRights,
   getChangeBaseline,
   pickFirstPhoneNumber,
   vmstFirstPeriodStartToAnswer,
@@ -2337,6 +2340,41 @@ describe('getApplicationExternalData', () => {
     ).toBeUndefined()
   })
 
+  it.each([
+    'M-L-GR-SJ',
+    'F-L-GR-SJ',
+    'FO-L-GR-SJ',
+    'M-FL-L-GRS',
+    'F-FL-L-GRS',
+    'FO-FL-L-GS',
+    'F-FÓ-GR-SJ',
+    'FO-FÓ-GR-S',
+    'M-FÓ-L-GRS',
+    'FO-Æ-L-GRS',
+    'F-Æ-L-GRSJ',
+    'M-Æ-L-GRSJ',
+  ])(
+    'should read %s, a parent both employed and self-employed, as a parental leave with employers',
+    (rightsUnit) => {
+      const application = buildApplication({
+        externalData: {
+          VMSTApplicationInformation: {
+            data: { applicationRights: [{ rightsUnit, days: '180' }] },
+            status: 'success',
+            date: new Date(),
+          },
+        } as unknown as ExternalData,
+      })
+
+      expect(getVMSTApplicationAnswers(application.externalData)).toMatchObject(
+        {
+          applicationType: { option: 'parentalLeave' },
+          employment: { isSelfEmployed: NO },
+        },
+      )
+    },
+  )
+
   it('should pick the first phone number from a semicolon-separated VMST list', () => {
     const application = buildApplication({
       externalData: {
@@ -3196,5 +3234,144 @@ describe('getFollowUpChildSelection', () => {
     })
 
     expect(getFollowUpChildSelection(application)).toBeUndefined()
+  })
+})
+
+describe('transferring days in a change application', () => {
+  const base = (days: string) => ({ rightsUnit: 'M-L-GR', days, months: '6.0' })
+  const received = (days: string) => ({ rightsUnit: 'FSAL-GR', days })
+
+  const changeApplication = (
+    vmstRights: Record<string, unknown>[],
+    answers: FormValue = {},
+  ) =>
+    buildApplication({
+      answers: {
+        selectedChild: 0,
+        otherParentObj: {
+          chooseOtherParent: MANUAL,
+          otherParentId: '0101302399',
+        },
+        ...answers,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 0,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2026-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        VMSTApplicationRights: {
+          data: vmstRights,
+          date: new Date(),
+          status: 'success',
+        },
+      } as unknown as ExternalData,
+    })
+
+  it('should read the days requested or given off the rights VMST holds', () => {
+    expect(getTransferFromRights([base('180'), received('30')])).toEqual({
+      requestDays: 30,
+      giveDays: 0,
+    })
+    expect(getTransferFromRights([base('165')])).toEqual({
+      requestDays: 0,
+      giveDays: 15,
+    })
+    expect(getTransferFromRights([base('180')])).toEqual({
+      requestDays: 0,
+      giveDays: 0,
+    })
+    // More than can be given is not a transfer
+    expect(getTransferFromRights([base('90')])).toEqual({
+      requestDays: 0,
+      giveDays: 0,
+    })
+  })
+
+  it('should prefill the transfer VMST holds into the change form', () => {
+    const requesting = changeApplication([base('180'), received('30')])
+    expect(getVMSTApplicationAnswers(requesting.externalData)).toMatchObject({
+      transferRights: TransferRightsOption.REQUEST,
+      requestRights: { isRequestingRights: YES, requestDays: '30' },
+      giveRights: { isGivingRights: NO, giveDays: '0' },
+    })
+
+    const giving = changeApplication([base('165')])
+    expect(getVMSTApplicationAnswers(giving.externalData)).toMatchObject({
+      transferRights: TransferRightsOption.GIVE,
+      requestRights: { isRequestingRights: NO, requestDays: '0' },
+      giveRights: { isGivingRights: YES, giveDays: '15' },
+    })
+  })
+
+  it('should keep the rights VMST holds until the transfer is answered', () => {
+    const application = changeApplication([base('180'), received('30')])
+
+    expect(getVMSTRightsWithTransfer(application)).toEqual([
+      base('180'),
+      received('30'),
+    ])
+    expect(getAvailableRightsInDays(application)).toBe(210)
+  })
+
+  it('should add the days a change requests', () => {
+    const application = changeApplication([base('180')], {
+      transferRights: TransferRightsOption.REQUEST,
+      requestRights: { isRequestingRights: YES, requestDays: '45' },
+    })
+
+    expect(getVMSTRightsWithTransfer(application)).toEqual([
+      base('180'),
+      expect.objectContaining({
+        rightsUnit: 'FSAL-GR',
+        days: '45',
+        months: '1.5',
+        daysLeft: '45',
+      }),
+    ])
+    expect(getAvailableRightsInDays(application)).toBe(225)
+  })
+
+  it('should swap a request for giving days', () => {
+    const application = changeApplication([base('180'), received('30')], {
+      transferRights: TransferRightsOption.GIVE,
+      requestRights: { isRequestingRights: NO, requestDays: '0' },
+      giveRights: { isGivingRights: YES, giveDays: '15' },
+    })
+
+    expect(getVMSTRightsWithTransfer(application)).toEqual([
+      { rightsUnit: 'M-L-GR', days: '165', months: '5.5' },
+    ])
+    expect(getAvailableRightsInDays(application)).toBe(165)
+  })
+
+  it('should give back days given before when the change stops giving', () => {
+    const application = changeApplication([base('165')], {
+      transferRights: TransferRightsOption.NONE,
+      requestRights: { isRequestingRights: NO, requestDays: '0' },
+      giveRights: { isGivingRights: NO, giveDays: '0' },
+    })
+
+    expect(getAvailableRightsInDays(application)).toBe(180)
+  })
+
+  it('should leave the rights alone when the transfer is what VMST holds', () => {
+    const vmstRights = [base('180'), received('30')]
+    const application = changeApplication(vmstRights, {
+      transferRights: TransferRightsOption.REQUEST,
+      requestRights: { isRequestingRights: YES, requestDays: '30' },
+    })
+
+    expect(getVMSTRightsWithTransfer(application)).toEqual(vmstRights)
   })
 })
