@@ -21,8 +21,7 @@
     "${configDir}/metro.config.js",
     "${configDir}/jest.config.js",
     "${configDir}/android",
-    "${configDir}/ios",
-    "**/*.stories.tsx"
+    "${configDir}/ios"
   ],
   "include": [
     "**/*.ts",

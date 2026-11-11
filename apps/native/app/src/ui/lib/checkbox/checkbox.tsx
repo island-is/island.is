@@ -4,7 +4,7 @@ import styled from 'styled-components/native'
 
 import checkedIcon from '../../assets/icons/checkbox-checked.png'
 import uncheckedIcon from '../../assets/icons/checkbox-unchecked.png'
-import { dynamicColor } from '../../utils'
+import { token } from '../../utils'
 import { Typography } from '../typography/typography'
 
 const Host = styled.Pressable<{
@@ -19,13 +19,7 @@ const Host = styled.Pressable<{
   padding-vertical: ${({ theme }) => theme.spacing[2]}px;
   border-bottom-width: ${({ theme, borderBottom }) =>
     borderBottom ? theme.border.width.standard : 0}px;
-  border-bottom-color: ${dynamicColor(
-    ({ theme }) => ({
-      light: theme.color.blue200,
-      dark: theme.shades.dark.shade300,
-    }),
-    true,
-  )};
+  border-bottom-color: ${token((t) => t.border.primary)};
 `
 
 interface CheckboxProps {

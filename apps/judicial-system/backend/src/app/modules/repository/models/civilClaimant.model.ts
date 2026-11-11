@@ -43,6 +43,22 @@ export class CivilClaimant extends Model {
     )
   }
 
+  // Court of appeals confirmation for a claimant's appeal advocate. An advocate
+  // the court has removed keeps a stale confirmation row; hasAppealSpokesperson
+  // !== false matches how notifications decide who still acts on the appeal.
+  static isConfirmedAppealSpokespersonOfCivilClaimant(
+    appealSpokespersonNationalId: string,
+    civilClaimants?: CivilClaimant[],
+  ) {
+    return civilClaimants?.some(
+      (civilClaimant) =>
+        civilClaimant.hasAppealSpokesperson !== false &&
+        civilClaimant.isAppealSpokespersonConfirmed &&
+        civilClaimant.appealSpokespersonNationalId ===
+          appealSpokespersonNationalId,
+    )
+  }
+
   @Column({
     type: DataType.UUID,
     primaryKey: true,

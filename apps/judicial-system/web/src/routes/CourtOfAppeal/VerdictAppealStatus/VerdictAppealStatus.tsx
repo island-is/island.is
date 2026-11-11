@@ -76,8 +76,9 @@ const VerdictAppealStatus = () => {
     isDeletingAppealCourtSession,
   } = useAppealCourtSession()
 
-  // Latest session first, the way the parties' agenda card reads too, and
-  // sorted here so a session the court books or moves lands by its date.
+  // Earliest session first, like a calendar, the way the parties' agenda card
+  // reads too, and sorted here so a session the court books or moves lands by
+  // its date.
   const bookedSessions = sortAppealCourtSessionsByDate(
     verdictAppealCase?.courtSessions,
   )

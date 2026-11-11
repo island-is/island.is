@@ -1,7 +1,11 @@
 import { calculatorConfigSchema } from '@island.is/tax-calculators'
 
 import { resolveIssuePath } from './issueIdentity'
-import { filterConfigForPersistence, OUTPUT_TOTAL_SECTION_KEY } from './utils'
+import {
+  filterConfigForPersistence,
+  monthOptionLabels,
+  OUTPUT_TOTAL_SECTION_KEY,
+} from './utils'
 
 const outputTotal = (extra = {}) => ({
   uid: 'hero',
@@ -383,5 +387,29 @@ describe('resolveIssuePath', () => {
       sectionKey: OUTPUT_TOTAL_SECTION_KEY,
       fieldUid: 'hero',
     })
+  })
+})
+
+describe('monthOptionLabels', () => {
+  it('labels options by position from January to December', () => {
+    const options = [
+      'jan',
+      'feb',
+      'mar',
+      'apr',
+      'maí',
+      'jún',
+      'júl',
+      'ágú',
+      'sep',
+      'okt',
+      'nóv',
+      'des',
+    ]
+    const labels = monthOptionLabels(options)
+
+    expect(Object.keys(labels)).toEqual(options)
+    expect(labels.jan).toEqual({ is: 'Janúar', en: 'January' })
+    expect(labels.des).toEqual({ is: 'Desember', en: 'December' })
   })
 })

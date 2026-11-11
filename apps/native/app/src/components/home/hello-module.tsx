@@ -15,7 +15,7 @@ export const HelloModule = React.memo(() => {
   const { userInfo } = useAuthStore()
 
   return (
-    <View style={{ backgroundColor: theme.color.blue100 }}>
+    <View style={{ backgroundColor: theme.tokens.background.brandMinimal }}>
       <SafeAreaView
         style={{
           marginHorizontal: theme.spacing[2],
@@ -23,7 +23,10 @@ export const HelloModule = React.memo(() => {
         }}
       >
         <Host>
-          <Typography color={theme.color.purple400} weight="600">
+          <Typography
+            color={theme.tokens.feedback.tags.purple.accent}
+            weight="600"
+          >
             <FormattedMessage id="home.goodDay" defaultMessage="Góðan dag," />
           </Typography>
           <Typography

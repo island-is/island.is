@@ -28,7 +28,9 @@ describe('toInputField', () => {
       type: expected,
       required: true,
       dependsOn: undefined,
-      ...(clientType === 'number' ? { semantic: undefined } : {}),
+      ...(clientType === 'number'
+        ? { semantic: undefined, integer: false }
+        : {}),
     })
   })
 
@@ -43,25 +45,24 @@ describe('toInputField', () => {
     expect(field.semantic).toBe(TaxCalculatorInputFieldSemantic.CURRENCY)
   })
 
-  it.each([
-    ['currency', undefined, undefined],
-    ['percentage', 0, 100],
-    ['month', 1, 12],
-    ['count', 0, undefined],
-  ] as const)(
-    "exposes the %s semantic's bounds as min/max",
-    (semantic, min, max) => {
-      const field = toInputField({
-        name: 'field',
-        type: 'number',
-        required: true,
-        semantic,
-      }) as NumberInputField
+  it("exposes the contract's number constraints", () => {
+    const field = toInputField({
+      name: 'year',
+      type: 'number',
+      required: true,
+      integer: true,
+      minimum: 2019,
+      maximum: 2026,
+      defaultValue: 2026,
+    }) as NumberInputField
 
-      expect(field.min).toBe(min)
-      expect(field.max).toBe(max)
-    },
-  )
+    expect(field).toMatchObject({
+      min: 2019,
+      max: 2026,
+      integer: true,
+      defaultValue: 2026,
+    })
+  })
 
   it('structures select options and leaves other types without any', () => {
     const select = toInputField({

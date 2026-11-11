@@ -297,6 +297,57 @@ describe.each(defenceRoles)('defence user %s', (role) => {
 
         verifyFullAccess(theCase, user)
       })
+
+      describe('confirmed appeal defender assigned to case', () => {
+        const theCase = {
+          type,
+          state,
+          defendants: [
+            {},
+            {
+              appealDefenderNationalId: user.nationalId,
+              isAppealDefenderConfirmed: true,
+            },
+            {},
+          ],
+          dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, date: new Date() }],
+        } as Case
+
+        verifyFullAccess(theCase, user)
+      })
+
+      describe('unconfirmed appeal defender assigned to case', () => {
+        const theCase = {
+          type,
+          state,
+          defendants: [
+            {
+              appealDefenderNationalId: user.nationalId,
+              isAppealDefenderConfirmed: false,
+            },
+          ],
+          dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, date: new Date() }],
+        } as Case
+
+        verifyNoAccess(theCase, user)
+      })
+
+      describe('waived appeal defender with stale confirmation', () => {
+        const theCase = {
+          type,
+          state,
+          defendants: [
+            {
+              appealDefenderNationalId: user.nationalId,
+              isAppealDefenderConfirmed: true,
+              isAppealDefenderWaived: true,
+            },
+          ],
+          dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, date: new Date() }],
+        } as Case
+
+        verifyNoAccess(theCase, user)
+      })
     })
 
     describe('case state RECEIVED without an arraignment date', () => {
@@ -418,6 +469,42 @@ describe.each(defenceRoles)('defence user %s', (role) => {
         } as Case
 
         verifyFullAccess(theCase, user)
+      })
+
+      describe('confirmed appeal spokesperson assigned to case', () => {
+        const theCase = {
+          type,
+          state,
+          civilClaimants: [
+            {},
+            {
+              hasAppealSpokesperson: true,
+              appealSpokespersonNationalId: user.nationalId,
+              isAppealSpokespersonConfirmed: true,
+            },
+            {},
+          ],
+          dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, date: new Date() }],
+        } as Case
+
+        verifyFullAccess(theCase, user)
+      })
+
+      describe('removed appeal spokesperson with stale confirmation', () => {
+        const theCase = {
+          type,
+          state,
+          civilClaimants: [
+            {
+              hasAppealSpokesperson: false,
+              appealSpokespersonNationalId: user.nationalId,
+              isAppealSpokespersonConfirmed: true,
+            },
+          ],
+          dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, date: new Date() }],
+        } as Case
+
+        verifyNoAccess(theCase, user)
       })
     })
   })

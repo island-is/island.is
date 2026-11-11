@@ -2,7 +2,7 @@ import React from 'react'
 import { FormattedDate, FormattedTime } from 'react-intl'
 import styled from 'styled-components/native'
 
-import { Typography, dynamicColor } from '@/ui'
+import { Typography, token } from '@/ui'
 import { GetAirDiscountFlightLegsQuery } from '@/graphql/types/schema'
 import { useTheme } from 'styled-components'
 
@@ -14,13 +14,7 @@ const FlightLeg = styled.View`
   padding: ${({ theme }) => theme.spacing[2]}px;
   padding-bottom: ${({ theme }) => theme.spacing[3]}px;
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
-  border-bottom-color: ${dynamicColor(
-    ({ theme }) => ({
-      light: theme.color.blue200,
-      dark: theme.shades.dark.shade300,
-    }),
-    true,
-  )};
+  border-bottom-color: ${token((t) => t.border.primary)};
 `
 
 const Info = styled.View`
