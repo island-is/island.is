@@ -1,4 +1,8 @@
-import { MockedProvider, MockedResponse } from '@apollo/client/testing'
+import {
+  MockedProvider,
+  MockedResponse,
+  MockLink,
+} from '@apollo/client/testing'
 import { FormSystemField } from '@island.is/api/schema'
 import { GET_COMPANY, IDENTITY_QUERY } from '@island.is/form-system/graphql'
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
@@ -68,6 +72,7 @@ const renderField = (
   mock?: MockedResponse | MockedResponse[],
   showAddress = false,
   mode: 'onBlur' | 'onSubmit' = 'onBlur',
+  isPreview = false,
 ) => {
   const dispatch = jest.fn()
   const onSubmit = jest.fn()
@@ -79,6 +84,7 @@ const renderField = (
           <NationalId
             item={{ ...item, fieldSettings: { showAddress } }}
             dispatch={dispatch}
+            isPreview={isPreview}
           />
           <button type="submit">Submit</button>
         </form>
@@ -278,6 +284,24 @@ describe.each([
     query,
     variables: { input: { nationalId: nationalId.replace('-', '') } },
   }
+
+  it('does not request a lookup in preview', async () => {
+    const requestSpy = jest.spyOn(MockLink.prototype, 'request')
+    try {
+      renderField({ request, result: { data: success } }, true, 'onBlur', true)
+      const input = screen.getByRole('textbox', { name: 'National ID' })
+      fireEvent.change(input, { target: { value: nationalId } })
+      fireEvent.blur(input)
+      await act(async () => {})
+
+      expect(input.getAttribute('value')).toBe(nationalId)
+      expect(requestSpy).not.toHaveBeenCalled()
+      expect(screen.queryByRole('status')).toBeNull()
+      expect(screen.queryByDisplayValue(name)).toBeNull()
+    } finally {
+      requestSpy.mockRestore()
+    }
+  })
 
   it.each([
     { outcome: 'success', response: { result: { data: success } } },
