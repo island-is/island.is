@@ -654,6 +654,80 @@ describe('CaseController - Transition', () => {
     },
   )
 
+  describe('completing a cancelled LÖKE indictment with a mid-case ruling', () => {
+    const caseId = uuid()
+    const rulingOrderId = uuid()
+    const oralRulingWithoutDocumentId = uuid()
+    const theCase = {
+      id: caseId,
+      origin: CaseOrigin.LOKE,
+      type: indictmentCases[0],
+      policeCaseNumbers: [uuid()],
+      courtCaseNumber: uuid(),
+      state: CaseState.WAITING_FOR_CANCELLATION,
+      caseFiles: [
+        {
+          id: rulingOrderId,
+          key: uuid(),
+          isKeyAccessible: true,
+          category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+        },
+        {
+          id: oralRulingWithoutDocumentId,
+          key: '',
+          isKeyAccessible: true,
+          category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+          isPronouncedOrally: true,
+        },
+      ],
+    } as Case
+
+    beforeEach(async () => {
+      const mockFindLiveById =
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      mockFindLiveById.mockResolvedValueOnce({
+        ...theCase,
+        state: CaseState.COMPLETED,
+      })
+
+      await givenWhenThen(caseId, theCase, {
+        transition: CaseTransition.COMPLETE,
+      })
+    })
+
+    it('should deliver written mid-case rulings to police without the full completion queue', () => {
+      expect(mockQueuedMessages).toEqual(
+        expect.arrayContaining([
+          {
+            type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
+            user: expect.objectContaining({ id: userId }),
+            caseId,
+            elementId: rulingOrderId,
+          },
+        ]),
+      )
+      expect(mockQueuedMessages).not.toEqual(
+        expect.arrayContaining([
+          {
+            type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
+            user: expect.any(Object),
+            caseId,
+            elementId: oralRulingWithoutDocumentId,
+          },
+        ]),
+      )
+      expect(mockQueuedMessages).not.toEqual(
+        expect.arrayContaining([
+          {
+            type: MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE,
+            user: expect.any(Object),
+            caseId,
+          },
+        ]),
+      )
+    })
+  })
+
   describe('completing an indictment case with a ruling', () => {
     const caseId = uuid()
     const dismissedDefendantId = uuid()

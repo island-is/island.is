@@ -855,6 +855,34 @@ export class CaseService {
     })
   }
 
+  // Mid-case ruling orders are not delivered to LÖKE on upload. Queue them when
+  // the case completes — including via cancellation, which otherwise skips the
+  // normal completion police-file loop. Orally pronounced orders with no
+  // document yet are skipped; attachRulingOrderDocument delivers those later.
+  private addMessagesForMidCaseRulingOrdersToPolice(
+    theCase: Case,
+    user: TUser,
+  ): void {
+    if (theCase.origin !== CaseOrigin.LOKE) {
+      return
+    }
+
+    for (const caseFile of theCase.caseFiles ?? []) {
+      if (
+        caseFile.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER &&
+        caseFile.isKeyAccessible &&
+        caseFile.key
+      ) {
+        queueMessagesAfterCommit({
+          type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: caseFile.id,
+        })
+      }
+    }
+  }
+
   private addMessagesForCompletedIndictmentCaseToQueue(
     updatedCase: Case,
     user: TUser,
@@ -904,15 +932,9 @@ export class CaseService {
       })
 
       for (const caseFile of updatedCase.caseFiles ?? []) {
-        // Orally pronounced ruling orders keep isKeyAccessible=true with an
-        // empty key until written up; skip those here (nothing to deliver) and
-        // let attachRulingOrderDocument queue delivery once the document exists.
         if (
-          caseFile.isKeyAccessible &&
-          (caseFile.category === CaseFileCategory.COURT_RECORD ||
-            (caseFile.category ===
-              CaseFileCategory.COURT_INDICTMENT_RULING_ORDER &&
-              caseFile.key))
+          caseFile.category === CaseFileCategory.COURT_RECORD &&
+          caseFile.isKeyAccessible
         ) {
           queueMessagesAfterCommit({
             type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
@@ -922,6 +944,8 @@ export class CaseService {
           })
         }
       }
+
+      this.addMessagesForMidCaseRulingOrdersToPolice(updatedCase, user)
 
       if (updatedCase.withCourtSessions) {
         queueMessagesAfterCommit({
@@ -1148,6 +1172,9 @@ export class CaseService {
         if (isIndictment) {
           if (theCase.state === CaseState.WAITING_FOR_CANCELLATION) {
             this.addMessagesForIndictmentConclusionToQueue(updatedCase, user)
+            // Cancellation completion skips the normal police-file loop; still
+            // deliver deferred mid-case ruling orders so LÖKE does not miss them.
+            this.addMessagesForMidCaseRulingOrdersToPolice(updatedCase, user)
           } else {
             this.addMessagesForCompletedIndictmentCaseToQueue(updatedCase, user)
           }
