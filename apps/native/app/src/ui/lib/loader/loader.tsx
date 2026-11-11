@@ -46,6 +46,15 @@ interface LoaderProps {
 }
 
 export function Loader({ text }: LoaderProps) {
+  return (
+    <Host>
+      <View>{text && <Text>{text}</Text>}</View>
+      <LoadingDots />
+    </Host>
+  )
+}
+
+export function LoadingDots() {
   const animRef = useRef<Animated.CompositeAnimation>(undefined)
   const scales = useRef<Animated.Value[]>([
     new Animated.Value(0),
@@ -115,13 +124,10 @@ export function Loader({ text }: LoaderProps) {
   }
 
   return (
-    <Host>
-      <View>{text && <Text>{text}</Text>}</View>
-      <Wrapper>
-        {renderCircle(0)}
-        {renderCircle(1)}
-        {renderCircle(2)}
-      </Wrapper>
-    </Host>
+    <Wrapper>
+      {renderCircle(0)}
+      {renderCircle(1)}
+      {renderCircle(2)}
+    </Wrapper>
   )
 }

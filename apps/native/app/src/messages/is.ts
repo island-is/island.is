@@ -24,13 +24,54 @@ export const is = {
   'login.expiredMissingUserMessage':
     'Tókst ekki að sækja notendaupplýsingar, vinsamlegast skráðu þig inn aftur.',
   'login.expiredMessage': 'Vinsamlegast skráðu þig inn aftur.',
+  'login.back': 'Til baka',
+  'login.welcome.title': 'Öll opinber þjónusta á einum stað',
+  'login.welcome.loginButton': 'Innskráning',
+  'login.welcome.terms': 'Skilmálar',
+  'login.welcome.help': 'Aðstoð',
+  'login.identifier.title': 'Skráðu þig inn',
+  'login.identifier.subtitle.sim': 'Notaðu rafræn skilríki í símanum þínum.',
+  'login.identifier.subtitle.app': 'Notaðu Auðkennisappið.',
+  'login.identifier.phoneLabel': 'Símanúmer',
+  'login.identifier.nationalIdLabel': 'Kennitala',
+  'login.identifier.submit': 'Auðkenna',
+  'login.identifier.or': 'Eða skráðu þig inn með',
+  'login.identifier.useApp': 'Auðkennisappinu',
+  'login.identifier.useSim': 'Rafrænum skilríkjum í síma',
 
   // app lock
   'applock.title': 'Sláðu inn 4 tölustafa PIN',
   'applock.attempts': 'tilraunir eftir',
   'applock.attempt': 'tilraun eftir',
   'applock.usePin': 'Nota PIN',
+  'applock.openWithBiometrics': 'Opna með {biometricType}',
+  'applock.useElectronicId': 'Nota rafræn skilríki',
+  'applock.openWithElectronicId': 'Opna með rafrænum skilríkjum',
+  'applock.biometricsFailedTitle': '{biometricType} tókst ekki',
+  'applock.biometricsFailedMessage': 'Reyndu aftur eða notaðu rafræn skilríki.',
+  'applock.logout': 'Útskrá',
   'biometrics.cancel': 'Hætta við',
+
+  // log in again after the update
+  'relogin.title': 'Skráðu þig inn aftur',
+  'relogin.body':
+    'Af öryggisástæðum er ekki lengur hægt að nota PIN-númer til að skrá sig inn í <b>Ísland.is appið.</b>',
+  'relogin.description':
+    'Skráðu þig inn með rafrænum skilríkjum. Eftir það má nota Face ID eða fingrafar.',
+  'relogin.loginButton': 'Innskráning með rafrænum skilríkjum',
+
+  // waiting for approval with electronic ID
+  'electronicId.eyebrow': 'Rafræn skilríki í síma',
+  'electronicId.title': 'Staðfestu auðkenninguna',
+  'electronicId.subtitle.login': 'Beiðni send í síma',
+  'electronicId.subtitle.unlock': 'Ísland.is appið',
+  'electronicId.subtitle.enableBiometrics':
+    'Virkja {biometricType} í Ísland.is appinu',
+  'electronicId.codeLabel': 'Öryggistala',
+  'electronicId.instructions':
+    'Staðfestu ef sama tala birtist í símanum þínum. Öryggistalan er ekki PIN-númer skilríkjanna.',
+  'electronicId.useAuthenticatorApp': 'Staðfesta með Auðkennisappinu',
+  'electronicId.cancel': 'Hætta við',
 
   // onboarding
   'onboarding.notifications.title': 'Leyfa tilkynningar',
@@ -49,6 +90,8 @@ export const is = {
   'onboarding.biometrics.title': 'Leyfa lífkenni',
   'onboarding.biometrics.body':
     'Þú getur einnig notað {biometricType} til að opna appið án þess að slá inn PIN.',
+  'onboarding.biometrics.bodyWithoutPin':
+    'Opnaðu appið með {biometricType}. Ef þú sleppir því þarftu rafræn skilríki í hvert skipti.',
   'onboarding.biometrics.notEnrolled':
     'Tækið þitt styður {biometricType} en þú hefur ekki virkjað það.',
   'onboarding.biometrics.noAuthenticationTypes':
@@ -134,6 +177,9 @@ export const is = {
   'settings.security.useBiometricsLabel': 'Nota {biometricType}',
   'settings.security.useBiometricsDescription':
     'Þannig sleppur þú við að nota PIN-númerið',
+  'settings.security.enableBiometricsLabel': 'Virkja {biometricType}',
+  'settings.security.enableBiometricsDescription':
+    'Annars opnar þú appið með rafrænum skilríkjum',
   'settings.security.createPasskeyLabel': 'Búa til aðgangslykil',
   'settings.security.createPasskeyDescription':
     'Til að skrá þig inn sjálfkrafa á Ísland.is í þessu tæki',

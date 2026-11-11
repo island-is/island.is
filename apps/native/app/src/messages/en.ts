@@ -26,13 +26,54 @@ export const en: TranslatedMessages = {
   'login.expiredMissingUserMessage':
     'Could not fetch user information, please login again.',
   'login.expiredMessage': 'Please log in again.',
+  'login.back': 'Back',
+  'login.welcome.title': 'All public services in one place',
+  'login.welcome.loginButton': 'Log in',
+  'login.welcome.terms': 'Terms',
+  'login.welcome.help': 'Help',
+  'login.identifier.title': 'Log in',
+  'login.identifier.subtitle.sim': 'Use the electronic ID on your phone.',
+  'login.identifier.subtitle.app': 'Use the Auðkenni app.',
+  'login.identifier.phoneLabel': 'Phone number',
+  'login.identifier.nationalIdLabel': 'National ID number',
+  'login.identifier.submit': 'Authenticate',
+  'login.identifier.or': 'Or log in with',
+  'login.identifier.useApp': 'The Auðkenni app',
+  'login.identifier.useSim': 'Electronic ID on your phone',
 
   // app lock
   'applock.title': 'Enter a 4-digit PIN',
   'applock.attempts': 'attempts left',
   'applock.attempt': 'attempt left',
   'applock.usePin': 'Use PIN',
+  'applock.openWithBiometrics': 'Open with {biometricType}',
+  'applock.useElectronicId': 'Use electronic ID',
+  'applock.openWithElectronicId': 'Open with electronic ID',
+  'applock.biometricsFailedTitle': '{biometricType} failed',
+  'applock.biometricsFailedMessage': 'Try again or use electronic ID.',
+  'applock.logout': 'Log out',
   'biometrics.cancel': 'Cancel',
+
+  // log in again after the update
+  'relogin.title': 'Log in again',
+  'relogin.body':
+    'For security reasons, a PIN can no longer be used to log in to <b>the Ísland.is app.</b>',
+  'relogin.description':
+    'Log in with electronic ID. After that you can use Face ID or fingerprint.',
+  'relogin.loginButton': 'Log in with electronic ID',
+
+  // waiting for approval with electronic ID
+  'electronicId.eyebrow': 'Electronic ID on phone',
+  'electronicId.title': 'Confirm the authentication',
+  'electronicId.subtitle.login': 'Request sent to your phone',
+  'electronicId.subtitle.unlock': 'The Ísland.is app',
+  'electronicId.subtitle.enableBiometrics':
+    'Turn on {biometricType} in the Ísland.is app',
+  'electronicId.codeLabel': 'Security code',
+  'electronicId.instructions':
+    'Confirm if the same number appears on your phone. The security code is not your electronic ID PIN.',
+  'electronicId.useAuthenticatorApp': 'Confirm with the Auðkenni app',
+  'electronicId.cancel': 'Cancel',
 
   // onboarding
   'onboarding.notifications.title': 'Allow notifications',
@@ -52,6 +93,8 @@ export const en: TranslatedMessages = {
   'onboarding.biometrics.title': 'Allow biometrics',
   'onboarding.biometrics.body':
     'You can also use {biometricType} to access the app without entering a PIN.',
+  'onboarding.biometrics.bodyWithoutPin':
+    'Open the app with {biometricType}. If you skip this, you will need electronic ID every time.',
   'onboarding.biometrics.notEnrolled':
     "Your device supports {biometricType} but you haven't enrolled into it yet.",
   'onboarding.biometrics.noAuthenticationTypes':
@@ -134,6 +177,9 @@ export const en: TranslatedMessages = {
   'settings.security.useBiometricsLabel': 'Use {biometricType}',
   'settings.security.useBiometricsDescription':
     'With {biometricType} you don’t need to enter PIN',
+  'settings.security.enableBiometricsLabel': 'Turn on {biometricType}',
+  'settings.security.enableBiometricsDescription':
+    'Otherwise you open the app with electronic ID',
   'settings.security.createPasskeyLabel': 'Create a passkey',
   'settings.security.createPasskeyDescription':
     'To automatically sign in to Island.is through the app in this device',
