@@ -6,10 +6,15 @@ import format from 'date-fns/format'
 import { ApplicationCardFields, ApplicationCardHistoryItem } from '../types'
 import { coreMessages } from '@island.is/application/core'
 
+type HistoryDateFormats = {
+  dateTimeFormat: string
+  dateOnlyFormat: string
+}
+
 export const buildHistoryItems = (
   application: ApplicationCardFields,
   formatMessage: FormatMessage,
-  dateFormat: string,
+  dateFormats: HistoryDateFormats,
   openApplication?: () => void,
 ): ApplicationCardHistoryItem[] | undefined => {
   if (application.status === ApplicationStatus.DRAFT) return
@@ -23,10 +28,11 @@ export const buildHistoryItems = (
     const pendingRowComplete =
       application.status !== ApplicationStatus.IN_PROGRESS
     historyItems.push({
-      date: format(
-        lastHistoryDate ? new Date(lastHistoryDate) : new Date(),
-        dateFormat,
-      ),
+      // Without a history entry there is no real timestamp for this row, so we
+      // fall back to today's date only rather than showing a made up time.
+      date: lastHistoryDate
+        ? format(new Date(lastHistoryDate), dateFormats.dateTimeFormat)
+        : format(new Date(), dateFormats.dateOnlyFormat),
       title: formatMessage(application.actionCard.pendingAction.title ?? ''),
       isComplete: pendingRowComplete,
       content: application.actionCard.pendingAction.content ? (
@@ -60,7 +66,7 @@ export const buildHistoryItems = (
   if (actionCardHistory) {
     historyItems = historyItems.concat(
       actionCardHistory.map((x) => ({
-        date: format(new Date(x.date), dateFormat),
+        date: format(new Date(x.date), dateFormats.dateTimeFormat),
         title: formatMessage(x.log),
         subjectAndActor: x.subLog,
         isComplete: true,
