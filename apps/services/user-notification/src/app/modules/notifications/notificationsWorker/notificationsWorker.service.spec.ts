@@ -125,6 +125,12 @@ const mockContentfulGraphQLClientService = {
   fetchData: jest.fn(),
 }
 /**
+ * How long a test waits for the workers. Less than the timeout of a test (`testTimeout` in
+ * `jest.preset.js`), so a test that waits in vain fails with what it was waiting for
+ */
+const WAIT_TIMEOUT_MS = 8_000
+
+/**
  * Tracks the messages on the queues of a test, to wait for the workers to process them
  * instead of waiting a fixed time (which fails on a busy machine, e.g. in CI).
  *
@@ -134,6 +140,10 @@ const mockContentfulGraphQLClientService = {
  */
 class QueueTracker {
   private pending = new Set<string>()
+  /** Messages a worker confirmed before `add` had returned their id */
+  private confirmedEarly = new Set<string>()
+  /** Calls to `add` that have not returned yet */
+  private adding = 0
 
   /** Spies on the client(s) every queue of the app uses */
   track(client: {
@@ -145,9 +155,16 @@ class QueueTracker {
   }) {
     const add = client.add.bind(client)
     jest.spyOn(client, 'add').mockImplementation(async (url, message) => {
-      const id = await add(url, message)
-      this.pending.add(id)
-      return id
+      this.adding++
+      try {
+        const id = await add(url, message)
+        // The id is not known until the queue has the message, and by then a worker may have
+        // processed it already: such a message is done, not pending
+        if (!this.confirmedEarly.delete(id)) this.pending.add(id)
+        return id
+      } finally {
+        this.adding--
+      }
     })
     const deleteMessages = client.deleteMessages.bind(client)
     jest
@@ -155,12 +172,17 @@ class QueueTracker {
       .mockImplementation(async (url, messages) => {
         await deleteMessages(url, messages)
         for (const { MessageId } of messages) {
-          if (MessageId) this.pending.delete(MessageId)
+          if (MessageId && !this.pending.delete(MessageId)) {
+            this.confirmedEarly.add(MessageId)
+          }
         }
       })
   }
 
-  /** Forget the messages of a previous test */
+  /**
+   * Forget the messages of a previous test. Not the ones confirmed early: their `add` may still
+   * be on its way, and would make them pending for good
+   */
   reset() {
     this.pending.clear()
   }
@@ -169,12 +191,12 @@ class QueueTracker {
    * Waits until every message added since the last reset has been processed. A message whose
    * handler throws is not deleted (it is delivered again), so such a test times out here.
    */
-  async waitForProcessing(timeoutMs = 20_000) {
+  async waitForProcessing(timeoutMs = WAIT_TIMEOUT_MS) {
     const start = Date.now()
-    while (this.pending.size > 0) {
+    while (this.adding > 0 || this.pending.size > 0) {
       if (Date.now() - start > timeoutMs) {
         throw new Error(
-          `${this.pending.size} queue message(s) not processed within ${timeoutMs} ms`,
+          `${this.pending.size} queue message(s) not processed and ${this.adding} not added within ${timeoutMs} ms`,
         )
       }
       await wait(0.05)
@@ -183,7 +205,10 @@ class QueueTracker {
 }
 
 /** Waits until `condition` is true */
-const waitFor = async (condition: () => boolean, timeoutMs = 20_000) => {
+const waitFor = async (
+  condition: () => boolean,
+  timeoutMs = WAIT_TIMEOUT_MS,
+) => {
   const start = Date.now()
   while (!condition()) {
     if (Date.now() - start > timeoutMs) {
