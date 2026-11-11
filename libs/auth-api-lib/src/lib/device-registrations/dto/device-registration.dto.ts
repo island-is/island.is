@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
+  IsBoolean,
   IsDate,
   IsInt,
   IsNotEmpty,
@@ -84,6 +85,11 @@ export class SaveDeviceRegistrationDto {
   @MaxLength(20)
   @ApiPropertyOptional({ nullable: true, type: String })
   audkenniSimNumber?: string | null
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  developmentBuild?: boolean
 
   @Type(() => Date)
   @IsDate()

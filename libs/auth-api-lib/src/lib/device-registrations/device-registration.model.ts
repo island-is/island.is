@@ -106,6 +106,11 @@ export class DeviceRegistration extends Model<
   @ApiPropertyOptional({ nullable: true, type: String })
   audkenniSimNumber!: string | null
 
+  /** Attested as a development build, so it stops working where those aren't allowed. */
+  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
+  @ApiProperty()
+  developmentBuild!: boolean
+
   @Column({ type: DataType.DATE, allowNull: false })
   @ApiProperty()
   lastUsed!: Date
@@ -134,6 +139,7 @@ export class DeviceRegistration extends Model<
       deviceName: this.deviceName,
       loginIdp: this.loginIdp,
       audkenniSimNumber: this.audkenniSimNumber,
+      developmentBuild: this.developmentBuild,
       lastUsed: this.lastUsed,
       created: this.created,
     }

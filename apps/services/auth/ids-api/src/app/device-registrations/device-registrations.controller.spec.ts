@@ -74,7 +74,19 @@ describe('DeviceRegistrationsController', () => {
         biometricKeyJwk: null,
         loginIdp: 'audkenni_sim',
         audkenniSimNumber: '7771234',
+        developmentBuild: false,
       })
+    })
+
+    it('keeps whether the install is a development build', async () => {
+      // Act
+      const saved = await server
+        .put(path)
+        .send(registration({ developmentBuild: true }))
+
+      // Assert
+      expect(saved.status).toBe(200)
+      expect(saved.body.developmentBuild).toBe(true)
     })
 
     it('returns 404 for an install with no registration', async () => {
