@@ -18,6 +18,7 @@ import { SequelizeConfigService } from '../../../sequelizeConfig.service'
 import { DocumentsScope } from '@island.is/auth/scopes'
 import { CmsService } from '@island.is/clients/cms'
 import { UserNotificationSender } from '../user-notification-sender.model'
+import { Notification } from '../notification.model'
 
 beforeAll(async () => {
   process.env.INIT_SCHEMA = 'true' // Disabling Firebase init
@@ -269,5 +270,109 @@ describe('MeNotificationsController - GET /v1/me/notifications/categories', () =
         { senderId, category: 'skattar', categoryLabel: { is: 'skattar' } },
       ],
     })
+  })
+})
+
+describe('MeNotificationsController - notifications that were not sent', () => {
+  const user = createCurrentUser({
+    nationalId: createNationalId('person'),
+    scope: [DocumentsScope.main],
+  })
+  const templateId = 'HNIPP.DEMO.ID'
+
+  let app: TestApp
+  let server: request.SuperTest<request.Test>
+  let notificationModel: typeof Notification
+  let sent: Notification
+  let unsent: Notification
+
+  beforeAll(async () => {
+    app = await setupApp({
+      AppModule,
+      SequelizeConfigService,
+      user,
+      override: (builder) =>
+        builder.overrideProvider(CmsService).useValue({
+          fetchData: jest.fn().mockResolvedValue({
+            hnippTemplateCollection: {
+              items: [
+                {
+                  templateId,
+                  title: 'Demo title',
+                  externalBody: 'Demo body',
+                  internalBody: 'Demo internal body',
+                  args: [],
+                  scope: DocumentsScope.main,
+                },
+              ],
+            },
+          }),
+        }),
+    })
+    server = request(app.getHttpServer())
+    notificationModel = app.get(getModelToken(Notification))
+  })
+
+  beforeEach(async () => {
+    await notificationModel.destroy({ truncate: true, cascade: true })
+    const base = {
+      recipient: user.nationalId,
+      templateId,
+      args: [],
+      scope: DocumentsScope.main,
+      read: false,
+      seen: false,
+    }
+    sent = await notificationModel.create({
+      ...base,
+      messageId: '11111111-1111-4111-8111-111111111111',
+      wasSent: true,
+    })
+    unsent = await notificationModel.create({
+      ...base,
+      messageId: '22222222-2222-4222-8222-222222222222',
+      wasSent: false,
+    })
+  })
+
+  afterAll(async () => {
+    await app.cleanUp()
+  })
+
+  it('should leave out notifications that were not sent by default', async () => {
+    const res = await server.get('/v1/me/notifications')
+
+    expect(res.status).toBe(200)
+    expect(res.body.totalCount).toBe(1)
+    expect(res.body.data.map((n: { id: number }) => n.id)).toEqual([sent.id])
+  })
+
+  it('should include notifications that were not sent when includeUnsent=true', async () => {
+    const res = await server.get('/v1/me/notifications?includeUnsent=true')
+
+    expect(res.status).toBe(200)
+    expect(res.body.totalCount).toBe(2)
+    expect(res.body.data.map((n: { id: number }) => n.id)).toEqual([
+      unsent.id,
+      sent.id,
+    ])
+  })
+
+  it('should not count notifications that were not sent as unread or unseen', async () => {
+    const unread = await server.get('/v1/me/notifications/unread-count')
+    const unseen = await server.get('/v1/me/notifications/unseen-count')
+
+    expect(unread.body).toEqual({ unreadCount: 1 })
+    expect(unseen.body).toEqual({ unseenCount: 1 })
+  })
+
+  it('should not mark notifications that were not sent as read or seen', async () => {
+    await server.post('/v1/me/notifications/mark-all-as-read')
+    await server.post('/v1/me/notifications/mark-all-as-seen')
+
+    await sent.reload()
+    await unsent.reload()
+    expect(sent).toMatchObject({ read: true, seen: true })
+    expect(unsent).toMatchObject({ read: false, seen: false })
   })
 })
