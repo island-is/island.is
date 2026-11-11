@@ -95,6 +95,8 @@ const atCourt = (caseId: string, type: CaseType, state: CaseState) =>
 
 const receivedIndictment = (caseId: string) =>
   atCourt(caseId, CaseType.INDICTMENT, CaseState.RECEIVED)
+const draftIndictment = (caseId: string) =>
+  atCourt(caseId, CaseType.INDICTMENT, CaseState.DRAFT)
 const completedIndictment = (caseId: string) =>
   atCourt(caseId, CaseType.INDICTMENT, CaseState.COMPLETED)
 const receivedCustodyCase = (caseId: string) =>
@@ -107,7 +109,8 @@ interface AfterReadRejection {
   caseFor?: (caseId: string) => Case
   params?: Record<string, string>
   rejectedBy: string
-  error: new (...args: never[]) => Error
+  // Left out for a guard that returns false rather than throwing.
+  error?: new (...args: never[]) => Error
 }
 
 interface Route {
@@ -175,13 +178,21 @@ const routes: Route[] = [
         name: "district court judge who is not the case's judge",
         user: anotherJudgeAtTheCourt,
         rejectedBy: RolesGuard.name,
-        error: undefined as never,
       },
+      // A judge at another court is not the case's judge either, and is
+      // turned away by RolesGuard before CaseWriteGuard is asked. What
+      // CaseWriteGuard is left to refuse is the case's own judge on a case
+      // the court cannot write yet.
       ...indictmentFileRejections(registeredJudge).filter(
-        // A judge at another court is not the case's judge either, and is
-        // turned away by RolesGuard before CaseWriteGuard is asked.
         ({ rejectedBy }) => rejectedBy !== CaseWriteGuard.name,
       ),
+      {
+        name: "the case's judge on an indictment not yet submitted",
+        user: registeredJudge,
+        caseFor: draftIndictment,
+        rejectedBy: CaseWriteGuard.name,
+        error: ForbiddenException,
+      },
     ],
   },
   {

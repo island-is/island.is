@@ -363,8 +363,9 @@ export class FileController {
     }
 
     // The transaction CaseExistsForUpdateGuard opened - see createCaseFile.
-    // The checks above read the file and the court sessions off the case that
-    // guard loaded, so they hold for as long as the row stays locked.
+    // The checks above read the court sessions off the case that guard
+    // loaded, and everything that confirms a court session locks the same
+    // row, so the file cannot be filed in a confirmed session meanwhile.
     const transaction = await getOrCreateTransaction(this.sequelize)
 
     return this.fileService.rejectCaseFile(theCase, caseFile, transaction)
