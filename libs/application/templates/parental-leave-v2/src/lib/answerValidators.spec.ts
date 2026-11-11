@@ -689,6 +689,53 @@ describe('when constructing a new period', () => {
       ),
     ).toEqual(undefined)
   })
+
+  describe('overlapping earlier periods', () => {
+    const earlierPeriods = [
+      {
+        firstPeriodStart: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
+        startDate: '2021-01-15',
+        useLength: NO,
+        endDate: '2021-02-14',
+        ratio: '100',
+      },
+      {
+        startDate: '2021-04-01',
+        useLength: NO,
+        endDate: '2021-04-30',
+        ratio: '100',
+      },
+    ]
+
+    const validateLatest = (startDate: string, endDate: string) =>
+      answerValidators[VALIDATE_LATEST_PERIOD](
+        [
+          ...earlierPeriods,
+          { startDate, useLength: NO, endDate, ratio: '100' },
+        ],
+        application,
+      )
+
+    it('rejects a start date inside a later period but not the first one', () => {
+      expect(validateLatest('2021-04-20', '2021-05-20')).toStrictEqual({
+        message: errorMessages.periodsStartDateOverlaps,
+        path: 'periods[2].startDate',
+        values: {},
+      })
+    })
+
+    it('rejects an end date inside a later period but not the first one', () => {
+      expect(validateLatest('2021-03-01', '2021-04-10')).toStrictEqual({
+        message: errorMessages.periodsEndDateOverlapsPeriod,
+        path: 'periods[2].endDate',
+        values: {},
+      })
+    })
+
+    it('accepts a period that overlaps none of the earlier periods', () => {
+      expect(validateLatest('2021-05-01', '2021-05-31')).toEqual(undefined)
+    })
+  })
 })
 
 describe('when selecting a child', () => {

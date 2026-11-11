@@ -85,18 +85,29 @@ export const dateIsWithinOtherPeriods = (
     }
 
     if (!currentPeriod.startDate || !currentPeriod.endDate) {
-      return false
+      continue
     }
 
     const currentPeriodStart = parseISO(currentPeriod.startDate)
     const currentPeriodEnd = parseISO(currentPeriod.endDate)
 
-    const currentPeriodRange = {
-      start: currentPeriodStart,
-      end: currentPeriodEnd,
+    // isWithinInterval throws a RangeError for invalid or reversed intervals
+    if (
+      !isValid(currentPeriodStart) ||
+      !isValid(currentPeriodEnd) ||
+      currentPeriodStart > currentPeriodEnd
+    ) {
+      continue
     }
 
-    return isWithinInterval(date, currentPeriodRange)
+    if (
+      isWithinInterval(date, {
+        start: currentPeriodStart,
+        end: currentPeriodEnd,
+      })
+    ) {
+      return true
+    }
   }
 
   return false
