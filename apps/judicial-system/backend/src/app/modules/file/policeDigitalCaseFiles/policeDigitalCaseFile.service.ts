@@ -29,7 +29,10 @@ import {
 import { UpdatePoliceDigitalCaseFileDto } from '../dto/updatePoliceDigitalCaseFiles.dto'
 import { PoliceDigitalCaseFileSyncResult } from '../models/policeDigitalCaseFileSyncResult.model'
 import { getFilesToCreate } from './getFilesToCreate'
-import { truncateToVarchar } from './truncateToVarchar'
+import {
+  truncateToVarchar,
+  VARCHAR_DEFAULT_LIMIT,
+} from './truncateToVarchar'
 
 @Injectable()
 export class PoliceDigitalCaseFileService {
@@ -88,7 +91,10 @@ export class PoliceDigitalCaseFileService {
       // Keep the S3/DB key short and independent of the police display name so
       // an overlong title cannot overflow case_file.key (varchar 255).
       const key = `${caseId}/${fileId}/metadata.pdf`
-      const caseFileName = truncateToVarchar(`${displayName}.pdf`)
+      const caseFileName = `${truncateToVarchar(
+        displayName,
+        VARCHAR_DEFAULT_LIMIT - '.pdf'.length,
+      )}.pdf`
 
       const metadataCaseFile = await this.caseFileRepositoryService.create(
         caseId,

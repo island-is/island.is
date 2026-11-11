@@ -293,7 +293,7 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
     caseFileRepositoryService.create.mockResolvedValueOnce({
       id: 'metadata-file-1',
       userGeneratedFilename: longName.slice(0, 255),
-      name: longName.slice(0, 255),
+      name: `${longName.slice(0, 251)}.pdf`,
     } as CaseFile)
     awsS3Service.putObject.mockResolvedValueOnce('ok')
 
@@ -322,7 +322,7 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
     expect(caseFileRepositoryService.create).toHaveBeenCalledWith(
       caseId,
       expect.objectContaining({
-        name: longName.slice(0, 255),
+        name: `${longName.slice(0, 251)}.pdf`,
         userGeneratedFilename: longName.slice(0, 255),
         key: expect.stringMatching(
           new RegExp(`^${caseId}/[0-9a-f-]+/metadata\\.pdf$`),
