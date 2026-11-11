@@ -1,4 +1,7 @@
-import type { CalculatorLocalizedText } from '@island.is/tax-calculators'
+import type {
+  CalculatorLocalizedText,
+  CalculatorNumberType,
+} from '@island.is/tax-calculators'
 
 import {
   TaxCalculatorInputFieldSemantic,
@@ -9,6 +12,14 @@ import type { InputContractField, InputFieldContract } from '../contract'
 type Control =
   | { kind: 'choice' }
   | { kind: 'text'; unit?: CalculatorLocalizedText }
+
+const controlByNumberType: Record<CalculatorNumberType, Control> = {
+  currency: { kind: 'text', unit: { is: 'krónur', en: 'ISK' } },
+  percentage: { kind: 'text', unit: { is: '%', en: '%' } },
+  count: { kind: 'text', unit: { is: 'fjöldi', en: 'count' } },
+  year: { kind: 'choice' },
+  plain: { kind: 'text' },
+}
 
 const controlByType: Record<TaxCalculatorInputFieldType, Control> = {
   [TaxCalculatorInputFieldType.Boolean]: { kind: 'choice' },
@@ -40,16 +51,25 @@ const controlBySemantic: Partial<
   [TaxCalculatorInputFieldSemantic.Month]: { kind: 'choice' },
 }
 
-export const controlForField = (field: InputContractField | undefined) => {
+export const controlForField = (
+  field: InputContractField | undefined,
+  numberType?: CalculatorNumberType,
+) => {
   if (!field) return undefined
+  if (numberType && field.type === TaxCalculatorInputFieldType.Number)
+    return controlByNumberType[numberType]
   return (
     (field.semantic ? controlBySemantic[field.semantic] : undefined) ??
     controlByType[field.type]
   )
 }
 
-export const placeholderFor = (key: string, contract: InputFieldContract) => {
-  const control = controlForField(contract.get(key))
+export const placeholderFor = (
+  key: string,
+  contract: InputFieldContract,
+  numberType?: CalculatorNumberType,
+) => {
+  const control = controlForField(contract.get(key), numberType)
   const unit = control?.kind === 'text' ? control.unit : undefined
   return unit ? { ...unit } : undefined
 }

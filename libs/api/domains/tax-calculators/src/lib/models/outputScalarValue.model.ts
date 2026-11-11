@@ -5,7 +5,7 @@ import { TaxCalculatorOutputFieldType } from './enums'
 /* Flat tagged values share a key, type, and exactly one payload. */
 @ObjectType('TaxCalculatorOutputScalarValue', {
   description:
-    'Calculated scalar value in an array row. Set exactly one payload matching `type`.',
+    'Calculated scalar value in a row. Set exactly one payload matching `type`.',
 })
 export class OutputScalarValue {
   @Field()

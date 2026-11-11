@@ -28,7 +28,7 @@ import { CodeOwners } from '@island.is/shared/constants'
   description: 'Front-end language selected',
 })
 @Controller()
-@CodeOwner(CodeOwners.NordaApplications)
+@CodeOwner(CodeOwners.ApplicationsCore)
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 

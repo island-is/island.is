@@ -18,6 +18,10 @@ export * from './hooks/useDeleteApplication'
 export * from './hooks/useOpenApplication'
 export { NationalIdWithName } from './components/NationalIdWithName/NationalIdWithName'
 export { default as Slider } from './components/Slider/Slider'
+export {
+  FormAlertBanner,
+  FormAlertBannerSlotContext,
+} from './components/FormAlertBanner/FormAlertBanner'
 export { SpiderChart } from './components/SpiderChart/SpiderChart'
 export type {
   SpiderChartProps,

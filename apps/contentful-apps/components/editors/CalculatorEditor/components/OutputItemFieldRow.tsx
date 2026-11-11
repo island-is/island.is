@@ -9,8 +9,10 @@ import { DeleteIcon } from '@contentful/f36-icons'
 
 import type { CalculatorOutputItemField } from '@island.is/tax-calculators'
 
+import { TaxCalculatorOutputFieldType } from '../../../../graphql/schema'
 import type { OutputContractItemField } from '../contract'
 import { LocalizedTextFields } from './LocalizedTextFields'
+import { NumberTypeSelect } from './NumberTypeSelect'
 import * as styles from './CalculatorEditor.css'
 
 interface Props {
@@ -52,14 +54,16 @@ export const OutputItemFieldRow = ({
           <Select
             value={item.key}
             isDisabled={isLoading || isDisabled}
-            onChange={(ev) => onChange({ key: ev.target.value })}
+            onChange={(ev) =>
+              onChange({ key: ev.target.value, numberType: undefined })
+            }
           >
             <Select.Option value="" isDisabled>
               Select an item field
             </Select.Option>
             {isMissing && (
               <Select.Option value={item.key}>
-                {isStaleKey ? `${item.key} — not in this array` : item.key}
+                {isStaleKey ? `${item.key} — not in this output` : item.key}
               </Select.Option>
             )}
             {available
@@ -77,7 +81,7 @@ export const OutputItemFieldRow = ({
           </Select>
           {isStaleKey && (
             <FormControl.ValidationMessage>
-              This array no longer offers &quot;{item.key}&quot;.
+              This output no longer offers &quot;{item.key}&quot;.
             </FormControl.ValidationMessage>
           )}
           {issues?.map((issue) => (
@@ -101,13 +105,24 @@ export const OutputItemFieldRow = ({
       )}
 
       {item.key && (
-        <LocalizedTextFields
-          label="Item label"
-          value={item.label}
-          isDisabled={isDisabled}
-          onChange={(next) => onChange({ label: next })}
-          clearWhenEmpty
-        />
+        <>
+          <LocalizedTextFields
+            label="Item label"
+            value={item.label}
+            isDisabled={isDisabled}
+            onChange={(next) => onChange({ label: next })}
+            clearWhenEmpty
+          />
+          {match?.type === TaxCalculatorOutputFieldType.Number && (
+            <NumberTypeSelect
+              fieldKey={item.key}
+              value={item.numberType}
+              inferred={match.semantic}
+              isDisabled={isDisabled}
+              onChange={(numberType) => onChange({ numberType })}
+            />
+          )}
+        </>
       )}
     </Stack>
   )

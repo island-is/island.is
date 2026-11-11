@@ -42,7 +42,7 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN,
   name: applicationMessage.general.name,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   translationNamespaces:
     ApplicationConfigurations.ComplaintsToAlthingiOmbudsman.translation,
   dataSchema: ComplaintsToAlthingiOmbudsmanSchema,
