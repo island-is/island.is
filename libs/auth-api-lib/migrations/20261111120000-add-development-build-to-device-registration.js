@@ -10,6 +10,9 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    await queryInterface.removeColumn('device_registration', 'development_build')
+    await queryInterface.removeColumn(
+      'device_registration',
+      'development_build',
+    )
   },
 }
