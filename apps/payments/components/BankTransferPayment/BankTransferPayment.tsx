@@ -14,7 +14,7 @@ import {
 import { useLocale } from '@island.is/localization'
 
 import { PaymentContainer } from '../PaymentContainer/PaymentContainer'
-import { bankTransfer, generic } from '../../messages'
+import { bankTransfer } from '../../messages'
 import {
   BANK_ACCOUNT_PART_LENGTHS,
   BANK_ACCOUNT_PART_ORDER,
@@ -207,7 +207,7 @@ export const BankTransferPayment = ({
           {!companyPayer && payerNationalId && (
             <Input
               name="payerNationalId"
-              label={formatMessage(generic.nationalId)}
+              label={formatMessage(bankTransfer.payerNationalId)}
               value={formatKennitala(payerNationalId)}
               size="sm"
               readOnly
