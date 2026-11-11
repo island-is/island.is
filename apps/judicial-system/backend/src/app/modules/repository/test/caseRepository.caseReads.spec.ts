@@ -116,10 +116,7 @@ describe('CaseRepositoryService - case reads', () => {
       )
 
       expect(
-        included(
-          mergedDefendants?.include,
-          'caseDefendantPoliceCaseNumbers',
-        ),
+        included(mergedDefendants?.include, 'caseDefendantPoliceCaseNumbers'),
       ).toBeDefined()
     })
 
