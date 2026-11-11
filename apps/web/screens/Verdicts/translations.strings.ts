@@ -179,6 +179,13 @@ export const m = {
       defaultMessage: 'Málategundir',
       description: 'Label á "Málategundir" accordion einingu',
     },
+    supremeCourtCaseTypeTooltip: {
+      id: 'web.verdicts:listPage.supremeCourtCaseTypeTooltip#markdown',
+      defaultMessage:
+        'Hægt er að leita eftir málategundum hjá Hæstarétti í dómum frá 01.01.2016',
+      description:
+        'Skýringartexti í upplýsingabólu við Hæstarétt í "Málategundir" síu',
+    },
     caseCategoryAccordionLabel: {
       id: 'web.verdicts:listPage.caseCategoryAccordionLabel',
       defaultMessage: 'Málaflokkur',

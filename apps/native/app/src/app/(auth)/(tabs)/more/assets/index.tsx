@@ -13,7 +13,7 @@ import { useRouter } from 'expo-router'
 import { useTheme } from 'styled-components/native'
 
 import illustrationSrc from '@/assets/illustrations/le-moving-s1.png'
-import { MoreInfoContiner } from '@/components/more-info-container/more-info-container'
+import { MoreInfoContainer } from '@/components/more-info-container/more-info-container'
 import { useListAssetsQuery } from '@/graphql/types/schema'
 import { useMyPagesLinks } from '@/lib/my-pages-links'
 import { AssetCard, EmptyList, Skeleton, TopLine } from '@/ui'
@@ -31,10 +31,9 @@ const AssetItem = React.memo(({ item }: { item: any }) => {
   return (
     <View style={{ paddingHorizontal: 16 }} testID={testIDs.ASSET_ITEM}>
       <TouchableHighlight
-        underlayColor={
-          theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
-        }
-        style={{ marginBottom: 16, borderRadius: 16 }}
+        underlayColor={theme.tokens.app.background.pressed}
+        activeOpacity={1}
+        style={{ marginBottom: 16, borderRadius: 8 }}
         onPress={() => {
           router.push({
             pathname: '/(auth)/(tabs)/more/assets/[id]',
@@ -218,7 +217,7 @@ export default function AssetsOverviewScreen() {
         ListFooterComponent={
           isEmpty ? null : (
             <View style={{ paddingHorizontal: 16, paddingVertical: 12 }}>
-              <MoreInfoContiner externalLinks={externalLinks} />
+              <MoreInfoContainer externalLinks={externalLinks} />
             </View>
           )
         }

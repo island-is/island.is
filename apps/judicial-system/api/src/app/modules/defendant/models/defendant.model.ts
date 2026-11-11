@@ -23,7 +23,9 @@ registerEnumType(PunishmentType, { name: 'PunishmentType' })
 registerEnumType(IndictmentCaseReviewDecision, {
   name: 'IndictmentCaseReviewDecision',
 })
-// RequestSharedWithDefender is registered on the Case GraphQL model.
+registerEnumType(RequestSharedWithDefender, {
+  name: 'RequestSharedWithDefender',
+})
 
 @ObjectType()
 export class IndictmentCancelledOrDismissedState {

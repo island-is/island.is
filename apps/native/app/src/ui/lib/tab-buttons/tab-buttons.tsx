@@ -13,7 +13,7 @@ import { Typography } from '../typography/typography'
 const Host = styled.View`
   border-radius: ${({ theme }) => theme.border.radius.large};
   justify-content: center;
-  background-color: ${({ theme }) => theme.color.blue100};
+  background-color: ${({ theme }) => theme.tokens.background.brandMinimal};
   position: relative;
 `
 
@@ -23,7 +23,9 @@ const Tabs = styled.View`
 
 const TabText = styled(Typography)<{ isSelected: boolean }>`
   color: ${({ isSelected, theme }) =>
-    isSelected ? theme.color.blue400 : theme.color.dark400};
+    isSelected
+      ? theme.tokens.interactive.foreground.primary
+      : theme.tokens.foreground.primary};
   font-weight: ${({ isSelected }) => (isSelected ? '600' : '400')};
 `
 
@@ -36,13 +38,13 @@ const Tab = styled.Pressable<{ isSelected: boolean }>`
 const ActiveBackground = styled(Animated.View)<{ buttonWidth: number }>`
   position: absolute;
 
-  background-color: ${({ theme }) => theme.color.white};
+  background-color: ${({ theme }) => theme.tokens.background.invert};
   border-radius: 6px;
   margin-horizontal: 2px;
   height: 38px;
   width: ${({ buttonWidth }) => buttonWidth}px;
   border-width: 1px;
-  border-color: ${({ theme }) => theme.color.blue200};
+  border-color: ${({ theme }) => theme.tokens.border.primary};
 `
 
 interface TabButton {

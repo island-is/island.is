@@ -1,7 +1,5 @@
 import PDFDocument from 'pdfkit'
 
-import { FormatMessage } from '@island.is/cms-translations'
-
 import {
   capitalize,
   formatDate,
@@ -49,10 +47,7 @@ export const formatCustodyNoticeDefender = (
   }${defendant.defenderEmail ? `, ${defendant.defenderEmail}` : ''}`
 }
 
-const constructCustodyNoticePdf = (
-  theCase: Case,
-  formatMessage: FormatMessage,
-): Promise<Buffer> => {
+const constructCustodyNoticePdf = (theCase: Case): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -168,7 +163,6 @@ const constructCustodyNoticePdf = (
   addNormalText(doc, formatCustodyNoticeDefender(theCase), 'Helvetica')
 
   const custodyRestrictions = formatCustodyRestrictions(
-    formatMessage,
     theCase.type,
     theCase.requestedCustodyRestrictions,
     theCase.isCustodyIsolation,
@@ -215,18 +209,12 @@ const constructCustodyNoticePdf = (
   )
 }
 
-export const getCustodyNoticePdfAsString = (
-  theCase: Case,
-  formatMessage: FormatMessage,
-): Promise<string> => {
-  return constructCustodyNoticePdf(theCase, formatMessage).then((buffer) =>
+export const getCustodyNoticePdfAsString = (theCase: Case): Promise<string> => {
+  return constructCustodyNoticePdf(theCase).then((buffer) =>
     buffer.toString('binary'),
   )
 }
 
-export const getCustodyNoticePdfAsBuffer = (
-  theCase: Case,
-  formatMessage: FormatMessage,
-): Promise<Buffer> => {
-  return constructCustodyNoticePdf(theCase, formatMessage)
+export const getCustodyNoticePdfAsBuffer = (theCase: Case): Promise<Buffer> => {
+  return constructCustodyNoticePdf(theCase)
 }

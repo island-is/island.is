@@ -6,6 +6,7 @@ import {
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
+  hasAllAppealJudges,
   isCourtOfAppealsUser,
   isDefenceUser,
   isIndictmentCase,
@@ -174,9 +175,7 @@ export const shouldUseAppealWithdrawnRoutes = (
     appealCase?.appealState === AppealCaseState.WITHDRAWN &&
     (!appealCase.appealAssistant ||
       !appealCase.appealCaseNumber ||
-      !appealCase.appealJudge1 ||
-      !appealCase.appealJudge2 ||
-      !appealCase.appealJudge3)
+      !hasAllAppealJudges(appealCase))
   )
 }
 
@@ -188,22 +187,34 @@ export const shouldDisplayGeneratedPdfFiles = (
     isProsecutionUser(user) ||
       theCase.defendants?.some(
         (defendant) =>
-          defendant.isDefenderChoiceConfirmed &&
-          defendant.caseFilesSharedWithDefender &&
-          defendant.defenderNationalId &&
-          normalizeAndFormatNationalId(user?.nationalId).includes(
-            defendant.defenderNationalId,
-          ),
+          (defendant.isDefenderChoiceConfirmed &&
+            defendant.caseFilesSharedWithDefender &&
+            defendant.defenderNationalId &&
+            normalizeAndFormatNationalId(user?.nationalId).includes(
+              defendant.defenderNationalId,
+            )) ||
+          (defendant.isAppealDefenderConfirmed &&
+            !defendant.isAppealDefenderWaived &&
+            defendant.appealDefenderNationalId &&
+            normalizeAndFormatNationalId(user?.nationalId).includes(
+              defendant.appealDefenderNationalId,
+            )),
       ) ||
       theCase.civilClaimants?.some(
         (civilClaimant) =>
-          civilClaimant.hasSpokesperson &&
-          civilClaimant.isSpokespersonConfirmed &&
-          civilClaimant.caseFilesSharedWithSpokesperson &&
-          civilClaimant.spokespersonNationalId &&
-          normalizeAndFormatNationalId(user?.nationalId).includes(
-            civilClaimant.spokespersonNationalId,
-          ),
+          (civilClaimant.hasSpokesperson &&
+            civilClaimant.isSpokespersonConfirmed &&
+            civilClaimant.caseFilesSharedWithSpokesperson &&
+            civilClaimant.spokespersonNationalId &&
+            normalizeAndFormatNationalId(user?.nationalId).includes(
+              civilClaimant.spokespersonNationalId,
+            )) ||
+          (civilClaimant.hasAppealSpokesperson !== false &&
+            civilClaimant.isAppealSpokespersonConfirmed &&
+            civilClaimant.appealSpokespersonNationalId &&
+            normalizeAndFormatNationalId(user?.nationalId).includes(
+              civilClaimant.appealSpokespersonNationalId,
+            )),
       ),
   )
 

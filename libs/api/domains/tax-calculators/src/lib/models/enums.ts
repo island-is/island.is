@@ -22,8 +22,6 @@ registerEnumType(TaxCalculatorInputFieldType, {
   },
 })
 
-/* Numeric semantics identify value meaning; selected semantics also define
- * validated ranges. */
 export enum TaxCalculatorInputFieldSemantic {
   CURRENCY = 'currency',
   PERCENTAGE = 'percentage',
@@ -52,6 +50,7 @@ export enum TaxCalculatorOutputFieldType {
   BOOLEAN = 'boolean',
   DATE = 'date',
   ARRAY = 'array',
+  OBJECT = 'object',
 }
 
 registerEnumType(TaxCalculatorOutputFieldType, {
@@ -59,6 +58,9 @@ registerEnumType(TaxCalculatorOutputFieldType, {
   valuesMap: {
     ARRAY: {
       description: 'Sequence of rows.',
+    },
+    OBJECT: {
+      description: 'Single row.',
     },
   },
 })

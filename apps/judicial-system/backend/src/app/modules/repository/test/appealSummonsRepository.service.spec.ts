@@ -5,10 +5,14 @@ import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { AppealSummonsAppellantSide } from '@island.is/judicial-system/types'
+import {
+  AppealSummonsAppellantSide,
+  VerdictServiceStatus,
+} from '@island.is/judicial-system/types'
 
 import { AppealSummons } from '../models/appealSummons.model'
 import { AppealSummonsDefendant } from '../models/appealSummonsDefendant.model'
+import { AppealSummonsServiceRecipient } from '../models/appealSummonsServiceRecipient.model'
 import { Institution } from '../models/institution.model'
 import { User } from '../models/user.model'
 import { AppealSummonsRepositoryService } from '../services/appealSummonsRepository.service'
@@ -23,6 +27,11 @@ describe('AppealSummonsRepositoryService', () => {
     update: jest.Mock
   }
   let defendantModel: { create: jest.Mock; destroy: jest.Mock }
+  let serviceRecipientModel: {
+    create: jest.Mock
+    findOne: jest.Mock
+    update: jest.Mock
+  }
 
   beforeEach(async () => {
     summonsModel = {
@@ -35,6 +44,11 @@ describe('AppealSummonsRepositoryService', () => {
       create: jest.fn(),
       destroy: jest.fn(),
     }
+    serviceRecipientModel = {
+      create: jest.fn(),
+      findOne: jest.fn(),
+      update: jest.fn(),
+    }
 
     const moduleRef = await Test.createTestingModule({
       providers: [
@@ -46,6 +60,10 @@ describe('AppealSummonsRepositoryService', () => {
         {
           provide: getModelToken(AppealSummonsDefendant),
           useValue: defendantModel,
+        },
+        {
+          provide: getModelToken(AppealSummonsServiceRecipient),
+          useValue: serviceRecipientModel,
         },
         AppealSummonsRepositoryService,
       ],
@@ -92,6 +110,13 @@ describe('AppealSummonsRepositoryService', () => {
           {
             model: AppealSummonsDefendant,
             as: 'defendants',
+            required: false,
+            separate: true,
+            order: [['created', 'ASC']],
+          },
+          {
+            model: AppealSummonsServiceRecipient,
+            as: 'services',
             required: false,
             separate: true,
             order: [['created', 'ASC']],
@@ -165,6 +190,57 @@ describe('AppealSummonsRepositoryService', () => {
         { where: { id: 'summons_id', caseId: 'case_id' }, transaction },
       )
       expect(result).toBe(updated)
+    })
+  })
+
+  describe('updateServiceRecipient', () => {
+    it('updates the recipient and reloads it', async () => {
+      const updated = {
+        id: 'service_id',
+        serviceStatus: VerdictServiceStatus.IN_PERSON,
+      }
+      serviceRecipientModel.update.mockResolvedValueOnce([1])
+      serviceRecipientModel.findOne.mockResolvedValueOnce(updated)
+
+      const result = await service.updateServiceRecipient(
+        'service_id',
+        'summons_id',
+        { serviceStatus: VerdictServiceStatus.IN_PERSON },
+        { transaction },
+      )
+
+      expect(serviceRecipientModel.update).toHaveBeenCalledWith(
+        { serviceStatus: VerdictServiceStatus.IN_PERSON },
+        {
+          where: { id: 'service_id', appealSummonsId: 'summons_id' },
+          transaction,
+        },
+      )
+      expect(result).toBe(updated)
+    })
+
+    it('returns null when a conditional where matches no row', async () => {
+      serviceRecipientModel.update.mockResolvedValueOnce([0])
+
+      const result = await service.updateServiceRecipient(
+        'service_id',
+        'summons_id',
+        { serviceStatus: VerdictServiceStatus.IN_PERSON },
+        { transaction, where: { serviceStatus: null } },
+      )
+
+      expect(serviceRecipientModel.update).toHaveBeenCalledWith(
+        { serviceStatus: VerdictServiceStatus.IN_PERSON },
+        {
+          where: {
+            id: 'service_id',
+            appealSummonsId: 'summons_id',
+            serviceStatus: null,
+          },
+          transaction,
+        },
+      )
+      expect(result).toBeNull()
     })
   })
 

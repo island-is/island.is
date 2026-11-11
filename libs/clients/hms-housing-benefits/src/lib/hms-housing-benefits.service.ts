@@ -10,6 +10,13 @@ import {
 import { handle204 } from '@island.is/clients/middlewares'
 import { CalculationTypes, TransactionTypes } from './enums'
 
+// Generated client returns boolean bodies as strings despite the `boolean` type:
+// https://github.com/OpenAPITools/openapi-generator/issues/2870
+const toBoolean = (value: boolean | string): boolean =>
+  typeof value === 'string'
+    ? value.trim().toLowerCase() === 'true'
+    : value === true
+
 @Injectable()
 export class HmsHousingBenefitsClientService {
   constructor(
@@ -33,21 +40,32 @@ export class HmsHousingBenefitsClientService {
       })
   }
 
-  async hasTaxReturnForYear(auth: Auth, nationalId: string, year: number) {
-    return this.taxApi
-      .withMiddleware(new AuthMiddleware(auth))
-      .hasTaxReturnForYear({
-        version: '1',
-        year,
-      })
+  async hasTaxReturnForYear(
+    auth: Auth,
+    nationalId: string,
+    year: number,
+  ): Promise<boolean> {
+    return toBoolean(
+      await this.taxApi
+        .withMiddleware(new AuthMiddleware(auth))
+        .hasTaxReturnForYear({
+          version: '1',
+          year,
+        }),
+    )
   }
 
-  async hasTaxReturnLastFiveYears(auth: Auth, nationalId: string) {
-    return this.taxApi
-      .withMiddleware(new AuthMiddleware(auth))
-      .hasTaxReturnLastFiveYears({
-        version: '1',
-      })
+  async hasTaxReturnLastFiveYears(
+    auth: Auth,
+    nationalId: string,
+  ): Promise<boolean> {
+    return toBoolean(
+      await this.taxApi
+        .withMiddleware(new AuthMiddleware(auth))
+        .hasTaxReturnLastFiveYears({
+          version: '1',
+        }),
+    )
   }
 
   async hmsPaymentHistory(

@@ -112,6 +112,7 @@ export enum ApplicationTypes {
   PAY_DEBTS = 'PayDebts',
   U2_CERTIFICATE = 'U2Certificate',
   TEMPORARY_VEHICLE_EXPORT = 'TemporaryVehicleExport',
+  FJARSKIPTASTOFA_SELF_ASSESSMENT = 'FjarskiptastofaSelfAssessment',
 }
 
 export const ApplicationConfigurations = {
@@ -560,7 +561,7 @@ export const ApplicationConfigurations = {
     translation: ['doe.sr.application', 'uiForms.application'],
   },
   [ApplicationTypes.PAY_DEBTS]: {
-    slug: 'greidum-rikinu',
+    slug: 'greida-skuld',
     translation: ['pd.application', 'uiForms.application'],
   },
   [ApplicationTypes.U2_CERTIFICATE]: {
@@ -570,5 +571,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.TEMPORARY_VEHICLE_EXPORT]: {
     slug: 'timabundinn-utflutningur-okutaekis',
     translation: ['rsk.tve.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.FJARSKIPTASTOFA_SELF_ASSESSMENT]: {
+    slug: 'sjalfsmat-fjarskiptastofu',
+    translation: ['fjs.sa.application', 'uiForms.application'],
   },
 }

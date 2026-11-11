@@ -373,6 +373,16 @@ export class AppService {
           ),
           policeDocumentId,
         )
+      case PoliceFileTypeCode.APPEAL_SUMMONS:
+        return await this.auditTrailService.audit(
+          'digital-mailbox-api',
+          AuditedAction.UPDATE_APPEAL_SUMMONS_SERVICE,
+          this.updateAppealSummonsServiceDelivery(
+            policeDocumentId,
+            updatePoliceDocumentDelivery,
+          ),
+          policeDocumentId,
+        )
     }
 
     throw new BadRequestException('Police file type code not supported')
@@ -439,6 +449,78 @@ export class AppService {
     try {
       const res = await fetch(
         `${this.config.backend.url}/api/internal/verdict/${policeDocumentId}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.backend.accessToken}`,
+          },
+          body: JSON.stringify(parsedPoliceUpdate),
+        },
+      )
+
+      const response = await res.json()
+
+      if (res.ok) {
+        return {
+          policeDocumentId: response.externalPoliceDocumentId,
+        } as PoliceDocumentDelivery
+      }
+
+      if (res.status < 500) {
+        throw new BadRequestException(response?.detail)
+      }
+
+      throw response
+    } catch (reason) {
+      if (reason instanceof BadRequestException) {
+        throw reason
+      }
+
+      throw new BadGatewayException({
+        ...reason,
+        message: `Failed to update document delivery ${policeDocumentId} information for file type code ${updatePoliceDocumentDelivery.fileTypeCode}`,
+      })
+    }
+  }
+
+  private async updateAppealSummonsServiceDelivery(
+    policeDocumentId: string,
+    updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
+  ) {
+    const serviceStatus = mapPoliceVerdictDeliveryStatus({
+      delivered: updatePoliceDocumentDelivery.delivered,
+      deliveredOnPaper: updatePoliceDocumentDelivery.deliveredOnPaper,
+      deliveredOnIslandis: updatePoliceDocumentDelivery.deliveredOnIslandis,
+      deliveredToLawyer: updatePoliceDocumentDelivery.deliveredToLawyer,
+      deliveredToDefendant: updatePoliceDocumentDelivery.deliveredToDefendant,
+      deliveryMethod: updatePoliceDocumentDelivery.deliveryMethod,
+    })
+
+    const legalPaperServiceDate =
+      serviceStatus === VerdictServiceStatus.LEGAL_PAPER
+        ? getServiceDateFromSupplements(
+            updatePoliceDocumentDelivery.supplements,
+          )
+        : undefined
+
+    const parsedPoliceUpdate = {
+      serviceDate:
+        legalPaperServiceDate ?? updatePoliceDocumentDelivery.servedAt,
+      servedBy: updatePoliceDocumentDelivery.servedBy,
+      comment: updatePoliceDocumentDelivery.comment,
+      serviceStatus,
+    }
+
+    this.logger.info(
+      `Parsed appeal summons service update request ${JSON.stringify(
+        parsedPoliceUpdate,
+      )}`,
+    )
+
+    try {
+      const res = await fetch(
+        `${this.config.backend.url}/api/internal/appeal-summons-service/${policeDocumentId}`,
         {
           method: 'PATCH',
           headers: {

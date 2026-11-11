@@ -16,9 +16,8 @@ import { router } from 'expo-router'
 import { StackScreen } from '@/components/stack-screen'
 import {
   Button,
-  NavigationBarSheet,
   NotificationCard,
-  Problem,
+  StatusMessage,
   ListItemSkeleton,
   EmptyList,
 } from '@/ui'
@@ -237,7 +236,7 @@ export default function NotificationsScreen() {
   const keyExtractor = useCallback((item: ListItem) => item.id.toString(), [])
 
   if (showError) {
-    return <Problem type="error" withContainer />
+    return <StatusMessage type="error" withContainer />
   }
 
   return (

@@ -20,7 +20,14 @@ import {
 } from '@/graphql/types/schema'
 import { useBrowser } from '@/hooks/use-browser'
 import { useMyPagesLinks } from '@/lib/my-pages-links'
-import { Button, Input, InputRow, LinkText, Problem, Typography } from '@/ui'
+import {
+  Button,
+  InfoLine,
+  InfoLineRow,
+  LinkText,
+  StatusMessage,
+  Typography,
+} from '@/ui'
 import { testIDs } from '@/utils/test-ids'
 import { useMemo, useState } from 'react'
 import { useTheme } from 'styled-components'
@@ -87,7 +94,7 @@ export default function VehicleDetailScreen() {
   }
 
   if (error) {
-    return <Problem withContainer error={error} />
+    return <StatusMessage withContainer error={error} />
   }
 
   const inputLoading = loading && !data
@@ -239,13 +246,13 @@ export default function VehicleDetailScreen() {
               onPress={() => openBrowser(myPagesLinks.reportOwnerChange)}
             />
           </View>
-          <InputRow>
-            <Input
+          <InfoLineRow>
+            <InfoLine
               loading={inputLoading}
               label={intl.formatMessage({ id: 'vehicleDetail.regno' })}
               value={mainInfo?.regno}
             />
-            <Input
+            <InfoLine
               loading={inputLoading}
               label={intl.formatMessage({ id: 'vehicleDetail.firstReg' })}
               value={
@@ -256,9 +263,9 @@ export default function VehicleDetailScreen() {
                   : '-'
               }
             />
-          </InputRow>
-          <InputRow>
-            <Input
+          </InfoLineRow>
+          <InfoLineRow>
+            <InfoLine
               loading={inputLoading}
               label={intl.formatMessage({
                 id: 'vehicleDetail.nextInspectionDate',
@@ -269,7 +276,7 @@ export default function VehicleDetailScreen() {
                   : '-'
               }
             />
-            <Input
+            <InfoLine
               loading={inputLoading}
               label={intl.formatMessage({ id: 'vehicleDetail.insured' })}
               value={intl.formatMessage(
@@ -277,10 +284,10 @@ export default function VehicleDetailScreen() {
                 { isInsured: inspectionInfo?.insuranceStatus },
               )}
             />
-          </InputRow>
+          </InfoLineRow>
           {allowMileageRegistration && (
-            <InputRow>
-              <Input
+            <InfoLineRow>
+              <InfoLine
                 loading={inputLoading}
                 label={`${intl.formatMessage({
                   id: 'vehicleDetail.lastOdometer',
@@ -309,7 +316,7 @@ export default function VehicleDetailScreen() {
                   </Pressable>
                 }
               />
-            </InputRow>
+            </InfoLineRow>
           )}
 
           <Typography
@@ -324,13 +331,13 @@ export default function VehicleDetailScreen() {
             {intl.formatMessage({ id: 'vehicleDetail.moreInfo' })}
           </Typography>
 
-          <InputRow>
-            <Input
+          <InfoLineRow>
+            <InfoLine
               loading={inputLoading}
               label={intl.formatMessage({ id: 'vehicleDetail.color' })}
               value={registrationInfo?.color}
             />
-            <Input
+            <InfoLine
               loading={inputLoading}
               label={intl.formatMessage({
                 id: 'vehicleDetail.unpaidVehicleFee',
@@ -342,14 +349,14 @@ export default function VehicleDetailScreen() {
                   : `${inspectionInfo.carTax} kr.`
               }
             />
-          </InputRow>
+          </InfoLineRow>
 
           {mainInfo &&
           (mainInfo.trailerWithBrakesWeight ||
             mainInfo.trailerWithoutBrakesWeight) ? (
-            <InputRow>
+            <InfoLineRow>
               {mainInfo.trailerWithBrakesWeight ? (
-                <Input
+                <InfoLine
                   loading={inputLoading}
                   label={intl.formatMessage({
                     id: 'vehicleDetail.trailerWithBrakes',
@@ -358,7 +365,7 @@ export default function VehicleDetailScreen() {
                 />
               ) : null}
               {mainInfo.trailerWithoutBrakesWeight ? (
-                <Input
+                <InfoLine
                   loading={inputLoading}
                   label={intl.formatMessage({
                     id: 'vehicleDetail.trailerWithoutBrakes',
@@ -366,26 +373,26 @@ export default function VehicleDetailScreen() {
                   value={`${mainInfo.trailerWithoutBrakesWeight} kg`}
                 />
               ) : null}
-            </InputRow>
+            </InfoLineRow>
           ) : null}
 
-          <InputRow>
+          <InfoLineRow>
             {mainInfo?.co2 != null ? (
-              <Input
+              <InfoLine
                 loading={inputLoading}
                 label={intl.formatMessage({ id: 'vehicleDetail.nedc' })}
                 value={`${mainInfo.co2 ?? 0} g/km`}
               />
             ) : null}
-            <Input
+            <InfoLine
               loading={inputLoading}
               label={intl.formatMessage({ id: 'vehicleDetail.permno' })}
               value={basicInfo?.permno}
             />
-          </InputRow>
+          </InfoLineRow>
 
-          <InputRow>
-            <Input
+          <InfoLineRow>
+            <InfoLine
               loading={inputLoading}
               label={intl.formatMessage({
                 id: 'vehicleDetail.vehicleWeight',
@@ -393,7 +400,7 @@ export default function VehicleDetailScreen() {
               value={`${technicalInfo?.vehicleWeight ?? ''} kg`}
             />
             {technicalInfo?.totalWeight ? (
-              <Input
+              <InfoLine
                 loading={inputLoading}
                 label={intl.formatMessage({
                   id: 'vehicleDetail.totalWeight',
@@ -401,18 +408,18 @@ export default function VehicleDetailScreen() {
                 value={`${technicalInfo.totalWeight ?? '-'} kg`}
               />
             ) : null}
-          </InputRow>
+          </InfoLineRow>
 
           {technicalInfo?.capacityWeight ? (
-            <InputRow>
-              <Input
+            <InfoLineRow>
+              <InfoLine
                 loading={inputLoading}
                 label={intl.formatMessage({
                   id: 'vehicleDetail.capacityWeight',
                 })}
                 value={`${technicalInfo.capacityWeight ?? '-'} kg`}
               />
-            </InputRow>
+            </InfoLineRow>
           ) : null}
         </View>
       </ScrollView>

@@ -5,7 +5,7 @@ import { router, Stack, useLocalSearchParams } from 'expo-router'
 import styled from 'styled-components/native'
 import trashIcon from '@/assets/icons/trash.png'
 
-import { Button, NavigationBarSheet, Typography } from '@/ui'
+import { Button, Typography } from '@/ui'
 import { useDeleteMedicineDelegationMutation } from '@/graphql/types/schema'
 import { StackScreen } from '../../../../../../components/stack-screen'
 

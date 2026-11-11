@@ -78,6 +78,16 @@ export const shouldShowPoliceDigitalCaseFilesSection = (
     isCourtOfAppealsUser(user)) &&
   (digitalCaseFilesLoading || isNonEmptyArray(digitalCaseFiles))
 
+// Other file categories (e.g. civil claims) can make the surrounding
+// showFiles block render before the indictment reaches court. The
+// "Innsend gögn" section is only for post-submission uploads, so keep
+// it off until there are such files or the parent forces the empty
+// table (prosecutor/court after send).
+export const shouldShowUploadedCaseFilesSection = (
+  uploadedCaseFilesCount: number,
+  forceDisplayAdditionalFiles: boolean,
+): boolean => uploadedCaseFilesCount > 0 || forceDisplayAdditionalFiles
+
 // Temporary: for a few indictment cases the court uploaded the real case
 // material as other documents, so defenders should not see the generated
 // case-files-record PDF. Add case ids here (including any on dev used to

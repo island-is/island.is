@@ -8,7 +8,7 @@ import assetsIcon from '@/assets/icons/assets.png'
 import financeIcon from '@/assets/icons/finance.png'
 import personIcon from '@/assets/icons/person.png'
 import vehicleIcon from '@/assets/icons/vehicle.png'
-import { MoreInfoContiner } from '@/components/more-info-container/more-info-container'
+import { MoreInfoContainer } from '@/components/more-info-container/more-info-container'
 import { useMyPagesLinks } from '@/lib/my-pages-links'
 import { blue400, MoreCard } from '@/ui'
 import { testIDs } from '@/utils/test-ids'
@@ -127,7 +127,7 @@ export default function MoreScreen() {
           }}
         >
           <View style={{ paddingBottom: theme.spacing[4] }}>
-            <MoreInfoContiner externalLinks={externalLinks} />
+            <MoreInfoContainer externalLinks={externalLinks} />
           </View>
         </View>
       </Animated.ScrollView>

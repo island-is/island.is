@@ -12,7 +12,7 @@ import {
   useGetQuestionnairesQuery,
 } from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'
-import { Problem, QuestionnaireCard, Skeleton } from '@/ui'
+import { StatusMessage, QuestionnaireCard, Skeleton } from '@/ui'
 import { createSkeletonArr } from '@/utils/create-skeleton-arr'
 import { getQuestionnaireOrganizationLabelId } from '@/utils/questionnaire-utils'
 import { pushOnce } from '@/utils/push-once'
@@ -168,11 +168,11 @@ export default function QuestionnairesScreen() {
         ListEmptyComponent={
           <>
             {!loading && error && questionnaires.length === 0 ? (
-              <Problem error={error} withContainer />
+              <StatusMessage error={error} withContainer />
             ) : null}
 
             {!loading && !error && questionnaires.length === 0 ? (
-              <Problem type="no_data" withContainer />
+              <StatusMessage type="no_data" withContainer />
             ) : null}
             {isInitialLoading
               ? createSkeletonArr(4).map((item) => (

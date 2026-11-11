@@ -32,11 +32,11 @@ import {
   RskCompanyInfo,
   RskCarRentalRate,
   RskKilometragjaldReimbursement,
+  RVKFinancialAid,
   SeminarsVer,
   SocialInsuranceAdministration,
   TransportAuthority,
   Vehicles,
-  VehicleServiceFjsV1,
   WorkMachines,
   SignatureCollection,
   ArborgWorkpoint,
@@ -58,6 +58,7 @@ import {
   VMSTUnemployment,
   RecyclingFund,
   DirectorateOfEquality,
+  FjarskiptastofaSelfAssessment,
 } from '../../../../infra/src/dsl/xroad'
 
 export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
@@ -84,7 +85,7 @@ export const workerSetup = (services: {
     .db()
     .serviceAccount('application-system-api-worker')
     .redis()
-    .codeOwner(CodeOwners.NordaApplications)
+    .codeOwner(CodeOwners.ApplicationsCore)
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system',
       IDENTITY_SERVER_ISSUER_URL: {
@@ -198,7 +199,7 @@ export const serviceSetup = (services: {
     .serviceAccount(serviceAccount)
     .command('node')
     .redis()
-    .codeOwner(CodeOwners.NordaApplications)
+    .codeOwner(CodeOwners.ApplicationsCore)
     .args('main.cjs')
     .env({
       EMAIL_REGION: 'eu-west-1',
@@ -371,6 +372,11 @@ export const serviceSetup = (services: {
         staging: 'hh_env_staging',
         prod: 'hh_env_prod',
       },
+      PERSONAL_TAX_RETURN_URL: {
+        dev: 'https://vefurp.rsk.is/ws/Ums/USStadgreidslaFramtalGogn.svc',
+        staging: 'https://vefurp.rsk.is/ws/Ums/USStadgreidslaFramtalGogn.svc',
+        prod: 'https://vefurp.rsk.is/ws/Ums/USStadgreidslaFramtalGogn.svc',
+      },
       REDIS_NODES: {
         dev: json([
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
@@ -413,7 +419,6 @@ export const serviceSetup = (services: {
       RskCompanyInfo,
       RskCarRentalRate,
       RskKilometragjaldReimbursement,
-      VehicleServiceFjsV1,
       Inna,
       VehiclesMileage,
       TransportAuthority,
@@ -441,6 +446,8 @@ export const serviceSetup = (services: {
       VMSTUnemployment,
       RecyclingFund,
       DirectorateOfEquality,
+      FjarskiptastofaSelfAssessment,
+      RVKFinancialAid,
     )
     .secrets({
       NOVA_URL: '/k8s/NOVA_URL_V1',
@@ -452,6 +459,8 @@ export const serviceSetup = (services: {
       CONTENTFUL_MANAGEMENT_ACCESS_TOKEN:
         '/k8s/application-system/api/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN',
       AUTH_JWT_SECRET: '/k8s/application-system/api/AUTH_JWT_SECRET',
+      SI_PUBLIC_FINANCIAL_AID_VEITA_TENANTS:
+        '/k8s/application-system/FINANCIAL_AID_VEITA_TENANTS',
       DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN',
       EMAIL_FROM: '/k8s/application-system/api/EMAIL_FROM',
       EMAIL_FROM_NAME: '/k8s/application-system/api/EMAIL_FROM_NAME',
@@ -498,6 +507,10 @@ export const serviceSetup = (services: {
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH',
       REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED:
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED',
+      PERSONAL_TAX_RETURN_AGENT_NATIONAL_ID:
+        '/k8s/application-system/api/PERSONAL_TAX_RETURN_AGENT_NATIONAL_ID',
+      PERSONAL_TAX_RETURN_AGENT_ID:
+        '/k8s/application-system/api/PERSONAL_TAX_RETURN_AGENT_ID',
     })
     .db()
     .migrations()

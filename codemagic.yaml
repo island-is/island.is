@@ -21,6 +21,17 @@ definitions:
     XCODE_SCHEME: 'IslandApp'
     CM_CLONE_DEPTH: 200
     NODE_OPTIONS: '--max-old-space-size=8192'
+  caches:
+    ios_cache: &ios_cache
+      cache_paths:
+        - ~/Library/Caches/CocoaPods
+        - $CM_BUILD_DIR/.yarn/cache
+        - $CM_BUILD_DIR/.cache/nx
+    android_cache: &android_cache
+      cache_paths:
+        - ~/.gradle/caches
+        - $CM_BUILD_DIR/.yarn/cache
+        - $CM_BUILD_DIR/.cache/nx
   scripts:
     - &check_changes
       name: Check changes since last build
@@ -78,21 +89,6 @@ definitions:
     - &provisioning_profiles
       name: Set up provisioning profiles settings on Xcode project
       script: xcode-project use-profiles --project ios/IslandApp.xcodeproj
-    - &increment_build_number
-      name: Increment build number
-      script: |
-        cd ios
-        APP_STORE_BUILD=$(app-store-connect get-latest-build-number "$APP_STORE_APPLE_ID")
-        PROJECT_BUILD=$(agvtool what-version -terse | tail -n 1)
-
-        if [ "$PROJECT_BUILD" -gt "$APP_STORE_BUILD" ]; then
-          echo "Using project build: $PROJECT_BUILD"
-          echo "This may be due to a hidden/failed build in App Store Connect"
-          # Keep current project build number (don't change it)
-        else
-          echo "Using App Store Connect build: $APP_STORE_BUILD"
-          agvtool new-version -all $(($APP_STORE_BUILD + 1))
-        fi
     - &build_ipa
       name: Build ipa for distribution
       script: |
@@ -168,6 +164,15 @@ definitions:
           echo "MOBILE_TARGET_SHA must be a full lowercase 40-character SHA" >&2
           exit 1
         fi
+        if [[ ! "$MOBILE_RELEASE_VERSION" =~ ^[0-9]{2}\.(0[1-9]|1[0-2])\.(0[1-9]|[12][0-9]|3[01])\.[0-9]{2}$ ]]; then
+          echo "MOBILE_RELEASE_VERSION must be yy.mm.dd.nn, got '$MOBILE_RELEASE_VERSION'" >&2
+          exit 1
+        fi
+        # The store marketing version allows three components, so drop the
+        # same-day counter (.nn); the build number still tells builds apart.
+        # app.config.js reads APP_VERSION during prebuild.
+        echo "APP_VERSION=${MOBILE_RELEASE_VERSION%.*}" >> "$CM_ENV"
+        echo "Using app version: ${MOBILE_RELEASE_VERSION%.*}"
         printf 'MOBILE_REQUEST_ID=%s\nMOBILE_TARGET_SHA=%s\nMOBILE_RELEASE_VERSION=%s\n' \
           "$MOBILE_REQUEST_ID" "$MOBILE_TARGET_SHA" "$MOBILE_RELEASE_VERSION"
         # Codemagic clones the branch tip; build the exact commit auto-release sent.
@@ -191,11 +196,6 @@ definitions:
         agvtool new-version -all "$MOBILE_BUILD_NUMBER_IOS"
         echo "Using iOS build number: $MOBILE_BUILD_NUMBER_IOS"
   publishing:
-    ios_publishing: &ios_publishing
-      app_store_connect:
-        auth: integration
-        submit_to_testflight: false
-        submit_to_app_store: false
     # auto-release iOS builds upload to TestFlight (both dev and prod app
     # records) but never submit for App Store review. Android auto-release
     # builds upload to the Google Play internal track (both dev and prod
@@ -212,159 +212,11 @@ definitions:
       slack:
         channel: '#team-app-builds'
         notify:
-          # don't want to spam slack with 4 successful builds. Overridden in dev-app-ios.
+          # don't want to spam slack with 4 successful builds.
           success: false
           failure: true
 
 workflows:
-  prod-app-ios:
-    <<: *base
-    name: Island.is Prod App iOS
-    instance_type: mac_mini_m2
-    cache: &ios_cache
-      cache_paths:
-        - ~/Library/Caches/CocoaPods
-        - $CM_BUILD_DIR/.yarn/cache
-        - $CM_BUILD_DIR/.cache/nx
-    integrations:
-      app_store_connect: 'Island.is API Key'
-    environment:
-      <<: *environment
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: is.island.app
-      vars:
-        <<: *shared_envs
-        BUNDLE_ID: 'is.island.app'
-        APP_STORE_APPLE_ID: 1569828682
-        APP_VARIANT: 'production'
-    scripts:
-      - *check_changes
-      - *pip_install
-      - *npm_install
-      - *codegen
-      - *prebuild_ios
-      - *cocoapods
-      - *provisioning_profiles
-      - *increment_build_number
-      - *build_ipa
-    artifacts:
-      - build/ios/ipa/*.ipa
-      - /tmp/xcodebuild_logs/*.log
-      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
-      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
-    publishing:
-      <<: *ios_publishing
-      <<: *slack_errors
-
-  dev-app-ios:
-    <<: *base
-    name: Island.is Dev App iOS
-    instance_type: mac_mini_m2
-    cache: *ios_cache
-    integrations:
-      app_store_connect: 'Island.is API Key'
-    environment:
-      <<: *environment
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: is.island.app.dev
-      vars:
-        <<: *shared_envs
-        BUNDLE_ID: 'is.island.app.dev'
-        APP_STORE_APPLE_ID: 1570427360
-        APP_VARIANT: 'development'
-    scripts:
-      - *check_changes
-      - *pip_install
-      - *npm_install
-      - *codegen
-      - *prebuild_ios
-      - *cocoapods
-      - *provisioning_profiles
-      - *increment_build_number
-      - *build_ipa
-    artifacts:
-      - build/ios/ipa/*.ipa
-      - /tmp/xcodebuild_logs/*.log
-      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
-      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
-      - $CM_BUILD_DIR/IslandApp.zip
-    publishing:
-      <<: *ios_publishing
-      slack:
-        channel: '#team-app-builds'
-        notify:
-          success: true
-          failure: true
-
-  prod-app-android:
-    <<: *base
-    name: Island.is Prod App Android
-    instance_type: linux_x2
-    cache: &android_cache
-      cache_paths:
-        - ~/.gradle/caches
-        - $CM_BUILD_DIR/.yarn/cache
-        - $CM_BUILD_DIR/.cache/nx
-    environment:
-      <<: *environment
-      android_signing:
-        - island-upload-keystore
-      groups:
-        - google_credentials
-        - firebase_credentials
-      vars:
-        <<: *shared_envs
-        PACKAGE_NAME: 'is.island.app'
-        APP_VARIANT: 'production'
-    scripts:
-      - *check_changes
-      - *pip_install
-      - *npm_install
-      - *codegen
-      - *get_android_version_code
-      - *prebuild_android
-      - *set_android_location
-      - *build_android
-    artifacts:
-      - android/app/build/outputs/**/*.aab
-    publishing:
-      <<: *android_publishing
-      <<: *slack_errors
-
-  dev-app-android:
-    <<: *base
-    name: Island.is Dev App Android
-    instance_type: linux_x2
-    cache: *android_cache
-    environment:
-      <<: *environment
-      android_signing:
-        - island-upload-keystore
-      groups:
-        - google_credentials
-        - firebase_credentials_dev
-      vars:
-        <<: *shared_envs
-        PACKAGE_NAME: 'is.island.app.dev'
-        APP_VARIANT: 'development'
-    scripts:
-      - *check_changes
-      - *pip_install
-      - *npm_install
-      - *codegen
-      - *get_android_version_code
-      - *prebuild_android
-      - *set_android_location
-      - *build_android
-    artifacts:
-      - android/app/build/outputs/**/*.aab
-      - android/app/build/outputs/**/*.apk
-    publishing:
-      <<: *android_publishing
-      <<: *slack_errors
-
   e2e-tests-ios:
     <<: *base
     name: Island.is E2E Tests iOS
@@ -428,11 +280,10 @@ workflows:
   #   CODEMAGIC_WORKFLOW_ID_IOS_PROD     -> mobile-release-ios-prod
   #   CODEMAGIC_WORKFLOW_ID_ANDROID_DEV  -> mobile-release-android-dev
   #   CODEMAGIC_WORKFLOW_ID_ANDROID_PROD -> mobile-release-android-prod
-  # Based on dev-app-* / prod-app-*, but every request builds: no `when:
-  # changeset`, no check_changes, and the build number comes from auto-release
-  # instead of the stores. iOS variants upload the signed .ipa to TestFlight
-  # (dev and prod app records) but never submit for App Store review. Android
-  # variants sign only and publish to no store; the signed .aab is an artifact.
+  # The build number and yy.mm.dd version come from auto-release. iOS variants
+  # upload the signed .ipa to TestFlight (dev and prod app records) but never
+  # submit for App Store review. Android variants upload the signed .aab to the
+  # Google Play internal track.
   mobile-release-ios-dev:
     name: Island.is Mobile Release iOS Dev (auto-release)
     max_build_duration: 120

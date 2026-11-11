@@ -1,9 +1,9 @@
 import gql from 'graphql-tag'
 
 export const siaUnionsQuery = gql`
-  query SiaUnions {
+  query SiaUnions($applicationId: String) {
     socialInsuranceGeneral {
-      unions {
+      unions(applicationId: $applicationId) {
         nationalId
         name
       }
@@ -12,9 +12,9 @@ export const siaUnionsQuery = gql`
 `
 
 export const siaCountriesQuery = gql`
-  query SiaCountries {
+  query SiaCountries($applicationId: String) {
     socialInsuranceGeneral {
-      countries {
+      countries(applicationId: $applicationId) {
         code
         name
       }
@@ -23,9 +23,9 @@ export const siaCountriesQuery = gql`
 `
 
 export const siaEducationalInstitutionsQuery = gql`
-  query SiaEducationalInstitutions {
+  query SiaEducationalInstitutions($applicationId: String) {
     socialInsuranceGeneral {
-      educationalInstitutions {
+      educationalInstitutions(applicationId: $applicationId) {
         name
         nationalId
       }

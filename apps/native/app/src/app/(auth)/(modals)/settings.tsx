@@ -32,13 +32,7 @@ import {
   usePreferencesStore,
 } from '@/stores/preferences-store'
 import { useUiStore } from '@/stores/ui-store'
-import {
-  Alert,
-  NavigationBarSheet,
-  TableViewAccessory,
-  TableViewCell,
-  TableViewGroup,
-} from '@/ui'
+import { Alert, TableViewAccessory, TableViewCell, TableViewGroup } from '@/ui'
 import { useBiometricType } from '../../../hooks/use-biometric-type'
 import { NotificationsPermissionAlert } from '@/components/notifications-permission-alert'
 import { useNotificationsPermission } from '@/hooks/use-notifications-permission'

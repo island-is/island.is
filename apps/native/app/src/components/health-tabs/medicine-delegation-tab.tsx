@@ -21,7 +21,7 @@ import {
   EmptyState,
   GeneralCardSkeleton,
   Label,
-  Problem,
+  StatusMessage,
   Typography,
 } from '@/ui'
 import { NetworkStatus } from '@apollo/client'
@@ -47,7 +47,7 @@ const ReadMoreButton = styled(TouchableOpacity)`
   flex-direction: row;
   align-items: center;
   border-bottom-width: 1px;
-  border-color: ${({ theme }) => theme.color.blue400};
+  border-color: ${({ theme }) => theme.tokens.interactive.border.borderPrimary};
 `
 
 const Card = styled(TouchableOpacity)`
@@ -60,7 +60,7 @@ const Card = styled(TouchableOpacity)`
   padding: ${({ theme }) => theme.spacing[2]}px;
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: 1px;
-  border-color: ${({ theme }) => theme.color.blue200};
+  border-color: ${({ theme }) => theme.tokens.border.primary};
 `
 
 const TagContainer = styled.View`
@@ -145,7 +145,7 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
           >
             <Typography
               variant="eyebrow"
-              color={theme.color.blue400}
+              color={theme.tokens.interactive.foreground.primary}
               style={{ marginRight: theme.spacing.smallGutter }}
             >
               <FormattedMessage id="health.medicineDelegation.readMore" />
@@ -166,7 +166,7 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
               onPress={() => router.navigate('/health/medicine/delegation/add')}
               icon={plusIcon}
               iconStyle={{
-                tintColor: theme.color.white,
+                tintColor: theme.tokens.interactive.foreground.invert,
                 width: 10,
                 height: 10,
               }}
@@ -185,7 +185,9 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
                 onPress={() => setShowInactivePermits((prev) => !prev)}
                 iconPosition="end"
                 icon={showInactivePermits ? eyeOffIcon : eyeIcon}
-                iconStyle={{ tintColor: theme.color.dark300 }}
+                iconStyle={{
+                  tintColor: theme.tokens.foreground.primaryMinimal,
+                }}
               />
             )}
           </View>
@@ -193,7 +195,7 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
 
         {hasError ? (
           <View style={{ marginTop: theme.spacing[3] }}>
-            <Problem error={medicineDelegationsRes.error} />
+            <StatusMessage error={medicineDelegationsRes.error} />
           </View>
         ) : isInitialLoading ? (
           <View style={{ paddingVertical: theme.spacing[2] }}>

@@ -7,6 +7,7 @@ import {
   getVisibleSubpoenas,
   shouldHideCaseFilesRecordFromDefender,
   shouldShowPoliceDigitalCaseFilesSection,
+  shouldShowUploadedCaseFilesSection,
 } from './IndictmentCaseFilesList.logic'
 
 const user = (role: UserRole, type?: InstitutionType): User =>
@@ -15,6 +16,20 @@ const user = (role: UserRole, type?: InstitutionType): User =>
     role,
     ...(type ? { institution: { id: 'institution-id', type } } : {}),
   } as User)
+
+describe('shouldShowUploadedCaseFilesSection', () => {
+  it('hides the empty section when display is not forced', () => {
+    expect(shouldShowUploadedCaseFilesSection(0, false)).toBe(false)
+  })
+
+  it('shows the empty section when display is forced after send to court', () => {
+    expect(shouldShowUploadedCaseFilesSection(0, true)).toBe(true)
+  })
+
+  it('shows the section when there are uploaded case files', () => {
+    expect(shouldShowUploadedCaseFilesSection(1, false)).toBe(true)
+  })
+})
 
 describe('shouldShowPoliceDigitalCaseFilesSection', () => {
   const files = [{ id: '1' }]

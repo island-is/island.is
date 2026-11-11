@@ -9,7 +9,8 @@ import { computeDisabledReason } from '../utils/filterNavigationTree/filterNavig
 import { renderHtml } from '@island.is/island-ui/contentful'
 import { useGetServicePortalPageQuery } from '../queries/ServicePortalPage.generated'
 import * as css from './AccessDenied.css'
-import { LoadingDots } from '@island.is/island-ui/core'
+import { Box, LoadingDots } from '@island.is/island-ui/core'
+import { RequestDelegationButton } from '../components/RequestDelegationButton/RequestDelegationButton'
 
 export const AccessDenied = ({ route }: { route?: PortalRoute }) => {
   const { formatMessage, lang } = useLocale()
@@ -20,9 +21,13 @@ export const AccessDenied = ({ route }: { route?: PortalRoute }) => {
     route?.disabledReason ??
     (route && user ? computeDisabledReason(user, route) : undefined)
 
+  const isNotAvailableForActors = disabledReason === 'notAvailableForActors'
+
   const slug =
     disabledReason === 'notMinor'
       ? 'access-denied-not-minor'
+      : isNotAvailableForActors
+      ? 'access-denied-not-available-for-actors'
       : 'access-denied-default'
 
   const { data, loading } = useGetServicePortalPageQuery({
@@ -31,6 +36,29 @@ export const AccessDenied = ({ route }: { route?: PortalRoute }) => {
   })
 
   const delegationsMessage = data?.getServicePortalPage?.emptyStateMessage
+
+  const showRequest = disabledReason === 'default'
+
+  const moduleName =
+    typeof route?.name === 'string'
+      ? route.name
+      : route?.name
+      ? formatMessage(route.name)
+      : ''
+
+  const messageBody = loading ? (
+    <LoadingDots />
+  ) : isDelegation ? (
+    delegationsMessage ? (
+      renderHtml(delegationsMessage?.document)
+    ) : isNotAvailableForActors ? (
+      formatMessage(m.disabledReasonNotAvailableForActors, { moduleName })
+    ) : (
+      formatMessage(m.accessDeniedText)
+    )
+  ) : (
+    formatMessage(m.accessNeededText)
+  )
 
   return (
     <div className={css.container}>
@@ -42,21 +70,23 @@ export const AccessDenied = ({ route }: { route?: PortalRoute }) => {
           isDelegation
             ? delegationsMessage
               ? ''
+              : isNotAvailableForActors
+              ? formatMessage(m.accessNotAvailableForActorsTitle)
               : formatMessage(m.accessNeeded)
             : formatMessage(m.accessDenied)
         }
         message={
-          loading ? (
-            <LoadingDots />
-          ) : isDelegation ? (
-            delegationsMessage ? (
-              renderHtml(delegationsMessage?.document)
-            ) : (
-              formatMessage(m.accessDeniedText)
-            )
-          ) : (
-            formatMessage(m.accessNeededText)
-          )
+          <>
+            {messageBody}
+            {showRequest && (
+              <Box display="flex" justifyContent="center" marginTop={2}>
+                <RequestDelegationButton
+                  scopes={route?.requiredScopes}
+                  variant="primary"
+                />
+              </Box>
+            )}
+          </>
         }
         imgSrc="./assets/images/jobsGrid.svg"
       />

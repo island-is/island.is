@@ -22,7 +22,7 @@ const TableRow = styled.View`
   flex-wrap: wrap;
   padding-top: ${({ theme }) => theme.spacing[2]}px;
   padding-bottom: ${({ theme }) => theme.spacing[2]}px;
-  border-bottom-color: ${({ theme }) => theme.color.blue200};
+  border-bottom-color: ${({ theme }) => theme.tokens.border.primary};
   border-bottom-width: 1px;
 `
 const RowItem = styled.View`
@@ -50,7 +50,7 @@ const DispensationCheckmark = styled.View`
 
 const StatusPill = styled.View`
   border-width: 1px;
-  border-color: ${({ theme }) => theme.color.blue200};
+  border-color: ${({ theme }) => theme.tokens.border.primary};
   border-radius: ${({ theme }) => theme.border.radius.large};
   padding-vertical: ${({ theme }) => theme.spacing[1]}px;
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
@@ -286,7 +286,12 @@ export const PrescriptionCard = ({
             { id: 'health.prescriptions.attachment' },
             { arg: 1 },
           ),
-          data: <ActivityIndicator size="small" color={theme.color.blue400} />,
+          data: (
+            <ActivityIndicator
+              size="small"
+              color={theme.tokens.foreground.brand}
+            />
+          ),
         },
       ]
     : documentsError
@@ -413,7 +418,9 @@ export const PrescriptionCard = ({
             )
           : undefined
       }
-      titleColor={isExpired ? theme.color.red600 : undefined}
+      titleColor={
+        isExpired ? theme.tokens.feedback.error.foregroundContrast : undefined
+      }
       titleIcon={clockIcon}
       topRightValue={
         prescription?.amountRemaining && prescription?.amountRemaining
@@ -446,8 +453,8 @@ export const PrescriptionCard = ({
                 style={{
                   backgroundColor:
                     visibleIndex % 2 === 0
-                      ? theme.color.blue100
-                      : theme.color.white,
+                      ? theme.tokens.background.brandMinimal
+                      : theme.tokens.background.invert,
                 }}
               >
                 <RowItem>
@@ -489,8 +496,8 @@ export const PrescriptionCard = ({
                     style={{
                       backgroundColor:
                         visibleIndex % 2 === 0
-                          ? theme.color.blue100
-                          : theme.color.white,
+                          ? theme.tokens.background.brandMinimal
+                          : theme.tokens.background.invert,
                     }}
                   >
                     <RowItem>
@@ -518,8 +525,8 @@ export const PrescriptionCard = ({
                   style={{
                     backgroundColor:
                       visibleIndex % 2 === 0
-                        ? theme.color.blue100
-                        : theme.color.white,
+                        ? theme.tokens.background.brandMinimal
+                        : theme.tokens.background.invert,
                     paddingTop: theme.spacing[1],
                     paddingBottom: theme.spacing[1],
                   }}

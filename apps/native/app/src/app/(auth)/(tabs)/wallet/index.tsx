@@ -305,6 +305,7 @@ export default function WalletScreen() {
               title={intl.formatMessage({ id: 'wallet.update' })}
               isTransparent={true}
               icon={refreshIcon}
+              style={{ marginVertical: theme.spacing.p1 }}
             />
           </View>
         }

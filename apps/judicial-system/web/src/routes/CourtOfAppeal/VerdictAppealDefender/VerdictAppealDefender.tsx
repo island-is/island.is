@@ -156,7 +156,7 @@ const VerdictAppealDefender = () => {
           previousUrl={overviewUrl}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               disabled: !stepIsValid,
               onClick: () =>

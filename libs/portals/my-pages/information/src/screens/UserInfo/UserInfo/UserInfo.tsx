@@ -98,6 +98,21 @@ const SubjectInfo = () => {
                 to: formatMessage(urls.editResidence),
               }}
             />
+            {nationalRegistryPerson?.housing?.residence && (
+              <InfoLine
+                label={spmm.temporaryResidence}
+                tooltip={formatMessage(spmm.temporaryResidenceTooltip)}
+                content={
+                  formatAddress(nationalRegistryPerson.housing.residence) || ''
+                }
+                loading={loading}
+                button={{
+                  type: 'link',
+                  label: spmm.changeInNationalReg,
+                  to: formatMessage(urls.editTemporaryResidence),
+                }}
+              />
+            )}
           </InfoLineStack>
           <InfoLineStack label={formatMessage(m.baseInfo)}>
             <InfoLine

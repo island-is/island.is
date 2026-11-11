@@ -53,11 +53,6 @@ query Case($input: CaseQueryInput!) {
         }
       }
     }
-    defenderName
-    defenderNationalId
-    defenderEmail
-    defenderPhoneNumber
-    requestSharedWithDefender
     isHeightenedSecurityLevel
     court {
       ...InstitutionFields
@@ -277,17 +272,14 @@ query Case($input: CaseQueryInput!) {
         civilClaimantId
         deadline
       }
-      appealJudge1 {
+      appealJudges {
         id
-        name
-      }
-      appealJudge2 {
-        id
-        name
-      }
-      appealJudge3 {
-        id
-        name
+        displayOrder
+        userId
+        user {
+          id
+          name
+        }
       }
       appealEventLogs {
         id
@@ -312,6 +304,17 @@ query Case($input: CaseQueryInput!) {
           appellantSide
           claims
         }
+        services {
+          id
+          defendantId
+          civilClaimantId
+          sentToServiceDate
+          externalPoliceDocumentId
+          serviceStatus
+          serviceDate
+          servedBy
+          comment
+        }
       }
       sentAppealSummonses {
         id
@@ -323,6 +326,17 @@ query Case($input: CaseQueryInput!) {
           defendantId
           appellantSide
           claims
+        }
+        services {
+          id
+          defendantId
+          civilClaimantId
+          sentToServiceDate
+          externalPoliceDocumentId
+          serviceStatus
+          serviceDate
+          servedBy
+          comment
         }
       }
     }

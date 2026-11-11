@@ -8,7 +8,8 @@ const Container = styled.View`
   overflow: hidden;
   height: 4px;
   flex: 1;
-  background-color: ${({ theme }) => theme.color.mint600};
+  background-color: ${({ theme }) =>
+    theme.tokens.app.foreground.successContrast};
 `
 
 const Bar = styled(Animated.View)`
@@ -18,7 +19,7 @@ const Bar = styled(Animated.View)`
   right: 0;
   top: 0;
   bottom: 0;
-  background-color: ${({ theme }) => theme.color.white};
+  background-color: ${({ theme }) => theme.tokens.background.invert};
 `
 
 type ProgressBarProps = {

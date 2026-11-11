@@ -11,7 +11,7 @@ import {
 import styled, { useTheme } from 'styled-components/native'
 import { router, useLocalSearchParams, useNavigation } from 'expo-router'
 
-import { Button, Typography, NavigationBarSheet, LinkText } from '@/ui'
+import { Button, Typography, LinkText } from '@/ui'
 import logo from '@/assets/logo/logo-64w.png'
 import externalLink from '@/assets/icons/external-link.png'
 import illustrationSrc from '@/assets/illustrations/digital-services-m1-dots.png'
@@ -108,12 +108,6 @@ export default function PasskeyScreen() {
 
   return (
     <View style={{ flex: 1 }} testID={testIDs.SCREEN_PASSKEY}>
-      <NavigationBarSheet
-        componentId="passkey"
-        title={''}
-        onClosePress={() => router.back()}
-        style={{ marginHorizontal: 16 }}
-      />
       <SafeAreaView edges={['bottom']} style={{ flex: 1 }}>
         <Host isSmallDevice={isSmallDevice}>
           <Image

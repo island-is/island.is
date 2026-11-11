@@ -7,7 +7,6 @@ import { SectionTypes } from '@island.is/form-system/enums'
 import { m } from '@island.is/form-system/ui'
 import {
   Box,
-  Button,
   Checkbox,
   GridColumn as Column,
   Input,
@@ -34,9 +33,14 @@ import * as styles from './MainContent.css'
 interface Props {
   openPreview: boolean
   setOpenPreview: Dispatch<SetStateAction<boolean>>
+  enforcePreviewRestrictions?: boolean
 }
 
-export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
+export const MainContent = ({
+  openPreview,
+  setOpenPreview,
+  enforcePreviewRestrictions,
+}: Props) => {
   const {
     control,
     controlDispatch,
@@ -49,6 +53,7 @@ export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
   const { formatMessage } = useIntl()
   const [identifierEditingEnabled, setIdentifierEditingEnabled] =
     useState(false)
+  const [fieldPreviewEnabled, setFieldPreviewEnabled] = useState(false)
 
   const showIdentifier =
     form.submissionServiceUrl !== 'zendesk' && activeItem.type === 'Screen'
@@ -84,6 +89,8 @@ export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
         <FieldContent
           identifierEditingEnabled={identifierEditingEnabled}
           setIdentifierEditingEnabled={setIdentifierEditingEnabled}
+          fieldPreviewEnabled={fieldPreviewEnabled}
+          setFieldPreviewEnabled={setFieldPreviewEnabled}
         />
       ) : activeItem.type === 'Section' &&
         (activeItem.data as FormSystemSection).id === 'BaseSettings' ? (
@@ -96,8 +103,6 @@ export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
         (activeItem.data as FormSystemSection).sectionType ===
           SectionTypes.PARTIES ? (
         <RelevantParties />
-      ) : openPreview ? (
-        <PreviewStepOrGroup setOpenPreview={setOpenPreview} />
       ) : (activeItem.data as FormSystemSection).sectionType ===
         SectionTypes.COMPLETED ? (
         <Completed />
@@ -314,16 +319,13 @@ export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
               </Row>
             </>
           )}
-          <Row>
-            <Column>
-              <Box marginTop={4}>
-                <Button variant="ghost" onClick={() => setOpenPreview(true)}>
-                  {formatMessage(m.preview)}
-                </Button>
-              </Box>
-            </Column>
-          </Row>
         </Stack>
+      )}
+      {openPreview && (
+        <PreviewStepOrGroup
+          setOpenPreview={setOpenPreview}
+          enforceRestrictions={enforcePreviewRestrictions}
+        />
       )}
     </Box>
   )

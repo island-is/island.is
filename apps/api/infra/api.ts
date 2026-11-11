@@ -56,7 +56,6 @@ import {
   UniversityCareers,
   Vehicles,
   NVSPermits,
-  VehicleServiceFjsV1,
   VehiclesMileage,
   WorkAccidents,
   WorkMachines,
@@ -162,9 +161,16 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.documentsService)}`,
       ),
       DOWNLOAD_SERVICE_BASE_PATH: {
-        prod: 'https://api.island.is',
-        dev: 'https://api.dev01.devland.is',
+        dev: ref(
+          (ctx) =>
+            `https://${
+              ctx.featureDeploymentName
+                ? `${ctx.featureDeploymentName}-api.dev01.devland.is`
+                : 'api.dev01.devland.is'
+            }`,
+        ),
         staging: 'https://api.staging01.devland.is',
+        prod: 'https://api.island.is',
       },
       ENDORSEMENT_SYSTEM_BASE_API_URL: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
@@ -591,7 +597,6 @@ export const serviceSetup = (services: {
       Vehicles,
       VehiclesMileage,
       Passports,
-      VehicleServiceFjsV1,
       TransportAuthority,
       ChargeFjsV2,
       EnergyFunds,

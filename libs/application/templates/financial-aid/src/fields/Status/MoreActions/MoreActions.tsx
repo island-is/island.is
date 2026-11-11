@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { DescriptionText } from '../..'
+import DescriptionText from '../../DescriptionText/DescriptionText'
 import { moreActions } from '../../../lib/messages'
 
 interface Props {

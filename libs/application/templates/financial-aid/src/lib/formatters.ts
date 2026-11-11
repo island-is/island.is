@@ -89,12 +89,16 @@ export const formItems = (
   externalData: ExternalData,
 ) => [
   {
-    route: Routes.INRELATIONSHIP,
+    // Mirrors the hasSpouse/hasNoSpouse conditions on the relationship subsections.
+    route:
+      externalData.nationalRegistrySpouse?.data != null
+        ? Routes.INRELATIONSHIPMULTIFIELD
+        : Routes.UNKNOWNRELATIONSHIPMULTIFIELD,
     label: m.inRelationship.general.sectionTitle,
     info: getMessageFamilyStatus[findFamilyStatus(answers, externalData)],
   },
   {
-    route: Routes.HOMECIRCUMSTANCES,
+    route: Routes.HOMECIRCUMSTANCESMULTIFIELD,
     label: m.homeCircumstancesForm.general.sectionTitle,
     info:
       answers?.homeCircumstances?.type === HomeCircumstances.OTHER
@@ -102,7 +106,7 @@ export const formItems = (
         : getMessageHomeCircumstances[answers?.homeCircumstances?.type],
   },
   {
-    route: Routes.STUDENT,
+    route: Routes.STUDENTMULTIFIELD,
     label: m.studentForm.general.sectionTitle,
     info: getMessageApproveOptions[answers?.student?.isStudent],
     comment:
@@ -111,7 +115,7 @@ export const formItems = (
         : undefined,
   },
   {
-    route: Routes.EMPLOYMENT,
+    route: Routes.EMPLOYMENTMULTIFIELD,
     label: m.employmentForm.general.sectionTitle,
     info:
       answers?.employment?.type === Employment.OTHER
@@ -119,7 +123,7 @@ export const formItems = (
         : getMessageEmploymentStatus[answers?.employment?.type],
   },
   {
-    route: Routes.INCOME,
+    route: Routes.INCOMEMULTIFIELD,
     label: m.incomeForm.general.sectionTitle,
     info: getMessageApproveOptionsForIncome[answers?.income],
   },
@@ -129,7 +133,7 @@ export const formItems = (
     info: getMessageApproveOptions[answers?.personalTaxCredit],
   },
   {
-    route: Routes.BANKINFO,
+    route: Routes.BANKINFOMULTIFIELD,
     label: m.bankInfoForm.general.sectionTitle,
     info: formatBankInfo(answers?.bankInfo),
   },
@@ -137,7 +141,7 @@ export const formItems = (
 
 export const spouseFormItems = (answers: OverrideAnswerSchema) => [
   {
-    route: Routes.SPOUSEINCOME,
+    route: Routes.INCOMEMULTIFIELD,
     label: m.incomeForm.general.sectionTitle,
     info: getMessageApproveOptionsForIncome[answers?.spouseIncome],
   },

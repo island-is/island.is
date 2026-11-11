@@ -1,0 +1,16 @@
+mutation SendAppealSummonsToService($input: SendAppealSummonsToServiceInput!) {
+  sendAppealSummonsToService(input: $input) {
+    id
+    services {
+      id
+      defendantId
+      civilClaimantId
+      sentToServiceDate
+      externalPoliceDocumentId
+      serviceStatus
+      serviceDate
+      servedBy
+      comment
+    }
+  }
+}

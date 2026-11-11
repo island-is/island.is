@@ -1,8 +1,6 @@
 import { setLineCap } from 'pdf-lib'
 import PDFDocument from 'pdfkit'
 
-import { FormatMessage } from '@island.is/cms-translations'
-
 import {
   containsHtml,
   formatDate,
@@ -73,7 +71,6 @@ export const getIndictmentCivilDemands = (
 
 export const createIndictment = async (
   theCase: Case,
-  formatMessage: FormatMessage,
   confirmation?: Confirmation,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
@@ -91,7 +88,7 @@ export const createIndictment = async (
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
-  setTitle(doc, formatMessage(indictment.title))
+  setTitle(doc, indictment.title)
 
   if (confirmation) {
     drawConfirmation(doc, {
@@ -119,7 +116,7 @@ export const createIndictment = async (
 
   addEmptyLines(doc, 6, doc.page.margins.left)
 
-  addGiganticHeading(doc, formatMessage(indictment.heading), 'Times-Roman')
+  addGiganticHeading(doc, indictment.heading, 'Times-Roman')
   addNormalPlusText(doc, ' ')
   setLineCap(2)
   addNormalPlusText(doc, theCase.indictmentIntroduction ?? '')
@@ -163,7 +160,7 @@ export const createIndictment = async (
 
   if (civilDemands) {
     addEmptyLines(doc, 2)
-    addNormalPlusText(doc, formatMessage(indictment.civilDemandsHeading))
+    addNormalPlusText(doc, indictment.civilDemandsHeading)
     addNormalPlusJustifiedText(doc, civilDemands)
   }
 

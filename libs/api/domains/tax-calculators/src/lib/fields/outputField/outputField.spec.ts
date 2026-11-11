@@ -7,6 +7,7 @@ import {
 import type {
   ArrayOutputField,
   NumberOutputField,
+  ObjectOutputField,
 } from '../../models/outputField'
 import { toOutputField, toOutputScalarField } from './outputField'
 
@@ -99,6 +100,26 @@ describe('toOutputField', () => {
     })
 
     expect(field).not.toHaveProperty('semantic')
+  })
+
+  it('maps an object output to itemFields, reusing the scalar mapper', () => {
+    const field = toOutputField({
+      name: 'firstPeriod',
+      kind: 'object',
+      itemFields: [{ name: 'days', kind: 'scalar', type: 'number' }],
+    }) as ObjectOutputField
+
+    expect(field).toEqual({
+      key: 'firstPeriod',
+      type: TaxCalculatorOutputFieldType.OBJECT,
+      itemFields: [
+        {
+          key: 'days',
+          type: TaxCalculatorOutputFieldType.NUMBER,
+          semantic: undefined,
+        },
+      ],
+    })
   })
 })
 

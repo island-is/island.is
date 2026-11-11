@@ -7,17 +7,7 @@ import { theme } from '../ui'
 export const themes = {
   light: {
     isDark: false,
-    shade: {
-      background: '#FFFFFF',
-      foreground: '#00003C',
-      shade700: '#8A8A8A',
-      shade600: '#BFC1C0',
-      shade500: '#CCCCD8',
-      shade400: '#E4E3E2',
-      shade300: '#EBEBEB',
-      shade200: '#F2F2F5',
-      shade100: '#FBFBFB',
-    },
+    shade: theme.shade,
   },
   dark: {
     isDark: true,
@@ -67,5 +57,6 @@ export function getThemeWithPreferences(
     ...themeObj,
     ...themes[themeKey],
     shades,
+    tokens: theme.tokenModes[themeKey],
   }
 }

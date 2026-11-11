@@ -35,8 +35,8 @@ describe('InternalNotificationController - Send indictment verdict appealed noti
   const courtCaseNumber = 'S-123/2026'
   const { prosecutor } = createTestUsers(['prosecutor'])
   // The domain has to be one the test whitelist lets through - the whitelist
-  // is on whenever CONTENTFUL_ENVIRONMENT is not master, as it is in CI, and
-  // it silently empties the recipient list otherwise.
+  // is on whenever EMAIL_USE_WHITELIST is true (the default in CI), and it
+  // silently empties the recipient list otherwise.
   const publicProsecutorEmail = 'saksoknari@omnitrix.is'
 
   const notificationDto: CaseNotificationDto = {

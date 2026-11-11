@@ -24,6 +24,7 @@ export type CreateUser = {
   active: boolean
   canConfirmIndictment: boolean
   canManageMessageSuspension?: boolean
+  canManageServiceInterruptionBanner?: boolean
 }
 
 export type UpdateUser = {
@@ -34,6 +35,7 @@ export type UpdateUser = {
   active?: boolean
   canConfirmIndictment?: boolean
   canManageMessageSuspension?: boolean
+  canManageServiceInterruptionBanner?: boolean
 }
 
 // The institution is always loaded with a user: it is a repository detail, never the

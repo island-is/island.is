@@ -1,5 +1,6 @@
 export { SocialInsuranceAdministrationClientModule } from './lib/socialInsuranceAdministrationClient.module'
 export { SocialInsuranceAdministrationClientService } from './lib/services/deprecated/socialInsuranceAdministrationClient.service'
+export { withApplicationGuidContext } from './lib/utils/withApplicationGuid'
 export { SocialInsuranceAdministrationClientConfig } from './lib/config/socialInsuranceAdministrationClient.config'
 export { SocialInsuranceAdministrationClientConfigV2 } from './lib/config/socialInsuranceAdministrationClientV2.config'
 export {

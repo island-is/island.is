@@ -301,6 +301,46 @@ describe('VerdictAppealStatus', () => {
     )
   })
 
+  // The list reads earliest session first, so one booked for tomorrow goes
+  // above a session already called for later, wherever it was appended.
+  it('lists a session it has just booked by its date', async () => {
+    const tomorrow = addDays(new Date(), 1)
+    const laterSession = {
+      id: 'session-later',
+      sessionType: AppealCourtSessionType.PREPARATORY_HEARING,
+      sessionDate: addDays(tomorrow, 30).toISOString(),
+      courtRoom: '2',
+    }
+    mockCreateAppealCourtSession.mockResolvedValue({
+      ...bookedSession,
+      sessionDate: tomorrow.toISOString(),
+    })
+    renderPage({
+      ...theCase,
+      verdictAppealCase: {
+        ...theCase.verdictAppealCase,
+        courtSessions: [laterSession],
+      },
+    } as unknown as WorkingCase)
+
+    await fillInSession()
+    await userEvent.click(screen.getByTestId('continueButton'))
+    await userEvent.click(screen.getByTestId('confirmSessionButton'))
+
+    await waitFor(() =>
+      expect(
+        within(
+          screen.getByRole('list', { name: 'Bókuð þinghöld' }),
+        ).getAllByRole('listitem'),
+      ).toHaveLength(2),
+    )
+    const [first, second] = within(
+      screen.getByRole('list', { name: 'Bókuð þinghöld' }),
+    ).getAllByRole('listitem')
+    expect(first).toHaveTextContent('Aðalmeðferð')
+    expect(second).toHaveTextContent('Undirbúningsþinghald')
+  })
+
   it('cannot continue before a status is chosen', () => {
     renderPage()
 

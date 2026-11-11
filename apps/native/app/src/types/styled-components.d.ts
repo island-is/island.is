@@ -1,5 +1,6 @@
 import type { CSSProp } from 'styled-components'
 import { Theme, Shade, Color } from '@/ui/utils/theme'
+import { Tokens } from '@/ui/utils/tokens'
 
 export interface ThemeType extends Theme {
   colorScheme: string
@@ -11,6 +12,11 @@ export interface ThemeType extends Theme {
     light: Shade
   }
   color: Color
+  tokens: Tokens
+  tokenModes: {
+    light: Tokens
+    dark: Tokens
+  }
 }
 
 declare module 'styled-components/native' {

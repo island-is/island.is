@@ -157,3 +157,18 @@ export const GET_PROJECT_PAGE_QUERY = gql`
   ${slices}
   ${nestedOneColumnTextFields}
 `
+
+export const GET_PROJECT_PARENT_SUBPAGE_QUERY = gql`
+  query GetProjectParentSubpage($input: GetProjectParentSubpageInput!) {
+    getProjectParentSubpage(input: $input) {
+      id
+      title
+      slug
+      childLinks {
+        id
+        label
+        href
+      }
+    }
+  }
+`

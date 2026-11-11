@@ -1,5 +1,4 @@
 import { useCallback, useContext } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
@@ -27,7 +26,6 @@ import { strings } from './Defendant.strings'
 
 const Defendant = () => {
   const router = useRouter()
-  const { formatMessage } = useIntl()
 
   const { user } = useContext(UserContext)
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
@@ -69,9 +67,7 @@ const Defendant = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.indictments.defendant)}
-      />
+      <PageHeader title={titles.prosecutor.indictments.defendant} />
       <FormContentContainer>
         <PageTitle>{strings.heading}</PageTitle>
         <Box component="section" marginBottom={5}>
@@ -87,9 +83,7 @@ const Defendant = () => {
           previousUrl={getStandardUserDashboardRoute(user)}
           actions={[
             {
-              text: formatMessage(
-                workingCase.id === '' ? core.createCase : core.continue,
-              ),
+              text: workingCase.id === '' ? core.createCase : core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

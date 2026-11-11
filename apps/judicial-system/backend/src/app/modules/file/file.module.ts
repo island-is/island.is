@@ -1,7 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common'
 
-import { CmsTranslationsModule } from '@island.is/cms-translations'
-
 import {
   AwsS3Module,
   CaseModule,
@@ -19,7 +17,6 @@ import { LimitedAccessFileController } from './limitedAccessFile.controller'
 
 @Module({
   imports: [
-    CmsTranslationsModule,
     forwardRef(() => CriminalRecordModule),
     forwardRef(() => PoliceModule),
     forwardRef(() => RepositoryModule),

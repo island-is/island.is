@@ -3,7 +3,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { Platform, SafeAreaView, ScrollView, Switch, View } from 'react-native'
 import { useTheme } from 'styled-components'
 
-import { Heading, TableViewCell, Typography } from '@/ui'
+import { TableViewCell, Typography } from '@/ui'
 import {
   preferencesStore,
   usePreferencesStore,
@@ -158,12 +158,22 @@ export default function HomeOptionsScreen() {
           marginBottom: theme.spacing[3],
         }}
       >
-        <Heading>
-          <FormattedMessage
-            id="homeOptions.heading.title"
-            defaultMessage="Stilla heimaskjá."
-          />
-        </Heading>
+        {/* Android form sheets have no native header, so the title is shown
+            here instead. */}
+        {Platform.OS === 'android' && (
+          <Typography
+            variant="heading5"
+            style={{
+              marginTop: theme.spacing[3],
+              marginBottom: theme.spacing[1],
+            }}
+          >
+            <FormattedMessage
+              id="homeOptions.heading.title"
+              defaultMessage="Stilla heimaskjá"
+            />
+          </Typography>
+        )}
         <Typography>
           <FormattedMessage
             id="homeOptions.heading.subtitle"

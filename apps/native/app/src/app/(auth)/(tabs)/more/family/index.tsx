@@ -12,7 +12,13 @@ import {
 import { useRouter } from 'expo-router'
 import { useTheme } from 'styled-components/native'
 
-import { EmptyList, FamilyMemberCard, Skeleton, TopLine, Problem } from '@/ui'
+import {
+  EmptyList,
+  FamilyMemberCard,
+  Skeleton,
+  TopLine,
+  StatusMessage,
+} from '@/ui'
 import illustrationSrc from '@/assets/illustrations/hero_spring.png'
 import {
   NationalRegistryChildCustody,
@@ -51,10 +57,9 @@ const FamilyMember = React.memo(
         testID={testIDs.FAMILY_MEMBER_ITEM}
       >
         <TouchableHighlight
-          underlayColor={
-            theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
-          }
-          style={{ marginBottom: theme.spacing[2], borderRadius: 16 }}
+          underlayColor={theme.tokens.app.background.pressed}
+          activeOpacity={1}
+          style={{ marginBottom: theme.spacing[2], borderRadius: 8 }}
           onPress={() => {
             router.push({
               pathname: '/(auth)/(tabs)/more/family/[type]/[nationalId]',
@@ -190,10 +195,9 @@ export default function FamilyScreen() {
       return (
         <View style={{ paddingHorizontal: theme.spacing[2] }}>
           <TouchableHighlight
-            underlayColor={
-              theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
-            }
-            style={{ marginBottom: theme.spacing[2], borderRadius: 16 }}
+            underlayColor={theme.tokens.app.background.pressed}
+            activeOpacity={1}
+            style={{ marginBottom: theme.spacing[2], borderRadius: 8 }}
             onPress={() => {
               router.navigate('/personal-info')
             }}
@@ -255,7 +259,7 @@ export default function FamilyScreen() {
           renderItem={renderItem}
         />
       )}
-      {familyRes.error && !familyRes.data && <Problem withContainer />}
+      {familyRes.error && !familyRes.data && <StatusMessage withContainer />}
       <TopLine scrollY={scrollY} />
     </>
   )

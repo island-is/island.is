@@ -15,10 +15,10 @@ import {
   AirDiscountCard,
   Alert,
   Bullet,
-  Heading,
+  SectionHeader,
   Link,
   LinkText,
-  Problem,
+  StatusMessage,
   Skeleton,
   TopLine,
   Typography,
@@ -69,7 +69,7 @@ const Empty = () => {
   const intl = useIntl()
   return (
     <View style={{ marginBottom: theme.spacing[4] }}>
-      <Problem
+      <StatusMessage
         type="no_data"
         title={intl.formatMessage({ id: 'airDiscount.emptyListTitle' })}
         message={intl.formatMessage({ id: 'airDiscount.emptyListDescription' })}
@@ -90,7 +90,7 @@ const Disabled = () => {
         margin: theme.spacing[2],
       }}
     >
-      <Problem
+      <StatusMessage
         type="no_data"
         title={intl.formatMessage({ id: 'airDiscount.disabledTitle' })}
         message={intl.formatMessage({ id: 'airDiscount.disabledDescription' })}
@@ -155,12 +155,12 @@ export default function AirDiscountScreen() {
           ]}
         />
         <SafeAreaView style={{ marginHorizontal: theme.spacing[2] }}>
-          <Heading>
+          <SectionHeader>
             <FormattedMessage
               id="airDiscount.headingTitle"
               defaultMessage="Lægra fargjald með loftbrú"
             />
-          </Heading>
+          </SectionHeader>
           <Typography>
             <FormattedMessage
               id="airDiscount.headingSubtitle"

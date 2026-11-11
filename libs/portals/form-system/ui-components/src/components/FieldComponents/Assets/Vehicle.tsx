@@ -32,6 +32,7 @@ interface Props {
   dispatch?: Dispatch<Action>
   valueIndex?: number
   state?: ApplicationState
+  isPreview?: boolean
 }
 
 type SelectItem = {
@@ -87,7 +88,12 @@ type PublicVehicleSearchVars = {
 
 const VEHICLES_PAGE_SIZE = 100
 
-export const Vehicle = ({ item, dispatch, valueIndex = 0 }: Props) => {
+export const Vehicle = ({
+  item,
+  dispatch,
+  valueIndex = 0,
+  isPreview = false,
+}: Props) => {
   const { lang, formatMessage } = useLocale()
   const { control, trigger, setValue, setError, clearErrors } = useFormContext()
   const client = useApolloClient()
@@ -150,7 +156,9 @@ export const Vehicle = ({ item, dispatch, valueIndex = 0 }: Props) => {
   const [selectedOption, setSelectedOption] = useState<SelectItem | undefined>(
     undefined,
   )
-  const [isLoading, setIsLoading] = useState(shouldFetch && !cached)
+  const [isLoading, setIsLoading] = useState(
+    shouldFetch && !cached && !isPreview,
+  )
   const [vehiclesFetchHasError, setVehiclesFetchHasError] = useState(false)
 
   const [searchLoading, setSearchLoading] = useState(false)
@@ -229,6 +237,8 @@ export const Vehicle = ({ item, dispatch, valueIndex = 0 }: Props) => {
   }
 
   const searchPublicVehicle = async (search: string) => {
+    if (isPreview) return
+
     const normalized = search.trim().toUpperCase()
 
     if (!normalized) {
@@ -314,7 +324,7 @@ export const Vehicle = ({ item, dispatch, valueIndex = 0 }: Props) => {
   useEffect(() => {
     let cancelled = false
 
-    if (!shouldFetch) {
+    if (isPreview || !shouldFetch) {
       setIsLoading(false)
       return
     }

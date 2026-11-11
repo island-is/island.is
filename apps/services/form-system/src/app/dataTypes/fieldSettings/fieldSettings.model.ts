@@ -8,6 +8,7 @@ import { Type } from 'class-transformer'
 import {
   IsBoolean,
   IsDateString,
+  IsInt,
   IsNumber,
   IsOptional,
   IsString,
@@ -43,13 +44,23 @@ export class FieldSettings {
 
   @IsOptional()
   @IsDateString()
-  @ApiPropertyOptional({ type: Date })
-  minDate?: string
+  @ApiPropertyOptional({ type: Date, nullable: true })
+  minDate?: string | null
 
   @IsOptional()
   @IsDateString()
-  @ApiPropertyOptional({ type: Date })
-  maxDate?: string
+  @ApiPropertyOptional({ type: Date, nullable: true })
+  maxDate?: string | null
+
+  @IsOptional()
+  @IsInt()
+  @ApiPropertyOptional({ type: Number })
+  minDateDaysFromToday?: number
+
+  @IsOptional()
+  @IsInt()
+  @ApiPropertyOptional({ type: Number })
+  maxDateDaysFromToday?: number
 
   @IsOptional()
   @IsNumber()
@@ -60,6 +71,11 @@ export class FieldSettings {
   @IsNumber()
   @ApiPropertyOptional({ type: Number })
   maxAmount?: number
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  notIncludedInSumbox?: boolean
 
   @IsOptional()
   @IsNumber()
@@ -171,6 +187,11 @@ export class FieldSettings {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   fetchEmailFromMyPages?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  fetchBankAccountFromMyPages?: boolean
 
   @IsOptional()
   @IsString()

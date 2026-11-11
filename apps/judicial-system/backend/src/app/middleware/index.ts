@@ -4,6 +4,7 @@ export {
 } from './context.middleware'
 export {
   getOrCreateTransaction,
+  getRequestTransaction,
   getTransactionContext,
   registerAfterCommit,
   TransactionContextMiddleware,
@@ -14,3 +15,8 @@ export type {
   TransactionSettlement,
 } from './transactionContext.middleware'
 export { queueMessagesAfterCommit } from './queueMessagesAfterCommit'
+export {
+  createRequestTransactionQueryHook,
+  QueryOutsideRequestTransactionError,
+} from './requestTransactionQueryHook'
+export type { HookedQueryOptions } from './requestTransactionQueryHook'

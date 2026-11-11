@@ -58,7 +58,7 @@ export const payment = {
     message: {
       id: 'pd.application:payment.unavailable.message',
       defaultMessage:
-        'Fjársýsla ríkisins svarar ekki eða önnur greiðsla vegna sömu skulda er í vinnslu. Reyndu aftur síðar.',
+        'Fjársýsla ríkisins svarar ekki eða önnur greiðsla er í vinnslu. Reyndu aftur síðar.',
       description:
         'Message shown when the debt payment could not be created because FJS could not check the debts',
     },

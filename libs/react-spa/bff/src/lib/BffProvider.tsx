@@ -25,6 +25,7 @@ type BffProviderProps = {
    * @example /stjornbord/bff, etc.
    */
   bffGlobalPrefix?: string
+  onSignOut?: () => void
 }
 
 export const BffProvider = ({
@@ -32,6 +33,7 @@ export const BffProvider = ({
   applicationBasePath,
   mockedInitialState,
   bffGlobalPrefix,
+  onSignOut,
 }: BffProviderProps) => {
   const [sessionExpiredReason, setSessionExpiredReason] =
     useState<SessionExpiredReason | null>(null)
@@ -68,6 +70,7 @@ export const BffProvider = ({
       ) {
         setSessionExpiredReason('session-changed')
       } else if (event.data.type === BffBroadcastEvents.LOGOUT) {
+        onSignOut?.()
         // We will wait 1 seconds before we dispatch logout action.
         // The reason is that IDS will not log the user out immediately.
         // Note! The bff poller may have triggered logout by that time anyways.
@@ -189,6 +192,7 @@ export const BffProvider = ({
     dispatch({
       type: ActionType.LOGGING_OUT,
     })
+    onSignOut?.()
 
     // Broadcast to all tabs/windows/iframes that the user is logging out
     postMessage({
@@ -199,7 +203,7 @@ export const BffProvider = ({
     window.location.href = bffUrlGenerator('/logout', {
       sid: state.userInfo.profile.sid,
     })
-  }, [bffUrlGenerator, postMessage, state.userInfo, bffBaseUrl])
+  }, [bffUrlGenerator, postMessage, state.userInfo, bffBaseUrl, onSignOut])
 
   const switchUser = useCallback(
     (nationalId?: string, targetLink?: string) => {

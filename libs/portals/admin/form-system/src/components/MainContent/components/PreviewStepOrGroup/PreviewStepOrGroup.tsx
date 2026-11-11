@@ -1,174 +1,545 @@
-import {
-  FormSystemField,
-  FormSystemScreen,
-  FormSystemSection,
-} from '@island.is/api/schema'
-import { FormStepper } from '@island.is/form-system/ui'
+import { FormSystemField } from '@island.is/api/schema'
+import { FormStepper, m, SectionTypes } from '@island.is/form-system/ui'
 import {
   Box,
   Button,
-  Divider,
   GridColumn,
+  GridContainer,
+  GridRow,
+  Header,
   ModalBase,
+  RadioButton,
+  Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import { Dispatch, SetStateAction, useContext, useEffect } from 'react'
+import { useQuery } from '@apollo/client/react'
+import { LocaleContext, MessagesDict, useLocale } from '@island.is/localization'
+import { sharedMessages } from '@island.is/shared/translations'
+import { Locale } from '@island.is/shared/types'
+import gql from 'graphql-tag'
+import { IntlProvider } from 'react-intl'
+import {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
+import { FormProvider, useForm } from 'react-hook-form'
 import { NavbarSelectStatus } from '../../../../lib/utils/interfaces'
+import { applicantTypeGroups } from '../../../../lib/utils/applicantTypeGroups'
 import { Preview } from '../Preview/Preview'
 import { MultiSet } from './components/MultiSet'
+import { PreviewCompleted } from './components/PreviewCompleted'
+import { PreviewPremises, PreviewSummary } from './components/PreviewSections'
+import {
+  createPreviewState,
+  getPreviewSections,
+  getPreviewSteps,
+  getRestrictedPreviewStart,
+  PREVIEW_APPLICANT_SCREEN_ID,
+  updatePreviewFields,
+  updateRestrictedPreview,
+} from './previewState'
 import * as styles from './PreviewStepOrGroup.css'
 
 interface Props {
   setOpenPreview: Dispatch<SetStateAction<boolean>>
+  enforceRestrictions?: boolean
 }
 
-export const PreviewStepOrGroup = ({ setOpenPreview }: Props) => {
+const focusPreviewHeading = (element: HTMLDivElement | null) => {
+  element?.focus({ preventScroll: true })
+}
+
+const GET_PREVIEW_TRANSLATIONS = gql`
+  query GetTranslations($input: GetTranslationsInput!) {
+    getTranslations(input: $input)
+  }
+`
+
+export const PreviewStepOrGroup = (props: Props) => {
+  const portalLocale = useContext(LocaleContext)
+  const [lang, setLang] = useState<Locale>('is')
+  const { data, loading } = useQuery<{ getTranslations: MessagesDict }>(
+    GET_PREVIEW_TRANSLATIONS,
+    {
+      variables: {
+        input: { namespaces: portalLocale.loadedNamespaces, lang },
+      },
+      skip: portalLocale.loadedNamespaces.length === 0,
+    },
+  )
+  const messages =
+    data?.getTranslations ??
+    (lang === portalLocale.lang ? portalLocale.messages : {})
+
+  return (
+    <LocaleContext.Provider
+      value={{
+        ...portalLocale,
+        lang,
+        messages,
+        loadingMessages: loading,
+        changeLanguage: setLang,
+      }}
+    >
+      <IntlProvider locale={lang} defaultLocale="is" messages={messages}>
+        <PreviewStepOrGroupContent {...props} />
+      </IntlProvider>
+    </LocaleContext.Provider>
+  )
+}
+
+const PreviewStepOrGroupContent = ({
+  setOpenPreview,
+  enforceRestrictions = false,
+}: Props) => {
   const { control, setSelectStatus } = useContext(ControlContext)
-  const { lang } = useLocale()
+  const { lang, formatMessage, changeLanguage } = useLocale()
   const { activeItem, form } = control
-  const { screens, fields } = form
-  const { type } = activeItem
+  const methods = useForm({ shouldUnregister: enforceRestrictions })
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, boolean>
+  >({})
+  const [previewData, previewDispatch] = useReducer(
+    (
+      state: ReturnType<typeof createPreviewState>,
+      action: Parameters<typeof updatePreviewFields>[1],
+    ) =>
+      enforceRestrictions
+        ? updateRestrictedPreview(state, action)
+        : { ...state, fields: updatePreviewFields(state.fields, action) },
+    form,
+    (initialForm) =>
+      enforceRestrictions
+        ? updateRestrictedPreview(createPreviewState(initialForm), {
+            type: 'INITIALIZE',
+          })
+        : createPreviewState(initialForm),
+  )
 
   useEffect(() => {
     setSelectStatus(NavbarSelectStatus.ON_WITHOUT_SELECT)
-  }, [])
+    return () => setSelectStatus(NavbarSelectStatus.OFF)
+  }, [setSelectStatus])
 
-  const renderScreen = (screen: FormSystemScreen) => (
-    <Box key={screen?.id} marginBottom={6}>
-      <Text variant="h2" as="h2" marginBottom={1}>
-        {screen?.name?.[lang]}
-      </Text>
-      {screen?.multiMax && screen.multiMax > 0 ? (
-        <MultiSet screen={screen} />
-      ) : (
-        fields
-          ?.filter((field) => field?.screenId === screen?.id)
-          .map((field) => (
-            <Preview
-              key={field?.id}
-              data={field as FormSystemField}
-              screenOrSection={true}
-            />
-          ))
-      )}
-    </Box>
+  const loginOptions = [
+    {
+      id: 'individual',
+      types: applicantTypeGroups.individual,
+      label: m.individual,
+    },
+    {
+      id: 'procuration',
+      types: applicantTypeGroups.procuration,
+      label: m.individualWithPowerOfAttorney,
+    },
+    {
+      id: 'individualDelegation',
+      types: applicantTypeGroups.individualDelegation,
+      label: m.individualOnBehalfPerson,
+    },
+    {
+      id: 'legalEntityDelegation',
+      types: applicantTypeGroups.legalEntityDelegation,
+      label: m.individualOnBehalfLegalEntity,
+    },
+    {
+      id: 'legalGuardian',
+      types: applicantTypeGroups.legalGuardian,
+      label: m.legalGuardian,
+    },
+  ].filter((option) =>
+    previewData.fields.some(
+      (field) =>
+        field.fieldType === 'APPLICANT' &&
+        option.types.includes(field.fieldSettings?.applicantType ?? ''),
+    ),
+  )
+  const [selectedLogin, setSelectedLogin] = useState(loginOptions[0]?.id)
+  const selectedApplicantTypes = loginOptions.find(
+    (option) => option.id === selectedLogin,
+  )?.types
+  const summarySections = getPreviewSections(
+    previewData,
+    enforceRestrictions,
+    selectedApplicantTypes,
+  ).map((section) =>
+    enforceRestrictions &&
+    selectedApplicantTypes &&
+    section.sectionType === SectionTypes.PARTIES
+      ? {
+          ...section,
+          screens: section.screens?.filter(
+            (screen) => (screen?.fields?.length ?? 0) > 0,
+          ),
+        }
+      : section,
+  )
+  const sections = summarySections.map((section) =>
+    enforceRestrictions &&
+    loginOptions.length > 0 &&
+    section.sectionType === SectionTypes.PARTIES
+      ? {
+          ...section,
+          screens: [
+            {
+              id: PREVIEW_APPLICANT_SCREEN_ID,
+              sectionId: section.id,
+              name: section.name,
+              fields: [],
+            },
+          ],
+        }
+      : section,
   )
 
-  const sectionScreens =
-    screens?.filter((screen) => screen?.sectionId === activeItem?.data?.id) ??
-    []
-
-  const stepperSections: FormSystemSection[] = (form.sections ?? [])
-    .filter((section): section is FormSystemSection => !!section)
-    .map((section) => ({
-      ...section,
-      screens: (screens ?? [])
-        .filter((screen) => screen?.sectionId === section.id)
-        .map((screen) => ({
-          ...(screen as FormSystemScreen),
-          fields: (fields ?? []).filter(
-            (field) => field?.screenId === screen?.id,
-          ),
-        })),
-    }))
-
-  const activeSection =
-    type === 'Screen'
-      ? stepperSections.find((section) =>
-          section.screens?.some(
-            (screen) => screen?.id === activeItem?.data?.id,
-          ),
-        )
-      : stepperSections.find((section) => section.id === activeItem?.data?.id)
-  const activeScreen =
-    type === 'Screen' ? (activeItem.data as FormSystemScreen) : undefined
+  const previewSteps = getPreviewSteps(sections)
+  const [stepId, setStepId] = useState(() => {
+    const selectedScreenId =
+      activeItem.type === 'Field'
+        ? (activeItem.data as FormSystemField | undefined)?.screenId
+        : activeItem.data?.id
+    const selectedIndex = previewSteps.findIndex((step) =>
+      activeItem.type === 'Section'
+        ? step.section.id === activeItem.data?.id
+        : step.screen?.id === selectedScreenId,
+    )
+    const index = enforceRestrictions
+      ? getRestrictedPreviewStart(previewSteps)
+      : Math.max(0, selectedIndex)
+    const step = previewSteps[index]
+    return step?.screen?.id ?? step?.section.id
+  })
+  const selectedIndex = previewSteps.findIndex(
+    (step) => (step.screen?.id ?? step.section.id) === stepId,
+  )
+  const screenIndex =
+    selectedIndex >= 0 ? selectedIndex : getRestrictedPreviewStart(previewSteps)
+  const setScreenIndex = (index: number) => {
+    const step = previewSteps[index]
+    setStepId(step?.screen?.id ?? step?.section.id)
+  }
+  const currentStep = previewSteps[screenIndex]
+  const currentScreen = currentStep?.screen
+  const previewState = {
+    currentScreen: { index: screenIndex, data: currentScreen },
+  }
+  const currentSection = currentStep?.section
+  const sectionIndex = currentStep?.sectionIndex ?? 0
+  const sectionType = currentSection?.sectionType
+  const organizationName =
+    form.organizationDisplayName?.[lang] ||
+    (lang === 'en' ? form.organizationTitleEn : form.organizationTitle) ||
+    ''
 
   return (
-    <Box display="flex" flexDirection="column" height="full">
-      <Box
-        position="relative"
-        paddingTop={[3, 6, 10]}
-        paddingBottom={[3, 6, 10]}
-        borderRadius="large"
-        background="white"
-      >
-        <ModalBase
-          baseId="formStepperPreview"
-          modalLabel="Skref"
-          className={styles.stepperPanel}
-          renderDisclosure={(disclosure) => (
-            <Box position="absolute" style={{ top: 16, right: 8 }}>
-              {disclosure}
-            </Box>
-          )}
-          disclosure={
-            <Button variant="text" aria-label="Sýna skref">
-              Sjá skrefavísi
-            </Button>
-          }
-        >
-          {({ closeModal }) => (
-            <Box background="white" height="full" padding={[3, 6, 8]}>
-              <Box display="flex" justifyContent="flexEnd" marginBottom={2}>
-                <Button
-                  circle
-                  icon="close"
-                  variant="ghost"
-                  size="small"
-                  aria-label="Loka"
-                  onClick={closeModal}
-                />
-              </Box>
-              <FormStepper
-                sections={stepperSections}
-                currentSection={{
-                  data: activeSection,
-                  index: stepperSections.findIndex(
-                    (section) => section.id === activeSection?.id,
-                  ),
+    <ModalBase
+      baseId="formContentPreview"
+      modalLabel={formatMessage(m.preview)}
+      initialVisibility
+      className={styles.previewModal}
+      onVisibilityChange={setOpenPreview}
+    >
+      {({ closeModal }) => (
+        <FormProvider {...methods}>
+          <div ref={focusPreviewHeading} tabIndex={-1}>
+            <GridContainer>
+              <Header
+                info={{
+                  title: organizationName,
+                  description: form.name?.[lang] ?? '',
                 }}
-                currentScreen={
-                  activeScreen ? { data: activeScreen } : undefined
-                }
-                hasSummaryScreen={form.hasSummaryScreen ?? false}
-                hasPayment={form.hasPayment ?? false}
-                submitted={false}
-              />
-            </Box>
-          )}
-        </ModalBase>
-        <GridColumn
-          span={['12/12', '12/12', '10/12', '7/9']}
-          offset={['0', '0', '1/12', '1/9']}
-        >
-          {type === 'Section' &&
-            sectionScreens.map((screen, index) => (
-              <Box key={screen?.id}>
-                {index > 0 && (
-                  <Box paddingTop={6} paddingBottom={6}>
-                    <Divider />
+                headerItems={
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    columnGap={2}
+                    marginRight={[1, 1, 2]}
+                  >
+                    <Button
+                      variant="utility"
+                      colorScheme="white"
+                      onClick={() =>
+                        changeLanguage(lang === 'en' ? 'is' : 'en')
+                      }
+                      aria-label={formatMessage(
+                        lang === 'en'
+                          ? sharedMessages.switchToIcelandic
+                          : sharedMessages.switchToEnglish,
+                      )}
+                      data-testid="preview-language-switcher-button"
+                    >
+                      {lang === 'en' ? 'IS' : 'EN'}
+                    </Button>
+                    <Button
+                      variant="utility"
+                      colorScheme="white"
+                      icon="close"
+                      onClick={closeModal}
+                    >
+                      Loka sýnishorni
+                    </Button>
                   </Box>
-                )}
-                {renderScreen(screen as FormSystemScreen)}
-              </Box>
-            ))}
-          {type === 'Screen' &&
-            activeItem.data &&
-            renderScreen(activeItem.data as FormSystemScreen)}
-        </GridColumn>
-      </Box>
-      <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-        <Button
-          onClick={() => {
-            setSelectStatus(NavbarSelectStatus.OFF)
-            setOpenPreview(false)
-          }}
-        >
-          Loka
-        </Button>
-      </Box>
-    </Box>
+                }
+              />
+            </GridContainer>
+          </div>
+          <Box className={styles.application}>
+            <Box
+              paddingTop={[0, 4]}
+              paddingLeft={[0, 4]}
+              paddingBottom={[0, 5]}
+              width="full"
+            >
+              <GridContainer>
+                <GridRow>
+                  <GridColumn
+                    span={['12/12', '12/12', '9/12', '9/12']}
+                    className={styles.shellContainer}
+                  >
+                    <Box
+                      paddingTop={[3, 6, 10]}
+                      height="full"
+                      borderRadius="large"
+                      background="white"
+                    >
+                      <Box
+                        display="flex"
+                        flexDirection="column"
+                        justifyContent="spaceBetween"
+                        height="full"
+                      >
+                        <GridColumn
+                          span={['12/12', '12/12', '10/12', '7/9']}
+                          offset={['0', '0', '1/12', '1/9']}
+                        >
+                          {sectionType !== SectionTypes.PREMISES &&
+                            sectionType !== SectionTypes.PARTIES &&
+                            sectionType !== SectionTypes.COMPLETED && (
+                              <Text variant="h2" as="h2" marginBottom={1}>
+                                {currentScreen?.name?.[lang] ??
+                                  currentSection?.name?.[lang]}
+                              </Text>
+                            )}
+                          {sectionType === SectionTypes.PREMISES && (
+                            <PreviewPremises form={form} />
+                          )}
+                          {sectionType === SectionTypes.COMPLETED && (
+                            <PreviewCompleted form={form} />
+                          )}
+                          {sectionType === SectionTypes.SUMMARY && (
+                            <PreviewSummary
+                              sections={summarySections}
+                              hasValidationError={(field, valueIndex) =>
+                                validationErrors[`${field.id}.${valueIndex}`] ??
+                                false
+                              }
+                              onNavigate={(sectionId, screenId) => {
+                                const isApplicantSection =
+                                  enforceRestrictions &&
+                                  sections.some(
+                                    (section) =>
+                                      section.id === sectionId &&
+                                      section.sectionType ===
+                                        SectionTypes.PARTIES,
+                                  )
+                                const index = previewSteps.findIndex((step) =>
+                                  screenId && !isApplicantSection
+                                    ? step.screen?.id === screenId
+                                    : step.section.id === sectionId,
+                                )
+                                if (index >= 0) setScreenIndex(index)
+                              }}
+                            />
+                          )}
+                          {currentScreen?.id ===
+                            PREVIEW_APPLICANT_SCREEN_ID && (
+                            <Stack space={2}>
+                              <Text variant="h2" as="h2">
+                                {currentSection?.name?.[lang] ??
+                                  formatMessage(m.relevantParties)}
+                              </Text>
+                              {loginOptions.map((option) => (
+                                <RadioButton
+                                  key={option.id}
+                                  id={`preview-applicant-login-${option.id}`}
+                                  name="previewApplicantLogin"
+                                  value={option.id}
+                                  label={formatMessage(option.label)}
+                                  checked={selectedLogin === option.id}
+                                  onChange={() => setSelectedLogin(option.id)}
+                                  large
+                                  backgroundColor="blue"
+                                />
+                              ))}
+                            </Stack>
+                          )}
+                          {currentScreen &&
+                            currentScreen.id !== PREVIEW_APPLICANT_SCREEN_ID &&
+                            sectionType !== SectionTypes.PREMISES &&
+                            sectionType !== SectionTypes.SUMMARY &&
+                            sectionType !== SectionTypes.COMPLETED &&
+                            (currentScreen.isMulti &&
+                            (currentScreen.multiMax ?? 1) > 1 ? (
+                              <MultiSet
+                                key={currentScreen.id}
+                                screen={currentScreen}
+                                dispatch={previewDispatch}
+                                state={previewState}
+                              />
+                            ) : (
+                              currentScreen.fields
+                                ?.filter(
+                                  (field): field is FormSystemField =>
+                                    !!field && !field.isHidden,
+                                )
+                                .map((field) => (
+                                  <Preview
+                                    key={field.id}
+                                    data={field}
+                                    dispatch={previewDispatch}
+                                    state={previewState}
+                                    screenOrSection
+                                  />
+                                ))
+                            ))}
+                        </GridColumn>
+                        <Box marginTop={7} className={styles.footer}>
+                          <GridColumn
+                            span={['12/12', '12/12', '10/12', '7/9']}
+                            offset={['0', '0', '1/12', '1/9']}
+                          >
+                            <Box
+                              display="flex"
+                              flexDirection="rowReverse"
+                              alignItems="center"
+                              justifyContent="spaceBetween"
+                              paddingTop={[1, 4]}
+                            >
+                              <Box
+                                display="inlineFlex"
+                                padding={2}
+                                paddingRight="none"
+                              >
+                                {screenIndex < previewSteps.length - 1 ? (
+                                  <Button
+                                    icon="arrowForward"
+                                    onClick={async () => {
+                                      const visibleFields =
+                                        currentScreen?.fields?.filter(
+                                          (field): field is FormSystemField =>
+                                            !!field && !field.isHidden,
+                                        ) ?? []
+                                      const fieldNames = visibleFields.map(
+                                        (field) => field.id,
+                                      )
+                                      await methods.trigger(fieldNames)
+                                      const errors: Record<string, boolean> = {}
+                                      const repeatedValueCount = Math.max(
+                                        1,
+                                        ...visibleFields
+                                          .filter(
+                                            (field) =>
+                                              field.isPartOfMultiset !== false,
+                                          )
+                                          .map(
+                                            (field) =>
+                                              field.values?.length ?? 0,
+                                          ),
+                                      )
+                                      for (const field of visibleFields) {
+                                        const valueCount =
+                                          currentScreen?.isMulti &&
+                                          field.isPartOfMultiset !== false
+                                            ? repeatedValueCount
+                                            : 1
+                                        for (
+                                          let valueIndex = 0;
+                                          valueIndex < valueCount;
+                                          valueIndex++
+                                        ) {
+                                          const name = `${field.id}.${valueIndex}`
+                                          errors[name] =
+                                            methods.getFieldState(name).invalid
+                                        }
+                                      }
+                                      setValidationErrors((previous) => ({
+                                        ...previous,
+                                        ...errors,
+                                      }))
+                                      setScreenIndex(screenIndex + 1)
+                                    }}
+                                  >
+                                    {formatMessage(m.continue)}
+                                  </Button>
+                                ) : (
+                                  <Button onClick={closeModal}>
+                                    Loka sýnishorni
+                                  </Button>
+                                )}
+                              </Box>
+                              <Box
+                                display="inlineFlex"
+                                padding={2}
+                                paddingLeft="none"
+                              >
+                                <Button
+                                  variant="ghost"
+                                  preTextIcon="arrowBack"
+                                  disabled={screenIndex === 0}
+                                  onClick={() =>
+                                    setScreenIndex(screenIndex - 1)
+                                  }
+                                >
+                                  {formatMessage(m.back)}
+                                </Button>
+                              </Box>
+                            </Box>
+                          </GridColumn>
+                        </Box>
+                      </Box>
+                    </Box>
+                  </GridColumn>
+                  <GridColumn
+                    span={['12/12', '12/12', '3/12', '3/12']}
+                    className={styles.sidebarContainer}
+                  >
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      justifyContent="spaceBetween"
+                      height="full"
+                      paddingTop={[0, 0, 8]}
+                      paddingLeft={[0, 0, 0, 4]}
+                    >
+                      <FormStepper
+                        sections={sections}
+                        currentSection={{
+                          data: currentSection,
+                          index: sectionIndex,
+                        }}
+                        currentScreen={
+                          currentScreen ? { data: currentScreen } : undefined
+                        }
+                        hasSummaryScreen={sections.some(
+                          (section) =>
+                            section.sectionType === SectionTypes.SUMMARY,
+                        )}
+                        hasPayment={false}
+                        submitted={false}
+                      />
+                    </Box>
+                  </GridColumn>
+                </GridRow>
+              </GridContainer>
+            </Box>
+          </Box>
+        </FormProvider>
+      )}
+    </ModalBase>
   )
 }

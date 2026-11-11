@@ -551,6 +551,25 @@ const canDefenceUserAccessIndictmentCase = (
     return true
   }
 
+  // Court of appeals advocates confirmed on the verdict appeal
+  if (
+    Defendant.isConfirmedAppealDefenderOfDefendant(
+      user.nationalId,
+      theCase.defendants,
+    )
+  ) {
+    return true
+  }
+
+  if (
+    CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
+      user.nationalId,
+      theCase.civilClaimants,
+    )
+  ) {
+    return true
+  }
+
   return false
 }
 

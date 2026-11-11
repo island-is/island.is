@@ -2,14 +2,22 @@ import { FormSystemField } from '@island.is/api/schema'
 import { FieldTypesEnum } from '@island.is/form-system/enums'
 import { m } from '@island.is/form-system/ui'
 import {
+  Accordion,
+  AccordionItem,
+  Bullet,
+  BulletList,
   Checkbox,
   GridColumn as Column,
+  DatePicker,
   Input,
   Option,
   GridRow as Row,
   Select,
   Stack,
+  Text,
 } from '@island.is/island-ui/core'
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
@@ -273,7 +281,6 @@ export const BaseInput = () => {
       )}
       {/* Required checkbox */}
       {screen?.isMulti &&
-        currentItem.fieldType !== FieldTypesEnum.ISK_SUMBOX &&
         currentItem.fieldType !== FieldTypesEnum.FILE &&
         currentItem.fieldType !== FieldTypesEnum.PAYMENT_QUANTITY && (
           <Row>
@@ -299,6 +306,54 @@ export const BaseInput = () => {
             </Column>
           </Row>
         )}
+      {currentItem.fieldType === FieldTypesEnum.ISK_NUMBERBOX && (
+        <Row>
+          <Column span="10/10">
+            <Checkbox
+              label="Ekki taka með í samtölu"
+              checked={currentItem.fieldSettings?.notIncludedInSumbox ?? false}
+              disabled={isReadOnly}
+              onChange={(e) =>
+                controlDispatch({
+                  type: 'SET_FIELD_SETTINGS',
+                  payload: {
+                    property: 'notIncludedInSumbox',
+                    value: e.target.checked,
+                    update: updateActiveItem,
+                  },
+                })
+              }
+            />
+          </Column>
+        </Row>
+      )}
+      {currentItem.fieldType === FieldTypesEnum.BANK_ACCOUNT && (
+        <Row>
+          <Column span="10/10">
+            <Text marginBottom={2}>
+              ATH. Bankareikningsnúmer getur aðeins verið sótt af Mínum síðum
+              innskráðs einstaklings.
+            </Text>
+            <Checkbox
+              label="Sækja bankareikning af Mínum síðum"
+              checked={
+                currentItem.fieldSettings?.fetchBankAccountFromMyPages ?? true
+              }
+              disabled={isReadOnly}
+              onChange={(e) =>
+                controlDispatch({
+                  type: 'SET_FIELD_SETTINGS',
+                  payload: {
+                    property: 'fetchBankAccountFromMyPages',
+                    value: e.target.checked,
+                    update: updateActiveItem,
+                  },
+                })
+              }
+            />
+          </Column>
+        </Row>
+      )}
       {currentItem.fieldType !== FieldTypesEnum.ISK_SUMBOX && (
         <Row>
           <Column span="5/10">
@@ -317,6 +372,146 @@ export const BaseInput = () => {
             />
           </Column>
         </Row>
+      )}
+      {currentItem.fieldType === FieldTypesEnum.DATE_PICKER && (
+        <Stack space={2}>
+          <Accordion dividerOnBottom={false}>
+            <AccordionItem
+              key={currentItem.id}
+              id={`date-settings-${currentItem.id}`}
+              label="Ítarlegar stillingar"
+            >
+              <Row>
+                <Column span="10/10">
+                  <Stack space={2}>
+                    <Text>
+                      Eftirfarandi stillingar eru valfrjálsar og hægt er að nota
+                      þær saman eða í sitthvoru lagi.
+                    </Text>
+                    <BulletList color="dark400" space={0}>
+                      <Bullet>
+                        <strong>Fastar dagsetningar:</strong> Veldu fyrstu
+                        og/eða síðustu leyfilegu dagsetningu.
+                      </Bullet>
+                      <Bullet>
+                        <strong>Fjöldi daga:</strong> Tilgreindu fjölda daga sem
+                        bætist við dagsetninguna þegar umsækjandi fyllir út
+                        umsóknina.
+                        <BulletList color="dark400" space={0}>
+                          <Bullet>
+                            <code>0</code> merkir daginn í dag.
+                          </Bullet>
+                          <Bullet>
+                            <code>7</code> merkir eftir sjö daga.
+                          </Bullet>
+                          <Bullet>
+                            <code>-7</code> merkir fyrir sjö dögum.
+                          </Bullet>
+                        </BulletList>
+                      </Bullet>
+                      <Bullet>
+                        <strong>Samspil stillinga:</strong> Ef bæði föst
+                        dagsetning og dagafjöldi eru tilgreind gilda
+                        eftirfarandi takmarkanir:
+                        <BulletList color="dark400" space={0}>
+                          <Bullet>
+                            Fyrsta leyfilega dagsetning getur aldrei verið fyrr
+                            en föst upphafsdagsetning.
+                          </Bullet>
+                          <Bullet>
+                            Síðasta leyfilega dagsetning getur aldrei verið
+                            síðar en föst lokadagsetning.
+                          </Bullet>
+                        </BulletList>
+                      </Bullet>
+                    </BulletList>
+                  </Stack>
+                </Column>
+              </Row>
+            </AccordionItem>
+          </Accordion>
+          <Row>
+            {(['minDate', 'maxDate'] as const).map((property) => (
+              <Column key={property} span={['10/10', '5/10']}>
+                <DatePicker
+                  name={property}
+                  label={
+                    property === 'minDate'
+                      ? 'Fyrsta leyfilega dagsetning'
+                      : 'Síðasta leyfilega dagsetning'
+                  }
+                  placeholderText={formatMessage(m.chooseDate)}
+                  locale="is"
+                  backgroundColor="blue"
+                  disabled={isReadOnly}
+                  selected={
+                    currentItem.fieldSettings?.[property]
+                      ? parseISO(currentItem.fieldSettings[property])
+                      : null
+                  }
+                  handleChange={(date) =>
+                    controlDispatch({
+                      type: 'SET_ANY_FIELD_SETTING',
+                      payload: {
+                        property,
+                        value: date ? format(date, 'yyyy-MM-dd') : null,
+                        update: updateActiveItem,
+                      },
+                    })
+                  }
+                  handleClear={() =>
+                    controlDispatch({
+                      type: 'SET_ANY_FIELD_SETTING',
+                      payload: {
+                        property,
+                        value: null,
+                        update: updateActiveItem,
+                      },
+                    })
+                  }
+                  isClearable
+                />
+              </Column>
+            ))}
+          </Row>
+          <Row>
+            {(['minDateDaysFromToday', 'maxDateDaysFromToday'] as const).map(
+              (property) => (
+                <Column key={property} span={['10/10', '5/10']}>
+                  <Input
+                    name={property}
+                    label={
+                      property === 'minDateDaysFromToday'
+                        ? 'Fyrsta leyfilega dagsetning: dagar frá deginum í dag'
+                        : 'Síðasta leyfilega dagsetning: dagar frá deginum í dag'
+                    }
+                    type="number"
+                    step="1"
+                    backgroundColor="blue"
+                    readOnly={isReadOnly}
+                    value={currentItem.fieldSettings?.[property] ?? ''}
+                    onChange={(e) =>
+                      controlDispatch({
+                        type: 'SET_ANY_FIELD_SETTING',
+                        payload: {
+                          property,
+                          value:
+                            e.target.value === ''
+                              ? null
+                              : Number(e.target.value),
+                        },
+                      })
+                    }
+                    onFocus={(e) => setFocus(e.target.value)}
+                    onBlur={(e) =>
+                      e.target.value !== focus && updateActiveItem()
+                    }
+                  />
+                </Column>
+              ),
+            )}
+          </Row>
+        </Stack>
       )}
     </Stack>
   )

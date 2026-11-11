@@ -3,7 +3,7 @@ import {
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
 import * as m from '../lib/messages'
-import { ApproveOptions } from '..'
+import { ApproveOptions } from '../lib/types'
 
 export const unknownRelationshipOptions = [
   {

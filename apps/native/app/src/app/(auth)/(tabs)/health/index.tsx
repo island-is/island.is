@@ -43,13 +43,13 @@ import {
   Button,
   ChevronRight,
   GeneralCardSkeleton,
-  Heading,
-  Input,
-  InputRow,
+  SectionHeader,
+  InfoLine,
+  InfoLineRow,
   ListItem,
   ListItemSkeleton,
   MoreCard,
-  Problem,
+  StatusMessage,
   Skeleton,
   Typography,
 } from '@/ui'
@@ -114,8 +114,8 @@ const HeadingSection: React.FC<HeadingSectionProps> = ({
       style={{ marginTop: theme.spacing[2] }}
       disabled={!onPress}
     >
-      <Heading
-        medium
+      <SectionHeader
+        size="small"
         button={
           <TouchableOpacity
             onPress={onPress}
@@ -145,7 +145,7 @@ const HeadingSection: React.FC<HeadingSectionProps> = ({
         }
       >
         {title}
-      </Heading>
+      </SectionHeader>
     </TouchableOpacity>
   )
 }
@@ -191,7 +191,7 @@ const ExternalLink: React.FC<ExternalLinkProps> = ({
 }
 
 const showErrorComponent = (error: ApolloError) => {
-  return <Problem error={error} size="small" />
+  return <StatusMessage error={error} size="small" />
 }
 
 // We don't want to query health data unless the user opens the health tab
@@ -649,7 +649,7 @@ export default function HealthOverviewScreen() {
             )}
             {appointmentsRes.error && appointments.length === 0 && (
               <AppointmentsContainer>
-                <Problem
+                <StatusMessage
                   type="error"
                   size="small"
                   error={appointmentsRes.error}
@@ -665,7 +665,7 @@ export default function HealthOverviewScreen() {
               !appointmentsRes.error &&
               appointments.length === 0 && (
                 <AppointmentsContainer>
-                  <Problem type="no_data" size="small" />
+                  <StatusMessage type="no_data" size="small" />
                 </AppointmentsContainer>
               )}
             {hasBeenFocused &&
@@ -708,7 +708,7 @@ export default function HealthOverviewScreen() {
             )}
             {messagesRes.error && messages.length === 0 && (
               <AppointmentsContainer>
-                <Problem
+                <StatusMessage
                   type="error"
                   size="small"
                   error={messagesRes.error}
@@ -724,7 +724,7 @@ export default function HealthOverviewScreen() {
               !messagesRes.error &&
               messages.length === 0 && (
                 <AppointmentsContainer>
-                  <Problem type="no_data" size="small" />
+                  <StatusMessage type="no_data" size="small" />
                 </AppointmentsContainer>
               )}
             {hasBeenFocused && !messagesRes.loading && messages.length > 0 && (
@@ -767,8 +767,8 @@ export default function HealthOverviewScreen() {
             )
           }
         />
-        <InputRow background>
-          <Input
+        <InfoLineRow background>
+          <InfoLine
             label={intl.formatMessage({
               id: 'health.overview.maxMonthlyPayment',
             })}
@@ -793,9 +793,9 @@ export default function HealthOverviewScreen() {
             fullWidthWarning
             darkBorder
           />
-        </InputRow>
-        <InputRow background>
-          <Input
+        </InfoLineRow>
+        <InfoLineRow background>
+          <InfoLine
             label={intl.formatMessage({
               id: 'health.overview.paymentLimit',
             })}
@@ -817,9 +817,9 @@ export default function HealthOverviewScreen() {
             fullWidthWarning
             darkBorder
           />
-        </InputRow>
-        <InputRow background>
-          <Input
+        </InfoLineRow>
+        <InfoLineRow background>
+          <InfoLine
             label={intl.formatMessage({
               id: 'health.overview.paymentCredit',
             })}
@@ -836,7 +836,7 @@ export default function HealthOverviewScreen() {
             }
             noBorder
           />
-          <Input
+          <InfoLine
             label={intl.formatMessage({
               id: 'health.overview.paymentDebt',
             })}
@@ -851,7 +851,7 @@ export default function HealthOverviewScreen() {
             }
             noBorder
           />
-        </InputRow>
+        </InfoLineRow>
         <HeadingSection
           title={intl.formatMessage({
             id: 'health.overview.medicinePurchase',
@@ -862,8 +862,8 @@ export default function HealthOverviewScreen() {
         />
         {(medicinePurchaseRes.loading || medicinePurchaseRes.data) && (
           <>
-            <InputRow background>
-              <Input
+            <InfoLineRow background>
+              <InfoLine
                 label={intl.formatMessage({
                   id: 'health.overview.period',
                 })}
@@ -880,9 +880,9 @@ export default function HealthOverviewScreen() {
                 error={medicinePurchaseRes.error && !medicinePurchaseRes.data}
                 darkBorder
               />
-            </InputRow>
-            <InputRow background>
-              <Input
+            </InfoLineRow>
+            <InfoLineRow background>
+              <InfoLine
                 label={intl.formatMessage({
                   id: 'health.overview.levelStatus',
                 })}
@@ -914,7 +914,7 @@ export default function HealthOverviewScreen() {
                 }
                 fullWidthWarning
               />
-            </InputRow>
+            </InfoLineRow>
           </>
         )}
         {medicinePurchaseRes.error &&
@@ -928,8 +928,8 @@ export default function HealthOverviewScreen() {
         />
         {(healthInsuranceRes.data && healthInsuranceData?.isInsured) ||
         healthInsuranceRes.loading ? (
-          <InputRow background>
-            <Input
+          <InfoLineRow background>
+            <InfoLine
               label={intl.formatMessage({
                 id: 'health.overview.insuredFrom',
               })}
@@ -942,7 +942,7 @@ export default function HealthOverviewScreen() {
               error={healthInsuranceRes.error && !healthInsuranceRes.data}
               noBorder
             />
-            <Input
+            <InfoLine
               label={intl.formatMessage({
                 id: 'health.overview.status',
               })}
@@ -951,7 +951,7 @@ export default function HealthOverviewScreen() {
               error={healthInsuranceRes.error && !healthInsuranceRes.data}
               noBorder
             />
-          </InputRow>
+          </InfoLineRow>
         ) : (
           !healthInsuranceRes.error &&
           healthInsuranceRes.data && (
@@ -972,8 +972,8 @@ export default function HealthOverviewScreen() {
             id: 'health.overview.basicInformation',
           })}
         />
-        <InputRow background testID={testIDs.HEALTH_CENTER}>
-          <Input
+        <InfoLineRow background testID={testIDs.HEALTH_CENTER}>
+          <InfoLine
             label={intl.formatMessage({
               id: 'health.overview.healthCenter',
             })}
@@ -1009,9 +1009,9 @@ export default function HealthOverviewScreen() {
               />
             }
           />
-        </InputRow>
-        <InputRow background>
-          <Input
+        </InfoLineRow>
+        <InfoLineRow background>
+          <InfoLine
             label={intl.formatMessage({
               id: 'health.overview.physician',
             })}
@@ -1047,9 +1047,9 @@ export default function HealthOverviewScreen() {
               />
             }
           />
-        </InputRow>
-        <InputRow background>
-          <Input
+        </InfoLineRow>
+        <InfoLineRow background>
+          <InfoLine
             label={intl.formatMessage({
               id: 'health.overview.dentist',
             })}
@@ -1084,10 +1084,10 @@ export default function HealthOverviewScreen() {
               />
             }
           />
-        </InputRow>
+        </InfoLineRow>
         {isOrganDonationEnabled && (
-          <InputRow background>
-            <Input
+          <InfoLineRow background>
+            <InfoLine
               label={intl.formatMessage({
                 id: 'health.organDonation',
               })}
@@ -1122,10 +1122,10 @@ export default function HealthOverviewScreen() {
                 />
               }
             />
-          </InputRow>
+          </InfoLineRow>
         )}
-        <InputRow background>
-          <Input
+        <InfoLineRow background>
+          <InfoLine
             label={intl.formatMessage({
               id: 'health.overview.bloodType',
             })}
@@ -1167,7 +1167,7 @@ export default function HealthOverviewScreen() {
             }
             noBorder
           />
-        </InputRow>
+        </InfoLineRow>
         <RefreshButtonContainer>
           {lastUpdatedFormatted && (
             <Typography variant="body3" textAlign="center">
@@ -1184,6 +1184,7 @@ export default function HealthOverviewScreen() {
             isTransparent
             loading={refetching}
             disabled={refetching}
+            style={{ marginVertical: theme.spacing.p1 }}
           />
         </RefreshButtonContainer>
       </Animated.ScrollView>

@@ -35,7 +35,15 @@ import {
   useCancelAppointmentMutation,
   useGetAppointmentDetailQuery,
 } from '@/graphql/types/schema'
-import { Alert, Button, Icon, Input, InputRow, Problem, Typography } from '@/ui'
+import {
+  Alert,
+  Button,
+  Icon,
+  InfoLine,
+  InfoLineRow,
+  StatusMessage,
+  Typography,
+} from '@/ui'
 import { formatAppointmentDate } from '../../../../../utils/format-appointment-date'
 
 const Header = styled.View`
@@ -61,7 +69,8 @@ const MapLink = styled.TouchableOpacity`
   gap: ${({ theme }) => theme.spacing.smallGutter}px;
   margin-left: ${({ theme }) => 16 + theme.spacing[1]}px;
   border-bottom-width: 1px;
-  border-bottom-color: ${({ theme }) => theme.color.blue400};
+  border-bottom-color: ${({ theme }) =>
+    theme.tokens.interactive.border.borderPrimary};
 `
 
 const LocationItem = styled.View`
@@ -73,7 +82,8 @@ const InlineLink = styled.TouchableOpacity`
   align-items: center;
   gap: ${({ theme }) => theme.spacing.smallGutter}px;
   border-bottom-width: 1px;
-  border-bottom-color: ${({ theme }) => theme.color.blue400};
+  border-bottom-color: ${({ theme }) =>
+    theme.tokens.interactive.border.borderPrimary};
 `
 
 const MoreInfoRow = styled.View`
@@ -81,7 +91,7 @@ const MoreInfoRow = styled.View`
   padding-vertical: ${({ theme }) => theme.spacing[3]}px;
   gap: ${({ theme }) => theme.spacing[1]}px;
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
-  border-bottom-color: ${({ theme }) => theme.color.blue200};
+  border-bottom-color: ${({ theme }) => theme.tokens.border.primary};
 `
 
 const EyebrowContainer = styled.View`
@@ -103,7 +113,7 @@ const CancelSection = styled.View`
 const StickyFooter = styled.View`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
   padding-top: ${({ theme }) => theme.spacing[2]}px;
-  background-color: ${({ theme }) => theme.color.white};
+  background-color: ${({ theme }) => theme.tokens.background.invert};
 `
 
 type VideoCallPhase = 'before' | 'active' | 'expired'
@@ -212,7 +222,10 @@ export default function AppointmentDetailScreen() {
     alignSelf: 'center' | 'flex-start' = 'center',
   ) => (
     <InlineLink style={{ alignSelf }} onPress={() => void openExternalUrl(url)}>
-      <Typography variant="eyebrow" color={theme.color.blue400}>
+      <Typography
+        variant="eyebrow"
+        color={theme.tokens.interactive.foreground.primary}
+      >
         {intl.formatMessage({ id: 'health.appointments.seeMore' })}
       </Typography>
       <Icon
@@ -436,7 +449,7 @@ export default function AppointmentDetailScreen() {
       >
         {error && !appointment && (
           <ProblemContainer>
-            <Problem
+            <StatusMessage
               type="error"
               error={error}
               title={intl.formatMessage({ id: 'problem.error.title' })}
@@ -449,7 +462,7 @@ export default function AppointmentDetailScreen() {
 
         {!loading && !error && !appointment && (
           <ProblemContainer>
-            <Problem
+            <StatusMessage
               type="no_data"
               title={intl.formatMessage({ id: 'problem.noData.title' })}
               message={intl.formatMessage({
@@ -473,7 +486,7 @@ export default function AppointmentDetailScreen() {
                       source={calendarIcon as ImageSourcePropType}
                       width={16}
                       height={16}
-                      tintColor="blue400"
+                      tintColor={theme.tokens.foreground.brand}
                       resizeMode="contain"
                     />
                     <Typography variant="body">
@@ -488,7 +501,7 @@ export default function AppointmentDetailScreen() {
                       source={clockIcon as ImageSourcePropType}
                       width={16}
                       height={16}
-                      tintColor="blue400"
+                      tintColor={theme.tokens.foreground.brand}
                     />
                     <Typography variant="body">{time}</Typography>
                   </IconRow>
@@ -500,7 +513,7 @@ export default function AppointmentDetailScreen() {
                       source={hourglassIcon as ImageSourcePropType}
                       width={16}
                       height={16}
-                      tintColor="blue400"
+                      tintColor={theme.tokens.foreground.brand}
                     />
                     <Typography variant="body">
                       {intl.formatMessage(
@@ -517,7 +530,7 @@ export default function AppointmentDetailScreen() {
                       source={videoCameraIcon as ImageSourcePropType}
                       width={16}
                       height={16}
-                      tintColor="blue400"
+                      tintColor={theme.tokens.foreground.brand}
                     />
                     <Typography variant="body">
                       {intl.formatMessage({
@@ -534,7 +547,7 @@ export default function AppointmentDetailScreen() {
                         source={locationIcon as ImageSourcePropType}
                         width={16}
                         height={16}
-                        tintColor="blue400"
+                        tintColor={theme.tokens.foreground.brand}
                         style={{ marginTop: 4 }}
                       />
                       <View style={{ flex: 1 }}>
@@ -558,7 +571,7 @@ export default function AppointmentDetailScreen() {
                       <MapLink onPress={handleOpenMap}>
                         <Typography
                           variant="eyebrow"
-                          color={theme.color.blue400}
+                          color={theme.tokens.interactive.foreground.primary}
                         >
                           {intl.formatMessage({
                             id: 'health.appointments.openMap',
@@ -581,7 +594,7 @@ export default function AppointmentDetailScreen() {
                         source={infoIcon as ImageSourcePropType}
                         width={16}
                         height={16}
-                        tintColor="blue400"
+                        tintColor={theme.tokens.foreground.brand}
                       />
                       <Typography variant="body">
                         {intl.formatMessage({
@@ -590,7 +603,10 @@ export default function AppointmentDetailScreen() {
                       </Typography>
                     </IconRow>
                     <MapLink onPress={() => void openExternalUrl(locationLink)}>
-                      <Typography variant="eyebrow" color={theme.color.blue400}>
+                      <Typography
+                        variant="eyebrow"
+                        color={theme.tokens.interactive.foreground.primary}
+                      >
                         {intl.formatMessage({
                           id: 'health.appointments.seeMore',
                         })}
@@ -646,7 +662,10 @@ export default function AppointmentDetailScreen() {
 
             {hasMoreInfo && (
               <EyebrowContainer>
-                <Typography variant="eyebrow" color={theme.color.purple400}>
+                <Typography
+                  variant="eyebrow"
+                  color={theme.tokens.foreground.brandSecondary}
+                >
                   {intl.formatMessage({
                     id: 'health.appointments.moreInfo',
                   })}
@@ -655,28 +674,28 @@ export default function AppointmentDetailScreen() {
             )}
 
             {appointment.practitioners && appointment.practitioners.length > 0 && (
-              <InputRow>
-                <Input
+              <InfoLineRow>
+                <InfoLine
                   label={intl.formatMessage({
                     id: 'health.appointments.appointmentWith',
                   })}
                   value={appointment.practitioners.join(', ')}
                 />
-              </InputRow>
+              </InfoLineRow>
             )}
 
             {detail?.assignees?.map((assignee, index) => (
-              <InputRow key={`assignee-${index}`}>
-                <Input
+              <InfoLineRow key={`assignee-${index}`}>
+                <InfoLine
                   label={assigneeTypeLabel(assignee.type)}
                   value={assignee.name}
                 />
-              </InputRow>
+              </InfoLineRow>
             ))}
 
             {appointment.instruction && (
-              <InputRow>
-                <Input
+              <InfoLineRow>
+                <InfoLine
                   label={intl.formatMessage({
                     id: 'health.appointments.instructions',
                   })}
@@ -687,7 +706,7 @@ export default function AppointmentDetailScreen() {
                       : undefined
                   }
                 />
-              </InputRow>
+              </InfoLineRow>
             )}
 
             {preparationLink && (
@@ -721,39 +740,39 @@ export default function AppointmentDetailScreen() {
             ]
               .filter((line) => !!line.value)
               .map((line) => (
-                <InputRow key={line.id}>
-                  <Input
+                <InfoLineRow key={line.id}>
+                  <InfoLine
                     label={intl.formatMessage({ id: line.id })}
                     value={line.value}
                   />
-                </InputRow>
+                </InfoLineRow>
               ))}
 
             {appointment.location?.phoneNumber && (
-              <InputRow>
-                <Input
+              <InfoLineRow>
+                <InfoLine
                   label={intl.formatMessage({
                     id: 'health.appointments.phoneNumber',
                   })}
                   value={appointment.location.phoneNumber}
                 />
-              </InputRow>
+              </InfoLineRow>
             )}
 
             {appointment.location?.openingHoursText && (
-              <InputRow>
-                <Input
+              <InfoLineRow>
+                <InfoLine
                   label={intl.formatMessage({
                     id: 'health.appointments.openingHours',
                   })}
                   value={appointment.location.openingHoursText}
                 />
-              </InputRow>
+              </InfoLineRow>
             )}
 
             {appointment.location?.organization && (
-              <InputRow>
-                <Input
+              <InfoLineRow>
+                <InfoLine
                   label={intl.formatMessage({
                     id: 'health.appointments.organization',
                   })}
@@ -764,7 +783,7 @@ export default function AppointmentDetailScreen() {
                       : undefined
                   }
                 />
-              </InputRow>
+              </InfoLineRow>
             )}
           </>
         )}

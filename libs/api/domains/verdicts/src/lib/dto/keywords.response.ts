@@ -5,6 +5,12 @@ import { Field, ObjectType } from '@nestjs/graphql'
 class Keyword {
   @Field()
   label!: string
+
+  @Field(() => Boolean)
+  belongsToSupremeCourt!: boolean
+
+  @Field(() => Boolean)
+  belongsToOtherCourts!: boolean
 }
 
 @ObjectType('WebVerdictKeywordsResponse')

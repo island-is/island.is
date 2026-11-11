@@ -62,6 +62,19 @@ const outputContract = (): OutputFieldContract =>
         },
       ],
     },
+    {
+      __typename: 'TaxCalculatorObjectOutputField',
+      key: 'quarters',
+      type: TaxCalculatorOutputFieldType.Object,
+      itemFields: [
+        {
+          __typename: 'TaxCalculatorNumberOutputField',
+          key: 'share',
+          type: TaxCalculatorOutputFieldType.Number,
+          semantic: null,
+        },
+      ],
+    },
   ])
 
 describe('collectUnplacedRequiredKeys', () => {
@@ -237,7 +250,7 @@ describe('collectOutputConfigIssues', () => {
       staleItemFieldKeys: [
         { fieldKey: 'breakdown', itemKeys: ['removedItem'] },
       ],
-      arrayValuedTotal: false,
+      nonScalarTotal: false,
     })
   })
 
@@ -258,8 +271,60 @@ describe('collectOutputConfigIssues', () => {
       staleFieldKeys: [],
       itemFieldsOnScalarKeys: [],
       staleItemFieldKeys: [],
-      arrayValuedTotal: false,
+      nonScalarTotal: false,
     })
+  })
+
+  it('accepts itemFields on an object-typed contract field', () => {
+    const issues = collectOutputConfigIssues(
+      config({
+        outputSections: [
+          {
+            key: 'result',
+            fields: [
+              {
+                uid: 'o1',
+                kind: 'value',
+                key: 'quarters',
+                itemFields: [{ uid: 'i1', key: 'share' }],
+              },
+            ],
+          },
+        ],
+      }),
+      outputContract(),
+    )
+
+    expect(issues.itemFieldsOnScalarKeys).toEqual([])
+    expect(issues.staleItemFieldKeys).toEqual([])
+  })
+
+  it('reports a stale item key on an object-typed contract field', () => {
+    const issues = collectOutputConfigIssues(
+      config({
+        outputSections: [
+          {
+            key: 'result',
+            fields: [
+              {
+                uid: 'o1',
+                kind: 'value',
+                key: 'quarters',
+                itemFields: [
+                  { uid: 'i1', key: 'share' },
+                  { uid: 'i2', key: 'removedShare' },
+                ],
+              },
+            ],
+          },
+        ],
+      }),
+      outputContract(),
+    )
+
+    expect(issues.staleItemFieldKeys).toEqual([
+      { fieldKey: 'quarters', itemKeys: ['removedShare'] },
+    ])
   })
 
   it('flags an outputTotal configured against an array-typed contract field', () => {
@@ -274,8 +339,19 @@ describe('collectOutputConfigIssues', () => {
       staleFieldKeys: [],
       itemFieldsOnScalarKeys: [],
       staleItemFieldKeys: [],
-      arrayValuedTotal: true,
+      nonScalarTotal: true,
     })
+  })
+
+  it('flags an outputTotal configured against an object-typed contract field', () => {
+    const issues = collectOutputConfigIssues(
+      config({
+        outputTotal: { uid: 'hero', key: 'quarters', label: label('Total') },
+      }),
+      outputContract(),
+    )
+
+    expect(issues.nonScalarTotal).toBe(true)
   })
 })
 

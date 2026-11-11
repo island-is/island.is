@@ -55,10 +55,7 @@ describe('CaseController - Get custody pdf', () => {
     })
 
     it('should generate pdf', () => {
-      expect(getCustodyNoticePdfAsBuffer).toHaveBeenCalledWith(
-        theCase,
-        expect.any(Function),
-      )
+      expect(getCustodyNoticePdfAsBuffer).toHaveBeenCalledWith(theCase)
     })
   })
 
