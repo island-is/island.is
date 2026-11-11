@@ -27,7 +27,8 @@ export const cardDelivery = {
     },
     currentAddressNoAddress: {
       id: 'aosh.mlcr.application:cardDelivery.labels.currentAddressNoAddress',
-      defaultMessage: 'Sent á lögheimili',
+      defaultMessage:
+        'Sent á lögheimili (ekkert lögheimili fannst í Þjóðskrá – veldu annað heimilisfang)',
       description: 'Send to legal domicile radio option (no address found)',
     },
     otherAddress: {

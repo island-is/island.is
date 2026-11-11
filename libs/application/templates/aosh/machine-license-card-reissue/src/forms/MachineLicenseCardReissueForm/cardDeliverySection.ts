@@ -38,27 +38,29 @@ export const cardDeliverySection = buildSection({
           backgroundColor: 'blue',
           largeButtons: true,
           required: true,
-          defaultValue: AddressDeliveryType.CURRENT,
-          options: [
-            {
-              value: AddressDeliveryType.CURRENT,
-              label: (application: Application) => {
-                const address = getLegalDomicileAddress(
-                  application.externalData,
-                )
-                return address
+          defaultValue: (application: Application) =>
+            getLegalDomicileAddress(application.externalData)
+              ? AddressDeliveryType.CURRENT
+              : AddressDeliveryType.OTHER,
+          options: (application: Application) => {
+            const address = getLegalDomicileAddress(application.externalData)
+            return [
+              {
+                value: AddressDeliveryType.CURRENT,
+                label: address
                   ? {
                       ...cardDelivery.labels.currentAddress,
                       values: { address },
                     }
-                  : cardDelivery.labels.currentAddressNoAddress
+                  : cardDelivery.labels.currentAddressNoAddress,
+                disabled: !address,
               },
-            },
-            {
-              value: AddressDeliveryType.OTHER,
-              label: cardDelivery.labels.otherAddress,
-            },
-          ],
+              {
+                value: AddressDeliveryType.OTHER,
+                label: cardDelivery.labels.otherAddress,
+              },
+            ]
+          },
         }),
         buildTextField({
           id: 'cardDelivery.address',
