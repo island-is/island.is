@@ -1,19 +1,13 @@
 import React from 'react'
 import styled from 'styled-components/native'
 import timeOutlineIcon from '../../assets/card/time-outline.png'
-import { dynamicColor } from '../../utils/dynamic-color'
+import { token } from '../../utils/dynamic-color'
 
 const Host = styled.View`
   width: 100%;
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: ${({ theme }) => theme.border.width.standard}px;
-  border-color: ${dynamicColor(
-    ({ theme }) => ({
-      dark: theme.shades.dark.shade300,
-      light: theme.color.blue200,
-    }),
-    true,
-  )};
+  border-color: ${token((t) => t.border.primary)};
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
   padding: ${({ theme }) => theme.spacing[2]}px;
   min-height: 180px;
@@ -28,19 +22,13 @@ const TimeIcon = styled.Image`
   width: 16px;
   height: 16px;
   margin-right: 8px;
-  tint-color: ${dynamicColor(({ theme }) => ({
-    dark: 'shade600',
-    light: theme.color.blue200,
-  }))};
+  tint-color: ${token((t) => t.background.brandLighter)};
 `
 
 const TimeSkeleton = styled.View`
   height: 12px;
   width: 110px;
-  background-color: ${dynamicColor(({ theme }) => ({
-    dark: 'shade200',
-    light: theme.color.blue100,
-  }))};
+  background-color: ${token((t) => t.background.brandMinimal)};
   border-radius: 4px;
 `
 
@@ -48,10 +36,7 @@ const Bar = styled.View`
   height: 12px;
   padding: 2px;
   overflow: hidden;
-  background-color: ${dynamicColor(({ theme }) => ({
-    dark: 'shade200',
-    light: theme.color.blue100,
-  }))};
+  background-color: ${token((t) => t.background.brandMinimal)};
   border-radius: 6px;
 
   margin-top: ${({ theme }) => theme.spacing[2]}px;
@@ -62,10 +47,7 @@ const Progress = styled.View<{ width?: number }>`
   width: ${(props) => props.width ?? 0}%;
   border-radius: 6px;
   width: 30%;
-  background-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blue200,
-    dark: 'shade300',
-  }))};
+  background-color: ${token((t) => t.background.brandLighter)};
 `
 
 const Title = styled.View`
@@ -79,19 +61,13 @@ const IconSkeleton = styled.View`
   height: 24px;
   margin-right: ${({ theme }) => theme.spacing[1]}px;
   border-radius: 4px;
-  background-color: ${dynamicColor(({ theme }) => ({
-    dark: 'shade200',
-    light: theme.color.blue100,
-  }))};
+  background-color: ${token((t) => t.background.brandMinimal)};
 `
 
 const TitleSkeleton = styled.View`
   height: 16px;
   width: 60%;
-  background-color: ${dynamicColor(({ theme }) => ({
-    dark: 'shade200',
-    light: theme.color.blue100,
-  }))};
+  background-color: ${token((t) => t.background.brandMinimal)};
   border-radius: 4px;
 `
 
@@ -99,10 +75,7 @@ const BadgeSkeleton = styled.View`
   width: 49px;
   height: 32px;
   border-radius: 8px;
-  background-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blue100,
-    dark: 'shade200',
-  }))};
+  background-color: ${token((t) => t.background.brandMinimal)};
 `
 
 const Flex = styled.View`

@@ -10,7 +10,7 @@ import {
   HealthDirectorateMedicineHistoryDispensation,
   useGetMedicineDispensationForAtcQuery,
 } from '@/graphql/types/schema'
-import { Badge, StatusMessage, Typography } from '@/ui'
+import { Badge, StatusMessage, token, Typography } from '@/ui'
 
 const Host = styled.View`
   flex: 1;
@@ -22,7 +22,7 @@ const DispensationRow = styled.View`
   padding-vertical: ${({ theme }) => theme.spacing[2]}px;
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
   border-bottom-width: 1px;
-  border-bottom-color: ${({ theme }) => theme.color.blue200};
+  border-bottom-color: ${token((t) => t.border.primary)};
 `
 
 const DispensationInfo = styled.View`
@@ -41,14 +41,14 @@ const NoDispensations = styled.View`
   align-items: center;
   gap: ${({ theme }) => theme.spacing[1]}px;
   border-width: ${({ theme }) => theme.border.width.standard}px;
-  border-color: ${({ theme }) => theme.color.blue200};
+  border-color: ${token((t) => t.border.primary)};
   border-radius: ${({ theme }) => theme.border.radius.large};
 `
 
 const SkeletonLine = styled.View<{ width: number }>`
   height: 12px;
   width: ${({ width }) => width}%;
-  background-color: ${({ theme }) => theme.color.blue100};
+  background-color: ${token((t) => t.background.brandMinimal)};
   border-radius: ${({ theme }) => theme.border.radius.large};
   margin-bottom: ${({ theme }) => theme.spacing[1]}px;
 `

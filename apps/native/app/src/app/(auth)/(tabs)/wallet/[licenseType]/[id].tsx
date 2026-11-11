@@ -15,7 +15,7 @@ import { useLocale } from '@/hooks/use-locale'
 import { useOfflineStore } from '@/stores/offline-store'
 import { usePreferencesStore } from '@/stores/preferences-store'
 import {
-  dynamicColor,
+  token,
   Alert as InfoAlert,
   LICENSE_CARD_ROW_GAP,
   LicenseCard,
@@ -36,10 +36,7 @@ const CARD_HEIGHT = 96
 
 const Information = styled.ScrollView<{ topSpacing?: number }>`
   flex: 1;
-  background-color: ${dynamicColor(({ theme }) => ({
-    dark: theme.shades.dark.shade100,
-    light: theme.color.blue100,
-  }))};
+  background-color: ${token((t) => t.background.brandMinimal)};
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
   margin-top: -${INFORMATION_BASE_TOP_SPACING}px;
@@ -88,8 +85,7 @@ const LoadingOverlay = styled.View`
   right: 0;
   z-index: 999;
 
-  background-color: #000;
-  opacity: ${({ theme }) => (theme.isDark ? 0.6 : 0.4)};
+  background-color: ${token((t) => t.app.overlay.scrim)};
   width: 100%;
   height: 100%;
 `
@@ -273,7 +269,7 @@ export default function WalletPassScreen() {
     return (
       <ActivityIndicator
         size="large"
-        color="#0061FF"
+        color={theme.tokens.interactive.foreground.primary}
         style={{ marginTop: theme.spacing[4] }}
       />
     )
@@ -395,7 +391,7 @@ export default function WalletPassScreen() {
             {!data?.payload?.data && loading ? (
               <ActivityIndicator
                 size="large"
-                color="#0061FF"
+                color={theme.tokens.interactive.foreground.primary}
                 style={{ marginTop: theme.spacing[4] }}
               />
             ) : (
@@ -411,7 +407,7 @@ export default function WalletPassScreen() {
           <LoadingOverlay>
             <ActivityIndicator
               size="large"
-              color={theme.color.white}
+              color={theme.tokens.foreground.invert}
               style={{ marginTop: theme.spacing[4] }}
             />
           </LoadingOverlay>
