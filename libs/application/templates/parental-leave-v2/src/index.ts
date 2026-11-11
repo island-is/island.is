@@ -13,6 +13,10 @@ export {
   calculateRemainingNumberOfDays,
   DAYS_IN_MONTH,
 } from './lib/directorateOfLabour.utils'
+export {
+  findShortPeriodWithoutPredecessor,
+  getShortPeriodWithoutPredecessorError,
+} from './lib/answerValidationSections/utils'
 export * from './constants'
 export * from './types'
 export * from './lib/messages'

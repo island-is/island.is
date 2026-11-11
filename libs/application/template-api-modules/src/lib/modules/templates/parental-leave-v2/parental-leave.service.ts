@@ -20,6 +20,7 @@ import {
   calculatePeriodLength,
   getAdditionalSingleParentRightsInDays,
   getApplicationAnswers,
+  getShortPeriodWithoutPredecessorError,
   getApplicationExternalData,
   getAvailablePersonalRightsInDays,
   getMultipleBirthsDays,
@@ -1324,14 +1325,28 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
   }
 
   async validateApplication({ application }: TemplateApiModuleActionProps) {
+    const { periods, firstPeriodStart } = getApplicationAnswers(
+      application.answers,
+    )
+
+    // The periods screen checks this on Continue, but a deleted period is
+    // saved at once, so the plan is checked again before anything is sent.
+    const shortPeriodError = getShortPeriodWithoutPredecessorError(periods)
+    if (shortPeriodError) {
+      throw new TemplateApiError(
+        {
+          title: errorMessages.invalidPeriodsTitle,
+          summary: shortPeriodError,
+        },
+        400,
+      )
+    }
+
     if (this.shouldUseMockData(application)) {
       return
     }
 
     const nationalRegistryId = application.applicant
-    const { periods, firstPeriodStart } = getApplicationAnswers(
-      application.answers,
-    )
     // The `previousState === RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE` guard that
     // used to sit here is gone along with the `previousState` history stack. It was
     // already unreachable: the no-birth-date state has no `validateApplication` on

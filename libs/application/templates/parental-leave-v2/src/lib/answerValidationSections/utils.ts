@@ -4,6 +4,7 @@ import addMonths from 'date-fns/addMonths'
 import addDays from 'date-fns/addDays'
 import isThisMonth from 'date-fns/isThisMonth'
 import isValid from 'date-fns/isValid'
+import format from 'date-fns/format'
 import {
   AnswerValidationError,
   NO,
@@ -111,6 +112,68 @@ export const dateIsWithinOtherPeriods = (
   }
 
   return false
+}
+
+/**
+ * A period shorter than MINIMUM_PERIOD_LENGTH is only allowed when it starts the
+ * day after another period ends. Deleting the period before it leaves it on its
+ * own, so the whole plan is checked, not just the latest period. Periods VMST
+ * has paid or approved, and periods already over, can't be changed and are
+ * skipped.
+ */
+export const findShortPeriodWithoutPredecessor = (
+  periods: Period[],
+): Period | undefined => {
+  const today = new Date()
+  const sorted = periods
+    .filter((period) => !!period?.startDate && !!period?.endDate)
+    .sort(
+      (a, b) =>
+        parseISO(a.startDate).getTime() - parseISO(b.startDate).getTime(),
+    )
+
+  return sorted.find((period, index) => {
+    if (period.paid || period.approved === true) {
+      return false
+    }
+
+    const start = parseISO(period.startDate)
+    const end = parseISO(period.endDate)
+
+    if (!isValid(start) || !isValid(end) || end < start) {
+      return false
+    }
+
+    if (end < today && !isThisMonth(start)) {
+      return false
+    }
+
+    if (isPeriodsContinuous(sorted[index - 1], period)) {
+      return false
+    }
+
+    return calculatePeriodLength(start, end) < MINIMUM_PERIOD_LENGTH
+  })
+}
+
+export const getShortPeriodWithoutPredecessorError = (
+  periods: Period[],
+): StaticTextObject | undefined => {
+  const period = findShortPeriodWithoutPredecessor(periods)
+
+  if (!period) {
+    return undefined
+  }
+
+  return {
+    ...errorMessages.periodsShortPeriodNotContinuous,
+    values: {
+      index: periods.indexOf(period) + 1,
+      startDate: format(parseISO(period.startDate), 'dd.MM.yyyy'),
+      endDate: format(parseISO(period.endDate), 'dd.MM.yyyy'),
+      minimumDays: MINIMUM_PERIOD_LENGTH,
+    },
+  }
 }
 
 const validFirstPeriodStartValues = [

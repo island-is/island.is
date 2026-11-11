@@ -543,6 +543,65 @@ describe('ParentalLeaveV2Service', () => {
         },
       })
     })
+
+    it('should reject a short period that no longer follows another period before asking VMST', async () => {
+      // Reported case: the applicant deleted the long period a short one
+      // followed, and the plan reached VMST.
+      const application = createApplication()
+      application.state = 'editOrAddEmployersAndPeriods'
+      set(application, 'externalData.navId', {
+        data: '2025-03076',
+        date: new Date(),
+        status: 'success',
+      })
+      set(application, 'answers.periods', [
+        {
+          startDate: '2030-01-01',
+          endDate: '2030-01-31',
+          ratio: '100',
+          paid: true,
+          approved: true,
+        },
+        {
+          startDate: '2030-04-01',
+          endDate: '2030-04-07',
+          ratio: '100',
+          paid: false,
+          approved: false,
+        },
+      ])
+      const vmstApi = (
+        parentalLeaveService as unknown as {
+          parentalLeaveApi: ParentalLeaveApi
+        }
+      ).parentalLeaveApi
+      const setParentalLeave = jest.spyOn(
+        vmstApi,
+        'parentalLeaveSetParentalLeave',
+      )
+
+      await expect(
+        parentalLeaveService.validateApplication({
+          application,
+        } as TemplateApiModuleActionProps),
+      ).rejects.toMatchObject({
+        problem: {
+          errorReason: {
+            title: errorMessages.invalidPeriodsTitle,
+            summary: {
+              id: errorMessages.periodsShortPeriodNotContinuous.id,
+              values: {
+                index: 2,
+                startDate: '01.04.2030',
+                endDate: '07.04.2030',
+                minimumDays: 14,
+              },
+            },
+          },
+        },
+      })
+      expect(setParentalLeave).not.toHaveBeenCalled()
+    })
   })
 
   describe('verifyFollowUpLeave', () => {

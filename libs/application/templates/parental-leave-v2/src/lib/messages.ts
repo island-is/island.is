@@ -2875,6 +2875,12 @@ export const errorMessages = defineMessages({
     description:
       'Shown when VMST does not list the leave a change or residence grant continues',
   },
+  invalidPeriodsTitle: {
+    id: 'plv2.application:error.invalidPeriods.title',
+    defaultMessage: 'Tímabilin uppfylla ekki skilyrði',
+    description:
+      'Title when the leave plan breaks a period rule when the application is submitted',
+  },
   vmstErrorTitle: {
     id: 'plv2.application:error.vmst.title',
     defaultMessage: 'Villa í samskiptum við Vinnumálastofnun',
@@ -3066,6 +3072,13 @@ export const errorMessages = defineMessages({
     id: 'plv2.application:answerValidators.periodsEndDateMinimumPeriod',
     defaultMessage: 'Þú getur ekki sótt um skemur en {minPeriodDays} daga.',
     description: 'Copy when period is less than minimum required',
+  },
+  periodsShortPeriodNotContinuous: {
+    id: 'plv2.application:answerValidators.periodsShortPeriodNotContinuous',
+    defaultMessage:
+      'Tímabil {index} ({startDate} – {endDate}) er styttra en {minimumDays} dagar. Svo stutt tímabil verður að hefjast daginn eftir að annað tímabil endar. Lengdu tímabilið eða eyddu því.',
+    description:
+      'Copy when a period shorter than the minimum no longer directly follows another period, e.g. after the period before it was deleted',
   },
   periodsEndDateOverlapsPeriod: {
     id: 'plv2.application:answerValidators.periodsEndDateOverlapsPeriod',

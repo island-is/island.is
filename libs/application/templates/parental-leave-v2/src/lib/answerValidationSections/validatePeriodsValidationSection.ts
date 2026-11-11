@@ -5,6 +5,7 @@ import {
   getAvailableRightsInDays,
 } from '../parentalLeaveUtils'
 import { errorMessages } from '../messages'
+import { getShortPeriodWithoutPredecessorError } from './utils'
 
 export const validatePeriodsValidationSection = (
   newAnswer: unknown,
@@ -32,6 +33,13 @@ export const validatePeriodsValidationSection = (
         rights,
       },
     }
+  }
+
+  const shortPeriodError = getShortPeriodWithoutPredecessorError(periods)
+
+  if (shortPeriodError) {
+    const { values, ...message } = shortPeriodError
+    return { path: 'periods', message, values }
   }
 
   return undefined

@@ -16,7 +16,7 @@ import { errorMessages, parentalLeaveFormMessages } from './messages'
 import { StartDateOptions, AnswerValidationConstants } from '../constants'
 import { NO, YES } from '@island.is/application/core'
 
-const { VALIDATE_LATEST_PERIOD } = AnswerValidationConstants
+const { VALIDATE_LATEST_PERIOD, VALIDATE_PERIODS } = AnswerValidationConstants
 
 const formatDate = (date: Date) => format(date, dateFormat)
 
@@ -734,6 +734,55 @@ describe('when constructing a new period', () => {
 
     it('accepts a period that overlaps none of the earlier periods', () => {
       expect(validateLatest('2021-05-01', '2021-05-31')).toEqual(undefined)
+    })
+  })
+})
+
+describe('when continuing from the periods screen', () => {
+  // Periods synced from VMST carry `paid` and `approved`
+  const paid = {
+    firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+    startDate: '2029-12-01',
+    endDate: '2029-12-31',
+    ratio: '100',
+    paid: true,
+    approved: true,
+  }
+  const long = {
+    startDate: '2030-01-01',
+    endDate: '2030-03-31',
+    ratio: '100',
+    paid: false,
+    approved: false,
+  }
+  const short = {
+    startDate: '2030-04-01',
+    endDate: '2030-04-07',
+    ratio: '100',
+    paid: false,
+    approved: false,
+  }
+
+  const validate = (periods: Record<string, unknown>[]) => {
+    const application = createBaseApplication()
+    set(application, 'answers.periods', periods)
+    return answerValidators[VALIDATE_PERIODS](periods, application)
+  }
+
+  it('accepts a short VMST period that follows straight on from a longer one', () => {
+    expect(validate([paid, long, short])).toBeUndefined()
+  })
+
+  it('rejects the short VMST period once the period before it is deleted', () => {
+    expect(validate([paid, short])).toStrictEqual({
+      path: 'periods',
+      message: errorMessages.periodsShortPeriodNotContinuous,
+      values: {
+        index: 2,
+        startDate: '01.04.2030',
+        endDate: '07.04.2030',
+        minimumDays: 14,
+      },
     })
   })
 })
