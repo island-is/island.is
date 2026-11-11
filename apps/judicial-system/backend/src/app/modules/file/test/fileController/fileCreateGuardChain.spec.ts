@@ -425,10 +425,11 @@ describe.each(routes.map((route) => [route.method, route] as const))(
       })
     })
 
-    // The guards after the locking read all decide from request.case. Each
+    // The write guard and the two party guards decide from request.case. Each
     // of them throws a 500 or a 400 for a missing case and a 403 or 404 for
     // the case it was given, so the error type is what shows the read came
-    // first.
+    // first. The two category guards decide from the user and the body
+    // alone, so their rows below rely on the read assertion instead.
     describe("prosecutor at another office than the case's", () => {
       const caseId = uuid()
       let then: Awaited<ReturnType<typeof runChain>>
