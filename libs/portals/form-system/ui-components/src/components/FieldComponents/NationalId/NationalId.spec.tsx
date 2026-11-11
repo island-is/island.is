@@ -292,7 +292,9 @@ describe.each([
       const input = screen.getByRole('textbox', { name: 'National ID' })
       fireEvent.change(input, { target: { value: nationalId } })
       fireEvent.blur(input)
-      await act(async () => {})
+      await act(async () => {
+        await Promise.resolve()
+      })
 
       expect(input.getAttribute('value')).toBe(nationalId)
       expect(requestSpy).not.toHaveBeenCalled()
