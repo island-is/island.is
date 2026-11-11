@@ -12,6 +12,7 @@ import {
 import { supportingDocuments } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
 import {
+  getBirthDate,
   getSelectedCustodyChild,
   getSelectedIndividualName,
 } from '../../../utils'
@@ -20,6 +21,15 @@ import { Routes } from '../../../lib/constants'
 import { FILE_TYPES_ALLOWED } from '../../../shared'
 
 const FILE_SIZE_LIMIT = 10000000
+
+const getChildBirthDate = (application: Application, index: number) =>
+  getBirthDate(
+    getSelectedCustodyChild(
+      application.externalData,
+      application.answers,
+      index,
+    )?.nationalId ?? '',
+  )
 
 export const ChildrenPassportSubSection = (index: number) =>
   buildSubSection({
@@ -64,6 +74,7 @@ export const ChildrenPassportSubSection = (index: number) =>
             title: supportingDocuments.labels.passport.publishDate,
             placeholder: supportingDocuments.labels.passport.datePlaceholder,
             width: 'half',
+            minDate: (application) => getChildBirthDate(application, index),
             maxDate: new Date(),
           }),
           buildDateField({
@@ -71,6 +82,7 @@ export const ChildrenPassportSubSection = (index: number) =>
             title: supportingDocuments.labels.passport.expirationDate,
             placeholder: supportingDocuments.labels.passport.datePlaceholder,
             width: 'half',
+            minDate: (application) => getChildBirthDate(application, index),
           }),
           buildTextField({
             id: `${Routes.CHILDRENPASSPORT}[${index}].passportNumber`,
