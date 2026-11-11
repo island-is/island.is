@@ -1,3 +1,5 @@
+import { MachineLicenseRenewalModule } from './aosh/machine-license-renewal/machine-license-renewal.module'
+import { MachineLicenseRenewalService } from './aosh/machine-license-renewal/machine-license-renewal.service'
 import { PayDebtsModule } from './pay-debts/pay-debts.module'
 import { PayDebtsService } from './pay-debts/pay-debts.service'
 import { ConfirmJobOrIncomeModule } from './vmst/confirm-job-or-income/confirm-job-or-income.module'
@@ -306,6 +308,7 @@ export const modules = [
   DirectorateOfEqualityModule,
   PayDebtsModule,
   U2CertificateModule,
+  MachineLicenseRenewalModule,
 ]
 
 export const services = [
@@ -410,4 +413,5 @@ export const services = [
   DirectorateOfEqualityService,
   PayDebtsService,
   U2CertificateService,
+  MachineLicenseRenewalService,
 ]

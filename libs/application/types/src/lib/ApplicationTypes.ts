@@ -111,6 +111,7 @@ export enum ApplicationTypes {
   SALARY_REPORT = 'SalaryReport',
   PAY_DEBTS = 'PayDebts',
   U2_CERTIFICATE = 'U2Certificate',
+  MACHINE_LICENSE_RENEWAL = 'MachineLicenseRenewal',
 }
 
 export const ApplicationConfigurations = {
@@ -565,5 +566,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.U2_CERTIFICATE]: {
     slug: 'u2-vottord',
     translation: ['vmst.u2c.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.MACHINE_LICENSE_RENEWAL]: {
+    slug: 'endurnyjun-vinnuvelaskirteinis',
+    translation: ['aosh.mlr.application', 'uiForms.application'],
   },
 }
