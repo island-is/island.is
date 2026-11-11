@@ -15,8 +15,8 @@ const Wrapper = styled(Animated.View)`
   position: absolute;
   bottom: ${({ theme }) => theme.spacing[2]}px;
   right: ${({ theme }) => theme.spacing[2]}px;
-  border: 1px solid ${({ theme }) => theme.color.blue200};
-  background-color: ${({ theme }) => theme.color.blue100};
+  border: 1px solid ${({ theme }) => theme.tokens.border.primary};
+  background-color: ${({ theme }) => theme.tokens.background.brandMinimal};
   border-radius: ${({ theme }) => theme.border.radius.large};
   padding-vertical: ${({ theme }) => theme.spacing.smallGutter}px;
   padding-horizontal: ${({ theme }) => theme.spacing.smallGutter}px;
@@ -86,7 +86,7 @@ export const ActionBar = ({
                 style={{
                   width: 16,
                   height: 16,
-                  tintColor: theme.color.blue400,
+                  tintColor: theme.tokens.interactive.foreground.primary,
                 }}
                 resizeMode="contain"
               />
@@ -114,7 +114,7 @@ export const ActionBar = ({
                 style={{
                   width: 16,
                   height: 16,
-                  tintColor: theme.color.blue400,
+                  tintColor: theme.tokens.interactive.foreground.primary,
                 }}
                 resizeMode="contain"
               />
@@ -142,7 +142,7 @@ export const ActionBar = ({
                 style={{
                   width: 16,
                   height: 16,
-                  tintColor: theme.color.blue400,
+                  tintColor: theme.tokens.interactive.foreground.primary,
                 }}
                 resizeMode="contain"
               />

@@ -17,6 +17,10 @@ export interface InputContractField {
   key: string
   type: TaxCalculatorInputFieldType
   semantic?: TaxCalculatorInputFieldSemantic
+  min?: number
+  max?: number
+  integer?: boolean
+  defaultValue?: number
   options?: string[]
   required: boolean
   dependsOn?: {
@@ -75,7 +79,14 @@ export const toInputContractField = (
 
   switch (field.__typename) {
     case 'TaxCalculatorNumberInputField':
-      return { ...base, semantic: field.semantic ?? undefined }
+      return {
+        ...base,
+        semantic: field.semantic ?? undefined,
+        min: field.min ?? undefined,
+        max: field.max ?? undefined,
+        integer: field.integer,
+        defaultValue: field.defaultValue ?? undefined,
+      }
     case 'TaxCalculatorSelectInputField':
       return { ...base, options: field.options.map((option) => option.value) }
     case 'TaxCalculatorStringInputField':
@@ -84,6 +95,30 @@ export const toInputContractField = (
       return base
     default: {
       const unhandled: never = field
+      return unhandled
+    }
+  }
+}
+
+type RawOutputItemField = Extract<
+  RawOutputField,
+  { __typename: 'TaxCalculatorArrayOutputField' }
+>['itemFields'][number]
+
+const toOutputContractItemField = (
+  itemField: RawOutputItemField,
+): OutputContractItemField => {
+  const itemBase = { key: itemField.key, type: itemField.type }
+
+  switch (itemField.__typename) {
+    case 'TaxCalculatorNumberOutputField':
+      return { ...itemBase, semantic: itemField.semantic ?? undefined }
+    case 'TaxCalculatorStringOutputField':
+    case 'TaxCalculatorBooleanOutputField':
+    case 'TaxCalculatorDateOutputField':
+      return itemBase
+    default: {
+      const unhandled: never = itemField
       return unhandled
     }
   }
@@ -98,27 +133,10 @@ export const toOutputContractField = (
     case 'TaxCalculatorNumberOutputField':
       return { ...base, semantic: field.semantic ?? undefined }
     case 'TaxCalculatorArrayOutputField':
+    case 'TaxCalculatorObjectOutputField':
       return {
         ...base,
-        itemFields: field.itemFields.map((itemField) => {
-          const itemBase = { key: itemField.key, type: itemField.type }
-
-          switch (itemField.__typename) {
-            case 'TaxCalculatorNumberOutputField':
-              return {
-                ...itemBase,
-                semantic: itemField.semantic ?? undefined,
-              }
-            case 'TaxCalculatorStringOutputField':
-            case 'TaxCalculatorBooleanOutputField':
-            case 'TaxCalculatorDateOutputField':
-              return itemBase
-            default: {
-              const unhandled: never = itemField
-              return unhandled
-            }
-          }
-        }),
+        itemFields: field.itemFields.map(toOutputContractItemField),
       }
     case 'TaxCalculatorStringOutputField':
     case 'TaxCalculatorBooleanOutputField':

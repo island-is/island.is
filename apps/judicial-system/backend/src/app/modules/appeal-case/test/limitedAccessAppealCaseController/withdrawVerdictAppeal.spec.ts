@@ -1,4 +1,5 @@
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import {
@@ -15,7 +16,11 @@ import {
 
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
-import { queueMessagesAfterCommit } from '../../../../middleware'
+import {
+  getOrCreateTransaction,
+  queueMessagesAfterCommit,
+} from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
 import { FileService } from '../../../file'
 import {
   AppealCase,
@@ -120,6 +125,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
   let mockCaseRepositoryService: CaseRepositoryService
   let mockVerdictRepositoryService: VerdictRepositoryService
   let mockFileService: FileService
+  let mockSequelize: Sequelize
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -142,11 +148,11 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
     mockVerdictRepositoryService = verdictRepositoryService
     mockFileService = fileService
 
+    mockSequelize = sequelize
+
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
     ;(
       mockCaseRepositoryService.lockByIdForUpdate as jest.Mock
     ).mockResolvedValue(true)
@@ -158,17 +164,27 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
     givenWhenThen = async (aCase, anAppealCase, transitionDto) => {
       const then = {} as Then
 
-      await limitedAccessAppealCaseController
-        .transition(
-          caseId,
-          appealCaseId,
-          defender,
-          aCase,
-          anAppealCase,
-          transitionDto,
-        )
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      // The route is guarded by LimitedAccessCaseExistsForUpdateGuard, so the
+      // request transaction is already open - and holding a lock on this case
+      // row - by the time the handler runs. Guards do not execute in
+      // controller unit tests, so the request context and that transaction
+      // are set up here instead.
+      try {
+        await runInRequestContext(async () => {
+          await getOrCreateTransaction(mockSequelize)
+
+          then.result = await limitedAccessAppealCaseController.transition(
+            caseId,
+            appealCaseId,
+            defender,
+            aCase,
+            anAppealCase,
+            transitionDto,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }

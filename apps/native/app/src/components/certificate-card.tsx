@@ -13,7 +13,7 @@ const TableRow = styled.View`
   flex-wrap: wrap;
   padding-top: ${({ theme }) => theme.spacing[2]}px;
   padding-bottom: ${({ theme }) => theme.spacing[2]}px;
-  border-bottom-color: ${({ theme }) => theme.color.blue200};
+  border-bottom-color: ${({ theme }) => theme.tokens.border.primary};
   border-bottom-width: 1px;
 `
 const RowItem = styled.View`
@@ -107,7 +107,9 @@ export function CertificateCard({ certificate }: CertificateCardProps) {
             )
           : undefined
       }
-      titleColor={isExpired ? theme.color.red600 : undefined}
+      titleColor={
+        isExpired ? theme.tokens.feedback.error.foregroundContrast : undefined
+      }
       titleIcon={clockIcon}
       topRightValue={certificate.drugName ? certificate.atcName : undefined}
       message={certificate.drugName ?? certificate.atcName}
@@ -149,8 +151,8 @@ export function CertificateCard({ certificate }: CertificateCardProps) {
                 style={{
                   backgroundColor:
                     visibleIndex % 2 === 0
-                      ? theme.color.blue100
-                      : theme.color.white,
+                      ? theme.tokens.background.brandMinimal
+                      : theme.tokens.background.invert,
                 }}
               >
                 <RowItem>

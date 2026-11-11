@@ -100,7 +100,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.GENERAL_FISHING_LICENSE,
   name: application.general.name,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: application.general.institutionName,
   translationNamespaces:
     ApplicationConfigurations.GeneralFishingLicense.translation,

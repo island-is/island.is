@@ -179,7 +179,7 @@ export const DebtsLoader: FC<FieldBaseProps> = ({
 
   if (hasError) {
     return (
-      <Box marginTop={2}>
+      <Box marginY={2}>
         <AlertMessage
           type="error"
           title={formatMessage(messages.fetch.errorTitle)}

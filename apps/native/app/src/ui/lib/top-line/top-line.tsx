@@ -2,13 +2,10 @@ import React, { useEffect, useRef } from 'react'
 import { Animated, Platform, SafeAreaView, StyleSheet } from 'react-native'
 import styled from 'styled-components/native'
 import { isIosLiquidGlassEnabled } from '../../../utils/devices'
-import { dynamicColor } from '../../utils'
+import { token } from '../../utils'
 
 const Host = styled(Animated.View)`
-  background-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blue200,
-    dark: theme.shades.dark.shade600,
-  }))};
+  background-color: ${token((t) => t.border.primary)};
 `
 
 interface TopLineProps {

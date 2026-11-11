@@ -178,6 +178,9 @@ export const useRegulationImpacts = ({
         throw new Error('Cannot add impact: no draftId')
       }
 
+      // Saved without their diff (appendix diffing awaits a decision from the
+      // stakeholders). When that work stores or rebuilds the diffs, the
+      // possible-mismatch warning picks them up: see `getAmendingMismatches`.
       const appendixes = (impact.appendixes ?? []).map((a) => ({
         title: a.title ?? '',
         text: a.text ?? '',

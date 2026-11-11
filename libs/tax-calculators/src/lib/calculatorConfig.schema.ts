@@ -21,6 +21,17 @@ const rowUidSchema = z.string().min(1)
 export const calculatorInputFieldSizes = ['small', 'medium', 'large'] as const
 export type CalculatorInputFieldSize = typeof calculatorInputFieldSizes[number]
 
+export const calculatorNumberTypes = [
+  'currency',
+  'count',
+  'year',
+  'percentage',
+  'plain',
+] as const
+export type CalculatorNumberType = typeof calculatorNumberTypes[number]
+
+const numberTypeSchema = z.enum(calculatorNumberTypes)
+
 const inputValueFieldSchema = z.object({
   uid: rowUidSchema,
   kind: z.literal('field'),
@@ -30,6 +41,7 @@ const inputValueFieldSchema = z.object({
   optionLabelsEnabled: z.boolean().optional(),
   optionLabels: z.record(z.string(), localizedTextSchema).optional(),
   size: z.enum(calculatorInputFieldSizes),
+  numberType: numberTypeSchema.optional(),
 })
 
 const inputContentFieldSchema = z.object({
@@ -61,6 +73,7 @@ const outputItemFieldSchema = z.object({
   uid: rowUidSchema,
   key: z.string().min(1),
   label: localizedTextSchema.optional(),
+  numberType: numberTypeSchema.optional(),
 })
 
 const outputValueFieldSchema = z.object({
@@ -70,6 +83,7 @@ const outputValueFieldSchema = z.object({
   label: localizedTextSchema.optional(),
   variant: z.enum(['default', 'emphasis']).optional(),
   itemFields: z.array(outputItemFieldSchema).optional(),
+  numberType: numberTypeSchema.optional(),
 })
 
 const outputContentFieldSchema = z.object({
@@ -87,6 +101,7 @@ const outputTotalSchema = z.object({
   uid: rowUidSchema,
   key: z.string().min(1),
   label: localizedTextSchema,
+  numberType: numberTypeSchema.optional(),
 })
 
 const outputSectionSchema = z

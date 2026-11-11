@@ -111,6 +111,7 @@ export enum ApplicationTypes {
   SALARY_REPORT = 'SalaryReport',
   PAY_DEBTS = 'PayDebts',
   U2_CERTIFICATE = 'U2Certificate',
+  FJARSKIPTASTOFA_SELF_ASSESSMENT = 'FjarskiptastofaSelfAssessment',
   MACHINE_LICENSE_RENEWAL = 'MachineLicenseRenewal',
 }
 
@@ -566,6 +567,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.U2_CERTIFICATE]: {
     slug: 'u2-vottord',
     translation: ['vmst.u2c.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.FJARSKIPTASTOFA_SELF_ASSESSMENT]: {
+    slug: 'sjalfsmat-fjarskiptastofu',
+    translation: ['fjs.sa.application', 'uiForms.application'],
   },
   [ApplicationTypes.MACHINE_LICENSE_RENEWAL]: {
     slug: 'endurnyjun-vinnuvelaskirteinis',

@@ -40,6 +40,7 @@ export enum Features {
   isConfirmJobSearchEnabled = 'isConfirmJobSearchEnabled',
   isNewDrivingLicenseEnabled = 'isNewDrivingLicenseEnabled',
   isDirectorateOfEqualityApplicationsEnabled = 'isDirectorateOfEqualityApplicationsEnabled',
+  isFjarskiptastofaSelfAssessmentEnabled = 'isFjarskiptastofaSelfAssessmentEnabled',
   isConfirmJobOrIncomeEnabled = 'isConfirmJobOrIncomeEnabled',
   machineLicenseRenewal = 'isMachineLicenseRenewalEnabled',
 
@@ -222,6 +223,9 @@ export enum Features {
 
   // Primary school (guardian-facing)
   isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',
+  // Primary school key information (lykilupplýsingar). Its own switch, so key
+  // info can be held back while the rest of the primary-school page is live.
+  isServicePortalPrimarySchoolKeyInfoEnabled = 'isServicePortalPrimarySchoolKeyInfoEnabled',
   // Primary school PDF viewer modal
   isServicePortalPrimarySchoolPdfViewerEnabled = 'isServicePortalPrimarySchoolPdfViewerEnabled',
   // Switches between current and new primary-school PDF implementations in download-service

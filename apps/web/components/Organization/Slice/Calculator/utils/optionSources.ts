@@ -13,11 +13,19 @@ export interface CalculatorOption {
   value: string
 }
 
-export const yearOptions = (): CalculatorOption[] => {
-  const currentYear = new Date().getFullYear()
+const MAX_YEAR_SPAN = 100
+
+export const yearOptions = (min?: number, max?: number): CalculatorOption[] => {
+  const isYearRange =
+    min !== undefined &&
+    max !== undefined &&
+    min <= max &&
+    max - min <= MAX_YEAR_SPAN
+  const first = isYearRange ? min : EARLIEST_INCOME_YEAR
+  const last = isYearRange ? max : new Date().getFullYear()
   const years: CalculatorOption[] = []
 
-  for (let year = currentYear; year >= EARLIEST_INCOME_YEAR; year--) {
+  for (let year = last; year >= first; year--) {
     years.push({ label: String(year), value: String(year) })
   }
 

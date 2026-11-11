@@ -160,7 +160,7 @@ const CaseFileTable: FC<Props> = ({
                   </Text>
                   <Text variant="small">
                     {file.category === CaseFileCategory.COURT_CASE_FILE
-                      ? 'Dómari leggur fram'
+                      ? 'Dómari lagði fram'
                       : `${getRoleTitleFromCaseFileCategory(
                           file.category ?? null,
                         )} ${initials ? `(${initials})` : ''} ${
