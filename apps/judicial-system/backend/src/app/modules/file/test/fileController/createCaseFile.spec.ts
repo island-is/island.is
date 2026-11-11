@@ -18,7 +18,8 @@ import {
 
 import { createTestingFileModule } from '../createTestingFileModule'
 
-import { randomDate } from '../../../../test'
+import { getOrCreateTransaction } from '../../../../middleware'
+import { randomDate, runInRequestContext } from '../../../../test'
 import { Case, CaseFile, CaseFileRepositoryService } from '../../../repository'
 import { CreateFileDto } from '../../dto/createFile.dto'
 
@@ -38,6 +39,7 @@ describe('FileController - Create case file', () => {
 
   let mockQueuedMessages: Message[]
   let mockCaseFileRepositoryService: CaseFileRepositoryService
+  let mockTransaction: jest.Mock
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
   let createCaseFileAs: (
@@ -58,12 +60,15 @@ describe('FileController - Create case file', () => {
     mockQueuedMessages = queuedMessagesAfterCommit
     mockCaseFileRepositoryService = caseFileRepositoryService
 
-    const mockTransaction = sequelize.transaction as jest.Mock
+    mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
+    // The route is guarded by CaseExistsForUpdateGuard, so the request
+    // transaction is already open - and holding a lock on this case row - by
+    // the time the handler runs. Guards do not execute in controller unit
+    // tests, so the request context and that transaction are set up here
+    // instead.
     createCaseFileAs = async (
       caseId: string,
       createCaseFile: CreateFileDto,
@@ -72,10 +77,20 @@ describe('FileController - Create case file', () => {
     ): Promise<Then> => {
       const then = {} as Then
 
-      await fileController
-        .createCaseFile(caseId, actingUser, theCase, createCaseFile)
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      try {
+        then.result = await runInRequestContext(async () => {
+          await getOrCreateTransaction(sequelize)
+
+          return fileController.createCaseFile(
+            caseId,
+            actingUser,
+            theCase,
+            createCaseFile,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }
@@ -83,6 +98,12 @@ describe('FileController - Create case file', () => {
     givenWhenThen = (caseId, createCaseFile, theCase) =>
       createCaseFileAs(caseId, createCaseFile, theCase, user)
   })
+
+  // Once, by the stand-in for the guard above. A second call would be the
+  // handler opening a transaction of its own, which would block on the
+  // guard's row lock and deadlock the request.
+  const expectTheGuardsTransactionOnly = () =>
+    expect(mockTransaction).toHaveBeenCalledTimes(1)
 
   describe.each([...restrictionCases, ...investigationCases])(
     'case file created for %s case',
@@ -122,6 +143,7 @@ describe('FileController - Create case file', () => {
       })
 
       it('should create a case file', () => {
+        expectTheGuardsTransactionOnly()
         expect(mockCaseFileRepositoryService.create).toHaveBeenCalledWith(
           caseId,
           {
@@ -177,6 +199,7 @@ describe('FileController - Create case file', () => {
     })
 
     it('should create a case file', () => {
+      expectTheGuardsTransactionOnly()
       expect(mockCaseFileRepositoryService.create).toHaveBeenCalledWith(
         caseId,
         {
