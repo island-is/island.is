@@ -270,11 +270,16 @@ describe('mapAgent', () => {
     const registeredAt = new Date('2026-03-04T10:11:12.000Z')
 
     expect(
-      mapAgent(contact({ createdBy: {
-        kind: 'guardian',
-        displayName: 'Gervimaður Noregur',
-        at: registeredAt,
-      } }), LocaleEnum.Is),
+      mapAgent(
+        contact({
+          createdBy: {
+            kind: 'guardian',
+            displayName: 'Gervimaður Noregur',
+            at: registeredAt,
+          },
+        }),
+        LocaleEnum.Is,
+      ),
     ).toEqual({
       id: 'agent-1',
       person: { nationalId: '0101302989', name: 'Gervimaður Afríka' },

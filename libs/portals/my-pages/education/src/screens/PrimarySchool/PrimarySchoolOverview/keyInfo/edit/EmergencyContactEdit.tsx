@@ -155,11 +155,7 @@ export const EmergencyContactEdit = () => {
               >
                 {formatMessage(kim.cancel)}
               </Button>
-              <Button
-                loading={saving}
-                disabled={!isDirty}
-                onClick={handleSave}
-              >
+              <Button loading={saving} disabled={!isDirty} onClick={handleSave}>
                 {formatMessage(kim.confirm)}
               </Button>
             </Box>

@@ -274,7 +274,11 @@ export const LanguageProfileEdit = () => {
                 columnGap={1}
                 marginBottom={1}
               >
-                <Text id={interpreterLabelId} variant="h5" fontWeight="semiBold">
+                <Text
+                  id={interpreterLabelId}
+                  variant="h5"
+                  fontWeight="semiBold"
+                >
                   {formatMessage(kim.interpreter)}
                 </Text>
                 <Tooltip text={formatMessage(kim.interpreterInfo)} />
@@ -309,7 +313,11 @@ export const LanguageProfileEdit = () => {
                 columnGap={1}
                 marginBottom={1}
               >
-                <Text id={signLanguageLabelId} variant="h5" fontWeight="semiBold">
+                <Text
+                  id={signLanguageLabelId}
+                  variant="h5"
+                  fontWeight="semiBold"
+                >
                   {formatMessage(kim.signLanguage)}
                 </Text>
                 <Tooltip text={formatMessage(kim.signLanguageInfo)} />

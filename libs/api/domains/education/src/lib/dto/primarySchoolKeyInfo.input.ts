@@ -1,10 +1,5 @@
 import { Field, ID, InputType } from '@nestjs/graphql'
-import {
-  IsArray,
-  IsBoolean,
-  IsOptional,
-  IsString,
-} from 'class-validator'
+import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator'
 
 /** Every key-info write is addressed by the routed nemendagrunnur student id,
  * which is also the frigg child id the endpoints take (contract v0.3 §4.3), so

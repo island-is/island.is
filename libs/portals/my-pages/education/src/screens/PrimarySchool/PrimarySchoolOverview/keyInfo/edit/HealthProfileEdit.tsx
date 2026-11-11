@@ -412,7 +412,12 @@ export const HealthProfileEdit = () => {
               {hasAnyAllergy && (
                 <Box>
                   <Stack space={2}>
-                    <Text id={epipenLabelId} variant="h5" fontWeight="semiBold" marginBottom={0}>
+                    <Text
+                      id={epipenLabelId}
+                      variant="h5"
+                      fontWeight="semiBold"
+                      marginBottom={0}
+                    >
                       {formatMessage(kim.epipen)}
                     </Text>
                     <Box
@@ -442,7 +447,12 @@ export const HealthProfileEdit = () => {
               )}
               <Box>
                 <Stack space={2}>
-                  <Text id={medicalDiagnosesLabelId} variant="h5" fontWeight="semiBold" marginBottom={0}>
+                  <Text
+                    id={medicalDiagnosesLabelId}
+                    variant="h5"
+                    fontWeight="semiBold"
+                    marginBottom={0}
+                  >
                     {formatMessage(kim.medicalDiagnoses)}
                   </Text>
                   <Box
@@ -471,7 +481,12 @@ export const HealthProfileEdit = () => {
               </Box>
               <Box>
                 <Stack space={2}>
-                  <Text id={medicationAssistanceLabelId} variant="h5" fontWeight="semiBold" marginBottom={0}>
+                  <Text
+                    id={medicationAssistanceLabelId}
+                    variant="h5"
+                    fontWeight="semiBold"
+                    marginBottom={0}
+                  >
                     {formatMessage(kim.medicationAssistance)}
                   </Text>
                   <Box
