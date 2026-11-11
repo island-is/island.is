@@ -49,7 +49,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD,
   name: e.application.applicationName,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: e.application.institutionName,
   featureFlag: Features.europeanHealthInsuranceCard,
   translationNamespaces:

@@ -3,11 +3,11 @@ import { Animated, Image, LayoutAnimation, Pressable, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import plus from '../../assets/icons/plus.png'
 import minus from '../../assets/icons/minus.png'
-import { dynamicColor } from '../../utils'
+import { token } from '../../utils'
 import { Typography } from '../typography/typography'
 
 const Host = styled.View<{ isOpen: boolean }>`
-  background-color: ${dynamicColor('background')};
+  background-color: ${token((t) => t.background.invert)};
   overflow: hidden;
   margin-bottom: ${({ theme }) => theme.spacing[1]}px;
   margin-top: ${({ theme }) => theme.spacing[1]}px;
@@ -26,7 +26,7 @@ const Icon = styled(Animated.View)`
 const PlusMinus = styled(Animated.View)`
   height: ${({ theme }) => theme.spacing[3]}px;
   width: ${({ theme }) => theme.spacing[3]}px;
-  background-color: ${({ theme }) => theme.color.blue100};
+  background-color: ${({ theme }) => theme.tokens.background.brandMinimal};
   border-radius: ${({ theme }) => theme.border.radius.full};
   justify-content: center;
   align-items: center;

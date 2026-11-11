@@ -21,6 +21,13 @@ export const pruneAfterDays = (Days: number) =>
     whenToPrune: Days * 24 * 3600 * 1000,
   })
 
+export const pruneAfterHours = (hours: number) =>
+  defineStateLifeCycle({
+    shouldBeListed: true,
+    shouldBePruned: true,
+    whenToPrune: hours * 3600 * 1000,
+  })
+
 export const DefaultStateLifeCycle = pruneAfterDays(30)
 
 export const defaultLifecycleWithPruneMessage = (

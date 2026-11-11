@@ -50,7 +50,7 @@ export default defineConfig({
       enums: true,
       name: '@hey-api/typescript',
     },
-    { dates: true, name: '@hey-api/transformers' },
+    { bigInt: false, dates: true, name: '@hey-api/transformers' },
     { name: '@hey-api/sdk', transformer: true },
     { compatibilityVersion: 3, name: 'zod' },
   ],

@@ -115,7 +115,10 @@ const template: ApplicationTemplate<
           name: 'Completed form',
           progress: 1,
           status: FormModes.COMPLETED,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            ...DefaultStateLifeCycle,
+            hideFromApplicationSystemOverview: true,
+          },
           roles: [
             {
               id: Roles.APPLICANT,

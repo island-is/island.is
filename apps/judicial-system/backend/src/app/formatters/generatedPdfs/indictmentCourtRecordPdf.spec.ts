@@ -70,7 +70,7 @@ describe('getFiledBy', () => {
       ],
     )
 
-    expect(result).toBe('Dómari leggur fram:')
+    expect(result).toBe('Dómari lagði fram:')
   })
 })
 

@@ -113,7 +113,7 @@ import { FeatureFlagService } from '@island.is/nest/feature-flags'
 })
 @ApiBearerAuth()
 @Controller()
-@CodeOwner(CodeOwners.NordaApplications)
+@CodeOwner(CodeOwners.ApplicationsCore)
 export class ApplicationController {
   constructor(
     private readonly applicationService: ApplicationService,

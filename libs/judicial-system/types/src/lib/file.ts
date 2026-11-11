@@ -166,4 +166,5 @@ export enum HashAlgorithm {
 export enum PoliceFileTypeCode {
   SUBPOENA = 'BRTNG',
   VERDICT = 'BRTNG_DOMUR',
+  APPEAL_SUMMONS = 'BRTNG_AFRYJUN',
 }

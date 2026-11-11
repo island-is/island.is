@@ -23,6 +23,10 @@ describe('toInputContractField', () => {
       type: TaxCalculatorInputFieldType.Number,
       required: true,
       semantic: null,
+      min: null,
+      max: null,
+      integer: false,
+      defaultValue: null,
     }
 
     const normalized = toInputContractField(field)
@@ -38,11 +42,36 @@ describe('toInputContractField', () => {
       type: TaxCalculatorInputFieldType.Number,
       required: true,
       semantic: TaxCalculatorInputFieldSemantic.Currency,
+      min: null,
+      max: null,
+      integer: false,
+      defaultValue: null,
     }
 
     expect(toInputContractField(field).semantic).toBe(
       TaxCalculatorInputFieldSemantic.Currency,
     )
+  })
+
+  it('maps a number field bounds, integer flag and default value', () => {
+    const field: RawInputField = {
+      __typename: 'TaxCalculatorNumberInputField',
+      key: 'year',
+      type: TaxCalculatorInputFieldType.Number,
+      required: true,
+      semantic: TaxCalculatorInputFieldSemantic.Year,
+      min: 2019,
+      max: 2026,
+      integer: true,
+      defaultValue: 2026,
+    }
+
+    expect(toInputContractField(field)).toMatchObject({
+      min: 2019,
+      max: 2026,
+      integer: true,
+      defaultValue: 2026,
+    })
   })
 
   it('collapses select options to plain strings', () => {
@@ -156,6 +185,34 @@ describe('toOutputContractField', () => {
           semantic: TaxCalculatorOutputFieldSemantic.Currency,
         },
         { key: 'note', type: TaxCalculatorOutputFieldType.String },
+      ],
+    })
+  })
+
+  it('normalizes an object field and its number item keeping the semantic', () => {
+    const field: RawOutputField = {
+      __typename: 'TaxCalculatorObjectOutputField',
+      key: 'quarters',
+      type: TaxCalculatorOutputFieldType.Object,
+      itemFields: [
+        {
+          __typename: 'TaxCalculatorNumberOutputField',
+          key: 'share',
+          type: TaxCalculatorOutputFieldType.Number,
+          semantic: TaxCalculatorOutputFieldSemantic.Percentage,
+        },
+      ],
+    }
+
+    expect(toOutputContractField(field)).toEqual({
+      key: 'quarters',
+      type: TaxCalculatorOutputFieldType.Object,
+      itemFields: [
+        {
+          key: 'share',
+          type: TaxCalculatorOutputFieldType.Number,
+          semantic: TaxCalculatorOutputFieldSemantic.Percentage,
+        },
       ],
     })
   })

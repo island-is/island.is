@@ -40,7 +40,7 @@ const formatFiledBy = (submitterText: string, submittedBy?: string | null) => {
   }
 
   if (submitterText === 'Dómari') {
-    return 'Dómari leggur fram:'
+    return 'Dómari lagði fram:'
   }
 
   return [submitterText, submittedBy, 'lagði fram:'].filter(Boolean).join(' ')

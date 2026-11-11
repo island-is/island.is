@@ -12,6 +12,10 @@ export interface CalculatorField {
   type: CalculatorFieldType
   required: boolean
   semantic?: CalculatorFieldSemantic
+  integer?: boolean
+  minimum?: number
+  maximum?: number
+  defaultValue?: number
   options?: readonly CalculatorFieldOption[]
   dependsOn?: CalculatorFieldDependency
 }

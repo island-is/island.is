@@ -8,6 +8,7 @@ import {
   COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
 } from '@island.is/judicial-system/consts'
+import { sortAppealCourtSessionsByDate } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -75,7 +76,12 @@ const VerdictAppealStatus = () => {
     isDeletingAppealCourtSession,
   } = useAppealCourtSession()
 
-  const bookedSessions = verdictAppealCase?.courtSessions ?? []
+  // Earliest session first, like a calendar, the way the parties' agenda card
+  // reads too, and sorted here so a session the court books or moves lands by
+  // its date.
+  const bookedSessions = sortAppealCourtSessionsByDate(
+    verdictAppealCase?.courtSessions,
+  )
 
   const [chosenStatus, setChosenStatus] = useState<Status>()
   const [courtSession, setCourtSession] = useState<AppealCourtSessionDraft>({})
@@ -171,8 +177,7 @@ const VerdictAppealStatus = () => {
     }
 
     // Written into the working case so the list is right when the court
-    // comes back, without a refetch. Placed first to match the backend,
-    // which hands the sessions over most recently booked first.
+    // comes back, without a refetch.
     setWorkingCase((previous) =>
       previous.verdictAppealCase
         ? {
@@ -180,8 +185,8 @@ const VerdictAppealStatus = () => {
             verdictAppealCase: {
               ...previous.verdictAppealCase,
               courtSessions: [
-                booked,
                 ...(previous.verdictAppealCase.courtSessions ?? []),
+                booked,
               ],
             },
           }

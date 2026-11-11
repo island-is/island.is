@@ -23,29 +23,51 @@ describe('CalculatorsClientService.getCalculator', () => {
       .getCalculator('withholdingTax')
       .outputFields.map((field) => field.name)
 
-    expect(names).toContain('taxBrackets')
-    expect(names.indexOf('payMonth')).toBeLessThan(names.indexOf('payrollTax'))
+    expect(names).toContain('skattthrep')
+    expect(names.indexOf('lifeyrisjodurProsenta')).toBeLessThan(
+      names.indexOf('lifeyrissjodur'),
+    )
     expect(names).toEqual(codeUnitSorted(names))
   })
 
   it('sorts array itemFields by name', () => {
-    const taxBrackets = service
+    const skattthrep = service
       .getCalculator('withholdingTax')
-      .outputFields.find((field) => field.name === 'taxBrackets')
+      .outputFields.find((field) => field.name === 'skattthrep')
 
-    expect(taxBrackets?.kind).toBe('array')
+    expect(skattthrep?.kind).toBe('array')
 
     const names =
-      taxBrackets?.kind === 'array'
-        ? taxBrackets.itemFields.map((field) => field.name)
+      skattthrep?.kind === 'array'
+        ? skattthrep.itemFields.map((field) => field.name)
         : []
 
     expect(names).toEqual(codeUnitSorted(names))
     expect(names).toEqual([
-      'bracketNumber',
-      'calculatedWithholding',
-      'lowerBound',
-      'withholdingRate',
+      'nedriMork',
+      'numerThreps',
+      'reiknudStadgreidsla',
+      'stadgreidsluhlutfall',
+    ])
+  })
+
+  it('derives object outputs with sorted itemFields', () => {
+    const fyrraTimabil = service
+      .getCalculator('vehicleTax')
+      .outputFields.find((field) => field.name === 'fyrraTimabil')
+
+    expect(fyrraTimabil?.kind).toBe('object')
+    expect(
+      fyrraTimabil?.kind === 'object'
+        ? fyrraTimabil.itemFields.map((field) => field.name)
+        : [],
+    ).toEqual([
+      'bifreidagjald',
+      'bifreidagjaldAlls',
+      'dagar',
+      'lokTimabils',
+      'upphafTimabils',
+      'urvinnslugjald',
     ])
   })
 
