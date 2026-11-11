@@ -255,6 +255,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/aosh/training-license-on-a-work-machine'
     ),
+  [ApplicationTypes.MACHINE_LICENSE_CARD_REISSUE]: () =>
+    import(
+      '@island.is/application/templates/aosh/machine-license-card-reissue'
+    ),
   [ApplicationTypes.SECONDARY_SCHOOL]: () =>
     import('@island.is/application/templates/secondary-school'),
   [ApplicationTypes.UNEMPLOYMENT_BENEFITS]: () =>
