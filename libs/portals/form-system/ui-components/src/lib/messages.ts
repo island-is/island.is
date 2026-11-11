@@ -1366,6 +1366,11 @@ export const m = defineMessages({
     description:
       'This form is in development and has not been published. Submissions will not be processed.',
   },
+  previewApplicationBanner: {
+    id: 'form.system:preview-application-banner',
+    defaultMessage: 'Þetta er forskoðun. Engin tenging er við vefþjónustur.',
+    description: 'This is a preview. We do not connect to any web services.',
+  },
   applicationLifetime: {
     id: 'form.system:application-lifetime',
     defaultMessage: 'Líftími umsókna',
