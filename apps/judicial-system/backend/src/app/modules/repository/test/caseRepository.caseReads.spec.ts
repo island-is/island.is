@@ -105,6 +105,24 @@ describe('CaseRepositoryService - case reads', () => {
       ).toBeDefined()
     })
 
+    // MergedCaseExistsGuard swaps request.case onto a merged child; defence
+    // visibility then reads defendant.policeCaseNumbers. Those come from this
+    // include — without it the filter treats assignments as empty and opens
+    // every police case number on the merged case.
+    it('should load police case number assignments for merged defendants', () => {
+      const mergedDefendants = included(
+        included(findOneOptions().include, 'mergedCases')?.include,
+        'defendants',
+      )
+
+      expect(
+        included(
+          mergedDefendants?.include,
+          'caseDefendantPoliceCaseNumbers',
+        ),
+      ).toBeDefined()
+    })
+
     // The statement deadline route reads the party's current deadline off the
     // verdict appeal this load carries. Without the include every call would be
     // a first deadline, and the second one for a party would die on the

@@ -487,6 +487,16 @@ export const caseInclude: Includeable[] = [
             order: [['created', 'DESC']],
             separate: true,
           },
+          // Needed when MergedCaseExistsGuard swaps request.case: defence
+          // visibility filters use defendant.policeCaseNumbers (virtual over
+          // these rows). Without them the filter sees an empty assignment
+          // list and permits every police case number on the merged case.
+          {
+            model: CaseDefendantPoliceCaseNumber,
+            as: 'caseDefendantPoliceCaseNumbers',
+            required: false,
+            separate: true,
+          },
         ],
         separate: true,
       },
