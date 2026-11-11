@@ -4,12 +4,11 @@ import { AppState, Keyboard, Platform } from 'react-native'
 
 import {
   authStore,
+  isAppLockEnabled,
   isLockScreenSuppressed,
   useAuthStore,
 } from '@/stores/auth-store'
-import { isOnboarded } from '@/utils/onboarding'
 import { useIntl } from 'react-intl'
-import { config } from '../../config'
 import {
   modalScreenOptions,
   tabScreenOptions,
@@ -23,6 +22,7 @@ export default function AuthLayout() {
   const intl = useIntl()
   const router = useRouter()
   const authorizeResult = useAuthStore((s) => s.authorizeResult)
+  const nativeUser = useAuthStore((s) => s.nativeUser)
   const appStateRef = useRef(AppState.currentState)
 
   const pushLockScreen = useCallback(() => {
@@ -44,7 +44,7 @@ export default function AuthLayout() {
   // the auth layout mounts. Trust that stamp — pushing only when it's set
   // means post-login mounts (no stamp) don't re-lock the freshly-authed user.
   useEffect(() => {
-    if (!isOnboarded() || config.isTestingApp) {
+    if (!isAppLockEnabled()) {
       return
     }
     if (authStore.getState().lockScreenActivatedAt === undefined) {
@@ -61,8 +61,7 @@ export default function AuthLayout() {
         prev.lockScreenComponentId &&
         !state.lockScreenComponentId &&
         state.lockScreenActivatedAt !== undefined &&
-        isOnboarded() &&
-        !config.isTestingApp
+        isAppLockEnabled()
       ) {
         pushLockScreen()
       }
@@ -74,7 +73,7 @@ export default function AuthLayout() {
       const previousAppState = appStateRef.current
       appStateRef.current = nextAppState
 
-      if (!isOnboarded() || config.isTestingApp) {
+      if (!isAppLockEnabled()) {
         return
       }
       if (isLockScreenSuppressed()) return
@@ -124,7 +123,8 @@ export default function AuthLayout() {
     return () => subscription.remove()
   }, [pushLockScreen])
 
-  if (!authorizeResult) {
+  // A locked native login has no tokens but stays in, behind the lock.
+  if (!authorizeResult && !nativeUser) {
     return <Redirect href="/login" />
   }
 

@@ -14,10 +14,10 @@ import { ApolloProvider } from '@apollo/client'
 import {
   authStore,
   checkIsAuthenticated,
+  isAppLockEnabled,
   readAuthorizeResult,
 } from '../stores/auth-store'
-import { getNextOnboardingStep, isOnboarded } from '../utils/onboarding'
-import { config } from '../config'
+import { getNextOnboardingStep } from '../utils/onboarding'
 import type { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { useFonts } from '@expo-google-fonts/ibm-plex-sans/useFonts'
 import { IBMPlexSans_100Thin } from '@expo-google-fonts/ibm-plex-sans/100Thin'
@@ -96,7 +96,7 @@ export default function RootLayout() {
           // lock on cold start. Past grace forces auth (PIN/biometric) rather
           // than auto-unlock. Post-login mounts don't hit this path so the
           // stamp stays undefined → no lock right after login.
-          if (isOnboarded() && !config.isTestingApp) {
+          if (isAppLockEnabled()) {
             authStore.setState({
               lockScreenActivatedAt: Date.now() - 24 * 60 * 60 * 1000,
               biometricAutoPromptedForCurrentLock: false,
@@ -127,9 +127,9 @@ export default function RootLayout() {
 
     // Defer splash hide until the lock mounts (avoids tab flash); 2s fallback
     // so the splash never hangs.
-    const { authorizeResult } = authStore.getState()
+    const { authorizeResult, nativeUser } = authStore.getState()
     const willPushLockScreen =
-      !!authorizeResult && isOnboarded() && !config.isTestingApp
+      (!!authorizeResult || !!nativeUser) && isAppLockEnabled()
 
     if (!willPushLockScreen) {
       SplashScreen.hideAsync().catch(() => {})

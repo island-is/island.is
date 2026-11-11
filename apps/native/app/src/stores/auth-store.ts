@@ -8,8 +8,9 @@ import {
   revoke,
 } from 'react-native-app-auth'
 import Keychain from 'react-native-keychain'
+import { deleteToken } from '@react-native-firebase/messaging'
 
-import { bundleId, getClientId, getConfig } from '../config'
+import { bundleId, config, getClientId, getConfig } from '../config'
 import { LOCK_SCREEN_SUPPRESS_MAX_MS } from '../constants/auth'
 import { getIntl } from '../components/providers/locale-provider'
 import { getApolloClientAsync } from '../graphql/client-instance'
@@ -26,13 +27,16 @@ import {
   DeletePasskeyMutationVariables,
 } from '../graphql/types/schema'
 import { deduplicatePromise } from '../utils/deduplicatePromise'
+import { isOnboarded } from '../utils/onboarding'
 import { clearWidgetData } from '../lib/widget-sync'
+import { app } from '../lib/firebase'
 import { setAuthStoreRef } from './auth-store-ref'
 import { create, useStore } from 'zustand'
 import { clearAllStorages } from './mmkv'
 import { router } from 'expo-router'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
+const KEYCHAIN_NATIVE_USER_KEY = `@islandis_${bundleId}_native`
 const INVALID_REFRESH_TOKEN_ERROR = 'invalid_grant'
 const UNAUTHORIZED_USER_INFO = 'Got 401 when fetching user info'
 
@@ -52,6 +56,12 @@ type KeychainAuthorizeCredentials = Awaited<
 interface AuthStore {
   authorizeResult: AuthorizeResult | RefreshResult | undefined
   userInfo: UserInfo | undefined
+  /**
+   * Who is signed in with native login. Its tokens are only kept in memory,
+   * so after a lock or a restart it's signed in but locked: no
+   * authorizeResult until unlockNative().
+   */
+  nativeUser: UserInfo | undefined
   lockScreenActivatedAt?: number
   lockScreenComponentId: string | undefined
   // Synchronously set when a push is dispatched, cleared when the lock route
@@ -71,8 +81,12 @@ interface AuthStore {
   ): Promise<UserInfo>
   refresh(skipLogout?: boolean): Promise<void | null>
   login(): Promise<boolean>
-  /** Stores a native login's tokens, as login() does the browser login's. */
-  loginNative(tokens: IasTokens): Promise<void>
+  /** Signs in with a native login's tokens, as login() does the browser's. */
+  loginNative(tokens: IasTokens): Promise<UserInfo>
+  /** Revokes and forgets a native login's tokens; stays signed in. */
+  lockNative(): Promise<void>
+  /** Tokens from a biometric or electronic ID unlock. */
+  unlockNative(tokens: IasTokens): void
   logout(skipPasskeyDeletion?: boolean): Promise<boolean>
 }
 
@@ -155,6 +169,7 @@ const isLogoutError = (e: Error & { code?: string }) => {
 export const authStore = create<AuthStore>((set, get) => ({
   authorizeResult: undefined,
   userInfo: undefined,
+  nativeUser: undefined,
   lockScreenActivatedAt: undefined,
   lockScreenComponentId: undefined,
   lockScreenPushPending: false,
@@ -231,7 +246,10 @@ export const authStore = create<AuthStore>((set, get) => ({
       ...newAuthorizeResult,
     }
 
-    await storeAuthorizeResult(authorizeResult)
+    // A native login's tokens stay in memory: a restart needs an unlock.
+    if (!isNativeLogin(authorizeResult)) {
+      await storeAuthorizeResult(authorizeResult)
+    }
     set({ authorizeResult })
   }),
   async login() {
@@ -255,7 +273,38 @@ export const authStore = create<AuthStore>((set, get) => ({
     return false
   },
   async loginNative(tokens) {
-    await storeAuthorizeResult(tokens)
+    set({ authorizeResult: tokens })
+    const userInfo = await get().fetchUserInfo(true)
+    if (!userInfo) {
+      throw new Error('No user info for the native login')
+    }
+    await Keychain.setGenericPassword(
+      KEYCHAIN_NATIVE_USER_KEY,
+      JSON.stringify(userInfo),
+      {
+        service: KEYCHAIN_NATIVE_USER_KEY,
+        accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+      },
+    )
+    // There's no PIN with native login. The flag still tells a fresh install
+    // apart from one that was logged in (see readAuthorizeResult).
+    preferencesStore.setState({ hasOnboardedPinCode: true })
+    set({ nativeUser: userInfo })
+    return userInfo
+  },
+  async lockNative() {
+    const { authorizeResult } = get()
+    if (!isNativeLogin(authorizeResult)) {
+      return
+    }
+    set({ authorizeResult: undefined })
+    if (authorizeResult?.refreshToken) {
+      await getIasClient()
+        .revoke(authorizeResult.refreshToken)
+        .catch((error) => console.log('Failed to revoke on lock', error))
+    }
+  },
+  unlockNative(tokens) {
     set({ authorizeResult: tokens })
   },
   async logout(skipPasskeyDeletion = false) {
@@ -265,26 +314,33 @@ export const authStore = create<AuthStore>((set, get) => ({
     // Clear widgets
     clearWidgetData()
 
-    // Clear push token if exists
+    // Clear push token if exists. Logging out from the lock there are no
+    // tokens to tell the server with, so the token is also invalidated on the
+    // device: the server's copy stops working, and the next login gets a new
+    // one.
     const pushToken = notificationsStore.getState().pushToken
-    if (pushToken) {
+    if (pushToken && get().authorizeResult) {
       void notificationsStore.getState().deletePushToken(pushToken)
     }
+    deleteToken(app.messaging()).catch((error) =>
+      console.log('Failed to delete the push token', error),
+    )
     notificationsStore.getState().reset()
 
-    // Clear passkey if exists, can't delete passkeys if no auth token
-    if (!skipPasskeyDeletion) {
+    // Clear passkey if exists, can't delete passkeys if no auth token. A
+    // locked native login has none: its request would wait for an unlock.
+    if (!skipPasskeyDeletion && get().authorizeResult) {
       const userNationalId = get().userInfo?.nationalId
       await clearPasskey(userNationalId)
     }
 
     const appAuthConfig = getAppAuthConfig()
-    const { authorizeResult } = get()
+    const { authorizeResult, nativeUser } = get()
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const tokenToRevoke = authorizeResult?.accessToken
     try {
-      if (isNativeLogin(authorizeResult)) {
-        // Ends the app login on IAS, not just this session.
+      if (nativeUser || isNativeLogin(authorizeResult)) {
+        // Ends the app login on IAS, not just this session. Works locked too.
         await getIasClient().logout(authorizeResult?.refreshToken ?? undefined)
       } else if (tokenToRevoke) {
         await revoke(appAuthConfig, {
@@ -303,11 +359,13 @@ export const authStore = create<AuthStore>((set, get) => ({
     const client = await getApolloClientAsync()
     await client.clearStore()
     await Keychain.resetGenericPassword({ service: KEYCHAIN_AUTH_KEY })
+    await Keychain.resetGenericPassword({ service: KEYCHAIN_NATIVE_USER_KEY })
     set(
       (state) => ({
         ...state,
         authorizeResult: undefined,
         userInfo: undefined,
+        nativeUser: undefined,
         lockScreenActivatedAt: undefined,
       }),
       true,
@@ -350,6 +408,18 @@ export function isLockScreenActive() {
   return authStore.getState().lockScreenActivatedAt !== undefined
 }
 
+/**
+ * Whether the app locks. A native login always does, even mid-onboarding:
+ * only an unlock gets its tokens back. A browser login once onboarded,
+ * except in the testing app.
+ */
+export function isAppLockEnabled() {
+  if (authStore.getState().nativeUser) {
+    return true
+  }
+  return isOnboarded() && !config.isTestingApp
+}
+
 export async function readAuthorizeResult(): Promise<void> {
   const { authorizeResult } = authStore.getState()
 
@@ -361,6 +431,10 @@ export async function readAuthorizeResult(): Promise<void> {
   // Attempt to restore the last known authorization data from the secure keychain.
   const keychainResult = await readStoredAuthorizeCredentials()
   if (!keychainResult) {
+    if (await restoreNativeUser()) {
+      return
+    }
+
     // Prefetch auth configuration on Android (non-blocking optimization) once we know we don't have an authorize result
     void prefetchAuthConfig()
 
@@ -399,6 +473,36 @@ async function readStoredAuthorizeCredentials(): Promise<KeychainAuthorizeCreden
   }
 }
 
+/**
+ * A native login keeps only who is signed in, and starts locked. Returns
+ * false when there's no native login.
+ */
+async function restoreNativeUser(): Promise<boolean> {
+  let nativeUser: UserInfo
+  try {
+    const stored = await Keychain.getGenericPassword({
+      service: KEYCHAIN_NATIVE_USER_KEY,
+    })
+    if (!stored) {
+      return false
+    }
+    nativeUser = JSON.parse(stored.password) as UserInfo
+  } catch (err) {
+    console.log('Unable to read the native login: ', err)
+    return false
+  }
+  // Locked, so userinfo can't be fetched: the stored copy is the same data.
+  authStore.setState({ nativeUser, userInfo: nativeUser })
+
+  // The same fresh install check as for a browser login.
+  const hasOnboardedPinCode =
+    preferencesStore.getState().hasOnboardedPinCode ?? false
+  if (!hasOnboardedPinCode && Platform.OS === 'ios') {
+    await forceLogoutAfterFreshInstall()
+  }
+  return true
+}
+
 async function forceLogoutAfterFreshInstall(): Promise<void> {
   try {
     await authStore.getState().logout(true)
@@ -424,10 +528,12 @@ function parseAuthorizeResult(
 export async function checkIsAuthenticated() {
   const intl = getIntl()
   const appAuthConfig = getAppAuthConfig()
-  const { authorizeResult, fetchUserInfo, logout } = authStore.getState()
+  const { authorizeResult, nativeUser, fetchUserInfo, logout } =
+    authStore.getState()
 
   if (!authorizeResult) {
-    return false
+    // A locked native login: the lock screen gets its tokens.
+    return !!nativeUser
   }
 
   if ('scopes' in authorizeResult) {

@@ -7,6 +7,7 @@ import { useRouter } from 'expo-router'
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
+  Alert,
   AppState,
   BackHandler,
   Image,
@@ -36,7 +37,9 @@ import {
   usePreferencesStore,
 } from '@/stores/preferences-store'
 import { useUiStore } from '@/stores/ui-store'
-import { dynamicColor, font } from '@/ui'
+import { Button, dynamicColor, font } from '@/ui'
+import { useBiometricType as useBiometricLabel } from '@/hooks/use-biometric-type'
+import { useNativeUnlock } from '@/hooks/use-native-unlock'
 import {
   ensureDeviceUnlockCanary,
   isDeviceUnlocked,
@@ -99,6 +102,7 @@ export default function AppLockScreen() {
   )
 
   const logout = useAuthStore(({ logout }) => logout)
+  const nativeUser = useAuthStore(({ nativeUser }) => nativeUser)
   const biometricType = useBiometricType()
   const intl = useIntl()
   const { openBrowser } = useBrowser()
@@ -170,6 +174,20 @@ export default function AppLockScreen() {
     clearPendingDeepLink()
     router.replace('/login')
   }
+
+  const nativeUnlock = useNativeUnlock({
+    onUnlocked: unlockApp,
+    onAppLoginGone() {
+      Alert.alert(
+        intl.formatMessage({ id: 'login.expiredTitle' }),
+        intl.formatMessage({ id: 'login.expiredMessage' }),
+      )
+      void handleLogout()
+    },
+  })
+  // The AppState effect below runs once; it needs the latest callbacks.
+  const nativeUnlockRef = useRef(nativeUnlock)
+  nativeUnlockRef.current = nativeUnlock
 
   const validatePin = async (pin: string) => {
     try {
@@ -272,17 +290,30 @@ export default function AppLockScreen() {
         return
       }
 
+      // A native login without tokens (after a restart) can't skip the lock.
+      const { nativeUser, authorizeResult } = authStore.getState()
       const elapsed = Date.now() - lockScreenActivatedAt
-      if (elapsed < appLockTimeout) {
+      if (elapsed < appLockTimeout && (!nativeUser || authorizeResult)) {
         unlockApp()
         return
+      }
+
+      if (nativeUser) {
+        // Past the grace period a native login's tokens go: the unlock gets
+        // new ones from IAS.
+        await authStore.getState().lockNative()
+        if (unmounted) {
+          return
+        }
       }
 
       if (biometricAutoPromptedForCurrentLock) {
         return
       }
       authStore.setState({ biometricAutoPromptedForCurrentLock: true })
-      void authenticateWithBiometrics()
+      void (nativeUser
+        ? nativeUnlockRef.current.unlockWithBiometrics()
+        : authenticateWithBiometrics())
     }
 
     // With Always-On Display, iOS fires ghost 'active' events while the
@@ -361,6 +392,21 @@ export default function AppLockScreen() {
     authenticateWithBiometrics()
   }
 
+  if (nativeUser) {
+    return (
+      <Host testID={testIDs.SCREEN_APP_LOCK}>
+        <SafeAreaView>
+          <NativeLock
+            name={nativeUser.name}
+            nationalId={nativeUser.nationalId}
+            unlock={nativeUnlock}
+            onLogoutPress={handleLogout}
+          />
+        </SafeAreaView>
+      </Host>
+    )
+  }
+
   return (
     <Host testID={testIDs.SCREEN_APP_LOCK}>
       <SafeAreaView>
@@ -409,5 +455,95 @@ export default function AppLockScreen() {
         </Center>
       </SafeAreaView>
     </Host>
+  )
+}
+
+/**
+ * A plain lock screen for native login, until the designed DeviceLock and
+ * ElectronicIdConfirmation replace it. The message ids are theirs.
+ */
+function NativeLock({
+  name,
+  nationalId,
+  unlock,
+  onLogoutPress,
+}: {
+  name: string
+  nationalId: string
+  unlock: ReturnType<typeof useNativeUnlock>
+  onLogoutPress(): void
+}) {
+  const intl = useIntl()
+  const { authenticationTypes } = useUiStore()
+  const biometricType = useBiometricLabel(authenticationTypes)?.text
+
+  if (unlock.status === 'electronicId') {
+    return (
+      <Center style={{ gap: 16, paddingHorizontal: 32 }}>
+        <Subtitle>
+          {intl.formatMessage({
+            id: 'electronicId.codeLabel',
+            defaultMessage: 'Security code',
+          })}
+        </Subtitle>
+        <Title>{unlock.verificationCode ?? '…'}</Title>
+        <Button
+          isOutlined
+          title={intl.formatMessage({
+            id: 'electronicId.cancel',
+            defaultMessage: 'Cancel',
+          })}
+          onPress={unlock.cancelElectronicId}
+        />
+      </Center>
+    )
+  }
+
+  return (
+    <Center style={{ gap: 16, paddingHorizontal: 32 }}>
+      <Image
+        source={require('../../assets/logo/logo-64w.png')}
+        resizeMode="contain"
+        style={{ width: 45, height: 45 }}
+      />
+      <Title>{name}</Title>
+      <Subtitle>{nationalId}</Subtitle>
+      {unlock.status === 'failed' ? (
+        <Subtitle>
+          {intl.formatMessage({
+            id: 'applock.biometricsFailedMessage',
+            defaultMessage: 'Try again or use electronic ID.',
+          })}
+        </Subtitle>
+      ) : null}
+      {unlock.isBiometricsEnabled ? (
+        <Button
+          title={intl.formatMessage(
+            {
+              id: 'applock.openWithBiometrics',
+              defaultMessage: 'Open with {biometricType}',
+            },
+            { biometricType },
+          )}
+          onPress={unlock.unlockWithBiometrics}
+        />
+      ) : null}
+      <Button
+        isOutlined={unlock.isBiometricsEnabled}
+        title={intl.formatMessage({
+          id: 'applock.openWithElectronicId',
+          defaultMessage: 'Open with electronic ID',
+        })}
+        onPress={unlock.unlockWithElectronicId}
+      />
+      <Button
+        isTransparent
+        title={intl.formatMessage({
+          id: 'applock.logout',
+          defaultMessage: 'Log out',
+        })}
+        onPress={onLogoutPress}
+      />
+    </Center>
   )
 }

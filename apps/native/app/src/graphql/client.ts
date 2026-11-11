@@ -159,7 +159,31 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
   }
 })
 
+/**
+ * A locked native login has no tokens until the lock screen unlocks it, so
+ * requests wait instead of failing. Logging out ends the wait too.
+ */
+const waitForNativeUnlock = () => {
+  const store = getAuthStoreRef()
+  const isLocked = (state: {
+    authorizeResult?: unknown
+    nativeUser?: unknown
+  }) => !state.authorizeResult && !!state.nativeUser
+  if (!isLocked(store.getState())) {
+    return Promise.resolve()
+  }
+  return new Promise<void>((resolve) => {
+    const unsubscribe = store.subscribe((state) => {
+      if (!isLocked(state)) {
+        unsubscribe()
+        resolve()
+      }
+    })
+  })
+}
+
 export const getAndRefreshToken = async () => {
+  await waitForNativeUnlock()
   const { refresh } = getAuthStoreRef().getState()
   let { authorizeResult } = getAuthStoreRef().getState()
 

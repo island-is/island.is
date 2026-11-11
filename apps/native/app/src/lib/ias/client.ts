@@ -4,7 +4,6 @@ import {
   IasError,
   isAppLoginRemoved,
   isBiometricKeyInvalidated,
-  isNativeLoginDisabled,
 } from './errors'
 import { attestationPop, deviceKeyAssertion, dpopProof } from './jwt'
 import { sleep } from './sleep'
@@ -14,7 +13,6 @@ import type {
   IasDevice,
   IasStorage,
   IasTokens,
-  LoginMode,
   StoredAttestation,
 } from './types'
 
@@ -29,14 +27,10 @@ export interface IasClientOptions {
   appVersion: string
   device: IasDevice
   storage: IasStorage
-  /** GET /app/config slower than this means the browser login. */
-  configTimeoutMs?: number
   /** For dev builds: IAS's verifier tests need real request bodies. */
   onAttestationRequest?: (body: Record<string, unknown>) => void
   /** For dev builds: an expired attestation was renewed. */
   onAttestationRenewed?: () => void
-  /** Why getLoginMode chose the browser login, when it was an error. */
-  onBrowserFallback?: (error: unknown) => void
 }
 
 interface RequestOptions {
@@ -148,29 +142,6 @@ export function createIasClient(options: IasClientOptions): IasClient {
   const isFresh = (attestation: StoredAttestation) =>
     attestation.expiresAt > Date.now() + RENEW_MARGIN_MS
 
-  async function isNativeLoginOn(thumbprint: string): Promise<boolean> {
-    const query = encodeForm({
-      platform: device.os,
-      version: options.appVersion,
-      install: thumbprint,
-    })
-    const controller = new AbortController()
-    const timeout = setTimeout(
-      () => controller.abort(),
-      options.configTimeoutMs ?? 5000,
-    )
-    try {
-      const { nativeLogin } = await request<{ nativeLogin?: boolean }>(
-        'GET',
-        `/app/config?${query}`,
-        { signal: controller.signal },
-      )
-      return nativeLogin === true
-    } finally {
-      clearTimeout(timeout)
-    }
-  }
-
   async function getAttestationChallenge(): Promise<string> {
     const { challenge } = await request<{ challenge: string }>(
       'POST',
@@ -180,39 +151,23 @@ export function createIasClient(options: IasClientOptions): IasClient {
     return challenge
   }
 
-  /**
-   * A new install key, attested when native login is on for it (spec
-   * sections 0 and 1). Null when it's off.
-   */
-  const attestNewInstall = shared(
-    async (): Promise<StoredAttestation | null> => {
-      let challenge: string | undefined
-      let key: DeviceKey
-      if (device.os === 'android') {
-        // The key's attestation certificate carries the challenge, so the
-        // challenge comes first.
-        challenge = await getAttestationChallenge()
-        key = await device.generateInstallKey(challenge)
-      } else {
-        key = await device.generateInstallKey()
-      }
-
-      if (!(await isNativeLoginOn(key.thumbprint))) {
-        return null
-      }
-
-      challenge ??= await getAttestationChallenge()
-      const evidence = await device.attestInstallKey(key, challenge)
-      const body = { clientId, jwk: key.publicJwk, challenge, ...evidence }
-      options.onAttestationRequest?.(body)
-      const response = await request<AttestationResponse>(
-        'POST',
-        '/app/attestation',
-        { json: body },
-      )
-      return saveAttestation(response, key)
-    },
-  )
+  /** A new install key, attested (spec section 1). */
+  const attestNewInstall = shared(async (): Promise<StoredAttestation> => {
+    const challenge = await getAttestationChallenge()
+    // On Android the key's attestation certificate carries the challenge.
+    const key = await device.generateInstallKey(
+      device.os === 'android' ? challenge : undefined,
+    )
+    const evidence = await device.attestInstallKey(key, challenge)
+    const body = { clientId, jwk: key.publicJwk, challenge, ...evidence }
+    options.onAttestationRequest?.(body)
+    const response = await request<AttestationResponse>(
+      'POST',
+      '/app/attestation',
+      { json: body },
+    )
+    return saveAttestation(response, key)
+  })
 
   /** Same install key, no new evidence. Needs an app login. */
   const renew = shared(async () => {
@@ -239,26 +194,12 @@ export function createIasClient(options: IasClientOptions): IasClient {
       try {
         return await renew()
       } catch (error) {
-        // Renewal is refused while native login is off, but refreshing
-        // still works with the old attestation.
-        if (isNativeLoginDisabled(error)) {
-          return current
-        }
         if (!(allowNewKey && isAppLoginRemoved(error))) {
           throw error
         }
       }
     }
-    const attestation = await attestNewInstall()
-    if (!attestation) {
-      throw new IasError(
-        'native_login_disabled',
-        undefined,
-        200,
-        'GET /app/config',
-      )
-    }
-    return attestation
+    return attestNewInstall()
   }
 
   async function createProof(
@@ -446,24 +387,7 @@ export function createIasClient(options: IasClientOptions): IasClient {
     })
   }
 
-  const getLoginMode = shared(async (): Promise<LoginMode> => {
-    try {
-      if (!(await currentAttestation())) {
-        return (await attestNewInstall()) ? 'native' : 'browser'
-      }
-      const attestation = await ensureAttested(true)
-      return (await isNativeLoginOn(attestation.thumbprint))
-        ? 'native'
-        : 'browser'
-    } catch (error) {
-      options.onBrowserFallback?.(error)
-      return 'browser'
-    }
-  })
-
   return {
-    getLoginMode,
-
     getInstallThumbprint() {
       return device.getInstallKey()?.thumbprint ?? null
     },

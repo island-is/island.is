@@ -2,6 +2,7 @@ import { NativeTabs } from 'expo-router/unstable-native-tabs'
 import React, { useEffect, useState } from 'react'
 
 import { Redirect, useNavigation, usePathname } from 'expo-router'
+import { useAuthStore } from '@/stores/auth-store'
 import { usePreferencesStore } from '@/stores/preferences-store'
 import { isOnboarded } from '@/utils/onboarding'
 import { blue100, blue400, theme } from '../../../ui'
@@ -24,10 +25,16 @@ export default function TabLayout() {
   const hasOnboardedNotifications = usePreferencesStore(
     (s) => s.hasOnboardedNotifications,
   )
+  const isLocked = useAuthStore((s) => s.lockScreenActivatedAt !== undefined)
 
   const onboarded = isOnboarded()
 
   if (!onboarded) {
+    // A Redirect replaces the top screen, which is the lock when a native
+    // login restarts mid-onboarding. Onboarding continues after the unlock.
+    if (isLocked) {
+      return null
+    }
     if (!hasOnboardedPinCode) {
       return <Redirect href="/(auth)/onboarding/pin" />
     } else if (!hasOnboardedBiometrics) {
