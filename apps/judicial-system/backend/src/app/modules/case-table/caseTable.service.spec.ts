@@ -631,4 +631,50 @@ describe('CaseTableService', () => {
       expect(result.rows[0].appealCaseId).toBe('appeal-case-level')
     })
   })
+
+  // A list may say for itself what "my cases" means. The public prosecution's
+  // appealed list does: the case is the user's when they argue the appeal, not
+  // when they prosecuted it in the district court.
+  describe('getCaseTableRows for the public prosecution appealed list', () => {
+    const user = {
+      id: 'user-1',
+      role: UserRole.PROSECUTOR,
+      institution: { type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE },
+    } as User
+
+    const buildCase = (id: string, roles: Record<string, string>) => {
+      const fields = {
+        id,
+        type: CaseType.INDICTMENT,
+        policeCaseNumbers: ['001-2026'],
+        defendants: [],
+        ...roles,
+      }
+
+      return { ...fields, toJSON: () => fields }
+    }
+
+    it('marks only the cases whose appeal the user argues as theirs', async () => {
+      mockFindAll.mockResolvedValue([
+        buildCase('argued-by-user', {
+          prosecutorId: 'user-2',
+          appealProsecutorId: 'user-1',
+        }),
+        buildCase('prosecuted-by-user', {
+          prosecutorId: 'user-1',
+          appealProsecutorId: 'user-2',
+        }),
+      ])
+
+      const result = await service.getCaseTableRows(
+        CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED,
+        user,
+      )
+
+      expect(result.rows.map((r) => [r.caseId, r.isMyCase])).toEqual([
+        ['argued-by-user', true],
+        ['prosecuted-by-user', false],
+      ])
+    })
+  })
 })
