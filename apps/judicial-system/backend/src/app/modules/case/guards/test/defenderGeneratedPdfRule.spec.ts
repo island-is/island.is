@@ -39,9 +39,7 @@ describe('defenderGeneratedPdfRule', () => {
       canActivate(requestFor({ user: { nationalId }, theCase: undefined })),
     ).toBe(false)
     expect(
-      canActivate(
-        requestFor({ user: undefined, theCase: { defendants: [] } }),
-      ),
+      canActivate(requestFor({ user: undefined, theCase: { defendants: [] } })),
     ).toBe(false)
   })
 
