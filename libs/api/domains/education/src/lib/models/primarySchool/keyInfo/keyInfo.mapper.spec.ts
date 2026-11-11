@@ -1,16 +1,4 @@
-import {
-  AllergyOutputTypeEnum,
-  CreatedByOutputKindEnum,
-  UpdatedByOutputKindEnum,
-  FOOD_ALLERGY_TYPE,
-  OTHER_ALLERGY_TYPE,
-  type AllergyOption,
-  type EmergencyContactOutput,
-  type HealthProfileOutput,
-  type KeyOptionValueOutput,
-  type LanguageProfileOutput,
-  type Option,
-} from '@island.is/clients/mms/frigg'
+import { LocaleEnum } from '@island.is/nest/graphql'
 
 import {
   byTitle,
@@ -22,30 +10,23 @@ import {
   mapRelationType,
 } from './keyInfo.mapper'
 
-const value = (
-  ...entries: Array<[string, string]>
-): Array<KeyOptionValueOutput> =>
+const value = (...entries: Array<[string, string]>) =>
   entries.map(([language, content]) => ({ language, content }))
 
-const option = (
-  overrides: Partial<Option> = {},
-): Option & { value: Array<KeyOptionValueOutput> } => ({
+const option = (overrides: Record<string, unknown> = {}) => ({
   id: 'option-1',
   key: 'mother',
   value: value(['is', 'Móðir'], ['en', 'Mother']),
   ...overrides,
 })
 
-const allergyOption = (overrides: Partial<AllergyOption> = {}) =>
-  ({
-    ...option({ id: 'allergy-1', key: 'peanuts' }),
-    type: FOOD_ALLERGY_TYPE,
-    ...overrides,
-  } as AllergyOption)
+const allergyOption = (overrides: Record<string, unknown> = {}) => ({
+  ...option({ id: 'allergy-1', key: 'peanuts' }),
+  type: 'foodAllergyAndIntolerance',
+  ...overrides,
+})
 
-const contact = (
-  overrides: Partial<EmergencyContactOutput> = {},
-): EmergencyContactOutput => ({
+const contact = (overrides: Record<string, unknown> = {}) => ({
   id: 'agent-1',
   person: { nationalId: '0101302989', name: 'Gervimaður Afríka' },
   relationType: {
@@ -54,7 +35,7 @@ const contact = (
     value: value(['is', 'Móðir'], ['en', 'Mother']),
   },
   createdBy: {
-    kind: CreatedByOutputKindEnum.Guardian,
+    kind: 'guardian',
     displayName: 'Gervimaður Noregur',
     at: new Date('2026-03-04T10:11:12.000Z'),
   },
@@ -62,9 +43,7 @@ const contact = (
   ...overrides,
 })
 
-const healthProfile = (
-  overrides: Partial<HealthProfileOutput> = {},
-): HealthProfileOutput => ({
+const healthProfile = (overrides: Record<string, unknown> = {}) => ({
   epipen: true,
   medicalDiagnoses: false,
   medicationAssistance: true,
@@ -74,9 +53,7 @@ const healthProfile = (
   ...overrides,
 })
 
-const languageProfile = (
-  overrides: Partial<LanguageProfileOutput> = {},
-): LanguageProfileOutput => ({
+const languageProfile = (overrides: Record<string, unknown> = {}) => ({
   languageEnvironment: {
     id: 'env-1',
     key: 'onlyIcelandic',
@@ -93,15 +70,15 @@ const languageProfile = (
 
 describe('localize', () => {
   it('picks the translation for the requested locale', () => {
-    expect(mapRelationType(option(), 'is').title).toBe('Móðir')
-    expect(mapRelationType(option(), 'en').title).toBe('Mother')
+    expect(mapRelationType(option(), LocaleEnum.Is).title).toBe('Móðir')
+    expect(mapRelationType(option(), LocaleEnum.En).title).toBe('Mother')
   })
 
   it('falls back to the first translation when the locale is missing', () => {
     const relationType = option({ value: value(['pl', 'Matka']) })
 
-    expect(mapRelationType(relationType, 'is').title).toBe('Matka')
-    expect(mapRelationType(relationType, 'en').title).toBe('Matka')
+    expect(mapRelationType(relationType, LocaleEnum.Is).title).toBe('Matka')
+    expect(mapRelationType(relationType, LocaleEnum.En).title).toBe('Matka')
   })
 
   it('falls back only for the locale that is missing', () => {
@@ -110,20 +87,18 @@ describe('localize', () => {
     })
 
     // `is` is missing, so it takes the first entry; `en` has its own.
-    expect(mapRelationType(relationType, 'is').title).toBe('Mother')
-    expect(mapRelationType(relationType, 'en').title).toBe('Mother')
+    expect(mapRelationType(relationType, LocaleEnum.Is).title).toBe('Mother')
+    expect(mapRelationType(relationType, LocaleEnum.En).title).toBe('Mother')
   })
 
   it('maps an empty translation list to an empty title', () => {
-    expect(mapRelationType(option({ value: [] }), 'is').title).toBe('')
+    expect(mapRelationType(option({ value: [] }), LocaleEnum.Is).title).toBe('')
   })
 
   it('maps a missing translation list to an empty title', () => {
-    const relationType = option({
-      value: undefined as unknown as Array<KeyOptionValueOutput>,
-    })
-
-    expect(mapRelationType(relationType, 'is').title).toBe('')
+    expect(
+      mapRelationType(option({ value: undefined }), LocaleEnum.Is).title,
+    ).toBe('')
   })
 })
 
@@ -131,17 +106,15 @@ describe('byTitle', () => {
   it('orders titles by the collation of the requested locale', () => {
     const titles = [{ title: 'Önnur' }, { title: 'Amma' }, { title: 'Ávallt' }]
 
-    expect([...titles].sort(byTitle('is')).map((t) => t.title)).toEqual([
-      'Amma',
-      'Ávallt',
-      'Önnur',
-    ])
+    expect(
+      [...titles].sort(byTitle(LocaleEnum.Is)).map((item) => item.title),
+    ).toEqual(['Amma', 'Ávallt', 'Önnur'])
   })
 })
 
 describe('mapRelationType', () => {
   it('exposes the key as the relation', () => {
-    expect(mapRelationType(option(), 'is')).toEqual({
+    expect(mapRelationType(option(), LocaleEnum.Is)).toEqual({
       id: 'option-1',
       relation: 'mother',
       title: 'Móðir',
@@ -154,7 +127,7 @@ describe('mapLanguageEnvironment', () => {
     expect(
       mapLanguageEnvironment(
         option({ id: 'env-1', key: 'onlyIcelandic' }),
-        'is',
+        LocaleEnum.Is,
       ),
     ).toEqual({
       id: 'env-1',
@@ -166,24 +139,25 @@ describe('mapLanguageEnvironment', () => {
 
 describe('mapAllergyOption', () => {
   it('tags the food key-option list as food', () => {
-    expect(mapAllergyOption(allergyOption(), 'is').type).toBe('food')
+    expect(mapAllergyOption(allergyOption(), LocaleEnum.Is).type).toBe('food')
   })
 
   it('tags the general allergy key-option list as other', () => {
     expect(
-      mapAllergyOption(allergyOption({ type: OTHER_ALLERGY_TYPE }), 'is').type,
+      mapAllergyOption(allergyOption({ type: 'allergy' }), LocaleEnum.Is).type,
     ).toBe('other')
   })
 
   it('tags a key-option type it does not know as other', () => {
     expect(
-      mapAllergyOption(allergyOption({ type: 'somethingElse' }), 'is').type,
+      mapAllergyOption(allergyOption({ type: 'somethingElse' }), LocaleEnum.Is)
+        .type,
     ).toBe('other')
   })
 })
 
 describe('mapHealthProfile allergies', () => {
-  const allergy = (type: AllergyOutputTypeEnum) => ({
+  const allergy = (type: string) => ({
     id: `allergy-${type}`,
     key: type,
     value: value(['is', type]),
@@ -192,8 +166,8 @@ describe('mapHealthProfile allergies', () => {
 
   it('keeps food allergies in the food category', () => {
     const profile = mapHealthProfile(
-      healthProfile({ allergies: [allergy(AllergyOutputTypeEnum.Food)] }),
-      'is',
+      healthProfile({ allergies: [allergy('food')] }),
+      LocaleEnum.Is,
     )
 
     expect(profile.allergies[0].type).toBe('food')
@@ -202,12 +176,9 @@ describe('mapHealthProfile allergies', () => {
   it('folds medicine and environmental allergies into other', () => {
     const profile = mapHealthProfile(
       healthProfile({
-        allergies: [
-          allergy(AllergyOutputTypeEnum.Medicine),
-          allergy(AllergyOutputTypeEnum.Environmental),
-        ],
+        allergies: [allergy('medicine'), allergy('environmental')],
       }),
-      'is',
+      LocaleEnum.Is,
     )
 
     expect(profile.allergies.map((item) => item.type)).toEqual([
@@ -218,19 +189,17 @@ describe('mapHealthProfile allergies', () => {
 })
 
 describe('mapHealthProfile audit fields', () => {
-  it('serialises updatedAt to an ISO string', () => {
+  it('passes the update timestamp through as a date', () => {
+    const updatedAt = new Date('2026-03-04T10:11:12.000Z')
     const profile = mapHealthProfile(
       healthProfile({
-        updatedAt: new Date('2026-03-04T10:11:12.000Z'),
-        updatedBy: {
-          kind: UpdatedByOutputKindEnum.Organization,
-          displayName: 'Skóli',
-        },
+        updatedAt,
+        updatedBy: { kind: 'organization', displayName: 'Skóli' },
       }),
-      'is',
+      LocaleEnum.Is,
     )
 
-    expect(profile.updatedAt).toBe('2026-03-04T10:11:12.000Z')
+    expect(profile.updatedAt).toBe(updatedAt)
     expect(profile.updatedBy).toEqual({
       kind: 'organization',
       displayName: 'Skóli',
@@ -238,7 +207,7 @@ describe('mapHealthProfile audit fields', () => {
   })
 
   it('maps a missing audit trail to undefined', () => {
-    const profile = mapHealthProfile(healthProfile(), 'is')
+    const profile = mapHealthProfile(healthProfile(), LocaleEnum.Is)
 
     expect(profile.updatedAt).toBeUndefined()
     expect(profile.updatedBy).toBeUndefined()
@@ -247,9 +216,9 @@ describe('mapHealthProfile audit fields', () => {
   it('maps a null displayName to undefined', () => {
     const profile = mapHealthProfile(
       healthProfile({
-        updatedBy: { kind: UpdatedByOutputKindEnum.System, displayName: null },
+        updatedBy: { kind: 'system', displayName: null },
       }),
-      'is',
+      LocaleEnum.Is,
     )
 
     expect(profile.updatedBy).toEqual({
@@ -257,11 +226,20 @@ describe('mapHealthProfile audit fields', () => {
       displayName: undefined,
     })
   })
+
+  it('maps a kind it does not know to unknown', () => {
+    const profile = mapHealthProfile(
+      healthProfile({ updatedBy: { kind: 'somethingElse' } }),
+      LocaleEnum.Is,
+    )
+
+    expect(profile.updatedBy?.kind).toBe('unknown')
+  })
 })
 
 describe('mapLanguageProfile', () => {
   it('maps the profile through', () => {
-    expect(mapLanguageProfile(languageProfile(), 'is')).toEqual({
+    expect(mapLanguageProfile(languageProfile(), LocaleEnum.Is)).toEqual({
       languageEnvironment: {
         id: 'env-1',
         code: 'onlyIcelandic',
@@ -279,7 +257,7 @@ describe('mapLanguageProfile', () => {
   it('maps a null language environment and preferred language to undefined', () => {
     const profile = mapLanguageProfile(
       languageProfile({ languageEnvironment: null, preferredLanguage: null }),
-      'is',
+      LocaleEnum.Is,
     )
 
     expect(profile.languageEnvironment).toBeUndefined()
@@ -288,8 +266,16 @@ describe('mapLanguageProfile', () => {
 })
 
 describe('mapAgent', () => {
-  it('maps a contact through, serialising the registration date', () => {
-    expect(mapAgent(contact(), 'is')).toEqual({
+  it('maps a contact through, keeping the registration date', () => {
+    const registeredAt = new Date('2026-03-04T10:11:12.000Z')
+
+    expect(
+      mapAgent(contact({ createdBy: {
+        kind: 'guardian',
+        displayName: 'Gervimaður Noregur',
+        at: registeredAt,
+      } }), LocaleEnum.Is),
+    ).toEqual({
       id: 'agent-1',
       person: { nationalId: '0101302989', name: 'Gervimaður Afríka' },
       relationType: {
@@ -299,31 +285,28 @@ describe('mapAgent', () => {
       createdBy: {
         kind: 'guardian',
         displayName: 'Gervimaður Noregur',
-        at: '2026-03-04T10:11:12.000Z',
+        at: registeredAt,
       },
       canEdit: true,
     })
   })
 
-  it('falls back to an empty relation type when MMS has none', () => {
+  it('leaves the relation type out when MMS has none', () => {
     expect(
-      mapAgent(contact({ relationType: null }), 'is').relationType,
-    ).toEqual({
-      id: '',
-      title: '',
-    })
+      mapAgent(contact({ relationType: null }), LocaleEnum.Is).relationType,
+    ).toBeUndefined()
   })
 
   it('maps a null createdBy displayName to undefined', () => {
     const agent = mapAgent(
       contact({
         createdBy: {
-          kind: CreatedByOutputKindEnum.Unknown,
+          kind: 'unknown',
           displayName: null,
           at: new Date('2026-03-04T10:11:12.000Z'),
         },
       }),
-      'is',
+      LocaleEnum.Is,
     )
 
     expect(agent.createdBy.displayName).toBeUndefined()

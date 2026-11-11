@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
 import { useLocale } from '@island.is/localization'
+import { LocaleEnum } from '@island.is/api/schema'
 import {
   PrimarySchoolKeyInfoSectionsDocument,
   usePrimarySchoolAddAgentMutation,
@@ -27,13 +28,8 @@ import type {
 
 /**
  * Data hook for the key-information sections (Aðstandendur, Tungumálaumhverfi,
- * Heilsufarsupplýsingar). It runs the education GraphQL queries/mutations and
- * flattens them onto the section view models in ./types.
- *
- * A caller passes the sections it reads — the overview takes all three, an edit
- * screen one — and the rest are left out of the selection set; see
- * PrimarySchoolKeyInfo.graphql for why they share one query. The mutations are
- * always available and refetch exactly what the caller reads.
+ * Heilsufarsupplýsingar). A caller passes the sections it reads; the rest are
+ * left out of the selection set.
  */
 
 /** The three key-info sections, as named on {@link PrimarySchoolKeyInfo}. */
@@ -80,20 +76,19 @@ export const usePrimarySchoolKeyInfo = (
   sections: KeyInfoSectionName[] = ALL_SECTIONS,
 ): PrimarySchoolKeyInfo => {
   const { lang } = useLocale()
+  const locale = lang === 'en' ? LocaleEnum.En : LocaleEnum.Is
 
   const variables = {
     studentId,
-    locale: lang,
+    locale,
     withEmergencyContacts: sections.includes('emergencyContacts'),
     withLanguageProfile: sections.includes('languageProfile'),
     withHealthProfile: sections.includes('healthProfile'),
   }
 
-  // errorPolicy 'all' keeps the sections that resolved; a failed one comes back
-  // null with an error of its own, which toMmsFieldError picks out by path.
-  // That null is cached, and the portal client is cache-first, so without
-  // 'cache-and-network' a section that failed once would read back as "no
-  // information" on every later mount until the page is reloaded.
+  // errorPolicy 'all' caches a failed section as null, and the portal client is
+  // cache-first, so without 'cache-and-network' that section would read back as
+  // "no information" on every later mount until the page is reloaded.
   const sectionsQuery = usePrimarySchoolKeyInfoSectionsQuery({
     variables,
     errorPolicy: 'all',
@@ -101,36 +96,24 @@ export const usePrimarySchoolKeyInfo = (
     skip: !studentId || sections.length === 0,
   })
 
-  // Every mutation refetches the same selection the caller reads, so a save
-  // refreshes exactly the sections on screen and nothing else.
   const refetchQueries = [
     { query: PrimarySchoolKeyInfoSectionsDocument, variables },
   ]
 
+  // Not awaited: a refetch that fails after the write succeeded would reject
+  // the caller's promise and report a successful save as a failure. The read is
+  // 'cache-and-network', so the sections re-read on the next mount regardless.
   const [addAgentMutation, addAgentState] = usePrimarySchoolAddAgentMutation({
     refetchQueries,
-    awaitRefetchQueries: true,
   })
   const [updateAgentMutation, updateAgentState] =
-    usePrimarySchoolUpdateAgentMutation({
-      refetchQueries,
-      awaitRefetchQueries: true,
-    })
+    usePrimarySchoolUpdateAgentMutation({ refetchQueries })
   const [deleteAgentMutation, deleteAgentState] =
-    usePrimarySchoolDeleteAgentMutation({
-      refetchQueries,
-      awaitRefetchQueries: true,
-    })
+    usePrimarySchoolDeleteAgentMutation({ refetchQueries })
   const [updateLanguageMutation, updateLanguageState] =
-    usePrimarySchoolUpdateLanguageProfileMutation({
-      refetchQueries,
-      awaitRefetchQueries: true,
-    })
+    usePrimarySchoolUpdateLanguageProfileMutation({ refetchQueries })
   const [updateHealthMutation, updateHealthState] =
-    usePrimarySchoolUpdateHealthProfileMutation({
-      refetchQueries,
-      awaitRefetchQueries: true,
-    })
+    usePrimarySchoolUpdateHealthProfileMutation({ refetchQueries })
 
   const mapAgent = (
     agent: PrimarySchoolAgentFieldsFragment,
@@ -138,8 +121,8 @@ export const usePrimarySchoolKeyInfo = (
     id: agent.id,
     name: agent.person.name,
     nationalId: agent.person.nationalId,
-    relationTypeId: agent.relationType.id,
-    relationTypeLabel: agent.relationType.title,
+    relationTypeId: agent.relationType?.id,
+    relationTypeLabel: agent.relationType?.title,
     createdBy: {
       kind: agent.createdBy.kind,
       name: agent.createdBy.displayName ?? undefined,
@@ -177,14 +160,11 @@ export const usePrimarySchoolKeyInfo = (
   const languageProfileData = student?.languageProfile
   const healthProfileData = student?.healthProfile
 
-  // Only a loading state while there is nothing to show: 'cache-and-network'
-  // re-reads on every mount, which would otherwise flash a loader over cached
-  // sections each time.
+  // 'cache-and-network' re-reads on every mount, so this is only a loading
+  // state while there is nothing to show.
   const loading = sectionsQuery.loading && !sectionsQuery.data
 
-  // The child-id lookup is what every section starts from, so when it fails all
-  // three fail with it. The failure is named on `hasKeyInfo` and reported once
-  // here rather than as three identical section errors.
+  // A failed child-id lookup fails every section, and is named on `hasKeyInfo`.
   const readError =
     toMmsFieldError(sectionsQuery.error, 'hasKeyInfo') ??
     // A transport failure never reached a resolver, so it carries no field
@@ -193,9 +173,16 @@ export const usePrimarySchoolKeyInfo = (
       ? toMmsError(sectionsQuery.error)
       : undefined)
 
-  /** A section fails either on its own or with the read that carried it. The
-   * overview reports the read-level failure once and leaves the sections out;
-   * an edit screen reads only its own section, so it has to see it here. */
+  // An error whose path names no section and not `hasKeyInfo` would otherwise
+  // be dropped, leaving every section showing its empty state as if the read
+  // had succeeded.
+  const unattributedError =
+    sectionsQuery.error &&
+    !readError &&
+    !ALL_SECTIONS.some((field) => toMmsFieldError(sectionsQuery.error, field))
+      ? toMmsError(sectionsQuery.error)
+      : undefined
+
   const sectionError = (field: KeyInfoSectionName) =>
     toMmsFieldError(sectionsQuery.error, field) ?? readError
 
@@ -203,7 +190,7 @@ export const usePrimarySchoolKeyInfo = (
     async (input: EmergencyContactCreateInput) => {
       await addAgentMutation({
         variables: {
-          locale: lang,
+          locale,
           input: {
             studentId,
             nationalId: input.nationalId,
@@ -212,14 +199,14 @@ export const usePrimarySchoolKeyInfo = (
         },
       })
     },
-    [addAgentMutation, lang, studentId],
+    [addAgentMutation, locale, studentId],
   )
 
   const updateAgent = useCallback(
     async (agentId: string, input: EmergencyContactUpdateInput) => {
       await updateAgentMutation({
         variables: {
-          locale: lang,
+          locale,
           input: {
             studentId,
             agentId,
@@ -228,7 +215,7 @@ export const usePrimarySchoolKeyInfo = (
         },
       })
     },
-    [updateAgentMutation, lang, studentId],
+    [updateAgentMutation, locale, studentId],
   )
 
   const removeAgent = useCallback(
@@ -244,7 +231,7 @@ export const usePrimarySchoolKeyInfo = (
     async (input: LanguageProfileUpdateInput) => {
       await updateLanguageMutation({
         variables: {
-          locale: lang,
+          locale,
           input: {
             studentId,
             languageEnvironmentId: input.languageEnvironmentId,
@@ -256,14 +243,14 @@ export const usePrimarySchoolKeyInfo = (
         },
       })
     },
-    [updateLanguageMutation, lang, studentId],
+    [updateLanguageMutation, locale, studentId],
   )
 
   const saveHealthProfile = useCallback(
     async (input: HealthProfileUpdateInput) => {
       await updateHealthMutation({
         variables: {
-          locale: lang,
+          locale,
           input: {
             studentId,
             epipen: input.epipen,
@@ -275,13 +262,13 @@ export const usePrimarySchoolKeyInfo = (
         },
       })
     },
-    [updateHealthMutation, lang, studentId],
+    [updateHealthMutation, locale, studentId],
   )
 
   return {
     hasKeyInfo: student?.hasKeyInfo ?? false,
     loading,
-    error: readError,
+    error: readError ?? unattributedError,
     emergencyContacts: {
       data: agents?.map(mapAgent),
       loading,

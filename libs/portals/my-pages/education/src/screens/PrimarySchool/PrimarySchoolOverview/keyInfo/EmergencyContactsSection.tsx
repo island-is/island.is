@@ -10,7 +10,7 @@ import {
   Tooltip,
   toast,
 } from '@island.is/island-ui/core'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { sharedMessages } from '@island.is/shared/translations'
 import { CardLoader, EmptyCard, Modal } from '@island.is/portals/my-pages/core'
@@ -20,6 +20,7 @@ import { KeyInfoSection } from './KeyInfoSection'
 import { SectionError } from './SectionError'
 import { mmsErrorMessage } from './mmsError'
 import * as styles from './keyInfoEmpty.css'
+import { EducationPrimarySchoolActorKind } from './types'
 import type { EmergencyContact, MmsError } from './types'
 
 interface Props {
@@ -36,7 +37,7 @@ interface Props {
  * 1. Aðstandendur — GET /me/children/{childId}/emergency-contacts
  *
  * Read view per ticket: name, national id, relation type, and — only when
- * `createdBy.kind !== 'unknown'` — who registered it and (if present) the date.
+ * `createdBy.kind` is not `Unknown` — who registered it and, if present, when.
  * Email / phone of the contact are never shown. Actions (Breyta / Fjarlægja)
  * appear only when MMS says `canEdit === true`; the frontend never computes this.
  *
@@ -58,6 +59,17 @@ export const EmergencyContactsSection = ({
     EmergencyContact | undefined
   >(undefined)
 
+  // Removing a contact takes its row — and the button that opened the modal —
+  // off the page, so focus is moved on rather than left on a detached node.
+  const removeButtons = useRef<Record<string, HTMLButtonElement | null>>({})
+  const addButton = useRef<HTMLButtonElement>(null)
+
+  const closeRemoveModal = () => {
+    const trigger = contactToRemove && removeButtons.current[contactToRemove.id]
+    setContactToRemove(undefined)
+    trigger?.focus()
+  }
+
   const addPath = generatePath(EducationPaths.PrimarySchoolContactAdd, {
     studentId: studentId ?? '',
   })
@@ -75,12 +87,16 @@ export const EmergencyContactsSection = ({
       toast.error(formatMessage(mmsErrorMessage(error)))
       return
     }
+    delete removeButtons.current[contactToRemove.id]
     setContactToRemove(undefined)
+    toast.success(formatMessage(kim.contactRemoveSuccess))
+    addButton.current?.focus()
   }
   const canEdit = (contact: EmergencyContact) => contact.canEdit === true
 
   const showRegisteredBy = (contact: EmergencyContact) =>
-    contact.createdBy && contact.createdBy.kind !== 'unknown'
+    contact.createdBy &&
+    contact.createdBy.kind !== EducationPrimarySchoolActorKind.Unknown
 
   return (
     <KeyInfoSection title={kim.emergencyContactsTitle}>
@@ -155,15 +171,24 @@ export const EmergencyContactsSection = ({
                         variant="text"
                         size="small"
                         disabled={saving}
+                        aria-label={`${formatMessage(sharedMessages.edit)}: ${
+                          contact.name
+                        }`}
                         onClick={() => navigate(editPath(contact.id))}
                       >
                         {formatMessage(sharedMessages.edit)}
                       </Button>
                       <Button
+                        ref={(element) => {
+                          removeButtons.current[contact.id] = element
+                        }}
                         variant="text"
                         colorScheme="destructive"
                         size="small"
                         disabled={saving}
+                        aria-label={`${formatMessage(kim.remove)}: ${
+                          contact.name
+                        }`}
                         onClick={() => setContactToRemove(contact)}
                       >
                         {formatMessage(kim.remove)}
@@ -192,6 +217,7 @@ export const EmergencyContactsSection = ({
       {!loading && !error && (
         <Box paddingTop={2}>
           <Button
+            ref={addButton}
             variant="text"
             icon="add"
             size="small"
@@ -207,7 +233,7 @@ export const EmergencyContactsSection = ({
           isVisible
           initialVisibility
           buttonsSpacing="spaceBetween"
-          onCloseModal={() => setContactToRemove(undefined)}
+          onCloseModal={closeRemoveModal}
           title={formatMessage(kim.contactRemoveTitle)}
           text={formatMessage(kim.contactRemoveText, {
             name: contactToRemove.name,
@@ -217,7 +243,7 @@ export const EmergencyContactsSection = ({
               id: 'key-info-contact-remove-cancel',
               type: 'ghost',
               text: formatMessage(kim.cancel),
-              onClick: () => setContactToRemove(undefined),
+              onClick: closeRemoveModal,
             },
             {
               id: 'key-info-contact-remove-confirm',

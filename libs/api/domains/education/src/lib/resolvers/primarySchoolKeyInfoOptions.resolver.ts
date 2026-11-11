@@ -9,12 +9,12 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
-import type { Locale } from '@island.is/shared/types'
 import {
   FeatureFlag,
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
+import { LocaleEnum } from '@island.is/nest/graphql'
 import { FriggKeyInfoClientService } from '@island.is/clients/mms/frigg'
 
 import {
@@ -28,16 +28,13 @@ import {
   mapLanguageEnvironment,
   mapRelationType,
 } from '../models/primarySchool/keyInfo/keyInfo.mapper'
+import { withMmsKeyInfoProblem } from '../errors/mmsKeyInfoProblem'
 
 /**
  * The lookup lists the key-information sections pick from (frigg
- * `/key-options`). They are reference data, the same for every child, so they
- * stay at the root rather than hanging off a student.
- *
- * Each list comes back with its titles resolved to the requested `locale` and
- * sorted by them, except where frigg's own order carries meaning.
- *
- * Gated on the key-information feature flag, like the sections that use them.
+ * `/key-options`). Reference data, the same for every child, with titles
+ * resolved to the requested locale and sorted by them — except the language
+ * environments, where frigg's own order is the scale they read as.
  */
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.isServicePortalPrimarySchoolKeyInfoEnabled)
@@ -49,10 +46,12 @@ export class PrimarySchoolKeyInfoOptionsResolver {
   @Query(() => [RelationType], { nullable: true })
   async primarySchoolAgentRelationTypes(
     @CurrentUser() user: User,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
+    @Args('locale', { type: () => LocaleEnum, nullable: true })
+    locale: LocaleEnum = LocaleEnum.Is,
   ): Promise<RelationType[]> {
-    const options = await this.keyInfoClient.getRelationTypeOptions(user)
+    const options = await withMmsKeyInfoProblem(() =>
+      this.keyInfoClient.getRelationTypeOptions(user),
+    )
     return options
       .map((option) => mapRelationType(option, locale))
       .sort(byTitle(locale))
@@ -61,23 +60,26 @@ export class PrimarySchoolKeyInfoOptionsResolver {
   @Query(() => [Allergy], { nullable: true })
   async primarySchoolAllergies(
     @CurrentUser() user: User,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
+    @Args('locale', { type: () => LocaleEnum, nullable: true })
+    locale: LocaleEnum = LocaleEnum.Is,
   ): Promise<Allergy[]> {
-    const options = await this.keyInfoClient.getAllergyOptions(user)
+    const options = await withMmsKeyInfoProblem(() =>
+      this.keyInfoClient.getAllergyOptions(user),
+    )
     return options
       .map((option) => mapAllergyOption(option, locale))
       .sort(byTitle(locale))
   }
 
-  /** Frigg's own order is the scale these read as, so it is kept. */
   @Query(() => [LanguageEnvironment], { nullable: true })
   async primarySchoolLanguageEnvironments(
     @CurrentUser() user: User,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
+    @Args('locale', { type: () => LocaleEnum, nullable: true })
+    locale: LocaleEnum = LocaleEnum.Is,
   ): Promise<LanguageEnvironment[]> {
-    const options = await this.keyInfoClient.getLanguageEnvironmentOptions(user)
+    const options = await withMmsKeyInfoProblem(() =>
+      this.keyInfoClient.getLanguageEnvironmentOptions(user),
+    )
     return options.map((option) => mapLanguageEnvironment(option, locale))
   }
 }

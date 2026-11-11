@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import {
   Box,
@@ -21,6 +21,7 @@ import { useAllergyOptions } from '../useAllergyOptions'
 import type { AllergySelectOption } from '../useAllergyOptions'
 import { usePrimarySchoolKeyInfo } from '../usePrimarySchoolKeyInfo'
 import { mmsErrorMessage } from '../mmsError'
+import { focusSelect } from './focusField'
 import { AllergyCategory } from '../types'
 import type { HealthProfileUpdateInput } from '../types'
 
@@ -40,6 +41,9 @@ import type { HealthProfileUpdateInput } from '../types'
 export const HealthProfileEdit = () => {
   useNamespaces('sp.education-primary-school')
   const { formatMessage } = useLocale()
+  const epipenLabelId = useId()
+  const medicalDiagnosesLabelId = useId()
+  const medicationAssistanceLabelId = useId()
   const navigate = useNavigate()
   const { studentId } = useParams<{ studentId: string }>()
   const { healthProfile, saveHealthProfile, saving } = usePrimarySchoolKeyInfo(
@@ -209,12 +213,28 @@ export const HealthProfileEdit = () => {
 
   const isValid = categoriesAnswered && categoriesConsistent
 
+  // Save reports what is missing rather than staying disabled.
+  const [showErrors, setShowErrors] = useState(false)
+  const missingFoodCategory = hasFoodAllergies === undefined
+  const missingOtherCategory = hasOtherAllergies === undefined
+  const missingFoodAllergies =
+    hasFoodAllergies === true && foodAllergyIds.length === 0
+  const missingOtherAllergies =
+    hasOtherAllergies === true && otherAllergyIds.length === 0
+
   const overviewPath = generatePath(EducationPaths.PrimarySchoolOverview, {
     studentId: studentId ?? '',
   })
 
   const handleSave = async () => {
-    if (!isValid) return
+    if (!isValid) {
+      setShowErrors(true)
+      if (missingFoodCategory) focusSelect('hasFoodAllergies')
+      else if (missingFoodAllergies) focusSelect('foodAllergies')
+      else if (missingOtherCategory) focusSelect('hasOtherAllergies')
+      else if (missingOtherAllergies) focusSelect('otherAllergies')
+      return
+    }
 
     // Rebuild allergies[] (the whole document, per contract §4.5) from the two
     // id lists. The hook reduces these to ids for the PATCH body, so an id is
@@ -264,6 +284,12 @@ export const HealthProfileEdit = () => {
                     <GridColumn span={['12/12', '12/12', '10/12']}>
                       <Select
                         name="hasFoodAllergies"
+                        hasError={showErrors && missingFoodCategory}
+                        errorMessage={
+                          showErrors && missingFoodCategory
+                            ? formatMessage(kim.fieldRequired)
+                            : undefined
+                        }
                         required
                         backgroundColor="blue"
                         size="sm"
@@ -288,6 +314,12 @@ export const HealthProfileEdit = () => {
                       <GridColumn span={['12/12', '12/12', '10/12']}>
                         <Select
                           name="foodAllergies"
+                          hasError={showErrors && missingFoodAllergies}
+                          errorMessage={
+                            showErrors && missingFoodAllergies
+                              ? formatMessage(kim.fieldRequired)
+                              : undefined
+                          }
                           backgroundColor="blue"
                           required={hasFoodAllergies === true}
                           size="sm"
@@ -315,6 +347,12 @@ export const HealthProfileEdit = () => {
                     <GridColumn span={['12/12', '12/12', '10/12']}>
                       <Select
                         name="hasOtherAllergies"
+                        hasError={showErrors && missingOtherCategory}
+                        errorMessage={
+                          showErrors && missingOtherCategory
+                            ? formatMessage(kim.fieldRequired)
+                            : undefined
+                        }
                         required
                         backgroundColor="blue"
                         size="sm"
@@ -339,6 +377,12 @@ export const HealthProfileEdit = () => {
                       <GridColumn span={['12/12', '12/12', '10/12']}>
                         <Select
                           name="otherAllergies"
+                          hasError={showErrors && missingOtherAllergies}
+                          errorMessage={
+                            showErrors && missingOtherAllergies
+                              ? formatMessage(kim.fieldRequired)
+                              : undefined
+                          }
                           backgroundColor="blue"
                           required={hasOtherAllergies === true}
                           size="sm"
@@ -368,10 +412,16 @@ export const HealthProfileEdit = () => {
               {hasAnyAllergy && (
                 <Box>
                   <Stack space={2}>
-                    <Text variant="h5" fontWeight="semiBold" marginBottom={0}>
+                    <Text id={epipenLabelId} variant="h5" fontWeight="semiBold" marginBottom={0}>
                       {formatMessage(kim.epipen)}
                     </Text>
-                    <Box display="flex" flexDirection="column" rowGap={2}>
+                    <Box
+                      role="radiogroup"
+                      aria-labelledby={epipenLabelId}
+                      display="flex"
+                      flexDirection="column"
+                      rowGap={2}
+                    >
                       <RadioButton
                         name="epipen"
                         id="epipen-yes"
@@ -392,10 +442,16 @@ export const HealthProfileEdit = () => {
               )}
               <Box>
                 <Stack space={2}>
-                  <Text variant="h5" fontWeight="semiBold" marginBottom={0}>
+                  <Text id={medicalDiagnosesLabelId} variant="h5" fontWeight="semiBold" marginBottom={0}>
                     {formatMessage(kim.medicalDiagnoses)}
                   </Text>
-                  <Box display="flex" flexDirection="column" rowGap={2}>
+                  <Box
+                    role="radiogroup"
+                    aria-labelledby={medicalDiagnosesLabelId}
+                    display="flex"
+                    flexDirection="column"
+                    rowGap={2}
+                  >
                     <RadioButton
                       name="medicalDiagnoses"
                       id="medicalDiagnoses-yes"
@@ -415,10 +471,16 @@ export const HealthProfileEdit = () => {
               </Box>
               <Box>
                 <Stack space={2}>
-                  <Text variant="h5" fontWeight="semiBold" marginBottom={0}>
+                  <Text id={medicationAssistanceLabelId} variant="h5" fontWeight="semiBold" marginBottom={0}>
                     {formatMessage(kim.medicationAssistance)}
                   </Text>
-                  <Box display="flex" flexDirection="column" rowGap={2}>
+                  <Box
+                    role="radiogroup"
+                    aria-labelledby={medicationAssistanceLabelId}
+                    display="flex"
+                    flexDirection="column"
+                    rowGap={2}
+                  >
                     <RadioButton
                       name="medicationAssistance"
                       id="medicationAssistance-yes"
@@ -450,7 +512,6 @@ export const HealthProfileEdit = () => {
                 size="small"
                 onClick={handleSave}
                 disabled={
-                  !isValid ||
                   !isDirty ||
                   !profile ||
                   allergyOptionsLoading ||

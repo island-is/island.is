@@ -19,6 +19,7 @@ import { SectionError } from '../SectionError'
 import { useAgentRelationTypeOptions } from '../useKeyInfoOptions'
 import { usePrimarySchoolKeyInfo } from '../usePrimarySchoolKeyInfo'
 import { mmsErrorMessage } from '../mmsError'
+import { focusInput, focusSelect } from './focusField'
 
 /**
  * Dedicated add screen for Aðstandendur (emergency contacts).
@@ -62,10 +63,27 @@ export const EmergencyContactAdd = () => {
       onError: () => setName(''),
     })
 
+  // Validation is reported on save rather than by disabling it, so there is
+  // always something to tell the guardian about what is missing.
+  const [showErrors, setShowErrors] = useState(false)
+
   const sanitizedNationalId = nationalId.replace(/\D/g, '')
   const nationalIdValid = kennitala.isValid(sanitizedNationalId)
+  const personNotFound =
+    nationalIdValid && lookupCalled && !nameLoading && !name
   // The name must have resolved from Þjóðskrá before the contact can be saved.
-  const canSubmit = nationalIdValid && !!name && !!relationTypeId
+  const nationalIdReady = nationalIdValid && !!name
+  const canSubmit = nationalIdReady && !!relationTypeId
+
+  const nationalIdError = () => {
+    if (nationalId.length > 0 && !nationalIdValid)
+      return formatMessage(kim.contactNationalIdInvalid)
+    if (personNotFound) return formatMessage(kim.contactPersonNotFound)
+    if (showErrors && !nationalIdReady) return formatMessage(kim.fieldRequired)
+    return undefined
+  }
+  const nationalIdErrorMessage = nationalIdError()
+  const relationTypeError = showErrors && !relationTypeId
 
   const overviewPath = generatePath(EducationPaths.PrimarySchoolOverview, {
     studentId: studentId ?? '',
@@ -82,7 +100,12 @@ export const EmergencyContactAdd = () => {
   }
 
   const handleSave = async () => {
-    if (!canSubmit || !relationTypeId) return
+    if (!canSubmit || !relationTypeId) {
+      setShowErrors(true)
+      if (!nationalIdReady) focusInput('new-contact-national-id')
+      else focusSelect('new-contact-relation-type')
+      return
+    }
     try {
       await addAgent({ nationalId: sanitizedNationalId, relationTypeId })
       toast.success(formatMessage(kim.saveSuccess))
@@ -104,24 +127,21 @@ export const EmergencyContactAdd = () => {
             loading={nameLoading}
             label={formatMessage(kim.contactNationalId)}
             value={nationalId}
-            hasError={nationalId.length > 0 && !nationalIdValid}
-            errorMessage={formatMessage(kim.contactNationalIdInvalid)}
+            hasError={Boolean(nationalIdErrorMessage)}
+            errorMessage={nationalIdErrorMessage}
             onChange={(event) => handleNationalIdChange(event.target.value)}
           />
-          {name && (
-            <Box paddingTop={1} paddingLeft={2}>
-              <Text variant="medium" fontWeight="semiBold">
-                {name}
-              </Text>
-            </Box>
-          )}
-          {nationalIdValid && lookupCalled && !nameLoading && !name && (
-            <Box paddingTop={1} paddingLeft={2}>
-              <Text variant="small" color="red600">
-                {formatMessage(kim.contactPersonNotFound)}
-              </Text>
-            </Box>
-          )}
+          {/* The name resolves a moment after the national id is typed, so the
+              result is announced rather than only shown. */}
+          <Box aria-live="polite">
+            {name && (
+              <Box paddingTop={1} paddingLeft={2}>
+                <Text variant="medium" fontWeight="semiBold">
+                  {name}
+                </Text>
+              </Box>
+            )}
+          </Box>
         </Box>
         <Select
           name="new-contact-relation-type"
@@ -134,6 +154,10 @@ export const EmergencyContactAdd = () => {
             relationOptions.find((option) => option.value === relationTypeId) ??
             null
           }
+          hasError={relationTypeError}
+          errorMessage={
+            relationTypeError ? formatMessage(kim.fieldRequired) : undefined
+          }
           onChange={(option) => setRelationTypeId(option?.value ?? undefined)}
         />
         {relationOptionsError && <SectionError error={relationOptionsError} />}
@@ -145,7 +169,7 @@ export const EmergencyContactAdd = () => {
           >
             {formatMessage(kim.cancel)}
           </Button>
-          <Button loading={saving} disabled={!canSubmit} onClick={handleSave}>
+          <Button loading={saving} disabled={saving} onClick={handleSave}>
             {formatMessage(kim.confirm)}
           </Button>
         </Box>

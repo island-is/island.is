@@ -20,6 +20,7 @@ import { SectionError } from '../SectionError'
 import { useAgentRelationTypeOptions } from '../useKeyInfoOptions'
 import { usePrimarySchoolKeyInfo } from '../usePrimarySchoolKeyInfo'
 import { mmsErrorMessage } from '../mmsError'
+import { focusSelect } from './focusField'
 
 /**
  * Dedicated edit screen for a single aðstandandi (emergency contact).
@@ -62,12 +63,21 @@ export const EmergencyContactEdit = () => {
   // from the loaded contact. Save stays disabled until then.
   const isDirty = relationTypeId !== contact?.relationTypeId
 
+  // A missing relation type is reported on save rather than by disabling it.
+  const [showErrors, setShowErrors] = useState(false)
+  const relationTypeError = showErrors && !relationTypeId
+
   const overviewPath = generatePath(EducationPaths.PrimarySchoolOverview, {
     studentId: studentId ?? '',
   })
 
   const handleSave = async () => {
-    if (!agentId || !relationTypeId) return
+    if (!relationTypeId) {
+      setShowErrors(true)
+      focusSelect('relation-type')
+      return
+    }
+    if (!agentId) return
     try {
       await updateAgent(agentId, { relationTypeId })
       toast.success(formatMessage(kim.saveSuccess))
@@ -88,7 +98,15 @@ export const EmergencyContactEdit = () => {
           title={formatMessage(m.noData)}
         />
       )}
-      {!loading && !error && contact && (
+      {!loading && !error && contact && !contact.canEdit && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(kim.contactNotEditable)}
+          message={formatMessage(kim.contactRegisteredNote)}
+        />
+      )}
+      {!loading && !error && contact && contact.canEdit && (
         <Box className={styles.formContainer}>
           <Stack space={3}>
             <Box>
@@ -118,6 +136,10 @@ export const EmergencyContactEdit = () => {
                   (option) => option.value === relationTypeId,
                 ) ?? null
               }
+              hasError={relationTypeError}
+              errorMessage={
+                relationTypeError ? formatMessage(kim.fieldRequired) : undefined
+              }
               onChange={(option) =>
                 setRelationTypeId(option?.value ?? undefined)
               }
@@ -135,7 +157,7 @@ export const EmergencyContactEdit = () => {
               </Button>
               <Button
                 loading={saving}
-                disabled={!relationTypeId || !isDirty}
+                disabled={!isDirty}
                 onClick={handleSave}
               >
                 {formatMessage(kim.confirm)}

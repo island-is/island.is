@@ -1,4 +1,5 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, ID, ObjectType } from '@nestjs/graphql'
+import { KeyInfoActorKind } from '../../../enums/primarySchoolKeyInfo.enum'
 
 /** The person behind an emergency contact. Email / phone are never exposed
  * here — they are the contact's own (contract §4.4). */
@@ -20,18 +21,18 @@ export class AgentRelationType {
   title!: string
 }
 
-/** Who registered the contact. `kind` is guardian | organization | unknown;
- * the UI must not render a "Skráð af" line when `kind === 'unknown'`. */
+/** Who registered the contact. The UI must not render a "Skráð af" line when
+ * `kind` is `unknown`. */
 @ObjectType('EducationPrimarySchoolAgentCreatedBy')
 export class AgentCreatedBy {
-  @Field()
-  kind!: string
+  @Field(() => KeyInfoActorKind)
+  kind!: KeyInfoActorKind
 
   @Field({ nullable: true })
   displayName?: string
 
-  @Field({ nullable: true })
-  at?: string
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  at?: Date
 }
 
 /** An emergency contact — GET /me/children/{childId}/emergency-contacts
@@ -44,8 +45,9 @@ export class PrimarySchoolAgent {
   @Field(() => AgentPerson)
   person!: AgentPerson
 
-  @Field(() => AgentRelationType)
-  relationType!: AgentRelationType
+  /** Absent on legacy records MMS has no relation type for. */
+  @Field(() => AgentRelationType, { nullable: true })
+  relationType?: AgentRelationType
 
   @Field(() => AgentCreatedBy)
   createdBy!: AgentCreatedBy

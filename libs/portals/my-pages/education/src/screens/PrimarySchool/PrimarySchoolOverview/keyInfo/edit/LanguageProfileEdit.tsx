@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useId } from 'react'
 import { generatePath, useNavigate, useParams } from 'react-router-dom'
 import {
   Box,
@@ -22,6 +22,7 @@ import { SectionError } from '../SectionError'
 import { useLanguageEnvironmentOptions } from '../useKeyInfoOptions'
 import { usePrimarySchoolKeyInfo } from '../usePrimarySchoolKeyInfo'
 import { mmsErrorMessage } from '../mmsError'
+import { focusSelect } from './focusField'
 
 /**
  * Dedicated edit screen for Tungumálaumhverfi (language profile).
@@ -36,6 +37,8 @@ import { mmsErrorMessage } from '../mmsError'
 export const LanguageProfileEdit = () => {
   useNamespaces('sp.education-primary-school')
   const { formatMessage } = useLocale()
+  const interpreterLabelId = useId()
+  const signLanguageLabelId = useId()
   const navigate = useNavigate()
   const { studentId } = useParams<{ studentId: string }>()
   const { languageProfile, saveLanguageProfile, saving } =
@@ -104,7 +107,13 @@ export const LanguageProfileEdit = () => {
   })
   const isDirty = currentSignature !== profileSignature
 
-  // Every field is required, so save stays blocked until they are all filled in.
+  // Every field is required. Save reports what is missing rather than staying
+  // disabled, so the guardian is never left guessing.
+  const [showErrors, setShowErrors] = useState(false)
+  const missingLanguageEnvironment = !languageEnvironmentId
+  const missingLanguages = languages.length === 0
+  const missingPreferredLanguage = !preferredLanguage
+
   const isValid =
     !!languageEnvironmentId &&
     languages.length > 0 &&
@@ -125,8 +134,13 @@ export const LanguageProfileEdit = () => {
       !languageEnvironmentId ||
       interpreter === undefined ||
       signLanguage === undefined
-    )
+    ) {
+      setShowErrors(true)
+      if (missingLanguageEnvironment) focusSelect('languageEnvironment')
+      else if (missingLanguages) focusSelect('languages')
+      else if (missingPreferredLanguage) focusSelect('preferredLanguage')
       return
+    }
     try {
       await saveLanguageProfile({
         languageEnvironmentId,
@@ -165,6 +179,12 @@ export const LanguageProfileEdit = () => {
                 <GridColumn span="12/12">
                   <Select
                     name="languageEnvironment"
+                    hasError={showErrors && missingLanguageEnvironment}
+                    errorMessage={
+                      showErrors && missingLanguageEnvironment
+                        ? formatMessage(kim.fieldRequired)
+                        : undefined
+                    }
                     backgroundColor="blue"
                     label={formatMessage(kim.languageEnvironment)}
                     size="sm"
@@ -187,6 +207,12 @@ export const LanguageProfileEdit = () => {
                 <GridColumn span="12/12">
                   <Select
                     name="languages"
+                    hasError={showErrors && missingLanguages}
+                    errorMessage={
+                      showErrors && missingLanguages
+                        ? formatMessage(kim.fieldRequired)
+                        : undefined
+                    }
                     backgroundColor="blue"
                     label={formatMessage(kim.childLanguages)}
                     size="sm"
@@ -220,6 +246,12 @@ export const LanguageProfileEdit = () => {
                 <GridColumn span="12/12">
                   <Select
                     name="preferredLanguage"
+                    hasError={showErrors && missingPreferredLanguage}
+                    errorMessage={
+                      showErrors && missingPreferredLanguage
+                        ? formatMessage(kim.fieldRequired)
+                        : undefined
+                    }
                     backgroundColor="blue"
                     size="sm"
                     required
@@ -236,11 +268,24 @@ export const LanguageProfileEdit = () => {
               </GridRow>
             </Box>
             <Box>
-              <Text variant="h5" fontWeight="semiBold" marginBottom={1}>
-                {formatMessage(kim.interpreter)}{' '}
+              <Box
+                display="flex"
+                alignItems="center"
+                columnGap={1}
+                marginBottom={1}
+              >
+                <Text id={interpreterLabelId} variant="h5" fontWeight="semiBold">
+                  {formatMessage(kim.interpreter)}
+                </Text>
                 <Tooltip text={formatMessage(kim.interpreterInfo)} />
-              </Text>
-              <Box display="flex" flexDirection="column" rowGap={2}>
+              </Box>
+              <Box
+                role="radiogroup"
+                aria-labelledby={interpreterLabelId}
+                display="flex"
+                flexDirection="column"
+                rowGap={2}
+              >
                 <RadioButton
                   name="interpreter"
                   id="interpreter-yes"
@@ -258,11 +303,24 @@ export const LanguageProfileEdit = () => {
               </Box>
             </Box>
             <Box>
-              <Text variant="h5" fontWeight="semiBold" marginBottom={1}>
-                {formatMessage(kim.signLanguage)}{' '}
+              <Box
+                display="flex"
+                alignItems="center"
+                columnGap={1}
+                marginBottom={1}
+              >
+                <Text id={signLanguageLabelId} variant="h5" fontWeight="semiBold">
+                  {formatMessage(kim.signLanguage)}
+                </Text>
                 <Tooltip text={formatMessage(kim.signLanguageInfo)} />
-              </Text>
-              <Box display="flex" flexDirection="column" rowGap={2}>
+              </Box>
+              <Box
+                role="radiogroup"
+                aria-labelledby={signLanguageLabelId}
+                display="flex"
+                flexDirection="column"
+                rowGap={2}
+              >
                 <RadioButton
                   name="signLanguage"
                   id="signLanguage-yes"
@@ -292,7 +350,7 @@ export const LanguageProfileEdit = () => {
                 size="small"
                 onClick={handleSave}
                 loading={saving}
-                disabled={!isValid || !isDirty}
+                disabled={!isDirty}
               >
                 {formatMessage(kim.save)}
               </Button>

@@ -34,19 +34,11 @@ export const PrimarySchoolOverview = () => {
 
   const student = data?.primarySchoolStudent
 
-  // While the key-info flag is off the sections below are left out and their
-  // reads are never made.
   const { value: keyInfoEnabled, loading: keyInfoFlagLoading } = useFeatureFlag(
     Features.isServicePortalPrimarySchoolKeyInfoEnabled,
     false,
   )
 
-  // Lykilupplýsingar (key information). One read brings back all three sections
-  // and whether the child exists in frigg at all; each section owns its own
-  // error and PATCH, so there is no page-level save. Without a counterpart in
-  // frigg every read answers "no information" and every write is rejected, so
-  // the sections are left out rather than shown with actions that cannot
-  // succeed.
   const {
     hasKeyInfo,
     loading: keyInfoLoading,
@@ -63,8 +55,7 @@ export const PrimarySchoolOverview = () => {
 
   // `hasKeyInfo` keeps its last known answer when a read fails (see the
   // EducationPrimarySchoolStudent type policy in the my-pages Apollo client),
-  // so the failure is what decides here: one error instead of three sections
-  // that would all be empty.
+  // so the error is what decides here.
   const showKeyInfo = hasKeyInfo && !keyInfoError && !keyInfoLoading
 
   return (

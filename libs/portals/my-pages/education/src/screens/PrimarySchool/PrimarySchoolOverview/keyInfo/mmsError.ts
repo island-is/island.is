@@ -1,5 +1,4 @@
 import { ApolloError } from '@apollo/client'
-import type { GraphQLError } from 'graphql'
 import type { MessageDescriptor } from 'react-intl'
 import { findProblemInApolloError } from '@island.is/shared/problem'
 import { primarySchoolKeyInfoMessages as kim } from '../../../../lib/messages'
@@ -11,7 +10,8 @@ import type { MmsError } from './types'
  * v0.2 §5), which the api lifts onto the problem it serialises into
  * `extensions.problem` (see mmsKeyInfoProblem in libs/api/domains/education).
  * Anything MMS did not explain — a timeout, a 500, a scope it refused — arrives
- * without a code and falls back to the generic "could not save".
+ * without a code and falls back to the generic "could not save". Frigg's own
+ * message is not forwarded, so `message` is always the GraphQL one.
  */
 
 /** The problem fields the api adds on top of the shared Problem shape. */
@@ -23,20 +23,34 @@ interface MmsProblem {
 const isApolloError = (error: unknown): error is ApolloError =>
   typeof error === 'object' && error !== null && 'graphQLErrors' in error
 
+const readString = (source: object, key: string): string | undefined => {
+  const value = Object.getOwnPropertyDescriptor(source, key)?.value
+  return typeof value === 'string' ? value : undefined
+}
+
+const mmsProblem = (problem: unknown): MmsProblem => {
+  if (typeof problem !== 'object' || problem === null) return {}
+  return {
+    mmsCode: readString(problem, 'mmsCode'),
+    mmsRequestId: readString(problem, 'mmsRequestId'),
+  }
+}
+
+const isMmsErrorCode = (code: string | undefined): code is MmsErrorCode =>
+  Object.values(MmsErrorCode).some((known) => known === code)
+
 /** ApolloError → MmsError, keeping the MMS code and request id when MMS sent
  * them so a section can explain the failure and a support request can quote it. */
 export const toMmsError = (
   error: ApolloError | undefined,
 ): MmsError | undefined => {
   if (!error) return undefined
-  const problem = findProblemInApolloError(error) as
-    | (MmsProblem & { detail?: string })
-    | undefined
+  const { mmsCode, mmsRequestId } = mmsProblem(findProblemInApolloError(error))
 
   return {
-    code: problem?.mmsCode,
-    message: problem?.detail ?? error.message,
-    requestId: problem?.mmsRequestId,
+    code: mmsCode,
+    message: error.message,
+    requestId: mmsRequestId,
   }
 }
 
@@ -57,9 +71,7 @@ export const toMmsFieldError = (
 
   // findProblemInApolloError only reads whole ApolloErrors, so the one error
   // this field failed with is wrapped back up on its own.
-  return toMmsError(
-    new ApolloError({ graphQLErrors: [graphQLError as GraphQLError] }),
-  )
+  return toMmsError(new ApolloError({ graphQLErrors: [graphQLError] }))
 }
 
 /** The messages we can explain a failure with, by MMS code. */
@@ -75,6 +87,6 @@ const MESSAGE_BY_CODE: Partial<Record<MmsErrorCode, MessageDescriptor>> = {
  */
 export const mmsErrorMessage = (error: unknown): MessageDescriptor => {
   const code = isApolloError(error) ? toMmsError(error)?.code : undefined
-  if (!code) return kim.saveError
-  return MESSAGE_BY_CODE[code as MmsErrorCode] ?? kim.saveError
+  if (!isMmsErrorCode(code)) return kim.saveError
+  return MESSAGE_BY_CODE[code] ?? kim.saveError
 }

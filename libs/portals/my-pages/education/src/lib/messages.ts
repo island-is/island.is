@@ -104,6 +104,10 @@ export const primarySchoolMessages = defineMessages({
     id: 'sp.education-primary-school:change-school',
     defaultMessage: 'Breyta skólavist',
   },
+  changeSchoolUrl: {
+    id: 'sp.education-primary-school:change-school-url',
+    defaultMessage: '/umsoknir/grunnskoli',
+  },
   contactTeacher: {
     id: 'sp.education-primary-school:contact-teacher',
     defaultMessage: 'Umsjónarkennari',
@@ -242,6 +246,18 @@ export const primarySchoolKeyInfoMessages = defineMessages({
     defaultMessage:
       'Skráð af hinum forsjáraðila. Aðeins sá sem skráði getur breytt.',
   },
+  fieldRequired: {
+    id: 'sp.education-primary-school:key-info-field-required',
+    defaultMessage: 'Þennan reit þarf að fylla út',
+  },
+  contactRemoveSuccess: {
+    id: 'sp.education-primary-school:key-info-contact-remove-success',
+    defaultMessage: 'Aðstandandi fjarlægður',
+  },
+  contactNotEditable: {
+    id: 'sp.education-primary-school:key-info-contact-not-editable',
+    defaultMessage: 'Þú getur ekki breytt þessum aðstandanda',
+  },
   contactsEmpty: {
     id: 'sp.education-primary-school:key-info-contacts-empty',
     defaultMessage: 'Engir aðstandendur eru skráðir.',
@@ -278,7 +294,7 @@ export const primarySchoolKeyInfoMessages = defineMessages({
   contactRemoveText: {
     id: 'sp.education-primary-school:key-info-contact-remove-text',
     defaultMessage:
-      'Ertu viss um að þú viljir fjarlægja {name} sem aðstandanda? Þú getur bætt honum við aftur ef þörf er á.',
+      'Ertu viss um að þú viljir fjarlægja {name} sem aðstandanda? Þú getur bætt viðkomandi við aftur ef þörf er á.',
   },
 
   // 2. Tungumálaumhverfi
@@ -312,7 +328,7 @@ export const primarySchoolKeyInfoMessages = defineMessages({
   },
   interpreterInfo: {
     id: 'sp.education-primary-school:key-info-interpreter-info',
-    defaultMessage: 'Forsjáaraðili þarf túlk í samskiptum við skóla',
+    defaultMessage: 'Forsjáraðili þarf túlk í samskiptum við skóla',
   },
   signLanguage: {
     id: 'sp.education-primary-school:key-info-sign-language',

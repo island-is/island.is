@@ -50,18 +50,13 @@ fragment PrimarySchoolHealthProfileFields on EducationPrimarySchoolHealthProfile
   }
 }
 
-# All three sections in one request: every key-info field resolver translates
-# the student into a frigg child id first, so splitting them costs an extra
-# `listChildren` per request (my-pages uses a plain HttpLink, no batching). The
-# three flags select the sections the caller actually reads.
-#
-# Every field selected here is nullable on purpose. Read with errorPolicy 'all'
-# (see usePrimarySchoolKeyInfo), a failing non-nullable field would null
-# `primarySchoolStudent` itself — and that null is cached under the root field
-# this query shares with the base info and assessment reads, blanking those too.
+# Every field selected here must stay nullable: read with errorPolicy 'all', a
+# failing non-nullable field nulls `primarySchoolStudent` itself, and that null
+# is cached under the root field this query shares with the base info and
+# assessment reads.
 query PrimarySchoolKeyInfoSections(
   $studentId: String!
-  $locale: String!
+  $locale: LocaleEnum!
   $withEmergencyContacts: Boolean!
   $withLanguageProfile: Boolean!
   $withHealthProfile: Boolean!
@@ -88,7 +83,7 @@ query PrimarySchoolContactIdentity($input: IdentityInput!) {
   }
 }
 
-query PrimarySchoolAgentRelationTypes($locale: String!) {
+query PrimarySchoolAgentRelationTypes($locale: LocaleEnum!) {
   primarySchoolAgentRelationTypes(locale: $locale) {
     id
     relation
@@ -96,7 +91,7 @@ query PrimarySchoolAgentRelationTypes($locale: String!) {
   }
 }
 
-query PrimarySchoolAllergies($locale: String!) {
+query PrimarySchoolAllergies($locale: LocaleEnum!) {
   primarySchoolAllergies(locale: $locale) {
     id
     code
@@ -105,7 +100,7 @@ query PrimarySchoolAllergies($locale: String!) {
   }
 }
 
-query PrimarySchoolLanguageEnvironments($locale: String!) {
+query PrimarySchoolLanguageEnvironments($locale: LocaleEnum!) {
   primarySchoolLanguageEnvironments(locale: $locale) {
     id
     code
@@ -115,7 +110,7 @@ query PrimarySchoolLanguageEnvironments($locale: String!) {
 
 mutation PrimarySchoolAddAgent(
   $input: EducationPrimarySchoolAddAgentInput!
-  $locale: String!
+  $locale: LocaleEnum!
 ) {
   primarySchoolAddAgent(input: $input, locale: $locale) {
     ...PrimarySchoolAgentFields
@@ -124,7 +119,7 @@ mutation PrimarySchoolAddAgent(
 
 mutation PrimarySchoolUpdateAgent(
   $input: EducationPrimarySchoolUpdateAgentInput!
-  $locale: String!
+  $locale: LocaleEnum!
 ) {
   primarySchoolUpdateAgent(input: $input, locale: $locale) {
     ...PrimarySchoolAgentFields
@@ -139,7 +134,7 @@ mutation PrimarySchoolDeleteAgent(
 
 mutation PrimarySchoolUpdateLanguageProfile(
   $input: EducationPrimarySchoolUpdateLanguageProfileInput!
-  $locale: String!
+  $locale: LocaleEnum!
 ) {
   primarySchoolUpdateLanguageProfile(input: $input, locale: $locale) {
     ...PrimarySchoolLanguageProfileFields
@@ -148,15 +143,13 @@ mutation PrimarySchoolUpdateLanguageProfile(
 
 mutation PrimarySchoolUpdateHealthProfile(
   $input: EducationPrimarySchoolUpdateHealthProfileInput!
-  $locale: String!
+  $locale: LocaleEnum!
 ) {
   primarySchoolUpdateHealthProfile(input: $input, locale: $locale) {
     ...PrimarySchoolHealthProfileFields
   }
 }
 
-# Whether the child exists in the frigg key-info database at all — the student
-# hub uses it to decide whether the overview tab has anything to show.
 query PrimarySchoolStudentHasKeyInfo($studentId: String!) {
   primarySchoolStudent(studentId: $studentId) {
     id

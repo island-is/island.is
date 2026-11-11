@@ -48,7 +48,7 @@ describe('toMmsKeyInfoProblem', () => {
     expect(toMmsKeyInfoProblem(error)).toBe(error)
   })
 
-  it('lifts the code, message and request id out of a rejection body', () => {
+  it('lifts the code and request id out of a rejection body', () => {
     const error = fetchError({
       body: {
         statusCode: 409,
@@ -63,10 +63,10 @@ describe('toMmsKeyInfoProblem', () => {
     expect(problem).toMatchObject({
       status: 409,
       title: 'AGENT_EXISTS',
-      detail: 'Aðstandandi er þegar skráður á barnið',
       mmsCode: 'AGENT_EXISTS',
       mmsRequestId: 'req-7f3c',
     })
+    expect(problem).not.toHaveProperty('detail')
   })
 
   it('reads a code served as application/problem+json', () => {
@@ -81,7 +81,6 @@ describe('toMmsKeyInfoProblem', () => {
 
     expect(problemOf(toMmsKeyInfoProblem(error))).toMatchObject({
       mmsCode: 'IS_GUARDIAN',
-      detail: 'Already a guardian of this child',
     })
   })
 

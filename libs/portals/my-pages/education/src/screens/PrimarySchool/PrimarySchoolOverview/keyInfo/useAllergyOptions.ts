@@ -1,10 +1,11 @@
 import { useLocale } from '@island.is/localization'
+import { LocaleEnum } from '@island.is/api/schema'
 import { usePrimarySchoolAllergiesQuery } from './PrimarySchoolKeyInfo.generated'
-import type { MmsError } from './types'
+import type { AllergyCategory, MmsError } from './types'
 
 /**
  * The selectable allergy reference list, served by MMS as two `GET /key-options`
- * lists. Callers split by `type` (values match AllergyCategory).
+ * lists. Callers split by `type`.
  *
  * `code` is not unique across types: `code: "other"` exists in both the food
  * and the other list, so always key selections off `value` (the id).
@@ -14,8 +15,7 @@ export interface AllergySelectOption {
   value: string
   label: string
   code: string
-  /** food | other (AllergyCategory) */
-  type: string
+  type: AllergyCategory
 }
 
 export const useAllergyOptions = (): {
@@ -25,7 +25,7 @@ export const useAllergyOptions = (): {
 } => {
   const { lang } = useLocale()
   const { data, loading, error } = usePrimarySchoolAllergiesQuery({
-    variables: { locale: lang },
+    variables: { locale: lang === 'en' ? LocaleEnum.En : LocaleEnum.Is },
   })
 
   const options = (data?.primarySchoolAllergies ?? []).map((allergy) => ({

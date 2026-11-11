@@ -1,4 +1,5 @@
 import { InfoLine, m } from '@island.is/portals/my-pages/core'
+import { useLocale } from '@island.is/localization'
 import { Divider } from '@island.is/island-ui/core'
 
 import type { EducationPrimarySchoolStudent } from '@island.is/api/schema'
@@ -21,6 +22,7 @@ interface Props {
  * it matches the other Lykilupplýsingar sections on the overview.
  */
 export const BaseInfoSection = ({ student, loading }: Props) => {
+  const { formatMessage } = useLocale()
   return (
     <KeyInfoSection title={m.baseInfo}>
       <Divider />
@@ -32,10 +34,11 @@ export const BaseInfoSection = ({ student, loading }: Props) => {
         button={{
           type: 'link',
           label: psm.changeSchool,
-          // Leaves Mínar síður for the application system. The origin makes it
-          // an absolute url, which LinkResolver opens as an external link —
-          // a relative path would be routed inside this SPA instead.
-          to: `${document.location.origin}/umsoknir/grunnskoli`,
+          // Absolute, so LinkResolver opens it as an external link instead of
+          // routing it inside this SPA.
+          to: `${document.location.origin}${formatMessage(
+            psm.changeSchoolUrl,
+          )}`,
         }}
       />
       <Divider />

@@ -1,11 +1,12 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql'
+import { KeyInfoActorKind } from '../../../enums/primarySchoolKeyInfo.enum'
 import { Allergy, LanguageEnvironment } from './lookups.model'
 
 /** Audit stamp shared by the health and language profiles (contract §4.5/§4.6). */
 @ObjectType('EducationPrimarySchoolUpdatedBy')
 export class UpdatedBy {
-  @Field()
-  kind!: string
+  @Field(() => KeyInfoActorKind)
+  kind!: KeyInfoActorKind
 
   @Field({ nullable: true })
   displayName?: string
@@ -26,8 +27,8 @@ export class HealthProfile {
   @Field(() => [Allergy])
   allergies!: Allergy[]
 
-  @Field({ nullable: true })
-  updatedAt?: string
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  updatedAt?: Date
 
   @Field(() => UpdatedBy, { nullable: true })
   updatedBy?: UpdatedBy
@@ -53,8 +54,8 @@ export class LanguageProfile {
   @Field()
   signLanguage!: boolean
 
-  @Field({ nullable: true })
-  updatedAt?: string
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  updatedAt?: Date
 
   @Field(() => UpdatedBy, { nullable: true })
   updatedBy?: UpdatedBy

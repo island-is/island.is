@@ -78,6 +78,15 @@ export const client = new ApolloClient({
       QuestionnaireQuestion: {
         keyFields: ['id', 'sectionId'],
       },
+      // Key-information lookups carry a title resolved to the locale the query
+      // asked for, so they cannot be normalized by `id` alone — switching
+      // language would overwrite the shared entity and leave the other
+      // language's list pointing at it. The id stays the raw MMS id, which is
+      // what writes send back.
+      EducationPrimarySchoolRelationType: { keyFields: false },
+      EducationPrimarySchoolAllergy: { keyFields: false },
+      EducationPrimarySchoolLanguageEnvironment: { keyFields: false },
+      EducationPrimarySchoolAgentRelationType: { keyFields: false },
       EducationPrimarySchoolStudent: {
         fields: {
           hasKeyInfo: {

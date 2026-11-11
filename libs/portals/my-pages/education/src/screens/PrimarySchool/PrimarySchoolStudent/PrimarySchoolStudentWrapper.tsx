@@ -51,9 +51,6 @@ export const PrimarySchoolStudentWrapper = ({
   const hasAssessment =
     (assessmentData?.primarySchoolStudent?.assessmentHistory?.length ?? 0) > 0
 
-  // Key information sits behind its own flag, separate from the one gating the
-  // primary-school page, so it can stay dark after the assessment screens go
-  // live. While it is off the frigg read is never made.
   const { value: keyInfoEnabled, loading: keyInfoFlagLoading } = useFeatureFlag(
     Features.isServicePortalPrimarySchoolKeyInfoEnabled,
     false,
@@ -70,13 +67,8 @@ export const PrimarySchoolStudentWrapper = ({
   const hasKeyInfoChild =
     keyInfoEnabled && (keyInfoData?.primarySchoolStudent?.hasKeyInfo ?? false)
 
-  // Show the student hub only when there is something to show: the child exists
-  // in the frigg key-info database, or has assessment history. Either answer on
-  // its own is enough to have content, but the assessment query is also what
-  // decides whether there is a tab bar — so the hub waits for that one answer
-  // rather than rendering the page and dropping a tab bar in above it a moment
-  // later. It does not wait on the frigg round trip: a student with assessment
-  // history gets its tabs without it.
+  // Waits on the assessment query because it decides whether there is a tab
+  // bar, but not on the frigg read.
   const hasContent = (hasAssessment || hasKeyInfoChild) && !assessmentLoading
   const stillChecking =
     assessmentLoading || keyInfoLoading || keyInfoFlagLoading
@@ -127,9 +119,6 @@ export const PrimarySchoolStudentWrapper = ({
       ) : stillChecking ? (
         <CardLoader />
       ) : keyInfoError ? (
-        // A child whose only content is key information looks exactly like a
-        // child with nothing to show once the frigg read fails, so the failure
-        // is reported rather than answered with "no data".
         <Problem error={keyInfoError} noBorder={false} />
       ) : (
         <Problem

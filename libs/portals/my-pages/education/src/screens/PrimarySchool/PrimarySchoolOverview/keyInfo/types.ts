@@ -8,16 +8,25 @@
  * source of truth for the wire shape.
  */
 
+import {
+  EducationPrimarySchoolActorKind,
+  EducationPrimarySchoolAllergyCategory,
+} from '@island.is/api/schema'
+
+export { EducationPrimarySchoolActorKind }
+/** MMS serves one key-option list per category, so these are the only two. */
+export { EducationPrimarySchoolAllergyCategory as AllergyCategory }
+
 /* -------------------------------------------------------------------------- */
 /* 1. Aðstandendur (emergency contacts)                                        */
 /* -------------------------------------------------------------------------- */
 
 /**
- * Who registered a contact. When `kind === 'unknown'` the UI must NOT render the
+ * Who registered a contact. When `kind` is `Unknown` the UI must NOT render the
  * "Skráð af" line (contract §7.2).
  */
 export interface EmergencyContactCreatedBy {
-  kind: string
+  kind: EducationPrimarySchoolActorKind
   name?: string
 }
 
@@ -26,9 +35,8 @@ export interface EmergencyContact {
   id: string
   name: string
   nationalId: string
-  /** id into key-options?type=relation */
-  relationTypeId: string
-  /** resolved display label for the relation type, if provided by MMS */
+  /** id into key-options?type=relation; absent on legacy records */
+  relationTypeId?: string
   relationTypeLabel?: string
   createdBy?: EmergencyContactCreatedBy
   /** ISO date string; only present for some records */
@@ -81,19 +89,9 @@ export interface LanguageProfileUpdateInput {
 /* 3. Heilsufarsupplýsingar (health profile)                                   */
 /* -------------------------------------------------------------------------- */
 
-/**
- * Categorisation of an allergy, taken from `allergies[].type`. MMS serves one
- * key-option list per category, so these are the only two that exist.
- */
-export enum AllergyCategory {
-  Food = 'food',
-  Other = 'other',
-}
-
 export interface Allergy {
   id: string
-  /** one of AllergyCategory; kept as string so an unknown value never crashes */
-  type: string
+  type: EducationPrimarySchoolAllergyCategory
   label: string
 }
 

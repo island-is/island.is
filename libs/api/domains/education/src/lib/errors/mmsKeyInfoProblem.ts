@@ -1,6 +1,7 @@
 import { FetchError } from '@island.is/clients/middlewares'
 import { ProblemError } from '@island.is/nest/problem'
-import type { Problem } from '@island.is/shared/problem'
+import { ProblemType } from '@island.is/shared/problem'
+import type { HttpProblem } from '@island.is/shared/problem'
 
 /**
  * Frigg answers a rejected key-info call with a machine-readable code
@@ -34,8 +35,6 @@ import type { Problem } from '@island.is/shared/problem'
 const CODE_KEYS = ['code']
 /** Where the request id lives (v0.3 §6). */
 const REQUEST_ID_KEYS = ['requestId']
-/** Where the human-readable detail lives (v0.3 §6). */
-const MESSAGE_KEYS = ['message']
 /**
  * Ísland.is may send `X-Request-Id` itself, in which case MMS reuses it rather
  * than minting one (v0.3 §6). Read as a fallback for a rejection whose body
@@ -51,6 +50,22 @@ const REQUEST_ID_HEADERS = ['x-request-id']
  * dressed up as one.
  */
 const MMS_CODE_PATTERN = /^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$/
+
+/**
+ * The problem the client reads. Frigg's own `message` is deliberately left out:
+ * it is backend wording and may name the people on the record.
+ */
+export interface MmsKeyInfoProblem extends HttpProblem {
+  mmsCode: string
+  mmsRequestId?: string
+}
+
+const PROBLEM_TYPE_BY_STATUS: Record<number, HttpProblem['type']> = {
+  400: ProblemType.HTTP_BAD_REQUEST,
+  401: ProblemType.HTTP_UNAUTHORIZED,
+  403: ProblemType.HTTP_FORBIDDEN,
+  404: ProblemType.HTTP_NOT_FOUND,
+}
 
 const pickString = (
   body: Record<string, unknown>,
@@ -95,17 +110,15 @@ export const toMmsKeyInfoProblem = (error: unknown): unknown => {
   const mmsRequestId =
     pickString(body, REQUEST_ID_KEYS) ?? requestIdFromHeaders(error)
 
-  return new ProblemError(
-    {
-      status: error.status,
-      type: `https://httpstatuses.org/${error.status}`,
-      title: mmsCode,
-      detail: pickString(body, MESSAGE_KEYS),
-      mmsCode,
-      mmsRequestId,
-    } as unknown as Problem,
-    { cause: error },
-  )
+  const problem: MmsKeyInfoProblem = {
+    status: error.status,
+    type: PROBLEM_TYPE_BY_STATUS[error.status] ?? ProblemType.HTTP_BAD_REQUEST,
+    title: mmsCode,
+    mmsCode,
+    mmsRequestId,
+  }
+
+  return new ProblemError(problem, { cause: error })
 }
 
 /** Runs a frigg key-info call, translating its failures for the client. */

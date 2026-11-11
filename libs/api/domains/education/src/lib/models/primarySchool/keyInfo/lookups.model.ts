@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { AllergyCategory } from '../../../enums/primarySchoolKeyInfo.enum'
 
 /** Relation-type lookup option, from `GET /key-options?type=relation`
  * (contract §4.1). */
@@ -24,8 +25,8 @@ export class Allergy {
   @Field()
   code!: string
 
-  @Field()
-  type!: string
+  @Field(() => AllergyCategory)
+  type!: AllergyCategory
 
   @Field()
   title!: string

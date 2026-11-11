@@ -1,4 +1,5 @@
 import { useLocale } from '@island.is/localization'
+import { LocaleEnum } from '@island.is/api/schema'
 import {
   usePrimarySchoolAgentRelationTypesQuery,
   usePrimarySchoolLanguageEnvironmentsQuery,
@@ -27,7 +28,7 @@ interface KeyInfoOptions {
 export const useAgentRelationTypeOptions = (): KeyInfoOptions => {
   const { lang } = useLocale()
   const { data, loading, error } = usePrimarySchoolAgentRelationTypesQuery({
-    variables: { locale: lang },
+    variables: { locale: lang === 'en' ? LocaleEnum.En : LocaleEnum.Is },
   })
 
   const options = (data?.primarySchoolAgentRelationTypes ?? []).map((type) => ({
@@ -46,7 +47,7 @@ export const useAgentRelationTypeOptions = (): KeyInfoOptions => {
 export const useLanguageEnvironmentOptions = (): KeyInfoOptions => {
   const { lang } = useLocale()
   const { data, loading, error } = usePrimarySchoolLanguageEnvironmentsQuery({
-    variables: { locale: lang },
+    variables: { locale: lang === 'en' ? LocaleEnum.En : LocaleEnum.Is },
   })
 
   const options = (data?.primarySchoolLanguageEnvironments ?? []).map(

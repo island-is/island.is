@@ -9,12 +9,12 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
-import type { Locale } from '@island.is/shared/types'
 import {
   FeatureFlag,
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
+import { LocaleEnum } from '@island.is/nest/graphql'
 import { FriggKeyInfoClientService } from '@island.is/clients/mms/frigg'
 
 import { PrimarySchoolAgent } from '../models/primarySchool/keyInfo/agent.model'
@@ -37,24 +37,13 @@ import {
 import { withMmsKeyInfoProblem } from '../errors/mmsKeyInfoProblem'
 
 /**
- * Writes for the key-information sections (contract v0.3, §4). Every input
- * carries the routed nemendagrunnur `studentId`, which is also the frigg child
- * id (`base.users.id` — contract v0.3 §4.3), so it is passed straight through.
+ * Writes for the key-information sections (contract v0.3 §4). The routed
+ * `studentId` is also the frigg child id (§4.3), so it passes straight through:
+ * frigg verifies guardianship and active enrolment on every call and answers
+ * 404 otherwise (§3, §6), so there is nothing to check first.
  *
- * Nothing is looked up first to check the child exists or belongs to the
- * caller: frigg verifies guardianship and active enrolment on every call and
- * answers 404 `NOT_FOUND` otherwise (§3, §6). Checking it here too would cost
- * two extra round trips to reach the same answer by guessing at frigg's rule.
- *
- * The matching reads are field resolvers on the student, see
- * {@link PrimarySchoolKeyInfoResolver}; each mutation returns the record it
- * wrote, so it takes the same `locale` they do.
- *
- * Every frigg call goes through {@link withMmsKeyInfoProblem} so a rejection
- * reaches the client as its MMS code rather than an unclassified 500 — the
- * add/edit screens show a specific message per code.
- *
- * Gated on the key-information feature flag, like the matching reads.
+ * Every call goes through {@link withMmsKeyInfoProblem} so a rejection reaches
+ * the client as its MMS code rather than an unclassified 500.
  */
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.isServicePortalPrimarySchoolKeyInfoEnabled)
@@ -69,8 +58,8 @@ export class PrimarySchoolKeyInfoMutationsResolver {
   async primarySchoolAddAgent(
     @CurrentUser() user: User,
     @Args('input') input: AddAgentInput,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
+    @Args('locale', { type: () => LocaleEnum, nullable: true })
+    locale: LocaleEnum = LocaleEnum.Is,
   ): Promise<PrimarySchoolAgent> {
     const childId = input.studentId
     const contact = await withMmsKeyInfoProblem(() =>
@@ -86,8 +75,8 @@ export class PrimarySchoolKeyInfoMutationsResolver {
   async primarySchoolUpdateAgent(
     @CurrentUser() user: User,
     @Args('input') input: UpdateAgentInput,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
+    @Args('locale', { type: () => LocaleEnum, nullable: true })
+    locale: LocaleEnum = LocaleEnum.Is,
   ): Promise<PrimarySchoolAgent> {
     const childId = input.studentId
     const contact = await withMmsKeyInfoProblem(() =>
@@ -116,8 +105,8 @@ export class PrimarySchoolKeyInfoMutationsResolver {
   async primarySchoolUpdateLanguageProfile(
     @CurrentUser() user: User,
     @Args('input') input: UpdateLanguageProfileInput,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
+    @Args('locale', { type: () => LocaleEnum, nullable: true })
+    locale: LocaleEnum = LocaleEnum.Is,
   ): Promise<LanguageProfile> {
     const childId = input.studentId
     const profile = await withMmsKeyInfoProblem(() =>
@@ -138,8 +127,8 @@ export class PrimarySchoolKeyInfoMutationsResolver {
   async primarySchoolUpdateHealthProfile(
     @CurrentUser() user: User,
     @Args('input') input: UpdateHealthProfileInput,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
+    @Args('locale', { type: () => LocaleEnum, nullable: true })
+    locale: LocaleEnum = LocaleEnum.Is,
   ): Promise<HealthProfile> {
     const childId = input.studentId
     const profile = await withMmsKeyInfoProblem(() =>
