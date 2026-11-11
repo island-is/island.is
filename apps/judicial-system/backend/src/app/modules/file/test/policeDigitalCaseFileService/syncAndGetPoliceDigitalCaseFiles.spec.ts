@@ -338,5 +338,4 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
       expect.any(Buffer),
     )
   })
-
 })
