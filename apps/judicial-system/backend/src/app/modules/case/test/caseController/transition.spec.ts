@@ -392,6 +392,7 @@ describe('CaseController - Transition', () => {
         const courtCaseNumber = uuid()
         const caseFileId1 = uuid()
         const caseFileId2 = uuid()
+        const caseFileId3 = uuid()
         const caseFiles = [
           {
             id: caseFileId1,
@@ -406,6 +407,13 @@ describe('CaseController - Transition', () => {
             isKeyAccessible: true,
             state: CaseFileState.STORED_IN_COURT,
             category: CaseFileCategory.RULING,
+          },
+          {
+            id: caseFileId3,
+            key: uuid(),
+            isKeyAccessible: true,
+            state: CaseFileState.STORED_IN_RVG,
+            category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
           },
         ]
         const courtEndTime = randomDate()
@@ -490,7 +498,8 @@ describe('CaseController - Transition', () => {
                 caseId,
               },
               {
-                // Only court records are delivered to police, not rulings
+                // Court records and mid-case ruling orders are delivered to
+                // police; final rulings (RULING) are not.
                 type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
                 user: {
                   ...defaultUser,
@@ -498,6 +507,15 @@ describe('CaseController - Transition', () => {
                 },
                 caseId,
                 elementId: caseFileId1,
+              },
+              {
+                type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
+                user: {
+                  ...defaultUser,
+                  canConfirmIndictment: isIndictmentCase(theCase.type),
+                },
+                caseId,
+                elementId: caseFileId3,
               },
             ])
           } else if (

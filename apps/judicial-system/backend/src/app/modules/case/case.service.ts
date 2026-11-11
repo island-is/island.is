@@ -905,7 +905,9 @@ export class CaseService {
 
       for (const caseFile of updatedCase.caseFiles ?? []) {
         if (
-          caseFile.category === CaseFileCategory.COURT_RECORD &&
+          (caseFile.category === CaseFileCategory.COURT_RECORD ||
+            caseFile.category ===
+              CaseFileCategory.COURT_INDICTMENT_RULING_ORDER) &&
           caseFile.isKeyAccessible
         ) {
           queueMessagesAfterCommit({

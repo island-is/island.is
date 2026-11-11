@@ -466,9 +466,12 @@ export class FileService {
     return file
   }
 
-  // Files of an indictment case are delivered to the police and the courts as
-  // they arrive. Also used when a ruling order pronounced orally is written up,
-  // which is the first moment that file has a document to deliver.
+  // Additional case files of an indictment case are delivered to the police
+  // and the courts as they arrive. Mid-case ruling orders are delivered to the
+  // courts here too, but to the police only when the case is completed — so
+  // LÖKE gets the confirmed PDF (see addMessagesForCompletedIndictmentCaseToQueue).
+  // Also used when a ruling order pronounced orally is written up, which is
+  // the first moment that file has a document to deliver.
   private addMessagesForIndictmentCaseFileDeliveryToQueue(
     theCase: Case,
     file: CaseFile,
@@ -485,7 +488,12 @@ export class FileService {
       return
     }
 
-    if (theCase.origin === CaseOrigin.LOKE) {
+    // Ruling orders under the course of a case wait for case completion before
+    // going to LÖKE, so the PDF is delivered with its confirmation stamp.
+    if (
+      theCase.origin === CaseOrigin.LOKE &&
+      file.category !== CaseFileCategory.COURT_INDICTMENT_RULING_ORDER
+    ) {
       queueMessagesAfterCommit({
         type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
         user,
@@ -842,8 +850,9 @@ export class FileService {
 
     const updatedCaseFile = updatedCaseFiles[0]
 
-    // The ruling finally has a document to deliver, which is what createCaseFile
-    // would have queued had the ruling arrived as an upload in the first place.
+    // The ruling finally has a document to deliver to the court (police delivery
+    // waits for case completion), which is what createCaseFile would have queued
+    // had the ruling arrived as an upload in the first place.
     this.addMessagesForIndictmentCaseFileDeliveryToQueue(
       theCase,
       updatedCaseFile,
