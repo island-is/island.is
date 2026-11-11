@@ -6,6 +6,11 @@ import { MIN_DATE } from './constants'
 
 const isOnOrAfterMinDate = (date?: string) => !date || date >= MIN_DATE
 
+const nullableSelectValue = z
+  .string()
+  .nullable()
+  .transform((value) => value ?? '')
+
 const UserSchemaBase = z.object({
   nationalId: z.string().refine((nationalId) => {
     return (
@@ -34,7 +39,7 @@ export const UserInformationSchema = z.intersection(
 
 export const RemoveableStayAbroadSchema = z
   .object({
-    countryId: z.string(),
+    countryId: nullableSelectValue,
     dateTo: z.string().optional(),
     dateFrom: z.string().optional(),
     purpose: z.string().optional(),
@@ -45,7 +50,7 @@ export const RemoveableStayAbroadSchema = z
       return wasRemoved === 'true' || (countryId && countryId.length > 0)
     },
     {
-      path: ['country'],
+      path: ['countryId'],
     },
   )
   .refine(
@@ -104,7 +109,7 @@ const StaysAbroadSchema = z.object({
 
 export const RemoveableCountrySchema = z
   .object({
-    countryId: z.string(),
+    countryId: nullableSelectValue,
     wasRemoved: z.string().min(1),
     dateTo: z.string().optional(),
     dateFrom: z.string().optional(),

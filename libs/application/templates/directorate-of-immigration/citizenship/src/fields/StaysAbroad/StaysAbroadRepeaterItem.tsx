@@ -112,11 +112,11 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
         justifyContent="spaceBetween"
         marginTop={showItemTitle || itemNumber > 0 ? 2 : 0}
       >
-        {showItemTitle &&
-          DescriptionFormField({
-            application: application,
-            showFieldName: false,
-            field: {
+        {showItemTitle && (
+          <DescriptionFormField
+            application={application}
+            showFieldName={false}
+            field={{
               id: 'title',
               title: '',
               description: formatMessage(
@@ -127,8 +127,9 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
               type: FieldTypes.DESCRIPTION,
               component: FieldComponents.DESCRIPTION,
               children: undefined,
-            },
-          })}
+            }}
+          />
+        )}
 
         {itemNumber > 0 && !readOnly && (
           <Button

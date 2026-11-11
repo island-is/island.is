@@ -111,4 +111,57 @@ describe('CitizenshipSchema', () => {
       expect(getIssuePaths(buildAnswers('1900-01-01'))).toEqual([])
     })
   })
+
+  describe('removed country rows', () => {
+    it('ignore a country the select reset to null', () => {
+      expect(
+        getIssuePaths(
+          residence({
+            countryId: null,
+            wasRemoved: 'true',
+            dateFrom: '',
+            dateTo: '',
+          }),
+        ),
+      ).toEqual([])
+      expect(
+        getIssuePaths(
+          staysAbroad({
+            countryId: null,
+            wasRemoved: 'true',
+            dateFrom: '',
+            dateTo: '',
+            purpose: '',
+          }),
+        ),
+      ).toEqual([])
+    })
+
+    it('still require a country on rows in use', () => {
+      expect(
+        getIssuePaths(
+          residence({
+            countryId: null,
+            wasRemoved: 'false',
+            dateFrom: '',
+            dateTo: '',
+          }),
+        ),
+      ).toEqual(['countriesOfResidence.selectedAbroadCountries.1.countryId'])
+    })
+  })
+
+  it('reports a missing stay-abroad country on countryId', () => {
+    expect(
+      getIssuePaths(
+        staysAbroad({
+          countryId: '',
+          wasRemoved: 'false',
+          dateFrom: '1990-01-01',
+          dateTo: '2000-01-01',
+          purpose: 'Nám',
+        }),
+      ),
+    ).toEqual(['staysAbroad.selectedAbroadCountries.1.countryId'])
+  })
 })
