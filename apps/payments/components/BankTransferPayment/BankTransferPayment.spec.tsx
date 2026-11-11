@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { format as formatKennitala } from 'kennitala'
 
 import { BankTransferPayment, CompanyPayer } from './BankTransferPayment'
 
@@ -31,10 +32,16 @@ const Form = ({ children }: { children: ReactNode }) => {
   )
 }
 
-const renderInputs = (companyPayer?: CompanyPayer) => {
+const renderInputs = (
+  companyPayer?: CompanyPayer,
+  payerNationalId = companyPayer?.nationalId ?? '0101302399',
+) => {
   const { container } = render(
     <Form>
-      <BankTransferPayment companyPayer={companyPayer} />
+      <BankTransferPayment
+        companyPayer={companyPayer}
+        payerNationalId={payerNationalId}
+      />
     </Form>,
   )
   const input = (part: string) =>
@@ -51,6 +58,8 @@ const renderInputs = (companyPayer?: CompanyPayer) => {
     ) as HTMLButtonElement,
   }
 }
+
+const company = { nationalId: '5005101370', name: '65 ARTIC ehf.' }
 
 const paste = (target: HTMLInputElement, text: string) =>
   fireEvent.paste(target, { clipboardData: { getData: () => text } })
@@ -161,7 +170,6 @@ describe('BankTransferPayment', () => {
     })
   })
   describe('approver national id', () => {
-    const company = { nationalId: '5005101370', name: '65 ARTIC ehf.' }
     const actorInput = () =>
       document.querySelector<HTMLInputElement>(
         'input[name="actorNationalId"]',
@@ -187,6 +195,30 @@ describe('BankTransferPayment', () => {
       expect(
         screen.queryByText('Sláðu inn gilda kennitölu einstaklings.'),
       ).not.toBeNull()
+    })
+  })
+
+  describe('payer national id', () => {
+    const payerInput = () =>
+      document.querySelector<HTMLInputElement>('input[name="payerNationalId"]')
+
+    it('shows an individual payer the national id the account must be in, read-only', () => {
+      renderInputs(undefined, '0101302399')
+
+      const input = payerInput()
+      expect(input?.value).toBe('010130-2399')
+      expect(input?.readOnly).toBe(true)
+    })
+
+    it('is left out for a company payer, which shows its own national id', () => {
+      renderInputs(company)
+
+      expect(payerInput()).toBeNull()
+      expect(
+        document.querySelector<HTMLInputElement>(
+          'input[name="companyNationalId"]',
+        )?.value,
+      ).toBe(formatKennitala(company.nationalId))
     })
   })
 })
