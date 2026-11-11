@@ -6,7 +6,6 @@ import {
   ForbiddenException,
   Inject,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
 
@@ -174,17 +173,11 @@ export class AppealSummonsService {
     const resolvedDefendants = this.resolveDefendants(theCase, dto, summons)
 
     if (summons.confirmedDate) {
-      await this.appealSummonsRepositoryService.update(
+      // Rejected if a concurrent send already went through.
+      await this.appealSummonsRepositoryService.clearConfirmationIfUnsent(
         summons.id,
         theCase.id,
-        {
-          confirmedById: null,
-          confirmedDate: null,
-          hash: null,
-          hashAlgorithm: null,
-        },
-        // Do not clear confirmation if a concurrent send already went through.
-        { transaction, where: { sentToCourtOfAppealsDate: null } },
+        { transaction },
       )
       // Delete after commit so a rolled-back edit cannot leave the DB hash
       // pointing at a PDF that S3 already removed. Re-check hash so a
@@ -247,11 +240,11 @@ export class AppealSummonsService {
       )
     }
 
-    const deleted = await this.appealSummonsRepositoryService.delete(
+    // Rejected if a concurrent send already went through.
+    const deleted = await this.appealSummonsRepositoryService.deleteIfUnsent(
       summons.id,
       theCase.id,
-      // Do not delete if a concurrent send already went through.
-      { transaction, where: { sentToCourtOfAppealsDate: null } },
+      { transaction },
     )
 
     if (deleted) {
@@ -558,10 +551,10 @@ export class AppealSummonsService {
     // Lock before the idempotency check so concurrent deliveries for the same
     // service row serialize and only one CreateDocument runs.
     const lockedService =
-      await this.appealSummonsRepositoryService.findServiceRecipientById(
+      await this.appealSummonsRepositoryService.findServiceRecipientByIdForUpdate(
         service.id,
         summons.id,
-        { transaction, lock: true },
+        { transaction },
       )
 
     if (!lockedService) {
@@ -607,7 +600,9 @@ export class AppealSummonsService {
     orderByDate.setMonth(orderByDate.getMonth() + 2)
 
     const originalAncestorCaseId =
-      await this.caseRepositoryService.findOriginalAncestorId(theCase)
+      await this.caseRepositoryService.findOriginalAncestorId(theCase, {
+        transaction,
+      })
 
     const receiverType = lockedService.defendantId
       ? DocumentDeliveryReceiverType.DEFENDANT
@@ -704,18 +699,12 @@ export class AppealSummonsService {
 
     const sentToCourtOfAppealsDate = new Date()
 
-    await this.appealSummonsRepositoryService.update(
+    // Rejected if already sent, or if a concurrent edit cleared confirmation.
+    await this.appealSummonsRepositoryService.markSentToCourtOfAppeals(
       summons.id,
       theCase.id,
-      { sentToCourtOfAppealsDate },
-      // Reject if already sent, or if a concurrent edit cleared confirmation.
-      {
-        transaction,
-        where: {
-          sentToCourtOfAppealsDate: null,
-          confirmedDate: summons.confirmedDate ?? null,
-        },
-      },
+      sentToCourtOfAppealsDate,
+      { transaction, expectedConfirmedDate: summons.confirmedDate ?? null },
     )
 
     await this.appealEventLogRepositoryService.create(
@@ -887,26 +876,17 @@ export class AppealSummonsService {
     update: PoliceUpdateAppealSummonsServiceDto,
     transaction: Transaction,
   ): Promise<AppealSummonsServiceRecipient> {
-    const updated =
-      await this.appealSummonsRepositoryService.updateServiceRecipient(
-        service.id,
-        service.appealSummonsId,
-        {
-          serviceStatus: update.serviceStatus,
-          serviceDate: update.serviceDate,
-          servedBy: update.servedBy,
-          comment: update.comment,
-        },
-        { transaction },
-      )
-
-    if (!updated) {
-      throw new InternalServerErrorException(
-        `Could not update appeal summons service recipient ${service.id} of summons ${service.appealSummonsId}`,
-      )
-    }
-
-    return updated
+    return this.appealSummonsRepositoryService.updateServiceRecipient(
+      service.id,
+      service.appealSummonsId,
+      {
+        serviceStatus: update.serviceStatus,
+        serviceDate: update.serviceDate,
+        servedBy: update.servedBy,
+        comment: update.comment,
+      },
+      { transaction },
+    )
   }
 
   async syncServiceStatusesForCase(
@@ -975,14 +955,14 @@ export class AppealSummonsService {
     const updatedSummonsIds = new Set<string>()
 
     for (const pull of pulls) {
-      // Only apply the poll while the row is still waiting. A police push that
-      // landed during the LOKE round-trip owns the row; do not overwrite it.
+      // Only applied while the row is still waiting. A police push that
+      // landed during the LOKE round-trip owns the row and is not overwritten.
       const updated =
-        await this.appealSummonsRepositoryService.updateServiceRecipient(
+        await this.appealSummonsRepositoryService.recordServiceStatusIfUnset(
           pull.service.id,
           pull.summons.id,
           pull.update,
-          { transaction, where: { serviceStatus: null } },
+          { transaction },
         )
 
       if (!updated) {

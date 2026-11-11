@@ -473,7 +473,9 @@ export class VerdictService {
       orderByDate.setMonth(orderByDate.getMonth() + 2)
 
       const originalAncestorCaseId =
-        await this.caseRepositoryService.findOriginalAncestorId(theCase)
+        await this.caseRepositoryService.findOriginalAncestorId(theCase, {
+          transaction,
+        })
 
       // deliver the verdict by creating the document at the police
       const createdDocument = await this.policeService.createDocument({
