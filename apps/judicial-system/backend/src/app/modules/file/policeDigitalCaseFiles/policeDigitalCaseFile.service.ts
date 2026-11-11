@@ -29,10 +29,7 @@ import {
 import { UpdatePoliceDigitalCaseFileDto } from '../dto/updatePoliceDigitalCaseFiles.dto'
 import { PoliceDigitalCaseFileSyncResult } from '../models/policeDigitalCaseFileSyncResult.model'
 import { getFilesToCreate } from './getFilesToCreate'
-import {
-  truncateToVarchar,
-  VARCHAR_DEFAULT_LIMIT,
-} from './truncateToVarchar'
+import { truncateToVarchar, VARCHAR_DEFAULT_LIMIT } from './truncateToVarchar'
 
 @Injectable()
 export class PoliceDigitalCaseFileService {
