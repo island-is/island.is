@@ -16,7 +16,10 @@ import { queueMessagesAfterCommit } from '../../../middleware'
 import { AwsS3Service } from '../../aws-s3'
 import { CaseService } from '../../case'
 import { CourtService } from '../../court'
-import { CaseFileRepositoryService } from '../../repository'
+import {
+  CaseFileRepositoryService,
+  CourtDocumentRepositoryService,
+} from '../../repository'
 import { fileModuleConfig } from '../file.config'
 import { FileController } from '../file.controller'
 import { FileService } from '../file.service'
@@ -91,6 +94,11 @@ export const createTestingFileModule = async () => {
     CaseFileRepositoryService,
   )
 
+  const courtDocumentRepositoryService =
+    fileModule.get<CourtDocumentRepositoryService>(
+      CourtDocumentRepositoryService,
+    )
+
   const fileConfig = fileModule.get<ConfigType<typeof fileModuleConfig>>(
     fileModuleConfig.KEY,
   )
@@ -128,6 +136,7 @@ export const createTestingFileModule = async () => {
     awsS3Service,
     courtService,
     caseFileRepositoryService,
+    courtDocumentRepositoryService,
     fileConfig,
     fileService,
     policeDigitalCaseFileService,
