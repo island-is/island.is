@@ -27,7 +27,8 @@ import BackgroundHuntingCard from '../../assets/card/veidikort-bg.png'
 import LogoAOSH from '../../assets/card/vinnueftirlitid-logo.png'
 import BackgroundVinnuvelar from '../../assets/card/vinnuvelar-bg.png'
 import chevronForward from '../../assets/icons/chevron-forward.png'
-import { dynamicColor, theme } from '../../utils'
+import { dynamicColor, theme, token } from '../../utils'
+import { licenceColours } from '../../utils/licence-colours'
 import { Typography } from '../typography/typography'
 
 export const LICENSE_CARD_ROW_GAP = theme.spacing.p2
@@ -41,7 +42,7 @@ const Host = styled(Animated.View)<{ emptyState?: boolean }>`
   row-gap: ${LICENSE_CARD_ROW_GAP}px;
   border-radius: ${({ theme }) => theme.border.radius.extraLarge};
   border-width: ${({ emptyState }) => (emptyState ? 1 : 0)}px;
-  border-color: ${({ theme }) => theme.color.blue200};
+  border-color: ${token((t) => t.border.primary)};
   overflow: hidden;
   justify-content: center;
 `
@@ -106,85 +107,51 @@ export const LicenseCardPresets: Record<GenericLicenseType, CardPreset> = {
     title: 'Ökuskírteini (IS)',
     logo: LogoCoatOfArms,
     backgroundImage: BackgroundDriversLicense,
-    backgroundColor: '#F5E4EC',
-    barcode: {
-      background: '#F5EAEF',
-      overlay: '#F0DDE5',
-    },
   },
   AdrLicense: {
     title: 'ADR skírteini',
     logo: LogoAOSH,
     backgroundImage: BackgroundADR,
-    backgroundColor: '#F2FAEC',
-    barcode: {
-      background: '#FAFDF7',
-      overlay: '#F4FCEE',
-    },
   },
   MachineLicense: {
     title: 'Vinnuvélaskírteini',
     logo: LogoAOSH,
     backgroundImage: BackgroundVinnuvelar,
-    backgroundColor: '#C5E6AF',
-    barcode: {
-      background: '#DEF1D1',
-      overlay: '#C8E6B3',
-    },
   },
   FirearmLicense: {
     title: 'Skotvopnaleyfi',
     logo: CoatOfArms,
     backgroundImage: BackgroundWeaponLicense,
-    backgroundColor: '#EBEBF2',
-    barcode: {
-      background: '#FDFDF7',
-      overlay: '#FAFAEB',
-    },
   },
   HuntingLicense: {
     title: 'Veiðikort',
     logo: LogoNatureConservationAgency,
     backgroundImage: BackgroundHuntingCard,
-    backgroundColor: '#E2EDFF',
-    barcode: {
-      background: '#DBECF4',
-      overlay: '#B3D3E3',
-    },
   },
   Ehic: {
     title: 'Evrópska sjúkratryggingakortið',
     logo: LogoEhic,
     backgroundImage: BackgroundPassport,
-    backgroundColor: '#B9C1E6',
   },
   DisabilityLicense: {
     title: 'Örorkuskírteini',
     logo: DisabilityLicenseLogo,
     backgroundImage: DisabilityLicenseBg,
-    backgroundColor: '#C5D5C8',
-    barcode: {
-      background: '#D7E3D7',
-      overlay: '#A0BAA2',
-    },
   },
   PCard: {
     title: 'Stæðiskort',
     logo: LogoCoatOfArms,
     backgroundImage: BackgroundPCardLicense,
-    backgroundColor: '#F2F7FF',
   },
   Passport: {
     title: 'Vegabréf: Almennt',
     logo: LogoRegistersIceland,
     backgroundImage: BackgroundPassport,
-    backgroundColor: '#CACFE4',
   },
   IdentityDocument: {
     title: 'Nafnskírteini',
     logo: LogoRegistersIceland,
     backgroundImage: BackgroundIdentityDocument,
-    backgroundColor: '#C5E3F2',
   },
 }
 
@@ -192,11 +159,6 @@ type CardPreset = {
   title: string
   logo: ImageSourcePropType
   backgroundImage: ImageSourcePropType
-  backgroundColor: string
-  barcode?: {
-    background: string
-    overlay: string
-  }
 }
 
 interface LicenseCardProps {
@@ -225,11 +187,12 @@ export function LicenseListCard({
   const preset = type
     ? LicenseCardPresets[type]
     : LicenseCardPresets.DriversLicense
+  const colours = type ? licenceColours[type] : licenceColours.DriversLicense
   const title = props.title ?? preset?.title
   const logo = props.logo ?? preset?.logo
   const backgroundImage = props.backgroundImage ?? preset?.backgroundImage
-  const backgroundColor = props.backgroundColor ?? preset?.backgroundColor
-  const textColor = theme.shades.light.foreground
+  const backgroundColor = props.backgroundColor ?? colours?.background
+  const textColor = theme.tokens.foreground.primary
 
   return (
     <Host emptyState={props.emptyState}>
@@ -281,7 +244,7 @@ export function LicenseListCard({
               style={{
                 height: 24,
                 width: 24,
-                tintColor: theme.color.dark400,
+                tintColor: theme.tokens.foreground.primary,
                 opacity: 0.3,
               }}
             />

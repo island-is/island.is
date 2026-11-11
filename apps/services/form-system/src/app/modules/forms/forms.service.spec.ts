@@ -791,6 +791,7 @@ describe('FormsService JSON sample', () => {
   }
 
   it.each([
+    [FamilyTypes.APPLICANT_INFO, ['nationalId', 'name']],
     [FamilyTypes.CHILD, ['nationalId', 'name']],
     [FamilyTypes.NATIONAL_ID_ESTATE, ['nationalId', 'name']],
     [FamilyTypes.SPOUSE, ['nationalId', 'name', 'maritalStatus']],

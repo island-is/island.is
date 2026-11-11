@@ -1193,6 +1193,16 @@ export const RecyclingFund = new XroadConf({
   },
 })
 
+export const FjarskiptastofaSelfAssessment = new XroadConf({
+  env: {
+    XROAD_FJARSKIPTASTOFA_SELF_ASSESSMENT_PATH: {
+      dev: 'IS-DEV/GOV/10100/Fjarskiptastofa-Protected/assessment-v1',
+      staging: 'IS-TEST/GOV/5703972499/Fjarskiptastofa-Protected/assessment-v1',
+      prod: 'IS/GOV/5703972499/Fjarskiptastofa-Protected/assessment-v1',
+    },
+  },
+})
+
 export const RVKFinancialAid = new XroadConf({
   env: {
     XROAD_RVK_VEITA_PATH: {

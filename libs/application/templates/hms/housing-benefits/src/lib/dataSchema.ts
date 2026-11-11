@@ -8,6 +8,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import * as m from './messages'
+import { LegalDomicileOption } from '../utils/constants'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -93,34 +94,14 @@ const baseSchema = z
         answer: z.string().min(1),
       })
       .optional(),
-    exemptionCheckbox: z
-      .union([z.array(z.string()), z.literal('')])
+    legalDomicileOption: z
+      .union([z.nativeEnum(LegalDomicileOption), z.literal('')])
       .optional()
       .transform((v) => (v === '' ? undefined : v)),
     exemptionReason: z
       .union([z.enum(exemptionReasons), z.literal('')])
       .optional()
       .transform((v) => (v === '' ? undefined : v)),
-    exemptionDocuments: z
-      .object({
-        studies: z
-          .union([z.array(fileSchema), z.literal('')])
-          .optional()
-          .transform((v) => (v === '' ? undefined : v)),
-        health: z
-          .union([z.array(fileSchema), z.literal('')])
-          .optional()
-          .transform((v) => (v === '' ? undefined : v)),
-        housing: z
-          .union([z.array(fileSchema), z.literal('')])
-          .optional()
-          .transform((v) => (v === '' ? undefined : v)),
-        work: z
-          .union([z.array(fileSchema), z.literal('')])
-          .optional()
-          .transform((v) => (v === '' ? undefined : v)),
-      })
-      .optional(),
     householdMembersTableRepeater: z
       .array(householdMemberRowSchema)
       .optional()
@@ -248,11 +229,10 @@ export const dataSchema = baseSchema
     }
   })
   .superRefine((data, ctx) => {
-    // Only validate exemption when user has explicitly requested one (checked the box).
-    // Skip validation when exemption section was never shown (address matches) or not completed.
-    const hasRequestedExemption = data.exemptionCheckbox?.includes(YES)
-
-    if (!hasRequestedExemption) return
+    // Only validate the exemption reason when the applicant chose to apply for an exemption.
+    // Skip when the legal domicile section was never shown (address matches) or the
+    // applicant chose to refetch from the national registry instead.
+    if (data.legalDomicileOption !== LegalDomicileOption.EXEMPTION) return
 
     if (
       !data.exemptionReason ||
@@ -262,22 +242,6 @@ export const dataSchema = baseSchema
         code: z.ZodIssueCode.custom,
         path: ['exemptionReason'],
         params: m.draftMessages.exemptionSection.validationReasonRequired,
-      })
-      return
-    }
-
-    if (data.exemptionReason === 'housing') return
-
-    const reasonFiles = data.exemptionDocuments?.[data.exemptionReason]
-    if (
-      !reasonFiles ||
-      !Array.isArray(reasonFiles) ||
-      reasonFiles.length === 0
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['exemptionDocuments', data.exemptionReason],
-        params: m.draftMessages.exemptionSection.validationFileRequired,
       })
     }
   })
@@ -320,7 +284,9 @@ export const dataSchema = baseSchema
     if (!bucket || typeof bucket !== 'object') return
 
     const repeater = (
-      bucket as { applicantSubmitAccessAgreementRepeater?: unknown }
+      bucket as {
+        applicantSubmitAccessAgreementRepeater?: unknown
+      }
     ).applicantSubmitAccessAgreementRepeater
     if (!Array.isArray(repeater) || repeater.length === 0) return
 

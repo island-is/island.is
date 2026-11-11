@@ -656,6 +656,22 @@ describe('HousingBenefitsService notifications', () => {
         )
     })
 
+    it('reports no tax return when the API says not filed in any of the last five years', async () => {
+      hasTaxReturnForYear.mockResolvedValue(false)
+
+      const result = await service.getPersonalTaxReturn({
+        application: createApplication(),
+        auth: createCurrentUser({ nationalId: APPLICANT_ID }),
+        currentUserLocale: 'is',
+      })
+
+      expect(result).toEqual({
+        handedInLastYear: false,
+        handedInLastFiveYears: false,
+      })
+      expect(hasTaxReturnForYear).toHaveBeenCalledTimes(5)
+    })
+
     it('returns empty mock without calling tax API when mock variant is emptySuccess', async () => {
       hasTaxReturnForYear.mockRejectedValue(new Error('HMS tax API down'))
       const application = createApplication({
@@ -793,6 +809,22 @@ describe('HousingBenefitsService notifications', () => {
         .mockImplementation((environment) =>
           actual.isRunningOnEnvironment(environment),
         )
+    })
+
+    it('reports no tax return when the API says the assignee has not filed', async () => {
+      hasTaxReturnForYear.mockResolvedValue(false)
+
+      const result = await service.getAssigneePersonalTaxReturn({
+        application: createApplication(),
+        auth: createCurrentUser({ nationalId: ASSIGNEE_A }),
+        currentUserLocale: 'is',
+      })
+
+      expect(result).toEqual({
+        handedInLastYear: false,
+        handedInLastFiveYears: false,
+      })
+      expect(hasTaxReturnForYear).toHaveBeenCalledTimes(5)
     })
 
     it('returns mock payload without calling tax API when assignee mock is enabled', async () => {

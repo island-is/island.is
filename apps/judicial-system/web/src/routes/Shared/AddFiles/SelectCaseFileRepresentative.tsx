@@ -12,9 +12,9 @@ import {
   FormContext,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import type {
+import {
   CaseFileCategory,
-  CaseRepresentative,
+  type CaseRepresentative,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
@@ -49,9 +49,12 @@ export const SelectRepresentative: FC<SelectRepresentativeProps> = (props) => {
   const options = useMemo(() => {
     const reps =
       workingCase.caseRepresentatives?.map((representative) => ({
-        label: `${representative.name} (${getRoleTitleFromCaseFileCategory(
-          representative.caseFileCategory,
-        )})`,
+        label:
+          representative.caseFileCategory === CaseFileCategory.COURT_CASE_FILE
+            ? 'Dómari'
+            : `${representative.name} (${getRoleTitleFromCaseFileCategory(
+                representative.caseFileCategory,
+              )})`,
         value: representative.name,
         selectedCaseRepresentative: representative,
       })) ?? []

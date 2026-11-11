@@ -1,3 +1,4 @@
+import type { AppContext } from 'next/app'
 import App from 'next/app'
 import Head from 'next/head'
 import { ApolloProvider } from '@apollo/client'
@@ -32,6 +33,14 @@ if (typeof window !== 'undefined') {
 }
 
 class JudicialSystemApplication extends App {
+  // Opting every page into server rendering. Without this, Next statically
+  // exports the pages at build time, and the runtime env that _document
+  // renders from process.env is baked into the build instead of being read
+  // on each request.
+  static async getInitialProps(appContext: AppContext) {
+    return App.getInitialProps(appContext)
+  }
+
   render() {
     const { Component, pageProps, router } = this.props
 

@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { ScrollView, View } from 'react-native'
 
-import { Input, InputRow, Typography } from '@/ui'
+import { InfoLine, InfoLineRow, Typography } from '@/ui'
 import { useNationalRegistryUserQuery } from '@/graphql/types/schema'
 import { formatNationalId } from '@/lib/format-national-id'
 import { testIDs } from '@/utils/test-ids'
@@ -34,15 +34,15 @@ export default function PersonalInfoScreen() {
             {intl.formatMessage({ id: 'user.natreg.description' })}
           </Typography>
         </View>
-        <Input
+        <InfoLine
           loading={loadingNatReg}
           error={errorNatReg}
           label={intl.formatMessage({ id: 'user.natreg.displayName' })}
           value={natRegData?.fullName}
           valueTestID={testIDs.USER_PROFILE_INFO_DISPLAY_NAME_VALUE}
         />
-        <InputRow>
-          <Input
+        <InfoLineRow>
+          <InfoLine
             loading={loadingNatReg}
             error={errorNatReg}
             label={intl.formatMessage({ id: 'user.natreg.nationalId' })}
@@ -52,21 +52,21 @@ export default function PersonalInfoScreen() {
                 : undefined
             }
           />
-          <Input
+          <InfoLine
             loading={loadingNatReg}
             error={errorNatReg}
             label={intl.formatMessage({ id: 'user.natreg.birthPlace' })}
             value={natRegData?.birthPlace}
           />
-        </InputRow>
-        <Input
+        </InfoLineRow>
+        <InfoLine
           loading={loadingNatReg}
           error={errorNatReg}
           label={intl.formatMessage({ id: 'user.natreg.legalResidence' })}
           value={natRegData?.legalResidence}
         />
-        <InputRow>
-          <Input
+        <InfoLineRow>
+          <InfoLine
             loading={loadingNatReg}
             error={errorNatReg}
             label={intl.formatMessage({ id: 'user.natreg.gender' })}
@@ -81,7 +81,7 @@ export default function PersonalInfoScreen() {
                 : undefined
             }
           />
-          <Input
+          <InfoLine
             loading={loadingNatReg}
             error={errorNatReg}
             label={intl.formatMessage({
@@ -98,14 +98,14 @@ export default function PersonalInfoScreen() {
                 : undefined
             }
           />
-        </InputRow>
-        <Input
+        </InfoLineRow>
+        <InfoLine
           loading={loadingNatReg}
           error={errorNatReg}
           label={intl.formatMessage({ id: 'user.natreg.citizenship' })}
           value={natRegData?.citizenship?.name}
         />
-        <Input
+        <InfoLine
           loading={loadingNatReg}
           error={errorNatReg}
           label={intl.formatMessage({ id: 'user.natreg.religion' })}
