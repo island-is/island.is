@@ -2,6 +2,8 @@ import { FormSystemField } from '@island.is/api/schema'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Dispatch } from 'react'
+import HtmlParser from 'react-html-parser'
+import sanitizeHtml from 'sanitize-html'
 import { Action } from '../../../lib'
 
 interface Props {
@@ -37,7 +39,12 @@ export const MessageWithLink = ({ item }: Props) => {
         </Box>
         <Box overflow="hidden">
           <Text whiteSpace="breakSpaces" textAlign="justify">
-            {item?.description?.[lang]}
+            {HtmlParser(
+              sanitizeHtml(item?.description?.[lang] ?? '', {
+                allowedTags: ['em', 'strong'],
+                allowedAttributes: {},
+              }),
+            )}
           </Text>
         </Box>
       </Box>
