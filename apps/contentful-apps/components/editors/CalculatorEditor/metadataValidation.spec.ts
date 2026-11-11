@@ -1,4 +1,7 @@
-import { TaxCalculatorInputFieldType } from '../../../graphql/schema'
+import {
+  TaxCalculatorInputFieldType,
+  TaxCalculatorOutputFieldType,
+} from '../../../graphql/schema'
 import type { InputFieldContract, OutputFieldContract } from './contract'
 import { hasMetadataValidationError } from './metadataValidation'
 
@@ -90,5 +93,59 @@ describe('hasMetadataValidationError', () => {
         outputContract,
       ),
     ).toBe(false)
+  })
+
+  describe('object outputs', () => {
+    const objectOutputContract: OutputFieldContract = new Map([
+      [
+        'periodOne',
+        {
+          key: 'periodOne',
+          type: TaxCalculatorOutputFieldType.Object,
+          itemFields: [
+            { key: 'upphaed', type: TaxCalculatorOutputFieldType.Number },
+          ],
+        },
+      ],
+    ])
+
+    const configWithItem = (itemKey: string) =>
+      ({
+        inputSections: [],
+        outputTotal: { uid: 'hero', key: '', label: { is: '' } },
+        outputSections: [
+          {
+            key: 'o',
+            fields: [
+              {
+                uid: 'f1',
+                kind: 'value',
+                key: 'periodOne',
+                itemFields: [{ uid: 'i1', key: itemKey }],
+              },
+            ],
+          },
+        ],
+      } as never)
+
+    it('passes when the item key exists on the object output', () => {
+      expect(
+        hasMetadataValidationError(
+          configWithItem('upphaed'),
+          new Map(),
+          objectOutputContract,
+        ),
+      ).toBe(false)
+    })
+
+    it('fails when the item key is missing from the object output', () => {
+      expect(
+        hasMetadataValidationError(
+          configWithItem('other'),
+          new Map(),
+          objectOutputContract,
+        ),
+      ).toBe(true)
+    })
   })
 })

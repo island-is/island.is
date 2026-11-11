@@ -14,7 +14,7 @@ import {
   Button,
   Checkbox,
   DatePickerInput,
-  Tag,
+  FilterChip,
   TextField,
   Typography,
 } from '@/ui'
@@ -277,7 +277,7 @@ export default function MedicineDelegationFormScreen() {
             <QuickLabelsContainer>
               {quickLabels.map((label) => (
                 <QuickLabel key={label.value}>
-                  <Tag
+                  <FilterChip
                     title={getQuickLabels(label.value, label.type)}
                     onPress={() => {
                       setDateTo(getQuickSelectDate(label.value, label.type))

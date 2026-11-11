@@ -6,7 +6,7 @@ import { useLocalSearchParams } from 'expo-router'
 import {
   Button,
   Divider,
-  Problem,
+  StatusMessage,
   TextField,
   Typography,
   useDynamicColor,
@@ -380,7 +380,9 @@ export default function VehicleMileageScreen() {
           </View>
         }
         style={{ flex: 1, margin: 16, marginTop: 0 }}
-        ListFooterComponent={res.error ? <Problem error={res.error} /> : null}
+        ListFooterComponent={
+          res.error ? <StatusMessage error={res.error} /> : null
+        }
       />
     </>
   )

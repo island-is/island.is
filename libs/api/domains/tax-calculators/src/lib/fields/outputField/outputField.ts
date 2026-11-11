@@ -14,6 +14,7 @@ import type {
   BooleanOutputField,
   DateOutputField,
   NumberOutputField,
+  ObjectOutputField,
   OutputField,
   OutputScalarField,
   ScalarOutputFieldType,
@@ -93,6 +94,14 @@ export const toOutputField = (field: CalculatorOutputField): OutputField => {
       const outputField: ArrayOutputField = {
         key: field.name,
         type: TaxCalculatorOutputFieldType.ARRAY,
+        itemFields: field.itemFields.map(toOutputScalarField),
+      }
+      return outputField
+    }
+    case 'object': {
+      const outputField: ObjectOutputField = {
+        key: field.name,
+        type: TaxCalculatorOutputFieldType.OBJECT,
         itemFields: field.itemFields.map(toOutputScalarField),
       }
       return outputField

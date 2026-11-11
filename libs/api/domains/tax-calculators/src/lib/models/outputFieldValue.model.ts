@@ -31,4 +31,10 @@ export class OutputFieldValue {
     description: 'Rows for an `ARRAY` output. An empty list is a valid result.',
   })
   arrayValue?: OutputFieldValueRow[]
+
+  @Field(() => OutputFieldValueRow, {
+    nullable: true,
+    description: 'Row for an `OBJECT` output.',
+  })
+  objectValue?: OutputFieldValueRow
 }

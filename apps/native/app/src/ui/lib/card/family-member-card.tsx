@@ -2,7 +2,7 @@ import React from 'react'
 import { Image } from 'react-native'
 import styled from 'styled-components/native'
 import chevronForward from '../../assets/icons/chevron-forward.png'
-import { dynamicColor } from '../../utils'
+import { token } from '../../utils'
 import { Avatar } from '../avatar/avatar'
 import { Typography } from '../typography/typography'
 
@@ -12,13 +12,7 @@ const Host = styled.View`
   padding: ${({ theme }) => theme.spacing[2]}px;
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: ${({ theme }) => theme.border.width.standard}px;
-  border-color: ${dynamicColor(
-    ({ theme }) => ({
-      light: theme.color.blue200,
-      dark: theme.shades.dark.shade300,
-    }),
-    true,
-  )};
+  border-color: ${token((t) => t.border.primary)};
   align-items: center;
   justify-content: space-between;
 `

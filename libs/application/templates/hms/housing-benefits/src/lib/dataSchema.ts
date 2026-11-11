@@ -8,6 +8,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import * as m from './messages'
+import { LegalDomicileOption } from '../utils/constants'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -93,8 +94,8 @@ const baseSchema = z
         answer: z.string().min(1),
       })
       .optional(),
-    exemptionCheckbox: z
-      .union([z.array(z.string()), z.literal('')])
+    legalDomicileOption: z
+      .union([z.nativeEnum(LegalDomicileOption), z.literal('')])
       .optional()
       .transform((v) => (v === '' ? undefined : v)),
     exemptionReason: z
@@ -228,11 +229,10 @@ export const dataSchema = baseSchema
     }
   })
   .superRefine((data, ctx) => {
-    // Only validate exemption when user has explicitly requested one (checked the box).
-    // Skip validation when exemption section was never shown (address matches) or not completed.
-    const hasRequestedExemption = data.exemptionCheckbox?.includes(YES)
-
-    if (!hasRequestedExemption) return
+    // Only validate the exemption reason when the applicant chose to apply for an exemption.
+    // Skip when the legal domicile section was never shown (address matches) or the
+    // applicant chose to refetch from the national registry instead.
+    if (data.legalDomicileOption !== LegalDomicileOption.EXEMPTION) return
 
     if (
       !data.exemptionReason ||

@@ -19,7 +19,7 @@ export function navbarCloseItem(): NativeStackHeaderItem {
     type: 'button',
     label: 'Close',
     icon: { type: 'sfSymbol', name: 'xmark' },
-    tintColor: theme.color.blue400,
+    tintColor: theme.tokens.interactive.foreground.primary,
     onPress: () => router.back(),
   }
 }

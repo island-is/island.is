@@ -26,7 +26,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.EXAMPLE_INPUTS,
   name: 'Example Inputs',
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: 'Stafrænt Ísland',
   translationNamespaces: ApplicationConfigurations.ExampleInputs.translation,
   dataSchema,

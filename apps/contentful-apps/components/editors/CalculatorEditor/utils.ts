@@ -61,6 +61,32 @@ const filterOptionLabels = (
 export const isBlankMarkdown = (value: string | undefined) =>
   !value?.replace(/<br>/g, '').trim()
 
+const monthLabels: CalculatorLocalizedText[] = [
+  { is: 'Janúar', en: 'January' },
+  { is: 'Febrúar', en: 'February' },
+  { is: 'Mars', en: 'March' },
+  { is: 'Apríl', en: 'April' },
+  { is: 'Maí', en: 'May' },
+  { is: 'Júní', en: 'June' },
+  { is: 'Júlí', en: 'July' },
+  { is: 'Ágúst', en: 'August' },
+  { is: 'September', en: 'September' },
+  { is: 'Október', en: 'October' },
+  { is: 'Nóvember', en: 'November' },
+  { is: 'Desember', en: 'December' },
+]
+
+export const MONTH_COUNT = monthLabels.length
+
+export const monthOptionLabels = (
+  options: string[],
+): Record<string, CalculatorLocalizedText> =>
+  Object.fromEntries(
+    options
+      .slice(0, MONTH_COUNT)
+      .map((option, index) => [option, { ...monthLabels[index] }]),
+  )
+
 const trimTrailingBreaks = (value: string) =>
   value.replace(/(\s*<br>)+\s*$/, '').trimEnd()
 
