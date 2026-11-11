@@ -293,18 +293,25 @@ export const defenderGeneratedPdfRule: RolesRule = {
       return false
     }
 
-    // Allow if the user is a defender of a defendant of the case
+    // Same indictment-file gate as the limited-access zip: district defenders
+    // with case-file access, and confirmed appeal advocates after Landsréttur
+    // records them. RolesGuard runs before the handler, so omitting appeal
+    // advocates here 403s ákæra / skjalaskrá even when CaseReadGuard allows
+    // the case.
     if (
       Defendant.isConfirmedDefenderOfDefendantWithCaseFileAccess(
         user.nationalId,
         theCase.defendants,
-      )
-    ) {
-      return true
-    }
-
-    if (
+      ) ||
       CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+        user.nationalId,
+        theCase.civilClaimants,
+      ) ||
+      Defendant.isConfirmedAppealDefenderOfDefendant(
+        user.nationalId,
+        theCase.defendants,
+      ) ||
+      CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
         user.nationalId,
         theCase.civilClaimants,
       )
