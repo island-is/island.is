@@ -20,8 +20,8 @@ export const VinnueftirlitidPaymentCatalogApi = PaymentCatalogApi.configure({
   externalDataId: 'payment',
 })
 
-export const MockableVinnueftirlitidPaymentCatalogApi = MockablePaymentCatalogApi.configure(
-  {
+export const MockableVinnueftirlitidPaymentCatalogApi =
+  MockablePaymentCatalogApi.configure({
     params: {
       organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
       enableMockPayment: true,
@@ -36,5 +36,4 @@ export const MockableVinnueftirlitidPaymentCatalogApi = MockablePaymentCatalogAp
       ],
     },
     externalDataId: 'payment',
-  },
-)
+  })
