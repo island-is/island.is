@@ -488,11 +488,13 @@ export class FileService {
       return
     }
 
-    // Ruling orders under the course of a case wait for case completion before
-    // going to LÖKE, so the PDF is delivered with its confirmation stamp.
+    // Mid-case ruling orders wait for case completion before going to LÖKE, so
+    // the PDF is delivered with its confirmation stamp. If the document only
+    // appears after completion (oral ruling written up later), deliver then.
     if (
       theCase.origin === CaseOrigin.LOKE &&
-      file.category !== CaseFileCategory.COURT_INDICTMENT_RULING_ORDER
+      (file.category !== CaseFileCategory.COURT_INDICTMENT_RULING_ORDER ||
+        isCompletedCase(theCase.state))
     ) {
       queueMessagesAfterCommit({
         type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,

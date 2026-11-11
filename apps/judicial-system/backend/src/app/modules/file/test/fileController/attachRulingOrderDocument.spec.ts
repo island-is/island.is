@@ -7,6 +7,7 @@ import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseOrigin,
+  CaseState,
   CaseType,
   User,
 } from '@island.is/judicial-system/types'
@@ -135,6 +136,32 @@ describe('FileController - Attach ruling order document', () => {
 
     it('should return the updated case file', () => {
       expect(then.result.key).toBe(key)
+    })
+  })
+
+  describe('document attached after the case is completed', () => {
+    beforeEach(async () => {
+      await givenWhenThen(
+        makeCase({ state: CaseState.COMPLETED }),
+        pronouncedOrally,
+      )
+    })
+
+    it('should deliver the ruling to the police and the court', () => {
+      expect(queuedMessagesAfterCommit).toEqual([
+        {
+          type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
+          user,
+          caseId,
+          elementId: fileId,
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
+          user,
+          caseId,
+          elementId: fileId,
+        },
+      ])
     })
   })
 

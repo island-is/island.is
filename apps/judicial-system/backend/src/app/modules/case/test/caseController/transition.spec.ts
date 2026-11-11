@@ -393,6 +393,7 @@ describe('CaseController - Transition', () => {
         const caseFileId1 = uuid()
         const caseFileId2 = uuid()
         const caseFileId3 = uuid()
+        const caseFileId4 = uuid()
         const caseFiles = [
           {
             id: caseFileId1,
@@ -414,6 +415,15 @@ describe('CaseController - Transition', () => {
             isKeyAccessible: true,
             state: CaseFileState.STORED_IN_RVG,
             category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+          },
+          // Orally pronounced, not yet written up — nothing to deliver to LÖKE.
+          {
+            id: caseFileId4,
+            key: '',
+            isKeyAccessible: true,
+            state: CaseFileState.STORED_IN_RVG,
+            category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+            isPronouncedOrally: true,
           },
         ]
         const courtEndTime = randomDate()
