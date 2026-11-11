@@ -214,6 +214,17 @@ export const BaseInput = () => {
       {/* Description  */}
       {renderDescription() && (
         <>
+          {currentItem.fieldType === FieldTypesEnum.MESSAGE && (
+            <Row>
+              <Column span="10/10">
+                <Text variant="small">
+                  {'Lýsingin getur innihaldið HTML-tögin <strong> fyrir feitletrun og <em> fyrir skáletrun. ' +
+                    'Hvert opnunartag þarf samsvarandi lokunartag, t.d. <strong> og </strong>. ' +
+                    'Dæmi: <strong>Feitletraður texti</strong> og <em>Skáletraður texti</em>.'}
+                </Text>
+              </Column>
+            </Row>
+          )}
           <Row>
             <Column span="10/10">
               <Input
