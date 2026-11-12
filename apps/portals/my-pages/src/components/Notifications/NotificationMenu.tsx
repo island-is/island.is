@@ -4,7 +4,6 @@ import {
   Button,
   GridContainer,
   Hidden,
-  Icon,
   ModalBase,
   Text,
 } from '@island.is/island-ui/core'
@@ -79,22 +78,6 @@ const NotificationMenu = ({
             marginRight={2}
             marginLeft={2}
           >
-            <Box
-              borderRadius="full"
-              background="blue100"
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              className={mStyles.overviewIcon}
-              marginRight="p2"
-            >
-              <Icon
-                icon="notifications"
-                type="outline"
-                color="blue400"
-                size="small"
-              />
-            </Box>
             <Text variant="h4">{formatMessage(m.notifications)}</Text>
           </Box>
           <Box className={styles.navWrapper}>
