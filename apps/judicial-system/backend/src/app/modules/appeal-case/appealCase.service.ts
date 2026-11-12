@@ -37,6 +37,7 @@ import {
   isProsecutionUser,
   isPublicProsecutionOfficeUser,
   isPublicProsecutionUser,
+  isSameAppealBench,
   verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
 
@@ -1107,18 +1108,20 @@ export class AppealCaseService {
 
     // Sequelize reports an empty update as affecting no rows, which the
     // repository treats as a failure, so skip it when only the bench changes.
-    if (Object.keys(data).length > 0) {
-      updatedAppealCase = await this.appealCaseRepositoryService.update(
-        appealCase.id,
-        data,
-        { transaction },
-      )
+    const columnsChanged = Object.keys(data).length > 0
+
+    if (columnsChanged) {
+      await this.appealCaseRepositoryService.update(appealCase.id, data, {
+        transaction,
+      })
     }
 
+    // The api's list is nullable, so a null bench arrives as well as an
+    // omitted one; neither is a change. An empty list clears the bench.
     const previousJudgeIds = getAppealJudgeUserIds(appealCase)
     const judgesChanged =
-      appealJudgeIds !== undefined &&
-      !this.isSameBench(appealJudgeIds, previousJudgeIds)
+      Array.isArray(appealJudgeIds) &&
+      !isSameAppealBench(appealJudgeIds, previousJudgeIds)
     const nextJudgeIds = judgesChanged ? appealJudgeIds : previousJudgeIds
 
     if (judgesChanged) {
@@ -1127,8 +1130,12 @@ export class AppealCaseService {
         appealJudgeIds,
         { transaction },
       )
+    }
 
-      // The response carries the bench as stored, in order.
+    // The response carries the appeal case as stored: the bench in order and
+    // the assistant as a user. The row the update returns has neither, only
+    // the assistant's id.
+    if (columnsChanged || judgesChanged) {
       const reloadedAppealCase =
         await this.appealCaseRepositoryService.findById(appealCase.id, {
           transaction,
@@ -1136,7 +1143,7 @@ export class AppealCaseService {
 
       if (!reloadedAppealCase) {
         throw new NotFoundException(
-          `Appeal case ${appealCase.id} not found after updating its judges`,
+          `Appeal case ${appealCase.id} not found after updating it`,
         )
       }
 
@@ -1189,12 +1196,6 @@ export class AppealCaseService {
     }
 
     return updatedAppealCase
-  }
-
-  // The same judges in the same order: a reordered bench changes who presides,
-  // so it counts as a change.
-  private isSameBench(a: string[], b: string[]): boolean {
-    return a.length === b.length && a.every((id, index) => id === b[index])
   }
 
   async createEventLog(
