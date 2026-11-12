@@ -1,6 +1,7 @@
 import { FormSystemField } from '@island.is/api/schema'
 import { FormStepper, m, SectionTypes } from '@island.is/form-system/ui'
 import {
+  AlertMessage,
   Box,
   Button,
   GridColumn,
@@ -281,11 +282,17 @@ const PreviewStepOrGroupContent = ({
                       icon="close"
                       onClick={closeModal}
                     >
-                      Loka sýnishorni
+                      Loka forskoðun
                     </Button>
                   </Box>
                 }
               />
+              <Box marginBottom={[3, 4]}>
+                <AlertMessage
+                  type="warning"
+                  title={formatMessage(m.previewApplicationBanner)}
+                />
+              </Box>
             </GridContainer>
           </div>
           <Box className={styles.application}>
@@ -478,7 +485,7 @@ const PreviewStepOrGroupContent = ({
                                   </Button>
                                 ) : (
                                   <Button onClick={closeModal}>
-                                    Loka sýnishorni
+                                    Loka forskoðun
                                   </Button>
                                 )}
                               </Box>

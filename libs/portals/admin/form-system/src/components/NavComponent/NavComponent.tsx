@@ -9,6 +9,8 @@ import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/enums'
 import { Box, Checkbox, Icon, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import { MouseEvent, useContext } from 'react'
+import HtmlParser from 'react-html-parser'
+import sanitizeHtml from 'sanitize-html'
 import { ControlContext } from '../../context/ControlContext'
 import { ItemType, NavbarSelectStatus } from '../../lib/utils/interfaces'
 import { NavButtons } from './components/NavButtons'
@@ -47,7 +49,18 @@ export const NavComponent = ({
     selectStatus === NavbarSelectStatus.LIST_ITEM
       ? activeListItem?.id ?? ''
       : activeItem?.data?.id ?? ''
-  const name = data?.name?.is ?? ''
+  const field = data as FormSystemField
+  const name =
+    type === 'Field' &&
+    field.fieldType === FieldTypesEnum.MESSAGE &&
+    !data.name?.is?.trim()
+      ? HtmlParser(
+          sanitizeHtml(field.description?.is ?? '', {
+            allowedTags: [],
+            allowedAttributes: {},
+          }),
+        ).join('')
+      : data.name?.is ?? ''
   const selectingIsOff = selectStatus === NavbarSelectStatus.OFF
   const isPaymentField =
     type === 'Field' &&
@@ -295,7 +308,7 @@ export const NavComponent = ({
               truncate={true}
               fontWeight="semiBold"
             >
-              {data?.name?.is}
+              {name}
             </Text>
           </Box>
           <Box
@@ -347,7 +360,7 @@ export const NavComponent = ({
               variant="medium"
               truncate={true}
             >
-              {data?.name?.is}
+              {name}
             </Text>
           </Box>
           <Box
