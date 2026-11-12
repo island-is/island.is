@@ -14,7 +14,8 @@ export const conclusion = {
     },
     alertTitle: {
       id: 'aosh.mlcr.application:conclusion.general.alertTitle',
-      defaultMessage: 'Umsókn um endurútgáfu plastkorts móttekin.',
+      defaultMessage:
+        'Umsókn um prentun vinnuvélaskírteinis á plastkorti móttekin.',
       description: 'Conclusion alert title',
     },
     accordionTitle: {

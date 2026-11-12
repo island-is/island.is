@@ -4,7 +4,7 @@ export const externalData = {
   dataProvider: defineMessages({
     pageTitle: {
       id: 'aosh.mlcr.application:externalData.dataProvider.pageTitle',
-      defaultMessage: 'Umsókn um endurútgáfu plastkorts',
+      defaultMessage: 'Gagnaöflun',
       description: 'Prerequisites page title',
     },
     subTitle: {

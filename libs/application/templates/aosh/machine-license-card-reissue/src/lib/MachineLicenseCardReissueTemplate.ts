@@ -102,7 +102,7 @@ const template: ApplicationTemplate<
       },
       [States.DRAFT]: {
         meta: {
-          name: 'Endurútgáfa plastkorts',
+          name: applicationMessages.name.defaultMessage,
           status: 'draft',
           actionCard: {
             tag: {

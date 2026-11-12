@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const application = defineMessages({
   name: {
     id: 'aosh.mlcr.application:application.name',
-    defaultMessage: 'Endurútgáfa plastkorts',
+    defaultMessage: 'Umsókn um prentun vinnuvélaskírteinis á plastkorti',
     description: `Application's name`,
   },
   institutionName: {
