@@ -27,9 +27,6 @@ import { syncLicenseWidgetData } from '@/lib/widget-sync'
 import { INCLUDED_LICENSE_TYPES } from '@/constants/wallet.constants'
 import { WalletItem } from '../../../../components/wallet-item'
 import {
-  blue100,
-  blue200,
-  blue400,
   Button,
   EmptyList,
   GeneralCardSkeleton,
@@ -221,7 +218,7 @@ export default function WalletScreen() {
                 source: require('@/assets/icons/barcode-scan.png'),
               },
               onPress: () => router.navigate('/wallet/scanner'),
-              tintColor: theme.color.blue400,
+              tintColor: theme.tokens.interactive.foreground.primary,
             },
           ],
         }}
