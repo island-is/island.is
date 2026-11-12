@@ -1159,6 +1159,12 @@ export const parentalLeaveFormMessages = {
       description:
         'Change application - shown when child already has an application',
     },
+    existingLeave: {
+      id: 'plv2.application:selectChild.existingLeave',
+      defaultMessage: 'Breyting á fæðingarorlofi {from} – {to}',
+      description:
+        'Sub-label of a child with a leave at VMST, with the first and last day of the leave',
+    },
     inProgressTitle: {
       id: 'plv2.application:selectChild.inProgress.title',
       defaultMessage: 'Umsókn í vinnslu',
@@ -2137,7 +2143,7 @@ export const parentalLeaveFormMessages = {
     },
     titleReceived: {
       id: 'plv2.application:review.titleReceived',
-      defaultMessage: 'Umsókn þín er móttekið',
+      defaultMessage: 'Umsókn þín er móttekin',
       description: 'Your application is received',
     },
     estimatedBirthDate: {
@@ -2931,6 +2937,12 @@ export const errorMessages = defineMessages({
     id: 'plv2.application:dataSchema.otherParent.id',
     defaultMessage: 'Kennitala þarf að vera gild.',
     description: 'Error message when the kennitala is invalid.',
+  },
+  otherParentIsApplicant: {
+    id: 'plv2.application:dataSchema.otherParent.isApplicant',
+    defaultMessage: 'Kennitala hins foreldrisins má ekki vera þín kennitala.',
+    description:
+      'Error message when the applicant enters their own kennitala as the other parent',
   },
   email: {
     id: 'plv2.application:answerValidators.email',

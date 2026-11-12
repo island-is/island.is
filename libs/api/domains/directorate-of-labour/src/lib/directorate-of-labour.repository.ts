@@ -57,7 +57,15 @@ export class DirectorateOfLabourRepository {
     )
 
     if (application) {
-      return application
+      // VMST's new response can leave a period's rights code out, and V1 reads
+      // it as a string (`rightsCodePeriod.split(',')`)
+      return {
+        ...application,
+        periods: application.periods.map((period) => ({
+          ...period,
+          rightsCodePeriod: period.rightsCodePeriod ?? '',
+        })),
+      }
     }
 
     this.logger.warning(

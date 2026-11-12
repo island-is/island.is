@@ -63,7 +63,6 @@ export enum ParentalRelations {
 
 export enum ApiModuleActions {
   assignOtherParent = 'assignOtherParent',
-  assignEmployers = 'assignEmployers',
   assignEmployer = 'assignEmployer',
   sendApplication = 'sendApplication',
   /**
@@ -76,7 +75,6 @@ export enum ApiModuleActions {
   notifyApplicantOfRejection = 'notifyApplicantOfRejection',
   validateApplication = 'validateApplication',
   setChildrenInformation = 'setChildrenInformation',
-  setBirthDateForNoPrimaryParent = 'setBirthDateForNoPrimaryParent',
   setBirthDate = 'setBirthDate',
   /**
    * Fetches and returns VMST periods for the given application.
@@ -173,6 +171,7 @@ export enum AnswerValidationConstants {
   REQUEST_RIGHTS = 'requestRights',
   GIVE_RIGHTS = 'giveRights',
   MULTIPLE_BIRTHS_REQUEST_DAYS = 'multipleBirthsRequestDays',
+  OTHER_PARENT = 'otherParentObj',
   // When attempting to continue from the periods repeater main screen
   // this validator will get called to validate all of the periods
   VALIDATE_PERIODS = 'validatedPeriods',

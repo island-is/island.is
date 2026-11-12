@@ -9,6 +9,7 @@ import { validatePeriodsValidationSection } from './answerValidationSections/val
 import { selectedChildValidationSection } from './answerValidationSections/selectedChildValidationSection'
 import { employersValidationSection } from './answerValidationSections/employersValidationSection'
 import { multipleBirthsRequestDaysValidationSection } from './answerValidationSections/multipleBirthsRequestDaysValidationSection'
+import { otherParentValidationSection } from './answerValidationSections/otherParentValidationSection'
 
 const {
   REQUEST_RIGHTS,
@@ -18,6 +19,7 @@ const {
   SELECTED_CHILD,
   EMPLOYERS,
   MULTIPLE_BIRTHS_REQUEST_DAYS,
+  OTHER_PARENT,
 } = AnswerValidationConstants
 
 export const answerValidators: Record<string, AnswerValidator> = {
@@ -28,4 +30,5 @@ export const answerValidators: Record<string, AnswerValidator> = {
   [SELECTED_CHILD]: selectedChildValidationSection,
   [EMPLOYERS]: employersValidationSection,
   [MULTIPLE_BIRTHS_REQUEST_DAYS]: multipleBirthsRequestDaysValidationSection,
+  [OTHER_PARENT]: otherParentValidationSection,
 }

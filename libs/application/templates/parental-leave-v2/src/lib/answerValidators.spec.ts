@@ -879,6 +879,39 @@ describe('when continuing from the employers table', () => {
 
     expect(validate([], application)).toBeUndefined()
   })
+
+  describe('rows prefilled from VMST', () => {
+    const vmstRow = {
+      email: 'vinnuveitandi@test.is',
+      ratio: '',
+      isFromVMST: true,
+    }
+    const withVMSTEmployer = () => {
+      const application = withAnswers(employee)
+      set(application, 'externalData.VMSTApplicationInformation', {
+        data: { employers: [{ email: 'vinnuveitandi@test.is' }] },
+        date: new Date(),
+        status: 'success',
+      })
+      return application
+    }
+
+    it('should accept an empty ratio on a row VMST lists', () => {
+      expect(validate([vmstRow], withVMSTEmployer())).toBeUndefined()
+    })
+
+    it('should refuse an empty ratio on a row only marked as from VMST', () => {
+      expect(
+        validate([{ ...vmstRow, email: 'annar@test.is' }], withVMSTEmployer()),
+      ).toMatchObject({
+        message: errorMessages.employersRatioInvalid,
+        path: 'employers[0].ratio',
+      })
+      expect(validate([vmstRow], withAnswers(employee))).toMatchObject({
+        path: 'employers[0].ratio',
+      })
+    })
+  })
 })
 
 describe('when choosing extra days for a multiple birth', () => {
@@ -912,5 +945,30 @@ describe('when choosing extra days for a multiple birth', () => {
     expect(validate('1.5', '2')).toMatchObject({
       path: 'multipleBirthsRequestDays',
     })
+  })
+})
+
+describe('when naming the other parent', () => {
+  const validate = (otherParentId: string) => {
+    const application = { ...createBaseApplication(), applicant: '0101302399' }
+    return answerValidators['otherParentObj'](
+      { chooseOtherParent: MANUAL, otherParentId },
+      application,
+    )
+  }
+
+  it("should refuse the applicant's own kennitala", () => {
+    expect(validate('0101302399')).toStrictEqual({
+      message: errorMessages.otherParentIsApplicant,
+      path: 'otherParentObj.otherParentId',
+      values: undefined,
+    })
+    expect(validate('010130-2399')).toMatchObject({
+      path: 'otherParentObj.otherParentId',
+    })
+  })
+
+  it('should accept another person', () => {
+    expect(validate('0101303019')).toBeUndefined()
   })
 })

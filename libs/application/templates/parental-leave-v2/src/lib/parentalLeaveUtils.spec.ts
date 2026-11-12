@@ -1366,6 +1366,63 @@ describe('getChildrenOptions', () => {
     ])
   })
 
+  describe('a child with a leave at VMST', () => {
+    const withLeave = (vmstLeaves: Record<string, unknown>) =>
+      getChildrenOptions(
+        buildApplication({
+          externalData: {
+            ...childrenExternalData([
+              {
+                expectedDateOfBirth: '2026-03-20',
+                dateOfBirth: '2026-03-12',
+                parentalRelation: ParentalRelations.primary,
+                vmstApplicationId: 'v1-application-id',
+              },
+            ]),
+            VMSTParentalLeaves: {
+              data: vmstLeaves,
+              date: new Date(),
+              status: 'success',
+            },
+          } as ExternalData,
+        }),
+      )[0]
+
+    it("should show the child's name and the days of the leave", () => {
+      const option = withLeave({
+        parentalLeaves: [
+          {
+            applicationId: 'v1-application-id',
+            periods: [
+              { from: '2026-06-01', to: '2026-08-31' },
+              { from: '2026-03-12', to: '2026-05-31' },
+            ],
+          },
+        ],
+        applications: {
+          'v1-application-id': { children: [{ name: 'Anna Jónsdóttir' }] },
+        },
+      })
+
+      expect(option.label).toBe('Anna Jónsdóttir')
+      expect(option.subLabel).toEqual({
+        ...parentalLeaveFormMessages.selectChild.existingLeave,
+        values: { from: '12.03.2026', to: '31.08.2026' },
+      })
+    })
+
+    it('should fall back to the date label when VMST gives no name or periods', () => {
+      const option = withLeave({ parentalLeaves: [], applications: {} })
+
+      expect(option.label).toMatchObject({
+        id: expect.stringContaining('plv2.application:selectChild'),
+      })
+      expect(option.subLabel).toEqual(
+        parentalLeaveFormMessages.selectChild.existingApplication,
+      )
+    })
+  })
+
   it('should store the child key as the value, not the sorted position', () => {
     // `selectedChild` identifies a child in externalData.children.data.children,
     // so reordering for display must not change which child an option means.

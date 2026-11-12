@@ -18,5 +18,6 @@ export {
   getShortPeriodWithoutPredecessorError,
 } from './lib/answerValidationSections/utils'
 export * from './constants'
+export { usageMaxMonths } from './config'
 export * from './types'
 export * from './lib/messages'

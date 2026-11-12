@@ -1,6 +1,6 @@
-import cloneDeep from 'lodash/cloneDeep'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
+import isPlainObject from 'lodash/isPlainObject'
 import { assign } from 'xstate'
 
 import {
@@ -87,7 +87,6 @@ import {
   hasEmployer,
   hasEmployerRelevantChange,
   isChangeApplication,
-  isInPlaceRewind,
   isMockApplication,
   isResidenceGrantApplication,
   needsOtherParentApproval,
@@ -95,6 +94,14 @@ import {
   restructureVMSTPeriods,
 } from './parentalLeaveTemplateUtils'
 import { CodeOwners } from '@island.is/shared/constants'
+
+// `clearOnChange` leaves '' behind, also in nested keys, when the applicant
+// switches child. That is not an answer.
+const isUnanswered = (value: unknown): boolean =>
+  value === undefined ||
+  value === '' ||
+  (isPlainObject(value) &&
+    Object.values(value as Record<string, unknown>).every(isUnanswered))
 
 const ParentalLeaveTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -934,6 +941,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.RESIDENCE_GRANT_APPLICATION]: {
         entry: ['setResidenceGrant', 'setActionName'],
+        exit: ['clearRejectedBy'],
         meta: {
           status: 'inprogress',
           name: States.RESIDENCE_GRANT_APPLICATION,
@@ -954,6 +962,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(90),
+          // VMST can send a residence grant back here
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.notifyApplicantOfRejection,
+            triggerEvent: DefaultEvents.REJECT,
+            shouldPersistToExternalData: false,
+            throwOnError: false,
+          }),
           onExit: [
             defineTemplateApi({
               action: ApiModuleActions.setApplicationFundId,
@@ -1084,7 +1099,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'setPeriodsFromVMST',
           'clearChangeApplicationInfo',
           'setAddEmployer',
-          'snapshotRewindBaseline',
         ],
         exit: [
           'detectEmployerChanges',
@@ -1111,7 +1125,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: DefaultStateLifeCycle,
+          // The applicant's own working state, like the draft
+          lifecycle: pruneAfterDays(90),
           onEntry: defineTemplateApi({
             action: ApiModuleActions.notifyApplicantOfRejection,
             triggerEvent: DefaultEvents.REJECT,
@@ -1283,16 +1298,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
           ],
-          [DefaultEvents.EDIT]: [
-            {
-              target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
-              cond: isChangeApplication,
-            },
-            {
-              target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
-              actions: 'markInPlaceRewind',
-            },
-          ],
+          [DefaultEvents.EDIT]: {
+            target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+          },
           [DefaultEvents.REJECT]: {
             target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
             actions: [
@@ -1371,16 +1379,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             target: States.EMPLOYER_APPROVE_EDITS,
             actions: 'setEmployerReviewerNationalRegistryId',
           },
-          [DefaultEvents.EDIT]: [
-            {
-              target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
-              cond: isChangeApplication,
-            },
-            {
-              target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
-              actions: 'markInPlaceRewind',
-            },
-          ],
+          [DefaultEvents.EDIT]: {
+            target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+          },
           CLOSED: { target: States.CLOSED },
         },
       },
@@ -1524,27 +1525,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               actions: 'setIsApprovedOnEmployer',
             },
           ],
-          [DefaultEvents.EDIT]: [
-            {
-              target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
-              cond: isChangeApplication,
-            },
-            {
-              target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
-              actions: 'markInPlaceRewind',
-            },
-          ],
-          [DefaultEvents.REJECT]: [
-            {
-              target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
-              cond: isChangeApplication,
-              actions: 'setRejectedBy',
-            },
-            {
-              target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
-              actions: ['setRejectedBy', 'markInPlaceRewind'],
-            },
-          ],
+          [DefaultEvents.EDIT]: {
+            target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+          },
+          [DefaultEvents.REJECT]: {
+            target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+            actions: 'setRejectedBy',
+          },
           CLOSED: { target: States.CLOSED },
         },
       },
@@ -1706,13 +1693,19 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             {
               target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
-              actions: 'markInPlaceRewind',
             },
           ],
-          [DefaultEvents.REJECT]: {
-            target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
-            actions: ['setRejectedBy', 'markInPlaceRewind'],
-          },
+          [DefaultEvents.REJECT]: [
+            {
+              target: States.RESIDENCE_GRANT_APPLICATION,
+              cond: isResidenceGrantApplication,
+              actions: 'setRejectedBy',
+            },
+            {
+              target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+              actions: 'setRejectedBy',
+            },
+          ],
           CLOSED: { target: States.CLOSED },
         },
       },
@@ -1742,7 +1735,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         for (const [key, value] of Object.entries(
           getVMSTApplicationAnswers(application.externalData),
         )) {
-          if (getValueViaPath(answers, key) === undefined) {
+          if (isUnanswered(getValueViaPath(answers, key))) {
             set(answers, key, value)
           }
         }
@@ -1758,16 +1751,16 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           }
         }
 
-        // Adoption and permanent foster care are read off VMST's rights. Only a
-        // primary parent answers this themselves; a secondary parent's comes with
-        // the child as `primaryParentTypeOfApplication`.
+        // Adoption and permanent foster care are read off VMST's rights, never
+        // from a "Ný umsókn" type left over from before the applicant picked
+        // this child. A secondary parent's comes with the child as
+        // `primaryParentTypeOfApplication`.
+        unset(answers, 'noChildrenFound')
         const typeOfApplication = getVMSTTypeOfApplication(
           application.externalData,
         )
         if (
           typeOfApplication &&
-          getValueViaPath(answers, 'noChildrenFound.typeOfApplication') ===
-            undefined &&
           getSelectedChild(answers, application.externalData)
             ?.parentalRelation === ParentalRelations.primary
         ) {
@@ -1853,10 +1846,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { application } = context
 
         // Only sync at the start of a change session: entering the change form
-        // from prerequisites (fresh follow-up), or from VMST_APPROVE_EDITS via
-        // markInPlaceRewind (applicant re-editing an already-approved change).
-        // Any other source state is a re-entry that would clobber the
-        // applicant's in-progress edits.
+        // from prerequisites (fresh follow-up), or from VMST_APPROVE_EDITS
+        // (applicant re-editing a change VMST has). Any other source state is a
+        // re-entry that would clobber the applicant's in-progress edits.
         const syncIsSafe =
           application.state === States.PREREQUISITES ||
           application.state === States.VINNUMALASTOFNUN_APPROVE_EDITS
@@ -1884,48 +1876,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { application } = context
 
         unset(application.answers, 'changeApplicationInfo')
-
-        return context
-      }),
-      /**
-       * Snapshot the answers as the applicant sees them on entry to the change
-       * form, so the change-review screens have a baseline to diff against for
-       * an in-place rewind of a first-time leave (`getChangeBaseline` falls back
-       * to this; follow-up applications diff against VMST data alone).
-       */
-      snapshotRewindBaseline: assign((context) => {
-        const { application } = context
-
-        if (isChangeApplication(context) || !isInPlaceRewind(context)) {
-          return context
-        }
-
-        const existing = getValueViaPath(
-          application.externalData,
-          'rewindBaseline.data.answers',
-        )
-        if (existing) {
-          return context
-        }
-
-        set(application.externalData, 'rewindBaseline', {
-          data: { answers: cloneDeep(application.answers) },
-          status: 'success',
-          date: new Date(),
-        })
-
-        return context
-      }),
-      /**
-       * Mark that an approved application is being edited in place so the change
-       * form can snapshot the current application as its baseline.
-       */
-      markInPlaceRewind: assign((context) => {
-        set(context.application.externalData, 'inPlaceRewind', {
-          data: { value: true },
-          status: 'success',
-          date: new Date(),
-        })
 
         return context
       }),

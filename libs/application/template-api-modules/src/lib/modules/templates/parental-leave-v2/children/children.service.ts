@@ -16,6 +16,7 @@ import {
   CustomTemplateFindQuery,
 } from '@island.is/application/types'
 import {
+  describeVmstError,
   ParentalLeave,
   ParentalLeaveApi,
   Right as ParentalLeaveEntitlement,
@@ -32,6 +33,7 @@ import {
   collectChildren,
   getChildren,
   getChildrenFromMockData,
+  vmstLeavesToChildCandidates,
   isPrimaryParentApplicationForOtherParent,
   sortApplicationsByRelevance,
   vmstParentalLeavesToChildApplicationLinks,
@@ -382,6 +384,7 @@ export class ChildrenService {
       pregnancyStatus,
       vmstLeaves,
       childApplicationLinks,
+      vmstLeavesToChildCandidates(vmstParentalLeaves ?? []),
     )
   }
 
@@ -442,7 +445,9 @@ export class ChildrenService {
 
       return results.parentalLeaves ?? []
     } catch (e) {
-      this.logger.error(`Could not fetch parental leaves for ${nationalId}`, e)
+      this.logger.error(
+        `Could not fetch parental leaves: ${await describeVmstError(e)}`,
+      )
 
       return null
     }
@@ -483,7 +488,9 @@ export class ChildrenService {
         ),
       }
     } catch (e) {
-      this.logger.error(`Could not fetch pregnancy status for ${nationalId}`, e)
+      this.logger.error(
+        `Could not fetch pregnancy status: ${await describeVmstError(e)}`,
+      )
 
       return null
     }
@@ -516,8 +523,9 @@ export class ChildrenService {
       }
     } catch (e) {
       this.logger.error(
-        `Could not fetch parental leaves entitlements for ${nationalId}, ${dateOfBirth}`,
-        e,
+        `Could not fetch parental leaves entitlements: ${await describeVmstError(
+          e,
+        )}`,
       )
 
       return null

@@ -4,6 +4,7 @@ import {
   ApplicationWithAttachments as Application,
   FormValue,
 } from '@island.is/application/types'
+import type { ParentalLeave } from '@island.is/clients/vmst'
 
 import {
   ApplicationStage,
@@ -16,8 +17,11 @@ import {
   applicationsToExistingChildApplication,
   applicationsToChildInformation,
   vmstParentalLeavesToChildApplicationLinks,
+  vmstLeavesToChildCandidates,
+  childApplicationLinksToExistingChildApplications,
 } from './children-utils'
 import {
+  ADOPTION,
   ParentalRelations,
   ChildApplicationLink,
   ChildInformationWithoutRights,
@@ -1414,5 +1418,133 @@ describe('isPrimaryParentApplicationForOtherParent', () => {
         inState(States.APPROVED, 'mock-application-fund-id'),
       ),
     ).toBe(false)
+  })
+})
+
+describe('leaves VMST holds without a V2 application', () => {
+  const TODAY = new Date('2026-11-12')
+  const leave = (fields: Partial<ParentalLeave>): ParentalLeave =>
+    ({
+      applicationId: 'v1-application-id',
+      applicant: PRIMARY_PARENT_ID,
+      rightsCode: 'M-L-GR',
+      dateOfBirth: '2026-03-12',
+      expectedDateOfBirth: '2026-03-20',
+      ...fields,
+    } as ParentalLeave)
+
+  it('should make a child of a leave applied for outside V2', () => {
+    const [candidate] = vmstLeavesToChildCandidates([leave({})], TODAY)
+
+    expect(candidate).toEqual({
+      leaveApplicationId: 'v1-application-id',
+      child: {
+        parentalRelation: ParentalRelations.primary,
+        expectedDateOfBirth: '2026-03-20',
+        dateOfBirth: '2026-03-12',
+        adoptionDate: undefined,
+      },
+    })
+  })
+
+  it.each([
+    ['M-L-GR', ParentalRelations.primary],
+    ['F-L-GR', ParentalRelations.secondary],
+    ['FO-FL-L-GR', ParentalRelations.secondary],
+    ['M-Æ-L-GR', ParentalRelations.primary],
+    // A father adopting can be either; taken as the primary parent
+    ['F-Æ-L-GR', ParentalRelations.primary],
+    ['F-FÓ-GR', ParentalRelations.primary],
+    ['FO-Æ-L-GR', ParentalRelations.secondary],
+  ])('should read %s as the %s parent', (rightsCode, parentalRelation) => {
+    const [candidate] = vmstLeavesToChildCandidates(
+      [leave({ rightsCode, otherParentId: SECONDARY_PARENT_ID })],
+      TODAY,
+    )
+
+    expect(candidate.child.parentalRelation).toBe(parentalRelation)
+  })
+
+  it("should take a secondary parent's primary parent and type from the leave", () => {
+    const [candidate] = vmstLeavesToChildCandidates(
+      [
+        leave({
+          rightsCode: 'FO-Æ-L-GR',
+          otherParentId: PRIMARY_PARENT_ID,
+          adoptionDate: '2026-06-01',
+          expectedDateOfBirth: null,
+        }),
+      ],
+      TODAY,
+    )
+
+    expect(candidate.child).toEqual({
+      parentalRelation: ParentalRelations.secondary,
+      primaryParentNationalRegistryId: PRIMARY_PARENT_ID,
+      primaryParentTypeOfApplication: ADOPTION,
+      expectedDateOfBirth: '',
+      dateOfBirth: '2026-03-12',
+      adoptionDate: '2026-06-01',
+    })
+  })
+
+  it('should leave out a leave whose child is older than the leave can be used', () => {
+    expect(
+      vmstLeavesToChildCandidates(
+        [
+          leave({ dateOfBirth: '2024-11-12', expectedDateOfBirth: null }),
+          leave({ dateOfBirth: '2024-11-13', expectedDateOfBirth: null }),
+        ],
+        TODAY,
+      ).map(({ child }) => child.dateOfBirth),
+    ).toEqual(['2024-11-13'])
+  })
+
+  it('should let the applicant change a leave they applied for outside V2', () => {
+    const vmstLeave = leave({})
+    const links = vmstParentalLeavesToChildApplicationLinks([vmstLeave])
+
+    const { children } = getChildren(
+      [],
+      [],
+      { hasActivePregnancy: false, expectedDateOfBirth: '' },
+      childApplicationLinksToExistingChildApplications(links),
+      links,
+      vmstLeavesToChildCandidates([vmstLeave], TODAY),
+    )
+
+    expect(children).toHaveLength(1)
+    expect(children[0]).toMatchObject({
+      vmstApplicationId: 'v1-application-id',
+      key: 'vmst:v1-application-id',
+      parentalRelation: ParentalRelations.primary,
+    })
+  })
+
+  it('should not list a leave twice when a V2 application is behind it', () => {
+    const application = createApplicationWithChildren(
+      PRIMARY_PARENT_ID,
+      [
+        {
+          expectedDateOfBirth: '2026-03-20',
+          parentalRelation: ParentalRelations.primary,
+        },
+      ],
+      0,
+    )
+    const vmstLeave = leave({ applicationId: application.id })
+    const links = vmstParentalLeavesToChildApplicationLinks([vmstLeave])
+
+    const { children } = getChildren(
+      [application],
+      [],
+      undefined,
+      childApplicationLinksToExistingChildApplications(links),
+      links,
+      vmstLeavesToChildCandidates([vmstLeave], TODAY),
+    )
+
+    expect(children).toHaveLength(1)
+    expect(children[0].vmstApplicationId).toBe(application.id)
   })
 })

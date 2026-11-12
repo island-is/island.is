@@ -61,7 +61,7 @@ import type {
 } from '@island.is/clients/vmst'
 import {
   ApplicationApi,
-  describeVmstErrorBody,
+  describeVmstError,
   ParentalLeaveApi,
 } from '@island.is/clients/vmst'
 import type { Logger } from '@island.is/logging'
@@ -198,13 +198,7 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
    * are kept.
    */
   private async describeError(error: unknown): Promise<string> {
-    if (error instanceof Response) {
-      const body = await error.text().catch(() => '')
-      const reason = describeVmstErrorBody(body)
-      return `${error.status} ${error.statusText}${reason ? `: ${reason}` : ''}`
-    }
-
-    return error instanceof Error ? error.message : String(error)
+    return describeVmstError(error)
   }
 
   private assertExistingApplicationHasFundId(application: Application) {
@@ -1211,25 +1205,20 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
       periods,
       firstPeriodStart,
     } = getApplicationAnswers(application.answers)
-    // if (
-    //   previousState === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
-    //   previousState === States.VINNUMALASTOFNUN_APPROVAL ||
-    //   previousState === States.APPROVED
-    // ) {
-    //   return
-    // }
     const nationalRegistryId = application.applicant
     const type = getType(application)
     this.assertExistingApplicationHasFundId(application)
-    const attachments = await this.getAttachments(application)
 
-    const { periodsDTO, rightsDTO } = await this.preparePeriodsAndRightsDTO(
-      application,
-      periods,
-      firstPeriodStart,
-    )
-
+    // Inside the try so a failure here reaches the applicant as a translated
+    // reason, not a generic error
     try {
+      const attachments = await this.getAttachments(application)
+      const { periodsDTO, rightsDTO } = await this.preparePeriodsAndRightsDTO(
+        application,
+        periods,
+        firstPeriodStart,
+      )
+
       const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
         application,
         periodsDTO,
@@ -1259,13 +1248,6 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
       // There has been case when island.is got Access Denied from AWS when sending out emails
       // This try/catch keeps application in correct state
       try {
-        //if (
-        //  application.state === States.RESIDENCE_GRANT_APPLICATION ||
-        //  application.state ===
-        //    States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE ||
-        //  previousState === States.RESIDENCE_GRANT_APPLICATION
-        //)
-        //  return
         const selfEmployed =
           applicationType === PARENTAL_LEAVE ? isSelfEmployed === YES : true
         const recivingUnemploymentBenefits =
@@ -1358,15 +1340,15 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
     // exit, and `setPreviousState` deliberately preserved the pre-residence-grant
     // origin, so the value it tested for never reached this call.
     this.assertExistingApplicationHasFundId(application)
-    const attachments = await this.getAttachments(application)
-
-    const { periodsDTO, rightsDTO } = await this.preparePeriodsAndRightsDTO(
-      application,
-      periods,
-      firstPeriodStart,
-    )
 
     try {
+      const attachments = await this.getAttachments(application)
+      const { periodsDTO, rightsDTO } = await this.preparePeriodsAndRightsDTO(
+        application,
+        periods,
+        firstPeriodStart,
+      )
+
       const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
         application,
         periodsDTO,

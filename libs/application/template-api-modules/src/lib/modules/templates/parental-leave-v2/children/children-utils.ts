@@ -1,6 +1,8 @@
 import { getValueViaPath, NO } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
+import type { ParentalLeave } from '@island.is/clients/vmst'
 import type { DistributiveOmit } from '@island.is/shared/types'
+import addMonths from 'date-fns/addMonths'
 
 import {
   ApplicationAction,
@@ -20,7 +22,9 @@ import {
   PregnancyStatus,
   getApplicationAnswers,
   getApplicationExternalData,
+  getTypeOfApplicationFromRights,
   parentalLeaveFormMessages,
+  usageMaxMonths,
 } from '@island.is/application/templates/parental-leave-v2'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { MOCK_APPLICATION_FUND_ID } from '../constants'
@@ -693,12 +697,86 @@ const refreshFromPrimaryParent = (
  * @param vmstLeaves The leaves VMST lists for the applicant, or `null` when
  * that list could not be fetched; the applicant's own applications stand in.
  */
+/**
+ * The parent's role in a leave, read off the start of VMST's rights code: `M`
+ * is the mother, `FO` a parent who is not the primary parent, and `F` a father,
+ * who is the secondary parent of a birth. `F` with adoption or foster care can
+ * be either; it is taken as the primary parent.
+ */
+const parentalRelationFromRightsCode = (
+  rightsCode: string,
+  isAdoptionOrFosterCare: boolean,
+): ParentalRelations => {
+  const prefix = rightsCode.split('-')[0]
+
+  if (prefix === 'FO' || (prefix === 'F' && !isAdoptionOrFosterCare)) {
+    return ParentalRelations.secondary
+  }
+
+  return ParentalRelations.primary
+}
+
+/**
+ * A child for every leave VMST holds for the applicant, so a leave applied for
+ * outside V2 (in V1, on paper or at VMST) can be changed here too. Passed last
+ * to `collectChildren`, so a leave already behind one of the applicant's V2
+ * applications is not listed twice. Only children whose leave can still be
+ * used: born, adopted or due less than `usageMaxMonths` ago.
+ */
+export const vmstLeavesToChildCandidates = (
+  parentalLeaves: ParentalLeave[],
+  today = new Date(),
+): ChildCandidate[] =>
+  parentalLeaves.flatMap((leave): ChildCandidate[] => {
+    const adoptionDate = toDay(leave.adoptionDate)
+    const dateOfBirth = toDay(leave.dateOfBirth)
+    const expectedDateOfBirth = toDay(leave.expectedDateOfBirth)
+    const childDate = adoptionDate || dateOfBirth || expectedDateOfBirth
+
+    if (
+      !leave.applicationId ||
+      !childDate ||
+      addMonths(new Date(childDate), usageMaxMonths) <= today
+    ) {
+      return []
+    }
+
+    const rightsCode =
+      (leave.rightsCode ?? '').split(',')[0] ||
+      leave.applicationRights?.[0]?.rightsUnit ||
+      ''
+    const typeOfApplication = getTypeOfApplicationFromRights([
+      { rightsUnit: rightsCode },
+    ])
+    const dates = {
+      // An adopted or fostered child is known by its adoption date
+      expectedDateOfBirth: adoptionDate
+        ? expectedDateOfBirth
+        : expectedDateOfBirth || dateOfBirth,
+      dateOfBirth: dateOfBirth || undefined,
+      adoptionDate: adoptionDate || undefined,
+    }
+    const child: ChildInformationWithoutRights =
+      parentalRelationFromRightsCode(rightsCode, !!typeOfApplication) ===
+      ParentalRelations.secondary
+        ? {
+            ...dates,
+            parentalRelation: ParentalRelations.secondary,
+            primaryParentNationalRegistryId: leave.otherParentId ?? '',
+            primaryParentTypeOfApplication: typeOfApplication,
+          }
+        : { ...dates, parentalRelation: ParentalRelations.primary }
+
+    return [{ child, leaveApplicationId: leave.applicationId }]
+  })
+
 export const getChildren = (
   applicationsWhereApplicant: Application[],
   applicationsWhereOtherParent: Application[],
   pregnancyStatus?: PregnancyStatus | null,
   vmstLeaves: ExistingChildApplication[] | null = null,
   childApplicationLinks: ChildApplicationLink[] = [],
+  fromVmstLeaves: ChildCandidate[] = [],
 ): {
   children: ChildInformationWithoutRights[]
   existingApplications: ExistingChildApplication[]
@@ -760,7 +838,7 @@ export const getChildren = (
     : []
 
   const children = collectChildren(
-    [fromOwnApplications, fromPrimaryParents, fromPregnancy],
+    [fromOwnApplications, fromPrimaryParents, fromPregnancy, fromVmstLeaves],
     existingApplications,
   )
 

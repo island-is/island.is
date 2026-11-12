@@ -103,25 +103,6 @@ export const EmployerApproveEdits: Form = buildForm({
                       name: coreMessages.buttonApprove,
                       type: 'primary',
                       event: DefaultEvents.APPROVE,
-
-                      // TODO: enable this when we could get 'applicationFundId' from externalData
-
-                      // condition: (answers, externalData) => {
-                      //   const {
-                      //     applicationFundId,
-                      //   } = getApplicationExternalData(externalData)
-                      //   console.log('----------- Emloyer', applicationFundId)
-                      //   if (!applicationFundId || applicationFundId === '') {
-                      //     const { periods } = getApplicationAnswers(answers)
-                      //     return (
-                      //       periods.length > 0 &&
-                      //       new Date(periods[0].startDate).getTime() >=
-                      //         currentDateStartTime()
-                      //     )
-                      //   }
-
-                      //   return true
-                      // },
                     },
                   ],
                 }),

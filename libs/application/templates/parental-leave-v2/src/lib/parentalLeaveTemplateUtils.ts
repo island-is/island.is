@@ -146,12 +146,6 @@ export const disableResidenceGrantApplication = (dateOfBirth: string) => {
   return true
 }
 
-export const hasDateOfBirth = (context: ApplicationContext) => {
-  const { application } = context
-  const { dateOfBirth } = getApplicationExternalData(application.externalData)
-  return disableResidenceGrantApplication(dateOfBirth?.data?.dateOfBirth || '')
-}
-
 /**
  * True when this application was created to change an already submitted one.
  * Drives the prerequisites routing straight into the change form instead of the
@@ -203,12 +197,6 @@ export const hasBeenSubmittedToVMST = (application: Application) => {
 
   return isRealId(navIdData) || isRealId(rawNavId)
 }
-
-export const isInPlaceRewind = (context: ApplicationContext) =>
-  getValueViaPath<boolean>(
-    context.application.externalData,
-    'inPlaceRewind.data.value',
-  ) === true
 
 /** True when this application was created to apply for the residence grant. */
 export const isResidenceGrantApplication = (context: ApplicationContext) => {

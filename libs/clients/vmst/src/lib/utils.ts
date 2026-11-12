@@ -107,6 +107,21 @@ export const describeVmstErrorBody = (rawBody: string): string => {
   return collapse(parts.join('; '))
 }
 
+/**
+ * What is safe to log about a failed VMST call. In production the generated
+ * client rejects with the raw `Response`; only the safe parts of its body are
+ * kept. The wrapped fetch already rejects with a safe message.
+ */
+export const describeVmstError = async (error: unknown): Promise<string> => {
+  if (error instanceof Response) {
+    const body = await error.text().catch(() => '')
+    const reason = describeVmstErrorBody(body)
+    return `${error.status} ${error.statusText}${reason ? `: ${reason}` : ''}`
+  }
+
+  return error instanceof Error ? error.message : String(error)
+}
+
 export const createWrappedFetchWithLogging = (
   input: RequestInfo,
   init?: RequestInit,

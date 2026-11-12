@@ -9,9 +9,7 @@ This application template allows applicants to apply for parental leave. For fur
 
 ### Legacy coexistence
 
-V2 uses application type `ParentalLeaveV2` and slug `faedingarorlof-v2`. The existing [parental leave application](../parental-leave/README.md) remains separate so its applications can complete their lifecycle.
-
-Application lookups remain scoped to the current application's type. V2 does not query legacy application records through the core application service; the unused cross-template query extension was removed.
+V2 uses application type `ParentalLeaveV2` and slug `faedingarorlof-v2`. The existing [parental leave application](../parental-leave/README.md) remains separate so its applications can complete their lifecycle. Application lookups are scoped to V2's own type.
 
 ### Glossary
 
@@ -33,7 +31,7 @@ The purpose of this state is to be a guard into the actual application. There is
 
 Applicants choose which application type ( parental-leave, parental-grant or parental-grant-students ) they are applying for. Primary parents of a born or expected child are asked if they are expecting multiple births.
 
-The external data step also gathers what VMST holds for the applicant (`VMSTParentalLeaves`): their list of parental leaves and the VMST application of each listed leave. Picking a child that already has a leave turns the application into a change of that leave with a single submit, prefilled from this data without asking VMST again. It is kept out of `children`, which the employer can read, and cleared when the applicant leaves prerequisites.
+The external data step also gathers what VMST holds for the applicant (`VMSTParentalLeaves`): their list of parental leaves and the VMST application of each listed leave. Picking a child that already has a leave turns the application into a change of that leave with a single submit, prefilled from this data without asking VMST again. A leave VMST holds without a V2 application behind it (applied for in V1, on paper or at VMST) is listed as a child too, when the child was born, adopted or due less than 24 months ago (`vmstLeavesToChildCandidates`). Such a child is shown with its name and the first and last day of its leave, read from this data rather than stored on the child, which the employer can read. It is kept out of `children`, which the employer can read, and cleared when the applicant leaves prerequisites.
 
 #### Draft
 
@@ -41,11 +39,7 @@ Valid applicants will be able to advance to this state where they can start the 
 
 #### Other parent approval
 
-When the primary parent requests transferal of rights, then the other secondary parent will need to approve of the transfer. The other parent will receive an email with a link to approve of this request.
-
-#### Other parent requires action
-
-When the primary parent requests transferal of rights and the other parent does not approve the transfer and asks the primary parent for edits. The primary parent's application updates to ask them to edit their application.
+When the primary parent requests days from the other parent, or the use of the spouse's personal allowance, the other parent has to approve. They get an email and SMS with a link. If they reject, the application goes back to the draft.
 
 #### Employer waiting to assign
 
@@ -55,63 +49,73 @@ If the applicant is employed by an employer(s) (not self employed, getting benef
 
 Here the employer will have a chance to review the periods selected by the applicant as well as pension fund and union.
 
-The employer(s) can then approve or request changes, one employer at a time since just one assignee can be at one state at a time.
-
-#### Employer requires action
-
-When the employer requests edits on changes that have been sent to him for approval. The application updates for the applicant to edit his changes.
+The employer(s) can then approve or reject, one employer at a time since just one assignee can be at one state at a time. A rejection sends the application back to the draft.
 
 #### VMST approval
 
-Applications that have been sent to VMST.
+Applications that have been sent to VMST. VMST can approve, reject (back to the draft), ask for additional documents or close the application. The applicant can also take it back to the draft to edit it.
 
-#### VMST requires action
+#### Additional documents required
 
-When Vinnumálastofnun requests edits on changes that have been sent to them for approval. The application updates for the applicant to edit his changes.
+VMST asks for additional documents while processing the application. When the applicant sends them, the application goes back to VMST.
+
+#### Approved
+
+Applications that have been approved by VMST. An approved application is not edited in place: changes and the residence grant are new applications (see below).
+
+#### Closed
+
+VMST closed the application, for example when the applicant has used all their rights or the leave has expired.
+
+### Changes and the residence grant
+
+A change to a leave VMST holds, or an application for the residence grant, is its own application. In prerequisites the applicant picks the child that already has a leave, which sets `applicationAction` (`change` or `residenceGrant`) and `initialQuery` (the VMST id of the leave). `verifyFollowUpLeave` checks that VMST lists that leave, and `prefillFromVMST` copies what VMST holds into the answers.
 
 #### Edit or add periods
 
-Applicants make changes in periods or employers and/or add more periods or employers to their application. If an applicant changes a previous employer, they will get a file upload field where they have to upload a document confirming they have left their previous place of employment.
+The change form. Applicants change periods, employers, rights transfers, payments, personal allowance or the other parent, and add periods or employers. If an applicant changes a previous employer, they will get a file upload field where they have to upload a document confirming they have left their previous place of employment.
+
+#### Other parent approval for edits
+
+When a change asks something of the other parent (requested days or the spouse's personal allowance), and that request or the other parent differs from what VMST holds, the other parent has to approve it. A rejection sends the applicant back to the change form.
 
 #### Employer waiting to assign for edits
 
-When the applicant has made changes to their application and is employed by an employer(s) (not self employed, getting benefits or applying for a parental-leave grant), then then the employer they registered in their original application receives the email they can click a link which automatically assigns them to the application and advances it to the next state. If the applicant has multiple employers, or added an employer when he made his last changes, we go back to this state after an employer has approved the request until there are no more employers left to approve.
+When the change concerns the employer (periods, employers or self-employment changed) and the applicant has an employer, the employer gets an email with a link that assigns them to the application. With multiple employers we come back to this state until every employer has approved.
+
+#### Employer approval edits
+
+Employers review the change, then approve or reject. A rejection sends the applicant back to the change form.
+
+#### VMST approve edits
+
+A change or residence grant that has been sent to VMST. VMST can approve, reject, ask for additional documents or close it. A rejected change goes back to the change form; a rejected residence grant goes back to the residence grant form.
+
+#### Additional documents required for edits
+
+VMST asks for additional documents while processing a change. When the applicant sends them, the change goes back to VMST.
 
 #### Residence grant no birthdate
 
-Applicant tries to apply for residence grant but havn't given birth to the child, so they cannot apply.
+Applicant tries to apply for the residence grant before the child is born, so they cannot apply yet.
 
 #### Residence grant
 
 If the applicant has given birth and it has been less than 6 months they can apply for residence grant.
 
-#### Employer approval edits
+### Application rules
 
-Employers review new periods selected/added by applicants then approve or request changes.
-
-#### Employer requires action on edits
-
-When employers request changes to edits that the applicant has made. The applicant can discard edits or change their edits.
-
-#### VMST approve edits
-
-Application that has been edited (edit perios or applied for residence grant) have been sent to VMST again.
-
-#### VMST requires action on edits
-
-When VMST request changes to edits that the applicant has made. The applicant can discard edits or change their edits.
-
-#### Additional document required
-
-VMST asks for additional documents while processing the application.
-
-#### Approve
-
-Applicantions have been approved by VMST.
-
-#### Close
-
-Applicants finished all his/her rights or parental-leave time is expired.
+- **Rejections:** a rejection by the other parent, the employer or VMST sends the applicant back to the draft, the change form or the residence grant form, records who rejected it in `rejectedBy`, and notifies the applicant through Hnipp (`ParentalLeaveRejected`, template `HNIPP.AS.PL.REJECTED`).
+- **Deleting:** the applicant can delete the application until VMST holds it (`hasBeenSubmittedToVMST` in `parentalLeaveTemplateUtils.ts`). The first VMST id is kept in `sentToVMST`, so a failed resend cannot bring the delete button back.
+- **Pruning:** prerequisites after 7 days; the draft, the change form and the residence grant forms after 90 days; every other state after 30 days (`DefaultStateLifeCycle`).
+- **Re-approval of a change:** the other parent is asked only when the change asks something of them (requested days or the spouse's personal allowance) and that request or the other parent differs from what VMST holds (`requiresOtherParentApprovalForEdits`). The employer is asked only when the applicant has an employer and the periods, employers or self-employment changed (`hasEmployerRelevantChange`). Both compare against what VMST holds (`getChangeBaseline`).
+- **Rights transfers in a change:** the change form is prefilled with the days VMST holds as requested (the `FSAL-GR` right) or given (the full personal right less VMST's personal right). A changed transfer adjusts VMST's rights (`getVMSTRightsWithTransfer`) for both the periods limit and the rights sent to VMST.
+- **The other parent:** cannot be the applicant (`otherParentValidationSection`). The other parent in the answers is sent to VMST; VMST's stored one is only the fallback.
+- **Periods:**
+  - A period may not start or end inside another period (`dateIsWithinOtherPeriods`).
+  - A period shorter than 14 days must start the day after another period ends. This is checked for the whole plan on Continue from the periods screen and again in `validateApplication` before anything is sent to VMST.
+  - A period that has started can only be deleted if VMST has not approved it, it started this month and it is before the 24th (`formatPeriods`).
+- **Mock data:** outside production the applicant can choose mock data, which never calls VMST (`shouldUseMockData` in the template API module). A sent mock application holds `MOCK_APPLICATION_FUND_ID`. Mock data is never used in production.
 
 ### Parental leave template API module
 
@@ -160,7 +164,7 @@ To run the application system you'll need to run three apps:
   - Fetch secrets using: `yarn get-secrets api`
 - `application-system-form`
 
-Once you have everything running you can navigate to [http://localhost:4200/umsoknir/faedingarorlof](http://localhost:4200/umsoknir/faedingarorlof) and start developing.
+Once you have everything running you can navigate to [http://localhost:4200/umsoknir/faedingarorlof-v2](http://localhost:4200/umsoknir/faedingarorlof-v2) and start developing.
 
 ### Local database
 

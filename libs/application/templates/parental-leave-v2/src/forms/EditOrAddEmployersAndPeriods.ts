@@ -113,9 +113,7 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
                   name: parentalLeaveFormMessages.confirmation.submitButton,
                   type: 'primary',
                   // Hide the submit action only when we're confident nothing
-                  // differs from the baseline — either the predecessor for a
-                  // follow-up change or the snapshot taken on entry to the change
-                  // form for an in-place rewind (see `snapshotRewindBaseline`).
+                  // differs from the baseline, the leave VMST holds.
                   // When there is no baseline we cannot detect changes, so we err
                   // on the side of letting the applicant submit rather than
                   // locking them out of the form.

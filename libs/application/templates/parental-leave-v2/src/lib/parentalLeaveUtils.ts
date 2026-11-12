@@ -77,6 +77,7 @@ import {
   findChildBySelection,
   getChildSelectionValue,
   isSameChild,
+  toDay,
 } from './childIdentity'
 import {
   Attachments,
@@ -1290,16 +1291,6 @@ export const getVMSTApplicationAnswers = (
   return answers
 }
 
-/**
- * Island.is answers snapshotted before an in-place rewind of a first-time leave,
- * which has no predecessor. Follow-up applications carry no answers over; their
- * baseline is VMST data alone.
- */
-export const getRewindBaselineAnswers = (
-  externalData: Application['externalData'],
-): FormValue =>
-  getValueViaPath(externalData, 'rewindBaseline.data.answers', {}) as FormValue
-
 /** Coerce a value into a string so undefined, null, '' and 0 compare consistently on both sides of a baseline diff. */
 export const normalize = (val: unknown): string => String(val ?? '')
 
@@ -1309,23 +1300,18 @@ export const normalize = (val: unknown): string => String(val ?? '')
  *
  * This replaces the old `temp*` answers. Those were written into the application's
  * own answers on entry to the change form and restored on cancel, which is what
- * made cancelling an edit a rollback problem. The baseline now comes from VMST
- * (or, for an in-place rewind of a first-time leave, a snapshot of its answers):
+ * made cancelling an edit a rollback problem. The baseline now comes from VMST:
  * it is external data, it is never written back, and cancelling simply closes
  * this application.
  *
- * `null` when there is neither VMST data nor a rewind baseline.
+ * `null` when there is no VMST data.
  */
 export const getChangeBaseline = (
   externalData: Application['externalData'],
 ) => {
-  const vmstAnswers = getVMSTApplicationAnswers(externalData)
-  const previousAnswers = {
-    ...getRewindBaselineAnswers(externalData),
-    ...vmstAnswers,
-  }
+  const previousAnswers = getVMSTApplicationAnswers(externalData)
 
-  if (!previousAnswers || Object.keys(previousAnswers).length === 0) {
+  if (Object.keys(previousAnswers).length === 0) {
     return null
   }
 
@@ -3030,6 +3016,61 @@ export const getChildrenInProgress = (
  *   3. "my child is not in this list"             → the no-children-found questions
  *
  */
+type VMSTLeavePeriod = { from?: string | null; to?: string | null }
+
+/**
+ * The child's name and the first and last day of its leave, for a child with a
+ * leave at VMST. Read from `VMSTParentalLeaves`, which only the applicant can
+ * read and which is cleared on leaving prerequisites, rather than copied onto
+ * the child, which the employer can read.
+ */
+export const getVMSTLeaveDisplay = (
+  externalData: Application['externalData'],
+  vmstApplicationId: string,
+): { name: string; from: string; to: string } => {
+  const parentalLeaves =
+    getValueViaPath<
+      Array<{ applicationId?: string; periods?: VMSTLeavePeriod[] | null }>
+    >(externalData, 'VMSTParentalLeaves.data.parentalLeaves') ?? []
+  const applications =
+    getValueViaPath<
+      Record<
+        string,
+        {
+          children?: Array<{ name?: string | null }> | null
+          periods?: VMSTLeavePeriod[] | null
+        }
+      >
+    >(externalData, 'VMSTParentalLeaves.data.applications') ?? {}
+
+  const leave = parentalLeaves.find(
+    (candidate) => candidate?.applicationId === vmstApplicationId,
+  )
+  const vmstApplication = applications[vmstApplicationId]
+
+  const name = (vmstApplication?.children ?? [])
+    .map((child) => child?.name?.trim())
+    .filter(Boolean)
+    .join(', ')
+
+  const periods = leave?.periods?.length
+    ? leave.periods
+    : vmstApplication?.periods ?? []
+  const days = (key: 'from' | 'to') =>
+    periods
+      .map((period) => toDay(period?.[key]))
+      .filter(Boolean)
+      .sort()
+  const formatDay = (day?: string) =>
+    day ? format(parseISO(day), dateFormat.is) : ''
+
+  return {
+    name,
+    from: formatDay(days('from')[0]),
+    to: formatDay(days('to').at(-1)),
+  }
+}
+
 export const getChildrenOptions = (application: Application) => {
   const { children } = getApplicationExternalData(application.externalData)
 
@@ -3038,10 +3079,18 @@ export const getChildrenOptions = (application: Application) => {
       child.parentalRelation === ParentalRelations.secondary
         ? child.primaryParentNationalRegistryId
         : undefined
+    const vmstLeave = child.vmstApplicationId
+      ? getVMSTLeaveDisplay(application.externalData, child.vmstApplicationId)
+      : undefined
     const subLabel = isChildInProgress(child)
       ? child.inProgressIsChange
         ? parentalLeaveFormMessages.selectChild.existingApplicationInProgress
         : parentalLeaveFormMessages.selectChild.applicationInProgress
+      : vmstLeave?.from && vmstLeave.to
+      ? {
+          ...parentalLeaveFormMessages.selectChild.existingLeave,
+          values: { from: vmstLeave.from, to: vmstLeave.to },
+        }
       : child.vmstApplicationId
       ? parentalLeaveFormMessages.selectChild.existingApplication
       : child.parentalRelation === ParentalRelations.secondary
@@ -3064,7 +3113,7 @@ export const getChildrenOptions = (application: Application) => {
         dataTestId: hasExistingApplication
           ? `existing-application-${index}`
           : `child-${index}`,
-        label: getChildLabel(child),
+        label: vmstLeave?.name || getChildLabel(child),
         subLabel,
       },
     }

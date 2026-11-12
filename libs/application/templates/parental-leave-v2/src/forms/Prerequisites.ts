@@ -559,8 +559,14 @@ export const NoPrimaryParentSubSection = buildSubSection({
           id: 'noPrimaryParent.questionOne',
           title: parentalLeaveFormMessages.shared.noPrimaryParentQuestionOne,
           options: [
-            { value: YES, label: 'Já' },
-            { value: NO, label: 'Nei' },
+            {
+              value: YES,
+              label: parentalLeaveFormMessages.shared.yesOptionLabel,
+            },
+            {
+              value: NO,
+              label: parentalLeaveFormMessages.shared.noOptionLabel,
+            },
           ],
           width: 'half',
           largeButtons: true,
@@ -569,8 +575,14 @@ export const NoPrimaryParentSubSection = buildSubSection({
           id: 'noPrimaryParent.questionTwo',
           title: parentalLeaveFormMessages.shared.noPrimaryParentQuestionTwo,
           options: [
-            { value: YES, label: 'Já' },
-            { value: NO, label: 'Nei' },
+            {
+              value: YES,
+              label: parentalLeaveFormMessages.shared.yesOptionLabel,
+            },
+            {
+              value: NO,
+              label: parentalLeaveFormMessages.shared.noOptionLabel,
+            },
           ],
           width: 'half',
           largeButtons: true,
@@ -579,8 +591,14 @@ export const NoPrimaryParentSubSection = buildSubSection({
           id: 'noPrimaryParent.questionThree',
           title: parentalLeaveFormMessages.shared.noPrimaryParentQuestionThree,
           options: [
-            { value: YES, label: 'Já' },
-            { value: NO, label: 'Nei' },
+            {
+              value: YES,
+              label: parentalLeaveFormMessages.shared.yesOptionLabel,
+            },
+            {
+              value: NO,
+              label: parentalLeaveFormMessages.shared.noOptionLabel,
+            },
           ],
           width: 'half',
           largeButtons: true,
