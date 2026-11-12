@@ -136,6 +136,42 @@ it.each([
   },
 )
 
+it.each([0, 1])(
+  'includes a selected non-multiset currency value in multiset entry %s',
+  (valueIndex) => {
+    const { dispatch } = renderSum(true, valueIndex, ['outside-multiset'])
+
+    expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe(
+      '500 kr.',
+    )
+    expect(dispatch).toHaveBeenCalledWith({
+      type: 'SET_CURRENCY',
+      payload: { id: 'sum', value: '500', valueIndex },
+    })
+  },
+)
+
+it.each([
+  { valueIndex: 0, expected: '1.500' },
+  { valueIndex: 1, expected: '2.500' },
+])(
+  'combines selected multiset and non-multiset fields in entry $valueIndex',
+  ({ valueIndex, expected }) => {
+    const { dispatch } = renderSum(true, valueIndex, [
+      'first',
+      'outside-multiset',
+    ])
+
+    expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe(
+      `${expected} kr.`,
+    )
+    expect(dispatch).toHaveBeenCalledWith({
+      type: 'SET_CURRENCY',
+      payload: { id: 'sum', value: expected, valueIndex },
+    })
+  },
+)
+
 it.each([
   { fieldsToSum: [], isPartOfMultiset: false, expected: '34.200' },
   { fieldsToSum: null, isPartOfMultiset: false, expected: '34.200' },

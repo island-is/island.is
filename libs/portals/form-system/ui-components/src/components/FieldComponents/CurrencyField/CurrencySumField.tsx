@@ -63,11 +63,18 @@ export const CurrencySumField = ({
 
     const total = selectedFields.reduce((total, field) => {
       if (field?.fieldType !== FieldTypesEnum.ISK_NUMBERBOX) return total
-      if (isPartOfMultiset && field.isPartOfMultiset === false) return total
+      if (
+        isPartOfMultiset &&
+        field.isPartOfMultiset === false &&
+        !fieldsToSum?.length
+      ) {
+        return total
+      }
 
       const valueCount = field.values?.length ?? 0
-      const firstValueIndex = isPartOfMultiset ? valueIndex : 0
-      const lastValueIndex = isPartOfMultiset ? valueIndex + 1 : valueCount
+      const sumEntryOnly = isPartOfMultiset && field.isPartOfMultiset !== false
+      const firstValueIndex = sumEntryOnly ? valueIndex : 0
+      const lastValueIndex = sumEntryOnly ? valueIndex + 1 : valueCount
 
       let fieldTotal = 0
 

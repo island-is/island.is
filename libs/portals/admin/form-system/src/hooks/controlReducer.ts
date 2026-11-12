@@ -428,6 +428,29 @@ export interface ControlState {
   isReadOnly: boolean
 }
 
+const removeCurrencyFieldFromSums = (
+  fields: FormSystemForm['fields'],
+  fieldId: string,
+): NonNullable<FormSystemForm['fields']> | undefined =>
+  fields?.map((field) => {
+    if (
+      field?.fieldType !== FieldTypesEnum.ISK_SUMBOX ||
+      !field.fieldSettings?.fieldsToSum?.includes(fieldId)
+    ) {
+      return field
+    }
+
+    return {
+      ...field,
+      fieldSettings: {
+        ...field.fieldSettings,
+        fieldsToSum: field.fieldSettings.fieldsToSum.filter(
+          (id) => id !== fieldId,
+        ),
+      },
+    }
+  })
+
 export const controlReducer = (
   state: ControlState,
   action: ControlAction,
@@ -586,6 +609,9 @@ export const controlReducer = (
       const removedField = state.form.fields?.find(
         (field) => field?.id === action.payload.id,
       )
+      if (removedField?.fieldType === FieldTypesEnum.ISK_NUMBERBOX) {
+        newFields = removeCurrencyFieldFromSums(newFields, removedField.id)
+      }
       if (removedField?.fieldType === FieldTypesEnum.PAYMENT_QUANTITY) {
         newFields = newFields?.map((field) => {
           if (
@@ -604,8 +630,15 @@ export const controlReducer = (
         })
       }
       if (action.payload.skipActiveItem) {
+        const updatedActiveField =
+          activeItem.type === 'Field'
+            ? newFields?.find((field) => field?.id === activeItem.data?.id)
+            : undefined
         return {
           ...state,
+          activeItem: updatedActiveField
+            ? { ...activeItem, data: updatedActiveField }
+            : activeItem,
           form: {
             ...form,
             fields: newFields,
@@ -668,6 +701,19 @@ export const controlReducer = (
             }
           }
           return field
+        })
+      }
+
+      if (
+        currentData.fieldType === FieldTypesEnum.ISK_NUMBERBOX &&
+        newValue !== FieldTypesEnum.ISK_NUMBERBOX
+      ) {
+        const fieldsBeforeCleanup = newFields
+        newFields = removeCurrencyFieldFromSums(newFields, currentData.id)
+        newFields?.forEach((field, index) => {
+          if (field && field !== fieldsBeforeCleanup?.[index]) {
+            update({ type: 'Field', data: field })
+          }
         })
       }
 
