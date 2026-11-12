@@ -180,8 +180,14 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | undefined>()
+  // Not seeded in DRAFT: the stored result is the shell's page-load copy, and
+  // the draft may have been edited since, so the effect below analyses afresh
+  // on every visit, as the results screen does.
   const [result, setResult] = useState<SalaryAnalysisResponseDto | undefined>(
-    () => getSalaryAnalysisResult(application.externalData),
+    () =>
+      isDraftPhase
+        ? undefined
+        : getSalaryAnalysisResult(application.externalData),
   )
   const [updateApplicationExternalData] = useMutation(
     UPDATE_APPLICATION_EXTERNAL_DATA,

@@ -97,12 +97,8 @@ describe('salary analysis outlier navigation flags', () => {
   })
 
   it('treats ábendingar-only results as not requiring the improvement plan', () => {
-    const answers: FormValue = {
-      salaryAnalysis: {
-        hasMinimumSetOutliers: true,
-        outlierPlanReviewed: false,
-      },
-    }
+    // No mirrored answer yet, so the stored result alone decides.
+    const answers: FormValue = {}
     const data = externalData(
       result(0, {
         payDispersion: {
@@ -144,12 +140,8 @@ describe('salary analysis outlier navigation flags', () => {
   })
 
   it('does not require the improvement plan for over-benchmark results with no listed outliers', () => {
-    const answers: FormValue = {
-      salaryAnalysis: {
-        hasMinimumSetOutliers: true,
-        outlierPlanReviewed: false,
-      },
-    }
+    // No mirrored answer yet, so the stored result alone decides.
+    const answers: FormValue = {}
     const data = externalData(
       result(0, {
         wageGapDecomposition: {
@@ -251,19 +243,53 @@ describe('salary analysis outlier navigation flags', () => {
     ).toBe(false)
   })
 
-  it('lets a present result outrank stale local need answers', () => {
+  // The form shell freezes its copy of externalData at page load, while the
+  // results screen re-analyses on every DRAFT visit and mirrors the live flag
+  // into the answers. So the answer is the fresher side and has to win.
+  it('requires the plan when the live answer finds outliers the page-load result did not', () => {
     const answers: FormValue = {
       salaryAnalysis: {
-        hasMinimumSetOutliers: false,
-        outlierPlanReviewed: true,
+        hasMinimumSetOutliers: true,
+        outlierPlanReviewed: false,
       },
     }
 
     expect(
-      salaryAnalysisNeedsImprovementPlan(answers, externalData(result(1))),
+      salaryAnalysisNeedsImprovementPlan(answers, externalData(result(0))),
     ).toBe(true)
     expect(
-      salaryAnalysisOutlierPlanIsReviewed(answers, externalData(result(1))),
+      salaryAnalysisOutlierPlanIsReviewed(answers, externalData(result(0))),
+    ).toBe(false)
+  })
+
+  it('drops the plan when the live answer finds no outliers the page-load result had', () => {
+    const answers: FormValue = {
+      salaryAnalysis: {
+        hasMinimumSetOutliers: false,
+        outlierPlanReviewed: false,
+      },
+    }
+
+    expect(
+      salaryAnalysisNeedsImprovementPlan(answers, externalData(result(2))),
+    ).toBe(false)
+    expect(
+      salaryAnalysisOutlierPlanIsReviewed(answers, externalData(result(2))),
+    ).toBe(true)
+  })
+
+  it('falls back to the stored result only when the answer is absent', () => {
+    expect(
+      salaryAnalysisNeedsImprovementPlan(
+        { salaryAnalysis: {} },
+        externalData(result(2)),
+      ),
+    ).toBe(true)
+    expect(
+      salaryAnalysisNeedsImprovementPlan(
+        { salaryAnalysis: {} },
+        externalData(result(0)),
+      ),
     ).toBe(false)
   })
 })
