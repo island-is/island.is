@@ -32,13 +32,7 @@ import {
   usePreferencesStore,
 } from '@/stores/preferences-store'
 import { useUiStore } from '@/stores/ui-store'
-import {
-  Alert,
-  NavigationBarSheet,
-  TableViewAccessory,
-  TableViewCell,
-  TableViewGroup,
-} from '@/ui'
+import { Alert, TableViewAccessory, TableViewCell, TableViewGroup } from '@/ui'
 import { useBiometricType } from '../../../hooks/use-biometric-type'
 import { NotificationsPermissionAlert } from '@/components/notifications-permission-alert'
 import { useNotificationsPermission } from '@/hooks/use-notifications-permission'
@@ -418,10 +412,12 @@ export default function SettingsScreen() {
                   }}
                   disabled={userProfile.loading && !userProfile.data}
                   value={emailNotifications}
-                  thumbColor={Platform.select({ android: theme.color.dark100 })}
+                  thumbColor={Platform.select({
+                    android: theme.tokens.app.background.neutral,
+                  })}
                   trackColor={{
-                    false: theme.color.dark200,
-                    true: theme.color.blue400,
+                    false: theme.tokens.app.border.neutral,
+                    true: theme.tokens.interactive.background.primary,
                   }}
                 />
               </View>
@@ -440,10 +436,12 @@ export default function SettingsScreen() {
                   onValueChange={onDocumentNotificationsChange}
                   disabled={userProfile.loading && !userProfile.data}
                   value={documentNotifications}
-                  thumbColor={Platform.select({ android: theme.color.dark100 })}
+                  thumbColor={Platform.select({
+                    android: theme.tokens.app.background.neutral,
+                  })}
                   trackColor={{
-                    false: theme.color.dark200,
-                    true: theme.color.blue400,
+                    false: theme.tokens.app.border.neutral,
+                    true: theme.tokens.interactive.background.primary,
                   }}
                 />
               </View>
@@ -518,10 +516,12 @@ export default function SettingsScreen() {
                   }}
                   disabled={!isEnrolledBiometrics}
                   value={useBiometrics}
-                  thumbColor={Platform.select({ android: theme.color.dark100 })}
+                  thumbColor={Platform.select({
+                    android: theme.tokens.app.background.neutral,
+                  })}
                   trackColor={{
-                    false: theme.color.dark200,
-                    true: theme.color.blue400,
+                    false: theme.tokens.app.border.neutral,
+                    true: theme.tokens.interactive.background.primary,
                   }}
                 />
               </View>

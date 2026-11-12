@@ -73,6 +73,11 @@ export class FieldSettings {
   maxAmount?: number
 
   @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  notIncludedInSumbox?: boolean
+
+  @IsOptional()
   @IsNumber()
   @ApiPropertyOptional({ type: Number })
   year?: number
@@ -182,6 +187,11 @@ export class FieldSettings {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   fetchEmailFromMyPages?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  fetchBankAccountFromMyPages?: boolean
 
   @IsOptional()
   @IsString()

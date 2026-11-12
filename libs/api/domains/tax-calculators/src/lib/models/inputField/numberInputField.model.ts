@@ -13,4 +13,10 @@ export class NumberInputField extends InputField {
 
   @Field(() => Float, { nullable: true })
   max?: number
+
+  @Field({ description: 'Only whole numbers are accepted.' })
+  integer!: boolean
+
+  @Field(() => Float, { nullable: true })
+  defaultValue?: number
 }

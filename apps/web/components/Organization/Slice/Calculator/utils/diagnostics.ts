@@ -112,12 +112,12 @@ export const reportContractDiagnostics = ({
     output.staleFieldKeys,
   )
   warn(
-    'output fields carry an itemFields block but are not arrays',
+    'output fields carry an itemFields block but are neither arrays nor objects',
     output.itemFieldsOnScalarKeys,
   )
   warn(
-    'outputTotal is array-typed and will never resolve to a displayable total',
-    output.arrayValuedTotal ? [config.outputTotal.key] : [],
+    'outputTotal is array- or object-typed and will never resolve to a displayable total',
+    output.nonScalarTotal ? [config.outputTotal.key] : [],
   )
   output.staleItemFieldKeys.forEach(({ fieldKey, itemKeys }) =>
     warn(`configured item fields of "${fieldKey}" are absent`, itemKeys),

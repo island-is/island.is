@@ -54,40 +54,124 @@ export const draftMessages = {
       description: 'Rental agreement option unbound term',
     },
   }),
+  legalDomicileSection: defineMessages({
+    title: {
+      id: 'hb.application:draft.legalDomicileSection.title',
+      defaultMessage: 'Skilyrði um búsetu',
+      description: 'Legal domicile sub section title',
+    },
+    multiFieldTitle: {
+      id: 'hb.application:draft.legalDomicileSection.multiFieldTitle',
+      defaultMessage: 'Misræmi í lögheimilisskráningu',
+      description: 'Legal domicile multi field title',
+    },
+    mismatchAlertTitle: {
+      id: 'hb.application:draft.legalDomicileSection.mismatchAlertTitle',
+      defaultMessage: 'Lögheimili ekki það sama og leiguhúsnæði',
+      description: 'Alert title when legal domicile does not match the lease',
+    },
+    mismatchAlertMessage: {
+      id: 'hb.application:draft.legalDomicileSection.mismatchAlertMessage#markdown',
+      defaultMessage:
+        'Ef þú átt eftir að færa lögheimili í leiguhúsnæði þá er hægt að gera það rafrænt hjá Þjóðskrá. Athugið að það getur tekið allt að tvo virka daga fyrir nýtt heimilisfang að uppfærast.',
+      description: 'Alert message when legal domicile does not match the lease',
+    },
+    mismatchAlertLinkTitle: {
+      id: 'hb.application:draft.legalDomicileSection.mismatchAlertLinkTitle',
+      defaultMessage: 'Breyta í Þjóðskrá',
+      description: 'Link title to change legal domicile',
+    },
+    mismatchAlertLinkUrl: {
+      id: 'hb.application:draft.legalDomicileSection.mismatchAlertLinkUrl',
+      defaultMessage: 'https://island.is/flytja-logheimili',
+      description: 'Link url to change legal domicile',
+    },
+    updatedAlertTitle: {
+      id: 'hb.application:draft.legalDomicileSection.updatedAlertTitle',
+      defaultMessage: 'Lögheimili uppfært',
+      description: 'Alert title when legal domicile now matches the lease',
+    },
+    updatedAlertMessage: {
+      id: 'hb.application:draft.legalDomicileSection.updatedAlertMessage',
+      defaultMessage:
+        'Lögheimili þitt hefur verið uppfært hjá Þjóðskrá og er nú í samræmi við leigusamninginn þinn. Þú getur nú haldið áfram með umsóknina.',
+      description: 'Alert message when legal domicile now matches the lease',
+    },
+    registeredDomicileTitle: {
+      id: 'hb.application:draft.legalDomicileSection.registeredDomicileTitle',
+      defaultMessage: 'Skráð lögheimili',
+      description: 'Title of the registered legal domicile card',
+    },
+    description: {
+      id: 'hb.application:draft.legalDomicileSection.description',
+      defaultMessage:
+        'Þegar búið er að uppfæra lögheimilisupplýsingarnar í Þjóðskrá er hægt að endursækja gögnin hér fyrir neðan. Að öðrum kosti er hægt að sækja um undanþágu.',
+      description: 'Description above the refetch / exemption options',
+    },
+    optionNationalRegistry: {
+      id: 'hb.application:draft.legalDomicileSection.optionNationalRegistry',
+      defaultMessage: 'Endursækja gögn í Þjóðskrá',
+      description: 'Radio option: refetch from the national registry',
+    },
+    optionExemption: {
+      id: 'hb.application:draft.legalDomicileSection.optionExemption',
+      defaultMessage: 'Sækja um undanþágu',
+      description: 'Radio option: apply for an exemption',
+    },
+    refetchButton: {
+      id: 'hb.application:draft.legalDomicileSection.refetchButton',
+      defaultMessage: 'Sækja gögn í Þjóðskrá',
+      description: 'Button to refetch data from the national registry',
+    },
+    notUpdatedAlertTitle: {
+      id: 'hb.application:draft.legalDomicileSection.notUpdatedAlertTitle',
+      defaultMessage: 'Ekki er búið að uppfæra gögn í Þjóðskrá',
+      description: 'Alert title when refetched address still does not match',
+    },
+    notUpdatedAlertMessage: {
+      id: 'hb.application:draft.legalDomicileSection.notUpdatedAlertMessage',
+      defaultMessage:
+        'Það getur tekið allt að 48 klst að uppfærast í Þjóðskrá. Vinsamlegast reyndu aftur síðar.',
+      description: 'Alert message when refetched address still does not match',
+    },
+    refetchErrorTitle: {
+      id: 'hb.application:draft.legalDomicileSection.refetchErrorTitle',
+      defaultMessage: 'Ekki tókst að sækja gögn í Þjóðskrá',
+      description:
+        'Alert title when refetching from the national registry fails',
+    },
+    refetchErrorMessage: {
+      id: 'hb.application:draft.legalDomicileSection.refetchErrorMessage',
+      defaultMessage: 'Vinsamlegast reyndu aftur síðar.',
+      description:
+        'Alert message when refetching from the national registry fails',
+    },
+    validationOptionRequired: {
+      id: 'hb.application:draft.legalDomicileSection.validationOptionRequired',
+      defaultMessage: 'Vinsamlegast veldu annan hvorn valkostinn',
+      description: 'Validation: refetch or exemption option must be selected',
+    },
+  }),
   exemptionSection: defineMessages({
     title: {
       id: 'hb.application:draft.exemptionSection.title',
       defaultMessage: 'Undanþágur',
       description: 'Exemption section title',
     },
-    multiFieldTitle: {
-      id: 'hb.application:draft.exemptionSection.multiFieldTitle',
-      defaultMessage: 'Undanþága frá skilyrðum um búsetu',
-      description: 'Exemption multi field title',
-    },
-    alertTitle: {
-      id: 'hb.application:draft.exemptionSection.alertTitle',
-      defaultMessage: 'Ósamræmi í skráningu',
-      description: 'Exemption alert title',
-    },
-    description: {
-      id: 'hb.application:draft.exemptionSection.alertMessageDescription#markdown',
-      defaultMessage:
-        'Ef þú átt eftir að færa lögheimili í leiguhúsnæði þá er hægt að gera það rafrænt hjá [Þjóðskrá](https://island.is/flytja-logheimili). Athugið að það getur tekið allt að tvo virka daga fyrir nýtt heimilisfang að uppfærast.',
-      description: 'Exemption alertmessage description',
+    reasonTitle: {
+      id: 'hb.application:draft.exemptionSection.reasonTitle',
+      defaultMessage: 'Ástæða undanþágu',
+      description: 'Exemption reason title',
     },
     description2: {
       id: 'hb.application:draft.exemptionSection.description2#markdown',
       defaultMessage:
-        'Undanþága frá skilyrðum um búsetu er veitt í eftirfarandi fjórum tilfellum: \n\n * Vegna náms sem er stundað fjarri lögheimili \n\n * Vegna veikinda þegar nauðsyn er að sækja heilbrigðisþjónustu fjarri lögheimil \n\n * Vegna dvalar á áfangaheimili \n\n * Vegna starfs unnið fjarri lögheimili í allt að þrjú ár',
+        'Hægt er að sækja um undanþágu frá skilyrðum um búsetu í eftirfarandi tilfellum: \n\n * Vegna náms sem er stundað fjarri lögheimili \n\n * Vegna veikinda \n\n * Vegna dvalar á áfangaheimili \n\n * Vegna starfs unnið fjarri lögheimili í allt að þrjú ár',
     },
-    checkboxLabel: {
-      id: 'hb.application:draft.exemptionSection.checkboxLabel',
-      defaultMessage: 'Sækja um undanþágu frá skilyrðum um búsetu',
-    },
-    checkboxTitle: {
-      id: 'hb.application:draft.exemptionSection.checkboxTitle',
-      defaultMessage: 'Undanþága frá skilyrðum um búsetu',
+    reasonRadioTitle: {
+      id: 'hb.application:draft.exemptionSection.reasonRadioTitle',
+      defaultMessage: 'Vinsamlegast veldu þá ástæðu sem á við',
+      description: 'Exemption reason radio title',
     },
     checkboxLabelStudies: {
       id: 'hb.application:draft.exemptionSection.checkboxLabelStudies',
@@ -104,31 +188,6 @@ export const draftMessages = {
     checkboxLabelWork: {
       id: 'hb.application:draft.exemptionSection.checkboxLabelWork',
       defaultMessage: 'Vegna starfs',
-    },
-    fileUploadStudiesTitle: {
-      id: 'hb.application:draft.exemptionSection.fileUploadStudiesTitle',
-      defaultMessage: 'Staðfesting á skólavist',
-      description: 'Studies - confirmation of enrollment',
-    },
-    fileUploadHealthTitle: {
-      id: 'hb.application:draft.exemptionSection.fileUploadHealthTitle',
-      defaultMessage: 'Læknisvottorð',
-      description: "Health - doctor's note",
-    },
-    fileUploadHousingTitle: {
-      id: 'hb.application:draft.exemptionSection.fileUploadHousingTitle',
-      defaultMessage: 'Staðfesting frá áfangaheimili',
-      description: 'Halfway housing - confirmation from housing',
-    },
-    fileUploadWorkTitle: {
-      id: 'hb.application:draft.exemptionSection.fileUploadWorkTitle',
-      defaultMessage: 'Ráðningarsamningur',
-      description: 'Work - confirmation of employment',
-    },
-    validationCheckboxRequired: {
-      id: 'hb.application:draft.exemptionSection.validationCheckboxRequired',
-      defaultMessage: 'Þú verður að staðfesta að þú sækir um undanþágu',
-      description: 'Validation: exemption checkbox must be checked',
     },
     validationReasonRequired: {
       id: 'hb.application:draft.exemptionSection.validationReasonRequired',

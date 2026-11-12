@@ -14,7 +14,6 @@ import {
   personalInformationOverviewItems,
   rentalAgreementOverviewItems,
   exemptionSectionOverviewItems,
-  exemptionSectionOverviewAttachments,
   applicantSubmitHouseholdMembersOverviewItems,
   applicantSubmitHouseholdMembersOverviewAttachments,
   incomeSectionOverviewItems,
@@ -24,7 +23,7 @@ import {
   applicantSubmitAccessAgreementOverviewAttachments,
 } from '../../../utils/getOverviewItems'
 import { shouldShowApplicantSubmitAccessAgreementSection } from '../../../utils/assigneeUtils'
-import { doesAddressMatchRentalContract } from '../../../utils/rentalAgreementUtils'
+import { shouldShowLegalDomicileSection } from '../../../utils/conditions'
 import { isTaxReturnFiled, isTaxReturnNotFiled } from '../../../utils/utils'
 import { hasAllAssigneesRejectedInAnswers } from '../../../utils/assigneeRejectionUtils'
 
@@ -66,10 +65,8 @@ export const applicantOverviewSection = buildSection({
         buildOverviewField({
           id: 'submitExemptionOverview',
           title: m.draftMessages.exemptionSection.title,
-          condition: (answers, externalData) =>
-            !doesAddressMatchRentalContract(answers, externalData),
+          condition: shouldShowLegalDomicileSection,
           items: exemptionSectionOverviewItems,
-          attachments: exemptionSectionOverviewAttachments,
         }),
         buildOverviewField({
           id: 'submitIncomeOverview',

@@ -40,6 +40,7 @@ export enum Features {
   isConfirmJobSearchEnabled = 'isConfirmJobSearchEnabled',
   isNewDrivingLicenseEnabled = 'isNewDrivingLicenseEnabled',
   isDirectorateOfEqualityApplicationsEnabled = 'isDirectorateOfEqualityApplicationsEnabled',
+  isFjarskiptastofaSelfAssessmentEnabled = 'isFjarskiptastofaSelfAssessmentEnabled',
   isConfirmJobOrIncomeEnabled = 'isConfirmJobOrIncomeEnabled',
 
   // Application System Delegations active
@@ -219,9 +220,14 @@ export enum Features {
 
   // Notifications settings
   isOnlyActionablePriorityNotificationsEnabled = 'isOnlyActionablePriorityNotificationsEnabled',
+  // Should user-notification skip notifications in categories the user has blocked
+  isNotificationBlockedCategoriesEnabled = 'isNotificationBlockedCategoriesEnabled',
 
   // Primary school (guardian-facing)
   isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',
+  // Primary school key information (lykilupplýsingar). Its own switch, so key
+  // info can be held back while the rest of the primary-school page is live.
+  isServicePortalPrimarySchoolKeyInfoEnabled = 'isServicePortalPrimarySchoolKeyInfoEnabled',
   // Primary school PDF viewer modal
   isServicePortalPrimarySchoolPdfViewerEnabled = 'isServicePortalPrimarySchoolPdfViewerEnabled',
   // Switches between current and new primary-school PDF implementations in download-service

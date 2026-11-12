@@ -18,7 +18,8 @@ import { isString } from '../../../utils/is-string'
 import IconStatusNonVerified from '../../assets/card/danger.png'
 import IconStatusVerified from '../../assets/card/is-verified.png'
 import { LicenseCardPresets } from './license-list-card'
-import { dynamicColor } from '../../utils/dynamic-color'
+import { dynamicColor, token } from '../../utils/dynamic-color'
+import { licenceBarcodeVeil, licenceColours } from '../../utils/licence-colours'
 import { Typography } from '../typography/typography'
 import { screenWidth } from '../../../utils/dimensions'
 import { BARCODE_MAX_WIDTH } from '@/constants/wallet.constants'
@@ -53,7 +54,7 @@ const BarcodeWrapper = styled.View<{ minHeight?: number }>`
 
 const BarcodeContainer = styled.View`
   flex: 1;
-  background-color: ${({ theme }) => theme.color.white};
+  background-color: ${token((t) => t.background.invert)};
   padding: ${({ theme }) => theme.spacing.smallGutter}px;
   align-items: center;
   justify-content: center;
@@ -156,12 +157,13 @@ export function LicenseCard({
   const preset = type
     ? LicenseCardPresets[type]
     : LicenseCardPresets.DriversLicense
+  const colours = type ? licenceColours[type] : licenceColours.DriversLicense
   const title = props.title ?? preset?.title
   const isTablet = screenWidth > 760
   const logo = props.logo ?? preset?.logo
   const backgroundImage = props.backgroundImage ?? preset?.backgroundImage
-  const backgroundColor = props.backgroundColor ?? preset?.backgroundColor
-  const textColor = theme.shades.light.foreground
+  const backgroundColor = props.backgroundColor ?? colours?.background
+  const textColor = theme.tokens.foreground.primary
   const showExpireDate =
     type === GenericLicenseType.Passport ||
     type === GenericLicenseType.IdentityDocument
@@ -222,7 +224,8 @@ export function LicenseCard({
                     width: 15,
                     height: 15,
                     marginRight: 8,
-                    tintColor: error && theme.color.yellow600,
+                    tintColor:
+                      error && theme.tokens.feedback.warning.foreground,
                   }}
                 />
                 <Typography
@@ -295,9 +298,13 @@ export function LicenseCard({
             <Skeleton
               active
               backgroundColor={
-                preset.barcode?.background ?? theme.color.blue100
+                colours?.barcode?.background ??
+                theme.tokens.background.brandMinimal
               }
-              overlayColor={preset.barcode?.overlay ?? theme.color.blue200}
+              overlayColor={
+                colours?.barcode?.overlay ??
+                theme.tokens.background.brandLighter
+              }
               overlayOpacity={1}
               style={{ flex: 1 }}
             />
@@ -306,9 +313,7 @@ export function LicenseCard({
       )}
       {allowLicenseBarcode && (error || showBarcodeOfflineMessage) && (
         <BarcodeWrapper minHeight={barcodeHeight}>
-          <BarcodeContainer
-            style={{ backgroundColor: 'rgba(255,255,255,0.4)' }}
-          >
+          <BarcodeContainer style={{ backgroundColor: licenceBarcodeVeil }}>
             <OfflineMessage variant="body3" style={{ opacity: 1 }}>
               {intl.formatMessage({
                 id: error

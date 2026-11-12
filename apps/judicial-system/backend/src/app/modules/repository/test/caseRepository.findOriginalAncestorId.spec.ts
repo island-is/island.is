@@ -1,3 +1,5 @@
+import type { Transaction } from 'sequelize'
+
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
@@ -159,6 +161,48 @@ describe('CaseRepositoryService — findOriginalAncestorId', () => {
 
       expect(result).toBe('missing-parent-id')
       expect(caseModel.findByPk).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  // The walk runs from an interceptor while the route's guard may hold the
+  // case row's lock in the request's transaction, so every parent read has to
+  // join that transaction rather than take a pool connection of its own.
+  describe('the transaction', () => {
+    const theCase = {
+      id: 'grandchild-id',
+      type: CaseType.CUSTODY,
+      parentCaseId: 'child-id',
+    } as Case
+
+    beforeEach(() => {
+      stubParentChain({ 'parent-id': null, 'child-id': 'parent-id' })
+    })
+
+    it('reads every parent in the given transaction', async () => {
+      const transaction = {} as Transaction
+
+      await caseRepositoryService.findOriginalAncestorId(theCase, {
+        transaction,
+      })
+
+      expect(caseModel.findByPk).toHaveBeenCalledTimes(2)
+      expect(caseModel.findByPk).toHaveBeenNthCalledWith(1, 'child-id', {
+        attributes: ['parentCaseId'],
+        transaction,
+      })
+      expect(caseModel.findByPk).toHaveBeenNthCalledWith(2, 'parent-id', {
+        attributes: ['parentCaseId'],
+        transaction,
+      })
+    })
+
+    it('reads without a transaction when none is given', async () => {
+      await caseRepositoryService.findOriginalAncestorId(theCase)
+
+      expect(caseModel.findByPk).toHaveBeenCalledWith('child-id', {
+        attributes: ['parentCaseId'],
+        transaction: undefined,
+      })
     })
   })
 })

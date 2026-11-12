@@ -11,6 +11,7 @@ import { TaxCalculatorOutputFieldType } from '@island.is/web/graphql/schema'
 import { MarkdownText } from '../../../MarkdownText/MarkdownText'
 import type { OutputContractField, OutputFieldContract } from '../contract'
 import { formatOutputValue } from '../utils/format'
+import { outputSemantic } from '../utils/numberType'
 import type { OutputValue, OutputValues } from '../utils/outputValues'
 import { localized } from '../utils/text'
 import { CalculatorOutputField } from './CalculatorOutputField'
@@ -56,7 +57,12 @@ const visibleRows = (
 
     if (
       contractField.type !== TaxCalculatorOutputFieldType.Array &&
-      formatOutputValue(value, contractField.semantic, locale) === undefined
+      contractField.type !== TaxCalculatorOutputFieldType.Object &&
+      formatOutputValue(
+        value,
+        outputSemantic(contractField, field.numberType),
+        locale,
+      ) === undefined
     ) {
       return []
     }

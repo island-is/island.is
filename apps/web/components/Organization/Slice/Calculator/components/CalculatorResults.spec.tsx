@@ -46,6 +46,25 @@ const contract: OutputFieldContract = new Map([
       ],
     },
   ],
+  [
+    'quarters',
+    {
+      key: 'quarters',
+      type: TaxCalculatorOutputFieldType.Object,
+      itemFields: [
+        {
+          key: 'firstHalf',
+          type: TaxCalculatorOutputFieldType.Number,
+          semantic: TaxCalculatorOutputFieldSemantic.Currency,
+        },
+        {
+          key: 'share',
+          type: TaxCalculatorOutputFieldType.Number,
+          semantic: TaxCalculatorOutputFieldSemantic.Count,
+        },
+      ],
+    },
+  ],
 ])
 
 const values = (...entries: OutputValue[]) =>
@@ -325,6 +344,101 @@ describe('CalculatorResults', () => {
     expect(text.indexOf('Skýring á milli.')).toBeLessThan(
       text.indexOf('Hlutfall'),
     )
+  })
+
+  it('renders an object field as one row of its configured item fields', () => {
+    renderResults(
+      [
+        {
+          key: 'result',
+          fields: [
+            {
+              uid: 'o1',
+              kind: 'value',
+              key: 'quarters',
+              label: { is: 'Ársfjórðungar' },
+              itemFields: [
+                {
+                  uid: 'i1',
+                  key: 'firstHalf',
+                  label: { is: 'Fyrri helmingur' },
+                },
+                {
+                  uid: 'i2',
+                  key: 'share',
+                  label: { is: 'Hlutdeild' },
+                  numberType: 'percentage',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      values({
+        key: 'quarters',
+        type: TaxCalculatorOutputFieldType.Object,
+        objectValue: {
+          values: [
+            {
+              key: 'firstHalf',
+              type: TaxCalculatorOutputFieldType.Number,
+              numberValue: 5000,
+            },
+            {
+              key: 'share',
+              type: TaxCalculatorOutputFieldType.Number,
+              numberValue: 31.45,
+            },
+          ],
+        },
+      }),
+    )
+
+    const text = document.body.textContent ?? ''
+
+    expect(screen.getByText('5.000 kr.')).toBeTruthy()
+    expect(screen.getByText('31,45%')).toBeTruthy()
+    expect(text.indexOf('Fyrri helmingur')).toBeLessThan(
+      text.indexOf('Hlutdeild'),
+    )
+    expect(screen.getByRole('group', { name: 'Ársfjórðungar' })).toBeTruthy()
+    expect(screen.getAllByRole('term').map((el) => el.textContent)).toEqual([
+      'Fyrri helmingur',
+      'Hlutdeild',
+    ])
+  })
+
+  it('renders an object field with no values as its label alone', () => {
+    renderResults(
+      [
+        {
+          key: 'result',
+          fields: [
+            {
+              uid: 'o1',
+              kind: 'value',
+              key: 'quarters',
+              label: { is: 'Ársfjórðungar' },
+              itemFields: [
+                {
+                  uid: 'i1',
+                  key: 'firstHalf',
+                  label: { is: 'Fyrri helmingur' },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      values({
+        key: 'quarters',
+        type: TaxCalculatorOutputFieldType.Object,
+        objectValue: { values: [] },
+      }),
+    )
+
+    expect(screen.getByText('Ársfjórðungar')).toBeTruthy()
+    expect(screen.queryByText('Fyrri helmingur')).toBeNull()
   })
 
   it('omits a content row with no text for the active locale', () => {

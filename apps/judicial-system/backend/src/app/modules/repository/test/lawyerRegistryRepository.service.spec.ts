@@ -19,6 +19,7 @@ describe('LawyerRegistryRepositoryService', () => {
     phoneNumber: '0000000',
     practice: 'Lögmannsstofan',
     isLitigator: true,
+    hasCourtOfAppealsRights: true,
   }
 
   let service: LawyerRegistryRepositoryService
@@ -108,6 +109,19 @@ describe('LawyerRegistryRepositoryService', () => {
     })
   })
 
+  describe('findAllCourtOfAppealsLitigators', () => {
+    it('filters on isLitigator and hasCourtOfAppealsRights', async () => {
+      model.findAll.mockResolvedValueOnce([lawyer])
+
+      const result = await service.findAllCourtOfAppealsLitigators()
+
+      expect(model.findAll).toHaveBeenCalledWith({
+        where: { isLitigator: true, hasCourtOfAppealsRights: true },
+      })
+      expect(result).toEqual([lawyer])
+    })
+  })
+
   describe('findByNationalId', () => {
     it('returns the lawyer with the given national id', async () => {
       model.findOne.mockResolvedValueOnce(lawyer)
@@ -154,6 +168,10 @@ describe('LawyerRegistryRepositoryService', () => {
     it.each([
       ['findAll', () => service.findAll()],
       ['findAllLitigators', () => service.findAllLitigators()],
+      [
+        'findAllCourtOfAppealsLitigators',
+        () => service.findAllCourtOfAppealsLitigators(),
+      ],
     ])('logs and rethrows when %s fails', async (_name, call) => {
       model.findAll.mockRejectedValueOnce(error)
 

@@ -29,6 +29,7 @@ export { CourtSessionStringType } from './lib/courtSessionString'
 export {
   isSubpoenaInfoChanged,
   isVerdictInfoChanged,
+  DocumentDeliveryReceiverType,
   DocumentDeliverySupplementCode,
   DocumentDeliveryMethod,
   getServiceDateFromSupplements,
@@ -93,11 +94,13 @@ export {
   getStatementDeadline,
   CaseAppealDecision,
   APPEAL_JUDGE_COUNT,
+  MAX_APPEAL_JUDGE_COUNT,
   getOrderedAppealJudges,
   getAppealJudges,
   getPresidingAppealJudge,
   getAppealJudgeUserIds,
   hasAllAppealJudges,
+  isSameAppealBench,
 } from './lib/appealCase'
 export type {
   AppealCorrectionLock,
@@ -127,6 +130,7 @@ export {
   CaseFileCategory,
   HashAlgorithm,
   partyAppealFileCategories,
+  indictmentAdditionalCaseFileCategories,
   verdictAppealDeclarationFileCategories,
   verdictAppealStatementFileCategories,
   verdictAppealFileCategories,

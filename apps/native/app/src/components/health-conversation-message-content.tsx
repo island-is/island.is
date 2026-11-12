@@ -27,7 +27,7 @@ const MessageText = ({ text }: { text: string }) => {
               key={index}
               variant="body2"
               weight="600"
-              color={theme.color.blue400}
+              color={theme.tokens.interactive.foreground.primary}
               style={{ ...bodyTextStyle, textDecorationLine: 'underline' }}
               accessibilityRole="link"
               onPress={() => openBrowser(href)}
@@ -40,7 +40,7 @@ const MessageText = ({ text }: { text: string }) => {
           <Typography
             key={index}
             variant="body2"
-            color={theme.color.dark400}
+            color={theme.tokens.foreground.primary}
             style={bodyTextStyle}
           >
             {part.value}
@@ -72,7 +72,7 @@ export const HealthConversationMessageContent = ({
       return (
         <Typography
           variant="body2"
-          color={theme.color.dark400}
+          color={theme.tokens.foreground.primary}
           style={bodyTextStyle}
         >
           <MessageText text={content.text} />
@@ -83,7 +83,7 @@ export const HealthConversationMessageContent = ({
       return (
         <Typography
           variant="body2"
-          color={theme.color.dark400}
+          color={theme.tokens.foreground.primary}
           style={bodyTextStyle}
         >
           {(content.segments ?? []).map((segment, index) => {
@@ -97,7 +97,7 @@ export const HealthConversationMessageContent = ({
                   key={index}
                   variant="body2"
                   weight="600"
-                  color={theme.color.blue400}
+                  color={theme.tokens.interactive.foreground.primary}
                   style={{ ...bodyTextStyle, textDecorationLine: 'underline' }}
                   accessibilityRole="link"
                   onPress={() => openBrowser(href)}
@@ -125,7 +125,7 @@ export const HealthConversationMessageContent = ({
         <View
           style={{
             borderWidth: theme.border.width.standard,
-            borderColor: theme.color.blue200,
+            borderColor: theme.tokens.border.primary,
             borderRadius: theme.border.radius.large,
             padding: theme.spacing[2],
             rowGap: theme.spacing[1],

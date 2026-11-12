@@ -19,7 +19,7 @@ import {
   Button,
   Container,
   Icon,
-  Problem,
+  StatusMessage,
   Spacing,
   TextField,
   Typography,
@@ -39,7 +39,7 @@ const Row = styled(Container)<{
   paddingBottom: theme.spacing[paddingVertical],
   ...(hasBottomBorder && {
     borderBottomWidth: theme.border.width.hairline,
-    borderBottomColor: theme.color.blue200,
+    borderBottomColor: theme.tokens.border.primary,
   }),
 }))
 
@@ -153,7 +153,7 @@ export default function DocumentReplyScreen() {
         {loading ? (
           <LoadingIcon />
         ) : error ? (
-          <Problem type="error" error={error} withContainer />
+          <StatusMessage type="error" error={error} withContainer />
         ) : (
           <ScrollView
             contentContainerStyle={{ flexGrow: 1 }}

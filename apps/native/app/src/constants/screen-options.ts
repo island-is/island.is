@@ -1,7 +1,7 @@
 import { router, StackScreenProps } from 'expo-router'
 import { NativeStackHeaderItem } from '@react-navigation/native-stack'
 import { Platform } from 'react-native'
-import { navbarCloseItem, spacingItem } from '../components/navbar/navbar-items'
+import { navbarCloseItem } from '../components/navbar/navbar-items'
 import { theme } from '../ui'
 
 export const blueBackItem = ({
@@ -15,7 +15,7 @@ export const blueBackItem = ({
           type: 'button',
           label: '',
           icon: { type: 'sfSymbol', name: 'chevron.backward' },
-          tintColor: theme.color.blue400,
+          tintColor: theme.tokens.interactive.foreground.primary,
           onPress: () => router.back(),
         },
       ]
@@ -26,7 +26,7 @@ export const tabScreenOptions: StackScreenProps['options'] = {
   headerTransparent: Platform.OS === 'ios',
   headerStyle:
     Platform.OS === 'android'
-      ? { backgroundColor: theme.color.white }
+      ? { backgroundColor: theme.tokens.background.invert }
       : undefined,
   headerShadowVisible: false,
   headerBackButtonDisplayMode: 'minimal',
@@ -36,6 +36,16 @@ export const tabScreenOptions: StackScreenProps['options'] = {
     headerBackVisible: false,
     unstable_headerLeftItems: blueBackItem,
   }),
+}
+
+// Sheet titles use the heading5 typography variant. iOS always centres them;
+// on Android they stay left-aligned.
+export const sheetHeaderTitleOptions: StackScreenProps['options'] = {
+  headerTitleAlign: 'left',
+  headerTitleStyle: {
+    fontFamily: 'IBMPlexSans_600SemiBold',
+    fontSize: 16,
+  },
 }
 
 export const modalScreenOptions: StackScreenProps['options'] = {
@@ -51,20 +61,16 @@ export const modalScreenOptions: StackScreenProps['options'] = {
     unstable_headerLeftItems: () => [],
   }),
   headerStyle: {
-    backgroundColor: theme.color.white,
+    backgroundColor: theme.tokens.background.invert,
   },
   // Match the header; otherwise the sheet body falls back to the navigation
   // theme's grey background, which shows on iPad.
   contentStyle: {
-    backgroundColor: theme.color.white,
+    backgroundColor: theme.tokens.background.invert,
   },
-  headerTitleAlign: 'left',
-  headerTitleStyle: {
-    fontFamily: 'IBMPlexSans_600SemiBold',
-    fontSize: 20,
-  },
+  ...sheetHeaderTitleOptions,
   sheetGrabberVisible: true,
   sheetCornerRadius: 16,
   presentation: Platform.OS === 'android' ? 'modal' : 'formSheet',
-  unstable_headerRightItems: () => [spacingItem(), navbarCloseItem()],
+  unstable_headerRightItems: () => [navbarCloseItem()],
 }

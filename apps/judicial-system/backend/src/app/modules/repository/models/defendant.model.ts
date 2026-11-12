@@ -72,6 +72,21 @@ export class Defendant extends Model {
     )
   }
 
+  // Court of appeals confirmation: the advocate recorded on the verdict appeal,
+  // distinct from the district-court defender on the same defendant row.
+  // Waived appointments stay confirmed in the row but no longer act on the appeal.
+  static isConfirmedAppealDefenderOfDefendant(
+    appealDefenderNationalId: string,
+    defendants?: Defendant[],
+  ) {
+    return defendants?.some(
+      (defendant) =>
+        defendant.isAppealDefenderConfirmed &&
+        !defendant.isAppealDefenderWaived &&
+        defendant.appealDefenderNationalId === appealDefenderNationalId,
+    )
+  }
+
   @Column({
     type: DataType.UUID,
     primaryKey: true,

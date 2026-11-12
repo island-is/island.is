@@ -1,6 +1,7 @@
 import { FormProvider, useForm } from 'react-hook-form'
 import { render, screen } from '@testing-library/react'
 
+import type { CalculatorNumberType } from '@island.is/tax-calculators'
 import {
   TaxCalculatorInputFieldSemantic,
   TaxCalculatorInputFieldType,
@@ -47,7 +48,11 @@ const Form = ({ children }: { children: React.ReactNode }) => {
   return <FormProvider {...methods}>{children}</FormProvider>
 }
 
-const renderField = (contractField: InputContractField, error?: string) =>
+const renderField = (
+  contractField: InputContractField,
+  error?: string,
+  numberType?: CalculatorNumberType,
+) =>
   render(
     <Form>
       <CalculatorField
@@ -56,6 +61,7 @@ const renderField = (contractField: InputContractField, error?: string) =>
           key: contractField.key,
           kind: 'field',
           size: 'medium',
+          numberType,
         }}
         contractField={contractField}
         label="Reitur"
@@ -88,20 +94,14 @@ describe('CalculatorField control resolution', () => {
     expect(element?.getAttribute('data-currency')).toBe('false')
   })
 
-  /* The domain rejects a fractional or negative count with INVALID_VALUE, so
-   * the control is constrained rather than left to fail server-side. */
-  it('renders a count as a whole non-negative number', () => {
-    const { container } = renderField(
-      numberField(TaxCalculatorInputFieldSemantic.Count),
+  it('adds no limits of its own to a count', () => {
+    const element = control(
+      renderField(numberField(TaxCalculatorInputFieldSemantic.Count)).container,
     )
-    const element = control(container)
 
     expect(element?.getAttribute('data-control')).toBe('input')
-    expect(element?.getAttribute('data-type')).toBe('number')
-    expect(element?.getAttribute('data-suffix')).toBe('')
-    expect(element?.getAttribute('data-min')).toBe('0')
-    expect(element?.getAttribute('data-decimal-scale')).toBe('0')
-    expect(element?.getAttribute('data-allow-negative')).toBe('false')
+    expect(element?.getAttribute('data-min')).toBe('')
+    expect(element?.getAttribute('data-decimal-scale')).toBe('')
   })
 
   it('renders currency with the currency flag rather than a suffix', () => {
@@ -112,16 +112,14 @@ describe('CalculatorField control resolution', () => {
     expect(control(container)?.getAttribute('data-currency')).toBe('true')
   })
 
-  it('collects a percentage as a 0-100 figure, which the boundary must scale', () => {
-    const { container } = renderField(
-      numberField(TaxCalculatorInputFieldSemantic.Percentage),
+  it('collects a percentage as a whole-percent figure with no limits of its own', () => {
+    const element = control(
+      renderField(numberField(TaxCalculatorInputFieldSemantic.Percentage))
+        .container,
     )
-    const element = control(container)
 
     expect(element?.getAttribute('data-suffix')).toBe('%')
-    expect(element?.getAttribute('data-min')).toBe('0')
-    expect(element?.getAttribute('data-max')).toBe('100')
-    expect(element?.getAttribute('data-allow-negative')).toBe('false')
+    expect(element?.getAttribute('data-min')).toBe('')
   })
 
   it('renders a year as a select of years, newest first, not a free number', () => {
@@ -135,6 +133,44 @@ describe('CalculatorField control resolution', () => {
     expect(element?.getAttribute('data-first-option')).toBe(
       String(new Date().getFullYear()),
     )
+  })
+
+  it('renders a year numberType as a select bounded by the contract range', () => {
+    const { container } = renderField(
+      {
+        key: 'amount',
+        type: TaxCalculatorInputFieldType.Number,
+        required: false,
+        semantic: TaxCalculatorInputFieldSemantic.Currency,
+        min: 2019,
+        max: 2026,
+      },
+      undefined,
+      'year',
+    )
+    const element = control(container)
+
+    expect(element?.getAttribute('data-control')).toBe('select')
+    expect(element?.getAttribute('data-option-count')).toBe('8')
+    expect(element?.getAttribute('data-first-option')).toBe('2026')
+  })
+
+  it('passes the contract minimum and whole-number limit, never the maximum', () => {
+    const { container } = renderField({
+      key: 'amount',
+      type: TaxCalculatorInputFieldType.Number,
+      required: false,
+      min: 0,
+      max: 100,
+      integer: true,
+    })
+    const element = control(container)
+
+    expect(element?.getAttribute('data-currency')).toBe('false')
+    expect(element?.getAttribute('data-min')).toBe('0')
+    expect(element?.getAttribute('data-max')).toBe('')
+    expect(element?.getAttribute('data-decimal-scale')).toBe('0')
+    expect(element?.getAttribute('data-allow-negative')).toBe('false')
   })
 
   it('renders a month as a select of twelve, 1-based', () => {

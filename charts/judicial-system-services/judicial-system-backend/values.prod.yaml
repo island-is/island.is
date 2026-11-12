@@ -103,6 +103,13 @@ initContainer:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   secrets:
     DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
+lifecycle:
+  preStop:
+    exec:
+      command:
+        - '/bin/sh'
+        - '-c'
+        - 'sleep 10'
 namespace: 'judicial-system'
 podDisruptionBudget:
   minAvailable: '50%'
@@ -165,3 +172,4 @@ serviceAccount:
     eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/judicial-system-backend'
   create: true
   name: 'judicial-system-backend'
+terminationGracePeriodSeconds: 60

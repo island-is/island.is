@@ -17,6 +17,7 @@ const firstWithoutEmail: Lawyer = {
   phoneNr: '0000001',
   nationalId: '0000000001',
   isLitigator: false,
+  hasCourtOfAppealsRights: false,
 }
 
 const secondWithoutEmail: Lawyer = {
@@ -27,6 +28,7 @@ const secondWithoutEmail: Lawyer = {
   phoneNr: '0000002',
   nationalId: '0000000002',
   isLitigator: false,
+  hasCourtOfAppealsRights: false,
 }
 
 // The same person listed under an old and a new name: same national id, same
@@ -39,6 +41,7 @@ const oldName: Lawyer = {
   phoneNr: '0000003',
   nationalId: '0000000003',
   isLitigator: true,
+  hasCourtOfAppealsRights: true,
 }
 
 const newName: Lawyer = {
@@ -49,6 +52,7 @@ const newName: Lawyer = {
   phoneNr: '0000003',
   nationalId: '0000000003',
   isLitigator: true,
+  hasCourtOfAppealsRights: true,
 }
 
 const lawyers = [firstWithoutEmail, secondWithoutEmail, oldName, newName]

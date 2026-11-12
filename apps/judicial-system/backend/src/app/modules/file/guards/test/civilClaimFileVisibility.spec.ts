@@ -243,6 +243,46 @@ describe('canDefenceUserViewCivilClaimCaseFile', () => {
       }),
     ).toBe(true)
   })
+
+  it("returns true when the user is the claimant's confirmed appeal spokesperson", () => {
+    expect(
+      canDefenceUserViewCivilClaimCaseFile(defenderNationalId, {
+        ...baseArgs,
+        civilClaimants: [
+          {
+            id: claimantId,
+            policeCaseNumbers: ['007-2024'],
+            hasAppealSpokesperson: true,
+            isAppealSpokespersonConfirmed: true,
+            appealSpokespersonNationalId: defenderNationalId,
+          } as CivilClaimant,
+        ],
+        defendants: [],
+      }),
+    ).toBe(true)
+  })
+
+  it('returns true when a confirmed appeal defender shares a LÖKE number with the claimant', () => {
+    expect(
+      canDefenceUserViewCivilClaimCaseFile(defenderNationalId, {
+        ...baseArgs,
+        civilClaimants: [
+          {
+            id: claimantId,
+            policeCaseNumbers: ['007-2024'],
+          } as CivilClaimant,
+        ],
+        defendants: [
+          {
+            id: defendantId,
+            isAppealDefenderConfirmed: true,
+            appealDefenderNationalId: defenderNationalId,
+            policeCaseNumbers: ['007-2024'],
+          } as Defendant,
+        ],
+      }),
+    ).toBe(true)
+  })
 })
 
 describe('canLimitedAccessUserViewCaseFile — CIVIL_CLAIM LÖKE scoping', () => {

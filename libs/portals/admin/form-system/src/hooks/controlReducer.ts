@@ -280,7 +280,11 @@ type InputSettingsActions =
   | {
       type: 'SET_FIELD_SETTINGS'
       payload: {
-        property: 'isLarge' | 'hasDescription'
+        property:
+          | 'isLarge'
+          | 'hasDescription'
+          | 'fetchBankAccountFromMyPages'
+          | 'notIncludedInSumbox'
         value: boolean
         update: (updatedActiveItem?: ActiveItem) => void
       }
@@ -448,11 +452,18 @@ export const controlReducer = (
     }
     // Sections
     case 'ADD_SECTION': {
+      const updatedSections = [...(sections ?? [])]
+      const summaryIndex = updatedSections.findIndex(
+        (section) => section?.sectionType === SectionTypes.SUMMARY,
+      )
+      const insertionIndex =
+        summaryIndex === -1 ? updatedSections.length : summaryIndex
       const newSection = {
         ...action.payload.section,
-        displayOrder: sections?.length ?? 0,
+        displayOrder: insertionIndex,
         sectionType: SectionTypes.INPUT,
       }
+      updatedSections.splice(insertionIndex, 0, newSection)
       return {
         ...state,
         activeItem: {
@@ -461,7 +472,9 @@ export const controlReducer = (
         },
         form: {
           ...form,
-          sections: [...(sections || []), newSection],
+          sections: updatedSections.map((section, displayOrder) =>
+            section ? { ...section, displayOrder } : section,
+          ),
         },
       }
     }

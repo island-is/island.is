@@ -41,8 +41,8 @@ import {
   Button,
   GeneralCardSkeleton,
   ListItemSkeleton,
-  Problem,
-  ProblemTemplate,
+  StatusMessage,
+  StatusMessageTemplate,
   theme,
 } from '@/ui'
 import { isAndroid } from '@/utils/devices'
@@ -427,7 +427,7 @@ export default function HealthMessageDetailScreen() {
                   <HealthConversationMessageContent content={item.content} />
                 ) : null}
                 {isUnpaidCertificate ? (
-                  <ProblemTemplate
+                  <StatusMessageTemplate
                     variant="info"
                     showIcon
                     title={intl.formatMessage({
@@ -510,7 +510,7 @@ export default function HealthMessageDetailScreen() {
                       style={{
                         width: 24,
                         height: 24,
-                        tintColor: theme.color.blue400,
+                        tintColor: theme.tokens.interactive.foreground.primary,
                         marginHorizontal: 8,
                       }}
                     />
@@ -525,7 +525,7 @@ export default function HealthMessageDetailScreen() {
                       style={{
                         width: 24,
                         height: 24,
-                        tintColor: theme.color.blue400,
+                        tintColor: theme.tokens.interactive.foreground.primary,
                         marginHorizontal: 8,
                       }}
                     />
@@ -582,7 +582,7 @@ export default function HealthMessageDetailScreen() {
                 }}
               >
                 {hasError ? (
-                  <Problem
+                  <StatusMessage
                     type="error"
                     error={res.error}
                     title={intl.formatMessage({ id: 'problem.error.title' })}
@@ -591,7 +591,7 @@ export default function HealthMessageDetailScreen() {
                     })}
                   />
                 ) : (
-                  <Problem
+                  <StatusMessage
                     type="no_data"
                     title={intl.formatMessage({ id: 'problem.noData.title' })}
                     message={intl.formatMessage({

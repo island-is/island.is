@@ -2,6 +2,7 @@ import { v4 as uuid } from 'uuid'
 
 import { EmailService } from '@island.is/email-service'
 
+import { DEFENDER_INDICTMENT_CASE_ROUTE } from '@island.is/judicial-system/consts'
 import {
   CaseType,
   DefendantNotificationType,
@@ -47,6 +48,7 @@ describe('InternalNotificationController - Send appeal defender assigned notific
         isAppealDefenderConfirmed: true,
         appealDefenderName: defender.name,
         appealDefenderEmail: defender.email,
+        appealDefenderNationalId: defender.nationalId,
         ...defendantOverrides,
       } as Defendant
 
@@ -85,10 +87,22 @@ describe('InternalNotificationController - Send appeal defender assigned notific
     )
   })
 
-  // The body carries no link, so the base service closes the mail the way it
-  // closes every other one, with a link to the portal.
-  it('closes with the portal link the service appends', async () => {
+  it('links to the defender indictment overview when a national id is recorded', async () => {
     await send({})
+
+    expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        html: expect.stringContaining(
+          `${DEFENDER_INDICTMENT_CASE_ROUTE}/${caseId}`,
+        ),
+      }),
+    )
+  })
+
+  // No national id means the advocate cannot open the case yet, so the body
+  // carries no case link and the base service closes with the portal tail.
+  it('closes with the portal link when no national id is recorded', async () => {
+    await send({ appealDefenderNationalId: undefined })
 
     expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({

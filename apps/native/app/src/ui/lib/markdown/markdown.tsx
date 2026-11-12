@@ -63,7 +63,7 @@ export const Markdown = ({
           // Weights map to font families in this app, so a bare fontWeight
           // would not change the rendered face.
           fontFamily: fontWeight ? fontByWeight(fontWeight) : 'IBM Plex Sans',
-          color: color ?? theme.color.dark400,
+          color: color ?? theme.tokens.foreground.primary,
           ...(fontSize != null && { fontSize }),
           ...(lineHeight != null && { lineHeight }),
           ...(fontWeight != null && { fontWeight }),
@@ -72,7 +72,7 @@ export const Markdown = ({
           paragraph: { marginTop: 0, marginBottom: 0 },
         }),
         link: {
-          color: theme.color.blue400,
+          color: theme.tokens.interactive.foreground.primary,
           fontWeight: '600',
         },
       }}

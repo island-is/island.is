@@ -34,6 +34,9 @@ export class UpdateFieldSettingsInput {
   @Field(() => Int, { nullable: true })
   maxAmount?: number
 
+  @Field(() => Boolean, { nullable: true })
+  notIncludedInSumbox?: boolean
+
   @Field(() => Int, { nullable: true })
   year?: number
 
@@ -102,6 +105,9 @@ export class UpdateFieldSettingsInput {
 
   @Field(() => Boolean, { nullable: true })
   fetchEmailFromMyPages?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  fetchBankAccountFromMyPages?: boolean
 
   @Field(() => String, { nullable: true })
   chargeItemCode?: string

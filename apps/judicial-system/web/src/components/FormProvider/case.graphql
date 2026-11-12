@@ -257,6 +257,10 @@ query Case($input: CaseQueryInput!) {
       appealType
       appealCaseNumber
       appealConclusion
+      appealAssistant {
+        id
+        name
+      }
       courtSessions {
         id
         created
@@ -304,6 +308,17 @@ query Case($input: CaseQueryInput!) {
           appellantSide
           claims
         }
+        services {
+          id
+          defendantId
+          civilClaimantId
+          sentToServiceDate
+          externalPoliceDocumentId
+          serviceStatus
+          serviceDate
+          servedBy
+          comment
+        }
       }
       sentAppealSummonses {
         id
@@ -315,6 +330,17 @@ query Case($input: CaseQueryInput!) {
           defendantId
           appellantSide
           claims
+        }
+        services {
+          id
+          defendantId
+          civilClaimantId
+          sentToServiceDate
+          externalPoliceDocumentId
+          serviceStatus
+          serviceDate
+          servedBy
+          comment
         }
       }
     }
@@ -373,6 +399,9 @@ query Case($input: CaseQueryInput!) {
         id
         defenderNationalId
         isDefenderChoiceConfirmed
+        appealDefenderNationalId
+        isAppealDefenderConfirmed
+        isAppealDefenderWaived
       }
       civilClaimants {
         ...CivilClaimantSpokespersonFields
@@ -432,6 +461,9 @@ query Case($input: CaseQueryInput!) {
         requestedDefenderName
         isDefenderChoiceConfirmed
         caseFilesSharedWithDefender
+        appealDefenderNationalId
+        isAppealDefenderConfirmed
+        isAppealDefenderWaived
         verdictAppealDeadline
         isVerdictAppealDeadlineExpired
         subpoenaType

@@ -1,8 +1,5 @@
-mutation UpdateAppealSummons(
-  $caseId: String!
-  $input: UpdateAppealSummonsInput!
-) {
-  updateAppealSummons(caseId: $caseId, input: $input) {
+mutation UpdateAppealSummons($input: UpdateAppealSummonsInput!) {
+  updateAppealSummons(input: $input) {
     id
     confirmedDate
     sentToCourtOfAppealsDate

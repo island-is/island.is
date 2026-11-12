@@ -30,8 +30,8 @@ import { useLocale } from '@/hooks/use-locale'
 import {
   Button,
   GeneralCardSkeleton,
-  Problem,
-  ProblemTemplate,
+  StatusMessage,
+  StatusMessageTemplate,
   Select,
   TextField,
   Typography,
@@ -324,11 +324,11 @@ export default function HealthMessageComposeScreen() {
         type: 'button',
         label: '',
         icon: { type: 'sfSymbol', name: 'chevron.backward' },
-        tintColor: theme.color.blue400,
+        tintColor: theme.tokens.interactive.foreground.primary,
         onPress: goBackToIntro,
       },
     ],
-    [theme.color.blue400, goBackToIntro],
+    [theme.tokens.interactive.foreground.primary, goBackToIntro],
   )
 
   if (step === 'intro' && !noOpenRecipient) {
@@ -391,7 +391,7 @@ export default function HealthMessageComposeScreen() {
             <GeneralCardSkeleton height={176} />
           </View>
         ) : recipientsError ? (
-          <Problem
+          <StatusMessage
             type="error"
             error={recipientsRes.error}
             title={intl.formatMessage({ id: 'problem.error.title' })}
@@ -411,7 +411,7 @@ export default function HealthMessageComposeScreen() {
                   paddingVertical: theme.spacing[1],
                   borderTopWidth: theme.border.width.hairline,
                   borderBottomWidth: theme.border.width.hairline,
-                  borderColor: theme.color.blue200,
+                  borderColor: theme.tokens.border.primary,
                 }}
               >
                 <Typography variant="body2">
@@ -487,7 +487,7 @@ export default function HealthMessageComposeScreen() {
                       />
                       <Typography
                         variant="body3"
-                        color={theme.color.dark300}
+                        color={theme.tokens.foreground.primaryMinimal}
                         textAlign="right"
                       >
                         {`${subjectText.length}/${SUBJECT_MAX_LENGTH}`}
@@ -513,7 +513,7 @@ export default function HealthMessageComposeScreen() {
                       />
                       <Typography
                         variant="body3"
-                        color={theme.color.dark300}
+                        color={theme.tokens.foreground.primaryMinimal}
                         textAlign="right"
                       >
                         {`${message.length}/${MESSAGE_MAX_LENGTH}`}
@@ -524,7 +524,7 @@ export default function HealthMessageComposeScreen() {
                 {/* Certificate requests aren't supported here — link to My
                 Pages instead of a send form. */}
                 {isCertificateSelected && (
-                  <ProblemTemplate
+                  <StatusMessageTemplate
                     variant="info"
                     showIcon
                     title={intl.formatMessage({
@@ -544,7 +544,7 @@ export default function HealthMessageComposeScreen() {
                 {/* External services (the Heilsuvera web chat) are opened, not
                 messaged. The server-side description covers opening hours. */}
                 {!!externalLinkUrl && (
-                  <ProblemTemplate
+                  <StatusMessageTemplate
                     variant="info"
                     showIcon
                     title={selectedType?.title ?? ''}

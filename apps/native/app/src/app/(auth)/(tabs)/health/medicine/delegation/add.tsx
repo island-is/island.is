@@ -14,8 +14,9 @@ import {
   Button,
   Checkbox,
   DatePickerInput,
-  Tag,
+  FilterChip,
   TextField,
+  token,
   Typography,
 } from '@/ui'
 import addMonths from 'date-fns/addMonths'
@@ -32,11 +33,6 @@ const Content = styled(ScrollView)`
 
 const FormContainer = styled(View)`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
-`
-
-const Title = styled(Typography)`
-  margin-top: ${({ theme }) => theme.spacing[1]}px;
-  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const Header = styled(View)`
@@ -71,7 +67,7 @@ const Actions = styled(View)`
 const ErrorMessage = styled(Typography)`
   margin-top: ${({ theme }) => theme.spacing[2]}px;
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
-  color: ${({ theme }) => theme.color.red600};
+  color: ${token((t) => t.feedback.error.foregroundContrast)};
 `
 
 const QUICK_LABEL_TYPE = {
@@ -220,7 +216,7 @@ export default function MedicineDelegationFormScreen() {
 
   return (
     <Host>
-      <StackScreen options={{ title: '' }} closeable />
+      <StackScreen closeable />
       <Content
         keyboardShouldPersistTaps="handled"
         // The kennitala field opens a number pad, which has no return key to
@@ -236,11 +232,6 @@ export default function MedicineDelegationFormScreen() {
         }}
       >
         <FormContainer>
-          <Title variant="heading3">
-            {intl.formatMessage({
-              id: 'health.medicineDelegation.form.title',
-            })}
-          </Title>
           <Header>
             <Typography variant="heading5">
               {intl.formatMessage({
@@ -287,7 +278,7 @@ export default function MedicineDelegationFormScreen() {
             <QuickLabelsContainer>
               {quickLabels.map((label) => (
                 <QuickLabel key={label.value}>
-                  <Tag
+                  <FilterChip
                     title={getQuickLabels(label.value, label.type)}
                     onPress={() => {
                       setDateTo(getQuickSelectDate(label.value, label.type))

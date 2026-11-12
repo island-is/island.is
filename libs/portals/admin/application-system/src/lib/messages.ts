@@ -1,14 +1,16 @@
 import { defineMessages } from 'react-intl'
 
+// Note that no translations exist for this namespace, thus no namespace exists in Contentful.
+// Default messages are displayed to users as is.
 export const m = defineMessages({
   // General
   applicationSystem: {
     id: 'admin-portal.application-system:name',
-    defaultMessage: 'Umsóknarkerfi',
+    defaultMessage: 'Umsóknakerfi',
   },
   applicationSystemDescription: {
     id: 'admin-portal.application-system:description',
-    defaultMessage: 'Tölfræðigögn og umsjá umsóknarkerfis',
+    defaultMessage: 'Tölfræðigögn og umsjá umsóknakerfis',
   },
   overview: {
     id: 'admin-portal.application-system:overview',
@@ -670,10 +672,10 @@ export const m = defineMessages({
   },
   originFormSystem: {
     id: 'admin-portal.application-system:originFormSystem',
-    defaultMessage: 'Umsóknarsmiður',
+    defaultMessage: 'Umsóknasmiður',
   },
   originApplicationSystem: {
     id: 'admin-portal.application-system:originApplicationSystem',
-    defaultMessage: 'Umsóknarkerfi',
+    defaultMessage: 'Umsóknakerfi',
   },
 })

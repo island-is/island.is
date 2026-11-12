@@ -37,8 +37,8 @@ import {
 import { IDS_ACCESS_TOKEN_NAME } from '@island.is/judicial-system/consts'
 import type { User } from '@island.is/judicial-system/types'
 import {
-  CaseFileCategory,
   CaseFileState,
+  indictmentAdditionalCaseFileCategories,
   indictmentCases,
   investigationCases,
   restrictionCases,
@@ -97,7 +97,7 @@ import { FileService } from './file.service'
 
 @Controller('api/case/:caseId')
 @ApiTags('files')
-@UseGuards(JwtAuthUserGuard, CaseExistsGuard, RolesGuard)
+@UseGuards(JwtAuthUserGuard)
 export class FileController {
   constructor(
     private readonly fileService: FileService,
@@ -107,7 +107,7 @@ export class FileController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(CaseWriteGuard)
+  @UseGuards(CaseExistsGuard, RolesGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -134,7 +134,7 @@ export class FileController {
     return this.fileService.createPresignedPost(theCase, createPresignedPost)
   }
 
-  @UseGuards(CaseWriteGuard)
+  @UseGuards(CaseExistsGuard, RolesGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -165,7 +165,13 @@ export class FileController {
   }
 
   // TODO: Add tests for this endpoint
-  @UseGuards(CaseWriteGuard, DefendantExistsGuard, CreateDefendantCaseFileGuard)
+  @UseGuards(
+    CaseExistsGuard,
+    RolesGuard,
+    CaseWriteGuard,
+    DefendantExistsGuard,
+    CreateDefendantCaseFileGuard,
+  )
   @RolesRules(
     publicProsecutorStaffRule,
     prosecutorRule,
@@ -202,6 +208,8 @@ export class FileController {
 
   // TODO: Add tests for this endpoint
   @UseGuards(
+    CaseExistsGuard,
+    RolesGuard,
     CaseWriteGuard,
     CivilClaimantExistsGuard,
     CreateCivilClaimantCaseFileGuard,
@@ -245,6 +253,8 @@ export class FileController {
   // However, giving prosecution and appeals court users access
   // does not pose a security risk
   @UseGuards(
+    CaseExistsGuard,
+    RolesGuard,
     CaseReadGuard,
     MergedCaseExistsGuard,
     SplitCaseFileExistsGuard,
@@ -280,6 +290,8 @@ export class FileController {
   }
 
   @UseGuards(
+    CaseExistsGuard,
+    RolesGuard,
     new CaseTypeGuard(indictmentCases),
     CaseWriteGuard,
     CaseFileExistsGuard,
@@ -307,19 +319,14 @@ export class FileController {
     }
 
     if (
-      caseFile.category !== CaseFileCategory.PROSECUTOR_CASE_FILE &&
-      caseFile.category !== CaseFileCategory.DEFENDANT_CASE_FILE &&
-      caseFile.category !== CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE &&
-      caseFile.category !==
-        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE &&
-      caseFile.category !==
-        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE
+      !caseFile.category ||
+      !indictmentAdditionalCaseFileCategories.includes(caseFile.category)
     ) {
       this.logger.error(
         `Attempt to reject case file ${fileId} of case ${caseId} with invalid category ${caseFile.category}`,
       )
       throw new BadRequestException(
-        'Only uploaded prosecutor, defendant and civil claimant case files can be rejected',
+        'Only uploaded prosecutor, defendant, civil claimant and court case files can be rejected',
       )
     }
 
@@ -340,7 +347,13 @@ export class FileController {
     )
   }
 
-  @UseGuards(CaseWriteGuard, CaseFileExistsGuard, DeleteAppealCaseFileGuard)
+  @UseGuards(
+    CaseExistsGuard,
+    RolesGuard,
+    CaseWriteGuard,
+    CaseFileExistsGuard,
+    DeleteAppealCaseFileGuard,
+  )
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -367,7 +380,12 @@ export class FileController {
     return this.fileService.deleteCaseFile(theCase, caseFile)
   }
 
+  // CaseExistsGuard must run before RolesGuard here: the roles rule is
+  // case-dependent - it reads the case to check that the user is its
+  // registered judge.
   @UseGuards(
+    CaseExistsGuard,
+    RolesGuard,
     new CaseTypeGuard(indictmentCases),
     CaseWriteGuard,
     CaseFileExistsGuard,
@@ -392,6 +410,8 @@ export class FileController {
   }
 
   @UseGuards(
+    CaseExistsGuard,
+    RolesGuard,
     new CaseTypeGuard(indictmentCases),
     CaseWriteGuard,
     CaseFileExistsGuard,
@@ -431,6 +451,8 @@ export class FileController {
   }
 
   @UseGuards(
+    CaseExistsGuard,
+    RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
     CaseReceivedGuard,
@@ -459,6 +481,8 @@ export class FileController {
   }
 
   @UseGuards(
+    CaseExistsGuard,
+    RolesGuard,
     new CaseTypeGuard([
       ...indictmentCases,
       ...restrictionCases,
@@ -486,7 +510,7 @@ export class FileController {
   }
 
   // TODO: Add tests for this endpoint
-  @UseGuards(CaseWriteGuard, DefendantExistsGuard)
+  @UseGuards(CaseExistsGuard, RolesGuard, CaseWriteGuard, DefendantExistsGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Post('defendant/:defendantId/criminalRecordFile')
   @ApiCreatedResponse({
@@ -519,7 +543,7 @@ export class FileController {
     })
   }
 
-  @UseGuards(CaseReadGuard)
+  @UseGuards(CaseExistsGuard, RolesGuard, CaseReadGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -563,7 +587,7 @@ export class FileController {
     )
   }
 
-  @UseGuards(CaseReadGuard)
+  @UseGuards(CaseExistsGuard, RolesGuard, CaseReadGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -607,7 +631,7 @@ export class FileController {
       .then((url) => ({ url }))
   }
 
-  @UseGuards(CaseWriteGuard)
+  @UseGuards(CaseExistsGuard, RolesGuard, CaseWriteGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @UseInterceptors(CaseOriginalAncestorInterceptor)
   @Delete('policeDigitalCaseFile/:fileId')
@@ -629,7 +653,12 @@ export class FileController {
     return { success }
   }
 
-  @UseGuards(new CaseTypeGuard(indictmentCases), CaseWriteGuard)
+  @UseGuards(
+    CaseExistsGuard,
+    RolesGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseWriteGuard,
+  )
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @UseInterceptors(CaseOriginalAncestorInterceptor)
   @Patch('policeDigitalCaseFiles')

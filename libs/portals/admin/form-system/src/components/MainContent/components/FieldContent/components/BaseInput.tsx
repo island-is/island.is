@@ -214,6 +214,17 @@ export const BaseInput = () => {
       {/* Description  */}
       {renderDescription() && (
         <>
+          {currentItem.fieldType === FieldTypesEnum.MESSAGE && (
+            <Row>
+              <Column span="10/10">
+                <Text variant="small">
+                  {'Lýsingin getur innihaldið HTML-tögin <strong> fyrir feitletrun og <em> fyrir skáletrun. ' +
+                    'Hvert opnunartag þarf samsvarandi lokunartag, t.d. <strong> og </strong>. ' +
+                    'Dæmi: <strong>Feitletraður texti</strong> og <em>Skáletraður texti</em>.'}
+                </Text>
+              </Column>
+            </Row>
+          )}
           <Row>
             <Column span="10/10">
               <Input
@@ -281,7 +292,6 @@ export const BaseInput = () => {
       )}
       {/* Required checkbox */}
       {screen?.isMulti &&
-        currentItem.fieldType !== FieldTypesEnum.ISK_SUMBOX &&
         currentItem.fieldType !== FieldTypesEnum.FILE &&
         currentItem.fieldType !== FieldTypesEnum.PAYMENT_QUANTITY && (
           <Row>
@@ -307,6 +317,53 @@ export const BaseInput = () => {
             </Column>
           </Row>
         )}
+      {currentItem.fieldType === FieldTypesEnum.ISK_NUMBERBOX && (
+        <Row>
+          <Column span="10/10">
+            <Checkbox
+              label="Ekki taka með í samtölu"
+              checked={currentItem.fieldSettings?.notIncludedInSumbox ?? false}
+              disabled={isReadOnly}
+              onChange={(e) =>
+                controlDispatch({
+                  type: 'SET_FIELD_SETTINGS',
+                  payload: {
+                    property: 'notIncludedInSumbox',
+                    value: e.target.checked,
+                    update: updateActiveItem,
+                  },
+                })
+              }
+            />
+          </Column>
+        </Row>
+      )}
+      {currentItem.fieldType === FieldTypesEnum.BANK_ACCOUNT && (
+        <Row>
+          <Column span="10/10">
+            <Checkbox
+              large
+              label="Sækja bankareikning af Mínum síðum"
+              subLabel="ATH. Bankareikningsnúmer getur aðeins verið sótt af Mínum síðum
+              innskráðs einstaklings."
+              checked={
+                currentItem.fieldSettings?.fetchBankAccountFromMyPages ?? true
+              }
+              disabled={isReadOnly}
+              onChange={(e) =>
+                controlDispatch({
+                  type: 'SET_FIELD_SETTINGS',
+                  payload: {
+                    property: 'fetchBankAccountFromMyPages',
+                    value: e.target.checked,
+                    update: updateActiveItem,
+                  },
+                })
+              }
+            />
+          </Column>
+        </Row>
+      )}
       {currentItem.fieldType !== FieldTypesEnum.ISK_SUMBOX && (
         <Row>
           <Column span="5/10">
