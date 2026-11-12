@@ -46,7 +46,7 @@ describe('AppealCaseRepositoryService', () => {
 
       expect(model.findOne).toHaveBeenCalledWith({
         where: { id: 'some-appeal-case-id' },
-        include: [appealAssistantInclude, appealJudgesInclude],
+        include: [appealAssistantInclude(), appealJudgesInclude],
         transaction,
       })
       expect(result).toBe(appealCase)
@@ -57,7 +57,7 @@ describe('AppealCaseRepositoryService', () => {
 
       expect(model.findOne).toHaveBeenCalledWith({
         where: { id: 'some-appeal-case-id' },
-        include: [appealAssistantInclude, appealJudgesInclude],
+        include: [appealAssistantInclude(), appealJudgesInclude],
         transaction: undefined,
       })
       expect(result).toBeNull()
