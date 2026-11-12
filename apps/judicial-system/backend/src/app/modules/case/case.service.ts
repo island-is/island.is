@@ -877,10 +877,7 @@ export class CaseService {
         caseFile.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER &&
         caseFile.isKeyAccessible &&
         caseFile.key &&
-        isRulingOrderInConfirmedCourtSession(
-          caseFile.id,
-          theCase.courtSessions,
-        )
+        isRulingOrderInConfirmedCourtSession(caseFile.id, theCase.courtSessions)
       ) {
         queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
