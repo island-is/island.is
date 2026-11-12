@@ -101,10 +101,11 @@ async function check() {
     'X-App-Version': Application.nativeApplicationVersion ?? '',
     'X-OS-Version': Device.osVersion ?? '',
     // IAS counts only letters, digits, space and , . _ - in the model, and
-    // some Android names have parentheses: "moto g(7) plus" → "moto g7 plus".
+    // some Android names have more: "moto g(7) plus" → "moto g7 plus". Other
+    // alphabets can't go in a header at all on Android.
     'X-Device-Model': (
       (Platform.OS === 'ios' ? Device.modelId : Device.modelName) ?? ''
-    ).replace(/[()]/g, ''),
+    ).replace(/[^A-Za-z0-9 ,._-]/g, ''),
   }
 
   // Error reports need a challenge too. No cookies on either request, so
