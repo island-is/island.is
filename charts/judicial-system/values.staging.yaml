@@ -192,6 +192,13 @@ judicial-system-backend:
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
+  lifecycle:
+    preStop:
+      exec:
+        command:
+          - '/bin/sh'
+          - '-c'
+          - 'sleep 10'
   namespace: 'judicial-system'
   podDisruptionBudget:
     minAvailable: '50%'
@@ -254,6 +261,7 @@ judicial-system-backend:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/judicial-system-backend'
     create: true
     name: 'judicial-system-backend'
+  terminationGracePeriodSeconds: 30
 judicial-system-digital-mailbox-api:
   enabled: true
   env:
