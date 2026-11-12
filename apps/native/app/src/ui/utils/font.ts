@@ -91,7 +91,9 @@ const propOrValue = (props: ThemeProps) => (value: any) => {
 
 export function font(settings: FontSettings = {}) {
   const fontWeight = settings.fontWeight ?? 'normal'
-  const color = settings.color ?? 'foreground'
+  const color =
+    settings.color ??
+    (({ theme }: ThemeProps) => theme.tokens.foreground.primary)
   const fontSize = settings.fontSize ?? 16
   const lineHeight = settings.lineHeight
 

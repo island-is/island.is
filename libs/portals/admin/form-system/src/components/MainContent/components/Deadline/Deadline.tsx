@@ -89,15 +89,14 @@ export const Deadline = () => {
           />
         </Column>
       </Row>
-      <Box marginTop={5} />
+      <Box marginTop={3} />
       <Row>
         <Column span="6/10">
           <Text variant="medium">
-            Það er gott að hafa lokað fyrir aðgengi að umsóknarformi eftir að
-            það er tekið úr notkun til að koma í veg fyrir að notendur stofni og
-            sendi óvart inn test-umsóknir (Þegar form er tekið úr notkun fer það
-            í geymslu og er það afritað með sama slug og hefur þ.a.l. sömu slóð
-            og áður nema afritið er í stöðunni "Í vinnslu").
+            Þegar form er tekið úr útgáfu hakast sjálfkrafa við "Loka fyrir
+            aðgengi að umsóknarforminu" svo að það sé ekki hægt að nálgast það
+            lengur. Að sama skapi afhakast sjálfkrafa þegar form er sett aftur í
+            útgáfu.
           </Text>
         </Column>
       </Row>

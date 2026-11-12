@@ -324,11 +324,11 @@ export default function HealthMessageComposeScreen() {
         type: 'button',
         label: '',
         icon: { type: 'sfSymbol', name: 'chevron.backward' },
-        tintColor: theme.color.blue400,
+        tintColor: theme.tokens.interactive.foreground.primary,
         onPress: goBackToIntro,
       },
     ],
-    [theme.color.blue400, goBackToIntro],
+    [theme.tokens.interactive.foreground.primary, goBackToIntro],
   )
 
   if (step === 'intro' && !noOpenRecipient) {
@@ -411,7 +411,7 @@ export default function HealthMessageComposeScreen() {
                   paddingVertical: theme.spacing[1],
                   borderTopWidth: theme.border.width.hairline,
                   borderBottomWidth: theme.border.width.hairline,
-                  borderColor: theme.color.blue200,
+                  borderColor: theme.tokens.border.primary,
                 }}
               >
                 <Typography variant="body2">
@@ -487,7 +487,7 @@ export default function HealthMessageComposeScreen() {
                       />
                       <Typography
                         variant="body3"
-                        color={theme.color.dark300}
+                        color={theme.tokens.foreground.primaryMinimal}
                         textAlign="right"
                       >
                         {`${subjectText.length}/${SUBJECT_MAX_LENGTH}`}
@@ -513,7 +513,7 @@ export default function HealthMessageComposeScreen() {
                       />
                       <Typography
                         variant="body3"
-                        color={theme.color.dark300}
+                        color={theme.tokens.foreground.primaryMinimal}
                         textAlign="right"
                       >
                         {`${message.length}/${MESSAGE_MAX_LENGTH}`}

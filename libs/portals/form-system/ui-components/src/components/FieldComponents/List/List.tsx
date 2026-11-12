@@ -34,6 +34,7 @@ interface Props {
   valueIndex?: number
   slug?: string
   isTest?: boolean
+  isPreview?: boolean
   orgNationalId?: string
   state?: ApplicationState
 }
@@ -74,13 +75,16 @@ export const List = ({
   valueIndex = 0,
   slug,
   isTest,
+  isPreview = false,
   orgNationalId,
   state,
 }: Props) => {
   const { lang, formatMessage } = useLocale()
   const { control, trigger, setValue, getValues } = useFormContext()
   const [dataFromUrl] = useMutation(DATA_FROM_URL)
-  const [urlList, setUrlList] = useState<(FormSystemListItem | null)[]>([])
+  const [urlList, setUrlList] = useState<(FormSystemListItem | null)[]>(
+    item.list ?? [],
+  )
   const [dataFromUrlHasError, setDataFromUrlHasError] = useState(false)
 
   const fieldName = `${item.id}.${valueIndex}`
@@ -91,9 +95,10 @@ export const List = ({
   }
 
   const shouldFetch =
-    listType === ListTypesEnum.LIST_FROM_URL ||
-    listType === ListTypesEnum.ZENDESK_FIELD_OPTIONS ||
-    listType === ListTypesEnum.ZENDESK_CUSTOM_OBJECT
+    !isPreview &&
+    (listType === ListTypesEnum.LIST_FROM_URL ||
+      listType === ListTypesEnum.ZENDESK_FIELD_OPTIONS ||
+      listType === ListTypesEnum.ZENDESK_CUSTOM_OBJECT)
 
   const isOrganizations = listType === ListTypesEnum.ORGANIZATIONS
 

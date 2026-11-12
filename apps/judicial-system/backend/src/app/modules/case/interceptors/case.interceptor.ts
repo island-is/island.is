@@ -693,11 +693,16 @@ const getDefenceUserDefendants = (
     }
   }
 
+  const isDistrictDefendant = (defendant: Defendant) =>
+    Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
+
+  const myDistrictDefendants = theCase.defendants?.filter(isDistrictDefendant)
   const myDefendants = theCase.defendants?.filter(
     (defendant) =>
-      defendant.isDefenderChoiceConfirmed &&
-      defendant.defenderNationalId &&
-      defendant.defenderNationalId === user.nationalId,
+      isDistrictDefendant(defendant) ||
+      Defendant.isConfirmedAppealDefenderOfDefendant(user.nationalId, [
+        defendant,
+      ]),
   )
 
   if (!myDefendants?.length) {
@@ -708,7 +713,18 @@ const getDefenceUserDefendants = (
     }
   }
 
-  const cancelledOrDismissedEventLogs = myDefendants.map((defendant) =>
+  // Appeal-only advocates must not see co-defendant rows. District defenders
+  // keep the full list until every defendant they represent is cancelled or
+  // dismissed.
+  if (!myDistrictDefendants?.length) {
+    return {
+      defendants: myDefendants,
+      allCancelledOrDismissed: false,
+      latestCancelledOrDismissedDate: undefined,
+    }
+  }
+
+  const cancelledOrDismissedEventLogs = myDistrictDefendants.map((defendant) =>
     DefendantEventLog.getEventLogByEventType(
       [
         DefendantEventType.INDICTMENT_CANCELLED,
@@ -727,8 +743,18 @@ const getDefenceUserDefendants = (
       }, undefined)
     : undefined
 
+  // A mixed district + appeal portfolio must keep every represented defendant
+  // and drop co-defendants the user does not act for. District-only lawyers
+  // still see the full list until their own clients are all cancelled.
+  const hasAppealOnlyClients = myDefendants.some(
+    (defendant) => !isDistrictDefendant(defendant),
+  )
+
   return {
-    defendants: allCancelledOrDismissed ? myDefendants : theCase.defendants,
+    defendants:
+      allCancelledOrDismissed || hasAppealOnlyClients
+        ? myDefendants
+        : theCase.defendants,
     allCancelledOrDismissed,
     latestCancelledOrDismissedDate,
   }

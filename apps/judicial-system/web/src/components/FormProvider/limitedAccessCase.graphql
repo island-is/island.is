@@ -173,6 +173,9 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         id
         defenderNationalId
         isDefenderChoiceConfirmed
+        appealDefenderNationalId
+        isAppealDefenderConfirmed
+        isAppealDefenderWaived
       }
       civilClaimants {
         ...CivilClaimantSpokespersonFields
@@ -223,6 +226,9 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         id
         defenderNationalId
         isDefenderChoiceConfirmed
+        appealDefenderNationalId
+        isAppealDefenderConfirmed
+        isAppealDefenderWaived
         isSentToPrisonAdmin
         policeCaseNumbers
         indictmentCancelledOrDismissedState {

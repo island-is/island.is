@@ -69,7 +69,11 @@ export default function HealthMessagesFilterScreen() {
               <Typography
                 size={15}
                 weight="400"
-                color={isSelected ? theme.color.blue400 : theme.color.dark300}
+                color={
+                  isSelected
+                    ? theme.tokens.interactive.foreground.primary
+                    : theme.tokens.foreground.primaryMinimal
+                }
               >
                 {intl.formatMessage({ id: 'inbox.filterClearButton' })}
               </Typography>
