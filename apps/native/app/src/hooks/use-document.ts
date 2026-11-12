@@ -186,7 +186,7 @@ export function useHtmlSource(value: string | undefined | null) {
   const { bottom } = useSafeAreaInsets()
   return useMemo(() => {
     if (!value) return null
-    const text = theme.shade.foreground
+    const text = theme.tokens.foreground.primary
     const styles = `<style>
       body { font-family: "IBM Plex Sans", San Francisco, Segoe UI, sans-serif; margin: ${theme.spacing[3]}px; padding-bottom: ${bottom}px; color: ${text}; }
       h1, h2, h3 { color: ${text}; }
@@ -194,7 +194,7 @@ export function useHtmlSource(value: string | undefined | null) {
       h2 { font-size: 26px; line-height: 32px; }
       h3 { font-size: 20px; line-height: 26px; }
       p { color: ${text}; font-size: 16px; line-height: 24px; }
-      a { color: ${theme.color.blue400}; text-decoration: none; word-break: break-word; }
+      a { color: ${theme.tokens.interactive.foreground.primary}; text-decoration: none; word-break: break-word; }
       svg, img { max-width: 100%; display: block; }
     </style>
     <meta name="viewport" content="width=device-width">`

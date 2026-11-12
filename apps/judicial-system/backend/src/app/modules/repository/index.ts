@@ -56,6 +56,7 @@ export {
 export {
   AppealSummonsRepositoryService,
   CreateAppealSummonsServiceRecipient,
+  RecordAppealSummonsServiceStatus,
   UpdateAppealSummons,
   UpdateAppealSummonsServiceRecipient,
 } from './services/appealSummonsRepository.service'

@@ -36,7 +36,7 @@ import {
   usePreferencesStore,
 } from '@/stores/preferences-store'
 import { useUiStore } from '@/stores/ui-store'
-import { dynamicColor, font } from '@/ui'
+import { font, token } from '@/ui'
 import {
   ensureDeviceUnlockCanary,
   isDeviceUnlocked,
@@ -52,7 +52,7 @@ const Host = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: ${dynamicColor('background')};
+  background-color: ${token((t) => t.background.invert)};
 `
 
 const Title = styled.Text`

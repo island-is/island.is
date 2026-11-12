@@ -1,3 +1,4 @@
+import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import {
@@ -10,7 +11,12 @@ import { createTestingVerdictModule } from '../createTestingVerdictModule'
 import { EventService } from '../../../event'
 import { FileService } from '../../../file'
 import { PoliceService } from '../../../police'
-import { Case, Defendant, Verdict } from '../../../repository'
+import {
+  Case,
+  CaseRepositoryService,
+  Defendant,
+  Verdict,
+} from '../../../repository'
 import { DeliverDto } from '../../dto/deliver.dto'
 import { InternalVerdictController } from '../../internalVerdict.controller'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -53,6 +59,8 @@ describe('InternalVerdictController - Deliver verdict to national commissioners 
   let mockPoliceService: PoliceService
   let mockFileService: FileService
   let mockEventService: EventService
+  let mockCaseRepositoryService: CaseRepositoryService
+  let transaction: Transaction
   let internalVerdictController: InternalVerdictController
 
   let givenWhenThen: GivenWhenThen
@@ -62,7 +70,15 @@ describe('InternalVerdictController - Deliver verdict to national commissioners 
 
     mockPoliceService = testingModule.policeService
     mockEventService = testingModule.eventService
+    mockCaseRepositoryService = testingModule.caseRepositoryService
     internalVerdictController = testingModule.internalVerdictController
+    transaction = {
+      commit: jest.fn(),
+      rollback: jest.fn(),
+    } as unknown as Transaction
+    ;(testingModule.sequelize.transaction as jest.Mock).mockResolvedValue(
+      transaction,
+    )
     const mockCreateDocument = mockPoliceService.createDocument as jest.Mock
     mockCreateDocument.mockRejectedValue(new Error('Some error'))
 
@@ -97,6 +113,12 @@ describe('InternalVerdictController - Deliver verdict to national commissioners 
       mockCreateDocument.mockResolvedValue(createDocumentResponse)
 
       await givenWhenThen()
+    })
+
+    it('should walk to the original ancestor in the delivery transaction', () => {
+      expect(
+        mockCaseRepositoryService.findOriginalAncestorId,
+      ).toHaveBeenCalledWith(theCase, { transaction })
     })
 
     it('should call createDocument', () => {

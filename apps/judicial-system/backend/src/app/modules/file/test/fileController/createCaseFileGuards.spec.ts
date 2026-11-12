@@ -1,7 +1,13 @@
+import { RolesGuard } from '@island.is/judicial-system/auth'
+
 import { verifyGuards } from '../../../../test'
-import { CaseWriteGuard } from '../../../case'
+import { CaseExistsGuard, CaseWriteGuard } from '../../../case'
 import { FileController } from '../../file.controller'
 
 describe('FileController - Create case file guards', () => {
-  verifyGuards(FileController, 'createCaseFile', [CaseWriteGuard])
+  verifyGuards(FileController, 'createCaseFile', [
+    CaseExistsGuard,
+    RolesGuard,
+    CaseWriteGuard,
+  ])
 })

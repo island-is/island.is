@@ -144,7 +144,9 @@ export default function QuestionnairesScreen() {
                           source={require('@/assets/icons/Ellipsis-vertical.png')}
                           width={24}
                           height={24}
-                          tintColor={theme.color.blue400}
+                          tintColor={
+                            theme.tokens.interactive.foreground.primary
+                          }
                         />
                       </Pressable>
                     </ContextMenu>
@@ -179,14 +181,8 @@ export default function QuestionnairesScreen() {
                   <Skeleton
                     key={item.id}
                     active
-                    backgroundColor={{
-                      dark: theme.shades.dark.shade300,
-                      light: theme.color.blue100,
-                    }}
-                    overlayColor={{
-                      dark: theme.shades.dark.shade200,
-                      light: theme.color.blue200,
-                    }}
+                    backgroundColor={theme.tokens.background.brandMinimal}
+                    overlayColor={theme.tokens.background.brandLighter}
                     overlayOpacity={1}
                     height={98}
                     style={{
