@@ -76,10 +76,16 @@ function shouldRun() {
   if (!Device.isDevice || !isDeviceKeysAvailable()) {
     return false
   }
-  // Production and staging only accept store builds of is.island.app, so the
-  // testing app would only add refusals to the numbers there.
-  const { id } = getConfig()
-  return !config.isTestingApp || (id !== 'prod' && id !== 'staging')
+  // On staging the testing app is a development build and may be refused,
+  // which would only add refusals to the numbers there.
+  return !config.isTestingApp || getConfig().id !== 'staging'
+}
+
+/** The same client as login: the testing app has its own on production. */
+function getClientId() {
+  return config.isTestingApp && getConfig().id === 'prod'
+    ? '@island.is/island.dev-appid'
+    : config.idsClientId
 }
 
 async function check() {
@@ -88,7 +94,7 @@ async function check() {
   }
 
   const issuer = getConfig().idsIssuer.replace(/\/+$/, '')
-  const clientId = config.idsClientId
+  const clientId = getClientId()
   const platform = Platform.OS === 'ios' ? 'apple' : 'android'
   const headers = {
     'Content-Type': 'application/json',
