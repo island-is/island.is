@@ -1043,6 +1043,9 @@ const linkedCaseDefendantAccessAttributes: (keyof Defendant)[] = [
   'id',
   'defenderNationalId',
   'isDefenderChoiceConfirmed',
+  'appealDefenderNationalId',
+  'isAppealDefenderConfirmed',
+  'isAppealDefenderWaived',
 ]
 
 const mergedCaseDefendantAttributes: (keyof Defendant)[] = [
@@ -1055,10 +1058,56 @@ const linkedCaseCivilClaimantAccessAttributes: (keyof CivilClaimant)[] = [
   'hasSpokesperson',
   'spokespersonNationalId',
   'isSpokespersonConfirmed',
+  'hasAppealSpokesperson',
+  'appealSpokespersonNationalId',
+  'isAppealSpokespersonConfirmed',
 ]
 
 const normalizeNationalId = (nationalId: string): string =>
   nationalId.replace(/-/g, '')
+
+// District or court of appeals confirmation for the defence user on a linked case.
+// Waived appeal appointments and removed appeal spokespersons stay out, matching
+// Defendant.isConfirmedAppealDefenderOfDefendant /
+// CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant.
+const linkedCaseDefendantWhereForDefenceUser = (
+  defenderNationalId: string,
+): WhereOptions => ({
+  [Op.or]: [
+    {
+      defenderNationalId,
+      isDefenderChoiceConfirmed: true,
+    },
+    {
+      appealDefenderNationalId: defenderNationalId,
+      isAppealDefenderConfirmed: true,
+      [Op.or]: [
+        { isAppealDefenderWaived: false },
+        { isAppealDefenderWaived: { [Op.is]: null } },
+      ],
+    },
+  ],
+})
+
+const linkedCaseCivilClaimantWhereForDefenceUser = (
+  defenderNationalId: string,
+): WhereOptions => ({
+  [Op.or]: [
+    {
+      hasSpokesperson: true,
+      spokespersonNationalId: defenderNationalId,
+      isSpokespersonConfirmed: true,
+    },
+    {
+      appealSpokespersonNationalId: defenderNationalId,
+      isAppealSpokespersonConfirmed: true,
+      [Op.or]: [
+        { hasAppealSpokesperson: true },
+        { hasAppealSpokesperson: { [Op.is]: null } },
+      ],
+    },
+  ],
+})
 
 const getLinkedCaseDefendantsInclude = (
   defenderNationalId?: string,
@@ -1069,12 +1118,7 @@ const getLinkedCaseDefendantsInclude = (
   required: false,
   order: [['created', 'ASC']],
   ...(defenderNationalId
-    ? {
-        where: {
-          defenderNationalId,
-          isDefenderChoiceConfirmed: true,
-        },
-      }
+    ? { where: linkedCaseDefendantWhereForDefenceUser(defenderNationalId) }
     : {}),
 })
 
@@ -1088,12 +1132,7 @@ const getMergedCaseDefendantsInclude = (
   order: [['created', 'ASC']],
   separate: true,
   ...(defenderNationalId
-    ? {
-        where: {
-          defenderNationalId,
-          isDefenderChoiceConfirmed: true,
-        },
-      }
+    ? { where: linkedCaseDefendantWhereForDefenceUser(defenderNationalId) }
     : {}),
   include: [
     {
@@ -1131,19 +1170,15 @@ const getLinkedCaseCivilClaimantsInclude = (
   ...(separate ? { separate: true } : {}),
   ...(defenderNationalId
     ? {
-        where: {
-          hasSpokesperson: true,
-          spokespersonNationalId: defenderNationalId,
-          isSpokespersonConfirmed: true,
-        },
+        where: linkedCaseCivilClaimantWhereForDefenceUser(defenderNationalId),
       }
     : {}),
 })
 
 // The case graph a limited access user is served. A defence user only ever
-// sees the parties they act for on the cases linked to this one, so their
-// national id - stored without a separator - narrows those joins; any other
-// caller reads the links unfiltered.
+// sees the parties they act for on the cases linked to this one (district or
+// court of appeals confirmation), so their national id - stored without a separator -
+// narrows those joins; any other caller reads the links unfiltered.
 export const getLimitedAccessCaseInclude = (
   defenceUserNationalId?: string,
 ): Includeable[] => {
@@ -1541,15 +1576,11 @@ export const getLimitedAccessCaseInclude = (
         {
           // A split case takes the civil claimants that applied to the defendant
           // who left with it, so a spokesperson can be a confirmed party here.
-          // The attributes are the ones that decide whether they may open it.
+          // The attributes are the ones that decide whether they may open it
+          // (district or court of appeals confirmation).
           model: CivilClaimant,
           as: 'civilClaimants',
-          attributes: [
-            'id',
-            'hasSpokesperson',
-            'spokespersonNationalId',
-            'isSpokespersonConfirmed',
-          ],
+          attributes: linkedCaseCivilClaimantAccessAttributes,
           required: false,
           order: [['created', 'ASC']],
           separate: true,

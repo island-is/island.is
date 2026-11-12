@@ -1429,7 +1429,10 @@ export class AppealCaseService {
 
     if (
       actor === 'DEFENDER' &&
-      !Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
+      !Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant]) &&
+      !Defendant.isConfirmedAppealDefenderOfDefendant(user.nationalId, [
+        defendant,
+      ])
     ) {
       throw new ForbiddenException(
         `Current user is not the confirmed defender of defendant ${defendantId}`,

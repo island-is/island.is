@@ -31,10 +31,12 @@ import {
   canSkipArraignmentSummons,
   getAppealActorText,
   getDefaultDefendantGender,
+  getDefenceUserPartyIds,
   hasAcceptedRulingOrderInCourt,
   hasSentNotification,
   isAppealFileCategoryVisible,
   isCurrentAppellantRepresentative,
+  isMatchingAppealCaseFile,
   isMatchingAppealCourtFile,
   isSentToPublicProsecutor,
   mapStringToGender,
@@ -2030,5 +2032,145 @@ describe('revertCaseLevelAppealDecision', () => {
     )
 
     expect(result).toEqual([otherPartyUpdated, rulingOrderDecision])
+  })
+})
+
+describe('getDefenceUserPartyIds', () => {
+  const defender = {
+    role: UserRole.DEFENDER,
+    nationalId: '0101302989',
+  } as User
+
+  it('resolves a district-confirmed defendant', () => {
+    expect(
+      getDefenceUserPartyIds(
+        {
+          type: CaseType.INDICTMENT,
+          defendants: [
+            {
+              id: 'defendant_id',
+              isDefenderChoiceConfirmed: true,
+              defenderNationalId: '0101302989',
+            },
+          ],
+        } as WorkingCase,
+        defender,
+      ),
+    ).toEqual({ defendantId: 'defendant_id' })
+  })
+
+  it('resolves an appeal-confirmed defendant without district confirmation', () => {
+    expect(
+      getDefenceUserPartyIds(
+        {
+          type: CaseType.INDICTMENT,
+          defendants: [
+            {
+              id: 'defendant_id',
+              isAppealDefenderConfirmed: true,
+              appealDefenderNationalId: '0101302989',
+            },
+          ],
+        } as WorkingCase,
+        defender,
+      ),
+    ).toEqual({ defendantId: 'defendant_id' })
+  })
+
+  it('resolves an appeal-confirmed civil claimant spokesperson', () => {
+    expect(
+      getDefenceUserPartyIds(
+        {
+          type: CaseType.INDICTMENT,
+          civilClaimants: [
+            {
+              id: 'claimant_id',
+              isAppealSpokespersonConfirmed: true,
+              appealSpokespersonNationalId: '0101302989',
+            },
+          ],
+        } as WorkingCase,
+        defender,
+      ),
+    ).toEqual({ civilClaimantId: 'claimant_id' })
+  })
+
+  it('ignores a waived appeal defender', () => {
+    expect(
+      getDefenceUserPartyIds(
+        {
+          type: CaseType.INDICTMENT,
+          defendants: [
+            {
+              id: 'defendant_id',
+              isAppealDefenderConfirmed: true,
+              isAppealDefenderWaived: true,
+              appealDefenderNationalId: '0101302989',
+            },
+          ],
+        } as WorkingCase,
+        defender,
+      ),
+    ).toEqual({})
+  })
+})
+
+describe('isMatchingAppealCaseFile', () => {
+  const defender = {
+    role: UserRole.DEFENDER,
+    nationalId: '0101302989',
+  } as User
+
+  const categories = [CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT]
+
+  it('matches a file for an appeal-confirmed defendant', () => {
+    expect(
+      isMatchingAppealCaseFile(
+        {
+          type: CaseType.INDICTMENT,
+          defendants: [
+            {
+              id: 'defendant_id',
+              isAppealDefenderConfirmed: true,
+              appealDefenderNationalId: '0101302989',
+            },
+          ],
+        } as WorkingCase,
+        categories,
+        {
+          category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          defendantId: 'defendant_id',
+        },
+        defender,
+      ),
+    ).toBe(true)
+  })
+
+  it('rejects a file for another defendant when only appeal-confirmed for one', () => {
+    expect(
+      isMatchingAppealCaseFile(
+        {
+          type: CaseType.INDICTMENT,
+          defendants: [
+            {
+              id: 'own_id',
+              isAppealDefenderConfirmed: true,
+              appealDefenderNationalId: '0101302989',
+            },
+            {
+              id: 'other_id',
+              isAppealDefenderConfirmed: true,
+              appealDefenderNationalId: '0909713459',
+            },
+          ],
+        } as WorkingCase,
+        categories,
+        {
+          category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          defendantId: 'other_id',
+        },
+        defender,
+      ),
+    ).toBe(false)
   })
 })
