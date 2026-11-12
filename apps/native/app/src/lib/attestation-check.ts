@@ -1,3 +1,4 @@
+import { DdRum, ErrorSource } from '@datadog/mobile-react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as Application from 'expo-application'
 import * as Device from 'expo-device'
@@ -145,9 +146,29 @@ async function check() {
       await AsyncStorage.setItem(STORAGE_KEY, 'true')
     }
   } finally {
-    // Also deletes the App Attest key id.
-    deleteDeviceKey('install')
+    try {
+      // Also deletes the App Attest key id.
+      deleteDeviceKey('install')
+    } catch (error) {
+      reportError('delete_key_failed', error)
+    }
   }
+}
+
+/** IAS only gets a code, so the error behind it goes to Datadog. */
+function reportError(code: string, error: unknown) {
+  if (__DEV__) {
+    return
+  }
+  const message = error instanceof Error ? error.message : String(error)
+  const stack = error instanceof Error ? error.stack : undefined
+  DdRum.addError(
+    `Attestation check: ${code}: ${message}`,
+    ErrorSource.CUSTOM,
+    stack ?? '',
+  ).catch(() => {
+    // noop
+  })
 }
 
 async function readErrorCode(response: Response) {
@@ -163,7 +184,8 @@ async function attest(challenge: string): Promise<Evidence> {
     return Platform.OS === 'ios'
       ? await attestIos(challenge)
       : await attestAndroid(challenge)
-  } catch {
+  } catch (error) {
+    reportError('unknown', error)
     return { error: 'unknown' }
   }
 }
@@ -176,7 +198,8 @@ async function attestIos(challenge: string): Promise<Evidence> {
   let key: DeviceKey
   try {
     key = await generateDeviceKey('install')
-  } catch {
+  } catch (error) {
+    reportError('key_generation_failed', error)
     return { error: 'key_generation_failed' }
   }
 
@@ -188,16 +211,22 @@ async function attestIos(challenge: string): Promise<Evidence> {
     )
     return { jwk: key.publicJwk, keyId, attestationObject }
   } catch (error) {
-    switch (getDeviceKeyErrorCode(error)) {
-      case 'ERR_DEVICE_KEY_ATTESTATION_UNSUPPORTED':
-        return { error: 'not_supported' }
-      case 'ERR_DEVICE_KEY_ATTESTATION_UNAVAILABLE':
-        return { error: 'server_unavailable' }
-      case 'ERR_DEVICE_KEY_ATTESTATION_KEY_FAILED':
-        return { error: 'generate_key_failed' }
-      default:
-        return { error: 'attest_key_failed' }
-    }
+    const code = getAppAttestErrorCode(error)
+    reportError(code, error)
+    return { error: code }
+  }
+}
+
+function getAppAttestErrorCode(error: unknown): AttestationErrorCode {
+  switch (getDeviceKeyErrorCode(error)) {
+    case 'ERR_DEVICE_KEY_ATTESTATION_UNSUPPORTED':
+      return 'not_supported'
+    case 'ERR_DEVICE_KEY_ATTESTATION_UNAVAILABLE':
+      return 'server_unavailable'
+    case 'ERR_DEVICE_KEY_ATTESTATION_KEY_FAILED':
+      return 'generate_key_failed'
+    default:
+      return 'attest_key_failed'
   }
 }
 
@@ -208,7 +237,8 @@ async function attestAndroid(challenge: string): Promise<Evidence> {
     key = await generateDeviceKey('install', {
       attestationChallenge: challenge,
     })
-  } catch {
+  } catch (error) {
+    reportError('key_generation_failed', error)
     return { error: 'key_generation_failed' }
   }
 
