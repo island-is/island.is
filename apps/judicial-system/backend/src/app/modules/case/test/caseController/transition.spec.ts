@@ -394,6 +394,7 @@ describe('CaseController - Transition', () => {
         const caseFileId2 = uuid()
         const caseFileId3 = uuid()
         const caseFileId4 = uuid()
+        const caseFileId5 = uuid()
         const caseFiles = [
           {
             id: caseFileId1,
@@ -409,6 +410,7 @@ describe('CaseController - Transition', () => {
             state: CaseFileState.STORED_IN_COURT,
             category: CaseFileCategory.RULING,
           },
+          // Linked in a confirmed court session — delivered to LÖKE on complete.
           {
             id: caseFileId3,
             key: uuid(),
@@ -425,6 +427,21 @@ describe('CaseController - Transition', () => {
             category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
             isPronouncedOrally: true,
           },
+          // Written up but not linked in a confirmed court session — not to LÖKE.
+          {
+            id: caseFileId5,
+            key: uuid(),
+            isKeyAccessible: true,
+            state: CaseFileState.STORED_IN_RVG,
+            category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+          },
+        ]
+        const courtSessions = [
+          {
+            id: uuid(),
+            isConfirmed: true,
+            rulingFileId: caseFileId3,
+          },
         ]
         const courtEndTime = randomDate()
         const defendants = [{ id: uuid(), name: 'Test Defendant' }]
@@ -436,6 +453,7 @@ describe('CaseController - Transition', () => {
           courtCaseNumber,
           state: oldState,
           caseFiles,
+          courtSessions,
           courtEndTime,
           defendants,
         } as Case
@@ -447,6 +465,7 @@ describe('CaseController - Transition', () => {
           courtCaseNumber,
           state: newState,
           caseFiles,
+          courtSessions,
           courtEndTime,
           defendants,
         } as Case
@@ -508,8 +527,9 @@ describe('CaseController - Transition', () => {
                 caseId,
               },
               {
-                // Court records and mid-case ruling orders are delivered to
-                // police; final rulings (RULING) are not.
+                // Court records and mid-case ruling orders linked in a
+                // confirmed court session are delivered to police; final
+                // rulings (RULING) and unlinked ruling orders are not.
                 type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
                 user: {
                   ...defaultUser,
@@ -528,6 +548,16 @@ describe('CaseController - Transition', () => {
                 elementId: caseFileId3,
               },
             ])
+            expect(mockQueuedMessages).not.toEqual(
+              expect.arrayContaining([
+                {
+                  type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
+                  user: expect.any(Object),
+                  caseId,
+                  elementId: caseFileId5,
+                },
+              ]),
+            )
           } else if (
             newState === CaseState.DELETED &&
             !isIndictmentCase(theCase.type)
@@ -653,80 +683,6 @@ describe('CaseController - Transition', () => {
       })
     },
   )
-
-  describe('completing a cancelled LÖKE indictment with a mid-case ruling', () => {
-    const caseId = uuid()
-    const rulingOrderId = uuid()
-    const oralRulingWithoutDocumentId = uuid()
-    const theCase = {
-      id: caseId,
-      origin: CaseOrigin.LOKE,
-      type: indictmentCases[0],
-      policeCaseNumbers: [uuid()],
-      courtCaseNumber: uuid(),
-      state: CaseState.WAITING_FOR_CANCELLATION,
-      caseFiles: [
-        {
-          id: rulingOrderId,
-          key: uuid(),
-          isKeyAccessible: true,
-          category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
-        },
-        {
-          id: oralRulingWithoutDocumentId,
-          key: '',
-          isKeyAccessible: true,
-          category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
-          isPronouncedOrally: true,
-        },
-      ],
-    } as Case
-
-    beforeEach(async () => {
-      const mockFindLiveById =
-        mockCaseRepositoryService.findLiveById as jest.Mock
-      mockFindLiveById.mockResolvedValueOnce({
-        ...theCase,
-        state: CaseState.COMPLETED,
-      })
-
-      await givenWhenThen(caseId, theCase, {
-        transition: CaseTransition.COMPLETE,
-      })
-    })
-
-    it('should deliver written mid-case rulings to police without the full completion queue', () => {
-      expect(mockQueuedMessages).toEqual(
-        expect.arrayContaining([
-          {
-            type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
-            user: expect.objectContaining({ id: userId }),
-            caseId,
-            elementId: rulingOrderId,
-          },
-        ]),
-      )
-      expect(mockQueuedMessages).not.toEqual(
-        expect.arrayContaining([
-          {
-            type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
-            user: expect.any(Object),
-            caseId,
-            elementId: oralRulingWithoutDocumentId,
-          },
-        ]),
-      )
-      expect(mockQueuedMessages).not.toEqual(
-        expect.arrayContaining([
-          {
-            type: MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE,
-            user: expect.any(Object),
-            caseId,
-          },
-        ]),
-      )
-    })
-  })
 
   describe('completing an indictment case with a ruling', () => {
     const caseId = uuid()

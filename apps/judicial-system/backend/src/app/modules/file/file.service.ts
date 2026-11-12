@@ -468,10 +468,11 @@ export class FileService {
 
   // Additional case files of an indictment case are delivered to the police
   // and the courts as they arrive. Mid-case ruling orders are delivered to the
-  // courts here too, but to the police only when the case is completed — so
-  // LÖKE gets the confirmed PDF (see addMessagesForCompletedIndictmentCaseToQueue).
-  // Also used when a ruling order pronounced orally is written up, which is
-  // the first moment that file has a document to deliver.
+  // courts here too, but never to the police from this path — LÖKE gets them
+  // on case completion when they are linked in a confirmed court session (see
+  // addMessagesForMidCaseRulingOrdersToPolice). Also used when a ruling order
+  // pronounced orally is written up, which is the first moment that file has a
+  // document to deliver to the courts.
   private addMessagesForIndictmentCaseFileDeliveryToQueue(
     theCase: Case,
     file: CaseFile,
@@ -488,13 +489,12 @@ export class FileService {
       return
     }
 
-    // Mid-case ruling orders wait for case completion before going to LÖKE, so
-    // the PDF is delivered with its confirmation stamp. If the document only
-    // appears after completion (oral ruling written up later), deliver then.
+    // Mid-case ruling orders wait for case completion before going to LÖKE.
+    // Write-ups after completion go through case correction and are delivered
+    // when the case is completed again, not from here.
     if (
       theCase.origin === CaseOrigin.LOKE &&
-      (file.category !== CaseFileCategory.COURT_INDICTMENT_RULING_ORDER ||
-        isCompletedCase(theCase.state))
+      file.category !== CaseFileCategory.COURT_INDICTMENT_RULING_ORDER
     ) {
       queueMessagesAfterCommit({
         type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
@@ -853,8 +853,9 @@ export class FileService {
     const updatedCaseFile = updatedCaseFiles[0]
 
     // The ruling finally has a document to deliver to the court (police delivery
-    // waits for case completion), which is what createCaseFile would have queued
-    // had the ruling arrived as an upload in the first place.
+    // waits for case completion when the ruling is linked in a confirmed court
+    // session), which is what createCaseFile would have queued had the ruling
+    // arrived as an upload in the first place.
     this.addMessagesForIndictmentCaseFileDeliveryToQueue(
       theCase,
       updatedCaseFile,
