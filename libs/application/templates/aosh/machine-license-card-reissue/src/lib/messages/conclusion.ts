@@ -25,7 +25,7 @@ export const conclusion = {
     accordionText: {
       id: 'aosh.mlcr.application:conclusion.general.accordionText#markdown',
       defaultMessage:
-        'Skirteinið mun vera sett í framleiðslu og verður sent til þín á næstu dögum.',
+        'Skírteinið mun vera sett í framleiðslu og verður sent til þín á næstu dögum.',
       description: 'Conclusion accordion text',
     },
   }),
