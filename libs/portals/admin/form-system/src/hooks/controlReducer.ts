@@ -53,7 +53,14 @@ type FieldActions =
       type: 'ADD_FIELD'
       payload: { field: FormSystemField; skipActiveItem?: boolean }
     }
-  | { type: 'REMOVE_FIELD'; payload: { id: string; skipActiveItem?: boolean } }
+  | {
+      type: 'REMOVE_FIELD'
+      payload: {
+        id: string
+        skipActiveItem?: boolean
+        update?: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
   | {
       type: 'CHANGE_FIELD_TYPE'
       payload: {
@@ -610,7 +617,13 @@ export const controlReducer = (
         (field) => field?.id === action.payload.id,
       )
       if (removedField?.fieldType === FieldTypesEnum.ISK_NUMBERBOX) {
+        const fieldsBeforeCleanup = newFields
         newFields = removeCurrencyFieldFromSums(newFields, removedField.id)
+        newFields?.forEach((field, index) => {
+          if (field && field !== fieldsBeforeCleanup?.[index]) {
+            action.payload.update?.({ type: 'Field', data: field })
+          }
+        })
       }
       if (removedField?.fieldType === FieldTypesEnum.PAYMENT_QUANTITY) {
         newFields = newFields?.map((field) => {

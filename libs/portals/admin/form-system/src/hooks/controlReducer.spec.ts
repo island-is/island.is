@@ -131,11 +131,12 @@ describe('currency sum selection cleanup', () => {
     'removes deleted currency IDs with skipActiveItem=%s',
     (skipActiveItem) => {
       const { state, sum, defaultSum } = setup()
+      const update = jest.fn()
       if (skipActiveItem) state.activeItem = { type: 'Field', data: sum }
 
       const result = controlReducer(state, {
         type: 'REMOVE_FIELD',
-        payload: { id: 'currency', skipActiveItem },
+        payload: { id: 'currency', skipActiveItem, update },
       })
 
       expect(result.form.fields?.map((field) => field?.id)).toEqual([
@@ -150,6 +151,15 @@ describe('currency sum selection cleanup', () => {
       expect(result.form.fields?.[1]?.fieldSettings?.fieldsToSum).toEqual([])
       expect(result.form.fields?.[2]).toBe(defaultSum)
       expect(sum.fieldSettings?.fieldsToSum).toEqual(['currency', 'other'])
+      expect(update).toHaveBeenCalledTimes(2)
+      expect(update).toHaveBeenCalledWith({
+        type: 'Field',
+        data: result.form.fields?.[0],
+      })
+      expect(update).toHaveBeenCalledWith({
+        type: 'Field',
+        data: result.form.fields?.[1],
+      })
       if (skipActiveItem) {
         expect(result.activeItem.data).toBe(result.form.fields?.[0])
       } else {
