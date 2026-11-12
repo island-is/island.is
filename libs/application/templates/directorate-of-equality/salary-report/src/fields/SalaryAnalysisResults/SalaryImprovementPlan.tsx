@@ -448,6 +448,16 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
     setAmbientValue,
   ])
 
+  // A fresh DRAFT analysis with no outliers hides this screen's sub-section,
+  // and the shell then unmounts this field without letting it re-register the
+  // callback below; the one it registered while analysing would refuse every
+  // Continue on the now-empty screen. The shell only clears it on a screen
+  // change, so clear it here. Unmount only: re-registering replaces it anyway.
+  useEffect(() => {
+    if (!setBeforeSubmitCallback) return undefined
+    return () => setBeforeSubmitCallback(null)
+  }, [setBeforeSubmitCallback])
+
   useEffect(() => {
     if (!setBeforeSubmitCallback) return
     setBeforeSubmitCallback(async () => {

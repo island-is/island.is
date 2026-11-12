@@ -1,10 +1,11 @@
-import { FC, PropsWithChildren } from 'react'
+import { ComponentProps, FC, PropsWithChildren, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import type {
   Application,
+  BeforeSubmitCallback,
   CustomField,
-  FieldBaseProps,
+  FormValue,
 } from '@island.is/application/types'
 import type { SalaryAnalysisResponseDto } from '@island.is/clients/directorate-of-equality'
 import { ApiActions, draftActionId, States } from '../../utils/constants'
@@ -21,7 +22,10 @@ jest.mock('@apollo/client', () => ({
 }))
 
 jest.mock('@island.is/localization', () => ({
-  useLocale: () => ({ lang: 'is', formatMessage: (m: unknown) => String(m) }),
+  useLocale: () => ({
+    lang: 'is',
+    formatMessage: (m: { id?: string }) => m?.id ?? String(m),
+  }),
 }))
 
 // The panel is the editor; what matters here is which outliers it is handed.
@@ -53,12 +57,20 @@ const providersOf = (call: unknown[]): string[] =>
 
 const analyzeActionId = draftActionId(ApiActions.analyzeSalaryReport)
 
+// The outliers the next fresh analysis lists.
+let freshOrdinals = [7, 8]
+
 // Answers each mutation by what it asks for: the screen's draft reads, or a
-// fresh analysis that now lists employees 7 and 8.
+// fresh analysis listing freshOrdinals.
 const respond = (call: unknown) => {
   const providers = providersOf([call])
   const externalData = providers.includes(analyzeActionId)
-    ? { salaryAnalysisResult: { status: 'success', data: analysis([7, 8]) } }
+    ? {
+        salaryAnalysisResult: {
+          status: 'success',
+          data: analysis(freshOrdinals),
+        },
+      }
     : {
         draftOutlierGroups: { status: 'success', data: { groups: [] } },
         draftEmployees: { status: 'success', data: { employees: [] } },
@@ -96,7 +108,7 @@ const renderPlan = (state: string, answerQuestions = jest.fn()) => {
           answerQuestions,
           setBeforeSubmitCallback: jest.fn(),
           setSubmitButtonDisabled: jest.fn(),
-        } as unknown as FieldBaseProps)}
+        } as unknown as ComponentProps<typeof SalaryImprovementPlan>)}
       />
     </AmbientForm>,
   )
@@ -105,6 +117,7 @@ const renderPlan = (state: string, answerQuestions = jest.fn()) => {
 
 describe('SalaryImprovementPlan', () => {
   beforeEach(() => {
+    freshOrdinals = [7, 8]
     mockMutate.mockReset()
     mockMutate.mockImplementation(respond)
   })
@@ -137,5 +150,55 @@ describe('SalaryImprovementPlan', () => {
         analyzeActionId,
       ),
     )
+  })
+
+  // Reached when the screen opens with a stale "plan needed" answer, e.g.
+  // through browser history after the data was edited. The fresh analysis
+  // then hides the plan sub-section, and the shell unmounts this field in the
+  // same render: Continue must not be left refused by what it registered
+  // while it was still analysing.
+  it('in DRAFT, does not block Continue once a fresh analysis hides the step', async () => {
+    freshOrdinals = []
+    // The shell's side, reduced to what matters here: one beforeSubmit slot
+    // (null clears it), and the field rendered only while the answers keep
+    // its sub-section navigable.
+    let beforeSubmit: BeforeSubmitCallback | null = null
+    const setBeforeSubmitCallback = (callback: BeforeSubmitCallback | null) => {
+      beforeSubmit = callback
+    }
+    const Shell = () => {
+      const [needsPlan, setNeedsPlan] = useState(true)
+      const answerQuestions = (answers: FormValue) => {
+        const flag = (
+          answers as { salaryAnalysis?: { hasMinimumSetOutliers?: boolean } }
+        ).salaryAnalysis?.hasMinimumSetOutliers
+        if (flag === false) setNeedsPlan(false)
+      }
+      return needsPlan ? (
+        <SalaryImprovementPlan
+          {...({
+            application: application(States.DRAFT),
+            field: { props: {} } as unknown as CustomField,
+            answerQuestions,
+            setBeforeSubmitCallback,
+            setSubmitButtonDisabled: jest.fn(),
+          } as unknown as ComponentProps<typeof SalaryImprovementPlan>)}
+        />
+      ) : (
+        <p>step hidden</p>
+      )
+    }
+
+    render(
+      <AmbientForm>
+        <Shell />
+      </AmbientForm>,
+    )
+
+    expect(await screen.findByText('step hidden')).toBeInTheDocument()
+    const outcome = await act(async () =>
+      beforeSubmit ? beforeSubmit('SUBMIT') : [true, null],
+    )
+    expect(outcome).toEqual([true, null])
   })
 })

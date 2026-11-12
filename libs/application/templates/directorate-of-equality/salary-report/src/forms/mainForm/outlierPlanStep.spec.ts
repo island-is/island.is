@@ -26,7 +26,7 @@ const analysis = (outlierCount: number): SalaryAnalysisResponseDto =>
     })),
   } as unknown as SalaryAnalysisResponseDto)
 
-type Screen = { id: string; isNavigable: boolean; item: FormItem }
+type Screen = { id: FormItem['id']; isNavigable: boolean; item: FormItem }
 
 const childrenOf = (item: FormItem): FormItem[] =>
   (item as { children?: FormItem[] }).children ?? []
