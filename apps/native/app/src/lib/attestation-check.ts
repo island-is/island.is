@@ -74,17 +74,13 @@ function start() {
 function shouldRun() {
   // Simulators and emulators can't attest, and dev clients built before the
   // module have no keys.
-  if (!Device.isDevice || !isDeviceKeysAvailable()) {
-    return false
-  }
-  // On staging the testing app is a development build and may be refused,
-  // which would only add refusals to the numbers there.
-  return !config.isTestingApp || getConfig().id !== 'staging'
+  return Device.isDevice && isDeviceKeysAvailable()
 }
 
-/** The same client as login: the testing app has its own on production. */
+/** IAS trusts the testing app under its own client on production and staging. */
 function getClientId() {
-  return config.isTestingApp && getConfig().id === 'prod'
+  const { id } = getConfig()
+  return config.isTestingApp && (id === 'prod' || id === 'staging')
     ? '@island.is/island.dev-appid'
     : config.idsClientId
 }
@@ -97,16 +93,13 @@ async function check() {
   const issuer = getConfig().idsIssuer.replace(/\/+$/, '')
   const clientId = getClientId()
   const platform = Platform.OS === 'ios' ? 'apple' : 'android'
-  const headers = {
-    'Content-Type': 'application/json',
-    'X-App-Version': Application.nativeApplicationVersion ?? '',
-    'X-OS-Version': Device.osVersion ?? '',
-    // IAS counts only letters, digits, space and , . _ - in the model, and
-    // some Android names have more: "moto g(7) plus" → "moto g7 plus". Other
-    // alphabets can't go in a header at all on Android.
-    'X-Device-Model': (
-      (Platform.OS === 'ios' ? Device.modelId : Device.modelName) ?? ''
-    ).replace(/[^A-Za-z0-9 ,._-]/g, ''),
+  const headers = { 'Content-Type': 'application/json' }
+  // Only logged and counted by IAS, which tidies up the model name itself.
+  const device = {
+    appVersion: Application.nativeApplicationVersion ?? undefined,
+    osVersion: Device.osVersion ?? undefined,
+    deviceModel:
+      (Platform.OS === 'ios' ? Device.modelId : Device.modelName) ?? undefined,
   }
 
   // Error reports need a challenge too. No cookies on either request, so
@@ -133,7 +126,13 @@ async function check() {
       method: 'POST',
       headers,
       credentials: 'omit',
-      body: JSON.stringify({ clientId, platform, challenge, ...evidence }),
+      body: JSON.stringify({
+        clientId,
+        platform,
+        challenge,
+        ...evidence,
+        ...device,
+      }),
     })
     // A 400 is an answer too: a refused attestation, or a request that
     // retrying won't fix. An expired challenge (the app sat in the
