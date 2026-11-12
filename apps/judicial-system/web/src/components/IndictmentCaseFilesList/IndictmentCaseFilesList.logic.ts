@@ -25,7 +25,10 @@ export type CaseFilesListCase = MergedCase &
   Partial<
     Pick<
       WorkingCase,
-      'caseSentToCourtDate' | 'splitCases' | 'indictmentHash' | 'originalAncestorId'
+      | 'caseSentToCourtDate'
+      | 'splitCases'
+      | 'indictmentHash'
+      | 'originalAncestorId'
     >
   >
 
