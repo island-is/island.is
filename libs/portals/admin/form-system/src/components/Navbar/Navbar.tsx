@@ -10,6 +10,7 @@ import {
 import { SectionTypes } from '@island.is/form-system/enums'
 import {
   CREATE_SECTION,
+  DELETE_SECTION,
   UPDATE_SECTION_DISPLAY_ORDER,
 } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
@@ -149,6 +150,7 @@ export const Navbar = () => {
   }, [fields])
 
   const [createSection, { loading }] = useMutation(CREATE_SECTION)
+  const [deleteSection] = useMutation(DELETE_SECTION)
   const [updateDisplayOrder] = useMutation(UPDATE_SECTION_DISPLAY_ORDER)
 
   const {
@@ -187,22 +189,19 @@ export const Navbar = () => {
           input: {
             createSectionDto: {
               formId: form.id,
-              displayOrder: insertionIndex,
+              displayOrder:
+                Math.max(
+                  -1,
+                  ...(sections ?? []).map(
+                    (section) => section?.displayOrder ?? -1,
+                  ),
+                ) + 1,
             },
           },
         },
       })
 
       if (newSection && !loading) {
-        controlDispatch({
-          type: 'ADD_SECTION',
-          payload: {
-            section: removeTypename(
-              newSection.data?.createFormSystemSection,
-            ) as FormSystemSection,
-          },
-        })
-
         const updatedSections = (sections ?? []).map((s) => ({
           id: s?.id,
         }))
@@ -210,13 +209,42 @@ export const Navbar = () => {
           id: newSection.data?.createFormSystemSection.id,
         })
 
-        updateDisplayOrder({
-          variables: {
-            input: {
-              updateSectionsDisplayOrderDto: {
-                sectionsDisplayOrderDto: updatedSections,
+        try {
+          await updateDisplayOrder({
+            variables: {
+              input: {
+                updateSectionsDisplayOrderDto: {
+                  sectionsDisplayOrderDto: updatedSections,
+                },
               },
             },
+          })
+        } catch (error) {
+          await deleteSection({
+            variables: {
+              input: { id: newSection.data?.createFormSystemSection.id },
+            },
+          })
+          await updateDisplayOrder({
+            variables: {
+              input: {
+                updateSectionsDisplayOrderDto: {
+                  sectionsDisplayOrderDto: (sections ?? []).map((section) => ({
+                    id: section?.id,
+                  })),
+                },
+              },
+            },
+          })
+          throw error
+        }
+
+        controlDispatch({
+          type: 'ADD_SECTION',
+          payload: {
+            section: removeTypename(
+              newSection.data?.createFormSystemSection,
+            ) as FormSystemSection,
           },
         })
       }

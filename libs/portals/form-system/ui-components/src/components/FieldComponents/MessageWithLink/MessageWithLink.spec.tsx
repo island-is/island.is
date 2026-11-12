@@ -11,7 +11,21 @@ jest.mock('@island.is/localization', () => ({
 
 jest.mock('@island.is/island-ui/core', () => ({
   Box: ({ children }: { children: ReactNode }) => <div>{children}</div>,
-  Text: ({ children }: { children: ReactNode }) => <p>{children}</p>,
+  Text: ({
+    children,
+    whiteSpace,
+  }: {
+    children: ReactNode
+    whiteSpace?: string
+  }) => (
+    <p
+      style={{
+        whiteSpace: whiteSpace === 'breakSpaces' ? 'break-spaces' : undefined,
+      }}
+    >
+      {children}
+    </p>
+  ),
   Button: ({ children }: { children: ReactNode }) => (
     <button>{children}</button>
   ),
@@ -50,6 +64,29 @@ it('preserves plain text and line breaks', () => {
   expect(screen.getByText('First line Second line').textContent).toBe(
     'First line\nSecond line',
   )
+})
+
+it.each(['\n', '\n\n', '\r\n'])(
+  'preserves line breaks between strong and em elements: %j',
+  (separator) => {
+    renderMessage(`<strong>First line</strong>${separator}<em>Second line</em>`)
+
+    const first = screen.getByText('First line')
+    const second = screen.getByText('Second line')
+    const description = first.parentElement as HTMLElement
+    expect(first.tagName).toBe('STRONG')
+    expect(second.tagName).toBe('EM')
+    expect(description.textContent).toBe(`First line${separator}Second line`)
+    expect(window.getComputedStyle(description).whiteSpace).toBe('break-spaces')
+  },
+)
+
+it('preserves newline-only nodes within nested formatting', () => {
+  renderMessage('<strong><em>First line</em>\n<em>Second line</em></strong>')
+
+  const strong = screen.getByText('First line').parentElement
+  expect(strong?.tagName).toBe('STRONG')
+  expect(strong?.textContent).toBe('First line\nSecond line')
 })
 
 it('renders the description for the selected language', () => {

@@ -44,6 +44,28 @@ export const MessageWithLink = ({ item }: Props) => {
                 allowedTags: ['em', 'strong'],
                 allowedAttributes: {},
               }),
+              {
+                preprocessNodes: (nodes) => {
+                  const preserveWhitespace = (node: typeof nodes[number]) => {
+                    if (
+                      node.type === 'text' &&
+                      node.data?.includes('\n') &&
+                      node.data.trim() === ''
+                    ) {
+                      node.type = 'tag'
+                      node.name = 'span'
+                    }
+                    node.children?.forEach(preserveWhitespace)
+                  }
+                  nodes.forEach(preserveWhitespace)
+                  return nodes
+                },
+                transform: (node, index) => {
+                  if (node.type === 'tag' && node.name === 'span') {
+                    return <span key={index}>{node.data}</span>
+                  }
+                },
+              },
             )}
           </Text>
         </Box>
