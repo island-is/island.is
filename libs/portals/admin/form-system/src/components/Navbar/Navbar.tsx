@@ -16,7 +16,7 @@ import {
 import { m } from '@island.is/form-system/ui'
 import { Box, Button } from '@island.is/island-ui/core'
 import cn from 'classnames'
-import { useContext, useMemo } from 'react'
+import { useContext, useMemo, useRef, useState } from 'react'
 import AnimateHeight from 'react-animate-height'
 import { createPortal } from 'react-dom'
 import { useIntl } from 'react-intl'
@@ -45,6 +45,8 @@ export const Navbar = () => {
   const { formatMessage } = useIntl()
   const { activeItem, form, isReadOnly } = control
   const { sections, screens, fields } = form
+  const additionPendingRef = useRef(false)
+  const [isAddingSection, setIsAddingSection] = useState(false)
 
   const inputSections = useMemo(
     () =>
@@ -176,6 +178,9 @@ export const Navbar = () => {
   }
 
   const addSection = async () => {
+    if (additionPendingRef.current || isReadOnly) return
+    additionPendingRef.current = true
+    setIsAddingSection(true)
     try {
       const summaryIndex = sections?.findIndex(
         (section) => section?.sectionType === SectionTypes.SUMMARY,
@@ -250,6 +255,9 @@ export const Navbar = () => {
       }
     } catch (err: any) {
       console.error('Error creating section:', err.message)
+    } finally {
+      additionPendingRef.current = false
+      setIsAddingSection(false)
     }
   }
 
@@ -529,7 +537,7 @@ export const Navbar = () => {
           variant="ghost"
           size="small"
           onClick={addSection}
-          disabled={isReadOnly}
+          disabled={isReadOnly || isAddingSection}
         >
           {formatMessage(m.addSection)}
         </Button>

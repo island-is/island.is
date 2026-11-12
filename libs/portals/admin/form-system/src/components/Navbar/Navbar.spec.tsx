@@ -1,6 +1,7 @@
 import { useMutation } from '@apollo/client'
 import { CREATE_SECTION, DELETE_SECTION } from '@island.is/form-system/graphql'
 import { SectionTypes } from '@island.is/form-system/enums'
+import { Button } from '@island.is/island-ui/core'
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { ComponentProps, ReactNode } from 'react'
 import { ControlContext } from '../../context/ControlContext'
@@ -16,10 +17,12 @@ jest.mock('react-intl', () => ({
 }))
 jest.mock('@island.is/island-ui/core', () => ({
   Box: ({ children }: { children: ReactNode }) => <div>{children}</div>,
-  Button: ({ children, onClick, disabled }: ComponentProps<'button'>) => (
-    <button onClick={onClick} disabled={disabled}>
-      {children}
-    </button>
+  Button: jest.fn(
+    ({ children, onClick, disabled }: ComponentProps<'button'>) => (
+      <button onClick={onClick} disabled={disabled}>
+        {children}
+      </button>
+    ),
   ),
 }))
 jest.mock('@dnd-kit/core', () => ({
@@ -48,7 +51,7 @@ const controlDispatch = jest.fn()
 const newSection = { id: 'new-section', formId: 'form' }
 const originalOrder = [{ id: 'input' }, { id: 'summary' }]
 
-const renderNavbar = () =>
+const renderNavbar = (isReadOnly = false) =>
   render(
     <ControlContext.Provider
       value={
@@ -72,7 +75,7 @@ const renderNavbar = () =>
               screens: [],
               fields: [],
             },
-            isReadOnly: false,
+            isReadOnly,
           },
           controlDispatch,
           openComponents: { sections: [], screens: [] },
@@ -138,6 +141,12 @@ it('creates at an unused order and waits for reordering before adding local stat
     },
   })
   expect(controlDispatch).not.toHaveBeenCalled()
+  expect(screen.getByRole('button', { name: 'Add section' })).toHaveProperty(
+    'disabled',
+    true,
+  )
+  fireEvent.click(screen.getByRole('button', { name: 'Add section' }))
+  expect(createSection).toHaveBeenCalledTimes(1)
   await act(async () => {
     resolveReorder()
   })
@@ -146,6 +155,33 @@ it('creates at an unused order and waits for reordering before adding local stat
     payload: { section: newSection },
   })
   expect(deleteSection).not.toHaveBeenCalled()
+  expect(screen.getByRole('button', { name: 'Add section' })).toHaveProperty(
+    'disabled',
+    false,
+  )
+})
+
+it('blocks repeated calls before the pending state renders', async () => {
+  renderNavbar()
+  const onClick = jest
+    .mocked(Button)
+    .mock.calls.find(([props]) => props.children === 'Add section')?.[0].onClick
+  expect(onClick).toBeDefined()
+  act(() => {
+    onClick?.({} as React.MouseEvent<HTMLButtonElement>)
+    onClick?.({} as React.MouseEvent<HTMLButtonElement>)
+  })
+  await waitFor(() => expect(controlDispatch).toHaveBeenCalledTimes(1))
+  expect(createSection).toHaveBeenCalledTimes(1)
+  expect(updateDisplayOrder).toHaveBeenCalledTimes(1)
+})
+
+it('keeps the add button disabled in read-only mode', () => {
+  renderNavbar(true)
+  const button = screen.getByRole('button', { name: 'Add section' })
+  expect(button).toHaveProperty('disabled', true)
+  fireEvent.click(button)
+  expect(createSection).not.toHaveBeenCalled()
 })
 
 it('deletes the new section and restores ordering when reorder rejects', async () => {
@@ -173,6 +209,33 @@ it('deletes the new section and restores ordering when reorder rejects', async (
     },
   })
   expect(controlDispatch).not.toHaveBeenCalled()
+  expect(screen.getByRole('button', { name: 'Add section' })).toHaveProperty(
+    'disabled',
+    false,
+  )
+})
+
+it('remains disabled until reorder failure recovery finishes', async () => {
+  let resolveDelete!: () => void
+  updateDisplayOrder.mockRejectedValueOnce(new Error('Reorder failed'))
+  deleteSection.mockReturnValue(
+    new Promise<void>((resolve) => {
+      resolveDelete = resolve
+    }),
+  )
+  renderNavbar()
+  const button = screen.getByRole('button', { name: 'Add section' })
+  fireEvent.click(button)
+  await waitFor(() => expect(deleteSection).toHaveBeenCalledTimes(1))
+  expect(button).toHaveProperty('disabled', true)
+  fireEvent.click(button)
+  expect(createSection).toHaveBeenCalledTimes(1)
+
+  await act(async () => {
+    resolveDelete()
+  })
+  expect(updateDisplayOrder).toHaveBeenCalledTimes(2)
+  expect(button).toHaveProperty('disabled', false)
 })
 
 it('handles creation rejection without attempting reorder or recovery', async () => {
@@ -188,6 +251,13 @@ it('handles creation rejection without attempting reorder or recovery', async ()
   expect(updateDisplayOrder).not.toHaveBeenCalled()
   expect(deleteSection).not.toHaveBeenCalled()
   expect(controlDispatch).not.toHaveBeenCalled()
+  expect(screen.getByRole('button', { name: 'Add section' })).toHaveProperty(
+    'disabled',
+    false,
+  )
+  fireEvent.click(screen.getByRole('button', { name: 'Add section' }))
+  await waitFor(() => expect(controlDispatch).toHaveBeenCalledTimes(1))
+  expect(createSection).toHaveBeenCalledTimes(2)
 })
 
 it.each(['delete', 'restore'])(
@@ -206,5 +276,9 @@ it.each(['delete', 'restore'])(
       ),
     )
     expect(controlDispatch).not.toHaveBeenCalled()
+    expect(screen.getByRole('button', { name: 'Add section' })).toHaveProperty(
+      'disabled',
+      false,
+    )
   },
 )
