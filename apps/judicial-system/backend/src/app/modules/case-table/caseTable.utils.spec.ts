@@ -252,6 +252,23 @@ describe('caseTable.utils', () => {
       expect(isMyCase(theCase, user)).toBe(true)
     })
 
+    // Arguing the appeal makes a case the user's on the public prosecution's
+    // appealed list only, which has a rule of its own. Everywhere else it would
+    // put a colleague's indictment under "Mín mál".
+    it('returns false for prosecution user who is only the appeal prosecutor', () => {
+      expect(
+        isMyCase(
+          {
+            creatingProsecutorId: 'other',
+            prosecutorId: 'other',
+            indictmentApproverId: 'other',
+            appealProsecutorId: 'user-1',
+          } as Case,
+          prosecutionUser('user-1'),
+        ),
+      ).toBe(false)
+    })
+
     it('returns false for prosecution user when neither matches', () => {
       const user = prosecutionUser('user-1')
       const theCase = {
@@ -647,6 +664,35 @@ describe('caseTable.utils', () => {
           defenceUser('2222222222'),
         ),
       ).toBe(false)
+    })
+
+    // A verdict list presents the verdict appeal as the row's appeal, and reads
+    // the events that say the prosecution appealed. The case-level check would
+    // pass on those for any prosecution user, but a verdict appeal is withdrawn
+    // per defendant on the case screen, never whole from a list.
+    it('returns false for a verdict appeal row even when the prosecution appealed', () => {
+      const row = {
+        type: CaseType.INDICTMENT,
+        appealSource: 'verdictAppealCase',
+        appeal: {
+          appealState: AppealCaseState.APPEALED,
+          appealEventLogs: [
+            {
+              eventType: AppealEventType.APPEALED,
+              userRole: UserRole.PROSECUTOR,
+              defendantId: 'defendant-1',
+            },
+          ],
+        },
+      } as unknown as Parameters<typeof canCancelAppeal>[0]
+
+      expect(canCancelAppeal(row, prosecutionUser('user-1'))).toBe(false)
+      expect(
+        canCancelAppeal(
+          { ...row, appealSource: 'appealCase' },
+          prosecutionUser('user-1'),
+        ),
+      ).toBe(true)
     })
 
     it('returns false once the appeal has been concluded', () => {

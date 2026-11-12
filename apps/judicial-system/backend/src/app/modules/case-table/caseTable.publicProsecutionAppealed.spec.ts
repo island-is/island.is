@@ -14,6 +14,7 @@ import {
   publicProsecutionIndictmentsAccessWhereOptions,
 } from './whereOptions/access'
 import { captureSql, initCaseTableModels } from './caseTable.sqlProbe'
+import type { CaseTableRowCase } from './caseTable.types'
 import {
   getAllIncludes,
   getAttributes,
@@ -237,18 +238,76 @@ describe('public prosecution appealed case list', () => {
     })
   })
 
-  // One row per case, unlike the office's list of the same name.
-  it('gives each case a single row', () => {
+  // One row per case, unlike the office's list of the same name - and that
+  // row is about the verdict appeal, which is what the columns read. A ruling
+  // appeal on the same case must not stand in for it.
+  it('gives each case a single row, about its verdict appeal', () => {
+    const { displayCases } = caseTableWhereOptions[
+      CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED
+    ](publicProsecutionUser)
+    const theCase = {
+      toJSON: () => ({
+        id: 'case_id',
+        defendants: [{ id: 'defendant_a' }, { id: 'defendant_b' }],
+        appealCase: { id: 'ruling_appeal_id' },
+        verdictAppealCase: { id: 'verdict_appeal_id' },
+      }),
+    } as unknown as repository.Case
+
+    const rows = displayCases?.([theCase])
+
+    expect(rows).toHaveLength(1)
+    expect(rows?.[0].appeal?.id).toBe('verdict_appeal_id')
+    expect(rows?.[0].appealSource).toBe('verdictAppealCase')
+  })
+
+  // "Mín mál" narrows to the appeals this user argues. The office brings
+  // indictments of its own, and having prosecuted one in the district court
+  // does not make its appeal theirs - the general rule would say it does.
+  it("counts a case as the user's only when they are its appeal prosecutor", () => {
+    const { isMyCase } = caseTableWhereOptions[
+      CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED
+    ](publicProsecutionUser)
+
     expect(
-      caseTableWhereOptions[
-        CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED
-      ](publicProsecutionUser).displayCases,
-    ).toBeUndefined()
+      isMyCase?.({
+        prosecutorId: 'another_prosecutor_id',
+        appealProsecutorId: publicProsecutionUser.id,
+      } as CaseTableRowCase),
+    ).toBe(true)
     expect(
-      caseTableWhereOptions[
-        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEALED
-      ](publicProsecutionUser).displayCases,
-    ).toBeDefined()
+      isMyCase?.({
+        creatingProsecutorId: publicProsecutionUser.id,
+        prosecutorId: publicProsecutionUser.id,
+        indictmentApproverId: publicProsecutionUser.id,
+        appealProsecutorId: 'another_prosecutor_id',
+      } as CaseTableRowCase),
+    ).toBe(false)
+  })
+
+  // The columns read the verdict appeal and what the court of appeals has
+  // attached to it. Each of those is a join the row query has to be able to
+  // build - an association the model maps do not name fails here, as it would
+  // for every user opening the list.
+  it('joins the verdict appeal and what the columns read off it', async () => {
+    const sql = flat(
+      await sqlForTableRows(
+        CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED,
+        publicProsecutionUser,
+      ),
+    )
+
+    expect(sql).toContain(
+      `LEFT OUTER JOIN "appeal_case" AS "verdictAppealCase" ON "Case"."id" = "verdictAppealCase"."case_id" AND "verdictAppealCase"."appeal_type" = 'VERDICT'`,
+    )
+    expect(sql).toContain(
+      'LEFT OUTER JOIN "user" AS "appealProsecutor" ON "Case"."appeal_prosecutor_id" = "appealProsecutor"."id"',
+    )
+    // "Mín mál" is decided on the row, so the assignment has to be selected -
+    // the join above names the column too, and proves nothing about that.
+    expect(sql).toContain(
+      '"Case"."appeal_prosecutor_id" AS "appealProsecutorId"',
+    )
   })
 
   // Search runs off the access options rather than the table's, so without

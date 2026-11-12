@@ -135,7 +135,9 @@ export class CaseTableService {
         caseId: c.id,
         appealCaseId: c.appeal?.id,
         defendantIds: c.defendants?.map((d: Defendant) => d.id),
-        isMyCase: isMyCase(c, user),
+        isMyCase: whereOptions.isMyCase
+          ? whereOptions.isMyCase(c)
+          : isMyCase(c, user),
         actionOnRowClick: getActionOnRowClick(c, user),
         contextMenuActions: getContextMenuActions(c, user),
         cells: caseTableCellKeys.map((k) =>

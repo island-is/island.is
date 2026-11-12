@@ -247,16 +247,58 @@ describe('public prosecution case tables', () => {
     expect(reviewed).toContain('indictmentRulingDecision')
   })
 
-  // The office's list of the same name is the one the columns were borrowed
-  // from, and the ticket leaves tidying them to a later one.
-  it('borrows the columns of the office list of the same name', () => {
+  it('titles the appealed list columns as the design does', () => {
+    expect(
+      caseTables[
+        CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED
+      ].columns.map((column) => column.title),
+    ).toEqual([
+      'Málsnúmer',
+      'Varnaraðili',
+      'Saksóknari',
+      'Áfrýjað af',
+      'Áfrýjað',
+      'Staða',
+      'Fyrirtaka',
+    ])
+  })
+
+  // The list is about the verdict appeal, so every appeal column has to read
+  // that one. The ruling appeal columns share titles with these - "Málsnúmer",
+  // "Áfrýjað af", "Staða" - so the titles alone would not catch a list showing
+  // the number or the state of the wrong appeal.
+  it('reads the verdict appeal on the appealed list, not the ruling appeal', () => {
+    const columnKeys =
+      caseTables[CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED]
+        .columnKeys
+
+    expect(columnKeys).toEqual([
+      'verdictAppealCaseNumber',
+      'defendants',
+      'appealProsecutor',
+      'verdictAppealAppellantTag',
+      'verdictAppealDate',
+      'verdictAppealProgress',
+      'verdictAppealCourtSession',
+    ])
+  })
+
+  // Every prosecutor at the office sees every appealed verdict, so the filter
+  // is how one of them finds the appeals that are theirs to argue. The two
+  // review lists are the user's own work already and have nothing to narrow.
+  it('offers the my cases filter on the appealed list only', () => {
     expect(
       caseTables[CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_APPEALED]
-        .columnKeys,
-    ).toEqual(
-      caseTables[CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEALED]
-        .columnKeys,
-    )
+        .hasMyCasesFilter,
+    ).toBe(true)
+    expect(
+      caseTables[CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_IN_REVIEW]
+        .hasMyCasesFilter,
+    ).toBe(false)
+    expect(
+      caseTables[CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_REVIEWED]
+        .hasMyCasesFilter,
+    ).toBe(false)
   })
 
   // The ordinary prosecutor's groups are spread into this user's, so adding a

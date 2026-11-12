@@ -1,4 +1,6 @@
 import {
+  AppealCaseState,
+  AppealCourtSessionType,
   AppealEventType,
   CaseFileCategory,
   CaseType,
@@ -12,9 +14,11 @@ import {
   appellantRepresentativeNationalIds,
   findAppealCaseOfCaseFile,
   hasStandingVerdictAppeal,
+  nextAppealCourtSession,
   standingVerdictAppellantIds,
   standingVerdictAppellants,
   userIsAppellant,
+  verdictAppealProgress,
 } from '../appealCase.helpers'
 
 const appealed = (fields: Partial<AppealEventLog> = {}): AppealEventLog =>
@@ -560,5 +564,164 @@ describe('standingVerdictAppellants', () => {
     ] as AppealEventLog[])
 
     expect(standingVerdictAppellants(appealCase)).toEqual([])
+  })
+})
+
+describe('verdict appeal progress', () => {
+  // Built from the clock: whether a session or a deadline is still ahead is the
+  // whole question, so fixed dates would pass until they were overtaken.
+  const now = new Date()
+  const daysFromNow = (days: number) =>
+    new Date(now.getTime() + days * 24 * 60 * 60 * 1000)
+
+  const session = (sessionType: AppealCourtSessionType, days: number) => ({
+    sessionType,
+    sessionDate: daysFromNow(days),
+  })
+  const deadline = (days: number) => ({ deadline: daysFromNow(days) })
+
+  const appealCase = (fields: Record<string, unknown> = {}): AppealCase =>
+    ({ appealState: AppealCaseState.APPEALED, ...fields } as AppealCase)
+
+  it('has no stage before the appeal has been sent to the court of appeals', () => {
+    expect(verdictAppealProgress(appealCase(), now)).toBeUndefined()
+  })
+
+  it('is sent once a summons has gone to the court of appeals', () => {
+    expect(
+      verdictAppealProgress(
+        appealCase({ sentAppealSummonses: [{ id: 'summons' }] }),
+        now,
+      ),
+    ).toBe('SENT')
+  })
+
+  it('is received once the court of appeals has numbered it', () => {
+    expect(
+      verdictAppealProgress(
+        appealCase({
+          sentAppealSummonses: [{ id: 'summons' }],
+          appealCaseNumber: '526/2026',
+        }),
+        now,
+      ),
+    ).toBe('RECEIVED')
+  })
+
+  it('is on statement deadlines while one is still running', () => {
+    expect(
+      verdictAppealProgress(
+        appealCase({
+          appealCaseNumber: '526/2026',
+          statementDeadlines: [deadline(-3), deadline(4)],
+        }),
+        now,
+      ),
+    ).toBe('STATEMENT_DEADLINES')
+  })
+
+  // The deadlines are a stage the appeal passes through, not a fact about it:
+  // once the last one is behind, the appeal is back to having been received.
+  it('falls back to received once every deadline has passed', () => {
+    expect(
+      verdictAppealProgress(
+        appealCase({
+          appealCaseNumber: '526/2026',
+          statementDeadlines: [deadline(-3), deadline(-2)],
+        }),
+        now,
+      ),
+    ).toBe('RECEIVED')
+  })
+
+  // A deadline is stored as the midnight its day starts on, which is already
+  // behind for the whole of that day - and the party has until the day ends.
+  it('counts a deadline that falls today as still running', () => {
+    const startOfToday = new Date(now)
+    startOfToday.setHours(0, 0, 0, 0)
+
+    expect(
+      verdictAppealProgress(
+        appealCase({
+          sentAppealSummonses: [{ id: 'summons' }],
+          statementDeadlines: [{ deadline: startOfToday }],
+        }),
+        now,
+      ),
+    ).toBe('STATEMENT_DEADLINES')
+  })
+
+  it('counts a deadline as passed once its day is over', () => {
+    const startOfYesterday = new Date(now)
+    startOfYesterday.setHours(0, 0, 0, 0)
+    startOfYesterday.setDate(startOfYesterday.getDate() - 1)
+
+    expect(
+      verdictAppealProgress(
+        appealCase({
+          sentAppealSummonses: [{ id: 'summons' }],
+          statementDeadlines: [{ deadline: startOfYesterday }],
+        }),
+        now,
+      ),
+    ).toBe('SENT')
+  })
+
+  it('is scheduled while a session is still ahead, deadlines or not', () => {
+    expect(
+      verdictAppealProgress(
+        appealCase({
+          appealCaseNumber: '526/2026',
+          statementDeadlines: [deadline(4)],
+          courtSessions: [session(AppealCourtSessionType.MAIN_HEARING, 10)],
+        }),
+        now,
+      ),
+    ).toBe('SCHEDULED')
+  })
+
+  it('does not count a session that has been held', () => {
+    expect(
+      verdictAppealProgress(
+        appealCase({
+          appealCaseNumber: '526/2026',
+          courtSessions: [session(AppealCourtSessionType.MAIN_HEARING, -2)],
+        }),
+        now,
+      ),
+    ).toBe('RECEIVED')
+  })
+
+  // None of the stages describes an appeal that is over, and the leftovers of
+  // its steps - a number, a session still in the calendar - would say otherwise.
+  it.each([AppealCaseState.COMPLETED, AppealCaseState.WITHDRAWN])(
+    'has no stage once the appeal is %s',
+    (appealState) => {
+      expect(
+        verdictAppealProgress(
+          appealCase({
+            appealState,
+            appealCaseNumber: '526/2026',
+            courtSessions: [session(AppealCourtSessionType.MAIN_HEARING, 10)],
+          }),
+          now,
+        ),
+      ).toBeUndefined()
+    },
+  )
+
+  it('picks the earliest session still ahead as the next one', () => {
+    const next = nextAppealCourtSession(
+      appealCase({
+        courtSessions: [
+          session(AppealCourtSessionType.VERDICT, 30),
+          session(AppealCourtSessionType.PREPARATORY_HEARING, -5),
+          session(AppealCourtSessionType.MAIN_HEARING, 10),
+        ],
+      }),
+      now,
+    )
+
+    expect(next?.sessionType).toBe(AppealCourtSessionType.MAIN_HEARING)
   })
 })
