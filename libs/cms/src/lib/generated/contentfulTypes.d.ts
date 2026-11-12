@@ -4356,6 +4356,9 @@ export interface IProjectPageFields {
 
   /** Alert Banner */
   alertBanner?: IAlertBanner | undefined
+
+  /** Plausible Tracking Domain */
+  trackingDomain?: string | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {
