@@ -14,5 +14,6 @@ export const testLawyers: LawyerRegistryData[] = [
     phoneNumber: '0000000',
     practice: 'Test Lögmannsstofa',
     isLitigator: true,
+    hasCourtOfAppealsRights: true,
   },
 ]
