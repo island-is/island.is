@@ -1055,7 +1055,7 @@ const linkedCaseCivilClaimantAccessAttributes: (keyof CivilClaimant)[] = [
 const normalizeNationalId = (nationalId: string): string =>
   nationalId.replace(/-/g, '')
 
-// District or Landsréttur confirmation for the defence user on a linked case.
+// District or court of appeals confirmation for the defence user on a linked case.
 // Waived appeal appointments and removed appeal spokespersons stay out, matching
 // Defendant.isConfirmedAppealDefenderOfDefendant /
 // CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant.
@@ -1166,7 +1166,7 @@ const getLinkedCaseCivilClaimantsInclude = (
 
 // The case graph a limited access user is served. A defence user only ever
 // sees the parties they act for on the cases linked to this one (district or
-// Landsréttur confirmation), so their national id - stored without a separator -
+// court of appeals confirmation), so their national id - stored without a separator -
 // narrows those joins; any other caller reads the links unfiltered.
 export const getLimitedAccessCaseInclude = (
   defenceUserNationalId?: string,
@@ -1573,7 +1573,7 @@ export const getLimitedAccessCaseInclude = (
           // A split case takes the civil claimants that applied to the defendant
           // who left with it, so a spokesperson can be a confirmed party here.
           // The attributes are the ones that decide whether they may open it
-          // (district or Landsréttur confirmation).
+          // (district or court of appeals confirmation).
           model: CivilClaimant,
           as: 'civilClaimants',
           attributes: linkedCaseCivilClaimantAccessAttributes,
