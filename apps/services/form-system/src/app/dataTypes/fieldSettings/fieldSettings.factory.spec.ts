@@ -3,6 +3,33 @@ import { validateSync } from 'class-validator'
 import { FieldSettingsFactory } from './fieldSettings.factory'
 import { FieldSettings } from './fieldSettings.model'
 
+it.each([{ fieldsToSum: [] }, { fieldsToSum: ['first', 'second'] }])(
+  'preserves selected currency field IDs: $fieldsToSum',
+  ({ fieldsToSum }) => {
+    const settings = Object.assign(new FieldSettings(), { fieldsToSum })
+
+    expect(
+      FieldSettingsFactory.getClass(FieldTypesEnum.ISK_SUMBOX, settings)
+        ?.fieldsToSum,
+    ).toEqual(fieldsToSum)
+    expect(validateSync(settings)).toEqual([])
+    expect(
+      FieldSettingsFactory.getClass(FieldTypesEnum.ISK_NUMBERBOX, settings),
+    ).not.toHaveProperty('fieldsToSum')
+  },
+)
+
+it.each([{ fieldsToSum: 'first' }, { fieldsToSum: [123] }])(
+  'rejects invalid currency field IDs: $fieldsToSum',
+  ({ fieldsToSum }) => {
+    const settings = Object.assign(new FieldSettings(), { fieldsToSum })
+
+    expect(validateSync(settings)).toEqual([
+      expect.objectContaining({ property: 'fieldsToSum' }),
+    ])
+  },
+)
+
 it('preserves amount limits for currency number fields', () => {
   const settings = Object.assign(new FieldSettings(), {
     minAmount: 0,

@@ -136,7 +136,9 @@ export const BaseInput = () => {
             isSearchable
             value={defaultOption}
             isDisabled={
-              selectStatus === NavbarSelectStatus.NORMAL || isReadOnly
+              selectStatus === NavbarSelectStatus.NORMAL ||
+              selectStatus === NavbarSelectStatus.SUM_FIELDS ||
+              isReadOnly
             }
             onChange={(e: SingleValue<Option<string>>) => {
               controlDispatch({

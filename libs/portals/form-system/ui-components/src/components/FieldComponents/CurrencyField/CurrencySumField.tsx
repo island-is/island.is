@@ -32,6 +32,7 @@ export const CurrencySumField = ({
   const label = item?.name?.[lang]
   const { control, setValue } = useFormContext()
   const isPartOfMultiset = item.isPartOfMultiset === true
+  const fieldsToSum = item.fieldSettings?.fieldsToSum
   const fieldName = isPartOfMultiset ? `${item.id}.${valueIndex}` : item.id
 
   const sum = useMemo(() => {
@@ -52,13 +53,15 @@ export const CurrencySumField = ({
       }
     }
 
-    const fieldsToSum = isPartOfMultiset
+    const selectedFields = fieldsToSum?.length
+      ? fields.filter((field) => field && fieldsToSum.includes(field.id))
+      : isPartOfMultiset
       ? fields.slice(previousSumFieldIndex + 1, currentSumFieldIndex)
       : fields
 
     let hasValue = false
 
-    const total = fieldsToSum.reduce((total, field) => {
+    const total = selectedFields.reduce((total, field) => {
       if (field?.fieldType !== FieldTypesEnum.ISK_NUMBERBOX) return total
       if (isPartOfMultiset && field.isPartOfMultiset === false) return total
 
@@ -85,7 +88,13 @@ export const CurrencySumField = ({
     }, 0)
 
     return hasValue ? total : ''
-  }, [currentScreen?.data?.fields, item.id, isPartOfMultiset, valueIndex])
+  }, [
+    currentScreen?.data?.fields,
+    item.id,
+    fieldsToSum,
+    isPartOfMultiset,
+    valueIndex,
+  ])
 
   const formattedSum =
     sum === '' ? '' : sum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')

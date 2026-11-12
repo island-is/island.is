@@ -39,13 +39,18 @@ const currencyField = (
   values: values.map((iskNumber) => ({ json: { iskNumber } })),
 })
 
-const renderSum = (isPartOfMultiset: boolean, valueIndex = 0) => {
+const renderSum = (
+  isPartOfMultiset: boolean,
+  valueIndex = 0,
+  fieldsToSum?: string[] | null,
+) => {
   const dispatch = jest.fn()
   const item: FormSystemField = {
     id: 'sum',
     name: { is: 'Total' },
     fieldType: FieldTypesEnum.ISK_SUMBOX,
     isPartOfMultiset,
+    fieldSettings: { fieldsToSum },
   }
   const fields = [
     currencyField('before-previous-sum', ['9.000', '8.000']),
@@ -106,3 +111,47 @@ it('sums every currency field on the screen for sum fields outside the multiset'
     payload: { id: 'sum', value: '34.200', valueIndex: 0 },
   })
 })
+
+it.each([
+  { isPartOfMultiset: false, valueIndex: 0, expected: '30.000' },
+  { isPartOfMultiset: true, valueIndex: 0, expected: '16.000' },
+  { isPartOfMultiset: true, valueIndex: 1, expected: '14.000' },
+])(
+  'sums selected fields regardless of position with multiset=$isPartOfMultiset, index=$valueIndex',
+  ({ isPartOfMultiset, valueIndex, expected }) => {
+    const { dispatch } = renderSum(isPartOfMultiset, valueIndex, [
+      'before-previous-sum',
+      'after-sum',
+      'previous-sum',
+      'missing-field',
+    ])
+
+    expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe(
+      `${expected} kr.`,
+    )
+    expect(dispatch).toHaveBeenCalledWith({
+      type: 'SET_CURRENCY',
+      payload: { id: 'sum', value: expected, valueIndex },
+    })
+  },
+)
+
+it.each([
+  { fieldsToSum: [], isPartOfMultiset: false, expected: '34.200' },
+  { fieldsToSum: null, isPartOfMultiset: false, expected: '34.200' },
+  { fieldsToSum: [], isPartOfMultiset: true, expected: '1.300' },
+  { fieldsToSum: null, isPartOfMultiset: true, expected: '1.300' },
+])(
+  'uses default sums for fieldsToSum=$fieldsToSum with multiset=$isPartOfMultiset',
+  ({ fieldsToSum, isPartOfMultiset, expected }) => {
+    const { dispatch } = renderSum(isPartOfMultiset, 0, fieldsToSum)
+
+    expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe(
+      `${expected} kr.`,
+    )
+    expect(dispatch).toHaveBeenCalledWith({
+      type: 'SET_CURRENCY',
+      payload: { id: 'sum', value: expected, valueIndex: 0 },
+    })
+  },
+)

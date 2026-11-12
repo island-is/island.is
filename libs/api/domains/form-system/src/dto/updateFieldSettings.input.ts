@@ -34,6 +34,9 @@ export class UpdateFieldSettingsInput {
   @Field(() => Int, { nullable: true })
   maxAmount?: number
 
+  @Field(() => [String], { nullable: true })
+  fieldsToSum?: string[] | null
+
   @Field(() => Int, { nullable: true })
   year?: number
 
