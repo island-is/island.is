@@ -413,6 +413,48 @@ describe('public prosecution appealed verdict cell generators', () => {
 
     // A verdict appealed before appeal cases were kept is on the list with no
     // appeal case at all, so the row has to answer from what put it there.
+    // The review decision stands in for a prosecution appeal that left no
+    // event. Here it left two, and the later one withdrew it: the decision
+    // still saying "appeal" must not put the prosecution back on the row.
+    it('does not restore a withdrawn prosecution appeal from the review decision', () => {
+      const c = row({
+        defendants: [
+          {
+            id: 'defendant_id',
+            indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
+            verdicts: [{ appealDate: new Date('2026-08-11T00:00:00.000Z') }],
+          },
+        ],
+        appeal: {
+          appealEventLogs: [
+            appealEvent(
+              AppealEventType.APPEALED,
+              UserRole.DEFENDER,
+              '2026-08-20T10:00:00.000Z',
+            ),
+            appealEvent(
+              AppealEventType.APPEALED,
+              UserRole.PROSECUTOR,
+              '2026-08-05T10:00:00.000Z',
+            ),
+            appealEvent(
+              AppealEventType.APPEAL_WITHDRAWN,
+              UserRole.PROSECUTOR,
+              '2026-08-25T10:00:00.000Z',
+            ),
+          ],
+        },
+      })
+
+      expect(
+        caseTableCellGenerators.verdictAppealAppellantTag.generate(c, user)
+          .value,
+      ).toEqual({ color: 'rose', text: 'Ákærði' })
+      expect(
+        caseTableCellGenerators.verdictAppealDate.generate(c, user).value,
+      ).toEqual({ str: '11.8.2026' })
+    })
+
     describe('without an appeal case', () => {
       it('reads a prosecution appeal off the review decision', () => {
         const c = row({

@@ -923,7 +923,18 @@ const getVerdictAppealSummary = (
       )
 
     const prosecutionEvent = standingEvent('PROSECUTION')
+    // The decision only answers where no event does. Once the prosecution's
+    // appeal regarding this defendant is on record, the record decides - a
+    // decision left at "appeal" must not bring a withdrawn appeal back.
+    const hasProsecutionAppealOnRecord = (c.appeal?.appealEventLogs ?? []).some(
+      (eventLog) =>
+        eventLog.defendantId === defendant.id &&
+        verdictAppellantSide(eventLog.userRole) === 'PROSECUTION' &&
+        (eventLog.eventType === AppealEventType.APPEALED ||
+          eventLog.eventType === AppealEventType.APPEAL_WITHDRAWN),
+    )
     const isAppealedByReviewDecision =
+      !hasProsecutionAppealOnRecord &&
       defendant.indictmentReviewDecision === IndictmentCaseReviewDecision.APPEAL
 
     if (prosecutionEvent || isAppealedByReviewDecision) {
