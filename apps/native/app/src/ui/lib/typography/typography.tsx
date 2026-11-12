@@ -1,5 +1,11 @@
 import React from 'react'
-import { Text, TextProps, TextStyle, useWindowDimensions } from 'react-native'
+import {
+  StyleSheet,
+  Text,
+  TextProps,
+  TextStyle,
+  useWindowDimensions,
+} from 'react-native'
 import { fontByWeight, useTokenColor } from '../../utils'
 
 export const variants = {
@@ -96,15 +102,25 @@ export function Typography({
   const tokenColor = useTokenColor()
   const scale = useFontScale(maxFontSizeMultiplier, allowFontScaling)
   const styles = (variants as Record<string, TextStyle>)[variant]
+  // Text metrics set through `style` still win, but are scaled here too, since
+  // the native scaling is turned off.
+  const {
+    fontSize: styleFontSize,
+    lineHeight: styleLineHeight,
+    letterSpacing: styleLetterSpacing,
+    ...restStyle
+  }: TextStyle = StyleSheet.flatten(style) ?? {}
   const fontFamily = fontByWeight(weight || styles.fontWeight || '400')
   const baseFontSize = size ?? styles.fontSize ?? 15
   const variantLineHeight = (styles.lineHeight ?? 1) / (styles.fontSize ?? 1)
   const baseLineHeight =
+    styleLineHeight ??
     overwriteLineHeight ??
     (size ? baseFontSize * variantLineHeight : styles.lineHeight)
-  const fontSize = baseFontSize * scale
+  const baseLetterSpacing = styleLetterSpacing ?? styles.letterSpacing
+  const fontSize = (styleFontSize ?? baseFontSize) * scale
   const lineHeight = baseLineHeight && baseLineHeight * scale
-  const letterSpacing = styles.letterSpacing && styles.letterSpacing * scale
+  const letterSpacing = baseLetterSpacing && baseLetterSpacing * scale
   const textColor = color ?? tokenColor((t) => t.foreground.primary)
 
   return (
@@ -121,7 +137,7 @@ export function Typography({
           letterSpacing,
           fontWeight: weight ?? styles.fontWeight,
         },
-        style,
+        restStyle,
       ]}
     >
       {children}

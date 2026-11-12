@@ -222,8 +222,13 @@ export function Button({
   const isUtility = variant === 'utility' || variant === 'utilityFilled'
   const smallPadding =
     size === 'small' ? smallPaddingVertical[variant] : undefined
-  // Capped at 150 % so the label doesn't outgrow the button.
-  const fontScale = useFontScale(1.5)
+  // Capped at 150 % so the label doesn't outgrow the button. textProps can
+  // lower the cap or turn scaling off.
+  const textCap = textProps?.maxFontSizeMultiplier
+  const fontScale = useFontScale(
+    textCap && textCap >= 1 ? Math.min(textCap, 1.5) : 1.5,
+    textProps?.allowFontScaling,
+  )
   const { fontSize, lineHeight, letterSpacing } = {
     ...textStyles[variant],
     ...textStyle,
