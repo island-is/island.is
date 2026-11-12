@@ -1435,10 +1435,6 @@ export const messages = {
         defaultMessage:
           'Meðaltal viðbótarlauna og aukagreiðslna á mánuði, eftir kyni. Krónur á mánuði — ekki tímakaup, og ekki deilt með greiddum stundum.',
       },
-      genderHeader: {
-        id: 'doe.sr.application:salaryAnalysis.components.genderHeader',
-        defaultMessage: 'Kyn',
-      },
       additionalHeader: {
         id: 'doe.sr.application:salaryAnalysis.components.additionalHeader',
         defaultMessage: 'Viðbótarlaun',

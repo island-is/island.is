@@ -33,7 +33,7 @@ import {
   navigationAnswersForAnalysisResult,
   type AnalysisExternalData,
 } from '../../utils/salaryAnalysisNavigation'
-import { PayComponentsTable } from './PayComponentsTable'
+import { PayComponentsChart } from './PayComponentsChart'
 import { PayDispersionTable } from './PayDispersionTable'
 import { StatisticCard } from './StatisticsCard'
 import { SalaryDistributionChart } from './SalaryDistributionChart'
@@ -599,7 +599,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
         payDispersion={result?.payDispersion}
       />
 
-      <PayComponentsTable data={payComponents} />
+      <PayComponentsChart data={payComponents} />
 
       <PayDispersionTable payDispersion={result?.payDispersion} />
     </Box>
