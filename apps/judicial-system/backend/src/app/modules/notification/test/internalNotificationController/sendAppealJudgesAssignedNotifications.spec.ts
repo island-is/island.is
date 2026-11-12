@@ -4,6 +4,7 @@ import { EmailService } from '@island.is/email-service'
 
 import {
   AppealCaseNotificationType,
+  CaseType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -24,6 +25,7 @@ interface Then {
 type GivenWhenThen = (
   userIds?: string[],
   judges?: ReturnType<typeof createTestUsers>[string][],
+  caseType?: CaseType,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal judges assigned notifications', () => {
@@ -52,6 +54,7 @@ describe('InternalNotificationController - Send appeal judges assigned notificat
     givenWhenThen = async (
       userIds?: string[],
       judges = [judge1, judge2, judge3],
+      caseType = CaseType.CUSTODY,
     ) => {
       const then = {} as Then
 
@@ -84,6 +87,7 @@ describe('InternalNotificationController - Send appeal judges assigned notificat
           appealCaseId,
           {
             id: caseId,
+            type: caseType,
             appealCase,
           } as Case,
           appealCase,
@@ -183,6 +187,30 @@ describe('InternalNotificationController - Send appeal judges assigned notificat
           to: [{ name: judge3.name, address: judge3.email }],
           subject: `Úthlutun máls nr. ${appealCaseNumber}`,
           html: `Landsréttur hefur skráð þig sem dómara í máli nr. ${appealCaseNumber}. Dómsformaður er ${judge1.name}. Þú getur nálgast yfirlit málsins á <a href="http://localhost:4200/landsrettur/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
+        }),
+      )
+      expect(then.result).toEqual({ delivered: true })
+    })
+  })
+
+  describe('a verdict appeal', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        [judge1.id],
+        [judge1, judge2, judge3],
+        CaseType.INDICTMENT,
+      )
+    })
+
+    it('should link to the overview of the appeal, not of the case', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: judge1.name, address: judge1.email }],
+          subject: `Úthlutun máls nr. ${appealCaseNumber}`,
+          html: `Landsréttur hefur skráð þig sem dómsformann í máli nr. ${appealCaseNumber}. Þú getur nálgast yfirlit málsins á <a href="http://localhost:4200/landsrettur/afryjun/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt.</a>`,
         }),
       )
       expect(then.result).toEqual({ delivered: true })
