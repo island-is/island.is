@@ -122,3 +122,20 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       max: 10,
       default: 2,
     })
+    .gracefulShutdown({
+      // The preStop sleep keeps the pod serving while it is removed from the
+      // service endpoints, so a scale-down or rollout does not refuse requests
+      // still routed to it. Prod gets a longer drain window for slow requests.
+      dev: {
+        terminationGracePeriodSeconds: 30,
+        preStopSleepSeconds: 10,
+      },
+      staging: {
+        terminationGracePeriodSeconds: 30,
+        preStopSleepSeconds: 10,
+      },
+      prod: {
+        terminationGracePeriodSeconds: 60,
+        preStopSleepSeconds: 10,
+      },
+    })
