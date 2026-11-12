@@ -3,7 +3,7 @@ import { ImageSourcePropType } from 'react-native'
 import styled from 'styled-components/native'
 import { useDateTimeFormatter } from '../../../hooks/use-date-time-formatter'
 import { Spacing, theme } from '../../utils'
-import { dynamicColor } from '../../utils/dynamic-color'
+import { token } from '../../utils/dynamic-color'
 import { Label } from '../label/label'
 import { Skeleton } from '../skeleton/skeleton'
 import { Typography } from '../typography/typography'
@@ -15,13 +15,7 @@ const Host = styled.View`
 `
 
 const LogoBackground = styled.View`
-  background-color: ${dynamicColor(
-    (props) => ({
-      dark: props.theme.color.white,
-      light: props.theme.color.blue100,
-    }),
-    true,
-  )};
+  background-color: ${token((t) => t.background.brandMinimal)};
   height: 42px;
   width: 42px;
   justify-content: center;
@@ -150,7 +144,10 @@ export function DetailHeader({
                 )}
                 {category && (
                   <>
-                    <Typography variant="body3" color={theme.color.blue200}>
+                    <Typography
+                      variant="body3"
+                      color={theme.tokens.border.primary}
+                    >
                       |
                     </Typography>
                     <Typography variant="body3">{category}</Typography>

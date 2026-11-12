@@ -105,6 +105,21 @@ describe('CaseRepositoryService - case reads', () => {
       ).toBeDefined()
     })
 
+    // MergedCaseExistsGuard swaps request.case onto a merged child; defence
+    // visibility then reads defendant.policeCaseNumbers. Those come from this
+    // include — without it the filter treats assignments as empty and opens
+    // every police case number on the merged case.
+    it('should load police case number assignments for merged defendants', () => {
+      const mergedDefendants = included(
+        included(findOneOptions().include, 'mergedCases')?.include,
+        'defendants',
+      )
+
+      expect(
+        included(mergedDefendants?.include, 'caseDefendantPoliceCaseNumbers'),
+      ).toBeDefined()
+    })
+
     // The statement deadline route reads the party's current deadline off the
     // verdict appeal this load carries. Without the include every call would be
     // a first deadline, and the second one for a party would die on the
@@ -462,24 +477,50 @@ describe('CaseRepositoryService - case reads', () => {
         const mergeCase = included(include, 'mergeCase')?.include
         const mergedCases = included(include, 'mergedCases')?.include
 
-        expect(included(mergeCase, 'defendants')?.where).toEqual({
-          defenderNationalId: '1234567890',
-          isDefenderChoiceConfirmed: true,
-        })
-        expect(included(mergeCase, 'civilClaimants')?.where).toEqual({
-          hasSpokesperson: true,
-          spokespersonNationalId: '1234567890',
-          isSpokespersonConfirmed: true,
-        })
-        expect(included(mergedCases, 'defendants')?.where).toEqual({
-          defenderNationalId: '1234567890',
-          isDefenderChoiceConfirmed: true,
-        })
-        expect(included(mergedCases, 'civilClaimants')?.where).toEqual({
-          hasSpokesperson: true,
-          spokespersonNationalId: '1234567890',
-          isSpokespersonConfirmed: true,
-        })
+        const defendantWhere = {
+          [Op.or]: [
+            {
+              defenderNationalId: '1234567890',
+              isDefenderChoiceConfirmed: true,
+            },
+            {
+              appealDefenderNationalId: '1234567890',
+              isAppealDefenderConfirmed: true,
+              [Op.or]: [
+                { isAppealDefenderWaived: false },
+                { isAppealDefenderWaived: { [Op.is]: null } },
+              ],
+            },
+          ],
+        }
+        const civilClaimantWhere = {
+          [Op.or]: [
+            {
+              hasSpokesperson: true,
+              spokespersonNationalId: '1234567890',
+              isSpokespersonConfirmed: true,
+            },
+            {
+              appealSpokespersonNationalId: '1234567890',
+              isAppealSpokespersonConfirmed: true,
+              [Op.or]: [
+                { hasAppealSpokesperson: true },
+                { hasAppealSpokesperson: { [Op.is]: null } },
+              ],
+            },
+          ],
+        }
+
+        expect(included(mergeCase, 'defendants')?.where).toEqual(defendantWhere)
+        expect(included(mergeCase, 'civilClaimants')?.where).toEqual(
+          civilClaimantWhere,
+        )
+        expect(included(mergedCases, 'defendants')?.where).toEqual(
+          defendantWhere,
+        )
+        expect(included(mergedCases, 'civilClaimants')?.where).toEqual(
+          civilClaimantWhere,
+        )
       })
 
       it('should read the linked case defendants the same way as before', () => {
@@ -498,12 +539,18 @@ describe('CaseRepositoryService - case reads', () => {
           'id',
           'defenderNationalId',
           'isDefenderChoiceConfirmed',
+          'appealDefenderNationalId',
+          'isAppealDefenderConfirmed',
+          'isAppealDefenderWaived',
         ])
         expect(mergeCaseDefendants?.separate).toBeUndefined()
         expect(mergedCaseDefendants?.attributes).toEqual([
           'id',
           'defenderNationalId',
           'isDefenderChoiceConfirmed',
+          'appealDefenderNationalId',
+          'isAppealDefenderConfirmed',
+          'isAppealDefenderWaived',
           'isSentToPrisonAdmin',
         ])
         expect(mergedCaseDefendants?.separate).toBe(true)

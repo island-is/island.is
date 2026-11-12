@@ -118,6 +118,9 @@ export const appealCorrectionLock = (
 // more than three are stored and shown as they are.
 export const APPEAL_JUDGE_COUNT = 3
 
+// The most judges the court of appeals seats on one case.
+export const MAX_APPEAL_JUDGE_COUNT = 5
+
 export interface AppealJudgeFields<U> {
   displayOrder?: number | null
   userId?: string | null
@@ -158,6 +161,11 @@ export const getAppealJudgeUserIds = (
   getOrderedAppealJudges(appealCase)
     .map((judge) => judge.userId ?? judge.user?.id)
     .filter((id): id is string => Boolean(id))
+
+// Whether two benches are the same judges in the same order. A reordered
+// bench changes who presides, so it counts as a change.
+export const isSameAppealBench = (a: string[], b: string[]): boolean =>
+  a.length === b.length && a.every((id, index) => id === b[index])
 
 // Whether the bench is complete: at least APPEAL_JUDGE_COUNT judges are
 // registered. Counts rows rather than loaded users so an unloaded user

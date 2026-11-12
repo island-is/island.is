@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -18,10 +18,16 @@ export class ServiceInterruptionBannerService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  get(): Promise<ServiceInterruptionBanner> {
+  async get(): Promise<ServiceInterruptionBanner> {
     this.logger.debug('Getting service interruption banner settings')
 
-    return this.serviceInterruptionBannerRepositoryService.find()
+    const banner = await this.serviceInterruptionBannerRepositoryService.find()
+
+    if (!banner) {
+      throw new NotFoundException('Service interruption banner not found')
+    }
+
+    return banner
   }
 
   update(

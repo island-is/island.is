@@ -28,4 +28,7 @@ fragment CivilClaimantSpokespersonFields on CivilClaimant {
   hasSpokesperson
   spokespersonNationalId
   isSpokespersonConfirmed
+  hasAppealSpokesperson
+  appealSpokespersonNationalId
+  isAppealSpokespersonConfirmed
 }

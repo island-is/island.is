@@ -9,7 +9,7 @@ import {
   StatusMessage,
   TextField,
   Typography,
-  useDynamicColor,
+  useTokenColor,
 } from '@/ui'
 import externalLinkIcon from '@/assets/icons/external-link.png'
 import {
@@ -52,7 +52,7 @@ export default function VehicleMileageScreen() {
   const { id } = params
 
   const intl = useIntl()
-  const dynamicColor = useDynamicColor()
+  const tokenColor = useTokenColor()
   const { openBrowser } = useBrowser()
   const [input, setInput] = useState('')
 
@@ -307,10 +307,9 @@ export default function VehicleMileageScreen() {
                 placeholder={intl.formatMessage({
                   id: 'vehicle.mileage.inputPlaceholder',
                 })}
-                placeholderTextColor={dynamicColor({
-                  light: '#999999',
-                  dark: '#999999',
-                })}
+                placeholderTextColor={tokenColor(
+                  (t) => t.foreground.primaryMinimal,
+                )}
                 label={intl.formatMessage({
                   id: 'vehicle.mileage.inputLabel',
                 })}
