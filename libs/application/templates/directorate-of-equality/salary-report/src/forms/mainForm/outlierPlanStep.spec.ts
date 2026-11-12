@@ -1,20 +1,14 @@
-import type { Application, FormValue } from '@island.is/application/types'
+import { mergeAnswers, shouldShowFormItem } from '@island.is/application/core'
+import {
+  FormItemTypes,
+  type ExternalData,
+  type FormItem,
+  type FormValue,
+  type SubmitField,
+} from '@island.is/application/types'
 import type { SalaryAnalysisResponseDto } from '@island.is/clients/directorate-of-equality'
-// The shell's reducer is not part of ui-shell's public API, but it is what
-// decides where Continue lands, so the spec drives the real thing.
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import {
-  ApplicationReducer,
-  initializeReducer,
-} from '../../../../../../ui-shell/src/reducer/ApplicationFormReducer'
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { ActionTypes } from '../../../../../../ui-shell/src/reducer/ReducerTypes'
-import { dataSchema } from '../../lib/dataSchema'
 import { ScreenIds } from '../../utils/constants'
-import {
-  navigationAnswersForAnalysisResult,
-  salaryAnalysisOutlierPlanIsReviewed,
-} from '../../utils/salaryAnalysisNavigation'
+import { navigationAnswersForAnalysisResult } from '../../utils/salaryAnalysisNavigation'
 import { MainForm } from './index'
 
 // Hoisted above the imports by babel-jest. The generated logo module is not
@@ -32,93 +26,109 @@ const analysis = (outlierCount: number): SalaryAnalysisResponseDto =>
     })),
   } as unknown as SalaryAnalysisResponseDto)
 
-// The shell as a page load seeds it: externalData is copied in once here and
-// nothing the template does afterwards replaces it.
-const loadPage = (
-  storedAnalysis: SalaryAnalysisResponseDto | undefined,
+type Screen = { id: string; isNavigable: boolean; item: FormItem }
+
+const childrenOf = (item: FormItem): FormItem[] =>
+  (item as { children?: FormItem[] }).children ?? []
+
+// The form's screens in order, navigable by the rules the form shell applies
+// (ui-shell's convertFormToScreens, which cannot be imported here without a
+// dependency cycle): every enclosing section and sub-section has to be shown,
+// and a multi-field needs at least one visible child.
+const screensOf = (
   answers: FormValue,
-) =>
-  initializeReducer({
-    application: {
-      id: 'application-id',
-      state: 'draft',
-      answers,
-      externalData: storedAnalysis
-        ? { salaryAnalysisResult: { status: 'success', data: storedAnalysis } }
-        : {},
-    } as unknown as Application,
-    nationalRegistryId: '0101302989',
-    dataSchema,
-    form: MainForm,
-    activeScreen: 0,
-    screens: [],
-    sections: [],
-    historyReason: 'initial',
-    user: null,
-  })
+  externalData: ExternalData,
+): Screen[] => {
+  const shown = (item: FormItem) =>
+    shouldShowFormItem(item, answers, externalData, null)
+  const walk = (item: FormItem, parentNavigable: boolean): Screen[] => {
+    const navigable = parentNavigable && shown(item)
+    if (
+      item.type === FormItemTypes.SECTION ||
+      item.type === FormItemTypes.SUB_SECTION
+    ) {
+      return childrenOf(item).flatMap((child) => walk(child, navigable))
+    }
+    const isNavigable =
+      item.type === FormItemTypes.MULTI_FIELD
+        ? navigable && childrenOf(item).some(shown)
+        : navigable
+    return [{ id: item.id ?? '', isNavigable, item }]
+  }
+  return MainForm.children.flatMap((child) => walk(child, true))
+}
+
+// The form as a page load leaves it: the shell keeps this externalData for
+// the rest of the visit, and only the answers move.
+const pageLoadExternalData = (
+  storedAnalysis: SalaryAnalysisResponseDto | undefined,
+): ExternalData =>
+  (storedAnalysis
+    ? { salaryAnalysisResult: { status: 'success', data: storedAnalysis } }
+    : {}) as unknown as ExternalData
 
 // What the results screen does when its re-run comes back: mirror the flags
-// into the answers (ANSWER), then the applicant presses Continue
-// (ANSWER_AND_GO_NEXT_SCREEN with the same values set on the form).
+// into the answers, then the applicant presses Continue, which lands on the
+// next navigable screen. Reads the submit button's condition off the form.
 const reanalyseAndContinue = (
-  state: ReturnType<typeof loadPage>,
+  storedAnalysis: SalaryAnalysisResponseDto | undefined,
+  persistedAnswers: FormValue,
   freshAnalysis: SalaryAnalysisResponseDto,
 ) => {
-  const flags = navigationAnswersForAnalysisResult(freshAnalysis, {
-    resetReviewed: true,
-  })
-  let next = ApplicationReducer(state, {
-    type: ActionTypes.GO_TO_SCREEN,
-    payload: ScreenIds.analysisOverview,
-  })
-  expect(next.screens[next.activeScreen].id).toBe(ScreenIds.analysisOverview)
-  next = ApplicationReducer(next, { type: ActionTypes.ANSWER, payload: flags })
-  next = ApplicationReducer(next, {
-    type: ActionTypes.ANSWER_AND_GO_NEXT_SCREEN,
-    payload: flags,
-  })
-  return {
-    landedOn: next.screens[next.activeScreen].id,
-    submitAllowed: salaryAnalysisOutlierPlanIsReviewed(
-      next.application.answers,
-      next.application.externalData,
-    ),
-  }
+  const externalData = pageLoadExternalData(storedAnalysis)
+  const answers = mergeAnswers(
+    persistedAnswers,
+    navigationAnswersForAnalysisResult(freshAnalysis, { resetReviewed: true }),
+  )
+  const screens = screensOf(answers, externalData)
+  const results = screens.findIndex((s) => s.id === ScreenIds.analysisOverview)
+  expect(results).toBeGreaterThanOrEqual(0)
+  const landedOn = screens.slice(results + 1).find((s) => s.isNavigable)?.id
+
+  const overview = screens.find((s) => s.id === 'overviewMultiField')
+  const submit = childrenOf(overview?.item as FormItem).find(
+    (field) => field.id === 'submit',
+  ) as SubmitField
+  const submitCondition = submit.actions[0].condition
+  const submitAllowed =
+    typeof submitCondition === 'function'
+      ? submitCondition(answers, externalData, null)
+      : true
+
+  return { landedOn, submitAllowed }
 }
 
 describe('MainForm: the improvement plan step after a page load', () => {
   it('shows the plan step when edits after the page load create outliers', () => {
-    const shell = loadPage(analysis(0), {
+    const persisted = {
       salaryAnalysis: {
         hasMinimumSetOutliers: false,
         outlierPlanReviewed: false,
       },
-    })
+    }
 
-    expect(reanalyseAndContinue(shell, analysis(3))).toEqual({
+    expect(reanalyseAndContinue(analysis(0), persisted, analysis(3))).toEqual({
       landedOn: ScreenIds.improvementPlan,
       submitAllowed: false,
     })
   })
 
   it('skips the plan step when edits after the page load remove every outlier', () => {
-    const shell = loadPage(analysis(2), {
+    const persisted = {
       salaryAnalysis: {
         hasMinimumSetOutliers: true,
         outlierPlanReviewed: true,
       },
-    })
+    }
 
-    expect(reanalyseAndContinue(shell, analysis(0))).toEqual({
+    expect(reanalyseAndContinue(analysis(2), persisted, analysis(0))).toEqual({
       landedOn: 'overviewMultiField',
       submitAllowed: true,
     })
   })
 
   it('still shows the plan step on a first visit with no stored analysis', () => {
-    const shell = loadPage(undefined, {})
-
-    expect(reanalyseAndContinue(shell, analysis(3))).toEqual({
+    expect(reanalyseAndContinue(undefined, {}, analysis(3))).toEqual({
       landedOn: ScreenIds.improvementPlan,
       submitAllowed: false,
     })
