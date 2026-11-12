@@ -317,27 +317,6 @@ export const BaseInput = () => {
             </Column>
           </Row>
         )}
-      {currentItem.fieldType === FieldTypesEnum.ISK_NUMBERBOX && (
-        <Row>
-          <Column span="10/10">
-            <Checkbox
-              label="Ekki taka með í samtölu"
-              checked={currentItem.fieldSettings?.notIncludedInSumbox ?? false}
-              disabled={isReadOnly}
-              onChange={(e) =>
-                controlDispatch({
-                  type: 'SET_FIELD_SETTINGS',
-                  payload: {
-                    property: 'notIncludedInSumbox',
-                    value: e.target.checked,
-                    update: updateActiveItem,
-                  },
-                })
-              }
-            />
-          </Column>
-        </Row>
-      )}
       {currentItem.fieldType === FieldTypesEnum.BANK_ACCOUNT && (
         <Row>
           <Column span="10/10">

@@ -3,33 +3,21 @@ import { validateSync } from 'class-validator'
 import { FieldSettingsFactory } from './fieldSettings.factory'
 import { FieldSettings } from './fieldSettings.model'
 
-it.each([true, false])(
-  'preserves notIncludedInSumbox=%s only for currency number fields',
-  (notIncludedInSumbox) => {
-    const settings = Object.assign(new FieldSettings(), { notIncludedInSumbox })
-
-    expect(
-      FieldSettingsFactory.getClass(FieldTypesEnum.ISK_NUMBERBOX, settings)
-        ?.notIncludedInSumbox,
-    ).toBe(notIncludedInSumbox)
-    expect(validateSync(settings)).toEqual([])
-    expect(
-      FieldSettingsFactory.getClass(FieldTypesEnum.TEXTBOX, settings),
-    ).not.toHaveProperty('notIncludedInSumbox')
-  },
-)
-
-it('rejects non-boolean sum exclusion settings', () => {
+it('preserves amount limits for currency number fields', () => {
   const settings = Object.assign(new FieldSettings(), {
-    notIncludedInSumbox: 'true',
+    minAmount: 0,
+    maxAmount: 1000,
   })
 
-  expect(validateSync(settings)).toEqual([
-    expect.objectContaining({
-      property: 'notIncludedInSumbox',
-      constraints: { isBoolean: expect.any(String) },
-    }),
-  ])
+  expect(
+    FieldSettingsFactory.getClass(FieldTypesEnum.ISK_NUMBERBOX, settings),
+  ).toEqual({
+    minAmount: 0,
+    maxAmount: 1000,
+    zendeskIsCustomField: null,
+    zendeskCustomFieldId: null,
+  })
+  expect(validateSync(settings)).toEqual([])
 })
 
 it.each([true, false])(

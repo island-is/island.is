@@ -60,7 +60,6 @@ export const CurrencySumField = ({
 
     const total = fieldsToSum.reduce((total, field) => {
       if (field?.fieldType !== FieldTypesEnum.ISK_NUMBERBOX) return total
-      if (field.fieldSettings?.notIncludedInSumbox === true) return total
       if (isPartOfMultiset && field.isPartOfMultiset === false) return total
 
       const valueCount = field.values?.length ?? 0

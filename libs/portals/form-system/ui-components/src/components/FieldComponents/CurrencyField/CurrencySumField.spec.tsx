@@ -39,11 +39,7 @@ const currencyField = (
   values: values.map((iskNumber) => ({ json: { iskNumber } })),
 })
 
-const renderSum = (
-  isPartOfMultiset: boolean,
-  valueIndex = 0,
-  notIncludedInSumbox?: boolean | null,
-) => {
+const renderSum = (isPartOfMultiset: boolean, valueIndex = 0) => {
   const dispatch = jest.fn()
   const item: FormSystemField = {
     id: 'sum',
@@ -54,10 +50,7 @@ const renderSum = (
   const fields = [
     currencyField('before-previous-sum', ['9.000', '8.000']),
     { id: 'previous-sum', fieldType: FieldTypesEnum.ISK_SUMBOX },
-    {
-      ...currencyField('first', ['1.000', '2.000']),
-      fieldSettings: { notIncludedInSumbox },
-    },
+    currencyField('first', ['1.000', '2.000']),
     currencyField('second', ['300', '400']),
     currencyField('outside-multiset', ['500'], false),
     item,
@@ -98,35 +91,6 @@ it.each<[number, string]>([
     expect(dispatch).toHaveBeenCalledWith({
       type: 'SET_CURRENCY',
       payload: { id: 'sum', value, valueIndex },
-    })
-  },
-)
-
-it.each<[boolean, number, boolean | null | undefined, string]>([
-  [true, 0, true, '300'],
-  [true, 1, true, '400'],
-  [false, 0, true, '31.200'],
-  [true, 0, false, '1.300'],
-  [false, 0, false, '34.200'],
-  [true, 0, undefined, '1.300'],
-  [false, 0, undefined, '34.200'],
-  [true, 0, null, '1.300'],
-  [false, 0, null, '34.200'],
-])(
-  'sums with multiset=%s, index=%s, exclusion=%s to %s',
-  (isPartOfMultiset, valueIndex, notIncludedInSumbox, expected) => {
-    const { dispatch } = renderSum(
-      isPartOfMultiset,
-      valueIndex,
-      notIncludedInSumbox,
-    )
-
-    expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe(
-      `${expected} kr.`,
-    )
-    expect(dispatch).toHaveBeenCalledWith({
-      type: 'SET_CURRENCY',
-      payload: { id: 'sum', value: expected, valueIndex },
     })
   },
 )

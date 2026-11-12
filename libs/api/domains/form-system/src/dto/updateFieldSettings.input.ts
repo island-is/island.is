@@ -34,9 +34,6 @@ export class UpdateFieldSettingsInput {
   @Field(() => Int, { nullable: true })
   maxAmount?: number
 
-  @Field(() => Boolean, { nullable: true })
-  notIncludedInSumbox?: boolean
-
   @Field(() => Int, { nullable: true })
   year?: number
 
