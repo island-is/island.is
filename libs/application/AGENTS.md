@@ -5,26 +5,15 @@ lists framework behaviour that a single template does not reveal.
 
 ## Layout
 
-- A template: `libs/application/templates/<name>/src/lib/template.ts` (state
-  machine, roles), with `forms/`, `dataProviders/` and `dataSchema.ts`. Its
-  server actions: `template-api-modules/src/lib/modules/templates/<name>`.
-- The API is `apps/application-system/api`; the form shell is
-  `libs/application/ui-shell`.
+- A template's server actions live in
+  `template-api-modules/src/lib/modules/templates/<name>`.
+- Adding an application type: follow "Making a new application" in
+  `templates/examples/README.md`.
 - Settled product rules are in a template's README under `## Decisions`.
   Read them before you change what it does.
 - Core, ui-shell, ui-fields, types, template-loader, `graphql` and
   `template-api-modules/src/lib/modules/shared` serve every template. A
   change there can break any of them.
-
-## A new application type
-
-- Add the `ApplicationTypes` value and its entries in
-  `ApplicationConfigurations`, `institutionMapper` and `templateLoaders`.
-- Creating one fails with "Ekki tókst að búa til umsókn af gerðinni" until
-  the gitignored client is regenerated
-  (`yarn nx run api-domains-application:codegen/backend-client`) and `api`
-  restarted. A TS7006 on any generated type means that library's
-  `gen/fetch` is stale; run its `codegen/backend-client` target.
 
 ## Validation
 
@@ -33,7 +22,9 @@ lists framework behaviour that a single template does not reveal.
   fields, eligibility and payment.
 - **A root-level `.refine`, `.superRefine` or `.transform` disables
   `.partial()`,** yet still sees only the keys sent: a rule comparing two
-  fields misfires when the screen sends one. `.partial()` is also shallow.
+  fields misfires when the screen sends one. Let such a rule pass when
+  either field is absent, and re-check the pair in the submit action.
+  `.partial()` is also shallow.
 - **The client shows only errors for the current screen's ids.**
   Single-field, repeater-child and provider screens, and multiFields whose
   visible children lack ids, filter nothing: an error anywhere in the form
@@ -46,16 +37,19 @@ lists framework behaviour that a single template does not reveal.
 - **Answers deep-merge on the server.** An omitted key keeps its old value,
   so nothing is deleted by navigation. Arrays merge row by row unless the
   new one is shorter: a key dropped from a row survives, and reordered rows
-  mix.
-- **Continue sends only the screen's own answers.** A value written outside
-  the field's id looks saved, vanishes on reload, and rides along with the
-  next SUBMIT. Repeater child screens and ids with brackets send the whole
-  top-level array.
+  mix. To clear a value, write an empty value the schema accepts (`''`,
+  `[]`); to drop rows, send the shorter array.
+- **Continue sends only the screen's own answers.** Keep every write under
+  the field's own id: a value written elsewhere looks saved, vanishes on
+  reload, and rides along with the next SUBMIT. Repeater child screens and
+  ids with brackets send the whole top-level array.
 - **SUBMIT sends every answer the client holds.** The server drops keys the
   role cannot write; UPDATE returns 403 for them.
 - **`clearOnChange` resets client state only,** writing `''` unless
-  `clearOnChangeDefaultValue` is set. That breaks number, enum, array and
-  object schemas. Abandoned branches keep their stored values.
+  `clearOnChangeDefaultValue` is set. Set it for number, enum, array and
+  object fields, whose schemas reject `''`. Abandoned branches keep their
+  stored values, so read a branch's answers only when its choice is
+  selected.
 - **An update without `draftProgress` resets progress to 0.**
 
 ## Access
@@ -70,7 +64,8 @@ lists framework behaviour that a single template does not reveal.
   state's `write` list, so a role with no buttons can still change any key
   it may write. Lists match top-level keys only.
 - **`read: 'all'` or `write: 'all'` sends every answer and all of
-  `externalData` to that browser.**
+  `externalData` to that browser.** Give explicit key lists to any role
+  that must not see other parties' data.
 - **The client cannot write `externalData`,** so what a server action
   stored there can be trusted.
 - **A data provider needs its `actionId` in the role's `api` list and its
@@ -83,21 +78,22 @@ lists framework behaviour that a single template does not reveal.
 - **A transition runs onExit, then onEntry, then persists.** Answers sent
   with the event persist only if the state changes and both succeed.
 - **Put side effects for an event with a `cond` in the target state's
-  `onEntry`,** not in `onExit`.
+  `onEntry`.** `onExit` runs before the `cond` is checked, even when the
+  state does not change.
 - **The current state's xstate `entry` actions re-run on every event;** make
   them idempotent. Only `answers`, `assignees` and `state` survive `assign`.
-- **Never rename or remove a state key while applications use it.** Stored
-  applications keep the old key and break.
+- **Keep a state key until no stored application uses it;** add a new key
+  rather than rename one. Stored applications keep the old key and break.
 - **A failed action is still stored at `externalData[<id>]`, with
   `status: 'failure'` and `data: {}`.** Test `.status`, not `.data`.
 - **Actions run in groups by `order`:** groups in sequence, members in
-  parallel. Negative or fractional orders run last.
+  parallel. Use non-negative integers: negative or fractional orders run
+  last.
 - **Actions run with the caller's `auth`.** If an assignee can fire the
   event, give a shared provider (`nationalRegistry`, `userProfile`) its own
   `externalDataId`.
 - **Creating an application runs the initial state's onEntry with event
-  `'SUBMIT'` and ignores failures,** so that onEntry must have no side
-  effects.
+  `'SUBMIT'` and ignores failures,** so limit that onEntry to lookups.
 - **The form's Apollo client retries mutations up to five times.** Make
   external side effects idempotent.
 
@@ -114,13 +110,14 @@ lists framework behaviour that a single template does not reveal.
   `.$.`, a leading `$.`, no array before `.$.`) makes pruning fail.
 - **Card text, `pendingAction`, `name` and `historyLogs` are shown to every
   viewer, admins included, and computed for every listed application in
-  one `Promise.all`.** Never show what only one party may see, and never
-  throw: one throw breaks the whole my-pages list.
+  one `Promise.all`.** Show only what every party may see, and catch errors
+  with a fallback: one throw breaks the whole my-pages list.
 
 ## Client and translations
 
 - **Section, subsection and single-field-screen conditions see only saved
-  answers.** Only multiField children react live.
+  answers.** Only multiField children react live, so put a field that must
+  respond to the current screen in a multiField.
 - **A role with no `formLoader`, or a user with no role, gets an endless
   spinner.**
 - **A data-provider item's `id` must equal the provider's

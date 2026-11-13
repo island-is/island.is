@@ -8,12 +8,14 @@ There are multiple requirements needed for a new template to be usable by the ap
 
 1. Run `yarn generate-application-template <name-of-application>` to generate a new template
 2. Run `yarn generate-application-template-api-module <name-of-application>` to generate a new template api module
-3. Add an application type to `libs/application/types/src/lib/ApplicationTypes.ts`
+3. Add an application type and its `ApplicationConfigurations` entry to `libs/application/types/src/lib/ApplicationTypes.ts`
 4. Make sure the new application type matches in the constructor of the service in `libs/application/template-api-modules/src/lib/modules/templates/<new-application>/<new-application>.service.ts` and in `libs/application/templates/<new-application>/src/lib/template.ts`
 5. Add to `libs/application/types/src/lib/institutionMapper.ts`
 6. Add the application type to `libs/application/template-loader/src/lib/templateLoaders.ts` so that library knows how to import this new application template.
 7. Run `yarn codegen`
 8. View your new application at `/umsoknir/<slug-from-application-types>`
+
+If creating one fails with "Ekki tókst að búa til umsókn af gerðinni", the gitignored client is stale: run `yarn nx run api-domains-application:codegen/backend-client` and restart `api`. A TS7006 on any generated type means that library's `gen/fetch` is stale; run its `codegen/backend-client` target.
 
 Note: It also works to create nested applications by running:
 
