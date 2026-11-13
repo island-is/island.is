@@ -243,6 +243,60 @@ describe('getVerdictAppealOverviewBanner', () => {
     })
   })
 
+  it('prefers an outstanding deadline over an earlier one that already filed', () => {
+    expect(
+      getVerdictAppealOverviewBanner(
+        {
+          type: CaseType.INDICTMENT,
+          defendants: [
+            {
+              id: 'first_defendant',
+              isDefenderChoiceConfirmed: true,
+              defenderNationalId: defender.nationalId,
+            },
+            {
+              id: 'second_defendant',
+              isAppealDefenderConfirmed: true,
+              appealDefenderNationalId: defender.nationalId,
+            },
+          ],
+          civilClaimants: [],
+          verdictAppealCase: {
+            id: 'appeal_id',
+            appealState: AppealCaseState.RECEIVED,
+            statementDeadlines: [
+              {
+                id: 'later_deadline',
+                defendantId: 'first_defendant',
+                deadline: '2026-11-20T15:00:00.000Z',
+              },
+              {
+                id: 'earlier_deadline',
+                defendantId: 'second_defendant',
+                deadline: '2026-11-12T15:00:00.000Z',
+              },
+            ],
+            appealEventLogs: [
+              {
+                id: 'log_id',
+                created: '2026-11-09T10:30:00.000Z',
+                eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+                defendantId: 'second_defendant',
+              },
+            ],
+          },
+        },
+        defender,
+        now,
+      ),
+    ).toEqual({
+      title: 'Dómur áfrýjaður',
+      description:
+        'Frestur til að skila greinargerð rennur út 20. nóvember 2026 kl. 15:00',
+      statementSentText: undefined,
+    })
+  })
+
   it('considers civil-claimant deadlines alongside defendant ones', () => {
     expect(
       getVerdictAppealOverviewBanner(
@@ -327,10 +381,11 @@ describe('getVerdictAppealOverviewBanner', () => {
 })
 
 describe('getVerdictAppealOverviewConclusion', () => {
-  it('returns the Landsréttur conclusion when present', () => {
+  it('returns the Landsréttur conclusion when the appeal is completed', () => {
     expect(
       getVerdictAppealOverviewConclusion({
         id: 'appeal_id',
+        appealState: AppealCaseState.COMPLETED,
         appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
       }),
     ).toEqual({
@@ -339,9 +394,22 @@ describe('getVerdictAppealOverviewConclusion', () => {
     })
   })
 
+  it('returns undefined when the conclusion exists but the appeal is not completed', () => {
+    expect(
+      getVerdictAppealOverviewConclusion({
+        id: 'appeal_id',
+        appealState: AppealCaseState.RECEIVED,
+        appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+      }),
+    ).toBeUndefined()
+  })
+
   it('returns undefined when there is no conclusion text', () => {
     expect(
-      getVerdictAppealOverviewConclusion({ id: 'appeal_id' }),
+      getVerdictAppealOverviewConclusion({
+        id: 'appeal_id',
+        appealState: AppealCaseState.COMPLETED,
+      }),
     ).toBeUndefined()
   })
 })

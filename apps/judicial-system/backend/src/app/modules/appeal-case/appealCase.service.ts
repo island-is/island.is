@@ -127,7 +127,12 @@ export class AppealCaseService {
 
     for (const defendant of theCase.defendants ?? []) {
       if (
-        Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
+        Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [
+          defendant,
+        ]) ||
+        Defendant.isConfirmedAppealDefenderOfDefendant(user.nationalId, [
+          defendant,
+        ])
       ) {
         parties.push({ defendantId: defendant.id })
       }
@@ -137,7 +142,11 @@ export class AppealCaseService {
       if (
         CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(user.nationalId, [
           civilClaimant,
-        ])
+        ]) ||
+        CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
+          user.nationalId,
+          [civilClaimant],
+        )
       ) {
         parties.push({ civilClaimantId: civilClaimant.id })
       }

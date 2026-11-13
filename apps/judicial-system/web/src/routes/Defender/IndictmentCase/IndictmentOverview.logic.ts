@@ -104,7 +104,15 @@ export const getVerdictAppealOverviewBanner = (
     return undefined
   }
 
-  const match = findEarliestPartyDeadline(appeal.statementDeadlines, parties)
+  // Prefer parties that have not filed yet, so a filed earlier deadline does
+  // not hide another party's outstanding greinargerðarfrest.
+  const outstandingParties = parties.filter(
+    (party) => !hasFiledAppealStatement(appeal.appealEventLogs, party),
+  )
+  const match = findEarliestPartyDeadline(
+    appeal.statementDeadlines,
+    outstandingParties.length > 0 ? outstandingParties : parties,
+  )
 
   if (!match) {
     return undefined
@@ -132,14 +140,18 @@ export const getVerdictAppealOverviewBanner = (
 }
 
 /**
- * Landsréttur's written conclusion for a verdict appeal, once it exists.
+ * Landsréttur's written conclusion for a verdict appeal, once the appeal is
+ * completed. Draft conclusions stay off the overview until then.
  */
 export const getVerdictAppealOverviewConclusion = (
   verdictAppealCase: WorkingCase['verdictAppealCase'],
 ): VerdictAppealOverviewConclusion | undefined => {
   const conclusionText = verdictAppealCase?.appealConclusion
 
-  if (!conclusionText) {
+  if (
+    verdictAppealCase?.appealState !== AppealCaseState.COMPLETED ||
+    !conclusionText
+  ) {
     return undefined
   }
 

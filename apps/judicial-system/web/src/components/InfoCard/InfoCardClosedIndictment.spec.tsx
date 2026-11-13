@@ -161,6 +161,7 @@ describe('InfoCardClosedIndictment', () => {
               civilClaimants: [
                 {
                   id: 'split-claimant',
+                  hasSpokesperson: true,
                   isSpokespersonConfirmed: true,
                   spokespersonNationalId: DEFENDER_NATIONAL_ID,
                 },

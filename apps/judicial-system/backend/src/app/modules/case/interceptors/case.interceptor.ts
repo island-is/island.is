@@ -830,18 +830,10 @@ const getDefenceUserDefendants = (
     }
   }
 
-  // Appeal-only advocates must not see co-defendant rows. District defenders
-  // keep the full list until every defendant they represent is cancelled or
-  // dismissed.
-  if (!myDistrictDefendants?.length) {
-    return {
-      defendants: myDefendants,
-      allCancelledOrDismissed: false,
-      latestCancelledOrDismissedDate: undefined,
-    }
-  }
-
-  const cancelledOrDismissedEventLogs = myDistrictDefendants.map((defendant) =>
+  // Cancelled/dismissed is evaluated across every represented defendant —
+  // district and appeal. A dismissed district client must not complete the
+  // case while an appeal-only client is still active.
+  const cancelledOrDismissedEventLogs = myDefendants.map((defendant) =>
     DefendantEventLog.getEventLogByEventType(
       [
         DefendantEventType.INDICTMENT_CANCELLED,
@@ -859,6 +851,17 @@ const getDefenceUserDefendants = (
         return !latest || log.created > latest ? log.created : latest
       }, undefined)
     : undefined
+
+  // Appeal-only advocates must not see co-defendant rows. District defenders
+  // keep the full list until every defendant they represent is cancelled or
+  // dismissed.
+  if (!myDistrictDefendants?.length) {
+    return {
+      defendants: myDefendants,
+      allCancelledOrDismissed,
+      latestCancelledOrDismissedDate,
+    }
+  }
 
   // A mixed district + appeal portfolio must keep every represented defendant
   // and drop co-defendants the user does not act for. District-only lawyers

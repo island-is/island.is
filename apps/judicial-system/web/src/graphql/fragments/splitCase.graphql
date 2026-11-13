@@ -26,6 +26,7 @@ fragment SplitCaseFields on Case {
   }
   civilClaimants {
     id
+    hasSpokesperson
     isSpokespersonConfirmed
     spokespersonNationalId
     hasAppealSpokesperson

@@ -7,6 +7,7 @@ import { CallHandler, ExecutionContext } from '@nestjs/common'
 import {
   AppealEventType,
   CaseIndictmentRulingDecision,
+  CaseState,
   CaseType,
   DefendantEventType,
   getIndictmentAppealDeadline,
@@ -305,6 +306,10 @@ describe('CaseInterceptor - getDefenceUserDefendants', () => {
           expect.objectContaining({ id: 'other_defendant' }),
         ]),
       )
+    })
+
+    it('does not complete the case from the district dismissal alone', () => {
+      expect(then.result).not.toMatchObject({ state: CaseState.COMPLETED })
     })
   })
 
