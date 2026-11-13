@@ -31,8 +31,8 @@ export default function LoginPreview() {
         onSubmit={() =>
           router.push('/dev/device-bound-auth/login?variant=waiting')
         }
-        onSwitchMethod={() => {
-          setMethod(method === 'sim' ? 'app' : 'sim')
+        onChangeMethod={(next) => {
+          setMethod(next)
           setValue('')
         }}
         onBackPress={() => router.back()}

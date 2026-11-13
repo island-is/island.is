@@ -30,14 +30,12 @@ export const is = {
   'login.welcome.terms': 'Skilmálar',
   'login.welcome.help': 'Aðstoð',
   'login.identifier.title': 'Skráðu þig inn',
-  'login.identifier.subtitle.sim': 'Notaðu rafræn skilríki í símanum þínum.',
-  'login.identifier.subtitle.app': 'Notaðu Auðkennisappið.',
+  'login.identifier.subtitle': 'Veldu hvernig þú vilt skrá þig inn.',
+  'login.identifier.method.sim': 'Rafræn skilríki',
+  'login.identifier.method.app': 'Auðkennisapp',
   'login.identifier.phoneLabel': 'Símanúmer',
   'login.identifier.nationalIdLabel': 'Kennitala',
   'login.identifier.submit': 'Auðkenna',
-  'login.identifier.or': 'Eða skráðu þig inn með',
-  'login.identifier.useApp': 'Auðkennisappinu',
-  'login.identifier.useSim': 'Rafrænum skilríkjum í síma',
 
   // app lock
   'applock.title': 'Sláðu inn 4 tölustafa PIN',

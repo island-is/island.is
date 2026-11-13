@@ -32,14 +32,12 @@ export const en: TranslatedMessages = {
   'login.welcome.terms': 'Terms',
   'login.welcome.help': 'Help',
   'login.identifier.title': 'Log in',
-  'login.identifier.subtitle.sim': 'Use the electronic ID on your phone.',
-  'login.identifier.subtitle.app': 'Use the Auðkenni app.',
+  'login.identifier.subtitle': 'Choose how you want to log in.',
+  'login.identifier.method.sim': 'Electronic ID',
+  'login.identifier.method.app': 'Auðkenni app',
   'login.identifier.phoneLabel': 'Phone number',
   'login.identifier.nationalIdLabel': 'National ID number',
   'login.identifier.submit': 'Authenticate',
-  'login.identifier.or': 'Or log in with',
-  'login.identifier.useApp': 'The Auðkenni app',
-  'login.identifier.useSim': 'Electronic ID on your phone',
 
   // app lock
   'applock.title': 'Enter a 4-digit PIN',

@@ -4,7 +4,7 @@ import { ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
-import { Alert, Button, TextField, token, Typography } from '@/ui'
+import { Alert, Button, TabButtons, TextField, token, Typography } from '@/ui'
 import { LoginHeader } from './login-header'
 
 const Host = styled(SafeAreaView)`
@@ -24,23 +24,14 @@ const Heading = styled.View`
   gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
-const Divider = styled.View`
-  flex-direction: row;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing[2]}px;
-`
-
-const Line = styled.View`
-  flex: 1;
-  height: 1px;
-  background-color: ${token((t) => t.border.primary)};
-`
-
 /**
  * - `sim`: electronic ID on the phone, found by phone number
  * - `app`: the Auðkenni app, found by kennitala
  */
 export type LoginMethod = 'sim' | 'app'
+
+// In the order of the tabs
+const methods: LoginMethod[] = ['sim', 'app']
 
 /** How many digits IAS expects as the login hint for each method */
 export const loginHintLength: Record<LoginMethod, number> = {
@@ -63,7 +54,7 @@ interface LoginIdentifierProps {
   value: string
   onChangeValue(digits: string): void
   onSubmit(): void
-  onSwitchMethod(): void
+  onChangeMethod(method: LoginMethod): void
   onBackPress(): void
   loading?: boolean
   error?: string
@@ -78,7 +69,7 @@ export function LoginIdentifier({
   value,
   onChangeValue,
   onSubmit,
-  onSwitchMethod,
+  onChangeMethod,
   onBackPress,
   loading,
   error,
@@ -96,14 +87,30 @@ export function LoginIdentifier({
               {intl.formatMessage({ id: 'login.identifier.title' })}
             </Typography>
             <Typography textAlign="center">
-              {intl.formatMessage({
-                id:
-                  method === 'sim'
-                    ? 'login.identifier.subtitle.sim'
-                    : 'login.identifier.subtitle.app',
-              })}
+              {intl.formatMessage({ id: 'login.identifier.subtitle' })}
             </Typography>
           </Heading>
+          <TabButtons
+            buttons={[
+              {
+                title: intl.formatMessage({
+                  id: 'login.identifier.method.sim',
+                }),
+              },
+              {
+                title: intl.formatMessage({
+                  id: 'login.identifier.method.app',
+                }),
+              },
+            ]}
+            selectedTab={methods.indexOf(method)}
+            setSelectedTab={(index) => {
+              if (methods[index] !== method) {
+                onChangeMethod(methods[index])
+              }
+            }}
+            disabled={loading}
+          />
           <TextField
             // Remount so autoFocus and the keyboard type follow the method.
             key={method}
@@ -133,24 +140,6 @@ export function LoginIdentifier({
             onPress={onSubmit}
             disabled={!isComplete || loading}
             loading={loading}
-          />
-          <Divider>
-            <Line />
-            <Typography variant="body3">
-              {intl.formatMessage({ id: 'login.identifier.or' })}
-            </Typography>
-            <Line />
-          </Divider>
-          <Button
-            isOutlined
-            title={intl.formatMessage({
-              id:
-                method === 'sim'
-                  ? 'login.identifier.useApp'
-                  : 'login.identifier.useSim',
-            })}
-            onPress={onSwitchMethod}
-            disabled={loading}
           />
         </Content>
       </ScrollView>
