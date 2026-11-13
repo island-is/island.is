@@ -25,7 +25,11 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { createNationalId } from '@island.is/testing/fixtures'
 import { EmailService } from '@island.is/email-service'
 import { SmsService } from '@island.is/nova-sms'
-import { QueueService, getQueueServiceToken } from '@island.is/message-queue'
+import {
+  QueueService,
+  getClientServiceToken,
+  getQueueServiceToken,
+} from '@island.is/message-queue'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { testServer, truncate, useDatabase } from '@island.is/testing/nest'
 
@@ -120,12 +124,107 @@ export const MockV2UsersApi = {
 const mockContentfulGraphQLClientService = {
   fetchData: jest.fn(),
 }
+/**
+ * How long a test waits for the workers. Less than the timeout of a test (`testTimeout` in
+ * `jest.preset.js`), so a test that waits in vain fails with what it was waiting for
+ */
+const WAIT_TIMEOUT_MS = 8_000
+
+/**
+ * Tracks the messages on the queues of a test, to wait for the workers to process them
+ * instead of waiting a fixed time (which fails on a busy machine, e.g. in CI).
+ *
+ * A worker confirms a message by deleting it from the queue when its handler is done. A handler
+ * may add messages to other queues (email, sms, push, actor notifications) before that, so
+ * those are pending before the message that caused them is gone.
+ */
+class QueueTracker {
+  private pending = new Set<string>()
+  /** Messages a worker confirmed before `add` had returned their id */
+  private confirmedEarly = new Set<string>()
+  /** Calls to `add` that have not returned yet */
+  private adding = 0
+
+  /** Spies on the client(s) every queue of the app uses */
+  track(client: {
+    add: (url: string, message: unknown) => Promise<string>
+    deleteMessages: (
+      url: string,
+      messages: { MessageId?: string }[],
+    ) => Promise<void>
+  }) {
+    const add = client.add.bind(client)
+    jest.spyOn(client, 'add').mockImplementation(async (url, message) => {
+      this.adding++
+      try {
+        const id = await add(url, message)
+        // The id is not known until the queue has the message, and by then a worker may have
+        // processed it already: such a message is done, not pending
+        if (!this.confirmedEarly.delete(id)) this.pending.add(id)
+        return id
+      } finally {
+        this.adding--
+      }
+    })
+    const deleteMessages = client.deleteMessages.bind(client)
+    jest
+      .spyOn(client, 'deleteMessages')
+      .mockImplementation(async (url, messages) => {
+        await deleteMessages(url, messages)
+        for (const { MessageId } of messages) {
+          if (MessageId && !this.pending.delete(MessageId)) {
+            this.confirmedEarly.add(MessageId)
+          }
+        }
+      })
+  }
+
+  /**
+   * Forget the messages of a previous test. Not the ones confirmed early: their `add` may still
+   * be on its way, and would make them pending for good
+   */
+  reset() {
+    this.pending.clear()
+  }
+
+  /**
+   * Waits until every message added since the last reset has been processed. A message whose
+   * handler throws is not deleted (it is delivered again), so such a test times out here.
+   */
+  async waitForProcessing(timeoutMs = WAIT_TIMEOUT_MS) {
+    const start = Date.now()
+    while (this.adding > 0 || this.pending.size > 0) {
+      if (Date.now() - start > timeoutMs) {
+        throw new Error(
+          `${this.pending.size} queue message(s) not processed and ${this.adding} not added within ${timeoutMs} ms`,
+        )
+      }
+      await wait(0.05)
+    }
+  }
+}
+
+/** Waits until `condition` is true */
+const waitFor = async (
+  condition: () => boolean,
+  timeoutMs = WAIT_TIMEOUT_MS,
+) => {
+  const start = Date.now()
+  while (!condition()) {
+    if (Date.now() - start > timeoutMs) {
+      throw new Error(`Condition not met within ${timeoutMs} ms`)
+    }
+    await wait(0.05)
+  }
+}
+
 describe('NotificationsWorkerService', () => {
   let app: INestApplication
   let sequelize: Sequelize
   let notificationDispatch: NotificationDispatchService
   let emailService: EmailService
   let queue: QueueService
+  const queues = new QueueTracker()
   let notificationModel: typeof Notification
   let actorNotificationModel: typeof ActorNotification
   let notificationsService: NotificationsService
@@ -165,6 +264,14 @@ describe('NotificationsWorkerService', () => {
     notificationDispatch = app.get(NotificationDispatchService)
     emailService = app.get(EmailService)
     queue = app.get(getQueueServiceToken('notifications'))
+    for (const name of [
+      'notifications',
+      'notifications-email',
+      'notifications-sms',
+      'notifications-push',
+    ]) {
+      queues.track(app.get(getClientServiceToken(name)))
+    }
     notificationModel = app.get(getModelToken(Notification))
     actorNotificationModel = app.get(getModelToken(ActorNotification))
     notificationDeliveryModel = app.get(getModelToken(NotificationDelivery))
@@ -194,6 +301,7 @@ describe('NotificationsWorkerService', () => {
     })
 
     jest.clearAllMocks()
+    queues.reset()
 
     jest
       .spyOn(emailService, 'sendEmail')
@@ -243,16 +351,16 @@ describe('NotificationsWorkerService', () => {
     await truncate(sequelize)
   })
 
-  const addToQueue = async (recipient: string, urgent?: boolean) => {
-    await queue.add({
-      recipient,
-      templateId: mockTemplateId,
-      urgent,
-      args: [{ key: 'organization', value: 'Test Crew' }],
-    })
+  const notificationMessage = (recipient: string, urgent?: boolean) => ({
+    recipient,
+    templateId: mockTemplateId,
+    urgent,
+    args: [{ key: 'organization', value: 'Test Crew' }],
+  })
 
-    // give the worker some time to process the message
-    await wait(2)
+  const addToQueue = async (recipient: string, urgent?: boolean) => {
+    await queue.add(notificationMessage(recipient, urgent))
+    await queues.waitForProcessing()
   }
 
   it('should send email and push notification to recipient and to delegation holders', async () => {
@@ -454,15 +562,17 @@ describe('NotificationsWorkerService', () => {
     // First message will be handled since the receiveMessages call is waiting (wait time is max 20s and returns when a message is ready)
     // This ensures that the next message is added after time is set outside working hours
     await addToQueue(userWithNoDelegations.nationalId)
-    await addToQueue(userWithNoDelegations.nationalId)
+    // The worker sleeps until the morning after this one, so it is not processed until the
+    // (fake) time is inside working hours again: only wait for it after that
+    await queue.add(notificationMessage(userWithNoDelegations.nationalId))
+    await wait(1)
 
     expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
     expect(notificationDispatch.sendPushNotification).toHaveBeenCalledTimes(1)
 
     // reset time to inside working hour
     jest.advanceTimersByTime(workingHoursDelta)
-    // give worker some time to process message
-    await wait(2)
+    await queues.waitForProcessing()
 
     expect(emailService.sendEmail).toHaveBeenCalledTimes(2)
     expect(notificationDispatch.sendPushNotification).toHaveBeenCalledTimes(2)
@@ -581,8 +691,7 @@ describe('NotificationsWorkerService', () => {
         // No rootMessageId - this triggers the specific actor targeting flow
       })
 
-      // Wait for processing
-      await wait(3)
+      await queues.waitForProcessing()
 
       // Verify user notification was created for the original recipient (onBehalfOf.nationalId)
       const userNotifications = await notificationModel.findAll({
@@ -655,8 +764,7 @@ describe('NotificationsWorkerService', () => {
       // Add a message for a user with delegations
       await addToQueue(userWithDelegations.nationalId)
 
-      // Wait for processing
-      await wait(3)
+      await queues.waitForProcessing()
 
       // Verify user notification was created in DB
       const userNotifications = await notificationModel.findAll({
@@ -730,8 +838,7 @@ describe('NotificationsWorkerService', () => {
       // Add a message for a user with delegations
       await addToQueue(userWithDelegations.nationalId)
 
-      // Wait for processing
-      await wait(3)
+      await queues.waitForProcessing()
 
       // Verify user notification was still created
       const userNotifications = await notificationModel.findAll({
@@ -784,8 +891,7 @@ describe('NotificationsWorkerService', () => {
       // Add a message for a user with delegations
       await addToQueue(userWithDelegations.nationalId)
 
-      // Wait for processing
-      await wait(3)
+      await queues.waitForProcessing()
 
       // Verify user notification was created with the valid scope
       const userNotifications = await notificationModel.findAll({
@@ -829,8 +935,7 @@ describe('NotificationsWorkerService', () => {
       // Add a message for a user with delegations
       await addToQueue(userWithDelegations.nationalId)
 
-      // Wait for processing
-      await wait(3)
+      await queues.waitForProcessing()
 
       // Verify user notification was created with the default scope
       const userNotifications = await notificationModel.findAll({
@@ -973,8 +1078,7 @@ describe('NotificationsWorkerService', () => {
         args: [{ key: 'organization', value: 'Test Crew' }],
       })
 
-      // Wait for processing
-      await wait(3)
+      await queues.waitForProcessing()
 
       // Verify user notification was created
       const userNotifications = await notificationModel.findAll({
@@ -1075,8 +1179,7 @@ describe('NotificationsWorkerService', () => {
         },
       })
 
-      // Wait for actor notification to be processed
-      await wait(4)
+      await queues.waitForProcessing()
 
       // Verify user notification exists (the root one, created separately)
       const userNotifications = await notificationModel.findAll({
@@ -1632,7 +1735,7 @@ describe('NotificationsWorkerService', () => {
         )
 
       await addToQueue(childUnder16.nationalId)
-      await wait(3)
+      await queues.waitForProcessing()
 
       const actorMessages = getActorMessages(queueAddSpy)
 
@@ -1658,7 +1761,7 @@ describe('NotificationsWorkerService', () => {
         )
 
       await addToQueue(childOver16.nationalId)
-      await wait(3)
+      await queues.waitForProcessing()
 
       const actorMessages = getActorMessages(queueAddSpy)
 
@@ -1683,7 +1786,7 @@ describe('NotificationsWorkerService', () => {
         )
 
       await addToQueue(childUnder16.nationalId)
-      await wait(3)
+      await queues.waitForProcessing()
 
       const actorMessages = getActorMessages(queueAddSpy)
 
@@ -1704,7 +1807,7 @@ describe('NotificationsWorkerService', () => {
         )
 
       await addToQueue(childUnder16.nationalId)
-      await wait(5)
+      await queues.waitForProcessing()
 
       const calledNumbers = (smsService.sendSms as jest.Mock).mock.calls.map(
         (call) => call[0],
@@ -1750,7 +1853,7 @@ describe('NotificationsWorkerService', () => {
         formattedTemplate: getMockHnippTemplate({}),
       } as EmailQueueMessage)
 
-      await wait(2)
+      await queues.waitForProcessing()
 
       const record = await notificationDeliveryModel.findOne({
         where: {
@@ -1784,7 +1887,7 @@ describe('NotificationsWorkerService', () => {
         smsContent: 'Test SMS content',
       } as SmsQueueMessage)
 
-      await wait(2)
+      await queues.waitForProcessing()
 
       const record = await notificationDeliveryModel.findOne({
         where: {
@@ -1850,7 +1953,7 @@ describe('NotificationsWorkerService', () => {
         smsContent: 'Test SMS content',
       } as SmsQueueMessage)
 
-      await wait(2)
+      await queues.waitForProcessing()
 
       expect(smsService.sendSms).toHaveBeenCalledWith(
         '+3546916391',
@@ -1903,7 +2006,12 @@ describe('NotificationsWorkerService', () => {
         smsContent: 'Test SMS content',
       } as SmsQueueMessage)
 
-      await wait(2)
+      // The handler throws, so the worker does not delete the message: it is delivered again
+      // later, and is never "processed". Wait for the attempt instead
+      await waitFor(
+        () => (smsService.sendSms as jest.Mock).mock.calls.length > 0,
+      )
+      queues.reset()
 
       // sendSms should have been called with the normalized number
       expect(smsService.sendSms).toHaveBeenCalledWith(
@@ -1945,7 +2053,7 @@ describe('NotificationsWorkerService', () => {
         },
       } as PushQueueMessage)
 
-      await wait(2)
+      await queues.waitForProcessing()
 
       expect(notificationDispatch.sendPushNotification).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -1981,7 +2089,7 @@ describe('NotificationsWorkerService', () => {
         formattedTemplate: getMockHnippTemplate({}),
       } as EmailQueueMessage)
 
-      await wait(2)
+      await queues.waitForProcessing()
 
       // The email was still sent despite the DB failure
       expect(emailService.sendEmail).toHaveBeenCalled()

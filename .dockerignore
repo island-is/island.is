@@ -2,9 +2,14 @@
 
 # Known ignores
 /.github/
+# A runtime input of the Nx builds (`forceRebuild` in nx.json). Without it the builds in a Docker
+# build don't have the hash of the same builds on a runner, and changing it does nothing in here
+!/.github/actions/force-build.mjs
 /.git/
 /scripts/ci/
 /.env.*
+# Written by CI for the tests (`scripts/ci/nx-agents/start-agent.sh`), and never something for an image
+**/.env
 /.envrc*
 /.nx/
 
@@ -26,6 +31,7 @@
 
 # Outputs
 **/out/
+/dist/
 
 # Docker-stuff
 **/Dockerfile
