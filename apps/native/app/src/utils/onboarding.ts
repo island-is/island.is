@@ -1,8 +1,8 @@
-import { hasHardwareAsync } from 'expo-local-authentication'
 import { Platform } from 'react-native'
 import { router } from 'expo-router'
 import { isIos } from './devices'
 import { androidIsVersion33OrAbove } from './versions-check'
+import { hasStrongBiometricHardwareAsync } from './biometrics'
 import { preferencesStore } from '../stores/preferences-store'
 
 export function isOnboarded() {
@@ -39,13 +39,13 @@ export async function getNextOnboardingStep(): Promise<
     return 'pin-code'
   }
 
-  const hasHardware = await hasHardwareAsync()
+  const hasHardware = await hasStrongBiometricHardwareAsync()
   if (hasHardware) {
     if (!hasOnboardedBiometrics) {
       return 'biometrics'
     }
   } else {
-    // No biometric hardware — skip that step
+    // No biometric hardware that may unlock the app — skip that step
     preferencesStore.setState({ hasOnboardedBiometrics: true })
   }
 

@@ -1,7 +1,6 @@
 import {
   AuthenticationType,
   authenticateAsync,
-  isEnrolledAsync,
   supportedAuthenticationTypesAsync,
 } from 'expo-local-authentication'
 import React, { useEffect, useState } from 'react'
@@ -13,6 +12,7 @@ import finger from '@/assets/icons/finger-16.png'
 import iris from '@/assets/icons/iris-16.png'
 import onboardingBiometrics from '@/assets/illustrations/onboarding-biometrics.png'
 import { preferencesStore } from '@/stores/preferences-store'
+import { isStrongBiometricsEnrolledAsync } from '@/utils/biometrics'
 import { nextOnboardingStep } from '@/utils/onboarding'
 
 function useBiometricType(types: AuthenticationType[]) {
@@ -62,16 +62,17 @@ export default function BiometricsScreen() {
   const biometricType = useBiometricType(authTypes)
 
   useEffect(() => {
-    Promise.all([isEnrolledAsync(), supportedAuthenticationTypesAsync()]).then(
-      ([enrolled, types]) => {
-        setIsEnrolled(enrolled)
-        setAuthTypes(types)
-      },
-    )
+    Promise.all([
+      isStrongBiometricsEnrolledAsync(),
+      supportedAuthenticationTypesAsync(),
+    ]).then(([enrolled, types]) => {
+      setIsEnrolled(enrolled)
+      setAuthTypes(types)
+    })
 
     const subscription = AppState.addEventListener('change', (state) => {
       if (state === 'active') {
-        isEnrolledAsync().then(setIsEnrolled)
+        isStrongBiometricsEnrolledAsync().then(setIsEnrolled)
       }
     })
 
@@ -83,12 +84,13 @@ export default function BiometricsScreen() {
       disableDeviceFallback: true,
       fallbackLabel: '',
       cancelLabel: intl.formatMessage({ id: 'biometrics.cancel' }),
+      biometricsSecurityLevel: 'strong',
     }).then((result) => {
       if (result.success) {
-        preferencesStore.getState().setUseBiometrics(true)
+        const enabled = preferencesStore.getState().setUseBiometrics(true)
         preferencesStore.setState({
           hasOnboardedBiometrics: true,
-          hasAcceptedBiometrics: true,
+          hasAcceptedBiometrics: enabled,
         })
         nextOnboardingStep()
       }
@@ -112,7 +114,11 @@ export default function BiometricsScreen() {
           />
         ) : (
           <FormattedMessage
-            id="onboarding.biometrics.notEnrolled"
+            id={
+              Platform.OS === 'android'
+                ? 'onboarding.biometrics.strongNotEnrolled'
+                : 'onboarding.biometrics.notEnrolled'
+            }
             values={{ biometricType: biometricType.text }}
           />
         )

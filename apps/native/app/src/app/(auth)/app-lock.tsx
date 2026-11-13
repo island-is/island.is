@@ -75,6 +75,14 @@ const Center = styled.View`
 
 function useBiometricType() {
   const { authenticationTypes } = useUiStore()
+  // Android lists sensors, not their strength: face unlock is often weak and
+  // can't unlock the app, while fingerprint sensors are strong.
+  if (
+    Platform.OS === 'android' &&
+    authenticationTypes.includes(AuthenticationType.FINGERPRINT)
+  ) {
+    return 'fingerprint'
+  }
   if (authenticationTypes.includes(AuthenticationType.FACIAL_RECOGNITION)) {
     return 'faceid'
   } else if (authenticationTypes.includes(AuthenticationType.FINGERPRINT)) {
@@ -140,17 +148,19 @@ export default function AppLockScreen() {
     if (!useBiometrics || isPromptRef.current) {
       return
     }
+    isPromptRef.current = true
     // Re-reads the store: biometrics may have been turned off since render
     // because the enrolled biometrics changed. Falls back to PIN.
-    if (!verifyBiometricIntegrity()) {
+    if (!(await verifyBiometricIntegrity())) {
+      isPromptRef.current = false
       return
     }
 
-    isPromptRef.current = true
     const response = await authenticateAsync({
       disableDeviceFallback: true,
       fallbackLabel: '',
       cancelLabel: intl.formatMessage({ id: 'applock.usePin' }),
+      biometricsSecurityLevel: 'strong',
     })
 
     if (response.success) {
