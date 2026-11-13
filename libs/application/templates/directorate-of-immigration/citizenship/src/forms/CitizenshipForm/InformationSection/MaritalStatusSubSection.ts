@@ -9,6 +9,7 @@ import {
 import { information } from '../../../lib/messages'
 import { Application } from '@island.is/api/schema'
 import { Routes } from '../../../lib/constants'
+import { getBirthDate } from '../../../utils'
 import {
   ExternalData,
   NationalRegistrySpouseV3,
@@ -58,6 +59,7 @@ export const MaritalStatusSubSection = buildSubSection({
           id: 'maritalStatus.dateOfMaritalStatusStr',
           title: information.labels.maritalStatus.marriedStatusDate,
           width: 'half',
+          minDate: (application) => getBirthDate(application.applicant),
           readOnly: (_, externalData: ExternalData) => {
             const spouseDetails = getValueViaPath<NationalRegistrySpouseV3>(
               externalData,

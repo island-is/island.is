@@ -201,7 +201,7 @@ export default function VehicleDetailScreen() {
                         source={require('@/assets/icons/Ellipsis-vertical.png')}
                         width={24}
                         height={24}
-                        tintColor={theme.color.blue400}
+                        tintColor={theme.tokens.interactive.foreground.primary}
                       />
                     </Pressable>
                   </ContextMenu>
@@ -222,7 +222,9 @@ export default function VehicleDetailScreen() {
             {allowMileageRegistration && (
               <Button
                 style={{ flex: 1 }}
-                iconStyle={{ tintColor: theme.color.dark300 }}
+                iconStyle={{
+                  tintColor: theme.tokens.foreground.primaryMinimal,
+                }}
                 isOutlined
                 title={intl.formatMessage({
                   id: 'vehicles.registerMileage',
@@ -237,7 +239,7 @@ export default function VehicleDetailScreen() {
               style={{ flex: 1 }}
               isOutlined
               iconPosition="end"
-              iconStyle={{ tintColor: theme.color.dark300 }}
+              iconStyle={{ tintColor: theme.tokens.foreground.primaryMinimal }}
               icon={require('@/assets/icons/external-link.png')}
               isUtilityButton
               title={intl.formatMessage({
@@ -309,7 +311,7 @@ export default function VehicleDetailScreen() {
                       variant="body"
                       size={13}
                       weight="600"
-                      color={theme.color.blue400}
+                      color={theme.tokens.interactive.foreground.primary}
                     >
                       →
                     </Typography>
@@ -321,7 +323,7 @@ export default function VehicleDetailScreen() {
 
           <Typography
             variant="eyebrow"
-            color={theme.color.purple400}
+            color={theme.tokens.foreground.brandSecondary}
             style={{
               marginHorizontal: theme.spacing[2],
               marginTop: theme.spacing[3],

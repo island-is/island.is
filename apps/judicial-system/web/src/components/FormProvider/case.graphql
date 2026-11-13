@@ -3,6 +3,7 @@ query Case($input: CaseQueryInput!) {
     id
     created
     type
+    originalAncestorId
     splitCases {
       ...SplitCaseFields
     }
@@ -257,6 +258,10 @@ query Case($input: CaseQueryInput!) {
       appealType
       appealCaseNumber
       appealConclusion
+      appealAssistant {
+        id
+        name
+      }
       courtSessions {
         id
         created
@@ -395,6 +400,9 @@ query Case($input: CaseQueryInput!) {
         id
         defenderNationalId
         isDefenderChoiceConfirmed
+        appealDefenderNationalId
+        isAppealDefenderConfirmed
+        isAppealDefenderWaived
       }
       civilClaimants {
         ...CivilClaimantSpokespersonFields
@@ -454,6 +462,9 @@ query Case($input: CaseQueryInput!) {
         requestedDefenderName
         isDefenderChoiceConfirmed
         caseFilesSharedWithDefender
+        appealDefenderNationalId
+        isAppealDefenderConfirmed
+        isAppealDefenderWaived
         verdictAppealDeadline
         isVerdictAppealDeadlineExpired
         subpoenaType

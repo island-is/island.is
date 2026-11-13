@@ -1325,10 +1325,14 @@ export class InternalCaseService {
       })
   }
 
+  // Most callers run outside any transaction. The one that has opened one
+  // passes it, so the ancestor read does not take a second connection while
+  // that transaction is open.
   async deliverCaseToPoliceWithFiles(
     theCase: Case,
     user: TUser,
     courtDocuments: PoliceDocument[],
+    options?: { transaction?: Transaction },
   ): Promise<boolean> {
     // Never call UpdateRVCase for cases that did not originate in LOKE
     if (theCase.origin !== CaseOrigin.LOKE) {
@@ -1336,7 +1340,7 @@ export class InternalCaseService {
     }
 
     const policeCaseId =
-      await this.caseRepositoryService.findOriginalAncestorId(theCase)
+      await this.caseRepositoryService.findOriginalAncestorId(theCase, options)
 
     const validToDate =
       (restrictionCases.includes(theCase.type) &&
@@ -1513,6 +1517,7 @@ export class InternalCaseService {
         theCase,
         user,
         policeDocuments,
+        { transaction },
       )
 
       return { delivered }

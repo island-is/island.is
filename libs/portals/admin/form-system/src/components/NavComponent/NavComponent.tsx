@@ -9,6 +9,8 @@ import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/enums'
 import { Box, Checkbox, Icon, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import { MouseEvent, useContext } from 'react'
+import HtmlParser from 'react-html-parser'
+import sanitizeHtml from 'sanitize-html'
 import { ControlContext } from '../../context/ControlContext'
 import { ItemType, NavbarSelectStatus } from '../../lib/utils/interfaces'
 import { NavButtons } from './components/NavButtons'
@@ -38,6 +40,7 @@ export const NavComponent = ({
     selectStatus,
     controlDispatch,
     formUpdate,
+    updateActiveItem,
     inListBuilder,
     openComponents,
     setOpenComponents,
@@ -47,8 +50,29 @@ export const NavComponent = ({
     selectStatus === NavbarSelectStatus.LIST_ITEM
       ? activeListItem?.id ?? ''
       : activeItem?.data?.id ?? ''
-  const name = data?.name?.is ?? ''
+  const field = data as FormSystemField
+  const name =
+    type === 'Field' &&
+    field.fieldType === FieldTypesEnum.MESSAGE &&
+    !data.name?.is?.trim()
+      ? HtmlParser(
+          sanitizeHtml(field.description?.is ?? '', {
+            allowedTags: [],
+            allowedAttributes: {},
+          }),
+        ).join('')
+      : data.name?.is ?? ''
   const selectingIsOff = selectStatus === NavbarSelectStatus.OFF
+  const selectingSumFields = selectStatus === NavbarSelectStatus.SUM_FIELDS
+  const currentField = activeItem?.data as FormSystemField | undefined
+  const fieldsToSum = currentField?.fieldSettings?.fieldsToSum ?? []
+  const isSelectedSumField =
+    activeItem?.type === 'Field' &&
+    currentField?.fieldType === FieldTypesEnum.ISK_SUMBOX &&
+    type === 'Field' &&
+    field.fieldType === FieldTypesEnum.ISK_NUMBERBOX &&
+    field.screenId === currentField.screenId &&
+    fieldsToSum.includes(field.id)
   const isPaymentField =
     type === 'Field' &&
     (data as FormSystemField).fieldType === FieldTypesEnum.PAYMENT
@@ -173,7 +197,10 @@ export const NavComponent = ({
   }
 
   const showCheckbox = (): boolean =>
-    (connected() || listIsConnected()) && !selectable && !inListBuilder
+    !selectingSumFields &&
+    (connected() || listIsConnected() || isSelectedSumField) &&
+    !selectable &&
+    !inListBuilder
 
   const renderChevron = () => {
     if (!canToggleOpenState) {
@@ -295,7 +322,7 @@ export const NavComponent = ({
               truncate={true}
               fontWeight="semiBold"
             >
-              {data?.name?.is}
+              {name}
             </Text>
           </Box>
           <Box
@@ -347,7 +374,7 @@ export const NavComponent = ({
               variant="medium"
               truncate={true}
             >
-              {data?.name?.is}
+              {name}
             </Text>
           </Box>
           <Box
@@ -369,8 +396,28 @@ export const NavComponent = ({
               onClick={(event) => event.stopPropagation()}
             >
               <Checkbox
-                checked={connected()}
-                onChange={() =>
+                name={selectingSumFields ? `fieldsToSum-${data.id}` : undefined}
+                ariaLabel={selectingSumFields ? name : undefined}
+                checked={
+                  selectingSumFields
+                    ? fieldsToSum.includes(data.id)
+                    : connected()
+                }
+                disabled={isReadOnly}
+                onChange={() => {
+                  if (selectingSumFields) {
+                    controlDispatch({
+                      type: 'SET_ANY_FIELD_SETTING',
+                      payload: {
+                        property: 'fieldsToSum',
+                        value: fieldsToSum.includes(data.id)
+                          ? fieldsToSum.filter((id) => id !== data.id)
+                          : [...fieldsToSum, data.id],
+                        update: updateActiveItem,
+                      },
+                    })
+                    return
+                  }
                   controlDispatch({
                     type: 'TOGGLE_DEPENDENCY',
                     payload: {
@@ -379,7 +426,7 @@ export const NavComponent = ({
                       update: formUpdate,
                     },
                   })
-                }
+                }}
               />
             </Box>
           )}
@@ -389,7 +436,12 @@ export const NavComponent = ({
               marginLeft="auto"
               onClick={(event) => event.stopPropagation()}
             >
-              <Checkbox checked={true} disabled={true} />
+              <Checkbox
+                name={isSelectedSumField ? `fieldsToSum-${data.id}` : undefined}
+                ariaLabel={isSelectedSumField ? name : undefined}
+                checked={true}
+                disabled={true}
+              />
             </Box>
           )}
         </Box>

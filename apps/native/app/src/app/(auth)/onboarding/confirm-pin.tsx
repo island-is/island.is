@@ -5,7 +5,7 @@ import { router, useLocalSearchParams, useRouter } from 'expo-router'
 import Keychain from 'react-native-keychain'
 import styled from 'styled-components/native'
 
-import { dynamicColor, font } from '@/ui'
+import { font, token } from '@/ui'
 import { CancelButton } from '@/ui/lib/button/cancel-button'
 import { PinKeypad } from '@/components/pin-keypad/pin-keypad'
 import { VisualizedPinCode } from '@/components/visualized-pin-code/visualized-pin-code'
@@ -21,7 +21,7 @@ const Host = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: ${dynamicColor('background')};
+  background-color: ${token((t) => t.background.invert)};
 `
 
 const Title = styled.Text`

@@ -6,6 +6,7 @@ import {
 import { ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
+  IsArray,
   IsBoolean,
   IsDateString,
   IsInt,
@@ -73,9 +74,10 @@ export class FieldSettings {
   maxAmount?: number
 
   @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional({ type: Boolean })
-  notIncludedInSumbox?: boolean
+  @IsArray()
+  @IsString({ each: true })
+  @ApiPropertyOptional({ type: [String], nullable: true })
+  fieldsToSum?: string[] | null
 
   @IsOptional()
   @IsNumber()

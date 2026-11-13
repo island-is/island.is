@@ -122,6 +122,7 @@ export const TabPills = ({
               variant="eyebrow"
               isSelected={isSelected}
               numberOfLines={1}
+              maxFontSizeMultiplier={1.5}
             >
               {button.title}
             </PillText>

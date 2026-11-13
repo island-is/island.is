@@ -39,6 +39,7 @@ import {
   Alert,
   Button,
   Icon,
+  IconRow,
   InfoLine,
   InfoLineRow,
   StatusMessage,
@@ -54,12 +55,6 @@ const Header = styled.View`
 
 const IconList = styled.View`
   gap: ${({ theme }) => theme.spacing.p2}px;
-`
-
-const IconRow = styled.View`
-  flex-direction: row;
-  align-items: center;
-  column-gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const MapLink = styled.TouchableOpacity`
@@ -481,91 +476,49 @@ export default function AppointmentDetailScreen() {
 
               <IconList>
                 {appointment.date && (
-                  <IconRow>
-                    <Icon
-                      source={calendarIcon as ImageSourcePropType}
-                      width={16}
-                      height={16}
-                      tintColor={theme.tokens.foreground.brand}
-                      resizeMode="contain"
-                    />
-                    <Typography variant="body">
-                      {weekday}, {dateStr}
-                    </Typography>
+                  <IconRow icon={calendarIcon as ImageSourcePropType}>
+                    {weekday}, {dateStr}
                   </IconRow>
                 )}
 
                 {appointment.date && (
-                  <IconRow>
-                    <Icon
-                      source={clockIcon as ImageSourcePropType}
-                      width={16}
-                      height={16}
-                      tintColor={theme.tokens.foreground.brand}
-                    />
-                    <Typography variant="body">{time}</Typography>
+                  <IconRow icon={clockIcon as ImageSourcePropType}>
+                    {time}
                   </IconRow>
                 )}
 
                 {!!appointment.duration && (
-                  <IconRow>
-                    <Icon
-                      source={hourglassIcon as ImageSourcePropType}
-                      width={16}
-                      height={16}
-                      tintColor={theme.tokens.foreground.brand}
-                    />
-                    <Typography variant="body">
-                      {intl.formatMessage(
-                        { id: 'health.appointments.minutesFormat' },
-                        { minutes: appointment.duration },
-                      )}
-                    </Typography>
+                  <IconRow icon={hourglassIcon as ImageSourcePropType}>
+                    {intl.formatMessage(
+                      { id: 'health.appointments.minutesFormat' },
+                      { minutes: appointment.duration },
+                    )}
                   </IconRow>
                 )}
 
                 {isVideo && (
-                  <IconRow>
-                    <Icon
-                      source={videoCameraIcon as ImageSourcePropType}
-                      width={16}
-                      height={16}
-                      tintColor={theme.tokens.foreground.brand}
-                    />
-                    <Typography variant="body">
-                      {intl.formatMessage({
-                        id: 'health.appointments.videoCall',
-                      })}
-                    </Typography>
+                  <IconRow icon={videoCameraIcon as ImageSourcePropType}>
+                    {intl.formatMessage({
+                      id: 'health.appointments.videoCall',
+                    })}
                   </IconRow>
                 )}
 
                 {!isVideo && appointment.location?.name && (
                   <LocationItem>
-                    <IconRow style={{ alignItems: 'flex-start' }}>
-                      <Icon
-                        source={locationIcon as ImageSourcePropType}
-                        width={16}
-                        height={16}
-                        tintColor={theme.tokens.foreground.brand}
-                        style={{ marginTop: 4 }}
-                      />
-                      <View style={{ flex: 1 }}>
-                        <Typography variant="body">
-                          {[
-                            appointment.location.name,
-                            appointment.location.address,
-                            [
-                              appointment.location.postalCode,
-                              appointment.location.city,
-                            ]
-                              .filter(Boolean)
-                              .join(' '),
-                          ]
-                            .filter(Boolean)
-                            .join(', ')}
-                        </Typography>
-                      </View>
+                    <IconRow icon={locationIcon as ImageSourcePropType}>
+                      {[
+                        appointment.location.name,
+                        appointment.location.address,
+                        [
+                          appointment.location.postalCode,
+                          appointment.location.city,
+                        ]
+                          .filter(Boolean)
+                          .join(' '),
+                      ]
+                        .filter(Boolean)
+                        .join(', ')}
                     </IconRow>
                     {mapsLink && (
                       <MapLink onPress={handleOpenMap}>
@@ -589,18 +542,10 @@ export default function AppointmentDetailScreen() {
 
                 {!isVideo && locationLink && (
                   <LocationItem>
-                    <IconRow>
-                      <Icon
-                        source={infoIcon as ImageSourcePropType}
-                        width={16}
-                        height={16}
-                        tintColor={theme.tokens.foreground.brand}
-                      />
-                      <Typography variant="body">
-                        {intl.formatMessage({
-                          id: 'health.appointments.locationInstructions',
-                        })}
-                      </Typography>
+                    <IconRow icon={infoIcon as ImageSourcePropType}>
+                      {intl.formatMessage({
+                        id: 'health.appointments.locationInstructions',
+                      })}
                     </IconRow>
                     <MapLink onPress={() => void openExternalUrl(locationLink)}>
                       <Typography

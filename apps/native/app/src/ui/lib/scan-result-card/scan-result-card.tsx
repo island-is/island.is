@@ -126,7 +126,7 @@ const LabelGroup = styled.View`
 const Photo = styled.Image`
   width: 79px;
   height: 109px;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: ${scanResultColours.photo};
   border-radius: ${({ theme: { border } }) => border.radius.large};
   margin-right: 32px;
 `

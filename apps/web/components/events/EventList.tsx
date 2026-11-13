@@ -173,6 +173,7 @@ export const EventList = ({
                 }
                 date={eventItem.startDate}
                 image={eventItem.thumbnailImage as ImageSchema}
+                imageVariant="landscape"
                 titleAs="h2"
                 readMoreText=""
               />
