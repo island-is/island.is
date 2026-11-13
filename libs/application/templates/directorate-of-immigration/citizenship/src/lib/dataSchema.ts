@@ -77,12 +77,16 @@ export const RemoveableStayAbroadSchema = z
       path: ['purpose'],
     },
   )
-  .refine(({ dateFrom }) => isOnOrAfterMinDate(dateFrom), {
-    path: ['dateFrom'],
-  })
-  .refine(({ dateTo }) => isOnOrAfterMinDate(dateTo), {
-    path: ['dateTo'],
-  })
+  .refine(
+    ({ wasRemoved, dateFrom }) =>
+      wasRemoved === 'true' || isOnOrAfterMinDate(dateFrom),
+    { path: ['dateFrom'] },
+  )
+  .refine(
+    ({ wasRemoved, dateTo }) =>
+      wasRemoved === 'true' || isOnOrAfterMinDate(dateTo),
+    { path: ['dateTo'] },
+  )
   .refine(
     ({ dateTo, dateFrom }) => {
       const to = dateTo ? new Date(dateTo).getTime() : null
@@ -122,12 +126,16 @@ export const RemoveableCountrySchema = z
       path: ['countryId'],
     },
   )
-  .refine(({ dateFrom }) => isOnOrAfterMinDate(dateFrom), {
-    path: ['dateFrom'],
-  })
-  .refine(({ dateTo }) => isOnOrAfterMinDate(dateTo), {
-    path: ['dateTo'],
-  })
+  .refine(
+    ({ wasRemoved, dateFrom }) =>
+      wasRemoved === 'true' || isOnOrAfterMinDate(dateFrom),
+    { path: ['dateFrom'] },
+  )
+  .refine(
+    ({ wasRemoved, dateTo }) =>
+      wasRemoved === 'true' || isOnOrAfterMinDate(dateTo),
+    { path: ['dateTo'] },
+  )
   .refine(
     ({ dateTo, dateFrom }) => {
       const to = dateTo ? new Date(dateTo).getTime() : null
@@ -371,7 +379,8 @@ export const SelectedChildSchema = z
     },
   )
   .refine(
-    ({ otherParentBirtDate }) => isOnOrAfterMinDate(otherParentBirtDate),
+    ({ wasRemoved, otherParentBirtDate }) =>
+      wasRemoved === 'true' || isOnOrAfterMinDate(otherParentBirtDate),
     { path: ['otherParentBirtDate'] },
   )
 
