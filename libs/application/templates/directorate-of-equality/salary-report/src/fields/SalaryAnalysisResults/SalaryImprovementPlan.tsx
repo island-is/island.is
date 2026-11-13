@@ -180,8 +180,14 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | undefined>()
+  // Not seeded in DRAFT: the stored result is the shell's page-load copy, and
+  // the draft may have been edited since, so the effect below analyses afresh
+  // on every visit, as the results screen does.
   const [result, setResult] = useState<SalaryAnalysisResponseDto | undefined>(
-    () => getSalaryAnalysisResult(application.externalData),
+    () =>
+      isDraftPhase
+        ? undefined
+        : getSalaryAnalysisResult(application.externalData),
   )
   const [updateApplicationExternalData] = useMutation(
     UPDATE_APPLICATION_EXTERNAL_DATA,
@@ -441,6 +447,16 @@ export const SalaryImprovementPlan: FC<React.PropsWithChildren<Props>> = ({
     outlierGroups,
     setAmbientValue,
   ])
+
+  // A fresh DRAFT analysis with no outliers hides this screen's sub-section,
+  // and the shell then unmounts this field without letting it re-register the
+  // callback below; the one it registered while analysing would refuse every
+  // Continue on the now-empty screen. The shell only clears it on a screen
+  // change, so clear it here. Unmount only: re-registering replaces it anyway.
+  useEffect(() => {
+    if (!setBeforeSubmitCallback) return undefined
+    return () => setBeforeSubmitCallback(null)
+  }, [setBeforeSubmitCallback])
 
   useEffect(() => {
     if (!setBeforeSubmitCallback) return

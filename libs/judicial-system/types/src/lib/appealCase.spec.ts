@@ -4,6 +4,7 @@ import {
   getOrderedAppealJudges,
   getPresidingAppealJudge,
   hasAllAppealJudges,
+  isSameAppealBench,
 } from './appealCase'
 
 const anna = { id: 'anna', name: 'Anna' }
@@ -79,6 +80,19 @@ describe('getAppealJudgeUserIds', () => {
         ],
       }),
     ).toEqual(['anna', 'bjorn'])
+  })
+})
+
+describe('isSameAppealBench', () => {
+  it('is true for the same judges in the same order', () => {
+    expect(isSameAppealBench(['anna', 'bjorn'], ['anna', 'bjorn'])).toBe(true)
+    expect(isSameAppealBench([], [])).toBe(true)
+  })
+
+  it('is false when a judge differs, is missing or presides instead', () => {
+    expect(isSameAppealBench(['anna', 'bjorn'], ['anna', 'dora'])).toBe(false)
+    expect(isSameAppealBench(['anna', 'bjorn'], ['anna'])).toBe(false)
+    expect(isSameAppealBench(['anna', 'bjorn'], ['bjorn', 'anna'])).toBe(false)
   })
 })
 

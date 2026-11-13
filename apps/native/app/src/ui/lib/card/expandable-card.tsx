@@ -71,7 +71,7 @@ const Footer = styled.View`
 `
 
 const Expanded = styled.View`
-  background-color: ${dynamicColor('background')};
+  background-color: ${token((t) => t.background.invert)};
   border-bottom-left-radius: ${({ theme }) => theme.border.radius.large};
   border-bottom-right-radius: ${({ theme }) => theme.border.radius.large};
 `

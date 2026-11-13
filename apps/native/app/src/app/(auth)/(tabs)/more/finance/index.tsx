@@ -67,14 +67,8 @@ export default function FinanceScreen() {
     <Skeleton
       key={id}
       active
-      backgroundColor={{
-        dark: theme.shades.dark.shade300,
-        light: theme.color.blue100,
-      }}
-      overlayColor={{
-        dark: theme.shades.dark.shade200,
-        light: theme.color.blue200,
-      }}
+      backgroundColor={theme.tokens.background.brandMinimal}
+      overlayColor={theme.tokens.background.brandLighter}
       overlayOpacity={1}
       height={80}
       style={{
@@ -181,7 +175,7 @@ export default function FinanceScreen() {
             isUtilityButton
             icon={externalLinkIcon}
             disabled={!scheduleButtonVisible}
-            iconStyle={{ tintColor: theme.color.dark300 }}
+            iconStyle={{ tintColor: theme.tokens.foreground.primaryMinimal }}
             style={{ flex: 1 }}
             onPress={() =>
               openBrowser(

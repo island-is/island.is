@@ -1,7 +1,6 @@
 import { FormSystemField, FormSystemListItem } from '@island.is/api/schema'
 import {
   Box,
-  Inline,
   InputError,
   RadioButton,
   Text,
@@ -70,14 +69,14 @@ export const Radio = ({ item, dispatch, hasError, valueIndex = 0 }: Props) => {
       }}
       render={({ field, fieldState }) => (
         <>
-          <Inline space={1}>
-            <Text variant="h4">{item?.name?.[lang]}</Text>
+          <Text variant="h4">
+            {item?.name?.[lang]}
             {item?.isRequired && (
               <Text variant="h4" as="span" fontWeight="medium" color="red600">
-                *
+                {'\u00a0*'}
               </Text>
             )}
-          </Inline>
+          </Text>
 
           {(hasError || fieldState.error) && (
             <InputError

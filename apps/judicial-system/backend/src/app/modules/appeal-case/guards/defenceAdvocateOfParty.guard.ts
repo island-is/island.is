@@ -20,9 +20,8 @@ import { CivilClaimant, Defendant } from '../../repository'
  * it has put on the request. A defender of one of the accused is not party to
  * what the court sends the other's defender.
  *
- * Who acts for a party is decided the way it is everywhere else on the case:
- * the advocate the district court confirmed. The court of appeals' own
- * appointment grants no access of its own yet.
+ * Who acts for a party is the advocate the district court confirmed, or the
+ * appeal advocate the court of appeals confirmed on that same party.
  *
  * Anyone who is not a defence user passes - which of them the route admits is
  * the role rules' business.
@@ -50,7 +49,12 @@ export class DefenceAdvocateOfPartyGuard implements CanActivate {
 
     if (defendant) {
       if (
-        !Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
+        !Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [
+          defendant,
+        ]) &&
+        !Defendant.isConfirmedAppealDefenderOfDefendant(user.nationalId, [
+          defendant,
+        ])
       ) {
         throw new ForbiddenException(
           `Defender is not confirmed for defendant ${defendant.id}`,
@@ -64,7 +68,11 @@ export class DefenceAdvocateOfPartyGuard implements CanActivate {
       civilClaimant &&
       !CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(user.nationalId, [
         civilClaimant,
-      ])
+      ]) &&
+      !CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
+        user.nationalId,
+        [civilClaimant],
+      )
     ) {
       throw new ForbiddenException(
         `Spokesperson is not confirmed for civil claimant ${civilClaimant.id}`,

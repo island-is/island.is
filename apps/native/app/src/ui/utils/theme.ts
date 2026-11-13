@@ -1,5 +1,4 @@
 import { StyleSheet } from 'react-native'
-import * as color from './colors'
 import { fontByWeight, fontByWeightItalic, lineHeightByFontSize } from './font'
 import { tokenModes, tokens } from './tokens'
 
@@ -41,19 +40,6 @@ const spacing = {
 
 export const theme = {
   mode: 'light',
-  light: color,
-  dark: color,
-  shade: {
-    background: '#FFFFFF',
-    foreground: '#00003C',
-    shade700: '#8A8A8A',
-    shade600: '#BFC1C0',
-    shade500: '#CCCCD8',
-    shade400: '#E4E3E2',
-    shade300: '#EBEBEB',
-    shade200: '#F2F2F5',
-    shade100: '#FBFBFB',
-  },
   tokens,
   tokenModes,
   spacing,
@@ -71,7 +57,6 @@ export const theme = {
       xl: 3,
     },
   },
-  color,
 
   // Helper Functions
   fontByWeight,
@@ -80,7 +65,4 @@ export const theme = {
 }
 
 export type Theme = typeof theme
-export type Colors = keyof typeof color
 export type Spacing = keyof typeof spacing
-export type Shade = typeof theme.shade
-export type Color = typeof theme.color

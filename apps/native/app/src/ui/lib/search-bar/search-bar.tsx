@@ -103,10 +103,10 @@ export function SearchBar(props: SearchBarProps) {
                   outputRange: [
                     theme.isDark
                       ? 'rgba(255, 255, 255, 0.10)'
-                      : theme.color.dark100,
+                      : theme.tokens.app.background.neutral,
                     theme.isDark
                       ? 'rgba(255, 255, 255, 0.16)'
-                      : theme.color.dark200,
+                      : theme.tokens.app.background.neutralActive,
                   ],
                   extrapolate: 'clamp',
                 }),

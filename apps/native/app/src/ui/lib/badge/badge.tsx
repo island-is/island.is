@@ -74,7 +74,11 @@ export function Badge({
         borderWidth: outlined ? 1 : 0,
       }}
     >
-      <Typography variant="eyebrow" color={colours.accent}>
+      <Typography
+        variant="eyebrow"
+        color={colours.accent}
+        maxFontSizeMultiplier={1.5}
+      >
         {title}
       </Typography>
     </Host>
