@@ -17,8 +17,13 @@ import { DeleteButton } from './DeleteButton'
 import * as styles from './MainColumn.css'
 
 export const MainContentColumn = () => {
-  const { control, controlDispatch, inSettings, inListBuilder } =
-    useContext(ControlContext)
+  const {
+    control,
+    controlDispatch,
+    inSettings,
+    inListBuilder,
+    updateActiveItem,
+  } = useContext(ControlContext)
   const { activeItem, form, isReadOnly } = control
   const { sections, screens, fields } = form
   const { type } = activeItem
@@ -109,7 +114,10 @@ export const MainContentColumn = () => {
             },
           },
         })
-        controlDispatch({ type: 'REMOVE_FIELD', payload: { id: id } })
+        controlDispatch({
+          type: 'REMOVE_FIELD',
+          payload: { id: id, update: updateActiveItem },
+        })
       }
     } catch (error) {
       console.error('Error removing item:', error)

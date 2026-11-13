@@ -129,7 +129,7 @@ const HeadingSection: React.FC<HeadingSectionProps> = ({
               <>
                 <Typography
                   variant="heading5"
-                  color={theme.color.blue400}
+                  color={theme.tokens.interactive.foreground.primary}
                   style={{ marginRight: 4 }}
                 >
                   <FormattedMessage id={linkTextId ?? 'button.seeAll'} />
@@ -174,12 +174,12 @@ const ExternalLink: React.FC<ExternalLinkProps> = ({
         style={{
           flexDirection: 'row',
           borderBottomWidth: 1,
-          borderBottomColor: theme.color.blue400,
+          borderBottomColor: theme.tokens.interactive.foreground.primary,
         }}
       >
         <Typography
           variant="eyebrow"
-          color={theme.color.blue400}
+          color={theme.tokens.interactive.foreground.primary}
           style={{ marginRight: 4 }}
         >
           <FormattedMessage id={text} />

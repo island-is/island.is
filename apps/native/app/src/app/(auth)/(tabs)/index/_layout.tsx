@@ -21,7 +21,7 @@ export default function IndexLayout() {
           headerTitle: intl.formatMessage({ id: 'home.screenTitle' }),
           headerStyle:
             Platform.OS === 'android'
-              ? { backgroundColor: theme.color.blue100 }
+              ? { backgroundColor: theme.tokens.background.brandMinimal }
               : undefined,
         }}
       />

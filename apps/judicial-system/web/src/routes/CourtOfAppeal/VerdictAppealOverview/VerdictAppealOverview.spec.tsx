@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
+import { COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE } from '@island.is/judicial-system/consts'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   AppealCaseState,
@@ -80,7 +80,7 @@ describe('VerdictAppealOverview', () => {
     await userEvent.click(screen.getByTestId('continueButton'))
 
     expect(mockPush).toHaveBeenCalledWith(
-      `${COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE}/${theCase.id}?appealCaseId=verdict-appeal`,
+      `${COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE}/${theCase.id}?appealCaseId=verdict-appeal`,
     )
   })
 
@@ -92,7 +92,7 @@ describe('VerdictAppealOverview', () => {
     await userEvent.click(screen.getByTestId('continueButton'))
 
     expect(mockPush).toHaveBeenCalledWith(
-      `${COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE}/${theCase.id}?appealCaseId=verdict-appeal`,
+      `${COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE}/${theCase.id}?appealCaseId=verdict-appeal`,
     )
   })
 })

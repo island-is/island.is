@@ -213,7 +213,7 @@ export default function RenewPrescriptionScreen() {
               style={{
                 paddingVertical: theme.spacing[2],
                 borderBottomWidth: 1,
-                borderBottomColor: theme.color.blue200,
+                borderBottomColor: theme.tokens.border.primary,
               }}
             >
               <Typography

@@ -151,7 +151,7 @@ definitions:
           --quiet
     # Steps used by the auto-release mobile-release-* workflows. The release
     # worker starts those builds through the Codemagic API and passes the commit
-    # and build numbers as environment variables.
+    # and release version as environment variables.
     - &checkout_release_target
       name: Check out the commit auto-release requested
       working_directory: .
@@ -179,22 +179,37 @@ definitions:
         git fetch --no-tags origin "$MOBILE_TARGET_SHA"
         git checkout --detach "$MOBILE_TARGET_SHA"
         test "$(git rev-parse HEAD)" = "$MOBILE_TARGET_SHA"
+    # The store build number is the latest number in the variant's store app
+    # plus one. Each (platform, variant) store app has its own counter, so the
+    # four numbers of one release can differ.
     - &apply_release_android_version_code
-      name: Apply auto-release Android version code
+      name: Apply next Google Play version code
       script: |
         set -euo pipefail
-        : "${MOBILE_BUILD_NUMBER_ANDROID:?required}"
+        : "${PACKAGE_NAME:?required}"
+        LATEST=$(google-play get-latest-build-number --package-name "$PACKAGE_NAME")
+        if [[ ! "$LATEST" =~ ^[0-9]+$ ]]; then
+          echo "Failed to get latest version code from Google Play, got '$LATEST'" >&2
+          exit 1
+        fi
+        NEXT=$((LATEST + 1))
         # app.config.js reads ANDROID_VERSION_CODE during prebuild.
-        echo "ANDROID_VERSION_CODE=$MOBILE_BUILD_NUMBER_ANDROID" >> "$CM_ENV"
-        echo "Using Android version code: $MOBILE_BUILD_NUMBER_ANDROID"
+        echo "ANDROID_VERSION_CODE=$NEXT" >> "$CM_ENV"
+        echo "Latest Google Play version code: $LATEST, using: $NEXT"
     - &apply_release_ios_build_number
-      name: Apply auto-release iOS build number
+      name: Apply next App Store Connect build number
       script: |
         set -euo pipefail
-        : "${MOBILE_BUILD_NUMBER_IOS:?required}"
+        : "${APP_STORE_APPLE_ID:?required}"
+        LATEST=$(app-store-connect get-latest-build-number "$APP_STORE_APPLE_ID")
+        if [[ ! "$LATEST" =~ ^[0-9]+$ ]]; then
+          echo "Failed to get latest build number from App Store Connect, got '$LATEST'" >&2
+          exit 1
+        fi
+        NEXT=$((LATEST + 1))
         cd ios
-        agvtool new-version -all "$MOBILE_BUILD_NUMBER_IOS"
-        echo "Using iOS build number: $MOBILE_BUILD_NUMBER_IOS"
+        agvtool new-version -all "$NEXT"
+        echo "Latest App Store Connect build number: $LATEST, using: $NEXT"
   publishing:
     # auto-release iOS builds upload to TestFlight (both dev and prod app
     # records) but never submit for App Store review. Android auto-release
@@ -280,7 +295,8 @@ workflows:
   #   CODEMAGIC_WORKFLOW_ID_IOS_PROD     -> mobile-release-ios-prod
   #   CODEMAGIC_WORKFLOW_ID_ANDROID_DEV  -> mobile-release-android-dev
   #   CODEMAGIC_WORKFLOW_ID_ANDROID_PROD -> mobile-release-android-prod
-  # The build number and yy.mm.dd version come from auto-release. iOS variants
+  # The yy.mm.dd version comes from auto-release; the build number is the
+  # store's latest build number plus one (see the apply_release_* steps). iOS variants
   # upload the signed .ipa to TestFlight (dev and prod app records) but never
   # submit for App Store review. Android variants upload the signed .aab to the
   # Google Play internal track.

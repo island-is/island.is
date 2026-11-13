@@ -16,6 +16,7 @@ import {
   DatePickerInput,
   FilterChip,
   TextField,
+  token,
   Typography,
 } from '@/ui'
 import addMonths from 'date-fns/addMonths'
@@ -66,7 +67,7 @@ const Actions = styled(View)`
 const ErrorMessage = styled(Typography)`
   margin-top: ${({ theme }) => theme.spacing[2]}px;
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
-  color: ${({ theme }) => theme.color.red600};
+  color: ${token((t) => t.feedback.error.foregroundContrast)};
 `
 
 const QUICK_LABEL_TYPE = {

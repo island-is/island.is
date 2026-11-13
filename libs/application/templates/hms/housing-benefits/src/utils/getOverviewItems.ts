@@ -27,6 +27,7 @@ import {
   getSelectedContract,
   getSelectedLandlordForPayment,
 } from './rentalAgreementUtils'
+import { isExemptionRequested } from './utils'
 
 const formatBankAccount = (
   bankAccount:
@@ -149,12 +150,7 @@ export const exemptionSectionOverviewItems = (
   _locale?: Locale,
 ): Array<KeyValueItem> => {
   const exemptionReason = getValueViaPath<string>(answers, 'exemptionReason')
-  const exemptionCheckbox = getValueViaPath<string[]>(
-    answers,
-    'exemptionCheckbox',
-  )
-  const hasExemption =
-    Array.isArray(exemptionCheckbox) && exemptionCheckbox.includes('yes')
+  const hasExemption = isExemptionRequested(answers)
 
   if (!hasExemption || !exemptionReason) {
     return [

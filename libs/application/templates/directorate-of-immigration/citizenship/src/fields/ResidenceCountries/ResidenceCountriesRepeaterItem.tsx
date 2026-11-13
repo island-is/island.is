@@ -21,6 +21,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { OptionSetItem } from '@island.is/clients/directorate-of-immigration'
 import { getErrorViaPath } from '@island.is/application/core'
 import { DatePickerController } from '@island.is/shared/form-fields'
+import { getBirthDate } from '../../utils'
 
 interface Props {
   id: string
@@ -51,6 +52,7 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
   const dateToField = `${fieldIndex}.dateTo`
   const dateFromField = `${fieldIndex}.dateFrom`
   const dateRangeField = `${fieldIndex}.dateRange`
+  const birthDate = getBirthDate(application.applicant)
 
   const countryOptions = (
     getValueViaPath(
@@ -146,6 +148,7 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
               onChange={(value) =>
                 addCountryToList('dateFrom', value as string, index)
               }
+              minDate={birthDate}
               maxDate={new Date()}
               backgroundColor="blue"
               required
@@ -161,6 +164,7 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
               onChange={(value) =>
                 addCountryToList('dateTo', value as string, index)
               }
+              minDate={birthDate}
               maxDate={new Date()}
               backgroundColor="blue"
               required

@@ -14,6 +14,10 @@ export const CALCULATOR_MESSAGES: Record<string, CalculatorLocalizedText> = {
     is: 'Ekki tókst að sækja reiknivélina',
     en: 'Could not load the calculator',
   },
+  incompleteConfig: {
+    is: 'Ekki er hægt að reikna þar sem nauðsynlega reiti vantar í reiknivélina.',
+    en: 'Calculation is unavailable because required fields are missing from the calculator.',
+  },
   calculationError: {
     is: 'Ekki tókst að reikna',
     en: 'The calculation could not be completed',
@@ -23,6 +27,34 @@ export const CALCULATOR_MESSAGES: Record<string, CalculatorLocalizedText> = {
     en: 'No result was found for these values',
   },
   invalidValue: { is: 'Ógilt gildi', en: 'Invalid value' },
+  numberInRange: {
+    is: 'Sláðu inn tölu á bilinu {min} til {max}',
+    en: 'Enter a number from {min} to {max}',
+  },
+  wholeNumberInRange: {
+    is: 'Sláðu inn heila tölu á bilinu {min} til {max}',
+    en: 'Enter a whole number from {min} to {max}',
+  },
+  numberAtLeast: {
+    is: 'Sláðu inn tölu sem er {min} eða hærri',
+    en: 'Enter a number of {min} or more',
+  },
+  wholeNumberAtLeast: {
+    is: 'Sláðu inn heila tölu sem er {min} eða hærri',
+    en: 'Enter a whole number of {min} or more',
+  },
+  numberAtMost: {
+    is: 'Sláðu inn tölu sem er {max} eða lægri',
+    en: 'Enter a number of {max} or less',
+  },
+  wholeNumberAtMost: {
+    is: 'Sláðu inn heila tölu sem er {max} eða lægri',
+    en: 'Enter a whole number of {max} or less',
+  },
+  fieldErrors: {
+    is: 'Leiðréttu villur í reitunum',
+    en: 'Correct the errors in the fields',
+  },
   yes: { is: 'Já', en: 'Yes' },
   no: { is: 'Nei', en: 'No' },
 }

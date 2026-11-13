@@ -807,11 +807,7 @@ const getDefenceUserDefendants = (
   }
 
   const isDistrictDefendant = (defendant: Defendant) =>
-    Boolean(
-      defendant.isDefenderChoiceConfirmed &&
-        defendant.defenderNationalId &&
-        defendant.defenderNationalId === user.nationalId,
-    )
+    Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
 
   const myDistrictDefendants = theCase.defendants?.filter(isDistrictDefendant)
   const myDefendants = theCase.defendants?.filter(

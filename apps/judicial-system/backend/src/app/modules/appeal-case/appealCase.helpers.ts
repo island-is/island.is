@@ -554,8 +554,8 @@ export const userIsAppellant = (
   }
 
   // Indictment defence: the user must be the current confirmed representative of
-  // a party (defendant / civil claimant) that appealed — district or Landsréttur
-  // confirmation. Resolving live against the case follows defender /
+  // a party (defendant / civil claimant) that appealed — district or court of
+  // appeals confirmation. Resolving live against the case follows defender /
   // spokesperson reassignment. A prosecution event names a defendant too - the
   // one whose verdict the prosecution appealed - and that does not make the
   // defendant's defender an appellant.

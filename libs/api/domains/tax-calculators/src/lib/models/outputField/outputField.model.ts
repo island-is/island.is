@@ -14,6 +14,8 @@ export const resolveOutputField = (value: OutputField) => {
       return 'TaxCalculatorDateOutputField'
     case TaxCalculatorOutputFieldType.ARRAY:
       return 'TaxCalculatorArrayOutputField'
+    case TaxCalculatorOutputFieldType.OBJECT:
+      return 'TaxCalculatorObjectOutputField'
     default: {
       const unhandled: never = value.type
       return unhandled

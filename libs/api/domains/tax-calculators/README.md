@@ -41,9 +41,10 @@ compile-time checks for every calculator-specific RSK call.
 ### Submission errors are returned, not thrown
 
 Input validation checks unknown and duplicate fields, requiredness,
-applicability, type, permitted options, dates, and semantic ranges. These are
-expected user-facing failures, so calculation is skipped and structured errors
-are returned. The defensive conversion helpers throw only if an invariant that
+applicability, type, permitted options, and dates; the RSK client then checks
+the values against its generated spec, and each field it rejects is returned as
+an invalid value. These are expected user-facing failures, so calculation is
+skipped and structured errors are returned. The defensive conversion helpers throw only if an invariant that
 validation established is later broken.
 
 ### Results are constrained by the published contract
@@ -64,8 +65,8 @@ duplicating calculator rules.
 
 - Percentages are whole percentages: `37`, not `0.37`.
 - Dates travel as `DateTime` in `dateValue`, on input and output.
-- `percentage`, `month`, and `count` bounds are declared once in
-  `shared/numericSemanticRange.ts` and used for both metadata and validation.
+- Number bounds, whole-number rules and defaults come from the client contract
+  (RSK's generated spec), not from semantics.
 - An invalid input or failed calculation returns `errors` and no calculation.
   A broken calculator contract throws.
 

@@ -18,7 +18,7 @@ import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
 import { FileService } from '../../../file'
 import { PoliceDocumentType, PoliceService } from '../../../police'
-import { Case } from '../../../repository'
+import { Case, CaseRepositoryService } from '../../../repository'
 import { DeliverResponse } from '../../models/deliver.response'
 
 jest.mock('../../../../factories')
@@ -39,6 +39,7 @@ describe('InternalCaseController - Deliver indictment to police', () => {
   let mockAwsS3Service: AwsS3Service
   let mockFileService: FileService
   let mockPoliceService: PoliceService
+  let mockCaseRepositoryService: CaseRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -48,12 +49,14 @@ describe('InternalCaseController - Deliver indictment to police', () => {
       awsS3Service,
       fileService,
       policeService,
+      caseRepositoryService,
       internalCaseController,
     } = await createTestingCaseModule()
 
     mockAwsS3Service = awsS3Service
     mockFileService = fileService
     mockPoliceService = policeService
+    mockCaseRepositoryService = caseRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -118,6 +121,12 @@ describe('InternalCaseController - Deliver indictment to police', () => {
       mockUpdatePoliceCase.mockResolvedValueOnce(true)
 
       then = await givenWhenThen(caseId, theCase)
+    })
+
+    it('should walk to the original ancestor in the handler transaction', () => {
+      expect(
+        mockCaseRepositoryService.findOriginalAncestorId,
+      ).toHaveBeenCalledWith(theCase, { transaction })
     })
 
     it('should update the police case', async () => {

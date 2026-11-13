@@ -8,38 +8,32 @@ import {
   getVehicleTax,
   getWithholdingTax,
 } from '../../../gen/fetch'
-import {
-  zGetChildBenefitData,
-  zGetVehicleTaxData,
-  zGetWithholdingTaxData,
-} from '../../../gen/fetch/zod.gen'
-import type { CalculatorKey } from '../catalog/registry'
-import { calculatorRegistry } from '../catalog/registry'
-import type { ChildBenefitInput } from '../domains/childBenefit'
-import { toChildBenefitOutput } from '../domains/childBenefit'
-import type { InterestBenefitInput } from '../domains/interestBenefit'
-import {
-  toInterestBenefitOutput,
-  toInterestBenefitQuery,
-} from '../domains/interestBenefit'
-import type { VehicleBenefitInput } from '../domains/vehicleBenefit'
-import {
-  toVehicleBenefitOutput,
-  toVehicleBenefitQuery,
-} from '../domains/vehicleBenefit'
-import type { VehicleDepreciationInput } from '../domains/vehicleDepreciation'
-import {
-  toVehicleDepreciationOutput,
-  toVehicleDepreciationQuery,
-} from '../domains/vehicleDepreciation'
-import type { VehicleTaxInput } from '../domains/vehicleTax'
-import { toVehicleTaxOutput } from '../domains/vehicleTax'
-import type { WithholdingTaxInput } from '../domains/withholdingTax'
-import { toWithholdingTaxOutput } from '../domains/withholdingTax'
+import { toInputFields } from '../contract/toInputFields'
+import { toOutputFields } from '../contract/toOutputFields'
 import type { CalculatorContract } from '../types/calculator'
-import type { CalculatorOutputField } from '../types/output-field'
+import type {
+  ChildBenefitInput,
+  InterestBenefitInput,
+  VehicleBenefitInput,
+  VehicleDepreciationInput,
+  VehicleTaxInput,
+  WithholdingTaxInput,
+} from '../types/calculators'
 import { byName } from '../utils/byName'
-import { toClientQuery } from '../utils/toClientQuery'
+import type { CalculatorKey } from './calculators.registry'
+import { calculatorRegistry } from './calculators.registry'
+import { fromClientResult } from './fromClientResult'
+import { invalidClientQueryFields } from './invalidClientQueryFields'
+import { toClientQuery } from './toClientQuery'
+
+const {
+  childBenefit,
+  interestBenefit,
+  vehicleBenefit,
+  vehicleDepreciation,
+  vehicleTax,
+  withholdingTax,
+} = calculatorRegistry
 
 @Injectable()
 export class CalculatorsClientService {
@@ -50,61 +44,65 @@ export class CalculatorsClientService {
       throw new Error(`Unknown calculator key: ${key}`)
     }
 
-    const outputFields: readonly CalculatorOutputField[] =
-      calculator.outputFields
-
     return {
-      key: calculator.key,
-      inputFields: [...calculator.inputFields].sort(byName),
-      outputFields: [...outputFields]
+      key,
+      inputFields: toInputFields(calculator.query).sort(byName),
+      outputFields: toOutputFields(calculator.result)
         .map((field) =>
-          field.kind === 'array'
-            ? { ...field, itemFields: [...field.itemFields].sort(byName) }
-            : field,
+          field.kind === 'scalar'
+            ? field
+            : { ...field, itemFields: [...field.itemFields].sort(byName) },
         )
         .sort(byName),
     }
   }
 
+  validateInput(
+    key: CalculatorKey,
+    input: Readonly<Record<string, unknown>>,
+  ): string[] {
+    return invalidClientQueryFields(calculatorRegistry[key].query, input)
+  }
+
   async getChildBenefit(input: ChildBenefitInput) {
     const { data } = await getChildBenefit({
-      query: toClientQuery(zGetChildBenefitData.shape.query.shape, input),
+      query: toClientQuery(childBenefit.query, input),
     })
-    return data && toChildBenefitOutput(data)
+    return data && fromClientResult(childBenefit.result, data)
   }
 
   async getVehicleTax(input: VehicleTaxInput) {
     const { data } = await getVehicleTax({
-      query: toClientQuery(zGetVehicleTaxData.shape.query.shape, input),
+      query: toClientQuery(vehicleTax.query, input),
     })
-    return data && toVehicleTaxOutput(data)
+    return data && fromClientResult(vehicleTax.result, data)
   }
 
   async getVehicleBenefit(input: VehicleBenefitInput) {
     const { data } = await getVehicleBenefit({
-      query: toVehicleBenefitQuery(input),
+      query: toClientQuery(vehicleBenefit.query, input),
     })
-    return data && toVehicleBenefitOutput(data)
+    return data && fromClientResult(vehicleBenefit.result, data)
   }
 
   async getVehicleDepreciation(input: VehicleDepreciationInput) {
     const { data } = await getVehicleDepreciation({
-      query: toVehicleDepreciationQuery(input),
+      query: toClientQuery(vehicleDepreciation.query, input),
     })
-    return data && toVehicleDepreciationOutput(data)
+    return data && fromClientResult(vehicleDepreciation.result, data)
   }
 
   async getWithholdingTax(input: WithholdingTaxInput) {
     const { data } = await getWithholdingTax({
-      query: toClientQuery(zGetWithholdingTaxData.shape.query.shape, input),
+      query: toClientQuery(withholdingTax.query, input),
     })
-    return data && toWithholdingTaxOutput(data)
+    return data && fromClientResult(withholdingTax.result, data)
   }
 
   async getInterestBenefit(input: InterestBenefitInput) {
     const { data } = await getInterestBenefit({
-      query: toInterestBenefitQuery(input),
+      query: toClientQuery(interestBenefit.query, input),
     })
-    return data && toInterestBenefitOutput(data)
+    return data && fromClientResult(interestBenefit.result, data)
   }
 }

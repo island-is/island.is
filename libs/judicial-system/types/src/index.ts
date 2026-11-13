@@ -94,11 +94,13 @@ export {
   getStatementDeadline,
   CaseAppealDecision,
   APPEAL_JUDGE_COUNT,
+  MAX_APPEAL_JUDGE_COUNT,
   getOrderedAppealJudges,
   getAppealJudges,
   getPresidingAppealJudge,
   getAppealJudgeUserIds,
   hasAllAppealJudges,
+  isSameAppealBench,
 } from './lib/appealCase'
 export type {
   AppealCorrectionLock,

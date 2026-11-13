@@ -40,7 +40,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.LOGIN_SERVICE,
   name: application.name,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: application.institutionName,
   translationNamespaces: ApplicationConfigurations.LoginService.translation,
   dataSchema: LoginServiceSchema,

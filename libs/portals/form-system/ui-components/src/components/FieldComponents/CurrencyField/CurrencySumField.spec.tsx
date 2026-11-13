@@ -42,7 +42,7 @@ const currencyField = (
 const renderSum = (
   isPartOfMultiset: boolean,
   valueIndex = 0,
-  notIncludedInSumbox?: boolean | null,
+  fieldsToSum?: string[] | null,
 ) => {
   const dispatch = jest.fn()
   const item: FormSystemField = {
@@ -50,14 +50,12 @@ const renderSum = (
     name: { is: 'Total' },
     fieldType: FieldTypesEnum.ISK_SUMBOX,
     isPartOfMultiset,
+    fieldSettings: { fieldsToSum },
   }
   const fields = [
     currencyField('before-previous-sum', ['9.000', '8.000']),
     { id: 'previous-sum', fieldType: FieldTypesEnum.ISK_SUMBOX },
-    {
-      ...currencyField('first', ['1.000', '2.000']),
-      fieldSettings: { notIncludedInSumbox },
-    },
+    currencyField('first', ['1.000', '2.000']),
     currencyField('second', ['300', '400']),
     currencyField('outside-multiset', ['500'], false),
     item,
@@ -102,35 +100,6 @@ it.each<[number, string]>([
   },
 )
 
-it.each<[boolean, number, boolean | null | undefined, string]>([
-  [true, 0, true, '300'],
-  [true, 1, true, '400'],
-  [false, 0, true, '31.200'],
-  [true, 0, false, '1.300'],
-  [false, 0, false, '34.200'],
-  [true, 0, undefined, '1.300'],
-  [false, 0, undefined, '34.200'],
-  [true, 0, null, '1.300'],
-  [false, 0, null, '34.200'],
-])(
-  'sums with multiset=%s, index=%s, exclusion=%s to %s',
-  (isPartOfMultiset, valueIndex, notIncludedInSumbox, expected) => {
-    const { dispatch } = renderSum(
-      isPartOfMultiset,
-      valueIndex,
-      notIncludedInSumbox,
-    )
-
-    expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe(
-      `${expected} kr.`,
-    )
-    expect(dispatch).toHaveBeenCalledWith({
-      type: 'SET_CURRENCY',
-      payload: { id: 'sum', value: expected, valueIndex },
-    })
-  },
-)
-
 it('sums every currency field on the screen for sum fields outside the multiset', () => {
   const { dispatch } = renderSum(false)
   expect(screen.getByRole('textbox').getAttribute('name')).toBe('sum')
@@ -142,3 +111,83 @@ it('sums every currency field on the screen for sum fields outside the multiset'
     payload: { id: 'sum', value: '34.200', valueIndex: 0 },
   })
 })
+
+it.each([
+  { isPartOfMultiset: false, valueIndex: 0, expected: '30.000' },
+  { isPartOfMultiset: true, valueIndex: 0, expected: '16.000' },
+  { isPartOfMultiset: true, valueIndex: 1, expected: '14.000' },
+])(
+  'sums selected fields regardless of position with multiset=$isPartOfMultiset, index=$valueIndex',
+  ({ isPartOfMultiset, valueIndex, expected }) => {
+    const { dispatch } = renderSum(isPartOfMultiset, valueIndex, [
+      'before-previous-sum',
+      'after-sum',
+      'previous-sum',
+      'missing-field',
+    ])
+
+    expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe(
+      `${expected} kr.`,
+    )
+    expect(dispatch).toHaveBeenCalledWith({
+      type: 'SET_CURRENCY',
+      payload: { id: 'sum', value: expected, valueIndex },
+    })
+  },
+)
+
+it.each([0, 1])(
+  'includes a selected non-multiset currency value in multiset entry %s',
+  (valueIndex) => {
+    const { dispatch } = renderSum(true, valueIndex, ['outside-multiset'])
+
+    expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe(
+      '500 kr.',
+    )
+    expect(dispatch).toHaveBeenCalledWith({
+      type: 'SET_CURRENCY',
+      payload: { id: 'sum', value: '500', valueIndex },
+    })
+  },
+)
+
+it.each([
+  { valueIndex: 0, expected: '1.500' },
+  { valueIndex: 1, expected: '2.500' },
+])(
+  'combines selected multiset and non-multiset fields in entry $valueIndex',
+  ({ valueIndex, expected }) => {
+    const { dispatch } = renderSum(true, valueIndex, [
+      'first',
+      'outside-multiset',
+    ])
+
+    expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe(
+      `${expected} kr.`,
+    )
+    expect(dispatch).toHaveBeenCalledWith({
+      type: 'SET_CURRENCY',
+      payload: { id: 'sum', value: expected, valueIndex },
+    })
+  },
+)
+
+it.each([
+  { fieldsToSum: [], isPartOfMultiset: false, expected: '34.200' },
+  { fieldsToSum: null, isPartOfMultiset: false, expected: '34.200' },
+  { fieldsToSum: [], isPartOfMultiset: true, expected: '1.300' },
+  { fieldsToSum: null, isPartOfMultiset: true, expected: '1.300' },
+])(
+  'uses default sums for fieldsToSum=$fieldsToSum with multiset=$isPartOfMultiset',
+  ({ fieldsToSum, isPartOfMultiset, expected }) => {
+    const { dispatch } = renderSum(isPartOfMultiset, 0, fieldsToSum)
+
+    expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe(
+      `${expected} kr.`,
+    )
+    expect(dispatch).toHaveBeenCalledWith({
+      type: 'SET_CURRENCY',
+      payload: { id: 'sum', value: expected, valueIndex: 0 },
+    })
+  },
+)

@@ -17,6 +17,7 @@ const fetchedLawyer: Lawyer = {
   phoneNr: '0000001',
   nationalId: '0000000001',
   isLitigator: true,
+  hasCourtOfAppealsRights: true,
 }
 
 const cachedLawyer: Lawyer = {
@@ -27,6 +28,7 @@ const cachedLawyer: Lawyer = {
   phoneNr: '0000002',
   nationalId: '0000000002',
   isLitigator: false,
+  hasCourtOfAppealsRights: false,
 }
 
 // A hand-rolled stand-in for window.indexedDB that lets each test drive the

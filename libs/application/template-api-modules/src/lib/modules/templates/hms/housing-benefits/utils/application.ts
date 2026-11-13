@@ -12,6 +12,7 @@ import {
 import {
   getCompletedAssigneeNationalIdSet,
   getRejectedAssigneeNationalIdsFromAnswers,
+  LegalDomicileOption,
 } from '@island.is/application/templates/hms/housing-benefits'
 import * as kennitala from 'kennitala'
 
@@ -134,16 +135,16 @@ const EXEMPTION_REASON_TO_EXEMPTION_TYPE: Record<string, ExemptionType> = {
 }
 
 /**
- * The exemption section is only shown to the applicant (when their legal domicile
+ * The legal domicile section is only shown to the applicant (when their legal domicile
  * does not match the lease), so this is only ever set on the applicant's entry.
- * Returns undefined when no exemption was requested.
+ * Returns undefined when the applicant did not choose to apply for an exemption.
  */
 export const getApplicantExemptionNumber = (
   answers: ApplicationWithAttachments['answers'],
 ): ExemptionType | undefined => {
   const exemptionRequested =
-    getValueViaPath<string[]>(answers, 'exemptionCheckbox')?.includes(YES) ??
-    false
+    getValueViaPath<string>(answers, 'legalDomicileOption') ===
+    LegalDomicileOption.EXEMPTION
   if (!exemptionRequested) {
     return undefined
   }
