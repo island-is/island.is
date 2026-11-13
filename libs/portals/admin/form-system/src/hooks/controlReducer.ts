@@ -53,7 +53,14 @@ type FieldActions =
       type: 'ADD_FIELD'
       payload: { field: FormSystemField; skipActiveItem?: boolean }
     }
-  | { type: 'REMOVE_FIELD'; payload: { id: string; skipActiveItem?: boolean } }
+  | {
+      type: 'REMOVE_FIELD'
+      payload: {
+        id: string
+        skipActiveItem?: boolean
+        update?: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
   | {
       type: 'CHANGE_FIELD_TYPE'
       payload: {
@@ -280,11 +287,7 @@ type InputSettingsActions =
   | {
       type: 'SET_FIELD_SETTINGS'
       payload: {
-        property:
-          | 'isLarge'
-          | 'hasDescription'
-          | 'fetchBankAccountFromMyPages'
-          | 'notIncludedInSumbox'
+        property: 'isLarge' | 'hasDescription' | 'fetchBankAccountFromMyPages'
         value: boolean
         update: (updatedActiveItem?: ActiveItem) => void
       }
@@ -431,6 +434,29 @@ export interface ControlState {
   organizationNationalId: string | null
   isReadOnly: boolean
 }
+
+const removeCurrencyFieldFromSums = (
+  fields: FormSystemForm['fields'],
+  fieldId: string,
+): NonNullable<FormSystemForm['fields']> | undefined =>
+  fields?.map((field) => {
+    if (
+      field?.fieldType !== FieldTypesEnum.ISK_SUMBOX ||
+      !field.fieldSettings?.fieldsToSum?.includes(fieldId)
+    ) {
+      return field
+    }
+
+    return {
+      ...field,
+      fieldSettings: {
+        ...field.fieldSettings,
+        fieldsToSum: field.fieldSettings.fieldsToSum.filter(
+          (id) => id !== fieldId,
+        ),
+      },
+    }
+  })
 
 export const controlReducer = (
   state: ControlState,
@@ -590,6 +616,15 @@ export const controlReducer = (
       const removedField = state.form.fields?.find(
         (field) => field?.id === action.payload.id,
       )
+      if (removedField?.fieldType === FieldTypesEnum.ISK_NUMBERBOX) {
+        const fieldsBeforeCleanup = newFields
+        newFields = removeCurrencyFieldFromSums(newFields, removedField.id)
+        newFields?.forEach((field, index) => {
+          if (field && field !== fieldsBeforeCleanup?.[index]) {
+            action.payload.update?.({ type: 'Field', data: field })
+          }
+        })
+      }
       if (removedField?.fieldType === FieldTypesEnum.PAYMENT_QUANTITY) {
         newFields = newFields?.map((field) => {
           if (
@@ -608,8 +643,15 @@ export const controlReducer = (
         })
       }
       if (action.payload.skipActiveItem) {
+        const updatedActiveField =
+          activeItem.type === 'Field'
+            ? newFields?.find((field) => field?.id === activeItem.data?.id)
+            : undefined
         return {
           ...state,
+          activeItem: updatedActiveField
+            ? { ...activeItem, data: updatedActiveField }
+            : activeItem,
           form: {
             ...form,
             fields: newFields,
@@ -672,6 +714,19 @@ export const controlReducer = (
             }
           }
           return field
+        })
+      }
+
+      if (
+        currentData.fieldType === FieldTypesEnum.ISK_NUMBERBOX &&
+        newValue !== FieldTypesEnum.ISK_NUMBERBOX
+      ) {
+        const fieldsBeforeCleanup = newFields
+        newFields = removeCurrencyFieldFromSums(newFields, currentData.id)
+        newFields?.forEach((field, index) => {
+          if (field && field !== fieldsBeforeCleanup?.[index]) {
+            update({ type: 'Field', data: field })
+          }
         })
       }
 

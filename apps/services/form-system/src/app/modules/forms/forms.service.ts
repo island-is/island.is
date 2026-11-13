@@ -1639,6 +1639,7 @@ export class FormsService {
     const sections: Section[] = []
     const screens: Screen[] = []
     const fields: Field[] = []
+    const currencyFieldIds = new Map<string, string>()
     const listItems: ListItem[] = []
     const formCertificationTypes: FormCertificationType[] = []
 
@@ -1663,6 +1664,9 @@ export class FormsService {
         for (const field of screen.fields) {
           const newField = field.toJSON()
           newField.id = uuidV4()
+          if (field.fieldType === FieldTypesEnum.ISK_NUMBERBOX) {
+            currencyFieldIds.set(field.id, newField.id)
+          }
           newField.identifier = field.identifier
           newField.screenId = newScreen.id
           newField.created = new Date()
@@ -1686,6 +1690,22 @@ export class FormsService {
             }
           }
         }
+      }
+    }
+    for (const field of fields) {
+      if (
+        field.fieldType !== FieldTypesEnum.ISK_SUMBOX ||
+        !field.fieldSettings?.fieldsToSum
+      ) {
+        continue
+      }
+
+      field.fieldSettings = {
+        ...field.fieldSettings,
+        fieldsToSum: field.fieldSettings.fieldsToSum.flatMap((fieldId) => {
+          const copiedFieldId = currencyFieldIds.get(fieldId)
+          return copiedFieldId ? [copiedFieldId] : []
+        }),
       }
     }
     newForm.dependencies = deps
