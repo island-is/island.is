@@ -7,10 +7,12 @@ import {
   UpdatedAt,
   ForeignKey,
   BelongsTo,
+  HasMany,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { MeActorProfileDto } from '../dto/actor-profile.dto'
 import { Emails } from './emails.model'
+import { ActorBlockedNotification } from './actorBlockedNotification.model'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 
 @Table({
@@ -62,6 +64,14 @@ export class ActorProfile extends Model {
   @ApiProperty()
   emailNotifications!: boolean
 
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: false,
+    allowNull: false,
+  })
+  @ApiProperty()
+  onlyActionablePriorityNotifications!: boolean
+
   @CreatedAt
   @ApiProperty()
   created!: Date
@@ -100,6 +110,13 @@ export class ActorProfile extends Model {
   })
   emails?: Emails
 
+  @HasMany(() => ActorBlockedNotification, {
+    foreignKey: 'actorProfileId',
+    sourceKey: 'id',
+    as: 'blockedNotifications',
+  })
+  blockedNotifications?: ActorBlockedNotification[]
+
   toDto(): MeActorProfileDto {
     return {
       fromNationalId: this.fromNationalId,
@@ -107,6 +124,8 @@ export class ActorProfile extends Model {
       emailsId: this.emailsId || null,
       email: this.emails?.email || null,
       emailVerified: this.emails?.emailStatus === DataStatus.VERIFIED,
+      onlyActionablePriorityNotifications:
+        this.onlyActionablePriorityNotifications,
     }
   }
 }

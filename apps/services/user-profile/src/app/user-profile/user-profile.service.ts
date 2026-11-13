@@ -47,6 +47,11 @@ import kennitala from 'kennitala'
 export const NUDGE_INTERVAL = 6
 export const SKIP_INTERVAL = 1
 
+// Email notifications default to off for company delegations, on for personal
+export const getDefaultActorEmailNotifications = (
+  fromNationalId: string,
+): boolean => !kennitala.isCompany(fromNationalId)
+
 @Injectable()
 export class UserProfileService {
   private readonly metrics = new DogStatsD({ prefix: 'user-profile.' })
@@ -800,17 +805,14 @@ export class UserProfileService {
 
         if (!emailPreference) {
           const { email, emailVerified } = await loadPrimaryEmail()
-          // Default email notifications off for company delegations when no actor profile yet
-          const defaultEmailNotifications = kennitala.isCompany(
-            delegation.fromNationalId,
-          )
-            ? false
-            : true
           return {
             fromNationalId: delegation.fromNationalId,
-            emailNotifications: defaultEmailNotifications,
+            emailNotifications: getDefaultActorEmailNotifications(
+              delegation.fromNationalId,
+            ),
             email,
             emailVerified,
+            onlyActionablePriorityNotifications: false,
           }
         }
 
@@ -875,14 +877,15 @@ export class UserProfileService {
               emailPreferences.emails?.emailStatus === DataStatus.VERIFIED,
           }
         : {
-            emailNotifications: kennitala.isCompany(fromNationalId)
-              ? false
-              : true,
+            emailNotifications:
+              getDefaultActorEmailNotifications(fromNationalId),
             email: userProfile.email,
             emailVerified: userProfile.emailVerified,
           }),
       documentNotifications: userProfile.documentNotifications,
       locale: userProfile.locale,
+      onlyActionablePriorityNotifications:
+        emailPreferences?.onlyActionablePriorityNotifications ?? false,
     }
 
     return actorProfile
@@ -903,11 +906,13 @@ export class UserProfileService {
     fromNationalId,
     emailNotifications,
     emailsId,
+    onlyActionablePriorityNotifications,
   }: {
     toNationalId: string
     fromNationalId: string
     emailNotifications?: boolean
     emailsId?: string
+    onlyActionablePriorityNotifications?: boolean
   }): Promise<MeActorProfileDto> {
     // Verify delegation exists
     const incomingDelegations = await this.getIncomingDelegations(toNationalId)
@@ -935,12 +940,34 @@ export class UserProfileService {
         emailStatus = emailRecord.emailStatus
       }
 
-      // Default email notifications off for company delegations, on for personal
-      const defaultEmailNotifications = kennitala.isCompany(fromNationalId)
-        ? false
-        : true
+      // An omitted emailNotifications keeps the stored value, so patching
+      // another field never resets it to the default
+      const existingProfile = isDefined(emailNotifications)
+        ? null
+        : await this.delegationPreference.findOne({
+            where: { toNationalId, fromNationalId },
+            attributes: ['emailNotifications'],
+          })
       const resolvedEmailNotifications =
-        emailNotifications ?? defaultEmailNotifications
+        emailNotifications ??
+        existingProfile?.emailNotifications ??
+        getDefaultActorEmailNotifications(fromNationalId)
+
+      // Only persist the field when provided and the feature flag is enabled,
+      // so an omitted field never overwrites an existing value
+      const isOnlyPrioNotificationsEnabled = isDefined(
+        onlyActionablePriorityNotifications,
+      )
+        ? await this.featureFlagService.getValue(
+            Features.isOnlyActionablePriorityNotificationsEnabled,
+            false,
+          )
+        : false
+      const onlyPrioNotificationsUpdate =
+        isDefined(onlyActionablePriorityNotifications) &&
+        isOnlyPrioNotificationsEnabled
+          ? { onlyActionablePriorityNotifications }
+          : {}
 
       // Create or update the actor profile
       const [profile] = await this.delegationPreference.upsert({
@@ -948,6 +975,7 @@ export class UserProfileService {
         fromNationalId,
         emailNotifications: resolvedEmailNotifications,
         emailsId,
+        ...onlyPrioNotificationsUpdate,
       })
 
       if (!profile) {
@@ -970,6 +998,8 @@ export class UserProfileService {
         email,
         emailsId: profile.emailsId,
         emailVerified: emailStatus === DataStatus.VERIFIED,
+        onlyActionablePriorityNotifications:
+          profile.onlyActionablePriorityNotifications ?? false,
       } as MeActorProfileDto
     } catch (error) {
       // Log and rethrow any errors
@@ -1387,6 +1417,23 @@ export class UserProfileService {
 
     // Return the updated actor profile details
     return this.getSingleActorProfile({ toNationalId, fromNationalId })
+  }
+
+  /**
+   * Throws BadRequestException unless the user has an incoming delegation
+   * from fromNationalId.
+   */
+  async verifyIncomingDelegation(
+    toNationalId: string,
+    fromNationalId: string,
+  ): Promise<void> {
+    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+
+    if (
+      !incomingDelegations.data.some((d) => d.fromNationalId === fromNationalId)
+    ) {
+      throw new BadRequestException('Delegation does not exist')
+    }
   }
 
   /* Private methods */

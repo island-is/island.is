@@ -329,6 +329,42 @@ describe('UserProfileController', () => {
           documentNotifications: testUserProfile.documentNotifications,
           locale: testUserProfile.locale,
           emailVerified: newEmail.emailStatus === DataStatus.VERIFIED,
+          onlyActionablePriorityNotifications: false,
+        })
+      })
+
+      it('should return the actor profile blocked categories and onlyActionablePriorityNotifications when include=notificationSettings', async () => {
+        await fixtureFactory.createUserProfile(testUserProfile)
+        const actorProfile = await fixtureFactory.createActorProfile({
+          toNationalId: testUserProfile.nationalId,
+          fromNationalId: testNationalId1,
+          emailNotifications: true,
+          onlyActionablePriorityNotifications: true,
+        })
+        await fixtureFactory.createActorBlockedNotification({
+          actorProfileId: actorProfile.id,
+          senderId: testNationalId2,
+          category: 'almennt',
+        })
+
+        const res = await server
+          .get(
+            '/v2/users/.to-national-id/actor-profiles/.from-national-id?include=notificationSettings',
+          )
+          .set('X-Param-To-National-Id', testUserProfile.nationalId)
+          .set('X-Param-From-National-Id', testNationalId1)
+
+        expect(res.status).toEqual(200)
+        expect(res.body).toMatchObject({
+          fromNationalId: testNationalId1,
+          onlyActionablePriorityNotifications: true,
+          blockedCategories: [
+            {
+              key: `${testNationalId2}-almennt`,
+              senderId: testNationalId2,
+              category: 'almennt',
+            },
+          ],
         })
       })
 
@@ -351,6 +387,7 @@ describe('UserProfileController', () => {
           documentNotifications: testUserProfile.documentNotifications,
           locale: testUserProfile.locale,
           emailVerified: false,
+          onlyActionablePriorityNotifications: false,
         })
       })
 

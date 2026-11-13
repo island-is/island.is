@@ -482,6 +482,70 @@ export class NotificationsService {
       ],
     })
 
+    return this.buildCategories(templateRows)
+  }
+
+  /**
+   * Categories a delegate has received notifications in on behalf of a
+   * principal. Derived from the actor notifications themselves so the delegate
+   * never sees categories of notifications they did not receive.
+   */
+  async findActorCategories(
+    toNationalId: string,
+    fromNationalId: string,
+  ): Promise<NotificationCategoriesDto> {
+    // DISTINCT (senderId, templateId) pairs, done in SQL via GROUP BY
+    const rawPairs = (await this.actorNotificationModel.findAll({
+      attributes: [],
+      where: { recipient: toNationalId },
+      include: [
+        {
+          model: this.notificationModel,
+          as: 'userNotification',
+          attributes: ['senderId', 'templateId'],
+          where: { recipient: fromNationalId },
+          required: true,
+        },
+      ],
+      group: ['userNotification.sender_id', 'userNotification.template_id'],
+      raw: true,
+    })) as unknown as Record<string, string | null>[]
+
+    const received = rawPairs
+      .map((row) => ({
+        senderId: row['userNotification.senderId'],
+        templateId: row['userNotification.templateId'],
+      }))
+      .filter(
+        (pair): pair is { senderId: string; templateId: string } =>
+          !!pair.senderId && !!pair.templateId,
+      )
+
+    if (received.length === 0) {
+      return { categories: [] }
+    }
+
+    const templateRows = await this.userNotificationSenderModel.findAll({
+      attributes: ['senderId', 'templateId', 'category'],
+      where: {
+        recipient: fromNationalId,
+        [Op.or]: received.map(({ senderId, templateId }) => ({
+          senderId,
+          templateId,
+        })),
+      },
+      order: [
+        ['senderId', 'ASC'],
+        ['category', 'ASC NULLS FIRST'],
+      ],
+    })
+
+    return this.buildCategories(templateRows)
+  }
+
+  private async buildCategories(
+    templateRows: UserNotificationSender[],
+  ): Promise<NotificationCategoriesDto> {
     // Rows are per template, so several templates can share a category
     const rows = [
       ...new Map(
@@ -622,6 +686,7 @@ export class NotificationsService {
         'messageId',
         'userNotificationId',
         'recipient',
+        'wasSent',
         'created',
       ],
     })

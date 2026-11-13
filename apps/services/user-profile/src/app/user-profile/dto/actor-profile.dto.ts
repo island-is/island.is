@@ -9,6 +9,7 @@ import {
   IsUUID,
 } from 'class-validator'
 import { PageInfoDto } from '@island.is/nest/pagination'
+import { BlockedCategoryDto } from './blocked-category.dto'
 import { Locale } from '../types/localeTypes'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 
@@ -35,6 +36,10 @@ export class MeActorProfileDto {
   @IsOptional()
   @IsBoolean()
   readonly emailVerified?: boolean | null
+
+  @ApiProperty({ type: Boolean })
+  @IsBoolean()
+  onlyActionablePriorityNotifications!: boolean
 }
 
 export class ActorProfileDto {
@@ -71,6 +76,18 @@ export class ActorProfileDto {
   @IsOptional()
   @IsUUID(4)
   readonly emailsId?: string
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly onlyActionablePriorityNotifications!: boolean
+
+  @ApiPropertyOptional({
+    type: [BlockedCategoryDto],
+    description:
+      'Sender categories blocked for this actor profile. Only returned when include=notificationSettings is requested.',
+  })
+  @IsOptional()
+  blockedCategories?: BlockedCategoryDto[]
 }
 
 export class ActorProfileDetailsDto {
@@ -110,6 +127,11 @@ export class PatchActorProfileDto {
   @IsOptional()
   @IsUUID(4)
   emailsId?: string
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  onlyActionablePriorityNotifications?: boolean
 }
 
 export class PaginatedActorProfileDto {

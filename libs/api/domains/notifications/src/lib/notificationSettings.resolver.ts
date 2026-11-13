@@ -3,13 +3,24 @@ import { IdsUserGuard, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { notificationScopes } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
-import { Inject, InternalServerErrorException, UseGuards } from '@nestjs/common'
+import {
+  BadRequestException,
+  Inject,
+  InternalServerErrorException,
+  UseGuards,
+} from '@nestjs/common'
+import * as kennitala from 'kennitala'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { NotificationSettingsService } from './notificationSettings.service'
-import { getErrorMessage, toCategoryKey } from './notificationSettings.utils'
+import {
+  getErrorMessage,
+  normalizeNationalId,
+  toCategoryKey,
+} from './notificationSettings.utils'
 import {
   NotificationCategoryInput,
   NotificationSettings,
+  UpdateActorNotificationCategoriesInput,
   UpdateNotificationCategoriesInput,
 } from './notificationSettings.model'
 import { AUDIT_NAMESPACE } from './notifications.resolver'
@@ -19,6 +30,14 @@ import type { OrganizationTitleByNationalIdDataLoader } from '@island.is/cms'
 import type { Locale } from '@island.is/shared/types'
 
 const LOG_CATEGORY = 'notification-settings-resolver'
+
+const toValidNationalId = (fromNationalId: string): string => {
+  const nationalId = normalizeNationalId(fromNationalId)
+  if (!kennitala.isValid(nationalId)) {
+    throw new BadRequestException(`National id ${fromNationalId} is not valid`)
+  }
+  return nationalId
+}
 
 @UseGuards(IdsUserGuard)
 @Resolver()
@@ -117,6 +136,139 @@ export class NotificationSettingsResolver {
         senders: [],
         onlyActionablePriorityNotifications:
           input.onlyActionablePriorityNotifications,
+      }
+    }
+  }
+
+  @Query(() => NotificationSettings, {
+    name: 'actorNotificationSettings',
+    nullable: true,
+  })
+  @Audit()
+  async getActorNotificationSettings(
+    @CurrentUser() user: User,
+    @Loader(OrganizationTitleByNationalIdLoader)
+    titleLoader: OrganizationTitleByNationalIdDataLoader,
+    @Args('fromNationalId', { type: () => String }) fromNationalId: string,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+  ): Promise<NotificationSettings> {
+    const nationalId = toValidNationalId(fromNationalId)
+    try {
+      return await this.service.getActorNotificationSettings(
+        user,
+        nationalId,
+        locale,
+        titleLoader,
+      )
+    } catch (e) {
+      this.logger.info('failed to get actor notification settings', {
+        category: LOG_CATEGORY,
+        error: getErrorMessage(e),
+      })
+      throw e
+    }
+  }
+
+  @Mutation(() => NotificationSettings, {
+    name: 'updateActorNotificationCategorySettings',
+  })
+  async updateActorNotificationCategorySettings(
+    @CurrentUser() user: User,
+    @Loader(OrganizationTitleByNationalIdLoader)
+    titleLoader: OrganizationTitleByNationalIdDataLoader,
+    @Args('input') input: UpdateActorNotificationCategoriesInput,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+  ): Promise<NotificationSettings> {
+    const nationalId = toValidNationalId(input.fromNationalId)
+    const categories = input.categories ?? []
+    const keysWhere = (blocked: boolean) =>
+      categories
+        .filter((c) => c.blocked === blocked)
+        .map(({ senderId, category }) => toCategoryKey(senderId, category))
+
+    try {
+      await this.auditService.auditPromise(
+        {
+          auth: user,
+          namespace: AUDIT_NAMESPACE,
+          action: 'updateActorNotificationCategorySettings',
+          resources: categories.map(({ senderId, category }) =>
+            toCategoryKey(senderId, category),
+          ),
+          meta: {
+            fromNationalId: nationalId,
+            blocked: keysWhere(true),
+            unblocked: keysWhere(false),
+            onlyActionablePriorityNotifications:
+              input.onlyActionablePriorityNotifications,
+          },
+        },
+        this.updateActorSettings(user, nationalId, categories, input),
+      )
+    } catch (e) {
+      this.logger.info(
+        'failed to update actor notification category settings',
+        {
+          category: LOG_CATEGORY,
+          error: getErrorMessage(e),
+        },
+      )
+      throw e
+    }
+
+    try {
+      return await this.service.getActorNotificationSettings(
+        user,
+        nationalId,
+        locale,
+        titleLoader,
+      )
+    } catch (e) {
+      // The update was already applied and audited, so don't report failure.
+      this.logger.warn(
+        'failed to read actor notification settings after successful update',
+        {
+          category: LOG_CATEGORY,
+          error: getErrorMessage(e),
+        },
+      )
+      return {
+        senders: [],
+        onlyActionablePriorityNotifications:
+          input.onlyActionablePriorityNotifications,
+      }
+    }
+  }
+
+  private async updateActorSettings(
+    user: User,
+    fromNationalId: string,
+    categories: NotificationCategoryInput[],
+    input: UpdateActorNotificationCategoriesInput,
+  ): Promise<void> {
+    await this.service.updateActorCategories(user, fromNationalId, categories)
+
+    if (typeof input.onlyActionablePriorityNotifications === 'boolean') {
+      try {
+        await this.service.updateActorOnlyActionablePriorityNotifications(
+          user,
+          fromNationalId,
+          input.onlyActionablePriorityNotifications,
+        )
+      } catch (e) {
+        // The two writes hit separate endpoints and cannot be made atomic, so
+        // make it explicit that the category changes were already applied.
+        this.logger.error('partial actor notification settings update', {
+          category: LOG_CATEGORY,
+          error: getErrorMessage(e),
+        })
+        throw new InternalServerErrorException(
+          categories.length > 0
+            ? 'Category settings were updated, but updating onlyActionablePriorityNotifications failed'
+            : 'Updating onlyActionablePriorityNotifications failed',
+        )
       }
     }
   }

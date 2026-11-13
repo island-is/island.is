@@ -1,6 +1,8 @@
 import {
   Body,
+  BadRequestException,
   Get,
+  Headers,
   Param,
   Query,
   UseGuards,
@@ -10,6 +12,7 @@ import {
   Post,
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
+import { isValid as isValidKennitala } from 'kennitala'
 
 import { notificationScopes } from '@island.is/auth/scopes'
 import { NotificationsService } from './notifications.service'
@@ -92,6 +95,34 @@ export class MeNotificationsController {
     @CurrentUser() user: User,
   ): Promise<NotificationCategoriesDto> {
     return this.notificationService.findCategories(user.nationalId)
+  }
+
+  @Get('/actor-categories')
+  @Documentation({
+    summary:
+      'Returns the distinct sender categories of notifications the current user has received as a delegate on behalf of the given principal',
+    response: { status: HttpStatus.OK, type: NotificationCategoriesDto },
+    request: {
+      header: {
+        'X-Param-From-National-Id': {
+          required: true,
+          description: 'National id of the user that granted the delegation',
+        },
+      },
+    },
+  })
+  findActorCategories(
+    @CurrentUser() user: User,
+    @Headers('X-Param-From-National-Id') fromNationalId: string,
+  ): Promise<NotificationCategoriesDto> {
+    if (!isValidKennitala(fromNationalId)) {
+      throw new BadRequestException('Invalid X-Param-From-National-Id header')
+    }
+
+    return this.notificationService.findActorCategories(
+      user.nationalId,
+      fromNationalId,
+    )
   }
 
   @Get(':id')
