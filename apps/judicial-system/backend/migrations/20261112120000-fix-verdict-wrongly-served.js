@@ -12,7 +12,7 @@
 // served, and the event is only deleted when the verdict was reverted. down is
 // a no-op - the state being reverted was a mistake.
 
-const VERDICT_ID = '<verdict id>'
+const VERDICT_ID = '1154e077-659c-4357-8bdc-a1b104592105'
 
 module.exports = {
   async up(queryInterface) {
