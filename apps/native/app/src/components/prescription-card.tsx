@@ -13,27 +13,19 @@ import {
   HealthDirectoratePrescriptionRenewalStatus,
   useGetPrescriptionDocumentsLazyQuery,
 } from '@/graphql/types/schema'
-import { Alert, Button, ExpandableCard, Link, LinkText, Typography } from '@/ui'
+import {
+  Alert,
+  Button,
+  ExpandableCard,
+  Link,
+  LinkText,
+  Table,
+  TableCell,
+  TableRow,
+  Typography,
+} from '@/ui'
 import checkmarkIcon from '@/ui/assets/icons/check.png'
 import { capitalizeEveryWord } from '@/utils/capitalize'
-
-const TableRow = styled.View`
-  flex-direction: row;
-  flex-wrap: wrap;
-  padding-top: ${({ theme }) => theme.spacing[2]}px;
-  padding-bottom: ${({ theme }) => theme.spacing[2]}px;
-  border-bottom-color: ${({ theme }) => theme.tokens.border.primary};
-  border-bottom-width: 1px;
-`
-const RowItem = styled.View`
-  margin-horizontal: ${({ theme }) => theme.spacing[1]}px;
-  width: 40%;
-  flex: 1;
-`
-
-const TableHeader = styled.View`
-  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
-`
 
 const DispensationRowItem = styled.View`
   flex-direction: row;
@@ -439,25 +431,16 @@ export const PrescriptionCard = ({
             <Alert type="info" hasBorder message={alertMessage} />
           </View>
         ) : null}
-        <View>
-          <TableHeader>
-            <Typography variant="eyebrow">
-              <FormattedMessage id="health.prescriptionsAndCertificates.furtherInformation" />
-            </Typography>
-          </TableHeader>
+        <Table
+          title={
+            <FormattedMessage id="health.prescriptionsAndCertificates.furtherInformation" />
+          }
+        >
           {prescriptionDataInformation
             .filter((item) => item.data)
             .map((item, visibleIndex) => (
-              <TableRow
-                key={visibleIndex}
-                style={{
-                  backgroundColor:
-                    visibleIndex % 2 === 0
-                      ? theme.tokens.background.brandMinimal
-                      : theme.tokens.background.invert,
-                }}
-              >
-                <RowItem>
+              <TableRow key={visibleIndex} index={visibleIndex}>
+                <TableCell>
                   <Typography variant="eyebrow">
                     {item.labelText ? (
                       item.labelText
@@ -465,8 +448,8 @@ export const PrescriptionCard = ({
                       <FormattedMessage id={item.label} />
                     )}
                   </Typography>
-                </RowItem>
-                <RowItem>
+                </TableCell>
+                <TableCell>
                   {item.url ? (
                     <Link url={item.url}>
                       <LinkText variant="small" icon={externalLinkIcon}>
@@ -478,84 +461,71 @@ export const PrescriptionCard = ({
                   ) : (
                     item.data
                   )}
-                </RowItem>
+                </TableCell>
               </TableRow>
             ))}
-          {prescriptionDataIssuedBy.length && (
-            <>
-              <TableHeader style={{ marginTop: theme.spacing[3] }}>
-                <Typography variant="eyebrow">
-                  <FormattedMessage id="health.prescriptions.issueInformation" />
-                </Typography>
-              </TableHeader>
-              {prescriptionDataIssuedBy
-                .filter((item) => item.data)
-                .map((item, visibleIndex) => (
-                  <TableRow
-                    key={visibleIndex}
-                    style={{
-                      backgroundColor:
-                        visibleIndex % 2 === 0
-                          ? theme.tokens.background.brandMinimal
-                          : theme.tokens.background.invert,
-                    }}
-                  >
-                    <RowItem>
-                      <Typography variant="eyebrow">
-                        {item.label && <FormattedMessage id={item.label} />}
-                      </Typography>
-                    </RowItem>
-                    <RowItem>
-                      <Typography variant="body3">{item.data}</Typography>
-                    </RowItem>
-                  </TableRow>
-                ))}
-            </>
-          )}
-          {!prescription?.dispensations?.length ? null : (
-            <>
-              <TableHeader style={{ marginTop: theme.spacing[3] }}>
-                <Typography variant="eyebrow">
-                  <FormattedMessage id="health.prescriptions.dispensations" />
-                </Typography>
-              </TableHeader>
-              {prescription.dispensations.map((item, visibleIndex) => (
-                <TableRow
-                  key={visibleIndex}
-                  style={{
-                    backgroundColor:
-                      visibleIndex % 2 === 0
-                        ? theme.tokens.background.brandMinimal
-                        : theme.tokens.background.invert,
-                    paddingTop: theme.spacing[1],
-                    paddingBottom: theme.spacing[1],
-                  }}
-                >
-                  <DispensationRowItem>
-                    <DispensationCheckmark>
-                      <Image source={checkmarkIcon} />
-                    </DispensationCheckmark>
-                    <View>
-                      <Typography variant="eyebrow">
-                        {intl.formatMessage(
-                          {
-                            id: 'health.prescriptions.dispensationNumber',
-                          },
-                          { number: visibleIndex + 1 },
-                        )}
-                      </Typography>
-                      <Typography variant="body3">
-                        {`${intl.formatDate(item.date)}${
-                          item.pharmacy ? ' - ' + item.pharmacy : ''
-                        }${item.amount ? ' - ' + item.amount : ''}`}
-                      </Typography>
-                    </View>
-                  </DispensationRowItem>
+        </Table>
+        {prescriptionDataIssuedBy.length && (
+          <Table
+            title={
+              <FormattedMessage id="health.prescriptions.issueInformation" />
+            }
+            style={{ marginTop: theme.spacing[3] }}
+          >
+            {prescriptionDataIssuedBy
+              .filter((item) => item.data)
+              .map((item, visibleIndex) => (
+                <TableRow key={visibleIndex} index={visibleIndex}>
+                  <TableCell>
+                    <Typography variant="eyebrow">
+                      {item.label && <FormattedMessage id={item.label} />}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="body3">{item.data}</Typography>
+                  </TableCell>
                 </TableRow>
               ))}
-            </>
-          )}
-        </View>
+          </Table>
+        )}
+        {!prescription?.dispensations?.length ? null : (
+          <Table
+            title={<FormattedMessage id="health.prescriptions.dispensations" />}
+            style={{ marginTop: theme.spacing[3] }}
+          >
+            {prescription.dispensations.map((item, visibleIndex) => (
+              <TableRow
+                key={visibleIndex}
+                index={visibleIndex}
+                style={{
+                  paddingTop: theme.spacing[1],
+                  paddingBottom: theme.spacing[1],
+                }}
+              >
+                <DispensationRowItem>
+                  <DispensationCheckmark>
+                    <Image source={checkmarkIcon} />
+                  </DispensationCheckmark>
+                  <View>
+                    <Typography variant="eyebrow">
+                      {intl.formatMessage(
+                        {
+                          id: 'health.prescriptions.dispensationNumber',
+                        },
+                        { number: visibleIndex + 1 },
+                      )}
+                    </Typography>
+                    <Typography variant="body3">
+                      {`${intl.formatDate(item.date)}${
+                        item.pharmacy ? ' - ' + item.pharmacy : ''
+                      }${item.amount ? ' - ' + item.amount : ''}`}
+                    </Typography>
+                  </View>
+                </DispensationRowItem>
+              </TableRow>
+            ))}
+          </Table>
+        )}
       </View>
     </ExpandableCard>
   )

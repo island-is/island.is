@@ -59,11 +59,14 @@ import { UpdateDateLog } from '../services/dateLogRepository.service'
 
 // The assistant of an appeal case, as a user. Every appeal case include loads
 // it along with the bench, so an appeal case read anywhere carries both.
-export const appealAssistantInclude: Includeable = {
+// Built per use: Sequelize records the parent on an include object, so one
+// object shared by sibling appeal case includes joins the institution against
+// whichever sibling claimed it last.
+export const appealAssistantInclude = (): Includeable => ({
   model: User,
   as: 'appealAssistant',
   include: [{ model: Institution, as: 'institution' }],
-}
+})
 
 // The bench of an appeal case, presiding judge first. Every appeal case include
 // loads it, whatever kind of appeal the case is.
@@ -94,7 +97,7 @@ export const caseInclude: Includeable[] = [
     as: 'appealCase',
     required: false,
     include: [
-      appealAssistantInclude,
+      appealAssistantInclude(),
       appealJudgesInclude,
       {
         model: AppealEventLog,
@@ -110,7 +113,7 @@ export const caseInclude: Includeable[] = [
     as: 'verdictAppealCase',
     required: false,
     include: [
-      appealAssistantInclude,
+      appealAssistantInclude(),
       appealJudgesInclude,
       {
         model: AppealEventLog,
@@ -199,7 +202,7 @@ export const caseInclude: Includeable[] = [
     required: false,
     separate: true,
     include: [
-      appealAssistantInclude,
+      appealAssistantInclude(),
       appealJudgesInclude,
       {
         model: AppealEventLog,
@@ -1228,7 +1231,7 @@ export const getLimitedAccessCaseInclude = (
       as: 'appealCase',
       required: false,
       include: [
-        appealAssistantInclude,
+        appealAssistantInclude(),
         appealJudgesInclude,
         {
           model: AppealEventLog,
@@ -1244,7 +1247,7 @@ export const getLimitedAccessCaseInclude = (
       as: 'verdictAppealCase',
       required: false,
       include: [
-        appealAssistantInclude,
+        appealAssistantInclude(),
         appealJudgesInclude,
         {
           model: AppealEventLog,
@@ -1270,7 +1273,7 @@ export const getLimitedAccessCaseInclude = (
       required: false,
       separate: true,
       include: [
-        appealAssistantInclude,
+        appealAssistantInclude(),
         appealJudgesInclude,
         {
           model: AppealEventLog,
