@@ -726,24 +726,13 @@ export const applicantSubmitAccessAgreementOverviewAttachments = (
     return []
   }
   const prefix = sanitizeKennitala(applicantRaw)
-  type SubmitRepeaterRow = {
-    childNationalId?: string
-    file?: Array<{ name: string; key: string }>
-  }
-  const scoped = getValueViaPath<SubmitRepeaterRow[]>(
-    answers,
-    `${prefix}.applicantSubmitAccessAgreementRepeater`,
-  )
-  // Older answers stored this repeater at the top level.
-  const legacy = getValueViaPath<SubmitRepeaterRow[]>(
-    answers,
-    'applicantSubmitAccessAgreementRepeater',
-  )
-  const repeater = [
-    ...(Array.isArray(scoped) ? scoped : []),
-    ...(Array.isArray(legacy) ? legacy : []),
-  ]
-  if (repeater.length === 0) {
+  const repeater = getValueViaPath<
+    Array<{
+      childNationalId?: string
+      file?: Array<{ name: string; key: string }>
+    }>
+  >(answers, `${prefix}.applicantSubmitAccessAgreementRepeater`)
+  if (!Array.isArray(repeater) || repeater.length === 0) {
     return []
   }
   const out: Array<AttachmentItem> = []

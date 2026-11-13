@@ -202,18 +202,4 @@ describe('collectApplicationFileEntries applicant-submit access agreements', () 
     expect(entries.map((e) => e.key)).toEqual(['scoped'])
     expect(entries[0].kennitala).toBe(APPLICANT_ID)
   })
-
-  it('collects files stored at the legacy top-level key', () => {
-    const entries = collectApplicationFileEntries(
-      createApplication({
-        applicantSubmitAccessAgreementRepeater: [
-          { childNationalId: MEMBER_ID, file: [file('legacy')] },
-        ],
-      }),
-      APPLICANT_ID,
-    )
-
-    expect(entries.map((e) => e.key)).toEqual(['legacy'])
-    expect(entries[0].kennitala).toBe(APPLICANT_ID)
-  })
 })

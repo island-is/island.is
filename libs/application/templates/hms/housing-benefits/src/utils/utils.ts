@@ -203,24 +203,6 @@ export const minorHasAnyUmgengnissamningurUploadAttached = (
     }
   }
 
-  // Older answers stored the applicant-submit repeater at the top level
-  // instead of under the applicant's kennitala.
-  const legacySubmitRepeater = (answers as Record<string, unknown>)
-    .applicantSubmitAccessAgreementRepeater as
-    | Array<{
-        childNationalId?: string
-        file?: Array<{ key: string; name: string }>
-      }>
-    | undefined
-  if (Array.isArray(legacySubmitRepeater)) {
-    for (const r of legacySubmitRepeater) {
-      const cid = r.childNationalId?.trim()
-      if (!cid) continue
-      if (normalizeKennitalaKey(cid) !== targetKey) continue
-      if (Array.isArray(r.file) && r.file.length > 0) return true
-    }
-  }
-
   const mainFormRepeater = (answers as Record<string, unknown>)
     .mainFormAccessAgreementRepeater as
     | Array<{

@@ -305,26 +305,6 @@ describe('applicant-submit access agreement', () => {
       ),
     ).toHaveLength(1)
   })
-
-  it('accepts uploads stored at the legacy top-level key', () => {
-    const answers = {
-      ...answersBase,
-      applicantSubmitAccessAgreementRepeater: uploadedRepeater,
-    } as FormValue
-
-    expect(
-      shouldShowApplicantSubmitAccessAgreementSection(
-        answers,
-        baseExternalData,
-      ),
-    ).toBe(false)
-    expect(
-      applicantSubmitAccessAgreementOverviewAttachments(
-        answers,
-        baseExternalData,
-      ),
-    ).toHaveLength(1)
-  })
 })
 
 describe('assignee waiting markdown lists', () => {
