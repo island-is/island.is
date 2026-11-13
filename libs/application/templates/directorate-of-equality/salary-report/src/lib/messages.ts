@@ -21,6 +21,10 @@ export const messages = {
       id: 'doe.sr.application:errors.invalidCompany',
       defaultMessage: 'Kennitala fyrirtækis er ekki gild',
     },
+    startDateAfterToday: {
+      id: 'doe.sr.application:errors.startDateAfterToday',
+      defaultMessage: 'Upphafsdagur starfs má ekki vera síðar en í dag',
+    },
     draftSyncFailed: {
       id: 'doe.sr.application:errors.draftSyncFailed',
       defaultMessage:

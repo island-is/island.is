@@ -21,6 +21,7 @@ import {
   PAID_HOURS_MIN,
   SALARY_COMPONENT_GROUPS,
 } from '../../utils/constants'
+import { isStartDateAfterToday } from '../../utils/dates'
 import type { Employee } from '../../utils/types'
 import {
   EMPTY_EMPLOYEE_FORM_VALUES,
@@ -79,6 +80,15 @@ export const EmployeeForm: FC<Props> = ({
     // `rules`, so enforce the requirement here (the `required` prop is UI-only).
     if (!data.startDate) {
       methods.setError('startDate', { type: 'required', message: requiredMsg })
+      return
+    }
+    // maxDate below only limits what the calendar offers; a typed date still
+    // gets here, and DMR's 400 for it would surface as a generic save error.
+    if (isStartDateAfterToday(data.startDate, new Date())) {
+      methods.setError('startDate', {
+        type: 'max',
+        message: formatMessage(messages.errors.startDateAfterToday),
+      })
       return
     }
     // Caller resolves roleTitle/id/ordinal and preserves step assignments.
@@ -143,6 +153,7 @@ export const EmployeeForm: FC<Props> = ({
               name="startDate"
               label={formatMessage(m.startDateLabel)}
               locale={lang as Locale}
+              maxDate={new Date()}
               backgroundColor="white"
               size="sm"
               required
