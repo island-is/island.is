@@ -38,6 +38,9 @@ export interface CompanyPayer {
 interface BankTransferPaymentProps {
   // Set when the payer is a company: the individual authorising the transfer is then entered here.
   companyPayer?: CompanyPayer
+  // The account must be in the payer's name, so an individual payer is shown the national id the
+  // bank checks it against.
+  payerNationalId?: string
 }
 
 const NATIONAL_ID_MASK = '______-____'
@@ -66,6 +69,7 @@ type PasteFocusTarget = keyof BankTransferPaymentInput | 'submit'
  */
 export const BankTransferPayment = ({
   companyPayer,
+  payerNationalId,
 }: BankTransferPaymentProps) => {
   const {
     control,
@@ -199,6 +203,15 @@ export const BankTransferPayment = ({
                 readOnly
               />
             </>
+          )}
+          {!companyPayer && payerNationalId && (
+            <Input
+              name="payerNationalId"
+              label={formatMessage(bankTransfer.payerNationalId)}
+              value={formatKennitala(payerNationalId)}
+              size="sm"
+              readOnly
+            />
           )}
           <Box>
             <Box display="flex" columnGap={2}>

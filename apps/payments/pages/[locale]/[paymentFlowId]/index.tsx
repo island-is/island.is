@@ -568,7 +568,10 @@ function PaymentPage({
                     />
                   )}
                   {selectedPaymentMethod === 'bank_transfer' && (
-                    <BankTransferPayment companyPayer={companyPayer} />
+                    <BankTransferPayment
+                      companyPayer={companyPayer}
+                      payerNationalId={paymentFlow?.payerNationalId}
+                    />
                   )}
                   <Button
                     type="submit"
