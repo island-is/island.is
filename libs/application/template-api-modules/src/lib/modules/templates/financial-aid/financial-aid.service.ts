@@ -21,10 +21,10 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import {
   ApplicationApi,
+  FilesApi,
   MunicipalityApi,
   PersonalTaxReturnApi,
 } from '@island.is/clients/municipalities-financial-aid'
-import { PersonalTaxReturnApi as RskPersonalTaxReturnApi } from '@island.is/clients/rsk/personal-tax-return'
 
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
@@ -40,13 +40,12 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { AttachmentS3Service } from '../../shared/services'
-import {
-  fetchDirectTaxPaymentsFromRsk,
-  fetchPersonalTaxReturnFromRsk,
-  shouldFetchTaxDataFromRsk,
-} from './taxDataFromRsk'
 import { fetchVeitaMunicipalitySettings } from './veitaMunicipalitySettings'
 import { serializeVeitaDirectTaxPayments } from './veitaDirectTaxPayments'
+import {
+  copyTaxReturnToApplicationAttachments,
+  padPayerNationalIds,
+} from './veitaTaxData'
 import {
   CreateApplicationDocument,
   CreateIslandisApplicationRequest,
@@ -64,7 +63,7 @@ export class FinancialAidService extends BaseTemplateApiService {
     private rvkApplicationsApi: ForIslandisApi,
     private municipalityApi: MunicipalityApi,
     private personalTaxReturnApi: PersonalTaxReturnApi,
-    private rskPersonalTaxReturnApi: RskPersonalTaxReturnApi,
+    private filesApi: FilesApi,
     private readonly attachmentService: AttachmentS3Service,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
@@ -86,6 +85,10 @@ export class FinancialAidService extends BaseTemplateApiService {
 
   personalTaxReturnApiWithAuth(auth: Auth) {
     return this.personalTaxReturnApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private filesApiWithAuth(auth: Auth) {
+    return this.filesApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   private handle404(error: FetchError) {
@@ -487,43 +490,35 @@ export class FinancialAidService extends BaseTemplateApiService {
         throw new Error('Municipality settings could not be fetched')
       }
 
-      if (shouldFetchTaxDataFromRsk(application.externalData)) {
-        const municipalitiesPersonalTaxReturn =
-          await fetchPersonalTaxReturnFromRsk(
-            this.rskPersonalTaxReturnApi,
-            this.attachmentService,
-            application,
-            auth.nationalId,
-            this.logger,
-          )
-        const municipalitiesDirectTaxPayments =
-          await fetchDirectTaxPaymentsFromRsk(
-            this.rskPersonalTaxReturnApi,
-            auth.nationalId,
-            this.logger,
-            application.id,
-          )
-
-        return {
-          municipalitiesPersonalTaxReturn,
-          municipalitiesDirectTaxPayments,
-        }
-      }
-
-      const personalTaxReturn = await this.personalTaxReturnApiWithAuth(
+      const personalTaxReturn = (await this.personalTaxReturnApiWithAuth(
         auth,
       ).personalTaxReturnControllerMunicipalitiesPersonalTaxReturn({
         id: application.id,
-      })
-      const directTaxPayments = await this.personalTaxReturnApiWithAuth(
+      })) as TaxData['municipalitiesPersonalTaxReturn']
+      const directTaxPayments = (await this.personalTaxReturnApiWithAuth(
         auth,
-      ).personalTaxReturnControllerMunicipalitiesDirectTaxPayments()
+      ).personalTaxReturnControllerMunicipalitiesDirectTaxPayments()) as TaxData['municipalitiesDirectTaxPayments']
+
+      if (
+        getFinancialAidRouting(application.externalData).backend !== 'veita'
+      ) {
+        return {
+          municipalitiesPersonalTaxReturn: personalTaxReturn,
+          municipalitiesDirectTaxPayments: directTaxPayments,
+        }
+      }
 
       return {
         municipalitiesPersonalTaxReturn:
-          personalTaxReturn as TaxData['municipalitiesPersonalTaxReturn'],
-        municipalitiesDirectTaxPayments:
-          directTaxPayments as TaxData['municipalitiesDirectTaxPayments'],
+          await copyTaxReturnToApplicationAttachments({
+            taxReturn: personalTaxReturn,
+            filesApi: this.filesApiWithAuth(auth),
+            attachmentService: this.attachmentService,
+            application,
+            nationalId: auth.nationalId,
+            logger: this.logger,
+          }),
+        municipalitiesDirectTaxPayments: padPayerNationalIds(directTaxPayments),
       }
     } catch {
       throw new TemplateApiError(
