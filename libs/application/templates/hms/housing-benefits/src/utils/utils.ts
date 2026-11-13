@@ -175,9 +175,9 @@ export const minorHasAnyUmgengnissamningurUploadAttached = (
     const legacyFiles = bucket.assigneeUmgengnissamningurFile as
       | Array<{ key: string; name: string }>
       | undefined
-    const forChild = (bucket.assigneeUmgengnissamningurForChildNationalId as
-      | string
-      | undefined)?.trim()
+    const forChild = (
+      bucket.assigneeUmgengnissamningurForChildNationalId as string | undefined
+    )?.trim()
     if (
       Array.isArray(legacyFiles) &&
       legacyFiles.length > 0 &&

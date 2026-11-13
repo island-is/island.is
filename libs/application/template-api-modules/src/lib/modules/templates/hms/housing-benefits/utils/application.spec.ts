@@ -14,7 +14,7 @@ const createApplication = (
   answers: ApplicationWithAttachments['answers'] = {},
   externalData: ApplicationWithAttachments['externalData'] = {},
 ): ApplicationWithAttachments =>
-  (({
+  ({
     id: 'app-1',
     applicant: APPLICANT_ID,
     assignees: [],
@@ -24,7 +24,7 @@ const createApplication = (
       ...answers,
     },
     externalData,
-  } as unknown) as ApplicationWithAttachments)
+  } as unknown as ApplicationWithAttachments)
 
 const registryEntry = (
   address: Record<string, string | null> | null,

@@ -46,10 +46,10 @@ const householdRepeater = [
   },
 ]
 
-const baseExternalData = ({
+const baseExternalData = {
   nationalRegistry: { data: { nationalId: APPLICANT_ID } },
   childrenCustodyInformation: { data: [] },
-} as unknown) as ExternalData
+} as unknown as ExternalData
 
 const uploadedRepeater = [
   {
@@ -75,10 +75,10 @@ const answersWithSignedUpload = {
   signedAssignees: [ASSIGNEE_ID],
 } as FormValue
 
-const custodyExternalData = ({
+const custodyExternalData = {
   nationalRegistry: { data: { nationalId: APPLICANT_ID } },
   childrenCustodyInformation: { data: [{ nationalId: CHILD_ID }] },
-} as unknown) as ExternalData
+} as unknown as ExternalData
 
 const asApplication = (
   answers: FormValue,
