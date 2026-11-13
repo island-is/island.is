@@ -31,6 +31,7 @@ import {
   canSkipArraignmentSummons,
   getAppealActorText,
   getDefaultDefendantGender,
+  getDefenceUserMatchingPartyIds,
   getDefenceUserPartyIds,
   hasAcceptedRulingOrderInCourt,
   hasSentNotification,
@@ -2095,6 +2096,24 @@ describe('getDefenceUserPartyIds', () => {
     ).toEqual({ civilClaimantId: 'claimant_id' })
   })
 
+  it('requires hasSpokesperson for a district civil claimant spokesperson', () => {
+    expect(
+      getDefenceUserPartyIds(
+        {
+          type: CaseType.INDICTMENT,
+          civilClaimants: [
+            {
+              id: 'claimant_id',
+              isSpokespersonConfirmed: true,
+              spokespersonNationalId: '0101302989',
+            },
+          ],
+        } as WorkingCase,
+        defender,
+      ),
+    ).toEqual({})
+  })
+
   it('ignores a waived appeal defender', () => {
     expect(
       getDefenceUserPartyIds(
@@ -2112,6 +2131,41 @@ describe('getDefenceUserPartyIds', () => {
         defender,
       ),
     ).toEqual({})
+  })
+
+  it('lists every defendant and civil claimant the defender is confirmed for', () => {
+    expect(
+      getDefenceUserMatchingPartyIds(
+        {
+          type: CaseType.INDICTMENT,
+          defendants: [
+            {
+              id: 'district_client',
+              isDefenderChoiceConfirmed: true,
+              defenderNationalId: '0101302989',
+            },
+            {
+              id: 'appeal_client',
+              isAppealDefenderConfirmed: true,
+              appealDefenderNationalId: '0101302989',
+            },
+          ],
+          civilClaimants: [
+            {
+              id: 'claimant_id',
+              hasSpokesperson: true,
+              isSpokespersonConfirmed: true,
+              spokespersonNationalId: '0101302989',
+            },
+          ],
+        } as WorkingCase,
+        defender,
+      ),
+    ).toEqual([
+      { defendantId: 'district_client' },
+      { defendantId: 'appeal_client' },
+      { civilClaimantId: 'claimant_id' },
+    ])
   })
 })
 

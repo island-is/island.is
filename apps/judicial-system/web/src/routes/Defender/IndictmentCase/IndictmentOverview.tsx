@@ -19,6 +19,7 @@ import {
 import { titles } from '@island.is/judicial-system-web/messages'
 import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components'
 import {
+  AlertBanner,
   AllIndictmentCaseFiles,
   AlternativeServiceAnnouncement,
   AppealCourtSessionScheduledCard,
@@ -61,6 +62,7 @@ import {
   useAppealCase,
   useAppealCaseBanner,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { getAppealDecision } from '@island.is/judicial-system-web/src/utils/hooks/useAppealCaseBanner'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   isCaseCivilClaimantSpokesperson,
@@ -68,6 +70,10 @@ import {
   shouldDisplayGeneratedPdfFiles,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
+import {
+  getVerdictAppealOverviewBanner,
+  getVerdictAppealOverviewConclusion,
+} from './IndictmentOverview.logic'
 import { getVerdictAppealAction } from './verdictAppealActions.logic'
 
 interface ServiceAnnouncementProps {
@@ -158,6 +164,11 @@ const IndictmentOverview: FC = () => {
       workingCase.appealCase?.appealState === AppealCaseState.COMPLETED ||
       workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN)
 
+  const verdictAppealBanner = getVerdictAppealOverviewBanner(workingCase, user)
+  const verdictAppealConclusion = getVerdictAppealOverviewConclusion(
+    workingCase.verdictAppealCase,
+  )
+
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
@@ -227,6 +238,22 @@ const IndictmentOverview: FC = () => {
   return (
     <>
       {shouldDisplayAppealBanner && appealBanner}
+      {verdictAppealBanner && (
+        <AlertBanner
+          variant="warning"
+          title={verdictAppealBanner.title}
+          description={
+            verdictAppealBanner.description ??
+            getAppealDecision(verdictAppealBanner.appealRulingDecision)
+          }
+        >
+          {verdictAppealBanner.statementSentText ? (
+            <Text variant="small" color="mint800" fontWeight="semiBold">
+              {verdictAppealBanner.statementSentText}
+            </Text>
+          ) : null}
+        </AlertBanner>
+      )}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
@@ -377,6 +404,12 @@ const IndictmentOverview: FC = () => {
                   conclusionText={workingCase.appealCase?.appealConclusion}
                 />
               )}
+            {verdictAppealConclusion && (
+              <Conclusion
+                title={verdictAppealConclusion.title}
+                conclusionText={verdictAppealConclusion.conclusionText}
+              />
+            )}
             {displayVerdictTimeline && <VerdictAppealFiles />}
             <AllIndictmentCaseFiles
               displayGeneratedPDFs={displayGeneratedPDFs}

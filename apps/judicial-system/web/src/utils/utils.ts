@@ -255,6 +255,60 @@ export const isCaseCivilClaimantLegalSpokesperson = (
       civilClaimant.spokespersonIsLawyer,
   )
 
+export type DefenceUserPartyIds = {
+  defendantId?: string
+  civilClaimantId?: string
+}
+
+/**
+ * Every defendant / civil claimant the defence user is confirmed for
+ * (district or appeal). Used when a lawyer may represent more than one
+ * party and a single `.find()` would pick the wrong one.
+ */
+export const getDefenceUserMatchingPartyIds = (
+  workingCase: Pick<WorkingCase, 'type' | 'defendants' | 'civilClaimants'>,
+  user: User | undefined,
+): DefenceUserPartyIds[] => {
+  if (!user || !isIndictmentCase(workingCase.type)) {
+    return []
+  }
+
+  const normalizedId = normalizeAndFormatNationalId(user.nationalId)
+
+  const defendants =
+    workingCase.defendants
+      ?.filter(
+        (d) =>
+          (d.isDefenderChoiceConfirmed &&
+            d.defenderNationalId &&
+            normalizedId.includes(d.defenderNationalId)) ||
+          (d.isAppealDefenderConfirmed &&
+            !d.isAppealDefenderWaived &&
+            d.appealDefenderNationalId &&
+            normalizedId.includes(d.appealDefenderNationalId)),
+      )
+      .map((d) => ({ defendantId: d.id })) ?? []
+
+  // Match district spokesperson confirmation the same way the backend and
+  // CivilClaimant model do (hasSpokesperson + confirmed + national id).
+  const civilClaimants =
+    workingCase.civilClaimants
+      ?.filter(
+        (cc) =>
+          (cc.hasSpokesperson &&
+            cc.isSpokespersonConfirmed &&
+            cc.spokespersonNationalId &&
+            normalizedId.includes(cc.spokespersonNationalId)) ||
+          (cc.hasAppealSpokesperson !== false &&
+            cc.isAppealSpokespersonConfirmed &&
+            cc.appealSpokespersonNationalId &&
+            normalizedId.includes(cc.appealSpokespersonNationalId)),
+      )
+      .map((cc) => ({ civilClaimantId: cc.id })) ?? []
+
+  return [...defendants, ...civilClaimants]
+}
+
 /**
  * For indictment cases, returns the defendant ID or civil claimant ID
  * that the current defence user represents. Used to associate uploaded
@@ -268,49 +322,15 @@ export const isCaseCivilClaimantLegalSpokesperson = (
  * 1. First matching confirmed defendant (district or appeal)
  * 2. First matching confirmed civil claimant (district or appeal)
  * 3. Empty object (prosecutor or no match)
+ *
+ * When the user represents several parties, prefer
+ * `getDefenceUserMatchingPartyIds` and pick among them explicitly.
  */
 export const getDefenceUserPartyIds = (
   workingCase: WorkingCase,
   user: User | undefined,
-): { defendantId?: string; civilClaimantId?: string } => {
-  if (!user || !isIndictmentCase(workingCase.type)) {
-    return {}
-  }
-
-  const normalizedId = normalizeAndFormatNationalId(user.nationalId)
-
-  const defendant = workingCase.defendants?.find(
-    (d) =>
-      (d.isDefenderChoiceConfirmed &&
-        d.defenderNationalId &&
-        normalizedId.includes(d.defenderNationalId)) ||
-      (d.isAppealDefenderConfirmed &&
-        !d.isAppealDefenderWaived &&
-        d.appealDefenderNationalId &&
-        normalizedId.includes(d.appealDefenderNationalId)),
-  )
-
-  if (defendant) {
-    return { defendantId: defendant.id }
-  }
-
-  const civilClaimant = workingCase.civilClaimants?.find(
-    (cc) =>
-      (cc.isSpokespersonConfirmed &&
-        cc.spokespersonNationalId &&
-        normalizedId.includes(cc.spokespersonNationalId)) ||
-      (cc.hasAppealSpokesperson !== false &&
-        cc.isAppealSpokespersonConfirmed &&
-        cc.appealSpokespersonNationalId &&
-        normalizedId.includes(cc.appealSpokespersonNationalId)),
-  )
-
-  if (civilClaimant) {
-    return { civilClaimantId: civilClaimant.id }
-  }
-
-  return {}
-}
+): DefenceUserPartyIds =>
+  getDefenceUserMatchingPartyIds(workingCase, user)[0] ?? {}
 
 /**
  * Whether a defence user may open a linked case (e.g. merge target / merged-from).
