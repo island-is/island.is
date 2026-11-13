@@ -17,7 +17,7 @@ const colors = {
 
 const pageMargin = 56
 const contentWidth = 483
-const footerHeight = 28
+const footerHeight = 40
 const sectionContentReservation = 150
 const screenContentReservation = 90
 const screenIndent = 10
@@ -25,7 +25,7 @@ const fieldIndent = 20
 
 const translations = {
   application: { is: 'Umsókn', en: 'Application' },
-  applicationNumber: { is: 'Númer umsóknar', en: 'Application number' },
+  applicationNumber: { is: 'Númer', en: 'number' },
   received: { is: 'Móttekin', en: 'Received' },
   page: { is: 'Bls.', en: 'Page' },
   selected: { is: 'Hakað við', en: 'checked' },
@@ -146,6 +146,8 @@ const fileNames = (value: unknown): string[] => {
 const drawPageChrome = (
   document: PDFKit.PDFDocument,
   organizationName: string,
+  applicationId: string,
+  receivedAt: string | undefined,
   locale: Locale,
   page: number,
 ) => {
@@ -174,6 +176,20 @@ const drawPageChrome = (
     pageMargin + contentWidth - document.widthOfString(pageNumber),
     footerTop,
   )
+  document.text(
+    `${textFor(translations.applicationNumber, locale)}: ${applicationId}`,
+    pageMargin,
+    footerTop + 12,
+    { width: contentWidth, lineBreak: false },
+  )
+  if (receivedAt) {
+    document.text(
+      `${textFor(translations.received, locale)}: ${receivedAt}`,
+      pageMargin,
+      footerTop + 24,
+      { width: contentWidth, lineBreak: false },
+    )
+  }
   document.restore()
   document.x = x
   document.y = y
@@ -454,6 +470,11 @@ export const buildApplicationPdf = (
       textFor(translations.application, locale)
     const organizationName =
       textFor(application.organizationName, locale) || title
+    const receivedAt = application.submittedAt
+      ? new Date(application.submittedAt).toLocaleString(
+          locale === 'en' ? 'en-GB' : 'is-IS',
+        )
+      : undefined
     const document = new PDFDocument({ margin: pageMargin, size: 'A4' })
     const chunks: Buffer[] = []
     let page = 1
@@ -463,33 +484,32 @@ export const buildApplicationPdf = (
     document.on('error', reject)
     document.on('pageAdded', () => {
       page += 1
-      drawPageChrome(document, organizationName, locale, page)
+      drawPageChrome(
+        document,
+        organizationName,
+        application.id ?? '',
+        receivedAt,
+        locale,
+        page,
+      )
     })
 
     document.info.Title = title
-    drawPageChrome(document, organizationName, locale, page)
+    drawPageChrome(
+      document,
+      organizationName,
+      application.id ?? '',
+      receivedAt,
+      locale,
+      page,
+    )
     document
       .fillColor(colors.accent)
       .font('Helvetica-Bold')
       .fontSize(20)
       .text(title)
     document.moveDown(0.45)
-    document
-      .fillColor(colors.muted)
-      .font('Helvetica')
-      .fontSize(10)
-      .text(
-        `${textFor(translations.applicationNumber, locale)}: ${
-          application.id ?? ''
-        }`,
-      )
-    if (application.submittedAt) {
-      document.text(
-        `${textFor(translations.received, locale)}: ${new Date(
-          application.submittedAt,
-        ).toLocaleString(locale === 'en' ? 'en-GB' : 'is-IS')}`,
-      )
-    }
+    document.fillColor(colors.muted).font('Helvetica').fontSize(10)
 
     const premises = application.sections?.find(
       (section) => section.sectionType === SectionTypes.PREMISES,
