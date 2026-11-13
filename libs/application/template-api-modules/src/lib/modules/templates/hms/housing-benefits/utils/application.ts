@@ -373,6 +373,14 @@ export const collectApplicationFileEntries = (
     applicantKennitala,
     collected,
   )
+  // Older answers stored the applicant-submit repeater at the top level
+  // instead of under the applicant's kennitala.
+  addAccessAgreementRepeaterFiles(
+    answers,
+    'applicantSubmitAccessAgreementRepeater',
+    applicantKennitala,
+    collected,
+  )
 
   const householdRows = getValueViaPath<
     Array<{

@@ -1,6 +1,7 @@
 import { ApplicationWithAttachments } from '@island.is/application/types'
 import { ExemptionType } from '@island.is/clients/hms-housing-benefits'
 import {
+  collectApplicationFileEntries,
   getApplicantAddressForSubmission,
   getApplicantExemptionNumber,
   mapApplicationToHousingBenefitsModel,
@@ -13,7 +14,7 @@ const createApplication = (
   answers: ApplicationWithAttachments['answers'] = {},
   externalData: ApplicationWithAttachments['externalData'] = {},
 ): ApplicationWithAttachments =>
-  ({
+  (({
     id: 'app-1',
     applicant: APPLICANT_ID,
     assignees: [],
@@ -23,7 +24,7 @@ const createApplication = (
       ...answers,
     },
     externalData,
-  } as unknown as ApplicationWithAttachments)
+  } as unknown) as ApplicationWithAttachments)
 
 const registryEntry = (
   address: Record<string, string | null> | null,
@@ -180,5 +181,39 @@ describe('mapApplicationToHousingBenefitsModel exemptionNumber', () => {
     const model = mapApplicationToHousingBenefitsModel(createApplication())
 
     expect(model.householdMembers?.[0].exemptionNumber).toBeUndefined()
+  })
+})
+
+describe('collectApplicationFileEntries applicant-submit access agreements', () => {
+  const file = (key: string) => ({ key, name: `${key}.pdf` })
+
+  it('collects files stored under the applicant kennitala', () => {
+    const entries = collectApplicationFileEntries(
+      createApplication({
+        [APPLICANT_ID]: {
+          applicantSubmitAccessAgreementRepeater: [
+            { childNationalId: MEMBER_ID, file: [file('scoped')] },
+          ],
+        },
+      }),
+      APPLICANT_ID,
+    )
+
+    expect(entries.map((e) => e.key)).toEqual(['scoped'])
+    expect(entries[0].kennitala).toBe(APPLICANT_ID)
+  })
+
+  it('collects files stored at the legacy top-level key', () => {
+    const entries = collectApplicationFileEntries(
+      createApplication({
+        applicantSubmitAccessAgreementRepeater: [
+          { childNationalId: MEMBER_ID, file: [file('legacy')] },
+        ],
+      }),
+      APPLICANT_ID,
+    )
+
+    expect(entries.map((e) => e.key)).toEqual(['legacy'])
+    expect(entries[0].kennitala).toBe(APPLICANT_ID)
   })
 })
