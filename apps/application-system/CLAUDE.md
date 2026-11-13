@@ -1,3 +1,3 @@
 # Application system
 
-Guidance lives in @../../libs/application/AGENTS.md (shared with other AI tools).
+Guidance lives in @AGENTS.md (shared with other AI tools).

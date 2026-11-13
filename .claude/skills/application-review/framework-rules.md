@@ -79,12 +79,10 @@ the code has moved. Abbreviations:
   answers sent with an event: ACT:138-211. State keys:
   `libs/application/types/src/lib/StateMachine.ts:259-262`. `meta.status`:
   ATH:62-71.
-- **The full order:** clear nonces → onExit (its externalData saved) →
-  xstate transition → onEntry (its externalData saved) → persist. History
-  and scheduled notifications follow in `allSettled`; their failures are
-  only logged.
-- **A renamed state key breaks stored applications,** which keep the old
-  key.
+- **Within a transition,** each hook's externalData is saved as it runs,
+  and the xstate transition sits between onExit and onEntry. History and
+  scheduled notifications follow in `allSettled`; their failures are only
+  logged.
 - **A self-transition with actions counts as changed.** onEntry re-runs,
   `pruneAt` resets and a history row is written.
 - **State status is `meta.status`, default `draft`.** It drives the

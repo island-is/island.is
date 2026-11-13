@@ -23,8 +23,8 @@ lists framework behaviour that a single template does not reveal.
 - Creating one fails with "Ekki tókst að búa til umsókn af gerðinni" until
   the gitignored client is regenerated
   (`yarn nx run api-domains-application:codegen/backend-client`) and `api`
-  restarted. A TS7006 error on any generated type means the same: a stale
-  `gen/fetch`.
+  restarted. A TS7006 on any generated type means that library's
+  `gen/fetch` is stale; run its `codegen/backend-client` target.
 
 ## Validation
 
@@ -82,11 +82,12 @@ lists framework behaviour that a single template does not reveal.
 
 - **A transition runs onExit, then onEntry, then persists.** Answers sent
   with the event persist only if the state changes and both succeed.
-- **Do not put side effects in an `onExit` whose event has a `cond`.** Use
-  the target state's `onEntry`.
+- **Put side effects for an event with a `cond` in the target state's
+  `onEntry`,** not in `onExit`.
 - **The current state's xstate `entry` actions re-run on every event;** make
   them idempotent. Only `answers`, `assignees` and `state` survive `assign`.
-- **Never rename or remove a state key while applications use it.**
+- **Never rename or remove a state key while applications use it.** Stored
+  applications keep the old key and break.
 - **A failed action is still stored at `externalData[<id>]`, with
   `status: 'failure'` and `data: {}`.** Test `.status`, not `.data`.
 - **Actions run in groups by `order`:** groups in sequence, members in
@@ -94,8 +95,9 @@ lists framework behaviour that a single template does not reveal.
 - **Actions run with the caller's `auth`.** If an assignee can fire the
   event, give a shared provider (`nationalRegistry`, `userProfile`) its own
   `externalDataId`.
-- **Creating an application runs the initial state's onEntry and ignores
-  failures,** so that onEntry must have no side effects.
+- **Creating an application runs the initial state's onEntry with event
+  `'SUBMIT'` and ignores failures,** so that onEntry must have no side
+  effects.
 - **The form's Apollo client retries mutations up to five times.** Make
   external side effects idempotent.
 
@@ -111,9 +113,9 @@ lists framework behaviour that a single template does not reveal.
 - **Pruning keeps only `adminDataConfig` keys.** A malformed key (a second
   `.$.`, a leading `$.`, no array before `.$.`) makes pruning fail.
 - **Card text, `pendingAction`, `name` and `historyLogs` are shown to every
-  viewer and computed for every listed application in one `Promise.all`.**
-  Never show what only one party may see, and never throw: one throw breaks
-  the whole my-pages list.
+  viewer, admins included, and computed for every listed application in
+  one `Promise.all`.** Never show what only one party may see, and never
+  throw: one throw breaks the whole my-pages list.
 
 ## Client and translations
 
