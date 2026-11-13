@@ -2,6 +2,7 @@ import {
   formatBackendDate,
   formatDateValue,
   isRemedyDateInWindow,
+  isStartDateAfterToday,
   remedyDateBounds,
   toDateInputValue,
 } from './dates'
@@ -127,5 +128,30 @@ describe('formatBackendDate', () => {
     expect(formatBackendDate(undefined)).toBe('')
     expect(formatBackendDate(null)).toBe('')
     expect(formatBackendDate('')).toBe('')
+  })
+})
+
+describe('isStartDateAfterToday', () => {
+  const now = new Date(2026, 10, 13, 15, 30)
+
+  it('accepts today and earlier', () => {
+    expect(isStartDateAfterToday('2026-11-13', now)).toBe(false)
+    expect(isStartDateAfterToday('2020-01-01', now)).toBe(false)
+  })
+
+  it('rejects tomorrow and later', () => {
+    expect(isStartDateAfterToday('2026-11-14', now)).toBe(true)
+    expect(isStartDateAfterToday('2027-01-01', now)).toBe(true)
+  })
+
+  it('reads a stored ISO instant by its date part', () => {
+    expect(isStartDateAfterToday('2026-11-13T00:00:00.000Z', now)).toBe(false)
+    expect(isStartDateAfterToday('2026-11-14T00:00:00.000Z', now)).toBe(true)
+  })
+
+  // Blank is the required check's job, not this one.
+  it('leaves a missing value alone', () => {
+    expect(isStartDateAfterToday('', now)).toBe(false)
+    expect(isStartDateAfterToday(undefined, now)).toBe(false)
   })
 })

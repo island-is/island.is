@@ -77,3 +77,15 @@ export const isRemedyDateInWindow = (
 // experiences.
 export const formatBackendDate = (value?: string | Date | null): string =>
   formatDateValue(toDateInputValue(value))
+
+// DMR rejects an employee start date later than today with a bare 400, which
+// the employee editor can only show as a generic save failure. Compared as
+// `yyyy-MM-dd` strings: the picker writes that shape, and a stored value is
+// sliced to it first (see toDateInputValue), so no time zone comes into it.
+export const isStartDateAfterToday = (
+  value: string | undefined | null,
+  now: Date,
+): boolean => {
+  const date = toDateInputValue(value)
+  return date !== '' && date > format(now, 'yyyy-MM-dd')
+}
