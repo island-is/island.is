@@ -16,6 +16,7 @@ import {
 } from '../../../utils/applicantSubmitAccessAgreementUtils'
 import {
   getNationalIdPrefix,
+  nationalIdPreface,
   shouldShowApplicantSubmitAccessAgreementSection,
 } from '../../../utils/assigneeUtils'
 
@@ -32,7 +33,12 @@ export const applicantSubmitAccessAgreementSection = buildSection({
       description: applicantSubmitAccessAgreementDescription,
       children: [
         buildFieldsRepeaterField({
-          id: 'applicantSubmitAccessAgreementRepeater',
+          id: (application, user) =>
+            nationalIdPreface(
+              application,
+              user,
+              'applicantSubmitAccessAgreementRepeater',
+            ),
           marginTop: 0,
           width: 'full',
           minRows: applicantSubmitAccessAgreementRepeaterMinRows,

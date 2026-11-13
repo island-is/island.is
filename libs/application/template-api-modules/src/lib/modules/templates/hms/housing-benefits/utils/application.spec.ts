@@ -1,6 +1,7 @@
 import { ApplicationWithAttachments } from '@island.is/application/types'
 import { ExemptionType } from '@island.is/clients/hms-housing-benefits'
 import {
+  collectApplicationFileEntries,
   getApplicantAddressForSubmission,
   getApplicantExemptionNumber,
   mapApplicationToHousingBenefitsModel,
@@ -180,5 +181,25 @@ describe('mapApplicationToHousingBenefitsModel exemptionNumber', () => {
     const model = mapApplicationToHousingBenefitsModel(createApplication())
 
     expect(model.householdMembers?.[0].exemptionNumber).toBeUndefined()
+  })
+})
+
+describe('collectApplicationFileEntries applicant-submit access agreements', () => {
+  const file = (key: string) => ({ key, name: `${key}.pdf` })
+
+  it('collects files stored under the applicant kennitala', () => {
+    const entries = collectApplicationFileEntries(
+      createApplication({
+        [APPLICANT_ID]: {
+          applicantSubmitAccessAgreementRepeater: [
+            { childNationalId: MEMBER_ID, file: [file('scoped')] },
+          ],
+        },
+      }),
+      APPLICANT_ID,
+    )
+
+    expect(entries.map((e) => e.key)).toEqual(['scoped'])
+    expect(entries[0].kennitala).toBe(APPLICANT_ID)
   })
 })
