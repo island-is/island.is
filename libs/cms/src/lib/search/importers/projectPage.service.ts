@@ -5,18 +5,33 @@ import { Entry } from 'contentful'
 import { IProjectPage } from '../../generated/contentfulTypes'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { mapProjectPage } from '../../models/projectPage.model'
-import { extractChildEntryIds } from './utils'
+import { PROJECT_SEARCH_TAG_TYPE } from '../projectPageSearch'
+import {
+  extractChildEntryIds,
+  extractStringsFromObject,
+  pruneNonSearchableSliceUnionFields,
+} from './utils'
 
 @Injectable()
 export class ProjectPageSyncService implements CmsSyncProvider<IProjectPage> {
   processSyncData(entries: processSyncDataInput<IProjectPage>) {
-    const entriesToUpdate = entries.filter(
-      (entry: Entry<any>): entry is IProjectPage =>
-        entry.sys.contentType.sys.id === 'projectPage' && !!entry.fields.title,
-    )
+    const entriesToUpdate: IProjectPage[] = []
+    const entriesToDelete: string[] = []
+
+    for (const entry of entries as Entry<any>[]) {
+      if (entry.sys.contentType.sys.id !== 'projectPage') {
+        continue
+      }
+      if (entry.fields.title && entry.fields.slug?.trim()) {
+        entriesToUpdate.push(entry as IProjectPage)
+      } else {
+        entriesToDelete.push(entry.sys.id)
+      }
+    }
+
     return {
       entriesToUpdate,
-      entriesToDelete: [],
+      entriesToDelete,
     }
   }
 
@@ -30,11 +45,35 @@ export class ProjectPageSyncService implements CmsSyncProvider<IProjectPage> {
         try {
           const mapped = mapProjectPage(entry)
 
-          const tags = entry.fields?.slug
+          const content = [
+            mapped.subtitle,
+            mapped.intro,
+            extractStringsFromObject(
+              [
+                ...(mapped.content ?? []),
+                ...(mapped.slices ?? []),
+                ...(mapped.bottomSlices ?? []),
+              ]
+                .filter(Boolean)
+                .map((slice) =>
+                  pruneNonSearchableSliceUnionFields(slice as never),
+                ),
+            ),
+          ]
+            .map((text) => text?.trim())
+            .filter(Boolean)
+            .join(' ')
+
+          const slug = entry.fields?.slug?.trim()
+          const tags = slug
             ? [
                 {
-                  key: entry.fields.slug,
+                  key: slug,
                   type: 'slug',
+                },
+                {
+                  key: slug,
+                  type: PROJECT_SEARCH_TAG_TYPE,
                 },
               ]
             : []
@@ -51,6 +90,8 @@ export class ProjectPageSyncService implements CmsSyncProvider<IProjectPage> {
           return {
             _id: mapped.id,
             title: mapped.title,
+            content,
+            contentWordCount: content ? content.split(/\s+/).length : 0,
             type: 'webProjectPage',
             response: JSON.stringify({
               ...mapped,

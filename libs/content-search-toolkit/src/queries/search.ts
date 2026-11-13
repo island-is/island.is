@@ -23,6 +23,7 @@ export const searchQuery = (
     countTypes = false,
     countProcessEntry = false,
     useQuery,
+    additionalDocumentMatches = [],
   }: SearchInput,
   aggregate = true,
   highlightSection = false,
@@ -117,6 +118,12 @@ export const searchQuery = (
                   },
                 },
               },
+              ...additionalDocumentMatches.map(({ id, boost }) => ({
+                constant_score: {
+                  filter: { ids: { values: [id] } },
+                  boost,
+                },
+              })),
             ],
           },
         })

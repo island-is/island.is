@@ -22,6 +22,15 @@ export class ProjectSubpage {
   @Field()
   slug!: string
 
+  // Only populated on search results, where a subpage has to link to itself
+  // without the surrounding project page
+  @Field(() => String, { nullable: true })
+  projectSlug?: string
+
+  // Only populated on search results, when the subpage is a chapter of a parent subpage
+  @Field(() => String, { nullable: true })
+  parentSubpageSlug?: string
+
   @Field({ nullable: true })
   contentLastReviewed?: string
 

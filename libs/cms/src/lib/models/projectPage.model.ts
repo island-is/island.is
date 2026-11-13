@@ -28,6 +28,7 @@ import {
 } from './organizationTheme.model'
 import { AlertBanner, mapAlertBanner } from './alertBanner.model'
 import { mapSidebarCard, SidebarCard } from './sidebarCard.model'
+import { ProjectSubpageLink } from './projectParentSubpage.model'
 
 @ObjectType()
 class ProjectPageThemeProperties extends OrganizationTheme {}
@@ -122,6 +123,10 @@ export class ProjectPage {
 
   @CacheField(() => AlertBanner, { nullable: true })
   alertBanner?: AlertBanner
+
+  // Only set on search results, links to the subpages that match the search query
+  @CacheField(() => [ProjectSubpageLink], { nullable: true })
+  searchResultChildLinks?: ProjectSubpageLink[] | null
 }
 
 const PROJECT_SUBPAGE_CONTENT_TYPE_IDS: string[] = [
