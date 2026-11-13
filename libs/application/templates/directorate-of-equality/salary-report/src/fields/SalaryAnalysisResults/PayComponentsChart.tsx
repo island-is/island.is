@@ -52,51 +52,61 @@ const ComponentChart = ({
 }) => {
   const max = Math.max(...bars.map((bar) => bar.value), 0)
   const yMax = max > 0 ? max * LABEL_HEADROOM : 1
+  // The svg itself only exposes loose tick and value text, so the chart is
+  // announced as one image carrying the same figures the bars show.
+  const ariaLabel = `${title}: ${bars
+    .map((bar) => `${bar.label} ${formatAmount(bar.value)}`)
+    .join(', ')}`
 
   return (
     <Box flexGrow={1} style={{ minWidth: 0, flexBasis: 0 }}>
-      <Text variant="h5" as="h5" textAlign="center">
+      <Text variant="h5" textAlign="center">
         {title}
       </Text>
-      <ResponsiveContainer
-        width="100%"
-        height={CHART_HEIGHT}
-        className={styles.chartFocus}
-      >
-        <BarChart
-          data={bars}
-          margin={{ top: 24, right: 8, left: 8, bottom: 0 }}
-          accessibilityLayer={false}
+      <Box role="img" aria-label={ariaLabel}>
+        <ResponsiveContainer
+          width="100%"
+          height={CHART_HEIGHT}
+          className={styles.chartFocus}
         >
-          <CartesianGrid vertical={false} stroke={theme.color.blue200} />
-          <XAxis
-            dataKey="label"
-            stroke={theme.color.dark300}
-            tickLine={false}
-            tick={{ fill: theme.color.dark400, fontSize: 14 }}
-            interval={0}
-          />
-          <YAxis hide domain={[0, yMax]} tickCount={3} />
-          <Bar
-            dataKey="value"
-            radius={[4, 4, 0, 0]}
-            maxBarSize={72}
-            isAnimationActive={false}
+          <BarChart
+            data={bars}
+            margin={{ top: 24, right: 8, left: 8, bottom: 0 }}
+            accessibilityLayer={false}
           >
-            {bars.map((bar) => (
-              <Cell key={bar.label} fill={bar.fill} />
-            ))}
-            <LabelList
-              dataKey="value"
-              position="top"
-              formatter={formatAmount}
-              fill={theme.color.dark400}
-              fontSize={14}
-              fontWeight={600}
+            <CartesianGrid vertical={false} stroke={theme.color.blue200} />
+            <XAxis
+              dataKey="label"
+              stroke={theme.color.dark300}
+              tickLine={false}
+              tick={{ fill: theme.color.dark400, fontSize: 14 }}
+              interval={0}
             />
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
+            <YAxis hide domain={[0, yMax]} tickCount={3} />
+            <Bar
+              dataKey="value"
+              radius={[4, 4, 0, 0]}
+              maxBarSize={72}
+              // Recharts drops zero-height bars and their labels; a group whose
+              // average is 0 still gets a sliver and its "0".
+              minPointSize={1}
+              isAnimationActive={false}
+            >
+              {bars.map((bar) => (
+                <Cell key={bar.label} fill={bar.fill} />
+              ))}
+              <LabelList
+                dataKey="value"
+                position="top"
+                formatter={formatAmount}
+                fill={theme.color.dark400}
+                fontSize={14}
+                fontWeight={600}
+              />
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </Box>
       <Box marginTop={2}>
         {footer.map((line) => (
           <Text key={line} variant="small" textAlign="center">
