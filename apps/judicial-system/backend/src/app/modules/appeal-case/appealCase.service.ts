@@ -1068,9 +1068,8 @@ export class AppealCaseService {
   }
 
   // The appeal defender belongs to the appeal concerning that defendant.
-  // Cleared only once no appeal for them remains — a defence withdrawal must
-  // not strip the appointment while a prosecution appeal against the same
-  // defendant still stands.
+  // Cleared once no appeal for them remains on either side — kept while a
+  // prosecution appeal against them still stands after a defence withdrawal.
   private async clearAppealDefender(
     theCase: Case,
     defendantId: string,
@@ -1506,10 +1505,19 @@ export class AppealCaseService {
       (appellant) => !isWithdrawn(appellant),
     )
 
-    // The defendant's own appeal carries a mirror on the verdict and possibly an
-    // appeal defender; the prosecution's carries neither. The appointment stays
-    // while any appeal for this defendant remains (typically a prosecution
-    // appeal against them).
+    // Drop the appeal appointment once nothing remains for this defendant —
+    // including when the prosecution withdraws last after the defence already
+    // did. Leaving it would keep granting the advocate access with no appeal.
+    const defendantStillHasStandingAppeal = remainingAppellants.some(
+      (appellant) => appellant.defendantId === defendantId,
+    )
+
+    if (!defendantStillHasStandingAppeal) {
+      await this.clearAppealDefender(theCase, defendantId, transaction)
+    }
+
+    // The defendant's own appeal carries a mirror on the verdict and declaration
+    // files; the prosecution's carries neither.
     if (side === 'DEFENCE') {
       // Clear the mirror on the verdict, so the public prosecution office's
       // screen stops showing this defendant as having appealed.
@@ -1523,14 +1531,6 @@ export class AppealCaseService {
           { appealDate: null },
           { transaction },
         )
-      }
-
-      const defendantStillHasStandingAppeal = remainingAppellants.some(
-        (appellant) => appellant.defendantId === defendantId,
-      )
-
-      if (!defendantStillHasStandingAppeal) {
-        await this.clearAppealDefender(theCase, defendantId, transaction)
       }
 
       // Soft-delete this defendant's áfrýjunaryfirlýsing and accompanying files.
