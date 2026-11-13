@@ -3,12 +3,14 @@ import {
   getApplicationStatisticsNameTranslationString,
   getPaymentStatusForAdmin,
   handleScheduledNotifications,
+  isHiddenFromApplicationSystemOverview,
   removeObjectWithKeyFromAnswers,
 } from './application'
 import {
   createApplication,
   createApplicationTemplate,
 } from '@island.is/application/testing'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 import { ApplicationService } from '@island.is/application/api/core'
 import { ScheduledNotificationConfig } from '@island.is/application/types'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
@@ -722,6 +724,60 @@ describe('Testing utility functions for applications', () => {
           args: [],
         },
       ])
+    })
+  })
+  describe('isHiddenFromApplicationSystemOverview', () => {
+    const baseTemplate = createApplicationTemplate()
+    const template = createApplicationTemplate({
+      stateMachineConfig: {
+        ...baseTemplate.stateMachineConfig,
+        states: {
+          ...baseTemplate.stateMachineConfig.states,
+          approved: {
+            meta: {
+              name: 'Approved',
+              status: 'approved',
+              lifecycle: {
+                ...DefaultStateLifeCycle,
+                hideFromApplicationSystemOverview: true,
+              },
+            },
+          },
+        },
+      },
+    })
+
+    it('Should return true when the current state hides the application from the overview', () => {
+      expect(
+        isHiddenFromApplicationSystemOverview(
+          createApplication({ state: 'approved' }),
+          template,
+        ),
+      ).toBe(true)
+    })
+
+    it('Should return false when the current state does not set the flag', () => {
+      expect(
+        isHiddenFromApplicationSystemOverview(
+          createApplication({ state: 'draft' }),
+          template,
+        ),
+      ).toBe(false)
+    })
+
+    it('Should return false when the state is unknown or the template is missing', () => {
+      expect(
+        isHiddenFromApplicationSystemOverview(
+          createApplication({ state: 'doesNotExist' }),
+          template,
+        ),
+      ).toBe(false)
+      expect(
+        isHiddenFromApplicationSystemOverview(
+          createApplication({ state: 'approved' }),
+          undefined,
+        ),
+      ).toBe(false)
     })
   })
 })

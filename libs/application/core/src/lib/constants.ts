@@ -4,52 +4,56 @@ import {
   StateLifeCycle,
 } from '@island.is/application/types'
 
-export const EphemeralStateLifeCycle: StateLifeCycle = {
+// Keeps literal types (e.g. `shouldBeListed: true`) so presets can be extended with `hideFromApplicationSystemOverview`
+const defineStateLifeCycle = <T extends StateLifeCycle>(lifecycle: T): T =>
+  lifecycle
+
+export const EphemeralStateLifeCycle = defineStateLifeCycle({
   shouldBeListed: false,
   shouldBePruned: true,
   whenToPrune: 24 * 3600 * 1000,
-} as const
+})
 
-export const pruneAfterDays = (Days: number): StateLifeCycle => {
-  return {
+export const pruneAfterDays = (Days: number) =>
+  defineStateLifeCycle({
     shouldBeListed: true,
     shouldBePruned: true,
     whenToPrune: Days * 24 * 3600 * 1000,
-  }
-}
+  })
 
-export const pruneAfterHours = (hours: number): StateLifeCycle => {
-  return {
+export const pruneAfterHours = (hours: number) =>
+  defineStateLifeCycle({
     shouldBeListed: true,
     shouldBePruned: true,
     whenToPrune: hours * 3600 * 1000,
-  }
-}
+  })
 
-export const DefaultStateLifeCycle: StateLifeCycle = pruneAfterDays(30)
+export const DefaultStateLifeCycle = pruneAfterDays(30)
 
 export const defaultLifecycleWithPruneMessage = (
   message:
     | PruningNotification
     | ((application: PruningApplication) => PruningNotification),
-): StateLifeCycle => ({
-  shouldBeListed: true,
-  shouldBePruned: true,
-  whenToPrune: 30 * 24 * 3600 * 1000,
-  pruneMessage: message,
-})
+) =>
+  defineStateLifeCycle({
+    shouldBeListed: true,
+    shouldBePruned: true,
+    whenToPrune: 30 * 24 * 3600 * 1000,
+    pruneMessage: message,
+  })
 
 export const pruneAfterDaysWithMessage = (
   days: number,
   message:
     | PruningNotification
     | ((application: PruningApplication) => PruningNotification),
-): StateLifeCycle => ({
-  shouldBeListed: true,
-  shouldBePruned: true,
-  whenToPrune: days * 24 * 3600 * 1000,
-  pruneMessage: message,
-})
+) =>
+  defineStateLifeCycle({
+    shouldBeListed: true,
+    shouldBePruned: true,
+    whenToPrune: days * 24 * 3600 * 1000,
+    pruneMessage: message,
+  })
 
 export const NO_ANSWER = null
 
