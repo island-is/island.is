@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Alert } from 'react-native'
 
@@ -10,6 +10,7 @@ import {
   isBiometricKeyInvalidated,
 } from '@/lib/ias'
 import { authStore } from '@/stores/auth-store'
+import { isCancelled, useElectronicIdUnlock } from './use-electronic-id-unlock'
 
 export type NativeUnlockStatus =
   | 'idle'
@@ -35,12 +36,11 @@ export function useNativeUnlock({
 }) {
   const intl = useIntl()
   const [status, setStatus] = useState<NativeUnlockStatus>('idle')
-  const [verificationCode, setVerificationCode] = useState<string>()
-  const electronicIdRef = useRef<AbortController | undefined>(undefined)
+  const electronicId = useElectronicIdUnlock()
   const ias = getIasClient()
 
   const unlockWithBiometrics = async () => {
-    if (!ias.isBiometricsEnabled() || electronicIdRef.current) {
+    if (!ias.isBiometricsEnabled() || electronicId.isPending()) {
       return
     }
     setStatus('prompting')
@@ -80,19 +80,12 @@ export function useNativeUnlock({
   }
 
   const unlockWithElectronicId = async () => {
-    if (electronicIdRef.current) {
+    if (electronicId.isPending()) {
       return
     }
-    const controller = new AbortController()
-    electronicIdRef.current = controller
     setStatus('electronicId')
     try {
-      const request = await ias.startElectronicIdUnlock()
-      setVerificationCode(request.verificationCode)
-      const tokens = await ias.waitForApproval(request, {
-        signal: controller.signal,
-      })
-      authStore.getState().unlockNative(tokens)
+      authStore.getState().unlockNative(await electronicId.unlock())
       setStatus('idle')
       onUnlocked()
     } catch (error) {
@@ -100,27 +93,20 @@ export function useNativeUnlock({
         onAppLoginGone()
         return
       }
-      if (!controller.signal.aborted) {
+      if (!isCancelled(error)) {
         console.warn('Electronic ID unlock failed', error)
       }
       setStatus('idle')
-    } finally {
-      electronicIdRef.current = undefined
-      setVerificationCode(undefined)
     }
-  }
-
-  const cancelElectronicId = () => {
-    electronicIdRef.current?.abort()
   }
 
   return {
     status,
     isBiometricsEnabled: ias.isBiometricsEnabled(),
     /** Shown while electronic ID waits; undefined until IAS sends it. */
-    verificationCode,
+    verificationCode: electronicId.verificationCode,
     unlockWithBiometrics,
     unlockWithElectronicId,
-    cancelElectronicId,
+    cancelElectronicId: electronicId.cancel,
   }
 }

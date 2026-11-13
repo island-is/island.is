@@ -12,6 +12,7 @@ import {
   BackHandler,
   Image,
   InteractionManager,
+  Modal,
   Platform,
   SafeAreaView,
   View,
@@ -37,7 +38,9 @@ import {
   usePreferencesStore,
 } from '@/stores/preferences-store'
 import { useUiStore } from '@/stores/ui-store'
-import { Button, font, token } from '@/ui'
+import { font, token } from '@/ui'
+import { DeviceLock } from '@/components/device-bound-auth/device-lock'
+import { ElectronicIdConfirmation } from '@/components/device-bound-auth/electronic-id-confirmation'
 import { useBiometricType as useBiometricLabel } from '@/hooks/use-biometric-type'
 import { useNativeUnlock } from '@/hooks/use-native-unlock'
 import {
@@ -394,16 +397,14 @@ export default function AppLockScreen() {
 
   if (nativeUser) {
     return (
-      <Host testID={testIDs.SCREEN_APP_LOCK}>
-        <SafeAreaView>
-          <NativeLock
-            name={nativeUser.name}
-            nationalId={nativeUser.nationalId}
-            unlock={nativeUnlock}
-            onLogoutPress={handleLogout}
-          />
-        </SafeAreaView>
-      </Host>
+      <View testID={testIDs.SCREEN_APP_LOCK} style={{ flex: 1 }}>
+        <NativeLock
+          name={nativeUser.name}
+          nationalId={nativeUser.nationalId}
+          unlock={nativeUnlock}
+          onLogoutPress={handleLogout}
+        />
+      </View>
     )
   }
 
@@ -459,8 +460,8 @@ export default function AppLockScreen() {
 }
 
 /**
- * A plain lock screen for native login, until the designed DeviceLock and
- * ElectronicIdConfirmation replace it. The message ids are theirs.
+ * The lock for a native login, with the electronic ID confirmation in a sheet
+ * while IAS waits for the person's approval.
  */
 function NativeLock({
   name,
@@ -473,77 +474,36 @@ function NativeLock({
   unlock: ReturnType<typeof useNativeUnlock>
   onLogoutPress(): void
 }) {
-  const intl = useIntl()
   const { authenticationTypes } = useUiStore()
   const biometricType = useBiometricLabel(authenticationTypes)?.text
 
-  if (unlock.status === 'electronicId') {
-    return (
-      <Center style={{ gap: 16, paddingHorizontal: 32 }}>
-        <Subtitle>
-          {intl.formatMessage({
-            id: 'electronicId.codeLabel',
-            defaultMessage: 'Security code',
-          })}
-        </Subtitle>
-        <Title>{unlock.verificationCode ?? '…'}</Title>
-        <Button
-          isOutlined
-          title={intl.formatMessage({
-            id: 'electronicId.cancel',
-            defaultMessage: 'Cancel',
-          })}
-          onPress={unlock.cancelElectronicId}
-        />
-      </Center>
-    )
-  }
-
   return (
-    <Center style={{ gap: 16, paddingHorizontal: 32 }}>
-      <Image
-        source={require('../../assets/logo/logo-64w.png')}
-        resizeMode="contain"
-        style={{ width: 45, height: 45 }}
+    <>
+      <DeviceLock
+        name={name}
+        nationalId={nationalId}
+        biometricType={unlock.isBiometricsEnabled ? biometricType : undefined}
+        status={
+          unlock.status === 'prompting' || unlock.status === 'failed'
+            ? unlock.status
+            : 'idle'
+        }
+        onBiometricsPress={unlock.unlockWithBiometrics}
+        onElectronicIdPress={unlock.unlockWithElectronicId}
+        onLogoutPress={onLogoutPress}
       />
-      <Title>{name}</Title>
-      <Subtitle>{nationalId}</Subtitle>
-      {unlock.status === 'failed' ? (
-        <Subtitle>
-          {intl.formatMessage({
-            id: 'applock.biometricsFailedMessage',
-            defaultMessage: 'Try again or use electronic ID.',
-          })}
-        </Subtitle>
-      ) : null}
-      {unlock.isBiometricsEnabled ? (
-        <Button
-          title={intl.formatMessage(
-            {
-              id: 'applock.openWithBiometrics',
-              defaultMessage: 'Open with {biometricType}',
-            },
-            { biometricType },
-          )}
-          onPress={unlock.unlockWithBiometrics}
+      <Modal
+        visible={unlock.verificationCode !== undefined}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={unlock.cancelElectronicId}
+      >
+        <ElectronicIdConfirmation
+          purpose="unlock"
+          verificationCode={unlock.verificationCode ?? ''}
+          onCancelPress={unlock.cancelElectronicId}
         />
-      ) : null}
-      <Button
-        isOutlined={unlock.isBiometricsEnabled}
-        title={intl.formatMessage({
-          id: 'applock.openWithElectronicId',
-          defaultMessage: 'Open with electronic ID',
-        })}
-        onPress={unlock.unlockWithElectronicId}
-      />
-      <Button
-        isTransparent
-        title={intl.formatMessage({
-          id: 'applock.logout',
-          defaultMessage: 'Log out',
-        })}
-        onPress={onLogoutPress}
-      />
-    </Center>
+      </Modal>
+    </>
   )
 }

@@ -61,7 +61,7 @@ export function getIasErrorCode(
 
 /**
  * The install has no app login any more (renewal refused), so the session
- * is gone: show screen A.
+ * is gone and the person logs in again.
  */
 export function isAppLoginRemoved(error: unknown) {
   return (

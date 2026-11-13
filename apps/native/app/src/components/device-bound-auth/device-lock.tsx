@@ -1,6 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
 import logo from '@/assets/logo/home-logo.png'
@@ -8,7 +8,7 @@ import illustration from '@/assets/illustrations/onboarding-biometrics.png'
 import { Alert, Button, token } from '@/ui'
 import { LockUserCard } from './lock-user-card'
 
-const Host = styled(SafeAreaView)`
+const Host = styled.View`
   flex: 1;
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
   background-color: ${token((t) => t.background.invert)};
@@ -78,10 +78,13 @@ export function DeviceLock({
   onLogoutPress,
 }: DeviceLockProps) {
   const intl = useIntl()
+  // The lock is a full-screen modal, where SafeAreaView gets no insets on
+  // iOS. The provider's are the window's.
+  const insets = useSafeAreaInsets()
   const isPrompting = status === 'prompting'
 
   return (
-    <Host>
+    <Host style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
       <Logo source={logo} resizeMode="contain" />
       <IllustrationWrapper>
         <Illustration source={illustration} resizeMode="contain" />
