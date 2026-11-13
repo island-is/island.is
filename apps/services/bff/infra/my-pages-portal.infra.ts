@@ -32,6 +32,14 @@ export const serviceSetup = (
         staging: json(['https://api.staging01.devland.is']),
         prod: json(['https://api.island.is']),
       },
+      /* TODO: WIP — REVERT BEFORE MERGE (feat/add-estates)
+       * ref() bypasses the feature-deploy IDS rewrite so login and the api's token exchange share dev01.
+       * Remove this override; bff.ts sets the issuer. */
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: ref(() => 'https://identity-server.dev01.devland.is'),
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
     })
     .bff({
       key,

@@ -194,7 +194,10 @@ export const serviceSetup = (services: {
         prod: 'https://auth-delegation-api.internal.innskra.island.is',
       },
       IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
+        /* TODO: WIP — REVERT BEFORE MERGE (feat/add-estates)
+         * ref() bypasses the feature-deploy IDS rewrite so Sýslumenn gets dev01-issued tokens.
+         * Restore to 'https://identity-server.dev01.devland.is'. */
+        dev: ref(() => 'https://identity-server.dev01.devland.is'),
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
