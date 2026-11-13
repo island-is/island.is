@@ -23,6 +23,7 @@ import { occupationalLicensesModule } from '@island.is/portals/my-pages/occupati
 import { signatureCollectionModule } from '@island.is/portals/my-pages/signature-collection'
 import { socialBenefitsModule } from '@island.is/portals/my-pages/social-benefits'
 import { lawAndOrderModule } from '@island.is/portals/my-pages/law-and-order'
+import { estatesModule } from '@island.is/portals/my-pages/estates'
 
 /**
  * NOTE:
@@ -53,4 +54,5 @@ export const modules: PortalModule[] = [
   signatureCollectionModule,
   petitionsModule,
   lawAndOrderModule,
+  estatesModule,
 ]
