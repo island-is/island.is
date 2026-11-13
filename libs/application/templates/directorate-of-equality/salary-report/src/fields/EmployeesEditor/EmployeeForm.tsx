@@ -82,8 +82,11 @@ export const EmployeeForm: FC<Props> = ({
       methods.setError('startDate', { type: 'required', message: requiredMsg })
       return
     }
-    // maxDate below only limits what the calendar offers; a typed date still
-    // gets here, and DMR's 400 for it would surface as a generic save error.
+    // maxDate below is what keeps future dates out: react-datepicker neither
+    // offers them nor accepts one typed in — it leaves the field's value as it
+    // was and puts that value back in the input when the calendar closes. This
+    // check is the backstop for any value that reaches the form some other way,
+    // since DMR's 400 for it would surface only as a generic save error.
     if (isStartDateAfterToday(data.startDate, new Date())) {
       methods.setError('startDate', {
         type: 'max',
