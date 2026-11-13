@@ -60,6 +60,8 @@ export type DeviceKeyErrorCode =
   | 'ERR_DEVICE_KEY_ATTESTATION_UNSUPPORTED'
   // Apple's App Attest service is down; try again later.
   | 'ERR_DEVICE_KEY_ATTESTATION_UNAVAILABLE'
+  // iOS: App Attest couldn't create its key, before attesting anything.
+  | 'ERR_DEVICE_KEY_ATTESTATION_KEY_FAILED'
   // The dev client was built before this module existed.
   | 'ERR_DEVICE_KEY_UNAVAILABLE'
   | 'ERR_DEVICE_KEY_FAILED'

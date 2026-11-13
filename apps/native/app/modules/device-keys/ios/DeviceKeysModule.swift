@@ -297,14 +297,14 @@ public class DeviceKeysModule: Module {
 
     appAttest.generateKey { keyId, error in
       guard let keyId else {
-        promise.reject(appAttestException("Could not create the App Attest key", error))
+        promise.reject(appAttestException("ATTESTATION_KEY_FAILED", "Could not create the App Attest key", error))
         return
       }
 
       let clientDataHash = Data(SHA256.hash(data: Data(clientData.utf8)))
       appAttest.attestKey(keyId, clientDataHash: clientDataHash) { attestationObject, error in
         guard let attestationObject else {
-          promise.reject(appAttestException("App Attest failed", error))
+          promise.reject(appAttestException("FAILED", "App Attest failed", error))
           return
         }
         guard storeItem(Data(keyId.utf8), account: appAttestKeyIdAccount) else {
@@ -319,14 +319,15 @@ public class DeviceKeysModule: Module {
     }
   }
 
-  private static func appAttestException(_ description: String, _ error: Error?) -> Exception {
+  // `code` is for other failures, so the step that failed can be told apart.
+  private static func appAttestException(_ code: String, _ description: String, _ error: Error?) -> Exception {
     switch (error as? DCError)?.code {
     case .featureUnsupported?:
       return exception("ATTESTATION_UNSUPPORTED", "App Attest is not supported on this device")
     case .serverUnavailable?:
       return exception("ATTESTATION_UNAVAILABLE", "App Attest is unavailable, try again later")
     default:
-      return exception("FAILED", "\(description): \(error?.localizedDescription ?? "unknown error")")
+      return exception(code, "\(description): \(error?.localizedDescription ?? "unknown error")")
     }
   }
 

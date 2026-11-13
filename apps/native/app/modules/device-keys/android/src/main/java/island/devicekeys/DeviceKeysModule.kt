@@ -5,7 +5,6 @@ import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyInfo
 import android.security.keystore.KeyPermanentlyInvalidatedException
 import android.security.keystore.KeyProperties
-import android.security.keystore.StrongBoxUnavailableException
 import android.util.Base64
 import androidx.annotation.RequiresApi
 import androidx.biometric.BiometricManager
@@ -105,11 +104,15 @@ class DeviceKeysModule : Module() {
     return describe(alias)
   }
 
+  // Falls back to the TEE on any StrongBox failure, not only
+  // StrongBoxUnavailableException: some phones have StrongBox but fail to
+  // create an attested key in it with a generic ProviderException. A TEE key
+  // is accepted, and the attestation tells IAS which one it got.
   @RequiresApi(Build.VERSION_CODES.P)
   private fun generateKeyPairPreferringStrongBox(alias: DeviceKeyAlias, attestationChallenge: String?) {
     try {
       generateKeyPair(alias, attestationChallenge, strongBox = true)
-    } catch (e: StrongBoxUnavailableException) {
+    } catch (e: Exception) {
       generateKeyPair(alias, attestationChallenge, strongBox = false)
     }
   }
