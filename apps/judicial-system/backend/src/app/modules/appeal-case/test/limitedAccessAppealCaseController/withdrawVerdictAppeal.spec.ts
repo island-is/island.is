@@ -25,6 +25,7 @@ import {
   Case,
   CaseFile,
   CaseRepositoryService,
+  DefendantRepositoryService,
   VerdictRepositoryService,
 } from '../../../repository'
 import { TransitionAppealCaseDto } from '../../dto/transitionAppealCase.dto'
@@ -118,6 +119,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
   let mockAppealCaseRepositoryService: AppealCaseRepositoryService
   let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
   let mockCaseRepositoryService: CaseRepositoryService
+  let mockDefendantRepositoryService: DefendantRepositoryService
   let mockVerdictRepositoryService: VerdictRepositoryService
   let mockFileService: FileService
   let transaction: Transaction
@@ -131,6 +133,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
       appealCaseRepositoryService,
       appealEventLogRepositoryService,
       caseRepositoryService,
+      defendantRepositoryService,
       verdictRepositoryService,
       fileService,
       sequelize,
@@ -139,6 +142,7 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
     mockCaseRepositoryService = caseRepositoryService
+    mockDefendantRepositoryService = defendantRepositoryService
     mockVerdictRepositoryService = verdictRepositoryService
     mockFileService = fileService
 
@@ -210,6 +214,23 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
         defendantId,
         verdictId,
         { appealDate: null },
+        { transaction },
+      )
+    })
+
+    // No appeal remains for this defendant, so the appeal appointment goes with
+    // the withdrawal even though another defendant's appeal keeps the case open.
+    it('should clear the appeal defender recorded on the defendant', () => {
+      expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        defendantId,
+        {
+          appealDefenderName: null,
+          appealDefenderNationalId: null,
+          appealDefenderEmail: null,
+          appealDefenderPhoneNumber: null,
+          isAppealDefenderConfirmed: null,
+        },
         { transaction },
       )
     })
@@ -305,6 +326,12 @@ describe('LimitedAccessAppealCaseController - Withdraw verdict appeal', () => {
         { transaction },
       )
       expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+    })
+
+    // The prosecution appeal against this defendant still needs a confirmed
+    // appeal advocate on the row.
+    it('should keep the appeal defender while the prosecution appeal stands', () => {
+      expect(mockDefendantRepositoryService.update).not.toHaveBeenCalled()
     })
   })
 
