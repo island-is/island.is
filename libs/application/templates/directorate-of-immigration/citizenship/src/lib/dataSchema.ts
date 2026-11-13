@@ -2,6 +2,14 @@ import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { NO, YES } from '@island.is/application/core'
 import { error } from './messages'
+import { MIN_DATE } from './constants'
+
+const isOnOrAfterMinDate = (date?: string) => !date || date >= MIN_DATE
+
+const nullableSelectValue = z
+  .string()
+  .nullable()
+  .transform((value) => value ?? '')
 
 const UserSchemaBase = z.object({
   nationalId: z.string().refine((nationalId) => {
@@ -31,7 +39,7 @@ export const UserInformationSchema = z.intersection(
 
 export const RemoveableStayAbroadSchema = z
   .object({
-    countryId: z.string(),
+    countryId: nullableSelectValue,
     dateTo: z.string().optional(),
     dateFrom: z.string().optional(),
     purpose: z.string().optional(),
@@ -42,7 +50,7 @@ export const RemoveableStayAbroadSchema = z
       return wasRemoved === 'true' || (countryId && countryId.length > 0)
     },
     {
-      path: ['country'],
+      path: ['countryId'],
     },
   )
   .refine(
@@ -70,6 +78,16 @@ export const RemoveableStayAbroadSchema = z
     },
   )
   .refine(
+    ({ wasRemoved, dateFrom }) =>
+      wasRemoved === 'true' || isOnOrAfterMinDate(dateFrom),
+    { path: ['dateFrom'] },
+  )
+  .refine(
+    ({ wasRemoved, dateTo }) =>
+      wasRemoved === 'true' || isOnOrAfterMinDate(dateTo),
+    { path: ['dateTo'] },
+  )
+  .refine(
     ({ dateTo, dateFrom }) => {
       const to = dateTo ? new Date(dateTo).getTime() : null
       const from = dateFrom ? new Date(dateFrom).getTime() : null
@@ -95,7 +113,7 @@ const StaysAbroadSchema = z.object({
 
 export const RemoveableCountrySchema = z
   .object({
-    countryId: z.string(),
+    countryId: nullableSelectValue,
     wasRemoved: z.string().min(1),
     dateTo: z.string().optional(),
     dateFrom: z.string().optional(),
@@ -107,6 +125,16 @@ export const RemoveableCountrySchema = z
     {
       path: ['countryId'],
     },
+  )
+  .refine(
+    ({ wasRemoved, dateFrom }) =>
+      wasRemoved === 'true' || isOnOrAfterMinDate(dateFrom),
+    { path: ['dateFrom'] },
+  )
+  .refine(
+    ({ wasRemoved, dateTo }) =>
+      wasRemoved === 'true' || isOnOrAfterMinDate(dateTo),
+    { path: ['dateTo'] },
   )
   .refine(
     ({ dateTo, dateFrom }) => {
@@ -189,6 +217,12 @@ const PassportSchema = z
       path: ['expirationDate'],
     },
   )
+  .refine(({ publishDate }) => isOnOrAfterMinDate(publishDate), {
+    path: ['publishDate'],
+  })
+  .refine(({ expirationDate }) => isOnOrAfterMinDate(expirationDate), {
+    path: ['expirationDate'],
+  })
 
 const ChildrenPassportSchema = z
   .object({
@@ -216,15 +250,26 @@ const ChildrenPassportSchema = z
       path: ['expirationDate'],
     },
   )
+  .refine(({ publishDate }) => isOnOrAfterMinDate(publishDate), {
+    path: ['publishDate'],
+  })
+  .refine(({ expirationDate }) => isOnOrAfterMinDate(expirationDate), {
+    path: ['expirationDate'],
+  })
 
-const MaritalStatusSchema = z.object({
-  status: z.string().optional(),
-  nationalId: z.string().min(1),
-  birthCountry: z.string().optional(),
-  name: z.string().min(1),
-  dateOfMaritalStatusStr: z.string().min(1),
-  explanation: z.string().optional(),
-})
+const MaritalStatusSchema = z
+  .object({
+    status: z.string().optional(),
+    nationalId: z.string().min(1),
+    birthCountry: z.string().optional(),
+    name: z.string().min(1),
+    dateOfMaritalStatusStr: z.string().min(1),
+    explanation: z.string().optional(),
+  })
+  .refine(
+    ({ dateOfMaritalStatusStr }) => isOnOrAfterMinDate(dateOfMaritalStatusStr),
+    { path: ['dateOfMaritalStatusStr'] },
+  )
 
 const CriminalRecordSchema = z.object({
   countryId: z.string().min(1),
@@ -332,6 +377,11 @@ export const SelectedChildSchema = z
     {
       path: ['otherParentBirtDate'],
     },
+  )
+  .refine(
+    ({ wasRemoved, otherParentBirtDate }) =>
+      wasRemoved === 'true' || isOnOrAfterMinDate(otherParentBirtDate),
+    { path: ['otherParentBirtDate'] },
   )
 
 export const CitizenshipSchema = z.object({
