@@ -92,7 +92,6 @@ const UserProfile = () => {
         }}
         desktopContentSpan="10/12"
       />
-      <div>{JSON.stringify(isNotificationsV2PageEnabled)}</div>
       {isActor ? (
         <ActorProfileNotificationSettings />
       ) : (

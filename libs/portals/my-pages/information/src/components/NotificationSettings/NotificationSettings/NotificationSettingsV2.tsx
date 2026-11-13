@@ -1,6 +1,6 @@
 import { SkeletonLoader, Stack, Text, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { Problem } from '@island.is/react-spa/shared'
 import { usePaperMail } from '../../../hooks/usePaperMail'
@@ -48,50 +48,50 @@ export const NotificationSettingsV2 = () => {
     onlyActionablePriorityNotifications:
       userProfile?.getUserProfile?.onlyActionablePriorityNotifications ?? false,
   })
+  const [updatingChannels, setUpdatingChannels] = useState(false)
+  const channelUpdatePending = useRef(false)
 
   useEffect(() => {
-    if (userProfile?.getUserProfile) {
-      setSettings({
-        ...settings,
-        documentNotifications:
-          userProfile?.getUserProfile.documentNotifications,
-        canNudge: userProfile?.getUserProfile.canNudge ?? true,
-        smsNotifications: userProfile?.getUserProfile.smsNotifications ?? false,
+    const profile = userProfile?.getUserProfile
+    if (profile) {
+      setSettings((current) => ({
+        ...current,
+        documentNotifications: profile.documentNotifications,
+        canNudge: profile.canNudge ?? true,
+        smsNotifications: profile.smsNotifications ?? false,
         onlyActionablePriorityNotifications:
-          userProfile?.getUserProfile.onlyActionablePriorityNotifications ??
-          false,
-      })
+          profile.onlyActionablePriorityNotifications ?? false,
+      }))
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userProfile])
 
   useEffect(() => {
-    setSettings({ ...settings, wantsPaper: wantsPaper ?? false })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setSettings((current) => ({ ...current, wantsPaper: wantsPaper ?? false }))
   }, [wantsPaper])
 
   const onChange = async (
-    updatedSettings: Partial<UserProfileNotificationSettings>,
+    key: 'documentNotifications' | 'canNudge' | 'smsNotifications',
+    active: boolean,
   ) => {
-    const oldSettings = { ...settings }
-    const newSettings = { ...settings, ...updatedSettings }
-    setSettings(newSettings)
+    if (channelUpdatePending.current) return
 
-    const { error } = await safeAwait(
-      updateUserProfile({
-        variables: {
-          input: {
-            documentNotifications: newSettings.documentNotifications,
-            canNudge: newSettings.canNudge,
-            smsNotifications: newSettings.smsNotifications,
-          },
-        },
-      }),
-    )
+    channelUpdatePending.current = true
+    setUpdatingChannels(true)
+    const previous = settings[key]
+    setSettings((current) => ({ ...current, [key]: active }))
 
-    if (error) {
-      setSettings(oldSettings)
-      toast.error(formatMessage(mNotifications.updateError))
+    try {
+      const { error } = await safeAwait(
+        updateUserProfile({ variables: { input: { [key]: active } } }),
+      )
+
+      if (error) {
+        setSettings((current) => ({ ...current, [key]: previous }))
+        toast.error(formatMessage(mNotifications.updateError))
+      }
+    } finally {
+      channelUpdatePending.current = false
+      setUpdatingChannels(false)
     }
   }
 
@@ -109,11 +109,10 @@ export const NotificationSettingsV2 = () => {
       return
     }
 
-    setSettings({
-      ...settings,
-      wantsPaper:
-        data?.data?.postPaperMailInfo?.wantsPaper ?? settings.wantsPaper,
-    })
+    setSettings((current) => ({
+      ...current,
+      wantsPaper: data?.data?.postPaperMailInfo?.wantsPaper ?? current.wantsPaper,
+    }))
   }
 
   if (loading || paperMailLoading) {
@@ -141,7 +140,8 @@ export const NotificationSettingsV2 = () => {
             mNotifications.emailNotificationsAriaLabel,
           )}
           checked={settings.canNudge}
-          onChange={(active: boolean) => onChange({ canNudge: active })}
+          disabled={updatingChannels}
+          onChange={(active: boolean) => onChange('canNudge', active)}
         />
 
         <SettingsCard
@@ -150,8 +150,9 @@ export const NotificationSettingsV2 = () => {
           subtitle={formatMessage(mNotifications.appNotificationsDescription)}
           toggleLabel={formatMessage(mNotifications.appNotificationsAriaLabel)}
           checked={settings.documentNotifications}
+          disabled={updatingChannels}
           onChange={(active: boolean) =>
-            onChange({ documentNotifications: active })
+            onChange('documentNotifications', active)
           }
         />
 
@@ -164,8 +165,9 @@ export const NotificationSettingsV2 = () => {
               mNotifications.smsNotificationsAriaLabel,
             )}
             checked={settings.smsNotifications}
+            disabled={updatingChannels}
             onChange={(active: boolean) =>
-              onChange({ smsNotifications: active })
+              onChange('smsNotifications', active)
             }
           />
         )}

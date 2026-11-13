@@ -9,6 +9,7 @@ interface SettingsCardProps {
   checked: boolean
   onChange(active: boolean): void
   variant?: 'default' | 'card'
+  disabled?: boolean
 }
 
 export const SettingsCard = ({
@@ -18,6 +19,7 @@ export const SettingsCard = ({
   checked,
   onChange,
   variant = 'default',
+  disabled = false,
 }: SettingsCardProps) => {
   return (
     <Box
@@ -40,6 +42,7 @@ export const SettingsCard = ({
         label={toggleLabel || title}
         checked={checked}
         onChange={onChange}
+        disabled={disabled}
         hiddenLabel
         className={styles.toggleButton}
       />
