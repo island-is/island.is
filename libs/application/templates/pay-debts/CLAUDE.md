@@ -1,6 +1,6 @@
 # pay-debts
 
-Pays debts owed to the state, fetched from Fjársýsla ríkisins (FJS). The nx project is `pay-debts`. Settled product rules are in the README's `## Decisions`; read them before changing what is charged.
+Pays debts owed to the state, fetched from Fjársýsla ríkisins (FJS). The nx project is `pay-debts`.
 
 ## The selection is paired with payIDs
 
