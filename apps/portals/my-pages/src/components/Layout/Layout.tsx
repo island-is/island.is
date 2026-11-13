@@ -69,6 +69,8 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
     Features.isNewHealthOverviewPageEnabled,
     false,
   )
+  const showContactBox =
+    showHealthContactBox && activeParent?.path === HealthPaths.HealthRoot
 
   const featureFlagClient = useFeatureFlagClient()
   useEffect(() => {
@@ -111,14 +113,7 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
               activeParent={activeParent}
               height={totalBannerOffset}
               pathname={pathname}
-              sidebarFooter={
-                showHealthContactBox &&
-                // If more pages end up needing to display the contact box in the future,
-                // we should consider moving this decision in to navigation metadata
-                activeParent.path === HealthPaths.HealthRoot ? (
-                  <SidebarContactBox />
-                ) : undefined
-              }
+              sidebarFooter={showContactBox ? <SidebarContactBox /> : undefined}
             >
               {children}
             </NarrowLayout>

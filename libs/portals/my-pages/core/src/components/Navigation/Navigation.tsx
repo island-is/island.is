@@ -84,6 +84,7 @@ interface MobileNavigationDialogProps {
   isVisible: boolean
   onClick: () => void
   mobileNavigationButtonCloseLabel?: string
+  menuFooter?: ReactNode
 }
 
 interface NavigationTreeProps {
@@ -127,6 +128,7 @@ export interface NavigationProps {
   titleProps?: NavigationItem
   mobileNavigationButtonOpenLabel?: string
   mobileNavigationButtonCloseLabel?: string
+  menuFooter?: ReactNode
 }
 
 // The sidebar nav is not designed to show more than 2 levels.
@@ -157,6 +159,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
   isMenuDialog = false,
   items,
   titleProps,
+  menuFooter,
   baseId,
   asSpan,
   mobileNavigationButtonOpenLabel = 'Open',
@@ -326,6 +329,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
             asSpan={asSpan}
             isVisible={mobileMenuOpen}
             mobileNavigationButtonCloseLabel={mobileNavigationButtonCloseLabel}
+            menuFooter={menuFooter}
             onClick={() => setMobileMenuOpen(false)}
           />
         </Box>
@@ -365,6 +369,7 @@ const MobileNavigationDialog = ({
   isVisible,
   asSpan,
   mobileNavigationButtonCloseLabel,
+  menuFooter,
 }: MobileNavigationDialogProps) => {
   return (
     <ModalBase
@@ -380,6 +385,7 @@ const MobileNavigationDialog = ({
         component="nav"
         background={colorSchemeColors[colorScheme]['backgroundColor']}
         paddingY={2}
+        className={styles.mobileNavContent}
       >
         <Box position="relative">
           {Title}
@@ -416,6 +422,11 @@ const MobileNavigationDialog = ({
           renderLink={renderLink}
           linkOnClick={onClick}
         />
+        {menuFooter && (
+          <Box className={styles.menuFooter} paddingX={2} paddingTop={3}>
+            {menuFooter}
+          </Box>
+        )}
       </Box>
     </ModalBase>
   )
