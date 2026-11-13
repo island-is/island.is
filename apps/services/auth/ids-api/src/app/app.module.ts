@@ -28,6 +28,7 @@ import { environment } from '../environments'
 import { ClientsModule } from './clients/clients.module'
 import { DelegationsModule } from './delegations/delegations.module'
 import { GrantsModule } from './grants/grants.module'
+import { DeviceRegistrationsModule } from './device-registrations/device-registrations.module'
 import { LoginRestrictionsModule } from './login-restrictions/login-restrictions.module'
 import { NotificationsModule } from './notifications/notifications.module'
 import { PasskeysModule } from './passkeys/passkeys.module'
@@ -55,6 +56,7 @@ import { ConfirmIdentityModule } from './confirm-identity/confirm-identity.modul
     PermissionsModule,
     UserProfileModule,
     NotificationsModule,
+    DeviceRegistrationsModule,
     LoginRestrictionsModule,
     ConfirmIdentityModule,
     PasskeysModule,

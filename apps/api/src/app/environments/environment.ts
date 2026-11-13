@@ -44,6 +44,8 @@ const prodConfig = () => ({
   },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+    // The app's DPoP-bound tokens must come with a proof here, at the edge.
+    requireDpopForBoundTokens: process.env.AUTH_REQUIRE_DPOP === 'true',
   },
   documentService: {
     basePath: process.env.POSTHOLF_BASE_PATH,
@@ -139,7 +141,11 @@ const devConfig = () => ({
     xroadID: process.env.XROAD_HEALTH_INSURANCE_ID ?? '',
   },
   auth: {
-    issuer: 'https://identity-server.dev01.devland.is',
+    // Set to a local identity server (https://localhost:5001) to run against it.
+    issuer:
+      process.env.IDENTITY_SERVER_ISSUER_URL ??
+      'https://identity-server.dev01.devland.is',
+    requireDpopForBoundTokens: process.env.AUTH_REQUIRE_DPOP === 'true',
   },
   documentService: {
     basePath: process.env.POSTHOLF_BASE_PATH,

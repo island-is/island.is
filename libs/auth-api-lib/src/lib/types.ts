@@ -3,6 +3,7 @@ export const DEFAULT_DOMAIN = '@island.is'
 export enum AcrEnum {
   EidasLoaHigh = 'eidas-loa-high',
   IslandIsPasskey = 'islandis-passkey',
+  IslandIsAppBiometrics = 'islandis-app-biometrics',
 }
 
 export const defaultAcrValue = AcrEnum.EidasLoaHigh
