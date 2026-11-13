@@ -44,3 +44,31 @@ Example:
 ```bash
 yarn hmr-benchmark --app services-sessions --message 'Nest application successfully started'
 ```
+
+## Scrub before sharing
+
+Masks personal data and secrets in raw errors, such as those from Datadog, GraphQL responses or the browser console, before they are shared. The logger masks only personal kennitölur, and errors that bypass it carry emails, names, phone numbers, tokens and request bodies.
+
+Masks kennitölur, emails, phone numbers, bank and card numbers, IBANs, IP addresses, tokens and sensitive keys. The same value gets the same label (`[KT-PERSON-1]`), so lines can still be correlated. URL-encoded and Base64 text is decoded and scrubbed too; URL-encoded text comes out decoded.
+
+In free text, only Icelandic full names ending in -son or -dóttir are caught; other names, such as foreign ones, are not. The script is an aid, not a guarantee: read the output before sharing it.
+
+Copy the error, then:
+
+```bash
+pbpaste | node scripts/scrub.mjs | pbcopy
+```
+
+`--show` lists each masked value on stderr, for checking the rules.
+
+To run it from anywhere, add a function to `~/.zshrc` (adjust the path to your clone). It reads piped input, or the clipboard when nothing is piped:
+
+```bash
+scrub() { if [ -t 0 ]; then pbpaste; else cat; fi | node ~/git/island.is/scripts/scrub.mjs "$@" | pbcopy }
+```
+
+Logs work too:
+
+```bash
+kubectl logs <pod> -n <namespace> --since=15m | scrub
+```
