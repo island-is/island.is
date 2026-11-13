@@ -3,12 +3,23 @@ import { IdsUserGuard, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { notificationScopes } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
-import { Inject, InternalServerErrorException, UseGuards } from '@nestjs/common'
+import {
+  BadRequestException,
+  Inject,
+  InternalServerErrorException,
+  UseGuards,
+} from '@nestjs/common'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { NotificationSettingsService } from './notificationSettings.service'
-import { getErrorMessage, toCategoryKey } from './notificationSettings.utils'
+import {
+  getErrorMessage,
+  normalizeSenderId,
+  toCategoryKey,
+} from './notificationSettings.utils'
 import {
   NotificationCategoryInput,
+  NotificationSenderInput,
   NotificationSettings,
   UpdateNotificationCategoriesInput,
 } from './notificationSettings.model'
@@ -28,6 +39,7 @@ export class NotificationSettingsResolver {
   constructor(
     private readonly service: NotificationSettingsService,
     private readonly auditService: AuditService,
+    private readonly featureFlagService: FeatureFlagService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -67,10 +79,29 @@ export class NotificationSettingsResolver {
     locale: Locale = 'is',
   ): Promise<NotificationSettings> {
     const categories = input.categories ?? []
+    const senders = input.senders ?? []
+
+    // Checked here rather than with @FeatureFlag, which would gate category
+    // settings too
+    if (senders.length > 0) {
+      const sendersEnabled = await this.featureFlagService.getValue(
+        Features.isNotificationBlockedSendersEnabled,
+        false,
+        user,
+      )
+      if (!sendersEnabled) {
+        throw new BadRequestException('Blocking senders is not enabled')
+      }
+    }
+
     const keysWhere = (blocked: boolean) =>
       categories
         .filter((c) => c.blocked === blocked)
         .map(({ senderId, category }) => toCategoryKey(senderId, category))
+    const sendersWhere = (blocked: boolean) =>
+      senders
+        .filter((s) => s.blocked === blocked)
+        .map(({ senderId }) => normalizeSenderId(senderId))
 
     try {
       await this.auditService.auditPromise(
@@ -78,17 +109,22 @@ export class NotificationSettingsResolver {
           auth: user,
           namespace: AUDIT_NAMESPACE,
           action: 'updateNotificationCategorySettings',
-          resources: categories.map(({ senderId, category }) =>
-            toCategoryKey(senderId, category),
-          ),
+          resources: [
+            ...categories.map(({ senderId, category }) =>
+              toCategoryKey(senderId, category),
+            ),
+            ...senders.map(({ senderId }) => normalizeSenderId(senderId)),
+          ],
           meta: {
             blocked: keysWhere(true),
             unblocked: keysWhere(false),
+            blockedSenders: sendersWhere(true),
+            unblockedSenders: sendersWhere(false),
             onlyActionablePriorityNotifications:
               input.onlyActionablePriorityNotifications,
           },
         },
-        this.updateSettings(user, categories, input),
+        this.updateSettings(user, categories, senders, input),
       )
     } catch (e) {
       this.logger.info('failed to update notification category settings', {
@@ -124,9 +160,10 @@ export class NotificationSettingsResolver {
   private async updateSettings(
     user: User,
     categories: NotificationCategoryInput[],
+    senders: NotificationSenderInput[],
     input: UpdateNotificationCategoriesInput,
   ): Promise<void> {
-    await this.service.updateCategories(user, categories)
+    await this.service.updateSettings(user, { categories, senders })
     if (typeof input.onlyActionablePriorityNotifications === 'boolean') {
       try {
         await this.service.updateOnlyActionablePriorityNotifications(
@@ -135,14 +172,15 @@ export class NotificationSettingsResolver {
         )
       } catch (e) {
         // The two writes hit separate endpoints and cannot be made atomic, so
-        // make it explicit that the category changes were already applied.
+        // make it explicit that the sender and category changes were already
+        // applied.
         this.logger.error('partial notification settings update', {
           category: LOG_CATEGORY,
           error: getErrorMessage(e),
         })
         throw new InternalServerErrorException(
-          categories.length > 0
-            ? 'Category settings were updated, but updating onlyActionablePriorityNotifications failed'
+          categories.length > 0 || senders.length > 0
+            ? 'Notification settings were updated, but updating onlyActionablePriorityNotifications failed'
             : 'Updating onlyActionablePriorityNotifications failed',
         )
       }
