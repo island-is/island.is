@@ -113,11 +113,7 @@ export class LimitedAccessCaseService {
   ): { file: CaseFile; owningCase: Case }[] {
     const accessible: { file: CaseFile; owningCase: Case }[] = []
 
-    const consider = (
-      file: CaseFile,
-      owningCase: Case,
-      accessCase: Case,
-    ) => {
+    const consider = (file: CaseFile, owningCase: Case, accessCase: Case) => {
       if (
         canLimitedAccessUserViewCaseFile({
           user,

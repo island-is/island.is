@@ -68,13 +68,16 @@ describe('LimitedAccessCaseService - getDefenceUserAccessibleCaseFiles', () => {
     ).getDefenceUserAccessibleCaseFiles(theCase, defenceUser)
 
   beforeEach(async () => {
-    const { limitedAccessCaseService: service } = await createTestingCaseModule()
+    const { limitedAccessCaseService: service } =
+      await createTestingCaseModule()
 
     limitedAccessCaseService = service
   })
 
   it('should return visible files on the case with the case as owner', () => {
-    const visible = makeFile({ category: CaseFileCategory.PROSECUTOR_CASE_FILE })
+    const visible = makeFile({
+      category: CaseFileCategory.PROSECUTOR_CASE_FILE,
+    })
     const theCase = makeIndictmentCase({ caseFiles: [visible] })
 
     expect(getAccessible(theCase)).toEqual([
@@ -130,7 +133,7 @@ describe('LimitedAccessCaseService - getDefenceUserAccessibleCaseFiles', () => {
     ])
   })
 
-  it('should omit another defendant\'s criminal record', () => {
+  it("should omit another defendant's criminal record", () => {
     const myDefendant = makeDefendant({ id: 'defendant-mine' })
     const otherDefendant = makeDefendant({
       id: 'defendant-other',

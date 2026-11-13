@@ -359,7 +359,7 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
       )
     })
 
-    it('should not include another defendant\'s criminal record', async () => {
+    it("should not include another defendant's criminal record", async () => {
       const myDefendant = makeDefendant({ id: 'defendant-mine' })
       const otherDefendant = makeDefendant({
         id: 'defendant-other',
