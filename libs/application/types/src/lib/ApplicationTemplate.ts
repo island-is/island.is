@@ -2,6 +2,7 @@ import { EventObject, MachineConfig } from 'xstate'
 import { MachineOptions, StatesConfig } from 'xstate/lib/types'
 
 import { Application } from './Application'
+import { PruningApplication } from './ApplicationLifecycle'
 import {
   ApplicationContext,
   ApplicationRole,
@@ -65,12 +66,16 @@ export interface ApplicationTemplate<
      * Optional override for post-prune delay. The default is to post-prune applications 1 year after they are pruned.
      * Post-pruning removes the last PIIs from an application so please be careful when using this override.
      *
-     * Value given as the number of milliseconds after pruning, e.g., `2 * 365 * 24 * 3600 * 1000` for 2 years.
+     * Value given as the number of milliseconds after pruning, e.g., `2 * 365 * 24 * 3600 * 1000` for 2 years,
+     * or as a function returning the date to post-prune a given application. The function is called with the
+     * application before it is pruned, so all its data is available; returning `undefined` uses the default.
      *
      * At post-pruning, all remaining `answers` and `externalData` will be cleared.
      * Additionally all nationalIds will be deleted from the state_history table
      */
-    postPruneDelayOverride?: number
+    postPruneDelayOverride?:
+      | number
+      | ((application: PruningApplication) => Date | undefined)
 
     /**
      * List of fields from the `answers` object to retain after pruning.

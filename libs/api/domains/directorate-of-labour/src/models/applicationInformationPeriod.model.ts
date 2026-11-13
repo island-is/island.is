@@ -17,12 +17,14 @@ export class ApplicationInformationPeriod {
   @Field(() => Boolean)
   paid!: boolean
 
-  @Field(() => String)
-  rightsCodePeriod!: string
+  @Field(() => String, { nullable: true })
+  rightsCodePeriod?: string | null
 
-  @Field(() => String)
-  firstPeriodStart!: string
+  @Field(() => String, { nullable: true })
+  firstPeriodStart?: string | null
 
-  @Field(() => String)
-  days!: string
+  // VMST no longer returns `days` per period; kept nullable so existing
+  // queries keep working.
+  @Field(() => String, { nullable: true })
+  days?: string | null
 }

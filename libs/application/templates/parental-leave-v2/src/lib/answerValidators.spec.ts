@@ -1,0 +1,974 @@
+import {
+  ApplicationWithAttachments as Application,
+  ApplicationStatus,
+  ApplicationTypes,
+  FormValue,
+} from '@island.is/application/types'
+import addDays from 'date-fns/addDays'
+import addMonths from 'date-fns/addMonths'
+import format from 'date-fns/format'
+
+import { minimumPeriodStartBeforeExpectedDateOfBirth } from '../config'
+import { MANUAL, ParentalRelations } from '../constants'
+import { answerValidators } from './answerValidators'
+import set from 'lodash/set'
+import { errorMessages, parentalLeaveFormMessages } from './messages'
+import { StartDateOptions, AnswerValidationConstants } from '../constants'
+import { NO, YES } from '@island.is/application/core'
+
+const { VALIDATE_LATEST_PERIOD, VALIDATE_PERIODS } = AnswerValidationConstants
+
+const formatDate = (date: Date) => format(date, dateFormat)
+
+const dateFormat = 'yyyy-MM-dd'
+const DEFAULT_DOB = '2021-01-15'
+const DEFAULT_DOB_DATE = new Date(DEFAULT_DOB)
+const FUTURE_DOB = formatDate(addMonths(new Date(), 3))
+const FUTURE_DOB_DATE = new Date(FUTURE_DOB)
+
+const createBaseApplication = (): Application => ({
+  answers: {
+    someAnswer: 'someValue',
+    selectedChild: '0',
+    applicationType: { option: 'parentalLeave' },
+  },
+  assignees: [],
+  applicant: '',
+  attachments: {},
+  applicantActors: [],
+  created: new Date(),
+  externalData: {
+    children: {
+      date: new Date(),
+      status: 'success',
+      data: {
+        children: [
+          {
+            expectedDateOfBirth: DEFAULT_DOB,
+            parentalRelation: ParentalRelations.primary,
+          },
+        ],
+      },
+    },
+  },
+  id: '',
+  modified: new Date(),
+  state: '',
+  typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
+  status: ApplicationStatus.IN_PROGRESS,
+})
+
+const createApplicationWithDob = (dob: string): Application => ({
+  ...createBaseApplication(),
+  externalData: {
+    children: {
+      date: new Date(),
+      status: 'success',
+      data: {
+        children: [
+          {
+            expectedDateOfBirth: dob,
+            parentalRelation: ParentalRelations.primary,
+          },
+        ],
+      },
+    },
+  },
+})
+
+describe('answerValidators', () => {
+  let application: Application
+  let futureApplication: Application
+
+  beforeEach(() => {
+    application = createBaseApplication()
+    futureApplication = createApplicationWithDob(FUTURE_DOB)
+  })
+
+  it('should return an error if startDate is more than 1 month before DOB', () => {
+    const minimumDate = addMonths(
+      FUTURE_DOB_DATE,
+      -minimumPeriodStartBeforeExpectedDateOfBirth,
+    )
+
+    const newAnswers = [
+      {
+        firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+        startDate: formatDate(addDays(minimumDate, -15)),
+      },
+    ]
+
+    expect(
+      answerValidators['periods'](newAnswers, futureApplication),
+    ).toStrictEqual({
+      message: errorMessages.periodsStartDate,
+      path: 'periods[0].startDate',
+      values: {},
+    })
+  })
+
+  it(`shouldn't return an error if startDate is less than 1 month before DOB`, () => {
+    const newAnswers = [
+      {
+        firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+        startDate: '2021-01-12',
+      },
+    ]
+
+    expect(answerValidators['periods'](newAnswers, application)).toBeUndefined()
+  })
+
+  it('should return error for startDate after maximum months period', () => {
+    const newAnswers = [
+      {
+        firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+        startDate: '2025-01-29',
+      },
+    ]
+
+    expect(answerValidators['periods'](newAnswers, application)).toStrictEqual({
+      message: errorMessages.periodsPeriodRange,
+      path: 'periods[0].startDate',
+      values: { usageMaxMonths: 23.5 },
+    })
+  })
+
+  describe('requestRights', () => {
+    it('should return error if multipleBirthsRequestDays exceeds maximum', () => {
+      const newAnswer = {
+        isRequestingRights: YES,
+        requestDays: 14,
+      }
+
+      const appAnswers = {
+        ...application.answers,
+        multipleBirthsRequestDays: 200,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+      }
+
+      const newApplication = {
+        ...application,
+        answers: appAnswers,
+      }
+
+      expect(
+        answerValidators['requestRights'](newAnswer, newApplication),
+      ).toStrictEqual({
+        message: errorMessages.notAllowedToRequestRights,
+        path: 'transferRights',
+        values: undefined,
+      })
+    })
+
+    it('should not return error if multipleBirthsRequestDays is below maximum (backwards-compatible)', () => {
+      const newAnswer = {
+        isRequestingRights: YES,
+        requestDays: 14,
+      }
+
+      const appAnswers = {
+        ...application.answers,
+        multipleBirthsRequestDays: 90,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+      }
+
+      const newApplication = {
+        ...application,
+        answers: appAnswers,
+      }
+
+      expect(
+        answerValidators['requestRights'](newAnswer, newApplication),
+      ).toStrictEqual(undefined)
+    })
+
+    it('should return not error if using all "common" days from multipleBirths and request more days', () => {
+      const newAnswer = {
+        isRequestingRights: YES,
+        requestDays: 14,
+      }
+
+      const appAnswers = {
+        ...application.answers,
+        multipleBirthsRequestDays: 180,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+      }
+
+      const newApplication = {
+        ...application,
+        answers: appAnswers,
+      }
+
+      expect(
+        answerValidators['requestRights'](newAnswer, newApplication),
+      ).toStrictEqual(undefined)
+    })
+  })
+
+  describe('giveRights', () => {
+    it('should return error if not using all "common" days from multipleBirths and giving days', () => {
+      const newAnswer = {
+        isGivingRights: YES,
+        giveDays: 14,
+      }
+
+      const appAnswers = {
+        ...application.answers,
+        multipleBirthsRequestDays: 30,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+      }
+
+      const newApplication = {
+        ...application,
+        answers: appAnswers,
+      }
+
+      expect(
+        answerValidators['giveRights'](newAnswer, newApplication),
+      ).toStrictEqual({
+        message: errorMessages.notAllowedToGiveRights,
+        path: 'transferRights',
+        values: undefined,
+      })
+    })
+
+    it('should return not error if using 0 "common" days from multipleBirths and giving days', () => {
+      const newAnswer = {
+        isGivingRights: YES,
+        giveDays: 14,
+      }
+
+      const appAnswers = {
+        ...application.answers,
+        multipleBirthsRequestDays: 0,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+      }
+
+      const newApplication = {
+        ...application,
+        answers: appAnswers,
+      }
+
+      expect(
+        answerValidators['giveRights'](newAnswer, newApplication),
+      ).toStrictEqual(undefined)
+    })
+
+    it('should return error if other parent MANUAL, not otherParentRightOfAccess and giving days', () => {
+      const newAnswer = {
+        isGivingRights: YES,
+        giveDays: 14,
+      }
+
+      const appAnswers = {
+        ...application.answers,
+        otherParentRightOfAccess: NO,
+        otherParentObj: {
+          chooseOtherParent: MANUAL,
+          otherParentName: 'Spouse Spousson',
+          otherParentId: '',
+        },
+      }
+
+      const newApplication = {
+        ...application,
+        answers: appAnswers,
+      }
+
+      expect(
+        answerValidators['giveRights'](newAnswer, newApplication),
+      ).toStrictEqual({
+        message: errorMessages.notAllowedToGiveRightsOtherParentNotAllowed,
+        path: 'transferRights',
+        values: undefined,
+      })
+    })
+
+    it('should return not error if other parent MANUAL, otherParentRightOfAccess and giving days', () => {
+      const newAnswer = {
+        isGivingRights: YES,
+        giveDays: 14,
+      }
+
+      const appAnswers = {
+        ...application.answers,
+        otherParentRightOfAccess: YES,
+        otherParentObj: {
+          chooseOtherParent: MANUAL,
+          otherParentName: 'Spouse Spousson',
+          otherParentId: '',
+        },
+      }
+
+      const newApplication = {
+        ...application,
+        answers: appAnswers,
+      }
+
+      expect(
+        answerValidators['giveRights'](newAnswer, newApplication),
+      ).toStrictEqual(undefined)
+    })
+  })
+})
+
+describe('when constructing a new period', () => {
+  let application: Application
+  let futureApplication: Application
+
+  beforeEach(() => {
+    application = createBaseApplication()
+    futureApplication = createApplicationWithDob(FUTURE_DOB)
+  })
+
+  const createValidationResultForPeriod = (period: Record<string, unknown>) =>
+    answerValidators[VALIDATE_LATEST_PERIOD]([period], application)
+
+  const createFutureValidationResultForPeriod = (
+    period: Record<string, unknown>,
+  ) => answerValidators[VALIDATE_LATEST_PERIOD]([period], futureApplication)
+
+  it('should be required that the answer is an array', () => {
+    expect(answerValidators[VALIDATE_LATEST_PERIOD]([], application)).toEqual(
+      undefined,
+    )
+
+    expect(answerValidators[VALIDATE_LATEST_PERIOD](null, application)).toEqual(
+      {
+        path: 'periods',
+        message: errorMessages.periodsNotAList,
+      },
+    )
+  })
+
+  it('should be allowed to pass an empty array', () => {
+    expect(answerValidators[VALIDATE_LATEST_PERIOD]([], application)).toEqual(
+      undefined,
+    )
+  })
+
+  it('should not be allowed to pass without providing a start date', () => {
+    expect(
+      createValidationResultForPeriod({
+        startDate: null,
+      }),
+    ).toEqual({
+      message: errorMessages.periodsStartMissing,
+      path: 'periods[0].startDate',
+      values: undefined,
+    })
+  })
+
+  it('should not be allowed to pass without providing a use length option', () => {
+    expect(
+      createValidationResultForPeriod({
+        startDate: DEFAULT_DOB_DATE,
+        useLength: null,
+      }),
+    ).toEqual({
+      message: errorMessages.periodsUseLengthMissing,
+      path: 'periods[0].useLength',
+      values: undefined,
+    })
+  })
+
+  it('should not be allowed to pass without providing an end date', () => {
+    expect(
+      createValidationResultForPeriod({
+        startDate: DEFAULT_DOB_DATE,
+        useLength: NO,
+        endDate: null,
+      }),
+    ).toEqual({
+      message: errorMessages.periodsEndDateRequired,
+      path: 'periods[0].endDate',
+      values: undefined,
+    })
+  })
+
+  it('should not be allowed to pass without providing a ratio', () => {
+    expect(
+      createValidationResultForPeriod({
+        startDate: DEFAULT_DOB_DATE,
+        useLength: NO,
+        endDate: formatDate(addDays(DEFAULT_DOB_DATE, 30)),
+        ratio: null,
+      }),
+    ).toEqual({
+      message: errorMessages.periodsRatioMissing,
+      path: 'periods[0].ratio',
+      values: undefined,
+    })
+  })
+
+  it('should not be allowed to pass in a start date before dob but not further back than minimum', () => {
+    const minimumDate = addMonths(
+      FUTURE_DOB_DATE,
+      -minimumPeriodStartBeforeExpectedDateOfBirth,
+    )
+
+    expect(
+      createFutureValidationResultForPeriod({
+        firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+        startDate: formatDate(addDays(minimumDate, 1)),
+      }),
+    ).toStrictEqual(undefined)
+
+    expect(
+      createFutureValidationResultForPeriod({
+        firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+        startDate: formatDate(addDays(minimumDate, -1)),
+      }),
+    ).toStrictEqual({
+      message: errorMessages.periodsStartDate,
+      path: 'periods[0].startDate',
+      values: {},
+    })
+  })
+
+  it('should not be able to pass in endDate before noting if want to use length or not', () => {
+    expect(
+      createValidationResultForPeriod({
+        firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+        startDate: DEFAULT_DOB,
+        endDate: formatDate(addDays(DEFAULT_DOB_DATE, 30)),
+      }),
+    ).toStrictEqual({
+      message: errorMessages.periodsEndDateDefinitionMissing,
+      path: 'periods[0].endDate',
+      values: {},
+    })
+
+    expect(
+      createValidationResultForPeriod({
+        firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+        startDate: DEFAULT_DOB,
+        useLength: NO,
+        endDate: formatDate(addDays(DEFAULT_DOB_DATE, 30)),
+      }),
+    ).toEqual(undefined)
+  })
+
+  it('should not be able to pass in endDate before startDate + minimumPeriodLength', () => {
+    expect(
+      createValidationResultForPeriod({
+        firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+        startDate: DEFAULT_DOB,
+        useLength: NO,
+        endDate: formatDate(addDays(DEFAULT_DOB_DATE, -1)),
+      }),
+    ).toStrictEqual({
+      message: errorMessages.periodsEndDateBeforeStartDate,
+      path: 'periods',
+      values: {},
+    })
+
+    // expect(
+    //   createValidationResultForPeriod({
+    //     firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+    //     startDate: DEFAULT_DOB,
+    //     useLength: NO,
+    //     endDate: formatDate(addDays(DEFAULT_DOB_DATE, 5)),
+    //   }),
+    // ).toStrictEqual(undefined)
+
+    expect(
+      createValidationResultForPeriod({
+        firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+        startDate: DEFAULT_DOB,
+        useLength: NO,
+        endDate: formatDate(addDays(DEFAULT_DOB_DATE, 30)),
+      }),
+    ).toEqual(undefined)
+  })
+
+  it('should not be able to pass in endDate more than 2 years from expected date of birth', () => {
+    expect(
+      createValidationResultForPeriod({
+        firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+        startDate: DEFAULT_DOB,
+        useLength: NO,
+        endDate: formatDate(addDays(DEFAULT_DOB_DATE, 30)),
+      }),
+    ).toEqual(undefined)
+  })
+
+  it('should not be able to pass in ratio before start and end dates', () => {
+    expect(
+      createValidationResultForPeriod({
+        firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+        useLength: NO,
+        endDate: formatDate(addDays(DEFAULT_DOB_DATE, 30)),
+        ratio: '100',
+      }),
+    ).toStrictEqual({
+      message: errorMessages.periodsStartMissing,
+      path: 'periods[0].startDate',
+      values: {},
+    })
+
+    expect(
+      createValidationResultForPeriod({
+        firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+        startDate: formatDate(addDays(DEFAULT_DOB_DATE, 10)),
+        useLength: NO,
+        ratio: '100',
+      }),
+    ).toStrictEqual({
+      message: errorMessages.periodsEndDateRequired,
+      path: 'periods[0].ratio',
+      values: {},
+    })
+
+    expect(
+      createValidationResultForPeriod({
+        firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+        startDate: DEFAULT_DOB,
+        useLength: NO,
+        endDate: formatDate(addDays(DEFAULT_DOB_DATE, 30)),
+        days: '30',
+        percentage: '100',
+        ratio: '100',
+      }),
+    ).toEqual(undefined)
+  })
+
+  describe('minimumStartDate when child is already born vs not born', () => {
+    it('should allow past start date before minimum when child is already born', () => {
+      const minimumDate = addMonths(
+        DEFAULT_DOB_DATE,
+        -minimumPeriodStartBeforeExpectedDateOfBirth,
+      )
+
+      const result = answerValidators[VALIDATE_LATEST_PERIOD](
+        [
+          {
+            firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+            startDate: formatDate(addDays(minimumDate, -15)),
+          },
+        ],
+        application,
+      )
+
+      expect(result).toStrictEqual(undefined)
+    })
+
+    it('should block start date before minimum when child is not yet born', () => {
+      const minimumDate = addMonths(
+        FUTURE_DOB_DATE,
+        -minimumPeriodStartBeforeExpectedDateOfBirth,
+      )
+
+      const result = answerValidators[VALIDATE_LATEST_PERIOD](
+        [
+          {
+            firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+            startDate: formatDate(addDays(minimumDate, -1)),
+          },
+        ],
+        futureApplication,
+      )
+
+      expect(result).toStrictEqual({
+        message: errorMessages.periodsStartDate,
+        path: 'periods[0].startDate',
+        values: {},
+      })
+    })
+
+    it('should allow start date after minimum regardless of birth status', () => {
+      // Not yet born
+      const futureMinimumDate = addMonths(
+        FUTURE_DOB_DATE,
+        -minimumPeriodStartBeforeExpectedDateOfBirth,
+      )
+
+      expect(
+        answerValidators[VALIDATE_LATEST_PERIOD](
+          [
+            {
+              firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+              startDate: formatDate(addDays(futureMinimumDate, 1)),
+            },
+          ],
+          futureApplication,
+        ),
+      ).toStrictEqual(undefined)
+
+      // Already born
+      const pastMinimumDate = addMonths(
+        DEFAULT_DOB_DATE,
+        -minimumPeriodStartBeforeExpectedDateOfBirth,
+      )
+
+      expect(
+        answerValidators[VALIDATE_LATEST_PERIOD](
+          [
+            {
+              firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+              startDate: formatDate(addDays(pastMinimumDate, 1)),
+            },
+          ],
+          application,
+        ),
+      ).toStrictEqual(undefined)
+    })
+  })
+
+  it('should not be able to have a lower ratio than 1%', () => {
+    expect(
+      createValidationResultForPeriod({
+        firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+        startDate: DEFAULT_DOB,
+        useLength: NO,
+        endDate: formatDate(addDays(DEFAULT_DOB_DATE, 30)),
+        days: '30',
+        percentage: '50',
+        ratio: '0',
+      }),
+    ).toStrictEqual({
+      message: errorMessages.periodsRatioBelowMinimum,
+      path: 'periods[0].ratio',
+      values: {},
+    })
+  })
+
+  it('should accept period data from simplified date-range + ratio UI', () => {
+    // This simulates the data format produced by the new PeriodDateRange + PeriodPercentage UI
+    // where firstPeriodStart and useLength are set via hidden inputs
+    expect(
+      createValidationResultForPeriod({
+        firstPeriodStart: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
+        startDate: DEFAULT_DOB,
+        useLength: NO,
+        endDate: formatDate(addDays(DEFAULT_DOB_DATE, 30)),
+        ratio: '100',
+      }),
+    ).toEqual(undefined)
+  })
+
+  it('should accept second period from simplified UI without firstPeriodStart', () => {
+    const firstPeriodEnd = addDays(DEFAULT_DOB_DATE, 30)
+    const secondPeriodStart = addDays(firstPeriodEnd, 1)
+    const secondPeriodEnd = addDays(secondPeriodStart, 30)
+
+    expect(
+      answerValidators[VALIDATE_LATEST_PERIOD](
+        [
+          {
+            firstPeriodStart: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
+            startDate: DEFAULT_DOB,
+            useLength: NO,
+            endDate: formatDate(firstPeriodEnd),
+            ratio: '100',
+          },
+          {
+            firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+            startDate: formatDate(secondPeriodStart),
+            useLength: NO,
+            endDate: formatDate(secondPeriodEnd),
+            ratio: '80',
+          },
+        ],
+        application,
+      ),
+    ).toEqual(undefined)
+  })
+
+  describe('overlapping earlier periods', () => {
+    const earlierPeriods = [
+      {
+        firstPeriodStart: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
+        startDate: '2021-01-15',
+        useLength: NO,
+        endDate: '2021-02-14',
+        ratio: '100',
+      },
+      {
+        startDate: '2021-04-01',
+        useLength: NO,
+        endDate: '2021-04-30',
+        ratio: '100',
+      },
+    ]
+
+    const validateLatest = (startDate: string, endDate: string) =>
+      answerValidators[VALIDATE_LATEST_PERIOD](
+        [
+          ...earlierPeriods,
+          { startDate, useLength: NO, endDate, ratio: '100' },
+        ],
+        application,
+      )
+
+    it('rejects a start date inside a later period but not the first one', () => {
+      expect(validateLatest('2021-04-20', '2021-05-20')).toStrictEqual({
+        message: errorMessages.periodsStartDateOverlaps,
+        path: 'periods[2].startDate',
+        values: {},
+      })
+    })
+
+    it('rejects an end date inside a later period but not the first one', () => {
+      expect(validateLatest('2021-03-01', '2021-04-10')).toStrictEqual({
+        message: errorMessages.periodsEndDateOverlapsPeriod,
+        path: 'periods[2].endDate',
+        values: {},
+      })
+    })
+
+    it('accepts a period that overlaps none of the earlier periods', () => {
+      expect(validateLatest('2021-05-01', '2021-05-31')).toEqual(undefined)
+    })
+  })
+})
+
+describe('when continuing from the periods screen', () => {
+  // Periods synced from VMST carry `paid` and `approved`
+  const paid = {
+    firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+    startDate: '2029-12-01',
+    endDate: '2029-12-31',
+    ratio: '100',
+    paid: true,
+    approved: true,
+  }
+  const long = {
+    startDate: '2030-01-01',
+    endDate: '2030-03-31',
+    ratio: '100',
+    paid: false,
+    approved: false,
+  }
+  const short = {
+    startDate: '2030-04-01',
+    endDate: '2030-04-07',
+    ratio: '100',
+    paid: false,
+    approved: false,
+  }
+
+  const validate = (periods: Record<string, unknown>[]) => {
+    const application = createBaseApplication()
+    set(application, 'answers.periods', periods)
+    return answerValidators[VALIDATE_PERIODS](periods, application)
+  }
+
+  it('accepts a short VMST period that follows straight on from a longer one', () => {
+    expect(validate([paid, long, short])).toBeUndefined()
+  })
+
+  it('rejects the short VMST period once the period before it is deleted', () => {
+    expect(validate([paid, short])).toStrictEqual({
+      path: 'periods',
+      message: errorMessages.periodsShortPeriodNotContinuous,
+      values: {
+        index: 2,
+        startDate: '01.04.2030',
+        endDate: '07.04.2030',
+        minimumDays: 14,
+      },
+    })
+  })
+})
+
+describe('when selecting a child', () => {
+  const withChildren = (children: Record<string, unknown>[]) => {
+    const application = createBaseApplication()
+    set(application, 'externalData.children.data.children', children)
+    return application
+  }
+
+  it('should refuse a child that already has an unfinished application', () => {
+    const application = withChildren([
+      {
+        expectedDateOfBirth: DEFAULT_DOB,
+        parentalRelation: ParentalRelations.primary,
+        inProgressApplicationId: 'waiting-for-approval-id',
+      },
+    ])
+
+    expect(
+      answerValidators[AnswerValidationConstants.SELECTED_CHILD](
+        '0',
+        application,
+      ),
+    ).toMatchObject({
+      message: parentalLeaveFormMessages.selectChild.childInProgressError,
+      path: 'selectedChild',
+    })
+  })
+
+  it('should accept a child whose earlier application has finished', () => {
+    const application = withChildren([
+      {
+        expectedDateOfBirth: DEFAULT_DOB,
+        parentalRelation: ParentalRelations.primary,
+        vmstApplicationId: 'approved-id',
+      },
+    ])
+
+    expect(
+      answerValidators[AnswerValidationConstants.SELECTED_CHILD](
+        '0',
+        application,
+      ),
+    ).toBeUndefined()
+  })
+})
+
+describe('when continuing from the employers table', () => {
+  const withAnswers = (answers: FormValue) => {
+    const application = createBaseApplication()
+    application.answers = { ...application.answers, ...answers }
+    return application
+  }
+  const validate = (employers: unknown, application: Application) =>
+    answerValidators[AnswerValidationConstants.EMPLOYERS](
+      employers,
+      application,
+    )
+  const employee = {
+    employment: { isSelfEmployed: NO, isReceivingUnemploymentBenefits: NO },
+  }
+
+  it('should require an employer from an employee', () => {
+    expect(validate([], withAnswers(employee))).toMatchObject({
+      message: parentalLeaveFormMessages.employer.addEmployerError,
+      path: 'employers',
+    })
+  })
+
+  it('should require an employer from a grant applicant who had one', () => {
+    const application = withAnswers({
+      applicationType: { option: 'parentalGrant' },
+      employerLastSixMonths: YES,
+    })
+
+    expect(validate([], application)).toMatchObject({ path: 'employers' })
+  })
+
+  it('should accept an employee with an employer', () => {
+    expect(
+      validate(
+        [{ email: 'vinnuveitandi@test.is', ratio: '100' }],
+        withAnswers(employee),
+      ),
+    ).toBeUndefined()
+  })
+
+  it('should not require one from the self-employed', () => {
+    const application = withAnswers({
+      employment: { isSelfEmployed: YES, isReceivingUnemploymentBenefits: NO },
+    })
+
+    expect(validate([], application)).toBeUndefined()
+  })
+
+  describe('rows prefilled from VMST', () => {
+    const vmstRow = {
+      email: 'vinnuveitandi@test.is',
+      ratio: '',
+      isFromVMST: true,
+    }
+    const withVMSTEmployer = () => {
+      const application = withAnswers(employee)
+      set(application, 'externalData.VMSTApplicationInformation', {
+        data: { employers: [{ email: 'vinnuveitandi@test.is' }] },
+        date: new Date(),
+        status: 'success',
+      })
+      return application
+    }
+
+    it('should accept an empty ratio on a row VMST lists', () => {
+      expect(validate([vmstRow], withVMSTEmployer())).toBeUndefined()
+    })
+
+    it('should refuse an empty ratio on a row only marked as from VMST', () => {
+      expect(
+        validate([{ ...vmstRow, email: 'annar@test.is' }], withVMSTEmployer()),
+      ).toMatchObject({
+        message: errorMessages.employersRatioInvalid,
+        path: 'employers[0].ratio',
+      })
+      expect(validate([vmstRow], withAnswers(employee))).toMatchObject({
+        path: 'employers[0].ratio',
+      })
+    })
+  })
+})
+
+describe('when choosing extra days for a multiple birth', () => {
+  const validate = (days: unknown, multipleBirths: string) => {
+    const application = createBaseApplication()
+    application.answers = {
+      ...application.answers,
+      multipleBirths: { hasMultipleBirths: YES, multipleBirths },
+    }
+    return answerValidators[
+      AnswerValidationConstants.MULTIPLE_BIRTHS_REQUEST_DAYS
+    ](days, application)
+  }
+
+  it('should accept days within the maximum for the number of children', () => {
+    expect(validate('180', '2')).toBeUndefined()
+    expect(validate('0', '2')).toBeUndefined()
+  })
+
+  it('should reject more days than the number of children allows', () => {
+    expect(validate('181', '2')).toMatchObject({
+      message: errorMessages.rightsDaysOutOfRange,
+      path: 'multipleBirthsRequestDays',
+    })
+  })
+
+  it('should reject negative and fractional days', () => {
+    expect(validate('-30', '2')).toMatchObject({
+      path: 'multipleBirthsRequestDays',
+    })
+    expect(validate('1.5', '2')).toMatchObject({
+      path: 'multipleBirthsRequestDays',
+    })
+  })
+})
+
+describe('when naming the other parent', () => {
+  const validate = (otherParentId: string) => {
+    const application = { ...createBaseApplication(), applicant: '0101302399' }
+    return answerValidators['otherParentObj'](
+      { chooseOtherParent: MANUAL, otherParentId },
+      application,
+    )
+  }
+
+  it("should refuse the applicant's own kennitala", () => {
+    expect(validate('0101302399')).toStrictEqual({
+      message: errorMessages.otherParentIsApplicant,
+      path: 'otherParentObj.otherParentId',
+      values: undefined,
+    })
+    expect(validate('010130-2399')).toMatchObject({
+      path: 'otherParentObj.otherParentId',
+    })
+  })
+
+  it('should accept another person', () => {
+    expect(validate('0101303019')).toBeUndefined()
+  })
+})

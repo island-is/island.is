@@ -1,7 +1,54 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { RecordObject } from '@island.is/application/types'
+import {
+  ApplicationTemplate,
+  PruningApplication,
+  RecordObject,
+} from '@island.is/application/types'
+import addMilliseconds from 'date-fns/addMilliseconds'
 
 export const DEFAULT_POST_PRUNE_DELAY = 365 * 24 * 3600 * 1000
+
+type PostPruneDelayOverride = NonNullable<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ApplicationTemplate<any, any, any>['adminDataConfig']
+>['postPruneDelayOverride']
+
+/**
+ * When a pruned application is post-pruned, as set by the template's
+ * `adminDataConfig.postPruneDelayOverride`. Called before pruning, while the
+ * application still has all its data. A function that throws or gives an
+ * invalid date gets the default, so it cannot keep the application from being
+ * pruned.
+ */
+export const getPostPruneAt = (
+  application: PruningApplication,
+  override: PostPruneDelayOverride,
+  {
+    now = new Date(),
+    onError,
+  }: { now?: Date; onError?: (error: unknown) => void } = {},
+): Date => {
+  const defaultPostPruneAt = addMilliseconds(now, DEFAULT_POST_PRUNE_DELAY)
+
+  if (typeof override === 'function') {
+    try {
+      const postPruneAt = override(application)
+
+      if (postPruneAt !== undefined && isNaN(postPruneAt.getTime())) {
+        throw new Error('postPruneDelayOverride gave an invalid date')
+      }
+
+      return postPruneAt ?? defaultPostPruneAt
+    } catch (error) {
+      onError?.(error)
+      return defaultPostPruneAt
+    }
+  }
+
+  return override === undefined
+    ? defaultPostPruneAt
+    : addMilliseconds(now, override)
+}
 
 /**
  * Sets a value in an object at the given dot-notated path.
