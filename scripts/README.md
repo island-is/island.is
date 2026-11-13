@@ -51,7 +51,7 @@ Masks personal data and secrets in raw errors, such as those from Datadog, Graph
 
 Masks kennitölur, emails, phone numbers, bank and card numbers, IBANs, IP addresses, tokens and sensitive keys. The same value gets the same label (`[KT-PERSON-1]`), so lines can still be correlated. URL-encoded and Base64 text is decoded and scrubbed too; URL-encoded text comes out decoded.
 
-Names in free text are not caught. The script is an aid, not a guarantee: read the output before sharing it.
+In free text, only Icelandic full names ending in -son or -dóttir are caught; other names, such as foreign ones, are not. The script is an aid, not a guarantee: read the output before sharing it.
 
 Copy the error, then:
 

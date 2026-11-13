@@ -55,7 +55,8 @@ const XML_ELEMENT = new RegExp(
 const SQL_STATEMENT =
   /\b(?:INSERT\s+INTO|UPDATE\s+\S+\s+SET|DELETE\s+FROM|SELECT\b[\s\S]*?\bFROM)\b/i
 const SQL_STRING = /'(?:[^']|'')*'/g
-const EMAIL = /[\p{L}\p{N}._%+-]+@(?:[\p{L}\p{N}-]+\.)+\p{L}{2,}/gu
+const EMAIL =
+  /(?<![\p{L}\p{N}._%+-])[\p{L}\p{N}._%+-]+@(?:[\p{L}\p{N}-]+\.)+\p{L}{2,}/gu
 const IBAN = /\bIS\d{2}(?:\s?\d{4}){5}\s?\d{2}\b/gi
 const BANK_ACCOUNT = /(?<!\d)\d{4}-\d{2}-\d{6}(?!\d)/g
 const KENNITALA = /(?<!\d)\d{6}-?\d{4}(?!\d)/g
@@ -64,10 +65,12 @@ const PHONE =
   /(?:\+|\b00)354[\s-]?\d{3}[\s-]?\d{4}(?!\d)|(?<![\w.:+-])[4-8]\d{2}[\s-]?\d{4}(?![\w.:-])/g
 const IPV6 =
   /(?<![\w:.])(?:(?:[\da-f]{1,4}:){7}[\da-f]{1,4}|(?:[\da-f]{1,4}:){1,7}:(?:[\da-f]{1,4}(?::[\da-f]{1,4}){0,6})?|::(?:[\da-f]{1,4}:){0,6}[\da-f]{1,4})(?![\w:.])/gi
+const ICELANDIC_NAME =
+  /(?<![\p{L}\p{N}])(?:(?:\p{Lu}\p{Ll}+(?:-\p{Lu}\p{Ll}+)?|\p{Lu}\.)\s+){1,4}(?!(?:Reason|Season|Treason|Lesson)\b)\p{Lu}\p{Ll}*(?:(?:s|a|ar)(?:son|syni|sonar)|d[oó]tt[iu]r)(?!\p{L})/gu
 const IPV4 =
   /(?<![\d.])(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)(?![\d.])/g
 
-const URL_ENCODED = /[^\s"'<>]*%[\dA-Fa-f]{2}[^\s"'<>]*/g
+const URL_ENCODED = /(?<![^\s"'<>])[^\s"'<>]*%[\dA-Fa-f]{2}[^\s"'<>]*/g
 const BASE64 =
   /(?<![\w+/=-])(?:[A-Za-z\d+/]{4}){4,}(?:[A-Za-z\d+/]{2}==|[A-Za-z\d+/]{3}=)?(?![\w+/=-])/g
 const CONTROL_CHAR = /[^\P{Cc}\t\n\r]/u
@@ -230,6 +233,9 @@ const createScrubber = () => {
       )
       .replace(IPV4, (ip) => label('IP', ip))
       .replace(IPV6, (ip) => label('IP', ip.toLowerCase()))
+      .replace(ICELANDIC_NAME, (name) =>
+        label('NAME', name.replace(/\s+/g, ' ')),
+      )
       .replace(XML_ELEMENT, (match, tag, localName, attributes = '', value) =>
         PLACEHOLDER.test(value) || !isSensitiveKey(localName, value)
           ? match
@@ -316,7 +322,7 @@ const main = () => {
     .join(', ')
   process.stderr.write(
     `scrub: ${summary || 'nothing masked'}. ` +
-      'Names in free text are not caught; read the output before sharing.\n',
+      'Only Icelandic -son/-dóttir names are caught in free text; read the output before sharing.\n',
   )
   if (process.argv.includes('--show')) {
     for (const [placeholder, value] of masked) {
