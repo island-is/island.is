@@ -3,7 +3,8 @@ import {
   authenticateAsync,
   AuthenticationType,
 } from 'expo-local-authentication'
-import { useRouter } from 'expo-router'
+import { StackActions } from '@react-navigation/native'
+import { useNavigation, useRouter } from 'expo-router'
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -12,7 +13,6 @@ import {
   BackHandler,
   Image,
   InteractionManager,
-  Modal,
   Platform,
   SafeAreaView,
   View,
@@ -40,7 +40,6 @@ import {
 import { useUiStore } from '@/stores/ui-store'
 import { font, token } from '@/ui'
 import { DeviceLock } from '@/components/device-bound-auth/device-lock'
-import { ElectronicIdConfirmation } from '@/components/device-bound-auth/electronic-id-confirmation'
 import { useBiometricType as useBiometricLabel } from '@/hooks/use-biometric-type'
 import { useNativeUnlock } from '@/hooks/use-native-unlock'
 import {
@@ -93,6 +92,7 @@ function useBiometricType() {
 
 export default function AppLockScreen() {
   const router = useRouter()
+  const navigation = useNavigation()
   const isPromptRef = useRef(false)
   const [code, setCode] = useState('')
   const [invalidCode, setInvalidCode] = useState(false)
@@ -114,6 +114,18 @@ export default function AppLockScreen() {
   // doesn't fire during unmount. Defer the deep-link replay until back has
   // settled — replaying with the lock still on top would push the link
   // above it, then back would pop the link instead of the lock.
+  // Closes the lock and any sheet on top of it in one step.
+  const closeLock = () => {
+    const state = navigation.getState()
+    const lockIndex =
+      state?.routes.map((route) => route.name).lastIndexOf('app-lock') ?? -1
+    if (state && lockIndex !== -1) {
+      navigation.dispatch(StackActions.pop(state.routes.length - lockIndex))
+    } else if (router.canGoBack()) {
+      router.back()
+    }
+  }
+
   const unlockApp = () => {
     // The user just authenticated, so the device is unlocked — refresh the canary.
     void ensureDeviceUnlockCanary()
@@ -131,8 +143,8 @@ export default function AppLockScreen() {
     // back/close ("GO_BACK was not handled"). A plain unlock keeps it.
     if (hasPendingDeepLink() && router.canDismiss()) {
       router.dismissAll()
-    } else if (router.canGoBack()) {
-      router.back()
+    } else {
+      closeLock()
     }
     // Replay after the dismiss settles — on setTimeout(0) the navigate races
     // the pop and gets dropped.
@@ -460,8 +472,7 @@ export default function AppLockScreen() {
 }
 
 /**
- * The lock for a native login, with the electronic ID confirmation in a sheet
- * while IAS waits for the person's approval.
+ * The lock for a native login.
  */
 function NativeLock({
   name,
@@ -478,32 +489,19 @@ function NativeLock({
   const biometricType = useBiometricLabel(authenticationTypes)?.text
 
   return (
-    <>
-      <DeviceLock
-        name={name}
-        nationalId={nationalId}
-        biometricType={unlock.isBiometricsEnabled ? biometricType : undefined}
-        status={
-          unlock.status === 'prompting' || unlock.status === 'failed'
-            ? unlock.status
-            : 'idle'
-        }
-        onBiometricsPress={unlock.unlockWithBiometrics}
-        onElectronicIdPress={unlock.unlockWithElectronicId}
-        onLogoutPress={onLogoutPress}
-      />
-      <Modal
-        visible={unlock.verificationCode !== undefined}
-        animationType="slide"
-        presentationStyle="pageSheet"
-        onRequestClose={unlock.cancelElectronicId}
-      >
-        <ElectronicIdConfirmation
-          purpose="unlock"
-          verificationCode={unlock.verificationCode ?? ''}
-          onCancelPress={unlock.cancelElectronicId}
-        />
-      </Modal>
-    </>
+    <DeviceLock
+      name={name}
+      nationalId={nationalId}
+      biometricType={unlock.isBiometricsEnabled ? biometricType : undefined}
+      status={
+        unlock.status === 'prompting' || unlock.status === 'failed'
+          ? unlock.status
+          : 'idle'
+      }
+      electronicIdError={unlock.electronicIdError}
+      onBiometricsPress={unlock.unlockWithBiometrics}
+      onElectronicIdPress={unlock.unlockWithElectronicId}
+      onLogoutPress={onLogoutPress}
+    />
   )
 }

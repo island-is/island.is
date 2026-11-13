@@ -198,6 +198,13 @@ export default function AuthLayout() {
         }}
       />
       <Stack.Screen
+        name="(modals)/electronic-id"
+        options={{
+          ...modalScreenOptions,
+          headerTitle: '',
+        }}
+      />
+      <Stack.Screen
         name="(modals)/renew-prescription"
         options={{
           ...modalScreenOptions,

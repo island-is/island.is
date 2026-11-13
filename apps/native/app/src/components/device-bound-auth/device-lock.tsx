@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
-import logo from '@/assets/logo/home-logo.png'
+import logo from '@/assets/logo/logo-64w.png'
 import illustration from '@/assets/illustrations/onboarding-biometrics.png'
 import { Alert, Button, token } from '@/ui'
 import { LockUserCard } from './lock-user-card'
@@ -16,8 +16,8 @@ const Host = styled.View`
 
 const Logo = styled.Image`
   align-self: center;
-  width: 136px;
-  height: 22px;
+  width: 40px;
+  height: 40px;
   margin-top: ${({ theme }) => theme.spacing[4]}px;
 `
 
@@ -50,6 +50,13 @@ const ButtonStack = styled.View`
  */
 export type DeviceLockStatus = 'idle' | 'prompting' | 'failed'
 
+/**
+ * Why electronic ID didn't open the app:
+ * - `tooManyRequests`: IAS allows only a few requests in a short time
+ * - `failed`: anything else
+ */
+export type ElectronicIdError = 'tooManyRequests' | 'failed'
+
 interface DeviceLockProps {
   name: string
   nationalId: string
@@ -59,6 +66,8 @@ interface DeviceLockProps {
    */
   biometricType?: string
   status?: DeviceLockStatus
+  /** Shown in place of the biometrics error, as the more recent one. */
+  electronicIdError?: ElectronicIdError
   onBiometricsPress(): void
   onElectronicIdPress(): void
   onLogoutPress(): void
@@ -73,6 +82,7 @@ export function DeviceLock({
   nationalId,
   biometricType,
   status = 'idle',
+  electronicIdError,
   onBiometricsPress,
   onElectronicIdPress,
   onLogoutPress,
@@ -90,22 +100,40 @@ export function DeviceLock({
         <Illustration source={illustration} resizeMode="contain" />
       </IllustrationWrapper>
       <Footer>
-        {biometricType && status === 'failed' && (
+        {electronicIdError ? (
           <Alert
             type="error"
             size="small"
             hasBorder
-            // "lífkenni tókst ekki" starts a sentence here, unlike elsewhere.
-            title={upperFirst(
-              intl.formatMessage(
-                { id: 'applock.biometricsFailedTitle' },
-                { biometricType },
-              ),
-            )}
+            title={intl.formatMessage({
+              id: 'applock.electronicIdFailedTitle',
+            })}
             message={intl.formatMessage({
-              id: 'applock.biometricsFailedMessage',
+              id:
+                electronicIdError === 'tooManyRequests'
+                  ? 'applock.electronicIdTooManyRequestsMessage'
+                  : 'applock.electronicIdFailedMessage',
             })}
           />
+        ) : (
+          biometricType &&
+          status === 'failed' && (
+            <Alert
+              type="error"
+              size="small"
+              hasBorder
+              // "lífkenni tókst ekki" starts a sentence here, unlike elsewhere.
+              title={upperFirst(
+                intl.formatMessage(
+                  { id: 'applock.biometricsFailedTitle' },
+                  { biometricType },
+                ),
+              )}
+              message={intl.formatMessage({
+                id: 'applock.biometricsFailedMessage',
+              })}
+            />
+          )
         )}
         <LockUserCard
           name={name}

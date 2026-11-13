@@ -72,6 +72,19 @@ export function isAppLoginRemoved(error: unknown) {
 }
 
 /**
+ * IAS refused to start an electronic ID request: an install may start 5 in
+ * 10 minutes, logins and unlocks together. (A SIM login on a new device has
+ * other reasons for this too.)
+ */
+export function isTooManyElectronicIdRequests(error: unknown) {
+  return (
+    error instanceof IasError &&
+    error.endpoint === 'POST /connect/ciba' &&
+    error.code === 'access_denied'
+  )
+}
+
+/**
  * The enrolled biometrics changed, so the biometric key can never sign
  * again. The client deletes it: biometrics are off until enabled again.
  */

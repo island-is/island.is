@@ -3,11 +3,13 @@ import { useIntl } from 'react-intl'
 import { Alert } from 'react-native'
 
 import { getDeviceKeyErrorCode } from '../../modules/device-keys'
+import type { ElectronicIdError } from '@/components/device-bound-auth/device-lock'
 import {
   getIasClient,
   getIasErrorCode,
   isAppLoginRemoved,
   isBiometricKeyInvalidated,
+  isTooManyElectronicIdRequests,
 } from '@/lib/ias'
 import { authStore } from '@/stores/auth-store'
 import { isCancelled, useElectronicIdUnlock } from './use-electronic-id-unlock'
@@ -36,13 +38,16 @@ export function useNativeUnlock({
 }) {
   const intl = useIntl()
   const [status, setStatus] = useState<NativeUnlockStatus>('idle')
-  const electronicId = useElectronicIdUnlock()
+  const [electronicIdError, setElectronicIdError] =
+    useState<ElectronicIdError>()
+  const electronicId = useElectronicIdUnlock('unlock')
   const ias = getIasClient()
 
   const unlockWithBiometrics = async () => {
     if (!ias.isBiometricsEnabled() || electronicId.isPending()) {
       return
     }
+    setElectronicIdError(undefined)
     setStatus('prompting')
     try {
       const tokens = await ias.unlockWithBiometrics({
@@ -83,10 +88,12 @@ export function useNativeUnlock({
     if (electronicId.isPending()) {
       return
     }
+    setElectronicIdError(undefined)
     setStatus('electronicId')
     try {
       authStore.getState().unlockNative(await electronicId.unlock())
       setStatus('idle')
+      // Closes the lock along with the sheet on top of it.
       onUnlocked()
     } catch (error) {
       if (isAppLoginGone(error)) {
@@ -95,6 +102,9 @@ export function useNativeUnlock({
       }
       if (!isCancelled(error)) {
         console.warn('Electronic ID unlock failed', error)
+        setElectronicIdError(
+          isTooManyElectronicIdRequests(error) ? 'tooManyRequests' : 'failed',
+        )
       }
       setStatus('idle')
     }
@@ -102,11 +112,10 @@ export function useNativeUnlock({
 
   return {
     status,
+    /** Why the last electronic ID attempt failed; cleared on the next try. */
+    electronicIdError,
     isBiometricsEnabled: ias.isBiometricsEnabled(),
-    /** Shown while electronic ID waits; undefined until IAS sends it. */
-    verificationCode: electronicId.verificationCode,
     unlockWithBiometrics,
     unlockWithElectronicId,
-    cancelElectronicId: electronicId.cancel,
   }
 }
