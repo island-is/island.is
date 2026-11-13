@@ -192,6 +192,8 @@ import { SecondarySchoolModule } from './secondary-school/secondary-school.modul
 import { SecondarySchoolService } from './secondary-school/secondary-school.service'
 import { TrainingLicenseOnAWorkMachineTemplateModule } from './aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.module'
 import { TrainingLicenseOnAWorkMachineTemplateService } from './aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.service'
+import { MachineLicenseCardReissueTemplateModule } from './aosh/machine-license-card-reissue/machine-license-card-reissue.module'
+import { MachineLicenseCardReissueTemplateService } from './aosh/machine-license-card-reissue/machine-license-card-reissue.service'
 import { PracticalExamTemplateModule } from './aosh/practical-exam/practical-exam.module'
 import { PracticalExamTemplateService } from './aosh/practical-exam/practical-exam.service'
 import { LegalGazetteTemplateModule } from './legal-gazette/legal-gazette.module'
@@ -282,6 +284,7 @@ export const modules = [
   SeminarsTemplateModule,
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
+  MachineLicenseCardReissueTemplateModule,
   UnemploymentBenefitsModule,
   CarRentalFeeCategoryModule,
   CarRentalDayrateReturnsModule,
@@ -387,6 +390,7 @@ export const services = [
   MunicipalListSigningService,
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
+  MachineLicenseCardReissueTemplateService,
   UnemploymentBenefitsService,
   CarRentalFeeCategoryService,
   CarRentalDayrateReturnsService,

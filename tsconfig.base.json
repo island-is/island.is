@@ -354,6 +354,9 @@
       "@island.is/application/templates/aosh/deregister-machine": [
         "libs/application/templates/aosh/deregister-machine/src/index.ts"
       ],
+      "@island.is/application/templates/aosh/machine-license-card-reissue": [
+        "libs/application/templates/aosh/machine-license-card-reissue/src/index.ts"
+      ],
       "@island.is/application/templates/aosh/practical-exam": [
         "libs/application/templates/aosh/practical-exam/src/index.ts"
       ],

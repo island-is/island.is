@@ -88,6 +88,7 @@ export enum ApplicationTypes {
   TERMINATE_RENTAL_AGREEMENT = 'TerminateRentalAgreement',
   SEMINAR_REGISTRATION = 'SeminarRegistration',
   TRAINING_LICENSE_ON_A_WORK_MACHINE = 'TrainingLicenseOnAWorkMachine',
+  MACHINE_LICENSE_CARD_REISSUE = 'MachineLicenseCardReissue',
   SECONDARY_SCHOOL = 'SecondarySchool',
   UNEMPLOYMENT_BENEFITS = 'UnemploymentBenefits',
   ACTIVATION_ALLOWANCE = 'ActivationAllowance',
@@ -474,6 +475,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.TRAINING_LICENSE_ON_A_WORK_MACHINE]: {
     slug: 'kennslurettindi-a-vinnuvel',
     translation: ['aosh.tlwm.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.MACHINE_LICENSE_CARD_REISSUE]: {
+    slug: 'endurutgafa-plastkorts',
+    translation: ['aosh.mlcr.application', 'uiForms.application'],
   },
   [ApplicationTypes.SECONDARY_SCHOOL]: {
     slug: 'framhaldsskoli',
