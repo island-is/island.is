@@ -21,16 +21,24 @@ export interface IasClientOptions {
   clientId: string
   scopes: string[]
   /**
-   * Semver without leading zeros (26.11.6), sent on every request: IAS's
-   * feature flag can target app versions.
+   * About the app and the phone, sent with POST /app/attestation. IAS only
+   * logs and counts them, to see which devices fail attestation.
    */
-  appVersion: string
+  deviceDetails?: DeviceDetails
   device: IasDevice
   storage: IasStorage
   /** For dev builds: IAS's verifier tests need real request bodies. */
   onAttestationRequest?: (body: Record<string, unknown>) => void
   /** For dev builds: an expired attestation was renewed. */
   onAttestationRenewed?: () => void
+}
+
+export interface DeviceDetails {
+  /** As the app has it, e.g. 26.11.06 */
+  appVersion?: string
+  osVersion?: string
+  /** The phone's own name: the iOS machine identifier, or Build.MODEL */
+  deviceModel?: string
 }
 
 interface RequestOptions {
@@ -159,7 +167,13 @@ export function createIasClient(options: IasClientOptions): IasClient {
       device.os === 'android' ? challenge : undefined,
     )
     const evidence = await device.attestInstallKey(key, challenge)
-    const body = { clientId, jwk: key.publicJwk, challenge, ...evidence }
+    const body = {
+      clientId,
+      jwk: key.publicJwk,
+      challenge,
+      ...evidence,
+      ...options.deviceDetails,
+    }
     options.onAttestationRequest?.(body)
     const response = await request<AttestationResponse>(
       'POST',
@@ -224,9 +238,7 @@ export function createIasClient(options: IasClientOptions): IasClient {
     nonce?: string,
   ): Promise<Response> {
     const url = issuer + path
-    const headers: Record<string, string> = {
-      'X-App-Version': options.appVersion,
-    }
+    const headers: Record<string, string> = {}
 
     if (attested) {
       const attestation = await currentAttestation()

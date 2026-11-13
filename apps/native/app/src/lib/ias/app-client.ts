@@ -1,4 +1,6 @@
 import * as Application from 'expo-application'
+import * as Device from 'expo-device'
+import { Platform } from 'react-native'
 import Keychain from 'react-native-keychain'
 import { getClientId, getConfig } from '../../config'
 import { createIasClient } from './client'
@@ -25,21 +27,6 @@ const keychainStorage: IasStorage = {
       },
     )
   },
-}
-
-/**
- * IAS's feature flag compares semver, which doesn't allow the leading zeros
- * in yy.mm.dd versions: 26.11.06 → 26.11.6.
- */
-export function toSemver(version: string) {
-  const parts = version
-    .split('.')
-    .slice(0, 3)
-    .map((part) => String(parseInt(part, 10) || 0))
-  while (parts.length < 3) {
-    parts.push('0')
-  }
-  return parts.join('.')
 }
 
 /** The IAS for native login, which testing builds can point elsewhere. */
@@ -71,9 +58,14 @@ export function getIasClient(): IasClient {
               issuer,
               clientId,
               scopes: idsScopes,
-              appVersion: toSemver(
-                Application.nativeApplicationVersion ?? '0.0.0',
-              ),
+              // IAS tidies up the model name itself.
+              deviceDetails: {
+                appVersion: Application.nativeApplicationVersion ?? undefined,
+                osVersion: Device.osVersion ?? undefined,
+                deviceModel:
+                  (Platform.OS === 'ios' ? Device.modelId : Device.modelName) ??
+                  undefined,
+              },
               device: deviceKeysIasDevice,
               storage: keychainStorage,
               onAttestationRequest: __DEV__
