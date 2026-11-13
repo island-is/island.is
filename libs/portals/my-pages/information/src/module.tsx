@@ -34,6 +34,10 @@ const UserNotificationsSettings = lazy(() =>
   import('./screens/UserNotifications/UserNotifications'),
 )
 
+const ActorNotificationSettings = lazy(() =>
+  import('./screens/ActorNotificationSettings/ActorNotificationSettings'),
+)
+
 const UserContractsOverview = lazy(() =>
   import('./screens/UserContracts/UserContractsOverview/UserContractsOverview'),
 )
@@ -128,6 +132,13 @@ export const informationModule: PortalModule = {
         enabled: hasSettingsAccess && !isActor,
         navHide: isActor,
         element: <UserNotificationsSettings />,
+      },
+      {
+        name: m.mySettingsActorNotifications,
+        path: InformationPaths.SettingsActorNotifications,
+        enabled: hasSettingsAccess && !isActor,
+        key: Features.isServicePortalNotificationsV2PageEnabled,
+        element: <ActorNotificationSettings />,
       },
       {
         name: m.notifications,

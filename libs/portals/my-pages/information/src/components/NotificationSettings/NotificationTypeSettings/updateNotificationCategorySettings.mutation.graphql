@@ -1,0 +1,12 @@
+mutation UpdateNotificationCategorySettings(
+  $input: UpdateNotificationCategoriesInput!
+) {
+  updateNotificationCategorySettings(input: $input) {
+    senders {
+      categories {
+        key
+        blocked
+      }
+    }
+  }
+}
