@@ -102,59 +102,96 @@ export class LimitedAccessCaseService {
     return user && isDefenceUser(user) ? user.nationalId : undefined
   }
 
-  // The limited-access include loads a broad caseFiles allowlist; strip rows
-  // the defence user may not see (including on merged/split cases) before the
-  // payload leaves the service. Uses the same per-file rules as downloads /
-  // LimitedAccessCaseFileInterceptor (category, submitter, cutoff, defendant,
-  // confirmed ruling order). Merged-case downloads use the parent for access
-  // control (LimitedAccessViewCaseFileGuard), and the merged include omits
-  // sharing / appeal fields the filter needs — so merged files are judged
-  // against the parent. Split cases own their defendant and files, so they
-  // supply their own context.
+  // Case / merged / split caseFiles the defence user may see, each with the
+  // owning case (for S3) and the access-control case. Same per-file rules as
+  // downloads / LimitedAccessCaseFileInterceptor. Merged files are judged
+  // against the parent (merged includes omit sharing / appeal fields); split
+  // files against the split case.
+  private getDefenceUserAccessibleCaseFiles(
+    theCase: Case,
+    user: TUser,
+  ): { file: CaseFile; owningCase: Case }[] {
+    const accessible: { file: CaseFile; owningCase: Case }[] = []
+
+    const consider = (
+      file: CaseFile,
+      owningCase: Case,
+      accessCase: Case,
+    ) => {
+      if (
+        canLimitedAccessUserViewCaseFile({
+          user,
+          caseType: accessCase.type,
+          caseState: accessCase.state,
+          submittedBy: file.submittedBy,
+          fileRepresentative: file.fileRepresentative,
+          caseFileCategory: file.category,
+          defendants: accessCase.defendants,
+          civilClaimants: accessCase.civilClaimants,
+          defendantId: file.defendantId,
+          fileCreated: file.created,
+          civilClaimantId: file.civilClaimantId,
+          isRulingOrderInConfirmedCourtSession:
+            isRulingOrderInConfirmedCourtSession(
+              file.id,
+              accessCase.courtSessions,
+            ),
+        })
+      ) {
+        accessible.push({ file, owningCase })
+      }
+    }
+
+    for (const file of theCase.caseFiles ?? []) {
+      consider(file, theCase, theCase)
+    }
+
+    for (const merged of theCase.mergedCases ?? []) {
+      for (const file of merged.caseFiles ?? []) {
+        consider(file, merged, theCase)
+      }
+    }
+
+    for (const split of theCase.splitCases ?? []) {
+      for (const file of split.caseFiles ?? []) {
+        consider(file, split, split)
+      }
+    }
+
+    return accessible
+  }
+
+  // Strip rows the defence user may not see before the limited-access payload
+  // leaves the service.
   private restrictCaseFilesForDefenceUser(theCase: Case, user?: TUser): Case {
     if (!user || !isDefenceUser(user)) {
       return theCase
     }
 
-    const keepAllowed = (file: CaseFile, caseContext: Case) =>
-      canLimitedAccessUserViewCaseFile({
-        user,
-        caseType: caseContext.type,
-        caseState: caseContext.state,
-        submittedBy: file.submittedBy,
-        fileRepresentative: file.fileRepresentative,
-        caseFileCategory: file.category,
-        defendants: caseContext.defendants,
-        civilClaimants: caseContext.civilClaimants,
-        defendantId: file.defendantId,
-        fileCreated: file.created,
-        civilClaimantId: file.civilClaimantId,
-        isRulingOrderInConfirmedCourtSession:
-          isRulingOrderInConfirmedCourtSession(
-            file.id,
-            caseContext.courtSessions,
-          ),
-      })
+    const filesByOwningCase = new Map<Case, CaseFile[]>()
+
+    for (const { file, owningCase } of this.getDefenceUserAccessibleCaseFiles(
+      theCase,
+      user,
+    )) {
+      const files = filesByOwningCase.get(owningCase) ?? []
+      files.push(file)
+      filesByOwningCase.set(owningCase, files)
+    }
 
     if (theCase.caseFiles) {
-      theCase.caseFiles = theCase.caseFiles.filter((file) =>
-        keepAllowed(file, theCase),
-      )
+      theCase.caseFiles = filesByOwningCase.get(theCase) ?? []
     }
 
     for (const merged of theCase.mergedCases ?? []) {
       if (merged.caseFiles) {
-        merged.caseFiles = merged.caseFiles.filter((file) =>
-          keepAllowed(file, theCase),
-        )
+        merged.caseFiles = filesByOwningCase.get(merged) ?? []
       }
     }
 
     for (const split of theCase.splitCases ?? []) {
       if (split.caseFiles) {
-        split.caseFiles = split.caseFiles.filter((file) =>
-          keepAllowed(file, split),
-        )
+        split.caseFiles = filesByOwningCase.get(split) ?? []
       }
     }
 
@@ -258,69 +295,23 @@ export class LimitedAccessCaseService {
       theCase.civilClaimants,
     )
 
-    const cutoffDate = getDefenceUserCutoffDate(
-      user.nationalId,
-      theCase.defendants,
-      theCase.civilClaimants,
-    )
-
-    const allowedCaseFiles =
-      theCase.caseFiles?.filter((file) => {
-        if (!file.isKeyAccessible || !file.category) {
-          return false
-        }
-
-        // A ruling order uploaded during the course of a case is only visible
-        // once it has been added to a confirmed court session. One pronounced
-        // orally has nothing to add to the zip until it has been written up.
-        if (file.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER) {
-          return (
-            !isRulingOrderWithoutDocument(file) &&
-            isRulingOrderInConfirmedCourtSession(file.id, theCase.courtSessions)
-          )
-        }
-
-        if (!allowedCaseFileCategories.includes(file.category)) {
-          return false
-        }
-
-        if (cutoffDate && file.created > cutoffDate) {
-          return false
-        }
-
-        if (
-          (file.category === CaseFileCategory.CRIMINAL_RECORD ||
-            file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE) &&
-          file.defendantId
-        ) {
-          const defendant = theCase.defendants?.find(
-            (d) => d.id === file.defendantId,
-          )
-
-          return (
-            Defendant.isConfirmedDefenderOfSpecificDefendantWithCaseFileAccess(
-              user.nationalId,
-              file.defendantId,
-              theCase.defendants,
-            ) ||
-            Defendant.isConfirmedAppealDefenderOfDefendant(
-              user.nationalId,
-              defendant ? [defendant] : undefined,
-            )
-          )
-        }
-
-        return true
-      }) ?? []
-
     const promises: Promise<void>[] = []
     const filesToZip: { data: Buffer; name: string }[] = []
 
-    allowedCaseFiles.forEach((file) => {
+    // Same visibility as the limited-access payload; skip oral ruling orders
+    // with no document and keys we cannot fetch.
+    for (const { file, owningCase } of this.getDefenceUserAccessibleCaseFiles(
+      theCase,
+      user,
+    )) {
+      if (!file.isKeyAccessible || isRulingOrderWithoutDocument(file)) {
+        continue
+      }
+
       promises.push(
-        this.tryAddCaseFileFromS3ToFilesToZip(theCase, file, filesToZip),
+        this.tryAddCaseFileFromS3ToFilesToZip(owningCase, file, filesToZip),
       )
-    })
+    }
 
     if (isRequestCase(theCase.type)) {
       promises.push(
