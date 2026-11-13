@@ -17,10 +17,9 @@ import {
 } from '@island.is/application/types'
 import {
   getAdminDataForPruning,
-  DEFAULT_POST_PRUNE_DELAY,
+  getPostPruneAt,
 } from './application-lifecycle.utils'
 import { HistoryService } from '@island.is/application/api/history'
-import addMilliseconds from 'date-fns/addMilliseconds'
 import addMonths from 'date-fns/addMonths'
 import { createDailyCompletionNotifications } from '@island.is/application/api/payment'
 
@@ -356,10 +355,16 @@ export class ApplicationLifeCycleService {
           await this.applicationService.cancelScheduledNotifications(
             prune.application.id,
           )
-          postPruneAt = addMilliseconds(
-            new Date(),
-            template?.adminDataConfig?.postPruneDelayOverride ??
-              DEFAULT_POST_PRUNE_DELAY,
+          postPruneAt = getPostPruneAt(
+            prune.application,
+            template?.adminDataConfig?.postPruneDelayOverride,
+            {
+              onError: (error) =>
+                this.logger.error(
+                  `Application post-prune date error on id ${prune.application.id}, using the default`,
+                  error,
+                ),
+            },
           )
         }
 

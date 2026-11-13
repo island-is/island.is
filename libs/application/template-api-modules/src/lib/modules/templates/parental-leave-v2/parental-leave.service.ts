@@ -63,6 +63,7 @@ import {
   ApplicationApi,
   describeVmstError,
   ParentalLeaveApi,
+  fetchParentalLeaves,
 } from '@island.is/clients/vmst'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -260,11 +261,10 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
 
     let parentalLeaves: ParentalLeave[] | null
     try {
-      const response =
-        await this.parentalLeaveApi.parentalLeaveGetParentalLeaves({
-          nationalRegistryId: auth.nationalId,
-        })
-      parentalLeaves = response.parentalLeaves ?? []
+      parentalLeaves = await this.childrenService.withIslandIsApplicationIds(
+        auth.nationalId,
+        await fetchParentalLeaves(this.parentalLeaveApi, auth.nationalId),
+      )
     } catch (e) {
       this.logger.warn(
         `Parental leave: could not fetch parental leaves for application ${
@@ -381,11 +381,7 @@ export class ParentalLeaveV2Service extends BaseTemplateApiService {
     try {
       const parentalLeaves =
         getStoredVmstParentalLeaves(application)?.parentalLeaves ??
-        (
-          await this.parentalLeaveApi.parentalLeaveGetParentalLeaves({
-            nationalRegistryId: application.applicant,
-          })
-        ).parentalLeaves
+        (await this.childrenService.getParentalLeaves(application.applicant))
       const vmstApplicationId = getVmstApplicationId(application)
       const match = parentalLeaves?.find(
         ({ applicationId }) => applicationId === vmstApplicationId,

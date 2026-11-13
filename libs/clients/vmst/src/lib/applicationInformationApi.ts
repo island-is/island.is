@@ -1,11 +1,12 @@
-import { ApplicationApi, Configuration } from '../../gen/fetch'
+import { Configuration } from '../../gen/fetch'
 import type { NewApplication } from '../../gen/fetch'
+import { VmstApplicationApi } from './applicationApi'
 
 export interface ApplicationGetApplicationInformationRequest {
   applicationId: string | null
 }
 
-export class ApplicationInformationApi extends ApplicationApi {
+export class ApplicationInformationApi extends VmstApplicationApi {
   constructor(configuration: Configuration) {
     super(configuration)
   }

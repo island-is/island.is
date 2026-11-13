@@ -77,7 +77,6 @@ import {
   findChildBySelection,
   getChildSelectionValue,
   isSameChild,
-  toDay,
 } from './childIdentity'
 import {
   Attachments,
@@ -3009,6 +3008,27 @@ export const getChildrenInProgress = (
 }
 
 /**
+ * The name VMST has for a child with a leave there. Read from
+ * `VMSTParentalLeaves`, which only the applicant can read and which is cleared
+ * on leaving prerequisites, rather than copied onto the child, which the
+ * employer can read.
+ */
+export const getVMSTChildName = (
+  externalData: Application['externalData'],
+  vmstApplicationId: string,
+): string => {
+  const applications =
+    getValueViaPath<
+      Record<string, { children?: Array<{ name?: string | null }> | null }>
+    >(externalData, 'VMSTParentalLeaves.data.applications') ?? {}
+
+  return (applications[vmstApplicationId]?.children ?? [])
+    .map((child) => child?.name?.trim())
+    .filter(Boolean)
+    .join(', ')
+}
+
+/**
  * Options for the select-child screen, in three groups:
  *
  *   1. children with no application yet          → a new application
@@ -3016,61 +3036,6 @@ export const getChildrenInProgress = (
  *   3. "my child is not in this list"             → the no-children-found questions
  *
  */
-type VMSTLeavePeriod = { from?: string | null; to?: string | null }
-
-/**
- * The child's name and the first and last day of its leave, for a child with a
- * leave at VMST. Read from `VMSTParentalLeaves`, which only the applicant can
- * read and which is cleared on leaving prerequisites, rather than copied onto
- * the child, which the employer can read.
- */
-export const getVMSTLeaveDisplay = (
-  externalData: Application['externalData'],
-  vmstApplicationId: string,
-): { name: string; from: string; to: string } => {
-  const parentalLeaves =
-    getValueViaPath<
-      Array<{ applicationId?: string; periods?: VMSTLeavePeriod[] | null }>
-    >(externalData, 'VMSTParentalLeaves.data.parentalLeaves') ?? []
-  const applications =
-    getValueViaPath<
-      Record<
-        string,
-        {
-          children?: Array<{ name?: string | null }> | null
-          periods?: VMSTLeavePeriod[] | null
-        }
-      >
-    >(externalData, 'VMSTParentalLeaves.data.applications') ?? {}
-
-  const leave = parentalLeaves.find(
-    (candidate) => candidate?.applicationId === vmstApplicationId,
-  )
-  const vmstApplication = applications[vmstApplicationId]
-
-  const name = (vmstApplication?.children ?? [])
-    .map((child) => child?.name?.trim())
-    .filter(Boolean)
-    .join(', ')
-
-  const periods = leave?.periods?.length
-    ? leave.periods
-    : vmstApplication?.periods ?? []
-  const days = (key: 'from' | 'to') =>
-    periods
-      .map((period) => toDay(period?.[key]))
-      .filter(Boolean)
-      .sort()
-  const formatDay = (day?: string) =>
-    day ? format(parseISO(day), dateFormat.is) : ''
-
-  return {
-    name,
-    from: formatDay(days('from')[0]),
-    to: formatDay(days('to').at(-1)),
-  }
-}
-
 export const getChildrenOptions = (application: Application) => {
   const { children } = getApplicationExternalData(application.externalData)
 
@@ -3079,20 +3044,15 @@ export const getChildrenOptions = (application: Application) => {
       child.parentalRelation === ParentalRelations.secondary
         ? child.primaryParentNationalRegistryId
         : undefined
-    const vmstLeave = child.vmstApplicationId
-      ? getVMSTLeaveDisplay(application.externalData, child.vmstApplicationId)
-      : undefined
+    const vmstChildName = child.vmstApplicationId
+      ? getVMSTChildName(application.externalData, child.vmstApplicationId)
+      : ''
     const subLabel = isChildInProgress(child)
       ? child.inProgressIsChange
         ? parentalLeaveFormMessages.selectChild.existingApplicationInProgress
         : parentalLeaveFormMessages.selectChild.applicationInProgress
-      : vmstLeave?.from && vmstLeave.to
-      ? {
-          ...parentalLeaveFormMessages.selectChild.existingLeave,
-          values: { from: vmstLeave.from, to: vmstLeave.to },
-        }
       : child.vmstApplicationId
-      ? parentalLeaveFormMessages.selectChild.existingApplication
+      ? parentalLeaveFormMessages.selectChild.existingLeave
       : child.parentalRelation === ParentalRelations.secondary
       ? {
           ...parentalLeaveFormMessages.selectChild.secondaryParent,
@@ -3113,7 +3073,7 @@ export const getChildrenOptions = (application: Application) => {
         dataTestId: hasExistingApplication
           ? `existing-application-${index}`
           : `child-${index}`,
-        label: vmstLeave?.name || getChildLabel(child),
+        label: vmstChildName || getChildLabel(child),
         subLabel,
       },
     }

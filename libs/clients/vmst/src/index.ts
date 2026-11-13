@@ -5,6 +5,12 @@ export * from '../gen/fetch'
 export * from './lib/vmst.config'
 export { describeVmstError, describeVmstErrorBody } from './lib/utils'
 export { ApplicationInformationApi } from './lib/applicationInformationApi'
+export {
+  fetchParentalLeaves,
+  toIsoDate,
+  toParentalLeaves,
+} from './lib/parentalLeaves'
+export { applicationResponseFromJson } from './lib/applicationApi'
 export type { ApplicationGetApplicationInformationRequest } from './lib/applicationInformationApi'
 
 export type ApplicationRights = Omit<ApplicationRight, 'rightsUnit'> & {

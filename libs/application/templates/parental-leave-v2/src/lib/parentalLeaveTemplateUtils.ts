@@ -1,5 +1,7 @@
 import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import { Application, ApplicationContext } from '@island.is/application/types'
+import addMonths from 'date-fns/addMonths'
+import { postPruneMarginMonths, usageMaxMonths } from '../config'
 import {
   ApplicationAction,
   MOCK_APPLICATION_FUND_ID,
@@ -13,6 +15,7 @@ import {
   getApplicationExternalData,
   employersHaveChanged,
   getChangeBaseline,
+  getExpectedDateOfBirthOrAdoptionDateOrBirthDate,
   normalize,
   periodsHaveChanged,
   requiresOtherParentApproval,
@@ -196,6 +199,35 @@ export const hasBeenSubmittedToVMST = (application: Application) => {
   }
 
   return isRealId(navIdData) || isRealId(rawNavId)
+}
+
+/**
+ * When the ids kept after pruning (`adminDataConfig`) are deleted. They link
+ * the applicant's VMST leave, listed by case number, to the island.is id of the
+ * application that started it, which VMST needs to look the leave up and
+ * change it. A leave can be changed until `usageMaxMonths` after the child's
+ * date. A change or residence grant (`initialQuery`), or an application VMST
+ * never received, starts no leave and gets the default.
+ */
+export const getPostPruneDate = (
+  application: Pick<Application, 'answers' | 'externalData'>,
+): Date | undefined => {
+  const fullApplication = application as Application
+
+  if (
+    getValueViaPath(fullApplication.answers, 'initialQuery') ||
+    !hasBeenSubmittedToVMST(fullApplication)
+  ) {
+    return undefined
+  }
+
+  const childDate = new Date(
+    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(fullApplication) ?? '',
+  )
+
+  return isNaN(childDate.getTime())
+    ? undefined
+    : addMonths(childDate, usageMaxMonths + postPruneMarginMonths)
 }
 
 /** True when this application was created to apply for the residence grant. */

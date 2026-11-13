@@ -1,6 +1,7 @@
 import set from 'lodash/set'
 import { parentalLeaveFormMessages } from './messages'
 import addDays from 'date-fns/addDays'
+import addMonths from 'date-fns/addMonths'
 import {
   ApplicationWithAttachments as Application,
   ApplicationStatus,
@@ -82,7 +83,10 @@ import {
   periodsHaveChanged,
   employersHaveChanged,
 } from './parentalLeaveUtils'
-import { hasBeenSubmittedToVMST } from './parentalLeaveTemplateUtils'
+import {
+  getPostPruneDate,
+  hasBeenSubmittedToVMST,
+} from './parentalLeaveTemplateUtils'
 import { PersonInformation } from '../types'
 import { NO, YES, validateAnswers } from '@island.is/application/core'
 import { dataSchema } from './dataSchema'
@@ -1388,14 +1392,14 @@ describe('getChildrenOptions', () => {
         }),
       )[0]
 
-    it("should show the child's name and the days of the leave", () => {
+    it("should show the child's name and that the leave would be changed", () => {
       const option = withLeave({
         parentalLeaves: [
           {
             applicationId: 'v1-application-id',
             periods: [
-              { from: '2026-06-01', to: '2026-08-31' },
               { from: '2026-03-12', to: '2026-05-31' },
+              { from: '2026-09-01', to: '2026-09-30' },
             ],
           },
         ],
@@ -1405,20 +1409,19 @@ describe('getChildrenOptions', () => {
       })
 
       expect(option.label).toBe('Anna Jónsdóttir')
-      expect(option.subLabel).toEqual({
-        ...parentalLeaveFormMessages.selectChild.existingLeave,
-        values: { from: '12.03.2026', to: '31.08.2026' },
-      })
+      expect(option.subLabel).toEqual(
+        parentalLeaveFormMessages.selectChild.existingLeave,
+      )
     })
 
-    it('should fall back to the date label when VMST gives no name or periods', () => {
+    it('should fall back to the date label when VMST gives no name', () => {
       const option = withLeave({ parentalLeaves: [], applications: {} })
 
       expect(option.label).toMatchObject({
         id: expect.stringContaining('plv2.application:selectChild'),
       })
       expect(option.subLabel).toEqual(
-        parentalLeaveFormMessages.selectChild.existingApplication,
+        parentalLeaveFormMessages.selectChild.existingLeave,
       )
     })
   })
@@ -3241,6 +3244,71 @@ describe('hasBeenSubmittedToVMST', () => {
       },
     })
     expect(hasBeenSubmittedToVMST(application)).toBe(false)
+  })
+})
+
+describe('getPostPruneDate', () => {
+  const sentApplication = (sentToVMSTId: string) =>
+    buildApplication({
+      answers: { selectedChild: 0 },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2027-06-27',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        sentToVMST: {
+          data: { id: sentToVMSTId },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+  it('should keep the ids until the leave can no longer be changed, with a margin for a later birth', () => {
+    // 24 months to change the leave, 3 for a later birth
+    expect(getPostPruneDate(sentApplication('2017-05170'))).toEqual(
+      addMonths(new Date('2027-06-27'), 27),
+    )
+  })
+
+  it('should leave an application VMST never received to the default', () => {
+    expect(
+      getPostPruneDate(sentApplication(MOCK_APPLICATION_FUND_ID)),
+    ).toBeUndefined()
+  })
+
+  it('should leave a change, which shares the case number of the leave it continues, to the default', () => {
+    const change = sentApplication('2017-05170')
+    change.answers.initialQuery = 'f7c66108-0000-4000-8000-000000000000'
+
+    expect(getPostPruneDate(change)).toBeUndefined()
+  })
+
+  it('should leave an application without a child date to the default', () => {
+    expect(
+      getPostPruneDate(
+        buildApplication({
+          externalData: {
+            sentToVMST: {
+              data: { id: '2017-05170' },
+              date: new Date(),
+              status: 'success',
+            },
+          },
+        }),
+      ),
+    ).toBeUndefined()
   })
 })
 

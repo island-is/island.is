@@ -11,6 +11,7 @@ import {
   ParentalLeave,
   ApplicationApi,
   NewApplication,
+  fetchParentalLeaves,
 } from '@island.is/clients/vmst'
 import format from 'date-fns/format'
 import formatISO from 'date-fns/formatISO'
@@ -173,12 +174,7 @@ export class DirectorateOfLabourRepository {
     }
 
     try {
-      const results =
-        await this.parentalLeaveApi.parentalLeaveGetParentalLeaves({
-          nationalRegistryId: nationalId,
-        })
-
-      return results.parentalLeaves ?? []
+      return await fetchParentalLeaves(this.parentalLeaveApi, nationalId)
     } catch (e) {
       this.logger.error(`Could not fetch parental leaves for ${nationalId}`, e)
 

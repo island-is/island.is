@@ -171,7 +171,17 @@ describe('ParentalLeaveV2Service', () => {
         },
         {
           provide: ChildrenService,
-          useValue: {},
+          // The test leaves already carry island.is ids
+          useValue: {
+            withIslandIsApplicationIds: async (
+              _applicant: string,
+              leaves: unknown[],
+            ) => leaves,
+            getParentalLeaves: async (nationalRegistryId: string) =>
+              (
+                await parentalLeaveGetParentalLeaves({ nationalRegistryId })
+              ).parentalLeaves ?? [],
+          },
         },
         {
           provide: NationalRegistryV3Service,
@@ -191,6 +201,14 @@ describe('ParentalLeaveV2Service', () => {
           provide: ParentalLeaveApi,
           useClass: jest.fn(() => ({
             parentalLeaveGetParentalLeaves,
+            // `fetchParentalLeaves` reads the body before it is parsed
+            parentalLeaveGetParentalLeavesRaw: async (params: {
+              nationalRegistryId: string
+            }) => {
+              const body = await parentalLeaveGetParentalLeaves(params)
+
+              return { raw: { json: async () => body } }
+            },
             parentalLeaveSetParentalLeave: () =>
               Promise.resolve({
                 id: '1337',
@@ -1395,10 +1413,16 @@ describe('ParentalLeaveV2Service', () => {
     } as TemplateApiModuleActionProps['auth']
 
     it('should fetch the list once and each listed leave once', async () => {
+      // VMST lists the applicant's leaves under `applications`
       parentalLeaveGetParentalLeaves.mockResolvedValue({
         parentalLeaves: [
-          { applicationId: 'leave-1' },
-          { applicationId: 'leave-2' },
+          {
+            nationalRegistryId: nationalId,
+            applications: [
+              { applicationId: 'leave-1' },
+              { applicationId: 'leave-2' },
+            ],
+          },
         ],
       })
       applicationGetApplication.mockImplementation(({ applicationId }) =>
@@ -1417,8 +1441,8 @@ describe('ParentalLeaveV2Service', () => {
       expect(applicationGetApplication).toHaveBeenCalledTimes(2)
       expect(res).toEqual({
         parentalLeaves: [
-          { applicationId: 'leave-1' },
-          { applicationId: 'leave-2' },
+          expect.objectContaining({ applicationId: 'leave-1' }),
+          expect.objectContaining({ applicationId: 'leave-2' }),
         ],
         applications: {
           'leave-1': { applicationId: 'leave-1' },

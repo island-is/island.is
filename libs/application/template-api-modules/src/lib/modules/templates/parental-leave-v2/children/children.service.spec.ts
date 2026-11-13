@@ -139,7 +139,7 @@ describe('ChildrenService.getMockData', () => {
 
 describe('ChildrenService.provideChildren', () => {
   const failingParentalLeaveApi = {
-    parentalLeaveGetParentalLeaves: jest.fn().mockRejectedValue(new Error()),
+    parentalLeaveGetParentalLeavesRaw: jest.fn().mockRejectedValue(new Error()),
   }
   const createService = () =>
     new ChildrenService(
@@ -225,7 +225,7 @@ describe('ChildrenService.childrenAndExistingApplications', () => {
 
 describe('ChildrenService.queryParentalLeavesAndPregnancyStatus', () => {
   it('should use the parental leaves gathered by the VMST provider', async () => {
-    const parentalLeaveApi = { parentalLeaveGetParentalLeaves: jest.fn() }
+    const parentalLeaveApi = { parentalLeaveGetParentalLeavesRaw: jest.fn() }
     const service = new ChildrenService(
       {
         info: jest.fn(),
@@ -246,7 +246,146 @@ describe('ChildrenService.queryParentalLeavesAndPregnancyStatus', () => {
 
     expect(res.getParentalLeaves).toBe(parentalLeaves)
     expect(
-      parentalLeaveApi.parentalLeaveGetParentalLeaves,
+      parentalLeaveApi.parentalLeaveGetParentalLeavesRaw,
     ).not.toHaveBeenCalled()
+  })
+})
+
+describe('ChildrenService.withIslandIsApplicationIds', () => {
+  const V2_APPLICATION_ID = '6b44e738-a278-44a6-8ac8-ff24e9d6e956'
+  const V2_CHANGE_ID = 'c8896013-573e-4ea3-9770-99a7246ee020'
+  const V1_APPLICATION_ID = '3044a099-76dc-4430-96c6-bfa7ece9e2c7'
+  const PRUNED_APPLICATION_ID = '10706b5b-2f5c-4f0e-9d8a-3b1f7a1c2d3e'
+  const ASSIGNED_APPLICATION_ID = 'f44563ad-8b0e-4c47-a4b7-6c2d1e0f9a8b'
+
+  const v2Application = {
+    id: V2_APPLICATION_ID,
+    applicant: APPLICANT_ID,
+    answers: {},
+    externalData: { sentToVMST: { data: { id: '2017-05168' } } },
+  }
+  const currentByType: Record<string, unknown[]> = {
+    // Most recently modified first, as the queries return them. A change and
+    // a residence grant continuing it share the leave's case number.
+    ParentalLeaveV2: [
+      {
+        id: 'residence-grant',
+        applicant: APPLICANT_ID,
+        answers: { initialQuery: V2_CHANGE_ID },
+        externalData: { sendApplication: { data: { id: '2017-05168' } } },
+      },
+      {
+        id: V2_CHANGE_ID,
+        applicant: APPLICANT_ID,
+        answers: { initialQuery: V2_APPLICATION_ID },
+        externalData: {
+          navId: { data: '2017-05168' },
+          sentToVMST: { data: { id: '2017-05168' } },
+        },
+      },
+      v2Application,
+      {
+        id: 'mock-application',
+        applicant: APPLICANT_ID,
+        answers: {},
+        externalData: { navId: { data: 'mock-application-fund-id' } },
+      },
+    ],
+    ParentalLeave: [
+      {
+        id: V1_APPLICATION_ID,
+        applicant: APPLICANT_ID,
+        answers: {},
+        externalData: { sendApplication: { data: { id: '2017-05170' } } },
+      },
+    ],
+  }
+  const includingPruned = [
+    v2Application,
+    // Pruned: only the fields kept by `adminDataConfig` are left
+    {
+      id: 'pruned-change',
+      applicant: APPLICANT_ID,
+      answers: { initialQuery: PRUNED_APPLICATION_ID },
+      externalData: { sentToVMST: { data: { id: '2017-05001' } } },
+    },
+    {
+      id: PRUNED_APPLICATION_ID,
+      applicant: APPLICANT_ID,
+      answers: {},
+      externalData: { sentToVMST: { data: { id: '2017-05001' } } },
+    },
+    // The other parent's application, which the applicant was assigned to
+    {
+      id: ASSIGNED_APPLICATION_ID,
+      applicant: 'other-parent',
+      answers: {},
+      externalData: { sentToVMST: { data: { id: '2017-05002' } } },
+    },
+  ]
+  const customTemplateFindQuery = jest.fn(
+    (typeId: string) => async () => currentByType[typeId] ?? [],
+  )
+  const findAllByNationalIdAndFilters = jest.fn(async () => includingPruned)
+  const service = new ChildrenService(
+    { info: jest.fn(), warn: jest.fn(), error: jest.fn() } as unknown as Logger,
+    { customTemplateFindQuery, findAllByNationalIdAndFilters } as never,
+    {} as never,
+    {} as never,
+    {} as never,
+  )
+  const leave = (applicationId: string) =>
+    ({ applicationId, applicationFundId: applicationId } as never)
+
+  it('should find the island.is id of the V2 or V1 application that started each leave, not of a change continuing it', async () => {
+    const leaves = await service.withIslandIsApplicationIds(APPLICANT_ID, [
+      leave('2017-05168'),
+      leave('2017-05170'),
+    ])
+
+    expect(leaves).toEqual([
+      { applicationId: V2_APPLICATION_ID, applicationFundId: '2017-05168' },
+      { applicationId: V1_APPLICATION_ID, applicationFundId: '2017-05170' },
+    ])
+    expect(customTemplateFindQuery).toHaveBeenCalledWith('ParentalLeaveV2')
+    expect(customTemplateFindQuery).toHaveBeenCalledWith('ParentalLeave')
+    expect(findAllByNationalIdAndFilters).toHaveBeenCalledWith(
+      APPLICANT_ID,
+      'ParentalLeaveV2,ParentalLeave',
+      undefined,
+      true,
+    )
+  })
+
+  it('should find the island.is id of a pruned application', async () => {
+    expect(
+      await service.withIslandIsApplicationIds(APPLICANT_ID, [
+        leave('2017-05001'),
+      ]),
+    ).toEqual([
+      { applicationId: PRUNED_APPLICATION_ID, applicationFundId: '2017-05001' },
+    ])
+  })
+
+  it('should leave out a leave no island.is application of the applicant created', async () => {
+    expect(
+      await service.withIslandIsApplicationIds(APPLICANT_ID, [
+        leave('2017-04407'),
+        leave('2017-05002'),
+        leave('mock-application-fund-id'),
+      ]),
+    ).toEqual([])
+  })
+
+  it('should keep leaves that already carry an island.is id', async () => {
+    customTemplateFindQuery.mockClear()
+    findAllByNationalIdAndFilters.mockClear()
+    const leaves = [leave(V2_APPLICATION_ID)]
+
+    expect(await service.withIslandIsApplicationIds(APPLICANT_ID, leaves)).toBe(
+      leaves,
+    )
+    expect(customTemplateFindQuery).not.toHaveBeenCalled()
+    expect(findAllByNationalIdAndFilters).not.toHaveBeenCalled()
   })
 })

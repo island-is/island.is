@@ -83,6 +83,7 @@ import { dataSchema } from './dataSchema'
 import { parentalLeaveFormMessages, statesMessages } from './messages'
 import {
   allEmployersHaveApproved,
+  getPostPruneDate,
   hasBeenSubmittedToVMST,
   hasEmployer,
   hasEmployerRelevantChange,
@@ -115,6 +116,19 @@ const ParentalLeaveTemplate: ApplicationTemplate<
   translationNamespaces: ApplicationConfigurations.ParentalLeaveV2.translation,
   allowMultipleApplicationsInDraft: true,
   initialQueryParameter: 'previousApplication',
+  // VMST lists leaves by case number but needs the island.is id to look one up
+  // or change it. Pruning would otherwise wipe the case number that links the
+  // two, and `initialQuery`, which tells a change apart from the application
+  // that started the leave (see `withIslandIsApplicationIds`). Nothing here is
+  // shown to admins.
+  adminDataConfig: {
+    postPruneDelayOverride: getPostPruneDate,
+    answers: [{ key: 'initialQuery', isListed: false }],
+    externalData: [
+      { key: 'sendApplication.data.id' },
+      { key: 'sentToVMST.data.id' },
+    ],
+  },
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,

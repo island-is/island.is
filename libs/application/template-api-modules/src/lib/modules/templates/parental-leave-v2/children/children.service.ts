@@ -13,6 +13,7 @@ import {
 } from '@island.is/application/templates/parental-leave-v2'
 import {
   Application,
+  ApplicationTypes,
   CustomTemplateFindQuery,
 } from '@island.is/application/types'
 import {
@@ -21,10 +22,12 @@ import {
   ParentalLeaveApi,
   Right as ParentalLeaveEntitlement,
   PregnancyApi,
+  fetchParentalLeaves,
 } from '@island.is/clients/vmst'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
 import format from 'date-fns/format'
+import uniqBy from 'lodash/uniqBy'
 import {
   applicationsToChildInformation,
   applicationsToExistingChildApplication,
@@ -48,6 +51,30 @@ import { ApplicationService as ApplicationApiService } from '@island.is/applicat
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { MOCK_APPLICATION_FUND_ID } from '../constants'
+
+const ISLAND_IS_APPLICATION_ID =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+// The case number VMST gave an application. Changes and residence grants that
+// continue a leave share it, so only the application that started the leave
+// is read.
+const caseNumbersOf = (application: Application): string[] =>
+  [
+    getValueViaPath<unknown>(application.externalData, 'sentToVMST.data.id'),
+    getValueViaPath<unknown>(
+      application.externalData,
+      'sendApplication.data.id',
+    ),
+    getValueViaPath<unknown>(application.externalData, 'navId.data'),
+  ].filter(
+    (id): id is string =>
+      typeof id === 'string' && !!id && id !== MOCK_APPLICATION_FUND_ID,
+  )
+
+// A change or residence grant continues the leave in its `initialQuery`
+const startedLeave = (application: Application): boolean =>
+  !getValueViaPath<string>(application.answers, 'initialQuery')
 
 @Injectable()
 export class ChildrenService {
@@ -434,16 +461,89 @@ export class ChildrenService {
     }
   }
 
+  /**
+   * VMST lists each leave under its case number, but looking a leave up
+   * (`GET /applications/{id}`) and changing it take the island.is id of the
+   * application that started it. That V2 or V1 application keeps the case
+   * number VMST gave it, so the id is found through it; changes and residence
+   * grants share the case number and are skipped. Pruned applications count
+   * too: V2 keeps the case number and `initialQuery` after pruning until its
+   * leave can no longer be changed (`adminDataConfig`). A leave no island.is
+   * application started (on paper or at VMST) cannot be looked up and is left
+   * out.
+   */
+  async withIslandIsApplicationIds(
+    applicant: string,
+    parentalLeaves: ParentalLeave[],
+  ): Promise<ParentalLeave[]> {
+    if (
+      parentalLeaves.every(({ applicationId }) =>
+        ISLAND_IS_APPLICATION_ID.test(applicationId),
+      )
+    ) {
+      return parentalLeaves
+    }
+
+    const typeIds = [
+      ApplicationTypes.PARENTAL_LEAVE_V2,
+      ApplicationTypes.PARENTAL_LEAVE,
+    ]
+    const [current, includingPruned] = await Promise.all([
+      Promise.all(
+        typeIds.map((typeId) =>
+          this.applicationApiService.customTemplateFindQuery(typeId)({
+            applicant,
+          }),
+        ),
+      ),
+      // The only query that returns pruned applications, but only listed ones
+      // and also those the applicant is assigned to
+      this.applicationApiService.findAllByNationalIdAndFilters(
+        applicant,
+        typeIds.join(','),
+        undefined,
+        true,
+      ),
+    ])
+    const applications = uniqBy(
+      [...current.flat(), ...includingPruned] as unknown as Application[],
+      'id',
+    ).filter(
+      (application) =>
+        application.applicant === applicant && startedLeave(application),
+    )
+
+    const idByCaseNumber = new Map<string, string>()
+    for (const application of applications) {
+      for (const caseNumber of caseNumbersOf(application)) {
+        if (!idByCaseNumber.has(caseNumber)) {
+          idByCaseNumber.set(caseNumber, application.id)
+        }
+      }
+    }
+
+    return parentalLeaves.flatMap((leave) => {
+      if (ISLAND_IS_APPLICATION_ID.test(leave.applicationId)) {
+        return [leave]
+      }
+
+      const caseNumber = leave.applicationFundId || leave.applicationId
+      const applicationId = idByCaseNumber.get(caseNumber)
+
+      return applicationId
+        ? [{ ...leave, applicationId, applicationFundId: caseNumber }]
+        : []
+    })
+  }
+
   async getParentalLeaves(nationalId: string): Promise<ParentalLeave[] | null> {
     // Called in every environment, development included: a follow-up can only
     // continue a leave this list contains (`getPreviousVmstLeave`).
     try {
-      const results =
-        await this.parentalLeaveApi.parentalLeaveGetParentalLeaves({
-          nationalRegistryId: nationalId,
-        })
-
-      return results.parentalLeaves ?? []
+      return await this.withIslandIsApplicationIds(
+        nationalId,
+        await fetchParentalLeaves(this.parentalLeaveApi, nationalId),
+      )
     } catch (e) {
       this.logger.error(
         `Could not fetch parental leaves: ${await describeVmstError(e)}`,

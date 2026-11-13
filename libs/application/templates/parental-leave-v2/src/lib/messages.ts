@@ -1153,17 +1153,10 @@ export const parentalLeaveFormMessages = {
         'Þú ert efri foreldri barnsins. Aðalforeldri er {nationalId}',
       description: 'Secondary parent copy',
     },
-    existingApplication: {
-      id: 'plv2.application:selectChild.existingApplication',
-      defaultMessage: 'Breyting á umsókn',
-      description:
-        'Change application - shown when child already has an application',
-    },
     existingLeave: {
       id: 'plv2.application:selectChild.existingLeave',
-      defaultMessage: 'Breyting á fæðingarorlofi {from} – {to}',
-      description:
-        'Sub-label of a child with a leave at VMST, with the first and last day of the leave',
+      defaultMessage: 'Breyting á fæðingarorlofi',
+      description: 'Sub-label of a child with a leave at VMST',
     },
     inProgressTitle: {
       id: 'plv2.application:selectChild.inProgress.title',

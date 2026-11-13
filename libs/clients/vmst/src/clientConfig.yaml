@@ -581,6 +581,20 @@ components:
         daysLeft:
           type: string
           nullable: true
+        applicationRigthSocialSecurityNo:
+          type: string
+          nullable: true
+        applicationRigthUnitCode:
+          type: string
+          nullable: true
+        applicationRigthQuantity:
+          type: string
+          nullable: true
+        applicationRigthAssignedQuantity:
+          type: array
+          nullable: true
+          items:
+            type: string
     Employer:
       type: object
       additionalProperties: false
@@ -620,7 +634,149 @@ components:
         parentalLeaves:
           type: array
           items:
-            $ref: '#/components/schemas/ParentalLeave'
+            $ref: '#/components/schemas/ParentalLeaveGet'
+    ParentalLeaveGet:
+      type: object
+      additionalProperties: false
+      properties:
+        result:
+          type: string
+          nullable: true
+        nationalRegistryId:
+          type: string
+          nullable: true
+        dateOfBirth:
+          type: string
+          nullable: true
+        applicant:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        phoneNumber:
+          type: string
+          nullable: true
+        paymentInfo:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/PaymentInfo14'
+        personalAllowance:
+          type: string
+          nullable: true
+        personalAllowanceFromSpouse:
+          type: string
+          nullable: true
+        union:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/Union'
+        pensionFund:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/PensionFund'
+        privatePensionFund:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/PrivatePensionFund'
+        employers:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Employer14'
+        applications:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Application14'
+        text:
+          type: array
+          nullable: true
+          items:
+            type: string
+    Application14:
+      type: object
+      additionalProperties: false
+      properties:
+        applicationId:
+          type: string
+          nullable: true
+        children:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Child'
+        otherParentId:
+          type: string
+          nullable: true
+        otherParentName:
+          type: string
+          nullable: true
+        employedLastSixMonths:
+          type: string
+          nullable: true
+        otherParentEmail:
+          type: string
+          nullable: true
+        stillEmployed:
+          type: string
+          nullable: true
+        language:
+          type: string
+          nullable: true
+        otherParentBlocked:
+          type: string
+          nullable: true
+        dateOfData:
+          type: string
+          nullable: true
+        status:
+          type: string
+          nullable: true
+        periods:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Period'
+        paymentPlans:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/PaymentPlan'
+        applicationRights:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/ApplicationRight'
+    PaymentInfo14:
+      type: object
+      additionalProperties: false
+      properties:
+        bankAccount:
+          type: string
+          nullable: true
+    Employer14:
+      type: object
+      additionalProperties: false
+      properties:
+        employerId:
+          type: string
+          nullable: true
+    PrivatePensionFund:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          minLength: 1
+        name:
+          type: string
+        privatePensionFundPercentage:
+          type: string
+          nullable: true
     ParentalLeave:
       type: object
       additionalProperties: false
@@ -739,6 +895,11 @@ components:
         rightDescription:
           type: string
           nullable: true
+        days:
+          type: array
+          nullable: true
+          items:
+            type: string
     Attachment:
       type: object
       additionalProperties: false
@@ -837,6 +998,18 @@ components:
         - type: object
           additionalProperties: false
           properties:
+            year:
+              type: string
+              nullable: true
+            month:
+              type: string
+              nullable: true
+            paymentPercentage:
+              type: string
+              nullable: true
+            estimatedSalaryAmount:
+              type: number
+              format: float
             pensionAmount:
               type: number
               format: float

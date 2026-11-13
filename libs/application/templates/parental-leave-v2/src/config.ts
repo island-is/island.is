@@ -3,6 +3,8 @@ import { DAYS_IN_MONTH } from './lib/directorateOfLabour.utils'
 export const defaultMonths = 6
 export const usageMinMonths = 0.5
 export const usageMaxMonths = 24
+// A birth later than expected moves the end of VMST's window
+export const postPruneMarginMonths = 3
 export const minPeriodDays = 14
 export const yearInMonths = 12
 export const yearFosterCareOrAdoption = 8
