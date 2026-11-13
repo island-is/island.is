@@ -65,8 +65,8 @@ The lenses are in `lenses/`:
 The other files:
 
 - `SKILL.md`: the process the agent follows.
-- `framework-rules.md`: how the application system behaves. Every lens reads
-  it first.
+- `framework-rules.md`: review detail beyond `libs/application/AGENTS.md`,
+  which holds the core rules. Every lens reads both first.
 - `suppressions.md`: what not to flag, and why.
 - `scripts/consumers.sh`: lists the templates and apps that use a changed
   shared file.
@@ -97,8 +97,9 @@ Ideas were taken from these sources. No text was copied.
 
 - Add a check only with a pull request that shows the problem, and give it one
   owner: no two lenses check the same thing.
-- A rule in `framework-rules.md` states how the system behaves, with a
-  `file:line`. Re-check the line when the code moves.
+- A rule that guides authors belongs in `libs/application/AGENTS.md`; one
+  only a reviewer needs goes in `framework-rules.md`, with a `file:line`.
+  Re-check the line when the code moves.
 - Try a new or changed check on a past PR before keeping it. Keep it only if
   it finds real problems without adding noise.
 

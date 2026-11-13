@@ -251,7 +251,7 @@ Read the gaps from the matrix.
 ## S10. One party writes another's answers
 
 Only the top-level key is checked, and every write list applies on UPDATE
-whether or not the role has buttons (see framework-rules, Access). Use the
+whether or not the role has buttons (see `libs/application/AGENTS.md`, Access). Use the
 "whose it is" column of the matrix.
 
 - **Flag:**

@@ -73,7 +73,7 @@ reachable".
 ### SE2. What reaches the browser, and whom
 
 A role with `read: 'all'` or `write: 'all'` receives every answer and
-**all** of `externalData` (see framework-rules, Access).
+**all** of `externalData` (see `libs/application/AGENTS.md`, Access).
 
 - **Flag:**
   - A data provider or action that returns a whole upstream response
