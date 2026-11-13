@@ -18,6 +18,9 @@ export type {
 } from './lib/types/output-field'
 export type { CalculatorKey } from './lib/client/calculators.registry'
 export type {
+  CalculateResult,
+  CalculatorInput,
+  CalculatorOutput,
   ChildBenefitInput,
   ChildBenefitOutput,
   InterestBenefitInput,

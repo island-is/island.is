@@ -12,6 +12,9 @@ import { toInputFields } from '../contract/toInputFields'
 import { toOutputFields } from '../contract/toOutputFields'
 import type { CalculatorContract } from '../types/calculator'
 import type {
+  CalculateResult,
+  CalculatorInput,
+  CalculatorOutput,
   ChildBenefitInput,
   InterestBenefitInput,
   VehicleBenefitInput,
@@ -24,6 +27,7 @@ import type { CalculatorKey } from './calculators.registry'
 import { calculatorRegistry } from './calculators.registry'
 import { fromClientResult } from './fromClientResult'
 import { invalidClientQueryFields } from './invalidClientQueryFields'
+import { parseClientQuery } from './parseClientQuery'
 import { toClientQuery } from './toClientQuery'
 
 const {
@@ -34,6 +38,20 @@ const {
   vehicleTax,
   withholdingTax,
 } = calculatorRegistry
+
+const endpoints: {
+  [K in CalculatorKey]: (
+    query: CalculatorInput<K>,
+  ) => Promise<CalculatorOutput<K> | undefined>
+} = {
+  childBenefit: async (query) => (await getChildBenefit({ query })).data,
+  interestBenefit: async (query) => (await getInterestBenefit({ query })).data,
+  vehicleBenefit: async (query) => (await getVehicleBenefit({ query })).data,
+  vehicleDepreciation: async (query) =>
+    (await getVehicleDepreciation({ query })).data,
+  vehicleTax: async (query) => (await getVehicleTax({ query })).data,
+  withholdingTax: async (query) => (await getWithholdingTax({ query })).data,
+}
 
 @Injectable()
 export class CalculatorsClientService {
@@ -62,6 +80,22 @@ export class CalculatorsClientService {
     input: Readonly<Record<string, unknown>>,
   ): string[] {
     return invalidClientQueryFields(calculatorRegistry[key].query, input)
+  }
+
+  async calculate<K extends CalculatorKey>(
+    key: K,
+    input: Readonly<Record<string, unknown>>,
+  ): Promise<CalculateResult<K>> {
+    const { query, result } = calculatorRegistry[key]
+    const parsed = parseClientQuery(key, input)
+
+    if (parsed.rejected) {
+      return { rejected: parsed.rejected }
+    }
+
+    const data = await endpoints[key](toClientQuery(query, parsed.query))
+
+    return { output: data && fromClientResult(result, data) }
   }
 
   async getChildBenefit(input: ChildBenefitInput) {

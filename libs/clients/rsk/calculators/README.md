@@ -22,6 +22,10 @@ and output keys are RSK's own, and an RSK spec update is a regenerate.
 - `client/toClientQuery` builds a request query from input values, and
   `validateInput(key, input)` checks it against the generated schema,
   returning the failing field names.
+- `calculate(key, input)` checks the input against the generated schema
+  (date-time fields must be `Date`s), then calls that calculator's endpoint.
+  It returns `{ rejected }` with the failing field names, or `{ output }`. A
+  failed request throws.
 - `client/fromClientResult` converts a response's ratios to percentages.
 
 `*Input` and `*Output` types are the generated query and result types.

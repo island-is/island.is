@@ -13,6 +13,7 @@ import type {
   VehicleTaxResult,
   WithholdingTaxResult,
 } from '../../../gen/fetch'
+import type { CalculatorKey } from '../client/calculators.registry'
 
 export type ChildBenefitInput = GetChildBenefitData['query']
 export type ChildBenefitOutput = ChildBenefitResult
@@ -32,3 +33,27 @@ export type VehicleTaxOutput = VehicleTaxResult
 export type WithholdingTaxInput = GetWithholdingTaxData['query']
 export type WithholdingTaxBracketOutput = TaxBracket
 export type WithholdingTaxOutput = WithholdingTaxResult
+
+interface CalculatorTypes {
+  childBenefit: { input: ChildBenefitInput; output: ChildBenefitOutput }
+  interestBenefit: {
+    input: InterestBenefitInput
+    output: InterestBenefitOutput
+  }
+  vehicleBenefit: { input: VehicleBenefitInput; output: VehicleBenefitOutput }
+  vehicleDepreciation: {
+    input: VehicleDepreciationInput
+    output: VehicleDepreciationOutput
+  }
+  vehicleTax: { input: VehicleTaxInput; output: VehicleTaxOutput }
+  withholdingTax: { input: WithholdingTaxInput; output: WithholdingTaxOutput }
+}
+
+export type CalculatorInput<K extends CalculatorKey> =
+  CalculatorTypes[K]['input']
+export type CalculatorOutput<K extends CalculatorKey> =
+  CalculatorTypes[K]['output']
+
+export type CalculateResult<K extends CalculatorKey> =
+  | { rejected: string[]; output?: never }
+  | { rejected?: never; output: CalculatorOutput<K> | undefined }
