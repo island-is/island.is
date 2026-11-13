@@ -1,6 +1,5 @@
 // Zendesk's documented test secret is only used for local development and schema generation.
-const testZendeskWebhookSecret =
-  'dGhpc19zZWNyZXRfaXNfZm9yX3Rlc3Rpbmdfb25seQ=='
+const testZendeskWebhookSecret = 'dGhpc19zZWNyZXRfaXNfZm9yX3Rlc3Rpbmdfb25seQ=='
 const schemaZendeskWebhookSecret =
   process.env.INIT_SCHEMA === 'true' ? testZendeskWebhookSecret : undefined
 
