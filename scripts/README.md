@@ -47,7 +47,13 @@ yarn hmr-benchmark --app services-sessions --message 'Nest application successfu
 
 ## Scrub before sharing
 
-Masks kennitölur, emails, phone numbers, bank and card numbers, IP addresses, tokens and sensitive keys in logs and errors. The same value gets the same label (`[KT-PERSON-1]`), so lines can still be correlated. Names in free text are not caught; read the output before sharing it.
+Masks personal data and secrets in raw errors, such as those from Datadog, GraphQL responses or the browser console, before they are shared. The logger masks only personal kennitölur, and errors that bypass it carry emails, names, phone numbers, tokens and request bodies.
+
+Masks kennitölur, emails, phone numbers, bank and card numbers, IBANs, IP addresses, tokens and sensitive keys. The same value gets the same label (`[KT-PERSON-1]`), so lines can still be correlated. URL-encoded and Base64 text is decoded and scrubbed too; URL-encoded text comes out decoded.
+
+Names in free text are not caught. The script is an aid, not a guarantee: read the output before sharing it.
+
+Copy the error, then:
 
 ```bash
 pbpaste | node scripts/scrub.mjs | pbcopy
@@ -60,6 +66,8 @@ To run it from anywhere, add a function to `~/.zshrc` (adjust the path to your c
 ```bash
 scrub() { if [ -t 0 ]; then pbpaste; else cat; fi | node ~/git/island.is/scripts/scrub.mjs "$@" | pbcopy }
 ```
+
+Logs work too:
 
 ```bash
 kubectl logs <pod> -n <namespace> --since=15m | scrub

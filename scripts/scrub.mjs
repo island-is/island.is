@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // @ts-check
 
-// Masks personal data and secrets in logs before they are shared.
+// Masks personal data and secrets in errors and logs before they are shared.
 // Usage: pbpaste | node scripts/scrub.mjs [--show] | pbcopy
 // --show lists each masked value on stderr, for checking the rules.
 
@@ -67,6 +67,12 @@ const IPV6 =
 const IPV4 =
   /(?<![\d.])(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)(?![\d.])/g
 
+const URL_ENCODED = /[^\s"'<>]*%[\dA-Fa-f]{2}[^\s"'<>]*/g
+const BASE64 =
+  /(?<![\w+/=-])(?:[A-Za-z\d+/]{4}){4,}(?:[A-Za-z\d+/]{2}==|[A-Za-z\d+/]{3}=)?(?![\w+/=-])/g
+const CONTROL_CHAR = /[^\P{Cc}\t\n\r]/u
+const UTF8 = new TextDecoder('utf-8', { fatal: true })
+
 const NAME_WORD = /^(?:\p{L}\.|\p{L}+(?:['-]\p{L}+)*)$/u
 const MID_WORD_CAPITAL = /\p{Ll}(?<!^Ma?c)\p{Lu}/u
 const ERROR_CLASS = /^(?:Error|Exception)$/
@@ -102,6 +108,29 @@ export const kennitalaKind = (kt) => {
   if (day >= 1 && day <= 31) return 'person'
   if (day >= 41 && day <= 71) return 'company'
   return undefined
+}
+
+/** @param {string} token */
+const urlDecoded = (token) => {
+  let decoded = token
+  for (let i = 0; i < 3 && /%[\dA-Fa-f]{2}/.test(decoded); i++) {
+    try {
+      decoded = decodeURIComponent(decoded.replace(/\+/g, ' '))
+    } catch {
+      break
+    }
+  }
+  return decoded
+}
+
+/** @param {string} token */
+const base64Text = (token) => {
+  try {
+    const text = UTF8.decode(Buffer.from(token, 'base64'))
+    return CONTROL_CHAR.test(text) ? undefined : text
+  } catch {
+    return undefined
+  }
 }
 
 /** @param {string} digits */
@@ -156,12 +185,19 @@ const createScrubber = () => {
   /** @param {string} text */
   const scrubText = (text) =>
     text
+      .replace(URL_ENCODED, (token) => urlDecoded(token))
       .replace(PRIVATE_KEY, () => label('PRIVATE-KEY', 'key'))
       .replace(JWT, (jwt) => label('JWT', jwt))
       .replace(
         AUTH_SCHEME,
         (_, scheme, token) => `${scheme} ${label('TOKEN', token)}`,
       )
+      .replace(BASE64, (token) => {
+        const decoded = base64Text(token)
+        if (decoded === undefined) return token
+        const scrubbed = scrubText(decoded)
+        return scrubbed === decoded ? token : scrubbed
+      })
       .replace(
         URL_SECRET_PARAM,
         (match, param) =>
