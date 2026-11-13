@@ -36,7 +36,6 @@ import { IBMPlexSans_600SemiBold_Italic } from '@expo-google-fonts/ibm-plex-sans
 import { IBMPlexSans_700Bold_Italic } from '@expo-google-fonts/ibm-plex-sans/700Bold_Italic'
 import { setupEventHandlers } from '../utils/lifecycle/setup-event-handlers'
 import { ensureDeviceUnlockCanary } from '../utils/device-unlock-canary'
-import { runAttestationCheck } from '../lib/attestation-check'
 import { useDatadogViewTracking } from '../hooks/use-datadog-view-tracking'
 
 export { ErrorBoundary } from 'expo-router'
@@ -112,7 +111,6 @@ export default function RootLayout() {
         console.warn('App init failed:', e)
       } finally {
         setAppReady(true)
-        runAttestationCheck()
       }
     }
     init()
