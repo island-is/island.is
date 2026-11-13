@@ -990,13 +990,9 @@ export const m = defineMessages({
     id: 'service.portal:my-settings-notifications',
     defaultMessage: 'Tilkynningar',
   },
-  mySettingsNotificationsV2: {
-    id: 'service.portal:my-settings-notifications-v2',
-    defaultMessage: 'Tilkynningastillingar',
-  },
   mySettingsActorNotifications: {
     id: 'service.portal:my-settings-actor-notifications',
-    defaultMessage: 'Umboðsstillingar',
+    defaultMessage: 'Tilkynningar umboða',
   },
   lists: {
     id: 'service.portal:lists',

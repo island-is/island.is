@@ -1,3 +1,9 @@
+// Zendesk's documented test secret is only used for local development and schema generation.
+const testZendeskWebhookSecret =
+  'dGhpc19zZWNyZXRfaXNfZm9yX3Rlc3Rpbmdfb25seQ=='
+const schemaZendeskWebhookSecret =
+  process.env.INIT_SCHEMA === 'true' ? testZendeskWebhookSecret : undefined
+
 const devConfig = {
   production: false,
   audit: {
@@ -10,20 +16,14 @@ const devConfig = {
   clientSecretEncryptionKey:
     process.env.CLIENT_SECRET_ENCRYPTION_KEY ?? 'secret',
   zendeskGeneralMandateWebhookSecret:
-    process.env.ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE ??
-    //The static test signing secret from Zendesk as described in their docs
-    // https://developer.zendesk.com/documentation/webhooks/verifying/#signing-secrets-on-new-webhooks
-    'dGhpc19zZWNyZXRfaXNfZm9yX3Rlc3Rpbmdfb25seQ==',
+    process.env.ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE ||
+    testZendeskWebhookSecret,
   zendeskDeleteGeneralMandateWebhookSecret:
-    process.env.ZENDESK_WEBHOOK_SECRET_DELETE_GENERAL_MANDATE ??
-    //The static test signing secret from Zendesk as described in their docs
-    // https://developer.zendesk.com/documentation/webhooks/verifying/#signing-secrets-on-new-webhooks
-    'dGhpc19zZWNyZXRfaXNfZm9yX3Rlc3Rpbmdfb25seQ==',
+    process.env.ZENDESK_WEBHOOK_SECRET_DELETE_GENERAL_MANDATE ||
+    testZendeskWebhookSecret,
   zendeskIdentityConfirmationSecret:
-    process.env.ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION ??
-    //The static test signing secret from Zendesk as described in their docs
-    // https://developer.zendesk.com/documentation/webhooks/verifying/#signing-secrets-on-new-webhooks
-    'dGhpc19zZWNyZXRfaXNfZm9yX3Rlc3Rpbmdfb25seQ==',
+    process.env.ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION ||
+    testZendeskWebhookSecret,
 }
 
 const prodConfig = {
@@ -39,11 +39,14 @@ const prodConfig = {
   port: 3333,
   clientSecretEncryptionKey: process.env.CLIENT_SECRET_ENCRYPTION_KEY,
   zendeskGeneralMandateWebhookSecret:
-    process.env.ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE,
+    process.env.ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE ||
+    schemaZendeskWebhookSecret,
   zendeskIdentityConfirmationSecret:
-    process.env.ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION,
+    process.env.ZENDESK_WEBHOOK_SECRET_IDENTITY_CONFIRMATION ||
+    schemaZendeskWebhookSecret,
   zendeskDeleteGeneralMandateWebhookSecret:
-    process.env.ZENDESK_WEBHOOK_SECRET_DELETE_GENERAL_MANDATE,
+    process.env.ZENDESK_WEBHOOK_SECRET_DELETE_GENERAL_MANDATE ||
+    schemaZendeskWebhookSecret,
 }
 
 export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig
