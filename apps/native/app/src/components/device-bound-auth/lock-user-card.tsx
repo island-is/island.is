@@ -4,7 +4,7 @@ import Svg, { Path } from 'react-native-svg'
 import styled, { useTheme } from 'styled-components/native'
 
 import { formatNationalId } from '@/lib/format-national-id'
-import { Avatar, dynamicColor, Typography } from '@/ui'
+import { Avatar, token, Typography } from '@/ui'
 
 const Host = styled.View`
   flex-direction: row;
@@ -13,13 +13,7 @@ const Host = styled.View`
   padding-left: ${({ theme }) => theme.spacing[2]}px;
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: ${({ theme }) => theme.border.width.standard}px;
-  border-color: ${dynamicColor(
-    ({ theme }) => ({
-      light: theme.color.blue200,
-      dark: theme.shades.dark.shade300,
-    }),
-    true,
-  )};
+  border-color: ${token((t) => t.border.primary)};
 `
 
 const Content = styled.View`
@@ -78,7 +72,7 @@ export function LockUserCard({
         accessibilityRole="button"
         accessibilityLabel={intl.formatMessage({ id: 'applock.logout' })}
       >
-        <LogoutIcon color={theme.color.blue400} />
+        <LogoutIcon color={theme.tokens.interactive.foreground.primary} />
       </LogoutButton>
     </Host>
   )

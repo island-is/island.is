@@ -17,7 +17,7 @@
 // window and the absolutely positioned toast draws on top of it.
 import React, { useEffect, useState } from 'react'
 import styled, { useTheme } from 'styled-components/native'
-import { Image, Platform, View } from 'react-native'
+import { Image, ImageSourcePropType, Platform, View } from 'react-native'
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { usePathname } from 'expo-router'
@@ -29,7 +29,7 @@ import infoIcon from '@/ui/assets/icons/info.png'
 import successIcon from '@/ui/assets/icons/check.png'
 import { screenWidth } from '@/utils/dimensions'
 import { useKeyboardHeight } from '@/hooks/use-keyboard-height'
-import { Typography } from '@/ui'
+import { TokenSelector, Typography } from '@/ui'
 
 // Standard system tab-bar heights: iOS UITabBar = 49pt, Android
 // BottomNavigationView = 56dp. Safe-area is added separately via insets.bottom.
@@ -46,32 +46,39 @@ const TAB_ROUTE_PREFIXES = ['/inbox', '/wallet', '/health', '/more']
 
 export type ToastVariant = 'success' | 'error' | 'warning' | 'info'
 
-export const toastSchemes = {
+type ToastScheme = {
+  backgroundColor: TokenSelector
+  borderColor: TokenSelector
+  icon: ImageSourcePropType
+  iconColor: TokenSelector
+}
+
+export const toastSchemes: Record<ToastVariant, ToastScheme> = {
   success: {
-    backgroundColor: 'mint100',
-    borderColor: 'mint200',
+    backgroundColor: (t) => t.feedback.success.background,
+    borderColor: (t) => t.feedback.success.border,
     icon: successIcon,
-    iconColor: 'mint400',
+    iconColor: (t) => t.feedback.success.foreground,
   },
   info: {
-    backgroundColor: 'blue100',
-    borderColor: 'blue200',
+    backgroundColor: (t) => t.feedback.information.backgroundMinimal,
+    borderColor: (t) => t.feedback.information.border,
     icon: infoIcon,
-    iconColor: 'blue400',
+    iconColor: (t) => t.feedback.information.foreground,
   },
   warning: {
-    backgroundColor: 'yellow200',
-    borderColor: 'yellow400',
+    backgroundColor: (t) => t.feedback.warning.background,
+    borderColor: (t) => t.feedback.warning.border,
     icon: warningIcon,
-    iconColor: 'yellow600',
+    iconColor: (t) => t.feedback.warning.foreground,
   },
   error: {
-    backgroundColor: 'red100',
-    borderColor: 'red200',
+    backgroundColor: (t) => t.feedback.error.background,
+    borderColor: (t) => t.feedback.error.border,
     icon: errorIcon,
-    iconColor: 'red400',
+    iconColor: (t) => t.feedback.error.foreground,
   },
-} as const
+}
 
 const Host = styled(Animated.View)<{
   backgroundColor: string
@@ -146,8 +153,8 @@ export const Toast = ({
       style={{ width: screenWidth - theme.spacing[4] }}
       entering={FadeInDown}
       exiting={FadeOutDown}
-      borderColor={theme.color[toastVariant.borderColor]}
-      backgroundColor={theme.color[toastVariant.backgroundColor]}
+      borderColor={toastVariant.borderColor(theme.tokens)}
+      backgroundColor={toastVariant.backgroundColor(theme.tokens)}
       bottomOffset={bottomOffset}
       lifted={lifted}
     >
@@ -157,7 +164,7 @@ export const Toast = ({
           style={{
             width: 24,
             height: 24,
-            tintColor: theme.color[toastVariant.iconColor],
+            tintColor: toastVariant.iconColor(theme.tokens),
           }}
           resizeMode="contain"
         />

@@ -5,11 +5,11 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import logo from '@/assets/logo/logo-64w.png'
-import { Button, dynamicColor, LinkText, LoadingDots, Typography } from '@/ui'
+import { Button, LinkText, LoadingDots, token, Typography } from '@/ui'
 
 const Host = styled(SafeAreaView)`
   flex: 1;
-  background-color: ${dynamicColor('background')};
+  background-color: ${token((t) => t.background.invert)};
 `
 
 const Logo = styled.Image`
@@ -36,10 +36,7 @@ const CodeBox = styled.View`
   margin-top: ${({ theme }) => theme.spacing[3]}px;
   padding-vertical: ${({ theme }) => theme.spacing[3]}px;
   border-radius: ${({ theme }) => theme.border.radius.large};
-  background-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blue100,
-    dark: theme.shades.dark.shade200,
-  }))};
+  background-color: ${token((t) => t.background.brandMinimal)};
 `
 
 const Dots = styled.View`
@@ -95,7 +92,7 @@ export function ElectronicIdConfirmation({
             <Typography
               variant="body3"
               weight="600"
-              color={theme.color.blue400}
+              color={theme.tokens.foreground.brand}
               textAlign="center"
             >
               {intl.formatMessage({ id: 'electronicId.eyebrow' })}

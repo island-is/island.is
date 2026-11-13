@@ -6,7 +6,7 @@ import { ApolloError } from '@apollo/client'
 
 import {
   Typography,
-  Heading,
+  SectionHeader,
   ChevronRight,
   ListItemSkeleton,
   EmptyCard,
@@ -97,7 +97,7 @@ const NotificationsModule = React.memo(
             onPress={() => router.navigate('/notifications')}
             style={{ marginHorizontal: theme.spacing[2] }}
           >
-            <Heading
+            <SectionHeader
               button={
                 notifications.length === 0 ? null : (
                   <TouchableOpacity
@@ -107,7 +107,10 @@ const NotificationsModule = React.memo(
                       alignItems: 'center',
                     }}
                   >
-                    <Typography variant="heading5" color={theme.color.blue400}>
+                    <Typography
+                      variant="heading5"
+                      color={theme.tokens.interactive.foreground.primary}
+                    >
                       <FormattedMessage id="button.seeAll" />
                     </Typography>
                     <ChevronRight />
@@ -116,7 +119,7 @@ const NotificationsModule = React.memo(
               }
             >
               <FormattedMessage id="homeOptions.notifications" />
-            </Heading>
+            </SectionHeader>
           </TouchableOpacity>
           {loading && !data ? (
             Array.from({ length: HOME_NOTIFICATIONS_LIMIT })

@@ -39,6 +39,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { getRequestTransaction } from '../../../middleware'
 import { hasOutOfCourtAppeal } from '../../appeal-case'
 import { getMostPermissiveRequestSharedWithDefenderForNationalId } from '../../defendant/requestSharedWithDefender.logic'
 import { isRulingOrderInConfirmedCourtSession } from '../../file/guards/caseFileCategory'
@@ -610,7 +611,10 @@ export const transformCivilClaimants = ({
   return civilClaimants?.map((civilClaimant) => civilClaimant.toJSON())
 }
 
-const transformCaseRepresentatives = (theCase: Case) => {
+const transformCaseRepresentatives = (
+  theCase: Case,
+  user: User | undefined,
+) => {
   const { prosecutor, civilClaimants } = theCase
   const prosecutorRepresentativeProps =
     prosecutor?.name && prosecutor?.nationalId
@@ -653,10 +657,19 @@ const transformCaseRepresentatives = (theCase: Case) => {
     return defendantAndDefender
   })
 
+  // Only district court users may attribute viðbótargögn to the court.
+  const courtRepresentative = isDistrictCourtUser(user)
+    ? {
+        name: 'Dómari',
+        caseFileCategory: CaseFileCategory.COURT_CASE_FILE,
+      }
+    : undefined
+
   return [
     prosecutorRepresentativeProps,
     ...(civilClaimantSpokespersons ? civilClaimantSpokespersons : []),
     ...(defendantsAndDefenders ? defendantsAndDefenders : []),
+    courtRepresentative,
   ].filter((representative) => !!representative)
 }
 
@@ -680,11 +693,16 @@ const getDefenceUserDefendants = (
     }
   }
 
+  const isDistrictDefendant = (defendant: Defendant) =>
+    Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
+
+  const myDistrictDefendants = theCase.defendants?.filter(isDistrictDefendant)
   const myDefendants = theCase.defendants?.filter(
     (defendant) =>
-      defendant.isDefenderChoiceConfirmed &&
-      defendant.defenderNationalId &&
-      defendant.defenderNationalId === user.nationalId,
+      isDistrictDefendant(defendant) ||
+      Defendant.isConfirmedAppealDefenderOfDefendant(user.nationalId, [
+        defendant,
+      ]),
   )
 
   if (!myDefendants?.length) {
@@ -695,7 +713,18 @@ const getDefenceUserDefendants = (
     }
   }
 
-  const cancelledOrDismissedEventLogs = myDefendants.map((defendant) =>
+  // Appeal-only advocates must not see co-defendant rows. District defenders
+  // keep the full list until every defendant they represent is cancelled or
+  // dismissed.
+  if (!myDistrictDefendants?.length) {
+    return {
+      defendants: myDefendants,
+      allCancelledOrDismissed: false,
+      latestCancelledOrDismissedDate: undefined,
+    }
+  }
+
+  const cancelledOrDismissedEventLogs = myDistrictDefendants.map((defendant) =>
     DefendantEventLog.getEventLogByEventType(
       [
         DefendantEventType.INDICTMENT_CANCELLED,
@@ -714,8 +743,18 @@ const getDefenceUserDefendants = (
       }, undefined)
     : undefined
 
+  // A mixed district + appeal portfolio must keep every represented defendant
+  // and drop co-defendants the user does not act for. District-only lawyers
+  // still see the full list until their own clients are all cancelled.
+  const hasAppealOnlyClients = myDefendants.some(
+    (defendant) => !isDistrictDefendant(defendant),
+  )
+
   return {
-    defendants: allCancelledOrDismissed ? myDefendants : theCase.defendants,
+    defendants:
+      allCancelledOrDismissed || hasAppealOnlyClients
+        ? myDefendants
+        : theCase.defendants,
     allCancelledOrDismissed,
     latestCancelledOrDismissedDate,
   }
@@ -846,7 +885,9 @@ const transformCase = (
               CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
                 user.nationalId,
                 theCase.civilClaimants,
-              ))),
+              )) ||
+            (file.category === CaseFileCategory.COURT_CASE_FILE &&
+              isDistrictCourtUser(user))),
       )
       .filter(
         (file) =>
@@ -871,7 +912,7 @@ const transformCase = (
         ...file.toJSON(),
         ...getRulingOrderAppealInfo(file, theCase),
       })),
-    caseRepresentatives: transformCaseRepresentatives(theCase),
+    caseRepresentatives: transformCaseRepresentatives(theCase, user),
     postponedIndefinitelyExplanation:
       CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),
     civilDemands: CaseString.civilDemands(theCase.caseStrings),
@@ -966,6 +1007,20 @@ const transformCase = (
 export class CaseInterceptor implements NestInterceptor {
   constructor(private readonly caseRepositoryService: CaseRepositoryService) {}
 
+  // Runs after the handler has returned and before the global
+  // TransactionCommitInterceptor commits, so on a route whose guard locked
+  // the case row in the request's transaction, that lock is still held here.
+  // The read joins that transaction: outside it, it would need a second pool
+  // connection while the requests holding the others are blocked on the
+  // lock, and the pool wedges. Undefined on a route without a transaction.
+  private async findOriginalAncestorId(theCase: Case): Promise<string> {
+    const transaction = await getRequestTransaction()
+
+    return this.caseRepositoryService.findOriginalAncestorId(theCase, {
+      transaction,
+    })
+  }
+
   intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
 
@@ -975,7 +1030,7 @@ export class CaseInterceptor implements NestInterceptor {
       .handle()
       .pipe(
         switchMap((theCase: Case) =>
-          from(this.caseRepositoryService.findOriginalAncestorId(theCase)).pipe(
+          from(this.findOriginalAncestorId(theCase)).pipe(
             map((originalAncestorId) =>
               transformCase(theCase, user, originalAncestorId),
             ),

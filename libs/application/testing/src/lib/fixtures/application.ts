@@ -54,7 +54,7 @@ export const createApplicationTemplate = (
   },
   type: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
   name: 'Test application',
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: 'Test institution',
   dataSchema: z.object({
     person: z.object({

@@ -6,12 +6,64 @@ import {
 } from '@island.is/form-system/shared'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { randomUUID } from 'crypto'
-import { UniqueConstraintError } from 'sequelize'
+import { Transaction, UniqueConstraintError } from 'sequelize'
 
 import { FormsService } from './forms.service'
 import { Form } from './models/form.model'
+import { UpdateFormDto } from './models/dto/updateForm.dto'
 import { ApplicationJsonDto } from '../applications/models/dto/application.json.dto'
 import { User } from '@island.is/auth-nest-tools'
+
+describe('FormsService publishing accessibility', () => {
+  it.each([FormStatus.IN_DEVELOPMENT, FormStatus.PUBLISHED_BEING_CHANGED])(
+    'makes an inaccessible %s form accessible when published',
+    async (status) => {
+      const user = { nationalId: 'owner', scope: [] } as unknown as User
+      const transaction = { id: 'transaction' }
+      const form = {
+        id: 'form-id',
+        organizationNationalId: user.nationalId,
+        status,
+        slug: 'form-i-breytingu',
+        derivedFrom: 'published-form-id',
+        isInaccessible: true,
+        save: jest.fn().mockImplementation(async () => {
+          expect(form.status).toBe(FormStatus.PUBLISHED)
+          expect(form.isInaccessible).toBe(false)
+        }),
+      }
+      const publishedForm = {
+        id: 'published-form-id',
+        status: FormStatus.PUBLISHED,
+        slug: 'form',
+        save: jest.fn().mockResolvedValue(undefined),
+      }
+      const service = Object.assign(Object.create(FormsService.prototype), {
+        formModel: {
+          findByPk: jest.fn(async (id) =>
+            id === form.id ? form : publishedForm,
+          ),
+        },
+        applicationModel: { findAll: jest.fn().mockResolvedValue([]) },
+        sequelize: {
+          transaction: jest.fn((callback) => callback(transaction)),
+        },
+        validateZendeskSettingsForPublish: jest
+          .fn()
+          .mockResolvedValue(undefined),
+        buildFormResponse: jest.fn().mockResolvedValue({}),
+      }) as FormsService
+
+      await service.updateStatus(user, form.id, {
+        newStatus: FormStatus.PUBLISHED,
+      })
+
+      expect(form.status).toBe(FormStatus.PUBLISHED)
+      expect(form.isInaccessible).toBe(false)
+      expect(form.save).toHaveBeenCalledWith({ transaction })
+    },
+  )
+})
 
 describe('FormsService update draft steps', () => {
   it.each(
@@ -65,6 +117,212 @@ describe('FormsService update draft steps', () => {
       expect(form.save).toHaveBeenCalledWith({ transaction })
     },
   )
+})
+
+describe('FormsService dependency updates', () => {
+  const setup = () => {
+    const user = { nationalId: 'owner', scope: [] } as unknown as User
+    const form = {
+      id: 'form-id',
+      organizationNationalId: user.nationalId,
+      save: jest.fn().mockResolvedValue(undefined),
+      sections: [
+        {
+          id: 'section-id',
+          screens: [
+            {
+              id: 'screen-id',
+              fields: [{ id: 'field-id', list: [{ id: 'option-id' }] }],
+            },
+          ],
+        },
+      ],
+    }
+    const transaction = { id: 'transaction' }
+    const service = Object.assign(Object.create(FormsService.prototype), {
+      formModel: { findByPk: jest.fn().mockResolvedValue(form) },
+      sectionModel: { count: jest.fn().mockResolvedValue(1) },
+      sequelize: { transaction: jest.fn((callback) => callback(transaction)) },
+    }) as FormsService
+    return { service, form, user, transaction }
+  }
+
+  it.each(['parent', 'child'])(
+    'rejects a stale or foreign %s reference without saving',
+    async (invalid) => {
+      const { service, form, user } = setup()
+      await expect(
+        service.update(user, form.id, {
+          dependencies: [
+            {
+              parentProp: invalid === 'parent' ? 'missing-id' : 'option-id',
+              childProps: [
+                'field-id',
+                ...(invalid === 'child' ? ['missing-id'] : []),
+              ],
+              isSelected: false,
+            },
+          ],
+        }),
+      ).rejects.toThrow('do not belong to this form')
+      expect(form.save).not.toHaveBeenCalled()
+    },
+  )
+
+  it.each([
+    { dependencies: [] },
+    { dependencies: null },
+    {
+      dependencies: [
+        {
+          parentProp: 'option-id',
+          childProps: ['section-id', 'screen-id', 'field-id'],
+          isSelected: false,
+        },
+      ],
+    },
+  ])('accepts valid dependencies: %j', async ({ dependencies }) => {
+    const { service, form, user, transaction } = setup()
+    await service.update(user, form.id, { dependencies } as UpdateFormDto)
+    expect(form.save).toHaveBeenCalledWith({ transaction })
+  })
+})
+
+describe('FormsService dependency cleanup on opening a form', () => {
+  const user = { nationalId: 'owner', scope: [] } as unknown as User
+  const validDependency = {
+    parentProp: 'option-id',
+    childProps: ['section-id', 'screen-id', 'field-id'],
+    isSelected: true,
+  }
+  const corruptedDependencies = [
+    { ...validDependency, parentProp: 'missing-parent' },
+    { ...validDependency, childProps: ['field-id', 'missing-child'] },
+    { ...validDependency, childProps: ['missing-child'] },
+    validDependency,
+  ]
+  const setup = (
+    dependencies: typeof corruptedDependencies | null = corruptedDependencies,
+  ) => {
+    const form = {
+      id: 'form-id',
+      organizationNationalId: user.nationalId,
+      dependencies,
+      status: FormStatus.PUBLISHED,
+      sections: [
+        {
+          id: 'section-id',
+          screens: [
+            {
+              id: 'screen-id',
+              fields: [{ id: 'field-id', list: [{ id: 'option-id' }] }],
+            },
+          ],
+        },
+      ],
+      save: jest.fn().mockResolvedValue(undefined),
+    }
+    const currentForm = {
+      ...form,
+      save: jest.fn().mockResolvedValue(undefined),
+    }
+    const transaction = { id: 'transaction' }
+    const formModel = {
+      findByPk: jest
+        .fn()
+        .mockResolvedValueOnce(form)
+        .mockResolvedValueOnce({ id: form.id })
+        .mockResolvedValue(currentForm),
+    }
+    const sequelize = {
+      transaction: jest.fn((callback) => callback(transaction)),
+    }
+    const buildFormResponse = jest.fn(async (definition) => ({
+      form: definition,
+    }))
+    const service = Object.assign(Object.create(FormsService.prototype), {
+      formModel,
+      sequelize,
+      buildFormResponse,
+    }) as FormsService
+    return {
+      service,
+      form,
+      currentForm,
+      formModel,
+      sequelize,
+      transaction,
+      buildFormResponse,
+    }
+  }
+
+  it('persists cleanup and returns it while preserving valid references and selection state', async () => {
+    const { service, form, currentForm, formModel, transaction } = setup()
+
+    const response = await service.findOne(user, form.id)
+
+    expect(currentForm.dependencies).toEqual([
+      { ...validDependency, childProps: ['field-id'] },
+      validDependency,
+    ])
+    expect(response.form).toBe(currentForm)
+    expect(currentForm.save).toHaveBeenCalledWith({
+      fields: ['dependencies'],
+      transaction,
+    })
+    expect(currentForm.status).toBe(FormStatus.PUBLISHED)
+    expect(form.dependencies).toEqual(corruptedDependencies)
+    expect(formModel.findByPk.mock.calls[1]).toEqual([
+      form.id,
+      { attributes: ['id'], lock: Transaction.LOCK.UPDATE, transaction },
+    ])
+    expect(formModel.findByPk.mock.calls[2][1]).toEqual(
+      expect.objectContaining({ transaction }),
+    )
+  })
+
+  it.each([null, [], [validDependency]])(
+    'does not write or lock an already-valid form: %j',
+    async (dependencies) => {
+      const { service, form, currentForm, sequelize } = setup(dependencies)
+      const response = await service.findOne(user, form.id)
+      expect(response.form).toBe(form)
+      expect(sequelize.transaction).not.toHaveBeenCalled()
+      expect(form.save).not.toHaveBeenCalled()
+      expect(currentForm.save).not.toHaveBeenCalled()
+    },
+  )
+
+  it('uses the latest definition rather than overwriting a concurrent editor save', async () => {
+    const { service, form, currentForm } = setup()
+    currentForm.dependencies = [
+      { ...validDependency, childProps: ['screen-id'] },
+    ]
+    const response = await service.findOne(user, form.id)
+    expect(response.form?.dependencies).toEqual(currentForm.dependencies)
+    expect(currentForm.save).not.toHaveBeenCalled()
+  })
+
+  it('does not clean records for an unauthorized caller', async () => {
+    const { service, form, currentForm, sequelize } = setup()
+    await expect(
+      service.findOne(
+        { nationalId: 'other', scope: [] } as unknown as User,
+        form.id,
+      ),
+    ).rejects.toThrow('permission')
+    expect(sequelize.transaction).not.toHaveBeenCalled()
+    expect(currentForm.save).not.toHaveBeenCalled()
+  })
+
+  it('propagates cleanup failures rather than returning unpersisted changes', async () => {
+    const { service, form, currentForm, buildFormResponse } = setup()
+    currentForm.save.mockRejectedValueOnce(new Error('Database error'))
+    await expect(service.findOne(user, form.id)).rejects.toThrow(
+      'Database error',
+    )
+    expect(buildFormResponse).not.toHaveBeenCalled()
+  })
 })
 
 describe('FormsService import', () => {
@@ -422,6 +680,152 @@ describe('FormsService import', () => {
     ])
   })
 
+  it('remaps selected currency field IDs on every copy without mutating the source', async () => {
+    const { service, form, formModel, fieldModel } = setup()
+    const sourceScreen = form.sections[0].screens[0]
+    const sourceField = sourceScreen.fields[0]
+    const beforeId = randomUUID()
+    const afterId = randomUUID()
+    const fieldsToSum = [afterId, beforeId, randomUUID()]
+    Object.assign(sourceScreen, {
+      fields: [
+        {
+          ...sourceField,
+          id: beforeId,
+          identifier: 'before',
+          fieldType: FieldTypesEnum.ISK_NUMBERBOX,
+          fieldSettings: { minAmount: 0 },
+          list: [],
+        },
+        {
+          ...sourceField,
+          identifier: 'sum',
+          displayOrder: 1,
+          fieldType: FieldTypesEnum.ISK_SUMBOX,
+          fieldSettings: { fieldsToSum, zendeskCustomFieldId: 'custom' },
+        },
+        {
+          ...sourceField,
+          id: afterId,
+          identifier: 'after',
+          displayOrder: 2,
+          fieldType: FieldTypesEnum.ISK_NUMBERBOX,
+          fieldSettings: { maxAmount: 1000 },
+          list: [],
+        },
+      ],
+    })
+    const source = formModel.build(form) as Form
+    const sourceJson = source.toJSON()
+    const copyService = service as unknown as {
+      copyForm: (...args: unknown[]) => Promise<Form>
+    }
+
+    for (const slug of ['first-copy', 'second-copy']) {
+      await copyService.copyForm(
+        form.id,
+        false,
+        false,
+        slug,
+        undefined,
+        undefined,
+        source,
+      )
+
+      const [before, sum, after] = fieldModel.bulkCreate.mock.lastCall[0]
+      expect(before.id).not.toBe(beforeId)
+      expect(after.id).not.toBe(afterId)
+      expect(sum.fieldSettings).toEqual({
+        fieldsToSum: [after.id, before.id],
+        zendeskCustomFieldId: 'custom',
+      })
+      expect(before.fieldSettings).toEqual({ minAmount: 0 })
+      expect(after.fieldSettings).toEqual({ maxAmount: 1000 })
+      expect(source.toJSON()).toEqual(sourceJson)
+    }
+  })
+
+  it.each([{ fieldsToSum: [] }, { fieldsToSum: null }, {}])(
+    'preserves default sum settings when copying: %j',
+    async (fieldSettings) => {
+      const { service, form, formModel, fieldModel } = setup()
+      Object.assign(form.sections[0].screens[0].fields[0], {
+        fieldType: FieldTypesEnum.ISK_SUMBOX,
+        fieldSettings,
+      })
+      const copyService = service as unknown as {
+        copyForm: (...args: unknown[]) => Promise<Form>
+      }
+
+      await copyService.copyForm(
+        form.id,
+        false,
+        false,
+        'copy',
+        undefined,
+        undefined,
+        formModel.build(form),
+      )
+
+      expect(fieldModel.bulkCreate.mock.calls[0][0][0].fieldSettings).toEqual(
+        fieldSettings,
+      )
+    },
+  )
+
+  it('drops dangling references when copying without mutating the source', async () => {
+    const {
+      service,
+      form,
+      formModel,
+      sectionModel,
+      screenModel,
+      fieldModel,
+      listItemModel,
+    } = setup()
+    const original = form.dependencies[0]
+    const missingChild = randomUUID()
+    const missingParent = randomUUID()
+    form.dependencies = [
+      { ...original, childProps: [...original.childProps, missingChild] },
+      { ...original, parentProp: missingParent },
+      {
+        ...original,
+        parentProp: form.sections[0].id,
+        childProps: [missingChild],
+      },
+    ]
+    const source = formModel.build(form)
+    const copyService = service as unknown as {
+      copyForm: (...args: unknown[]) => Promise<Form>
+    }
+
+    await copyService.copyForm(
+      form.id,
+      false,
+      false,
+      'copy',
+      undefined,
+      undefined,
+      source,
+    )
+
+    const copied = formModel.create.mock.calls[0][0]
+    expect(copied.dependencies).toEqual([
+      {
+        parentProp: listItemModel.bulkCreate.mock.calls[0][0][0].id,
+        childProps: [
+          sectionModel.bulkCreate.mock.calls[0][0][0].id,
+          screenModel.bulkCreate.mock.calls[0][0][0].id,
+          fieldModel.bulkCreate.mock.calls[0][0][0].id,
+        ],
+        isSelected: true,
+      },
+    ])
+    expect(form.dependencies[0].childProps).toContain(missingChild)
+    expect(form.dependencies[0].parentProp).toBe(original.parentProp)
+  })
+
   it.each(['duplicate', 'dependency', 'certification'])(
     'rejects an invalid %s before writing',
     async (invalid) => {
@@ -480,6 +884,7 @@ describe('FormsService JSON sample', () => {
   }
 
   it.each([
+    [FamilyTypes.APPLICANT_INFO, ['nationalId', 'name']],
     [FamilyTypes.CHILD, ['nationalId', 'name']],
     [FamilyTypes.NATIONAL_ID_ESTATE, ['nationalId', 'name']],
     [FamilyTypes.SPOUSE, ['nationalId', 'name', 'maritalStatus']],

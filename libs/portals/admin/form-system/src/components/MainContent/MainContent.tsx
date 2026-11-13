@@ -33,9 +33,14 @@ import * as styles from './MainContent.css'
 interface Props {
   openPreview: boolean
   setOpenPreview: Dispatch<SetStateAction<boolean>>
+  enforcePreviewRestrictions?: boolean
 }
 
-export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
+export const MainContent = ({
+  openPreview,
+  setOpenPreview,
+  enforcePreviewRestrictions,
+}: Props) => {
   const {
     control,
     controlDispatch,
@@ -316,7 +321,12 @@ export const MainContent = ({ openPreview, setOpenPreview }: Props) => {
           )}
         </Stack>
       )}
-      {openPreview && <PreviewStepOrGroup setOpenPreview={setOpenPreview} />}
+      {openPreview && (
+        <PreviewStepOrGroup
+          setOpenPreview={setOpenPreview}
+          enforceRestrictions={enforcePreviewRestrictions}
+        />
+      )}
     </Box>
   )
 }

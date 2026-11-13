@@ -32,6 +32,7 @@ import type { StatementDeadlineParty } from './VerdictAppealStatementDeadlines.l
 import {
   applyStatementDeadline,
   getStatementDeadlineParties,
+  getStatementUploadUrl,
 } from './VerdictAppealStatementDeadlines.logic'
 
 /**
@@ -89,8 +90,8 @@ const VerdictAppealStatementDeadlines = () => {
     const saved = await setAppealStatementDeadline({
       caseId: workingCase.id,
       appealCaseId: verdictAppealCase.id,
-      defendantId: party.party.defendantId ?? undefined,
-      civilClaimantId: party.party.civilClaimantId ?? undefined,
+      defendantId: party.ids.defendantId ?? undefined,
+      civilClaimantId: party.ids.civilClaimantId ?? undefined,
       // The picker gives a day at midnight, and that is what is sent: the
       // backend compares deadlines as instants, so a time of day on one
       // would let the same day pass as an extension.
@@ -106,6 +107,16 @@ const VerdictAppealStatementDeadlines = () => {
     setWorkingCase((previous) => applyStatementDeadline(previous, saved))
 
     return true
+  }
+
+  // The court files a party's statement itself when it arrives outside the
+  // system; the page it goes to names the party in its query.
+  const goToUpload = (party: StatementDeadlineParty) => {
+    if (verdictAppealCase) {
+      router.push(
+        getStatementUploadUrl(workingCase.id, verdictAppealCase.id, party),
+      )
+    }
   }
 
   return (
@@ -142,6 +153,7 @@ const VerdictAppealStatementDeadlines = () => {
                 party={party}
                 onSend={sendDeadline}
                 isSending={isSettingAppealStatementDeadline}
+                onUpload={goToUpload}
               />
             ))}
           </BlueBox>

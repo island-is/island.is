@@ -74,6 +74,9 @@ const renderField = (
   bankAccount?: string,
   applicantType?: string,
   state?: Partial<ApplicationState>,
+  fieldSettings: FormSystemField['fieldSettings'] = {
+    fetchBankAccountFromMyPages: true,
+  },
 ) => {
   const dispatch = jest.fn()
   const profileRequest = jest.fn()
@@ -86,11 +89,11 @@ const renderField = (
     return (
       <FormProvider {...methods}>
         <Banknumber
-          item={
-            bankAccount
-              ? { ...item, values: [{ json: { bankAccount } }] }
-              : item
-          }
+          item={{
+            ...item,
+            fieldSettings,
+            ...(bankAccount ? { values: [{ json: { bankAccount } }] } : {}),
+          }}
           dispatch={dispatch}
           state={
             state ??
@@ -113,6 +116,46 @@ const renderField = (
   )
   return { dispatch, profileRequest }
 }
+
+it.each([false])(
+  'does not fetch bank info when fetching is %s and permits manual entry',
+  (fetchBankAccountFromMyPages) => {
+    const { profileRequest, dispatch } = renderField(
+      [{ ...profileMock('1234-12-123456'), delay: Infinity }],
+      undefined,
+      undefined,
+      undefined,
+      { fetchBankAccountFromMyPages },
+    )
+
+    expect(profileRequest).not.toHaveBeenCalled()
+    fireEvent.change(screen.getAllByRole('textbox')[0], {
+      target: { value: '4321' },
+    })
+    expect(dispatch).toHaveBeenCalledWith({
+      type: 'SET_BANK_ACCOUNT',
+      payload: { id: item.id, valueIndex: 0, value: '4321--' },
+    })
+    expect(profileRequest).not.toHaveBeenCalled()
+  },
+)
+
+it.each([true, undefined, null])(
+  'prefills bank info when fetching is %s',
+  async (fetchBankAccountFromMyPages) => {
+    renderField(
+      [profileMock('1234-12-123456')],
+      undefined,
+      undefined,
+      undefined,
+      { fetchBankAccountFromMyPages },
+    )
+
+    await screen.findByDisplayValue('123456')
+    expect(screen.getByDisplayValue('1234')).toBeTruthy()
+    expect(screen.getByDisplayValue('12')).toBeTruthy()
+  },
+)
 
 it('renders and prefills with preview state that has no screens', async () => {
   renderField([profileMock('1234-12-123456')], undefined, undefined, {

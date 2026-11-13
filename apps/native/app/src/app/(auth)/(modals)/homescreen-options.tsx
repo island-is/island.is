@@ -3,7 +3,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { Platform, SafeAreaView, ScrollView, Switch, View } from 'react-native'
 import { useTheme } from 'styled-components'
 
-import { Heading, TableViewCell, Typography } from '@/ui'
+import { TableViewCell, Typography } from '@/ui'
 import {
   preferencesStore,
   usePreferencesStore,
@@ -144,7 +144,7 @@ export default function HomeOptionsScreen() {
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: theme.color.white }}
+      style={{ flex: 1, backgroundColor: theme.tokens.background.invert }}
       nestedScrollEnabled
       alwaysBounceVertical={false}
       contentInsetAdjustmentBehavior="automatic"
@@ -158,12 +158,22 @@ export default function HomeOptionsScreen() {
           marginBottom: theme.spacing[3],
         }}
       >
-        <Heading>
-          <FormattedMessage
-            id="homeOptions.heading.title"
-            defaultMessage="Stilla heimaskjá."
-          />
-        </Heading>
+        {/* Android form sheets have no native header, so the title is shown
+            here instead. */}
+        {Platform.OS === 'android' && (
+          <Typography
+            variant="heading5"
+            style={{
+              marginTop: theme.spacing[3],
+              marginBottom: theme.spacing[1],
+            }}
+          >
+            <FormattedMessage
+              id="homeOptions.heading.title"
+              defaultMessage="Stilla heimaskjá"
+            />
+          </Typography>
+        )}
         <Typography>
           <FormattedMessage
             id="homeOptions.heading.subtitle"
@@ -180,10 +190,12 @@ export default function HomeOptionsScreen() {
               <Switch
                 onValueChange={item.onValueChange}
                 value={item.enabled}
-                thumbColor={Platform.select({ android: theme.color.dark100 })}
+                thumbColor={Platform.select({
+                  android: theme.tokens.app.background.neutral,
+                })}
                 trackColor={{
-                  false: theme.color.dark200,
-                  true: theme.color.blue400,
+                  false: theme.tokens.app.border.neutral,
+                  true: theme.tokens.interactive.background.primary,
                 }}
               />
             </View>

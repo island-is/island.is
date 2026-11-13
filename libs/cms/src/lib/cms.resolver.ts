@@ -135,6 +135,8 @@ import { GetSingleGrantInput } from './dto/getSingleGrant.input'
 import { GrantList } from './models/grantList.model'
 import { OrganizationParentSubpage } from './models/organizationParentSubpage.model'
 import { GetOrganizationParentSubpageInput } from './dto/getOrganizationParentSubpage.input'
+import { ProjectParentSubpage } from './models/projectParentSubpage.model'
+import { GetProjectParentSubpageInput } from './dto/getProjectParentSubpage.input'
 import {
   OrganizationPageStandaloneSitemap,
   OrganizationPageStandaloneSitemapLevel2,
@@ -803,6 +805,14 @@ export class CmsResolver {
     @Args('input') input: GetOrganizationParentSubpageInput,
   ): Promise<OrganizationParentSubpage | null> {
     return this.cmsContentfulService.getOrganizationParentSubpage(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => ProjectParentSubpage, { nullable: true })
+  getProjectParentSubpage(
+    @Args('input') input: GetProjectParentSubpageInput,
+  ): Promise<ProjectParentSubpage | null> {
+    return this.cmsContentfulService.getProjectParentSubpage(input)
   }
 
   @CacheControl(defaultCache)

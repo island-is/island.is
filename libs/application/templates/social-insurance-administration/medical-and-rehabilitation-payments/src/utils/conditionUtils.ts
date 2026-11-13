@@ -65,11 +65,23 @@ export const isFirstApplication = (externalData: ExternalData) => {
   )
 }
 
+// Exemption cases (ísl. jaðartilvik) skip the medical certificate and the
+// rehabilitation plan/confirmation sections.
+export const isExemptionCase = (externalData: ExternalData): boolean => {
+  const { hasActiveExemption } = getApplicationExternalData(externalData)
+  return hasActiveExemption
+}
+
+export const shouldShowCertificateForSicknessAndRehabilitation = (
+  externalData: ExternalData,
+): boolean => !isExemptionCase(externalData)
+
 export const shouldShowRehabilitationPlan = (externalData: ExternalData) => {
   const { marpApplicationType, marpConfirmationType } =
     getApplicationExternalData(externalData)
 
   return (
+    !isExemptionCase(externalData) &&
     (marpApplicationType ===
       MedicalAndRehabilitationPaymentsApplicationType.EH1 ||
       marpApplicationType ===
@@ -84,6 +96,7 @@ export const shouldShowConfirmedTreatment = (externalData: ExternalData) => {
     getApplicationExternalData(externalData)
 
   return (
+    !isExemptionCase(externalData) &&
     (marpApplicationType ===
       MedicalAndRehabilitationPaymentsApplicationType.SG1 ||
       marpApplicationType ===
@@ -100,6 +113,7 @@ export const shouldShowConfirmationOfPendingResolution = (
     getApplicationExternalData(externalData)
 
   return (
+    !isExemptionCase(externalData) &&
     (marpApplicationType ===
       MedicalAndRehabilitationPaymentsApplicationType.SG1 ||
       marpApplicationType ===
@@ -116,11 +130,29 @@ export const shouldShowConfirmationOfIllHealth = (
     getApplicationExternalData(externalData)
 
   return (
+    !isExemptionCase(externalData) &&
     (marpApplicationType ===
       MedicalAndRehabilitationPaymentsApplicationType.SG1 ||
       marpApplicationType ===
         MedicalAndRehabilitationPaymentsApplicationType.SG2) &&
     marpConfirmationType ===
       MedicalAndRehabilitationPaymentsConfirmationType.HEILSUBRESTUR
+  )
+}
+
+export const shouldShowConfirmationOfJobSearch = (
+  externalData: ExternalData,
+) => {
+  const { marpApplicationType, marpConfirmationType } =
+    getApplicationExternalData(externalData)
+
+  return (
+    !isExemptionCase(externalData) &&
+    (marpApplicationType ===
+      MedicalAndRehabilitationPaymentsApplicationType.EH1 ||
+      marpApplicationType ===
+        MedicalAndRehabilitationPaymentsApplicationType.EH2) &&
+    marpConfirmationType ===
+      MedicalAndRehabilitationPaymentsConfirmationType.ATVINNULEIT
   )
 }

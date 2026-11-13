@@ -341,6 +341,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
         width
         height
       }
+      hideFromExternalSearchEngines
     }
   }
   ${slices}
@@ -382,6 +383,7 @@ export const GET_ORGANIZATION_SUBPAGE_BY_ID_QUERY = gql`
         width
         height
       }
+      hideFromExternalSearchEngines
     }
   }
   ${slices}

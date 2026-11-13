@@ -84,6 +84,29 @@ export const getTransactionContext = (): TransactionContext | undefined =>
   transactionStorage.getStore()
 
 /**
+ * The request's transaction if something has opened one and it is still open,
+ * otherwise undefined. Never opens one.
+ *
+ * For code that runs on every route, locking or not - the interceptors that
+ * read the original ancestor - and must join the transaction where there is
+ * one. A read without it, while the guard's transaction holds the case row's
+ * lock, needs a second pool connection; under concurrent updates of the same
+ * case the other connections are held by requests blocked on that very lock,
+ * and the pool wedges until the acquire timeout fails everything in it.
+ */
+export const getRequestTransaction = async (): Promise<
+  Transaction | undefined
+> => {
+  const context = getTransactionContext()
+
+  if (!context?.transaction || context.settlement !== 'open') {
+    return undefined
+  }
+
+  return await context.transaction
+}
+
+/**
  * Opens the request's transaction, or returns the one already open.
  *
  * The caller must not commit or roll it back: `TransactionCommitInterceptor`

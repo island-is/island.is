@@ -406,10 +406,6 @@ const indictmentCountFieldChecks = (
       warningMessage: 'Vantar atvikalýsingu',
     },
     {
-      isMissing: (count) => !count.legalArguments,
-      warningMessage: 'Vantar heimfærslu',
-    },
-    {
       isMissing: (count) =>
         isTrafficViolation(count) &&
         isSpeedingIndictmentCount(count) &&
@@ -895,6 +891,15 @@ export const isCourtOfAppealCaseStepValid = (
       ]).isValid,
   )
 }
+
+// The registration step of a verdict appeal only asks for the court's case
+// number; the bench is optional there.
+export const isVerdictAppealRegistrationStepValid = (
+  appealCase: Pick<AppealCase, 'appealCaseNumber'> | undefined | null,
+): boolean =>
+  validate([
+    [appealCase?.appealCaseNumber, ['empty', 'appeal-case-number-format']],
+  ]).isValid
 
 export const isCourtOfAppealRulingStepFieldsValid = (
   appealCase: AppealCase | undefined | null,

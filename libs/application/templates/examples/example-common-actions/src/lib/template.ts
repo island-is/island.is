@@ -29,7 +29,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
   name: 'Example Common Actions',
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: 'Stafrænt Ísland',
   dataSchema: exampleSchema,
   featureFlag: Features.exampleApplication,

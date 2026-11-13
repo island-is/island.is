@@ -1,0 +1,547 @@
+import { useEffect, useId, useState } from 'react'
+import { generatePath, useNavigate, useParams } from 'react-router-dom'
+import {
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  RadioButton,
+  Select,
+  Stack,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { CardLoader } from '@island.is/portals/my-pages/core'
+import * as styles from './editForm.css'
+import { primarySchoolKeyInfoMessages as kim } from '../../../../../lib/messages'
+import { EducationPaths } from '../../../../../lib/paths'
+import { SectionError } from '../SectionError'
+import { useAllergyOptions } from '../useAllergyOptions'
+import type { AllergySelectOption } from '../useAllergyOptions'
+import { usePrimarySchoolKeyInfo } from '../usePrimarySchoolKeyInfo'
+import { mmsErrorMessage } from '../mmsError'
+import { focusSelect } from './focusField'
+import { AllergyCategory } from '../types'
+import type { HealthProfileUpdateInput } from '../types'
+
+/**
+ * Dedicated edit screen for Heilsufarsupplýsingar (health profile). Save/cancel return to the overview.
+ *
+ * Saving stays disabled until the guardian actually changes something (isDirty).
+ *
+ * The allergy multi-selects load from MMS `GET /key-options` and split by
+ * `type` into food / other, the two categories MMS actually serves (values
+ * match AllergyCategory). See useAllergyOptions.
+ *
+ * handleSave assembles the whole HealthProfileUpdateInput (allergies rebuilt
+ * from the two id lists tagged by category, epipen forced false when no allergy
+ * is selected) and replaces the profile in one PATCH.
+ */
+export const HealthProfileEdit = () => {
+  useNamespaces('sp.education-primary-school')
+  const { formatMessage } = useLocale()
+  const epipenLabelId = useId()
+  const medicalDiagnosesLabelId = useId()
+  const medicationAssistanceLabelId = useId()
+  const navigate = useNavigate()
+  const { studentId } = useParams<{ studentId: string }>()
+  const { healthProfile, saveHealthProfile, saving } = usePrimarySchoolKeyInfo(
+    studentId,
+    ['healthProfile'],
+  )
+  const { data: profile, loading, error } = healthProfile
+
+  // Allergy options come from MMS `GET /key-options`; `type` splits them into
+  // food / other (values match AllergyCategory).
+  const {
+    options: allergyOptions,
+    loading: allergyOptionsLoading,
+    error: allergyOptionsError,
+  } = useAllergyOptions()
+
+  const optionsInCategory = (category: AllergyCategory) =>
+    allergyOptions.filter((option) => option.type === category)
+
+  const allergyIdsInCategory = (category: AllergyCategory) =>
+    (profile?.allergies ?? [])
+      .filter((allergy) => allergy.type === category)
+      .map((allergy) => allergy.id)
+
+  // An allergy the child has registered but this category's lookup list does
+  // not carry would otherwise sit in state without appearing in the select: the
+  // guardian sees an empty field under "Já" and drops the allergy the moment
+  // they touch it. Keep it selectable, labelled with whatever MMS stored it
+  // under. The lookup is per category, not across both: a stored allergy takes
+  // its category from the three-value AllergyOutput.type enum while an option
+  // takes its own from the key-option list it was served in, so the same id can
+  // be registered under one category and listed under the other.
+  const storedOptionsInCategory = (
+    category: AllergyCategory,
+  ): AllergySelectOption[] =>
+    allergyOptionsLoading
+      ? []
+      : (profile?.allergies ?? [])
+          .filter(
+            (allergy) =>
+              allergy.type === category &&
+              !optionsInCategory(category).some(
+                (option) => option.value === allergy.id,
+              ),
+          )
+          .map((allergy) => ({
+            value: allergy.id,
+            label: allergy.label || allergy.id,
+            code: '',
+            type: category,
+          }))
+
+  const foodAllergyOptions = [
+    ...optionsInCategory(AllergyCategory.Food),
+    ...storedOptionsInCategory(AllergyCategory.Food),
+  ]
+  const otherAllergyOptions = [
+    ...optionsInCategory(AllergyCategory.Other),
+    ...storedOptionsInCategory(AllergyCategory.Other),
+  ]
+
+  const [foodAllergyIds, setFoodAllergyIds] = useState<string[]>(
+    allergyIdsInCategory(AllergyCategory.Food),
+  )
+  const [otherAllergyIds, setOtherAllergyIds] = useState<string[]>(
+    allergyIdsInCategory(AllergyCategory.Other),
+  )
+  const [epipen, setEpipen] = useState<boolean>(profile?.epipen ?? false)
+  const [medicalDiagnoses, setMedicalDiagnoses] = useState<boolean>(
+    profile?.medicalDiagnoses ?? false,
+  )
+  const [medicationAssistance, setMedicationAssistance] = useState<boolean>(
+    profile?.medicationAssistance ?? false,
+  )
+  // Each category has its own Já/Nei gate. Starts "Já" when the child already
+  // has allergies recorded in that category, otherwise unset so the guardian
+  // answers explicitly.
+  const hasInCategory = (category: AllergyCategory) =>
+    allergyIdsInCategory(category).length > 0 ? true : undefined
+  const [hasFoodAllergies, setHasFoodAllergies] = useState<boolean | undefined>(
+    hasInCategory(AllergyCategory.Food),
+  )
+  const [hasOtherAllergies, setHasOtherAllergies] = useState<
+    boolean | undefined
+  >(hasInCategory(AllergyCategory.Other))
+
+  // A value-based signature of the server data. `profile` is rebuilt as a fresh
+  // object on every render in the hook, so it can't be used as an effect dep —
+  // doing so re-runs the prefill on every render and clobbers the guardian's
+  // in-progress edits (e.g. choosing "Nei" or clearing an allergy). This string
+  // only changes when the data itself changes (initial load / after save).
+  // Booleans are normalized with `?? false` to match how the form state is
+  // initialized below — otherwise an undefined `medicationAssistance` is dropped
+  // by JSON.stringify (or a null epipen stays null) and the signature never
+  // matches the current one, leaving Save permanently enabled.
+  const profileSignature = profile
+    ? JSON.stringify({
+        allergies: (profile.allergies ?? [])
+          .map((allergy) => allergy.id)
+          .sort(),
+        epipen:
+          (profile.allergies ?? []).length > 0
+            ? profile.epipen ?? false
+            : false,
+        medicalDiagnoses: profile.medicalDiagnoses ?? false,
+        medicationAssistance: profile.medicationAssistance ?? false,
+      })
+    : ''
+
+  // Prefill when the profile first arrives (and re-sync after a save/refetch).
+  useEffect(() => {
+    setFoodAllergyIds(allergyIdsInCategory(AllergyCategory.Food))
+    setOtherAllergyIds(allergyIdsInCategory(AllergyCategory.Other))
+    setEpipen(profile?.epipen ?? false)
+    setMedicalDiagnoses(profile?.medicalDiagnoses ?? false)
+    setMedicationAssistance(profile?.medicationAssistance ?? false)
+    setHasFoodAllergies(hasInCategory(AllergyCategory.Food))
+    setHasOtherAllergies(hasInCategory(AllergyCategory.Other))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profileSignature])
+
+  const yesNoOptions = [
+    { value: 'true', label: formatMessage(kim.yes) },
+    { value: 'false', label: formatMessage(kim.no) },
+  ]
+
+  const selectedIn = (options: typeof allergyOptions, ids: string[]) =>
+    options.filter((option) => ids.includes(option.value))
+  const selectedFoodAllergies = selectedIn(foodAllergyOptions, foodAllergyIds)
+  const selectedOtherAllergies = selectedIn(
+    otherAllergyOptions,
+    otherAllergyIds,
+  )
+
+  // The adrenaline pen is only meaningful when at least one allergy is
+  // registered (contract §4.5).
+  const hasAnyAllergy = foodAllergyIds.length + otherAllergyIds.length > 0
+
+  // The selected ids across both categories, each once. An id MMS stored under
+  // one category but lists under the other is offered in both selects, since
+  // there is no telling which it belongs to, so the guardian can tick it twice
+  // — but it is one allergy and the PATCH sends one id.
+  const selectedAllergyIds = [
+    ...new Set([...foodAllergyIds, ...otherAllergyIds]),
+  ]
+
+  // Value-based signature of the current form state, built the same way as
+  // `profileSignature` (and normalized like the payload). Save stays disabled
+  // until this diverges from the loaded profile, i.e. the guardian has actually
+  // changed something.
+  const currentSignature = JSON.stringify({
+    allergies: [...selectedAllergyIds].sort(),
+    epipen: hasAnyAllergy ? epipen : false,
+    medicalDiagnoses,
+    medicationAssistance,
+  })
+  const isDirty = currentSignature !== profileSignature
+
+  // Every allergy category must be answered Já/Nei, and a "Já" must have at
+  // least one allergy selected. Save stays blocked until then.
+  const categoriesAnswered =
+    hasFoodAllergies !== undefined && hasOtherAllergies !== undefined
+
+  const categoriesConsistent =
+    (hasFoodAllergies !== true || foodAllergyIds.length > 0) &&
+    (hasOtherAllergies !== true || otherAllergyIds.length > 0)
+
+  const isValid = categoriesAnswered && categoriesConsistent
+
+  // Save reports what is missing rather than staying disabled.
+  const [showErrors, setShowErrors] = useState(false)
+  const missingFoodCategory = hasFoodAllergies === undefined
+  const missingOtherCategory = hasOtherAllergies === undefined
+  const missingFoodAllergies =
+    hasFoodAllergies === true && foodAllergyIds.length === 0
+  const missingOtherAllergies =
+    hasOtherAllergies === true && otherAllergyIds.length === 0
+
+  const overviewPath = generatePath(EducationPaths.PrimarySchoolOverview, {
+    studentId: studentId ?? '',
+  })
+
+  const handleSave = async () => {
+    if (!isValid) {
+      setShowErrors(true)
+      if (missingFoodCategory) focusSelect('hasFoodAllergies')
+      else if (missingFoodAllergies) focusSelect('foodAllergies')
+      else if (missingOtherCategory) focusSelect('hasOtherAllergies')
+      else if (missingOtherAllergies) focusSelect('otherAllergies')
+      return
+    }
+
+    // Rebuild allergies[] (the whole document, per contract §4.5) from the two
+    // id lists. The hook reduces these to ids for the PATCH body, so an id is
+    // sent whether or not the lookup list still carries a label for it —
+    // filtering on the lookup would silently drop a registered allergy.
+    const optionById = new Map(
+      [...foodAllergyOptions, ...otherAllergyOptions].map((option) => [
+        option.value,
+        option,
+      ]),
+    )
+    const categoryOf = (id: string) =>
+      foodAllergyIds.includes(id) ? AllergyCategory.Food : AllergyCategory.Other
+
+    const payload: HealthProfileUpdateInput = {
+      allergies: selectedAllergyIds.map((id) => ({
+        id,
+        type: categoryOf(id),
+        label: optionById.get(id)?.label ?? '',
+      })),
+      // When no allergy is selected, epipen must be sent as false (§4.5).
+      epipen: hasAnyAllergy ? epipen : false,
+      medicalDiagnoses,
+      medicationAssistance,
+    }
+
+    try {
+      await saveHealthProfile(payload)
+      toast.success(formatMessage(kim.saveSuccess))
+      navigate(overviewPath)
+    } catch (error) {
+      toast.error(formatMessage(mmsErrorMessage(error)))
+    }
+  }
+
+  return (
+    <>
+      {loading && <CardLoader />}
+      {!loading && error && <SectionError error={error} />}
+      {!loading && !error && (
+        <Box className={styles.formContainer}>
+          <Stack space={2}>
+            <Stack space={5}>
+              <Box>
+                <Stack space={2}>
+                  <GridRow>
+                    <GridColumn span={['12/12', '12/12', '10/12']}>
+                      <Select
+                        name="hasFoodAllergies"
+                        hasError={showErrors && missingFoodCategory}
+                        errorMessage={
+                          showErrors && missingFoodCategory
+                            ? formatMessage(kim.fieldRequired)
+                            : undefined
+                        }
+                        required
+                        backgroundColor="blue"
+                        size="sm"
+                        label={formatMessage(kim.foodAllergies)}
+                        options={yesNoOptions}
+                        value={
+                          yesNoOptions.find(
+                            (option) =>
+                              option.value === String(hasFoodAllergies),
+                          ) ?? null
+                        }
+                        onChange={(option) => {
+                          const next = option?.value === 'true'
+                          setHasFoodAllergies(next)
+                          if (!next) setFoodAllergyIds([])
+                        }}
+                      />
+                    </GridColumn>
+                  </GridRow>
+                  {hasFoodAllergies === true && (
+                    <GridRow>
+                      <GridColumn span={['12/12', '12/12', '10/12']}>
+                        <Select
+                          name="foodAllergies"
+                          hasError={showErrors && missingFoodAllergies}
+                          errorMessage={
+                            showErrors && missingFoodAllergies
+                              ? formatMessage(kim.fieldRequired)
+                              : undefined
+                          }
+                          backgroundColor="blue"
+                          required={hasFoodAllergies === true}
+                          size="sm"
+                          label={formatMessage(kim.foodAllergyChoose)}
+                          isMulti
+                          isSearchable
+                          isClearable={false}
+                          isLoading={allergyOptionsLoading}
+                          options={foodAllergyOptions}
+                          value={selectedFoodAllergies}
+                          onChange={(selected) =>
+                            setFoodAllergyIds(
+                              (selected ?? []).map((option) => option.value),
+                            )
+                          }
+                        />
+                      </GridColumn>
+                    </GridRow>
+                  )}
+                </Stack>
+              </Box>
+              <Box>
+                <Stack space={2}>
+                  <GridRow>
+                    <GridColumn span={['12/12', '12/12', '10/12']}>
+                      <Select
+                        name="hasOtherAllergies"
+                        hasError={showErrors && missingOtherCategory}
+                        errorMessage={
+                          showErrors && missingOtherCategory
+                            ? formatMessage(kim.fieldRequired)
+                            : undefined
+                        }
+                        required
+                        backgroundColor="blue"
+                        size="sm"
+                        label={formatMessage(kim.otherAllergies)}
+                        options={yesNoOptions}
+                        value={
+                          yesNoOptions.find(
+                            (option) =>
+                              option.value === String(hasOtherAllergies),
+                          ) ?? null
+                        }
+                        onChange={(option) => {
+                          const next = option?.value === 'true'
+                          setHasOtherAllergies(next)
+                          if (!next) setOtherAllergyIds([])
+                        }}
+                      />
+                    </GridColumn>
+                  </GridRow>
+                  {hasOtherAllergies === true && (
+                    <GridRow>
+                      <GridColumn span={['12/12', '12/12', '10/12']}>
+                        <Select
+                          name="otherAllergies"
+                          hasError={showErrors && missingOtherAllergies}
+                          errorMessage={
+                            showErrors && missingOtherAllergies
+                              ? formatMessage(kim.fieldRequired)
+                              : undefined
+                          }
+                          backgroundColor="blue"
+                          required={hasOtherAllergies === true}
+                          size="sm"
+                          label={formatMessage(kim.otherAllergyChoose)}
+                          isMulti
+                          isSearchable
+                          isClearable={false}
+                          isLoading={allergyOptionsLoading}
+                          options={otherAllergyOptions}
+                          value={selectedOtherAllergies}
+                          onChange={(selected) =>
+                            setOtherAllergyIds(
+                              (selected ?? []).map((option) => option.value),
+                            )
+                          }
+                        />
+                      </GridColumn>
+                    </GridRow>
+                  )}
+                </Stack>
+              </Box>
+              {allergyOptionsError && (
+                <SectionError
+                  error={{ message: allergyOptionsError.message }}
+                />
+              )}
+              {hasAnyAllergy && (
+                <Box>
+                  <Stack space={2}>
+                    <Text
+                      id={epipenLabelId}
+                      variant="h5"
+                      fontWeight="semiBold"
+                      marginBottom={0}
+                    >
+                      {formatMessage(kim.epipen)}
+                    </Text>
+                    <Box
+                      role="radiogroup"
+                      aria-labelledby={epipenLabelId}
+                      display="flex"
+                      flexDirection="column"
+                      rowGap={2}
+                    >
+                      <RadioButton
+                        name="epipen"
+                        id="epipen-yes"
+                        label={formatMessage(kim.yes)}
+                        checked={epipen === true}
+                        onChange={() => setEpipen(true)}
+                      />
+                      <RadioButton
+                        name="epipen"
+                        id="epipen-no"
+                        label={formatMessage(kim.no)}
+                        checked={epipen === false}
+                        onChange={() => setEpipen(false)}
+                      />
+                    </Box>
+                  </Stack>
+                </Box>
+              )}
+              <Box>
+                <Stack space={2}>
+                  <Text
+                    id={medicalDiagnosesLabelId}
+                    variant="h5"
+                    fontWeight="semiBold"
+                    marginBottom={0}
+                  >
+                    {formatMessage(kim.medicalDiagnoses)}
+                  </Text>
+                  <Box
+                    role="radiogroup"
+                    aria-labelledby={medicalDiagnosesLabelId}
+                    display="flex"
+                    flexDirection="column"
+                    rowGap={2}
+                  >
+                    <RadioButton
+                      name="medicalDiagnoses"
+                      id="medicalDiagnoses-yes"
+                      label={formatMessage(kim.yes)}
+                      checked={medicalDiagnoses === true}
+                      onChange={() => setMedicalDiagnoses(true)}
+                    />
+                    <RadioButton
+                      name="medicalDiagnoses"
+                      id="medicalDiagnoses-no"
+                      label={formatMessage(kim.no)}
+                      checked={medicalDiagnoses === false}
+                      onChange={() => setMedicalDiagnoses(false)}
+                    />
+                  </Box>
+                </Stack>
+              </Box>
+              <Box>
+                <Stack space={2}>
+                  <Text
+                    id={medicationAssistanceLabelId}
+                    variant="h5"
+                    fontWeight="semiBold"
+                    marginBottom={0}
+                  >
+                    {formatMessage(kim.medicationAssistance)}
+                  </Text>
+                  <Box
+                    role="radiogroup"
+                    aria-labelledby={medicationAssistanceLabelId}
+                    display="flex"
+                    flexDirection="column"
+                    rowGap={2}
+                  >
+                    <RadioButton
+                      name="medicationAssistance"
+                      id="medicationAssistance-yes"
+                      label={formatMessage(kim.yes)}
+                      checked={medicationAssistance === true}
+                      onChange={() => setMedicationAssistance(true)}
+                    />
+                    <RadioButton
+                      name="medicationAssistance"
+                      id="medicationAssistance-no"
+                      label={formatMessage(kim.no)}
+                      checked={medicationAssistance === false}
+                      onChange={() => setMedicationAssistance(false)}
+                    />
+                  </Box>
+                </Stack>
+              </Box>
+            </Stack>
+            <Box display="flex" columnGap={2} justifyContent="flexEnd">
+              <Button
+                variant="ghost"
+                size="small"
+                onClick={() => navigate(overviewPath)}
+              >
+                {formatMessage(kim.cancel)}
+              </Button>
+              <Button
+                variant="primary"
+                size="small"
+                onClick={handleSave}
+                disabled={
+                  !isDirty ||
+                  !profile ||
+                  allergyOptionsLoading ||
+                  Boolean(allergyOptionsError)
+                }
+                loading={saving}
+              >
+                {formatMessage(kim.save)}
+              </Button>
+            </Box>
+          </Stack>
+        </Box>
+      )}
+    </>
+  )
+}
+
+export default HealthProfileEdit

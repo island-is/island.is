@@ -5,13 +5,13 @@ import styled from 'styled-components/native'
 
 import logo from '@/assets/logo/home-logo.png'
 import illustration from '@/assets/illustrations/onboarding-biometrics.png'
-import { Alert, Button, dynamicColor } from '@/ui'
+import { Alert, Button, token } from '@/ui'
 import { LockUserCard } from './lock-user-card'
 
 const Host = styled(SafeAreaView)`
   flex: 1;
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
-  background-color: ${dynamicColor('background')};
+  background-color: ${token((t) => t.background.invert)};
 `
 
 const Logo = styled.Image`

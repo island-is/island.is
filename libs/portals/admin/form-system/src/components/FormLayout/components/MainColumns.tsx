@@ -17,8 +17,13 @@ import { DeleteButton } from './DeleteButton'
 import * as styles from './MainColumn.css'
 
 export const MainContentColumn = () => {
-  const { control, controlDispatch, inSettings, inListBuilder } =
-    useContext(ControlContext)
+  const {
+    control,
+    controlDispatch,
+    inSettings,
+    inListBuilder,
+    updateActiveItem,
+  } = useContext(ControlContext)
   const { activeItem, form, isReadOnly } = control
   const { sections, screens, fields } = form
   const { type } = activeItem
@@ -27,6 +32,8 @@ export const MainContentColumn = () => {
   const deleteField = useMutation(DELETE_FIELD)
   const deleteSection = useMutation(DELETE_SECTION)
   const [openPreview, setOpenPreview] = useState(false)
+  const [enforcePreviewRestrictions, setEnforcePreviewRestrictions] =
+    useState(false)
   const staticSection =
     activeItem.type === 'Section' &&
     ((activeItem.data as { sectionType?: string })?.sectionType === 'PARTIES' ||
@@ -107,7 +114,10 @@ export const MainContentColumn = () => {
             },
           },
         })
-        controlDispatch({ type: 'REMOVE_FIELD', payload: { id: id } })
+        controlDispatch({
+          type: 'REMOVE_FIELD',
+          payload: { id: id, update: updateActiveItem },
+        })
       }
     } catch (error) {
       console.error('Error removing item:', error)
@@ -123,15 +133,30 @@ export const MainContentColumn = () => {
           alignItems="center"
           marginBottom={2}
         >
-          <Box>
+          <Box display="flex" flexWrap="wrap" columnGap={2} rowGap={1}>
             {showPreview && (
-              <Button
-                variant="ghost"
-                size="small"
-                onClick={() => setOpenPreview(true)}
-              >
-                {formatMessage(m.preview)}
-              </Button>
+              <>
+                <Button
+                  variant="ghost"
+                  size="small"
+                  onClick={() => {
+                    setEnforcePreviewRestrictions(false)
+                    setOpenPreview(true)
+                  }}
+                >
+                  {formatMessage(m.preview)}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="small"
+                  onClick={() => {
+                    setEnforcePreviewRestrictions(true)
+                    setOpenPreview(true)
+                  }}
+                >
+                  {formatMessage(m.previewWithRestrictions)}
+                </Button>
+              </>
             )}
           </Box>
           {showDelete &&
@@ -169,6 +194,7 @@ export const MainContentColumn = () => {
         <MainContent
           openPreview={openPreview}
           setOpenPreview={setOpenPreview}
+          enforcePreviewRestrictions={enforcePreviewRestrictions}
         />
       </Box>
     </Box>

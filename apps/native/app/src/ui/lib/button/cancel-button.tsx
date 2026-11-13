@@ -2,7 +2,7 @@ import React from 'react'
 import { Image, TouchableOpacityProps } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import arrow from '../../assets/icons/arrow.png'
-import { dynamicColor } from '../../utils'
+import { token } from '../../utils'
 import { Typography } from '../typography/typography'
 
 interface CancelProps extends TouchableOpacityProps {
@@ -13,10 +13,7 @@ interface CancelProps extends TouchableOpacityProps {
 
 const Host = styled.TouchableOpacity`
   border-bottom-width: 1px;
-  border-bottom-color: ${dynamicColor(
-    ({ theme }) => theme.color.blue400,
-    true,
-  )};
+  border-bottom-color: ${token((t) => t.interactive.foreground.primary)};
 `
 
 const Wrapper = styled.View`
@@ -56,7 +53,7 @@ export function CancelButton({
         <Title
           variant={isSmall ? 'body3' : 'body'}
           weight={600}
-          color={theme.color.blue400}
+          color={theme.tokens.interactive.foreground.primary}
           arrowBack={arrowBack}
         >
           {title}

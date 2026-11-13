@@ -12,14 +12,17 @@ import type { CalculatorLabelledRow } from './text'
 export interface OutputConfigIssues {
   /** Configured output keys the calculator's metadata no longer carries. */
   staleFieldKeys: string[]
-  /** Configured item keys absent from their array field's `itemFields`. */
+  /** Configured item keys absent from their array or object field's `itemFields`. */
   staleItemFieldKeys: { fieldKey: string; itemKeys: string[] }[]
-  /** Fields configured with an `itemFields` block that are not arrays. */
+  /** Fields configured with an `itemFields` block that are neither arrays nor objects. */
   itemFieldsOnScalarKeys: string[]
-  /** `outputTotal` configured against an array-typed contract field, which
-   * cannot resolve to a displayable total. */
-  arrayValuedTotal: boolean
+  /** `outputTotal` configured against an array- or object-typed contract field, which cannot resolve to a displayable total. */
+  nonScalarTotal: boolean
 }
+
+export const hasItemFields = (type: TaxCalculatorOutputFieldType) =>
+  type === TaxCalculatorOutputFieldType.Array ||
+  type === TaxCalculatorOutputFieldType.Object
 
 export const collectOutputConfigIssues = (
   config: CalculatorConfig,
@@ -41,8 +44,8 @@ export const collectOutputConfigIssues = (
   ]
 
   const totalContractField = contract.get(config.outputTotal.key)
-  const arrayValuedTotal =
-    totalContractField?.type === TaxCalculatorOutputFieldType.Array
+  const nonScalarTotal =
+    totalContractField !== undefined && hasItemFields(totalContractField.type)
 
   for (const field of valueRows) {
     const contractField = contract.get(field.key)
@@ -56,7 +59,7 @@ export const collectOutputConfigIssues = (
 
     if (!('itemFields' in field) || !field.itemFields?.length) continue
 
-    if (contractField.type !== TaxCalculatorOutputFieldType.Array) {
+    if (!hasItemFields(contractField.type)) {
       if (!itemFieldsOnScalarKeys.includes(field.key)) {
         itemFieldsOnScalarKeys.push(field.key)
       }
@@ -82,7 +85,7 @@ export const collectOutputConfigIssues = (
     staleFieldKeys,
     staleItemFieldKeys,
     itemFieldsOnScalarKeys,
-    arrayValuedTotal,
+    nonScalarTotal,
   }
 }
 

@@ -9,7 +9,7 @@ import { DebugInfo } from '@/components/testing/debug-info'
 import { isTestingApp } from '@/config'
 import { useBrowser } from '@/hooks/use-browser'
 import { usePreferencesStore } from '@/stores/preferences-store'
-import { Button, dynamicColor, LinkText, Typography } from '@/ui'
+import { Button, LinkText, token, Typography } from '@/ui'
 import { HeaderButton, LoginHeader } from './login-header'
 
 const links = {
@@ -25,7 +25,7 @@ const links = {
 
 const Root = styled.View`
   flex: 1;
-  background-color: ${dynamicColor('background')};
+  background-color: ${token((t) => t.background.invert)};
 `
 
 const Host = styled(SafeAreaView)`
@@ -103,7 +103,7 @@ export function LoginWelcome({
               <Typography
                 variant="body2"
                 weight="600"
-                color={theme.color.blue400}
+                color={theme.tokens.interactive.foreground.primary}
               >
                 {intl.formatMessage({ id: 'login.languageButtonText' })}
               </Typography>

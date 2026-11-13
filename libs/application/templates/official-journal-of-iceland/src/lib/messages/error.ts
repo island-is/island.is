@@ -299,4 +299,17 @@ export const error = defineMessages({
     defaultMessage: 'Texti breytingar vantar',
     description: 'Error message when impact amendment text is missing',
   },
+  postApplicationFailedTitle: {
+    id: 'ojoi.application:error.postApplicationFailedTitle',
+    defaultMessage: 'Ekki tókst að senda inn umsókn',
+    description:
+      'Title of the error shown on submit when Stjórnartíðindi could not receive the application',
+  },
+  postApplicationFailedMessage: {
+    id: 'ojoi.application:error.postApplicationFailedMessage',
+    defaultMessage:
+      'Umsóknin hefur ekki verið send og ekkert hefur glatast. Vinsamlegast reyndu að senda hana inn aftur. Ef það tekst ekki, hafðu samband við ritstjórn Stjórnartíðinda á stjornartidindi@dmr.is.',
+    description:
+      'Shown on submit when Stjórnartíðindi could not receive the application: retry, then contact the editors',
+  },
 })

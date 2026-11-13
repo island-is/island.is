@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { Animated, View } from 'react-native'
 import styled from 'styled-components/native'
-import { dynamicColor, spacing } from '../../utils'
+import { spacing, token } from '../../utils'
 import { font } from '../../utils/font'
 
 const Host = styled.View`
@@ -35,10 +35,7 @@ const AnimatedCircle = styled(Animated.View)`
   height: ${spacing(1)};
   width: ${spacing(1)};
   border-radius: ${({ theme }) => theme.border.radius.large};
-  background-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blue400,
-    dark: theme.color.blue600,
-  }))};
+  background-color: ${token((t) => t.background.brand)};
 `
 
 interface LoaderProps {

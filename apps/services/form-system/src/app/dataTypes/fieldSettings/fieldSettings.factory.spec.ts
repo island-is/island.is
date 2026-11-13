@@ -3,6 +3,95 @@ import { validateSync } from 'class-validator'
 import { FieldSettingsFactory } from './fieldSettings.factory'
 import { FieldSettings } from './fieldSettings.model'
 
+it.each([{ fieldsToSum: [] }, { fieldsToSum: ['first', 'second'] }])(
+  'preserves selected currency field IDs: $fieldsToSum',
+  ({ fieldsToSum }) => {
+    const settings = Object.assign(new FieldSettings(), { fieldsToSum })
+
+    expect(
+      FieldSettingsFactory.getClass(FieldTypesEnum.ISK_SUMBOX, settings)
+        ?.fieldsToSum,
+    ).toEqual(fieldsToSum)
+    expect(validateSync(settings)).toEqual([])
+    expect(
+      FieldSettingsFactory.getClass(FieldTypesEnum.ISK_NUMBERBOX, settings),
+    ).not.toHaveProperty('fieldsToSum')
+  },
+)
+
+it.each([{ fieldsToSum: 'first' }, { fieldsToSum: [123] }])(
+  'rejects invalid currency field IDs: $fieldsToSum',
+  ({ fieldsToSum }) => {
+    const settings = Object.assign(new FieldSettings(), { fieldsToSum })
+
+    expect(validateSync(settings)).toEqual([
+      expect.objectContaining({ property: 'fieldsToSum' }),
+    ])
+  },
+)
+
+it('preserves amount limits for currency number fields', () => {
+  const settings = Object.assign(new FieldSettings(), {
+    minAmount: 0,
+    maxAmount: 1000,
+  })
+
+  expect(
+    FieldSettingsFactory.getClass(FieldTypesEnum.ISK_NUMBERBOX, settings),
+  ).toEqual({
+    minAmount: 0,
+    maxAmount: 1000,
+    zendeskIsCustomField: null,
+    zendeskCustomFieldId: null,
+  })
+  expect(validateSync(settings)).toEqual([])
+})
+
+it.each([true, false])(
+  'preserves fetchBankAccountFromMyPages=%s for bank account fields',
+  (fetchBankAccountFromMyPages) => {
+    const settings = Object.assign(new FieldSettings(), {
+      fetchBankAccountFromMyPages,
+    })
+
+    expect(
+      FieldSettingsFactory.getClass(FieldTypesEnum.BANK_ACCOUNT, settings)
+        ?.fetchBankAccountFromMyPages,
+    ).toBe(fetchBankAccountFromMyPages)
+    expect(validateSync(settings)).toEqual([])
+    expect(
+      FieldSettingsFactory.getClass(FieldTypesEnum.TEXTBOX, settings),
+    ).not.toHaveProperty('fetchBankAccountFromMyPages')
+  },
+)
+
+it.each([undefined, null])(
+  'defaults bank account fetching to true when the setting is %s',
+  (fetchBankAccountFromMyPages) => {
+    const settings = Object.assign(new FieldSettings(), {
+      fetchBankAccountFromMyPages,
+    })
+
+    expect(
+      FieldSettingsFactory.getClass(FieldTypesEnum.BANK_ACCOUNT, settings)
+        ?.fetchBankAccountFromMyPages,
+    ).toBe(true)
+  },
+)
+
+it('rejects non-boolean bank account fetch settings', () => {
+  const settings = Object.assign(new FieldSettings(), {
+    fetchBankAccountFromMyPages: 'true',
+  })
+
+  expect(validateSync(settings)).toEqual([
+    expect.objectContaining({
+      property: 'fetchBankAccountFromMyPages',
+      constraints: { isBoolean: expect.any(String) },
+    }),
+  ])
+})
+
 it('preserves zero and negative date offsets for date picker fields', () => {
   const settings = Object.assign(new FieldSettings(), {
     minDateDaysFromToday: 0,

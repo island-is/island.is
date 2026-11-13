@@ -153,6 +153,7 @@ export default function RenewPrescriptionScreen() {
         contentInsetAdjustmentBehavior="automatic"
         contentContainerStyle={{
           padding: theme.spacing[2],
+          paddingTop: 0,
           // The buttons are the last thing in the scroll content, so it has to
           // end clear of the bottom edge and the home indicator for the cancel
           // button to scroll fully into view.
@@ -160,14 +161,6 @@ export default function RenewPrescriptionScreen() {
         }}
       >
         <View>
-          <Typography
-            variant="heading3"
-            style={{ marginBottom: theme.spacing[1] }}
-          >
-            {intl.formatMessage({
-              id: 'health.prescriptions.renewalModal.title',
-            })}
-          </Typography>
           <Typography
             variant="body2"
             weight="300"
@@ -220,7 +213,7 @@ export default function RenewPrescriptionScreen() {
               style={{
                 paddingVertical: theme.spacing[2],
                 borderBottomWidth: 1,
-                borderBottomColor: theme.color.blue200,
+                borderBottomColor: theme.tokens.border.primary,
               }}
             >
               <Typography

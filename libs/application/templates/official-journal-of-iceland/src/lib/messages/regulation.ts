@@ -142,6 +142,81 @@ export const regulation = {
         description: 'Shown for an amend impact whose diff has no changes',
       },
     }),
+    mismatches: defineMessages({
+      title: {
+        id: 'ojoi.application:regulation.content.mismatches.title',
+        defaultMessage: 'Mögulegt ósamræmi',
+        description:
+          'Title of the warning listing possible mismatches between the amending text and the base regulation changes',
+      },
+      intro: {
+        id: 'ojoi.application:regulation.content.mismatches.intro',
+        defaultMessage:
+          'Texti breytingareglugerðarinnar og breytingarnar á stofnreglugerð virðast ekki passa saman á eftirfarandi stöðum. Farðu yfir þá. Þetta eru ábendingar, ekki villur, og þær koma ekki í veg fyrir að hægt sé að senda inn.',
+        description:
+          'Explains that the listed mismatches are hints to review, not errors',
+      },
+      missingFromText: {
+        id: 'ojoi.application:regulation.content.mismatches.missingFromText',
+        defaultMessage:
+          '„{text}“ er í breytingu á {place} en kemur ekki fram í textanum.',
+        description:
+          'An amount or date a base change brings in that the amending text never mentions',
+      },
+      notInChanges: {
+        id: 'ojoi.application:regulation.content.mismatches.notInChanges',
+        defaultMessage:
+          '„{text}“ í {section} textans er hvergi í breytingum á stofnreglugerð.',
+        description:
+          'An amount or date in an article of the amending text that no base change holds',
+      },
+      notInChangesNoSection: {
+        id: 'ojoi.application:regulation.content.mismatches.notInChangesNoSection',
+        defaultMessage:
+          '„{text}“ í textanum er hvergi í breytingum á stofnreglugerð.',
+        description:
+          'An amount or date in the amending text that no base change holds',
+      },
+      wordingHeading: {
+        id: 'ojoi.application:regulation.content.mismatches.wordingHeading',
+        defaultMessage:
+          'Orðalag í breytingum á stofnreglugerð sem kemur ekki fram í textanum:',
+        description:
+          'Heading above wording that base changes bring in and the amending text never mentions',
+      },
+      placeSection: {
+        id: 'ojoi.application:regulation.content.mismatches.placeSection',
+        defaultMessage: '{section} reglugerðar nr. {regulation}',
+        description: 'Where a change is: an article of a base regulation',
+      },
+      placeRegulation: {
+        id: 'ojoi.application:regulation.content.mismatches.placeRegulation',
+        defaultMessage: 'reglugerð nr. {regulation}',
+        description: 'Where a change is: a base regulation',
+      },
+      placeAppendix: {
+        id: 'ojoi.application:regulation.content.mismatches.placeAppendix',
+        defaultMessage: '„{appendix}“ við reglugerð nr. {regulation}',
+        description: 'Where a change is: an appendix of a base regulation',
+      },
+      failedTitle: {
+        id: 'ojoi.application:regulation.content.mismatches.failedTitle',
+        defaultMessage: 'Ekki tókst að leita að ósamræmi',
+        description: 'Title of the warning shown when the mismatch check fails',
+      },
+      failed: {
+        id: 'ojoi.application:regulation.content.mismatches.failed',
+        defaultMessage:
+          'Texti breytingareglugerðarinnar var ekki borinn saman við breytingarnar á stofnreglugerð. Farðu yfir hvort þau passi saman.',
+        description:
+          'Shown when the mismatch check fails, so it is not taken for a check that found nothing',
+      },
+      more: {
+        id: 'ojoi.application:regulation.content.mismatches.more',
+        defaultMessage: 'og {count} til viðbótar',
+        description: 'Ends a shortened list of mismatches',
+      },
+    }),
   },
   meta: {
     general: defineMessages({
@@ -493,12 +568,12 @@ export const regulation = {
       },
     }),
     dateWarnings: defineMessages({
-      effectiveBeforePublish: {
-        id: 'ojoi.application:regulation.summary.dateWarnings.effectiveBeforePublish',
+      effectiveOnOrBeforePublish: {
+        id: 'ojoi.application:regulation.summary.dateWarnings.effectiveOnOrBeforePublish',
         defaultMessage:
-          'Valinn gildistökudagur er á undan útgáfudegi. Almennt er miðað við að reglugerð öðlist gildi eftir birtingu.',
+          'Gildistökudagur er sami dagur og útgáfudagur eða fyrr. Slíkt tíðkast aðeins í sérstökum undantekningartilvikum. Vinsamlegast gangið úr skugga um að dagsetningin sé rétt.',
         description:
-          'Warning when the effective date is before the requested publish date',
+          'Warning when the effective date is on or before the requested publish date',
       },
       effectiveDateEarly: {
         id: 'ojoi.application:regulation.summary.dateWarnings.effectiveDateEarly',
@@ -506,19 +581,24 @@ export const regulation = {
         description: 'Warning when the effective date is in the past',
       },
     }),
-    impactsAfterEffectiveDate: defineMessages({
+    impactsOffEffectiveDate: defineMessages({
       title: {
-        id: 'ojoi.application:regulation.summary.impactsAfterEffectiveDate.title',
-        defaultMessage: 'Gildistökudagur er á undan dagsetningu áhrifa',
+        id: 'ojoi.application:regulation.summary.impactsOffEffectiveDate.title',
+        defaultMessage: 'Dagsetning áhrifa passar ekki við gildistökudag',
         description:
-          'Title of the warning when the effective date is before an impact date',
+          'Title of the warning when an impact is not dated on the effective date',
       },
       message: {
-        id: 'ojoi.application:regulation.summary.impactsAfterEffectiveDate.message',
+        id: 'ojoi.application:regulation.summary.impactsOffEffectiveDate.message',
         defaultMessage:
-          'Reglugerðin tekur gildi {effectiveDate} en áhrif hennar á {regulations} eru dagsett síðar. Slíkt tíðkast aðeins í undantekningartilvikum. Gakktu úr skugga um að dagsetningarnar séu réttar.',
+          'Reglugerðin tekur gildi {effectiveDate} en áhrif hennar á {regulations} eru dagsett annan dag. Almenna reglan er að breytingar taki gildi sama dag og reglugerðin. Gakktu úr skugga um að dagsetningarnar séu réttar.',
         description:
-          'Message of the warning when the effective date is before an impact date',
+          'Message of the warning when an impact is not dated on the effective date',
+      },
+      openImpacts: {
+        id: 'ojoi.application:regulation.summary.impactsOffEffectiveDate.openImpacts',
+        defaultMessage: 'Opna áhrif',
+        description: 'Link back to the impacts step from the warning',
       },
     }),
     textComparison: defineMessages({

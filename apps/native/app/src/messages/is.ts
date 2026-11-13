@@ -714,7 +714,7 @@ export const is = {
   'edit.phone.errorMessage': 'Gat ekki sent staðfestingarkóða',
 
   // edit email
-  'edit.email.screenTitle': 'Breyta Netfangi',
+  'edit.email.screenTitle': 'Breyta netfangi',
   'edit.email.description': 'Hér getur þú breytt netfangi',
   'edit.email.inputlabel': 'Netfang',
   'edit.email.button': 'Vista',
@@ -723,7 +723,7 @@ export const is = {
   'edit.email.errorMessage': 'Gat ekki sent staðfestingarkóða',
 
   // edit bank info
-  'edit.bankinfo.screenTitle': 'Breyta banka upplýsingum',
+  'edit.bankinfo.screenTitle': 'Breyta bankaupplýsingum',
   'edit.bankinfo.description':
     'Hér getur þú gert breytingar á þeim bankareikningi sem þú vilt að Fjársýsla ríkisins noti til endurgreiðslu',
   'edit.bankinfo.inputlabel.bank': 'Banki',

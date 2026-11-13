@@ -91,4 +91,30 @@ describe('FieldsService.update', () => {
       }
     })
   })
+
+  it.each(fieldTypes)(
+    'removes field and option references when deleting %s',
+    async (fieldType) => {
+      const { service, field, form } = setup(fieldType)
+      const fieldDestroy = jest.fn().mockResolvedValue(undefined)
+      Object.assign(field, { destroy: fieldDestroy })
+      form.dependencies.push({
+        parentProp: 'kept-parent',
+        childProps: [
+          field.id,
+          ...(fieldType === FieldTypesEnum.CHECKBOX ? [] : ['list-item-id']),
+          'kept-child',
+        ],
+      })
+
+      await service.delete(user, field.id)
+
+      expect(form.dependencies).toEqual([
+        { parentProp: 'other-parent-id', childProps: ['other-child-id'] },
+        { parentProp: 'kept-parent', childProps: ['kept-child'] },
+      ])
+      expect(form.save).toHaveBeenCalledTimes(1)
+      expect(fieldDestroy).toHaveBeenCalledTimes(1)
+    },
+  )
 })

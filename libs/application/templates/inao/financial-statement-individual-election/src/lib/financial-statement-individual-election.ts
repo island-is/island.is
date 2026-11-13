@@ -40,7 +40,7 @@ const FinancialStatementIndividualElectionTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION,
   name: m.applicationTitleAlt,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: m.institutionName,
   dataSchema,
   translationNamespaces: [configuration.translation],

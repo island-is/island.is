@@ -2,7 +2,7 @@ import { RegulationImpactSchema } from '../lib/dataSchema'
 import { regulation } from '../lib/messages'
 import {
   getEffectiveDateWarnings,
-  getImpactsAfterEffectiveDate,
+  getImpactsOffEffectiveDate,
 } from './regulationValidations'
 
 const impact = (
@@ -12,31 +12,33 @@ const impact = (
   type: 'amend' | 'repeal' = 'amend',
 ): RegulationImpactSchema => ({ id, type, name, date })
 
-describe('getImpactsAfterEffectiveDate', () => {
+describe('getImpactsOffEffectiveDate', () => {
   it('returns impacts dated after the effective date', () => {
     const later = impact('a', '2026-05-19')
-    expect(getImpactsAfterEffectiveDate('2026-05-18', [later])).toEqual([later])
+    expect(getImpactsOffEffectiveDate('2026-05-18', [later])).toEqual([later])
   })
 
-  it('ignores impacts on or before the effective date', () => {
+  it('returns impacts dated before the effective date', () => {
+    const earlier = impact('a', '2026-05-17')
+    expect(getImpactsOffEffectiveDate('2026-05-18', [earlier])).toEqual([
+      earlier,
+    ])
+  })
+
+  it('ignores impacts on the effective date', () => {
     expect(
-      getImpactsAfterEffectiveDate('2026-05-18', [
-        impact('same', '2026-05-18'),
-        impact('earlier', '2026-05-17'),
-      ]),
+      getImpactsOffEffectiveDate('2026-05-18', [impact('same', '2026-05-18')]),
     ).toEqual([])
   })
 
   it('includes repeals', () => {
     const repeal = impact('r', '2026-06-01', '0100/2020', 'repeal')
-    expect(getImpactsAfterEffectiveDate('2026-05-18', [repeal])).toEqual([
-      repeal,
-    ])
+    expect(getImpactsOffEffectiveDate('2026-05-18', [repeal])).toEqual([repeal])
   })
 
   it('ignores self-impacts and impacts without a date', () => {
     expect(
-      getImpactsAfterEffectiveDate('2026-05-18', [
+      getImpactsOffEffectiveDate('2026-05-18', [
         impact('self', '2026-06-01', 'self'),
         impact('nodate', undefined),
       ]),
@@ -45,7 +47,7 @@ describe('getImpactsAfterEffectiveDate', () => {
 
   it('compares by day when dates carry a time part', () => {
     expect(
-      getImpactsAfterEffectiveDate('2026-05-18', [
+      getImpactsOffEffectiveDate('2026-05-18', [
         impact('a', '2026-05-18T23:00:00.000Z'),
       ]),
     ).toEqual([])
@@ -53,13 +55,13 @@ describe('getImpactsAfterEffectiveDate', () => {
 
   it('returns nothing without an effective date', () => {
     expect(
-      getImpactsAfterEffectiveDate(undefined, [impact('a', '2026-05-19')]),
+      getImpactsOffEffectiveDate(undefined, [impact('a', '2026-05-19')]),
     ).toEqual([])
   })
 })
 
 describe('getEffectiveDateWarnings', () => {
-  const { effectiveBeforePublish, effectiveDateEarly } =
+  const { effectiveOnOrBeforePublish, effectiveDateEarly } =
     regulation.summary.dateWarnings
 
   beforeEach(() => {
@@ -74,29 +76,37 @@ describe('getEffectiveDateWarnings', () => {
 
   it('warns when the effective date is before the publish date', () => {
     expect(getEffectiveDateWarnings('2026-10-19', '2026-10-20')).toEqual([
-      effectiveBeforePublish,
+      effectiveOnOrBeforePublish,
     ])
   })
 
-  it('does not warn when the effective date is on or after the publish date', () => {
-    expect(getEffectiveDateWarnings('2026-10-20', '2026-10-20')).toEqual([])
+  it('warns when the effective date is the publish date', () => {
+    expect(getEffectiveDateWarnings('2026-10-20', '2026-10-20')).toEqual([
+      effectiveOnOrBeforePublish,
+    ])
+  })
+
+  it('does not warn when the effective date is after the publish date', () => {
     expect(getEffectiveDateWarnings('2026-10-21', '2026-10-20')).toEqual([])
   })
 
-  it('moves a weekend effective date to the next workday before comparing', () => {
-    // Saturday 17 Oct counts as Monday 19 Oct
-    expect(getEffectiveDateWarnings('2026-10-17', '2026-10-19')).toEqual([])
+  it('warns when a weekend effective date comes before the publish date', () => {
+    // Saturday 17 Oct, published Monday 19 Oct
+    expect(getEffectiveDateWarnings('2026-10-17', '2026-10-19')).toEqual([
+      effectiveOnOrBeforePublish,
+    ])
   })
 
   it('warns when the effective date is in the past', () => {
-    expect(getEffectiveDateWarnings('2026-10-01', '2026-10-01')).toEqual([
+    expect(getEffectiveDateWarnings('2026-10-01', '2026-10-05')).toEqual([
+      effectiveOnOrBeforePublish,
       effectiveDateEarly,
     ])
   })
 
   it('warns about both when the effective date is past and before publish', () => {
     expect(getEffectiveDateWarnings('2026-09-30', '2026-10-20')).toEqual([
-      effectiveBeforePublish,
+      effectiveOnOrBeforePublish,
       effectiveDateEarly,
     ])
   })
@@ -104,7 +114,7 @@ describe('getEffectiveDateWarnings', () => {
   it('warns on fast-track when the effective date is before the next workday', () => {
     // Friday 2 Oct is a workday, so Thursday 1 Oct is before it
     expect(getEffectiveDateWarnings('2026-10-01', '2026-10-01', true)).toEqual([
-      effectiveBeforePublish,
+      effectiveOnOrBeforePublish,
       effectiveDateEarly,
     ])
   })

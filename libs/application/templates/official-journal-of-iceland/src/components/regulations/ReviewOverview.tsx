@@ -25,10 +25,8 @@ import { prettyName, RegName } from '@island.is/regulations'
 import { useLawChapters } from '../../hooks/useLawChapters'
 import { RegulationImpactSchema } from '../../lib/dataSchema'
 import { regulation } from '../../lib/messages'
-import {
-  getEffectiveDateWarnings,
-  getImpactsAfterEffectiveDate,
-} from '../../utils/regulationValidations'
+import { getEffectiveDateWarnings } from '../../utils/regulationValidations'
+import { ImpactDateWarning } from './ImpactDateWarning'
 
 // ---------------------------------------------------------------------------
 
@@ -91,6 +89,8 @@ export type ReviewOverviewProps = {
   price?: number
   priceLoading?: boolean
   priceError?: boolean
+  /** Opens a step of the application, e.g. to fix impact dates */
+  goToScreen?: (screenId: string) => void
 }
 
 export const ReviewOverview = ({
@@ -99,6 +99,7 @@ export const ReviewOverview = ({
   price,
   priceLoading,
   priceError,
+  goToScreen,
 }: ReviewOverviewProps) => {
   const { formatMessage: f, formatDateFns, formatNumber } = useLocale()
   const user = useUserInfo()
@@ -133,10 +134,6 @@ export const ReviewOverview = ({
 
   const advert = answers.advert
   const reg = answers.regulation
-  const impactsAfterEffectiveDate = getImpactsAfterEffectiveDate(
-    reg?.effectiveDate,
-    reg?.impacts,
-  )
   const effectiveDateWarnings = getEffectiveDateWarnings(
     reg?.effectiveDate,
     advert?.requestedDate,
@@ -180,24 +177,11 @@ export const ReviewOverview = ({
         </Text>
       </OverviewItem>
 
-      {impactsAfterEffectiveDate.length > 0 && (
-        <Box marginBottom={3}>
-          <AlertMessage
-            type="warning"
-            title={f(regulation.summary.impactsAfterEffectiveDate.title)}
-            message={f(regulation.summary.impactsAfterEffectiveDate.message, {
-              effectiveDate: formatDate(reg?.effectiveDate),
-              regulations: [
-                ...new Set(
-                  impactsAfterEffectiveDate.map((impact) =>
-                    prettyName(impact.name as RegName),
-                  ),
-                ),
-              ].join(', '),
-            })}
-          />
-        </Box>
-      )}
+      <ImpactDateWarning
+        effectiveDate={reg?.effectiveDate}
+        impacts={reg?.impacts}
+        goToScreen={goToScreen}
+      />
 
       <OverviewItem label={f(regulation.summary.labels.lawChapters)}>
         {reg?.lawChapters && reg.lawChapters.length > 0 ? (

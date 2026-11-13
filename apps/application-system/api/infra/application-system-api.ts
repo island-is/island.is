@@ -57,6 +57,7 @@ import {
   VMSTUnemployment,
   RecyclingFund,
   DirectorateOfEquality,
+  FjarskiptastofaSelfAssessment,
 } from '../../../../infra/src/dsl/xroad'
 
 export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
@@ -83,7 +84,7 @@ export const workerSetup = (services: {
     .db()
     .serviceAccount('application-system-api-worker')
     .redis()
-    .codeOwner(CodeOwners.NordaApplications)
+    .codeOwner(CodeOwners.ApplicationsCore)
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system',
       IDENTITY_SERVER_ISSUER_URL: {
@@ -197,7 +198,7 @@ export const serviceSetup = (services: {
     .serviceAccount(serviceAccount)
     .command('node')
     .redis()
-    .codeOwner(CodeOwners.NordaApplications)
+    .codeOwner(CodeOwners.ApplicationsCore)
     .args('main.cjs')
     .env({
       EMAIL_REGION: 'eu-west-1',
@@ -443,6 +444,7 @@ export const serviceSetup = (services: {
       VMSTUnemployment,
       RecyclingFund,
       DirectorateOfEquality,
+      FjarskiptastofaSelfAssessment,
       RVKFinancialAid,
     )
     .secrets({

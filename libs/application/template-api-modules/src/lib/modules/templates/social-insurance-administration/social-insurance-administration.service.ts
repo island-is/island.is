@@ -11,6 +11,7 @@ import {
   getApplicationAnswers as getMARPApplicationAnswers,
   getApplicationExternalData as getMARPApplicationExternalData,
   getIncompleteAnswerSections,
+  MedicalAndRehabilitationPaymentsApplicationType,
 } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 import {
   ApplicationType,
@@ -784,18 +785,26 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     application,
     auth,
   }: TemplateApiModuleActionProps) {
-    const { marpApplicationType, isEligible } = getMARPApplicationExternalData(
-      application.externalData,
-    )
+    const { marpApplicationType, isEligible, hasActiveExemption } =
+      getMARPApplicationExternalData(application.externalData)
 
     if (!isEligible?.isEligible) {
       return null
     }
 
-    return await this.siaClientService.getEducationLevels(
-      auth,
-      marpApplicationType || '',
-    )
+    // Exemption cases (ísl. jaðartilvik) have no application type from TR, so
+    // fall back to the first sickness payment type to get the education levels
+    const applicationType = marpApplicationType
+      ? marpApplicationType
+      : hasActiveExemption
+      ? MedicalAndRehabilitationPaymentsApplicationType.SG1
+      : undefined
+
+    if (!applicationType) {
+      return null
+    }
+
+    return await this.siaClientService.getEducationLevels(auth, applicationType)
   }
 
   async getEducationLevelsWithEnum({
@@ -852,9 +861,41 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       return null
     }
 
-    return await this.siaClientService.getMedicalAndRehabilitationApplicationType(
-      auth,
+    try {
+      return await this.siaClientService.getMedicalAndRehabilitationApplicationType(
+        auth,
+      )
+    } catch (error) {
+      // TR fails with a 500 for applicants without a base certificate, which
+      // includes exemption cases. Treat it as "no type" so the exemption check
+      // can decide whether the applicant may continue.
+      if (
+        error?.status === 500 &&
+        error?.body?.detail === 'No document associated with client'
+      ) {
+        return null
+      }
+
+      throw error
+    }
+  }
+
+  // Exemption cases (ísl. jaðartilvik) skip the medical certificate and
+  // rehabilitation/confirmation sections. Only applicants TR returned no
+  // application type for are checked.
+  async getMedicalAndRehabilitationExemption({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const { marpApplicationType, isEligible } = getMARPApplicationExternalData(
+      application.externalData,
     )
+
+    if (!isEligible?.isEligible || marpApplicationType) {
+      return null
+    }
+
+    return await this.siaClientService.getExemption(auth)
   }
 
   async getEmploymentStatusesWithLocale({

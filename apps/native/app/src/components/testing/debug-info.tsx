@@ -11,7 +11,7 @@ import {
   environmentStore,
   useEnvironmentStore,
 } from '@/stores/environment-store'
-import { Button, dynamicColor } from '@/ui'
+import { Button, token } from '@/ui'
 import { SelectionMenu } from 'react-native-platform-components'
 import { cognitoAuthUrl } from '../../graphql/client'
 import {
@@ -34,19 +34,13 @@ const FEATURE_ENVIRONMENT: EnvironmentConfig = {
 }
 
 const DebugHost = styled.View`
-  background-color: ${dynamicColor((props) => ({
-    light: props.theme.color.blue100,
-    dark: props.theme.shades.dark.background,
-  }))};
+  background-color: ${token((t) => t.background.brandMinimal)};
   height: 360px;
   max-height: 40%;
 `
 
 const Text = styled.Text`
-  color: ${dynamicColor((props) => ({
-    light: props.theme.color.dark400,
-    dark: 'white',
-  }))};
+  color: ${token((t) => t.foreground.primary)};
 `
 
 function DebugRow({

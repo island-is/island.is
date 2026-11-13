@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer'
 import {
+  ArrayMaxSize,
   ArrayUnique,
   IsArray,
   IsBoolean,
@@ -13,6 +14,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
   AppealCaseRulingDecision,
+  MAX_APPEAL_JUDGE_COUNT,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -33,6 +35,7 @@ export class UpdateAppealCaseDto {
   @IsOptional()
   @IsArray()
   @ArrayUnique()
+  @ArrayMaxSize(MAX_APPEAL_JUDGE_COUNT)
   @IsString({ each: true })
   @ApiPropertyOptional({ type: String, isArray: true })
   readonly appealJudgeIds?: string[]

@@ -52,7 +52,7 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
   },
   type: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
   name: 'Test application',
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   dataSchema: z.object({
     person: z.object({
       age: z.number().min(18),

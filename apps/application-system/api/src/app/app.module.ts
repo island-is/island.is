@@ -85,6 +85,7 @@ import { ContentfulTranslationConfig } from '@island.is/application/api/core'
 import { CmsTranslationConfig } from '@island.is/cms-translations'
 import { RecyclingFundClientConfig } from '@island.is/clients/recycling-fund'
 import { DirectorateOfEqualityClientConfig } from '@island.is/clients/directorate-of-equality'
+import { FjarskiptastofaSelfAssessmentClientConfig } from '@island.is/clients/fjarskiptastofa/self-assessment'
 
 @Module({
   imports: [
@@ -165,6 +166,7 @@ import { DirectorateOfEqualityClientConfig } from '@island.is/clients/directorat
         ZendeskServiceConfig,
         RecyclingFundClientConfig,
         DirectorateOfEqualityClientConfig,
+        FjarskiptastofaSelfAssessmentClientConfig,
         CmsTranslationConfig,
         ContentfulTranslationConfig,
       ],

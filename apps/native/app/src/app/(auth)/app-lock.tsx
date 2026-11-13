@@ -37,7 +37,7 @@ import {
   usePreferencesStore,
 } from '@/stores/preferences-store'
 import { useUiStore } from '@/stores/ui-store'
-import { Button, dynamicColor, font } from '@/ui'
+import { Button, font, token } from '@/ui'
 import { useBiometricType as useBiometricLabel } from '@/hooks/use-biometric-type'
 import { useNativeUnlock } from '@/hooks/use-native-unlock'
 import {
@@ -55,7 +55,7 @@ const Host = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: ${dynamicColor('background')};
+  background-color: ${token((t) => t.background.invert)};
 `
 
 const Title = styled.Text`

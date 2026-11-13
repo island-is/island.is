@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
-import { dynamicColor, font } from '../../utils'
+import { font, token } from '../../utils'
 import { Typography } from '../typography/typography'
 
 const Host = styled.Pressable<{ readOnly: boolean }>`
@@ -19,31 +19,22 @@ const Host = styled.Pressable<{ readOnly: boolean }>`
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: 1px;
   border-style: solid;
-  border-color: ${dynamicColor(
-    (props) => ({
-      dark: 'shade500',
-      light: props.theme.color.blue200,
-    }),
-    true,
-  )};
+  border-color: ${token((t) => t.border.primary)};
   /* A read-only field is not something you can type into, so it drops the
      tinted "input" fill and sits flat on the screen background. */
-  background-color: ${dynamicColor((props) => ({
-    dark: props.readOnly ? 'background' : 'shade300',
-    light: props.readOnly ? props.theme.color.white : props.theme.color.blue100,
-  }))};
+  background-color: ${({ theme, readOnly }) =>
+    readOnly
+      ? theme.tokens.background.invert
+      : theme.tokens.background.brandMinimal};
 `
 
 const Label = styled(Typography)<{ readOnly: boolean }>`
-  color: ${dynamicColor((props) => ({
-    dark: 'foreground',
-    light: props.theme.color.blue400,
-  }))};
+  color: ${token((t) => t.foreground.brand)};
   margin-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
   ${({ readOnly }) =>
     readOnly &&
     css`
-      color: ${({ theme }) => theme.color.dark400};
+      color: ${({ theme }) => theme.tokens.foreground.primary};
     `}
 `
 
@@ -57,7 +48,7 @@ const Input = styled(TextInput)<{
   padding-bottom: 0px;
 
   color: ${({ theme, readOnly }) =>
-    readOnly ? theme.color.dark400 : theme.color.blue400};
+    readOnly ? theme.tokens.foreground.primary : theme.tokens.foreground.brand};
 
   ${font({
     fontSize: 16,
@@ -112,7 +103,7 @@ export const TextField = ({
             value={value}
             ref={inputRef}
             readOnly={readOnly}
-            placeholderTextColor={theme.color.dark300}
+            placeholderTextColor={theme.tokens.foreground.primaryMinimal}
             {...rest}
             // Android vertically centers multiline inputs by default; keep
             // the text (and placeholder) at the top like iOS does.
@@ -131,7 +122,7 @@ export const TextField = ({
       {errorMessage && (
         <Typography
           variant="body3"
-          color={theme.color.red600}
+          color={theme.tokens.feedback.error.foregroundContrast}
           style={{ marginTop: theme.spacing.smallGutter }}
         >
           {errorMessage}

@@ -4,12 +4,12 @@ import { ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
-import { Alert, Button, dynamicColor, TextField, Typography } from '@/ui'
+import { Alert, Button, TextField, token, Typography } from '@/ui'
 import { LoginHeader } from './login-header'
 
 const Host = styled(SafeAreaView)`
   flex: 1;
-  background-color: ${dynamicColor('background')};
+  background-color: ${token((t) => t.background.invert)};
 `
 
 const Content = styled.View`
@@ -33,10 +33,7 @@ const Divider = styled.View`
 const Line = styled.View`
   flex: 1;
   height: 1px;
-  background-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blue200,
-    dark: theme.shades.dark.shade300,
-  }))};
+  background-color: ${token((t) => t.border.primary)};
 `
 
 /**

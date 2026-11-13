@@ -5,12 +5,12 @@ import styled from 'styled-components/native'
 
 import logo from '@/assets/logo/logo-64w.png'
 import illustration from '@/assets/illustrations/onboarding-privacy.png'
-import { Button, dynamicColor, Typography } from '@/ui'
+import { Button, token, Typography } from '@/ui'
 
 const Host = styled(SafeAreaView)`
   flex: 1;
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
-  background-color: ${dynamicColor('background')};
+  background-color: ${token((t) => t.background.invert)};
 `
 
 const Content = styled.View`

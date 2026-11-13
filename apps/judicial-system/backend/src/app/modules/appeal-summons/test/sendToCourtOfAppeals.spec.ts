@@ -113,7 +113,7 @@ describe('AppealSummonsController - Send to court of appeals', () => {
     } as AppealSummons
 
     ;(
-      mockAppealSummonsRepositoryService.update as jest.Mock
+      mockAppealSummonsRepositoryService.markSentToCourtOfAppeals as jest.Mock
     ).mockResolvedValueOnce(afterSend)
     ;(
       mockAppealSummonsRepositoryService.findByIdAndCaseId as jest.Mock
@@ -124,18 +124,12 @@ describe('AppealSummonsController - Send to court of appeals', () => {
 
     const result = await sendToCourtOfAppeals(confirmed)
 
-    expect(mockAppealSummonsRepositoryService.update).toHaveBeenCalledWith(
-      summonsId,
-      caseId,
-      { sentToCourtOfAppealsDate },
-      {
-        transaction,
-        where: {
-          sentToCourtOfAppealsDate: null,
-          confirmedDate: confirmed.confirmedDate,
-        },
-      },
-    )
+    expect(
+      mockAppealSummonsRepositoryService.markSentToCourtOfAppeals,
+    ).toHaveBeenCalledWith(summonsId, caseId, sentToCourtOfAppealsDate, {
+      transaction,
+      expectedConfirmedDate: confirmed.confirmedDate,
+    })
     expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
       {
         caseId,
@@ -186,7 +180,7 @@ describe('AppealSummonsController - Send to court of appeals', () => {
 
   it('rejects when a concurrent send already set the date', async () => {
     ;(
-      mockAppealSummonsRepositoryService.update as jest.Mock
+      mockAppealSummonsRepositoryService.markSentToCourtOfAppeals as jest.Mock
     ).mockRejectedValueOnce(
       new ConflictException(
         `Could not update appeal summons ${summonsId} of case ${caseId}`,

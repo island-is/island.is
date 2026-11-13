@@ -13,6 +13,7 @@ import {
   DefaultDisplay,
   FieldTypesEnum,
   FileUploadDisplay,
+  hasFieldValueError,
   IndividualApplicant,
   LegalEntity,
   m,
@@ -132,14 +133,24 @@ const displays: Partial<Record<string, ElementType>> = {
 const SummaryField = ({
   field,
   valueIndex,
+  requiredMissing = false,
 }: {
   field: FormSystemField
   valueIndex: number
+  requiredMissing?: boolean
 }) => {
   const Display = displays[field.fieldType ?? ''] ?? DefaultDisplay
   return (
     <Box paddingLeft={2} marginTop={1}>
-      <Display item={field} valueIndex={valueIndex} />
+      <Display
+        item={field}
+        valueIndex={valueIndex}
+        labelsOnly={field.fieldType === FieldTypesEnum.APPLICANT}
+        requiredMissing={
+          requiredMissing ||
+          (Boolean(field.isRequired) && hasFieldValueError(field, valueIndex))
+        }
+      />
     </Box>
   )
 }
@@ -147,9 +158,11 @@ const SummaryField = ({
 export const PreviewSummary = ({
   sections,
   onNavigate,
+  hasValidationError,
 }: {
   sections: FormSystemSection[]
   onNavigate: (sectionId: string, screenId?: string) => void
+  hasValidationError?: (field: FormSystemField, valueIndex: number) => boolean
 }) => {
   const { lang, formatMessage } = useLocale()
   return (
@@ -175,12 +188,23 @@ export const PreviewSummary = ({
                   !field.isHidden &&
                   field.fieldType !== FieldTypesEnum.MESSAGE,
               )
-              const nonRepeating = fields.filter(
-                (field) => field.isPartOfMultiset === false,
-              )
-              const repeating = fields.filter(
-                (field) => field.isPartOfMultiset !== false,
-              )
+              const firstMultisetFieldIndex = screen?.isMulti
+                ? fields.findIndex((field) => field.isPartOfMultiset !== false)
+                : -1
+              const leadingFields =
+                firstMultisetFieldIndex === -1
+                  ? fields
+                  : fields.slice(0, firstMultisetFieldIndex)
+              const repeating =
+                firstMultisetFieldIndex === -1
+                  ? []
+                  : fields.filter((field) => field.isPartOfMultiset !== false)
+              const trailingFields =
+                firstMultisetFieldIndex === -1
+                  ? []
+                  : fields
+                      .slice(firstMultisetFieldIndex)
+                      .filter((field) => field.isPartOfMultiset === false)
               const itemCount = Math.max(
                 1,
                 ...repeating.map((field) => field.values?.length ?? 0),
@@ -198,11 +222,12 @@ export const PreviewSummary = ({
                             : screen?.name?.[lang]}
                         </Text>
                       </Box>
-                      {nonRepeating.map((field) => (
+                      {leadingFields.map((field) => (
                         <SummaryField
                           key={field.id}
                           field={field}
                           valueIndex={0}
+                          requiredMissing={hasValidationError?.(field, 0)}
                         />
                       ))}
                       {Array.from({ length: itemCount }).map(
@@ -222,11 +247,23 @@ export const PreviewSummary = ({
                                 key={field.id}
                                 field={field}
                                 valueIndex={valueIndex}
+                                requiredMissing={hasValidationError?.(
+                                  field,
+                                  valueIndex,
+                                )}
                               />
                             ))}
                           </Box>
                         ),
                       )}
+                      {trailingFields.map((field) => (
+                        <SummaryField
+                          key={field.id}
+                          field={field}
+                          valueIndex={0}
+                          requiredMissing={hasValidationError?.(field, 0)}
+                        />
+                      ))}
                     </GridColumn>
                     <GridColumn span={['12/12', '2/12']}>
                       <Box

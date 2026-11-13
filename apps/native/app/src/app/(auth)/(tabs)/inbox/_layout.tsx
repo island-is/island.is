@@ -53,7 +53,7 @@ export default function InboxLayout() {
           headerShown: false,
           ...tabScreenOptions,
           headerTransparent: false,
-          headerStyle: { backgroundColor: theme.color.white },
+          headerStyle: { backgroundColor: theme.tokens.background.invert },
           title: intl.formatMessage({
             id: 'documentDetail.buttonCommunications',
           }),

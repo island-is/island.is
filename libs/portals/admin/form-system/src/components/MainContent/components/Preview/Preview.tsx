@@ -103,6 +103,7 @@ export const Preview = ({
       lang={lang}
       dispatch={dispatch ?? previewDispatch}
       state={state}
+      isPreview
     />
   ) : null
 

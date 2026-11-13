@@ -4,7 +4,7 @@ import Svg, { Path } from 'react-native-svg'
 import styled, { useTheme } from 'styled-components/native'
 
 import logo from '@/assets/logo/logo-64w.png'
-import { dynamicColor } from '@/ui'
+import { token } from '@/ui'
 
 const Host = styled.View`
   height: 40px;
@@ -31,10 +31,7 @@ export const HeaderButton = styled.TouchableOpacity`
   border-radius: 20px;
   align-items: center;
   justify-content: center;
-  background-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.white,
-    dark: theme.shades.dark.shade200,
-  }))};
+  background-color: ${token((t) => t.background.invert)};
   shadow-color: #000;
   shadow-opacity: 0.12;
   shadow-radius: 8px;
@@ -66,7 +63,7 @@ export function LoginHeader({ onBackPress, right }: LoginHeaderProps) {
               <Path
                 d="M328 112L184 256l144 144"
                 fill="none"
-                stroke={theme.color.blue400}
+                stroke={theme.tokens.interactive.foreground.primary}
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={48}

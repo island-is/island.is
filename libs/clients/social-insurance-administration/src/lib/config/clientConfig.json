@@ -481,6 +481,114 @@
         }
       }
     },
+    "/api/protected/v1/Applicant/exemption": {
+      "get": {
+        "tags": ["Applicant"],
+        "summary": "Returns whether the applicant has an active exemption (ísl. jaðartilvik) and, if so, which application type it applies to.",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Applications.Models.ExemptionDto"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Applications.Models.ExemptionDto"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Applications.Models.ExemptionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/protected/v1/Applicant/medicalandrehabilitationpayments/type": {
       "get": {
         "tags": ["Applicant"],
@@ -15662,6 +15770,15 @@
         "type": "object",
         "properties": {
           "applicationLineId": { "type": "integer", "format": "int32" }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Api.Services.Domain.Applications.Models.ExemptionDto": {
+        "type": "object",
+        "properties": {
+          "hasActiveExemption": { "type": "boolean" },
+          "applicationTypeCode": { "type": "string", "nullable": true },
+          "applicationTypeName": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },

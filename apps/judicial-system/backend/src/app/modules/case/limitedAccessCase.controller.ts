@@ -229,7 +229,15 @@ export class LimitedAccessCaseController {
         user.nationalId,
         theCase.defendants,
       ) ||
+      Defendant.isConfirmedAppealDefenderOfDefendant(
+        user.nationalId,
+        theCase.defendants,
+      ) ||
       CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+        user.nationalId,
+        theCase.civilClaimants,
+      ) ||
+      CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
         user.nationalId,
         theCase.civilClaimants,
       )

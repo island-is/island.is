@@ -94,7 +94,7 @@ export const CivilClaimantFields = ({
     civilClaimant.nationalId ?? null,
   )
 
-  const { personData, businessData, notFound } =
+  const { personData, businessData, notFound, isLoading } =
     useNationalRegistry(lookupNationalId)
   const {
     updateCivilClaimant,
@@ -139,6 +139,11 @@ export const CivilClaimantFields = ({
         nationalId: cleanNationalId,
         civilClaimantId,
       })
+    } else {
+      // Drop a pending complete-id update if the user edits mid-lookup.
+      // Otherwise isLoading flipping to false would still save the old id
+      // and reset the input via InputNationalId's value sync.
+      setCivilClaimantNationalIdUpdate(undefined)
     }
   }
 
@@ -182,6 +187,13 @@ export const CivilClaimantFields = ({
       return
     }
 
+    // Wait for the registry request to settle so we only write once. Still
+    // persists the national id when the lookup fails (common on DEV with
+    // fake ids) because isLoading flipping to false re-runs this effect.
+    if (isLoading) {
+      return
+    }
+
     let name: string | undefined
 
     // Separately handle person and business data in order to populate
@@ -201,9 +213,8 @@ export const CivilClaimantFields = ({
     }
 
     handleSetAndSendCivilClaimantToServer(update)
-    // We want this hook to run exclusively when personData or businessData changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [personData, businessData])
+  }, [personData, businessData, isLoading])
 
   const legalProtectorCheckboxId = `defender_type_legal_rights_protector-${civilClaimant.id}`
   const lawyerCheckboxId = `defender_type_lawyer-${civilClaimant.id}`
