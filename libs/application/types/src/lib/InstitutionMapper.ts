@@ -571,4 +571,9 @@ export const institutionMapper = {
     slug: InstitutionTypes.FJARSKIPTASTOFA,
     contentfulId: InstitutionContentfulIds.FJARSKIPTASTOFA,
   },
+  [ApplicationTypes.MACHINE_LICENSE_RENEWAL]: {
+    nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
+    slug: InstitutionTypes.VINNUEFTIRLITID,
+    contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
+  },
 }
