@@ -104,7 +104,7 @@ describe('InternalNotificationController - Send indictment verdict accepted by d
       )
     })
 
-    it('should send the email the design asked for', () => {
+    it('should send ríkissaksóknari the stance with a link to the case', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: 'Ríkissaksóknari', address: publicProsecutorEmail }],
