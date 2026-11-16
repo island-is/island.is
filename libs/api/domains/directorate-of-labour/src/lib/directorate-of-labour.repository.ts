@@ -9,8 +9,9 @@ import {
   PregnancyApi,
   ParentalLeaveApi,
   ParentalLeave,
-  ApplicationInformationApi,
-  ApplicationInformation,
+  ApplicationApi,
+  NewApplication,
+  fetchParentalLeaves,
 } from '@island.is/clients/vmst'
 import format from 'date-fns/format'
 import formatISO from 'date-fns/formatISO'
@@ -42,21 +43,30 @@ export class DirectorateOfLabourRepository {
     private unionApi: UnionApi,
     private pensionApi: PensionApi,
     private pregnancyApi: PregnancyApi,
-    private applicationInfo: ApplicationInformationApi,
+    private applicationApi: ApplicationApi,
   ) {
     this.logger.debug('Created Directorate of labour repository')
   }
 
   async getApplicationInfo(
     applicationId: string,
-  ): Promise<ApplicationInformation | null> {
-    const applicationInfo =
-      await this.applicationInfo.applicationGetApplicationInformation({
+  ): Promise<NewApplication | null> {
+    const { application } = await this.applicationApi.applicationGetApplication(
+      {
         applicationId,
-      })
+      },
+    )
 
-    if (applicationInfo) {
-      return applicationInfo
+    if (application) {
+      // VMST's new response can leave a period's rights code out, and V1 reads
+      // it as a string (`rightsCodePeriod.split(',')`)
+      return {
+        ...application,
+        periods: application.periods.map((period) => ({
+          ...period,
+          rightsCodePeriod: period.rightsCodePeriod ?? '',
+        })),
+      }
     }
 
     this.logger.warning(
@@ -164,12 +174,7 @@ export class DirectorateOfLabourRepository {
     }
 
     try {
-      const results =
-        await this.parentalLeaveApi.parentalLeaveGetParentalLeaves({
-          nationalRegistryId: nationalId,
-        })
-
-      return results.parentalLeaves ?? []
+      return await fetchParentalLeaves(this.parentalLeaveApi, nationalId)
     } catch (e) {
       this.logger.error(`Could not fetch parental leaves for ${nationalId}`, e)
 

@@ -1,0 +1,3502 @@
+import set from 'lodash/set'
+import { parentalLeaveFormMessages } from './messages'
+import addDays from 'date-fns/addDays'
+import addMonths from 'date-fns/addMonths'
+import {
+  ApplicationWithAttachments as Application,
+  ApplicationStatus,
+  ApplicationTypes,
+  ExternalData,
+  Field,
+  FieldComponents,
+  FieldTypes,
+  FormValue,
+  MultiField,
+} from '@island.is/application/types'
+
+import {
+  ApplicationAction,
+  MANUAL,
+  SINGLE,
+  SPOUSE,
+  ParentalRelations,
+  ADOPTION,
+  PERMANENT_FOSTER_CARE,
+  States,
+  FileType,
+  StartDateOptions,
+  MOCK_APPLICATION_FUND_ID,
+  TransferRightsOption,
+} from '../constants'
+import { ChildInformation } from '../dataProviders/Children/types'
+import {
+  formatIsk,
+  getAvailableRightsInMonths,
+  getExpectedDateOfBirthOrAdoptionDateOrBirthDate,
+  getSelectedChild,
+  getFollowUpChildSelection,
+  getTransferredDays,
+  getOtherParentId,
+  calculateEndDateForPeriodWithStartAndLength,
+  calculatePeriodLengthInMonths,
+  applicantIsMale,
+  getOtherParentName,
+  getSpouse,
+  isEligibleForParentalLeave,
+  isFollowUpApplication,
+  getChildrenInProgress,
+  getApplicationAnswers,
+  getChildLabel,
+  isNoChildrenFoundPath,
+  getChildrenOptions,
+  isChildNotInDataSelected,
+  getPeriodIndex,
+  getApplicationExternalData,
+  getVmstApplicationId,
+  getPreviousVmstLeave,
+  getTypeOfApplicationFromRights,
+  requiresOtherParentApproval,
+  getMaxMultipleBirthsDays,
+  getMultipleBirthsDays,
+  getMultipleBirthRequestDays,
+  getMaxMultipleBirthsInMonths,
+  getMaxMultipleBirthsAndDefaultMonths,
+  getAvailablePersonalRightsInDays,
+  getAvailableRightsInDays,
+  getAvailablePersonalRightsInMonths,
+  getAdditionalSingleParentRightsInDays,
+  allowOtherParentToUsePersonalAllowance,
+  getAvailablePersonalRightsSingleParentInMonths,
+  isParentWithoutBirthParent,
+  isNotEligibleForParentWithoutBirthParent,
+  isFosterCareAndAdoption,
+  residentGrantIsOpenForApplication,
+  setTestBirthAndExpectedDate,
+  getActionName,
+  getVMSTApplicationAnswers,
+  getVMSTRightsWithTransfer,
+  getTransferFromRights,
+  getChangeBaseline,
+  pickFirstPhoneNumber,
+  vmstFirstPeriodStartToAnswer,
+  canStartOnActualDateOfBirth,
+  periodsHaveChanged,
+  employersHaveChanged,
+} from './parentalLeaveUtils'
+import {
+  getPostPruneDate,
+  hasBeenSubmittedToVMST,
+} from './parentalLeaveTemplateUtils'
+import { PersonInformation } from '../types'
+import { NO, YES, validateAnswers } from '@island.is/application/core'
+import { dataSchema } from './dataSchema'
+import {
+  ApplicationTypeSubSection,
+  FollowUpSubSection,
+  FosterCareOrAdoptionSubSection,
+  MockDataSubSection,
+  NoChildrenFoundSubSection,
+  NoPrimaryParentSubSection,
+  NewChildBirthSubSection,
+  PrerequisitesForm,
+  SelectChildSubSection,
+} from '../forms/Prerequisites'
+
+const buildApplication = (data?: {
+  answers?: FormValue
+  externalData?: ExternalData
+  state?: string
+}): Application => {
+  const { answers = {}, externalData = {}, state = 'draft' } = data ?? {}
+
+  return {
+    id: '12345',
+    assignees: [],
+    applicant: '1234567890',
+    typeId: ApplicationTypes.PARENTAL_LEAVE_V2,
+    created: new Date(),
+    modified: new Date(),
+    attachments: {},
+    applicantActors: [],
+    answers,
+    state,
+    externalData,
+    status: ApplicationStatus.IN_PROGRESS,
+  }
+}
+
+const buildField = (): Field => {
+  return {
+    type: FieldTypes.TEXT,
+    component: FieldComponents.TEXT,
+    id: 'periods',
+    title: 'fieldTitle',
+    children: undefined,
+  }
+}
+
+let id = 0
+const createApplicationBase = (): Application => ({
+  answers: {},
+  applicant: '',
+  assignees: [],
+  attachments: {},
+  created: new Date(),
+  modified: new Date(),
+  applicantActors: [],
+  externalData: {},
+  id: (id++).toString(),
+  state: '',
+  typeId: ApplicationTypes.PARENTAL_LEAVE_V2,
+  name: '',
+  status: ApplicationStatus.IN_PROGRESS,
+})
+
+describe('getExpectedDateOfBirthOrAdoptionDateOrBirthDate', () => {
+  it('should return undefined when no child is found', () => {
+    const application = buildApplication()
+    const res = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
+
+    expect(res).toBeUndefined()
+  })
+
+  it('should return the selected child expected DOB', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: undefined, // Transferred days are only defined for secondary parents
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
+
+    expect(res).toEqual('2021-05-17')
+  })
+
+  it('should return the selected child DOB', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: undefined, // Transferred days are only defined for secondary parents
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        dateOfBirth: {
+          data: {
+            dateOfBirth: '2021-05-10',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
+
+    expect(res).toEqual('2021-05-10')
+  })
+
+  it('should return the selected child adoption date if adoption', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: undefined, // Transferred days are only defined for secondary parents
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '',
+                adoptionDate: '2021-05-17',
+                dateOfBirth: '2021-01-01',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        dateOfBirth: {
+          data: {
+            dateOfBirth: '2021-01-01',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
+
+    expect(res).toEqual('2021-05-17')
+  })
+})
+
+describe('isFosterCareAndAdoption', () => {
+  it('should return true if application is due to adoption for primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        noChildrenFound: {
+          typeOfApplication: ADOPTION,
+        },
+        selectedChild: 0,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: undefined,
+                parentalRelation: 'primary',
+                expectedDateOfBirth: '2022-12-20',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date('2022-11-07T20:05:46.422Z'),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(isFosterCareAndAdoption(application)).toBe(true)
+  })
+
+  it('should return true if application is due to adoption for secondary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: 0,
+                parentalRelation: 'secondary',
+                expectedDateOfBirth: '2022-12-20',
+                primaryParentNationalRegistryId: '1111111119',
+                primaryParentGenderCode: '1',
+                primaryParentTypeOfApplication: ADOPTION,
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date('2022-11-07T20:05:46.422Z'),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(isFosterCareAndAdoption(application)).toBe(true)
+  })
+})
+
+describe('formatIsk', () => {
+  it('should take a number as input and format it following ISK format', () => {
+    const res = formatIsk(100000)
+
+    expect(res).toEqual('100.000 kr.')
+  })
+})
+
+describe('getTransferredDays', () => {
+  it('should return the number of days requested by the primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        requestRights: {
+          isRequestingRights: 'yes',
+          requestDays: 45,
+        },
+      },
+    })
+
+    const child = {
+      hasRights: true,
+      remainingDays: 180,
+      parentalRelation: ParentalRelations.primary,
+      expectedDateOfBirth: '2021-05-17',
+    } as ChildInformation
+
+    const res = getTransferredDays(application, child)
+
+    expect(res).toEqual(45)
+  })
+
+  it('should return the number of days given by the primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        giveRights: {
+          isGivingRights: 'yes',
+          giveDays: 45,
+        },
+      },
+    })
+
+    const child = {
+      hasRights: true,
+      remainingDays: 180,
+      parentalRelation: ParentalRelations.primary,
+      expectedDateOfBirth: '2021-05-17',
+    } as ChildInformation
+
+    const res = getTransferredDays(application, child)
+
+    expect(res).toEqual(-45)
+  })
+
+  it('should return the number of days given to the secondary parent', () => {
+    const application = buildApplication({
+      answers: {},
+    })
+
+    const child = {
+      hasRights: true,
+      remainingDays: 180,
+      transferredDays: 45,
+      parentalRelation: ParentalRelations.secondary,
+      expectedDateOfBirth: '2021-05-17',
+    } as ChildInformation
+
+    const res = getTransferredDays(application, child)
+
+    expect(res).toEqual(45)
+  })
+})
+
+describe('getMultipleBirthsDays', () => {
+  it('should return the number of multiple days of other parent', () => {
+    const application = buildApplication({
+      answers: {
+        multipleBirthsRequestDays: 80,
+        selectedChild: 0,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 235,
+                multipleBirthsDays: 55,
+                transferredDays: -14,
+                parentalRelation: 'secondary',
+                expectedDateOfBirth: '2022-12-20',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date('2022-11-07T20:05:46.422Z'),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getMultipleBirthsDays(application)
+
+    expect(res).toEqual(55)
+  })
+
+  it('should return the number of multiple days of primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        multipleBirthsRequestDays: 80,
+        selectedChild: 0,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                transferredDays: -14,
+                parentalRelation: 'primary',
+                expectedDateOfBirth: '2022-12-20',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date('2022-11-07T20:05:46.422Z'),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getMultipleBirthsDays(application)
+
+    expect(res).toEqual(80)
+  })
+})
+
+describe('getMultipleBirthRequestDays', () => {
+  it('should return the number of multiple request days of primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        multipleBirthsRequestDays: 80,
+        selectedChild: 0,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+        },
+      },
+    })
+
+    const res = getMultipleBirthRequestDays(application.answers)
+
+    expect(res).toEqual(80)
+  })
+})
+
+describe('getMaxMultipleBirthsDays', () => {
+  it('should return the number of maximum multiple request days for 2 children', () => {
+    const application = buildApplication({
+      answers: {
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+      },
+    })
+
+    const res = getMaxMultipleBirthsDays(application.answers)
+
+    expect(res).toEqual(180)
+  })
+
+  it('should return the number of maximum multiple request days for 3 children', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 3,
+        },
+      },
+    })
+
+    const res = getMaxMultipleBirthsDays(application.answers)
+
+    expect(res).toEqual(360)
+  })
+})
+
+describe('getMaxMultipleBirthsInMonths', () => {
+  it('should return the number of max multiple births days', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+      },
+    })
+
+    const res = getMaxMultipleBirthsInMonths(application.answers)
+
+    expect(res).toEqual(6)
+  })
+})
+
+describe('getMaxMultipleBirthsAndDefaultMonths', () => {
+  it('should return the number of months from max multiple births and default days', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+      },
+    })
+
+    const res = getMaxMultipleBirthsAndDefaultMonths(application.answers)
+
+    expect(res).toEqual(12)
+  })
+})
+
+describe('getAvailableRightsInDays', () => {
+  it('should return the number of available right with multiple births and request days for primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        multipleBirthsRequestDays: 180,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+        requestRights: {
+          isRequestingRights: YES,
+          requestDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: 30,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailableRightsInDays(application)
+
+    expect(res).toBe(390)
+  })
+
+  it('should return the number of available right with multiple births and giving days for primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        multipleBirthsRequestDays: 0,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+        giveRights: {
+          isGivingRights: YES,
+          giveDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: -30,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailableRightsInDays(application)
+
+    expect(res).toBe(150)
+  })
+
+  it('should return the number of available right with request days for primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        requestRights: {
+          isRequestingRights: YES,
+          requestDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: 30,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailableRightsInDays(application)
+
+    expect(res).toBe(210)
+  })
+
+  it('should return the number of available right with request days for secondary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        requestRights: {
+          isRequestingRights: YES,
+          requestDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 210,
+                transferredDays: 30,
+                parentalRelation: ParentalRelations.secondary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailableRightsInDays(application)
+
+    expect(res).toBe(210)
+  })
+
+  it('should return the number of available right with multiple births and giving days for secondary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        giveRights: {
+          isGivingRights: YES,
+          giveDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 150,
+                transferredDays: -30,
+                parentalRelation: ParentalRelations.secondary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailableRightsInDays(application)
+
+    expect(res).toBe(150)
+  })
+})
+
+describe('getAvailablePersonalRightsInDays', () => {
+  it('should return the number of available right with multiple births and request days for primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        multipleBirthsRequestDays: 90,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+        requestRights: {
+          isRequestingRights: YES,
+          requestDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: 30,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailablePersonalRightsInDays(application)
+
+    expect(res).toBe(180)
+  })
+
+  it('should return the number of available right with multiple births and giving days for primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        multipleBirthsRequestDays: 0,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+        giveRights: {
+          isGivingRights: YES,
+          giveDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: -30,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailablePersonalRightsInDays(application)
+
+    expect(res).toBe(180)
+  })
+
+  it('should return the number of available right with request days for primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        requestRights: {
+          isRequestingRights: YES,
+          requestDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: 30,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailablePersonalRightsInDays(application)
+
+    expect(res).toBe(180)
+  })
+
+  it('should return the number of available right with request days for secondary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        requestRights: {
+          isRequestingRights: YES,
+          requestDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 210,
+                transferredDays: 30,
+                parentalRelation: ParentalRelations.secondary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailablePersonalRightsInDays(application)
+
+    expect(res).toBe(180)
+  })
+
+  it('should return the number of available right with multiple births and giving days for secondary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        giveRights: {
+          isGivingRights: YES,
+          giveDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 150,
+                transferredDays: -30,
+                parentalRelation: ParentalRelations.secondary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailablePersonalRightsInDays(application)
+
+    expect(res).toBe(180)
+  })
+})
+
+describe('getAvailablePersonalRightsInMonths', () => {
+  it('should return the number of months with multiple births and request days for primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        multipleBirthsRequestDays: 90,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+        requestRights: {
+          isRequestingRights: YES,
+          requestDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: 30,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailablePersonalRightsInMonths(application)
+
+    expect(res).toBe(6)
+  })
+
+  it('should return the number of months with multiple births and giving days for secondary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        giveRights: {
+          isGivingRights: YES,
+          giveDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 150,
+                transferredDays: -30,
+                parentalRelation: ParentalRelations.secondary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailablePersonalRightsInMonths(application)
+
+    expect(res).toBe(6)
+  })
+})
+
+describe('getAvailableRightsInMonths', () => {
+  it('should return an error when no child is selected', () => {
+    const application = buildApplication()
+
+    expect(() => {
+      getAvailableRightsInMonths(application)
+    }).toThrow('Missing selected child')
+  })
+
+  it('should return the number of rights in months for the selected child', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailableRightsInMonths(application)
+
+    expect(res).toBe(6)
+  })
+
+  it('should return the number of months with multiple births and request days for primary parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        multipleBirthsRequestDays: 180,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+        requestRights: {
+          isRequestingRights: YES,
+          requestDays: 30,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: 30,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailableRightsInMonths(application)
+
+    expect(res).toBe(13)
+  })
+})
+
+describe('Single Parent', () => {
+  it('getAdditionalSingleParentRightsInDays - should return 0 additional days when not single parent', () => {
+    const application = buildApplication()
+
+    const res = getAdditionalSingleParentRightsInDays(application)
+
+    expect(res).toBe(0)
+  })
+
+  it('getAdditionalSingleParentRightsInDays - should return 180 days for additional right for single parent', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        otherParent: SINGLE,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAdditionalSingleParentRightsInDays(application)
+
+    expect(res).toBe(180)
+  })
+
+  it('getAdditionalSingleParentRightsInDays - should return 450 for single parent personal right', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        otherParent: SINGLE,
+        multipleBirths: {
+          multipleBirths: 2,
+          hasMultipleBirths: YES,
+        },
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailableRightsInDays(application)
+
+    expect(res).toBe(540)
+  })
+
+  it('getAvailablePersonalRightsSingleParentInMonths - should return 12 months for single parents', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+        otherParent: SINGLE,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getAvailablePersonalRightsSingleParentInMonths(application)
+
+    expect(res).toBe(12)
+  })
+})
+
+describe('getSpouse', () => {
+  it('should return null with no spouse', () => {
+    const application = buildApplication()
+    expect(getSpouse(application)).toEqual(null)
+  })
+  it('should return name and national ID of spouse', () => {
+    const application = buildApplication({
+      externalData: {
+        person: {
+          data: {
+            spouse: {
+              name: 'my spouse',
+              nationalId: 'spouse national ID',
+            },
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+    expect(getSpouse(application)).toEqual({
+      name: 'my spouse',
+      nationalId: 'spouse national ID',
+    })
+  })
+})
+
+describe('getChildrenInProgress', () => {
+  it('should list only children held by an unfinished application, with the application to open', () => {
+    const externalData: ExternalData = {
+      children: {
+        data: {
+          children: [
+            {
+              expectedDateOfBirth: '2027-10-29',
+              parentalRelation: ParentalRelations.primary,
+              inProgressApplicationId: 'waiting-for-vmst',
+            },
+            {
+              expectedDateOfBirth: '2027-05-18',
+              parentalRelation: ParentalRelations.primary,
+              inProgressApplicationId: 'pending-change',
+              inProgressIsChange: true,
+            },
+            {
+              expectedDateOfBirth: '2027-04-02',
+              parentalRelation: ParentalRelations.primary,
+              vmstApplicationId: 'approved',
+            },
+            {
+              expectedDateOfBirth: '2028-01-01',
+              parentalRelation: ParentalRelations.primary,
+            },
+          ],
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+
+    expect(getChildrenInProgress(externalData)).toEqual([
+      {
+        label: expect.objectContaining({
+          values: { dateOfBirth: '29.10.2027' },
+        }),
+        applicationId: 'waiting-for-vmst',
+        isChange: false,
+      },
+      {
+        label: expect.objectContaining({
+          values: { dateOfBirth: '18.05.2027' },
+        }),
+        applicationId: 'pending-change',
+        isChange: true,
+      },
+    ])
+  })
+
+  it("should not throw for the applicant's own unfinished adoption", () => {
+    // The synthesized child of an adoption or foster care application has no
+    // expected date of birth. Formatting it used to throw, which crashed the
+    // prerequisites of every new application while that one was in progress.
+    const externalData: ExternalData = {
+      children: {
+        data: {
+          children: [
+            {
+              expectedDateOfBirth: '',
+              adoptionDate: '2026-11-15',
+              parentalRelation: ParentalRelations.primary,
+              inProgressApplicationId: 'adoption-in-progress',
+            },
+          ],
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+
+    expect(getChildrenInProgress(externalData)).toEqual([
+      {
+        label: expect.objectContaining({
+          id: parentalLeaveFormMessages.selectChild.adoptionOrFosterCare.id,
+          values: { dateOfBirth: '15.11.2026' },
+        }),
+        applicationId: 'adoption-in-progress',
+        isChange: false,
+      },
+    ])
+  })
+})
+
+describe('getChildLabel', () => {
+  it('should name a registry child by its expected date of birth', () => {
+    expect(
+      getChildLabel({
+        expectedDateOfBirth: '2027-10-29',
+        parentalRelation: ParentalRelations.primary,
+        hasRights: true,
+        remainingDays: 180,
+      }),
+    ).toEqual({
+      ...parentalLeaveFormMessages.selectChild.baby,
+      values: { dateOfBirth: '29.10.2027' },
+    })
+  })
+
+  it("should name the applicant's own adopted or foster child by its adoption date", () => {
+    expect(
+      getChildLabel({
+        expectedDateOfBirth: '',
+        adoptionDate: '2026-11-15',
+        parentalRelation: ParentalRelations.primary,
+        hasRights: true,
+        remainingDays: 180,
+      }),
+    ).toEqual({
+      ...parentalLeaveFormMessages.selectChild.adoptionOrFosterCare,
+      values: { dateOfBirth: '15.11.2026' },
+    })
+  })
+
+  it('should not throw when there is no date at all', () => {
+    expect(
+      getChildLabel({
+        expectedDateOfBirth: '',
+        parentalRelation: ParentalRelations.primary,
+        hasRights: true,
+        remainingDays: 180,
+      }).values,
+    ).toEqual({ dateOfBirth: '' })
+  })
+})
+
+describe('getChildrenOptions', () => {
+  const childrenExternalData = (
+    children: Record<string, unknown>[],
+  ): ExternalData => ({
+    children: {
+      data: { children, existingApplications: [] },
+      date: new Date(),
+      status: 'success',
+    },
+  })
+
+  const build = (children: Record<string, unknown>[]) =>
+    getChildrenOptions(
+      buildApplication({ externalData: childrenExternalData(children) }),
+    )
+
+  it('should list children without an application before ones that have one', () => {
+    const options = build([
+      // Deliberately the order collectChildren produces: the applicant's own
+      // earlier applications come first there, for dedup precedence.
+      {
+        expectedDateOfBirth: '2027-03-04',
+        parentalRelation: ParentalRelations.primary,
+        vmstApplicationId: 'previous-application-id',
+      },
+      {
+        expectedDateOfBirth: '2028-01-01',
+        parentalRelation: ParentalRelations.primary,
+      },
+    ])
+
+    expect(options.map((o) => o.dataTestId)).toEqual([
+      'child-1',
+      'existing-application-0',
+      'child-not-in-data',
+    ])
+  })
+
+  describe('a child with a leave at VMST', () => {
+    const withLeave = (vmstLeaves: Record<string, unknown>) =>
+      getChildrenOptions(
+        buildApplication({
+          externalData: {
+            ...childrenExternalData([
+              {
+                expectedDateOfBirth: '2026-03-20',
+                dateOfBirth: '2026-03-12',
+                parentalRelation: ParentalRelations.primary,
+                vmstApplicationId: 'v1-application-id',
+              },
+            ]),
+            VMSTParentalLeaves: {
+              data: vmstLeaves,
+              date: new Date(),
+              status: 'success',
+            },
+          } as ExternalData,
+        }),
+      )[0]
+
+    it("should show the child's name and that the leave would be changed", () => {
+      const option = withLeave({
+        parentalLeaves: [
+          {
+            applicationId: 'v1-application-id',
+            periods: [
+              { from: '2026-03-12', to: '2026-05-31' },
+              { from: '2026-09-01', to: '2026-09-30' },
+            ],
+          },
+        ],
+        applications: {
+          'v1-application-id': { children: [{ name: 'Anna Jónsdóttir' }] },
+        },
+      })
+
+      expect(option.label).toBe('Anna Jónsdóttir')
+      expect(option.subLabel).toEqual(
+        parentalLeaveFormMessages.selectChild.existingLeave,
+      )
+    })
+
+    it('should fall back to the date label when VMST gives no name', () => {
+      const option = withLeave({ parentalLeaves: [], applications: {} })
+
+      expect(option.label).toMatchObject({
+        id: expect.stringContaining('plv2.application:selectChild'),
+      })
+      expect(option.subLabel).toEqual(
+        parentalLeaveFormMessages.selectChild.existingLeave,
+      )
+    })
+  })
+
+  it('should store the child key as the value, not the sorted position', () => {
+    // `selectedChild` identifies a child in externalData.children.data.children,
+    // so reordering for display must not change which child an option means.
+    const options = build([
+      {
+        expectedDateOfBirth: '2027-03-04',
+        parentalRelation: ParentalRelations.primary,
+        vmstApplicationId: 'previous-application-id',
+      },
+      {
+        expectedDateOfBirth: '2028-01-01',
+        parentalRelation: ParentalRelations.primary,
+      },
+    ])
+
+    expect(options[0].value).toBe('edd:2028-01-01')
+    expect(options[1].value).toBe('vmst:previous-application-id')
+  })
+
+  it('should use the key the provider assigned when there is one', () => {
+    const options = build([
+      {
+        key: 'edd:2028-01-01#2',
+        expectedDateOfBirth: '2028-01-01',
+        parentalRelation: ParentalRelations.primary,
+      },
+    ])
+
+    expect(options[0].value).toBe('edd:2028-01-01#2')
+  })
+
+  it('should fall back to the index for a child without a key or dates', () => {
+    const options = build([
+      {
+        expectedDateOfBirth: 'N/A',
+        parentalRelation: ParentalRelations.secondary,
+        primaryParentNationalRegistryId: 'N/A',
+      },
+    ])
+
+    expect(options[0].value).toBe('0')
+  })
+
+  it('should disable a child with an in-progress change application', () => {
+    const options = build([
+      {
+        expectedDateOfBirth: '2027-03-04',
+        parentalRelation: ParentalRelations.primary,
+        inProgressApplicationId: 'pending-change-id',
+        inProgressIsChange: true,
+      },
+      {
+        expectedDateOfBirth: '2028-01-01',
+        parentalRelation: ParentalRelations.primary,
+      },
+    ])
+
+    expect(options.map((option) => option.dataTestId)).toEqual([
+      'child-1',
+      'existing-application-0',
+      'child-not-in-data',
+    ])
+    expect(options[1].value).toBe('edd:2027-03-04')
+    expect(options[1].disabled).toBe(true)
+  })
+
+  it('should disable a child with an unfinished first-time application', () => {
+    const options = build([
+      {
+        expectedDateOfBirth: '2027-03-04',
+        parentalRelation: ParentalRelations.primary,
+        inProgressApplicationId: 'waiting-for-approval-id',
+      },
+    ])
+
+    expect((options[0] as { disabled?: boolean }).disabled).toBe(true)
+    expect(options[0].subLabel).toBe(
+      parentalLeaveFormMessages.selectChild.applicationInProgress,
+    )
+  })
+
+  it('should always offer the not-in-the-data option last', () => {
+    expect(build([]).map((o) => o.dataTestId)).toEqual(['child-not-in-data'])
+  })
+})
+
+describe('prerequisites screens hidden for a follow-up application', () => {
+  // A change or residence grant inherits all of this from the application it
+  // continues, so none of these questions should be put to the applicant again.
+  const cases: [
+    string,
+    { condition?: (a: FormValue, e: ExternalData) => boolean },
+  ][] = [
+    ['mock data', MockDataSubSection],
+    ['select child', SelectChildSubSection],
+    ['application type', ApplicationTypeSubSection],
+  ]
+
+  const externalData: ExternalData = {
+    children: {
+      data: {
+        children: [
+          {
+            expectedDateOfBirth: '2027-03-04',
+            parentalRelation: ParentalRelations.primary,
+          },
+        ],
+        existingApplications: [],
+      },
+      date: new Date(),
+      status: 'success',
+    },
+  }
+
+  it.each(cases)('should hide the %s screen', (_name, section) => {
+    expect(
+      section.condition?.(
+        { applicationAction: ApplicationAction.CHANGE },
+        externalData,
+      ),
+    ).toBe(false)
+  })
+
+  it.each(cases)(
+    'should show the %s screen for a first-time application',
+    (_name, section) => {
+      expect(section.condition?.({}, externalData)).toBe(true)
+    },
+  )
+
+  it('should show the follow-up screen only for a follow-up', () => {
+    expect(
+      FollowUpSubSection.condition?.(
+        { applicationAction: ApplicationAction.CHANGE },
+        externalData,
+      ),
+    ).toBe(true)
+    expect(FollowUpSubSection.condition?.({}, externalData)).toBe(false)
+  })
+})
+
+describe('multiple births questions on the select-child screen', () => {
+  // They must not be asked for a child that already has an application: the
+  // answer is prefilled from VMST for the leave being changed and asking again
+  // could contradict it.
+  const screen = SelectChildSubSection.children[0] as unknown as {
+    children: {
+      id: string
+      condition?: (a: FormValue, e: ExternalData) => boolean
+    }[]
+  }
+
+  const externalDataFor = (child: Record<string, unknown>): ExternalData => ({
+    children: {
+      data: { children: [child], existingApplications: [] },
+      date: new Date(),
+      status: 'success',
+    },
+  })
+
+  const conditionFor = (id: string) =>
+    screen.children.find((field) => field.id === id)?.condition
+
+  const freshChild = {
+    expectedDateOfBirth: '2028-01-01',
+    parentalRelation: ParentalRelations.primary,
+  }
+  const childBeingChanged = {
+    ...freshChild,
+    vmstApplicationId: 'previous-application-id',
+  }
+
+  it('should ask for a child with no application yet', () => {
+    const condition = conditionFor('multipleBirths.hasMultipleBirths')
+
+    expect(
+      condition?.({ selectedChild: '0' }, externalDataFor(freshChild)),
+    ).toBe(true)
+  })
+
+  it('should not ask for a child that already has an application', () => {
+    expect(
+      conditionFor('multipleBirths.hasMultipleBirths')?.(
+        { selectedChild: '0' },
+        externalDataFor(childBeingChanged),
+      ),
+    ).toBe(false)
+
+    expect(
+      conditionFor('multipleBirths.multipleBirths')?.(
+        { selectedChild: '0', multipleBirths: { hasMultipleBirths: YES } },
+        externalDataFor(childBeingChanged),
+      ),
+    ).toBe(false)
+  })
+})
+
+describe('isChildNotInDataSelected', () => {
+  it('should recognise the sentinel', () => {
+    expect(isChildNotInDataSelected({ selectedChild: 'new' })).toBe(true)
+    expect(isChildNotInDataSelected({ selectedChild: '0' })).toBe(false)
+    expect(isChildNotInDataSelected({})).toBe(false)
+  })
+})
+
+describe('isNoChildrenFoundPath', () => {
+  it('should be true when no registry child was picked', () => {
+    expect(isNoChildrenFoundPath({ selectedChild: 'new' })).toBe(true)
+    expect(isNoChildrenFoundPath({})).toBe(true)
+  })
+
+  it('should be false once a registry child is picked', () => {
+    expect(
+      isNoChildrenFoundPath({
+        selectedChild: '0',
+        noChildrenFound: { typeOfApplication: 'primary_adoption' },
+      }),
+    ).toBe(false)
+  })
+})
+
+describe('selected child on the no-children-found path', () => {
+  const registry: ExternalData = {
+    children: {
+      data: {
+        children: [
+          {
+            expectedDateOfBirth: '2027-10-29',
+            parentalRelation: ParentalRelations.primary,
+            vmstApplicationId: 'approved-leave',
+          },
+          {
+            expectedDateOfBirth: '2027-11-17',
+            parentalRelation: ParentalRelations.primary,
+          },
+        ],
+      },
+      date: new Date(),
+      status: 'success',
+    },
+  }
+  const adoption = { typeOfApplication: 'primary_adoption' }
+
+  it('should not resolve "Ný umsókn" to a registry child during prerequisites', () => {
+    // Index 0 is a registry child here, not the synthesized one. Resolving to it
+    // made the change screen start a change for that child's leave.
+    expect(
+      getSelectedChild(
+        { selectedChild: 'new', noChildrenFound: adoption },
+        registry,
+      ),
+    ).toBeNull()
+  })
+
+  it('should keep a registry child picked after answering the screens', () => {
+    expect(
+      getSelectedChild(
+        { selectedChild: '1', noChildrenFound: adoption },
+        registry,
+      )?.expectedDateOfBirth,
+    ).toBe('2027-11-17')
+  })
+
+  it('should still point at the synthesized child when none was ever picked', () => {
+    // An empty registry never asks for a child, so `selectedChild` stays unset.
+    expect(
+      getApplicationAnswers({ noChildrenFound: adoption }).selectedChild,
+    ).toBe('0')
+  })
+})
+
+describe('no-children-found prerequisites', () => {
+  const externalData: ExternalData = {
+    children: {
+      data: {
+        children: [
+          {
+            expectedDateOfBirth: '2027-10-29',
+            parentalRelation: ParentalRelations.primary,
+          },
+        ],
+      },
+      date: new Date(),
+      status: 'success',
+    },
+  }
+
+  const isShown = (
+    section: { condition?: unknown },
+    answers: FormValue,
+  ): boolean =>
+    (
+      section.condition as (
+        answers: FormValue,
+        externalData: ExternalData,
+      ) => boolean
+    )(answers, externalData)
+
+  it('should come after child selection, which is where "Ný umsókn" is picked', () => {
+    // The shell only moves forward through the form's order. Before child
+    // selection, picking "Ný umsókn" left no screen ahead and a blank page.
+    const ids = PrerequisitesForm.children[0].children?.map(({ id }) => id)
+    const selectChild = ids?.indexOf(SelectChildSubSection.id) ?? -1
+
+    expect(selectChild).toBeGreaterThan(-1)
+    for (const section of [
+      NoChildrenFoundSubSection,
+      FosterCareOrAdoptionSubSection,
+      NewChildBirthSubSection,
+      NoPrimaryParentSubSection,
+    ]) {
+      expect(ids?.indexOf(section.id)).toBeGreaterThan(selectChild)
+    }
+  })
+
+  it('should follow "Ný umsókn" with the no-children-found screens', () => {
+    const answers = {
+      selectedChild: 'new',
+      noChildrenFound: { typeOfApplication: 'primary_adoption' },
+    }
+
+    expect(isShown(NoChildrenFoundSubSection, answers)).toBe(true)
+    expect(isShown(FosterCareOrAdoptionSubSection, answers)).toBe(true)
+  })
+
+  it('should follow a new birth with the birth date screen only', () => {
+    const answers = {
+      selectedChild: 'new',
+      noChildrenFound: { typeOfApplication: 'birth' },
+    }
+
+    expect(isShown(NewChildBirthSubSection, answers)).toBe(true)
+    expect(isShown(FosterCareOrAdoptionSubSection, answers)).toBe(false)
+    expect(isShown(NoPrimaryParentSubSection, answers)).toBe(false)
+  })
+
+  it('should follow "Annað" with the parent without birth parent screen only', () => {
+    const answers = {
+      selectedChild: 'new',
+      noChildrenFound: { typeOfApplication: 'other' },
+    }
+
+    expect(isShown(NoPrimaryParentSubSection, answers)).toBe(true)
+    expect(isShown(NewChildBirthSubSection, answers)).toBe(false)
+  })
+
+  it('should keep a screen after "Umsókn vegna" before a type is picked', () => {
+    // Otherwise the shell finds nothing ahead and renders no next button.
+    expect(
+      isShown(FosterCareOrAdoptionSubSection, { selectedChild: 'new' }),
+    ).toBe(true)
+  })
+
+  it('should hide them again when a registry child is picked afterwards', () => {
+    const adoption = {
+      selectedChild: '0',
+      noChildrenFound: { typeOfApplication: 'primary_adoption' },
+    }
+    const other = {
+      selectedChild: '0',
+      noChildrenFound: { typeOfApplication: 'other' },
+    }
+
+    expect(isShown(FosterCareOrAdoptionSubSection, adoption)).toBe(false)
+    expect(isShown(NoPrimaryParentSubSection, other)).toBe(false)
+    expect(
+      isShown(NewChildBirthSubSection, {
+        selectedChild: '0',
+        noChildrenFound: { typeOfApplication: 'birth' },
+      }),
+    ).toBe(false)
+  })
+
+  it('should clear the "Ný umsókn" screens when the child or type changes', () => {
+    const findRadio = (id: string) =>
+      [
+        ...(SelectChildSubSection.children[0] as MultiField).children,
+        ...(NoChildrenFoundSubSection.children[0] as MultiField).children,
+      ].find((field) => field.id === id) as Field
+
+    for (const id of ['selectedChild', 'noChildrenFound.typeOfApplication']) {
+      expect(findRadio(id).clearOnChange).toEqual(
+        expect.arrayContaining([
+          'fosterCareOrAdoption',
+          'newChildBirth',
+          'noPrimaryParent',
+        ]),
+      )
+    }
+  })
+
+  it('should start a change from the gathered data with one submit', () => {
+    // No custom field that submits on mount: the answers that make this a
+    // change go only with the screen's own submit.
+    const screen = SelectChildSubSection.children.find(
+      ({ id }) => id === 'startChangeApplicationScreen',
+    ) as MultiField
+    const answersOf = (application: Application) =>
+      Object.fromEntries(
+        screen.children
+          .filter(({ type }) => type === FieldTypes.HIDDEN_INPUT)
+          .map((field) => {
+            const { defaultValue } = field as {
+              defaultValue?: unknown | ((application: Application) => unknown)
+            }
+            return [
+              field.id,
+              typeof defaultValue === 'function'
+                ? defaultValue(application)
+                : defaultValue,
+            ]
+          }),
+      )
+    const application = buildApplication({
+      answers: { selectedChild: '0' },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2027-03-04',
+                vmstApplicationId: 'previous-leave',
+              },
+            ],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(answersOf(application)).toEqual({
+      applicationAction: ApplicationAction.CHANGE,
+      initialQuery: 'previous-leave',
+    })
+    expect(screen.children.some(({ type }) => type === FieldTypes.SUBMIT)).toBe(
+      true,
+    )
+  })
+
+  it('should clear a started change when another child is picked', () => {
+    const selectedChild = (SelectChildSubSection.children[0] as MultiField)
+      .children[0] as Field
+
+    expect(selectedChild.id).toBe('selectedChild')
+    expect(selectedChild.clearOnChange).toEqual(
+      expect.arrayContaining(['applicationAction', 'initialQuery']),
+    )
+  })
+
+  it('should read a cleared application action as a first-time application', () => {
+    expect(
+      getApplicationAnswers({ applicationAction: '' }).applicationAction,
+    ).toBe(ApplicationAction.APPLY)
+  })
+
+  it('should let the applicant change type after backing out of a type screen', () => {
+    // The form keeps one react-hook-form instance across screens, so a type
+    // screen that was opened leaves its fields behind as empty answers. The
+    // client validates only the current screen's field ids, which a bare radio
+    // screen does not have, and then every one of those empty answers failed.
+    const typeScreen = NoChildrenFoundSubSection.children[0] as MultiField
+    const currentScreenFields = typeScreen.children.map(({ id }) => String(id))
+
+    expect(currentScreenFields).toEqual(['noChildrenFound.typeOfApplication'])
+    expect(
+      validateAnswers({
+        dataSchema,
+        answers: {
+          noChildrenFound: { typeOfApplication: 'birth' },
+          noPrimaryParent: {
+            questionOne: undefined,
+            questionTwo: undefined,
+            questionThree: undefined,
+          },
+          fosterCareOrAdoption: {
+            birthDate: undefined,
+            adoptionDate: undefined,
+          },
+        } as unknown as FormValue,
+        formatMessage: (message) => String(message),
+        currentScreenFields,
+      }),
+    ).toBeUndefined()
+  })
+})
+
+describe('isFollowUpApplication', () => {
+  it('should be false for a first-time application', () => {
+    expect(isFollowUpApplication({})).toBe(false)
+    expect(
+      isFollowUpApplication({ applicationAction: ApplicationAction.APPLY }),
+    ).toBe(false)
+  })
+
+  it('should be true for a change or residence grant', () => {
+    // This is what stops the change flow looping: the child keeps its
+    // vmstApplicationId in the change application, so the screen that starts a
+    // change has to know not to fire again.
+    expect(
+      isFollowUpApplication({ applicationAction: ApplicationAction.CHANGE }),
+    ).toBe(true)
+    expect(
+      isFollowUpApplication({
+        applicationAction: ApplicationAction.RESIDENCE_GRANT,
+      }),
+    ).toBe(true)
+  })
+})
+
+describe('isEligibleForParentalLeave', () => {
+  it('should not be eligible without data', () => {
+    const application = buildApplication()
+    expect(isEligibleForParentalLeave(application.externalData)).toBe(false)
+  })
+
+  it('should be eligible once the provider has resolved a child', () => {
+    const application = buildApplication({
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                parentalRelation: 'primary',
+                expectedDateOfBirth: '2022-10-31',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(isEligibleForParentalLeave(application.externalData)).toBe(true)
+  })
+
+  it('should be eligible for a child that already has an application, so it can be changed', () => {
+    const application = buildApplication({
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 0,
+                parentalRelation: 'primary',
+                expectedDateOfBirth: '2022-10-31',
+                vmstApplicationId: 'previous-application-id',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(isEligibleForParentalLeave(application.externalData)).toBe(true)
+  })
+})
+
+describe('getSelectedChild', () => {
+  it('should return null if it cannot find a child', () => {
+    const answers = {}
+    const externalData = {}
+    const res = getSelectedChild(answers, externalData)
+
+    expect(res).toBeNull()
+  })
+
+  it('should return the selected child', () => {
+    const answers = {
+      selectedChild: 0,
+    }
+
+    const externalData = {
+      children: {
+        data: {
+          children: [
+            {
+              hasRights: true,
+              remainingDays: 180,
+              transferredDays: undefined, // Transferred days are only defined for secondary parents
+              parentalRelation: ParentalRelations.primary,
+              expectedDateOfBirth: '2021-05-17',
+            },
+          ],
+          existingApplications: [],
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    } as ExternalData
+
+    const res = getSelectedChild(answers, externalData)
+
+    expect(res).toEqual({
+      hasRights: true,
+      remainingDays: 180,
+      transferredDays: undefined,
+      parentalRelation: ParentalRelations.primary,
+      expectedDateOfBirth: '2021-05-17',
+    })
+  })
+
+  const twoChildren = {
+    children: {
+      data: {
+        children: [
+          {
+            key: 'vmst:leave-1',
+            vmstApplicationId: 'leave-1',
+            parentalRelation: ParentalRelations.primary,
+            expectedDateOfBirth: '2021-05-17',
+          },
+          {
+            key: 'edd:2027-02-01',
+            parentalRelation: ParentalRelations.primary,
+            expectedDateOfBirth: '2027-02-01',
+          },
+        ],
+      },
+      date: new Date(),
+      status: 'success',
+    },
+  } as ExternalData
+
+  it('should find the selected child by its key wherever it is in the list', () => {
+    expect(
+      getSelectedChild({ selectedChild: 'edd:2027-02-01' }, twoChildren)
+        ?.expectedDateOfBirth,
+    ).toBe('2027-02-01')
+    expect(
+      getSelectedChild({ selectedChild: 'vmst:leave-1' }, twoChildren)
+        ?.expectedDateOfBirth,
+    ).toBe('2021-05-17')
+  })
+
+  it('should still honour an index stored before keys were introduced', () => {
+    expect(
+      getSelectedChild({ selectedChild: '1' }, twoChildren)
+        ?.expectedDateOfBirth,
+    ).toBe('2027-02-01')
+  })
+
+  it('should return null for a key no child has', () => {
+    expect(
+      getSelectedChild({ selectedChild: 'edd:2030-01-01' }, twoChildren),
+    ).toBeNull()
+  })
+})
+
+describe('getPeriodIndex', () => {
+  it('should return -1 if field id is missing', () => {
+    expect(getPeriodIndex()).toEqual(-1)
+  })
+  it('should return 0 if field id === periods', () => {
+    const field = buildField()
+    expect(getPeriodIndex(field)).toEqual(0)
+  })
+})
+
+describe('getApplicationExternalData', () => {
+  it('should get external data from application with expected return values', () => {
+    const application = buildApplication({
+      externalData: {
+        children: {
+          data: {
+            children: 'Mock child',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        userProfile: {
+          data: {
+            email: 'mock@email.is',
+            mobilePhoneNumber: 'Mock number',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        person: {
+          data: {
+            genderCode: 'Mock gender code',
+            fullName: 'Mock name',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+    expect(getApplicationExternalData(application.externalData)).toEqual({
+      applicantGenderCode: 'Mock gender code',
+      applicantName: 'Mock name',
+      applicationFundId: '',
+      childApplicationLinks: [],
+      children: 'Mock child',
+      dataProvider: {
+        children: 'Mock child',
+      },
+      existingApplications: [],
+      VMSTOtherParent: {},
+      VMSTPeriods: undefined,
+      VMSTApplicationRights: undefined,
+      VMSTApplicationInformation: undefined,
+      dateOfBirth: undefined,
+      navId: '',
+      userEmail: 'mock@email.is',
+      userPhoneNumber: 'Mock number',
+    })
+  })
+
+  it('should map VMST application information to follow-up answers', () => {
+    const application = buildApplication({
+      externalData: {
+        VMSTApplicationInformation: {
+          data: {
+            email: 'applicant@island.is',
+            phoneNumber: '6612345',
+            paymentInfo: {
+              bankAccount: '011126111111',
+              personalAllowance: 50,
+              personalAllowanceFromSpouse: 100,
+              union: { id: 'F001', name: 'Union' },
+              pensionFund: { id: 'L001', name: 'Pension' },
+              privatePensionFund: { id: 'X001', name: 'Private pension' },
+              privatePensionFundRatio: 2,
+            },
+            otherParentId: '0101307789',
+            otherParentName: 'Other Parent',
+            periods: [
+              {
+                from: '2027-01-01',
+                to: '2027-03-01',
+                ratio: '100,50',
+                firstPeriodStart: 'specificDate',
+                rightsCodePeriod: 'M-L-GR,ORLOF-FBF',
+                days: '60',
+                paid: false,
+                approved: true,
+              },
+            ],
+            employers: [
+              {
+                email: 'employer@island.is',
+                nationalRegistryId: '1111111119',
+              },
+            ],
+            applicationRights: [
+              {
+                rightsUnit: 'M-S-GR',
+                rightsDescription: 'Self employed personal right',
+                months: '6.0',
+                days: '180',
+                daysLeft: '120',
+              },
+              {
+                rightsUnit: 'ORLOF-FBF',
+                rightsDescription: 'Multiple births',
+                months: '12.0',
+                days: '360',
+                daysLeft: '360',
+              },
+            ],
+          },
+          status: 'success',
+          date: new Date(),
+        },
+      } as unknown as ExternalData,
+    })
+
+    expect(getVMSTApplicationAnswers(application.externalData)).toMatchObject({
+      applicant: {
+        email: 'applicant@island.is',
+        phoneNumber: '6612345',
+        language: 'IS',
+      },
+      applicationType: {
+        option: 'parentalLeave',
+      },
+      employment: {
+        isSelfEmployed: YES,
+      },
+      payments: {
+        bank: '011126111111',
+        pensionFund: 'L001',
+        useUnion: YES,
+        union: 'F001',
+        usePrivatePensionFund: YES,
+        privatePensionFund: 'X001',
+        privatePensionFundPercentage: '2',
+      },
+      personalAllowance: {
+        usePersonalAllowance: YES,
+        useAsMuchAsPossible: NO,
+        usage: '50',
+      },
+      personalAllowanceFromSpouse: {
+        usePersonalAllowance: YES,
+        useAsMuchAsPossible: YES,
+        usage: '100',
+      },
+      otherParent: MANUAL,
+      otherParentObj: {
+        chooseOtherParent: MANUAL,
+        otherParentId: '0101307789',
+        otherParentName: 'Other Parent',
+      },
+      periods: [
+        {
+          startDate: '2027-01-01',
+          endDate: '2027-03-01',
+          ratio: '100',
+          firstPeriodStart: 'specificDate',
+          rightCodePeriod: 'M-L-GR',
+          daysToUse: '60',
+          paid: false,
+          approved: true,
+        },
+      ],
+      employers: [
+        {
+          email: 'employer@island.is',
+          companyNationalRegistryId: '1111111119',
+        },
+      ],
+      multipleBirths: {
+        hasMultipleBirths: YES,
+        multipleBirths: '2',
+      },
+      multipleBirthsRequestDays: 360,
+    })
+  })
+
+  it('should not build a change baseline from null VMST data on first-time applications', () => {
+    const application = buildApplication({
+      externalData: {
+        VMSTApplicationInformation: {
+          data: null,
+          status: 'success',
+          date: new Date(),
+        },
+        VMSTPeriods: {
+          data: null,
+          status: 'success',
+          date: new Date(),
+        },
+        VMSTApplicationRights: {
+          data: null,
+          status: 'success',
+          date: new Date(),
+        },
+        VMSTOtherParent: {
+          data: null,
+          status: 'success',
+          date: new Date(),
+        },
+      } as unknown as ExternalData,
+    })
+
+    expect(getVMSTApplicationAnswers(application.externalData)).toEqual({})
+    expect(getChangeBaseline(application.externalData)).toBeNull()
+  })
+
+  it('should ignore failed VMST provider object payloads on mock applications', () => {
+    const application = buildApplication({
+      externalData: {
+        VMSTApplicationInformation: {
+          data: null,
+          status: 'success',
+          date: new Date(),
+        },
+        VMSTPeriods: {
+          data: {},
+          status: 'failure',
+          statusCode: 500,
+          reason: {
+            title: 'Eitthvað fór úrskeiðis',
+            summary: 'Villa kom upp',
+          },
+          date: new Date(),
+        },
+        VMSTApplicationRights: {
+          data: {},
+          status: 'failure',
+          statusCode: 500,
+          reason: {
+            title: 'Eitthvað fór úrskeiðis',
+            summary: 'Villa kom upp',
+          },
+          date: new Date(),
+        },
+        VMSTOtherParent: {
+          data: {
+            otherParentId: '',
+            otherParentName: '',
+          },
+          status: 'success',
+          date: new Date(),
+        },
+      } as unknown as ExternalData,
+    })
+
+    expect(getVMSTApplicationAnswers(application.externalData)).toEqual({})
+    expect(getChangeBaseline(application.externalData)).toBeNull()
+  })
+
+  describe('VMST leave a follow-up continues', () => {
+    const withLinks = (initialQuery: string) =>
+      buildApplication({
+        answers: { initialQuery },
+        externalData: {
+          children: {
+            data: {
+              children: [],
+              childApplicationLinks: [
+                {
+                  childKey: 'vmst:root-application-id',
+                  vmstApplicationId: 'root-application-id',
+                },
+              ],
+            },
+            date: new Date(),
+            status: 'success',
+          },
+        },
+      })
+
+    it('should take the VMST id from a leave VMST lists for the applicant', () => {
+      const application = withLinks('root-application-id')
+
+      expect(getPreviousVmstLeave(application)?.vmstApplicationId).toBe(
+        'root-application-id',
+      )
+      expect(getVmstApplicationId(application)).toBe('root-application-id')
+    })
+
+    // `initialQuery` comes from the browser and VMST's application lookup does
+    // not check ownership.
+    it('should not trust an id VMST does not list for the applicant', () => {
+      const application = withLinks('someone-elses-application-id')
+
+      expect(getPreviousVmstLeave(application)).toBeUndefined()
+      expect(getVmstApplicationId(application)).toBe(application.id)
+    })
+
+    it('should ignore a VMST id written into answers', () => {
+      const application = withLinks('root-application-id')
+      application.answers.vmstApplicationId = 'someone-elses-application-id'
+
+      expect(getVmstApplicationId(application)).toBe('root-application-id')
+    })
+  })
+
+  it('should read adoption and permanent foster care off the rights code', () => {
+    expect(getTypeOfApplicationFromRights([{ rightsUnit: 'M-Æ-L-GR' }])).toBe(
+      ADOPTION,
+    )
+    expect(getTypeOfApplicationFromRights([{ rightsUnit: 'F-FÓ-GR' }])).toBe(
+      PERMANENT_FOSTER_CARE,
+    )
+    expect(
+      getTypeOfApplicationFromRights([{ rightsUnit: 'M-L-GR' }]),
+    ).toBeUndefined()
+  })
+
+  it.each([
+    'M-L-GR-SJ',
+    'F-L-GR-SJ',
+    'FO-L-GR-SJ',
+    'M-FL-L-GRS',
+    'F-FL-L-GRS',
+    'FO-FL-L-GS',
+    'F-FÓ-GR-SJ',
+    'FO-FÓ-GR-S',
+    'M-FÓ-L-GRS',
+    'FO-Æ-L-GRS',
+    'F-Æ-L-GRSJ',
+    'M-Æ-L-GRSJ',
+  ])(
+    'should read %s, a parent both employed and self-employed, as a parental leave with employers',
+    (rightsUnit) => {
+      const application = buildApplication({
+        externalData: {
+          VMSTApplicationInformation: {
+            data: { applicationRights: [{ rightsUnit, days: '180' }] },
+            status: 'success',
+            date: new Date(),
+          },
+        } as unknown as ExternalData,
+      })
+
+      expect(getVMSTApplicationAnswers(application.externalData)).toMatchObject(
+        {
+          applicationType: { option: 'parentalLeave' },
+          employment: { isSelfEmployed: NO },
+        },
+      )
+    },
+  )
+
+  it('should pick the first phone number from a semicolon-separated VMST list', () => {
+    const application = buildApplication({
+      externalData: {
+        VMSTApplicationInformation: {
+          data: {
+            email: 'applicant@island.is',
+            phoneNumber: '8663887; 9999999; 7999999; 899',
+          },
+          status: 'success',
+          date: new Date(),
+        },
+      } as unknown as ExternalData,
+    })
+
+    expect(getVMSTApplicationAnswers(application.externalData)).toMatchObject({
+      applicant: {
+        phoneNumber: '8663887',
+      },
+    })
+  })
+
+  it('should prefill what only the VMST parental-leaves list returns', () => {
+    const application = buildApplication({
+      externalData: {
+        VMSTApplicationInformation: {
+          data: {
+            otherParentId: '0101307789',
+            otherParentName: 'Other Parent',
+            language: 'en',
+            otherParentBlocked: true,
+            noOfChildren: '3',
+            applicationRights: [
+              { rightsUnit: 'M-L-GR', days: '180' },
+              { rightsUnit: 'ORLOF-FBF', days: '360' },
+            ],
+          },
+          status: 'success',
+          date: new Date(),
+        },
+      } as unknown as ExternalData,
+    })
+
+    expect(getVMSTApplicationAnswers(application.externalData)).toMatchObject({
+      applicant: { language: 'EN' },
+      otherParentRightOfAccess: NO,
+      multipleBirths: { hasMultipleBirths: YES, multipleBirths: '3' },
+    })
+  })
+
+  it('should ignore a VMST id written into answers of a first-time application', () => {
+    const application = buildApplication({
+      answers: { vmstApplicationId: 'someone-elses-application-id' },
+    })
+
+    expect(getVmstApplicationId(application)).toBe(application.id)
+  })
+
+  it('should fall back to its own id for a first-time application', () => {
+    const application = buildApplication()
+
+    expect(getVmstApplicationId(application)).toBe(application.id)
+  })
+
+  it('should get applicationFundId from persisted navId external data', () => {
+    const application = buildApplication({
+      externalData: {
+        navId: {
+          data: '2025-03076',
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(getApplicationExternalData(application.externalData)).toMatchObject({
+      applicationFundId: '2025-03076',
+      navId: '2025-03076',
+    })
+  })
+})
+
+describe('ParentWithOutBirthParent', () => {
+  it('should return true if question one and two are answeres YES and thrid question answered NO', () => {
+    const application = buildApplication({
+      answers: {
+        noPrimaryParent: {
+          birthDate: '2023-02-03',
+          questionOne: 'yes',
+          questionTwo: 'yes',
+          questionThree: 'no',
+        },
+      },
+    })
+    expect(isParentWithoutBirthParent(application.answers)).toBe(true)
+  })
+
+  it('should return true if either question one and two are answeres NO and/or thrid question answered YES', () => {
+    const application = buildApplication({
+      answers: {
+        noPrimaryParent: {
+          questionOne: 'no',
+          questionTwo: 'yes',
+          questionThree: 'no',
+        },
+      },
+    })
+    expect(isNotEligibleForParentWithoutBirthParent(application.answers)).toBe(
+      true,
+    )
+  })
+})
+
+describe('requiresOtherParentApproval', () => {
+  it('should return false when conditions not met', () => {
+    const application = buildApplication()
+    expect(
+      requiresOtherParentApproval(
+        application.answers,
+        application.externalData,
+      ),
+    ).toBe(false)
+  })
+  it('should return true when usePersonalAllowanceFromSpouse === YES ', () => {
+    const application = buildApplication({
+      answers: {
+        otherParent: 'spouse',
+        usePersonalAllowanceFromSpouse: YES,
+      },
+    })
+    expect(
+      requiresOtherParentApproval(
+        application.answers,
+        application.externalData,
+      ),
+    ).toBe(true)
+  })
+
+  // A mock application gets the mock fund id as it leaves prerequisites; that
+  // must not make it skip the other parent.
+  it('should still require approval when the fund id is the mock one', () => {
+    const application = buildApplication({
+      answers: {
+        otherParent: 'spouse',
+        usePersonalAllowanceFromSpouse: YES,
+      },
+      externalData: {
+        navId: {
+          data: MOCK_APPLICATION_FUND_ID,
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(
+      requiresOtherParentApproval(
+        application.answers,
+        application.externalData,
+      ),
+    ).toBe(true)
+  })
+
+  it('should return false once the application has a fund id from sendApplication', () => {
+    const application = buildApplication({
+      answers: {
+        otherParent: 'spouse',
+        usePersonalAllowanceFromSpouse: YES,
+      },
+      externalData: {
+        sendApplication: {
+          data: { id: '2017-05140' },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(
+      requiresOtherParentApproval(
+        application.answers,
+        application.externalData,
+      ),
+    ).toBe(false)
+  })
+})
+
+describe('getOtherParentId', () => {
+  let id = 0
+  const createApplicationBase = (): Application => ({
+    answers: {},
+    applicant: '',
+    assignees: [],
+    attachments: {},
+    created: new Date(),
+    modified: new Date(),
+    applicantActors: [],
+    externalData: {},
+    id: (id++).toString(),
+    state: '',
+    typeId: ApplicationTypes.PARENTAL_LEAVE_V2,
+    name: '',
+    status: ApplicationStatus.IN_PROGRESS,
+  })
+
+  let application: Application
+  beforeEach(() => {
+    application = createApplicationBase()
+  })
+
+  it('should return undefined if NO parent is selected', () => {
+    application.answers.otherParentObj = {
+      chooseOtherParent: NO,
+    }
+
+    expect(getOtherParentId(application)).toBeUndefined()
+  })
+
+  it('should return answers.otherParentId if manual is selected', () => {
+    const expectedId = '1234567899'
+
+    application.answers.otherParentObj = {
+      chooseOtherParent: MANUAL,
+      otherParentId: expectedId,
+    }
+
+    expect(getOtherParentId(application)).toBe(expectedId)
+  })
+
+  it('should return spouse if spouse is selected', () => {
+    const expectedSpouse: PersonInformation['spouse'] = {
+      name: 'Spouse Spouseson',
+      nationalId: '1234567890',
+    }
+
+    application.externalData.person = {
+      data: {
+        spouse: expectedSpouse,
+      },
+      date: new Date(),
+      status: 'success',
+    }
+    application.answers.otherParentObj = {
+      chooseOtherParent: 'spouse',
+    }
+
+    expect(getOtherParentId(application)).toBe(expectedSpouse.nationalId)
+  })
+
+  it('should not return other parent id if where is no primary parent birth date', () => {
+    const expectedId = ''
+
+    const application = buildApplication({
+      answers: {
+        noPrimaryParent: {
+          birthDate: '2023-02-03',
+          questionOne: 'no',
+          questionTwo: 'yes',
+          questionThree: 'yes',
+        },
+      },
+    })
+
+    expect(getOtherParentId(application)).toBe(expectedId)
+  })
+})
+
+describe('getOtherParentName', () => {
+  let application: Application
+  beforeEach(() => {
+    application = createApplicationBase()
+  })
+
+  it('should return undefined if NO parent is selected', () => {
+    application.answers.otherParentObj = {
+      chooseOtherParent: NO,
+    }
+
+    expect(getOtherParentName(application)).toBeUndefined()
+  })
+
+  it('should return answers.otherParentName if manual is selected', () => {
+    const expectedName = '1234567899'
+
+    application.answers.otherParentObj = {
+      chooseOtherParent: MANUAL,
+      otherParentName: expectedName,
+    }
+
+    expect(getOtherParentName(application)).toBe(expectedName)
+  })
+
+  it('should return spouse if spouse is selected', () => {
+    const expectedSpouse: PersonInformation['spouse'] = {
+      name: 'Spouse Spouseson',
+      nationalId: '1234567890',
+    }
+
+    application.externalData.person = {
+      data: {
+        spouse: expectedSpouse,
+      },
+      date: new Date(),
+      status: 'success',
+    }
+    application.answers.otherParentObj = {
+      chooseOtherParent: 'spouse',
+    }
+
+    expect(getOtherParentName(application)).toBe(expectedSpouse.name)
+  })
+})
+
+describe('calculateEndDateForPeriodWithStartAndLength', () => {
+  it('should calculate month + n and day of month - 1 for whole months', () => {
+    expect(
+      calculateEndDateForPeriodWithStartAndLength('2021-01-01', 1),
+    ).toEqual(new Date(2021, 0, 31))
+
+    expect(
+      calculateEndDateForPeriodWithStartAndLength('2021-01-01', 2),
+    ).toEqual(new Date(2021, 1, 28))
+
+    expect(
+      calculateEndDateForPeriodWithStartAndLength('2021-01-01', 3),
+    ).toEqual(new Date(2021, 2, 31))
+
+    expect(
+      calculateEndDateForPeriodWithStartAndLength('2021-06-15', 1),
+    ).toEqual(new Date(2021, 6, 14))
+
+    expect(
+      calculateEndDateForPeriodWithStartAndLength('2021-02-28', 1),
+    ).toEqual(new Date(2021, 2, 27))
+  })
+
+  it('should calculate month + n for whole months when startDate is 31', () => {
+    expect(
+      calculateEndDateForPeriodWithStartAndLength('2021-01-31', 1),
+    ).toEqual(new Date(2021, 1, 28))
+
+    expect(
+      calculateEndDateForPeriodWithStartAndLength('2021-03-31', 1),
+    ).toEqual(new Date(2021, 3, 30))
+
+    expect(
+      calculateEndDateForPeriodWithStartAndLength('2020-12-31', 1),
+    ).toEqual(new Date(2021, 0, 31))
+  })
+
+  it('should calculate month + n and multiply remainder with 28', () => {
+    const addWholeMonthsPlusRemainder = (
+      startDate: string,
+      wholeMonths: number,
+      remainder: number,
+    ) => {
+      const whole = calculateEndDateForPeriodWithStartAndLength(
+        startDate,
+        wholeMonths,
+      )
+
+      return addDays(whole, remainder * 28)
+    }
+
+    expect(addWholeMonthsPlusRemainder('2021-01-01', 0, 0.5)).toEqual(
+      new Date(2021, 0, 0.5 * 28),
+    )
+
+    expect(addWholeMonthsPlusRemainder('2021-01-01', 1, 0.5)).toEqual(
+      new Date(2021, 1, 0.5 * 28),
+    )
+
+    expect(addWholeMonthsPlusRemainder('2021-01-01', 5, 0.5)).toEqual(
+      new Date(2021, 5, 0.5 * 28),
+    )
+
+    expect(addWholeMonthsPlusRemainder('2021-02-28', 0, 0.5)).toEqual(
+      new Date(2021, 2, 0.5 * 28 - 1),
+    )
+
+    expect(addWholeMonthsPlusRemainder('2021-03-01', 0, 0.5)).toEqual(
+      new Date(2021, 2, 0.5 * 28),
+    )
+  })
+})
+
+describe('calculatePeriodLengthInMonths', () => {
+  it('should calculate whole months correctly', () => {
+    expect(
+      calculatePeriodLengthInMonths(
+        '2021-01-01',
+        calculateEndDateForPeriodWithStartAndLength(
+          '2021-01-01',
+          1,
+        ).toISOString(),
+      ),
+    ).toBe(1)
+
+    expect(
+      calculatePeriodLengthInMonths(
+        '2021-01-31',
+        calculateEndDateForPeriodWithStartAndLength(
+          '2021-01-31',
+          1,
+        ).toISOString(),
+      ),
+    ).toBe(1)
+  })
+
+  it('should calculate half months correctly', () => {
+    expect(calculatePeriodLengthInMonths('2021-01-01', '2021-01-15')).toBe(0.5)
+    expect(calculatePeriodLengthInMonths('2021-01-14', '2021-01-28')).toBe(0.5)
+    expect(calculatePeriodLengthInMonths('2021-01-31', '2021-02-13')).toBe(0.5)
+    expect(calculatePeriodLengthInMonths('2021-02-28', '2021-03-14')).toBe(0.5)
+    expect(calculatePeriodLengthInMonths('2021-02-28', '2021-03-28')).toBe(1)
+    expect(calculatePeriodLengthInMonths('2021-02-28', '2021-04-13')).toBe(1.5)
+    expect(calculatePeriodLengthInMonths('2021-02-28', '2021-05-13')).toBe(2.5)
+    expect(calculatePeriodLengthInMonths('2021-02-28', '2021-07-13')).toBe(4.5)
+    expect(calculatePeriodLengthInMonths('2021-02-28', '2022-07-13')).toBe(16.5)
+    expect(calculatePeriodLengthInMonths('2021-03-27', '2021-04-11')).toBe(0.5)
+  })
+})
+
+describe('applicantIsMale', () => {
+  it('should return false if genderCode is missing', () => {
+    const application = buildApplication()
+
+    expect(applicantIsMale(application)).toBe(false)
+  })
+
+  it('should return false if genderCode is present and !== "1"', () => {
+    const application1 = buildApplication()
+    const application2 = buildApplication()
+    const application3 = buildApplication()
+
+    set(application1.externalData, 'person.data.genderCode', '0')
+    set(application2.externalData, 'person.data.genderCode', 'invalid')
+    set(application3.externalData, 'person.data.genderCode', '11')
+
+    expect(applicantIsMale(application1)).toBe(false)
+    expect(applicantIsMale(application2)).toBe(false)
+    expect(applicantIsMale(application3)).toBe(false)
+  })
+
+  it('should return true if genderCode is === "1"', () => {
+    const application = buildApplication()
+
+    set(application.externalData, 'person.data.genderCode', '1')
+
+    expect(applicantIsMale(application)).toBe(true)
+  })
+})
+
+test.each([
+  { parentRelation: '', expected: false },
+  { parentRelation: SPOUSE, expected: true },
+  { parentRelation: SINGLE, expected: false },
+  { parentRelation: 'some bogus value', expected: false },
+])(
+  'it should return true if the otherParent is SPOUSE otherwise false',
+  ({ parentRelation, expected }) => {
+    const application = buildApplication({
+      answers: {
+        otherParentObj: {
+          chooseOtherParent: parentRelation,
+        },
+      },
+    })
+    expect(allowOtherParentToUsePersonalAllowance(application.answers)).toBe(
+      expected,
+    )
+  },
+)
+test.each([
+  { date: setTestBirthAndExpectedDate(6, 0, false, true), expected: true },
+  { date: setTestBirthAndExpectedDate(7, 0, false, true), expected: false },
+  { date: setTestBirthAndExpectedDate(1, 0, true, false), expected: false },
+  { date: setTestBirthAndExpectedDate(0, 0, true, false), expected: true },
+  { date: setTestBirthAndExpectedDate(0, 0, false, true), expected: true },
+  { date: setTestBirthAndExpectedDate(10), expected: true },
+])(
+  'should return true if today is after the date and within 6 months of the date',
+  ({ date, expected }) => {
+    expect(residentGrantIsOpenForApplication(date.birthDate)).toBe(expected)
+  },
+)
+
+describe('getActionName', () => {
+  let application: Application
+  beforeEach(() => {
+    application = createApplicationBase()
+  })
+
+  it('should return FileType.EMPDOCPER if changeEmployerFile, changeEmployer and changePeriods', () => {
+    set(application, 'answers.fileUpload.changeEmployerFile', [
+      { name: 'file1.pdf', key: 'Key1' },
+    ])
+    set(application, 'answers.changeEmployer', true)
+    set(application, 'answers.changePeriods', true)
+
+    application.state = States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
+
+    const result = getActionName(application)
+
+    expect(result).toBe(FileType.EMPDOCPER)
+  })
+
+  it('should return FileType.PERIOD if changePeriods', () => {
+    set(application, 'answers.changePeriods', true)
+
+    application.state = States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
+
+    const result = getActionName(application)
+
+    expect(result).toBe(FileType.PERIOD)
+  })
+
+  it('should return FileType.EMPLOYER if changeEmployer', () => {
+    set(application, 'answers.changeEmployer', true)
+
+    application.state = States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
+
+    const result = getActionName(application)
+
+    expect(result).toBe(FileType.EMPLOYER)
+  })
+
+  it('should return FileType.EMPPER if changePeriods & changeEmployer', () => {
+    set(application, 'answers.changeEmployer', true)
+    set(application, 'answers.changePeriods', true)
+
+    application.state = States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
+
+    const result = getActionName(application)
+
+    expect(result).toBe(FileType.EMPPER)
+  })
+
+  it('should return FileType.DOCUMENT if state is ADDITIONAL_DOCUMENTS_REQUIRED', () => {
+    application.state = application.state = States.ADDITIONAL_DOCUMENTS_REQUIRED
+
+    const result = getActionName(application)
+
+    expect(result).toBe(FileType.DOCUMENT)
+  })
+
+  it('should return FileType.DOCUMENT if state is ADDITIONAL_DOCUMENTS_REQUIRED_FOR_EDITS', () => {
+    application.state = States.ADDITIONAL_DOCUMENTS_REQUIRED_FOR_EDITS
+
+    const result = getActionName(application)
+
+    expect(result).toBe(FileType.DOCUMENT)
+  })
+
+  it('should return undefined if no conditions met', () => {
+    application.state = application.state = States.CLOSED
+
+    const result = getActionName(application)
+
+    expect(result).toBeUndefined()
+  })
+})
+
+describe('pickFirstPhoneNumber', () => {
+  it('should return undefined for empty or missing input', () => {
+    expect(pickFirstPhoneNumber(undefined)).toBeUndefined()
+    expect(pickFirstPhoneNumber(null)).toBeUndefined()
+    expect(pickFirstPhoneNumber('')).toBeUndefined()
+    expect(pickFirstPhoneNumber('   ')).toBeUndefined()
+    expect(pickFirstPhoneNumber(';;;')).toBeUndefined()
+  })
+
+  it('should return the input unchanged when there is only one number', () => {
+    expect(pickFirstPhoneNumber('8663887')).toBe('8663887')
+    expect(pickFirstPhoneNumber('  8663887  ')).toBe('8663887')
+  })
+
+  it('should return the first non-empty entry from a semicolon-separated list', () => {
+    expect(pickFirstPhoneNumber('8663887; 9999999; 7999999; 899')).toBe(
+      '8663887',
+    )
+    expect(pickFirstPhoneNumber('866-3887; 4213075;')).toBe('866-3887')
+    expect(pickFirstPhoneNumber('; 8663887; 9999999')).toBe('8663887')
+  })
+})
+
+describe('getApplicationExternalData applicationFundId', () => {
+  // Regression: `getValueViaPath` only substitutes its default when a path is
+  // absent, so a path that exists and holds `null` came back as `null`. Readers
+  // compare against '' — the other-parent filter in ChildrenService among them —
+  // so a null quietly defeated them.
+  it('should be an empty string, not null, when nothing has reached VMST', () => {
+    const { applicationFundId } = getApplicationExternalData({
+      navId: { data: null, date: new Date(), status: 'success' },
+      sendApplication: { data: null, date: new Date(), status: 'success' },
+    } as unknown as ExternalData)
+
+    expect(applicationFundId).toBe('')
+  })
+
+  it('should be an empty string when no provider has run at all', () => {
+    const { applicationFundId } = getApplicationExternalData(
+      {} as unknown as ExternalData,
+    )
+
+    expect(applicationFundId).toBe('')
+  })
+
+  it('should take the fund id from sendApplication once the application is sent', () => {
+    const { applicationFundId } = getApplicationExternalData({
+      navId: { data: null, date: new Date(), status: 'success' },
+      sendApplication: {
+        data: { id: '2017-05140' },
+        date: new Date(),
+        status: 'success',
+      },
+    } as unknown as ExternalData)
+
+    expect(applicationFundId).toBe('2017-05140')
+  })
+})
+
+describe('vmstFirstPeriodStartToAnswer', () => {
+  const future = addDays(new Date(), 30).toISOString().slice(0, 10)
+  const past = addDays(new Date(), -30).toISOString().slice(0, 10)
+
+  it.each(['date_of_birth', 'date_of_birth_months'])(
+    'maps a future %s period to actualDateOfBirth',
+    (firstPeriodStart) => {
+      expect(
+        vmstFirstPeriodStartToAnswer({ from: future, firstPeriodStart }),
+      ).toBe(StartDateOptions.ACTUAL_DATE_OF_BIRTH)
+    },
+  )
+
+  it('uses the date VMST sent once a date_of_birth period has started', () => {
+    expect(
+      vmstFirstPeriodStartToAnswer({
+        from: past,
+        firstPeriodStart: 'date_of_birth',
+      }),
+    ).toBe(StartDateOptions.SPECIFIC_DATE)
+  })
+
+  it.each([null, undefined, 'specific_date'])(
+    'maps %s to specificDate',
+    (firstPeriodStart) => {
+      expect(
+        vmstFirstPeriodStartToAnswer({ from: future, firstPeriodStart }),
+      ).toBe(StartDateOptions.SPECIFIC_DATE)
+    },
+  )
+})
+
+describe('canStartOnActualDateOfBirth', () => {
+  const withChild = (child: object, dateOfBirth?: string) => {
+    const application = buildApplication({ answers: { selectedChild: '0' } })
+    set(application.externalData, 'children.data.children', [
+      { parentalRelation: ParentalRelations.primary, ...child },
+    ])
+    if (dateOfBirth) {
+      set(application.externalData, 'dateOfBirth.data.dateOfBirth', dateOfBirth)
+    }
+    return application
+  }
+  const inAMonth = addDays(new Date(), 30).toISOString().slice(0, 10)
+
+  it('is true for a child that is expected and not yet born', () => {
+    expect(
+      canStartOnActualDateOfBirth(withChild({ expectedDateOfBirth: inAMonth })),
+    ).toBe(true)
+  })
+
+  it('is false once the child is born', () => {
+    expect(
+      canStartOnActualDateOfBirth(
+        withChild({ expectedDateOfBirth: inAMonth }, inAMonth),
+      ),
+    ).toBe(false)
+  })
+
+  it('is false for adoption and foster care', () => {
+    expect(
+      canStartOnActualDateOfBirth(
+        withChild({ expectedDateOfBirth: '', adoptionDate: inAMonth }),
+      ),
+    ).toBe(false)
+  })
+
+  it('is false when the expected date of birth is before this month', () => {
+    expect(
+      canStartOnActualDateOfBirth(
+        withChild({ expectedDateOfBirth: '2020-01-15' }),
+      ),
+    ).toBe(false)
+  })
+})
+
+describe('periodsHaveChanged', () => {
+  const period = {
+    startDate: '2027-01-15',
+    endDate: '2027-03-15',
+    ratio: '100',
+  }
+
+  it('flags switching to or from the actual date of birth', () => {
+    expect(
+      periodsHaveChanged(
+        [{ ...period, firstPeriodStart: StartDateOptions.SPECIFIC_DATE }],
+        [
+          {
+            ...period,
+            firstPeriodStart: StartDateOptions.ACTUAL_DATE_OF_BIRTH,
+          },
+        ],
+      ),
+    ).toBe(true)
+  })
+
+  it('ignores estimated vs specific date when the dates are the same', () => {
+    expect(
+      periodsHaveChanged(
+        [{ ...period, firstPeriodStart: StartDateOptions.SPECIFIC_DATE }],
+        [
+          {
+            ...period,
+            firstPeriodStart: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
+          },
+        ],
+      ),
+    ).toBe(false)
+  })
+})
+
+describe('employersHaveChanged', () => {
+  const employer = {
+    email: 'employer@island.is',
+    ratio: '100',
+    stillEmployed: YES,
+  } as const
+
+  it('ignores key order and workflow fields', () => {
+    expect(
+      employersHaveChanged(
+        [{ ...employer }],
+        [
+          {
+            stillEmployed: YES,
+            isApproved: true,
+            reviewerNationalRegistryId: '0101302399',
+            ratio: '100',
+            email: 'employer@island.is',
+          },
+        ],
+      ),
+    ).toBe(false)
+  })
+
+  it('flags a changed email or ratio', () => {
+    expect(
+      employersHaveChanged([employer], [{ ...employer, ratio: '50' }]),
+    ).toBe(true)
+    expect(
+      employersHaveChanged(
+        [employer],
+        [{ ...employer, email: 'other@island.is' }],
+      ),
+    ).toBe(true)
+  })
+
+  it('flags an added or removed employer', () => {
+    expect(employersHaveChanged([employer], [employer, employer])).toBe(true)
+    expect(employersHaveChanged([employer], [])).toBe(true)
+  })
+
+  it('only compares stillEmployed when VMST reported it', () => {
+    const { stillEmployed: _stillEmployed, ...withoutStillEmployed } = employer
+    expect(employersHaveChanged([withoutStillEmployed], [employer])).toBe(false)
+    expect(
+      employersHaveChanged([employer], [{ ...employer, stillEmployed: NO }]),
+    ).toBe(true)
+  })
+})
+
+describe('hasBeenSubmittedToVMST', () => {
+  it('should be true for a real fund id', () => {
+    const application = buildApplication({
+      externalData: {
+        navId: { data: '2017-05140', date: new Date(), status: 'success' },
+      },
+    })
+    expect(hasBeenSubmittedToVMST(application)).toBe(true)
+  })
+
+  it('should be false for the mock fund id', () => {
+    const application = buildApplication({
+      externalData: {
+        navId: {
+          data: MOCK_APPLICATION_FUND_ID,
+          date: new Date(),
+          status: 'success',
+        },
+        sendApplication: {
+          data: { id: MOCK_APPLICATION_FUND_ID },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+    expect(hasBeenSubmittedToVMST(application)).toBe(false)
+  })
+})
+
+describe('getPostPruneDate', () => {
+  const sentApplication = (sentToVMSTId: string) =>
+    buildApplication({
+      answers: { selectedChild: 0 },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2027-06-27',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        sentToVMST: {
+          data: { id: sentToVMSTId },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+  it('should keep the ids until the leave can no longer be changed, with a margin for a later birth', () => {
+    // 24 months to change the leave, 3 for a later birth
+    expect(getPostPruneDate(sentApplication('2017-05170'))).toEqual(
+      addMonths(new Date('2027-06-27'), 27),
+    )
+  })
+
+  it('should leave an application VMST never received to the default', () => {
+    expect(
+      getPostPruneDate(sentApplication(MOCK_APPLICATION_FUND_ID)),
+    ).toBeUndefined()
+  })
+
+  it('should leave a change, which shares the case number of the leave it continues, to the default', () => {
+    const change = sentApplication('2017-05170')
+    change.answers.initialQuery = 'f7c66108-0000-4000-8000-000000000000'
+
+    expect(getPostPruneDate(change)).toBeUndefined()
+  })
+
+  it('should leave an application without a child date to the default', () => {
+    expect(
+      getPostPruneDate(
+        buildApplication({
+          externalData: {
+            sentToVMST: {
+              data: { id: '2017-05170' },
+              date: new Date(),
+              status: 'success',
+            },
+          },
+        }),
+      ),
+    ).toBeUndefined()
+  })
+})
+
+describe('getFollowUpChildSelection', () => {
+  const children = [
+    {
+      key: 'edd:2026-01-01',
+      parentalRelation: ParentalRelations.primary,
+      expectedDateOfBirth: '2026-01-01',
+    },
+    {
+      key: 'edd:2027-03-04',
+      parentalRelation: ParentalRelations.primary,
+      expectedDateOfBirth: '2027-03-04',
+    },
+  ]
+
+  it("should match the child on VMST's dates when no child carries the leave id", () => {
+    const application = buildApplication({
+      answers: { applicationAction: 'change', initialQuery: 'unlinked' },
+      externalData: {
+        children: {
+          data: { children, childApplicationLinks: [] },
+          date: new Date(),
+          status: 'success',
+        },
+        VMSTApplicationInformation: {
+          data: { expectedDateOfBirth: '2027-03-04T00:00:00' },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(getFollowUpChildSelection(application)).toBe('edd:2027-03-04')
+  })
+
+  it('should find nothing when neither the id nor the dates match', () => {
+    const application = buildApplication({
+      answers: { applicationAction: 'change', initialQuery: 'unlinked' },
+      externalData: {
+        children: {
+          data: { children, childApplicationLinks: [] },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    expect(getFollowUpChildSelection(application)).toBeUndefined()
+  })
+})
+
+describe('transferring days in a change application', () => {
+  const base = (days: string) => ({ rightsUnit: 'M-L-GR', days, months: '6.0' })
+  const received = (days: string) => ({ rightsUnit: 'FSAL-GR', days })
+
+  const changeApplication = (
+    vmstRights: Record<string, unknown>[],
+    answers: FormValue = {},
+  ) =>
+    buildApplication({
+      answers: {
+        selectedChild: 0,
+        otherParentObj: {
+          chooseOtherParent: MANUAL,
+          otherParentId: '0101302399',
+        },
+        ...answers,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 0,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2026-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        VMSTApplicationRights: {
+          data: vmstRights,
+          date: new Date(),
+          status: 'success',
+        },
+      } as unknown as ExternalData,
+    })
+
+  it('should read the days requested or given off the rights VMST holds', () => {
+    expect(getTransferFromRights([base('180'), received('30')])).toEqual({
+      requestDays: 30,
+      giveDays: 0,
+    })
+    expect(getTransferFromRights([base('165')])).toEqual({
+      requestDays: 0,
+      giveDays: 15,
+    })
+    expect(getTransferFromRights([base('180')])).toEqual({
+      requestDays: 0,
+      giveDays: 0,
+    })
+    // More than can be given is not a transfer
+    expect(getTransferFromRights([base('90')])).toEqual({
+      requestDays: 0,
+      giveDays: 0,
+    })
+  })
+
+  it('should prefill the transfer VMST holds into the change form', () => {
+    const requesting = changeApplication([base('180'), received('30')])
+    expect(getVMSTApplicationAnswers(requesting.externalData)).toMatchObject({
+      transferRights: TransferRightsOption.REQUEST,
+      requestRights: { isRequestingRights: YES, requestDays: '30' },
+      giveRights: { isGivingRights: NO, giveDays: '0' },
+    })
+
+    const giving = changeApplication([base('165')])
+    expect(getVMSTApplicationAnswers(giving.externalData)).toMatchObject({
+      transferRights: TransferRightsOption.GIVE,
+      requestRights: { isRequestingRights: NO, requestDays: '0' },
+      giveRights: { isGivingRights: YES, giveDays: '15' },
+    })
+  })
+
+  it('should keep the rights VMST holds until the transfer is answered', () => {
+    const application = changeApplication([base('180'), received('30')])
+
+    expect(getVMSTRightsWithTransfer(application)).toEqual([
+      base('180'),
+      received('30'),
+    ])
+    expect(getAvailableRightsInDays(application)).toBe(210)
+  })
+
+  it('should add the days a change requests', () => {
+    const application = changeApplication([base('180')], {
+      transferRights: TransferRightsOption.REQUEST,
+      requestRights: { isRequestingRights: YES, requestDays: '45' },
+    })
+
+    expect(getVMSTRightsWithTransfer(application)).toEqual([
+      base('180'),
+      expect.objectContaining({
+        rightsUnit: 'FSAL-GR',
+        days: '45',
+        months: '1.5',
+        daysLeft: '45',
+      }),
+    ])
+    expect(getAvailableRightsInDays(application)).toBe(225)
+  })
+
+  it('should swap a request for giving days', () => {
+    const application = changeApplication([base('180'), received('30')], {
+      transferRights: TransferRightsOption.GIVE,
+      requestRights: { isRequestingRights: NO, requestDays: '0' },
+      giveRights: { isGivingRights: YES, giveDays: '15' },
+    })
+
+    expect(getVMSTRightsWithTransfer(application)).toEqual([
+      { rightsUnit: 'M-L-GR', days: '165', months: '5.5' },
+    ])
+    expect(getAvailableRightsInDays(application)).toBe(165)
+  })
+
+  it('should give back days given before when the change stops giving', () => {
+    const application = changeApplication([base('165')], {
+      transferRights: TransferRightsOption.NONE,
+      requestRights: { isRequestingRights: NO, requestDays: '0' },
+      giveRights: { isGivingRights: NO, giveDays: '0' },
+    })
+
+    expect(getAvailableRightsInDays(application)).toBe(180)
+  })
+
+  it('should leave the rights alone when the transfer is what VMST holds', () => {
+    const vmstRights = [base('180'), received('30')]
+    const application = changeApplication(vmstRights, {
+      transferRights: TransferRightsOption.REQUEST,
+      requestRights: { isRequestingRights: YES, requestDays: '30' },
+    })
+
+    expect(getVMSTRightsWithTransfer(application)).toEqual(vmstRights)
+  })
+})
