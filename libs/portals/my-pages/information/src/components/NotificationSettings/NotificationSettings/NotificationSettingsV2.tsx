@@ -33,6 +33,7 @@ export const NotificationSettingsV2 = () => {
     wantsPaper,
     postPaperMailMutation,
     loading: paperMailLoading,
+    error: paperMailError,
   } = usePaperMail()
   const { value: isSmsNotificationEnabled } = useFeatureFlag(
     Features.isSmsNotificationEnabled,
@@ -66,7 +67,9 @@ export const NotificationSettingsV2 = () => {
   }, [userProfile])
 
   useEffect(() => {
-    setSettings((current) => ({ ...current, wantsPaper: wantsPaper ?? false }))
+    if (wantsPaper !== null) {
+      setSettings((current) => ({ ...current, wantsPaper }))
+    }
   }, [wantsPaper])
 
   const onChange = async (
@@ -170,14 +173,23 @@ export const NotificationSettingsV2 = () => {
             onChange={(active: boolean) => onChange('smsNotifications', active)}
           />
         )}
-        <SettingsCard
-          variant="card"
-          title={formatMessage(mNotifications.paperMailTitle)}
-          subtitle={formatMessage(mNotifications.paperMailDescription)}
-          toggleLabel={formatMessage(mNotifications.paperMailAriaLabel)}
-          checked={settings.wantsPaper}
-          onChange={onPaperMailChange}
-        />
+        {paperMailError && wantsPaper === null ? (
+          <Stack space={1}>
+            <Text variant="h5" as="h4">
+              {formatMessage(mNotifications.paperMailTitle)}
+            </Text>
+            <Problem error={paperMailError} size="small" />
+          </Stack>
+        ) : (
+          <SettingsCard
+            variant="card"
+            title={formatMessage(mNotifications.paperMailTitle)}
+            subtitle={formatMessage(mNotifications.paperMailDescription)}
+            toggleLabel={formatMessage(mNotifications.paperMailAriaLabel)}
+            checked={settings.wantsPaper}
+            onChange={onPaperMailChange}
+          />
+        )}
       </Stack>
     </Stack>
   )
