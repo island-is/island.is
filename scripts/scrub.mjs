@@ -13,6 +13,18 @@ import { spawnSync } from 'child_process'
 import fs from 'fs'
 import { pathToFileURL } from 'url'
 
+const FREE_TEXT_KEY_NAMES = [
+  '[\\w-]*comments?',
+  '[\\w-]*remarks?',
+  'athugasemd(?:ir)?',
+  '[\\w-]+reasons?',
+  'explanation',
+  'moreDetails',
+  'accidentSymptoms',
+  'descriptionOfAccident',
+  'complaintDescription',
+].join('|')
+
 const SENSITIVE_KEY_NAMES = [
   '(?!__typename\\b)[\\w-]*name',
   'nafn',
@@ -34,6 +46,11 @@ const SENSITIVE_KEY_NAMES = [
   '(?:set[_-])?cookie',
   'iban',
   '(?:bank[_-]?)?account(?:[_-]?number)?',
+  '(?!exp|estimated)[\\w-]*date[_-]?of[_-]?birth',
+  '(?!exp|estimated)[\\w-]*birth[_-]?(?:date|day)',
+  'dob',
+  'f(?:æ|ae)[ðd]ingardag(?:ur)?',
+  FREE_TEXT_KEY_NAMES,
 ].join('|')
 
 const SENSITIVE_KEY = new RegExp(`^(?:${SENSITIVE_KEY_NAMES})$`, 'iu')
@@ -41,6 +58,9 @@ const PERSON_NAME_KEY =
   /^(?:full|first|middle|last|given|family|user|display)[_-]?name$/i
 const PLACEHOLDER = /^\[[A-Z-]+(?:-\d+)?\]$/
 
+const S3_URL =
+  /\b(?:https?:\/\/(?:[\w-]+\.)*s3[\w.-]*\.amazonaws\.com|s3:\/\/[\w.-]+)\/[^\s"'<>\\]*/gi
+const UUID_PREFIX = /^[\da-f]{8}-(?:[\da-f]{4}-){3}[\da-f]{12}-/i
 const PRIVATE_KEY =
   /-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----/g
 const JWT = /\beyJ[\w-]*\.[\w-]+\.[\w-]*/g
@@ -50,6 +70,11 @@ const URL_SECRET_PARAM =
 const KEY_VALUE = new RegExp(
   `(\\\\?["']?)(?<![\\w.-])((?:[\\w-]+\\.)*(?:${SENSITIVE_KEY_NAMES}))\\1(\\s*[:=]\\s*)` +
     `(\\\\?"(?:[^"\\\\]|\\\\.)*?\\\\?"|'[^']*'|\\[[A-Z-]+(?:-\\d+)?\\]|(?:\\[[A-Z-]+(?:-\\d+)?\\]|[^\\s,;&}\\]])(?:\\[[A-Z-]+(?:-\\d+)?\\]|[^,;&}\\]\\r\\n])*?(?=\\s*(?:[,;&}\\]\\r\\n]|$)|\\s+[\\w.-]+\\s*[:=]))`,
+  'giu',
+)
+const FREE_TEXT_LINE = new RegExp(
+  `(\\\\?["']?)(?<![\\w.-])((?:[\\w-]+\\.)*(?:${FREE_TEXT_KEY_NAMES}))\\1(\\s*[:=]\\s*)` +
+    `(?!\\\\?["']|\\[[A-Z-]+(?:-\\d+)?\\]|(?:true|false)\\b)(\\S[^\\r\\n]*)`,
   'giu',
 )
 const COOKIE_HEADER = /\b((?:set-)?cookie\s*[:=]\s*)[^\r\n"]+/gi
@@ -104,6 +129,7 @@ const isSensitiveKey = (key, value) => {
   const lastSegment = key.split('.').pop() ?? ''
   return (
     SENSITIVE_KEY.test(lastSegment) &&
+    !/^(?:true|false)$/.test(value) &&
     (!/name$/i.test(lastSegment) ||
       PERSON_NAME_KEY.test(lastSegment) ||
       looksLikePersonName(value))
@@ -316,6 +342,11 @@ const createScrubber = (knownNames = []) => {
           ? `'${redacted('sql', literal.slice(1, -1))}'`
           : literal,
       )
+      .replace(
+        FREE_TEXT_LINE,
+        (_, quote, key, separator, value) =>
+          `${quote}${key}${quote}${separator}${redacted(key, value)}`,
+      )
       .replace(KEY_VALUE, (match, quote, key, separator, value) => {
         const quoted = /^(\\?["'])([\s\S]*?)(\\?["'])$/.exec(value)
         const [, inner = '', rest = ''] = quoted
@@ -344,6 +375,20 @@ const createScrubber = (knownNames = []) => {
   /** @param {string} text */
   const scrubValues = (text) =>
     text
+      .replace(S3_URL, (url) => {
+        const path = urlDecoded(url.split(/[?#]/)[0]).split('"')[0]
+        const fileName = (
+          path
+            .replace(/^\w+:\/\/[^/]*/, '')
+            .split('/')
+            .filter(Boolean)
+            .at(-1) ?? ''
+        ).replace(UUID_PREFIX, '')
+        const placeholder = label('S3-URL', path)
+        return /\.\w+$/.test(fileName)
+          ? `${placeholder}/${fileName}`
+          : placeholder
+      })
       .replace(URL_SECRET_PARAM, maskSecretParam)
       .replace(URL_ENCODED, (token) => urlDecoded(token))
       .replace(PRIVATE_KEY, () => label('PRIVATE-KEY', 'key'))
@@ -483,7 +528,9 @@ What it masks:
                       [BANK-ACCOUNT-n]
   Tokens, JWTs, private keys
                       [TOKEN-n], [JWT-n], [PRIVATE-KEY-n]
-  Passwords, API keys, cookies, secret URL parameters, SQL values
+  S3 URLs             [S3-URL-n]/<file name>: only the file name is kept
+  Passwords, API keys, cookies, secret URL parameters, SQL values,
+  birth dates, comments and other free text
                       [REDACTED]
 
 URL-encoded and Base64 text is decoded and scrubbed too.
