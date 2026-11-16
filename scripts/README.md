@@ -47,12 +47,19 @@ yarn hmr-benchmark --app services-sessions --message 'Nest application successfu
 
 ## Scrub before sharing
 
-Masks personal data and secrets in raw errors, such as those from Datadog, GraphQL responses or the browser console, before they are shared. The logger masks only personal kennitölur, and errors that bypass it carry emails, names, phone numbers, tokens and request bodies.
+Masks personal data and secrets in text or raw data, such as that from Datadog, GraphQL responses, the browser console or database queries, before it is shared.
 
-Logs and extracted application data, such as the result of a database query, work too. Each value gets a consistent label (`[KT-PERSON-1]`, `[NAME-1]`), so people can still be told apart. The script is an aid, not a guarantee: read the output before sharing it.
+Each value gets a consistent label (`[KT-PERSON-1]`, `[NAME-1]`), so people can still be told apart. The script is an aid, not a guarantee: read the output before sharing it.
+
+To scrub the clipboard:
 
 ```bash
 pbpaste | node scripts/scrub.mjs | pbcopy
+```
+
+To scrub a file, ask for extra names to mask and list what was masked:
+
+```bash
 node scripts/scrub.mjs --names --show application.json > scrubbed.json
 ```
 
