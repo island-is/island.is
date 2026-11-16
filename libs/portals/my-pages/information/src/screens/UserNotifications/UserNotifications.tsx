@@ -14,7 +14,7 @@ import { ActorProfileNotificationSettings } from '../../components/NotificationS
 import { useFeatureFlag } from '@island.is/react/feature-flags'
 import { Features } from '@island.is/feature-flags'
 import { NotificationSettingsV2 } from '../../components/NotificationSettings/NotificationSettings/NotificationSettingsV2'
-import { NotificationTypeSettings } from '@/components/NotificationSettings/NotificationTypeSettings/NotificationTypeSettings'
+import { NotificationTypeSettings } from '../../components/NotificationSettings/NotificationTypeSettings/NotificationTypeSettings'
 
 const UserProfile = () => {
   useNamespaces('sp.notifications')
