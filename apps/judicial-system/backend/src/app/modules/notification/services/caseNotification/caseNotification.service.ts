@@ -2327,9 +2327,9 @@ export class CaseNotificationService extends BaseNotificationService {
       theCase.court?.name ?? 'héraðsdómi',
     )
     const subject = `Afstaða í máli ${courtCaseNumber}`
-    const body = `Verjandi hefur uppfært afstöðu dómfellda til dóms í máli ${courtCaseNumber} hjá ${courtName}.<br /><br />Afstaða: ${getVerdictAppealDecision(
-      VerdictAppealDecision.ACCEPT,
-    )}.<br /><br />Sjá nánar á yfirlitssíðu málsins í Réttarvörslugátt.`
+    const stance = getVerdictAppealDecision(VerdictAppealDecision.ACCEPT)
+    const link = `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">yfirlitssíðu málsins í Réttarvörslugátt</a>`
+    const body = `Verjandi hefur uppfært afstöðu dómfellda til dóms í máli ${courtCaseNumber} hjá ${courtName}.<br /><br />Afstaða: ${stance}.<br /><br />Sjá nánar á ${link}.`
 
     const publicProsecutorEmail =
       await this.institutionContactRepositoryService.getInstitutionContact(

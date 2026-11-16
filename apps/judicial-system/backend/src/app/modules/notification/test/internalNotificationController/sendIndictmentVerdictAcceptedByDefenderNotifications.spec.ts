@@ -109,7 +109,7 @@ describe('InternalNotificationController - Send indictment verdict accepted by d
         expect.objectContaining({
           to: [{ name: 'Ríkissaksóknari', address: publicProsecutorEmail }],
           subject: `Afstaða í máli ${courtCaseNumber}`,
-          html: `Verjandi hefur uppfært afstöðu dómfellda til dóms í máli ${courtCaseNumber} hjá Héraðsdómi Reykjavíkur.<br /><br />Afstaða: Unir dómi.<br /><br />Sjá nánar á yfirlitssíðu málsins í Réttarvörslugátt.`,
+          html: `Verjandi hefur uppfært afstöðu dómfellda til dóms í máli ${courtCaseNumber} hjá Héraðsdómi Reykjavíkur.<br /><br />Afstaða: Unir dómi.<br /><br />Sjá nánar á <a href="${mockConfig.clientUrl}/beinir/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(then.result).toEqual({ delivered: true })
