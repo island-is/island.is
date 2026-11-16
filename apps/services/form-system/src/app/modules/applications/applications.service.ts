@@ -25,6 +25,7 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { jwtDecode } from 'jwt-decode'
+import axios from 'axios'
 import * as kennitala from 'kennitala'
 import pick from 'lodash/pick'
 import { Op, QueryTypes } from 'sequelize'
@@ -67,6 +68,7 @@ import { DataFromUrlResDto } from './models/dto/dataFromUrl.response.dto'
 import { DataFromUrlReqDto } from './models/dto/dataFromUrl.request.dto'
 import { Payment } from '../payment/payment.model'
 import { buildApplicationPdf } from '../../../utils/applicationPdf'
+import { getOrganizationLogoUrl } from '../../../utils/organizationLogo'
 import { ApplicationPdfResponseDto } from './models/dto/applicationPdf.response.dto'
 
 @Injectable()
@@ -767,11 +769,53 @@ export class ApplicationsService {
       )
     }
 
-    const pdf = await buildApplicationPdf(response.application, locale)
+    const pdf = await this.createApplicationPdf(response.application, locale)
     return {
       base64: pdf.toString('base64'),
       filename: `${slug}-${applicationId}.pdf`,
     }
+  }
+
+  async createApplicationPdf(
+    application: ApplicationDto,
+    locale: Locale = 'is',
+  ): Promise<Buffer> {
+    const organization = application.organizationNationalId
+      ? await this.organizationModel.findOne({
+          where: { nationalId: application.organizationNationalId },
+        })
+      : null
+    if (application.organizationNationalId && !organization) {
+      throw new NotFoundException(
+        `Organization with nationalId ${application.organizationNationalId} not found`,
+      )
+    }
+    const logoUrl = organization?.logo?.is
+    let logo: Buffer | undefined
+
+    if (logoUrl) {
+      const url = getOrganizationLogoUrl(logoUrl)
+      url.searchParams.set('fm', 'png')
+      url.searchParams.set('w', '240')
+      url.searchParams.set('h', '120')
+      url.searchParams.set('fit', 'pad')
+      try {
+        const response = await axios.get<ArrayBuffer>(url.toString(), {
+          responseType: 'arraybuffer',
+          timeout: 10000,
+          maxContentLength: 5 * 1024 * 1024,
+          maxRedirects: 0,
+        })
+        logo = Buffer.from(response.data)
+      } catch (error) {
+        this.logger.warn('Failed to download organization logo for PDF', {
+          applicationId: application.id,
+          error,
+        })
+      }
+    }
+
+    return buildApplicationPdf(application, locale, logo)
   }
 
   async findAllByNationalId(
