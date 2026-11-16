@@ -7,7 +7,6 @@ import type {
   GetVehicleTaxData,
   GetWithholdingTaxData,
   InterestBenefitResult,
-  TaxBracket,
   VehicleBenefitResult,
   VehicleDepreciationResult,
   VehicleTaxResult,
@@ -31,7 +30,6 @@ export type VehicleTaxInput = GetVehicleTaxData['query']
 export type VehicleTaxOutput = VehicleTaxResult
 
 export type WithholdingTaxInput = GetWithholdingTaxData['query']
-export type WithholdingTaxBracketOutput = TaxBracket
 export type WithholdingTaxOutput = WithholdingTaxResult
 
 interface CalculatorTypes {
