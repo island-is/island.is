@@ -209,7 +209,7 @@ export const applyAssetPolicies = (
     },
   ]
 
-  // Only reading is ever unlocked by the readable-by-all tag
+  // The readable-by-all tag lets other organizations read the asset, it doesn't give them edit access
   if (!allowReadingAllAssets) {
     allowedWhen.push({
       in: [{ doc: 'metadata.tags.sys.id' }, [READABLE_BY_ALL_TAG_ID]],
@@ -336,7 +336,8 @@ export const applyEntryEditPolicies = (
 
   if (readDeniedContentTypeIds.length === 0) return
 
-  // Reading is denied in a single policy so the readable-by-all tag can unlock reading (and only reading)
+  // Reading is denied in a single policy so the readable-by-all tag can let other organizations read,
+  // without giving them edit access (edit access is still decided by the policies above)
   policies.push({
     actions: ['read'],
     effect: 'deny',

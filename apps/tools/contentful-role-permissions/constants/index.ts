@@ -3,7 +3,8 @@ export const contentfulManagementAccessToken =
 export const spaceId = process.env.CONTENTFUL_SPACE || '8k0h54kbe6bj'
 export const environmentId = process.env.CONTENTFUL_ENVIRONMENT || 'master'
 
-// Entries and assets with this tag are readable (never editable) by every organization role
+// Entries and assets with this tag can be read by every organization role.
+// It only adds read access, edit access stays the same (the owning organization can still edit)
 export const READABLE_BY_ALL_TAG_ID = 'readableByAll'
 
 export const DEFAULT_EDITABLE_ENTRY_TYPE_IDS = [
