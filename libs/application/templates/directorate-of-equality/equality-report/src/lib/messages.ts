@@ -511,6 +511,74 @@ export const messages = {
         defaultMessage: 'Hlaðið upp jafnréttisáætlun áður en þú heldur áfram.',
       },
     }),
+    attachments: defineMessages({
+      title: {
+        id: 'doe.er.application:equalityReport.attachments.title',
+        defaultMessage: 'Fylgiskjöl',
+      },
+      description: {
+        id: 'doe.er.application:equalityReport.attachments.description',
+        defaultMessage:
+          'Hér getur þú sent fylgiskjöl með jafnréttisáætluninni, til dæmis aðgerðaáætlun í Excel. Leyfileg snið eru PDF, Word (.docx) og Excel (.xlsx, .xls). Hámark 6 skjöl, hvert að hámarki 4 MB. Aðeins Jafnréttisstofa sér skjölin.',
+      },
+      uploadButton: {
+        id: 'doe.er.application:equalityReport.attachments.uploadButton',
+        defaultMessage: 'Velja skjöl til að hlaða upp',
+      },
+      loadError: {
+        id: 'doe.er.application:equalityReport.attachments.loadError',
+        defaultMessage:
+          'Ekki tókst að sækja fylgiskjöl. Reyndu aftur eftir smá stund.',
+      },
+      uploadError: {
+        id: 'doe.er.application:equalityReport.attachments.uploadError',
+        defaultMessage:
+          'Ekki tókst að hlaða upp skjalinu {filename}. Reyndu aftur.',
+      },
+      rejected: {
+        id: 'doe.er.application:equalityReport.attachments.rejected',
+        defaultMessage:
+          'Jafnréttisstofa tók ekki við skjalinu {filename}. Gakktu úr skugga um að skjalið sé á leyfilegu sniði, innihaldi ekki fjölva og að innihald þess passi við skráarendinguna.',
+      },
+      rejectedWithReason: {
+        id: 'doe.er.application:equalityReport.attachments.rejectedWithReason',
+        defaultMessage:
+          'Jafnréttisstofa tók ekki við skjalinu {filename}: {reason}',
+      },
+      removeError: {
+        id: 'doe.er.application:equalityReport.attachments.removeError',
+        defaultMessage: 'Ekki tókst að eyða skjalinu {filename}. Reyndu aftur.',
+      },
+      unsupportedType: {
+        id: 'doe.er.application:equalityReport.attachments.unsupportedType',
+        defaultMessage:
+          'Skjalið {filename} er ekki á leyfilegu sniði. Leyfileg snið eru PDF, .docx, .xlsx og .xls.',
+      },
+      tooLarge: {
+        id: 'doe.er.application:equalityReport.attachments.tooLarge',
+        defaultMessage:
+          'Skjalið {filename} er of stórt. Hvert skjal má vera að hámarki 4 MB.',
+      },
+      empty: {
+        id: 'doe.er.application:equalityReport.attachments.empty',
+        defaultMessage: 'Skjalið {filename} er tómt.',
+      },
+      filenameTooLong: {
+        id: 'doe.er.application:equalityReport.attachments.filenameTooLong',
+        defaultMessage:
+          'Heiti skjalsins {filename} er of langt. Styttu heitið og reyndu aftur.',
+      },
+      limitReached: {
+        id: 'doe.er.application:equalityReport.attachments.limitReached',
+        defaultMessage:
+          'Hámarksfjölda fylgiskjala er náð. Eyddu skjali til að bæta öðru við.',
+      },
+      overLimit: {
+        id: 'doe.er.application:equalityReport.attachments.overLimit',
+        defaultMessage:
+          'Aðeins má senda 6 fylgiskjöl. {count, plural, one {# skjal var ekki hlaðið upp} other {# skjöl voru ekki hlaðin upp}}.',
+      },
+    }),
     previousEqualityPlan: defineMessages({
       sectionTitle: {
         id: 'doe.er.application:equalityReport.previousEqualityPlan.sectionTitle',
