@@ -15,7 +15,7 @@ export const FieldSettingsFragment = gql`
     maxDateDaysFromToday
     minAmount
     maxAmount
-    notIncludedInSumbox
+    fieldsToSum
     year
     hasLink
     url

@@ -1,5 +1,6 @@
 import { Link, Stack, usePathname } from 'expo-router'
 import { StyleSheet, View, Text } from 'react-native'
+import { tokens } from '@/ui'
 
 export default function NotFoundScreen(props: any) {
   const pathname = usePathname()
@@ -35,6 +36,6 @@ const styles = StyleSheet.create({
   },
   linkText: {
     fontSize: 14,
-    color: '#2e78b7',
+    color: tokens.interactive.foreground.primary,
   },
 })

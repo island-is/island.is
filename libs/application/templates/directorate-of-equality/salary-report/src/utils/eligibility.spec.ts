@@ -62,6 +62,24 @@ describe('hasPostponedOutlierPlan', () => {
     ).toBe(false)
   })
 
+  // The mirrored answer is written by the screen that ran the latest analysis,
+  // so it wins over a stored snapshot that says otherwise.
+  it('follows the mirrored answer over the stored analysis', () => {
+    expect(
+      hasPostponedOutlierPlan(
+        ctx(
+          {
+            salaryAnalysis: {
+              postponed: [YES],
+              hasMinimumSetOutliers: false,
+            },
+          },
+          analysis(2),
+        ),
+      ),
+    ).toBe(false)
+  })
+
   // No stored snapshot: the mirrored answer is all there is to go on, and it
   // says a plan is required — so the postpone stands.
   it('falls back to the mirrored answer when no analysis is stored', () => {

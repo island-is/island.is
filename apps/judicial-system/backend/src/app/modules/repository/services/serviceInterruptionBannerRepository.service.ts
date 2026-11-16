@@ -2,7 +2,6 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
@@ -28,37 +27,50 @@ export class ServiceInterruptionBannerRepositoryService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async find(): Promise<ServiceInterruptionBanner> {
-    this.logger.debug('Finding service interruption banner settings')
+  // Null when the single settings row has not been seeded. Whether that is
+  // an error is the caller's decision.
+  async find(): Promise<ServiceInterruptionBanner | null> {
+    try {
+      this.logger.debug('Finding service interruption banner settings')
 
-    const banner = await this.serviceInterruptionBannerModel.findByPk(
-      SERVICE_INTERRUPTION_BANNER_ID,
-    )
+      return await this.serviceInterruptionBannerModel.findByPk(
+        SERVICE_INTERRUPTION_BANNER_ID,
+      )
+    } catch (error) {
+      this.logger.error('Error finding service interruption banner settings:', {
+        error,
+      })
 
-    if (!banner) {
-      throw new NotFoundException('Service interruption banner not found')
+      throw error
     }
-
-    return banner
   }
 
   async update(
     update: UpdateServiceInterruptionBanner,
   ): Promise<ServiceInterruptionBanner> {
-    this.logger.debug('Updating service interruption banner settings')
+    try {
+      this.logger.debug('Updating service interruption banner settings')
 
-    const [numberOfAffectedRows, updatedBanners] =
-      await this.serviceInterruptionBannerModel.update(update, {
-        where: { id: SERVICE_INTERRUPTION_BANNER_ID },
-        returning: true,
-      })
+      const [numberOfAffectedRows, updatedBanners] =
+        await this.serviceInterruptionBannerModel.update(update, {
+          where: { id: SERVICE_INTERRUPTION_BANNER_ID },
+          returning: true,
+        })
 
-    if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(
-        'Could not update service interruption banner',
+      if (numberOfAffectedRows < 1) {
+        throw new InternalServerErrorException(
+          'Could not update service interruption banner',
+        )
+      }
+
+      return updatedBanners[0]
+    } catch (error) {
+      this.logger.error(
+        'Error updating service interruption banner settings:',
+        { error },
       )
-    }
 
-    return updatedBanners[0]
+      throw error
+    }
   }
 }

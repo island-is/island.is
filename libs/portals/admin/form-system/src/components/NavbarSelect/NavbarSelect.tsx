@@ -114,7 +114,13 @@ export const NavbarSelect = () => {
             type="Field"
             data={field as FormSystemField}
             active={activeItem?.data?.id === field?.id}
-            selectable={selectable}
+            selectable={
+              selectStatus === NavbarSelectStatus.SUM_FIELDS
+                ? field?.fieldType === FieldTypesEnum.ISK_NUMBERBOX &&
+                  field?.screenId ===
+                    (activeItem.data as FormSystemField)?.screenId
+                : selectable
+            }
             stylePaymentFieldAsSection={
               field?.fieldType === FieldTypesEnum.PAYMENT
             }
@@ -135,7 +141,9 @@ export const NavbarSelect = () => {
             type="Screen"
             data={screen as FormSystemScreen}
             active={activeItem?.data?.id === screen?.id}
-            selectable={selectable}
+            selectable={
+              selectStatus !== NavbarSelectStatus.SUM_FIELDS && selectable
+            }
           />
           {openComponents.screens.includes(screen?.id as string) &&
             renderFieldsForScreen(screen)}
@@ -158,7 +166,9 @@ export const NavbarSelect = () => {
           type="Field"
           data={field}
           active={activeItem?.data?.id === field.id}
-          selectable={selectable}
+          selectable={
+            selectStatus !== NavbarSelectStatus.SUM_FIELDS && selectable
+          }
           stylePaymentFieldAsSection
         />
       )
@@ -185,7 +195,9 @@ export const NavbarSelect = () => {
               type="Section"
               data={section}
               active={activeItem?.data?.id === section.id}
-              selectable={selectable}
+              selectable={
+                selectStatus !== NavbarSelectStatus.SUM_FIELDS && selectable
+              }
             />
             {openComponents.sections.includes(section.id) &&
               renderScreensForSection(section)}

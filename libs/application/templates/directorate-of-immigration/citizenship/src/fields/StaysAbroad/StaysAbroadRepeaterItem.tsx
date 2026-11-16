@@ -26,6 +26,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { OptionSetItem } from '@island.is/clients/directorate-of-immigration'
 import { getErrorViaPath } from '@island.is/application/core'
 import { CountryOfVisit } from '../../shared'
+import { getBirthDate } from '../../utils'
 
 interface Props {
   id: string
@@ -59,6 +60,7 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
   const purposeField = `${fieldIndex}.purpose`
   const wasRemovedField = `${fieldIndex}.wasRemoved`
   const dateRangeField = `${fieldIndex}.dateRange`
+  const birthDate = getBirthDate(application.applicant)
 
   const dateRangeError =
     errors &&
@@ -110,11 +112,11 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
         justifyContent="spaceBetween"
         marginTop={showItemTitle || itemNumber > 0 ? 2 : 0}
       >
-        {showItemTitle &&
-          DescriptionFormField({
-            application: application,
-            showFieldName: false,
-            field: {
+        {showItemTitle && (
+          <DescriptionFormField
+            application={application}
+            showFieldName={false}
+            field={{
               id: 'title',
               title: '',
               description: formatMessage(
@@ -125,8 +127,9 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
               type: FieldTypes.DESCRIPTION,
               component: FieldComponents.DESCRIPTION,
               children: undefined,
-            },
-          })}
+            }}
+          />
+        )}
 
         {itemNumber > 0 && !readOnly && (
           <Button
@@ -176,6 +179,7 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
               onChange={(value) =>
                 addDataToCountryList('dateFrom', value as string, index)
               }
+              minDate={birthDate}
               maxDate={new Date()}
               required
             />
@@ -190,6 +194,7 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
               onChange={(value) =>
                 addDataToCountryList('dateTo', value as string, index)
               }
+              minDate={birthDate}
               maxDate={new Date()}
               required
             />

@@ -680,6 +680,99 @@ describe('FormsService import', () => {
     ])
   })
 
+  it('remaps selected currency field IDs on every copy without mutating the source', async () => {
+    const { service, form, formModel, fieldModel } = setup()
+    const sourceScreen = form.sections[0].screens[0]
+    const sourceField = sourceScreen.fields[0]
+    const beforeId = randomUUID()
+    const afterId = randomUUID()
+    const fieldsToSum = [afterId, beforeId, randomUUID()]
+    Object.assign(sourceScreen, {
+      fields: [
+        {
+          ...sourceField,
+          id: beforeId,
+          identifier: 'before',
+          fieldType: FieldTypesEnum.ISK_NUMBERBOX,
+          fieldSettings: { minAmount: 0 },
+          list: [],
+        },
+        {
+          ...sourceField,
+          identifier: 'sum',
+          displayOrder: 1,
+          fieldType: FieldTypesEnum.ISK_SUMBOX,
+          fieldSettings: { fieldsToSum, zendeskCustomFieldId: 'custom' },
+        },
+        {
+          ...sourceField,
+          id: afterId,
+          identifier: 'after',
+          displayOrder: 2,
+          fieldType: FieldTypesEnum.ISK_NUMBERBOX,
+          fieldSettings: { maxAmount: 1000 },
+          list: [],
+        },
+      ],
+    })
+    const source = formModel.build(form) as Form
+    const sourceJson = source.toJSON()
+    const copyService = service as unknown as {
+      copyForm: (...args: unknown[]) => Promise<Form>
+    }
+
+    for (const slug of ['first-copy', 'second-copy']) {
+      await copyService.copyForm(
+        form.id,
+        false,
+        false,
+        slug,
+        undefined,
+        undefined,
+        source,
+      )
+
+      const [before, sum, after] = fieldModel.bulkCreate.mock.lastCall[0]
+      expect(before.id).not.toBe(beforeId)
+      expect(after.id).not.toBe(afterId)
+      expect(sum.fieldSettings).toEqual({
+        fieldsToSum: [after.id, before.id],
+        zendeskCustomFieldId: 'custom',
+      })
+      expect(before.fieldSettings).toEqual({ minAmount: 0 })
+      expect(after.fieldSettings).toEqual({ maxAmount: 1000 })
+      expect(source.toJSON()).toEqual(sourceJson)
+    }
+  })
+
+  it.each([{ fieldsToSum: [] }, { fieldsToSum: null }, {}])(
+    'preserves default sum settings when copying: %j',
+    async (fieldSettings) => {
+      const { service, form, formModel, fieldModel } = setup()
+      Object.assign(form.sections[0].screens[0].fields[0], {
+        fieldType: FieldTypesEnum.ISK_SUMBOX,
+        fieldSettings,
+      })
+      const copyService = service as unknown as {
+        copyForm: (...args: unknown[]) => Promise<Form>
+      }
+
+      await copyService.copyForm(
+        form.id,
+        false,
+        false,
+        'copy',
+        undefined,
+        undefined,
+        formModel.build(form),
+      )
+
+      expect(fieldModel.bulkCreate.mock.calls[0][0][0].fieldSettings).toEqual(
+        fieldSettings,
+      )
+    },
+  )
+
   it('drops dangling references when copying without mutating the source', async () => {
     const {
       service,

@@ -79,7 +79,7 @@ describe('AppealSummonsService - Deliver to national commissioners office', () =
     mockCaseRepositoryService = module.caseRepositoryService
     transaction = {} as Transaction
     ;(
-      mockAppealSummonsRepositoryService.findServiceRecipientById as jest.Mock
+      mockAppealSummonsRepositoryService.findServiceRecipientByIdForUpdate as jest.Mock
     ).mockResolvedValue(service)
   })
 
@@ -108,12 +108,14 @@ describe('AppealSummonsService - Deliver to national commissioners office', () =
         },
       )
 
+    // The row lock, and the ancestor walk in the same transaction so it does
+    // not take a second connection while the lock is held.
     expect(
-      mockAppealSummonsRepositoryService.findServiceRecipientById,
-    ).toHaveBeenCalledWith(serviceId, summonsId, {
-      transaction,
-      lock: true,
-    })
+      mockAppealSummonsRepositoryService.findServiceRecipientByIdForUpdate,
+    ).toHaveBeenCalledWith(serviceId, summonsId, { transaction })
+    expect(
+      mockCaseRepositoryService.findOriginalAncestorId,
+    ).toHaveBeenCalledWith(theCase, { transaction })
     expect(mockPoliceService.createDocument).toHaveBeenCalledWith(
       expect.objectContaining({
         caseId,
@@ -146,7 +148,7 @@ describe('AppealSummonsService - Deliver to national commissioners office', () =
       externalPoliceDocumentId: uuid(),
     } as AppealSummonsServiceRecipient
     ;(
-      mockAppealSummonsRepositoryService.findServiceRecipientById as jest.Mock
+      mockAppealSummonsRepositoryService.findServiceRecipientByIdForUpdate as jest.Mock
     ).mockResolvedValueOnce(alreadyDelivered)
 
     const result =

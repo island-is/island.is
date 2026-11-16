@@ -1,3 +1,5 @@
+import { NotFoundException } from '@nestjs/common'
+
 import { createTestingServiceInterruptionBannerModule } from './createTestingServiceInterruptionBannerModule'
 
 import {
@@ -61,6 +63,22 @@ describe('ServiceInterruptionBannerController - Get', () => {
 
     it('should return the banner', () => {
       expect(then.result).toBe(banner)
+    })
+  })
+
+  describe('banner not found', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFind = mockRepository.find as jest.Mock
+      mockFind.mockResolvedValueOnce(null)
+
+      then = await givenWhenThen()
+    })
+
+    it('should respond with not found', () => {
+      expect(then.error).toBeInstanceOf(NotFoundException)
+      expect(then.error.message).toBe('Service interruption banner not found')
     })
   })
 })

@@ -30,6 +30,7 @@ describe('LawyerRegistryService - populate', () => {
     phoneNumber: lmfiLawyer.GSM,
     practice: lmfiLawyer.Practice,
     isLitigator: true,
+    hasCourtOfAppealsRights: false,
   }
 
   let originalFetch: typeof global.fetch
