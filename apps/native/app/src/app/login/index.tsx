@@ -15,7 +15,6 @@ async function logInWithMocks() {
   await setupNativeMocking()
   preferencesStore.setState({
     hasOnboardedBiometrics: true,
-    hasOnboardedPinCode: true,
     hasOnboardedNotifications: true,
   })
   authStore.setState({

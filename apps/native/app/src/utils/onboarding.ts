@@ -9,14 +9,12 @@ export function isOnboarded() {
   const {
     hasOnboardedNotifications,
     hasOnboardedBiometrics,
-    hasOnboardedPinCode,
     hasOnboardedPrivacy,
   } = preferencesStore.getState()
 
   return (
     hasOnboardedBiometrics &&
     (Platform.OS === 'android' || hasOnboardedNotifications) &&
-    hasOnboardedPinCode &&
     hasOnboardedPrivacy
   )
 }
@@ -26,18 +24,13 @@ export function isOnboarded() {
  * or null if onboarding is done.
  */
 export async function getNextOnboardingStep(): Promise<
-  'pin-code' | 'biometrics' | 'notifications' | 'privacy' | null
+  'biometrics' | 'notifications' | 'privacy' | null
 > {
   const {
     hasOnboardedNotifications,
     hasOnboardedBiometrics,
-    hasOnboardedPinCode,
     hasOnboardedPrivacy,
   } = preferencesStore.getState()
-
-  if (!hasOnboardedPinCode) {
-    return 'pin-code'
-  }
 
   const hasHardware = await hasHardwareAsync()
   if (hasHardware) {
@@ -74,9 +67,7 @@ export async function nextOnboardingStep() {
     return
   }
 
-  if (step === 'pin-code') {
-    router.replace('/(auth)/onboarding/pin')
-  } else if (step === 'biometrics') {
+  if (step === 'biometrics') {
     router.replace('/(auth)/onboarding/biometrics')
   } else if (step === 'notifications') {
     router.replace('/(auth)/onboarding/notifications')

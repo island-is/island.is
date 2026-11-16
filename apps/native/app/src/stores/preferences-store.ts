@@ -3,10 +3,6 @@ import { Platform } from 'react-native'
 import { create } from 'zustand'
 import { useStore } from 'zustand/react'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import {
-  clearBiometricBaseline,
-  enrollBiometricBaseline,
-} from '../../modules/biometric-integrity'
 
 export type Locale = 'en-US' | 'is-IS' | 'en-IS' | 'is-US'
 export type ThemeMode = 'dark' | 'light'
@@ -16,7 +12,11 @@ export const PREFERENCES_KEY = 'preferences_04'
 
 export interface PreferencesStore {
   dev__useLockScreen: boolean
-  hasOnboardedPinCode: boolean
+  /**
+   * Whether this install has logged in. The keychain survives reinstalling on
+   * iOS and preferences don't, so this tells a fresh install apart.
+   */
+  hasLoggedIn: boolean
   hasOnboardedBiometrics: boolean
   hasOnboardedNotifications: boolean
   hasOnboardedPrivacy: boolean
@@ -25,7 +25,6 @@ export interface PreferencesStore {
   hasRequestedNotificationsPermission: boolean
   /** Set by "decide later" at onboarding, so the home screen leaves them alone. */
   hasDeferredNotificationsOnboarding: boolean
-  hasAcceptedBiometrics: boolean
   hasOnboardedPasskeys: boolean
   hasCreatedPasskey: boolean
   inboxWidgetEnabled: boolean
@@ -43,14 +42,11 @@ export interface PreferencesStore {
   notificationsApplicationStatusUpdates: boolean
   dismissed: string[]
   walletPassDismissedInfoAlerts: Record<string, boolean>
-  useBiometrics: boolean
   locale: Locale
   appearanceMode: AppearanceMode
   appLockTimeout: number
-  pinTries: number
   setLocale(locale: Locale): void
   setAppearanceMode(appearanceMode: AppearanceMode): void
-  setUseBiometrics(useBiometrics: boolean): void
   dismiss(key: string, value?: boolean): void
   setWalletPassInfoAlertDismissed(key: string): void
   reset(): void
@@ -61,16 +57,14 @@ const availableLocales: Locale[] = ['en-US', 'is-IS', 'is-US', 'en-IS']
 const defaultPreferences = {
   appearanceMode: 'automatic',
   locale: 'is-IS',
-  useBiometrics: false,
   dev__useLockScreen: true,
   hasOnboardedBiometrics: false,
-  hasOnboardedPinCode: false,
+  hasLoggedIn: false,
   hasOnboardedNotifications: false,
   hasOnboardedPrivacy: false,
   hasAcceptedNotifications: false,
   hasRequestedNotificationsPermission: false,
   hasDeferredNotificationsOnboarding: false,
-  hasAcceptedBiometrics: false,
   hasOnboardedPasskeys: false,
   hasCreatedPasskey: false,
   inboxWidgetEnabled: true,
@@ -89,7 +83,6 @@ const defaultPreferences = {
   dismissed: [] as string[],
   walletPassDismissedInfoAlerts: {} as Record<string, boolean>,
   appLockTimeout: 5000,
-  pinTries: 0,
 }
 
 export const preferencesStore = create<PreferencesStore>()(
@@ -105,15 +98,6 @@ export const preferencesStore = create<PreferencesStore>()(
       },
       setAppearanceMode(appearanceMode: AppearanceMode) {
         set({ appearanceMode })
-      },
-      setUseBiometrics(useBiometrics: boolean) {
-        // Snapshot the enrolled biometrics so later changes can be detected.
-        if (useBiometrics) {
-          enrollBiometricBaseline()
-        } else {
-          clearBiometricBaseline()
-        }
-        set({ useBiometrics })
       },
       dismiss(key: string, value = true) {
         const now = get().dismissed
@@ -133,7 +117,6 @@ export const preferencesStore = create<PreferencesStore>()(
         set({ walletPassDismissedInfoAlerts: current })
       },
       reset() {
-        clearBiometricBaseline()
         set(defaultPreferences as PreferencesStore)
       },
     }),

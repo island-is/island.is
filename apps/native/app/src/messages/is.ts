@@ -6,23 +6,13 @@ export const is = {
   'button.moreInfoHere': 'Nánari upplýsingar hér',
   'button.seeMore': 'Sjá nánar',
   // login
-  'login.welcomeMessage': 'Skráðu þig inn í appið með rafrænum skilríkjum',
-  'login.loginButtonText': 'Skrá inn',
   'login.languageButtonText': 'English',
-  'login.needHelpButtonText': 'Þarftu aðstoð?',
   'login.outdatedBrowserTitle': 'Gamall vafri',
   'login.outdatedBrowserMessage':
     'Vafrinn þinn er of gamall, vinsamlegast uppfærið hann í gegnum Play Store',
   'login.outdatedBrowserUpdateButton': 'Uppfæra',
   'login.outdatedBrowserCancelButton': 'Hætta við',
-  'login.networkErrorTitle': 'Villa kom upp',
-  'login.networkErrorMessage':
-    '\nEkki náðist samband við innskráningarþjónustu.\n\nVinsamlegast athugið netsamband á tækinu eða reynið aftur síðar.',
   'login.expiredTitle': 'Innskráning útrunnin',
-  'login.expiredScopesMessage':
-    'Uppfærð réttindi vantar, vinsamlegast skráðu þig inn aftur.',
-  'login.expiredMissingUserMessage':
-    'Tókst ekki að sækja notendaupplýsingar, vinsamlegast skráðu þig inn aftur.',
   'login.expiredMessage': 'Vinsamlegast skráðu þig inn aftur.',
   'login.back': 'Til baka',
   'login.welcome.title': 'Öll opinber þjónusta á einum stað',
@@ -54,10 +44,6 @@ export const is = {
   'login.error.failed': 'Ekki tókst að skrá þig inn. Reyndu aftur.',
 
   // app lock
-  'applock.title': 'Sláðu inn 4 tölustafa PIN',
-  'applock.attempts': 'tilraunir eftir',
-  'applock.attempt': 'tilraun eftir',
-  'applock.usePin': 'Nota PIN',
   'applock.openWithBiometrics': 'Opna með {biometricType}',
   'applock.useElectronicId': 'Nota rafræn skilríki',
   'applock.openWithElectronicId': 'Opna með rafrænum skilríkjum',
@@ -100,15 +86,7 @@ export const is = {
   'onboarding.notifications.decideLaterButtonText': 'Sleppa því í bili',
   'onboarding.appLock.title':
     'Skjálæsing tryggir að enginn geti opnað appið nema þú.',
-  'onboarding.appLock.choosePinButtonText': 'Velja PIN',
-  'onboarding.pinCode.enterPin': 'Veldu 4 tölustafa PIN',
-  'onboarding.pinCode.confirmPin': 'Staðfestu PIN-númerið',
-  'onboarding.pinCode.goBackButtonText': 'Til baka',
-  'onboarding.pinCode.cancelButtonText': 'Hætta við',
-  'onboarding.pinCode.nonMatchingPinCodes': 'Númerin pössuðu ekki saman',
   'onboarding.biometrics.title': 'Leyfa lífkenni',
-  'onboarding.biometrics.body':
-    'Þú getur einnig notað {biometricType} til að opna appið án þess að slá inn PIN.',
   'onboarding.biometrics.bodyWithoutPin':
     'Opnaðu appið með {biometricType}. Ef þú sleppir því þarftu rafræn skilríki í hvert skipti.',
   'onboarding.biometrics.notEnrolled':
@@ -124,17 +102,11 @@ export const is = {
   'biometrics.enrollmentChanged.title': 'Slökkt á lífkennum',
   'biometrics.enrollmentChanged.message':
     'Lífkennin sem skráð eru í tækinu hafa breyst. Opnaðu appið með PIN-númerinu og kveiktu aftur á lífkennum í stillingum.',
-  'onboarding.pinKeypad.accessibilityLabel.iris': 'Nota augnskannaauðkenningu',
-  'onboarding.pinKeypad.accessibilityLabel.fingerprint':
-    'Nota fingrafarsauðkenningu',
-  'onboarding.pinKeypad.accessibilityLabel.faceId': 'Nota andlitsauðkenningu',
-  'onboarding.pinKeypad.accessibilityLabel.delete': 'Eyða staf',
   'onboarding.privacy.title': 'Persónuvernd',
   'onboarding.privacy.body':
     'Hægt er að kynna sér stefnu Stafræns Íslands um meðferð persónuupplýsinga á Ísland.is',
   'onboarding.privacy.linkText': 'Persónuverndastefna Ísland.is',
   'onboarding.privacy.continueButtonText': 'Halda áfram',
-  'pinCode.updated': 'PIN-númeri breytt',
 
   // personal info screen
   'personalInfo.screenTitle': 'Persónuupplýsingar',
@@ -191,11 +163,6 @@ export const is = {
   'settings.security.privacyTitle': 'Persónuverndarstefna',
   'settings.security.privacySubTitle': 'Stafrænt Íslands',
   'settings.security.groupTitle': 'Öryggi og persónuvernd',
-  'settings.security.changePinLabel': 'Breyta PIN',
-  'settings.security.changePinDescription': 'Veldu nýtt 4 stafa PIN-númer',
-  'settings.security.useBiometricsLabel': 'Nota {biometricType}',
-  'settings.security.useBiometricsDescription':
-    'Þannig sleppur þú við að nota PIN-númerið',
   'settings.security.enableBiometricsLabel': 'Virkja {biometricType}',
   'settings.security.enableBiometricsDescription':
     'Annars opnar þú appið með rafrænum skilríkjum',

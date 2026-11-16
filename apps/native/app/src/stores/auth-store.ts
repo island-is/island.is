@@ -202,9 +202,7 @@ export const authStore = create<AuthStore>((set, get) => ({
         accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
       },
     )
-    // There's no PIN with native login. The flag still tells a fresh install
-    // apart from one that was logged in (see restoreNativeUser).
-    preferencesStore.setState({ hasOnboardedPinCode: true })
+    preferencesStore.setState({ hasLoggedIn: true })
     set({ nativeUser: userInfo })
     return userInfo
   },
@@ -322,6 +320,8 @@ export function isAppLockEnabled() {
 
 /** At startup: restores who is signed in, locked. */
 export async function readAuthorizeResult(): Promise<void> {
+  void clearLegacyKeychain()
+
   // We already have tokens in memory, nothing else to do.
   if (authStore.getState().authorizeResult) {
     return
@@ -335,6 +335,20 @@ export async function readAuthorizeResult(): Promise<void> {
   }
 
   await restoreNativeUser()
+}
+
+// Older versions' PIN, and on iOS the snapshot of enrolled biometrics they
+// used to notice changes. Can go once nobody updates from those versions.
+async function clearLegacyKeychain() {
+  const services =
+    Platform.OS === 'ios'
+      ? ['PIN_CODE', 'is.island.biometric-integrity']
+      : ['PIN_CODE']
+  for (const service of services) {
+    await Keychain.resetGenericPassword({ service }).catch((err) =>
+      console.log(`Unable to clear ${service}: `, err),
+    )
+  }
 }
 
 async function hasBrowserLogin(): Promise<boolean> {
@@ -369,9 +383,7 @@ async function restoreNativeUser(): Promise<boolean> {
 
   // The keychain survives reinstalling on iOS: a fresh install shouldn't
   // pick up the login from before.
-  const hasOnboardedPinCode =
-    preferencesStore.getState().hasOnboardedPinCode ?? false
-  if (!hasOnboardedPinCode && Platform.OS === 'ios') {
+  if (!preferencesStore.getState().hasLoggedIn && Platform.OS === 'ios') {
     await forceLogout()
   }
   return true

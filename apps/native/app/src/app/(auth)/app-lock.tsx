@@ -1,27 +1,16 @@
-import { selectionAsync } from 'expo-haptics'
-import {
-  authenticateAsync,
-  AuthenticationType,
-} from 'expo-local-authentication'
 import { StackActions } from '@react-navigation/native'
 import { useNavigation, useRouter } from 'expo-router'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import {
   Alert,
   AppState,
   BackHandler,
-  Image,
   InteractionManager,
   Platform,
-  SafeAreaView,
   View,
 } from 'react-native'
-import Keychain from 'react-native-keychain'
-import styled from 'styled-components/native'
 
-import { PinKeypad } from '@/components/pin-keypad/pin-keypad'
-import { VisualizedPinCode } from '@/components/visualized-pin-code/visualized-pin-code'
 import {
   clearPendingDeepLink,
   consumePendingDeepLink,
@@ -33,87 +22,26 @@ import {
   suppressLockScreen,
   useAuthStore,
 } from '@/stores/auth-store'
-import {
-  preferencesStore,
-  usePreferencesStore,
-} from '@/stores/preferences-store'
+import { preferencesStore } from '@/stores/preferences-store'
 import { useUiStore } from '@/stores/ui-store'
-import { font, token } from '@/ui'
 import { DeviceLock } from '@/components/device-bound-auth/device-lock'
-import { useBiometricType as useBiometricLabel } from '@/hooks/use-biometric-type'
+import { useBiometricType } from '@/hooks/use-biometric-type'
 import { useNativeUnlock } from '@/hooks/use-native-unlock'
 import {
   ensureDeviceUnlockCanary,
   isDeviceUnlocked,
 } from '@/utils/device-unlock-canary'
-import { verifyBiometricIntegrity } from '@/utils/biometric-integrity'
 import { testIDs } from '@/utils/test-ids'
 import { useBrowser } from '@/hooks/use-browser'
-
-const MAX_PIN_CHARS = 4
-const MAX_ATTEMPTS = 3
-
-const Host = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-  background-color: ${token((t) => t.background.invert)};
-`
-
-const Title = styled.Text`
-  ${font({
-    fontSize: 20,
-  })}
-  margin-bottom: 8px;
-`
-
-const Subtitle = styled.Text`
-  ${font({
-    fontSize: 20,
-  })}
-`
-
-const Center = styled.View`
-  justify-content: center;
-  align-items: center;
-`
-
-function useBiometricType() {
-  const { authenticationTypes } = useUiStore()
-  if (authenticationTypes.includes(AuthenticationType.FACIAL_RECOGNITION)) {
-    return 'faceid'
-  } else if (authenticationTypes.includes(AuthenticationType.FINGERPRINT)) {
-    return 'fingerprint'
-  } else if (authenticationTypes.includes(AuthenticationType.IRIS)) {
-    return 'iris'
-  }
-  return undefined
-}
 
 export default function AppLockScreen() {
   const router = useRouter()
   const navigation = useNavigation()
-  const isPromptRef = useRef(false)
-  const [code, setCode] = useState('')
-  const [invalidCode, setInvalidCode] = useState(false)
-
-  const pinTries = usePreferencesStore(({ pinTries }) => pinTries)
-  const attemptsLeft = MAX_ATTEMPTS - pinTries
-
-  const useBiometrics = usePreferencesStore(
-    ({ useBiometrics }) => useBiometrics,
-  )
-
   const logout = useAuthStore(({ logout }) => logout)
   const nativeUser = useAuthStore(({ nativeUser }) => nativeUser)
-  const biometricType = useBiometricType()
   const intl = useIntl()
   const { openBrowser } = useBrowser()
 
-  // Clear state before router.back so the layout's re-push subscriber
-  // doesn't fire during unmount. Defer the deep-link replay until back has
-  // settled — replaying with the lock still on top would push the link
-  // above it, then back would pop the link instead of the lock.
   // Closes the lock and any sheet on top of it in one step.
   const closeLock = () => {
     const state = navigation.getState()
@@ -155,31 +83,6 @@ export default function AppLockScreen() {
     })
   }
 
-  const authenticateWithBiometrics = async () => {
-    if (!useBiometrics || isPromptRef.current) {
-      return
-    }
-    // Re-reads the store: biometrics may have been turned off since render
-    // because the enrolled biometrics changed. Falls back to PIN.
-    if (!verifyBiometricIntegrity()) {
-      return
-    }
-
-    isPromptRef.current = true
-    const response = await authenticateAsync({
-      disableDeviceFallback: true,
-      fallbackLabel: '',
-      cancelLabel: intl.formatMessage({ id: 'applock.usePin' }),
-    })
-
-    if (response.success) {
-      void selectionAsync()
-      unlockApp()
-    } else {
-      isPromptRef.current = false
-    }
-  }
-
   const handleLogout = async () => {
     await logout()
     authStore.setState({
@@ -203,56 +106,6 @@ export default function AppLockScreen() {
   // The AppState effect below runs once; it needs the latest callbacks.
   const nativeUnlockRef = useRef(nativeUnlock)
   nativeUnlockRef.current = nativeUnlock
-
-  const validatePin = async (pin: string) => {
-    try {
-      const res = await Keychain.getGenericPassword({ service: 'PIN_CODE' })
-
-      if (res && res.password === pin) {
-        return true
-      }
-
-      return false
-    } catch (error) {
-      console.log(error)
-      return false
-    }
-  }
-
-  const loginAttempt = async (pin: string) => {
-    if (pin.length !== MAX_PIN_CHARS) {
-      return
-    }
-
-    setInvalidCode(false)
-    const isValid = await validatePin(pin)
-
-    if (isValid) {
-      preferencesStore.setState({ pinTries: 0 })
-      unlockApp()
-      return
-    }
-
-    if (pinTries + 1 >= MAX_ATTEMPTS) {
-      preferencesStore.setState({ pinTries: 0 })
-      handleLogout()
-      return
-    }
-
-    preferencesStore.setState((state) => ({
-      pinTries: state.pinTries + 1,
-    }))
-
-    setInvalidCode(true)
-    setTimeout(() => {
-      setCode('')
-    }, 660)
-  }
-
-  useEffect(() => {
-    loginAttempt(code)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [code])
 
   // Swallow Android hardware back.
   useEffect(() => {
@@ -294,8 +147,11 @@ export default function AppLockScreen() {
         return
       }
 
-      const { lockScreenActivatedAt, biometricAutoPromptedForCurrentLock } =
-        authStore.getState()
+      const {
+        lockScreenActivatedAt,
+        biometricAutoPromptedForCurrentLock,
+        authorizeResult,
+      } = authStore.getState()
       const { appLockTimeout } = preferencesStore.getState()
 
       if (lockScreenActivatedAt === undefined) {
@@ -305,30 +161,24 @@ export default function AppLockScreen() {
         return
       }
 
-      // A native login without tokens (after a restart) can't skip the lock.
-      const { nativeUser, authorizeResult } = authStore.getState()
+      // Without tokens (after a restart) there's no skipping the lock.
       const elapsed = Date.now() - lockScreenActivatedAt
-      if (elapsed < appLockTimeout && (!nativeUser || authorizeResult)) {
+      if (elapsed < appLockTimeout && authorizeResult) {
         unlockApp()
         return
       }
 
-      if (nativeUser) {
-        // Past the grace period a native login's tokens go: the unlock gets
-        // new ones from IAS.
-        await authStore.getState().lockNative()
-        if (unmounted) {
-          return
-        }
+      // Past the grace period the tokens go: the unlock gets new ones from IAS.
+      await authStore.getState().lockNative()
+      if (unmounted) {
+        return
       }
 
       if (biometricAutoPromptedForCurrentLock) {
         return
       }
       authStore.setState({ biometricAutoPromptedForCurrentLock: true })
-      void (nativeUser
-        ? nativeUnlockRef.current.unlockWithBiometrics()
-        : authenticateWithBiometrics())
+      void nativeUnlockRef.current.unlockWithBiometrics()
     }
 
     // With Always-On Display, iOS fires ghost 'active' events while the
@@ -374,7 +224,6 @@ export default function AppLockScreen() {
 
     const subscription = AppState.addEventListener('change', (nextAppState) => {
       if (nextAppState === 'active') {
-        isPromptRef.current = false
         confirmVisibleThenRun()
       } else {
         cancelPendingConfirm()
@@ -389,85 +238,20 @@ export default function AppLockScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const onPinInput = (char: string) => {
-    setCode(
-      (previousCode) =>
-        `${previousCode}${previousCode.length >= MAX_PIN_CHARS ? '' : char}`,
-    )
-  }
-
-  const onBackPress = () => {
-    setCode(
-      (previousCode) => `${previousCode.substr(0, previousCode.length - 1)}`,
-    )
-  }
-
-  const onFaceIdPress = () => {
-    isPromptRef.current = false
-    authenticateWithBiometrics()
-  }
-
-  if (nativeUser) {
-    return (
-      <View testID={testIDs.SCREEN_APP_LOCK} style={{ flex: 1 }}>
-        <NativeLock
-          name={nativeUser.name}
-          nationalId={nativeUser.nationalId}
-          unlock={nativeUnlock}
-          onLogoutPress={handleLogout}
-        />
-      </View>
-    )
+  // Only a native login locks; this is a moment's gap while logging out.
+  if (!nativeUser) {
+    return null
   }
 
   return (
-    <Host testID={testIDs.SCREEN_APP_LOCK}>
-      <SafeAreaView>
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            paddingTop: 50,
-            paddingBottom: 20,
-            maxHeight: 200,
-            flex: 1,
-          }}
-        >
-          <Image
-            source={require('../../assets/logo/logo-64w.png')}
-            resizeMode="contain"
-            style={{ width: 45, height: 45, marginBottom: 20 }}
-          />
-          <Title>{intl.formatMessage({ id: 'applock.title' })}</Title>
-          <Subtitle>
-            {pinTries > 0
-              ? `${attemptsLeft} ${intl.formatMessage({
-                  id:
-                    attemptsLeft === 1 ? 'applock.attempt' : 'applock.attempts',
-                })}`
-              : ''}
-          </Subtitle>
-        </View>
-        <Center>
-          <VisualizedPinCode
-            code={code}
-            invalid={invalidCode}
-            maxChars={MAX_PIN_CHARS}
-          />
-          <View style={{ height: 32 }} />
-          <PinKeypad
-            onInput={onPinInput}
-            onBackPress={onBackPress}
-            onFaceIdPress={onFaceIdPress}
-            back={code.length > 0}
-            biometricType={
-              useBiometrics ? biometricType ?? 'faceid' : undefined
-            }
-          />
-          <View style={{ height: 64 }} />
-        </Center>
-      </SafeAreaView>
-    </Host>
+    <View testID={testIDs.SCREEN_APP_LOCK} style={{ flex: 1 }}>
+      <NativeLock
+        name={nativeUser.name}
+        nationalId={nativeUser.nationalId}
+        unlock={nativeUnlock}
+        onLogoutPress={handleLogout}
+      />
+    </View>
   )
 }
 
@@ -486,7 +270,7 @@ function NativeLock({
   onLogoutPress(): void
 }) {
   const { authenticationTypes } = useUiStore()
-  const biometricType = useBiometricLabel(authenticationTypes)?.text
+  const biometricType = useBiometricType(authenticationTypes)?.text
 
   return (
     <DeviceLock

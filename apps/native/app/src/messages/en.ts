@@ -8,23 +8,13 @@ export const en: TranslatedMessages = {
   'button.seeMore': 'See more',
 
   // login
-  'login.welcomeMessage': 'Log in to the app with electronic ID',
-  'login.loginButtonText': 'Login',
   'login.languageButtonText': 'Íslenska',
-  'login.needHelpButtonText': 'Need help?',
   'login.outdatedBrowserTitle': 'Outdated browser',
   'login.outdatedBrowserMessage':
     'You have an unsupported browser version, please update it through the Play Store.',
   'login.outdatedBrowserUpdateButton': 'Update',
   'login.outdatedBrowserCancelButton': 'Cancel',
-  'login.networkErrorTitle': 'Network error',
-  'login.networkErrorMessage':
-    '\nCould not contact the login service.\n\nPlease check your device internet connection or try again later.',
   'login.expiredTitle': 'Session expired',
-  'login.expiredScopesMessage':
-    'Updated permissions required, please login again.',
-  'login.expiredMissingUserMessage':
-    'Could not fetch user information, please login again.',
   'login.expiredMessage': 'Please log in again.',
   'login.back': 'Back',
   'login.welcome.title': 'All public services in one place',
@@ -54,10 +44,6 @@ export const en: TranslatedMessages = {
   'login.error.failed': "Couldn't log you in. Try again.",
 
   // app lock
-  'applock.title': 'Enter a 4-digit PIN',
-  'applock.attempts': 'attempts left',
-  'applock.attempt': 'attempt left',
-  'applock.usePin': 'Use PIN',
   'applock.openWithBiometrics': 'Open with {biometricType}',
   'applock.useElectronicId': 'Use electronic ID',
   'applock.openWithElectronicId': 'Open with electronic ID',
@@ -101,15 +87,7 @@ export const en: TranslatedMessages = {
   'onboarding.notifications.decideLaterButtonText': 'Skip for now',
   'onboarding.appLock.title':
     'Screen lock ensures that no one can open the app except you.',
-  'onboarding.appLock.choosePinButtonText': 'Choose PIN',
-  'onboarding.pinCode.enterPin': 'Choose 4-digit PIN',
-  'onboarding.pinCode.confirmPin': 'Confirm the 4-digit PIN',
-  'onboarding.pinCode.goBackButtonText': 'Go back',
-  'onboarding.pinCode.cancelButtonText': 'Cancel',
-  'onboarding.pinCode.nonMatchingPinCodes': 'The numbers did not match',
   'onboarding.biometrics.title': 'Allow biometrics',
-  'onboarding.biometrics.body':
-    'You can also use {biometricType} to access the app without entering a PIN.',
   'onboarding.biometrics.bodyWithoutPin':
     'Open the app with {biometricType}. If you skip this, you will need electronic ID every time.',
   'onboarding.biometrics.notEnrolled':
@@ -125,16 +103,11 @@ export const en: TranslatedMessages = {
   'biometrics.enrollmentChanged.title': 'Biometrics turned off',
   'biometrics.enrollmentChanged.message':
     'The biometrics registered on this device have changed. Unlock the app with your PIN and turn biometrics back on in settings.',
-  'onboarding.pinKeypad.accessibilityLabel.faceId': 'Use FaceID',
-  'onboarding.pinKeypad.accessibilityLabel.iris': 'Use Iris',
-  'onboarding.pinKeypad.accessibilityLabel.fingerprint': 'Use fingerprint',
-  'onboarding.pinKeypad.accessibilityLabel.delete': 'Delete character',
   'onboarding.privacy.title': 'Privacy',
   'onboarding.privacy.body':
     "You can read Digital Iceland's policy on the handling of personal data on Ísland.is",
   'onboarding.privacy.linkText': 'Privacy policy of Ísland.is',
   'onboarding.privacy.continueButtonText': 'Continue',
-  'pinCode.updated': 'PIN code updated',
 
   // personal info screen
   'personalInfo.screenTitle': 'Personal info',
@@ -189,11 +162,6 @@ export const en: TranslatedMessages = {
   'settings.security.privacyTitle': 'Privacy Policy',
   'settings.security.privacySubTitle': 'Digital Iceland',
   'settings.security.groupTitle': 'Security and privacy',
-  'settings.security.changePinLabel': 'Change PIN',
-  'settings.security.changePinDescription': 'Choose a new 4-digit PIN number',
-  'settings.security.useBiometricsLabel': 'Use {biometricType}',
-  'settings.security.useBiometricsDescription':
-    'With {biometricType} you don’t need to enter PIN',
   'settings.security.enableBiometricsLabel': 'Turn on {biometricType}',
   'settings.security.enableBiometricsDescription':
     'Otherwise you open the app with electronic ID',

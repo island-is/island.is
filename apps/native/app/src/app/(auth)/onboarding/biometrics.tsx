@@ -1,6 +1,5 @@
 import {
   AuthenticationType,
-  authenticateAsync,
   isEnrolledAsync,
   supportedAuthenticationTypesAsync,
 } from 'expo-local-authentication'
@@ -13,7 +12,6 @@ import { useEnableBiometrics } from '@/hooks/use-enable-biometrics'
 import finger from '@/assets/icons/finger-16.png'
 import iris from '@/assets/icons/iris-16.png'
 import onboardingBiometrics from '@/assets/illustrations/onboarding-biometrics.png'
-import { useAuthStore } from '@/stores/auth-store'
 import { preferencesStore } from '@/stores/preferences-store'
 import { nextOnboardingStep } from '@/utils/onboarding'
 
@@ -62,8 +60,6 @@ export default function BiometricsScreen() {
   const [isEnrolled, setIsEnrolled] = useState(false)
   const [authTypes, setAuthTypes] = useState<AuthenticationType[]>([])
   const biometricType = useBiometricType(authTypes)
-  // A native login has no PIN: biometrics are registered with IAS instead.
-  const isNativeLogin = useAuthStore(({ nativeUser }) => !!nativeUser)
   const { isEnabling, enableBiometrics } = useEnableBiometrics()
 
   useEffect(() => {
@@ -83,28 +79,13 @@ export default function BiometricsScreen() {
     return () => subscription.remove()
   }, [])
 
+  // Biometrics are a key registered with IAS, which takes an electronic ID
+  // approval first.
   const onBiometricsPress = async () => {
-    if (isNativeLogin) {
-      if (await enableBiometrics()) {
-        preferencesStore.setState({ hasOnboardedBiometrics: true })
-        nextOnboardingStep()
-      }
-      return
+    if (await enableBiometrics()) {
+      preferencesStore.setState({ hasOnboardedBiometrics: true })
+      nextOnboardingStep()
     }
-    authenticateAsync({
-      disableDeviceFallback: true,
-      fallbackLabel: '',
-      cancelLabel: intl.formatMessage({ id: 'biometrics.cancel' }),
-    }).then((result) => {
-      if (result.success) {
-        preferencesStore.getState().setUseBiometrics(true)
-        preferencesStore.setState({
-          hasOnboardedBiometrics: true,
-          hasAcceptedBiometrics: true,
-        })
-        nextOnboardingStep()
-      }
-    })
   }
 
   const onSkipPress = () => {
@@ -119,11 +100,7 @@ export default function BiometricsScreen() {
       body={
         isEnrolled ? (
           <FormattedMessage
-            id={
-              isNativeLogin
-                ? 'onboarding.biometrics.bodyWithoutPin'
-                : 'onboarding.biometrics.body'
-            }
+            id="onboarding.biometrics.bodyWithoutPin"
             values={{ biometricType: biometricType.text }}
           />
         ) : (

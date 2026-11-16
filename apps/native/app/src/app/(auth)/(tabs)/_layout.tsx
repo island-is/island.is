@@ -18,7 +18,6 @@ export const unstable_settings = {
 export default function TabLayout() {
   const intl = useIntl()
   const tabsHidden = useUiStore((s) => s.tabsHidden)
-  const hasOnboardedPinCode = usePreferencesStore((s) => s.hasOnboardedPinCode)
   const hasOnboardedBiometrics = usePreferencesStore(
     (s) => s.hasOnboardedBiometrics,
   )
@@ -35,9 +34,7 @@ export default function TabLayout() {
     if (isLocked) {
       return null
     }
-    if (!hasOnboardedPinCode) {
-      return <Redirect href="/(auth)/onboarding/pin" />
-    } else if (!hasOnboardedBiometrics) {
+    if (!hasOnboardedBiometrics) {
       return <Redirect href="/(auth)/onboarding/biometrics" />
     } else if (!hasOnboardedNotifications) {
       return <Redirect href="/(auth)/onboarding/notifications" />
