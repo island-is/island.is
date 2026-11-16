@@ -252,6 +252,7 @@ codemagic.yaml                                                                  
 /libs/portals/admin/regulations-admin/                                                                                       @island-is/hugsmidjan
 /libs/portals/admin/document-provider/                                                                                       @island-is/hugsmidjan @island-is/core
 /libs/clients/icelandic-health-insurance/rights-portal/                                                                      @island-is/hugsmidjan
+/libs/clients/icelandic-health-insurance/speech-therapy/                                                                     @island-is/deloitte
 /libs/clients/health-directorate                                                                                             @island-is/hugsmidjan
 /libs/clients/health-directorate/src/lib/clients/occupational-license                                                        @island-is/hugsmidjan @island-is/origo
 /libs/clients/farmers/                                                                                                       @island-is/hugsmidjan
@@ -281,6 +282,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/iceland-health/european-health-insurance-card/                                                   @island-is/origo
 /libs/application/templates/iceland-health/health-insurance/                                                                 @island-is/origo
 /libs/application/templates/iceland-health/health-insurance-declaration/                                                     @island-is/origo
+/libs/application/templates/iceland-health/speech-therapy-waiting-list-registration/                                         @island-is/deloitte
 /libs/application/templates/inao/financial-statement-cemetery/                                                               @island-is/origo
 /libs/application/templates/inao/financial-statement-individual-election/                                                    @island-is/origo
 /libs/application/templates/inao/financial-statement-political-party/                                                        @island-is/origo
@@ -304,6 +306,7 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/iceland-health/european-health-insurance-card/              @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/iceland-health/health-insurance/                            @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/iceland-health/health-insurance-declaration/                @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/iceland-health/speech-therapy-waiting-list-registration/    @island-is/deloitte
 /libs/application/template-api-modules/src/lib/modules/templates/inao/financial-statement-cemetery/                          @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/inao/financial-statement-individual-election/               @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/inao/financial-statement-political-party/                   @island-is/origo

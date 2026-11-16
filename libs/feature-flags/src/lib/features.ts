@@ -42,6 +42,7 @@ export enum Features {
   isDirectorateOfEqualityApplicationsEnabled = 'isDirectorateOfEqualityApplicationsEnabled',
   isFjarskiptastofaSelfAssessmentEnabled = 'isFjarskiptastofaSelfAssessmentEnabled',
   isConfirmJobOrIncomeEnabled = 'isConfirmJobOrIncomeEnabled',
+  isSpeechTherapyWaitingListRegistrationEnabled = 'isSpeechTherapyWaitingListRegistrationEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',

@@ -2,6 +2,8 @@ import { FjarskiptastofaSelfAssessmentModule } from './fjarskiptastofa/self-asse
 import { FjarskiptastofaSelfAssessmentService } from './fjarskiptastofa/self-assessment/self-assessment.service'
 import { PayDebtsModule } from './pay-debts/pay-debts.module'
 import { PayDebtsService } from './pay-debts/pay-debts.service'
+import { SpeechTherapyWaitingListRegistrationModule } from './iceland-health/speech-therapy-waiting-list-registration/speech-therapy-waiting-list-registration.module'
+import { SpeechTherapyWaitingListRegistrationService } from './iceland-health/speech-therapy-waiting-list-registration/speech-therapy-waiting-list-registration.service'
 import { ConfirmJobOrIncomeModule } from './vmst/confirm-job-or-income/confirm-job-or-income.module'
 import { ConfirmJobOrIncomeService } from './vmst/confirm-job-or-income/confirm-job-or-income.service'
 import { U2CertificateModule } from './vmst/u2-certificate/u2-certificate.module'
@@ -309,6 +311,7 @@ export const modules = [
   PayDebtsModule,
   U2CertificateModule,
   FjarskiptastofaSelfAssessmentModule,
+  SpeechTherapyWaitingListRegistrationModule,
 ]
 
 export const services = [
@@ -414,4 +417,5 @@ export const services = [
   PayDebtsService,
   U2CertificateService,
   FjarskiptastofaSelfAssessmentService,
+  SpeechTherapyWaitingListRegistrationService,
 ]
