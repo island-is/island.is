@@ -17,6 +17,7 @@ jest.mock('./calculators.registry', () => {
     query: {
       count: z.number().int(),
       splitDate: z.string().datetime().optional(),
+      ratio: z.number().gte(0).lte(1).optional(),
     },
     result: { total: z.number().int().optional() },
   }
@@ -58,6 +59,23 @@ describe('CalculatorsClientService.calculate', () => {
     expect(result.rejected).toEqual(
       expect.arrayContaining(['count', 'splitDate']),
     )
+    expect(mockGetVehicleTax).not.toHaveBeenCalled()
+  })
+
+  it('sends a whole percentage as an RSK ratio', async () => {
+    mockGetVehicleTax.mockResolvedValue({ data: { total: 1000 } })
+
+    await service.calculate('vehicleTax', { count: 2026, ratio: 50 })
+
+    expect(mockGetVehicleTax).toHaveBeenCalledWith({
+      query: { count: 2026, ratio: 0.5 },
+    })
+  })
+
+  it('rejects a percentage over 100 without calling the endpoint', async () => {
+    await expect(
+      service.calculate('vehicleTax', { count: 2026, ratio: 150 }),
+    ).resolves.toEqual({ rejected: ['ratio'] })
     expect(mockGetVehicleTax).not.toHaveBeenCalled()
   })
 

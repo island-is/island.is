@@ -20,8 +20,14 @@ import { byName } from '../utils/byName'
 import type { CalculatorKey } from './calculators.registry'
 import { calculatorRegistry } from './calculators.registry'
 import { fromClientResult } from './fromClientResult'
-import { parseClientQuery } from './parseClientQuery'
 import { toClientQuery } from './toClientQuery'
+import { validateClientQuery } from './validateClientQuery'
+
+const isClientQuery = <K extends CalculatorKey>(
+  _key: K,
+  query: Readonly<Record<string, unknown>>,
+  rejected: readonly string[],
+): query is CalculatorInput<K> => rejected.length === 0
 
 const endpoints: {
   [K in CalculatorKey]: (
@@ -63,15 +69,17 @@ export class CalculatorsClientService {
     key: K,
     input: Readonly<Record<string, unknown>>,
   ): Promise<CalculateResult<K>> {
-    const { query, result } = calculatorRegistry[key]
-    const parsed = parseClientQuery(key, input)
+    const { query: queryShape, result: resultShape } = calculatorRegistry[key]
 
-    if (parsed.rejected) {
-      return { rejected: parsed.rejected }
+    const query = toClientQuery(queryShape, input)
+    const rejected = validateClientQuery(queryShape, query)
+
+    if (!isClientQuery(key, query, rejected)) {
+      return { rejected }
     }
 
-    const data = await endpoints[key](toClientQuery(query, parsed.query))
+    const data = await endpoints[key](query)
 
-    return { output: data && fromClientResult(result, data) }
+    return { output: data && fromClientResult(resultShape, data) }
   }
 }

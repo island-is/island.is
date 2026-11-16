@@ -1,39 +1,39 @@
 import { z } from 'zod'
 
-import { invalidClientQueryFields } from './invalidClientQueryFields'
+import { validateClientQuery } from './validateClientQuery'
 
-describe('invalidClientQueryFields', () => {
+describe('validateClientQuery', () => {
   it('validates dates as ISO strings', () => {
     const shape = { date: z.string().datetime() }
 
-    expect(invalidClientQueryFields(shape, { date: new Date(0) })).toEqual([])
+    expect(validateClientQuery(shape, { date: new Date(0) })).toEqual([])
   })
 
-  it('validates ratios after scaling whole percentages', () => {
+  it('validates ratios as RSK ratios', () => {
     const shape = { ratio: z.number().gte(0).lte(1) }
 
-    expect(invalidClientQueryFields(shape, { ratio: 50 })).toEqual([])
-    expect(invalidClientQueryFields(shape, { ratio: 150 })).toEqual(['ratio'])
+    expect(validateClientQuery(shape, { ratio: 0.5 })).toEqual([])
+    expect(validateClientQuery(shape, { ratio: 1.5 })).toEqual(['ratio'])
   })
 
   it('rejects a date-time value that is not a Date', () => {
     const shape = { date: z.string().datetime() }
 
     expect(
-      invalidClientQueryFields(shape, { date: '1970-01-01T00:00:00.000Z' }),
+      validateClientQuery(shape, { date: '1970-01-01T00:00:00.000Z' }),
     ).toEqual(['date'])
   })
 
   it('accepts an absent optional date-time', () => {
     const shape = { date: z.string().datetime().optional() }
 
-    expect(invalidClientQueryFields(shape, {})).toEqual([])
+    expect(validateClientQuery(shape, {})).toEqual([])
   })
 
   it('rejects an unknown key', () => {
     const shape = { count: z.number() }
 
-    expect(invalidClientQueryFields(shape, { count: 1, foo: 1 })).toEqual([
+    expect(validateClientQuery(shape, { count: 1, foo: 1 })).toEqual([
       'foo',
     ])
   })
@@ -42,14 +42,14 @@ describe('invalidClientQueryFields', () => {
     const shape = { date: z.string().datetime() }
 
     expect(
-      invalidClientQueryFields(shape, { date: new Date('garbage') }),
+      validateClientQuery(shape, { date: new Date('garbage') }),
     ).toEqual(['date'])
   })
 
   it('rejects a Date for a plain string field', () => {
     const shape = { text: z.string() }
 
-    expect(invalidClientQueryFields(shape, { text: new Date() })).toEqual([
+    expect(validateClientQuery(shape, { text: new Date() })).toEqual([
       'text',
     ])
   })
@@ -58,13 +58,13 @@ describe('invalidClientQueryFields', () => {
     const shape = { count: z.number() }
 
     expect(
-      invalidClientQueryFields(shape, { count: 1, constructor: 1 }),
+      validateClientQuery(shape, { count: 1, constructor: 1 }),
     ).toEqual(['constructor'])
   })
 
   it('accepts null for a nullable date-time', () => {
     const shape = { date: z.string().datetime().nullable() }
 
-    expect(invalidClientQueryFields(shape, { date: null })).toEqual([])
+    expect(validateClientQuery(shape, { date: null })).toEqual([])
   })
 })
