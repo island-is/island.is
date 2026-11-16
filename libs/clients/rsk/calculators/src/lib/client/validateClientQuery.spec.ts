@@ -33,33 +33,29 @@ describe('validateClientQuery', () => {
   it('rejects an unknown key', () => {
     const shape = { count: z.number() }
 
-    expect(validateClientQuery(shape, { count: 1, foo: 1 })).toEqual([
-      'foo',
-    ])
+    expect(validateClientQuery(shape, { count: 1, foo: 1 })).toEqual(['foo'])
   })
 
   it('rejects an invalid Date', () => {
     const shape = { date: z.string().datetime() }
 
-    expect(
-      validateClientQuery(shape, { date: new Date('garbage') }),
-    ).toEqual(['date'])
+    expect(validateClientQuery(shape, { date: new Date('garbage') })).toEqual([
+      'date',
+    ])
   })
 
   it('rejects a Date for a plain string field', () => {
     const shape = { text: z.string() }
 
-    expect(validateClientQuery(shape, { text: new Date() })).toEqual([
-      'text',
-    ])
+    expect(validateClientQuery(shape, { text: new Date() })).toEqual(['text'])
   })
 
   it('rejects a prototype key as an unknown key', () => {
     const shape = { count: z.number() }
 
-    expect(
-      validateClientQuery(shape, { count: 1, constructor: 1 }),
-    ).toEqual(['constructor'])
+    expect(validateClientQuery(shape, { count: 1, constructor: 1 })).toEqual([
+      'constructor',
+    ])
   })
 
   it('accepts null for a nullable date-time', () => {
