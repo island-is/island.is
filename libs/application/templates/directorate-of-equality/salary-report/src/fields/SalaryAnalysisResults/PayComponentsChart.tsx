@@ -125,7 +125,7 @@ export const PayComponentsChart = ({ data }: Props) => {
   if (!data || data.overall.count === 0) return null
 
   // A group with nobody in it gets no bar rather than a zero bar, which would
-  // read as "they get nothing" — the same reason the table showed a dash.
+  // read as "they get nothing".
   const groups = [
     { breakdown: data.male, label: formatMessage(t.male), fill: MALE_COLOR },
     {
@@ -187,7 +187,9 @@ export const PayComponentsChart = ({ data }: Props) => {
         <>
           <Box
             display="flex"
-            flexDirection={['column', 'column', 'row']}
+            // Side by side only from lg: at md the form column leaves each
+            // chart too narrow for "Kona/kynsegin" beside "Karl".
+            flexDirection={['column', 'column', 'column', 'row']}
             columnGap={3}
             rowGap={4}
           >
