@@ -863,6 +863,13 @@ export class VerdictsClientService {
       orderDirection: 'desc',
     })
 
+    if (response.succeeded === false) {
+      throw new Error(
+        response.message ||
+          'Failed to fetch published appeal cases from Court of Appeal',
+      )
+    }
+
     return {
       total: response.total ?? 0,
       items: (response.items ?? [])
