@@ -138,19 +138,21 @@ export class LimitedAccessCaseService {
       }
     }
 
-    for (const file of theCase.caseFiles ?? []) {
-      consider(file, theCase, theCase)
-    }
+    const sources = [
+      { owningCase: theCase, accessCase: theCase },
+      ...(theCase.mergedCases ?? []).map((merged) => ({
+        owningCase: merged,
+        accessCase: theCase,
+      })),
+      ...(theCase.splitCases ?? []).map((split) => ({
+        owningCase: split,
+        accessCase: split,
+      })),
+    ]
 
-    for (const merged of theCase.mergedCases ?? []) {
-      for (const file of merged.caseFiles ?? []) {
-        consider(file, merged, theCase)
-      }
-    }
-
-    for (const split of theCase.splitCases ?? []) {
-      for (const file of split.caseFiles ?? []) {
-        consider(file, split, split)
+    for (const { owningCase, accessCase } of sources) {
+      for (const file of owningCase.caseFiles ?? []) {
+        consider(file, owningCase, accessCase)
       }
     }
 
