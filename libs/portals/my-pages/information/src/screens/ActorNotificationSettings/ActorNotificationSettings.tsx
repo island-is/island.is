@@ -5,16 +5,12 @@ import {
   m,
 } from '@island.is/portals/my-pages/core'
 
-import { useUserInfo } from '@island.is/react-spa/bff'
 import { ActorNotificationSettings } from '../../components/NotificationSettings/ActorNotificationSettings/ActorNotificationSettings'
 import { mNotifications } from '../../lib/messages'
-import { ActorProfileNotificationSettings } from '../../components/NotificationSettings/ActorProfileNotificationSettings/ActorProfileNotificationSettings'
 
 const UserProfile = () => {
   useNamespaces('sp.notifications')
   const { formatMessage } = useLocale()
-  const { profile } = useUserInfo()
-  const isActor = !!profile?.actor
 
   return (
     <>
@@ -28,11 +24,7 @@ const UserProfile = () => {
         }}
         desktopContentSpan="10/12"
       />
-      {isActor ? (
-        <ActorProfileNotificationSettings />
-      ) : (
-        <ActorNotificationSettings />
-      )}
+      <ActorNotificationSettings />
     </>
   )
 }
