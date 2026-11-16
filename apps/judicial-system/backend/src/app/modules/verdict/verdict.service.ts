@@ -50,6 +50,7 @@ import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
 import { DeliverResponse } from './models/deliver.response'
 import { getLatestVerdict } from './getLatestVerdict'
+import { validateVerdictAppealUpdate } from './verdict.helpers'
 
 type UpdateVerdict = {
   serviceDate?: Date | null
@@ -310,9 +311,10 @@ export class VerdictService {
     return updatedVerdict
   }
 
-  // The defender reports that the defendant accepts the verdict. Unlike an
-  // appeal this is allowed after the appeal deadline: accepting gives up a
-  // right rather than exercising one, and the position is often passed on late.
+  // The defender reports that the defendant accepts the verdict. It stands on
+  // the same footing as the defender's appeal, deadline included: once the
+  // appeal deadline has run out the position is no longer the defender's to
+  // register.
   async acceptVerdictAsDefender(
     theCase: Case,
     defendant: Defendant,
@@ -349,6 +351,13 @@ export class VerdictService {
         `The verdict of defendant ${defendant.id} has been appealed`,
       )
     }
+
+    validateVerdictAppealUpdate({
+      caseId: theCase.id,
+      indictmentRulingDecision: theCase.indictmentRulingDecision,
+      rulingDate: theCase.rulingDate,
+      verdict,
+    })
 
     if (verdict.appealDecision === VerdictAppealDecision.ACCEPT) {
       return verdict

@@ -2,7 +2,7 @@ import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
-import { ForbiddenException } from '@nestjs/common'
+import { BadRequestException, ForbiddenException } from '@nestjs/common'
 
 import { MessageType } from '@island.is/judicial-system/message'
 import {
@@ -121,7 +121,7 @@ describe('LimitedAccessVerdictController - Accept verdict', () => {
         type: CaseType.INDICTMENT,
         state: CaseState.COMPLETED,
         indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
-        rulingDate: verdict.serviceDate,
+        rulingDate: servedNow,
         defendants: [defendant],
         ...caseOverrides,
       } as Case
@@ -188,11 +188,6 @@ describe('LimitedAccessVerdictController - Accept verdict', () => {
     expectAccepted(await givenWhenThen({ appealDecision: undefined }))
   })
 
-  // Accepting is not bound by the appeal deadline the way an appeal is.
-  it('should accept a verdict whose appeal deadline has passed', async () => {
-    expectAccepted(await givenWhenThen({ serviceDate: servedLongAgo }))
-  })
-
   it('should accept the verdict of a defendant who was present in court', async () => {
     expectAccepted(
       await givenWhenThen({
@@ -242,6 +237,15 @@ describe('LimitedAccessVerdictController - Accept verdict', () => {
 
   it('should reject a default judgement', async () => {
     expectRejected(await givenWhenThen({ isDefaultJudgement: true }))
+  })
+
+  // The deadline binds accepting the way it binds the defender's appeal.
+  it('should reject a verdict whose appeal deadline has passed', async () => {
+    const then = await givenWhenThen({ serviceDate: servedLongAgo })
+
+    expect(then.error).toBeInstanceOf(BadRequestException)
+    expect(mockVerdictRepositoryService.update).not.toHaveBeenCalled()
+    expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
   })
 
   it('should reject a verdict that has been appealed', async () => {

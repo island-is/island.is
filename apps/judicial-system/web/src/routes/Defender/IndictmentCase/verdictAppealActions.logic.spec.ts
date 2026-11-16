@@ -270,15 +270,14 @@ describe('verdictAppealActions', () => {
       ).toBe(true)
     })
 
-    // Unlike an appeal, the position can be registered after the deadline.
-    it('should allow after the appeal deadline has passed', () => {
+    it('should refuse after the appeal deadline has passed', () => {
       expect(
         canDefenderAcceptVerdictOf(
           theCase(),
           defendant({ isVerdictAppealDeadlineExpired: true }),
           user,
         ),
-      ).toBe(true)
+      ).toBe(false)
     })
 
     it('should refuse a verdict that is already accepted', () => {
@@ -365,7 +364,7 @@ describe('verdictAppealActions', () => {
       ).toEqual(['APPEAL', 'ACCEPT'])
     })
 
-    it('should offer only to accept once the appeal deadline has passed', () => {
+    it('should offer nothing once the appeal deadline has passed', () => {
       expect(
         getVerdictAppealActions(
           theCase(),
@@ -373,7 +372,7 @@ describe('verdictAppealActions', () => {
           user,
           true,
         ),
-      ).toEqual(['ACCEPT'])
+      ).toEqual([])
     })
 
     it('should still offer to appeal an accepted verdict within the deadline', () => {

@@ -57,20 +57,14 @@ export const canDefenderWithdrawVerdictAppealOf = (
   Boolean(defendant.verdict?.appealDate) &&
   Boolean(workingCase.verdictAppealCase?.id)
 
-// Whether this defender may register that the defendant accepts the verdict.
-// The appeal deadline does not matter here: the position is often passed on
-// after it has run out. An appeal has to be withdrawn first.
+// Whether this defender may register that the defendant accepts the verdict:
+// whenever they could still appeal it, and it is not accepted already.
 export const canDefenderAcceptVerdictOf = (
   workingCase: WorkingCase,
   defendant: Defendant,
   user: User | undefined,
 ): boolean =>
-  isConfirmedDefenderOf(user, defendant) &&
-  isCompletedCase(workingCase.state) &&
-  workingCase.indictmentRulingDecision ===
-    CaseIndictmentRulingDecision.RULING &&
-  canDefendantAppealVerdict(defendant.verdict) &&
-  !defendant.verdict?.appealDate &&
+  canDefenderAppealVerdictOf(workingCase, defendant, user) &&
   defendant.verdict?.appealDecision !== VerdictAppealDecision.ACCEPT
 
 // The actions the defendant's verdict timeline card offers this user, in menu
