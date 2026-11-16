@@ -1057,11 +1057,9 @@ export class BackendService {
   limitedAccessAcceptVerdict(
     caseId: string,
     defendantId: string,
-    acceptVerdict: unknown,
   ): Promise<Verdict> {
-    return this.patch(
-      `case/${caseId}/limitedAccess/defendant/${defendantId}/verdict/appealDecision`,
-      acceptVerdict,
+    return this.post(
+      `case/${caseId}/limitedAccess/defendant/${defendantId}/verdict/accept`,
     )
   }
 

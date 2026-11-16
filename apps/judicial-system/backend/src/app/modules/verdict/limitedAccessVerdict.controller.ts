@@ -1,13 +1,6 @@
 import { Sequelize } from 'sequelize-typescript'
 
-import {
-  Body,
-  Controller,
-  Inject,
-  Param,
-  Patch,
-  UseGuards,
-} from '@nestjs/common'
+import { Controller, Inject, Param, Post, UseGuards } from '@nestjs/common'
 import { InjectConnection } from '@nestjs/sequelize'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -33,7 +26,6 @@ import { LimitedAccessCaseExistsForUpdateGuard } from '../case/guards/limitedAcc
 import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
 import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
 import { Case, Defendant, Verdict } from '../repository'
-import { AcceptVerdictDto } from './dto/acceptVerdict.dto'
 import { CurrentVerdict } from './guards/verdict.decorator'
 import { VerdictExistsGuard } from './guards/verdictExists.guard'
 import { VerdictService } from './verdict.service'
@@ -61,7 +53,7 @@ export class LimitedAccessVerdictController {
     CaseCompletedGuard,
   )
   @RolesRules(defenderRule)
-  @Patch('defendant/:defendantId/verdict/appealDecision')
+  @Post('defendant/:defendantId/verdict/accept')
   @ApiOkResponse({
     type: Verdict,
     description:
@@ -74,8 +66,6 @@ export class LimitedAccessVerdictController {
     @CurrentCase() theCase: Case,
     @CurrentDefendant() defendant: Defendant,
     @CurrentVerdict() verdict: Verdict,
-    // Validated, and otherwise unused: the route registers one position only.
-    @Body() _dto: AcceptVerdictDto,
   ): Promise<Verdict> {
     this.logger.debug(
       `Accepting verdict ${verdict.id} of ${defendantId} in ${caseId}`,

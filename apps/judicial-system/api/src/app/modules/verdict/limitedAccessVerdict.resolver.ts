@@ -12,11 +12,7 @@ import {
   CurrentGraphQlUser,
   JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
-import {
-  Feature,
-  type User,
-  VerdictAppealDecision,
-} from '@island.is/judicial-system/types'
+import { Feature, type User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { FeatureService } from '../feature/feature.service'
@@ -55,9 +51,7 @@ export class LimitedAccessVerdictResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_VERDICT,
-      this.backendService.limitedAccessAcceptVerdict(caseId, defendantId, {
-        appealDecision: VerdictAppealDecision.ACCEPT,
-      }),
+      this.backendService.limitedAccessAcceptVerdict(caseId, defendantId),
       defendantId,
     )
   }

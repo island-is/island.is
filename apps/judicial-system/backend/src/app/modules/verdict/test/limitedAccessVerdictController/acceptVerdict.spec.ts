@@ -141,7 +141,6 @@ describe('LimitedAccessVerdictController - Accept verdict', () => {
             theCase,
             defendant,
             verdict,
-            { appealDecision: VerdictAppealDecision.ACCEPT },
           )
         })
       } catch (error) {
