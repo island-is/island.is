@@ -214,9 +214,20 @@ export async function runNativeLoginTest(
       (result) => result,
     ).catch(() => undefined)
 
+    // Turning on biometrics takes its own electronic ID approval, whose tokens
+    // replace the login's.
+    const approval = await step(
+      'Approve biometrics',
+      async () =>
+        ias.waitForApproval(
+          await ias.startElectronicIdUnlock({ purpose: 'biometric-key' }),
+        ),
+      (tokens) => `acr ${tokenClaims(tokens.accessToken).acr}`,
+    )
+    refreshToken = approval.refreshToken
     await step(
       'Enable biometrics',
-      () => ias.enableBiometrics(login.accessToken),
+      () => ias.enableBiometrics(approval.accessToken),
       () => getDeviceKey('biometric')?.securityLevel,
     )
     await lock()

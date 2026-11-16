@@ -111,8 +111,8 @@ export function DeviceLock({
             message={intl.formatMessage({
               id:
                 electronicIdError === 'tooManyRequests'
-                  ? 'applock.electronicIdTooManyRequestsMessage'
-                  : 'applock.electronicIdFailedMessage',
+                  ? 'electronicId.error.tooManyRequests'
+                  : 'electronicId.error.tryAgain',
             })}
           />
         ) : (

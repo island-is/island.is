@@ -48,8 +48,9 @@ export const is = {
   'applock.biometricsFailedTitle': '{biometricType} tókst ekki',
   'applock.biometricsFailedMessage': 'Reyndu aftur eða notaðu rafræn skilríki.',
   'applock.electronicIdFailedTitle': 'Ekki tókst að opna appið',
-  'applock.electronicIdFailedMessage': 'Reyndu aftur.',
-  'applock.electronicIdTooManyRequestsMessage':
+  'biometrics.enableFailedTitle': 'Ekki tókst að virkja {biometricType}',
+  'electronicId.error.tryAgain': 'Reyndu aftur.',
+  'electronicId.error.tooManyRequests':
     'Of margar beiðnir um rafræn skilríki í bili. Reyndu aftur eftir nokkrar mínútur.',
   'applock.logout': 'Útskrá',
   'biometrics.cancel': 'Hætta við',

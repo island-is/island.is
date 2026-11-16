@@ -25,7 +25,9 @@ import {
   useDeletePasskeyMutation,
   useGetProfileQuery,
 } from '@/graphql/types/schema'
-import { authStore } from '@/stores/auth-store'
+import { useEnableBiometrics } from '@/hooks/use-enable-biometrics'
+import { getIasClient } from '@/lib/ias'
+import { authStore, useAuthStore } from '@/stores/auth-store'
 import {
   Locale,
   preferencesStore,
@@ -125,6 +127,23 @@ export default function SettingsScreen() {
   const { authenticationTypes, isEnrolledBiometrics } = useUiStore()
   const biometricType = useBiometricType(authenticationTypes)
   const isPasskeyEnabled = useFeatureFlag('isPasskeyEnabled', false)
+
+  // A native login has no PIN: biometrics are a key registered with IAS.
+  const isNativeLogin = useAuthStore(({ nativeUser }) => !!nativeUser)
+  const { isEnabling, enableBiometrics } = useEnableBiometrics()
+  const [hasBiometricKey, setHasBiometricKey] = useState(
+    () => isNativeLogin && getIasClient().isBiometricsEnabled(),
+  )
+  const onNativeBiometricsChange = async (value: boolean) => {
+    if (value) {
+      await enableBiometrics()
+    } else {
+      await getIasClient()
+        .disableBiometrics()
+        .catch((error) => console.warn('Turning off biometrics failed', error))
+    }
+    setHasBiometricKey(getIasClient().isBiometricsEnabled())
+  }
 
   const userProfile = useGetProfileQuery()
   const [deletePasskey] = useDeletePasskeyMutation()
@@ -507,27 +526,33 @@ export default function SettingsScreen() {
         <TableViewGroup
           header={intl.formatMessage({ id: 'settings.security.groupTitle' })}
         >
-          <PressableHighlight
-            onPress={() => router.navigate('/onboarding/pin?from=settings')}
-          >
-            <TableViewCell
-              title={intl.formatMessage({
-                id: 'settings.security.changePinLabel',
-              })}
-              subtitle={intl.formatMessage({
-                id: 'settings.security.changePinDescription',
-              })}
-              accessory={
-                <Image
-                  source={chevronForward}
-                  style={{ width: 24, height: 24 }}
-                />
-              }
-            />
-          </PressableHighlight>
+          {!isNativeLogin && (
+            <PressableHighlight
+              onPress={() => router.navigate('/onboarding/pin?from=settings')}
+            >
+              <TableViewCell
+                title={intl.formatMessage({
+                  id: 'settings.security.changePinLabel',
+                })}
+                subtitle={intl.formatMessage({
+                  id: 'settings.security.changePinDescription',
+                })}
+                accessory={
+                  <Image
+                    source={chevronForward}
+                    style={{ width: 24, height: 24 }}
+                  />
+                }
+              />
+            </PressableHighlight>
+          )}
           <TableViewCell
             title={intl.formatMessage(
-              { id: 'settings.security.useBiometricsLabel' },
+              {
+                id: isNativeLogin
+                  ? 'settings.security.enableBiometricsLabel'
+                  : 'settings.security.useBiometricsLabel',
+              },
               { biometricType: biometricType.text },
             )}
             subtitle={
@@ -537,7 +562,11 @@ export default function SettingsScreen() {
                   })
                 : isEnrolledBiometrics
                 ? intl.formatMessage(
-                    { id: 'settings.security.useBiometricsDescription' },
+                    {
+                      id: isNativeLogin
+                        ? 'settings.security.enableBiometricsDescription'
+                        : 'settings.security.useBiometricsDescription',
+                    },
                     { biometricType: biometricType.text },
                   )
                 : intl.formatMessage(
@@ -549,7 +578,9 @@ export default function SettingsScreen() {
               <View>
                 <Switch
                   onValueChange={(value) => {
-                    if (value && !hasAcceptedBiometrics) {
+                    if (isNativeLogin) {
+                      void onNativeBiometricsChange(value)
+                    } else if (value && !hasAcceptedBiometrics) {
                       authenticateAsync({
                         disableDeviceFallback: true,
                         fallbackLabel: '',
@@ -568,8 +599,8 @@ export default function SettingsScreen() {
                       setUseBiometrics(value)
                     }
                   }}
-                  disabled={!isEnrolledBiometrics}
-                  value={useBiometrics}
+                  disabled={!isEnrolledBiometrics || isEnabling}
+                  value={isNativeLogin ? hasBiometricKey : useBiometrics}
                   thumbColor={Platform.select({
                     android: theme.tokens.app.background.neutral,
                   })}

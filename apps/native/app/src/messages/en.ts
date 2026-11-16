@@ -50,8 +50,9 @@ export const en: TranslatedMessages = {
   'applock.biometricsFailedTitle': '{biometricType} failed',
   'applock.biometricsFailedMessage': 'Try again or use electronic ID.',
   'applock.electronicIdFailedTitle': "Couldn't open the app",
-  'applock.electronicIdFailedMessage': 'Try again.',
-  'applock.electronicIdTooManyRequestsMessage':
+  'biometrics.enableFailedTitle': "Couldn't turn on {biometricType}",
+  'electronicId.error.tryAgain': 'Try again.',
+  'electronicId.error.tooManyRequests':
     'Too many electronic ID requests for now. Try again in a few minutes.',
   'applock.logout': 'Log out',
   'biometrics.cancel': 'Cancel',

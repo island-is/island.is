@@ -23,8 +23,14 @@ export interface IasClient {
     loginHint: string,
     options?: { smsCode?: string },
   ): Promise<CibaRequest>
-  /** Electronic ID unlock: IAS finds the person from the install. */
-  startElectronicIdUnlock(): Promise<CibaRequest>
+  /**
+   * Electronic ID unlock: IAS finds the person from the install. With
+   * `purpose: 'biometric-key'` the person approves turning on biometrics
+   * instead, and the tokens can register a biometric key.
+   */
+  startElectronicIdUnlock(options?: {
+    purpose?: 'biometric-key'
+  }): Promise<CibaRequest>
   /** Polls until the person approves on their phone, declines or it expires. */
   waitForApproval(
     request: CibaRequest,
@@ -32,7 +38,10 @@ export interface IasClient {
   ): Promise<IasTokens>
 
   isBiometricsEnabled(): boolean
-  /** Within 10 minutes of an electronic ID login or unlock. */
+  /**
+   * With the access token from an electronic ID approval for biometrics,
+   * within 10 minutes of it. One approval enables one key.
+   */
   enableBiometrics(accessToken: string): Promise<void>
   disableBiometrics(): Promise<void>
   /**

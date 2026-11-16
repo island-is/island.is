@@ -367,7 +367,11 @@ export function createIasClient(options: IasClientOptions): IasClient {
 
   async function startCiba(
     loginHint: string,
-    { smsCode, allowNewKey }: { smsCode?: string; allowNewKey: boolean },
+    {
+      smsCode,
+      purpose,
+      allowNewKey,
+    }: { smsCode?: string; purpose?: string; allowNewKey: boolean },
   ): Promise<CibaRequest> {
     const response = await request<CibaResponse>('POST', '/connect/ciba', {
       attested: true,
@@ -377,6 +381,7 @@ export function createIasClient(options: IasClientOptions): IasClient {
         login_hint: loginHint,
         scope,
         ...(smsCode ? { sms_code: smsCode } : {}),
+        ...(purpose ? { purpose } : {}),
       },
     })
     return {
@@ -408,8 +413,8 @@ export function createIasClient(options: IasClientOptions): IasClient {
       return startCiba(loginHint, { smsCode, allowNewKey: true })
     },
 
-    startElectronicIdUnlock() {
-      return startCiba('device', { allowNewKey: false })
+    startElectronicIdUnlock({ purpose } = {}) {
+      return startCiba('device', { purpose, allowNewKey: false })
     },
 
     async waitForApproval(ciba, { signal } = {}) {

@@ -26,6 +26,7 @@ export function closeElectronicIdSheet() {
  * An electronic ID unlock: IAS sends a verification code, shown in a sheet
  * while the person approves on their phone, then new tokens. Unlocking ends
  * the session from before, so the caller replaces its tokens with these.
+ * To turn on biometrics the person approves that instead, in its own request.
  *
  * On success the sheet stays open, for the caller to close along with its own
  * screen. Closing the sheet cancels the request.
@@ -38,7 +39,9 @@ export function useElectronicIdUnlock(purpose: ElectronicIdPurpose) {
     controllerRef.current = controller
     try {
       const ias = getIasClient()
-      const request = await ias.startElectronicIdUnlock()
+      const request = await ias.startElectronicIdUnlock(
+        purpose === 'enableBiometrics' ? { purpose: 'biometric-key' } : {},
+      )
       const requestId = electronicIdStore.getState().requestId + 1
       electronicIdStore.setState({
         purpose,

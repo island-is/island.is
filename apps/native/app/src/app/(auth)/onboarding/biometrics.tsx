@@ -9,9 +9,11 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { AppState, Platform } from 'react-native'
 
 import { Button, Onboarding } from '@/ui'
+import { useEnableBiometrics } from '@/hooks/use-enable-biometrics'
 import finger from '@/assets/icons/finger-16.png'
 import iris from '@/assets/icons/iris-16.png'
 import onboardingBiometrics from '@/assets/illustrations/onboarding-biometrics.png'
+import { useAuthStore } from '@/stores/auth-store'
 import { preferencesStore } from '@/stores/preferences-store'
 import { nextOnboardingStep } from '@/utils/onboarding'
 
@@ -60,6 +62,9 @@ export default function BiometricsScreen() {
   const [isEnrolled, setIsEnrolled] = useState(false)
   const [authTypes, setAuthTypes] = useState<AuthenticationType[]>([])
   const biometricType = useBiometricType(authTypes)
+  // A native login has no PIN: biometrics are registered with IAS instead.
+  const isNativeLogin = useAuthStore(({ nativeUser }) => !!nativeUser)
+  const { isEnabling, enableBiometrics } = useEnableBiometrics()
 
   useEffect(() => {
     Promise.all([isEnrolledAsync(), supportedAuthenticationTypesAsync()]).then(
@@ -78,7 +83,14 @@ export default function BiometricsScreen() {
     return () => subscription.remove()
   }, [])
 
-  const onBiometricsPress = () => {
+  const onBiometricsPress = async () => {
+    if (isNativeLogin) {
+      if (await enableBiometrics()) {
+        preferencesStore.setState({ hasOnboardedBiometrics: true })
+        nextOnboardingStep()
+      }
+      return
+    }
     authenticateAsync({
       disableDeviceFallback: true,
       fallbackLabel: '',
@@ -107,7 +119,11 @@ export default function BiometricsScreen() {
       body={
         isEnrolled ? (
           <FormattedMessage
-            id="onboarding.biometrics.body"
+            id={
+              isNativeLogin
+                ? 'onboarding.biometrics.bodyWithoutPin'
+                : 'onboarding.biometrics.body'
+            }
             values={{ biometricType: biometricType.text }}
           />
         ) : (
@@ -125,6 +141,7 @@ export default function BiometricsScreen() {
           )}
           onPress={onBiometricsPress}
           disabled={!isEnrolled}
+          loading={isEnabling}
           icon={biometricType.icon}
         />
       }
