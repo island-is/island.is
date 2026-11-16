@@ -104,22 +104,26 @@ export const createDelegationsModule = (
             enabled: hasAccess,
             element: <GrantAccessNew />,
           },
-          {
-            name: m.delegationRequestsNavTitle,
-            path: DelegationPaths.DelegationRequestsList,
-            navHide: !delegationRequestsEnabled,
-            enabled: hasAccess && Boolean(delegationRequestsEnabled),
-            element: <DelegationRequests />,
-          },
-          ...(canRequestDelegation
+          // Omitted rather than disabled: the navigation only reads the
+          // top-level route's navHide/enabled, so a disabled child still shows.
+          ...(delegationRequestsEnabled
             ? [
                 {
-                  name: m.requestDelegationNavTitle,
-                  path: DelegationPaths.DelegationRequest,
-                  navHide: !delegationRequestsEnabled,
-                  enabled: hasAccess && Boolean(delegationRequestsEnabled),
-                  element: <RequestDelegation />,
+                  name: m.delegationRequestsNavTitle,
+                  path: DelegationPaths.DelegationRequestsList,
+                  enabled: hasAccess,
+                  element: <DelegationRequests />,
                 },
+                ...(canRequestDelegation
+                  ? [
+                      {
+                        name: m.requestDelegationNavTitle,
+                        path: DelegationPaths.DelegationRequest,
+                        enabled: hasAccess,
+                        element: <RequestDelegation />,
+                      },
+                    ]
+                  : []),
               ]
             : []),
           {

@@ -9,6 +9,8 @@ import {
   ExpandableCard,
   LinkText,
   Skeleton,
+  TableCell,
+  TableRow,
   Typography,
   token,
 } from '@/ui'
@@ -34,15 +36,6 @@ const Cell = styled.View`
   margin-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
 `
 
-const TableRow = styled.View`
-  flex-direction: row;
-  flex-wrap: wrap;
-  padding-top: ${({ theme }) => theme.spacing[2]}px;
-  padding-bottom: ${({ theme }) => theme.spacing[2]}px;
-  border-bottom-color: ${token((t) => t.border.primary)};
-  border-bottom-width: 1px;
-`
-
 const NoVaccinations = styled.View`
   padding: ${({ theme }) => theme.spacing[3]}px;
   justify-content: center;
@@ -51,12 +44,6 @@ const NoVaccinations = styled.View`
   border-width: ${({ theme }) => theme.border.width.standard}px;
   border-color: ${({ theme }) => theme.tokens.border.primary};
   border-radius: ${({ theme }) => theme.border.radius.large};
-`
-
-const RowItem = styled.View`
-  margin-right: ${({ theme }) => theme.spacing[1]}px;
-  margin-left: ${({ theme }) => theme.spacing[1]}px;
-  flex: 1;
 `
 
 const TableHeading = styled.View`
@@ -227,22 +214,17 @@ export function VaccinationsCard({
               <TableRow
                 testID={testIDs.VACCINATION_ITEM_ROW}
                 key={index}
-                style={{
-                  backgroundColor:
-                    index % 2 === 0
-                      ? theme.tokens.background.brandMinimal
-                      : theme.tokens.background.invert,
-                }}
+                index={index}
               >
-                <RowItem style={{ maxWidth: '6%' }}>
+                <TableCell style={{ maxWidth: '6%' }}>
                   <Typography variant="body3">{index + 1}</Typography>
-                </RowItem>
-                <RowItem style={{ maxWidth: '21%' }}>
+                </TableCell>
+                <TableCell style={{ maxWidth: '21%' }}>
                   <Typography variant="body3">
                     {vaccination.date ? intl.formatDate(vaccination.date) : ''}
                   </Typography>
-                </RowItem>
-                <RowItem style={{ maxWidth: '25%' }}>
+                </TableCell>
+                <TableCell style={{ maxWidth: '25%' }}>
                   <Typography variant="body3">
                     {convertAgeToString(
                       locale,
@@ -250,9 +232,9 @@ export function VaccinationsCard({
                       vaccination.age?.years,
                     )}
                   </Typography>
-                </RowItem>
+                </TableCell>
                 {vaccination.name && (
-                  <RowItem>
+                  <TableCell>
                     {vaccination.url ? (
                       <TouchableOpacity
                         style={{ flexWrap: 'wrap' }}
@@ -269,7 +251,7 @@ export function VaccinationsCard({
                         {vaccination.name}
                       </Typography>
                     )}
-                  </RowItem>
+                  </TableCell>
                 )}
               </TableRow>
             ))}

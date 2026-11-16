@@ -55,7 +55,9 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
+import { getOrCreateTransaction } from '../../middleware'
 import {
+  CaseExistsForUpdateGuard,
   CaseExistsGuard,
   CaseNotCompletedGuard,
   CaseOriginalAncestorInterceptor,
@@ -134,7 +136,11 @@ export class FileController {
     return this.fileService.createPresignedPost(theCase, createPresignedPost)
   }
 
-  @UseGuards(CaseExistsGuard, RolesGuard, CaseWriteGuard)
+  // The three routes that create a file decide against a case row locked for
+  // the request. Their roles rules are bare - none has a canActivate that
+  // reads the case - so RolesGuard runs ahead of the locking read and a caller
+  // in a role the route has no rule for never takes the lock.
+  @UseGuards(RolesGuard, CaseExistsForUpdateGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -159,15 +165,23 @@ export class FileController {
   ): Promise<CaseFile> {
     this.logger.debug(`Creating a file for case ${caseId}`)
 
-    return this.sequelize.transaction((transaction) =>
-      this.fileService.createCaseFile(theCase, createFile, user, transaction),
+    // The transaction CaseExistsForUpdateGuard opened, holding the lock on
+    // this case row. Opening one here instead would block on that lock while
+    // it waits for this handler to return, which is a deadlock rather than a
+    // race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.fileService.createCaseFile(
+      theCase,
+      createFile,
+      user,
+      transaction,
     )
   }
 
-  // TODO: Add tests for this endpoint
   @UseGuards(
-    CaseExistsGuard,
     RolesGuard,
+    CaseExistsForUpdateGuard,
     CaseWriteGuard,
     DefendantExistsGuard,
     CreateDefendantCaseFileGuard,
@@ -196,20 +210,20 @@ export class FileController {
       `Creating a file for case ${caseId} for defendant ${defendantId}`,
     )
 
-    return this.sequelize.transaction((transaction) =>
-      this.fileService.createCaseFile(
-        theCase,
-        { ...createFile, defendantId },
-        user,
-        transaction,
-      ),
+    // The transaction CaseExistsForUpdateGuard opened - see createCaseFile.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.fileService.createCaseFile(
+      theCase,
+      { ...createFile, defendantId },
+      user,
+      transaction,
     )
   }
 
-  // TODO: Add tests for this endpoint
   @UseGuards(
-    CaseExistsGuard,
     RolesGuard,
+    CaseExistsForUpdateGuard,
     CaseWriteGuard,
     CivilClaimantExistsGuard,
     CreateCivilClaimantCaseFileGuard,
@@ -238,13 +252,14 @@ export class FileController {
       `Creating a file for case ${caseId} for civil claimant ${civilClaimantId}`,
     )
 
-    return this.sequelize.transaction((transaction) =>
-      this.fileService.createCaseFile(
-        theCase,
-        { ...createFile, civilClaimantId },
-        user,
-        transaction,
-      ),
+    // The transaction CaseExistsForUpdateGuard opened - see createCaseFile.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.fileService.createCaseFile(
+      theCase,
+      { ...createFile, civilClaimantId },
+      user,
+      transaction,
     )
   }
 

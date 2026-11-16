@@ -39,7 +39,7 @@ export class AppealCaseRepositoryService {
 
       const result = await this.appealCaseModel.findOne({
         where: { id },
-        include: [appealAssistantInclude, appealJudgesInclude],
+        include: [appealAssistantInclude(), appealJudgesInclude],
         transaction: options?.transaction,
       })
 

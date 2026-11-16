@@ -3,6 +3,7 @@ query Case($input: CaseQueryInput!) {
     id
     created
     type
+    originalAncestorId
     splitCases {
       ...SplitCaseFields
     }

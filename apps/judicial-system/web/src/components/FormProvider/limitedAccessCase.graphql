@@ -4,6 +4,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     created
     origin
     type
+    originalAncestorId
     indictmentSubtypes
     state
     policeCaseNumbers
