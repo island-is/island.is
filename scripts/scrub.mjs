@@ -49,7 +49,7 @@ const URL_SECRET_PARAM =
   /([?&][\w-]*(?:token|secret|password|key|code|signature|sig|session)[\w-]*=)[^&\s#"']+/gi
 const KEY_VALUE = new RegExp(
   `(\\\\?["']?)(?<![\\w.-])((?:[\\w-]+\\.)*(?:${SENSITIVE_KEY_NAMES}))\\1(\\s*[:=]\\s*)` +
-    `(\\\\?"(?:[^"\\\\]|\\\\.)*?\\\\?"|'[^']*'|\\[[A-Z-]+(?:-\\d+)?\\]|[^\\s,;&}\\]]+(?:\\s+\\p{Lu}[\\p{L}'-]*(?![\\w.-]*\\s*[:=]))*)`,
+    `(\\\\?"(?:[^"\\\\]|\\\\.)*?\\\\?"|'[^']*'|\\[[A-Z-]+(?:-\\d+)?\\]|(?:\\[[A-Z-]+(?:-\\d+)?\\]|[^\\s,;&}\\]])(?:\\[[A-Z-]+(?:-\\d+)?\\]|[^,;&}\\]\\r\\n])*?(?=\\s*(?:[,;&}\\]\\r\\n]|$)|\\s+[\\w.-]+\\s*[:=]))`,
   'giu',
 )
 const COOKIE_HEADER = /\b((?:set-)?cookie\s*[:=]\s*)[^\r\n"]+/gi
@@ -57,6 +57,8 @@ const XML_ELEMENT = new RegExp(
   `<((?:[\\w-]+:)?(${SENSITIVE_KEY_NAMES}))(\\s[^>]*)?>([^<]*)</\\1>`,
   'giu',
 )
+const NAME_THEN_REST =
+  /^(\S+(?:\s+(?:\p{Lu}\S*|(?:af|al|bin|da|das|de|del|den|der|di|dos|du|la|le|van|von)(?=\s)))*)([\s\S]*)$/u
 const SQL_STATEMENT =
   /\b(?:INSERT\s+INTO|UPDATE\s+\S+\s+SET|DELETE\s+FROM|SELECT\b[\s\S]*?\bFROM)\b/i
 const SQL_STRING = /'(?:[^']|'')*'/g
@@ -173,6 +175,17 @@ export const kennitalaKind = (kt) => {
   return undefined
 }
 
+/**
+ * @param {string} key
+ * @param {Set<string>} taken
+ */
+const uniqueKey = (key, taken) => {
+  let unique = key
+  for (let n = 2; taken.has(unique); n++) unique = `${key} (${n})`
+  taken.add(unique)
+  return unique
+}
+
 /** @param {string} kt */
 const isMinor = (kt, today = new Date()) => {
   const century = { 8: 1800, 9: 1900, 0: 2000 }[kt[9]]
@@ -283,11 +296,13 @@ const createScrubber = (knownNames = []) => {
       : redacted(key, value)
 
   /** @param {string} text */
-  const scrubText = (text) =>
-    knownNamePatterns
+  const scrubText = (text) => {
+    const values = scrubValues(text)
+    const isSql = SQL_STATEMENT.test(values)
+    return knownNamePatterns
       .reduce(
         (out, [pattern, name]) => out.replace(pattern, () => nameLabel(name)),
-        scrubValues(text),
+        values,
       )
       .replace(ICELANDIC_NAME, (name) => nameLabel(name))
       .replace(XML_ELEMENT, (match, tag, localName, attributes = '', value) =>
@@ -296,15 +311,18 @@ const createScrubber = (knownNames = []) => {
           : `<${tag}${attributes}>${maskValue(localName, value)}</${tag}>`,
       )
       .replace(SQL_STRING, (literal) =>
-        SQL_STATEMENT.test(text) && !PLACEHOLDER.test(literal.slice(1, -1))
+        isSql && !PLACEHOLDER.test(literal.slice(1, -1))
           ? `'${redacted('sql', literal.slice(1, -1))}'`
           : literal,
       )
       .replace(KEY_VALUE, (match, quote, key, separator, value) => {
-        const [, open = '', inner = '', close = '', rest = ''] =
-          /^(\\?["'])([\s\S]*?)(\\?["'])$/.exec(value) ??
-          /^()(\S+(?:\s+\p{Lu}[\p{L}'-]*)*)()([\s\S]*)$/u.exec(value) ??
-          []
+        const quoted = /^(\\?["'])([\s\S]*?)(\\?["'])$/.exec(value)
+        const [, inner = '', rest = ''] = quoted
+          ? [, quoted[2]]
+          : NAME_KEY.test(key.split('.').pop() ?? '')
+          ? NAME_THEN_REST.exec(value) ?? []
+          : [, value]
+        const [open, close] = quoted ? [quoted[1], quoted[3]] : ['', '']
         return !PLACEHOLDER.test(inner) && isSensitiveKey(key, inner)
           ? `${quote}${key}${quote}${separator}${open}${maskValue(
               key,
@@ -312,10 +330,20 @@ const createScrubber = (knownNames = []) => {
             )}${close}${rest}`
           : match
       })
+  }
+
+  /** @param {string} text */
+  const maskSecretParam = (match, param) => {
+    const value = match.slice(param.length)
+    return PLACEHOLDER.test(value)
+      ? match
+      : `${param}${redacted(param.slice(1, -1), value)}`
+  }
 
   /** @param {string} text */
   const scrubValues = (text) =>
     text
+      .replace(URL_SECRET_PARAM, maskSecretParam)
       .replace(URL_ENCODED, (token) => urlDecoded(token))
       .replace(PRIVATE_KEY, () => label('PRIVATE-KEY', 'key'))
       .replace(JWT, (jwt) => label('JWT', jwt))
@@ -329,11 +357,7 @@ const createScrubber = (knownNames = []) => {
         const scrubbed = scrubText(decoded)
         return scrubbed === decoded ? token : scrubbed
       })
-      .replace(
-        URL_SECRET_PARAM,
-        (match, param) =>
-          `${param}${redacted(param.slice(1, -1), match.slice(param.length))}`,
-      )
+      .replace(URL_SECRET_PARAM, maskSecretParam)
       .replace(
         COOKIE_HEADER,
         (match, header) =>
@@ -387,9 +411,11 @@ const createScrubber = (knownNames = []) => {
     if (value && typeof value === 'object') {
       const isApplicationRow =
         'applicant' in value && ('type_id' in value || 'typeId' in value)
+      /** @type {Set<string>} */
+      const keys = new Set()
       return Object.fromEntries(
         Object.entries(value).map(([k, v]) => [
-          k,
+          uniqueKey(scrubText(k), keys),
           isApplicationRow && k === 'name' && typeof v === 'string'
             ? scrubText(v)
             : scrubValue(v, k),
@@ -448,9 +474,9 @@ What it masks:
   Kennitölur          [KT-PERSON-n], [KT-CHILD-n] if under 18, [KT-COMPANY-n]
   Names               [NAME-n]: under name keys, -son/-dóttir names and
                       names given with --names, wherever else they appear
-  Emails, phone numbers, IBANs, bank accounts, cards, IP addresses
-                      [EMAIL-n], [PHONE-n], [IBAN-n], [BANK-ACCOUNT-n],
-                      [CARD-n], [IP-n]
+  Emails, cards, IP addresses; Icelandic phone numbers, IBANs, bank accounts
+                      [EMAIL-n], [CARD-n], [IP-n], [PHONE-n], [IBAN-n],
+                      [BANK-ACCOUNT-n]
   Tokens, JWTs, private keys
                       [TOKEN-n], [JWT-n], [PRIVATE-KEY-n]
   Passwords, API keys, cookies, secret URL parameters, SQL values
