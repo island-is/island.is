@@ -78,12 +78,10 @@ export default function RootLayout() {
         // Seed the canary the lock screen uses to detect device unlocks.
         void ensureDeviceUnlockCanary()
 
-        // 1. Restore auth tokens from keychain
+        // 1. Restore who is signed in from the keychain
         await readAuthorizeResult()
 
-        // 2. Validate token: check required scopes, refresh if needed, fetch userinfo.
-        //    Mirrors getAppRoot -> checkIsAuthenticated() from the old app.
-        //    Will clear authorizeResult (→ redirect to /login) if token is invalid.
+        // 2. A native login starts locked; without one the app goes to /login.
         const isAuthenticated = await checkIsAuthenticated()
 
         // 3. If authenticated, resolve async onboarding state (e.g. checks biometric
@@ -93,8 +91,8 @@ export default function RootLayout() {
         if (isAuthenticated) {
           await getNextOnboardingStep()
           // Stamp a past timestamp so the auth-layout mount effect pushes the
-          // lock on cold start. Past grace forces auth (PIN/biometric) rather
-          // than auto-unlock. Post-login mounts don't hit this path so the
+          // lock on cold start. Past grace forces an unlock (biometrics or
+          // electronic ID) rather than auto-unlock. Post-login mounts don't hit this path so the
           // stamp stays undefined → no lock right after login.
           if (isAppLockEnabled()) {
             authStore.setState({

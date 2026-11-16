@@ -78,7 +78,7 @@ export interface CibaRequest {
   interval: number
 }
 
-/** Shaped like react-native-app-auth's results, for the auth store. */
+/** The tokens the auth store keeps. */
 export interface IasTokens {
   accessToken: string
   /** ISO 8601 */

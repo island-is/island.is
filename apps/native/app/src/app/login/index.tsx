@@ -25,9 +25,9 @@ async function logInWithMocks() {
       accessTokenExpirationDate: new Date(
         Date.now() + 3600 * 1000,
       ).toISOString(),
-      authorizationCode: 'mock-authorization-code',
       idToken: 'mock-id-token',
       refreshToken: 'mock-refresh-token',
+      scopes: [],
     },
     userInfo: {
       name: 'Mock User',

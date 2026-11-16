@@ -69,12 +69,6 @@ export default ({ config }) => {
           imageWidth: 200,
         },
       ],
-      [
-        'react-native-app-auth',
-        {
-          redirectUrls: [`${getUniqueIdentifier()}.auth://oauth`],
-        },
-      ],
       './plugins/with-island-app',
     ],
   }
