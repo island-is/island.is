@@ -21,6 +21,7 @@ import {
   PAID_HOURS_MIN,
   SALARY_COMPONENT_GROUPS,
 } from '../../utils/constants'
+import { isStartDateAfterToday } from '../../utils/dates'
 import type { Employee } from '../../utils/types'
 import {
   EMPTY_EMPLOYEE_FORM_VALUES,
@@ -79,6 +80,18 @@ export const EmployeeForm: FC<Props> = ({
     // `rules`, so enforce the requirement here (the `required` prop is UI-only).
     if (!data.startDate) {
       methods.setError('startDate', { type: 'required', message: requiredMsg })
+      return
+    }
+    // maxDate below is what keeps future dates out: react-datepicker neither
+    // offers them nor accepts one typed in — it leaves the field's value as it
+    // was and puts that value back in the input when the calendar closes. This
+    // check is the backstop for any value that reaches the form some other way,
+    // since DMR's 400 for it would surface only as a generic save error.
+    if (isStartDateAfterToday(data.startDate, new Date())) {
+      methods.setError('startDate', {
+        type: 'max',
+        message: formatMessage(messages.errors.startDateAfterToday),
+      })
       return
     }
     // Caller resolves roleTitle/id/ordinal and preserves step assignments.
@@ -143,6 +156,7 @@ export const EmployeeForm: FC<Props> = ({
               name="startDate"
               label={formatMessage(m.startDateLabel)}
               locale={lang as Locale}
+              maxDate={new Date()}
               backgroundColor="white"
               size="sm"
               required
