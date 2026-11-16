@@ -245,7 +245,7 @@ describe('Defender IndictmentOverview', () => {
 
     expect(
       await screen.findByText(
-        'Ertu viss um að þú viljir skrá að Eigin sakborningur uni dómi? Ríkissaksóknari fær tilkynningu.',
+        'Ertu viss um að þú viljir skrá að Eigin sakborningur unir dómi? Ríkissaksóknari fær tilkynningu.',
       ),
     ).toBeInTheDocument()
     expect(accept).not.toHaveBeenCalled()

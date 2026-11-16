@@ -437,7 +437,7 @@ const IndictmentOverview: FC = () => {
               title="Una dómi"
               text={`Ertu viss um að þú viljir skrá að ${
                 acceptingVerdictFor.name ?? 'dómfelldi'
-              } uni dómi? Ríkissaksóknari fær tilkynningu.`}
+              } unir dómi? Ríkissaksóknari fær tilkynningu.`}
               buttons={[
                 {
                   text: 'Hætta við',
