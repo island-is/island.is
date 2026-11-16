@@ -397,7 +397,7 @@ const createScrubber = (knownNames = []) => {
     if (value && typeof value === 'object' && !JSON.isRawJSON(value)) {
       const sensitiveKey = key && isSensitiveKey(key, '') ? key : ''
       if (Array.isArray(value)) {
-        return value.map((item) => scrubValue(item, sensitiveKey))
+        return value.map((item) => scrubValue(item, key))
       }
       const isApplicationRow =
         'applicant' in value && ('type_id' in value || 'typeId' in value)
