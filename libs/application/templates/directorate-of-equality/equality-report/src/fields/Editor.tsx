@@ -24,6 +24,7 @@ import {
   useEnsureEqualityDraft,
   useEqualityContentPush,
 } from '../utils/useEqualityDraft'
+import { useScreenEntered } from '../utils/useScreenEntered'
 
 interface Props extends FieldBaseProps {
   field: CustomField
@@ -133,8 +134,12 @@ export const Editor = ({
     return () => setSubmitButtonDisabled?.(false)
   }, [uploadUnresolved, setSubmitButtonDisabled])
 
+  const screenEntered = useScreenEntered()
+
   // Kept out of the disabled flag above: a button greyed out on arrival
   // explains nothing, so the untouched case blocks on press with a reason.
+  // `screenEntered` re-registers it after Screen's arrival clear, which would
+  // otherwise leave an untouched screen with no guard at all.
   useEffect(() => {
     if (!setBeforeSubmitCallback) return
     setBeforeSubmitCallback(async () => {
@@ -152,6 +157,7 @@ export const Editor = ({
       // registers its own guard, which a plain registration would wipe out.
     }, EDITOR_BEFORE_SUBMIT)
   }, [
+    screenEntered,
     uploadUnresolved,
     hasSettledFile,
     setBeforeSubmitCallback,

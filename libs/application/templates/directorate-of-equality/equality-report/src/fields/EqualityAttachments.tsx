@@ -17,6 +17,7 @@ import {
 } from '@island.is/island-ui/core'
 import { messages } from '../lib/messages'
 import { useEnsureEqualityDraft } from '../utils/useEqualityDraft'
+import { useScreenEntered } from '../utils/useScreenEntered'
 import {
   ATTACHMENT_ACCEPT,
   ATTACHMENT_CONTENT_TYPES,
@@ -118,8 +119,6 @@ export const EqualityAttachments = ({
   const dropRejectionsRef = useRef<string[]>([])
 
   const busy = !!uploading || !!removingId
-  const busyRef = useRef(busy)
-  busyRef.current = busy
 
   useEffect(() => {
     mountedRef.current = true
@@ -141,17 +140,21 @@ export const EqualityAttachments = ({
   // Leaving the screen (or sending the reply on draftRetryForm) mid-upload
   // would drop a file the applicant thinks is on its way. Composed with the
   // Editor's guard rather than replacing it.
+  //
+  // Registered again after Screen's arrival clear (see useScreenEntered), and
+  // again whenever `busy` changes so the guard reads the current value.
+  const screenEntered = useScreenEntered()
   useEffect(() => {
     if (!setBeforeSubmitCallback) return
     setBeforeSubmitCallback(async () => {
-      if (busyRef.current) {
+      if (busy) {
         const message = formatMessage(m.uploadInProgress)
         setBlockMessage(message)
         return [false, message]
       }
       return [true, null]
     }, ATTACHMENTS_BEFORE_SUBMIT)
-  }, [setBeforeSubmitCallback, formatMessage, m])
+  }, [screenEntered, busy, setBeforeSubmitCallback, formatMessage, m])
 
   const reload = useCallback(async (): Promise<Attachment[] | undefined> => {
     try {
