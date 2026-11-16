@@ -60,7 +60,8 @@ const PLACEHOLDER = /^\[[A-Z-]+(?:-\d+)?\]$/
 
 const S3_URL =
   /\b(?:https?:\/\/(?:[\w-]+\.)*s3[\w.-]*\.amazonaws\.com|s3:\/\/[\w.-]+)\/[^\s"'<>\\]*/gi
-const UUID_PREFIX = /^[\da-f]{8}-(?:[\da-f]{4}-){3}[\da-f]{12}-/i
+const UPLOADED_FILE =
+  /(?<![\w-])[\da-f]{8}-(?:[\da-f]{4}-){3}[\da-f]{12}-[^\s"'<>/\\?#](?:[^\r\n"'<>/\\?#]*?)\.[\da-z]{2,5}(?![\p{L}\d])/giu
 const PRIVATE_KEY =
   /-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----/g
 const JWT = /\beyJ[\w-]*\.[\w-]+\.[\w-]*/g
@@ -376,19 +377,16 @@ const createScrubber = (knownNames = []) => {
   const scrubValues = (text) =>
     text
       .replace(S3_URL, (url) => {
-        const path = urlDecoded(url.split(/[?#]/)[0]).split('"')[0]
-        const fileName = (
-          path
-            .replace(/^\w+:\/\/[^/]*/, '')
-            .split('/')
-            .filter(Boolean)
-            .at(-1) ?? ''
-        ).replace(UUID_PREFIX, '')
-        const placeholder = label('S3-URL', path)
-        return /\.\w+$/.test(fileName)
-          ? `${placeholder}/${fileName}`
-          : placeholder
+        const path = urlDecoded(url.split(/[?#]/)[0])
+          .split('"')[0]
+          .replace(/(?<=\/[^/]+)\/+$/, '')
+        const [, origin, folder, fileName] =
+          /^(\w+:\/\/[^/]*)(.*\/)([^/]*)$/.exec(path) ?? []
+        return /\.\w+$/.test(fileName ?? '')
+          ? `${origin}${folder}${label('FILE', fileName)}`
+          : path
       })
+      .replace(UPLOADED_FILE, (fileName) => label('FILE', fileName))
       .replace(URL_SECRET_PARAM, maskSecretParam)
       .replace(URL_ENCODED, (token) => urlDecoded(token))
       .replace(PRIVATE_KEY, () => label('PRIVATE-KEY', 'key'))
@@ -528,7 +526,7 @@ What it masks:
                       [BANK-ACCOUNT-n]
   Tokens, JWTs, private keys
                       [TOKEN-n], [JWT-n], [PRIVATE-KEY-n]
-  S3 URLs             [S3-URL-n]/<file name>: only the file name is kept
+  Uploaded file names [FILE-n]: in S3 URLs, and wherever prefixed by a UUID
   Passwords, API keys, cookies, secret URL parameters, SQL values,
   birth dates, comments and other free text
                       [REDACTED]
