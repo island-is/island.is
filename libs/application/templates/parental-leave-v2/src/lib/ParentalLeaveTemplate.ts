@@ -26,6 +26,7 @@ import {
   defineTemplateApi,
   InstitutionNationalIds,
 } from '@island.is/application/types'
+import { Features } from '@island.is/feature-flags'
 
 import {
   ADOPTION,
@@ -110,6 +111,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.PARENTAL_LEAVE_V2,
+  featureFlag: Features.parentalLeaveV2,
   name: determineNameFromApplicationAnswers,
   codeOwner: CodeOwners.Origo,
   institution: parentalLeaveFormMessages.shared.institution,

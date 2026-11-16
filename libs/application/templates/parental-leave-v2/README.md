@@ -11,6 +11,10 @@ This application template allows applicants to apply for parental leave. For fur
 
 V2 uses application type `ParentalLeaveV2` and slug `faedingarorlof-v2`. The existing [parental leave application](../parental-leave/README.md) remains separate so its applications can complete their lifecycle. Application lookups are scoped to V2's own type.
 
+### Feature flag
+
+V2 is behind the ConfigCat flag `isParentalLeaveV2Enabled` (`Features.parentalLeaveV2`), which defaults to off. The application system checks it for the logged-in user when V2 applications are listed, created, opened or assigned, so targeting by national id must include the employer and the other parent as well as the applicant. Turning the flag off also blocks applications already in progress.
+
 ### Glossary
 
 | Word             | Description                   |
