@@ -34,6 +34,7 @@ export const NotificationSettingsV2 = () => {
     postPaperMailMutation,
     loading: paperMailLoading,
     error: paperMailError,
+    postLoading: paperMailPostLoading,
   } = usePaperMail()
   const { value: isSmsNotificationEnabled } = useFeatureFlag(
     Features.isSmsNotificationEnabled,
@@ -51,6 +52,7 @@ export const NotificationSettingsV2 = () => {
   })
   const [updatingChannels, setUpdatingChannels] = useState(false)
   const channelUpdatePending = useRef(false)
+  const paperMailUpdatePending = useRef(false)
 
   useEffect(() => {
     const profile = userProfile?.getUserProfile
@@ -99,24 +101,31 @@ export const NotificationSettingsV2 = () => {
   }
 
   const onPaperMailChange = async (active: boolean) => {
-    const { data, error } = await safeAwait(
-      postPaperMailMutation({
-        variables: {
-          input: { wantsPaper: active },
-        },
-      }),
-    )
+    if (paperMailUpdatePending.current) return
 
-    if (error) {
-      toast.error(formatMessage(mNotifications.updateError))
-      return
+    paperMailUpdatePending.current = true
+    try {
+      const { data, error } = await safeAwait(
+        postPaperMailMutation({
+          variables: {
+            input: { wantsPaper: active },
+          },
+        }),
+      )
+
+      if (error) {
+        toast.error(formatMessage(mNotifications.updateError))
+        return
+      }
+
+      setSettings((current) => ({
+        ...current,
+        wantsPaper:
+          data?.data?.postPaperMailInfo?.wantsPaper ?? current.wantsPaper,
+      }))
+    } finally {
+      paperMailUpdatePending.current = false
     }
-
-    setSettings((current) => ({
-      ...current,
-      wantsPaper:
-        data?.data?.postPaperMailInfo?.wantsPaper ?? current.wantsPaper,
-    }))
   }
 
   if (loading || paperMailLoading) {
@@ -187,6 +196,7 @@ export const NotificationSettingsV2 = () => {
             subtitle={formatMessage(mNotifications.paperMailDescription)}
             toggleLabel={formatMessage(mNotifications.paperMailAriaLabel)}
             checked={settings.wantsPaper}
+            disabled={paperMailPostLoading}
             onChange={onPaperMailChange}
           />
         )}
