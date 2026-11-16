@@ -573,6 +573,11 @@ export const messages = {
         defaultMessage:
           'Hámarksfjölda fylgiskjala er náð. Eyddu skjali til að bæta öðru við.',
       },
+      uploadInProgress: {
+        id: 'doe.er.application:equalityReport.attachments.uploadInProgress',
+        defaultMessage:
+          'Bíddu þar til fylgiskjölum hefur verið hlaðið upp áður en þú heldur áfram.',
+      },
       overLimit: {
         id: 'doe.er.application:equalityReport.attachments.overLimit',
         defaultMessage:

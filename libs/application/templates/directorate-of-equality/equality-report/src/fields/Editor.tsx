@@ -38,6 +38,11 @@ interface Props extends FieldBaseProps {
  */
 const MAX_PDF_BYTES = 4 * 1024 * 1024
 
+const EDITOR_BEFORE_SUBMIT = {
+  allowMultiple: true,
+  customCallbackId: 'equalityReportEditor',
+}
+
 /**
  * Reads a File into base64, without the data-URI prefix `readAsDataURL` adds.
  *
@@ -143,7 +148,9 @@ export const Editor = ({
         return [false, message]
       }
       return [true, null]
-    })
+      // Composed, not replacing: EqualityAttachments shares this screen and
+      // registers its own guard, which a plain registration would wipe out.
+    }, EDITOR_BEFORE_SUBMIT)
   }, [
     uploadUnresolved,
     hasSettledFile,

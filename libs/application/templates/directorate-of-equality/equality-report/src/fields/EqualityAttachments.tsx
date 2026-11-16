@@ -72,6 +72,11 @@ type Attachment = { id: string; filename: string; sizeBytes: number }
 // Cap the presigned PUT so a stalled upload can't leave the field busy.
 const UPLOAD_TIMEOUT_MS = 60_000
 
+const ATTACHMENTS_BEFORE_SUBMIT = {
+  allowMultiple: true,
+  customCallbackId: 'equalityReportAttachments',
+}
+
 interface Props extends FieldBaseProps {
   field: CustomField
 }
@@ -90,6 +95,7 @@ interface Props extends FieldBaseProps {
 export const EqualityAttachments = ({
   application,
   field,
+  setBeforeSubmitCallback,
   setSubmitButtonDisabled,
 }: Props) => {
   const { formatMessage } = useIntl()
@@ -105,9 +111,15 @@ export const EqualityAttachments = ({
   const [uploading, setUploading] = useState<string | undefined>()
   const [removingId, setRemovingId] = useState<string | undefined>()
   const [errors, setErrors] = useState<string[]>([])
+  const [blockMessage, setBlockMessage] = useState<string | undefined>()
   const mountedRef = useRef(true)
+  // Dropzone reports rejected files and then accepted ones in the same drop,
+  // through two callbacks. Held here so the second doesn't erase the first.
+  const dropRejectionsRef = useRef<string[]>([])
 
   const busy = !!uploading || !!removingId
+  const busyRef = useRef(busy)
+  busyRef.current = busy
 
   useEffect(() => {
     mountedRef.current = true
@@ -117,22 +129,42 @@ export const EqualityAttachments = ({
   }, [])
 
   // Same cleanup as the Editor: Screen keeps this flag across screens, so it
-  // must be released when the field unmounts mid-upload.
+  // must be released when the field unmounts mid-upload. The Editor writes the
+  // same single flag, so either field can clear the other's disabled state;
+  // the before-submit guards below and in the Editor are what actually hold.
   useEffect(() => {
     setSubmitButtonDisabled?.(busy)
+    if (!busy) setBlockMessage(undefined)
     return () => setSubmitButtonDisabled?.(false)
   }, [busy, setSubmitButtonDisabled])
+
+  // Leaving the screen (or sending the reply on draftRetryForm) mid-upload
+  // would drop a file the applicant thinks is on its way. Composed with the
+  // Editor's guard rather than replacing it.
+  useEffect(() => {
+    if (!setBeforeSubmitCallback) return
+    setBeforeSubmitCallback(async () => {
+      if (busyRef.current) {
+        const message = formatMessage(m.uploadInProgress)
+        setBlockMessage(message)
+        return [false, message]
+      }
+      return [true, null]
+    }, ATTACHMENTS_BEFORE_SUBMIT)
+  }, [setBeforeSubmitCallback, formatMessage, m])
 
   const reload = useCallback(async (): Promise<Attachment[] | undefined> => {
     try {
       const { data } = await client.query<{
-        directorateOfEqualityEqualityAttachments: Attachment[]
+        directorateOfEqualityEqualityAttachments: Attachment[] | null
       }>({
         query: EQUALITY_ATTACHMENTS,
         variables: { input: { applicationId: application.id } },
         fetchPolicy: 'network-only',
       })
-      const list = data.directorateOfEqualityEqualityAttachments
+      // Nullable root query (domain convention); a failure arrives as an
+      // error, so null only ever means nothing to show.
+      const list = data.directorateOfEqualityEqualityAttachments ?? []
       if (mountedRef.current) {
         setAttachments(list)
         setLoadError(false)
@@ -223,8 +255,9 @@ export const EqualityAttachments = ({
   }
 
   const handleFilesChanged = async (files: File[]) => {
+    const nextErrors = [...dropRejectionsRef.current]
+    dropRejectionsRef.current = []
     if (busy || files.length === 0) return
-    const nextErrors: string[] = []
     const accepted: File[] = []
 
     for (const file of files) {
@@ -286,11 +319,17 @@ export const EqualityAttachments = ({
   }
 
   const handleUploadRejection = (rejections: FileRejection[]) => {
-    setErrors(
-      rejections.map(({ file }) =>
-        formatMessage(m.unsupportedType, { filename: file.name }),
-      ),
+    const rejectionMessages = rejections.map(({ file }) =>
+      formatMessage(m.unsupportedType, { filename: file.name }),
     )
+    setErrors(rejectionMessages)
+    // onChange, if this drop also had accepted files, runs synchronously right
+    // after this and picks these up. Cleared after the drop either way, so a
+    // rejection-only drop can't leak into the next one.
+    dropRejectionsRef.current = rejectionMessages
+    queueMicrotask(() => {
+      dropRejectionsRef.current = []
+    })
   }
 
   if (loading) {
@@ -322,6 +361,7 @@ export const EqualityAttachments = ({
       <Text variant="h4" as="h3">
         {formatMessage(m.title)}
       </Text>
+      {blockMessage && <AlertMessage type="warning" message={blockMessage} />}
       {loadError && (
         <AlertMessage
           type="warning"

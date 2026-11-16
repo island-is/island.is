@@ -129,6 +129,7 @@ export class DirectorateOfEqualityApplicationResolver {
   // to the presigned URL, never through GraphQL.
   @Query(() => [EqualityAttachmentModel], {
     name: 'directorateOfEqualityEqualityAttachments',
+    nullable: true,
   })
   @Scopes(ApiScope.directorateOfEquality)
   @Audit()
