@@ -27,6 +27,7 @@ import { Form } from '../forms/models/form.model'
 import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { normalizeZendeskInstance } from '../../../utils/zendeskPartiesCustomFieldIds'
+import { getOrganizationLogoUrl } from '../../../utils/organizationLogo'
 
 @Injectable()
 export class OrganizationsService {
@@ -196,6 +197,9 @@ export class OrganizationsService {
     user: User,
     { nationalId, logo }: OrganizationLogoDto,
   ): Promise<void> {
+    if (logo !== '') {
+      getOrganizationLogoUrl(logo)
+    }
     await this.sequelize.transaction(async (transaction) => {
       const organization = await this.organizationModel.findOne({
         where: { nationalId },

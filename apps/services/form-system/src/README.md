@@ -83,6 +83,7 @@ Application PDFs display the organization's stored `logo.is` in the top-right
 header on the first page only, regardless of the PDF language. Content starts below the
 header and footer positions are unchanged. Logos are loaded from Contentful as
 PNG images; organizations without an Icelandic logo produce PDFs without one.
+Logo download failures are logged and do not block user or X-Road PDF downloads.
 
 ## Code owners and maintainers
 

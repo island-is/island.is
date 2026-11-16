@@ -103,6 +103,22 @@ describe('OrganizationsService.create', () => {
       expect(save).toHaveBeenCalledWith({ transaction })
     })
 
+    it.each([
+      'https://example.com/logo.png',
+      'http://images.ctfassets.net/logo.png',
+      'https://images.ctfassets.net.example.com/logo.png',
+      'not-a-url',
+    ])(
+      'rejects invalid logo URL %s before accessing the database',
+      async (invalidLogo) => {
+        await expect(
+          service.updateLogo(user, { nationalId, logo: invalidLogo }),
+        ).rejects.toThrow(BadRequestException)
+        expect(findOne).not.toHaveBeenCalled()
+        expect(save).not.toHaveBeenCalled()
+      },
+    )
+
     it('clears logo.is while preserving logo.en', async () => {
       await service.updateLogo(user, { nationalId, logo: '' })
 

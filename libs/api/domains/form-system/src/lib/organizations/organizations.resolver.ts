@@ -5,6 +5,8 @@ import { OrganizationsService } from './organizations.service'
 import {
   CurrentUser,
   IdsUserGuard,
+  Scopes,
+  ScopesGuard,
   type User,
 } from '@island.is/auth-nest-tools'
 import {
@@ -20,6 +22,7 @@ import {
 import { OrganizationAdmin } from '../../models/organizationAdmin.model'
 import { OrganizationZendeskInstanceInput } from '../../dto/organizationZendeskInstance.input'
 import { OrganizationLogoInput } from '../../dto/organizationLogo.input'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -56,7 +59,9 @@ export class OrganizationsResolver {
     return this.organizationsService.getOrganizationAdmin(user, input)
   }
 
-  @Mutation(() => Boolean, { name: 'formSystemUpdateOrganizationLogo' })
+  @Mutation(() => Boolean, { name: 'updateFormSystemOrganizationLogo' })
+  @UseGuards(ScopesGuard)
+  @Scopes(AdminPortalScope.formSystem)
   async updateOrganizationLogo(
     @Args('input', { type: () => OrganizationLogoInput })
     input: OrganizationLogoInput,

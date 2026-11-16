@@ -1,9 +1,9 @@
 import { gql } from '@apollo/client'
 
 export const UPDATE_ORGANIZATION_LOGO = gql`
-  mutation FormSystemUpdateOrganizationLogo(
+  mutation UpdateFormSystemOrganizationLogo(
     $input: FormSystemOrganizationLogoInput!
   ) {
-    formSystemUpdateOrganizationLogo(input: $input)
+    updateFormSystemOrganizationLogo(input: $input)
   }
 `

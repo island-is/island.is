@@ -122,7 +122,7 @@ describe('Completed organization logo', () => {
       data: { getOrganizationByNationalId: { logo: { url: logo } } },
     }))
     const save = jest.fn(() => ({
-      data: { formSystemUpdateOrganizationLogo: true },
+      data: { updateFormSystemOrganizationLogo: true },
     }))
     const { controlDispatch, formUpdate } = renderCompleted([
       { request, result },
@@ -147,6 +147,39 @@ describe('Completed organization logo', () => {
     expect(toast.error).not.toHaveBeenCalled()
   })
 
+  it('retries a missing organization with a dashed national ID and saves its logo', async () => {
+    const logo = 'https://images.ctfassets.net/space/logo/organization.png'
+    const save = jest.fn(() => ({
+      data: { updateFormSystemOrganizationLogo: true },
+    }))
+    const fallback = jest.fn(() => ({
+      data: { getOrganizationByNationalId: { logo: { url: logo } } },
+    }))
+    renderCompleted([
+      { request, result: { data: { getOrganizationByNationalId: null } } },
+      {
+        request: {
+          query: GET_ORGANIZATION_LOGO,
+          variables: { input: { nationalId: '123456-7890' } },
+        },
+        result: fallback,
+      },
+      {
+        request: {
+          query: UPDATE_ORGANIZATION_LOGO,
+          variables: { input: { nationalId: organizationNationalId, logo } },
+        },
+        result: save,
+      },
+    ])
+
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Download PDF' }))
+
+    await waitFor(() => expect(save).toHaveBeenCalledTimes(1))
+    expect(fallback).toHaveBeenCalledTimes(1)
+    expect(toast.error).not.toHaveBeenCalled()
+  })
+
   it('does not fetch a logo when PDF downloads are disabled', () => {
     const result = jest.fn(() => ({
       data: { getOrganizationByNationalId: null },
@@ -167,7 +200,7 @@ describe('Completed organization logo', () => {
 
   it('clears the stored logo when Contentful no longer has a logo', async () => {
     const save = jest.fn(() => ({
-      data: { formSystemUpdateOrganizationLogo: true },
+      data: { updateFormSystemOrganizationLogo: true },
     }))
     renderCompleted([
       {
@@ -193,7 +226,7 @@ describe('Completed organization logo', () => {
 
   it('reports logo fetch failures', async () => {
     const save = jest.fn(() => ({
-      data: { formSystemUpdateOrganizationLogo: true },
+      data: { updateFormSystemOrganizationLogo: true },
     }))
     renderCompleted([
       { request, error: new Error('Contentful unavailable') },

@@ -68,6 +68,7 @@ import { DataFromUrlResDto } from './models/dto/dataFromUrl.response.dto'
 import { DataFromUrlReqDto } from './models/dto/dataFromUrl.request.dto'
 import { Payment } from '../payment/payment.model'
 import { buildApplicationPdf } from '../../../utils/applicationPdf'
+import { getOrganizationLogoUrl } from '../../../utils/organizationLogo'
 import { ApplicationPdfResponseDto } from './models/dto/applicationPdf.response.dto'
 
 @Injectable()
@@ -793,28 +794,25 @@ export class ApplicationsService {
     let logo: Buffer | undefined
 
     if (logoUrl) {
-      const url = new URL(
-        logoUrl.startsWith('//') ? `https:${logoUrl}` : logoUrl,
-      )
-      if (
-        url.protocol !== 'https:' ||
-        url.hostname !== 'images.ctfassets.net'
-      ) {
-        throw new BadRequestException(
-          'Organization logo must be a Contentful image',
-        )
-      }
+      const url = getOrganizationLogoUrl(logoUrl)
       url.searchParams.set('fm', 'png')
       url.searchParams.set('w', '240')
       url.searchParams.set('h', '120')
       url.searchParams.set('fit', 'pad')
-      const response = await axios.get<ArrayBuffer>(url.toString(), {
-        responseType: 'arraybuffer',
-        timeout: 10000,
-        maxContentLength: 5 * 1024 * 1024,
-        maxRedirects: 0,
-      })
-      logo = Buffer.from(response.data)
+      try {
+        const response = await axios.get<ArrayBuffer>(url.toString(), {
+          responseType: 'arraybuffer',
+          timeout: 10000,
+          maxContentLength: 5 * 1024 * 1024,
+          maxRedirects: 0,
+        })
+        logo = Buffer.from(response.data)
+      } catch (error) {
+        this.logger.warn('Failed to download organization logo for PDF', {
+          applicationId: application.id,
+          error,
+        })
+      }
     }
 
     return buildApplicationPdf(application, locale, logo)

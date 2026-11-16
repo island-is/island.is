@@ -22,13 +22,15 @@ describe('ApplicationsService.createApplicationPdf', () => {
     en: string | null
   }) => {
     const findOne = jest.fn().mockResolvedValue({ logo: organizationLogo })
+    const warn = jest.fn()
     const service = Object.assign(
       Object.create(ApplicationsService.prototype),
       {
         organizationModel: { findOne },
+        logger: { warn },
       },
     ) as ApplicationsService
-    return { service, findOne }
+    return { service, findOne, warn }
   }
 
   afterEach(() => jest.restoreAllMocks())
@@ -88,16 +90,25 @@ describe('ApplicationsService.createApplicationPdf', () => {
     expect(get).not.toHaveBeenCalled()
   })
 
-  it('propagates logo download failures', async () => {
-    jest.spyOn(axios, 'get').mockRejectedValue(new Error('Logo unavailable'))
-    const { service } = createService({
+  it('logs download failures and generates the PDF without a logo', async () => {
+    const error = new Error('Logo unavailable')
+    jest.spyOn(axios, 'get').mockRejectedValue(error)
+    const image = jest.spyOn(PDFDocument.prototype, 'image')
+    const { service, warn } = createService({
       is: 'https://images.ctfassets.net/space/logo.png',
       en: null,
     })
 
-    await expect(
-      service.createApplicationPdf({ organizationNationalId: nationalId }),
-    ).rejects.toThrow('Logo unavailable')
+    const pdf = await service.createApplicationPdf({
+      id: 'application-id',
+      organizationNationalId: nationalId,
+    })
+    expect(pdf.subarray(0, 5).toString()).toBe('%PDF-')
+    expect(image).not.toHaveBeenCalled()
+    expect(warn).toHaveBeenCalledWith(
+      'Failed to download organization logo for PDF',
+      { applicationId: 'application-id', error },
+    )
   })
 })
 

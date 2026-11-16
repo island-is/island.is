@@ -41,7 +41,7 @@ export const Completed = () => {
     { fetchPolicy: 'no-cache' },
   )
   const [updateOrganizationLogo, { loading: isSavingLogo }] = useMutation<
-    { formSystemUpdateOrganizationLogo: boolean },
+    { updateFormSystemOrganizationLogo: boolean },
     { input: { nationalId: string; logo: string } }
   >(UPDATE_ORGANIZATION_LOGO)
   const [nextSteps, setNextSteps] = useState<FormSystemLanguageType[]>(() =>
@@ -125,15 +125,29 @@ export const Completed = () => {
                 throw new Error('Organization national ID is missing')
               }
 
-              const { data, error } = await getOrganizationLogo({
+              let result = await getOrganizationLogo({
                 variables: {
                   input: { nationalId: organizationNationalId },
                 },
               })
-              if (error) {
-                throw error
+              if (
+                !result.error &&
+                result.data &&
+                !result.data.getOrganizationByNationalId
+              ) {
+                result = await getOrganizationLogo({
+                  variables: {
+                    input: {
+                      nationalId: `${organizationNationalId.slice(
+                        0,
+                        6,
+                      )}-${organizationNationalId.slice(6)}`,
+                    },
+                  },
+                })
               }
-
+              const { data, error } = result
+              if (error) throw error
               if (!data) {
                 throw new Error('Organization logo query returned no data')
               }
@@ -143,7 +157,7 @@ export const Completed = () => {
                   input: { nationalId: organizationNationalId, logo },
                 },
               })
-              if (!updateData?.formSystemUpdateOrganizationLogo) {
+              if (!updateData?.updateFormSystemOrganizationLogo) {
                 throw new Error('Organization logo was not saved')
               }
             } catch {
