@@ -1,7 +1,8 @@
 import { useIntl } from 'react-intl'
 import { Image, Pressable, View } from 'react-native'
+import { useTheme } from 'styled-components/native'
 
-import { Skeleton, Typography, useDynamicColor } from '@/ui'
+import { Skeleton, Typography } from '@/ui'
 import clock from '@/assets/icons/clock.png'
 
 export function MileageCell({
@@ -20,7 +21,7 @@ export function MileageCell({
   skeleton?: boolean
 }) {
   const intl = useIntl()
-  const dynamicColor = useDynamicColor()
+  const theme = useTheme()
   if (skeleton) {
     return (
       <Skeleton
@@ -40,12 +41,9 @@ export function MileageCell({
           borderRadius: 8,
           paddingHorizontal: 16,
           paddingVertical: 8,
-          backgroundColor: dynamicColor({
-            light: editable ? '#FFFCE0' : dynamicColor.theme.color.blueberry100,
-            dark: editable
-              ? dynamicColor.theme.shades.dark.shade400
-              : dynamicColor.theme.shades.dark.shade100,
-          }),
+          backgroundColor: editable
+            ? theme.tokens.feedback.warning.background
+            : theme.tokens.feedback.tags.blueberry.background,
           gap: 4,
           marginBottom: 8,
         }}
@@ -56,10 +54,7 @@ export function MileageCell({
           </Typography>
           {editable && (
             <Typography
-              color={dynamicColor({
-                light: dynamicColor.theme.color.blue400,
-                dark: dynamicColor.theme.color.blue400,
-              })}
+              color={theme.tokens.interactive.foreground.primary}
               weight="600"
               size={12}
             >

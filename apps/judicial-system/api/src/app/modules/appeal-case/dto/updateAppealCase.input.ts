@@ -34,23 +34,6 @@ export class UpdateAppealCaseInput {
   @Field(() => [ID], { nullable: true })
   readonly appealJudgeIds?: string[]
 
-  // One position on the bench each, for clients that have not moved to
-  // appealJudgeIds.
-  @Allow()
-  @IsOptional()
-  @Field(() => ID, { nullable: true })
-  readonly appealJudge1Id?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => ID, { nullable: true })
-  readonly appealJudge2Id?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => ID, { nullable: true })
-  readonly appealJudge3Id?: string
-
   @Allow()
   @IsOptional()
   @Field(() => String, { nullable: true })

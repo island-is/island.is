@@ -2,6 +2,7 @@ import type { FC } from 'react'
 import { useContext } from 'react'
 
 import {
+  hasAllAppealJudges,
   isCompletedCase,
   isDefenceUser,
   isPrisonAdminUser,
@@ -108,9 +109,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
                 items: [
                   appealCaseNumber,
                   ...(appealAssistant ? [appealAssistant] : []),
-                  ...(targetAppealCase?.appealJudge1 &&
-                  targetAppealCase?.appealJudge2 &&
-                  targetAppealCase?.appealJudge3
+                  ...(hasAllAppealJudges(targetAppealCase)
                     ? [appealJudges]
                     : []),
                 ],

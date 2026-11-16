@@ -13,9 +13,8 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { BackButton } from '@island.is/portals/admin/core'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
-import { Identity } from '@island.is/api/schema'
 import { IntroHeader, m as coreMessages } from '@island.is/portals/core'
 import {
   DelegationsFormFooter,
@@ -28,7 +27,6 @@ import { maskString, unmaskString } from '@island.is/shared/utils'
 import cn from 'classnames'
 import startOfDay from 'date-fns/startOfDay'
 import kennitala from 'kennitala'
-import debounce from 'lodash/debounce'
 import NumberFormat from 'react-number-format'
 import {
   Form,
@@ -45,6 +43,70 @@ import { CreateDelegationResult } from './CreateDelegation.action'
 import * as styles from './CreateDelegation.css'
 import { useIdentityLazyQuery } from './CreateDelegation.generated'
 
+const validateNationalId = (nationalId: string) =>
+  nationalId.length === 10 && kennitala.isValid(nationalId)
+
+const useIdentityLookup = ({
+  onNotFound,
+  onError,
+}: {
+  onNotFound: () => void
+  onError: () => void
+}) => {
+  const [nationalId, setNationalId] = useState('')
+  const nationalIdRef = useRef('')
+  const callbacksRef = useRef({ onNotFound, onError })
+  callbacksRef.current = { onNotFound, onError }
+
+  const [getIdentity, { data, error, loading, variables }] =
+    useIdentityLazyQuery()
+
+  const isCurrent =
+    !loading &&
+    validateNationalId(nationalId) &&
+    variables?.input.nationalId === nationalId
+  const identity = isCurrent ? data?.identity ?? null : null
+  const notFound = isCurrent && !error && !!data && !data.identity
+  const failed = isCurrent && !!error
+
+  useEffect(() => {
+    if (notFound) {
+      callbacksRef.current.onNotFound()
+    }
+  }, [notFound, nationalId])
+
+  useEffect(() => {
+    if (failed) {
+      callbacksRef.current.onError()
+    }
+  }, [failed, nationalId])
+
+  const lookup = (value: string) => {
+    const sanitized = value.replace(/\D/g, '')
+    if (sanitized === nationalIdRef.current) {
+      return
+    }
+    nationalIdRef.current = sanitized
+    setNationalId(sanitized)
+    if (validateNationalId(sanitized)) {
+      getIdentity({ variables: { input: { nationalId: sanitized } } })
+    }
+  }
+
+  return {
+    nationalId,
+    identity,
+    loading: loading && validateNationalId(nationalId),
+    lookup,
+    prefill: (value: string) => {
+      if (!nationalIdRef.current) {
+        lookup(value)
+      }
+    },
+    clear: () => lookup(''),
+  }
+}
+
 const CreateDelegationScreen = () => {
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
@@ -54,12 +116,8 @@ const CreateDelegationScreen = () => {
   const submit = useSubmit()
   const actionData = useActionData() as CreateDelegationResult
   const [noEndDate, setNoEndDate] = React.useState(true)
-  const [fromIdentity, setFromIdentity] = React.useState<Identity | null>(null)
-  const [toIdentity, setToIdentity] = React.useState<Identity | null>(null)
   const [validTo, setValidTo] = React.useState<Date | null>(null)
   const [isConfirmed, setIsConfirmed] = React.useState(false)
-  const [fromNationalId, setFromNationalId] = React.useState('')
-  const [toNationalId, setToNationalId] = React.useState('')
   const [loading, setLoading] = React.useState(false)
   const fromInputRef = React.useRef<HTMLInputElement>(null)
   const toInputRef = React.useRef<HTMLInputElement>(null)
@@ -113,23 +171,6 @@ const CreateDelegationScreen = () => {
     }
   }, [actionData])
 
-  useEffect(() => {
-    async function getFromNationalId() {
-      const unmaskedNationalId = await unmaskString(
-        defaultFromNationalId ?? '',
-        userInfo?.profile.nationalId ?? '',
-      )
-      if (unmaskedNationalId && validateNationalId(unmaskedNationalId)) {
-        setFromNationalId(unmaskedNationalId)
-        getFromIdentity({
-          variables: { input: { nationalId: unmaskedNationalId } },
-        })
-      }
-    }
-
-    !!defaultFromNationalId && getFromNationalId()
-  }, [defaultFromNationalId])
-
   const noUserFoundToast = () => {
     toast.warning(formatMessage(m.grantIdentityError))
   }
@@ -138,61 +179,34 @@ const CreateDelegationScreen = () => {
     toast.success(formatMessage(m.createDelegationSuccessToast))
   }
 
-  const [getFromIdentity, { loading: fromIdentityQueryLoading }] =
-    useIdentityLazyQuery({
-      onError: (error) => {
-        console.error(error)
-      },
-      onCompleted: (data) => {
-        if (!data.identity) {
-          noUserFoundToast()
-        } else if (data.identity) {
-          setFromIdentity(data.identity)
-        }
-      },
-    })
-
-  const [getToIdentity, { loading: toIdentityQueryLoading }] =
-    useIdentityLazyQuery({
-      onError: (error) => {
-        console.error(error)
-      },
-      onCompleted: (data) => {
-        if (!data.identity) {
-          noUserFoundToast()
-        } else if (data.identity) {
-          setToIdentity(data.identity)
-        }
-      },
-    })
-
-  const validateNationalId = (nationalId: string) => {
-    const value = nationalId.replace('-', '').trim()
-    return value.length === 10 && kennitala.isValid(value)
+  const lookupErrorToast = () => {
+    toast.error(formatMessage(m.errorDefault))
   }
 
-  const handleNationalIdFromChange = debounce(async ({ value }) => {
-    setFromNationalId(value)
+  const from = useIdentityLookup({
+    onNotFound: noUserFoundToast,
+    onError: lookupErrorToast,
+  })
+  const to = useIdentityLookup({
+    onNotFound: noUserFoundToast,
+    onError: lookupErrorToast,
+  })
+  const fromIdentity = from.identity
+  const toIdentity = to.identity
 
-    const isValid = validateNationalId(value)
-    if (!isValid) {
-      return
+  useEffect(() => {
+    async function getFromNationalId() {
+      const unmaskedNationalId = await unmaskString(
+        defaultFromNationalId ?? '',
+        userInfo?.profile.nationalId ?? '',
+      )
+      if (unmaskedNationalId && validateNationalId(unmaskedNationalId)) {
+        from.prefill(unmaskedNationalId)
+      }
     }
-    return getFromIdentity({
-      variables: { input: { nationalId: value } },
-    })
-  }, 300)
 
-  const handleNationalIdToChange = debounce(({ value }) => {
-    setToNationalId(value)
-    const isValid = validateNationalId(value)
-    if (!isValid) {
-      return
-    }
-    return getToIdentity({
-      variables: { input: { nationalId: value } },
-    })
-  }, 300)
+    !!defaultFromNationalId && getFromNationalId()
+  }, [defaultFromNationalId])
 
   const Loading = () => (
     <span className={cn(styles.icon, styles.loadingIcon)} aria-label="Loading">
@@ -208,6 +222,7 @@ const CreateDelegationScreen = () => {
     loading: boolean
   }) => (
     <button
+      type="button"
       disabled={loading}
       onClick={onClick}
       className={styles.icon}
@@ -251,8 +266,8 @@ const CreateDelegationScreen = () => {
                     backgroundColor="blue"
                     customInput={Input}
                     format="######-####"
-                    onValueChange={handleNationalIdFromChange}
-                    value={fromNationalId ?? ''}
+                    onValueChange={({ value }) => from.lookup(value)}
+                    value={from.nationalId}
                     required
                     getInputRef={fromInputRef}
                     errorMessage={formatMessage(
@@ -260,14 +275,13 @@ const CreateDelegationScreen = () => {
                     )}
                   />
                 </Box>
-                {fromIdentityQueryLoading ? (
+                {from.loading ? (
                   <Loading />
                 ) : fromIdentity?.name ? (
                   <ClearButton
-                    loading={fromIdentityQueryLoading}
+                    loading={from.loading}
                     onClick={() => {
-                      setFromNationalId('')
-                      setFromIdentity(null)
+                      from.clear()
                       if (defaultFromNationalId) {
                         setSearchParams(
                           (params) => {
@@ -311,8 +325,8 @@ const CreateDelegationScreen = () => {
                     backgroundColor="blue"
                     customInput={Input}
                     format="######-####"
-                    onValueChange={handleNationalIdToChange}
-                    value={toNationalId}
+                    onValueChange={({ value }) => to.lookup(value)}
+                    value={to.nationalId}
                     getInputRef={toInputRef}
                     required
                     errorMessage={formatMessage(
@@ -320,14 +334,13 @@ const CreateDelegationScreen = () => {
                     )}
                   />
                 </Box>
-                {toIdentityQueryLoading ? (
+                {to.loading ? (
                   <Loading />
                 ) : toIdentity?.name ? (
                   <ClearButton
-                    loading={toIdentityQueryLoading}
+                    loading={to.loading}
                     onClick={() => {
-                      setToNationalId('')
-                      setToIdentity(null)
+                      to.clear()
                       setTimeout(() => {
                         if (toInputRef.current) {
                           toInputRef.current.focus()

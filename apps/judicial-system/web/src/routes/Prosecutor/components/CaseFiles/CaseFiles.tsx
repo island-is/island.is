@@ -1,5 +1,4 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { validate as validateUuid } from 'uuid'
 
@@ -62,7 +61,6 @@ export const CaseFiles = () => {
     errorPolicy: 'all',
   })
   const router = useRouter()
-  const { formatMessage } = useIntl()
   const [isUploadingPoliceCaseFiles, setIsUploadingPoliceCaseFiles] =
     useState<boolean>(false)
   const [editCount, setEditCount] = useState(0)
@@ -330,7 +328,7 @@ export const CaseFiles = () => {
           }/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

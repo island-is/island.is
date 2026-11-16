@@ -92,6 +92,8 @@ import { mapServiceWebPage } from './models/serviceWebPage.model'
 import { mapEvent } from './models/event.model'
 import { GetOrganizationParentSubpageInput } from './dto/getOrganizationParentSubpage.input'
 import { mapOrganizationParentSubpage } from './models/organizationParentSubpage.model'
+import { GetProjectParentSubpageInput } from './dto/getProjectParentSubpage.input'
+import { mapProjectParentSubpage } from './models/projectParentSubpage.model'
 import {
   GetOrganizationPageStandaloneSitemapLevel1Input,
   GetOrganizationPageStandaloneSitemapLevel2Input,
@@ -573,6 +575,7 @@ export class CmsContentfulService {
   async getProjectPage(
     slug: string,
     lang: string,
+    subpageSlug?: string | null,
   ): Promise<ProjectPage | null> {
     const params = {
       ['content_type']: 'projectPage',
@@ -584,9 +587,33 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IProjectPageFields>(lang, params, 5)
       .catch(errorHandler('getProjectPage'))
 
-    return result.items.length
-      ? mapProjectPage(result.items[0] as IProjectPage)
-      : null
+    if (!result.items.length) {
+      return null
+    }
+
+    const projectPage = result.items[0] as IProjectPage
+
+    if (!subpageSlug) {
+      return mapProjectPage(projectPage)
+    }
+
+    const subpageResult = await this.contentfulRepository
+      .getLocalizedEntries<types.IProjectSubpageFields>(
+        lang,
+        {
+          ['content_type']: 'projectSubpage',
+          'fields.projectPage.sys.id': projectPage.sys.id,
+          'fields.slug': subpageSlug,
+          limit: 1,
+        },
+        6,
+      )
+      .catch(errorHandler('getProjectPage'))
+
+    return mapProjectPage(
+      projectPage,
+      subpageResult.items as types.IProjectSubpage[],
+    )
   }
 
   async getArticle(slug: string, lang: string): Promise<Article | null> {
@@ -1377,6 +1404,29 @@ export class CmsContentfulService {
     return (
       (response.items as types.IOrganizationParentSubpage[]).map(
         mapOrganizationParentSubpage,
+      )[0] ?? null
+    )
+  }
+
+  async getProjectParentSubpage(input: GetProjectParentSubpageInput) {
+    const params = {
+      content_type: 'projectParentSubpage',
+      'fields.slug': input.slug,
+      'fields.projectPage.sys.contentType.sys.id': 'projectPage',
+      'fields.projectPage.fields.slug': input.projectPageSlug,
+      limit: 1,
+    }
+
+    const response = await this.contentfulRepository
+      .getLocalizedEntries<types.IProjectParentSubpageFields>(
+        input.lang,
+        params,
+      )
+      .catch(errorHandler('getProjectParentSubpage'))
+
+    return (
+      (response.items as types.IProjectParentSubpage[]).map(
+        mapProjectParentSubpage,
       )[0] ?? null
     )
   }

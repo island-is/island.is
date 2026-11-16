@@ -111,6 +111,7 @@ export enum ApplicationTypes {
   SALARY_REPORT = 'SalaryReport',
   PAY_DEBTS = 'PayDebts',
   U2_CERTIFICATE = 'U2Certificate',
+  FJARSKIPTASTOFA_SELF_ASSESSMENT = 'FjarskiptastofaSelfAssessment',
 }
 
 export const ApplicationConfigurations = {
@@ -559,11 +560,15 @@ export const ApplicationConfigurations = {
     translation: ['doe.sr.application', 'uiForms.application'],
   },
   [ApplicationTypes.PAY_DEBTS]: {
-    slug: 'greidum-rikinu',
+    slug: 'greida-skuld',
     translation: ['pd.application', 'uiForms.application'],
   },
   [ApplicationTypes.U2_CERTIFICATE]: {
     slug: 'u2-vottord',
     translation: ['vmst.u2c.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.FJARSKIPTASTOFA_SELF_ASSESSMENT]: {
+    slug: 'sjalfsmat-fjarskiptastofu',
+    translation: ['fjs.sa.application', 'uiForms.application'],
   },
 }

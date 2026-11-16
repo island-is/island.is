@@ -17,13 +17,19 @@ import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayH
 
 // The list renders the working case and, through
 // ConnectedCaseFilesAccordionItem, each case merged into it. A merged case is
-// fetched with fewer fields, so the type is what the two have in common. The
-// two fields only the working case carries are optional: a merged case has no
-// split cases of its own in the payload, and its indictment row is named
-// without a date.
+// fetched with fewer fields, so the type is what the two have in common. Fields
+// only the working case carries are optional: a merged case has no split cases
+// of its own in the payload, no originalAncestorId, and its indictment row is
+// named without a date.
 export type CaseFilesListCase = MergedCase &
   Partial<
-    Pick<WorkingCase, 'caseSentToCourtDate' | 'splitCases' | 'indictmentHash'>
+    Pick<
+      WorkingCase,
+      | 'caseSentToCourtDate'
+      | 'splitCases'
+      | 'indictmentHash'
+      | 'originalAncestorId'
+    >
   >
 
 // Every subpoena on the case and on the cases split from it, each with the
@@ -78,9 +84,20 @@ export const shouldShowPoliceDigitalCaseFilesSection = (
     isCourtOfAppealsUser(user)) &&
   (digitalCaseFilesLoading || isNonEmptyArray(digitalCaseFiles))
 
+// Other file categories (e.g. civil claims) can make the surrounding
+// showFiles block render before the indictment reaches court. The
+// "Innsend gögn" section is only for post-submission uploads, so keep
+// it off until there are such files or the parent forces the empty
+// table (prosecutor/court after send).
+export const shouldShowUploadedCaseFilesSection = (
+  uploadedCaseFilesCount: number,
+  forceDisplayAdditionalFiles: boolean,
+): boolean => uploadedCaseFilesCount > 0 || forceDisplayAdditionalFiles
+
 // Temporary: for a few indictment cases the court uploaded the real case
 // material as other documents, so defenders should not see the generated
-// case-files-record PDF. Add case ids here (including any on dev used to
+// case-files-record PDF. Also covers cases split from these (matched via
+// originalAncestorId). Add case ids here (including any on dev used to
 // verify) and remove the list once the exception is no longer needed.
 export const CASE_IDS_HIDING_CASE_FILES_RECORD_FROM_DEFENDERS: string[] = [
   '6528b088-fdf0-4da5-be87-a01ad83bfa92',
@@ -91,8 +108,14 @@ export const CASE_IDS_HIDING_CASE_FILES_RECORD_FROM_DEFENDERS: string[] = [
 export const shouldHideCaseFilesRecordFromDefender = (
   caseId: string,
   user?: User,
+  originalAncestorId?: string | null,
   hiddenCaseIds: readonly string[] = CASE_IDS_HIDING_CASE_FILES_RECORD_FROM_DEFENDERS,
-): boolean => isDefenceUser(user) && hiddenCaseIds.includes(caseId)
+): boolean =>
+  isDefenceUser(user) &&
+  (hiddenCaseIds.includes(caseId) ||
+    (originalAncestorId !== undefined &&
+      originalAncestorId !== null &&
+      hiddenCaseIds.includes(originalAncestorId)))
 
 // Replacement uploads store `{ replaced: true }` in indictmentHash. Generated
 // freezes do not, so they keep the sent-to-court date in the display name.

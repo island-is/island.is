@@ -12,6 +12,7 @@ query AuthDelegationsGroupedByIdentityOutgoing($lang: String) {
     nationalId
     name
     type
+    direction
     subjectId
     totalScopeCount
     scopes {

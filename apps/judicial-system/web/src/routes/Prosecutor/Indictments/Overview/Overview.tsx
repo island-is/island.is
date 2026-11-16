@@ -275,9 +275,9 @@ const Overview: FC = () => {
             text: canDuplicateIndictment
               ? 'Afrita mál í drög'
               : userIsReviewer
-              ? formatMessage(core.continue)
+              ? core.continue
               : userCanSendIndictmentToCourt
-              ? formatMessage(core.continue)
+              ? core.continue
               : wantsReview && isIndictmentNew
               ? 'Senda í yfirlestur'
               : formatMessage(
@@ -312,9 +312,7 @@ const Overview: FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.indictments.overview)}
-      />
+      <PageHeader title={titles.prosecutor.indictments.overview} />
       <FormContentContainer>
         {workingCase.indictmentDeniedExplanation && (
           <Box marginBottom={5}>
@@ -579,7 +577,7 @@ const Overview: FC = () => {
             onClose={() => router.push(getStandardUserDashboardRoute(user))}
             buttons={[
               {
-                text: formatMessage(core.closeModal),
+                text: core.closeModal,
                 onClick: () => {
                   router.push(getStandardUserDashboardRoute(user))
                 },
@@ -595,7 +593,7 @@ const Overview: FC = () => {
             onClose={() => router.push(getStandardUserDashboardRoute(user))}
             buttons={[
               {
-                text: formatMessage(core.closeModal),
+                text: core.closeModal,
                 onClick: () => router.push(getStandardUserDashboardRoute(user)),
               },
             ]}

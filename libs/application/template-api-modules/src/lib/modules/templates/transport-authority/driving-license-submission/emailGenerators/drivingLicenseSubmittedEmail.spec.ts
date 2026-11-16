@@ -12,6 +12,7 @@ import {
   EmailComplete,
   EmailHeader,
   EmailNextSteps,
+  EmailDigitalFlow,
   EmailRequirements,
 } from './EmailUi'
 import { EmailTemplateGeneratorProps } from '../../../../../types'
@@ -265,5 +266,115 @@ describe('driving license submission', () => {
     ]
 
     expect(result?.template?.body).toEqual(generated)
+  })
+
+  it('should generate the digital-flow B-temp email', () => {
+    const result = generateDrivingLicenseSubmittedEmail({
+      application: {
+        ...application,
+        answers: {
+          ...application.answers,
+          applicationFor: 'B-temp',
+          isBTempRedesignEnabled: true,
+        },
+      },
+      options,
+    })
+
+    expect(result?.template?.body).toEqual(
+      EmailDigitalFlow({
+        applicationFor: 'B-temp',
+        needsHealthCertificate: true,
+        firstName: 'Jón',
+        selectedDistrictCommissioner: 'Sýslumaðurinn',
+      }),
+    )
+  })
+
+  it('should generate the digital-flow B-full email without health certificate for home delivery', () => {
+    const result = generateDrivingLicenseSubmittedEmail({
+      application: {
+        ...application,
+        answers: {
+          ...application.answers,
+          applicationFor: 'B-full',
+          isBFullRedesignEnabled: true,
+          healthDeclaration: { a: 'no', b: 'no' },
+          delivery: { deliveryMethod: 'post', jurisdiction: 1 },
+        },
+      },
+      options,
+    })
+
+    const body = result?.template?.body
+
+    expect(body).toEqual(
+      EmailDigitalFlow({
+        applicationFor: 'B-full',
+        needsHealthCertificate: false,
+        firstName: 'Jón',
+      }),
+    )
+    expect(JSON.stringify(body)).not.toContain('%s')
+    expect(JSON.stringify(body)).not.toContain('()')
+  })
+
+  it('should generate the digital-flow B-full email with health certificate for pickup', () => {
+    const result = generateDrivingLicenseSubmittedEmail({
+      application: {
+        ...application,
+        answers: {
+          ...application.answers,
+          applicationFor: 'B-full',
+          isBFullRedesignEnabled: true,
+          delivery: { deliveryMethod: 'district', jurisdiction: 1 },
+        },
+      },
+      options,
+    })
+
+    expect(JSON.stringify(result?.template?.body)).toContain(
+      'sýslumanns (Sýslumaðurinn)',
+    )
+  })
+
+  it('should keep the legacy email for B-temp without the redesign flag', () => {
+    const result = generateDrivingLicenseSubmittedEmail({
+      application: {
+        ...application,
+        answers: {
+          ...application.answers,
+          applicationFor: 'B-temp',
+          isBTempRedesignEnabled: false,
+        },
+      },
+      options,
+    })
+
+    expect(result?.template?.body).toEqual([
+      ...EmailHeader({ applicationFor: 'B-temp', firstName: 'Jón' }),
+      ...EmailRequirements('B-temp', true, true),
+    ])
+  })
+
+  it('should drop the delivery location for pickup at an unknown office', () => {
+    const result = generateDrivingLicenseSubmittedEmail({
+      application: {
+        ...application,
+        answers: {
+          ...application.answers,
+          applicationFor: 'B-full',
+          isBFullRedesignEnabled: true,
+          delivery: { deliveryMethod: 'district', jurisdiction: 99 },
+        },
+      },
+      options,
+    })
+
+    const body = JSON.stringify(result?.template?.body)
+
+    expect(body).not.toContain('%s')
+    expect(body).not.toContain('()')
+    expect(body).toContain('sýslumanns, að jafnaði')
   })
 })

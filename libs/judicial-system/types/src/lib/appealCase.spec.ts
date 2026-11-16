@@ -1,10 +1,10 @@
 import {
-  getAppealJudgeInSeat,
   getAppealJudges,
   getAppealJudgeUserIds,
   getOrderedAppealJudges,
   getPresidingAppealJudge,
   hasAllAppealJudges,
+  isSameAppealBench,
 } from './appealCase'
 
 const anna = { id: 'anna', name: 'Anna' }
@@ -65,31 +65,6 @@ describe('getPresidingAppealJudge', () => {
   })
 })
 
-describe('getAppealJudgeInSeat', () => {
-  it('is the judge at that display order', () => {
-    expect(getAppealJudgeInSeat(bench, 0)).toEqual(anna)
-    expect(getAppealJudgeInSeat(bench, 1)).toEqual(bjorn)
-    expect(getAppealJudgeInSeat(bench, 2)).toEqual(dora)
-  })
-
-  it('leaves a hole in the bench empty rather than pulling the next judge in', () => {
-    const benchWithHole = {
-      appealJudges: [
-        { displayOrder: 0, userId: anna.id, user: anna },
-        { displayOrder: 2, userId: dora.id, user: dora },
-      ],
-    }
-
-    expect(getAppealJudgeInSeat(benchWithHole, 1)).toBeUndefined()
-    expect(getAppealJudgeInSeat(benchWithHole, 2)).toEqual(dora)
-  })
-
-  it('is undefined past the bench or without one', () => {
-    expect(getAppealJudgeInSeat(bench, 3)).toBeUndefined()
-    expect(getAppealJudgeInSeat(undefined, 0)).toBeUndefined()
-  })
-})
-
 describe('getAppealJudgeUserIds', () => {
   it('reads the user id of each row in bench order', () => {
     expect(getAppealJudgeUserIds(bench)).toEqual(['anna', 'bjorn', 'dora'])
@@ -105,6 +80,19 @@ describe('getAppealJudgeUserIds', () => {
         ],
       }),
     ).toEqual(['anna', 'bjorn'])
+  })
+})
+
+describe('isSameAppealBench', () => {
+  it('is true for the same judges in the same order', () => {
+    expect(isSameAppealBench(['anna', 'bjorn'], ['anna', 'bjorn'])).toBe(true)
+    expect(isSameAppealBench([], [])).toBe(true)
+  })
+
+  it('is false when a judge differs, is missing or presides instead', () => {
+    expect(isSameAppealBench(['anna', 'bjorn'], ['anna', 'dora'])).toBe(false)
+    expect(isSameAppealBench(['anna', 'bjorn'], ['anna'])).toBe(false)
+    expect(isSameAppealBench(['anna', 'bjorn'], ['bjorn', 'anna'])).toBe(false)
   })
 })
 

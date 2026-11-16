@@ -281,7 +281,7 @@ export const Ruling = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader title={formatMessage(titles.court.restrictionCases.ruling)} />
+      <PageHeader title={titles.court.restrictionCases.ruling} />
       <FormContentContainer>
         <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
@@ -574,9 +574,9 @@ export const Ruling = () => {
         </Box>
         <PdfButton
           caseId={workingCase.id}
-          title={formatMessage(core.pdfButtonRuling)}
+          title={core.pdfButtonRuling}
           pdfType="ruling"
-          elementId={formatMessage(core.pdfButtonRuling)}
+          elementId={core.pdfButtonRuling}
         />
       </FormContentContainer>
       <FormContentContainer isFooter>
@@ -584,7 +584,7 @@ export const Ruling = () => {
           previousUrl={`${DISTRICT_COURT_RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

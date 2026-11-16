@@ -156,7 +156,7 @@ const AppealToCourtOfAppeals = () => {
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
-      <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
+      <PageHeader title={titles.shared.appealToCourtOfAppeals} />
       <FormContentContainer>
         <PageTitle>Kæra til Landsréttar</PageTitle>
         <Box component="section" marginBottom={5}>
@@ -177,11 +177,17 @@ const AppealToCourtOfAppeals = () => {
             name="appealBrief"
             files={appealBriefFiles}
             accept={'application/pdf'}
-            title={formatMessage(core.uploadBoxTitle)}
-            description={formatMessage(core.uploadBoxDescription, {
-              fileEndings: '.pdf',
-            })}
-            buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
+            title={core.uploadBoxTitle}
+            description={formatMessage(
+              {
+                id: core.uploadBoxDescription,
+                defaultMessage: core.uploadBoxDescription,
+              },
+              {
+                fileEndings: '.pdf',
+              },
+            )}
+            buttonLabel={core.uploadBoxButtonLabel}
             onChange={(files) => handleChange(files, appealBriefType)}
             onRemove={(file) => {
               handleRemoveFile(file)
@@ -210,11 +216,17 @@ const AppealToCourtOfAppeals = () => {
               filter(file, appealCaseFilesType),
             )}
             accept={'application/pdf'}
-            title={formatMessage(core.uploadBoxTitle)}
-            description={formatMessage(core.uploadBoxDescription, {
-              fileEndings: '.pdf',
-            })}
-            buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
+            title={core.uploadBoxTitle}
+            description={formatMessage(
+              {
+                id: core.uploadBoxDescription,
+                defaultMessage: core.uploadBoxDescription,
+              },
+              {
+                fileEndings: '.pdf',
+              },
+            )}
+            buttonLabel={core.uploadBoxButtonLabel}
             onChange={(files) => handleChange(files, appealCaseFilesType)}
             onRemove={(file) => handleRemoveFile(file)}
             onOpenFile={(file) => onOpenFile(file)}
@@ -249,7 +261,7 @@ const AppealToCourtOfAppeals = () => {
           text="Tilkynning um móttöku kæru verður send á aðila máls."
           buttons={[
             {
-              text: formatMessage(core.closeModal),
+              text: core.closeModal,
               onClick: () => {
                 refreshCase()
                 router.push(previousUrl)

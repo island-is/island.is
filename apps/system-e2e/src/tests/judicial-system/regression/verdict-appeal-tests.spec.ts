@@ -2,7 +2,7 @@ import { expect } from '@playwright/test'
 import faker from 'faker'
 import { urls } from '../../../support/urls'
 import { verifyRequestCompletion } from '../../../support/api-tools'
-import { getDaysFromNow } from '../utils/helpers'
+import { chooseDocument, getDaysFromNow } from '../utils/helpers'
 import { test } from '../utils/judicialSystemTest'
 import {
   judgeCompletesIndictmentWithVerdict,
@@ -67,7 +67,7 @@ test.describe.serial('Verdict appeal tests', () => {
     await page.getByTestId('continueButton').click()
     await Promise.all([
       page.getByTestId('modalPrimaryButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendant'),
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendants'),
     ])
   })
 
@@ -144,6 +144,50 @@ test.describe.serial('Verdict appeal tests', () => {
     await expect(
       defendantCard.getByRole('button', { name: 'Framlengja frest' }),
     ).toBeVisible()
+
+    // The court files the defendant's statement itself, from the card's
+    // menu: it uploads the statement and lands back on the list, where the
+    // defendant now stands as filed, with the date locked and no menu left.
+    await defendantCard
+      .getByRole('button', { name: `Valmynd fyrir ${accusedName}` })
+      .click()
+    await page.getByRole('button', { name: 'Hlaða upp greinargerð' }).click()
+    await expect(page).toHaveURL(
+      new RegExp(`/landsrettur/afryjun/greinargerd/${caseId}(\\?.*)?$`),
+    )
+    await expect(
+      page.getByRole('heading', { name: 'Hlaða upp greinargerð', level: 1 }),
+    ).toBeVisible()
+    await expect(page.getByText(`Ákærði ${accusedName}`)).toBeVisible()
+    await chooseDocument(
+      page,
+      async () => {
+        await page
+          .getByRole('button', { name: 'Velja skjöl til að hlaða upp' })
+          .first()
+          .click()
+      },
+      'TestGreinargerdVerjanda.pdf',
+    )
+    await Promise.all([
+      verifyRequestCompletion(page, '/api/graphql', 'CreateDefendantFile'),
+      verifyRequestCompletion(page, '/api/graphql', 'FileAppealStatement'),
+      page.getByTestId('continueButton').click(),
+    ])
+    await expect(page).toHaveURL(
+      new RegExp(
+        `/landsrettur/afryjun/greinargerdarfrestir/${caseId}(\\?.*)?$`,
+      ),
+    )
+    await expect(
+      defendantCard.getByText('Ákærði - Greinargerð skilað'),
+    ).toBeVisible()
+    await expect(defendantCard.getByLabel('Frestur til')).toBeDisabled()
+    await expect(
+      defendantCard.getByRole('button', {
+        name: `Valmynd fyrir ${accusedName}`,
+      }),
+    ).toHaveCount(0)
     await page.getByTestId('continueButton').click()
 
     // Status

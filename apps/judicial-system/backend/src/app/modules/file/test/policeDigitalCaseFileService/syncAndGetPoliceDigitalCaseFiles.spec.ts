@@ -261,4 +261,81 @@ describe('PoliceDigitalCaseFileService - syncAndGetPoliceDigitalCaseFiles', () =
       }),
     ])
   })
+
+  it('truncates long names and uses a short metadata key', async () => {
+    const longName = 'n'.repeat(300)
+    const createDigitalCaseFileMetadataPdfSpy = jest
+      .spyOn(formatterModule, 'createDigitalCaseFileMetadataPdf')
+      .mockResolvedValueOnce(Buffer.from('mock-pdf'))
+
+    policeService.getAllPoliceSystemDigitalCaseFiles.mockResolvedValueOnce([
+      {
+        ...makePoliceSystemDigitalCaseFile(),
+        name: longName,
+      } as never,
+    ])
+    policeDigitalCaseFileRepositoryService.findByCaseId
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([
+        {
+          ...makeStoredPoliceDigitalCaseFile(),
+          name: longName.slice(0, 255),
+        } as never,
+      ])
+
+    policeDigitalCaseFileRepositoryService.create.mockResolvedValueOnce({
+      ...makeStoredPoliceDigitalCaseFile(),
+      name: longName.slice(0, 255),
+    } as never)
+    caseFileRepositoryService.findByCaseAndPoliceFileId.mockResolvedValueOnce(
+      null,
+    )
+    caseFileRepositoryService.create.mockResolvedValueOnce({
+      id: 'metadata-file-1',
+      userGeneratedFilename: longName.slice(0, 255),
+      name: `${longName.slice(0, 251)}.pdf`,
+    } as CaseFile)
+    awsS3Service.putObject.mockResolvedValueOnce('ok')
+
+    await service.syncAndGetPoliceDigitalCaseFiles(
+      caseId,
+      CaseType.INDICTMENT,
+      CaseState.SUBMITTED,
+      'R-2026-1234',
+      true,
+      'Prosecutor Name',
+      [policeCaseNumber],
+      { nationalId: '0000000000' } as User,
+    )
+
+    expect(policeDigitalCaseFileRepositoryService.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: longName.slice(0, 255),
+      }),
+      expect.anything(),
+    )
+    expect(createDigitalCaseFileMetadataPdfSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: longName.slice(0, 255),
+      }),
+    )
+    expect(caseFileRepositoryService.create).toHaveBeenCalledWith(
+      caseId,
+      expect.objectContaining({
+        name: `${longName.slice(0, 251)}.pdf`,
+        userGeneratedFilename: longName.slice(0, 255),
+        key: expect.stringMatching(
+          new RegExp(`^${caseId}/[0-9a-f-]+/metadata\\.pdf$`),
+        ),
+      }),
+      expect.anything(),
+    )
+    expect(awsS3Service.putObject).toHaveBeenCalledWith(
+      CaseType.INDICTMENT,
+      expect.stringMatching(
+        new RegExp(`^${caseId}/[0-9a-f-]+/metadata\\.pdf$`),
+      ),
+      expect.any(Buffer),
+    )
+  })
 })

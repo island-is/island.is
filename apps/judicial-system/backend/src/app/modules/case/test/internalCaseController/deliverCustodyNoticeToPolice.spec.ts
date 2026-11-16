@@ -90,10 +90,7 @@ describe('InternalCaseController - Deliver custody notice to police', () => {
     })
 
     it('should deliver the custody notice to police', async () => {
-      expect(getCustodyNoticePdfAsString).toHaveBeenCalledWith(
-        theCase,
-        expect.any(Function),
-      )
+      expect(getCustodyNoticePdfAsString).toHaveBeenCalledWith(theCase)
       expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
         user,
         caseId,
@@ -110,6 +107,7 @@ describe('InternalCaseController - Deliver custody notice to police', () => {
             courtDocument: Base64.btoa(custodyNoticePdf),
           },
         ],
+        caseId,
       )
       expect(then.result.delivered).toEqual(true)
     })

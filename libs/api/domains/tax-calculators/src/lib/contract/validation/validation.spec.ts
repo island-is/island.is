@@ -352,6 +352,41 @@ describe('assertPublishableContract output invariants', () => {
     ).toThrow(/array output field "taxBrackets" publishes no item fields/)
   })
 
+  it('accepts an object output with item fields', () => {
+    expect(
+      assertOutputFields([
+        {
+          name: 'firstPeriod',
+          kind: 'object',
+          itemFields: [{ name: 'days', kind: 'scalar', type: 'number' }],
+        },
+      ]),
+    ).not.toThrow()
+  })
+
+  it('rejects an object output with no item fields', () => {
+    expect(
+      assertOutputFields([
+        { name: 'firstPeriod', kind: 'object', itemFields: [] },
+      ]),
+    ).toThrow(/object output field "firstPeriod" publishes no item fields/)
+  })
+
+  it('rejects duplicate object item field names', () => {
+    expect(
+      assertOutputFields([
+        {
+          name: 'firstPeriod',
+          kind: 'object',
+          itemFields: [
+            { name: 'days', kind: 'scalar', type: 'number' },
+            { name: 'days', kind: 'scalar', type: 'string' },
+          ],
+        },
+      ]),
+    ).toThrow(/object output field "firstPeriod" has duplicate field names/)
+  })
+
   it('rejects an empty array item field name', () => {
     expect(
       assertOutputFields([

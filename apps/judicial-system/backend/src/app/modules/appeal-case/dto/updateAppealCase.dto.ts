@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer'
 import {
+  ArrayMaxSize,
   ArrayUnique,
   IsArray,
   IsBoolean,
@@ -13,6 +14,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
   AppealCaseRulingDecision,
+  MAX_APPEAL_JUDGE_COUNT,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -33,27 +35,10 @@ export class UpdateAppealCaseDto {
   @IsOptional()
   @IsArray()
   @ArrayUnique()
+  @ArrayMaxSize(MAX_APPEAL_JUDGE_COUNT)
   @IsString({ each: true })
   @ApiPropertyOptional({ type: String, isArray: true })
   readonly appealJudgeIds?: string[]
-
-  // One position on the bench each, for clients that have not moved to
-  // appealJudgeIds: a slot replaces the judge at that position and leaves the
-  // rest of the bench as it is. Ignored when appealJudgeIds is present.
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  readonly appealJudge1Id?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  readonly appealJudge2Id?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  readonly appealJudge3Id?: string
 
   @IsOptional()
   @IsString()

@@ -211,6 +211,7 @@ export const getRoleTitleFromCaseFileCategory = (
     independentDefendant?: string
     civilClaimantSpokesperson?: string
     civilClaimantLegalSpokesperson?: string
+    court?: string
     notRegistered?: string
   },
 ) => {
@@ -225,6 +226,8 @@ export const getRoleTitleFromCaseFileCategory = (
       return overrides?.civilClaimantSpokesperson ?? 'Réttargæslumaður'
     case CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE:
       return overrides?.civilClaimantLegalSpokesperson ?? 'Lögmaður'
+    case CaseFileCategory.COURT_CASE_FILE:
+      return overrides?.court ?? 'Dómari'
     default:
       return overrides?.notRegistered ?? 'Ekki skráð'
   }
@@ -700,3 +703,16 @@ export const getVerdictAppealDecision = (
 // mistaken for HTML.
 export const containsHtml = (str: string): boolean =>
   /<\/?(?:p|strong|em|b|i|span|br|ul|ol|li)(?:[\s/>])/i.test(str)
+
+export const isNonBlank = (value?: string | null): value is string =>
+  Boolean(value?.trim())
+
+// Trim for optional update payloads: omit nullish fields, keep '' after trim
+// so callers can clear a stored string.
+export const trimOrUndefined = (value?: string | null): string | undefined => {
+  if (value === undefined || value === null) {
+    return undefined
+  }
+
+  return value.trim()
+}

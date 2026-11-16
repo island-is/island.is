@@ -36,6 +36,7 @@ export class NotificationSettingsService {
     })
 
     return {
+      nationalId,
       blockedCategories: blockedNotifications.map(
         ({ senderId, category, categoryLabel }) => ({
           key: toCategoryKey(senderId, category),

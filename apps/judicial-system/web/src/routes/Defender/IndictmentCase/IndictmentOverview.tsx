@@ -21,6 +21,7 @@ import type { ContextMenuItem } from '@island.is/judicial-system-web/src/compone
 import {
   AllIndictmentCaseFiles,
   AlternativeServiceAnnouncement,
+  AppealCourtSessionScheduledCard,
   AppealRulingModifiedAlert,
   Conclusion,
   CourtCaseInfo,
@@ -236,10 +237,16 @@ const IndictmentOverview: FC = () => {
         <PageHeader
           title={
             caseIsClosed
-              ? formatMessage(titles.shared.closedCaseOverview, {
-                  courtCaseNumber: workingCase.courtCaseNumber,
-                })
-              : formatMessage(titles.court.indictments.overview)
+              ? formatMessage(
+                  {
+                    id: titles.shared.closedCaseOverview,
+                    defaultMessage: titles.shared.closedCaseOverview,
+                  },
+                  {
+                    courtCaseNumber: workingCase.courtCaseNumber,
+                  },
+                )
+              : titles.court.indictments.overview
           }
         />
         <FormContentContainer>
@@ -339,6 +346,9 @@ const IndictmentOverview: FC = () => {
                   />
                 </Box>
               )}
+            <AppealCourtSessionScheduledCard
+              verdictAppealCase={workingCase.verdictAppealCase}
+            />
             <Box component="section">
               {caseIsClosed ? (
                 <InfoCardClosedIndictment />

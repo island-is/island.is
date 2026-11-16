@@ -656,6 +656,22 @@ describe('HousingBenefitsService notifications', () => {
         )
     })
 
+    it('reports no tax return when the API says not filed in any of the last five years', async () => {
+      hasTaxReturnForYear.mockResolvedValue(false)
+
+      const result = await service.getPersonalTaxReturn({
+        application: createApplication(),
+        auth: createCurrentUser({ nationalId: APPLICANT_ID }),
+        currentUserLocale: 'is',
+      })
+
+      expect(result).toEqual({
+        handedInLastYear: false,
+        handedInLastFiveYears: false,
+      })
+      expect(hasTaxReturnForYear).toHaveBeenCalledTimes(5)
+    })
+
     it('returns empty mock without calling tax API when mock variant is emptySuccess', async () => {
       hasTaxReturnForYear.mockRejectedValue(new Error('HMS tax API down'))
       const application = createApplication({
@@ -793,6 +809,22 @@ describe('HousingBenefitsService notifications', () => {
         .mockImplementation((environment) =>
           actual.isRunningOnEnvironment(environment),
         )
+    })
+
+    it('reports no tax return when the API says the assignee has not filed', async () => {
+      hasTaxReturnForYear.mockResolvedValue(false)
+
+      const result = await service.getAssigneePersonalTaxReturn({
+        application: createApplication(),
+        auth: createCurrentUser({ nationalId: ASSIGNEE_A }),
+        currentUserLocale: 'is',
+      })
+
+      expect(result).toEqual({
+        handedInLastYear: false,
+        handedInLastFiveYears: false,
+      })
+      expect(hasTaxReturnForYear).toHaveBeenCalledTimes(5)
     })
 
     it('returns mock payload without calling tax API when assignee mock is enabled', async () => {
@@ -1040,5 +1072,36 @@ describe('HousingBenefitsService', () => {
       acceptedDataFetch: true,
       email: 'b@test.is',
     })
+  })
+
+  it('includes contract tenants (excluding applicant) when householdMembersTableRepeater is empty', () => {
+    const model = mapApplicationToHousingBenefitsModel(
+      createApplication({
+        answers: {
+          rentalAgreement: { answer: '123' },
+          householdMembersTableRepeater: [],
+        },
+        externalData: {
+          getRentalAgreements: {
+            data: [
+              {
+                contractId: 123,
+                contractParty: [
+                  { partyTypeUseCode: 'TENANT', kennitala: APPLICANT_ID },
+                  { partyTypeUseCode: 'TENANT', kennitala: ASSIGNEE_A },
+                  { partyTypeUseCode: 'OWNER', kennitala: ASSIGNEE_B },
+                ],
+              },
+            ],
+            status: 'success',
+            date: new Date(),
+          },
+        },
+      }),
+    )
+    expect(model.householdMembers?.map((m) => m.kennitala)).toEqual([
+      APPLICANT_ID,
+      ASSIGNEE_A,
+    ])
   })
 })

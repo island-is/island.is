@@ -16,6 +16,7 @@ import { TaxCalculatorOutputFieldType } from '../../../../graphql/schema'
 import type { OutputFieldContract } from '../contract'
 import type { OutputSectionActions } from '../types'
 import { LocalizedTextFields } from './LocalizedTextFields'
+import { NumberTypeSelect } from './NumberTypeSelect'
 import { OutputItemFieldRow } from './OutputItemFieldRow'
 import { SortableRow } from './SortableRow'
 import * as styles from './CalculatorEditor.css'
@@ -44,10 +45,12 @@ export const OutputFieldRow = ({
   const isStaleKey = isMissing && !isLoading
   const issues = rowIssues.get(field.uid)
 
-  const isArray = contractField?.type === TaxCalculatorOutputFieldType.Array
+  const hasItemFields =
+    contractField?.type === TaxCalculatorOutputFieldType.Array ||
+    contractField?.type === TaxCalculatorOutputFieldType.Object
   const itemFields = field.itemFields ?? []
   /* Retains stale item fields until their key changes. */
-  const hasStrandedItems = !isArray && itemFields.length > 0 && !isLoading
+  const hasStrandedItems = !hasItemFields && itemFields.length > 0 && !isLoading
   const hasError = isStaleKey || hasStrandedItems || Boolean(issues?.length)
   const available = contractField?.itemFields ?? []
   const usedItemKeys = new Set(itemFields.map((item) => item.key))
@@ -99,8 +102,8 @@ export const OutputFieldRow = ({
           )}
           {hasStrandedItems && (
             <FormControl.ValidationMessage>
-              &quot;{field.key}&quot; is not an array, so its item fields cannot
-              render. Remove them or pick an array output.
+              &quot;{field.key}&quot; has no item fields, so these cannot
+              render. Remove them or pick an array or object output.
             </FormControl.ValidationMessage>
           )}
           {issues?.map((issue) => (
@@ -145,10 +148,21 @@ export const OutputFieldRow = ({
           >
             Bold
           </Checkbox>
+          {contractField?.type === TaxCalculatorOutputFieldType.Number && (
+            <NumberTypeSelect
+              fieldKey={field.key}
+              value={field.numberType}
+              inferred={contractField.semantic}
+              isDisabled={isDisabled}
+              onChange={(numberType) =>
+                actions.updateField(fieldIndex, { numberType })
+              }
+            />
+          )}
         </>
       )}
 
-      {isArray && (
+      {hasItemFields && (
         <Stack
           flexDirection="column"
           alignItems="stretch"

@@ -132,7 +132,7 @@ const CourtRecord: FC = () => {
     const endOfSessionBookings: string[] = []
 
     if (workingCase.sessionArrangements === SessionArrangements.NONE_PRESENT) {
-      autofillAttendees.push(formatMessage(core.sessionArrangementsNonePresent))
+      autofillAttendees.push(core.sessionArrangementsNonePresent)
     } else {
       if (workingCase.prosecutor) {
         autofillAttendees.push(
@@ -154,7 +154,10 @@ const CourtRecord: FC = () => {
                 SessionArrangements.ALL_PRESENT_SPOKESPERSON
                   ? 'talsmaður'
                   : 'verjandi'
-              } ${formatMessage(core.defendant, { suffix: 'a' })}`,
+              } ${formatMessage(
+                { id: core.defendant, defaultMessage: core.defendant },
+                { suffix: 'a' },
+              )}`,
             )
           },
         )
@@ -170,9 +173,12 @@ const CourtRecord: FC = () => {
         ) {
           workingCase.defendants.forEach((defendant) => {
             autofillAttendees.push(
-              `\n${defendant.name} ${formatMessage(core.defendant, {
-                suffix: 'i',
-              })}`,
+              `\n${defendant.name} ${formatMessage(
+                { id: core.defendant, defaultMessage: core.defendant },
+                {
+                  suffix: 'i',
+                },
+              )}`,
             )
           })
         }
@@ -311,9 +317,7 @@ const CourtRecord: FC = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader
-        title={formatMessage(titles.court.investigationCases.courtRecord)}
-      />
+      <PageHeader title={titles.court.investigationCases.courtRecord} />
       <FormContentContainer>
         <PageTitle>{m.sections.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
@@ -503,9 +507,9 @@ const CourtRecord: FC = () => {
           <Box>
             <PdfButton
               caseId={workingCase.id}
-              title={formatMessage(core.pdfButtonRulingShortVersion)}
+              title={core.pdfButtonRulingShortVersion}
               pdfType="courtRecord"
-              elementId={formatMessage(core.pdfButtonRulingShortVersion)}
+              elementId={core.pdfButtonRulingShortVersion}
             />
           </Box>
         </div>
@@ -518,7 +522,7 @@ const CourtRecord: FC = () => {
               ? []
               : [
                   {
-                    text: formatMessage(core.continue),
+                    text: core.continue,
                     icon: 'arrowForward',
                     onClick: () =>
                       handleNavigationTo(

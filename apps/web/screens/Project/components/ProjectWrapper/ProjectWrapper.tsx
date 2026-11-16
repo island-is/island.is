@@ -14,6 +14,7 @@ import {
 } from '@island.is/island-ui/core'
 import { SidebarCards } from '@island.is/web/components'
 import { ProjectPage } from '@island.is/web/graphql/schema'
+import { usePlausiblePageview } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 
@@ -31,6 +32,8 @@ interface ProjectWrapperProps {
   backLink?: { url: string; text: string }
   isSubpage?: boolean // Only controls the header size (smallerSubpageHeader in the project namespace), use isFrontpage to check if the page is a subpage
   isFrontpage?: boolean
+  /** Path used to mark the active sidebar item, defaults to the current path */
+  activeNavigationPath?: string
 }
 
 export const ProjectWrapper: React.FC<
@@ -44,17 +47,21 @@ export const ProjectWrapper: React.FC<
   children,
   isSubpage,
   isFrontpage = false,
+  activeNavigationPath,
 }) => {
   const router = useRouter()
 
   const { activeLocale } = useI18n()
+
+  usePlausiblePageview(projectPage.trackingDomain)
 
   const mobileNavigationButtonOpenLabel =
     activeLocale === 'is' ? 'Opna' : 'Open'
   const mobileNavigationButtonCloseLabel =
     activeLocale === 'is' ? 'Loka' : 'Close'
 
-  const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
+  const baseRouterPath =
+    activeNavigationPath ?? router.asPath.split('?')[0].split('#')[0]
   const projectPageSidebarNavigationComponent = useMemo(
     () =>
       getSidebarNavigationComponent(

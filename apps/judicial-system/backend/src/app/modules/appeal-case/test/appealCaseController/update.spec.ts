@@ -120,11 +120,14 @@ describe('AppealCaseController - Update', () => {
       const mockUpdate = mockAppealCaseRepositoryService.update as jest.Mock
       mockUpdate.mockResolvedValueOnce(updatedAppealCase)
 
-      // The reload after a bench change returns the bench as stored.
+      // The reload after a change returns the appeal case as stored, with
+      // the bench when it was replaced.
       const mockFindById = mockAppealCaseRepositoryService.findById as jest.Mock
       mockFindById.mockResolvedValueOnce({
         ...updatedAppealCase,
-        appealJudges: bench(appealJudgeIds ?? []),
+        appealJudges: appealJudgeIds
+          ? bench(appealJudgeIds)
+          : appealCase.appealJudges,
       })
 
       // The route is guarded by CaseExistsForUpdateGuard, so the request
@@ -173,6 +176,15 @@ describe('AppealCaseController - Update', () => {
       expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
         appealCaseId,
         { appealConclusion: 'Conclusion' },
+        { transaction },
+      )
+    })
+
+    // The row the update returns carries ids only, so the response is read
+    // back with its associations.
+    it('should return the appeal case as stored', () => {
+      expect(mockAppealCaseRepositoryService.findById).toHaveBeenCalledWith(
+        appealCaseId,
         { transaction },
       )
       expect(then.result).toEqual({ ...appealCase, ...update })
@@ -475,6 +487,31 @@ describe('AppealCaseController - Update', () => {
     })
   })
 
+  describe('the bench is sent as null', () => {
+    const theCase = { id: caseId, type: CaseType.CUSTODY } as Case
+    const appealCase = {
+      id: appealCaseId,
+      caseId,
+      appealCaseNumber: 'LANDSRÉTTUR 1/2024',
+      appealAssistantId: uuid(),
+      appealJudges: bench([uuid(), uuid(), uuid()]),
+    } as AppealCase
+    const update = { appealJudgeIds: null } as unknown as UpdateAppealCaseDto
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(theCase, appealCase, update)
+    })
+
+    it('should keep the bench and queue nothing', () => {
+      expect(
+        mockAppealCaseJudgeRepositoryService.replaceForAppealCase,
+      ).not.toHaveBeenCalled()
+      expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+      expect(then.result).toBe(appealCase)
+    })
+  })
+
   describe('the bench is cleared', () => {
     const theCase = { id: caseId, type: CaseType.CUSTODY } as Case
     const assistantId = uuid()
@@ -521,91 +558,6 @@ describe('AppealCaseController - Update', () => {
       expect(
         mockAppealCaseJudgeRepositoryService.replaceForAppealCase,
       ).not.toHaveBeenCalled()
-    })
-  })
-
-  describe('a judge is assigned to one slot', () => {
-    const theCase = { id: caseId, type: CaseType.CUSTODY } as Case
-    const judgeIds = [uuid(), uuid(), uuid()]
-    const newJudgeId = uuid()
-    const appealCase = {
-      id: appealCaseId,
-      caseId,
-      appealJudges: bench(judgeIds),
-    } as AppealCase
-    const update = { appealJudge2Id: newJudgeId }
-
-    beforeEach(async () => {
-      await givenWhenThen(theCase, appealCase, update)
-    })
-
-    it('should validate the new judge', () => {
-      expect(mockUserService.findById).toHaveBeenCalledWith(newJudgeId, {
-        transaction,
-      })
-    })
-
-    it('should replace only that position on the bench', () => {
-      expect(
-        mockAppealCaseJudgeRepositoryService.replaceForAppealCase,
-      ).toHaveBeenCalledWith(
-        appealCaseId,
-        [judgeIds[0], newJudgeId, judgeIds[2]],
-        { transaction },
-      )
-    })
-
-    it('should not write the slot to the appeal case row', () => {
-      expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
-    })
-  })
-
-  // A bench copied from the legacy columns with seat 2 empty and seat 3 filled.
-  describe('a judge is assigned to a hole in a legacy bench', () => {
-    const theCase = { id: caseId, type: CaseType.CUSTODY } as Case
-    const judge1Id = uuid()
-    const judge3Id = uuid()
-    const newJudgeId = uuid()
-    const appealCase = {
-      id: appealCaseId,
-      caseId,
-      appealJudges: [
-        { userId: judge1Id, displayOrder: 0 },
-        { userId: judge3Id, displayOrder: 2 },
-      ] as AppealCaseJudge[],
-    } as AppealCase
-    const update = { appealJudge2Id: newJudgeId }
-
-    beforeEach(async () => {
-      await givenWhenThen(theCase, appealCase, update)
-    })
-
-    it('should fill the hole and keep the judge after it', () => {
-      expect(
-        mockAppealCaseJudgeRepositoryService.replaceForAppealCase,
-      ).toHaveBeenCalledWith(appealCaseId, [judge1Id, newJudgeId, judge3Id], {
-        transaction,
-      })
-    })
-  })
-
-  describe('judges are assigned to the slots of an empty bench', () => {
-    const theCase = { id: caseId, type: CaseType.CUSTODY } as Case
-    const judge1Id = uuid()
-    const judge3Id = uuid()
-    const appealCase = { id: appealCaseId, caseId } as AppealCase
-    const update = { appealJudge1Id: judge1Id, appealJudge3Id: judge3Id }
-
-    beforeEach(async () => {
-      await givenWhenThen(theCase, appealCase, update)
-    })
-
-    it('should store the judges in slot order', () => {
-      expect(
-        mockAppealCaseJudgeRepositoryService.replaceForAppealCase,
-      ).toHaveBeenCalledWith(appealCaseId, [judge1Id, judge3Id], {
-        transaction,
-      })
     })
   })
 

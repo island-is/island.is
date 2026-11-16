@@ -2,6 +2,7 @@ import React from 'react'
 import { View } from 'react-native'
 import { screenWidth } from '../../../utils/dimensions'
 import styled, { useTheme } from 'styled-components/native'
+import { TokenSelector } from '../../utils'
 import { Typography } from '../typography/typography'
 
 const Host = styled.View`
@@ -29,28 +30,31 @@ interface ProgressMeterProps {
   progressMessage?: string
 }
 
-const colorSchemes = {
+const colorSchemes: Record<
+  ProgressMeterVariant,
+  { unfinished: TokenSelector; outer: TokenSelector; inner: TokenSelector }
+> = {
   blue: {
-    unfinished: 'blue200',
-    outer: 'blue100',
-    inner: 'blue400',
+    unfinished: (t) => t.feedback.information.border,
+    outer: (t) => t.feedback.information.backgroundMinimal,
+    inner: (t) => t.feedback.information.foreground,
   },
   red: {
-    unfinished: 'red200',
-    outer: 'red100',
-    inner: 'red400',
+    unfinished: (t) => t.feedback.error.border,
+    outer: (t) => t.feedback.error.background,
+    inner: (t) => t.feedback.error.foreground,
   },
   rose: {
-    unfinished: 'roseTinted200',
-    outer: 'roseTinted100',
-    inner: 'roseTinted400',
+    unfinished: (t) => t.feedback.tags.rose.border,
+    outer: (t) => t.feedback.tags.rose.background,
+    inner: (t) => t.feedback.tags.rose.accent,
   },
   mint: {
-    unfinished: 'mint200',
-    outer: 'mint100',
-    inner: 'mint600',
+    unfinished: (t) => t.feedback.success.border,
+    outer: (t) => t.feedback.success.background,
+    inner: (t) => t.app.foreground.successContrast,
   },
-} as const
+}
 
 export const ProgressMeter = ({
   finishedSteps,
@@ -60,6 +64,7 @@ export const ProgressMeter = ({
   variant = 'blue',
 }: ProgressMeterProps) => {
   const theme = useTheme()
+  const colours = colorSchemes[variant]
   const steps = Array.from(Array(totalSteps ?? 1).keys())
   const allowedWidth = containerWidth ?? screenWidth - theme.spacing[2] * 4
 
@@ -75,17 +80,15 @@ export const ProgressMeter = ({
 
   return (
     <>
-      <Host
-        style={{ backgroundColor: theme.color[colorSchemes[variant].outer] }}
-      >
+      <Host style={{ backgroundColor: colours.outer(theme.tokens) }}>
         <InnerHost>
           {steps.map((i) => (
             <View
               style={{
                 backgroundColor:
                   finishedSteps > i
-                    ? theme.color[colorSchemes[variant].inner]
-                    : theme.color[colorSchemes[variant].unfinished],
+                    ? colours.inner(theme.tokens)
+                    : colours.unfinished(theme.tokens),
                 borderRadius: 8,
                 width: stepWidth,
               }}
@@ -95,7 +98,7 @@ export const ProgressMeter = ({
         </InnerHost>
       </Host>
       <View style={{ marginTop: theme.spacing[1] }}>
-        <Typography variant="body3" color={theme.color.blue400}>
+        <Typography variant="body3" color={theme.tokens.foreground.brand}>
           {progressMessage}
         </Typography>
       </View>

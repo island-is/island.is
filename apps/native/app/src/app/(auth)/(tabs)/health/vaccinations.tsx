@@ -6,8 +6,7 @@ import styled from 'styled-components/native'
 
 import {
   GeneralCardSkeleton,
-  Heading,
-  Problem,
+  StatusMessage,
   TabButtons,
   Typography,
 } from '@/ui'
@@ -123,7 +122,7 @@ export default function VaccinationsScreen() {
         )}
         {vaccinationsRes.error && !vaccinationsRes.data && (
           <ErrorWrapper>
-            <Problem error={vaccinationsRes.error} />
+            <StatusMessage error={vaccinationsRes.error} />
           </ErrorWrapper>
         )}
       </Host>

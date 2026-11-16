@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { useCallback, useContext, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, FileUploadStatus } from '@island.is/island-ui/core'
@@ -100,7 +99,6 @@ const getUserProps = (user: User | undefined, workingCase: WorkingCase) => {
 const AddFiles: FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { formatMessage } = useIntl()
   const [editCount, setEditCount] = useState(0)
   const [visibleModal, setVisibleModal] = useState<'confirmation'>()
   const router = useRouter()
@@ -238,9 +236,7 @@ const AddFiles: FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.indictments.overview)}
-      />
+      <PageHeader title={titles.prosecutor.indictments.overview} />
       <FormContentContainer>
         <PageTitle>{strings.heading}</PageTitle>
         {CaseInfo}

@@ -16,9 +16,18 @@ const fields: readonly CalculatorOutputField[] = [
       { name: 'rate', kind: 'scalar', type: 'number' },
     ],
   },
+  {
+    name: 'period',
+    kind: 'object',
+    itemFields: [
+      { name: 'days', kind: 'scalar', type: 'number' },
+      { name: 'label', kind: 'scalar', type: 'string' },
+    ],
+  },
 ]
 
-const { NUMBER, STRING, BOOLEAN, DATE, ARRAY } = TaxCalculatorOutputFieldType
+const { NUMBER, STRING, BOOLEAN, DATE, ARRAY, OBJECT } =
+  TaxCalculatorOutputFieldType
 
 describe('toOutputValues', () => {
   it('maps each scalar kind onto its own payload field', () => {
@@ -131,5 +140,32 @@ describe('toOutputValues', () => {
     }).map((value) => value.key)
 
     expect(keys).toEqual(['total', 'label', 'applied'])
+  })
+
+  describe('object fields', () => {
+    it('maps the object to a single row keyed by item field', () => {
+      expect(
+        toOutputValues(fields, { period: { days: 181, label: 'First' } }),
+      ).toEqual([
+        {
+          key: 'period',
+          type: OBJECT,
+          objectValue: {
+            values: [
+              { key: 'days', type: NUMBER, numberValue: 181 },
+              { key: 'label', type: STRING, stringValue: 'First' },
+            ],
+          },
+        },
+      ])
+    })
+
+    it.each([
+      ['absent', {}],
+      ['null', { period: null }],
+      ['an array', { period: [] }],
+    ])('omits an object value that is %s', (_label, result) => {
+      expect(toOutputValues(fields, result)).toEqual([])
+    })
   })
 })

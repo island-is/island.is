@@ -27,6 +27,7 @@ import {
   getSelectedContract,
   getSelectedLandlordForPayment,
 } from './rentalAgreementUtils'
+import { isExemptionRequested } from './utils'
 
 const formatBankAccount = (
   bankAccount:
@@ -149,12 +150,7 @@ export const exemptionSectionOverviewItems = (
   _locale?: Locale,
 ): Array<KeyValueItem> => {
   const exemptionReason = getValueViaPath<string>(answers, 'exemptionReason')
-  const exemptionCheckbox = getValueViaPath<string[]>(
-    answers,
-    'exemptionCheckbox',
-  )
-  const hasExemption =
-    Array.isArray(exemptionCheckbox) && exemptionCheckbox.includes('yes')
+  const hasExemption = isExemptionRequested(answers)
 
   if (!hasExemption || !exemptionReason) {
     return [
@@ -185,36 +181,6 @@ export const exemptionSectionOverviewItems = (
   ]
 
   return items
-}
-
-export const exemptionSectionOverviewAttachments = (
-  answers: FormValue,
-  _externalData: ExternalData,
-): Array<AttachmentItem> => {
-  const exemptionReason = getValueViaPath<string>(answers, 'exemptionReason')
-  const exemptionCheckbox = getValueViaPath<string[]>(
-    answers,
-    'exemptionCheckbox',
-  )
-  const hasExemption =
-    Array.isArray(exemptionCheckbox) && exemptionCheckbox.includes('yes')
-
-  if (!hasExemption || !exemptionReason || exemptionReason === 'housing') {
-    return []
-  }
-
-  const files = getValueViaPath<Array<{ key: string; name: string }>>(
-    answers,
-    `exemptionDocuments.${exemptionReason}`,
-  )
-
-  if (!Array.isArray(files) || files.length === 0) return []
-
-  return files.map((file) => ({
-    width: 'full' as const,
-    fileName: file.name,
-    fileType: file.name?.split('.').pop(),
-  }))
 }
 
 type HouseholdMember = {

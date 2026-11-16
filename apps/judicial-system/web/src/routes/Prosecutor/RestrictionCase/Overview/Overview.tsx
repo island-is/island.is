@@ -151,9 +151,7 @@ export const Overview = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.restrictionCases.overview)}
-      />
+      <PageHeader title={titles.prosecutor.restrictionCases.overview} />
       <FormContentContainer>
         {workingCase.state === CaseState.RECEIVED && (
           <Box
@@ -348,9 +346,9 @@ export const Overview = () => {
           <div>
             <PdfButton
               caseId={workingCase.id}
-              title={formatMessage(core.pdfButtonRequest)}
+              title={core.pdfButtonRequest}
               pdfType="request"
-              elementId={formatMessage(core.pdfButtonRequest)}
+              elementId={core.pdfButtonRequest}
             />
           </div>
         </div>
@@ -407,7 +405,7 @@ export const Overview = () => {
             onClose={() => router.push(getStandardUserDashboardRoute(user))}
             buttons={[
               {
-                text: formatMessage(core.closeModal),
+                text: core.closeModal,
                 onClick: () => router.push(getStandardUserDashboardRoute(user)),
                 variant: 'ghost',
               },

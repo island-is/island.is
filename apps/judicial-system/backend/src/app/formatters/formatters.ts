@@ -1,5 +1,3 @@
-import type { FormatMessage } from '@island.is/cms-translations'
-
 import {
   DEFENDER_INDICTMENT_CASE_ROUTE,
   DEFENDER_REQUEST_CASE_ROUTE,
@@ -120,7 +118,6 @@ const getProsecutorText = (
   })
 
 export const formatCourtHeadsUpSmsNotification = (
-  _formatMessage: FormatMessage,
   type: CaseType,
   prosecutorName?: string,
   arrestDate?: Date,
@@ -153,7 +150,6 @@ export const formatCourtHeadsUpSmsNotification = (
 }
 
 export const formatCourtReadyForCourtSmsNotification = (
-  _formatMessage: FormatMessage,
   type: CaseType,
   prosecutorName?: string,
   prosecutorInstitution?: string,
@@ -171,7 +167,6 @@ export const formatCourtReadyForCourtSmsNotification = (
 }
 
 export const formatCourtResubmittedToCourtSmsNotification = (
-  _formatMessage: FormatMessage,
   courtCaseNumber?: string,
 ) => {
   return formatIcuMessage(notifications.courtResubmittedToCourt, {
@@ -180,7 +175,6 @@ export const formatCourtResubmittedToCourtSmsNotification = (
 }
 
 export const formatDefenderResubmittedToCourtEmailNotification = (
-  _formatMessage: FormatMessage,
   overviewUrl?: string,
   court?: string,
   courtCaseNumber?: string,
@@ -203,7 +197,6 @@ export const formatDefenderResubmittedToCourtEmailNotification = (
 }
 
 export const formatProsecutorReadyForCourtEmailNotification = (
-  _formatMessage: FormatMessage,
   policeCaseNumbers: string[],
   caseType: CaseType,
   courtName?: string,
@@ -234,7 +227,6 @@ export const formatProsecutorReadyForCourtEmailNotification = (
 }
 
 export const formatProsecutorReceivedByCourtSmsNotification = (
-  _formatMessage: FormatMessage,
   type: CaseType,
   court?: string,
   courtCaseNumber?: string,
@@ -256,7 +248,6 @@ export const formatProsecutorReceivedByCourtSmsNotification = (
 }
 
 export const formatPostponedCourtDateEmailNotification = (
-  _formatMessage: FormatMessage,
   theCase: Case,
   courtDate: DateLog,
   overviewUrl?: string,
@@ -297,7 +288,6 @@ export const formatArraignmentDateEmailNotification = ({
   registrarName,
   arraignmentDateLog,
 }: {
-  formatMessage: FormatMessage
   courtName?: string
   courtCaseNumber?: string
   judgeName?: string
@@ -369,7 +359,6 @@ export const formatCourtCalendarInvitation = (
 }
 
 export const formatProsecutorCourtDateEmailNotification = (
-  _formatMessage: FormatMessage,
   type: CaseType,
   courtCaseNumber?: string,
   court?: string,
@@ -429,7 +418,6 @@ export const formatProsecutorCourtDateEmailNotification = (
 }
 
 export const formatPrisonCourtDateEmailNotification = (
-  _formatMessage: FormatMessage,
   type: CaseType,
   prosecutorOffice?: string,
   court?: string,
@@ -498,7 +486,6 @@ export const formatPrisonCourtDateEmailNotification = (
 }
 
 export const formatDefenderCourtDateEmailNotification = (
-  _formatMessage: FormatMessage,
   court?: string,
   courtCaseNumber?: string,
   courtDate?: Date,
@@ -510,7 +497,6 @@ export const formatDefenderCourtDateEmailNotification = (
   sessionArrangements?: SessionArrangements,
   defenderSubRole?: DefenderSubRole,
 ): string => {
-  /** contentful strings */
   const defenderResponsibility = formatDefenderResponsibility({
     defenderSubRole,
     getCustomDefendantDefenderLabel: () =>
@@ -570,7 +556,6 @@ export const formatDefenderCourtDateLinkEmailNotification = ({
   requestSharedWithDefender,
   defenderSubRole,
 }: {
-  formatMessage: FormatMessage
   overviewUrl?: string
   court?: string
   courtCaseNumber?: string
@@ -607,7 +592,6 @@ export const formatDefenderCourtDateLinkEmailNotification = ({
 }
 
 export const formatPrisonAdministrationRulingNotification = (
-  _formatMessage: FormatMessage,
   isModifyingRuling: boolean,
   overviewUrl: string,
   courtCaseNumber?: string | undefined,
@@ -629,7 +613,6 @@ export const formatPrisonAdministrationRulingNotification = (
 }
 
 export const formatCourtRevokedSmsNotification = (
-  formatMessage: FormatMessage,
   type: CaseType,
   prosecutorName?: string,
   requestedCourtDate?: Date,
@@ -650,7 +633,7 @@ export const formatCourtRevokedSmsNotification = (
       })
     : undefined
   const courtRevokedText = isInvestigationCase(type)
-    ? formatMessage(notifications.courtRevoked.investigationCaseRevoked)
+    ? notifications.courtRevoked.investigationCaseRevoked
     : formatIcuMessage(notifications.courtRevoked.caseTypeRevoked, {
         caseType: type,
       })
@@ -661,7 +644,6 @@ export const formatCourtRevokedSmsNotification = (
 }
 
 export const formatPrisonRevokedEmailNotification = (
-  _formatMessage: FormatMessage,
   type: CaseType,
   prosecutorOffice?: string,
   court?: string,
@@ -709,7 +691,6 @@ export const stripHtmlTags = (html: string): string => {
 }
 
 export const formatCustodyRestrictions = (
-  formatMessage: FormatMessage,
   caseType: CaseType,
   requestedRestrictions?: CaseCustodyRestrictions[],
   isCustodyIsolation?: boolean,
@@ -726,9 +707,7 @@ export const formatCustodyRestrictions = (
   }
 
   const formatedRestrictions = enumerate(
-    restrictions.map((x) =>
-      formatMessage(custodyNotice.rulingRestrictions[x.type]),
-    ),
+    restrictions.map((x) => custodyNotice.rulingRestrictions[x.type]),
     'og',
   )
 
@@ -739,7 +718,6 @@ export const formatCustodyRestrictions = (
 }
 
 export const formatCourtOfAppealJudgeAssignedEmailNotification = (
-  _formatMessage: FormatMessage,
   caseNumber: string,
   isForeperson: boolean,
   forepersonName: string,
@@ -768,7 +746,6 @@ export const formatCourtOfAppealJudgeAssignedEmailNotification = (
 }
 
 export const formatCourtIndictmentReadyForCourtEmailNotification = (
-  formatMessage: FormatMessage,
   theCase: Case,
   overviewUrl?: string,
 ) => {
@@ -784,7 +761,7 @@ export const formatCourtIndictmentReadyForCourtEmailNotification = (
           theCase.policeCaseNumbers,
           theCase.indictmentSubtypes,
         ),
-        formatMessage(core.and),
+        core.and,
       ),
       prosecutorName: theCase.prosecutorsOffice?.name,
       linkStart: `<a href="${overviewUrl}">`,
@@ -816,7 +793,6 @@ export const formatDefenderReadyForCourtEmailNotification = ({
   overviewUrl,
   defenderSubRole,
 }: {
-  formatMessage: FormatMessage
   policeCaseNumber: string
   courtName: string
   overviewUrl?: string

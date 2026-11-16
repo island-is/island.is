@@ -1,10 +1,7 @@
 import type { PrimitiveType } from 'intl-messageformat'
 import { IntlMessageFormat } from 'intl-messageformat'
 
-/**
- * Interpolate an ICU message template without looking it up in the CMS
- * catalog (avoids MISSING_TRANSLATION warnings from Nest FormatMessage).
- */
+/** Interpolate an ICU message template with Icelandic locale rules. */
 export const formatIcuMessage = (
   message: string,
   values?: Record<string, PrimitiveType>,

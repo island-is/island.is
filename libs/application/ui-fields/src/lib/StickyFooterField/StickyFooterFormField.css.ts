@@ -1,8 +1,11 @@
 import { style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
+export const floating = style({
+  zIndex: theme.zIndex.belowHeader,
+})
+
 export const footer = style({
-  zIndex: theme.zIndex.above,
   backgroundColor: theme.color.overlayDefault,
 })
 

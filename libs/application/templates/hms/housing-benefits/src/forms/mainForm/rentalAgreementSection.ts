@@ -6,6 +6,7 @@ import {
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
 import { rentalContractOptions } from '../../utils/rentalAgreementOptions'
+import { legalDomicileSubSection } from './legalDomicileSubSection'
 
 export const rentalAgreementSection = buildSection({
   id: 'rentalAgreementSection',
@@ -23,16 +24,11 @@ export const rentalAgreementSection = buildSection({
         }),
         buildRadioField({
           id: 'rentalAgreement.answer',
-          clearOnChange: [
-            'exemptionCheckbox',
-            'exemptionReason',
-            'exemptionDocuments.studies',
-            'exemptionDocuments.health',
-            'exemptionDocuments.work',
-          ],
+          clearOnChange: ['legalDomicileOption', 'exemptionReason'],
           options: rentalContractOptions,
         }),
       ],
     }),
+    legalDomicileSubSection,
   ],
 })

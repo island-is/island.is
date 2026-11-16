@@ -7,7 +7,7 @@ import { PressableHighlight } from '../../../components/pressable-highlight/pres
 import { QuestionnaireQuestionnairesStatusEnum } from '../../../graphql/types/schema'
 import timeOutlineIcon from '../../assets/card/time-outline.png'
 import chevronForward from '../../assets/icons/chevron-forward.png'
-import { dynamicColor } from '../../utils/dynamic-color'
+import { token } from '../../utils/dynamic-color'
 import { Badge } from '../badge/badge'
 import { Typography } from '../typography/typography'
 import { getQuestionnaireStatusLabelId } from '../../../utils/questionnaire-utils'
@@ -32,11 +32,8 @@ const Host = styled.View`
   width: 100%;
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: ${({ theme }) => theme.border.width.standard}px;
-  border-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blue200,
-    dark: theme.shades.dark.shade300,
-  }))};
-  background-color: ${({ theme }) => theme.color.white};
+  border-color: ${token((t) => t.border.primary)};
+  background-color: ${token((t) => t.background.invert)};
   overflow: hidden;
 `
 
@@ -82,10 +79,7 @@ const ActionsContainer = styled.View`
   justify-content: center;
   align-items: center;
   border-top-width: ${({ theme }) => theme.border.width.standard}px;
-  border-top-color: ${dynamicColor((props) => ({
-    light: props.theme.color.blue200,
-    dark: props.theme.shades.dark.shade300,
-  }))};
+  border-top-color: ${token((t) => t.border.primary)};
   flex-direction: row;
 `
 
@@ -93,10 +87,8 @@ const ActionButton = styled.TouchableOpacity<{ $border: boolean }>`
   flex: 1;
   padding: ${({ theme }) => theme.spacing[2]}px;
   border-left-width: ${({ theme }) => theme.border.width.standard}px;
-  border-left-color: ${dynamicColor(
-    ({ theme, $border }) => (!$border ? 'transparent' : theme.color.blue200),
-    true,
-  )};
+  border-left-color: ${({ theme, $border }) =>
+    $border ? theme.tokens.border.primary : 'transparent'};
 `
 
 const ActionContent = styled.View`
@@ -136,14 +128,14 @@ export function QuestionnaireCard({
       <PressableHighlight
         onPress={onPress}
         disabled={!onPress}
-        highlightColor={
-          theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
-        }
         style={{ borderRadius: theme.border.radius.large }}
       >
         <PressableContent>
           <TopRow>
-            <Typography variant="eyebrow" color={theme.color.purple400}>
+            <Typography
+              variant="eyebrow"
+              color={theme.tokens.foreground.brandSecondary}
+            >
               {organization}
             </Typography>
           </TopRow>
@@ -188,7 +180,10 @@ export function QuestionnaireCard({
           {actionList.map(({ text, onPress: actionPress, icon }, i) => (
             <ActionButton onPress={actionPress} key={i} $border={i !== 0}>
               <ActionContent>
-                <Typography variant="heading5" color={theme.color.blue400}>
+                <Typography
+                  variant="heading5"
+                  color={theme.tokens.interactive.foreground.primary}
+                >
                   {text}
                 </Typography>
                 {icon ? <Image source={icon} /> : null}

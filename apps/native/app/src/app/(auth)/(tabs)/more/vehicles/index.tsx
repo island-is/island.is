@@ -16,7 +16,7 @@ import {
   useListVehiclesV2Query,
 } from '@/graphql/types/schema'
 import { useMyPagesLinks } from '@/lib/my-pages-links'
-import { MoreInfoContiner } from '@/components/more-info-container/more-info-container'
+import { MoreInfoContainer } from '@/components/more-info-container/more-info-container'
 import { EmptyList, GeneralCardSkeleton, TopLine } from '@/ui'
 import { testIDs } from '@/utils/test-ids'
 import { VehicleItem } from '../../../../../components/vehicle-item'
@@ -197,7 +197,7 @@ export default function VehiclesScreen() {
               </View>
             )}
             <View style={{ paddingHorizontal: 16, paddingVertical: 12 }}>
-              <MoreInfoContiner externalLinks={externalLinks} />
+              <MoreInfoContainer externalLinks={externalLinks} />
             </View>
           </>
         }

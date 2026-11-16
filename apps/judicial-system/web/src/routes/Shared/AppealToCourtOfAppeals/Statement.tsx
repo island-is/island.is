@@ -186,7 +186,7 @@ const Statement = () => {
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
-      <PageHeader title={formatMessage(titles.shared.appealToCourtOfAppeals)} />
+      <PageHeader title={titles.shared.appealToCourtOfAppeals} />
       <FormContentContainer>
         <PageTitle>Greinargerð</PageTitle>
         <Box marginBottom={7}>
@@ -215,11 +215,17 @@ const Statement = () => {
                 name="appealStatement"
                 files={appealStatementFiles}
                 accept={'application/pdf'}
-                title={formatMessage(core.uploadBoxTitle)}
-                description={formatMessage(core.uploadBoxDescription, {
-                  fileEndings: '.pdf',
-                })}
-                buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
+                title={core.uploadBoxTitle}
+                description={formatMessage(
+                  {
+                    id: core.uploadBoxDescription,
+                    defaultMessage: core.uploadBoxDescription,
+                  },
+                  {
+                    fileEndings: '.pdf',
+                  },
+                )}
+                buttonLabel={core.uploadBoxButtonLabel}
                 onChange={(files) => handleChange(files, appealStatementType)}
                 onRemove={(file) => handleRemoveFile(file)}
                 onOpenFile={(file) => onOpenFile(file)}
@@ -246,11 +252,17 @@ const Statement = () => {
                   filter(file, appealCaseFilesType),
                 )}
                 accept={'application/pdf'}
-                title={formatMessage(core.uploadBoxTitle)}
-                description={formatMessage(core.uploadBoxDescription, {
-                  fileEndings: '.pdf',
-                })}
-                buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
+                title={core.uploadBoxTitle}
+                description={formatMessage(
+                  {
+                    id: core.uploadBoxDescription,
+                    defaultMessage: core.uploadBoxDescription,
+                  },
+                  {
+                    fileEndings: '.pdf',
+                  },
+                )}
+                buttonLabel={core.uploadBoxButtonLabel}
                 onChange={(files) => handleChange(files, appealCaseFilesType)}
                 onRemove={(file) => handleRemoveFile(file)}
                 onOpenFile={(file) => onOpenFile(file)}
@@ -290,7 +302,7 @@ const Statement = () => {
           text="Tilkynning um greinargerð hefur verið send Landsrétti og aðilum máls."
           buttons={[
             {
-              text: formatMessage(core.closeModal),
+              text: core.closeModal,
               onClick: () => {
                 refreshCase()
                 router.push(previousUrl)
