@@ -171,12 +171,15 @@ the code has moved. Abbreviations:
 
 ## Reach
 
-- **Also shared:** `libs/api/domains/application`, the national registry
-  and payment services, the my-pages BFF and `libs/cms-translations`.
+- **Many templates share** core, ui-shell, ui-fields, types,
+  template-loader, `graphql`, `template-api-modules/src/lib/modules/shared`,
+  `libs/api/domains/application`, the national registry and payment
+  services, the my-pages BFF and `libs/cms-translations`.
 - **`InstitutionMapper.ts` and `Institution.ts` are also read by
   form-system,** by key name. A new type's `ApplicationConfigurations` and
   `institutionMapper` entries are in `libs/application/types/src/lib/`;
-  `templateLoaders` is `libs/application/template-loader/src/index.ts`.
+  `templateLoaders` is
+  `libs/application/template-loader/src/lib/templateLoaders.ts`.
 - **`examples/example-inputs` is the shared fields' test bed.**
 - **Form-system** lives in `apps/form-system/*`, `apps/services/form-system`,
   `libs/form-system`, `libs/api/domains/form-system` and

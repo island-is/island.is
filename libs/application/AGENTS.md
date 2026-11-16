@@ -11,9 +11,16 @@ lists framework behaviour that a single template does not reveal.
   `templates/examples/README.md`.
 - Settled product rules are in a template's README under `## Decisions`.
   Read them before you change what it does.
-- Core, ui-shell, ui-fields, types, template-loader, `graphql` and
-  `template-api-modules/src/lib/modules/shared` serve every template. A
-  change there can break any of them.
+
+## Commands
+
+- Test a template: `yarn nx test <name>`. Faster, without nx:
+  `NX_TASK_TARGET_PROJECT=<name> yarn jest -c libs/application/templates/<name>/jest.config.ts`.
+  Without the variable, path aliases fail.
+- Typecheck a template:
+  `yarn tsc -p libs/application/templates/<name>/tsconfig.lib.json --noEmit`.
+- A TS7006 on a generated type means that library's gitignored `gen/fetch`
+  is stale: run its `codegen/backend-client` target.
 
 ## Validation
 

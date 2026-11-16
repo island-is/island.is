@@ -15,7 +15,7 @@ There are multiple requirements needed for a new template to be usable by the ap
 7. Run `yarn codegen`
 8. View your new application at `/umsoknir/<slug-from-application-types>`
 
-If creating one fails with "Ekki tókst að búa til umsókn af gerðinni", the gitignored client is stale: run `yarn nx run api-domains-application:codegen/backend-client` and restart `api`. A TS7006 on any generated type means that library's `gen/fetch` is stale; run its `codegen/backend-client` target.
+If creating one fails with "Ekki tókst að búa til umsókn af gerðinni", the gitignored client is stale: run `yarn nx run api-domains-application:codegen/backend-client` and restart `api`.
 
 Note: It also works to create nested applications by running:
 
