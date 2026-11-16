@@ -884,7 +884,7 @@ export class VerdictsClientService {
   async getCourtOfAppealAppeals(input: { page: number }) {
     const { goproCaseApi } = await this.getAuthenticatedGoproApis()
     const response = await goproCaseApi.getPublishedAppealCasesV2({
-      pageNumber: input.page ?? 1,
+      pageNumber: Math.max(1, input.page ?? 1),
       itemsPerPage: ITEMS_PER_PAGE,
       orderBy: 'publishdate',
       orderDirection: 'desc',
