@@ -70,6 +70,7 @@ export const DEFAULT_EDITABLE_ENTRY_TYPE_IDS = [
   'featured',
   'lifeEventPage',
   'footerItem',
+  'customPage',
 ]
 
 export const DEFAULT_READ_ONLY_ENTRY_IDS = [
