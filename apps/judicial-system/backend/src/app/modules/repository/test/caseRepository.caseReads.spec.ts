@@ -423,6 +423,13 @@ describe('CaseRepositoryService - case reads', () => {
       // The attribute allowlist is the only thing keeping a defence user off
       // the rest of the case columns - the case interceptor serves whatever
       // the read returns, unredacted.
+      // CaseInterceptor → findOriginalAncestorId reads splitCaseId off the
+      // in-memory case; without it, split indictments resolve to themselves
+      // and defender allowlists keyed on the origin case miss.
+      it('should include splitCaseId so original ancestor resolution works', () => {
+        expect(limitedAccessCaseAttributes).toContain('splitCaseId')
+      })
+
       it('should restrict every linked case to the limited access columns', () => {
         const include = findOneOptions().include
         const attributesOf = (as: string) => included(include, as)?.attributes
