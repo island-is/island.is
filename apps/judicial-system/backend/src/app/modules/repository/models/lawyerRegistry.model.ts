@@ -54,4 +54,8 @@ export class LawyerRegistry extends Model {
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
   isLitigator?: boolean
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  hasCourtOfAppealsRights?: boolean
 }

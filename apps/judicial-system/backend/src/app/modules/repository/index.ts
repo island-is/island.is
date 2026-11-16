@@ -6,6 +6,7 @@ export { AppealCourtSession } from './models/appealCourtSession.model'
 export { AppealStatementDeadline } from './models/appealStatementDeadline.model'
 export { AppealSummons } from './models/appealSummons.model'
 export { AppealSummonsDefendant } from './models/appealSummonsDefendant.model'
+export { AppealSummonsServiceRecipient } from './models/appealSummonsServiceRecipient.model'
 export { Case } from './models/case.model'
 export { CaseArchive } from './models/caseArchive.model'
 export { CaseFile } from './models/caseFile.model'
@@ -54,7 +55,10 @@ export {
 } from './services/appealStatementDeadlineRepository.service'
 export {
   AppealSummonsRepositoryService,
+  CreateAppealSummonsServiceRecipient,
+  RecordAppealSummonsServiceStatus,
   UpdateAppealSummons,
+  UpdateAppealSummonsServiceRecipient,
 } from './services/appealSummonsRepository.service'
 export { CaseRepositoryService } from './services/caseRepository.service'
 export { CaseArchiveRepositoryService } from './services/caseArchiveRepository.service'

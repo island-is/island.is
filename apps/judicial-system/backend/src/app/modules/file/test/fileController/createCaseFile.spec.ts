@@ -1,7 +1,7 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { BadRequestException } from '@nestjs/common'
+import { BadRequestException, ForbiddenException } from '@nestjs/common'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
@@ -9,14 +9,17 @@ import {
   CaseFileState,
   CaseOrigin,
   indictmentCases,
+  InstitutionType,
   investigationCases,
   restrictionCases,
   User,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { createTestingFileModule } from '../createTestingFileModule'
 
-import { randomDate } from '../../../../test'
+import { getOrCreateTransaction } from '../../../../middleware'
+import { randomDate, runInRequestContext } from '../../../../test'
 import { Case, CaseFile, CaseFileRepositoryService } from '../../../repository'
 import { CreateFileDto } from '../../dto/createFile.dto'
 
@@ -36,8 +39,15 @@ describe('FileController - Create case file', () => {
 
   let mockQueuedMessages: Message[]
   let mockCaseFileRepositoryService: CaseFileRepositoryService
+  let mockTransaction: jest.Mock
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
+  let createCaseFileAs: (
+    caseId: string,
+    createCaseFile: CreateFileDto,
+    theCase: Case,
+    actingUser: User,
+  ) => Promise<Then>
 
   beforeEach(async () => {
     const {
@@ -50,27 +60,50 @@ describe('FileController - Create case file', () => {
     mockQueuedMessages = queuedMessagesAfterCommit
     mockCaseFileRepositoryService = caseFileRepositoryService
 
-    const mockTransaction = sequelize.transaction as jest.Mock
+    mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
-    givenWhenThen = async (
+    // The route is guarded by CaseExistsForUpdateGuard, so the request
+    // transaction is already open - and holding a lock on this case row - by
+    // the time the handler runs. Guards do not execute in controller unit
+    // tests, so the request context and that transaction are set up here
+    // instead.
+    createCaseFileAs = async (
       caseId: string,
       createCaseFile: CreateFileDto,
       theCase: Case,
+      actingUser: User,
     ): Promise<Then> => {
       const then = {} as Then
 
-      await fileController
-        .createCaseFile(caseId, user, theCase, createCaseFile)
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      try {
+        then.result = await runInRequestContext(async () => {
+          await getOrCreateTransaction(sequelize)
+
+          return fileController.createCaseFile(
+            caseId,
+            actingUser,
+            theCase,
+            createCaseFile,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }
+
+    givenWhenThen = (caseId, createCaseFile, theCase) =>
+      createCaseFileAs(caseId, createCaseFile, theCase, user)
   })
+
+  // Once, by the stand-in for the guard above. A second call would be the
+  // handler opening a transaction of its own, which would block on the
+  // guard's row lock and deadlock the request.
+  const expectTheGuardsTransactionOnly = () =>
+    expect(mockTransaction).toHaveBeenCalledTimes(1)
 
   describe.each([...restrictionCases, ...investigationCases])(
     'case file created for %s case',
@@ -110,6 +143,7 @@ describe('FileController - Create case file', () => {
       })
 
       it('should create a case file', () => {
+        expectTheGuardsTransactionOnly()
         expect(mockCaseFileRepositoryService.create).toHaveBeenCalledWith(
           caseId,
           {
@@ -165,6 +199,7 @@ describe('FileController - Create case file', () => {
     })
 
     it('should create a case file', () => {
+      expectTheGuardsTransactionOnly()
       expect(mockCaseFileRepositoryService.create).toHaveBeenCalledWith(
         caseId,
         {
@@ -283,6 +318,70 @@ describe('FileController - Create case file', () => {
       })
     },
   )
+
+  describe('court case file created by non-court user', () => {
+    const caseId = uuid()
+    const theCase = { id: caseId, type: indictmentCases[0] } as Case
+    const uuId = uuid()
+    const createCaseFile: CreateFileDto = {
+      type: 'text/plain',
+      key: `${caseId}/${uuId}/test.txt`,
+      size: 99,
+      category: CaseFileCategory.COURT_CASE_FILE,
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(caseId, createCaseFile, theCase)
+    })
+
+    it('should forbid creation', () => {
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+      expect(mockCaseFileRepositoryService.create).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('court case file created by district court user', () => {
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+      type: indictmentCases[0],
+    } as Case
+    const uuId = uuid()
+    const createCaseFile: CreateFileDto = {
+      type: 'text/plain',
+      key: `${caseId}/${uuId}/test.txt`,
+      size: 99,
+      category: CaseFileCategory.COURT_CASE_FILE,
+      fileRepresentative: 'Dómari',
+    }
+    const fileId = uuid()
+    const caseFile = {
+      ...createCaseFile,
+      id: fileId,
+      name: 'test.txt',
+      userGeneratedFilename: 'test.txt',
+      state: CaseFileState.STORED_IN_RVG,
+      category: CaseFileCategory.COURT_CASE_FILE,
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
+      mockCreate.mockResolvedValueOnce(caseFile)
+
+      then = await createCaseFileAs(caseId, createCaseFile, theCase, {
+        id: uuid(),
+        role: UserRole.DISTRICT_COURT_JUDGE,
+        institution: { type: InstitutionType.DISTRICT_COURT },
+      } as User)
+    })
+
+    it('should create a court case file', () => {
+      expect(then.error).toBeUndefined()
+      expect(then.result).toBe(caseFile)
+    })
+  })
 
   describe('malformed key', () => {
     const caseId = uuid()

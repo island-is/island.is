@@ -1,4 +1,4 @@
-import { getValueViaPath, YES } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
 import {
   ApplicantChildCustodyInformationV3,
   Application,
@@ -9,6 +9,7 @@ import { BffUser } from '@island.is/shared/types'
 import * as kennitala from 'kennitala'
 import { getLandlordOptionsForSelectedContract } from './rentalAgreementUtils'
 import { assigneeExternalDataKey } from './assigneeUtils'
+import { LegalDomicileOption } from './constants'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 
@@ -311,13 +312,14 @@ export const shouldShowLandlordSelection = (
     externalData,
   } as Application).length > 1
 
-export const isExemptionRequested = (answers: FormValue) => {
-  const exemptionCheckbox = getValueViaPath<string[]>(
-    answers,
-    'exemptionCheckbox',
-  )
-  return Array.isArray(exemptionCheckbox) && exemptionCheckbox.includes(YES)
-}
+export const getLegalDomicileOption = (answers: FormValue) =>
+  getValueViaPath<LegalDomicileOption>(answers, 'legalDomicileOption')
+
+export const isExemptionRequested = (answers: FormValue) =>
+  getLegalDomicileOption(answers) === LegalDomicileOption.EXEMPTION
+
+export const isNationalRegistryRefetchSelected = (answers: FormValue) =>
+  getLegalDomicileOption(answers) === LegalDomicileOption.NATIONAL_REGISTRY
 
 type PersonalTaxReturnData = {
   handedInLastYear?: boolean

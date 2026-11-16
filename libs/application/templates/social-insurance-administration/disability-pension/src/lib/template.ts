@@ -30,7 +30,6 @@ import {
 } from '@island.is/application/core'
 import { assign } from 'xstate'
 import * as m from './messages'
-import { getApplicationExternalData } from '../utils'
 import {
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
@@ -59,7 +58,6 @@ import {
   defaultIncomeTypes,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { ApiScope } from '@island.is/auth/scopes'
-import cloneDeep from 'lodash/cloneDeep'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
 import {
@@ -381,28 +379,8 @@ const template: ApplicationTemplate<
       populateIncomeTable: assign((context) => {
         const { application } = context
         const { answers } = application
-        const { latestIncomePlan } = getApplicationExternalData(
-          application.externalData,
-        )
 
-        if (
-          latestIncomePlan?.status === 'Accepted' &&
-          latestIncomePlan.incomeTypeLines?.length
-        ) {
-          set(
-            answers,
-            'incomePlan',
-            latestIncomePlan.incomeTypeLines.map((income) => ({
-              incomeType: income.incomeTypeName,
-              incomePerYear: String(income.totalSum),
-              currency: income.currency,
-              income: RatioType.YEARLY,
-              incomeCategory: income.incomeCategoryName,
-            })),
-          )
-        } else {
-          set(answers, 'incomePlan', cloneDeep(defaultIncomeTypes))
-        }
+        set(answers, 'incomePlan', defaultIncomeTypes)
 
         return context
       }),

@@ -17,6 +17,9 @@ fragment SplitCaseFields on Case {
     name
     defenderNationalId
     isDefenderChoiceConfirmed
+    appealDefenderNationalId
+    isAppealDefenderConfirmed
+    isAppealDefenderWaived
     subpoenas {
       ...SubpoenaFields
     }
@@ -25,6 +28,9 @@ fragment SplitCaseFields on Case {
     id
     isSpokespersonConfirmed
     spokespersonNationalId
+    hasAppealSpokesperson
+    appealSpokespersonNationalId
+    isAppealSpokespersonConfirmed
   }
   caseFiles {
     ...CaseFileFields

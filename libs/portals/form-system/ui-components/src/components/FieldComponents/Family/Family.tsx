@@ -2,6 +2,7 @@ import { FormSystemField } from '@island.is/api/schema'
 import { FamilyTypes } from '@island.is/form-system/enums'
 import { Dispatch } from 'react'
 import { Action, ApplicationState } from '../../../lib'
+import { Applicant } from './Applicant'
 import { Child } from './Child'
 import { Estate } from './Estate'
 import { Spouse } from './Spouse'
@@ -22,6 +23,16 @@ export const Family = ({
   isPreview = false,
 }: Props) => {
   switch (item.fieldSettings?.familyType) {
+    case FamilyTypes.APPLICANT_INFO:
+      return (
+        <Applicant
+          state={state}
+          item={item}
+          valueIndex={valueIndex}
+          dispatch={dispatch}
+          isPreview={isPreview}
+        />
+      )
     case FamilyTypes.CHILD:
       return (
         <Child

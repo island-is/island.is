@@ -408,6 +408,30 @@ export const defenceIndictmentsAccessWhereOptions = (user: User) => {
           `),
         },
       },
+      {
+        // confirmed appeal defender on a verdict appeal
+        id: {
+          [Op.in]: literal(`
+            (SELECT case_id
+              FROM defendant
+              WHERE appeal_defender_national_id = '${userNationalId}'
+                AND is_appeal_defender_confirmed = true
+                AND is_appeal_defender_waived IS DISTINCT FROM true)
+          `),
+        },
+      },
+      {
+        // confirmed appeal spokesperson on a verdict appeal
+        id: {
+          [Op.in]: literal(`
+            (SELECT case_id
+              FROM civil_claimant
+              WHERE appeal_spokesperson_national_id = '${userNationalId}'
+                AND is_appeal_spokesperson_confirmed = true
+                AND has_appeal_spokesperson IS DISTINCT FROM false)
+          `),
+        },
+      },
     ],
   }
 }

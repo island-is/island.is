@@ -2,7 +2,7 @@ import { useIntl } from 'react-intl'
 import { ScrollView, View } from 'react-native'
 import { router, Stack, useLocalSearchParams } from 'expo-router'
 
-import { Input, InputRow } from '@/ui'
+import { InfoLine, InfoLineRow } from '@/ui'
 import { useGetFinanceStatusDetailsQuery } from '@/graphql/types/schema'
 import { testIDs } from '@/utils/test-ids'
 import { StackScreen } from '../../../../../../../components/stack-screen'
@@ -47,70 +47,70 @@ export default function FinanceStatusDetailScreen() {
         closeable
       />
       <View>
-        <InputRow>
-          <Input
+        <InfoLineRow>
+          <InfoLine
             loading={loading}
             error={error}
             label={intl.formatMessage({ id: 'financeDetail.paymentBase' })}
             value={item.chargeItemSubject}
           />
-          <Input
+          <InfoLine
             loading={loading}
             error={error}
             label={intl.formatMessage({ id: 'financeDetail.yearAndPeriod' })}
             value={item.timePeriod}
           />
-        </InputRow>
-        <InputRow>
-          <Input
+        </InfoLineRow>
+        <InfoLineRow>
+          <InfoLine
             loading={loading}
             error={error}
             label={intl.formatMessage({ id: 'financeDetail.dueDate' })}
             value={item.dueDate}
           />
-          <Input
+          <InfoLine
             loading={loading}
             error={error}
             label={intl.formatMessage({ id: 'financeDetail.finalDueDate' })}
             value={item.finalDueDate}
           />
-        </InputRow>
-        <InputRow>
-          <Input
+        </InfoLineRow>
+        <InfoLineRow>
+          <InfoLine
             loading={loading}
             error={error}
             label={intl.formatMessage({ id: 'financeDetail.principal' })}
             value={`${intl.formatNumber(item.principal)} kr.`}
           />
-          <Input
+          <InfoLine
             loading={loading}
             error={error}
             label={intl.formatMessage({ id: 'financeDetail.interest' })}
             value={`${intl.formatNumber(item.interest)} kr.`}
           />
-        </InputRow>
-        <InputRow>
-          <Input
+        </InfoLineRow>
+        <InfoLineRow>
+          <InfoLine
             loading={loading}
             error={error}
             label={intl.formatMessage({ id: 'financeDetail.costs' })}
             value={`${intl.formatNumber(item.cost)} kr.`}
           />
-          <Input
+          <InfoLine
             loading={loading}
             error={error}
             label={intl.formatMessage({ id: 'financeDetail.payments' })}
             value={`${intl.formatNumber(item.paid)} kr.`}
           />
-        </InputRow>
-        <InputRow>
-          <Input
+        </InfoLineRow>
+        <InfoLineRow>
+          <InfoLine
             loading={loading}
             error={error}
             label={intl.formatMessage({ id: 'financeDetail.status' })}
             value={`${intl.formatNumber(item.totals)} kr.`}
           />
-        </InputRow>
+        </InfoLineRow>
       </View>
     </ScrollView>
   )

@@ -5,16 +5,19 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TaxCalculatorType } from '@island.is/tax-calculators'
 
-import type { ReachableCalculatorKey } from './contract/calculatorKey'
-import { toCalculatorKey } from './contract/calculatorKey'
-import { assertPublishableContract } from './contract/validation/validation'
 import { toChildBenefitInput } from './calculate/clientInput/childBenefit/childBenefit'
 import { toVehicleBenefitInput } from './calculate/clientInput/vehicleBenefit/vehicleBenefit'
 import { toVehicleTaxInput } from './calculate/clientInput/vehicleTax/vehicleTax'
 import { toWithholdingTaxInput } from './calculate/clientInput/withholdingTax/withholdingTax'
 import { toOutputValues } from './calculate/outputFieldValue/outputFieldValue'
 import type { SubmittedValues } from './calculate/submission/submission'
-import { validateCalculationInput } from './calculate/submission/submission'
+import {
+  toInvalidValueErrors,
+  validateCalculationInput,
+} from './calculate/submission/submission'
+import type { ReachableCalculatorKey } from './contract/calculatorKey'
+import { toCalculatorKey } from './contract/calculatorKey'
+import { assertPublishableContract } from './contract/validation/validation'
 import { toInputField } from './fields/inputField/inputField'
 import { toOutputField } from './fields/outputField/outputField'
 import type { CalculateInput } from './models/calculateInput.model'
@@ -60,12 +63,22 @@ export class TaxCalculatorsService {
       return { calculation: undefined, errors: validation.errors }
     }
 
+    const calculatorKey = toCalculatorKey(type)
+    const rejected = this.calculatorsClientService.validateInput(
+      calculatorKey,
+      validation.values,
+    )
+
+    if (rejected.length > 0) {
+      return {
+        calculation: undefined,
+        errors: toInvalidValueErrors(contract.inputFields, rejected),
+      }
+    }
+
     let result
     try {
-      result = await this.runCalculation(
-        toCalculatorKey(type),
-        validation.values,
-      )
+      result = await this.runCalculation(calculatorKey, validation.values)
     } catch (error) {
       /* Log upstream failure without including raw error details, which may
        * echo submitted input values, in the response or the log payload. */

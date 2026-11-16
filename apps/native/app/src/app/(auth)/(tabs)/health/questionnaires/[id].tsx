@@ -14,7 +14,7 @@ import {
 } from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'
 import { useBrowser } from '@/hooks/use-browser'
-import { Button, Input, InputRow, Problem, Typography } from '@/ui'
+import { Button, InfoLine, InfoLineRow, StatusMessage, Typography } from '@/ui'
 import { questionnaireUrls } from '@/utils/url-builder'
 import {
   getQuestionnaireOrganizationLabelId,
@@ -130,9 +130,9 @@ export default function QuestionnaireDetailScreen() {
       </View>
     )
   } else if (!loading && error && !base) {
-    errorContent = <Problem error={error} withContainer />
+    errorContent = <StatusMessage error={error} withContainer />
   } else if (!loading && !error && !base) {
-    errorContent = <Problem type="no_data" withContainer />
+    errorContent = <StatusMessage type="no_data" withContainer />
   }
 
   const isAnswered =
@@ -231,8 +231,8 @@ export default function QuestionnaireDetailScreen() {
               </View>
             </Content>
 
-            <InputRow>
-              <Input
+            <InfoLineRow>
+              <InfoLine
                 size="normal"
                 loading={isInitialLoading}
                 label={intl.formatMessage({
@@ -247,9 +247,9 @@ export default function QuestionnaireDetailScreen() {
                 }
                 hideWhenEmpty
               />
-            </InputRow>
-            <InputRow>
-              <Input
+            </InfoLineRow>
+            <InfoLineRow>
+              <InfoLine
                 size="normal"
                 loading={isInitialLoading}
                 label={intl.formatMessage({
@@ -267,9 +267,9 @@ export default function QuestionnaireDetailScreen() {
                 }
                 hideWhenEmpty
               />
-            </InputRow>
-            <InputRow>
-              <Input
+            </InfoLineRow>
+            <InfoLineRow>
+              <InfoLine
                 size="normal"
                 loading={isInitialLoading}
                 label={intl.formatMessage({
@@ -280,9 +280,9 @@ export default function QuestionnaireDetailScreen() {
                 }
                 hideWhenEmpty
               />
-            </InputRow>
-            <InputRow>
-              <Input
+            </InfoLineRow>
+            <InfoLineRow>
+              <InfoLine
                 size="normal"
                 loading={isInitialLoading}
                 label={intl.formatMessage({
@@ -291,9 +291,9 @@ export default function QuestionnaireDetailScreen() {
                 value={questionnaire?.sender ?? ''}
                 hideWhenEmpty
               />
-            </InputRow>
-            <InputRow>
-              <Input
+            </InfoLineRow>
+            <InfoLineRow>
+              <InfoLine
                 size="normal"
                 loading={isInitialLoading}
                 label={intl.formatMessage({
@@ -306,7 +306,7 @@ export default function QuestionnaireDetailScreen() {
                 }
                 hideWhenEmpty
               />
-            </InputRow>
+            </InfoLineRow>
           </>
         )}
       </ScrollView>

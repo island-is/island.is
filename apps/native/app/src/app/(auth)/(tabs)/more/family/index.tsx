@@ -12,7 +12,13 @@ import {
 import { useRouter } from 'expo-router'
 import { useTheme } from 'styled-components/native'
 
-import { EmptyList, FamilyMemberCard, Skeleton, TopLine, Problem } from '@/ui'
+import {
+  EmptyList,
+  FamilyMemberCard,
+  Skeleton,
+  TopLine,
+  StatusMessage,
+} from '@/ui'
 import illustrationSrc from '@/assets/illustrations/hero_spring.png'
 import {
   NationalRegistryChildCustody,
@@ -146,14 +152,8 @@ export default function FamilyScreen() {
         <View style={{ paddingHorizontal: theme.spacing[2] }}>
           <Skeleton
             active
-            backgroundColor={{
-              dark: theme.shades.dark.shade300,
-              light: theme.color.blue100,
-            }}
-            overlayColor={{
-              dark: theme.shades.dark.shade200,
-              light: theme.color.blue200,
-            }}
+            backgroundColor={theme.tokens.background.brandMinimal}
+            overlayColor={theme.tokens.background.brandLighter}
             overlayOpacity={1}
             height={82}
             style={{
@@ -253,7 +253,7 @@ export default function FamilyScreen() {
           renderItem={renderItem}
         />
       )}
-      {familyRes.error && !familyRes.data && <Problem withContainer />}
+      {familyRes.error && !familyRes.data && <StatusMessage withContainer />}
       <TopLine scrollY={scrollY} />
     </>
   )

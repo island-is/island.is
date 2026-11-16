@@ -128,7 +128,7 @@ describe('getApplicantExemptionNumber', () => {
   ])('maps %p to %p', (reason, expected) => {
     expect(
       getApplicantExemptionNumber({
-        exemptionCheckbox: ['yes'],
+        legalDomicileOption: 'exemption',
         exemptionReason: reason,
       }),
     ).toBe(expected)
@@ -138,10 +138,10 @@ describe('getApplicantExemptionNumber', () => {
     expect(getApplicantExemptionNumber({})).toBeUndefined()
   })
 
-  it('returns undefined when a reason is left over but the checkbox is unticked', () => {
+  it('returns undefined when a reason is left over but the national registry option is selected', () => {
     expect(
       getApplicantExemptionNumber({
-        exemptionCheckbox: [],
+        legalDomicileOption: 'nationalRegistry',
         exemptionReason: 'studies',
       }),
     ).toBeUndefined()
@@ -150,7 +150,7 @@ describe('getApplicantExemptionNumber', () => {
   it('returns undefined for an unknown reason', () => {
     expect(
       getApplicantExemptionNumber({
-        exemptionCheckbox: ['yes'],
+        legalDomicileOption: 'exemption',
         exemptionReason: 'somethingElse',
       }),
     ).toBeUndefined()
@@ -161,7 +161,7 @@ describe('mapApplicationToHousingBenefitsModel exemptionNumber', () => {
   it('sets exemptionNumber only on the applicant entry', () => {
     const model = mapApplicationToHousingBenefitsModel(
       createApplication({
-        exemptionCheckbox: ['yes'],
+        legalDomicileOption: 'exemption',
         exemptionReason: 'work',
         householdMembersTableRepeater: [
           { nationalIdWithName: { nationalId: MEMBER_ID, name: 'Member' } },

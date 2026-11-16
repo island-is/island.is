@@ -26,7 +26,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.EXAMPLE_FOLDER_STRUCTURE_AND_CONVENTIONS,
   name: 'example-folder-structure-and-conventions template',
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: 'Stafrænt Ísland',
   translationNamespaces: [
     ApplicationConfigurations.ExampleFolderStructureAndConventions.translation,

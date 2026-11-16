@@ -53,6 +53,9 @@ jest.mock('@island.is/form-system/ui', () => ({
     continue: { defaultMessage: 'Continue' },
     back: { defaultMessage: 'Back' },
     preview: { defaultMessage: 'Preview' },
+    previewApplicationBanner: {
+      defaultMessage: 'Þetta er forskoðun. Engin tenging er við vefþjónustur.',
+    },
     relevantParties: { defaultMessage: 'Applicants' },
     individual: { defaultMessage: 'Einstaklingur (innskráður)' },
     individualWithPowerOfAttorney: {
@@ -72,13 +75,18 @@ jest.mock('@island.is/island-ui/core', () => {
     <div>{children}</div>
   )
   return {
+    AlertMessage: ({ title, type }: { title: string; type: string }) => (
+      <div data-testid="preview-warning" data-type={type}>
+        {title}
+      </div>
+    ),
     Box: Container,
     GridColumn: Container,
     GridContainer: Container,
     GridRow: Container,
     Text: Container,
     Stack: Container,
-    Header: () => null,
+    Header: () => <header data-testid="preview-header" />,
     RadioButton: ({
       label,
       ...props
@@ -264,6 +272,30 @@ const renderPreview = (
       />
     </ControlContext.Provider>,
   )
+
+it.each([false, true])(
+  'shows the warning below the header in restricted preview: %s',
+  (enforceRestrictions) => {
+    renderPreview(enforceRestrictions)
+    const warning = screen.getByTestId('preview-warning')
+    const heading = screen.getByText(
+      enforceRestrictions ? 'First screen' : 'Last screen',
+    )
+
+    expect(warning.textContent).toBe(
+      'Þetta er forskoðun. Engin tenging er við vefþjónustur.',
+    )
+    expect(warning.getAttribute('data-type')).toBe('warning')
+    expect(
+      screen.getByTestId('preview-header').compareDocumentPosition(warning) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
+    expect(
+      warning.compareDocumentPosition(heading) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
+  },
+)
 
 it.each([false, undefined])(
   'starts after applicants and reveals dependent screens with bypass=%s',

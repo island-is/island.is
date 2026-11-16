@@ -14,7 +14,7 @@ import { StackScreen } from '@/components/stack-screen'
 
 import { BaseAppointmentStatuses } from '@/constants/base-appointment-statuses'
 import { useGetAppointmentsQuery } from '@/graphql/types/schema'
-import { EmptyList, GeneralCardSkeleton, Problem } from '@/ui'
+import { EmptyList, GeneralCardSkeleton, StatusMessage } from '@/ui'
 import { pushOnce } from '@/utils/push-once'
 import { AppointmentCard } from '../../../../../components/appointment-card'
 
@@ -98,7 +98,7 @@ export default function AppointmentsScreen() {
 
           {appointmentsRes.error && appointments.length === 0 && (
             <ErrorWrapper>
-              <Problem
+              <StatusMessage
                 type="error"
                 error={appointmentsRes.error}
                 title={intl.formatMessage({ id: 'problem.error.title' })}

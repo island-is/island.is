@@ -555,7 +555,7 @@ export const SalaryDistributionChart: FC<Props> = ({
 
       <RegressionReadout fit={fit} />
 
-      {/* Closes the chart block before the extra-pay table. rowGap already
+      {/* Closes the chart block before the extra-pay charts. rowGap already
           supplies 16px above, so the extra 16px here matches the 32px the
           container's marginBottom leaves below — a divider only reads as a
           separator when the space either side of it is equal. */}

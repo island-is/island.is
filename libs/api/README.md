@@ -1,8 +1,7 @@
 # API
 
 To create a new domain, run:
-`yarn generate @nx/nest:library libs/api/domains/<new_domain_name>`
 
-When prompted for project name and where it should be generated, choose the `derived` lib option.
+`yarn nx g @nx/nest:library libs/api/domains/<name> --name=api-domains-<name> --importPath=@island.is/api/domains/<name> --tags=lib:api,scope:api --linter=eslint --unitTestRunner=jest`
 
-After generation, open `project.json` in your new lib's folder and add `"tags": ["lib:api", "scope:api"]`
+Then revert the generator's `package.json`/`yarn.lock` changes, add the folder to `.github/CODEOWNERS`, and register the module in `apps/api/src/app/app.module.ts`.

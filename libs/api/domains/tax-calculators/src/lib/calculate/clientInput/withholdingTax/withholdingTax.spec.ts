@@ -5,7 +5,7 @@ const values: SubmittedValues = {
   launGreidast: 'Mánaðarlega',
   hjuskaparstada: 'Einhleypingur',
   tekjuar: 2026,
-  launamanudur: 9,
+  launamanudur: 'sep',
   laun: 800000,
   lifeyrissjodurHlutfall: 4,
   sereignHlutfall: 2,
@@ -37,5 +37,19 @@ describe('client input builders', () => {
     expect(() =>
       toWithholdingTaxInput({ ...values, hjuskaparstada: 'Gift/Í sambúð' }),
     ).toThrow(/permitted option/)
+  })
+
+  it('omits optional params that were not submitted', () => {
+    const required: SubmittedValues = {
+      launGreidast: 'Mánaðarlega',
+      hjuskaparstada: 'Einhleypingur',
+      tekjuar: 2026,
+      launamanudur: 'sep',
+      laun: 800000,
+      lifeyrissjodurHlutfall: 4,
+      nytingSkattkorts: 100,
+    }
+
+    expect(toWithholdingTaxInput(required)).toEqual(required)
   })
 })

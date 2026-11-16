@@ -10,6 +10,9 @@ export const ConfigFactory = (
   xroadConfig: ConfigType<typeof XRoadConfig>,
   config: ConfigType<typeof FriggClientConfig>,
   idsClientConfig: ConfigType<typeof IdsClientConfig>,
+  // The scopes this api's token exchange asks for; they differ per api, so the
+  // caller passes them in (see apiProvider).
+  scope: string[],
 ) => ({
   fetchApi: createEnhancedFetch({
     name: 'clients-mms-frigg',
@@ -20,7 +23,7 @@ export const ConfigFactory = (
           issuer: idsClientConfig.issuer,
           clientId: idsClientConfig.clientId,
           clientSecret: idsClientConfig.clientSecret,
-          scope: config.scope,
+          scope,
         }
       : undefined,
   }),

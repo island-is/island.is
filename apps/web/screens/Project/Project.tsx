@@ -390,6 +390,16 @@ const ProjectPage: Screen<PageProps> = ({
         backLink={backLink}
         isSubpage={(subpage && p('smallerSubpageHeader', false)) ?? false}
         isFrontpage={!subpage}
+        activeNavigationPath={
+          // Chapters (and their list items) live below the parent subpage, so highlight the parent subpage in the sidebar
+          parentSubpage && projectPage?.slug
+            ? linkResolver(
+                'projectsubpage',
+                [projectPage.slug, parentSubpage.slug],
+                activeLocale,
+              ).href
+            : undefined
+        }
       >
         {customContent ? customContent : mainContent}
       </ProjectWrapper>

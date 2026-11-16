@@ -780,6 +780,23 @@ export class BackendService {
     )
   }
 
+  sendAppealSummonsToService(
+    caseId: string,
+    appealSummonsId: string,
+    body: {
+      recipients: { defendantId?: string; civilClaimantId?: string }[]
+    },
+  ): Promise<AppealSummons> {
+    return this.patch(
+      `case/${caseId}/appealSummons/${appealSummonsId}/sendToService`,
+      body,
+    )
+  }
+
+  syncAppealSummonsServiceStatuses(caseId: string): Promise<AppealSummons[]> {
+    return this.post(`case/${caseId}/appealSummons/syncServiceStatuses`, {})
+  }
+
   createVerdicts(caseId: string, createVerdicts: unknown): Promise<Verdict[]> {
     return this.post(`case/${caseId}/verdicts`, createVerdicts)
   }
