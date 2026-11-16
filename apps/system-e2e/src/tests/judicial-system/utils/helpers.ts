@@ -116,7 +116,7 @@ export const uploadDocument = async (
 // the operation name is not enough here: the step's own autofill saves the
 // case at the same moment, without a decision.
 export const chooseCourtDecision = async (page: Page, decisionText: string) => {
-  await Promise.all([
+  const [response] = await Promise.all([
     page.waitForResponse(
       (resp) => {
         if (!resp.url().includes('/api/graphql')) {
@@ -134,4 +134,13 @@ export const chooseCourtDecision = async (page: Page, decisionText: string) => {
     // 'Kröfu um gæsluvarðhald hafnað( en úrskurðað í farbann)'
     page.getByText(decisionText, { exact: true }).click(),
   ])
+
+  // A save that failed would otherwise surface a step later, as the missing
+  // continue button this helper exists to prevent.
+  const body = await response.json()
+  if (body.errors?.length) {
+    throw new Error(
+      `GraphQL operation UpdateCase returned errors: ${body.errors[0].message}`,
+    )
+  }
 }
