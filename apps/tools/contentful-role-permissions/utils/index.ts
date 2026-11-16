@@ -15,9 +15,13 @@ import { sortAlpha } from '@island.is/shared/utils'
 import {
   contentfulManagementAccessToken,
   environmentId,
+  READABLE_BY_ALL_TAG_ID,
   spaceId,
 } from '../constants'
 import type { CheckboxState } from '../types'
+
+// contentful-management's ConstraintType doesn't list the `in` operator the API supports
+type Condition = Record<string, unknown>
 
 let client: PlainClientAPI | null = null
 
@@ -196,6 +200,22 @@ export const applyAssetPolicies = (
     ]
   }
 
+  const allowedWhen: Condition[] = [
+    {
+      in: [{ doc: 'metadata.tags.sys.id' }, [tagId]],
+    },
+    {
+      equals: [{ doc: 'sys.createdBy.sys.id' }, 'User.current()'],
+    },
+  ]
+
+  // Only reading is ever unlocked by the readable-by-all tag
+  if (!allowReadingAllAssets) {
+    allowedWhen.push({
+      in: [{ doc: 'metadata.tags.sys.id' }, [READABLE_BY_ALL_TAG_ID]],
+    })
+  }
+
   policies.push({
     actions: disallowedActions,
     effect: 'deny',
@@ -204,14 +224,7 @@ export const applyAssetPolicies = (
         { equals: [{ doc: 'sys.type' }, 'Asset'] },
         {
           not: {
-            or: [
-              {
-                in: [{ doc: 'metadata.tags.sys.id' }, [tagId]],
-              },
-              {
-                equals: [{ doc: 'sys.createdBy.sys.id' }, 'User.current()'],
-              },
-            ],
+            or: allowedWhen,
           },
         },
       ],
@@ -281,24 +294,29 @@ export const applyEntryEditPolicies = (
     allContentTypeIds.add(id)
   }
 
+  const ownerOrCreator: Condition[] = [
+    { equals: [{ doc: 'sys.createdBy.sys.id' }, 'User.current()'] },
+    { in: [{ doc: 'metadata.tags.sys.id' }, [tagId]] },
+  ]
+
+  const readDeniedContentTypeIds: string[] = []
+
   for (const id of allContentTypeIds) {
     if (!scopedEditableContentTypeIds.has(id)) continue
 
-    const actions: ActionType[] = [
-      'update',
-      'delete',
-      'publish',
-      'unpublish',
-      'archive',
-      'unarchive',
-    ]
-
     if (!globallyReadableContentTypeIds.has(id)) {
-      actions.push('read')
+      readDeniedContentTypeIds.push(id)
     }
 
     policies.push({
-      actions,
+      actions: [
+        'update',
+        'delete',
+        'publish',
+        'unpublish',
+        'archive',
+        'unarchive',
+      ],
       effect: 'deny',
       constraint: {
         and: [
@@ -308,16 +326,42 @@ export const applyEntryEditPolicies = (
           },
           {
             not: {
-              or: [
-                { equals: [{ doc: 'sys.createdBy.sys.id' }, 'User.current()'] },
-                { in: [{ doc: 'metadata.tags.sys.id' }, [tagId]] },
-              ],
+              or: ownerOrCreator,
             },
           },
         ],
       },
     })
   }
+
+  if (readDeniedContentTypeIds.length === 0) return
+
+  // Reading is denied in a single policy so the readable-by-all tag can unlock reading (and only reading)
+  policies.push({
+    actions: ['read'],
+    effect: 'deny',
+    constraint: {
+      and: [
+        { equals: [{ doc: 'sys.type' }, 'Entry'] },
+        {
+          in: [
+            { doc: 'sys.contentType.sys.id' },
+            readDeniedContentTypeIds.sort(),
+          ],
+        },
+        {
+          not: {
+            or: [
+              ...ownerOrCreator,
+              {
+                in: [{ doc: 'metadata.tags.sys.id' }, [READABLE_BY_ALL_TAG_ID]],
+              },
+            ],
+          },
+        },
+      ],
+    },
+  })
 }
 
 export const narrowDownCheckboxState = (
