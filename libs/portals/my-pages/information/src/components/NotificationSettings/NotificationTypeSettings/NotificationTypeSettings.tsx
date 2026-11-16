@@ -152,7 +152,8 @@ export const NotificationTypeSettings = () => {
         />
       )}
 
-      {!onlyActionablePriorityNotifications && (
+      {(!onlyActionablePriorityNotifications ||
+        !isActionablePrioritySettingAvailable) && (
         <>
           <Stack space={1}>
             <Text variant="h4" as="h2">
