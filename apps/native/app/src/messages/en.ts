@@ -38,6 +38,20 @@ export const en: TranslatedMessages = {
   'login.identifier.phoneLabel': 'Phone number',
   'login.identifier.nationalIdLabel': 'National ID number',
   'login.identifier.submit': 'Authenticate',
+  'login.smsCode.title': 'Two-factor authentication',
+  'login.smsCode.subtitle':
+    "As you're logging in on a new device, we've sent a code to {phoneNumber}.",
+  'login.smsCode.label': 'Security code',
+  'login.smsCode.submit': 'Confirm',
+  'login.smsCode.next': 'After this you continue to log in with electronic ID.',
+  'login.error.newLoginRestricted':
+    "You've restricted logins from unknown devices. Log in to My pages on a known device to turn this off.",
+  'login.error.wrongSmsCode': 'Wrong code. {attemptsLeft} attempts left.',
+  'login.error.wrongSmsCodeLastAttempt': 'Wrong code. One attempt left.',
+  'login.error.smsCodeAttemptsUsed':
+    "Couldn't confirm the code. Please start again.",
+  'login.error.declined': 'The login was declined or timed out. Try again.',
+  'login.error.failed': "Couldn't log you in. Try again.",
 
   // app lock
   'applock.title': 'Enter a 4-digit PIN',

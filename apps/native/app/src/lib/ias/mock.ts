@@ -7,11 +7,11 @@ export interface MockIasClientOptions {
   approvalDelayMs?: number
 }
 
-const MOCK_SMS_CODE = '123456'
+const MOCK_SMS_CODE = '123'
 
 /**
  * For building the screens without IAS. Login hints pick the outcome:
- * - ending in 000: asks for an SMS code, which is 123456
+ * - ending in 000: asks for an SMS code, which is 123
  * - ending in 999: the person declines on their phone
  * - anything else: approved after `approvalDelayMs`
  */
@@ -20,6 +20,8 @@ export function createMockIasClient({
 }: MockIasClientOptions = {}): IasClient {
   let biometrics = false
   let declines = false
+  // Like IAS: 3 tries per code, then start again with a new one.
+  let smsAttemptsLeft = 3
 
   const tokens = (): IasTokens => ({
     accessToken: 'mock-access-token',
@@ -36,19 +38,22 @@ export function createMockIasClient({
     async startLogin(loginHint, { smsCode } = {}) {
       await sleep(500)
       if (loginHint.endsWith('000') && smsCode !== MOCK_SMS_CODE) {
-        throw smsCode
-          ? new IasError(
-              'access_denied',
-              'invalid_sms_code: 2 attempts remaining',
-              400,
-              'POST /connect/ciba',
-            )
-          : new IasError(
-              'access_denied',
-              'sms_code_required: An SMS code was sent',
-              400,
-              'POST /connect/ciba',
-            )
+        if (!smsCode) {
+          smsAttemptsLeft = 3
+          throw new IasError(
+            'access_denied',
+            'sms_code_required: An SMS code was sent',
+            400,
+            'POST /connect/ciba',
+          )
+        }
+        smsAttemptsLeft -= 1
+        throw new IasError(
+          'access_denied',
+          `invalid_sms_code: ${smsAttemptsLeft} attempts remaining`,
+          400,
+          'POST /connect/ciba',
+        )
       }
       declines = loginHint.endsWith('999')
       return {

@@ -8,7 +8,7 @@ import { token } from '@/ui'
 
 const Host = styled.View`
   height: 40px;
-  margin-top: ${({ theme }) => theme.spacing[1]}px;
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
   align-items: center;
   justify-content: center;
 `
@@ -37,6 +37,11 @@ export const HeaderButton = styled.TouchableOpacity`
   shadow-radius: 8px;
   shadow-offset: 0px 2px;
   elevation: 3;
+`
+
+// A header button with a word in it, e.g. the language button.
+export const HeaderTextButton = styled(HeaderButton)`
+  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
 `
 
 interface LoginHeaderProps {

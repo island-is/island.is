@@ -4,21 +4,23 @@ import { ImageSourcePropType, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
-import fallbackIllustration from '@/assets/illustrations/digital-services-m1-dots.png'
+import fallbackIllustration from '@/assets/illustrations/digital-services-m2.png'
 import { DebugInfo } from '@/components/testing/debug-info'
 import { isTestingApp } from '@/config'
 import { useBrowser } from '@/hooks/use-browser'
 import { usePreferencesStore } from '@/stores/preferences-store'
 import { Button, LinkText, token, Typography } from '@/ui'
-import { HeaderButton, LoginHeader } from './login-header'
+import { testIDs } from '@/utils/test-ids'
+import { HeaderTextButton, LoginHeader } from './login-header'
 
 const links = {
   is: {
-    terms: 'https://island.is/skilmalar-island-is',
+    terms: 'https://island.is/s/stafraent-island/stefnur-skilmalar-og-vidmid',
     help: 'https://island.is/adstod',
   },
   en: {
-    terms: 'https://island.is/en/skilmalar-island-is',
+    terms:
+      'https://island.is/en/o/digital-iceland/policies-terms-and-guidelines-digital-iceland',
     help: 'https://island.is/en/help',
   },
 }
@@ -38,7 +40,7 @@ const Spacer = styled.View`
 `
 
 const Title = styled(Typography)`
-  margin-top: ${({ theme }) => theme.spacing[6]}px;
+  margin-top: ${({ theme }) => theme.spacing[9]}px;
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
 `
 
@@ -49,9 +51,12 @@ const IllustrationWrapper = styled.View`
   margin-vertical: ${({ theme }) => theme.spacing[3]}px;
 `
 
+// The design's size at most, smaller when the screen is short.
 const Illustration = styled.Image`
   width: 100%;
   height: 100%;
+  max-width: 318px;
+  max-height: 362px;
 `
 
 const Footer = styled.View`
@@ -94,12 +99,15 @@ export function LoginWelcome({
   const { terms, help } = links[locale === 'is-IS' ? 'is' : 'en']
 
   return (
-    <Root>
+    <Root testID={testIDs.SCREEN_LOGIN}>
       {/* The debug panel handles the bottom inset itself. */}
       <Host edges={showDebugInfo ? ['top'] : ['top', 'bottom']}>
         <LoginHeader
           right={
-            <HeaderButton onPress={onLanguagePress} accessibilityRole="button">
+            <HeaderTextButton
+              onPress={onLanguagePress}
+              accessibilityRole="button"
+            >
               <Typography
                 variant="body2"
                 weight="600"
@@ -107,7 +115,7 @@ export function LoginWelcome({
               >
                 {intl.formatMessage({ id: 'login.languageButtonText' })}
               </Typography>
-            </HeaderButton>
+            </HeaderTextButton>
           }
         />
         <Title variant="heading1" textAlign="center">
@@ -123,6 +131,7 @@ export function LoginWelcome({
         <Footer>
           <Button
             title={intl.formatMessage({ id: 'login.welcome.loginButton' })}
+            testID={testIDs.LOGIN_BUTTON_AUTHENTICATE}
             onPress={onLoginPress}
           />
           <Links>

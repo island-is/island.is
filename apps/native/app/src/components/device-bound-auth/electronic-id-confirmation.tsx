@@ -33,7 +33,7 @@ const Title = styled(Typography)`
 const CodeBox = styled.View`
   align-self: stretch;
   align-items: center;
-  margin-top: ${({ theme }) => theme.spacing[3]}px;
+  margin-top: ${({ theme }) => theme.spacing[5]}px;
   padding-vertical: ${({ theme }) => theme.spacing[3]}px;
   border-radius: ${({ theme }) => theme.border.radius.large};
   background-color: ${token((t) => t.background.brandMinimal)};

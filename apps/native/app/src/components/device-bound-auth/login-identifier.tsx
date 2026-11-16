@@ -20,7 +20,7 @@ const Content = styled.View`
 
 const Heading = styled.View`
   margin-top: ${({ theme }) => theme.spacing[4]}px;
-  margin-bottom: ${({ theme }) => theme.spacing[1]}px;
+  margin-bottom: ${({ theme }) => theme.spacing[3]}px;
   gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
@@ -39,13 +39,13 @@ export const loginHintLength: Record<LoginMethod, number> = {
   app: 10,
 }
 
-// 8681234 → "868 1234", 0101302989 → "010130-2989"
-function formatLoginHint(method: LoginMethod, digits: string) {
-  const [split, separator] = method === 'sim' ? [3, ' '] : [6, '-']
+// 8681234 → "868-1234", 0101302989 → "010130-2989"
+export function formatLoginHint(method: LoginMethod, digits: string) {
+  const split = method === 'sim' ? 3 : 6
   if (digits.length <= split) {
     return digits
   }
-  return `${digits.slice(0, split)}${separator}${digits.slice(split)}`
+  return `${digits.slice(0, split)}-${digits.slice(split)}`
 }
 
 interface LoginIdentifierProps {
@@ -126,6 +126,7 @@ export function LoginIdentifier({
                 text.replace(/\D/g, '').slice(0, loginHintLength[method]),
               )
             }
+            placeholder={method === 'sim' ? '000-0000' : '000000-0000'}
             keyboardType="number-pad"
             textContentType={method === 'sim' ? 'telephoneNumber' : 'none'}
             autoComplete={method === 'sim' ? 'tel' : 'off'}

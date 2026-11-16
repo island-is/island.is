@@ -36,6 +36,22 @@ export const is = {
   'login.identifier.phoneLabel': 'Símanúmer',
   'login.identifier.nationalIdLabel': 'Kennitala',
   'login.identifier.submit': 'Auðkenna',
+  'login.smsCode.title': 'Tveggja þátta auðkenning',
+  'login.smsCode.subtitle':
+    'Þar sem þú ert að skrá þig inn á nýju tæki höfum við sent þér kóða í síma {phoneNumber}.',
+  'login.smsCode.label': 'Öryggiskóði',
+  'login.smsCode.submit': 'Staðfesta',
+  'login.smsCode.next':
+    'Eftir auðkenningu ferðu áfram í innskráningu með rafrænum skilríkjum.',
+  'login.error.newLoginRestricted':
+    'Þú ert með virka takmörkun á innskráningu af óþekktum tækjum. Skráðu þig inn á Mínar síður á þekktu tæki til að afvirkja hana.',
+  'login.error.wrongSmsCode': 'Rangur kóði. {attemptsLeft} tilraunir eftir.',
+  'login.error.wrongSmsCodeLastAttempt': 'Rangur kóði. Ein tilraun eftir.',
+  'login.error.smsCodeAttemptsUsed':
+    'Ekki tókst að staðfesta kóða. Vinsamlegast byrjaðu upp á nýtt.',
+  'login.error.declined':
+    'Innskráningu var hafnað eða hún rann út. Reyndu aftur.',
+  'login.error.failed': 'Ekki tókst að skrá þig inn. Reyndu aftur.',
 
   // app lock
   'applock.title': 'Sláðu inn 4 tölustafa PIN',
