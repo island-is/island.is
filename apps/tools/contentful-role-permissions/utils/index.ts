@@ -7,7 +7,6 @@ import {
   RoleProps,
   TagProps,
 } from 'contentful-management'
-import type { ActionType } from 'contentful-management/dist/typings/entities/role'
 import slugify from '@sindresorhus/slugify'
 
 import { sortAlpha } from '@island.is/shared/utils'
@@ -146,19 +145,28 @@ export const extractInitialReadonlyCheckboxStateFromRolesAndContentTypes = (
   )
 }
 
+const hasAllPolicies = (role: RoleProps, policies: Role['policies']) =>
+  policies.every((p1) =>
+    role.policies.find((p2) => JSON.stringify(p1) === JSON.stringify(p2)),
+  )
+
 export const extractInitialRoleNamesThatCanReadAllAssetsFromRoles = (
   roles: RoleProps[],
   tagsMap: Map<string, string>,
 ): string[] => {
   const roleNames: string[] = []
   for (const role of roles) {
-    const policies = []
-    applyAssetPolicies(policies, true, tagsMap.get(slugify(role.name)))
-    if (
-      policies.every((p1) =>
-        role.policies.find((p2) => JSON.stringify(p1) === JSON.stringify(p2)),
-      )
-    ) {
+    const tagId = tagsMap.get(slugify(role.name))
+
+    // Roles that can only read assets with their tag also have every policy a
+    // "can read all assets" role has, so rule those out first
+    const readScopedPolicies: Role['policies'] = []
+    applyAssetPolicies(readScopedPolicies, false, tagId)
+    if (hasAllPolicies(role, readScopedPolicies)) continue
+
+    const readAllPolicies: Role['policies'] = []
+    applyAssetPolicies(readAllPolicies, true, tagId)
+    if (hasAllPolicies(role, readAllPolicies)) {
       roleNames.push(role.name)
     }
   }
@@ -187,20 +195,7 @@ export const applyAssetPolicies = (
     },
   })
 
-  let disallowedActions: ActionType[] = ['read']
-
-  if (allowReadingAllAssets) {
-    disallowedActions = [
-      'update',
-      'delete',
-      'publish',
-      'unpublish',
-      'archive',
-      'unarchive',
-    ]
-  }
-
-  const allowedWhen: Condition[] = [
+  const ownerOrCreator: Condition[] = [
     {
       in: [{ doc: 'metadata.tags.sys.id' }, [tagId]],
     },
@@ -209,24 +204,66 @@ export const applyAssetPolicies = (
     },
   ]
 
-  // The readable-by-all tag lets other organizations read the asset, it doesn't give them edit access
   if (!allowReadingAllAssets) {
-    allowedWhen.push({
-      in: [{ doc: 'metadata.tags.sys.id' }, [READABLE_BY_ALL_TAG_ID]],
+    // The readable-by-all tag lets other organizations read the asset
+    policies.push({
+      actions: ['read'],
+      effect: 'deny',
+      constraint: {
+        and: [
+          { equals: [{ doc: 'sys.type' }, 'Asset'] },
+          {
+            not: {
+              or: [
+                ...ownerOrCreator,
+                {
+                  in: [
+                    { doc: 'metadata.tags.sys.id' },
+                    [READABLE_BY_ALL_TAG_ID],
+                  ],
+                },
+              ],
+            },
+          },
+        ],
+      },
     })
   }
 
+  // Editing is always denied separately, so being able to read an asset
+  // (e.g. because of the readable-by-all tag) never means being able to edit it
   policies.push({
-    actions: disallowedActions,
+    actions: [
+      'update',
+      'delete',
+      'publish',
+      'unpublish',
+      'archive',
+      'unarchive',
+    ],
     effect: 'deny',
     constraint: {
       and: [
         { equals: [{ doc: 'sys.type' }, 'Asset'] },
         {
           not: {
-            or: allowedWhen,
+            or: ownerOrCreator,
           },
         },
+      ],
+    },
+  })
+}
+
+// Every organization can read entries with the readable-by-all tag, whatever their content type
+export const applyReadableByAllEntryPolicy = (policies: Role['policies']) => {
+  policies.push({
+    actions: ['read'],
+    effect: 'allow',
+    constraint: {
+      and: [
+        { equals: [{ doc: 'sys.type' }, 'Entry'] },
+        { in: [{ doc: 'metadata.tags.sys.id' }, [READABLE_BY_ALL_TAG_ID]] },
       ],
     },
   })
