@@ -6,7 +6,7 @@
 //        node scripts/scrub.mjs [--show] [--names] <file>
 // --help explains the options and what is masked.
 // --show lists each masked value and its original in a pager, which leaves
-// nothing in scrollback or on disk; without a terminal it falls back to stderr.
+// nothing in scrollback or on disk; without a terminal it shows nothing.
 // --names asks for names to mask everywhere, such as the person being debugged.
 
 import { spawnSync } from 'child_process'
@@ -208,14 +208,14 @@ const urlDecoded = (token) => {
       break
     }
   }
-  return decoded
+  return decoded.normalize('NFC')
 }
 
 /** @param {string} token */
 const base64Text = (token) => {
   try {
     const text = UTF8.decode(Buffer.from(token, 'base64'))
-    return CONTROL_CHAR.test(text) ? undefined : text
+    return CONTROL_CHAR.test(text) ? undefined : text.normalize('NFC')
   } catch {
     return undefined
   }
@@ -304,9 +304,8 @@ const createScrubber = (knownNames = []) => {
     return knownNamePatterns
       .reduce(
         (out, [pattern, name]) => out.replace(pattern, () => nameLabel(name)),
-        values,
+        values.replace(ICELANDIC_NAME, (name) => nameLabel(name)),
       )
-      .replace(ICELANDIC_NAME, (name) => nameLabel(name))
       .replace(XML_ELEMENT, (match, tag, localName, attributes = '', value) =>
         PLACEHOLDER.test(value) || !isSensitiveKey(localName, value)
           ? match
@@ -506,7 +505,7 @@ const main = () => {
   const file = process.argv.slice(2).find((arg) => !arg.startsWith('--'))
   let input
   try {
-    input = fs.readFileSync(file ?? 0, 'utf8')
+    input = fs.readFileSync(file ?? 0, 'utf8').normalize('NFC')
   } catch {
     process.stderr.write(`scrub: cannot read ${file}.\n`)
     process.exit(1)
@@ -587,9 +586,11 @@ const showMasked = (masked) => {
     fs.closeSync(tty)
     if (!pager.error && pager.status === 0) return
   } catch {
-    // No terminal or no pager: fall through to stderr.
+    // No terminal or no pager: warn below.
   }
-  process.stderr.write(listing)
+  process.stderr.write(
+    'scrub: --show needs a terminal and less; masked values not shown.\n',
+  )
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
