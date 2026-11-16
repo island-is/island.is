@@ -17,6 +17,9 @@ import { getProsecutionVerdictAppealItem } from './prosecutionVerdictAppeal.logi
 import type { VerdictTimelineItem } from './VerdictTimelineBody'
 import { strings } from './VerdictTimelineCard.strings'
 
+// Names the bullet that shows the defendant's stance on the verdict.
+const STANCE_ITEM_ID = 'stance'
+
 /**
  * Whether there is anything yet to tell the defence about a verdict. Until the
  * public prosecution office has decided whether the verdict must be served, the
@@ -106,8 +109,10 @@ export const getDefenderVerdictTimelineItems = ({
       verdict.appealDecision,
     )
 
+    // One bullet whichever stance it shows, so a change of stance swaps the
+    // text in place.
     if (appealDecisionLabel) {
-      items.push({ text: appealDecisionLabel })
+      items.push({ id: STANCE_ITEM_ID, text: appealDecisionLabel })
     }
   }
 
