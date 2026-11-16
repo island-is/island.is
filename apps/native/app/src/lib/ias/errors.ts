@@ -8,6 +8,7 @@ const DESCRIPTION_REASONS = [
   'sms_code_required',
   'invalid_sms_code',
   'new_login_restricted',
+  'too_many_requests',
 ] as const
 
 export type IasErrorCode =
@@ -72,16 +73,12 @@ export function isAppLoginRemoved(error: unknown) {
 }
 
 /**
- * IAS refused to start an electronic ID request: an install may start 5 in
- * 10 minutes, logins and unlocks together. (A SIM login on a new device has
- * other reasons for this too.)
+ * IAS refused an electronic ID request over a limit: requests per install,
+ * logins per phone number or kennitala, SMS codes per number, or requests
+ * still waiting for an answer. Nothing was sent.
  */
 export function isTooManyElectronicIdRequests(error: unknown) {
-  return (
-    error instanceof IasError &&
-    error.endpoint === 'POST /connect/ciba' &&
-    error.code === 'access_denied'
-  )
+  return getIasErrorCode(error) === 'too_many_requests'
 }
 
 /**
