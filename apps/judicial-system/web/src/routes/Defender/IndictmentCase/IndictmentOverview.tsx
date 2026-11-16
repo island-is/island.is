@@ -1,6 +1,7 @@
 import type { FC } from 'react'
 import { Fragment, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
@@ -430,47 +431,51 @@ const IndictmentOverview: FC = () => {
           <FormFooter previousUrl={getStandardUserDashboardRoute(user)} />
         </FormContentContainer>
         {appealModals}
-        {acceptingVerdictFor && (
-          <Modal
-            title="Una dómi"
-            text={`Ertu viss um að þú viljir skrá að ${
-              acceptingVerdictFor.name ?? 'dómfelldi'
-            } uni dómi? Ríkissaksóknari fær tilkynningu.`}
-            buttons={[
-              {
-                text: 'Hætta við',
-                onClick: () => setAcceptingVerdictFor(undefined),
-                variant: 'ghost',
-              },
-              {
-                text: 'Já, una dómi',
-                onClick: handleAcceptVerdict,
-                isLoading: isAcceptingVerdict,
-              },
-            ]}
-          />
-        )}
-        {withdrawingAppealFor && (
-          <Modal
-            title="Afturkalla áfrýjun"
-            text={`Ertu viss um að þú viljir afturkalla áfrýjun dóms fyrir ${
-              withdrawingAppealFor.name ?? 'dómfellda'
-            }?`}
-            buttons={[
-              {
-                text: 'Hætta við',
-                onClick: () => setWithdrawingAppealFor(undefined),
-                variant: 'ghost',
-              },
-              {
-                text: 'Afturkalla',
-                onClick: handleWithdrawVerdictAppeal,
-                colorScheme: 'destructive',
-                isLoading: isTransitioningAppealCase,
-              },
-            ]}
-          />
-        )}
+        <AnimatePresence>
+          {acceptingVerdictFor && (
+            <Modal
+              title="Una dómi"
+              text={`Ertu viss um að þú viljir skrá að ${
+                acceptingVerdictFor.name ?? 'dómfelldi'
+              } uni dómi? Ríkissaksóknari fær tilkynningu.`}
+              buttons={[
+                {
+                  text: 'Hætta við',
+                  onClick: () => setAcceptingVerdictFor(undefined),
+                  variant: 'ghost',
+                },
+                {
+                  text: 'Já, una dómi',
+                  onClick: handleAcceptVerdict,
+                  isLoading: isAcceptingVerdict,
+                },
+              ]}
+            />
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {withdrawingAppealFor && (
+            <Modal
+              title="Afturkalla áfrýjun"
+              text={`Ertu viss um að þú viljir afturkalla áfrýjun dóms fyrir ${
+                withdrawingAppealFor.name ?? 'dómfellda'
+              }?`}
+              buttons={[
+                {
+                  text: 'Hætta við',
+                  onClick: () => setWithdrawingAppealFor(undefined),
+                  variant: 'ghost',
+                },
+                {
+                  text: 'Afturkalla',
+                  onClick: handleWithdrawVerdictAppeal,
+                  colorScheme: 'destructive',
+                  isLoading: isTransitioningAppealCase,
+                },
+              ]}
+            />
+          )}
+        </AnimatePresence>
       </PageLayout>
     </>
   )
