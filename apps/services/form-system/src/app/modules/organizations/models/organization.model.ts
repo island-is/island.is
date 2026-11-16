@@ -49,6 +49,13 @@ export class Organization extends Model<Organization> {
   })
   delegations!: string[]
 
+  @Column({
+    type: DataType.JSONB,
+    allowNull: true,
+    defaultValue: { is: '', en: '' },
+  })
+  logo!: { is: string | null; en: string | null } | null
+
   @HasMany(() => Form)
   forms?: Form[]
 

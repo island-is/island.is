@@ -16,6 +16,9 @@ const colors = {
 }
 
 const pageMargin = 56
+const logoWidth = 120
+const logoHeight = 60
+const contentTop = pageMargin + logoHeight + 12
 const contentWidth = 483
 const footerHeight = 40
 const sectionContentReservation = 150
@@ -145,11 +148,9 @@ const fileNames = (value: unknown): string[] => {
 
 const drawPageChrome = (
   document: PDFKit.PDFDocument,
-  organizationName: string,
-  applicationId: string,
-  receivedAt: string | undefined,
   locale: Locale,
   page: number,
+  logo?: Buffer,
 ) => {
   const { width, height } = document.page
   const footerTop = height - pageMargin - footerHeight
@@ -158,38 +159,20 @@ const drawPageChrome = (
 
   document.save()
   document.fillColor(colors.accent).rect(0, 0, width, 8).fill()
-  document
-    .fillColor(colors.muted)
-    .font('Helvetica')
-    .fontSize(8)
-    .text(
-      truncateText(
-        document,
-        organizationName,
-        contentWidth - document.widthOfString(pageNumber) - 16,
-      ),
-      pageMargin,
-      footerTop,
-    )
+  document.fillColor(colors.muted).font('Helvetica').fontSize(8)
+  if (page === 1) {
+    if (logo) {
+      document.image(logo, width - pageMargin - logoWidth, pageMargin, {
+        fit: [logoWidth, logoHeight],
+        align: 'right',
+      })
+    }
+  }
   document.text(
     pageNumber,
     pageMargin + contentWidth - document.widthOfString(pageNumber),
     footerTop,
   )
-  document.text(
-    `${textFor(translations.applicationNumber, locale)}: ${applicationId}`,
-    pageMargin,
-    footerTop + 12,
-    { width: contentWidth, lineBreak: false },
-  )
-  if (receivedAt) {
-    document.text(
-      `${textFor(translations.received, locale)}: ${receivedAt}`,
-      pageMargin,
-      footerTop + 24,
-      { width: contentWidth, lineBreak: false },
-    )
-  }
   document.restore()
   document.x = x
   document.y = y
@@ -463,6 +446,7 @@ const drawScreenHeading = (document: PDFKit.PDFDocument, name: string) => {
 export const buildApplicationPdf = (
   application: ApplicationDto,
   locale: Locale = 'is',
+  logo?: Buffer,
 ): Promise<Buffer> =>
   new Promise((resolve, reject) => {
     const title =
@@ -475,7 +459,15 @@ export const buildApplicationPdf = (
           locale === 'en' ? 'en-GB' : 'is-IS',
         )
       : undefined
-    const document = new PDFDocument({ margin: pageMargin, size: 'A4' })
+    const document = new PDFDocument({
+      margins: {
+        top: contentTop,
+        right: pageMargin,
+        bottom: pageMargin,
+        left: pageMargin,
+      },
+      size: 'A4',
+    })
     const chunks: Buffer[] = []
     let page = 1
 
@@ -484,25 +476,11 @@ export const buildApplicationPdf = (
     document.on('error', reject)
     document.on('pageAdded', () => {
       page += 1
-      drawPageChrome(
-        document,
-        organizationName,
-        application.id ?? '',
-        receivedAt,
-        locale,
-        page,
-      )
+      drawPageChrome(document, locale, page, logo)
     })
 
     document.info.Title = title
-    drawPageChrome(
-      document,
-      organizationName,
-      application.id ?? '',
-      receivedAt,
-      locale,
-      page,
-    )
+    drawPageChrome(document, locale, page, logo)
     document
       .fillColor(colors.accent)
       .font('Helvetica-Bold')
@@ -510,7 +488,21 @@ export const buildApplicationPdf = (
       .text(title)
     document.moveDown(0.45)
     document.fillColor(colors.muted).font('Helvetica').fontSize(10)
-
+    const metadataOptions = { width: contentWidth, align: 'left' as const }
+    document.text(
+      truncateText(document, organizationName, contentWidth),
+      pageMargin,
+      document.y,
+      metadataOptions,
+    )
+    if (receivedAt) {
+      document.text(
+        `${textFor(translations.received, locale)}: ${receivedAt}`,
+        pageMargin,
+        document.y,
+        metadataOptions,
+      )
+    }
     const premises = application.sections?.find(
       (section) => section.sectionType === SectionTypes.PREMISES,
     )
@@ -605,5 +597,17 @@ export const buildApplicationPdf = (
       }
     }
 
+    document
+      .fillColor(colors.muted)
+      .font('Helvetica')
+      .fontSize(8)
+      .text(
+        `${textFor(translations.applicationNumber, locale)}: ${
+          application.id ?? ''
+        }`,
+        pageMargin,
+        document.page.height - pageMargin - footerHeight,
+        { width: contentWidth, lineBreak: false },
+      )
     document.end()
   })

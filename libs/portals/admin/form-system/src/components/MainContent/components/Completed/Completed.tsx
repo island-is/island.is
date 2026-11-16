@@ -1,4 +1,9 @@
+import { useLazyQuery, useMutation } from '@apollo/client'
 import { FormSystemLanguageType } from '@island.is/api/schema'
+import {
+  GET_ORGANIZATION_LOGO,
+  UPDATE_ORGANIZATION_LOGO,
+} from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
 import {
   AlertMessage,
@@ -10,6 +15,7 @@ import {
   Stack,
   Text,
   GridRow as Row,
+  toast,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useContext, useState } from 'react'
@@ -30,6 +36,14 @@ export const Completed = () => {
   const { title, confirmationHeader, confirmationText, additionalInfo } =
     sectionInfo || {}
   const { formatMessage } = useLocale()
+  const [getOrganizationLogo, { loading: isFetchingLogo }] = useLazyQuery(
+    GET_ORGANIZATION_LOGO,
+    { fetchPolicy: 'no-cache' },
+  )
+  const [updateOrganizationLogo, { loading: isSavingLogo }] = useMutation<
+    { formSystemUpdateOrganizationLogo: boolean },
+    { input: { nationalId: string; logo: string } }
+  >(UPDATE_ORGANIZATION_LOGO)
   const [nextSteps, setNextSteps] = useState<FormSystemLanguageType[]>(() =>
     (additionalInfo ?? []).filter(
       (x): x is FormSystemLanguageType => x != null,
@@ -92,16 +106,55 @@ export const Completed = () => {
         <Checkbox
           label={formatMessage(m.enableApplicationPdfDownload)}
           checked={control.form.enableApplicationPdfDownload ?? false}
-          disabled={isReadOnly}
+          disabled={isReadOnly || isFetchingLogo || isSavingLogo}
           large={true}
-          onChange={(event) => {
+          onChange={async (event) => {
+            const checked = event.target.checked
             controlDispatch({
               type: 'CHANGE_ENABLE_APPLICATION_PDF_DOWNLOAD',
               payload: {
-                value: event.target.checked,
+                value: checked,
                 update: formUpdate,
               },
             })
+            if (!checked) return
+
+            try {
+              const organizationNationalId = control.organizationNationalId
+              if (!organizationNationalId) {
+                throw new Error('Organization national ID is missing')
+              }
+
+              const { data, error } = await getOrganizationLogo({
+                variables: {
+                  input: { nationalId: organizationNationalId },
+                },
+              })
+              if (error) {
+                throw error
+              }
+
+              if (!data) {
+                throw new Error('Organization logo query returned no data')
+              }
+              const logo = data.getOrganizationByNationalId?.logo?.url ?? ''
+              const { data: updateData } = await updateOrganizationLogo({
+                variables: {
+                  input: { nationalId: organizationNationalId, logo },
+                },
+              })
+              if (!updateData?.formSystemUpdateOrganizationLogo) {
+                throw new Error('Organization logo was not saved')
+              }
+            } catch {
+              toast.error(
+                formatMessage({
+                  id: 'formSystemOrganizationLogoSaveError',
+                  defaultMessage:
+                    'Ekki tókst að vista merki stofnunar. Athugaðu hvort merkið sé skráð í Contentful og reyndu aftur.',
+                }),
+              )
+            }
           }}
         />
       </Box>

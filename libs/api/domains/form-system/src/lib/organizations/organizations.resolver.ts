@@ -19,6 +19,7 @@ import {
 } from '@island.is/cms'
 import { OrganizationAdmin } from '../../models/organizationAdmin.model'
 import { OrganizationZendeskInstanceInput } from '../../dto/organizationZendeskInstance.input'
+import { OrganizationLogoInput } from '../../dto/organizationLogo.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -53,6 +54,16 @@ export class OrganizationsResolver {
     @CurrentUser() user: User,
   ): Promise<OrganizationAdmin> {
     return this.organizationsService.getOrganizationAdmin(user, input)
+  }
+
+  @Mutation(() => Boolean, { name: 'formSystemUpdateOrganizationLogo' })
+  async updateOrganizationLogo(
+    @Args('input', { type: () => OrganizationLogoInput })
+    input: OrganizationLogoInput,
+    @CurrentUser() user: User,
+  ): Promise<boolean> {
+    await this.organizationsService.updateOrganizationLogo(user, input)
+    return true
   }
 
   @Mutation(() => Boolean, {

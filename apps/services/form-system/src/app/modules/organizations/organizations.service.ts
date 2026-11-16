@@ -22,6 +22,7 @@ import {
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { OrganizationZendeskInstanceDto } from './models/dto/organizationZendeskInstance.dto'
 import { OrganizationDelegationDto } from './models/dto/organizationDelegation.dto'
+import { OrganizationLogoDto } from './models/dto/organizationLogo.dto'
 import { Form } from '../forms/models/form.model'
 import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -189,6 +190,36 @@ export class OrganizationsService {
     if (zendeskInstance && !supportedZendeskInstance) {
       throw new BadRequestException('Unsupported Zendesk tenant')
     }
+  }
+
+  async updateLogo(
+    user: User,
+    { nationalId, logo }: OrganizationLogoDto,
+  ): Promise<void> {
+    await this.sequelize.transaction(async (transaction) => {
+      const organization = await this.organizationModel.findOne({
+        where: { nationalId },
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      })
+
+      if (!organization) {
+        throw new NotFoundException(
+          `Organization with nationalId ${nationalId} not found`,
+        )
+      }
+
+      const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+      if (!isAdmin && user.nationalId !== organization.nationalId) {
+        throw new UnauthorizedException('User does not have admin privileges')
+      }
+
+      organization.logo = {
+        is: logo,
+        en: organization.logo?.en ?? '',
+      }
+      await organization.save({ transaction })
+    })
   }
 
   async addDelegation(

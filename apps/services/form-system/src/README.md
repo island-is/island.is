@@ -70,6 +70,20 @@ yarn dev form-system-web
 
 Open localhost:4242/form/<slug>
 
+## Zendesk routing
+
+Local environments (`name` unset or `local`) and dev deployments (`name=dev`)
+always send applications to the configured Zendesk sandbox, including applications
+for published forms. Stored production tenants and brand IDs are ignored there,
+even when `NODE_ENV=production`.
+
+## Application PDFs
+
+Application PDFs display the organization's stored `logo.is` in the top-right
+header on the first page only, regardless of the PDF language. Content starts below the
+header and footer positions are unchanged. Logos are loaded from Contentful as
+PNG images; organizations without an Icelandic logo produce PDFs without one.
+
 ## Code owners and maintainers
 
 - [Advania](https://github.com/orgs/island-is/teams/advania/members)
