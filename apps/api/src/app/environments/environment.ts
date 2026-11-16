@@ -44,7 +44,7 @@ const prodConfig = () => ({
   },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
-    // The app's DPoP-bound tokens must come with a proof here, at the edge.
+    // When on, the app's DPoP-bound tokens must come with a proof here, at the edge.
     requireDpopForBoundTokens: process.env.AUTH_REQUIRE_DPOP === 'true',
   },
   documentService: {
