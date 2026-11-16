@@ -61,7 +61,7 @@ const PLACEHOLDER = /^\[[A-Z-]+(?:-\d+)?\]$/
 const S3_URL =
   /\b(?:https?:\/\/(?:[\w-]+\.)*s3[\w.-]*\.amazonaws\.com|s3:\/\/[\w.-]+)\/[^\s"'<>\\]*/gi
 const UPLOADED_FILE =
-  /(?<![\w-])[\da-f]{8}-(?:[\da-f]{4}-){3}[\da-f]{12}-[^\s"'<>/\\?#](?:[^\r\n"'<>/\\?#]*?)\.[\da-z]{2,5}(?![\p{L}\d])/giu
+  /(?<![\w-])[\da-f]{8}-(?:[\da-f]{4}-){3}[\da-f]{12}-[^\s"'<>/\\?#](?:[^\r\n"'<>/\\?#]*?)\.[\da-z]{2,5}(?![\p{L}\d]|\.[\p{L}\d])/giu
 const PRIVATE_KEY =
   /-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----/g
 const JWT = /\beyJ[\w-]*\.[\w-]+\.[\w-]*/g
@@ -291,6 +291,20 @@ const createScrubber = (knownNames = []) => {
     return /** @type {string} */ (labels.get(id))
   }
 
+  const checkpoint = () => ({
+    labels: labels.size,
+    counts: { ...counts },
+    masked: masked.length,
+  })
+
+  /** @param {ReturnType<typeof checkpoint>} saved */
+  const rollBack = (saved) => {
+    ;[...labels.keys()].slice(saved.labels).forEach((id) => labels.delete(id))
+    for (const kind of Object.keys(counts)) delete counts[kind]
+    Object.assign(counts, saved.counts)
+    masked.length = saved.masked
+  }
+
   /** @param {string} name */
   const nameLabel = (name) => {
     const display = name.trim().replace(/\s+/g, ' ')
@@ -377,14 +391,14 @@ const createScrubber = (knownNames = []) => {
   const scrubValues = (text) =>
     text
       .replace(S3_URL, (url) => {
-        const path = urlDecoded(url.split(/[?#]/)[0])
-          .split('"')[0]
-          .replace(/(?<=\/[^/]+)\/+$/, '')
-        const [, origin, folder, fileName] =
-          /^(\w+:\/\/[^/]*)(.*\/)([^/]*)$/.exec(path) ?? []
-        return /\.\w+$/.test(fileName ?? '')
-          ? `${origin}${folder}${label('FILE', fileName)}`
-          : path
+        const match = /^(\w+:\/\/[^/]*)(.*\/)([^/]*)$/.exec(
+          url.split(/[?#]/)[0].split(/%22/i)[0],
+        )
+        if (!match) return url
+        const [, origin, folder, fileName] = match
+        return `${origin}${urlDecoded(folder)}${
+          fileName ? label('FILE', urlDecoded(fileName)) : ''
+        }`
       })
       .replace(UPLOADED_FILE, (fileName) => label('FILE', fileName))
       .replace(URL_SECRET_PARAM, maskSecretParam)
@@ -451,14 +465,23 @@ const createScrubber = (knownNames = []) => {
           uniqueKey(scrubText(k), keys),
           isApplicationRow && k === 'name' && typeof v === 'string'
             ? scrubText(v)
-            : scrubValue(v, sensitiveKey || k),
+            : scrubValue(
+                v,
+                sensitiveKey &&
+                  !isSensitiveKey(k, typeof v === 'string' ? v : '')
+                  ? sensitiveKey
+                  : k,
+              ),
         ]),
       )
     }
     const text = JSON.isRawJSON(value) ? value.rawJSON : String(value)
     if (key && value !== null && isSensitiveKey(key, text)) {
+      const saved = checkpoint()
       const scrubbed = scrubText(text)
-      return PLACEHOLDER.test(scrubbed) ? scrubbed : maskValue(key, text)
+      if (PLACEHOLDER.test(scrubbed)) return scrubbed
+      rollBack(saved)
+      return maskValue(key, text)
     }
     if (typeof value === 'string') return scrubText(value)
     if (JSON.isRawJSON(value)) {
@@ -547,12 +570,24 @@ const main = () => {
     process.stderr.write(HELP)
     process.exit(0)
   }
-  const file = process.argv.slice(2).find((arg) => !arg.startsWith('--'))
+  const args = process.argv.slice(2)
+  const unknown = args.find(
+    (arg) => arg.startsWith('-') && !['--names', '--show'].includes(arg),
+  )
+  if (unknown) {
+    process.stderr.write(`scrub: unknown option ${unknown}; see --help.\n`)
+    process.exit(1)
+  }
+  const file = args.find((arg) => !arg.startsWith('-'))
   let input
   try {
     input = fs.readFileSync(file ?? 0, 'utf8').normalize('NFC')
-  } catch {
-    process.stderr.write(`scrub: cannot read ${file}.\n`)
+  } catch (error) {
+    process.stderr.write(
+      `scrub: cannot read ${file ?? 'standard input'} (${
+        error.code ?? error.message
+      }).\n`,
+    )
     process.exit(1)
   }
   const givenNames = process.argv.includes('--names') ? askNames() : []
