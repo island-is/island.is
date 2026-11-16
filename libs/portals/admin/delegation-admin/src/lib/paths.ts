@@ -3,3 +3,5 @@ export enum DelegationAdminPaths {
   DelegationAdmin = '/delegation-admin/:nationalId',
   CreateDelegation = '/delegation-admin/create',
 }
+
+export const NOT_FOUND_PARAM = 'notFound'

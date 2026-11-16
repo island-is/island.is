@@ -7,6 +7,7 @@ import {
   PaymentService,
   PaymentMethod,
   PaymentModuleConfig,
+  isDebtPayment,
 } from '@island.is/application/api/payment'
 import { PaymentsApi } from '@island.is/clients/payments'
 import { PaymentServiceCode } from '@island.is/shared/constants'
@@ -40,6 +41,14 @@ export class ApplicationChargeService {
       if (!payment) {
         this.logger.info(
           `Not deleting charge for application ${application.id} because it does not have a payment`,
+        )
+        return
+      }
+
+      // services-payments alone refunds a debt payment; FJS has no reversal
+      if (isDebtPayment(payment)) {
+        this.logger.info(
+          `Not deleting charge for application ${application.id} because it is a debt payment`,
         )
         return
       }

@@ -18,5 +18,4 @@ appId: ${APP_ID}
     id: 'ASSET_ITEM'
 - assertVisible:
     id: 'SCREEN_ASSETS_DETAIL'
-- tapOn:
-    id: 'NAVBAR_SHEET_CLOSE_BUTTON'
+- runFlow: 'utils/close-sheet.yaml'

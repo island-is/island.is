@@ -28,6 +28,8 @@ import {
   CaseFileState,
   CaseIndictmentRulingDecision,
   CaseOrigin,
+  getAppealJudgeUserIds,
+  hasAllAppealJudges,
   IndictmentCaseNotificationType,
   isCompletedCase,
   isDefenceUser,
@@ -35,6 +37,7 @@ import {
   isProsecutionUser,
   isPublicProsecutionOfficeUser,
   isPublicProsecutionUser,
+  isSameAppealBench,
   verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
 
@@ -43,6 +46,7 @@ import { queueMessagesAfterCommit } from '../../middleware'
 import { FileService } from '../file'
 import {
   AppealCase,
+  AppealCaseJudgeRepositoryService,
   AppealCaseRepositoryService,
   AppealDecisionRepositoryService,
   AppealEventLogRepositoryService,
@@ -92,6 +96,7 @@ export type VerdictAppealRequest = Pick<
 export class AppealCaseService {
   constructor(
     private readonly appealCaseRepositoryService: AppealCaseRepositoryService,
+    private readonly appealCaseJudgeRepositoryService: AppealCaseJudgeRepositoryService,
     @Inject(forwardRef(() => CaseRepositoryService))
     private readonly caseRepositoryService: CaseRepositoryService,
     private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
@@ -250,17 +255,17 @@ export class AppealCaseService {
     )
   }
 
-  private allAppealRolesAssigned(appealRoles: {
-    appealAssistantId?: string
-    appealJudge1Id?: string
-    appealJudge2Id?: string
-    appealJudge3Id?: string
-  }): boolean {
-    return Boolean(
-      appealRoles.appealAssistantId &&
-        appealRoles.appealJudge1Id &&
-        appealRoles.appealJudge2Id &&
-        appealRoles.appealJudge3Id,
+  // An appeal case is fully assigned once it has an assistant and a complete
+  // bench of judges.
+  private allAppealRolesAssigned(
+    appealAssistantId: string | undefined,
+    appealJudgeIds: string[],
+  ): boolean {
+    return (
+      Boolean(appealAssistantId) &&
+      hasAllAppealJudges({
+        appealJudges: appealJudgeIds.map((userId) => ({ userId })),
+      })
     )
   }
 
@@ -480,7 +485,12 @@ export class AppealCaseService {
       elementId: appealCase.id,
     })
 
-    if (this.allAppealRolesAssigned(appealCase)) {
+    if (
+      this.allAppealRolesAssigned(
+        appealCase.appealAssistantId,
+        getAppealJudgeUserIds(appealCase),
+      )
+    ) {
       this.addMessagesForAssignedAppealRolesToQueue(theCase, appealCase, user)
     }
   }
@@ -498,19 +508,14 @@ export class AppealCaseService {
     })
   }
 
-  // The ids of the appeal roles (assistant + judges) currently assigned.
-  private getAssignedAppealUserIds(appealRoles: {
-    appealAssistantId?: string
-    appealJudge1Id?: string
-    appealJudge2Id?: string
-    appealJudge3Id?: string
-  }): string[] {
-    return [
-      appealRoles.appealAssistantId,
-      appealRoles.appealJudge1Id,
-      appealRoles.appealJudge2Id,
-      appealRoles.appealJudge3Id,
-    ].filter((id): id is string => Boolean(id))
+  // The ids of the users in the appeal roles (assistant + judges).
+  private getAssignedAppealUserIds(
+    appealAssistantId: string | undefined,
+    appealJudgeIds: string[],
+  ): string[] {
+    return [appealAssistantId, ...appealJudgeIds].filter((id): id is string =>
+      Boolean(id),
+    )
   }
 
   private addMessagesForAppealJudgesAssignedToQueue(
@@ -1087,7 +1092,9 @@ export class AppealCaseService {
       `Updating appeal case ${appealCase.id} of case ${theCase.id}`,
     )
 
-    const data: UpdateAppealCase = { ...update }
+    // The bench is not a column: it is replaced as rows, below.
+    const { appealJudgeIds, ...columnUpdate } = update
+    const data: UpdateAppealCase = { ...columnUpdate }
 
     if (update.appealRulingModifiedHistory) {
       const existingHistory = appealCase.appealRulingModifiedHistory
@@ -1097,10 +1104,57 @@ export class AppealCaseService {
       data.appealRulingModifiedHistory = `${existingHistory}${today} - ${user.name} ${user.title}\n\n${update.appealRulingModifiedHistory}`
     }
 
-    const updatedAppealCase = await this.appealCaseRepositoryService.update(
-      appealCase.id,
-      data,
-      { transaction },
+    let updatedAppealCase = appealCase
+
+    // Sequelize reports an empty update as affecting no rows, which the
+    // repository treats as a failure, so skip it when only the bench changes.
+    const columnsChanged = Object.keys(data).length > 0
+
+    if (columnsChanged) {
+      await this.appealCaseRepositoryService.update(appealCase.id, data, {
+        transaction,
+      })
+    }
+
+    // The api's list is nullable, so a null bench arrives as well as an
+    // omitted one; neither is a change. An empty list clears the bench.
+    const previousJudgeIds = getAppealJudgeUserIds(appealCase)
+    const judgesChanged =
+      Array.isArray(appealJudgeIds) &&
+      !isSameAppealBench(appealJudgeIds, previousJudgeIds)
+    const nextJudgeIds = judgesChanged ? appealJudgeIds : previousJudgeIds
+
+    if (judgesChanged) {
+      await this.appealCaseJudgeRepositoryService.replaceForAppealCase(
+        appealCase.id,
+        appealJudgeIds,
+        { transaction },
+      )
+    }
+
+    // The response carries the appeal case as stored: the bench in order and
+    // the assistant as a user. The row the update returns has neither, only
+    // the assistant's id.
+    if (columnsChanged || judgesChanged) {
+      const reloadedAppealCase =
+        await this.appealCaseRepositoryService.findById(appealCase.id, {
+          transaction,
+        })
+
+      if (!reloadedAppealCase) {
+        throw new NotFoundException(
+          `Appeal case ${appealCase.id} not found after updating it`,
+        )
+      }
+
+      updatedAppealCase = reloadedAppealCase
+    }
+
+    const nextAssistantId =
+      update.appealAssistantId ?? appealCase.appealAssistantId
+    const assistantChanged = Boolean(
+      update.appealAssistantId &&
+        update.appealAssistantId !== appealCase.appealAssistantId,
     )
 
     if (
@@ -1111,21 +1165,8 @@ export class AppealCaseService {
       this.addMessagesForNewAppealCaseNumberToQueue(theCase, appealCase, user)
     } else if (
       appealCase.appealCaseNumber &&
-      this.allAppealRolesAssigned({
-        appealAssistantId:
-          update.appealAssistantId ?? appealCase.appealAssistantId,
-        appealJudge1Id: update.appealJudge1Id ?? appealCase.appealJudge1Id,
-        appealJudge2Id: update.appealJudge2Id ?? appealCase.appealJudge2Id,
-        appealJudge3Id: update.appealJudge3Id ?? appealCase.appealJudge3Id,
-      }) &&
-      ((update.appealAssistantId &&
-        update.appealAssistantId !== appealCase.appealAssistantId) ||
-        (update.appealJudge1Id &&
-          update.appealJudge1Id !== appealCase.appealJudge1Id) ||
-        (update.appealJudge2Id &&
-          update.appealJudge2Id !== appealCase.appealJudge2Id) ||
-        (update.appealJudge3Id &&
-          update.appealJudge3Id !== appealCase.appealJudge3Id))
+      this.allAppealRolesAssigned(nextAssistantId, nextJudgeIds) &&
+      (assistantChanged || judgesChanged)
     ) {
       // Queue messages for assigned roles
       this.addMessagesForAssignedAppealRolesToQueue(theCase, appealCase, user)
@@ -1133,16 +1174,15 @@ export class AppealCaseService {
 
     // Notify any users that are newly assigned to an appeal role, i.e. users
     // that were not already assigned to one of the roles before this update.
-    const previouslyAssignedUserIds = this.getAssignedAppealUserIds(appealCase)
+    const previouslyAssignedUserIds = this.getAssignedAppealUserIds(
+      appealCase.appealAssistantId,
+      previousJudgeIds,
+    )
     const newlyAssignedUserIds = [
       ...new Set(
-        this.getAssignedAppealUserIds({
-          appealAssistantId:
-            update.appealAssistantId ?? appealCase.appealAssistantId,
-          appealJudge1Id: update.appealJudge1Id ?? appealCase.appealJudge1Id,
-          appealJudge2Id: update.appealJudge2Id ?? appealCase.appealJudge2Id,
-          appealJudge3Id: update.appealJudge3Id ?? appealCase.appealJudge3Id,
-        }).filter((id) => !previouslyAssignedUserIds.includes(id)),
+        this.getAssignedAppealUserIds(nextAssistantId, nextJudgeIds).filter(
+          (id) => !previouslyAssignedUserIds.includes(id),
+        ),
       ),
     ]
 
@@ -1389,7 +1429,10 @@ export class AppealCaseService {
 
     if (
       actor === 'DEFENDER' &&
-      !Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
+      !Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant]) &&
+      !Defendant.isConfirmedAppealDefenderOfDefendant(user.nationalId, [
+        defendant,
+      ])
     ) {
       throw new ForbiddenException(
         `Current user is not the confirmed defender of defendant ${defendantId}`,

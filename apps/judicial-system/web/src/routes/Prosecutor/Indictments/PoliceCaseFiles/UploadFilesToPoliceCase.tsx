@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { useEffect, useMemo, useState } from 'react'
-import { useIntl } from 'react-intl'
 
 import { FileUploadStatus, InputFileUpload } from '@island.is/island-ui/core'
 import { errors as errorMessages } from '@island.is/judicial-system-web/messages'
@@ -40,7 +39,6 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
   caseFiles,
   policeCaseFilesData,
 }) => {
-  const { formatMessage } = useIntl()
   const {
     uploadFiles,
     allFilesDoneOrError,
@@ -68,14 +66,14 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
 
   const errorMessage = useMemo(() => {
     if (uploadFiles.some((file) => file.status === FileUploadStatus.error)) {
-      return formatMessage(errorMessages.general)
+      return errorMessages.general
     }
     if (uploadFiles.some((file) => file.size === 0)) {
       return 'Villa kom upp. Tómt skjal.'
     } else {
       return undefined
     }
-  }, [uploadFiles, formatMessage])
+  }, [uploadFiles])
 
   useEffect(() => {
     setAllUploaded(allFilesDoneOrError && !isUploadingPoliceCaseFiles)
@@ -158,9 +156,9 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
         name="fileUpload"
         files={uploadFiles}
         accept="application/pdf"
-        title={formatMessage(strings.inputFileUpload.header)}
-        description={formatMessage(strings.inputFileUpload.description)}
-        buttonLabel={formatMessage(strings.inputFileUpload.buttonLabel)}
+        title={strings.inputFileUpload.header}
+        description={strings.inputFileUpload.description}
+        buttonLabel={strings.inputFileUpload.buttonLabel}
         onChange={(files) =>
           handleUpload(
             addUploadFiles(files, {

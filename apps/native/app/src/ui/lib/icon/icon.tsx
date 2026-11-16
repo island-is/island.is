@@ -1,26 +1,39 @@
-import { ImageProps, ImageSourcePropType, ImageStyle } from 'react-native'
+import {
+  ColorValue,
+  ImageProps,
+  ImageSourcePropType,
+  ImageStyle,
+} from 'react-native'
 import styled from 'styled-components/native'
-import { Colors } from '../../utils'
 
-export const StyledIcon = styled.Image<
-  Pick<IconProps, 'width' | 'height' | 'tintColor'>
->(({ width, height, tintColor, theme }) => ({
-  width,
-  height,
-  ...(tintColor && {
-    tintColor: theme.color[tintColor],
+export const StyledIcon = styled.Image<Pick<IconProps, 'width' | 'height'>>(
+  ({ width, height }) => ({
+    width,
+    height,
   }),
-}))
+)
 
 type IconProps = {
   source: ImageSourcePropType
   width: number
   height: number
   style?: ImageStyle
-  tintColor?: Colors
+  tintColor?: ColorValue
   resizeMode?: ImageProps['resizeMode']
 }
 
-export const Icon = ({ resizeMode = 'center', ...rest }: IconProps) => {
-  return <StyledIcon resizeMode={resizeMode} {...rest} />
+export const Icon = ({
+  resizeMode = 'center',
+  tintColor,
+  style,
+  ...rest
+}: IconProps) => {
+  return (
+    <StyledIcon
+      resizeMode={resizeMode}
+      // In style rather than the styled object so dynamic colours work too
+      style={[tintColor ? { tintColor } : undefined, style]}
+      {...rest}
+    />
+  )
 }

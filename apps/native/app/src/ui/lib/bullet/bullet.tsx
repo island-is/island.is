@@ -17,12 +17,10 @@ export function Bullet({ children }: BulletProps) {
   return (
     <Host>
       <Typography
-        color={theme.color.red400}
+        color={theme.tokens.feedback.error.foreground}
         size={12}
-        style={{
-          marginRight: theme.spacing[1],
-          lineHeight: 24,
-        }}
+        lineHeight={22}
+        style={{ marginRight: theme.spacing[1] }}
       >
         {'\u25CF'}
       </Typography>

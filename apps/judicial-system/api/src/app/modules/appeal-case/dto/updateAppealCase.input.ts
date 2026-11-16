@@ -27,20 +27,12 @@ export class UpdateAppealCaseInput {
   @Field(() => ID, { nullable: true })
   readonly appealAssistantId?: string
 
+  // The whole bench in order; the first id is the presiding judge.
   @Allow()
   @IsOptional()
-  @Field(() => ID, { nullable: true })
-  readonly appealJudge1Id?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => ID, { nullable: true })
-  readonly appealJudge2Id?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => ID, { nullable: true })
-  readonly appealJudge3Id?: string
+  @IsArray()
+  @Field(() => [ID], { nullable: true })
+  readonly appealJudgeIds?: string[]
 
   @Allow()
   @IsOptional()

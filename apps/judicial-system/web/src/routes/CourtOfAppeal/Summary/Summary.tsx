@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { useContext, useState } from 'react'
-import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
@@ -50,7 +49,6 @@ type ModalType =
   | 'none'
 
 const Summary: FC = () => {
-  const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const targetAppealCase = useTargetAppealCaseByAppealCaseId()
@@ -98,11 +96,8 @@ const Summary: FC = () => {
     <>
       <AlertBanner
         variant="warning"
-        title={formatMessage(strings.alertBannerTitle)}
-        description={getAppealDecision(
-          formatMessage,
-          targetAppealCase?.appealRulingDecision,
-        )}
+        title={strings.alertBannerTitle}
+        description={getAppealDecision(targetAppealCase?.appealRulingDecision)}
       />
       <PageLayout
         workingCase={workingCase}
@@ -110,22 +105,22 @@ const Summary: FC = () => {
         notFound={caseNotFound}
         onNavigationTo={handleNavigationTo}
       >
-        <PageHeader title={formatMessage(strings.htmlTitle)} />
+        <PageHeader title={strings.htmlTitle} />
         <FormContentContainer>
-          <PageTitle>{formatMessage(strings.title)}</PageTitle>
+          <PageTitle>{strings.title}</PageTitle>
 
           <CaseNumbers />
 
           <Box marginBottom={6}>
             <Conclusion
-              title={formatMessage(conclusion.title)}
+              title={conclusion.title}
               conclusionText={workingCase.conclusion}
               judgeName={workingCase.judge?.name}
             />
           </Box>
           <Box marginBottom={6}>
             <Conclusion
-              title={formatMessage(conclusion.appealTitle)}
+              title={conclusion.appealTitle}
               conclusionText={targetAppealCase?.appealConclusion}
             />
           </Box>
@@ -143,7 +138,7 @@ const Summary: FC = () => {
             )}
             actions={[
               {
-                text: formatMessage(strings.nextButtonFooter),
+                text: strings.nextButtonFooter,
                 icon: 'checkmark',
                 onClick: async () => await handleNextButtonClick(),
                 disabled: isTransitioningAppealCase,
@@ -154,11 +149,11 @@ const Summary: FC = () => {
         </FormContentContainer>
         {visibleModal === 'AppealCompleted' && (
           <Modal
-            title={formatMessage(strings.appealCompletedModalTitle)}
-            text={formatMessage(strings.appealCompletedModalText)}
+            title={strings.appealCompletedModalTitle}
+            text={strings.appealCompletedModalText}
             buttons={[
               {
-                text: formatMessage(core.closeModal),
+                text: core.closeModal,
                 onClick: () => {
                   router.push(
                     appendAppealCaseIdQuery(
@@ -180,11 +175,11 @@ const Summary: FC = () => {
         )}
         {visibleModal === 'AppealDiscontinued' && (
           <Modal
-            title={formatMessage(strings.appealDiscontinuedModalTitle)}
-            text={formatMessage(strings.appealDiscontinuedModalText)}
+            title={strings.appealDiscontinuedModalTitle}
+            text={strings.appealDiscontinuedModalText}
             buttons={[
               {
-                text: formatMessage(core.closeModal),
+                text: core.closeModal,
                 onClick: () => {
                   router.push(
                     appendAppealCaseIdQuery(

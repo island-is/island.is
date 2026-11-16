@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { useContext, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Accordion, Box } from '@island.is/island-ui/core'
@@ -54,7 +53,6 @@ type VisibleModal =
 
 const Confirmation: FC = () => {
   const router = useRouter()
-  const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
@@ -136,11 +134,9 @@ const Confirmation: FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader
-        title={formatMessage(titles.court.restrictionCases.conclusion)}
-      />
+      <PageHeader title={titles.court.restrictionCases.conclusion} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box marginBottom={9}>
           <Accordion>
@@ -151,7 +147,7 @@ const Confirmation: FC = () => {
         </Box>
         <Box marginBottom={7}>
           <Conclusion
-            title={formatMessage(strings.conclusionTitle)}
+            title={strings.conclusionTitle}
             conclusionText={workingCase.conclusion}
             judgeName={workingCase.judge?.name}
           />
@@ -159,16 +155,16 @@ const Confirmation: FC = () => {
         <Box marginBottom={3}>
           <PdfButton
             caseId={workingCase.id}
-            title={formatMessage(core.pdfButtonRuling)}
+            title={core.pdfButtonRuling}
             pdfType="ruling"
-            elementId={formatMessage(core.pdfButtonRuling)}
+            elementId={core.pdfButtonRuling}
           />
         </Box>
         <PdfButton
           caseId={workingCase.id}
-          title={formatMessage(core.pdfButtonRulingShortVersion)}
+          title={core.pdfButtonRulingShortVersion}
           pdfType="courtRecord"
-          elementId={formatMessage(core.pdfButtonRulingShortVersion)}
+          elementId={core.pdfButtonRulingShortVersion}
         />
       </FormContentContainer>
       <FormContentContainer isFooter>
@@ -179,7 +175,7 @@ const Confirmation: FC = () => {
               ? []
               : [
                   {
-                    text: formatMessage(
+                    text:
                       workingCase.decision === CaseDecision.ACCEPTING
                         ? strings.continueButtonTextAccepting
                         : workingCase.decision ===
@@ -190,7 +186,6 @@ const Confirmation: FC = () => {
                         : workingCase.decision === CaseDecision.DISMISSING
                         ? strings.continueButtonTextDismissing
                         : strings.continueButtonTextAcceptingAlternativeTravelBan,
-                    ),
                     icon:
                       isAcceptingCaseDecision(workingCase.decision) ||
                       workingCase.decision ===

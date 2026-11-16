@@ -26,6 +26,7 @@ import {
   GetTaxCalculatorQuery,
   GetTaxCalculatorQueryVariables,
   TaxCalculatorCalculationErrorCode,
+  TaxCalculatorInputFieldSemantic,
   TaxCalculatorType,
 } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
@@ -40,6 +41,7 @@ import {
   toOutputFieldContract,
 } from '../contract'
 import {
+  type ApplicableField,
   canSubmit,
   collectApplicableFields,
   isUsedForCalculation,
@@ -51,6 +53,8 @@ import {
   reportContractDiagnostics,
 } from '../utils/diagnostics'
 import { formatOutputValue } from '../utils/format'
+import { inputSemantic, outputSemantic } from '../utils/numberType'
+import { LOCALE_TAG } from '../utils/optionSources'
 import { type OutputValues, toOutputValues } from '../utils/outputValues'
 import { toInputFieldValues } from '../utils/serialize'
 import { CALCULATOR_MESSAGES, localized } from '../utils/text'
@@ -96,6 +100,48 @@ const errorText = (code: TaxCalculatorCalculationErrorCode) => {
   }
 }
 
+const INT32_MIN = -2147483648
+const INT32_MAX = 2147483647
+
+const rangeMessage = (
+  min: number | undefined,
+  max: number | undefined,
+  integer: boolean | undefined,
+) => {
+  if (min !== undefined && max !== undefined) {
+    return integer
+      ? CALCULATOR_MESSAGES.wholeNumberInRange
+      : CALCULATOR_MESSAGES.numberInRange
+  }
+  if (min !== undefined) {
+    return integer
+      ? CALCULATOR_MESSAGES.wholeNumberAtLeast
+      : CALCULATOR_MESSAGES.numberAtLeast
+  }
+  return integer
+    ? CALCULATOR_MESSAGES.wholeNumberAtMost
+    : CALCULATOR_MESSAGES.numberAtMost
+}
+
+const rangeText = (
+  { field, contractField }: ApplicableField,
+  locale: Locale,
+) => {
+  const min = contractField.min === INT32_MIN ? undefined : contractField.min
+  const max = contractField.max === INT32_MAX ? undefined : contractField.max
+  if (min === undefined && max === undefined) return undefined
+
+  const number = new Intl.NumberFormat(LOCALE_TAG[locale], {
+    useGrouping:
+      inputSemantic(contractField, field.numberType) !==
+      TaxCalculatorInputFieldSemantic.Year,
+  })
+
+  return localized(rangeMessage(min, max, contractField.integer), locale)
+    ?.replace('{min}', min === undefined ? '' : number.format(min))
+    .replace('{max}', max === undefined ? '' : number.format(max))
+}
+
 const resolvePrimaryResult = (
   config: CalculatorConfig,
   contract: OutputFieldContract,
@@ -113,7 +159,11 @@ const resolvePrimaryResult = (
   const value = values.get(outputTotal.key)
   if (!value) return undefined
 
-  const formatted = formatOutputValue(value, contractField.semantic, locale)
+  const formatted = formatOutputValue(
+    value,
+    outputSemantic(contractField, outputTotal.numberType),
+    locale,
+  )
   if (formatted === undefined) return undefined
 
   return { label, formatted }
@@ -280,8 +330,13 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
     : []
 
   for (const returned of shown?.errors ?? []) {
-    const text = localized(errorText(returned.code), activeLocale) ?? ''
     const entry = returned.key ? applicable.get(returned.key) : undefined
+    const text =
+      (returned.code === TaxCalculatorCalculationErrorCode.InvalidValue && entry
+        ? rangeText(entry, activeLocale)
+        : undefined) ??
+      localized(errorText(returned.code), activeLocale) ??
+      ''
 
     if (returned.key && entry && isUsedForCalculation(entry)) {
       fieldErrors.set(returned.key, text)
@@ -308,7 +363,9 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
   const announcement = calculating
     ? localized(CALCULATOR_MESSAGES.calculating, activeLocale)
     : alerts[0] ??
-      (hasResults
+      (fieldErrors.size > 0
+        ? localized(CALCULATOR_MESSAGES.fieldErrors, activeLocale)
+        : hasResults
         ? shown
           ? localized(CALCULATOR_MESSAGES.resultReady, activeLocale)
           : !isCurrent
@@ -335,6 +392,19 @@ const CalculatorForm = ({ calculatorType, config }: FormProps) => {
               />
             ))}
             <Box>
+              {hasUnplacedRequiredFields && (
+                <Box marginBottom={3}>
+                  <AlertMessage
+                    type="error"
+                    title={
+                      localized(
+                        CALCULATOR_MESSAGES.incompleteConfig,
+                        activeLocale,
+                      ) ?? ''
+                    }
+                  />
+                </Box>
+              )}
               <Button
                 type="submit"
                 loading={calculating}

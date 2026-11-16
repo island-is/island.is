@@ -75,5 +75,20 @@ export const coaJudgesCompleteAppealCaseTest = async (
   await expect(page).toHaveURL(
     new RegExp(`/landsrettur/samantekt/${caseId}(\\?.*)?$`),
   )
-  await page.getByTestId('continueButton').click()
+  await Promise.all([
+    verifyRequestCompletion(page, '/api/graphql', 'TransitionAppealCase'),
+    page.getByTestId('continueButton').click(),
+  ])
+
+  // Closing the completion modal lands on the result screen
+  await page.getByTestId('modalSecondaryButton').click()
+  await expect(page).toHaveURL(
+    new RegExp(`/landsrettur/nidurstada/${caseId}(\\?.*)?$`),
+  )
+  await expect(
+    page.getByRole('heading', { name: 'Úrskurðarorð Landsréttar' }),
+  ).toBeVisible()
+  await expect(
+    page.getByText('Test úrskurðarorð Landsréttar').first(),
+  ).toBeVisible()
 }

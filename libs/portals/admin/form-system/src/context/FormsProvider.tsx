@@ -6,7 +6,7 @@ import {
   GET_ORGANIZATION_ADMIN,
 } from '@island.is/form-system/graphql'
 import { Option } from '@island.is/island-ui/core'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { FormsLocationState } from '../lib/utils/interfaces'
 import { FormsContext, IFormsContext } from './FormsContext'
 
@@ -49,8 +49,10 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
   const [selectedDelegations, setSelectedDelegations] = useState<string[]>(
     organizationDelegations ?? [],
   )
+  const organizationChangeRequest = useRef(0)
 
   const handleOrganizationChange = async (selected: { value: string }) => {
+    const requestId = ++organizationChangeRequest.current
     setOrganizationNationalId(selected.value)
     const updatedOrganizations = organizations.map((org) => ({
       ...org,
@@ -65,6 +67,9 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
         },
       },
     })
+    if (requestId !== organizationChangeRequest.current) {
+      return
+    }
     if (data?.formSystemForms?.forms) {
       setForms(data.formSystemForms.forms)
     }
@@ -77,6 +82,9 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
       },
     })
 
+    if (requestId !== organizationChangeRequest.current) {
+      return
+    }
     const admin = permissionsData?.formSystemOrganizationAdmin
     const {
       organizationId,

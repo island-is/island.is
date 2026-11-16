@@ -1,0 +1,14 @@
+appId: ${APP_ID}
+---
+# Closes a modal sheet. iOS shows the native close item from StackScreen
+# `closeable`; Android has no close item, so use the system back.
+- runFlow:
+    when:
+      platform: 'android'
+    commands:
+      - back
+- runFlow:
+    when:
+      platform: 'ios'
+    commands:
+      - tapOn: 'Close'

@@ -1,7 +1,5 @@
 import PDFDocument from 'pdfkit'
 
-import { FormatMessage } from '@island.is/cms-translations'
-
 import { getIntro } from '@island.is/judicial-system/consts'
 import {
   capitalize,
@@ -14,7 +12,7 @@ import {
 import { SubpoenaType } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories/date.factory'
-import { subpoena as strings } from '../../messages'
+import { formatIcuMessage, subpoena as strings } from '../../messages'
 import { Case, Defendant, Subpoena } from '../../modules/repository'
 import {
   addEmptyLines,
@@ -32,7 +30,6 @@ import {
 export const createSubpoena = (
   theCase: Case,
   defendant: Defendant,
-  formatMessage: FormatMessage,
   subpoena?: Subpoena,
   arraignmentDate?: Date,
   location?: string,
@@ -55,7 +52,7 @@ export const createSubpoena = (
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
-  setTitle(doc, formatMessage(strings.title))
+  setTitle(doc, strings.title)
 
   if (confirmation) {
     addEmptyLines(doc, 5)
@@ -93,7 +90,7 @@ export const createSubpoena = (
   )
   addNormalText(doc, defendant.address || 'Heimili ekki skráð')
   addEmptyLines(doc)
-  addHugeHeading(doc, formatMessage(strings.title).toUpperCase(), 'Times-Bold')
+  addHugeHeading(doc, strings.title.toUpperCase(), 'Times-Bold')
   addEmptyLines(doc)
   addMediumText(doc, `Mál nr. ${theCase.courtCaseNumber}`, 'Times-Bold')
   addEmptyLines(doc)
@@ -127,7 +124,7 @@ export const createSubpoena = (
   if (arraignmentDate) {
     addNormalText(
       doc,
-      formatMessage(strings.arraignmentDate, {
+      formatIcuMessage(strings.arraignmentDate, {
         arraignmentDate: formatDate(new Date(arraignmentDate), 'PPPp'),
       }),
       'Times-Bold',
@@ -137,31 +134,29 @@ export const createSubpoena = (
   if (location) {
     addNormalText(
       doc,
-      formatMessage(strings.courtRoom, {
+      formatIcuMessage(strings.courtRoom, {
         courtRoom: location,
       }),
       'Times-Roman',
     )
   }
 
-  addNormalText(doc, formatMessage(strings.type), 'Times-Roman')
+  addNormalText(doc, strings.type, 'Times-Roman')
   addEmptyLines(doc)
-  addNormalText(doc, formatMessage(intro.intro), 'Times-Bold')
+  addNormalText(doc, intro.intro, 'Times-Bold')
 
   if (subpoenaType) {
     addNormalText(
       doc,
-      formatMessage(
-        subpoenaType === SubpoenaType.ABSENCE
-          ? intro.absenceIntro
-          : intro.arrestIntro,
-      ),
+      subpoenaType === SubpoenaType.ABSENCE
+        ? intro.absenceIntro
+        : intro.arrestIntro,
       'Times-Bold',
     )
   }
 
   addEmptyLines(doc)
-  addNormalText(doc, formatMessage(intro.deadline), 'Times-Roman')
+  addNormalText(doc, intro.deadline, 'Times-Roman')
 
   addFooter(doc)
 

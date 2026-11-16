@@ -4,6 +4,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import {
   ApplicantChildCustodyInformation,
   ApplicationContext,
+  ExternalData,
 } from '@island.is/application/types'
 
 import {
@@ -17,13 +18,26 @@ import {
   ApproveOptions,
   CurrentApplication,
   FAApplication,
+  FinancialAidRouting,
   OverrideAnswerSchema,
   UploadFileType,
-} from '..'
+} from './types'
 import { UploadFileDeprecated } from '@island.is/island-ui/core'
 import { ApplicationStates } from './constants'
 import sortBy from 'lodash/sortBy'
 import { EMAIL_REGEX } from '@island.is/application/core'
+
+export const getFinancialAidRouting = (
+  externalData: ExternalData,
+): FinancialAidRouting => {
+  const routing = getValueViaPath<FinancialAidRouting>(
+    externalData,
+    'municipality.data',
+  )
+  return routing?.backend === 'veita'
+    ? { backend: 'veita', veitaTenant: routing.veitaTenant }
+    : { backend: 'municipalities' }
+}
 
 export const isValidEmail = (value: string) => EMAIL_REGEX.test(value)
 export const isValidPhone = (value: string) => {
@@ -111,6 +125,11 @@ export const waitingForSpouse = (state: string) => {
     state === ApplicationStates.PREREQUISITESSPOUSE
   )
 }
+
+// SUBMITTED is only persisted after createApplication has delivered the
+// application to the municipality's backend.
+export const isSubmittedToMunicipality = (state: string) =>
+  state === ApplicationStates.SUBMITTED
 
 export const sortChildrenUnderAgeByAge = (
   children: ApplicantChildCustodyInformation[],

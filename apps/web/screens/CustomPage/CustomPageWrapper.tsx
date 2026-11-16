@@ -53,7 +53,11 @@ export const withCustomPageWrapper = <Props,>(
           imageWidth={customPageData?.ogImage?.width?.toString()}
           imageHeight={customPageData?.ogImage?.height?.toString()}
           imageUrl={customPageData?.ogImage?.url}
-        />
+        >
+          {customPageData?.hideFromExternalSearchEngines && (
+            <meta name="robots" content="noindex, nofollow" />
+          )}
+        </HeadWithSocialSharing>
         <Component {...pageProps} customPageData={customPageData} />
       </IntlProvider>
     )

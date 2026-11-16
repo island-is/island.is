@@ -6,6 +6,7 @@ import {
   EXPORT_FORM,
   GET_APPLICATION_JSON_SAMPLE,
   GET_FORM,
+  GET_FORMS,
   UPDATE_FORM_STATUS,
 } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
@@ -97,6 +98,7 @@ export const TableRow = ({
   const [updateFormStatus] = useMutation(UPDATE_FORM_STATUS)
   const [copyForm] = useMutation(COPY_FORM)
   const [getForm] = useLazyQuery(GET_FORM, { fetchPolicy: 'no-cache' })
+  const [getForms] = useLazyQuery(GET_FORMS, { fetchPolicy: 'no-cache' })
   const [exportForm] = useLazyQuery(EXPORT_FORM, { fetchPolicy: 'no-cache' })
   const [getJsonSample] = useLazyQuery(GET_APPLICATION_JSON_SAMPLE, {
     fetchPolicy: 'no-cache',
@@ -314,6 +316,31 @@ export const TableRow = ({
       iconType: 'outline' as const,
       onClick: async () => {
         try {
+          const { data: formsData } = await getForms({
+            variables: { input: { nationalId: organizationNationalId } },
+          })
+          const refreshedForms: FormSystemForm[] | undefined =
+            formsData?.formSystemForms?.forms
+          if (!refreshedForms) throw new Error('Missing forms list')
+          setFormsState(refreshedForms)
+
+          if (
+            slug &&
+            refreshedForms.some(
+              (form) =>
+                form.slug === `${slug}-i-breytingu` &&
+                form.status === FormStatus.PUBLISHED_BEING_CHANGED,
+            )
+          ) {
+            toast.warning(
+              formatMessage({
+                id: 'publishedFormAlreadyBeingChanged',
+                defaultMessage:
+                  'Það er þegar til eyðublað af þessari gerð með stöðuna Útgefið í breytingu.',
+              }),
+            )
+            return
+          }
           const { data } = await updateFormStatus({
             variables: {
               input: {
@@ -329,6 +356,12 @@ export const TableRow = ({
             return [returnedForm, ...prevForms]
           })
         } catch (error) {
+          toast.error(
+            formatMessage({
+              id: 'changePublishedFormError',
+              defaultMessage: 'Ekki tókst að breyta útgefnu eyðublaði.',
+            }),
+          )
           console.error('Error publishing form:', error)
         }
       },
@@ -612,6 +645,7 @@ export const TableRow = ({
     isAdmin,
     formatMessage,
     exportForm,
+    getForms,
     updateFormStatus,
     copyFormToOrganization,
     organizationNationalId,
@@ -730,7 +764,11 @@ export const TableRow = ({
                 />
               </Box>
 
-              <Box marginRight={2} onClick={(e) => e.stopPropagation()}>
+              <Box
+                className={styles.actionsMenu}
+                marginRight={2}
+                onClick={(e) => e.stopPropagation()}
+              >
                 <DropdownMenu
                   menuLabel={`${formatMessage(m.actions)} ${name}`}
                   disclosure={

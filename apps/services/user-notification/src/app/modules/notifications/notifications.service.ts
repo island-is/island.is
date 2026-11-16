@@ -127,6 +127,12 @@ export class NotificationsService {
     }
   }
 
+  /**
+   * Renders a stored notification using its Hnipp template, including its
+   * priority type (falling back to the template's) and category key and label.
+   * Fetches the template when it is not provided.
+   * @throws InternalServerErrorException if the template cannot be rendered.
+   */
   async formatAndMapNotification(
     notification: Notification,
     templateId: string,
@@ -162,6 +168,12 @@ export class NotificationsService {
         updated: notification.updated,
         read: notification.read,
         seen: notification.seen,
+        wasSent: notification.wasSent,
+        // Notifications created before priorityType was stored fall back to the template
+        priorityType: notification.priorityType ?? template.priorityType,
+        category: toTemplateCategory(template.hnippCategoryIs),
+        categoryLabel:
+          template.hnippCategory?.trim() || DEFAULT_CATEGORY_LABEL[locale],
       }
     } catch (error) {
       this.logger.error('Error formatting notification:', error)

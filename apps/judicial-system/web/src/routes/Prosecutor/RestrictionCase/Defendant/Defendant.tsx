@@ -1,5 +1,4 @@
 import { useCallback, useContext, useEffect } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Input, LoadingDots } from '@island.is/island-ui/core'
@@ -50,7 +49,6 @@ const isLokeCaseWithId = (origin: CaseOrigin | null | undefined, id: string) =>
 
 export const Defendant = () => {
   const router = useRouter()
-  const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
@@ -111,16 +109,7 @@ export const Defendant = () => {
   const handleNavigationTo = useCallback(
     async (destination: string) => {
       if (!workingCase.id) {
-        // Case creation copies these onto the created defendant
-        const defendant = workingCase.defendants?.[0]
-        const createdCase = await createCase({
-          ...workingCase,
-          defenderName: defendant?.defenderName,
-          defenderNationalId: defendant?.defenderNationalId,
-          defenderEmail: defendant?.defenderEmail,
-          defenderPhoneNumber: defendant?.defenderPhoneNumber,
-          requestSharedWithDefender: defendant?.requestSharedWithDefender,
-        })
+        const createdCase = await createCase(workingCase)
 
         if (
           createdCase &&
@@ -160,13 +149,11 @@ export const Defendant = () => {
       onNavigationTo={handleNavigationTo}
       isValid={stepIsValid}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.restrictionCases.defendant)}
-      />
+      <PageHeader title={titles.prosecutor.restrictionCases.defendant} />
       {!institutionLoading && (
         <>
           <FormContentContainer>
-            <PageTitle>{formatMessage(m.heading)}</PageTitle>
+            <PageTitle>{m.heading}</PageTitle>
             <div className={stack({ gap: 5 })}>
               <Box component="section">
                 <PoliceCaseNumbers
@@ -184,9 +171,7 @@ export const Defendant = () => {
                     justifyContent="spaceBetween"
                     marginBottom={2}
                   >
-                    <SectionHeading
-                      title={formatMessage(m.sections.accusedInfo.heading)}
-                    />
+                    <SectionHeading title={m.sections.accusedInfo.heading} />
                     {showPoliceDefendantsUI && policeDefendantsLoading && (
                       <LoadingDots size="small" />
                     )}
@@ -209,17 +194,15 @@ export const Defendant = () => {
               {workingCase.type !== CaseType.TRAVEL_BAN && (
                 <Box component="section">
                   <SectionHeading
-                    title={formatMessage(m.sections.leadInvestigator.heading)}
-                    tooltip={formatMessage(m.sections.leadInvestigator.tooltip)}
+                    title={m.sections.leadInvestigator.heading}
+                    tooltip={m.sections.leadInvestigator.tooltip}
                   />
                   <Input
                     data-testid="leadInvestigator"
                     name="leadInvestigator"
                     autoComplete="off"
-                    label={formatMessage(m.sections.leadInvestigator.label)}
-                    placeholder={formatMessage(
-                      m.sections.leadInvestigator.placeholder,
-                    )}
+                    label={m.sections.leadInvestigator.label}
+                    placeholder={m.sections.leadInvestigator.placeholder}
                     value={leadInvestigator.value}
                     errorMessage={leadInvestigator.errorMessage}
                     hasError={leadInvestigator.hasError}
@@ -238,9 +221,7 @@ export const Defendant = () => {
               previousUrl={getStandardUserDashboardRoute(user)}
               actions={[
                 {
-                  text: formatMessage(
-                    workingCase.id === '' ? core.createCase : core.continue,
-                  ),
+                  text: workingCase.id === '' ? core.createCase : core.continue,
                   icon: 'arrowForward',
                   onClick: () =>
                     handleNavigationTo(

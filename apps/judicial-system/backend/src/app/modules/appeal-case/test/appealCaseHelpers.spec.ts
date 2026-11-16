@@ -261,6 +261,72 @@ describe('userIsAppellant', () => {
         false,
       )
     })
+
+    it('is true for the current confirmed appeal defender of a defendant that appealed', () => {
+      const theCase = {
+        type: CaseType.INDICTMENT,
+        defendants: [
+          {
+            id: 'defendant-id',
+            isAppealDefenderConfirmed: true,
+            isAppealDefenderWaived: false,
+            appealDefenderNationalId: '0101010101',
+          },
+        ],
+      } as Case
+      const appealCase = appealCaseWith([
+        appealed({ userRole: UserRole.DEFENDER, defendantId: 'defendant-id' }),
+      ])
+
+      expect(userIsAppellant(theCase, appealCase, defender('0101010101'))).toBe(
+        true,
+      )
+    })
+
+    it('is true for the current confirmed appeal spokesperson of a civil claimant that appealed', () => {
+      const theCase = {
+        type: CaseType.INDICTMENT,
+        civilClaimants: [
+          {
+            id: 'claimant-id',
+            hasAppealSpokesperson: true,
+            isAppealSpokespersonConfirmed: true,
+            appealSpokespersonNationalId: '0101010101',
+          },
+        ],
+      } as Case
+      const appealCase = appealCaseWith([
+        appealed({
+          userRole: UserRole.DEFENDER,
+          civilClaimantId: 'claimant-id',
+        }),
+      ])
+
+      expect(userIsAppellant(theCase, appealCase, defender('0101010101'))).toBe(
+        true,
+      )
+    })
+
+    it('is false for a waived appeal defender', () => {
+      const theCase = {
+        type: CaseType.INDICTMENT,
+        defendants: [
+          {
+            id: 'defendant-id',
+            isAppealDefenderConfirmed: true,
+            isAppealDefenderWaived: true,
+            appealDefenderNationalId: '0101010101',
+          },
+        ],
+      } as Case
+      const appealCase = appealCaseWith([
+        appealed({ userRole: UserRole.DEFENDER, defendantId: 'defendant-id' }),
+      ])
+
+      expect(userIsAppellant(theCase, appealCase, defender('0101010101'))).toBe(
+        false,
+      )
+    })
   })
 })
 

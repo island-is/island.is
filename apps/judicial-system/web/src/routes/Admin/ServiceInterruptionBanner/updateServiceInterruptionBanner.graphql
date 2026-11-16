@@ -1,0 +1,10 @@
+mutation UpdateServiceInterruptionBanner(
+  $input: UpdateServiceInterruptionBannerInput!
+) {
+  updateServiceInterruptionBanner(input: $input) {
+    title
+    globalMessage
+    prosecutorMessage
+    courtMessage
+  }
+}

@@ -1,5 +1,4 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { validate as validateUuid } from 'uuid'
 
@@ -62,7 +61,6 @@ export const CaseFiles = () => {
     errorPolicy: 'all',
   })
   const router = useRouter()
-  const { formatMessage } = useIntl()
   const [isUploadingPoliceCaseFiles, setIsUploadingPoliceCaseFiles] =
     useState<boolean>(false)
   const [editCount, setEditCount] = useState(0)
@@ -140,14 +138,14 @@ export const CaseFiles = () => {
 
   const uploadErrorMessage = useMemo(() => {
     if (uploadFiles.some((file) => file.status === FileUploadStatus.error)) {
-      return formatMessage(errors.general)
+      return errors.general
     }
     if (uploadFiles.some((file) => file.size === 0)) {
       return 'Villa kom upp. Tómt skjal.'
     } else {
       return undefined
     }
-  }, [uploadFiles, formatMessage])
+  }, [uploadFiles])
 
   const stepIsValid =
     !isUploadingPoliceCaseFiles && allFilesDoneOrError && editCount === 0
@@ -181,7 +179,7 @@ export const CaseFiles = () => {
         },
       })
     } catch {
-      toast.error(formatMessage(errors.general))
+      toast.error(errors.general)
     }
   }
 
@@ -205,7 +203,7 @@ export const CaseFiles = () => {
         },
       })
     } catch {
-      toast.error(formatMessage(errors.general))
+      toast.error(errors.general)
     }
   }
   const handleNavigationTo = (destination: string) =>
@@ -246,18 +244,18 @@ export const CaseFiles = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader title={formatMessage(strings.title)} />
+      <PageHeader title={strings.title} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
+        <PageTitle>{strings.heading}</PageTitle>
         <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
           <ParentCaseFiles files={workingCase.parentCase?.caseFiles} />
           <section>
             <SectionHeading
-              title={formatMessage(strings.policeCaseFilesHeading)}
+              title={strings.policeCaseFilesHeading}
               description={
                 workingCase.origin === CaseOrigin.LOKE
-                  ? formatMessage(strings.policeCaseFilesIntroduction)
+                  ? strings.policeCaseFilesIntroduction
                   : undefined
               }
             />
@@ -284,13 +282,13 @@ export const CaseFiles = () => {
           </section>
           <section>
             <SectionHeading
-              title={formatMessage(strings.filesHeading)}
+              title={strings.filesHeading}
               description="Gögnin í pakkanum hér fyrir neðan munu liggja frammi í þinghaldinu. Samkvæmt reglum dómstólasýslunnar skulu skjöl hafa lýsandi heiti."
             />
             <ReorderableFileUpload
               files={uploadFiles.filter((file) => !file.category)}
-              dropzoneTitle={formatMessage(strings.filesLabel)}
-              dropzoneButtonLabel={formatMessage(strings.filesButtonLabel)}
+              dropzoneTitle={strings.filesLabel}
+              dropzoneButtonLabel={strings.filesButtonLabel}
               onFilesChange={(files) =>
                 handleUpload(addUploadFiles(files), updateUploadFile)
               }
@@ -306,13 +304,13 @@ export const CaseFiles = () => {
           </section>
           <section>
             <SectionHeading
-              title={formatMessage(strings.commentsHeading)}
-              tooltip={formatMessage(strings.commentsTooltip)}
+              title={strings.commentsHeading}
+              tooltip={strings.commentsTooltip}
             />
             <Input
               name="caseFilesComments"
-              label={formatMessage(strings.commentsLabel)}
-              placeholder={formatMessage(strings.commentsPlaceholder)}
+              label={strings.commentsLabel}
+              placeholder={strings.commentsPlaceholder}
               value={caseFilesComments.value}
               onChange={(evt) => caseFilesComments.onChange(evt.target.value)}
               textarea
@@ -330,7 +328,7 @@ export const CaseFiles = () => {
           }/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

@@ -14,6 +14,7 @@ import { DelegationScope } from '../delegations/models/delegation-scope.model'
 import { Delegation } from '../delegations/models/delegation.model'
 import { DelegationDirection } from '../delegations/types/delegationDirection'
 import { ApiScopeListDTO } from './dto/api-scope-list.dto'
+import { ScopeDelegationSettingsDTO } from './dto/scope-delegation-settings.dto'
 import { ScopeTreeDTO } from './dto/scope-tree.dto'
 import { ApiScopeGroup } from './models/api-scope-group.model'
 import { ApiScopeUserAccess } from './models/api-scope-user-access.model'
@@ -26,6 +27,15 @@ import { mapToScopeTree } from './utils/scope-tree.mapper'
 import type { Attributes, WhereOptions } from 'sequelize'
 import type { ConfigType } from '@island.is/nest/config'
 import { ApiScopeDelegationType } from './models/api-scope-delegation-type.model'
+
+export const RequestGrantorType = {
+  company: 'company',
+  individual: 'individual',
+} as const
+export type RequestGrantorType =
+  typeof RequestGrantorType[keyof typeof RequestGrantorType]
+
+const DELEGATION_SETTINGS_TTL_MS = 5 * 60 * 1000
 
 type DelegationConfigType = ConfigType<typeof DelegationConfig>
 type ScopeRule = DelegationConfigType['customScopeRules'] extends Array<
@@ -50,6 +60,97 @@ export class DelegationResourcesService {
     private delegationConfig: ConfigType<typeof DelegationConfig>,
   ) {}
 
+  private delegationSettings?: {
+    expiresAt: number
+    byScope: Promise<Map<string, ScopeDelegationSettingsDTO>>
+  }
+
+  async findScopeDelegationSettings(
+    user: User,
+    scopeNames: string[],
+  ): Promise<ScopeDelegationSettingsDTO[]> {
+    if (
+      !this.delegationSettings ||
+      this.delegationSettings.expiresAt <= Date.now()
+    ) {
+      this.delegationSettings = {
+        expiresAt: Date.now() + DELEGATION_SETTINGS_TTL_MS,
+        byScope: this.loadScopeDelegationSettings(user).catch((error) => {
+          this.delegationSettings = undefined
+          throw error
+        }),
+      }
+    }
+    const byScope = await this.delegationSettings.byScope
+    return [...new Set(scopeNames)]
+      .map((name) => byScope.get(name))
+      .filter((settings): settings is ScopeDelegationSettingsDTO =>
+        Boolean(settings),
+      )
+  }
+
+  private async loadScopeDelegationSettings(
+    user: User,
+  ): Promise<Map<string, ScopeDelegationSettingsDTO>> {
+    const requestableNames = async (requestGrantorType: RequestGrantorType) =>
+      new Set(
+        (
+          await this.apiScopeModel.findAll({
+            where: and(
+              ...(await this.apiScopeFilter({
+                user,
+                direction: DelegationDirection.REQUEST,
+                requestGrantorType,
+              })),
+            ),
+            attributes: ['name'],
+          })
+        ).map((scope) => scope.name),
+      )
+
+    const [scopes, individual, company, delegationTypes] = await Promise.all([
+      this.apiScopeModel.findAll({
+        where: { enabled: true },
+        attributes: ['name', 'domainName'],
+      }),
+      requestableNames(RequestGrantorType.individual),
+      requestableNames(RequestGrantorType.company),
+      this.apiScopeDelegationTypeModel.findAll({
+        attributes: ['apiScopeName', 'delegationType'],
+      }),
+    ])
+
+    const typesByScope = new Map<string, string[]>()
+    for (const { apiScopeName, delegationType } of delegationTypes) {
+      typesByScope.set(apiScopeName, [
+        ...(typesByScope.get(apiScopeName) ?? []),
+        delegationType,
+      ])
+    }
+
+    return new Map(
+      scopes
+        .filter(
+          (scope) =>
+            individual.has(scope.name) ||
+            company.has(scope.name) ||
+            typesByScope.has(scope.name),
+        )
+        .map((scope) => [
+          scope.name,
+          {
+            name: scope.name,
+            domainName: scope.domainName,
+            delegationTypes: typesByScope.get(scope.name) ?? [],
+            requestable: {
+              individual: individual.has(scope.name),
+              company: company.has(scope.name),
+            },
+          },
+        ]),
+    )
+  }
+
   async findAllDomains(
     user: User,
     {
@@ -65,7 +166,9 @@ export class DelegationResourcesService {
     },
   ): Promise<Domain[]> {
     const onlyDelegations =
-      supportsDelegations || direction === DelegationDirection.OUTGOING
+      supportsDelegations ||
+      direction === DelegationDirection.OUTGOING ||
+      direction === DelegationDirection.REQUEST
 
     const domainNameFilter: WhereOptions<Domain> = domainNames
       ? { name: domainNames }
@@ -200,10 +303,12 @@ export class DelegationResourcesService {
     user,
     prefix,
     direction,
+    requestGrantorType,
   }: {
     user: User
     prefix?: string
     direction?: DelegationDirection
+    requestGrantorType?: RequestGrantorType
   }) {
     const apiScopeFilter: Array<WhereOptions<ApiScope>> = [
       {
@@ -219,6 +324,25 @@ export class DelegationResourcesService {
         ...(await this.delegationTypeFilter(user, prefix)),
         ...this.grantToAuthenticatedUserFilter(user, prefix),
       )
+    }
+
+    if (direction === DelegationDirection.REQUEST) {
+      apiScopeFilter.push({
+        [col(prefix, 'isAccessControlled')]: { [Op.ne]: true },
+      })
+      apiScopeFilter.push(
+        ...this.requestScopeRuleFilter(requestGrantorType, prefix),
+      )
+
+      if (requestGrantorType === 'company') {
+        apiScopeFilter.push({
+          [col(prefix, 'grantToProcuringHolders')]: true,
+        })
+      } else if (requestGrantorType === 'individual') {
+        apiScopeFilter.push({
+          [col(prefix, 'grantToAuthenticatedUser')]: true,
+        })
+      }
     }
 
     return apiScopeFilter
@@ -237,6 +361,7 @@ export class DelegationResourcesService {
     domainName,
     language,
     direction,
+    requestGrantorType,
     attributes,
     additionalIncludes = [],
   }: {
@@ -244,10 +369,15 @@ export class DelegationResourcesService {
     domainName?: string | null
     language?: string
     direction?: DelegationDirection
+    requestGrantorType?: RequestGrantorType
     attributes?: Array<keyof Attributes<ApiScope>>
     additionalIncludes?: Includeable[]
   }): Promise<ApiScope[]> {
-    const filters = await this.apiScopeFilter({ user, direction })
+    const filters = await this.apiScopeFilter({
+      user,
+      direction,
+      requestGrantorType,
+    })
 
     const scopes = await this.apiScopeModel.findAll({
       attributes: attributes as string[],
@@ -295,6 +425,24 @@ export class DelegationResourcesService {
       duplicating: false,
       required: false,
     }
+  }
+
+  private requestScopeRuleFilter(
+    requestGrantorType: RequestGrantorType | undefined,
+    prefix?: string,
+  ): Array<WhereOptions<ApiScope>> {
+    const excluded = this.delegationConfig.customScopeRules
+      .filter(
+        (rule) =>
+          requestGrantorType === RequestGrantorType.individual ||
+          !rule.onlyForDelegationType.includes(
+            AuthDelegationType.ProcurationHolder,
+          ),
+      )
+      .map((rule) => rule.scopeName)
+    return excluded.length === 0
+      ? []
+      : [{ [col(prefix, 'name')]: { [Op.notIn]: excluded } }]
   }
 
   private accessControlFilter(

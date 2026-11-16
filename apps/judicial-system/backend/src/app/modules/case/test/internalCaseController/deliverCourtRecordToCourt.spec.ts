@@ -84,10 +84,7 @@ describe('InternalCaseController - Deliver court record to court', () => {
     })
 
     it('should generate the court record', async () => {
-      expect(getCourtRecordPdfAsBuffer).toHaveBeenCalledWith(
-        theCase,
-        expect.any(Function),
-      )
+      expect(getCourtRecordPdfAsBuffer).toHaveBeenCalledWith(theCase)
     })
 
     it('should create a court record at court', async () => {

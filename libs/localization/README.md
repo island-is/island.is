@@ -3,7 +3,11 @@
 This library provides components to support Internationalization in nextjs and react projects using [Formatjs](https://formatjs.io/).
 
 {% hint style="warning" %}
-You will need a `CONTENTFUL_MANAGEMENT_ACCESS_TOKEN` environnement variable to run the extract script. You can create it [here in contentful](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types).
+You will need a `CONTENTFUL_MANAGEMENT_ACCESS_TOKEN` environnement variable to run the extract script. Create a Personal Access Token (PAT) under [your Contentful account settings](https://app.contentful.com/account/profile/cma_tokens) — the token is per user, not per space.
+{% endhint %}
+
+{% hint style="danger" %}
+A newly created PAT must also be **authorized for the organization** before it can reach any space. On the token's row in the [token list](https://app.contentful.com/account/profile/cma_tokens), click **Authorize** and authorize **Digital Iceland**. The "Token authorization" dialog should then list Digital Iceland with a `Deauthorize` option next to it.
 {% endhint %}
 
 ## Usage in Next.js

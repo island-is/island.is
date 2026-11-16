@@ -16,6 +16,7 @@ import { HashAlgorithm } from '@island.is/judicial-system/types'
 
 import { AppealCase } from './appealCase.model'
 import { AppealSummonsDefendant } from './appealSummonsDefendant.model'
+import { AppealSummonsServiceRecipient } from './appealSummonsServiceRecipient.model'
 import { Case } from './case.model'
 import { User } from './user.model'
 
@@ -90,4 +91,11 @@ export class AppealSummons extends Model {
   @HasMany(() => AppealSummonsDefendant, 'appealSummonsId')
   @ApiPropertyOptional({ type: () => AppealSummonsDefendant, isArray: true })
   defendants?: AppealSummonsDefendant[]
+
+  @HasMany(() => AppealSummonsServiceRecipient, 'appealSummonsId')
+  @ApiPropertyOptional({
+    type: () => AppealSummonsServiceRecipient,
+    isArray: true,
+  })
+  services?: AppealSummonsServiceRecipient[]
 }

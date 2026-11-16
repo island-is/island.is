@@ -14,6 +14,7 @@ import {
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AllIndictmentCaseFiles,
+  AppealCourtSessionScheduledCard,
   AppealRulingModifiedAlert,
   BlueBox,
   Conclusion,
@@ -173,17 +174,21 @@ const IndictmentOverview: FC = () => {
         <PageHeader
           title={
             caseIsClosed
-              ? formatMessage(titles.shared.closedCaseOverview, {
-                  courtCaseNumber: workingCase.courtCaseNumber,
-                })
-              : formatMessage(titles.court.indictments.overview)
+              ? formatMessage(
+                  {
+                    id: titles.shared.closedCaseOverview,
+                    defaultMessage: titles.shared.closedCaseOverview,
+                  },
+                  {
+                    courtCaseNumber: workingCase.courtCaseNumber,
+                  },
+                )
+              : titles.court.indictments.overview
           }
         />
         <FormContentContainer>
           <PageTitle>
-            {caseIsClosed
-              ? formatMessage(strings.completedTitle)
-              : formatMessage(strings.inProgressTitle)}
+            {caseIsClosed ? strings.completedTitle : strings.inProgressTitle}
           </PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
           {workingCase.defendants?.map(
@@ -223,6 +228,9 @@ const IndictmentOverview: FC = () => {
                   />
                 </Box>
               )}
+            <AppealCourtSessionScheduledCard
+              verdictAppealCase={workingCase.verdictAppealCase}
+            />
             {shouldDisplayReviewDecision &&
               isRuling &&
               defendantsRequiringReview && (

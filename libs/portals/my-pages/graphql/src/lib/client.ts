@@ -70,12 +70,35 @@ export const client = new ApolloClient({
         keyFields: ['from', ['nationalId']],
       },
       AuthDelegationsGroupedByIdentity: {
-        keyFields: ['nationalId', 'type'],
+        // The same counterparty can appear in both incoming and outgoing lists.
+        keyFields: ['nationalId', 'type', 'direction'],
       },
       // Health Questionnaire Question: composite key because
       // questions from different sections can share the same id
       QuestionnaireQuestion: {
         keyFields: ['id', 'sectionId'],
+      },
+      // Key-information lookups carry a title resolved to the locale the query
+      // asked for, so they cannot be normalized by `id` alone — switching
+      // language would overwrite the shared entity and leave the other
+      // language's list pointing at it. The id stays the raw MMS id, which is
+      // what writes send back.
+      EducationPrimarySchoolRelationType: { keyFields: false },
+      EducationPrimarySchoolAllergy: { keyFields: false },
+      EducationPrimarySchoolLanguageEnvironment: { keyFields: false },
+      EducationPrimarySchoolAgentRelationType: { keyFields: false },
+      EducationPrimarySchoolStudent: {
+        fields: {
+          hasKeyInfo: {
+            // Read by two queries (the overview sections and the student hub)
+            // with errorPolicy 'all', which caches a failed field as null. Null
+            // means unknown, so it is dropped rather than letting one failed
+            // read turn the other's "MMS has this child" into "nothing to
+            // show"; a real `false` still overwrites. The trailing `null` keeps
+            // the field present so the read stays complete.
+            merge: (existing, incoming) => incoming ?? existing ?? null,
+          },
+        },
       },
       Query: {
         fields: {

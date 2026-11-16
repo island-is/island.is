@@ -10,7 +10,9 @@ import {
   ViewStyle,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
-import { dynamicColor } from '../../utils'
+
+// Fill under the swoosh when the caller passes no colour
+const DEFAULT_BACKGROUND = '#fbfbfb'
 
 interface SkeletonProps {
   active?: boolean
@@ -25,10 +27,10 @@ interface SkeletonProps {
 const Host = styled.View<{ error?: boolean }>`
   height: 20px;
   width: 100%;
-  background-color: ${dynamicColor(({ theme, error }) => ({
-    dark: error ? theme.color.red600 : theme.shades.dark.shade100,
-    light: error ? theme.color.red200 : theme.color.dark100,
-  }))};
+  background-color: ${({ theme, error }) =>
+    error
+      ? theme.tokens.app.fill.errorLighter
+      : theme.tokens.app.background.neutral};
   opacity: 1;
   overflow: hidden;
 `
@@ -63,8 +65,9 @@ export function Skeleton(props: SkeletonProps) {
       props.overlayColor.dark
       ? props.overlayColor
       : {
-          light: props.overlayColor ?? theme.shades.light.foreground,
-          dark: props.overlayColor ?? theme.shades.dark.shade600,
+          light:
+            props.overlayColor ?? theme.tokenModes.light.foreground.primary,
+          dark: props.overlayColor ?? theme.tokenModes.dark.foreground.primary,
         },
   )
 
@@ -74,8 +77,8 @@ export function Skeleton(props: SkeletonProps) {
       props.backgroundColor.dark
       ? props.backgroundColor
       : {
-          light: props.backgroundColor ?? theme.shades.light.shade100,
-          dark: props.backgroundColor ?? theme.shades.dark.shade200,
+          light: props.backgroundColor ?? DEFAULT_BACKGROUND,
+          dark: props.backgroundColor ?? DEFAULT_BACKGROUND,
         },
   )
 

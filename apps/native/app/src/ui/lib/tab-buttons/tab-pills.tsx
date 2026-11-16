@@ -16,12 +16,16 @@ const Pill = styled.Pressable<{ isSelected: boolean }>`
   justify-content: center;
   align-items: center;
   background-color: ${({ isSelected, theme }) =>
-    isSelected ? theme.color.blue400 : theme.color.blue100};
+    isSelected
+      ? theme.tokens.interactive.background.primary
+      : theme.tokens.background.brandMinimal};
 `
 
 const PillText = styled(Typography)<{ isSelected: boolean }>`
   color: ${({ isSelected, theme }) =>
-    isSelected ? theme.color.white : theme.color.blue400};
+    isSelected
+      ? theme.tokens.interactive.foreground.invert
+      : theme.tokens.foreground.brand};
 `
 
 interface TabPill {
@@ -118,6 +122,7 @@ export const TabPills = ({
               variant="eyebrow"
               isSelected={isSelected}
               numberOfLines={1}
+              maxFontSizeMultiplier={1.5}
             >
               {button.title}
             </PillText>

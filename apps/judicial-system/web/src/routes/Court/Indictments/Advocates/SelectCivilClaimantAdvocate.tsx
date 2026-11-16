@@ -115,7 +115,7 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             <RadioButton
               name="civilClaimantAdvocateType"
               id={`civil_claimant_lawyer-${civilClaimant.id}`}
-              label={formatMessage(strings.lawyer)}
+              label={strings.lawyer}
               large
               backgroundColor="white"
               checked={civilClaimant.spokespersonIsLawyer === true}
@@ -132,7 +132,7 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             <RadioButton
               name="civilClaimantAdvocateType"
               id={`civil_claimant_legal_rights_protector-${civilClaimant.id}`}
-              label={formatMessage(strings.legalRightsProtector)}
+              label={strings.legalRightsProtector}
               large
               backgroundColor="white"
               checked={civilClaimant.spokespersonIsLawyer === false}
@@ -193,9 +193,15 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
           />
           <Checkbox
             name={`shareFilesWithCivilClaimantAdvocate-${civilClaimant.id}`}
-            label={formatMessage(strings.shareFilesWithCivilClaimantAdvocate, {
-              defenderIsLawyer: civilClaimant.spokespersonIsLawyer,
-            })}
+            label={formatMessage(
+              {
+                id: strings.shareFilesWithCivilClaimantAdvocate,
+                defaultMessage: strings.shareFilesWithCivilClaimantAdvocate,
+              },
+              {
+                defenderIsLawyer: civilClaimant.spokespersonIsLawyer,
+              },
+            )}
             checked={Boolean(civilClaimant.caseFilesSharedWithSpokesperson)}
             disabled={
               civilClaimant.spokespersonIsLawyer === null ||
@@ -210,7 +216,11 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
               })
             }}
             tooltip={formatMessage(
-              strings.shareFilesWithCivilClaimantAdvocateTooltip,
+              {
+                id: strings.shareFilesWithCivilClaimantAdvocateTooltip,
+                defaultMessage:
+                  strings.shareFilesWithCivilClaimantAdvocateTooltip,
+              },
               {
                 defenderIsLawyer: civilClaimant.spokespersonIsLawyer,
               },
@@ -221,10 +231,7 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
           />
         </>
       ) : (
-        <AlertMessage
-          message={formatMessage(strings.noCivilClaimantAdvocate)}
-          type="info"
-        />
+        <AlertMessage message={strings.noCivilClaimantAdvocate} type="info" />
       )}
       {civilClaimant.isSpokespersonConfirmed &&
         civilClaimant.spokespersonName && (
@@ -254,9 +261,15 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             }}
             disabled={workingCase.state === CaseState.CORRECTING}
           >
-            {formatMessage(strings.confirmSpokespersonChoice, {
-              spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
-            })}
+            {formatMessage(
+              {
+                id: strings.confirmSpokespersonChoice,
+                defaultMessage: strings.confirmSpokespersonChoice,
+              },
+              {
+                spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
+              },
+            )}
           </Button>
         </Box>
       )}
@@ -279,30 +292,48 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             }
             disabled={workingCase.state === CaseState.CORRECTING}
           >
-            {formatMessage(strings.addCivilClaimantAdvocate)}
+            {strings.addCivilClaimantAdvocate}
           </Button>
         </Box>
       )}
       {displayModal && (
         <Modal
-          title={formatMessage(strings.confirmSpokespersonModalTitle, {
-            isSpokespersonConfirmed: civilClaimant.isSpokespersonConfirmed,
-            spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
-          })}
-          text={formatMessage(strings.confirmSpokespersonModalText, {
-            isSpokespersonConfirmed: civilClaimant.isSpokespersonConfirmed,
-            spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
-          })}
+          title={formatMessage(
+            {
+              id: strings.confirmSpokespersonModalTitle,
+              defaultMessage: strings.confirmSpokespersonModalTitle,
+            },
+            {
+              isSpokespersonConfirmed: civilClaimant.isSpokespersonConfirmed,
+              spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
+            },
+          )}
+          text={formatMessage(
+            {
+              id: strings.confirmSpokespersonModalText,
+              defaultMessage: strings.confirmSpokespersonModalText,
+            },
+            {
+              isSpokespersonConfirmed: civilClaimant.isSpokespersonConfirmed,
+              spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
+            },
+          )}
           buttons={[
             {
-              text: formatMessage(strings.confirmModalSecondaryButtonText),
+              text: strings.confirmModalSecondaryButtonText,
               onClick: () => setDisplayModal(false),
               variant: 'ghost',
             },
             {
-              text: formatMessage(strings.confirmModalPrimaryButtonText, {
-                isConfirming: !civilClaimant.isSpokespersonConfirmed,
-              }),
+              text: formatMessage(
+                {
+                  id: strings.confirmModalPrimaryButtonText,
+                  defaultMessage: strings.confirmModalPrimaryButtonText,
+                },
+                {
+                  isConfirming: !civilClaimant.isSpokespersonConfirmed,
+                },
+              ),
               onClick: () => {
                 handleSetAndSendCivilClaimantToServer({
                   isSpokespersonConfirmed:

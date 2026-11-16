@@ -8,9 +8,8 @@ import {
   Typography,
   Button,
   ButtonProps,
-  blue400,
-  dynamicColor,
   ExpandableCard,
+  token,
 } from '@/ui'
 import chevronDown from '@/assets/icons/chevron-down.png'
 import {
@@ -21,7 +20,6 @@ import {
 import { useGetFinanceStatusDetailsQuery } from '@/graphql/types/schema'
 import { useRouter } from 'expo-router'
 import { useBrowser } from '@/hooks/use-browser'
-import { DynamicColorIOS, Platform } from 'react-native'
 import { testIDs } from '../utils/test-ids'
 import { SelectionMenu } from 'react-native-platform-components'
 
@@ -32,24 +30,19 @@ export const SelectButton = (props: ButtonProps) => {
       {...props}
       isOutlined
       iconStyle={{
-        tintColor: props.disabled ? '#999' : blue400,
+        tintColor: props.disabled
+          ? theme.tokens.interactive.foreground.disabled
+          : theme.tokens.interactive.foreground.primary,
       }}
       style={{
         borderColor: props.disabled
-          ? 'rgba(128,128,128,0.25)'
-          : Platform.OS === 'ios'
-          ? DynamicColorIOS({
-              dark: theme.shades.dark.shade300,
-              light: theme.color.blue200,
-            })
-          : theme.colorScheme === 'dark'
-          ? theme.shades.dark.shade300
-          : theme.color.blue200,
+          ? theme.tokens.interactive.border.borderDisabled
+          : theme.tokens.interactive.border.borderPrimaryMinimal,
         paddingTop: 8,
         paddingBottom: 8,
         minWidth: 0,
         minHeight: 40,
-        backgroundColor: theme.color.blue100,
+        backgroundColor: theme.tokens.interactive.background.primaryMinimal,
       }}
       textProps={{
         lineBreakMode: 'tail',
@@ -60,15 +53,8 @@ export const SelectButton = (props: ButtonProps) => {
         fontSize: 12,
         fontWeight: '500',
         color: props.disabled
-          ? '#999'
-          : Platform.OS === 'ios'
-          ? DynamicColorIOS({
-              dark: theme.shades.dark.foreground,
-              light: theme.shades.light.foreground,
-            })
-          : theme.colorScheme === 'dark'
-          ? theme.shades.dark.foreground
-          : theme.shades.light.foreground,
+          ? theme.tokens.interactive.foreground.disabled
+          : theme.tokens.interactive.foreground.default,
         ...props.textStyle,
       }}
     />
@@ -78,10 +64,7 @@ export const SelectButton = (props: ButtonProps) => {
 const Row = styled.View<{ border?: boolean }>`
   flex-direction: row;
   flex-wrap: wrap;
-  border-bottom-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blue100,
-    dark: theme.shades.dark.shade300,
-  }))};
+  border-bottom-color: ${token((t) => t.border.primary)};
   border-bottom-width: ${({ border }) => (border ? 1 : 0)}px;
 `
 
@@ -103,10 +86,7 @@ const TouchableRow = styled.Pressable`
   flex-wrap: wrap;
   padding-top: ${({ theme }) => theme.spacing[2]}px;
   padding-bottom: ${({ theme }) => theme.spacing[2]}px;
-  border-bottom-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blue200,
-    dark: theme.shades.dark.shade300,
-  }))};
+  border-bottom-color: ${token((t) => t.border.primary)};
   border-bottom-width: 1px;
 `
 
@@ -126,10 +106,7 @@ const TableHeading = styled.View`
   flex: 1;
   margin-top: ${({ theme }) => theme.spacing[1]}px;
   padding-bottom: ${({ theme }) => theme.spacing[1]}px;
-  border-bottom-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blue200,
-    dark: theme.shades.dark.shade300,
-  }))};
+  border-bottom-color: ${token((t) => t.border.primary)};
   border-bottom-width: 1px;
 `
 
@@ -196,7 +173,10 @@ export function FinanceStatusCard({
       <View style={{ width: '100%', padding: theme.spacing[2] }}>
         <Typography
           variant="eyebrow"
-          style={{ color: blue400, marginBottom: theme.spacing[1] }}
+          style={{
+            color: theme.tokens.foreground.brand,
+            marginBottom: theme.spacing[1],
+          }}
         >
           <FormattedMessage
             id="finance.statusCard.paymentBase"
@@ -276,10 +256,10 @@ export function FinanceStatusCard({
                   key={index}
                   style={(p) => ({
                     backgroundColor: p.pressed
-                      ? 'rgba(128,128,128,0.1)'
+                      ? theme.tokens.app.background.pressed
                       : index % 2 === 0
-                      ? theme.color.blue100
-                      : theme.color.white,
+                      ? theme.tokens.background.brandMinimal
+                      : theme.tokens.background.invert,
                   })}
                   onPress={() => {
                     router.navigate({
@@ -305,7 +285,7 @@ export function FinanceStatusCard({
                   <Image
                     source={chevronDown}
                     style={{
-                      tintColor: theme.color.dark300,
+                      tintColor: theme.tokens.foreground.primaryMinimal,
                       transform: [{ rotate: '-90deg' }],
                     }}
                   />
@@ -372,7 +352,7 @@ export function FinanceStatusCard({
                     variant="eyebrow"
                     style={{
                       paddingTop: theme.spacing.smallGutter,
-                      color: blue400,
+                      color: theme.tokens.interactive.foreground.primary,
                     }}
                   >
                     {org.homepage}
@@ -397,7 +377,7 @@ export function FinanceStatusCard({
                     variant="eyebrow"
                     style={{
                       paddingTop: theme.spacing.smallGutter,
-                      color: blue400,
+                      color: theme.tokens.interactive.foreground.primary,
                     }}
                   >
                     {org.email}
@@ -422,7 +402,7 @@ export function FinanceStatusCard({
                     variant="eyebrow"
                     style={{
                       paddingTop: theme.spacing.smallGutter,
-                      color: blue400,
+                      color: theme.tokens.interactive.foreground.primary,
                     }}
                   >
                     {org.phone}

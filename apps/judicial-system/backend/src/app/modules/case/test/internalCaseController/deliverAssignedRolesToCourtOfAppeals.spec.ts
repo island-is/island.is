@@ -38,29 +38,38 @@ describe('InternalCaseController - Deliver assigned roles to court of appeals', 
     type: CaseType.CUSTODY,
   } as Case
 
+  // The bench is stored in order; the robot gets the first three, presiding
+  // judge first, so a fourth judge is not delivered.
   const appealCase = {
     id: appealCaseId,
     appealCaseNumber,
     appealAssistantId,
-    appealJudge1Id,
-    appealJudge2Id,
-    appealJudge3Id,
     appealAssistant: {
       nationalId: appealAssistantNationalId,
       name: appealAssistantName,
     },
-    appealJudge1: {
-      nationalId: appealJudge1NationalId,
-      name: appealJudge1Name,
-    },
-    appealJudge2: {
-      nationalId: appealJudge2NationalId,
-      name: appealJudge2Name,
-    },
-    appealJudge3: {
-      nationalId: appealJudge3NationalId,
-      name: appealJudge3Name,
-    },
+    appealJudges: [
+      {
+        displayOrder: 2,
+        userId: appealJudge3Id,
+        user: { nationalId: appealJudge3NationalId, name: appealJudge3Name },
+      },
+      {
+        displayOrder: 0,
+        userId: appealJudge1Id,
+        user: { nationalId: appealJudge1NationalId, name: appealJudge1Name },
+      },
+      {
+        displayOrder: 1,
+        userId: appealJudge2Id,
+        user: { nationalId: appealJudge2NationalId, name: appealJudge2Name },
+      },
+      {
+        displayOrder: 3,
+        userId: uuid(),
+        user: { nationalId: uuid(), name: uuid() },
+      },
+    ],
   } as unknown as AppealCase
 
   let mockCourtService: CourtService

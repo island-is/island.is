@@ -1,6 +1,5 @@
 import type { Dispatch, FC, ReactNode, SetStateAction } from 'react'
 import { useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 
 import {
   Box,
@@ -63,7 +62,6 @@ const DefendantInfo: FC<Props> = (props) => {
     updateDefendantState,
     children,
   } = props
-  const { formatMessage } = useIntl()
 
   // Tracks whether the user has actively edited the national id this session.
   // On load/refresh this is false, so an existing defendant's name/address are
@@ -84,9 +82,9 @@ const DefendantInfo: FC<Props> = (props) => {
   )
 
   const genderOptions: ReactSelectOption[] = [
-    { label: formatMessage(core.male), value: Gender.MALE },
-    { label: formatMessage(core.female), value: Gender.FEMALE },
-    { label: formatMessage(core.otherGender), value: Gender.OTHER },
+    { label: core.male, value: Gender.MALE },
+    { label: core.female, value: Gender.FEMALE },
+    { label: core.otherGender, value: Gender.OTHER },
   ]
 
   const [accusedAddressErrorMessage, setAccusedAddressErrorMessage] =
@@ -225,7 +223,7 @@ const DefendantInfo: FC<Props> = (props) => {
         />
         {defendant.nationalId?.length === 11 && notFound && (
           <Text color="red600" variant="eyebrow" marginTop={1}>
-            {formatMessage(core.nationalIdNotFoundInNationalRegistry)}
+            {core.nationalIdNotFoundInNationalRegistry}
           </Text>
         )}
       </div>
@@ -254,8 +252,8 @@ const DefendantInfo: FC<Props> = (props) => {
         data-testid="accusedAddress"
         name="accusedAddress"
         autoComplete="off"
-        label={formatMessage(core.addressOrResidence)}
-        placeholder={formatMessage(core.addressOrResidence)}
+        label={core.addressOrResidence}
+        placeholder={core.addressOrResidence}
         value={defendant.address ?? ''}
         errorMessage={accusedAddressErrorMessage}
         hasError={
@@ -303,9 +301,9 @@ const DefendantInfo: FC<Props> = (props) => {
           <GridColumn span="6/12">
             <Select
               name="defendantGender"
-              placeholder={formatMessage(core.selectGender)}
+              placeholder={core.selectGender}
               options={genderOptions}
-              label={formatMessage(core.gender)}
+              label={core.gender}
               value={
                 genderOptions.find(
                   (option) => option.value === defendant.gender,
@@ -326,8 +324,8 @@ const DefendantInfo: FC<Props> = (props) => {
             <Input
               name="defendantCitizenship"
               autoComplete="off"
-              label={formatMessage(core.citizenship)}
-              placeholder={formatMessage(core.selectCitizenship)}
+              label={core.citizenship}
+              placeholder={core.selectCitizenship}
               value={defendant.citizenship ?? ''}
               onChange={(evt) => {
                 updateDefendantState(

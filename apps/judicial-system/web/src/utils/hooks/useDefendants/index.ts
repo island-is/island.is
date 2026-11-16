@@ -1,6 +1,5 @@
 import type { Dispatch, SetStateAction } from 'react'
 import { useCallback } from 'react'
-import { useIntl } from 'react-intl'
 
 import { errors } from '@island.is/judicial-system-web/messages'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
@@ -19,8 +18,6 @@ import { useUpdateDefendantMutation } from './updateDefendant.generated'
 import { useUpdateDefendantsMutation } from './updateDefendants.generated'
 
 const useDefendants = () => {
-  const { formatMessage } = useIntl()
-
   const [createDefendantMutation, { loading: isCreatingDefendant }] =
     useCreateDefendantMutation()
 
@@ -64,12 +61,12 @@ const useDefendants = () => {
 
         return defendantId
       } catch {
-        toast.error(formatMessage(errors.createDefendant))
+        toast.error(errors.createDefendant)
 
         return undefined
       }
     },
-    [createDefendantMutation, formatMessage, isCreatingDefendant],
+    [createDefendantMutation, isCreatingDefendant],
   )
 
   // Resolves to whether the defendant was deleted. The server can answer
@@ -88,12 +85,12 @@ const useDefendants = () => {
 
         return true
       } catch {
-        toast.error(formatMessage(errors.deleteDefendant))
+        toast.error(errors.deleteDefendant)
 
         return false
       }
     },
-    [deleteDefendantMutation, formatMessage],
+    [deleteDefendantMutation],
   )
 
   const updateDefendant = useCallback(
@@ -114,12 +111,12 @@ const useDefendants = () => {
 
         return Boolean(data)
       } catch {
-        toast.error(formatMessage(errors.updateDefendant))
+        toast.error(errors.updateDefendant)
 
         return false
       }
     },
-    [formatMessage, updateDefendantMutation],
+    [updateDefendantMutation],
   )
 
   // One request for many defendants of a case, so the server locks and reads
@@ -144,12 +141,12 @@ const useDefendants = () => {
 
         return Boolean(data?.updateDefendants)
       } catch {
-        toast.error(formatMessage(errors.updateDefendant))
+        toast.error(errors.updateDefendant)
 
         return false
       }
     },
-    [formatMessage, updateDefendantsMutation],
+    [updateDefendantsMutation],
   )
 
   const limitedAccessUpdateDefendant = useCallback(
@@ -167,12 +164,12 @@ const useDefendants = () => {
 
         return Boolean(data)
       } catch {
-        toast.error(formatMessage(errors.updateDefendant))
+        toast.error(errors.updateDefendant)
 
         return false
       }
     },
-    [formatMessage, limitedAccessUpdateDefendantMutation],
+    [limitedAccessUpdateDefendantMutation],
   )
 
   const updateDefendantState = useCallback(

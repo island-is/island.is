@@ -176,6 +176,44 @@ describe('canPerformAppealSummonsAction', () => {
     ).toBe(false)
   })
 
+  it('lets staff send a confirmed, in-service or CoA-sent summons to service', () => {
+    expect(
+      canPerformAppealSummonsAction(
+        AppealSummonsAction.SEND_TO_SERVICE,
+        confirmed,
+        staff,
+      ),
+    ).toBe(true)
+    expect(
+      canPerformAppealSummonsAction(
+        AppealSummonsAction.SEND_TO_SERVICE,
+        inService,
+        staff,
+      ),
+    ).toBe(true)
+    expect(
+      canPerformAppealSummonsAction(
+        AppealSummonsAction.SEND_TO_SERVICE,
+        sent,
+        staff,
+      ),
+    ).toBe(true)
+    expect(
+      canPerformAppealSummonsAction(
+        AppealSummonsAction.SEND_TO_SERVICE,
+        draft,
+        staff,
+      ),
+    ).toBe(false)
+    expect(
+      canPerformAppealSummonsAction(
+        AppealSummonsAction.SEND_TO_SERVICE,
+        confirmed,
+        publicProsecutor,
+      ),
+    ).toBe(false)
+  })
+
   it('lets staff send a confirmed or in-service summons to the court of appeals', () => {
     expect(
       canPerformAppealSummonsAction(
@@ -252,6 +290,13 @@ describe('canPerformAppealSummonsAction', () => {
       ).toBe(false)
       expect(
         canPerformAppealSummonsAction(AppealSummonsAction.OPEN, draft, user),
+      ).toBe(false)
+      expect(
+        canPerformAppealSummonsAction(
+          AppealSummonsAction.SEND_TO_SERVICE,
+          confirmed,
+          user,
+        ),
       ).toBe(false)
       expect(
         canPerformAppealSummonsAction(

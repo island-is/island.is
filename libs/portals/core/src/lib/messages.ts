@@ -18,6 +18,14 @@ export const m = defineMessages({
     defaultMessage: 'Umboð vantar',
     id: 'portals:access-needed-text',
   },
+  requestDelegationCta: {
+    defaultMessage: 'Biðja um umboð',
+    id: 'portals:request-delegation-cta',
+  },
+  accessNotAvailableForActorsTitle: {
+    defaultMessage: 'Þú hefur ekki aðgang til að skoða þessar upplýsingar',
+    id: 'portals:access-not-available-for-actors-title',
+  },
   buttonCancel: {
     defaultMessage: 'Hætta við',
     description: 'Cancel',

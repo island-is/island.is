@@ -1,16 +1,13 @@
 import React from 'react'
-import { DynamicColorIOS, Image, Platform } from 'react-native'
+import { Image } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import illustrationSrc from '../../assets/illustrations/digital-services-m1.png'
 import gridDotSrc from '../../assets/illustrations/grid-dot.png'
-import { dynamicColor } from '../../utils'
+import { token } from '../../utils'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Host = styled.SafeAreaView<{ isBottom: boolean }>`
-  background-color: ${dynamicColor((props) => ({
-    light: props.theme.color.blue100,
-    dark: props.theme.shades.dark.background,
-  }))};
+  background-color: ${token((t) => t.background.brandMinimal)};
   height: ${({ isBottom }) => (isBottom ? '360px' : '400px')};
   max-height: 50%;
   align-items: center;
@@ -47,13 +44,7 @@ export function Illustration({ isBottomAligned = false }: IllustrationProps) {
           style={{
             width: '100%',
             height: '100%',
-            tintColor:
-              Platform.OS === 'android'
-                ? theme.color.blue200
-                : DynamicColorIOS({
-                    light: theme.color.blue200,
-                    dark: 'rgba(204, 223, 255, 0.20)',
-                  }),
+            tintColor: theme.tokens.background.brandLighter,
           }}
           resizeMode="repeat"
         />

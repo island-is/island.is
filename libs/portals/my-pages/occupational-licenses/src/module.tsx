@@ -50,6 +50,7 @@ export const occupationalLicensesModule: PortalModule = {
       path: OccupationalLicensesPaths.SailorsRoot,
       key: Features.isServicePortalSailorsPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.ships),
+      requiredScopes: [ApiScope.ships],
       element: (
         <Navigate
           to={OccupationalLicensesPaths.SailorsSchoolCertificates}
@@ -62,6 +63,7 @@ export const occupationalLicensesModule: PortalModule = {
       path: OccupationalLicensesPaths.SailorsSchoolCertificates,
       key: Features.isServicePortalSailorsPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.ships),
+      requiredScopes: [ApiScope.ships],
       element: <CompetencyCertificatesScreen />,
     },
     {
@@ -69,6 +71,7 @@ export const occupationalLicensesModule: PortalModule = {
       path: OccupationalLicensesPaths.SailorsRightCertificates,
       key: Features.isServicePortalSailorsPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.ships),
+      requiredScopes: [ApiScope.ships],
       element: <RightCertificatesScreen />,
     },
     {
@@ -76,6 +79,7 @@ export const occupationalLicensesModule: PortalModule = {
       path: OccupationalLicensesPaths.SailorsCrewRegistrations,
       key: Features.isServicePortalSailorsPageEnabled,
       enabled: userInfo.scopes.includes(ApiScope.ships),
+      requiredScopes: [ApiScope.ships],
       element: <LegalRegistrationsScreen />,
     },
   ],

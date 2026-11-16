@@ -1,0 +1,7 @@
+export enum DelegationRequestError {
+  TooManyPending = 'DELEGATION_REQUEST_TOO_MANY_PENDING',
+  Blocked = 'DELEGATION_REQUEST_BLOCKED',
+  RateLimited = 'DELEGATION_REQUEST_RATE_LIMITED',
+  GrantorRateLimited = 'DELEGATION_REQUEST_GRANTOR_RATE_LIMITED',
+  DuplicatePending = 'DELEGATION_REQUEST_DUPLICATE_PENDING',
+}

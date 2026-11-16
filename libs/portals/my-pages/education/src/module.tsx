@@ -1,8 +1,10 @@
 import { lazy } from 'react'
 import { ApiScope } from '@island.is/auth/scopes'
+import { Features } from '@island.is/react/feature-flags'
 import { UniversityCareersStudyType } from '@island.is/api/schema'
 import { PortalModule } from '@island.is/portals/core'
 import { EducationPaths } from './lib/paths'
+import { primarySchoolKeyInfoMessages as kim } from './lib/messages'
 import { Navigate } from 'react-router-dom'
 import { primarySchoolStudentLoader } from './screens/PrimarySchool/PrimarySchoolStudent/PrimarySchoolStudent.loader'
 import {
@@ -72,7 +74,34 @@ const PrimarySchoolAssessment = lazy(() =>
   ),
 )
 
+const PrimarySchoolContactAdd = lazy(() =>
+  import(
+    './screens/PrimarySchool/PrimarySchoolOverview/keyInfo/edit/EmergencyContactAdd'
+  ),
+)
+
+const PrimarySchoolContactEdit = lazy(() =>
+  import(
+    './screens/PrimarySchool/PrimarySchoolOverview/keyInfo/edit/EmergencyContactEdit'
+  ),
+)
+
+const PrimarySchoolLanguageEdit = lazy(() =>
+  import(
+    './screens/PrimarySchool/PrimarySchoolOverview/keyInfo/edit/LanguageProfileEdit'
+  ),
+)
+
+const PrimarySchoolHealthEdit = lazy(() =>
+  import(
+    './screens/PrimarySchool/PrimarySchoolOverview/keyInfo/edit/HealthProfileEdit'
+  ),
+)
+
 const PRIMARY_SCHOOL_FLAG = 'PrimarySchool'
+// Key information (lykilupplýsingar) has its own flag, so the edit screens can
+// stay unreachable while the rest of the primary-school page is live.
+const KEY_INFO_FLAG = Features.isServicePortalPrimarySchoolKeyInfoEnabled
 const MICRO_CREDENTIALS_FLAG = 'UniversityMicroCredentials'
 
 export const educationModule: PortalModule = {
@@ -83,6 +112,7 @@ export const educationModule: PortalModule = {
       name: 'Menntun',
       path: EducationPaths.EducationRoot,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: <Navigate to={EducationPaths.EducationPrimarySchool} replace />,
     },
 
@@ -91,6 +121,7 @@ export const educationModule: PortalModule = {
       name: 'Grunnskóli',
       path: EducationPaths.EducationPrimarySchool,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       loader: primarySchoolGateLoader({ userInfo, ...rest }),
       element: <PrimarySchool />,
     },
@@ -98,6 +129,7 @@ export const educationModule: PortalModule = {
       name: 'Námsmat',
       path: EducationPaths.EducationAssessment,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       loader: educationAssessmentGateLoader({ userInfo, ...rest }),
       element: <EducationCareer />,
     },
@@ -108,6 +140,7 @@ export const educationModule: PortalModule = {
       path: EducationPaths.PrimarySchoolList,
       key: PRIMARY_SCHOOL_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: <PrimarySchool />,
     },
     {
@@ -115,6 +148,7 @@ export const educationModule: PortalModule = {
       path: EducationPaths.PrimarySchoolStudent,
       key: PRIMARY_SCHOOL_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: <Navigate to="yfirlit" replace />,
     },
     {
@@ -122,6 +156,7 @@ export const educationModule: PortalModule = {
       path: EducationPaths.PrimarySchoolOverview,
       key: PRIMARY_SCHOOL_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       loader: primarySchoolStudentLoader({ userInfo, ...rest }),
       element: (
         <PrimarySchoolStudentWrapper>
@@ -130,10 +165,79 @@ export const educationModule: PortalModule = {
       ),
     },
     {
+      name: 'Bæta við aðstandanda',
+      path: EducationPaths.PrimarySchoolContactAdd,
+      key: KEY_INFO_FLAG,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
+      loader: primarySchoolStudentLoader({ userInfo, ...rest }),
+      element: (
+        <PrimarySchoolStudentWrapper
+          hideTabs
+          title={kim.contactAddTitle}
+          intro={kim.contactAddIntro}
+        >
+          <PrimarySchoolContactAdd />
+        </PrimarySchoolStudentWrapper>
+      ),
+    },
+    {
+      name: 'Breyta tengslum',
+      path: EducationPaths.PrimarySchoolContactEdit,
+      key: KEY_INFO_FLAG,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
+      loader: primarySchoolStudentLoader({ userInfo, ...rest }),
+      element: (
+        <PrimarySchoolStudentWrapper
+          hideTabs
+          title={kim.contactEditTitle}
+          intro={kim.contactEditIntro}
+        >
+          <PrimarySchoolContactEdit />
+        </PrimarySchoolStudentWrapper>
+      ),
+    },
+    {
+      name: 'Breyta tungumálaumhverfi',
+      path: EducationPaths.PrimarySchoolLanguageEdit,
+      key: KEY_INFO_FLAG,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
+      loader: primarySchoolStudentLoader({ userInfo, ...rest }),
+      element: (
+        <PrimarySchoolStudentWrapper
+          hideTabs
+          title={kim.languageEditTitle}
+          intro={kim.languageEditIntro}
+        >
+          <PrimarySchoolLanguageEdit />
+        </PrimarySchoolStudentWrapper>
+      ),
+    },
+    {
+      name: 'Breyta heilsufarsupplýsingum',
+      path: EducationPaths.PrimarySchoolHealthEdit,
+      key: KEY_INFO_FLAG,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
+      loader: primarySchoolStudentLoader({ userInfo, ...rest }),
+      element: (
+        <PrimarySchoolStudentWrapper
+          hideTabs
+          title={kim.healthEditTitle}
+          intro={kim.healthEditIntro}
+        >
+          <PrimarySchoolHealthEdit />
+        </PrimarySchoolStudentWrapper>
+      ),
+    },
+    {
       name: 'Námsmat',
       path: EducationPaths.PrimarySchoolAssessment,
       key: PRIMARY_SCHOOL_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       loader: primarySchoolStudentLoader({ userInfo, ...rest }),
       element: (
         <PrimarySchoolStudentWrapper>
@@ -147,6 +251,7 @@ export const educationModule: PortalModule = {
       name: 'Framhaldsskóli',
       path: EducationPaths.EducationFramhskoli,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: (
         <Navigate to={EducationPaths.EducationFramhskoliCareer} replace />
       ),
@@ -155,24 +260,28 @@ export const educationModule: PortalModule = {
       name: 'Framhaldsskóli - Námsferill',
       path: EducationPaths.EducationFramhskoliCareer,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: <SecondarySchoolCareer />,
     },
     {
       name: 'Útskriftaryfirlit',
       path: EducationPaths.EducationFramhskoliGraduationOverview,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: <SecondarySchoolGraduationOverview />,
     },
     {
       name: 'Útskriftarferill',
       path: EducationPaths.EducationFramhskoliGraduationSingle,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: <SecondarySchoolGraduationSingle />,
     },
     {
       name: 'Útskriftarferill nánar',
       path: EducationPaths.EducationFramhskoliGraduationDetail,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: <SecondarySchoolGraduationDetail />,
     },
 
@@ -181,6 +290,7 @@ export const educationModule: PortalModule = {
       name: 'Háskóli',
       path: EducationPaths.EducationHaskoli,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: (
         <Navigate to={EducationPaths.EducationHaskoliGraduation} replace />
       ),
@@ -189,6 +299,7 @@ export const educationModule: PortalModule = {
       name: 'Brautskráning',
       path: EducationPaths.EducationHaskoliGraduation,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: (
         <UniversityGraduation
           studyType={UniversityCareersStudyType.UNIVERSITY_STUDIES}
@@ -199,6 +310,7 @@ export const educationModule: PortalModule = {
       name: 'Brautskráning - nánar ',
       path: EducationPaths.EducationHaskoliGraduationDetail,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: (
         <UniversityGraduationDetail
           studyType={UniversityCareersStudyType.UNIVERSITY_STUDIES}
@@ -212,6 +324,7 @@ export const educationModule: PortalModule = {
       path: EducationPaths.EducationHaskoliMicroCredentials,
       key: MICRO_CREDENTIALS_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: (
         <UniversityGraduation
           studyType={UniversityCareersStudyType.MICRO_CREDENTIALS}
@@ -223,6 +336,7 @@ export const educationModule: PortalModule = {
       path: EducationPaths.EducationHaskoliMicroCredentialsDetail,
       key: MICRO_CREDENTIALS_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: (
         <UniversityGraduationDetail
           studyType={UniversityCareersStudyType.MICRO_CREDENTIALS}
@@ -235,6 +349,7 @@ export const educationModule: PortalModule = {
       name: 'Ökunám',
       path: EducationPaths.EducationDrivingLessons,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       dynamic: true,
       element: <DrivingLessonsBook />,
     },

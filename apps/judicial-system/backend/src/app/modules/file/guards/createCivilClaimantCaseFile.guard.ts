@@ -11,7 +11,9 @@ import {
   isCourtOfAppealsUser,
 } from '@island.is/judicial-system/types'
 
-const allowedCaseFileCategories = [CaseFileCategory.CIVIL_CLAIM]
+// The prosecution's files on a civil claimant. The route also admits the court
+// of appeals, which has no part in them.
+const prosecutionCaseFileCategories = [CaseFileCategory.CIVIL_CLAIM]
 
 // The court of appeals files a civil claimant's verdict appeal statement on
 // the claimant's behalf when it arrives outside the system. The claimant's
@@ -30,7 +32,10 @@ export class CreateCivilClaimantCaseFileGuard implements CanActivate {
     const user: User | undefined = request.user?.currentUser
     const caseFileCategory: CaseFileCategory = request.body?.category
 
-    if (allowedCaseFileCategories.includes(caseFileCategory)) {
+    if (
+      !isCourtOfAppealsUser(user) &&
+      prosecutionCaseFileCategories.includes(caseFileCategory)
+    ) {
       return true
     }
 

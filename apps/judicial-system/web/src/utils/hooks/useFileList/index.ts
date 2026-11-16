@@ -1,5 +1,4 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { validate as validateUuid } from 'uuid'
 import type { ApolloError } from '@apollo/client'
 
@@ -53,7 +52,6 @@ interface Parameters {
 const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
   const { limitedAccess } = useContext(UserContext)
   const { setWorkingCase } = useContext(FormContext)
-  const { formatMessage } = useIntl()
   const isMobile = useIsMobile()
   const [fileNotFound, setFileNotFound] = useState<boolean>()
 
@@ -64,14 +62,11 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
     [isMobile],
   )
 
-  const reportOpenFailure = useCallback(
-    (error: ApolloError) => {
-      if (!isFileNotFoundError(error)) {
-        toast.error(formatMessage(errors.openDocument))
-      }
-    },
-    [formatMessage],
-  )
+  const reportOpenFailure = useCallback((error: ApolloError) => {
+    if (!isFileNotFoundError(error)) {
+      toast.error(errors.openDocument)
+    }
+  }, [])
 
   // Lazy queries
   const [getSignedUrl, fullAccessQueryState] = useGetSignedUrlLazyQuery({
@@ -155,7 +150,7 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
               ?.limitedAccessGetSignedUrl?.url
           : (data as GetSignedUrlQuery | undefined)?.getSignedUrl?.url
       } catch {
-        toast.error(formatMessage(errors.openDocument))
+        toast.error(errors.openDocument)
         return undefined
       }
     },
@@ -165,7 +160,6 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
       getSignedUrl,
       connectedCaseParentId,
       caseId,
-      formatMessage,
     ],
   )
 

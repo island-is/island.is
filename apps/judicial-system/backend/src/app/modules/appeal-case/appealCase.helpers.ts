@@ -554,32 +554,44 @@ export const userIsAppellant = (
   }
 
   // Indictment defence: the user must be the current confirmed representative of
-  // a party (defendant / civil claimant) that appealed. Resolving live against
-  // the case follows defender / spokesperson reassignment. A prosecution
-  // event names a defendant too - the one whose verdict the prosecution
-  // appealed - and that does not make the defendant's defender an appellant.
+  // a party (defendant / civil claimant) that appealed — district or court of
+  // appeals confirmation. Resolving live against the case follows defender /
+  // spokesperson reassignment. A prosecution event names a defendant too - the
+  // one whose verdict the prosecution appealed - and that does not make the
+  // defendant's defender an appellant.
   return appealedEvents.some((eventLog) => {
     if (prosecutionRoles.includes(eventLog.userRole)) {
       return false
     }
 
     if (eventLog.defendantId) {
+      const defendants = theCase.defendants?.filter(
+        (d) => d.id === eventLog.defendantId,
+      )
+
       return Boolean(
-        Defendant.isConfirmedDefenderOfDefendant(
-          user.nationalId,
-          theCase.defendants?.filter((d) => d.id === eventLog.defendantId),
-        ),
+        Defendant.isConfirmedDefenderOfDefendant(user.nationalId, defendants) ||
+          Defendant.isConfirmedAppealDefenderOfDefendant(
+            user.nationalId,
+            defendants,
+          ),
       )
     }
 
     if (eventLog.civilClaimantId) {
+      const civilClaimants = theCase.civilClaimants?.filter(
+        (c) => c.id === eventLog.civilClaimantId,
+      )
+
       return Boolean(
         CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
           user.nationalId,
-          theCase.civilClaimants?.filter(
-            (c) => c.id === eventLog.civilClaimantId,
+          civilClaimants,
+        ) ||
+          CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
+            user.nationalId,
+            civilClaimants,
           ),
-        ),
       )
     }
 

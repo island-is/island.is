@@ -4,12 +4,15 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
+import { shouldShowCertificateForSicknessAndRehabilitation } from '../../utils/conditionUtils'
 
 export const certificateForSicknessAndRehabilitationSection = buildSection({
   id: 'certificateForSicknessAndRehabilitationSection',
   title:
     medicalAndRehabilitationPaymentsFormMessage
       .certificateForSicknessAndRehabilitation.sectionTitle,
+  condition: (_, externalData) =>
+    shouldShowCertificateForSicknessAndRehabilitation(externalData),
   children: [
     buildMultiField({
       id: 'certificateForSicknessAndRehabilitation',

@@ -32,6 +32,11 @@ import { GetPaymentFlowsResponse } from './dto/getPaymentFlows.response'
 import { ValidateApplePayMerchantResponse } from './dto/validateApplePayMerchant.response'
 import { ApplePayChargeResponse } from './dto/applePayCharge.response'
 import { ApplePayChargeInput } from './dto/applePayCharge.input'
+import {
+  GooglePayChargeInput,
+  GooglePayChargeVerifiedInput,
+} from './dto/googlePayCharge.input'
+import { GooglePayChargeResponse } from './dto/googlePayCharge.response'
 import { CreateBankTransferInput } from './dto/createBankTransfer.input'
 import { CreateBankTransferResponse } from './dto/createBankTransfer.response'
 import { VerifyBankTransferInput } from './dto/verifyBankTransfer.input'
@@ -274,6 +279,48 @@ export class PaymentsService {
     )
 
     const { isSuccess, responseCode } = response
+
+    return {
+      isSuccess,
+      responseCode,
+    }
+  }
+
+  async chargeGooglePay(
+    googlePayChargeInput: GooglePayChargeInput,
+    payerRequestInfo: PayerRequestInfo,
+  ): Promise<GooglePayChargeResponse> {
+    const { browserInfo, ...chargeInput } = googlePayChargeInput
+
+    const { status, payment, verification } =
+      await this.paymentsApi.cardPaymentControllerChargeGooglePay({
+        googlePayChargeInput: {
+          ...chargeInput,
+          // As for verifyCard: the payer's own request, derived server-side
+          browserInfo: browserInfo && {
+            ...browserInfo,
+            ...payerRequestInfo,
+          },
+        },
+      })
+
+    return {
+      status,
+      payment: payment && {
+        isSuccess: payment.isSuccess,
+        responseCode: payment.responseCode,
+      },
+      verification,
+    }
+  }
+
+  async chargeGooglePayVerified(
+    googlePayChargeVerifiedInput: GooglePayChargeVerifiedInput,
+  ): Promise<ChargeCardResponse> {
+    const { isSuccess, responseCode } =
+      await this.paymentsApi.cardPaymentControllerChargeGooglePayVerified({
+        googlePayChargeVerifiedInput,
+      })
 
     return {
       isSuccess,

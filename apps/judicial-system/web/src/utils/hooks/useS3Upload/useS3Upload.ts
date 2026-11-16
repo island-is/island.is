@@ -1,5 +1,4 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { v4 as uuid } from 'uuid'
 
 import type { UploadFile } from '@island.is/island-ui/core'
@@ -41,7 +40,6 @@ import type { LimitedAccessCreatePresignedPostMutation } from './limitedAccessCr
 import { useLimitedAccessCreatePresignedPostMutation } from './limitedAccessCreatePresignedPost.generated'
 import type { LimitedAccessDeleteFileMutation } from './limitedAccessDeleteFile.generated'
 import { useLimitedAccessDeleteFileMutation } from './limitedAccessDeleteFile.generated'
-import { useReplaceIndictmentPdfMutation } from './replaceIndictmentPdf.generated'
 import { useUploadCriminalRecordFileMutation } from './uploadCriminalRecordFile.generated'
 import { useUploadPoliceCaseFileMutation } from './uploadPoliceCaseFile.generated'
 import { strings } from './useS3Upload.strings'
@@ -224,7 +222,6 @@ const useS3Upload = (
   rulingFileId?: string | null,
 ) => {
   const { limitedAccess } = useContext(UserContext)
-  const { formatMessage } = useIntl()
 
   const [createPresignedPost] = useCreatePresignedPostMutation()
   const [limitedAccessCreatePresignedPost] =
@@ -242,8 +239,6 @@ const useS3Upload = (
   const [uploadPoliceCaseFile] = useUploadPoliceCaseFileMutation()
   const [uploadCriminalRecordFile] = useUploadCriminalRecordFileMutation()
   const [attachRulingOrderDocument] = useAttachRulingOrderDocumentMutation()
-  const [replaceIndictmentPdf] = useReplaceIndictmentPdfMutation()
-
   const getPresignedPost = useCallback(
     async (file: TUploadFile) => {
       const mutation = limitedAccess
@@ -423,7 +418,7 @@ const useS3Upload = (
 
           return true
         } catch {
-          toast.error(formatMessage(strings.uploadFailed))
+          toast.error(strings.uploadFailed)
           updateFile({ ...file, percent: 0, status: FileUploadStatus.error })
 
           return false
@@ -442,7 +437,7 @@ const useS3Upload = (
         return 'NONE_SUCCEEDED'
       })
     },
-    [getPresignedPost, addFileToCaseState, formatMessage],
+    [getPresignedPost, addFileToCaseState],
   )
 
   // The district court writes up a ruling order that was pronounced orally and
@@ -491,46 +486,13 @@ const useS3Upload = (
 
         return true
       } catch {
-        toast.error(formatMessage(strings.uploadFailed))
+        toast.error(strings.uploadFailed)
         updateFile({ ...file, percent: 0, status: FileUploadStatus.error })
 
         return false
       }
     },
-    [attachRulingOrderDocument, caseId, getPresignedPost, formatMessage],
-  )
-
-  const handleReplaceIndictmentPdf = useCallback(
-    async (file: File) => {
-      const uploadFile: TUploadFile = {
-        id: uuid(),
-        name: file.name,
-        type: file.type,
-        size: file.size,
-        originalFileObj: file,
-      }
-
-      try {
-        const presignedPost = await getPresignedPost(uploadFile)
-
-        await uploadToS3(uploadFile, presignedPost, () => undefined)
-
-        const { data } = await replaceIndictmentPdf({
-          variables: { input: { caseId, key: presignedPost.key } },
-        })
-
-        if (!data?.replaceIndictmentPdf?.success) {
-          throw Error('Failed to replace the indictment')
-        }
-
-        return true
-      } catch {
-        toast.error('Ekki tókst að skipta út ákæru')
-
-        return false
-      }
-    },
-    [caseId, getPresignedPost, replaceIndictmentPdf],
+    [attachRulingOrderDocument, caseId, getPresignedPost],
   )
 
   const handleUploadCriminalRecord = (
@@ -600,7 +562,7 @@ const useS3Upload = (
               logMessage: 'Defendant has no national id',
             })
           } else {
-            toast.error(formatMessage(strings.uploadFailed))
+            toast.error(strings.uploadFailed)
             updateFile({
               ...commonFileProps,
               percent: 0,
@@ -652,14 +614,14 @@ const useS3Upload = (
             )
           })
           .catch(() => {
-            toast.error(formatMessage(strings.uploadFailed))
+            toast.error(strings.uploadFailed)
             callback(file)
           })
       })
 
       return Promise.all(promises)
     },
-    [uploadPoliceCaseFile, caseId, addFileToCaseState, formatMessage],
+    [uploadPoliceCaseFile, caseId, addFileToCaseState],
   )
 
   const handleRetry = useCallback(
@@ -718,10 +680,10 @@ const useS3Upload = (
           callback && callback(file)
         }
       } catch {
-        toast.error(formatMessage(strings.removeFailed))
+        toast.error(strings.removeFailed)
       }
     },
-    [formatMessage, limitedAccess, remove],
+    [limitedAccess, remove],
   )
 
   return {
@@ -731,7 +693,6 @@ const useS3Upload = (
     handleUploadFromPolice,
     handleUploadCriminalRecord,
     handleUploadRulingOrderDocument,
-    handleReplaceIndictmentPdf,
   }
 }
 

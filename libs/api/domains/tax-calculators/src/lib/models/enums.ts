@@ -16,17 +16,12 @@ export enum TaxCalculatorInputFieldType {
 registerEnumType(TaxCalculatorInputFieldType, {
   name: 'TaxCalculatorInputFieldType',
   valuesMap: {
-    DATE: {
-      description: 'Calendar date encoded as `yyyy-MM-dd`.',
-    },
     SELECT: {
       description: 'One of the field’s `options` values.',
     },
   },
 })
 
-/* Numeric semantics identify value meaning; selected semantics also define
- * validated ranges. */
 export enum TaxCalculatorInputFieldSemantic {
   CURRENCY = 'currency',
   PERCENTAGE = 'percentage',
@@ -55,16 +50,17 @@ export enum TaxCalculatorOutputFieldType {
   BOOLEAN = 'boolean',
   DATE = 'date',
   ARRAY = 'array',
+  OBJECT = 'object',
 }
 
 registerEnumType(TaxCalculatorOutputFieldType, {
   name: 'TaxCalculatorOutputFieldType',
   valuesMap: {
-    DATE: {
-      description: 'Calendar date encoded as `yyyy-MM-dd`.',
-    },
     ARRAY: {
       description: 'Sequence of rows.',
+    },
+    OBJECT: {
+      description: 'Single row.',
     },
   },
 })

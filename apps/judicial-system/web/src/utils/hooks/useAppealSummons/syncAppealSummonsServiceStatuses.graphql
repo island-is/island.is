@@ -1,0 +1,18 @@
+mutation SyncAppealSummonsServiceStatuses(
+  $input: SyncAppealSummonsServiceStatusesInput!
+) {
+  syncAppealSummonsServiceStatuses(input: $input) {
+    id
+    services {
+      id
+      defendantId
+      civilClaimantId
+      sentToServiceDate
+      externalPoliceDocumentId
+      serviceStatus
+      serviceDate
+      servedBy
+      comment
+    }
+  }
+}

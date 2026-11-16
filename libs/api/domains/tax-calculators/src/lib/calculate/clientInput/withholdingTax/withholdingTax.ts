@@ -1,47 +1,41 @@
-import {
-  EMPLOYER_PENSION_MATCH_RATIOS,
-  MARITAL_STATUSES,
-  PAYMENT_FREQUENCIES,
-  PENSION_FUND_RATIOS,
-  PRIVATE_PENSION_RATIOS,
-} from '@island.is/clients/rsk/calculators'
 import type { WithholdingTaxInput } from '@island.is/clients/rsk/calculators'
+import {
+  HjuskaparstadaStadgreidsla,
+  LaunGreidast,
+  Manudur,
+} from '@island.is/clients/rsk/calculators'
 
 import type { SubmittedValues } from '../../submission/submission'
-import { numberAt, optionAt } from '../validation'
+import { numberAt, requireNumberAt, requireOptionAt } from '../validation'
 
-/* All fields are optional; upstream defaults fill missing values. */
 export const toWithholdingTaxInput = (
   values: SubmittedValues,
 ): WithholdingTaxInput => ({
-  paymentFrequency: optionAt(values, 'paymentFrequency', PAYMENT_FREQUENCIES),
-  maritalStatus: optionAt(values, 'maritalStatus', MARITAL_STATUSES),
-  incomeYear: numberAt(values, 'incomeYear'),
-  payMonth: numberAt(values, 'payMonth'),
-  salary: numberAt(values, 'salary'),
-  pensionFundRatio: optionAt(values, 'pensionFundRatio', PENSION_FUND_RATIOS),
-  privatePensionRatio: optionAt(
+  launGreidast: requireOptionAt(
     values,
-    'privatePensionRatio',
-    PRIVATE_PENSION_RATIOS,
+    'launGreidast',
+    Object.values(LaunGreidast),
   ),
-  taxCardUtilization: numberAt(values, 'taxCardUtilization'),
-  spouseTaxCardUtilization: numberAt(values, 'spouseTaxCardUtilization'),
-  accumulatedPersonalTaxCredit: numberAt(
+  hjuskaparstada: requireOptionAt(
     values,
-    'accumulatedPersonalTaxCredit',
+    'hjuskaparstada',
+    Object.values(HjuskaparstadaStadgreidsla),
   ),
-  vacationPay: numberAt(values, 'vacationPay'),
-  unionDues: numberAt(values, 'unionDues'),
-  otherDeduction: numberAt(values, 'otherDeduction'),
-  employerPensionMatchRatio: optionAt(
+  tekjuar: requireNumberAt(values, 'tekjuar'),
+  launamanudur: requireOptionAt(values, 'launamanudur', Object.values(Manudur)),
+  laun: requireNumberAt(values, 'laun'),
+  lifeyrissjodurHlutfall: requireNumberAt(values, 'lifeyrissjodurHlutfall'),
+  sereignHlutfall: numberAt(values, 'sereignHlutfall'),
+  nytingSkattkorts: requireNumberAt(values, 'nytingSkattkorts'),
+  nytingSkattkortsMaka: numberAt(values, 'nytingSkattkortsMaka'),
+  uppsafnadurPersonuafslattur: numberAt(values, 'uppsafnadurPersonuafslattur'),
+  orlof: numberAt(values, 'orlof'),
+  stettarfelag: numberAt(values, 'stettarfelag'),
+  annad: numberAt(values, 'annad'),
+  motframlagLifeyrissjodur: numberAt(values, 'motframlagLifeyrissjodur'),
+  okutaekjastyrkurUtan: numberAt(values, 'okutaekjastyrkurUtan'),
+  idgjaldSlysatryggingSjomanna: numberAt(
     values,
-    'employerPensionMatchRatio',
-    EMPLOYER_PENSION_MATCH_RATIOS,
-  ),
-  vehicleAllowance: numberAt(values, 'vehicleAllowance'),
-  seamenAccidentInsurancePremium: numberAt(
-    values,
-    'seamenAccidentInsurancePremium',
+    'idgjaldSlysatryggingSjomanna',
   ),
 })

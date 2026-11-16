@@ -85,7 +85,6 @@ import { UpdateCase } from '../repository'
 import { UserService } from '../user'
 import { CaseAppealDecisionDto } from './dto/caseAppealDecision.dto'
 import { CreateCaseDto } from './dto/createCase.dto'
-import { ReplaceIndictmentPdfDto } from './dto/replaceIndictmentPdf.dto'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
@@ -116,12 +115,10 @@ import {
   CasesInterceptor,
 } from './interceptors/case.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
-import { ReplaceIndictmentPdfResponse } from './models/replaceIndictmentPdf.response'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
 import { CaseCloningService } from './caseCloning.service'
-import { canReplaceIndictmentPdf } from './indictmentPdfReplacement'
 import { PdfService } from './pdf.service'
 
 @Controller('api')
@@ -139,12 +136,21 @@ export class CaseController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
+  // The three validators below read a user while the route's guard holds the
+  // case row's lock in the request's transaction, so they read in that
+  // transaction. A read outside it needs a second pool connection, and under
+  // concurrent updates of the same case the other connections are held by
+  // requests blocked on that very lock - the pool wedges until the acquire
+  // timeout fails everything in it.
   private async validateAssignedUser(
     assignedUserId: string,
     assignableUserRoles: UserRole[],
-    institutionId?: string,
+    institutionId: string | undefined,
+    transaction: Transaction,
   ) {
-    const assignedUser = await this.userService.findById(assignedUserId)
+    const assignedUser = await this.userService.findById(assignedUserId, {
+      transaction,
+    })
 
     if (!assignableUserRoles.includes(assignedUser.role)) {
       throw new ForbiddenException(
@@ -163,8 +169,11 @@ export class CaseController {
     approverId: string,
     theCase: Case,
     user: User,
+    transaction: Transaction,
   ) {
-    const approver = await this.userService.findById(approverId)
+    const approver = await this.userService.findById(approverId, {
+      transaction,
+    })
 
     if (!approver.active) {
       throw new ForbiddenException(
@@ -197,8 +206,14 @@ export class CaseController {
     }
   }
 
-  private async validateAppealProsecutor(appealProsecutorId: string) {
-    const appealProsecutor = await this.userService.findById(appealProsecutorId)
+  private async validateAppealProsecutor(
+    appealProsecutorId: string,
+    transaction: Transaction,
+  ) {
+    const appealProsecutor = await this.userService.findById(
+      appealProsecutorId,
+      { transaction },
+    )
 
     if (!appealProsecutor.active) {
       throw new ForbiddenException(
@@ -311,12 +326,21 @@ export class CaseController {
 
     this.assertIndictmentWaitingForReviewUpdateAllowed(theCase, update, user)
 
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race. TransactionCommitInterceptor
+    // commits it after this handler has returned, and the middleware rolls it
+    // back if anything below throws. Taken before the validators, which read
+    // in it.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
     // Make sure valid users are assigned to the case's roles
     if (update.prosecutorId) {
       await this.validateAssignedUser(
         update.prosecutorId,
         [UserRole.PROSECUTOR],
         theCase.prosecutorsOfficeId,
+        transaction,
       )
     }
 
@@ -325,6 +349,7 @@ export class CaseController {
         update.judgeId,
         [UserRole.DISTRICT_COURT_JUDGE, UserRole.DISTRICT_COURT_ASSISTANT],
         theCase.courtId,
+        transaction,
       )
     }
 
@@ -333,6 +358,7 @@ export class CaseController {
         update.registrarId,
         [UserRole.DISTRICT_COURT_REGISTRAR, UserRole.DISTRICT_COURT_ASSISTANT],
         theCase.courtId,
+        transaction,
       )
     }
 
@@ -341,11 +367,15 @@ export class CaseController {
         update.indictmentApproverId,
         theCase,
         user,
+        transaction,
       )
     }
 
     if (update.appealProsecutorId) {
-      await this.validateAppealProsecutor(update.appealProsecutorId)
+      await this.validateAppealProsecutor(
+        update.appealProsecutorId,
+        transaction,
+      )
     }
 
     if (update.rulingModifiedHistory) {
@@ -391,13 +421,6 @@ export class CaseController {
         throw new BadRequestException('Reopen reason cannot be empty')
       }
     }
-
-    // The same transaction the guard read the case in - opening one of our own
-    // would block on its row lock while it waits for this handler to return,
-    // which is a deadlock rather than a race. TransactionCommitInterceptor
-    // commits it after this handler has returned, and the middleware rolls it
-    // back if anything above or below throws.
-    const transaction = await getOrCreateTransaction(this.sequelize)
 
     // This probably belongs inside the case service
     if (update.hasCivilClaims !== undefined) {
@@ -503,6 +526,12 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race. Taken before the approver
+    // validation, which reads in it.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
     if (
       transition.transition === CaseTransition.ASK_FOR_REVIEW &&
       theCase.indictmentApproverId
@@ -511,17 +540,13 @@ export class CaseController {
         theCase.indictmentApproverId,
         theCase,
         user,
+        transaction,
       )
     }
 
     // CaseExistsForUpdateGuard read this case under FOR UPDATE, so the
     // transition is decided against a row no one else can change.
     const update = transitionCase(transition.transition, theCase, user)
-
-    // The same transaction the guard read the case in - opening one of our own
-    // would block on its row lock while it waits for this handler to return,
-    // which is a deadlock rather than a race.
-    const transaction = await getOrCreateTransaction(this.sequelize)
 
     const updatedCase = await this.caseService.update(
       theCase,
@@ -890,49 +915,6 @@ export class CaseController {
     )
 
     res.end(pdf)
-  }
-
-  @UseGuards(
-    RolesGuard,
-    CaseExistsGuard,
-    new CaseTypeGuard(indictmentCases),
-    CaseWriteGuard,
-  )
-  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
-  @Post('case/:caseId/indictment/replace')
-  @ApiCreatedResponse({
-    type: ReplaceIndictmentPdfResponse,
-    description:
-      'Replaces the indictment of an existing case with an uploaded pdf',
-  })
-  async replaceIndictmentPdf(
-    @Param('caseId') caseId: string,
-    @CurrentCase() theCase: Case,
-    @CurrentHttpUser() user: User,
-    @Body() { key }: ReplaceIndictmentPdfDto,
-  ): Promise<ReplaceIndictmentPdfResponse> {
-    this.logger.debug(`Replacing the indictment of case ${caseId}`)
-
-    if (!canReplaceIndictmentPdf(theCase, user)) {
-      throw new ForbiddenException(
-        `Cannot replace the indictment of case ${caseId}`,
-      )
-    }
-
-    if (!key.startsWith(`${caseId}/`) || key === `${caseId}/indictment.pdf`) {
-      throw new BadRequestException(
-        `Key does not belong to an upload of case ${caseId}`,
-      )
-    }
-
-    await this.sequelize.transaction((transaction) =>
-      this.pdfService.replaceIndictmentPdf(theCase, key, transaction),
-    )
-
-    // Outside the transaction: keep the temp upload if the hash update rolled back
-    await this.pdfService.deleteIndictmentUpload(theCase, key)
-
-    return { success: true }
   }
 
   @UseGuards(

@@ -42,28 +42,40 @@ const RestrictionLength: FC<Props> = (props) => {
       <Box marginBottom={5}>
         <Text as="h3" variant="h3" marginBottom={3}>
           {capitalize(
-            formatMessage(strings.caseType, {
-              caseType:
-                workingCase.decision ===
-                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                  ? CaseType.TRAVEL_BAN
-                  : workingCase.type,
-            }),
-          )}
-        </Text>
-        <DateTime
-          name="validToDate"
-          datepickerLabel={formatMessage(strings.validToDateLabel, {
-            caseType: capitalize(
-              formatMessage(strings.caseType, {
+            formatMessage(
+              { id: strings.caseType, defaultMessage: strings.caseType },
+              {
                 caseType:
                   workingCase.decision ===
                   CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                     ? CaseType.TRAVEL_BAN
                     : workingCase.type,
-              }),
+              },
             ),
-          })}
+          )}
+        </Text>
+        <DateTime
+          name="validToDate"
+          datepickerLabel={formatMessage(
+            {
+              id: strings.validToDateLabel,
+              defaultMessage: strings.validToDateLabel,
+            },
+            {
+              caseType: capitalize(
+                formatMessage(
+                  { id: strings.caseType, defaultMessage: strings.caseType },
+                  {
+                    caseType:
+                      workingCase.decision ===
+                      CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                        ? CaseType.TRAVEL_BAN
+                        : workingCase.type,
+                  },
+                ),
+              ),
+            },
+          )}
           selectedDate={
             isCOAUser
               ? workingCase.appealCase?.appealValidToDate
@@ -86,14 +98,14 @@ const RestrictionLength: FC<Props> = (props) => {
           >
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
-                {formatMessage(strings.title)}
+                {strings.title}
               </Text>
             </Box>
             <BlueBox>
               <Box marginBottom={3}>
                 <Checkbox
                   name="isCustodyIsolation"
-                  label={formatMessage(strings.isolation)}
+                  label={strings.isolation}
                   checked={
                     isCOAUser
                       ? Boolean(
@@ -108,7 +120,7 @@ const RestrictionLength: FC<Props> = (props) => {
               </Box>
               <DateTime
                 name="isolationToDate"
-                datepickerLabel={formatMessage(strings.isolationDateLable)}
+                datepickerLabel={strings.isolationDateLable}
                 disabled={
                   (isCOAUser &&
                     workingCase.appealCase?.isAppealCustodyIsolation ===

@@ -18,6 +18,30 @@ export const status = defineMessages({
   },
 })
 
+export const rvkStatus = defineMessages({
+  alertTitle: {
+    id: 'fa.application:section.rvkStatus.alertTitle',
+    defaultMessage: 'Umsókn um fjárhagsaðstoð er móttekin',
+    description: 'Alert shown to the applicant once the application was sent',
+  },
+  spouseAlertTitle: {
+    id: 'fa.application:section.rvkStatus.spouseAlertTitle',
+    defaultMessage: 'Þinn hluti umsóknar um fjárhagsaðstoð er móttekinn',
+    description: 'Alert shown to the spouse once their part was sent',
+  },
+  nextStepsTitle: {
+    id: 'fa.application:section.rvkStatus.nextStepsTitle',
+    defaultMessage: 'Hér eru næstu skref',
+    description: 'Next steps title',
+  },
+  nextSteps: {
+    id: 'fa.application:section.rvkStatus.nextSteps#markdown',
+    defaultMessage:
+      '* Vinnsluaðili sveitarfélagsins vinnur úr umsókninni og hefur samband ef frekari gagna er þörf. \n* Ef umsóknin er samþykkt getur þú reiknað með útgreiðslu í byrjun {nextMonth}. \n* Staða umsóknarinnar uppfærist ekki hér á Ísland.is. Hafðu samband við sveitarfélagið til að fá upplýsingar um stöðu hennar.',
+    description: 'Next steps for municipalities that process outside island.is',
+  },
+})
+
 export const moreActions = defineMessages({
   title: {
     id: 'fa.application:section.moreActions.title',

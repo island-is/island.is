@@ -532,13 +532,13 @@ export const m = defineMessages({
   },
   prerequisiteActiveDraftApplicationTitle: {
     id: 'hi.application:prerequisiteActiveDraftApplication.title',
-    defaultMessage: 'Uppfletting umsókna í umsóknarkerfi Island.is',
+    defaultMessage: 'Uppfletting umsókna í umsóknakerfi Island.is',
     description: 'Search for previous applications in Island.is',
   },
   prerequisiteActiveDraftApplicationDescription: {
     id: 'hi.application:prerequisiteActiveDraftApplication.description',
     defaultMessage:
-      'Athugað hvort notandi sé þegar með umsókn í umsóknarkerfi Island.is',
+      'Athugað hvort notandi sé þegar með umsókn í umsóknakerfi Island.is',
     description:
       'Search for previous applications in the application system at Island.is',
   },

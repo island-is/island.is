@@ -88,9 +88,7 @@ const Result = () => {
                 targetAppealCase?.requestAppealRulingNotToBePublished
                   ? [
                       {
-                        message: formatMessage(
-                          strings.requestAppealRulingNotToBePublished,
-                        ),
+                        message: strings.requestAppealRulingNotToBePublished,
                       },
                     ]
                   : undefined
@@ -136,7 +134,7 @@ const Result = () => {
             {isIndictment ? (
               <>
                 <Conclusion
-                  title={formatMessage(conclusion.appealTitle)}
+                  title={conclusion.appealTitle}
                   conclusionText={targetAppealCase?.appealConclusion}
                 />
                 <AllIndictmentCaseFiles />
@@ -171,12 +169,12 @@ const Result = () => {
                   )}
                 </Accordion>
                 <Conclusion
-                  title={formatMessage(conclusion.title)}
+                  title={conclusion.title}
                   conclusionText={workingCase.conclusion}
                   judgeName={workingCase.judge?.name}
                 />
                 <Conclusion
-                  title={formatMessage(conclusion.appealTitle)}
+                  title={conclusion.appealTitle}
                   conclusionText={targetAppealCase?.appealConclusion}
                 />
                 <CaseFilesOverview />
@@ -189,7 +187,7 @@ const Result = () => {
             previousUrl={getStandardUserDashboardRoute(user)}
             actions={[
               {
-                text: formatMessage(strings.nextButtonText),
+                text: strings.nextButtonText,
                 onClick: () => setModalVisible('reopenCase'),
                 testId: 'continueButton',
               },

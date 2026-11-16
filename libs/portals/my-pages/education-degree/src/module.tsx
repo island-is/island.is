@@ -16,6 +16,7 @@ export const educationDegreeModule: ServicePortalModule = {
       name: m.educationDegree,
       path: EducationDegreePaths.EducationDegree,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: <EducationDegree />,
     },
   ],

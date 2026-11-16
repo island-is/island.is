@@ -5,10 +5,12 @@ import {
   customerDebtsnationalIdGet2,
   customerRecordsnationalIdGet1,
   payDebtPost3,
+  payrollDeductionGet5,
   validatePaymentPost4,
   type CustomerDebtsOutput,
   type CustomerRecordsnationalIdGet1Data,
   type CustomerRercordsOutputDt,
+  type PayerOfWagesOutput,
   type PaymentsInDt,
   type PaymentsOutDt,
   type ProblemDetailsDt,
@@ -77,6 +79,23 @@ export class FinanceClientV3Service {
     )
 
     return response?.customerDebtsResult ?? null
+  }
+
+  /**
+   * The user's employer and the charge types FJS may collect through payroll
+   * deduction. `null` when FJS has no employer on record.
+   */
+  async getPayrollDeduction(
+    user: User,
+    input: { nationalID: string },
+  ): Promise<PayerOfWagesOutput | null> {
+    const response = await withAuthContext(user, () =>
+      dataOr404Null(
+        payrollDeductionGet5({ query: { nationalID: input.nationalID } }),
+      ),
+    )
+
+    return response?.payrollDeductionResult ?? null
   }
 
   /**

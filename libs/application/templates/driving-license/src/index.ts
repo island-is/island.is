@@ -11,3 +11,7 @@ export * from './lib/messages'
 export default template
 export { dataSchema, m as messages }
 export type { DrivingLicenseApplicationFor } from './lib/constants'
+export {
+  isRedesignedBTempOrBFull,
+  needsHealthCertificateCondition,
+} from './lib/utils/formUtils'

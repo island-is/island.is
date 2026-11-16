@@ -21,7 +21,6 @@ import { CreateCaseInput } from './dto/createCase.input'
 import { CreateCourtCaseInput } from './dto/createCourtCase.input'
 import { DuplicateIndictmentCaseInput } from './dto/duplicateIndictmentCase.input'
 import { ExtendCaseInput } from './dto/extendCase.input'
-import { ReplaceIndictmentPdfInput } from './dto/replaceIndictmentPdf.input'
 import { RequestSignatureInput } from './dto/requestSignature.input'
 import { SendAppealNotificationInput } from './dto/sendAppealNotification.input'
 import { SendNotificationInput } from './dto/sendNotification.input'
@@ -31,7 +30,6 @@ import { TransitionCaseInput } from './dto/transitionCase.input'
 import { UpdateCaseInput } from './dto/updateCase.input'
 import { UpdateCaseAppealDecisionInput } from './dto/updateCaseAppealDecision.input'
 import { Case } from './models/case.model'
-import { ReplaceIndictmentPdfResponse } from './models/replaceIndictmentPdf.response'
 import { RequestSignatureResponse } from './models/requestSignature.response'
 import { SendNotificationResponse } from './models/sendNotification.response'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
@@ -272,24 +270,6 @@ export class CaseResolver {
         appealCaseId,
         sendAppealNotification,
       ),
-      caseId,
-    )
-  }
-
-  @Mutation(() => ReplaceIndictmentPdfResponse)
-  replaceIndictmentPdf(
-    @Args('input', { type: () => ReplaceIndictmentPdfInput })
-    input: ReplaceIndictmentPdfInput,
-    @CurrentGraphQlUser() user: User,
-  ): Promise<ReplaceIndictmentPdfResponse> {
-    const { caseId, key } = input
-
-    this.logger.debug(`Replacing the indictment of case ${caseId}`)
-
-    return this.auditTrailService.audit(
-      user.id,
-      AuditedAction.REPLACE_INDICTMENT_PDF,
-      this.backendService.replaceIndictmentPdf(caseId, { key }),
       caseId,
     )
   }

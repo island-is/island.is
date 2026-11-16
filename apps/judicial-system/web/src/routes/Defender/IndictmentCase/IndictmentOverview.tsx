@@ -21,6 +21,7 @@ import type { ContextMenuItem } from '@island.is/judicial-system-web/src/compone
 import {
   AllIndictmentCaseFiles,
   AlternativeServiceAnnouncement,
+  AppealCourtSessionScheduledCard,
   AppealRulingModifiedAlert,
   Conclusion,
   CourtCaseInfo,
@@ -76,12 +77,9 @@ interface ServiceAnnouncementProps {
 
 const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
   const { defendant, subpoena } = props
-  const { formatMessage } = useIntl()
 
   const getTitle = (defendantName?: string | null): string => {
-    const successMessage = formatMessage(
-      serviceAnnouncementsStrings.serviceStatusSuccess,
-    )
+    const successMessage = serviceAnnouncementsStrings.serviceStatusSuccess
 
     return defendantName
       ? `${successMessage} - ${defendantName}`
@@ -239,10 +237,16 @@ const IndictmentOverview: FC = () => {
         <PageHeader
           title={
             caseIsClosed
-              ? formatMessage(titles.shared.closedCaseOverview, {
-                  courtCaseNumber: workingCase.courtCaseNumber,
-                })
-              : formatMessage(titles.court.indictments.overview)
+              ? formatMessage(
+                  {
+                    id: titles.shared.closedCaseOverview,
+                    defaultMessage: titles.shared.closedCaseOverview,
+                  },
+                  {
+                    courtCaseNumber: workingCase.courtCaseNumber,
+                  },
+                )
+              : titles.court.indictments.overview
           }
         />
         <FormContentContainer>
@@ -342,6 +346,9 @@ const IndictmentOverview: FC = () => {
                   />
                 </Box>
               )}
+            <AppealCourtSessionScheduledCard
+              verdictAppealCase={workingCase.verdictAppealCase}
+            />
             <Box component="section">
               {caseIsClosed ? (
                 <InfoCardClosedIndictment />

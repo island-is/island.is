@@ -8,9 +8,8 @@ export type RequestCaseDefenderRecipient = {
 
 /**
  * Unique defenders assigned on request-case defendants, keyed by email.
- * Dual-write keeps every defendant in sync with the (still single) case-level
- * defender today, so this returns one recipient until Phase 4 allows
- * per-defendant divergence.
+ * Defender contact lives on the defendant only, so each defendant can have
+ * a different defender.
  */
 export const getRequestCaseDefenderRecipients = (
   theCase: Pick<Case, 'defendants'>,

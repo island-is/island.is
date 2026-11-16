@@ -15,6 +15,7 @@ import { PaymentError } from '../utils/error/error'
 import { useCardPayment } from './useCardPayment'
 import { useInvoicePayment } from './useInvoicePayment'
 import { useApplePay } from './useApplePay'
+import { useGooglePay } from './useGooglePay'
 import { useBankTransferPayment } from './useBankTransferPayment'
 import { toBankAccountNumber } from '../components/BankTransferPayment/BankTransferPayment.utils'
 
@@ -25,6 +26,8 @@ interface UsePaymentOrchestrationProps {
     title: string
   }
   isApplePayPaymentEnabled: boolean
+  isGooglePayPaymentEnabled: boolean
+  isGooglePayDeviceTokensEnabled: boolean
   // The server refused the individual authorising a company's transfer. Shown on its input, so the
   // payer stays on the form to correct it rather than landing on the error screen.
   onInvalidActorNationalId: () => void
@@ -55,6 +58,8 @@ export const usePaymentOrchestration = ({
   paymentFlow,
   productInformation,
   isApplePayPaymentEnabled,
+  isGooglePayPaymentEnabled,
+  isGooglePayDeviceTokensEnabled,
   onInvalidActorNationalId,
 }: UsePaymentOrchestrationProps) => {
   const router = useRouter()
@@ -117,6 +122,17 @@ export const usePaymentOrchestration = ({
     productInformation,
     onPaymentSuccess: commonOnPaymentSuccess,
     onPaymentError: commonOnPaymentError,
+  })
+
+  const googlePayPayment = useGooglePay({
+    isEnabled: isGooglePayPaymentEnabled,
+    allowDeviceTokens: isGooglePayDeviceTokensEnabled,
+    paymentFlow,
+    productInformation,
+    onPaymentSuccess: commonOnPaymentSuccess,
+    onPaymentError: commonOnPaymentError,
+    completeVerification: cardPayment.completeVerification,
+    setThreeDSecureModalActive: setIsThreeDSecureModalActive,
   })
 
   const bankTransferOnPaymentError = useCallback(
@@ -208,7 +224,11 @@ export const usePaymentOrchestration = ({
       : false
 
   // Overall submitting state combines the local initiation with the hook's processing state.
-  const overallIsSubmitting = isInitiatingSubmit || combinedIsProcessing
+  // A Google Pay charge runs after its sheet closes, whichever method is selected
+  const overallIsSubmitting =
+    isInitiatingSubmit ||
+    combinedIsProcessing ||
+    googlePayPayment.isGooglePayProcessing
 
   const changePaymentMethod = (newMethod: string) => {
     setPaymentError(null)
@@ -232,5 +252,7 @@ export const usePaymentOrchestration = ({
     verificationStatusLoading: cardPayment.verificationStatusLoading,
     supportsApplePay: applePayPayment.supportsApplePay ?? false,
     initiateApplePay: applePayPayment.initiateApplePay,
+    supportsGooglePay: googlePayPayment.supportsGooglePay,
+    createGooglePayButton: googlePayPayment.createGooglePayButton,
   }
 }

@@ -23,6 +23,7 @@ import { HiddenTextInput } from '../HiddenTextInput'
 import debounce from 'lodash/debounce'
 import { ChildrenOfApplicant } from '../../shared'
 import { getSelectedCustodyChild } from '../../utils'
+import { MIN_DATE } from '../../lib/constants'
 import { getErrorViaPath, NO, YES } from '@island.is/application/core'
 
 interface Props {
@@ -215,6 +216,7 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
                   error={
                     errors && getErrorViaPath(errors, otherParentBirthDateField)
                   }
+                  minDate={new Date(MIN_DATE)}
                   maxDate={new Date()}
                 />
               </GridColumn>

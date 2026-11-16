@@ -12,6 +12,8 @@ export const serviceSetup = (): ServiceBuilder<'application-system-form'> =>
     })
     .secrets({
       SI_PUBLIC_DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',
+      SI_PUBLIC_FINANCIAL_AID_VEITA_TENANTS:
+        '/k8s/application-system/FINANCIAL_AID_VEITA_TENANTS',
     })
     .resources({
       limits: {

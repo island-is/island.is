@@ -4,6 +4,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     created
     origin
     type
+    originalAncestorId
     indictmentSubtypes
     state
     policeCaseNumbers
@@ -41,11 +42,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         isDefaultJudgement
       }
     }
-    defenderName
-    defenderNationalId
-    defenderEmail
-    defenderPhoneNumber
-    requestSharedWithDefender
     court {
       ...InstitutionFields
     }
@@ -104,6 +100,13 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       appealState
       appealType
+      courtSessions {
+        id
+        created
+        sessionType
+        sessionDate
+        courtRoom
+      }
       appealEventLogs {
         id
         created
@@ -171,6 +174,9 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         id
         defenderNationalId
         isDefenderChoiceConfirmed
+        appealDefenderNationalId
+        isAppealDefenderConfirmed
+        isAppealDefenderWaived
       }
       civilClaimants {
         ...CivilClaimantSpokespersonFields
@@ -221,6 +227,9 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         id
         defenderNationalId
         isDefenderChoiceConfirmed
+        appealDefenderNationalId
+        isAppealDefenderConfirmed
+        isAppealDefenderWaived
         isSentToPrisonAdmin
         policeCaseNumbers
         indictmentCancelledOrDismissedState {

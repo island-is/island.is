@@ -35,9 +35,9 @@ import {
   EmptyList,
   ListItem,
   ListItemSkeleton,
-  Problem,
+  StatusMessage,
   SearchBar,
-  Tag,
+  FilterChip,
 } from '@/ui'
 
 const TagsWrapper = styled.View`
@@ -204,7 +204,11 @@ export default function HealthMessagesScreen() {
       <Image
         source={icon}
         resizeMode="contain"
-        style={{ width: 20, height: 20, tintColor: theme.color.blue400 }}
+        style={{
+          width: 20,
+          height: 20,
+          tintColor: theme.tokens.interactive.foreground.primary,
+        }}
       />
     </Pressable>
   )
@@ -256,7 +260,7 @@ export default function HealthMessagesScreen() {
               <ActivityIndicator
                 size="small"
                 animating
-                color={theme.color.blue400}
+                color={theme.tokens.interactive.foreground.primary}
               />
             </LoadingWrapper>
           ) : null
@@ -286,7 +290,7 @@ export default function HealthMessagesScreen() {
             {isFilterApplied ? (
               <TagsWrapper>
                 {starred && (
-                  <Tag
+                  <FilterChip
                     title={intl.formatMessage({
                       id: 'inbox.filterStarredTagTitle',
                     })}
@@ -297,7 +301,7 @@ export default function HealthMessagesScreen() {
                   />
                 )}
                 {archived && (
-                  <Tag
+                  <FilterChip
                     title={intl.formatMessage({
                       id: 'inbox.filterArchivedTagTitle',
                     })}
@@ -343,7 +347,7 @@ export default function HealthMessagesScreen() {
             </View>
           ) : messagesRes.error ? (
             <View style={{ marginHorizontal: 16, marginTop: 24 }}>
-              <Problem
+              <StatusMessage
                 type="error"
                 error={messagesRes.error}
                 title={intl.formatMessage({ id: 'problem.error.title' })}

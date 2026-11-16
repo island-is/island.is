@@ -72,7 +72,7 @@ describe('InternalFileController - Deliver case file to police', () => {
     ${CaseFileCategory.COURT_RECORD}             | ${PoliceDocumentType.RVTB}
     ${CaseFileCategory.DEFENDANT_CASE_FILE}      | ${PoliceDocumentType.RVMV}
     ${CaseFileCategory.PROSECUTOR_CASE_FILE}     | ${PoliceDocumentType.RVVS}
-    ${CaseFileCategory.COURT_INDICTMENT_RULING_ORDER} | ${PoliceDocumentType.RVMG}
+    ${CaseFileCategory.COURT_INDICTMENT_RULING_ORDER} | ${PoliceDocumentType.RVSUR}
   `.describe(
     '$category delivered as $policeDocumentType',
     ({ category, policeDocumentType }) => {

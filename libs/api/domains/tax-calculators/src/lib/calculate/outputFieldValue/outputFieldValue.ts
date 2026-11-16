@@ -28,8 +28,9 @@ const toScalarPayload = (
         ? { type, numberValue: raw }
         : undefined
     case 'string':
-    case 'date':
       return typeof raw === 'string' ? { type, stringValue: raw } : undefined
+    case 'date':
+      return raw instanceof Date ? { type, dateValue: raw } : undefined
     case 'boolean':
       return typeof raw === 'boolean' ? { type, booleanValue: raw } : undefined
     default: {
@@ -74,6 +75,17 @@ export const toOutputValues = (
           key: field.name,
           type: TaxCalculatorOutputFieldType.ARRAY,
           arrayValue: raw.map((row) => toRow(field.itemFields, row)),
+        })
+      }
+      continue
+    }
+
+    if (field.kind === 'object') {
+      if (typeof raw === 'object' && raw !== null && !Array.isArray(raw)) {
+        values.push({
+          key: field.name,
+          type: TaxCalculatorOutputFieldType.OBJECT,
+          objectValue: toRow(field.itemFields, raw),
         })
       }
       continue

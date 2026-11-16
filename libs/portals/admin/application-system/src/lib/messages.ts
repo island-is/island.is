@@ -1,14 +1,16 @@
 import { defineMessages } from 'react-intl'
 
+// Note that no translations exist for this namespace, thus no namespace exists in Contentful.
+// Default messages are displayed to users as is.
 export const m = defineMessages({
   // General
   applicationSystem: {
     id: 'admin-portal.application-system:name',
-    defaultMessage: 'Umsóknarkerfi',
+    defaultMessage: 'Umsóknakerfi',
   },
   applicationSystemDescription: {
     id: 'admin-portal.application-system:description',
-    defaultMessage: 'Tölfræðigögn og umsjá umsóknarkerfis',
+    defaultMessage: 'Tölfræðigögn og umsjá umsóknakerfis',
   },
   overview: {
     id: 'admin-portal.application-system:overview',
@@ -605,11 +607,27 @@ export const m = defineMessages({
   },
   translationPublishedByLabel: {
     id: 'admin-portal.application-system:translationPublishedByLabel',
-    defaultMessage: 'Kennitala: {nationalId}',
+    defaultMessage: 'Útgefandi: {name}',
   },
-  translationActorLabel: {
-    id: 'admin-portal.application-system:translationActorLabel',
-    defaultMessage: 'Umboðsaðili: {actorNationalId}',
+  translationOnBehalfOfLabel: {
+    id: 'admin-portal.application-system:translationOnBehalfOfLabel',
+    defaultMessage: 'Fyrir hönd: {name}',
+  },
+  translationRolledBackToLabel: {
+    id: 'admin-portal.application-system:translationRolledBackToLabel',
+    defaultMessage: 'Endurheimt útgáfa frá {date}',
+  },
+  translationPublisherNameUnavailableLabel: {
+    id: 'admin-portal.application-system:translationPublisherNameUnavailableLabel',
+    defaultMessage: 'Nafn útgefanda ekki fáanlegt',
+  },
+  translationPublishHistoryShowMore: {
+    id: 'admin-portal.application-system:translationPublishHistoryShowMore',
+    defaultMessage: 'Sýna fleiri',
+  },
+  translationPublishedByUnknownLabel: {
+    id: 'admin-portal.application-system:translationPublishedByUnknownLabel',
+    defaultMessage: 'Nafn útgefanda ekki skráð',
   },
   translationWorkspaceOverviewPreviewHint: {
     id: 'admin-portal.application-system:translationWorkspaceOverviewPreviewHint',
@@ -654,10 +672,10 @@ export const m = defineMessages({
   },
   originFormSystem: {
     id: 'admin-portal.application-system:originFormSystem',
-    defaultMessage: 'Umsóknarsmiður',
+    defaultMessage: 'Umsóknasmiður',
   },
   originApplicationSystem: {
     id: 'admin-portal.application-system:originApplicationSystem',
-    defaultMessage: 'Umsóknarkerfi',
+    defaultMessage: 'Umsóknakerfi',
   },
 })

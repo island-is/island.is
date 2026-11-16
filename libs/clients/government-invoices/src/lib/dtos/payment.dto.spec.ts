@@ -5,11 +5,13 @@ const baseData: InvoicePaymentDetailResponseDto = {
   paymentGuid: '00000000-0000-0000-0000-000000000003',
   paymentAccountingDate: '2025-02-07',
   paymentCurrencyCode: 'ISK',
+  paymentAmount: 12683,
   paymentAmountISK: 12683,
   invoiceGuid: '00000000-0000-0000-0000-000000000002',
   invoiceNum: '191552084',
   invoiceCurrencyCode: 'ISK',
   invoiceTotalBaseAmountISK: 16161,
+  invoiceTotalBaseAmount: 16161,
   glLines: [],
 }
 
@@ -89,7 +91,17 @@ describe('mapPaymentDto', () => {
       id: '00000000-0000-0000-0000-000000000002',
       number: '191552084',
       totalAmount: 16161,
+      originalTotalAmount: 16161,
+      currencyCode: 'ISK',
       itemization: [],
     })
+  })
+
+  it('sources originalAmount from paymentAmount and currencyCode from paymentCurrencyCode', () => {
+    const result = mapPaymentDto({ ...baseData, paymentAmount: 90 })
+
+    expect(result?.originalAmount).toBe(90)
+    expect(result?.amount).toBe(12683)
+    expect(result?.currencyCode).toBe('ISK')
   })
 })

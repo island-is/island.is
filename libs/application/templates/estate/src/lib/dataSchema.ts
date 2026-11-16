@@ -422,14 +422,6 @@ export const estateSchema = z.object({
           path: ['value'],
         },
       )
-      .refine(
-        ({ info, value }) => {
-          return value !== '' ? isValidString(info) : true
-        },
-        {
-          path: ['info'],
-        },
-      )
       .optional(),
     otherAssets: z
       .object({

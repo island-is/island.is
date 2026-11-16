@@ -1,6 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common'
 
-import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { SigningModule } from '@island.is/dokobit-signing'
 
 import {
@@ -32,7 +31,6 @@ import { PdfService } from './pdf.service'
 @Module({
   imports: [
     SigningModule,
-    CmsTranslationsModule,
     forwardRef(() => RepositoryModule),
     forwardRef(() => DefendantModule),
     forwardRef(() => SubpoenaModule),

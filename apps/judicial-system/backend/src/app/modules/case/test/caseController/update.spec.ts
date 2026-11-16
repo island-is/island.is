@@ -840,6 +840,16 @@ describe('CaseController - Update', () => {
       await givenWhenThen(caseId, user, theCase, caseToUpdate)
     })
 
+    // The guard's transaction holds the case row's lock while the prosecutor
+    // is validated, so the read joins it rather than take a pool connection
+    // of its own - under concurrent updates of this case those are held by
+    // requests blocked on that lock.
+    it('should validate the prosecutor in the request transaction', () => {
+      expect(mockUserService.findById).toHaveBeenCalledWith(prosecutorId, {
+        transaction,
+      })
+    })
+
     it('should post to queue', () => {
       expect(mockQueuedMessages).toEqual([
         {
@@ -1599,6 +1609,32 @@ describe('CaseController - Update', () => {
     })
   })
 
+  describe('civil claims turned off', () => {
+    const caseToUpdate = {
+      hasCivilClaims: false,
+      // Stale paired field must not reinsert the string after the delete
+      civilDemands: uuid(),
+    }
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+    })
+
+    it('should delete the civil demands case string', () => {
+      expect(
+        mockCaseStringRepositoryService.deleteByCaseAndType,
+      ).toHaveBeenCalledWith(caseId, StringType.CIVIL_DEMANDS, {
+        transaction,
+      })
+    })
+
+    it('should not upsert civil demands from the same update', () => {
+      expect(
+        mockCaseStringRepositoryService.upsertByCaseAndType,
+      ).not.toHaveBeenCalled()
+    })
+  })
+
   describe('merge parent chosen for a received case', () => {
     const receivedCase = {
       ...theCase,
@@ -2031,6 +2067,50 @@ describe('CaseController - Update', () => {
     })
   })
 
+  describe('indictment approver assigned', () => {
+    const indictmentApproverId = uuid()
+    const prosecutorsOfficeId = uuid()
+    const originalCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      prosecutorsOfficeId,
+    } as Case
+    const caseToUpdate = { indictmentApproverId } as UpdateCaseDto
+    const updatedCase = { ...originalCase, indictmentApproverId } as Case
+
+    beforeEach(async () => {
+      ;(mockUserService.findById as jest.Mock).mockResolvedValueOnce({
+        id: indictmentApproverId,
+        active: true,
+        role: UserRole.PROSECUTOR,
+        institutionId: prosecutorsOfficeId,
+      })
+      ;(
+        mockCaseRepositoryService.findLiveById as jest.Mock
+      ).mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, originalCase, caseToUpdate)
+    })
+
+    // The guard's transaction holds the case row's lock while the approver is
+    // validated, so the read joins it rather than take a pool connection of
+    // its own.
+    it('should validate the approver in the request transaction', () => {
+      expect(mockUserService.findById).toHaveBeenCalledWith(
+        indictmentApproverId,
+        { transaction },
+      )
+    })
+
+    it('should update the case', () => {
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        caseToUpdate,
+        { transaction },
+      )
+    })
+  })
+
   describe('appeal prosecutor assigned - queues APPEAL_PROSECUTOR_ASSIGNED', () => {
     const appealProsecutorId = uuid()
     const validAppealProsecutor = {
@@ -2067,6 +2147,13 @@ describe('CaseController - Update', () => {
         ).mockResolvedValueOnce(updatedCase)
 
         await givenWhenThen(caseId, user, originalCase, caseToUpdate)
+      })
+
+      it('should validate the appeal prosecutor in the request transaction', () => {
+        expect(mockUserService.findById).toHaveBeenCalledWith(
+          appealProsecutorId,
+          { transaction },
+        )
       })
 
       it('should queue APPEAL_PROSECUTOR_ASSIGNED notification', () => {
@@ -2385,6 +2472,17 @@ describe('CaseController - Update', () => {
       mockFindLiveById.mockResolvedValueOnce(updatedCase)
 
       await givenWhenThen(caseId, user, originalCase, caseToUpdate)
+    })
+
+    it('should validate both assignees in the request transaction', () => {
+      expect(mockUserService.findById).toHaveBeenNthCalledWith(1, judge.id, {
+        transaction,
+      })
+      expect(mockUserService.findById).toHaveBeenNthCalledWith(
+        2,
+        registrar.id,
+        { transaction },
+      )
     })
 
     // The delivery resolves one role per message, so both assignments must be

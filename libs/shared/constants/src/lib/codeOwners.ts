@@ -3,6 +3,7 @@
  */
 export enum CodeOwners {
   Advania = 'Advania',
+  ApplicationsCore = 'applications-core',
   Aranja = 'aranja',
   Core = 'core',
   Deloitte = 'deloitte',
@@ -12,7 +13,6 @@ export enum CodeOwners {
   KolibriJusticeLeague = 'kolibri-justice-league',
   KolibriRobinHood = 'kolibri-robin-hood',
   KolibriKotid = 'kolibri-kotid',
-  NordaApplications = 'norda-applications',
   Origo = 'origo',
   Programm = 'programm',
   Stefna = 'stefna',

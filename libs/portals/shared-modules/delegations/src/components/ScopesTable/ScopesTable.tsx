@@ -32,6 +32,7 @@ type ScopesTableProps = {
   onSelectScope?: (scope: AuthApiScope) => void
   showDate?: boolean
   editableDates?: boolean
+  canGrantSensitiveScopes?: boolean
 }
 
 export const ScopesTable = ({
@@ -42,13 +43,16 @@ export const ScopesTable = ({
   onSelectScope,
   showDate,
   editableDates = true,
+  canGrantSensitiveScopes: canGrantSensitiveScopesProp,
 }: ScopesTableProps) => {
   const { formatMessage } = useLocale()
   const { md } = useBreakpoint()
 
   const { selectedScopes, setSelectedScopes } = useDelegationForm()
   const scopes = scopesProp ?? selectedScopes ?? []
-  const canGrantSensitiveScopes = useCanGrantSensitiveScopes()
+  const canGrantSensitiveScopesDefault = useCanGrantSensitiveScopes()
+  const canGrantSensitiveScopes =
+    canGrantSensitiveScopesProp ?? canGrantSensitiveScopesDefault
 
   const isLocked = (scope: AuthApiScope, isChecked: boolean) =>
     !isChecked && !canSelectScope(scope, canGrantSensitiveScopes)

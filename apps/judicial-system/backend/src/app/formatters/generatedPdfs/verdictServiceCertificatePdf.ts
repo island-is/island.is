@@ -1,7 +1,5 @@
 import PDFDocument from 'pdfkit'
 
-import { FormatMessage } from '@island.is/cms-translations'
-
 import {
   formatDate,
   formatDOB,
@@ -40,13 +38,11 @@ export const createVerdictServiceCertificate = ({
   defendant,
   verdict,
   deliveredToDefenderName,
-  formatMessage,
 }: {
   theCase: Case
   defendant: Defendant
   verdict: Verdict
   deliveredToDefenderName?: string
-  formatMessage: FormatMessage
 }): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
@@ -63,9 +59,9 @@ export const createVerdictServiceCertificate = ({
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
-  setTitle(doc, formatMessage(strings.title))
+  setTitle(doc, strings.title)
 
-  addLargeHeading(doc, formatMessage(strings.title).toUpperCase(), 'Times-Bold')
+  addLargeHeading(doc, strings.title.toUpperCase(), 'Times-Bold')
   addMediumCenteredText(
     doc,
     `Dómur í máli nr. ${theCase.courtCaseNumber || ''}`,
