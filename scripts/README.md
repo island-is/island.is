@@ -59,12 +59,19 @@ Copy the error, then:
 pbpaste | node scripts/scrub.mjs | pbcopy
 ```
 
+On other systems, replace `pbpaste` and `pbcopy` here and below with:
+
+- Linux (Wayland): `wl-paste` and `wl-copy`, from the `wl-clipboard` package.
+- Linux (X11): `xclip -selection clipboard -o` and `xclip -selection clipboard`, from the `xclip` package.
+- Windows (WSL): `powershell.exe -NoProfile -Command '[Console]::OutputEncoding = [Text.Encoding]::UTF8; Get-Clipboard'` and `iconv -f utf-8 -t utf-16le | clip.exe`. Without the encoding steps, Icelandic letters get garbled and names can slip through.
+- Windows (Git Bash): `cat /dev/clipboard` and `cat > /dev/clipboard`.
+
 `--show` lists each masked value on stderr, for checking the rules.
 
-To run it from anywhere, add a function to `~/.zshrc` (adjust the path to your clone). It reads piped input, or the clipboard when nothing is piped:
+To run it from anywhere, add a function to your shell's startup file (`~/.zshrc` for zsh, `~/.bashrc` for bash), replacing `~/git/island.is` with where the repo lives on your machine. It reads piped input, or the clipboard when nothing is piped:
 
 ```bash
-scrub() { if [ -t 0 ]; then pbpaste; else cat; fi | node ~/git/island.is/scripts/scrub.mjs "$@" | pbcopy }
+scrub() { if [ -t 0 ]; then pbpaste; else cat; fi | node ~/git/island.is/scripts/scrub.mjs "$@" | pbcopy; }
 ```
 
 Logs work too:
