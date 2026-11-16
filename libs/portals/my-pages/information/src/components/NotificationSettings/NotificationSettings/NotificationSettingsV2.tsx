@@ -111,7 +111,8 @@ export const NotificationSettingsV2 = () => {
 
     setSettings((current) => ({
       ...current,
-      wantsPaper: data?.data?.postPaperMailInfo?.wantsPaper ?? current.wantsPaper,
+      wantsPaper:
+        data?.data?.postPaperMailInfo?.wantsPaper ?? current.wantsPaper,
     }))
   }
 
@@ -166,9 +167,7 @@ export const NotificationSettingsV2 = () => {
             )}
             checked={settings.smsNotifications}
             disabled={updatingChannels}
-            onChange={(active: boolean) =>
-              onChange('smsNotifications', active)
-            }
+            onChange={(active: boolean) => onChange('smsNotifications', active)}
           />
         )}
         <SettingsCard
