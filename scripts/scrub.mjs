@@ -267,7 +267,9 @@ const createScrubber = (knownNames = []) => {
   /** @param {string} name */
   const nameLabel = (name) => {
     const display = name.trim().replace(/\s+/g, ' ')
-    foundNames.add(display)
+    if (nameWords(display).length > 1 || /^\p{Lu}/u.test(display)) {
+      foundNames.add(display)
+    }
     return label('NAME', nameWords(display).join(' '), display)
   }
 
@@ -393,6 +395,24 @@ const createScrubber = (knownNames = []) => {
       .replace(IPV6, (ip) => label('IP', ip.toLowerCase()))
 
   const scrubValue = (value, key = '') => {
+    if (value && typeof value === 'object' && !JSON.isRawJSON(value)) {
+      const sensitiveKey = key && isSensitiveKey(key, '') ? key : ''
+      if (Array.isArray(value)) {
+        return value.map((item) => scrubValue(item, sensitiveKey))
+      }
+      const isApplicationRow =
+        'applicant' in value && ('type_id' in value || 'typeId' in value)
+      /** @type {Set<string>} */
+      const keys = new Set()
+      return Object.fromEntries(
+        Object.entries(value).map(([k, v]) => [
+          uniqueKey(scrubText(k), keys),
+          isApplicationRow && k === 'name' && typeof v === 'string'
+            ? scrubText(v)
+            : scrubValue(v, sensitiveKey || k),
+        ]),
+      )
+    }
     const text = JSON.isRawJSON(value) ? value.rawJSON : String(value)
     if (key && value !== null && isSensitiveKey(key, text)) {
       const scrubbed = scrubText(text)
@@ -406,21 +426,6 @@ const createScrubber = (knownNames = []) => {
     if (typeof value === 'number') {
       const scrubbed = scrubText(String(value))
       return scrubbed === String(value) ? value : scrubbed
-    }
-    if (Array.isArray(value)) return value.map((item) => scrubValue(item))
-    if (value && typeof value === 'object') {
-      const isApplicationRow =
-        'applicant' in value && ('type_id' in value || 'typeId' in value)
-      /** @type {Set<string>} */
-      const keys = new Set()
-      return Object.fromEntries(
-        Object.entries(value).map(([k, v]) => [
-          uniqueKey(scrubText(k), keys),
-          isApplicationRow && k === 'name' && typeof v === 'string'
-            ? scrubText(v)
-            : scrubValue(v, k),
-        ]),
-      )
     }
     return value
   }
