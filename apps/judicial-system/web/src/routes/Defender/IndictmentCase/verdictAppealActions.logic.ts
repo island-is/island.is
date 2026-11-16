@@ -8,9 +8,12 @@ import type {
   Defendant,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseIndictmentRulingDecision,
+  VerdictAppealDecision,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
-export type VerdictAppealAction = 'APPEAL' | 'WITHDRAW'
+export type VerdictAppealAction = 'APPEAL' | 'ACCEPT' | 'WITHDRAW'
 
 // A defender acts on the verdict of one specific defendant, and only one they
 // have been confirmed as the defender of. This is the same test the backend
@@ -54,25 +57,48 @@ export const canDefenderWithdrawVerdictAppealOf = (
   Boolean(defendant.verdict?.appealDate) &&
   Boolean(workingCase.verdictAppealCase?.id)
 
-// The single action the defendant's verdict timeline card offers this user, if
-// any. Nothing is offered while the feature is hidden.
-export const getVerdictAppealAction = (
+// Whether this defender may register that the defendant accepts the verdict.
+// The appeal deadline does not matter here: the position is often passed on
+// after it has run out. An appeal has to be withdrawn first.
+export const canDefenderAcceptVerdictOf = (
+  workingCase: WorkingCase,
+  defendant: Defendant,
+  user: User | undefined,
+): boolean =>
+  isConfirmedDefenderOf(user, defendant) &&
+  isCompletedCase(workingCase.state) &&
+  workingCase.indictmentRulingDecision ===
+    CaseIndictmentRulingDecision.RULING &&
+  canDefendantAppealVerdict(defendant.verdict) &&
+  !defendant.verdict?.appealDate &&
+  defendant.verdict?.appealDecision !== VerdictAppealDecision.ACCEPT
+
+// The actions the defendant's verdict timeline card offers this user, in menu
+// order. A filed appeal can only be withdrawn; otherwise the defender may
+// appeal, accept, or both. Nothing is offered while the feature is hidden.
+export const getVerdictAppealActions = (
   workingCase: WorkingCase,
   defendant: Defendant,
   user: User | undefined,
   isFeatureEnabled: boolean,
-): VerdictAppealAction | undefined => {
+): VerdictAppealAction[] => {
   if (!isFeatureEnabled) {
-    return undefined
+    return []
   }
 
   if (canDefenderWithdrawVerdictAppealOf(workingCase, defendant, user)) {
-    return 'WITHDRAW'
+    return ['WITHDRAW']
   }
+
+  const actions: VerdictAppealAction[] = []
 
   if (canDefenderAppealVerdictOf(workingCase, defendant, user)) {
-    return 'APPEAL'
+    actions.push('APPEAL')
   }
 
-  return undefined
+  if (canDefenderAcceptVerdictOf(workingCase, defendant, user)) {
+    actions.push('ACCEPT')
+  }
+
+  return actions
 }

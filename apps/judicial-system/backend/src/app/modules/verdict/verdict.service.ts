@@ -3,6 +3,7 @@ import { Transaction } from 'sequelize'
 
 import {
   BadRequestException,
+  ForbiddenException,
   forwardRef,
   Inject,
   NotFoundException,
@@ -13,13 +14,16 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { MessageType } from '@island.is/judicial-system/message'
 import {
+  canDefendantAppealVerdict,
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   CourtSessionRulingType,
   DefendantEventType,
   IndictmentCaseNotificationType,
   isVerdictInfoChanged,
   PoliceFileTypeCode,
   type User as TUser,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 import { ServiceRequirement } from '@island.is/judicial-system/types'
 
@@ -303,6 +307,68 @@ export class VerdictService {
       update,
       transaction,
     )
+    return updatedVerdict
+  }
+
+  // The defender reports that the defendant accepts the verdict. Unlike an
+  // appeal this is allowed after the appeal deadline: accepting gives up a
+  // right rather than exercising one, and the position is often passed on late.
+  async acceptVerdictAsDefender(
+    theCase: Case,
+    defendant: Defendant,
+    verdict: Verdict,
+    user: TUser,
+    transaction: Transaction,
+  ): Promise<Verdict> {
+    if (
+      !Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
+    ) {
+      throw new ForbiddenException(
+        `Current user is not the confirmed defender of defendant ${defendant.id}`,
+      )
+    }
+
+    if (
+      theCase.indictmentRulingDecision !== CaseIndictmentRulingDecision.RULING
+    ) {
+      throw new ForbiddenException(
+        'Only a verdict of a case that ended in a ruling can be accepted',
+      )
+    }
+
+    // The same footing as an appeal: no position is taken on an
+    // útivistardómur, nor on a verdict the defendant has not been served.
+    if (!canDefendantAppealVerdict(verdict)) {
+      throw new ForbiddenException(
+        `The verdict of defendant ${defendant.id} cannot be accepted`,
+      )
+    }
+
+    if (verdict.appealDate) {
+      throw new ForbiddenException(
+        `The verdict of defendant ${defendant.id} has been appealed`,
+      )
+    }
+
+    if (verdict.appealDecision === VerdictAppealDecision.ACCEPT) {
+      return verdict
+    }
+
+    const updatedVerdict = await this.updateVerdict(
+      verdict,
+      { appealDecision: VerdictAppealDecision.ACCEPT },
+      transaction,
+    )
+
+    queueMessagesAfterCommit({
+      type: MessageType.NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      body: {
+        type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_ACCEPTED_BY_DEFENDER,
+      },
+    })
+
     return updatedVerdict
   }
 
