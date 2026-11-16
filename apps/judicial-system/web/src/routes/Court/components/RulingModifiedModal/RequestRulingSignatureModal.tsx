@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { useContext } from 'react'
-import { useIntl } from 'react-intl'
 
 import {
   FormContext,
@@ -21,7 +20,6 @@ const RequestRulingSignatureModal: FC<Props> = ({
   onNo,
   description,
 }) => {
-  const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
   const { updateCase } = useCase()
 
@@ -37,16 +35,16 @@ const RequestRulingSignatureModal: FC<Props> = ({
 
   return (
     <Modal
-      title={formatMessage(strings.title)}
+      title={strings.title}
       text={description}
       buttons={[
         {
-          text: formatMessage(strings.no),
+          text: strings.no,
           onClick: onNo,
           variant: 'ghost',
         },
         {
-          text: formatMessage(strings.yes),
+          text: strings.yes,
           onClick: handleContinue,
         },
       ]}

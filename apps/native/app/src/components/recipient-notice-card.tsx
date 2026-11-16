@@ -1,15 +1,15 @@
 import React, { ReactNode } from 'react'
 import { useTheme } from 'styled-components/native'
 
-import { ProblemTemplate } from '@/ui'
+import { StatusMessageTemplate } from '@/ui'
 
 /**
  * Shown in place of the compose form whenever a message can't be sent: the
  * recipient is closed, it doesn't offer messaging, or there is no recipient.
  *
- * Wraps ProblemTemplate, not Problem: these are content states, so Problem's
+ * Wraps StatusMessageTemplate, not StatusMessage: these are content states, so StatusMessage's
  * offline swap would replace an accurate explanation with a connectivity one.
- * Only a failed load uses Problem.
+ * Only a failed load uses StatusMessage.
  */
 export const RecipientNoticeCard = ({
   title,
@@ -21,7 +21,7 @@ export const RecipientNoticeCard = ({
   const theme = useTheme()
 
   return (
-    <ProblemTemplate
+    <StatusMessageTemplate
       variant="info"
       showIcon
       paddingHorizontal={theme.spacing[3]}

@@ -15,7 +15,10 @@ import {
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 
 import { Delegation } from '../models/delegation.model'
-import { DelegationAdminCustomDto } from '../dto/delegation-admin-custom.dto'
+import {
+  DelegationAdminCustomDto,
+  DelegationAdminDelegationDto,
+} from '../dto/delegation-admin-custom.dto'
 import { DelegationScope } from '../models/delegation-scope.model'
 import { ApiScope } from '../../resources/models/api-scope.model'
 import { ApiScopeDelegationType } from '../../resources/models/api-scope-delegation-type.model'
@@ -35,6 +38,10 @@ import { DelegationsIncomingCustomService } from '../delegations-incoming-custom
 import { DelegationValidity } from '../types/delegationValidity'
 import { ErrorCodes } from '@island.is/shared/utils'
 import { Op } from 'sequelize'
+import {
+  DelegationIndexLookupService,
+  IndexedDelegation,
+} from './delegation-index-lookup.service'
 
 @Injectable()
 export class DelegationAdminCustomService {
@@ -51,6 +58,7 @@ export class DelegationAdminCustomService {
     private namesService: NamesService,
     private sequelize: Sequelize,
     private rskCompanyInfoService: CompanyRegistryClientService,
+    private delegationIndexLookupService: DelegationIndexLookupService,
   ) {}
 
   private getZendeskCustomFields(ticket: Ticket): {
@@ -87,6 +95,41 @@ export class DelegationAdminCustomService {
     }
   }
 
+  async findAllOutgoingCustom(nationalId: string): Promise<DelegationDTO[]> {
+    const delegations = await this.delegationModel.findAll({
+      where: {
+        fromNationalId: nationalId,
+      },
+      include: [
+        {
+          model: DelegationScope,
+          required: true,
+          include: [
+            {
+              model: ApiScope,
+              required: true,
+              as: 'apiScope',
+              where: {
+                enabled: true,
+              },
+              include: [
+                {
+                  model: ApiScopeDelegationType,
+                  required: true,
+                  where: {
+                    delegationType: AuthDelegationType.Custom,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    })
+
+    return delegations.map((delegation) => delegation.toDTO())
+  }
+
   async getAllDelegationsByNationalId(
     nationalId: string,
   ): Promise<DelegationAdminCustomDto> {
@@ -95,6 +138,7 @@ export class DelegationAdminCustomService {
       incomingGeneralDelegations,
       outgoingCustomDelegations,
       outgoingGeneralDelegations,
+      indexedDelegations,
     ] = await Promise.all([
       this.delegationsIncomingCustomService.findAllValidIncoming({
         nationalId: nationalId,
@@ -103,36 +147,7 @@ export class DelegationAdminCustomService {
       this.delegationsIncomingCustomService.findAllValidGeneralMandate({
         nationalId: nationalId,
       }),
-      this.delegationModel.findAll({
-        where: {
-          fromNationalId: nationalId,
-        },
-        include: [
-          {
-            model: DelegationScope,
-            required: true,
-            include: [
-              {
-                model: ApiScope,
-                required: true,
-                as: 'apiScope',
-                where: {
-                  enabled: true,
-                },
-                include: [
-                  {
-                    model: ApiScopeDelegationType,
-                    required: true,
-                    where: {
-                      delegationType: AuthDelegationType.Custom,
-                    },
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      }),
+      this.findAllOutgoingCustom(nationalId),
       this.delegationModel.findAll({
         where: {
           fromNationalId: nationalId,
@@ -147,15 +162,27 @@ export class DelegationAdminCustomService {
           },
         ],
       }),
+      // Custom delegations and general mandates are read from the delegation table above.
+      this.delegationIndexLookupService.findByNationalId(nationalId, [
+        AuthDelegationType.Custom,
+        AuthDelegationType.GeneralMandate,
+      ]),
     ])
 
+    const indexed = indexedDelegations.map(toAdminDelegation)
+
     return {
-      incoming: [...incomingCustomDelegations, ...incomingGeneralDelegations],
+      incoming: [
+        ...incomingCustomDelegations,
+        ...incomingGeneralDelegations,
+        ...indexed.filter((d) => d.toNationalId === nationalId),
+      ],
       outgoing: [
         ...outgoingGeneralDelegations.map((d) =>
           d.toDTO(AuthDelegationType.GeneralMandate),
         ),
-        ...outgoingCustomDelegations.map((delegation) => delegation.toDTO()),
+        ...outgoingCustomDelegations,
+        ...indexed.filter((d) => d.fromNationalId === nationalId),
       ],
     }
   }
@@ -470,3 +497,23 @@ export class DelegationAdminCustomService {
     return new Date(year, month - 1, day)
   }
 }
+
+const toAdminDelegation = ({
+  record,
+  type,
+  provider,
+  id,
+  indexedAt,
+}: IndexedDelegation): DelegationAdminDelegationDto => ({
+  id,
+  type,
+  provider,
+  fromNationalId: record.fromNationalId,
+  // Names are resolved by the GraphQL layer.
+  fromName: '',
+  toNationalId: record.toNationalId,
+  validTo: record.validTo ?? null,
+  scopes: [],
+  domainName: null,
+  indexedAt,
+})

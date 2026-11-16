@@ -40,7 +40,7 @@ const FinancialStatementPoliticalPartyTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.FINANCIAL_STATEMENT_POLITICAL_PARTY,
   name: m.applicationTitle,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: m.institutionName,
   translationNamespaces: [configuration.translation],
   dataSchema,

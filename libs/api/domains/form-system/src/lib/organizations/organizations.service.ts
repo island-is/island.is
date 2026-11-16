@@ -7,7 +7,10 @@ import {
   OrganizationsControllerFindAdminRequest,
   OrganizationZendeskInstanceDto,
 } from '@island.is/clients/form-system'
-import { GetOrganizationAdminInput } from '../../dto/organization.input'
+import {
+  CreateOrganizationInput,
+  GetOrganizationAdminInput,
+} from '../../dto/organization.input'
 import { OrganizationAdmin } from '../../models/organizationAdmin.model'
 import { OrganizationZendeskInstanceInput } from '../../dto/organizationZendeskInstance.input'
 
@@ -32,6 +35,15 @@ export class OrganizationsService {
 
   private organizationsApiWithAuth(auth: User) {
     return this.organizationsApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async createOrganization(
+    auth: User,
+    input: CreateOrganizationInput,
+  ): Promise<void> {
+    await this.organizationsApiWithAuth(auth).organizationsControllerCreate({
+      nationalId: input.nationalId,
+    })
   }
 
   async getOrganizationAdmin(

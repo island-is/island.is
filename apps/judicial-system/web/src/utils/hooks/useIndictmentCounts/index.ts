@@ -1,6 +1,5 @@
 import type { Dispatch, SetStateAction } from 'react'
 import { useCallback } from 'react'
-import { useIntl } from 'react-intl'
 
 import { errors } from '@island.is/judicial-system-web/messages'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
@@ -26,8 +25,6 @@ export type UpdateIndictmentCountState = UpdateIndictmentCount & {
 }
 
 const useIndictmentCounts = () => {
-  const { formatMessage } = useIntl()
-
   const [createIndictmentCountMutation] = useCreateIndictmentCountMutation()
   const [updateIndictmentCountMutation] = useUpdateIndictmentCountMutation()
   const [deleteIndictmentCountMutation] = useDeleteIndictmentCountMutation()
@@ -41,15 +38,15 @@ const useIndictmentCounts = () => {
         })
 
         if (!data) {
-          toast.error(formatMessage(errors.createIndictmentCount))
+          toast.error(errors.createIndictmentCount)
         }
 
         return data?.createIndictmentCount
       } catch {
-        toast.error(formatMessage(errors.createIndictmentCount))
+        toast.error(errors.createIndictmentCount)
       }
     },
-    [createIndictmentCountMutation, formatMessage],
+    [createIndictmentCountMutation],
   )
 
   const deleteIndictmentCount = useCallback(
@@ -61,10 +58,10 @@ const useIndictmentCounts = () => {
 
         return data?.deleteIndictmentCount?.deleted
       } catch {
-        toast.error(formatMessage(errors.deleteIndictmentCount))
+        toast.error(errors.deleteIndictmentCount)
       }
     },
-    [deleteIndictmentCountMutation, formatMessage],
+    [deleteIndictmentCountMutation],
   )
 
   const updateIndictmentCount = useCallback(
@@ -85,15 +82,15 @@ const useIndictmentCounts = () => {
         })
 
         if (!data) {
-          toast.error(formatMessage(errors.updateIndictmentCount))
+          toast.error(errors.updateIndictmentCount)
         }
 
         return data?.updateIndictmentCount
       } catch {
-        toast.error(formatMessage(errors.updateIndictmentCount))
+        toast.error(errors.updateIndictmentCount)
       }
     },
-    [updateIndictmentCountMutation, formatMessage],
+    [updateIndictmentCountMutation],
   )
 
   const reorderIndictmentCounts = useCallback(

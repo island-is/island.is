@@ -10,7 +10,9 @@ import {
   COURT_OF_APPEAL_SUMMARY_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
   DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE,
@@ -169,9 +171,15 @@ const useSections = (
     const { type, id, parentCase, state } = workingCase
 
     return {
-      name: formatMessage(sections.restrictionCaseProsecutorSection.caseTitle, {
-        caseType: type,
-      }),
+      name: formatMessage(
+        {
+          id: sections.restrictionCaseProsecutorSection.caseTitle,
+          defaultMessage: sections.restrictionCaseProsecutorSection.caseTitle,
+        },
+        {
+          caseType: type,
+        },
+      ),
       isActive:
         isProsecutionUser(user) &&
         isRestrictionCase(type) &&
@@ -182,9 +190,12 @@ const useSections = (
         : [
             {
               name: capitalize(
-                formatMessage(core.defendant, {
-                  suffix: 'i',
-                }),
+                formatMessage(
+                  { id: core.defendant, defaultMessage: core.defendant },
+                  {
+                    suffix: 'i',
+                  },
+                ),
               ),
               isActive:
                 isActive(PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE) ||
@@ -193,9 +204,8 @@ const useSections = (
               href: `${PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE}/${id}`,
             },
             {
-              name: formatMessage(
-                sections.restrictionCaseProsecutorSection.hearingArrangements,
-              ),
+              name: sections.restrictionCaseProsecutorSection
+                .hearingArrangements,
               href: `${PROSECUTION_RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${id}`,
               isActive: isActive(
                 PROSECUTION_RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
@@ -221,9 +231,7 @@ const useSections = (
                   : undefined,
             },
             {
-              name: formatMessage(
-                sections.restrictionCaseProsecutorSection.policeDemands,
-              ),
+              name: sections.restrictionCaseProsecutorSection.policeDemands,
               href: `${PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE}/${id}`,
               isActive: isActive(
                 PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
@@ -246,9 +254,7 @@ const useSections = (
                   : undefined,
             },
             {
-              name: formatMessage(
-                sections.restrictionCaseProsecutorSection.policeReport,
-              ),
+              name: sections.restrictionCaseProsecutorSection.policeReport,
               href: `${PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE}/${id}`,
               isActive: isActive(
                 PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE,
@@ -272,9 +278,7 @@ const useSections = (
                   : undefined,
             },
             {
-              name: formatMessage(
-                sections.restrictionCaseProsecutorSection.caseFiles,
-              ),
+              name: sections.restrictionCaseProsecutorSection.caseFiles,
               href: `${PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE}/${id}`,
               isActive: isActive(PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE),
               onClick:
@@ -297,9 +301,7 @@ const useSections = (
                   : undefined,
             },
             {
-              name: formatMessage(
-                sections.restrictionCaseProsecutorSection.overview,
-              ),
+              name: sections.restrictionCaseProsecutorSection.overview,
               href: `${PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE}/${id}`,
               isActive: isActive(PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE),
               onClick:
@@ -333,7 +335,7 @@ const useSections = (
     const { id, type, parentCase, state } = workingCase
 
     return {
-      name: formatMessage(sections.investigationCaseProsecutorSection.title),
+      name: sections.investigationCaseProsecutorSection.title,
       isActive:
         isProsecutionUser(user) &&
         isInvestigationCase(type) &&
@@ -350,7 +352,12 @@ const useSections = (
               href: `${PROSECUTION_INVESTIGATION_CASE_REGISTRATION_ROUTE}/${id}`,
             },
             {
-              name: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
+              name: capitalize(
+                formatMessage(
+                  { id: core.defendant, defaultMessage: core.defendant },
+                  { suffix: 'i' },
+                ),
+              ),
               isActive: isActive(
                 PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE,
               ),
@@ -370,9 +377,8 @@ const useSections = (
                   : undefined,
             },
             {
-              name: formatMessage(
-                sections.investigationCaseProsecutorSection.hearingArrangements,
-              ),
+              name: sections.investigationCaseProsecutorSection
+                .hearingArrangements,
               isActive: isActive(
                 PROSECUTION_INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
               ),
@@ -394,9 +400,7 @@ const useSections = (
                   : undefined,
             },
             {
-              name: formatMessage(
-                sections.investigationCaseProsecutorSection.policeDemands,
-              ),
+              name: sections.investigationCaseProsecutorSection.policeDemands,
               isActive: isActive(
                 PROSECUTION_INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
               ),
@@ -421,9 +425,7 @@ const useSections = (
                   : undefined,
             },
             {
-              name: formatMessage(
-                sections.investigationCaseProsecutorSection.policeReport,
-              ),
+              name: sections.investigationCaseProsecutorSection.policeReport,
               href: `${PROSECUTION_INVESTIGATION_CASE_POLICE_REPORT_ROUTE}/${id}`,
               isActive: isActive(
                 PROSECUTION_INVESTIGATION_CASE_POLICE_REPORT_ROUTE,
@@ -447,9 +449,7 @@ const useSections = (
                   : undefined,
             },
             {
-              name: formatMessage(
-                sections.investigationCaseProsecutorSection.caseFiles,
-              ),
+              name: sections.investigationCaseProsecutorSection.caseFiles,
               href: `${PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE}/${id}`,
               isActive: isActive(
                 PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE,
@@ -474,9 +474,7 @@ const useSections = (
                   : undefined,
             },
             {
-              name: formatMessage(
-                sections.investigationCaseProsecutorSection.overview,
-              ),
+              name: sections.investigationCaseProsecutorSection.overview,
               href: `${PROSECUTION_INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/${id}`,
               isActive: isActive(
                 PROSECUTION_INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
@@ -519,7 +517,7 @@ const useSections = (
       router.pathname === `${PROSECUTION_INDICTMENT_CASE_ADD_FILES_ROUTE}/[id]`
 
     return {
-      name: formatMessage(sections.indictmentCaseProsecutorSection.title),
+      name: sections.indictmentCaseProsecutorSection.title,
       isActive:
         isProsecutionUser(user) &&
         isIndictmentCase(type) &&
@@ -531,9 +529,15 @@ const useSections = (
         : [
             {
               name: capitalize(
-                formatMessage(core.indictmentDefendant, {
-                  gender: Gender.MALE,
-                }),
+                formatMessage(
+                  {
+                    id: core.indictmentDefendant,
+                    defaultMessage: core.indictmentDefendant,
+                  },
+                  {
+                    gender: Gender.MALE,
+                  },
+                ),
               ),
               isActive:
                 isActive(PROSECUTION_CREATE_INDICTMENT_ROUTE) ||
@@ -542,9 +546,7 @@ const useSections = (
             },
             {
               name: capitalize(
-                formatMessage(
-                  sections.indictmentCaseProsecutorSection.policeCaseFiles,
-                ),
+                sections.indictmentCaseProsecutorSection.policeCaseFiles,
               ),
               isActive: isActive(
                 PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE,
@@ -568,9 +570,7 @@ const useSections = (
             },
             {
               name: capitalize(
-                formatMessage(
-                  sections.indictmentCaseProsecutorSection.caseFile,
-                ),
+                sections.indictmentCaseProsecutorSection.caseFile,
               ),
               isActive: isActive(PROSECUTION_INDICTMENT_CASE_CASE_FILE_ROUTE),
               href: `${PROSECUTION_INDICTMENT_CASE_CASE_FILE_ROUTE}/${id}`,
@@ -593,9 +593,7 @@ const useSections = (
             },
             {
               name: capitalize(
-                formatMessage(
-                  sections.indictmentCaseProsecutorSection.caseFiles,
-                ),
+                sections.indictmentCaseProsecutorSection.caseFiles,
               ),
               href: `${PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE}/${id}`,
               isActive: substepsShouldBeHidden
@@ -621,9 +619,7 @@ const useSections = (
             },
             {
               name: capitalize(
-                formatMessage(
-                  sections.indictmentCaseProsecutorSection.processing,
-                ),
+                sections.indictmentCaseProsecutorSection.processing,
               ),
               isActive: isActive(PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE),
               href: `${PROSECUTION_INDICTMENT_CASE_PROCESSING_ROUTE}/${id}`,
@@ -647,9 +643,7 @@ const useSections = (
                   : undefined,
             },
             {
-              name: formatMessage(
-                sections.indictmentCaseProsecutorSection.indictment,
-              ),
+              name: sections.indictmentCaseProsecutorSection.indictment,
               href: `${PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE}/${id}`,
               isActive: isActive(PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE),
               onClick:
@@ -674,9 +668,7 @@ const useSections = (
             },
             {
               name: capitalize(
-                formatMessage(
-                  sections.indictmentCaseProsecutorSection.overview,
-                ),
+                sections.indictmentCaseProsecutorSection.overview,
               ),
               href: `${PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE}/${id}`,
               isActive: isActive(PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE),
@@ -711,7 +703,7 @@ const useSections = (
   ): RouteSection => {
     const { id, parentCase, state } = workingCase
     return {
-      name: formatMessage(sections.courtSection.title),
+      name: sections.courtSection.title,
       isActive:
         (isDistrictCourtUser(user) || isDefenceUser(user)) &&
         !isCompletedCase(state) &&
@@ -721,16 +713,14 @@ const useSections = (
           ? []
           : [
               {
-                name: formatMessage(
-                  sections.courtSection.receptionAndAssignment,
-                ),
+                name: sections.courtSection.receptionAndAssignment,
                 isActive: isActive(
                   DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
                 ),
                 href: `${DISTRICT_COURT_RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
               },
               {
-                name: formatMessage(sections.courtSection.overview),
+                name: sections.courtSection.overview,
                 isActive: isActive(
                   DISTRICT_COURT_RESTRICTION_CASE_COURT_OVERVIEW_ROUTE,
                 ),
@@ -754,7 +744,7 @@ const useSections = (
                     : undefined,
               },
               {
-                name: formatMessage(sections.courtSection.hearingArrangements),
+                name: sections.courtSection.hearingArrangements,
                 isActive: isActive(
                   DISTRICT_COURT_RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
                 ),
@@ -779,7 +769,7 @@ const useSections = (
                     : undefined,
               },
               {
-                name: formatMessage(sections.courtSection.ruling),
+                name: sections.courtSection.ruling,
                 isActive: isActive(
                   DISTRICT_COURT_RESTRICTION_CASE_RULING_ROUTE,
                 ),
@@ -803,7 +793,7 @@ const useSections = (
                     : undefined,
               },
               {
-                name: formatMessage(sections.courtSection.courtRecord),
+                name: sections.courtSection.courtRecord,
                 isActive: isActive(
                   DISTRICT_COURT_RESTRICTION_CASE_COURT_RECORD_ROUTE,
                 ),
@@ -830,7 +820,7 @@ const useSections = (
                     : undefined,
               },
               {
-                name: formatMessage(sections.courtSection.conclusion),
+                name: sections.courtSection.conclusion,
                 isActive: isActive(
                   DISTRICT_COURT_RESTRICTION_CASE_CONFIRMATION_ROUTE,
                 ),
@@ -868,7 +858,7 @@ const useSections = (
     const { id, parentCase, state } = workingCase
 
     return {
-      name: formatMessage(sections.investigationCaseCourtSection.title),
+      name: sections.investigationCaseCourtSection.title,
       isActive:
         (isDistrictCourtUser(user) || isDefenceUser(user)) &&
         !isCompletedCase(state) &&
@@ -878,18 +868,14 @@ const useSections = (
           ? []
           : [
               {
-                name: formatMessage(
-                  sections.courtSection.receptionAndAssignment,
-                ),
+                name: sections.courtSection.receptionAndAssignment,
                 isActive: isActive(
                   DISTRICT_COURT_INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
                 ),
                 href: `${DISTRICT_COURT_INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
               },
               {
-                name: formatMessage(
-                  sections.investigationCaseCourtSection.overview,
-                ),
+                name: sections.investigationCaseCourtSection.overview,
                 isActive: isActive(
                   DISTRICT_COURT_INVESTIGATION_CASE_OVERVIEW_ROUTE,
                 ),
@@ -911,9 +897,8 @@ const useSections = (
                     : undefined,
               },
               {
-                name: formatMessage(
-                  sections.investigationCaseCourtSection.hearingArrangements,
-                ),
+                name: sections.investigationCaseCourtSection
+                  .hearingArrangements,
                 isActive: isActive(
                   DISTRICT_COURT_INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
                 ),
@@ -938,9 +923,7 @@ const useSections = (
                     : undefined,
               },
               {
-                name: formatMessage(
-                  sections.investigationCaseCourtSection.ruling,
-                ),
+                name: sections.investigationCaseCourtSection.ruling,
                 isActive: isActive(
                   DISTRICT_COURT_INVESTIGATION_CASE_RULING_ROUTE,
                 ),
@@ -964,9 +947,7 @@ const useSections = (
                     : undefined,
               },
               {
-                name: formatMessage(
-                  sections.investigationCaseCourtSection.courtRecord,
-                ),
+                name: sections.investigationCaseCourtSection.courtRecord,
                 isActive: isActive(
                   DISTRICT_COURT_INVESTIGATION_CASE_COURT_RECORD_ROUTE,
                 ),
@@ -993,9 +974,7 @@ const useSections = (
                     : undefined,
               },
               {
-                name: formatMessage(
-                  sections.investigationCaseCourtSection.conclusion,
-                ),
+                name: sections.investigationCaseCourtSection.conclusion,
                 isActive: isActive(
                   DISTRICT_COURT_INVESTIGATION_CASE_CONFIRMATION_ROUTE,
                 ),
@@ -1033,7 +1012,7 @@ const useSections = (
     const { id, state, indictmentDecision } = workingCase
 
     return {
-      name: formatMessage(sections.indictmentsCourtSection.title),
+      name: sections.indictmentsCourtSection.title,
       isActive:
         (isProsecutionUser(user) && state === CaseState.RECEIVED) ||
         (isDistrictCourtUser(user) &&
@@ -1042,16 +1021,14 @@ const useSections = (
       children: isDistrictCourtUser(user)
         ? [
             {
-              name: formatMessage(sections.indictmentsCourtSection.overview),
+              name: sections.indictmentsCourtSection.overview,
               isActive: isActive(
                 DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE,
               ),
               href: `${DISTRICT_COURT_INDICTMENT_CASE_COURT_OVERVIEW_ROUTE}/${id}`,
             },
             {
-              name: formatMessage(
-                sections.indictmentsCourtSection.receptionAndAssignment,
-              ),
+              name: sections.indictmentsCourtSection.receptionAndAssignment,
               isActive: isActive(
                 DISTRICT_COURT_INDICTMENT_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
               ),
@@ -1069,7 +1046,7 @@ const useSections = (
                   : undefined,
             },
             {
-              name: formatMessage(sections.indictmentsCourtSection.subpoena),
+              name: sections.indictmentsCourtSection.subpoena,
               isActive: isActive(DISTRICT_COURT_INDICTMENT_CASE_SUBPOENA_ROUTE),
               href: `${DISTRICT_COURT_INDICTMENT_CASE_SUBPOENA_ROUTE}/${id}`,
               onClick:
@@ -1090,7 +1067,7 @@ const useSections = (
                   : undefined,
             },
             {
-              name: formatMessage(sections.indictmentsCourtSection.defender),
+              name: sections.indictmentsCourtSection.defender,
               isActive: isActive(DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE),
               href: `${DISTRICT_COURT_INDICTMENT_CASE_DEFENDER_ROUTE}/${id}`,
               onClick:
@@ -1112,7 +1089,7 @@ const useSections = (
                   : undefined,
             },
             {
-              name: formatMessage(sections.indictmentsCourtSection.courtRecord),
+              name: sections.indictmentsCourtSection.courtRecord,
               isActive: isActive(
                 DISTRICT_COURT_INDICTMENT_CASE_COURT_RECORD_ROUTE,
               ),
@@ -1137,7 +1114,7 @@ const useSections = (
                   : undefined,
             },
             {
-              name: formatMessage(sections.indictmentsCourtSection.conclusion),
+              name: sections.indictmentsCourtSection.conclusion,
               isActive: isActive(
                 DISTRICT_COURT_INDICTMENT_CASE_CONCLUSION_ROUTE,
               ),
@@ -1163,7 +1140,7 @@ const useSections = (
                   : undefined,
             },
             {
-              name: formatMessage(sections.indictmentsCourtSection.summary),
+              name: sections.indictmentsCourtSection.summary,
               isActive: isActive(DISTRICT_COURT_INDICTMENT_CASE_SUMMARY_ROUTE),
               href: `${DISTRICT_COURT_INDICTMENT_CASE_SUMMARY_ROUTE}/${id}`,
               onClick:
@@ -1205,7 +1182,7 @@ const useSections = (
     const { id, type, parentCase, state } = workingCase
 
     return {
-      name: formatMessage(sections.extensionSection.title),
+      name: sections.extensionSection.title,
       isActive:
         isProsecutionUser(user) &&
         isRestrictionCase(type) &&
@@ -1218,7 +1195,10 @@ const useSections = (
           : [
               {
                 name: capitalize(
-                  formatMessage(core.defendant, { suffix: 'i' }),
+                  formatMessage(
+                    { id: core.defendant, defaultMessage: core.defendant },
+                    { suffix: 'i' },
+                  ),
                 ),
                 isActive: isActive(
                   PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE,
@@ -1226,9 +1206,7 @@ const useSections = (
                 href: `${PROSECUTION_RESTRICTION_CASE_DEFENDANT_ROUTE}/${id}`,
               },
               {
-                name: formatMessage(
-                  sections.extensionSection.hearingArrangements,
-                ),
+                name: sections.extensionSection.hearingArrangements,
                 isActive: isActive(
                   PROSECUTION_RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
                 ),
@@ -1242,7 +1220,7 @@ const useSections = (
                   undefined,
               },
               {
-                name: formatMessage(sections.extensionSection.policeDemands),
+                name: sections.extensionSection.policeDemands,
                 isActive: isActive(
                   PROSECUTION_RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
                 ),
@@ -1256,7 +1234,7 @@ const useSections = (
                   undefined,
               },
               {
-                name: formatMessage(sections.extensionSection.policeReport),
+                name: sections.extensionSection.policeReport,
                 isActive: isActive(
                   PROSECUTION_RESTRICTION_CASE_POLICE_REPORT_ROUTE,
                 ),
@@ -1270,7 +1248,7 @@ const useSections = (
                   undefined,
               },
               {
-                name: formatMessage(sections.extensionSection.caseFiles),
+                name: sections.extensionSection.caseFiles,
                 isActive: isActive(
                   PROSECUTION_RESTRICTION_CASE_CASE_FILES_ROUTE,
                 ),
@@ -1282,7 +1260,7 @@ const useSections = (
                   undefined,
               },
               {
-                name: formatMessage(sections.extensionSection.overview),
+                name: sections.extensionSection.overview,
                 isActive: isActive(PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE),
                 href: `${PROSECUTION_RESTRICTION_CASE_OVERVIEW_ROUTE}/${id}`,
                 onClick:
@@ -1303,7 +1281,7 @@ const useSections = (
     const { id, type, parentCase, state } = workingCase
 
     return {
-      name: formatMessage(sections.investigationCaseExtensionSection.title),
+      name: sections.investigationCaseExtensionSection.title,
       isActive:
         isProsecutionUser(user) &&
         isInvestigationCase(type) &&
@@ -1313,16 +1291,20 @@ const useSections = (
         ? []
         : [
             {
-              name: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
+              name: capitalize(
+                formatMessage(
+                  { id: core.defendant, defaultMessage: core.defendant },
+                  { suffix: 'i' },
+                ),
+              ),
               isActive: isActive(
                 PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE,
               ),
               href: `${PROSECUTION_INVESTIGATION_CASE_DEFENDANT_ROUTE}/${id}`,
             },
             {
-              name: formatMessage(
-                sections.investigationCaseExtensionSection.hearingArrangements,
-              ),
+              name: sections.investigationCaseExtensionSection
+                .hearingArrangements,
               isActive: isActive(
                 PROSECUTION_INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
               ),
@@ -1335,9 +1317,7 @@ const useSections = (
                 undefined,
             },
             {
-              name: formatMessage(
-                sections.investigationCaseExtensionSection.policeDemands,
-              ),
+              name: sections.investigationCaseExtensionSection.policeDemands,
               isActive: isActive(
                 PROSECUTION_INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE,
               ),
@@ -1350,9 +1330,7 @@ const useSections = (
                 undefined,
             },
             {
-              name: formatMessage(
-                sections.investigationCaseExtensionSection.policeReport,
-              ),
+              name: sections.investigationCaseExtensionSection.policeReport,
               isActive: isActive(
                 PROSECUTION_INVESTIGATION_CASE_POLICE_REPORT_ROUTE,
               ),
@@ -1365,9 +1343,7 @@ const useSections = (
                 undefined,
             },
             {
-              name: formatMessage(
-                sections.investigationCaseExtensionSection.caseFiles,
-              ),
+              name: sections.investigationCaseExtensionSection.caseFiles,
               isActive: isActive(
                 PROSECUTION_INVESTIGATION_CASE_CASE_FILES_ROUTE,
               ),
@@ -1378,9 +1354,7 @@ const useSections = (
                 undefined,
             },
             {
-              name: formatMessage(
-                sections.investigationCaseExtensionSection.overview,
-              ),
+              name: sections.investigationCaseExtensionSection.overview,
               isActive: isActive(
                 PROSECUTION_INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
               ),
@@ -1409,21 +1383,21 @@ const useSections = (
 
     return [
       {
-        name: formatMessage(sections.courtOfAppealSection.appealed),
+        name: sections.courtOfAppealSection.appealed,
         isActive:
           !isCourtOfAppealsUser(user) &&
           appealState === AppealCaseState.APPEALED,
         children: [],
       },
       {
-        name: formatMessage(sections.courtOfAppealSection.result),
+        name: sections.courtOfAppealSection.result,
         isActive:
           appealState === AppealCaseState.RECEIVED ||
           appealState === AppealCaseState.WITHDRAWN,
         children: isCourtOfAppealsUser(user)
           ? [
               {
-                name: formatMessage(sections.courtOfAppealSection.overview),
+                name: sections.courtOfAppealSection.overview,
                 isActive: isActive(COURT_OF_APPEAL_OVERVIEW_ROUTE),
                 href: appendAppealCaseIdQuery(
                   `${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`,
@@ -1433,9 +1407,7 @@ const useSections = (
               ...(!useAppealWithdrawnSections
                 ? [
                     {
-                      name: formatMessage(
-                        sections.courtOfAppealSection.reception,
-                      ),
+                      name: sections.courtOfAppealSection.reception,
                       isActive: isActive(COURT_OF_APPEAL_CASE_ROUTE),
                       href: appendAppealCaseIdQuery(
                         `${COURT_OF_APPEAL_CASE_ROUTE}/${id}`,
@@ -1454,7 +1426,7 @@ const useSections = (
                           : undefined,
                     },
                     {
-                      name: formatMessage(sections.courtOfAppealSection.ruling),
+                      name: sections.courtOfAppealSection.ruling,
                       isActive: isActive(COURT_OF_APPEAL_RULING_ROUTE),
                       href: appendAppealCaseIdQuery(
                         `${COURT_OF_APPEAL_RULING_ROUTE}/${id}`,
@@ -1480,9 +1452,7 @@ const useSections = (
               ...(useAppealWithdrawnSections
                 ? [
                     {
-                      name: formatMessage(
-                        sections.courtOfAppealSection.withdrawal,
-                      ),
+                      name: sections.courtOfAppealSection.withdrawal,
                       isActive: isActive(COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE),
                       href: appendAppealCaseIdQuery(
                         `${COURT_OF_APPEAL_CASE_WITHDRAWN_ROUTE}/${id}`,
@@ -1505,7 +1475,7 @@ const useSections = (
                   ]
                 : []),
               {
-                name: formatMessage(sections.courtOfAppealSection.summary),
+                name: sections.courtOfAppealSection.summary,
                 isActive: isActive(COURT_OF_APPEAL_SUMMARY_ROUTE),
                 href: appendAppealCaseIdQuery(
                   `${COURT_OF_APPEAL_SUMMARY_ROUTE}/${id}`,
@@ -1534,7 +1504,7 @@ const useSections = (
         name:
           appealState === AppealCaseState.COMPLETED
             ? getAppealResultTextByValue(appealRulingDecision)
-            : formatMessage(sections.caseResults.result),
+            : sections.caseResults.result,
         isActive: appealState === AppealCaseState.COMPLETED,
         children: [],
       },
@@ -1577,8 +1547,10 @@ const useSections = (
       name: 'Dómur Landsréttar',
       isActive:
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE) ||
+        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE) ||
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE) ||
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE) ||
+        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE) ||
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE) ||
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE),
       children: [
@@ -1595,18 +1567,42 @@ const useSections = (
           ),
         },
         {
-          name: 'Verjandi',
-          isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE),
+          name: 'Skráning og úthlutun',
+          isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE),
           href: appendAppealCaseIdQuery(
-            `${COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE}/${workingCase.id}`,
+            `${COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE}/${workingCase.id}`,
             targetAppealCase?.id,
           ),
           // The href alone only reaches a step the court has already passed.
           // Going forward to one needs this, and nothing stands in the way:
           // the overview before it asks nothing of the court.
           onClick:
-            !isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE) &&
+            !isActive(COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE) &&
             validateFormStepper(isValid, [], workingCase) &&
+            onNavigationTo
+              ? async () =>
+                  await onNavigationTo(
+                    COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
+                  )
+              : undefined,
+        },
+        {
+          name: 'Verjandi',
+          isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE),
+          href: appendAppealCaseIdQuery(
+            `${COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE}/${workingCase.id}`,
+            targetAppealCase?.id,
+          ),
+          // Going forward to it runs through the registration step: the court
+          // records its case number before it does anything else with the
+          // appeal.
+          onClick:
+            !isActive(COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE) &&
+            validateFormStepper(
+              isValid,
+              [COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE],
+              workingCase,
+            ) &&
             onNavigationTo
               ? async () =>
                   await onNavigationTo(
@@ -1616,26 +1612,36 @@ const useSections = (
         },
         {
           name: 'Greinargerðarfrestir',
-          isActive: isActive(
-            COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
-          ),
+          // The upload page is the deadlines step's own: it is reached from a
+          // card there and goes back there, so the step stays lit on it.
+          isActive:
+            isActive(
+              COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
+            ) || isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE),
           href: appendAppealCaseIdQuery(
             `${COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE}/${workingCase.id}`,
             targetAppealCase?.id,
           ),
-          // Going forward to it runs through the defender step's validation:
-          // a deadline is given to a party's advocate, so the court settles
-          // who that is first.
+          // Going forward to it runs through the steps before it, in practice
+          // the defender step's validation: a deadline is given to a party's
+          // advocate, so the court settles who that is first. From the upload
+          // page it is a step back, and the href does not carry it (the panel
+          // links only to earlier steps), so the way back is offered as a
+          // click with nothing asked.
           onClick:
-            !isActive(
-              COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
-            ) &&
-            validateFormStepper(
-              isValid,
-              [COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE],
-              workingCase,
-            ) &&
-            onNavigationTo
+            onNavigationTo &&
+            (isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE) ||
+              (!isActive(
+                COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
+              ) &&
+                validateFormStepper(
+                  isValid,
+                  [
+                    COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
+                    COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+                  ],
+                  workingCase,
+                )))
               ? async () =>
                   await onNavigationTo(
                     COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
@@ -1658,6 +1664,7 @@ const useSections = (
             validateFormStepper(
               isValid,
               [
+                COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
                 COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
                 COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
               ],
@@ -1682,6 +1689,7 @@ const useSections = (
             validateFormStepper(
               isValid,
               [
+                COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
                 COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
                 COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
                 COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,

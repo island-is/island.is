@@ -15,13 +15,27 @@ export class FieldSettingsFactory {
         keys = ['minLength', 'maxLength', 'isLarge', 'hasDescription', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.NUMBERBOX:
-        keys = ['minValue', 'maxValue', 'hasDescription', 'isDecimal', ...keys]
+        keys = [
+          'minValue',
+          'maxValue',
+          'minLength',
+          'maxLength',
+          'hasDescription',
+          'isDecimal',
+          ...keys,
+        ]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.MESSAGE:
         keys = ['hasLink', 'url', 'buttonText', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.DATE_PICKER:
-        keys = ['minDate', 'maxDate', ...keys]
+        keys = [
+          'minDate',
+          'maxDate',
+          'minDateDaysFromToday',
+          'maxDateDaysFromToday',
+          ...keys,
+        ]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.DROPDOWN_LIST:
         keys = [
@@ -35,6 +49,9 @@ export class FieldSettingsFactory {
       case FieldTypesEnum.ISK_NUMBERBOX:
         keys = ['minAmount', 'maxAmount', ...keys]
         return this.pickSettings(fieldSettings, keys)
+      case FieldTypesEnum.ISK_SUMBOX:
+        keys = ['fieldsToSum', ...keys]
+        return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.PROPERTY_NUMBER:
         keys = ['hasPropertyInput', 'hasPropertyList', ...keys]
         return this.pickSettings(fieldSettings, keys)
@@ -44,6 +61,16 @@ export class FieldSettingsFactory {
       case FieldTypesEnum.TIME_INPUT:
         keys = ['timeInterval', ...keys]
         return this.pickSettings(fieldSettings, keys)
+      case FieldTypesEnum.BANK_ACCOUNT:
+        keys = ['fetchBankAccountFromMyPages', ...keys]
+        return this.pickSettings(
+          {
+            ...fieldSettings,
+            fetchBankAccountFromMyPages:
+              fieldSettings.fetchBankAccountFromMyPages ?? true,
+          },
+          keys,
+        )
       case FieldTypesEnum.HOMESTAY_OVERVIEW:
         keys = ['year', ...keys]
         return this.pickSettings(fieldSettings, keys)

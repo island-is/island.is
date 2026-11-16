@@ -15,3 +15,13 @@ export const idCard = style({
     },
   },
 })
+
+export const reviewScopesTable = style({
+  overflowX: 'auto',
+})
+
+export const reviewReasonBox = style({
+  border: `1px solid ${theme.color.blue200}`,
+  borderRadius: theme.border.radius.large,
+  padding: theme.spacing[2],
+})

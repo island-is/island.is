@@ -7,8 +7,10 @@ import {
 
 import type { CalculatorOutputTotal } from '@island.is/tax-calculators'
 
+import { TaxCalculatorOutputFieldType } from '../../../../graphql/schema'
 import type { OutputFieldContract } from '../contract'
 import { LocalizedTextFields } from './LocalizedTextFields'
+import { NumberTypeSelect } from './NumberTypeSelect'
 import * as styles from './CalculatorEditor.css'
 
 interface Props {
@@ -51,7 +53,9 @@ export const OutputTotalEditor = ({
         <Select
           value={total.key}
           isDisabled={isLoading || isDisabled}
-          onChange={(ev) => onChange({ key: ev.target.value })}
+          onChange={(ev) =>
+            onChange({ key: ev.target.value, numberType: undefined })
+          }
         >
           <Select.Option value="" isDisabled>
             {isLoading ? 'Loading fields…' : 'Select an output field'}
@@ -94,6 +98,17 @@ export const OutputTotalEditor = ({
           </FormControl.ValidationMessage>
         )}
       </FormControl>
+
+      {contract.get(total.key)?.type ===
+        TaxCalculatorOutputFieldType.Number && (
+        <NumberTypeSelect
+          fieldKey={total.key}
+          value={total.numberType}
+          inferred={contract.get(total.key)?.semantic}
+          isDisabled={isDisabled}
+          onChange={(numberType) => onChange({ numberType })}
+        />
+      )}
     </Stack>
   )
 }

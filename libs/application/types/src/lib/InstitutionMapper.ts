@@ -556,9 +556,19 @@ export const institutionMapper = {
     slug: InstitutionTypes.JAFNRETTISSTOFA,
     contentfulId: InstitutionContentfulIds.JAFNRETTISSTOFA,
   },
+  [ApplicationTypes.PAY_DEBTS]: {
+    nationalId: InstitutionNationalIds.FJARSYSLA_RIKISINS,
+    slug: InstitutionTypes.FJARSYSLA_RIKISINS,
+    contentfulId: InstitutionContentfulIds.FJARSYSLA_RIKISINS,
+  },
   [ApplicationTypes.U2_CERTIFICATE]: {
     nationalId: InstitutionNationalIds.VINNUMALASTOFNUN,
     slug: InstitutionTypes.VINNUMALASTOFNUN,
     contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
+  },
+  [ApplicationTypes.FJARSKIPTASTOFA_SELF_ASSESSMENT]: {
+    nationalId: InstitutionNationalIds.FJARSKIPTASTOFA,
+    slug: InstitutionTypes.FJARSKIPTASTOFA,
+    contentfulId: InstitutionContentfulIds.FJARSKIPTASTOFA,
   },
 }

@@ -91,4 +91,12 @@ export class User extends Model {
   })
   @ApiProperty({ type: Boolean })
   canManageMessageSuspension!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({ type: Boolean })
+  canManageServiceInterruptionBanner!: boolean
 }

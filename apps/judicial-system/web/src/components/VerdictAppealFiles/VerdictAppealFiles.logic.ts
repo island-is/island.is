@@ -7,16 +7,19 @@ import {
   isCourtOfAppealsUser,
   isPublicProsecutionOfficeUser,
   isPublicProsecutionUser,
+  isSuccessfulVerdictServiceStatus,
   verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
-import type {
-  AppealSummons,
-  CaseFile,
-  CaseFileCategory,
-  Defendant,
-  User,
+import {
+  type AppealSummons,
+  type CaseFile,
+  type CaseFileCategory,
+  type CivilClaimant,
+  type Defendant,
+  type User,
+  VerdictServiceStatus,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isMatchingAppealCaseFile } from '@island.is/judicial-system-web/src/utils/utils'
 
@@ -172,14 +175,33 @@ export const formatAppealSummonsFileName = (
 }
 
 export const getAppealSummonsMenuItems = (
-  summons: Pick<AppealSummons, 'confirmedDate' | 'sentToCourtOfAppealsDate'>,
+  summons: Pick<
+    AppealSummons,
+    'confirmedDate' | 'sentToCourtOfAppealsDate' | 'services'
+  >,
   user: User | undefined,
   onEdit: () => void,
   onOpen: () => void,
   onDelete: () => void,
+  onSendToService?: () => void,
   onSendToCourtOfAppeals?: () => void,
 ): ContextMenuItem[] => {
   const items: ContextMenuItem[] = []
+
+  if (
+    onSendToService &&
+    canPerformAppealSummonsAction(
+      AppealSummonsAction.SEND_TO_SERVICE,
+      summons,
+      user,
+    )
+  ) {
+    items.push({
+      title: 'Senda í birtingu',
+      onClick: onSendToService,
+      icon: 'mail',
+    })
+  }
 
   if (
     onSendToCourtOfAppeals &&
@@ -211,4 +233,153 @@ export const getAppealSummonsMenuItems = (
   }
 
   return items
+}
+
+export type AppealSummonsServiceRecipientOption = {
+  key: string
+  label: string
+  defendantId?: string
+  civilClaimantId?: string
+  alreadySent: boolean
+  missingNationalId: boolean
+}
+
+const recipientHasNationalId = (
+  recipient:
+    | Pick<Defendant, 'nationalId' | 'noNationalId'>
+    | Pick<CivilClaimant, 'nationalId' | 'noNationalId'>
+    | null
+    | undefined,
+): boolean =>
+  Boolean(recipient) &&
+  !recipient?.noNationalId &&
+  Boolean(recipient?.nationalId)
+
+export const getAppealSummonsServiceRecipientOptions = (
+  summons: Pick<AppealSummons, 'defendants' | 'services'>,
+  defendants: Defendant[] | null | undefined,
+  civilClaimants: CivilClaimant[] | null | undefined,
+): AppealSummonsServiceRecipientOption[] => {
+  const services = summons.services ?? []
+  const options: AppealSummonsServiceRecipientOption[] = []
+
+  for (const row of summons.defendants ?? []) {
+    const defendant = defendants?.find((item) => item.id === row.defendantId)
+    const missingNationalId = !recipientHasNationalId(defendant)
+    const name = `Dómfelldi ${defendant?.name ?? ''}`.trim()
+
+    options.push({
+      key: `defendant-${row.defendantId}`,
+      label: missingNationalId ? `${name} (vantar kennitölu)` : name,
+      defendantId: row.defendantId,
+      alreadySent: services.some(
+        (service) => service.defendantId === row.defendantId,
+      ),
+      missingNationalId,
+    })
+  }
+
+  for (const claimant of civilClaimants ?? []) {
+    const missingNationalId = !recipientHasNationalId(claimant)
+    const name = claimant.name ?? ''
+
+    options.push({
+      key: `civilClaimant-${claimant.id}`,
+      label: missingNationalId ? `${name} (vantar kennitölu)`.trim() : name,
+      civilClaimantId: claimant.id,
+      alreadySent: services.some(
+        (service) => service.civilClaimantId === claimant.id,
+      ),
+      missingNationalId,
+    })
+  }
+
+  return options
+}
+
+export type AppealSummonsServiceBanner = {
+  key: string
+  title: string
+  message: string
+  type: 'info' | 'success' | 'error'
+}
+
+export const getAppealSummonsServiceBanners = (
+  workingCase: WorkingCase,
+): AppealSummonsServiceBanner[] => {
+  const summonses = workingCase.verdictAppealCase?.appealSummonses ?? []
+  const banners: AppealSummonsServiceBanner[] = []
+
+  for (const summons of summonses) {
+    for (const service of summons.services ?? []) {
+      const name = service.defendantId
+        ? workingCase.defendants?.find(
+            (defendant) => defendant.id === service.defendantId,
+          )?.name
+        : workingCase.civilClaimants?.find(
+            (claimant) => claimant.id === service.civilClaimantId,
+          )?.name
+
+      if (service.serviceStatus === VerdictServiceStatus.FAILED) {
+        banners.push({
+          key: service.id,
+          type: 'error',
+          title: `Birting áfrýjunarstefnu mistókst${name ? ` – ${name}` : ''}`,
+          message: service.comment?.trim()
+            ? service.comment
+            : 'Ekki tókst að birta áfrýjunarstefnuna',
+        })
+        continue
+      }
+
+      if (isSuccessfulVerdictServiceStatus(service.serviceStatus)) {
+        const isLegalPaper =
+          service.serviceStatus === VerdictServiceStatus.LEGAL_PAPER
+        const servedAt = !service.serviceDate
+          ? undefined
+          : isLegalPaper
+          ? formatDate(service.serviceDate)
+          : `${formatDate(service.serviceDate)} kl. ${formatDate(
+              service.serviceDate,
+              TIME_FORMAT,
+            )}`
+
+        banners.push({
+          key: service.id,
+          type: 'success',
+          title: isLegalPaper
+            ? `Áfrýjunarstefna birt í Lögbirtingablaðinu${
+                name ? ` – ${name}` : ''
+              }`
+            : `Áfrýjunarstefna birt${name ? ` – ${name}` : ''}`,
+          message: isLegalPaper
+            ? servedAt
+              ? `Birt í Lögbirtingablaðinu ${servedAt}`
+              : 'Birt í Lögbirtingablaðinu'
+            : servedAt
+            ? `Birt ${servedAt}`
+            : 'Birt',
+        })
+        continue
+      }
+
+      if (!service.sentToServiceDate) {
+        continue
+      }
+
+      const sentAt = `${formatDate(service.sentToServiceDate)} kl. ${formatDate(
+        service.sentToServiceDate,
+        TIME_FORMAT,
+      )}`
+
+      banners.push({
+        key: service.id,
+        type: 'info',
+        title: `Áfrýjunarstefna bíður birtingar${name ? ` – ${name}` : ''}`,
+        message: `Send í birtingu ${sentAt}`,
+      })
+    }
+  }
+
+  return banners
 }

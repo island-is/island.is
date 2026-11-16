@@ -1,30 +1,36 @@
 # RSK Calculators Client
 
-This library provides a stable, typed boundary for RSK's public calculators
-API. It covers child benefit, vehicle tax, vehicle benefit, vehicle
-depreciation, withholding tax, and interest benefit.
-
-The generated OpenAPI client is an internal transport detail. Consumers use the
-client service and curated calculator contracts instead of generated RSK types
-or Icelandic wire-property names.
+Typed client for RSK's public calculators API: child benefit, interest
+benefit, vehicle benefit, vehicle depreciation, vehicle tax and withholding
+tax. The API is public. It does not require X-Road or authentication.
 
 ## Design
 
-Each calculator domain owns three responsibilities:
+The client passes RSK's API through as the generated spec describes it. Input
+and output keys are RSK's own, and an RSK spec update is a regenerate.
 
-- `definition.ts` declares the client-facing input and output contract.
-- `input.ts` maps that contract to RSK query parameters.
-- `output.ts` maps RSK responses to stable client output.
+- `client/calculators.registry.ts` holds each calculator's generated zod
+  request query and response schemas.
+- `contract/toInputFields` and `contract/toOutputFields` derive a calculator's
+  contract (`getCalculator(key)`) from those schemas. Enums become selects,
+  date-time strings become dates, number fields carry `integer`, `minimum`,
+  `maximum` and `defaultValue` as given. Schemas the contract can't describe
+  are skipped. Output fields are `scalar`, `array` or `object`; arrays and
+  objects carry scalar `itemFields`.
+- `contract/numberSemantic` labels a number `percentage` when it is a ratio,
+  otherwise `currency`.
+- `client/toClientQuery` builds a request query from input values, and
+  `validateInput(key, input)` checks it against the generated schema,
+  returning the failing field names.
+- `client/fromClientResult` converts a response's ratios to percentages.
 
-The client service configures the generated client, exposes calculator
-definitions, and calls the domain mappers. Shared types describe the contract;
-the catalog registers available calculators.
+`*Input` and `*Output` types are the generated query and result types.
 
-Inputs and outputs use whole percentages (`0-100`). Domain mappers convert to
-and from RSK's `0-1` wire ratios. Mapped scalar values are optional rather than
-`null`; absent arrays are returned as `[]`.
-
-The API is public. It does not require X-Road or authentication.
+Percentages are whole percentages (`0-100`) on both sides. A ratio is a
+non-integer number the generated schema bounds to `0-1` (`utils/isRskRatio`):
+`toClientQuery` divides ratio inputs by 100, and `fromClientResult` multiplies
+ratio outputs by 100. Contract bounds and defaults of ratio fields are in
+percent too. A ratio RSK leaves unbounded in its spec is not detected.
 
 ## Configuration
 

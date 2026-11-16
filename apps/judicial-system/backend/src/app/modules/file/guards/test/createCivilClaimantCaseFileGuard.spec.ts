@@ -61,16 +61,24 @@ describe('Create Civil Claimant Case File Guard', () => {
     )
   }
 
+  // The prosecution's file on a civil claimant; the court of appeals has no
+  // part in it.
   describe(CaseFileCategory.CIVIL_CLAIM, () => {
     it.each([
       ['a prosecutor', prosecutor],
       ['the public prosecution office', publicProsecutorStaff],
-      ['the court of appeals', courtOfAppealsRegistrar],
     ])('can be created by %s', (_, user) => {
       const then = givenWhenThen(user, CaseFileCategory.CIVIL_CLAIM)
 
       expect(then.error).toBeUndefined()
       expect(then.result).toBe(true)
+    })
+
+    it('cannot be created by the court of appeals', () => {
+      expectForbidden(
+        givenWhenThen(courtOfAppealsRegistrar, CaseFileCategory.CIVIL_CLAIM),
+        CaseFileCategory.CIVIL_CLAIM,
+      )
     })
   })
 

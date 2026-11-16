@@ -28,7 +28,11 @@ import { InternalCaseService, PdfService } from '../case'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { FileService } from '../file'
-import { PoliceDocumentType, PoliceService } from '../police'
+import {
+  isFileTooLargeForPolice,
+  PoliceDocumentType,
+  PoliceService,
+} from '../police'
 import {
   Case,
   CaseRepositoryService,
@@ -469,7 +473,9 @@ export class VerdictService {
       orderByDate.setMonth(orderByDate.getMonth() + 2)
 
       const originalAncestorCaseId =
-        await this.caseRepositoryService.findOriginalAncestorId(theCase)
+        await this.caseRepositoryService.findOriginalAncestorId(theCase, {
+          transaction,
+        })
 
       // deliver the verdict by creating the document at the police
       const createdDocument = await this.policeService.createDocument({
@@ -526,6 +532,11 @@ export class VerdictService {
 
       return { delivered: true }
     } catch (error) {
+      // Do not retry an upload LÖKE will never accept
+      if (isFileTooLargeForPolice(error)) {
+        return { delivered: true }
+      }
+
       this.logger.error(
         'Error delivering verdict to the national commissioners office',
         error,
@@ -644,8 +655,28 @@ export class VerdictService {
         user,
       )
 
-      if (isVerdictInfoChanged(verdictInfo, verdict)) {
-        return this.updateVerdict(verdict, verdictInfo, transaction)
+      // PoliceDocumentInfo uses defenderNationalId; the verdict row stores
+      // deliveredToDefenderNationalId — map both ways at this boundary.
+      if (
+        isVerdictInfoChanged(verdictInfo, {
+          serviceStatus: verdict.serviceStatus ?? undefined,
+          serviceDate: verdict.serviceDate ?? undefined,
+          servedBy: verdict.servedBy ?? undefined,
+          comment: verdict.comment ?? undefined,
+          defenderNationalId:
+            verdict.deliveredToDefenderNationalId ?? undefined,
+        })
+      ) {
+        return this.updateVerdict(
+          verdict,
+          {
+            serviceStatus: verdictInfo.serviceStatus,
+            serviceDate: verdictInfo.serviceDate,
+            servedBy: verdictInfo.servedBy,
+            deliveredToDefenderNationalId: verdictInfo.defenderNationalId,
+          },
+          transaction,
+        )
       }
     }
 

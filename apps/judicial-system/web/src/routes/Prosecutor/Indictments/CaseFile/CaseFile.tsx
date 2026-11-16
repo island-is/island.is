@@ -75,16 +75,14 @@ const CaseFile = () => {
       isValid={true}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.indictments.caseFile)}
-      />
+      <PageHeader title={titles.prosecutor.indictments.caseFile} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(m.heading)}</PageTitle>
+        <PageTitle>{m.heading}</PageTitle>
         <Box marginBottom={5}>
           <ProsecutorCaseInfo workingCase={workingCase} />
         </Box>
         <Box marginBottom={7}>
-          <AlertMessage type="info" message={formatMessage(m.infoPanel)} />
+          <AlertMessage type="info" message={m.infoPanel} />
         </Box>
         <Box marginBottom={5}>
           <LayoutGroup>
@@ -112,9 +110,12 @@ const CaseFile = () => {
         </Box>
         <Box marginBottom={7}>
           {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => {
-            const caseFilesRecordFileName = formatMessage(m.pdfButtonText, {
-              policeCaseNumber: policeCaseNumber,
-            })
+            const caseFilesRecordFileName = formatMessage(
+              { id: m.pdfButtonText, defaultMessage: m.pdfButtonText },
+              {
+                policeCaseNumber: policeCaseNumber,
+              },
+            )
 
             return (
               <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>
@@ -134,7 +135,7 @@ const CaseFile = () => {
           previousUrl={`${PROSECUTION_INDICTMENT_CASE_POLICE_CASE_FILES_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

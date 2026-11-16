@@ -249,7 +249,7 @@ const Overview: FC = () => {
       ? []
       : [
           {
-            text: formatMessage(strings.askForCancellationButtonText),
+            text: strings.askForCancellationButtonText,
             variant: 'ghost' as const,
             colorScheme: 'destructive' as const,
             onClick: () => setModal('askForCancellationModal'),
@@ -275,14 +275,20 @@ const Overview: FC = () => {
             text: canDuplicateIndictment
               ? 'Afrita mál í drög'
               : userIsReviewer
-              ? formatMessage(core.continue)
+              ? core.continue
               : userCanSendIndictmentToCourt
-              ? formatMessage(core.continue)
+              ? core.continue
               : wantsReview && isIndictmentNew
               ? 'Senda í yfirlestur'
-              : formatMessage(strings.nextButtonText, {
-                  isNewIndictment: isIndictmentNew,
-                }),
+              : formatMessage(
+                  {
+                    id: strings.nextButtonText,
+                    defaultMessage: strings.nextButtonText,
+                  },
+                  {
+                    isNewIndictment: isIndictmentNew,
+                  },
+                ),
             icon: canDuplicateIndictment
               ? undefined
               : ('arrowForward' as const),
@@ -306,14 +312,12 @@ const Overview: FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.indictments.overview)}
-      />
+      <PageHeader title={titles.prosecutor.indictments.overview} />
       <FormContentContainer>
         {workingCase.indictmentDeniedExplanation && (
           <Box marginBottom={5}>
             <AlertMessage
-              title={formatMessage(strings.indictmentDeniedExplanationTitle)}
+              title={strings.indictmentDeniedExplanationTitle}
               message={workingCase.indictmentDeniedExplanation}
               type="info"
             />
@@ -328,15 +332,15 @@ const Overview: FC = () => {
             />
           </Box>
         )}
-        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
+        <PageTitle>{strings.heading}</PageTitle>
         <Box marginBottom={5}>
           <ProsecutorCaseInfo workingCase={workingCase} />
         </Box>
         {workingCase.state === CaseState.WAITING_FOR_CANCELLATION && (
           <Box marginBottom={2}>
             <AlertMessage
-              title={formatMessage(strings.indictmentCancelledTitle)}
-              message={formatMessage(strings.indictmentCancelledMessage)}
+              title={strings.indictmentCancelledTitle}
+              message={strings.indictmentCancelledMessage}
               type="warning"
             />
           </Box>
@@ -416,7 +420,7 @@ const Overview: FC = () => {
                   )
                 }
               >
-                {formatMessage(strings.addDocumentsButtonText)}
+                {strings.addDocumentsButtonText}
               </Button>
             </Box>
           )}
@@ -496,7 +500,7 @@ const Overview: FC = () => {
           {userCanSendIndictmentToCourt && (
             <Box component="section">
               <SectionHeading
-                title={formatMessage(strings.indictmentConfirmationTitle)}
+                title={strings.indictmentConfirmationTitle}
                 required
               />
               <BlueBox>
@@ -506,7 +510,7 @@ const Overview: FC = () => {
                     name="indictmentConfirmationRequest"
                     id="denyIndictment"
                     backgroundColor="white"
-                    label={formatMessage(strings.denyIndictment)}
+                    label={strings.denyIndictment}
                     checked={indictmentConfirmationDecision === 'deny'}
                     onChange={() => setIndictmentConfirmationDecision('deny')}
                   />
@@ -515,7 +519,7 @@ const Overview: FC = () => {
                     name="indictmentConfirmationRequest"
                     id="confirmIndictment"
                     backgroundColor="white"
-                    label={formatMessage(strings.confirmIndictment)}
+                    label={strings.confirmIndictment}
                     checked={indictmentConfirmationDecision === 'confirm'}
                     onChange={() =>
                       setIndictmentConfirmationDecision('confirm')
@@ -543,26 +547,24 @@ const Overview: FC = () => {
           }
           actions={footerActions}
           infoBoxText={
-            isIndictmentReceived
-              ? formatMessage(strings.indictmentSentToCourt)
-              : undefined
+            isIndictmentReceived ? strings.indictmentSentToCourt : undefined
           }
         />
       </FormContentContainer>
       <AnimatePresence>
         {modal === 'caseSubmitModal' ? (
           <Modal
-            title={formatMessage(strings.caseSubmitModalTitle)}
-            text={formatMessage(strings.caseSubmitModalText)}
+            title={strings.caseSubmitModalTitle}
+            text={strings.caseSubmitModalText}
             onClose={() => setModal('noModal')}
             buttons={[
               {
-                text: formatMessage(strings.caseSubmitSecondaryButtonText),
+                text: strings.caseSubmitSecondaryButtonText,
                 onClick: () => setModal('noModal'),
                 variant: 'ghost',
               },
               {
-                text: formatMessage(strings.caseSubmitPrimaryButtonText),
+                text: strings.caseSubmitPrimaryButtonText,
                 onClick: handleConfirmIndictment,
                 isLoading: isTransitioningCase,
               },
@@ -570,12 +572,12 @@ const Overview: FC = () => {
           />
         ) : modal === 'caseSentForConfirmationModal' ? (
           <Modal
-            title={formatMessage(strings.indictmentSentForConfirmationTitle)}
-            text={formatMessage(strings.indictmentSentForConfirmationText)}
+            title={strings.indictmentSentForConfirmationTitle}
+            text={strings.indictmentSentForConfirmationText}
             onClose={() => router.push(getStandardUserDashboardRoute(user))}
             buttons={[
               {
-                text: formatMessage(core.closeModal),
+                text: core.closeModal,
                 onClick: () => {
                   router.push(getStandardUserDashboardRoute(user))
                 },
@@ -591,7 +593,7 @@ const Overview: FC = () => {
             onClose={() => router.push(getStandardUserDashboardRoute(user))}
             buttons={[
               {
-                text: formatMessage(core.closeModal),
+                text: core.closeModal,
                 onClick: () => router.push(getStandardUserDashboardRoute(user)),
               },
             ]}
@@ -648,21 +650,17 @@ const Overview: FC = () => {
           />
         ) : modal === 'askForCancellationModal' ? (
           <Modal
-            title={formatMessage(strings.askForCancellationModalTitle)}
-            text={formatMessage(strings.askForCancellationModalText)}
+            title={strings.askForCancellationModalTitle}
+            text={strings.askForCancellationModalText}
             onClose={() => setModal('noModal')}
             buttons={[
               {
-                text: formatMessage(
-                  strings.askForCancellationSecondaryButtonText,
-                ),
+                text: strings.askForCancellationSecondaryButtonText,
                 onClick: () => setModal('noModal'),
                 variant: 'ghost',
               },
               {
-                text: formatMessage(
-                  strings.askForCancellationPrimaryButtonText,
-                ),
+                text: strings.askForCancellationPrimaryButtonText,
                 onClick: handleAskForCancellation,
                 isLoading: isTransitioningCase,
               },

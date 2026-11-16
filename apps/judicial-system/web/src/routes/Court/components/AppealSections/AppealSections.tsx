@@ -8,9 +8,7 @@ import {
   Input,
   RadioButton,
 } from '@island.is/island-ui/core'
-import { capitalize } from '@island.is/judicial-system/formatters'
 import { appealCorrectionLock } from '@island.is/judicial-system/types'
-import { core } from '@island.is/judicial-system-web/messages'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
@@ -247,10 +245,7 @@ const AppealSections: FC<Props> = ({
 
   return (
     <>
-      <SectionHeading
-        title={formatMessage(m.titleV2)}
-        description={formatMessage(m.disclaimerV2)}
-      />
+      <SectionHeading title={m.titleV2} description={m.disclaimerV2} />
       {lock && (
         <Box marginBottom={3}>
           <AlertMessage
@@ -267,7 +262,7 @@ const AppealSections: FC<Props> = ({
         {workingCase.defendants && workingCase.defendants.length > 0 && (
           <BlueBox>
             <SectionHeading
-              title={formatMessage(m.defendantTitleV2)}
+              title={m.defendantTitleV2}
               heading="h4"
               marginBottom={2}
               required
@@ -276,13 +271,7 @@ const AppealSections: FC<Props> = ({
               <RadioButton
                 name="accused-appeal-decision"
                 id="accused-appeal"
-                label={formatMessage(m.defendantAppealV2, {
-                  accused: capitalize(
-                    formatMessage(core.defendant, {
-                      suffix: 'i',
-                    }),
-                  ),
-                })}
+                label={m.defendantAppealV2}
                 value={CaseAppealDecision.APPEAL}
                 checked={
                   checkedAccusedRadio === CaseAppealDecision.APPEAL ||
@@ -295,11 +284,13 @@ const AppealSections: FC<Props> = ({
                     accusedAppealAnnouncement:
                       workingCase.sessionArrangements ===
                       SessionArrangements.ALL_PRESENT_SPOKESPERSON
-                        ? formatMessage(
-                            m.defendantAnnouncementAutofillSpokespersonAppealV2,
-                          )
+                        ? m.defendantAnnouncementAutofillSpokespersonAppealV2
                         : formatMessage(
-                            m.defendantAnnouncementAutofillAppealV2,
+                            {
+                              id: m.defendantAnnouncementAutofillAppealV2,
+                              defaultMessage:
+                                m.defendantAnnouncementAutofillAppealV2,
+                            },
                             { caseType: workingCase.type },
                           ),
                   }
@@ -313,7 +304,7 @@ const AppealSections: FC<Props> = ({
               <RadioButton
                 name="accused-appeal-decision"
                 id="accused-accept"
-                label={formatMessage(m.defendantAcceptV2)}
+                label={m.defendantAcceptV2}
                 value={CaseAppealDecision.ACCEPT}
                 checked={
                   checkedAccusedRadio === CaseAppealDecision.ACCEPT ||
@@ -337,7 +328,7 @@ const AppealSections: FC<Props> = ({
               <RadioButton
                 name="accused-appeal-decision"
                 id="accused-postpone"
-                label={formatMessage(m.defendantPostponeV2)}
+                label={m.defendantPostponeV2}
                 value={CaseAppealDecision.POSTPONE}
                 checked={
                   checkedAccusedRadio === CaseAppealDecision.POSTPONE ||
@@ -359,7 +350,7 @@ const AppealSections: FC<Props> = ({
               <RadioButton
                 name="accused-appeal-decision"
                 id="accused-not-applicable"
-                label={formatMessage(m.defendantNotApplicableV2)}
+                label={m.defendantNotApplicableV2}
                 value={CaseAppealDecision.NOT_APPLICABLE}
                 checked={
                   checkedAccusedRadio === CaseAppealDecision.NOT_APPLICABLE ||
@@ -383,9 +374,9 @@ const AppealSections: FC<Props> = ({
               name="accusedAppealAnnouncement"
               data-testid="accusedAppealAnnouncement"
               disabled={disabled}
-              label={formatMessage(m.defendantAnnouncementLabelV2)}
+              label={m.defendantAnnouncementLabelV2}
               value={accusedAppealAnnouncementInput.value || ''}
-              placeholder={formatMessage(m.defendantAnnouncementPlaceholderV2)}
+              placeholder={m.defendantAnnouncementPlaceholderV2}
               onChange={(evt) => {
                 const accusedAppealAnnouncement = evt.target.value
 
@@ -404,7 +395,7 @@ const AppealSections: FC<Props> = ({
         )}
         <BlueBox>
           <SectionHeading
-            title={formatMessage(m.prosecutorTitleV2)}
+            title={m.prosecutorTitleV2}
             heading="h4"
             marginBottom={2}
             required
@@ -413,7 +404,7 @@ const AppealSections: FC<Props> = ({
             <RadioButton
               name="prosecutor-appeal-decision"
               id="prosecutor-appeal"
-              label={formatMessage(m.prosecutorAppealV2)}
+              label={m.prosecutorAppealV2}
               value={CaseAppealDecision.APPEAL}
               checked={
                 checkedProsecutorRadio === CaseAppealDecision.APPEAL ||
@@ -423,9 +414,8 @@ const AppealSections: FC<Props> = ({
               onChange={() => {
                 const update = {
                   prosecutorAppealDecision: CaseAppealDecision.APPEAL,
-                  prosecutorAppealAnnouncement: formatMessage(
+                  prosecutorAppealAnnouncement:
                     m.prosecutorAnnoncementAutofillAppealV2,
-                  ),
                 }
                 setCheckedProsecutorRadio(CaseAppealDecision.APPEAL)
                 handleChange(update)
@@ -437,7 +427,7 @@ const AppealSections: FC<Props> = ({
             <RadioButton
               name="prosecutor-appeal-decision"
               id="prosecutor-accept"
-              label={formatMessage(m.prosecutorAcceptV2)}
+              label={m.prosecutorAcceptV2}
               value={CaseAppealDecision.ACCEPT}
               checked={
                 checkedProsecutorRadio === CaseAppealDecision.ACCEPT ||
@@ -461,7 +451,7 @@ const AppealSections: FC<Props> = ({
             <RadioButton
               name="prosecutor-appeal-decision"
               id="prosecutor-postpone"
-              label={formatMessage(m.prosecutorPostponeV2)}
+              label={m.prosecutorPostponeV2}
               value={CaseAppealDecision.POSTPONE}
               checked={
                 checkedProsecutorRadio === CaseAppealDecision.POSTPONE ||
@@ -484,7 +474,7 @@ const AppealSections: FC<Props> = ({
             <RadioButton
               name="prosecutor-appeal-decision"
               id="prosecutor-not-applicable"
-              label={formatMessage(m.prosecutorNotApplicableV2)}
+              label={m.prosecutorNotApplicableV2}
               value={CaseAppealDecision.NOT_APPLICABLE}
               checked={
                 checkedProsecutorRadio === CaseAppealDecision.NOT_APPLICABLE ||
@@ -510,9 +500,9 @@ const AppealSections: FC<Props> = ({
               name="prosecutorAppealAnnouncement"
               data-testid="prosecutorAppealAnnouncement"
               disabled={disabled}
-              label={formatMessage(m.prosecutorAnnouncementLabelV2)}
+              label={m.prosecutorAnnouncementLabelV2}
               value={prosecutorAppealAnnouncementInput.value || ''}
-              placeholder={formatMessage(m.prosecutorAnnouncementPlaceholderV2)}
+              placeholder={m.prosecutorAnnouncementPlaceholderV2}
               onChange={(evt) => {
                 const prosecutorAppealAnnouncement = evt.target.value
 

@@ -1,6 +1,11 @@
 import React from 'react'
 
-import { LinkV2, Text } from '@island.is/island-ui/core'
+import {
+  LinkV2,
+  Text,
+  Tooltip,
+  VisuallyHidden,
+} from '@island.is/island-ui/core'
 import {
   interpolate,
   ISODate,
@@ -50,6 +55,38 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
     : !timelineDate || timelineDate === (lastAmendDate || publishedDate)
     ? 'green'
     : 'yellow'
+
+  // Falls back on missing keys (`txt` fallback) and on empty Contentful
+  // values (`||`): an empty string would make Tooltip render nothing and
+  // hide the status ball itself.
+  const textOrDefault = (key: keyof RegulationPageTexts, fallback: string) =>
+    txt(key, fallback) || fallback
+  // Yellow has several causes; pick the text in the same order the status
+  // line below does, so the tooltip never contradicts it.
+  const isCurrentVersion =
+    !timelineDate || timelineDate === (lastAmendDate || publishedDate)
+  const yellowText = !isCurrentVersion
+    ? textOrDefault(
+        'statusBall_yellow_notCurrent',
+        'Ekki núgildandi útgáfa reglugerðarinnar',
+      )
+    : hasPending
+    ? textOrDefault(
+        'statusBall_yellow_pending',
+        'Ekki er búið að færa allar breytingar inn í reglugerðina',
+      )
+    : textOrDefault(
+        'statusBall_yellow_amending',
+        'Breytingareglugerð, breytir annarri reglugerð',
+      )
+  const ballText: Record<BallColor, string> = {
+    green: textOrDefault(
+      'statusBall_green',
+      'Gildandi reglugerð, allar breytingar færðar inn',
+    ),
+    yellow: yellowText,
+    red: textOrDefault('statusBall_red', 'Reglugerðin er ekki lengur í gildi'),
+  }
 
   const onDateText = urlDate && (
     <small className={s.metaDate}>
@@ -102,7 +139,14 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
         </Text>
       </div>
       <div className={s.statusText}>
-        <Ball type={color} />
+        {/* The status text next to the ball already says this in context, so
+            the tooltip is a hover aid only and stays out of the tab order. */}
+        <Tooltip text={ballText[color]}>
+          <span tabIndex={-1} aria-hidden="true">
+            <Ball type={color} />
+          </span>
+        </Tooltip>
+        <VisuallyHidden>{ballText[color]}</VisuallyHidden>
 
         {!timelineDate || timelineDate === (lastAmendDate || publishedDate) ? (
           repealedDate ? (

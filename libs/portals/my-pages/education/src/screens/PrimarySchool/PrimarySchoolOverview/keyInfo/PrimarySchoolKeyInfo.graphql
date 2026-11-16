@@ -1,0 +1,158 @@
+fragment PrimarySchoolAgentFields on EducationPrimarySchoolAgent {
+  id
+  person {
+    nationalId
+    name
+  }
+  relationType {
+    id
+    title
+  }
+  createdBy {
+    kind
+    displayName
+    at
+  }
+  canEdit
+}
+
+fragment PrimarySchoolLanguageProfileFields on EducationPrimarySchoolLanguageProfile {
+  languageEnvironment {
+    id
+    code
+    title
+  }
+  preferredLanguage
+  languages
+  interpreter
+  signLanguage
+  updatedAt
+  updatedBy {
+    kind
+    displayName
+  }
+}
+
+fragment PrimarySchoolHealthProfileFields on EducationPrimarySchoolHealthProfile {
+  epipen
+  medicalDiagnoses
+  medicationAssistance
+  allergies {
+    id
+    code
+    type
+    title
+  }
+  updatedAt
+  updatedBy {
+    kind
+    displayName
+  }
+}
+
+# Every field selected here must stay nullable: read with errorPolicy 'all', a
+# failing non-nullable field nulls `primarySchoolStudent` itself, and that null
+# is cached under the root field this query shares with the base info and
+# assessment reads.
+query PrimarySchoolKeyInfoSections(
+  $studentId: String!
+  $locale: LocaleEnum!
+  $withEmergencyContacts: Boolean!
+  $withLanguageProfile: Boolean!
+  $withHealthProfile: Boolean!
+) {
+  primarySchoolStudent(studentId: $studentId) {
+    id
+    hasKeyInfo
+    emergencyContacts(locale: $locale) @include(if: $withEmergencyContacts) {
+      ...PrimarySchoolAgentFields
+    }
+    languageProfile(locale: $locale) @include(if: $withLanguageProfile) {
+      ...PrimarySchoolLanguageProfileFields
+    }
+    healthProfile(locale: $locale) @include(if: $withHealthProfile) {
+      ...PrimarySchoolHealthProfileFields
+    }
+  }
+}
+
+query PrimarySchoolContactIdentity($input: IdentityInput!) {
+  identity(input: $input) {
+    nationalId
+    name
+  }
+}
+
+query PrimarySchoolAgentRelationTypes($locale: LocaleEnum!) {
+  primarySchoolAgentRelationTypes(locale: $locale) {
+    id
+    relation
+    title
+  }
+}
+
+query PrimarySchoolAllergies($locale: LocaleEnum!) {
+  primarySchoolAllergies(locale: $locale) {
+    id
+    code
+    type
+    title
+  }
+}
+
+query PrimarySchoolLanguageEnvironments($locale: LocaleEnum!) {
+  primarySchoolLanguageEnvironments(locale: $locale) {
+    id
+    code
+    title
+  }
+}
+
+mutation PrimarySchoolAddAgent(
+  $input: EducationPrimarySchoolAddAgentInput!
+  $locale: LocaleEnum!
+) {
+  primarySchoolAddAgent(input: $input, locale: $locale) {
+    ...PrimarySchoolAgentFields
+  }
+}
+
+mutation PrimarySchoolUpdateAgent(
+  $input: EducationPrimarySchoolUpdateAgentInput!
+  $locale: LocaleEnum!
+) {
+  primarySchoolUpdateAgent(input: $input, locale: $locale) {
+    ...PrimarySchoolAgentFields
+  }
+}
+
+mutation PrimarySchoolDeleteAgent(
+  $input: EducationPrimarySchoolDeleteAgentInput!
+) {
+  primarySchoolDeleteAgent(input: $input)
+}
+
+mutation PrimarySchoolUpdateLanguageProfile(
+  $input: EducationPrimarySchoolUpdateLanguageProfileInput!
+  $locale: LocaleEnum!
+) {
+  primarySchoolUpdateLanguageProfile(input: $input, locale: $locale) {
+    ...PrimarySchoolLanguageProfileFields
+  }
+}
+
+mutation PrimarySchoolUpdateHealthProfile(
+  $input: EducationPrimarySchoolUpdateHealthProfileInput!
+  $locale: LocaleEnum!
+) {
+  primarySchoolUpdateHealthProfile(input: $input, locale: $locale) {
+    ...PrimarySchoolHealthProfileFields
+  }
+}
+
+query PrimarySchoolStudentHasKeyInfo($studentId: String!) {
+  primarySchoolStudent(studentId: $studentId) {
+    id
+    hasKeyInfo
+  }
+}

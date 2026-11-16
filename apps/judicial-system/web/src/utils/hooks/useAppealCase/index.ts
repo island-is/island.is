@@ -1,6 +1,5 @@
 import type { Dispatch, SetStateAction } from 'react'
 import { useContext, useMemo } from 'react'
-import { useIntl } from 'react-intl'
 
 import { errors } from '@island.is/judicial-system-web/messages'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
@@ -42,7 +41,6 @@ export interface AppealDefender {
 
 const useAppealCase = () => {
   const { limitedAccess } = useContext(UserContext)
-  const { formatMessage } = useIntl()
 
   const [createAppealCaseMutation, { loading: isCreatingAppealCase }] =
     useCreateAppealCaseMutation()
@@ -114,7 +112,7 @@ const useAppealCase = () => {
 
           return appealCase
         } catch {
-          toast.error(formatMessage(errors.transitionCase))
+          toast.error(errors.transitionCase)
           return undefined
         }
       },
@@ -122,7 +120,6 @@ const useAppealCase = () => {
       limitedAccess,
       limitedAccessCreateAppealCaseMutation,
       createAppealCaseMutation,
-      formatMessage,
     ],
   )
 
@@ -147,11 +144,11 @@ const useAppealCase = () => {
 
           return data?.limitedAccessCreateAppealCase ?? undefined
         } catch {
-          toast.error(formatMessage(errors.transitionCase))
+          toast.error(errors.transitionCase)
           return undefined
         }
       },
-    [limitedAccessCreateVerdictAppealMutation, formatMessage],
+    [limitedAccessCreateVerdictAppealMutation],
   )
 
   // The public prosecution office registers a verdict appeal that reached it
@@ -183,11 +180,11 @@ const useAppealCase = () => {
 
           return data?.createAppealCase ?? undefined
         } catch {
-          toast.error(formatMessage(errors.transitionCase))
+          toast.error(errors.transitionCase)
           return undefined
         }
       },
-    [registerVerdictAppealMutation, formatMessage],
+    [registerVerdictAppealMutation],
   )
 
   const transitionAppealCase = useMemo(
@@ -237,7 +234,7 @@ const useAppealCase = () => {
 
           return true
         } catch {
-          toast.error(formatMessage(errors.transitionCase))
+          toast.error(errors.transitionCase)
           return false
         }
       },
@@ -245,7 +242,6 @@ const useAppealCase = () => {
       limitedAccess,
       limitedAccessTransitionAppealCaseMutation,
       transitionAppealCaseMutation,
-      formatMessage,
     ],
   )
 
@@ -269,11 +265,11 @@ const useAppealCase = () => {
 
           return data?.updateAppealCase as AppealCase | undefined
         } catch {
-          toast.error(formatMessage(errors.updateCase))
+          toast.error(errors.updateCase)
           return undefined
         }
       },
-    [updateAppealCaseMutation, formatMessage],
+    [updateAppealCaseMutation],
   )
 
   const createAppealEventLog = useMemo(
@@ -294,7 +290,7 @@ const useAppealCase = () => {
 
           return Boolean(data)
         } catch {
-          toast.error(formatMessage(errors.updateCase))
+          toast.error(errors.updateCase)
           return false
         }
       },
@@ -302,7 +298,6 @@ const useAppealCase = () => {
       limitedAccess,
       limitedAccessCreateAppealEventLogMutation,
       createAppealEventLogMutation,
-      formatMessage,
     ],
   )
 

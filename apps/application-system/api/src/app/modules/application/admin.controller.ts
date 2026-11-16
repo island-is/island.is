@@ -17,7 +17,7 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import { Audit } from '@island.is/nest/audit'
+import { AuditService } from '@island.is/nest/audit'
 import { ApplicationService } from '@island.is/application/api/core'
 import { Documentation } from '@island.is/nest/swagger'
 import { DelegationGuard } from './guards/delegation.guard'
@@ -48,6 +48,7 @@ import {
 export class AdminController {
   constructor(
     private readonly applicationService: ApplicationService,
+    private readonly auditService: AuditService,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
@@ -128,9 +129,6 @@ export class AdminController {
   @BypassDelegation()
   @Get('admin/applications/overview/:page/:count')
   @UseInterceptors(ApplicationAdminSerializer)
-  @Audit<ApplicationAdminPaginatedResponse>({
-    resources: (apps) => apps.rows.map((app) => app.id),
-  })
   @Documentation({
     description: 'Get applications for super admin overview',
     response: {
@@ -191,6 +189,7 @@ export class AdminController {
     },
   })
   async findAllSuperAdmin(
+    @CurrentUser() user: User,
     @Param('page') page: number,
     @Param('count') count: number,
     @Query('status') status?: string,
@@ -201,16 +200,34 @@ export class AdminController {
     @Query('typeIdValue') typeIdValue?: string,
     @Query('searchStr') searchStr?: string,
   ) {
-    return this.applicationService.findAllByAdminFilters(
-      page ?? 1,
-      count ?? 12,
-      status,
-      applicantNationalId,
-      institutionNationalId,
-      from,
-      to,
-      typeIdValue,
-      searchStr,
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        action: 'findAllSuperAdmin',
+        resources: (apps) => apps.rows.map((app) => app.id),
+        meta: {
+          filters: {
+            status,
+            applicantNationalId,
+            institutionNationalId,
+            from,
+            to,
+            typeIdValue,
+            searchStr,
+          },
+        },
+      },
+      this.applicationService.findAllByAdminFilters(
+        page ?? 1,
+        count ?? 12,
+        status,
+        applicantNationalId,
+        institutionNationalId,
+        from,
+        to,
+        typeIdValue,
+        searchStr,
+      ),
     )
   }
 
@@ -218,9 +235,6 @@ export class AdminController {
   @BypassDelegation()
   @Get('admin/applications/overview/institution/:page/:count')
   @UseInterceptors(ApplicationAdminSerializer)
-  @Audit<ApplicationAdminPaginatedResponse>({
-    resources: (apps) => apps.rows.map((app) => app.id),
-  })
   @Documentation({
     description: 'Get applications for a specific institution',
     response: {
@@ -286,16 +300,33 @@ export class AdminController {
     @Query('typeIdValue') typeIdValue?: string,
     @Query('searchStr') searchStr?: string,
   ) {
-    return this.applicationService.findAllByAdminFilters(
-      page ?? 1,
-      count ?? 12,
-      status,
-      applicantNationalId,
-      user.nationalId,
-      from,
-      to,
-      typeIdValue,
-      searchStr,
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        action: 'findAllInstitutionAdmin',
+        resources: (apps) => apps.rows.map((app) => app.id),
+        meta: {
+          filters: {
+            status,
+            applicantNationalId,
+            from,
+            to,
+            typeIdValue,
+            searchStr,
+          },
+        },
+      },
+      this.applicationService.findAllByAdminFilters(
+        page ?? 1,
+        count ?? 12,
+        status,
+        applicantNationalId,
+        user.nationalId,
+        from,
+        to,
+        typeIdValue,
+        searchStr,
+      ),
     )
   }
 

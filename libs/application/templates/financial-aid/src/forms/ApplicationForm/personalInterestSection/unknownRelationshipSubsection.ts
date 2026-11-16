@@ -21,7 +21,7 @@ export const unknownRelationshipSubsection = buildSubSection({
   id: Routes.UNKNOWNRELATIONSHIP,
   children: [
     buildMultiField({
-      id: 'unknownRelationshipMultiField',
+      id: Routes.UNKNOWNRELATIONSHIPMULTIFIELD,
       title: m.unknownRelationship.general.pageTitle,
       children: [
         buildDescriptionField({

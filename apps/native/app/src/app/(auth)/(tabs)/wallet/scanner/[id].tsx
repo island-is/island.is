@@ -1,18 +1,15 @@
 import { useIntl } from 'react-intl'
-import { router, Stack } from 'expo-router'
-import styled from 'styled-components/native'
+import { Stack } from 'expo-router'
+import { ScrollView } from 'react-native'
+import { useTheme } from 'styled-components/native'
 
 import { ScanResultCard, SupportedGenericLicenseTypes } from '@/ui'
 import { VerifyLicenseBarcodeError } from '@/graphql/types/schema'
 import { getScanResult } from '../../../../../stores/scan-result-store'
 
-const Host = styled.View`
-  flex: 1;
-  padding: ${({ theme }) => theme.spacing[2]}px;
-`
-
 export default function LicenseScanDetailScreen() {
   const intl = useIntl()
+  const theme = useTheme()
   const scanResult = getScanResult()
 
   if (!scanResult) {
@@ -30,7 +27,14 @@ export default function LicenseScanDetailScreen() {
           title: intl.formatMessage({ id: 'licenseScanner.title' }),
         }}
       />
-      <Host>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{
+          padding: theme.spacing[2],
+          paddingTop: theme.spacing[1],
+        }}
+        contentInsetAdjustmentBehavior="automatic"
+      >
         <ScanResultCard
           isExpired={isExpired}
           error={!!error}
@@ -43,7 +47,7 @@ export default function LicenseScanDetailScreen() {
           hasNoData={!data?.nationalId}
           type={type ?? 'Unknown'}
         />
-      </Host>
+      </ScrollView>
     </>
   )
 }

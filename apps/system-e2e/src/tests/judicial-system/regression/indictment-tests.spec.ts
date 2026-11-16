@@ -57,7 +57,7 @@ test.describe.serial('Indictment tests', () => {
     await page.getByTestId('continueButton').click()
     await Promise.all([
       page.getByTestId('modalPrimaryButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendant'),
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendants'),
     ])
 
     // Case list for reviewed cases
@@ -89,5 +89,23 @@ test.describe.serial('Indictment tests', () => {
     await page.goto('/malalistar/sakamal-i-fullnustu')
     await expect(page).toHaveURL('/malalistar/sakamal-i-fullnustu')
     await expect(page.getByText(accusedName)).toHaveCount(1)
+  })
+
+  test('prison admin should receive indictment case', async ({
+    prisonAdminPage,
+  }) => {
+    const page = prisonAdminPage
+
+    // Case list for cases sent to the prison administration
+    await page.goto('/malalistar/sakamal-til-fullnustu')
+    await expect(page).toHaveURL('/malalistar/sakamal-til-fullnustu')
+    await page.getByText(accusedName).click()
+
+    // Prison admin indictment overview
+    await expect(page).toHaveURL(`fangelsi/akaera/yfirlit/${caseId}`)
+    await expect(
+      page.getByRole('heading', { name: 'Dómur til fullnustu' }),
+    ).toBeVisible()
+    await expect(page.getByText(accusedName).first()).toBeVisible()
   })
 })

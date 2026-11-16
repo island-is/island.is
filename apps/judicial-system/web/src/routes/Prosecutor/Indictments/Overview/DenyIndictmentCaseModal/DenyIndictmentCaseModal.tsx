@@ -1,6 +1,5 @@
 import type { Dispatch, FC, SetStateAction } from 'react'
 import { useState } from 'react'
-import { useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
@@ -24,7 +23,6 @@ const DenyIndictmentCaseModal: FC<Props> = ({
   onClose,
   onComplete,
 }) => {
-  const { formatMessage } = useIntl()
   const { updateCase, transitionCase } = useCase()
   const [indictmentDeniedExplanation, setIndictmentDeniedExplanation] =
     useState<string>()
@@ -78,17 +76,17 @@ const DenyIndictmentCaseModal: FC<Props> = ({
 
   return (
     <Modal
-      title={formatMessage(strings.title)}
-      text={formatMessage(strings.text)}
+      title={strings.title}
+      text={strings.text}
       onClose={() => onClose()}
       buttons={[
         {
-          text: formatMessage(strings.stopModal),
+          text: strings.stopModal,
           onClick: onClose,
           variant: 'ghost',
         },
         {
-          text: formatMessage(strings.denyAndReturnToProsecutor),
+          text: strings.denyAndReturnToProsecutor,
           onClick: handleDenyIndictmentCase,
         },
       ]}
@@ -96,8 +94,8 @@ const DenyIndictmentCaseModal: FC<Props> = ({
       <Box marginBottom={5}>
         <Input
           name="indictmentDeniedExplanation"
-          label={formatMessage(strings.explanationLabel)}
-          placeholder={formatMessage(strings.explanationPlaceholder)}
+          label={strings.explanationLabel}
+          placeholder={strings.explanationPlaceholder}
           onChange={(event) => {
             handleIndictmentDeniedExplanationChange(event.target.value)
           }}

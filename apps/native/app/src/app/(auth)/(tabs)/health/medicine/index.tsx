@@ -65,7 +65,7 @@ export default function MedicineScreen() {
             left: 0,
             right: 0,
             height: theme.spacing[1],
-            backgroundColor: theme.shade.background,
+            backgroundColor: theme.tokens.background.invert,
           }}
         />
       </View>

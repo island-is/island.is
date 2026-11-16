@@ -205,7 +205,7 @@ describe('formatCustodyRestrictions', () => {
     const res = formatCustodyRestrictions(formatMessage, caseType, restrictions)
 
     expect(res).toEqual(
-      'Sækjandi kynnir kærða tilhögun gæsluvarðhaldsins, sem sé með takmörkunum skv. c-lið 1. mgr. 99. gr. laga nr. 88/2008.',
+      'Sækjandi kynnir varnaraðila tilhögun gæsluvarðhaldsins, sem sé með takmörkunum skv. c-lið 1. mgr. 99. gr. laga nr. 88/2008.',
     )
   })
 
@@ -219,7 +219,7 @@ describe('formatCustodyRestrictions', () => {
     const res = formatCustodyRestrictions(formatMessage, caseType, restrictions)
 
     expect(res).toEqual(
-      'Sækjandi kynnir kærða tilhögun vistunarinnar, sem sé með takmörkunum skv. a- og c-liðum 1. mgr. 99. gr. laga nr. 88/2008.',
+      'Sækjandi kynnir varnaraðila tilhögun vistunarinnar, sem sé með takmörkunum skv. a- og c-liðum 1. mgr. 99. gr. laga nr. 88/2008.',
     )
   })
 
@@ -234,7 +234,7 @@ describe('formatCustodyRestrictions', () => {
     const res = formatCustodyRestrictions(formatMessage, caseType, restrictions)
 
     expect(res).toEqual(
-      'Sækjandi kynnir kærða tilhögun vistunarinnar, sem sé með takmörkunum skv. a-, c- og e-liðum 1. mgr. 99. gr. laga nr. 88/2008.',
+      'Sækjandi kynnir varnaraðila tilhögun vistunarinnar, sem sé með takmörkunum skv. a-, c- og e-liðum 1. mgr. 99. gr. laga nr. 88/2008.',
     )
   })
 

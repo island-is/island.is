@@ -1,4 +1,8 @@
-import { splitDepartmentDateFromBody } from './OJOIUtils'
+import {
+  getAdvertCitationTitle,
+  getAdvertMetaDescription,
+  splitDepartmentDateFromBody,
+} from './OJOIUtils'
 
 const dateLine = (inner: string) =>
   `<p align="center" style="margin-top: 1.5em;"><strong>${inner}</strong></p>`
@@ -100,5 +104,53 @@ describe('splitDepartmentDateFromBody', () => {
       bodyHtml: html,
       departmentDateHtml: null,
     })
+  })
+})
+
+describe('getAdvertCitationTitle', () => {
+  it('cites the publication number with its type', () => {
+    expect(
+      getAdvertCitationTitle({
+        type: 'REGLUGERÐ',
+        publicationNumber: '760/2026',
+        subject:
+          'um endurgreiðslu kostnaðar vegna veikinda eða slysa erlendis.',
+      }),
+    ).toBe(
+      'REGLUGERÐ nr. 760/2026 um endurgreiðslu kostnaðar vegna veikinda eða slysa erlendis.',
+    )
+  })
+
+  it('leaves out missing parts', () => {
+    expect(
+      getAdvertCitationTitle({ type: 'AUGLÝSING', publicationNumber: '' }),
+    ).toBe('AUGLÝSING')
+    expect(getAdvertCitationTitle({})).toBe('')
+  })
+})
+
+describe('getAdvertMetaDescription', () => {
+  it('summarises the advert', () => {
+    expect(
+      getAdvertMetaDescription({
+        citationTitle: 'REGLUGERÐ nr. 760/2026 um endurgreiðslu.',
+        department: 'B deild',
+        involvedParty: 'Heilbrigðisráðuneytið',
+        publicationDateLabel: 'Útgáfudagur',
+        publicationDate: '2026-07-06T12:00:00.000Z',
+      }),
+    ).toBe(
+      'REGLUGERÐ nr. 760/2026 um endurgreiðslu. B deild, Heilbrigðisráðuneytið. Útgáfudagur: 6. júlí 2026.',
+    )
+  })
+
+  it('does not double up periods or leave gaps for missing parts', () => {
+    expect(
+      getAdvertMetaDescription({
+        citationTitle: 'GJALDSKRÁ nr. 12/2026 fyrir Stjórnartíðindi',
+        involvedParty: 'Dómsmálaráðuneytið',
+        publicationDateLabel: 'Útgáfudagur',
+      }),
+    ).toBe('GJALDSKRÁ nr. 12/2026 fyrir Stjórnartíðindi. Dómsmálaráðuneytið.')
   })
 })

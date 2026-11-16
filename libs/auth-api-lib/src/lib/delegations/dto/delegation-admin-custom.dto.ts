@@ -1,11 +1,29 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { DelegationDTO } from './delegation.dto'
 
-export class DelegationAdminCustomDto {
-  @ApiProperty({ type: [DelegationDTO], nullable: false, default: [] })
-  incoming!: DelegationDTO[]
+export class DelegationAdminDelegationDto extends DelegationDTO {
+  @ApiPropertyOptional({
+    nullable: true,
+    type: Date,
+    description:
+      'For delegations from the delegation index, when the recipient was last fully reindexed. Null if never.',
+  })
+  indexedAt?: Date | null
+}
 
-  @ApiProperty({ type: [DelegationDTO], nullable: false, default: [] })
-  outgoing!: DelegationDTO[]
+export class DelegationAdminCustomDto {
+  @ApiProperty({
+    type: [DelegationAdminDelegationDto],
+    nullable: false,
+    default: [],
+  })
+  incoming!: DelegationAdminDelegationDto[]
+
+  @ApiProperty({
+    type: [DelegationAdminDelegationDto],
+    nullable: false,
+    default: [],
+  })
+  outgoing!: DelegationAdminDelegationDto[]
 }

@@ -188,9 +188,15 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
           return (
             <Box key={index}>
               <SectionHeading
-                title={formatMessage(strings.policeCaseNumberSectionHeading, {
-                  policeCaseNumber,
-                })}
+                title={formatMessage(
+                  {
+                    id: strings.policeCaseNumberSectionHeading,
+                    defaultMessage: strings.policeCaseNumberSectionHeading,
+                  },
+                  {
+                    policeCaseNumber,
+                  },
+                )}
                 marginBottom={2}
               />
               <Box marginBottom={3}>
@@ -245,7 +251,6 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
 )
 
 const PoliceCaseFilesRoute = () => {
-  const { formatMessage } = useIntl()
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
@@ -292,14 +297,12 @@ const PoliceCaseFilesRoute = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.indictments.policeCaseFiles)}
-      />
+      <PageHeader title={titles.prosecutor.indictments.policeCaseFiles} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
+        <PageTitle>{strings.heading}</PageTitle>
         <div className={stack({ gap: 5 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
-          <InfoBox text={formatMessage(strings.infoBox)} />
+          <InfoBox text={strings.infoBox} />
           <PoliceUploadListMemo
             caseId={workingCase.id}
             caseFiles={workingCase.caseFiles}
@@ -317,7 +320,7 @@ const PoliceCaseFilesRoute = () => {
           previousUrl={`${PROSECUTION_INDICTMENT_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(PROSECUTION_INDICTMENT_CASE_CASE_FILE_ROUTE),

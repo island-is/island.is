@@ -16,11 +16,11 @@ import { router } from 'expo-router'
 import { StackScreen } from '@/components/stack-screen'
 import {
   Button,
-  NavigationBarSheet,
   NotificationCard,
-  Problem,
+  StatusMessage,
   ListItemSkeleton,
   EmptyList,
+  token,
 } from '@/ui'
 import {
   GetUserNotificationsQuery,
@@ -50,7 +50,7 @@ const LoadingWrapper = styled.View`
 const ButtonWrapper = styled.View`
   flex-direction: row;
   padding: ${({ theme }) => theme.spacing[2]}px;
-  background-color: ${({ theme }) => theme.shade.background};
+  background-color: ${token((t) => t.background.invert)};
 `
 
 const DEFAULT_PAGE_SIZE = 50
@@ -237,7 +237,7 @@ export default function NotificationsScreen() {
   const keyExtractor = useCallback((item: ListItem) => item.id.toString(), [])
 
   if (showError) {
-    return <Problem type="error" withContainer />
+    return <StatusMessage type="error" withContainer />
   }
 
   return (
@@ -268,7 +268,9 @@ export default function NotificationsScreen() {
                 maxWidth: 145,
               }}
               icon={inboxRead}
-              iconStyle={{ tintColor: theme.color.blue400 }}
+              iconStyle={{
+                tintColor: theme.tokens.interactive.foreground.primary,
+              }}
               onPress={() => markAllUserNotificationsAsRead()}
             />
             <Button
@@ -284,7 +286,7 @@ export default function NotificationsScreen() {
                 maxWidth: 145,
               }}
               iconStyle={{
-                tintColor: theme.color.blue400,
+                tintColor: theme.tokens.interactive.foreground.primary,
                 resizeMode: 'contain',
               }}
             />
@@ -296,7 +298,7 @@ export default function NotificationsScreen() {
               <ActivityIndicator
                 size="small"
                 animating
-                color={theme.color.blue400}
+                color={theme.tokens.interactive.foreground.primary}
               />
             </LoadingWrapper>
           ) : null

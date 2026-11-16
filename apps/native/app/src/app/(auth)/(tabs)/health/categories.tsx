@@ -9,7 +9,7 @@ import medicineIcon from '@/assets/icons/medicine.png'
 import readerIcon from '@/assets/icons/reader.png'
 import vaccinationsIcon from '@/assets/icons/vaccinations.png'
 import { LinkRowButton } from '@/components/link-row-button/link-row-button'
-import { MoreInfoContiner } from '@/components/more-info-container/more-info-container'
+import { MoreInfoContainer } from '@/components/more-info-container/more-info-container'
 import { getConfig } from '@/config'
 import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
 import { useGetHealthTreatmentsQuery } from '@/graphql/types/schema'
@@ -239,7 +239,7 @@ export default function HealthCategoriesScreen() {
             />
           ))}
         </CategoriesContainer>
-        <MoreInfoContiner
+        <MoreInfoContainer
           externalLinks={externalLinks.map((link) => ({
             id: link.id,
             link: link.url,

@@ -17,7 +17,13 @@ export default async function handler(req, res) {
     QueryGetProjectPageArgs
   >({
     query: GET_PROJECT_PAGE_QUERY,
-    variables: { input: { slug: 'opinbernyskopun', lang: 'is' } },
+    variables: {
+      input: {
+        slug: 'opinbernyskopun',
+        lang: 'is',
+        subpageSlug: 'askoranir-opinberra-adila',
+      },
+    },
   })
 
   const projectSubpage =

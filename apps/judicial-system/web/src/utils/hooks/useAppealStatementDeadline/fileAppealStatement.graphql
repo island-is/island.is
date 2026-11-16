@@ -1,0 +1,9 @@
+mutation FileAppealStatement($input: FileAppealStatementInput!) {
+  fileAppealStatement(input: $input) {
+    id
+    created
+    eventType
+    defendantId
+    civilClaimantId
+  }
+}

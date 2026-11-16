@@ -16,6 +16,7 @@ export const educationCareerModule: PortalModule = {
       name: m.educationCareer,
       path: EducationCareerPaths.EducationCareer,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
       element: <EducationCareer />,
     },
   ],

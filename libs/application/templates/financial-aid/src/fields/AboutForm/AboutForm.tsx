@@ -5,7 +5,8 @@ import { Text, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { currentMonth } from '@island.is/financial-aid/shared/lib'
 
-import { DescriptionText, PrivacyPolicyAccordion } from '..'
+import DescriptionText from '../DescriptionText/DescriptionText'
+import PrivacyPolicyAccordion from '../PrivacyPolicyAccordion/PrivacyPolicyAccordion'
 import { FAFieldBaseProps } from '../../lib/types'
 import { aboutForm } from '../../lib/messages'
 

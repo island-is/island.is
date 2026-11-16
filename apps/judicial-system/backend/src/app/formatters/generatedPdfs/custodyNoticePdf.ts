@@ -1,7 +1,5 @@
 import PDFDocument from 'pdfkit'
 
-import { FormatMessage } from '@island.is/cms-translations'
-
 import {
   capitalize,
   formatDate,
@@ -11,7 +9,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { SessionArrangements } from '@island.is/judicial-system/types'
 
-import { custodyNotice } from '../../messages'
+import { custodyNotice, formatIcuMessage } from '../../messages'
 import { Case } from '../../modules/repository'
 import { formatCustodyRestrictions } from '../formatters'
 import {
@@ -49,10 +47,7 @@ export const formatCustodyNoticeDefender = (
   }${defendant.defenderEmail ? `, ${defendant.defenderEmail}` : ''}`
 }
 
-const constructCustodyNoticePdf = (
-  theCase: Case,
-  formatMessage: FormatMessage,
-): Promise<Buffer> => {
+const constructCustodyNoticePdf = (theCase: Case): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -73,7 +68,9 @@ const constructCustodyNoticePdf = (
   addHugeHeading(doc, 'Vistunarseðill', 'Helvetica-Bold')
   addLargeHeading(
     doc,
-    formatMessage(custodyNotice.rulingTitle, { caseType: theCase.type }),
+    formatIcuMessage(custodyNotice.rulingTitle, {
+      caseType: theCase.type,
+    }),
   )
   addLargeHeading(
     doc,
@@ -128,7 +125,9 @@ const constructCustodyNoticePdf = (
   setLineGap(doc, 8)
   addMediumText(
     doc,
-    formatMessage(custodyNotice.rulingTitle, { caseType: theCase.type }),
+    formatIcuMessage(custodyNotice.rulingTitle, {
+      caseType: theCase.type,
+    }),
     'Helvetica-Bold',
   )
   addNormalText(
@@ -164,7 +163,6 @@ const constructCustodyNoticePdf = (
   addNormalText(doc, formatCustodyNoticeDefender(theCase), 'Helvetica')
 
   const custodyRestrictions = formatCustodyRestrictions(
-    formatMessage,
     theCase.type,
     theCase.requestedCustodyRestrictions,
     theCase.isCustodyIsolation,
@@ -175,7 +173,9 @@ const constructCustodyNoticePdf = (
     setLineGap(doc, 8)
     addMediumText(
       doc,
-      formatMessage(custodyNotice.arrangement, { caseType: theCase.type }),
+      formatIcuMessage(custodyNotice.arrangement, {
+        caseType: theCase.type,
+      }),
       'Helvetica-Bold',
     )
 
@@ -187,7 +187,7 @@ const constructCustodyNoticePdf = (
       addNormalText(
         doc,
         capitalize(
-          formatMessage(custodyNotice.isolationDisclaimer, {
+          formatIcuMessage(custodyNotice.isolationDisclaimer, {
             isolationPeriod,
           }),
         ),
@@ -209,18 +209,12 @@ const constructCustodyNoticePdf = (
   )
 }
 
-export const getCustodyNoticePdfAsString = (
-  theCase: Case,
-  formatMessage: FormatMessage,
-): Promise<string> => {
-  return constructCustodyNoticePdf(theCase, formatMessage).then((buffer) =>
+export const getCustodyNoticePdfAsString = (theCase: Case): Promise<string> => {
+  return constructCustodyNoticePdf(theCase).then((buffer) =>
     buffer.toString('binary'),
   )
 }
 
-export const getCustodyNoticePdfAsBuffer = (
-  theCase: Case,
-  formatMessage: FormatMessage,
-): Promise<Buffer> => {
-  return constructCustodyNoticePdf(theCase, formatMessage)
+export const getCustodyNoticePdfAsBuffer = (theCase: Case): Promise<Buffer> => {
+  return constructCustodyNoticePdf(theCase)
 }

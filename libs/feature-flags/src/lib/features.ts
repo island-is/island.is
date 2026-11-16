@@ -40,6 +40,7 @@ export enum Features {
   isConfirmJobSearchEnabled = 'isConfirmJobSearchEnabled',
   isNewDrivingLicenseEnabled = 'isNewDrivingLicenseEnabled',
   isDirectorateOfEqualityApplicationsEnabled = 'isDirectorateOfEqualityApplicationsEnabled',
+  isFjarskiptastofaSelfAssessmentEnabled = 'isFjarskiptastofaSelfAssessmentEnabled',
   isConfirmJobOrIncomeEnabled = 'isConfirmJobOrIncomeEnabled',
 
   // Application System Delegations active
@@ -137,6 +138,7 @@ export enum Features {
 
   // Userprofile Collection
   isIASSpaPagesEnabled = 'isiasspapagesenabled',
+  notificationSettingsMetricsEnabled = 'notificationSettingsMetricsEnabled',
 
   // Disable new login restrictions
   disableNewDeviceLogins = 'disableNewDeviceLogins',
@@ -164,9 +166,14 @@ export enum Features {
   isIslandisInvoicePaymentEnabled = 'isIslandisInvoicePaymentEnabled',
   isIslandisApplePayPaymentEnabled = 'isIslandisApplePayPaymentEnabled',
   isIslandisApplePayStrictSignatureVerificationEnabled = 'isIslandisApplePayStrictSignatureVerificationEnabled',
+  isIslandisGooglePayPaymentEnabled = 'isIslandisGooglePayPaymentEnabled',
+  isIslandisGooglePayPaymentAllowedForUser = 'isIslandisGooglePayPaymentAllowedForUser',
+  isIslandisGooglePayDeviceTokensEnabled = 'isIslandisGooglePayDeviceTokensEnabled',
   isIslandisBankTransferPaymentEnabled = 'isIslandisBankTransferPaymentEnabled',
   isIslandisBankTransferPaymentAllowedForCompany = 'isIslandisBankTransferPaymentAllowedForCompany',
   isIslandisDebtPaymentEnabled = 'isIslandisDebtPaymentEnabled',
+
+  isPayDebtsApplicationEnabled = 'isPayDebtsApplicationEnabled',
 
   // Should auth api use national registry v3 for checking deceased status
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',
@@ -199,6 +206,9 @@ export enum Features {
   // Use new delegation system
   useNewDelegationSystem = 'useNewDelegationSystem',
 
+  isDelegationRequestsEnabled = 'isDelegationRequestsEnabled',
+  isDelegationRequestNotificationEnabled = 'isDelegationRequestNotificationEnabled',
+
   // Validate Personal representative delegations at syslumenn
   usePersonalRepresentativesFromSyslumenn = 'usePersonalRepresentativesFromSyslumenn',
   // SMS Notifications
@@ -207,9 +217,14 @@ export enum Features {
 
   // Notifications settings
   isOnlyActionablePriorityNotificationsEnabled = 'isOnlyActionablePriorityNotificationsEnabled',
+  // Should user-notification skip notifications in categories the user has blocked
+  isNotificationBlockedCategoriesEnabled = 'isNotificationBlockedCategoriesEnabled',
 
   // Primary school (guardian-facing)
   isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',
+  // Primary school key information (lykilupplýsingar). Its own switch, so key
+  // info can be held back while the rest of the primary-school page is live.
+  isServicePortalPrimarySchoolKeyInfoEnabled = 'isServicePortalPrimarySchoolKeyInfoEnabled',
   // Primary school PDF viewer modal
   isServicePortalPrimarySchoolPdfViewerEnabled = 'isServicePortalPrimarySchoolPdfViewerEnabled',
   // Switches between current and new primary-school PDF implementations in download-service

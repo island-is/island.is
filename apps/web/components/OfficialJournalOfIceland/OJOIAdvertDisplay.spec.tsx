@@ -64,4 +64,12 @@ describe('OJOIAdvertDisplay', () => {
       container.querySelector('.ojoi-advert-display-wrapper')?.textContent,
     ).toContain(DATE_LINE)
   })
+
+  it('renders the advert type and subject as the page heading', () => {
+    const { container } = render(<OJOIAdvertDisplay {...props} />)
+
+    const headings = container.querySelectorAll('h1')
+    expect(headings).toHaveLength(1)
+    expect(headings[0].textContent).toBe('AUGLÝSING um innleiðingu')
+  })
 })

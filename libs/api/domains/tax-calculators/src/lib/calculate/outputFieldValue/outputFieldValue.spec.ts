@@ -16,23 +16,34 @@ const fields: readonly CalculatorOutputField[] = [
       { name: 'rate', kind: 'scalar', type: 'number' },
     ],
   },
+  {
+    name: 'period',
+    kind: 'object',
+    itemFields: [
+      { name: 'days', kind: 'scalar', type: 'number' },
+      { name: 'label', kind: 'scalar', type: 'string' },
+    ],
+  },
 ]
 
-const { NUMBER, STRING, BOOLEAN, DATE, ARRAY } = TaxCalculatorOutputFieldType
+const { NUMBER, STRING, BOOLEAN, DATE, ARRAY, OBJECT } =
+  TaxCalculatorOutputFieldType
 
 describe('toOutputValues', () => {
   it('maps each scalar kind onto its own payload field', () => {
+    const dueDate = new Date('2026-06-01T00:00:00.000Z')
+
     expect(
       toOutputValues(fields, {
         total: 1234,
         label: 'First half',
-        dueDate: '2026-06-01',
+        dueDate,
         applied: true,
       }),
     ).toEqual([
       { key: 'total', type: NUMBER, numberValue: 1234 },
       { key: 'label', type: STRING, stringValue: 'First half' },
-      { key: 'dueDate', type: DATE, stringValue: '2026-06-01' },
+      { key: 'dueDate', type: DATE, dateValue: dueDate },
       { key: 'applied', type: BOOLEAN, booleanValue: true },
     ])
   })
@@ -57,9 +68,15 @@ describe('toOutputValues', () => {
   })
 
   /* Contract mismatches are omitted, never coerced. */
-  it('omits a value whose runtime kind contradicts the contract', () => {
-    expect(toOutputValues(fields, { total: '1234' })).toEqual([])
-  })
+  it.each([
+    ['a string number', { total: '1234' }],
+    ['a date string', { dueDate: '2026-06-01' }],
+  ])(
+    'omits a value whose runtime kind contradicts the contract (%s)',
+    (_label, result) => {
+      expect(toOutputValues(fields, result)).toEqual([])
+    },
+  )
 
   describe('array fields', () => {
     it('maps rows keyed by item field', () => {
@@ -123,5 +140,32 @@ describe('toOutputValues', () => {
     }).map((value) => value.key)
 
     expect(keys).toEqual(['total', 'label', 'applied'])
+  })
+
+  describe('object fields', () => {
+    it('maps the object to a single row keyed by item field', () => {
+      expect(
+        toOutputValues(fields, { period: { days: 181, label: 'First' } }),
+      ).toEqual([
+        {
+          key: 'period',
+          type: OBJECT,
+          objectValue: {
+            values: [
+              { key: 'days', type: NUMBER, numberValue: 181 },
+              { key: 'label', type: STRING, stringValue: 'First' },
+            ],
+          },
+        },
+      ])
+    })
+
+    it.each([
+      ['absent', {}],
+      ['null', { period: null }],
+      ['an array', { period: [] }],
+    ])('omits an object value that is %s', (_label, result) => {
+      expect(toOutputValues(fields, result)).toEqual([])
+    })
   })
 })

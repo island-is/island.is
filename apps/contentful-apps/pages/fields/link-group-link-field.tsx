@@ -10,18 +10,12 @@ import {
 import { LinkActionsProps } from '@contentful/field-editor-reference/dist/types/components'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 
-import { DEFAULT_LOCALE } from '../../constants'
+import {
+  getSubpageContentTypeIds,
+  getSubpagePrefillFields,
+} from '../../utils/linkGroupSubpages'
 
 const RETRY_COUNT = 5
-
-const getSubpageContentTypeIds = (
-  pageContentTypeId?: string,
-): string[] | null => {
-  if (pageContentTypeId === 'organizationPage')
-    return ['organizationParentSubpage', 'organizationSubpage']
-  if (pageContentTypeId === 'projectPage') return ['projectSubpage']
-  return null
-}
 
 interface SubpageData {
   pageAbove: EntryProps | null
@@ -159,24 +153,7 @@ const LinkGroupLinkField = () => {
     contentTypeId: string,
     props: LinkActionsProps,
   ) => {
-    let fields = {}
-
-    if (
-      (contentTypeId === 'organizationSubpage' ||
-        contentTypeId === 'organizationParentSubpage') &&
-      pageAbove?.sys?.contentType?.sys?.id === 'organizationPage'
-    ) {
-      fields = {
-        organizationPage: {
-          [DEFAULT_LOCALE]: {
-            sys: {
-              id: pageAbove.sys.id,
-              linkType: 'Entry',
-            },
-          },
-        },
-      }
-    }
+    const fields = getSubpagePrefillFields(contentTypeId, pageAbove)
 
     try {
       const entry = await cma.entry.create(
@@ -192,26 +169,6 @@ const LinkGroupLinkField = () => {
 
       props.onCreated(entry)
       sdk.navigator.openEntry(entry.sys.id, { slideIn: true })
-
-      if (
-        contentTypeId === 'projectSubpage' &&
-        pageAbove?.sys?.contentType?.sys?.id === 'projectPage'
-      ) {
-        const data = await cma.entry.get({
-          contentTypeId: 'projectPage',
-          entryId: pageAbove.sys.id,
-        })
-        if (data) {
-          data.fields.projectSubpages[DEFAULT_LOCALE].push({
-            sys: {
-              id: entry.sys.id,
-              linkType: 'Entry',
-              type: 'Link',
-            },
-          })
-          cma.entry.update({ entryId: data.sys.id }, data)
-        }
-      }
     } catch (error) {
       console.error('Error creating entry:', error)
     }

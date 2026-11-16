@@ -1,0 +1,90 @@
+name: Mobile release (auto-release)
+
+# Manually queues one commit on main for the auto-release mobile pipeline.
+# The release worker then starts the Codemagic mobile-release-ios and
+# mobile-release-android builds for that commit.
+#
+# Dispatch only on purpose: nothing runs on push while the pipeline is tested.
+# Standalone: never a required check or a dependency of any other workflow.
+
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: Full commit SHA on main (blank uses the main commit this run starts from)
+        required: false
+        type: string
+
+concurrency:
+  group: mobile-release
+  queue: max
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate target commit
+    runs-on: arc-shared
+    timeout-minutes: 5
+    outputs:
+      sha: ${{ steps.target.outputs.sha }}
+    steps:
+      - name: Validate dispatch branch and target commit
+        id: target
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          DISPATCH_REF: ${{ github.ref }}
+          INPUT_SHA: ${{ inputs.sha }}
+          DISPATCH_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          if [[ "$DISPATCH_REF" != 'refs/heads/main' ]]; then
+            echo 'Run this workflow from main; the AWS producer role trusts that branch only.' >&2
+            exit 1
+          fi
+          target="${INPUT_SHA:-$DISPATCH_SHA}"
+          if [[ ! "$target" =~ ^[0-9a-fA-F]{40}$ ]]; then
+            echo 'sha must be a full 40-character hexadecimal commit SHA.' >&2
+            exit 1
+          fi
+          target=$(printf '%s' "$target" | tr 'A-F' 'a-f')
+          # identical/behind means the target is main or an ancestor of main.
+          status=$(gh api "repos/$REPO/compare/main...$target" --jq '.status')
+          if [[ "$status" != 'identical' && "$status" != 'behind' ]]; then
+            echo "The target commit must belong to main (compare status: $status)." >&2
+            exit 1
+          fi
+          printf 'sha=%s\n' "$target" >> "$GITHUB_OUTPUT"
+          printf 'Queued target: %s\n\nA successful run only means the target was queued; the Codemagic builds run afterwards.\n' "$target" >> "$GITHUB_STEP_SUMMARY"
+
+  # Inlined from island-is/release-actions notify-mobile-release.yml: this repo
+  # is public, and GitHub does not let public repos call reusable workflows
+  # stored in a private repo.
+  notify:
+    name: Queue mobile release
+    needs: validate
+    runs-on: arc-shared
+    timeout-minutes: 5
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Authenticate to AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::821090935708:role/github-action-release-producer-mobile
+          aws-region: eu-west-1
+
+      - name: Send target message
+        shell: bash
+        env:
+          TARGET_SHA: ${{ needs.validate.outputs.sha }}
+        run: |
+          set -euo pipefail
+          aws sqs send-message \
+            --queue-url "https://sqs.eu-west-1.amazonaws.com/821090935708/islandis-release-mobile" \
+            --message-body "{\"commitSha\":\"$TARGET_SHA\"}"

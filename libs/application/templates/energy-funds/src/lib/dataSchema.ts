@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
+import { YES } from '@island.is/application/core'
 import { error } from './messages'
 import { getPriceCap } from '../utils'
 
@@ -39,6 +40,12 @@ export const EnergyFundsSchema = z.object({
   grant: z.object({
     bankNumber: z.string().min(1),
     grantAmount: z.number().optional(),
+    confirmPriceDefinition: z
+      .array(z.string())
+      .optional()
+      .refine((v) => v?.includes(YES) ?? false, {
+        params: error.confirmPriceDefinitionRequired,
+      }),
   }),
 })
 

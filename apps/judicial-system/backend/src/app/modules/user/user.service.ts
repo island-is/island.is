@@ -86,6 +86,7 @@ export class UserService {
             active: true,
             canConfirmIndictment: false,
             canManageMessageSuspension: false,
+            canManageServiceInterruptionBanner: false,
             ...admin,
           } as User,
         ]

@@ -1,5 +1,4 @@
 import React, { useContext } from 'react'
-import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 
 import { Box, RadioButton } from '@island.is/island-ui/core'
@@ -64,7 +63,6 @@ export const DefendantServiceRequirement = ({
 }: {
   defendant: Defendant
 }) => {
-  const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { setAndSendVerdictToServer } = useVerdict()
   const { verdict } = defendant
@@ -107,7 +105,7 @@ export const DefendantServiceRequirement = ({
             }}
             large
             backgroundColor="white"
-            label={formatMessage(strings.serviceRequirementNotApplicable)}
+            label={strings.serviceRequirementNotApplicable}
           />
           <RadioButton
             id={`defendant-${defendant.id}-service-requirement-required`}
@@ -144,7 +142,7 @@ export const DefendantServiceRequirement = ({
             }}
             large
             backgroundColor="white"
-            label={formatMessage(strings.serviceRequirementRequired)}
+            label={strings.serviceRequirementRequired}
           />
           <RadioButton
             id={`defendant-${defendant.id}-service-requirement-not-required`}
@@ -167,10 +165,8 @@ export const DefendantServiceRequirement = ({
             }}
             large
             backgroundColor="white"
-            label={formatMessage(strings.serviceRequirementNotRequired)}
-            tooltip={formatMessage(
-              strings.serviceRequirementNotRequiredTooltip,
-            )}
+            label={strings.serviceRequirementNotRequired}
+            tooltip={strings.serviceRequirementNotRequiredTooltip}
           />
         </div>
         <AnimatedSection

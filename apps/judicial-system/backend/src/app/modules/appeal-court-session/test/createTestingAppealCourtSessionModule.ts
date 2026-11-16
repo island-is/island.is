@@ -17,6 +17,7 @@ import { AppealCourtSessionService } from '../appealCourtSession.service'
 
 jest.mock('../../case/case.service')
 jest.mock('../../repository/services/appealCourtSessionRepository.service')
+jest.mock('../../../middleware/queueMessagesAfterCommit')
 
 export const createTestingAppealCourtSessionModule = async () => {
   const appealCourtSessionModule = await Test.createTestingModule({

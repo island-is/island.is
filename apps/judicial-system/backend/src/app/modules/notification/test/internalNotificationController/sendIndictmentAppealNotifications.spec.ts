@@ -495,9 +495,11 @@ describe('InternalNotificationController - Send indictment appeal statement noti
           name: assistant.name,
           email: assistant.email,
         },
-        appealJudge1: { name: judge1.name, email: judge1.email },
-        appealJudge2: { name: judge2.name, email: judge2.email },
-        appealJudge3: { name: judge3.name, email: judge3.email },
+        appealJudges: [judge1, judge2, judge3].map((judge, displayOrder) => ({
+          displayOrder,
+          userId: judge.id,
+          user: { name: judge.name, email: judge.email },
+        })),
       } as AppealCase
 
       await internalNotificationController

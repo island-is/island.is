@@ -12,8 +12,8 @@ import {
 import {
   ChevronRight,
   GeneralCardSkeleton,
-  Heading,
-  Problem,
+  SectionHeader,
+  StatusMessage,
   Typography,
   ViewPager,
 } from '@/ui'
@@ -107,7 +107,7 @@ const AppointmentsModule = React.memo(
             disabled={count === 0}
             onPress={() => router.navigate('/health/appointments')}
           >
-            <Heading
+            <SectionHeader
               button={
                 count === 0 ? null : (
                   <TouchableOpacity
@@ -117,7 +117,10 @@ const AppointmentsModule = React.memo(
                       alignItems: 'center',
                     }}
                   >
-                    <Typography variant="heading5" color={theme.color.blue400}>
+                    <Typography
+                      variant="heading5"
+                      color={theme.tokens.interactive.foreground.primary}
+                    >
                       <FormattedMessage id="button.seeAll" />
                     </Typography>
                     <ChevronRight />
@@ -126,13 +129,13 @@ const AppointmentsModule = React.memo(
               }
             >
               <FormattedMessage id="homeOptions.appointments" />
-            </Heading>
+            </SectionHeader>
           </TouchableOpacity>
           {loading && !data ? (
             <GeneralCardSkeleton height={100} />
           ) : (
             <>
-              {count === 0 && <Problem type="no_data" size="small" />}
+              {count === 0 && <StatusMessage type="no_data" size="small" />}
               {count === 1 && items}
               {count >= 2 && (
                 <ViewPager itemWidth={viewPagerItemWidth}>{items}</ViewPager>

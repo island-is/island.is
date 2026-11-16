@@ -19,6 +19,7 @@ import {
 } from '@island.is/clients/directorate-of-immigration'
 import { Routes } from '../../../lib/constants'
 import { FILE_TYPES_ALLOWED } from '../../../shared'
+import { getBirthDate } from '../../../utils'
 
 const FILE_SIZE_LIMIT = 10000000
 
@@ -54,6 +55,7 @@ export const PassportSubSection = buildSubSection({
           title: supportingDocuments.labels.passport.publishDate,
           placeholder: supportingDocuments.labels.passport.datePlaceholder,
           width: 'half',
+          minDate: (application) => getBirthDate(application.applicant),
           maxDate: new Date(),
           defaultValue: (application: Application) => {
             const passport = getValueViaPath(
@@ -70,6 +72,7 @@ export const PassportSubSection = buildSubSection({
           title: supportingDocuments.labels.passport.expirationDate,
           placeholder: supportingDocuments.labels.passport.datePlaceholder,
           width: 'half',
+          minDate: (application) => getBirthDate(application.applicant),
           defaultValue: (application: Application) => {
             const passport = getValueViaPath(
               application.externalData,

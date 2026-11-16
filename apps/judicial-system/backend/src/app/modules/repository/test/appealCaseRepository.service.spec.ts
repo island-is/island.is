@@ -7,6 +7,10 @@ import { AppealCaseType } from '@island.is/judicial-system/types'
 
 import { AppealCase } from '../models/appealCase.model'
 import { AppealCaseRepositoryService } from '../services/appealCaseRepository.service'
+import {
+  appealAssistantInclude,
+  appealJudgesInclude,
+} from '../types/caseRepository.types'
 
 describe('AppealCaseRepositoryService', () => {
   let service: AppealCaseRepositoryService
@@ -30,7 +34,8 @@ describe('AppealCaseRepositoryService', () => {
   })
 
   describe('findById', () => {
-    it('reads the appeal case by id in the given transaction', async () => {
+    // The bench is part of the appeal case, so it is read with it, in order.
+    it('reads the appeal case with its assistant and bench by id in the given transaction', async () => {
       const transaction = {} as never
       const appealCase = { id: 'some-appeal-case-id' }
       model.findOne.mockResolvedValueOnce(appealCase)
@@ -41,6 +46,7 @@ describe('AppealCaseRepositoryService', () => {
 
       expect(model.findOne).toHaveBeenCalledWith({
         where: { id: 'some-appeal-case-id' },
+        include: [appealAssistantInclude(), appealJudgesInclude],
         transaction,
       })
       expect(result).toBe(appealCase)
@@ -51,6 +57,7 @@ describe('AppealCaseRepositoryService', () => {
 
       expect(model.findOne).toHaveBeenCalledWith({
         where: { id: 'some-appeal-case-id' },
+        include: [appealAssistantInclude(), appealJudgesInclude],
         transaction: undefined,
       })
       expect(result).toBeNull()

@@ -8,7 +8,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -63,28 +62,12 @@ export class PdfService {
 
   constructor(
     private readonly awsS3Service: AwsS3Service,
-    private readonly intlService: IntlService,
     private readonly policeDigitalCaseFileRepositoryService: PoliceDigitalCaseFileRepositoryService,
     @Inject(forwardRef(() => SubpoenaService))
     private readonly subpoenaService: SubpoenaService,
     private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
-
-  private formatMessage: FormatMessage = () => {
-    throw new InternalServerErrorException('Format message not initialized')
-  }
-
-  private async refreshFormatMessage(): Promise<void> {
-    return this.intlService
-      .useIntl(['judicial.system.backend'], 'is')
-      .then((res) => {
-        this.formatMessage = res.formatMessage
-      })
-      .catch((reason) => {
-        this.logger.error('Unable to refresh format messages', { reason })
-      })
-  }
 
   private async throttleGetCaseFilesRecordPdf(
     theCase: Case,
@@ -95,8 +78,6 @@ export class PdfService {
     await this.throttle.catch((reason) => {
       this.logger.info('Previous case files pdf generation failed', { reason })
     })
-
-    await this.refreshFormatMessage()
 
     const caseFiles = theCase.caseFiles
       ?.filter(
@@ -147,7 +128,6 @@ export class PdfService {
       policeCaseNumber,
       caseFiles ?? [],
       policeDigitalCaseFiles,
-      this.formatMessage,
       (file, reason) => {
         // Tolerate failure, but log error
         this.logger.error(
@@ -180,9 +160,7 @@ export class PdfService {
       }
     }
 
-    await this.refreshFormatMessage()
-
-    return getCourtRecordPdfAsBuffer(theCase, this.formatMessage, user)
+    return getCourtRecordPdfAsBuffer(theCase, user)
   }
 
   async getCourtRecordPdfForIndictmentCase(
@@ -251,9 +229,7 @@ export class PdfService {
   }
 
   async getRequestPdf(theCase: Case): Promise<Buffer> {
-    await this.refreshFormatMessage()
-
-    return getRequestPdfAsBuffer(theCase, this.formatMessage)
+    return getRequestPdfAsBuffer(theCase)
   }
 
   async getRulingPdf(theCase: Case): Promise<Buffer> {
@@ -271,15 +247,11 @@ export class PdfService {
       }
     }
 
-    await this.refreshFormatMessage()
-
-    return getRulingPdfAsBuffer(theCase, this.formatMessage)
+    return getRulingPdfAsBuffer(theCase)
   }
 
   async getCustodyNoticePdf(theCase: Case): Promise<Buffer> {
-    await this.refreshFormatMessage()
-
-    return getCustodyNoticePdfAsBuffer(theCase, this.formatMessage)
+    return getCustodyNoticePdfAsBuffer(theCase)
   }
 
   private async tryGetPdfFromS3(
@@ -384,8 +356,6 @@ export class PdfService {
       }
     }
 
-    await this.refreshFormatMessage()
-
     const fullOriginalCase = await this.getFullOriginalCase(
       theCase,
       transaction,
@@ -401,11 +371,7 @@ export class PdfService {
     }
 
     // In case of splits, we use the reconstructed full parent case for generation
-    const generatedPdf = await createIndictment(
-      fullOriginalCase,
-      this.formatMessage,
-      confirmation,
-    )
+    const generatedPdf = await createIndictment(fullOriginalCase, confirmation)
 
     if (
       hasIndictmentCaseBeenSubmittedToCourt(fullOriginalCase.state) &&
@@ -435,63 +401,6 @@ export class PdfService {
     }
 
     return generatedPdf
-  }
-
-  async replaceIndictmentPdf(
-    theCase: Case,
-    key: string,
-    transaction: Transaction,
-  ): Promise<void> {
-    const indictmentKey = `${theCase.id}/indictment.pdf`
-
-    // The temporary upload and the frozen indictment share the case id
-    // prefix. Using the indictment key as the upload would overwrite, then
-    // delete the only copy of the Ákæra.
-    if (key === indictmentKey) {
-      throw new BadRequestException(
-        'Cannot replace the indictment with its own storage key',
-      )
-    }
-
-    const uploadedPdf = await this.awsS3Service.getObject(theCase.type, key)
-
-    if (uploadedPdf.subarray(0, 5).toString('latin1') !== '%PDF-') {
-      throw new BadRequestException('Uploaded file is not a PDF')
-    }
-
-    // Overwrite the frozen object first, then update the hash. S3 is not part
-    // of the DB transaction: if the hash update fails the new bytes are still
-    // served while the hash is set, which is preferable to a hash pointing at
-    // missing bytes. The temporary upload is deleted by the caller after
-    // commit so a rolled-back attempt can be retried.
-    await this.uploadPdfToS3(theCase, indictmentKey, uploadedPdf)
-
-    const { hash, hashAlgorithm } = getCaseFileHash(uploadedPdf)
-    // `replaced` tells the UI to list the file as Ákæra.pdf without the
-    // sent-to-court date that generated indictments carry.
-    const indictmentHash = JSON.stringify({
-      hash,
-      hashAlgorithm,
-      replaced: true,
-    })
-
-    await this.caseRepositoryService.update(
-      theCase.id,
-      { indictmentHash },
-      { transaction },
-    )
-
-    for (const splitCase of theCase.splitCases ?? []) {
-      await this.caseRepositoryService.update(
-        splitCase.id,
-        { indictmentHash },
-        { transaction },
-      )
-    }
-  }
-
-  async deleteIndictmentUpload(theCase: Case, key: string): Promise<void> {
-    await this.awsS3Service.deleteObject(theCase.type, key)
   }
 
   async getCaseFilesRecordPdf(
@@ -557,8 +466,6 @@ export class PdfService {
       }
     }
 
-    await this.refreshFormatMessage()
-
     // For subpoenas created before the split, use the reconstructed full parent
     // case. For subpoenas created after the split, use the current case directly
     // so the correct court case number appears in the PDF.
@@ -569,7 +476,6 @@ export class PdfService {
     const generatedPdf = await createSubpoena(
       caseForPdf,
       defendant,
-      this.formatMessage,
       subpoena,
       arraignmentDate,
       location,
@@ -599,8 +505,6 @@ export class PdfService {
     defendant: Defendant,
     subpoena: Subpoena,
   ): Promise<Buffer> {
-    await this.refreshFormatMessage()
-
     const isSplitSubpoena =
       theCase.splitCaseId && subpoena.created < theCase.created
 
@@ -615,7 +519,6 @@ export class PdfService {
       caseForPdf,
       defendant,
       subpoena,
-      this.formatMessage,
     )
 
     return generatedPdf
@@ -627,14 +530,11 @@ export class PdfService {
     verdict: Verdict,
     deliveredToDefenderName?: string,
   ): Promise<Buffer> {
-    await this.refreshFormatMessage()
-
     const generatedPdf = await createVerdictServiceCertificate({
       theCase,
       defendant,
       verdict,
       deliveredToDefenderName,
-      formatMessage: this.formatMessage,
     })
 
     return generatedPdf

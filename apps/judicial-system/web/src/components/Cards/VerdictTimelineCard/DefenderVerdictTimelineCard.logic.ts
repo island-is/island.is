@@ -58,9 +58,15 @@ export const getDefenderVerdictTimelineItems = ({
     verdict.serviceDate
   ) {
     items.push({
-      text: formatMessage(strings.defendantVerdictViewedDate, {
-        date: formatDate(verdict.serviceDate),
-      }),
+      text: formatMessage(
+        {
+          id: strings.defendantVerdictViewedDate,
+          defaultMessage: strings.defendantVerdictViewedDate,
+        },
+        {
+          date: formatDate(verdict.serviceDate),
+        },
+      ),
     })
   } else if (verdict.serviceRequirement) {
     const serviceRequirementText = getServiceRequirementText(

@@ -1,12 +1,18 @@
 import type { FC } from 'react'
 
-import { Box, Input, Select, Text } from '@island.is/island-ui/core'
+import { Box, Input, Select, Tag, Text } from '@island.is/island-ui/core'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { appealCourtSessionTypeNames } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   DateTime,
+  FadeSwap,
+  PopIn,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
+import ContextMenu from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
+import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
 import type {
   AppealCourtSession,
   AppealCourtSessionType,
@@ -18,34 +24,52 @@ import {
   appealCourtSessionTypeOptions,
   formatAppealCourtSessionDetails,
 } from './VerdictAppealStatus.logic'
+import * as styles from './ScheduleCourtSession.css'
 
 interface Props {
   session: AppealCourtSessionDraft
   onChange: (session: AppealCourtSessionDraft) => void
   // The sessions already booked in the appeal, listed under the form.
   bookedSessions: AppealCourtSession[]
+  // The booked session the form currently holds, if the court is changing one.
+  editingSessionId?: string
+  onEdit: (session: AppealCourtSession) => void
+  onDelete: (session: AppealCourtSession) => void
 }
 
 /**
  * The form the court fills in to call a session - its type, when it is held
  * and in which room - and the list of sessions already called.
  *
- * The form is a draft; the page books it when the court continues. The list
- * is read only.
+ * The form is a draft; the page books it when the court continues, or writes
+ * it back over the session being changed. Each booked session has a menu to
+ * change or cancel it; what either does is the page's business.
  */
 const ScheduleCourtSession: FC<Props> = ({
   session,
   onChange,
   bookedSessions,
+  editingSessionId,
+  onEdit,
+  onDelete,
 }) => {
   const selectedTypeOption =
     appealCourtSessionTypeOptions.find(
       (option) => option.value === session.sessionType,
     ) ?? null
 
+  const sessionTitle = (bookedSession: AppealCourtSession) =>
+    bookedSession.sessionType
+      ? appealCourtSessionTypeNames[bookedSession.sessionType]
+      : 'þinghald'
+
+  const heading = editingSessionId ? 'Breyta þinghaldi' : 'Boða til þinghalds'
+
   return (
     <Box component="section">
-      <SectionHeading title="Boða til þinghalds" />
+      <FadeSwap swapKey={heading}>
+        <SectionHeading title={heading} />
+      </FadeSwap>
       <BlueBox className={stack({ gap: 2 })}>
         <Select
           name="appeal-court-session-type"
@@ -100,24 +124,72 @@ const ScheduleCourtSession: FC<Props> = ({
         <Box component="section" marginTop={5}>
           <SectionHeading title="Bókuð þinghöld" marginBottom={1} />
           <Box component="ul" aria-label="Bókuð þinghöld">
-            {bookedSessions.map((bookedSession) => (
-              <Box
-                key={bookedSession.id}
-                component="li"
-                paddingY={2}
-                borderBottomWidth="standard"
-                borderColor="blue200"
-              >
-                <Text variant="h5">
-                  {bookedSession.sessionType
-                    ? appealCourtSessionTypeNames[bookedSession.sessionType]
-                    : ''}
-                </Text>
-                <Text variant="medium" fontWeight="light">
-                  {formatAppealCourtSessionDetails(bookedSession)}
-                </Text>
-              </Box>
-            ))}
+            {bookedSessions.map((bookedSession) => {
+              const title = sessionTitle(bookedSession)
+              const isBeingEdited = bookedSession.id === editingSessionId
+              const editItem: ContextMenuItem = {
+                title: 'Breyta þinghaldi',
+                icon: 'pencil',
+                onClick: () => onEdit(bookedSession),
+              }
+              const deleteItem: ContextMenuItem = {
+                title: 'Eyða þinghaldi',
+                icon: 'trash',
+                onClick: () => onDelete(bookedSession),
+              }
+              // The session already in the form has nothing to offer here
+              // but its cancellation.
+              const menuItems = isBeingEdited
+                ? [deleteItem]
+                : [editItem, deleteItem]
+
+              return (
+                <Box
+                  key={bookedSession.id}
+                  component="li"
+                  display="flex"
+                  alignItems="center"
+                  columnGap={2}
+                  paddingY={2}
+                  borderBottomWidth="standard"
+                  borderColor="blue200"
+                >
+                  <Box flexGrow={1}>
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      columnGap="p2"
+                      className={styles.sessionTitle}
+                    >
+                      <Text variant="h5">{title}</Text>
+                      <PopIn show={isBeingEdited}>
+                        <Tag variant="blue" disabled>
+                          Verið að breyta
+                        </Tag>
+                      </PopIn>
+                    </Box>
+                    <Text variant="medium" fontWeight="light">
+                      {formatAppealCourtSessionDetails(bookedSession)}
+                    </Text>
+                  </Box>
+                  <ContextMenu
+                    items={menuItems}
+                    render={
+                      <IconButton
+                        icon="ellipsisVertical"
+                        colorScheme="transparent"
+                        // Without the room: a label that says "Dómsalur" would
+                        // answer for the court room input as well.
+                        ariaLabel={`Valmynd fyrir ${title} ${formatDate(
+                          bookedSession.sessionDate,
+                          "dd.MM.yyyy 'kl.' HH:mm",
+                        )}`}
+                      />
+                    }
+                  />
+                </Box>
+              )
+            })}
           </Box>
         </Box>
       )}

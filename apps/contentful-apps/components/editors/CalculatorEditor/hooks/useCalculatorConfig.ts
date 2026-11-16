@@ -392,6 +392,7 @@ export const useCalculatorConfig = (
             patch.key !== field.key
           ) {
             delete next.itemFields
+            delete next.numberType
           }
           return next
         }),

@@ -1,7 +1,5 @@
 import PDFDocument from 'pdfkit'
 
-import { FormatMessage } from '@island.is/cms-translations'
-
 import {
   capitalize,
   formatCaseType,
@@ -16,7 +14,7 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
-import { core, request as m } from '../../messages'
+import { core, formatIcuMessage, request as m } from '../../messages'
 import { Case, Defendant, EventLog } from '../../modules/repository'
 import { formatLegalProvisions } from '../formatters'
 import {
@@ -51,10 +49,7 @@ export const formatRequestPdfDefenderName = (
   return noDefenderLabel
 }
 
-const constructRestrictionRequestPdf = (
-  theCase: Case,
-  formatMessage: FormatMessage,
-): Promise<Buffer> => {
+const constructRestrictionRequestPdf = (theCase: Case): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -72,14 +67,14 @@ const constructRestrictionRequestPdf = (
 
   let caseTypeText = ''
   if (theCase.type === CaseType.ADMISSION_TO_FACILITY) {
-    caseTypeText = formatMessage(core.caseType.admissionToFacility)
+    caseTypeText = core.caseType.admissionToFacility
   } else if (theCase.type === CaseType.TRAVEL_BAN) {
-    caseTypeText = formatMessage(core.caseType.travelBan)
+    caseTypeText = core.caseType.travelBan
   } else if (theCase.type === CaseType.CUSTODY) {
-    caseTypeText = formatMessage(core.caseType.custody)
+    caseTypeText = core.caseType.custody
   }
 
-  const title = formatMessage(m.heading, {
+  const title = formatIcuMessage(m.heading, {
     caseType: caseTypeText,
   })
 
@@ -96,7 +91,7 @@ const constructRestrictionRequestPdf = (
   setLineGap(doc, 4)
   addLargeHeading(
     doc,
-    theCase.prosecutorsOffice?.name ?? formatMessage(m.noDistrict),
+    theCase.prosecutorsOffice?.name ?? m.noDistrict,
     'Times-Bold',
   )
   setLineGap(doc, 24)
@@ -113,12 +108,9 @@ const constructRestrictionRequestPdf = (
     ) ?? '',
   )
   setLineGap(doc, 40)
-  addMediumPlusHeading(
-    doc,
-    `${formatMessage(m.baseInfo.court)} ${theCase.court?.name}`,
-  )
+  addMediumPlusHeading(doc, `${m.baseInfo.court} ${theCase.court?.name}`)
   setLineGap(doc, 4)
-  addMediumText(doc, formatMessage(m.policeCaseNumbers), 'Times-Bold')
+  addMediumText(doc, m.policeCaseNumbers, 'Times-Bold')
   theCase.policeCaseNumbers.forEach((policeCaseNumber) => {
     addNormalText(doc, policeCaseNumber, 'Times-Roman')
   })
@@ -126,7 +118,7 @@ const constructRestrictionRequestPdf = (
   addMediumText(
     doc,
     capitalize(
-      formatMessage(core.defendant, {
+      formatIcuMessage(core.defendant, {
         suffix:
           theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'i',
       }),
@@ -142,7 +134,7 @@ const constructRestrictionRequestPdf = (
     if (!defendant.noNationalId) {
       addNormalText(
         doc,
-        `${formatMessage(m.baseInfo.nationalId)} ${formatNationalId(
+        `${m.baseInfo.nationalId} ${formatNationalId(
           defendant.nationalId ?? '',
         )}`,
         'Times-Roman',
@@ -150,26 +142,20 @@ const constructRestrictionRequestPdf = (
     } else if (defendant.nationalId) {
       addNormalText(
         doc,
-        `${formatMessage(m.baseInfo.dateOfBirth)} ${defendant.nationalId}`,
+        `${m.baseInfo.dateOfBirth} ${defendant.nationalId}`,
         'Times-Roman',
       )
     }
 
+    addNormalText(doc, `${m.baseInfo.fullName} ${defendant.name ?? ''}`)
+    addNormalText(doc, `${m.baseInfo.address} ${defendant.address ?? ''}`)
     addNormalText(
       doc,
-      `${formatMessage(m.baseInfo.fullName)} ${defendant.name ?? ''}`,
-    )
-    addNormalText(
-      doc,
-      `${formatMessage(m.baseInfo.address)} ${defendant.address ?? ''}`,
-    )
-    addNormalText(
-      doc,
-      formatMessage(m.baseInfo.defender, {
+      formatIcuMessage(m.baseInfo.defender, {
         defenderName: formatRequestPdfDefenderName(
           defendant,
           theCase.sessionArrangements,
-          formatMessage(m.baseInfo.noDefender),
+          m.baseInfo.noDefender,
         ),
       }),
       'Times-Roman',
@@ -177,48 +163,48 @@ const constructRestrictionRequestPdf = (
   })
 
   addEmptyLines(doc)
-  addMediumText(doc, formatMessage(m.demands.heading), 'Times-Bold')
+  addMediumText(doc, m.demands.heading, 'Times-Bold')
   addNormalJustifiedText(
     doc,
-    theCase.demands ?? formatMessage(m.demands.noDemands),
+    theCase.demands ?? m.demands.noDemands,
     'Times-Roman',
   )
   addEmptyLines(doc)
-  addMediumText(doc, formatMessage(m.lawsBroken.heading), 'Times-Bold')
+  addMediumText(doc, m.lawsBroken.heading, 'Times-Bold')
   addNormalJustifiedText(
     doc,
-    theCase.lawsBroken ?? formatMessage(m.lawsBroken.noLawsBroken),
+    theCase.lawsBroken ?? m.lawsBroken.noLawsBroken,
     'Times-Roman',
   )
   addEmptyLines(doc)
-  addMediumText(doc, formatMessage(m.legalBasis.heading), 'Times-Bold')
+  addMediumText(doc, m.legalBasis.heading, 'Times-Bold')
   addNormalJustifiedText(
     doc,
     formatLegalProvisions(theCase.legalProvisions, theCase.legalBasis),
     'Times-Roman',
   )
   addEmptyLines(doc, 2)
-  addLargeText(doc, formatMessage(m.factsAndArguments.heading), 'Times-Bold')
+  addLargeText(doc, m.factsAndArguments.heading, 'Times-Bold')
   addEmptyLines(doc)
-  addMediumText(doc, formatMessage(m.factsAndArguments.facts))
+  addMediumText(doc, m.factsAndArguments.facts)
   addNormalJustifiedText(
     doc,
-    theCase.caseFacts ?? formatMessage(m.factsAndArguments.noFacts),
+    theCase.caseFacts ?? m.factsAndArguments.noFacts,
     'Times-Roman',
   )
   addEmptyLines(doc)
-  addMediumText(doc, formatMessage(m.factsAndArguments.arguments), 'Times-Bold')
+  addMediumText(doc, m.factsAndArguments.arguments, 'Times-Bold')
   addNormalJustifiedText(
     doc,
-    theCase.legalArguments ?? formatMessage(m.factsAndArguments.noArguments),
+    theCase.legalArguments ?? m.factsAndArguments.noArguments,
     'Times-Roman',
   )
   addEmptyLines(doc)
   addNormalText(
     doc,
-    `${
-      theCase.prosecutor?.name ?? formatMessage(m.prosecutor.noProsecutor)
-    } ${lowercase(theCase.prosecutor?.title)}`,
+    `${theCase.prosecutor?.name ?? m.prosecutor.noProsecutor} ${lowercase(
+      theCase.prosecutor?.title,
+    )}`,
     'Times-Bold',
   )
   addFooter(doc)
@@ -230,10 +216,7 @@ const constructRestrictionRequestPdf = (
   )
 }
 
-const constructInvestigationRequestPdf = (
-  theCase: Case,
-  formatMessage: FormatMessage,
-): Promise<Buffer> => {
+const constructInvestigationRequestPdf = (theCase: Case): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -249,8 +232,8 @@ const constructInvestigationRequestPdf = (
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
-  const title = formatMessage(m.heading, {
-    caseType: formatMessage(core.caseType.investigate),
+  const title = formatIcuMessage(m.heading, {
+    caseType: core.caseType.investigate,
   })
 
   setTitle(doc, title)
@@ -266,7 +249,7 @@ const constructInvestigationRequestPdf = (
   setLineGap(doc, 4)
   addLargeHeading(
     doc,
-    theCase.prosecutorsOffice?.name ?? formatMessage(m.noDistrict),
+    theCase.prosecutorsOffice?.name ?? m.noDistrict,
     'Times-Bold',
   )
   setLineGap(doc, 24)
@@ -284,12 +267,9 @@ const constructInvestigationRequestPdf = (
     ) ?? '',
   )
   setLineGap(doc, 40)
-  addMediumPlusHeading(
-    doc,
-    `${formatMessage(m.baseInfo.court)} ${theCase.court?.name}`,
-  )
+  addMediumPlusHeading(doc, `${m.baseInfo.court} ${theCase.court?.name}`)
   setLineGap(doc, 4)
-  addMediumText(doc, formatMessage(m.policeCaseNumbers), 'Times-Bold')
+  addMediumText(doc, m.policeCaseNumbers, 'Times-Bold')
   theCase.policeCaseNumbers.forEach((policeCaseNumber) => {
     addNormalText(doc, policeCaseNumber, 'Times-Roman')
   })
@@ -297,7 +277,7 @@ const constructInvestigationRequestPdf = (
   addMediumText(
     doc,
     capitalize(
-      formatMessage(core.defendant, {
+      formatIcuMessage(core.defendant, {
         suffix:
           theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'i',
       }),
@@ -313,7 +293,7 @@ const constructInvestigationRequestPdf = (
     if (!defendant.noNationalId) {
       addNormalText(
         doc,
-        `${formatMessage(m.baseInfo.nationalId)} ${formatNationalId(
+        `${m.baseInfo.nationalId} ${formatNationalId(
           defendant.nationalId ?? '',
         )}`,
         'Times-Roman',
@@ -321,19 +301,13 @@ const constructInvestigationRequestPdf = (
     } else if (defendant.nationalId) {
       addNormalText(
         doc,
-        `${formatMessage(m.baseInfo.dateOfBirth)} ${defendant.nationalId}`,
+        `${m.baseInfo.dateOfBirth} ${defendant.nationalId}`,
         'Times-Roman',
       )
     }
 
-    addNormalText(
-      doc,
-      `${formatMessage(m.baseInfo.fullName)} ${defendant.name ?? ''}`,
-    )
-    addNormalText(
-      doc,
-      `${formatMessage(m.baseInfo.address)} ${defendant.address ?? ''}`,
-    )
+    addNormalText(doc, `${m.baseInfo.fullName} ${defendant.name ?? ''}`)
+    addNormalText(doc, `${m.baseInfo.address} ${defendant.address ?? ''}`)
 
     if (
       defendant.defenderName &&
@@ -342,7 +316,7 @@ const constructInvestigationRequestPdf = (
     ) {
       addNormalText(
         doc,
-        formatMessage(m.baseInfo.defender, {
+        formatIcuMessage(m.baseInfo.defender, {
           defenderName: defendant.defenderName,
         }),
         'Times-Roman',
@@ -351,12 +325,12 @@ const constructInvestigationRequestPdf = (
   })
 
   addEmptyLines(doc)
-  addMediumText(doc, formatMessage(m.description.heading), 'Times-Bold')
+  addMediumText(doc, m.description.heading, 'Times-Bold')
   addNormalText(
     doc,
     capitalize(
       theCase.type === CaseType.OTHER
-        ? formatMessage(core.caseType.investigate)
+        ? core.caseType.investigate
         : formatCaseType(theCase.type),
     ),
     'Times-Roman',
@@ -367,50 +341,46 @@ const constructInvestigationRequestPdf = (
   }
 
   addEmptyLines(doc)
-  addMediumText(doc, formatMessage(m.demands.heading), 'Times-Bold')
+  addMediumText(doc, m.demands.heading, 'Times-Bold')
   addNormalJustifiedText(
     doc,
-    theCase.demands ?? formatMessage(m.demands.noDemands),
+    theCase.demands ?? m.demands.noDemands,
     'Times-Roman',
   )
   addEmptyLines(doc)
-  addMediumText(doc, formatMessage(m.lawsBroken.heading), 'Times-Bold')
+  addMediumText(doc, m.lawsBroken.heading, 'Times-Bold')
   addNormalJustifiedText(
     doc,
-    theCase.lawsBroken ?? formatMessage(m.lawsBroken.noLawsBroken),
+    theCase.lawsBroken ?? m.lawsBroken.noLawsBroken,
     'Times-Roman',
   )
   addEmptyLines(doc)
-  addMediumText(doc, formatMessage(m.legalBasis.heading), 'Times-Bold')
+  addMediumText(doc, m.legalBasis.heading, 'Times-Bold')
   addNormalJustifiedText(
     doc,
-    theCase.legalBasis ?? formatMessage(m.legalBasis.noLegalBasis),
+    theCase.legalBasis ?? m.legalBasis.noLegalBasis,
     'Times-Roman',
   )
   addEmptyLines(doc, 2)
-  addLargeText(doc, formatMessage(m.factsAndArguments.heading), 'Times-Bold')
+  addLargeText(doc, m.factsAndArguments.heading, 'Times-Bold')
   addEmptyLines(doc)
-  addMediumText(doc, formatMessage(m.factsAndArguments.facts))
+  addMediumText(doc, m.factsAndArguments.facts)
   addNormalJustifiedText(
     doc,
-    theCase.caseFacts ?? formatMessage(m.factsAndArguments.noFacts),
+    theCase.caseFacts ?? m.factsAndArguments.noFacts,
     'Times-Roman',
   )
   addEmptyLines(doc)
-  addMediumText(doc, formatMessage(m.factsAndArguments.arguments), 'Times-Bold')
+  addMediumText(doc, m.factsAndArguments.arguments, 'Times-Bold')
   addNormalJustifiedText(
     doc,
-    theCase.legalArguments ?? formatMessage(m.factsAndArguments.noArguments),
+    theCase.legalArguments ?? m.factsAndArguments.noArguments,
     'Times-Roman',
   )
   addEmptyLines(doc)
 
   if (theCase.requestProsecutorOnlySession) {
-    addMediumText(
-      doc,
-      formatMessage(m.requestProsecutorOnlySession),
-      'Times-Bold',
-    )
+    addMediumText(doc, m.requestProsecutorOnlySession, 'Times-Bold')
     addNormalJustifiedText(
       doc,
       theCase.prosecutorOnlySessionRequest ?? '',
@@ -421,9 +391,9 @@ const constructInvestigationRequestPdf = (
 
   addNormalText(
     doc,
-    `${
-      theCase.prosecutor?.name ?? formatMessage(m.prosecutor.noProsecutor)
-    } ${lowercase(theCase.prosecutor?.title)}`,
+    `${theCase.prosecutor?.name ?? m.prosecutor.noProsecutor} ${lowercase(
+      theCase.prosecutor?.title,
+    )}`,
     'Times-Bold',
   )
   addFooter(doc)
@@ -435,27 +405,18 @@ const constructInvestigationRequestPdf = (
   )
 }
 
-const constructRequestPdf = (
-  theCase: Case,
-  formatMessage: FormatMessage,
-): Promise<Buffer> => {
+const constructRequestPdf = (theCase: Case): Promise<Buffer> => {
   return isRestrictionCase(theCase.type)
-    ? constructRestrictionRequestPdf(theCase, formatMessage)
-    : constructInvestigationRequestPdf(theCase, formatMessage)
+    ? constructRestrictionRequestPdf(theCase)
+    : constructInvestigationRequestPdf(theCase)
 }
 
-export const getRequestPdfAsString = (
-  theCase: Case,
-  formatMessage: FormatMessage,
-): Promise<string> => {
-  return constructRequestPdf(theCase, formatMessage).then((buffer) =>
+export const getRequestPdfAsString = (theCase: Case): Promise<string> => {
+  return constructRequestPdf(theCase).then((buffer) =>
     buffer.toString('binary'),
   )
 }
 
-export const getRequestPdfAsBuffer = (
-  theCase: Case,
-  formatMessage: FormatMessage,
-): Promise<Buffer> => {
-  return constructRequestPdf(theCase, formatMessage)
+export const getRequestPdfAsBuffer = (theCase: Case): Promise<Buffer> => {
+  return constructRequestPdf(theCase)
 }

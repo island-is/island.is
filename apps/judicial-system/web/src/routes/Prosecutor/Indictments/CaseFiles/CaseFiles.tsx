@@ -1,5 +1,4 @@
 import { useCallback, useContext } from 'react'
-import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Box, Button, InputFileUpload } from '@island.is/island-ui/core'
@@ -31,7 +30,6 @@ import * as strings from './CaseFiles.strings'
 const CaseFiles = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { formatMessage } = useIntl()
   const {
     uploadFiles,
     allFilesDoneOrError,
@@ -66,17 +64,15 @@ const CaseFiles = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.indictments.caseFiles)}
-      />
+      <PageHeader title={titles.prosecutor.indictments.caseFiles} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.caseFiles.heading)}</PageTitle>
+        <PageTitle>{strings.caseFiles.heading}</PageTitle>
         <Box marginBottom={5}>
           <ProsecutorCaseInfo workingCase={workingCase} />
         </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading
-            title={formatMessage(strings.caseFiles.criminalRecordSection)}
+            title={strings.caseFiles.criminalRecordSection}
             heading="h2"
           />
           <Box marginBottom={3}>
@@ -103,8 +99,8 @@ const CaseFiles = () => {
               (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            title={formatMessage(strings.caseFiles.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
+            title={strings.caseFiles.inputFieldLabel}
+            buttonLabel={strings.caseFiles.buttonLabel}
             onChange={(files) =>
               handleUpload(
                 addUploadFiles(files, {
@@ -120,7 +116,7 @@ const CaseFiles = () => {
         </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading
-            title={formatMessage(strings.caseFiles.costBreakdownSection)}
+            title={strings.caseFiles.costBreakdownSection}
             heading="h2"
           />
           <InputFileUpload
@@ -129,8 +125,8 @@ const CaseFiles = () => {
               (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            title={formatMessage(strings.caseFiles.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
+            title={strings.caseFiles.inputFieldLabel}
+            buttonLabel={strings.caseFiles.buttonLabel}
             onChange={(files) =>
               handleUpload(
                 addUploadFiles(files, {
@@ -146,7 +142,7 @@ const CaseFiles = () => {
         </Box>
         <Box component="section">
           <SectionHeading
-            title={formatMessage(strings.caseFiles.otherDocumentsSection)}
+            title={strings.caseFiles.otherDocumentsSection}
             heading="h2"
           />
           <InputFileUpload
@@ -155,8 +151,8 @@ const CaseFiles = () => {
               (file) => file.category === CaseFileCategory.CASE_FILE,
             )}
             accept={Object.values(fileExtensionWhitelist)}
-            title={formatMessage(strings.caseFiles.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
+            title={strings.caseFiles.inputFieldLabel}
+            buttonLabel={strings.caseFiles.buttonLabel}
             onChange={(files) =>
               handleUpload(
                 addUploadFiles(files, { category: CaseFileCategory.CASE_FILE }),
@@ -174,7 +170,7 @@ const CaseFiles = () => {
           previousUrl={`${PROSECUTION_INDICTMENT_CASE_CASE_FILE_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

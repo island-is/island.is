@@ -1,5 +1,4 @@
 import type { FC } from 'react'
-import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { formatDOB } from '@island.is/judicial-system/formatters'
@@ -15,13 +14,11 @@ interface CivilClaimantInfoProps {
 
 export const CivilClaimantInfo: FC<CivilClaimantInfoProps> = (props) => {
   const { civilClaimant } = props
-  const { formatMessage } = useIntl()
-
   return (
     <>
       <Box marginBottom={1}>
         <Text as="span" fontWeight="semiBold">
-          {`${formatMessage(infoCardStrings.name)}: `}
+          {`${infoCardStrings.name}: `}
         </Text>
         <Text as="span">
           {civilClaimant.name}
@@ -36,8 +33,8 @@ export const CivilClaimantInfo: FC<CivilClaimantInfoProps> = (props) => {
         <>
           <Text as="span" whiteSpace="pre" fontWeight="semiBold">
             {civilClaimant.spokespersonIsLawyer
-              ? `${formatMessage(strings.lawyer)}: `
-              : `${formatMessage(strings.spokesperson)}: `}
+              ? `${strings.lawyer}: `
+              : `${strings.spokesperson}: `}
           </Text>
           {RenderPersonalData({
             name: civilClaimant.spokespersonName,
@@ -52,8 +49,8 @@ export const CivilClaimantInfo: FC<CivilClaimantInfoProps> = (props) => {
             as="span"
             whiteSpace="pre"
             fontWeight="semiBold"
-          >{`${formatMessage(strings.lawyer)}: `}</Text>
-          <Text as="span">{`${formatMessage(strings.noLawyer)}`}</Text>
+          >{`${strings.lawyer}: `}</Text>
+          <Text as="span">{`${strings.noLawyer}`}</Text>
         </>
       )}
     </>

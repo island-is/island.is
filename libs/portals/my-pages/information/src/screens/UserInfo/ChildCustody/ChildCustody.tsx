@@ -22,7 +22,7 @@ import {
 import { unmaskString } from '@island.is/shared/utils'
 import { useParams } from 'react-router-dom'
 import { TwoColumnUserInfoLine } from '../../../components/TwoColumnUserInfoLine/TwoColumnUserInfoLine'
-import { formatNameBreaks } from '../../../helpers/formatting'
+import { formatAddress, formatNameBreaks } from '../../../helpers/formatting'
 import { natRegGenderMessageDescriptorRecord } from '../../../helpers/localizationHelpers'
 import { spmm, urls } from '../../../lib/messages'
 import { useNationalRegistryChildCustodyQuery } from './ChildCustody.generated'
@@ -191,6 +191,29 @@ const ChildCustody = () => {
               <Box printHidden>
                 <Divider />
               </Box>
+              {child?.housing?.residence && (
+                <>
+                  <UserInfoLine
+                    label={formatMessage(spmm.temporaryResidence)}
+                    content={formatAddress(child.housing.residence) || ''}
+                    loading={loading}
+                    printable
+                    editLink={
+                      !isChild
+                        ? {
+                            title: formatMessage(spmm.editLink),
+                            external: true,
+                            skipOutboundTrack: true,
+                            url: formatMessage(urls.editTemporaryResidence),
+                          }
+                        : undefined
+                    }
+                  />
+                  <Box printHidden>
+                    <Divider />
+                  </Box>
+                </>
+              )}
             </Stack>
             <Stack component="ul" space={2}>
               <UserInfoLine

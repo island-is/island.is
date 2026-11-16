@@ -39,11 +39,21 @@ describe('appealAdvocateAssignedBody', () => {
     )
   })
 
-  // The base notification service only appends its closing line and link to a
-  // mail that carries no link of its own, so this one must not.
-  it('carries no link, leaving the closing line to the service', () => {
+  it('carries no link when the case is not yet open to the advocate', () => {
     expect(appealAdvocateAssignedBody('verjanda', '77/2026')).not.toContain(
       '<a',
+    )
+  })
+
+  it('links to the case overview when a case url is provided', () => {
+    expect(
+      appealAdvocateAssignedBody(
+        'verjanda',
+        '77/2026',
+        'https://rvg.example/verjandi/akaera/case-id',
+      ),
+    ).toContain(
+      '<a href="https://rvg.example/verjandi/akaera/case-id">yfirlitssíðu málsins í Réttarvörslugátt</a>',
     )
   })
 })

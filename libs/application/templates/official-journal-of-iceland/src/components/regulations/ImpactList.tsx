@@ -40,6 +40,8 @@ export type ImpactListProps = {
   draftHtml?: string
   /** Whether the parent regulation is a base type */
   isBase?: boolean
+  /** The regulation's effective date, which impacts take by default */
+  regulationEffectiveDate?: string
   /** Application ID needed for file uploads in the editor */
   applicationId: string
   /** Custom title for the list */
@@ -58,6 +60,7 @@ export const ImpactList = (props: ImpactListProps) => {
     draftTitle,
     draftHtml,
     isBase,
+    regulationEffectiveDate,
     applicationId,
     title,
     titleEmpty,
@@ -200,6 +203,7 @@ export const ImpactList = (props: ImpactListProps) => {
         <EditCancellation
           cancellation={editing.impact}
           impacts={groupedImpacts[editing.impact.name]}
+          regulationEffectiveDate={regulationEffectiveDate}
           onSave={handleSave}
           onClose={closeModal}
         />
@@ -211,6 +215,7 @@ export const ImpactList = (props: ImpactListProps) => {
           draftTitle={draftTitle}
           draftHtml={draftHtml}
           isBase={isBase}
+          regulationEffectiveDate={regulationEffectiveDate}
           applicationId={applicationId}
           readOnly={editing.readonly}
           onSave={handleSave}

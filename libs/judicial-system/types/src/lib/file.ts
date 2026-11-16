@@ -15,8 +15,8 @@ export enum CaseFileCategory {
   CASE_FILE_RECORD = 'CASE_FILE_RECORD',
   PROSECUTOR_CASE_FILE = 'PROSECUTOR_CASE_FILE',
   DEFENDANT_CASE_FILE = 'DEFENDANT_CASE_FILE',
-  PROSECUTOR_APPEAL_BRIEF = 'PROSECUTOR_APPEAL_BRIEF', // Sækjandi:  Kæruskjal til Landsréttar
-  DEFENDANT_APPEAL_BRIEF = 'DEFENDANT_APPEAL_BRIEF', // Verjandi:  Kæruskjal til Landsréttar
+  PROSECUTOR_APPEAL_BRIEF = 'PROSECUTOR_APPEAL_BRIEF', // Sækjandi: Kæruskjal til Landsréttar
+  DEFENDANT_APPEAL_BRIEF = 'DEFENDANT_APPEAL_BRIEF', // Verjandi: Kæruskjal til Landsréttar
   PROSECUTOR_APPEAL_BRIEF_CASE_FILE = 'PROSECUTOR_APPEAL_BRIEF_CASE_FILE', // Sækjandi: Fylgigögn kæruskjals til Landsréttar
   DEFENDANT_APPEAL_BRIEF_CASE_FILE = 'DEFENDANT_APPEAL_BRIEF_CASE_FILE', // Verjandi: Fylgigögn kæruskjals til Landsréttar
   PROSECUTOR_APPEAL_STATEMENT = 'PROSECUTOR_APPEAL_STATEMENT', // Sækjandi: Greinargerð
@@ -31,9 +31,10 @@ export enum CaseFileCategory {
   DEFENDANT_VERDICT_APPEAL_STATEMENT = 'DEFENDANT_VERDICT_APPEAL_STATEMENT', // Verjandi / réttargæslumaður: Greinargerð í áfrýjun til Landsréttar
   PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE = 'PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE', // Ákærandi: Fylgigögn greinargerðar í áfrýjun
   DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE = 'DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE', // Verjandi / réttargæslumaður: Fylgigögn greinargerðar í áfrýjun
-  INDEPENDENT_DEFENDANT_CASE_FILE = 'INDEPENDENT_DEFENDANT_CASE_FILE', // Varnaraðili: Innsend gögn í dómssal
-  CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE = 'CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE', // Lögmaður: Innsend gögn í dómssal
-  CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE = 'CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE', // Réttargæslumaður: Innsend gögn í dómssal
+  INDEPENDENT_DEFENDANT_CASE_FILE = 'INDEPENDENT_DEFENDANT_CASE_FILE', // Varnaraðili: Innsend gögn í dómsal
+  CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE = 'CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE', // Lögmaður: Innsend gögn í dómsal
+  CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE = 'CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE', // Réttargæslumaður: Innsend gögn í dómsal
+  COURT_CASE_FILE = 'COURT_CASE_FILE', // Dómari: Viðbótargögn í dómsal
   APPEAL_COURT_RECORD = 'APPEAL_COURT_RECORD',
   APPEAL_RULING = 'APPEAL_RULING',
   CIVIL_CLAIM = 'CIVIL_CLAIM',
@@ -41,6 +42,16 @@ export enum CaseFileCategory {
   COURT_INDICTMENT_RULING_ORDER = 'COURT_INDICTMENT_RULING_ORDER', // dómari: úrskurðarskjal undir rekstri máls
   DEFENDANT_RULING = 'DEFENDANT_RULING', // dómari: dómur (vísað frá eða niðurfelling) á einstakling
 }
+
+// Viðbótargögn filed in indictment court sessions (party or court).
+export const indictmentAdditionalCaseFileCategories = [
+  CaseFileCategory.PROSECUTOR_CASE_FILE,
+  CaseFileCategory.DEFENDANT_CASE_FILE,
+  CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+  CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+  CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+  CaseFileCategory.COURT_CASE_FILE,
+]
 
 // Appeal files submitted by the parties (kærugögn) - as opposed to the court of
 // appeals' own documents (APPEAL_RULING, APPEAL_COURT_RECORD)
@@ -155,4 +166,5 @@ export enum HashAlgorithm {
 export enum PoliceFileTypeCode {
   SUBPOENA = 'BRTNG',
   VERDICT = 'BRTNG_DOMUR',
+  APPEAL_SUMMONS = 'BRTNG_AFRYJUN',
 }

@@ -1,5 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common'
 
+import { EmailModule } from '@island.is/email-service'
+
 import { RepositoryModule } from '../repository/repository.module'
 import {
   AwsS3Module,
@@ -13,6 +15,7 @@ import { PoliceService } from './police.service'
 
 @Module({
   imports: [
+    EmailModule,
     forwardRef(() => CaseModule),
     forwardRef(() => EventModule),
     forwardRef(() => AwsS3Module),
