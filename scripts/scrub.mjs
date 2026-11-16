@@ -588,31 +588,25 @@ const askNames = () => {
     'Names to mask, separated by commas, e.g. Jón Jónsson, Anna Smith ' +
       '(input hidden, Enter to skip): ',
   )
-  spawnSync('stty', ['-echo'], { stdio: [tty, 'ignore', 'ignore'] })
-  /** @type {string[]} */
-  let names = []
-  try {
-    const chunks = []
-    const buffer = Buffer.alloc(1024)
-    let bytes
-    while ((bytes = fs.readSync(tty, buffer, 0, buffer.length, null)) > 0) {
-      chunks.push(Buffer.from(buffer.subarray(0, bytes)))
-      if (buffer.subarray(0, bytes).includes(10)) break
-    }
-    names = Buffer.concat(chunks)
-      .toString('utf8')
-      .split(',')
-      .map((name) => name.trim())
-      .filter(Boolean)
-  } finally {
-    spawnSync('stty', ['echo'], { stdio: [tty, 'ignore', 'ignore'] })
-    const count =
-      names.length === 0
-        ? 'No names given.'
-        : `${names.length} ${names.length === 1 ? 'name' : 'names'} given.`
-    fs.writeSync(tty, `\n${count}\n`)
-    fs.closeSync(tty)
-  }
+  const answer = spawnSync(
+    'sh',
+    [
+      '-c',
+      `trap 'stty echo; echo >&0; exit 130' INT
+      stty -echo; IFS= read -r line; stty echo; printf '%s' "$line"`,
+    ],
+    { stdio: [tty, 'pipe', 'ignore'], encoding: 'utf8' },
+  )
+  const names = (answer.stdout ?? '')
+    .split(',')
+    .map((name) => name.trim())
+    .filter(Boolean)
+  const count =
+    names.length === 0
+      ? 'No names given.'
+      : `${names.length} ${names.length === 1 ? 'name' : 'names'} given.`
+  fs.writeSync(tty, `\n${count}\n`)
+  fs.closeSync(tty)
   return names
 }
 
