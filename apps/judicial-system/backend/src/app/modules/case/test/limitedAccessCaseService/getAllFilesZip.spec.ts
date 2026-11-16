@@ -359,6 +359,43 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
       )
     })
 
+    it('should include split-case files for a confirmed appeal spokesperson', async () => {
+      const appealSpokespersonNationalId = defenderNationalId
+      const splitFile = makeAccessibleFile({
+        name: 'split-appeal-spokesperson.pdf',
+        category: CaseFileCategory.CASE_FILE,
+      })
+      const splitCase = {
+        id: uuid(),
+        type: CaseType.INDICTMENT,
+        state: CaseState.COMPLETED,
+        defendants: [],
+        civilClaimants: [
+          {
+            id: uuid(),
+            hasAppealSpokesperson: true,
+            appealSpokespersonNationalId,
+            isAppealSpokespersonConfirmed: true,
+          },
+        ],
+        caseFiles: [splitFile],
+        courtSessions: [],
+      } as Case
+      const theCase = makeIndictmentCase({
+        defendants: [],
+        civilClaimants: [],
+        caseFiles: [],
+        splitCases: [splitCase],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockFileService.getCaseFileFromS3).toHaveBeenCalledWith(
+        splitCase,
+        splitFile,
+      )
+    })
+
     it("should not include another defendant's criminal record", async () => {
       const myDefendant = makeDefendant({ id: 'defendant-mine' })
       const otherDefendant = makeDefendant({
