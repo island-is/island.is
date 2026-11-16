@@ -1025,6 +1025,9 @@ export const limitedAccessCaseAttributes: (keyof Case)[] = [
   'courtRecordSignatoryId',
   'courtRecordSignatureDate',
   'parentCaseId',
+  // CaseInterceptor → findOriginalAncestorId reads this FK off the loaded
+  // case. Without it, split indictments resolve to themselves for defenders.
+  'splitCaseId',
   'caseModifiedExplanation',
   'openedByDefender',
   'caseResentExplanation',
