@@ -795,6 +795,11 @@ export class VerdictService {
                 // appealed case lists and the read access that goes with them
                 // for the appeal date, "Áfrýjunarleyfi" for the leave request,
                 // and "Sýknudómar" for the acquittal.
+                //
+                // The defendant's stance, appealDecision, is deliberately not
+                // one of them. It was taken on the copy that was served, and
+                // the new copy is served afresh with a deadline of its own, so
+                // the stance is taken again.
                 appealDate: verdict.appealDate,
                 defendantHasRequestedAppeal:
                   verdict.defendantHasRequestedAppeal,
