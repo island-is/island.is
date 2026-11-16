@@ -311,6 +311,12 @@ export class AppealCaseNotificationService extends BaseNotificationService {
     const judges = getAppealJudges(appealCase)
     const presidingJudge = judges[0]
     const recipientRoles = [appealCase.appealAssistant, ...judges]
+    // A verdict appeal has an overview of its own; a ruling appeal is read
+    // from the case overview.
+    const overviewRoute = isIndictmentCase(theCase.type)
+      ? COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE
+      : COURT_OF_APPEAL_OVERVIEW_ROUTE
+    const overviewUrl = `${this.config.clientUrl}${overviewRoute}/${theCase.id}`
 
     recipientRoles.forEach((recipient) => {
       if (
@@ -325,7 +331,7 @@ export class AppealCaseNotificationService extends BaseNotificationService {
             recipient.id === presidingJudge.id,
             presidingJudge.name,
             recipient.role,
-            `${this.config.clientUrl}${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${theCase.id}`,
+            overviewUrl,
           )
 
         promises.push(
