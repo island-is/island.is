@@ -14,6 +14,7 @@ module.exports = {
           template_id: 'HNIPP.SEED.HEALTH_INFO',
           category: 'heilbrigdismal',
           priority_type: 'Informative',
+          source_type: 'General',
         },
         {
           recipient,
@@ -21,6 +22,7 @@ module.exports = {
           template_id: 'HNIPP.SEED.HEALTH_ACTION',
           category: 'heilbrigdismal',
           priority_type: 'Actionable',
+          source_type: 'Event',
         },
         // Uncategorized, presented as 'almennt'
         {
@@ -29,6 +31,7 @@ module.exports = {
           template_id: 'HNIPP.SEED.GENERAL',
           category: null,
           priority_type: null,
+          source_type: null,
         },
         // Only actionable, still offered
         {
@@ -37,6 +40,7 @@ module.exports = {
           template_id: 'HNIPP.SEED.COLLECTION_ACTION',
           category: 'innheimta',
           priority_type: 'Actionable',
+          source_type: 'Mail',
         },
       ],
       {},
