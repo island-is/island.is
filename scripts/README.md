@@ -49,33 +49,24 @@ yarn hmr-benchmark --app services-sessions --message 'Nest application successfu
 
 Masks personal data and secrets in raw errors, such as those from Datadog, GraphQL responses or the browser console, before they are shared. The logger masks only personal kennitölur, and errors that bypass it carry emails, names, phone numbers, tokens and request bodies.
 
-Masks kennitölur, emails, phone numbers, bank and card numbers, IBANs, IP addresses, tokens and sensitive keys. The same value gets the same label (`[KT-PERSON-1]`), so lines can still be correlated. URL-encoded and Base64 text is decoded and scrubbed too; URL-encoded text comes out decoded.
-
-In free text, only Icelandic full names ending in -son or -dóttir are caught; other names, such as foreign ones, are not. The script is an aid, not a guarantee: read the output before sharing it.
-
-Copy the error, then:
+Logs and extracted application data, such as the result of a database query, work too. Each value gets a consistent label (`[KT-PERSON-1]`, `[NAME-1]`), so people can still be told apart. The script is an aid, not a guarantee: read the output before sharing it.
 
 ```bash
 pbpaste | node scripts/scrub.mjs | pbcopy
+node scripts/scrub.mjs --names --show application.json > scrubbed.json
 ```
 
-On other systems, replace `pbpaste` and `pbcopy` here and below with:
+`--help` explains the options and lists what is masked.
 
-- Linux (Wayland): `wl-paste` and `wl-copy`, from the `wl-clipboard` package.
-- Linux (X11): `xclip -selection clipboard -o` and `xclip -selection clipboard`, from the `xclip` package.
-- Windows (WSL): `powershell.exe -NoProfile -Command '[Console]::OutputEncoding = [Text.Encoding]::UTF8; Get-Clipboard'` and `iconv -f utf-8 -t utf-16le | clip.exe`. Without the encoding steps, Icelandic letters get garbled and names can slip through.
-- Windows (Git Bash): `cat /dev/clipboard` and `cat > /dev/clipboard`.
-
-`--show` lists each masked value on stderr, for checking the rules.
-
-To run it from anywhere, add a function to your shell's startup file (`~/.zshrc` for zsh, `~/.bashrc` for bash), replacing `~/git/island.is` with where the repo lives on your machine. It reads piped input, or the clipboard when nothing is piped:
+To run it as `scrub` from anywhere, add this to `~/.zshrc` or `~/.bashrc`, with the path to your copy of the repo. It reads a file, piped input or the clipboard, and puts the result on the clipboard:
 
 ```bash
 scrub() { if [ -t 0 ]; then pbpaste; else cat; fi | node ~/git/island.is/scripts/scrub.mjs "$@" | pbcopy; }
 ```
 
-Logs work too:
+On other systems, replace `pbpaste` and `pbcopy` with:
 
-```bash
-kubectl logs <pod> -n <namespace> --since=15m | scrub
-```
+- Linux (Wayland): `wl-paste` and `wl-copy`, from the `wl-clipboard` package.
+- Linux (X11): `xclip -selection clipboard -o` and `xclip -selection clipboard`, from the `xclip` package.
+- Windows (WSL): `powershell.exe -NoProfile -Command '[Console]::OutputEncoding = [Text.Encoding]::UTF8; Get-Clipboard'` and `iconv -f utf-8 -t utf-16le | clip.exe`. Without the encoding steps, Icelandic letters get garbled and names can slip through.
+- Windows (Git Bash): `cat /dev/clipboard` and `cat > /dev/clipboard`.

@@ -2,9 +2,14 @@
 // @ts-check
 
 // Masks personal data and secrets in errors and logs before they are shared.
-// Usage: pbpaste | node scripts/scrub.mjs [--show] | pbcopy
-// --show lists each masked value on stderr, for checking the rules.
+// Usage: pbpaste | node scripts/scrub.mjs [--show] [--names] | pbcopy
+//        node scripts/scrub.mjs [--show] [--names] <file>
+// --help explains the options and what is masked.
+// --show lists each masked value and its original in a pager, which leaves
+// nothing in scrollback or on disk; without a terminal it falls back to stderr.
+// --names asks for names to mask everywhere, such as the person being debugged.
 
+import { spawnSync } from 'child_process'
 import fs from 'fs'
 import { pathToFileURL } from 'url'
 
@@ -103,6 +108,61 @@ const isSensitiveKey = (key, value) => {
   )
 }
 
+const NAME_KEY = /(?:name|nafn)$/i
+const NAME_SEPARATOR = '[\\s_.-]*'
+const FOLDED_LETTERS = {
+  a: 'aáàâäãå',
+  c: 'cç',
+  d: 'dð',
+  e: 'eéèêë',
+  i: 'iíìîï',
+  n: 'nñ',
+  o: 'oóòôöõø',
+  s: 'sš',
+  u: 'uúùûü',
+  y: 'yýÿ',
+  z: 'zž',
+}
+
+/** @param {string} name */
+const nameWords = (name) =>
+  name
+    .toLowerCase()
+    .replace(/þ/g, 'th')
+    .replace(/æ/g, 'ae')
+    .replace(/ð/g, 'd')
+    .replace(/ø/g, 'o')
+    .replace(/ß/g, 'ss')
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .split(/[\s_.,-]+/)
+    .filter(Boolean)
+
+/** @param {string} word */
+const namePattern = (word) =>
+  word.replace(/th|ae|ss|[\s\S]/g, (part) =>
+    part === 'th'
+      ? '(?:th|þ)'
+      : part === 'ae'
+      ? '(?:ae|æ)'
+      : part === 'ss'
+      ? '(?:ss|ß)'
+      : part in FOLDED_LETTERS
+      ? `[${FOLDED_LETTERS[part]}]`
+      : part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+  )
+
+/** @param {string} name */
+const knownNameRegex = (name) => {
+  const words = nameWords(name)
+  const variants =
+    words.length > 2 ? [words, [words[0], words.at(-1)]] : [words]
+  const alternatives = variants
+    .map((variant) => variant.map(namePattern).join(NAME_SEPARATOR))
+    .join('|')
+  return new RegExp(`(?<!\\p{L})(?:${alternatives})(?!\\p{L})`, 'giu')
+}
+
 /** @param {string} kt */
 export const kennitalaKind = (kt) => {
   const day = parseInt(kt.slice(0, 2), 10)
@@ -111,6 +171,18 @@ export const kennitalaKind = (kt) => {
   if (day >= 1 && day <= 31) return 'person'
   if (day >= 41 && day <= 71) return 'company'
   return undefined
+}
+
+/** @param {string} kt */
+const isMinor = (kt, today = new Date()) => {
+  const century = { 8: 1800, 9: 1900, 0: 2000 }[kt[9]]
+  if (century === undefined) return false
+  const eighteenthBirthday = new Date(
+    century + Number(kt.slice(4, 6)) + 18,
+    Number(kt.slice(2, 4)) - 1,
+    Number(kt.slice(0, 2)),
+  )
+  return today < eighteenthBirthday
 }
 
 /** @param {string} token */
@@ -157,7 +229,8 @@ const keepBigIntegers = (_, value, context) =>
     ? JSON.rawJSON(context.source)
     : value
 
-const createScrubber = () => {
+/** @param {string[]} knownNames */
+const createScrubber = (knownNames = []) => {
   /** @type {Map<string, string>} */
   const labels = new Map()
   /** @type {Record<string, number>} */
@@ -165,15 +238,30 @@ const createScrubber = () => {
   /** @type {Array<[string, string]>} */
   const masked = []
 
-  const label = (kind, value) => {
+  /** @type {Set<string>} */
+  const foundNames = new Set()
+
+  const label = (kind, value, display = value) => {
     const id = `${kind}:${value}`
     if (!labels.has(id)) {
       counts[kind] = (counts[kind] ?? 0) + 1
       labels.set(id, `[${kind}-${counts[kind]}]`)
-      masked.push([`[${kind}-${counts[kind]}]`, value])
+      masked.push([`[${kind}-${counts[kind]}]`, display])
     }
     return /** @type {string} */ (labels.get(id))
   }
+
+  /** @param {string} name */
+  const nameLabel = (name) => {
+    const display = name.trim().replace(/\s+/g, ' ')
+    foundNames.add(display)
+    return label('NAME', nameWords(display).join(' '), display)
+  }
+
+  const knownNamePatterns = [...new Set(knownNames)]
+    .filter((name) => nameWords(name).join('').length > 1)
+    .sort((a, b) => b.length - a.length)
+    .map((name) => /** @type {const} */ ([knownNameRegex(name), name]))
 
   /**
    * @param {string} key
@@ -185,8 +273,48 @@ const createScrubber = () => {
     return '[REDACTED]'
   }
 
+  /**
+   * @param {string} key
+   * @param {string} value
+   */
+  const maskValue = (key, value) =>
+    NAME_KEY.test(key.split('.').pop() ?? '')
+      ? nameLabel(value)
+      : redacted(key, value)
+
   /** @param {string} text */
   const scrubText = (text) =>
+    knownNamePatterns
+      .reduce(
+        (out, [pattern, name]) => out.replace(pattern, () => nameLabel(name)),
+        scrubValues(text),
+      )
+      .replace(ICELANDIC_NAME, (name) => nameLabel(name))
+      .replace(XML_ELEMENT, (match, tag, localName, attributes = '', value) =>
+        PLACEHOLDER.test(value) || !isSensitiveKey(localName, value)
+          ? match
+          : `<${tag}${attributes}>${maskValue(localName, value)}</${tag}>`,
+      )
+      .replace(SQL_STRING, (literal) =>
+        SQL_STATEMENT.test(text) && !PLACEHOLDER.test(literal.slice(1, -1))
+          ? `'${redacted('sql', literal.slice(1, -1))}'`
+          : literal,
+      )
+      .replace(KEY_VALUE, (match, quote, key, separator, value) => {
+        const [, open = '', inner = '', close = '', rest = ''] =
+          /^(\\?["'])([\s\S]*?)(\\?["'])$/.exec(value) ??
+          /^()(\S+(?:\s+\p{Lu}[\p{L}'-]*)*)()([\s\S]*)$/u.exec(value) ??
+          []
+        return !PLACEHOLDER.test(inner) && isSensitiveKey(key, inner)
+          ? `${quote}${key}${quote}${separator}${open}${maskValue(
+              key,
+              inner,
+            )}${close}${rest}`
+          : match
+      })
+
+  /** @param {string} text */
+  const scrubValues = (text) =>
     text
       .replace(URL_ENCODED, (token) => urlDecoded(token))
       .replace(PRIVATE_KEY, () => label('PRIVATE-KEY', 'key'))
@@ -222,7 +350,13 @@ const createScrubber = () => {
       .replace(KENNITALA, (match) => {
         const kt = match.replace('-', '')
         const kind = kennitalaKind(kt)
-        return kind ? label(`KT-${kind.toUpperCase()}`, kt) : match
+        if (!kind) return match
+        return label(
+          kind === 'person' && isMinor(kt)
+            ? 'KT-CHILD'
+            : `KT-${kind.toUpperCase()}`,
+          kt,
+        )
       })
       .replace(CARD, (match) => {
         const digits = match.replace(/\D/g, '')
@@ -233,37 +367,12 @@ const createScrubber = () => {
       )
       .replace(IPV4, (ip) => label('IP', ip))
       .replace(IPV6, (ip) => label('IP', ip.toLowerCase()))
-      .replace(ICELANDIC_NAME, (name) =>
-        label('NAME', name.replace(/\s+/g, ' ')),
-      )
-      .replace(XML_ELEMENT, (match, tag, localName, attributes = '', value) =>
-        PLACEHOLDER.test(value) || !isSensitiveKey(localName, value)
-          ? match
-          : `<${tag}${attributes}>${redacted(localName, value)}</${tag}>`,
-      )
-      .replace(SQL_STRING, (literal) =>
-        SQL_STATEMENT.test(text) && !PLACEHOLDER.test(literal.slice(1, -1))
-          ? `'${redacted('sql', literal.slice(1, -1))}'`
-          : literal,
-      )
-      .replace(KEY_VALUE, (match, quote, key, separator, value) => {
-        const [, open = '', inner = '', close = '', rest = ''] =
-          /^(\\?["'])([\s\S]*?)(\\?["'])$/.exec(value) ??
-          /^()(\S+(?:\s+\p{Lu}[\p{L}'-]*)*)()([\s\S]*)$/u.exec(value) ??
-          []
-        return !PLACEHOLDER.test(inner) && isSensitiveKey(key, inner)
-          ? `${quote}${key}${quote}${separator}${open}${redacted(
-              key,
-              inner,
-            )}${close}${rest}`
-          : match
-      })
 
   const scrubValue = (value, key = '') => {
     const text = JSON.isRawJSON(value) ? value.rawJSON : String(value)
     if (key && value !== null && isSensitiveKey(key, text)) {
       const scrubbed = scrubText(text)
-      return PLACEHOLDER.test(scrubbed) ? scrubbed : redacted(key, text)
+      return PLACEHOLDER.test(scrubbed) ? scrubbed : maskValue(key, text)
     }
     if (typeof value === 'string') return scrubText(value)
     if (JSON.isRawJSON(value)) {
@@ -276,8 +385,15 @@ const createScrubber = () => {
     }
     if (Array.isArray(value)) return value.map((item) => scrubValue(item))
     if (value && typeof value === 'object') {
+      const isApplicationRow =
+        'applicant' in value && ('type_id' in value || 'typeId' in value)
       return Object.fromEntries(
-        Object.entries(value).map(([k, v]) => [k, scrubValue(v, k)]),
+        Object.entries(value).map(([k, v]) => [
+          k,
+          isApplicationRow && k === 'name' && typeof v === 'string'
+            ? scrubText(v)
+            : scrubValue(v, k),
+        ]),
       )
     }
     return value
@@ -311,24 +427,138 @@ const createScrubber = () => {
       .join('\n')
   }
 
-  return { scrub, counts, masked }
+  return { scrub, counts, masked, foundNames }
 }
 
+const HELP = `Usage: node scripts/scrub.mjs [--names] [--show] [file]
+
+Masks personal data and secrets in logs, errors and database extracts.
+Reads the file, or standard input when no file is given, and writes the
+scrubbed text to standard output.
+
+Options:
+  --names  Ask for names to mask everywhere, separated by commas, e.g.
+           Jón Jónsson, Anna Smith. Input is hidden; Enter skips. Use it
+           when names appear only in free text or file names.
+  --show   Show each label with its original value in a pager. Press q
+           to close; nothing is kept in scrollback or on disk.
+  --help   Show this help.
+
+What it masks:
+  Kennitölur          [KT-PERSON-n], [KT-CHILD-n] if under 18, [KT-COMPANY-n]
+  Names               [NAME-n]: under name keys, -son/-dóttir names and
+                      names given with --names, wherever else they appear
+  Emails, phone numbers, IBANs, bank accounts, cards, IP addresses
+                      [EMAIL-n], [PHONE-n], [IBAN-n], [BANK-ACCOUNT-n],
+                      [CARD-n], [IP-n]
+  Tokens, JWTs, private keys
+                      [TOKEN-n], [JWT-n], [PRIVATE-KEY-n]
+  Passwords, API keys, cookies, secret URL parameters, SQL values
+                      [REDACTED]
+
+URL-encoded and Base64 text is decoded and scrubbed too.
+The same value always gets the same label, so people can be told apart.
+Labels are numbered per run, so scrub a whole file at once, not in pieces.
+The script is an aid, not a guarantee: read the output before sharing it.
+
+Examples:
+  pbpaste | node scripts/scrub.mjs | pbcopy
+  node scripts/scrub.mjs --names --show application.json > scrubbed.json
+  kubectl logs <pod> -n <namespace> --since=15m | node scripts/scrub.mjs
+`
+
 const main = () => {
-  const { scrub, counts, masked } = createScrubber()
-  process.stdout.write(scrub(fs.readFileSync(0, 'utf8')))
+  if (process.argv.includes('--help') || process.argv.includes('-h')) {
+    process.stderr.write(HELP)
+    process.exit(0)
+  }
+  const file = process.argv.slice(2).find((arg) => !arg.startsWith('--'))
+  let input
+  try {
+    input = fs.readFileSync(file ?? 0, 'utf8')
+  } catch {
+    process.stderr.write(`scrub: cannot read ${file}.\n`)
+    process.exit(1)
+  }
+  const givenNames = process.argv.includes('--names') ? askNames() : []
+  const firstPass = createScrubber(givenNames)
+  firstPass.scrub(input)
+  const { scrub, counts, masked } = createScrubber([
+    ...givenNames,
+    ...firstPass.foundNames,
+  ])
+  process.stdout.write(scrub(input))
   const summary = Object.entries(counts)
     .map(([kind, count]) => `${kind}: ${count}`)
     .join(', ')
   process.stderr.write(
     `scrub: ${summary || 'nothing masked'}. ` +
-      'Only Icelandic -son/-dóttir names are caught in free text; read the output before sharing.\n',
+      'Free-text names are caught only if found under a name key, given with --names, or ending in -son/-dóttir; read the output before sharing.\n',
   )
   if (process.argv.includes('--show')) {
-    for (const [placeholder, value] of masked) {
-      process.stderr.write(`  ${placeholder.padEnd(18)} ${value}\n`)
-    }
+    showMasked(masked)
   }
+}
+
+const askNames = () => {
+  let tty
+  try {
+    tty = fs.openSync('/dev/tty', 'r+')
+  } catch {
+    process.stderr.write('scrub: --names needs a terminal.\n')
+    process.exit(1)
+  }
+  fs.writeSync(
+    tty,
+    'Names to mask, separated by commas, e.g. Jón Jónsson, Anna Smith ' +
+      '(input hidden, Enter to skip): ',
+  )
+  spawnSync('stty', ['-echo'], { stdio: [tty, 'ignore', 'ignore'] })
+  /** @type {string[]} */
+  let names = []
+  try {
+    const chunks = []
+    const buffer = Buffer.alloc(1024)
+    let bytes
+    while ((bytes = fs.readSync(tty, buffer, 0, buffer.length, null)) > 0) {
+      chunks.push(Buffer.from(buffer.subarray(0, bytes)))
+      if (buffer.subarray(0, bytes).includes(10)) break
+    }
+    names = Buffer.concat(chunks)
+      .toString('utf8')
+      .split(',')
+      .map((name) => name.trim())
+      .filter(Boolean)
+  } finally {
+    spawnSync('stty', ['echo'], { stdio: [tty, 'ignore', 'ignore'] })
+    const count =
+      names.length === 0
+        ? 'No names given.'
+        : `${names.length} ${names.length === 1 ? 'name' : 'names'} given.`
+    fs.writeSync(tty, `\n${count}\n`)
+    fs.closeSync(tty)
+  }
+  return names
+}
+
+/** @param {Array<[string, string]>} masked */
+const showMasked = (masked) => {
+  const listing = masked
+    .map(([placeholder, value]) => `  ${placeholder.padEnd(18)} ${value}\n`)
+    .join('')
+  try {
+    const tty = fs.openSync('/dev/tty', 'w')
+    const pager = spawnSync('less', ['-S'], {
+      input: `Masked values. Press q to close; nothing is kept.\n\n${listing}`,
+      stdio: ['pipe', tty, 'inherit'],
+      env: { ...process.env, LESS: '', LESSSECURE: '1', LESSHISTFILE: '-' },
+    })
+    fs.closeSync(tty)
+    if (!pager.error && pager.status === 0) return
+  } catch {
+    // No terminal or no pager: fall through to stderr.
+  }
+  process.stderr.write(listing)
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
