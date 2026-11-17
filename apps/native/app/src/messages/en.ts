@@ -70,7 +70,6 @@ export const en: TranslatedMessages = {
   'relogin.loginButton': 'Log in with electronic ID',
 
   // waiting for approval with electronic ID
-  'electronicId.eyebrow': 'Electronic ID on phone',
   'electronicId.title': 'Confirm the authentication',
   'electronicId.subtitle.login': 'Request sent to your phone',
   'electronicId.subtitle.unlock': 'The Ísland.is app',

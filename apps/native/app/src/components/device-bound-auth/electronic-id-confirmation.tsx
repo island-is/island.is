@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { TouchableOpacity } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import logo from '@/assets/logo/logo-64w.png'
 import { Button, LinkText, LoadingDots, token, Typography } from '@/ui'
@@ -63,8 +63,8 @@ interface ElectronicIdConfirmationProps {
    */
   purpose: 'login' | 'unlock' | 'enableBiometrics'
   /**
-   * A whole screen with the logo at the top. Otherwise it's in a sheet, under
-   * a heading. Login is always a whole screen.
+   * A whole screen, so it keeps clear of the status bar. Otherwise it's in a
+   * sheet. Login is always a whole screen.
    */
   fullScreen?: boolean
   biometricType?: string
@@ -88,7 +88,6 @@ export function ElectronicIdConfirmation({
   onAuthenticatorAppPress,
 }: ElectronicIdConfirmationProps) {
   const intl = useIntl()
-  const theme = useTheme()
   // In a full-screen modal SafeAreaView gets no insets on iOS, so pad with
   // the window's. A sheet starts below the top, so it only needs the bottom.
   const insets = useSafeAreaInsets()
@@ -103,18 +102,7 @@ export function ElectronicIdConfirmation({
       }}
     >
       <Content>
-        {isFullScreen ? (
-          <Logo source={logo} resizeMode="contain" />
-        ) : (
-          <Typography
-            variant="body3"
-            weight="600"
-            color={theme.tokens.foreground.brand}
-            textAlign="center"
-          >
-            {intl.formatMessage({ id: 'electronicId.eyebrow' })}
-          </Typography>
-        )}
+        <Logo source={logo} resizeMode="contain" />
         <Title variant="heading2" textAlign="center">
           {intl.formatMessage({ id: 'electronicId.title' })}
         </Title>

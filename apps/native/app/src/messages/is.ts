@@ -69,7 +69,6 @@ export const is = {
   'relogin.loginButton': 'Innskráning með rafrænum skilríkjum',
 
   // waiting for approval with electronic ID
-  'electronicId.eyebrow': 'Rafræn skilríki í síma',
   'electronicId.title': 'Staðfestu auðkenninguna',
   'electronicId.subtitle.login': 'Beiðni send í síma',
   'electronicId.subtitle.unlock': 'Ísland.is appið',
