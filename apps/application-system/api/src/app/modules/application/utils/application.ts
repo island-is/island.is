@@ -76,6 +76,14 @@ type Template = ApplicationTemplate<
   EventObject
 >
 
+// Unlike `isListed`, evaluated per request so template changes apply to existing applications
+export const isHiddenFromApplicationSystemOverview = (
+  application: Pick<Application, 'state'>,
+  template?: Template,
+): boolean =>
+  template?.stateMachineConfig.states[application.state]?.meta?.lifecycle
+    ?.hideFromApplicationSystemOverview === true
+
 export const getApplicationNameTranslationString = (
   template: Template,
   application: Application,
