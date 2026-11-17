@@ -88,6 +88,9 @@ const insideWorkingHours = new Date(2021, 1, 1, 9, 0, 0)
 const outsideWorkingHours = new Date(2021, 1, 1, 7, 0, 0)
 
 let mockBlockedCategories: BlockedCategoryDto[] = []
+// Actor profiles are separate from user profiles, so the delegate's own
+// onlyActionablePriorityNotifications never leaks into the actor profile
+let mockActorOnlyActionable = false
 
 export const MockV2UsersApi = {
   userProfileControllerFindUserProfile: jest.fn(
@@ -112,11 +115,14 @@ export const MockV2UsersApi = {
 
   userProfileControllerGetActorProfile: jest.fn(
     ({ xParamToNationalId }: { xParamToNationalId: string }) => {
-      return Promise.resolve(
-        userProfiles.find(
-          (u) => u.nationalId === xParamToNationalId,
-        ) as UserProfileDto,
-      )
+      const profile = userProfiles.find(
+        (u) => u.nationalId === xParamToNationalId,
+      ) as UserProfileDto
+
+      return Promise.resolve({
+        ...profile,
+        onlyActionablePriorityNotifications: mockActorOnlyActionable,
+      })
     },
   ),
 }
@@ -1705,6 +1711,71 @@ describe('NotificationsWorkerService', () => {
 
       await expectDelivered(false)
       expect(smsService.sendSms).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('Actor profile preferences', () => {
+    const delegator = userWithDelegations
+    const delegate = userWithNoDelegations
+
+    // Enqueues the actor message directly, isolating the actor profile filter
+    // from the fan-out from the delegator.
+    const sendToActor = async ({
+      urgent,
+      senderId,
+    }: { urgent?: boolean; senderId?: string } = {}) => {
+      const root = await notificationModel.create({
+        messageId: randomUUID(),
+        recipient: delegator.nationalId,
+        templateId: mockTemplateId,
+        args: [{ key: 'organization', value: 'Test Crew' }],
+        scope: '@island.is/documents',
+        wasSent: true,
+      })
+
+      await queue.add({
+        recipient: delegate.nationalId,
+        senderId,
+        templateId: mockTemplateId,
+        urgent,
+        args: [{ key: 'organization', value: 'Test Crew' }],
+        rootMessageId: root.messageId,
+        onBehalfOf: { nationalId: delegator.nationalId, name: delegator.name },
+      })
+      await wait(5)
+
+      return actorNotificationModel.findOne({
+        where: { recipient: delegate.nationalId },
+      })
+    }
+
+    describe('onlyActionablePriorityNotifications', () => {
+      beforeEach(() => {
+        mockActorOnlyActionable = true
+        jest
+          .spyOn(notificationsService, 'getTemplate')
+          .mockResolvedValue(
+            getMockHnippTemplate({ priorityType: 'Informative' }),
+          )
+      })
+
+      afterEach(() => {
+        mockActorOnlyActionable = false
+      })
+
+      it('should not email the delegate an informative notification', async () => {
+        const actorNotification = await sendToActor()
+
+        expect(actorNotification?.wasSent).toBe(false)
+        expect(emailService.sendEmail).not.toHaveBeenCalled()
+      })
+
+      it('should email the delegate an urgent notification', async () => {
+        const actorNotification = await sendToActor({ urgent: true })
+
+        expect(actorNotification?.wasSent).toBe(true)
+        expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
+      })
     })
   })
 

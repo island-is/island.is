@@ -329,6 +329,28 @@ describe('UserProfileController', () => {
           documentNotifications: testUserProfile.documentNotifications,
           locale: testUserProfile.locale,
           emailVerified: newEmail.emailStatus === DataStatus.VERIFIED,
+          onlyActionablePriorityNotifications: false,
+        })
+      })
+
+      it('should return the actor profile onlyActionablePriorityNotifications', async () => {
+        await fixtureFactory.createUserProfile(testUserProfile)
+        await fixtureFactory.createActorProfile({
+          toNationalId: testUserProfile.nationalId,
+          fromNationalId: testNationalId1,
+          emailNotifications: true,
+          onlyActionablePriorityNotifications: true,
+        })
+
+        const res = await server
+          .get('/v2/users/.to-national-id/actor-profiles/.from-national-id')
+          .set('X-Param-To-National-Id', testUserProfile.nationalId)
+          .set('X-Param-From-National-Id', testNationalId1)
+
+        expect(res.status).toEqual(200)
+        expect(res.body).toMatchObject({
+          fromNationalId: testNationalId1,
+          onlyActionablePriorityNotifications: true,
         })
       })
 
@@ -351,6 +373,7 @@ describe('UserProfileController', () => {
           documentNotifications: testUserProfile.documentNotifications,
           locale: testUserProfile.locale,
           emailVerified: false,
+          onlyActionablePriorityNotifications: false,
         })
       })
 

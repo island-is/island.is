@@ -198,11 +198,13 @@ export class FixtureFactory {
     fromNationalId,
     emailNotifications,
     emailsId,
+    onlyActionablePriorityNotifications,
   }: {
     toNationalId: string
     fromNationalId: string
     emailNotifications: boolean
     emailsId?: string
+    onlyActionablePriorityNotifications?: boolean
   }) {
     const actorProfileModel = this.get(ActorProfile)
 
@@ -211,6 +213,7 @@ export class FixtureFactory {
       fromNationalId,
       emailNotifications,
       emailsId,
+      onlyActionablePriorityNotifications,
     })
   }
 }

@@ -144,7 +144,8 @@ export class NotificationsWorkerService {
   ) {}
 
   // Stopgap: lets users ignore notifications that are neither urgent nor
-  // actionable. Only the receiving user's own profile is consulted.
+  // actionable. Only the receiving profile's own preferences are consulted (the
+  // user's profile, or the actor profile for delegations).
   private shouldDeliverByPriority({
     profile,
     priorityType,
@@ -337,7 +338,19 @@ export class NotificationsWorkerService {
           : Promise.resolve(undefined),
       ])
 
-    const dbRecord = await this.createActorNotificationDbRecord(args)
+    // Email only: the actor profile's preferences never affect SMS, which uses
+    // the delegate's own profile. Urgent notifications bypass the filter.
+    const shouldSendNotification = this.shouldDeliverByPriority({
+      profile: actorProfile,
+      priorityType: template.priorityType,
+      urgent: args.urgent,
+      messageId,
+    })
+
+    const dbRecord = await this.createActorNotificationDbRecord(
+      args,
+      shouldSendNotification,
+    )
 
     // Phase 1: collect all payloads (data fetching only, no queue side effects)
     const [emailPayload, smsPayload] = await Promise.all([
@@ -346,7 +359,8 @@ export class NotificationsWorkerService {
             messageId,
             nationalId: args.recipient,
             email: actorProfile.email,
-            emailNotifications: actorProfile.emailNotifications,
+            emailNotifications:
+              actorProfile.emailNotifications && shouldSendNotification,
             fullName:
               args.onBehalfOf?.name ||
               onBehalfOfNames?.fullName ||
@@ -393,6 +407,7 @@ export class NotificationsWorkerService {
 
   private async createActorNotificationDbRecord(
     args: InternalCreateHnippNotificationDto & { messageId: string },
+    wasSent = true,
   ) {
     const { messageId, ...message } = args
 
@@ -437,6 +452,7 @@ export class NotificationsWorkerService {
         messageId,
         userNotificationId: userNotification.id,
         recipient: message.recipient,
+        wasSent,
       })
       this.logger.info('actor notification written to db', {
         messageId,
