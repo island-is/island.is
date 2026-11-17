@@ -439,7 +439,12 @@ export class ApplicationsService {
       }
     }
 
-    const applicationResponseDto = await this.getApplication(id, '', null)
+    const applicationResponseDto = await this.getApplication(
+      id,
+      '',
+      null,
+      transaction,
+    )
 
     if (!applicationResponseDto.application) {
       throw new NotFoundException(`Application DTO with id '${id}' not found.`)
@@ -630,9 +635,11 @@ export class ApplicationsService {
     applicationId: string,
     slug: string,
     user: User | null,
+    transaction?: Transaction,
   ): Promise<ApplicationResponseDto> {
     try {
       const application = await this.applicationModel.findOne({
+        transaction,
         where: { id: applicationId },
         include: [
           {
@@ -657,6 +664,7 @@ export class ApplicationsService {
         application.formId,
         applicationId,
         slug,
+        transaction,
       )
 
       if (!this.isFakeUserAllowed(form, user)) {
@@ -1037,8 +1045,10 @@ export class ApplicationsService {
     formId: string,
     applicationId: string,
     slug: string,
+    transaction?: Transaction,
   ): Promise<Form> {
     const form = await this.formModel.findOne({
+      transaction,
       where: { id: formId },
       include: [
         {

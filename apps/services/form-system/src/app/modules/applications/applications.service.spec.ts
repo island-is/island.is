@@ -624,6 +624,70 @@ describe('ApplicationsService.calculateDraftTotalSteps', () => {
   )
 })
 
+describe('ApplicationsService.getApplication transaction', () => {
+  it.each([false, true])(
+    'loads the application and its form with a transaction supplied: %s',
+    async (withTransaction) => {
+      const transaction: Transaction | undefined = withTransaction
+        ? {
+            commit: jest.fn(),
+            rollback: jest.fn(),
+            afterCommit: jest.fn(),
+            LOCK: Transaction.LOCK,
+          }
+        : undefined
+      const application = { id: 'application-id', formId: 'form-id' }
+      const form = {
+        id: 'form-id',
+        slug: 'form-slug',
+        sections: [{ sectionType: SectionTypes.PARTIES, screens: [] }],
+      }
+      const applicationModel = {
+        findOne: jest.fn().mockResolvedValue(application),
+      }
+      const formModel = {
+        findOne: jest.fn().mockResolvedValue(form),
+      }
+      const service = Object.assign(
+        Object.create(ApplicationsService.prototype),
+        {
+          applicationModel,
+          formModel,
+          applicationMapper: {
+            mapFormToApplicationDto: jest.fn().mockReturnValue({
+              id: application.id,
+            }),
+          },
+          logger: { warn: jest.fn(), error: jest.fn() },
+        },
+      ) as ApplicationsService
+
+      const response = withTransaction
+        ? await service.getApplication(
+            application.id,
+            form.slug,
+            null,
+            transaction,
+          )
+        : await service.getApplication(application.id, form.slug, null)
+
+      expect(response.application).toMatchObject({ id: application.id })
+      expect(applicationModel.findOne).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: application.id },
+          transaction,
+        }),
+      )
+      expect(formModel.findOne).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: form.id },
+          transaction,
+        }),
+      )
+    },
+  )
+})
+
 describe('ApplicationsService.submit payment visibility', () => {
   const user = { nationalId: '0101307789' } as User
 
@@ -785,6 +849,12 @@ describe('ApplicationsService.submit payment visibility', () => {
     })
 
     expect(application.save).toHaveBeenCalledWith({ transaction })
+    expect(service.getApplication).toHaveBeenCalledWith(
+      application.id,
+      '',
+      null,
+      transaction,
+    )
     expect(service.applicationEventModel.create).toHaveBeenCalledWith(
       expect.objectContaining({ applicationId: application.id }),
       { transaction },

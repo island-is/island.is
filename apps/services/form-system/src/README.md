@@ -102,6 +102,7 @@ after the form is archived.
 Draft applications are locked during archive cleanup. Submission takes the same
 row lock and verifies that the application is still a draft before sending it.
 The lock is held through the external send and the completed-status update.
+Application and form reads during submission reuse the submission transaction.
 Draft file keys are collected during database cleanup; S3 objects are deleted
 only after the archive transaction commits, without updating deleted values.
 Storage deletion errors are logged and surfaced after commit; the database
