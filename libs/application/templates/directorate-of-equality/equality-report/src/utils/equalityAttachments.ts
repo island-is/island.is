@@ -30,7 +30,11 @@ export const getAttachmentExtension = (
   const dot = filename.lastIndexOf('.')
   if (dot < 0) return undefined
   const extension = filename.slice(dot + 1).toLowerCase()
-  return extension in ATTACHMENT_CONTENT_TYPES
+  // Own keys only: `in` would let `x.constructor` through.
+  return Object.prototype.hasOwnProperty.call(
+    ATTACHMENT_CONTENT_TYPES,
+    extension,
+  )
     ? (extension as AttachmentExtension)
     : undefined
 }

@@ -16,12 +16,17 @@ describe('getAttachmentExtension', () => {
     expect(getAttachmentExtension(name)).toBe(extension)
   })
 
-  it.each(['plan', 'plan.xlsm', 'plan.docm', 'plan.txt', 'pdf'])(
-    'refuses %s',
-    (name) => {
-      expect(getAttachmentExtension(name)).toBeUndefined()
-    },
-  )
+  it.each([
+    'plan',
+    'plan.xlsm',
+    'plan.docm',
+    'plan.txt',
+    'pdf',
+    'x.constructor',
+    'x.__proto__',
+  ])('refuses %s', (name) => {
+    expect(getAttachmentExtension(name)).toBeUndefined()
+  })
 })
 
 describe('validateAttachment', () => {
