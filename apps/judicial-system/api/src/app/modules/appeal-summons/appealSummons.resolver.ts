@@ -66,6 +66,7 @@ export class AppealSummonsResolver {
       user.id,
       AuditedAction.CREATE_APPEAL_SUMMONS,
       this.backendService.createAppealSummons(input.caseId, {
+        caseName: input.caseName,
         defendants: input.defendants,
       }),
       input.caseId,
@@ -91,6 +92,7 @@ export class AppealSummonsResolver {
         input.caseId,
         input.appealSummonsId,
         {
+          caseName: input.caseName,
           defendants: input.defendants,
         },
       ),

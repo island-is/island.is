@@ -81,6 +81,17 @@ describe('formatAppealSummonsIntro', () => {
       }),
     ).toContain('Ákæruvaldið gegn Jón Jónsson og Guðrún Jónsdóttir')
   })
+
+  it('prefers a stored case name over defendant names', () => {
+    expect(
+      formatAppealSummonsIntro({
+        ...shared,
+        appellantSide: AppealSummonsAppellantSide.PROSECUTION,
+        defendantNames: ['Jón Jónsson'],
+        caseName: 'Ákæruvaldið gegn Páli Pálssyni',
+      }),
+    ).toContain('Ákæruvaldið gegn Páli Pálssyni')
+  })
 })
 
 describe('formatAppealSummonsClosingPlaceAndDate', () => {

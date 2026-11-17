@@ -13,6 +13,8 @@ import {
   containsHtml,
   displayFirstPlusRemaining,
   formatAppeal,
+  formatAppealCaseName,
+  formatAppealDefendantNames,
   formatDate,
   formatDOB,
   formatGender,
@@ -24,6 +26,7 @@ import {
   normalizeAndFormatNationalId,
   normalizePersonAddress,
   readableIndictmentSubtypes,
+  resolveAppealCaseName,
   sanitize,
   splitStringByComma,
   stripPdfExtension,
@@ -494,6 +497,44 @@ describe('containsHtml', () => {
     expect(containsHtml('með kennitöluna <kennitala>')).toBe(false)
     // Placeholders that merely start with a list tag's letters.
     expect(containsHtml('<liður 1> og <ólöglegur akstur>')).toBe(false)
+  })
+})
+
+describe('formatAppealDefendantNames', () => {
+  test('joins one, two and many names', () => {
+    expect(formatAppealDefendantNames(['Jón'])).toBe('Jón')
+    expect(formatAppealDefendantNames(['Jón', 'Guðrún'])).toBe('Jón og Guðrún')
+    expect(formatAppealDefendantNames(['A', 'B', 'C'])).toBe('A, B og C')
+  })
+
+  test('skips empty names', () => {
+    expect(formatAppealDefendantNames([null, 'Jón', '', undefined])).toBe('Jón')
+  })
+})
+
+describe('formatAppealCaseName', () => {
+  test('names the prosecution against the defendants', () => {
+    expect(formatAppealCaseName(['Jóni Jónssyni'])).toBe(
+      'Ákæruvaldið gegn Jóni Jónssyni',
+    )
+  })
+
+  test('falls back to Ákæruvaldið alone when no names are given', () => {
+    expect(formatAppealCaseName([])).toBe('Ákæruvaldið')
+  })
+})
+
+describe('resolveAppealCaseName', () => {
+  test('prefers a stored case name', () => {
+    expect(
+      resolveAppealCaseName('Ákæruvaldið gegn Páli', ['Jón']),
+    ).toBe('Ákæruvaldið gegn Páli')
+  })
+
+  test('builds the legacy string when the stored name is missing', () => {
+    expect(resolveAppealCaseName(null, ['Jón Jónsson'])).toBe(
+      'Ákæruvaldið gegn Jón Jónsson',
+    )
   })
 })
 

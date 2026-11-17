@@ -40,6 +40,7 @@ export const createAppealSummons = (
   issuer: AppealSummonsPdfIssuer,
   confirmation?: Confirmation,
   issuedDate?: Date,
+  caseName?: string | null,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
@@ -108,6 +109,7 @@ export const createAppealSummons = (
         rulingDate: theCase.rulingDate,
         courtCaseNumber: theCase.courtCaseNumber,
         defendantNames,
+        caseName,
       }),
       'Times-Roman',
     )

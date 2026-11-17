@@ -587,6 +587,58 @@ export const getWordByGender = (
   }
 }
 
+/**
+ * Joins defendant names the way appeal documents list them: one name alone,
+ * two or more as "A, B og C".
+ */
+export const formatAppealDefendantNames = (
+  names: (string | undefined | null)[],
+): string => {
+  const listed = names.filter(
+    (name): name is string =>
+      name !== undefined && name !== null && name !== '',
+  )
+
+  if (listed.length === 0) {
+    return ''
+  }
+
+  if (listed.length === 1) {
+    return listed[0]
+  }
+
+  return `${listed.slice(0, -1).join(', ')} og ${listed[listed.length - 1]}`
+}
+
+/**
+ * Style-of-cause for an indictment appeal: "Ákæruvaldið gegn …". Used as the
+ * stored case name prefill and as the fallback when an older appeal has none.
+ */
+export const formatAppealCaseName = (
+  names: (string | undefined | null)[],
+): string => {
+  const against = formatAppealDefendantNames(names)
+
+  return against ? `Ákæruvaldið gegn ${against}` : 'Ákæruvaldið'
+}
+
+/**
+ * Prefer a stored appeal case name; otherwise build the same string PDFs used
+ * before the field existed.
+ */
+export const resolveAppealCaseName = (
+  caseName: string | undefined | null,
+  defendantNames: (string | undefined | null)[],
+): string => {
+  const trimmed = caseName?.trim()
+
+  if (trimmed) {
+    return trimmed
+  }
+
+  return formatAppealCaseName(defendantNames)
+}
+
 // þgf to dómur
 export const applyDativeCaseToCourtName = (courtName: string) => {
   const target = 'dómur'

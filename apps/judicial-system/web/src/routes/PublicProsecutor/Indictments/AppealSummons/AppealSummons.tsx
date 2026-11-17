@@ -33,6 +33,7 @@ import {
   getEarliestStandingAppealDate,
   getStandingAppealSummonsDefendants,
   isAppealSummonsFormReady,
+  resolveAppealSummonsCaseName,
   toAppealSummonsDefendantInputs,
 } from './AppealSummons.logic'
 
@@ -80,6 +81,7 @@ const AppealSummons = () => {
   const mayAccess = isEdit ? mayEdit : mayIssue
 
   const [sections, setSections] = useState<AppealSummonsFormSection[]>([])
+  const [caseName, setCaseName] = useState('')
   const [hasInitialized, setHasInitialized] = useState(false)
 
   useEffect(() => {
@@ -130,6 +132,12 @@ const AppealSummons = () => {
         workingCase.defendants ?? [],
       ),
     )
+    setCaseName(
+      resolveAppealSummonsCaseName(
+        workingCase.verdictAppealCase?.caseName,
+        (workingCase.defendants ?? []).map((defendant) => defendant.name),
+      ),
+    )
     setHasInitialized(true)
   }, [
     isLoadingWorkingCase,
@@ -160,26 +168,45 @@ const AppealSummons = () => {
     )
   }
 
+  const formReady = isAppealSummonsFormReady(sections, caseName)
+
   const handlePreview = useCallback(async () => {
     const defendants = toAppealSummonsDefendantInputs(sections)
 
-    if (defendants.length === 0) {
+    if (defendants.length === 0 || !caseName.trim()) {
       return
     }
 
-    await previewAppealSummons(workingCase.id, defendants, appealSummonsId)
-  }, [appealSummonsId, previewAppealSummons, sections, workingCase.id])
+    await previewAppealSummons(
+      workingCase.id,
+      caseName.trim(),
+      defendants,
+      appealSummonsId,
+    )
+  }, [
+    appealSummonsId,
+    caseName,
+    previewAppealSummons,
+    sections,
+    workingCase.id,
+  ])
 
   const handleSave = useCallback(async () => {
     const defendants = toAppealSummonsDefendantInputs(sections)
+    const trimmedCaseName = caseName.trim()
 
-    if (defendants.length === 0) {
+    if (defendants.length === 0 || !trimmedCaseName) {
       return
     }
 
     const result = appealSummonsId
-      ? await updateAppealSummons(workingCase.id, appealSummonsId, defendants)
-      : await createAppealSummons(workingCase.id, defendants)
+      ? await updateAppealSummons(
+          workingCase.id,
+          appealSummonsId,
+          trimmedCaseName,
+          defendants,
+        )
+      : await createAppealSummons(workingCase.id, trimmedCaseName, defendants)
 
     if (!result) {
       return
@@ -189,6 +216,7 @@ const AppealSummons = () => {
     router.push(overviewUrl)
   }, [
     appealSummonsId,
+    caseName,
     createAppealSummons,
     overviewUrl,
     refreshCase,
@@ -222,6 +250,17 @@ const AppealSummons = () => {
                     as="h3"
                   />
                 )}
+              </Box>
+              <Box component="section">
+                <SectionHeading title="Heiti máls" required />
+                <Input
+                  name="caseName"
+                  label="Heiti máls"
+                  value={caseName}
+                  onChange={(event) => setCaseName(event.target.value)}
+                  required
+                  tooltip="Heiti máls kemur fram í áfrýjunarstefnu og skilar sér í viðmót Landsréttar."
+                />
               </Box>
               {sections.map((section) =>
                 section.included ? (
@@ -293,7 +332,7 @@ const AppealSummons = () => {
               <Box marginBottom={10}>
                 <PdfButton
                   title="Áfrýjunarstefna.pdf"
-                  disabled={!isAppealSummonsFormReady(sections)}
+                  disabled={!formReady}
                   handleClick={handlePreview}
                 />
               </Box>
@@ -308,7 +347,7 @@ const AppealSummons = () => {
                     ? 'Vista áfrýjunarstefnu'
                     : 'Gefa út áfrýjunarstefnu',
                   onClick: handleSave,
-                  disabled: !isAppealSummonsFormReady(sections) || isSaving,
+                  disabled: !formReady || isSaving,
                   loading: isSaving,
                   testId: 'continueButton',
                 },

@@ -34,11 +34,14 @@ const CaseTitleInfoAndTags: FC = () => {
     : undefined
   const rulingOrderFileName = rulingOrderFile?.userGeneratedFilename
   const courtCaseNumberPrefix = `${workingCase.courtCaseNumber ?? ''} `
+  // Verdict appeals carry an editable style-of-cause; prefer it over the
+  // generic case-state title so CoA pages show "Ákæruvaldið gegn …".
+  const appealCaseName = targetAppealCase?.caseName?.trim()
   const title = rulingOrderFile
     ? (rulingOrderFileName?.startsWith(courtCaseNumberPrefix)
         ? rulingOrderFileName.slice(courtCaseNumberPrefix.length)
         : rulingOrderFileName) ?? 'Úrskurður'
-    : titleForCase(formatMessage, workingCase)
+    : appealCaseName || titleForCase(formatMessage, workingCase)
 
   return (
     <Box

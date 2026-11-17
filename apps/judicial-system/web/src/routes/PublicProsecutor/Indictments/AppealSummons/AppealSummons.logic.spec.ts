@@ -12,7 +12,9 @@ import {
   getEarliestStandingAppealDate,
   getStandingAppealSummonsDefendants,
   isAppealSummonsFormReady,
+  prefillAppealCaseName,
   prefillAppealSummonsClaims,
+  resolveAppealSummonsCaseName,
   toAppealSummonsDefendantInputs,
 } from './AppealSummons.logic'
 
@@ -333,20 +335,58 @@ describe('civilClaimantsForDefendant', () => {
   })
 })
 
-describe('isAppealSummonsFormReady', () => {
-  it('requires at least one included section with non-empty claims', () => {
+describe('prefillAppealCaseName', () => {
+  it('declines defendant names into þágufall for the style-of-cause', () => {
+    expect(prefillAppealCaseName(['Jón Sigurður Jónsson'])).toBe(
+      'Ákæruvaldið gegn Jóni Sigurði Jónssyni',
+    )
+  })
+})
+
+describe('resolveAppealSummonsCaseName', () => {
+  it('prefers a stored case name', () => {
     expect(
-      isAppealSummonsFormReady([
-        { included: false, claims: 'x' },
-        { included: true, claims: '   ' },
-      ]),
+      resolveAppealSummonsCaseName('Ákæruvaldið gegn Páli', ['Jón']),
+    ).toBe('Ákæruvaldið gegn Páli')
+  })
+
+  it('prefills with Beygla when nothing is stored', () => {
+    expect(resolveAppealSummonsCaseName(null, ['Jón Sigurður Jónsson'])).toBe(
+      'Ákæruvaldið gegn Jóni Sigurði Jónssyni',
+    )
+  })
+})
+
+describe('isAppealSummonsFormReady', () => {
+  it('requires a case name and at least one included section with non-empty claims', () => {
+    expect(
+      isAppealSummonsFormReady(
+        [
+          { included: false, claims: 'x' },
+          { included: true, claims: '   ' },
+        ],
+        'Ákæruvaldið gegn Jóni',
+      ),
     ).toBe(false)
 
     expect(
-      isAppealSummonsFormReady([
-        { included: false, claims: 'x' },
-        { included: true, claims: 'Kröfur' },
-      ]),
+      isAppealSummonsFormReady(
+        [
+          { included: false, claims: 'x' },
+          { included: true, claims: 'Kröfur' },
+        ],
+        '   ',
+      ),
+    ).toBe(false)
+
+    expect(
+      isAppealSummonsFormReady(
+        [
+          { included: false, claims: 'x' },
+          { included: true, claims: 'Kröfur' },
+        ],
+        'Ákæruvaldið gegn Jóni',
+      ),
     ).toBe(true)
   })
 })

@@ -1722,6 +1722,7 @@ export interface UpdateAppealCase
   extends Pick<
     AppealCase,
     | 'appealCaseNumber'
+    | 'caseName'
     | 'appealReceivedByCourtDate'
     | 'appealRulingDate'
     | 'appealAssistantId'

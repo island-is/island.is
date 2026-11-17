@@ -100,6 +100,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       appealState
       appealType
+      caseName
       courtSessions {
         id
         created

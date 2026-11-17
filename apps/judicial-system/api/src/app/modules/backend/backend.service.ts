@@ -737,7 +737,7 @@ export class BackendService {
 
   createAppealSummons(
     caseId: string,
-    createAppealSummons: { defendants: unknown[] },
+    createAppealSummons: { caseName: string; defendants: unknown[] },
   ): Promise<AppealSummons> {
     return this.post(`case/${caseId}/appealSummons`, createAppealSummons)
   }
@@ -745,7 +745,7 @@ export class BackendService {
   updateAppealSummons(
     caseId: string,
     appealSummonsId: string,
-    updateAppealSummons: { defendants: unknown[] },
+    updateAppealSummons: { caseName: string; defendants: unknown[] },
   ): Promise<AppealSummons> {
     return this.patch(
       `case/${caseId}/appealSummons/${appealSummonsId}`,

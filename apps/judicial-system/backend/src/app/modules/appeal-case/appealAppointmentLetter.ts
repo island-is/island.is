@@ -1,3 +1,4 @@
+import { resolveAppealCaseName } from '@island.is/judicial-system/formatters'
 import { AppealCaseState } from '@island.is/judicial-system/types'
 
 import {
@@ -204,11 +205,15 @@ export const buildAppealAppointmentLetter = (params: {
     // Only the defender's letter names the party: it is appointed to one of
     // the accused, and a case may have several.
     clientName: defendant?.name,
-    defendantName: getAppealAppointmentDefendantNames(
-      (theCase.defendants ?? [])
-        .map((d) => d.name)
-        .filter((name): name is string => Boolean(name)),
-    ),
+    // Prefer the case name entered on the appeal summons; older appeals fall
+    // back to the abbreviated "Ákæruvaldið gegn …" string the letter used before.
+    defendantName: resolveAppealCaseName(appealCase.caseName, [
+      getAppealAppointmentDefendantNames(
+        (theCase.defendants ?? [])
+          .map((d) => d.name)
+          .filter((name): name is string => Boolean(name)),
+      ),
+    ]),
     courtName: getCourtNameInGenitive(theCase.court?.name),
     courtCaseNumber: theCase.courtCaseNumber ?? '',
     appealCaseNumber: appealCase.appealCaseNumber,
