@@ -31,6 +31,9 @@ describe('CreateHnippNotificationDto deadline', () => {
 
   it.each([
     '2026-12-01',
+    '2026-335T16:00:00',
+    '2026-W48-2T16:00:00Z',
+    '20261201T160000Z',
     '2026-02-30T16:00:00Z',
     '2026-12-01T25:00:00Z',
     '1. desember 16:00',
