@@ -73,13 +73,9 @@ export const UserMenu = ({
           setDropdownState('closed')
           signOut()
         }}
-        onSwitchUser={(nationalId: string) => {
+        onSwitchUser={(nationalId?: string) => {
           setDropdownState('closed')
           switchUser(nationalId, switchUserTargetLink)
-        }}
-        onSwitchAccount={() => {
-          setDropdownState('closed')
-          switchUser(undefined, switchUserTargetLink)
         }}
         fullscreen={fullscreen}
         showDropdownLanguage={showDropdownLanguage}

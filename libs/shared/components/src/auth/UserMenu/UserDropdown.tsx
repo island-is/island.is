@@ -28,8 +28,7 @@ interface UserDropdownProps {
   dropdownState: 'open' | 'closed'
   setDropdownState: Dispatch<SetStateAction<'closed' | 'open'>>
   onLogout?: () => void
-  onSwitchUser: (nationalId: string) => void
-  onSwitchAccount: () => void
+  onSwitchUser: (nationalId?: string) => void
   fullscreen: boolean
   showActorButton: boolean
   showDropdownLanguage: boolean
@@ -39,7 +38,6 @@ export const UserDropdown = ({
   dropdownState,
   setDropdownState,
   onSwitchUser,
-  onSwitchAccount,
   onLogout,
   fullscreen,
   showActorButton,
@@ -143,7 +141,7 @@ export const UserDropdown = ({
               <UserDropdownItem
                 text={formatMessage(userMessages.switchUser)}
                 icon={{ icon: 'reload', type: 'outline' }}
-                onClick={onSwitchAccount}
+                onClick={() => onSwitchUser()}
               />
 
               {hasAccessToUserProfileInfo && !actor && (
