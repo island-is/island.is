@@ -180,12 +180,15 @@ curl -s -o /dev/null -w '%{http_code} %{redirect_url} %{time_total}s\n' \
   "http://localhost:<api port>/api/auth/login?nationalId=9999999999"
 ```
 
-It must answer `302` with a redirect url that has no `villa=` in it. A failed
-login is a `302` too - to `/?villa=innskraning-villa` when the api cannot
-reach the backend or the backend the database - so the status alone proves
-nothing. A clean redirect proves the whole chain, and it takes the
-first-request slowness of a freshly started
-service out of the run, where it can trip the suite's 15s waits.
+It must answer `302` with a redirect url that starts with
+`http://localhost:<api port>/` and has no `villa=` in it. The status alone
+proves nothing, because the other outcomes are a `302` too: a failed login
+goes to `/?villa=innskraning-villa` when the api cannot reach the backend or
+the backend the database, and with the auth bypass off the api sends the
+browser to the identity provider on another host without asking the backend
+at all. A local redirect without `villa=` proves the whole chain, and it
+takes the first-request slowness of a freshly started service out of the
+run, where it can trip the suite's 15s waits.
 
 **Check the listeners are yours.** For the backend, api and message handler
 ports and for `PORT + 1` of the backend and api, read the environment of the
@@ -220,7 +223,7 @@ each are free, as in step 6: a node child left behind by `nx serve` keeps the
 port, the new process then fails to bind, and the old one - still on the old
 web port - goes on answering every check below. Start them with the same run
 id, then repeat the end of step 3 for them: wait for `/liveness`, send the
-login request twice and require the clean `302`, and check the marker on both
+login request twice and require the same local `302`, and check the marker on both
 ports of each. The restarted processes are cold.
 
 ```bash
