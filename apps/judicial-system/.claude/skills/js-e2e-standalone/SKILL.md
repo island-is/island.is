@@ -228,12 +228,16 @@ ports of each. The restarted processes are cold.
 
 ```bash
 PLAYWRIGHT_JSON_OUTPUT_NAME=<scratchpad>/e2e-report.json \
-E2E_RUN_ID=<run id> JUDICIAL_SYSTEM_WEB_PORT=<web port> INTERNAL_API_URL=http://localhost:<api port> \
+TEST_ENVIRONMENT=local E2E_RUN_ID=<run id> \
+JUDICIAL_SYSTEM_WEB_PORT=<web port> INTERNAL_API_URL=http://localhost:<api port> \
   yarn playwright test -c apps/system-e2e/src --project judicial-system --reporter=line,json $ARGUMENTS
 ```
 
-`JUDICIAL_SYSTEM_WEB_PORT` and `INTERNAL_API_URL` are required, and
-`E2E_RUN_ID` gives the web app the run's marker for step 6:
+`JUDICIAL_SYSTEM_WEB_PORT` and `INTERNAL_API_URL` are required,
+`E2E_RUN_ID` gives the web app the run's marker for step 6, and
+`TEST_ENVIRONMENT=local` keeps a value inherited from the shell (`dev`,
+`staging`) from pointing the suite at a remote environment instead of the
+stack you just started:
 
 - `JUDICIAL_SYSTEM_WEB_PORT` is where the config serves the web app and where
   the tests look for it. Without it both fall back to 4200, where the config
