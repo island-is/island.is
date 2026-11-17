@@ -21,6 +21,12 @@ import { messages } from '../lib/messages'
 import { useEnsureEqualityDraft } from '../utils/useEqualityDraft'
 import { useScreenEntered } from '../utils/useScreenEntered'
 import {
+  getAttachmentQueue,
+  runAttachmentUploads,
+  updateAttachmentQueue,
+  useAttachmentQueue,
+} from '../utils/attachmentQueue'
+import {
   ATTACHMENT_ACCEPT,
   ATTACHMENT_CONTENT_TYPES,
   MAX_ATTACHMENTS,
@@ -184,9 +190,15 @@ const EditableEqualityAttachments = ({
   const [attachments, setAttachments] = useState<Attachment[]>([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
-  const [uploading, setUploading] = useState<string | undefined>()
-  const [removingId, setRemovingId] = useState<string | undefined>()
-  const [errors, setErrors] = useState<string[]>([])
+  // In a store, not state: back navigation unmounts the field without a
+  // guard, and the queue has to carry on and be picked up on return.
+  const { uploading, removingId, errors } = useAttachmentQueue(application.id)
+  const setErrors = (next: string[]) =>
+    updateAttachmentQueue(application.id, { errors: next })
+  const isBusy = () => {
+    const queue = getAttachmentQueue(application.id)
+    return !!queue.uploading || !!queue.removingId
+  }
   const [blockMessage, setBlockMessage] = useState<string | undefined>()
   const mountedRef = useRef(true)
   // Dropzone reports rejected files and then accepted ones in the same drop,
@@ -212,9 +224,10 @@ const EditableEqualityAttachments = ({
     return () => setSubmitButtonDisabled?.(false)
   }, [busy, setSubmitButtonDisabled])
 
-  // Leaving the screen (or sending the reply on draftRetryForm) mid-upload
-  // would drop a file the applicant thinks is on its way. Composed with the
-  // Editor's guard rather than replacing it.
+  // Moving on (or sending the reply on draftRetryForm) mid-upload would
+  // submit before a file the applicant thinks is on its way has landed.
+  // Composed with the Editor's guard rather than replacing it. Back
+  // navigation runs no guard; the queue store covers that path.
   //
   // Registered again after Screen's arrival clear (see useScreenEntered), and
   // again whenever `busy` changes so the guard reads the current value.
@@ -267,6 +280,16 @@ const EditableEqualityAttachments = ({
     }
     void load()
   }, [mode, ensureDraft, reload])
+
+  // Reload whenever the queue moves on (next file, or done), including a
+  // queue started by an earlier mount of this field.
+  const queueStep = `${uploading ?? ''}|${removingId ?? ''}`
+  const lastQueueStep = useRef(queueStep)
+  useEffect(() => {
+    if (lastQueueStep.current === queueStep) return
+    lastQueueStep.current = queueStep
+    void reload()
+  }, [queueStep, reload])
 
   const uploadOne = async (file: File): Promise<string | undefined> => {
     const extension = getAttachmentExtension(file.name)
@@ -335,7 +358,7 @@ const EditableEqualityAttachments = ({
   const handleFilesChanged = async (files: File[]) => {
     const nextErrors = [...dropRejectionsRef.current]
     dropRejectionsRef.current = []
-    if (busy || files.length === 0) return
+    if (isBusy() || files.length === 0) return
     const accepted: File[] = []
 
     for (const file of files) {
@@ -355,25 +378,12 @@ const EditableEqualityAttachments = ({
     if (skipped > 0) {
       nextErrors.push(formatMessage(m.overLimit, { count: skipped }))
     }
-    setErrors(nextErrors)
-
-    for (const file of toUpload) {
-      setUploading(file.name)
-      const error = await uploadOne(file)
-      if (!mountedRef.current) return
-      if (error) {
-        nextErrors.push(error)
-        setErrors([...nextErrors])
-      }
-      await reload()
-    }
-    if (mountedRef.current) setUploading(undefined)
+    await runAttachmentUploads(application.id, toUpload, uploadOne, nextErrors)
   }
 
   const handleRemove = async (file: UploadFile) => {
-    if (busy || !file.id) return
-    setErrors([])
-    setRemovingId(file.id)
+    if (isBusy() || !file.id) return
+    updateAttachmentQueue(application.id, { errors: [], removingId: file.id })
     try {
       await client.mutate({
         mutation: DELETE_EQUALITY_ATTACHMENT,
@@ -392,8 +402,7 @@ const EditableEqualityAttachments = ({
           : formatMessage(m.removeError, { filename: file.name }),
       ])
     }
-    await reload()
-    if (mountedRef.current) setRemovingId(undefined)
+    updateAttachmentQueue(application.id, { removingId: undefined })
   }
 
   const handleUploadRejection = (rejections: FileRejection[]) => {
