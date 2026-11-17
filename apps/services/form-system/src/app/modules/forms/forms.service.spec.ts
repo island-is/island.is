@@ -1,5 +1,6 @@
 import { FamilyTypes } from '@island.is/form-system/enums'
 import {
+  ApplicationStatus,
   FieldTypesEnum,
   FormStatus,
   SectionTypes,
@@ -13,6 +14,242 @@ import { Form } from './models/form.model'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
 import { ApplicationJsonDto } from '../applications/models/dto/application.json.dto'
 import { User } from '@island.is/auth-nest-tools'
+
+describe.each(['archive', 'publish replacement'])(
+  'FormsService draft cleanup when using %s',
+  (action) => {
+    const setup = () => {
+      const user = { nationalId: 'owner', scope: [] } as unknown as User
+      const transaction = { id: 'transaction' }
+      const form = {
+        id: 'published-form-id',
+        organizationNationalId: user.nationalId,
+        status: FormStatus.PUBLISHED,
+        slug: 'form',
+        save: jest.fn().mockResolvedValue(undefined),
+      }
+      const replacement = {
+        ...form,
+        id: 'replacement-form-id',
+        derivedFrom: form.id,
+        status: FormStatus.PUBLISHED_BEING_CHANGED,
+        save: jest.fn().mockResolvedValue(undefined),
+      }
+      const applications = [
+        { formId: form.id, status: ApplicationStatus.DRAFT, isTest: false },
+        { formId: form.id, status: ApplicationStatus.DRAFT, isTest: true },
+        { formId: form.id, status: ApplicationStatus.COMPLETED, isTest: false },
+        {
+          formId: 'other-form-id',
+          status: ApplicationStatus.DRAFT,
+          isTest: false,
+        },
+      ].map((application, index) => ({
+        ...application,
+        id: `application-${index}`,
+        values: [
+          {
+            id: `value-${index}`,
+            fieldType: FieldTypesEnum.FILE,
+            json: { s3Key: [`file-${index}`] },
+          },
+        ],
+        destroy: jest.fn().mockResolvedValue(undefined),
+      }))
+      const applicationModel = {
+        findAll: jest.fn(
+          async ({ where }: { where: { formId: string; status?: string } }) =>
+            applications.filter(
+              (application) =>
+                application.formId === where.formId &&
+                (!where.status || application.status === where.status),
+            ),
+        ),
+      }
+      const fileService = { deleteFile: jest.fn().mockResolvedValue(undefined) }
+      const applicationEventModel = {
+        destroy: jest.fn().mockResolvedValue(1),
+      }
+      const service = Object.assign(Object.create(FormsService.prototype), {
+        formModel: {
+          findByPk: jest.fn(async (id) =>
+            id === replacement.id ? replacement : form,
+          ),
+        },
+        applicationModel,
+        applicationEventModel,
+        fileService,
+        logger: { debug: jest.fn() },
+        sequelize: {
+          transaction: jest.fn((callback) => callback(transaction)),
+        },
+        validateZendeskSettingsForPublish: jest
+          .fn()
+          .mockResolvedValue(undefined),
+        copyForm: jest.fn().mockResolvedValue(replacement),
+        buildFormResponse: jest.fn().mockResolvedValue({}),
+      }) as FormsService
+      const updateStatus = () =>
+        service.updateStatus(
+          user,
+          action === 'archive' ? form.id : replacement.id,
+          {
+            newStatus:
+              action === 'archive' ? FormStatus.ARCHIVED : FormStatus.PUBLISHED,
+          },
+        )
+
+      return {
+        updateStatus,
+        form,
+        transaction,
+        applications,
+        applicationModel,
+        applicationEventModel,
+        fileService,
+      }
+    }
+
+    it('deletes only drafts for the archived form, including test drafts and their files', async () => {
+      const {
+        updateStatus,
+        form,
+        transaction,
+        applications,
+        applicationModel,
+        applicationEventModel,
+        fileService,
+      } = setup()
+
+      await updateStatus()
+
+      expect(applicationModel.findAll).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { formId: form.id, status: ApplicationStatus.DRAFT },
+          transaction,
+          include: [
+            expect.objectContaining({
+              as: 'values',
+              where: { fieldType: FieldTypesEnum.FILE },
+              required: false,
+            }),
+          ],
+        }),
+      )
+      for (const index of [0, 1]) {
+        expect(fileService.deleteFile).toHaveBeenCalledWith(
+          `file-${index}`,
+          `value-${index}`,
+          transaction,
+        )
+        expect(applications[index].destroy).toHaveBeenCalledWith({
+          transaction,
+        })
+        expect(applicationEventModel.destroy).toHaveBeenCalledWith({
+          where: { applicationId: applications[index].id },
+          transaction,
+        })
+        expect(
+          applicationEventModel.destroy.mock.invocationCallOrder[index],
+        ).toBeLessThan(applications[index].destroy.mock.invocationCallOrder[0])
+      }
+      expect(applicationEventModel.destroy).toHaveBeenCalledTimes(2)
+      expect(fileService.deleteFile).toHaveBeenCalledTimes(2)
+      expect(applications[2].destroy).not.toHaveBeenCalled()
+      expect(applications[3].destroy).not.toHaveBeenCalled()
+      expect(form.status).toBe(FormStatus.ARCHIVED)
+      expect(form.save).toHaveBeenCalledWith({ transaction })
+    })
+
+    it('fails without saving the archived status if draft cleanup fails', async () => {
+      const { updateStatus, form, applications, fileService } = setup()
+      fileService.deleteFile.mockRejectedValue(
+        new Error('File deletion failed'),
+      )
+
+      await expect(updateStatus()).rejects.toThrow()
+
+      expect(form.save).not.toHaveBeenCalled()
+      expect(applications[0].destroy).not.toHaveBeenCalled()
+    })
+
+    it('does not delete the application or archive the form if event deletion fails', async () => {
+      const { updateStatus, form, applications, applicationEventModel } =
+        setup()
+      applicationEventModel.destroy.mockRejectedValue(
+        new Error('Event deletion failed'),
+      )
+
+      await expect(updateStatus()).rejects.toThrow()
+
+      expect(form.save).not.toHaveBeenCalled()
+      expect(applications[0].destroy).not.toHaveBeenCalled()
+    })
+  },
+)
+
+describe('FormsService publishing a form in development', () => {
+  it.each([false, true])(
+    'deletes application events before applications (event deletion fails: %s)',
+    async (eventDeletionFails) => {
+      const user = { nationalId: 'owner', scope: [] } as unknown as User
+      const transaction = { id: 'transaction' }
+      const form = {
+        id: 'form-id',
+        organizationNationalId: user.nationalId,
+        status: FormStatus.IN_DEVELOPMENT,
+        save: jest.fn().mockResolvedValue(undefined),
+      }
+      const application = {
+        id: 'application-id',
+        values: [],
+        destroy: jest.fn().mockResolvedValue(undefined),
+      }
+      const applicationEventModel = {
+        destroy: eventDeletionFails
+          ? jest.fn().mockRejectedValue(new Error('Event deletion failed'))
+          : jest.fn().mockResolvedValue(1),
+      }
+      const service = Object.assign(Object.create(FormsService.prototype), {
+        formModel: { findByPk: jest.fn().mockResolvedValue(form) },
+        applicationModel: {
+          findAll: jest.fn().mockResolvedValue([application]),
+        },
+        applicationEventModel,
+        sequelize: {
+          transaction: jest.fn((callback) => callback(transaction)),
+        },
+        validateZendeskSettingsForPublish: jest
+          .fn()
+          .mockResolvedValue(undefined),
+      }) as FormsService
+
+      const publish = service.updateStatus(user, form.id, {
+        newStatus: FormStatus.PUBLISHED,
+      })
+
+      if (eventDeletionFails) {
+        await expect(publish).rejects.toThrow(
+          `Unexpected error publishing form '${form.id}'.`,
+        )
+        expect(application.destroy).not.toHaveBeenCalled()
+        expect(form.save).not.toHaveBeenCalled()
+      } else {
+        await publish
+        expect(application.destroy).toHaveBeenCalledWith({ transaction })
+        expect(
+          applicationEventModel.destroy.mock.invocationCallOrder[0],
+        ).toBeLessThan(application.destroy.mock.invocationCallOrder[0])
+        expect(form.save).toHaveBeenCalledWith({ transaction })
+      }
+
+      expect(applicationEventModel.destroy).toHaveBeenCalledWith({
+        where: { applicationId: application.id },
+        transaction,
+      })
+    },
+  )
+})
 
 describe('FormsService publishing accessibility', () => {
   it.each([FormStatus.IN_DEVELOPMENT, FormStatus.PUBLISHED_BEING_CHANGED])(

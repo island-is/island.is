@@ -18,6 +18,7 @@ import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { AssetTypes, FamilyTypes } from '@island.is/form-system/enums'
 import {
+  ApplicationStatus,
   FieldTypesEnum,
   FormStatus,
   SectionTypes,
@@ -50,6 +51,7 @@ import { Option } from '../../dataTypes/option.model'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { Application } from '../applications/models/application.model'
+import { ApplicationEvent } from '../applications/models/applicationEvent.model'
 import { Value } from '../applications/models/value.model'
 import { FieldDto } from '../fields/models/dto/field.dto'
 import { Field } from '../fields/models/field.model'
@@ -105,6 +107,8 @@ export class FormsService {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     private readonly fileService: FileService,
+    @InjectModel(ApplicationEvent)
+    private readonly applicationEventModel: typeof ApplicationEvent,
   ) {}
 
   async findAll(user: User, nationalId: string): Promise<FormResponseDto> {
@@ -871,6 +875,10 @@ export class FormsService {
 
         for (const application of applications) {
           await this.cleanupApplicationFiles(application, transaction)
+          await this.applicationEventModel.destroy({
+            where: { applicationId: application.id },
+            transaction,
+          })
           await application.destroy({ transaction })
         }
 
@@ -893,6 +901,8 @@ export class FormsService {
     let copyForm: Form | undefined
 
     await this.sequelize.transaction(async (transaction) => {
+      await this.deleteDraftApplications(id, transaction)
+
       form.status = FormStatus.ARCHIVED
       form.slug = `${form.slug}-archived-${Date.now()}`
       await form.save({ transaction })
@@ -955,6 +965,8 @@ export class FormsService {
           await this.cleanupApplicationFiles(application, transaction)
           await application.destroy({ transaction })
         }
+
+        await this.deleteDraftApplications(derivedFromId, transaction)
 
         const slugToBeArchived = formToBeArchived.slug
         formToBeArchived.status = FormStatus.ARCHIVED
@@ -1028,6 +1040,33 @@ export class FormsService {
     }
 
     return new FormResponseDto()
+  }
+
+  private async deleteDraftApplications(
+    formId: string,
+    transaction: Transaction,
+  ): Promise<void> {
+    const applications = await this.applicationModel.findAll({
+      where: { formId, status: ApplicationStatus.DRAFT },
+      include: [
+        {
+          model: Value,
+          as: 'values',
+          where: { fieldType: FieldTypesEnum.FILE },
+          required: false,
+        },
+      ],
+      transaction,
+    })
+
+    for (const application of applications) {
+      await this.cleanupApplicationFiles(application, transaction)
+      await this.applicationEventModel.destroy({
+        where: { applicationId: application.id },
+        transaction,
+      })
+      await application.destroy({ transaction })
+    }
   }
 
   private async cleanupApplicationFiles(

@@ -85,6 +85,15 @@ header and footer positions are unchanged. Logos are loaded from Contentful as
 PNG images; organizations without an Icelandic logo produce PDFs without one.
 Logo download failures are logged and do not block user or X-Road PDF downloads.
 
+## Publishing and archiving forms
+
+Publishing a form in development deletes its applications' events before deleting
+the applications, within the publishing transaction.
+
+Archiving a published form deletes all of its draft applications, including test
+drafts, their application events, and their uploaded files. This also applies when publishing a replacement
+archives the previous form version. Non-draft applications are retained.
+
 ## Code owners and maintainers
 
 - [Advania](https://github.com/orgs/island-is/teams/advania/members)
