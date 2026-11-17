@@ -7,10 +7,8 @@ import {
   AvailableLocationsApi,
   ChildrenApi,
   LanguagesApi,
-  NationalRegistryV3UserApi,
   RejectionReasonsApi,
   SpeechPathologistsApi,
-  UserProfileApi,
 } from '../../dataProviders'
 import { prerequisitesMessages } from '../../lib/messages'
 
@@ -25,18 +23,12 @@ export const externalDataSection = buildSection({
       checkboxLabel: prerequisitesMessages.externalData.checkboxProvider,
       dataProviders: [
         buildDataProviderItem({
-          provider: NationalRegistryV3UserApi,
+          id: 'nationalRegistry',
           title:
             prerequisitesMessages.externalData.nationalRegistryInformationTitle,
           subTitle:
             prerequisitesMessages.externalData
               .nationalRegistryInformationSubTitle,
-        }),
-        buildDataProviderItem({
-          provider: UserProfileApi,
-          title: prerequisitesMessages.externalData.userProfileInformationTitle,
-          subTitle:
-            prerequisitesMessages.externalData.userProfileInformationSubTitle,
         }),
         buildDataProviderItem({
           provider: ChildrenApi,

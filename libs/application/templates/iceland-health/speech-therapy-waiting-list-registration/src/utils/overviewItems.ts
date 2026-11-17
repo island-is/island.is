@@ -5,10 +5,8 @@ import {
   KeyValueItem,
 } from '@island.is/application/types'
 import { format as formatKennitala } from 'kennitala'
-import { formatNumber } from 'libphonenumber-js'
 import {
   childMessages,
-  guardiansMessages,
   otherInformationMessages,
   overviewMessages,
   sharedMessages,
@@ -79,41 +77,6 @@ export const childItems = (
           },
         ]
       : []),
-  ]
-}
-
-export const guardiansItems = (
-  answers: FormValue,
-  _externalData: ExternalData,
-  _userNationalId: string,
-  index: number,
-): Array<KeyValueItem> => {
-  const { guardians } = getApplicationAnswers(answers)
-  const guardian = guardians[index]
-
-  return [
-    {
-      width: 'half',
-      keyText: sharedMessages.fullName,
-      valueText: guardian?.fullName,
-    },
-    {
-      width: 'half',
-      keyText: sharedMessages.nationalId,
-      valueText: formatKennitala(guardian?.nationalId ?? ''),
-    },
-    {
-      width: 'half',
-      keyText: guardiansMessages.email,
-      valueText: guardian?.email,
-      hideIfEmpty: true,
-    },
-    {
-      width: 'half',
-      keyText: guardiansMessages.phoneNumber,
-      valueText: formatNumber(guardian?.phoneNumber ?? '', 'International'),
-      hideIfEmpty: true,
-    },
   ]
 }
 

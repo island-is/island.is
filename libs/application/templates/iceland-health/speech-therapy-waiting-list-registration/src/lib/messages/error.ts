@@ -6,11 +6,6 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Vinsamlegast veldu tungumál',
     description: 'Please select a language',
   },
-  phoneNumber: {
-    id: 'stwlr.application:error.phoneNumber',
-    defaultMessage: 'Símanúmerið þarf að vera gilt.',
-    description: 'The phone number must be valid.',
-  },
   noChildOnWaitingListTitle: {
     id: 'stwlr.application:error.noChildOnWaitingListTitle',
     defaultMessage: 'Ekkert barn bíður samþykkis',

@@ -22,10 +22,8 @@ import {
   AvailableLocationsApi,
   ChildrenApi,
   LanguagesApi,
-  NationalRegistryV3UserApi,
   RejectionReasonsApi,
   SpeechPathologistsApi,
-  UserProfileApi,
 } from '../dataProviders'
 import {
   overviewMessages,
@@ -82,8 +80,6 @@ const SpeechTherapyWaitingListRegistrationTemplate: ApplicationTemplate<
               write: 'all',
               read: 'all',
               api: [
-                NationalRegistryV3UserApi,
-                UserProfileApi,
                 ChildrenApi,
                 LanguagesApi,
                 AvailableLocationsApi,

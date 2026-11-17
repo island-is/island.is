@@ -1,7 +1,6 @@
 export * from './shared'
 export * from './prerequisites'
 export * from './child'
-export * from './guardians'
 export * from './otherInformation'
 export * from './overview'
 export * from './conclusion'

@@ -11,26 +11,6 @@ import { Child } from '../types'
 export const getApplicationExternalData = (externalData: ExternalData) => {
   const children = getValueViaPath<Child[]>(externalData, 'children.data') ?? []
 
-  const applicantName = getValueViaPath<string>(
-    externalData,
-    'nationalRegistry.data.fullName',
-  )
-
-  const applicantNationalId = getValueViaPath<string>(
-    externalData,
-    'nationalRegistry.data.nationalId',
-  )
-
-  const userProfileEmail = getValueViaPath<string>(
-    externalData,
-    'userProfile.data.email',
-  )
-
-  const userProfilePhoneNumber = getValueViaPath<string>(
-    externalData,
-    'userProfile.data.mobilePhoneNumber',
-  )
-
   const languages =
     getValueViaPath<LanguageCodeResponseModel[]>(
       externalData,
@@ -57,10 +37,6 @@ export const getApplicationExternalData = (externalData: ExternalData) => {
 
   return {
     children,
-    applicantName,
-    applicantNationalId,
-    userProfileEmail,
-    userProfilePhoneNumber,
     languages,
     availableLocations,
     speechPathologists,

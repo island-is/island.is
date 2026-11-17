@@ -25,7 +25,7 @@ The languages, locations, speech pathologists and rejection reasons are currentl
 
 ### Prerequisites
 
-Fetches the applicant from the National Registry, the user profile, the applicant's children who are on the waiting list, and the lists of languages, locations, speech pathologists and rejection reasons from Sjúkratryggingar. The applicant then selects a child.
+Fetches the applicant's children who are on the waiting list, and the lists of languages, locations, speech pathologists and rejection reasons from Sjúkratryggingar. The applicant then selects a child.
 
 A user who has no child on the waiting list is stopped in this step with an error.
 
@@ -33,7 +33,7 @@ A user who has no child on the waiting list is stopped in this step with an erro
 
 The applicant reviews the child's information and chooses whether to keep the child's place on the waiting list.
 
-- If yes, the applicant fills in guardian contact information and preferences (languages, locations, speech pathologist and remote therapy).
+- If yes, the applicant chooses preferences (languages, locations, speech pathologist and remote therapy).
 - If no, the applicant gives a reason for declining.
 
 ### Completed

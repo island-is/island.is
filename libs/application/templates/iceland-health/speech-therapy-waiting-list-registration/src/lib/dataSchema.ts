@@ -1,22 +1,6 @@
 import { NO, YES } from '@island.is/application/core'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import { errorMessages } from './messages'
-
-const validatePhoneNumber = (value: string) => {
-  const phoneNumber = parsePhoneNumberFromString(value, 'IS')
-  return !!phoneNumber && phoneNumber.isValid()
-}
-
-const guardianSchema = z.object({
-  email: z.string().email().optional().or(z.literal('')),
-  phoneNumber: z
-    .string()
-    .optional()
-    .refine((value) => !value || validatePhoneNumber(value), {
-      params: errorMessages.phoneNumber,
-    }),
-})
 
 const waitingListSchema = z
   .object({
@@ -51,7 +35,6 @@ export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   childNationalId: z.string().min(1),
   waitingList: waitingListSchema,
-  guardians: z.array(guardianSchema),
   otherInformation: otherInformationSchema,
   confirmCorrectInfo: z.array(z.enum([YES])).length(1),
 })

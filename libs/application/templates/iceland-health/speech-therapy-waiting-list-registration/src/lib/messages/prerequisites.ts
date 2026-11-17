@@ -20,21 +20,9 @@ export const prerequisitesMessages = {
     nationalRegistryInformationSubTitle: {
       id: 'stwlr.application:prerequisites.externalData.nationalRegistryInformationSubTitle',
       defaultMessage:
-        'Nafn, kennitala og lögheimili þitt og barnsins, ásamt staðfestingu á forsjá.',
+        'Nafn, kennitala og lögheimili barnsins, ásamt staðfestingu á forsjá.',
       description:
-        'Name, national ID number, and domicile of you and your child, along with custody confirmation.',
-    },
-    userProfileInformationTitle: {
-      id: 'stwlr.application:prerequisites.externalData.userProfileInformationTitle',
-      defaultMessage: 'Upplýsingar af mínum síðum á Ísland.is',
-      description: 'Information from My Pages at Ísland.is',
-    },
-    userProfileInformationSubTitle: {
-      id: 'stwlr.application:prerequisites.externalData.userProfileInformationSubTitle',
-      defaultMessage:
-        'Upplýsingar um netfang og símanúmer eru sóttar á mínar síður á Ísland.is.',
-      description:
-        'Information about email address and phone number will be retrieved from My Pages at Ísland.is.',
+        "Your child's name, national ID number and domicile, along with custody confirmation.",
     },
     icelandHealthInformationTitle: {
       id: 'stwlr.application:prerequisites.externalData.icelandHealthInformationTitle',

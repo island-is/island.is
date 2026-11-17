@@ -1,6 +1,5 @@
 import { getValueViaPath, YesOrNo } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { Guardian } from '../types'
 
 export const getApplicationAnswers = (answers: FormValue) => {
   const selectedChildNationalId = getValueViaPath<string>(
@@ -31,8 +30,6 @@ export const getApplicationAnswers = (answers: FormValue) => {
     answers,
     'waitingList.declineReason',
   )
-
-  const guardians = getValueViaPath<Guardian[]>(answers, 'guardians') ?? []
 
   const languages =
     getValueViaPath<Array<{ language: string }>>(
@@ -68,7 +65,6 @@ export const getApplicationAnswers = (answers: FormValue) => {
     childLocality,
     waitingListConsent,
     waitingListDeclineReason,
-    guardians,
     languages,
     locations,
     chosenSpeechPathologist,

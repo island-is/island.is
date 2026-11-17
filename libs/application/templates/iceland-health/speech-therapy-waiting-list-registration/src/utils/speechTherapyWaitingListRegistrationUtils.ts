@@ -14,11 +14,6 @@ export const getSelectedChild = (
   return children.find((child) => child.nationalId === selectedChildNationalId)
 }
 
-export const getSelectedChildOtherParent = (
-  answers: FormValue,
-  externalData: ExternalData,
-) => getSelectedChild(answers, externalData)?.otherParent
-
 export const getLanguageOptions = (externalData: ExternalData) => {
   const { languages } = getApplicationExternalData(externalData)
 

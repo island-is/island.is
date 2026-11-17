@@ -3,10 +3,6 @@ import {
   defineTemplateApi,
 } from '@island.is/application/types'
 import { ApiModuleActions } from '../utils/constants'
-export {
-  NationalRegistryV3UserApi,
-  UserProfileApi,
-} from '@island.is/application/types'
 
 export const ChildrenApi = defineTemplateApi({
   action: ApiModuleActions.getChildren,
