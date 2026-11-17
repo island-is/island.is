@@ -26,6 +26,7 @@ describe.each(['archive', 'publish replacement'])(
         organizationNationalId: user.nationalId,
         status: FormStatus.PUBLISHED,
         slug: 'form',
+        reload: jest.fn().mockResolvedValue(undefined),
         save: jest.fn().mockResolvedValue(undefined),
       }
       const replacement = {
@@ -33,6 +34,7 @@ describe.each(['archive', 'publish replacement'])(
         id: 'replacement-form-id',
         derivedFrom: form.id,
         status: FormStatus.PUBLISHED_BEING_CHANGED,
+        reload: jest.fn().mockResolvedValue(undefined),
         save: jest.fn().mockResolvedValue(undefined),
       }
       const applications = [
@@ -111,6 +113,7 @@ describe.each(['archive', 'publish replacement'])(
       return {
         updateStatus,
         form,
+        replacement,
         transaction,
         applications,
         applicationModel,
@@ -124,6 +127,7 @@ describe.each(['archive', 'publish replacement'])(
       const {
         updateStatus,
         form,
+        replacement,
         transaction,
         applications,
         applicationModel,
@@ -133,6 +137,22 @@ describe.each(['archive', 'publish replacement'])(
 
       await updateStatus()
 
+      expect(form.reload).toHaveBeenCalledWith({
+        transaction,
+        lock: Transaction.LOCK.UPDATE,
+      })
+      expect(form.reload.mock.invocationCallOrder[0]).toBeLessThan(
+        applicationModel.findAll.mock.invocationCallOrder[0],
+      )
+      if (action === 'publish replacement') {
+        expect(replacement.reload).toHaveBeenCalledWith({
+          transaction,
+          lock: Transaction.LOCK.UPDATE,
+        })
+        expect(replacement.reload.mock.invocationCallOrder[0]).toBeLessThan(
+          applicationModel.findAll.mock.invocationCallOrder[0],
+        )
+      }
       expect(applicationModel.findAll).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { formId: form.id, status: ApplicationStatus.DRAFT },
@@ -170,6 +190,18 @@ describe.each(['archive', 'publish replacement'])(
       expect(applications[3].destroy).not.toHaveBeenCalled()
       expect(form.status).toBe(FormStatus.ARCHIVED)
       expect(form.save).toHaveBeenCalledWith({ transaction })
+    })
+
+    it('rechecks the form status under the lock before draft cleanup', async () => {
+      const { updateStatus, form, applicationModel } = setup()
+      form.reload.mockImplementationOnce(async () => {
+        form.status = FormStatus.ARCHIVED
+      })
+
+      await expect(updateStatus()).rejects.toThrow()
+
+      expect(applicationModel.findAll).not.toHaveBeenCalled()
+      expect(form.save).not.toHaveBeenCalled()
     })
 
     it('surfaces storage deletion failures after database cleanup has committed', async () => {
@@ -294,6 +326,7 @@ describe('FormsService publishing accessibility', () => {
         slug: 'form-i-breytingu',
         derivedFrom: 'published-form-id',
         isInaccessible: true,
+        reload: jest.fn().mockResolvedValue(undefined),
         save: jest.fn().mockImplementation(async () => {
           expect(form.status).toBe(FormStatus.PUBLISHED)
           expect(form.isInaccessible).toBe(false)
@@ -303,6 +336,7 @@ describe('FormsService publishing accessibility', () => {
         id: 'published-form-id',
         status: FormStatus.PUBLISHED,
         slug: 'form',
+        reload: jest.fn().mockResolvedValue(undefined),
         save: jest.fn().mockResolvedValue(undefined),
       }
       const service = Object.assign(Object.create(FormsService.prototype), {

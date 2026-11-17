@@ -148,18 +148,37 @@ export class ApplicationsService {
 
     let newApplicationId = ''
 
-    const isTest = form.status !== FormStatus.PUBLISHED
-
     const nationalId = user.nationalId
     const actorNationalId = user.actor?.nationalId || user.nationalId
 
     try {
       await this.sequelize.transaction(async (transaction) => {
+        const lockedForm = await this.formModel.findByPk(form.id, {
+          transaction,
+          lock: Transaction.LOCK.UPDATE,
+        })
+        if (!lockedForm) {
+          throw new NotFoundException(`Form with id '${form.id}' not found`)
+        }
+        if (
+          lockedForm.isInaccessible ||
+          lockedForm.status === FormStatus.ARCHIVED
+        ) {
+          throw new ForbiddenException(
+            `Form with id '${form.id}' is inaccessible`,
+          )
+        }
+        if (lockedForm.status !== form.status) {
+          throw new ConflictException(
+            `Form with id '${form.id}' has changed status. Please try again.`,
+          )
+        }
+
         const newApplication: Application = await this.applicationModel.create(
           {
             formId: form.id,
             organizationId: form.organizationId,
-            isTest: isTest,
+            isTest: lockedForm.status !== FormStatus.PUBLISHED,
             dependencies: form.dependencies,
             status: ApplicationStatus.DRAFT,
             nationalId,

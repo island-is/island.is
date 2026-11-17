@@ -173,6 +173,11 @@ describe('ApplicationsService.create value JSON', () => {
         getLoginTypes: jest.fn().mockResolvedValue([]),
         isLoginAllowed: jest.fn().mockReturnValue(true),
         hasDelegation: jest.fn().mockReturnValue(true),
+        formModel: {
+          findByPk: jest.fn().mockResolvedValue({
+            status: FormStatus.IN_DEVELOPMENT,
+          }),
+        },
         applicationModel: {
           create: jest.fn().mockResolvedValue({ id: 'application-id' }),
         },
@@ -206,6 +211,113 @@ describe('ApplicationsService.create value JSON', () => {
         },
         { transaction },
       )
+    },
+  )
+})
+
+describe('ApplicationsService.create form locking', () => {
+  const setup = (status = FormStatus.PUBLISHED) => {
+    const transaction = { id: 'transaction' }
+    const form = {
+      id: 'form-id',
+      status,
+      isInaccessible: false,
+      sections: [],
+    }
+    const lockedForm = { ...form }
+    const formModel = {
+      findByPk: jest.fn().mockResolvedValue(lockedForm),
+    }
+    const applicationModel = {
+      create: jest.fn().mockResolvedValue({ id: 'application-id' }),
+    }
+    const applicationEventModel = {
+      create: jest.fn().mockResolvedValue(undefined),
+    }
+    const service = Object.assign(
+      Object.create(ApplicationsService.prototype),
+      {
+        getForm: jest.fn().mockResolvedValue(form),
+        formModel,
+        applicationModel,
+        applicationEventModel,
+        isFakeUserAllowed: jest.fn().mockReturnValue(true),
+        getAllowedLoginTypes: jest.fn().mockResolvedValue([]),
+        getLoginTypes: jest.fn().mockResolvedValue([]),
+        isLoginAllowed: jest.fn().mockReturnValue(true),
+        hasDelegation: jest.fn().mockReturnValue(true),
+        sequelize: {
+          transaction: jest.fn((callback) => callback(transaction)),
+        },
+        logger: { error: jest.fn() },
+        getApplication: jest.fn().mockResolvedValue({}),
+      },
+    ) as ApplicationsService
+
+    return {
+      create: () =>
+        service.create('form-slug', { nationalId: '0101307789' } as User),
+      lockedForm,
+      transaction,
+      formModel,
+      applicationModel,
+      applicationEventModel,
+    }
+  }
+
+  it.each([
+    FormStatus.PUBLISHED,
+    FormStatus.IN_DEVELOPMENT,
+    FormStatus.PUBLISHED_BEING_CHANGED,
+  ])('locks an eligible %s form before inserting a draft', async (status) => {
+    const { create, transaction, formModel, applicationModel } = setup(status)
+
+    await create()
+
+    expect(formModel.findByPk).toHaveBeenCalledWith('form-id', {
+      transaction,
+      lock: Transaction.LOCK.UPDATE,
+    })
+    expect(formModel.findByPk.mock.invocationCallOrder[0]).toBeLessThan(
+      applicationModel.create.mock.invocationCallOrder[0],
+    )
+    expect(applicationModel.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status: ApplicationStatus.DRAFT,
+        isTest: status !== FormStatus.PUBLISHED,
+      }),
+      { transaction },
+    )
+  })
+
+  it.each(['archived', 'inaccessible', 'deleted', 'changed status'])(
+    'does not insert a draft if the form is %s after the initial read',
+    async (change) => {
+      const {
+        create,
+        lockedForm,
+        formModel,
+        applicationModel,
+        applicationEventModel,
+      } = setup()
+      if (change === 'archived') {
+        lockedForm.status = FormStatus.ARCHIVED
+      } else if (change === 'inaccessible') {
+        lockedForm.isInaccessible = true
+      } else if (change === 'deleted') {
+        formModel.findByPk.mockResolvedValueOnce(null)
+      } else {
+        lockedForm.status = FormStatus.PUBLISHED_BEING_CHANGED
+      }
+
+      await expect(create()).rejects.toThrow()
+
+      expect(formModel.findByPk).toHaveBeenCalledWith(
+        'form-id',
+        expect.objectContaining({ lock: Transaction.LOCK.UPDATE }),
+      )
+      expect(applicationModel.create).not.toHaveBeenCalled()
+      expect(applicationEventModel.create).not.toHaveBeenCalled()
     },
   )
 })

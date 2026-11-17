@@ -897,10 +897,15 @@ export class FormsService {
   }
 
   async archiveForm(id: string, form: Form): Promise<FormResponseDto> {
-    const slug = form.slug
     let copyForm: Form | undefined
 
     const fileKeys = await this.sequelize.transaction(async (transaction) => {
+      await form.reload({ transaction, lock: Transaction.LOCK.UPDATE })
+      if (form.status !== FormStatus.PUBLISHED) {
+        throw new ConflictException(`Form with id '${id}' is not published`)
+      }
+
+      const slug = form.slug
       const fileKeys = await this.deleteDraftApplications(id, transaction)
 
       form.status = FormStatus.ARCHIVED
@@ -954,6 +959,20 @@ export class FormsService {
 
     const fileKeys = await this.sequelize.transaction(async (transaction) => {
       try {
+        await formToBeArchived.reload({
+          transaction,
+          lock: Transaction.LOCK.UPDATE,
+        })
+        if (formToBeArchived.status !== FormStatus.PUBLISHED) {
+          throw new ConflictException(
+            `Form with id '${derivedFromId}' is not published`,
+          )
+        }
+        await formToBePublished.reload({
+          transaction,
+          lock: Transaction.LOCK.UPDATE,
+        })
+
         const applications = await this.applicationModel.findAll({
           where: { formId: id },
           include: [
