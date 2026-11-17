@@ -12,6 +12,7 @@ import {
   type User,
   UserRole,
   verdictAppealFileCategories,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -120,11 +121,33 @@ export const standingVerdictAppealEvents = (
 //     held.
 // An appeal that has not been sent has no stage yet, and neither does one that
 // is over - completed or withdrawn - since none of these describes it.
+//
+// Those four are read off what has happened to the appeal, and are what a list
+// shows until the court of appeals records a status of its own. Once it has,
+// the recorded status decides the stage instead, and adds the three only the
+// court can say:
+//   - POSTPONED: the court has postponed the appeal;
+//   - UNDER_ADVISEMENT: the appeal has been heard and awaits judgment;
+//   - COMPLETED: the court has marked the appeal as finished.
 export type VerdictAppealProgress =
   | 'SENT'
   | 'RECEIVED'
   | 'STATEMENT_DEADLINES'
   | 'SCHEDULED'
+  | 'POSTPONED'
+  | 'UNDER_ADVISEMENT'
+  | 'COMPLETED'
+
+const recordedVerdictAppealProgress: Record<
+  VerdictAppealStatus,
+  VerdictAppealProgress
+> = {
+  [VerdictAppealStatus.STATEMENT_DEADLINE_GRANTED]: 'STATEMENT_DEADLINES',
+  [VerdictAppealStatus.COURT_SESSION_SCHEDULED]: 'SCHEDULED',
+  [VerdictAppealStatus.POSTPONED]: 'POSTPONED',
+  [VerdictAppealStatus.UNDER_ADVISEMENT]: 'UNDER_ADVISEMENT',
+  [VerdictAppealStatus.COMPLETED]: 'COMPLETED',
+}
 
 // An appeal the court of appeals has concluded, or that was withdrawn: nothing
 // about its progress or its calendar is current any more.
@@ -143,6 +166,46 @@ export const nextAppealCourtSession = (
     .filter((session) => session.sessionDate >= now)
     .sort((a, b) => a.sessionDate.getTime() - b.sessionDate.getTime())[0]
 
+// The session a list shows for a verdict appeal, or 'POSTPONED' when the court
+// of appeals has postponed it and there is none to show.
+//
+// The status the court has recorded decides, the way the district court's
+// decision decides its court date: while the court is calling sessions, that
+// is the next one, or the last one held when none is ahead - the status says
+// the appeal is still on the calendar, which explains a date that has passed.
+// Any other recorded status means no session is current. Until the court has
+// recorded one, only a session still ahead is shown.
+export const currentAppealCourtSession = (
+  appealCase: Pick<
+    AppealCase,
+    'appealState' | 'verdictAppealStatus' | 'courtSessions'
+  >,
+  now: Date,
+): AppealCourtSession | 'POSTPONED' | undefined => {
+  if (isVerdictAppealOver(appealCase)) {
+    return undefined
+  }
+
+  const next = nextAppealCourtSession(appealCase, now)
+
+  switch (appealCase.verdictAppealStatus) {
+    case undefined:
+    case null:
+      return next
+    case VerdictAppealStatus.COURT_SESSION_SCHEDULED:
+      return (
+        next ??
+        [...(appealCase.courtSessions ?? [])].sort(
+          (a, b) => b.sessionDate.getTime() - a.sessionDate.getTime(),
+        )[0]
+      )
+    case VerdictAppealStatus.POSTPONED:
+      return 'POSTPONED'
+    default:
+      return undefined
+  }
+}
+
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000
 
 // A statement deadline is a day, stored as the midnight that day starts on,
@@ -154,6 +217,7 @@ export const verdictAppealProgress = (
   appealCase: Pick<
     AppealCase,
     | 'appealState'
+    | 'verdictAppealStatus'
     | 'appealCaseNumber'
     | 'sentAppealSummonses'
     | 'courtSessions'
@@ -163,6 +227,10 @@ export const verdictAppealProgress = (
 ): VerdictAppealProgress | undefined => {
   if (isVerdictAppealOver(appealCase)) {
     return undefined
+  }
+
+  if (appealCase.verdictAppealStatus) {
+    return recordedVerdictAppealProgress[appealCase.verdictAppealStatus]
   }
 
   if (nextAppealCourtSession(appealCase, now)) {
