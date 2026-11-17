@@ -2376,6 +2376,21 @@ export interface IGrantCardsListFields {
 
   /** Always display results as cards */
   grantCardsAlwaysDisplayResultsAsCards?: boolean | undefined
+
+  /** Show search input */
+  grantCardsListShowSearchInput?: boolean | undefined
+
+  /** Search input placeholder */
+  grantCardsListSearchInputPlaceholder?: string | undefined
+
+  /** Filter tags */
+  grantCardsListFilterTags?: IGenericTag[] | undefined
+
+  /** Alphabetically order filter tags */
+  grantCardsListAlphabeticallyOrderFilterTags?: boolean | undefined
+
+  /** Show pagination */
+  grantCardsListShowPagination?: boolean | undefined
 }
 
 export interface IGrantCardsList extends Entry<IGrantCardsListFields> {

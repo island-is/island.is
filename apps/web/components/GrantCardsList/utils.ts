@@ -1,9 +1,80 @@
 import { Locale } from '@island.is/shared/types'
-import { Grant, GrantStatus } from '@island.is/web/graphql/schema'
+import {
+  GetGrantsInput,
+  GetGrantsInputSortByEnum,
+  Grant,
+  GrantCardsListSorting,
+  GrantStatus,
+} from '@island.is/web/graphql/schema'
 import { containsTimePart } from '@island.is/web/utils/containsTimePart'
 import { formatDate, toIcelandTime } from '@island.is/web/utils/formatDate'
 
 import { OPEN_GRANT_STATUSES, TranslationKeys } from './types'
+
+export const GRANT_CARDS_PAGE_SIZE = 10
+
+export const getCappedTotal = (total: number, cap: number | null | undefined) =>
+  cap == null ? total : Math.min(total, cap)
+
+export const getVisibleCountOnPage = (
+  page: number,
+  cap: number | null | undefined,
+  pageSize: number,
+) => {
+  if (cap == null) {
+    return pageSize
+  }
+  return Math.min(Math.max(cap - (page - 1) * pageSize, 0), pageSize)
+}
+
+export const buildGrantsQueryInput = ({
+  fundIds,
+  lang,
+  page,
+  searchValue,
+  tags,
+  tagGroups,
+  showPagination,
+  maxNumberOfCards,
+  sorting,
+}: {
+  fundIds: string[]
+  lang: Locale
+  page: number
+  searchValue: string
+  tags: string[]
+  tagGroups?: Record<string, string[]>
+  showPagination: boolean
+  maxNumberOfCards?: number | null
+  sorting?: GrantCardsListSorting | null
+}): GetGrantsInput | null => {
+  if (fundIds.length === 0 || maxNumberOfCards === 0) {
+    return null
+  }
+
+  const input: GetGrantsInput = {
+    funds: fundIds,
+    lang,
+    page: showPagination ? page : 1,
+    size: showPagination
+      ? GRANT_CARDS_PAGE_SIZE
+      : maxNumberOfCards ?? GRANT_CARDS_PAGE_SIZE,
+    sort:
+      sorting === GrantCardsListSorting.Alphabetical
+        ? GetGrantsInputSortByEnum.Alphabetical
+        : GetGrantsInputSortByEnum.RecentlyUpdated,
+  }
+
+  if (searchValue) {
+    input.search = searchValue
+  }
+  if (tags.length > 0) {
+    input.categories = tags
+    input.tagGroups = tagGroups
+  }
+
+  return input
+}
 
 export const getTranslationString = (
   key: keyof TranslationKeys,
