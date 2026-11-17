@@ -1,41 +1,24 @@
-import { Link, Stack, usePathname } from 'expo-router'
-import { StyleSheet, View, Text } from 'react-native'
-import { tokens } from '@/ui'
+import { Redirect, Stack, useRouter } from 'expo-router'
+import React, { useEffect } from 'react'
 
-export default function NotFoundScreen(props: any) {
-  const pathname = usePathname()
-  console.log('Rendering NotFoundScreen with props', props, { pathname })
+/**
+ * A link to a screen the app doesn't have, such as Cognito's return link in
+ * testing builds. Goes back to where the person was, or home.
+ */
+export default function NotFoundScreen() {
+  const router = useRouter()
+  const canGoBack = router.canGoBack()
+
+  useEffect(() => {
+    if (canGoBack) {
+      router.back()
+    }
+  }, [canGoBack, router])
+
   return (
     <>
-      <Stack.Screen options={{ title: 'Oops!' }} />
-      <View style={styles.container}>
-        <Text style={styles.title}>This screen doesn't exist.</Text>
-
-        <Link href="/" style={styles.link}>
-          <Text style={styles.linkText}>Go to home screen!</Text>
-        </Link>
-      </View>
+      <Stack.Screen options={{ headerShown: false, animation: 'none' }} />
+      {!canGoBack && <Redirect href="/(auth)/(tabs)" />}
     </>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  link: {
-    marginTop: 15,
-    paddingVertical: 15,
-  },
-  linkText: {
-    fontSize: 14,
-    color: tokens.interactive.foreground.primary,
-  },
-})
