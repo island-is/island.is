@@ -27,10 +27,6 @@ export interface IasClientOptions {
   deviceDetails?: DeviceDetails
   device: IasDevice
   storage: IasStorage
-  /** For dev builds: IAS's verifier tests need real request bodies. */
-  onAttestationRequest?: (body: Record<string, unknown>) => void
-  /** For dev builds: an expired attestation was renewed. */
-  onAttestationRenewed?: () => void
 }
 
 export interface DeviceDetails {
@@ -174,7 +170,6 @@ export function createIasClient(options: IasClientOptions): IasClient {
       ...evidence,
       ...options.deviceDetails,
     }
-    options.onAttestationRequest?.(body)
     const response = await request<AttestationResponse>(
       'POST',
       '/app/attestation',
@@ -193,7 +188,6 @@ export function createIasClient(options: IasClientOptions): IasClient {
       await parse<AttestationResponse>(response, 'POST /app/attestation/renew'),
       key,
     )
-    options.onAttestationRenewed?.()
     return attestation
   })
 

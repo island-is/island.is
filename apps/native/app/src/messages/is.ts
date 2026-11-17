@@ -55,7 +55,6 @@ export const is = {
   'electronicId.error.tooManyRequests':
     'Of margar beiðnir um rafræn skilríki í bili. Reyndu aftur eftir nokkrar mínútur.',
   'applock.logout': 'Útskrá',
-  'biometrics.cancel': 'Hætta við',
 
   // log in again after the update
   'relogin.title': 'Skráðu þig inn aftur',

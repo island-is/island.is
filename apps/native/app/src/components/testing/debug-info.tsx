@@ -14,13 +14,6 @@ import {
 import { Button, token } from '@/ui'
 import { SelectionMenu } from 'react-native-platform-components'
 import { cognitoAuthUrl } from '../../graphql/client'
-import {
-  GERVIMENN_PHONES,
-  runBiometricUnlockTest,
-  runNativeAppLogin,
-  runNativeLoginTest,
-} from './native-login-test'
-import { nextOnboardingStep } from '@/utils/onboarding'
 
 // The feature deployment for native login: IAS and the API that trusts it.
 // The switcher doesn't list it, so this is what it would have given.
@@ -129,51 +122,6 @@ export function DebugInfo() {
   const [showEnvPicker, setShowEnvPicker] = React.useState(false)
   const [envs, setEnvs] = React.useState<EnvironmentConfig[]>([])
   const iasIssuer = useEnvironmentStore((state) => state.environment.iasIssuer)
-  const [nativeTestStatus, setNativeTestStatus] = React.useState<string>()
-  const [nativeTestRunning, setNativeTestRunning] = React.useState(false)
-  // A different gervimaður per platform, so a test on one phone doesn't end
-  // the other phone's app login.
-  const [nativeTestPhone, setNativeTestPhone] = React.useState(
-    GERVIMENN_PHONES[Platform.OS === 'ios' ? 1 : 0],
-  )
-
-  const onNextTestUserPress = () => {
-    const index = GERVIMENN_PHONES.indexOf(nativeTestPhone)
-    setNativeTestPhone(GERVIMENN_PHONES[(index + 1) % GERVIMENN_PHONES.length])
-  }
-
-  const runNativeTest = async (
-    test: (report: (line: string) => void) => Promise<boolean>,
-  ) => {
-    setNativeTestRunning(true)
-    const lines: string[] = []
-    const passed = await test((line) => {
-      lines.push(line)
-      console.log(`[ias-test] ${line}`)
-      setNativeTestStatus(line)
-    })
-    setNativeTestRunning(false)
-    setNativeTestStatus(passed ? 'Passed' : 'Failed')
-    Alert.alert(
-      passed ? 'Native login test passed' : 'Native login test failed',
-      lines.join('\n'),
-    )
-  }
-
-  const onNativeAppLoginPress = () =>
-    runNativeTest(async (report) => {
-      const passed = await runNativeAppLogin(report, { phone: nativeTestPhone })
-      if (passed) {
-        await nextOnboardingStep()
-      }
-      return passed
-    })
-
-  const onNativeLoginTestPress = (keepLogin: boolean) =>
-    runNativeTest((report) =>
-      runNativeLoginTest(report, { keepLogin, phone: nativeTestPhone }),
-    )
-
   const onEnvironmentPress = () => {
     if (loading) return
 
@@ -265,59 +213,6 @@ export function DebugInfo() {
                 },
           ]}
         />
-        {__DEV__ ? (
-          <>
-            <DebugRow
-              title="User"
-              value={`Gervimaður ${nativeTestPhone}`}
-              actions={[
-                {
-                  title: '(Next)',
-                  disabled: nativeTestRunning,
-                  onPress: onNextTestUserPress,
-                },
-              ]}
-            />
-            <DebugRow
-              title="Native"
-              value={nativeTestStatus ?? 'Login test'}
-              actions={[
-                {
-                  title: '(Run)',
-                  disabled: nativeTestRunning,
-                  onPress: () => onNativeLoginTestPress(false),
-                },
-                {
-                  title: '(Keep)',
-                  disabled: nativeTestRunning,
-                  onPress: () => onNativeLoginTestPress(true),
-                },
-              ]}
-            />
-            <DebugRow
-              title="App"
-              value="Native login"
-              actions={[
-                {
-                  title: '(Log in)',
-                  disabled: nativeTestRunning,
-                  onPress: onNativeAppLoginPress,
-                },
-              ]}
-            />
-            <DebugRow
-              title="Unlock"
-              value="Kept biometric key"
-              actions={[
-                {
-                  title: '(Run)',
-                  disabled: nativeTestRunning,
-                  onPress: () => runNativeTest(runBiometricUnlockTest),
-                },
-              ]}
-            />
-          </>
-        ) : null}
         <DebugRow
           title="Cognito"
           value={isCognitoAuth ? `Yes (exp ${cognitoMinutes}m)` : 'No'}

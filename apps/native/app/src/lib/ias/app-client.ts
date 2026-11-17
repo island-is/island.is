@@ -68,19 +68,6 @@ export function getIasClient(): IasClient {
               },
               device: deviceKeysIasDevice,
               storage: keychainStorage,
-              onAttestationRequest: __DEV__
-                ? (body) => {
-                    console.log(
-                      '[ias] POST /app/attestation',
-                      JSON.stringify(body),
-                    )
-                  }
-                : undefined,
-              onAttestationRenewed: __DEV__
-                ? () => {
-                    console.log('[ias] Renewed the attestation')
-                  }
-                : undefined,
             }),
     }
   }

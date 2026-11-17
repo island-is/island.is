@@ -201,7 +201,6 @@ function RootLayoutNav({
                   name="login"
                   options={{ headerShown: false, animation: 'none' }}
                 />
-                <Stack.Screen name="dev" options={{ headerShown: false }} />
               </Stack>
               <PromptModal />
               <ToastHost fallback />
