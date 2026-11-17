@@ -205,7 +205,9 @@ export const vehicleSubSection = buildSubSection({
             getAllCountryCodes(locale).map((country) => ({
               value: country.code,
               label:
-                locale === 'is' ? country.name_is ?? country.name : country.name,
+                locale === 'is'
+                  ? country.name_is ?? country.name
+                  : country.name,
             })),
         }),
       ],

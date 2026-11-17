@@ -17,9 +17,7 @@
   "paths": {
     "/registration/preregistrationrejectedconfirmation": {
       "post": {
-        "tags": [
-          "Registration"
-        ],
+        "tags": ["Registration"],
         "parameters": [
           {
             "name": "api-version",
@@ -115,9 +113,7 @@
     },
     "/registration/preregistrationonholdconfirmation": {
       "post": {
-        "tags": [
-          "Registration"
-        ],
+        "tags": ["Registration"],
         "parameters": [
           {
             "name": "api-version",
@@ -213,9 +209,7 @@
     },
     "/registration/preregistrationrecievedconfirmation": {
       "post": {
-        "tags": [
-          "Registration"
-        ],
+        "tags": ["Registration"],
         "parameters": [
           {
             "name": "api-version",
@@ -311,9 +305,7 @@
     },
     "/registration/printpreregistrationdone": {
       "post": {
-        "tags": [
-          "Registration"
-        ],
+        "tags": ["Registration"],
         "parameters": [
           {
             "name": "api-version",
@@ -409,9 +401,7 @@
     },
     "/registration/preregistrationecocdone": {
       "post": {
-        "tags": [
-          "Registration"
-        ],
+        "tags": ["Registration"],
         "parameters": [
           {
             "name": "api-version",
@@ -480,9 +470,7 @@
     },
     "/registration/requestregistrationcardprint": {
       "post": {
-        "tags": [
-          "Registration"
-        ],
+        "tags": ["Registration"],
         "parameters": [
           {
             "name": "permno",
@@ -618,9 +606,7 @@
     },
     "/registration/newregistrationrequestpdf": {
       "post": {
-        "tags": [
-          "Registration"
-        ],
+        "tags": ["Registration"],
         "parameters": [
           {
             "name": "api-version",
@@ -851,13 +837,7 @@
         "description": "Email model"
       },
       "PostPreRegistrationConfirmation": {
-        "required": [
-          "email",
-          "permno",
-          "receptionNumber",
-          "username",
-          "vin"
-        ],
+        "required": ["email", "permno", "receptionNumber", "username", "vin"],
         "type": "object",
         "properties": {
           "receptionNumber": {
@@ -889,9 +869,7 @@
         "additionalProperties": false
       },
       "PostPreRegistrationOnHoldModel": {
-        "required": [
-          "email"
-        ],
+        "required": ["email"],
         "type": "object",
         "properties": {
           "email": {
@@ -917,9 +895,7 @@
         "additionalProperties": false
       },
       "PostPreRegistrationRecievedModel": {
-        "required": [
-          "email"
-        ],
+        "required": ["email"],
         "type": "object",
         "properties": {
           "email": {
@@ -947,9 +923,7 @@
         "additionalProperties": false
       },
       "PostPreRegistrationRejectedModel": {
-        "required": [
-          "email"
-        ],
+        "required": ["email"],
         "type": "object",
         "properties": {
           "email": {
@@ -1011,9 +985,7 @@
         "additionalProperties": false
       },
       "SendPreRegistrationConfirmationDto": {
-        "required": [
-          "confirmationStatus"
-        ],
+        "required": ["confirmationStatus"],
         "type": "object",
         "properties": {
           "confirmationStatus": {
@@ -1024,9 +996,7 @@
         "additionalProperties": false
       },
       "SendPreRegistrationOnHoldConfirmationDto": {
-        "required": [
-          "confirmationStatus"
-        ],
+        "required": ["confirmationStatus"],
         "type": "object",
         "properties": {
           "confirmationStatus": {
@@ -1037,9 +1007,7 @@
         "additionalProperties": false
       },
       "SendPreRegistrationRecievedConfirmationDto": {
-        "required": [
-          "confirmationStatus"
-        ],
+        "required": ["confirmationStatus"],
         "type": "object",
         "properties": {
           "confirmationStatus": {
@@ -1050,9 +1018,7 @@
         "additionalProperties": false
       },
       "SendPreRegistrationRejectedConfirmationDto": {
-        "required": [
-          "confirmationStatus"
-        ],
+        "required": ["confirmationStatus"],
         "type": "object",
         "properties": {
           "confirmationStatus": {
