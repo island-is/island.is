@@ -12,6 +12,8 @@ const PROOF_ALGORITHMS: jwt.Algorithm[] = ['ES256', 'RS256', 'PS256']
 const NONCE_LIFETIME_SECONDS = 300
 /** How far ahead of this instance another instance's clock may be. */
 const SERVER_CLOCK_SKEW_SECONDS = 5
+/** A proof is remembered this much longer than its nonce can be accepted. */
+const REPLAY_MARGIN_SECONDS = 60
 const MAX_REMEMBERED_PROOFS = 50_000
 
 export class DpopError extends Error {}
@@ -24,7 +26,8 @@ export class DpopNonceError extends DpopError {}
  * is fresh by our clock and the phone's clock doesn't matter. The nonce is the
  * time it was issued, so nothing is stored and any instance can check it. With
  * a secret shared by the instances it is also signed, so a client can't make
- * its own; without one it is as strong as the iat check it replaces.
+ * its own. Without one a client can, and a proof is only as fresh as the client
+ * says, within the nonce's lifetime.
  */
 export class DpopNonces {
   constructor(private readonly secret?: string) {}
@@ -130,10 +133,7 @@ export class DpopReplayCache {
     }
 
     if (this.seen.has(jti)) return false
-    this.seen.set(
-      jti,
-      now + NONCE_LIFETIME_SECONDS + SERVER_CLOCK_SKEW_SECONDS * 2,
-    )
+    this.seen.set(jti, now + NONCE_LIFETIME_SECONDS + REPLAY_MARGIN_SECONDS)
     return true
   }
 }
