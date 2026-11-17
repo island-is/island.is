@@ -266,6 +266,84 @@ describe('LimitedAccessAppealCaseController - Create event log', () => {
     })
   })
 
+  describe('district-only confirmed defender sends a verdict-appeal statement', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants: [
+        {
+          id: defendantId,
+          isDefenderChoiceConfirmed: true,
+          defenderNationalId: defenderNationalId,
+        },
+      ],
+    } as unknown as Case
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        theCase,
+        {
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          defendantId,
+        },
+        verdictAppealCase,
+      )
+    })
+
+    it('should forbid the request', () => {
+      expect(then.error).toBeDefined()
+      expect(then.error.message).toBe(
+        `Current user is not a confirmed appeal defender of defendant ${defendantId}`,
+      )
+      expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('appeal-confirmed defender sends a verdict-appeal statement already filed', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants: [
+        {
+          id: defendantId,
+          isAppealDefenderConfirmed: true,
+          appealDefenderNationalId: defenderNationalId,
+        },
+      ],
+    } as unknown as Case
+    const alreadyFiledAppealCase = {
+      ...verdictAppealCase,
+      appealEventLogs: [
+        {
+          id: uuid(),
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          defendantId,
+        },
+      ],
+    } as AppealCase
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        theCase,
+        {
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          defendantId,
+        },
+        alreadyFiledAppealCase,
+      )
+    })
+
+    it('should reject a duplicate filing', () => {
+      expect(then.error).toBeDefined()
+      expect(then.error.message).toBe(
+        `The party has already filed its statement in appeal case ${appealCaseId} of case ${caseId}`,
+      )
+      expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
+    })
+  })
+
   describe('defender sends an appeal statement on a non-indictment case', () => {
     const theCase = { id: caseId, type: CaseType.CUSTODY } as Case
 

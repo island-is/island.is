@@ -30,6 +30,7 @@ import {
   CaseOrigin,
   getAppealJudgeUserIds,
   hasAllAppealJudges,
+  hasFiledAppealStatement,
   IndictmentCaseNotificationType,
   isCompletedCase,
   isDefenceUser,
@@ -1180,7 +1181,8 @@ export class AppealCaseService {
 
     // Verdict-appeal statements are per party. Require an explicit party so we
     // never fall back to writing one row for every party the defence user
-    // represents.
+    // represents. File create requires Landsréttur confirmation for these
+    // categories — the event log must match that bar.
     if (requiresScopedParty || party?.defendantId || party?.civilClaimantId) {
       if (
         requiresScopedParty &&
@@ -1196,7 +1198,17 @@ export class AppealCaseService {
         theCase,
         user,
         party ?? {},
+        { appealConfirmationOnly: requiresScopedParty },
       )
+
+      if (
+        requiresScopedParty &&
+        hasFiledAppealStatement(appealCase.appealEventLogs, partyRow)
+      ) {
+        throw new BadRequestException(
+          `The party has already filed its statement in appeal case ${appealCase.id} of case ${theCase.id}`,
+        )
+      }
 
       await this.writeEventLogRows(
         theCase,
@@ -1221,13 +1233,17 @@ export class AppealCaseService {
     return appealCase
   }
 
-  // Validates that the defence user is confirmed (district or appeal) for the
-  // named party and returns a single party row for writeEventLogRows.
+  // Validates that the defence user is confirmed for the named party and
+  // returns a single party row for writeEventLogRows. Verdict-appeal statement
+  // events require Landsréttur confirmation only (appealConfirmationOnly).
   private resolveScopedDefenceParty(
     theCase: Case,
     user: User,
     party: { defendantId?: string; civilClaimantId?: string },
+    options: { appealConfirmationOnly?: boolean } = {},
   ): { defendantId?: string; civilClaimantId?: string } {
+    const { appealConfirmationOnly = false } = options
+
     if (party.defendantId && party.civilClaimantId) {
       throw new BadRequestException(
         'Provide either defendantId or civilClaimantId, not both',
@@ -1245,16 +1261,19 @@ export class AppealCaseService {
         )
       }
 
-      if (
-        !Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [
-          defendant,
-        ]) &&
-        !Defendant.isConfirmedAppealDefenderOfDefendant(user.nationalId, [
-          defendant,
-        ])
-      ) {
+      const isAppealConfirmed = Defendant.isConfirmedAppealDefenderOfDefendant(
+        user.nationalId,
+        [defendant],
+      )
+      const isDistrictConfirmed =
+        !appealConfirmationOnly &&
+        Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
+
+      if (!isAppealConfirmed && !isDistrictConfirmed) {
         throw new ForbiddenException(
-          `Current user is not a confirmed defender of defendant ${party.defendantId}`,
+          appealConfirmationOnly
+            ? `Current user is not a confirmed appeal defender of defendant ${party.defendantId}`
+            : `Current user is not a confirmed defender of defendant ${party.defendantId}`,
         )
       }
 
@@ -1272,17 +1291,22 @@ export class AppealCaseService {
         )
       }
 
-      if (
-        !CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(user.nationalId, [
-          civilClaimant,
-        ]) &&
-        !CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
+      const isAppealConfirmed =
+        CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
           user.nationalId,
           [civilClaimant],
         )
-      ) {
+      const isDistrictConfirmed =
+        !appealConfirmationOnly &&
+        CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(user.nationalId, [
+          civilClaimant,
+        ])
+
+      if (!isAppealConfirmed && !isDistrictConfirmed) {
         throw new ForbiddenException(
-          `Current user is not a confirmed spokesperson of civil claimant ${party.civilClaimantId}`,
+          appealConfirmationOnly
+            ? `Current user is not a confirmed appeal spokesperson of civil claimant ${party.civilClaimantId}`
+            : `Current user is not a confirmed spokesperson of civil claimant ${party.civilClaimantId}`,
         )
       }
 

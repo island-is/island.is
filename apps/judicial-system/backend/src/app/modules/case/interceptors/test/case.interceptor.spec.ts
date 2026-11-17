@@ -1371,6 +1371,42 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     jest.restoreAllMocks()
   })
 
+  it('keeps a midnight statement deadline open through its calendar day', async () => {
+    // own_deadline is 2026-11-15T00:00:00.000Z; the party has that whole day.
+    jest
+      .spyOn(Date, 'now')
+      .mockReturnValue(new Date('2026-11-15T12:00:00.000Z').getTime())
+
+    const theCase = makeIndictmentWithVerdictAppeal()
+    mockRequest.mockImplementationOnce(() => ({
+      user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+    }))
+    mockHandle.mockReturnValueOnce(of(theCase))
+
+    const interceptor = new CaseInterceptor({
+      findOriginalAncestorId: (c: { id?: string }) => Promise.resolve(c.id),
+    } as unknown as CaseRepositoryService)
+
+    const result = (await firstValueFrom(
+      interceptor.intercept(
+        {
+          switchToHttp: () => ({ getRequest: mockRequest }),
+        } as unknown as ExecutionContext,
+        { handle: mockHandle } as unknown as CallHandler,
+      ),
+    )) as {
+      verdictAppealCase: {
+        statementDeadlines: { id: string; isExpired?: boolean }[]
+      }
+    }
+
+    expect(result.verdictAppealCase.statementDeadlines).toEqual([
+      expect.objectContaining({ id: 'own_deadline', isExpired: false }),
+    ])
+
+    jest.restoreAllMocks()
+  })
+
   it('leaves statement deadlines unenriched for non-defence users', async () => {
     const theCase = makeIndictmentWithVerdictAppeal()
     mockRequest.mockImplementationOnce(() => ({

@@ -85,29 +85,25 @@ const resolveVerdictAppealParty = (
 
   const appealParties = getDefenceUserAppealConfirmedPartyIds(workingCase, user)
 
+  // An explicit party query that does not match an appeal-confirmed party
+  // fails closed — never remap to another client.
   if (queryDefendantId) {
-    const match = appealParties.find(
-      (party) => party.defendantId === queryDefendantId,
+    return (
+      appealParties.find((party) => party.defendantId === queryDefendantId) ??
+      {}
     )
-
-    if (match) {
-      return match
-    }
   }
 
   if (queryCivilClaimantId) {
-    const match = appealParties.find(
-      (party) => party.civilClaimantId === queryCivilClaimantId,
+    return (
+      appealParties.find(
+        (party) => party.civilClaimantId === queryCivilClaimantId,
+      ) ?? {}
     )
-
-    if (match) {
-      return match
-    }
   }
 
-  // Stay on appeal-confirmed parties only. Do not fall back to
-  // getDefenceUserPartyIds (district-or-appeal, first match) — that can
-  // pick the wrong client when the route is opened without query params.
+  // No party query: pick among appeal-confirmed parties by earliest deadline.
+  // Do not fall back to getDefenceUserPartyIds (district-or-appeal).
   return getVerdictAppealStatementParty(workingCase, user) ?? {}
 }
 
@@ -121,6 +117,16 @@ const Statement = ({ isVerdictAppeal = false }: Props) => {
   const { defendantId, civilClaimantId } = isVerdictAppeal
     ? resolveVerdictAppealParty(workingCase, user, router.query)
     : getDefenceUserPartyIds(workingCase, user)
+  const filingPartyName = isVerdictAppeal
+    ? defendantId
+      ? workingCase.defendants?.find((defendant) => defendant.id === defendantId)
+          ?.name
+      : civilClaimantId
+      ? workingCase.civilClaimants?.find(
+          (civilClaimant) => civilClaimant.id === civilClaimantId,
+        )?.name
+      : undefined
+    : undefined
   const {
     uploadFiles,
     allFilesDoneOrError,
@@ -291,14 +297,21 @@ const Statement = ({ isVerdictAppeal = false }: Props) => {
             </Text>
           )}
           {isVerdictAppeal ? (
-            workingCase.rulingDate && (
-              <DateLabel
-                text="Máli lokið"
-                date={workingCase.rulingDate}
-                hideTime
-                as="h3"
-              />
-            )
+            <>
+              {workingCase.rulingDate && (
+                <DateLabel
+                  text="Máli lokið"
+                  date={workingCase.rulingDate}
+                  hideTime
+                  as="h3"
+                />
+              )}
+              {filingPartyName && (
+                <Text variant="h5" as="h5">
+                  Greinargerð fyrir {filingPartyName}
+                </Text>
+              )}
+            </>
           ) : (
             <>
               {workingCase.rulingDate && (
