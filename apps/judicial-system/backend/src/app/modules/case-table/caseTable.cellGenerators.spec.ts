@@ -455,6 +455,41 @@ describe('public prosecution appealed verdict cell generators', () => {
       ).toEqual({ str: '11.8.2026' })
     })
 
+    // Withdrawing the defendant's appeal clears the date on the verdict, so
+    // the withdrawal leaves nothing behind for the row to read.
+    it('does not count a defence appeal that was withdrawn', () => {
+      const c = row({
+        defendants: [{ id: 'defendant_id', verdicts: [{ appealDate: null }] }],
+        appeal: {
+          appealEventLogs: [
+            appealEvent(
+              AppealEventType.APPEALED,
+              UserRole.DEFENDER,
+              '2026-08-03T10:00:00.000Z',
+            ),
+            appealEvent(
+              AppealEventType.APPEALED,
+              UserRole.PROSECUTOR,
+              '2026-08-05T10:00:00.000Z',
+            ),
+            appealEvent(
+              AppealEventType.APPEAL_WITHDRAWN,
+              UserRole.DEFENDER,
+              '2026-08-25T10:00:00.000Z',
+            ),
+          ],
+        },
+      })
+
+      expect(
+        caseTableCellGenerators.verdictAppealAppellantTag.generate(c, user)
+          .value,
+      ).toEqual({ color: 'blue', text: 'Ákæruvald' })
+      expect(
+        caseTableCellGenerators.verdictAppealDate.generate(c, user).value,
+      ).toEqual({ str: '5.8.2026' })
+    })
+
     describe('without an appeal case', () => {
       it('reads a prosecution appeal off the review decision', () => {
         const c = row({

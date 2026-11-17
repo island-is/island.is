@@ -956,6 +956,11 @@ const getVerdictAppealSummary = (
     // Only the latest verdict is relevant
     const verdictAppealDate = defendant.verdicts?.[0]?.appealDate
 
+    // Unlike the review decision, the verdict date needs no check against the
+    // record: withdrawing the defendant's appeal clears the date in the same
+    // transaction that writes the withdrawal, so a date that is there is a
+    // standing appeal. It is also what puts the case on this list, so a row
+    // that ignored it would be listed with nobody named.
     if (defenceEvent || verdictAppealDate) {
       hasDefenceAppeal = true
 
