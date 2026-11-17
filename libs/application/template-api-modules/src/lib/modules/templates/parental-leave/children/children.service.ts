@@ -19,6 +19,7 @@ import {
   ParentalLeaveApi,
   Right as ParentalLeaveEntitlement,
   PregnancyApi,
+  fetchParentalLeaves,
 } from '@island.is/clients/vmst'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
@@ -340,12 +341,7 @@ export class ChildrenService {
     }
 
     try {
-      const results =
-        await this.parentalLeaveApi.parentalLeaveGetParentalLeaves({
-          nationalRegistryId: nationalId,
-        })
-
-      return results.parentalLeaves ?? []
+      return await fetchParentalLeaves(this.parentalLeaveApi, nationalId)
     } catch (e) {
       this.logger.error(`Could not fetch parental leaves for ${nationalId}`, e)
 

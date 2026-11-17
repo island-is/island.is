@@ -1,9 +1,13 @@
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
-import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import type {
+  Defendant,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
+  InstitutionType,
   ServiceRequirement,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -14,6 +18,7 @@ import {
 
 import {
   canRegisterVerdictAppeal,
+  canWithdrawVerdictAppeal,
   isAfterVerdictAppealDeadline,
   withAppealDefender,
 } from './VerdictTimelineCard.logic'
@@ -145,6 +150,131 @@ describe('VerdictTimelineCard.logic', () => {
           publicProsecutorStaff,
         ),
       ).toBe(false)
+    })
+  })
+
+  describe('canWithdrawVerdictAppeal', () => {
+    const appealedDefendant = servedDefendant({
+      verdict: {
+        id: 'verdict_id',
+        serviceRequirement: ServiceRequirement.REQUIRED,
+        serviceDate: '2026-08-01T10:00:00.000Z',
+        appealDate: '2026-08-16T00:00:00.000Z',
+      },
+    })
+    const withAppealCase = completedCase({
+      verdictAppealCase: { id: 'verdict_appeal_case_id' },
+    })
+
+    it('allows the public prosecution office to withdraw on the appeal case', () => {
+      expect(
+        canWithdrawVerdictAppeal(
+          withAppealCase,
+          appealedDefendant,
+          publicProsecutorStaff,
+          true,
+        ),
+      ).toBe(true)
+    })
+
+    // A public prosecution prosecutor reaches the card once a verdict appeal
+    // stands. The prosecution withdraws its own appeal by changing the review
+    // decision, and the defendant's appeal is not the prosecutor's to withdraw.
+    it('denies a prosecutor at the public prosecution office', () => {
+      const prosecutor = mockUser(UserRole.PROSECUTOR)
+      const publicProsecutionProsecutor = {
+        ...prosecutor,
+        institution: {
+          ...prosecutor.institution,
+          type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+        },
+      } as User
+
+      expect(
+        canWithdrawVerdictAppeal(
+          withAppealCase,
+          appealedDefendant,
+          publicProsecutionProsecutor,
+          true,
+        ),
+      ).toBe(false)
+      expect(
+        canWithdrawVerdictAppeal(
+          completedCase(),
+          appealedDefendant,
+          publicProsecutionProsecutor,
+          false,
+        ),
+      ).toBe(false)
+    })
+
+    it.each([
+      UserRole.PROSECUTOR,
+      UserRole.PROSECUTOR_REPRESENTATIVE,
+      UserRole.DEFENDER,
+    ])('denies a %s', (role) => {
+      expect(
+        canWithdrawVerdictAppeal(
+          withAppealCase,
+          appealedDefendant,
+          mockUser(role),
+          true,
+        ),
+      ).toBe(false)
+      expect(
+        canWithdrawVerdictAppeal(
+          completedCase(),
+          appealedDefendant,
+          mockUser(role),
+          false,
+        ),
+      ).toBe(false)
+    })
+
+    it('denies without a user', () => {
+      expect(
+        canWithdrawVerdictAppeal(
+          withAppealCase,
+          appealedDefendant,
+          undefined,
+          true,
+        ),
+      ).toBe(false)
+    })
+
+    it('denies when the defendant has not appealed', () => {
+      expect(
+        canWithdrawVerdictAppeal(
+          withAppealCase,
+          servedDefendant(),
+          publicProsecutorStaff,
+          true,
+        ),
+      ).toBe(false)
+    })
+
+    it('denies an appeal case while verdict appeals are hidden', () => {
+      expect(
+        canWithdrawVerdictAppeal(
+          withAppealCase,
+          appealedDefendant,
+          publicProsecutorStaff,
+          false,
+        ),
+      ).toBe(false)
+    })
+
+    // An appeal date stamped before appeal cases existed is cleared on the
+    // verdict, which does not depend on the feature.
+    it('allows clearing an appeal date that has no appeal case', () => {
+      expect(
+        canWithdrawVerdictAppeal(
+          completedCase(),
+          appealedDefendant,
+          publicProsecutorStaff,
+          false,
+        ),
+      ).toBe(true)
     })
   })
 

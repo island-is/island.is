@@ -14,6 +14,7 @@ import {
 } from '@island.is/island-ui/core'
 import { SidebarCards } from '@island.is/web/components'
 import { ProjectPage } from '@island.is/web/graphql/schema'
+import { usePlausiblePageview } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 
@@ -51,6 +52,8 @@ export const ProjectWrapper: React.FC<
   const router = useRouter()
 
   const { activeLocale } = useI18n()
+
+  usePlausiblePageview(projectPage.trackingDomain)
 
   const mobileNavigationButtonOpenLabel =
     activeLocale === 'is' ? 'Opna' : 'Open'

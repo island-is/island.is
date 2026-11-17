@@ -5,7 +5,10 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
-import { CaseWhereOptions } from '../caseTable.types'
+import {
+  CaseWhereOptions,
+  presentVerdictAppealAsRowAppeal,
+} from '../caseTable.types'
 import { publicProsecutionIndictmentsAccessWhereOptions } from './access'
 import {
   buildHasAppealedVerdictCondition,
@@ -56,8 +59,10 @@ export const publicProsecutionIndictmentsReviewedWhereOptions = (
 // appeal prosecutor is one of the exemptions, so a case that is reachable at
 // all already satisfies it.
 //
-// One row per case, so no displayCases - unlike the office's list of the same
-// name, which gives each defendant a row of their own.
+// One row per case - unlike the office's list of the same name, which gives
+// each defendant a row of their own - and that row is about the verdict appeal,
+// which is what the columns read. A verdict appealed before appeal cases were
+// kept has none, and its row simply has no appeal to show.
 export const publicProsecutionIndictmentsAppealedWhereOptions = (
   user: User,
 ): CaseWhereOptions => ({
@@ -68,4 +73,9 @@ export const publicProsecutionIndictmentsAppealedWhereOptions = (
       buildHasAppealedVerdictCondition(),
     ],
   },
+  displayCases: presentVerdictAppealAsRowAppeal,
+  // On this list a case is the user's when they argue the appeal. The office
+  // brings indictments of its own, and having prosecuted one in the district
+  // court does not make its appeal theirs.
+  isMyCase: (theCase) => theCase.appealProsecutorId === user.id,
 })

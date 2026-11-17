@@ -43,6 +43,7 @@ export enum NotificationType {
   HmsHousingBenefitsPruned = 'HmsHousingBenefitsPrunedNotification',
   ApplicationPruneReminder = 'ApplicationPruneReminderNotification',
   ApplicationPeriodEndingReminder = 'ApplicationPeriodEndingReminderNotification',
+  ParentalLeaveRejected = 'ParentalLeaveRejectedNotification',
 }
 
 interface NotificationKeysMap {
@@ -143,6 +144,10 @@ interface NotificationKeysMap {
     address: string
   }
   [NotificationType.ApplicationCompletionReminder]: {
+    applicationLink: string
+  }
+  [NotificationType.ParentalLeaveRejected]: {
+    rejectedBy: string
     applicationLink: string
   }
 }
@@ -283,6 +288,9 @@ export const NotificationConfig = defineNotificationConfig({
   },
   [NotificationType.ApplicationPeriodEndingReminder]: {
     templateId: 'HNIPP.AS.PERIOD.ENDING.REMINDER',
+  },
+  [NotificationType.ParentalLeaveRejected]: {
+    templateId: 'HNIPP.AS.PL.REJECTED',
   },
 } as const)
 

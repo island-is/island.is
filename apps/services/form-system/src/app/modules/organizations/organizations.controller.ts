@@ -31,6 +31,7 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 import { OrganizationAdminDto } from './models/dto/organizationAdmin.dto'
 import { OrganizationZendeskInstanceDto } from './models/dto/organizationZendeskInstance.dto'
 import { OrganizationDelegationDto } from './models/dto/organizationDelegation.dto'
+import { OrganizationLogoDto } from './models/dto/organizationLogo.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.formSystem)
@@ -85,6 +86,18 @@ export class OrganizationsController {
       user,
       organizationZendeskInstanceDto,
     )
+  }
+
+  @ApiOperation({ summary: 'Update Icelandic organization logo' })
+  @ApiNoContentResponse({ description: 'Organization logo updated' })
+  @ApiBody({ type: OrganizationLogoDto })
+  @Put('logo')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async updateLogo(
+    @CurrentUser() user: User,
+    @Body() organizationLogoDto: OrganizationLogoDto,
+  ): Promise<void> {
+    return this.organizationsService.updateLogo(user, organizationLogoDto)
   }
 
   @ApiOperation({ summary: 'Add organization delegation' })

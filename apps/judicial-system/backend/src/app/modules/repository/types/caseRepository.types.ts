@@ -607,7 +607,9 @@ export const caseInclude: Includeable[] = [
       {
         // A split case takes the civil claimants that applied to the defendant
         // who left with it, so a spokesperson can be a confirmed party here.
-        // The attributes are the ones that decide whether they may open it.
+        // District and appeal confirmation fields both matter: the zip route
+        // loads this include via CaseExistsGuard and judges split files against
+        // the split case's parties.
         model: CivilClaimant,
         as: 'civilClaimants',
         attributes: [
@@ -615,6 +617,9 @@ export const caseInclude: Includeable[] = [
           'hasSpokesperson',
           'spokespersonNationalId',
           'isSpokespersonConfirmed',
+          'hasAppealSpokesperson',
+          'appealSpokespersonNationalId',
+          'isAppealSpokespersonConfirmed',
         ],
         required: false,
         order: [['created', 'ASC']],
@@ -1025,6 +1030,9 @@ export const limitedAccessCaseAttributes: (keyof Case)[] = [
   'courtRecordSignatoryId',
   'courtRecordSignatureDate',
   'parentCaseId',
+  // CaseInterceptor → findOriginalAncestorId reads this FK off the loaded
+  // case. Without it, split indictments resolve to themselves for defenders.
+  'splitCaseId',
   'caseModifiedExplanation',
   'openedByDefender',
   'caseResentExplanation',

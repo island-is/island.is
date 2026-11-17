@@ -74,6 +74,23 @@ describe('CaseRepositoryService — findOriginalAncestorId', () => {
       expect(caseModel.findByPk).not.toHaveBeenCalled()
     })
 
+    // The helper only sees what the caller loaded. A limited-access read that
+    // omitted splitCaseId from its attributes left the FK undefined on the
+    // in-memory case, so the split branch was skipped and defenders got their
+    // own case id as originalAncestorId. limitedAccessCaseAttributes must
+    // keep splitCaseId for the branch above to run.
+    it('returns the case id when a split indictment was loaded without splitCaseId', async () => {
+      const theCase = {
+        id: 'split-child-id',
+        type: CaseType.INDICTMENT,
+      } as Case
+
+      const result = await caseRepositoryService.findOriginalAncestorId(theCase)
+
+      expect(result).toBe('split-child-id')
+      expect(caseModel.findByPk).not.toHaveBeenCalled()
+    })
+
     it('returns the case id for an indictment that was not split', async () => {
       const theCase = {
         id: 'indictment-id',

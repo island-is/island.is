@@ -122,14 +122,8 @@ describe('FileController - Attach ruling order document', () => {
       )
     })
 
-    it('should deliver the ruling to the police and the court', () => {
+    it('should deliver the ruling to the court, but not yet to the police', () => {
       expect(queuedMessagesAfterCommit).toEqual([
-        {
-          type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
-          user,
-          caseId,
-          elementId: fileId,
-        },
         {
           type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           user,
