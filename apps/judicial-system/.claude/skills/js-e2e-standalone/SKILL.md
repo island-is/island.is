@@ -206,6 +206,9 @@ lsof -nP -iTCP:<web port> -sTCP:LISTEN; lsof -nP -iTCP:<web port + 1> -sTCP:LIST
 Both must print nothing. If either lists a listener, run `pick-ports.mjs` again
 and take only its `WEB_PORT`. The backend and api have the old web port in
 `CLIENT_URL` and the `AUTH_IDS_*` urls, so restart those two with the new value.
+Wait for their `/liveness` again, then note their pids again as in step 3,
+for both ports of each - the ones you noted before the restart belong to
+processes that are gone, and step 6 goes by the current ones.
 
 ```bash
 PLAYWRIGHT_JSON_OUTPUT_NAME=<scratchpad>/e2e-report.json \
