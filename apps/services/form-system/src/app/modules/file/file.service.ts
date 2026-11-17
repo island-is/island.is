@@ -162,6 +162,27 @@ export class FileService {
     }
   }
 
+  async deleteFileFromStorage(key: string): Promise<void> {
+    if (!key) {
+      throw new Error('Key must be provided for deletion')
+    }
+
+    const bucket = this.config.bucket
+    if (!bucket) {
+      throw new Error('S3 bucket not configured')
+    }
+
+    this.logger.info(`Deleting file ${key}`)
+
+    try {
+      await this.s3Service.deleteObject({ bucket, key })
+      this.logger.info(`Successfully deleted file ${key}`)
+    } catch (error) {
+      this.logger.error('Error deleting file from S3', error)
+      throw error
+    }
+  }
+
   async deleteFile(
     key: string,
     valueId: string,
@@ -171,17 +192,8 @@ export class FileService {
       throw new Error('Key and valueId must be provided for deletion')
     }
 
-    const bucket = this.config.bucket
-    if (!bucket) {
-      throw new Error('S3 bucket not configured')
-    }
-
-    this.logger.info(`Deleting file ${key} for valueId ${valueId}`)
-
     try {
-      await this.s3Service.deleteObject({ bucket, key })
-      this.logger.info(`Successfully deleted file ${key}`)
-
+      await this.deleteFileFromStorage(key)
       // Update the Value to remove the S3 key reference
       const value = await this.valueModel.findByPk(valueId, { transaction })
       if (value) {
