@@ -159,9 +159,10 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           </Text>
         </Text>
         <Text>
-          <Text as="span" fontWeight="semiBold">{`${formatMessage(
-            core.addressOrResidence,
-          )}: `}</Text>
+          <Text
+            as="span"
+            fontWeight="semiBold"
+          >{`${core.addressOrResidence}: `}</Text>
           <Text as="span">
             {defendant.address ? defendant.address : 'Ekki skráð'}
           </Text>

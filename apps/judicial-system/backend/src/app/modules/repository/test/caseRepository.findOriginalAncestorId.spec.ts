@@ -1,3 +1,5 @@
+import type { Transaction } from 'sequelize'
+
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
@@ -69,6 +71,23 @@ describe('CaseRepositoryService — findOriginalAncestorId', () => {
       const result = await caseRepositoryService.findOriginalAncestorId(theCase)
 
       expect(result).toBe('split-origin-id')
+      expect(caseModel.findByPk).not.toHaveBeenCalled()
+    })
+
+    // The helper only sees what the caller loaded. A limited-access read that
+    // omitted splitCaseId from its attributes left the FK undefined on the
+    // in-memory case, so the split branch was skipped and defenders got their
+    // own case id as originalAncestorId. limitedAccessCaseAttributes must
+    // keep splitCaseId for the branch above to run.
+    it('returns the case id when a split indictment was loaded without splitCaseId', async () => {
+      const theCase = {
+        id: 'split-child-id',
+        type: CaseType.INDICTMENT,
+      } as Case
+
+      const result = await caseRepositoryService.findOriginalAncestorId(theCase)
+
+      expect(result).toBe('split-child-id')
       expect(caseModel.findByPk).not.toHaveBeenCalled()
     })
 
@@ -159,6 +178,48 @@ describe('CaseRepositoryService — findOriginalAncestorId', () => {
 
       expect(result).toBe('missing-parent-id')
       expect(caseModel.findByPk).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  // The walk runs from an interceptor while the route's guard may hold the
+  // case row's lock in the request's transaction, so every parent read has to
+  // join that transaction rather than take a pool connection of its own.
+  describe('the transaction', () => {
+    const theCase = {
+      id: 'grandchild-id',
+      type: CaseType.CUSTODY,
+      parentCaseId: 'child-id',
+    } as Case
+
+    beforeEach(() => {
+      stubParentChain({ 'parent-id': null, 'child-id': 'parent-id' })
+    })
+
+    it('reads every parent in the given transaction', async () => {
+      const transaction = {} as Transaction
+
+      await caseRepositoryService.findOriginalAncestorId(theCase, {
+        transaction,
+      })
+
+      expect(caseModel.findByPk).toHaveBeenCalledTimes(2)
+      expect(caseModel.findByPk).toHaveBeenNthCalledWith(1, 'child-id', {
+        attributes: ['parentCaseId'],
+        transaction,
+      })
+      expect(caseModel.findByPk).toHaveBeenNthCalledWith(2, 'parent-id', {
+        attributes: ['parentCaseId'],
+        transaction,
+      })
+    })
+
+    it('reads without a transaction when none is given', async () => {
+      await caseRepositoryService.findOriginalAncestorId(theCase)
+
+      expect(caseModel.findByPk).toHaveBeenCalledWith('child-id', {
+        attributes: ['parentCaseId'],
+        transaction: undefined,
+      })
     })
   })
 })

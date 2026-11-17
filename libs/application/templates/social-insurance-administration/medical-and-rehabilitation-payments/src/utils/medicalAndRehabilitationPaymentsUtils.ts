@@ -6,8 +6,10 @@ import {
   BankInfo,
   CategorizedIncomeTypes,
   Eligible,
+  FileType,
   IncomePlanConditions,
   IncomePlanRow,
+  LatestIncomePlan,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { Application, ExternalData } from '@island.is/application/types'
@@ -82,6 +84,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const ectsUnits = getValueViaPath<string>(answers, 'questions.ectsUnits')
 
+  const studyDocuments =
+    getValueViaPath<FileType[]>(answers, 'questions.studyDocuments') ?? []
+
   const hasUtilizedEmployeeSickPayRights = getValueViaPath<
     YesOrNo | NotApplicable
   >(answers, 'employeeSickPay.hasUtilizedEmployeeSickPayRights')
@@ -152,6 +157,16 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const confirmationOfIllHealthReferenceId = getValueViaPath<string>(
     answers,
     'confirmationOfIllHealth.referenceId',
+  )
+
+  const confirmationOfJobSearchConfirmation = getValueViaPath<string[]>(
+    answers,
+    'confirmationOfJobSearch.confirmation',
+  )
+
+  const confirmationOfJobSearchReferenceId = getValueViaPath<string>(
+    answers,
+    'confirmationOfJobSearch.referenceId',
   )
 
   const hadAssistance = getValueViaPath<YesOrNo>(
@@ -251,6 +266,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     isStudying,
     educationalInstitution,
     ectsUnits,
+    studyDocuments,
     hasUtilizedEmployeeSickPayRights,
     employeeSickPayEndDate,
     hasUtilizedUnionSickPayRights,
@@ -266,6 +282,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     confirmationOfPendingResolutionReferenceId,
     confirmationOfIllHealthConfirmation,
     confirmationOfIllHealthReferenceId,
+    confirmationOfJobSearchConfirmation,
+    confirmationOfJobSearchReferenceId,
     hadAssistance,
     educationalLevel,
     comment,
@@ -369,6 +387,11 @@ export const getApplicationExternalData = (
       'socialInsuranceAdministrationCurrencies.data',
     ) ?? []
 
+  const latestIncomePlan = getValueViaPath<LatestIncomePlan>(
+    externalData,
+    'socialInsuranceAdministrationLatestIncomePlan.data',
+  )
+
   const incomePlanConditions = getValueViaPath<IncomePlanConditions>(
     externalData,
     'socialInsuranceAdministrationIncomePlanConditions.data',
@@ -413,6 +436,11 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationIsApplicantEligible.data',
   )
 
+  const hasActiveExemption = !!getValueViaPath<boolean>(
+    externalData,
+    'socialInsuranceAdministrationMARPExemption.data.hasActiveExemption',
+  )
+
   const professions =
     getValueViaPath<LabeledValue[]>(
       externalData,
@@ -443,6 +471,7 @@ export const getApplicationExternalData = (
     hasSpouse,
     categorizedIncomeTypes,
     currencies,
+    latestIncomePlan,
     incomePlanConditions,
     selfAssessmentQuestionnaire,
     ectsUnits,
@@ -453,6 +482,7 @@ export const getApplicationExternalData = (
     isEligible,
     professions,
     activitiesOfProfessions,
+    hasActiveExemption,
   }
 }
 
@@ -513,8 +543,26 @@ export const isEligible = (externalData: ExternalData): boolean => {
   return !!isEligible && isEligible.isEligible
 }
 
+// Applicants without an application type from TR are only let through when
+// they have an active exemption (ísl. jaðartilvik)
+export const canStartApplication = (externalData: ExternalData): boolean => {
+  const { marpApplicationType, hasActiveExemption } =
+    getApplicationExternalData(externalData)
+
+  return (
+    isEligible(externalData) && (!!marpApplicationType || hasActiveExemption)
+  )
+}
+
 export const eligibleText = (externalData: ExternalData) => {
   const { isEligible } = getApplicationExternalData(externalData)
+
+  // Eligible applicants only end up here when TR returned neither an
+  // application type nor an active exemption (see canStartApplication)
+  if (isEligible?.isEligible) {
+    return medicalAndRehabilitationPaymentsFormMessage.notEligible
+      .noApplicationTypeDescription
+  }
 
   switch (isEligible?.reasonCode) {
     case EligibleReasonCodes.APPLICANT_ALREADY_HAS_PENDING_APPLICATION:

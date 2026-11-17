@@ -47,10 +47,7 @@ describe('CaseController - Get request pdf', () => {
     })
 
     it('should generate pdf', () => {
-      expect(getRequestPdfAsBuffer).toHaveBeenCalledWith(
-        theCase,
-        expect.any(Function),
-      )
+      expect(getRequestPdfAsBuffer).toHaveBeenCalledWith(theCase)
     })
   })
 

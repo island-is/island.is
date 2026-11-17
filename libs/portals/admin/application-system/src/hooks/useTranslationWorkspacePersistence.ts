@@ -17,6 +17,7 @@ import type {
   PersistedByKey,
 } from '../utils/translationWorkspaceEditing'
 import { getTranslationSaveErrorDetail } from '../utils/translationWorkspaceErrors'
+import { useTranslationPublishActor } from './useTranslationPublishActor'
 
 type UseTranslationWorkspacePersistenceArgs = {
   namespace: string
@@ -55,6 +56,7 @@ export const useTranslationWorkspacePersistence = ({
   const [publishMutation] = usePublishApplicationTranslationsMutation()
   const [saving, setSaving] = useState(false)
   const [publishing, setPublishing] = useState(false)
+  const publishActor = useTranslationPublishActor()
   const [googleTranslate] = useGoogleTranslateStringsMutation()
   const [translatingIds, setTranslatingIds] = useState<Set<string>>(
     () => new Set(),
@@ -210,7 +212,7 @@ export const useTranslationWorkspacePersistence = ({
     setPublishing(true)
     try {
       await publishMutation({
-        variables: { input: { namespace } },
+        variables: { input: { namespace, ...publishActor } },
       })
       await refetchTranslations()
       toast.success(formatMessage(m.translationPublishSuccess))
@@ -225,6 +227,7 @@ export const useTranslationWorkspacePersistence = ({
     hasUnsavedChanges,
     handleSaveAll,
     namespace,
+    publishActor,
     publishMutation,
     refetchTranslations,
     formatMessage,
@@ -244,9 +247,9 @@ export const useTranslationWorkspacePersistence = ({
   }, [])
 
   const handleRollbackComplete = useCallback(async () => {
+    setHistoryOpen(false)
     await refetchTranslations()
     clearEditedValues()
-    setHistoryOpen(false)
   }, [refetchTranslations, clearEditedValues])
 
   return {

@@ -61,12 +61,18 @@ describe('InternalNotificationController - Send appeal summons sent to court of 
           email: assistant.email,
           role: UserRole.COURT_OF_APPEALS_ASSISTANT,
         },
-        appealJudge1: {
-          name: judge1.name,
-          email: judge1.email,
-          id: judge1.id,
-          role: UserRole.COURT_OF_APPEALS_JUDGE,
-        },
+        appealJudges: [
+          {
+            displayOrder: 0,
+            userId: judge1.id,
+            user: {
+              name: judge1.name,
+              email: judge1.email,
+              id: judge1.id,
+              role: UserRole.COURT_OF_APPEALS_JUDGE,
+            },
+          },
+        ],
       } as AppealCase
 
       await internalNotificationController

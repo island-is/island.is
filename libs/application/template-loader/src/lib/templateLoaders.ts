@@ -23,6 +23,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/estate'),
   [ApplicationTypes.PARENTAL_LEAVE]: () =>
     import('@island.is/application/templates/parental-leave'),
+  [ApplicationTypes.PARENTAL_LEAVE_V2]: () =>
+    import('@island.is/application/templates/parental-leave-v2'),
   [ApplicationTypes.DRIVING_LEARNERS_PERMIT]: () =>
     import(
       '@island.is/application/templates/transport-authority/driving-learners-permit'
@@ -321,6 +323,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/pay-debts'),
   [ApplicationTypes.U2_CERTIFICATE]: () =>
     import('@island.is/application/templates/vmst/u2-certificate'),
+  [ApplicationTypes.FJARSKIPTASTOFA_SELF_ASSESSMENT]: () =>
+    import('@island.is/application/templates/fjarskiptastofa/self-assessment'),
 }
 
 export default templates

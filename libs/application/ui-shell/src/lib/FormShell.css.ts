@@ -5,6 +5,16 @@ import { escapeGrid } from '@island.is/island-ui/utils'
 
 const headerHeight = 112
 
+export const alertBannerSlot = style({
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      position: 'sticky',
+      top: 0,
+      zIndex: theme.zIndex.header,
+    },
+  },
+})
+
 export const root = style({
   minHeight: '-webkit-fill-available',
   display: 'flex',

@@ -68,6 +68,9 @@ export class OrganizationSubpage {
 
   @CacheField(() => [SliceUnion], { nullable: true })
   bottomSlices?: Array<typeof SliceUnion | null>
+
+  @Field(() => Boolean, { nullable: true })
+  hideFromExternalSearchEngines?: boolean
 }
 
 export const mapOrganizationSubpage = ({
@@ -109,5 +112,7 @@ export const mapOrganizationSubpage = ({
     bottomSlices: (fields.bottomSlices ?? [])
       .map(safelyMapSliceUnion)
       .filter(Boolean),
+    hideFromExternalSearchEngines:
+      fields.hideFromExternalSearchEngines ?? false,
   }
 }

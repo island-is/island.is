@@ -137,10 +137,10 @@ const SidePanel: FC<SidePanelProps> = ({
   onNavigationTo,
   workingCase,
 }) => {
+  const { formatMessage } = useIntl()
   const { getSections } = useSections(isValid, onNavigationTo)
   const sections = getSections(workingCase, user)
   const targetAppealCase = useTargetAppealCaseByAppealCaseId()
-  const { formatMessage } = useIntl()
 
   const activeSection = sections.findIndex((s) => s.isActive)
   const activeSubSection = sections[activeSection]?.children.findIndex(
@@ -176,11 +176,22 @@ const SidePanel: FC<SidePanelProps> = ({
               targetAppealCase?.appealType === AppealCaseType.VERDICT
                 ? 'Áfrýjun'
                 : formatMessage(
-                    user?.institution?.type === InstitutionType.COURT_OF_APPEALS
-                      ? formStepperSections.appealedCaseTitle
-                      : isIndictmentCase(workingCase.type)
-                      ? formStepperSections.indictmentTitle
-                      : formStepperSections.title,
+                    {
+                      id:
+                        user?.institution?.type ===
+                        InstitutionType.COURT_OF_APPEALS
+                          ? formStepperSections.appealedCaseTitle
+                          : isIndictmentCase(workingCase.type)
+                          ? formStepperSections.indictmentTitle
+                          : formStepperSections.title,
+                      defaultMessage:
+                        user?.institution?.type ===
+                        InstitutionType.COURT_OF_APPEALS
+                          ? formStepperSections.appealedCaseTitle
+                          : isIndictmentCase(workingCase.type)
+                          ? formStepperSections.indictmentTitle
+                          : formStepperSections.title,
+                    },
                     { caseType: workingCase.type },
                   )}
             </Text>
@@ -228,7 +239,6 @@ const PageLayout: FC<PropsWithChildren<PageProps>> = ({
 }) => {
   const { isCreating } = useContext(FormContext)
   const { user } = useContext(UserContext)
-  const { formatMessage } = useIntl()
   const hideBreadcrumbs = isCreating
 
   return (
@@ -239,13 +249,13 @@ const PageLayout: FC<PropsWithChildren<PageProps>> = ({
         <AlertBanner
           title={
             isDefenceUser(user)
-              ? formatMessage(pageLayout.defenderRole.alertTitle)
-              : formatMessage(pageLayout.otherRoles.alertTitle)
+              ? pageLayout.defenderRole.alertTitle
+              : pageLayout.otherRoles.alertTitle
           }
           description={
             isDefenceUser(user)
-              ? formatMessage(pageLayout.defenderRole.alertMessage)
-              : formatMessage(pageLayout.otherRoles.alertMessage)
+              ? pageLayout.defenderRole.alertMessage
+              : pageLayout.otherRoles.alertMessage
           }
           variant="error"
           link={{

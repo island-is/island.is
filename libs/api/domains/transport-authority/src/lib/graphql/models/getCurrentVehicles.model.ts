@@ -41,13 +41,6 @@ export class BasicVehicleInformation {
 
 @ObjectType()
 export class VehicleOwnerchangeChecksByPermno {
-  @Field(() => Boolean, {
-    nullable: true,
-    deprecationReason:
-      'No longer checked for owner/co-owner change; Samgöngustofa already validates debt status for this flow via validationErrorMessages.',
-  })
-  isDebtLess?: boolean
-
   @Field(() => [VehicleValidationErrorMessage], { nullable: true })
   validationErrorMessages?: VehicleValidationErrorMessage[] | null
 
@@ -57,12 +50,6 @@ export class VehicleOwnerchangeChecksByPermno {
 
 @ObjectType()
 export class VehicleOperatorChangeChecksByPermno {
-  @Field(() => Boolean, {
-    nullable: true,
-    deprecationReason:
-      'No longer checked for operator change; Samgöngustofa already validates debt status for this flow via validationErrorMessages.',
-  })
-  isDebtLess?: boolean
   @Field(() => [VehicleValidationErrorMessage], { nullable: true })
   validationErrorMessages?: VehicleValidationErrorMessage[] | null
 

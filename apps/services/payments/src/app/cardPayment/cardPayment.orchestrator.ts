@@ -2,6 +2,8 @@ import type { ProblemDetailsDt } from '@island.is/clients/finance-v3'
 
 import {
   CardPaymentSuccessResponse,
+  CardVerificationSuccessResponse,
+  GooglePayWalletTransactionOutcome,
   PaymentTrackingData,
   RefundSuccessResponse,
 } from '../../types/cardPayment'
@@ -10,7 +12,12 @@ import { SagaDefinition } from '../../utils/orchestrator'
 import { PaymentFlowAttributes } from '../paymentFlow/models'
 import { PaymentContext } from '../refund/refund.orchestrator'
 import type { SettleDebtStepResult } from './cardPayment.debt'
-import { ApplePayChargeInput, ChargeCardInput } from './dtos'
+import { ApplePayChargeInput } from './applePay/dtos'
+import { ChargeCardInput } from './card/dtos'
+import {
+  GooglePayChargeInput,
+  GooglePayChargeVerifiedInput,
+} from './googlePay/dtos'
 
 export {
   PaymentOrchestrator,
@@ -79,6 +86,65 @@ export interface ApplePayPaymentStepResults {
 export interface ApplePayPaymentContext
   extends PaymentContext<ApplePayPaymentStepResults> {
   input: ApplePayChargeInput
+  trackingData: PaymentTrackingData
+  metadata?: CardPaymentSagaMetadata
+}
+
+// Google Pay types: two sagas, one for each endpoint
+
+/** The steps after a charge, the same in both Google Pay sagas, see googlePaySaga.shared */
+export interface GooglePaySettlementStepResults {
+  VALIDATE: {
+    paymentFlow: PaymentFlowAttributes
+    catalogItems: CatalogItemWithQuantity[]
+    totalPrice: number
+  }
+  PERSIST_PAYMENT_CONFIRMATION: void
+  SETTLE_DEBT: SettleDebtStepResult
+  NOTIFY_SUCCESSFUL_PAYMENT: void
+}
+
+/**
+ * The charge endpoint: the gateway either decrypts the token, and its card is
+ * sent to 3-D Secure, or charges it, and the payment is settled.
+ */
+export type GooglePayChargeSagaDefinition = SagaDefinition<
+  GooglePayChargeContext,
+  GooglePayChargeStepResults
+>
+
+export interface GooglePayChargeStepResults
+  extends GooglePaySettlementStepResults {
+  DECRYPT_GOOGLE_PAY_TOKEN: GooglePayWalletTransactionOutcome
+  START_VERIFICATION: {
+    verification: CardVerificationSuccessResponse
+  }
+}
+
+export interface GooglePayChargeContext
+  extends PaymentContext<GooglePayChargeStepResults> {
+  input: GooglePayChargeInput
+  trackingData: PaymentTrackingData
+  metadata?: CardPaymentSagaMetadata
+}
+
+/** The charge-verified endpoint: a card saved in the Google account, after 3-D Secure */
+export type GooglePayPaymentSagaDefinition = SagaDefinition<
+  GooglePayPaymentContext,
+  GooglePayPaymentStepResults
+>
+
+export interface GooglePayPaymentStepResults
+  extends GooglePaySettlementStepResults {
+  CHARGE_GOOGLE_PAY: {
+    paymentResult: CardPaymentSuccessResponse
+  }
+}
+
+export interface GooglePayPaymentContext
+  extends PaymentContext<GooglePayPaymentStepResults> {
+  /** Decrypted again by Valitor when charged, after 3-D Secure */
+  input: GooglePayChargeVerifiedInput
   trackingData: PaymentTrackingData
   metadata?: CardPaymentSagaMetadata
 }

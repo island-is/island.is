@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 
 import {
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
@@ -113,30 +114,47 @@ const card = (name: string) => within(screen.getByRole('region', { name }))
 
 // Tomorrow rather than a fixed day: the picker refuses dates in the past.
 const pickTomorrow = async (name: string) => {
-  const today = new Date()
-  const tomorrow = addDays(today, 1)
+  const tomorrow = addDays(new Date(), 1)
 
   await userEvent.click(card(name).getByLabelText(/Frestur til/))
 
-  if (tomorrow.getMonth() !== today.getMonth()) {
+  // The calendar opens on the selected/deadline month, which may not be
+  // tomorrow's month (e.g. extending an October deadline in November).
+  // Advance until tomorrow is an in-month, enabled day.
+  let cell: HTMLElement | undefined
+
+  for (let i = 0; i < 12; i++) {
+    cell = screen
+      .getAllByText(String(tomorrow.getDate()))
+      .find(
+        (el) =>
+          el.className.includes('react-datepicker__day') &&
+          !el.className.includes('outside-month') &&
+          !el.className.includes('disabled'),
+      )
+
+    if (cell) {
+      break
+    }
+
     await userEvent.click(screen.getByLabelText('Next month'))
   }
-
-  // The calendar pads its grid with the neighbouring months' days, so the
-  // number alone can match twice. Only a cell of the month on view counts.
-  const cell = screen
-    .getAllByText(String(tomorrow.getDate()))
-    .find(
-      (el) =>
-        el.className.includes('react-datepicker__day') &&
-        !el.className.includes('outside-month'),
-    )
 
   if (!cell) {
     throw new Error('No calendar cell for tomorrow')
   }
 
   await userEvent.click(cell)
+
+  // The send/extend control stays aria-disabled until the picked date is
+  // applied; clicking it too early fails with pointer-events: none.
+  await waitFor(() => {
+    expect(
+      card(name).getByRole('button', {
+        name: /Framlengja frest|Senda frest/,
+      }),
+    ).not.toHaveAttribute('aria-disabled', 'true')
+  })
 
   return tomorrow
 }
@@ -194,6 +212,50 @@ describe('VerdictAppealStatementDeadlines', () => {
     expect(
       card('Fyrsti Kröfuhafi').getByLabelText(/Frestur til/),
     ).toBeDisabled()
+  })
+
+  // The court files a statement itself through the card's menu. A party
+  // whose statement is in has none: there is nothing left to file.
+  it('offers to upload a statement for each party whose is not in', async () => {
+    renderPage()
+
+    expect(
+      card('Fyrsti Kröfuhafi').queryByRole('button', { name: /Valmynd/ }),
+    ).not.toBeInTheDocument()
+
+    await userEvent.click(
+      card('Gervimaður Jónsson').getByRole('button', {
+        name: 'Valmynd fyrir Gervimaður Jónsson',
+      }),
+    )
+    // The item's handler sits on the button inside the menu item, not on
+    // the item itself, so the click goes to the text.
+    await userEvent.click(
+      await screen.findByText('Hlaða upp greinargerð', { selector: 'button' }),
+    )
+
+    expect(mockPush).toHaveBeenCalledWith(
+      `${COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE}/case-id?appealCaseId=verdict-appeal&defendantId=d1`,
+    )
+  })
+
+  it('names nobody on the upload link for the prosecution', async () => {
+    renderPage()
+
+    await userEvent.click(
+      card('Sækjandi Sækjandason').getByRole('button', {
+        name: 'Valmynd fyrir Sækjandi Sækjandason',
+      }),
+    )
+    // The item's handler sits on the button inside the menu item, not on
+    // the item itself, so the click goes to the text.
+    await userEvent.click(
+      await screen.findByText('Hlaða upp greinargerð', { selector: 'button' }),
+    )
+
+    expect(mockPush).toHaveBeenCalledWith(
+      `${COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE}/case-id?appealCaseId=verdict-appeal`,
+    )
   })
 
   it('sends a first deadline after the court confirms it', async () => {

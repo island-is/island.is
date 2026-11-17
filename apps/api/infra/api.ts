@@ -56,7 +56,6 @@ import {
   UniversityCareers,
   Vehicles,
   NVSPermits,
-  VehicleServiceFjsV1,
   VehiclesMileage,
   WorkAccidents,
   WorkMachines,
@@ -162,9 +161,16 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.documentsService)}`,
       ),
       DOWNLOAD_SERVICE_BASE_PATH: {
-        prod: 'https://api.island.is',
-        dev: 'https://api.dev01.devland.is',
+        dev: ref(
+          (ctx) =>
+            `https://${
+              ctx.featureDeploymentName
+                ? `${ctx.featureDeploymentName}-api.dev01.devland.is`
+                : 'api.dev01.devland.is'
+            }`,
+        ),
         staging: 'https://api.staging01.devland.is',
+        prod: 'https://api.island.is',
       },
       ENDORSEMENT_SYSTEM_BASE_API_URL: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
@@ -326,7 +332,7 @@ export const serviceSetup = (services: {
         dev: 'https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net',
         staging:
           'https://fjs-cdn-endpoint-elfur-staging-hhesbzhxabbwbqen.a03.azurefd.net',
-        prod: 'https://fjs-cdn-endpoint-elfur-prod-hhesbzhxabbwbqen.a03.azurefd.net',
+        prod: 'https://fjs-cdn-endpoint-elfur-prod-azescphpe7b5ecf2.a03.azurefd.net',
       },
       ELFUR_BASE_IDS_URL: {
         dev: 'https://identity-server.staging01.devland.is',
@@ -526,8 +532,6 @@ export const serviceSetup = (services: {
         '/k8s/api/LANDSPITALI_PAYMENT_ORGANISATION_ID',
       VERDICTS_SUPREME_COURT_BEARER_TOKEN:
         '/k8s/api/VERDICTS_SUPREME_COURT_BEARER_TOKEN',
-      VERDICTS_LANDSRETTUR_APPEALS_URL:
-        '/k8s/api/VERDICTS_LANDSRETTUR_APPEALS_URL',
       FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH:
         '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH',
       FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID:
@@ -591,7 +595,6 @@ export const serviceSetup = (services: {
       Vehicles,
       VehiclesMileage,
       Passports,
-      VehicleServiceFjsV1,
       TransportAuthority,
       ChargeFjsV2,
       EnergyFunds,

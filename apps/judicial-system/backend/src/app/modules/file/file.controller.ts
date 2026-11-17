@@ -33,12 +33,13 @@ import {
   JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
+  RouteRolesGuard,
 } from '@island.is/judicial-system/auth'
 import { IDS_ACCESS_TOKEN_NAME } from '@island.is/judicial-system/consts'
 import type { User } from '@island.is/judicial-system/types'
 import {
-  CaseFileCategory,
   CaseFileState,
+  indictmentAdditionalCaseFileCategories,
   indictmentCases,
   investigationCases,
   restrictionCases,
@@ -55,7 +56,9 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
+import { getOrCreateTransaction } from '../../middleware'
 import {
+  CaseExistsForUpdateGuard,
   CaseExistsGuard,
   CaseNotCompletedGuard,
   CaseOriginalAncestorInterceptor,
@@ -97,7 +100,7 @@ import { FileService } from './file.service'
 
 @Controller('api/case/:caseId')
 @ApiTags('files')
-@UseGuards(JwtAuthUserGuard, CaseExistsGuard, RolesGuard)
+@UseGuards(JwtAuthUserGuard)
 export class FileController {
   constructor(
     private readonly fileService: FileService,
@@ -107,7 +110,7 @@ export class FileController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(CaseWriteGuard)
+  @UseGuards(CaseExistsGuard, RolesGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -134,7 +137,11 @@ export class FileController {
     return this.fileService.createPresignedPost(theCase, createPresignedPost)
   }
 
-  @UseGuards(CaseWriteGuard)
+  // The three routes that create a file decide against a case row locked for
+  // the request. Their roles rules are bare - none has a canActivate that
+  // reads the case - so RolesGuard runs ahead of the locking read and a caller
+  // in a role the route has no rule for never takes the lock.
+  @UseGuards(RolesGuard, CaseExistsForUpdateGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -159,13 +166,27 @@ export class FileController {
   ): Promise<CaseFile> {
     this.logger.debug(`Creating a file for case ${caseId}`)
 
-    return this.sequelize.transaction((transaction) =>
-      this.fileService.createCaseFile(theCase, createFile, user, transaction),
+    // The transaction CaseExistsForUpdateGuard opened, holding the lock on
+    // this case row. Opening one here instead would block on that lock while
+    // it waits for this handler to return, which is a deadlock rather than a
+    // race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.fileService.createCaseFile(
+      theCase,
+      createFile,
+      user,
+      transaction,
     )
   }
 
-  // TODO: Add tests for this endpoint
-  @UseGuards(CaseWriteGuard, DefendantExistsGuard, CreateDefendantCaseFileGuard)
+  @UseGuards(
+    RolesGuard,
+    CaseExistsForUpdateGuard,
+    CaseWriteGuard,
+    DefendantExistsGuard,
+    CreateDefendantCaseFileGuard,
+  )
   @RolesRules(
     publicProsecutorStaffRule,
     prosecutorRule,
@@ -190,18 +211,20 @@ export class FileController {
       `Creating a file for case ${caseId} for defendant ${defendantId}`,
     )
 
-    return this.sequelize.transaction((transaction) =>
-      this.fileService.createCaseFile(
-        theCase,
-        { ...createFile, defendantId },
-        user,
-        transaction,
-      ),
+    // The transaction CaseExistsForUpdateGuard opened - see createCaseFile.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.fileService.createCaseFile(
+      theCase,
+      { ...createFile, defendantId },
+      user,
+      transaction,
     )
   }
 
-  // TODO: Add tests for this endpoint
   @UseGuards(
+    RolesGuard,
+    CaseExistsForUpdateGuard,
     CaseWriteGuard,
     CivilClaimantExistsGuard,
     CreateCivilClaimantCaseFileGuard,
@@ -230,13 +253,14 @@ export class FileController {
       `Creating a file for case ${caseId} for civil claimant ${civilClaimantId}`,
     )
 
-    return this.sequelize.transaction((transaction) =>
-      this.fileService.createCaseFile(
-        theCase,
-        { ...createFile, civilClaimantId },
-        user,
-        transaction,
-      ),
+    // The transaction CaseExistsForUpdateGuard opened - see createCaseFile.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.fileService.createCaseFile(
+      theCase,
+      { ...createFile, civilClaimantId },
+      user,
+      transaction,
     )
   }
 
@@ -245,6 +269,8 @@ export class FileController {
   // However, giving prosecution and appeals court users access
   // does not pose a security risk
   @UseGuards(
+    CaseExistsGuard,
+    RolesGuard,
     CaseReadGuard,
     MergedCaseExistsGuard,
     SplitCaseFileExistsGuard,
@@ -279,7 +305,13 @@ export class FileController {
     return this.fileService.getCaseFileSignedUrl(theCase, caseFile)
   }
 
+  // Rejecting a file, attaching a ruling order's document and reordering the
+  // files decide against a case row locked for the request, like the three
+  // creates above: their roles rules are bare, so RolesGuard runs ahead of
+  // the locking read.
   @UseGuards(
+    RolesGuard,
+    CaseExistsForUpdateGuard,
     new CaseTypeGuard(indictmentCases),
     CaseWriteGuard,
     CaseFileExistsGuard,
@@ -307,19 +339,14 @@ export class FileController {
     }
 
     if (
-      caseFile.category !== CaseFileCategory.PROSECUTOR_CASE_FILE &&
-      caseFile.category !== CaseFileCategory.DEFENDANT_CASE_FILE &&
-      caseFile.category !== CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE &&
-      caseFile.category !==
-        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE &&
-      caseFile.category !==
-        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE
+      !caseFile.category ||
+      !indictmentAdditionalCaseFileCategories.includes(caseFile.category)
     ) {
       this.logger.error(
         `Attempt to reject case file ${fileId} of case ${caseId} with invalid category ${caseFile.category}`,
       )
       throw new BadRequestException(
-        'Only uploaded prosecutor, defendant and civil claimant case files can be rejected',
+        'Only uploaded prosecutor, defendant, civil claimant and court case files can be rejected',
       )
     }
 
@@ -335,12 +362,22 @@ export class FileController {
       )
     }
 
-    return this.sequelize.transaction(async (transaction) =>
-      this.fileService.rejectCaseFile(theCase, caseFile, transaction),
-    )
+    // The transaction CaseExistsForUpdateGuard opened - see createCaseFile.
+    // The checks above read the court sessions off the case that guard
+    // loaded, and everything that confirms a court session locks the same
+    // row, so the file cannot be filed in a confirmed session meanwhile.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.fileService.rejectCaseFile(theCase, caseFile, transaction)
   }
 
-  @UseGuards(CaseWriteGuard, CaseFileExistsGuard, DeleteAppealCaseFileGuard)
+  @UseGuards(
+    CaseExistsGuard,
+    RolesGuard,
+    CaseWriteGuard,
+    CaseFileExistsGuard,
+    DeleteAppealCaseFileGuard,
+  )
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -367,7 +404,18 @@ export class FileController {
     return this.fileService.deleteCaseFile(theCase, caseFile)
   }
 
+  // RolesGuard must run after the case read here: the roles rule is
+  // case-dependent - it reads the case to check that the user is its
+  // registered judge. The read locks the case row for the request, so
+  // RouteRolesGuard goes ahead of it: it reads the same rule but decides on
+  // the user's role alone, and rejects everyone but a district court judge
+  // before the lock is taken. What still reaches the lock is a district court
+  // judge who is not this case's judge. fileEditGuardChain.spec.ts runs this
+  // chain and the three like it.
   @UseGuards(
+    RouteRolesGuard,
+    CaseExistsForUpdateGuard,
+    RolesGuard,
     new CaseTypeGuard(indictmentCases),
     CaseWriteGuard,
     CaseFileExistsGuard,
@@ -378,7 +426,7 @@ export class FileController {
     type: CaseFile,
     description: 'Confirms a ruling order uploaded during the course of a case',
   })
-  confirmRulingOrder(
+  async confirmRulingOrder(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Param('fileId') fileId: string,
@@ -386,12 +434,15 @@ export class FileController {
   ): Promise<CaseFile> {
     this.logger.debug(`Confirming ruling order ${fileId} of case ${caseId}`)
 
-    return this.sequelize.transaction((transaction) =>
-      this.fileService.confirmRulingOrder(theCase, caseFile, transaction),
-    )
+    // The transaction CaseExistsForUpdateGuard opened - see createCaseFile.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.fileService.confirmRulingOrder(theCase, caseFile, transaction)
   }
 
   @UseGuards(
+    RolesGuard,
+    CaseExistsForUpdateGuard,
     new CaseTypeGuard(indictmentCases),
     CaseWriteGuard,
     CaseFileExistsGuard,
@@ -407,7 +458,7 @@ export class FileController {
     description:
       'Attaches the document the district court wrote up for a ruling order pronounced orally',
   })
-  attachRulingOrderDocument(
+  async attachRulingOrderDocument(
     @Param('caseId') caseId: string,
     @Param('fileId') fileId: string,
     @CurrentHttpUser() user: User,
@@ -419,18 +470,21 @@ export class FileController {
       `Attaching a document to ruling order ${fileId} of case ${caseId}`,
     )
 
-    return this.sequelize.transaction((transaction) =>
-      this.fileService.attachRulingOrderDocument(
-        theCase,
-        caseFile,
-        attachDocument,
-        user,
-        transaction,
-      ),
+    // The transaction CaseExistsForUpdateGuard opened - see createCaseFile.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.fileService.attachRulingOrderDocument(
+      theCase,
+      caseFile,
+      attachDocument,
+      user,
+      transaction,
     )
   }
 
   @UseGuards(
+    CaseExistsGuard,
+    RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
     CaseReceivedGuard,
@@ -459,6 +513,8 @@ export class FileController {
   }
 
   @UseGuards(
+    RolesGuard,
+    CaseExistsForUpdateGuard,
     new CaseTypeGuard([
       ...indictmentCases,
       ...restrictionCases,
@@ -474,19 +530,20 @@ export class FileController {
     isArray: true,
     description: 'Updates multiple files of the case',
   })
-  updateFiles(
+  async updateFiles(
     @Param('caseId') caseId: string,
     @Body() updateFiles: UpdateFilesDto,
   ): Promise<CaseFile[]> {
     this.logger.debug(`Updating files of case ${caseId}`, { updateFiles })
 
-    return this.sequelize.transaction((transaction) =>
-      this.fileService.updateFiles(caseId, updateFiles.files, transaction),
-    )
+    // The transaction CaseExistsForUpdateGuard opened - see createCaseFile.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.fileService.updateFiles(caseId, updateFiles.files, transaction)
   }
 
   // TODO: Add tests for this endpoint
-  @UseGuards(CaseWriteGuard, DefendantExistsGuard)
+  @UseGuards(CaseExistsGuard, RolesGuard, CaseWriteGuard, DefendantExistsGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Post('defendant/:defendantId/criminalRecordFile')
   @ApiCreatedResponse({
@@ -519,7 +576,7 @@ export class FileController {
     })
   }
 
-  @UseGuards(CaseReadGuard)
+  @UseGuards(CaseExistsGuard, RolesGuard, CaseReadGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -563,7 +620,7 @@ export class FileController {
     )
   }
 
-  @UseGuards(CaseReadGuard)
+  @UseGuards(CaseExistsGuard, RolesGuard, CaseReadGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -607,7 +664,7 @@ export class FileController {
       .then((url) => ({ url }))
   }
 
-  @UseGuards(CaseWriteGuard)
+  @UseGuards(CaseExistsGuard, RolesGuard, CaseWriteGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @UseInterceptors(CaseOriginalAncestorInterceptor)
   @Delete('policeDigitalCaseFile/:fileId')
@@ -629,7 +686,12 @@ export class FileController {
     return { success }
   }
 
-  @UseGuards(new CaseTypeGuard(indictmentCases), CaseWriteGuard)
+  @UseGuards(
+    CaseExistsGuard,
+    RolesGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseWriteGuard,
+  )
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @UseInterceptors(CaseOriginalAncestorInterceptor)
   @Patch('policeDigitalCaseFiles')

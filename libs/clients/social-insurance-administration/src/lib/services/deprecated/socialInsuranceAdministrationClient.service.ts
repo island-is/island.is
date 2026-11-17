@@ -56,6 +56,7 @@ import {
   TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto,
   TrWebApiServicesDomainEducationalInstitutionsModelsEducationLevelDto,
   TrWebApiServicesDomainApplicationsModelsApplicationTypeDto,
+  TrWebApiServicesDomainApplicationsModelsExemptionDto,
   TrWebCommonsExternalPortalsApiModelsGeneralEmploymentStatusesForLanguage,
   TrWebContractsExternalDigitalIcelandIncomePlanIncomePlanConditionsDto,
   TrWebContractsExternalDigitalIcelandDocumentsDigitalIcelandDocument,
@@ -619,6 +620,12 @@ export class SocialInsuranceAdministrationClientService {
     return this.applicantApiWithAuth(
       user,
     ).apiProtectedV1ApplicantMedicalandrehabilitationpaymentsTypeGet()
+  }
+
+  async getExemption(
+    user: User,
+  ): Promise<TrWebApiServicesDomainApplicationsModelsExemptionDto> {
+    return this.applicantApiWithAuth(user).apiProtectedV1ApplicantExemptionGet()
   }
 
   async getEmploymentStatuses(

@@ -42,12 +42,20 @@ export const serviceSetup = (services: {
         staging: 'true',
         prod: 'true',
       },
+      GOOGLE_PAY_ENVIRONMENT: {
+        dev: 'TEST',
+        staging: 'TEST',
+        prod: 'PRODUCTION',
+      },
     })
     .secrets({
       SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
       SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
       PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET:
         '/k8s/payments/PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET',
+      GOOGLE_PAY_MERCHANT_ID: '/k8s/payments/GOOGLE_PAY_MERCHANT_ID',
+      GOOGLE_PAY_GATEWAY_MERCHANT_ID:
+        '/k8s/payments/GOOGLE_PAY_GATEWAY_MERCHANT_ID',
     })
     .ingress({
       primary: {

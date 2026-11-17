@@ -1,6 +1,7 @@
 import addDays from 'date-fns/addDays'
 import startOfDay from 'date-fns/startOfDay'
 
+import { COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   type AppealStatementParty,
@@ -26,7 +27,9 @@ export interface StatementDeadlineParty {
   role: StatementDeadlineRole
   roleLabel: string
   name: string
-  party: AppealStatementParty
+  // How the backend names the party: a defendant id, a civil claimant id,
+  // or neither for the prosecution.
+  ids: AppealStatementParty
   deadline?: string
   hasFiledStatement: boolean
 }
@@ -59,16 +62,16 @@ export const getStatementDeadlineParties = (
     key: string,
     role: StatementDeadlineRole,
     name: string | null | undefined,
-    party: AppealStatementParty,
+    ids: AppealStatementParty,
   ): StatementDeadlineParty => ({
     key,
     role,
     roleLabel: roleLabels[role],
     name: name ?? '',
-    party,
+    ids,
     deadline:
-      findAppealStatementDeadline(deadlines, party)?.deadline ?? undefined,
-    hasFiledStatement: hasFiledAppealStatement(eventLogs, party),
+      findAppealStatementDeadline(deadlines, ids)?.deadline ?? undefined,
+    hasFiledStatement: hasFiledAppealStatement(eventLogs, ids),
   })
 
   return [
@@ -172,6 +175,28 @@ export const getStatementDeadlineConfirmation = (
       'Aðilar máls fá tilkynningu um frestinn.',
     ],
   }
+}
+
+/**
+ * Where the court uploads the party's statement on its behalf. The appeal id
+ * keeps the page about this appeal, as every step's link does; the party is
+ * named the way the deadline rows name it, and the prosecution by naming
+ * nobody.
+ */
+export const getStatementUploadUrl = (
+  caseId: string,
+  appealCaseId: string,
+  party: Pick<StatementDeadlineParty, 'ids'>,
+): string => {
+  const query = new URLSearchParams({ appealCaseId })
+
+  if (party.ids.defendantId) {
+    query.set('defendantId', party.ids.defendantId)
+  } else if (party.ids.civilClaimantId) {
+    query.set('civilClaimantId', party.ids.civilClaimantId)
+  }
+
+  return `${COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE}/${caseId}?${query}`
 }
 
 /**

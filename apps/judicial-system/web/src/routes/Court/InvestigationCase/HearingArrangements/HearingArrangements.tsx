@@ -155,11 +155,7 @@ const HearingArrangements = () => {
       onNavigationTo={handleNavigationTo}
       isValid={stepIsValid}
     >
-      <PageHeader
-        title={formatMessage(
-          titles.court.investigationCases.hearingArrangements,
-        )}
-      />
+      <PageHeader title={titles.court.investigationCases.hearingArrangements} />
       <FormContentContainer>
         {workingCase.requestProsecutorOnlySession &&
           workingCase.prosecutorOnlySessionRequest && (
@@ -468,7 +464,7 @@ const HearingArrangements = () => {
           ]}
           errorMessage={
             isModalDeferring && sendNotificationError
-              ? formatMessage(errors.sendNotification)
+              ? errors.sendNotification
               : undefined
           }
         />

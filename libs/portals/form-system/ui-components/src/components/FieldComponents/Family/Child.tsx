@@ -18,6 +18,7 @@ interface Props {
   item: FormSystemField
   valueIndex?: number
   dispatch?: Dispatch<Action>
+  isPreview?: boolean
 }
 
 type FamilyMember = {
@@ -36,12 +37,17 @@ type RegistryChild = {
   details?: { name?: { fullName?: string | null } | null } | null
 }
 
-export const Child = ({ item, valueIndex = 0, dispatch }: Props) => {
+export const Child = ({
+  item,
+  valueIndex = 0,
+  dispatch,
+  isPreview = false,
+}: Props) => {
   const { lang, formatMessage } = useLocale()
   const { control, trigger } = useFormContext()
   const cached = (item.list?.length ?? 0) > 0
   const { data, loading } = useQuery(GET_FAMILY_MEMBERS, {
-    skip: cached,
+    skip: isPreview || cached,
     onCompleted: (data) => {
       const children = (data?.nationalRegistryPerson?.biologicalChildren ??
         []) as RegistryChild[]

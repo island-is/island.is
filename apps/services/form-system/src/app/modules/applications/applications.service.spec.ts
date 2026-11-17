@@ -1,13 +1,118 @@
 import { User } from '@island.is/auth-nest-tools'
 import {
+  ApplicationStatus,
   AssetTypes,
   FamilyTypes,
   FieldTypesEnum,
   FormStatus,
   SectionTypes,
 } from '@island.is/form-system/shared'
+import { Transaction } from 'sequelize'
 import { ApplicationsService } from './applications.service'
 import { SectionDto } from '../sections/models/dto/section.dto'
+import axios from 'axios'
+import PDFDocument from 'pdfkit'
+
+describe('ApplicationsService.createApplicationPdf', () => {
+  const nationalId = '1234567890'
+  const logo = Buffer.from(
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
+    'base64',
+  )
+  const createService = (organizationLogo: {
+    is: string | null
+    en: string | null
+  }) => {
+    const findOne = jest.fn().mockResolvedValue({ logo: organizationLogo })
+    const warn = jest.fn()
+    const service = Object.assign(
+      Object.create(ApplicationsService.prototype),
+      {
+        organizationModel: { findOne },
+        logger: { warn },
+      },
+    ) as ApplicationsService
+    return { service, findOne, warn }
+  }
+
+  afterEach(() => jest.restoreAllMocks())
+
+  it.each(['is', 'en'] as const)(
+    'loads the Icelandic logo even for a %s PDF',
+    async (locale) => {
+      const get = jest.spyOn(axios, 'get').mockResolvedValue({ data: logo })
+      const image = jest.spyOn(PDFDocument.prototype, 'image')
+      const { service, findOne } = createService({
+        is: 'https://images.ctfassets.net/space/icelandic-logo.png',
+        en: 'https://images.ctfassets.net/space/english-logo.png',
+      })
+
+      const pdf = await service.createApplicationPdf(
+        { organizationNationalId: nationalId },
+        locale,
+      )
+
+      expect(findOne).toHaveBeenCalledWith({ where: { nationalId } })
+      expect(get).toHaveBeenCalledWith(
+        'https://images.ctfassets.net/space/icelandic-logo.png?fm=png&w=240&h=120&fit=pad',
+        expect.objectContaining({
+          responseType: 'arraybuffer',
+          maxRedirects: 0,
+        }),
+      )
+      expect(image.mock.calls[0][0]).toEqual(logo)
+      expect(pdf.subarray(0, 5).toString()).toBe('%PDF-')
+    },
+  )
+
+  it('does not fall back to the English logo when logo.is is missing', async () => {
+    const get = jest.spyOn(axios, 'get')
+    const image = jest.spyOn(PDFDocument.prototype, 'image')
+    const { service } = createService({
+      is: null,
+      en: 'https://images.ctfassets.net/space/english-logo.png',
+    })
+
+    await service.createApplicationPdf({ organizationNationalId: nationalId })
+
+    expect(get).not.toHaveBeenCalled()
+    expect(image).not.toHaveBeenCalled()
+  })
+
+  it('rejects non-Contentful logo URLs without fetching them', async () => {
+    const get = jest.spyOn(axios, 'get')
+    const { service } = createService({
+      is: 'https://example.com/logo.png',
+      en: null,
+    })
+
+    await expect(
+      service.createApplicationPdf({ organizationNationalId: nationalId }),
+    ).rejects.toThrow('Organization logo must be a Contentful image')
+    expect(get).not.toHaveBeenCalled()
+  })
+
+  it('logs download failures and generates the PDF without a logo', async () => {
+    const error = new Error('Logo unavailable')
+    jest.spyOn(axios, 'get').mockRejectedValue(error)
+    const image = jest.spyOn(PDFDocument.prototype, 'image')
+    const { service, warn } = createService({
+      is: 'https://images.ctfassets.net/space/logo.png',
+      en: null,
+    })
+
+    const pdf = await service.createApplicationPdf({
+      id: 'application-id',
+      organizationNationalId: nationalId,
+    })
+    expect(pdf.subarray(0, 5).toString()).toBe('%PDF-')
+    expect(image).not.toHaveBeenCalled()
+    expect(warn).toHaveBeenCalledWith(
+      'Failed to download organization logo for PDF',
+      { applicationId: 'application-id', error },
+    )
+  })
+})
 
 describe('ApplicationsService.create value JSON', () => {
   it.each([
@@ -68,6 +173,11 @@ describe('ApplicationsService.create value JSON', () => {
         getLoginTypes: jest.fn().mockResolvedValue([]),
         isLoginAllowed: jest.fn().mockReturnValue(true),
         hasDelegation: jest.fn().mockReturnValue(true),
+        formModel: {
+          findByPk: jest.fn().mockResolvedValue({
+            status: FormStatus.IN_DEVELOPMENT,
+          }),
+        },
         applicationModel: {
           create: jest.fn().mockResolvedValue({ id: 'application-id' }),
         },
@@ -101,6 +211,113 @@ describe('ApplicationsService.create value JSON', () => {
         },
         { transaction },
       )
+    },
+  )
+})
+
+describe('ApplicationsService.create form locking', () => {
+  const setup = (status = FormStatus.PUBLISHED) => {
+    const transaction = { id: 'transaction' }
+    const form = {
+      id: 'form-id',
+      status,
+      isInaccessible: false,
+      sections: [],
+    }
+    const lockedForm = { ...form }
+    const formModel = {
+      findByPk: jest.fn().mockResolvedValue(lockedForm),
+    }
+    const applicationModel = {
+      create: jest.fn().mockResolvedValue({ id: 'application-id' }),
+    }
+    const applicationEventModel = {
+      create: jest.fn().mockResolvedValue(undefined),
+    }
+    const service = Object.assign(
+      Object.create(ApplicationsService.prototype),
+      {
+        getForm: jest.fn().mockResolvedValue(form),
+        formModel,
+        applicationModel,
+        applicationEventModel,
+        isFakeUserAllowed: jest.fn().mockReturnValue(true),
+        getAllowedLoginTypes: jest.fn().mockResolvedValue([]),
+        getLoginTypes: jest.fn().mockResolvedValue([]),
+        isLoginAllowed: jest.fn().mockReturnValue(true),
+        hasDelegation: jest.fn().mockReturnValue(true),
+        sequelize: {
+          transaction: jest.fn((callback) => callback(transaction)),
+        },
+        logger: { error: jest.fn() },
+        getApplication: jest.fn().mockResolvedValue({}),
+      },
+    ) as ApplicationsService
+
+    return {
+      create: () =>
+        service.create('form-slug', { nationalId: '0101307789' } as User),
+      lockedForm,
+      transaction,
+      formModel,
+      applicationModel,
+      applicationEventModel,
+    }
+  }
+
+  it.each([
+    FormStatus.PUBLISHED,
+    FormStatus.IN_DEVELOPMENT,
+    FormStatus.PUBLISHED_BEING_CHANGED,
+  ])('locks an eligible %s form before inserting a draft', async (status) => {
+    const { create, transaction, formModel, applicationModel } = setup(status)
+
+    await create()
+
+    expect(formModel.findByPk).toHaveBeenCalledWith('form-id', {
+      transaction,
+      lock: Transaction.LOCK.UPDATE,
+    })
+    expect(formModel.findByPk.mock.invocationCallOrder[0]).toBeLessThan(
+      applicationModel.create.mock.invocationCallOrder[0],
+    )
+    expect(applicationModel.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status: ApplicationStatus.DRAFT,
+        isTest: status !== FormStatus.PUBLISHED,
+      }),
+      { transaction },
+    )
+  })
+
+  it.each(['archived', 'inaccessible', 'deleted', 'changed status'])(
+    'does not insert a draft if the form is %s after the initial read',
+    async (change) => {
+      const {
+        create,
+        lockedForm,
+        formModel,
+        applicationModel,
+        applicationEventModel,
+      } = setup()
+      if (change === 'archived') {
+        lockedForm.status = FormStatus.ARCHIVED
+      } else if (change === 'inaccessible') {
+        lockedForm.isInaccessible = true
+      } else if (change === 'deleted') {
+        formModel.findByPk.mockResolvedValueOnce(null)
+      } else {
+        lockedForm.status = FormStatus.PUBLISHED_BEING_CHANGED
+      }
+
+      await expect(create()).rejects.toThrow()
+
+      expect(formModel.findByPk).toHaveBeenCalledWith(
+        'form-id',
+        expect.objectContaining({ lock: Transaction.LOCK.UPDATE }),
+      )
+      expect(applicationModel.create).not.toHaveBeenCalled()
+      expect(applicationEventModel.create).not.toHaveBeenCalled()
     },
   )
 })
@@ -407,6 +624,70 @@ describe('ApplicationsService.calculateDraftTotalSteps', () => {
   )
 })
 
+describe('ApplicationsService.getApplication transaction', () => {
+  it.each([false, true])(
+    'loads the application and its form with a transaction supplied: %s',
+    async (withTransaction) => {
+      const transaction: Transaction | undefined = withTransaction
+        ? {
+            commit: jest.fn(),
+            rollback: jest.fn(),
+            afterCommit: jest.fn(),
+            LOCK: Transaction.LOCK,
+          }
+        : undefined
+      const application = { id: 'application-id', formId: 'form-id' }
+      const form = {
+        id: 'form-id',
+        slug: 'form-slug',
+        sections: [{ sectionType: SectionTypes.PARTIES, screens: [] }],
+      }
+      const applicationModel = {
+        findOne: jest.fn().mockResolvedValue(application),
+      }
+      const formModel = {
+        findOne: jest.fn().mockResolvedValue(form),
+      }
+      const service = Object.assign(
+        Object.create(ApplicationsService.prototype),
+        {
+          applicationModel,
+          formModel,
+          applicationMapper: {
+            mapFormToApplicationDto: jest.fn().mockReturnValue({
+              id: application.id,
+            }),
+          },
+          logger: { warn: jest.fn(), error: jest.fn() },
+        },
+      ) as ApplicationsService
+
+      const response = withTransaction
+        ? await service.getApplication(
+            application.id,
+            form.slug,
+            null,
+            transaction,
+          )
+        : await service.getApplication(application.id, form.slug, null)
+
+      expect(response.application).toMatchObject({ id: application.id })
+      expect(applicationModel.findOne).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: application.id },
+          transaction,
+        }),
+      )
+      expect(formModel.findOne).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: form.id },
+          transaction,
+        }),
+      )
+    },
+  )
+})
+
 describe('ApplicationsService.submit payment visibility', () => {
   const user = { nationalId: '0101307789' } as User
 
@@ -421,8 +702,10 @@ describe('ApplicationsService.submit payment visibility', () => {
     const application = {
       id: 'application-id',
       formId: 'form-id',
+      status: ApplicationStatus.DRAFT as string,
       save: jest.fn().mockResolvedValue(undefined),
     }
+    const transaction = { id: 'transaction' }
     const service = {
       applicationModel: {
         findByPk: jest.fn().mockResolvedValue(application),
@@ -463,13 +746,22 @@ describe('ApplicationsService.submit payment visibility', () => {
       },
       serviceManager: { send: jest.fn().mockResolvedValue(true) },
       logger: { info: jest.fn() },
+      sequelize: {
+        transaction: jest.fn((callback) => callback(transaction)),
+      },
     }
+    const instance = Object.assign(
+      Object.create(ApplicationsService.prototype),
+      service,
+    ) as ApplicationsService
 
     return {
       service,
+      application,
+      transaction,
       submit: (submittingUser?: User) =>
         ApplicationsService.prototype.submit.call(
-          service as unknown as ApplicationsService,
+          instance,
           application.id,
           submittingUser,
         ),
@@ -523,5 +815,97 @@ describe('ApplicationsService.submit payment visibility', () => {
 
     await expect(submit()).rejects.toThrow('without user context')
     expect(service.serviceManager.send).not.toHaveBeenCalled()
+  })
+
+  it('holds the application lock through sending and saving the completed status', async () => {
+    const { service, application, transaction, submit } = setupSubmission({
+      fieldHidden: true,
+    })
+    let transactionActive = false
+    service.sequelize.transaction.mockImplementation(async (callback) => {
+      transactionActive = true
+      try {
+        return await callback(transaction)
+      } finally {
+        transactionActive = false
+      }
+    })
+    service.serviceManager.send.mockImplementation(async () => {
+      expect(transactionActive).toBe(true)
+      expect(service.applicationModel.findByPk).toHaveBeenCalledWith(
+        application.id,
+        { transaction, lock: Transaction.LOCK.UPDATE },
+      )
+      expect(application.save).not.toHaveBeenCalled()
+      return true
+    })
+    application.save.mockImplementation(async () => {
+      expect(transactionActive).toBe(true)
+      expect(application.status).toBe(ApplicationStatus.COMPLETED)
+    })
+
+    await expect(submit(user)).resolves.toMatchObject({
+      submissionFailed: false,
+    })
+
+    expect(application.save).toHaveBeenCalledWith({ transaction })
+    expect(service.getApplication).toHaveBeenCalledWith(
+      application.id,
+      '',
+      null,
+      transaction,
+    )
+    expect(service.applicationEventModel.create).toHaveBeenCalledWith(
+      expect.objectContaining({ applicationId: application.id }),
+      { transaction },
+    )
+    expect(transactionActive).toBe(false)
+  })
+
+  it.each(['completed', 'deleted'])(
+    'does not send if the application was %s while waiting for the row lock',
+    async (state) => {
+      const { service, application, submit } = setupSubmission({
+        fieldHidden: true,
+      })
+      let releaseLock!: () => void
+      const lockReleased = new Promise<void>((resolve) => {
+        releaseLock = resolve
+      })
+      service.applicationModel.findByPk.mockImplementation(async () => {
+        await lockReleased
+        application.status = ApplicationStatus.COMPLETED
+        return state === 'deleted' ? null : application
+      })
+
+      const result = submit(user)
+      expect(service.serviceManager.send).not.toHaveBeenCalled()
+      const rejection = expect(result).rejects.toThrow(
+        state === 'deleted' ? 'not found' : 'not a draft',
+      )
+      releaseLock()
+      await rejection
+
+      expect(service.serviceManager.send).not.toHaveBeenCalled()
+      expect(service.applicationEventModel.create).not.toHaveBeenCalled()
+      expect(application.save).not.toHaveBeenCalled()
+    },
+  )
+
+  it('keeps the draft eligible for retry when sending fails', async () => {
+    const { service, application, transaction, submit } = setupSubmission({
+      fieldHidden: true,
+    })
+    const destroy = jest.fn().mockResolvedValue(undefined)
+    service.applicationEventModel.create.mockResolvedValue({ destroy })
+    service.serviceManager.send.mockResolvedValue(false)
+
+    await expect(submit(user)).resolves.toMatchObject({
+      submissionFailed: true,
+    })
+
+    expect(application.status).toBe(ApplicationStatus.DRAFT)
+    expect(application.save).not.toHaveBeenCalled()
+    expect(destroy).toHaveBeenCalledWith({ transaction })
   })
 })

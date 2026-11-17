@@ -1,3 +1,5 @@
+import { FjarskiptastofaSelfAssessmentModule } from './fjarskiptastofa/self-assessment/self-assessment.module'
+import { FjarskiptastofaSelfAssessmentService } from './fjarskiptastofa/self-assessment/self-assessment.service'
 import { PayDebtsModule } from './pay-debts/pay-debts.module'
 import { PayDebtsService } from './pay-debts/pay-debts.service'
 import { ConfirmJobOrIncomeModule } from './vmst/confirm-job-or-income/confirm-job-or-income.module'
@@ -102,6 +104,8 @@ import { PSignSubmissionModule } from './p-sign-submission/p-sign-submission.mod
 import { PSignSubmissionService } from './p-sign-submission/p-sign-submission.service'
 import { ParentalLeaveModule } from './parental-leave/parental-leave.module'
 import { ParentalLeaveService } from './parental-leave/parental-leave.service'
+import { ParentalLeaveV2Module } from './parental-leave-v2/parental-leave.module'
+import { ParentalLeaveV2Service } from './parental-leave-v2/parental-leave.service'
 import { PassportAnnulmentModule } from './passport-annulment/passport-annulment.module'
 import { PassportAnnulmentService } from './passport-annulment/passport-annulment.service'
 import { PassportModule } from './passport/passport.module'
@@ -276,6 +280,7 @@ export const modules = [
   MunicipalListCreationModule,
   MunicipalListSigningModule,
   ParentalLeaveModule,
+  ParentalLeaveV2Module,
   SocialInsuranceAdministrationModule,
   SeminarsTemplateModule,
   SecondarySchoolModule,
@@ -306,6 +311,7 @@ export const modules = [
   DirectorateOfEqualityModule,
   PayDebtsModule,
   U2CertificateModule,
+  FjarskiptastofaSelfAssessmentModule,
 ]
 
 export const services = [
@@ -318,6 +324,7 @@ export const services = [
   DataProtectionComplaintService,
   PublicDebtPaymentPlanTemplateService,
   ParentalLeaveService,
+  ParentalLeaveV2Service,
   DocumentProviderOnboardingService,
   InstitutionCollaborationService,
   HealthInsuranceService,
@@ -410,4 +417,5 @@ export const services = [
   DirectorateOfEqualityService,
   PayDebtsService,
   U2CertificateService,
+  FjarskiptastofaSelfAssessmentService,
 ]

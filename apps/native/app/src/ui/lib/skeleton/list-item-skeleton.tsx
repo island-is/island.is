@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components/native'
-import { dynamicColor } from '../../utils'
+import { token } from '../../utils'
 import { Skeleton } from './skeleton'
 
 interface ListItemSkeletonProps {
@@ -12,13 +12,7 @@ const Host = styled.SafeAreaView`
   position: relative;
   flex-direction: row;
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
-  border-bottom-color: ${dynamicColor(
-    ({ theme }) => ({
-      light: theme.color.blue200,
-      dark: theme.shades.dark.shade400,
-    }),
-    true,
-  )};
+  border-bottom-color: ${token((t) => t.border.primary)};
 `
 
 const Icon = styled.View<{ multilineMessage: boolean }>`
@@ -33,10 +27,7 @@ const Circle = styled.View`
   height: 42px;
   width: 42px;
   border-radius: 50px;
-  background-color: ${dynamicColor(({ theme }) => ({
-    dark: theme.shades.dark.shade100,
-    light: theme.color.dark100,
-  }))};
+  background-color: ${token((t) => t.app.background.neutral)};
 `
 
 const Content = styled.View`

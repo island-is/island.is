@@ -17,6 +17,7 @@ export { default as PrivacyPolicyAccordion } from './PrivacyPolicyAccordion/Priv
 export { default as ServiceCenter } from './ServiceCenter/ServiceCenter'
 export { default as ApplicantStatus } from './Status/ApplicantStatus'
 export { default as SpouseStatus } from './Status/SpouseStatus'
+export { default as RvkStatus } from './Status/RvkStatus'
 export { default as MissingFiles } from './MissingFiles/MissingFiles'
 export { default as MissingFilesConfirmation } from './MissingFiles/MissingFilesConfirmation/MissingFilesConfirmation'
 export { default as DirectTaxPaymentsModal } from './DirectTaxPaymentsModal/DirectTaxPaymentModal'

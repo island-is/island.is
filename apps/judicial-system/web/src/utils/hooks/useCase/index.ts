@@ -1,6 +1,5 @@
 import type { Dispatch, SetStateAction } from 'react'
 import { useContext, useMemo } from 'react'
-import { useIntl } from 'react-intl'
 
 import { errors } from '@island.is/judicial-system-web/messages'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
@@ -33,7 +32,6 @@ import { createCaseInput, formatUpdates } from './useCase.logic'
 
 const useCase = () => {
   const { limitedAccess } = useContext(UserContext)
-  const { formatMessage } = useIntl()
 
   const [createCaseMutation, { loading: isCreatingCase }] =
     useCreateCaseMutation()
@@ -98,10 +96,10 @@ const useCase = () => {
             }
           }
         } catch {
-          toast.error(formatMessage(errors.createCase))
+          toast.error(errors.createCase)
         }
       },
-    [createCaseMutation, formatMessage, isCreatingCase],
+    [createCaseMutation, isCreatingCase],
   )
 
   const createCourtCase = useMemo(
@@ -143,10 +141,10 @@ const useCase = () => {
 
         return res.limitedAccessUpdateCase
       } catch {
-        toast.error(formatMessage(errors.updateCase))
+        toast.error(errors.updateCase)
       }
     },
-    [formatMessage, limitedAccessUpdateCaseMutation],
+    [limitedAccessUpdateCaseMutation],
   )
 
   const updateUnlimitedAccessCase = useMemo(
@@ -166,10 +164,10 @@ const useCase = () => {
 
         return res.updateCase
       } catch {
-        toast.error(formatMessage(errors.updateCase))
+        toast.error(errors.updateCase)
       }
     },
-    [formatMessage, updateCaseMutation],
+    [updateCaseMutation],
   )
 
   const updateCase = useMemo(
@@ -209,7 +207,7 @@ const useCase = () => {
           const appealState = res?.transitionCase?.appealCase?.appealState
 
           if (!state && !appealState) {
-            toast.error(formatMessage(errors.transitionCase))
+            toast.error(errors.transitionCase)
 
             return false
           }
@@ -223,12 +221,12 @@ const useCase = () => {
 
           return true
         } catch {
-          toast.error(formatMessage(errors.transitionCase))
+          toast.error(errors.transitionCase)
 
           return false
         }
       },
-    [transitionCaseMutation, formatMessage],
+    [transitionCaseMutation],
   )
 
   const sendNotification = useMemo(
@@ -288,10 +286,10 @@ const useCase = () => {
 
         return data?.extendCase
       } catch {
-        toast.error(formatMessage(errors.extendCase))
+        toast.error(errors.extendCase)
       }
     },
-    [extendCaseMutation, formatMessage],
+    [extendCaseMutation],
   )
 
   const duplicateIndictmentCase = useMemo(
@@ -353,7 +351,7 @@ const useCase = () => {
 
       return true
     } catch {
-      toast.error(formatMessage(errors.updateCase))
+      toast.error(errors.updateCase)
 
       return false
     }

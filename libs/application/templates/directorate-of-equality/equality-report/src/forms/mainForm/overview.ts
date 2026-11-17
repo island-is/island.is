@@ -1,4 +1,5 @@
 import {
+  buildCustomField,
   buildMultiField,
   buildOverviewField,
   buildSection,
@@ -245,6 +246,13 @@ export const overviewSection = buildSection({
             },
           ],
         }),
+        buildCustomField(
+          {
+            id: 'overview.equalityAttachments',
+            component: 'EqualityAttachments',
+          },
+          { mode: 'overview' },
+        ),
         buildSubmitField({
           id: 'submit',
           title: messages.overview.submitButton,

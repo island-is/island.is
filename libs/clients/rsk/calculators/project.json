@@ -26,6 +26,7 @@
       "options": {
         "command": "yarn openapi-ts -f libs/clients/rsk/calculators/src/lib/openapi-ts.config.ts"
       },
+      "inputs": ["schema-files", "{projectRoot}/src/lib/openapi-ts.config.ts"],
       "outputs": ["{projectRoot}/gen/fetch"]
     }
   }

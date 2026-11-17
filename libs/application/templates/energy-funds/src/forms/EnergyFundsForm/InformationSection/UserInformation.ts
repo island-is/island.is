@@ -1,5 +1,6 @@
 import { Application } from '@island.is/api/schema'
 import {
+  buildAccordionField,
   buildMultiField,
   buildTextField,
   buildSubSection,
@@ -87,6 +88,15 @@ export const userInformationSubSection = buildSubSection({
               format(new Date(vehicle.newRegistrationDate), 'dd.MM.yyyy')
             )
           },
+        }),
+        buildAccordionField({
+          id: 'vehicleDetails.priceHelp',
+          accordionItems: [
+            {
+              itemTitle: information.labels.vehicle.priceHelpTitle,
+              itemContent: information.labels.vehicle.priceHelpText,
+            },
+          ],
         }),
         buildDescriptionField({
           id: 'applicant.description',

@@ -31,6 +31,7 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 import { OrganizationAdminDto } from './models/dto/organizationAdmin.dto'
 import { OrganizationZendeskInstanceDto } from './models/dto/organizationZendeskInstance.dto'
 import { OrganizationDelegationDto } from './models/dto/organizationDelegation.dto'
+import { OrganizationLogoDto } from './models/dto/organizationLogo.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.formSystem)
@@ -38,6 +39,19 @@ import { OrganizationDelegationDto } from './models/dto/organizationDelegation.d
 @Controller({ path: 'organizations', version: ['1', VERSION_NEUTRAL] })
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
+
+  @ApiOperation({ summary: 'Create organization in development' })
+  @ApiNoContentResponse({ description: 'Organization created' })
+  @ApiParam({ name: 'nationalId', type: String })
+  @Scopes(AdminPortalScope.formSystemAdmin)
+  @Post('national-id/:nationalId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async create(
+    @CurrentUser() user: User,
+    @Param('nationalId') nationalId: string,
+  ): Promise<void> {
+    return this.organizationsService.create(user, nationalId)
+  }
 
   @ApiOperation({ summary: 'Get organization admin' })
   @ApiOkResponse({
@@ -72,6 +86,18 @@ export class OrganizationsController {
       user,
       organizationZendeskInstanceDto,
     )
+  }
+
+  @ApiOperation({ summary: 'Update Icelandic organization logo' })
+  @ApiNoContentResponse({ description: 'Organization logo updated' })
+  @ApiBody({ type: OrganizationLogoDto })
+  @Put('logo')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async updateLogo(
+    @CurrentUser() user: User,
+    @Body() organizationLogoDto: OrganizationLogoDto,
+  ): Promise<void> {
+    return this.organizationsService.updateLogo(user, organizationLogoDto)
   }
 
   @ApiOperation({ summary: 'Add organization delegation' })

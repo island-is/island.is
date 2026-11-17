@@ -5,7 +5,7 @@ import { router, Stack, useLocalSearchParams } from 'expo-router'
 import styled from 'styled-components/native'
 import trashIcon from '@/assets/icons/trash.png'
 
-import { Button, NavigationBarSheet, Typography } from '@/ui'
+import { Button, token, Typography } from '@/ui'
 import { useDeleteMedicineDelegationMutation } from '@/graphql/types/schema'
 import { StackScreen } from '../../../../../../components/stack-screen'
 
@@ -22,7 +22,7 @@ const Title = styled(Typography)`
 
 const Row = styled.View`
   border-bottom-width: 1px;
-  border-color: ${({ theme }) => theme.color.blue200};
+  border-color: ${token((t) => t.border.primary)};
   padding-bottom: ${({ theme }) => theme.spacing.p1}px;
   padding-top: ${({ theme }) => theme.spacing.p1}px;
 `
@@ -35,7 +35,7 @@ const RowContent = styled.View`
 const ErrorMessage = styled(Typography)`
   margin-top: ${({ theme }) => theme.spacing[2]}px;
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
-  color: ${({ theme }) => theme.color.red600};
+  color: ${token((t) => t.feedback.error.foregroundContrast)};
 `
 
 export default function MedicineDelegationDetailScreen() {

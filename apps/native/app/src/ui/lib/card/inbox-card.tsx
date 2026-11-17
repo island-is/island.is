@@ -41,7 +41,9 @@ export const InboxCard = ({
 
   return (
     <PressableHighlight
-      highlightColor={theme.shade.shade400}
+      style={
+        unread && { backgroundColor: theme.tokens.background.brandMinimal }
+      }
       onPress={() => onPress(id)}
       testID={`${testIDs.INBOX_ITEM}_${id}`}
     >
@@ -50,6 +52,7 @@ export const InboxCard = ({
         subtitle={subject}
         date={publicationDate ? new Date(publicationDate) : undefined}
         unread={unread}
+        unreadBackground={false}
         urgent={!!isUrgent}
         replyable={!!replyable}
         starred={!!bookmarked}

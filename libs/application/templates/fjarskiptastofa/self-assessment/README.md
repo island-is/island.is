@@ -1,0 +1,155 @@
+# Fjarskiptastofa, self-assessment (NIS2)
+
+Self-assessment of network and information security for companies under
+Fjarskiptastofa's supervision (NIS2). The applicant answers a set of control
+questions that Fjarskiptastofa serves from its own API, submits them over
+X-Road, and gets a preliminary scoring back on screen and as a downloadable PDF.
+
+| | |
+| --- | --- |
+| Application type | `ApplicationTypes.FJARSKIPTASTOFA_SELF_ASSESSMENT` |
+| Slug | `umsoknir/sjalfsmat-fjarskiptastofu` |
+| Translation namespace | `fjs.sa.application` |
+| Feature flag | `isFjarskiptastofaSelfAssessmentEnabled` |
+| Code owner | `CodeOwners.Juni` |
+
+## Who can apply
+
+- Companies only. A person logged in with their own national id is routed to the
+  `notAllowed` role and sees a screen explaining the application is for
+  companies (`mapUserToRole`).
+- Actors acting on a company's behalf through procuration
+  (`AuthDelegationType.ProcurationHolder`).
+- Only one draft at a time (`allowMultipleApplicationsInDraft: false`).
+
+On top of that, Fjarskiptastofa decides who is actually eligible: the company
+must be a supervised entity and its access window must be open. See
+[Eligibility](#eligibility).
+
+## States
+
+| State | Lifecycle | What happens |
+| --- | --- | --- |
+| `prerequisites` | ephemeral | Intro screen with the EU funding emblem, the terms the applicant confirms, and the eligibility check. `getIsRegulated` runs on entry. |
+| `draft` | pruned after 7 days | `IdentityApi`, `UserProfileApiWithValidation` and `getQuestionsAndCategories` run on entry. The applicant answers the questions and submits from the overview. `submitSelfAssessment` runs on exit. |
+| `completed` | pruned after 4 hours | Results screen with the preliminary scoring and the PDF download. |
+
+The short lifecycles are deliberate. The applicant has a week to finish an
+assessment once started, and the submitted answers plus findings stay on
+Ísland.is only long enough to be read and downloaded, so no confidential
+assessment data lingers in the application system.
+
+## Eligibility
+
+`getIsRegulated` asks Fjarskiptastofa whether the company is a supervised entity
+(`isSupervisedEntity`) and whether its access window is open
+(`accessWindowOpen`), and stores both flags in
+`externalData.isRegulated`.
+
+Two things read those flags:
+
+- The intro screen shows an error alert when either flag is false.
+- `canStartApplication` guards the `prerequisites -> draft` transition, so an
+  ineligible company cannot start the assessment even if the frontend check is
+  bypassed.
+
+## API-driven questions
+
+Categories and questions are **not** hardcoded. They are fetched on entry to the
+draft state by the `getQuestionsAndCategories` data provider and stored in
+`externalData.selfAssessmentQuestions`. Everything downstream (the answering
+screen, the overview, the results table, the PDF) renders whatever the API
+returns, so adding or changing a category or question needs no change here.
+
+- Answers live in `answers.assessment`, keyed by `q<questionId>`. The `q` prefix
+  matters: react-hook-form would otherwise read a numeric key as an array index.
+- Each answer is `{ answerValue, remark }`. The scale mirrors the API's
+  `AnswerStatus` (`No`, `InProgress`, `InAdoption`, `Yes`) so answers submit
+  without mapping.
+- A question counts as answered only when both the value and a non-empty remark
+  are filled in.
+
+## Screens
+
+**Assessment** (`AssessmentQuestions`). One screen for the whole assessment. A
+select switches between categories, each question is an accordion item with a
+checkmark when answered, a tooltip from the API, a radio group and a remark
+field. A progress meter tracks the selected category, and answering a question
+collapses it and scrolls to the next one. Answers are saved when the applicant
+presses "Halda áfram", and the screen blocks moving on while anything is
+unanswered.
+
+**Overview** (`AssessmentOverview`). Company name plus every
+question grouped under its category with the chosen answer. Edit buttons jump
+back to a specific question (the target id is passed through `sessionStorage`,
+see `utils/focusQuestion.ts`, so it is not persisted as application data). The
+applicant must tick the confirmation checkbox before submitting.
+
+**Results** (`AssessmentResults`). Rendered from the scoring the submit call
+returns (`externalData.selfAssessmentResult`): overall score, a spider chart
+with one axis per category, a table of category scores, Fjarskiptastofa's
+interpretation of the score and the next steps. `AssessmentResultsPdf` builds a
+PDF of the same scoring in the browser with `@react-pdf/renderer`
+(`PdfSpiderChart` draws the chart as plain SVG for the PDF). The two are close
+but not identical: the PDF also lists every submitted answer with its remark,
+which the screen does not show, and it leaves out `scoreInterpretation` and the
+next steps. The reference number is shown only when the API returns one.
+
+## Backend
+
+Template API actions live in
+`libs/application/template-api-modules/.../fjarskiptastofa/self-assessment`:
+
+- `getIsRegulated`, the eligibility flags.
+- `getQuestionsAndCategories`, categories and questions in the user's locale.
+- `submitSelfAssessment`, builds the payload from the questions the applicant
+  was shown rather than from the stored answers, so a missing answer fails the
+  submit instead of being silently dropped. Fjarskiptastofa accepts only a
+  complete assessment. The returned scoring is stored in
+  `externalData.selfAssessmentResult`.
+
+## Client
+
+Backed by `@island.is/clients/fjarskiptastofa/self-assessment`
+(`isRegulated`, `getQuestionCategories`, `getQuestions`, `submitAnswers`) over
+X-Road. Because the answers are confidential, the client turns off error
+response body logging and strips `problem+json` bodies out of log entries
+(`redactProblemBody`).
+
+## Changes outside this library
+
+- `SpiderChart` was added to `@island.is/application/ui-components` as a
+  reusable Recharts radar chart.
+- `AccordionItem` in `island-ui/core` gained optional `checkmark`, `tooltip` and
+  `statusPill` props, used by the question accordion.
+- `pruneAfterHours` was added to `@island.is/application/core`.
+
+## Test data
+
+Fjarskiptastofa's test environment has gervimaður (test) companies with a known
+verdict from `isRegulated`, so both paths through the prerequisites screen can
+be tried end to end. The application is only reachable on a company delegation
+(see [Who can apply](#who-can-apply)), so testing one of them means logging in
+to dev/staging as a gervimaður who holds procuration for the company and then
+switching to that company's delegation.
+
+| Company | `accessWindowOpen` | Log in as |
+| --- | --- | --- |
+| 65° ARTIC ehf. (`5005101370`) | open | Gervimaður Ameríku (`0101302989`) or Gervimaður Færeyjar (`0101302399`) |
+| `4703013920` | open | Gervimaður Færeyjar (`0101302399`) |
+| `6211170100` | open | Gervimaður Færeyjar (`0101302399`) |
+| `5105160160` | closed | Gervimaður Færeyjar (`0101302399`) |
+| `6203170390` | closed | Gervimaður Færeyjar (`0101302399`) |
+
+An open access window continues to the assessment; a closed one stays in
+`prerequisites` and shows the "not eligible" alert. 65° ARTIC ehf. is the one
+company both gervimenn can act for, so it is the easier starting point.
+
+Logging in as a person with no company delegation is worth a look too: that is
+the `notAllowed` role, which shows the "this application is for companies"
+screen instead.
+
+## Running unit tests
+
+Run `nx test application-templates-fjarskiptastofa-self-assessment` to execute
+the unit tests via [Jest](https://jestjs.io).

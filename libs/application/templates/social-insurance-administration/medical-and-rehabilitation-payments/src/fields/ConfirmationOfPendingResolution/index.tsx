@@ -46,7 +46,9 @@ export const ConfirmationOfPendingResolution: FC<FieldBaseProps> = ({
     data,
     loading,
     error: confirmationOfPendingResolutionError,
-  } = useQuery<Query>(siaConfirmationOfPendingResolutionQuery)
+  } = useQuery<Query>(siaConfirmationOfPendingResolutionQuery, {
+    variables: { applicationId: application.id },
+  })
 
   setBeforeSubmitCallback?.(async () => {
     const { confirmationOfPendingResolutionConfirmation } =

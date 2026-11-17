@@ -44,6 +44,7 @@ export const ValueFragment = gql`
     }
     s3Key
     isLoggedInUser
+    paymentCode
   }
 `
 

@@ -6,6 +6,7 @@ const baseData: InvoicePaymentDetailResponseDto = {
   invoiceNum: '191552084',
   invoiceCurrencyCode: 'ISK',
   invoiceTotalBaseAmountISK: 16161,
+  invoiceTotalBaseAmount: 16161,
   paymentAmountISK: 12683,
   glLines: [],
 }
@@ -59,5 +60,19 @@ describe('mapInvoiceDto', () => {
     const result = mapInvoiceDto({ ...baseData, invoiceCurrencyCode: null })
 
     expect(result?.id).toBe('00000000-0000-0000-0000-000000000002')
+    expect(result?.currencyCode).toBeNull()
+  })
+
+  it('sources originalTotalAmount from invoiceTotalBaseAmount, not the ISK amount', () => {
+    const result = mapInvoiceDto({ ...baseData, invoiceTotalBaseAmount: 110 })
+
+    expect(result?.originalTotalAmount).toBe(110)
+    expect(result?.totalAmount).toBe(16161)
+  })
+
+  it('sources currencyCode from invoiceCurrencyCode', () => {
+    const result = mapInvoiceDto(baseData)
+
+    expect(result?.currencyCode).toBe('ISK')
   })
 })

@@ -69,13 +69,19 @@ const ReceptionAndAssignment = () => {
             display="block"
             marginBottom={index === workingCase.defendants?.length ? 0 : 1}
           >
-            {formatMessage(strings.defendantPleaAlertMessage, {
-              defendantGender: defendant.gender ?? Gender.MALE,
-              nameAndPlea: getDefendantPleaText(
-                defendant.name,
-                defendant.defendantPlea,
-              ),
-            })}
+            {formatMessage(
+              {
+                id: strings.defendantPleaAlertMessage,
+                defaultMessage: strings.defendantPleaAlertMessage,
+              },
+              {
+                defendantGender: defendant.gender ?? Gender.MALE,
+                nameAndPlea: getDefendantPleaText(
+                  defendant.name,
+                  defendant.defendantPlea,
+                ),
+              },
+            )}
           </Box>
         )
       } else {
@@ -92,16 +98,14 @@ const ReceptionAndAssignment = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader
-        title={formatMessage(titles.court.shared.receptionAndAssignment)}
-      />
+      <PageHeader title={titles.court.shared.receptionAndAssignment} />
       <FormContentContainer>
         {isIndictment && workingCase.comments && (
           <Box
             marginBottom={defendantPleas && defendantPleas.length > 0 ? 2 : 5}
           >
             <AlertMessage
-              title={formatMessage(strings.commentsTitle)}
+              title={strings.commentsTitle}
               message={workingCase.comments}
               type="warning"
             />
@@ -110,15 +114,21 @@ const ReceptionAndAssignment = () => {
         {isIndictment && defendantPleas && defendantPleas.length > 0 && (
           <Box marginBottom={3}>
             <AlertMessage
-              title={formatMessage(strings.defendantPleaAlertTitle, {
-                defendantCount: workingCase.defendants?.length,
-              })}
+              title={formatMessage(
+                {
+                  id: strings.defendantPleaAlertTitle,
+                  defaultMessage: strings.defendantPleaAlertTitle,
+                },
+                {
+                  defendantCount: workingCase.defendants?.length,
+                },
+              )}
               message={defendantPleas}
               type="warning"
             />
           </Box>
         )}
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <div className={stack({ gap: 5 })}>
           <Box component="section">
             <ProsecutorAndDefendantsEntries workingCase={workingCase} />
@@ -145,7 +155,7 @@ const ReceptionAndAssignment = () => {
           }
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () => handleNavigationTo(getNextRoute),
               disabled: !stepIsValid,

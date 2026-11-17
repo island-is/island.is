@@ -9,13 +9,18 @@ import {
   assigneeAccessAgreementRepeaterMaxRows,
   assigneeAccessAgreementRepeaterMinRows,
 } from './assigneeAccessAgreementUtils'
-import { shouldShowAssigneeUmgengnissamningurScreen } from './assigneeUtils'
+import {
+  shouldShowApplicantSubmitAccessAgreementSection,
+  shouldShowAssigneeUmgengnissamningurScreen,
+} from './assigneeUtils'
+import { applicantSubmitAccessAgreementSection } from '../forms/applicantSubmitState/applicantSubmitForm/applicantSubmitAccessAgreementSection'
 import {
   assigneeWaitingApprovedDescription,
   assigneeWaitingPendingDescription,
   assigneeWaitingRejectedDescription,
 } from './assigneeWaitingUtils'
 import {
+  applicantSubmitAccessAgreementOverviewAttachments,
   assigneeAccessAgreementOverviewAttachments,
   householdMembersOverviewTitle,
   mainFormAccessAgreementOverviewAttachments,
@@ -243,6 +248,62 @@ describe('access agreement attachments on overview', () => {
         baseExternalData,
       ),
     ).toEqual([])
+  })
+})
+
+describe('applicant-submit access agreement', () => {
+  const applicantUser = {
+    profile: { nationalId: APPLICANT_ID },
+  } as BffUser
+
+  const answersBase = {
+    applicant: { nationalId: APPLICANT_ID },
+    householdMembersTableRepeater: householdRepeater,
+  } as FormValue
+
+  it('stores the repeater under the applicant kennitala so uploads are found', () => {
+    const multiField = applicantSubmitAccessAgreementSection.children[0] as {
+      children: Array<{ id: unknown }>
+    }
+    const repeaterId = multiField.children[0].id as (
+      application: Application,
+      user: BffUser,
+    ) => string
+
+    expect(repeaterId(asApplication(answersBase), applicantUser)).toBe(
+      `${APPLICANT_ID}.applicantSubmitAccessAgreementRepeater`,
+    )
+  })
+
+  it('is shown while a household minor still needs an access agreement', () => {
+    expect(
+      shouldShowApplicantSubmitAccessAgreementSection(
+        answersBase,
+        baseExternalData,
+      ),
+    ).toBe(true)
+  })
+
+  it('is satisfied once the applicant uploads under their kennitala', () => {
+    const answers = {
+      ...answersBase,
+      [APPLICANT_ID]: {
+        applicantSubmitAccessAgreementRepeater: uploadedRepeater,
+      },
+    } as FormValue
+
+    expect(
+      shouldShowApplicantSubmitAccessAgreementSection(
+        answers,
+        baseExternalData,
+      ),
+    ).toBe(false)
+    expect(
+      applicantSubmitAccessAgreementOverviewAttachments(
+        answers,
+        baseExternalData,
+      ),
+    ).toHaveLength(1)
   })
 })
 

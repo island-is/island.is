@@ -1,9 +1,14 @@
+import type { Transaction } from 'sequelize'
+import type { Sequelize } from 'sequelize-typescript'
+
 import {
   CallHandler,
   ExecutionContext,
   InternalServerErrorException,
 } from '@nestjs/common'
 
+import { getOrCreateTransaction } from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
 import { Case, CaseRepositoryService } from '../../../repository'
 import { CaseOriginalAncestorInterceptor } from '../caseOriginalAncestor.interceptor'
 
@@ -50,8 +55,39 @@ describe('Case Original Ancestor Interceptor', () => {
       await givenWhenThen()
     })
 
-    it('should request the original ancestor', () => {
-      expect(mockFindOriginalAncestor).toHaveBeenCalledWith(theCase)
+    it('should request the original ancestor without a transaction', () => {
+      // Outside a request there is no request transaction to join.
+      expect(mockFindOriginalAncestor).toHaveBeenCalledWith(theCase, {
+        transaction: undefined,
+      })
+    })
+  })
+
+  describe('original ancestor lookup on a route with a request transaction', () => {
+    const theCase = {} as Case
+    const transaction = {} as Transaction
+    const sequelize = {
+      transaction: jest.fn().mockResolvedValue(transaction),
+    } as unknown as Sequelize
+
+    beforeEach(async () => {
+      mockRequest.mockImplementationOnce(() => ({ case: theCase }))
+
+      // The guard that locked the case row opened the request transaction
+      // before the interceptor runs; guards do not run here, so it is set up
+      // by hand.
+      await runInRequestContext(async () => {
+        await getOrCreateTransaction(sequelize)
+
+        await givenWhenThen()
+      })
+    })
+
+    it('should read the original ancestor in the request transaction', () => {
+      expect(mockFindOriginalAncestor).toHaveBeenCalledWith(theCase, {
+        transaction,
+      })
+      expect(sequelize.transaction).toHaveBeenCalledTimes(1)
     })
   })
 

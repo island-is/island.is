@@ -185,10 +185,9 @@ export default function AuthLayout() {
         name="(modals)/homescreen-options"
         options={{
           ...modalScreenOptions,
-          headerShown: false,
           presentation: 'formSheet',
           sheetAllowedDetents: 'fitToContents',
-          headerTitle: intl.formatMessage({ id: 'homeOptions.screenTitle' }),
+          headerTitle: intl.formatMessage({ id: 'homeOptions.heading.title' }),
         }}
       />
       <Stack.Screen
@@ -202,7 +201,9 @@ export default function AuthLayout() {
         name="(modals)/renew-prescription"
         options={{
           ...modalScreenOptions,
-          headerTitle: '',
+          headerTitle: intl.formatMessage({
+            id: 'health.prescriptions.renewalModal.title',
+          }),
         }}
       />
       <Stack.Screen

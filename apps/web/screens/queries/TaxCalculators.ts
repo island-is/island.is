@@ -30,6 +30,10 @@ export const GET_TAX_CALCULATOR = gql`
         }
         ... on TaxCalculatorNumberInputField {
           semantic
+          min
+          max
+          integer
+          defaultValue
         }
         ... on TaxCalculatorSelectInputField {
           options {
@@ -45,6 +49,16 @@ export const GET_TAX_CALCULATOR = gql`
           semantic
         }
         ... on TaxCalculatorArrayOutputField {
+          itemFields {
+            __typename
+            key
+            type
+            ... on TaxCalculatorNumberOutputField {
+              semantic
+            }
+          }
+        }
+        ... on TaxCalculatorObjectOutputField {
           itemFields {
             __typename
             key
@@ -72,6 +86,7 @@ export const GET_TAX_CALCULATOR_CALCULATION = gql`
           numberValue
           stringValue
           booleanValue
+          dateValue
           arrayValue {
             values {
               key
@@ -79,6 +94,17 @@ export const GET_TAX_CALCULATOR_CALCULATION = gql`
               numberValue
               stringValue
               booleanValue
+              dateValue
+            }
+          }
+          objectValue {
+            values {
+              key
+              type
+              numberValue
+              stringValue
+              booleanValue
+              dateValue
             }
           }
         }

@@ -3,7 +3,7 @@ import { Animated, SafeAreaView, View, useWindowDimensions } from 'react-native'
 import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 import { useUiStore } from '../../stores/ui-store'
-import { dynamicColor } from '../../ui'
+import { token } from '../../ui'
 import { isIosLiquidGlassEnabled } from '../../utils/devices'
 
 const Host = styled.View`
@@ -13,11 +13,11 @@ const Host = styled.View`
   right: 0px;
   height: 30px;
   z-index: 101;
-  background-color: ${dynamicColor('background')};
+  background-color: ${token((t) => t.background.invert)};
 `
 
 const Active = styled(Animated.View)`
-  background-color: ${(props) => props.theme.color.blue400};
+  background-color: ${({ theme }) => theme.tokens.background.brand};
 `
 
 type BottomTabsIndicatorProps = {
@@ -61,7 +61,7 @@ function BottomTabsIndicatorInner({ index, total }: BottomTabsIndicatorProps) {
   return (
     <Host
       style={{
-        shadowColor: theme.color.blue400,
+        shadowColor: theme.tokens.app.shadow.brand,
         shadowOffset: {
           width: 0,
           height: -4,

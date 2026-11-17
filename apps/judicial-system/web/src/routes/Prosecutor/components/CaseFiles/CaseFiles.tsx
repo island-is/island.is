@@ -1,5 +1,4 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { validate as validateUuid } from 'uuid'
 
@@ -62,7 +61,6 @@ export const CaseFiles = () => {
     errorPolicy: 'all',
   })
   const router = useRouter()
-  const { formatMessage } = useIntl()
   const [isUploadingPoliceCaseFiles, setIsUploadingPoliceCaseFiles] =
     useState<boolean>(false)
   const [editCount, setEditCount] = useState(0)
@@ -140,14 +138,14 @@ export const CaseFiles = () => {
 
   const uploadErrorMessage = useMemo(() => {
     if (uploadFiles.some((file) => file.status === FileUploadStatus.error)) {
-      return formatMessage(errors.general)
+      return errors.general
     }
     if (uploadFiles.some((file) => file.size === 0)) {
       return 'Villa kom upp. Tómt skjal.'
     } else {
       return undefined
     }
-  }, [uploadFiles, formatMessage])
+  }, [uploadFiles])
 
   const stepIsValid =
     !isUploadingPoliceCaseFiles && allFilesDoneOrError && editCount === 0
@@ -181,7 +179,7 @@ export const CaseFiles = () => {
         },
       })
     } catch {
-      toast.error(formatMessage(errors.general))
+      toast.error(errors.general)
     }
   }
 
@@ -205,7 +203,7 @@ export const CaseFiles = () => {
         },
       })
     } catch {
-      toast.error(formatMessage(errors.general))
+      toast.error(errors.general)
     }
   }
   const handleNavigationTo = (destination: string) =>
@@ -330,7 +328,7 @@ export const CaseFiles = () => {
           }/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

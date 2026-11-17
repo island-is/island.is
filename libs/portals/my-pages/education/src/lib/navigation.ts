@@ -1,7 +1,10 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { m, searchTagsMessages as s } from '@island.is/portals/my-pages/core'
 import { EducationPaths } from './paths'
-import { primarySchoolMessages as psm } from './messages'
+import {
+  primarySchoolMessages as psm,
+  primarySchoolKeyInfoMessages as kim,
+} from './messages'
 
 export const educationNavigation: PortalNavigationItem = {
   name: m.education,
@@ -46,6 +49,33 @@ export const educationNavigation: PortalNavigationItem = {
                   navHide: true,
                   searchHide: true,
                   path: EducationPaths.PrimarySchoolOverview,
+                  children: [
+                    {
+                      // Edit screens — breadcrumb only
+                      name: kim.contactAddTitle,
+                      navHide: true,
+                      searchHide: true,
+                      path: EducationPaths.PrimarySchoolContactAdd,
+                    },
+                    {
+                      name: kim.contactEditTitle,
+                      navHide: true,
+                      searchHide: true,
+                      path: EducationPaths.PrimarySchoolContactEdit,
+                    },
+                    {
+                      name: kim.languageEditTitle,
+                      navHide: true,
+                      searchHide: true,
+                      path: EducationPaths.PrimarySchoolLanguageEdit,
+                    },
+                    {
+                      name: kim.healthEditTitle,
+                      navHide: true,
+                      searchHide: true,
+                      path: EducationPaths.PrimarySchoolHealthEdit,
+                    },
+                  ],
                 },
                 {
                   name: psm.assessmentTitle,

@@ -12,7 +12,7 @@ import {
   NationalRegistryChildCustodyQuery,
   NationalRegistrySpouseQuery,
 } from '@/graphql/types/schema'
-import { Input, InputRow, NavigationBarSheet, Typography } from '@/ui'
+import { InfoLine, InfoLineRow, Typography } from '@/ui'
 import { formatNationalId } from '@/lib/format-national-id'
 import { testIDs } from '@/utils/test-ids'
 import { StackScreen } from '../../../../../../components/stack-screen'
@@ -99,8 +99,8 @@ export default function FamilyDetailScreen() {
           {intl.formatMessage({ id: 'familyDetail.description' })}
         </Typography>
       </View>
-      <InputRow>
-        <Input
+      <InfoLineRow>
+        <InfoLine
           label={intl.formatMessage({
             id: 'familyDetail.natreg.displayName',
           })}
@@ -109,9 +109,9 @@ export default function FamilyDetailScreen() {
           error={!!error}
           size="big"
         />
-      </InputRow>
-      <InputRow>
-        <Input
+      </InfoLineRow>
+      <InfoLineRow>
+        <InfoLine
           label={intl.formatMessage({
             id: 'familyDetail.natreg.familyRelation',
           })}
@@ -125,9 +125,9 @@ export default function FamilyDetailScreen() {
           loading={loading}
           error={!!error}
         />
-      </InputRow>
-      <InputRow>
-        <Input
+      </InfoLineRow>
+      <InfoLineRow>
+        <InfoLine
           label={intl.formatMessage({
             id: 'familyDetail.natreg.nationalId',
           })}
@@ -136,7 +136,7 @@ export default function FamilyDetailScreen() {
           error={!!error}
         />
         {person && 'citizenship' in person && person?.citizenship ? (
-          <Input
+          <InfoLine
             label={intl.formatMessage({
               id: 'familyDetail.natreg.citizenship',
             })}
@@ -145,32 +145,34 @@ export default function FamilyDetailScreen() {
             error={!!error}
           />
         ) : null}
-      </InputRow>
+      </InfoLineRow>
       {person &&
       'housing' in person &&
       person?.housing &&
       'address' in person.housing &&
       person.housing.address ? (
-        <InputRow>
-          <Input
+        <InfoLineRow>
+          <InfoLine
             label={intl.formatMessage({
               id: 'familyDetail.natreg.legalResidence',
             })}
             value={
               'postalCode' in person.housing.address &&
-              'city' in person.housing.address
+              person.housing.address.postalCode &&
+              'city' in person.housing.address &&
+              person.housing.address.city
                 ? `${person?.housing.address?.streetAddress}, ${person?.housing.address?.postalCode} ${person?.housing.address?.city}`
                 : person?.housing.address?.streetAddress
             }
             loading={loading}
             error={!!error}
           />
-        </InputRow>
+        </InfoLineRow>
       ) : null}
 
-      <InputRow>
+      <InfoLineRow>
         {person && 'gender' in person && person.gender ? (
-          <Input
+          <InfoLine
             label={intl.formatMessage({
               id: 'familyDetail.natreg.gender',
             })}
@@ -183,7 +185,7 @@ export default function FamilyDetailScreen() {
           />
         ) : null}
         {person && 'birthplace' in person && person?.birthplace ? (
-          <Input
+          <InfoLine
             label={intl.formatMessage({
               id: 'familyDetail.natreg.birthPlace',
             })}
@@ -192,7 +194,7 @@ export default function FamilyDetailScreen() {
             error={!!error}
           />
         ) : null}
-      </InputRow>
+      </InfoLineRow>
     </ScrollView>
   )
 }

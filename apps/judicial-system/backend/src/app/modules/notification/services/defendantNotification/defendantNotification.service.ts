@@ -6,7 +6,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { IntlService } from '@island.is/cms-translations'
 import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
@@ -32,6 +31,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { formatDefenderRoute } from '../../../../formatters'
+import { formatIcuMessage } from '../../../../messages'
 import { CourtService } from '../../../court'
 import { EventService } from '../../../event'
 import {
@@ -58,7 +58,6 @@ export class DefendantNotificationService extends BaseNotificationService {
     @Inject(notificationModuleConfig.KEY)
     config: ConfigType<typeof notificationModuleConfig>,
     @Inject(LOGGER_PROVIDER) logger: Logger,
-    intlService: IntlService,
     emailService: EmailService,
     eventService: EventService,
     courtService: CourtService,
@@ -67,7 +66,6 @@ export class DefendantNotificationService extends BaseNotificationService {
     super(
       notificationRepositoryService,
       emailService,
-      intlService,
       courtService,
       config,
       eventService,
@@ -107,14 +105,14 @@ export class DefendantNotificationService extends BaseNotificationService {
   private sendDefendantSelectedDefenderNotification(
     theCase: Case,
   ): Promise<DeliverResponse> {
-    const formattedSubject = this.formatMessage(
+    const formattedSubject = formatIcuMessage(
       strings.defendantSelectedDefenderSubject,
       {
         courtCaseNumber: theCase.courtCaseNumber,
       },
     )
 
-    const formattedBody = this.formatMessage(
+    const formattedBody = formatIcuMessage(
       strings.defendantSelectedDefenderBody,
       {
         courtCaseNumber: theCase.courtCaseNumber,
@@ -144,14 +142,14 @@ export class DefendantNotificationService extends BaseNotificationService {
   private sendDefendantDelegatedDefenderChoiceNotification(
     theCase: Case,
   ): Promise<DeliverResponse> {
-    const formattedSubject = this.formatMessage(
+    const formattedSubject = formatIcuMessage(
       strings.defendantDelegatedDefenderChoiceSubject,
       {
         courtCaseNumber: theCase.courtCaseNumber,
       },
     )
 
-    const formattedBody = this.formatMessage(
+    const formattedBody = formatIcuMessage(
       strings.defendantDelegatedDefenderChoiceBody,
       {
         linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
@@ -283,11 +281,8 @@ export class DefendantNotificationService extends BaseNotificationService {
 
   /**
    * The court of appeals telling an advocate it has recorded them on the
-   * appeal.
-   *
-   * Deliberately not a link to the case: confirming an advocate grants them
-   * no access yet, so a link would lead to a refusal. The text is the one on
-   * the ticket.
+   * appeal. When a national id is recorded, the mail links to the defender
+   * indictment overview — confirmation is what opens limited access.
    *
    * Dedupe is per recipient address, so replacing a defender tells the new one
    * without telling the old one twice.
@@ -309,14 +304,22 @@ export class DefendantNotificationService extends BaseNotificationService {
       return { delivered: true }
     }
 
+    const caseUrl =
+      defendant.appealDefenderNationalId && !defendant.isAppealDefenderWaived
+        ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}`
+        : undefined
+
     // Not through sendEmails: that one drops a recipient with no name, and an
     // advocate the court typed in by hand may have only an address. The
     // address is what the mail needs.
+    // When caseUrl is set the body already carries an <a>, so the base
+    // service skips its portal closing line; without one it appends as usual.
     const recipient = await this.sendEmail({
       subject: appealAdvocateAssignedSubject(),
       html: appealAdvocateAssignedBody(
         'verjanda',
         theCase.verdictAppealCase?.appealCaseNumber,
+        caseUrl,
       ),
       recipientName: defendant.appealDefenderName,
       recipientEmail: defendant.appealDefenderEmail,
@@ -336,14 +339,14 @@ export class DefendantNotificationService extends BaseNotificationService {
       institution: { type: InstitutionType.PRISON_ADMIN },
     })
 
-    const formattedSubject = this.formatMessage(
+    const formattedSubject = formatIcuMessage(
       strings.indictmentSentToPrisonAdminSubject,
       {
         courtCaseNumber: theCase.courtCaseNumber,
       },
     )
 
-    const formattedBody = this.formatMessage(
+    const formattedBody = formatIcuMessage(
       strings.indictmentSentToPrisonAdminBody,
       {
         courtCaseNumber: theCase.courtCaseNumber,
@@ -385,14 +388,14 @@ export class DefendantNotificationService extends BaseNotificationService {
   ) {
     const courtCaseNumber = theCase.courtCaseNumber
 
-    const formattedSubject = this.formatMessage(
+    const formattedSubject = formatIcuMessage(
       strings.indictmentWithdrawnFromPrisonAdminSubject,
       {
         courtCaseNumber,
       },
     )
 
-    const formattedBody = this.formatMessage(
+    const formattedBody = formatIcuMessage(
       strings.indictmentWithdrawnFromPrisonAdminBody,
       {
         courtCaseNumber,
@@ -575,7 +578,6 @@ export class DefendantNotificationService extends BaseNotificationService {
     defendant: Defendant,
     user?: User,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
     try {
       return await this.sendNotification(type, theCase, defendant, user)
     } catch (error) {

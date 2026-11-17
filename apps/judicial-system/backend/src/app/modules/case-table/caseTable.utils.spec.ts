@@ -114,22 +114,35 @@ describe('caseTable.utils', () => {
         {
           appealCase: {
             attributes: [],
-            includes: { appealJudge1: { attributes: ['name'] } },
+            includes: {
+              appealJudges: {
+                attributes: ['displayOrder'],
+                includes: { user: { attributes: ['name'] } },
+              },
+            },
           },
         },
         judge,
       )
 
-      const appealJudge1 = findInclude(
+      const appealJudges = findInclude(
         findInclude(includes, 'appealCase')?.include ?? [],
-        'appealJudge1',
+        'appealJudges',
       )
 
-      expect(appealJudge1).toMatchObject({
-        as: 'appealJudge1',
-        separate: false,
-        attributes: ['id', 'name'],
+      expect(appealJudges).toMatchObject({
+        as: 'appealJudges',
+        separate: true,
+        order: [['displayOrder', 'ASC']],
+        attributes: ['id', 'displayOrder'],
       })
+      expect(appealJudges?.include).toEqual([
+        expect.objectContaining({
+          as: 'user',
+          separate: false,
+          attributes: ['id', 'name'],
+        }),
+      ])
     })
 
     it('merges what two declarations read off the same nested association', () => {
@@ -137,19 +150,27 @@ describe('caseTable.utils', () => {
         {
           appealCase: {
             attributes: [],
-            includes: { appealJudge1: { attributes: ['title'] } },
+            includes: {
+              appealJudges: {
+                attributes: [],
+                includes: { user: { attributes: ['title'] } },
+              },
+            },
           },
         },
         ['courtOfAppealsHead' as CaseTableColumnKey],
         judge,
       )
 
-      const appealJudge1 = findInclude(
-        findInclude(includes, 'appealCase')?.include ?? [],
-        'appealJudge1',
+      const user = findInclude(
+        findInclude(
+          findInclude(includes, 'appealCase')?.include ?? [],
+          'appealJudges',
+        )?.include ?? [],
+        'user',
       )
 
-      expect(appealJudge1?.attributes).toEqual(
+      expect(user?.attributes).toEqual(
         expect.arrayContaining(['id', 'title', 'name']),
       )
     })
@@ -161,16 +182,21 @@ describe('caseTable.utils', () => {
             appealCase: {
               attributes: [],
               includes: {
-                appealJudge1: {
+                appealJudges: {
                   attributes: [],
-                  includes: { institution: { attributes: ['name'] } },
+                  includes: {
+                    user: {
+                      attributes: [],
+                      includes: { institution: { attributes: ['name'] } },
+                    },
+                  },
                 },
               },
             },
           },
           judge,
         ),
-      ).toThrow('appealCase.appealJudge1.institution')
+      ).toThrow('appealCase.appealJudges.user.institution')
     })
   })
 
@@ -224,6 +250,23 @@ describe('caseTable.utils', () => {
         registrarId: null,
       } as unknown as Case
       expect(isMyCase(theCase, user)).toBe(true)
+    })
+
+    // Arguing the appeal makes a case the user's on the public prosecution's
+    // appealed list only, which has a rule of its own. Everywhere else it would
+    // put a colleague's indictment under "Mín mál".
+    it('returns false for prosecution user who is only the appeal prosecutor', () => {
+      expect(
+        isMyCase(
+          {
+            creatingProsecutorId: 'other',
+            prosecutorId: 'other',
+            indictmentApproverId: 'other',
+            appealProsecutorId: 'user-1',
+          } as Case,
+          prosecutionUser('user-1'),
+        ),
+      ).toBe(false)
     })
 
     it('returns false for prosecution user when neither matches', () => {
@@ -621,6 +664,35 @@ describe('caseTable.utils', () => {
           defenceUser('2222222222'),
         ),
       ).toBe(false)
+    })
+
+    // A verdict list presents the verdict appeal as the row's appeal, and reads
+    // the events that say the prosecution appealed. The case-level check would
+    // pass on those for any prosecution user, but a verdict appeal is withdrawn
+    // per defendant on the case screen, never whole from a list.
+    it('returns false for a verdict appeal row even when the prosecution appealed', () => {
+      const row = {
+        type: CaseType.INDICTMENT,
+        appealSource: 'verdictAppealCase',
+        appeal: {
+          appealState: AppealCaseState.APPEALED,
+          appealEventLogs: [
+            {
+              eventType: AppealEventType.APPEALED,
+              userRole: UserRole.PROSECUTOR,
+              defendantId: 'defendant-1',
+            },
+          ],
+        },
+      } as unknown as Parameters<typeof canCancelAppeal>[0]
+
+      expect(canCancelAppeal(row, prosecutionUser('user-1'))).toBe(false)
+      expect(
+        canCancelAppeal(
+          { ...row, appealSource: 'appealCase' },
+          prosecutionUser('user-1'),
+        ),
+      ).toBe(true)
     })
 
     it('returns false once the appeal has been concluded', () => {

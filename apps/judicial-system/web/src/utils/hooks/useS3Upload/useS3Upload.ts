@@ -1,5 +1,4 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { v4 as uuid } from 'uuid'
 
 import type { UploadFile } from '@island.is/island-ui/core'
@@ -223,7 +222,6 @@ const useS3Upload = (
   rulingFileId?: string | null,
 ) => {
   const { limitedAccess } = useContext(UserContext)
-  const { formatMessage } = useIntl()
 
   const [createPresignedPost] = useCreatePresignedPostMutation()
   const [limitedAccessCreatePresignedPost] =
@@ -420,7 +418,7 @@ const useS3Upload = (
 
           return true
         } catch {
-          toast.error(formatMessage(strings.uploadFailed))
+          toast.error(strings.uploadFailed)
           updateFile({ ...file, percent: 0, status: FileUploadStatus.error })
 
           return false
@@ -439,7 +437,7 @@ const useS3Upload = (
         return 'NONE_SUCCEEDED'
       })
     },
-    [getPresignedPost, addFileToCaseState, formatMessage],
+    [getPresignedPost, addFileToCaseState],
   )
 
   // The district court writes up a ruling order that was pronounced orally and
@@ -488,13 +486,13 @@ const useS3Upload = (
 
         return true
       } catch {
-        toast.error(formatMessage(strings.uploadFailed))
+        toast.error(strings.uploadFailed)
         updateFile({ ...file, percent: 0, status: FileUploadStatus.error })
 
         return false
       }
     },
-    [attachRulingOrderDocument, caseId, getPresignedPost, formatMessage],
+    [attachRulingOrderDocument, caseId, getPresignedPost],
   )
 
   const handleUploadCriminalRecord = (
@@ -564,7 +562,7 @@ const useS3Upload = (
               logMessage: 'Defendant has no national id',
             })
           } else {
-            toast.error(formatMessage(strings.uploadFailed))
+            toast.error(strings.uploadFailed)
             updateFile({
               ...commonFileProps,
               percent: 0,
@@ -616,14 +614,14 @@ const useS3Upload = (
             )
           })
           .catch(() => {
-            toast.error(formatMessage(strings.uploadFailed))
+            toast.error(strings.uploadFailed)
             callback(file)
           })
       })
 
       return Promise.all(promises)
     },
-    [uploadPoliceCaseFile, caseId, addFileToCaseState, formatMessage],
+    [uploadPoliceCaseFile, caseId, addFileToCaseState],
   )
 
   const handleRetry = useCallback(
@@ -682,10 +680,10 @@ const useS3Upload = (
           callback && callback(file)
         }
       } catch {
-        toast.error(formatMessage(strings.removeFailed))
+        toast.error(strings.removeFailed)
       }
     },
-    [formatMessage, limitedAccess, remove],
+    [limitedAccess, remove],
   )
 
   return {

@@ -5,6 +5,7 @@ import type { CardPaymentService } from '../../cardPayment.service'
 import type { PaymentFlowService } from '../../../paymentFlow/paymentFlow.service'
 import {
   mockCardPaymentConfirmation,
+  mockCardVerification,
   mockPaymentFulfillmentWithoutFjs,
   mockPaymentFlow,
   mockCatalogItems,
@@ -33,6 +34,16 @@ export const createMockCardPaymentService = (
     ),
     charge: jest.fn().mockResolvedValue(resolved(mockPaymentResult)),
     chargeApplePay: jest.fn().mockResolvedValue(resolved(mockPaymentResult)),
+    chargeGooglePay: jest.fn().mockResolvedValue(resolved(mockPaymentResult)),
+    // A device token: the gateway charges it on decryption
+    decryptOrChargeGooglePayToken: jest
+      .fn()
+      .mockResolvedValue(
+        resolved({ outcome: 'charged', paymentResult: mockPaymentResult }),
+      ),
+    verifyGooglePaySavedCard: jest
+      .fn()
+      .mockResolvedValue(resolved(mockCardVerification)),
     persistPaymentConfirmation: jest
       .fn()
       .mockResolvedValue(resolved(undefined)),

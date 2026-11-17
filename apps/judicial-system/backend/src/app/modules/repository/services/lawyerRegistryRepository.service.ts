@@ -16,6 +16,7 @@ export type LawyerRegistryData = {
   phoneNumber: string
   practice: string
   isLitigator: boolean
+  hasCourtOfAppealsRights: boolean
 }
 
 @Injectable()
@@ -88,6 +89,25 @@ export class LawyerRegistryRepositoryService {
     } catch (error) {
       this.logger.error(
         'Error finding all litigators in the lawyer registry:',
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  async findAllCourtOfAppealsLitigators(): Promise<LawyerRegistry[]> {
+    try {
+      this.logger.debug(
+        'Finding court of appeals litigators in the lawyer registry',
+      )
+
+      return await this.lawyerRegistryModel.findAll({
+        where: { isLitigator: true, hasCourtOfAppealsRights: true },
+      })
+    } catch (error) {
+      this.logger.error(
+        'Error finding court of appeals litigators in the lawyer registry:',
         { error },
       )
 

@@ -18,15 +18,23 @@ interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
   state?: ApplicationState
+  valueIndex?: number
 }
 
-export const CurrencySumField = ({ item, dispatch, state }: Props) => {
+export const CurrencySumField = ({
+  item,
+  dispatch,
+  state,
+  valueIndex = 0,
+}: Props) => {
   const { currentScreen } = state || {}
   const { formatMessage, lang } = useLocale()
   const label = item?.name?.[lang]
   const { control, setValue } = useFormContext()
+  const isPartOfMultiset = item.isPartOfMultiset === true
+  const fieldsToSum = item.fieldSettings?.fieldsToSum
+  const fieldName = isPartOfMultiset ? `${item.id}.${valueIndex}` : item.id
 
-  // Calculates the sum of all ISK_NUMBERBOX fields that are before the current ISK_SUMBOX field, and after the previous ISK_SUMBOX field (if any)
   const sum = useMemo(() => {
     const fields = currentScreen?.data?.fields ?? []
 
@@ -45,21 +53,32 @@ export const CurrencySumField = ({ item, dispatch, state }: Props) => {
       }
     }
 
-    const fieldsToSum = fields.slice(
-      previousSumFieldIndex + 1,
-      currentSumFieldIndex,
-    )
+    const selectedFields = fieldsToSum?.length
+      ? fields.filter((field) => field && fieldsToSum.includes(field.id))
+      : isPartOfMultiset
+      ? fields.slice(previousSumFieldIndex + 1, currentSumFieldIndex)
+      : fields
 
     let hasValue = false
 
-    const total = fieldsToSum.reduce((total, field) => {
+    const total = selectedFields.reduce((total, field) => {
       if (field?.fieldType !== FieldTypesEnum.ISK_NUMBERBOX) return total
+      if (
+        isPartOfMultiset &&
+        field.isPartOfMultiset === false &&
+        !fieldsToSum?.length
+      ) {
+        return total
+      }
 
       const valueCount = field.values?.length ?? 0
+      const sumEntryOnly = isPartOfMultiset && field.isPartOfMultiset !== false
+      const firstValueIndex = sumEntryOnly ? valueIndex : 0
+      const lastValueIndex = sumEntryOnly ? valueIndex + 1 : valueCount
 
       let fieldTotal = 0
 
-      for (let idx = 0; idx < valueCount; idx++) {
+      for (let idx = firstValueIndex; idx < lastValueIndex; idx++) {
         const value = getValue(field, 'iskNumber', idx)
 
         if (!value) continue
@@ -76,13 +95,19 @@ export const CurrencySumField = ({ item, dispatch, state }: Props) => {
     }, 0)
 
     return hasValue ? total : ''
-  }, [currentScreen?.data?.fields, item.id])
+  }, [
+    currentScreen?.data?.fields,
+    item.id,
+    fieldsToSum,
+    isPartOfMultiset,
+    valueIndex,
+  ])
 
   const formattedSum =
     sum === '' ? '' : sum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
 
   useEffect(() => {
-    setValue(item.id, formattedSum)
+    setValue(fieldName, formattedSum)
 
     if (dispatch) {
       dispatch({
@@ -90,17 +115,26 @@ export const CurrencySumField = ({ item, dispatch, state }: Props) => {
         payload: {
           value: formattedSum,
           id: item.id,
+          valueIndex: isPartOfMultiset ? valueIndex : 0,
         },
       })
     }
-  }, [dispatch, formattedSum, item.id, setValue])
+  }, [
+    dispatch,
+    formattedSum,
+    item.id,
+    setValue,
+    fieldName,
+    isPartOfMultiset,
+    valueIndex,
+  ])
 
   return (
     <Row marginTop={2}>
       <Column span="10/10">
         <Controller
-          key={item.id}
-          name={item.id}
+          key={fieldName}
+          name={fieldName}
           control={control}
           defaultValue=""
           rules={{

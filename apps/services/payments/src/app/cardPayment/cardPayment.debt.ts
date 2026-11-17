@@ -13,11 +13,20 @@ import type { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import type {
   ApplePayPaymentContext,
   CardPaymentContext,
+  GooglePayChargeContext,
+  GooglePayPaymentContext,
 } from './cardPayment.orchestrator'
 import type { CardPaymentService } from './cardPayment.service'
 
 /** Result of the SETTLE_DEBT step, `skipped` for flows that are not debt payments. */
 export type SettleDebtStepResult = { type: 'skipped' } | DebtSettlementOutcome
+
+/** The contexts of the sagas that capture a card payment */
+type CardPaymentSagaContext =
+  | CardPaymentContext
+  | ApplePayPaymentContext
+  | GooglePayPaymentContext
+  | GooglePayChargeContext
 
 /**
  * Whether the rollback has to leave the payment as it is: a debt payment that may be registered
@@ -36,7 +45,7 @@ export const keepDebtPayment = async ({
 }: {
   cardPaymentService: CardPaymentService
   logger: Logger
-  ctx: CardPaymentContext | ApplePayPaymentContext
+  ctx: CardPaymentSagaContext
 }): Promise<boolean> => {
   if (ctx.stepResults.VALIDATE?.paymentFlow.type !== 'debt') {
     return false
@@ -100,7 +109,7 @@ export const notifyKeptDebtPayment = async ({
 }: {
   paymentFlowService: PaymentFlowService
   logger: Logger
-  ctx: CardPaymentContext | ApplePayPaymentContext
+  ctx: CardPaymentSagaContext
   paymentFlow: PaymentFlowAttributes
   paymentResult: CardPaymentSuccessResponse
   message: string

@@ -1,69 +1,79 @@
 import { CalculatorsClientService } from './calculators.service'
-import type { CalculatorOutputField } from '../types/output-field'
 
-const codeUnitSorted = (names: string[]) =>
-  [...names].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))
+jest.mock('./calculators.registry', () => {
+  const { z } = jest.requireActual<typeof import('zod')>('zod')
+  const unsorted = {
+    b: z.number().optional(),
+    aB: z.number().optional(),
+    a_b: z.number().optional(),
+    a: z.number().optional(),
+  }
+  const shape = {
+    query: unsorted,
+    result: {
+      ...unsorted,
+      rows: z.array(z.object(unsorted)).optional(),
+      group: z.object(unsorted).optional(),
+    },
+  }
+  return {
+    calculatorRegistry: {
+      childBenefit: shape,
+      interestBenefit: shape,
+      vehicleBenefit: shape,
+      vehicleDepreciation: shape,
+      vehicleTax: shape,
+      withholdingTax: shape,
+    },
+  }
+})
+
+const sorted = ['a', 'aB', 'a_b', 'b']
 
 describe('CalculatorsClientService.getCalculator', () => {
   const service = new CalculatorsClientService()
 
   it('sorts input fields by name in code-unit order', () => {
     const names = service
-      .getCalculator('withholdingTax')
+      .getCalculator('vehicleTax')
       .inputFields.map((field) => field.name)
 
-    expect(names.indexOf('payMonth')).toBeLessThan(
-      names.indexOf('paymentFrequency'),
-    )
-    expect(names).toEqual(codeUnitSorted(names))
+    expect(names).toEqual(sorted)
   })
 
   it('sorts output fields by name in code-unit order', () => {
     const names = service
-      .getCalculator('withholdingTax')
+      .getCalculator('vehicleTax')
       .outputFields.map((field) => field.name)
 
-    expect(names).toContain('taxBrackets')
-    expect(names.indexOf('payMonth')).toBeLessThan(names.indexOf('payrollTax'))
-    expect(names).toEqual(codeUnitSorted(names))
+    expect(names).toEqual(['a', 'aB', 'a_b', 'b', 'group', 'rows'])
   })
 
   it('sorts array itemFields by name', () => {
-    const taxBrackets = service
-      .getCalculator('withholdingTax')
-      .outputFields.find((field) => field.name === 'taxBrackets')
+    const rows = service
+      .getCalculator('vehicleTax')
+      .outputFields.find((field) => field.name === 'rows')
 
-    expect(taxBrackets?.kind).toBe('array')
+    expect(rows?.kind).toBe('array')
 
     const names =
-      taxBrackets?.kind === 'array'
-        ? taxBrackets.itemFields.map((field) => field.name)
+      rows?.kind === 'array' ? rows.itemFields.map((field) => field.name) : []
+
+    expect(names).toEqual(sorted)
+  })
+
+  it('derives object outputs with sorted itemFields', () => {
+    const group = service
+      .getCalculator('vehicleTax')
+      .outputFields.find((field) => field.name === 'group')
+
+    expect(group?.kind).toBe('object')
+
+    const names =
+      group?.kind === 'object'
+        ? group.itemFields.map((field) => field.name)
         : []
 
-    expect(names).toEqual(codeUnitSorted(names))
-    expect(names).toEqual([
-      'bracketNumber',
-      'calculatedWithholding',
-      'lowerBound',
-      'withholdingRate',
-    ])
-  })
-
-  it('does not mutate the authored contract', () => {
-    const names = (contract: {
-      inputFields: readonly { name: string }[]
-      outputFields: readonly CalculatorOutputField[]
-    }) => [
-      contract.inputFields.map((field) => field.name),
-      contract.outputFields.map((field) => field.name),
-    ]
-
-    expect(names(service.getCalculator('childBenefit'))).toEqual(
-      names(service.getCalculator('childBenefit')),
-    )
-  })
-
-  it('returns the requested key', () => {
-    expect(service.getCalculator('vehicleTax').key).toBe('vehicleTax')
+    expect(names).toEqual(sorted)
   })
 })

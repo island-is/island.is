@@ -1,6 +1,10 @@
 import { expect, Page } from '@playwright/test'
 import { verifyRequestCompletion } from '../../../../support/api-tools'
-import { getDaysFromNow, randomCourtCaseNumber } from '../../utils/helpers'
+import {
+  chooseCourtDecision,
+  getDaysFromNow,
+  randomCourtCaseNumber,
+} from '../../utils/helpers'
 
 export const judgeSubmitsDecision = async (
   page: Page,
@@ -58,9 +62,7 @@ export const judgeSubmitsDecision = async (
 
   // Ruling
   await expect(page).toHaveURL(`/domur/urskurdur/${caseId}`)
-  // Exact match because some decision labels are prefixes of others, e.g.
-  // 'Kröfu um gæsluvarðhald hafnað( en úrskurðað í farbann)'
-  await page.getByText(options.decisionText, { exact: true }).click()
+  await chooseCourtDecision(page, options.decisionText)
   if (options.validToDate) {
     await page.locator('input[id=validToDate]').fill(options.validToDate)
     await page.keyboard.press('Escape')

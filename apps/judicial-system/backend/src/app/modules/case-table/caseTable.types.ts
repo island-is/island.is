@@ -4,7 +4,11 @@ import { DefendantEventType } from '@island.is/judicial-system/types'
 
 import {
   AppealCase,
+  AppealCaseJudge,
+  AppealCourtSession,
   AppealEventLog,
+  AppealStatementDeadline,
+  AppealSummons,
   Case,
   CaseFile,
   CivilClaimant,
@@ -37,8 +41,8 @@ type SortDir = 'ASC' | 'DESC'
 // One association in an include declaration: the attributes to read off it and
 // the associations to follow from it. The shape is the same at every depth, so
 // a column declares exactly the path its value needs and nothing else - the
-// head judge's initials are appealCase.appealJudge1.name, declared as such -
-// and the model maps below stay flat.
+// presiding judge's initials are appealCase.appealJudges.user.name, declared as
+// such - and the model maps below stay flat.
 export type IncludeNode<T> = {
   attributes: (keyof T)[]
   required?: boolean
@@ -89,6 +93,7 @@ export const modelMap: {
   indictmentReviewer: ModelDef<typeof User>
   judge: ModelDef<typeof User>
   prosecutor: ModelDef<typeof User>
+  appealProsecutor: ModelDef<typeof User>
   registrar: ModelDef<typeof User>
   appealCase: ModelDef<typeof AppealCase>
   verdictAppealCase: ModelDef<typeof AppealCase>
@@ -106,6 +111,7 @@ export const modelMap: {
   indictmentReviewer: { model: User, separate: false },
   judge: { model: User, separate: false },
   prosecutor: { model: User, separate: false },
+  appealProsecutor: { model: User, separate: false },
   registrar: { model: User, separate: false },
   appealCase: { model: AppealCase, separate: false },
   verdictAppealCase: { model: AppealCase, separate: false },
@@ -114,27 +120,47 @@ export const modelMap: {
 }
 
 export const subModelMap: {
-  appealJudge1: ModelDef<typeof User>
+  appealJudges: ModelDef<typeof AppealCaseJudge>
   appealEventLogs: ModelDef<typeof AppealEventLog>
+  sentAppealSummonses: ModelDef<typeof AppealSummons>
+  courtSessions: ModelDef<typeof AppealCourtSession>
+  statementDeadlines: ModelDef<typeof AppealStatementDeadline>
   eventLogs: ModelDef<typeof DefendantEventLog>
   rulingFile: ModelDef<typeof CaseFile>
   subpoenas: ModelDef<typeof Subpoena>
   verdicts: ModelDef<typeof Verdict>
 } = {
-  appealJudge1: { model: User, separate: false },
+  appealJudges: {
+    model: AppealCaseJudge,
+    separate: true,
+    order: [['displayOrder', 'ASC']],
+  },
   appealEventLogs: { model: AppealEventLog, separate: true },
+  sentAppealSummonses: { model: AppealSummons, separate: true },
+  courtSessions: { model: AppealCourtSession, separate: true },
+  statementDeadlines: { model: AppealStatementDeadline, separate: true },
   eventLogs: { model: DefendantEventLog, separate: true },
   rulingFile: { model: CaseFile, separate: false },
   subpoenas: { model: Subpoena, separate: false, order: [['created', 'DESC']] },
   verdicts: { model: Verdict, separate: false, order: [['created', 'DESC']] },
 }
 
+export const subSubModelMap: {
+  user: ModelDef<typeof User>
+} = {
+  user: { model: User, separate: false },
+}
+
 // The model definitions by depth in an include declaration: the case's own
-// associations and those of the models they reach.
+// associations, those of the models they reach, and those one level further.
 // Building an include tree walks a declaration down this list, so an
 // association deeper than the maps go is a declaration error, not a silent
 // missing join.
-export const modelMapsByDepth: ModelMap[] = [modelMap, subModelMap]
+export const modelMapsByDepth: ModelMap[] = [
+  modelMap,
+  subModelMap,
+  subSubModelMap,
+]
 
 /**
  * A case as a case table row sees it.
@@ -159,12 +185,22 @@ export type CaseTableRowCase = Omit<
   'appealCase' | 'rulingOrderAppealCases' | 'verdictAppealCase'
 > & {
   appeal?: AppealCase | null
+  // Which association `appeal` was taken from. The appeal itself cannot be
+  // asked: its type is only on the row if some column happened to fetch it, and
+  // what depends on this - whether the list may offer to withdraw the appeal -
+  // must not hinge on a column. Every row built here carries it; it is optional
+  // only so that a bare case can still stand in for a row where nothing reads
+  // the appeal.
+  appealSource?: RowAppealSource
 }
 
 export type CaseWhereOptions = {
   includes?: CaseIncludes
   where: WhereOptions
   displayCases?: (cases: Case[]) => CaseTableRowCase[]
+  // What "my cases" means on this list, where the general rule - the user's
+  // role on the case as it went through the district court - is not it.
+  isMyCase?: (theCase: CaseTableRowCase) => boolean
 }
 
 // Which association the row's appeal comes from, named as fields of Case so a
@@ -189,7 +225,11 @@ const toRow = (
     ...rest
   } = json
 
-  return { ...rest, appeal: json[appealFrom] } as CaseTableRowCase
+  return {
+    ...rest,
+    appeal: json[appealFrom],
+    appealSource: appealFrom,
+  } as CaseTableRowCase
 }
 
 /**
@@ -368,6 +408,8 @@ export const expandCasesWithAppeals = (cs: Case[]): CaseTableRowCase[] =>
       (rulingOrderAppeal: AppealCase) => ({
         ...row,
         appeal: rulingOrderAppeal,
+        // Neither of the case's single appeals, so the row names no source.
+        appealSource: undefined,
       }),
     )
 

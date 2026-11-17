@@ -33,8 +33,13 @@ export const canDefenceUserViewCivilClaimCaseFile = (
 
   // The claimant's own confirmed spokesperson (lögmaður/réttargæslumaður) always
   // has standing (aðild) to their own civil claim, so they may view it.
+  // Appeal confirmation grants the same standing for the appeal advocate.
   if (
     CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
+      defenderUserNationalId,
+      [claimant],
+    ) ||
+    CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
       defenderUserNationalId,
       [claimant],
     )
@@ -45,9 +50,11 @@ export const canDefenceUserViewCivilClaimCaseFile = (
   return (
     args.defendants?.some(
       (defendant) =>
-        defendant.isDefenderChoiceConfirmed &&
-        defendant.defenderNationalId &&
-        defendant.defenderNationalId === defenderUserNationalId &&
+        ((defendant.isDefenderChoiceConfirmed &&
+          defendant.defenderNationalId === defenderUserNationalId) ||
+          (defendant.isAppealDefenderConfirmed &&
+            !defendant.isAppealDefenderWaived &&
+            defendant.appealDefenderNationalId === defenderUserNationalId)) &&
         defendant.policeCaseNumbers?.some((pcn) =>
           claimant.policeCaseNumbers?.includes(pcn),
         ),

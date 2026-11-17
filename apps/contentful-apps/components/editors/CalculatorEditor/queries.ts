@@ -49,6 +49,16 @@ export const GET_TAX_CALCULATOR_FIELDS = gql`
             }
           }
         }
+        ... on TaxCalculatorObjectOutputField {
+          itemFields {
+            __typename
+            key
+            type
+            ... on TaxCalculatorNumberOutputField {
+              semantic
+            }
+          }
+        }
       }
     }
   }

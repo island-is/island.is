@@ -109,7 +109,6 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
         expect.any(Array),
         expect.any(Array),
         expect.any(Function),
-        expect.any(Function),
       )
       expect(mockawsS3Service.putObject).toHaveBeenCalledWith(
         theCase.type,
@@ -145,6 +144,82 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
       expect(then.error.message).toEqual(
         `Case ${caseId} does not include police case number ${policeCaseNumber}`,
+      )
+    })
+  })
+
+  describe('appeal-confirmed defender can get the case files record', () => {
+    beforeEach(async () => {
+      const getMock = createCaseFilesRecord as jest.Mock
+      getMock.mockResolvedValueOnce(pdf)
+
+      const caseWithAppealDefender = {
+        ...theCase,
+        defendants: [
+          {
+            appealDefenderNationalId: user.nationalId,
+            isAppealDefenderConfirmed: true,
+            policeCaseNumbers: [policeCaseNumber],
+          },
+        ],
+      } as Case
+
+      await limitedAccessCaseController.getCaseFilesRecordPdf(
+        caseId,
+        policeCaseNumber,
+        user,
+        caseWithAppealDefender,
+        res,
+      )
+    })
+
+    it('should return pdf', () => {
+      expect(res.end).toHaveBeenCalledWith(pdf)
+    })
+  })
+
+  describe('appeal-confirmed defender does not have access to another police case number', () => {
+    const otherPoliceCaseNumber = theCase.policeCaseNumbers[0]
+    let then: Then
+
+    beforeEach(async () => {
+      const caseWithAppealDefender = {
+        ...theCase,
+        defendants: [
+          {
+            appealDefenderNationalId: user.nationalId,
+            isAppealDefenderConfirmed: true,
+            policeCaseNumbers: [policeCaseNumber],
+          },
+          {
+            appealDefenderNationalId: '9999999999',
+            isAppealDefenderConfirmed: true,
+            policeCaseNumbers: [otherPoliceCaseNumber],
+          },
+        ],
+      } as Case
+
+      const then2 = {} as Then
+
+      try {
+        await limitedAccessCaseController.getCaseFilesRecordPdf(
+          caseId,
+          otherPoliceCaseNumber,
+          user,
+          caseWithAppealDefender,
+          res,
+        )
+      } catch (error) {
+        then2.error = error as Error
+      }
+
+      then = then2
+    })
+
+    it('should return ForbiddenException', () => {
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+      expect(then.error.message).toEqual(
+        `Defence user does not have access to police case number ${otherPoliceCaseNumber}`,
       )
     })
   })

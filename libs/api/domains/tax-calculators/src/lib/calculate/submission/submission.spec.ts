@@ -2,11 +2,10 @@ import type { CalculatorField } from '@island.is/clients/rsk/calculators'
 
 import { TaxCalculatorCalculationErrorCode } from '../../models/enums'
 import type { InputFieldValue } from '../../models/inputFieldValue.model'
-import { validateCalculationInput } from './submission'
+import { toInvalidValueErrors, validateCalculationInput } from './submission'
 
 const fields: readonly CalculatorField[] = [
   { name: 'amount', type: 'number', required: true, semantic: 'currency' },
-  { name: 'year', type: 'number', required: false, semantic: 'year' },
   { name: 'note', type: 'string', required: false },
   { name: 'startedAt', type: 'date', required: false },
   { name: 'splitCustody', type: 'boolean', required: false },
@@ -24,7 +23,6 @@ const fields: readonly CalculatorField[] = [
     dependsOn: { field: 'splitCustody', equals: true },
   },
   { name: 'taxRate', type: 'number', required: false, semantic: 'percentage' },
-  { name: 'billingMonth', type: 'number', required: false, semantic: 'month' },
 ]
 
 const number = (key: string, numberValue: number): InputFieldValue => ({
@@ -40,6 +38,11 @@ const string = (key: string, stringValue: string): InputFieldValue => ({
 const boolean = (key: string, booleanValue: boolean): InputFieldValue => ({
   key,
   value: { booleanValue },
+})
+
+const date = (key: string, dateValue: Date): InputFieldValue => ({
+  key,
+  value: { dateValue },
 })
 
 const validate = (submitted: InputFieldValue[]) =>
@@ -111,89 +114,33 @@ describe('validateCalculationInput', () => {
   })
 
   describe('dates', () => {
-    it('accepts a real calendar date', () => {
-      expect(
-        validate([number('amount', 1), string('startedAt', '2026-02-28')])
-          .errors,
-      ).toEqual([])
+    it('accepts a date', () => {
+      const startedAt = new Date('2026-02-28T00:00:00.000Z')
+      const result = validate([
+        number('amount', 1),
+        date('startedAt', startedAt),
+      ])
+
+      expect(result.errors).toEqual([])
+      expect(result.values.startedAt).toBe(startedAt)
     })
 
-    it('rejects a date that does not exist', () => {
+    it('rejects a string for a date field', () => {
       expect(
-        codes([number('amount', 1), string('startedAt', '2026-02-31')]),
-      ).toEqual([[INVALID_VALUE, 'startedAt']])
-    })
-
-    it('rejects an unpadded date', () => {
-      expect(
-        codes([number('amount', 1), string('startedAt', '2026-2-3')]),
+        codes([number('amount', 1), string('startedAt', '2026-02-28')]),
       ).toEqual([[INVALID_VALUE, 'startedAt']])
     })
   })
 
   describe('numbers', () => {
-    it('accepts a fraction where no integer semantic applies', () => {
-      expect(validate([number('amount', 1000.5)]).errors).toEqual([])
-    })
-
-    it.each(['year', 'childrenUnder7'])(
-      'rejects a fraction for the integer-semantic field %s',
-      (key) => {
-        expect(
-          codes([
-            number('amount', 1),
-            boolean('splitCustody', true),
-            number(key, 2.5),
-          ]),
-        ).toEqual([[INVALID_VALUE, key]])
-      },
-    )
-
-    it('rejects a negative count', () => {
-      expect(
-        codes([
-          number('amount', 1),
-          boolean('splitCustody', true),
-          number('childrenUnder7', -1),
-        ]),
-      ).toEqual([[INVALID_VALUE, 'childrenUnder7']])
-    })
-
-    it('accepts a count of zero', () => {
+    it('leaves integer and range checks to the client', () => {
       expect(
         validate([
-          number('amount', 1),
+          number('amount', 2.5),
           boolean('splitCustody', true),
-          number('childrenUnder7', 0),
+          number('childrenUnder7', -1),
+          number('taxRate', 150),
         ]).errors,
-      ).toEqual([])
-    })
-
-    it('leaves a negative value alone where no count semantic applies', () => {
-      expect(validate([number('amount', -500)]).errors).toEqual([])
-    })
-
-    it.each([-1, 101])('rejects a percentage outside 0-100 (%d)', (value) => {
-      expect(codes([number('amount', 1), number('taxRate', value)])).toEqual([
-        [INVALID_VALUE, 'taxRate'],
-      ])
-    })
-
-    it.each([0, 100])('accepts a percentage boundary (%d)', (value) => {
-      expect(
-        validate([number('amount', 1), number('taxRate', value)]).errors,
-      ).toEqual([])
-    })
-
-    it.each([0, 13])('rejects a month outside 1-12 (%d)', (value) => {
-      expect(
-        codes([number('amount', 1), number('billingMonth', value)]),
-      ).toEqual([[INVALID_VALUE, 'billingMonth']])
-    })
-
-    it.each([1, 12])('accepts a month boundary (%d)', (value) => {
-      expect(
-        validate([number('amount', 1), number('billingMonth', value)]).errors,
       ).toEqual([])
     })
 
@@ -272,5 +219,42 @@ describe('validateCalculationInput', () => {
         ).errors,
       ).toEqual([])
     })
+  })
+})
+
+describe('toInvalidValueErrors', () => {
+  const contract: readonly CalculatorField[] = [
+    {
+      name: 'year',
+      type: 'number',
+      required: true,
+      integer: true,
+      minimum: 2019,
+      maximum: 2026,
+    },
+    { name: 'count', type: 'number', required: false, integer: true },
+    { name: 'floor', type: 'number', required: false, minimum: 0 },
+    { name: 'cap', type: 'number', required: false, maximum: 100 },
+    { name: 'plain', type: 'number', required: false },
+    {
+      name: 'period',
+      type: 'select',
+      required: true,
+      options: [{ value: 'a' }],
+    },
+  ]
+
+  it.each([
+    ['year', 'Field "year" expects a whole number between 2019 and 2026.'],
+    ['count', 'Field "count" expects a whole number.'],
+    ['floor', 'Field "floor" expects a number of 0 or more.'],
+    ['cap', 'Field "cap" expects a number of 100 or less.'],
+    ['plain', 'Field "plain" is not accepted by the calculator.'],
+    ['period', 'Field "period" is not accepted by the calculator.'],
+    ['unknown', 'Field "unknown" is not accepted by the calculator.'],
+  ])('describes a rejected %s from the contract', (key, message) => {
+    expect(toInvalidValueErrors(contract, [key])).toEqual([
+      { code: INVALID_VALUE, key, message },
+    ])
   })
 })
