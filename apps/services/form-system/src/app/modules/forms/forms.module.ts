@@ -10,6 +10,7 @@ import { ListItem } from '../listItems/models/listItem.model'
 import { Field } from '../fields/models/field.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
 import { Application } from '../applications/models/application.model'
+import { ApplicationEvent } from '../applications/models/applicationEvent.model'
 import { FileModule } from '../file/file.module'
 
 @Module({
@@ -17,6 +18,7 @@ import { FileModule } from '../file/file.module'
     SequelizeModule.forFeature([
       Form,
       Application,
+      ApplicationEvent,
       FormCertificationType,
       Section,
       Screen,
