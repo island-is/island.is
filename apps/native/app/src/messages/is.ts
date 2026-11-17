@@ -39,8 +39,8 @@ export const is = {
   'login.error.wrongSmsCodeLastAttempt': 'Rangur kóði. Ein tilraun eftir.',
   'login.error.smsCodeAttemptsUsed':
     'Ekki tókst að staðfesta kóða. Vinsamlegast byrjaðu upp á nýtt.',
-  'login.error.declined':
-    'Innskráningu var hafnað eða hún rann út. Reyndu aftur.',
+  'login.error.declined': 'Notandi finnst ekki.',
+  'login.error.expired': 'Beiðnin rann út. Reyndu aftur.',
   'login.error.failed': 'Ekki tókst að skrá þig inn. Reyndu aftur.',
 
   // app lock

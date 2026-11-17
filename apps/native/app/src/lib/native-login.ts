@@ -18,7 +18,10 @@ export const SMS_CODE_LENGTH = 3
  * - `tooManyRequests`: IAS allows only a few requests in a short time
  * - `wrongSmsCode`: the SMS code was wrong; some attempts are left
  * - `smsCodeAttemptsUsed`: the SMS code was wrong too often; start again
- * - `declined`: declined on the phone, or it timed out
+ * - `declined`: Auðkenni refused it, e.g. for a number without electronic
+ *   ID, or it was declined on the phone: IAS can't tell those apart, and
+ *   says the user wasn't found
+ * - `expired`: nobody answered in time
  * - `failed`: anything else
  */
 export type LoginError =
@@ -27,6 +30,7 @@ export type LoginError =
   | 'wrongSmsCode'
   | 'smsCodeAttemptsUsed'
   | 'declined'
+  | 'expired'
   | 'failed'
 
 /** The message for each error. `wrongSmsCode` takes `attemptsLeft`. */
@@ -36,6 +40,7 @@ export const loginErrorMessageId: Record<LoginError, string> = {
   wrongSmsCode: 'login.error.wrongSmsCode',
   smsCodeAttemptsUsed: 'login.error.smsCodeAttemptsUsed',
   declined: 'login.error.declined',
+  expired: 'login.error.expired',
   failed: 'login.error.failed',
 }
 
@@ -67,8 +72,11 @@ export function toLoginError(error: unknown): LoginError {
   if (isTooManyElectronicIdRequests(error)) {
     return 'tooManyRequests'
   }
-  if (code === 'access_denied' || code === 'expired_token') {
+  if (code === 'access_denied') {
     return 'declined'
+  }
+  if (code === 'expired_token') {
+    return 'expired'
   }
   return 'failed'
 }

@@ -40,7 +40,8 @@ export const en: TranslatedMessages = {
   'login.error.wrongSmsCodeLastAttempt': 'Wrong code. One attempt left.',
   'login.error.smsCodeAttemptsUsed':
     "Couldn't confirm the code. Please start again.",
-  'login.error.declined': 'The login was declined or timed out. Try again.',
+  'login.error.declined': 'User not found.',
+  'login.error.expired': 'The request timed out. Try again.',
   'login.error.failed': "Couldn't log you in. Try again.",
 
   // app lock
