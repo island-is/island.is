@@ -43,9 +43,11 @@ lists framework behaviour that a single template does not reveal.
 
 - **Answers deep-merge on the server.** An omitted key keeps its old value,
   so nothing is deleted by navigation. Arrays merge row by row unless the
-  new one is shorter: a key dropped from a row survives, and reordered rows
-  mix. To clear a value, write an empty value the schema accepts (`''`,
-  `[]`); to drop rows, send the shorter array.
+  new one is shorter, or its last item is not an object (an empty array
+  included): then it replaces the old array outright. Otherwise a key
+  dropped from a row survives, and reordered rows mix. To clear a value,
+  write an empty value the schema accepts (`''`, `[]`); to drop rows, send
+  the shorter array.
 - **Continue sends only the screen's own answers.** Keep every write under
   the field's own id: a value written elsewhere looks saved, vanishes on
   reload, and rides along with the next SUBMIT. Repeater child screens and
