@@ -1,3 +1,9 @@
+import type { InstitutionUser } from '@island.is/judicial-system/types'
+import {
+  InstitutionType,
+  UserRole,
+} from '@island.is/judicial-system/types'
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseIndictmentRulingDecision,
   ServiceRequirement,
@@ -6,8 +12,26 @@ import {
 import {
   getAppealExpirationInfo,
   getDefendantTagConfig,
+  getInfoCardDefender,
+  prefersAppealDefenderOnInfoCard,
 } from './DefendantInfo.logic'
 import { strings } from './DefendantInfo.strings'
+
+const defendantWith = (overrides: Partial<Defendant>): Defendant =>
+  ({
+    id: 'defendant-id',
+    name: 'Jón Sigurður Jónsson',
+    ...overrides,
+  } as Defendant)
+
+const userWith = (
+  role: UserRole,
+  institutionType: InstitutionType,
+): InstitutionUser =>
+  ({
+    role,
+    institution: { type: institutionType },
+  } as InstitutionUser)
 
 describe('DefendantInfo', () => {
   describe('getAdditionalDataSections', () => {
@@ -297,6 +321,107 @@ describe('DefendantInfo', () => {
       })
 
       expect(tag).toBeNull()
+    })
+  })
+
+  describe('getInfoCardDefender', () => {
+    const defendant = defendantWith({
+      defenderName: 'Lára Lögmann',
+      defenderEmail: 'lara@lawyers.is',
+      defenderPhoneNumber: '5555555',
+      appealDefenderName: 'Brynjar Sveinsson',
+      appealDefenderEmail: 'brynjar@lawyers.is',
+      appealDefenderPhoneNumber: '1111111',
+    })
+
+    test('prefers the appeal defender for court of appeals users', () => {
+      expect(
+        getInfoCardDefender(defendant, {
+          user: userWith(
+            UserRole.COURT_OF_APPEALS_JUDGE,
+            InstitutionType.COURT_OF_APPEALS,
+          ),
+        }),
+      ).toEqual({
+        name: 'Brynjar Sveinsson',
+        email: 'brynjar@lawyers.is',
+        phoneNumber: '1111111',
+      })
+    })
+
+    test('prefers the appeal defender for public prosecution office staff', () => {
+      expect(
+        getInfoCardDefender(defendant, {
+          user: userWith(
+            UserRole.PUBLIC_PROSECUTOR_STAFF,
+            InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+          ),
+        }).name,
+      ).toBe('Brynjar Sveinsson')
+    })
+
+    test('prefers the appeal defender for public prosecutors', () => {
+      expect(
+        getInfoCardDefender(defendant, {
+          user: userWith(
+            UserRole.PROSECUTOR,
+            InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+          ),
+        }).name,
+      ).toBe('Brynjar Sveinsson')
+    })
+
+    test('keeps the district-court defender for other roles', () => {
+      expect(
+        getInfoCardDefender(defendant, {
+          user: userWith(
+            UserRole.DISTRICT_COURT_JUDGE,
+            InstitutionType.DISTRICT_COURT,
+          ),
+        }),
+      ).toEqual({
+        name: 'Lára Lögmann',
+        email: 'lara@lawyers.is',
+        phoneNumber: '5555555',
+      })
+    })
+
+    test('falls back to the district-court defender when no appeal defender is set', () => {
+      expect(
+        getInfoCardDefender(
+          defendantWith({
+            defenderName: 'Lára Lögmann',
+            defenderEmail: 'lara@lawyers.is',
+          }),
+          {
+            user: userWith(
+              UserRole.COURT_OF_APPEALS_JUDGE,
+              InstitutionType.COURT_OF_APPEALS,
+            ),
+          },
+        ).name,
+      ).toBe('Lára Lögmann')
+    })
+  })
+
+  describe('prefersAppealDefenderOnInfoCard', () => {
+    test('is true for the appeal-facing roles and false otherwise', () => {
+      expect(
+        prefersAppealDefenderOnInfoCard(
+          userWith(
+            UserRole.COURT_OF_APPEALS_ASSISTANT,
+            InstitutionType.COURT_OF_APPEALS,
+          ),
+        ),
+      ).toBe(true)
+      expect(
+        prefersAppealDefenderOnInfoCard(
+          userWith(
+            UserRole.PROSECUTOR,
+            InstitutionType.POLICE_PROSECUTORS_OFFICE,
+          ),
+        ),
+      ).toBe(false)
     })
   })
 })
