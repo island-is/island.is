@@ -26,6 +26,7 @@ export type {
   GetDraftRolesWithStepsResponseDto,
   GetDraftStepsResponseDto,
   GetDraftSubCriteriaResponseDto,
+  GetReportAttachmentsResponseDto,
   GetReportOutliersResponseDto,
   Paging,
   GetSubCriterionCatalogResponseDto,
@@ -34,6 +35,7 @@ export type {
   ParsedEmployeeDto,
   ParsedRoleDto,
   ParsedReportDto,
+  ReportAttachmentDto,
   ReportCriterionDto,
   ReportEmployeeDto,
   ReportEmployeeRoleDto,
@@ -64,6 +66,7 @@ export type {
 export {
   CompanySizeEnum,
   EqualityCoverageSourceEnum,
+  ReportAttachmentExtensionEnum,
   ReportCriterionTypeEnum,
   ReportStatusEnum,
   ReportTypeEnum,
