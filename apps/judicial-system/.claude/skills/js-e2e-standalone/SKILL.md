@@ -97,9 +97,13 @@ user already has running alone - it is on other ports and you do not need it.
 **Pick the ports.** From the repo root:
 
 ```bash
-eval "$(node apps/judicial-system/.claude/skills/js-e2e-standalone/pick-ports.mjs)"
+PORT_ASSIGNMENTS=$(node apps/judicial-system/.claude/skills/js-e2e-standalone/pick-ports.mjs) || exit 1
+eval "$PORT_ASSIGNMENTS"
 QUEUE=e2e-message-queue-$BACKEND_PORT
 ```
+
+If the script fails, stop there - `eval` on its empty output would succeed and
+leave the ports unset.
 
 That sets `BACKEND_PORT`, `API_PORT`, `MESSAGE_HANDLER_PORT` and `WEB_PORT` to
 random free ports. `WEB_PORT` is for the web app, which you do not start
@@ -176,12 +180,24 @@ It must answer `302`. It proves the api reaches the backend and the backend
 the database, and it takes the first-request slowness of a freshly started
 service out of the run, where it can trip the suite's 15s waits.
 
+**Note the pids.** Now that the services are up, record which process holds
+each of their ports:
+
+```bash
+lsof -nP -t -iTCP:<port> -sTCP:LISTEN
+```
+
+Run it for the backend, api and message handler ports and for `PORT + 1` of
+the backend and api, and note the pids next to the ports. Step 6 uses them to
+tell a process this run started from one that took the port later.
+
 ## 4. Run
 
 **Check the web port is still free.** Nothing has held it since step 3, and
-the services took minutes to start. If something took it in the meantime,
-Playwright reuses whatever answers there and the run silently tests the wrong
-app. So check both the web port and the one above it:
+the services took minutes to start. On a port other than 4200 the config
+never reuses a server that is already there, so if something took the port in
+the meantime Playwright fails at startup rather than test the wrong app. Check
+first, for both the web port and the one above it:
 
 ```bash
 lsof -nP -iTCP:<web port> -sTCP:LISTEN; lsof -nP -iTCP:<web port + 1> -sTCP:LISTEN
@@ -200,9 +216,12 @@ JUDICIAL_SYSTEM_WEB_PORT=<web port> INTERNAL_API_URL=http://localhost:<api port>
 Both variables are required:
 
 - `JUDICIAL_SYSTEM_WEB_PORT` is where the config serves the web app and where
-  the tests look for it. Without it both fall back to 4200, and the config
-  sets `reuseExistingServer` - so if the user has anything on 4200 the suite
-  silently runs against that instead of this checkout.
+  the tests look for it. Without it both fall back to 4200, where the config
+  reuses a server that is already listening - so if the user has anything on
+  4200 the suite silently runs against that instead of this checkout. On any
+  other port it does not reuse: if the port is taken, Playwright stops with
+  "already used" before any test runs. Pick a new web port as above and run
+  again.
 - `INTERNAL_API_URL` points that web app at your api: it proxies `/api` there
   and uses it for its own server-side calls. Without it the web app falls
   back to `localhost:3333`.
@@ -246,7 +265,7 @@ Common causes, in the order to check them:
 | `GraphQL operation X returned errors: Internal server error`               | backend 500 - usually pending migrations; reproduce with curl against `localhost:<web port>/api/graphql` and read `extensions.problem.detail`                                                                                                   |
 | login GET redirects to `/?villa=innskraning-ekki-notandi`                  | user not eligible - for the defender, the `lawyer_registry` seed is missing                                                                                                                                                                     |
 | `page.waitForResponse: Timeout` right after an action                      | either the action did not fire the request (button still disabled - check the DOM state) or the wait was satisfied earlier by a response already in flight from a previous action; `verifyRequestCompletion` matches on operation name only     |
-| `page.goto` / chunk requests taking 5-30s                                  | the web port was already taken by a dev server and got reused - check what listens on it                                                                                                                                                        |
+| `page.goto` / chunk requests taking 5-30s                                  | `JUDICIAL_SYSTEM_WEB_PORT` was not set, so the run fell back to 4200 and reused a dev server there - check what listens on it                                                                                                                   |
 | upload `POST` to `*.s3.eu-west-1.amazonaws.com` returns 403                | read the XML body in `resources/`: `InvalidAccessKeyId` or `ExpiredToken` - the backend has no valid AWS credentials, see preconditions; `AccessDenied ... s3:PutObject` - the credentials are valid but their role may not write to the bucket |
 | upload `POST` to `*.s3.eu-west-1.amazonaws.com` blocked or never completes | CORS - the web app is not on 4200 and the browser was not started with `--disable-web-security`; check `judicialSystemBrowserArgs` in the Playwright config                                                                                     |
 
@@ -267,10 +286,12 @@ opens a metrics server there). Stopping
 message handler also takes up to ten seconds to let go of its port while it
 finishes its last queue poll, so check again after that before deciding a
 listener was left behind. If a
-listener remains, read its command with `ps -o command= -p <pid>`; when it is
-a node process running from this checkout's `dist/` on one of your ports, it
-is yours - stop it with `kill <pid>` and check again. Anything else, leave
-alone and report. Playwright shuts the web app down itself.
+listener remains, compare its pid with the one you noted for that port in
+step 3. When they match it is yours - stop it with `kill <pid>` and check
+again. When they differ, or you have no pid noted for the port, leave it
+alone and report it with its command (`ps -o command= -p <pid>`): a process
+from this checkout on one of your ports is not proof that this run started
+it. Playwright shuts the web app down itself.
 
 If the user asked to keep the stack up, leave it and tell them the ports.
 

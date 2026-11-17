@@ -30,7 +30,10 @@ const judicialSystemBrowserArgs =
  * e2e). In dev mode Next compiles every route on first visit, which blows the
  * request waits and makes the suite look flaky. So for local runs of that
  * project, build and serve the production bundle - unless something already
- * listens on the port (e.g. a dev server), which is then reused as-is.
+ * listens on 4200 (e.g. a dev server), which is then reused as-is. A port
+ * chosen with JUDICIAL_SYSTEM_WEB_PORT is never reused: it was picked to run
+ * this checkout beside another stack, so a server already there is someone
+ * else's and the run fails instead of testing it.
  * Port 4200 is the only origin the dev S3 bucket allows in its CORS rules;
  * see judicialSystemBrowserArgs for how another port still uploads.
  * The islandis project targets remote environments and needs no server.
@@ -46,7 +49,8 @@ const judicialSystemWebServer: PlaywrightTestConfig['webServer'] =
         ].join(' && '),
         cwd: join(__dirname, '../../..'),
         url: `http://localhost:${judicialSystemPort}/liveness`,
-        reuseExistingServer: true,
+        reuseExistingServer:
+          judicialSystemPort === judicialSystemDefaultLocalPort,
         // The production build takes several minutes on a cold nx cache.
         timeout: 15 * 60 * 1000,
         stdout: 'ignore',

@@ -144,8 +144,9 @@ and makes it look flaky. Do not "fix" that by raising timeouts or rerunning.
   touched a file in this app (or after `/add-dir apps/judicial-system`).
   The Playwright config builds the production bundle and serves it itself on
   port 4200, or on `JUDICIAL_SYSTEM_WEB_PORT` when that is set; whatever
-  already listens on that port is reused as-is, so a dev server there is slow
-  (avoid). The served bundle reaches the api at `INTERNAL_API_URL` (default
+  already listens on 4200 is reused as-is, so a dev server there is slow
+  (avoid), while on any other port a server that is already there fails the
+  run. The served bundle reaches the api at `INTERNAL_API_URL` (default
   `http://localhost:3333`). `js-e2e-standalone` sets both to run on free ports next to
   a stack on the defaults. The dev S3 upload bucket only allows the
   `localhost:4200` origin, so on any other port the config starts the browser
