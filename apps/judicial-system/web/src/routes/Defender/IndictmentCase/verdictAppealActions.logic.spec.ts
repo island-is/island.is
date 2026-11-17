@@ -339,7 +339,11 @@ describe('verdictAppealActions', () => {
 
     it('should allow an appeal-confirmed defender with an open deadline', () => {
       expect(
-        canDefenderFileVerdictStatementOf(openAppealCase, appealDefendant, user),
+        canDefenderFileVerdictStatementOf(
+          openAppealCase,
+          appealDefendant,
+          user,
+        ),
       ).toBe(true)
     })
 
