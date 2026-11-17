@@ -252,7 +252,7 @@ const AppealSummons = () => {
                 )}
               </Box>
               <Box component="section">
-                <SectionHeading title="Heiti máls" required />
+                <SectionHeading title="Heiti máls" />
                 <Input
                   name="caseName"
                   label="Heiti máls"
@@ -293,7 +293,7 @@ const AppealSummons = () => {
                     <Text marginBottom={3}>
                       {appellantSideLabel(section.appellantSide)}
                     </Text>
-                    <SectionHeading title="Kröfur áfrýjanda" required />
+                    <SectionHeading title="Kröfur áfrýjanda" />
                     <Input
                       name={`claims-${section.defendantId}`}
                       label="Kröfur áfrýjanda"
