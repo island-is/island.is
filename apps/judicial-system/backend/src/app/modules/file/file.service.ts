@@ -56,6 +56,7 @@ import { AttachRulingOrderDocumentDto } from './dto/attachRulingOrderDocument.dt
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFileDto } from './dto/updateFile.dto'
+import { canUserAccessCaseFileCategory } from './guards/caseFileCategory'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { DeliverResponse } from './models/deliver.response'
 import { PresignedPost } from './models/presignedPost.model'
@@ -159,6 +160,7 @@ export class FileService {
       case CaseFileCategory.DEFENDANT_APPEAL_BRIEF:
       case CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE:
       case CaseFileCategory.APPEAL_RULING:
+      case CaseFileCategory.VERDICT_APPEAL_RULING:
         courtDocumentFolder = CourtDocumentFolder.APPEAL_DOCUMENTS
         break
       default:
@@ -395,6 +397,21 @@ export class FileService {
     ) {
       throw new ForbiddenException(
         'Only district court users can create court case files',
+      )
+    }
+
+    if (!canUserAccessCaseFileCategory(user, createFile.category)) {
+      throw new ForbiddenException(
+        'Only court of appeals users can create a verdict appeal ruling',
+      )
+    }
+
+    if (
+      createFile.category === CaseFileCategory.VERDICT_APPEAL_RULING &&
+      !theCase.verdictAppealCase
+    ) {
+      throw new BadRequestException(
+        `Case ${theCase.id} has no verdict appeal to rule on`,
       )
     }
 

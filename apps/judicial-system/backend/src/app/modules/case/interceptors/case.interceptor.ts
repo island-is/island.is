@@ -27,6 +27,7 @@ import {
   getStatementDeadline,
   hasDatePassed,
   isCompletedCase,
+  isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
   isIndictmentCase,
@@ -43,7 +44,10 @@ import {
 import { getRequestTransaction } from '../../../middleware'
 import { hasOutOfCourtAppeal } from '../../appeal-case'
 import { getMostPermissiveRequestSharedWithDefenderForNationalId } from '../../defendant/requestSharedWithDefender.logic'
-import { isRulingOrderInConfirmedCourtSession } from '../../file/guards/caseFileCategory'
+import {
+  canUserAccessCaseFileCategory,
+  isRulingOrderInConfirmedCourtSession,
+} from '../../file/guards/caseFileCategory'
 import { canDefenceUserViewCivilClaimCaseFile } from '../../file/guards/civilClaimFileVisibility'
 import {
   AppealCase,
@@ -776,6 +780,26 @@ const getAppealRulingOverride = (appealCase: AppealCase, isDefence: boolean) =>
       }
     : {}
 
+// How the court of appeals concludes a verdict appeal is its own until it is
+// released: every other user is presented with an appeal still in progress,
+// whatever the court has saved on it and whether or not it has completed it.
+const getVerdictAppealOutcomeOverride = (
+  verdictAppealCase: AppealCase,
+  user: User | undefined,
+) =>
+  isCourtOfAppealsUser(user)
+    ? {}
+    : {
+        appealRulingDecision: undefined,
+        appealRulingType: undefined,
+        appealConclusion: undefined,
+        appealRulingModifiedHistory: undefined,
+        appealRulingDate: undefined,
+        ...(verdictAppealCase.appealState === AppealCaseState.COMPLETED
+          ? { appealState: AppealCaseState.APPEALED }
+          : {}),
+      }
+
 const transformCase = (
   theCase: Case,
   user: User | undefined,
@@ -842,6 +866,15 @@ const transformCase = (
       }
     : {}
 
+  const verdictAppealCaseOverride = theCase.verdictAppealCase
+    ? {
+        verdictAppealCase: {
+          ...theCase.verdictAppealCase.toJSON(),
+          ...getVerdictAppealOutcomeOverride(theCase.verdictAppealCase, user),
+        },
+      }
+    : {}
+
   const caseLevelAppealInfo = getCaseLevelAppealInfo(theCase)
 
   return {
@@ -870,6 +903,7 @@ const transformCase = (
     )?.announcement,
     ...appealCaseOverride,
     ...rulingOrderAppealCasesOverride,
+    ...verdictAppealCaseOverride,
     defendants: transformDefendants({
       defendants: transformedDefendants,
       indictmentRulingDecision: theCase.indictmentRulingDecision,
@@ -881,7 +915,8 @@ const transformCase = (
       civilClaimants: theCase.civilClaimants,
     }),
     caseFiles: theCase.caseFiles
-      ?.filter(
+      ?.filter((file) => canUserAccessCaseFileCategory(user, file.category))
+      .filter(
         (file) =>
           // The user must be known
           user &&

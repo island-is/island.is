@@ -7,6 +7,9 @@ import { CallHandler, ExecutionContext } from '@nestjs/common'
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
+  AppealRulingType,
+  CaseFileCategory,
+  CaseFileState,
   CaseIndictmentRulingDecision,
   CaseType,
   DefendantEventType,
@@ -971,6 +974,191 @@ describe('CaseInterceptor - appeal ruling', () => {
         expect(then.result.rulingOrderAppealCases[0]).toMatchObject(
           appealRuling,
         )
+      })
+    },
+  )
+})
+
+describe('CaseInterceptor - verdict appeal outcome', () => {
+  const mockRequest = jest.fn()
+  const mockHandle = jest.fn()
+
+  const outcome = {
+    appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+    appealRulingType: AppealRulingType.VERDICT,
+    appealConclusion: 'the appealed judgment stands',
+    appealRulingModifiedHistory: 'the judgment was corrected',
+    appealRulingDate: new Date('2024-03-01'),
+  }
+  const withheldOutcome = {
+    appealRulingDecision: undefined,
+    appealRulingType: undefined,
+    appealConclusion: undefined,
+    appealRulingModifiedHistory: undefined,
+    appealRulingDate: undefined,
+  }
+
+  const makeFile = (id: string, category: CaseFileCategory) => {
+    const file = { id, category, state: CaseFileState.STORED_IN_RVG }
+
+    return { ...file, toJSON: () => file }
+  }
+
+  const courtOfAppealsUser = {
+    role: UserRole.COURT_OF_APPEALS_ASSISTANT,
+    nationalId,
+    institution: { type: InstitutionType.COURT_OF_APPEALS },
+  }
+
+  interface Then {
+    result: {
+      verdictAppealCase: Partial<typeof outcome> & {
+        id: string
+        appealState: AppealCaseState
+        appealCaseNumber: string
+      }
+      caseFiles: { id: string }[]
+    }
+  }
+
+  const givenWhenThen = async (
+    appealState: AppealCaseState,
+    currentUser: unknown,
+  ): Promise<Then> => {
+    const interceptor = new CaseInterceptor({
+      findOriginalAncestorId: (theCase) => Promise.resolve(theCase.id),
+    } as unknown as CaseRepositoryService)
+    const verdictAppealCase = {
+      id: 'verdict_appeal',
+      appealState,
+      appealCaseNumber: '2/2024',
+      ...outcome,
+    }
+
+    mockRequest.mockImplementationOnce(() => ({ user: { currentUser } }))
+    mockHandle.mockReturnValueOnce(
+      of({
+        ...makeCase([]),
+        verdictAppealCase: {
+          ...verdictAppealCase,
+          toJSON: () => verdictAppealCase,
+        },
+        caseFiles: [
+          makeFile('district_ruling', CaseFileCategory.RULING),
+          makeFile(
+            'verdict_appeal_ruling',
+            CaseFileCategory.VERDICT_APPEAL_RULING,
+          ),
+        ],
+      }),
+    )
+
+    const result = await firstValueFrom(
+      interceptor.intercept(
+        {
+          switchToHttp: () => ({ getRequest: mockRequest }),
+        } as unknown as ExecutionContext,
+        { handle: mockHandle } as unknown as CallHandler,
+      ),
+    )
+
+    return { result: result as Then['result'] }
+  }
+
+  describe.each([
+    [
+      'a prosecution user',
+      {
+        role: UserRole.PROSECUTOR,
+        nationalId,
+        institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
+      },
+    ],
+    [
+      'a public prosecution office user',
+      {
+        role: UserRole.PUBLIC_PROSECUTOR_STAFF,
+        nationalId,
+        institution: { type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE },
+      },
+    ],
+    [
+      'a district court user',
+      {
+        role: UserRole.DISTRICT_COURT_JUDGE,
+        nationalId,
+        institution: { type: InstitutionType.DISTRICT_COURT },
+      },
+    ],
+    ['a defence user', { role: UserRole.DEFENDER, nationalId }],
+    [
+      'a prison system user',
+      {
+        role: UserRole.PRISON_SYSTEM_STAFF,
+        nationalId,
+        institution: { type: InstitutionType.PRISON },
+      },
+    ],
+  ])('when the user is %s', (_, currentUser) => {
+    describe.each([AppealCaseState.APPEALED, AppealCaseState.COMPLETED])(
+      'and the verdict appeal is %s',
+      (appealState) => {
+        let then: Then
+
+        beforeEach(async () => {
+          then = await givenWhenThen(appealState, currentUser)
+        })
+
+        it('withholds the outcome', () => {
+          expect(then.result.verdictAppealCase).toMatchObject(withheldOutcome)
+        })
+
+        it('presents the appeal as in progress', () => {
+          expect(then.result.verdictAppealCase).toMatchObject({
+            id: 'verdict_appeal',
+            appealState: AppealCaseState.APPEALED,
+            appealCaseNumber: '2/2024',
+          })
+        })
+
+        it('leaves the court of appeals ruling out of the case files', () => {
+          expect(then.result.caseFiles.map((file) => file.id)).toEqual([
+            'district_ruling',
+          ])
+        })
+      },
+    )
+
+    it('still presents a withdrawn appeal as withdrawn', async () => {
+      const then = await givenWhenThen(AppealCaseState.WITHDRAWN, currentUser)
+
+      expect(then.result.verdictAppealCase.appealState).toBe(
+        AppealCaseState.WITHDRAWN,
+      )
+    })
+  })
+
+  describe.each([AppealCaseState.APPEALED, AppealCaseState.COMPLETED])(
+    'when the user is a court of appeals user and the verdict appeal is %s',
+    (appealState) => {
+      let then: Then
+
+      beforeEach(async () => {
+        then = await givenWhenThen(appealState, courtOfAppealsUser)
+      })
+
+      it('includes the outcome and the state', () => {
+        expect(then.result.verdictAppealCase).toMatchObject({
+          ...outcome,
+          appealState,
+        })
+      })
+
+      it('includes the court of appeals ruling in the case files', () => {
+        expect(then.result.caseFiles.map((file) => file.id)).toEqual([
+          'district_ruling',
+          'verdict_appeal_ruling',
+        ])
       })
     },
   )

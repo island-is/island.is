@@ -17,6 +17,7 @@ import {
   AppealCaseRulingDecision,
   AppealCaseState,
   AppealCaseType,
+  AppealRulingType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -162,6 +163,18 @@ export class AppealCase extends Model {
   })
   @ApiPropertyOptional({ enum: AppealCaseRulingDecision })
   appealRulingDecision?: AppealCaseRulingDecision
+
+  /**********
+   * Whether the court of appeals concludes a verdict appeal with a judgment or
+   * with a ruling - not set on a ruling appeal
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(AppealRulingType),
+  })
+  @ApiPropertyOptional({ enum: AppealRulingType })
+  appealRulingType?: AppealRulingType
 
   /**********
    * The appeal conclusion

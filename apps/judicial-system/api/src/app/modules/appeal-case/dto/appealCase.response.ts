@@ -4,6 +4,7 @@ import {
   AppealCaseRulingDecision,
   AppealCaseState,
   AppealCaseType,
+  AppealRulingType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -17,6 +18,7 @@ import { AppealStatementDeadline } from './appealStatementDeadline.response'
 registerEnumType(AppealCaseState, { name: 'AppealCaseState' })
 registerEnumType(AppealCaseType, { name: 'AppealCaseType' })
 registerEnumType(AppealCaseRulingDecision, { name: 'AppealCaseRulingDecision' })
+registerEnumType(AppealRulingType, { name: 'AppealRulingType' })
 
 @ObjectType()
 export class AppealDefendantStatementDate {
@@ -101,6 +103,10 @@ export class AppealCase {
 
   @Field(() => AppealCaseRulingDecision, { nullable: true })
   readonly appealRulingDecision?: AppealCaseRulingDecision
+
+  // Set on a verdict appeal only: a judgment (VERDICT) or a ruling (RULING).
+  @Field(() => AppealRulingType, { nullable: true })
+  readonly appealRulingType?: AppealRulingType
 
   @Field(() => String, { nullable: true })
   readonly appealConclusion?: string
