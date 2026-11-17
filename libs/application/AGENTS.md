@@ -28,10 +28,12 @@ lists framework behaviour that a single template does not reveal.
   only the answers it carries. A submit action must re-check required
   fields, eligibility and payment.
 - **A root-level `.refine`, `.superRefine` or `.transform` disables
-  `.partial()`,** yet still sees only the keys sent: a rule comparing two
-  fields misfires when the screen sends one. Let such a rule pass when
-  either field is absent, and re-check the pair in the submit action.
-  `.partial()` is also shallow.
+  `.partial()`,** so the whole refined schema is parsed as written: a
+  request without a required field fails. Call `.partial()` on the
+  underlying object before adding the refinement, and re-check required
+  fields in the submit action. The rule still sees only the keys sent, so
+  let a comparison of two fields pass when either is absent, and re-check
+  the pair on submit. `.partial()` is also shallow.
 - **The client shows only errors for the current screen's ids.**
   Single-field, repeater-child and provider screens, and multiFields whose
   visible children lack ids, filter nothing: an error anywhere in the form
