@@ -1,8 +1,5 @@
 import type { InstitutionUser } from '@island.is/judicial-system/types'
-import {
-  InstitutionType,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
 import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseIndictmentRulingDecision,
