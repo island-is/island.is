@@ -57,6 +57,9 @@ export const en: TranslatedMessages = {
     'Too many electronic ID requests for now. Try again in a few minutes.',
   'applock.logout': 'Log out',
   'biometrics.close': 'Close',
+  'biometrics.notAllowedMessage':
+    "{biometricType} isn't allowed for the Ísland.is app. You can allow it in your device settings.",
+  'biometrics.openSettings': 'Open settings',
 
   // log in again after the update
   'relogin.title': 'Log in',

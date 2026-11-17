@@ -56,6 +56,9 @@ export const is = {
     'Of margar beiðnir um rafræn skilríki í bili. Reyndu aftur eftir nokkrar mínútur.',
   'applock.logout': 'Útskrá',
   'biometrics.close': 'Loka',
+  'biometrics.notAllowedMessage':
+    '{biometricType} er ekki leyft fyrir Ísland.is appið. Þú getur leyft það í stillingum tækisins.',
+  'biometrics.openSettings': 'Opna stillingar',
 
   // log in again after the update
   'relogin.title': 'Skráðu þig inn',

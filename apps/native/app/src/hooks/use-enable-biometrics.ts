@@ -1,9 +1,11 @@
+import { authenticateAsync } from 'expo-local-authentication'
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Alert } from 'react-native'
+import { Alert, Linking, Platform } from 'react-native'
 
+import { getSystemIntl } from '@/components/providers/locale-provider'
 import { getIasClient, isTooManyElectronicIdRequests } from '@/lib/ias'
-import { authStore } from '@/stores/auth-store'
+import { authStore, whileSystemDialog } from '@/stores/auth-store'
 import { useUiStore } from '@/stores/ui-store'
 import { useBiometricType } from './use-biometric-type'
 import { isCancelled, useElectronicIdUnlock } from './use-electronic-id-unlock'
@@ -28,6 +30,72 @@ export function useEnableBiometrics({
   const [isEnabling, setIsEnabling] = useState(false)
   const electronicId = useElectronicIdUnlock('enableBiometrics', { inline })
 
+  /**
+   * iOS asks to allow Face ID the first time an app uses it. Using it once
+   * here asks while the person turns it on, not later at the lock, and a
+   * refusal stops before the electronic ID request. Android doesn't ask.
+   */
+  const confirmBiometrics = async (): Promise<boolean> => {
+    if (Platform.OS !== 'ios') {
+      return true
+    }
+    const result = await whileSystemDialog(() =>
+      authenticateAsync({
+        promptMessage: 'Ísland.is',
+        // The system's dialog: its own text is in the phone's language.
+        cancelLabel: getSystemIntl().formatMessage({ id: 'biometrics.close' }),
+        disableDeviceFallback: true,
+        fallbackLabel: '',
+      }),
+    )
+    if (result.success) {
+      return true
+    }
+
+    const title = intl.formatMessage(
+      { id: 'biometrics.enableFailedTitle' },
+      { biometricType: biometricType.text },
+    )
+    if (result.error === 'not_available') {
+      // What iOS says once the person hasn't allowed it for the app.
+      Alert.alert(
+        title,
+        intl.formatMessage(
+          { id: 'biometrics.notAllowedMessage' },
+          { biometricType: biometricType.text },
+        ),
+        [
+          {
+            text: intl.formatMessage({ id: 'biometrics.close' }),
+            style: 'cancel',
+          },
+          {
+            text: intl.formatMessage({ id: 'biometrics.openSettings' }),
+            onPress: () => void Linking.openSettings(),
+          },
+        ],
+      )
+    } else if (result.error === 'not_enrolled') {
+      Alert.alert(
+        title,
+        intl.formatMessage(
+          { id: 'onboarding.biometrics.notEnrolled' },
+          { biometricType: biometricType.text },
+        ),
+      )
+    } else if (
+      result.error !== 'user_cancel' &&
+      result.error !== 'system_cancel' &&
+      result.error !== 'app_cancel'
+    ) {
+      Alert.alert(
+        title,
+        intl.formatMessage({ id: 'electronicId.error.tryAgain' }),
+      )
+    }
+    return false
+  }
+
   /** Resolves with whether biometrics are on. */
   const enableBiometrics = async (): Promise<boolean> => {
     if (electronicId.isPending()) {
@@ -36,6 +104,9 @@ export function useEnableBiometrics({
     setIsEnabling(true)
     let enabled = false
     try {
+      if (!(await confirmBiometrics())) {
+        return false
+      }
       const tokens = await electronicId.unlock()
       // As with an unlock, the earlier refresh token stops working.
       authStore.getState().unlockNative(tokens)
