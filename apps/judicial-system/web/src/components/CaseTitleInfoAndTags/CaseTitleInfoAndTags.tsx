@@ -59,10 +59,9 @@ const CaseTitleInfoAndTags: FC = () => {
     ? (rulingOrderFileName?.startsWith(courtCaseNumberPrefix)
         ? rulingOrderFileName.slice(courtCaseNumberPrefix.length)
         : rulingOrderFileName) ?? 'Úrskurður'
-    : verdictAppealCaseName &&
-      (hasStoredAppealCaseName || hasNamedDefendant)
-      ? verdictAppealCaseName
-      : titleForCase(formatMessage, workingCase)
+    : verdictAppealCaseName && (hasStoredAppealCaseName || hasNamedDefendant)
+    ? verdictAppealCaseName
+    : titleForCase(formatMessage, workingCase)
 
   return (
     <Box
