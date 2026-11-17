@@ -7,8 +7,9 @@ import { Layout } from '../components/Layout/Layout'
 import { Application } from '../routes/Application'
 import { Applications } from '../routes/Applications'
 import { AssignApplication } from '../routes/AssignApplication'
+import { BASE_PATH } from './basePath'
 
-export const BASE_PATH = '/umsoknir'
+export { BASE_PATH }
 
 /**
  * Creates routes for application-system. All routes are defined here.
