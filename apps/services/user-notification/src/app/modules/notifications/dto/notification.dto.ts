@@ -308,6 +308,14 @@ export class ActorNotificationDto {
   @IsString()
   scope!: string
 
+  @ApiProperty({
+    example: true,
+    description:
+      'Whether the notification was delivered to the delegate, false if it was suppressed',
+  })
+  @IsBoolean()
+  wasSent!: boolean
+
   @ApiProperty({ example: new Date().toISOString() })
   @IsDate()
   created!: Date
