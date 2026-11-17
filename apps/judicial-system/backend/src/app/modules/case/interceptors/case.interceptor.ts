@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common'
 
 import {
+  AppealCaseState,
   AppealDecisionPartyRole,
   AppealEventType,
   CaseAppealDecision,
@@ -760,6 +761,21 @@ const getDefenceUserDefendants = (
   }
 }
 
+// The court of appeals saves its ruling on the appeal case while writing it,
+// so until the appeal case is completed the ruling is a draft and is withheld
+// from defence users.
+const getAppealRulingOverride = (appealCase: AppealCase, isDefence: boolean) =>
+  isDefence && appealCase.appealState !== AppealCaseState.COMPLETED
+    ? {
+        appealRulingDecision: undefined,
+        appealConclusion: undefined,
+        appealRulingModifiedHistory: undefined,
+        appealValidToDate: undefined,
+        isAppealCustodyIsolation: undefined,
+        appealIsolationToDate: undefined,
+      }
+    : {}
+
 const transformCase = (
   theCase: Case,
   user: User | undefined,
@@ -808,6 +824,7 @@ const transformCase = (
           ...theCase.appealCase.toJSON(),
           ...getAppealCaseStatementDates(theCase.appealCase, theCase),
           ...getAppealCaseInfo(theCase.appealCase, theCase),
+          ...getAppealRulingOverride(theCase.appealCase, isDefence),
           appealEventLogs: undefined,
         },
       }
@@ -819,6 +836,7 @@ const transformCase = (
           ...ac.toJSON(),
           ...getAppealCaseStatementDates(ac, theCase),
           ...getAppealCaseInfo(ac, theCase),
+          ...getAppealRulingOverride(ac, isDefence),
           appealEventLogs: undefined,
         })),
       }
