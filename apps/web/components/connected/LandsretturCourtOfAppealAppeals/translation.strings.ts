@@ -11,4 +11,9 @@ export const m = defineMessages({
     defaultMessage: 'Villa kom upp við að sækja áfrýjuð mál',
     description: 'Error message when fetching court of appeal appeals fails',
   },
+  appealDatePrefix: {
+    id: 'web.landsretturCourtOfAppealAppeals:appealDatePrefix',
+    defaultMessage: 'Áfrýjað',
+    description: 'Label shown before the date a case was appealed',
+  },
 })
