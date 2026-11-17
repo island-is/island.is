@@ -58,9 +58,9 @@ export const is = {
   'biometrics.close': 'Loka',
 
   // log in again after the update
-  'relogin.title': 'Skráðu þig inn aftur',
+  'relogin.title': 'Skráðu þig inn',
   'relogin.body':
-    'Af öryggisástæðum er ekki lengur hægt að nota PIN-númer til að skrá sig inn í <b>Ísland.is appið.</b>',
+    'Ekki er lengur hægt að nota PIN-númer til að skrá sig inn í <b>Ísland.is appið.</b>',
   'relogin.description':
     'Skráðu þig inn með rafrænum skilríkjum. Eftir það má nota Face ID eða fingrafar.',
   'relogin.loginButton': 'Innskráning með rafrænum skilríkjum',

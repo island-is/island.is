@@ -17,6 +17,11 @@ export interface PreferencesStore {
    * iOS and preferences don't, so this tells a fresh install apart.
    */
   hasLoggedIn: boolean
+  /**
+   * The login screen tells someone who was logged in with an older version
+   * why they have to log in again, until they do.
+   */
+  showReloginNotice: boolean
   hasOnboardedBiometrics: boolean
   hasOnboardedNotifications: boolean
   hasOnboardedPrivacy: boolean
@@ -60,6 +65,7 @@ const defaultPreferences = {
   dev__useLockScreen: true,
   hasOnboardedBiometrics: false,
   hasLoggedIn: false,
+  showReloginNotice: false,
   hasOnboardedNotifications: false,
   hasOnboardedPrivacy: false,
   hasAcceptedNotifications: false,

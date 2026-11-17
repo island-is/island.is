@@ -3,10 +3,14 @@ import React from 'react'
 import { Alert } from 'react-native'
 
 import { LoginWelcome } from '@/components/device-bound-auth/login-welcome'
+import { ReloginNotice } from '@/components/device-bound-auth/relogin-notice'
 import { environments } from '@/constants/environments'
 import { authStore } from '@/stores/auth-store'
 import { useEnvironmentStore } from '@/stores/environment-store'
-import { preferencesStore } from '@/stores/preferences-store'
+import {
+  preferencesStore,
+  usePreferencesStore,
+} from '@/stores/preferences-store'
 import { nextOnboardingStep } from '@/utils/onboarding'
 
 // The Mock environment logs in without IAS, for the Maestro tests.
@@ -40,6 +44,9 @@ async function logInWithMocks() {
 export default function LoginScreen() {
   const router = useRouter()
   const { environment = environments.prod, cognito } = useEnvironmentStore()
+  const showReloginNotice = usePreferencesStore(
+    ({ showReloginNotice }) => showReloginNotice,
+  )
 
   const onLoginPress = async () => {
     if (environment.id === 'mock') {
@@ -66,6 +73,10 @@ export default function LoginScreen() {
   const onLanguagePress = () => {
     const { locale, setLocale } = preferencesStore.getState()
     setLocale(locale === 'en-US' ? 'is-IS' : 'en-US')
+  }
+
+  if (showReloginNotice) {
+    return <ReloginNotice onLoginPress={onLoginPress} />
   }
 
   return (

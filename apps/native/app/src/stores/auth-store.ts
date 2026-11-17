@@ -202,7 +202,7 @@ export const authStore = create<AuthStore>((set, get) => ({
         accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
       },
     )
-    preferencesStore.setState({ hasLoggedIn: true })
+    preferencesStore.setState({ hasLoggedIn: true, showReloginNotice: false })
     set({ nativeUser: userInfo })
     return userInfo
   },
@@ -330,7 +330,10 @@ export async function readAuthorizeResult(): Promise<void> {
   // Older versions logged in through the browser. Those tokens can't be
   // refreshed any more, so the person logs in again.
   if (await hasBrowserLogin()) {
+    // Logging out resets the preferences, but the notice is in their language.
+    const { locale } = preferencesStore.getState()
     await forceLogout()
+    preferencesStore.setState({ locale, showReloginNotice: true })
     return
   }
 

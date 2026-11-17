@@ -59,9 +59,9 @@ export const en: TranslatedMessages = {
   'biometrics.close': 'Close',
 
   // log in again after the update
-  'relogin.title': 'Log in again',
+  'relogin.title': 'Log in',
   'relogin.body':
-    'For security reasons, a PIN can no longer be used to log in to <b>the Ísland.is app.</b>',
+    'A PIN can no longer be used to log in to <b>the Ísland.is app.</b>',
   'relogin.description':
     'Log in with electronic ID. After that you can use Face ID or fingerprint.',
   'relogin.loginButton': 'Log in with electronic ID',
