@@ -48,7 +48,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.RENTAL_AGREEMENT,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   name: application.name,
   institution: application.institutionName,
   translationNamespaces: ApplicationConfigurations.RentalAgreement.translation,

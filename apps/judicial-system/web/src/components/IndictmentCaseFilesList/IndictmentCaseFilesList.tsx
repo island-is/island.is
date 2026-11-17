@@ -452,6 +452,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const hideCaseFilesRecord = shouldHideCaseFilesRecordFromDefender(
     workingCase.id,
     user,
+    workingCase.originalAncestorId,
   )
 
   const visiblePoliceCaseNumbers = useMemo(

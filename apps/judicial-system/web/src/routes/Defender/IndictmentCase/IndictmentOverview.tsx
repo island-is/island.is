@@ -20,7 +20,6 @@ import {
 import { titles } from '@island.is/judicial-system-web/messages'
 import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components'
 import {
-  AlertBanner,
   AllIndictmentCaseFiles,
   AlternativeServiceAnnouncement,
   AppealCourtSessionScheduledCard,
@@ -63,7 +62,6 @@ import {
   useAppealCase,
   useAppealCaseBanner,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { getAppealDecision } from '@island.is/judicial-system-web/src/utils/hooks/useAppealCaseBanner'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   isCaseCivilClaimantSpokesperson,
@@ -72,10 +70,9 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 
 import {
-  getVerdictAppealOverviewBanner,
-  getVerdictAppealOverviewConclusion,
-} from './IndictmentOverview.logic'
-import { getVerdictAppealAction } from './verdictAppealActions.logic'
+  canDefenderFileVerdictStatementOf,
+  getVerdictAppealAction,
+} from './verdictAppealActions.logic'
 
 interface ServiceAnnouncementProps {
   defendant: Defendant
@@ -165,22 +162,17 @@ const IndictmentOverview: FC = () => {
       workingCase.appealCase?.appealState === AppealCaseState.COMPLETED ||
       workingCase.appealCase?.appealState === AppealCaseState.WITHDRAWN)
 
-  const verdictAppealBanner = getVerdictAppealOverviewBanner(workingCase, user)
-  const verdictAppealConclusion = getVerdictAppealOverviewConclusion(
-    workingCase.verdictAppealCase,
-  )
-
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
   )
 
-  // The one appeal action the verdict timeline card offers for a defendant:
-  // file a verdict appeal, or take back the one this defender filed. Which, if either,
-  // is decided by getVerdictAppealAction.
+  // Actions on the defendant's verdict timeline card: appeal / withdraw, and
+  // for Landsréttur-confirmed advocates, send greinargerð when still open.
   const getVerdictTimelineMenuItems = (
     defendant: Defendant,
   ): ContextMenuItem[] => {
+    const items: ContextMenuItem[] = []
     const action = getVerdictAppealAction(
       workingCase,
       defendant,
@@ -190,25 +182,35 @@ const IndictmentOverview: FC = () => {
 
     switch (action) {
       case 'APPEAL':
-        return [
-          {
-            title: 'Áfrýja dómi',
-            onClick: () =>
-              router.push(
-                `${DEFENDER_INDICTMENT_CASE_APPEAL_ROUTE}/${workingCase.id}?defendantId=${defendant.id}`,
-              ),
-          },
-        ]
+        items.push({
+          title: 'Áfrýja dómi',
+          onClick: () =>
+            router.push(
+              `${DEFENDER_INDICTMENT_CASE_APPEAL_ROUTE}/${workingCase.id}?defendantId=${defendant.id}`,
+            ),
+        })
+        break
       case 'WITHDRAW':
-        return [
-          {
-            title: 'Afturkalla áfrýjun',
-            onClick: () => setWithdrawingAppealFor(defendant),
-          },
-        ]
+        items.push({
+          title: 'Afturkalla áfrýjun',
+          onClick: () => setWithdrawingAppealFor(defendant),
+        })
+        break
       default:
-        return []
+        break
     }
+
+    if (canDefenderFileVerdictStatementOf(workingCase, defendant, user)) {
+      items.push({
+        title: 'Senda greinargerð',
+        onClick: () =>
+          router.push(
+            `${DEFENDER_INDICTMENT_CASE_STATEMENT_ROUTE}/${workingCase.id}?defendantId=${defendant.id}`,
+          ),
+      })
+    }
+
+    return items
   }
 
   const handleWithdrawVerdictAppeal = async () => {
@@ -239,41 +241,6 @@ const IndictmentOverview: FC = () => {
   return (
     <>
       {shouldDisplayAppealBanner && appealBanner}
-      {verdictAppealBanner && (
-        <AlertBanner
-          variant="warning"
-          title={verdictAppealBanner.title}
-          description={
-            verdictAppealBanner.description ??
-            getAppealDecision(verdictAppealBanner.appealRulingDecision)
-          }
-        >
-          {verdictAppealBanner.statementSentText ? (
-            <Text variant="small" color="mint800" fontWeight="semiBold">
-              {verdictAppealBanner.statementSentText}
-            </Text>
-          ) : verdictAppealBanner.showStatementButton ? (
-            <Button
-              variant="text"
-              size="small"
-              onClick={() => {
-                const party = verdictAppealBanner.statementParty
-                const partyQuery = party?.defendantId
-                  ? `?defendantId=${party.defendantId}`
-                  : party?.civilClaimantId
-                  ? `?civilClaimantId=${party.civilClaimantId}`
-                  : ''
-
-                router.push(
-                  `${DEFENDER_INDICTMENT_CASE_STATEMENT_ROUTE}/${workingCase.id}${partyQuery}`,
-                )
-              }}
-            >
-              Senda greinargerð
-            </Button>
-          ) : null}
-        </AlertBanner>
-      )}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
@@ -424,12 +391,16 @@ const IndictmentOverview: FC = () => {
                   conclusionText={workingCase.appealCase?.appealConclusion}
                 />
               )}
-            {verdictAppealConclusion && (
-              <Conclusion
-                title={verdictAppealConclusion.title}
-                conclusionText={verdictAppealConclusion.conclusionText}
-              />
-            )}
+            {workingCase.verdictAppealCase?.appealState ===
+              AppealCaseState.COMPLETED &&
+              workingCase.verdictAppealCase.appealConclusion && (
+                <Conclusion
+                  title="Dómsorð Landsréttar"
+                  conclusionText={
+                    workingCase.verdictAppealCase.appealConclusion
+                  }
+                />
+              )}
             {displayVerdictTimeline && <VerdictAppealFiles />}
             <AllIndictmentCaseFiles
               displayGeneratedPDFs={displayGeneratedPDFs}

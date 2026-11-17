@@ -73,7 +73,7 @@ import { useIntl } from 'react-intl'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useTheme } from 'styled-components/native'
 import { StackScreen } from '../../../../components/stack-screen'
-import { Button, red400, Typography } from '../../../../ui'
+import { Button, Typography } from '../../../../ui'
 
 interface ListItem {
   id: string
@@ -493,7 +493,7 @@ export default function HomeScreen() {
                         position: 'absolute',
                         right: Platform.select({ ios: -4, android: 0 }),
                         top: Platform.select({ ios: -4, android: 0 }),
-                        backgroundColor: red400,
+                        backgroundColor: theme.tokens.feedback.error.foreground,
                         borderRadius: 8,
                         paddingVertical: 2,
                         paddingHorizontal: 4,
@@ -519,12 +519,14 @@ export default function HomeScreen() {
         style={{
           flex: 1,
           backgroundColor:
-            Platform.OS === 'ios' ? theme.color.blue100 : undefined,
+            Platform.OS === 'ios'
+              ? theme.tokens.background.brandMinimal
+              : undefined,
         }}
         contentContainerStyle={{
           paddingBottom: insets.bottom + (Platform.OS === 'android' ? 0 : 30),
           backgroundColor:
-            Platform.OS === 'ios' ? theme.color.white : undefined,
+            Platform.OS === 'ios' ? theme.tokens.background.invert : undefined,
           flexGrow: Platform.OS === 'ios' ? 1 : undefined,
         }}
         refreshControl={

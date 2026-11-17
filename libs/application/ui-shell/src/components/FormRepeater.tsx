@@ -25,6 +25,7 @@ const FormRepeater: FC<
     onUpdateRepeater: (
       newRepeaterItems: RepeaterItems,
     ) => Promise<{ errors?: FetchResult['errors'] }>
+    goToScreen?: (id: string) => void
   }>
 > = ({
   application,
@@ -34,6 +35,7 @@ const FormRepeater: FC<
   expandRepeater,
   onUpdateRepeater,
   repeater,
+  goToScreen,
 }) => {
   const [allFields] = useFields()
   if (!repeater.isNavigable) {
@@ -73,6 +75,7 @@ const FormRepeater: FC<
     setRepeaterItems,
     setBeforeSubmitCallback,
     setFieldLoadingState,
+    goToScreen,
   }
   const Component = allFields[repeater.component] as
     | FC<React.PropsWithChildren<RepeaterProps>>

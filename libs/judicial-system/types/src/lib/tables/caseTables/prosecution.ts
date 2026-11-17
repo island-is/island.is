@@ -100,21 +100,27 @@ export const publicProsecutionIndictmentsReviewed: CaseTable = {
   columns: pickColumns(publicProsecutionIndictmentsReviewedColumnKeys),
 }
 
-// Verdict appeals only - the columns are the public prosecution office's for
-// now, and the ticket leaves tidying them to a later one. A fine is appealed by
-// ruling appeal rather than verdict appeal, so the where options keep those out
-// even though the office's own appealed list carries both.
+// Verdict appeals only. A fine is appealed by ruling appeal rather than verdict
+// appeal, so the where options keep those out even though the office's own
+// appealed list carries both.
+//
+// The columns follow the appeal rather than the district court case: which
+// prosecutor argues it, who appealed and when, how far it has come and what is
+// next on the court of appeals' agenda. "Mín mál" narrows the list to the
+// appeals assigned to the user.
 const publicProsecutionIndictmentsAppealedColumnKeys: CaseTableColumnKey[] = [
-  'caseNumber',
+  'verdictAppealCaseNumber',
   'defendants',
-  'rulingType',
-  'indictmentReviewDecision',
-  'subpoenaServiceState',
+  'appealProsecutor',
+  'verdictAppealAppellantTag',
+  'verdictAppealDate',
+  'verdictAppealProgress',
+  'verdictAppealCourtSession',
 ]
 
 export const publicProsecutionIndictmentsAppealed: CaseTable = {
   title: 'Áfrýjuð mál',
-  hasMyCasesFilter: false,
+  hasMyCasesFilter: true,
   columnKeys: publicProsecutionIndictmentsAppealedColumnKeys,
   columns: pickColumns(publicProsecutionIndictmentsAppealedColumnKeys),
 }

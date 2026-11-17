@@ -44,7 +44,7 @@ const HealthInsuranceDeclarationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.HEALTH_INSURANCE_DECLARATION,
   name: application.general.name,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   translationNamespaces: configuration.translation,
   dataSchema: HealthInsuranceDeclarationSchema,
   institution: application.general.institutionName,

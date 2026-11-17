@@ -27,6 +27,7 @@ interface NewsCardProps {
   titleAs?: 'h2' | 'h3' | 'h4'
   titleTextColor?: 'dark400' | 'blue400'
   mini?: boolean
+  imageVariant?: 'square' | 'landscape'
 }
 
 export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
@@ -42,6 +43,7 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
   titleAs = 'h3',
   titleTextColor = 'dark400',
   mini,
+  imageVariant = 'square',
 }) => {
   const [ref, { width }] = useMeasure()
   const { format } = useDateUtils()
@@ -143,9 +145,9 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
               <BackgroundImage
                 width={600}
                 quality={60}
-                positionX="left"
+                positionX={imageVariant === 'square' ? 'left' : undefined}
                 backgroundSize="cover"
-                ratio="1:1"
+                ratio={imageVariant === 'square' ? '1:1' : '10:7'}
                 thumbnailColor="blue100"
                 image={{
                   url: image?.url,

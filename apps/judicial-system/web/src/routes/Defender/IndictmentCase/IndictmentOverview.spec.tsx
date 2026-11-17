@@ -6,9 +6,9 @@ import { Feature } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components'
 import {
-  AppealCaseRulingDecision,
   AppealCaseState,
   AppealCourtSessionType,
+  AppealEventType,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
@@ -332,17 +332,38 @@ describe('Defender IndictmentOverview', () => {
     })
   })
 
-  describe('verdict appeal deadline and conclusion', () => {
-    const daysFromNow = (days: number, hours: number): Date => {
-      const date = new Date()
-      date.setDate(date.getDate() + days)
-      date.setHours(hours, 0, 0, 0)
+  describe('verdict appeal statement deadline', () => {
+    it('shows the greinargerðarfrest on the defendant’s timeline card', async () => {
+      renderOverview(
+        completedCase(CaseIndictmentRulingDecision.RULING, {
+          verdictAppealCase: {
+            id: 'verdict_appeal_case_id',
+            appealState: AppealCaseState.RECEIVED,
+            statementDeadlines: [
+              {
+                id: 'deadline_id',
+                defendantId: 'own_client_id',
+                deadline: '2026-09-14T00:00:00.000Z',
+                isExpired: false,
+              },
+            ],
+          },
+        }),
+      )
 
-      return date
-    }
+      const timelineCards = await screen.findAllByTestId(
+        'defenderVerdictTimelineCard',
+      )
 
-    it('shows the statement deadline for a confirmed appeal defender', async () => {
-      const deadline = daysFromNow(5, 15)
+      expect(
+        within(timelineCards[0]).getByText(
+          '• Frestur til að skila greinargerð er til 14.09.2026',
+        ),
+      ).toBeInTheDocument()
+      expect(screen.queryByText('Dómur áfrýjaður')).not.toBeInTheDocument()
+    })
+
+    it('offers the statement action on the card for a confirmed appeal defender', async () => {
       const theCase = completedCase(CaseIndictmentRulingDecision.RULING, {
         verdictAppealCase: {
           id: 'verdict_appeal_case_id',
@@ -351,7 +372,8 @@ describe('Defender IndictmentOverview', () => {
             {
               id: 'deadline_id',
               defendantId: 'own_client_id',
-              deadline: deadline.toISOString(),
+              deadline: '2026-09-14T00:00:00.000Z',
+              isExpired: false,
             },
           ],
         },
@@ -372,27 +394,63 @@ describe('Defender IndictmentOverview', () => {
           : [],
       })
 
-      expect(await screen.findByText('Dómur áfrýjaður')).toBeInTheDocument()
-      expect(
-        screen.getByText(
-          `Frestur til að skila greinargerð rennur út ${
-            formatDate(deadline, 'PPPp') ?? ''
-          }`,
-        ),
-      ).toBeInTheDocument()
-      expect(
-        screen.getByRole('button', { name: 'Senda greinargerð' }),
-      ).toBeInTheDocument()
+      const timelineCards = await screen.findAllByTestId(
+        'defenderVerdictTimelineCard',
+      )
+
+      expect(menuButtonOf(timelineCards[0])).toBeInTheDocument()
+      expect(menuButtonOf(timelineCards[1])).not.toBeInTheDocument()
+      expect(screen.queryByText('Dómur áfrýjaður')).not.toBeInTheDocument()
     })
 
-    it('shows Landsréttur’s written conclusion for a verdict appeal', async () => {
+    it('replaces the deadline with the sent date once the statement is filed', async () => {
+      renderOverview(
+        completedCase(CaseIndictmentRulingDecision.RULING, {
+          verdictAppealCase: {
+            id: 'verdict_appeal_case_id',
+            appealState: AppealCaseState.RECEIVED,
+            statementDeadlines: [
+              {
+                id: 'deadline_id',
+                defendantId: 'own_client_id',
+                deadline: '2026-09-14T00:00:00.000Z',
+                isExpired: false,
+              },
+            ],
+            appealEventLogs: [
+              {
+                id: 'event_id',
+                created: '2026-09-10T12:00:00.000Z',
+                eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+                defendantId: 'own_client_id',
+              },
+            ],
+          },
+        }),
+      )
+
+      const timelineCards = await screen.findAllByTestId(
+        'defenderVerdictTimelineCard',
+      )
+
+      expect(
+        within(timelineCards[0]).getByText('• Greinargerð send 10.09.2026'),
+      ).toBeInTheDocument()
+      expect(
+        within(timelineCards[0]).queryByText(
+          /Frestur til að skila greinargerð/,
+        ),
+      ).not.toBeInTheDocument()
+    })
+  })
+
+  describe('verdict appeal conclusion', () => {
+    it('shows Landsréttur’s dómsorð once the verdict appeal is completed', async () => {
       renderOverview(
         completedCase(CaseIndictmentRulingDecision.RULING, {
           verdictAppealCase: {
             id: 'verdict_appeal_case_id',
             appealState: AppealCaseState.COMPLETED,
-            appealRulingDate: '2026-12-01T12:00:00.000Z',
-            appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
             appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
           },
         }),
@@ -402,9 +460,10 @@ describe('Defender IndictmentOverview', () => {
       expect(
         screen.getByText('Hinn áfrýjaði dómur skal vera óraskaður.'),
       ).toBeInTheDocument()
+      expect(screen.queryByText('Dómur áfrýjaður')).not.toBeInTheDocument()
       expect(
-        screen.getByText('Niðurstaða Landsréttar 1. desember 2026'),
-      ).toBeInTheDocument()
+        screen.queryByText('Niðurstaða Landsréttar'),
+      ).not.toBeInTheDocument()
     })
   })
 })

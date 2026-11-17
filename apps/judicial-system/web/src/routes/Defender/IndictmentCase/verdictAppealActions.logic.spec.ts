@@ -4,6 +4,8 @@ import type {
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  AppealCaseState,
+  AppealEventType,
   CaseIndictmentRulingDecision,
   CaseState,
   ServiceRequirement,
@@ -12,8 +14,10 @@ import {
 
 import {
   canDefenderAppealVerdictOf,
+  canDefenderFileVerdictStatementOf,
   canDefenderWithdrawVerdictAppealOf,
   getVerdictAppealAction,
+  isConfirmedAppealDefenderOf,
   isConfirmedDefenderOf,
 } from './verdictAppealActions.logic'
 
@@ -280,6 +284,121 @@ describe('verdictAppealActions', () => {
           true,
         ),
       ).toBeUndefined()
+    })
+  })
+
+  describe('isConfirmedAppealDefenderOf', () => {
+    it('should accept a confirmed appeal defender', () => {
+      expect(
+        isConfirmedAppealDefenderOf(
+          user,
+          defendant({
+            isAppealDefenderConfirmed: true,
+            appealDefenderNationalId: defenderNationalId,
+          }),
+        ),
+      ).toBe(true)
+    })
+
+    it('should reject a district-only confirmed defender', () => {
+      expect(isConfirmedAppealDefenderOf(user, defendant())).toBe(false)
+    })
+
+    it('should reject a waived appeal defender', () => {
+      expect(
+        isConfirmedAppealDefenderOf(
+          user,
+          defendant({
+            isAppealDefenderConfirmed: true,
+            isAppealDefenderWaived: true,
+            appealDefenderNationalId: defenderNationalId,
+          }),
+        ),
+      ).toBe(false)
+    })
+  })
+
+  describe('canDefenderFileVerdictStatementOf', () => {
+    const appealDefendant = defendant({
+      isAppealDefenderConfirmed: true,
+      appealDefenderNationalId: defenderNationalId,
+    })
+    const openAppealCase = theCase({
+      verdictAppealCase: {
+        id: 'appeal_case_id',
+        appealState: AppealCaseState.RECEIVED,
+        statementDeadlines: [
+          {
+            id: 'deadline_id',
+            defendantId: 'defendant_id',
+            deadline: '2026-09-14T00:00:00.000Z',
+          },
+        ],
+      },
+    })
+
+    it('should allow an appeal-confirmed defender with an open deadline', () => {
+      expect(
+        canDefenderFileVerdictStatementOf(openAppealCase, appealDefendant, user),
+      ).toBe(true)
+    })
+
+    it('should refuse once the party has already filed', () => {
+      expect(
+        canDefenderFileVerdictStatementOf(
+          theCase({
+            verdictAppealCase: {
+              id: 'appeal_case_id',
+              appealState: AppealCaseState.RECEIVED,
+              statementDeadlines: [
+                {
+                  id: 'deadline_id',
+                  defendantId: 'defendant_id',
+                  deadline: '2026-09-14T00:00:00.000Z',
+                },
+              ],
+              appealEventLogs: [
+                {
+                  id: 'event_id',
+                  created: '2026-09-10T12:00:00.000Z',
+                  eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+                  defendantId: 'defendant_id',
+                },
+              ],
+            },
+          }),
+          appealDefendant,
+          user,
+        ),
+      ).toBe(false)
+    })
+
+    it('should refuse a district-only confirmed defender', () => {
+      expect(
+        canDefenderFileVerdictStatementOf(openAppealCase, defendant(), user),
+      ).toBe(false)
+    })
+
+    it('should refuse a completed appeal', () => {
+      expect(
+        canDefenderFileVerdictStatementOf(
+          theCase({
+            verdictAppealCase: {
+              id: 'appeal_case_id',
+              appealState: AppealCaseState.COMPLETED,
+              statementDeadlines: [
+                {
+                  id: 'deadline_id',
+                  defendantId: 'defendant_id',
+                  deadline: '2026-09-14T00:00:00.000Z',
+                },
+              ],
+            },
+          }),
+          appealDefendant,
+          user,
+        ),
+      ).toBe(false)
     })
   })
 })

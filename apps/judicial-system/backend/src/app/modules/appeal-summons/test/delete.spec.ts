@@ -2,7 +2,7 @@ import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
-import { ForbiddenException } from '@nestjs/common'
+import { ConflictException, ForbiddenException } from '@nestjs/common'
 
 import {
   InstitutionType,
@@ -80,9 +80,9 @@ describe('AppealSummonsController - Delete', () => {
     ;(testingModule.sequelize.transaction as jest.Mock).mockResolvedValue(
       transaction,
     )
-    ;(mockAppealSummonsRepositoryService.delete as jest.Mock).mockResolvedValue(
-      true,
-    )
+    ;(
+      mockAppealSummonsRepositoryService.deleteIfUnsent as jest.Mock
+    ).mockResolvedValue(true)
     ;(mockAwsS3Service.deleteObject as jest.Mock).mockResolvedValue(true)
   })
 
@@ -93,11 +93,9 @@ describe('AppealSummonsController - Delete', () => {
     // would be the handler opening a transaction of its own, which would
     // block on the guard's row lock and deadlock the request.
     expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
-    expect(mockAppealSummonsRepositoryService.delete).toHaveBeenCalledWith(
-      summonsId,
-      caseId,
-      { transaction, where: { sentToCourtOfAppealsDate: null } },
-    )
+    expect(
+      mockAppealSummonsRepositoryService.deleteIfUnsent,
+    ).toHaveBeenCalledWith(summonsId, caseId, { transaction })
     expect(mockAwsS3Service.deleteObject).toHaveBeenCalledWith(
       theCase.type,
       `${caseId}/appealSummons/${summonsId}.pdf`,
@@ -113,11 +111,9 @@ describe('AppealSummonsController - Delete', () => {
 
     const result = await remove(confirmed)
 
-    expect(mockAppealSummonsRepositoryService.delete).toHaveBeenCalledWith(
-      summonsId,
-      caseId,
-      { transaction, where: { sentToCourtOfAppealsDate: null } },
-    )
+    expect(
+      mockAppealSummonsRepositoryService.deleteIfUnsent,
+    ).toHaveBeenCalledWith(summonsId, caseId, { transaction })
     expect(mockAwsS3Service.deleteObject).toHaveBeenCalledWith(
       theCase.type,
       `${caseId}/appealSummons/${summonsId}.pdf`,
@@ -125,10 +121,26 @@ describe('AppealSummonsController - Delete', () => {
     expect(result).toEqual({ deleted: true })
   })
 
+  it('rejects the delete and keeps the cached PDF when a concurrent send already went through', async () => {
+    ;(
+      mockAppealSummonsRepositoryService.deleteIfUnsent as jest.Mock
+    ).mockRejectedValueOnce(
+      new ConflictException(
+        `Could not delete appeal summons ${summonsId} of case ${caseId}`,
+      ),
+    )
+
+    await expect(remove(draft)).rejects.toThrow(ConflictException)
+
+    expect(mockAwsS3Service.deleteObject).not.toHaveBeenCalled()
+  })
+
   it('rejects delete once the summons has been sent to the court of appeals', async () => {
     await expect(remove(sent)).rejects.toThrow(ForbiddenException)
 
-    expect(mockAppealSummonsRepositoryService.delete).not.toHaveBeenCalled()
+    expect(
+      mockAppealSummonsRepositoryService.deleteIfUnsent,
+    ).not.toHaveBeenCalled()
     expect(mockAwsS3Service.deleteObject).not.toHaveBeenCalled()
   })
 })

@@ -204,7 +204,11 @@ export default function HealthMessagesScreen() {
       <Image
         source={icon}
         resizeMode="contain"
-        style={{ width: 20, height: 20, tintColor: theme.color.blue400 }}
+        style={{
+          width: 20,
+          height: 20,
+          tintColor: theme.tokens.interactive.foreground.primary,
+        }}
       />
     </Pressable>
   )
@@ -256,7 +260,7 @@ export default function HealthMessagesScreen() {
               <ActivityIndicator
                 size="small"
                 animating
-                color={theme.color.blue400}
+                color={theme.tokens.interactive.foreground.primary}
               />
             </LoadingWrapper>
           ) : null

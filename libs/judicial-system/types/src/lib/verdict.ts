@@ -137,7 +137,7 @@ const INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS_DESCRIPTION = `
       Í áfrýjun felst að leitað er endurskoðunar æðri dómstóls á dómi.
       Einstaklingar sem hafa verið dæmdir í <b>a)</b> fangelsi eða
       <b>b)</b> til að greiða sekt eða sæta upptöku eigna sem nema að
-      minnsta kosti 1.420.488 krónum, geta áfrýjað dómi héraðsdóms til
+      minnsta kosti 1.473.007 krónum, geta áfrýjað dómi héraðsdóms til
       Landsréttar.
     </p>
     <p>
@@ -175,7 +175,7 @@ const INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS_DESCRIPTION_EN = `
       An appeal is a request for a higher court to review a judgment.
       Individuals who have been sentenced to <b>a)</b> imprisonment or
       <b>b)</b> to pay a fine or to have their property confiscated 
-      amounting to at least 1,420,488 ISK may appeal a judgment of a 
+      amounting to at least 1,473,007 ISK may appeal a judgment of a 
       district court to the Landsréttur Court.
     </p>
     <p>
@@ -512,7 +512,7 @@ export const informationForDefendantMap: Map<
         en: 'Information about appeals to the Landsréttur Court and appeal deadlines',
       },
       detail:
-        'Einstaklingur getur áfrýjað dómi til Landsréttar ef viðkomandi hefur verið dæmdur í fangelsi eða til að greiða sekt eða sæta upptöku eigna sem nær áfrýjunarfjárhæð í einkamáli, kr. 1.420.488.',
+        'Einstaklingur getur áfrýjað dómi til Landsréttar ef viðkomandi hefur verið dæmdur í fangelsi eða til að greiða sekt eða sæta upptöku eigna sem nær áfrýjunarfjárhæð í einkamáli, kr. 1.473.007.',
       description: {
         is: INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS_DESCRIPTION,
         en: INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS_DESCRIPTION_EN,

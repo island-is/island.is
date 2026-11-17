@@ -14,9 +14,9 @@ interface Props {
 
 // The sessions the court of appeals has called in the verdict appeal, on one
 // card: an entry per session with its type, date, time and courtroom, the way
-// the district court's scheduled card reads. A log, newest first, so an entry
-// never leaves the card once the session is held. Renders nothing while
-// nothing is booked.
+// the district court's scheduled card reads. A log in calendar order, earliest
+// first, so an entry never leaves the card once the session is held. Renders
+// nothing while nothing is booked.
 const AppealCourtSessionScheduledCard: FC<Props> = ({ verdictAppealCase }) => {
   const sessions = getBookedAppealCourtSessions(verdictAppealCase)
 

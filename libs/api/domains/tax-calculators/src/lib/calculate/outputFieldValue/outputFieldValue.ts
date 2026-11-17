@@ -80,6 +80,17 @@ export const toOutputValues = (
       continue
     }
 
+    if (field.kind === 'object') {
+      if (typeof raw === 'object' && raw !== null && !Array.isArray(raw)) {
+        values.push({
+          key: field.name,
+          type: TaxCalculatorOutputFieldType.OBJECT,
+          objectValue: toRow(field.itemFields, raw),
+        })
+      }
+      continue
+    }
+
     const payload = toScalarPayload(field, raw)
 
     if (payload) {

@@ -5,13 +5,22 @@ import {
   getDefendantVerdictAppealDecisionLabel,
   getServiceRequirementText,
 } from '@island.is/judicial-system/formatters'
+import {
+  findAppealStatementDeadline,
+  hasFiledAppealStatement,
+  isSameAppealStatementParty,
+} from '@island.is/judicial-system/types'
 import { getAppealExpirationInfo } from '@island.is/judicial-system-web/src/components/InfoCard/DefendantInfo/DefendantInfo.logic'
 import type {
   AppealCase,
   Defendant,
   Verdict,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { ServiceRequirement } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  AppealCaseState,
+  AppealEventType,
+  ServiceRequirement,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { getProsecutionVerdictAppealItem } from './prosecutionVerdictAppeal.logic'
 import type { VerdictTimelineItem } from './VerdictTimelineBody'
@@ -32,7 +41,10 @@ interface DefenderVerdictTimeline {
   verdict: Verdict
   verdictAppealDeadline?: Defendant['verdictAppealDeadline']
   isVerdictAppealDeadlineExpired?: Defendant['isVerdictAppealDeadlineExpired']
-  verdictAppealCase?: Pick<AppealCase, 'appealEventLogs'> | null
+  verdictAppealCase?: Pick<
+    AppealCase,
+    'appealState' | 'appealEventLogs' | 'statementDeadlines'
+  > | null
   formatMessage: IntlShape['formatMessage']
 }
 
@@ -120,6 +132,41 @@ export const getDefenderVerdictTimelineItems = ({
 
   if (prosecutionAppealItem) {
     items.push(prosecutionAppealItem)
+  }
+
+  // Greinargerðarfrest for this defendant while the verdict appeal is open.
+  // Once the party has filed, the sent date replaces the deadline line.
+  // Completed / withdrawn appeals leave the outcome off this card for now.
+  if (
+    verdictAppealCase?.appealState !== AppealCaseState.COMPLETED &&
+    verdictAppealCase?.appealState !== AppealCaseState.WITHDRAWN
+  ) {
+    const party = { defendantId }
+    const statementDeadline = findAppealStatementDeadline(
+      verdictAppealCase?.statementDeadlines,
+      party,
+    )
+
+    if (statementDeadline?.deadline) {
+      if (hasFiledAppealStatement(verdictAppealCase?.appealEventLogs, party)) {
+        const statementEvent = verdictAppealCase?.appealEventLogs?.find(
+          (eventLog) =>
+            eventLog.eventType === AppealEventType.APPEAL_STATEMENT_SENT &&
+            isSameAppealStatementParty(eventLog, party),
+        )
+        const sentDate = formatDate(statementEvent?.created)
+
+        items.push({
+          text: sentDate ? `Greinargerð send ${sentDate}` : 'Greinargerð send',
+        })
+      } else {
+        items.push({
+          text: `Frestur til að skila greinargerð ${
+            statementDeadline.isExpired ? 'rann út' : 'er til'
+          } ${formatDate(statementDeadline.deadline)}`,
+        })
+      }
+    }
   }
 
   return items

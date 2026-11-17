@@ -22,7 +22,7 @@ import {
   assetsDeclarationOverviewItems,
   paymentSectionOverviewItems,
 } from '../../utils/getOverviewItems'
-import { doesAddressMatchRentalContract } from '../../utils/rentalAgreementUtils'
+import { shouldShowLegalDomicileSection } from '../../utils/conditions'
 import {
   hasNonCustodyMinorsInHousehold,
   isTaxReturnFiled,
@@ -54,9 +54,8 @@ export const overviewSection = buildSection({
         buildOverviewField({
           id: 'exemptionSectionOverview',
           title: m.draftMessages.exemptionSection.title,
-          backId: 'exemptionMultiField',
-          condition: (answers, externalData) =>
-            !doesAddressMatchRentalContract(answers, externalData),
+          backId: 'legalDomicileMultiField',
+          condition: shouldShowLegalDomicileSection,
           items: exemptionSectionOverviewItems,
         }),
         buildOverviewField({

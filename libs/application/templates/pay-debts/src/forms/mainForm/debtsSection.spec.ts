@@ -209,7 +209,7 @@ describe('debtsSection', () => {
     ).toBe(false)
   })
 
-  it('warns about salary withholding only on the debts it applies to', () => {
+  it('flags salary withholding only on the rows it applies to', () => {
     const table = findByType(FieldTypes.INTERACTIVE_TABLE) as
       | InteractiveTableField
       | undefined
@@ -230,10 +230,7 @@ describe('debtsSection', () => {
     } as unknown as Application
 
     expect(info(application)).toEqual([
-      {
-        ...messages.table.salaryWithholdingInfo,
-        values: { payerName: 'Mocklaunagreiðandi ehf.' },
-      },
+      messages.table.salaryWithholdingInfo,
       undefined,
     ])
   })

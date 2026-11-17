@@ -44,7 +44,7 @@ const FundingGovernmentProjectsTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS,
   name: application.name,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: application.institutionName,
   featureFlag: Features.fundingGovernmentProjectsEnabled,
   translationNamespaces:

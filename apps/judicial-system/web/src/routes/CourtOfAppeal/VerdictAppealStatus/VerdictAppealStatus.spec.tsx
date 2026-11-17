@@ -80,6 +80,7 @@ const theCase = {
     id: 'verdict-appeal',
     appealState: AppealCaseState.RECEIVED,
     appealType: AppealCaseType.VERDICT,
+    appealCaseNumber: '555/2026',
   },
 } as unknown as WorkingCase
 
@@ -301,8 +302,8 @@ describe('VerdictAppealStatus', () => {
     )
   })
 
-  // The list reads latest session first, so one booked for tomorrow goes
-  // under a session already called for later, wherever it was appended.
+  // The list reads earliest session first, so one booked for tomorrow goes
+  // above a session already called for later, wherever it was appended.
   it('lists a session it has just booked by its date', async () => {
     const tomorrow = addDays(new Date(), 1)
     const laterSession = {
@@ -337,8 +338,8 @@ describe('VerdictAppealStatus', () => {
     const [first, second] = within(
       screen.getByRole('list', { name: 'Bókuð þinghöld' }),
     ).getAllByRole('listitem')
-    expect(first).toHaveTextContent('Undirbúningsþinghald')
-    expect(second).toHaveTextContent('Aðalmeðferð')
+    expect(first).toHaveTextContent('Aðalmeðferð')
+    expect(second).toHaveTextContent('Undirbúningsþinghald')
   })
 
   it('cannot continue before a status is chosen', () => {
