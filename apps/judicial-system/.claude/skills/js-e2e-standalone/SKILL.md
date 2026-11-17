@@ -176,12 +176,15 @@ a partial stack.
 Then send one real request through the whole stack, twice:
 
 ```bash
-curl -s -o /dev/null -w '%{http_code} %{time_total}s\n' \
+curl -s -o /dev/null -w '%{http_code} %{redirect_url} %{time_total}s\n' \
   "http://localhost:<api port>/api/auth/login?nationalId=9999999999"
 ```
 
-It must answer `302`. It proves the api reaches the backend and the backend
-the database, and it takes the first-request slowness of a freshly started
+It must answer `302` with a redirect url that has no `villa=` in it. A failed
+login is a `302` too - to `/?villa=innskraning-villa` when the api cannot
+reach the backend or the backend the database - so the status alone proves
+nothing. A clean redirect proves the whole chain, and it takes the
+first-request slowness of a freshly started
 service out of the run, where it can trip the suite's 15s waits.
 
 **Check the listeners are yours.** For the backend, api and message handler
@@ -212,17 +215,22 @@ lsof -nP -iTCP:<web port> -sTCP:LISTEN; lsof -nP -iTCP:<web port + 1> -sTCP:LIST
 Both must print nothing. If either lists a listener, run `pick-ports.mjs` again
 and take only its `WEB_PORT`. The backend and api have the old web port in
 `CLIENT_URL` and the `AUTH_IDS_*` urls, so restart those two with the new value.
-Start them with the same run id, then repeat the end of step 3 for them:
-wait for `/liveness`, send the login request twice and require `302`, and
-check the marker on both ports of each. The restarted processes are cold.
+Stop them first, and before starting them again check that both ports of
+each are free, as in step 6: a node child left behind by `nx serve` keeps the
+port, the new process then fails to bind, and the old one - still on the old
+web port - goes on answering every check below. Start them with the same run
+id, then repeat the end of step 3 for them: wait for `/liveness`, send the
+login request twice and require the clean `302`, and check the marker on both
+ports of each. The restarted processes are cold.
 
 ```bash
 PLAYWRIGHT_JSON_OUTPUT_NAME=<scratchpad>/e2e-report.json \
-JUDICIAL_SYSTEM_WEB_PORT=<web port> INTERNAL_API_URL=http://localhost:<api port> \
+E2E_RUN_ID=<run id> JUDICIAL_SYSTEM_WEB_PORT=<web port> INTERNAL_API_URL=http://localhost:<api port> \
   yarn playwright test -c apps/system-e2e/src --project judicial-system --reporter=line,json $ARGUMENTS
 ```
 
-Both variables are required:
+`JUDICIAL_SYSTEM_WEB_PORT` and `INTERNAL_API_URL` are required, and
+`E2E_RUN_ID` gives the web app the run's marker for step 6:
 
 - `JUDICIAL_SYSTEM_WEB_PORT` is where the config serves the web app and where
   the tests look for it. Without it both fall back to 4200, where the config
@@ -300,7 +308,8 @@ this run's `E2E_RUN_ID` the process was started by this run - stop it with
 `kill <pid>` and check again. When it prints nothing, leave the process
 alone and report it with its command (`ps -o command= -p <pid>`): a process
 from this checkout on one of your ports is not proof that this run started
-it. Playwright shuts the web app down itself.
+it. Playwright shuts the web app down itself; if it was killed before it
+could, the web app is still on its port and carries the marker too.
 
 If the user asked to keep the stack up, leave it and tell them the ports.
 

@@ -61,9 +61,10 @@ const parseJudicialSystemLocalPort = (value: string | undefined) => {
     return judicialSystemDefaultLocalPort
   }
   const port = Number(value)
-  if (!Number.isInteger(port) || port < 1 || port > 65535) {
+  // The web server also opens a metrics server on the next port up.
+  if (!Number.isInteger(port) || port < 1 || port > 65534) {
     throw new Error(
-      `JUDICIAL_SYSTEM_WEB_PORT must be a port number, got "${value}"`,
+      `JUDICIAL_SYSTEM_WEB_PORT must be a port number from 1 to 65534, got "${value}"`,
     )
   }
   return port
