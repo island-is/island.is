@@ -522,6 +522,12 @@ describe('formatAppealCaseName', () => {
   test('falls back to Ákæruvaldið alone when no names are given', () => {
     expect(formatAppealCaseName([])).toBe('Ákæruvaldið')
   })
+
+  test('declines nominative names into þágufall when asked', () => {
+    expect(
+      formatAppealCaseName(['Jón Sigurður Jónsson'], { decline: true }),
+    ).toBe('Ákæruvaldið gegn Jóni Sigurði Jónssyni')
+  })
 })
 
 describe('resolveAppealCaseName', () => {
@@ -531,10 +537,16 @@ describe('resolveAppealCaseName', () => {
     ).toBe('Ákæruvaldið gegn Páli')
   })
 
-  test('builds the legacy string when the stored name is missing', () => {
+  test('builds the style-of-cause when the stored name is missing', () => {
     expect(resolveAppealCaseName(null, ['Jón Jónsson'])).toBe(
       'Ákæruvaldið gegn Jón Jónsson',
     )
+  })
+
+  test('declines fallback names into þágufall when asked', () => {
+    expect(
+      resolveAppealCaseName(null, ['Jón Sigurður Jónsson'], { decline: true }),
+    ).toBe('Ákæruvaldið gegn Jóni Sigurði Jónssyni')
   })
 })
 

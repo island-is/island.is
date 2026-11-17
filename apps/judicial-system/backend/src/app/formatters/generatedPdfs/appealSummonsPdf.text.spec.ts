@@ -72,14 +72,14 @@ describe('formatAppealSummonsIntro', () => {
     expect(intro).not.toContain('Ákærði,')
   })
 
-  it('lists several defendants in the case caption', () => {
+  it('lists several defendants in the case caption, declined into þágufall', () => {
     expect(
       formatAppealSummonsIntro({
         ...shared,
         appellantSide: AppealSummonsAppellantSide.PROSECUTION,
         defendantNames: ['Jón Jónsson', 'Guðrún Jónsdóttir'],
       }),
-    ).toContain('Ákæruvaldið gegn Jón Jónsson og Guðrún Jónsdóttir')
+    ).toContain('Ákæruvaldið gegn Jóni Jónssyni og Guðrúnu Jónsdóttur')
   })
 
   it('prefers a stored case name over defendant names', () => {

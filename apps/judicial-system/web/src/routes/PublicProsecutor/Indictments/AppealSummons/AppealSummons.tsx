@@ -123,19 +123,22 @@ const AppealSummons = () => {
     }
 
     const standing = getStandingAppealSummonsDefendants(workingCase)
-
-    setSections(
-      buildAppealSummonsFormSections(
-        standing,
-        workingCase.civilClaimants ?? [],
-        existingSummons,
-        workingCase.defendants ?? [],
-      ),
+    const nextSections = buildAppealSummonsFormSections(
+      standing,
+      workingCase.civilClaimants ?? [],
+      existingSummons,
+      workingCase.defendants ?? [],
     )
+
+    setSections(nextSections)
+    // Prefill from defendants included on this summons only, not every
+    // defendant on the case (a partial appeal must not name the others).
     setCaseName(
       resolveAppealSummonsCaseName(
         workingCase.verdictAppealCase?.caseName,
-        (workingCase.defendants ?? []).map((defendant) => defendant.name),
+        nextSections
+          .filter((section) => section.included)
+          .map((section) => section.name),
       ),
     )
     setHasInitialized(true)

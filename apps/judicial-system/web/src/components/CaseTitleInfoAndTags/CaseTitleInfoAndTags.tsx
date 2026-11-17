@@ -3,7 +3,10 @@ import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  resolveAppealCaseName,
+} from '@island.is/judicial-system/formatters'
 import DateLabel from '@island.is/judicial-system-web/src/components/DateLabel/DateLabel'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/DateLabel/RulingDateLabel'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
@@ -12,6 +15,7 @@ import RestrictionTags from '@island.is/judicial-system-web/src/components/Restr
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   AppealCaseState,
+  AppealCaseType,
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CaseNumbers } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components'
@@ -34,14 +38,23 @@ const CaseTitleInfoAndTags: FC = () => {
     : undefined
   const rulingOrderFileName = rulingOrderFile?.userGeneratedFilename
   const courtCaseNumberPrefix = `${workingCase.courtCaseNumber ?? ''} `
-  // Verdict appeals carry an editable style-of-cause; prefer it over the
-  // generic case-state title so CoA pages show "Ákæruvaldið gegn …".
-  const appealCaseName = targetAppealCase?.caseName?.trim()
+  // Verdict appeals use the editable style-of-cause (or a Beygla fallback),
+  // not the generic indictment state title ("Máli lokið").
+  const verdictAppealCaseName =
+    targetAppealCase?.appealType === AppealCaseType.VERDICT
+      ? resolveAppealCaseName(
+          targetAppealCase.caseName,
+          (workingCase.defendants ?? []).map((defendant) => defendant.name),
+          { decline: true },
+        )
+      : undefined
   const title = rulingOrderFile
     ? (rulingOrderFileName?.startsWith(courtCaseNumberPrefix)
         ? rulingOrderFileName.slice(courtCaseNumberPrefix.length)
         : rulingOrderFileName) ?? 'Úrskurður'
-    : appealCaseName || titleForCase(formatMessage, workingCase)
+    : verdictAppealCaseName && verdictAppealCaseName !== 'Ákæruvaldið'
+      ? verdictAppealCaseName
+      : titleForCase(formatMessage, workingCase)
 
   return (
     <Box

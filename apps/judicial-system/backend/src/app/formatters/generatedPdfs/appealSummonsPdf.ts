@@ -87,8 +87,11 @@ export const createAppealSummons = (
   addHugeHeading(doc, APPEAL_SUMMONS_TITLE, 'Times-Bold')
   addEmptyLines(doc)
 
-  const defendantNames = (theCase.defendants ?? []).map(
-    (defendant) => defendant.name,
+  // Style-of-cause fallback names only the defendants on this summons, not
+  // every defendant on the case (a partial appeal must not name the others).
+  const defendantNames = defendants.map(
+    (row) =>
+      theCase.defendants?.find((item) => item.id === row.defendantId)?.name,
   )
   const closingDate = issuedDate ?? confirmation?.date ?? nowFactory()
 

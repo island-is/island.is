@@ -1,3 +1,4 @@
+import { applyCase } from 'beygla/strict'
 import { format, isValid, parseISO } from 'date-fns' // eslint-disable-line no-restricted-imports
 // Importing 'is' directly from date-fns/locale/is has caused unexpected problems
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
@@ -610,25 +611,40 @@ export const formatAppealDefendantNames = (
   return `${listed.slice(0, -1).join(', ')} og ${listed[listed.length - 1]}`
 }
 
+type AppealCaseNameOptions = {
+  /**
+   * Decline each nominative person name into þágufall via Beygla before
+   * joining. Use for fallbacks that should match the summons form prefill.
+   * Leave off when the names are already declined or are abbreviated strings
+   * such as "Jón Jónsson o.fl.".
+   */
+  decline?: boolean
+}
+
 /**
  * Style-of-cause for an indictment appeal: "Ákæruvaldið gegn …". Used as the
  * stored case name prefill and as the fallback when an older appeal has none.
  */
 export const formatAppealCaseName = (
   names: (string | undefined | null)[],
+  options?: AppealCaseNameOptions,
 ): string => {
-  const against = formatAppealDefendantNames(names)
+  const prepared = options?.decline
+    ? names.map((name) => (name ? applyCase('þgf', name) : name))
+    : names
+  const against = formatAppealDefendantNames(prepared)
 
   return against ? `Ákæruvaldið gegn ${against}` : 'Ákæruvaldið'
 }
 
 /**
- * Prefer a stored appeal case name; otherwise build the same string PDFs used
- * before the field existed.
+ * Prefer a stored appeal case name; otherwise build the style-of-cause from
+ * the defendant names (optionally declined into þágufall).
  */
 export const resolveAppealCaseName = (
   caseName: string | undefined | null,
   defendantNames: (string | undefined | null)[],
+  options?: AppealCaseNameOptions,
 ): string => {
   const trimmed = caseName?.trim()
 
@@ -636,7 +652,7 @@ export const resolveAppealCaseName = (
     return trimmed
   }
 
-  return formatAppealCaseName(defendantNames)
+  return formatAppealCaseName(defendantNames, options)
 }
 
 // þgf to dómur

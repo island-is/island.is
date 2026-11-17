@@ -54,6 +54,7 @@ export const getVerdictAppealOverviewHeaderLines = (
   const caseName = resolveAppealCaseName(
     theCase.verdictAppealCase?.caseName,
     (theCase.defendants ?? []).map((defendant) => defendant.name),
+    { decline: true },
   )
 
   if (caseName && caseName !== 'Ákæruvaldið') {

@@ -109,10 +109,15 @@ export class AppealSummonsService {
     )
 
     const resolvedDefendants = this.resolveDefendants(theCase, dto)
+    const caseName = dto.caseName.trim()
+
+    if (!caseName) {
+      throw new BadRequestException('caseName must not be empty')
+    }
 
     await this.appealCaseRepositoryService.update(
       appealCase.id,
-      { caseName: dto.caseName.trim() },
+      { caseName },
       { transaction },
     )
 
@@ -180,6 +185,7 @@ export class AppealSummonsService {
 
     const resolvedDefendants = this.resolveDefendants(theCase, dto, summons)
     const appealCaseId = summons.appealCaseId ?? theCase.verdictAppealCase?.id
+    const caseName = dto.caseName.trim()
 
     if (!appealCaseId) {
       throw new BadRequestException(
@@ -187,9 +193,13 @@ export class AppealSummonsService {
       )
     }
 
+    if (!caseName) {
+      throw new BadRequestException('caseName must not be empty')
+    }
+
     await this.appealCaseRepositoryService.update(
       appealCaseId,
-      { caseName: dto.caseName.trim() },
+      { caseName },
       { transaction },
     )
 

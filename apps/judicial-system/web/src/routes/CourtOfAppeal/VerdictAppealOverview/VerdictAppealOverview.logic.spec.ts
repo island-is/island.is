@@ -88,7 +88,7 @@ describe('getVerdictAppealOverviewHeaderLines', () => {
     ).toEqual(['Héraðsdómsmál S-14/2026'])
   })
 
-  it('falls back to defendant names when no case name is stored', () => {
+  it('falls back to declined defendant names when no case name is stored', () => {
     expect(
       getVerdictAppealOverviewHeaderLines({
         courtCaseNumber: 'S-14/2026',
@@ -96,7 +96,7 @@ describe('getVerdictAppealOverviewHeaderLines', () => {
         verdictAppealCase: { appealEventLogs: [] },
       } as HeaderCase),
     ).toEqual([
-      'Ákæruvaldið gegn Jón Jónsson',
+      'Ákæruvaldið gegn Jóni Jónssyni',
       'Héraðsdómsmál S-14/2026',
     ])
   })

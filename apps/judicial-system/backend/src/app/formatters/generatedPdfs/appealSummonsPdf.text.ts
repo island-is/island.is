@@ -43,7 +43,10 @@ export const formatAppealSummonsIntro = ({
   caseName,
 }: AppealSummonsIntroInput): string => {
   const courtGenitive = applyGenitiveCaseToCourtName(courtName || 'Héraðsdómur')
-  const caseAgainst = resolveAppealCaseName(caseName, defendantNames)
+  // Decline when falling back so the PDF matches the summons form prefill.
+  const caseAgainst = resolveAppealCaseName(caseName, defendantNames, {
+    decline: true,
+  })
 
   if (appellantSide === AppealSummonsAppellantSide.PROSECUTION) {
     return `Ríkissaksóknari gerir kunnugt: Að hann hefur ákveðið að áfrýja til Landsréttar dómi ${courtGenitive}, uppkveðnum ${formatDate(

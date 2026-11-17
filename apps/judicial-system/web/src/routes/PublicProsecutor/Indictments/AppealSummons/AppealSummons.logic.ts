@@ -1,5 +1,3 @@
-import { applyCase } from 'beygla/strict'
-
 import {
   formatAppealCaseName,
   formatNationalId,
@@ -290,34 +288,17 @@ export const buildAppealSummonsFormSections = (
  */
 export const prefillAppealCaseName = (
   names: (string | undefined | null)[],
-): string =>
-  formatAppealCaseName(
-    names.map((name) => (name ? applyCase('þgf', name) : name)),
-  )
+): string => formatAppealCaseName(names, { decline: true })
 
 /**
  * Value shown in the Heiti máls field: a stored name when the appeal already
- * has one, otherwise the Beygla prefill (and the same string older PDFs used
- * when neither is available).
+ * has one, otherwise the Beygla-declined prefill.
  */
 export const resolveAppealSummonsCaseName = (
   storedCaseName: string | undefined | null,
   defendantNames: (string | undefined | null)[],
-): string => {
-  const trimmed = storedCaseName?.trim()
-
-  if (trimmed) {
-    return trimmed
-  }
-
-  const prefilled = prefillAppealCaseName(defendantNames)
-
-  if (prefilled !== 'Ákæruvaldið') {
-    return prefilled
-  }
-
-  return resolveAppealCaseName(null, defendantNames)
-}
+): string =>
+  resolveAppealCaseName(storedCaseName, defendantNames, { decline: true })
 
 export const isAppealSummonsFormReady = (
   sections: Pick<AppealSummonsFormSection, 'included' | 'claims'>[],
