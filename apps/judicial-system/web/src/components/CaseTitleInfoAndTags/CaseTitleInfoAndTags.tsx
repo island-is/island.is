@@ -39,22 +39,30 @@ const CaseTitleInfoAndTags: FC = () => {
   const rulingOrderFileName = rulingOrderFile?.userGeneratedFilename
   const courtCaseNumberPrefix = `${workingCase.courtCaseNumber ?? ''} `
   // Verdict appeals use the editable style-of-cause (or a Beygla fallback),
-  // not the generic indictment state title ("Máli lokið").
-  const verdictAppealCaseName =
+  // not the generic indictment state title ("Máli lokið"). Prefer a stored
+  // name even when it is only "Ákæruvaldið"; fall back to the case-state
+  // title only when there is neither a stored name nor any defendant to name.
+  const isVerdictAppeal =
     targetAppealCase?.appealType === AppealCaseType.VERDICT
-      ? resolveAppealCaseName(
-          targetAppealCase.caseName,
-          (workingCase.defendants ?? []).map((defendant) => defendant.name),
-          { decline: true },
-        )
-      : undefined
+  const hasStoredAppealCaseName = Boolean(targetAppealCase?.caseName?.trim())
+  const hasNamedDefendant = (workingCase.defendants ?? []).some((defendant) =>
+    Boolean(defendant.name?.trim()),
+  )
+  const verdictAppealCaseName = isVerdictAppeal
+    ? resolveAppealCaseName(
+        targetAppealCase?.caseName,
+        (workingCase.defendants ?? []).map((defendant) => defendant.name),
+        { decline: true },
+      )
+    : undefined
   const title = rulingOrderFile
     ? (rulingOrderFileName?.startsWith(courtCaseNumberPrefix)
         ? rulingOrderFileName.slice(courtCaseNumberPrefix.length)
         : rulingOrderFileName) ?? 'Úrskurður'
-    : verdictAppealCaseName && verdictAppealCaseName !== 'Ákæruvaldið'
-    ? verdictAppealCaseName
-    : titleForCase(formatMessage, workingCase)
+    : verdictAppealCaseName &&
+      (hasStoredAppealCaseName || hasNamedDefendant)
+      ? verdictAppealCaseName
+      : titleForCase(formatMessage, workingCase)
 
   return (
     <Box

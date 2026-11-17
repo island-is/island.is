@@ -120,7 +120,7 @@ export class AppealCase extends Model {
    * appeal summons is issued and reused in later documents and CoA headers.
    * Nullable so older summonses keep working via a computed fallback.
    **********/
-  @Column({ type: DataType.STRING, allowNull: true })
+  @Column({ type: DataType.TEXT, allowNull: true })
   @ApiPropertyOptional({ type: String })
   caseName?: string
 

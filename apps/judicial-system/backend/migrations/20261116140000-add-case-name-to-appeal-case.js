@@ -3,7 +3,7 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.addColumn('appeal_case', 'case_name', {
-      type: Sequelize.STRING,
+      type: Sequelize.TEXT,
       allowNull: true,
     })
   },

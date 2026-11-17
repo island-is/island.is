@@ -33,6 +33,7 @@ import {
   getEarliestStandingAppealDate,
   getStandingAppealSummonsDefendants,
   isAppealSummonsFormReady,
+  prefillAppealCaseName,
   resolveAppealSummonsCaseName,
   toAppealSummonsDefendantInputs,
 } from './AppealSummons.logic'
@@ -82,6 +83,9 @@ const AppealSummons = () => {
 
   const [sections, setSections] = useState<AppealSummonsFormSection[]>([])
   const [caseName, setCaseName] = useState('')
+  // Once the user edits Heiti máls (or a stored name was loaded), keep it
+  // even when defendants are added or removed from the summons.
+  const [caseNameEdited, setCaseNameEdited] = useState(false)
   const [hasInitialized, setHasInitialized] = useState(false)
 
   useEffect(() => {
@@ -133,14 +137,16 @@ const AppealSummons = () => {
     setSections(nextSections)
     // Prefill from defendants included on this summons only, not every
     // defendant on the case (a partial appeal must not name the others).
+    const storedCaseName = workingCase.verdictAppealCase?.caseName
     setCaseName(
       resolveAppealSummonsCaseName(
-        workingCase.verdictAppealCase?.caseName,
+        storedCaseName,
         nextSections
           .filter((section) => section.included)
           .map((section) => section.name),
       ),
     )
+    setCaseNameEdited(Boolean(storedCaseName?.trim()))
     setHasInitialized(true)
   }, [
     isLoadingWorkingCase,
@@ -152,6 +158,26 @@ const AppealSummons = () => {
     appealSummonsId,
     existingSummons,
   ])
+
+  const includedDefendantKey = sections
+    .filter((section) => section.included)
+    .map((section) => section.defendantId)
+    .join(',')
+
+  // Refresh an untouched generated prefill when included defendants change.
+  useEffect(() => {
+    if (!hasInitialized || caseNameEdited) {
+      return
+    }
+
+    setCaseName(
+      prefillAppealCaseName(
+        sections
+          .filter((section) => section.included)
+          .map((section) => section.name),
+      ),
+    )
+  }, [includedDefendantKey, hasInitialized, caseNameEdited, sections])
 
   const standing = getStandingAppealSummonsDefendants(workingCase)
   const earliestAppealDate = getEarliestStandingAppealDate(standing)
@@ -260,7 +286,10 @@ const AppealSummons = () => {
                   name="caseName"
                   label="Heiti máls"
                   value={caseName}
-                  onChange={(event) => setCaseName(event.target.value)}
+                  onChange={(event) => {
+                    setCaseName(event.target.value)
+                    setCaseNameEdited(true)
+                  }}
                   required
                   tooltip="Heiti máls kemur fram í áfrýjunarstefnu og skilar sér í viðmót Landsréttar."
                 />
