@@ -6,7 +6,7 @@ lists framework behaviour that a single template does not reveal.
 ## Layout
 
 - A template's server actions live in
-  `template-api-modules/src/lib/modules/templates/<name>`.
+  `template-api-modules/src/lib/modules/templates/<path>`.
 - Adding an application type: follow "Making a new application" in
   `templates/examples/README.md`.
 - Settled product rules are in a template's README under `## Decisions`.
@@ -14,11 +14,14 @@ lists framework behaviour that a single template does not reveal.
 
 ## Commands
 
-- Test a template: `yarn nx test <name>`. Faster, without nx:
-  `NX_TASK_TARGET_PROJECT=<name> yarn jest -c libs/application/templates/<name>/jest.config.ts`.
+- Placeholders: `<project>` is the `name` in the template's `project.json`
+  (`application-templates-rental-agreement`); `<path>` is its directory
+  under `libs/application/templates/` (`hms/rental-agreement`).
+- Test a template: `yarn nx test <project>`. Faster, without nx:
+  `NX_TASK_TARGET_PROJECT=<project> yarn jest -c libs/application/templates/<path>/jest.config.ts`.
   Without the variable, path aliases fail.
 - Typecheck a template:
-  `yarn tsc -p libs/application/templates/<name>/tsconfig.lib.json --noEmit`.
+  `yarn tsc -p libs/application/templates/<path>/tsconfig.lib.json --noEmit`.
 - A TS7006 on a generated type means that library's gitignored `gen/fetch`
   is stale: run its `codegen/backend-client` target.
 
