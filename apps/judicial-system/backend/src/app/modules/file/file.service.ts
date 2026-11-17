@@ -695,8 +695,21 @@ export class FileService {
     const success = await this.deleteFileFromDatabase(file.id, transaction)
 
     if (success && isRequestCase(theCase.type)) {
-      // Fire and forget, no need to wait for the result
-      this.tryDeleteFileFromS3(theCase, file)
+      if (transaction) {
+        // Delete after commit so a rolled-back delete cannot leave a live
+        // case file whose object S3 has already removed. Still fire and
+        // forget: Sequelize awaits its after-commit hooks inside commit(), so
+        // the hook starts the delete and returns nothing - returning the
+        // promise would make every transactional caller wait for S3. Nothing
+        // is left to reject either, tryDeleteFileFromS3 catches and logs
+        // every failure.
+        transaction.afterCommit(() => {
+          this.tryDeleteFileFromS3(theCase, file)
+        })
+      } else {
+        // Fire and forget, no need to wait for the result
+        this.tryDeleteFileFromS3(theCase, file)
+      }
     }
 
     return { success }
