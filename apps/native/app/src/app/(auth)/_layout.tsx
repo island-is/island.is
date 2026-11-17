@@ -6,6 +6,7 @@ import {
   authStore,
   isAppLockEnabled,
   isLockScreenSuppressed,
+  isSystemDialogShowing,
   useAuthStore,
 } from '@/stores/auth-store'
 import { useIntl } from 'react-intl'
@@ -100,6 +101,10 @@ export default function AuthLayout() {
         previousAppState === 'active' &&
         nextAppState === 'inactive'
       ) {
+        // The app is still in front, under a dialog it asked for.
+        if (isSystemDialogShowing()) {
+          return
+        }
         if (authStore.getState().lockScreenActivatedAt === undefined) {
           authStore.setState({
             lockScreenActivatedAt: Date.now(),

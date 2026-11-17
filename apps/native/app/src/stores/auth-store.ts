@@ -60,6 +60,8 @@ interface AuthStore {
   // can dedupe them.
   lockScreenPushPending: boolean
   lockScreenSuppressedUntil: number | undefined
+  // While a system dialog the app asked for is up (see whileSystemDialog).
+  systemDialogUntil: number | undefined
   // Auto-prompt biometrics at most once per lock session (loop guard).
   biometricAutoPromptedForCurrentLock: boolean
   isCogitoAuth: boolean
@@ -123,6 +125,7 @@ export const authStore = create<AuthStore>((set, get) => ({
   lockScreenComponentId: undefined,
   lockScreenPushPending: false,
   lockScreenSuppressedUntil: undefined,
+  systemDialogUntil: undefined,
   biometricAutoPromptedForCurrentLock: false,
   isCogitoAuth: false,
   cognitoDismissCount: 0,
@@ -303,6 +306,27 @@ export function isLockScreenSuppressed() {
 
 export function clearLockScreenSuppression() {
   authStore.setState({ lockScreenSuppressedUntil: undefined })
+}
+
+/**
+ * Shows a system dialog the app asked for, such as a permission prompt. iOS
+ * makes the app inactive while it's up, which would put up the lock. Unlike
+ * suppressLockScreen(), going to the background still locks the app.
+ */
+export async function whileSystemDialog<T>(show: () => Promise<T>) {
+  authStore.setState({
+    systemDialogUntil: Date.now() + LOCK_SCREEN_SUPPRESS_MAX_MS,
+  })
+  try {
+    return await show()
+  } finally {
+    authStore.setState({ systemDialogUntil: undefined })
+  }
+}
+
+export function isSystemDialogShowing() {
+  const until = authStore.getState().systemDialogUntil
+  return until != null && Date.now() < until
 }
 
 // True if the lock screen is in an auth-required state (not just a mask).
