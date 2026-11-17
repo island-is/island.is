@@ -81,7 +81,9 @@ describe('getAppealAppointmentCaseTitleLines', () => {
   // Three lines, which is how a court document heads a case.
   it('breaks the case title the way the letter sets it', () => {
     expect(
-      getAppealAppointmentCaseTitleLines('Ákæruvaldið gegn Gervimanni Jónssyni'),
+      getAppealAppointmentCaseTitleLines(
+        'Ákæruvaldið gegn Gervimanni Jónssyni',
+      ),
     ).toEqual(['Ákæruvaldið', 'gegn', 'Gervimanni Jónssyni'])
   })
 

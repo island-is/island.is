@@ -345,9 +345,9 @@ describe('prefillAppealCaseName', () => {
 
 describe('resolveAppealSummonsCaseName', () => {
   it('prefers a stored case name', () => {
-    expect(
-      resolveAppealSummonsCaseName('Ákæruvaldið gegn Páli', ['Jón']),
-    ).toBe('Ákæruvaldið gegn Páli')
+    expect(resolveAppealSummonsCaseName('Ákæruvaldið gegn Páli', ['Jón'])).toBe(
+      'Ákæruvaldið gegn Páli',
+    )
   })
 
   it('prefills with Beygla when nothing is stored', () => {

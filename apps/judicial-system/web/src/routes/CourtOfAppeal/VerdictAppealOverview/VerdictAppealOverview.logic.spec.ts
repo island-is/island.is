@@ -95,9 +95,6 @@ describe('getVerdictAppealOverviewHeaderLines', () => {
         defendants: [{ name: 'Jón Jónsson' }],
         verdictAppealCase: { appealEventLogs: [] },
       } as HeaderCase),
-    ).toEqual([
-      'Ákæruvaldið gegn Jóni Jónssyni',
-      'Héraðsdómsmál S-14/2026',
-    ])
+    ).toEqual(['Ákæruvaldið gegn Jóni Jónssyni', 'Héraðsdómsmál S-14/2026'])
   })
 })

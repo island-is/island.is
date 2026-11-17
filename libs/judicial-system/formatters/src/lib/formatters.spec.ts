@@ -532,9 +532,9 @@ describe('formatAppealCaseName', () => {
 
 describe('resolveAppealCaseName', () => {
   test('prefers a stored case name', () => {
-    expect(
-      resolveAppealCaseName('Ákæruvaldið gegn Páli', ['Jón']),
-    ).toBe('Ákæruvaldið gegn Páli')
+    expect(resolveAppealCaseName('Ákæruvaldið gegn Páli', ['Jón'])).toBe(
+      'Ákæruvaldið gegn Páli',
+    )
   })
 
   test('builds the style-of-cause when the stored name is missing', () => {
