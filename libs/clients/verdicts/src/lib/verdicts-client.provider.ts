@@ -13,6 +13,7 @@ import {
   Configuration as GoProConfiguration,
   ExtensionPublishedBookingApi,
   ExtensionLawyerApi,
+  ExtensionPublishedCaseApi,
   ExternalIntegrationAPISecurityApi,
 } from '../../gen/fetch/gopro'
 import { VerdictsClientConfig } from './verdicts-client.config'
@@ -44,6 +45,7 @@ export const GoProApiProviders = [
   ExtensionPublishedVerdictApi,
   ExtensionPublishedBookingApi,
   ExtensionLawyerApi,
+  ExtensionPublishedCaseApi,
   ExternalIntegrationAPISecurityApi,
 ].map((api) => ({
   provide: api,
