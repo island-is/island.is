@@ -407,6 +407,22 @@ export class FileService {
     }
 
     if (rulingFileId) {
+      // Verdict-appeal statements are case-level files. A rulingFileId would
+      // bind them to the ruling-order appeal for deletion locks and delivery.
+      if (
+        createFile.category &&
+        [
+          CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE,
+          CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT,
+          CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE,
+        ].includes(createFile.category)
+      ) {
+        throw new BadRequestException(
+          `Verdict appeal file ${createFile.key} cannot reference a ruling order`,
+        )
+      }
+
       const rulingFile = theCase.caseFiles?.find((f) => f.id === rulingFileId)
       if (!rulingFile) {
         throw new BadRequestException(

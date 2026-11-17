@@ -135,18 +135,21 @@ const Statement = ({ isVerdictAppeal = false }: Props) => {
   })
 
   // Statement events target the specific appeal-case row. Verdict appeals
-  // have no rulingFileId — use the case-level verdictAppealCase instead.
+  // are case-level (no rulingFileId) — use the case-level verdictAppealCase.
   const rulingFileAppealCase = useTargetAppealCaseByRulingFileId()
   const targetAppealCase = isVerdictAppeal
     ? workingCase.verdictAppealCase
     : rulingFileAppealCase
   const targetAppealCaseId = targetAppealCase?.id
+  const rulingFileId = isVerdictAppeal
+    ? undefined
+    : rulingFileAppealCase?.rulingFileId
 
   const { handleUpload, handleRemove } = useS3Upload(
     workingCase.id,
     defendantId,
     civilClaimantId,
-    targetAppealCase?.rulingFileId,
+    rulingFileId,
   )
 
   const appealStatementType = isVerdictAppeal
@@ -241,17 +244,29 @@ const Statement = ({ isVerdictAppeal = false }: Props) => {
       status: FileUploadStatus.done,
       defendantId,
       civilClaimantId,
-      rulingFileId: targetAppealCase?.rulingFileId,
+      rulingFileId,
     })
   }
 
   const filter = (file: TUploadFile, category: CaseFileCategory): boolean => {
+    // Verdict-appeal statements are per selected party. Do not show another
+    // client's files on this page — that would enable send for the wrong party.
+    if (isVerdictAppeal) {
+      const belongsToSelectedParty =
+        (Boolean(defendantId) && file.defendantId === defendantId) ||
+        (Boolean(civilClaimantId) && file.civilClaimantId === civilClaimantId)
+
+      if (!belongsToSelectedParty) {
+        return false
+      }
+    }
+
     return isMatchingAppealCaseFile(
       workingCase,
       [category],
       file,
       user,
-      targetAppealCase?.rulingFileId,
+      rulingFileId,
     )
   }
   const appealStatementFiles = uploadFiles.filter((file) =>
@@ -291,7 +306,7 @@ const Statement = ({ isVerdictAppeal = false }: Props) => {
               )}
               <RulingFileLabel
                 caseFiles={workingCase.caseFiles}
-                rulingFileId={targetAppealCase?.rulingFileId}
+                rulingFileId={rulingFileId}
               />
               <Text variant="h5" as="h5">
                 {getAppealActorText(workingCase, targetAppealCase)}

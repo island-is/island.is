@@ -429,4 +429,30 @@ describe('FileController - Create case file', () => {
       expect(then.error.message).toBe('Some error')
     })
   })
+
+  describe('verdict appeal statement with rulingFileId', () => {
+    const caseId = uuid()
+    const rulingFileId = uuid()
+    const theCase = { id: caseId } as Case
+    const uuId = uuid()
+    const createCaseFile: CreateFileDto = {
+      type: 'text/plain',
+      category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+      key: `${caseId}/${uuId}/statement.pdf`,
+      size: 99,
+      rulingFileId,
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(caseId, createCaseFile, theCase)
+    })
+
+    it('should reject the ruling order reference', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(then.error.message).toBe(
+        `Verdict appeal file ${createCaseFile.key} cannot reference a ruling order`,
+      )
+    })
+  })
 })

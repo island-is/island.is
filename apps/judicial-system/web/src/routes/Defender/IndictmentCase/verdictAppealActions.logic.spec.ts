@@ -323,6 +323,8 @@ describe('verdictAppealActions', () => {
       isAppealDefenderConfirmed: true,
       appealDefenderNationalId: defenderNationalId,
     })
+    const openDeadline = new Date()
+    openDeadline.setDate(openDeadline.getDate() + 14)
     const openAppealCase = theCase({
       verdictAppealCase: {
         id: 'appeal_case_id',
@@ -331,7 +333,7 @@ describe('verdictAppealActions', () => {
           {
             id: 'deadline_id',
             defendantId: 'defendant_id',
-            deadline: '2026-09-14T00:00:00.000Z',
+            deadline: openDeadline.toISOString(),
           },
         ],
       },
