@@ -1,4 +1,5 @@
-import { Field, FormNode } from '@island.is/application/types'
+import { Field, FormItemTypes, FormNode } from '@island.is/application/types'
+import { EditOrAddEmployersAndPeriods } from './EditOrAddEmployersAndPeriods'
 import { ParentalLeaveForm } from './ParentalLeaveForm'
 
 const findField = (node: FormNode, id: string): Field | undefined => {
@@ -9,6 +10,21 @@ const findField = (node: FormNode, id: string): Field | undefined => {
 
   for (const child of children) {
     const found = findField(child, id)
+    if (found) {
+      return found
+    }
+  }
+
+  return undefined
+}
+
+const findParent = (node: FormNode, id: string): FormNode | undefined => {
+  const children = (node as { children?: FormNode[] }).children ?? []
+  for (const child of children) {
+    if ((child as Field).id === id) {
+      return node
+    }
+    const found = findParent(child, id)
     if (found) {
       return found
     }
@@ -29,4 +45,18 @@ describe('ParentalLeaveForm', () => {
       'otherParentObj.otherParentId',
     ])
   })
+
+  // A bare field screen is validated against every answer, so unsaved payment
+  // answers left behind by going back from the payments screen blocked "Next".
+  it.each([
+    ['apply', ParentalLeaveForm],
+    ['edit', EditOrAddEmployersAndPeriods],
+  ])(
+    'should ask for right of access on a multi-field screen in the %s form',
+    (_, form) => {
+      expect(findParent(form, 'otherParentRightOfAccess')?.type).toBe(
+        FormItemTypes.MULTI_FIELD,
+      )
+    },
+  )
 })

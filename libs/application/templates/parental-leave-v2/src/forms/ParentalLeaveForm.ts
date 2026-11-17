@@ -263,8 +263,11 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
               ],
             }),
-            buildRadioField({
-              id: 'otherParentRightOfAccess',
+            // A multi-field, not a bare radio screen: the client validates a
+            // screen without child fields against every answer, so payment
+            // answers left unsaved by going back would silently block "Next".
+            buildMultiField({
+              id: 'otherParentRightOfAccessScreen',
               condition: (answers) =>
                 (
                   answers as {
@@ -275,18 +278,23 @@ export const ParentalLeaveForm: Form = buildForm({
                 )?.otherParentObj?.chooseOtherParent === MANUAL,
               title: parentalLeaveFormMessages.rightOfAccess.title,
               description: parentalLeaveFormMessages.rightOfAccess.description,
-              defaultValue: YES,
-              options: [
-                {
-                  label: parentalLeaveFormMessages.rightOfAccess.yesOption,
-                  dataTestId: 'yes-option',
-                  value: YES,
-                },
-                {
-                  label: parentalLeaveFormMessages.rightOfAccess.noOption,
-                  dataTestId: 'no-option',
-                  value: NO,
-                },
+              children: [
+                buildRadioField({
+                  id: 'otherParentRightOfAccess',
+                  defaultValue: YES,
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.rightOfAccess.yesOption,
+                      dataTestId: 'yes-option',
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.rightOfAccess.noOption,
+                      dataTestId: 'no-option',
+                      value: NO,
+                    },
+                  ],
+                }),
               ],
             }),
           ],
