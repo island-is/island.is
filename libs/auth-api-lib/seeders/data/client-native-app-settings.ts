@@ -76,9 +76,8 @@ const settings = {
 const setNativeApp =
   (clientId: keyof typeof settings) =>
   async (queryInterface: QueryInterface) => {
-    // No rows where the client doesn't exist.
-    await queryInterface.sequelize.query(
-      'update client set native_app = :nativeApp::jsonb where client_id = :clientId',
+    const [updated] = await queryInterface.sequelize.query(
+      'update client set native_app = :nativeApp::jsonb where client_id = :clientId returning client_id',
       {
         replacements: {
           clientId,
@@ -86,6 +85,10 @@ const setNativeApp =
         },
       },
     )
+    if (updated.length === 0) {
+      // A client created here later needs a seeder of its own.
+      console.log(`Skipping "${clientId}": the client does not exist here.`)
+    }
   }
 
 export const up = compose(

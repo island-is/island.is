@@ -110,19 +110,16 @@ export class DeviceRegistrationsController {
       'Removes an app login, if it still belongs to the given install key.',
     request: {
       params: { id: { type: 'string', required: true } },
-      query: { installKeyThumbprint: { type: 'string', required: true } },
+      query: { installKeyThumbprint: { type: 'string', required: false } },
     },
     response: { status: 204 },
   })
   @Audit()
   async delete(
     @Param('id', new ParseUUIDPipe()) id: string,
-    @Query('installKeyThumbprint') installKeyThumbprint: string,
+    @Query('installKeyThumbprint') installKeyThumbprint?: string,
   ): Promise<void> {
-    if (!installKeyThumbprint) {
-      throw new BadRequestException('installKeyThumbprint is required')
-    }
-
+    // Optional until every IdentityServer in use sends it: without it the delete is unguarded, as before.
     await this.deviceRegistrationsService.delete(id, installKeyThumbprint)
   }
 }

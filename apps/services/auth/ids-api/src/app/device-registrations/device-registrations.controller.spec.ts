@@ -269,7 +269,7 @@ describe('DeviceRegistrationsController', () => {
       expect(await model.count()).toBe(1)
     })
 
-    it('requires the install key when deleting', async () => {
+    it('deletes without the install key, for callers that do not send it yet', async () => {
       // Arrange
       const saved = await server.put(path).send(registration())
 
@@ -277,8 +277,8 @@ describe('DeviceRegistrationsController', () => {
       const response = await server.delete(`${path}/${saved.body.id}`)
 
       // Assert
-      expect(response.status).toBe(400)
-      expect(await model.count()).toBe(1)
+      expect(response.status).toBe(204)
+      expect(await model.count()).toBe(0)
     })
   })
 

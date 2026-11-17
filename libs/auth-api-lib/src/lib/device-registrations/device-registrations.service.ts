@@ -99,9 +99,9 @@ export class DeviceRegistrationsService {
    * Only while the registration still has the install key the caller read: a
    * login on another install reuses the row, and a stale delete must not remove it.
    */
-  async delete(id: string, installKeyThumbprint: string): Promise<void> {
+  async delete(id: string, installKeyThumbprint?: string): Promise<void> {
     await this.deviceRegistrationModel.destroy({
-      where: { id, installKeyThumbprint },
+      where: { id, ...(installKeyThumbprint && { installKeyThumbprint }) },
     })
   }
 }
