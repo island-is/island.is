@@ -10,6 +10,7 @@ export {
   InCourtAppellant,
   inCourtAppellantsFromDecisions,
   isOutOfCourtAppealEvent,
+  resolveDefenceParties,
   standingVerdictAppealEvents,
   standingVerdictAppellants,
   verdictAppealProgress,

@@ -47,6 +47,12 @@ type GivenWhenThen = (
 
 // The public prosecution reviewer withdraws the prosecution's appeal of one
 // defendant's verdict - the review decision changed away from appealing.
+//
+// Over HTTP the transition route is closed to the prosecution for verdict
+// appeals (see userAppealedAppealCase in the roles rules); the withdrawal is
+// only reached from the defendant service when the review decision changes.
+// The controller method is called here because guards do not run in controller
+// unit tests, which makes it a convenient way into the same service logic.
 describe('AppealCaseController - Prosecution withdraws a verdict appeal', () => {
   const caseId = uuid()
   const appealCaseId = uuid()
@@ -271,6 +277,74 @@ describe('AppealCaseController - Prosecution withdraws a verdict appeal', () => 
         expect.objectContaining({ appealState: AppealCaseState.WITHDRAWN }),
         { transaction },
       )
+    })
+
+    it('should clear the appeal defender once no appeal remains for the defendant', () => {
+      expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        defendantId,
+        {
+          appealDefenderName: null,
+          appealDefenderNationalId: null,
+          appealDefenderEmail: null,
+          appealDefenderPhoneNumber: null,
+          isAppealDefenderConfirmed: null,
+        },
+        { transaction },
+      )
+    })
+  })
+
+  // Defence withdrew first and kept the appointment for the standing
+  // prosecution appeal; that appeal ending must clear it too.
+  describe('the prosecution withdraws after the defence already withdrew', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      ;(
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
+      ).mockResolvedValue([
+        event(
+          defendantId,
+          AppealEventType.APPEALED,
+          UserRole.DEFENDER,
+          '2026-06-04T13:34:00Z',
+        ),
+        event(
+          defendantId,
+          AppealEventType.APPEALED,
+          UserRole.PROSECUTOR,
+          '2026-06-05T09:00:00Z',
+        ),
+        event(
+          defendantId,
+          AppealEventType.APPEAL_WITHDRAWN,
+          UserRole.DEFENDER,
+          '2026-06-06T09:00:00Z',
+        ),
+      ])
+
+      then = await givenWhenThen(dto)
+    })
+
+    it('should clear the appeal defender left from the defence withdrawal', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        defendantId,
+        {
+          appealDefenderName: null,
+          appealDefenderNationalId: null,
+          appealDefenderEmail: null,
+          appealDefenderPhoneNumber: null,
+          isAppealDefenderConfirmed: null,
+        },
+        { transaction },
+      )
+    })
+
+    it('should not clear the defence-side verdict mirror or declaration files', () => {
+      expect(mockVerdictRepositoryService.update).not.toHaveBeenCalled()
     })
   })
 
