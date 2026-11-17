@@ -62,6 +62,14 @@ export class ActorProfile extends Model {
   @ApiProperty()
   emailNotifications!: boolean
 
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: false,
+    allowNull: false,
+  })
+  @ApiProperty()
+  onlyActionablePriorityNotifications!: boolean
+
   @CreatedAt
   @ApiProperty()
   created!: Date
@@ -107,6 +115,8 @@ export class ActorProfile extends Model {
       emailsId: this.emailsId || null,
       email: this.emails?.email || null,
       emailVerified: this.emails?.emailStatus === DataStatus.VERIFIED,
+      onlyActionablePriorityNotifications:
+        this.onlyActionablePriorityNotifications,
     }
   }
 }

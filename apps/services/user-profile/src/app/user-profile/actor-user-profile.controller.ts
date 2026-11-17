@@ -288,6 +288,8 @@ export class ActorUserProfileController {
         fromNationalId,
         emailNotifications: actorProfile.emailNotifications,
         emailsId: actorProfile.emailsId,
+        onlyActionablePriorityNotifications:
+          actorProfile.onlyActionablePriorityNotifications,
       }),
     )
   }
