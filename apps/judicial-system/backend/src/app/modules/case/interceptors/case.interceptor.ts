@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common'
 
 import {
+  AppealCaseState,
   AppealDecisionPartyRole,
   AppealEventType,
   CaseAppealDecision,
@@ -40,7 +41,10 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { getRequestTransaction } from '../../../middleware'
-import { hasOutOfCourtAppeal } from '../../appeal-case'
+import {
+  hasOutOfCourtAppeal,
+  resolveDefenceParties,
+} from '../../appeal-case'
 import { getMostPermissiveRequestSharedWithDefenderForNationalId } from '../../defendant/requestSharedWithDefender.logic'
 import { isRulingOrderInConfirmedCourtSession } from '../../file/guards/caseFileCategory'
 import { canDefenceUserViewCivilClaimCaseFile } from '../../file/guards/civilClaimFileVisibility'
@@ -677,32 +681,17 @@ const getDefenceUserVerdictAppealPartyIds = (
   theCase: Case,
   nationalId: string,
 ): { defendantIds: Set<string>; civilClaimantIds: Set<string> } => {
-  const defendantIds = new Set(
-    (theCase.defendants ?? [])
-      .filter(
-        (defendant) =>
-          (defendant.isDefenderChoiceConfirmed &&
-            defendant.defenderNationalId === nationalId) ||
-          (defendant.isAppealDefenderConfirmed &&
-            !defendant.isAppealDefenderWaived &&
-            defendant.appealDefenderNationalId === nationalId),
-      )
-      .map((defendant) => defendant.id),
-  )
+  const defendantIds = new Set<string>()
+  const civilClaimantIds = new Set<string>()
 
-  const civilClaimantIds = new Set(
-    (theCase.civilClaimants ?? [])
-      .filter(
-        (civilClaimant) =>
-          (civilClaimant.hasSpokesperson &&
-            civilClaimant.isSpokespersonConfirmed &&
-            civilClaimant.spokespersonNationalId === nationalId) ||
-          (civilClaimant.hasAppealSpokesperson !== false &&
-            civilClaimant.isAppealSpokespersonConfirmed &&
-            civilClaimant.appealSpokespersonNationalId === nationalId),
-      )
-      .map((civilClaimant) => civilClaimant.id),
-  )
+  for (const party of resolveDefenceParties(theCase, nationalId)) {
+    if (party.defendantId) {
+      defendantIds.add(party.defendantId)
+    }
+    if (party.civilClaimantId) {
+      civilClaimantIds.add(party.civilClaimantId)
+    }
+  }
 
   return { defendantIds, civilClaimantIds }
 }
@@ -749,40 +738,46 @@ const shouldKeepVerdictAppealEventLogForDefenceUser = (
   isVerdictAppealPartyRow(eventLog, partyIds) ||
   isProsecutionVerdictAppealTimelineEvent(eventLog, theCase)
 
+const serializeVerdictAppealStatementDeadline = (
+  deadline: NonNullable<AppealCase['statementDeadlines']>[number],
+) => ({
+  ...deadline.toJSON(),
+  // Same clock as isStatementDeadlineExpired on kæra appealCase rows.
+  isExpired: Date.now() >= new Date(deadline.deadline).getTime(),
+})
+
 const transformVerdictAppealCaseForUser = (
   appealCase: AppealCase,
   theCase: Case,
-  defenceUser: User | undefined,
-): Record<string, unknown> => {
-  const json = appealCase.toJSON() as Record<string, unknown>
-
-  if (!defenceUser) {
-    return json
-  }
-
+  defenceUser: User,
+) => {
   const partyIds = getDefenceUserVerdictAppealPartyIds(
     theCase,
     defenceUser.nationalId,
   )
 
+  // Draft Landsréttur conclusion/decision stay off the wire until the appeal
+  // is completed — including after reopen, when the previous ruling fields
+  // remain on the row while state is RECEIVED again.
   return {
-    ...json,
-    statementDeadlines: (appealCase.statementDeadlines ?? [])
-      .filter((deadline) => isVerdictAppealPartyRow(deadline, partyIds))
-      .map((deadline) =>
-        typeof deadline.toJSON === 'function' ? deadline.toJSON() : deadline,
+    ...appealCase.toJSON(),
+    ...(appealCase.appealState === AppealCaseState.COMPLETED
+      ? {}
+      : {
+          appealConclusion: undefined,
+          appealRulingDecision: undefined,
+          appealRulingDate: undefined,
+        }),
+    statementDeadlines: appealCase.statementDeadlines
+      ?.filter((deadline) => isVerdictAppealPartyRow(deadline, partyIds))
+      .map(serializeVerdictAppealStatementDeadline),
+    appealEventLogs: appealCase.appealEventLogs?.filter((eventLog) =>
+      shouldKeepVerdictAppealEventLogForDefenceUser(
+        eventLog,
+        theCase,
+        partyIds,
       ),
-    appealEventLogs: (appealCase.appealEventLogs ?? [])
-      .filter((eventLog) =>
-        shouldKeepVerdictAppealEventLogForDefenceUser(
-          eventLog,
-          theCase,
-          partyIds,
-        ),
-      )
-      .map((eventLog) =>
-        typeof eventLog.toJSON === 'function' ? eventLog.toJSON() : eventLog,
-      ),
+    ),
   }
 }
 
@@ -943,15 +938,17 @@ const transformCase = (
   // Defence users only see their own parties' verdict-appeal deadlines and
   // event logs. An empty party filter would otherwise match prosecution rows
   // (null/null), and other defendants' greinargerðarfrest is not theirs.
-  const verdictAppealCaseOverride = theCase.verdictAppealCase
-    ? {
-        verdictAppealCase: transformVerdictAppealCaseForUser(
-          theCase.verdictAppealCase,
-          theCase,
-          isDefence ? user : undefined,
-        ),
-      }
-    : {}
+  // Non-defence keeps theCase.toJSON()'s nested verdictAppealCase as-is.
+  const verdictAppealCaseOverride =
+    theCase.verdictAppealCase && isDefence && user
+      ? {
+          verdictAppealCase: transformVerdictAppealCaseForUser(
+            theCase.verdictAppealCase,
+            theCase,
+            user,
+          ),
+        }
+      : {}
 
   const caseLevelAppealInfo = getCaseLevelAppealInfo(theCase)
 

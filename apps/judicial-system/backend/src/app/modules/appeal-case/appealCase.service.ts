@@ -73,6 +73,7 @@ import {
   findUserRulingOrderAppealDecision,
   hasStandingVerdictAppeal,
   isInCourtRulingOrderAppeal,
+  resolveDefenceParties,
   standingVerdictAppellants,
   userRulingOrderAppealDecisions,
   type VerdictAppellantSide,
@@ -112,50 +113,6 @@ export class AppealCaseService {
 
   // Every defence party (defendant / civil claimant) the user currently, and
   // confirmedly, represents on the case. A defence event is recorded once per
-  // party, so a lawyer who represents several clients appeals (or submits a
-  // statement) on behalf of all of them - the backend resolves this, the client
-  // never has to pick. Empty for request cases (collective defence, no party)
-  // and non-defence users.
-  private resolveDefenceParties(
-    theCase: Case,
-    user: User,
-  ): { defendantId?: string; civilClaimantId?: string }[] {
-    if (!isIndictmentCase(theCase.type)) {
-      return []
-    }
-
-    const parties: { defendantId?: string; civilClaimantId?: string }[] = []
-
-    for (const defendant of theCase.defendants ?? []) {
-      if (
-        Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [
-          defendant,
-        ]) ||
-        Defendant.isConfirmedAppealDefenderOfDefendant(user.nationalId, [
-          defendant,
-        ])
-      ) {
-        parties.push({ defendantId: defendant.id })
-      }
-    }
-
-    for (const civilClaimant of theCase.civilClaimants ?? []) {
-      if (
-        CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(user.nationalId, [
-          civilClaimant,
-        ]) ||
-        CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
-          user.nationalId,
-          [civilClaimant],
-        )
-      ) {
-        parties.push({ civilClaimantId: civilClaimant.id })
-      }
-    }
-
-    return parties
-  }
-
   // Writes appeal event-log rows with an actor snapshot of who performed the
   // event. Defenders are not system users, so userId is null and
   // national_id/name identify them (plus the defence party); for
@@ -170,7 +127,7 @@ export class AppealCaseService {
     transaction: Transaction,
   ): Promise<void> {
     const parties = isDefenceUser(user)
-      ? this.resolveDefenceParties(theCase, user)
+      ? resolveDefenceParties(theCase, user.nationalId)
       : []
     // Prosecution and request-case collective defence carry no party, but still
     // get a single event row.

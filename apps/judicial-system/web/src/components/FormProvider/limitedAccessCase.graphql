@@ -118,6 +118,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         defendantId
         civilClaimantId
         deadline
+        isExpired
       }
       appealEventLogs {
         id
