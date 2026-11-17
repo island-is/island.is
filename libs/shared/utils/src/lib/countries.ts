@@ -10,8 +10,14 @@ export const getCountryByCode = (code: string): Country | undefined => {
   return countryCodes.find((country) => country.code === code) ?? undefined
 }
 
-export const getAllCountryCodes = () => {
-  return countryCodes
+export const getAllCountryCodes = (locale: 'is' | 'en' | string = 'en') => {
+  const isIcelandic = locale === 'is'
+  const displayName = (country: Country) =>
+    isIcelandic ? country.name_is ?? country.name : country.name
+
+  return [...countryCodes].sort((a, b) =>
+    displayName(a).localeCompare(displayName(b), isIcelandic ? 'is' : 'en'),
+  )
 }
 
 export interface Country {

@@ -7,6 +7,7 @@ import { ChargeItemCode } from '@island.is/shared/constants'
 import { OrderVehicleRegistrationCertificateAnswers } from '..'
 
 export { getSelectedVehicle } from './getSelectedVehicle'
+export { isSendToOtherAddress } from './isSendToOtherAddress'
 
 export const getChargeItems = (): Array<BasicChargeItem> => {
   return [

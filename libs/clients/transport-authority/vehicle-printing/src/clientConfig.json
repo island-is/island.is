@@ -1,31 +1,43 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.0.4",
   "info": {
     "title": "SGS Rest API",
-    "description": "Printing API developed in .Net6.0 - Release-6 : 20240927.1",
+    "description": "Printing API, developed in .NET 10 - Release-12 : 20261112.2",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
     },
     "version": "1.0"
   },
-  "servers": [{ "url": "/vehicle/printing" }],
+  "servers": [
+    {
+      "url": "/vehicle/printing"
+    }
+  ],
   "paths": {
     "/registration/preregistrationrejectedconfirmation": {
       "post": {
-        "tags": ["Registration"],
+        "tags": [
+          "Registration"
+        ],
         "parameters": [
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           }
         ],
         "requestBody": {
@@ -103,19 +115,27 @@
     },
     "/registration/preregistrationonholdconfirmation": {
       "post": {
-        "tags": ["Registration"],
+        "tags": [
+          "Registration"
+        ],
         "parameters": [
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           }
         ],
         "requestBody": {
@@ -193,19 +213,27 @@
     },
     "/registration/preregistrationrecievedconfirmation": {
       "post": {
-        "tags": ["Registration"],
+        "tags": [
+          "Registration"
+        ],
         "parameters": [
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           }
         ],
         "requestBody": {
@@ -283,19 +311,27 @@
     },
     "/registration/printpreregistrationdone": {
       "post": {
-        "tags": ["Registration"],
+        "tags": [
+          "Registration"
+        ],
         "parameters": [
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           }
         ],
         "requestBody": {
@@ -373,86 +409,207 @@
     },
     "/registration/preregistrationecocdone": {
       "post": {
-        "tags": ["Registration"],
+        "tags": [
+          "Registration"
+        ],
         "parameters": [
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           }
         ],
         "requestBody": {
           "content": {
             "application/json-patch+json": {
-              "schema": { "$ref": "#/components/schemas/PostEmailModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PostEmailModel"
+              }
             },
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/PostEmailModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PostEmailModel"
+              }
             },
             "text/json": {
-              "schema": { "$ref": "#/components/schemas/PostEmailModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PostEmailModel"
+              }
             },
             "application/*+json": {
-              "schema": { "$ref": "#/components/schemas/PostEmailModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PostEmailModel"
+              }
             },
             "application/xml": {
-              "schema": { "$ref": "#/components/schemas/PostEmailModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PostEmailModel"
+              }
             },
             "text/xml": {
-              "schema": { "$ref": "#/components/schemas/PostEmailModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PostEmailModel"
+              }
             },
             "application/*+xml": {
-              "schema": { "$ref": "#/components/schemas/PostEmailModel" }
+              "schema": {
+                "$ref": "#/components/schemas/PostEmailModel"
+              }
             }
           }
         },
-        "responses": { "200": { "description": "OK" } }
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/registration/requestregistrationcardprint": {
       "post": {
-        "tags": ["Registration"],
+        "tags": [
+          "Registration"
+        ],
         "parameters": [
-          { "name": "permno", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "permno",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendToAddress"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendToAddress"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendToAddress"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendToAddress"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/SendToAddress"
+              }
+            },
+            "text/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/SendToAddress"
+              }
+            },
+            "application/*+xml": {
+              "schema": {
+                "$ref": "#/components/schemas/SendToAddress"
+              }
+            }
+          }
+        },
         "responses": {
-          "200": { "description": "OK" },
+          "200": {
+            "description": "OK"
+          },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "text/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "application/xml": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "text/xml": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -461,19 +618,27 @@
     },
     "/registration/newregistrationrequestpdf": {
       "post": {
-        "tags": ["Registration"],
+        "tags": [
+          "Registration"
+        ],
         "parameters": [
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": { "type": "string", "default": "1.0" }
+            "schema": {
+              "type": "string",
+              "default": "1.0"
+            }
           }
         ],
         "requestBody": {
@@ -520,35 +685,64 @@
             "description": "OK",
             "content": {
               "text/plain": {
-                "schema": { "type": "string", "format": "byte" }
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
               },
               "application/json": {
-                "schema": { "type": "string", "format": "byte" }
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
               },
-              "text/json": { "schema": { "type": "string", "format": "byte" } },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              },
               "application/xml": {
-                "schema": { "type": "string", "format": "byte" }
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
               },
-              "text/xml": { "schema": { "type": "string", "format": "byte" } }
+              "text/xml": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
             }
           },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "text/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "application/xml": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               },
               "text/xml": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -561,13 +755,34 @@
       "NewRegistrationRequestPDFModel": {
         "type": "object",
         "properties": {
-          "permno": { "type": "string", "nullable": true },
-          "importName": { "type": "string", "nullable": true },
-          "operatorPersidno": { "type": "string", "nullable": true },
-          "vehicleIdentificationNumber": { "type": "string", "nullable": true },
-          "makeAndVehcom": { "type": "string", "nullable": true },
-          "importerName": { "type": "string", "nullable": true },
-          "importerAddress": { "type": "string", "nullable": true }
+          "permno": {
+            "type": "string",
+            "nullable": true
+          },
+          "importName": {
+            "type": "string",
+            "nullable": true
+          },
+          "operatorPersidno": {
+            "type": "string",
+            "nullable": true
+          },
+          "vehicleIdentificationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "makeAndVehcom": {
+            "type": "string",
+            "nullable": true
+          },
+          "importerName": {
+            "type": "string",
+            "nullable": true
+          },
+          "importerAddress": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -598,7 +813,9 @@
         "properties": {
           "recipients": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "description": "List of email to sent o",
             "nullable": true
           },
@@ -617,10 +834,15 @@
             "description": "Body of email",
             "nullable": true
           },
-          "isHTML": { "type": "boolean", "description": "Is body html" },
+          "isHTML": {
+            "type": "boolean",
+            "description": "Is body html"
+          },
           "attachments": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/PostEmailAttachments" },
+            "items": {
+              "$ref": "#/components/schemas/PostEmailAttachments"
+            },
             "description": "List of base64 attachments in email",
             "nullable": true
           }
@@ -629,7 +851,13 @@
         "description": "Email model"
       },
       "PostPreRegistrationConfirmation": {
-        "required": ["email", "permno", "receptionNumber", "username", "vin"],
+        "required": [
+          "email",
+          "permno",
+          "receptionNumber",
+          "username",
+          "vin"
+        ],
         "type": "object",
         "properties": {
           "receptionNumber": {
@@ -637,90 +865,241 @@
             "minLength": 1,
             "type": "string"
           },
-          "vin": { "maxLength": 18, "minLength": 1, "type": "string" },
-          "email": { "minLength": 1, "type": "string", "format": "email" },
-          "permno": { "maxLength": 8, "minLength": 1, "type": "string" },
-          "username": { "maxLength": 50, "minLength": 1, "type": "string" }
+          "vin": {
+            "maxLength": 18,
+            "minLength": 1,
+            "type": "string"
+          },
+          "email": {
+            "minLength": 1,
+            "type": "string",
+            "format": "email"
+          },
+          "permno": {
+            "maxLength": 8,
+            "minLength": 1,
+            "type": "string"
+          },
+          "username": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string"
+          }
         },
         "additionalProperties": false
       },
       "PostPreRegistrationOnHoldModel": {
+        "required": [
+          "email"
+        ],
         "type": "object",
         "properties": {
-          "email": { "type": "string", "nullable": true },
-          "reasons": {
-            "type": "array",
-            "items": { "type": "string" },
+          "email": {
+            "type": "string",
             "nullable": true
           },
-          "receptionNumber": { "type": "string", "nullable": true },
-          "vehicleIdentificationNumber": { "type": "string", "nullable": true }
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "receptionNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "vehicleIdentificationNumber": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "PostPreRegistrationRecievedModel": {
+        "required": [
+          "email"
+        ],
         "type": "object",
         "properties": {
-          "email": { "type": "string", "nullable": true },
-          "dateRecieved": { "type": "string", "format": "date-time" },
-          "receptionNumber": { "type": "string", "nullable": true },
-          "vehicleIdentificationNumber": { "type": "string", "nullable": true },
-          "timeRecieved": { "type": "string", "nullable": true }
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateRecieved": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "receptionNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "vehicleIdentificationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "timeRecieved": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "PostPreRegistrationRejectedModel": {
+        "required": [
+          "email"
+        ],
         "type": "object",
         "properties": {
-          "email": { "type": "string", "nullable": true },
-          "dateRecieved": { "type": "string", "format": "date-time" },
-          "reasons": {
-            "type": "array",
-            "items": { "type": "string" },
+          "email": {
+            "type": "string",
             "nullable": true
           },
-          "receptionNumber": { "type": "string", "nullable": true },
-          "vehicleIdentificationNumber": { "type": "string", "nullable": true },
-          "timeRecieved": { "type": "string", "nullable": true }
+          "dateRecieved": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "receptionNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "vehicleIdentificationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "timeRecieved": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "ProblemDetails": {
         "type": "object",
         "properties": {
-          "type": { "type": "string", "nullable": true },
-          "title": { "type": "string", "nullable": true },
-          "status": { "type": "integer", "format": "int32", "nullable": true },
-          "detail": { "type": "string", "nullable": true },
-          "instance": { "type": "string", "nullable": true }
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "SendPreRegistrationConfirmationDto": {
+        "required": [
+          "confirmationStatus"
+        ],
         "type": "object",
         "properties": {
-          "confirmationStatus": { "type": "string", "nullable": true }
+          "confirmationStatus": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "SendPreRegistrationOnHoldConfirmationDto": {
+        "required": [
+          "confirmationStatus"
+        ],
         "type": "object",
         "properties": {
-          "confirmationStatus": { "type": "string", "nullable": true }
+          "confirmationStatus": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "SendPreRegistrationRecievedConfirmationDto": {
+        "required": [
+          "confirmationStatus"
+        ],
         "type": "object",
         "properties": {
-          "confirmationStatus": { "type": "string", "nullable": true }
+          "confirmationStatus": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "SendPreRegistrationRejectedConfirmationDto": {
+        "required": [
+          "confirmationStatus"
+        ],
         "type": "object",
         "properties": {
-          "confirmationStatus": { "type": "string", "nullable": true }
+          "confirmationStatus": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SendToAddress": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 100,
+            "type": "string",
+            "nullable": true
+          },
+          "address1": {
+            "maxLength": 100,
+            "type": "string",
+            "nullable": true
+          },
+          "address2": {
+            "maxLength": 100,
+            "type": "string",
+            "nullable": true
+          },
+          "apartment": {
+            "maxLength": 20,
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "maxLength": 100,
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "maxLength": 20,
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "maxLength": 100,
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       }
@@ -734,5 +1113,14 @@
       }
     }
   },
-  "security": [{ "Bearer": [] }]
+  "security": [
+    {
+      "Bearer": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Registration"
+    }
+  ]
 }
