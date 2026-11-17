@@ -757,18 +757,8 @@ const transformVerdictAppealCaseForUser = (
     defenceUser.nationalId,
   )
 
-  // Draft Landsréttur conclusion/decision stay off the wire until the appeal
-  // is completed — including after reopen, when the previous ruling fields
-  // remain on the row while state is RECEIVED again.
   return {
     ...appealCase.toJSON(),
-    ...(appealCase.appealState === AppealCaseState.COMPLETED
-      ? {}
-      : {
-          appealConclusion: undefined,
-          appealRulingDecision: undefined,
-          appealRulingDate: undefined,
-        }),
     statementDeadlines: appealCase.statementDeadlines
       ?.filter((deadline) => isVerdictAppealPartyRow(deadline, partyIds))
       .map(serializeVerdictAppealStatementDeadline),
