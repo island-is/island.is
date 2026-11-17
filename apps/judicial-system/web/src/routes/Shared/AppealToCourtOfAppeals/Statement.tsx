@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -16,6 +16,8 @@ import {
   SIGNED_VERDICT_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  findAppealStatementDeadline,
+  hasFiledAppealStatement,
   isAppealFileDeletionLocked,
   isCompletedCase,
   isDefenceUser,
@@ -39,9 +41,11 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import DateLabel from '@island.is/judicial-system-web/src/components/DateLabel/DateLabel'
 import {
+  AppealCaseState,
   AppealEventType,
   CaseFileCategory,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { canDefenderFileVerdictStatementOf } from '@island.is/judicial-system-web/src/routes/Defender/IndictmentCase/verdictAppealActions.logic'
 import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   useAppealCase,
@@ -107,8 +111,58 @@ const resolveVerdictAppealParty = (
   return getVerdictAppealStatementParty(workingCase, user) ?? {}
 }
 
+const canAccessVerdictAppealStatementPage = (
+  workingCase: Parameters<typeof canDefenderFileVerdictStatementOf>[0],
+  user: Parameters<typeof canDefenderFileVerdictStatementOf>[2],
+  party: DefenceUserPartyIds,
+): boolean => {
+  const appeal = workingCase.verdictAppealCase
+
+  if (
+    !appeal ||
+    appeal.appealState === AppealCaseState.COMPLETED ||
+    appeal.appealState === AppealCaseState.WITHDRAWN
+  ) {
+    return false
+  }
+
+  if (party.defendantId) {
+    const defendant = workingCase.defendants?.find(
+      (entry) => entry.id === party.defendantId,
+    )
+
+    return Boolean(
+      defendant &&
+        canDefenderFileVerdictStatementOf(workingCase, defendant, user),
+    )
+  }
+
+  if (party.civilClaimantId) {
+    const isAppealConfirmedSpokesperson =
+      getDefenceUserAppealConfirmedPartyIds(workingCase, user).some(
+        (confirmedParty) =>
+          confirmedParty.civilClaimantId === party.civilClaimantId,
+      )
+
+    if (!isAppealConfirmedSpokesperson) {
+      return false
+    }
+
+    if (
+      !findAppealStatementDeadline(appeal.statementDeadlines, party)?.deadline
+    ) {
+      return false
+    }
+
+    return !hasFiledAppealStatement(appeal.appealEventLogs, party)
+  }
+
+  return false
+}
+
 const Statement = ({ isVerdictAppeal = false }: Props) => {
-  const { workingCase, refreshCase } = useContext(FormContext)
+  const { workingCase, isLoadingWorkingCase, refreshCase } =
+    useContext(FormContext)
   const { user } = useContext(UserContext)
   const { createAppealEventLog, isCreatingAppealEventLog } = useAppealCase()
   const { formatMessage } = useIntl()
@@ -185,6 +239,32 @@ const Statement = ({ isVerdictAppeal = false }: Props) => {
         : PROSECUTION_INDICTMENT_CASE_CONFIRMING_ROUTE
       : SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${workingCase.id}`
+
+  // Overview already hides the CTA once the appeal is over; keep the direct
+  // route from becoming a back door for completed / withdrawn appeals.
+  useEffect(() => {
+    if (!isVerdictAppeal || isLoadingWorkingCase || !user) {
+      return
+    }
+
+    if (
+      !canAccessVerdictAppealStatementPage(workingCase, user, {
+        defendantId,
+        civilClaimantId,
+      })
+    ) {
+      router.replace(previousUrl)
+    }
+  }, [
+    isVerdictAppeal,
+    isLoadingWorkingCase,
+    user,
+    workingCase,
+    defendantId,
+    civilClaimantId,
+    router,
+    previousUrl,
+  ])
 
   const handleNextButtonClick = useCallback(async () => {
     const uploadResult = await handleUpload(

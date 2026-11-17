@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid'
 import { MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseNotificationType,
+  AppealCaseState,
   AppealCaseType,
   AppealEventType,
   CaseType,
@@ -295,6 +296,44 @@ describe('LimitedAccessAppealCaseController - Create event log', () => {
       expect(then.error).toBeDefined()
       expect(then.error.message).toBe(
         `Current user is not a confirmed appeal defender of defendant ${defendantId}`,
+      )
+      expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('appeal-confirmed defender sends a statement on a completed verdict appeal', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants: [
+        {
+          id: defendantId,
+          isAppealDefenderConfirmed: true,
+          appealDefenderNationalId: defenderNationalId,
+        },
+      ],
+    } as unknown as Case
+    const completedAppealCase = {
+      ...verdictAppealCase,
+      appealState: AppealCaseState.COMPLETED,
+    } as AppealCase
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        theCase,
+        {
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          defendantId,
+        },
+        completedAppealCase,
+      )
+    })
+
+    it('should reject the request', () => {
+      expect(then.error).toBeDefined()
+      expect(then.error.message).toBe(
+        `Cannot record a statement for completed or withdrawn appeal case ${appealCaseId} of case ${caseId}`,
       )
       expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
     })

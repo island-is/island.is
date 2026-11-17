@@ -74,6 +74,7 @@ import {
   findUserRulingOrderAppealDecision,
   hasStandingVerdictAppeal,
   isInCourtRulingOrderAppeal,
+  isVerdictAppealOver,
   resolveDefenceParties,
   standingVerdictAppellants,
   userRulingOrderAppealDecisions,
@@ -1191,6 +1192,12 @@ export class AppealCaseService {
       ) {
         throw new BadRequestException(
           'Verdict appeal statement events require defendantId or civilClaimantId',
+        )
+      }
+
+      if (requiresScopedParty && isVerdictAppealOver(appealCase)) {
+        throw new BadRequestException(
+          `Cannot record a statement for completed or withdrawn appeal case ${appealCase.id} of case ${theCase.id}`,
         )
       }
 
