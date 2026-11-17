@@ -564,6 +564,37 @@ describe('NotificationsWorkerService', () => {
   })
 
   describe('Actor Notifications', () => {
+    it('should keep the deadline when onBehalfOf is provided without rootMessageId', async () => {
+      const deadline = '2026-12-01T16:00:00.000Z'
+      const queueAddSpy = jest.spyOn(queue, 'add')
+
+      await queue.add({
+        recipient: userWithNoDelegations.nationalId,
+        templateId: mockTemplateId,
+        args: [{ key: 'organization', value: 'Test Crew' }],
+        onBehalfOf: {
+          nationalId: userWithDelegations.nationalId,
+          name: userWithDelegations.name,
+        },
+        deadline,
+      })
+      await wait(3)
+
+      const userNotifications = await notificationModel.findAll({
+        where: { recipient: userWithDelegations.nationalId },
+      })
+      expect(userNotifications).toHaveLength(1)
+      expect(userNotifications[0].deadline?.toISOString()).toBe(deadline)
+
+      const actorMessages = queueAddSpy.mock.calls
+        .map(([message]) => message as InternalCreateHnippNotificationDto)
+        .filter(
+          (message) => message.rootMessageId === userNotifications[0].messageId,
+        )
+      expect(actorMessages).toHaveLength(1)
+      expect(actorMessages[0].deadline).toBe(deadline)
+    })
+
     it('should target a specific actor when onBehalfOf is provided without rootMessageId', async () => {
       // Clear mocks to isolate this test
       jest.clearAllMocks()
