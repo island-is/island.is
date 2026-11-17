@@ -52,7 +52,6 @@ import {
   AppealEventLogRepositoryService,
   Case,
   CaseRepositoryService,
-  CivilClaimant,
   CreateAppealCase,
   Defendant,
   DefendantRepositoryService,
@@ -73,6 +72,7 @@ import {
   findUserRulingOrderAppealDecision,
   hasStandingVerdictAppeal,
   isInCourtRulingOrderAppeal,
+  resolveDefenceParties,
   standingVerdictAppellants,
   userRulingOrderAppealDecisions,
   type VerdictAppellantSide,
@@ -112,41 +112,6 @@ export class AppealCaseService {
 
   // Every defence party (defendant / civil claimant) the user currently, and
   // confirmedly, represents on the case. A defence event is recorded once per
-  // party, so a lawyer who represents several clients appeals (or submits a
-  // statement) on behalf of all of them - the backend resolves this, the client
-  // never has to pick. Empty for request cases (collective defence, no party)
-  // and non-defence users.
-  private resolveDefenceParties(
-    theCase: Case,
-    user: User,
-  ): { defendantId?: string; civilClaimantId?: string }[] {
-    if (!isIndictmentCase(theCase.type)) {
-      return []
-    }
-
-    const parties: { defendantId?: string; civilClaimantId?: string }[] = []
-
-    for (const defendant of theCase.defendants ?? []) {
-      if (
-        Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
-      ) {
-        parties.push({ defendantId: defendant.id })
-      }
-    }
-
-    for (const civilClaimant of theCase.civilClaimants ?? []) {
-      if (
-        CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(user.nationalId, [
-          civilClaimant,
-        ])
-      ) {
-        parties.push({ civilClaimantId: civilClaimant.id })
-      }
-    }
-
-    return parties
-  }
-
   // Writes appeal event-log rows with an actor snapshot of who performed the
   // event. Defenders are not system users, so userId is null and
   // national_id/name identify them (plus the defence party); for
@@ -161,7 +126,7 @@ export class AppealCaseService {
     transaction: Transaction,
   ): Promise<void> {
     const parties = isDefenceUser(user)
-      ? this.resolveDefenceParties(theCase, user)
+      ? resolveDefenceParties(theCase, user.nationalId)
       : []
     // Prosecution and request-case collective defence carry no party, but still
     // get a single event row.
@@ -1103,9 +1068,9 @@ export class AppealCaseService {
     )
   }
 
-  // The appeal defender belongs to the appeal: withdrawn, there is no appeal
-  // for them to have filed, and a later registration that names nobody must
-  // not show them again.
+  // The appeal defender belongs to the appeal concerning that defendant.
+  // Cleared once no appeal for them remains on either side — kept while a
+  // prosecution appeal against them still stands after a defence withdrawal.
   private async clearAppealDefender(
     theCase: Case,
     defendantId: string,
@@ -1536,8 +1501,24 @@ export class AppealCaseService {
       transaction,
     )
 
-    // The defendant's own appeal carries a mirror on the verdict and possibly an
-    // appeal defender; the prosecution's carries neither.
+    // The appeal case stands while any appellant of either side stands.
+    const remainingAppellants = standingAppellants.filter(
+      (appellant) => !isWithdrawn(appellant),
+    )
+
+    // Drop the appeal appointment once nothing remains for this defendant —
+    // including when the prosecution withdraws last after the defence already
+    // did. Leaving it would keep granting the advocate access with no appeal.
+    const defendantStillHasStandingAppeal = remainingAppellants.some(
+      (appellant) => appellant.defendantId === defendantId,
+    )
+
+    if (!defendantStillHasStandingAppeal) {
+      await this.clearAppealDefender(theCase, defendantId, transaction)
+    }
+
+    // The defendant's own appeal carries a mirror on the verdict and declaration
+    // files; the prosecution's carries neither.
     if (side === 'DEFENCE') {
       // Clear the mirror on the verdict, so the public prosecution office's
       // screen stops showing this defendant as having appealed.
@@ -1553,8 +1534,6 @@ export class AppealCaseService {
         )
       }
 
-      await this.clearAppealDefender(theCase, defendantId, transaction)
-
       // Soft-delete this defendant's áfrýjunaryfirlýsing and accompanying files.
       // They are otherwise locked while a verdict appeal case exists, so leaving
       // them behind blocks a fresh appeal upload after withdrawal.
@@ -1569,11 +1548,6 @@ export class AppealCaseService {
         await this.fileService.deleteCaseFile(theCase, file, transaction)
       }
     }
-
-    // The appeal case stands while any appellant of either side stands.
-    const remainingAppellants = standingAppellants.filter(
-      (appellant) => !isWithdrawn(appellant),
-    )
 
     if (remainingAppellants.length === 0) {
       return this.applyTransition(
