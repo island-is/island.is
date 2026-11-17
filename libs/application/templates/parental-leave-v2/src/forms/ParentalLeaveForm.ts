@@ -918,10 +918,8 @@ export const ParentalLeaveForm: Form = buildForm({
                       ],
                       displayInTable: false,
                       condition: (application) => {
-                        const {
-                          applicationType,
-                          employerLastSixMonths,
-                        } = getApplicationAnswers(application.answers)
+                        const { applicationType, employerLastSixMonths } =
+                          getApplicationAnswers(application.answers)
 
                         return (
                           (applicationType === PARENTAL_GRANT ||
