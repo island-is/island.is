@@ -103,7 +103,7 @@ export const is = {
   'onboarding.biometrics.type.iris': 'augnskanna',
   'biometrics.enrollmentChanged.title': 'Slökkt á lífkennum',
   'biometrics.enrollmentChanged.message':
-    'Lífkennin sem skráð eru í tækinu hafa breyst. Opnaðu appið með PIN-númerinu og kveiktu aftur á lífkennum í stillingum.',
+    'Lífkennin sem skráð eru í tækinu hafa breyst. Opnaðu appið með rafrænum skilríkjum og kveiktu aftur á lífkennum í stillingum.',
   'onboarding.privacy.title': 'Persónuvernd',
   'onboarding.privacy.body':
     'Hægt er að kynna sér stefnu Stafræns Íslands um meðferð persónuupplýsinga á Ísland.is',

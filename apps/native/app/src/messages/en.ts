@@ -105,7 +105,7 @@ export const en: TranslatedMessages = {
   'onboarding.biometrics.type.iris': 'iris scanner',
   'biometrics.enrollmentChanged.title': 'Biometrics turned off',
   'biometrics.enrollmentChanged.message':
-    'The biometrics registered on this device have changed. Unlock the app with your PIN and turn biometrics back on in settings.',
+    'The biometrics registered on this device have changed. Unlock the app with electronic ID and turn biometrics back on in settings.',
   'onboarding.privacy.title': 'Privacy',
   'onboarding.privacy.body':
     "You can read Digital Iceland's policy on the handling of personal data on Ísland.is",
