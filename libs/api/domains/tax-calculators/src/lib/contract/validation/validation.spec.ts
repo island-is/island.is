@@ -443,7 +443,7 @@ describe('assertPublishableContract output invariants', () => {
           kind: 'array',
           itemFields: [
             {
-              name: 'withholdingRate',
+              name: 'rate',
               kind: 'scalar',
               type: 'number',
               semantic: 'percentage',
