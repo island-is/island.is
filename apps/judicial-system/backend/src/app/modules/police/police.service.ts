@@ -8,6 +8,7 @@ import { z } from 'zod'
 import {
   BadGatewayException,
   forwardRef,
+  GatewayTimeoutException,
   HttpException,
   HttpStatus,
   Inject,
@@ -120,6 +121,14 @@ interface CreateDocumentResponse {
 
 const tokenUrlResponseStructure = z.object({ url: z.string().min(1) })
 
+// Each file is held in memory while it is copied to AWS S3, so only a few are
+// copied at once. A slow file then takes one slot and the rest keep moving.
+export const maxConcurrentPoliceCaseFileUploads = 3
+
+// CloudFront gives up on a request after 50 seconds. An upload gets less than
+// that, counted from when it is requested, so the answer comes from here.
+export const policeCaseFileUploadTimeLimitMs = 40 * 1000
+
 const getChapter = (category?: string): number | undefined => {
   if (!category) {
     return undefined
@@ -160,7 +169,8 @@ const formatCrimeScenePlace = (
 export class PoliceService {
   private xRoadPath: string
   private agent: Agent
-  private throttle = Promise.resolve({} as UploadPoliceCaseFileResponse)
+  private activePoliceCaseFileUploads = 0
+  private readonly waitingPoliceCaseFileUploads: (() => void)[] = []
 
   private policeCaseFileType = z.object({
     kodi: z.string().nullish(),
@@ -306,7 +316,10 @@ export class PoliceService {
     })
   }
 
-  private async fetchPoliceDocumentApi(url: string): Promise<Response> {
+  private async fetchPoliceDocumentApi(
+    url: string,
+    signal?: AbortSignal,
+  ): Promise<Response> {
     if (!this.config.policeCaseApiAvailable) {
       throw new ServiceUnavailableException('Police document API not available')
     }
@@ -317,6 +330,7 @@ export class PoliceService {
         'X-API-KEY': this.config.policeApiKey,
       },
       agent: this.agent,
+      signal,
     } as RequestInit)
   }
 
@@ -442,72 +456,109 @@ export class PoliceService {
     }
   }
 
-  private async throttleUploadPoliceCaseFile(
+  private async acquirePoliceCaseFileUploadSlot(): Promise<void> {
+    if (this.activePoliceCaseFileUploads < maxConcurrentPoliceCaseFileUploads) {
+      this.activePoliceCaseFileUploads++
+
+      return
+    }
+
+    // The slot is handed over by the upload that releases it
+    await new Promise<void>((resolve) =>
+      this.waitingPoliceCaseFileUploads.push(resolve),
+    )
+  }
+
+  private releasePoliceCaseFileUploadSlot(): void {
+    const next = this.waitingPoliceCaseFileUploads.shift()
+
+    if (next) {
+      next()
+    } else {
+      this.activePoliceCaseFileUploads--
+    }
+  }
+
+  private async getPoliceCaseFilePdf(
     caseId: string,
-    caseType: CaseType,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
     user: User,
-  ): Promise<UploadPoliceCaseFileResponse> {
-    await this.throttle.catch((reason) => {
-      this.logger.info('Previous upload failed', { reason })
-    })
+    deadline: number,
+  ): Promise<string> {
+    const timeLeft = deadline - Date.now()
 
-    const pdf = await this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/V2/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
-    )
-      .then(async (res) => {
-        if (res.ok) {
-          const response = await res.json()
-
-          return Base64.atob(response)
-        }
-
-        const reason = await res.text()
-
-        throw new NotFoundException({
-          message: `Police case file ${uploadPoliceCaseFile.id} of case ${caseId} not found`,
-          detail: reason,
-        })
+    if (timeLeft <= 0) {
+      throw new GatewayTimeoutException({
+        message: `Timed out getting police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
+        detail: 'Earlier uploads took too long',
       })
-      .catch((reason) => {
-        if (reason instanceof NotFoundException) {
-          throw reason
-        }
+    }
 
-        if (reason instanceof ServiceUnavailableException) {
-          // Act as if the file was not found
-          throw new NotFoundException({
-            ...reason,
-            message: `Police case file ${uploadPoliceCaseFile.id} of case ${caseId} not found`,
-            detail: reason.message,
-          })
-        }
+    const abortController = new AbortController()
+    const timeout = setTimeout(() => abortController.abort(), timeLeft)
 
-        this.logPoliceFailureAndNotify(
-          'Failed to get police case file',
-          `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
-          {
-            caseId,
-            actor: user.name,
-            institution: user.institution?.name,
-            caseFileId: uploadPoliceCaseFile.id,
-            name: uploadPoliceCaseFile.name,
-          },
-          reason,
-        )
+    try {
+      const res = await this.fetchPoliceDocumentApi(
+        `${this.xRoadPath}/V2/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
+        abortController.signal,
+      )
 
-        throw new BadGatewayException({
+      if (res.ok) {
+        const response = await res.json()
+
+        return Base64.atob(response)
+      }
+
+      const reason = await res.text()
+
+      throw new NotFoundException({
+        message: `Police case file ${uploadPoliceCaseFile.id} of case ${caseId} not found`,
+        detail: reason,
+      })
+    } catch (reason) {
+      if (reason instanceof NotFoundException) {
+        throw reason
+      }
+
+      if (reason instanceof ServiceUnavailableException) {
+        // Act as if the file was not found
+        throw new NotFoundException({
           ...reason,
-          message: `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
+          message: `Police case file ${uploadPoliceCaseFile.id} of case ${caseId} not found`,
           detail: reason.message,
         })
+      }
+
+      if (abortController.signal.aborted) {
+        throw new GatewayTimeoutException({
+          message: `Timed out getting police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
+          detail: 'The police system did not answer in time',
+        })
+      }
+
+      this.logPoliceFailureAndNotify(
+        'Failed to get police case file',
+        `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          caseFileId: uploadPoliceCaseFile.id,
+          name: uploadPoliceCaseFile.name,
+        },
+        reason,
+      )
+
+      const error = this.reasonToError(reason)
+
+      throw new BadGatewayException({
+        ...error,
+        message: `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
+        detail: error.message,
       })
-
-    const key = `${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
-
-    await this.awsS3Service.putObject(caseType, key, pdf)
-
-    return { key, size: pdf.length }
+    } finally {
+      clearTimeout(timeout)
+    }
   }
 
   private async getPoliceCaseFiles(caseId: string, user: User, source: string) {
@@ -1256,14 +1307,26 @@ export class PoliceService {
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
     user: User,
   ): Promise<UploadPoliceCaseFileResponse> {
-    this.throttle = this.throttleUploadPoliceCaseFile(
-      caseId,
-      caseType,
-      uploadPoliceCaseFile,
-      user,
-    )
+    const deadline = Date.now() + policeCaseFileUploadTimeLimitMs
 
-    return this.throttle
+    await this.acquirePoliceCaseFileUploadSlot()
+
+    try {
+      const pdf = await this.getPoliceCaseFilePdf(
+        caseId,
+        uploadPoliceCaseFile,
+        user,
+        deadline,
+      )
+
+      const key = `${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
+
+      await this.awsS3Service.putObject(caseType, key, pdf)
+
+      return { key, size: pdf.length }
+    } finally {
+      this.releasePoliceCaseFileUploadSlot()
+    }
   }
 
   async updatePoliceCase(

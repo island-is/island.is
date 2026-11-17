@@ -2,7 +2,11 @@ import fetch from 'isomorphic-fetch'
 import { Base64 } from 'js-base64'
 import { v4 as uuid } from 'uuid'
 
-import { BadGatewayException, NotFoundException } from '@nestjs/common'
+import {
+  BadGatewayException,
+  GatewayTimeoutException,
+  NotFoundException,
+} from '@nestjs/common'
 
 import { CaseType, User } from '@island.is/judicial-system/types'
 
@@ -12,6 +16,10 @@ import { AwsS3Service } from '../../aws-s3'
 import { Case } from '../../repository'
 import { UploadPoliceCaseFileDto } from '../dto/uploadPoliceCaseFile.dto'
 import { UploadPoliceCaseFileResponse } from '../models/uploadPoliceCaseFile.response'
+import {
+  maxConcurrentPoliceCaseFileUploads,
+  policeCaseFileUploadTimeLimitMs,
+} from '../police.service'
 
 jest.mock('isomorphic-fetch')
 
@@ -32,6 +40,9 @@ describe('PoliceController - Upload police case file', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
+    const mockFetch = fetch as jest.Mock
+    mockFetch.mockReset()
+
     const { awsS3Service, policeController } = await createTestingPoliceModule()
 
     mockAwsS3Service = awsS3Service
@@ -237,6 +248,110 @@ describe('PoliceController - Upload police case file', () => {
     it('should throw error', () => {
       expect(then.error).toBeInstanceOf(Error)
       expect(then.error.message).toBe(`Some error`)
+    })
+  })
+
+  describe('police files that never arrive', () => {
+    const caseId = uuid()
+    const user = {} as User
+    const startUpload = () =>
+      givenWhenThen(caseId, CaseType.INDICTMENT, user, {
+        id: uuid(),
+        name: 'test.txt',
+      } as UploadPoliceCaseFileDto)
+
+    beforeEach(() => {
+      jest.useFakeTimers()
+
+      const mockFetch = fetch as jest.Mock
+      mockFetch.mockImplementation(
+        (_url: string, { signal }: { signal: AbortSignal }) =>
+          new Promise((_resolve, reject) =>
+            signal.addEventListener('abort', () =>
+              reject(new Error('Aborted')),
+            ),
+          ),
+      )
+    })
+
+    afterEach(() => {
+      jest.useRealTimers()
+    })
+
+    it('should give up on the police system within the time limit', async () => {
+      const upload = startUpload()
+
+      await jest.advanceTimersByTimeAsync(policeCaseFileUploadTimeLimitMs - 1)
+
+      expect(fetch).toHaveBeenCalledTimes(1)
+
+      await jest.advanceTimersByTimeAsync(1)
+
+      const then = await upload
+
+      expect(then.error).toBeInstanceOf(GatewayTimeoutException)
+      expect(then.error.message).toMatch(
+        new RegExp(
+          `^Timed out getting police case file .{36} of case ${caseId}$`,
+        ),
+      )
+      expect(mockAwsS3Service.putObject).not.toHaveBeenCalled()
+    })
+
+    it('should get a few files at once and no more', async () => {
+      const uploads = Array.from(
+        { length: maxConcurrentPoliceCaseFileUploads + 1 },
+        startUpload,
+      )
+
+      await jest.advanceTimersByTimeAsync(0)
+
+      expect(fetch).toHaveBeenCalledTimes(maxConcurrentPoliceCaseFileUploads)
+
+      await jest.advanceTimersByTimeAsync(policeCaseFileUploadTimeLimitMs)
+      await Promise.all(uploads)
+    })
+
+    it('should not ask the police system for a file that waited too long', async () => {
+      const uploads = Array.from(
+        { length: maxConcurrentPoliceCaseFileUploads + 1 },
+        startUpload,
+      )
+
+      await jest.advanceTimersByTimeAsync(policeCaseFileUploadTimeLimitMs)
+
+      const thens = await Promise.all(uploads)
+
+      expect(fetch).toHaveBeenCalledTimes(maxConcurrentPoliceCaseFileUploads)
+      for (const then of thens) {
+        expect(then.error).toBeInstanceOf(GatewayTimeoutException)
+      }
+    })
+
+    it('should get a waiting file once an earlier one is done', async () => {
+      const uploads = Array.from(
+        { length: maxConcurrentPoliceCaseFileUploads },
+        startUpload,
+      )
+
+      await jest.advanceTimersByTimeAsync(policeCaseFileUploadTimeLimitMs / 2)
+
+      const mockFetch = fetch as jest.Mock
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Base64.btoa('Test content'),
+      })
+      const mockPutObject = mockAwsS3Service.putObject as jest.Mock
+      mockPutObject.mockResolvedValueOnce(uuid())
+      const waiting = startUpload()
+
+      await jest.advanceTimersByTimeAsync(policeCaseFileUploadTimeLimitMs / 2)
+      await Promise.all(uploads)
+
+      const then = await waiting
+
+      expect(then.error).toBeUndefined()
+      expect(then.result.size).toBe(12)
     })
   })
 })
