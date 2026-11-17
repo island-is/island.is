@@ -188,6 +188,28 @@ describe('DatePicker', () => {
       expect(input?.value).toContain('20/01/2021')
     })
 
+    it('should still open the calendar from its icon when there is an error', async () => {
+      const { getByRole, getByText, getAllByText } = render(
+        <DatePicker
+          placeholderText="Pick a date"
+          label="Select date range"
+          range={true}
+          selectedRange={{ startDate, endDate }}
+          handleChange={jest.fn()}
+          errorMessage="Too short"
+          locale="en"
+        />,
+      )
+
+      expect(getByText('Too short')).toBeInTheDocument()
+      await act(async () => {
+        fireEvent.click(getByRole('button', { name: 'Open calendar' }))
+      })
+      await waitFor(() => {
+        expect(getAllByText('October').length).toBeGreaterThan(0)
+      })
+    })
+
     it('should call handleClear and clear input when clear button is clicked', () => {
       const handleClear = jest.fn()
       const { getByRole, container } = render(

@@ -271,9 +271,10 @@ const AsideIcons: FC<AsideProps> = (props) => {
     hasLabel,
     disabled,
   } = props
-  const displayedIcon: InputIcon | undefined = hasError
-    ? { name: 'warning' }
-    : icon
+  // An icon that is a button, e.g. the one that opens a range date picker's
+  // calendar, is kept on error: the warning in its place cannot be clicked.
+  const displayedIcon: InputIcon | undefined =
+    hasError && !icon?.onClick ? { name: 'warning' } : icon
 
   const renderIcon = (item: {
     name: InputIcon['name']
