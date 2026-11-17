@@ -15,7 +15,7 @@ There are multiple requirements needed for a new template to be usable by the ap
 7. Run `yarn codegen`
 8. View your new application at `/umsoknir/<slug-from-application-types>`
 
-If creating one fails with "Ekki tókst að búa til umsókn af gerðinni", the gitignored client is stale: run `yarn nx run api-domains-application:codegen/backend-client` and restart `api`.
+If creating one fails with "Ekki tókst að búa til umsókn af gerðinni", a stale gitignored client is one possible cause: run `yarn nx run api-domains-application:codegen/backend-client`, restart `api` and try again.
 
 Note: It also works to create nested applications by running:
 
