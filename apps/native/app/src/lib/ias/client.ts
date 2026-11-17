@@ -111,14 +111,17 @@ export function createIasClient(options: IasClientOptions): IasClient {
     return key
   }
 
-  /** The stored attestation, if it's for this issuer, client and key. */
+  /**
+   * The stored attestation, if it's for this issuer, client and key. One
+   * saved without its token, from an answer that had none, doesn't count.
+   */
   async function currentAttestation(): Promise<StoredAttestation | null> {
     if (cachedAttestation === undefined) {
       cachedAttestation = await storage.getAttestation()
     }
     const key = device.getInstallKey()
     const attestation = cachedAttestation
-    return attestation &&
+    return attestation?.clientAttestation &&
       key &&
       attestation.issuer === issuer &&
       attestation.clientId === clientId &&
@@ -130,7 +133,11 @@ export function createIasClient(options: IasClientOptions): IasClient {
   async function saveAttestation(
     { clientAttestation, expiresIn }: AttestationResponse,
     key: DeviceKey,
+    endpoint: string,
   ): Promise<StoredAttestation> {
+    if (!clientAttestation || typeof expiresIn !== 'number') {
+      throw new Error(`${endpoint} answered without a client attestation`)
+    }
     const attestation = {
       issuer,
       clientId,
@@ -175,7 +182,7 @@ export function createIasClient(options: IasClientOptions): IasClient {
       '/app/attestation',
       { json: body },
     )
-    return saveAttestation(response, key)
+    return saveAttestation(response, key, 'POST /app/attestation')
   })
 
   /** Same install key, no new evidence. Needs an app login. */
@@ -187,6 +194,7 @@ export function createIasClient(options: IasClientOptions): IasClient {
     const attestation = await saveAttestation(
       await parse<AttestationResponse>(response, 'POST /app/attestation/renew'),
       key,
+      'POST /app/attestation/renew',
     )
     return attestation
   })
