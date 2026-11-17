@@ -4,20 +4,15 @@ import {
   buildAlertMessageField,
   buildCustomField,
   buildHiddenInput,
-  buildKeyValueField,
   buildTextField,
 } from '@island.is/application/core'
 import { Application, TextField } from '@island.is/application/types'
 import { maxDaysToGiveOrReceive } from '../config'
-import { SINGLE } from '../constants'
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {
-  getApplicationAnswers,
   getMaxMultipleBirthsAndSingleParenttMonths,
-  getMaxMultipleBirthsInMonths,
   getMultipleBirthRequestDays,
 } from '../lib/parentalLeaveUtils'
-import { defaultMonths, additionalSingleParentMonths } from '../config'
 import type { RightsTotalKind } from '../fields/Rights/RightsTotal'
 
 // The days input and the total side by side from the small breakpoint up. A
@@ -52,50 +47,14 @@ const buildRightsAlert = (
   })
 
 /**
- * The applicant's total entitlement and what it is made of: personal rights,
- * including the extra single parent months, plus any multiple births rights.
+ * The applicant's personal rights, including the extra single parent months,
+ * and any days requested on top of them.
  */
 export const buildRightsIntroFields = () => [
-  buildKeyValueField({
-    label: parentalLeaveFormMessages.shared.yourRights,
-    value: (application: Application) => {
-      const { otherParent, hasMultipleBirths } = getApplicationAnswers(
-        application.answers,
-      )
-      const personalMonths =
-        otherParent === SINGLE
-          ? defaultMonths + additionalSingleParentMonths
-          : defaultMonths
-
-      return [
-        {
-          ...parentalLeaveFormMessages.reviewScreen.rightsTotal,
-          values: {
-            months: getMaxMultipleBirthsAndSingleParenttMonths(application),
-          },
-        },
-        {
-          ...parentalLeaveFormMessages.shared.yourRightsInMonths,
-          values: { months: personalMonths },
-        },
-        // Left out rather than null: each line is rendered as markdown, which
-        // throws on anything that is not a string
-        ...(hasMultipleBirths === YES
-          ? [
-              {
-                ...(otherParent === SINGLE
-                  ? parentalLeaveFormMessages.shared
-                      .yourSingleParentMultipleBirthsRightsInMonths
-                  : parentalLeaveFormMessages.shared
-                      .yourMultipleBirthsRightsInMonths),
-                values: {
-                  months: getMaxMultipleBirthsInMonths(application.answers),
-                },
-              },
-            ]
-          : []),
-      ]
-    },
+  buildCustomField({
+    id: 'rightsIntro.rights',
+    component: 'RightsIntro',
+    doesNotRequireAnswer: true,
   }),
   buildAlertMessageField({
     id: 'rightsIntro.alert',

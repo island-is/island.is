@@ -473,6 +473,29 @@ export const getTransferredDaysInMonths = (
   selectedChild: ChildInformation,
 ) => daysToMonths(getTransferredDays(application, selectedChild)).toFixed(1)
 
+/**
+ * The applicant's personal months, including the extra single parent months,
+ * and the days on top of them: requested from the other parent or from the
+ * shared multiple births rights.
+ */
+export const getRightsIntro = (application: Application) => {
+  const { otherParent } = getApplicationAnswers(application.answers)
+  const months =
+    otherParent === SINGLE
+      ? defaultMonths + additionalSingleParentMonths
+      : defaultMonths
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+  const requestedDays = selectedChild
+    ? Math.max(getTransferredDays(application, selectedChild), 0) +
+      Number(getMultipleBirthsDays(application) || 0)
+    : 0
+
+  return { months, requestedDays }
+}
+
 export const getSpouse = (
   application: Application,
 ): PersonInformation['spouse'] | null => {

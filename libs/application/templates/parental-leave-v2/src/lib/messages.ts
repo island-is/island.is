@@ -383,8 +383,15 @@ export const parentalLeaveFormMessages = {
     },
     yourRightsInMonths: {
       id: 'plv2.application:your.rights.inMonths',
-      defaultMessage: '{months} mánuðir sjálfstæður réttur',
-      description: '{months} months individual rights',
+      defaultMessage: '{months} mánuðir – þínir persónulegu mánuðir',
+      description: '{months} months – your personal months',
+    },
+    yourRightsInMonthsAndRequestedDays: {
+      id: 'plv2.application:your.rights.inMonthsAndRequestedDays',
+      defaultMessage:
+        '{months} mánuðir – þínir persónulegu mánuðir og {days, plural, one {# dagur} other {# dagar}} til viðbótar',
+      description:
+        '{months} months – your personal months and {days} additional days, requested from the other parent or for multiple births',
     },
     yourRightsInMonthsAndDay: {
       id: 'plv2.application:your.rights.inMonthsAndDay',
@@ -517,17 +524,6 @@ export const parentalLeaveFormMessages = {
         '{day} dagar sem óskað er eftir af sameiginlegum rétti vegna fjölbura',
       description:
         '{day} days requested from the joint entitlement due to multiple births',
-    },
-    yourMultipleBirthsRightsInMonths: {
-      id: 'plv2.application:your.multipleBirths.rights.inMonths',
-      defaultMessage: '{months} mánuðir – sameiginlegur réttur vegna fjölbura',
-      description: '{months} months – joint entitlement due to multiple births',
-    },
-    yourSingleParentMultipleBirthsRightsInMonths: {
-      id: 'plv2.application:your.single.parent.multipleBirths.rights.inMonths',
-      defaultMessage: '{months} mánuðir – auka réttur vegna fjölbura',
-      description:
-        '{months} months – additional entitlement due to multiple births',
     },
     requestRightsDaysTitle: {
       id: 'plv2.application:request.rights.daysTitle',
