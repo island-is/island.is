@@ -45,9 +45,9 @@ describe('FileController - Delete case file', () => {
     const mockDeleteObject = mockAwsS3Service.deleteObject as jest.Mock
     mockDeleteObject.mockResolvedValue(true)
 
-    // Sequelize runs a transaction's after-commit hooks when it commits and
-    // never when it rolls back. The stand-in only collects them, so a spec
-    // decides whether the commit happens.
+    // Sequelize runs a transaction's after-commit hooks when it is committed
+    // and never when it is rolled back. The stand-in only collects them, so a
+    // spec decides whether the commit happens.
     afterCommitHooks = []
     transaction = {
       afterCommit: (hook: () => unknown) => {
