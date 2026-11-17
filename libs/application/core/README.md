@@ -379,6 +379,16 @@ stateMachineConfig: {
 This will add a delete button in the Draft state available only to the `Applicant` role like so:
 application-pending-action.jpeg
 
+`delete` can also be a predicate `(application) => boolean` when the button should only appear conditionally — for example when a state can be re-entered after the application was sent to an external system and deleting it locally would leave the two systems out of sync:
+
+```ts
+{
+  id: 'applicant',
+  delete: (application) => !hasBeenSubmittedToExternalSystem(application),
+  ...
+}
+```
+
 ## Form
 
 The `Form` type describes how to structure the flow of a form. It is basically a big json object which is used by `application-ui-shell` to know what to render on the screen.

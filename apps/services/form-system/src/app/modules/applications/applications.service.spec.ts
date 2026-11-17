@@ -8,6 +8,109 @@ import {
 } from '@island.is/form-system/shared'
 import { ApplicationsService } from './applications.service'
 import { SectionDto } from '../sections/models/dto/section.dto'
+import axios from 'axios'
+import PDFDocument from 'pdfkit'
+
+describe('ApplicationsService.createApplicationPdf', () => {
+  const nationalId = '1234567890'
+  const logo = Buffer.from(
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
+    'base64',
+  )
+  const createService = (organizationLogo: {
+    is: string | null
+    en: string | null
+  }) => {
+    const findOne = jest.fn().mockResolvedValue({ logo: organizationLogo })
+    const warn = jest.fn()
+    const service = Object.assign(
+      Object.create(ApplicationsService.prototype),
+      {
+        organizationModel: { findOne },
+        logger: { warn },
+      },
+    ) as ApplicationsService
+    return { service, findOne, warn }
+  }
+
+  afterEach(() => jest.restoreAllMocks())
+
+  it.each(['is', 'en'] as const)(
+    'loads the Icelandic logo even for a %s PDF',
+    async (locale) => {
+      const get = jest.spyOn(axios, 'get').mockResolvedValue({ data: logo })
+      const image = jest.spyOn(PDFDocument.prototype, 'image')
+      const { service, findOne } = createService({
+        is: 'https://images.ctfassets.net/space/icelandic-logo.png',
+        en: 'https://images.ctfassets.net/space/english-logo.png',
+      })
+
+      const pdf = await service.createApplicationPdf(
+        { organizationNationalId: nationalId },
+        locale,
+      )
+
+      expect(findOne).toHaveBeenCalledWith({ where: { nationalId } })
+      expect(get).toHaveBeenCalledWith(
+        'https://images.ctfassets.net/space/icelandic-logo.png?fm=png&w=240&h=120&fit=pad',
+        expect.objectContaining({
+          responseType: 'arraybuffer',
+          maxRedirects: 0,
+        }),
+      )
+      expect(image.mock.calls[0][0]).toEqual(logo)
+      expect(pdf.subarray(0, 5).toString()).toBe('%PDF-')
+    },
+  )
+
+  it('does not fall back to the English logo when logo.is is missing', async () => {
+    const get = jest.spyOn(axios, 'get')
+    const image = jest.spyOn(PDFDocument.prototype, 'image')
+    const { service } = createService({
+      is: null,
+      en: 'https://images.ctfassets.net/space/english-logo.png',
+    })
+
+    await service.createApplicationPdf({ organizationNationalId: nationalId })
+
+    expect(get).not.toHaveBeenCalled()
+    expect(image).not.toHaveBeenCalled()
+  })
+
+  it('rejects non-Contentful logo URLs without fetching them', async () => {
+    const get = jest.spyOn(axios, 'get')
+    const { service } = createService({
+      is: 'https://example.com/logo.png',
+      en: null,
+    })
+
+    await expect(
+      service.createApplicationPdf({ organizationNationalId: nationalId }),
+    ).rejects.toThrow('Organization logo must be a Contentful image')
+    expect(get).not.toHaveBeenCalled()
+  })
+
+  it('logs download failures and generates the PDF without a logo', async () => {
+    const error = new Error('Logo unavailable')
+    jest.spyOn(axios, 'get').mockRejectedValue(error)
+    const image = jest.spyOn(PDFDocument.prototype, 'image')
+    const { service, warn } = createService({
+      is: 'https://images.ctfassets.net/space/logo.png',
+      en: null,
+    })
+
+    const pdf = await service.createApplicationPdf({
+      id: 'application-id',
+      organizationNationalId: nationalId,
+    })
+    expect(pdf.subarray(0, 5).toString()).toBe('%PDF-')
+    expect(image).not.toHaveBeenCalled()
+    expect(warn).toHaveBeenCalledWith(
+      'Failed to download organization logo for PDF',
+      { applicationId: 'application-id', error },
+    )
+  })
+})
 
 describe('ApplicationsService.create value JSON', () => {
   it.each([

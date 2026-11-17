@@ -59,8 +59,16 @@ export class ZendeskService {
     let zendeskUser = 'stafraentisland@gmail.com'
     let zendeskBrandId: string | undefined = undefined
     let zendeskInstance = this.SANDBOX_INSTANCE
+    const isDevelopmentEnvironment =
+      !process.env.name ||
+      process.env.name === 'dev' ||
+      process.env.name === 'local'
+    const useProductionZendesk =
+      applicationDto.isTest === false &&
+      environment.production === true &&
+      !isDevelopmentEnvironment
 
-    if (applicationDto.isTest === false && environment.production === true) {
+    if (useProductionZendesk) {
       zendeskInstance = storedInstance || this.PROD_INSTANCE
       zendeskBrandId = storedBrandId
     }
@@ -73,7 +81,7 @@ export class ZendeskService {
 
     let apiKey = this.SANDBOX_API_KEY
 
-    if (applicationDto.isTest === false && environment.production === true) {
+    if (useProductionZendesk) {
       apiKey = this.PROD_API_KEY
     }
 

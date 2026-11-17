@@ -8,8 +8,8 @@ import { ParentalLeavePaymentInfo } from './parentalLeavePaymentInfo.model'
 
 @ObjectType()
 export class ApplicationInformation {
-  @Field(() => String)
-  result!: string
+  @Field(() => String, { nullable: true })
+  result?: string | null
 
   @Field(() => ID)
   applicationId!: string
@@ -17,17 +17,17 @@ export class ApplicationInformation {
   @Field(() => String)
   applicationFundId!: string
 
-  @Field(() => String)
-  nationalRegisteryId!: string
+  @Field(() => String, { nullable: true })
+  nationalRegisteryId?: string | null
 
-  @Field(() => String)
-  dateOfBirth!: string
+  @Field(() => String, { nullable: true })
+  dateOfBirth?: string | null
 
-  @Field(() => String)
-  expectedDateOfBirth!: string
+  @Field(() => String, { nullable: true })
+  expectedDateOfBirth?: string | null
 
-  @Field(() => String)
-  applicantId!: string
+  @Field(() => String, { nullable: true })
+  applicantId?: string | null
 
   @Field(() => String)
   email!: string
@@ -38,14 +38,14 @@ export class ApplicationInformation {
   @Field(() => ParentalLeavePaymentInfo)
   paymentInfo!: ParentalLeavePaymentInfo
 
-  @Field(() => [ApplicationInformationChildren])
-  children!: ApplicationInformationChildren[]
+  @Field(() => [ApplicationInformationChildren], { nullable: true })
+  children?: ApplicationInformationChildren[] | null
 
   @Field(() => String, { nullable: true })
-  otherParentName!: string
+  otherParentName?: string | null
 
   @Field(() => String, { nullable: true })
-  otherParentId!: string
+  otherParentId?: string | null
 
   @Field(() => String)
   status!: string
@@ -53,12 +53,12 @@ export class ApplicationInformation {
   @Field(() => [ApplicationInformationPeriod])
   periods!: ApplicationInformationPeriod[]
 
-  @Field(() => [ApplicationRights])
-  applicationRights!: ApplicationRights[]
+  @Field(() => [ApplicationRights], { nullable: true })
+  applicationRights?: ApplicationRights[] | null
 
   @Field(() => [ApplicationInformationEmployer])
   employers!: ApplicationInformationEmployer[]
 
   @Field(() => String, { nullable: true })
-  testData!: string
+  testData?: string | null
 }
