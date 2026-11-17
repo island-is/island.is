@@ -1,0 +1,536 @@
+import { z } from 'zod'
+import * as kennitala from 'kennitala'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
+
+import {
+  ApplicationAction,
+  MANUAL,
+  SPOUSE,
+  TransferRightsOption,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
+  SINGLE,
+  PERMANENT_FOSTER_CARE,
+  OTHER_NO_CHILDREN_FOUND,
+  BIRTH,
+  ADOPTION,
+  NO_PRIVATE_PENSION_FUND,
+  NO_UNION,
+  NO_UNEMPLOYED_BENEFITS,
+  Languages,
+} from '../constants'
+import { errorMessages } from './messages'
+import { formatBankInfo } from './parentalLeaveUtils'
+import { yearFosterCareOrAdoption, yearInMonths } from '../config'
+import { coreErrorMessages, NO, YES } from '@island.is/application/core'
+import {
+  defaultMultipleBirthsMonths,
+  maxDaysToGiveOrReceive,
+  multipleBirthsDefaultDays,
+} from '../config'
+
+const PersonalAllowance = z
+  .object({
+    usePersonalAllowance: z.enum([YES, NO]).optional(),
+    usage: z.string().optional(),
+    useAsMuchAsPossible: z.enum([YES, NO]).optional(),
+    doNotUsePersonalAllowance: z.array(z.string()).optional(),
+  })
+  .refine(
+    ({
+      usePersonalAllowance,
+      useAsMuchAsPossible,
+      doNotUsePersonalAllowance,
+    }) => {
+      if (doNotUsePersonalAllowance !== undefined) return true
+      return usePersonalAllowance === YES ? !!useAsMuchAsPossible : true
+    },
+    {
+      path: ['useAsMuchAsPossible'],
+    },
+  )
+  .refine(
+    ({
+      usePersonalAllowance,
+      usage,
+      useAsMuchAsPossible,
+      doNotUsePersonalAllowance,
+    }) => {
+      if (doNotUsePersonalAllowance?.includes(YES)) return true
+      if (doNotUsePersonalAllowance !== undefined) {
+        return usage
+          ? parseFloat(usage) >= 1 && parseFloat(usage) <= 100
+          : false
+      }
+      return usePersonalAllowance === YES && useAsMuchAsPossible === NO
+        ? usage
+          ? parseFloat(usage) >= 1 && parseFloat(usage) <= 100
+          : false
+        : true
+    },
+    {
+      path: ['usage'],
+    },
+  )
+
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
+
+/**
+ * Both periods and employers objects had been removed from here, and the logic has
+ * been moved to the answerValidators because it needs to be more advanced than
+ * what zod can handle.
+ */
+const isNumberInRange = (value: unknown, min: number, max: number) => {
+  if (value === '' || value === null || value === undefined) {
+    return false
+  }
+  const n = Number(value)
+  return !isNaN(n) && n >= min && n <= max
+}
+
+const isWholeNumberInRange = (value: unknown, min: number, max: number) =>
+  isNumberInRange(value, min, max) && Number.isInteger(Number(value))
+
+const rightsDays = z
+  .string()
+  .refine((v) => isWholeNumberInRange(v, 0, maxDaysToGiveOrReceive), {
+    params: errorMessages.rightsDaysOutOfRange,
+  })
+
+// Upper bound for the largest supported multiple birth; the per-application
+// maximum is checked by the `multipleBirthsRequestDays` answer validator.
+const maxMultipleBirthsRequestDays =
+  defaultMultipleBirthsMonths * multipleBirthsDefaultDays
+
+// `clearOnChange` leaves '' behind when the applicant switches to another
+// child or "Ný umsókn" type, and the final submit sends it along. It means the
+// path was left, so it is treated as not answered.
+const answerOfAlternativePath = <T extends z.ZodTypeAny>(schema: T) =>
+  z.preprocess((value) => (value === '' ? undefined : value), schema.optional())
+
+export const dataSchema = z.object({
+  approveExternalData: z.boolean().refine((v) => v),
+  selectedChild: z.string().min(1),
+  // What this application is for. Optional so applications created before
+  // one-application-per-action still validate; readers default to APPLY, as
+  // they do for the '' left when the applicant picks another child.
+  applicationAction: z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z
+      .enum([
+        ApplicationAction.APPLY,
+        ApplicationAction.CHANGE,
+        ApplicationAction.RESIDENCE_GRANT,
+      ])
+      .optional(),
+  ),
+  applicationType: z.object({
+    option: z.enum([PARENTAL_GRANT, PARENTAL_GRANT_STUDENTS, PARENTAL_LEAVE]),
+  }),
+  noChildrenFound: z.object({
+    typeOfApplication: z.enum([
+      BIRTH,
+      PERMANENT_FOSTER_CARE,
+      ADOPTION,
+      OTHER_NO_CHILDREN_FOUND,
+    ]),
+  }),
+  // Its own key, not part of `noChildrenFound`: the server validates every
+  // answer it saves, so a rule tying the two would reject picking "birth"
+  // before the birth date screen is reached.
+  newChildBirth: answerOfAlternativePath(
+    z
+      .object({
+        birthDate: z.string().optional(),
+      })
+      .refine(({ birthDate }) => !!birthDate?.trim(), {
+        path: ['birthDate'],
+        params: coreErrorMessages.missingAnswer,
+      }),
+  ),
+  fosterCareOrAdoption: answerOfAlternativePath(
+    z
+      .object({
+        birthDate: z.string().optional(),
+        adoptionDate: z.string().optional(),
+      })
+      .refine(({ birthDate }) => !!birthDate?.trim(), {
+        path: ['birthDate'],
+        params: coreErrorMessages.missingAnswer,
+      })
+      .refine(({ adoptionDate }) => !!adoptionDate?.trim(), {
+        path: ['adoptionDate'],
+        params: coreErrorMessages.missingAnswer,
+      })
+      .refine(
+        ({ birthDate, adoptionDate }) => {
+          if (!birthDate?.trim() || !adoptionDate?.trim()) return true
+          // Eligibility is "child was under 8 on the placement date", a stable
+          // historical fact — not a sliding window against today. Otherwise an
+          // already-approved application becomes uneditable the day the child
+          // turns 8 (zendesk #461551).
+          const referenceDate = new Date(adoptionDate)
+          const minimumStartDate = new Date(referenceDate)
+          minimumStartDate.setMonth(
+            referenceDate.getMonth() - yearFosterCareOrAdoption * yearInMonths,
+          )
+          return new Date(birthDate) >= minimumStartDate
+        },
+        { path: ['birthDate'], params: errorMessages.fosterCare },
+      ),
+  ),
+  noPrimaryParent: answerOfAlternativePath(
+    z.object({
+      questionOne: z.enum([YES, NO]),
+      questionTwo: z.enum([YES, NO]),
+      questionThree: z.enum([YES, NO]),
+      birthDate: z.string(),
+    }),
+  ),
+  applicant: z.object({
+    email: z.string().email(),
+    phoneNumber: z.string().refine(
+      (p) => {
+        const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+        const phoneNumberStartStr = ['6', '7', '8']
+        return (
+          phoneNumber &&
+          phoneNumber.isValid() &&
+          phoneNumberStartStr.some((substr) =>
+            phoneNumber.nationalNumber.startsWith(substr),
+          )
+        )
+      },
+      { params: errorMessages.phoneNumber },
+    ),
+    language: z.enum([Languages.IS, Languages.EN]),
+  }),
+  personalAllowance: PersonalAllowance,
+  personalAllowanceFromSpouse: PersonalAllowance,
+  payments: z
+    .object({
+      bank: z.string().refine(
+        (b) => {
+          const bankAccount = formatBankInfo(b)
+          return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
+        },
+        { params: errorMessages.bank },
+      ),
+      useUnion: z.enum([YES, NO]).optional(),
+      usePrivatePensionFund: z.enum([YES, NO]).optional(),
+      pensionFund: z.string().optional(),
+      privatePensionFund: z.string().optional(),
+      privatePensionFundPercentage: z.enum(['0', '2', '4', '']).optional(),
+      union: z.string().optional(),
+    })
+    .refine((p) => ('pensionFund' in p ? !!p.pensionFund : true), {
+      path: ['pensionFund'],
+      params: coreErrorMessages.missingAnswer,
+    })
+    .refine(
+      ({ useUnion, union }) =>
+        useUnion === YES ? !!union && union !== NO_UNION : true,
+      {
+        path: ['union'],
+        params: coreErrorMessages.missingAnswer,
+      },
+    )
+    .refine(
+      ({ usePrivatePensionFund, privatePensionFund }) =>
+        usePrivatePensionFund === YES
+          ? !!privatePensionFund &&
+            privatePensionFund !== NO_PRIVATE_PENSION_FUND
+          : true,
+      {
+        path: ['privatePensionFund'],
+        params: coreErrorMessages.missingAnswer,
+      },
+    )
+    .refine(
+      ({ usePrivatePensionFund, privatePensionFundPercentage }) =>
+        usePrivatePensionFund === YES
+          ? !!privatePensionFundPercentage &&
+            privatePensionFundPercentage !== '0'
+          : true,
+      {
+        path: ['privatePensionFundPercentage'],
+        params: coreErrorMessages.missingAnswer,
+      },
+    ),
+  shareInformationWithOtherParent: z.enum([YES, NO]),
+  // We don't have away to validate companyId yet because isCompany return false on personal business ID
+  employerNationalRegistryId: z.string().refine((n) => kennitala.isValid(n), {
+    params: errorMessages.employerNationalRegistryId,
+  }),
+  employerPhoneNumber: z
+    .string()
+    .refine(
+      (p) => {
+        const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+        const phoneNumberStartStr = ['6', '7', '8']
+        if (phoneNumber)
+          return (
+            phoneNumber.isValid() &&
+            phoneNumberStartStr.some((substr) =>
+              phoneNumber.nationalNumber.startsWith(substr),
+            )
+          )
+        else return true
+      },
+      { params: errorMessages.phoneNumber },
+    )
+    .optional(),
+  employment: z
+    .object({
+      isSelfEmployed: z.enum([YES, NO]),
+      isReceivingUnemploymentBenefits: z.enum([YES, NO]).optional(),
+      unemploymentBenefits: z.string().optional(),
+    })
+    .refine(
+      ({ isSelfEmployed, isReceivingUnemploymentBenefits }) =>
+        isSelfEmployed === NO ? !!isReceivingUnemploymentBenefits : true,
+      { path: ['isReceivingUnemploymentBenefits'] },
+    )
+    .refine(
+      ({
+        isSelfEmployed,
+        isReceivingUnemploymentBenefits,
+        unemploymentBenefits,
+      }) =>
+        isSelfEmployed === NO && isReceivingUnemploymentBenefits === YES
+          ? !!unemploymentBenefits &&
+            unemploymentBenefits !== NO_UNEMPLOYED_BENEFITS
+          : true,
+      { path: ['unemploymentBenefits'] },
+    ),
+  employerLastSixMonths: z.enum([YES, NO]),
+  requestRights: z.object({
+    isRequestingRights: z.enum([YES, NO]),
+    requestDays: rightsDays.optional(),
+  }),
+  giveRights: z
+    .object({
+      isGivingRights: z.enum([YES, NO]),
+      giveDays: rightsDays.optional(),
+    })
+    .optional(),
+  transferRights: z.enum([
+    TransferRightsOption.REQUEST,
+    TransferRightsOption.GIVE,
+    TransferRightsOption.NONE,
+  ]),
+  otherParentObj: z
+    .object({
+      chooseOtherParent: z.enum([SPOUSE, NO, MANUAL, SINGLE]),
+      otherParentName: z.string().optional(),
+      otherParentId: z
+        .string()
+        .optional()
+        .refine((n) => !n || (kennitala.isValid(n) && kennitala.isPerson(n)), {
+          params: errorMessages.otherParentId,
+        }),
+    })
+    .refine(
+      ({ chooseOtherParent, otherParentId }) =>
+        chooseOtherParent === MANUAL ? !!otherParentId : true,
+      {
+        params: coreErrorMessages.missingAnswer,
+        path: ['otherParentId'],
+      },
+    )
+    .optional(),
+  otherParent: z.enum([SPOUSE, NO, MANUAL, SINGLE]).optional(),
+  otherParentName: z.string().optional(),
+  otherParentId: z
+    .string()
+    .optional()
+    .refine((n) => !n || (kennitala.isValid(n) && kennitala.isPerson(n)), {
+      params: errorMessages.otherParentId,
+    }),
+  otherParentRightOfAccess: z.enum([YES, NO]),
+  otherParentEmail: z.string().email().optional(),
+  otherParentPhoneNumber: z
+    .string()
+    .refine(
+      (p) => {
+        const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+        const phoneNumberStartStr = ['6', '7', '8']
+        if (phoneNumber)
+          return (
+            phoneNumber.isValid() &&
+            phoneNumberStartStr.some((substr) =>
+              phoneNumber.nationalNumber.startsWith(substr),
+            )
+          )
+        else return true
+      },
+      { params: errorMessages.phoneNumber },
+    )
+    .optional(),
+  multipleBirths: z
+    .object({
+      hasMultipleBirths: z.preprocess(
+        (value) => (value === '' ? undefined : value),
+        z.enum([YES, NO]).optional(),
+      ),
+      multipleBirths: z.string().optional(),
+      // Set while the question is shown; '' once cleared with the child or type
+      isAsked: z.preprocess(
+        (value) => (value === '' ? undefined : value),
+        z.enum([YES]).optional(),
+      ),
+    })
+    .refine(
+      ({ hasMultipleBirths, isAsked }) =>
+        isAsked === YES ? hasMultipleBirths !== undefined : true,
+      {
+        path: ['hasMultipleBirths'],
+        params: coreErrorMessages.missingAnswer,
+      },
+    )
+    .refine(
+      ({ hasMultipleBirths, multipleBirths }) =>
+        hasMultipleBirths === YES ? !!multipleBirths : true,
+      {
+        path: ['multipleBirths'],
+        params: errorMessages.missingMultipleBirthsAnswer,
+      },
+    )
+    .refine(
+      ({ hasMultipleBirths, multipleBirths }) =>
+        hasMultipleBirths === YES && multipleBirths
+          ? Number(multipleBirths) >= 2
+          : true,
+      {
+        path: ['multipleBirths'],
+        params: errorMessages.tooFewMultipleBirthsAnswer,
+      },
+    )
+    .refine(
+      ({ hasMultipleBirths, multipleBirths }) =>
+        hasMultipleBirths === YES && multipleBirths
+          ? Number(multipleBirths) <= defaultMultipleBirthsMonths + 1
+          : true,
+      {
+        path: ['multipleBirths'],
+        params: errorMessages.tooManyMultipleBirthsAnswer,
+      },
+    )
+    .optional(),
+  // Seeded from VMST as a number, entered in the form as a string.
+  multipleBirthsRequestDays: z
+    .union([z.string(), z.number()])
+    .refine((v) => isWholeNumberInRange(v, 0, maxMultipleBirthsRequestDays), {
+      params: errorMessages.rightsDaysOutOfRange,
+    })
+    .optional(),
+  addEmployer: z.enum([YES, NO]),
+  addPeriods: z.enum([YES, NO]),
+  fileUpload: z.object({
+    studentFile: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    selfEmployedFile: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    singleParent: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    parentWithoutBirthParent: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    permanentFosterCare: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    adoption: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    employmentTerminationCertificateFile: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    benefitsFile: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+    additionalDocuments: z
+      .array(FileSchema)
+      .optional()
+      .refine((a) => a === undefined || a.length > 0, {
+        params: errorMessages.requiredAttachment,
+      }),
+  }),
+  employers: z
+    .array(
+      z
+        .object({
+          email: z
+            .string()
+            .email()
+            .refine((x) => x.trim().length > 0, {
+              params: errorMessages.employerEmail,
+            }),
+          phoneNumber: z
+            .string()
+            .refine(
+              (p) => {
+                const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+                const phoneNumberStartStr = ['6', '7', '8']
+                if (phoneNumber)
+                  return (
+                    phoneNumber.isValid() &&
+                    phoneNumberStartStr.some((substr) =>
+                      phoneNumber.nationalNumber.startsWith(substr),
+                    )
+                  )
+                else return true
+              },
+              { params: errorMessages.phoneNumber },
+            )
+            .optional(),
+          ratio: z.string(),
+          stillEmployed: z.enum([YES, NO]).optional(),
+          isFromVMST: z.boolean().optional(),
+        })
+        // A row prefilled from VMST has no ratio until the applicant edits it
+        .refine(
+          ({ ratio, isFromVMST }) =>
+            (isFromVMST === true && ratio === '') ||
+            isNumberInRange(ratio, 1, 100),
+          { path: ['ratio'], params: errorMessages.employersRatioInvalid },
+        )
+        .refine((e) => ('stillEmployed' in e ? !!e.stillEmployed : true), {
+          path: ['stillEmployed'],
+        }),
+    )
+    .optional(),
+})
+
+export type SchemaFormValues = z.infer<typeof dataSchema>

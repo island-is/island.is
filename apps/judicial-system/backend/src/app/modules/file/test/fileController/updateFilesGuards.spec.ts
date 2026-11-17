@@ -7,7 +7,7 @@ import {
 
 import { verifyGuards } from '../../../../test'
 import {
-  CaseExistsGuard,
+  CaseExistsForUpdateGuard,
   CaseNotCompletedGuard,
   CaseWriteGuard,
 } from '../../../case'
@@ -19,8 +19,8 @@ describe('FileController - Upload case file to court guards', () => {
     FileController,
     'updateFiles',
     [
-      CaseExistsGuard,
       RolesGuard,
+      CaseExistsForUpdateGuard,
       CaseTypeGuard,
       CaseWriteGuard,
       CaseNotCompletedGuard,

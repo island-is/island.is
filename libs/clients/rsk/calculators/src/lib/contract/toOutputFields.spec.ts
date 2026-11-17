@@ -3,24 +3,24 @@ import { z } from 'zod'
 import { toOutputFields } from './toOutputFields'
 
 const bracket = z.object({
-  nedriMork: z.coerce.bigint().optional(),
-  stadgreidsluhlutfall: z.number().optional(),
+  lowerBound: z.coerce.bigint().optional(),
+  rate: z.number().optional(),
 })
 
 const period = z.object({
-  dagar: z.number().int().optional(),
+  days: z.number().int().optional(),
 })
 
 const shape = {
-  manadarlaun: z.number().int().optional(),
-  sereignProsenta: z.number().gte(0).lte(1).optional(),
-  reiknadiHatekjuskatt: z.boolean().optional(),
-  timabil: z.union([z.string(), z.null()]).optional(),
-  upphaf: z.string().datetime().optional(),
-  skattthrep: z.union([z.array(bracket), z.null()]).optional(),
-  fyrraTimabil: period.optional(),
+  amount: z.number().int().optional(),
+  ratio: z.number().gte(0).lte(1).optional(),
+  flag: z.boolean().optional(),
+  label: z.union([z.string(), z.null()]).optional(),
+  start: z.string().datetime().optional(),
+  rows: z.union([z.array(bracket), z.null()]).optional(),
+  group: period.optional(),
   tags: z.array(z.string()).optional(),
-  annad: z.unknown(),
+  other: z.unknown(),
 }
 
 describe('toOutputFields', () => {
@@ -28,39 +28,39 @@ describe('toOutputFields', () => {
     expect(toOutputFields(shape)).toEqual(
       expect.arrayContaining([
         {
-          name: 'manadarlaun',
+          name: 'amount',
           kind: 'scalar',
           type: 'number',
           semantic: 'currency',
         },
         {
-          name: 'sereignProsenta',
+          name: 'ratio',
           kind: 'scalar',
           type: 'number',
           semantic: 'percentage',
         },
-        { name: 'reiknadiHatekjuskatt', kind: 'scalar', type: 'boolean' },
-        { name: 'timabil', kind: 'scalar', type: 'string' },
-        { name: 'upphaf', kind: 'scalar', type: 'date' },
+        { name: 'flag', kind: 'scalar', type: 'boolean' },
+        { name: 'label', kind: 'scalar', type: 'string' },
+        { name: 'start', kind: 'scalar', type: 'date' },
       ]),
     )
   })
 
   it('derives array item fields, treating bigints as numbers', () => {
     expect(
-      toOutputFields(shape).find((field) => field.name === 'skattthrep'),
+      toOutputFields(shape).find((field) => field.name === 'rows'),
     ).toEqual({
-      name: 'skattthrep',
+      name: 'rows',
       kind: 'array',
       itemFields: [
         {
-          name: 'nedriMork',
+          name: 'lowerBound',
           kind: 'scalar',
           type: 'number',
           semantic: 'currency',
         },
         {
-          name: 'stadgreidsluhlutfall',
+          name: 'rate',
           kind: 'scalar',
           type: 'number',
           semantic: 'currency',
@@ -71,12 +71,12 @@ describe('toOutputFields', () => {
 
   it('derives object item fields', () => {
     expect(
-      toOutputFields(shape).find((field) => field.name === 'fyrraTimabil'),
+      toOutputFields(shape).find((field) => field.name === 'group'),
     ).toEqual({
-      name: 'fyrraTimabil',
+      name: 'group',
       kind: 'object',
       itemFields: [
-        { name: 'dagar', kind: 'scalar', type: 'number', semantic: 'currency' },
+        { name: 'days', kind: 'scalar', type: 'number', semantic: 'currency' },
       ],
     })
   })
@@ -85,6 +85,6 @@ describe('toOutputFields', () => {
     const names = toOutputFields(shape).map((field) => field.name)
 
     expect(names).not.toContain('tags')
-    expect(names).not.toContain('annad')
+    expect(names).not.toContain('other')
   })
 })
