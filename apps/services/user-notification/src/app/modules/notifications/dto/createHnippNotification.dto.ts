@@ -84,7 +84,7 @@ export class CreateHnippNotificationDto {
   @IsISO8601({ strict: true })
   // Calendar date and time only (no ordinal or week dates), optional offset
   @Matches(
-    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}(:?\d{2})?)?$/i,
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:?\d{2})?$/i,
     {
       message:
         'deadline must be a calendar date and time, e.g. 2026-12-01T16:00:00',
