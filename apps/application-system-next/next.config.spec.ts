@@ -14,6 +14,12 @@ jest.mock('@vanilla-extract/next-plugin', () => ({
   createVanillaExtractPlugin: () => (config: Record<string, unknown>) => config,
 }))
 
+// `@nx/next` is mocked above to return the config object itself, whereas its
+// real type is a config function.
+type MockedNextConfig = {
+  rewrites: () => Promise<{ afterFiles: unknown[] }>
+}
+
 describe('application-system-next next config', () => {
   const originalEnv = process.env
 
@@ -27,7 +33,8 @@ describe('application-system-next next config', () => {
     delete process.env.BFF_PROXY_TARGET
 
     const nextConfigModule = await import('./next.config.js')
-    const nextConfig = nextConfigModule.default ?? nextConfigModule
+    const nextConfig = (nextConfigModule.default ??
+      nextConfigModule) as unknown as MockedNextConfig
     const rewrites = await nextConfig.rewrites()
 
     // `rewrites()` returns the phased `{ afterFiles }` shape (not a flat array)

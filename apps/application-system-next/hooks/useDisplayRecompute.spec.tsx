@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react'
 
-import { validateAction } from '../lib/graphql'
+import { validateAction, type SdfComponentData } from '../lib/graphql'
 import { useDisplayRecompute } from './useDisplayRecompute'
 
 jest.mock('../lib/graphql', () => ({
@@ -20,7 +20,7 @@ const components = [
   },
 ]
 
-const clientComputedComponents = [
+const clientComputedComponents: SdfComponentData[] = [
   {
     __typename: 'SdfDisplayField',
     id: 'displayField',
