@@ -176,6 +176,7 @@ export class NotificationsService {
         // Notifications created before sourceType was stored fall back to the template
         sourceType:
           notification.sourceType ?? toSourceType(template.sourceType),
+        deadline: notification.deadline ?? null,
         category: toTemplateCategory(template.hnippCategoryIs),
         categoryLabel:
           template.hnippCategory?.trim() || DEFAULT_CATEGORY_LABEL[locale],

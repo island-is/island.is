@@ -946,6 +946,7 @@ export class NotificationsWorkerService {
         wasSent,
         priorityType,
         sourceType,
+        deadline: message.deadline ? new Date(message.deadline) : null,
       })
       this.logger.info('notification written to db', {
         messageId,
