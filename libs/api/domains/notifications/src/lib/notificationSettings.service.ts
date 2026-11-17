@@ -1,6 +1,6 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { UserNotificationApi } from '@island.is/clients/user-notification'
-import { V2MeApi } from '@island.is/clients/user-profile'
+import { V2ActorApi, V2MeApi } from '@island.is/clients/user-profile'
 import type { OrganizationTitleByNationalIdDataLoader } from '@island.is/cms'
 import type { Locale } from '@island.is/shared/types'
 import { BadRequestException, Injectable } from '@nestjs/common'
@@ -21,6 +21,11 @@ interface CategoryLabel {
   en?: string
 }
 
+type CategoryEntry = Pick<
+  CategorySetting,
+  'senderId' | 'category' | 'categoryLabel'
+>
+
 interface CategorySetting {
   key: string
   senderId: string
@@ -34,6 +39,7 @@ export class NotificationSettingsService {
   constructor(
     private userNotificationApi: UserNotificationApi,
     private v2MeApi: V2MeApi,
+    private v2ActorApi: V2ActorApi,
   ) {}
 
   private userNotificationsWAuth(auth: Auth) {
@@ -44,23 +50,21 @@ export class NotificationSettingsService {
     return this.v2MeApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  /**
-   * Combines the sender categories the user has received notifications in
-   * with the categories the user has blocked. Blocked categories are included
-   * even if the user hasn't received them, e.g. after a category was renamed,
-   * so they can be unblocked.
-   */
-  private async findCategorySettings(
-    user: User,
-  ): Promise<Map<string, CategorySetting>> {
-    const [{ categories }, { blockedCategories }] = await Promise.all([
-      this.userNotificationsWAuth(
-        user,
-      ).meNotificationsControllerFindCategories(),
-      this.v2MeApiWAuth(user).meUserProfileControllerFindNotificationSettings(),
-    ])
+  private v2ActorApiWAuth(auth: Auth) {
+    return this.v2ActorApi.withMiddleware(new AuthMiddleware(auth))
+  }
 
+  /**
+   * Combines the sender categories received with the categories blocked.
+   * Blocked categories are included even if none were received, e.g. after a
+   * category was renamed, so they can be unblocked.
+   */
+  private mergeCategorySettings(
+    categories: CategoryEntry[],
+    blockedCategories: CategoryEntry[],
+  ): Map<string, CategorySetting> {
     const settings = new Map<string, CategorySetting>()
+
     for (const { senderId, category, categoryLabel } of categories) {
       const key = toCategoryKey(senderId, category)
       settings.set(key, {
@@ -88,16 +92,56 @@ export class NotificationSettingsService {
     return settings
   }
 
-  async getNotificationSettings(
+  private async findCategorySettings(
     user: User,
+  ): Promise<Map<string, CategorySetting>> {
+    const [{ categories }, { blockedCategories }] = await Promise.all([
+      this.userNotificationsWAuth(
+        user,
+      ).meNotificationsControllerFindCategories(),
+      this.v2MeApiWAuth(user).meUserProfileControllerFindNotificationSettings(),
+    ])
+    return this.mergeCategorySettings(categories, blockedCategories)
+  }
+
+  private async findActorCategorySettings(
+    user: User,
+    fromNationalId: string,
+  ): Promise<{
+    settings: Map<string, CategorySetting>
+    onlyActionablePriorityNotifications: boolean
+  }> {
+    const [{ categories }, actorSettings] = await Promise.all([
+      this.userNotificationsWAuth(
+        user,
+      ).meNotificationsControllerFindActorCategories({
+        xParamFromNationalId: fromNationalId,
+      }),
+      this.v2ActorApiWAuth(
+        user,
+      ).actorUserProfileControllerFindActorNotificationSettings({
+        xParamFromNationalId: fromNationalId,
+      }),
+    ])
+    return {
+      settings: this.mergeCategorySettings(
+        categories,
+        actorSettings.blockedCategories,
+      ),
+      onlyActionablePriorityNotifications:
+        actorSettings.onlyActionablePriorityNotifications,
+    }
+  }
+
+  /**
+   * Groups the settings by sender, looks up sender titles and sorts.
+   */
+  private async toNotificationSettings(
+    settings: Map<string, CategorySetting>,
     locale: Locale,
     titleLoader: OrganizationTitleByNationalIdDataLoader,
+    onlyActionablePriorityNotifications: boolean,
   ): Promise<NotificationSettings> {
-    const [settings, userProfile] = await Promise.all([
-      this.findCategorySettings(user),
-      this.v2MeApiWAuth(user).meUserProfileControllerFindUserProfile(),
-    ])
-
     const senders = new Map<string, NotificationSenderSetting>()
     for (const setting of settings.values()) {
       const sender = senders.get(setting.senderId) ?? {
@@ -133,9 +177,41 @@ export class NotificationSettingsService {
           ),
         }),
       ),
-      onlyActionablePriorityNotifications:
-        userProfile.onlyActionablePriorityNotifications,
+      onlyActionablePriorityNotifications,
     }
+  }
+
+  async getNotificationSettings(
+    user: User,
+    locale: Locale,
+    titleLoader: OrganizationTitleByNationalIdDataLoader,
+  ): Promise<NotificationSettings> {
+    const [settings, userProfile] = await Promise.all([
+      this.findCategorySettings(user),
+      this.v2MeApiWAuth(user).meUserProfileControllerFindUserProfile(),
+    ])
+    return this.toNotificationSettings(
+      settings,
+      locale,
+      titleLoader,
+      userProfile.onlyActionablePriorityNotifications,
+    )
+  }
+
+  async getActorNotificationSettings(
+    user: User,
+    fromNationalId: string,
+    locale: Locale,
+    titleLoader: OrganizationTitleByNationalIdDataLoader,
+  ): Promise<NotificationSettings> {
+    const { settings, onlyActionablePriorityNotifications } =
+      await this.findActorCategorySettings(user, fromNationalId)
+    return this.toNotificationSettings(
+      settings,
+      locale,
+      titleLoader,
+      onlyActionablePriorityNotifications,
+    )
   }
 
   async updateOnlyActionablePriorityNotifications(
@@ -147,15 +223,29 @@ export class NotificationSettingsService {
     })
   }
 
-  /**
-   * Blocks or unblocks the given sender categories.
-   */
-  async updateCategories(
+  async updateActorOnlyActionablePriorityNotifications(
     user: User,
-    categories: NotificationCategoryInput[],
+    fromNationalId: string,
+    onlyActionablePriorityNotifications: boolean,
   ): Promise<void> {
+    await this.v2ActorApiWAuth(
+      user,
+    ).actorUserProfileControllerCreateOrUpdateActorProfile({
+      xParamFromNationalId: fromNationalId,
+      patchActorProfileDto: { onlyActionablePriorityNotifications },
+    })
+  }
+
+  /**
+   * Validates the requested changes and resolves blocked categories against
+   * the known ones. Returns undefined when there is nothing to update.
+   */
+  private async buildCategoryUpdates(
+    categories: NotificationCategoryInput[],
+    findSettings: () => Promise<Map<string, CategorySetting>>,
+  ) {
     if (categories.length === 0) {
-      return
+      return undefined
     }
 
     for (const { senderId } of categories) {
@@ -165,21 +255,19 @@ export class NotificationSettingsService {
     }
 
     const settings = categories.some(({ blocked }) => blocked)
-      ? await this.findCategorySettings(user)
+      ? await findSettings()
       : new Map<string, CategorySetting>()
 
-    const updates = categories.map(({ senderId, category, blocked }) => {
+    return categories.map(({ senderId, category, blocked }) => {
       if (!blocked) {
         return { senderId, category, blocked }
       }
-
       const setting = settings.get(toCategoryKey(senderId, category))
       if (!setting) {
         throw new BadRequestException(
           `Unknown notification category ${toCategoryKey(senderId, category)}`,
         )
       }
-
       return {
         senderId: setting.senderId,
         category: setting.category,
@@ -187,10 +275,52 @@ export class NotificationSettingsService {
         blocked,
       }
     })
+  }
+
+  /**
+   * Blocks or unblocks the given sender categories.
+   */
+  async updateCategories(
+    user: User,
+    categories: NotificationCategoryInput[],
+  ): Promise<void> {
+    const updates = await this.buildCategoryUpdates(categories, () =>
+      this.findCategorySettings(user),
+    )
+    if (!updates) {
+      return
+    }
 
     await this.v2MeApiWAuth(
       user,
     ).meUserProfileControllerUpdateNotificationSettings({
+      updateNotificationSettingsDto: { categories: updates },
+    })
+  }
+
+  /**
+   * Blocks or unblocks the given sender categories for an incoming delegation.
+   */
+  async updateActorCategories(
+    user: User,
+    fromNationalId: string,
+    categories: NotificationCategoryInput[],
+  ): Promise<void> {
+    const updates = await this.buildCategoryUpdates(
+      categories,
+      async () =>
+        (
+          await this.findActorCategorySettings(user, fromNationalId)
+        ).settings,
+    )
+    if (!updates) {
+      return
+    }
+
+    await this.v2ActorApiWAuth(
+      user,
+    ).actorUserProfileControllerUpdateActorNotificationSettings({
+      xParamFromNationalId: fromNationalId,
       updateNotificationSettingsDto: { categories: updates },
     })
   }

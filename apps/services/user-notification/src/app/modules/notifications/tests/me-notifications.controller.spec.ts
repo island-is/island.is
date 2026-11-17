@@ -17,7 +17,10 @@ import { AppModule } from '../../../app.module'
 import { SequelizeConfigService } from '../../../sequelizeConfig.service'
 import { DocumentsScope } from '@island.is/auth/scopes'
 import { CmsService } from '@island.is/clients/cms'
+import { randomUUID } from 'crypto'
 import { UserNotificationSender } from '../user-notification-sender.model'
+import { Notification } from '../notification.model'
+import { ActorNotification } from '../actor-notification.model'
 
 beforeAll(async () => {
   process.env.INIT_SCHEMA = 'true' // Disabling Firebase init
@@ -267,6 +270,96 @@ describe('MeNotificationsController - GET /v1/me/notifications/categories', () =
     expect(res.body).toEqual({
       categories: [
         { senderId, category: 'skattar', categoryLabel: { is: 'skattar' } },
+      ],
+    })
+  })
+})
+
+describe('MeNotificationsController - GET /v1/me/notifications/actor-categories', () => {
+  const delegate = createCurrentUser({
+    nationalId: createNationalId('person'),
+    scope: [DocumentsScope.main],
+  })
+  const principalNationalId = createNationalId('person')
+  const senderId = createNationalId('company')
+
+  let app: TestApp
+  let server: request.SuperTest<request.Test>
+  let notificationModel: typeof Notification
+  let actorNotificationModel: typeof ActorNotification
+  let userNotificationSenderModel: typeof UserNotificationSender
+
+  beforeAll(async () => {
+    app = await setupApp({
+      AppModule,
+      SequelizeConfigService,
+      user: delegate,
+      override: (builder) =>
+        builder.overrideProvider(CmsService).useValue({
+          fetchData: jest.fn().mockResolvedValue({
+            hnippTemplateCollection: {
+              items: [{ categoryIs: 'Heilbrigðismál', categoryEn: 'Health' }],
+            },
+          }),
+        }),
+    })
+    server = request(app.getHttpServer())
+    notificationModel = app.get(getModelToken(Notification))
+    actorNotificationModel = app.get(getModelToken(ActorNotification))
+    userNotificationSenderModel = app.get(getModelToken(UserNotificationSender))
+  })
+
+  afterAll(async () => {
+    await app.cleanUp()
+  })
+
+  it('should only return categories the delegate received on behalf of the principal', async () => {
+    await userNotificationSenderModel.bulkCreate([
+      {
+        recipient: principalNationalId,
+        senderId,
+        templateId: 'HNIPP.HEALTH',
+        category: 'heilbrigdismal',
+        priorityType: 'Informative',
+      },
+      {
+        recipient: principalNationalId,
+        senderId,
+        templateId: 'HNIPP.TAXES',
+        category: 'skattar',
+        priorityType: 'Informative',
+      },
+    ])
+    const [received, notReceived] = await notificationModel.bulkCreate(
+      ['HNIPP.HEALTH', 'HNIPP.TAXES'].map((templateId) => ({
+        messageId: randomUUID(),
+        recipient: principalNationalId,
+        senderId,
+        templateId,
+        scope: DocumentsScope.main,
+        args: [],
+      })),
+    )
+    // Only the health notification was received by the delegate
+    await actorNotificationModel.create({
+      messageId: randomUUID(),
+      userNotificationId: received.id,
+      recipient: delegate.nationalId,
+    })
+
+    const res = await server
+      .get('/v1/me/notifications/actor-categories')
+      .set('X-Param-From-National-Id', principalNationalId)
+
+    expect(notReceived.id).toBeDefined()
+    expect(res.status).toBe(200)
+    expect(res.body).toEqual({
+      categories: [
+        {
+          senderId,
+          category: 'heilbrigdismal',
+          categoryLabel: { is: 'Heilbrigðismál', en: 'Health' },
+        },
       ],
     })
   })

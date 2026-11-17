@@ -9,6 +9,7 @@ import {
   IsUUID,
 } from 'class-validator'
 import { PageInfoDto } from '@island.is/nest/pagination'
+import { BlockedCategoryDto } from './blocked-category.dto'
 import { Locale } from '../types/localeTypes'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 
@@ -79,6 +80,14 @@ export class ActorProfileDto {
   @ApiProperty()
   @IsBoolean()
   readonly onlyActionablePriorityNotifications!: boolean
+
+  @ApiPropertyOptional({
+    type: [BlockedCategoryDto],
+    description:
+      'Sender categories blocked for this actor profile. Only returned when include=notificationSettings is requested.',
+  })
+  @IsOptional()
+  blockedCategories?: BlockedCategoryDto[]
 }
 
 export class ActorProfileDetailsDto {

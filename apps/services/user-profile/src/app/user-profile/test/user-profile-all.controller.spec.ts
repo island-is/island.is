@@ -333,17 +333,24 @@ describe('UserProfileController', () => {
         })
       })
 
-      it('should return the actor profile onlyActionablePriorityNotifications', async () => {
+      it('should return the actor profile blocked categories and onlyActionablePriorityNotifications when include=notificationSettings', async () => {
         await fixtureFactory.createUserProfile(testUserProfile)
-        await fixtureFactory.createActorProfile({
+        const actorProfile = await fixtureFactory.createActorProfile({
           toNationalId: testUserProfile.nationalId,
           fromNationalId: testNationalId1,
           emailNotifications: true,
           onlyActionablePriorityNotifications: true,
         })
+        await fixtureFactory.createActorBlockedNotification({
+          actorProfileId: actorProfile.id,
+          senderId: testNationalId2,
+          category: 'almennt',
+        })
 
         const res = await server
-          .get('/v2/users/.to-national-id/actor-profiles/.from-national-id')
+          .get(
+            '/v2/users/.to-national-id/actor-profiles/.from-national-id?include=notificationSettings',
+          )
           .set('X-Param-To-National-Id', testUserProfile.nationalId)
           .set('X-Param-From-National-Id', testNationalId1)
 
@@ -351,6 +358,13 @@ describe('UserProfileController', () => {
         expect(res.body).toMatchObject({
           fromNationalId: testNationalId1,
           onlyActionablePriorityNotifications: true,
+          blockedCategories: [
+            {
+              key: `${testNationalId2}-almennt`,
+              senderId: testNationalId2,
+              category: 'almennt',
+            },
+          ],
         })
       })
 

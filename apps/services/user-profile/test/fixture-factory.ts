@@ -10,6 +10,7 @@ import { UserDeviceTokens } from '../src/app/user-profile/models/userDeviceToken
 import { DataStatus } from '../src/app/user-profile/types/dataStatusTypes'
 import { ActorProfile } from '../src/app/user-profile/models/actor-profile.model'
 import { Emails } from '../src/app/user-profile/models/emails.model'
+import { ActorBlockedNotification } from '../src/app/user-profile/models/actorBlockedNotification.model'
 import {
   BlockedNotification,
   CategoryLabel,
@@ -214,6 +215,25 @@ export class FixtureFactory {
       emailNotifications,
       emailsId,
       onlyActionablePriorityNotifications,
+    })
+  }
+
+  async createActorBlockedNotification({
+    actorProfileId,
+    senderId,
+    category = 'almennt',
+    categoryLabel = { is: 'Almennt', en: 'General' },
+  }: {
+    actorProfileId: string
+    senderId: string
+    category?: string
+    categoryLabel?: CategoryLabel
+  }) {
+    return this.get(ActorBlockedNotification).create<ActorBlockedNotification>({
+      actorProfileId,
+      senderId,
+      category,
+      categoryLabel,
     })
   }
 }

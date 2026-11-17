@@ -54,3 +54,11 @@ export class UpdateNotificationCategoriesInput {
   @Field(() => Boolean, { nullable: true })
   onlyActionablePriorityNotifications?: boolean
 }
+
+@InputType()
+export class UpdateActorNotificationCategoriesInput extends UpdateNotificationCategoriesInput {
+  @Field({
+    description: 'National id of the person the delegation is from, ##########',
+  })
+  fromNationalId!: string
+}
