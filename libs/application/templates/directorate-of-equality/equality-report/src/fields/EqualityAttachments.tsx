@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { gql, useApolloClient } from '@apollo/client'
 import { FileRejection } from 'react-dropzone'
@@ -34,18 +34,11 @@ import {
   getAttachmentRejection,
   validateAttachment,
 } from '../utils/equalityAttachments'
-
-const EQUALITY_ATTACHMENTS = gql`
-  query DirectorateOfEqualityEqualityAttachments(
-    $input: DirectorateOfEqualityEqualityAttachmentsInput!
-  ) {
-    directorateOfEqualityEqualityAttachments(input: $input) {
-      id
-      filename
-      sizeBytes
-    }
-  }
-`
+import {
+  Attachment,
+  EQUALITY_ATTACHMENTS,
+  useAttachmentList,
+} from '../utils/useAttachmentList'
 
 const PRESIGN_EQUALITY_ATTACHMENT = gql`
   mutation DirectorateOfEqualityPresignEqualityAttachment(
@@ -75,8 +68,6 @@ const DELETE_EQUALITY_ATTACHMENT = gql`
     directorateOfEqualityDeleteEqualityAttachment(input: $input)
   }
 `
-
-type Attachment = { id: string; filename: string; sizeBytes: number }
 
 // Cap the presigned PUT so a stalled upload can't leave the field busy.
 const UPLOAD_TIMEOUT_MS = 60_000
@@ -187,9 +178,10 @@ const EditableEqualityAttachments = ({
 
   const mode = field?.props?.['mode'] === 'retry' ? 'retry' : 'draft'
 
-  const [attachments, setAttachments] = useState<Attachment[]>([])
+  const { attachments, loadError, setLoadError, reload } = useAttachmentList(
+    application.id,
+  )
   const [loading, setLoading] = useState(true)
-  const [loadError, setLoadError] = useState(false)
   // In a store, not state: back navigation unmounts the field without a
   // guard, and the queue has to carry on and be picked up on return.
   const { uploading, removingId, errors } = useAttachmentQueue(application.id)
@@ -244,29 +236,6 @@ const EditableEqualityAttachments = ({
     }, ATTACHMENTS_BEFORE_SUBMIT)
   }, [screenEntered, busy, setBeforeSubmitCallback, formatMessage, m])
 
-  const reload = useCallback(async (): Promise<Attachment[] | undefined> => {
-    try {
-      const { data } = await client.query<{
-        directorateOfEqualityEqualityAttachments: Attachment[] | null
-      }>({
-        query: EQUALITY_ATTACHMENTS,
-        variables: { input: { applicationId: application.id } },
-        fetchPolicy: 'network-only',
-      })
-      // Nullable root query (domain convention); a failure arrives as an
-      // error, so null only ever means nothing to show.
-      const list = data.directorateOfEqualityEqualityAttachments ?? []
-      if (mountedRef.current) {
-        setAttachments(list)
-        setLoadError(false)
-      }
-      return list
-    } catch {
-      if (mountedRef.current) setLoadError(true)
-      return undefined
-    }
-  }, [client, application.id])
-
   useEffect(() => {
     const load = async () => {
       try {
@@ -279,7 +248,7 @@ const EditableEqualityAttachments = ({
       }
     }
     void load()
-  }, [mode, ensureDraft, reload])
+  }, [mode, ensureDraft, reload, setLoadError])
 
   // Reload whenever the queue moves on (next file, or done), including a
   // queue started by an earlier mount of this field.
