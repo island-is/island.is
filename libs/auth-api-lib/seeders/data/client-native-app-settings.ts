@@ -73,20 +73,20 @@ const settings = {
   },
 }
 
-const setNativeApp = (clientId: keyof typeof settings) => async (
-  queryInterface: QueryInterface,
-) => {
-  // No rows where the client doesn't exist.
-  await queryInterface.sequelize.query(
-    'update client set native_app = :nativeApp::jsonb where client_id = :clientId',
-    {
-      replacements: {
-        clientId,
-        nativeApp: JSON.stringify(settings[clientId]),
+const setNativeApp =
+  (clientId: keyof typeof settings) =>
+  async (queryInterface: QueryInterface) => {
+    // No rows where the client doesn't exist.
+    await queryInterface.sequelize.query(
+      'update client set native_app = :nativeApp::jsonb where client_id = :clientId',
+      {
+        replacements: {
+          clientId,
+          nativeApp: JSON.stringify(settings[clientId]),
+        },
       },
-    },
-  )
-}
+    )
+  }
 
 export const up = compose(
   setNativeApp('@island.is/app'),
