@@ -363,17 +363,19 @@ export class FileController {
     }
 
     // The transaction CaseExistsForUpdateGuard opened - see createCaseFile.
-    // The checks above read the court sessions off the case that guard
-    // loaded, and everything that confirms a court session locks the same
-    // row, so the file cannot be filed in a confirmed session meanwhile.
+    // The checks above read the file and the court sessions off the case
+    // that guard loaded. Everything that confirms a court session locks the
+    // same row, and so does deleting a file through this controller, so the
+    // file can neither be filed in a confirmed session nor deleted here
+    // meanwhile. The limited access delete does not take the lock.
     const transaction = await getOrCreateTransaction(this.sequelize)
 
     return this.fileService.rejectCaseFile(theCase, caseFile, transaction)
   }
 
   @UseGuards(
-    CaseExistsGuard,
     RolesGuard,
+    CaseExistsForUpdateGuard,
     CaseWriteGuard,
     CaseFileExistsGuard,
     DeleteAppealCaseFileGuard,
@@ -393,7 +395,7 @@ export class FileController {
     type: DeleteFileResponse,
     description: 'Deletes a case file',
   })
-  deleteCaseFile(
+  async deleteCaseFile(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Param('fileId') fileId: string,
@@ -401,7 +403,12 @@ export class FileController {
   ): Promise<DeleteFileResponse> {
     this.logger.debug(`Deleting file ${fileId} of case ${caseId}`)
 
-    return this.fileService.deleteCaseFile(theCase, caseFile)
+    // The transaction CaseExistsForUpdateGuard opened - see createCaseFile.
+    // Given a transaction, the service removes the file from S3 only after
+    // the commit, so a rollback leaves both the row and the object in place.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.fileService.deleteCaseFile(theCase, caseFile, transaction)
   }
 
   // RolesGuard must run after the case read here: the roles rule is
