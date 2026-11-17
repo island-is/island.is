@@ -150,9 +150,12 @@ const canAccessVerdictAppealStatementPage = (
       return false
     }
 
-    if (
-      !findAppealStatementDeadline(appeal.statementDeadlines, party)?.deadline
-    ) {
+    const statementDeadline = findAppealStatementDeadline(
+      appeal.statementDeadlines,
+      party,
+    )
+
+    if (!statementDeadline?.deadline || statementDeadline.isExpired) {
       return false
     }
 

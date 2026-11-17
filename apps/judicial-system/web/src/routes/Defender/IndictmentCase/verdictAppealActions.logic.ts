@@ -122,10 +122,12 @@ export const canDefenderFileVerdictStatementOf = (
   }
 
   const party = { defendantId: defendant.id }
+  const statementDeadline = findAppealStatementDeadline(
+    appeal.statementDeadlines,
+    party,
+  )
 
-  if (
-    !findAppealStatementDeadline(appeal.statementDeadlines, party)?.deadline
-  ) {
+  if (!statementDeadline?.deadline || statementDeadline.isExpired) {
     return false
   }
 

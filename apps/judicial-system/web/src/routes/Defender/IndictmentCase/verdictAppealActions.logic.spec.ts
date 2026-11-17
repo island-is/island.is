@@ -334,6 +334,7 @@ describe('verdictAppealActions', () => {
             id: 'deadline_id',
             defendantId: 'defendant_id',
             deadline: openDeadline.toISOString(),
+            isExpired: false,
           },
         ],
       },
@@ -360,7 +361,8 @@ describe('verdictAppealActions', () => {
                 {
                   id: 'deadline_id',
                   defendantId: 'defendant_id',
-                  deadline: '2026-09-14T00:00:00.000Z',
+                  deadline: openDeadline.toISOString(),
+                  isExpired: false,
                 },
               ],
               appealEventLogs: [
@@ -385,6 +387,29 @@ describe('verdictAppealActions', () => {
       ).toBe(false)
     })
 
+    it('should refuse after the statement deadline has expired', () => {
+      expect(
+        canDefenderFileVerdictStatementOf(
+          theCase({
+            verdictAppealCase: {
+              id: 'appeal_case_id',
+              appealState: AppealCaseState.RECEIVED,
+              statementDeadlines: [
+                {
+                  id: 'deadline_id',
+                  defendantId: 'defendant_id',
+                  deadline: openDeadline.toISOString(),
+                  isExpired: true,
+                },
+              ],
+            },
+          }),
+          appealDefendant,
+          user,
+        ),
+      ).toBe(false)
+    })
+
     it('should refuse a completed appeal', () => {
       expect(
         canDefenderFileVerdictStatementOf(
@@ -396,7 +421,8 @@ describe('verdictAppealActions', () => {
                 {
                   id: 'deadline_id',
                   defendantId: 'defendant_id',
-                  deadline: '2026-09-14T00:00:00.000Z',
+                  deadline: openDeadline.toISOString(),
+                  isExpired: false,
                 },
               ],
             },

@@ -28,6 +28,7 @@ import {
   CaseFileState,
   CaseIndictmentRulingDecision,
   CaseOrigin,
+  findAppealStatementDeadline,
   getAppealJudgeUserIds,
   hasAllAppealJudges,
   hasFiledAppealStatement,
@@ -74,6 +75,7 @@ import {
   findUserRulingOrderAppealDecision,
   hasStandingVerdictAppeal,
   isInCourtRulingOrderAppeal,
+  isStatementDeadlineExpired,
   isVerdictAppealOver,
   resolveDefenceParties,
   standingVerdictAppellants,
@@ -1208,13 +1210,34 @@ export class AppealCaseService {
         { appealConfirmationOnly: requiresScopedParty },
       )
 
-      if (
-        requiresScopedParty &&
-        hasFiledAppealStatement(appealCase.appealEventLogs, partyRow)
-      ) {
-        throw new BadRequestException(
-          `The party has already filed its statement in appeal case ${appealCase.id} of case ${theCase.id}`,
-        )
+      if (requiresScopedParty) {
+        const statementDeadline = findAppealStatementDeadline(
+          appealCase.statementDeadlines,
+          partyRow,
+        )?.deadline
+
+        if (!statementDeadline) {
+          throw new BadRequestException(
+            `No statement deadline for the party on appeal case ${appealCase.id} of case ${theCase.id}`,
+          )
+        }
+
+        if (
+          isStatementDeadlineExpired(
+            new Date(statementDeadline),
+            new Date(Date.now()),
+          )
+        ) {
+          throw new BadRequestException(
+            `The statement deadline for the party on appeal case ${appealCase.id} of case ${theCase.id} has expired`,
+          )
+        }
+
+        if (hasFiledAppealStatement(appealCase.appealEventLogs, partyRow)) {
+          throw new BadRequestException(
+            `The party has already filed its statement in appeal case ${appealCase.id} of case ${theCase.id}`,
+          )
+        }
       }
 
       await this.writeEventLogRows(

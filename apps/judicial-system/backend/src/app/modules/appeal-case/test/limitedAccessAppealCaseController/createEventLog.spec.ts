@@ -53,10 +53,19 @@ describe('LimitedAccessAppealCaseController - Create event log', () => {
     caseId,
     appealType: AppealCaseType.RULING,
   } as AppealCase
+  const openStatementDeadline = new Date()
+  openStatementDeadline.setDate(openStatementDeadline.getDate() + 14)
   const verdictAppealCase = {
     id: appealCaseId,
     caseId,
     appealType: AppealCaseType.VERDICT,
+    statementDeadlines: [
+      {
+        id: uuid(),
+        defendantId,
+        deadline: openStatementDeadline,
+      },
+    ],
   } as AppealCase
 
   const defender = {
@@ -296,6 +305,52 @@ describe('LimitedAccessAppealCaseController - Create event log', () => {
       expect(then.error).toBeDefined()
       expect(then.error.message).toBe(
         `Current user is not a confirmed appeal defender of defendant ${defendantId}`,
+      )
+      expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('appeal-confirmed defender sends a statement after the deadline', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants: [
+        {
+          id: defendantId,
+          isAppealDefenderConfirmed: true,
+          appealDefenderNationalId: defenderNationalId,
+        },
+      ],
+    } as unknown as Case
+    const expiredDeadline = new Date()
+    expiredDeadline.setDate(expiredDeadline.getDate() - 2)
+    const expiredAppealCase = {
+      ...verdictAppealCase,
+      statementDeadlines: [
+        {
+          id: uuid(),
+          defendantId,
+          deadline: expiredDeadline,
+        },
+      ],
+    } as AppealCase
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        theCase,
+        {
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          defendantId,
+        },
+        expiredAppealCase,
+      )
+    })
+
+    it('should reject the request', () => {
+      expect(then.error).toBeDefined()
+      expect(then.error.message).toBe(
+        `The statement deadline for the party on appeal case ${appealCaseId} of case ${caseId} has expired`,
       )
       expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
     })
