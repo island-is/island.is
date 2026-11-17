@@ -42,7 +42,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.FIRE_COMPENSATION_APPRAISAL_SDF,
   name: m.miscMessages.applicationName,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.ApplicationsCore,
   institution: m.miscMessages.institutionName,
   featureFlag: Features.fireCompensationAppraisalEnabled,
   translationNamespaces:

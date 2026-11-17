@@ -134,7 +134,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.EXAMPLE_INPUTS_SDF,
   name: 'Example Inputs SDF',
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.ApplicationsCore,
   institution: 'Stafrænt Ísland',
   translationNamespaces: ApplicationConfigurations.ExampleInputsSdf.translation,
   dataSchema,
