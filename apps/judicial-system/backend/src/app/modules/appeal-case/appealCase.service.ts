@@ -52,7 +52,6 @@ import {
   AppealEventLogRepositoryService,
   Case,
   CaseRepositoryService,
-  CivilClaimant,
   CreateAppealCase,
   Defendant,
   DefendantRepositoryService,

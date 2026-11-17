@@ -19,7 +19,6 @@ import {
 import { titles } from '@island.is/judicial-system-web/messages'
 import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components'
 import {
-  AlertBanner,
   AllIndictmentCaseFiles,
   AlternativeServiceAnnouncement,
   AppealCourtSessionScheduledCard,
