@@ -12,28 +12,36 @@ import { toInputFields } from '../contract/toInputFields'
 import { toOutputFields } from '../contract/toOutputFields'
 import type { CalculatorContract } from '../types/calculator'
 import type {
-  ChildBenefitInput,
-  InterestBenefitInput,
-  VehicleBenefitInput,
-  VehicleDepreciationInput,
-  VehicleTaxInput,
-  WithholdingTaxInput,
+  CalculateResult,
+  CalculatorInput,
+  CalculatorOutput,
 } from '../types/calculators'
 import { byName } from '../utils/byName'
 import type { CalculatorKey } from './calculators.registry'
 import { calculatorRegistry } from './calculators.registry'
 import { fromClientResult } from './fromClientResult'
-import { invalidClientQueryFields } from './invalidClientQueryFields'
 import { toClientQuery } from './toClientQuery'
+import { validateClientQuery } from './validateClientQuery'
 
-const {
-  childBenefit,
-  interestBenefit,
-  vehicleBenefit,
-  vehicleDepreciation,
-  vehicleTax,
-  withholdingTax,
-} = calculatorRegistry
+const isClientQuery = <K extends CalculatorKey>(
+  _key: K,
+  query: Readonly<Record<string, unknown>>,
+  rejected: readonly string[],
+): query is CalculatorInput<K> => rejected.length === 0
+
+const endpoints: {
+  [K in CalculatorKey]: (
+    query: CalculatorInput<K>,
+  ) => Promise<CalculatorOutput<K> | undefined>
+} = {
+  childBenefit: async (query) => (await getChildBenefit({ query })).data,
+  interestBenefit: async (query) => (await getInterestBenefit({ query })).data,
+  vehicleBenefit: async (query) => (await getVehicleBenefit({ query })).data,
+  vehicleDepreciation: async (query) =>
+    (await getVehicleDepreciation({ query })).data,
+  vehicleTax: async (query) => (await getVehicleTax({ query })).data,
+  withholdingTax: async (query) => (await getWithholdingTax({ query })).data,
+}
 
 @Injectable()
 export class CalculatorsClientService {
@@ -57,52 +65,21 @@ export class CalculatorsClientService {
     }
   }
 
-  validateInput(
-    key: CalculatorKey,
+  async calculate<K extends CalculatorKey>(
+    key: K,
     input: Readonly<Record<string, unknown>>,
-  ): string[] {
-    return invalidClientQueryFields(calculatorRegistry[key].query, input)
-  }
+  ): Promise<CalculateResult<K>> {
+    const { query: queryShape, result: resultShape } = calculatorRegistry[key]
 
-  async getChildBenefit(input: ChildBenefitInput) {
-    const { data } = await getChildBenefit({
-      query: toClientQuery(childBenefit.query, input),
-    })
-    return data && fromClientResult(childBenefit.result, data)
-  }
+    const query = toClientQuery(queryShape, input)
+    const rejected = validateClientQuery(queryShape, query)
 
-  async getVehicleTax(input: VehicleTaxInput) {
-    const { data } = await getVehicleTax({
-      query: toClientQuery(vehicleTax.query, input),
-    })
-    return data && fromClientResult(vehicleTax.result, data)
-  }
+    if (!isClientQuery(key, query, rejected)) {
+      return { rejected }
+    }
 
-  async getVehicleBenefit(input: VehicleBenefitInput) {
-    const { data } = await getVehicleBenefit({
-      query: toClientQuery(vehicleBenefit.query, input),
-    })
-    return data && fromClientResult(vehicleBenefit.result, data)
-  }
+    const data = await endpoints[key](query)
 
-  async getVehicleDepreciation(input: VehicleDepreciationInput) {
-    const { data } = await getVehicleDepreciation({
-      query: toClientQuery(vehicleDepreciation.query, input),
-    })
-    return data && fromClientResult(vehicleDepreciation.result, data)
-  }
-
-  async getWithholdingTax(input: WithholdingTaxInput) {
-    const { data } = await getWithholdingTax({
-      query: toClientQuery(withholdingTax.query, input),
-    })
-    return data && fromClientResult(withholdingTax.result, data)
-  }
-
-  async getInterestBenefit(input: InterestBenefitInput) {
-    const { data } = await getInterestBenefit({
-      query: toClientQuery(interestBenefit.query, input),
-    })
-    return data && fromClientResult(interestBenefit.result, data)
+    return { output: data && fromClientResult(resultShape, data) }
   }
 }

@@ -47,6 +47,12 @@ type GivenWhenThen = (
 
 // The public prosecution reviewer withdraws the prosecution's appeal of one
 // defendant's verdict - the review decision changed away from appealing.
+//
+// Over HTTP the transition route is closed to the prosecution for verdict
+// appeals (see userAppealedAppealCase in the roles rules); the withdrawal is
+// only reached from the defendant service when the review decision changes.
+// The controller method is called here because guards do not run in controller
+// unit tests, which makes it a convenient way into the same service logic.
 describe('AppealCaseController - Prosecution withdraws a verdict appeal', () => {
   const caseId = uuid()
   const appealCaseId = uuid()

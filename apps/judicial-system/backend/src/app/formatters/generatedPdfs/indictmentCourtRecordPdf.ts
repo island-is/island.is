@@ -217,7 +217,7 @@ export const createIndictmentCourtRecordPdf = (
     addEmptyLines(doc)
     addNormalText(
       doc,
-      `Sóknaraðili er ${theCase.prosecutorsOffice?.name ?? 'óþekktur'}.`,
+      `Ákæruvald er ${theCase.prosecutorsOffice?.name ?? 'óþekktur'}.`,
     )
 
     if (isMultipleDefendants) {

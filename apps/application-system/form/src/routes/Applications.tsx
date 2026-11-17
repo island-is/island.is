@@ -92,7 +92,10 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
     APPLICATION_CARDS,
     {
       variables: {
-        input: { typeId: type },
+        input: {
+          typeId: type,
+          excludeHiddenFromApplicationSystemOverview: true,
+        },
       },
       skip: !type && !delegationsChecked,
       fetchPolicy: 'cache-and-network',
