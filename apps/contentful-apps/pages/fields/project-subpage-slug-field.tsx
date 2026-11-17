@@ -71,20 +71,36 @@ const ProjectSubpageSlugField = () => {
         return
       }
 
-      const subpagesWithSameSlug = await cma.entry.getMany({
-        query: {
-          locale: sdk.field.locale,
-          content_type: 'projectSubpage',
-          'fields.slug': value,
-          'sys.id[ne]': sdk.entry.getSys().id,
-          'sys.archivedVersion[exists]': false,
-          'fields.projectPage.sys.id': projectPageId,
-          limit: 1,
-          select: 'sys',
-        },
-      })
+      const [subpagesWithSameSlug, parentSubpagesWithSameSlug] =
+        await Promise.all([
+          cma.entry.getMany({
+            query: {
+              locale: sdk.field.locale,
+              content_type: 'projectSubpage',
+              'fields.slug': value,
+              'sys.id[ne]': sdk.entry.getSys().id,
+              'sys.archivedVersion[exists]': false,
+              'fields.projectPage.sys.id': projectPageId,
+              limit: 1,
+              select: 'sys',
+            },
+          }),
+          // The web resolves a project page's own subpages before parent
+          // subpages, so a subpage with the same slug would hide a parent subpage
+          cma.entry.getMany({
+            query: {
+              locale: sdk.field.locale,
+              content_type: 'projectParentSubpage',
+              'fields.slug': value,
+              'sys.archivedVersion[exists]': false,
+              'fields.projectPage.sys.id': projectPageId,
+              limit: 1,
+              select: 'sys',
+            },
+          }),
+        ])
 
-      // Discard the result if the slug or project page changed during the query
+      // Discard the result if the slug or project page changed during the queries
       if (
         latestFieldValues.current.value !== value ||
         latestFieldValues.current.projectPageId !== projectPageId
@@ -92,7 +108,10 @@ const ProjectSubpageSlugField = () => {
         return
       }
 
-      setIsValid(subpagesWithSameSlug.items.length === 0)
+      setIsValid(
+        subpagesWithSameSlug.items.length === 0 &&
+          parentSubpagesWithSameSlug.items.length === 0,
+      )
     },
     DEBOUNCE_TIME,
     [value, projectPageId],
@@ -127,7 +146,7 @@ const ProjectSubpageSlugField = () => {
       )}
       {value.length > 0 && isInvalid && (
         <Text fontColor="red400">
-          Project subpage already exists with this slug
+          Another page in this project already exists with this slug
         </Text>
       )}
     </Stack>
