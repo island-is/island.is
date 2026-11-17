@@ -31,12 +31,12 @@ non-chained, and input and output field shapes must be valid. A broken contract
 throws because it is a code defect that must be fixed before deployment, not a
 recoverable user error.
 
-### The API is generic; the RSK call is specific
+### The API is generic; so is the RSK call
 
 The GraphQL API carries values keyed by field key. After submission validation,
-the domain converts that generic record to the input type required by the
-selected RSK calculator. This keeps the consumer API stable while retaining
-compile-time checks for every calculator-specific RSK call.
+the domain passes that record to the client's `calculate(key, values)`, which
+checks it against the calculator's generated schema and calls RSK. The domain
+names no RSK field.
 
 ### Submission errors are returned, not thrown
 
@@ -44,8 +44,7 @@ Input validation checks unknown and duplicate fields, requiredness,
 applicability, type, permitted options, and dates; the RSK client then checks
 the values against its generated spec, and each field it rejects is returned as
 an invalid value. These are expected user-facing failures, so calculation is
-skipped and structured errors are returned. The defensive conversion helpers throw only if an invariant that
-validation established is later broken.
+skipped and structured errors are returned.
 
 ### Results are constrained by the published contract
 
@@ -74,7 +73,6 @@ duplicating calculator rules.
 
 - `contract/` maps and validates calculator contracts.
 - `calculate/submission/` validates submitted values.
-- `calculate/clientInput/` builds calculator-specific RSK inputs.
 - `calculate/outputFieldValue/` maps RSK results to public values.
 - `models/inputField/` and `models/outputField/` contain one GraphQL model per
   file; their `index.ts` files only re-export models.
