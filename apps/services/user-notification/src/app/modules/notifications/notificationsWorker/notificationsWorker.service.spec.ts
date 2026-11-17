@@ -1367,13 +1367,14 @@ describe('NotificationsWorkerService', () => {
       })
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
 
+      // The two jobs may be stored in either order
       const notifications = await notificationModel.findAll({
         where: { recipient: userWithNoDelegations.nationalId },
-        order: [['id', 'ASC']],
       })
       expect(notifications).toHaveLength(2)
-      expect(notifications[0].deadline?.toISOString()).toBe(deadline)
-      expect(notifications[1].deadline).toBeNull()
+      expect(
+        notifications.map((n) => n.deadline?.toISOString() ?? null),
+      ).toEqual(expect.arrayContaining([deadline, null]))
     })
 
     it('should forward the deadline to delegation holders', async () => {
