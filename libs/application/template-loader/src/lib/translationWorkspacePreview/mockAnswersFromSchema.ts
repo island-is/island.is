@@ -203,6 +203,17 @@ const KNOWN_ANSWERS_DEFAULTS_BY_TYPE: Partial<
       },
     ],
   },
+  [ApplicationTypes.PARENTAL_LEAVE_V2]: {
+    periods: [
+      {
+        startDate: '2026-04-01',
+        endDate: '2026-04-30',
+        ratio: '100',
+        firstPeriodStart: 'specificDate',
+        useLength: 'no',
+      },
+    ],
+  },
 }
 
 const isPlainProviderKey = (prop: string): boolean =>
