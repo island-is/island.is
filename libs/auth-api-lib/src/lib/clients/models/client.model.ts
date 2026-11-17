@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   BelongsTo,
   Column,
@@ -15,6 +15,7 @@ import {
 
 import { defaultAcrValue } from '../../types'
 import { ClientAllowedCorsOrigin } from './client-allowed-cors-origin.model'
+import { ClientNativeApp } from './client-native-app'
 import { ClientAllowedScope } from './client-allowed-scope.model'
 import { ClientPostLogoutRedirectUri } from './client-post-logout-redirect-uri.model'
 import { ClientRedirectUri } from './client-redirect-uri.model'
@@ -437,6 +438,14 @@ export class Client extends Model {
     example: false,
   })
   requireDpop!: boolean
+
+  /** Set for a native app that authenticates to IdentityServer with an attestation. */
+  @Column({
+    type: DataType.JSONB,
+    allowNull: true,
+  })
+  @ApiPropertyOptional({ type: ClientNativeApp, nullable: true })
+  nativeApp?: ClientNativeApp | null
 
   @Column({
     type: DataType.DATE,
