@@ -99,6 +99,13 @@ export const equalityReportSection = buildSection({
               },
               { mode: 'draft' },
             ),
+            buildCustomField(
+              {
+                id: 'equalityAttachments',
+                component: 'EqualityAttachments',
+              },
+              { mode: 'draft' },
+            ),
           ],
         }),
       ],

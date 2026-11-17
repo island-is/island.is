@@ -132,7 +132,12 @@ const indictmentWithAppealedVerdict = (caseId: string) =>
     id: caseId,
     type: CaseType.INDICTMENT,
     state: CaseState.COMPLETED,
-    verdictAppealCase: { id: uuid() } as AppealCase,
+    // The court of appeals has no access to a verdict appeal until an appeal
+    // summons has been sent to it.
+    verdictAppealCase: {
+      id: uuid(),
+      sentAppealSummonses: [{ id: uuid() }],
+    } as AppealCase,
   } as Case)
 
 // One row per allowed role: the user, a body the route's category guard lets
