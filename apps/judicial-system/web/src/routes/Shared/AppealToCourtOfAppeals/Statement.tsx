@@ -138,11 +138,13 @@ const canAccessVerdictAppealStatementPage = (
   }
 
   if (party.civilClaimantId) {
-    const isAppealConfirmedSpokesperson =
-      getDefenceUserAppealConfirmedPartyIds(workingCase, user).some(
-        (confirmedParty) =>
-          confirmedParty.civilClaimantId === party.civilClaimantId,
-      )
+    const isAppealConfirmedSpokesperson = getDefenceUserAppealConfirmedPartyIds(
+      workingCase,
+      user,
+    ).some(
+      (confirmedParty) =>
+        confirmedParty.civilClaimantId === party.civilClaimantId,
+    )
 
     if (!isAppealConfirmedSpokesperson) {
       return false
@@ -173,8 +175,9 @@ const Statement = ({ isVerdictAppeal = false }: Props) => {
     : getDefenceUserPartyIds(workingCase, user)
   const filingPartyName = isVerdictAppeal
     ? defendantId
-      ? workingCase.defendants?.find((defendant) => defendant.id === defendantId)
-          ?.name
+      ? workingCase.defendants?.find(
+          (defendant) => defendant.id === defendantId,
+        )?.name
       : civilClaimantId
       ? workingCase.civilClaimants?.find(
           (civilClaimant) => civilClaimant.id === civilClaimantId,
