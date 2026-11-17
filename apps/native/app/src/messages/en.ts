@@ -55,6 +55,7 @@ export const en: TranslatedMessages = {
   'electronicId.error.tooManyRequests':
     'Too many electronic ID requests for now. Try again in a few minutes.',
   'applock.logout': 'Log out',
+  'biometrics.close': 'Close',
 
   // log in again after the update
   'relogin.title': 'Log in again',

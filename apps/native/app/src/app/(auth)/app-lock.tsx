@@ -25,6 +25,7 @@ import {
 import { preferencesStore } from '@/stores/preferences-store'
 import { useUiStore } from '@/stores/ui-store'
 import { DeviceLock } from '@/components/device-bound-auth/device-lock'
+import { ElectronicIdConfirmation } from '@/components/device-bound-auth/electronic-id-confirmation'
 import { useBiometricType } from '@/hooks/use-biometric-type'
 import { useNativeUnlock } from '@/hooks/use-native-unlock'
 import {
@@ -271,6 +272,18 @@ function NativeLock({
 }) {
   const { authenticationTypes } = useUiStore()
   const biometricType = useBiometricType(authenticationTypes)?.text
+
+  // Electronic ID shows its code in place of the lock while it waits.
+  if (unlock.verificationCode !== undefined) {
+    return (
+      <ElectronicIdConfirmation
+        purpose="unlock"
+        fullScreen
+        verificationCode={unlock.verificationCode}
+        onCancelPress={unlock.cancelElectronicId}
+      />
+    )
+  }
 
   return (
     <DeviceLock

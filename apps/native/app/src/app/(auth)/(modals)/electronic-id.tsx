@@ -20,7 +20,7 @@ export default function ElectronicIdScreen() {
   const biometricType = useBiometricType(authenticationTypes)?.text
 
   useEffect(() => {
-    // The request this sheet opened for, not one started after it closes.
+    // The request this opened for, not one started after it closes.
     const { requestId, cancel } = electronicIdStore.getState()
     return () => {
       if (electronicIdStore.getState().sheetRequestId === requestId) {

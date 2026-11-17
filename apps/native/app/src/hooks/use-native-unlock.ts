@@ -11,6 +11,7 @@ import {
   isBiometricKeyInvalidated,
   isTooManyElectronicIdRequests,
 } from '@/lib/ias'
+import { getSystemIntl } from '@/components/providers/locale-provider'
 import { authStore } from '@/stores/auth-store'
 import { isCancelled, useElectronicIdUnlock } from './use-electronic-id-unlock'
 
@@ -40,7 +41,9 @@ export function useNativeUnlock({
   const [status, setStatus] = useState<NativeUnlockStatus>('idle')
   const [electronicIdError, setElectronicIdError] =
     useState<ElectronicIdError>()
-  const electronicId = useElectronicIdUnlock('unlock')
+  // Shown by the lock in place of itself: a screen pushed over the lock,
+  // itself a modal, would end up behind it.
+  const electronicId = useElectronicIdUnlock('unlock', { inline: true })
   const ias = getIasClient()
 
   const unlockWithBiometrics = async () => {
@@ -52,10 +55,8 @@ export function useNativeUnlock({
     try {
       const tokens = await ias.unlockWithBiometrics({
         title: 'Ísland.is',
-        cancel: intl.formatMessage({
-          id: 'applock.useElectronicId',
-          defaultMessage: 'Use electronic ID',
-        }),
+        // The system's dialog: its own text is in the phone's language.
+        cancel: getSystemIntl().formatMessage({ id: 'biometrics.close' }),
       })
       authStore.getState().unlockNative(tokens)
       setStatus('idle')
@@ -115,7 +116,10 @@ export function useNativeUnlock({
     /** Why the last electronic ID attempt failed; cleared on the next try. */
     electronicIdError,
     isBiometricsEnabled: ias.isBiometricsEnabled(),
+    /** Shown while electronic ID waits; undefined until IAS sends it. */
+    verificationCode: electronicId.verificationCode,
     unlockWithBiometrics,
     unlockWithElectronicId,
+    cancelElectronicId: electronicId.cancel,
   }
 }

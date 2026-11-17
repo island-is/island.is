@@ -8,6 +8,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { AppState, Platform } from 'react-native'
 
 import { Button, Onboarding } from '@/ui'
+import { ElectronicIdConfirmation } from '@/components/device-bound-auth/electronic-id-confirmation'
 import { useEnableBiometrics } from '@/hooks/use-enable-biometrics'
 import finger from '@/assets/icons/finger-16.png'
 import iris from '@/assets/icons/iris-16.png'
@@ -60,7 +61,9 @@ export default function BiometricsScreen() {
   const [isEnrolled, setIsEnrolled] = useState(false)
   const [authTypes, setAuthTypes] = useState<AuthenticationType[]>([])
   const biometricType = useBiometricType(authTypes)
-  const { isEnabling, enableBiometrics } = useEnableBiometrics()
+  // The electronic ID approval is shown in place of this step.
+  const { isEnabling, enableBiometrics, verificationCode, cancelElectronicId } =
+    useEnableBiometrics({ inline: true })
 
   useEffect(() => {
     Promise.all([isEnrolledAsync(), supportedAuthenticationTypesAsync()]).then(
@@ -91,6 +94,18 @@ export default function BiometricsScreen() {
   const onSkipPress = () => {
     preferencesStore.setState({ hasOnboardedBiometrics: true })
     nextOnboardingStep()
+  }
+
+  if (verificationCode !== undefined) {
+    return (
+      <ElectronicIdConfirmation
+        purpose="enableBiometrics"
+        fullScreen
+        biometricType={biometricType.text}
+        verificationCode={verificationCode}
+        onCancelPress={cancelElectronicId}
+      />
+    )
   }
 
   return (

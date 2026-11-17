@@ -1,13 +1,16 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { ScrollView, TouchableOpacity } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { TouchableOpacity } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import logo from '@/assets/logo/logo-64w.png'
 import { Button, LinkText, LoadingDots, token, Typography } from '@/ui'
 
-const Host = styled(SafeAreaView)`
+// The scroll view is the root, with the button at the end of its content. In
+// a sheet, react-native-screens sizes a scroll view that's nested in another
+// view to the whole screen, and over another sheet that moves it out of view.
+const Host = styled.ScrollView`
   flex: 1;
   background-color: ${token((t) => t.background.invert)};
 `
@@ -20,6 +23,7 @@ const Logo = styled.Image`
 `
 
 const Content = styled.View`
+  flex-grow: 1;
   align-items: center;
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
   padding-top: ${({ theme }) => theme.spacing[3]}px;
@@ -55,10 +59,14 @@ const Footer = styled.View`
 interface ElectronicIdConfirmationProps {
   /**
    * What the person is confirming: logging in, opening the app, or turning
-   * on biometrics (which then names `biometricType`). Login is a full
-   * screen; the others are shown in a sheet.
+   * on biometrics (which then names `biometricType`).
    */
   purpose: 'login' | 'unlock' | 'enableBiometrics'
+  /**
+   * A whole screen with the logo at the top. Otherwise it's in a sheet, under
+   * a heading. Login is always a whole screen.
+   */
+  fullScreen?: boolean
   biometricType?: string
   /** The code the person compares against the one on their phone. */
   verificationCode: string
@@ -73,6 +81,7 @@ interface ElectronicIdConfirmationProps {
  */
 export function ElectronicIdConfirmation({
   purpose,
+  fullScreen = false,
   biometricType,
   verificationCode,
   onCancelPress,
@@ -80,71 +89,78 @@ export function ElectronicIdConfirmation({
 }: ElectronicIdConfirmationProps) {
   const intl = useIntl()
   const theme = useTheme()
-  const isFullScreen = purpose === 'login'
+  // In a full-screen modal SafeAreaView gets no insets on iOS, so pad with
+  // the window's. A sheet starts below the top, so it only needs the bottom.
+  const insets = useSafeAreaInsets()
+  const isFullScreen = fullScreen || purpose === 'login'
 
   return (
-    <Host edges={isFullScreen ? ['top', 'bottom'] : ['bottom']}>
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <Content>
-          {isFullScreen ? (
-            <Logo source={logo} resizeMode="contain" />
-          ) : (
-            <Typography
-              variant="body3"
-              weight="600"
-              color={theme.tokens.foreground.brand}
-              textAlign="center"
-            >
-              {intl.formatMessage({ id: 'electronicId.eyebrow' })}
-            </Typography>
-          )}
-          <Title variant="heading2" textAlign="center">
-            {intl.formatMessage({ id: 'electronicId.title' })}
-          </Title>
-          <Typography textAlign="center">
-            {purpose === 'enableBiometrics'
-              ? intl.formatMessage(
-                  { id: 'electronicId.subtitle.enableBiometrics' },
-                  { biometricType },
-                )
-              : intl.formatMessage({
-                  id:
-                    purpose === 'login'
-                      ? 'electronicId.subtitle.login'
-                      : 'electronicId.subtitle.unlock',
-                })}
-          </Typography>
-          <CodeBox
-            accessible
-            accessibilityLiveRegion="polite"
-            // Read digit by digit, not as "four thousand seven hundred…".
-            accessibilityLabel={`${intl.formatMessage({
-              id: 'electronicId.codeLabel',
-            })}: ${verificationCode.split('').join(' ')}`}
+    <Host
+      contentContainerStyle={{
+        flexGrow: 1,
+        paddingTop: isFullScreen ? insets.top : 0,
+        paddingBottom: insets.bottom,
+      }}
+    >
+      <Content>
+        {isFullScreen ? (
+          <Logo source={logo} resizeMode="contain" />
+        ) : (
+          <Typography
+            variant="body3"
+            weight="600"
+            color={theme.tokens.foreground.brand}
+            textAlign="center"
           >
-            <Typography variant="body2">
-              {intl.formatMessage({ id: 'electronicId.codeLabel' })}
-            </Typography>
-            <Typography variant="heading2">{verificationCode}</Typography>
-          </CodeBox>
-          <Dots>
-            <LoadingDots />
-          </Dots>
-          <Instructions variant="body3" textAlign="center">
-            {intl.formatMessage({ id: 'electronicId.instructions' })}
-          </Instructions>
-          {onAuthenticatorAppPress && (
-            <TouchableOpacity
-              onPress={onAuthenticatorAppPress}
-              accessibilityRole="link"
-            >
-              <LinkText variant="small">
-                {intl.formatMessage({ id: 'electronicId.useAuthenticatorApp' })}
-              </LinkText>
-            </TouchableOpacity>
-          )}
-        </Content>
-      </ScrollView>
+            {intl.formatMessage({ id: 'electronicId.eyebrow' })}
+          </Typography>
+        )}
+        <Title variant="heading2" textAlign="center">
+          {intl.formatMessage({ id: 'electronicId.title' })}
+        </Title>
+        <Typography textAlign="center">
+          {purpose === 'enableBiometrics'
+            ? intl.formatMessage(
+                { id: 'electronicId.subtitle.enableBiometrics' },
+                { biometricType },
+              )
+            : intl.formatMessage({
+                id:
+                  purpose === 'login'
+                    ? 'electronicId.subtitle.login'
+                    : 'electronicId.subtitle.unlock',
+              })}
+        </Typography>
+        <CodeBox
+          accessible
+          accessibilityLiveRegion="polite"
+          // Read digit by digit, not as "four thousand seven hundred…".
+          accessibilityLabel={`${intl.formatMessage({
+            id: 'electronicId.codeLabel',
+          })}: ${verificationCode.split('').join(' ')}`}
+        >
+          <Typography variant="body2">
+            {intl.formatMessage({ id: 'electronicId.codeLabel' })}
+          </Typography>
+          <Typography variant="heading2">{verificationCode}</Typography>
+        </CodeBox>
+        <Dots>
+          <LoadingDots />
+        </Dots>
+        <Instructions variant="body3" textAlign="center">
+          {intl.formatMessage({ id: 'electronicId.instructions' })}
+        </Instructions>
+        {onAuthenticatorAppPress && (
+          <TouchableOpacity
+            onPress={onAuthenticatorAppPress}
+            accessibilityRole="link"
+          >
+            <LinkText variant="small">
+              {intl.formatMessage({ id: 'electronicId.useAuthenticatorApp' })}
+            </LinkText>
+          </TouchableOpacity>
+        )}
+      </Content>
       <Footer>
         <Button
           isOutlined
