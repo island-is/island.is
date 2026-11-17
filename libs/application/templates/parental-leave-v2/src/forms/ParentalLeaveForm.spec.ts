@@ -33,6 +33,25 @@ const findParent = (node: FormNode, id: string): FormNode | undefined => {
   return undefined
 }
 
+const containers: string[] = [
+  FormItemTypes.FORM,
+  FormItemTypes.SECTION,
+  FormItemTypes.SUB_SECTION,
+]
+const screenTypes: string[] = [
+  FormItemTypes.MULTI_FIELD,
+  FormItemTypes.REPEATER,
+  FormItemTypes.EXTERNAL_DATA_PROVIDER,
+]
+
+const findBareFieldScreens = (node: FormNode): string[] =>
+  ((node as { children?: FormNode[] }).children ?? []).flatMap((child) => {
+    if (containers.includes(child.type)) {
+      return findBareFieldScreens(child)
+    }
+    return screenTypes.includes(child.type) ? [] : [String(child.id)]
+  })
+
 describe('ParentalLeaveForm', () => {
   it('should clear the manually entered other parent when another option is picked', () => {
     const chooseOtherParent = findField(
@@ -46,8 +65,15 @@ describe('ParentalLeaveForm', () => {
     ])
   })
 
-  // A bare field screen is validated against every answer, so unsaved payment
-  // answers left behind by going back from the payments screen blocked "Next".
+  // A bare field screen is validated against every answer, so unsaved answers
+  // left behind by going back, e.g. from the payments screen, blocked "Next".
+  it.each([
+    ['apply', ParentalLeaveForm],
+    ['edit', EditOrAddEmployersAndPeriods],
+  ])('should only have multi-field screens in the %s form', (_, form) => {
+    expect(findBareFieldScreens(form)).toEqual([])
+  })
+
   it.each([
     ['apply', ParentalLeaveForm],
     ['edit', EditOrAddEmployersAndPeriods],

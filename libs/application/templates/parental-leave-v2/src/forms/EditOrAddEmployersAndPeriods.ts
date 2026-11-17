@@ -696,15 +696,10 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
           },
           children: [...buildMultipleBirthsDaysFields()],
         }),
-        buildCustomField({
-          id: 'editTransferRights',
-          childInputIds: [
-            'transferRights',
-            'requestRights.isRequestingRights',
-            'requestRights.requestDays',
-            'giveRights.isGivingRights',
-            'giveRights.giveDays',
-          ],
+        // Not a bare field screen, which the client validates
+        // against every answer: see otherParentRightOfAccess
+        buildMultiField({
+          id: 'editTransferRightsScreen',
           condition: (answers, externalData) => {
             const { hasMultipleBirths, otherParent } =
               getApplicationAnswers(answers)
@@ -726,9 +721,19 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
             )
           },
           title: parentalLeaveFormMessages.shared.transferRightsTitle,
-          description:
-            parentalLeaveFormMessages.shared.transferRightsDescription,
-          component: 'TransferRights',
+          children: [
+            buildCustomField({
+              id: 'editTransferRights',
+              description:
+                parentalLeaveFormMessages.shared.transferRightsDescription,
+              component: 'TransferRights',
+            }),
+            buildHiddenInput({ id: 'transferRights' }),
+            buildHiddenInput({ id: 'requestRights.isRequestingRights' }),
+            buildHiddenInput({ id: 'requestRights.requestDays' }),
+            buildHiddenInput({ id: 'giveRights.isGivingRights' }),
+            buildHiddenInput({ id: 'giveRights.giveDays' }),
+          ],
         }),
         buildMultiField({
           id: 'editRequestRights',
@@ -1055,23 +1060,30 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
           id: 'reviewUpload',
           title: parentalLeaveFormMessages.fileUpload.additionalAttachmentTitle,
           children: [
-            buildFileUploadField({
-              id: 'fileUpload.changeEmployerFile',
+            // Not a bare field screen, which the client validates
+            // against every answer: see otherParentRightOfAccess
+            buildMultiField({
+              id: 'changeEmployerFileScreen',
               title:
                 parentalLeaveFormMessages.fileUpload.additionalAttachmentTitle,
-              introduction:
-                parentalLeaveFormMessages.fileUpload
-                  .additionalAttachmentDescription,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader: '',
-              uploadDescription:
-                parentalLeaveFormMessages.fileUpload.uploadDescription,
-              uploadButtonLabel:
-                parentalLeaveFormMessages.fileUpload.attachmentButton,
-              uploadMultiple: true,
+              children: [
+                buildFileUploadField({
+                  id: 'fileUpload.changeEmployerFile',
+                  introduction:
+                    parentalLeaveFormMessages.fileUpload
+                      .additionalAttachmentDescription,
+                  maxSize: FILE_SIZE_LIMIT,
+                  maxSizeErrorText:
+                    parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
+                  uploadAccept: '.pdf',
+                  uploadHeader: '',
+                  uploadDescription:
+                    parentalLeaveFormMessages.fileUpload.uploadDescription,
+                  uploadButtonLabel:
+                    parentalLeaveFormMessages.fileUpload.attachmentButton,
+                  uploadMultiple: true,
+                }),
+              ],
             }),
           ],
         }),

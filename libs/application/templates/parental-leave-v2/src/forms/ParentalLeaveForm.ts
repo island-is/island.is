@@ -7,6 +7,7 @@ import {
   buildDescriptionField,
   buildFileUploadField,
   buildForm,
+  buildHiddenInput,
   buildMultiField,
   buildRadioField,
   buildRepeater,
@@ -800,20 +801,27 @@ export const ParentalLeaveForm: Form = buildForm({
           id: 'parentalGrantEmployment',
           title: parentalLeaveFormMessages.employer.subSection,
           children: [
-            buildRadioField({
-              id: 'employerLastSixMonths',
+            // Not a bare field screen, which the client validates
+            // against every answer: see otherParentRightOfAccess
+            buildMultiField({
+              id: 'employerLastSixMonthsScreen',
               title: parentalLeaveFormMessages.employer.employerLastSixMonths,
-              width: 'half',
-              required: true,
-              options: [
-                {
-                  value: YES,
-                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
-                },
-                {
-                  value: NO,
-                  label: parentalLeaveFormMessages.shared.noOptionLabel,
-                },
+              children: [
+                buildRadioField({
+                  id: 'employerLastSixMonths',
+                  width: 'half',
+                  required: true,
+                  options: [
+                    {
+                      value: YES,
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                    },
+                    {
+                      value: NO,
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                    },
+                  ],
+                }),
               ],
             }),
           ],
@@ -840,92 +848,103 @@ export const ParentalLeaveForm: Form = buildForm({
             )
           },
           children: [
-            buildTableRepeaterField({
-              id: 'employers',
+            // Not a bare field screen, which the client validates
+            // against every answer: see otherParentRightOfAccess
+            buildMultiField({
+              id: 'employersScreen',
               title: parentalLeaveFormMessages.employer.title,
-              description: (application) => {
-                const { employerLastSixMonths } = getApplicationAnswers(
-                  application.answers,
-                )
-                return employerLastSixMonths === YES
-                  ? parentalLeaveFormMessages.employer.grantsDescription
-                  : parentalLeaveFormMessages.employer.description
-              },
-              formTitle: parentalLeaveFormMessages.employer.registration,
-              addItemButtonText: parentalLeaveFormMessages.employer.addEmployer,
-              saveItemButtonText:
-                parentalLeaveFormMessages.employer.registerEmployer,
-              removeButtonTooltipText:
-                parentalLeaveFormMessages.employer.deleteEmployer,
-              editButtonTooltipText:
-                parentalLeaveFormMessages.employer.editEmployer,
-              editField: true,
-              marginTop: 0,
-              fields: {
-                email: {
-                  component: 'input',
-                  label: parentalLeaveFormMessages.employer.email,
-                  type: 'email',
-                  dataTestId: 'employer-email',
-                },
-                phoneNumber: {
-                  component: 'input',
-                  label: parentalLeaveFormMessages.employer.phoneNumber,
-                  type: 'tel',
-                  format: '###-####',
-                  placeholder: '000-0000',
-                  dataTestId: 'employer-phone-number',
-                },
-                ratio: {
-                  component: 'input',
-                  label: parentalLeaveFormMessages.employer.ratio,
-                  placeholder:
-                    parentalLeaveFormMessages.employer.ratioPlaceholder,
-                  dataTestId: 'employment-ratio',
-                  type: 'number',
-                  suffix: '%',
-                  min: 1,
-                  max: 100,
-                },
-                stillEmployed: {
-                  component: 'radio',
-                  label: parentalLeaveFormMessages.employer.stillEmployed,
-                  width: 'half',
-                  options: [
-                    {
-                      value: YES,
-                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
-                    },
-                    {
-                      value: NO,
-                      label: parentalLeaveFormMessages.shared.noOptionLabel,
-                    },
-                  ],
-                  displayInTable: false,
-                  condition: (application) => {
-                    const { applicationType, employerLastSixMonths } =
-                      getApplicationAnswers(application.answers)
-
-                    return (
-                      (applicationType === PARENTAL_GRANT ||
-                        applicationType === PARENTAL_GRANT_STUDENTS) &&
-                      employerLastSixMonths === YES
+              children: [
+                buildTableRepeaterField({
+                  id: 'employers',
+                  description: (application) => {
+                    const { employerLastSixMonths } = getApplicationAnswers(
+                      application.answers,
                     )
+                    return employerLastSixMonths === YES
+                      ? parentalLeaveFormMessages.employer.grantsDescription
+                      : parentalLeaveFormMessages.employer.description
                   },
-                },
-              },
-              table: {
-                header: [
-                  parentalLeaveFormMessages.employer.emailHeader,
-                  parentalLeaveFormMessages.employer.phoneNumberHeader,
-                  parentalLeaveFormMessages.employer.ratioHeader,
-                ],
-                format: {
-                  phoneNumber: (value) =>
-                    formatPhoneNumber(removeCountryCode(value ?? '')),
-                  ratio: (value) => `${value}%`,
-                },
-              },
+                  formTitle: parentalLeaveFormMessages.employer.registration,
+                  addItemButtonText:
+                    parentalLeaveFormMessages.employer.addEmployer,
+                  saveItemButtonText:
+                    parentalLeaveFormMessages.employer.registerEmployer,
+                  removeButtonTooltipText:
+                    parentalLeaveFormMessages.employer.deleteEmployer,
+                  editButtonTooltipText:
+                    parentalLeaveFormMessages.employer.editEmployer,
+                  editField: true,
+                  marginTop: 0,
+                  fields: {
+                    email: {
+                      component: 'input',
+                      label: parentalLeaveFormMessages.employer.email,
+                      type: 'email',
+                      dataTestId: 'employer-email',
+                    },
+                    phoneNumber: {
+                      component: 'input',
+                      label: parentalLeaveFormMessages.employer.phoneNumber,
+                      type: 'tel',
+                      format: '###-####',
+                      placeholder: '000-0000',
+                      dataTestId: 'employer-phone-number',
+                    },
+                    ratio: {
+                      component: 'input',
+                      label: parentalLeaveFormMessages.employer.ratio,
+                      placeholder:
+                        parentalLeaveFormMessages.employer.ratioPlaceholder,
+                      dataTestId: 'employment-ratio',
+                      type: 'number',
+                      suffix: '%',
+                      min: 1,
+                      max: 100,
+                    },
+                    stillEmployed: {
+                      component: 'radio',
+                      label: parentalLeaveFormMessages.employer.stillEmployed,
+                      width: 'half',
+                      options: [
+                        {
+                          value: YES,
+                          label:
+                            parentalLeaveFormMessages.shared.yesOptionLabel,
+                        },
+                        {
+                          value: NO,
+                          label: parentalLeaveFormMessages.shared.noOptionLabel,
+                        },
+                      ],
+                      displayInTable: false,
+                      condition: (application) => {
+                        const {
+                          applicationType,
+                          employerLastSixMonths,
+                        } = getApplicationAnswers(application.answers)
+
+                        return (
+                          (applicationType === PARENTAL_GRANT ||
+                            applicationType === PARENTAL_GRANT_STUDENTS) &&
+                          employerLastSixMonths === YES
+                        )
+                      },
+                    },
+                  },
+                  table: {
+                    header: [
+                      parentalLeaveFormMessages.employer.emailHeader,
+                      parentalLeaveFormMessages.employer.phoneNumberHeader,
+                      parentalLeaveFormMessages.employer.ratioHeader,
+                    ],
+                    format: {
+                      phoneNumber: (value) =>
+                        formatPhoneNumber(removeCountryCode(value ?? '')),
+                      ratio: (value) => `${value}%`,
+                    },
+                  },
+                }),
+              ],
             }),
           ],
         }),
@@ -968,33 +987,43 @@ export const ParentalLeaveForm: Form = buildForm({
             )
           },
           children: [
-            buildFileUploadField({
-              id: 'fileUpload.selfEmployedFile',
+            // Not a bare field screen, which the client validates
+            // against every answer: see otherParentRightOfAccess
+            buildMultiField({
+              id: 'selfEmployedFileScreen',
               title: parentalLeaveFormMessages.selfEmployed.attachmentTitle,
-              description:
-                parentalLeaveFormMessages.selfEmployed.attachmentDescription,
-              introduction:
-                parentalLeaveFormMessages.selfEmployed.attachmentDescription,
               condition: (answers) => {
                 const { isSelfEmployed } = getApplicationAnswers(answers)
 
                 return isSelfEmployed === YES
               },
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
-              uploadDescription:
-                parentalLeaveFormMessages.fileUpload.uploadDescription,
-              uploadButtonLabel:
-                parentalLeaveFormMessages.fileUpload.attachmentButton,
+              children: [
+                buildFileUploadField({
+                  id: 'fileUpload.selfEmployedFile',
+                  description:
+                    parentalLeaveFormMessages.selfEmployed
+                      .attachmentDescription,
+                  introduction:
+                    parentalLeaveFormMessages.selfEmployed
+                      .attachmentDescription,
+                  maxSize: FILE_SIZE_LIMIT,
+                  maxSizeErrorText:
+                    parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
+                  uploadAccept: '.pdf',
+                  uploadHeader:
+                    parentalLeaveFormMessages.fileUpload.uploadHeader,
+                  uploadDescription:
+                    parentalLeaveFormMessages.fileUpload.uploadDescription,
+                  uploadButtonLabel:
+                    parentalLeaveFormMessages.fileUpload.attachmentButton,
+                }),
+              ],
             }),
-            buildFileUploadField({
-              id: 'fileUpload.studentFile',
+            // Not a bare field screen, which the client validates
+            // against every answer: see otherParentRightOfAccess
+            buildMultiField({
+              id: 'studentFileScreen',
               title: parentalLeaveFormMessages.attachmentScreen.studentTitle,
-              introduction:
-                parentalLeaveFormMessages.attachmentScreen.studentDescription,
               condition: (answers) =>
                 (
                   answers as {
@@ -1003,22 +1032,31 @@ export const ParentalLeaveForm: Form = buildForm({
                     }
                   }
                 )?.applicationType?.option === PARENTAL_GRANT_STUDENTS,
-              maxSizeErrorText:
-                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
-              uploadDescription:
-                parentalLeaveFormMessages.fileUpload.uploadDescription,
-              uploadButtonLabel:
-                parentalLeaveFormMessages.fileUpload.attachmentButton,
+              children: [
+                buildFileUploadField({
+                  id: 'fileUpload.studentFile',
+                  introduction:
+                    parentalLeaveFormMessages.attachmentScreen
+                      .studentDescription,
+                  maxSizeErrorText:
+                    parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
+                  uploadAccept: '.pdf',
+                  uploadHeader:
+                    parentalLeaveFormMessages.fileUpload.uploadHeader,
+                  uploadDescription:
+                    parentalLeaveFormMessages.fileUpload.uploadDescription,
+                  uploadButtonLabel:
+                    parentalLeaveFormMessages.fileUpload.attachmentButton,
+                }),
+              ],
             }),
-            buildFileUploadField({
-              id: 'fileUpload.benefitsFile',
+            // Not a bare field screen, which the client validates
+            // against every answer: see otherParentRightOfAccess
+            buildMultiField({
+              id: 'benefitsFileScreen',
               title:
                 parentalLeaveFormMessages.attachmentScreen
                   .unemploymentBenefitsTitle,
-              introduction:
-                parentalLeaveFormMessages.attachmentScreen.benefitDescription,
               condition: (answers) => {
                 const {
                   isReceivingUnemploymentBenefits,
@@ -1034,23 +1072,31 @@ export const ParentalLeaveForm: Form = buildForm({
                       UnEmployedBenefitTypes.healthInsurance)
                 )
               },
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
-              uploadDescription:
-                parentalLeaveFormMessages.fileUpload.uploadDescription,
-              uploadButtonLabel:
-                parentalLeaveFormMessages.fileUpload.attachmentButton,
+              children: [
+                buildFileUploadField({
+                  id: 'fileUpload.benefitsFile',
+                  introduction:
+                    parentalLeaveFormMessages.attachmentScreen
+                      .benefitDescription,
+                  maxSize: FILE_SIZE_LIMIT,
+                  maxSizeErrorText:
+                    parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
+                  uploadAccept: '.pdf',
+                  uploadHeader:
+                    parentalLeaveFormMessages.fileUpload.uploadHeader,
+                  uploadDescription:
+                    parentalLeaveFormMessages.fileUpload.uploadDescription,
+                  uploadButtonLabel:
+                    parentalLeaveFormMessages.fileUpload.attachmentButton,
+                }),
+              ],
             }),
-            buildFileUploadField({
-              id: 'fileUpload.singleParent',
+            // Not a bare field screen, which the client validates
+            // against every answer: see otherParentRightOfAccess
+            buildMultiField({
+              id: 'singleParentFileScreen',
               title:
                 parentalLeaveFormMessages.attachmentScreen.singleParentTitle,
-              introduction:
-                parentalLeaveFormMessages.attachmentScreen
-                  .singleParentDescription,
               condition: (answers) =>
                 (
                   answers as {
@@ -1059,43 +1105,59 @@ export const ParentalLeaveForm: Form = buildForm({
                     }
                   }
                 )?.otherParentObj?.chooseOtherParent === SINGLE,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
-              uploadDescription:
-                parentalLeaveFormMessages.fileUpload.uploadDescription,
-              uploadButtonLabel:
-                parentalLeaveFormMessages.fileUpload.attachmentButton,
+              children: [
+                buildFileUploadField({
+                  id: 'fileUpload.singleParent',
+                  introduction:
+                    parentalLeaveFormMessages.attachmentScreen
+                      .singleParentDescription,
+                  maxSize: FILE_SIZE_LIMIT,
+                  maxSizeErrorText:
+                    parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
+                  uploadAccept: '.pdf',
+                  uploadHeader:
+                    parentalLeaveFormMessages.fileUpload.uploadHeader,
+                  uploadDescription:
+                    parentalLeaveFormMessages.fileUpload.uploadDescription,
+                  uploadButtonLabel:
+                    parentalLeaveFormMessages.fileUpload.attachmentButton,
+                }),
+              ],
             }),
-            buildFileUploadField({
-              id: 'fileUpload.parentWithoutBirthParent',
+            // Not a bare field screen, which the client validates
+            // against every answer: see otherParentRightOfAccess
+            buildMultiField({
+              id: 'parentWithoutBirthParentFileScreen',
               title:
                 parentalLeaveFormMessages.attachmentScreen
                   .parentWithoutBirthParentTitle,
-              introduction:
-                parentalLeaveFormMessages.attachmentScreen
-                  .parentWithoutBirthParentDescription,
               condition: (answers) => isParentWithoutBirthParent(answers),
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
-              uploadDescription:
-                parentalLeaveFormMessages.fileUpload.uploadDescription,
-              uploadButtonLabel:
-                parentalLeaveFormMessages.fileUpload.attachmentButton,
+              children: [
+                buildFileUploadField({
+                  id: 'fileUpload.parentWithoutBirthParent',
+                  introduction:
+                    parentalLeaveFormMessages.attachmentScreen
+                      .parentWithoutBirthParentDescription,
+                  maxSize: FILE_SIZE_LIMIT,
+                  maxSizeErrorText:
+                    parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
+                  uploadAccept: '.pdf',
+                  uploadHeader:
+                    parentalLeaveFormMessages.fileUpload.uploadHeader,
+                  uploadDescription:
+                    parentalLeaveFormMessages.fileUpload.uploadDescription,
+                  uploadButtonLabel:
+                    parentalLeaveFormMessages.fileUpload.attachmentButton,
+                }),
+              ],
             }),
-            buildFileUploadField({
-              id: 'fileUpload.permanentFosterCare',
+            // Not a bare field screen, which the client validates
+            // against every answer: see otherParentRightOfAccess
+            buildMultiField({
+              id: 'permanentFosterCareFileScreen',
               title:
                 parentalLeaveFormMessages.attachmentScreen
                   .permanentFostercareTitle,
-              introduction:
-                parentalLeaveFormMessages.attachmentScreen
-                  .permanentFostercareDescription,
               condition: (answers) => {
                 const { noChildrenFoundTypeOfApplication } =
                   getApplicationAnswers(answers)
@@ -1104,45 +1166,62 @@ export const ParentalLeaveForm: Form = buildForm({
                   noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE
                 )
               },
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
-              uploadDescription:
-                parentalLeaveFormMessages.fileUpload.uploadDescription,
-              uploadButtonLabel:
-                parentalLeaveFormMessages.fileUpload.attachmentButton,
+              children: [
+                buildFileUploadField({
+                  id: 'fileUpload.permanentFosterCare',
+                  introduction:
+                    parentalLeaveFormMessages.attachmentScreen
+                      .permanentFostercareDescription,
+                  maxSize: FILE_SIZE_LIMIT,
+                  maxSizeErrorText:
+                    parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
+                  uploadAccept: '.pdf',
+                  uploadHeader:
+                    parentalLeaveFormMessages.fileUpload.uploadHeader,
+                  uploadDescription:
+                    parentalLeaveFormMessages.fileUpload.uploadDescription,
+                  uploadButtonLabel:
+                    parentalLeaveFormMessages.fileUpload.attachmentButton,
+                }),
+              ],
             }),
-            buildFileUploadField({
-              id: 'fileUpload.adoption',
+            // Not a bare field screen, which the client validates
+            // against every answer: see otherParentRightOfAccess
+            buildMultiField({
+              id: 'adoptionFileScreen',
               title: parentalLeaveFormMessages.attachmentScreen.adoptionTitle,
-              introduction:
-                parentalLeaveFormMessages.attachmentScreen.adoptionDescription,
               condition: (answers) => {
                 const { noChildrenFoundTypeOfApplication } =
                   getApplicationAnswers(answers)
 
                 return noChildrenFoundTypeOfApplication === ADOPTION
               },
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
-              uploadDescription:
-                parentalLeaveFormMessages.fileUpload.uploadDescription,
-              uploadButtonLabel:
-                parentalLeaveFormMessages.fileUpload.attachmentButton,
+              children: [
+                buildFileUploadField({
+                  id: 'fileUpload.adoption',
+                  introduction:
+                    parentalLeaveFormMessages.attachmentScreen
+                      .adoptionDescription,
+                  maxSize: FILE_SIZE_LIMIT,
+                  maxSizeErrorText:
+                    parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
+                  uploadAccept: '.pdf',
+                  uploadHeader:
+                    parentalLeaveFormMessages.fileUpload.uploadHeader,
+                  uploadDescription:
+                    parentalLeaveFormMessages.fileUpload.uploadDescription,
+                  uploadButtonLabel:
+                    parentalLeaveFormMessages.fileUpload.attachmentButton,
+                }),
+              ],
             }),
-            buildFileUploadField({
-              id: 'fileUpload.employmentTerminationCertificateFile',
+            // Not a bare field screen, which the client validates
+            // against every answer: see otherParentRightOfAccess
+            buildMultiField({
+              id: 'employmentTerminationCertificateFileScreen',
               title:
                 parentalLeaveFormMessages.attachmentScreen
                   .employmentTerminationCertificateTitle,
-              introduction:
-                parentalLeaveFormMessages.attachmentScreen
-                  .employmentTerminationCertificateDescription,
               condition: (answers) => {
                 const {
                   applicationType,
@@ -1157,14 +1236,23 @@ export const ParentalLeaveForm: Form = buildForm({
                   isNotStillEmployed
                 )
               },
-              maxSizeErrorText:
-                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
-              uploadDescription:
-                parentalLeaveFormMessages.fileUpload.uploadDescription,
-              uploadButtonLabel:
-                parentalLeaveFormMessages.fileUpload.attachmentButton,
+              children: [
+                buildFileUploadField({
+                  id: 'fileUpload.employmentTerminationCertificateFile',
+                  introduction:
+                    parentalLeaveFormMessages.attachmentScreen
+                      .employmentTerminationCertificateDescription,
+                  maxSizeErrorText:
+                    parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
+                  uploadAccept: '.pdf',
+                  uploadHeader:
+                    parentalLeaveFormMessages.fileUpload.uploadHeader,
+                  uploadDescription:
+                    parentalLeaveFormMessages.fileUpload.uploadDescription,
+                  uploadButtonLabel:
+                    parentalLeaveFormMessages.fileUpload.attachmentButton,
+                }),
+              ],
             }),
           ],
         }),
@@ -1208,15 +1296,10 @@ export const ParentalLeaveForm: Form = buildForm({
               },
               children: [...buildMultipleBirthsDaysFields()],
             }),
-            buildCustomField({
-              id: 'transferRights',
-              childInputIds: [
-                'transferRights',
-                'requestRights.isRequestingRights',
-                'requestRights.requestDays',
-                'giveRights.isGivingRights',
-                'giveRights.giveDays',
-              ],
+            // Not a bare field screen, which the client validates
+            // against every answer: see otherParentRightOfAccess
+            buildMultiField({
+              id: 'transferRightsScreen',
               condition: (answers, externalData) => {
                 const { hasMultipleBirths, otherParent } =
                   getApplicationAnswers(answers)
@@ -1238,9 +1321,18 @@ export const ParentalLeaveForm: Form = buildForm({
                 )
               },
               title: parentalLeaveFormMessages.shared.transferRightsTitle,
-              description:
-                parentalLeaveFormMessages.shared.transferRightsDescription,
-              component: 'TransferRights',
+              children: [
+                buildCustomField({
+                  id: 'transferRights',
+                  description:
+                    parentalLeaveFormMessages.shared.transferRightsDescription,
+                  component: 'TransferRights',
+                }),
+                buildHiddenInput({ id: 'requestRights.isRequestingRights' }),
+                buildHiddenInput({ id: 'requestRights.requestDays' }),
+                buildHiddenInput({ id: 'giveRights.isGivingRights' }),
+                buildHiddenInput({ id: 'giveRights.giveDays' }),
+              ],
             }),
             buildMultiField({
               id: 'requestRights',
@@ -1391,20 +1483,28 @@ export const ParentalLeaveForm: Form = buildForm({
           id: 'fileUploadSection',
           title: parentalLeaveFormMessages.attachmentScreen.title,
           children: [
-            buildFileUploadField({
-              id: 'fileUpload.file',
+            // Not a bare field screen, which the client validates
+            // against every answer: see otherParentRightOfAccess
+            buildMultiField({
+              id: 'additionalFileScreen',
               title: parentalLeaveFormMessages.attachmentScreen.title,
-              introduction:
-                parentalLeaveFormMessages.attachmentScreen.description,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
-              uploadDescription:
-                parentalLeaveFormMessages.fileUpload.uploadDescription,
-              uploadButtonLabel:
-                parentalLeaveFormMessages.fileUpload.attachmentButton,
+              children: [
+                buildFileUploadField({
+                  id: 'fileUpload.file',
+                  introduction:
+                    parentalLeaveFormMessages.attachmentScreen.description,
+                  maxSize: FILE_SIZE_LIMIT,
+                  maxSizeErrorText:
+                    parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
+                  uploadAccept: '.pdf',
+                  uploadHeader:
+                    parentalLeaveFormMessages.fileUpload.uploadHeader,
+                  uploadDescription:
+                    parentalLeaveFormMessages.fileUpload.uploadDescription,
+                  uploadButtonLabel:
+                    parentalLeaveFormMessages.fileUpload.attachmentButton,
+                }),
+              ],
             }),
           ],
         }),
@@ -1412,16 +1512,24 @@ export const ParentalLeaveForm: Form = buildForm({
           id: 'commentSection',
           title: parentalLeaveFormMessages.applicant.commentSection,
           children: [
-            buildTextField({
-              id: 'comment',
+            // Not a bare field screen, which the client validates
+            // against every answer: see otherParentRightOfAccess
+            buildMultiField({
+              id: 'commentScreen',
               title: parentalLeaveFormMessages.applicant.commentSection,
-              variant: 'textarea',
-              rows: 10,
-              maxLength: 1024,
-              description:
-                parentalLeaveFormMessages.applicant.commentDescription,
-              placeholder:
-                parentalLeaveFormMessages.applicant.commentPlaceholder,
+              children: [
+                buildTextField({
+                  id: 'comment',
+                  title: parentalLeaveFormMessages.applicant.commentSection,
+                  variant: 'textarea',
+                  rows: 10,
+                  maxLength: 1024,
+                  description:
+                    parentalLeaveFormMessages.applicant.commentDescription,
+                  placeholder:
+                    parentalLeaveFormMessages.applicant.commentPlaceholder,
+                }),
+              ],
             }),
           ],
         }),
