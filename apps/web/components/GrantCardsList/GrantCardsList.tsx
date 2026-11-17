@@ -161,6 +161,7 @@ const SearchableGrantCardsList = ({
     total: 0,
   })
   const [errorOccurred, setErrorOccurred] = useState(false)
+  const [fetchSkipped, setFetchSkipped] = useState(false)
   const latestRequestId = useRef(0)
 
   const [getGrants, { loading, called }] = useLazyQuery<
@@ -192,11 +193,15 @@ const SearchableGrantCardsList = ({
     })
 
     if (!input) {
+      // Ignore any request still in flight
+      latestRequestId.current++
+      setFetchSkipped(true)
       setResult({ items: [], total: 0 })
       return
     }
 
     const requestId = ++latestRequestId.current
+    setFetchSkipped(false)
 
     getGrants({ variables: { input } })
       .then((res) => {
@@ -218,7 +223,7 @@ const SearchableGrantCardsList = ({
           total:
             visibleCount === 0
               ? 0
-              : getCappedTotal(total, showPagination ? cap : input.size),
+              : getCappedTotal(total, showPagination ? cap : visibleCount),
         })
         setErrorOccurred(false)
       })
@@ -241,7 +246,7 @@ const SearchableGrantCardsList = ({
       showPagination={showPagination}
       fetchListItems={fetchListItems}
       totalItems={result.total}
-      loading={loading || !called}
+      loading={loading || (!called && !fetchSkipped)}
       displayError={errorOccurred}
     >
       <GrantCards grants={result.items} getTranslation={getTranslation} />

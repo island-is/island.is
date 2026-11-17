@@ -124,6 +124,46 @@ describe('CmsElasticsearchService.getGrants category filtering', () => {
     expect(tagKeysInQuery(tagQueries[1])).toEqual(['"tags.key":"evropa"'])
   })
 
+  it('keeps the category filter when tag groups are empty', async () => {
+    const findByQuery = jest.fn().mockResolvedValue(emptyResponse)
+    const service = new CmsElasticsearchService({
+      findByQuery,
+    } as unknown as ElasticService)
+
+    await service.getGrants('some-index', {
+      lang: 'is',
+      categories: ['nam'],
+      tagGroups: {},
+    })
+
+    const tagQueries = getMust(findByQuery).filter(
+      (clause) => tagKeysInQuery(clause).length > 0,
+    )
+    expect(tagQueries).toHaveLength(1)
+    expect(tagKeysInQuery(tagQueries[0])).toEqual(['"tags.key":["nam"]'])
+  })
+
+  it('keeps the category filter when a category has no tag group', async () => {
+    const findByQuery = jest.fn().mockResolvedValue(emptyResponse)
+    const service = new CmsElasticsearchService({
+      findByQuery,
+    } as unknown as ElasticService)
+
+    await service.getGrants('some-index', {
+      lang: 'is',
+      categories: ['nam', 'evropa'],
+      tagGroups: { flokkur: ['nam'] },
+    })
+
+    const tagQueries = getMust(findByQuery).filter(
+      (clause) => tagKeysInQuery(clause).length > 0,
+    )
+    expect(tagQueries).toHaveLength(1)
+    expect(tagKeysInQuery(tagQueries[0])).toEqual([
+      '"tags.key":["nam","evropa"]',
+    ])
+  })
+
   it('matches any category when no tag groups are given', async () => {
     const findByQuery = jest.fn().mockResolvedValue(emptyResponse)
     const service = new CmsElasticsearchService({

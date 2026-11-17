@@ -933,7 +933,15 @@ export class CmsElasticsearchService {
 
     const tagFilters: Array<Array<string>> = []
 
-    if (categories && categories.length > 0 && tagGroups) {
+    const everyCategoryHasTagGroup =
+      !!tagGroups &&
+      !!categories &&
+      categories.length > 0 &&
+      categories.every((category) =>
+        Object.values(tagGroups).some((group) => group.includes(category)),
+      )
+
+    if (categories && tagGroups && everyCategoryHasTagGroup) {
       must.push(...generateGenericTagGroupQueries(categories, tagGroups))
     } else if (categories) {
       tagFilters.push(categories)

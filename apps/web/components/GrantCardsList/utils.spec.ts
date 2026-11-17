@@ -64,10 +64,24 @@ describe('buildGrantsQueryInput', () => {
     maxNumberOfCards: 20,
   }
 
-  it('returns null without funds', () => {
-    expect(
-      buildGrantsQueryInput({ ...base, fundIds: [], showPagination: true }),
-    ).toBeNull()
+  it('omits the fund filter when the list has no funds', () => {
+    const input = buildGrantsQueryInput({
+      ...base,
+      fundIds: [],
+      showPagination: true,
+    })
+    expect(input).not.toBeNull()
+    expect(input?.funds).toBeUndefined()
+  })
+
+  it('leaves the size to the server default when pagination is off and there is no cap', () => {
+    const input = buildGrantsQueryInput({
+      ...base,
+      fundIds: ['f1'],
+      showPagination: false,
+      maxNumberOfCards: null,
+    })
+    expect(input?.size).toBeUndefined()
   })
 
   it('returns null when the cap is zero', () => {

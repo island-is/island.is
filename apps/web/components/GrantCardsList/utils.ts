@@ -48,23 +48,28 @@ export const buildGrantsQueryInput = ({
   maxNumberOfCards?: number | null
   sorting?: GrantCardsListSorting | null
 }): GetGrantsInput | null => {
-  if (fundIds.length === 0 || maxNumberOfCards === 0) {
+  if (maxNumberOfCards === 0) {
     return null
   }
 
   const input: GetGrantsInput = {
-    funds: fundIds,
     lang,
     page: showPagination ? page : 1,
-    size: showPagination
-      ? GRANT_CARDS_PAGE_SIZE
-      : maxNumberOfCards ?? GRANT_CARDS_PAGE_SIZE,
     sort:
       sorting === GrantCardsListSorting.Alphabetical
         ? GetGrantsInputSortByEnum.Alphabetical
         : GetGrantsInputSortByEnum.RecentlyUpdated,
   }
 
+  // Without pagination and a cap, getGrants uses its default size, the same as lists without search
+  const size = showPagination ? GRANT_CARDS_PAGE_SIZE : maxNumberOfCards
+  if (size != null) {
+    input.size = size
+  }
+  // A list without funds shows grants from all funds, the same as lists without search
+  if (fundIds.length > 0) {
+    input.funds = fundIds
+  }
   if (searchValue) {
     input.search = searchValue
   }
