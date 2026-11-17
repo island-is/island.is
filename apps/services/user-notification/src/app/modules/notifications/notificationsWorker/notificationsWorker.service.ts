@@ -1130,6 +1130,7 @@ export class NotificationsWorkerService {
               senderId: message.senderId,
               messageId: messageId,
               urgent: message.urgent,
+              deadline: message.deadline,
             },
             message.recipient,
           )
