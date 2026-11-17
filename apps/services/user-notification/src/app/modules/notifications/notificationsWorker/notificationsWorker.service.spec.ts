@@ -1326,6 +1326,46 @@ describe('NotificationsWorkerService', () => {
       expect(notifications[0].sourceType).toBe('Event')
     })
 
+    it('should store the deadline on the notification, and null without one', async () => {
+      const deadline = '2026-12-01T16:00:00.000Z'
+      await queue.add({
+        recipient: userWithNoDelegations.nationalId,
+        templateId: mockTemplateId,
+        args: [{ key: 'organization', value: 'Test Crew' }],
+        deadline,
+      })
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+
+      const notifications = await notificationModel.findAll({
+        where: { recipient: userWithNoDelegations.nationalId },
+        order: [['id', 'ASC']],
+      })
+      expect(notifications).toHaveLength(2)
+      expect(notifications[0].deadline?.toISOString()).toBe(deadline)
+      expect(notifications[1].deadline).toBeNull()
+    })
+
+    it('should forward the deadline to delegation holders', async () => {
+      const deadline = '2026-12-01T16:00:00.000Z'
+      const queueAddSpy = jest.spyOn(queue, 'add')
+
+      await queue.add({
+        recipient: userWithDelegations.nationalId,
+        templateId: mockTemplateId,
+        args: [{ key: 'organization', value: 'Test Crew' }],
+        deadline,
+      })
+      await wait(3)
+
+      const delegationMessages = queueAddSpy.mock.calls
+        .map(([message]) => message as InternalCreateHnippNotificationDto)
+        .filter((message) => message.rootMessageId)
+      expect(delegationMessages.length).toBeGreaterThan(0)
+      delegationMessages.forEach((message) =>
+        expect(message.deadline).toBe(deadline),
+      )
+    })
+
     it('should record each template of a sender separately', async () => {
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
       mockTemplateCategory({ is: 'Heilbrigðismál', en: 'Health' })
