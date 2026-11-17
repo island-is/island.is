@@ -1,22 +1,27 @@
 import { hasHardwareAsync } from 'expo-local-authentication'
-import { Platform } from 'react-native'
 import { router } from 'expo-router'
 import { isIos } from './devices'
 import { androidIsVersion33OrAbove } from './versions-check'
 import { preferencesStore } from '../stores/preferences-store'
 
-export function isOnboarded() {
-  const {
-    hasOnboardedNotifications,
-    hasOnboardedBiometrics,
-    hasOnboardedPrivacy,
-  } = preferencesStore.getState()
-
-  return (
-    hasOnboardedBiometrics &&
-    (Platform.OS === 'android' || hasOnboardedNotifications) &&
-    hasOnboardedPrivacy
-  )
+/**
+ * The onboarding step to come back to after an unlock, for someone who left
+ * part way through. Not biometrics: turning them on takes another electronic
+ * ID approval, and Settings has it.
+ */
+export function getUnfinishedOnboardingStep():
+  | 'notifications'
+  | 'privacy'
+  | null {
+  const { hasOnboardedNotifications, hasOnboardedPrivacy } =
+    preferencesStore.getState()
+  if ((isIos || androidIsVersion33OrAbove()) && !hasOnboardedNotifications) {
+    return 'notifications'
+  }
+  if (!hasOnboardedPrivacy) {
+    return 'privacy'
+  }
+  return null
 }
 
 /**

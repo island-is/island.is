@@ -17,7 +17,7 @@ import {
   isAppLockEnabled,
   readAuthorizeResult,
 } from '../stores/auth-store'
-import { getNextOnboardingStep } from '../utils/onboarding'
+import { waitForPreferences } from '../stores/preferences-store'
 import type { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { useFonts } from '@expo-google-fonts/ibm-plex-sans/useFonts'
 import { IBMPlexSans_100Thin } from '@expo-google-fonts/ibm-plex-sans/100Thin'
@@ -78,22 +78,22 @@ export default function RootLayout() {
         // Seed the canary the lock screen uses to detect device unlocks.
         void ensureDeviceUnlockCanary()
 
+        // Startup may log out, which resets the preferences: they have to
+        // have loaded first, or the saved ones would overwrite the reset.
+        await waitForPreferences()
+
         // 1. Restore who is signed in from the keychain
         await readAuthorizeResult()
 
         // 2. A native login starts locked; without one the app goes to /login.
         const isAuthenticated = await checkIsAuthenticated()
 
-        // 3. If authenticated, resolve async onboarding state (e.g. checks biometric
-        //    hardware availability and auto-completes that step if absent).
-        //    Mirrors getAppRoot -> getOnboardingScreens() from the old app.
-        //    The reactive Redirect in (tabs)/_layout then drives routing.
+        // 3. Stamp a past timestamp so the auth-layout mount effect pushes the
+        //    lock on cold start. Past grace forces an unlock (biometrics or
+        //    electronic ID) rather than auto-unlock. Post-login mounts don't
+        //    hit this path so the stamp stays undefined → no lock right after
+        //    login. Onboarding only follows a login, so a restart skips it.
         if (isAuthenticated) {
-          await getNextOnboardingStep()
-          // Stamp a past timestamp so the auth-layout mount effect pushes the
-          // lock on cold start. Past grace forces an unlock (biometrics or
-          // electronic ID) rather than auto-unlock. Post-login mounts don't hit this path so the
-          // stamp stays undefined → no lock right after login.
           if (isAppLockEnabled()) {
             authStore.setState({
               lockScreenActivatedAt: Date.now() - 24 * 60 * 60 * 1000,

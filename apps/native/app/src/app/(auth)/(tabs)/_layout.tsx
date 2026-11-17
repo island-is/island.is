@@ -3,8 +3,11 @@ import React, { useEffect, useState } from 'react'
 
 import { Redirect, useNavigation, usePathname } from 'expo-router'
 import { useAuthStore } from '@/stores/auth-store'
-import { usePreferencesStore } from '@/stores/preferences-store'
-import { isOnboarded } from '@/utils/onboarding'
+import {
+  preferencesStore,
+  usePreferencesStore,
+} from '@/stores/preferences-store'
+import { getUnfinishedOnboardingStep } from '@/utils/onboarding'
 import { theme } from '../../../ui'
 import { Image, Platform, StyleSheet, View } from 'react-native'
 import { useTheme } from 'styled-components'
@@ -15,31 +18,34 @@ export const unstable_settings = {
   initialRouteName: 'index',
 }
 
+// Shows what's left of onboarding after an unlock. Biometrics are skipped,
+// so the steps' own "next" doesn't lead there.
+function ResumeOnboarding({ step }: { step: 'notifications' | 'privacy' }) {
+  useEffect(() => {
+    preferencesStore.setState({ hasOnboardedBiometrics: true })
+  }, [])
+  return <Redirect href={`/(auth)/onboarding/${step}`} />
+}
+
 export default function TabLayout() {
   const intl = useIntl()
   const tabsHidden = useUiStore((s) => s.tabsHidden)
-  const hasOnboardedBiometrics = usePreferencesStore(
-    (s) => s.hasOnboardedBiometrics,
-  )
-  const hasOnboardedNotifications = usePreferencesStore(
-    (s) => s.hasOnboardedNotifications,
-  )
+  // Read here so a finished step re-renders the tabs.
+  usePreferencesStore((s) => s.hasOnboardedNotifications)
+  usePreferencesStore((s) => s.hasOnboardedPrivacy)
   const isLocked = useAuthStore((s) => s.lockScreenActivatedAt !== undefined)
+  const isSignedIn = useAuthStore((s) => !!s.nativeUser)
 
-  const onboarded = isOnboarded()
-
-  if (!onboarded) {
-    // A Redirect replaces the top screen, which is the lock when a native
-    // login restarts mid-onboarding. Onboarding continues after the unlock.
-    if (isLocked) {
-      return null
-    }
-    if (!hasOnboardedBiometrics) {
-      return <Redirect href="/(auth)/onboarding/biometrics" />
-    } else if (!hasOnboardedNotifications) {
-      return <Redirect href="/(auth)/onboarding/notifications" />
-    }
+  // A login runs the whole onboarding (nextOnboardingStep). Someone who left
+  // part way through gets the rest after an unlock. Not while locked: a
+  // Redirect replaces the top screen, which is the lock. Not after logging
+  // out either, which resets the steps while these tabs are still up.
+  const unfinishedStep =
+    isLocked || !isSignedIn ? null : getUnfinishedOnboardingStep()
+  if (unfinishedStep) {
+    return <ResumeOnboarding step={unfinishedStep} />
   }
+
   return (
     <>
       <NativeTabs

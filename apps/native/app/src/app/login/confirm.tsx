@@ -20,6 +20,8 @@ export default function LoginConfirmScreen() {
   const router = useRouter()
   const request = useNativeLoginStore(({ request }) => request)
 
+  // The request this screen opened with: clearing it from the store after
+  // the login mustn't send this screen back.
   useEffect(() => {
     if (!request) {
       router.back()
@@ -30,8 +32,8 @@ export default function LoginConfirmScreen() {
       .waitForApproval(request, { signal: controller.signal })
       .then(async (tokens) => {
         await authStore.getState().loginNative(tokens)
-        nativeLoginStore.setState({ loginHint: '', request: undefined })
         await nextOnboardingStep()
+        nativeLoginStore.setState({ loginHint: '', request: undefined })
       })
       .catch((error) => {
         if (isCancelled(error)) {
@@ -43,7 +45,7 @@ export default function LoginConfirmScreen() {
       })
     return () => controller.abort()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [request])
+  }, [])
 
   return (
     <ElectronicIdConfirmation

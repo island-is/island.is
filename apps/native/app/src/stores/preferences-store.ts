@@ -142,6 +142,22 @@ export const preferencesStore = create<PreferencesStore>()(
   ),
 )
 
+/**
+ * Resolves once the saved preferences have loaded. Until then the store has
+ * the defaults, and a reset would be overwritten when they arrive.
+ */
+export function waitForPreferences(): Promise<void> {
+  if (preferencesStore.persist.hasHydrated()) {
+    return Promise.resolve()
+  }
+  return new Promise((resolve) => {
+    const unsubscribe = preferencesStore.persist.onFinishHydration(() => {
+      unsubscribe()
+      resolve()
+    })
+  })
+}
+
 export const usePreferencesStore = <U = PreferencesStore>(
   selector?: (state: PreferencesStore) => U,
 ) => useStore(preferencesStore, selector!)
