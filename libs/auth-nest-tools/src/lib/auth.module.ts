@@ -11,6 +11,11 @@ export interface AuthConfig {
    * Bearer and leave this off.
    */
   requireDpopForBoundTokens?: boolean
+  /**
+   * Signs the DPoP nonces, and must be the same on every instance. Without it
+   * the nonces are unsigned server timestamps.
+   */
+  dpopNonceSecret?: string
 }
 
 @Module({})

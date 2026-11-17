@@ -46,6 +46,7 @@ const prodConfig = () => ({
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     // When on, the app's DPoP-bound tokens must come with a proof here, at the edge.
     requireDpopForBoundTokens: process.env.AUTH_REQUIRE_DPOP === 'true',
+    dpopNonceSecret: process.env.AUTH_DPOP_NONCE_SECRET,
   },
   documentService: {
     basePath: process.env.POSTHOLF_BASE_PATH,
@@ -146,6 +147,7 @@ const devConfig = () => ({
       process.env.IDENTITY_SERVER_ISSUER_URL ??
       'https://identity-server.dev01.devland.is',
     requireDpopForBoundTokens: process.env.AUTH_REQUIRE_DPOP === 'true',
+    dpopNonceSecret: process.env.AUTH_DPOP_NONCE_SECRET,
   },
   documentService: {
     basePath: process.env.POSTHOLF_BASE_PATH,

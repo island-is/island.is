@@ -1,12 +1,71 @@
-import { createHash, createPublicKey, JsonWebKey } from 'crypto'
+import {
+  createHash,
+  createHmac,
+  createPublicKey,
+  JsonWebKey,
+  timingSafeEqual,
+} from 'crypto'
 import { Request } from 'express'
 import jwt from 'jsonwebtoken'
 
 const PROOF_ALGORITHMS: jwt.Algorithm[] = ['ES256', 'RS256', 'PS256']
-const PROOF_LIFETIME_SECONDS = 60
-const MAX_REMEMBERED_PROOFS = 10_000
+const NONCE_LIFETIME_SECONDS = 300
+/** How far ahead of this instance another instance's clock may be. */
+const SERVER_CLOCK_SKEW_SECONDS = 5
+const MAX_REMEMBERED_PROOFS = 50_000
 
 export class DpopError extends Error {}
+
+/** The proof has no server nonce, or an expired one: the client retries with a new one. */
+export class DpopNonceError extends DpopError {}
+
+/**
+ * The server nonce a client puts in its proofs (RFC 9449, section 9), so a proof
+ * is fresh by our clock and the phone's clock doesn't matter. The nonce is the
+ * time it was issued, so nothing is stored and any instance can check it. With
+ * a secret shared by the instances it is also signed, so a client can't make
+ * its own; without one it is as strong as the iat check it replaces.
+ */
+export class DpopNonces {
+  constructor(private readonly secret?: string) {}
+
+  create(now = Math.floor(Date.now() / 1000)): string {
+    const issued = String(now)
+    return this.secret ? `${issued}.${this.sign(issued)}` : issued
+  }
+
+  isFresh(nonce: unknown, now = Math.floor(Date.now() / 1000)): boolean {
+    if (typeof nonce !== 'string' || nonce.length > 100) return false
+
+    const [issued, signature, ...rest] = nonce.split('.')
+    if (!/^\d{1,12}$/.test(issued) || rest.length > 0) return false
+
+    if (this.secret) {
+      const expected = Buffer.from(this.sign(issued))
+      const actual = Buffer.from(signature ?? '')
+      if (
+        actual.length !== expected.length ||
+        !timingSafeEqual(actual, expected)
+      ) {
+        return false
+      }
+    } else if (signature !== undefined) {
+      return false
+    }
+
+    const age = now - Number(issued)
+    return (
+      age >= -SERVER_CLOCK_SKEW_SECONDS &&
+      age <= NONCE_LIFETIME_SECONDS + SERVER_CLOCK_SKEW_SECONDS
+    )
+  }
+
+  private sign(issued: string): string {
+    return createHmac('sha256', this.secret as string)
+      .update(`dpop-nonce:${issued}`)
+      .digest('base64url')
+  }
+}
 
 const base64url = (data: Buffer) => data.toString('base64url')
 
@@ -57,8 +116,8 @@ const sameUrl = (a: string, b: string): boolean => {
 }
 
 /**
- * Proofs seen recently, by jti. Per instance: a proof replayed to another
- * replica within its minute isn't caught here.
+ * Proofs seen recently, by jti, for as long as their nonce could be accepted.
+ * Per instance: a proof replayed to another replica in that time isn't caught here.
  */
 export class DpopReplayCache {
   private readonly seen = new Map<string, number>()
@@ -71,7 +130,10 @@ export class DpopReplayCache {
     }
 
     if (this.seen.has(jti)) return false
-    this.seen.set(jti, now + PROOF_LIFETIME_SECONDS * 2)
+    this.seen.set(
+      jti,
+      now + NONCE_LIFETIME_SECONDS + SERVER_CLOCK_SKEW_SECONDS * 2,
+    )
     return true
   }
 }
@@ -85,12 +147,14 @@ export const verifyDpopProof = ({
   accessToken,
   boundKey,
   replayCache,
+  nonces,
   now = Math.floor(Date.now() / 1000),
 }: {
   request: Request
   accessToken: string
   boundKey: string
   replayCache: DpopReplayCache
+  nonces: DpopNonces
   now?: number
 }): void => {
   const header = request.headers['dpop']
@@ -133,16 +197,16 @@ export const verifyDpopProof = ({
     throw new DpopError('DPoP proof is for another URL')
   }
 
-  if (
-    typeof payload.iat !== 'number' ||
-    Math.abs(now - payload.iat) > PROOF_LIFETIME_SECONDS
-  ) {
-    throw new DpopError('DPoP proof is not fresh')
-  }
-
   const ath = base64url(createHash('sha256').update(accessToken).digest())
   if (payload.ath !== ath) {
     throw new DpopError('DPoP proof is for another access token')
+  }
+
+  // Last of the checks on the proof itself, so only the token's holder is told to retry.
+  if (!nonces.isFresh(payload.nonce, now)) {
+    throw new DpopNonceError(
+      'DPoP proof needs the nonce from the DPoP-Nonce header',
+    )
   }
 
   if (

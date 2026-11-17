@@ -7,7 +7,13 @@ import type { AuthConfig } from './auth.module'
 import { JwtPayload } from './jwt.payload'
 import { Auth } from './auth'
 import { createKeyProvider } from './create-key-provider'
-import { DpopError, DpopReplayCache, verifyDpopProof } from './dpop'
+import {
+  DpopError,
+  DpopNonceError,
+  DpopNonces,
+  DpopReplayCache,
+  verifyDpopProof,
+} from './dpop'
 
 const AUTH_BODY_FIELD_NAME = '__accessToken'
 
@@ -23,6 +29,7 @@ const ACCESS_TOKEN_TYPES = ['at+jwt', 'application/at+jwt', 'jwt']
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   private readonly dpopReplayCache = new DpopReplayCache()
+  private readonly dpopNonces: DpopNonces
   /** Guards run per GraphQL root field, so one request can be validated many times. */
   private readonly verifiedProofs = new WeakMap<Request, string>()
 
@@ -49,6 +56,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         clockTolerance: 60,
       },
     })
+    this.dpopNonces = new DpopNonces(config.dpopNonceSecret)
   }
 
   private parseScopes(scopes: undefined | string | string[]): string[] {
@@ -159,15 +167,35 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       return
     }
 
+    // Every answer carries the nonce for the next proofs, so a client in use is never refused for one.
+    const response = request.res
+    if (response && !response.headersSent) {
+      response.setHeader('DPoP-Nonce', this.dpopNonces.create())
+    }
+
     try {
       verifyDpopProof({
         request,
         accessToken: dpopToken,
         boundKey,
         replayCache: this.dpopReplayCache,
+        nonces: this.dpopNonces,
       })
       this.verifiedProofs.set(request, proof as string)
     } catch (error) {
+      if (error instanceof DpopNonceError) {
+        if (response && !response.headersSent) {
+          response.setHeader(
+            'WWW-Authenticate',
+            `DPoP error="use_dpop_nonce", error_description="${error.message}"`,
+          )
+        }
+        throw new UnauthorizedException({
+          statusCode: 401,
+          error: 'use_dpop_nonce',
+          message: error.message,
+        })
+      }
       if (error instanceof DpopError) {
         throw new UnauthorizedException(error.message)
       }

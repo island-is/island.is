@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 
 import { JwtStrategy } from './jwt.strategy'
 import { JwtPayload } from './jwt.payload'
-import { jwkThumbprint } from './dpop'
+import { DpopNonces, jwkThumbprint } from './dpop'
 
 const accessToken = 'header.payload.signature'
 const url = 'https://api.island.is/api/graphql'
@@ -17,6 +17,9 @@ const createKey = () => {
   return { privateKey, jwk, thumbprint: jwkThumbprint(jwk) }
 }
 
+const nonceSecret = 'nonce-secret'
+const now = () => Math.floor(Date.now() / 1000)
+
 const proof = (
   key: ReturnType<typeof createKey>,
   overrides: Record<string, unknown> = {},
@@ -26,7 +29,8 @@ const proof = (
       jti: randomUUID(),
       htm: 'POST',
       htu: url,
-      iat: Math.floor(Date.now() / 1000),
+      iat: now(),
+      nonce: new DpopNonces(nonceSecret).create(),
       ath: createHash('sha256').update(accessToken).digest('base64url'),
       ...overrides,
     },
@@ -39,6 +43,7 @@ const proof = (
 
 const request = (authorization: string, dpop?: string) =>
   ({
+    res: { headersSent: false, setHeader: jest.fn() },
     method: 'POST',
     protocol: 'http',
     originalUrl: '/api/graphql',
@@ -63,7 +68,11 @@ describe('JwtStrategy DPoP', () => {
   }
 
   const strategy = (requireDpopForBoundTokens = false) =>
-    new JwtStrategy({ issuer: 'issuer', requireDpopForBoundTokens })
+    new JwtStrategy({
+      issuer: 'issuer',
+      requireDpopForBoundTokens,
+      dpopNonceSecret: nonceSecret,
+    })
 
   it('accepts a bound token with a proof from its key, and forwards it as Bearer', async () => {
     const auth = await strategy().validate(
@@ -116,7 +125,6 @@ describe('JwtStrategy DPoP', () => {
     ${'is for another method'} | ${() => proof(key, { htm: 'GET' })}
     ${'is for another URL'}    | ${() => proof(key, { htu: 'https://api.island.is/other' })}
     ${'is for another token'}  | ${() => proof(key, { ath: 'other' })}
-    ${'is stale'}              | ${() => proof(key, { iat: Math.floor(Date.now() / 1000) - 300 })}
   `('refuses a proof that $case', async ({ makeProof }) => {
     await expect(
       strategy().validate(
@@ -124,6 +132,73 @@ describe('JwtStrategy DPoP', () => {
         boundPayload,
       ),
     ).rejects.toThrow()
+  })
+
+  it('accepts a proof from a phone whose clock is hours off', async () => {
+    await expect(
+      strategy().validate(
+        request(`DPoP ${accessToken}`, proof(key, { iat: now() - 3 * 3600 })),
+        boundPayload,
+      ),
+    ).resolves.toBeDefined()
+  })
+
+  it.each`
+    case                      | nonce
+    ${'is missing'}           | ${undefined}
+    ${'has expired'}          | ${new DpopNonces(nonceSecret).create(now() - 600)}
+    ${'is from the future'}   | ${new DpopNonces(nonceSecret).create(now() + 60)}
+    ${'was not signed by us'} | ${new DpopNonces('another-secret').create()}
+    ${'is an unsigned time'}  | ${String(now())}
+    ${'is not a nonce'}       | ${'made-up'}
+  `(
+    'asks for a new proof with the nonce in the response when the nonce $case',
+    async ({ nonce }) => {
+      const refused = request(`DPoP ${accessToken}`, proof(key, { nonce }))
+
+      await expect(
+        strategy().validate(refused, boundPayload),
+      ).rejects.toMatchObject({ response: { error: 'use_dpop_nonce' } })
+
+      const headers = Object.fromEntries(
+        (refused.res?.setHeader as jest.Mock).mock.calls,
+      )
+      expect(new DpopNonces(nonceSecret).isFresh(headers['DPoP-Nonce'])).toBe(
+        true,
+      )
+      expect(headers['WWW-Authenticate']).toContain('error="use_dpop_nonce"')
+    },
+  )
+
+  it('hands out the next nonce with every accepted proof', async () => {
+    const accepted = request(`DPoP ${accessToken}`, proof(key))
+
+    await strategy().validate(accepted, boundPayload)
+
+    expect(accepted.res?.setHeader).toHaveBeenCalledWith(
+      'DPoP-Nonce',
+      expect.any(String),
+    )
+  })
+
+  it('checks unsigned nonces where the instances share no secret', async () => {
+    const unsigned = new JwtStrategy({ issuer: 'issuer' })
+
+    await expect(
+      unsigned.validate(
+        request(`DPoP ${accessToken}`, proof(key, { nonce: String(now()) })),
+        boundPayload,
+      ),
+    ).resolves.toBeDefined()
+    await expect(
+      unsigned.validate(
+        request(
+          `DPoP ${accessToken}`,
+          proof(key, { nonce: String(now() - 600) }),
+        ),
+        boundPayload,
+      ),
+    ).rejects.toMatchObject({ response: { error: 'use_dpop_nonce' } })
   })
 
   it('refuses a proof used twice', async () => {
