@@ -88,6 +88,7 @@ let mockBlockedCategories: BlockedCategoryDto[] = []
 // Actor profiles are separate from user profiles, so the delegate's own
 // onlyActionablePriorityNotifications never leaks into the actor profile
 let mockActorOnlyActionable = false
+let mockActorBlockedCategories: BlockedCategoryDto[] = []
 
 export const MockV2UsersApi = {
   userProfileControllerFindUserProfile: jest.fn(
@@ -111,7 +112,13 @@ export const MockV2UsersApi = {
   ),
 
   userProfileControllerGetActorProfile: jest.fn(
-    ({ xParamToNationalId }: { xParamToNationalId: string }) => {
+    ({
+      xParamToNationalId,
+      include,
+    }: {
+      xParamToNationalId: string
+      include?: UserProfileInclude[]
+    }) => {
       const profile = userProfiles.find(
         (u) => u.nationalId === xParamToNationalId,
       ) as UserProfileDto
@@ -119,6 +126,9 @@ export const MockV2UsersApi = {
       return Promise.resolve({
         ...profile,
         onlyActionablePriorityNotifications: mockActorOnlyActionable,
+        ...(include?.includes(UserProfileInclude.NotificationSettings)
+          ? { blockedCategories: mockActorBlockedCategories }
+          : {}),
       })
     },
   ),
@@ -1628,7 +1638,12 @@ describe('NotificationsWorkerService', () => {
     const sendToActor = async ({
       urgent,
       senderId,
-    }: { urgent?: boolean; senderId?: string } = {}) => {
+      forceSmsToMinorGuardian,
+    }: {
+      urgent?: boolean
+      senderId?: string
+      forceSmsToMinorGuardian?: boolean
+    } = {}) => {
       const root = await notificationModel.create({
         messageId: randomUUID(),
         recipient: delegator.nationalId,
@@ -1645,6 +1660,7 @@ describe('NotificationsWorkerService', () => {
         urgent,
         args: [{ key: 'organization', value: 'Test Crew' }],
         rootMessageId: root.messageId,
+        forceSmsToMinorGuardian,
         onBehalfOf: { nationalId: delegator.nationalId, name: delegator.name },
       })
       await wait(5)
@@ -1680,6 +1696,55 @@ describe('NotificationsWorkerService', () => {
 
         expect(actorNotification?.wasSent).toBe(true)
         expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
+      })
+    })
+
+    describe('blocked categories', () => {
+      const senderId = createNationalId('company')
+
+      beforeEach(() => {
+        mockActorBlockedCategories = [
+          {
+            key: `${senderId}-heilbrigdismal`,
+            senderId,
+            category: 'heilbrigdismal',
+            categoryLabel: { is: 'heilbrigdismal' },
+          },
+        ]
+        jest.spyOn(notificationsService, 'getTemplate').mockResolvedValue(
+          getMockHnippTemplate({
+            hnippCategory: 'Heilbrigðismál',
+            hnippCategoryIs: 'Heilbrigðismál',
+          }),
+        )
+      })
+
+      afterEach(() => {
+        mockActorBlockedCategories = []
+      })
+
+      it('should not email the delegate when the actor profile blocks the category', async () => {
+        const actorNotification = await sendToActor({ senderId })
+
+        expect(actorNotification?.wasSent).toBe(false)
+        expect(emailService.sendEmail).not.toHaveBeenCalled()
+      })
+
+      it('should email the delegate for urgent notifications despite the block', async () => {
+        const actorNotification = await sendToActor({ senderId, urgent: true })
+
+        expect(actorNotification?.wasSent).toBe(true)
+        expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
+      })
+
+      it('should still send a forced minor-guardian SMS when the category is blocked', async () => {
+        await sendToActor({ senderId, forceSmsToMinorGuardian: true })
+
+        expect(emailService.sendEmail).not.toHaveBeenCalled()
+        const calledNumbers = (smsService.sendSms as jest.Mock).mock.calls.map(
+          (call) => call[0],
+        )
+        expect(calledNumbers).toContain(delegate.mobilePhoneNumber)
       })
     })
   })

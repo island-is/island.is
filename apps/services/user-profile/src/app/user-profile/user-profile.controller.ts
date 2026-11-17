@@ -180,15 +180,35 @@ export class UserProfileController {
           description: 'National id of the user the delegation is from',
         },
       },
+      query: {
+        include: {
+          required: false,
+          description:
+            'Comma separated list of optional data to include in the response, e.g. notificationSettings returns the sender categories blocked for the actor profile',
+          type: 'string',
+          isArray: true,
+          enum: UserProfileInclude,
+          style: 'form',
+          explode: false,
+        },
+      },
     },
     response: { status: 200, type: ActorProfileDto },
   })
   @Audit<ActorProfileDto>({
-    resources: (profile) => profile.fromNationalId,
+    resources: (profile) => [
+      profile.fromNationalId,
+      ...(profile.blockedCategories ?? []).map(({ key }) => key),
+    ],
   })
   async getActorProfile(
     @Headers('X-Param-To-National-Id') toNationalId: string,
     @Headers('X-Param-From-National-Id') fromNationalId: string,
+    @Query(
+      'include',
+      new ParseArrayPipe({ optional: true, items: String, separator: ',' }),
+    )
+    include: string[] = [],
   ): Promise<ActorProfileDto> {
     if (
       !kennitala.isValid(toNationalId) ||
@@ -197,10 +217,31 @@ export class UserProfileController {
       throw new BadRequestException('National id is not valid')
     }
 
-    return this.userProfileService.getActorProfile({
+    const invalidIncludes = include.filter(
+      (value) => !Object.values<string>(UserProfileInclude).includes(value),
+    )
+    if (invalidIncludes.length > 0) {
+      throw new BadRequestException(
+        `Invalid include: ${invalidIncludes.join(', ')}`,
+      )
+    }
+
+    const actorProfile = await this.userProfileService.getActorProfile({
       toNationalId,
       fromNationalId,
     })
+
+    if (!include.includes(UserProfileInclude.NOTIFICATION_SETTINGS)) {
+      return actorProfile
+    }
+
+    const { blockedCategories } =
+      await this.notificationSettingsService.findActorSettings(
+        toNationalId,
+        fromNationalId,
+      )
+
+    return { ...actorProfile, blockedCategories }
   }
 
   @Patch('/.national-id')
