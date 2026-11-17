@@ -314,8 +314,9 @@ describe('AppealCaseController - transition withdrawal rules', () => {
     })
   })
 
-  // The prosecution appeals a verdict per defendant, so it withdraws per
-  // defendant too - and only where its own appeal of that defendant stands.
+  // The prosecution's verdict appeal is the reviewer's review decision: it is
+  // withdrawn by changing the decision, never through the transition route,
+  // which would leave the decision standing at appeal with no appeal behind it.
   describe('prosecution on a verdict appeal', () => {
     const reviewer = {
       role: UserRole.PROSECUTOR,
@@ -327,31 +328,21 @@ describe('AppealCaseController - transition withdrawal rules', () => {
       appealEventLogs: events,
     })
 
-    it('allows withdrawing the prosecution appeal of the requested defendant', () => {
-      const request = buildRequest(
-        { type: CaseType.INDICTMENT },
-        verdictAppealCase([
-          appealed({ userRole: UserRole.PROSECUTOR, defendantId: 'd1' }),
-        ]),
-        reviewer,
-        { defendantId: 'd1' },
-      )
+    it.each([prosecutorTransitionRule, prosecutorRepresentativeTransitionRule])(
+      'denies withdrawing the prosecution appeal of the requested defendant',
+      (rule) => {
+        const request = buildRequest(
+          { type: CaseType.INDICTMENT },
+          verdictAppealCase([
+            appealed({ userRole: UserRole.PROSECUTOR, defendantId: 'd1' }),
+          ]),
+          reviewer,
+          { defendantId: 'd1' },
+        )
 
-      expect(prosecutorTransitionRule.canActivate?.(request)).toBe(true)
-    })
-
-    it('denies a defendant the prosecution did not appeal', () => {
-      const request = buildRequest(
-        { type: CaseType.INDICTMENT },
-        verdictAppealCase([
-          appealed({ userRole: UserRole.PROSECUTOR, defendantId: 'd1' }),
-        ]),
-        reviewer,
-        { defendantId: 'd2' },
-      )
-
-      expect(prosecutorTransitionRule.canActivate?.(request)).toBe(false)
-    })
+        expect(rule.canActivate?.(request)).toBe(false)
+      },
+    )
 
     it('denies withdrawing the defendant own appeal', () => {
       const request = buildRequest(
@@ -366,16 +357,84 @@ describe('AppealCaseController - transition withdrawal rules', () => {
       expect(prosecutorTransitionRule.canActivate?.(request)).toBe(false)
     })
 
-    it('denies a request that names no defendant', () => {
+    it('denies when both sides appealed the requested defendant', () => {
       const request = buildRequest(
         { type: CaseType.INDICTMENT },
         verdictAppealCase([
+          appealed({ userRole: UserRole.DEFENDER, defendantId: 'd1' }),
           appealed({ userRole: UserRole.PROSECUTOR, defendantId: 'd1' }),
         ]),
         reviewer,
+        { defendantId: 'd1' },
       )
 
       expect(prosecutorTransitionRule.canActivate?.(request)).toBe(false)
+    })
+  })
+
+  // Closing the route to the prosecution must not close it to the defence: a
+  // defender still withdraws the verdict appeal filed for their own client.
+  describe('defence on a verdict appeal', () => {
+    const nationalId = '0101010101'
+    const defender = { role: UserRole.DEFENDER, nationalId }
+    const theCase = {
+      type: CaseType.INDICTMENT,
+      defendants: [
+        {
+          id: 'd1',
+          isDefenderChoiceConfirmed: true,
+          defenderNationalId: nationalId,
+        },
+        {
+          id: 'd2',
+          isDefenderChoiceConfirmed: true,
+          defenderNationalId: '0202020202',
+        },
+      ],
+    } as Partial<Case>
+    const verdictAppealCase = (events: AppealEventLog[]) => ({
+      appealType: AppealCaseType.VERDICT,
+      appealEventLogs: events,
+    })
+
+    it('allows the defender to withdraw the appeal of their own client', () => {
+      const request = buildRequest(
+        theCase,
+        verdictAppealCase([
+          appealed({ userRole: UserRole.DEFENDER, defendantId: 'd1' }),
+        ]),
+        defender,
+        { defendantId: 'd1' },
+      )
+
+      expect(defenderTransitionRule.canActivate?.(request)).toBe(true)
+    })
+
+    it('allows it when the prosecution appealed the same defendant too', () => {
+      const request = buildRequest(
+        theCase,
+        verdictAppealCase([
+          appealed({ userRole: UserRole.DEFENDER, defendantId: 'd1' }),
+          appealed({ userRole: UserRole.PROSECUTOR, defendantId: 'd1' }),
+        ]),
+        defender,
+        { defendantId: 'd1' },
+      )
+
+      expect(defenderTransitionRule.canActivate?.(request)).toBe(true)
+    })
+
+    it('denies a defender when only another defendant appealed', () => {
+      const request = buildRequest(
+        theCase,
+        verdictAppealCase([
+          appealed({ userRole: UserRole.DEFENDER, defendantId: 'd2' }),
+        ]),
+        defender,
+        { defendantId: 'd2' },
+      )
+
+      expect(defenderTransitionRule.canActivate?.(request)).toBe(false)
     })
   })
 

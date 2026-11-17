@@ -9,6 +9,11 @@ export {
   InCourtAppellant,
   inCourtAppellantsFromDecisions,
   isOutOfCourtAppealEvent,
+  isVerdictAppealOver,
+  nextAppealCourtSession,
+  standingVerdictAppealEvents,
   standingVerdictAppellants,
+  verdictAppealProgress,
+  type VerdictAppealProgress,
   verdictAppellantSide,
 } from './appealCase.helpers'

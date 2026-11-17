@@ -5,20 +5,27 @@ import userEvent from '@testing-library/user-event'
 import { Feature } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
-import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import type {
+  Defendant,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseTransition,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
+  InstitutionType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
+import {
+  mockCase,
+  mockUser,
+} from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   ApolloProviderWrapper,
   FormContextWrapper,
   IntlProviderWrapper,
-  UserContextWrapper,
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
@@ -125,13 +132,14 @@ describe('VerdictTimelineCard', () => {
     {
       features = [] as Feature[],
       caseOverrides = {} as Partial<WorkingCase>,
+      user = mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF) as User,
     } = {},
   ) => {
     return render(
       <IntlProviderWrapper>
         <ApolloProviderWrapper>
           <FeatureContext.Provider value={{ features, isLoading: false }}>
-            <UserContextWrapper userRole={UserRole.PUBLIC_PROSECUTOR_STAFF}>
+            <UserContext.Provider value={{ user }}>
               <FormContextWrapper
                 theCase={{
                   ...mockCase(CaseType.INDICTMENT),
@@ -148,7 +156,7 @@ describe('VerdictTimelineCard', () => {
                 {/* Modals portal into this container, normally supplied by PageLayout */}
                 <div id="modal" />
               </FormContextWrapper>
-            </UserContextWrapper>
+            </UserContext.Provider>
           </FeatureContext.Provider>
         </ApolloProviderWrapper>
       </IntlProviderWrapper>,
@@ -643,6 +651,40 @@ describe('VerdictTimelineCard', () => {
         await screen.findByRole('button', { name: `Valmynd fyrir ${name}` }),
       )
 
+      expect(screen.queryByText('Afturkalla áfrýjun')).not.toBeInTheDocument()
+    })
+
+    // A public prosecution prosecutor is sent to this card once a verdict
+    // appeal stands. The prosecution withdraws its appeal by changing the
+    // review decision, and the defendant's appeal is not the prosecutor's to
+    // withdraw, so the action is not offered.
+    it('offers no withdrawal to a public prosecution prosecutor', async () => {
+      const prosecutor = mockUser(UserRole.PROSECUTOR)
+
+      renderComponent(
+        appealedDefendant,
+        CaseIndictmentRulingDecision.RULING,
+        true,
+        {
+          features: [Feature.INDICTMENT_APPEAL],
+          caseOverrides: {
+            verdictAppealCase: { id: 'verdict_appeal_case_id' },
+          },
+          user: {
+            ...prosecutor,
+            institution: {
+              ...prosecutor.institution,
+              type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+            },
+          } as User,
+        },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: `Valmynd fyrir ${name}` }),
+      )
+
+      expect(await screen.findByText('Skráð í LÖKE')).toBeInTheDocument()
       expect(screen.queryByText('Afturkalla áfrýjun')).not.toBeInTheDocument()
     })
 
