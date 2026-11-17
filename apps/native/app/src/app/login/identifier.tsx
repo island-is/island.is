@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { LoginIdentifier } from '@/components/device-bound-auth/login-identifier'
@@ -15,6 +15,9 @@ export default function LoginIdentifierScreen() {
   const intl = useIntl()
   const { method, loginHint, error } = useNativeLoginStore()
   const [loading, setLoading] = useState(false)
+
+  // An error is about the last try: leaving this screen takes it away.
+  useEffect(() => () => nativeLoginStore.setState({ error: undefined }), [])
 
   const onSubmit = async () => {
     setLoading(true)
