@@ -1,6 +1,7 @@
 export { default as PeriodsRepeater } from './PeriodsRepeater'
 export { PeriodDateRange } from './PeriodDateRange/PeriodDateRange'
 export { PeriodActualDateOfBirth } from './PeriodDateRange/PeriodActualDateOfBirth'
+export { PeriodDateError } from './PeriodDateRange/PeriodDateError'
 export { TransferRights } from './Rights/TransferRights'
 export { default as RightsTotal } from './Rights/RightsTotal'
 export { default as RightsIntro } from './Rights/RightsIntro'

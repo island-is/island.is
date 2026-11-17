@@ -1454,6 +1454,12 @@ export const ParentalLeaveForm: Form = buildForm({
                       width: 'half',
                     }),
                     buildCustomField({
+                      id: 'dateError',
+                      title: '',
+                      component: 'PeriodDateError',
+                      doesNotRequireAnswer: true,
+                    }),
+                    buildCustomField({
                       id: 'actualDateOfBirth',
                       title: '',
                       component: 'PeriodActualDateOfBirth',
