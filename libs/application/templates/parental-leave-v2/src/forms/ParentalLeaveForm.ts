@@ -226,6 +226,10 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildRadioField({
                   id: 'otherParentObj.chooseOtherParent',
                   options: getOtherParentOptions,
+                  clearOnChange: [
+                    'otherParentObj.otherParentName',
+                    'otherParentObj.otherParentId',
+                  ],
                 }),
                 buildTextField({
                   id: 'otherParentObj.otherParentName',
