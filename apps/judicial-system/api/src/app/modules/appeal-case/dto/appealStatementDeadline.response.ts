@@ -22,4 +22,8 @@ export class AppealStatementDeadline {
 
   @Field(() => String, { nullable: true })
   readonly deadline?: string
+
+  // Computed in the backend case interceptor from the server clock.
+  @Field(() => Boolean, { nullable: true })
+  readonly isExpired?: boolean
 }
