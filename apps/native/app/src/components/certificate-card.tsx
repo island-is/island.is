@@ -1,30 +1,19 @@
 import { useCallback, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { View } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import { useTheme } from 'styled-components/native'
 
 import chevronDown from '@/assets/icons/chevron-down.png'
 import clockIcon from '@/assets/icons/clock.png'
 import { RightsPortalDrugCertificate } from '@/graphql/types/schema'
-import { Badge, ExpandableCard, Typography } from '@/ui'
-
-const TableRow = styled.View`
-  flex-direction: row;
-  flex-wrap: wrap;
-  padding-top: ${({ theme }) => theme.spacing[2]}px;
-  padding-bottom: ${({ theme }) => theme.spacing[2]}px;
-  border-bottom-color: ${({ theme }) => theme.tokens.border.primary};
-  border-bottom-width: 1px;
-`
-const RowItem = styled.View`
-  margin-horizontal: ${({ theme }) => theme.spacing[1]}px;
-  width: 40%;
-  flex: 1;
-`
-
-const TableHeader = styled.View`
-  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
-`
+import {
+  Badge,
+  ExpandableCard,
+  Table,
+  TableCell,
+  TableRow,
+  Typography,
+} from '@/ui'
 
 type CertificateCardProps = {
   certificate: RightsPortalDrugCertificate
@@ -137,35 +126,26 @@ export function CertificateCard({ certificate }: CertificateCardProps) {
       open={open}
     >
       <View style={{ width: '100%', padding: theme.spacing[2] }}>
-        <View>
-          <TableHeader>
-            <Typography variant="eyebrow">
-              <FormattedMessage id="health.prescriptionsAndCertificates.furtherInformation" />
-            </Typography>
-          </TableHeader>
+        <Table
+          title={
+            <FormattedMessage id="health.prescriptionsAndCertificates.furtherInformation" />
+          }
+        >
           {certificateData
             .filter((item) => item.data)
             .map((item, visibleIndex) => (
-              <TableRow
-                key={visibleIndex}
-                style={{
-                  backgroundColor:
-                    visibleIndex % 2 === 0
-                      ? theme.tokens.background.brandMinimal
-                      : theme.tokens.background.invert,
-                }}
-              >
-                <RowItem>
+              <TableRow key={visibleIndex} index={visibleIndex}>
+                <TableCell>
                   <Typography variant="eyebrow">
                     <FormattedMessage id={item.label} />
                   </Typography>
-                </RowItem>
-                <RowItem>
+                </TableCell>
+                <TableCell>
                   <Typography variant="body3">{item.data}</Typography>
-                </RowItem>
+                </TableCell>
               </TableRow>
             ))}
-        </View>
+        </Table>
       </View>
     </ExpandableCard>
   )

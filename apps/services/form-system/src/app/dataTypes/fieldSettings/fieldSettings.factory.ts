@@ -47,7 +47,10 @@ export class FieldSettingsFactory {
         ]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.ISK_NUMBERBOX:
-        keys = ['minAmount', 'maxAmount', 'notIncludedInSumbox', ...keys]
+        keys = ['minAmount', 'maxAmount', ...keys]
+        return this.pickSettings(fieldSettings, keys)
+      case FieldTypesEnum.ISK_SUMBOX:
+        keys = ['fieldsToSum', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.PROPERTY_NUMBER:
         keys = ['hasPropertyInput', 'hasPropertyList', ...keys]

@@ -122,6 +122,9 @@ export class ProjectPage {
 
   @CacheField(() => AlertBanner, { nullable: true })
   alertBanner?: AlertBanner
+
+  @Field({ nullable: true })
+  trackingDomain?: string
 }
 
 const PROJECT_SUBPAGE_CONTENT_TYPE_IDS: string[] = [
@@ -297,5 +300,6 @@ export const mapProjectPage = (
     alertBanner: fields.alertBanner
       ? mapAlertBanner(fields.alertBanner)
       : undefined,
+    trackingDomain: fields.trackingDomain ?? '',
   }
 }

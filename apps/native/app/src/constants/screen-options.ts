@@ -15,7 +15,7 @@ export const blueBackItem = ({
           type: 'button',
           label: '',
           icon: { type: 'sfSymbol', name: 'chevron.backward' },
-          tintColor: theme.color.blue400,
+          tintColor: theme.tokens.interactive.foreground.primary,
           onPress: () => router.back(),
         },
       ]
@@ -26,7 +26,7 @@ export const tabScreenOptions: StackScreenProps['options'] = {
   headerTransparent: Platform.OS === 'ios',
   headerStyle:
     Platform.OS === 'android'
-      ? { backgroundColor: theme.color.white }
+      ? { backgroundColor: theme.tokens.background.invert }
       : undefined,
   headerShadowVisible: false,
   headerBackButtonDisplayMode: 'minimal',
@@ -61,12 +61,12 @@ export const modalScreenOptions: StackScreenProps['options'] = {
     unstable_headerLeftItems: () => [],
   }),
   headerStyle: {
-    backgroundColor: theme.color.white,
+    backgroundColor: theme.tokens.background.invert,
   },
   // Match the header; otherwise the sheet body falls back to the navigation
   // theme's grey background, which shows on iPad.
   contentStyle: {
-    backgroundColor: theme.color.white,
+    backgroundColor: theme.tokens.background.invert,
   },
   ...sheetHeaderTitleOptions,
   sheetGrabberVisible: true,

@@ -172,6 +172,7 @@ describe('getVisibleSubpoenas', () => {
 describe('shouldHideCaseFilesRecordFromDefender', () => {
   const hiddenCaseId = 'hidden-case-id'
   const otherCaseId = 'other-case-id'
+  const splitDescendantId = 'split-descendant-id'
   const hiddenCaseIds = [hiddenCaseId]
 
   it('hides the case files record from a defender on a listed case', () => {
@@ -179,6 +180,7 @@ describe('shouldHideCaseFilesRecordFromDefender', () => {
       shouldHideCaseFilesRecordFromDefender(
         hiddenCaseId,
         user(UserRole.DEFENDER),
+        undefined,
         hiddenCaseIds,
       ),
     ).toBe(true)
@@ -189,6 +191,7 @@ describe('shouldHideCaseFilesRecordFromDefender', () => {
       shouldHideCaseFilesRecordFromDefender(
         otherCaseId,
         user(UserRole.DEFENDER),
+        undefined,
         hiddenCaseIds,
       ),
     ).toBe(false)
@@ -199,6 +202,40 @@ describe('shouldHideCaseFilesRecordFromDefender', () => {
       shouldHideCaseFilesRecordFromDefender(
         hiddenCaseId,
         user(UserRole.PROSECUTOR, InstitutionType.POLICE_PROSECUTORS_OFFICE),
+        undefined,
+        hiddenCaseIds,
+      ),
+    ).toBe(false)
+  })
+
+  it('hides the case files record from a defender when originalAncestorId is listed', () => {
+    expect(
+      shouldHideCaseFilesRecordFromDefender(
+        splitDescendantId,
+        user(UserRole.DEFENDER),
+        hiddenCaseId,
+        hiddenCaseIds,
+      ),
+    ).toBe(true)
+  })
+
+  it('keeps the case files record for a defender when originalAncestorId is unlisted', () => {
+    expect(
+      shouldHideCaseFilesRecordFromDefender(
+        splitDescendantId,
+        user(UserRole.DEFENDER),
+        otherCaseId,
+        hiddenCaseIds,
+      ),
+    ).toBe(false)
+  })
+
+  it('keeps the case files record for non-defence users when originalAncestorId is listed', () => {
+    expect(
+      shouldHideCaseFilesRecordFromDefender(
+        splitDescendantId,
+        user(UserRole.PROSECUTOR, InstitutionType.POLICE_PROSECUTORS_OFFICE),
+        hiddenCaseId,
         hiddenCaseIds,
       ),
     ).toBe(false)

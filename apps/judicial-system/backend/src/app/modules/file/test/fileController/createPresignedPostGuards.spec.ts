@@ -1,7 +1,13 @@
+import { RolesGuard } from '@island.is/judicial-system/auth'
+
 import { verifyGuards } from '../../../../test'
-import { CaseWriteGuard } from '../../../case'
+import { CaseExistsGuard, CaseWriteGuard } from '../../../case'
 import { FileController } from '../../file.controller'
 
 describe('FileController - Create presigned post guards', () => {
-  verifyGuards(FileController, 'createPresignedPost', [CaseWriteGuard])
+  verifyGuards(FileController, 'createPresignedPost', [
+    CaseExistsGuard,
+    RolesGuard,
+    CaseWriteGuard,
+  ])
 })

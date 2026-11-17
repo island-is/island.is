@@ -19,7 +19,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import WebView from 'react-native-webview'
 import type { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import { PdfView } from '@kishannareshpal/expo-pdf'
 
 import { ButtonDrawer } from '@/components/button-drawer'
@@ -30,15 +30,7 @@ import { useDocument } from '@/hooks/use-document'
 import { toggleAction } from '@/lib/post-mail-action'
 import { toast } from '@/components/toast'
 import { useOrganizationsStore } from '@/stores/organizations-store'
-import {
-  Alert,
-  Button,
-  DetailHeader,
-  Loader,
-  StatusMessage,
-  blue400,
-  dynamicColor,
-} from '@/ui'
+import { Alert, Button, DetailHeader, Loader, StatusMessage, token } from '@/ui'
 import { getButtonsForActions } from '../../../../../utils/get-buttons-for-actions'
 import { shareFile } from '../../../../../utils/share-file'
 
@@ -50,7 +42,7 @@ const Host = styled.SafeAreaView`
 
 const Border = styled.View`
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
-  border-bottom-color: ${({ theme }) => theme.color.blue200};
+  border-bottom-color: ${token((t) => t.border.primary)};
 `
 
 const ActionsWrapper = styled.View`
@@ -61,10 +53,11 @@ const ActionsWrapper = styled.View`
 
 const ContentArea = styled.View`
   flex: 1;
-  background-color: ${dynamicColor('background')};
+  background-color: ${token((t) => t.background.invert)};
 `
 
 export default function DocumentScreen() {
+  const theme = useTheme()
   const { id, isUrgent: isUrgentParam } = useLocalSearchParams<{
     id: string
     isUrgent?: string
@@ -279,7 +272,7 @@ export default function DocumentScreen() {
                   style={{
                     width: 24,
                     height: 24,
-                    tintColor: blue400,
+                    tintColor: theme.tokens.interactive.foreground.primary,
                     marginHorizontal: 8,
                   }}
                 />
@@ -302,7 +295,7 @@ export default function DocumentScreen() {
                   style={{
                     width: 24,
                     height: 24,
-                    tintColor: blue400,
+                    tintColor: theme.tokens.interactive.foreground.primary,
                     marginHorizontal: 8,
                   }}
                 />
@@ -325,7 +318,7 @@ export default function DocumentScreen() {
                   style={{
                     width: 24,
                     height: 24,
-                    tintColor: blue400,
+                    tintColor: theme.tokens.interactive.foreground.primary,
                     marginHorizontal: 8,
                   }}
                 />

@@ -110,7 +110,6 @@ export const LinkRowButton = ({
             </IconWrapper>
           )}
           <Typography
-            lineHeight={ICON_SIZE}
             weight={fontWeight}
             color={theme.tokens.foreground.primary}
             size={fontSize}
