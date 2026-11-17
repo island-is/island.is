@@ -243,11 +243,42 @@ describe('DeviceRegistrationsController', () => {
       const saved = await server.put(path).send(registration())
 
       // Act
-      const response = await server.delete(`${path}/${saved.body.id}`)
+      const response = await server
+        .delete(`${path}/${saved.body.id}`)
+        .query({ installKeyThumbprint: 'install-1' })
 
       // Assert
       expect(response.status).toBe(204)
       expect(await model.count()).toBe(0)
+    })
+
+    it('does not delete a registration that moved to another install', async () => {
+      // Arrange
+      const saved = await server.put(path).send(registration())
+      await server
+        .put(path)
+        .send(registration({ installKeyThumbprint: 'install-2' }))
+
+      // Act
+      const response = await server
+        .delete(`${path}/${saved.body.id}`)
+        .query({ installKeyThumbprint: 'install-1' })
+
+      // Assert
+      expect(response.status).toBe(204)
+      expect(await model.count()).toBe(1)
+    })
+
+    it('requires the install key when deleting', async () => {
+      // Arrange
+      const saved = await server.put(path).send(registration())
+
+      // Act
+      const response = await server.delete(`${path}/${saved.body.id}`)
+
+      // Assert
+      expect(response.status).toBe(400)
+      expect(await model.count()).toBe(1)
     })
   })
 

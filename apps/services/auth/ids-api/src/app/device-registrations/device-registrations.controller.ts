@@ -106,12 +106,23 @@ export class DeviceRegistrationsController {
   @Delete(':id')
   @HttpCode(204)
   @Documentation({
-    description: 'Removes an app login.',
-    request: { params: { id: { type: 'string', required: true } } },
+    description:
+      'Removes an app login, if it still belongs to the given install key.',
+    request: {
+      params: { id: { type: 'string', required: true } },
+      query: { installKeyThumbprint: { type: 'string', required: true } },
+    },
     response: { status: 204 },
   })
   @Audit()
-  async delete(@Param('id', new ParseUUIDPipe()) id: string): Promise<void> {
-    await this.deviceRegistrationsService.delete(id)
+  async delete(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Query('installKeyThumbprint') installKeyThumbprint: string,
+  ): Promise<void> {
+    if (!installKeyThumbprint) {
+      throw new BadRequestException('installKeyThumbprint is required')
+    }
+
+    await this.deviceRegistrationsService.delete(id, installKeyThumbprint)
   }
 }
