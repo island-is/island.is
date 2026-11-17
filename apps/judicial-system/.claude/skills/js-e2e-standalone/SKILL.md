@@ -184,12 +184,16 @@ service out of the run, where it can trip the suite's 15s waits.
 each of their ports:
 
 ```bash
-lsof -nP -t -iTCP:<port> -sTCP:LISTEN
+ps -o pid=,lstart=,command= -p "$(lsof -nP -t -iTCP:<port> -sTCP:LISTEN)"
 ```
 
 Run it for the backend, api and message handler ports and for `PORT + 1` of
-the backend and api, and note the pids next to the ports. Step 6 uses them to
-tell a process this run started from one that took the port later.
+the backend and api. Each must be a node process running that service from
+this checkout's `dist/`, started after you started the services. Note its pid
+and start time next to the port; step 6 uses the pair to tell a process this
+run started from one that took the port later. If a listener is anything
+else, another process took the port between the pick and the start: do not
+note it, stop your services and start over from the port pick.
 
 ## 4. Run
 
@@ -206,9 +210,10 @@ lsof -nP -iTCP:<web port> -sTCP:LISTEN; lsof -nP -iTCP:<web port + 1> -sTCP:LIST
 Both must print nothing. If either lists a listener, run `pick-ports.mjs` again
 and take only its `WEB_PORT`. The backend and api have the old web port in
 `CLIENT_URL` and the `AUTH_IDS_*` urls, so restart those two with the new value.
-Wait for their `/liveness` again, then note their pids again as in step 3,
-for both ports of each - the ones you noted before the restart belong to
-processes that are gone, and step 6 goes by the current ones.
+Then repeat the end of step 3 for them: wait for `/liveness`, send the login
+request twice and require `302`, and note the pid and start time for both
+ports of each. The restarted processes are cold, and the pids from before the
+restart belong to processes that are gone - step 6 goes by the current ones.
 
 ```bash
 PLAYWRIGHT_JSON_OUTPUT_NAME=<scratchpad>/e2e-report.json \
@@ -289,12 +294,12 @@ opens a metrics server there). Stopping
 message handler also takes up to ten seconds to let go of its port while it
 finishes its last queue poll, so check again after that before deciding a
 listener was left behind. If a
-listener remains, compare its pid with the one you noted for that port in
-step 3. When they match it is yours - stop it with `kill <pid>` and check
-again. When they differ, or you have no pid noted for the port, leave it
-alone and report it with its command (`ps -o command= -p <pid>`): a process
-from this checkout on one of your ports is not proof that this run started
-it. Playwright shuts the web app down itself.
+listener remains, run the `ps` command from step 3 on it and compare its pid
+and start time with the pair you noted for that port. When both match it is
+yours - stop it with `kill <pid>` and check again. When either differs, or
+you have nothing noted for the port, leave it alone and report it with its
+command: a process from this checkout on one of your ports is not proof that
+this run started it. Playwright shuts the web app down itself.
 
 If the user asked to keep the stack up, leave it and tell them the ports.
 
