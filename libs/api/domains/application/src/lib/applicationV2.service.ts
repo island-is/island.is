@@ -48,6 +48,8 @@ export class ApplicationV2Service {
             status: input?.status?.join(','),
             scopeCheck: input?.scopeCheck,
             showPruned: input?.showPruned,
+            excludeHiddenFromApplicationSystemOverview:
+              input?.excludeHiddenFromApplicationSystemOverview,
           },
         ),
         this.formSystemApplicationApiWithAuth(
@@ -90,6 +92,8 @@ export class ApplicationV2Service {
       typeId: input?.typeId?.join(','),
       status: input?.status?.join(','),
       scopeCheck: input?.scopeCheck,
+      excludeHiddenFromApplicationSystemOverview:
+        input?.excludeHiddenFromApplicationSystemOverview,
     })
 
     const appSystemCards = applications.map(mapAppSystemCards)

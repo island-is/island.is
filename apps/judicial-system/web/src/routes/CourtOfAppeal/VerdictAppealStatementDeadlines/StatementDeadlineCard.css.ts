@@ -2,20 +2,34 @@ import { globalStyle, style } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
+// The width the card's content needs before the party and the date fit side
+// by side: the party's column, the picker at its narrowest, the menu button
+// and the two gaps between them.
+const SIDE_BY_SIDE = '(min-width: 540px)'
+
+// The card answers to its own width rather than the screen's. The page puts
+// it in a column beside the stepper, inside two layers of padding, so the
+// screen is a poor measure of the room the card has: on a tablet-sized screen
+// the card is narrower than it is on a phone held sideways.
+export const container = style({
+  containerType: 'inline-size',
+})
+
 // The party on the left, the date on the right, the card's menu past it and
 // the date's action under the date, laid out as the design has it: the role
 // line and the name sit centred against the date picker, the menu button
 // centres on the picker too, and the action hangs off the picker's right
 // edge. A grid, because the text column takes whatever the picker leaves
-// (so the role line stays on one line) while the picker column is sized for
-// a date rather than for half the card, and the menu column for its button.
+// while the picker column is sized for a date rather than for half the card,
+// and the menu column for its button. The text column has a floor, or the
+// picker would grow to its full width first and leave the party no room.
 export const card = style({
   display: 'grid',
   rowGap: theme.spacing[2],
 
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      gridTemplateColumns: 'minmax(0, 1fr) minmax(240px, 320px) auto',
+  '@container': {
+    [SIDE_BY_SIDE]: {
+      gridTemplateColumns: 'minmax(200px, 1fr) minmax(240px, 320px) auto',
       alignItems: 'center',
       columnGap: theme.spacing[3],
       rowGap: theme.spacing[1],
@@ -23,17 +37,17 @@ export const card = style({
   },
 })
 
-// On a narrow screen the menu goes first, in the top right corner of the
+// In a narrow card the menu goes first, in the top right corner of the
 // card, where a card menu is looked for; the grid's own flow would have put
-// it between the picker and its action. From md the menu has its own column
-// and takes its place in the flow again, or it would start a row of its own
-// ahead of the party.
+// it between the picker and its action. Side by side the menu has its own
+// column and takes its place in the flow again, or it would start a row of
+// its own ahead of the party.
 export const menu = style({
   order: -1,
   justifySelf: 'end',
 
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+  '@container': {
+    [SIDE_BY_SIDE]: {
       order: 0,
       gridColumn: 3,
     },
@@ -44,8 +58,8 @@ export const action = style({
   display: 'flex',
   justifyContent: 'flex-end',
 
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+  '@container': {
+    [SIDE_BY_SIDE]: {
       gridColumn: 2,
     },
   },

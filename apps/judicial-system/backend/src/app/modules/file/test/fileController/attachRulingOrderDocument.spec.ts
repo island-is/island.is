@@ -13,6 +13,8 @@ import {
 
 import { createTestingFileModule } from '../createTestingFileModule'
 
+import { getOrCreateTransaction } from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
 import { Case, CaseFile, CaseFileRepositoryService } from '../../../repository'
 import { AttachRulingOrderDocumentDto } from '../../dto/attachRulingOrderDocument.dto'
 
@@ -33,6 +35,7 @@ describe('FileController - Attach ruling order document', () => {
 
   let mockCaseFileRepositoryService: CaseFileRepositoryService
   let queuedMessagesAfterCommit: Message[]
+  let mockTransaction: jest.Mock
   let transaction: Transaction
   let givenWhenThen: (
     theCase: Case,
@@ -51,11 +54,9 @@ describe('FileController - Attach ruling order document', () => {
     mockCaseFileRepositoryService = caseFileRepositoryService
     queuedMessagesAfterCommit = messages
 
-    const mockTransaction = sequelize.transaction as jest.Mock
+    mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     givenWhenThen = async (theCase, caseFile, attachDocument) => {
       const then = {} as Then
@@ -67,15 +68,32 @@ describe('FileController - Attach ruling order document', () => {
         caseFiles: [{ ...caseFile, key }],
       })
 
-      await fileController
-        .attachRulingOrderDocument(caseId, fileId, user, theCase, caseFile, {
-          type: 'application/pdf',
-          key,
-          size: 1234,
-          ...attachDocument,
-        } as AttachRulingOrderDocumentDto)
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      // The route is guarded by CaseExistsForUpdateGuard, so the request
+      // transaction is already open - and holding a lock on this case row -
+      // by the time the handler runs. Guards do not execute in controller
+      // unit tests, so the request context and that transaction are set up
+      // here instead.
+      try {
+        then.result = await runInRequestContext(async () => {
+          await getOrCreateTransaction(sequelize)
+
+          return fileController.attachRulingOrderDocument(
+            caseId,
+            fileId,
+            user,
+            theCase,
+            caseFile,
+            {
+              type: 'application/pdf',
+              key,
+              size: 1234,
+              ...attachDocument,
+            } as AttachRulingOrderDocumentDto,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }
@@ -106,7 +124,11 @@ describe('FileController - Attach ruling order document', () => {
       then = await givenWhenThen(makeCase(), pronouncedOrally)
     })
 
-    it('should fill in the document, keeping the pronounced name', () => {
+    it('should fill in the document in the transaction the guard opened, keeping the pronounced name', () => {
+      // Once, by the stand-in for the guard above. A second call would be the
+      // handler opening a transaction of its own, which would block on the
+      // guard's row lock and deadlock the request.
+      expect(mockTransaction).toHaveBeenCalledTimes(1)
       expect(
         mockCaseFileRepositoryService.updateByIdAndCaseWithoutDocument,
       ).toHaveBeenCalledWith(
