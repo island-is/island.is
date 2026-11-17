@@ -11,10 +11,12 @@ import {
   FileUploadStatus,
   InputFileUpload,
   LoadingDots,
+  SkeletonLoader,
   Stack,
   Text,
   UploadFile,
 } from '@island.is/island-ui/core'
+import { ReviewGroup } from '@island.is/application/ui-components'
 import { messages } from '../lib/messages'
 import { useEnsureEqualityDraft } from '../utils/useEqualityDraft'
 import { useScreenEntered } from '../utils/useScreenEntered'
@@ -73,6 +75,9 @@ type Attachment = { id: string; filename: string; sizeBytes: number }
 // Cap the presigned PUT so a stalled upload can't leave the field busy.
 const UPLOAD_TIMEOUT_MS = 60_000
 
+// The multi-field holding the plan and the fylgiskjöl (equalityReportSection).
+const GOALS_AND_ACTIONS_SCREEN = 'goalsAndActionsMultiField'
+
 const ATTACHMENTS_BEFORE_SUBMIT = {
   allowMultiple: true,
   customCallbackId: 'equalityReportAttachments',
@@ -92,8 +97,78 @@ interface Props extends FieldBaseProps {
  * `mode: 'draft'` (mainForm) makes sure the DMR draft exists first, as the
  * Editor does. `mode: 'retry'` (draftRetryForm) works on the submitted report,
  * where DMR counts every change as the company's reply to the reviewer.
+ * `mode: 'overview'` only lists the files, for the overview screen; answers
+ * hold nothing for a buildOverviewField to show.
  */
-export const EqualityAttachments = ({
+export const EqualityAttachments = (props: Props) =>
+  props.field?.props?.['mode'] === 'overview' ? (
+    <EqualityAttachmentsOverview {...props} />
+  ) : (
+    <EditableEqualityAttachments {...props} />
+  )
+
+// Laid out like a buildOverviewField block, with its edit link back to the
+// plan screen, so it sits in the overview with the other sections.
+const EqualityAttachmentsOverview = ({ application, goToScreen }: Props) => {
+  const { formatMessage } = useIntl()
+  const client = useApolloClient()
+  const m = messages.equalityReport.attachments
+  const [attachments, setAttachments] = useState<Attachment[] | undefined>()
+  const [loadError, setLoadError] = useState(false)
+
+  useEffect(() => {
+    let active = true
+    client
+      .query<{
+        directorateOfEqualityEqualityAttachments: Attachment[] | null
+      }>({
+        query: EQUALITY_ATTACHMENTS,
+        variables: { input: { applicationId: application.id } },
+        fetchPolicy: 'network-only',
+      })
+      .then(({ data }) => {
+        if (active) {
+          setAttachments(data.directorateOfEqualityEqualityAttachments ?? [])
+        }
+      })
+      .catch(() => {
+        if (active) setLoadError(true)
+      })
+    return () => {
+      active = false
+    }
+  }, [client, application.id])
+
+  return (
+    <ReviewGroup
+      isLast
+      editAction={() => goToScreen?.(GOALS_AND_ACTIONS_SCREEN)}
+    >
+      <Box marginRight={12}>
+        <Text variant="h3" as="h3" paddingTop={2} paddingBottom={5}>
+          {formatMessage(m.title)}
+        </Text>
+      </Box>
+      {loadError ? (
+        <Text variant="eyebrow" color="red600">
+          {formatMessage(m.loadError)}
+        </Text>
+      ) : !attachments ? (
+        <SkeletonLoader height={40} width="80%" borderRadius="large" />
+      ) : attachments.length === 0 ? (
+        <Text>{formatMessage(m.none)}</Text>
+      ) : (
+        <Stack space={1}>
+          {attachments.map((attachment) => (
+            <Text key={attachment.id}>{attachment.filename}</Text>
+          ))}
+        </Stack>
+      )}
+    </ReviewGroup>
+  )
+}
+
+const EditableEqualityAttachments = ({
   application,
   field,
   setBeforeSubmitCallback,

@@ -573,6 +573,10 @@ export const messages = {
         defaultMessage:
           'Hámarksfjölda fylgiskjala er náð. Eyddu skjali til að bæta öðru við.',
       },
+      none: {
+        id: 'doe.er.application:equalityReport.attachments.none',
+        defaultMessage: 'Engin fylgiskjöl',
+      },
       uploadInProgress: {
         id: 'doe.er.application:equalityReport.attachments.uploadInProgress',
         defaultMessage:
