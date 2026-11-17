@@ -8,7 +8,7 @@ import { defaultLanguage } from '@island.is/shared/constants'
 import { applicationSystemScopes } from '@island.is/auth/scopes'
 import { BffProvider, createMockedInitialState } from '@island.is/react-spa/bff'
 import { Router } from '../components/Router'
-import { BASE_PATH } from '../lib/routes'
+import { BASE_PATH } from '../lib/basePath'
 import { isMockMode } from '../mocks'
 
 const mockedInitialState = isMockMode

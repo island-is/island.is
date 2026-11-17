@@ -62,11 +62,13 @@ export const DelegationsScreen = ({
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const { setHideDelegationBanner } = useHeaderInfo()
+  const isLoading = screenData.screenType === ScreenType.LOADING
 
   useLayoutEffect(() => {
+    if (isLoading) return
     setHideDelegationBanner(true)
     return () => setHideDelegationBanner(false)
-  }, [setHideDelegationBanner])
+  }, [isLoading, setHideDelegationBanner])
 
   const paramString = searchParams.size
     ? '&' +

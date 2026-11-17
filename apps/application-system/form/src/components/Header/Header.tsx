@@ -15,10 +15,11 @@ import { fixSvgUrls } from '../../utils'
 export const Header: FC<React.PropsWithChildren<unknown>> = () => {
   const location = useLocation()
   const { info, hideDelegationBanner } = useHeaderInfo()
-  const slug = useMatches().find((match) => match.params.slug)?.params.slug
-  const switchTargetLink = slug
+  const { slug, id } =
+    useMatches().find((match) => match.params.slug)?.params ?? {}
+  const switchTargetLink = id
     ? `${window.location.origin}${BASE_PATH}/${slug}`
-    : `${window.location.origin}/minarsidur/umsoknir`
+    : undefined
 
   useEffect(() => {
     // Fixes the island.is logo and other SVGs not appearing on
