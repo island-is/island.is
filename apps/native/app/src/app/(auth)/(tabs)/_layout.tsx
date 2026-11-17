@@ -35,11 +35,18 @@ export default function TabLayout() {
   usePreferencesStore((s) => s.hasOnboardedPrivacy)
   const isLocked = useAuthStore((s) => s.lockScreenActivatedAt !== undefined)
   const isSignedIn = useAuthStore((s) => !!s.nativeUser)
+  const isOnboarding = usePathname().startsWith('/onboarding')
 
-  // A login runs the whole onboarding (nextOnboardingStep). Someone who left
-  // part way through gets the rest after an unlock. Not while locked: a
-  // Redirect replaces the top screen, which is the lock. Not after logging
-  // out either, which resets the steps while these tabs are still up.
+  // A login runs the whole onboarding (nextOnboardingStep), and these tabs
+  // wait under it: they'd otherwise skip its steps.
+  if (isOnboarding) {
+    return null
+  }
+
+  // Someone who left part way through gets the rest after an unlock. Not
+  // while locked: a Redirect replaces the top screen, which is the lock. Not
+  // after logging out either, which resets the steps while these tabs are
+  // still up.
   const unfinishedStep =
     isLocked || !isSignedIn ? null : getUnfinishedOnboardingStep()
   if (unfinishedStep) {
