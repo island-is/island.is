@@ -4,12 +4,26 @@ import type {
 } from '@playwright/test'
 import { join } from 'path'
 import './addons'
-import { env, urls } from './support/urls'
+import {
+  env,
+  judicialSystemDefaultLocalPort,
+  judicialSystemLocalPort,
+  urls,
+} from './support/urls'
 
-// Fixed on purpose, not read from PORT: the dev S3 upload bucket only allows the
-// localhost:4200 origin, so the tests must run there. Kept in step with
-// judicialSystemBaseUrl in support/urls.ts.
-const judicialSystemPort = 4200
+// Not read from PORT. 4200 unless JUDICIAL_SYSTEM_WEB_PORT moves it, e.g. to
+// run next to a stack that already holds 4200.
+const judicialSystemPort = judicialSystemLocalPort
+
+// The dev S3 upload bucket only allows the localhost:4200 origin in its CORS
+// rules, so from any other local port the browser would block every upload.
+// S3 itself accepts the request, so on another port the browser's CORS checks
+// are turned off instead. Local runs only - CI and remote environments keep
+// them on.
+const judicialSystemBrowserArgs =
+  env === 'local' && judicialSystemPort !== judicialSystemDefaultLocalPort
+    ? ['--disable-web-security']
+    : []
 
 /**
  * The judicial-system suite is timed for a production build (the way CI runs
@@ -17,8 +31,8 @@ const judicialSystemPort = 4200
  * request waits and makes the suite look flaky. So for local runs of that
  * project, build and serve the production bundle - unless something already
  * listens on the port (e.g. a dev server), which is then reused as-is.
- * The port has to stay 4200 for file uploads to work: the dev S3 bucket only
- * allows that origin in its CORS rules.
+ * Port 4200 is the only origin the dev S3 bucket allows in its CORS rules;
+ * see judicialSystemBrowserArgs for how another port still uploads.
  * The islandis project targets remote environments and needs no server.
  */
 const judicialSystemWebServer: PlaywrightTestConfig['webServer'] =
@@ -110,6 +124,7 @@ const config: PlaywrightTestConfig = {
         /* Slows down execution in ms */
         launchOptions: {
           slowMo: 200,
+          args: judicialSystemBrowserArgs,
         },
       },
     },

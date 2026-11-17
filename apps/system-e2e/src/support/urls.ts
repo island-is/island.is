@@ -51,9 +51,27 @@ export const getEnvironmentBaseUrl = (authority: string) => {
   return `https://${prefix}${authority}`
 }
 const localUrl = `http://${BaseAuthority.local}:${process.env.PORT ?? 4200}`
-// The judicial-system suite is pinned to 4200 regardless of PORT: the dev S3
-// upload bucket only allows that origin, so any other port fails every upload.
-const judicialSystemLocalUrl = `http://${BaseAuthority.local}:4200`
+// The judicial-system suite does not follow PORT. It defaults to 4200, the
+// only origin the dev S3 upload bucket allows, and moves only when
+// JUDICIAL_SYSTEM_WEB_PORT says so - the Playwright config then turns off the
+// browser's CORS checks so that uploads still go through.
+export const judicialSystemDefaultLocalPort = 4200
+const parseJudicialSystemLocalPort = (value: string | undefined) => {
+  if (!value) {
+    return judicialSystemDefaultLocalPort
+  }
+  const port = Number(value)
+  if (!Number.isInteger(port) || port < 1 || port > 65535) {
+    throw new Error(
+      `JUDICIAL_SYSTEM_WEB_PORT must be a port number, got "${value}"`,
+    )
+  }
+  return port
+}
+export const judicialSystemLocalPort = parseJudicialSystemLocalPort(
+  process.env.JUDICIAL_SYSTEM_WEB_PORT,
+)
+const judicialSystemLocalUrl = `http://${BaseAuthority.local}:${judicialSystemLocalPort}`
 // This set of query params is used to hide the onboarding modal as well as force locale to Icelandic.
 // Useful if you need to test something that is using icelandic labels for example.
 const icelandicAndNoPopup = {
