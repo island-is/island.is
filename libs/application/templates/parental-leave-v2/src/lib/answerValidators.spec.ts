@@ -736,6 +736,51 @@ describe('when constructing a new period', () => {
       expect(validateLatest('2021-05-01', '2021-05-31')).toEqual(undefined)
     })
   })
+
+  describe('a period shorter than the minimum', () => {
+    const day = (offset: number) => formatDate(addDays(FUTURE_DOB_DATE, offset))
+    const first = {
+      firstPeriodStart: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
+      startDate: day(0),
+      useLength: NO,
+      endDate: day(30),
+      ratio: '100',
+    }
+    const later = {
+      startDate: day(60),
+      useLength: NO,
+      endDate: day(90),
+      ratio: '100',
+    }
+    const validateLatest = (
+      periods: Record<string, unknown>[],
+      startDate: string,
+      endDate: string,
+    ) =>
+      answerValidators[VALIDATE_LATEST_PERIOD](
+        [...periods, { startDate, useLength: NO, endDate, ratio: '100' }],
+        futureApplication,
+      )
+
+    it('names the minimum length in the error', () => {
+      expect(validateLatest([first], day(40), day(45))).toStrictEqual({
+        message: errorMessages.periodsEndDateMinimumPeriod,
+        path: 'periods[1].endDate',
+        values: { minPeriodDays: 14 },
+      })
+    })
+
+    it('accepts it straight after the period before it', () => {
+      expect(validateLatest([first], day(31), day(36))).toEqual(undefined)
+    })
+
+    // The period before it by date need not be the last one in the list
+    it('accepts it straight after a period that is not the last one entered', () => {
+      expect(validateLatest([first, later], day(31), day(36))).toEqual(
+        undefined,
+      )
+    })
+  })
 })
 
 describe('when continuing from the periods screen', () => {

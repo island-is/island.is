@@ -25,7 +25,6 @@ import {
 import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   minimumRatio,
-  minPeriodDays,
   usageMaxMonths,
   usageMinMonths,
 } from '../../config'
@@ -329,11 +328,13 @@ export const validatePeriod = (
 
     // Stop check period in the past from VMST
     // Sometime they changed period to less than 14 days
+    // A short period may follow any period ending the day before it, not only
+    // the last one in the list, which need not be the previous one by date.
     if (
       !(
         endDateValue.getTime() < today.getTime() && !isThisMonth(startDateValue)
       ) &&
-      !isPeriodsContinuous(existingPeriods.at(-1), period)
+      !existingPeriods.some((other) => isPeriodsContinuous(other, period))
     ) {
       if (
         calculatePeriodLength(startDateValue, endDateValue) <
@@ -343,7 +344,7 @@ export const validatePeriod = (
           useLength === YES ? 'endDateDuration' : 'endDate',
           errorMessages.periodsEndDateMinimumPeriod,
           {
-            minPeriodDays: minPeriodDays - 1,
+            minPeriodDays: MINIMUM_PERIOD_LENGTH,
           },
         )
       }
