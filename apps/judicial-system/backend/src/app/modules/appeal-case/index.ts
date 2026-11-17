@@ -11,6 +11,7 @@ export {
   isOutOfCourtAppealEvent,
   isVerdictAppealOver,
   nextAppealCourtSession,
+  resolveDefenceParties,
   standingVerdictAppealEvents,
   standingVerdictAppellants,
   verdictAppealProgress,
