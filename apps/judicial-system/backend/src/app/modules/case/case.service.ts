@@ -82,7 +82,11 @@ import { CourtSessionService } from '../court-session'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { EventLogService } from '../event-log'
-import { FileService, PoliceDigitalCaseFileService } from '../file'
+import {
+  FileService,
+  isRulingOrderInConfirmedCourtSession,
+  PoliceDigitalCaseFileService,
+} from '../file'
 import { IndictmentCountService } from '../indictment-count'
 import {
   AppealCase,
@@ -855,6 +859,36 @@ export class CaseService {
     })
   }
 
+  // Mid-case ruling orders are not delivered to LÖKE on upload. Queue them when
+  // the case completes, but only those linked in a confirmed court session and
+  // with a document. Orally pronounced orders with no document yet, and rulings
+  // never linked to a confirmed session, are skipped. A later write-up goes
+  // through case correction and is delivered on the next completion.
+  private addMessagesForMidCaseRulingOrdersToPolice(
+    theCase: Case,
+    user: TUser,
+  ): void {
+    if (theCase.origin !== CaseOrigin.LOKE) {
+      return
+    }
+
+    for (const caseFile of theCase.caseFiles ?? []) {
+      if (
+        caseFile.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER &&
+        caseFile.isKeyAccessible &&
+        caseFile.key &&
+        isRulingOrderInConfirmedCourtSession(caseFile.id, theCase.courtSessions)
+      ) {
+        queueMessagesAfterCommit({
+          type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: caseFile.id,
+        })
+      }
+    }
+  }
+
   private addMessagesForCompletedIndictmentCaseToQueue(
     updatedCase: Case,
     user: TUser,
@@ -916,6 +950,8 @@ export class CaseService {
           })
         }
       }
+
+      this.addMessagesForMidCaseRulingOrdersToPolice(updatedCase, user)
 
       if (updatedCase.withCourtSessions) {
         queueMessagesAfterCommit({
@@ -1141,6 +1177,8 @@ export class CaseService {
       } else if (isCompletedCase(updatedCase.state)) {
         if (isIndictment) {
           if (theCase.state === CaseState.WAITING_FOR_CANCELLATION) {
+            // Prosecutor cancellation voids the case; mid-case ruling orders are
+            // not delivered to LÖKE.
             this.addMessagesForIndictmentConclusionToQueue(updatedCase, user)
           } else {
             this.addMessagesForCompletedIndictmentCaseToQueue(updatedCase, user)
