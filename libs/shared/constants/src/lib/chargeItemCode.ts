@@ -30,6 +30,8 @@ export enum ChargeItemCode {
   AOSH_STREET_REGISTRATION_SA117 = 'SA117', // Rafræn forskráning
   AOSH_PRACTICAL_EXAM_VJ172 = 'VJ172', // Skráning í verklegt próf
   AOSH_PRACTICAL_EXAM_VJ171 = 'VJ171', // Skirteinisgjald
+  // TODO: Staðfesta gjaldlið við Vinnueftirlitið/FJS
+  AOSH_MACHINE_LICENSE_CARD_REISSUE = 'VJ_TBD', // Endurnýjun réttinda (endurútgáfa plastkorts)
   HEALTHCARE_LICENSE_CERTIFICATE = 'L6102',
   ID_CARD_REGULAR = 'AY155', //Nafnskírteini almennt gjald
   ID_CARD_EXPRESS = 'AY156', //Nafnskírteini skyndiútgáfa

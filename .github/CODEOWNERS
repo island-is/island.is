@@ -534,6 +534,8 @@ codemagic.yaml                                                                  
 /libs/application/templates/aosh/practical-exam                                                                              @island-is/origo
 /libs/application/templates/aosh/request-for-inspection                                                                      @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/aosh                                                        @island-is/origo
+/libs/application/templates/aosh/machine-license-card-reissue                                                                @island-is/deloitte
+/libs/application/template-api-modules/src/lib/modules/templates/aosh/machine-license-card-reissue                           @island-is/deloitte
 
 /libs/application/templates/healthcare-license-certificate/                                                                  @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/healthcare-license-certificate/                             @island-is/origo
