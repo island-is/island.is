@@ -100,6 +100,7 @@ user already has running alone - it is on other ports and you do not need it.
 PORT_ASSIGNMENTS=$(node apps/judicial-system/.claude/skills/js-e2e-standalone/pick-ports.mjs) || exit 1
 eval "$PORT_ASSIGNMENTS"
 QUEUE=e2e-message-queue-$BACKEND_PORT
+RUN_ID=e2e-$(uuidgen)
 ```
 
 If the script fails, stop there - `eval` on its empty output would succeed and
@@ -108,16 +109,19 @@ leave the ports unset.
 That sets `BACKEND_PORT`, `API_PORT`, `MESSAGE_HANDLER_PORT` and `WEB_PORT` to
 random free ports. `WEB_PORT` is for the web app, which you do not start
 yourself - Playwright does, in step 4. It reserves a pair for each, because the backend and api also open a
-metrics server on `PORT + 1`. Shell state does not carry between your tool
-calls, so note the five values and write them out literally from here on.
+metrics server on `PORT + 1`. `RUN_ID` is a marker unique to this run: every
+service is started with it in its environment, their child processes inherit
+it, and step 6 uses it to recognise the processes this run started. Shell
+state does not carry between your tool
+calls, so note the six values and write them out literally from here on.
 
 **Wire them together.** These are the only settings that connect the services:
 
-| Service         | Command                                         | Environment                                                                                                                                                                                            |
-| --------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| backend         | `yarn nx serve judicial-system-backend`         | `AWS_PROFILE=judicial-system-dev PORT=$BACKEND_PORT SQS_QUEUE_NAME=$QUEUE CLIENT_URL=http://localhost:$WEB_PORT`                                                                                       |
-| api             | `yarn nx serve judicial-system-api`             | `PORT=$API_PORT BACKEND_URL=http://localhost:$BACKEND_PORT AUTH_IDS_REDIRECT_URI=http://localhost:$WEB_PORT/api/auth/callback/identity-server AUTH_IDS_LOGOUT_REDIRECT_URI=http://localhost:$WEB_PORT` |
-| message handler | `yarn nx serve judicial-system-message-handler` | `PORT=$MESSAGE_HANDLER_PORT BACKEND_URL=http://localhost:$BACKEND_PORT SQS_QUEUE_NAME=$QUEUE`                                                                                                          |
+| Service         | Command                                         | Environment                                                                                                                                                                                                               |
+| --------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| backend         | `yarn nx serve judicial-system-backend`         | `E2E_RUN_ID=$RUN_ID AWS_PROFILE=judicial-system-dev PORT=$BACKEND_PORT SQS_QUEUE_NAME=$QUEUE CLIENT_URL=http://localhost:$WEB_PORT`                                                                                       |
+| api             | `yarn nx serve judicial-system-api`             | `E2E_RUN_ID=$RUN_ID PORT=$API_PORT BACKEND_URL=http://localhost:$BACKEND_PORT AUTH_IDS_REDIRECT_URI=http://localhost:$WEB_PORT/api/auth/callback/identity-server AUTH_IDS_LOGOUT_REDIRECT_URI=http://localhost:$WEB_PORT` |
+| message handler | `yarn nx serve judicial-system-message-handler` | `E2E_RUN_ID=$RUN_ID PORT=$MESSAGE_HANDLER_PORT BACKEND_URL=http://localhost:$BACKEND_PORT SQS_QUEUE_NAME=$QUEUE`                                                                                                          |
 
 The web port appears on the backend and api because they send the browser
 back to the web app: the backend in the links it puts in notifications, the
@@ -139,7 +143,7 @@ created on first use.
   ```bash
   ~/.local/bin/hc run --bg --name e2e-backend --cwd <repo root> \
     --label herdr.space=<space> --label herdr.tab=<tab> \
-    -- zsh -ic 'AWS_PROFILE=judicial-system-dev PORT=<backend port> SQS_QUEUE_NAME=<queue> CLIENT_URL=http://localhost:<web port> yarn nx serve judicial-system-backend'
+    -- zsh -ic 'E2E_RUN_ID=<run id> AWS_PROFILE=judicial-system-dev PORT=<backend port> SQS_QUEUE_NAME=<queue> CLIENT_URL=http://localhost:<web port> yarn nx serve judicial-system-backend'
   ```
 
   The `zsh -ic` wrapper is required: Herdr's own environment has no nvm on its
@@ -180,20 +184,18 @@ It must answer `302`. It proves the api reaches the backend and the backend
 the database, and it takes the first-request slowness of a freshly started
 service out of the run, where it can trip the suite's 15s waits.
 
-**Note the pids.** Now that the services are up, record which process holds
-each of their ports:
+**Check the listeners are yours.** For the backend, api and message handler
+ports and for `PORT + 1` of the backend and api, read the environment of the
+process that holds the port:
 
 ```bash
-ps -o pid=,lstart=,command= -p "$(lsof -nP -t -iTCP:<port> -sTCP:LISTEN)"
+ps eww -o command= -p "$(lsof -nP -t -iTCP:<port> -sTCP:LISTEN)" | tr ' ' '\n' | grep -x 'E2E_RUN_ID=<run id>'
 ```
 
-Run it for the backend, api and message handler ports and for `PORT + 1` of
-the backend and api. Each must be a node process running that service from
-this checkout's `dist/`, started after you started the services. Note its pid
-and start time next to the port; step 6 uses the pair to tell a process this
-run started from one that took the port later. If a listener is anything
-else, another process took the port between the pick and the start: do not
-note it, stop your services and start over from the port pick.
+Each must print the marker. If one prints nothing, the listener was not
+started by this run - another process took the port between the pick and the
+start. Leave that process alone, stop your services and start over from the
+port pick.
 
 ## 4. Run
 
@@ -210,10 +212,9 @@ lsof -nP -iTCP:<web port> -sTCP:LISTEN; lsof -nP -iTCP:<web port + 1> -sTCP:LIST
 Both must print nothing. If either lists a listener, run `pick-ports.mjs` again
 and take only its `WEB_PORT`. The backend and api have the old web port in
 `CLIENT_URL` and the `AUTH_IDS_*` urls, so restart those two with the new value.
-Then repeat the end of step 3 for them: wait for `/liveness`, send the login
-request twice and require `302`, and note the pid and start time for both
-ports of each. The restarted processes are cold, and the pids from before the
-restart belong to processes that are gone - step 6 goes by the current ones.
+Start them with the same run id, then repeat the end of step 3 for them:
+wait for `/liveness`, send the login request twice and require `302`, and
+check the marker on both ports of each. The restarted processes are cold.
 
 ```bash
 PLAYWRIGHT_JSON_OUTPUT_NAME=<scratchpad>/e2e-report.json \
@@ -294,12 +295,12 @@ opens a metrics server there). Stopping
 message handler also takes up to ten seconds to let go of its port while it
 finishes its last queue poll, so check again after that before deciding a
 listener was left behind. If a
-listener remains, run the `ps` command from step 3 on it and compare its pid
-and start time with the pair you noted for that port. When both match it is
-yours - stop it with `kill <pid>` and check again. When either differs, or
-you have nothing noted for the port, leave it alone and report it with its
-command: a process from this checkout on one of your ports is not proof that
-this run started it. Playwright shuts the web app down itself.
+listener remains, run the marker check from step 3 on it. When it prints
+this run's `E2E_RUN_ID` the process was started by this run - stop it with
+`kill <pid>` and check again. When it prints nothing, leave the process
+alone and report it with its command (`ps -o command= -p <pid>`): a process
+from this checkout on one of your ports is not proof that this run started
+it. Playwright shuts the web app down itself.
 
 If the user asked to keep the stack up, leave it and tell them the ports.
 
