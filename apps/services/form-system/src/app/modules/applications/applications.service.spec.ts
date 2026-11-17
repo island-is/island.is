@@ -1,11 +1,13 @@
 import { User } from '@island.is/auth-nest-tools'
 import {
+  ApplicationStatus,
   AssetTypes,
   FamilyTypes,
   FieldTypesEnum,
   FormStatus,
   SectionTypes,
 } from '@island.is/form-system/shared'
+import { Transaction } from 'sequelize'
 import { ApplicationsService } from './applications.service'
 import { SectionDto } from '../sections/models/dto/section.dto'
 import axios from 'axios'
@@ -524,8 +526,10 @@ describe('ApplicationsService.submit payment visibility', () => {
     const application = {
       id: 'application-id',
       formId: 'form-id',
+      status: ApplicationStatus.DRAFT as string,
       save: jest.fn().mockResolvedValue(undefined),
     }
+    const transaction = { id: 'transaction' }
     const service = {
       applicationModel: {
         findByPk: jest.fn().mockResolvedValue(application),
@@ -566,13 +570,22 @@ describe('ApplicationsService.submit payment visibility', () => {
       },
       serviceManager: { send: jest.fn().mockResolvedValue(true) },
       logger: { info: jest.fn() },
+      sequelize: {
+        transaction: jest.fn((callback) => callback(transaction)),
+      },
     }
+    const instance = Object.assign(
+      Object.create(ApplicationsService.prototype),
+      service,
+    ) as ApplicationsService
 
     return {
       service,
+      application,
+      transaction,
       submit: (submittingUser?: User) =>
         ApplicationsService.prototype.submit.call(
-          service as unknown as ApplicationsService,
+          instance,
           application.id,
           submittingUser,
         ),
@@ -626,5 +639,91 @@ describe('ApplicationsService.submit payment visibility', () => {
 
     await expect(submit()).rejects.toThrow('without user context')
     expect(service.serviceManager.send).not.toHaveBeenCalled()
+  })
+
+  it('holds the application lock through sending and saving the completed status', async () => {
+    const { service, application, transaction, submit } = setupSubmission({
+      fieldHidden: true,
+    })
+    let transactionActive = false
+    service.sequelize.transaction.mockImplementation(async (callback) => {
+      transactionActive = true
+      try {
+        return await callback(transaction)
+      } finally {
+        transactionActive = false
+      }
+    })
+    service.serviceManager.send.mockImplementation(async () => {
+      expect(transactionActive).toBe(true)
+      expect(service.applicationModel.findByPk).toHaveBeenCalledWith(
+        application.id,
+        { transaction, lock: Transaction.LOCK.UPDATE },
+      )
+      expect(application.save).not.toHaveBeenCalled()
+      return true
+    })
+    application.save.mockImplementation(async () => {
+      expect(transactionActive).toBe(true)
+      expect(application.status).toBe(ApplicationStatus.COMPLETED)
+    })
+
+    await expect(submit(user)).resolves.toMatchObject({
+      submissionFailed: false,
+    })
+
+    expect(application.save).toHaveBeenCalledWith({ transaction })
+    expect(service.applicationEventModel.create).toHaveBeenCalledWith(
+      expect.objectContaining({ applicationId: application.id }),
+      { transaction },
+    )
+    expect(transactionActive).toBe(false)
+  })
+
+  it.each(['completed', 'deleted'])(
+    'does not send if the application was %s while waiting for the row lock',
+    async (state) => {
+      const { service, application, submit } = setupSubmission({
+        fieldHidden: true,
+      })
+      let releaseLock!: () => void
+      const lockReleased = new Promise<void>((resolve) => {
+        releaseLock = resolve
+      })
+      service.applicationModel.findByPk.mockImplementation(async () => {
+        await lockReleased
+        application.status = ApplicationStatus.COMPLETED
+        return state === 'deleted' ? null : application
+      })
+
+      const result = submit(user)
+      expect(service.serviceManager.send).not.toHaveBeenCalled()
+      const rejection = expect(result).rejects.toThrow(
+        state === 'deleted' ? 'not found' : 'not a draft',
+      )
+      releaseLock()
+      await rejection
+
+      expect(service.serviceManager.send).not.toHaveBeenCalled()
+      expect(service.applicationEventModel.create).not.toHaveBeenCalled()
+      expect(application.save).not.toHaveBeenCalled()
+    },
+  )
+
+  it('keeps the draft eligible for retry when sending fails', async () => {
+    const { service, application, transaction, submit } = setupSubmission({
+      fieldHidden: true,
+    })
+    const destroy = jest.fn().mockResolvedValue(undefined)
+    service.applicationEventModel.create.mockResolvedValue({ destroy })
+    service.serviceManager.send.mockResolvedValue(false)
+
+    await expect(submit(user)).resolves.toMatchObject({
+      submissionFailed: true,
+    })
+
+    expect(application.status).toBe(ApplicationStatus.DRAFT)
+    expect(application.save).not.toHaveBeenCalled()
+    expect(destroy).toHaveBeenCalledWith({ transaction })
   })
 })

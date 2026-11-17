@@ -94,6 +94,14 @@ Archiving a published form deletes all of its draft applications, including test
 drafts, their application events, and their uploaded files. This also applies when publishing a replacement
 archives the previous form version. Non-draft applications are retained.
 
+Draft applications are locked during archive cleanup. Submission takes the same
+row lock and verifies that the application is still a draft before sending it.
+The lock is held through the external send and the completed-status update.
+Draft file keys are collected during database cleanup; S3 objects are deleted
+only after the archive transaction commits, without updating deleted values.
+Storage deletion errors are logged and surfaced after commit; the database
+cleanup remains committed.
+
 ## Code owners and maintainers
 
 - [Advania](https://github.com/orgs/island-is/teams/advania/members)

@@ -900,8 +900,8 @@ export class FormsService {
     const slug = form.slug
     let copyForm: Form | undefined
 
-    await this.sequelize.transaction(async (transaction) => {
-      await this.deleteDraftApplications(id, transaction)
+    const fileKeys = await this.sequelize.transaction(async (transaction) => {
+      const fileKeys = await this.deleteDraftApplications(id, transaction)
 
       form.status = FormStatus.ARCHIVED
       form.slug = `${form.slug}-archived-${Date.now()}`
@@ -915,7 +915,13 @@ export class FormsService {
         undefined,
         transaction,
       )
+
+      return fileKeys
     })
+
+    await Promise.all(
+      fileKeys.map((key) => this.fileService.deleteFileFromStorage(key)),
+    )
 
     if (!copyForm) {
       throw new Error('Error copying form')
@@ -946,7 +952,7 @@ export class FormsService {
       throw new NotFoundException(`Form with id '${derivedFromId}' not found`)
     }
 
-    await this.sequelize.transaction(async (transaction) => {
+    const fileKeys = await this.sequelize.transaction(async (transaction) => {
       try {
         const applications = await this.applicationModel.findAll({
           where: { formId: id },
@@ -966,7 +972,10 @@ export class FormsService {
           await application.destroy({ transaction })
         }
 
-        await this.deleteDraftApplications(derivedFromId, transaction)
+        const fileKeys = await this.deleteDraftApplications(
+          derivedFromId,
+          transaction,
+        )
 
         const slugToBeArchived = formToBeArchived.slug
         formToBeArchived.status = FormStatus.ARCHIVED
@@ -982,12 +991,18 @@ export class FormsService {
         formToBePublished.status = FormStatus.PUBLISHED
         formToBePublished.isInaccessible = false
         await formToBePublished.save({ transaction })
+
+        return fileKeys
       } catch (error) {
         throw new InternalServerErrorException(
           `Unexpected error publishing form '${id}'.`,
         )
       }
     })
+
+    await Promise.all(
+      fileKeys.map((key) => this.fileService.deleteFileFromStorage(key)),
+    )
 
     const formResponse = await this.buildFormResponse(formToBeArchived)
 
@@ -1045,34 +1060,41 @@ export class FormsService {
   private async deleteDraftApplications(
     formId: string,
     transaction: Transaction,
-  ): Promise<void> {
+  ): Promise<string[]> {
     const applications = await this.applicationModel.findAll({
       where: { formId, status: ApplicationStatus.DRAFT },
       include: [
         {
           model: Value,
           as: 'values',
+          separate: true,
           where: { fieldType: FieldTypesEnum.FILE },
           required: false,
         },
       ],
       transaction,
+      lock: Transaction.LOCK.UPDATE,
     })
 
+    const fileKeys: string[] = []
     for (const application of applications) {
-      await this.cleanupApplicationFiles(application, transaction)
+      fileKeys.push(
+        ...this.getApplicationFiles(application).map(({ key }) => key),
+      )
       await this.applicationEventModel.destroy({
         where: { applicationId: application.id },
         transaction,
       })
       await application.destroy({ transaction })
     }
+
+    return fileKeys
   }
 
-  private async cleanupApplicationFiles(
+  private getApplicationFiles(
     application: Application,
-    transaction?: Transaction,
-  ): Promise<void> {
+  ): { key: string; valueId: string }[] {
+    const files: { key: string; valueId: string }[] = []
     for (const value of application.values ?? []) {
       if (value.fieldType !== FieldTypesEnum.FILE) continue
 
@@ -1101,8 +1123,19 @@ export class FormsService {
       this.logger.debug(`Deleting s3Keys for value ${value.id}:`, s3Keys)
 
       for (const key of s3Keys) {
-        await this.fileService.deleteFile(key, value.id, transaction)
+        files.push({ key, valueId: value.id })
       }
+    }
+
+    return files
+  }
+
+  private async cleanupApplicationFiles(
+    application: Application,
+    transaction?: Transaction,
+  ): Promise<void> {
+    for (const { key, valueId } of this.getApplicationFiles(application)) {
+      await this.fileService.deleteFile(key, valueId, transaction)
     }
   }
 

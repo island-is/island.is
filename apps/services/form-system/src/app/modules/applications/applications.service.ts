@@ -16,6 +16,7 @@ import type { Locale } from '@island.is/shared/types'
 import { AuthDelegationType } from '@island.is/shared/types'
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
   HttpException,
   Inject,
@@ -28,7 +29,7 @@ import { jwtDecode } from 'jwt-decode'
 import axios from 'axios'
 import * as kennitala from 'kennitala'
 import pick from 'lodash/pick'
-import { Op, QueryTypes } from 'sequelize'
+import { Op, QueryTypes, Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { calculatePruneAt } from '../../../utils/calculatePruneAt'
 import { getOrganizationInfoByNationalId } from '../../../utils/organizationInfo'
@@ -369,15 +370,32 @@ export class ApplicationsService {
   }
 
   async submit(id: string, user?: User): Promise<SubmitApplicationResponseDto> {
+    return this.sequelize.transaction((transaction) =>
+      this.submitLocked(id, user, transaction),
+    )
+  }
+
+  private async submitLocked(
+    id: string,
+    user: User | undefined,
+    transaction: Transaction,
+  ): Promise<SubmitApplicationResponseDto> {
     const application = await this.applicationModel.findByPk(id, {
-      include: [{ model: Value, as: 'values' }],
+      transaction,
+      lock: Transaction.LOCK.UPDATE,
     })
 
     if (!application) {
       throw new NotFoundException(`Application with id '${id}' not found.`)
     }
 
-    const form = await this.formModel.findByPk(application.formId)
+    if (application.status !== ApplicationStatus.DRAFT) {
+      throw new ConflictException(`Application with id '${id}' is not a draft.`)
+    }
+
+    const form = await this.formModel.findByPk(application.formId, {
+      transaction,
+    })
 
     if (!form) {
       throw new NotFoundException(
@@ -451,14 +469,17 @@ export class ApplicationsService {
 
     applicationDto.submittedAt = new Date()
     applicationDto.status = ApplicationStatus.COMPLETED
-    const applicationEvent = await this.applicationEventModel.create({
-      applicationId: application.id,
-      eventType: ApplicationEvents.APPLICATION_SUBMITTED,
-      eventMessage: {
-        is: 'Umsókn móttekin',
-        en: 'Application submitted',
-      },
-    } as ApplicationEvent)
+    const applicationEvent = await this.applicationEventModel.create(
+      {
+        applicationId: application.id,
+        eventType: ApplicationEvents.APPLICATION_SUBMITTED,
+        eventMessage: {
+          is: 'Umsókn móttekin',
+          en: 'Application submitted',
+        },
+      } as ApplicationEvent,
+      { transaction },
+    )
     if (!applicationDto.events) {
       applicationDto.events = []
     }
@@ -479,6 +500,7 @@ export class ApplicationsService {
       zendeskBrandId = form.zendeskBrandId ?? ''
     }
 
+    // Keep the row locked through sending and saving so archiving rechecks its status.
     const success = await this.serviceManager.send(
       applicationDto,
       zendeskInstance,
@@ -486,26 +508,21 @@ export class ApplicationsService {
     )
 
     if (success) {
-      try {
-        application.status = applicationDto.status
-        application.submittedAt = applicationDto.submittedAt
-        application.pruneAt = calculatePruneAt(form.submissionDaysToLive)
-        await application.save()
-        this.logger.info('form system application submitted', {
-          applicationId: application.id,
-          formId: form.id,
-          formSlug: form.slug,
-          organizationNationalId: applicationDto.organizationNationalId,
-          isTest: application.isTest,
-          submittedWithPayment: !user,
-          datadogEvent: 'form_system_application_submitted',
-        })
-      } catch (error) {
-        await applicationEvent.destroy()
-        throw error
-      }
+      application.status = applicationDto.status
+      application.submittedAt = applicationDto.submittedAt
+      application.pruneAt = calculatePruneAt(form.submissionDaysToLive)
+      await application.save({ transaction })
+      this.logger.info('form system application submitted', {
+        applicationId: application.id,
+        formId: form.id,
+        formSlug: form.slug,
+        organizationNationalId: applicationDto.organizationNationalId,
+        isTest: application.isTest,
+        submittedWithPayment: !user,
+        datadogEvent: 'form_system_application_submitted',
+      })
     } else {
-      await applicationEvent.destroy()
+      await applicationEvent.destroy({ transaction })
     }
 
     const submitResponseDto = new SubmitApplicationResponseDto()

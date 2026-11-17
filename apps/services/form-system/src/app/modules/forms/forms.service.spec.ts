@@ -66,10 +66,14 @@ describe.each(['archive', 'publish replacement'])(
             ),
         ),
       }
-      const fileService = { deleteFile: jest.fn().mockResolvedValue(undefined) }
+      const fileService = {
+        deleteFile: jest.fn().mockResolvedValue(undefined),
+        deleteFileFromStorage: jest.fn().mockResolvedValue(undefined),
+      }
       const applicationEventModel = {
         destroy: jest.fn().mockResolvedValue(1),
       }
+      const commit = jest.fn().mockResolvedValue(undefined)
       const service = Object.assign(Object.create(FormsService.prototype), {
         formModel: {
           findByPk: jest.fn(async (id) =>
@@ -81,7 +85,12 @@ describe.each(['archive', 'publish replacement'])(
         fileService,
         logger: { debug: jest.fn() },
         sequelize: {
-          transaction: jest.fn((callback) => callback(transaction)),
+          transaction: jest.fn(async (callback) => {
+            const result = await callback(transaction)
+            expect(fileService.deleteFileFromStorage).not.toHaveBeenCalled()
+            await commit()
+            return result
+          }),
         },
         validateZendeskSettingsForPublish: jest
           .fn()
@@ -107,6 +116,7 @@ describe.each(['archive', 'publish replacement'])(
         applicationModel,
         applicationEventModel,
         fileService,
+        commit,
       }
     }
 
@@ -127,9 +137,11 @@ describe.each(['archive', 'publish replacement'])(
         expect.objectContaining({
           where: { formId: form.id, status: ApplicationStatus.DRAFT },
           transaction,
+          lock: Transaction.LOCK.UPDATE,
           include: [
             expect.objectContaining({
               as: 'values',
+              separate: true,
               where: { fieldType: FieldTypesEnum.FILE },
               required: false,
             }),
@@ -137,10 +149,8 @@ describe.each(['archive', 'publish replacement'])(
         }),
       )
       for (const index of [0, 1]) {
-        expect(fileService.deleteFile).toHaveBeenCalledWith(
+        expect(fileService.deleteFileFromStorage).toHaveBeenCalledWith(
           `file-${index}`,
-          `value-${index}`,
-          transaction,
         )
         expect(applications[index].destroy).toHaveBeenCalledWith({
           transaction,
@@ -154,28 +164,34 @@ describe.each(['archive', 'publish replacement'])(
         ).toBeLessThan(applications[index].destroy.mock.invocationCallOrder[0])
       }
       expect(applicationEventModel.destroy).toHaveBeenCalledTimes(2)
-      expect(fileService.deleteFile).toHaveBeenCalledTimes(2)
+      expect(fileService.deleteFileFromStorage).toHaveBeenCalledTimes(2)
+      expect(fileService.deleteFile).not.toHaveBeenCalled()
       expect(applications[2].destroy).not.toHaveBeenCalled()
       expect(applications[3].destroy).not.toHaveBeenCalled()
       expect(form.status).toBe(FormStatus.ARCHIVED)
       expect(form.save).toHaveBeenCalledWith({ transaction })
     })
 
-    it('fails without saving the archived status if draft cleanup fails', async () => {
+    it('surfaces storage deletion failures after database cleanup has committed', async () => {
       const { updateStatus, form, applications, fileService } = setup()
-      fileService.deleteFile.mockRejectedValue(
+      fileService.deleteFileFromStorage.mockRejectedValue(
         new Error('File deletion failed'),
       )
 
-      await expect(updateStatus()).rejects.toThrow()
+      await expect(updateStatus()).rejects.toThrow('File deletion failed')
 
-      expect(form.save).not.toHaveBeenCalled()
-      expect(applications[0].destroy).not.toHaveBeenCalled()
+      expect(form.save).toHaveBeenCalled()
+      expect(applications[0].destroy).toHaveBeenCalled()
     })
 
     it('does not delete the application or archive the form if event deletion fails', async () => {
-      const { updateStatus, form, applications, applicationEventModel } =
-        setup()
+      const {
+        updateStatus,
+        form,
+        applications,
+        applicationEventModel,
+        fileService,
+      } = setup()
       applicationEventModel.destroy.mockRejectedValue(
         new Error('Event deletion failed'),
       )
@@ -184,7 +200,21 @@ describe.each(['archive', 'publish replacement'])(
 
       expect(form.save).not.toHaveBeenCalled()
       expect(applications[0].destroy).not.toHaveBeenCalled()
+      expect(fileService.deleteFileFromStorage).not.toHaveBeenCalled()
     })
+
+    it.each(['save', 'commit'])(
+      'does not delete stored files if the archive transaction fails during %s',
+      async (failure) => {
+        const { updateStatus, form, commit, fileService } = setup()
+        const operation = failure === 'save' ? form.save : commit
+        operation.mockRejectedValue(new Error('Transaction failed'))
+
+        await expect(updateStatus()).rejects.toThrow()
+
+        expect(fileService.deleteFileFromStorage).not.toHaveBeenCalled()
+      },
+    )
   },
 )
 
