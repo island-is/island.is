@@ -19,12 +19,14 @@ and output keys are RSK's own, and an RSK spec update is a regenerate.
   objects carry scalar `itemFields`.
 - `contract/numberSemantic` labels a number `percentage` when it is a ratio,
   otherwise `currency`.
-- `client/toClientQuery` builds a request query from input values, and
-  `validateInput(key, input)` checks it against the generated schema,
-  returning the failing field names.
-- `client/fromClientResult` converts a response's ratios to percentages.
+- `calculate(key, input)` runs one chain: `client/toClientQuery` builds the
+  request query from the input, `client/validateClientQuery` checks it against
+  the generated schema (unknown fields, date-time fields must be valid
+  `Date`s), the calculator's endpoint is called, and `client/fromClientResult`
+  converts the response's ratios to percentages. It returns `{ rejected }` with
+  the failing field names, or `{ output }`. A failed request throws.
 
-`*Input` and `*Output` types are the generated query and result types.
+`CalculatorInput<K>` and `CalculatorOutput<K>` are the generated query and result types.
 
 Percentages are whole percentages (`0-100`) on both sides. A ratio is a
 non-integer number the generated schema bounds to `0-1` (`utils/isRskRatio`):
