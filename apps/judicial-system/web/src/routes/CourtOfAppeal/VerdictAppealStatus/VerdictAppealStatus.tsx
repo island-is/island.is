@@ -395,6 +395,7 @@ const VerdictAppealStatus = () => {
                     label={verdictAppealStatusLabels[value]}
                     checked={status === value}
                     onChange={() => chooseStatus(value)}
+                    disabled={isUpdatingAppealCase}
                     large
                     backgroundColor="white"
                   />

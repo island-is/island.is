@@ -33,6 +33,7 @@ const mockCreateAppealCourtSession = jest.fn()
 const mockUpdateAppealCourtSession = jest.fn()
 const mockDeleteAppealCourtSession = jest.fn()
 const mockUpdateAppealCase = jest.fn()
+let mockIsUpdatingAppealCase = false
 
 jest.mock(
   '@island.is/judicial-system-web/src/utils/hooks/useAppealCase',
@@ -40,7 +41,7 @@ jest.mock(
     __esModule: true,
     default: () => ({
       updateAppealCase: mockUpdateAppealCase,
-      isUpdatingAppealCase: false,
+      isUpdatingAppealCase: mockIsUpdatingAppealCase,
     }),
   }),
 )
@@ -204,6 +205,7 @@ describe('VerdictAppealStatus', () => {
     mockUpdateAppealCourtSession.mockReset()
     mockDeleteAppealCourtSession.mockReset()
     mockUpdateAppealCase.mockReset()
+    mockIsUpdatingAppealCase = false
     mockUpdateAppealCase.mockResolvedValue({ id: 'verdict-appeal' })
   })
 
@@ -298,6 +300,18 @@ describe('VerdictAppealStatus', () => {
         `${COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE}/case-id?appealCaseId=verdict-appeal`,
       ),
     )
+  })
+
+  // A choice made while the save is under way would be left behind: the
+  // earlier one is stored and the page moves on.
+  it('holds the choice still while the status is being saved', () => {
+    mockIsUpdatingAppealCase = true
+
+    renderPage()
+
+    for (const radio of screen.getAllByRole('radio')) {
+      expect(radio).toBeDisabled()
+    }
   })
 
   it('stays on the page when the status could not be saved', async () => {
