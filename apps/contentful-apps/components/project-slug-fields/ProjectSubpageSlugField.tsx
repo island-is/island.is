@@ -71,34 +71,35 @@ const ProjectSubpageSlugField = () => {
         return
       }
 
-      const [subpagesWithSameSlug, parentSubpagesWithSameSlug] =
-        await Promise.all([
-          cma.entry.getMany({
-            query: {
-              locale: sdk.field.locale,
-              content_type: 'projectSubpage',
-              'fields.slug': value,
-              'sys.id[ne]': sdk.entry.getSys().id,
-              'sys.archivedVersion[exists]': false,
-              'fields.projectPage.sys.id': projectPageId,
-              limit: 1,
-              select: 'sys',
-            },
-          }),
-          // The web resolves a project page's own subpages before parent
-          // subpages, so a subpage with the same slug would hide a parent subpage
-          cma.entry.getMany({
-            query: {
-              locale: sdk.field.locale,
-              content_type: 'projectParentSubpage',
-              'fields.slug': value,
-              'sys.archivedVersion[exists]': false,
-              'fields.projectPage.sys.id': projectPageId,
-              limit: 1,
-              select: 'sys',
-            },
-          }),
-        ])
+      // allSettled so a failed lookup, e.g. in an environment without parent
+      // subpages, doesn't discard a duplicate the other lookup found
+      const lookups = await Promise.allSettled([
+        cma.entry.getMany({
+          query: {
+            locale: sdk.field.locale,
+            content_type: 'projectSubpage',
+            'fields.slug': value,
+            'sys.id[ne]': sdk.entry.getSys().id,
+            'sys.archivedVersion[exists]': false,
+            'fields.projectPage.sys.id': projectPageId,
+            limit: 1,
+            select: 'sys',
+          },
+        }),
+        // The web resolves a project page's own subpages before parent
+        // subpages, so a subpage with the same slug would hide a parent subpage
+        cma.entry.getMany({
+          query: {
+            locale: sdk.field.locale,
+            content_type: 'projectParentSubpage',
+            'fields.slug': value,
+            'sys.archivedVersion[exists]': false,
+            'fields.projectPage.sys.id': projectPageId,
+            limit: 1,
+            select: 'sys',
+          },
+        }),
+      ])
 
       // Discard the result if the slug or project page changed during the queries
       if (
@@ -109,8 +110,10 @@ const ProjectSubpageSlugField = () => {
       }
 
       setIsValid(
-        subpagesWithSameSlug.items.length === 0 &&
-          parentSubpagesWithSameSlug.items.length === 0,
+        !lookups.some(
+          (lookup) =>
+            lookup.status === 'fulfilled' && lookup.value.items.length > 0,
+        ),
       )
     },
     DEBOUNCE_TIME,
