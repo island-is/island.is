@@ -7,6 +7,7 @@ import format from 'date-fns/format'
 import isValid from 'date-fns/isValid'
 
 import { FieldBaseProps, CustomField } from '@island.is/application/types'
+import { getErrorViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { Box, DatePicker } from '@island.is/island-ui/core'
 
@@ -29,7 +30,7 @@ const toDateString = (date: Date) =>
 
 export const PeriodDateRange: FC<
   React.PropsWithChildren<PeriodDateRangeProps>
-> = ({ field, application }) => {
+> = ({ field, application, error, errors }) => {
   const { formatMessage } = useLocale()
   const { setValue, register, control } = useFormContext()
   const currentIndex = getPeriodIndex(field)
@@ -164,6 +165,18 @@ export const PeriodDateRange: FC<
     return null
   }
 
+  // The period answer validator reports on the answers this field writes,
+  // e.g. a period shorter than the minimum on `endDate`.
+  const dateError = [
+    ...[
+      endFieldId,
+      startFieldId,
+      firstPeriodStartFieldId,
+      useLengthFieldId,
+    ].map((id) => getErrorViaPath(errors ?? {}, id)),
+    error,
+  ].find((message) => typeof message === 'string' && message !== '')
+
   const handleChange = (startDate: Date, endDate?: Date) => {
     const start = format(startDate, 'yyyy-MM-dd')
     setValue(startFieldId, start)
@@ -198,6 +211,8 @@ export const PeriodDateRange: FC<
           excludeDates={excludeDates}
           selected={endDateValue ? parseISO(endDateValue) : null}
           handleChange={handleEndDateChange}
+          hasError={!!dateError}
+          errorMessage={dateError}
         />
       ) : (
         <DatePicker
@@ -213,6 +228,8 @@ export const PeriodDateRange: FC<
           excludeDates={excludeDates}
           selectedRange={selectedRange}
           handleChange={handleChange}
+          hasError={!!dateError}
+          errorMessage={dateError}
         />
       )}
       <input type="hidden" {...register(startFieldId)} />
