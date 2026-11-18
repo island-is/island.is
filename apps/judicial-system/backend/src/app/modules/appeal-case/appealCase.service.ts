@@ -1183,22 +1183,27 @@ export class AppealCaseService {
       appealCase.appealType === AppealCaseType.VERDICT &&
       eventType === AppealEventType.APPEAL_STATEMENT_SENT
 
+    // Party IDs select the single-party write path only for verdict-appeal
+    // statements. Ruling-appeal statements stay collective (writeEventLog) —
+    // a stray party ID must not shrink that write to one represented party.
+    if (!requiresScopedParty && (party?.defendantId || party?.civilClaimantId)) {
+      throw new BadRequestException(
+        'defendantId and civilClaimantId are only allowed for verdict appeal statement events',
+      )
+    }
+
     // Verdict-appeal statements are per party. Require an explicit party so we
     // never fall back to writing one row for every party the defence user
     // represents. File create requires Landsréttur confirmation for these
     // categories — the event log must match that bar.
-    if (requiresScopedParty || party?.defendantId || party?.civilClaimantId) {
-      if (
-        requiresScopedParty &&
-        !party?.defendantId &&
-        !party?.civilClaimantId
-      ) {
+    if (requiresScopedParty) {
+      if (!party?.defendantId && !party?.civilClaimantId) {
         throw new BadRequestException(
           'Verdict appeal statement events require defendantId or civilClaimantId',
         )
       }
 
-      if (requiresScopedParty && isVerdictAppealOver(appealCase)) {
+      if (isVerdictAppealOver(appealCase)) {
         throw new BadRequestException(
           `Cannot record a statement for completed or withdrawn appeal case ${appealCase.id} of case ${theCase.id}`,
         )
@@ -1208,59 +1213,57 @@ export class AppealCaseService {
         theCase,
         user,
         party ?? {},
-        { appealConfirmationOnly: requiresScopedParty },
+        { appealConfirmationOnly: true },
       )
 
-      if (requiresScopedParty) {
-        const statementDeadline = findAppealStatementDeadline(
-          appealCase.statementDeadlines,
-          partyRow,
-        )?.deadline
+      const statementDeadline = findAppealStatementDeadline(
+        appealCase.statementDeadlines,
+        partyRow,
+      )?.deadline
 
-        if (!statementDeadline) {
-          throw new BadRequestException(
-            `No statement deadline for the party on appeal case ${appealCase.id} of case ${theCase.id}`,
-          )
-        }
-
-        if (
-          isStatementDeadlineExpired(
-            new Date(statementDeadline),
-            new Date(Date.now()),
-          )
-        ) {
-          throw new BadRequestException(
-            `The statement deadline for the party on appeal case ${appealCase.id} of case ${theCase.id} has expired`,
-          )
-        }
-
-        if (hasFiledAppealStatement(appealCase.appealEventLogs, partyRow)) {
-          throw new BadRequestException(
-            `The party has already filed its statement in appeal case ${appealCase.id} of case ${theCase.id}`,
-          )
-        }
-
-        const hasStatementFile = (theCase.caseFiles ?? []).some(
-          (caseFile) =>
-            caseFile.category ===
-              CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT &&
-            caseFile.state === CaseFileState.STORED_IN_RVG &&
-            caseFile.isKeyAccessible &&
-            (caseFile.rulingFileId ?? null) === null &&
-            isSameAppealStatementParty(
-              {
-                defendantId: caseFile.defendantId,
-                civilClaimantId: caseFile.civilClaimantId,
-              },
-              partyRow,
-            ),
+      if (!statementDeadline) {
+        throw new BadRequestException(
+          `No statement deadline for the party on appeal case ${appealCase.id} of case ${theCase.id}`,
         )
+      }
 
-        if (!hasStatementFile) {
-          throw new BadRequestException(
-            `No verdict appeal statement file for the party on appeal case ${appealCase.id} of case ${theCase.id}`,
-          )
-        }
+      if (
+        isStatementDeadlineExpired(
+          new Date(statementDeadline),
+          new Date(Date.now()),
+        )
+      ) {
+        throw new BadRequestException(
+          `The statement deadline for the party on appeal case ${appealCase.id} of case ${theCase.id} has expired`,
+        )
+      }
+
+      if (hasFiledAppealStatement(appealCase.appealEventLogs, partyRow)) {
+        throw new BadRequestException(
+          `The party has already filed its statement in appeal case ${appealCase.id} of case ${theCase.id}`,
+        )
+      }
+
+      const hasStatementFile = (theCase.caseFiles ?? []).some(
+        (caseFile) =>
+          caseFile.category ===
+            CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT &&
+          caseFile.state === CaseFileState.STORED_IN_RVG &&
+          caseFile.isKeyAccessible &&
+          (caseFile.rulingFileId ?? null) === null &&
+          isSameAppealStatementParty(
+            {
+              defendantId: caseFile.defendantId,
+              civilClaimantId: caseFile.civilClaimantId,
+            },
+            partyRow,
+          ),
+      )
+
+      if (!hasStatementFile) {
+        throw new BadRequestException(
+          `No verdict appeal statement file for the party on appeal case ${appealCase.id} of case ${theCase.id}`,
+        )
       }
 
       await this.writeEventLogRows(

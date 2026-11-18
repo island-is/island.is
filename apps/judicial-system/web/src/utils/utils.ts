@@ -8,6 +8,7 @@ import {
 import {
   findAppealStatementDeadline,
   hasAllAppealJudges,
+  hasFiledAppealStatement,
   isCourtOfAppealsUser,
   isDefenceUser,
   isIndictmentCase,
@@ -374,8 +375,10 @@ export const getDefenceUserAppealConfirmedPartyIds = (
 
 /**
  * Party an appeal-confirmed advocate should file a verdict-appeal statement
- * for: the one with the earliest statement deadline among their
- * Landsréttur-confirmed parties.
+ * for: the one with the earliest still-open statement deadline among their
+ * Landsréttur-confirmed parties who have not already filed. Used only when no
+ * party is named in the URL — an explicit party link is resolved separately
+ * and must not fall back here.
  */
 export const getVerdictAppealStatementParty = (
   workingCase: Pick<
@@ -393,20 +396,30 @@ export const getVerdictAppealStatementParty = (
   let earliest: { party: DefenceUserPartyIds; deadline: string } | undefined
 
   for (const party of appealParties) {
-    const deadline = findAppealStatementDeadline(
+    if (
+      hasFiledAppealStatement(
+        workingCase.verdictAppealCase?.appealEventLogs,
+        party,
+      )
+    ) {
+      continue
+    }
+
+    const statementDeadline = findAppealStatementDeadline(
       workingCase.verdictAppealCase?.statementDeadlines,
       party,
-    )?.deadline
+    )
 
-    if (!deadline) {
+    if (!statementDeadline?.deadline || statementDeadline.isExpired) {
       continue
     }
 
     if (
       !earliest ||
-      new Date(deadline).getTime() < new Date(earliest.deadline).getTime()
+      new Date(statementDeadline.deadline).getTime() <
+        new Date(earliest.deadline).getTime()
     ) {
-      earliest = { party, deadline }
+      earliest = { party, deadline: statementDeadline.deadline }
     }
   }
 

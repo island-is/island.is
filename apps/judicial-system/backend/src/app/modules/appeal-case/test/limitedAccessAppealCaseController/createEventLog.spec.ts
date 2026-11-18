@@ -507,4 +507,34 @@ describe('LimitedAccessAppealCaseController - Create event log', () => {
       )
     })
   })
+
+  describe('ruling-appeal statement with a party id', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants: [
+        {
+          id: defendantId,
+          isDefenderChoiceConfirmed: true,
+          defenderNationalId: defenderNationalId,
+        },
+      ],
+    } as unknown as Case
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(theCase, {
+        eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+        defendantId,
+      })
+    })
+
+    it('should reject party scoping outside verdict statement filing', () => {
+      expect(then.error).toBeDefined()
+      expect(then.error.message).toBe(
+        'defendantId and civilClaimantId are only allowed for verdict appeal statement events',
+      )
+      expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
+    })
+  })
 })

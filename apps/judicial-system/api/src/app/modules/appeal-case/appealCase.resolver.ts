@@ -14,6 +14,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import {
   AppealCaseType,
+  AppealEventType,
   Feature,
   type User,
 } from '@island.is/judicial-system/types'
@@ -231,6 +232,16 @@ export class AppealCaseResolver {
   ): Promise<AppealCase> {
     const { caseId, appealCaseId, eventType, defendantId, civilClaimantId } =
       input
+
+    // Same gate as limitedAccessCreateAppealEventLog / createAppealCase: a
+    // party-scoped APPEAL_STATEMENT_SENT is verdict-appeal filing.
+    if (
+      eventType === AppealEventType.APPEAL_STATEMENT_SENT &&
+      (defendantId || civilClaimantId) &&
+      this.featureService.isHidden(Feature.INDICTMENT_APPEAL)
+    ) {
+      throw new ForbiddenException('Indictment appeals are not available')
+    }
 
     this.logger.debug(
       `Creating appeal event log ${eventType} on appeal case ${appealCaseId} of case ${caseId}`,

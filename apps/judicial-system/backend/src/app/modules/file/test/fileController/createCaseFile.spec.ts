@@ -51,6 +51,13 @@ describe('FileController - Create case file', () => {
     theCase: Case,
     actingUser: User,
   ) => Promise<Then>
+  let createDefendantCaseFileAs: (
+    caseId: string,
+    defendantId: string,
+    createCaseFile: CreateFileDto,
+    theCase: Case,
+    actingUser: User,
+  ) => Promise<Then>
 
   beforeEach(async () => {
     const {
@@ -86,6 +93,34 @@ describe('FileController - Create case file', () => {
 
           return fileController.createCaseFile(
             caseId,
+            actingUser,
+            theCase,
+            createCaseFile,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
+
+      return then
+    }
+
+    createDefendantCaseFileAs = async (
+      caseId: string,
+      defendantId: string,
+      createCaseFile: CreateFileDto,
+      theCase: Case,
+      actingUser: User,
+    ): Promise<Then> => {
+      const then = {} as Then
+
+      try {
+        then.result = await runInRequestContext(async () => {
+          await getOrCreateTransaction(sequelize)
+
+          return fileController.createDefendantCaseFile(
+            caseId,
+            defendantId,
             actingUser,
             theCase,
             createCaseFile,
@@ -453,13 +488,18 @@ describe('FileController - Create case file', () => {
       category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
       key: `${caseId}/${uuId}/statement.pdf`,
       size: 99,
-      defendantId,
       rulingFileId,
     }
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(caseId, createCaseFile, theCase)
+      then = await createDefendantCaseFileAs(
+        caseId,
+        defendantId,
+        createCaseFile,
+        theCase,
+        user,
+      )
     })
 
     it('should reject the ruling order reference', () => {
@@ -524,12 +564,17 @@ describe('FileController - Create case file', () => {
       category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
       key: `${caseId}/${uuid()}/statement.pdf`,
       size: 99,
-      defendantId,
     }
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(caseId, createCaseFile, theCase)
+      then = await createDefendantCaseFileAs(
+        caseId,
+        defendantId,
+        createCaseFile,
+        theCase,
+        user,
+      )
     })
 
     it('should reject the upload', () => {
@@ -558,7 +603,44 @@ describe('FileController - Create case file', () => {
       category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
       key: `${caseId}/${uuid()}/statement.pdf`,
       size: 99,
-      defendantId,
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      then = await createDefendantCaseFileAs(
+        caseId,
+        defendantId,
+        createCaseFile,
+        theCase,
+        user,
+      )
+    })
+
+    it('should reject the upload', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(then.error.message).toBe(
+        `Cannot upload a verdict appeal statement when the statement deadline for case ${caseId} is missing or has expired`,
+      )
+    })
+  })
+
+  describe('verdict appeal defence statement without a party id', () => {
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+      verdictAppealCase: {
+        id: uuid(),
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.RECEIVED,
+        statementDeadlines: [{ deadline: new Date('2099-01-01') }],
+        appealEventLogs: [],
+      },
+    } as Case
+    const createCaseFile: CreateFileDto = {
+      type: 'text/plain',
+      category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+      key: `${caseId}/${uuid()}/statement.pdf`,
+      size: 99,
     }
     let then: Then
 
@@ -566,10 +648,10 @@ describe('FileController - Create case file', () => {
       then = await givenWhenThen(caseId, createCaseFile, theCase)
     })
 
-    it('should reject the upload', () => {
+    it('should reject the unscoped defence upload', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
       expect(then.error.message).toBe(
-        `Cannot upload a verdict appeal statement when the statement deadline for case ${caseId} is missing or has expired`,
+        `Verdict appeal defence statement files for case ${caseId} require exactly one of defendantId or civilClaimantId`,
       )
     })
   })

@@ -39,7 +39,10 @@ import {
 import { nowFactory } from '../../factories'
 import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
 import { hasConfirmableCaseFileCategories } from '../../formatters/confirmation/confirmedPdf'
-import { queueMessagesAfterCommit } from '../../middleware'
+import {
+  queueMessagesAfterCommit,
+  registerAfterCommit,
+} from '../../middleware'
 import {
   findAppealCaseOfCaseFile,
   isStatementDeadlineExpired,
@@ -434,6 +437,30 @@ export class FileService {
         )
       }
 
+      const isDefenceStatementCategory =
+        createFile.category ===
+          CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT ||
+        createFile.category ===
+          CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE
+
+      const hasDefendantId = Boolean(createFile.defendantId)
+      const hasCivilClaimantId = Boolean(createFile.civilClaimantId)
+
+      // Defence categories are party-scoped; prosecution categories are not.
+      // Without this, an unscoped defence upload matches the prosecution
+      // deadline row and never satisfies a party's APPEAL_STATEMENT_SENT.
+      if (isDefenceStatementCategory) {
+        if (hasDefendantId === hasCivilClaimantId) {
+          throw new BadRequestException(
+            `Verdict appeal defence statement files for case ${theCase.id} require exactly one of defendantId or civilClaimantId`,
+          )
+        }
+      } else if (hasDefendantId || hasCivilClaimantId) {
+        throw new BadRequestException(
+          `Verdict appeal prosecution statement files for case ${theCase.id} must not name a defendant or civil claimant`,
+        )
+      }
+
       const party = {
         defendantId: createFile.defendantId,
         civilClaimantId: createFile.civilClaimantId,
@@ -757,8 +784,16 @@ export class FileService {
     const success = await this.deleteFileFromDatabase(file.id, transaction)
 
     if (success && isRequestCase(theCase.type)) {
-      // Fire and forget, no need to wait for the result
-      this.tryDeleteFileFromS3(theCase, file)
+      // Delete controllers pass the open request transaction. Wait until that
+      // commits before removing the object — otherwise a rollback leaves a
+      // CaseFile row whose PDF is already gone.
+      const deleteFromS3 = () => this.tryDeleteFileFromS3(theCase, file)
+
+      if (transaction) {
+        registerAfterCommit(deleteFromS3)
+      } else {
+        deleteFromS3()
+      }
     }
 
     return { success }

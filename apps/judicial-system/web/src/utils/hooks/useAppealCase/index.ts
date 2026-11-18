@@ -309,7 +309,12 @@ const useAppealCase = () => {
               'createAppealEventLog' in data &&
               data.createAppealEventLog?.id
 
-          return Boolean(createdId)
+          if (!createdId) {
+            toast.error(errors.updateCase)
+            return false
+          }
+
+          return true
         } catch {
           toast.error(errors.updateCase)
           return false
