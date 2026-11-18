@@ -27,6 +27,7 @@ import { useUiStore } from '@/stores/ui-store'
 import { DeviceLock } from '@/components/device-bound-auth/device-lock'
 import { ElectronicIdConfirmation } from '@/components/device-bound-auth/electronic-id-confirmation'
 import { useBiometricType } from '@/hooks/use-biometric-type'
+import { useIsOffline } from '@/hooks/use-is-offline'
 import { useNativeUnlock } from '@/hooks/use-native-unlock'
 import {
   ensureDeviceUnlockCanary,
@@ -270,6 +271,7 @@ function NativeLock({
   onLogoutPress(): void
 }) {
   const { authenticationTypes } = useUiStore()
+  const isOffline = useIsOffline()
   const biometricType = useBiometricType(authenticationTypes)?.text
 
   // Electronic ID shows its code in place of the lock while it waits.
@@ -297,6 +299,7 @@ function NativeLock({
           : 'idle'
       }
       electronicIdError={unlock.electronicIdError}
+      isOffline={isOffline}
       onBiometricsPress={unlock.unlockWithBiometrics}
       onElectronicIdPress={unlock.unlockWithElectronicId}
       onLogoutPress={onLogoutPress}

@@ -778,6 +778,9 @@ export const en: TranslatedMessages = {
 
   // offline
   'offline.title': 'No internet connection',
+  'offline.openAppMessage':
+    'Connect your device to the internet to open the app.',
+  'offline.loginMessage': 'Connect your device to the internet to log in.',
   'offline.message': 'Information has not been updated.',
 
   // problem

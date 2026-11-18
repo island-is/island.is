@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { LoginIdentifier } from '@/components/device-bound-auth/login-identifier'
+import { useIsOffline } from '@/hooks/use-is-offline'
 import {
   loginErrorMessageId,
   nativeLoginStore,
@@ -15,6 +16,7 @@ export default function LoginIdentifierScreen() {
   const intl = useIntl()
   const { method, loginHint, error } = useNativeLoginStore()
   const [loading, setLoading] = useState(false)
+  const isOffline = useIsOffline()
 
   // An error is about the last try: leaving this screen takes it away.
   useEffect(() => () => nativeLoginStore.setState({ error: undefined }), [])
@@ -50,6 +52,7 @@ export default function LoginIdentifierScreen() {
       onSubmit={onSubmit}
       loading={loading}
       error={error && intl.formatMessage({ id: loginErrorMessageId[error] })}
+      isOffline={isOffline}
     />
   )
 }

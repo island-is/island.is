@@ -78,6 +78,8 @@ interface DeviceLockProps {
   status?: DeviceLockStatus
   /** Shown in place of the biometrics error, as the more recent one. */
   electronicIdError?: ElectronicIdError
+  /** No network: said in place of the other messages, as the likely cause. */
+  isOffline?: boolean
   onBiometricsPress(): void
   onElectronicIdPress(): void
   onLogoutPress(): void
@@ -93,6 +95,7 @@ export function DeviceLock({
   biometricType,
   status = 'idle',
   electronicIdError,
+  isOffline,
   onBiometricsPress,
   onElectronicIdPress,
   onLogoutPress,
@@ -125,7 +128,17 @@ export function DeviceLock({
           )}
         </IllustrationWrapper>
         <Footer>
-          {electronicIdError ? (
+          {isOffline ? (
+            <Alert
+              type="warning"
+              size="small"
+              hasBorder
+              title={intl.formatMessage({ id: 'offline.title' })}
+              message={intl.formatMessage({
+                id: 'offline.openAppMessage',
+              })}
+            />
+          ) : electronicIdError ? (
             <Alert
               type="error"
               size="small"

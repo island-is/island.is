@@ -57,6 +57,8 @@ interface LoginIdentifierProps {
   onChangeMethod(method: LoginMethod): void
   loading?: boolean
   error?: string
+  /** No network: said in place of the error, as the likely cause. */
+  isOffline?: boolean
 }
 
 /**
@@ -71,6 +73,7 @@ export function LoginIdentifier({
   onChangeMethod,
   loading,
   error,
+  isOffline,
 }: LoginIdentifierProps) {
   const intl = useIntl()
   const isComplete = value.length === loginHintLength[method]
@@ -131,8 +134,20 @@ export function LoginIdentifier({
             autoFocus
             editable={!loading}
           />
-          {error && (
-            <Alert type="error" size="small" hasBorder message={error} />
+          {isOffline ? (
+            <Alert
+              type="warning"
+              size="small"
+              hasBorder
+              title={intl.formatMessage({ id: 'offline.title' })}
+              message={intl.formatMessage({
+                id: 'offline.loginMessage',
+              })}
+            />
+          ) : (
+            error && (
+              <Alert type="error" size="small" hasBorder message={error} />
+            )
           )}
           <Button
             title={intl.formatMessage({ id: 'login.identifier.submit' })}

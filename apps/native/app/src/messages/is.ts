@@ -778,6 +778,8 @@ export const is = {
 
   // offline
   'offline.title': 'Ekkert netsamband',
+  'offline.openAppMessage': 'Tengdu tækið við net til að opna appið.',
+  'offline.loginMessage': 'Tengdu tækið við net til að skrá þig inn.',
   'offline.message': 'Upplýsingar hafa ekki verið uppfærðar.',
 
   // problems
