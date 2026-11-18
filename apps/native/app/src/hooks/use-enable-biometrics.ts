@@ -1,4 +1,8 @@
-import { authenticateAsync } from 'expo-local-authentication'
+import {
+  authenticateAsync,
+  hasHardwareAsync,
+  isEnrolledAsync,
+} from 'expo-local-authentication'
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Alert, Linking, Platform } from 'react-native'
@@ -9,6 +13,13 @@ import { authStore, whileSystemDialog } from '@/stores/auth-store'
 import { useUiStore } from '@/stores/ui-store'
 import { useBiometricType } from './use-biometric-type'
 import { isCancelled, useElectronicIdUnlock } from './use-electronic-id-unlock'
+
+// Straight to adding a fingerprint where the phone has that screen (Android
+// 11 and later), else its security settings.
+const openBiometricEnrollment = () =>
+  Linking.sendIntent('android.settings.BIOMETRIC_ENROLL').catch(() =>
+    Linking.sendIntent('android.settings.SECURITY_SETTINGS'),
+  )
 
 /**
  * Turns on biometric unlock for a native login. The person approves it with
@@ -29,6 +40,39 @@ export function useEnableBiometrics({
   const biometricType = useBiometricType(authenticationTypes)
   const [isEnabling, setIsEnabling] = useState(false)
   const electronicId = useElectronicIdUnlock('enableBiometrics', { inline })
+
+  /**
+   * Says where to set biometrics up on a phone that has none yet. iOS can't
+   * open its Face ID settings, so it only says so.
+   */
+  const showNotEnrolledAlert = () => {
+    const title = intl.formatMessage({ id: 'biometrics.notEnrolledTitle' })
+    if (Platform.OS === 'android') {
+      Alert.alert(
+        title,
+        intl.formatMessage({ id: 'biometrics.notEnrolledMessage.android' }),
+        [
+          {
+            text: intl.formatMessage({ id: 'biometrics.notNow' }),
+            style: 'cancel',
+          },
+          {
+            text: intl.formatMessage({ id: 'biometrics.openSettings' }),
+            onPress: () => void openBiometricEnrollment(),
+          },
+        ],
+      )
+    } else {
+      Alert.alert(
+        title,
+        intl.formatMessage(
+          { id: 'biometrics.notEnrolledMessage.ios' },
+          { biometricType: biometricType.text },
+        ),
+        [{ text: intl.formatMessage({ id: 'biometrics.close' }) }],
+      )
+    }
+  }
 
   /**
    * iOS asks to allow Face ID the first time an app uses it. Using it once
@@ -52,10 +96,6 @@ export function useEnableBiometrics({
       return true
     }
 
-    const title = intl.formatMessage(
-      { id: 'biometrics.enableFailedTitle' },
-      { biometricType: biometricType.text },
-    )
     if (result.error === 'not_available') {
       // What iOS says once the person has turned it off for the app.
       Alert.alert(
@@ -80,20 +120,17 @@ export function useEnableBiometrics({
         ],
       )
     } else if (result.error === 'not_enrolled') {
-      Alert.alert(
-        title,
-        intl.formatMessage(
-          { id: 'onboarding.biometrics.notEnrolled' },
-          { biometricType: biometricType.text },
-        ),
-      )
+      showNotEnrolledAlert()
     } else if (
       result.error !== 'user_cancel' &&
       result.error !== 'system_cancel' &&
       result.error !== 'app_cancel'
     ) {
       Alert.alert(
-        title,
+        intl.formatMessage(
+          { id: 'biometrics.enableFailedTitle' },
+          { biometricType: biometricType.text },
+        ),
         intl.formatMessage({ id: 'electronicId.error.tryAgain' }),
       )
     }
@@ -108,6 +145,12 @@ export function useEnableBiometrics({
     setIsEnabling(true)
     let enabled = false
     try {
+      // Not when it's turned off for the app on iOS: then it has no hardware
+      // either, and confirmBiometrics() says where to turn it on.
+      if ((await hasHardwareAsync()) && !(await isEnrolledAsync())) {
+        showNotEnrolledAlert()
+        return false
+      }
       if (!(await confirmBiometrics())) {
         return false
       }

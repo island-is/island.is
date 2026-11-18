@@ -181,8 +181,8 @@ export default function BiometricsScreen() {
             { id: 'onboarding.biometrics.useBiometricsButtonText' },
             { biometricType: biometricType.text },
           )}
+          // Without biometrics set up, a tap says where to do it.
           onPress={onBiometricsPress}
-          disabled={!isEnrolled}
           loading={isEnabling}
           icon={biometricType.icon}
         />

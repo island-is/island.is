@@ -61,6 +61,11 @@ export const en: TranslatedMessages = {
   'biometrics.turnedOffMessage':
     'Turn on {biometricType} for Ísland.is in your device settings.',
   'biometrics.notNow': 'Not now',
+  'biometrics.notEnrolledTitle': 'No biometrics set up',
+  'biometrics.notEnrolledMessage.android':
+    "Add a fingerprint in your phone's settings to open the app with it.",
+  'biometrics.notEnrolledMessage.ios':
+    "Set up {biometricType} in your phone's settings to open the app with it.",
   'biometrics.openSettings': 'Open settings',
 
   // log in again after the update

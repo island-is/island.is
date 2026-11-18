@@ -60,6 +60,11 @@ export const is = {
   'biometrics.turnedOffMessage':
     'Kveiktu á {biometricType} fyrir Ísland.is í stillingum tækisins.',
   'biometrics.notNow': 'Ekki núna',
+  'biometrics.notEnrolledTitle': 'Engin lífkenni skráð',
+  'biometrics.notEnrolledMessage.android':
+    'Skráðu fingrafar í stillingum símans til að opna appið með því.',
+  'biometrics.notEnrolledMessage.ios':
+    'Settu upp {biometricType} í stillingum símans til að opna appið með því.',
   'biometrics.openSettings': 'Opna stillingar',
 
   // log in again after the update

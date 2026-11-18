@@ -552,10 +552,8 @@ export default function SettingsScreen() {
               <View>
                 <Switch
                   onValueChange={(value) => void onBiometricsChange(value)}
-                  disabled={
-                    (!isEnrolledBiometrics && !isBiometricsTurnedOff) ||
-                    isEnabling
-                  }
+                  // Without biometrics set up, a tap says where to do it.
+                  disabled={authenticationTypes.length === 0 || isEnabling}
                   value={hasBiometricKey}
                   thumbColor={Platform.select({
                     android: theme.tokens.app.background.neutral,
