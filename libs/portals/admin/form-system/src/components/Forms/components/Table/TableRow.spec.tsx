@@ -36,13 +36,23 @@ jest.mock('../../../StatusTag/StatusTag', () => ({
 }))
 jest.mock('react-animate-height', () => ({
   __esModule: true,
-  default: () => null,
+  default: ({
+    children,
+    height,
+  }: {
+    children: ReactNode
+    height: number | string
+  }) => (height === 0 ? null : <div>{children}</div>),
 }))
 jest.mock('./TableRow.css', () => ({}))
 jest.mock('@island.is/island-ui/core', () => {
-  const Container = ({ children }: { children?: ReactNode }) => (
-    <div>{children}</div>
-  )
+  const Container = ({
+    children,
+    onClick,
+  }: {
+    children?: ReactNode
+    onClick?: () => void
+  }) => <div onClick={onClick}>{children}</div>
   return {
     Box: Container,
     Button: () => null,
@@ -64,12 +74,54 @@ jest.mock('@island.is/island-ui/core', () => {
           ))}
       </>
     ),
-    Icon: () => null,
+    Icon: ({ icon, color }: { icon: string; color?: string }) => (
+      <span data-testid={`icon-${icon}`} data-color={color} />
+    ),
     Inline: Container,
     GridRow: Container,
-    Text: Container,
+    Stack: Container,
+    Text: ({ children, color }: { children?: ReactNode; color?: string }) => (
+      <span data-color={color}>{children}</span>
+    ),
     toast: { error: jest.fn(), warning: jest.fn() },
   }
+})
+
+describe('inaccessible forms', () => {
+  it.each([true, false, undefined])(
+    'shows a neutral lock and accordion notice only when isInaccessible is true (%s)',
+    (isInaccessible) => {
+      render(
+        <TableRow
+          name="Test form"
+          isHeader={false}
+          isInaccessible={isInaccessible}
+          setFormsState={jest.fn()}
+        />,
+      )
+
+      const name = screen.getByText('Test form')
+      expect(name.getAttribute('data-color')).toBeNull()
+      const lock = screen.queryByTestId('icon-lockClosed')
+      if (isInaccessible) {
+        expect(lock).not.toBeNull()
+        expect(lock?.getAttribute('data-color')).toBeNull()
+      } else {
+        expect(lock).toBeNull()
+      }
+      expect(screen.queryByText('Eyðublaðið er ekki aðgengilegt.')).toBeNull()
+
+      fireEvent.click(name)
+
+      const notice = screen.queryByText('Eyðublaðið er ekki aðgengilegt.')
+      if (isInaccessible) {
+        expect(notice).not.toBeNull()
+        expect(notice?.getAttribute('data-color')).toBeNull()
+      } else {
+        expect(notice).toBeNull()
+      }
+    },
+  )
 })
 
 describe('publishing a changed form', () => {

@@ -59,6 +59,7 @@ interface Props {
   status?: string
   url?: string
   lastModifiedBy?: string
+  isInaccessible?: boolean
 }
 
 const PATH = getStaticEnv('SI_PUBLIC_FORM_SYSTEM_URL')
@@ -66,13 +67,22 @@ const PATH = getStaticEnv('SI_PUBLIC_FORM_SYSTEM_URL')
 interface ColumnTextProps {
   text: string | number
   isOpen: boolean
+  isInaccessible: boolean
 }
 
-const ColumnText = ({ text, isOpen }: ColumnTextProps) => (
+const ColumnText = ({ text, isOpen, isInaccessible }: ColumnTextProps) => (
   <Box width="full" textAlign="left" paddingLeft={1}>
-    <Text variant="medium" fontWeight={isOpen ? 'semiBold' : 'regular'}>
-      {text}
-    </Text>
+    <Inline space={1} alignY="center">
+      <Text
+        variant="medium"
+        fontWeight={isOpen ? 'semiBold' : 'regular'}
+      >
+        {text}
+      </Text>
+      {isInaccessible && (
+        <Icon icon="lockClosed" size="small" ariaHidden />
+      )}
+    </Inline>
   </Box>
 )
 
@@ -85,6 +95,7 @@ export const TableRow = ({
   slug,
   status,
   url,
+  isInaccessible = false,
 }: Props) => {
   const { isAdmin, organizations, organizationNationalId } =
     useContext(FormsContext)
@@ -716,7 +727,11 @@ export const TableRow = ({
                 size="small"
                 color="blue600"
               />
-              <ColumnText text={name ? name : ''} isOpen={isOpen} />
+              <ColumnText
+                text={name ? name : ''}
+                isOpen={isOpen}
+                isInaccessible={isInaccessible}
+              />
             </Inline>
           </Column>
           <Column span="2/12" hiddenBelow="md">
@@ -804,6 +819,16 @@ export const TableRow = ({
         <Box paddingTop={1} paddingBottom={2} paddingLeft={1}>
           <Column span="12/12">
             <Stack space={1}>
+              {isInaccessible && (
+                <Row>
+                  <Text variant="medium">
+                    {formatMessage({
+                      id: 'formInaccessible',
+                      defaultMessage: 'Eyðublaðið er ekki aðgengilegt.',
+                    })}
+                  </Text>
+                </Row>
+              )}
               <Row>
                 <Inline space={2}>
                   <Text variant="medium">
