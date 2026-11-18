@@ -81,7 +81,7 @@ export const GenericListEditor = () => {
   const cma = useCMA()
 
   /** Counter that's simply used to refresh the list when an item gets created */
-  const [_, setCounter] = useState(0)
+  const [counter, setCounter] = useState(0)
 
   const defaultLocale = sdk.locales.default
 
@@ -226,6 +226,7 @@ export const GenericListEditor = () => {
         contentTypeId={LIST_ITEM_CONTENT_TYPE_ID}
         contentTypeLabel="List Item"
         contentTypeTitleField="internalTitle"
+        refreshKey={counter}
         query={{
           'fields.genericList.sys.id': sdk.ids.entry,
         }}
