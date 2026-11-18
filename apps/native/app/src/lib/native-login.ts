@@ -6,6 +6,7 @@ import {
   getIasErrorCode,
   IasError,
   isAppAttestUnavailable,
+  isDeviceNotAttested,
   isTooManyElectronicIdRequests,
 } from '@/lib/ias'
 import type { CibaRequest } from '@/lib/ias'
@@ -25,6 +26,7 @@ export const SMS_CODE_LENGTH = 3
  * - `expired`: nobody answered in time
  * - `deviceCheckUnavailable`: iOS: Apple's App Attest service is down, so
  *   the phone can't be attested for now
+ * - `unsupportedDevice`: the phone couldn't attest, or IAS refused it
  * - `failed`: anything else
  */
 export type LoginError =
@@ -35,6 +37,7 @@ export type LoginError =
   | 'declined'
   | 'expired'
   | 'deviceCheckUnavailable'
+  | 'unsupportedDevice'
   | 'failed'
 
 /** The message for each error. `wrongSmsCode` takes `attemptsLeft`. */
@@ -46,6 +49,7 @@ export const loginErrorMessageId: Record<LoginError, string> = {
   declined: 'login.error.declined',
   expired: 'login.error.expired',
   deviceCheckUnavailable: 'login.error.deviceCheckUnavailable',
+  unsupportedDevice: 'login.error.unsupportedDevice',
   failed: 'login.error.failed',
 }
 
@@ -85,6 +89,9 @@ export function toLoginError(error: unknown): LoginError {
   }
   if (isAppAttestUnavailable(error)) {
     return 'deviceCheckUnavailable'
+  }
+  if (isDeviceNotAttested(error)) {
+    return 'unsupportedDevice'
   }
   return 'failed'
 }

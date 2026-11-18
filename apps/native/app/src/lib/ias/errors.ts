@@ -111,6 +111,19 @@ export class DeviceAttestationError extends Error {
   }
 }
 
+/**
+ * The phone can't be trusted with a login: it couldn't attest its install
+ * key, or IAS refused the attestation, e.g. for an unlocked bootloader.
+ */
+export function isDeviceNotAttested(error: unknown) {
+  return (
+    error instanceof DeviceAttestationError ||
+    (error instanceof IasError &&
+      error.endpoint === 'POST /app/attestation' &&
+      error.code === 'invalid_attestation')
+  )
+}
+
 /** iOS: Apple's App Attest service is down. It works again later. */
 export function isAppAttestUnavailable(error: unknown) {
   return (

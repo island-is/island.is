@@ -43,6 +43,8 @@ export const is = {
   'login.error.expired': 'Beiðnin rann út. Reyndu aftur.',
   'login.error.deviceCheckUnavailable':
     'Ekki tókst að skrá þig inn eins og er. Reyndu aftur eftir nokkrar mínútur.',
+  'login.error.unsupportedDevice':
+    'Ekki tókst að skrá þig inn í þessu tæki. Uppfærðu appið og stýrikerfið og reyndu aftur. Ef það gengur ekki, hafðu samband við Ísland.is.',
   'login.error.failed': 'Ekki tókst að skrá þig inn. Reyndu aftur.',
 
   // app lock

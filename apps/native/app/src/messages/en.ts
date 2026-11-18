@@ -44,6 +44,8 @@ export const en: TranslatedMessages = {
   'login.error.expired': 'The request timed out. Try again.',
   'login.error.deviceCheckUnavailable':
     "Couldn't log you in right now. Try again in a few minutes.",
+  'login.error.unsupportedDevice':
+    "Couldn't log you in on this device. Update the app and the operating system, then try again. If that doesn't help, contact Ísland.is.",
   'login.error.failed': "Couldn't log you in. Try again.",
 
   // app lock

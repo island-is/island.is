@@ -7,6 +7,7 @@ export {
   isAppAttestUnavailable,
   isAppLoginRemoved,
   isBiometricKeyInvalidated,
+  isDeviceNotAttested,
   isTooManyElectronicIdRequests,
 } from './errors'
 export type { IasErrorCode } from './errors'
