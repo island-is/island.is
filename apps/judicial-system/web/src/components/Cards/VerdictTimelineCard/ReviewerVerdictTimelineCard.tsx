@@ -12,7 +12,10 @@ import VerdictTimelineBody from './VerdictTimelineBody'
 
 interface Props {
   defendant: Defendant
-  verdictAppealCase?: Pick<AppealCase, 'appealEventLogs'> | null
+  verdictAppealCase?: Pick<
+    AppealCase,
+    'appealState' | 'appealEventLogs' | 'statementDeadlines'
+  > | null
   indictmentAppealDeadline?: string | null
 }
 

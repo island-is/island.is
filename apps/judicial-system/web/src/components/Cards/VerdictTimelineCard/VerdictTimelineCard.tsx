@@ -43,6 +43,7 @@ import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdic
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
+import { getOpenAppealStatementDeadlineItem } from './appealStatementDeadlineItem.logic'
 import { getProsecutionVerdictAppealItem } from './prosecutionVerdictAppeal.logic'
 import type { VerdictTimelineItem } from './VerdictTimelineBody'
 import VerdictTimelineBody from './VerdictTimelineBody'
@@ -239,6 +240,16 @@ const VerdictTimelineCard: FC<Props> = (props) => {
 
     if (prosecutionAppealItem) {
       items.push(prosecutionAppealItem)
+    }
+
+    // Greinargerðarfrest for the prosecution once Landsréttur has set one.
+    const statementDeadlineItem = getOpenAppealStatementDeadlineItem(
+      workingCase.verdictAppealCase,
+      {},
+    )
+
+    if (statementDeadlineItem) {
+      items.push(statementDeadlineItem)
     }
 
     pushIf(

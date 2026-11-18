@@ -1,5 +1,6 @@
 import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  AppealCaseState,
   AppealEventType,
   UserRole,
   VerdictAppealDecision,
@@ -129,5 +130,31 @@ describe('getReviewerVerdictTimelineItems', () => {
     expect(getReviewerVerdictTimelineItems({ defendant: defendant() })).toEqual(
       [],
     )
+  })
+
+  it('should show the prosecution greinargerðarfrest once Landsréttur has set one', () => {
+    expect(
+      getReviewerVerdictTimelineItems({
+        defendant: defendant({
+          appealDecision: VerdictAppealDecision.ACCEPT,
+        }),
+        verdictAppealCase: {
+          ...prosecutionAppealed,
+          appealState: AppealCaseState.RECEIVED,
+          statementDeadlines: [
+            {
+              id: 'prosecution_deadline',
+              deadline: '2026-09-14T23:59:59.999Z',
+              isExpired: false,
+            },
+          ],
+        },
+        indictmentAppealDeadline,
+      }),
+    ).toEqual([
+      { text: 'Afstaða dómfellda: Unir dómi' },
+      { text: 'Ákæruvaldið áfrýjaði 25.05.2026' },
+      { text: 'Frestur til að skila greinargerð er til 14.09.2026' },
+    ])
   })
 })
