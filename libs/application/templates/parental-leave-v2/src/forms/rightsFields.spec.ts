@@ -1,38 +1,11 @@
 import { NO, YES } from '@island.is/application/core'
-import {
-  Application,
-  FieldTypes,
-  KeyValueField,
-} from '@island.is/application/types'
-import { SINGLE } from '../constants'
-import { parentalLeaveFormMessages } from '../lib/messages'
+import { FieldTypes } from '@island.is/application/types'
 import {
   buildGiveDaysFields,
   buildMultipleBirthsDaysFields,
   buildRequestDaysFields,
   buildRightsIntroFields,
 } from './rightsFields'
-
-const application = (answers: Record<string, unknown>) =>
-  ({
-    answers: { selectedChild: '0', ...answers },
-    externalData: {
-      children: {
-        data: {
-          children: [
-            {
-              hasRights: true,
-              remainingDays: 180,
-              parentalRelation: 'primary',
-              expectedDateOfBirth: '2027-03-04',
-            },
-          ],
-        },
-        date: new Date(),
-        status: 'success',
-      },
-    },
-  } as unknown as Application)
 
 const hiddenDefaults = (fields: ReturnType<typeof buildRequestDaysFields>) =>
   Object.fromEntries(
@@ -45,46 +18,16 @@ const hiddenDefaults = (fields: ReturnType<typeof buildRequestDaysFields>) =>
   )
 
 describe('rightsFields', () => {
-  it('should show the total and the multiple births rights of a single parent', () => {
+  it('should show the rights as a read-only input that is not saved', () => {
     const [rights] = buildRightsIntroFields()
-    const value = (rights as KeyValueField).value as (
-      application: Application,
-    ) => unknown[]
 
-    const lines = value(
-      application({
-        otherParentObj: { chooseOtherParent: SINGLE },
-        multipleBirths: { hasMultipleBirths: YES, multipleBirths: '2' },
+    expect(rights).toEqual(
+      expect.objectContaining({
+        type: FieldTypes.CUSTOM,
+        component: 'RightsIntro',
+        doesNotRequireAnswer: true,
       }),
     )
-
-    expect(lines).toEqual([
-      expect.objectContaining({
-        id: parentalLeaveFormMessages.reviewScreen.rightsTotal.id,
-      }),
-      expect.objectContaining({
-        id: parentalLeaveFormMessages.shared.yourRightsInMonths.id,
-      }),
-      expect.objectContaining({
-        id: parentalLeaveFormMessages.shared
-          .yourSingleParentMultipleBirthsRightsInMonths.id,
-      }),
-    ])
-  })
-
-  it('should only show lines that can be rendered without multiple births', () => {
-    // Each line is rendered as markdown, which throws on null
-    const [rights] = buildRightsIntroFields()
-    const value = (rights as KeyValueField).value as (
-      application: Application,
-    ) => unknown[]
-
-    const lines = value(
-      application({ multipleBirths: { hasMultipleBirths: NO } }),
-    )
-
-    expect(lines).toHaveLength(2)
-    expect(lines.every((line) => line && typeof line === 'object')).toBe(true)
   })
 
   // Each screen saves its yes/no flags with the days on Continue, rather than
