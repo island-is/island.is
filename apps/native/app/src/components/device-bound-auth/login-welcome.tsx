@@ -35,10 +35,6 @@ const Host = styled(SafeAreaView)`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
 `
 
-const Spacer = styled.View`
-  flex: 1;
-`
-
 const Title = styled(Typography)`
   margin-top: ${({ theme }) => theme.spacing[9]}px;
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
@@ -51,12 +47,13 @@ const IllustrationWrapper = styled.View`
   margin-vertical: ${({ theme }) => theme.spacing[3]}px;
 `
 
-// The design's size at most, smaller when the screen is short.
-const Illustration = styled.Image`
+// The design's size at most, smaller when the screen is short. Above the
+// debug panel there's only room for a small one.
+const Illustration = styled.Image<{ isSmall: boolean }>`
   width: 100%;
   height: 100%;
-  max-width: 318px;
-  max-height: 362px;
+  max-width: ${({ isSmall }) => (isSmall ? 132 : 318)}px;
+  max-height: ${({ isSmall }) => (isSmall ? 150 : 362)}px;
 `
 
 const Footer = styled.View`
@@ -74,8 +71,8 @@ interface LoginWelcomeProps {
   /** The front-page image from the CMS. Falls back to a bundled one. */
   illustration?: ImageSourcePropType
   /**
-   * The environment and Cognito settings, in place of the illustration.
-   * On in the testing app.
+   * The environment and Cognito settings, below a smaller illustration. On
+   * in the testing app.
    */
   showDebugInfo?: boolean
   onLoginPress(): void
@@ -121,13 +118,13 @@ export function LoginWelcome({
         <Title variant="heading1" textAlign="center">
           {intl.formatMessage({ id: 'login.welcome.title' })}
         </Title>
-        {showDebugInfo ? (
-          <Spacer />
-        ) : (
-          <IllustrationWrapper>
-            <Illustration source={illustration} resizeMode="contain" />
-          </IllustrationWrapper>
-        )}
+        <IllustrationWrapper>
+          <Illustration
+            source={illustration}
+            resizeMode="contain"
+            isSmall={showDebugInfo}
+          />
+        </IllustrationWrapper>
         <Footer>
           <Button
             title={intl.formatMessage({ id: 'login.welcome.loginButton' })}
