@@ -276,6 +276,7 @@ query Case($input: CaseQueryInput!) {
         defendantId
         civilClaimantId
         deadline
+        isExpired
       }
       appealJudges {
         id

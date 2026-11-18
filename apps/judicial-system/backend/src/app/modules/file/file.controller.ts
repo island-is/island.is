@@ -33,6 +33,7 @@ import {
   JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
+  RouteRolesGuard,
 } from '@island.is/judicial-system/auth'
 import { IDS_ACCESS_TOKEN_NAME } from '@island.is/judicial-system/consts'
 import type { User } from '@island.is/judicial-system/types'
@@ -304,9 +305,13 @@ export class FileController {
     return this.fileService.getCaseFileSignedUrl(theCase, caseFile)
   }
 
+  // Rejecting a file, attaching a ruling order's document and reordering the
+  // files decide against a case row locked for the request, like the three
+  // creates above: their roles rules are bare, so RolesGuard runs ahead of
+  // the locking read.
   @UseGuards(
-    CaseExistsGuard,
     RolesGuard,
+    CaseExistsForUpdateGuard,
     new CaseTypeGuard(indictmentCases),
     CaseWriteGuard,
     CaseFileExistsGuard,
@@ -357,9 +362,13 @@ export class FileController {
       )
     }
 
-    return this.sequelize.transaction(async (transaction) =>
-      this.fileService.rejectCaseFile(theCase, caseFile, transaction),
-    )
+    // The transaction CaseExistsForUpdateGuard opened - see createCaseFile.
+    // The checks above read the court sessions off the case that guard
+    // loaded, and everything that confirms a court session locks the same
+    // row, so the file cannot be filed in a confirmed session meanwhile.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.fileService.rejectCaseFile(theCase, caseFile, transaction)
   }
 
   @UseGuards(
@@ -395,11 +404,17 @@ export class FileController {
     return this.fileService.deleteCaseFile(theCase, caseFile)
   }
 
-  // CaseExistsGuard must run before RolesGuard here: the roles rule is
+  // RolesGuard must run after the case read here: the roles rule is
   // case-dependent - it reads the case to check that the user is its
-  // registered judge.
+  // registered judge. The read locks the case row for the request, so
+  // RouteRolesGuard goes ahead of it: it reads the same rule but decides on
+  // the user's role alone, and rejects everyone but a district court judge
+  // before the lock is taken. What still reaches the lock is a district court
+  // judge who is not this case's judge. fileEditGuardChain.spec.ts runs this
+  // chain and the three like it.
   @UseGuards(
-    CaseExistsGuard,
+    RouteRolesGuard,
+    CaseExistsForUpdateGuard,
     RolesGuard,
     new CaseTypeGuard(indictmentCases),
     CaseWriteGuard,
@@ -411,7 +426,7 @@ export class FileController {
     type: CaseFile,
     description: 'Confirms a ruling order uploaded during the course of a case',
   })
-  confirmRulingOrder(
+  async confirmRulingOrder(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Param('fileId') fileId: string,
@@ -419,14 +434,15 @@ export class FileController {
   ): Promise<CaseFile> {
     this.logger.debug(`Confirming ruling order ${fileId} of case ${caseId}`)
 
-    return this.sequelize.transaction((transaction) =>
-      this.fileService.confirmRulingOrder(theCase, caseFile, transaction),
-    )
+    // The transaction CaseExistsForUpdateGuard opened - see createCaseFile.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.fileService.confirmRulingOrder(theCase, caseFile, transaction)
   }
 
   @UseGuards(
-    CaseExistsGuard,
     RolesGuard,
+    CaseExistsForUpdateGuard,
     new CaseTypeGuard(indictmentCases),
     CaseWriteGuard,
     CaseFileExistsGuard,
@@ -442,7 +458,7 @@ export class FileController {
     description:
       'Attaches the document the district court wrote up for a ruling order pronounced orally',
   })
-  attachRulingOrderDocument(
+  async attachRulingOrderDocument(
     @Param('caseId') caseId: string,
     @Param('fileId') fileId: string,
     @CurrentHttpUser() user: User,
@@ -454,14 +470,15 @@ export class FileController {
       `Attaching a document to ruling order ${fileId} of case ${caseId}`,
     )
 
-    return this.sequelize.transaction((transaction) =>
-      this.fileService.attachRulingOrderDocument(
-        theCase,
-        caseFile,
-        attachDocument,
-        user,
-        transaction,
-      ),
+    // The transaction CaseExistsForUpdateGuard opened - see createCaseFile.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.fileService.attachRulingOrderDocument(
+      theCase,
+      caseFile,
+      attachDocument,
+      user,
+      transaction,
     )
   }
 
@@ -496,8 +513,8 @@ export class FileController {
   }
 
   @UseGuards(
-    CaseExistsGuard,
     RolesGuard,
+    CaseExistsForUpdateGuard,
     new CaseTypeGuard([
       ...indictmentCases,
       ...restrictionCases,
@@ -513,15 +530,16 @@ export class FileController {
     isArray: true,
     description: 'Updates multiple files of the case',
   })
-  updateFiles(
+  async updateFiles(
     @Param('caseId') caseId: string,
     @Body() updateFiles: UpdateFilesDto,
   ): Promise<CaseFile[]> {
     this.logger.debug(`Updating files of case ${caseId}`, { updateFiles })
 
-    return this.sequelize.transaction((transaction) =>
-      this.fileService.updateFiles(caseId, updateFiles.files, transaction),
-    )
+    // The transaction CaseExistsForUpdateGuard opened - see createCaseFile.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.fileService.updateFiles(caseId, updateFiles.files, transaction)
   }
 
   // TODO: Add tests for this endpoint
