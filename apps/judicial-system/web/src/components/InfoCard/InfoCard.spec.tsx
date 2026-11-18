@@ -2,10 +2,18 @@ import React from 'react'
 import { MockedProvider } from '@apollo/client/testing'
 import { render, screen } from '@testing-library/react'
 
+import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import { LocaleProvider } from '@island.is/localization'
 
 import { DefendantInfo } from './DefendantInfo/DefendantInfo'
 import InfoCard from './InfoCard'
+
+const courtOfAppealsUser = {
+  role: UserRole.COURT_OF_APPEALS_JUDGE,
+  institution: { type: InstitutionType.COURT_OF_APPEALS },
+} as User
 
 const renderInfoCard = (
   sections: React.ComponentProps<typeof InfoCard>['sections'],
@@ -251,5 +259,41 @@ describe('InfoCard', () => {
           element?.textContent === 'Verjandi: Hefur ekki verið skráður',
       ),
     ).toBeTruthy()
+  })
+
+  test('should show the appeal defender instead of the district-court defender for court of appeals users', async () => {
+    render(
+      <MockedProvider>
+        <LocaleProvider locale="is" messages={{}}>
+          <UserContext.Provider value={{ user: courtOfAppealsUser }}>
+            <InfoCard
+              sections={[
+                {
+                  id: 'sec_id',
+                  items: [
+                    {
+                      id: 'itm_id',
+                      title: 'Titill',
+                      values: [
+                        <DefendantInfo
+                          defendant={{
+                            id: 'def_id',
+                            defenderName: 'Lára Lögmann',
+                            appealDefenderName: 'Brynjar Sveinsson',
+                          }}
+                        />,
+                      ],
+                    },
+                  ],
+                },
+              ]}
+            />
+          </UserContext.Provider>
+        </LocaleProvider>
+      </MockedProvider>,
+    )
+
+    expect(await screen.findByText('Brynjar Sveinsson')).toBeTruthy()
+    expect(screen.queryByText('Lára Lögmann')).toBeNull()
   })
 })
