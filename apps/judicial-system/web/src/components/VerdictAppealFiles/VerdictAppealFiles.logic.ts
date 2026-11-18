@@ -5,18 +5,16 @@ import {
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
-  AppealEventType,
   AppealSummonsAction,
   canIssueAppealSummons,
   canPerformAppealSummonsAction,
+  findFiledAppealStatementEvent,
   isCourtOfAppealsUser,
   isDefenceUser,
   isProsecutionUser,
   isPublicProsecutionOfficeUser,
   isPublicProsecutionUser,
-  isSameAppealStatementParty,
   isSuccessfulVerdictServiceStatus,
-  UserRole,
   verdictAppealDeclarationFileCategories,
   verdictAppealStatementFileCategories,
 } from '@island.is/judicial-system/types'
@@ -120,35 +118,6 @@ export const canDefenceUserAccessVerdictAppealFiles = (
       ),
   )
 }
-
-// The APPEAL_STATEMENT_SENT row for this party, if any. Used both as the
-// filed gate and as the cutoff so a later orphan upload (e.g. a second tab
-// after the party already filed) does not appear as part of that filing.
-const findFiledAppealStatementEvent = (
-  eventLogs:
-    | {
-        eventType?: string | null
-        userRole?: string | null
-        defendantId?: string | null
-        civilClaimantId?: string | null
-        created?: string | Date | null
-      }[]
-    | null
-    | undefined,
-  party: { defendantId?: string | null; civilClaimantId?: string | null },
-) =>
-  eventLogs?.find(
-    (eventLog) =>
-      eventLog.eventType === AppealEventType.APPEAL_STATEMENT_SENT &&
-      isSameAppealStatementParty(eventLog, party) &&
-      // Legacy defender backfill names no party; same exclusion as
-      // hasFiledAppealStatement.
-      !(
-        !eventLog.defendantId &&
-        !eventLog.civilClaimantId &&
-        eventLog.userRole === UserRole.DEFENDER
-      ),
-  )
 
 // Greinargerð visibility mirrors kærumál once the party has filed: court of
 // appeals, prosecution, and defence users who can download appeal files see

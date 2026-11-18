@@ -3,7 +3,7 @@ import {
   CaseState,
   CaseType,
   DefendantEventType,
-  hasFiledAppealStatement,
+  findFiledAppealStatementEvent,
   isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
@@ -199,7 +199,9 @@ const canDefenceUserViewCaseFileOfIndictmentCase = (
 
 // Incomplete greinargerð uploads stay private to the party's own confirmed
 // defender/advocate until APPEAL_STATEMENT_SENT. Co-parties and prosecution
-// drafts must not leak through limited-access listing or download.
+// drafts must not leak through limited-access listing or download, and files
+// uploaded after that party's SENT are treated as orphans (same cutoff as the
+// overview).
 const canDefenceUserViewVerdictAppealStatementFile = (
   nationalId: string,
   caseFileCategory: CaseFileCategory,
@@ -207,7 +209,8 @@ const canDefenceUserViewVerdictAppealStatementFile = (
   civilClaimants: CivilClaimant[] | undefined,
   defendantId: string | undefined,
   civilClaimantId: string | null | undefined,
-  appealEventLogs: Parameters<typeof hasFiledAppealStatement>[0],
+  fileCreated: Date | undefined,
+  appealEventLogs: Parameters<typeof findFiledAppealStatementEvent>[0],
 ): boolean => {
   if (!verdictAppealStatementFileCategories.includes(caseFileCategory)) {
     return true
@@ -237,7 +240,13 @@ const canDefenceUserViewVerdictAppealStatementFile = (
     return true
   }
 
-  return hasFiledAppealStatement(appealEventLogs, party)
+  const filedEvent = findFiledAppealStatementEvent(appealEventLogs, party)
+
+  if (!filedEvent?.created || !fileCreated) {
+    return false
+  }
+
+  return fileCreated.getTime() <= new Date(filedEvent.created).getTime()
 }
 
 const canDefenceUserViewCaseFile = ({
@@ -269,7 +278,7 @@ const canDefenceUserViewCaseFile = ({
   civilClaimantId?: string | null
   fileCreated?: Date
   isRulingOrderInConfirmedCourtSession?: boolean
-  appealEventLogs?: Parameters<typeof hasFiledAppealStatement>[0]
+  appealEventLogs?: Parameters<typeof findFiledAppealStatementEvent>[0]
 }) => {
   if (isRequestCase(caseType)) {
     return canDefenceUserViewCaseFileOfRequestCase(caseState, caseFileCategory)
@@ -371,6 +380,7 @@ const canDefenceUserViewCaseFile = ({
         civilClaimants,
         defendantId,
         civilClaimantId,
+        fileCreated,
         appealEventLogs,
       )
     ) {
@@ -435,7 +445,7 @@ export const canLimitedAccessUserViewCaseFile = ({
   civilClaimantId?: string | null
   fileCreated?: Date
   isRulingOrderInConfirmedCourtSession?: boolean
-  appealEventLogs?: Parameters<typeof hasFiledAppealStatement>[0]
+  appealEventLogs?: Parameters<typeof findFiledAppealStatementEvent>[0]
 }) => {
   if (!caseFileCategory) {
     return false

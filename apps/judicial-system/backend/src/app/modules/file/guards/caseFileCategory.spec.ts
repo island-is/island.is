@@ -775,6 +775,7 @@ describe('canLimitedAccessUserViewCaseFile - verdict appeal cutoff exemption', (
         {
           eventType: AppealEventType.APPEAL_STATEMENT_SENT,
           defendantId: 'co-defendant',
+          created: afterCutoff,
         },
       ],
     })
@@ -816,6 +817,7 @@ describe('canLimitedAccessUserViewCaseFile - verdict appeal cutoff exemption', (
         {
           eventType: AppealEventType.APPEAL_STATEMENT_SENT,
           defendantId: 'co-defendant',
+          created: afterCutoff,
         },
       ],
     })
@@ -831,6 +833,9 @@ describe('canLimitedAccessUserViewCaseFile - incomplete verdict statements', () 
     name: 'Appeal Defender',
     role: UserRole.DEFENDER,
   } as User
+  const filedAt = new Date('2024-02-01T12:00:00Z')
+  const beforeFiling = new Date('2024-02-01T11:00:00Z')
+  const afterFiling = new Date('2024-02-01T13:00:00Z')
 
   it('allows the confirmed appeal advocate to see their own incomplete statement', () => {
     const canView = canLimitedAccessUserViewCaseFile({
@@ -839,6 +844,7 @@ describe('canLimitedAccessUserViewCaseFile - incomplete verdict statements', () 
       caseState: CaseState.COMPLETED,
       caseFileCategory: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
       defendantId: 'defendant-id',
+      fileCreated: beforeFiling,
       defendants: [
         makeDefendant({
           id: 'defendant-id',
@@ -859,6 +865,7 @@ describe('canLimitedAccessUserViewCaseFile - incomplete verdict statements', () 
       caseState: CaseState.COMPLETED,
       caseFileCategory: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
       defendantId: 'co-defendant',
+      fileCreated: beforeFiling,
       defendants: [
         makeDefendant({
           id: 'defendant-id',
@@ -877,13 +884,14 @@ describe('canLimitedAccessUserViewCaseFile - incomplete verdict statements', () 
     expect(canView).toBe(false)
   })
 
-  it('shows a co-defendant statement after APPEAL_STATEMENT_SENT', () => {
+  it('shows a co-defendant statement filed on or before APPEAL_STATEMENT_SENT', () => {
     const canView = canLimitedAccessUserViewCaseFile({
       user,
       caseType: CaseType.INDICTMENT,
       caseState: CaseState.COMPLETED,
       caseFileCategory: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
       defendantId: 'co-defendant',
+      fileCreated: beforeFiling,
       defendants: [
         makeDefendant({
           id: 'defendant-id',
@@ -900,10 +908,43 @@ describe('canLimitedAccessUserViewCaseFile - incomplete verdict statements', () 
         {
           eventType: AppealEventType.APPEAL_STATEMENT_SENT,
           defendantId: 'co-defendant',
+          created: filedAt,
         },
       ],
     })
 
     expect(canView).toBe(true)
+  })
+
+  it('hides a co-defendant orphan upload created after APPEAL_STATEMENT_SENT', () => {
+    const canView = canLimitedAccessUserViewCaseFile({
+      user,
+      caseType: CaseType.INDICTMENT,
+      caseState: CaseState.COMPLETED,
+      caseFileCategory: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+      defendantId: 'co-defendant',
+      fileCreated: afterFiling,
+      defendants: [
+        makeDefendant({
+          id: 'defendant-id',
+          appealDefenderNationalId: nationalId,
+          isAppealDefenderConfirmed: true,
+        }),
+        makeDefendant({
+          id: 'co-defendant',
+          appealDefenderNationalId: '9999999999',
+          isAppealDefenderConfirmed: true,
+        }),
+      ],
+      appealEventLogs: [
+        {
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          defendantId: 'co-defendant',
+          created: filedAt,
+        },
+      ],
+    })
+
+    expect(canView).toBe(false)
   })
 })
