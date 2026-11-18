@@ -583,10 +583,12 @@ export function createIasClient(options: IasClientOptions): IasClient {
         return device.getBiometricKey() !== null
       } catch (error) {
         // Some Android devices report an invalidated key as soon as it's read.
-        if (!isBiometricKeyInvalidated(error)) {
-          throw error
+        if (isBiometricKeyInvalidated(error)) {
+          device.deleteBiometricKey()
+        } else {
+          // A key that can't be read can't unlock either: electronic ID can.
+          console.warn('Could not read the biometric key', error)
         }
-        device.deleteBiometricKey()
         return false
       }
     },

@@ -51,6 +51,14 @@ export function useNativeUnlock({
   const electronicId = useElectronicIdUnlock('unlock', { inline: true })
   const ias = getIasClient()
   const lockoutTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
+  // A native key read: once, and again after an unlock may have changed it.
+  const [isBiometricsEnabled, setIsBiometricsEnabled] = useState(() =>
+    ias.isBiometricsEnabled(),
+  )
+  // The auto-prompt and a tap can come together.
+  const isUnlockingWithBiometrics = useRef(false)
+  // Logging out from the lock while an unlock is out leaves nothing to open.
+  const isStillLoggedIn = () => !!authStore.getState().nativeUser
 
   // Biometrics are offered again once the lockout may be over: the phone was
   // unlocked with its passcode while the app was away, or Android's 30
@@ -73,9 +81,14 @@ export function useNativeUnlock({
   }, [])
 
   const unlockWithBiometrics = async () => {
-    if (!ias.isBiometricsEnabled() || electronicId.isPending()) {
+    if (
+      isUnlockingWithBiometrics.current ||
+      !ias.isBiometricsEnabled() ||
+      electronicId.isPending()
+    ) {
       return
     }
+    isUnlockingWithBiometrics.current = true
     setElectronicIdError(undefined)
     setStatus('prompting')
     try {
@@ -84,10 +97,16 @@ export function useNativeUnlock({
         // The system's dialog: its own text is in the phone's language.
         cancel: getSystemIntl().formatMessage({ id: 'biometrics.close' }),
       })
+      if (!isStillLoggedIn()) {
+        return
+      }
       authStore.getState().unlockNative(tokens)
       setStatus('idle')
       onUnlocked()
     } catch (error) {
+      if (!isStillLoggedIn()) {
+        return
+      }
       if (isAppLoginGone(error)) {
         onAppLoginGone()
         return
@@ -119,6 +138,10 @@ export function useNativeUnlock({
       // IAS refused the key, or anything else: electronic ID still works.
       console.warn('Biometric unlock failed', error)
       setStatus('failed')
+    } finally {
+      isUnlockingWithBiometrics.current = false
+      // An invalidated key is gone now.
+      setIsBiometricsEnabled(ias.isBiometricsEnabled())
     }
   }
 
@@ -129,11 +152,18 @@ export function useNativeUnlock({
     setElectronicIdError(undefined)
     setStatus('electronicId')
     try {
-      authStore.getState().unlockNative(await electronicId.unlock())
+      const tokens = await electronicId.unlock()
+      if (!isStillLoggedIn()) {
+        return
+      }
+      authStore.getState().unlockNative(tokens)
       setStatus('idle')
       // Closes the lock along with the sheet on top of it.
       onUnlocked()
     } catch (error) {
+      if (!isStillLoggedIn()) {
+        return
+      }
       if (isAppLoginGone(error)) {
         onAppLoginGone()
         return
@@ -152,7 +182,7 @@ export function useNativeUnlock({
     status,
     /** Why the last electronic ID attempt failed; cleared on the next try. */
     electronicIdError,
-    isBiometricsEnabled: ias.isBiometricsEnabled(),
+    isBiometricsEnabled,
     /** Shown while electronic ID waits; undefined until IAS sends it. */
     verificationCode: electronicId.verificationCode,
     unlockWithBiometrics,
