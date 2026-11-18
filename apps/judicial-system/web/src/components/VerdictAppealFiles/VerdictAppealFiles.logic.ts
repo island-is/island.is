@@ -1,21 +1,24 @@
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import { formatDate, getInitials } from '@island.is/judicial-system/formatters'
 import {
   AppealSummonsAction,
   canIssueAppealSummons,
   canPerformAppealSummonsAction,
   isCourtOfAppealsUser,
+  isDefenceUser,
+  isProsecutionUser,
   isPublicProsecutionOfficeUser,
   isPublicProsecutionUser,
   isSuccessfulVerdictServiceStatus,
   verdictAppealDeclarationFileCategories,
+  verdictAppealStatementFileCategories,
 } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
+  CaseFileCategory,
   type AppealSummons,
   type CaseFile,
-  type CaseFileCategory,
   type CivilClaimant,
   type Defendant,
   type User,
@@ -45,25 +48,50 @@ export type { AppealAppointmentLetterRow } from '../AppealAppointmentLetter/Appe
 // a defender their own clients'.
 export const canViewVerdictAppealFile = (
   workingCase: WorkingCase,
-  categories: CaseFileCategory[],
+  categories: readonly CaseFileCategory[] | CaseFileCategory[],
   file: Pick<CaseFile, 'category' | 'defendantId' | 'civilClaimantId'>,
   user: User | undefined,
 ): boolean =>
   ((isPublicProsecutionOfficeUser(user) || isCourtOfAppealsUser(user)) &&
     Boolean(file.category && categories.includes(file.category))) ||
-  isMatchingAppealCaseFile(workingCase, categories, file, user)
+  isMatchingAppealCaseFile(workingCase, [...categories], file, user)
 
 export interface VerdictAppealFileGroup {
-  defendant: Defendant
+  // Defendant declarations and that defendant's greinargerð share a group.
+  // Civil-claimant and prosecution greinargerðir have no defendant row.
+  defendant?: Defendant
+  civilClaimant?: CivilClaimant
   files: CaseFile[]
 }
 
+const byCreatedAsc = (a: CaseFile, b: CaseFile): number =>
+  new Date(a.created ?? 0).getTime() - new Date(b.created ?? 0).getTime()
+
+// Greinargerð visibility mirrors kærumál "Skjöl kærumáls": court of appeals,
+// prosecution (including the public prosecution office), and defence all see
+// every party's filed statement. Declarations stay party-scoped for defence
+// via canViewVerdictAppealFile / isMatchingAppealCaseFile.
+export const canViewVerdictAppealStatementFile = (
+  file: Pick<CaseFile, 'category'>,
+  user: User | undefined,
+): boolean =>
+  Boolean(
+    file.category &&
+      verdictAppealStatementFileCategories.includes(file.category),
+  ) &&
+  (isCourtOfAppealsUser(user) ||
+    isProsecutionUser(user) ||
+    isPublicProsecutionOfficeUser(user) ||
+    isDefenceUser(user))
+
 /**
- * The appeal declaration and its accompanying files that this user may open,
- * grouped by the defendant they were filed for, in the order the defendants
- * appear on the case and the order the files were filed. A defence user only
- * sees the files of the defendants they represent, the same rule that governs
- * every other party appeal file.
+ * Appeal-process files this user may open on the verdict-appeal overview:
+ * áfrýjunaryfirlýsingar (defence-scoped for defenders) and greinargerðir
+ * (same roles as kærumál — CoA, prosecution, defence see every party's).
+ *
+ * Grouped by party in case order — defendants, then civil claimants, then a
+ * prosecution group when the prosecution has filed. Files within a group are
+ * oldest first.
  */
 export const getVerdictAppealFileGroups = (
   workingCase: WorkingCase,
@@ -78,18 +106,90 @@ export const getVerdictAppealFileGroups = (
         user,
       ),
     )
-    .sort(
-      (a, b) =>
-        new Date(a.created ?? 0).getTime() - new Date(b.created ?? 0).getTime(),
+    .sort(byCreatedAsc)
+
+  const statementFiles = (workingCase.caseFiles ?? [])
+    .filter((file) => canViewVerdictAppealStatementFile(file, user))
+    .sort(byCreatedAsc)
+
+  const groups: VerdictAppealFileGroup[] = []
+
+  for (const defendant of workingCase.defendants ?? []) {
+    const files = [
+      ...declarationFiles.filter((file) => file.defendantId === defendant.id),
+      ...statementFiles.filter((file) => file.defendantId === defendant.id),
+    ].sort(byCreatedAsc)
+
+    if (files.length > 0) {
+      groups.push({ defendant, files })
+    }
+  }
+
+  for (const civilClaimant of workingCase.civilClaimants ?? []) {
+    const files = statementFiles.filter(
+      (file) => file.civilClaimantId === civilClaimant.id,
     )
 
-  return (workingCase.defendants ?? []).flatMap((defendant) => {
-    const files = declarationFiles.filter(
-      (file) => file.defendantId === defendant.id,
+    if (files.length > 0) {
+      groups.push({ civilClaimant, files })
+    }
+  }
+
+  const prosecutionFiles = statementFiles.filter(
+    (file) =>
+      file.category ===
+        CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT ||
+      file.category ===
+        CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE,
+  )
+
+  if (prosecutionFiles.length > 0) {
+    groups.push({ files: prosecutionFiles })
+  }
+
+  return groups
+}
+
+export const getVerdictAppealFileGroupKey = (
+  group: VerdictAppealFileGroup,
+): string =>
+  group.defendant?.id ?? group.civilClaimant?.id ?? 'prosecution'
+
+export const getVerdictAppealFileGroupTitle = (
+  group: VerdictAppealFileGroup,
+): string | undefined =>
+  group.defendant?.name ?? group.civilClaimant?.name ?? 'Ákæruvaldið'
+
+// Who sent the row in: declarations and defence greinargerðir credit the
+// advocate on the party; civil-claimant greinargerðir the spokesperson;
+// prosecution greinargerðir the prosecutor role alone.
+export const getVerdictAppealFileSentInBy = (
+  group: VerdictAppealFileGroup,
+): string => {
+  if (group.defendant) {
+    const initials = getInitials(
+      group.defendant.appealDefenderName ?? group.defendant.defenderName,
     )
 
-    return files.length > 0 ? [{ defendant, files }] : []
-  })
+    return initials ? `Verjandi (${initials}) sendi inn` : 'Verjandi sendi inn'
+  }
+
+  if (group.civilClaimant) {
+    const initials = getInitials(
+      group.civilClaimant.appealSpokespersonName ??
+        group.civilClaimant.spokespersonName,
+    )
+    const role = (
+      group.civilClaimant.appealSpokespersonIsLawyer ??
+      group.civilClaimant.spokespersonIsLawyer
+    )
+      ? 'Lögmaður'
+      : 'Réttargæslumaður'
+
+    return initials ? `${role} (${initials}) sendi inn` : `${role} sendi inn`
+  }
+
+  return 'Ákærandi sendi inn'
 }
 
 export const showsAppealSummonses = (

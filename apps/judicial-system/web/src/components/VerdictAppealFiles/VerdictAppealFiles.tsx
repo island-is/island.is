@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 
 import { Box, Button, Checkbox, Text } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_APPEAL_SUMMONS_ROUTE } from '@island.is/judicial-system/consts'
-import { formatDate, getInitials } from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { Feature } from '@island.is/judicial-system/types'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
@@ -31,26 +31,19 @@ import {
   getAppealSummonsMenuItems,
   getAppealSummonsRows,
   getAppealSummonsServiceRecipientOptions,
+  getVerdictAppealFileGroupKey,
   getVerdictAppealFileGroups,
+  getVerdictAppealFileGroupTitle,
+  getVerdictAppealFileSentInBy,
   showsAppealSummonses,
 } from './VerdictAppealFiles.logic'
 
-// Appeal documents are "sent in" (design, 2026-09-03), unlike the case files
-// the shared formatter describes as "lagt fram". When the public prosecution
-// office registered the appeal on a letter, the defender who wrote that letter
-// is the one who sent it in, not the defender of record.
-const formatSentInBy = (defenderName?: string | null): string => {
-  const initials = getInitials(defenderName)
-
-  return initials ? `Verjandi (${initials}) sendi inn` : 'Verjandi sendi inn'
-}
-
 /**
  * The appeal-process section of a completed indictment: the áfrýjunarstefna
- * the public prosecution office issues, and the appeal declaration each
- * defendant's defender filed, with whatever came with it. Renders nothing until
- * there is something to show. Which declarations that is, and for whom, is
- * decided by getVerdictAppealFileGroups.
+ * the public prosecution office issues, each defendant's áfrýjunaryfirlýsing,
+ * and greinargerðir once filed. Renders nothing until there is something to
+ * show. Which files that is, and for whom, is decided by
+ * getVerdictAppealFileGroups.
  *
  * The rows offer no deletion: a declaration is the appeal itself, and the way to
  * take it back is to withdraw the appeal from the verdict timeline card.
@@ -383,14 +376,14 @@ const VerdictAppealFiles: FC = () => {
           })}
         </Box>
       )}
-      {groups.map(({ defendant, files }) => (
-        <Box key={defendant.id} marginBottom={2}>
+      {groups.map((group) => (
+        <Box key={getVerdictAppealFileGroupKey(group)} marginBottom={2}>
           {groups.length > 1 && (
             <Text variant="eyebrow" marginBottom={1}>
-              {defendant.name}
+              {getVerdictAppealFileGroupTitle(group)}
             </Text>
           )}
-          {files.map((file) => (
+          {group.files.map((file) => (
             <AppealProcessFileRow
               key={file.id}
               title={file.name ?? ''}
@@ -415,9 +408,7 @@ const VerdictAppealFiles: FC = () => {
                     {formatDate(file.created, 'dd.MM.y')}
                   </Text>
                   <Text whiteSpace="nowrap" variant="small">
-                    {formatSentInBy(
-                      defendant.appealDefenderName ?? defendant.defenderName,
-                    )}
+                    {getVerdictAppealFileSentInBy(group)}
                   </Text>
                 </>
               }

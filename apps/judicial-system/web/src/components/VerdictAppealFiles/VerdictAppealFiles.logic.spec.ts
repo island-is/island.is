@@ -17,6 +17,7 @@ import { mockUser } from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   canConfirmAppealSummonsRow,
   canShowIssueAppealSummons,
+  canViewVerdictAppealStatementFile,
   formatAppealSummonsConfirmedDate,
   formatAppealSummonsFileName,
   formatAppealSummonsSentToCourtOfAppealsTooltip,
@@ -25,7 +26,10 @@ import {
   getAppealSummonsRows,
   getAppealSummonsServiceBanners,
   getAppealSummonsServiceRecipientOptions,
+  getVerdictAppealFileGroupKey,
   getVerdictAppealFileGroups,
+  getVerdictAppealFileGroupTitle,
+  getVerdictAppealFileSentInBy,
   hasStandingVerdictAppeal,
   showsAppealSummonses,
 } from './VerdictAppealFiles.logic'
@@ -189,7 +193,7 @@ describe('getVerdictAppealFileGroups', () => {
       user,
     )
 
-    expect(groups.map((g) => g.defendant.id)).toEqual(['own_client_id'])
+    expect(groups.map((g) => g.defendant?.id)).toEqual(['own_client_id'])
   })
 
   it('should show a prosecution user every defendant, in case order', () => {
@@ -211,7 +215,7 @@ describe('getVerdictAppealFileGroups', () => {
       mockUser(UserRole.PROSECUTOR),
     )
 
-    expect(groups.map((g) => g.defendant.id)).toEqual([
+    expect(groups.map((g) => g.defendant?.id)).toEqual([
       'own_client_id',
       'other_client_id',
     ])
@@ -240,7 +244,7 @@ describe('getVerdictAppealFileGroups', () => {
       mockUser(UserRole.COURT_OF_APPEALS_JUDGE),
     )
 
-    expect(groups.map((g) => g.defendant.id)).toEqual([
+    expect(groups.map((g) => g.defendant?.id)).toEqual([
       'own_client_id',
       'other_client_id',
     ])
@@ -267,10 +271,134 @@ describe('getVerdictAppealFileGroups', () => {
       mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF),
     )
 
-    expect(groups.map((g) => g.defendant.id)).toEqual([
+    expect(groups.map((g) => g.defendant?.id)).toEqual([
       'own_client_id',
       'other_client_id',
     ])
+  })
+
+  // Greinargerð mirrors kærumál: CoA / prosecution / defence see every party's
+  // statement on the overview, not only the client's the defender represents.
+  it('should include a filed greinargerð under the defendant for CoA', () => {
+    const groups = getVerdictAppealFileGroups(
+      theCase([
+        file(
+          'declaration',
+          'own_client_id',
+          CaseFileCategory.DEFENDANT_APPEAL_DECLARATION,
+          '2026-06-04T13:34:00.000Z',
+        ),
+        file(
+          'statement',
+          'own_client_id',
+          CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          '2026-06-05T13:34:00.000Z',
+        ),
+      ]),
+      mockUser(UserRole.COURT_OF_APPEALS_JUDGE),
+    )
+
+    expect(groups).toHaveLength(1)
+    expect(groups[0].files.map((f) => f.id)).toEqual([
+      'declaration',
+      'statement',
+    ])
+  })
+
+  it('should show another defendants greinargerð to a defence user', () => {
+    const groups = getVerdictAppealFileGroups(
+      theCase([
+        file(
+          'other-statement',
+          'other_client_id',
+          CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          '2026-06-05T13:34:00.000Z',
+        ),
+      ]),
+      user,
+    )
+
+    expect(groups.map((g) => g.defendant?.id)).toEqual(['other_client_id'])
+    expect(groups[0].files.map((f) => f.id)).toEqual(['other-statement'])
+  })
+
+  it('should group a civil-claimant greinargerð under the claimant', () => {
+    const theCaseWithClaimant = {
+      ...theCase([]),
+      civilClaimants: [
+        {
+          id: 'claimant_id',
+          name: 'Bótakröfuhafi',
+          appealSpokespersonName: 'Lóa Lögmaður',
+          appealSpokespersonIsLawyer: true,
+        },
+      ],
+      caseFiles: [
+        {
+          id: 'cc-statement',
+          civilClaimantId: 'claimant_id',
+          category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          created: '2026-06-05T13:34:00.000Z',
+          name: 'cc-statement.pdf',
+        },
+      ],
+    } as WorkingCase
+
+    const groups = getVerdictAppealFileGroups(
+      theCaseWithClaimant,
+      mockUser(UserRole.PROSECUTOR),
+    )
+
+    expect(groups).toHaveLength(1)
+    expect(getVerdictAppealFileGroupKey(groups[0])).toBe('claimant_id')
+    expect(getVerdictAppealFileGroupTitle(groups[0])).toBe('Bótakröfuhafi')
+    expect(getVerdictAppealFileSentInBy(groups[0])).toBe(
+      'Lögmaður (LL) sendi inn',
+    )
+  })
+
+  it('should put the prosecution greinargerð in its own group', () => {
+    const groups = getVerdictAppealFileGroups(
+      theCase([
+        {
+          id: 'pros-statement',
+          category: CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT,
+          created: '2026-06-05T13:34:00.000Z',
+          name: 'pros-statement.pdf',
+        },
+      ]),
+      mockUser(UserRole.COURT_OF_APPEALS_JUDGE),
+    )
+
+    expect(groups).toHaveLength(1)
+    expect(getVerdictAppealFileGroupKey(groups[0])).toBe('prosecution')
+    expect(getVerdictAppealFileGroupTitle(groups[0])).toBe('Ákæruvaldið')
+    expect(getVerdictAppealFileSentInBy(groups[0])).toBe('Ákærandi sendi inn')
+  })
+})
+
+describe('canViewVerdictAppealStatementFile', () => {
+  const statement = {
+    category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+  }
+
+  it.each([
+    UserRole.COURT_OF_APPEALS_JUDGE,
+    UserRole.PROSECUTOR,
+    UserRole.DEFENDER,
+  ])('allows %s', (role) => {
+    expect(
+      canViewVerdictAppealStatementFile(statement, mockUser(role)),
+    ).toBe(true)
+  })
+
+  it('rejects district court users', () => {
+    expect(
+      canViewVerdictAppealStatementFile(
+        statement,
+        mockUser(UserRole.DISTRICT_COURT_JUDGE),
+      ),
+    ).toBe(false)
   })
 })
 
