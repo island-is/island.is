@@ -24,7 +24,7 @@ const { VALIDATE_LATEST_PERIOD } = AnswerValidationConstants
 const validatePeriodRepeaterFields = (
   periods: Period[] | undefined,
 ): AnswerValidationError | undefined => {
-  const periodDictionary = (periods as unknown) as Record<string, Period>
+  const periodDictionary = periods as unknown as Record<string, Period>
   const validations: ValidateField<Period>[] = [
     {
       fieldName: 'startDate',
@@ -153,9 +153,8 @@ export const validateLatestPeriodValidationSection = (
     getValueViaPath<Period[]>(application.answers, 'periods'),
   )
   const latestPeriod = periods[latestPeriodIndex]
-  const expectedDateOfBirthOrAdoptionDateOrBirthDate = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(
-    application,
-  )
+  const expectedDateOfBirthOrAdoptionDateOrBirthDate =
+    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
 
   if (!expectedDateOfBirthOrAdoptionDateOrBirthDate) {
     return {
