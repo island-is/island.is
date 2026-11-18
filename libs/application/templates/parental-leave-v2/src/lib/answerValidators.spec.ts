@@ -69,6 +69,7 @@ const createApplicationWithDob = (dob: string): Application => ({
           {
             expectedDateOfBirth: dob,
             parentalRelation: ParentalRelations.primary,
+            remainingDays: 180,
           },
         ],
       },
@@ -887,6 +888,26 @@ describe('when constructing a new period', () => {
         values: {},
       })
     })
+  })
+
+  it('rejects future periods that use more days than the rights', () => {
+    const start = FUTURE_DOB_DATE
+    const result = answerValidators[VALIDATE_LATEST_PERIOD](
+      [
+        {
+          firstPeriodStart: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
+          startDate: formatDate(start),
+          useLength: NO,
+          endDate: formatDate(addMonths(start, 7)),
+          ratio: '100',
+        },
+      ],
+      futureApplication,
+    )
+
+    expect(result).toEqual(
+      expect.objectContaining({ message: errorMessages.periodsExceedRights }),
+    )
   })
 })
 
