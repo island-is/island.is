@@ -11,9 +11,7 @@
     "**/*.spec.tsx",
     "**/*.test.ts",
     "**/*.test.tsx",
-    "jest.config.ts",
-    "jest.setup.ts",
-    "react-test-renderer.d.ts"
+    "jest.config.ts"
   ],
   "exclude": ["node_modules", ".next"]
 }

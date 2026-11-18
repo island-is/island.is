@@ -29,7 +29,6 @@
     ".next",
     "infra",
     "jest.config.ts",
-    "jest.setup.ts",
     "**/*.spec.ts",
     "**/*.spec.tsx"
   ]

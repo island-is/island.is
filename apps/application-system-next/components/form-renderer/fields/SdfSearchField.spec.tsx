@@ -1,5 +1,5 @@
-import React, { act } from 'react'
-import TestRenderer from 'react-test-renderer'
+import React from 'react'
+import { render } from '@testing-library/react'
 
 import { SdfSearchField } from './SdfSearchField'
 
@@ -16,9 +16,6 @@ jest.mock('@island.is/island-ui/core', () => ({
 
 type Selection = { value: string; label?: string } | null
 type Option = { value: string; label: string }
-
-// Unmounted after each test so rendered trees don't pile up.
-const renderers: TestRenderer.ReactTestRenderer[] = []
 
 const latestAsyncSearchProps = () =>
   asyncSearchProps[asyncSearchProps.length - 1]
@@ -61,13 +58,7 @@ const renderSearchField = ({
     />
   )
 
-  let renderer!: TestRenderer.ReactTestRenderer
-  // `TestRenderer.create` renders asynchronously; wrap it in act() so the
-  // tree is committed before asserting.
-  act(() => {
-    renderer = TestRenderer.create(renderField(currentValue))
-  })
-  renderers.push(renderer)
+  const { rerender, unmount } = render(renderField(currentValue))
 
   // The handlers are read from the latest render at call time. `handleChange`
   // is a mock and does not re-render, so calls made before `rerender` use the
@@ -96,17 +87,8 @@ const renderSearchField = ({
       type(option.label, option)
       select(option)
     },
-    rerender: (value: unknown) => {
-      act(() => {
-        renderer.update(renderField(value))
-      })
-    },
-    unmount: () => {
-      act(() => {
-        renderer.unmount()
-      })
-      renderers.splice(renderers.indexOf(renderer), 1)
-    },
+    rerender: (value: unknown) => rerender(renderField(value)),
+    unmount,
   }
 }
 
@@ -123,13 +105,6 @@ const valueWithExtraKey = {
 describe('SdfSearchField', () => {
   beforeEach(() => {
     asyncSearchProps.length = 0
-  })
-
-  afterEach(() => {
-    act(() => {
-      renderers.forEach((renderer) => renderer.unmount())
-    })
-    renderers.length = 0
   })
 
   it('publishes only value, label and query on select', () => {

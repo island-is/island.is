@@ -1,5 +1,5 @@
-import React, { act } from 'react'
-import TestRenderer from 'react-test-renderer'
+import React from 'react'
+import { render } from '@testing-library/react'
 
 import { SdfTextField } from './SdfTextField'
 
@@ -26,26 +26,22 @@ describe('SdfTextField', () => {
   it('publishes raw numeric values from currency input changes', () => {
     const handleChange = jest.fn()
 
-    // `TestRenderer.create` renders asynchronously; wrap it in act() so the
-    // tree is committed before asserting.
-    act(() => {
-      TestRenderer.create(
-        <SdfTextField
-          component={{
-            __typename: 'SdfTextField',
-            id: 'input1',
-            label: 'Input 1',
-            inputVariant: 'currency',
-          }}
-          currentValue=""
-          answers={{}}
-          onAnswerChange={jest.fn()}
-          handleChange={handleChange}
-          pendingRefetchTargets={[]}
-          isRefetchPending={false}
-        />,
-      )
-    })
+    render(
+      <SdfTextField
+        component={{
+          __typename: 'SdfTextField',
+          id: 'input1',
+          label: 'Input 1',
+          inputVariant: 'currency',
+        }}
+        currentValue=""
+        answers={{}}
+        onAnswerChange={jest.fn()}
+        handleChange={handleChange}
+        pendingRefetchTargets={[]}
+        isRefetchPending={false}
+      />,
+    )
 
     const onValueChange = numberFormatProps[0].onValueChange as
       | ((values: { value: string }) => void)

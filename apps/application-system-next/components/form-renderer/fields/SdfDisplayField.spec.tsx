@@ -1,5 +1,5 @@
-import React, { act } from 'react'
-import TestRenderer from 'react-test-renderer'
+import React from 'react'
+import { render, screen } from '@testing-library/react'
 
 import { SdfDisplayField } from './SdfDisplayField'
 
@@ -51,24 +51,21 @@ const baseProps = {
 
 describe('SdfDisplayField', () => {
   it('updates client expression value when answers change', () => {
-    let renderer!: TestRenderer.ReactTestRenderer
-    // `TestRenderer.create` renders asynchronously; wrap it in act() so the
-    // tree is committed before asserting.
-    act(() => {
-      renderer = TestRenderer.create(<SdfDisplayField {...baseProps} />)
-    })
+    const { rerender } = render(<SdfDisplayField {...baseProps} />)
 
-    expect(renderer.root.findByType('input').props.value).toBe('0 kr.')
+    expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe(
+      '0 kr.',
+    )
 
-    act(() => {
-      renderer.update(
-        <SdfDisplayField
-          {...baseProps}
-          answers={{ input1: '23', input2: '34', input3: '23' }}
-        />,
-      )
-    })
+    rerender(
+      <SdfDisplayField
+        {...baseProps}
+        answers={{ input1: '23', input2: '34', input3: '23' }}
+      />,
+    )
 
-    expect(renderer.root.findByType('input').props.value).toBe('80 kr.')
+    expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe(
+      '80 kr.',
+    )
   })
 })

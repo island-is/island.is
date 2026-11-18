@@ -1,5 +1,5 @@
-import React, { act, useState } from 'react'
-import TestRenderer from 'react-test-renderer'
+import React, { useState } from 'react'
+import { act, render, screen } from '@testing-library/react'
 
 import { FormRenderer } from './FormRenderer'
 import type { SdfComponentData } from '../lib/graphql'
@@ -109,14 +109,12 @@ describe('FormRenderer client display fields', () => {
   })
 
   it('updates a display field immediately from typed currency answers', () => {
-    let renderer!: TestRenderer.ReactTestRenderer
-    // `TestRenderer.create` renders asynchronously; wrap it in act() so the
-    // tree is committed before asserting.
-    act(() => {
-      renderer = TestRenderer.create(<Harness />)
-    })
+    render(<Harness />)
 
-    expect(renderer.root.findAllByType('input')[3].props.value).toBe('0 kr.')
+    const displayInput = () =>
+      screen.getAllByRole('textbox')[3] as HTMLInputElement
+
+    expect(displayInput().value).toBe('0 kr.')
 
     act(() => {
       ;(
@@ -142,34 +140,32 @@ describe('FormRenderer client display fields', () => {
       })
     })
 
-    expect(renderer.root.findAllByType('input')[3].props.value).toBe('80 kr.')
+    expect(displayInput().value).toBe('80 kr.')
   })
 
   it('warns in development when a display field client expression reads another display field', () => {
-    act(() => {
-      TestRenderer.create(
-        <FormRenderer
-          components={[
-            ...components,
-            {
-              __typename: 'SdfDisplayField',
-              id: 'displayField2',
-              label: 'Display Field 2',
-              clientValueExpression: {
-                operator: 'MULTIPLY',
-                args: [
-                  { operator: 'GET', args: ['input1'] },
-                  { operator: 'GET', args: ['displayField'] },
-                ],
-              },
+    render(
+      <FormRenderer
+        components={[
+          ...components,
+          {
+            __typename: 'SdfDisplayField',
+            id: 'displayField2',
+            label: 'Display Field 2',
+            clientValueExpression: {
+              operator: 'MULTIPLY',
+              args: [
+                { operator: 'GET', args: ['input1'] },
+                { operator: 'GET', args: ['displayField'] },
+              ],
             },
-          ]}
-          errors={[]}
-          answers={{}}
-          onAnswerChange={jest.fn()}
-        />,
-      )
-    })
+          },
+        ]}
+        errors={[]}
+        answers={{}}
+        onAnswerChange={jest.fn()}
+      />,
+    )
 
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining(
