@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid'
 import { ExecutionContext, InternalServerErrorException } from '@nestjs/common'
 
 import {
+  AppealEventType,
   CaseFileCategory,
   indictmentCases,
   investigationCases,
@@ -211,6 +212,42 @@ describe('LimitedAccess Delete Case File Guard', () => {
         })
       },
     )
+
+    it('rejects deleting a verdict appeal statement after the party has filed', () => {
+      const nationalId = uuid()
+      const defendantId = uuid()
+      mockRequest.mockImplementationOnce(() => ({
+        user: {
+          currentUser: { role: UserRole.DEFENDER, nationalId },
+        },
+        case: {
+          type,
+          defendants: [
+            {
+              id: defendantId,
+              isAppealDefenderConfirmed: true,
+              appealDefenderNationalId: nationalId,
+            },
+          ],
+          verdictAppealCase: {
+            appealEventLogs: [
+              {
+                eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+                defendantId,
+              },
+            ],
+          },
+        },
+        caseFile: {
+          category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          defendantId,
+        },
+      }))
+
+      const then = givenWhenThen()
+
+      expect(then.result).toBe(false)
+    })
 
     describe.each([
       CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,

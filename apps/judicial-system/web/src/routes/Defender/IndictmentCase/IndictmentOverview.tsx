@@ -13,7 +13,6 @@ import {
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   Feature,
-  findAppealStatementDeadline,
   hasFiledAppealStatement,
   isCompletedCase,
   isRulingOrDismissalCase,
@@ -216,16 +215,10 @@ const IndictmentOverview: FC = () => {
       return false
     }
 
-    const party = { defendantId: defendant.id }
-    const statementDeadline = findAppealStatementDeadline(
-      appeal.statementDeadlines,
-      party,
-    )
-
-    return Boolean(
-      statementDeadline?.deadline &&
-        hasFiledAppealStatement(appeal.appealEventLogs, party),
-    )
+    // Landsréttur can record a statement without setting a portal deadline.
+    return hasFiledAppealStatement(appeal.appealEventLogs, {
+      defendantId: defendant.id,
+    })
   }
 
   const showVerdictTimelineCards =

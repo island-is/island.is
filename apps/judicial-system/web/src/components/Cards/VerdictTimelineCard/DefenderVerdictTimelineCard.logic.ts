@@ -147,25 +147,25 @@ export const getDefenderVerdictTimelineItems = ({
       party,
     )
 
-    if (statementDeadline?.deadline) {
-      if (hasFiledAppealStatement(verdictAppealCase?.appealEventLogs, party)) {
-        const statementEvent = verdictAppealCase?.appealEventLogs?.find(
-          (eventLog) =>
-            eventLog.eventType === AppealEventType.APPEAL_STATEMENT_SENT &&
-            isSameAppealStatementParty(eventLog, party),
-        )
-        const sentDate = formatDate(statementEvent?.created)
+    if (hasFiledAppealStatement(verdictAppealCase?.appealEventLogs, party)) {
+      // Filed status does not require a portal deadline — Landsréttur can
+      // record a statement received outside the system.
+      const statementEvent = verdictAppealCase?.appealEventLogs?.find(
+        (eventLog) =>
+          eventLog.eventType === AppealEventType.APPEAL_STATEMENT_SENT &&
+          isSameAppealStatementParty(eventLog, party),
+      )
+      const sentDate = formatDate(statementEvent?.created)
 
-        items.push({
-          text: sentDate ? `Greinargerð send ${sentDate}` : 'Greinargerð send',
-        })
-      } else {
-        items.push({
-          text: `Frestur til að skila greinargerð ${
-            statementDeadline.isExpired ? 'rann út' : 'er til'
-          } ${formatDate(statementDeadline.deadline)}`,
-        })
-      }
+      items.push({
+        text: sentDate ? `Greinargerð send ${sentDate}` : 'Greinargerð send',
+      })
+    } else if (statementDeadline?.deadline) {
+      items.push({
+        text: `Frestur til að skila greinargerð ${
+          statementDeadline.isExpired ? 'rann út' : 'er til'
+        } ${formatDate(statementDeadline.deadline)}`,
+      })
     }
   }
 

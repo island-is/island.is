@@ -7,6 +7,7 @@ import {
 
 import {
   CaseFileCategory,
+  hasFiledAppealStatement,
   isDefenceUser,
   isIndictmentCase,
   isRequestCase,
@@ -103,6 +104,17 @@ export class LimitedAccessDeleteCaseFileGuard implements CanActivate {
         CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE,
       ].includes(category)
     ) {
+      // Once the party has filed, the PDF must stay — deleting it would leave
+      // APPEAL_STATEMENT_SENT with no statement and block a new filing.
+      if (
+        hasFiledAppealStatement(theCase.verdictAppealCase?.appealEventLogs, {
+          defendantId,
+          civilClaimantId,
+        })
+      ) {
+        return false
+      }
+
       return true
     }
 

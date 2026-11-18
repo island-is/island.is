@@ -316,9 +316,16 @@ const Statement = ({ isVerdictAppeal = false }: Props) => {
     if (file.key) {
       // Files that have been sent to the court of appeals can no longer be
       // deleted once it has registered its case number
-      if (isAppealFileDeletionLocked(file.category, targetAppealCase)) {
+      if (
+        isAppealFileDeletionLocked(file.category, targetAppealCase, {
+          defendantId: file.defendantId ?? defendantId,
+          civilClaimantId: file.civilClaimantId ?? civilClaimantId,
+        })
+      ) {
         toast.error(
-          'Ekki er hægt að eyða gögnum eftir að Landsréttur hefur skráð málsnúmer',
+          targetAppealCase?.appealCaseNumber
+            ? 'Ekki er hægt að eyða gögnum eftir að Landsréttur hefur skráð málsnúmer'
+            : 'Ekki er hægt að eyða greinargerð eftir að hún hefur verið send',
         )
 
         return
