@@ -60,10 +60,15 @@ beforeEach(() => {
     .mockReturnValue([mutate, { loading: false }] as never)
 })
 
-const renderFooter = (fieldType = 'NUMBERBOX', isHidden = false) => {
+const renderFooter = (
+  fieldType = 'NUMBERBOX',
+  isHidden = false,
+  pendingUploads = 0,
+) => {
   const section = { id: 'section', sectionType: SectionTypes.INPUT }
-  jest.mocked(useApplicationContext).mockReturnValue({
+  const context = {
     state: {
+      pendingUploads,
       currentScreen: {
         data: { id: 'screen', fields: [{ id: 'number', fieldType, isHidden }] },
       },
@@ -72,7 +77,8 @@ const renderFooter = (fieldType = 'NUMBERBOX', isHidden = false) => {
       application: { id: 'application', allowProceedOnValidationFail: true },
     },
     dispatch,
-  } as unknown as ReturnType<typeof useApplicationContext>)
+  } as unknown as ReturnType<typeof useApplicationContext>
+  jest.mocked(useApplicationContext).mockReturnValue(context)
 
   const Wrapper = () => {
     const methods = useForm({ defaultValues: { number: ['12'] } })
@@ -90,8 +96,52 @@ const renderFooter = (fieldType = 'NUMBERBOX', isHidden = false) => {
       </FormProvider>
     )
   }
-  render(<Wrapper />)
+  const view = render(<Wrapper />)
+  return (pendingUploads: number) => {
+    jest.mocked(useApplicationContext).mockReturnValue({
+      ...context,
+      state: { ...context.state, pendingUploads },
+    })
+    view.rerender(<Wrapper />)
+  }
 }
+
+it.each([1, 2])(
+  'blocks both navigation directions while %s files are uploading',
+  (pendingUploads) => {
+    renderFooter('TEXTBOX', false, pendingUploads)
+    const next = screen.getByRole('button', { name: 'Continue' })
+    const back = screen.getByRole('button', { name: 'Back' })
+    expect(next.hasAttribute('disabled')).toBe(true)
+    expect(back.hasAttribute('disabled')).toBe(true)
+    fireEvent.click(next)
+    fireEvent.click(back)
+    expect(mutate).not.toHaveBeenCalled()
+    expect(dispatch).not.toHaveBeenCalled()
+  },
+)
+
+it('re-enables both navigation directions only after the last upload finishes', async () => {
+  const setPendingUploads = renderFooter('TEXTBOX', false, 2)
+  setPendingUploads(1)
+  expect(
+    screen.getByRole('button', { name: 'Continue' }).hasAttribute('disabled'),
+  ).toBe(true)
+  expect(
+    screen.getByRole('button', { name: 'Back' }).hasAttribute('disabled'),
+  ).toBe(true)
+
+  setPendingUploads(0)
+  expect(
+    screen.getByRole('button', { name: 'Continue' }).hasAttribute('disabled'),
+  ).toBe(false)
+  const back = screen.getByRole('button', { name: 'Back' })
+  expect(back.hasAttribute('disabled')).toBe(false)
+  fireEvent.click(back)
+  await waitFor(() =>
+    expect(dispatch).toHaveBeenCalledWith({ type: 'DECREMENT' }),
+  )
+})
 
 it('blocks invalid number fields despite validation bypass and continues after correction', async () => {
   renderFooter()

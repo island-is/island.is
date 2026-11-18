@@ -26,6 +26,7 @@ export interface ApplicationState {
   screenError?: FormSystemValidationError
   isValid?: boolean
   submitted?: boolean
+  pendingUploads?: number
 }
 
 export interface Action {

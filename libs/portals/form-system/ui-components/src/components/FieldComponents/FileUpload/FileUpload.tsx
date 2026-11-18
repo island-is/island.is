@@ -92,6 +92,7 @@ export const FileUpload = ({
     async (file: UploadFile, id: string) => {
       if (!applicationId) return
 
+      dispatch?.({ type: 'START_FILE_UPLOAD' })
       try {
         const { data } = await createUploadUrl({
           variables: { filename: file.name },
@@ -157,6 +158,8 @@ export const FileUpload = ({
           status: FileUploadStatus.error,
           error: formatMessage(m.uploadFailed),
         })
+      } finally {
+        dispatch?.({ type: 'FINISH_FILE_UPLOAD' })
       }
     },
     [

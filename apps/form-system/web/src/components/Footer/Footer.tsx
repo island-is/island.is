@@ -101,6 +101,7 @@ export const Footer = ({
   const { trigger, getFieldState } = useFormContext()
   const { currentSection } = state
   const currentSectionType = currentSection?.data?.sectionType
+  const isUploading = (state.pendingUploads ?? 0) > 0
 
   const submitScreen = useMutation(SAVE_SCREEN)
   const updateDependencies = useMutation(UPDATE_APPLICATION_SETTINGS)
@@ -228,7 +229,7 @@ export const Footer = ({
   }
 
   const handleIncrement = async () => {
-    if (isPaymentLoading) return
+    if (isPaymentLoading || isUploading) return
     const isValid = await validate()
     dispatch({ type: 'SET_VALIDITY', payload: { isValid } })
 
@@ -459,6 +460,8 @@ export const Footer = ({
   }
 
   const handleDecrement = async () => {
+    if (isUploading) return
+
     const saved = await saveCurrentScreen(false)
     if (!saved) return
 
@@ -487,6 +490,7 @@ export const Footer = ({
               icon="arrowForward"
               onClick={handleIncrement}
               disabled={
+                isUploading ||
                 !enableContinueButton ||
                 isValidateEligibilityError ||
                 isPaymentLoading ||
@@ -507,6 +511,7 @@ export const Footer = ({
                 variant="ghost"
                 onClick={handleDecrement}
                 disabled={
+                  isUploading ||
                   submitLoading ||
                   notifyLoading ||
                   isPaymentLoading ||

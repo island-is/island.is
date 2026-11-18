@@ -137,7 +137,24 @@ export const applicationReducer = (
   state: ApplicationState,
   action: Action,
 ): ApplicationState => {
+  if (
+    (state.pendingUploads ?? 0) > 0 &&
+    ['INCREMENT', 'DECREMENT', 'INDEX_SCREEN'].includes(action.type)
+  ) {
+    return state
+  }
+
   switch (action.type) {
+    case 'START_FILE_UPLOAD':
+      return {
+        ...state,
+        pendingUploads: (state.pendingUploads ?? 0) + 1,
+      }
+    case 'FINISH_FILE_UPLOAD':
+      return {
+        ...state,
+        pendingUploads: (state.pendingUploads ?? 0) - 1,
+      }
     case 'INCREMENT': {
       const { currentSectionData, currentScreenIndex } =
         getIncrementVariables(state)
