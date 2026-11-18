@@ -1,10 +1,13 @@
 import { useLazyQuery, useMutation } from '@apollo/client'
 import { SectionTypes } from '@island.is/form-system/enums'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { ButtonHTMLAttributes, ReactNode } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { Footer } from './Footer'
+import { getPaymentFlow } from '../../utils/payment'
+import { uploadNavigationReducer } from '../../reducers/applicationReducer'
+import { ApplicationState } from '@island.is/form-system/ui'
 
 jest.mock('./Footer.css', () => ({ buttonContainer: 'buttonContainer' }))
 jest.mock('../../context/ApplicationProvider', () => ({
@@ -16,6 +19,8 @@ jest.mock('@apollo/client', () => ({
 }))
 jest.mock('@island.is/form-system/graphql', () => ({
   removeTypename: (value: unknown) => value,
+  SAVE_SCREEN: 'SAVE_SCREEN',
+  SUBMIT_APPLICATION: 'SUBMIT_APPLICATION',
 }))
 jest.mock('@island.is/form-system/ui', () => ({
   FieldTypesEnum: { NUMBERBOX: 'NUMBERBOX' },
@@ -24,13 +29,15 @@ jest.mock('@island.is/form-system/ui', () => ({
     continue: 'Continue',
     back: 'Back',
     externalDataConfirmation: 'Confirm',
+    submitApplication2: 'Submit',
+    openMyPages: 'My pages',
   },
 }))
 jest.mock('@island.is/localization', () => ({
   useLocale: () => ({ formatMessage: (message: string) => message }),
 }))
 jest.mock('../../utils/payment', () => ({
-  getPaymentFlow: () => ({ shouldShowPay: false, onSubmit: false }),
+  getPaymentFlow: jest.fn(),
 }))
 jest.mock('@island.is/island-ui/core', () => ({
   Box: ({ children }: { children: ReactNode }) => <div>{children}</div>,
@@ -51,6 +58,11 @@ const mutate = jest.fn()
 
 beforeEach(() => {
   jest.clearAllMocks()
+  dispatch.mockReset()
+  jest.mocked(getPaymentFlow).mockReturnValue({
+    shouldShowPay: false,
+    onSubmit: false,
+  })
   mutate.mockResolvedValue({})
   jest
     .mocked(useMutation)
@@ -58,6 +70,109 @@ beforeEach(() => {
   jest
     .mocked(useLazyQuery)
     .mockReturnValue([mutate, { loading: false }] as never)
+})
+
+it.each(['Continue', 'Back', 'Submit'])(
+  'blocks an upload selected while %s is saving before navigating or submitting',
+  async (button) => {
+    let guard: Pick<
+      ApplicationState,
+      'pendingUploads' | 'isNavigating' | 'submitted'
+    > = {}
+    dispatch.mockImplementation((action) => {
+      const next = uploadNavigationReducer(guard, action)
+      if (action.type.startsWith('START_') && next === guard) return false
+      guard = next
+      return true
+    })
+    if (button === 'Submit') {
+      jest.mocked(getPaymentFlow).mockReturnValue({
+        shouldShowPay: false,
+        onSubmit: true,
+      })
+    }
+    let finishSave!: (value: object) => void
+    const saving = new Promise((resolve) => {
+      finishSave = resolve
+    })
+    mutate.mockReturnValueOnce(saving)
+    renderFooter('TEXTBOX')
+
+    fireEvent.click(screen.getByRole('button', { name: button }))
+    await waitFor(() => expect(mutate).toHaveBeenCalledTimes(1))
+    expect(guard.isNavigating).toBe(true)
+    expect(dispatch({ type: 'START_FILE_UPLOAD' })).toBe(false)
+    expect(dispatch({ type: 'START_NAVIGATION' })).toBe(false)
+
+    await act(async () => finishSave({}))
+    await waitFor(() =>
+      expect(dispatch).toHaveBeenCalledWith({ type: 'FINISH_NAVIGATION' }),
+    )
+    expect(dispatch).toHaveBeenCalledWith({
+      type: button === 'Back' ? 'DECREMENT' : 'INCREMENT',
+    })
+    expect(guard.submitted).toBe(button === 'Submit' ? true : undefined)
+  },
+)
+
+it.each(['save', 'submission'])(
+  'releases the submission guard after a %s failure so the user can retry',
+  async (phase) => {
+    const error = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+    jest.mocked(getPaymentFlow).mockReturnValue({
+      shouldShowPay: false,
+      onSubmit: true,
+    })
+    let guard: Pick<
+      ApplicationState,
+      'pendingUploads' | 'isNavigating' | 'submitted'
+    > = {}
+    dispatch.mockImplementation((action) => {
+      const next = uploadNavigationReducer(guard, action)
+      if (action.type.startsWith('START_') && next === guard) return false
+      guard = next
+      return true
+    })
+    if (phase === 'submission') {
+      // Saving the input screen and dependencies precedes submission.
+      mutate.mockResolvedValueOnce({}).mockResolvedValueOnce({})
+    }
+    mutate.mockRejectedValueOnce(new Error('Request failed'))
+    renderFooter('TEXTBOX')
+    fireEvent.click(screen.getByRole('button', { name: 'Submit' }))
+    await waitFor(() =>
+      expect(dispatch).toHaveBeenCalledWith({ type: 'FINISH_NAVIGATION' }),
+    )
+    expect(guard.isNavigating).toBe(false)
+    expect(dispatch({ type: 'START_FILE_UPLOAD' })).toBe(true)
+    dispatch({ type: 'FINISH_FILE_UPLOAD' })
+    fireEvent.click(screen.getByRole('button', { name: 'Submit' }))
+    await waitFor(() =>
+      expect(dispatch).toHaveBeenCalledWith({
+        type: 'SUBMITTED',
+        payload: expect.objectContaining({ submitted: true }),
+      }),
+    )
+    error.mockRestore()
+  },
+)
+
+it('does not validate, save or submit if an upload reserves the guard before a render', async () => {
+  jest.mocked(getPaymentFlow).mockReturnValue({
+    shouldShowPay: false,
+    onSubmit: true,
+  })
+  dispatch.mockReturnValue(false)
+  renderFooter('TEXTBOX')
+
+  await act(async () => {
+    fireEvent.click(screen.getByRole('button', { name: 'Submit' }))
+  })
+
+  expect(dispatch.mock.calls).toEqual([[{ type: 'START_NAVIGATION' }]])
+  expect(mutate).not.toHaveBeenCalled()
 })
 
 const renderFooter = (
@@ -221,3 +336,34 @@ it.each([true, false])(
     }
   },
 )
+
+it('still opens My pages after submission has completed', () => {
+  const open = jest.spyOn(window, 'open').mockImplementation(() => null)
+  const section = { id: 'completed', sectionType: SectionTypes.COMPLETED }
+  jest.mocked(useApplicationContext).mockReturnValue({
+    state: {
+      submitted: true,
+      application: { id: 'application' },
+      currentSection: { index: 2, data: section },
+      sections: [section],
+    },
+    dispatch,
+  } as unknown as ReturnType<typeof useApplicationContext>)
+  const Wrapper = () => {
+    const methods = useForm()
+    return (
+      <FormProvider {...methods}>
+        <Footer externalDataAgreement isValidateEligibilityError={false} />
+      </FormProvider>
+    )
+  }
+  render(<Wrapper />)
+  fireEvent.click(screen.getByRole('button', { name: 'My pages' }))
+  expect(open).toHaveBeenCalledWith(
+    '/minarsidur',
+    '_blank',
+    'noopener,noreferrer',
+  )
+  expect(dispatch).not.toHaveBeenCalled()
+  open.mockRestore()
+})

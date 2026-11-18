@@ -1,6 +1,9 @@
 import { FormSystemSection } from '@island.is/api/schema'
 import { ApplicationState, SectionTypes } from '@island.is/form-system/ui'
-import { applicationReducer } from './applicationReducer'
+import {
+  applicationReducer,
+  uploadNavigationReducer,
+} from './applicationReducer'
 
 jest.mock('@island.is/form-system/ui', () => ({
   SectionTypes: jest.requireActual('@island.is/form-system/enums').SectionTypes,
@@ -55,3 +58,34 @@ it.each([
     )
   },
 )
+
+it('rejects navigation reservations while uploading and upload starts while navigating', () => {
+  let state = createState()
+  state = applicationReducer(state, { type: 'START_FILE_UPLOAD' })
+  expect(applicationReducer(state, { type: 'START_NAVIGATION' })).toBe(state)
+  expect(applicationReducer(state, { type: 'INCREMENT' })).toBe(state)
+
+  state = applicationReducer(state, { type: 'FINISH_FILE_UPLOAD' })
+  state = applicationReducer(state, { type: 'START_NAVIGATION' })
+  expect(state.isNavigating).toBe(true)
+  expect(applicationReducer(state, { type: 'START_FILE_UPLOAD' })).toBe(state)
+
+  state = applicationReducer(state, { type: 'FINISH_NAVIGATION' })
+  expect(
+    applicationReducer(state, { type: 'START_FILE_UPLOAD' }).pendingUploads,
+  ).toBe(1)
+})
+
+it('keeps uploads blocked after successful submission even when navigation finishes', () => {
+  let state = uploadNavigationReducer(createState(), {
+    type: 'START_NAVIGATION',
+  })
+  state = uploadNavigationReducer(state, {
+    type: 'SUBMITTED',
+    payload: { submitted: true },
+  })
+  state = uploadNavigationReducer(state, { type: 'FINISH_NAVIGATION' })
+  expect(uploadNavigationReducer(state, { type: 'START_FILE_UPLOAD' })).toBe(
+    state,
+  )
+})

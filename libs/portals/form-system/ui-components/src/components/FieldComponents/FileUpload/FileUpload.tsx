@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/client'
-import { Dispatch, useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { v4 as uuid } from 'uuid'
 import { useLocale } from '@island.is/localization'
 
@@ -14,7 +14,12 @@ import {
   InputFileUpload,
   UploadFile,
 } from '@island.is/island-ui/core'
-import { Action, ApplicationState, getValue, uploadToS3 } from '../../../lib'
+import {
+  ApplicationDispatch,
+  ApplicationState,
+  getValue,
+  uploadToS3,
+} from '../../../lib'
 import { m } from '../../../lib/messages'
 import { Controller, useFormContext } from 'react-hook-form'
 
@@ -22,7 +27,7 @@ interface Props {
   item: FormSystemField
   valueIndex?: number
   hasError?: boolean
-  dispatch?: Dispatch<Action>
+  dispatch?: ApplicationDispatch
   state?: Partial<ApplicationState>
 }
 
@@ -67,6 +72,11 @@ export const FileUpload = ({
   const [files, setFiles] = useState<UploadFile[]>(
     initializeFiles(item, valueIndex),
   )
+  const filesRef = useRef(files)
+  const updateFiles = useCallback((next: UploadFile[]) => {
+    filesRef.current = next
+    setFiles(next)
+  }, [])
   const [error, setError] = useState<string | undefined>(
     hasError ? 'error' : undefined,
   )
@@ -82,17 +92,28 @@ export const FileUpload = ({
       .map((t) => t.trim())
       .filter((t) => t.length > 0 && t !== '*') ?? []
 
-  const updateFile = useCallback((id: string, updated: Partial<UploadFile>) => {
-    setFiles((prev) =>
-      prev.map((f) => (f.id === id ? { ...f, ...updated } : f)),
-    )
-  }, [])
+  const updateFile = useCallback(
+    (id: string, updated: Partial<UploadFile>) => {
+      const next = filesRef.current.map((f) =>
+        f.id === id ? { ...f, ...updated } : f,
+      )
+      updateFiles(next)
+      return next
+    },
+    [updateFiles],
+  )
 
   const handleUpload = useCallback(
     async (file: UploadFile, id: string) => {
       if (!applicationId) return
 
-      dispatch?.({ type: 'START_FILE_UPLOAD' })
+      if (dispatch?.({ type: 'START_FILE_UPLOAD' }) === false) return
+      const existing = filesRef.current.some((f) => f.id === id)
+      if (existing) {
+        updateFile(id, { status: FileUploadStatus.uploading, percent: 0 })
+      } else {
+        updateFiles([...filesRef.current, file])
+      }
       try {
         const { data } = await createUploadUrl({
           variables: { filename: file.name },
@@ -124,35 +145,26 @@ export const FileUpload = ({
 
         const newKey = `${applicationId}/${presigned.fields.key}`
 
-        setFiles((prev) => {
-          const next = prev.map((f) =>
-            f.id === id
-              ? {
-                  ...f,
-                  status: FileUploadStatus.done,
-                  percent: 100,
-                  key: newKey,
-                }
-              : f,
-          )
-
-          const nextKeys = next
-            .map((f) => f.key)
-            .filter((k): k is string => typeof k === 'string' && k.length > 0)
-
-          dispatch?.({
-            type: 'SET_FILES',
-            payload: { id: item.id, value: nextKeys, valueIndex },
-          })
-
-          setValue(fieldName, nextKeys, {
-            shouldDirty: true,
-            shouldValidate: true,
-          })
-          trigger(fieldName)
-
-          return next
+        const next = updateFile(id, {
+          status: FileUploadStatus.done,
+          percent: 100,
+          key: newKey,
         })
+
+        const nextKeys = next
+          .map((f) => f.key)
+          .filter((k): k is string => typeof k === 'string' && k.length > 0)
+
+        dispatch?.({
+          type: 'SET_FILES',
+          payload: { id: item.id, value: nextKeys, valueIndex },
+        })
+
+        setValue(fieldName, nextKeys, {
+          shouldDirty: true,
+          shouldValidate: true,
+        })
+        await trigger(fieldName)
       } catch (err) {
         updateFile(id, {
           status: FileUploadStatus.error,
@@ -168,6 +180,7 @@ export const FileUpload = ({
       item,
       dispatch,
       updateFile,
+      updateFiles,
       formatMessage,
       setValue,
       trigger,
@@ -179,10 +192,11 @@ export const FileUpload = ({
 
   const onChange = useCallback(
     (selectedFiles: File[]) => {
+      if (state?.isNavigating || state?.submitted) return
       const maxSize = item?.fieldSettings?.fileMaxSize
 
       if (
-        files.length + selectedFiles.length >
+        filesRef.current.length + selectedFiles.length >
         (item?.fieldSettings?.maxFiles ?? 1)
       ) {
         clearErrors(fieldName)
@@ -223,11 +237,11 @@ export const FileUpload = ({
       })
 
       if (!applicationId) {
-        const nextFiles = [...files, ...uploadFiles]
+        const nextFiles = [...filesRef.current, ...uploadFiles]
         const nextKeys = nextFiles
           .map((file) => file.key)
           .filter(Boolean) as string[]
-        setFiles(nextFiles)
+        updateFiles(nextFiles)
         dispatch?.({
           type: 'SET_FILES',
           payload: { id: item.id, value: nextKeys, valueIndex },
@@ -240,15 +254,15 @@ export const FileUpload = ({
         return
       }
 
-      setFiles((prev) => [...prev, ...uploadFiles])
-
       uploadFiles.forEach((f) => {
         handleUpload(f, f.id as string)
       })
     },
     [
       applicationId,
-      files,
+      state?.isNavigating,
+      state?.submitted,
+      updateFiles,
       item,
       formatMessage,
       handleUpload,
@@ -266,14 +280,10 @@ export const FileUpload = ({
       if (!applicationId) return
 
       if (file.originalFileObj && file.id) {
-        updateFile(file.id, {
-          status: FileUploadStatus.uploading,
-          percent: 0,
-        })
         handleUpload(file, file.id)
       }
     },
-    [applicationId, handleUpload, updateFile],
+    [applicationId, handleUpload],
   )
 
   const onRemove = useCallback(
@@ -290,10 +300,10 @@ export const FileUpload = ({
           },
         })
       }
-      const newFiles = files.filter(
+      const newFiles = filesRef.current.filter(
         (f) => (f.key ?? f.id) !== (file.key ?? file.id),
       )
-      setFiles(newFiles)
+      updateFiles(newFiles)
       setError(undefined)
 
       const newKeys = newFiles.map((f) => f.key).filter(Boolean) as string[]
@@ -308,7 +318,7 @@ export const FileUpload = ({
       applicationId,
       deleteFile,
       dispatch,
-      files,
+      updateFiles,
       item.id,
       item.values,
       fieldName,
@@ -345,6 +355,8 @@ export const FileUpload = ({
           })}
           buttonLabel={formatMessage(m.uploadBoxButtonLabel)}
           disabled={
+            state?.isNavigating ||
+            state?.submitted ||
             types.length === 0 ||
             !item.fieldSettings?.fileMaxSize ||
             !item.fieldSettings?.maxFiles

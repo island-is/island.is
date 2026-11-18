@@ -228,8 +228,7 @@ export const Footer = ({
     }
   }
 
-  const handleIncrement = async () => {
-    if (isPaymentLoading || isUploading) return
+  const continueApplication = async () => {
     const isValid = await validate()
     dispatch({ type: 'SET_VALIDITY', payload: { isValid } })
 
@@ -252,11 +251,6 @@ export const Footer = ({
       onConfirmPremises &&
       !(await onConfirmPremises())
     ) {
-      return
-    }
-
-    if (isCompletedSection) {
-      window.open('/minarsidur', '_blank', 'noopener,noreferrer')
       return
     }
 
@@ -459,17 +453,37 @@ export const Footer = ({
     }
   }
 
+  const handleIncrement = async () => {
+    if (isPaymentLoading || isUploading) return
+    if (isCompletedSection) {
+      window.open('/minarsidur', '_blank', 'noopener,noreferrer')
+      return
+    }
+    if (dispatch({ type: 'START_NAVIGATION' }) === false) return
+
+    try {
+      await continueApplication()
+    } finally {
+      dispatch({ type: 'FINISH_NAVIGATION' })
+    }
+  }
+
   const handleDecrement = async () => {
     if (isUploading) return
+    if (dispatch({ type: 'START_NAVIGATION' }) === false) return
 
-    const saved = await saveCurrentScreen(false)
-    if (!saved) return
+    try {
+      const saved = await saveCurrentScreen(false)
+      if (!saved) return
 
-    dispatch({
-      type: 'DECREMENT',
-    })
+      dispatch({
+        type: 'DECREMENT',
+      })
 
-    await updateCurrentDependencies()
+      await updateCurrentDependencies()
+    } finally {
+      dispatch({ type: 'FINISH_NAVIGATION' })
+    }
   }
 
   return (
@@ -491,6 +505,7 @@ export const Footer = ({
               onClick={handleIncrement}
               disabled={
                 isUploading ||
+                state.isNavigating ||
                 !enableContinueButton ||
                 isValidateEligibilityError ||
                 isPaymentLoading ||
@@ -512,6 +527,7 @@ export const Footer = ({
                 onClick={handleDecrement}
                 disabled={
                   isUploading ||
+                  state.isNavigating ||
                   submitLoading ||
                   notifyLoading ||
                   isPaymentLoading ||

@@ -133,6 +133,39 @@ const initializeApplication = (
   }
 }
 
+export const uploadNavigationReducer = <
+  T extends Pick<
+    ApplicationState,
+    'pendingUploads' | 'isNavigating' | 'submitted'
+  >,
+>(
+  state: T,
+  action: Action,
+): T => {
+  switch (action.type) {
+    case 'START_NAVIGATION':
+      if (
+        state.isNavigating ||
+        state.submitted ||
+        (state.pendingUploads ?? 0) > 0
+      ) {
+        return state
+      }
+      return { ...state, isNavigating: true }
+    case 'FINISH_NAVIGATION':
+      return { ...state, isNavigating: false }
+    case 'START_FILE_UPLOAD':
+      if (state.isNavigating || state.submitted) return state
+      return { ...state, pendingUploads: (state.pendingUploads ?? 0) + 1 }
+    case 'FINISH_FILE_UPLOAD':
+      return { ...state, pendingUploads: (state.pendingUploads ?? 0) - 1 }
+    case 'SUBMITTED':
+      return { ...state, submitted: action.payload.submitted }
+    default:
+      return state
+  }
+}
+
 export const applicationReducer = (
   state: ApplicationState,
   action: Action,
@@ -145,16 +178,11 @@ export const applicationReducer = (
   }
 
   switch (action.type) {
+    case 'START_NAVIGATION':
+    case 'FINISH_NAVIGATION':
     case 'START_FILE_UPLOAD':
-      return {
-        ...state,
-        pendingUploads: (state.pendingUploads ?? 0) + 1,
-      }
     case 'FINISH_FILE_UPLOAD':
-      return {
-        ...state,
-        pendingUploads: (state.pendingUploads ?? 0) - 1,
-      }
+      return uploadNavigationReducer(state, action)
     case 'INCREMENT': {
       const { currentSectionData, currentScreenIndex } =
         getIncrementVariables(state)

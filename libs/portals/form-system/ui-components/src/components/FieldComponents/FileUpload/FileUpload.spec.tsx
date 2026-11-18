@@ -2,7 +2,7 @@ import { useMutation } from '@apollo/client'
 import { FormSystemField } from '@island.is/api/schema'
 import { FileUploadStatus, InputFileUpload } from '@island.is/island-ui/core'
 import { act, render } from '@testing-library/react'
-import { ReactNode } from 'react'
+import { ReactNode, StrictMode } from 'react'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { IntlProvider } from 'react-intl'
 import { ApplicationState } from '../../../lib'
@@ -360,3 +360,89 @@ it.each(['presigned URL', 'permanent storage'])(
     )
   },
 )
+
+it('does not start an upload when navigation has reserved the guard before a render', async () => {
+  const dispatch = jest.fn(() => false)
+  render(
+    <FileUpload
+      item={item}
+      state={{ application: { id: 'application' } }}
+      dispatch={dispatch}
+    />,
+    { wrapper: Wrapper },
+  )
+  const latestProps = () =>
+    jest.mocked(InputFileUpload).mock.calls.slice(-1)[0][0]
+
+  await act(async () => {
+    latestProps().onChange?.([new File(['test'], 'test.pdf')])
+  })
+
+  expect(dispatch).toHaveBeenCalledWith({ type: 'START_FILE_UPLOAD' })
+  expect(mutate).not.toHaveBeenCalled()
+  expect(latestProps().files).toEqual([])
+  expect(dispatch).not.toHaveBeenCalledWith({ type: 'FINISH_FILE_UPLOAD' })
+})
+
+it('commits simultaneous upload keys and form values before releasing uploads in Strict Mode', async () => {
+  let getFormValues!: ReturnType<typeof useForm>['getValues']
+  const ObserveForm = () => {
+    getFormValues = useFormContext().getValues
+    return null
+  }
+  let savedKeys: string[] = []
+  const finished: { keys: string[]; form: string[] }[] = []
+  const dispatch = jest.fn((action) => {
+    if (action.type === 'SET_FILES') savedKeys = action.payload.value
+    if (action.type === 'FINISH_FILE_UPLOAD') {
+      finished.push({
+        keys: savedKeys,
+        form: getFormValues(`${item.id}.0`),
+      })
+    }
+  })
+  mutate
+    .mockResolvedValueOnce({
+      data: { createUploadUrl: { url: 'url', fields: { key: 'first' } } },
+    })
+    .mockResolvedValueOnce({
+      data: { createUploadUrl: { url: 'url', fields: { key: 'second' } } },
+    })
+    .mockResolvedValue({})
+  jest.mocked(uploadToS3).mockResolvedValue(undefined)
+  render(
+    <StrictMode>
+      <ObserveForm />
+      <FileUpload
+        item={{
+          ...item,
+          fieldSettings: { ...item.fieldSettings, maxFiles: 2 },
+        }}
+        state={{ application: { id: 'application' } }}
+        dispatch={dispatch}
+      />
+    </StrictMode>,
+    { wrapper: Wrapper },
+  )
+  await act(async () => {
+    const calls = jest.mocked(InputFileUpload).mock.calls
+    calls[calls.length - 1][0].onChange?.([
+      new File(['first'], 'first.pdf'),
+      new File(['second'], 'second.pdf'),
+    ])
+  })
+
+  expect(
+    dispatch.mock.calls.filter(([action]) => action.type === 'SET_FILES'),
+  ).toHaveLength(2)
+  expect(finished).toHaveLength(2)
+  expect(finished[1]).toEqual({
+    keys: ['application/first', 'application/second'],
+    form: ['application/first', 'application/second'],
+  })
+  expect(
+    finished.every(
+      ({ keys, form }) => keys.length > 0 && keys.join() === form.join(),
+    ),
+  ).toBe(true)
+})
