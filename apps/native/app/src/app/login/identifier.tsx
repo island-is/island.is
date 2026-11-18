@@ -6,6 +6,7 @@ import { LoginIdentifier } from '@/components/device-bound-auth/login-identifier
 import { useIsOffline } from '@/hooks/use-is-offline'
 import {
   loginErrorMessageId,
+  loginErrorTitleId,
   nativeLoginStore,
   startNativeLogin,
   useNativeLoginStore,
@@ -52,6 +53,11 @@ export default function LoginIdentifierScreen() {
       onSubmit={onSubmit}
       loading={loading}
       error={error && intl.formatMessage({ id: loginErrorMessageId[error] })}
+      errorTitle={
+        error && loginErrorTitleId[error]
+          ? intl.formatMessage({ id: loginErrorTitleId[error] })
+          : undefined
+      }
       isOffline={isOffline}
     />
   )

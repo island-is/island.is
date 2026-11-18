@@ -35,6 +35,8 @@ interface LoginSmsCodeProps {
   onBackPress(): void
   loading?: boolean
   error?: string
+  /** Bold, above the error */
+  errorTitle?: string
 }
 
 /**
@@ -50,6 +52,7 @@ export function LoginSmsCode({
   onBackPress,
   loading,
   error,
+  errorTitle,
 }: LoginSmsCodeProps) {
   const intl = useIntl()
 
@@ -82,7 +85,13 @@ export function LoginSmsCode({
             editable={!loading}
           />
           {error && (
-            <Alert type="error" size="small" hasBorder message={error} />
+            <Alert
+              type="error"
+              size="small"
+              hasBorder
+              title={errorTitle}
+              message={error}
+            />
           )}
           <Button
             title={intl.formatMessage({ id: 'login.smsCode.submit' })}

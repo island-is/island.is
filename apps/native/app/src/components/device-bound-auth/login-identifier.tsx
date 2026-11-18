@@ -57,6 +57,8 @@ interface LoginIdentifierProps {
   onChangeMethod(method: LoginMethod): void
   loading?: boolean
   error?: string
+  /** Bold, above the error */
+  errorTitle?: string
   /** No network: said in place of the error, as the likely cause. */
   isOffline?: boolean
 }
@@ -73,6 +75,7 @@ export function LoginIdentifier({
   onChangeMethod,
   loading,
   error,
+  errorTitle,
   isOffline,
 }: LoginIdentifierProps) {
   const intl = useIntl()
@@ -146,7 +149,13 @@ export function LoginIdentifier({
             />
           ) : (
             error && (
-              <Alert type="error" size="small" hasBorder message={error} />
+              <Alert
+                type="error"
+                size="small"
+                hasBorder
+                title={errorTitle}
+                message={error}
+              />
             )
           )}
           <Button

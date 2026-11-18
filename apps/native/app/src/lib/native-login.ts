@@ -53,6 +53,11 @@ export const loginErrorMessageId: Record<LoginError, string> = {
   failed: 'login.error.failed',
 }
 
+/** A bold title above the message, for the errors that have one. */
+export const loginErrorTitleId: Partial<Record<LoginError, string>> = {
+  unsupportedDevice: 'login.error.unsupportedDeviceTitle',
+}
+
 interface NativeLoginStore {
   method: LoginMethod
   /** Digits only: a phone number for SIM, a kennitala for the app */

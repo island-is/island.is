@@ -6,6 +6,7 @@ import { formatLoginHint } from '@/components/device-bound-auth/login-identifier
 import { LoginSmsCode } from '@/components/device-bound-auth/login-sms-code'
 import {
   loginErrorMessageId,
+  loginErrorTitleId,
   nativeLoginStore,
   SMS_CODE_LENGTH,
   startNativeLogin,
@@ -71,6 +72,11 @@ export default function LoginSmsCodeScreen() {
           },
           { attemptsLeft: failure.attemptsLeft },
         )
+      }
+      errorTitle={
+        failure && loginErrorTitleId[failure.error]
+          ? intl.formatMessage({ id: loginErrorTitleId[failure.error] })
+          : undefined
       }
     />
   )
