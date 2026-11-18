@@ -2,7 +2,8 @@
 
 ---
 
-Status: **Approved for Implementation**
+Status: **Original design document, partly outdated.** This RFC describes the design as first proposed and approved. The implementation has since diverged in places, and parts were already out of date when the work changed hands. It does not describe current behavior, and not every difference is recorded. Treat the code and its tests as the reference, and verify anything here against them before relying on it.
+
 Target Audience: Technical Shareholders, Core Architecture Team, Feature Developers, **Implementing Agents**
 Technologies: TypeScript, Next.js (App Router), NestJS, GraphQL, PostgreSQL, Nx
 
