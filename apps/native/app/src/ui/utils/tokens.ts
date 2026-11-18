@@ -218,7 +218,7 @@ const light = {
     },
     // code-only
     shadow: {
-      brand: 'rgba(0, 97, 255, 0.12)',
+      brand: blue400,
       card: 'rgb(0, 32, 128)',
     },
   },

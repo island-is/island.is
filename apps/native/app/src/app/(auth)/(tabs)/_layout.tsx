@@ -46,7 +46,10 @@ export default function TabLayout() {
         backgroundColor={
           Platform.OS === 'android' ? theme.tokens.background.invert : undefined
         }
-        indicatorColor={theme.tokens.app.background.pressed}
+        // Light keeps its original value so this change is dark-only.
+        indicatorColor={
+          theme.isDark ? theme.tokens.app.background.pressed : '#e4e4f0'
+        }
         labelStyle={{
           fontFamily: 'IBMPlexSans_400Regular',
           fontSize: 11,
