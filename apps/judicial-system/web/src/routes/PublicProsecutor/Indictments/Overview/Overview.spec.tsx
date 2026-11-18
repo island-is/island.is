@@ -204,8 +204,7 @@ describe('PublicProsecutor Overview', () => {
                       },
                       {
                         id: 'preparatory_hearing_id',
-                        sessionType:
-                          AppealCourtSessionType.PREPARATORY_HEARING,
+                        sessionType: AppealCourtSessionType.PREPARATORY_HEARING,
                         sessionDate: preparatoryHearing.toISOString(),
                         courtRoom: '102',
                       },
