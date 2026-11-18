@@ -233,6 +233,7 @@ export const authStore = create<AuthStore>((set, get) => ({
     }
     preferencesStore.setState({ hasLoggedIn: true, showReloginNotice: false })
     set({ nativeUser: userInfo })
+    revokeBrowserLogin()
     return userInfo
   },
   async lockNative() {
@@ -380,7 +381,9 @@ export async function readAuthorizeResult(): Promise<void> {
 
   // Older versions logged in through the browser. Those tokens can't be
   // refreshed any more, so the person logs in again.
-  if (await hasBrowserLogin()) {
+  const browserLogin = await readBrowserLogin()
+  if (browserLogin) {
+    browserRefreshToken = browserLogin.refreshToken ?? undefined
     // Logging out resets the preferences, but the notice is in their language.
     const { locale } = preferencesStore.getState()
     await forceLogout()
@@ -405,12 +408,42 @@ async function clearLegacyKeychain() {
   }
 }
 
-async function hasBrowserLogin(): Promise<boolean> {
+/** The browser login's tokens, as older versions kept them. */
+async function readBrowserLogin(): Promise<{
+  refreshToken?: string | null
+} | null> {
+  let stored
   try {
-    return !!(await Keychain.getGenericPassword({ service: KEYCHAIN_AUTH_KEY }))
+    stored = await Keychain.getGenericPassword({ service: KEYCHAIN_AUTH_KEY })
   } catch (err) {
     console.log('Unable to read from keystore: ', err)
-    return false
+    return null
+  }
+  if (!stored) {
+    return null
+  }
+  try {
+    return JSON.parse(stored.password)
+  } catch {
+    // Still a login to replace, just nothing to revoke.
+    return {}
+  }
+}
+
+// The upgraded browser login's refresh token, until a native login can
+// revoke it: revoking needs the install's attestation, which logging in
+// creates. Kept in memory only, so it's lost if the app restarts first.
+let browserRefreshToken: string | undefined
+
+function revokeBrowserLogin() {
+  const refreshToken = browserRefreshToken
+  browserRefreshToken = undefined
+  if (refreshToken) {
+    void getIasClient()
+      .revoke(refreshToken)
+      .catch((error) =>
+        console.log('Failed to revoke the browser login', error),
+      )
   }
 }
 
