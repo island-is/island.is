@@ -102,6 +102,9 @@ export function createIasClient(options: IasClientOptions): IasClient {
   const signWithInstallKey = (data: string) => device.signWithInstallKey(data)
 
   let cachedAttestation: StoredAttestation | null | undefined
+  // IAS's latest nonces, from any response: proofs are fresh by these, not by
+  // the phone's clock. Kept in memory only.
+  const nonces: { challenge?: string; dpop?: string } = {}
 
   function requireInstallKey(): DeviceKey {
     const key = device.getInstallKey()
@@ -236,9 +239,10 @@ export function createIasClient(options: IasClientOptions): IasClient {
   async function send(
     method: string,
     path: string,
-    { attested, dpop, accessToken, form, json, signal }: RequestOptions,
-    nonce?: string,
+    options: RequestOptions,
+    isRetry = false,
   ): Promise<Response> {
+    const { attested, dpop, accessToken, form, json, signal } = options
     const url = issuer + path
     const headers: Record<string, string> = {}
 
@@ -250,11 +254,16 @@ export function createIasClient(options: IasClientOptions): IasClient {
       headers['OAuth-Client-Attestation'] = attestation.clientAttestation
       headers['OAuth-Client-Attestation-PoP'] = await attestationPop(
         signWithInstallKey,
-        { clientId, issuer, jti: device.randomUUID() },
+        {
+          clientId,
+          issuer,
+          jti: device.randomUUID(),
+          challenge: nonces.challenge,
+        },
       )
     }
     if (dpop) {
-      headers.DPoP = await createProof(method, url, { nonce })
+      headers.DPoP = await createProof(method, url, { nonce: nonces.dpop })
     }
     if (accessToken) {
       headers.Authorization = `DPoP ${accessToken}`
@@ -270,19 +279,18 @@ export function createIasClient(options: IasClientOptions): IasClient {
     }
 
     const response = await fetch(url, { method, headers, body, signal })
-    const serverNonce = response.headers.get('DPoP-Nonce')
-    if (
-      dpop &&
-      serverNonce &&
-      !nonce &&
-      (response.status === 400 || response.status === 401)
-    ) {
-      return send(
-        method,
-        path,
-        { attested, dpop, accessToken, form, json, signal },
-        serverNonce,
-      )
+    nonces.challenge =
+      response.headers.get('OAuth-Client-Attestation-Challenge') ??
+      nonces.challenge
+    nonces.dpop = response.headers.get('DPoP-Nonce') ?? nonces.dpop
+
+    // A proof with a missing or expired nonce, e.g. after the app was idle,
+    // did nothing: sign new ones with this answer's nonces and send it again.
+    if (!isRetry && (response.status === 400 || response.status === 401)) {
+      const { error } = await readError(response.clone())
+      if (error === 'use_attestation_challenge' || error === 'use_dpop_nonce') {
+        return send(method, path, options, true)
+      }
     }
     return response
   }
@@ -560,8 +568,8 @@ export function createIasClient(options: IasClientOptions): IasClient {
       }
     },
 
-    createDpopProof(method, url, accessToken) {
-      return createProof(method, url, { accessToken })
+    createDpopProof(method, url, accessToken, nonce) {
+      return createProof(method, url, { accessToken, nonce })
     },
   }
 }

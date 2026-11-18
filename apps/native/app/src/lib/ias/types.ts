@@ -64,6 +64,8 @@ export interface IasClient {
     method: string,
     url: string,
     accessToken: string,
+    /** The latest `DPoP-Nonce` from the server the request goes to */
+    nonce?: string,
   ): Promise<string>
 }
 

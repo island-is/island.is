@@ -31,13 +31,18 @@ export async function signJwt(
 /** OAuth-Client-Attestation-PoP, fresh for every request. */
 export function attestationPop(
   sign: Sign,
-  claims: { clientId: string; issuer: string; jti: string },
+  claims: { clientId: string; issuer: string; jti: string; challenge?: string },
 ): Promise<string> {
-  return signJwt(
-    sign,
-    { typ: 'oauth-client-attestation-pop+jwt' },
-    { iss: claims.clientId, aud: claims.issuer, jti: claims.jti, iat: now() },
-  )
+  const payload: Record<string, unknown> = {
+    iss: claims.clientId,
+    aud: claims.issuer,
+    jti: claims.jti,
+    iat: now(),
+  }
+  if (claims.challenge) {
+    payload.challenge = claims.challenge
+  }
+  return signJwt(sign, { typ: 'oauth-client-attestation-pop+jwt' }, payload)
 }
 
 /**

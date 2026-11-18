@@ -1,7 +1,11 @@
 import * as FileSystem from 'expo-file-system'
 import * as Share from 'expo-sharing'
 
-import { getAuthHeaders } from '@/graphql/client'
+import {
+  getAuthHeaders,
+  isDpopNonceError,
+  rememberDpopNonce,
+} from '@/graphql/client'
 import {
   clearLockScreenSuppression,
   suppressLockScreen,
@@ -37,11 +41,19 @@ export const downloadHealthAttachment = async ({
   const timeout = setTimeout(() => controller.abort(), DOWNLOAD_TIMEOUT_MS)
 
   try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: await getAuthHeaders('POST', url),
-      signal: controller.signal,
-    })
+    const send = async () => {
+      const answer = await fetch(url, {
+        method: 'POST',
+        headers: await getAuthHeaders('POST', url),
+        signal: controller.signal,
+      })
+      rememberDpopNonce(url, answer.headers)
+      return answer
+    }
+    let response = await send()
+    if (isDpopNonceError(response.headers)) {
+      response = await send()
+    }
     if (!response.ok) {
       throw new Error(`Failed to download attachment (${response.status})`)
     }

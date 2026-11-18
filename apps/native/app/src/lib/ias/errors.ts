@@ -29,6 +29,7 @@ export type IasErrorCode =
   | 'unauthorized_client'
   | 'invalid_dpop_proof'
   | 'use_dpop_nonce'
+  | 'use_attestation_challenge'
 
 export class IasError extends Error {
   /** The reason from `error_description` when there is one, else `error` */

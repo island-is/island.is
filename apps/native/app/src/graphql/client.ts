@@ -4,6 +4,7 @@ import {
   defaultDataIdFromObject,
   HttpLink,
   InMemoryCache,
+  Operation,
   ServerError,
   ServerParseError,
 } from '@apollo/client'
@@ -206,6 +207,75 @@ export const getAndRefreshToken = async () => {
   return authorizeResult?.accessToken
 }
 
+// The latest answer from each server, with the DPoP nonce it carried: proofs
+// are fresh by that, not by the phone's clock. Kept in memory only.
+const dpopAnswers = new Map<string, { nonce?: string; receivedAt: number }>()
+// The GraphQL API's nonces last 5 minutes.
+const DPOP_NONCE_LIFETIME_MS = 5 * 60 * 1000
+// How long other calls wait for the first one's answer, at most.
+const FIRST_CALL_TIMEOUT_MS = 10_000
+// The call that goes first while a server's nonce is missing or too old.
+const firstCalls = new Map<
+  string,
+  { answered: Promise<void>; answer(): void }
+>()
+
+const originOf = (url: string) => /^[a-z]+:\/\/[^/]+/i.exec(url)?.[0] ?? url
+
+/** Keeps a response's DPoP nonce for the next proofs to that server. */
+export const rememberDpopNonce = (url: string, headers?: Headers) => {
+  const origin = originOf(url)
+  if (headers) {
+    const nonce = headers.get('DPoP-Nonce') ?? undefined
+    dpopAnswers.set(origin, { nonce, receivedAt: Date.now() })
+  }
+  firstCalls.get(origin)?.answer()
+}
+
+/**
+ * The nonce for the next proof to a server. Once it's too old, calls sent
+ * together would each be refused and sent again, so the first goes alone and
+ * the others wait for the nonce its answer brings. A server that sends no
+ * nonces isn't waited for.
+ */
+const getDpopNonce = async (url: string) => {
+  const origin = originOf(url)
+  const latest = dpopAnswers.get(origin)
+  if (
+    latest &&
+    (!latest.nonce || Date.now() - latest.receivedAt < DPOP_NONCE_LIFETIME_MS)
+  ) {
+    return latest.nonce
+  }
+
+  const first = firstCalls.get(origin)
+  if (first) {
+    await first.answered
+    return dpopAnswers.get(origin)?.nonce
+  }
+
+  let answer!: () => void
+  const answered = new Promise<void>((resolve) => {
+    answer = resolve
+  })
+  firstCalls.set(origin, { answered, answer })
+  // Also when no answer comes, e.g. the call failed before it was sent.
+  setTimeout(answer, FIRST_CALL_TIMEOUT_MS)
+  void answered.then(() => {
+    if (firstCalls.get(origin)?.answered === answered) {
+      firstCalls.delete(origin)
+    }
+  })
+  return latest?.nonce
+}
+
+/**
+ * The server refused the proof for a missing or expired nonce, e.g. after the
+ * app was idle. The request did nothing: send it once more, with a new proof.
+ */
+export const isDpopNonceError = (headers?: Headers) =>
+  /error="use_dpop_nonce"/.test(headers?.get('WWW-Authenticate') ?? '')
+
 /**
  * Authorization for a request: a browser login's token as Bearer, or a native
  * login's token, which is bound to the install key, as DPoP with a proof for
@@ -219,11 +289,37 @@ export const getAuthHeaders = async (
   if (token && isNativeLogin(getAuthStoreRef().getState().authorizeResult)) {
     return {
       authorization: `DPoP ${token}`,
-      dpop: await getIasClient().createDpopProof(method, url, token),
+      dpop: await getIasClient().createDpopProof(
+        method,
+        url,
+        token,
+        await getDpopNonce(url),
+      ),
     }
   }
   return { authorization: `Bearer ${token}` }
 }
+
+const responseHeaders = (operation: Operation) =>
+  (operation.getContext().response as Response | undefined)?.headers
+
+// Before authLink, so a retry is signed again.
+const dpopNonceLink = ApolloLink.from([
+  onError(({ operation, forward }) => {
+    const headers = responseHeaders(operation)
+    rememberDpopNonce(getGraphqlUrl(), headers)
+    if (isDpopNonceError(headers) && !operation.getContext().dpopNonceRetried) {
+      operation.setContext({ dpopNonceRetried: true })
+      return forward(operation)
+    }
+  }),
+  new ApolloLink((operation, forward) =>
+    forward(operation).map((result) => {
+      rememberDpopNonce(getGraphqlUrl(), responseHeaders(operation))
+      return result
+    }),
+  ),
+])
 
 const authLink = setContext(async (_, { headers }) => {
   return {
@@ -369,6 +465,7 @@ const initializeApolloClient = async () => {
     link: ApolloLink.from([
       retryLink,
       errorLink,
+      dpopNonceLink,
       authLink,
       licenseLocaleTagLink,
       httpLink,
