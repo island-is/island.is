@@ -1,3 +1,4 @@
+import { AppealEventType } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
   CaseFile,
@@ -16,7 +17,9 @@ import { mockUser } from '@island.is/judicial-system-web/src/utils/mocks'
 
 import {
   canConfirmAppealSummonsRow,
+  canDefenceUserAccessVerdictAppealFiles,
   canShowIssueAppealSummons,
+  canViewVerdictAppealFile,
   canViewVerdictAppealStatementFile,
   formatAppealSummonsConfirmedDate,
   formatAppealSummonsFileName,
@@ -89,6 +92,7 @@ describe('getVerdictAppealFileGroups', () => {
           id: 'own_client_id',
           name: 'Eigin sakborningur',
           isDefenderChoiceConfirmed: true,
+          caseFilesSharedWithDefender: true,
           defenderNationalId,
         },
         {
@@ -277,11 +281,34 @@ describe('getVerdictAppealFileGroups', () => {
     ])
   })
 
+  const withFiledStatement = (
+    caseFiles: CaseFile[],
+    party: { defendantId?: string; civilClaimantId?: string } = {
+      defendantId: 'own_client_id',
+    },
+  ): WorkingCase =>
+    ({
+      ...theCase(caseFiles),
+      verdictAppealCase: {
+        id: 'appeal_id',
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.RECEIVED,
+        appealEventLogs: [
+          {
+            id: 'sent',
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            defendantId: party.defendantId,
+            civilClaimantId: party.civilClaimantId,
+          },
+        ],
+      },
+    } as WorkingCase)
+
   // Greinargerð mirrors kærumál: CoA / prosecution / defence see every party's
   // statement on the overview, not only the client's the defender represents.
   it('should include a filed greinargerð under the defendant for CoA', () => {
     const groups = getVerdictAppealFileGroups(
-      theCase([
+      withFiledStatement([
         file(
           'declaration',
           'own_client_id',
@@ -305,16 +332,35 @@ describe('getVerdictAppealFileGroups', () => {
     ])
   })
 
-  it('should show another defendants greinargerð to a defence user', () => {
+  it('should hide a statement upload until APPEAL_STATEMENT_SENT exists', () => {
     const groups = getVerdictAppealFileGroups(
       theCase([
         file(
-          'other-statement',
-          'other_client_id',
+          'statement',
+          'own_client_id',
           CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
           '2026-06-05T13:34:00.000Z',
         ),
       ]),
+      mockUser(UserRole.COURT_OF_APPEALS_JUDGE),
+    )
+
+    expect(groups).toEqual([])
+  })
+
+  it('should show another defendants greinargerð to a defence user', () => {
+    const groups = getVerdictAppealFileGroups(
+      withFiledStatement(
+        [
+          file(
+            'other-statement',
+            'other_client_id',
+            CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+            '2026-06-05T13:34:00.000Z',
+          ),
+        ],
+        { defendantId: 'other_client_id' },
+      ),
       user,
     )
 
@@ -324,7 +370,7 @@ describe('getVerdictAppealFileGroups', () => {
 
   it('should group a civil-claimant greinargerð under the claimant', () => {
     const theCaseWithClaimant = {
-      ...theCase([]),
+      ...withFiledStatement([], { civilClaimantId: 'claimant_id' }),
       civilClaimants: [
         {
           id: 'claimant_id',
@@ -340,6 +386,7 @@ describe('getVerdictAppealFileGroups', () => {
           category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
           created: '2026-06-05T13:34:00.000Z',
           name: 'cc-statement.pdf',
+          submittedBy: 'Gamli Lögmaður',
         },
       ],
     } as WorkingCase
@@ -352,51 +399,141 @@ describe('getVerdictAppealFileGroups', () => {
     expect(groups).toHaveLength(1)
     expect(getVerdictAppealFileGroupKey(groups[0])).toBe('claimant_id')
     expect(getVerdictAppealFileGroupTitle(groups[0])).toBe('Bótakröfuhafi')
-    expect(getVerdictAppealFileSentInBy(groups[0])).toBe(
-      'Lögmaður (LL) sendi inn',
+    expect(getVerdictAppealFileSentInBy(groups[0], groups[0].files[0])).toBe(
+      'Lögmaður (GL) sendi inn',
     )
   })
 
   it('should put the prosecution greinargerð in its own group', () => {
     const groups = getVerdictAppealFileGroups(
-      theCase([
-        {
-          id: 'pros-statement',
-          category: CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT,
-          created: '2026-06-05T13:34:00.000Z',
-          name: 'pros-statement.pdf',
-        },
-      ]),
+      withFiledStatement(
+        [
+          {
+            id: 'pros-statement',
+            category: CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT,
+            created: '2026-06-05T13:34:00.000Z',
+            name: 'pros-statement.pdf',
+          },
+        ],
+        {},
+      ),
       mockUser(UserRole.COURT_OF_APPEALS_JUDGE),
     )
 
     expect(groups).toHaveLength(1)
     expect(getVerdictAppealFileGroupKey(groups[0])).toBe('prosecution')
     expect(getVerdictAppealFileGroupTitle(groups[0])).toBe('Ákæruvaldið')
-    expect(getVerdictAppealFileSentInBy(groups[0])).toBe('Ákærandi sendi inn')
+    expect(getVerdictAppealFileSentInBy(groups[0], groups[0].files[0])).toBe(
+      'Ákærandi sendi inn',
+    )
+  })
+})
+
+describe('canViewVerdictAppealFile', () => {
+  it('rejects a declaration attachment that belongs to a ruling-order appeal', () => {
+    expect(
+      canViewVerdictAppealFile(
+        { id: 'case_id', type: CaseType.INDICTMENT } as WorkingCase,
+        [CaseFileCategory.DEFENDANT_APPEAL_DECLARATION_CASE_FILE],
+        {
+          category: CaseFileCategory.DEFENDANT_APPEAL_DECLARATION_CASE_FILE,
+          defendantId: 'd1',
+          rulingFileId: 'ruling_order_id',
+        },
+        mockUser(UserRole.COURT_OF_APPEALS_JUDGE),
+      ),
+    ).toBe(false)
   })
 })
 
 describe('canViewVerdictAppealStatementFile', () => {
+  const workingCase = {
+    defendants: [
+      {
+        id: 'own_client_id',
+        isAppealDefenderConfirmed: true,
+        appealDefenderNationalId: '1111111111',
+      },
+    ],
+    verdictAppealCase: {
+      appealEventLogs: [
+        {
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          defendantId: 'own_client_id',
+        },
+      ],
+    },
+  } as WorkingCase
+
   const statement = {
     category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+    defendantId: 'own_client_id',
   }
 
   it.each([
     UserRole.COURT_OF_APPEALS_JUDGE,
     UserRole.PROSECUTOR,
-    UserRole.DEFENDER,
   ])('allows %s', (role) => {
-    expect(canViewVerdictAppealStatementFile(statement, mockUser(role))).toBe(
-      true,
-    )
+    expect(
+      canViewVerdictAppealStatementFile(
+        workingCase,
+        statement,
+        mockUser(role),
+      ),
+    ).toBe(true)
+  })
+
+  it('allows a confirmed appeal defender', () => {
+    expect(
+      canViewVerdictAppealStatementFile(workingCase, statement, {
+        id: 'user_id',
+        role: UserRole.DEFENDER,
+        nationalId: '1111111111',
+      } as User),
+    ).toBe(true)
+  })
+
+  it('rejects a defence user without appeal or case-file access', () => {
+    expect(
+      canViewVerdictAppealStatementFile(workingCase, statement, {
+        id: 'user_id',
+        role: UserRole.DEFENDER,
+        nationalId: '9999999999',
+      } as User),
+    ).toBe(false)
   })
 
   it('rejects district court users', () => {
     expect(
       canViewVerdictAppealStatementFile(
+        workingCase,
         statement,
         mockUser(UserRole.DISTRICT_COURT_JUDGE),
+      ),
+    ).toBe(false)
+  })
+})
+
+describe('canDefenceUserAccessVerdictAppealFiles', () => {
+  it('is false for a confirmed district spokesperson without case-file access', () => {
+    expect(
+      canDefenceUserAccessVerdictAppealFiles(
+        {
+          civilClaimants: [
+            {
+              id: 'c1',
+              hasSpokesperson: true,
+              isSpokespersonConfirmed: true,
+              caseFilesSharedWithSpokesperson: false,
+              spokespersonNationalId: '1111111111',
+            },
+          ],
+        },
+        {
+          id: 'user_id',
+          role: UserRole.DEFENDER,
+          nationalId: '1111111111',
+        } as User,
       ),
     ).toBe(false)
   })

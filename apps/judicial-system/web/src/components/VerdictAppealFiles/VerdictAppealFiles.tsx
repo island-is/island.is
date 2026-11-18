@@ -408,7 +408,7 @@ const VerdictAppealFiles: FC = () => {
                     {formatDate(file.created, 'dd.MM.y')}
                   </Text>
                   <Text whiteSpace="nowrap" variant="small">
-                    {getVerdictAppealFileSentInBy(group)}
+                    {getVerdictAppealFileSentInBy(group, file)}
                   </Text>
                 </>
               }
