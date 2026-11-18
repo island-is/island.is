@@ -197,6 +197,7 @@ export const serviceSetup = (services: {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      AUTH_REQUIRE_DPOP: 'false',
       MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: {
         dev: 'http://financial-aid-backend',
         staging: 'http://financial-aid-backend',
