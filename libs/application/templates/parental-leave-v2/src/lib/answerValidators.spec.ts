@@ -804,6 +804,90 @@ describe('when constructing a new period', () => {
       ).toEqual(undefined)
     })
   })
+
+  describe('a period overlapping another', () => {
+    const day = (offset: number) => formatDate(addDays(FUTURE_DOB_DATE, offset))
+    const first = {
+      firstPeriodStart: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
+      startDate: day(0),
+      useLength: NO,
+      endDate: day(30),
+      ratio: '100',
+    }
+    const later = {
+      startDate: day(60),
+      useLength: NO,
+      endDate: day(90),
+      ratio: '100',
+    }
+
+    it('rejects a new period that spans another one', () => {
+      expect(
+        answerValidators[VALIDATE_LATEST_PERIOD](
+          [
+            first,
+            later,
+            {
+              startDate: day(40),
+              useLength: NO,
+              endDate: day(100),
+              ratio: '100',
+            },
+          ],
+          futureApplication,
+        ),
+      ).toStrictEqual({
+        message: errorMessages.periodsSpansOtherPeriod,
+        path: 'periods[2].endDate',
+        values: {},
+      })
+    })
+
+    it('accepts a new period right after another one', () => {
+      expect(
+        answerValidators[VALIDATE_LATEST_PERIOD](
+          [
+            first,
+            later,
+            {
+              startDate: day(91),
+              useLength: NO,
+              endDate: day(110),
+              ratio: '100',
+            },
+          ],
+          futureApplication,
+        ),
+      ).toEqual(undefined)
+    })
+
+    // A `rawIndex` saved before a deletion must not hide the period now there
+    it('rejects an edit overlapping the period at its stale saved index', () => {
+      const moved = {
+        startDate: day(120),
+        useLength: NO,
+        endDate: day(140),
+        ratio: '100',
+        rawIndex: 2,
+      }
+      const saved = [first, moved, later]
+      const withSaved = {
+        ...futureApplication,
+        answers: { ...futureApplication.answers, periods: saved },
+      }
+
+      expect(
+        answerValidators[VALIDATE_LATEST_PERIOD](
+          [first, { ...moved, startDate: day(70), endDate: day(100) }, later],
+          withSaved,
+        ),
+      ).toStrictEqual({
+        message: errorMessages.periodsStartDateOverlaps,
+        path: 'periods[1].startDate',
+        values: {},
+      })
+    })
+  })
 })
 
 describe('when continuing from the periods screen', () => {

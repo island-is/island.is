@@ -3087,6 +3087,13 @@ export const errorMessages = defineMessages({
       'Nýtt tímabil getur ekki endað innan annars tímabils sem þegar hefur verið vistað.',
     description: 'Copy when end date overlaps other period',
   },
+  periodsSpansOtherPeriod: {
+    id: 'plv2.application:answerValidators.periodsSpansOtherPeriod',
+    defaultMessage:
+      'Tímabil getur ekki náð yfir annað tímabil sem þegar hefur verið vistað.',
+    description:
+      'Copy when a period starts before and ends after another period',
+  },
   periodsEndDateRequired: {
     id: 'plv2.application:answerValidators.periodsEndDateRequired',
     defaultMessage: 'Vinsamlegast veldu lokadagsetningu',

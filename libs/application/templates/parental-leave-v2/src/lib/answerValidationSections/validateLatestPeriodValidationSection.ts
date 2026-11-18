@@ -196,8 +196,10 @@ export const validateLatestPeriodValidationSection = (
     return undefined
   }
 
+  // Its position now, not a `rawIndex` saved before a period was deleted, or
+  // the overlap check would skip the period that now has that index
   const validatedField = validatePeriod(
-    latestPeriod,
+    { ...latestPeriod, rawIndex: latestPeriodIndex },
     isFirstPeriod,
     validOtherPeriods,
     application,

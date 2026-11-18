@@ -326,6 +326,27 @@ export const validatePeriod = (
       )
     }
 
+    // Neither end lies within another period, checked above, but the period
+    // may still span one
+    const spannedPeriod = existingPeriods.find((other) => {
+      const otherStart = other.startDate ? parseISO(other.startDate) : undefined
+      return (
+        otherStart !== undefined &&
+        isValid(otherStart) &&
+        isWithinInterval(otherStart, {
+          start: startDateValue as Date,
+          end: endDateValue,
+        })
+      )
+    })
+
+    if (spannedPeriod) {
+      return buildError(
+        useLength === YES ? 'endDateDuration' : 'endDate',
+        errorMessages.periodsSpansOtherPeriod,
+      )
+    }
+
     // Stop check period in the past from VMST
     // Sometime they changed period to less than 14 days
     // A short period may follow any period ending the day before it, not only
