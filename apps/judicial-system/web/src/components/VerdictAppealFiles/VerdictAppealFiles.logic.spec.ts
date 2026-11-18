@@ -470,18 +470,18 @@ describe('canViewVerdictAppealStatementFile', () => {
     defendantId: 'own_client_id',
   }
 
-  it.each([
-    UserRole.COURT_OF_APPEALS_JUDGE,
-    UserRole.PROSECUTOR,
-  ])('allows %s', (role) => {
-    expect(
-      canViewVerdictAppealStatementFile(
-        workingCase,
-        statement,
-        mockUser(role),
-      ),
-    ).toBe(true)
-  })
+  it.each([UserRole.COURT_OF_APPEALS_JUDGE, UserRole.PROSECUTOR])(
+    'allows %s',
+    (role) => {
+      expect(
+        canViewVerdictAppealStatementFile(
+          workingCase,
+          statement,
+          mockUser(role),
+        ),
+      ).toBe(true)
+    },
+  )
 
   it('allows a confirmed appeal defender', () => {
     expect(

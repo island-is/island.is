@@ -152,10 +152,13 @@ export const canViewVerdictAppealStatementFile = (
     return false
   }
 
-  return hasFiledAppealStatement(workingCase.verdictAppealCase?.appealEventLogs, {
-    defendantId: file.defendantId,
-    civilClaimantId: file.civilClaimantId,
-  })
+  return hasFiledAppealStatement(
+    workingCase.verdictAppealCase?.appealEventLogs,
+    {
+      defendantId: file.defendantId,
+      civilClaimantId: file.civilClaimantId,
+    },
+  )
 }
 
 /**
