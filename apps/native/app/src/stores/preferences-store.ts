@@ -89,6 +89,11 @@ const defaultPreferences = {
   walletPassDismissedInfoAlerts: {} as Record<string, boolean>,
 }
 
+let preferencesLoadedResolve!: () => void
+const preferencesLoaded = new Promise<void>((resolve) => {
+  preferencesLoadedResolve = resolve
+})
+
 export const preferencesStore = create<PreferencesStore>()(
   persist(
     (set, get) => ({
@@ -127,6 +132,14 @@ export const preferencesStore = create<PreferencesStore>()(
     {
       name: PREFERENCES_KEY,
       storage: createJSONStorage(() => AsyncStorage),
+      // Called on failure too, when onFinishHydration isn't: unreadable
+      // preferences mustn't hold up the start.
+      onRehydrateStorage: () => (_state, error) => {
+        if (error) {
+          console.warn('Could not load the preferences', error)
+        }
+        preferencesLoadedResolve()
+      },
       version: 1,
       migrate: (persistedState: any, version) => {
         if (version === 0) {
@@ -147,19 +160,12 @@ export const preferencesStore = create<PreferencesStore>()(
 )
 
 /**
- * Resolves once the saved preferences have loaded. Until then the store has
- * the defaults, and a reset would be overwritten when they arrive.
+ * Resolves once the saved preferences have loaded, or failed to, when the
+ * defaults stay. Until then the store has the defaults, and a reset would be
+ * overwritten when they arrive.
  */
 export function waitForPreferences(): Promise<void> {
-  if (preferencesStore.persist.hasHydrated()) {
-    return Promise.resolve()
-  }
-  return new Promise((resolve) => {
-    const unsubscribe = preferencesStore.persist.onFinishHydration(() => {
-      unsubscribe()
-      resolve()
-    })
-  })
+  return preferencesLoaded
 }
 
 export const usePreferencesStore = <U = PreferencesStore>(
