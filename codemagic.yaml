@@ -475,6 +475,74 @@ workflows:
       <<: *android_publishing
       <<: *slack_errors
 
+  # TEMPORARY, as above: the prod app's builds of this branch, to TestFlight
+  # and the Play internal track only.
+  native-login-ios-prod:
+    name: Native login iOS Prod (branch build)
+    max_build_duration: 120
+    working_directory: apps/native/app
+    instance_type: mac_mini_m2
+    cache: *ios_cache
+    integrations:
+      app_store_connect: 'Island.is API Key'
+    environment:
+      <<: *environment
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: is.island.app
+      vars:
+        <<: *shared_envs
+        BUNDLE_ID: 'is.island.app'
+        APP_STORE_APPLE_ID: 1569828682
+        APP_VARIANT: 'production'
+    scripts:
+      - *pip_install
+      - *npm_install
+      - *codegen
+      - *prebuild_ios
+      - *cocoapods
+      - *provisioning_profiles
+      - *apply_release_ios_build_number
+      - *build_ipa
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+    publishing:
+      <<: *ios_release_testflight
+      <<: *slack_errors
+
+  native-login-android-prod:
+    name: Native login Android Prod (branch build)
+    max_build_duration: 120
+    working_directory: apps/native/app
+    instance_type: linux_x2
+    cache: *android_cache
+    environment:
+      <<: *environment
+      android_signing:
+        - island-upload-keystore
+      groups:
+        - google_credentials
+        - firebase_credentials
+      vars:
+        <<: *shared_envs
+        PACKAGE_NAME: 'is.island.app'
+        APP_VARIANT: 'production'
+    scripts:
+      - *pip_install
+      - *npm_install
+      - *codegen
+      - *apply_release_android_version_code
+      - *prebuild_android
+      - *set_android_location
+      - *build_android
+    artifacts:
+      - android/app/build/outputs/**/*.aab
+    publishing:
+      <<: *android_publishing
+      <<: *slack_errors
+
   mobile-release-android-prod:
     name: Island.is Mobile Release Android Prod (auto-release)
     max_build_duration: 120
