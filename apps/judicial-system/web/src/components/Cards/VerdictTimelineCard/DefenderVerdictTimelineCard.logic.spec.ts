@@ -231,7 +231,11 @@ describe('getDefenderVerdictTimelineItems', () => {
         }),
       ).toEqual([
         { text: 'Dómur birtur 01.06.2026' },
-        { text: 'Dómfelldi áfrýjaði 04.06.2026', tone: 'critical' },
+        {
+          id: 'stance',
+          text: 'Dómfelldi áfrýjaði 04.06.2026',
+          tone: 'critical',
+        },
         { text: 'Frestur til að skila greinargerð er til 14.09.2026' },
       ])
     })
@@ -251,7 +255,11 @@ describe('getDefenderVerdictTimelineItems', () => {
         }),
       ).toEqual([
         { text: 'Dómur birtur 01.06.2026' },
-        { text: 'Dómfelldi áfrýjaði 04.06.2026', tone: 'critical' },
+        {
+          id: 'stance',
+          text: 'Dómfelldi áfrýjaði 04.06.2026',
+          tone: 'critical',
+        },
         { text: 'Frestur til að skila greinargerð rann út 14.09.2026' },
       ])
     })
@@ -270,7 +278,11 @@ describe('getDefenderVerdictTimelineItems', () => {
         }),
       ).toEqual([
         { text: 'Dómur birtur 01.06.2026' },
-        { text: 'Dómfelldi áfrýjaði 04.06.2026', tone: 'critical' },
+        {
+          id: 'stance',
+          text: 'Dómfelldi áfrýjaði 04.06.2026',
+          tone: 'critical',
+        },
       ])
     })
 
@@ -288,7 +300,11 @@ describe('getDefenderVerdictTimelineItems', () => {
         }),
       ).toEqual([
         { text: 'Dómur birtur 01.06.2026' },
-        { text: 'Dómfelldi áfrýjaði 04.06.2026', tone: 'critical' },
+        {
+          id: 'stance',
+          text: 'Dómfelldi áfrýjaði 04.06.2026',
+          tone: 'critical',
+        },
       ])
     })
   })
