@@ -52,13 +52,13 @@ const NX_PARALLEL = env.NX_PARALLEL || '3'
 const AGENT_TYPES = {
   shared: {
     min: parseInt(env.MIN_AGENTS || '1'),
-    max: parseInt(env.MAX_AGENTS || '10'),
+    max: parseInt(env.MAX_AGENTS || '20'),
     capacity: parseInt(env.AGENT_CAPACITY || '60'),
     runner: env.SHARED_RUNNER || 'arc-shared',
   },
   judicial: {
     min: parseInt(env.MIN_JUDICIAL_AGENTS || '1'),
-    max: parseInt(env.MAX_JUDICIAL_AGENTS || '2'),
+    max: parseInt(env.MAX_JUDICIAL_AGENTS || '5'),
     // Lower than for shared agents: `judicial-system-backend:test` takes over 10 minutes and
     // with a single agent every other judicial task shares that agent with it
     capacity: parseInt(env.JUDICIAL_AGENT_CAPACITY || '30'),

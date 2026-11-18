@@ -112,7 +112,8 @@ jobs:
           # Without the images a release reuses from its pre-release
           BUILD_CHUNKS: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS || '[]' }}
           # Same as the pull request pipeline
-          MAX_AGENTS: '10'
+          MAX_AGENTS: '20'
+          MAX_JUDICIAL_AGENTS: '5'
           SHARED_RUNNER: arc-mergequeue
           JUDICIAL_RUNNER: arc-mergequeue
 

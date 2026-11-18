@@ -270,7 +270,8 @@ jobs:
         env:
           PLAN_MODE: ${{ needs.pre-checks.outputs.PRE_RELEASE == 'true' && 'images' || 'deploy' }}
           BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
-          MAX_AGENTS: '10'
+          MAX_AGENTS: '20'
+          MAX_JUDICIAL_AGENTS: '5'
           # A pre-release runs on the runners of the merge queue, like the rest of its jobs
           SHARED_RUNNER: ${{ needs.pre-checks.outputs.PRE_RELEASE == 'true' && 'arc-mergequeue' || 'arc-shared' }}
           JUDICIAL_RUNNER: ${{ needs.pre-checks.outputs.PRE_RELEASE == 'true' && 'arc-mergequeue' || 'arc-shared' }}

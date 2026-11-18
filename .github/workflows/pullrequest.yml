@@ -40,9 +40,9 @@ env:
   # taken out of the build outputs of the Next.js apps. Kept as a safety net for the next big output
   NX_CLOUD_NO_TIMEOUTS: 'true'
   MIN_AGENTS: '1'
-  MAX_AGENTS: '10'
+  MAX_AGENTS: '20'
   # Judicial tasks run on agents of their own, see `scripts/ci/nx-agents/assignment-rules.yaml`
-  MAX_JUDICIAL_AGENTS: '2'
+  MAX_JUDICIAL_AGENTS: '5'
   SHARED_RUNNER: arc-shared
   JUDICIAL_RUNNER: arc-shared
   AWS_REGION: eu-west-1
