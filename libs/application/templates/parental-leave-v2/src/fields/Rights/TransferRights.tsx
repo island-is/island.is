@@ -19,7 +19,7 @@ import {
 } from '../../lib/parentalLeaveUtils'
 import { maxDaysToGiveOrReceive } from '../../config'
 import { TransferRightsOption } from '../../constants'
-import { NO, YES, YesOrNo } from '@island.is/application/core'
+import { NO, YES, YesOrNo, getValueViaPath } from '@island.is/application/core'
 
 const getDefaultValue = (
   isRequestingRights: YesOrNo,
@@ -103,9 +103,16 @@ export const TransferRights: FC<
   )
   const maxMultipleBirthsDays = getMaxMultipleBirthsDays(application.answers)
 
+  // The change form saves the selection under its own id, `editTransferRights`
+  const ownAnswer =
+    typeof field.id === 'string'
+      ? getValueViaPath<TransferRightsOption>(application.answers, field.id)
+      : undefined
+  const savedSelection = ownAnswer ?? transferRights
+
   const defaultValue =
-    transferRights !== undefined
-      ? transferRights
+    savedSelection !== undefined
+      ? savedSelection
       : getDefaultValue(isRequestingRights, isGivingRights)
 
   const { setValue } = useFormContext()
@@ -116,6 +123,7 @@ export const TransferRights: FC<
   const onSelect = (selected: string) => {
     const option = selected as TransferRightsOption
 
+    setValue('transferRights', option)
     setHiddenValues(calculateHiddenValues(option, requestDays, giveDays))
   }
 
