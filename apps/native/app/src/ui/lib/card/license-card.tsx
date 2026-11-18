@@ -15,6 +15,7 @@ import { Skeleton } from '../skeleton/skeleton'
 import { ExpirationProgressBar } from '../../../components/progress-bar/expiration-progress-bar'
 import { GenericLicenseType } from '../../../graphql/types/schema'
 import { isString } from '../../../utils/is-string'
+import { licenceFallback, licenceForeground } from '../../utils/licence-colours'
 import IconStatusNonVerified from '../../assets/card/danger.png'
 import IconStatusVerified from '../../assets/card/is-verified.png'
 import { LicenseCardPresets } from './license-list-card'
@@ -163,7 +164,7 @@ export function LicenseCard({
   const logo = props.logo ?? preset?.logo
   const backgroundImage = props.backgroundImage ?? preset?.backgroundImage
   const backgroundColor = props.backgroundColor ?? colours?.background
-  const textColor = theme.tokens.foreground.primary
+  const textColor = licenceForeground
   const showExpireDate =
     type === GenericLicenseType.Passport ||
     type === GenericLicenseType.IdentityDocument
@@ -298,12 +299,10 @@ export function LicenseCard({
             <Skeleton
               active
               backgroundColor={
-                colours?.barcode?.background ??
-                theme.tokens.background.brandMinimal
+                colours?.barcode?.background ?? licenceFallback.background
               }
               overlayColor={
-                colours?.barcode?.overlay ??
-                theme.tokens.background.brandLighter
+                colours?.barcode?.overlay ?? licenceFallback.barcodeOverlay
               }
               overlayOpacity={1}
               style={{ flex: 1 }}

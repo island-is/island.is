@@ -28,7 +28,7 @@ import LogoAOSH from '../../assets/card/vinnueftirlitid-logo.png'
 import BackgroundVinnuvelar from '../../assets/card/vinnuvelar-bg.png'
 import chevronForward from '../../assets/icons/chevron-forward.png'
 import { dynamicColor, theme, token } from '../../utils'
-import { licenceColours } from '../../utils/licence-colours'
+import { licenceColours, licenceForeground } from '../../utils/licence-colours'
 import { Typography } from '../typography/typography'
 
 export const LICENSE_CARD_ROW_GAP = theme.spacing.p2
@@ -192,7 +192,7 @@ export function LicenseListCard({
   const logo = props.logo ?? preset?.logo
   const backgroundImage = props.backgroundImage ?? preset?.backgroundImage
   const backgroundColor = props.backgroundColor ?? colours?.background
-  const textColor = theme.tokens.foreground.primary
+  const textColor = licenceForeground
 
   return (
     <Host emptyState={props.emptyState}>
@@ -244,7 +244,7 @@ export function LicenseListCard({
               style={{
                 height: 24,
                 width: 24,
-                tintColor: theme.tokens.foreground.primary,
+                tintColor: licenceForeground,
                 opacity: 0.3,
               }}
             />

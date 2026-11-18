@@ -1,4 +1,5 @@
 import { GenericLicenseType } from '../../graphql/types/schema'
+import { blue100, blue200, blue400, dark400 } from './colors'
 
 // Licence artwork colours: the fill under each licence's background image and
 // the barcode skeleton that matches it while loading. They follow the artwork,
@@ -78,3 +79,19 @@ export const scanResultColours = {
 
 // Veil over the barcode while it is offline or failed to load
 export const licenceBarcodeVeil = 'rgba(255, 255, 255, 0.4)'
+
+// Every licence background above is light, in both themes, because the
+// artwork does not follow the colour scheme. So the text on it has to stay
+// dark: a theme-dependent foreground turns near-white in dark mode and drops
+// to 1.4:1 on the artwork.
+export const licenceForeground = dark400
+
+// Accent on the artwork, for spinners and icons. Fixed for the same reason.
+export const licenceAccent = blue400
+
+// For licences with no artwork colours of their own. Light for the same
+// reason: a theme token here would turn the card dark under dark text.
+export const licenceFallback = {
+  background: blue100,
+  barcodeOverlay: blue200,
+}
