@@ -17,14 +17,21 @@ fragment SplitCaseFields on Case {
     name
     defenderNationalId
     isDefenderChoiceConfirmed
+    appealDefenderNationalId
+    isAppealDefenderConfirmed
+    isAppealDefenderWaived
     subpoenas {
       ...SubpoenaFields
     }
   }
   civilClaimants {
     id
+    hasSpokesperson
     isSpokespersonConfirmed
     spokespersonNationalId
+    hasAppealSpokesperson
+    appealSpokespersonNationalId
+    isAppealSpokespersonConfirmed
   }
   caseFiles {
     ...CaseFileFields

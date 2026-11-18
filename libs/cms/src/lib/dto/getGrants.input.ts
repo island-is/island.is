@@ -8,6 +8,7 @@ import {
 import { Field, InputType, Int, registerEnumType } from '@nestjs/graphql'
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 import { CacheField } from '@island.is/nest/graphql'
+import GraphQLJSON from 'graphql-type-json'
 
 export enum GrantsSortBy {
   ALPHABETICAL,
@@ -61,6 +62,14 @@ export class GetGrantsInput {
   @IsArray()
   @IsOptional()
   categories?: string[]
+
+  @Field(() => GraphQLJSON, {
+    nullable: true,
+    description:
+      'Groups the categories by tag group so that a grant must match a category in every group',
+  })
+  @IsOptional()
+  tagGroups?: Record<string, string[]>
 
   @Field(() => [String], { nullable: true })
   @IsArray()

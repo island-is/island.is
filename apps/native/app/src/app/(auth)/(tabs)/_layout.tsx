@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { Redirect, useNavigation, usePathname } from 'expo-router'
 import { usePreferencesStore } from '@/stores/preferences-store'
 import { isOnboarded } from '@/utils/onboarding'
-import { blue100, blue400, theme } from '../../../ui'
+import { theme } from '../../../ui'
 import { Image, Platform, StyleSheet, View } from 'react-native'
 import { useTheme } from 'styled-components'
 import { useIntl } from 'react-intl'
@@ -44,21 +44,21 @@ export default function TabLayout() {
         backBehavior="history"
         labelVisibilityMode="labeled"
         backgroundColor={
-          Platform.OS === 'android' ? theme.shade.background : undefined
+          Platform.OS === 'android' ? theme.tokens.background.invert : undefined
         }
         indicatorColor="#e4e4f0"
         labelStyle={{
           fontFamily: 'IBMPlexSans_400Regular',
           fontSize: 11,
-          color: theme.shade.foreground,
+          color: theme.tokens.foreground.primary,
           selected: {
-            color: theme.color.blue400,
+            color: theme.tokens.interactive.foreground.primary,
           },
           default: {
-            color: theme.shade.foreground,
+            color: theme.tokens.foreground.primary,
           },
         }}
-        iconColor={theme.color.blue400}
+        iconColor={theme.tokens.interactive.foreground.primary}
         hidden={tabsHidden}
         screenListeners={{
           tabPress: (e) => uiStore.setState({ focusedTab: e.target }),

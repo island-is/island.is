@@ -37,6 +37,7 @@ import {
   isProsecutionUser,
   isPublicProsecutionOfficeUser,
   isPublicProsecutionUser,
+  isSameAppealBench,
   verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
 
@@ -51,7 +52,6 @@ import {
   AppealEventLogRepositoryService,
   Case,
   CaseRepositoryService,
-  CivilClaimant,
   CreateAppealCase,
   Defendant,
   DefendantRepositoryService,
@@ -72,6 +72,7 @@ import {
   findUserRulingOrderAppealDecision,
   hasStandingVerdictAppeal,
   isInCourtRulingOrderAppeal,
+  resolveDefenceParties,
   standingVerdictAppellants,
   userRulingOrderAppealDecisions,
   type VerdictAppellantSide,
@@ -111,41 +112,6 @@ export class AppealCaseService {
 
   // Every defence party (defendant / civil claimant) the user currently, and
   // confirmedly, represents on the case. A defence event is recorded once per
-  // party, so a lawyer who represents several clients appeals (or submits a
-  // statement) on behalf of all of them - the backend resolves this, the client
-  // never has to pick. Empty for request cases (collective defence, no party)
-  // and non-defence users.
-  private resolveDefenceParties(
-    theCase: Case,
-    user: User,
-  ): { defendantId?: string; civilClaimantId?: string }[] {
-    if (!isIndictmentCase(theCase.type)) {
-      return []
-    }
-
-    const parties: { defendantId?: string; civilClaimantId?: string }[] = []
-
-    for (const defendant of theCase.defendants ?? []) {
-      if (
-        Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
-      ) {
-        parties.push({ defendantId: defendant.id })
-      }
-    }
-
-    for (const civilClaimant of theCase.civilClaimants ?? []) {
-      if (
-        CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(user.nationalId, [
-          civilClaimant,
-        ])
-      ) {
-        parties.push({ civilClaimantId: civilClaimant.id })
-      }
-    }
-
-    return parties
-  }
-
   // Writes appeal event-log rows with an actor snapshot of who performed the
   // event. Defenders are not system users, so userId is null and
   // national_id/name identify them (plus the defence party); for
@@ -160,7 +126,7 @@ export class AppealCaseService {
     transaction: Transaction,
   ): Promise<void> {
     const parties = isDefenceUser(user)
-      ? this.resolveDefenceParties(theCase, user)
+      ? resolveDefenceParties(theCase, user.nationalId)
       : []
     // Prosecution and request-case collective defence carry no party, but still
     // get a single event row.
@@ -915,6 +881,8 @@ export class AppealCaseService {
         request,
         transaction,
       )
+    } else if (actor === 'DEFENDER') {
+      await this.recordAppealingDefender(theCase, defendant, transaction)
     }
 
     // AppealCase is the source of truth for who appealed; verdict.appealDate is
@@ -1058,9 +1026,51 @@ export class AppealCaseService {
     )
   }
 
-  // The appeal defender belongs to the appeal: withdrawn, there is no appeal
-  // for them to have filed, and a later registration that names nobody must
-  // not show them again.
+  // A defender appealing in the system is the defendant's confirmed defender
+  // of record, so that record names the appeal defender. Unconfirmed, like the
+  // one the office registers: access follows once the court of appeals
+  // confirms them.
+  //
+  // Only while the appeal says nothing about this defendant's counsel. The
+  // court of appeals may already have named a defender or recorded a waiver -
+  // on an appeal the prosecution filed first - and that stance is not
+  // overwritten, nor is a confirmed defender set back to unconfirmed.
+  private async recordAppealingDefender(
+    theCase: Case,
+    defendant: Defendant,
+    transaction: Transaction,
+  ): Promise<void> {
+    const isAppealDefenderSettled =
+      Boolean(
+        defendant.appealDefenderName ||
+          defendant.appealDefenderNationalId ||
+          defendant.appealDefenderEmail ||
+          defendant.appealDefenderPhoneNumber,
+      ) ||
+      (defendant.isAppealDefenderWaived !== null &&
+        defendant.isAppealDefenderWaived !== undefined)
+
+    if (isAppealDefenderSettled) {
+      return
+    }
+
+    await this.defendantRepositoryService.update(
+      theCase.id,
+      defendant.id,
+      {
+        appealDefenderName: defendant.defenderName ?? null,
+        appealDefenderNationalId: defendant.defenderNationalId ?? null,
+        appealDefenderEmail: defendant.defenderEmail ?? null,
+        appealDefenderPhoneNumber: defendant.defenderPhoneNumber ?? null,
+        isAppealDefenderConfirmed: false,
+      },
+      { transaction },
+    )
+  }
+
+  // The appeal defender belongs to the appeal concerning that defendant.
+  // Cleared once no appeal for them remains on either side — kept while a
+  // prosecution appeal against them still stands after a defence withdrawal.
   private async clearAppealDefender(
     theCase: Case,
     defendantId: string,
@@ -1107,18 +1117,20 @@ export class AppealCaseService {
 
     // Sequelize reports an empty update as affecting no rows, which the
     // repository treats as a failure, so skip it when only the bench changes.
-    if (Object.keys(data).length > 0) {
-      updatedAppealCase = await this.appealCaseRepositoryService.update(
-        appealCase.id,
-        data,
-        { transaction },
-      )
+    const columnsChanged = Object.keys(data).length > 0
+
+    if (columnsChanged) {
+      await this.appealCaseRepositoryService.update(appealCase.id, data, {
+        transaction,
+      })
     }
 
+    // The api's list is nullable, so a null bench arrives as well as an
+    // omitted one; neither is a change. An empty list clears the bench.
     const previousJudgeIds = getAppealJudgeUserIds(appealCase)
     const judgesChanged =
-      appealJudgeIds !== undefined &&
-      !this.isSameBench(appealJudgeIds, previousJudgeIds)
+      Array.isArray(appealJudgeIds) &&
+      !isSameAppealBench(appealJudgeIds, previousJudgeIds)
     const nextJudgeIds = judgesChanged ? appealJudgeIds : previousJudgeIds
 
     if (judgesChanged) {
@@ -1127,8 +1139,12 @@ export class AppealCaseService {
         appealJudgeIds,
         { transaction },
       )
+    }
 
-      // The response carries the bench as stored, in order.
+    // The response carries the appeal case as stored: the bench in order and
+    // the assistant as a user. The row the update returns has neither, only
+    // the assistant's id.
+    if (columnsChanged || judgesChanged) {
       const reloadedAppealCase =
         await this.appealCaseRepositoryService.findById(appealCase.id, {
           transaction,
@@ -1136,7 +1152,7 @@ export class AppealCaseService {
 
       if (!reloadedAppealCase) {
         throw new NotFoundException(
-          `Appeal case ${appealCase.id} not found after updating its judges`,
+          `Appeal case ${appealCase.id} not found after updating it`,
         )
       }
 
@@ -1189,12 +1205,6 @@ export class AppealCaseService {
     }
 
     return updatedAppealCase
-  }
-
-  // The same judges in the same order: a reordered bench changes who presides,
-  // so it counts as a change.
-  private isSameBench(a: string[], b: string[]): boolean {
-    return a.length === b.length && a.every((id, index) => id === b[index])
   }
 
   async createEventLog(
@@ -1428,7 +1438,10 @@ export class AppealCaseService {
 
     if (
       actor === 'DEFENDER' &&
-      !Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
+      !Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant]) &&
+      !Defendant.isConfirmedAppealDefenderOfDefendant(user.nationalId, [
+        defendant,
+      ])
     ) {
       throw new ForbiddenException(
         `Current user is not the confirmed defender of defendant ${defendantId}`,
@@ -1488,8 +1501,24 @@ export class AppealCaseService {
       transaction,
     )
 
-    // The defendant's own appeal carries a mirror on the verdict and possibly an
-    // appeal defender; the prosecution's carries neither.
+    // The appeal case stands while any appellant of either side stands.
+    const remainingAppellants = standingAppellants.filter(
+      (appellant) => !isWithdrawn(appellant),
+    )
+
+    // Drop the appeal appointment once nothing remains for this defendant —
+    // including when the prosecution withdraws last after the defence already
+    // did. Leaving it would keep granting the advocate access with no appeal.
+    const defendantStillHasStandingAppeal = remainingAppellants.some(
+      (appellant) => appellant.defendantId === defendantId,
+    )
+
+    if (!defendantStillHasStandingAppeal) {
+      await this.clearAppealDefender(theCase, defendantId, transaction)
+    }
+
+    // The defendant's own appeal carries a mirror on the verdict and declaration
+    // files; the prosecution's carries neither.
     if (side === 'DEFENCE') {
       // Clear the mirror on the verdict, so the public prosecution office's
       // screen stops showing this defendant as having appealed.
@@ -1505,8 +1534,6 @@ export class AppealCaseService {
         )
       }
 
-      await this.clearAppealDefender(theCase, defendantId, transaction)
-
       // Soft-delete this defendant's áfrýjunaryfirlýsing and accompanying files.
       // They are otherwise locked while a verdict appeal case exists, so leaving
       // them behind blocks a fresh appeal upload after withdrawal.
@@ -1521,11 +1548,6 @@ export class AppealCaseService {
         await this.fileService.deleteCaseFile(theCase, file, transaction)
       }
     }
-
-    // The appeal case stands while any appellant of either side stands.
-    const remainingAppellants = standingAppellants.filter(
-      (appellant) => !isWithdrawn(appellant),
-    )
 
     if (remainingAppellants.length === 0) {
       return this.applyTransition(

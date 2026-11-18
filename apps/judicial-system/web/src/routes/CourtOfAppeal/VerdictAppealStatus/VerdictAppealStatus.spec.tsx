@@ -80,6 +80,7 @@ const theCase = {
     id: 'verdict-appeal',
     appealState: AppealCaseState.RECEIVED,
     appealType: AppealCaseType.VERDICT,
+    appealCaseNumber: '555/2026',
   },
 } as unknown as WorkingCase
 

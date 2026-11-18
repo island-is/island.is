@@ -64,14 +64,15 @@ const ExpandingSection: FC<PropsWithChildren<Props>> = ({
   )
 }
 
-interface BlockProps extends Pick<Props, 'className'> {
+export interface BlockProps extends Pick<Props, 'className'> {
   // Whether the block animates open on mount, and so starts out clipped.
   animatesIn: boolean
 }
 
 // Its own component so each opening starts clipped: the state has to belong
-// to the mounted block, not to whatever renders it.
-const ExpandingBlock: FC<PropsWithChildren<BlockProps>> = ({
+// to the mounted block, not to whatever renders it. Shared with
+// ExpandingList, which renders one per item inside its own AnimatePresence.
+export const ExpandingBlock: FC<PropsWithChildren<BlockProps>> = ({
   className,
   animatesIn,
   children,

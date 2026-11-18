@@ -154,6 +154,8 @@ const light = {
       pressed: '#e6ebf5',
       // code-only: grey surface behind grouped content
       neutral: dark100,
+      // code-only: pressed search field
+      neutralActive: dark200,
     },
     fill: {
       errorLighter: red200,

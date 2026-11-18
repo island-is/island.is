@@ -32,7 +32,13 @@ import {
   usePreferencesStore,
 } from '@/stores/preferences-store'
 import { useUiStore } from '@/stores/ui-store'
-import { Alert, TableViewAccessory, TableViewCell, TableViewGroup } from '@/ui'
+import {
+  Alert,
+  Icon,
+  TableViewAccessory,
+  TableViewCell,
+  TableViewGroup,
+} from '@/ui'
 import { useBiometricType } from '../../../hooks/use-biometric-type'
 import { NotificationsPermissionAlert } from '@/components/notifications-permission-alert'
 import { useNotificationsPermission } from '@/hooks/use-notifications-permission'
@@ -40,11 +46,62 @@ import { ensureNotificationsPermission } from '@/utils/permissions'
 import { testIDs } from '@/utils/test-ids'
 
 import chevronForward from '@/ui/assets/icons/chevron-forward.png'
+import chevronUpDown from '@/ui/assets/icons/chevron-up-down.png'
 import editIcon from '@/assets/icons/edit.png'
 import { StackScreen } from '../../../components/stack-screen'
 import { ToastHost } from '@/components/toast'
-import { SelectionMenu } from 'react-native-platform-components'
+import { ContextMenu } from 'react-native-platform-components'
 import { openBrowserAsync } from 'expo-web-browser'
+
+type MenuCellProps = {
+  title: string
+  subtitle?: string
+  value: string
+  options: { id: string; title: string }[]
+  selected: string
+  onSelect: (id: string) => void
+}
+
+// A row that opens a native pull-down menu anchored to it (UIMenu on iOS,
+// PopupMenu on Android). The selected option gets a checkmark.
+function MenuCell({
+  title,
+  subtitle,
+  value,
+  options,
+  selected,
+  onSelect,
+}: MenuCellProps) {
+  const theme = useTheme()
+
+  return (
+    <ContextMenu
+      trigger="tap"
+      actions={options.map((option) => ({
+        id: option.id,
+        title: option.title,
+        state: option.id === selected ? 'on' : 'off',
+      }))}
+      onPressAction={onSelect}
+    >
+      <TableViewCell
+        title={title}
+        subtitle={subtitle}
+        accessory={
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TableViewAccessory>{value}</TableViewAccessory>
+            <Icon
+              source={chevronUpDown}
+              width={24}
+              height={24}
+              tintColor={theme.tokens.foreground.primaryMinimal}
+            />
+          </View>
+        }
+      />
+    </ContextMenu>
+  )
+}
 
 export default function SettingsScreen() {
   const router = useRouter()
@@ -63,9 +120,6 @@ export default function SettingsScreen() {
     appLockTimeout,
     hasCreatedPasskey,
   } = usePreferencesStore()
-  const [localeDialogVisible, setLocaleDialogVisible] = useState(false)
-  const [screenLockTimeDialogVisible, setScreenLockTimeDialogVisible] =
-    useState(false)
 
   const isInfoDismissed = dismissed.includes('userSettingsInformational')
   const { authenticationTypes, isEnrolledBiometrics } = useUiStore()
@@ -412,10 +466,12 @@ export default function SettingsScreen() {
                   }}
                   disabled={userProfile.loading && !userProfile.data}
                   value={emailNotifications}
-                  thumbColor={Platform.select({ android: theme.color.dark100 })}
+                  thumbColor={Platform.select({
+                    android: theme.tokens.app.background.neutral,
+                  })}
                   trackColor={{
-                    false: theme.color.dark200,
-                    true: theme.color.blue400,
+                    false: theme.tokens.app.border.neutral,
+                    true: theme.tokens.interactive.background.primary,
                   }}
                 />
               </View>
@@ -434,10 +490,12 @@ export default function SettingsScreen() {
                   onValueChange={onDocumentNotificationsChange}
                   disabled={userProfile.loading && !userProfile.data}
                   value={documentNotifications}
-                  thumbColor={Platform.select({ android: theme.color.dark100 })}
+                  thumbColor={Platform.select({
+                    android: theme.tokens.app.background.neutral,
+                  })}
                   trackColor={{
-                    false: theme.color.dark200,
-                    true: theme.color.blue400,
+                    false: theme.tokens.app.border.neutral,
+                    true: theme.tokens.interactive.background.primary,
                   }}
                 />
               </View>
@@ -512,10 +570,12 @@ export default function SettingsScreen() {
                   }}
                   disabled={!isEnrolledBiometrics}
                   value={useBiometrics}
-                  thumbColor={Platform.select({ android: theme.color.dark100 })}
+                  thumbColor={Platform.select({
+                    android: theme.tokens.app.background.neutral,
+                  })}
                   trackColor={{
-                    false: theme.color.dark200,
-                    true: theme.color.blue400,
+                    false: theme.tokens.app.border.neutral,
+                    true: theme.tokens.interactive.background.primary,
                   }}
                 />
               </View>
@@ -549,76 +609,35 @@ export default function SettingsScreen() {
               />
             </PressableHighlight>
           )}
-          <PressableHighlight
-            onPress={() => setScreenLockTimeDialogVisible(true)}
-          >
-            <TableViewCell
-              title={intl.formatMessage({
-                id: 'settings.security.appLockTimeoutLabel',
-              })}
-              subtitle={intl.formatMessage({
-                id: 'settings.security.appLockTimeoutDescription',
-              })}
-              accessory={
-                <TableViewAccessory>
-                  {`${intl.formatNumber(Math.floor(appLockTimeout / 1000), {
-                    style: 'decimal',
-                    unitDisplay: 'short',
-                    unit: 'second',
-                  })} ${intl.formatMessage({
-                    id: 'settings.security.appLockTimeoutSeconds',
-                  })}`}
-                  <SelectionMenu
-                    placeholder={intl.formatMessage({
-                      id: 'settings.security.appLockTimeoutLabel',
-                    })}
-                    options={[
-                      {
-                        data: '5000',
-                        label: `${intl.formatNumber(5, {
-                          style: 'decimal',
-                          unitDisplay: 'long',
-                          unit: 'second',
-                        })} ${intl.formatMessage({
-                          id: 'settings.security.appLockTimeoutSeconds',
-                        })}`,
-                      },
-                      {
-                        data: '10000',
-                        label: `${intl.formatNumber(10, {
-                          style: 'decimal',
-                          unitDisplay: 'long',
-                          unit: 'second',
-                        })} ${intl.formatMessage({
-                          id: 'settings.security.appLockTimeoutSeconds',
-                        })}`,
-                      },
-                      {
-                        data: '15000',
-                        label: `${intl.formatNumber(15, {
-                          style: 'decimal',
-                          unitDisplay: 'long',
-                          unit: 'second',
-                        })} ${intl.formatMessage({
-                          id: 'settings.security.appLockTimeoutSeconds',
-                        })}`,
-                      },
-                    ]}
-                    selected={String(appLockTimeout)}
-                    visible={screenLockTimeDialogVisible}
-                    onSelect={(data) => {
-                      preferencesStore.setState({
-                        appLockTimeout: Number(data),
-                      })
-                      setScreenLockTimeDialogVisible(false)
-                    }}
-                    presentation="modal"
-                    onRequestClose={() => setScreenLockTimeDialogVisible(false)}
-                  />
-                </TableViewAccessory>
-              }
-            />
-          </PressableHighlight>
+          <MenuCell
+            title={intl.formatMessage({
+              id: 'settings.security.appLockTimeoutLabel',
+            })}
+            subtitle={intl.formatMessage({
+              id: 'settings.security.appLockTimeoutDescription',
+            })}
+            value={`${intl.formatNumber(Math.floor(appLockTimeout / 1000), {
+              style: 'decimal',
+              unitDisplay: 'short',
+              unit: 'second',
+            })} ${intl.formatMessage({
+              id: 'settings.security.appLockTimeoutSeconds',
+            })}`}
+            options={[5, 10, 15].map((seconds) => ({
+              id: String(seconds * 1000),
+              title: `${intl.formatNumber(seconds, {
+                style: 'decimal',
+                unitDisplay: 'long',
+                unit: 'second',
+              })} ${intl.formatMessage({
+                id: 'settings.security.appLockTimeoutSeconds',
+              })}`,
+            }))}
+            selected={String(appLockTimeout)}
+            onSelect={(id) => {
+              preferencesStore.setState({ appLockTimeout: Number(id) })
+            }}
+          />
           <PressableHighlight
             onPress={() =>
               openBrowserAsync(
@@ -647,36 +666,21 @@ export default function SettingsScreen() {
         <TableViewGroup
           header={intl.formatMessage({ id: 'settings.about.groupTitle' })}
         >
-          <PressableHighlight onPress={() => setLocaleDialogVisible(true)}>
-            <TableViewCell
-              title={intl.formatMessage({
-                id: 'settings.accessibilityLayout.language',
-              })}
-              accessory={
-                <TableViewAccessory>
-                  {locale === 'is-IS' ? 'Íslenska' : 'English'}
-                  <SelectionMenu
-                    placeholder={intl.formatMessage({
-                      id: 'settings.accessibilityLayout.language',
-                    })}
-                    options={[
-                      { label: 'Íslenska', data: 'is-IS' },
-                      { label: 'English', data: 'en-US' },
-                    ]}
-                    selected={locale}
-                    visible={localeDialogVisible}
-                    onSelect={(data) => {
-                      setLocale(data as Locale)
-                      updateLocale(data === 'is-IS' ? 'is' : 'en')
-                      setLocaleDialogVisible(false)
-                    }}
-                    presentation="modal"
-                    onRequestClose={() => setLocaleDialogVisible(false)}
-                  />
-                </TableViewAccessory>
-              }
-            />
-          </PressableHighlight>
+          <MenuCell
+            title={intl.formatMessage({
+              id: 'settings.accessibilityLayout.language',
+            })}
+            value={locale === 'is-IS' ? 'Íslenska' : 'English'}
+            options={[
+              { id: 'is-IS', title: 'Íslenska' },
+              { id: 'en-US', title: 'English' },
+            ]}
+            selected={locale}
+            onSelect={(id) => {
+              setLocale(id as Locale)
+              updateLocale(id === 'is-IS' ? 'is' : 'en')
+            }}
+          />
 
           <TableViewCell
             title={intl.formatMessage({ id: 'settings.about.versionLabel' })}

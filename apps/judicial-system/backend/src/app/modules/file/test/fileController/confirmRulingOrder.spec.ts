@@ -8,6 +8,8 @@ import { CaseFileCategory } from '@island.is/judicial-system/types'
 
 import { createTestingFileModule } from '../createTestingFileModule'
 
+import { getOrCreateTransaction } from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
 import { Case, CaseFile, CaseFileRepositoryService } from '../../../repository'
 
 interface Then {
@@ -25,6 +27,7 @@ type GivenWhenThen = (
 describe('FileController - Confirm ruling order', () => {
   let mockCaseFileRepositoryService: CaseFileRepositoryService
   let queuedMessagesAfterCommit: Message[]
+  let mockTransaction: jest.Mock
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -39,11 +42,9 @@ describe('FileController - Confirm ruling order', () => {
     mockCaseFileRepositoryService = caseFileRepositoryService
     queuedMessagesAfterCommit = messages
 
-    const mockTransaction = sequelize.transaction as jest.Mock
+    mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     givenWhenThen = async (
       caseId: string,
@@ -53,10 +54,25 @@ describe('FileController - Confirm ruling order', () => {
     ): Promise<Then> => {
       const then = {} as Then
 
-      await fileController
-        .confirmRulingOrder(caseId, theCase, fileId, caseFile)
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      // The route is guarded by CaseExistsForUpdateGuard, so the request
+      // transaction is already open - and holding a lock on this case row -
+      // by the time the handler runs. Guards do not execute in controller
+      // unit tests, so the request context and that transaction are set up
+      // here instead.
+      try {
+        then.result = await runInRequestContext(async () => {
+          await getOrCreateTransaction(sequelize)
+
+          return fileController.confirmRulingOrder(
+            caseId,
+            theCase,
+            fileId,
+            caseFile,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }
@@ -85,7 +101,11 @@ describe('FileController - Confirm ruling order', () => {
       then = await givenWhenThen(caseId, fileId, theCase, caseFile)
     })
 
-    it('should set the submission date on the file', () => {
+    it('should set the submission date on the file in the transaction the guard opened', () => {
+      // Once, by the stand-in for the guard above. A second call would be the
+      // handler opening a transaction of its own, which would block on the
+      // guard's row lock and deadlock the request.
+      expect(mockTransaction).toHaveBeenCalledTimes(1)
       expect(
         mockCaseFileRepositoryService.updateByIdAndCase,
       ).toHaveBeenCalledWith(

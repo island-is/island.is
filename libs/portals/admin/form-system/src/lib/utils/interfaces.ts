@@ -10,6 +10,7 @@ import {
 export enum NavbarSelectStatus {
   OFF = 'Off',
   NORMAL = 'Normal',
+  SUM_FIELDS = 'SumFields',
   LIST_ITEM = 'ListItem',
   ON_WITHOUT_SELECT = 'OnWithoutSelect',
 }

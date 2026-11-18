@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components/native'
-import { dynamicColor } from '../../utils'
+import { token } from '../../utils'
 import { font } from '../../utils/font'
 
 const Host = styled.View`
@@ -9,7 +9,7 @@ const Host = styled.View`
   padding-left: 32px;
   padding-right: 32px;
   border-radius: 32px;
-  background-color: ${dynamicColor('background')};
+  background-color: ${token((t) => t.background.invert)};
 `
 
 const Text = styled.Text`

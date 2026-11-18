@@ -1,6 +1,6 @@
 name: Mobile release (auto-release)
 
-# Manually queues one commit on main for the auto-release mobile pipeline.
+# Manually queues one commit on main (or feat/native-app-native-login) for the auto-release mobile pipeline.
 # The release worker then starts the Codemagic mobile-release-ios and
 # mobile-release-android builds for that commit.
 #
@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       sha:
-        description: Full commit SHA on main (blank uses the main commit this run starts from)
+        description: Full commit SHA on the dispatch branch (blank uses the commit this run starts from)
         required: false
         type: string
 
@@ -42,20 +42,24 @@ jobs:
           DISPATCH_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
-          if [[ "$DISPATCH_REF" != 'refs/heads/main' ]]; then
-            echo 'Run this workflow from main; the AWS producer role trusts that branch only.' >&2
-            exit 1
-          fi
+          # Keep in sync with the AWS producer role trust policy (infrastructure repo).
+          case "$DISPATCH_REF" in
+            refs/heads/main | refs/heads/feat/native-app-native-login) ;;
+            *)
+              echo 'Run this workflow from main or feat/native-app-native-login; the AWS producer role trusts only those branches.' >&2
+              exit 1
+              ;;
+          esac
           target="${INPUT_SHA:-$DISPATCH_SHA}"
           if [[ ! "$target" =~ ^[0-9a-fA-F]{40}$ ]]; then
             echo 'sha must be a full 40-character hexadecimal commit SHA.' >&2
             exit 1
           fi
           target=$(printf '%s' "$target" | tr 'A-F' 'a-f')
-          # identical/behind means the target is main or an ancestor of main.
-          status=$(gh api "repos/$REPO/compare/main...$target" --jq '.status')
+          # identical/behind means the target is the dispatch branch head or its ancestor.
+          status=$(gh api "repos/$REPO/compare/${DISPATCH_REF#refs/heads/}...$target" --jq '.status')
           if [[ "$status" != 'identical' && "$status" != 'behind' ]]; then
-            echo "The target commit must belong to main (compare status: $status)." >&2
+            echo "The target commit must belong to the dispatch branch (compare status: $status)." >&2
             exit 1
           fi
           printf 'sha=%s\n' "$target" >> "$GITHUB_OUTPUT"

@@ -36,7 +36,6 @@ import {
   useInboxFilterStore,
 } from '@/stores/inbox-filter-store'
 import {
-  blue400,
   EmptyList,
   fontByWeight,
   ListItemSkeleton,
@@ -94,6 +93,7 @@ const Action = ({
   label: string
   onPress: () => void
 }) => {
+  const theme = useTheme()
   const { width } = useWindowDimensions()
   const { left, right } = useSafeAreaInsets()
   const itemWidth = (width - left - right) / 3 - 32
@@ -114,7 +114,7 @@ const Action = ({
         style={{
           width: 16,
           height: 16,
-          tintColor: blue400,
+          tintColor: theme.tokens.interactive.foreground.primary,
         }}
         resizeMode="contain"
       />
@@ -549,7 +549,11 @@ export default function InboxScreen() {
       <Image
         source={icon}
         resizeMode="contain"
-        style={{ width: 20, height: 20, tintColor: theme.color.blue400 }}
+        style={{
+          width: 20,
+          height: 20,
+          tintColor: theme.tokens.interactive.foreground.primary,
+        }}
       />
     </Pressable>
   )
@@ -596,7 +600,7 @@ export default function InboxScreen() {
                       )
                     }
                   },
-                  tintColor: theme.color.blue400,
+                  tintColor: theme.tokens.interactive.foreground.primary,
                 },
               ]
             : [
@@ -613,7 +617,7 @@ export default function InboxScreen() {
                   onPress() {
                     setSelectedState((v) => !v)
                   },
-                  tintColor: theme.color.blue400,
+                  tintColor: theme.tokens.interactive.foreground.primary,
                 },
               ],
           // Always rendered via `headerRight`: the native items API breaks
@@ -634,7 +638,7 @@ export default function InboxScreen() {
                   <Typography
                     size={15}
                     weight="400"
-                    color={theme.color.blue400}
+                    color={theme.tokens.interactive.foreground.primary}
                   >
                     {intl.formatMessage({ id: 'inbox.bulkSelectCancelButton' })}
                   </Typography>
@@ -669,7 +673,7 @@ export default function InboxScreen() {
         <Stack.Toolbar placement="bottom">
           <Stack.Toolbar.Button
             icon="star"
-            tintColor={blue400}
+            tintColor={theme.tokens.interactive.foreground.primary}
             onPress={onStarPress}
           >
             {intl.formatMessage({
@@ -679,7 +683,7 @@ export default function InboxScreen() {
           </Stack.Toolbar.Button>
           <Stack.Toolbar.Button
             icon="tray"
-            tintColor={blue400}
+            tintColor={theme.tokens.interactive.foreground.primary}
             onPress={onArchivePress}
           >
             {intl.formatMessage({
@@ -688,7 +692,7 @@ export default function InboxScreen() {
             })}
           </Stack.Toolbar.Button>
           <Stack.Toolbar.Button
-            tintColor={blue400}
+            tintColor={theme.tokens.interactive.foreground.primary}
             icon="envelope.open"
             onPress={onMarkAsReadPress}
           >
@@ -835,7 +839,7 @@ export default function InboxScreen() {
               <ActivityIndicator
                 size="small"
                 animating
-                color={theme.color.blue400}
+                color={theme.tokens.interactive.foreground.primary}
               />
             </LoadingWrapper>
           ) : null

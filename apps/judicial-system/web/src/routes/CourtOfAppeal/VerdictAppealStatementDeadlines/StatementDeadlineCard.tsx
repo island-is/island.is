@@ -85,66 +85,68 @@ const StatementDeadlineCard: FC<Props> = ({
       borderColor="blue200"
       borderRadius="large"
       padding={3}
-      className={styles.card}
+      className={styles.container}
     >
-      <Box>
-        {/* The role line is plain until the statement is in, and then it is
+      <div className={styles.card}>
+        <Box>
+          {/* The role line is plain until the statement is in, and then it is
             the green, weighted line the design uses to pick those out. */}
-        <Text
-          variant="small"
-          fontWeight={party.hasFiledStatement ? 'semiBold' : 'regular'}
-          color={party.hasFiledStatement ? 'mint800' : 'dark400'}
-        >
-          {getStatementDeadlineStatusLabel(party)}
-        </Text>
-        <Text variant="h4">{party.name}</Text>
-      </Box>
-      <DateTime
-        name={`statement-deadline-${party.key}`}
-        datepickerLabel="Frestur til"
-        datepickerPlaceholder="Veldu dagsetningu"
-        selectedDate={pickedDate ?? party.deadline}
-        minDate={getStatementDeadlineMinDate(party)}
-        blueBox={false}
-        size="sm"
-        dateOnly
-        disabled={party.hasFiledStatement}
-        onChange={(date) => setPickedDate(date)}
-      />
-      {!party.hasFiledStatement && onUpload && (
-        <div className={styles.menu}>
-          <ContextMenu
-            placement="bottom-end"
-            items={[
-              {
-                title: 'Hlaða upp greinargerð',
-                icon: 'attach',
-                onClick: () => onUpload(party),
-              },
-            ]}
-            render={
-              <IconButton
-                icon="ellipsisVertical"
-                colorScheme="transparent"
-                ariaLabel={`Valmynd fyrir ${party.name || party.roleLabel}`}
-              />
-            }
-          />
-        </div>
-      )}
-      {!party.hasFiledStatement && (
-        <div className={styles.action}>
-          <Button
-            variant="text"
-            size="small"
-            icon="arrowForward"
-            disabled={!canSend}
-            onClick={() => setIsConfirming(true)}
+          <Text
+            variant="small"
+            fontWeight={party.hasFiledStatement ? 'semiBold' : 'regular'}
+            color={party.hasFiledStatement ? 'mint800' : 'dark400'}
           >
-            {getStatementDeadlineActionLabel(party)}
-          </Button>
-        </div>
-      )}
+            {getStatementDeadlineStatusLabel(party)}
+          </Text>
+          <Text variant="h4">{party.name}</Text>
+        </Box>
+        <DateTime
+          name={`statement-deadline-${party.key}`}
+          datepickerLabel="Frestur til"
+          datepickerPlaceholder="Veldu dagsetningu"
+          selectedDate={pickedDate ?? party.deadline}
+          minDate={getStatementDeadlineMinDate(party)}
+          blueBox={false}
+          size="sm"
+          dateOnly
+          disabled={party.hasFiledStatement}
+          onChange={(date) => setPickedDate(date)}
+        />
+        {!party.hasFiledStatement && onUpload && (
+          <div className={styles.menu}>
+            <ContextMenu
+              placement="bottom-end"
+              items={[
+                {
+                  title: 'Hlaða upp greinargerð',
+                  icon: 'attach',
+                  onClick: () => onUpload(party),
+                },
+              ]}
+              render={
+                <IconButton
+                  icon="ellipsisVertical"
+                  colorScheme="transparent"
+                  ariaLabel={`Valmynd fyrir ${party.name || party.roleLabel}`}
+                />
+              }
+            />
+          </div>
+        )}
+        {!party.hasFiledStatement && (
+          <div className={styles.action}>
+            <Button
+              variant="text"
+              size="small"
+              icon="arrowForward"
+              disabled={!canSend}
+              onClick={() => setIsConfirming(true)}
+            >
+              {getStatementDeadlineActionLabel(party)}
+            </Button>
+          </div>
+        )}
+      </div>
       <AnimatePresence>
         {/* No close handler on purpose: the dialog is left through its own
             buttons, with no corner cross, and so no Escape or backdrop close
