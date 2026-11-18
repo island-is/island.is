@@ -176,6 +176,15 @@ the change does.
 - **Fix PRs:** a fix in a state machine, mapper or validator with no
   regression test is a suggestion, not a blocker. The team writes tests for
   non-trivial logic only.
+- **Tests that only echo the mock:** a test whose only assertion is that a
+  mocked dependency's value comes back, or an `it.each` that varies an input
+  the code never reads (several kennitölur against a mocked client, say). It
+  cannot fail for any reason the change could cause. Keep one test of the
+  wiring (what the code passes to the dependency) and test the logic around
+  the call.
+- **A rejection with no name:** `.rejects.toThrow()` or `toThrow()` with no
+  error type, status or message. Any crash passes it, including a
+  `TypeError` from the bug the test should catch.
 - **Mutation check (on request only):** when the user asks for one, and the
   review runs on the working tree, do this:
 
@@ -188,7 +197,8 @@ the change does.
   report it.
 
 Severity is low; medium when the untested logic is high-severity by
-SKILL.md's definition.
+SKILL.md's definition. An echo test is low, or medium when it is the only
+test of an eligibility or security guard.
 
 ## G6. README holds the business logic and its reasons
 

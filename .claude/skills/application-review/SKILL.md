@@ -119,6 +119,18 @@ outside its paths:
 <diff> | grep -iE "^\+.*(dangerouslySetInnerHTML|innerHTML|#markdown|buildFileUploadField|secret|password|apikey|api_key|token['\"]?\s*[:=]|read: 'all'|write: 'all'|@CurrentUser|nationalId:)"
 ```
 
+**Delegations are outside this skill.** Which delegation types and scopes a
+template needs is not something this review judges. If this finds anything
+in the diff, report one FYI and no finding:
+
+```
+<diff> | grep -iE "^\+.*(allowedDelegations|AuthDelegationType|requiredScopes|DelegationGuard|BypassDelegation|procuration|prókúru)"
+```
+
+The FYI reads: "This PR includes changes to delegations. Those are outside
+this skill's scope; feel free to ask in #application-system-support or
+#ids-support." The checks on the repo's own grants (SC5) still apply.
+
 ## 3. Dispatch
 
 Send every routed lens as its own `general-purpose` subagent, all in one
@@ -158,7 +170,9 @@ Each prompt carries:
 > 503", "two failures overlapping"), what the user or institution then
 > sees, read from the code that renders or receives it, severity, and a
 > one-line fix. The check's stated severity is a ceiling: rate by
-> consequence and frequency, with a one-line reason when lower. Include any ledger, abuse cases or
+> consequence and frequency, with a one-line reason when lower. A reason
+> for lowering a **high** check must cite the code that makes the scenario
+> unreachable; "something else already guards it" is not one. Include any ledger, abuse cases or
 > FYI list your lens asks for. End with a list of the checks you applied
 > that came up clean. Keep findings under 500 words; the extras may add up
 > to 200 more.
@@ -180,6 +194,9 @@ finding, try to disprove it:
 - When there are more than about five such findings, send them to one
   `general-purpose` subagent per lens, in parallel, briefed to disprove
   each and return kept, lowered or dropped with a one-line reason.
+- If a lens rated a finding below the stated severity of a **high** check,
+  read the code its reason cites before accepting the lower rating. A drop
+  from medium to low needs only the lens's one-line reason.
 
 Then:
 
@@ -239,7 +256,7 @@ empty, except the counts and clean checks.
 
 ### FYI
 - **<Item>:** pre-existing code this PR newly reaches, product questions,
-  stale comments. One bullet each.
+  stale comments, the delegation pointer (step 2). One bullet each.
 
 ### Nits (low)
 - `<path:line>`: <one line>. At most eight bullets.

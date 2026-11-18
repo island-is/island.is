@@ -7,6 +7,7 @@ line number if the code has moved. Abbreviations:
 - `CTRL`: `apps/application-system/api/src/app/modules/application/application.controller.ts`
 - `ACT`: `.../application/application-action.service.ts`
 - `VAL`: `.../application/tools/applicationTemplateValidation.service.ts`
+- `ACS`: `.../application/tools/applicationAccess.service.ts`
 - `ATH`: `libs/application/core/src/lib/ApplicationTemplateHelper.ts`
 
 ## Validation
@@ -84,6 +85,12 @@ line number if the code has moved. Abbreviations:
   user who should act on the application, and `undefined` for everyone
   else. The role must exist in every state the user can reach, or the user
   gets no form (see Client).
+- **For anyone but the applicant, `mapUserToRole` is the only ownership
+  check.** If the caller is neither the applicant nor an actor,
+  `findOneByIdAndNationalId` loads the application by id alone and returns
+  it when `mapUserToRole` gives the caller a role that exists in the current
+  state (ACS:49-86, 103-112). That function applies no further ownership
+  check.
 - **A role's `actions` define its buttons and the events it may send.**
   SUBMIT returns 403 for an event outside the role's `actions` in the stored
   state, unless the `applicationSystemDisableEventPermissionCheck` flag is
