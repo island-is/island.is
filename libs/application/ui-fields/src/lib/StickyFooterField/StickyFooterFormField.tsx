@@ -5,7 +5,8 @@ import {
 } from '@island.is/application/types'
 import { CSSProperties, FC, Fragment, useEffect, useRef, useState } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Text, useBreakpoint } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { formatText } from '@island.is/application/core'
 import * as styles from './StickyFooterFormField.css'
@@ -18,6 +19,7 @@ const BOTTOM_GAP = 16
 
 export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
   const { formatMessage } = useLocale()
+  const { md } = useBreakpoint()
   const { control } = useFormContext()
 
   const watchedValues = useWatch({ name: field.watchFieldIds, control })
@@ -67,7 +69,7 @@ export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
       const alignCells =
         field.alignToRowTestId && !overflows
           ? target.querySelectorAll<HTMLElement>(
-              `[data-testid="${field.alignToRowTestId}"] td[data-column-index]`,
+              `[data-testid="${field.alignToRowTestId}"] [data-column-index]`,
             )
           : []
       const textLeft = (cell?: HTMLElement) =>
@@ -159,7 +161,11 @@ export const StickyFooterFormField: FC<Props> = ({ field, application }) => {
       marginTop={state.isFloating ? undefined : 4}
       className={state.isFloating ? styles.floating : undefined}
       style={
-        state.isFloating ? { left: state.left, width: state.width } : undefined
+        !state.isFloating
+          ? undefined
+          : md
+          ? { left: state.left, width: state.width }
+          : { left: theme.spacing[2], right: theme.spacing[2] }
       }
     >
       <Box

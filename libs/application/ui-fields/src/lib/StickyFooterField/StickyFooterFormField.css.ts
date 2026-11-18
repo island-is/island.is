@@ -15,18 +15,16 @@ export const floatingShadow = style({
 
 export const grid = style({
   display: 'grid',
-  gridTemplateColumns: '1fr auto',
+  gridTemplateColumns:
+    'minmax(var(--sticky-footer-label-min-width, 0px), auto) auto',
+  justifyContent: 'start',
   alignItems: 'start',
   paddingTop: theme.spacing[1],
   paddingBottom: theme.spacing[1],
-  paddingLeft: theme.spacing[2],
-  paddingRight: theme.spacing[2],
   ...themeUtils.responsiveStyle({
     md: {
-      gridTemplateColumns:
-        'minmax(var(--sticky-footer-label-min-width, 0px), auto) auto',
-      justifyContent: 'start',
       paddingLeft: `var(--sticky-footer-label-indent, ${theme.spacing[2]}px)`,
+      paddingRight: theme.spacing[2],
     },
   }),
 })
@@ -51,12 +49,16 @@ export const inlineRow = style({
   gridTemplateColumns: 'var(--sticky-footer-value-left, 1fr) auto',
   alignItems: 'center',
   height: theme.spacing[7],
-  borderTop: `1px solid ${theme.color.blue200}`,
+  ...themeUtils.responsiveStyle({
+    md: {
+      borderTop: `1px solid ${theme.color.blue200}`,
+    },
+  }),
 })
 
 export const inlineLabelCell = style({
   minWidth: 0,
-  paddingLeft: `var(--sticky-footer-label-left, ${theme.spacing[2]}px)`,
+  marginLeft: `var(--sticky-footer-label-left, ${theme.spacing[2]}px)`,
   paddingRight: theme.spacing[2],
 })
 

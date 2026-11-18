@@ -13,6 +13,7 @@ import {
   HoverTooltip,
   Table as T,
   Text,
+  useBreakpoint,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -53,6 +54,7 @@ export const InteractiveTableFormField: FC<Props> = ({
     selectable,
   } = field
   const { formatMessage, lang: locale } = useLocale()
+  const { md } = useBreakpoint()
   const user = useUserInfo()
   const { control, setValue, getValues } = useFormContext()
   const fieldId = resolveFieldId({ id: field.id }, application, user)
@@ -68,6 +70,13 @@ export const InteractiveTableFormField: FC<Props> = ({
           expandable: !!headerCell.expandable,
         }
       : { truncate: false },
+  )
+  const labels = header.map((headerCell) =>
+    formatText(
+      isHeaderColumnConfig(headerCell) ? headerCell.label : headerCell,
+      application,
+      formatMessage,
+    ),
   )
   const rows = useMemo(
     () =>
@@ -114,16 +123,9 @@ export const InteractiveTableFormField: FC<Props> = ({
     ? formatText(field.inputColumn.placeholder, application, formatMessage)
     : 'kr.'
 
-  const inputColumnLabel = useMemo(() => {
-    if (!hasInputColumn || header.length === 0) {
-      return undefined
-    }
-    const headerCell = header[header.length - 1]
-    const label = isHeaderColumnConfig(headerCell)
-      ? headerCell.label
-      : headerCell
-    return formatText(label, application, formatMessage)
-  }, [hasInputColumn, header, application, formatMessage])
+  const inputColumnLabel = hasInputColumn
+    ? labels[labels.length - 1]
+    : undefined
 
   const colSpan = header.length + (selectable ? 1 : 0)
 
@@ -215,6 +217,30 @@ export const InteractiveTableFormField: FC<Props> = ({
     })
   }
 
+  const renderRows = (mobile: boolean) =>
+    rows.map((row, rowIndex) => (
+      <InteractiveTableFormFieldRow
+        key={`row-${rowIndex}`}
+        row={row}
+        rowIndex={rowIndex}
+        application={application}
+        selectable={!!selectable}
+        fieldId={fieldId}
+        hasInputColumn={hasInputColumn}
+        inputFieldId={inputFieldId}
+        inputMaxAmount={inputMaxAmounts[rowIndex]}
+        inputPlaceholder={inputPlaceholder}
+        inputColumnLabel={inputColumnLabel}
+        columns={columns}
+        labels={labels}
+        expandedHeader={expandedHeader}
+        expandedRows={expandedRows?.[rowIndex]}
+        expandedInfo={expandedInfo?.[rowIndex]}
+        colSpan={colSpan}
+        mobile={mobile}
+      />
+    ))
+
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
       {showFieldName && (
@@ -242,98 +268,115 @@ export const InteractiveTableFormField: FC<Props> = ({
         dataTestId={field.dataTestId}
         className={styles.tableWrapper}
       >
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              {leadingColumn(
-                <T.HeadData style={styles.checkboxColumnStyle}>
-                  <Checkbox
-                    id={`${fieldId}-select-all`}
-                    ariaLabel={formatMessage(
-                      coreMessages.interactiveTableSelectAll,
+        {!md ? (
+          <>
+            <Box component="ul" className={styles.bleed}>
+              {renderRows(true)}
+            </Box>
+            {footerRow && footerRow.length > 0 && (
+              <Box
+                component="dl"
+                dataTestId={styles.footerRowTestId}
+                className={`${styles.pairs} ${styles.bleed}`}
+                paddingX={2}
+                paddingY={2}
+                borderBottomWidth="standard"
+                borderColor="blue200"
+              >
+                <dt data-column-index={0}>
+                  <Text as="span" variant="medium">
+                    {formatText(footerRow[0], application, formatMessage)}
+                  </Text>
+                </dt>
+                <dd data-column-index={footerRow.length - 1}>
+                  <Text as="span" variant="medium" fontWeight="semiBold">
+                    {formatText(
+                      footerRow[footerRow.length - 1],
+                      application,
+                      formatMessage,
                     )}
-                    checked={allSelected}
-                    onChange={toggleAll}
-                  />
-                </T.HeadData>,
-              )}
-              {header.map((headerCell, index) => {
-                const isColumnConfig = isHeaderColumnConfig(headerCell)
-                const label = isColumnConfig ? headerCell.label : headerCell
-                const width = isColumnConfig ? headerCell.width : undefined
-                const tooltip = isColumnConfig ? headerCell.tooltip : undefined
-                const text = formatText(label, application, formatMessage)
-
-                return (
-                  <T.HeadData
-                    key={`${label}-${index}`}
-                    data-column-index={index}
-                    style={
-                      width
-                        ? { width }
-                        : hasInputColumn && index === header.length - 1
-                        ? styles.inputColumnHeaderStyle
-                        : undefined
-                    }
-                  >
-                    {tooltip ? (
-                      <HoverTooltip
-                        text={formatText(tooltip, application, formatMessage)}
-                      >
-                        <span>{text}</span>
-                      </HoverTooltip>
-                    ) : (
-                      text
-                    )}
-                  </T.HeadData>
-                )
-              })}
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            {rows.map((row, rowIndex) => (
-              <InteractiveTableFormFieldRow
-                key={`row-${rowIndex}`}
-                row={row}
-                rowIndex={rowIndex}
-                application={application}
-                selectable={!!selectable}
-                fieldId={fieldId}
-                hasInputColumn={hasInputColumn}
-                inputFieldId={inputFieldId}
-                inputMaxAmount={inputMaxAmounts[rowIndex]}
-                inputPlaceholder={inputPlaceholder}
-                inputColumnLabel={inputColumnLabel}
-                columns={columns}
-                expandedHeader={expandedHeader}
-                expandedRows={expandedRows?.[rowIndex]}
-                expandedInfo={expandedInfo?.[rowIndex]}
-                colSpan={colSpan}
-              />
-            ))}
-            {footerRow && (
-              <T.Row dataTestId={styles.footerRowTestId}>
-                {leadingColumn(fillerCell('footer-checkbox-column'))}
-                {footerRow.map((cell, cellIndex) => (
-                  <T.Data
-                    key={`footer-cell-${cellIndex}`}
-                    data-column-index={cellIndex}
-                    text={{
-                      variant: 'medium',
-                      fontWeight:
-                        cellIndex === footerRow.length - 1
-                          ? 'semiBold'
-                          : undefined,
-                    }}
-                  >
-                    {formatText(cell, application, formatMessage)}
-                  </T.Data>
-                ))}
-                {trailingColumn(fillerCell('footer-input-column'))}
-              </T.Row>
+                  </Text>
+                </dd>
+              </Box>
             )}
-          </T.Body>
-        </T.Table>
+          </>
+        ) : (
+          <T.Table>
+            <T.Head>
+              <T.Row>
+                {leadingColumn(
+                  <T.HeadData style={styles.checkboxColumnStyle}>
+                    <Checkbox
+                      id={`${fieldId}-select-all`}
+                      ariaLabel={formatMessage(
+                        coreMessages.interactiveTableSelectAll,
+                      )}
+                      checked={allSelected}
+                      onChange={toggleAll}
+                    />
+                  </T.HeadData>,
+                )}
+                {header.map((headerCell, index) => {
+                  const isColumnConfig = isHeaderColumnConfig(headerCell)
+                  const label = isColumnConfig ? headerCell.label : headerCell
+                  const width = isColumnConfig ? headerCell.width : undefined
+                  const tooltip = isColumnConfig
+                    ? headerCell.tooltip
+                    : undefined
+                  const text = labels[index]
+
+                  return (
+                    <T.HeadData
+                      key={`${label}-${index}`}
+                      data-column-index={index}
+                      style={
+                        width
+                          ? { width }
+                          : hasInputColumn && index === header.length - 1
+                          ? styles.inputColumnHeaderStyle
+                          : undefined
+                      }
+                    >
+                      {tooltip ? (
+                        <HoverTooltip
+                          text={formatText(tooltip, application, formatMessage)}
+                        >
+                          <span>{text}</span>
+                        </HoverTooltip>
+                      ) : (
+                        text
+                      )}
+                    </T.HeadData>
+                  )
+                })}
+              </T.Row>
+            </T.Head>
+            <T.Body>
+              {renderRows(false)}
+              {footerRow && (
+                <T.Row dataTestId={styles.footerRowTestId}>
+                  {leadingColumn(fillerCell('footer-checkbox-column'))}
+                  {footerRow.map((cell, cellIndex) => (
+                    <T.Data
+                      key={`footer-cell-${cellIndex}`}
+                      data-column-index={cellIndex}
+                      text={{
+                        variant: 'medium',
+                        fontWeight:
+                          cellIndex === footerRow.length - 1
+                            ? 'semiBold'
+                            : undefined,
+                      }}
+                    >
+                      {formatText(cell, application, formatMessage)}
+                    </T.Data>
+                  ))}
+                  {trailingColumn(fillerCell('footer-input-column'))}
+                </T.Row>
+              )}
+            </T.Body>
+          </T.Table>
+        )}
       </Box>
     </Box>
   )

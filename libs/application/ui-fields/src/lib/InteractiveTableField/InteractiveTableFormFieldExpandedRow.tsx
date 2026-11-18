@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, Fragment } from 'react'
 import {
   Application,
   InteractiveTableHeaderCell,
@@ -29,6 +29,7 @@ const isHeaderColumnConfig = (
 interface Props extends Partial<ExpandedTable> {
   info?: StaticText
   application: Application
+  mobile?: boolean
 }
 
 export const hasExpandedTable = (
@@ -52,37 +53,95 @@ export const InteractiveTableFormFieldExpandedRow: FC<Props> = ({
   rows,
   info,
   application,
+  mobile,
 }) => {
   const { formatMessage } = useLocale()
   const table = { header, rows }
   const hasTable = hasExpandedTable(table)
   const columnIndexes = hasTable ? visibleColumnIndexes(table) : []
 
+  const headerLabel = (headerCell: InteractiveTableHeaderCell) =>
+    formatText(
+      isHeaderColumnConfig(headerCell) ? headerCell.label : headerCell,
+      application,
+      formatMessage,
+    )
+
+  const isLinkColumn = (headerCell: InteractiveTableHeaderCell) =>
+    isHeaderColumnConfig(headerCell) && !!headerCell.link
+
+  const renderCell = (row: StaticText[], cellIndex: number) => {
+    const cell = row[cellIndex]
+    const headerCell = (header ?? [])[cellIndex]
+    const url = typeof cell === 'string' ? cell : undefined
+
+    return isLinkColumn(headerCell)
+      ? url && (
+          <button
+            type="button"
+            className={styles.invoiceLinkButton}
+            aria-label={headerLabel(headerCell)}
+            onClick={() => openBffDocument(url)}
+          >
+            <Icon icon="open" type="outline" size="small" color="blue400" />
+          </button>
+        )
+      : formatText(cell, application, formatMessage)
+  }
+
   return (
-    <Box marginRight={2} marginBottom={3}>
-      {hasTable && (
+    <Box marginRight={mobile ? 0 : 2} marginBottom={mobile ? 0 : 3}>
+      {hasTable &&
+        mobile &&
+        table.rows.map((row, rowIndex) => (
+          <Box
+            key={`expanded-row-${rowIndex}`}
+            component="dl"
+            className={styles.pairs}
+            background="white"
+            padding={2}
+            borderTopWidth={rowIndex > 0 ? 'standard' : undefined}
+            borderColor="blue200"
+          >
+            {columnIndexes
+              .filter(
+                (cellIndex) =>
+                  !isLinkColumn(table.header[cellIndex]) || !!row[cellIndex],
+              )
+              .map((cellIndex) => (
+                <Fragment key={`expanded-row-${rowIndex}-cell-${cellIndex}`}>
+                  <dt>
+                    <Text as="span" variant="medium" fontWeight="semiBold">
+                      {headerLabel(table.header[cellIndex])}
+                    </Text>
+                  </dt>
+                  <dd>
+                    <Text as="span" variant="medium">
+                      {renderCell(row, cellIndex)}
+                    </Text>
+                  </dd>
+                </Fragment>
+              ))}
+          </Box>
+        ))}
+      {hasTable && !mobile && (
         <Box className={styles.expandedTable}>
           <T.Table>
             <T.Head>
               <T.Row>
                 {columnIndexes.map((cellIndex) => {
                   const headerCell = table.header[cellIndex]
-                  const label = isHeaderColumnConfig(headerCell)
-                    ? headerCell.label
-                    : headerCell
                   const width = isHeaderColumnConfig(headerCell)
                     ? headerCell.width
                     : undefined
-                  const isLinkColumn =
-                    isHeaderColumnConfig(headerCell) && !!headerCell.link
                   return (
                     <T.HeadData
                       key={`expanded-header-${cellIndex}`}
                       box={{ borderBottomWidth: undefined }}
-                      align={isLinkColumn ? 'center' : undefined}
+                      align={isLinkColumn(headerCell) ? 'center' : undefined}
                       style={width ? { width } : undefined}
                     >
-                      {formatText(label, application, formatMessage)}
+                      {headerLabel(headerCell)}
                     </T.HeadData>
                   )
                 })}
@@ -91,44 +150,14 @@ export const InteractiveTableFormFieldExpandedRow: FC<Props> = ({
             <T.Body>
               {table.rows.map((row, rowIndex) => (
                 <T.Row key={`expanded-row-${rowIndex}`}>
-                  {columnIndexes.map((cellIndex) => {
-                    const cell = row[cellIndex]
-                    const headerCell = table.header[cellIndex]
-                    const isLinkColumn =
-                      isHeaderColumnConfig(headerCell) && !!headerCell.link
-                    const url = typeof cell === 'string' ? cell : undefined
-
-                    return (
-                      <T.Data
-                        key={`expanded-row-${rowIndex}-cell-${cellIndex}`}
-                        box={{ background: 'white' }}
-                      >
-                        {isLinkColumn
-                          ? url && (
-                              <button
-                                type="button"
-                                className={styles.invoiceLinkButton}
-                                aria-label={formatText(
-                                  isHeaderColumnConfig(headerCell)
-                                    ? headerCell.label
-                                    : headerCell,
-                                  application,
-                                  formatMessage,
-                                )}
-                                onClick={() => openBffDocument(url)}
-                              >
-                                <Icon
-                                  icon="open"
-                                  type="outline"
-                                  size="small"
-                                  color="blue400"
-                                />
-                              </button>
-                            )
-                          : formatText(cell, application, formatMessage)}
-                      </T.Data>
-                    )
-                  })}
+                  {columnIndexes.map((cellIndex) => (
+                    <T.Data
+                      key={`expanded-row-${rowIndex}-cell-${cellIndex}`}
+                      box={{ background: 'white' }}
+                    >
+                      {renderCell(row, cellIndex)}
+                    </T.Data>
+                  ))}
                 </T.Row>
               ))}
             </T.Body>

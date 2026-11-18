@@ -1,6 +1,8 @@
 import {
   FC,
+  Fragment,
   memo,
+  ReactNode,
   useCallback,
   useEffect,
   useId,
@@ -14,10 +16,12 @@ import {
   StaticText,
 } from '@island.is/application/types'
 import {
+  Box,
   Button,
   Checkbox,
   HoverTooltip,
   Table as T,
+  Text,
 } from '@island.is/island-ui/core'
 import { formatText } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
@@ -113,7 +117,8 @@ const ExpandableCell: FC<{
   expanded: boolean
   expandedRowId: string
   onToggle: () => void
-}> = ({ value, truncate, expanded, expandedRowId, onToggle }) => {
+  inline?: boolean
+}> = ({ value, truncate, expanded, expandedRowId, onToggle, inline }) => {
   const { ref, isTruncated } = useTruncation(value)
 
   const button = (
@@ -134,6 +139,10 @@ const ExpandableCell: FC<{
       )}
     </Button>
   )
+
+  if (inline) {
+    return button
+  }
 
   return (
     <div className={styles.expandableCell}>
@@ -158,10 +167,12 @@ interface Props {
   inputPlaceholder: string
   inputColumnLabel?: string
   columns: InteractiveTableColumn[]
+  labels: string[]
   expandedHeader?: InteractiveTableHeaderCell[]
   expandedRows?: StaticText[][]
   expandedInfo?: StaticText
   colSpan: number
+  mobile: boolean
 }
 
 const InteractiveTableFormFieldRowComponent: FC<Props> = ({
@@ -176,10 +187,12 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
   inputPlaceholder,
   inputColumnLabel,
   columns,
+  labels,
   expandedHeader,
   expandedRows,
   expandedInfo,
   colSpan,
+  mobile,
 }) => {
   const { formatMessage } = useLocale()
   const { control, setValue, register, unregister } = useFormContext()
@@ -252,18 +265,153 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
     position,
   })
 
+  const checkbox = (
+    <Checkbox
+      id={`${fieldId}-select-${rowIndex}`}
+      ariaLabel={rowLabel}
+      checked={checked}
+      onChange={toggleRow}
+    />
+  )
+
+  const inputHandlers = {
+    onFocus: () => setFocused(true),
+    onBlur: () => {
+      setFocused(false)
+      if (checked && !amountValue) {
+        setValue(checkboxFieldId, false, {
+          shouldDirty: true,
+          shouldTouch: true,
+        })
+      }
+    },
+  }
+
+  const input = hasInputColumn && inputFieldId && (
+    <InputController
+      id={`${inputFieldId}-${rowIndex}`}
+      name={`${inputFieldId}[${rowIndex}]`}
+      ariaLabel={
+        inputColumnLabel ? `${inputColumnLabel}: ${rowLabel}` : rowLabel
+      }
+      type="number"
+      currency
+      rightAlign
+      allowNegative={false}
+      min={1}
+      max={inputMaxAmount}
+      placeholder={focused ? undefined : inputPlaceholder}
+      size="sm"
+      disabled={!checked}
+    />
+  )
+
+  const expandedContent = (
+    <AnimateHeight
+      id={expandedRowId}
+      duration={300}
+      height={expanded ? 'auto' : 0}
+      onHeightAnimationEnd={(newHeight) => {
+        if (newHeight === 0) {
+          setCollapsing(false)
+        }
+      }}
+    >
+      {isOpen && (
+        <Box
+          marginTop={mobile ? 1 : 0}
+          paddingTop={mobile ? 2 : 0}
+          borderTopWidth={mobile ? 'standard' : undefined}
+          borderColor="blue200"
+        >
+          <InteractiveTableFormFieldExpandedRow
+            header={expandedHeader}
+            rows={expandedRows}
+            info={expandedInfo}
+            application={application}
+            mobile={mobile}
+          />
+        </Box>
+      )}
+    </AnimateHeight>
+  )
+
+  if (mobile) {
+    const titleIndex = Math.max(
+      columns.findIndex((column) => column.expandable),
+      0,
+    )
+    const title = formatText(row[titleIndex], application, formatMessage)
+    const pair = (key: string, label: string | undefined, value: ReactNode) => (
+      <Fragment key={key}>
+        <dt>
+          <Text as="span" variant="medium" fontWeight="semiBold">
+            {label}
+          </Text>
+        </dt>
+        {value}
+      </Fragment>
+    )
+
+    return (
+      <Box
+        component="li"
+        paddingX={2}
+        paddingY={2}
+        borderBottomWidth="standard"
+        borderColor="blue200"
+        background={isOpen ? 'blue100' : undefined}
+      >
+        <Box display="flex" justifyContent="spaceBetween" columnGap={2}>
+          {isExpandable && columns[titleIndex]?.expandable ? (
+            <ExpandableCell
+              value={title}
+              truncate={false}
+              expanded={expanded}
+              expandedRowId={expandedRowId}
+              onToggle={toggleExpanded}
+              inline
+            />
+          ) : (
+            <Text variant="medium" fontWeight="semiBold">
+              {title}
+            </Text>
+          )}
+          {selectable && checkbox}
+        </Box>
+        <Box component="dl" className={styles.pairs} marginTop={1}>
+          {row.map((cell, cellIndex) =>
+            cellIndex === titleIndex
+              ? null
+              : pair(
+                  `row-${rowIndex}-cell-${cellIndex}`,
+                  labels[cellIndex],
+                  <dd>
+                    <Text as="span" variant="medium">
+                      {formatText(cell, application, formatMessage)}
+                    </Text>
+                  </dd>,
+                ),
+          )}
+          {input &&
+            pair(
+              `row-${rowIndex}-input`,
+              inputColumnLabel,
+              <dd {...inputHandlers}>{input}</dd>,
+            )}
+        </Box>
+        {isExpandable && expandedContent}
+      </Box>
+    )
+  }
+
   return (
     <>
       <T.Row>
         {selectable && (
           <T.Data box={cellBox('relative')}>
             {isOpen && <div className={styles.line} />}
-            <Checkbox
-              id={`${fieldId}-select-${rowIndex}`}
-              ariaLabel={rowLabel}
-              checked={checked}
-              onChange={toggleRow}
-            />
+            {checkbox}
           </T.Data>
         )}
         {row.map((cell, cellIndex) => {
@@ -296,36 +444,9 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
             </T.Data>
           )
         })}
-        {hasInputColumn && inputFieldId && (
-          <T.Data
-            box={cellBox()}
-            onFocus={() => setFocused(true)}
-            onBlur={() => {
-              setFocused(false)
-              if (checked && !amountValue) {
-                setValue(checkboxFieldId, false, {
-                  shouldDirty: true,
-                  shouldTouch: true,
-                })
-              }
-            }}
-          >
-            <InputController
-              id={`${inputFieldId}-${rowIndex}`}
-              name={`${inputFieldId}[${rowIndex}]`}
-              ariaLabel={
-                inputColumnLabel ? `${inputColumnLabel}: ${rowLabel}` : rowLabel
-              }
-              type="number"
-              currency
-              rightAlign
-              allowNegative={false}
-              min={1}
-              max={inputMaxAmount}
-              placeholder={focused ? undefined : inputPlaceholder}
-              size="sm"
-              disabled={!checked}
-            />
+        {input && (
+          <T.Data box={cellBox()} {...inputHandlers}>
+            {input}
           </T.Data>
         )}
       </T.Row>
@@ -341,25 +462,7 @@ const InteractiveTableFormFieldRowComponent: FC<Props> = ({
             }}
           >
             {isOpen && <div className={styles.line} />}
-            <AnimateHeight
-              id={expandedRowId}
-              duration={300}
-              height={expanded ? 'auto' : 0}
-              onHeightAnimationEnd={(newHeight) => {
-                if (newHeight === 0) {
-                  setCollapsing(false)
-                }
-              }}
-            >
-              {isOpen && (
-                <InteractiveTableFormFieldExpandedRow
-                  header={expandedHeader}
-                  rows={expandedRows}
-                  info={expandedInfo}
-                  application={application}
-                />
-              )}
-            </AnimateHeight>
+            {expandedContent}
           </T.Data>
         </tr>
       )}
@@ -389,6 +492,8 @@ const arePropsEqual = (prev: Props, next: Props) =>
   prev.inputPlaceholder === next.inputPlaceholder &&
   prev.inputColumnLabel === next.inputColumnLabel &&
   prev.colSpan === next.colSpan &&
+  prev.mobile === next.mobile &&
+  areCellsEqual(prev.labels, next.labels) &&
   prev.row.length === next.row.length &&
   prev.row.every((cell, index) => cell === next.row[index]) &&
   prev.columns.length === next.columns.length &&

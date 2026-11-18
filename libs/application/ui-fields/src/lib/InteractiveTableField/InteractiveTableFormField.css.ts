@@ -132,3 +132,26 @@ export const invoiceLinkButton = style({
   padding: 0,
   cursor: 'pointer',
 })
+
+export const pairs = style({
+  display: 'grid',
+  gridTemplateColumns: '150px minmax(0, 1fr)',
+  columnGap: theme.spacing[2],
+  rowGap: theme.spacing[1],
+  alignItems: 'center',
+})
+
+globalStyle(`${pairs} dd`, {
+  margin: 0,
+  overflowWrap: 'anywhere',
+})
+
+globalStyle(`${pairs} ${invoiceLinkButton}`, {
+  justifyContent: 'flex-start',
+  width: 'auto',
+})
+
+export const bleed = style({
+  marginLeft: 'calc(50% - 50vw)',
+  marginRight: 'calc(50% - 50vw)',
+})
