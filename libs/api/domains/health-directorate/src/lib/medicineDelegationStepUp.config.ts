@@ -8,7 +8,7 @@ const schema = z.object({
   scope: z.string(),
   requiredAcr: z.string(),
   allowFakeLogin: z.boolean(),
-  requiredForClients: z.array(z.string()),
+  exemptClients: z.array(z.string()),
   maxAgeInSeconds: z.number(),
 })
 
@@ -32,9 +32,10 @@ export const MedicineDelegationStepUpConfig = defineConfig({
     allowFakeLogin:
       (env.optionalJSON('STEP_UP_ALLOW_FAKE_LOGIN') ?? false) === true,
     // The native app grants with the same mutation and has no step-up screen yet.
-    requiredForClients: env.optionalJSON(
-      'MEDICINE_DELEGATION_STEP_UP_CLIENTS',
-    ) ?? ['@island.is/web'],
+    // Every other client steps up, including ones added later.
+    exemptClients: env.optionalJSON(
+      'MEDICINE_DELEGATION_STEP_UP_EXEMPT_CLIENTS',
+    ) ?? ['@island.is/app'],
     maxAgeInSeconds:
       env.optionalJSON('MEDICINE_DELEGATION_STEP_UP_MAX_AGE_IN_SECONDS') ?? 600,
   }),

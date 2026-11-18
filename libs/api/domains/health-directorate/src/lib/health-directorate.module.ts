@@ -1,4 +1,5 @@
 import { HealthDirectorateClientModule } from '@island.is/clients/health-directorate'
+import { IdentityClientModule } from '@island.is/clients/identity'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { CibaClient } from '@island.is/auth/step-up'
 import type { ConfigType } from '@island.is/nest/config'
@@ -24,6 +25,7 @@ import { TreatmentsResolver } from './resolvers/treatments.resolver'
 @Module({
   imports: [
     HealthDirectorateClientModule,
+    IdentityClientModule,
     FeatureFlagModule,
     CmsTranslationsModule,
   ],

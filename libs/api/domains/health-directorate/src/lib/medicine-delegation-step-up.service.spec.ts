@@ -1,8 +1,16 @@
+import { BadRequestException, ForbiddenException } from '@nestjs/common'
+
 import type { User } from '@island.is/auth-nest-tools'
-import type { CibaClient, StepUpClaims } from '@island.is/auth/step-up'
+import {
+  SessionCannotStepUpError,
+  type CibaClient,
+  type StepUpClaims,
+} from '@island.is/auth/step-up'
+import type { IdentityClientService } from '@island.is/clients/identity'
 import type { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 import {
+  createBindingMessage,
   hashGrant,
   MedicineDelegationStepUpService,
 } from './medicine-delegation-step-up.service'
@@ -14,9 +22,8 @@ const config = {
   scope: 'openid @island.is/auth/step-up',
   requiredAcr: 'eidas-loa-high',
   allowFakeLogin: false,
-  requiredForClients: ['@island.is/web'],
+  exemptClients: ['@island.is/app'],
   maxAgeInSeconds: 600,
-  isConfigured: true,
 }
 
 const user = {
@@ -51,12 +58,16 @@ const setup = ({
 }: { flag?: boolean; configOverrides?: Partial<typeof config> } = {}) => {
   const ciba = { start: jest.fn(), poll: jest.fn() }
   const flags = { getValue: jest.fn().mockResolvedValue(flag) }
+  const identity = {
+    getIdentity: jest.fn().mockResolvedValue({ name: 'Jón Jónsson' }),
+  }
   const service = new MedicineDelegationStepUpService(
     { ...config, ...configOverrides },
     ciba as unknown as CibaClient,
     flags as unknown as FeatureFlagService,
+    identity as unknown as IdentityClientService,
   )
-  return { service, ciba, flags }
+  return { service, ciba, flags, identity }
 }
 
 describe('MedicineDelegationStepUpService', () => {
@@ -64,6 +75,29 @@ describe('MedicineDelegationStepUpService', () => {
     it('is required from the web client when the flag is on', async () => {
       const { service } = setup()
       expect(await service.isRequired(user)).toBe(true)
+    })
+
+    it('is required from a client nobody listed', async () => {
+      const { service } = setup()
+      const other = { ...user, client: '@island.is/some-new-client' } as User
+
+      expect(await service.isRequired(other)).toBe(true)
+    })
+
+    it('asks the flag about the person at the keyboard, and defaults to off', async () => {
+      const { service, flags } = setup()
+      const acting = {
+        ...user,
+        actor: { nationalId: '0101304929', scope: [] },
+      } as User
+
+      await service.isRequired(acting)
+
+      expect(flags.getValue).toHaveBeenCalledWith(
+        'isHealthMedicineDelegationStepUpEnabled',
+        false,
+        expect.objectContaining({ nationalId: '0101304929' }),
+      )
     })
 
     it('is not required when the flag is off', async () => {
@@ -89,16 +123,37 @@ describe('MedicineDelegationStepUpService', () => {
 
       expect(ciba.start).toHaveBeenCalledWith({
         userToken: 'Bearer user-token',
-        bindingMessage: expect.any(String),
+        bindingMessage: 'Lyfjaumboð til Jón Jónsson',
         contextHash: hashGrant(user, input),
       })
+    })
+
+    it('names the recipient by the registry, not by anything the browser sent', async () => {
+      const { service, ciba, identity } = setup()
+      ciba.start.mockResolvedValue({ authReqId: 'req' })
+
+      await service.start(user, input)
+
+      expect(identity.getIdentity).toHaveBeenCalledWith(input.nationalId)
+    })
+
+    it('refuses a recipient the registry does not know', async () => {
+      const { service, ciba, identity } = setup()
+      identity.getIdentity.mockResolvedValue(null)
+
+      await expect(service.start(user, input)).rejects.toThrow(
+        BadRequestException,
+      )
+      expect(ciba.start).not.toHaveBeenCalled()
     })
 
     it('refuses a card session without asking the identity server', async () => {
       const { service, ciba } = setup()
       const cardUser = { ...user, idp: 'audkenni_card' } as User
 
-      expect(() => service.start(cardUser, input)).toThrow()
+      await expect(service.start(cardUser, input)).rejects.toThrow(
+        SessionCannotStepUpError,
+      )
       expect(ciba.start).not.toHaveBeenCalled()
     })
   })
@@ -122,6 +177,7 @@ describe('MedicineDelegationStepUpService', () => {
       })
 
       expect(await service.check(user, 'req', input)).toBe('confirmed')
+      expect(ciba.poll).toHaveBeenCalledWith('req')
     })
 
     it.each([
@@ -138,7 +194,9 @@ describe('MedicineDelegationStepUpService', () => {
         claims: claimsFor(overrides),
       })
 
-      await expect(service.check(user, 'req', input)).rejects.toThrow()
+      await expect(service.check(user, 'req', input)).rejects.toThrow(
+        ForbiddenException,
+      )
     })
 
     it('refuses when the grant was changed after the authentication started', async () => {
@@ -150,7 +208,7 @@ describe('MedicineDelegationStepUpService', () => {
 
       await expect(
         service.check(user, 'req', { ...input, nationalId: '0101303019' }),
-      ).rejects.toThrow()
+      ).rejects.toThrow(ForbiddenException)
     })
 
     it('accepts a fake login only where configured', async () => {
@@ -180,6 +238,14 @@ describe('MedicineDelegationStepUpService', () => {
       })
 
       expect(await service.check(acting, 'req', input)).toBe('confirmed')
+    })
+  })
+
+  describe('createBindingMessage', () => {
+    it('stays within what the identity server and an SMS take', () => {
+      expect(createBindingMessage('A'.repeat(300)).length).toBeLessThanOrEqual(
+        100,
+      )
     })
   })
 

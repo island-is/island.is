@@ -1,5 +1,10 @@
 import { createHash } from 'crypto'
-import { ForbiddenException, Inject, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  ForbiddenException,
+  Inject,
+  Injectable,
+} from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -9,6 +14,7 @@ import {
   type CibaStartResult,
   type StepUpClaims,
 } from '@island.is/auth/step-up'
+import { IdentityClientService } from '@island.is/clients/identity'
 import type { ConfigType } from '@island.is/nest/config'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
@@ -19,8 +25,22 @@ export const MEDICINE_DELEGATION_CIBA_CLIENT = 'MedicineDelegationCibaClient'
 
 const FAKE_LOGIN_ACR = '0'
 
-/** Shown by Auðkenni. Names no one: for a SIM it travels by SMS. */
-const BINDING_MESSAGE = 'Veita lyfjaumboð á Ísland.is'
+const BINDING_MESSAGE_PREFIX = 'Lyfjaumboð til '
+const BINDING_MESSAGE_MAX_LENGTH = 100
+
+/**
+ * Shown by Auðkenni, so the person sees who they are granting to on the device
+ * they approve on. The name is looked up here: the browser's can't be trusted.
+ */
+export const createBindingMessage = (recipientName: string) => {
+  const maxName = BINDING_MESSAGE_MAX_LENGTH - BINDING_MESSAGE_PREFIX.length
+  const name =
+    recipientName.length > maxName
+      ? `${recipientName.slice(0, maxName - 1)}…`
+      : recipientName
+
+  return `${BINDING_MESSAGE_PREFIX}${name}`
+}
 
 export type MedicineDelegationStepUpOutcome =
   | 'pending'
@@ -42,20 +62,22 @@ export class MedicineDelegationStepUpService {
     @Inject(MEDICINE_DELEGATION_CIBA_CLIENT)
     private readonly cibaClient: CibaClient,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly identityService: IdentityClientService,
   ) {}
 
   async isRequired(user: User): Promise<boolean> {
-    if (!this.config.requiredForClients.includes(user.client)) {
+    if (this.config.exemptClients.includes(user.client)) {
       return false
     }
+    // For the person at the keyboard, as the identity server's own flag is.
     return this.featureFlagService.getValue(
       Features.isHealthMedicineDelegationStepUpEnabled,
       false,
-      user,
+      { ...user, nationalId: grantor(user) },
     )
   }
 
-  start(
+  async start(
     user: User,
     input: MedicineDelegationCreateOrDeleteInput,
   ): Promise<CibaStartResult> {
@@ -63,9 +85,14 @@ export class MedicineDelegationStepUpService {
       throw new SessionCannotStepUpError()
     }
 
+    const recipient = await this.identityService.getIdentity(input.nationalId)
+    if (!recipient?.name) {
+      throw new BadRequestException('The recipient was not found.')
+    }
+
     return this.cibaClient.start({
       userToken: user.authorization,
-      bindingMessage: BINDING_MESSAGE,
+      bindingMessage: createBindingMessage(recipient.name),
       contextHash: hashGrant(user, input),
     })
   }

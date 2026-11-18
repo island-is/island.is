@@ -13,8 +13,9 @@ import {
   m,
   Modal,
 } from '@island.is/portals/my-pages/core'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { findProblemInApolloError } from '@island.is/shared/problem'
 import { ConfirmModal } from '../../components/PatientDataPermit/ConfirmModal'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
@@ -41,10 +42,10 @@ type PendingStepUp = {
   input: DelegationInput
 }
 
-const isForbidden = (error: ApolloError) =>
-  error.graphQLErrors?.some(
-    ({ extensions }) => extensions?.code === 'FORBIDDEN',
-  )
+const REFETCH_ON_SAVE = ['GetMedicineDelegations']
+
+const problemStatus = (error: unknown) =>
+  findProblemInApolloError(error as ApolloError)?.status
 
 const NewMedicineDelegation = () => {
   const { formatMessage } = useLocale()
@@ -54,19 +55,32 @@ const NewMedicineDelegation = () => {
   const [formState, setFormState] = useState<DelegationState>()
   const navigate = useNavigate()
 
+  // The list is only fetched again once a delegation was saved, not while waiting for the step-up.
   const [postMedicineDelegation, { loading }] =
     usePostMedicineDelegationMutation({
-      refetchQueries: ['GetMedicineDelegations'],
+      refetchQueries: ({ data }) =>
+        data?.healthDirectorateMedicineDelegationCreate.success
+          ? REFETCH_ON_SAVE
+          : [],
       awaitRefetchQueries: true,
     })
 
   const [checkStepUp] = useCheckMedicineDelegationStepUpMutation({
-    refetchQueries: ['GetMedicineDelegations'],
+    refetchQueries: ({ data }) =>
+      data?.healthDirectorateMedicineDelegationCheckStepUp.success
+        ? REFETCH_ON_SAVE
+        : [],
     awaitRefetchQueries: true,
   })
   const [stepUp, setStepUp] = useState<PendingStepUp>()
+  const created = useRef(false)
 
+  // Once only: a check can confirm after the step-up screen was closed.
   const handleCreated = () => {
+    if (created.current) {
+      return
+    }
+    created.current = true
     toast.success(formatMessage(messages.permitCreated))
     navigate(HealthPaths.HealthMedicineDelegation, {
       replace: true,
@@ -105,9 +119,9 @@ const NewMedicineDelegation = () => {
             )
           }
         })
-        .catch((error: ApolloError) => {
+        .catch((error: unknown) => {
           toast.error(
-            isForbidden(error)
+            problemStatus(error) === 403
               ? formatMessage(coreMessages.stepUpUnavailable)
               : formatMessage(messages.permitCreatedError, { arg: '' }),
           )
@@ -128,16 +142,25 @@ const NewMedicineDelegation = () => {
         },
       })
       result = response.data?.healthDirectorateMedicineDelegationCheckStepUp
-    } catch {
-      // The step-up screen shows this as an authentication that could not be confirmed.
-      throw 'refused'
+    } catch (error) {
+      // A 4xx is final and shown as such; anything else is retried on the next poll.
+      const status = problemStatus(error)
+      if (status && status >= 400 && status < 500) {
+        throw 'refused'
+      }
+      throw error
     }
 
-    if (result?.status === 'confirmed' && !result.success) {
-      // Authenticated, but the delegation could not be saved.
-      handleClose()
-      toast.error(formatMessage(messages.permitCreatedError, { arg: '' }))
-      return 'pending'
+    if (result?.status === 'confirmed') {
+      if (result.success) {
+        // Here and not only in onConfirmed, which is skipped if the screen was closed meanwhile.
+        handleCreated()
+      } else {
+        // Authenticated, but the delegation could not be saved.
+        handleClose()
+        toast.error(formatMessage(messages.permitCreatedError, { arg: '' }))
+        return 'pending'
+      }
     }
 
     return result?.status ?? 'pending'
