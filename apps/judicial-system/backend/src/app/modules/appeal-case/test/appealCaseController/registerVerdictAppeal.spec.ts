@@ -553,8 +553,20 @@ describe('AppealCaseController - Register verdict appeal', () => {
       )
     })
 
-    it('should not record an appeal defender', () => {
-      expect(mockDefendantRepositoryService.update).not.toHaveBeenCalled()
+    it('should record the defender of record, not the supplied one', () => {
+      expect(mockDefendantRepositoryService.update).toHaveBeenCalledTimes(1)
+      expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        defendantId,
+        {
+          appealDefenderName: null,
+          appealDefenderNationalId: defenderNationalId,
+          appealDefenderEmail: null,
+          appealDefenderPhoneNumber: null,
+          isAppealDefenderConfirmed: false,
+        },
+        { transaction },
+      )
     })
   })
 })
