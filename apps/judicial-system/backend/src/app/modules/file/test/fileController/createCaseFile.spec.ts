@@ -5,6 +5,8 @@ import { BadRequestException, ForbiddenException } from '@nestjs/common'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealCaseState,
+  AppealCaseType,
   CaseFileCategory,
   CaseFileState,
   CaseOrigin,
@@ -427,6 +429,70 @@ describe('FileController - Create case file', () => {
     it('should throw error', () => {
       expect(then.error).toBeInstanceOf(Error)
       expect(then.error.message).toBe('Some error')
+    })
+  })
+
+  describe('verdict appeal statement with rulingFileId', () => {
+    const caseId = uuid()
+    const rulingFileId = uuid()
+    const theCase = {
+      id: caseId,
+      verdictAppealCase: {
+        id: uuid(),
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.RECEIVED,
+      },
+    } as Case
+    const uuId = uuid()
+    const createCaseFile: CreateFileDto = {
+      type: 'text/plain',
+      category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+      key: `${caseId}/${uuId}/statement.pdf`,
+      size: 99,
+      rulingFileId,
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(caseId, createCaseFile, theCase)
+    })
+
+    it('should reject the ruling order reference', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(then.error.message).toBe(
+        `Verdict appeal file ${createCaseFile.key} cannot reference a ruling order`,
+      )
+    })
+  })
+
+  describe('verdict appeal statement on a completed verdict appeal', () => {
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+      verdictAppealCase: {
+        id: uuid(),
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.COMPLETED,
+      },
+    } as Case
+    const uuId = uuid()
+    const createCaseFile: CreateFileDto = {
+      type: 'text/plain',
+      category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+      key: `${caseId}/${uuId}/statement.pdf`,
+      size: 99,
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(caseId, createCaseFile, theCase)
+    })
+
+    it('should reject the upload', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(then.error.message).toBe(
+        `Cannot upload a verdict appeal statement when the verdict appeal of case ${caseId} is missing, completed, or withdrawn`,
+      )
     })
   })
 })

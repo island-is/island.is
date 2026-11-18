@@ -6,6 +6,7 @@ import {
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
+  findAppealStatementDeadline,
   hasAllAppealJudges,
   isCourtOfAppealsUser,
   isDefenceUser,
@@ -331,6 +332,86 @@ export const getDefenceUserPartyIds = (
   user: User | undefined,
 ): DefenceUserPartyIds =>
   getDefenceUserMatchingPartyIds(workingCase, user)[0] ?? {}
+
+/**
+ * Parties the defence user may file a verdict-appeal greinargerð for:
+ * Landsréttur confirmation only (not district-court confirmation).
+ */
+export const getDefenceUserAppealConfirmedPartyIds = (
+  workingCase: Pick<WorkingCase, 'type' | 'defendants' | 'civilClaimants'>,
+  user: User | undefined,
+): DefenceUserPartyIds[] => {
+  if (!user || !isIndictmentCase(workingCase.type)) {
+    return []
+  }
+
+  const normalizedId = normalizeAndFormatNationalId(user.nationalId)
+
+  const defendants =
+    workingCase.defendants
+      ?.filter(
+        (d) =>
+          d.isAppealDefenderConfirmed &&
+          !d.isAppealDefenderWaived &&
+          d.appealDefenderNationalId &&
+          normalizedId.includes(d.appealDefenderNationalId),
+      )
+      .map((d) => ({ defendantId: d.id })) ?? []
+
+  const civilClaimants =
+    workingCase.civilClaimants
+      ?.filter(
+        (cc) =>
+          cc.hasAppealSpokesperson !== false &&
+          cc.isAppealSpokespersonConfirmed &&
+          cc.appealSpokespersonNationalId &&
+          normalizedId.includes(cc.appealSpokespersonNationalId),
+      )
+      .map((cc) => ({ civilClaimantId: cc.id })) ?? []
+
+  return [...defendants, ...civilClaimants]
+}
+
+/**
+ * Party an appeal-confirmed advocate should file a verdict-appeal statement
+ * for: the one with the earliest statement deadline among their
+ * Landsréttur-confirmed parties.
+ */
+export const getVerdictAppealStatementParty = (
+  workingCase: Pick<
+    WorkingCase,
+    'type' | 'defendants' | 'civilClaimants' | 'verdictAppealCase'
+  >,
+  user: User | undefined,
+): DefenceUserPartyIds | undefined => {
+  const appealParties = getDefenceUserAppealConfirmedPartyIds(workingCase, user)
+
+  if (appealParties.length === 0) {
+    return undefined
+  }
+
+  let earliest: { party: DefenceUserPartyIds; deadline: string } | undefined
+
+  for (const party of appealParties) {
+    const deadline = findAppealStatementDeadline(
+      workingCase.verdictAppealCase?.statementDeadlines,
+      party,
+    )?.deadline
+
+    if (!deadline) {
+      continue
+    }
+
+    if (
+      !earliest ||
+      new Date(deadline).getTime() < new Date(earliest.deadline).getTime()
+    ) {
+      earliest = { party, deadline }
+    }
+  }
+
+  return earliest?.party
+}
 
 /**
  * Whether a defence user may open a linked case (e.g. merge target / merged-from).

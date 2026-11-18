@@ -114,6 +114,7 @@ export {
 } from './lib/appealCourtSession'
 export {
   findAppealStatementDeadline,
+  findFiledAppealStatementEvent,
   hasFiledAppealStatement,
   isSameAppealStatementParty,
 } from './lib/appealStatementDeadline'

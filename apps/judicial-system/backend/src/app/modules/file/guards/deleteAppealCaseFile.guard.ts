@@ -6,14 +6,20 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { isAppealFileDeletionLocked } from '@island.is/judicial-system/types'
+import {
+  hasFiledAppealStatement,
+  isAppealFileDeletionLocked,
+  verdictAppealStatementFileCategories,
+} from '@island.is/judicial-system/types'
 
 import { findAppealCaseOfCaseFile } from '../../appeal-case'
 import { Case, CaseFile } from '../../repository'
 
 // Appeal files submitted by the parties are delivered to the court of appeals
 // as soon as it registers its case number, so from that point on they can no
-// longer be deleted. The court of appeals' own documents are not affected.
+// longer be deleted. A verdict-appeal greinargerð also locks once that party
+// has recorded APPEAL_STATEMENT_SENT. The court of appeals' own documents are
+// not affected.
 @Injectable()
 export class DeleteAppealCaseFileGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
@@ -31,14 +37,25 @@ export class DeleteAppealCaseFileGuard implements CanActivate {
       throw new InternalServerErrorException('Missing case file')
     }
 
-    if (
-      isAppealFileDeletionLocked(
-        caseFile.category,
-        findAppealCaseOfCaseFile(theCase, caseFile),
-      )
-    ) {
+    const appealCase = findAppealCaseOfCaseFile(theCase, caseFile)
+    const party = {
+      defendantId: caseFile.defendantId,
+      civilClaimantId: caseFile.civilClaimantId,
+    }
+
+    if (isAppealFileDeletionLocked(caseFile.category, appealCase, party)) {
+      const lockedByStatementSent =
+        Boolean(
+          caseFile.category &&
+            verdictAppealStatementFileCategories.includes(caseFile.category),
+        ) &&
+        hasFiledAppealStatement(appealCase?.appealEventLogs, party) &&
+        !appealCase?.appealCaseNumber
+
       throw new ForbiddenException(
-        'Forbidden when the court of appeals has registered its case number',
+        lockedByStatementSent
+          ? 'Forbidden when the appeal statement has already been filed'
+          : 'Forbidden when the court of appeals has registered its case number',
       )
     }
 

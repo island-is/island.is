@@ -1,3 +1,6 @@
+import type { AppealStatementParty } from './appealStatementDeadline'
+import { hasFiledAppealStatement } from './appealStatementDeadline'
+
 export enum CaseFileState {
   STORED_IN_RVG = 'STORED_IN_RVG',
   STORED_IN_COURT = 'STORED_IN_COURT',
@@ -111,7 +114,9 @@ export const verdictAppealFileCategories = [
 
 // Kæra files are delivered to the court of appeals as soon as it registers its
 // case number, so from that point on they can no longer be deleted. A verdict
-// appeal statement follows the same rule.
+// appeal statement follows the same rule, and also locks once that party has
+// recorded APPEAL_STATEMENT_SENT — otherwise a delete after filing leaves the
+// party marked filed with no PDF and no way to file again.
 //
 // An áfrýjunaryfirlýsing locks earlier, and for a different reason: the
 // declaration is the appeal itself, not a document filed in support of one, and
@@ -119,13 +124,25 @@ export const verdictAppealFileCategories = [
 // back means withdrawing the appeal.
 export const isAppealFileDeletionLocked = (
   category?: string | null,
-  appealCase?: { appealCaseNumber?: string | null } | null,
+  appealCase?: {
+    appealCaseNumber?: string | null
+    appealEventLogs?: Parameters<typeof hasFiledAppealStatement>[0]
+  } | null,
+  party?: AppealStatementParty,
 ): boolean => {
   if (!appealCase) {
     return false
   }
 
   if (isVerdictAppealDeclarationCategory(category)) {
+    return true
+  }
+
+  if (
+    isVerdictAppealStatementCategory(category) &&
+    party &&
+    hasFiledAppealStatement(appealCase.appealEventLogs, party)
+  ) {
     return true
   }
 

@@ -189,6 +189,11 @@ const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000
 const isStatementDeadlineRunning = (deadline: Date, now: Date): boolean =>
   now.getTime() < deadline.getTime() + DAY_IN_MILLISECONDS
 
+export const isStatementDeadlineExpired = (
+  deadline: Date,
+  now: Date = new Date(),
+): boolean => !isStatementDeadlineRunning(deadline, now)
+
 export const verdictAppealProgress = (
   appealCase: Pick<
     AppealCase,

@@ -5,7 +5,11 @@ import {
   getDefendantVerdictAppealDecisionLabel,
   getServiceRequirementText,
 } from '@island.is/judicial-system/formatters'
-import { findAppealStatementDeadline } from '@island.is/judicial-system/types'
+import {
+  findAppealStatementDeadline,
+  hasFiledAppealStatement,
+  isSameAppealStatementParty,
+} from '@island.is/judicial-system/types'
 import { getAppealExpirationInfo } from '@island.is/judicial-system-web/src/components/InfoCard/DefendantInfo/DefendantInfo.logic'
 import type {
   AppealCase,
@@ -14,6 +18,7 @@ import type {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealCaseState,
+  AppealEventType,
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -130,17 +135,32 @@ export const getDefenderVerdictTimelineItems = ({
   }
 
   // Greinargerðarfrest for this defendant while the verdict appeal is open.
+  // Once the party has filed, the sent date replaces the deadline line.
   // Completed / withdrawn appeals leave the outcome off this card for now.
   if (
     verdictAppealCase?.appealState !== AppealCaseState.COMPLETED &&
     verdictAppealCase?.appealState !== AppealCaseState.WITHDRAWN
   ) {
+    const party = { defendantId }
     const statementDeadline = findAppealStatementDeadline(
       verdictAppealCase?.statementDeadlines,
-      { defendantId },
+      party,
     )
 
-    if (statementDeadline?.deadline) {
+    if (hasFiledAppealStatement(verdictAppealCase?.appealEventLogs, party)) {
+      // Filed status does not require a portal deadline — Landsréttur can
+      // record a statement received outside the system.
+      const statementEvent = verdictAppealCase?.appealEventLogs?.find(
+        (eventLog) =>
+          eventLog.eventType === AppealEventType.APPEAL_STATEMENT_SENT &&
+          isSameAppealStatementParty(eventLog, party),
+      )
+      const sentDate = formatDate(statementEvent?.created)
+
+      items.push({
+        text: sentDate ? `Greinargerð send ${sentDate}` : 'Greinargerð send',
+      })
+    } else if (statementDeadline?.deadline) {
       items.push({
         text: `Frestur til að skila greinargerð ${
           statementDeadline.isExpired ? 'rann út' : 'er til'

@@ -5,7 +5,11 @@ import { v4 as uuid } from 'uuid'
 import { MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseNotificationType,
+  AppealCaseState,
+  AppealCaseType,
   AppealEventType,
+  CaseFileCategory,
+  CaseFileState,
   CaseType,
   User,
   UserRole,
@@ -34,7 +38,11 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (theCase: Case) => Promise<Then>
+type GivenWhenThen = (
+  theCase: Case,
+  dto?: CreateAppealEventLogDto,
+  targetAppealCase?: AppealCase,
+) => Promise<Then>
 
 describe('LimitedAccessAppealCaseController - Create event log', () => {
   const caseId = uuid()
@@ -42,7 +50,25 @@ describe('LimitedAccessAppealCaseController - Create event log', () => {
   const defendantId = uuid()
   const defenderNationalId = '0101302129'
 
-  const appealCase = { id: appealCaseId, caseId } as AppealCase
+  const appealCase = {
+    id: appealCaseId,
+    caseId,
+    appealType: AppealCaseType.RULING,
+  } as AppealCase
+  const openStatementDeadline = new Date()
+  openStatementDeadline.setDate(openStatementDeadline.getDate() + 14)
+  const verdictAppealCase = {
+    id: appealCaseId,
+    caseId,
+    appealType: AppealCaseType.VERDICT,
+    statementDeadlines: [
+      {
+        id: uuid(),
+        defendantId,
+        deadline: openStatementDeadline,
+      },
+    ],
+  } as AppealCase
 
   const defender = {
     id: uuid(),
@@ -74,10 +100,10 @@ describe('LimitedAccessAppealCaseController - Create event log', () => {
     transaction = {} as Transaction
     mockTransaction.mockResolvedValue(transaction)
 
-    givenWhenThen = async (theCase) => {
+    givenWhenThen = async (theCase, dto, targetAppealCase = appealCase) => {
       const then = {} as Then
 
-      const dto: CreateAppealEventLogDto = {
+      const body: CreateAppealEventLogDto = dto ?? {
         eventType: AppealEventType.APPEAL_STATEMENT_SENT,
       }
 
@@ -97,8 +123,8 @@ describe('LimitedAccessAppealCaseController - Create event log', () => {
             appealCaseId,
             defender,
             theCase,
-            appealCase,
-            dto,
+            targetAppealCase,
+            body,
           )
         })
       } catch (error) {
@@ -165,6 +191,296 @@ describe('LimitedAccessAppealCaseController - Create event log', () => {
     // An event log announces nothing, so nothing waits for the commit.
     it('should register nothing to run after the commit', () => {
       expect(transactionContext?.afterCommit).toHaveLength(0)
+    })
+  })
+
+  describe('appeal-confirmed defender sends a verdict-appeal statement for one of several parties', () => {
+    const otherDefendantId = uuid()
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants: [
+        {
+          id: defendantId,
+          isAppealDefenderConfirmed: true,
+          appealDefenderNationalId: defenderNationalId,
+        },
+        {
+          id: otherDefendantId,
+          isAppealDefenderConfirmed: true,
+          appealDefenderNationalId: defenderNationalId,
+        },
+      ],
+      caseFiles: [
+        {
+          id: uuid(),
+          category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          state: CaseFileState.STORED_IN_RVG,
+          isKeyAccessible: true,
+          defendantId,
+        },
+      ],
+    } as unknown as Case
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        theCase,
+        {
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          defendantId,
+        },
+        verdictAppealCase,
+      )
+    })
+
+    it('should tie the event log only to the named defendant', () => {
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledTimes(
+        1,
+      )
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
+        {
+          caseId,
+          appealCaseId,
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          userRole: UserRole.DEFENDER,
+          defendantId,
+          nationalId: defender.nationalId,
+          userName: defender.name,
+          userTitle: defender.title,
+          institutionName: defender.institution?.name,
+        },
+        { transaction },
+      )
+      expect(then.error).toBeUndefined()
+    })
+  })
+
+  describe('appeal-confirmed defender sends a verdict-appeal statement without a statement file', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants: [
+        {
+          id: defendantId,
+          isAppealDefenderConfirmed: true,
+          appealDefenderNationalId: defenderNationalId,
+        },
+      ],
+      caseFiles: [],
+    } as unknown as Case
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        theCase,
+        {
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          defendantId,
+        },
+        verdictAppealCase,
+      )
+    })
+
+    it('should reject the request', () => {
+      expect(then.error).toBeDefined()
+      expect(then.error.message).toBe(
+        `No verdict appeal statement file for the party on appeal case ${appealCaseId} of case ${caseId}`,
+      )
+      expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('verdict appeal statement without a party id', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants: [
+        {
+          id: defendantId,
+          isAppealDefenderConfirmed: true,
+          appealDefenderNationalId: defenderNationalId,
+        },
+      ],
+    } as unknown as Case
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        theCase,
+        { eventType: AppealEventType.APPEAL_STATEMENT_SENT },
+        verdictAppealCase,
+      )
+    })
+
+    it('should reject the request', () => {
+      expect(then.error).toBeDefined()
+      expect(then.error.message).toBe(
+        'Verdict appeal statement events require defendantId or civilClaimantId',
+      )
+      expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('district-only confirmed defender sends a verdict-appeal statement', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants: [
+        {
+          id: defendantId,
+          isDefenderChoiceConfirmed: true,
+          defenderNationalId: defenderNationalId,
+        },
+      ],
+    } as unknown as Case
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        theCase,
+        {
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          defendantId,
+        },
+        verdictAppealCase,
+      )
+    })
+
+    it('should forbid the request', () => {
+      expect(then.error).toBeDefined()
+      expect(then.error.message).toBe(
+        `Current user is not a confirmed appeal defender of defendant ${defendantId}`,
+      )
+      expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('appeal-confirmed defender sends a statement after the deadline', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants: [
+        {
+          id: defendantId,
+          isAppealDefenderConfirmed: true,
+          appealDefenderNationalId: defenderNationalId,
+        },
+      ],
+    } as unknown as Case
+    const expiredDeadline = new Date()
+    expiredDeadline.setDate(expiredDeadline.getDate() - 2)
+    const expiredAppealCase = {
+      ...verdictAppealCase,
+      statementDeadlines: [
+        {
+          id: uuid(),
+          defendantId,
+          deadline: expiredDeadline,
+        },
+      ],
+    } as AppealCase
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        theCase,
+        {
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          defendantId,
+        },
+        expiredAppealCase,
+      )
+    })
+
+    it('should reject the request', () => {
+      expect(then.error).toBeDefined()
+      expect(then.error.message).toBe(
+        `The statement deadline for the party on appeal case ${appealCaseId} of case ${caseId} has expired`,
+      )
+      expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('appeal-confirmed defender sends a statement on a completed verdict appeal', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants: [
+        {
+          id: defendantId,
+          isAppealDefenderConfirmed: true,
+          appealDefenderNationalId: defenderNationalId,
+        },
+      ],
+    } as unknown as Case
+    const completedAppealCase = {
+      ...verdictAppealCase,
+      appealState: AppealCaseState.COMPLETED,
+    } as AppealCase
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        theCase,
+        {
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          defendantId,
+        },
+        completedAppealCase,
+      )
+    })
+
+    it('should reject the request', () => {
+      expect(then.error).toBeDefined()
+      expect(then.error.message).toBe(
+        `Cannot record a statement for completed or withdrawn appeal case ${appealCaseId} of case ${caseId}`,
+      )
+      expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('appeal-confirmed defender sends a verdict-appeal statement already filed', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants: [
+        {
+          id: defendantId,
+          isAppealDefenderConfirmed: true,
+          appealDefenderNationalId: defenderNationalId,
+        },
+      ],
+    } as unknown as Case
+    const alreadyFiledAppealCase = {
+      ...verdictAppealCase,
+      appealEventLogs: [
+        {
+          id: uuid(),
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          defendantId,
+        },
+      ],
+    } as AppealCase
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        theCase,
+        {
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          defendantId,
+        },
+        alreadyFiledAppealCase,
+      )
+    })
+
+    it('should reject a duplicate filing', () => {
+      expect(then.error).toBeDefined()
+      expect(then.error.message).toBe(
+        `The party has already filed its statement in appeal case ${appealCaseId} of case ${caseId}`,
+      )
+      expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
     })
   })
 

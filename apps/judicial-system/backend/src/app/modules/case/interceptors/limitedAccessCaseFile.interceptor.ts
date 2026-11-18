@@ -54,6 +54,7 @@ export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
               civilClaimantId,
               isRulingOrderInConfirmedCourtSession:
                 isRulingOrderInConfirmedCourtSession(id, theCase.courtSessions),
+              appealEventLogs: theCase.verdictAppealCase?.appealEventLogs,
             }),
         )
 

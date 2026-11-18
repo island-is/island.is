@@ -8,6 +8,7 @@ import { FeatureContext } from '@island.is/judicial-system-web/src/components'
 import {
   AppealCaseState,
   AppealCourtSessionType,
+  AppealEventType,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
@@ -360,6 +361,86 @@ describe('Defender IndictmentOverview', () => {
         ),
       ).toBeInTheDocument()
       expect(screen.queryByText('Dómur áfrýjaður')).not.toBeInTheDocument()
+    })
+
+    it('offers the statement action on the card for a confirmed appeal defender', async () => {
+      const theCase = completedCase(CaseIndictmentRulingDecision.RULING, {
+        verdictAppealCase: {
+          id: 'verdict_appeal_case_id',
+          appealState: AppealCaseState.RECEIVED,
+          statementDeadlines: [
+            {
+              id: 'deadline_id',
+              defendantId: 'own_client_id',
+              deadline: '2026-09-14T00:00:00.000Z',
+              isExpired: false,
+            },
+          ],
+        },
+      })
+      const [ownClient, ...others] = theCase.defendants ?? []
+
+      renderOverview({
+        ...theCase,
+        defendants: ownClient
+          ? [
+              {
+                ...ownClient,
+                isAppealDefenderConfirmed: true,
+                appealDefenderNationalId: defenderNationalId,
+              },
+              ...others,
+            ]
+          : [],
+      })
+
+      const timelineCards = await screen.findAllByTestId(
+        'defenderVerdictTimelineCard',
+      )
+
+      expect(menuButtonOf(timelineCards[0])).toBeInTheDocument()
+      expect(menuButtonOf(timelineCards[1])).not.toBeInTheDocument()
+      expect(screen.queryByText('Dómur áfrýjaður')).not.toBeInTheDocument()
+    })
+
+    it('replaces the deadline with the sent date once the statement is filed', async () => {
+      renderOverview(
+        completedCase(CaseIndictmentRulingDecision.RULING, {
+          verdictAppealCase: {
+            id: 'verdict_appeal_case_id',
+            appealState: AppealCaseState.RECEIVED,
+            statementDeadlines: [
+              {
+                id: 'deadline_id',
+                defendantId: 'own_client_id',
+                deadline: '2026-09-14T00:00:00.000Z',
+                isExpired: false,
+              },
+            ],
+            appealEventLogs: [
+              {
+                id: 'event_id',
+                created: '2026-09-10T12:00:00.000Z',
+                eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+                defendantId: 'own_client_id',
+              },
+            ],
+          },
+        }),
+      )
+
+      const timelineCards = await screen.findAllByTestId(
+        'defenderVerdictTimelineCard',
+      )
+
+      expect(
+        within(timelineCards[0]).getByText('• Greinargerð send 10.09.2026'),
+      ).toBeInTheDocument()
+      expect(
+        within(timelineCards[0]).queryByText(
+          /Frestur til að skila greinargerð/,
+        ),
+      ).not.toBeInTheDocument()
     })
   })
 

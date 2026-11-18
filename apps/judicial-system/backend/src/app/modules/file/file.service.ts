@@ -38,7 +38,7 @@ import { nowFactory } from '../../factories'
 import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
 import { hasConfirmableCaseFileCategories } from '../../formatters/confirmation/confirmedPdf'
 import { queueMessagesAfterCommit } from '../../middleware'
-import { findAppealCaseOfCaseFile } from '../appeal-case'
+import { findAppealCaseOfCaseFile, isVerdictAppealOver } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
 import { CourtDocumentFolder, CourtService } from '../court'
@@ -406,7 +406,37 @@ export class FileService {
       )
     }
 
+    const isVerdictAppealStatementCategory =
+      createFile.category !== undefined &&
+      [
+        CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+        CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE,
+        CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT,
+        CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE,
+      ].includes(createFile.category)
+
+    // Verdict-appeal statements only belong on an open verdict appeal. The
+    // overview CTA already hides once the appeal is over; enforce the same
+    // rule here so a direct upload cannot bypass it.
+    if (isVerdictAppealStatementCategory) {
+      const verdictAppealCase = theCase.verdictAppealCase
+
+      if (!verdictAppealCase || isVerdictAppealOver(verdictAppealCase)) {
+        throw new BadRequestException(
+          `Cannot upload a verdict appeal statement when the verdict appeal of case ${theCase.id} is missing, completed, or withdrawn`,
+        )
+      }
+    }
+
     if (rulingFileId) {
+      // Verdict-appeal statements are case-level files. A rulingFileId would
+      // bind them to the ruling-order appeal for deletion locks and delivery.
+      if (isVerdictAppealStatementCategory) {
+        throw new BadRequestException(
+          `Verdict appeal file ${createFile.key} cannot reference a ruling order`,
+        )
+      }
+
       const rulingFile = theCase.caseFiles?.find((f) => f.id === rulingFileId)
       if (!rulingFile) {
         throw new BadRequestException(

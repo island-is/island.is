@@ -372,8 +372,8 @@ export class FileController {
   }
 
   @UseGuards(
-    CaseExistsGuard,
     RolesGuard,
+    CaseExistsForUpdateGuard,
     CaseWriteGuard,
     CaseFileExistsGuard,
     DeleteAppealCaseFileGuard,
@@ -393,7 +393,7 @@ export class FileController {
     type: DeleteFileResponse,
     description: 'Deletes a case file',
   })
-  deleteCaseFile(
+  async deleteCaseFile(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Param('fileId') fileId: string,
@@ -401,7 +401,12 @@ export class FileController {
   ): Promise<DeleteFileResponse> {
     this.logger.debug(`Deleting file ${fileId} of case ${caseId}`)
 
-    return this.fileService.deleteCaseFile(theCase, caseFile)
+    // The transaction CaseExistsForUpdateGuard opened - see createCaseFile.
+    // Holds the case row so DeleteAppealCaseFileGuard's SENT / case-number
+    // read cannot race a concurrent APPEAL_STATEMENT_SENT commit.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.fileService.deleteCaseFile(theCase, caseFile, transaction)
   }
 
   // RolesGuard must run after the case read here: the roles rule is

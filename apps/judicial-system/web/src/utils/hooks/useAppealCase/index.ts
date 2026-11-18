@@ -278,6 +278,7 @@ const useAppealCase = () => {
         caseId: string,
         appealCaseId: string,
         eventType: AppealEventType,
+        party?: { defendantId?: string; civilClaimantId?: string },
       ): Promise<boolean> => {
         const mutation = limitedAccess
           ? limitedAccessCreateAppealEventLogMutation
@@ -285,10 +286,30 @@ const useAppealCase = () => {
 
         try {
           const { data } = await mutation({
-            variables: { input: { caseId, appealCaseId, eventType } },
+            variables: {
+              input: {
+                caseId,
+                appealCaseId,
+                eventType,
+                ...(party?.defendantId
+                  ? { defendantId: party.defendantId }
+                  : {}),
+                ...(party?.civilClaimantId
+                  ? { civilClaimantId: party.civilClaimantId }
+                  : {}),
+              },
+            },
           })
 
-          return Boolean(data)
+          const createdId = limitedAccess
+            ? data &&
+              'limitedAccessCreateAppealEventLog' in data &&
+              data.limitedAccessCreateAppealEventLog?.id
+            : data &&
+              'createAppealEventLog' in data &&
+              data.createAppealEventLog?.id
+
+          return Boolean(createdId)
         } catch {
           toast.error(errors.updateCase)
           return false

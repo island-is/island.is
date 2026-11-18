@@ -229,7 +229,8 @@ export class AppealCaseResolver {
     @Args('input', { type: () => CreateAppealEventLogInput })
     input: CreateAppealEventLogInput,
   ): Promise<AppealCase> {
-    const { caseId, appealCaseId, eventType } = input
+    const { caseId, appealCaseId, eventType, defendantId, civilClaimantId } =
+      input
 
     this.logger.debug(
       `Creating appeal event log ${eventType} on appeal case ${appealCaseId} of case ${caseId}`,
@@ -239,6 +240,8 @@ export class AppealCaseResolver {
       caseId,
       appealCaseId,
       eventType,
+      defendantId,
+      civilClaimantId,
     )
   }
 
