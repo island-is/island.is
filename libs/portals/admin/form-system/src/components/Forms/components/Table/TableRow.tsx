@@ -406,7 +406,13 @@ export const TableRow = ({
           })
           setFormsState((prevForms) =>
             prevForms.map((form) =>
-              form.id === id ? { ...form, status: FormStatus.PUBLISHED } : form,
+              form.id === id
+                ? {
+                    ...form,
+                    status: FormStatus.PUBLISHED,
+                    isInaccessible: false,
+                  }
+                : form,
             ),
           )
         } catch (error) {
@@ -454,6 +460,7 @@ export const TableRow = ({
                   ? {
                       ...form,
                       status: FormStatus.PUBLISHED,
+                      isInaccessible: false,
                       slug:
                         slug === publishedSlug + '-i-breytingu'
                           ? publishedSlug

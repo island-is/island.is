@@ -1,7 +1,7 @@
 import { FormStatus } from '@island.is/form-system/enums'
 import { toast } from '@island.is/island-ui/core'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 import { TableRow } from './TableRow'
 
 const mockUpdateFormStatus = jest.fn()
@@ -124,11 +124,74 @@ describe('inaccessible forms', () => {
   )
 })
 
-describe('publishing a changed form', () => {
+describe('publishing a form', () => {
   afterEach(() => {
     jest.restoreAllMocks()
     jest.clearAllMocks()
   })
+
+  it.each([FormStatus.IN_DEVELOPMENT, FormStatus.PUBLISHED_BEING_CHANGED])(
+    'clears the inaccessible lock and notice after publishing from %s',
+    async (status) => {
+      const form: FormSystemForm = {
+        id: 'form',
+        name: { is: 'Test form', en: 'Test form' },
+        status,
+        slug:
+          status === FormStatus.PUBLISHED_BEING_CHANGED
+            ? 'form-i-breytingu'
+            : 'form',
+        created: '2026-01-01T00:00:00Z',
+        modified: '2026-01-01T00:00:00Z',
+        allowProceedOnValidationFail: false,
+        draftDaysToLive: 0,
+        enableApplicationPdfDownload: false,
+        hasSummaryScreen: false,
+        isInaccessible: true,
+        isTranslated: true,
+        submissionDaysToLive: 0,
+        validateEligibility: false,
+      }
+      mockGetForm.mockResolvedValue({
+        data: { formSystemForm: { form } },
+      })
+      mockUpdateFormStatus.mockResolvedValue({
+        data: {
+          updateFormSystemFormStatus: {
+            form: { id: 'original-form', slug: 'form-archived-123' },
+          },
+        },
+      })
+      const FormRow = () => {
+        const [forms, setForms] = useState([form])
+        return (
+          <TableRow
+            id={forms[0].id}
+            name={forms[0].name?.is ?? ''}
+            slug={forms[0].slug ?? ''}
+            status={forms[0].status}
+            isInaccessible={forms[0].isInaccessible}
+            isHeader={false}
+            setFormsState={setForms}
+          />
+        )
+      }
+      render(<FormRow />)
+      fireEvent.click(screen.getByText('Test form'))
+      expect(screen.queryByTestId('icon-lockClosed')).not.toBeNull()
+      expect(
+        screen.queryByText('Eyðublaðið er ekki aðgengilegt.'),
+      ).not.toBeNull()
+
+      fireEvent.click(screen.getByRole('button', { name: 'Publish' }))
+
+      await waitFor(() =>
+        expect(screen.queryByTestId('icon-lockClosed')).toBeNull(),
+      )
+      expect(screen.queryByText('Eyðublaðið er ekki aðgengilegt.')).toBeNull()
+      expect(screen.queryByRole('button', { name: 'Publish' })).toBeNull()
+    },
+  )
 
   it('shows an error toast and leaves forms unchanged when publishing fails', async () => {
     const error = new Error('Unexpected error publishing form')
@@ -145,6 +208,7 @@ describe('publishing a changed form', () => {
         name="Changed form"
         slug="form-i-breytingu"
         status={FormStatus.PUBLISHED_BEING_CHANGED}
+        isInaccessible
         isHeader={false}
         setFormsState={setFormsState}
       />,
@@ -153,7 +217,7 @@ describe('publishing a changed form', () => {
 
     await waitFor(() =>
       expect(toast.error).toHaveBeenCalledWith(
-        'Ekki tókst að birta breytt eyðublað. Athugaðu hvort upprunalega eyðublaðið sé enn útgefið.',
+        'Ekki er hægt að gefa þetta breytta form út því upprunalega formið er komið í geymslu (archived).',
       ),
     )
     expect(mockUpdateFormStatus).toHaveBeenCalledWith({
@@ -165,6 +229,8 @@ describe('publishing a changed form', () => {
       },
     })
     expect(setFormsState).not.toHaveBeenCalled()
+    expect(screen.queryByTestId('icon-lockClosed')).not.toBeNull()
     expect(console.error).toHaveBeenCalledWith('Error publishing form:', error)
   })
 })
+import { FormSystemForm } from '@island.is/api/schema'
