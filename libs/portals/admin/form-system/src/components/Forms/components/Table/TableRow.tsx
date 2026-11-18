@@ -453,6 +453,13 @@ export const TableRow = ({
               .filter((form) => form.id !== returnedForm.id)
           })
         } catch (error) {
+          toast.error(
+            formatMessage({
+              id: 'publishChangedFormError',
+              defaultMessage:
+                'Ekki er hægt að gefa þetta breytta form út því upprunalega formið er komið í geymslu (archived).',
+            }),
+          )
           console.error('Error publishing form:', error)
         }
       },
