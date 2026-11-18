@@ -62,8 +62,7 @@ export const en: TranslatedMessages = {
     'Turn on {biometricType} for Ísland.is in your device settings.',
   'biometrics.notNow': 'Not now',
   'biometrics.notEnrolledTitle': 'No biometrics set up',
-  'biometrics.notEnrolledMessage.android':
-    "Add a fingerprint in your phone's settings to open the app with it.",
+  'biometrics.notEnrolledTitle.android': 'No fingerprint set up',
   'biometrics.notEnrolledMessage.ios':
     "Set up {biometricType} in your phone's settings to open the app with it.",
   'biometrics.openSettings': 'Open settings',
@@ -100,6 +99,8 @@ export const en: TranslatedMessages = {
   'onboarding.biometrics.title': 'Allow biometrics',
   'onboarding.biometrics.bodyWithoutPin':
     'Open the app with {biometricType}. If you skip this, you will need electronic ID every time.',
+  'onboarding.biometrics.strongNotEnrolled':
+    'Only fingerprint or secure face unlock can be used to open the app. Set one up in your device settings.',
   'onboarding.biometrics.notEnrolled':
     "Your device supports {biometricType} but you haven't enrolled into it yet.",
   'onboarding.biometrics.noAuthenticationTypes':

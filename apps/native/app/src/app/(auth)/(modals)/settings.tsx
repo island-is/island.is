@@ -120,8 +120,12 @@ export default function SettingsScreen() {
   } = usePreferencesStore()
 
   const isInfoDismissed = dismissed.includes('userSettingsInformational')
-  const { authenticationTypes, isEnrolledBiometrics, hasBiometricHardware } =
-    useUiStore()
+  const {
+    authenticationTypes,
+    isEnrolledBiometrics,
+    hasBiometricHardware,
+    hasStrongBiometricHardware,
+  } = useUiStore()
   const biometricType = useBiometricType(authenticationTypes)
   // Turned off for this app in the phone's settings: turning it on here says
   // where to turn it back on.
@@ -129,6 +133,8 @@ export default function SettingsScreen() {
     Platform.OS === 'ios' &&
     authenticationTypes.length > 0 &&
     !hasBiometricHardware
+  // Biometrics that can unlock the app: on Android not weak ones only.
+  const supportsBiometrics = hasStrongBiometricHardware || isBiometricsTurnedOff
   const isPasskeyEnabled = useFeatureFlag('isPasskeyEnabled', false)
 
   // Biometrics are a key registered with IAS.
@@ -534,7 +540,7 @@ export default function SettingsScreen() {
               { biometricType: biometricType.text },
             )}
             subtitle={
-              authenticationTypes.length === 0
+              !supportsBiometrics
                 ? intl.formatMessage({
                     id: 'onboarding.biometrics.noAuthenticationTypes',
                   })
@@ -544,7 +550,12 @@ export default function SettingsScreen() {
                     { biometricType: biometricType.text },
                   )
                 : intl.formatMessage(
-                    { id: 'onboarding.biometrics.notEnrolled' },
+                    {
+                      id:
+                        Platform.OS === 'android'
+                          ? 'onboarding.biometrics.strongNotEnrolled'
+                          : 'onboarding.biometrics.notEnrolled',
+                    },
                     { biometricType: biometricType.text },
                   )
             }
@@ -553,7 +564,7 @@ export default function SettingsScreen() {
                 <Switch
                   onValueChange={(value) => void onBiometricsChange(value)}
                   // Without biometrics set up, a tap says where to do it.
-                  disabled={authenticationTypes.length === 0 || isEnabling}
+                  disabled={!supportsBiometrics || isEnabling}
                   value={hasBiometricKey}
                   thumbColor={Platform.select({
                     android: theme.tokens.app.background.neutral,

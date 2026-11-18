@@ -61,8 +61,7 @@ export const is = {
     'Kveiktu á {biometricType} fyrir Ísland.is í stillingum tækisins.',
   'biometrics.notNow': 'Ekki núna',
   'biometrics.notEnrolledTitle': 'Engin lífkenni skráð',
-  'biometrics.notEnrolledMessage.android':
-    'Skráðu fingrafar í stillingum símans til að opna appið með því.',
+  'biometrics.notEnrolledTitle.android': 'Fingrafar ekki skráð',
   'biometrics.notEnrolledMessage.ios':
     'Settu upp {biometricType} í stillingum símans til að opna appið með því.',
   'biometrics.openSettings': 'Opna stillingar',
@@ -98,6 +97,8 @@ export const is = {
   'onboarding.biometrics.title': 'Leyfa lífkenni',
   'onboarding.biometrics.bodyWithoutPin':
     'Opnaðu appið með {biometricType}. Ef þú sleppir því þarftu rafræn skilríki í hvert skipti.',
+  'onboarding.biometrics.strongNotEnrolled':
+    'Aðeins er hægt að nota fingrafar eða örugga andlitsgreiningu til að opna appið. Settu það upp í stillingum tækisins.',
   'onboarding.biometrics.notEnrolled':
     'Tækið þitt styður {biometricType} en þú hefur ekki virkjað það.',
   'onboarding.biometrics.noAuthenticationTypes':

@@ -1,12 +1,10 @@
-import {
-  hasHardwareAsync,
-  supportedAuthenticationTypesAsync,
-} from 'expo-local-authentication'
+import { supportedAuthenticationTypesAsync } from 'expo-local-authentication'
 import { router } from 'expo-router'
 import { isIos } from './devices'
 import { androidIsVersion33OrAbove } from './versions-check'
 import { preferencesStore } from '../stores/preferences-store'
 import { uiStore } from '../stores/ui-store'
+import { hasStrongBiometricHardwareAsync } from './biometrics'
 
 /**
  * The onboarding step to come back to after an unlock, for someone who left
@@ -23,11 +21,11 @@ export function getUnfinishedOnboardingStep():
     hasOnboardedNotifications,
     hasOnboardedPrivacy,
   } = preferencesStore.getState()
-  // Any biometrics, also when they're turned off for the app.
-  if (
-    uiStore.getState().authenticationTypes.length > 0 &&
-    !hasOnboardedBiometrics
-  ) {
+  // Biometrics that can unlock the app, also when they're turned off for it.
+  const { authenticationTypes, hasStrongBiometricHardware } = uiStore.getState()
+  const hasBiometrics =
+    hasStrongBiometricHardware || (isIos && authenticationTypes.length > 0)
+  if (hasBiometrics && !hasOnboardedBiometrics) {
     return 'biometrics'
   }
   if ((isIos || androidIsVersion33OrAbove()) && !hasOnboardedNotifications) {
@@ -54,9 +52,9 @@ export async function getNextOnboardingStep(): Promise<
 
   // iOS says there's no hardware also when biometrics are turned off for this
   // app. The step then says where to turn them on, so only a phone without
-  // any skips it.
+  // any that can unlock the app skips it.
   const hasBiometrics =
-    (await hasHardwareAsync()) ||
+    (await hasStrongBiometricHardwareAsync()) ||
     (isIos && (await supportedAuthenticationTypesAsync()).length > 0)
   if (hasBiometrics) {
     if (!hasOnboardedBiometrics) {

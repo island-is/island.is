@@ -1,8 +1,4 @@
-import {
-  authenticateAsync,
-  hasHardwareAsync,
-  isEnrolledAsync,
-} from 'expo-local-authentication'
+import { authenticateAsync, hasHardwareAsync } from 'expo-local-authentication'
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Alert, Linking, Platform } from 'react-native'
@@ -11,6 +7,7 @@ import { getSystemIntl } from '@/components/providers/locale-provider'
 import { getIasClient, isTooManyElectronicIdRequests } from '@/lib/ias'
 import { authStore, whileSystemDialog } from '@/stores/auth-store'
 import { useUiStore } from '@/stores/ui-store'
+import { isStrongBiometricsEnrolledAsync } from '@/utils/biometrics'
 import { useBiometricType } from './use-biometric-type'
 import { isCancelled, useElectronicIdUnlock } from './use-electronic-id-unlock'
 
@@ -46,11 +43,10 @@ export function useEnableBiometrics({
    * open its Face ID settings, so it only says so.
    */
   const showNotEnrolledAlert = () => {
-    const title = intl.formatMessage({ id: 'biometrics.notEnrolledTitle' })
     if (Platform.OS === 'android') {
       Alert.alert(
-        title,
-        intl.formatMessage({ id: 'biometrics.notEnrolledMessage.android' }),
+        intl.formatMessage({ id: 'biometrics.notEnrolledTitle.android' }),
+        intl.formatMessage({ id: 'onboarding.biometrics.strongNotEnrolled' }),
         [
           {
             text: intl.formatMessage({ id: 'biometrics.notNow' }),
@@ -64,7 +60,7 @@ export function useEnableBiometrics({
       )
     } else {
       Alert.alert(
-        title,
+        intl.formatMessage({ id: 'biometrics.notEnrolledTitle' }),
         intl.formatMessage(
           { id: 'biometrics.notEnrolledMessage.ios' },
           { biometricType: biometricType.text },
@@ -147,7 +143,10 @@ export function useEnableBiometrics({
     try {
       // Not when it's turned off for the app on iOS: then it has no hardware
       // either, and confirmBiometrics() says where to turn it on.
-      if ((await hasHardwareAsync()) && !(await isEnrolledAsync())) {
+      if (
+        (await hasHardwareAsync()) &&
+        !(await isStrongBiometricsEnrolledAsync())
+      ) {
         showNotEnrolledAlert()
         return false
       }

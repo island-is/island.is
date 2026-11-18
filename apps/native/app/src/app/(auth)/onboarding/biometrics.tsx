@@ -1,7 +1,6 @@
 import {
   AuthenticationType,
   hasHardwareAsync,
-  isEnrolledAsync,
   supportedAuthenticationTypesAsync,
 } from 'expo-local-authentication'
 import React, { useEffect, useState } from 'react'
@@ -10,52 +9,12 @@ import { AppState, Linking, Platform } from 'react-native'
 
 import { Button, Onboarding } from '@/ui'
 import { ElectronicIdConfirmation } from '@/components/device-bound-auth/electronic-id-confirmation'
+import { useBiometricType } from '@/hooks/use-biometric-type'
 import { useEnableBiometrics } from '@/hooks/use-enable-biometrics'
-import finger from '@/assets/icons/finger-16.png'
-import iris from '@/assets/icons/iris-16.png'
 import onboardingBiometrics from '@/assets/illustrations/onboarding-biometrics.png'
 import { preferencesStore } from '@/stores/preferences-store'
+import { isStrongBiometricsEnrolledAsync } from '@/utils/biometrics'
 import { nextOnboardingStep } from '@/utils/onboarding'
-
-function useBiometricType(types: AuthenticationType[]) {
-  const intl = useIntl()
-  if (types.includes(AuthenticationType.FACIAL_RECOGNITION)) {
-    return Platform.OS === 'ios'
-      ? {
-          text: intl.formatMessage({ id: 'onboarding.biometrics.type.faceId' }),
-          icon: iris,
-        }
-      : {
-          text: intl.formatMessage({
-            id: 'onboarding.biometrics.type.biometrics',
-          }),
-          icon: iris,
-        }
-  } else if (types.includes(AuthenticationType.FINGERPRINT)) {
-    return Platform.OS === 'ios'
-      ? {
-          text: intl.formatMessage({
-            id: 'onboarding.biometrics.type.fingerprint',
-          }),
-          icon: finger,
-        }
-      : {
-          text: intl.formatMessage({
-            id: 'onboarding.biometrics.type.biometrics',
-          }),
-          icon: finger,
-        }
-  } else if (types.includes(AuthenticationType.IRIS)) {
-    return {
-      text: intl.formatMessage({ id: 'onboarding.biometrics.type.iris' }),
-      icon: iris,
-    }
-  }
-  return {
-    text: intl.formatMessage({ id: 'onboarding.biometrics.type.biometrics' }),
-    icon: undefined,
-  }
-}
 
 export default function BiometricsScreen() {
   const intl = useIntl()
@@ -73,7 +32,7 @@ export default function BiometricsScreen() {
 
   useEffect(() => {
     Promise.all([
-      isEnrolledAsync(),
+      isStrongBiometricsEnrolledAsync(),
       supportedAuthenticationTypesAsync(),
       hasHardwareAsync(),
     ]).then(([enrolled, types, hardware]) => {
@@ -85,7 +44,7 @@ export default function BiometricsScreen() {
     // Also back from the phone's settings, with biometrics turned on there.
     const subscription = AppState.addEventListener('change', (state) => {
       if (state === 'active') {
-        isEnrolledAsync().then(setIsEnrolled)
+        isStrongBiometricsEnrolledAsync().then(setIsEnrolled)
         hasHardwareAsync().then(setHasHardware)
       }
     })
@@ -170,7 +129,11 @@ export default function BiometricsScreen() {
           />
         ) : (
           <FormattedMessage
-            id="onboarding.biometrics.notEnrolled"
+            id={
+              Platform.OS === 'android'
+                ? 'onboarding.biometrics.strongNotEnrolled'
+                : 'onboarding.biometrics.notEnrolled'
+            }
             values={{ biometricType: biometricType.text }}
           />
         )
