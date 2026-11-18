@@ -225,9 +225,12 @@ const originOf = (url: string) => /^[a-z]+:\/\/[^/]+/i.exec(url)?.[0] ?? url
 /** Keeps a response's DPoP nonce for the next proofs to that server. */
 export const rememberDpopNonce = (url: string, headers?: Headers) => {
   const origin = originOf(url)
-  if (headers) {
-    const nonce = headers.get('DPoP-Nonce') ?? undefined
+  const nonce = headers?.get('DPoP-Nonce')
+  if (nonce) {
     dpopAnswers.set(origin, { nonce, receivedAt: Date.now() })
+  } else if (headers && !dpopAnswers.has(origin)) {
+    // A server that sends none. One that has, keeps using its last.
+    dpopAnswers.set(origin, { receivedAt: Date.now() })
   }
   firstCalls.get(origin)?.answer()
 }
