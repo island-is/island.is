@@ -216,6 +216,7 @@ describe('LimitedAccessAppealCaseController - Create event log', () => {
           id: uuid(),
           category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
           state: CaseFileState.STORED_IN_RVG,
+          isKeyAccessible: true,
           defendantId,
         },
       ],

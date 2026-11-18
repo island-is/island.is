@@ -13,6 +13,8 @@ import {
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   Feature,
+  findAppealStatementDeadline,
+  hasFiledAppealStatement,
   isCompletedCase,
   isRulingOrDismissalCase,
   isSuccessfulServiceStatus,
@@ -190,12 +192,41 @@ const IndictmentOverview: FC = () => {
 
   const shouldShowDefenderVerdictTimelineCard = (
     defendant: Defendant,
-  ): boolean =>
-    Boolean(
-      defendant.verdict &&
-        (hasVerdictServiceDecision(defendant.verdict) ||
-          canDefenderFileVerdictStatementOf(workingCase, defendant, user)),
+  ): boolean => {
+    if (!defendant.verdict) {
+      return false
+    }
+
+    if (hasVerdictServiceDecision(defendant.verdict)) {
+      return true
+    }
+
+    // Statement CTA / filed status without a service decision — keep the card
+    // after filing so "Greinargerð send" remains visible.
+    if (canDefenderFileVerdictStatementOf(workingCase, defendant, user)) {
+      return true
+    }
+
+    const appeal = workingCase.verdictAppealCase
+    if (
+      !appeal ||
+      appeal.appealState === AppealCaseState.COMPLETED ||
+      appeal.appealState === AppealCaseState.WITHDRAWN
+    ) {
+      return false
+    }
+
+    const party = { defendantId: defendant.id }
+    const statementDeadline = findAppealStatementDeadline(
+      appeal.statementDeadlines,
+      party,
     )
+
+    return Boolean(
+      statementDeadline?.deadline &&
+        hasFiledAppealStatement(appeal.appealEventLogs, party),
+    )
+  }
 
   const showVerdictTimelineCards =
     displayVerdictTimeline &&
@@ -224,21 +255,31 @@ const IndictmentOverview: FC = () => {
       features.includes(Feature.INDICTMENT_APPEAL),
     )
 
+    // Appeal / withdraw stay behind the service-decision gate. The card can
+    // mount earlier for greinargerð, but widening withdrawal was not in scope.
+    const canOfferVerdictAppealAction = hasVerdictServiceDecision(
+      defendant.verdict,
+    )
+
     switch (action) {
       case 'APPEAL':
-        items.push({
-          title: 'Áfrýja dómi',
-          onClick: () =>
-            router.push(
-              `${DEFENDER_INDICTMENT_CASE_APPEAL_ROUTE}/${workingCase.id}?defendantId=${defendant.id}`,
-            ),
-        })
+        if (canOfferVerdictAppealAction) {
+          items.push({
+            title: 'Áfrýja dómi',
+            onClick: () =>
+              router.push(
+                `${DEFENDER_INDICTMENT_CASE_APPEAL_ROUTE}/${workingCase.id}?defendantId=${defendant.id}`,
+              ),
+          })
+        }
         break
       case 'WITHDRAW':
-        items.push({
-          title: 'Afturkalla áfrýjun',
-          onClick: () => setWithdrawingAppealFor(defendant),
-        })
+        if (canOfferVerdictAppealAction) {
+          items.push({
+            title: 'Afturkalla áfrýjun',
+            onClick: () => setWithdrawingAppealFor(defendant),
+          })
+        }
         break
       default:
         break

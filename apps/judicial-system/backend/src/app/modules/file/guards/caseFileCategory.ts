@@ -235,7 +235,26 @@ const canDefenceUserViewCaseFile = ({
       civilClaimants,
     )
 
-    if (cutoffDate && fileCreated && fileCreated > cutoffDate) {
+    // District dismissal cutoff must not hide verdict-appeal greinargerðir.
+    // A lawyer can be district defender of a dismissed client and appeal
+    // defender of another — the dismissed client's date must not block the
+    // active client's (or co-defendant's) appeal statement download.
+    const isVerdictAppealStatementFile =
+      caseFileCategory ===
+        CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT ||
+      caseFileCategory ===
+        CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE ||
+      caseFileCategory ===
+        CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT ||
+      caseFileCategory ===
+        CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE
+
+    if (
+      cutoffDate &&
+      fileCreated &&
+      fileCreated > cutoffDate &&
+      !isVerdictAppealStatementFile
+    ) {
       return false
     }
 

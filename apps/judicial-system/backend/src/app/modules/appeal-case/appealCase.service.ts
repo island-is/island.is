@@ -1245,6 +1245,7 @@ export class AppealCaseService {
             caseFile.category ===
               CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT &&
             caseFile.state === CaseFileState.STORED_IN_RVG &&
+            caseFile.isKeyAccessible &&
             (caseFile.rulingFileId ?? null) === null &&
             isSameAppealStatementParty(
               {

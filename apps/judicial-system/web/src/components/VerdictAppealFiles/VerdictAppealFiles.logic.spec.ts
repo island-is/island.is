@@ -370,6 +370,39 @@ describe('getVerdictAppealFileGroups', () => {
     expect(groups[0].files.map((f) => f.id)).toEqual(['other-statement'])
   })
 
+  it('should keep a co-defendant greinargerð when that defendant is absent from the list', () => {
+    const appealOnlyCase = {
+      ...withFiledStatement(
+        [
+          file(
+            'other-statement',
+            'other_client_id',
+            CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+            '2026-06-05T13:34:00.000Z',
+          ),
+        ],
+        { defendantId: 'other_client_id' },
+      ),
+      defendants: [
+        {
+          id: 'own_client_id',
+          name: 'Eigin sakborningur',
+          isAppealDefenderConfirmed: true,
+          appealDefenderNationalId: defenderNationalId,
+        },
+      ],
+    } as WorkingCase
+
+    const groups = getVerdictAppealFileGroups(appealOnlyCase, user)
+
+    expect(groups.map((g) => g.defendant?.id)).toEqual(['other_client_id'])
+    expect(getVerdictAppealFileGroupKey(groups[0])).toBe('other_client_id')
+    expect(getVerdictAppealFileGroupTitle(groups[0])).toBeUndefined()
+    expect(getVerdictAppealFileSentInBy(groups[0], groups[0].files[0])).toBe(
+      'Verjandi sendi inn',
+    )
+  })
+
   it('should group a civil-claimant greinargerð under the claimant', () => {
     const theCaseWithClaimant = {
       ...withFiledStatement([], { civilClaimantId: 'claimant_id' }),

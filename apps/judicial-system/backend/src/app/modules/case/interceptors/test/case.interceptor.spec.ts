@@ -1198,6 +1198,31 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
       'prosecution_statement_event',
       'co_defendant_prosecution_appeal',
     ])
+    // Co-party / unscoped prosecution SENT rows are filing-status only.
+    expect(
+      result.verdictAppealCase.appealEventLogs.find(
+        (e) => e.id === 'other_statement_event',
+      ),
+    ).toEqual({
+      id: 'other_statement_event',
+      eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+      defendantId: 'other_defendant',
+      created: undefined,
+      userRole: undefined,
+      civilClaimantId: undefined,
+    })
+    expect(
+      result.verdictAppealCase.appealEventLogs.find(
+        (e) => e.id === 'prosecution_statement_event',
+      ),
+    ).toEqual({
+      id: 'prosecution_statement_event',
+      eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+      userRole: UserRole.PROSECUTOR,
+      created: undefined,
+      defendantId: undefined,
+      civilClaimantId: undefined,
+    })
   })
 
   it('leaves verdict-appeal deadlines unfiltered for non-defence users', async () => {

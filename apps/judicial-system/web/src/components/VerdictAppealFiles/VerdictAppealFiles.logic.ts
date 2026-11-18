@@ -233,6 +233,7 @@ export const getVerdictAppealFileGroups = (
     .sort(byCreatedAsc)
 
   const groups: VerdictAppealFileGroup[] = []
+  const groupedDefendantIds = new Set<string>()
 
   for (const defendant of workingCase.defendants ?? []) {
     const files = [
@@ -241,7 +242,29 @@ export const getVerdictAppealFileGroups = (
     ].sort(byCreatedAsc)
 
     if (files.length > 0) {
+      groupedDefendantIds.add(defendant.id)
       groups.push({ defendant, files })
+    }
+  }
+
+  // Appeal-only defenders get a filtered defendants list. Co-defendant
+  // statement files still arrive with APPEAL_STATEMENT_SENT — group them by
+  // defendantId so they are not dropped (and not labeled as prosecution).
+  const remainingDefendantIds = new Set<string>()
+  for (const file of [...declarationFiles, ...statementFiles]) {
+    if (file.defendantId && !groupedDefendantIds.has(file.defendantId)) {
+      remainingDefendantIds.add(file.defendantId)
+    }
+  }
+
+  for (const defendantId of remainingDefendantIds) {
+    const files = [
+      ...declarationFiles.filter((file) => file.defendantId === defendantId),
+      ...statementFiles.filter((file) => file.defendantId === defendantId),
+    ].sort(byCreatedAsc)
+
+    if (files.length > 0) {
+      groups.push({ defendant: { id: defendantId } as Defendant, files })
     }
   }
 

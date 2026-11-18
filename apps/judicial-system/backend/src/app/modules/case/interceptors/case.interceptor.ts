@@ -812,13 +812,30 @@ const transformVerdictAppealCaseForUser = (
     statementDeadlines: appealCase.statementDeadlines
       ?.filter((deadline) => isVerdictAppealPartyRow(deadline, partyIds))
       .map(serializeVerdictAppealStatementDeadline),
-    appealEventLogs: appealCase.appealEventLogs?.filter((eventLog) =>
-      shouldKeepVerdictAppealEventLogForDefenceUser(
-        eventLog,
-        theCase,
-        partyIds,
+    // Own-party and prosecution timeline rows stay full. Co-party /
+    // unscoped prosecution SENT rows are filing-status only — enough for
+    // the overview list, without filer name/title/institution.
+    appealEventLogs: appealCase.appealEventLogs
+      ?.filter((eventLog) =>
+        shouldKeepVerdictAppealEventLogForDefenceUser(
+          eventLog,
+          theCase,
+          partyIds,
+        ),
+      )
+      .map((eventLog) =>
+        isVerdictAppealPartyRow(eventLog, partyIds) ||
+        isProsecutionVerdictAppealTimelineEvent(eventLog, theCase)
+          ? eventLog
+          : {
+              id: eventLog.id,
+              eventType: eventLog.eventType,
+              created: eventLog.created,
+              userRole: eventLog.userRole,
+              defendantId: eventLog.defendantId,
+              civilClaimantId: eventLog.civilClaimantId,
+            },
       ),
-    ),
   }
 }
 
