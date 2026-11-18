@@ -21,9 +21,9 @@ export function getThemeWithPreferences(
 ): DefaultTheme {
   // get color scheme from system if "automatic"
   // otherwise from appearanceMode
-  const colorScheme = (
-    appearanceMode === 'automatic' ? systemScheme : appearanceMode
-  ) as ThemeMode
+  const colorScheme = (appearanceMode === 'automatic'
+    ? systemScheme
+    : appearanceMode) as ThemeMode
 
   // find correct theme key
   const themeKey =
@@ -35,6 +35,7 @@ export function getThemeWithPreferences(
     colorScheme: themeKey,
     ...theme,
     ...themes[themeKey],
+    mode: themeKey,
     tokens: theme.tokenModes[themeKey],
   }
 }

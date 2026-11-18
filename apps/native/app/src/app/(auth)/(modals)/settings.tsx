@@ -114,6 +114,8 @@ export default function SettingsScreen() {
     dismissed,
     locale,
     setLocale,
+    appearanceMode,
+    setAppearanceMode,
     hasAcceptedBiometrics,
     useBiometrics,
     setUseBiometrics,
@@ -259,13 +261,15 @@ export default function SettingsScreen() {
           [
             {
               text: intl.formatMessage({
-                id: 'settings.communication.notificationsBlockedAlertCancelButton',
+                id:
+                  'settings.communication.notificationsBlockedAlertCancelButton',
               }),
               style: 'cancel',
             },
             {
               text: intl.formatMessage({
-                id: 'settings.communication.notificationsBlockedAlertOpenSettingsButton',
+                id:
+                  'settings.communication.notificationsBlockedAlertOpenSettingsButton',
               }),
               onPress: onNotificationsBlockedPress,
             },
@@ -660,6 +664,62 @@ export default function SettingsScreen() {
               }
             />
           </PressableHighlight>
+        </TableViewGroup>
+
+        {/* Appearance */}
+        <TableViewGroup
+          header={intl.formatMessage({
+            id: 'settings.accessibilityLayout.groupTitle',
+          })}
+        >
+          <TableViewCell
+            title={intl.formatMessage({
+              id: 'settings.accessibilityLayout.sytemDarkMode',
+            })}
+            accessory={
+              <View>
+                <Switch
+                  onValueChange={(value) =>
+                    setAppearanceMode(
+                      value ? 'automatic' : theme.isDark ? 'dark' : 'light',
+                    )
+                  }
+                  value={appearanceMode === 'automatic'}
+                  thumbColor={Platform.select({
+                    android: theme.tokens.app.background.neutral,
+                  })}
+                  trackColor={{
+                    false: theme.tokens.app.border.neutral,
+                    true: theme.tokens.interactive.background.primary,
+                  }}
+                />
+              </View>
+            }
+          />
+          <TableViewCell
+            title={intl.formatMessage({
+              id: 'settings.accessibilityLayout.darkMode',
+            })}
+            disabled={appearanceMode === 'automatic'}
+            accessory={
+              <View>
+                <Switch
+                  onValueChange={(value) =>
+                    setAppearanceMode(value ? 'dark' : 'light')
+                  }
+                  disabled={appearanceMode === 'automatic'}
+                  value={theme.isDark}
+                  thumbColor={Platform.select({
+                    android: theme.tokens.app.background.neutral,
+                  })}
+                  trackColor={{
+                    false: theme.tokens.app.border.neutral,
+                    true: theme.tokens.interactive.background.primary,
+                  }}
+                />
+              </View>
+            }
+          />
         </TableViewGroup>
 
         {/* About */}

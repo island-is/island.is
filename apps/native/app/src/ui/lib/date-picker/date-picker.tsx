@@ -153,7 +153,11 @@ export const DatePickerInput = ({
             <Animated.View
               style={[
                 styles,
-                { backgroundColor: 'white', padding: 4, borderRadius: 8 },
+                {
+                  backgroundColor: theme.tokens.background.invert,
+                  padding: 4,
+                  borderRadius: 8,
+                },
               ]}
             >
               <DatePicker

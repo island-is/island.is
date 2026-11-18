@@ -2,7 +2,8 @@ import React, { memo, useCallback, useMemo } from 'react'
 
 import { DocumentCategory, DocumentV2 } from '@/graphql/types/schema'
 import { useOrganizationsStore } from '@/stores/organizations-store'
-import { InboxCard, ListItem, theme } from '@/ui'
+import { InboxCard, ListItem } from '@/ui'
+import { useTheme } from 'styled-components/native'
 import { Filters } from '../utils/inbox-filters'
 import { router } from 'expo-router'
 import { PressableHighlight } from './pressable-highlight/pressable-highlight'
@@ -29,14 +30,15 @@ export const PressableListItem = memo(
     setSelectedState,
   }: PressableListItemProps) => {
     const { getSenderLogo } = useOrganizationsStore()
+    const { tokens } = useTheme()
     const isSelected = useMemo(
       () => selectable && selectedItems.includes(item.id),
       [selectable, selectedItems, item.id],
     )
-    const icon = useMemo(
-      () => getSenderLogo(item.sender, 75),
-      [item.sender, getSenderLogo],
-    )
+    const icon = useMemo(() => getSenderLogo(item.sender, 75), [
+      item.sender,
+      getSenderLogo,
+    ])
 
     const toggleSelectItem = useCallback(() => {
       if (isSelected) {
@@ -91,7 +93,7 @@ export const PressableListItem = memo(
       <PressableHighlight
         style={
           !item.opened && {
-            backgroundColor: theme.tokens.background.brandMinimal,
+            backgroundColor: tokens.background.brandMinimal,
           }
         }
         onPress={onPress}

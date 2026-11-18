@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react'
 import { Redirect, useNavigation, usePathname } from 'expo-router'
 import { usePreferencesStore } from '@/stores/preferences-store'
 import { isOnboarded } from '@/utils/onboarding'
-import { theme } from '../../../ui'
 import { Image, Platform, StyleSheet, View } from 'react-native'
 import { useTheme } from 'styled-components'
 import { useIntl } from 'react-intl'
@@ -16,6 +15,7 @@ export const unstable_settings = {
 
 export default function TabLayout() {
   const intl = useIntl()
+  const theme = useTheme()
   const tabsHidden = useUiStore((s) => s.tabsHidden)
   const hasOnboardedPinCode = usePreferencesStore((s) => s.hasOnboardedPinCode)
   const hasOnboardedBiometrics = usePreferencesStore(
@@ -46,7 +46,7 @@ export default function TabLayout() {
         backgroundColor={
           Platform.OS === 'android' ? theme.tokens.background.invert : undefined
         }
-        indicatorColor="#e4e4f0"
+        indicatorColor={theme.tokens.app.background.pressed}
         labelStyle={{
           fontFamily: 'IBMPlexSans_400Regular',
           fontSize: 11,

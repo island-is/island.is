@@ -1,19 +1,29 @@
+import { usePreferencesStore } from '@/stores/preferences-store'
 import { getThemeWithPreferences } from '@/utils/get-theme-with-preferences'
 import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native'
 import React, { useEffect, useMemo } from 'react'
-import { DynamicColorIOS, Platform, StatusBar } from 'react-native'
+import {
+  DynamicColorIOS,
+  Platform,
+  StatusBar,
+  useColorScheme,
+} from 'react-native'
 import { ThemeProvider as StyledThemeProvider } from 'styled-components'
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const appearanceMode = 'light' as const
+  const appearanceMode = usePreferencesStore((s) => s.appearanceMode)
+  const systemScheme = useColorScheme()
   const selectedTheme = useMemo(
-    () => getThemeWithPreferences({ appearanceMode }, appearanceMode),
-    [appearanceMode],
+    () => getThemeWithPreferences({ appearanceMode }, systemScheme),
+    [appearanceMode, systemScheme],
   )
 
   useEffect(() => {
-    StatusBar.setBarStyle('dark-content', true)
-  }, [])
+    StatusBar.setBarStyle(
+      selectedTheme.isDark ? 'light-content' : 'dark-content',
+      true,
+    )
+  }, [selectedTheme.isDark])
 
   const navigationTheme = useMemo(() => {
     const { tokens, tokenModes } = selectedTheme
@@ -21,13 +31,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       dark: selectedTheme.isDark,
       colors: {
         primary: tokens.interactive.foreground.primary,
-        background: (Platform.OS === 'ios'
+        background: (Platform.OS === 'ios' && appearanceMode === 'automatic'
           ? DynamicColorIOS({
               light: tokenModes.light.background.invert,
               dark: tokenModes.dark.background.invert,
             })
           : tokens.background.invert) as string,
-        card: tokens.app.background.neutral,
+        card: tokens.app.background.header,
         text: tokens.foreground.primary,
         border: tokens.app.border.subtle,
         notification: tokens.feedback.error.foreground,
@@ -51,7 +61,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         },
       },
     }
-  }, [selectedTheme])
+  }, [selectedTheme, appearanceMode])
 
   return (
     <NavigationThemeProvider value={navigationTheme}>
