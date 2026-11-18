@@ -61,6 +61,14 @@ describe('dateIsWithinOtherPeriods', () => {
 })
 
 describe('findShortPeriodWithoutPredecessor', () => {
+  // Periods already over are skipped, so the 2030 periods must stay ahead
+  beforeEach(() => {
+    jest.useFakeTimers().setSystemTime(new Date('2026-01-01T12:00:00'))
+  })
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
   const long: Period = {
     startDate: '2030-01-01',
     endDate: '2030-03-31',
