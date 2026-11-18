@@ -454,12 +454,10 @@ const IndictmentOverview: FC = () => {
                   onClick: () => setAcceptingVerdictFor(undefined),
                   variant: 'ghost',
                 },
-                {
-                  text: 'Já, una dómi',
-                  onClick: handleAcceptVerdict,
-                  isLoading: isAcceptingVerdict,
-                },
+                { text: 'Já, una dómi', onClick: handleAcceptVerdict },
               ]}
+              onClose={() => setAcceptingVerdictFor(undefined)}
+              loading={isAcceptingVerdict}
             />
           )}
         </AnimatePresence>
@@ -480,9 +478,10 @@ const IndictmentOverview: FC = () => {
                   text: 'Afturkalla',
                   onClick: handleWithdrawVerdictAppeal,
                   colorScheme: 'destructive',
-                  isLoading: isTransitioningAppealCase,
                 },
               ]}
+              onClose={() => setWithdrawingAppealFor(undefined)}
+              loading={isTransitioningAppealCase}
             />
           )}
         </AnimatePresence>

@@ -255,6 +255,102 @@ describe('Defender IndictmentOverview', () => {
     await waitFor(() => expect(accept).toHaveBeenCalledTimes(1))
   })
 
+  it('closes the confirmation on Escape without accepting the verdict', async () => {
+    const accept = jest.fn(() => ({
+      data: { limitedAccessAcceptVerdict: { defendantId: 'own_client_id' } },
+    }))
+
+    renderOverview(
+      completedCase(CaseIndictmentRulingDecision.RULING, {
+        defendersConfirmed: true,
+      }),
+      [Feature.INDICTMENT_APPEAL],
+      [
+        {
+          request: {
+            query: LimitedAccessAcceptVerdictDocument,
+            variables: {
+              input: { caseId: 'test_id', defendantId: 'own_client_id' },
+            },
+          },
+          result: accept,
+        },
+      ],
+    )
+
+    const timelineCards = await screen.findAllByTestId(
+      'defenderVerdictTimelineCard',
+    )
+    const menuButton = menuButtonOf(timelineCards[0])
+
+    if (!menuButton) {
+      throw new Error('The card has no menu')
+    }
+
+    await userEvent.click(menuButton)
+    await userEvent.click(await screen.findByText('Una dómi'))
+    await screen.findByRole('button', { name: 'Já, una dómi' })
+
+    await userEvent.keyboard('{Escape}')
+
+    await waitFor(() =>
+      expect(
+        screen.queryByRole('button', { name: 'Já, una dómi' }),
+      ).not.toBeInTheDocument(),
+    )
+    expect(accept).not.toHaveBeenCalled()
+  })
+
+  it('keeps the confirmation open and locked while the verdict is being accepted', async () => {
+    renderOverview(
+      completedCase(CaseIndictmentRulingDecision.RULING, {
+        defendersConfirmed: true,
+      }),
+      [Feature.INDICTMENT_APPEAL],
+      [
+        {
+          request: {
+            query: LimitedAccessAcceptVerdictDocument,
+            variables: {
+              input: { caseId: 'test_id', defendantId: 'own_client_id' },
+            },
+          },
+          result: {
+            data: {
+              limitedAccessAcceptVerdict: { defendantId: 'own_client_id' },
+            },
+          },
+          delay: Infinity,
+        },
+      ],
+    )
+
+    const timelineCards = await screen.findAllByTestId(
+      'defenderVerdictTimelineCard',
+    )
+    const menuButton = menuButtonOf(timelineCards[0])
+
+    if (!menuButton) {
+      throw new Error('The card has no menu')
+    }
+
+    await userEvent.click(menuButton)
+    await userEvent.click(await screen.findByText('Una dómi'))
+    await userEvent.click(
+      await screen.findByRole('button', { name: 'Já, una dómi' }),
+    )
+
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Hætta við' })).toBeDisabled(),
+    )
+
+    await userEvent.keyboard('{Escape}')
+
+    expect(
+      screen.getByRole('button', { name: 'Hætta við' }),
+    ).toBeInTheDocument()
+  })
+
   it('offers to withdraw once the verdict has been appealed', async () => {
     renderOverview(
       completedCase(CaseIndictmentRulingDecision.RULING, {
