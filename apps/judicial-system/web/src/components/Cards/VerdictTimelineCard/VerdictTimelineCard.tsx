@@ -174,7 +174,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
     [verdict?.serviceRequirement],
   )
 
-  const textItems = useMemo(() => {
+  const leadingTextItems = useMemo(() => {
     const items: VerdictTimelineItem[] = []
 
     const pushIf = (condition: boolean, message: string | null) => {
@@ -242,39 +242,6 @@ const VerdictTimelineCard: FC<Props> = (props) => {
       items.push(prosecutionAppealItem)
     }
 
-    // Greinargerðarfrest for the prosecution once Landsréttur has set one.
-    const statementDeadlineItem = getOpenAppealStatementDeadlineItem(
-      workingCase.verdictAppealCase,
-      {},
-    )
-
-    if (statementDeadlineItem) {
-      items.push(statementDeadlineItem)
-    }
-
-    pushIf(
-      !!(defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin),
-      formatMessage(
-        {
-          id: strings.sendToPrisonAdminDate,
-          defaultMessage: strings.sendToPrisonAdminDate,
-        },
-        {
-          date: formatDate(defendant.sentToPrisonAdminDate),
-        },
-      ),
-    )
-
-    pushIf(
-      !!(
-        defendant.isClosedWithoutEnforcement &&
-        defendant.closedWithoutEnforcementDate
-      ),
-      `Máli lokið án fullnustu ${formatDate(
-        defendant.closedWithoutEnforcementDate,
-      )}`,
-    )
-
     return items
   }, [
     appealExpirationInfo.date,
@@ -287,6 +254,50 @@ const VerdictTimelineCard: FC<Props> = (props) => {
     verdict,
     workingCase.verdictAppealCase,
   ])
+
+  const trailingTextItems = useMemo(() => {
+    const items: VerdictTimelineItem[] = []
+
+    if (defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin) {
+      items.push({
+        text: formatMessage(
+          {
+            id: strings.sendToPrisonAdminDate,
+            defaultMessage: strings.sendToPrisonAdminDate,
+          },
+          {
+            date: formatDate(defendant.sentToPrisonAdminDate),
+          },
+        ),
+      })
+    }
+
+    if (
+      defendant.isClosedWithoutEnforcement &&
+      defendant.closedWithoutEnforcementDate
+    ) {
+      items.push({
+        text: `Máli lokið án fullnustu ${formatDate(
+          defendant.closedWithoutEnforcementDate,
+        )}`,
+      })
+    }
+
+    return items
+  }, [defendant, formatMessage])
+
+  // Outside the memo so the client-clock expiry fallback is re-read on each
+  // render (prosecution payloads often omit server `isExpired`).
+  const statementDeadlineItem = getOpenAppealStatementDeadlineItem(
+    workingCase.verdictAppealCase,
+    {},
+  )
+
+  const textItems = [
+    ...leadingTextItems,
+    ...(statementDeadlineItem ? [statementDeadlineItem] : []),
+    ...trailingTextItems,
+  ]
 
   const handleDateChange = (
     date: Date | undefined,
