@@ -137,8 +137,7 @@ export const getVerdictAppealFileGroups = (
 
   const prosecutionFiles = statementFiles.filter(
     (file) =>
-      file.category ===
-        CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT ||
+      file.category === CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT ||
       file.category ===
         CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE,
   )
@@ -152,8 +151,7 @@ export const getVerdictAppealFileGroups = (
 
 export const getVerdictAppealFileGroupKey = (
   group: VerdictAppealFileGroup,
-): string =>
-  group.defendant?.id ?? group.civilClaimant?.id ?? 'prosecution'
+): string => group.defendant?.id ?? group.civilClaimant?.id ?? 'prosecution'
 
 export const getVerdictAppealFileGroupTitle = (
   group: VerdictAppealFileGroup,
@@ -179,12 +177,11 @@ export const getVerdictAppealFileSentInBy = (
       group.civilClaimant.appealSpokespersonName ??
         group.civilClaimant.spokespersonName,
     )
-    const role = (
+    const role =
       group.civilClaimant.appealSpokespersonIsLawyer ??
       group.civilClaimant.spokespersonIsLawyer
-    )
-      ? 'Lögmaður'
-      : 'Réttargæslumaður'
+        ? 'Lögmaður'
+        : 'Réttargæslumaður'
 
     return initials ? `${role} (${initials}) sendi inn` : `${role} sendi inn`
   }

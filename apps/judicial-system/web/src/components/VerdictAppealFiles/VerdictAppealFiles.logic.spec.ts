@@ -387,9 +387,9 @@ describe('canViewVerdictAppealStatementFile', () => {
     UserRole.PROSECUTOR,
     UserRole.DEFENDER,
   ])('allows %s', (role) => {
-    expect(
-      canViewVerdictAppealStatementFile(statement, mockUser(role)),
-    ).toBe(true)
+    expect(canViewVerdictAppealStatementFile(statement, mockUser(role))).toBe(
+      true,
+    )
   })
 
   it('rejects district court users', () => {
