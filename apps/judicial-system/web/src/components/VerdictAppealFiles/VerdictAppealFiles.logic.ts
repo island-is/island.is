@@ -1,21 +1,29 @@
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  getInitials,
+  normalizeAndFormatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   AppealSummonsAction,
   canIssueAppealSummons,
   canPerformAppealSummonsAction,
+  findFiledAppealStatementEvent,
   isCourtOfAppealsUser,
+  isDefenceUser,
+  isProsecutionUser,
   isPublicProsecutionOfficeUser,
   isPublicProsecutionUser,
   isSuccessfulVerdictServiceStatus,
   verdictAppealDeclarationFileCategories,
+  verdictAppealStatementFileCategories,
 } from '@island.is/judicial-system/types'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
   type AppealSummons,
   type CaseFile,
-  type CaseFileCategory,
+  CaseFileCategory,
   type CivilClaimant,
   type Defendant,
   type User,
@@ -45,25 +53,132 @@ export type { AppealAppointmentLetterRow } from '../AppealAppointmentLetter/Appe
 // a defender their own clients'.
 export const canViewVerdictAppealFile = (
   workingCase: WorkingCase,
-  categories: CaseFileCategory[],
-  file: Pick<CaseFile, 'category' | 'defendantId' | 'civilClaimantId'>,
+  categories: readonly CaseFileCategory[] | CaseFileCategory[],
+  file: Pick<
+    CaseFile,
+    'category' | 'defendantId' | 'civilClaimantId' | 'rulingFileId'
+  >,
   user: User | undefined,
 ): boolean =>
   ((isPublicProsecutionOfficeUser(user) || isCourtOfAppealsUser(user)) &&
-    Boolean(file.category && categories.includes(file.category))) ||
-  isMatchingAppealCaseFile(workingCase, categories, file, user)
+    Boolean(file.category && categories.includes(file.category)) &&
+    // Verdict-appeal declarations are case-level. A rulingFileId belongs to a
+    // ruling-order appeal and must not appear in this list.
+    (file.rulingFileId ?? null) === null) ||
+  isMatchingAppealCaseFile(workingCase, [...categories], file, user)
 
 export interface VerdictAppealFileGroup {
-  defendant: Defendant
+  // Defendant declarations and that defendant's greinargerð share a group.
+  // Civil-claimant and prosecution greinargerðir have no defendant row.
+  defendant?: Defendant
+  civilClaimant?: CivilClaimant
   files: CaseFile[]
 }
 
+const byCreatedAsc = (a: CaseFile, b: CaseFile): number =>
+  new Date(a.created ?? 0).getTime() - new Date(b.created ?? 0).getTime()
+
+// Same gate the limited-access signed-URL guard uses for indictment appeal
+// files: district defenders/spokespersons with case-file access, or confirmed
+// appeal advocates. Broader isDefenceUser alone would list rows the download
+// guard then refuses.
+export const canDefenceUserAccessVerdictAppealFiles = (
+  workingCase: Pick<WorkingCase, 'defendants' | 'civilClaimants'>,
+  user: User | undefined,
+): boolean => {
+  if (!user || !user.nationalId || !isDefenceUser(user)) {
+    return false
+  }
+
+  const ownIds = normalizeAndFormatNationalId(user.nationalId)
+
+  return Boolean(
+    workingCase.defendants?.some(
+      (defendant) =>
+        (defendant.isDefenderChoiceConfirmed &&
+          defendant.caseFilesSharedWithDefender &&
+          defendant.defenderNationalId &&
+          ownIds.includes(defendant.defenderNationalId)) ||
+        (defendant.isAppealDefenderConfirmed &&
+          !defendant.isAppealDefenderWaived &&
+          defendant.appealDefenderNationalId &&
+          ownIds.includes(defendant.appealDefenderNationalId)),
+    ) ||
+      workingCase.civilClaimants?.some(
+        (civilClaimant) =>
+          (civilClaimant.hasSpokesperson &&
+            civilClaimant.isSpokespersonConfirmed &&
+            civilClaimant.caseFilesSharedWithSpokesperson &&
+            civilClaimant.spokespersonNationalId &&
+            ownIds.includes(civilClaimant.spokespersonNationalId)) ||
+          (civilClaimant.hasAppealSpokesperson !== false &&
+            civilClaimant.isAppealSpokespersonConfirmed &&
+            civilClaimant.appealSpokespersonNationalId &&
+            ownIds.includes(civilClaimant.appealSpokespersonNationalId)),
+      ),
+  )
+}
+
+// Greinargerð visibility mirrors kærumál once the party has filed: court of
+// appeals, prosecution, and defence users who can download appeal files see
+// every party's confirmed statement. Incomplete uploads stay off the overview
+// until APPEAL_STATEMENT_SENT exists for that party. Only files present at
+// that filing (created on or before the event) are listed.
+export const canViewVerdictAppealStatementFile = (
+  workingCase: Pick<
+    WorkingCase,
+    'defendants' | 'civilClaimants' | 'verdictAppealCase'
+  >,
+  file: Pick<
+    CaseFile,
+    'category' | 'defendantId' | 'civilClaimantId' | 'rulingFileId' | 'created'
+  >,
+  user: User | undefined,
+): boolean => {
+  if (
+    !file.category ||
+    !verdictAppealStatementFileCategories.includes(file.category) ||
+    (file.rulingFileId ?? null) !== null
+  ) {
+    return false
+  }
+
+  const canRole =
+    isCourtOfAppealsUser(user) ||
+    isProsecutionUser(user) ||
+    isPublicProsecutionOfficeUser(user) ||
+    canDefenceUserAccessVerdictAppealFiles(workingCase, user)
+
+  if (!canRole) {
+    return false
+  }
+
+  const party = {
+    defendantId: file.defendantId,
+    civilClaimantId: file.civilClaimantId,
+  }
+  const filedEvent = findFiledAppealStatementEvent(
+    workingCase.verdictAppealCase?.appealEventLogs,
+    party,
+  )
+
+  if (!filedEvent?.created || !file.created) {
+    return false
+  }
+
+  return (
+    new Date(file.created).getTime() <= new Date(filedEvent.created).getTime()
+  )
+}
+
 /**
- * The appeal declaration and its accompanying files that this user may open,
- * grouped by the defendant they were filed for, in the order the defendants
- * appear on the case and the order the files were filed. A defence user only
- * sees the files of the defendants they represent, the same rule that governs
- * every other party appeal file.
+ * Appeal-process files this user may open on the verdict-appeal overview:
+ * áfrýjunaryfirlýsingar (defence-scoped for defenders) and greinargerðir
+ * (same roles as kærumál — CoA, prosecution, defence see every party's).
+ *
+ * Grouped by party in case order — defendants, then civil claimants, then a
+ * prosecution group when the prosecution has filed. Files within a group are
+ * oldest first.
  */
 export const getVerdictAppealFileGroups = (
   workingCase: WorkingCase,
@@ -78,18 +193,143 @@ export const getVerdictAppealFileGroups = (
         user,
       ),
     )
-    .sort(
-      (a, b) =>
-        new Date(a.created ?? 0).getTime() - new Date(b.created ?? 0).getTime(),
+    .sort(byCreatedAsc)
+
+  const statementFiles = (workingCase.caseFiles ?? [])
+    .filter((file) =>
+      canViewVerdictAppealStatementFile(workingCase, file, user),
+    )
+    .sort(byCreatedAsc)
+
+  const groups: VerdictAppealFileGroup[] = []
+  const groupedDefendantIds = new Set<string>()
+
+  for (const defendant of workingCase.defendants ?? []) {
+    const files = [
+      ...declarationFiles.filter((file) => file.defendantId === defendant.id),
+      ...statementFiles.filter((file) => file.defendantId === defendant.id),
+    ].sort(byCreatedAsc)
+
+    if (files.length > 0) {
+      groupedDefendantIds.add(defendant.id)
+      groups.push({ defendant, files })
+    }
+  }
+
+  // Appeal-only defenders get a filtered defendants list. Co-defendant
+  // statement files still arrive with APPEAL_STATEMENT_SENT — group them by
+  // defendantId so they are not dropped (and not labeled as prosecution).
+  const remainingDefendantIds = new Set<string>()
+  for (const file of [...declarationFiles, ...statementFiles]) {
+    if (file.defendantId && !groupedDefendantIds.has(file.defendantId)) {
+      remainingDefendantIds.add(file.defendantId)
+    }
+  }
+
+  for (const defendantId of remainingDefendantIds) {
+    const files = [
+      ...declarationFiles.filter((file) => file.defendantId === defendantId),
+      ...statementFiles.filter((file) => file.defendantId === defendantId),
+    ].sort(byCreatedAsc)
+
+    if (files.length > 0) {
+      groups.push({ defendant: { id: defendantId } as Defendant, files })
+    }
+  }
+
+  for (const civilClaimant of workingCase.civilClaimants ?? []) {
+    const files = statementFiles.filter(
+      (file) => file.civilClaimantId === civilClaimant.id,
     )
 
-  return (workingCase.defendants ?? []).flatMap((defendant) => {
-    const files = declarationFiles.filter(
-      (file) => file.defendantId === defendant.id,
-    )
+    if (files.length > 0) {
+      groups.push({ civilClaimant, files })
+    }
+  }
 
-    return files.length > 0 ? [{ defendant, files }] : []
-  })
+  const prosecutionFiles = statementFiles.filter(
+    (file) =>
+      file.category === CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT ||
+      file.category ===
+        CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE,
+  )
+
+  if (prosecutionFiles.length > 0) {
+    groups.push({ files: prosecutionFiles })
+  }
+
+  return groups
+}
+
+export const getVerdictAppealFileGroupKey = (
+  group: VerdictAppealFileGroup,
+): string => group.defendant?.id ?? group.civilClaimant?.id ?? 'prosecution'
+
+export const getVerdictAppealFileGroupTitle = (
+  group: VerdictAppealFileGroup,
+): string | undefined => {
+  if (group.defendant) {
+    return group.defendant.name || undefined
+  }
+
+  if (group.civilClaimant) {
+    return group.civilClaimant.name || undefined
+  }
+
+  return 'Ákæruvaldið'
+}
+
+// Who sent the row in. Prefer the filer stored on the file so a later
+// advocate replacement does not re-attribute an earlier upload. Fall back to
+// the party's current representative for declarations registered without that
+// field (e.g. letter appeals at the public prosecution office).
+export const getVerdictAppealFileSentInBy = (
+  group: VerdictAppealFileGroup,
+  file?: Pick<CaseFile, 'submittedBy' | 'fileRepresentative' | 'category'>,
+): string => {
+  const storedName = file?.fileRepresentative ?? file?.submittedBy
+  const isProsecutorCategory =
+    file?.category === CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT ||
+    file?.category ===
+      CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE ||
+    (!group.defendant && !group.civilClaimant)
+
+  if (isProsecutorCategory) {
+    const initials = getInitials(storedName)
+
+    return initials ? `Ákærandi (${initials}) sendi inn` : 'Ákærandi sendi inn'
+  }
+
+  if (group.civilClaimant) {
+    // Stored filer identity must not pick up a later spokesperson's role.
+    if (storedName) {
+      const initials = getInitials(storedName)
+
+      return initials
+        ? `Sendandi (${initials}) sendi inn`
+        : 'Sendandi sendi inn'
+    }
+
+    const initials = getInitials(
+      group.civilClaimant.appealSpokespersonName ??
+        group.civilClaimant.spokespersonName,
+    )
+    const role =
+      group.civilClaimant.appealSpokespersonIsLawyer ??
+      group.civilClaimant.spokespersonIsLawyer
+        ? 'Lögmaður'
+        : 'Réttargæslumaður'
+
+    return initials ? `${role} (${initials}) sendi inn` : `${role} sendi inn`
+  }
+
+  const initials = getInitials(
+    storedName ??
+      group.defendant?.appealDefenderName ??
+      group.defendant?.defenderName,
+  )
+
+  return initials ? `Verjandi (${initials}) sendi inn` : 'Verjandi sendi inn'
 }
 
 export const showsAppealSummonses = (
