@@ -18,24 +18,7 @@ export type {
 } from './lib/types/output-field'
 export type { CalculatorKey } from './lib/client/calculators.registry'
 export type {
-  ChildBenefitInput,
-  ChildBenefitOutput,
-  InterestBenefitInput,
-  InterestBenefitOutput,
-  VehicleBenefitInput,
-  VehicleBenefitOutput,
-  VehicleDepreciationInput,
-  VehicleDepreciationOutput,
-  VehicleTaxInput,
-  VehicleTaxOutput,
-  WithholdingTaxBracketOutput,
-  WithholdingTaxInput,
-  WithholdingTaxOutput,
+  CalculateResult,
+  CalculatorInput,
+  CalculatorOutput,
 } from './lib/types/calculators'
-export {
-  Gjaldtimabil,
-  Hjuskaparstada,
-  HjuskaparstadaStadgreidsla,
-  LaunGreidast,
-  Manudur,
-} from '../gen/fetch'

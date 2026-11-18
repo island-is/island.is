@@ -397,6 +397,16 @@ const IndictmentOverview: FC = () => {
                   conclusionText={workingCase.appealCase?.appealConclusion}
                 />
               )}
+            {workingCase.verdictAppealCase?.appealState ===
+              AppealCaseState.COMPLETED &&
+              workingCase.verdictAppealCase.appealConclusion && (
+                <Conclusion
+                  title="Dómsorð Landsréttar"
+                  conclusionText={
+                    workingCase.verdictAppealCase.appealConclusion
+                  }
+                />
+              )}
             {displayVerdictTimeline && <VerdictAppealFiles />}
             <AllIndictmentCaseFiles
               displayGeneratedPDFs={displayGeneratedPDFs}

@@ -8,6 +8,7 @@ import {
   presentVerdictAppealAsRowAppeal,
 } from '../caseTable.types'
 import { courtOfAppealsCasesAccessWhereOptions } from './access'
+import { buildHasSentAppealSummonsCondition } from './conditions'
 
 // Court of appeals cases
 
@@ -86,11 +87,17 @@ export const courtOfAppealsCasesCompletedWhereOptions =
 
 // Appealed verdicts
 
+// A verdict appeal enters these lists only once an appeal summons has been
+// sent to the court. The access options cannot be relied on for that: they
+// admit a case, and a case the court reaches through a ruling appeal passes
+// them while its verdict appeal is still being prepared. So both lists ask for
+// the sent summons themselves.
+//
 // In progress from the court's point of view means the appeal has not been
-// disposed of: filed and waiting to be received, or received and being worked
-// on. A withdrawn appeal is finished, not in progress - which is where this
-// parts company with the ruling-appeal list above, on the design's word
-// (the withdrawn tag appears under Niðurstaða in "Afgreidd mál").
+// disposed of: sent to the court and waiting to be received, or received and
+// being worked on. A withdrawn appeal is finished, not in progress - which is
+// where this parts company with the ruling-appeal list above, on the design's
+// word (the withdrawn tag appears under Niðurstaða in "Afgreidd mál").
 export const courtOfAppealsVerdictAppealsInProgressWhereOptions =
   (): CaseWhereOptions => ({
     includes: {
@@ -114,6 +121,7 @@ export const courtOfAppealsVerdictAppealsInProgressWhereOptions =
             AppealCaseState.RECEIVED,
           ],
         },
+        buildHasSentAppealSummonsCondition(),
       ],
     },
     displayCases: presentVerdictAppealAsRowAppeal,
@@ -140,6 +148,7 @@ export const courtOfAppealsVerdictAppealsCompletedWhereOptions =
             AppealCaseState.WITHDRAWN,
           ],
         },
+        buildHasSentAppealSummonsCondition(),
       ],
     },
     displayCases: presentVerdictAppealAsRowAppeal,

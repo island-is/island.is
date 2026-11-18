@@ -5,6 +5,8 @@ import { InternalServerErrorException } from '@nestjs/common'
 
 import { createTestingFileModule } from '../createTestingFileModule'
 
+import { getOrCreateTransaction } from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
 import { CaseFile, CaseFileRepositoryService } from '../../../repository'
 import { UpdateFileDto } from '../../dto/updateFile.dto'
 
@@ -21,6 +23,7 @@ type GivenWhenThen = (
 describe('FileController - Update case file order', () => {
   let mockCaseFileRepositoryService: CaseFileRepositoryService
   let givenWhenThen: GivenWhenThen
+  let mockTransaction: jest.Mock
   let transaction: Transaction
 
   beforeEach(async () => {
@@ -28,11 +31,9 @@ describe('FileController - Update case file order', () => {
       await createTestingFileModule()
 
     mockCaseFileRepositoryService = caseFileRepositoryService
-    const mockTransaction = sequelize.transaction as jest.Mock
+    mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     givenWhenThen = async (
       caseId: string,
@@ -40,13 +41,19 @@ describe('FileController - Update case file order', () => {
     ): Promise<Then> => {
       const then = {} as Then
 
+      // The route is guarded by CaseExistsForUpdateGuard, so the request
+      // transaction is already open - and holding a lock on this case row -
+      // by the time the handler runs. Guards do not execute in controller
+      // unit tests, so the request context and that transaction are set up
+      // here instead.
       try {
-        then.result = await fileController
-          .updateFiles(caseId, { files: fileUpdates })
-          .then((result) => (then.result = result))
-          .catch((error) => (then.error = error))
+        then.result = await runInRequestContext(async () => {
+          await getOrCreateTransaction(sequelize)
+
+          return fileController.updateFiles(caseId, { files: fileUpdates })
+        })
       } catch (error) {
-        then.error = error
+        then.error = error as Error
       }
       return then
     }
@@ -83,6 +90,18 @@ describe('FileController - Update case file order', () => {
         caseFiles: [{}] as CaseFile[],
       })
       then = await givenWhenThen(caseId, fileUpdates)
+    })
+
+    it('should update every file in the transaction the guard opened', () => {
+      // Once, by the stand-in for the guard above. A second call would be the
+      // handler opening a transaction of its own, which would block on the
+      // guard's row lock and deadlock the request.
+      expect(mockTransaction).toHaveBeenCalledTimes(1)
+      fileUpdates.forEach((update) =>
+        expect(
+          mockCaseFileRepositoryService.updateByIdAndCase,
+        ).toHaveBeenCalledWith(update.id, caseId, update, { transaction }),
+      )
     })
 
     it('should return all case files', () => {

@@ -392,6 +392,9 @@ describe('CaseController - Transition', () => {
         const courtCaseNumber = uuid()
         const caseFileId1 = uuid()
         const caseFileId2 = uuid()
+        const caseFileId3 = uuid()
+        const caseFileId4 = uuid()
+        const caseFileId5 = uuid()
         const caseFiles = [
           {
             id: caseFileId1,
@@ -407,6 +410,38 @@ describe('CaseController - Transition', () => {
             state: CaseFileState.STORED_IN_COURT,
             category: CaseFileCategory.RULING,
           },
+          // Linked in a confirmed court session — delivered to LÖKE on complete.
+          {
+            id: caseFileId3,
+            key: uuid(),
+            isKeyAccessible: true,
+            state: CaseFileState.STORED_IN_RVG,
+            category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+          },
+          // Orally pronounced, not yet written up — nothing to deliver to LÖKE.
+          {
+            id: caseFileId4,
+            key: '',
+            isKeyAccessible: true,
+            state: CaseFileState.STORED_IN_RVG,
+            category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+            isPronouncedOrally: true,
+          },
+          // Written up but not linked in a confirmed court session — not to LÖKE.
+          {
+            id: caseFileId5,
+            key: uuid(),
+            isKeyAccessible: true,
+            state: CaseFileState.STORED_IN_RVG,
+            category: CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
+          },
+        ]
+        const courtSessions = [
+          {
+            id: uuid(),
+            isConfirmed: true,
+            rulingFileId: caseFileId3,
+          },
         ]
         const courtEndTime = randomDate()
         const defendants = [{ id: uuid(), name: 'Test Defendant' }]
@@ -418,6 +453,7 @@ describe('CaseController - Transition', () => {
           courtCaseNumber,
           state: oldState,
           caseFiles,
+          courtSessions,
           courtEndTime,
           defendants,
         } as Case
@@ -429,6 +465,7 @@ describe('CaseController - Transition', () => {
           courtCaseNumber,
           state: newState,
           caseFiles,
+          courtSessions,
           courtEndTime,
           defendants,
         } as Case
@@ -490,7 +527,9 @@ describe('CaseController - Transition', () => {
                 caseId,
               },
               {
-                // Only court records are delivered to police, not rulings
+                // Court records and mid-case ruling orders linked in a
+                // confirmed court session are delivered to police; final
+                // rulings (RULING) and unlinked ruling orders are not.
                 type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
                 user: {
                   ...defaultUser,
@@ -499,7 +538,26 @@ describe('CaseController - Transition', () => {
                 caseId,
                 elementId: caseFileId1,
               },
+              {
+                type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
+                user: {
+                  ...defaultUser,
+                  canConfirmIndictment: isIndictmentCase(theCase.type),
+                },
+                caseId,
+                elementId: caseFileId3,
+              },
             ])
+            expect(mockQueuedMessages).not.toEqual(
+              expect.arrayContaining([
+                {
+                  type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
+                  user: expect.any(Object),
+                  caseId,
+                  elementId: caseFileId5,
+                },
+              ]),
+            )
           } else if (
             newState === CaseState.DELETED &&
             !isIndictmentCase(theCase.type)

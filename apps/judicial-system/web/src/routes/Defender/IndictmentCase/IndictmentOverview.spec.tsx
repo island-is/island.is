@@ -407,4 +407,59 @@ describe('Defender IndictmentOverview', () => {
       expect(screen.getByText('Undirbúningsþinghald')).toBeInTheDocument()
     })
   })
+
+  describe('verdict appeal statement deadline', () => {
+    it('shows the greinargerðarfrest on the defendant’s timeline card', async () => {
+      renderOverview(
+        completedCase(CaseIndictmentRulingDecision.RULING, {
+          verdictAppealCase: {
+            id: 'verdict_appeal_case_id',
+            appealState: AppealCaseState.RECEIVED,
+            statementDeadlines: [
+              {
+                id: 'deadline_id',
+                defendantId: 'own_client_id',
+                deadline: '2026-09-14T00:00:00.000Z',
+                isExpired: false,
+              },
+            ],
+          },
+        }),
+      )
+
+      const timelineCards = await screen.findAllByTestId(
+        'defenderVerdictTimelineCard',
+      )
+
+      expect(
+        within(timelineCards[0]).getByText(
+          '• Frestur til að skila greinargerð er til 14.09.2026',
+        ),
+      ).toBeInTheDocument()
+      expect(screen.queryByText('Dómur áfrýjaður')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('verdict appeal conclusion', () => {
+    it('shows Landsréttur’s dómsorð once the verdict appeal is completed', async () => {
+      renderOverview(
+        completedCase(CaseIndictmentRulingDecision.RULING, {
+          verdictAppealCase: {
+            id: 'verdict_appeal_case_id',
+            appealState: AppealCaseState.COMPLETED,
+            appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+          },
+        }),
+      )
+
+      expect(await screen.findByText('Dómsorð Landsréttar')).toBeInTheDocument()
+      expect(
+        screen.getByText('Hinn áfrýjaði dómur skal vera óraskaður.'),
+      ).toBeInTheDocument()
+      expect(screen.queryByText('Dómur áfrýjaður')).not.toBeInTheDocument()
+      expect(
+        screen.queryByText('Niðurstaða Landsréttar'),
+      ).not.toBeInTheDocument()
+    })
+  })
 })

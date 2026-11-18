@@ -3,27 +3,27 @@ import { z } from 'zod'
 import { fromClientResult } from './fromClientResult'
 
 const bracket = z.object({
-  nedriMork: z.number().int().optional(),
-  stadgreidsluhlutfall: z.number().min(0).max(1).optional(),
+  lowerBound: z.number().int().optional(),
+  rate: z.number().min(0).max(1).optional(),
 })
 
 const shape = {
-  manadarlaun: z.number().int().optional(),
-  stadgreidsluhlutfall: z.number().min(0).max(1).optional(),
+  amount: z.number().int().optional(),
+  rate: z.number().min(0).max(1).optional(),
   unboundedRatio: z.number().optional(),
   nullableRatio: z.union([z.number().min(0).max(1), z.null()]).optional(),
-  skattthrep: z.union([z.array(bracket), z.null()]).optional(),
+  rows: z.union([z.array(bracket), z.null()]).optional(),
 }
 
 describe('fromClientResult', () => {
   it('converts 0–1 bounded non-integer fields to whole percent', () => {
     const result = fromClientResult(shape, {
-      manadarlaun: 800000,
-      stadgreidsluhlutfall: 0.3148,
+      amount: 800000,
+      rate: 0.3148,
     })
 
-    expect(result.stadgreidsluhlutfall).toBe(31.48)
-    expect(result.manadarlaun).toBe(800000)
+    expect(result.rate).toBe(31.48)
+    expect(result.amount).toBe(800000)
   })
 
   it('leaves unbounded numbers unchanged', () => {
@@ -43,16 +43,14 @@ describe('fromClientResult', () => {
 
   it('converts ratios inside arrays of objects', () => {
     const result = fromClientResult(shape, {
-      skattthrep: [{ nedriMork: 0, stadgreidsluhlutfall: 0.3148 }],
+      rows: [{ lowerBound: 0, rate: 0.3148 }],
     })
 
-    expect(result.skattthrep).toEqual([
-      { nedriMork: 0, stadgreidsluhlutfall: 31.48 },
-    ])
+    expect(result.rows).toEqual([{ lowerBound: 0, rate: 31.48 }])
   })
 
   it('passes a null array through', () => {
-    expect(fromClientResult(shape, { skattthrep: null }).skattthrep).toBeNull()
+    expect(fromClientResult(shape, { rows: null }).rows).toBeNull()
   })
 
   it('passes keys missing from the shape through unchanged', () => {
@@ -61,15 +59,15 @@ describe('fromClientResult', () => {
 
   it('does not mutate the result', () => {
     const input = {
-      stadgreidsluhlutfall: 0.04,
-      skattthrep: [{ stadgreidsluhlutfall: 0.04 }],
+      rate: 0.04,
+      rows: [{ rate: 0.04 }],
     }
 
     fromClientResult(shape, input)
 
     expect(input).toEqual({
-      stadgreidsluhlutfall: 0.04,
-      skattthrep: [{ stadgreidsluhlutfall: 0.04 }],
+      rate: 0.04,
+      rows: [{ rate: 0.04 }],
     })
   })
 })
