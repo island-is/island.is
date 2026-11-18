@@ -443,9 +443,7 @@ describe('FileController - Create case file', () => {
         id: uuid(),
         appealType: AppealCaseType.VERDICT,
         appealState: AppealCaseState.RECEIVED,
-        statementDeadlines: [
-          { defendantId, deadline: new Date('2099-01-01') },
-        ],
+        statementDeadlines: [{ defendantId, deadline: new Date('2099-01-01') }],
         appealEventLogs: [],
       },
     } as Case
@@ -512,9 +510,7 @@ describe('FileController - Create case file', () => {
         id: uuid(),
         appealType: AppealCaseType.VERDICT,
         appealState: AppealCaseState.RECEIVED,
-        statementDeadlines: [
-          { defendantId, deadline: new Date('2099-01-01') },
-        ],
+        statementDeadlines: [{ defendantId, deadline: new Date('2099-01-01') }],
         appealEventLogs: [
           {
             eventType: AppealEventType.APPEAL_STATEMENT_SENT,
@@ -553,9 +549,7 @@ describe('FileController - Create case file', () => {
         id: uuid(),
         appealType: AppealCaseType.VERDICT,
         appealState: AppealCaseState.RECEIVED,
-        statementDeadlines: [
-          { defendantId, deadline: new Date('2020-01-01') },
-        ],
+        statementDeadlines: [{ defendantId, deadline: new Date('2020-01-01') }],
         appealEventLogs: [],
       },
     } as Case
