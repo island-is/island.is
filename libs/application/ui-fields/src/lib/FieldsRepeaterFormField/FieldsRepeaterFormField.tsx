@@ -27,7 +27,7 @@ import { Locale } from '@island.is/shared/types'
 import isEqual from 'lodash/isEqual'
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
-import { Item } from './FieldsRepeaterItem'
+import { Item } from '../RepeaterItem/RepeaterItem'
 
 interface Props extends FieldBaseProps {
   field: FieldsRepeaterField

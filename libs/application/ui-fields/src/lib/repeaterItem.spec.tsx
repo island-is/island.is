@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { screen, waitFor } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
   buildFieldsRepeaterField,
@@ -67,8 +67,7 @@ const repeaters = [
   },
 ]
 
-describe.each(repeaters)('$name row fields', ({ name, open, validate }) => {
-  const isTable = name === 'TableRepeater'
+describe.each(repeaters)('$name row fields', ({ open, validate }) => {
   it('I10: field errors show on the row', async () => {
     const harness = await open(
       { name: { component: 'input', label: 'Heiti' } },
@@ -92,15 +91,6 @@ describe.each(repeaters)('$name row fields', ({ name, open, validate }) => {
 
     await validate(harness)
 
-    if (isTable) {
-      await waitFor(() =>
-        expect(
-          screen.getByRole('textbox', { name: /Gata/ }),
-        ).toBeInTheDocument(),
-      )
-      expect(screen.queryByText('Ógilt gildi')).not.toBeInTheDocument()
-    } else {
-      expect(await screen.findByText('Ógilt gildi')).toBeInTheDocument()
-    }
+    expect(await screen.findByText('Ógilt gildi')).toBeInTheDocument()
   })
 })

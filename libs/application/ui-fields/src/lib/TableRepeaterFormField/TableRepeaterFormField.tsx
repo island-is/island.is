@@ -34,7 +34,7 @@ import {
   handleCustomMappedValues,
   setObjectWithNestedKey,
 } from './utils'
-import { Item } from './TableRepeaterItem'
+import { Item } from '../RepeaterItem/RepeaterItem'
 import { Locale } from '@island.is/shared/types'
 import { useApolloClient } from '@apollo/client/react'
 import { uuid } from 'uuidv4'
@@ -504,10 +504,11 @@ export const TableRepeaterFormField: FC<Props> = ({
                     errors={errors}
                     item={item}
                     dataId={resolvedId}
-                    activeIndex={activeIndex}
+                    index={activeIndex}
                     values={values}
                     setFieldLoadingState={setFieldLoadingState}
                     setSubmitButtonDisabled={setSubmitButtonDisabled}
+                    compactLayout
                   />
                 ))}
               </GridRow>

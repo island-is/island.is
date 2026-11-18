@@ -4,13 +4,12 @@ import {
   DEFAULT_FILE_SIZE_LIMIT,
   DEFAULT_TOTAL_FILE_SIZE_SUM,
   formatText,
+  getErrorViaPath,
   getValueViaPath,
 } from '@island.is/application/core'
 import {
   AlertMessageField,
   Application,
-  SetFieldLoadingState,
-  SetSubmitButtonDisabled,
   AsyncSelectField,
   DescriptionField,
   FieldComponents,
@@ -19,8 +18,10 @@ import {
   HiddenInputField,
   RepeaterItem,
   RepeaterOptionValue,
-  VehiclePermnoWithInfoField,
+  SetFieldLoadingState,
+  SetSubmitButtonDisabled,
   StaticText,
+  VehiclePermnoWithInfoField,
 } from '@island.is/application/types'
 import { GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -40,7 +41,7 @@ import { AsyncSelectFormField } from '../AsyncSelectFormField/AsyncSelectFormFie
 import { useApolloClient } from '@apollo/client'
 import { HiddenInputFormField } from '../HiddenInputFormField/HiddenInputFormField'
 import { AlertMessageFormField } from '../AlertMessageFormField/AlertMessageFormField'
-import * as styles from './TableRepeaterItem.css'
+import * as styles from './RepeaterItem.css'
 import { VehiclePermnoWithInfoFormField } from '../VehiclePermnoWithInfoFormField/VehiclePermnoWithInfoFormField'
 import { DescriptionFormField } from '../DescriptionFormField/DescriptionFormField'
 import { FileUploadFormField } from '../FileUploadFormField/FileUploadFormField'
@@ -52,10 +53,11 @@ interface ItemFieldProps {
   errors?: RecordObject
   item: RepeaterItem & { id: string }
   dataId: string
-  activeIndex: number
+  index: number
   values: Array<Record<string, string>>
   setFieldLoadingState?: SetFieldLoadingState
   setSubmitButtonDisabled?: SetSubmitButtonDisabled
+  compactLayout?: boolean
 }
 
 const componentMapper = {
@@ -74,10 +76,11 @@ export const Item = ({
   errors,
   item,
   dataId,
-  activeIndex,
+  index,
   values,
   setFieldLoadingState,
   setSubmitButtonDisabled,
+  compactLayout = false,
 }: ItemFieldProps) => {
   const { formatMessage, lang } = useLocale()
   const { setValue, getValues, control, clearErrors } = useFormContext()
@@ -137,9 +140,8 @@ export const Item = ({
   } else {
     Component = componentMapper[component]
   }
-  const id = `${dataId}[${activeIndex}].${itemId}`
-  const activeValues =
-    activeIndex >= 0 && values ? values[activeIndex] : undefined
+  const id = `${dataId}[${index}].${itemId}`
+  const activeValues = index >= 0 && values ? values[index] : undefined
 
   let watchedValues: string | (string | undefined)[] | undefined
   if (updateValueObj) {
@@ -188,8 +190,8 @@ export const Item = ({
      * This hack is needed to get the correct type
      */
     const errorList = error as unknown as Record<string, string>[] | undefined
-    const errors = errorList?.[activeIndex]
-    return errors?.[id]
+    const errors = errorList?.[index]
+    return errors && getErrorViaPath(errors, id)
   }
 
   const getDefaultValue = (
@@ -204,41 +206,42 @@ export const Item = ({
     }
 
     return typeof defaultValue === 'function'
-      ? defaultValue(application, activeField, activeIndex)
+      ? defaultValue(application, activeField, index, lang)
       : defaultValue
   }
 
   let translatedOptions: any = []
   if (typeof options === 'function') {
-    translatedOptions = options(application, activeValues, lang)
+    translatedOptions = options(application, activeValues, lang, formatMessage)
   } else {
-    translatedOptions = options?.map((option) => ({
-      ...option,
-      label: formatText(option.label, application, formatMessage),
-      ...(option.tooltip && {
-        tooltip: formatText(option.tooltip, application, formatMessage),
-      }),
-    }))
+    translatedOptions =
+      options?.map((option) => ({
+        ...option,
+        label: formatText(option.label, application, formatMessage),
+        ...(option.tooltip && {
+          tooltip: formatText(option.tooltip, application, formatMessage),
+        }),
+      })) ?? []
   }
 
   if (item.filterOptions && typeof item.filterOptions === 'function') {
     translatedOptions = item.filterOptions(
       translatedOptions,
       getValues(),
-      activeIndex,
+      index,
     )
   }
 
   let readonlyVal: boolean | undefined
   if (typeof readonly === 'function') {
-    readonlyVal = readonly(application, activeValues)
+    readonlyVal = readonly(application, activeValues, index)
   } else {
     readonlyVal = readonly
   }
 
   let disabledVal: boolean | undefined
   if (typeof disabled === 'function') {
-    disabledVal = disabled(application, activeValues)
+    disabledVal = disabled(application, activeValues, index)
   } else {
     disabledVal = disabled
   }
@@ -252,7 +255,7 @@ export const Item = ({
 
   let isClearableVal: boolean | undefined
   if (typeof isClearable === 'function') {
-    isClearableVal = isClearable(application)
+    isClearableVal = isClearable(application, activeValues)
   } else {
     isClearableVal = isClearable
   }
@@ -284,6 +287,9 @@ export const Item = ({
   if (component === 'hiddenInput') {
     defaultVal = getDefaultValue(item, application, activeValues)
   }
+  if (component === 'nationalIdWithName') {
+    defaultVal = getDefaultValue(item, application, activeValues)
+  }
 
   let maxDateVal: Date | undefined
   let minDateVal: Date | undefined
@@ -301,7 +307,7 @@ export const Item = ({
 
   let clearOnChangeVal: string[] | undefined
   if (typeof clearOnChange === 'function') {
-    clearOnChangeVal = clearOnChange(activeIndex)
+    clearOnChangeVal = clearOnChange(index)
   } else {
     clearOnChangeVal = clearOnChange
   }
@@ -313,7 +319,7 @@ export const Item = ({
 
   let labelVal: StaticText | undefined
   if (typeof label === 'function') {
-    labelVal = label(activeIndex)
+    labelVal = label(index)
   } else {
     labelVal = label
   }
@@ -330,6 +336,15 @@ export const Item = ({
     disableDropdownVal = !(item.enableCountrySelector ?? false)
   }
 
+  let nationalIdWithNameDefaults: Record<string, unknown> | undefined
+  if (item.component === 'nationalIdWithName') {
+    nationalIdWithNameDefaults = {
+      nationalIdDefaultValue:
+        defaultVal?.nationalId ?? item.nationalIdDefaultValue,
+      nameDefaultValue: defaultVal?.name ?? item.nameDefaultValue,
+    }
+  }
+
   const setOnChangeFunc =
     setOnChange &&
     (async (optionValue: RepeaterOptionValue) => {
@@ -340,7 +355,7 @@ export const Item = ({
             ...application,
             answers: getValues(),
           },
-          activeIndex,
+          index,
           activeValues,
           apolloClient,
           lang,
@@ -364,11 +379,11 @@ export const Item = ({
       isMulti: item.isMulti,
       loadOptions: (c) =>
         item.loadOptions(c, lang, activeValues, (subKey, value) => {
-          setValue(`${dataId}[${activeIndex}].${subKey}`, value)
+          setValue(`${dataId}[${index}].${subKey}`, value)
         }),
       updateOnSelect:
         typeof item.updateOnSelect === 'function'
-          ? item.updateOnSelect(activeIndex)
+          ? item.updateOnSelect(index)
           : item.updateOnSelect,
       disabled: disabledVal,
       required: requiredVal,
@@ -399,7 +414,7 @@ export const Item = ({
         : item.title
     const messageVal =
       typeof item.message === 'function'
-        ? item.message(application, activeValues)
+        ? item.message(application, activeValues, index, lang)
         : item.message
 
     alertMessageProps = {
@@ -474,7 +489,7 @@ export const Item = ({
 
   if (
     typeof condition === 'function'
-      ? condition && !condition(application, activeValues)
+      ? condition && !condition(application, activeValues, index, lang)
       : condition
   ) {
     return null
@@ -483,12 +498,13 @@ export const Item = ({
   return (
     <GridColumn
       span={['1/1', '1/1', '1/1', span]}
-      position={component === 'hiddenInput' ? 'absolute' : 'relative'}
-      className={
-        component === 'nationalIdWithName' || component === 'selectAsync'
-          ? styles.removePaddingTop
-          : undefined
-      }
+      {...(compactLayout && {
+        position: component === 'hiddenInput' ? 'absolute' : 'relative',
+        className:
+          component === 'nationalIdWithName' || component === 'selectAsync'
+            ? styles.removePaddingTop
+            : undefined,
+      })}
     >
       {component === 'radio' && labelVal && (
         <Text variant="h4" as="h4" id={id + 'title'} marginBottom={3}>
@@ -585,8 +601,9 @@ export const Item = ({
             setOnChange={setOnChangeFunc}
             {...props}
             {...(component === 'date'
-              ? { maxDate: maxDateVal, minDate: minDateVal }
+              ? { maxDate: maxDateVal, minDate: minDateVal, locale: lang }
               : {})}
+            {...nationalIdWithNameDefaults}
             {...(component === 'input' ? { suffix: suffixVal } : {})}
             {...(component === 'phone'
               ? { disableDropdown: disableDropdownVal }
