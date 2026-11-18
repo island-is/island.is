@@ -2963,11 +2963,6 @@ export const messages = defineMessages({
       'Ekki tókst að eyða heimild. Vinsamlegast reyndu aftur síðar.',
     id: 'sp.health:permit-deleted-error',
   },
-  medicineDelegationStepUpExpired: {
-    defaultMessage:
-      'Auðkenningin rann út. Athugaðu hvort lyfjaheimildin hafi verið skráð áður en þú reynir aftur.',
-    id: 'sp.health:medicine-delegation-step-up-expired',
-  },
   permitCreatedError: {
     defaultMessage:
       'Ekki tókst að bæta heimild við. {arg} Vinsamlegast reyndu aftur síðar.',

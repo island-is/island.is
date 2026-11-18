@@ -216,7 +216,7 @@ export class MedicineResolver {
     try {
       outcome = await this.stepUp.check(user, input.authReqId, input.delegation)
     } catch (error) {
-      // An authentication that was made, but not by this person or not for this grant.
+      // An authentication that can't be accepted: not this person's, not for this grant, or not a token we can verify.
       if (
         error instanceof ForbiddenException ||
         error instanceof StepUpTokenRejectedError

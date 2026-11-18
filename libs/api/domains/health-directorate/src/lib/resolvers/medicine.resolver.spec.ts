@@ -1,10 +1,14 @@
 import { ForbiddenException } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
+import { StepUpTokenRejectedError } from '@island.is/auth/step-up'
 import type { AuditService } from '@island.is/nest/audit'
 
 import type { HealthDirectorateService } from '../health-directorate.service'
-import type { MedicineDelegationStepUpService } from '../medicine-delegation-step-up.service'
+import {
+  hashGrant,
+  type MedicineDelegationStepUpService,
+} from '../medicine-delegation-step-up.service'
 import { MedicineResolver } from './medicine.resolver'
 
 const user = { nationalId: '0101302399', client: '@island.is/web' } as User
@@ -111,6 +115,58 @@ describe('MedicineResolver pharmacy delegations', () => {
         resources: input.nationalId,
       }),
     )
+  })
+
+  it('records a token the identity server issued but we could not accept', async () => {
+    const { resolver, api, stepUp, audit } = setup()
+    stepUp.check.mockRejectedValue(new StepUpTokenRejectedError('bad issuer'))
+
+    await expect(
+      resolver.checkMedicineDelegationStepUp(
+        { authReqId: 'req', delegation: input },
+        user,
+      ),
+    ).rejects.toThrow(StepUpTokenRejectedError)
+    expect(api.postMedicineDelegation).not.toHaveBeenCalled()
+    expect(audit.audit).toHaveBeenCalledWith(
+      expect.objectContaining({ action: 'refuseMedicineDelegationStepUp' }),
+    )
+  })
+
+  it('ties the start, the refusal and the grant together by the hash of the grant', async () => {
+    const grant = hashGrant(user, input)
+    const { resolver, stepUp, audit } = setup()
+    stepUp.isRequired.mockResolvedValue(true)
+    stepUp.start.mockResolvedValue({ authReqId: 'req', method: 'app' })
+    await resolver.postMedicineDelegation(input, user)
+
+    stepUp.check.mockRejectedValueOnce(new ForbiddenException('other person'))
+    await resolver
+      .checkMedicineDelegationStepUp(
+        { authReqId: 'req', delegation: input },
+        user,
+      )
+      .catch(() => undefined)
+
+    stepUp.check.mockResolvedValue({
+      status: 'confirmed',
+      claims: { acr: 'eidas-loa-high', authTime: new Date() },
+    })
+    await resolver.checkMedicineDelegationStepUp(
+      { authReqId: 'req', delegation: input },
+      user,
+    )
+
+    expect(
+      audit.audit.mock.calls.map(([record]) => [
+        record.action,
+        record.meta.grant,
+      ]),
+    ).toEqual([
+      ['startMedicineDelegationStepUp', grant],
+      ['refuseMedicineDelegationStepUp', grant],
+      ['postMedicineDelegation', grant],
+    ])
   })
 
   it('saves the checked delegation once the step-up is confirmed', async () => {

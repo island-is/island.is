@@ -8,7 +8,7 @@ export const up = compose(
     clientType: 'machine',
     displayName: 'Auðkenning fyrir viðkvæmar aðgerðir',
     description:
-      'GraphQL API: staðfestir viðkvæmar aðgerðir, t.d. veitingu lyfjaumboðs, með rafrænum skilríkjum notanda (CIBA).',
+      'GraphQL API: staðfestir viðkvæmar aðgerðir, t.d. veitingu lyfjaheimildar, með rafrænum skilríkjum notanda (CIBA).',
     grantTypes: ['urn:openid:params:grant-type:ciba'],
     allowedScopes: ['openid'],
   }),

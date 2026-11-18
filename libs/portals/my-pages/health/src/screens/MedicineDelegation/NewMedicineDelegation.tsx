@@ -24,6 +24,7 @@ import SecondStep from './components/ChooseDate'
 import FirstStep from './components/ChoosePerson'
 import {
   useCheckMedicineDelegationStepUpMutation,
+  useGetMedicineDelegationsLazyQuery,
   usePostMedicineDelegationMutation,
 } from './MedicineDelegation.generated'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
@@ -44,11 +45,14 @@ type PendingStepUp = {
 
 const REFETCH_ON_SAVE = ['GetMedicineDelegations']
 
+const sameDay = (a: string | Date | null | undefined, b: Date) =>
+  a != null && new Date(a).toDateString() === b.toDateString()
+
 const problemStatus = (error: unknown) =>
   findProblemInApolloError(error as ApolloError)?.status
 
 const NewMedicineDelegation = () => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   useHealthPlausibleSwap()
   const [step, setStep] = useState<number>(1)
   const [openModal, setOpenModal] = useState<boolean>(false)
@@ -72,8 +76,26 @@ const NewMedicineDelegation = () => {
         : [],
     awaitRefetchQueries: true,
   })
+  const [getDelegations] = useGetMedicineDelegationsLazyQuery({
+    fetchPolicy: 'network-only',
+  })
   const [stepUp, setStepUp] = useState<PendingStepUp>()
   const created = useRef(false)
+
+  /** The answer to a check can be lost after the save, and the next one then says expired. */
+  const wasSaved = async (input: DelegationInput) => {
+    const { data } = await getDelegations({
+      variables: { locale: lang, input: { status: ['active'] } },
+    })
+    return (
+      data?.healthDirectorateMedicineDelegations?.items?.some(
+        (item) =>
+          item.isActive &&
+          item.nationalId === input.nationalId &&
+          sameDay(item.dates?.to, input.to),
+      ) ?? false
+    )
+  }
 
   // Once only: a check can confirm after the step-up screen was closed.
   const handleCreated = () => {
@@ -163,6 +185,11 @@ const NewMedicineDelegation = () => {
       }
     }
 
+    if (result?.status === 'expired' && (await wasSaved(stepUp.input))) {
+      handleCreated()
+      return 'confirmed'
+    }
+
     return result?.status ?? 'pending'
   }
 
@@ -238,8 +265,6 @@ const NewMedicineDelegation = () => {
             context={`${formatMessage(messages.medicineDelegation)}: ${
               formState?.name ?? ''
             }`}
-            // An answer can be lost after the delegation was saved, and the next check then says expired.
-            messages={{ expired: messages.medicineDelegationStepUpExpired }}
             onBack={handleClose}
           />
         </Modal>

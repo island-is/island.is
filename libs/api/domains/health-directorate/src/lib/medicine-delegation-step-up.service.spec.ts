@@ -128,7 +128,7 @@ describe('MedicineDelegationStepUpService', () => {
       })
     })
 
-    it('names the recipient by the registry, not by anything the browser sent', async () => {
+    it('looks the recipient up in the registry', async () => {
       const { service, ciba, identity } = setup()
       ciba.start.mockResolvedValue({ authReqId: 'req' })
 
@@ -247,7 +247,7 @@ describe('MedicineDelegationStepUpService', () => {
   })
 
   describe('createBindingMessage', () => {
-    it('stays within what the identity server and an SMS take', () => {
+    it('shortens a long name to at most 100 characters', () => {
       expect(createBindingMessage('A'.repeat(300)).length).toBeLessThanOrEqual(
         100,
       )
