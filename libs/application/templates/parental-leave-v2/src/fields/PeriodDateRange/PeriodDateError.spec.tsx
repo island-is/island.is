@@ -28,6 +28,13 @@ describe('PeriodDateError', () => {
     expect(screen.getByText('Too short')).toBeTruthy()
   })
 
+  // The validator reports here when the period was defined by its length
+  it('shows an error on the period length', () => {
+    renderError({ 'periods[1].endDateDuration': 'Too short' })
+
+    expect(screen.getByText('Too short')).toBeTruthy()
+  })
+
   it('shows an error on the period start date, nested as the shell keeps it', () => {
     renderError({ periods: [undefined, { startDate: 'Overlaps' }] })
 

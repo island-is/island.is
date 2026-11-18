@@ -21,7 +21,13 @@ export const PeriodDateError: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     return null
   }
 
-  const message = ['endDate', 'startDate', 'firstPeriodStart', 'useLength']
+  const message = [
+    'endDate',
+    'endDateDuration',
+    'startDate',
+    'firstPeriodStart',
+    'useLength',
+  ]
     .map((name) =>
       getErrorViaPath(errors ?? {}, `periods[${currentIndex}].${name}`),
     )
