@@ -265,11 +265,10 @@ const IndictmentOverview: FC = () => {
         />
         <FormContentContainer>
           <PageTitle>{caseIsClosed ? 'Máli lokið' : 'Yfirlit ákæru'}</PageTitle>
-        <CourtCaseInfo workingCase={workingCase} />
-        <div className={stack({ gap: 5 })}>
-          <div className={stack({ gap: 2 })}>
-            {workingCase.reopenReason &&
-              !isCompletedCase(workingCase.state) && (
+          <CourtCaseInfo workingCase={workingCase} />
+          <div className={stack({ gap: 5 })}>
+            <div className={stack({ gap: 2 })}>
+              {workingCase.reopenReason && !isCompletedCase(workingCase.state) && (
                 <AlertMessage
                   title="Mál enduropnað"
                   message={
@@ -280,149 +279,153 @@ const IndictmentOverview: FC = () => {
                   type="info"
                 />
               )}
-            {workingCase.defendants?.map(
-              (defendant) =>
-                defendant.verdict && (
-                  <VerdictStatusAlert
-                    key={`${defendant.id}${defendant.verdict.id}`}
-                    defendant={defendant}
-                    verdict={defendant.verdict}
-                  />
-                ),
-            )}
-            {displayVerdictTimeline &&
-              workingCase.defendants?.map(
+              {workingCase.defendants?.map(
                 (defendant) =>
-                  defendant.verdict &&
-                  hasVerdictServiceDecision(defendant.verdict) && (
-                    <Box
-                      key={`${defendant.id}${defendant.verdict.id}-timeline`}
-                      dataTestId="defenderVerdictTimelineCard"
-                    >
-                      <DefenderVerdictTimelineCard
-                        defendant={defendant}
-                        verdictAppealCase={workingCase.verdictAppealCase}
-                        contextMenuItems={getVerdictTimelineMenuItems(
-                          defendant,
-                        )}
-                      />
-                    </Box>
+                  defendant.verdict && (
+                    <VerdictStatusAlert
+                      key={`${defendant.id}${defendant.verdict.id}`}
+                      defendant={defendant}
+                      verdict={defendant.verdict}
+                    />
                   ),
               )}
-            {!caseIsClosed &&
-              workingCase.defendants?.map((defendant) => (
-                <Fragment key={defendant.id}>
-                  {defendant.alternativeServiceDescription && (
-                    <AlternativeServiceAnnouncement
-                      alternativeServiceDescription={
-                        defendant.alternativeServiceDescription
-                      }
-                      defendantName={defendant.name}
-                    />
-                  )}
-                  {defendant.subpoenas
-                    ?.filter((subpoena) =>
-                      isSuccessfulServiceStatus(subpoena.serviceStatus),
-                    )
-                    .map((subpoena) => (
-                      <ServiceAnnouncement
-                        key={`${defendant.id}${subpoena.id}`}
-                        defendant={defendant}
-                        subpoena={subpoena}
+              {displayVerdictTimeline &&
+                workingCase.defendants?.map(
+                  (defendant) =>
+                    defendant.verdict &&
+                    hasVerdictServiceDecision(defendant.verdict) && (
+                      <Box
+                        key={`${defendant.id}${defendant.verdict.id}-timeline`}
+                        dataTestId="defenderVerdictTimelineCard"
+                      >
+                        <DefenderVerdictTimelineCard
+                          defendant={defendant}
+                          verdictAppealCase={workingCase.verdictAppealCase}
+                          contextMenuItems={getVerdictTimelineMenuItems(
+                            defendant,
+                          )}
+                        />
+                      </Box>
+                    ),
+                )}
+              {!caseIsClosed &&
+                workingCase.defendants?.map((defendant) => (
+                  <Fragment key={defendant.id}>
+                    {defendant.alternativeServiceDescription && (
+                      <AlternativeServiceAnnouncement
+                        alternativeServiceDescription={
+                          defendant.alternativeServiceDescription
+                        }
+                        defendantName={defendant.name}
                       />
-                    ))}
-                </Fragment>
-              ))}
-          </div>
-          <AppealRulingModifiedAlert />
-          <RulingModifiedAlert />
-          {caseHasBeenReceivedByCourt &&
-            workingCase.court &&
-            latestDate?.date &&
-            workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
-            workingCase.indictmentDecision !==
-              IndictmentDecision.REDISTRIBUTING &&
-            caseIsClosed === false && (
-              <Box component="section">
-                <IndictmentCaseScheduledCard
-                  court={workingCase.court}
-                  indictmentDecision={workingCase.indictmentDecision}
-                  courtDate={latestDate.date}
-                  courtRoom={latestDate.location}
-                  postponedIndefinitelyExplanation={
-                    workingCase.postponedIndefinitelyExplanation
+                    )}
+                    {defendant.subpoenas
+                      ?.filter((subpoena) =>
+                        isSuccessfulServiceStatus(subpoena.serviceStatus),
+                      )
+                      .map((subpoena) => (
+                        <ServiceAnnouncement
+                          key={`${defendant.id}${subpoena.id}`}
+                          defendant={defendant}
+                          subpoena={subpoena}
+                        />
+                      ))}
+                  </Fragment>
+                ))}
+            </div>
+            <AppealRulingModifiedAlert />
+            <RulingModifiedAlert />
+            {caseHasBeenReceivedByCourt &&
+              workingCase.court &&
+              latestDate?.date &&
+              workingCase.indictmentDecision !==
+                IndictmentDecision.COMPLETING &&
+              workingCase.indictmentDecision !==
+                IndictmentDecision.REDISTRIBUTING &&
+              caseIsClosed === false && (
+                <Box component="section">
+                  <IndictmentCaseScheduledCard
+                    court={workingCase.court}
+                    indictmentDecision={workingCase.indictmentDecision}
+                    courtDate={latestDate.date}
+                    courtRoom={latestDate.location}
+                    postponedIndefinitelyExplanation={
+                      workingCase.postponedIndefinitelyExplanation
+                    }
+                    courtSessionType={workingCase.courtSessionType}
+                  />
+                </Box>
+              )}
+            <AppealCourtSessionScheduledCard
+              verdictAppealCase={workingCase.verdictAppealCase}
+            />
+            <Box component="section">
+              {caseIsClosed ? (
+                <InfoCardClosedIndictment />
+              ) : (
+                <InfoCardActiveIndictment displayVerdictViewDate />
+              )}
+            </Box>
+            {caseIsClosed &&
+              isRulingOrDismissalCase(workingCase.indictmentRulingDecision) && (
+                <Conclusion
+                  title={`${
+                    workingCase.indictmentRulingDecision ===
+                    CaseIndictmentRulingDecision.RULING
+                      ? 'Dóms'
+                      : 'Úrskurðar'
+                  }orð héraðsdóms`}
+                  conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
+                  judgeName={workingCase.judge?.name}
+                />
+              )}
+            {workingCase.appealCase?.appealState ===
+              AppealCaseState.COMPLETED &&
+              workingCase.appealCase?.appealConclusion && (
+                <Conclusion
+                  title="Úrskurðarorð Landsréttar"
+                  conclusionText={workingCase.appealCase?.appealConclusion}
+                />
+              )}
+            {workingCase.verdictAppealCase?.appealState ===
+              AppealCaseState.COMPLETED &&
+              workingCase.verdictAppealCase.appealConclusion && (
+                <Conclusion
+                  title="Dómsorð Landsréttar"
+                  conclusionText={
+                    workingCase.verdictAppealCase.appealConclusion
                   }
-                  courtSessionType={workingCase.courtSessionType}
+                />
+              )}
+            {displayVerdictTimeline && <VerdictAppealFiles />}
+            <AllIndictmentCaseFiles
+              displayGeneratedPDFs={displayGeneratedPDFs}
+              forceDisplayAdditionalFiles={canAddFiles}
+            />
+            {canAddFiles && (
+              <Box display="flex" justifyContent="flexEnd">
+                <Button
+                  size="small"
+                  icon="add"
+                  onClick={() =>
+                    router.push(
+                      `${DEFENDER_INDICTMENT_CASE_ADD_FILES_ROUTE}/${workingCase.id}`,
+                    )
+                  }
+                >
+                  Bæta við gögnum
+                </Button>
+              </Box>
+            )}
+            {caseIsClosed && (
+              <Box component="section">
+                <ZipButton
+                  caseId={workingCase.id}
+                  courtCaseNumber={workingCase.courtCaseNumber}
                 />
               </Box>
             )}
-          <AppealCourtSessionScheduledCard
-            verdictAppealCase={workingCase.verdictAppealCase}
-          />
-          <Box component="section">
-            {caseIsClosed ? (
-              <InfoCardClosedIndictment />
-            ) : (
-              <InfoCardActiveIndictment displayVerdictViewDate />
-            )}
-          </Box>
-          {caseIsClosed &&
-            isRulingOrDismissalCase(workingCase.indictmentRulingDecision) && (
-              <Conclusion
-                title={`${
-                  workingCase.indictmentRulingDecision ===
-                  CaseIndictmentRulingDecision.RULING
-                    ? 'Dóms'
-                    : 'Úrskurðar'
-                }orð héraðsdóms`}
-                conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
-                judgeName={workingCase.judge?.name}
-              />
-            )}
-          {workingCase.appealCase?.appealState === AppealCaseState.COMPLETED &&
-            workingCase.appealCase?.appealConclusion && (
-              <Conclusion
-                title="Úrskurðarorð Landsréttar"
-                conclusionText={workingCase.appealCase?.appealConclusion}
-              />
-            )}
-          {workingCase.verdictAppealCase?.appealState ===
-            AppealCaseState.COMPLETED &&
-            workingCase.verdictAppealCase.appealConclusion && (
-              <Conclusion
-                title="Dómsorð Landsréttar"
-                conclusionText={workingCase.verdictAppealCase.appealConclusion}
-              />
-            )}
-          {displayVerdictTimeline && <VerdictAppealFiles />}
-          <AllIndictmentCaseFiles
-            displayGeneratedPDFs={displayGeneratedPDFs}
-            forceDisplayAdditionalFiles={canAddFiles}
-          />
-          {canAddFiles && (
-            <Box display="flex" justifyContent="flexEnd">
-              <Button
-                size="small"
-                icon="add"
-                onClick={() =>
-                  router.push(
-                    `${DEFENDER_INDICTMENT_CASE_ADD_FILES_ROUTE}/${workingCase.id}`,
-                  )
-                }
-              >
-                Bæta við gögnum
-              </Button>
-            </Box>
-          )}
-          {caseIsClosed && (
-            <Box component="section">
-              <ZipButton
-                caseId={workingCase.id}
-                courtCaseNumber={workingCase.courtCaseNumber}
-              />
-            </Box>
-          )}
-        </div>
+          </div>
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter previousUrl={getStandardUserDashboardRoute(user)} />
