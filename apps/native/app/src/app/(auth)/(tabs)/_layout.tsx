@@ -1,12 +1,9 @@
 import { NativeTabs } from 'expo-router/unstable-native-tabs'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import { Redirect, useNavigation, usePathname } from 'expo-router'
 import { useAuthStore } from '@/stores/auth-store'
-import {
-  preferencesStore,
-  usePreferencesStore,
-} from '@/stores/preferences-store'
+import { usePreferencesStore } from '@/stores/preferences-store'
 import { getUnfinishedOnboardingStep } from '@/utils/onboarding'
 import { theme } from '../../../ui'
 import { Image, Platform, StyleSheet, View } from 'react-native'
@@ -18,12 +15,12 @@ export const unstable_settings = {
   initialRouteName: 'index',
 }
 
-// Shows what's left of onboarding after an unlock. Biometrics are skipped,
-// so the steps' own "next" doesn't lead there.
-function ResumeOnboarding({ step }: { step: 'notifications' | 'privacy' }) {
-  useEffect(() => {
-    preferencesStore.setState({ hasOnboardedBiometrics: true })
-  }, [])
+// Shows what's left of onboarding after an unlock.
+function ResumeOnboarding({
+  step,
+}: {
+  step: 'biometrics' | 'notifications' | 'privacy'
+}) {
   return <Redirect href={`/(auth)/onboarding/${step}`} />
 }
 
@@ -31,8 +28,10 @@ export default function TabLayout() {
   const intl = useIntl()
   const tabsHidden = useUiStore((s) => s.tabsHidden)
   // Read here so a finished step re-renders the tabs.
+  usePreferencesStore((s) => s.hasOnboardedBiometrics)
   usePreferencesStore((s) => s.hasOnboardedNotifications)
   usePreferencesStore((s) => s.hasOnboardedPrivacy)
+  useUiStore((s) => s.authenticationTypes.length)
   const isLocked = useAuthStore((s) => s.lockScreenActivatedAt !== undefined)
   const isSignedIn = useAuthStore((s) => !!s.nativeUser)
   const isOnboarding = usePathname().startsWith('/onboarding')

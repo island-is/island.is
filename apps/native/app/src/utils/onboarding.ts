@@ -6,18 +6,30 @@ import { router } from 'expo-router'
 import { isIos } from './devices'
 import { androidIsVersion33OrAbove } from './versions-check'
 import { preferencesStore } from '../stores/preferences-store'
+import { uiStore } from '../stores/ui-store'
 
 /**
  * The onboarding step to come back to after an unlock, for someone who left
- * part way through. Not biometrics: turning them on takes another electronic
- * ID approval, and Settings has it.
+ * part way through. That includes biometrics: turning them on for the app in
+ * the phone's settings restarts the app.
  */
 export function getUnfinishedOnboardingStep():
+  | 'biometrics'
   | 'notifications'
   | 'privacy'
   | null {
-  const { hasOnboardedNotifications, hasOnboardedPrivacy } =
-    preferencesStore.getState()
+  const {
+    hasOnboardedBiometrics,
+    hasOnboardedNotifications,
+    hasOnboardedPrivacy,
+  } = preferencesStore.getState()
+  // Any biometrics, also when they're turned off for the app.
+  if (
+    uiStore.getState().authenticationTypes.length > 0 &&
+    !hasOnboardedBiometrics
+  ) {
+    return 'biometrics'
+  }
   if ((isIos || androidIsVersion33OrAbove()) && !hasOnboardedNotifications) {
     return 'notifications'
   }
