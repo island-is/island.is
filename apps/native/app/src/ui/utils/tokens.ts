@@ -96,7 +96,15 @@ const light = {
     success: {
       background: mint100,
       border: mint200,
+      // Decorative accent. Figma warns it does not have enough contrast on
+      // the light success surface, so icons and text use foregroundContrast.
       foreground: mint400,
+      foregroundContrast: mint800,
+    },
+    // Progress meters and bars
+    progress: {
+      background: mint200,
+      foreground: mint800,
     },
     warning: {
       background: yellow200,
@@ -210,7 +218,7 @@ const light = {
     },
     // code-only
     shadow: {
-      brand: blue400,
+      brand: 'rgba(0, 97, 255, 0.12)',
       card: 'rgb(0, 32, 128)',
     },
   },
@@ -222,184 +230,189 @@ export type TokenSelector = (tokens: Tokens) => string
 // Dark mode. Values marked confirmed were read from the dark frames in Figma.
 // Everything else is derived: `name` means a Figma dark surface matches the
 // token's role, `family` means a hue rule taken from a confirmed sibling,
-// `inferred` means reasoned from the light value's role, and `GUESS` means
-// it needs design review.
+// `inferred` means reasoned from the light value's role. `figma` means the
+// value comes from the Test - Colors Tokens export.
 const dark: Tokens = {
   background: {
-    invert: darkSurface, // screens: base surface measured as #151F31
-    brand: blue300, // family: blue 400->300
-    brandLighter: darkTinted, // inferred
-    brandMinimal: darkCanvas, // screens: recessed list rows measured as #0C1424
-    brandSecondary: purple300,
-    brandSecondaryLighter: darkPurpleBg, // inferred
-    brandSecondaryMinimal: darkPurpleBg, // GUESS: only one purple dark surface exists, so Lighter and Minimal collapse
+    invert: darkSurface, // figma
+    brand: darkHeader, // figma
+    brandLighter: darkActive, // figma
+    brandMinimal: darkCanvas, // figma
+    brandSecondary: darkPurpleBg, // figma
+    brandSecondaryLighter: darkSelection, // figma
+    brandSecondaryMinimal: darkTinted, // figma
   },
   foreground: {
-    primary: dark100,
-    primaryMinimal: dark200, // screens: measured: muted text is lighter than dark300, which is too dark to match
-    brand: blue300,
-    brandContrast: blue200, // inferred: contrast variant goes one step lighter than brand
-    brandSecondary: purple300,
-    invert: dark400, // family: white->dark400 pole swap
+    primary: dark100, // figma
+    primaryMinimal: dark200, // figma
+    brand: blue300, // figma
+    brandContrast: blue200, // figma
+    brandSecondary: purple300, // figma
+    invert: dark400, // figma
   },
   border: {
-    primary: darkBorder, // inferred
-    primaryContrast: blue300, // family
-    invert: dark400, // family
+    primary: darkBorder, // figma
+    primaryContrast: dark300, // figma
+    invert: dark100, // figma
   },
   feedback: {
     information: {
-      backgroundMinimal: darkTinted, // name
-      border: blue300, // GUESS: warning and success borders use the hue's vivid tone, not darkBorder
-      foreground: blue300, // family
+      backgroundMinimal: darkTinted, // figma
+      border: blue300, // figma
+      foreground: blue300, // figma
     },
     success: {
-      background: darkMintBg, // screens
-      border: mint400, // screens: the success alert border is #00E4CA
-      foreground: mint300, // screens: the success alert icon is #99F4EA
+      background: darkMintBg, // figma
+      border: mint400, // figma
+      foreground: mint400, // figma
+      foregroundContrast: mint300, // figma
+    },
+    progress: {
+      background: darkMintBg, // figma
+      foreground: mint400, // figma
     },
     warning: {
-      background: darkYellowBg, // screens: alert fill measured as #3B3519
-      border: yellow600,
-      foreground: yellow600, // screens: the alert icon is #E6CF00, same as the border
+      background: darkYellowBg, // figma
+      border: yellow600, // figma
+      foreground: yellow400, // figma
     },
     error: {
-      background: darkRedBg, // name
-      border: red300, // GUESS: warning and success borders use the hue's vivid tone, not darkBorder
-      borderContrast: red300, // family: red->300, from interactive-foreground-red
-      foreground: red300, // family
-      foregroundContrast: red300, // family
+      background: darkRedBg, // figma
+      border: red300, // figma
+      borderContrast: red200, // figma
+      foreground: red300, // figma
+      foregroundContrast: red200, // figma
     },
     tags: {
       blue: {
-        background: darkTinted, // name
-        accent: blue300, // family
-        border: darkBorder, // inferred
+        background: darkSurface, // figma
+        accent: blue300, // figma
+        border: blue300, // figma
       },
       darkerBlue: {
-        background: darkSelection, // GUESS: needs to differ from the blue tag
-        accent: blue200, // GUESS
-        border: darkBorder, // inferred
+        background: darkSelection, // figma
+        accent: dark100, // figma
+        border: dark100, // figma
       },
       red: {
-        background: darkRedBg, // name
-        accent: red300, // family
-        border: darkBorder, // inferred
+        background: darkRedBg, // figma
+        accent: red300, // figma
+        border: red300, // figma
       },
       purple: {
-        background: darkPurpleBg, // name
-        accent: purple300, // family
-        border: darkBorder, // inferred
+        background: darkPurpleBg, // figma
+        accent: purple300, // figma
+        border: purple300, // figma
       },
       rose: {
-        background: darkRoseBg, // screens: tag fill measured as #35243B
-        accent: roseTinted200,
-        border: darkBorder, // inferred
+        background: darkRoseBg, // figma
+        accent: roseTinted200, // figma
+        border: darkBorder, // no figma equivalent
       },
       blueberry: {
-        background: darkBerryBg, // name
-        accent: blueberry300, // GUESS: blueberry family rule unconfirmed
-        border: darkBorder, // inferred
+        background: darkBerryBg, // figma
+        accent: blueberry200, // figma
+        border: blueberry200, // figma
       },
       mint: {
-        background: darkMintBg, // name
-        accent: mint300, // GUESS: mint family rule unconfirmed
-        border: darkBorder, // inferred
+        background: darkMintBg, // figma
+        accent: mint400, // figma
+        border: mint400, // figma
       },
       yellow: {
-        background: darkYellowBg, // name
-        accent: dark100, // family: dark400->dark100 pole swap
-        border: yellow600, // inferred: matches the confirmed warning border
+        background: darkYellowBg, // figma
+        accent: yellow400, // figma
+        border: yellow400, // figma
       },
     },
   },
   interactive: {
     background: {
-      primary: blue300,
-      primaryActive: blueberry300, // GUESS: blueberry family rule unconfirmed
-      primaryDisabled: darkDisabled, // name
-      primaryMinimal: darkTinted, // inferred
-      primaryMinimalActive: darkActive, // name
-      focus: mint400, // inferred: focus ring stays vivid on both themes
-      invert: darkSurface, // inferred
-      destructive: red300, // family
-      destructiveActive: roseTinted200, // family: rose 400->200
-      destructiveDisabled: darkDisabled, // name
+      primary: blue300, // figma
+      primaryActive: blueberry300, // figma
+      primaryDisabled: darkSurface, // figma
+      primaryMinimal: darkTinted, // figma
+      primaryMinimalActive: darkSelection, // figma
+      focus: mint400, // figma
+      invert: darkSurface, // figma
+      destructive: red300, // figma
+      destructiveActive: red200, // figma
+      destructiveDisabled: darkRedBg, // figma
     },
     foreground: {
-      primary: blue300, // family
-      primaryActive: blueberry300, // GUESS
-      primaryContrast: blue200, // inferred
-      primaryDisabled: darkDisabled, // name
-      default: dark100, // family: matches foreground.primary
-      disabled: darkDisabled, // name
-      invert: dark400,
-      invertActive: blueberry600, // GUESS: pressed state of an inverted control
-      destructive: red300,
-      destructiveActive: roseTinted200, // family
-      destructiveDisabled: darkDisabled, // name
+      primary: blue300, // figma
+      primaryActive: blueberry200, // figma
+      primaryContrast: blue200, // figma
+      primaryDisabled: darkDisabled, // figma
+      default: dark200, // figma
+      disabled: darkDisabled, // figma
+      invert: dark400, // figma
+      invertActive: dark400, // figma
+      destructive: red300, // figma
+      destructiveActive: red200, // figma
+      destructiveDisabled: darkDisabled, // figma
     },
     border: {
-      borderPrimary: blue300, // family
-      borderPrimaryMinimal: darkBorder, // inferred
-      borderActive: blueberry300, // GUESS
-      borderDisabled: darkDisabled, // name
-      active: dark100, // family
-      focus: mint400, // inferred
-      invert: dark400, // family
-      invertActive: blueberry600, // GUESS
-      destructiveDefault: red300, // family
-      destructiveActive: roseTinted200, // family
-      destructiveDisabled: darkDisabled, // name
+      borderPrimary: blue300, // figma
+      borderPrimaryMinimal: dark300, // figma
+      borderActive: blue200, // figma
+      borderDisabled: darkBorder, // figma
+      active: blue300, // figma
+      focus: mint400, // figma
+      invert: dark100, // figma
+      invertActive: blue200, // figma
+      destructiveDefault: red300, // figma
+      destructiveActive: red200, // figma
+      destructiveDisabled: darkBorder, // figma
     },
   },
   app: {
     background: {
-      pressed: darkActive, // name
-      header: darkHeader, // name: Figma color/app/dark/header
-      neutral: darkTinted, // screens: Posthol search field measured as #192A43
-      neutralActive: darkActive, // name
+      pressed: darkActive, // no figma equivalent
+      header: darkHeader, // no figma equivalent
+      neutral: darkTinted, // no figma equivalent
+      neutralActive: darkActive, // no figma equivalent
     },
     fill: {
-      errorLighter: darkRedBg, // name
-      roseLighter: darkRoseLighter, // name: Figma calls it fill/rose-lighter
+      errorLighter: darkRedBg, // no figma equivalent
+      roseLighter: darkRoseLighter, // no figma equivalent
     },
     foreground: {
-      successContrast: mint300, // GUESS
+      successContrast: mint300, // no figma equivalent
     },
     border: {
-      neutral: darkBorder, // screens: dividers measured as #30415E
-      subtle: darkBorder, // inferred: only one dark border exists
-      muted: darkBorder, // inferred: only one dark border exists
+      neutral: darkBorder, // no figma equivalent
+      subtle: darkBorder, // no figma equivalent
+      muted: darkBorder, // no figma equivalent
     },
     tags: {
       white: {
-        background: darkSurface, // inferred
-        accent: blue300, // family
-        border: darkBorder, // inferred
+        background: darkSurface, // no figma equivalent
+        accent: blue300, // no figma equivalent
+        border: darkBorder, // no figma equivalent
       },
       dark: {
-        background: darkSelection, // inferred
-        accent: dark100, // family
-        border: darkBorder, // inferred
+        background: darkSelection, // no figma equivalent
+        accent: dark100, // no figma equivalent
+        border: darkBorder, // no figma equivalent
       },
       disabled: {
-        background: darkTinted, // inferred
-        accent: darkDisabled, // name
-        border: darkBorder, // inferred
+        background: darkTinted, // no figma equivalent
+        accent: darkDisabled, // no figma equivalent
+        border: darkBorder, // no figma equivalent
       },
       warn: {
-        background: darkYellowBg, // name
-        accent: dark100, // family
-        border: yellow600, // inferred
+        background: darkYellowBg, // no figma equivalent
+        accent: dark100, // no figma equivalent
+        border: yellow600, // no figma equivalent
       },
     },
     overlay: {
-      scrim: darkScrim, // name: Figma calls it overlay/scrim
+      scrim: darkScrim, // no figma equivalent
     },
     shadow: {
-      brand: darkShadowCard, // GUESS: colored glow has no dark counterpart
-      card: darkShadowCard, // name: Figma calls it shadow/card
+      brand: 'rgba(153, 192, 255, 0.2)', // figma
+      card: darkShadowCard, // no figma equivalent
     },
   },
 }

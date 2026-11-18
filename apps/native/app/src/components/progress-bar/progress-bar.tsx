@@ -8,8 +8,7 @@ const Container = styled.View`
   overflow: hidden;
   height: 4px;
   flex: 1;
-  background-color: ${({ theme }) =>
-    theme.tokens.app.foreground.successContrast};
+  background-color: ${({ theme }) => theme.tokens.feedback.progress.background};
 `
 
 const Bar = styled(Animated.View)`

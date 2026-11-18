@@ -50,9 +50,9 @@ const colorSchemes: Record<
     inner: (t) => t.feedback.tags.rose.accent,
   },
   mint: {
-    unfinished: (t) => t.feedback.success.border,
-    outer: (t) => t.feedback.success.background,
-    inner: (t) => t.app.foreground.successContrast,
+    unfinished: (t) => t.feedback.progress.background,
+    outer: (t) => t.feedback.progress.background,
+    inner: (t) => t.feedback.progress.foreground,
   },
 }
 

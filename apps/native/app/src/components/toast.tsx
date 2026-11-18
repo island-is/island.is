@@ -58,7 +58,7 @@ export const toastSchemes: Record<ToastVariant, ToastScheme> = {
     backgroundColor: (t) => t.feedback.success.background,
     borderColor: (t) => t.feedback.success.border,
     icon: successIcon,
-    iconColor: (t) => t.feedback.success.foreground,
+    iconColor: (t) => t.feedback.success.foregroundContrast,
   },
   info: {
     backgroundColor: (t) => t.feedback.information.backgroundMinimal,
@@ -230,10 +230,10 @@ const hide = (id?: number) => {
   toastStore.setState({ current: null })
 }
 
-const variantShortcut =
-  (variant: ToastVariant) =>
-  (title: string, options?: ShowOptions): number =>
-    show({ variant, title, ...options })
+const variantShortcut = (variant: ToastVariant) => (
+  title: string,
+  options?: ShowOptions,
+): number => show({ variant, title, ...options })
 
 export const toast = {
   show,
