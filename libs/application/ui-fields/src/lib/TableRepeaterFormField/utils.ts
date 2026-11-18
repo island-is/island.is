@@ -1,4 +1,8 @@
-import { RepeaterItem, RepeaterItemContext } from '@island.is/application/types'
+import {
+  RepeaterItem,
+  RepeaterItemContext,
+  TableRepeaterColumn,
+} from '@island.is/application/types'
 import { coreMessages } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
 
@@ -120,6 +124,17 @@ export const buildDefaultTableRows = (
       }
     })
     .flat(2)
+
+export const buildDefaultColumns = (
+  items: Array<RepeaterItem & { id: string }>,
+  ctx: Omit<RepeaterItemContext, 'index' | 'row'>,
+): TableRepeaterColumn[] => {
+  const header = buildDefaultTableHeader(items, ctx)
+  return buildDefaultTableRows(items).map((value, index) => ({
+    header: header[index] ?? '',
+    value,
+  }))
+}
 
 export const setObjectWithNestedKey = <T extends Record<string, unknown>>(
   obj: T,

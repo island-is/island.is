@@ -10,6 +10,7 @@ import {
   RepeaterItem,
   RepeaterOptionValue,
   StateLifeCycle,
+  TableRepeaterField,
 } from '@island.is/application/types'
 import { ApplicantsInfo, BankAccount, PropertyUnit } from '../shared'
 
@@ -187,35 +188,40 @@ export const landLordInfoTableFields: Record<string, RepeaterItem> = {
   },
 }
 
-export const applicantTableConfig = {
-  format: {
-    phone: (value: string) => value && formatPhoneNumber(value),
-    nationalId: (value: string) => value && formatNationalId(value),
-  },
-  header: [
-    m.misc.fullName,
-    m.misc.phoneNumber,
-    m.misc.nationalId,
-    m.misc.email,
-    m.misc.address,
+export const applicantTableConfig: TableRepeaterField['table'] = {
+  columns: [
+    { header: m.misc.fullName, value: 'name' },
+    {
+      header: m.misc.phoneNumber,
+      value: ({ row }) => row.phone && formatPhoneNumber(row.phone),
+    },
+    {
+      header: m.misc.nationalId,
+      value: ({ row }) => row.nationalId && formatNationalId(row.nationalId),
+    },
+    { header: m.misc.email, value: 'email' },
+    { header: m.misc.address, value: 'address' },
   ],
-  rows: ['name', 'phone', 'nationalId', 'email', 'address'],
 }
 
-export const landlordTableConfig = {
-  format: {
-    phone: (value: string) => value && formatPhoneNumber(value),
-    nationalId: (value: string) => value && formatNationalId(value),
-  },
-  header: [
-    m.misc.fullName,
-    m.misc.phoneNumber,
-    m.misc.nationalId,
-    m.misc.email,
-    m.misc.address,
-    m.landlordAndTenantDetails.representativeLabel,
+export const landlordTableConfig: TableRepeaterField['table'] = {
+  columns: [
+    { header: m.misc.fullName, value: 'name' },
+    {
+      header: m.misc.phoneNumber,
+      value: ({ row }) => row.phone && formatPhoneNumber(row.phone),
+    },
+    {
+      header: m.misc.nationalId,
+      value: ({ row }) => row.nationalId && formatNationalId(row.nationalId),
+    },
+    { header: m.misc.email, value: 'email' },
+    { header: m.misc.address, value: 'address' },
+    {
+      header: m.landlordAndTenantDetails.representativeLabel,
+      value: 'isRepresentative',
+    },
   ],
-  rows: ['name', 'phone', 'nationalId', 'email', 'address', 'isRepresentative'],
 }
 
 export const toISK = (v: unknown): number => {

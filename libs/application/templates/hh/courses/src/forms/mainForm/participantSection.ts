@@ -61,12 +61,14 @@ export const participantSection = buildSection({
             ]
           },
           table: {
-            rows: ['name', 'nationalId', 'email', 'phone'],
-            header: [
-              m.participant.participantName,
-              m.participant.participantNationalId,
-              m.participant.participantEmail,
-              m.participant.participantPhone,
+            columns: [
+              { header: m.participant.participantName, value: 'name' },
+              {
+                header: m.participant.participantNationalId,
+                value: 'nationalId',
+              },
+              { header: m.participant.participantEmail, value: 'email' },
+              { header: m.participant.participantPhone, value: 'phone' },
             ],
           },
           fields: {

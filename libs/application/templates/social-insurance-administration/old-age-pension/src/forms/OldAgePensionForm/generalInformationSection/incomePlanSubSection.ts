@@ -276,16 +276,26 @@ export const incomePlanSubSection = buildSubSection({
             ),
           },
           table: {
-            format: {
-              incomePerYear: (value) =>
-                value && formatCurrencyWithoutSuffix(value),
-            },
-            header: [
-              socialInsuranceAdministrationMessage.incomePlan.incomeType,
-              socialInsuranceAdministrationMessage.incomePlan.incomePerYear,
-              socialInsuranceAdministrationMessage.incomePlan.currency,
+            columns: [
+              {
+                header:
+                  socialInsuranceAdministrationMessage.incomePlan.incomeType,
+                value: 'incomeType',
+              },
+              {
+                header:
+                  socialInsuranceAdministrationMessage.incomePlan.incomePerYear,
+                value: ({ row }) => {
+                  const value = row.incomePerYear ?? ''
+                  return value && formatCurrencyWithoutSuffix(value)
+                },
+              },
+              {
+                header:
+                  socialInsuranceAdministrationMessage.incomePlan.currency,
+                value: 'currency',
+              },
             ],
-            rows: ['incomeType', 'incomePerYear', 'currency'],
           },
         }),
         buildHiddenInputWithWatchedValue({

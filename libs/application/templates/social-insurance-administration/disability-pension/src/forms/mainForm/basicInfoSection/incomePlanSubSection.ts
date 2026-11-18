@@ -217,15 +217,17 @@ export const incomePlanSubSection = buildSubSection({
         december: generateMonthInput(sm.months.december),
       },
       table: {
-        format: {
-          incomePerYear: (value) => value && formatCurrencyWithoutSuffix(value),
-        },
-        header: [
-          sm.incomePlan.incomeType,
-          sm.incomePlan.incomePerYear,
-          sm.incomePlan.currency,
+        columns: [
+          { header: sm.incomePlan.incomeType, value: 'incomeType' },
+          {
+            header: sm.incomePlan.incomePerYear,
+            value: ({ row }) => {
+              const value = row.incomePerYear ?? ''
+              return value && formatCurrencyWithoutSuffix(value)
+            },
+          },
+          { header: sm.incomePlan.currency, value: 'currency' },
         ],
-        rows: ['incomeType', 'incomePerYear', 'currency'],
       },
     }),
   ],

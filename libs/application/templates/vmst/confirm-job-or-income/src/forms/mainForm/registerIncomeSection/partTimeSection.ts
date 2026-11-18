@@ -148,33 +148,37 @@ export const partTimeSection = buildSubSection({
             },
           },
           table: {
-            header: [
-              m.application.tableHeaderNationalId,
-              m.application.tableHeaderCompany,
-              m.application.tableHeaderWorkPercentage,
-              m.application.tableHeaderJobStart,
-              m.application.tableHeaderEstimatedIncome,
-            ],
-            rows: [
-              'nationalId',
-              'company.name',
-              'workPercentage',
-              'jobStart',
-              'estimatedIncome',
-            ],
-            format: {
-              nationalId: (value) => {
-                if (!value) return ''
-                const clean = value.replace('-', '')
-                return `${clean.slice(0, 6)}\u2011${clean.slice(6)}`
+            columns: [
+              {
+                header: m.application.tableHeaderNationalId,
+                value: ({ row }) => {
+                  const value = row.nationalId ?? ''
+                  if (!value) return ''
+                  const clean = value.replace('-', '')
+                  return `${clean.slice(0, 6)}\u2011${clean.slice(6)}`
+                },
               },
-              jobStart: formatIsDate,
-              workPercentage: (value) => {
-                if (!value) return ''
-                return `${value}%`
+              {
+                header: m.application.tableHeaderCompany,
+                value: 'company.name',
               },
-              estimatedIncome: formatIsCurrency,
-            },
+              {
+                header: m.application.tableHeaderWorkPercentage,
+                value: ({ row }) => {
+                  const value = row.workPercentage ?? ''
+                  if (!value) return ''
+                  return `${value}%`
+                },
+              },
+              {
+                header: m.application.tableHeaderJobStart,
+                value: ({ row }) => formatIsDate(row.jobStart ?? ''),
+              },
+              {
+                header: m.application.tableHeaderEstimatedIncome,
+                value: ({ row }) => formatIsCurrency(row.estimatedIncome ?? ''),
+              },
+            ],
           },
         }),
         buildAlertMessageField({

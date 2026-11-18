@@ -159,42 +159,47 @@ export const casualWorkSection = buildSubSection({
             },
           },
           table: {
-            header: [
-              m.application.tableHeaderNationalId,
-              m.application.tableHeaderCompany,
-              m.application.tableHeaderDateFrom,
-              m.application.tableHeaderDateTo,
-              m.application.tableHeaderWorkshiftPeriod,
-              m.application.tableHeaderEstimatedIncome,
-            ],
-            rows: [
-              'nationalId',
-              'company.name',
-              'dateFrom',
-              'dateTo',
-              'workshiftPeriod',
-              'estimatedIncome',
-            ],
-            format: {
-              nationalId: (value) => {
-                if (!value) return ''
-                const clean = value.replace('-', '')
-                return `${clean.slice(0, 6)}-${clean.slice(6)}`
+            columns: [
+              {
+                header: m.application.tableHeaderNationalId,
+                value: ({ row }) => {
+                  const value = row.nationalId ?? ''
+                  if (!value) return ''
+                  const clean = value.replace('-', '')
+                  return `${clean.slice(0, 6)}-${clean.slice(6)}`
+                },
               },
-              dateFrom: formatIsDate,
-              dateTo: formatIsDate,
-              workshiftPeriod: (value, _displayIndex, application) => {
-                if (!value || !application) return ''
-                const workshiftPeriods =
-                  getValueViaPath<Array<WorkshiftPeriod>>(
-                    application.externalData,
-                    'workshiftPeriods.data',
-                  ) ?? []
-                const period = workshiftPeriods.find((p) => p.id === value)
-                return period?.name ?? value
+              {
+                header: m.application.tableHeaderCompany,
+                value: 'company.name',
               },
-              estimatedIncome: formatIsCurrency,
-            },
+              {
+                header: m.application.tableHeaderDateFrom,
+                value: ({ row }) => formatIsDate(row.dateFrom ?? ''),
+              },
+              {
+                header: m.application.tableHeaderDateTo,
+                value: ({ row }) => formatIsDate(row.dateTo ?? ''),
+              },
+              {
+                header: m.application.tableHeaderWorkshiftPeriod,
+                value: ({ row, application }) => {
+                  const value = row.workshiftPeriod ?? ''
+                  if (!value || !application) return ''
+                  const workshiftPeriods =
+                    getValueViaPath<Array<WorkshiftPeriod>>(
+                      application.externalData,
+                      'workshiftPeriods.data',
+                    ) ?? []
+                  const period = workshiftPeriods.find((p) => p.id === value)
+                  return period?.name ?? value
+                },
+              },
+              {
+                header: m.application.tableHeaderEstimatedIncome,
+                value: ({ row }) => formatIsCurrency(row.estimatedIncome ?? ''),
+              },
+            ],
           },
         }),
         buildAlertMessageField({

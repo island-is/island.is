@@ -6,9 +6,10 @@ import {
   resolveFieldId,
 } from '@island.is/application/core'
 import {
-  Application,
   FieldBaseProps,
   FormText,
+  TableRepeaterCellContext,
+  TableRepeaterColumn,
   TableRepeaterField,
 } from '@island.is/application/types'
 import {
@@ -29,8 +30,7 @@ import { FieldDescription } from '@island.is/shared/form-fields'
 import { FC, useEffect, useRef, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import {
-  buildDefaultTableHeader,
-  buildDefaultTableRows,
+  buildDefaultColumns,
   handleCustomMappedValues,
   setObjectWithNestedKey,
 } from './utils'
@@ -105,20 +105,14 @@ export const TableRepeaterFormField: FC<Props> = ({
     ...rawItems[key],
   }))
   const tableItems = items.filter((x) => x.displayInTable !== false)
-  const tableHeader =
-    typeof table?.header === 'function'
-      ? table.header(watchedAnswers, application.externalData)
-      : table?.header ??
-        buildDefaultTableHeader(tableItems, {
-          application: watchedApplication,
-          locale: locale as Locale,
-          formatMessage,
-          apolloClient,
-        })
-  const tableRows =
-    typeof table?.rows === 'function'
-      ? table.rows(watchedAnswers, application.externalData)
-      : table?.rows ?? buildDefaultTableRows(tableItems)
+  const columns =
+    table?.columns ??
+    buildDefaultColumns(tableItems, {
+      application: watchedApplication,
+      locale: locale as Locale,
+      formatMessage,
+      apolloClient,
+    })
   const { fields, append, remove, update } = useFieldArray({
     control: methods.control,
     name: resolvedId,
@@ -202,38 +196,30 @@ export const TableRepeaterFormField: FC<Props> = ({
     setIsEditing(true)
   }
 
-  const formatTableValue = (
-    key: string,
-    item: Record<string, string>,
+  const cellContext = (
+    row: Record<string, string>,
     displayIndex: number,
-    application: Application,
+  ): TableRepeaterCellContext => ({
+    application: watchedApplication,
+    row,
+    displayIndex,
+    locale: locale as Locale,
+    formatMessage,
+  })
+
+  const renderCell = (
+    column: TableRepeaterColumn,
+    ctx: TableRepeaterCellContext,
   ) => {
-    const rawValue = item[key]
-    item[key] = rawValue ?? ''
-    const formatFn = table?.format?.[key]
-    const formatted = formatFn
-      ? formatFn(item[key], displayIndex, application, item)
-      : item[key]
-    if (
-      formatted &&
-      typeof formatted === 'object' &&
-      'type' in formatted &&
-      formatted.type === 'checkmark'
-    ) {
-      return (
-        <Icon
-          icon="checkmarkCircle"
-          color="mint400"
-          type="filled"
-          size="small"
-        />
-      )
-    }
-    return typeof formatted === 'string'
-      ? formatted
-      : Array.isArray(formatted)
-      ? formatText(formatted, application, formatMessage).join(', ')
-      : formatText(formatted as FormText, application, formatMessage)
+    const value =
+      (typeof column.value === 'string'
+        ? ctx.row[column.value]
+        : column.value(ctx)) ?? ''
+    return typeof value === 'string'
+      ? value
+      : Array.isArray(value)
+      ? formatText(value, application, formatMessage).join(', ')
+      : formatText(value as FormText, application, formatMessage)
   }
 
   // If the list is empty and initActiveFieldIfEmpty=true,
@@ -341,9 +327,13 @@ export const TableRepeaterFormField: FC<Props> = ({
               <T.Head>
                 <T.Row>
                   <T.HeadData></T.HeadData>
-                  {tableHeader.map((item, index) => (
+                  {columns.map((column, index) => (
                     <T.HeadData key={index}>
-                      {formatText(item ?? '', application, formatMessage)}
+                      {formatText(
+                        column.header ?? '',
+                        application,
+                        formatMessage,
+                      )}
                     </T.HeadData>
                   ))}
                 </T.Row>
@@ -353,9 +343,9 @@ export const TableRepeaterFormField: FC<Props> = ({
                   staticData.map((item, index) => (
                     <T.Row key={index}>
                       <T.Data></T.Data>
-                      {Object.keys(item).map((key, idx) => (
-                        <T.Data key={`static-${key}-${idx}`}>
-                          {formatTableValue(key, item, index, application)}
+                      {columns.map((column, idx) => (
+                        <T.Data key={`static-${idx}`}>
+                          {renderCell(column, cellContext(item, index))}
                         </T.Data>
                       ))}
                     </T.Row>
@@ -373,6 +363,14 @@ export const TableRepeaterFormField: FC<Props> = ({
                     const displayIndex = fields
                       .filter((f) => !f.isUnsaved && !f.isRemoved)
                       .findIndex((f) => f.id === field.id)
+
+                    const rowContext = cellContext(
+                      customMappedValues.length
+                        ? customMappedValues[index]
+                        : values[index],
+                      displayIndex,
+                    )
+                    const rowDisabled = table?.rowProps?.(rowContext).disabled
 
                     const canRemove = canRemoveRow
                       ? canRemoveRow(
@@ -473,19 +471,9 @@ export const TableRepeaterFormField: FC<Props> = ({
                               ))}
                           </Box>
                         </T.Data>
-                        {tableRows.map((item, idx) => (
-                          <T.Data
-                            key={`${item}-${idx}`}
-                            disabled={values[index].disabled === 'true'}
-                          >
-                            {formatTableValue(
-                              item,
-                              customMappedValues.length
-                                ? customMappedValues[index]
-                                : values[index],
-                              displayIndex,
-                              application,
-                            )}
+                        {columns.map((column, idx) => (
+                          <T.Data key={idx} disabled={rowDisabled}>
+                            {renderCell(column, rowContext)}
                           </T.Data>
                         ))}
                       </T.Row>

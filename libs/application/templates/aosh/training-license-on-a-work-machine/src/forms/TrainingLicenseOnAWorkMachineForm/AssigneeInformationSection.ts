@@ -29,12 +29,20 @@ export const assigneeInformationSection = buildSection({
           addItemButtonText: assigneeInformation.labels.tableButtonText,
           marginTop: 0,
           table: {
-            header: [
-              assigneeInformation.labels.company,
-              assigneeInformation.labels.assignee,
-              assigneeInformation.labels.workMachine,
+            columns: [
+              {
+                header: assigneeInformation.labels.company,
+                value: 'company.name',
+              },
+              {
+                header: assigneeInformation.labels.assignee,
+                value: 'assignee.name',
+              },
+              {
+                header: assigneeInformation.labels.workMachine,
+                value: 'workMachine',
+              },
             ],
-            rows: ['company.name', 'assignee.name', 'workMachine'],
           },
           initActiveFieldIfEmpty: true,
           fields: {

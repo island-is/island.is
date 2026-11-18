@@ -41,7 +41,6 @@ export const tableRepeaterSubsection = buildSubSection({
           getStaticTableData: (_application) => {
             // Possibility to populate the table with data from the answers or external data
             // Populated data will not be editable or deletable
-            // The prepopulated data will not be automatically run through the format function
             return [
               {
                 input: 'John Doe',
@@ -193,26 +192,25 @@ export const tableRepeaterSubsection = buildSubSection({
             },
           },
           table: {
-            // Format values for display in the table
-            // In the format function, you can use the value, index in the repeater and the application object
-            format: {
-              input: (value, _i, _application) => {
-                return `${value} - custom format`
+            // Columns for the table. If not provided, the labels from the fields will be used
+            columns: [
+              {
+                header: 'Input',
+                value: ({ row }) => `${row.input ?? ''} - custom format`,
               },
-              nationalIdWithName: (value) => {
-                return `${value} - custom format`
+              { header: 'Select', value: 'select' },
+              { header: 'Radio', value: 'radio' },
+              { header: 'Checkbox', value: 'checkbox' },
+              { header: 'Date', value: 'date' },
+              { header: 'Name', value: 'name' },
+              { header: 'NationalId', value: 'nationalId' },
+              { header: 'Phone', value: 'phone' },
+              { header: 'Primary Select Async', value: 'selectAsyncPrimary' },
+              { header: 'Reliant Select Async', value: 'selectAsyncReliant' },
+              {
+                header: 'Regular input with index in label',
+                value: 'inputWithIndexinLabel',
               },
-            },
-            // Overwrite header for the table. If not provided, the labels from the fields will be used
-            header: [
-              'Input',
-              'Select',
-              'Radio',
-              'Checkbox',
-              'Date',
-              'Name',
-              'NationalId',
-              'Phone',
             ],
           },
         }),

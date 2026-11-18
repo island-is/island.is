@@ -26,24 +26,27 @@ export const certificateOfTenureSection = buildSection({
             certificateOfTenure.labels.registerMachineButtonText,
           marginTop: 0,
           table: {
-            format: {
-              practicalRight: (value) => {
-                return typeof value === 'string' ? value[0] : value
+            columns: [
+              {
+                header: certificateOfTenure.labels.machineNumber,
+                value: 'machineNumber',
               },
-            },
-            header: [
-              certificateOfTenure.labels.machineNumber,
-              certificateOfTenure.labels.machineType,
-              certificateOfTenure.labels.practicalRightHeader,
-              certificateOfTenure.labels.dateHeader,
-              certificateOfTenure.labels.tenureInHoursHeader,
-            ],
-            rows: [
-              'machineNumber',
-              'machineType',
-              'practicalRight',
-              'date',
-              'tenureInHours',
+              {
+                header: certificateOfTenure.labels.machineType,
+                value: 'machineType',
+              },
+              {
+                header: certificateOfTenure.labels.practicalRightHeader,
+                value: ({ row }) => {
+                  const value = row.practicalRight ?? ''
+                  return typeof value === 'string' ? value[0] : value
+                },
+              },
+              { header: certificateOfTenure.labels.dateHeader, value: 'date' },
+              {
+                header: certificateOfTenure.labels.tenureInHoursHeader,
+                value: 'tenureInHours',
+              },
             ],
           },
           initActiveFieldIfEmpty: true,

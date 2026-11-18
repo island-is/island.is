@@ -31,19 +31,19 @@ export const ConvoyLongTermMultiField = buildMultiField({
       editField: true,
       initActiveFieldIfEmpty: true,
       table: {
-        header: [
-          convoy.labels.convoyNumberTableHeader,
-          convoy.labels.vehicleTableHeader,
-          convoy.labels.trailerTableHeader,
-        ],
-        format: {
-          index: (_value, displayIndex) => {
-            return {
-              ...convoy.labels.convoyNumber,
-              values: { number: displayIndex + 1 },
-            }
+        columns: [
+          {
+            header: convoy.labels.convoyNumberTableHeader,
+            value: ({ displayIndex }) => {
+              return {
+                ...convoy.labels.convoyNumber,
+                values: { number: displayIndex + 1 },
+              }
+            },
           },
-        },
+          { header: convoy.labels.vehicleTableHeader, value: 'vehicle.permno' },
+          { header: convoy.labels.trailerTableHeader, value: 'trailer.permno' },
+        ],
       },
       onSubmitLoad: async ({ tableItems }) => {
         const index = tableItems.length - 1

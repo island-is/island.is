@@ -834,6 +834,21 @@ export type ApplicationActionCardProps = Modify<
   }
 >
 
+export type TableRepeaterCellContext = {
+  application: Application
+  row: Record<string, string>
+  displayIndex: number
+  locale: Locale
+  formatMessage: FormatMessage
+}
+
+export type TableRepeaterColumn = {
+  header: StaticText
+  value:
+    | string
+    | ((ctx: TableRepeaterCellContext) => StaticText | StaticText[] | undefined)
+}
+
 export type TableRepeaterField = BaseField & {
   readonly type: FieldTypes.TABLE_REPEATER
   component: FieldComponents.TABLE_REPEATER
@@ -879,31 +894,8 @@ export type TableRepeaterField = BaseField & {
    */
   maxRows?: number
   table?: {
-    /**
-     * List of strings to render,
-     * or a function (answers, externalData) => StaticText[] for dynamic headers.
-     * If not provided it will be auto generated from the fields.
-     */
-    header?:
-      | StaticText[]
-      | ((answers: FormValue, externalData: ExternalData) => StaticText[])
-    /**
-     * List of field id's to render,
-     * or a function (answers, externalData) => string[] for dynamic rows.
-     * If not provided it will be auto generated from the fields.
-     */
-    rows?:
-      | string[]
-      | ((answers: FormValue, externalData: ExternalData) => string[])
-    format?: Record<
-      string,
-      (
-        value: string,
-        displayIndex: number,
-        application?: Application,
-        row?: Record<string, string>,
-      ) => string | StaticText
-    >
+    columns?: TableRepeaterColumn[]
+    rowProps?: (ctx: TableRepeaterCellContext) => { disabled?: boolean }
   }
   initActiveFieldIfEmpty?: boolean
   /**

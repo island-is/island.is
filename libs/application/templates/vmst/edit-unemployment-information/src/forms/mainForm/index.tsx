@@ -221,23 +221,39 @@ export const MainForm = buildForm({
                     },
                   },
                   table: {
-                    header: [
-                      m.application.educationLevelOfStudyLabel,
-                      m.application.educationDegreeLabel,
-                      m.application.educationCourseOfStudyLabel,
-                      m.application.educationEndLabel,
+                    columns: [
+                      {
+                        header: m.application.educationLevelOfStudyLabel,
+                        value: ({ row, displayIndex, application }) =>
+                          formatLevelOfStudy(
+                            row.levelOfStudy ?? '',
+                            displayIndex,
+                            application,
+                          ),
+                      },
+                      {
+                        header: m.application.educationDegreeLabel,
+                        value: ({ row, displayIndex, application }) =>
+                          formatDegree(
+                            row.degree ?? '',
+                            displayIndex,
+                            application,
+                          ),
+                      },
+                      {
+                        header: m.application.educationCourseOfStudyLabel,
+                        value: ({ row, displayIndex, application }) =>
+                          formatCourseOfStudy(
+                            row.courseOfStudy ?? '',
+                            displayIndex,
+                            application,
+                          ),
+                      },
+                      {
+                        header: m.application.educationEndLabel,
+                        value: 'endDate',
+                      },
                     ],
-                    rows: [
-                      'levelOfStudy',
-                      'degree',
-                      'courseOfStudy',
-                      'endDate',
-                    ],
-                    format: {
-                      levelOfStudy: formatLevelOfStudy,
-                      degree: formatDegree,
-                      courseOfStudy: formatCourseOfStudy,
-                    },
                   },
                 }),
               ],
@@ -324,15 +340,26 @@ export const MainForm = buildForm({
                     },
                   },
                   table: {
-                    header: [
-                      m.application.languageNameLabel,
-                      m.application.languageAbilityLabel,
+                    columns: [
+                      {
+                        header: m.application.languageNameLabel,
+                        value: ({ row, displayIndex, application }) =>
+                          formatLanguage(
+                            row.language ?? '',
+                            displayIndex,
+                            application,
+                          ),
+                      },
+                      {
+                        header: m.application.languageAbilityLabel,
+                        value: ({ row, displayIndex, application }) =>
+                          formatLanguageSkill(
+                            row.skill ?? '',
+                            displayIndex,
+                            application,
+                          ),
+                      },
                     ],
-                    rows: ['language', 'skill'],
-                    format: {
-                      language: formatLanguage,
-                      skill: formatLanguageSkill,
-                    },
                   },
                 }),
               ],

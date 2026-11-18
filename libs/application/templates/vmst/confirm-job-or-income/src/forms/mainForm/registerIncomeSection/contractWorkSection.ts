@@ -106,15 +106,16 @@ export const contractWorkSection = buildSubSection({
             },
           },
           table: {
-            header: [
-              m.application.tableHeaderJobStart,
-              m.application.tableHeaderWorkEnds,
+            columns: [
+              {
+                header: m.application.tableHeaderJobStart,
+                value: ({ row }) => formatIsDate(row.contractJobStart ?? ''),
+              },
+              {
+                header: m.application.tableHeaderWorkEnds,
+                value: ({ row }) => formatIsDate(row.workEnds ?? ''),
+              },
             ],
-            rows: ['contractJobStart', 'workEnds'],
-            format: {
-              contractJobStart: formatIsDate,
-              workEnds: formatIsDate,
-            },
           },
         }),
         buildCustomField(

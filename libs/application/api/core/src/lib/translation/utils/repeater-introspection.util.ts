@@ -81,11 +81,13 @@ export const buildTableRepeaterColumnHeaderDescriptors = (
   )
   const tableItems = items.filter((x) => x.displayInTable !== false)
 
-  const tableHeader = tr.table?.header
-  if (Array.isArray(tableHeader) && tableHeader.length > 0) {
+  const columns = tr.table?.columns
+  if (columns && columns.length > 0) {
     const out: MessageDescriptorInfo[] = []
-    for (const h of tableHeader) {
-      out.push(...extractMessageDescriptorsFromFormText(h as FormText))
+    for (const column of columns) {
+      out.push(
+        ...extractMessageDescriptorsFromFormText(column.header as FormText),
+      )
     }
     return out
   }

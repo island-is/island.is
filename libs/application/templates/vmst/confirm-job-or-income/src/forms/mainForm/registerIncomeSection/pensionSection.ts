@@ -178,46 +178,51 @@ export const pensionSection = buildSubSection({
             },
           },
           table: {
-            header: [
-              m.application.tableHeaderPensionFund,
-              m.application.tableHeaderPaymentType,
-              m.application.tableHeaderDateFrom,
-              m.application.tableHeaderDateTo,
-              m.application.tableHeaderAmount,
-            ],
-            rows: [
-              'pensionFund',
-              'pensionType',
-              'dateFrom',
-              'dateTo',
-              'amountPerMonth',
-            ],
-            format: {
-              pensionFund: (value, _displayIndex, application) => {
-                if (!value || !application) return ''
-                const pensionFunds =
-                  getValueViaPath<Array<{ id?: string; name?: string }>>(
-                    application.externalData,
-                    'pensionFunds.data',
-                  ) ?? []
-                const fund = pensionFunds.find((f) => f.id === value)
-                return fund?.name ?? value
+            columns: [
+              {
+                header: m.application.tableHeaderPensionFund,
+                value: ({ row, application }) => {
+                  const value = row.pensionFund ?? ''
+                  if (!value || !application) return ''
+                  const pensionFunds =
+                    getValueViaPath<Array<{ id?: string; name?: string }>>(
+                      application.externalData,
+                      'pensionFunds.data',
+                    ) ?? []
+                  const fund = pensionFunds.find((f) => f.id === value)
+                  return fund?.name ?? value
+                },
               },
-              pensionType: (value, _displayIndex, application) => {
-                if (!value || !application) return ''
-                const incomeTypes =
-                  getValueViaPath<Array<{ id?: string; name?: string }>>(
-                    application.externalData,
-                    'incomeTypes.data.pensionTypes',
-                  ) ?? []
-                const type = incomeTypes.find((t) => t.id === value)
-                return type?.name ?? value
+              {
+                header: m.application.tableHeaderPaymentType,
+                value: ({ row, application }) => {
+                  const value = row.pensionType ?? ''
+                  if (!value || !application) return ''
+                  const incomeTypes =
+                    getValueViaPath<Array<{ id?: string; name?: string }>>(
+                      application.externalData,
+                      'incomeTypes.data.pensionTypes',
+                    ) ?? []
+                  const type = incomeTypes.find((t) => t.id === value)
+                  return type?.name ?? value
+                },
               },
-              dateFrom: formatIsDate,
-              dateTo: (value, _displayIndex, _application, row) =>
-                formatIsDateOrIndefinite(value, row?.paymentFrequency),
-              amountPerMonth: formatIsCurrency,
-            },
+              {
+                header: m.application.tableHeaderDateFrom,
+                value: ({ row }) => formatIsDate(row.dateFrom ?? ''),
+              },
+              {
+                header: m.application.tableHeaderDateTo,
+                value: ({ row }) => {
+                  const value = row.dateTo ?? ''
+                  return formatIsDateOrIndefinite(value, row?.paymentFrequency)
+                },
+              },
+              {
+                header: m.application.tableHeaderAmount,
+                value: ({ row }) => formatIsCurrency(row.amountPerMonth ?? ''),
+              },
+            ],
           },
         }),
         buildCustomField(

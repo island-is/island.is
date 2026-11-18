@@ -165,29 +165,37 @@ export const socialInsuranceSection = buildSubSection({
             },
           },
           table: {
-            header: [
-              m.application.tableHeaderPaymentType,
-              m.application.tableHeaderDateFrom,
-              m.application.tableHeaderDateTo,
-              m.application.tableHeaderAmount,
-            ],
-            rows: ['socialPaymentType', 'dateFrom', 'dateTo', 'amountPerMonth'],
-            format: {
-              socialPaymentType: (value, _displayIndex, application) => {
-                if (!value || !application) return ''
-                const incomeTypes =
-                  getValueViaPath<Array<{ id?: string; name?: string }>>(
-                    application.externalData,
-                    'incomeTypes.data.trTypes',
-                  ) ?? []
-                const type = incomeTypes.find((t) => t.id === value)
-                return type?.name ?? value
+            columns: [
+              {
+                header: m.application.tableHeaderPaymentType,
+                value: ({ row, application }) => {
+                  const value = row.socialPaymentType ?? ''
+                  if (!value || !application) return ''
+                  const incomeTypes =
+                    getValueViaPath<Array<{ id?: string; name?: string }>>(
+                      application.externalData,
+                      'incomeTypes.data.trTypes',
+                    ) ?? []
+                  const type = incomeTypes.find((t) => t.id === value)
+                  return type?.name ?? value
+                },
               },
-              dateFrom: formatIsDate,
-              dateTo: (value, _displayIndex, _application, row) =>
-                formatIsDateOrIndefinite(value, row?.paymentFrequency),
-              amountPerMonth: formatIsCurrency,
-            },
+              {
+                header: m.application.tableHeaderDateFrom,
+                value: ({ row }) => formatIsDate(row.dateFrom ?? ''),
+              },
+              {
+                header: m.application.tableHeaderDateTo,
+                value: ({ row }) => {
+                  const value = row.dateTo ?? ''
+                  return formatIsDateOrIndefinite(value, row?.paymentFrequency)
+                },
+              },
+              {
+                header: m.application.tableHeaderAmount,
+                value: ({ row }) => formatIsCurrency(row.amountPerMonth ?? ''),
+              },
+            ],
           },
         }),
         buildCustomField(

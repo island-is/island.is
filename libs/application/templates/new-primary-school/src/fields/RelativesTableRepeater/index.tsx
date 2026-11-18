@@ -111,20 +111,30 @@ const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           },
         },
         table: {
-          format: {
-            phoneNumber: (value) =>
-              value ? formatPhoneNumber(removeCountryCode(value)) : '',
-            nationalId: (value) => (value ? formatKennitala(value) : ''),
-            relation: (value) =>
-              value
-                ? getSelectedOptionLabel(relationFriggOptions, value) ?? ''
-                : '',
-          },
-          header: [
-            sharedMessages.fullName,
-            sharedMessages.nationalId,
-            sharedMessages.phoneNumber,
-            sharedMessages.relation,
+          columns: [
+            { header: sharedMessages.fullName, value: 'name' },
+            {
+              header: sharedMessages.nationalId,
+              value: ({ row }) =>
+                row.nationalId ? formatKennitala(row.nationalId) : '',
+            },
+            {
+              header: sharedMessages.phoneNumber,
+              value: ({ row }) =>
+                row.phoneNumber
+                  ? formatPhoneNumber(removeCountryCode(row.phoneNumber))
+                  : '',
+            },
+            {
+              header: sharedMessages.relation,
+              value: ({ row }) =>
+                row.relation
+                  ? getSelectedOptionLabel(
+                      relationFriggOptions,
+                      row.relation,
+                    ) ?? ''
+                  : '',
+            },
           ],
         },
       }}

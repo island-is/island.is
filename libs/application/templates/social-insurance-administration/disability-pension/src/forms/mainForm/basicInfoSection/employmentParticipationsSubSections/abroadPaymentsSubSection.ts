@@ -93,11 +93,16 @@ export const abroadPaymentsSubSection = buildMultiField({
         },
       },
       table: {
-        header: [
-          m.employmentParticipation.country,
-          m.employmentParticipation.abroadNationalId,
+        columns: [
+          {
+            header: m.employmentParticipation.country,
+            value: 'countryDisplay',
+          },
+          {
+            header: m.employmentParticipation.abroadNationalId,
+            value: 'abroadNationalId',
+          },
         ],
-        rows: ['countryDisplay', 'abroadNationalId'],
       },
     }),
   ],
