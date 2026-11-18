@@ -46,7 +46,7 @@ export const is = {
   'login.error.unsupportedDeviceTitle':
     'Ekki tókst að skrá þig inn í þessu tæki',
   'login.error.unsupportedDevice':
-    'Uppfærðu appið og stýrikerfið og reyndu aftur. Ef það gengur ekki, hafðu samband við Ísland.is.',
+    'Tækið uppfyllir mögulega ekki skilyrði appsins. Uppfærðu appið og stýrikerfið og reyndu aftur.',
   'login.error.failed': 'Ekki tókst að skrá þig inn. Reyndu aftur.',
 
   // app lock

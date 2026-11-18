@@ -46,7 +46,7 @@ export const en: TranslatedMessages = {
     "Couldn't log you in right now. Try again in a few minutes.",
   'login.error.unsupportedDeviceTitle': "Couldn't log you in on this device",
   'login.error.unsupportedDevice':
-    "Update the app and the operating system, then try again. If that doesn't help, contact Ísland.is.",
+    "This device may not meet the app's requirements. Update the app and the operating system, then try again.",
   'login.error.failed': "Couldn't log you in. Try again.",
 
   // app lock
