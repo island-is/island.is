@@ -135,12 +135,16 @@ Constants are in `src/config.ts`. Rights are counted in days, and a month of rig
 
 #### Days used by a period
 
-`calculatePeriodLength` counts the days of rights a period uses, month by month. A whole calendar month counts as 30 days, whatever its length. A stretch that ends on the last day of a month counts as if the month had 30 days, so 18.03–31.03 uses 13 days and 15.02–28.02 uses 16. Each month is multiplied by the ratio and rounded. A period set to use all remaining days (`daysToUse`) uses exactly that many (`calculateDaysUsedByPeriods`). The days used by all periods may not exceed the rights.
+`calculatePeriodLength` counts the days of rights a period lasts, month by month. A whole calendar month counts as 30 days, whatever its length. A stretch that ends on the last day of a month counts as if the month had 30 days, so 18.03–31.03 lasts 13 days and 15.02–28.02 lasts 16.
+
+The rights check (`calculateDaysUsedByPeriods`) multiplies each period's length by its ratio and rounds once per period, then adds the periods up: 17.01–14.02 (28 days) at 10% uses 3 days. A period set to use all remaining days (`daysToUse`) uses exactly that many. The days used by all periods may not exceed the rights.
+
+`calculatePeriodLength` can also apply a ratio itself, rounding each month separately, which can give a different total (2 days in the example). The lowest ratio offered (`calculateMinPercentageForPeriod`) is found that way; the rights check and the highest ratio offered are not.
 
 #### Ratio
 
 - At least 1% (`minimumRatio`), and at most 100%.
-- The highest ratio offered is the highest one whose days fit in the rights left (`calculateMaxPercentageForPeriod`). A warning shows when that is below 100%. When even that ratio leaves days unused, one step higher is offered, which uses exactly the remaining days.
+- The highest ratio offered is the highest one whose days, counted as the rights check counts them, fit in the rights left (`calculateMaxPercentageForPeriod`). A warning shows when that is below 100%. When even that ratio leaves days unused, one step higher is offered, which uses exactly the remaining days.
 
 #### Period dates
 
