@@ -6,7 +6,6 @@ import {
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
 import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { hasCasualWorkOverlap, isCasualWork } from '../../../utils/conditions'
@@ -100,19 +99,19 @@ export const casualWorkSection = buildSubSection({
               label: m.application.dateFrom,
               width: 'half',
               required: true,
-              clearOnChange: (index: number) => [
+              clearOnChange: ({ index }) => [
                 `registerCasualWork[${index}].dateTo`,
               ],
-              minDate: getCurrentMonthStartDate,
-              maxDate: getMaxRegistrationDate,
+              minDate: () => getCurrentMonthStartDate(),
+              maxDate: () => getMaxRegistrationDate(),
             },
             dateTo: {
               component: 'date',
               label: m.application.dateTo,
               width: 'half',
               required: true,
-              maxDate: getMaxRegistrationDate,
-              minDate: (_application, activeField) => {
+              maxDate: () => getMaxRegistrationDate(),
+              minDate: ({ row: activeField }) => {
                 const fromDate = activeField?.dateFrom
                 if (fromDate) {
                   return new Date(fromDate)
@@ -125,7 +124,7 @@ export const casualWorkSection = buildSubSection({
               label: m.application.workshiftPeriod,
               width: 'half',
               required: true,
-              options: (application, _, locale) => {
+              options: ({ application, locale }) => {
                 const workshiftPeriods =
                   getValueViaPath<Array<WorkshiftPeriod>>(
                     application.externalData,
@@ -155,10 +154,8 @@ export const casualWorkSection = buildSubSection({
             // function stays idempotent across renders.
             validationId: {
               component: 'hiddenInput',
-              defaultValue: (
-                _application: Application,
-                activeField?: Record<string, string>,
-              ) => activeField?.validationId ?? uuid(),
+              defaultValue: ({ row: activeField }) =>
+                activeField?.validationId ?? uuid(),
             },
           },
           table: {

@@ -84,7 +84,7 @@ export const incomePlanSubSection = buildSubSection({
               displayInTable: false,
               width: 'half',
               isSearchable: true,
-              options: (application) => {
+              options: ({ application }) => {
                 const { categorizedIncomeTypes } = getApplicationExternalData(
                   application.externalData,
                 )
@@ -101,7 +101,7 @@ export const incomePlanSubSection = buildSubSection({
               width: 'half',
               isSearchable: true,
               updateValueObj: {
-                valueModifier: (application, activeField) => {
+                valueModifier: ({ application, row: activeField }) => {
                   const { categorizedIncomeTypes } = getApplicationExternalData(
                     application.externalData,
                   )
@@ -112,7 +112,7 @@ export const incomePlanSubSection = buildSubSection({
                 },
                 watchValues: 'incomeCategory',
               },
-              options: (application, activeField) => {
+              options: ({ application, row: activeField }) => {
                 const { categorizedIncomeTypes } = getApplicationExternalData(
                   application.externalData,
                 )
@@ -130,11 +130,11 @@ export const incomePlanSubSection = buildSubSection({
                 socialInsuranceAdministrationMessage.incomePlan.selectCurrency,
               isSearchable: true,
               updateValueObj: {
-                valueModifier: (_, activeField) =>
+                valueModifier: ({ row: activeField }) =>
                   currencyValueModifier(activeField),
                 watchValues: 'incomeType',
               },
-              options: (application, activeField) => {
+              options: ({ application, row: activeField }) => {
                 const { currencies } = getApplicationExternalData(
                   application.externalData,
                 )
@@ -175,12 +175,12 @@ export const incomePlanSubSection = buildSubSection({
               displayInTable: false,
               currency: true,
               updateValueObj: {
-                valueModifier: (_, activeField) =>
+                valueModifier: ({ row: activeField }) =>
                   equalIncomePerMonthValueModifier(true, activeField),
                 watchValues: ['income', 'currency', 'unevenIncomePerYear'],
               },
               suffix: '',
-              condition: (_, activeField) =>
+              condition: ({ row: activeField }) =>
                 shouldShowEqualIncomePerMonth(true, activeField),
             },
             equalIncomePerMonth: {
@@ -193,12 +193,12 @@ export const incomePlanSubSection = buildSubSection({
               displayInTable: false,
               currency: true,
               updateValueObj: {
-                valueModifier: (_, activeField) =>
+                valueModifier: ({ row: activeField }) =>
                   equalIncomePerMonthValueModifier(false, activeField),
                 watchValues: ['income', 'currency', 'unevenIncomePerYear'],
               },
               suffix: '',
-              condition: (_, activeField) =>
+              condition: ({ row: activeField }) =>
                 shouldShowEqualIncomePerMonth(false, activeField),
             },
             incomePerYear: {
@@ -208,15 +208,15 @@ export const incomePlanSubSection = buildSubSection({
               width: 'half',
               type: 'number',
               currency: true,
-              disabled: (_, activeField) =>
+              disabled: ({ row: activeField }) =>
                 activeField?.income === RatioType.MONTHLY,
               updateValueObj: {
-                valueModifier: (_, activeField) =>
+                valueModifier: ({ row: activeField }) =>
                   incomePerYearValueModifier(activeField),
-                watchValues: incomePerYearWatchValues,
+                watchValues: ({ row }) => incomePerYearWatchValues(row),
               },
               suffix: '',
-              condition: (_, activeField) =>
+              condition: ({ row: activeField }) =>
                 isMonthlyOrYearlyIncome(activeField),
             },
             unevenIncomePerYear: {
@@ -236,7 +236,7 @@ export const incomePlanSubSection = buildSubSection({
               ],
               backgroundColor: 'blue',
               displayInTable: false,
-              condition: (_, activeField) => isMonthlyIncome(activeField),
+              condition: ({ row: activeField }) => isMonthlyIncome(activeField),
             },
             january: generateMonthInput(
               socialInsuranceAdministrationMessage.months.january,

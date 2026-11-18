@@ -72,23 +72,24 @@ export const schoolSection = buildSection({
               component: 'select',
               label: school.selection.schoolLabel,
               required: true,
-              options: (application) => getSchoolOptions(application),
-              filterOptions: (options, answers, index) =>
-                filterSchoolOptions(options, answers, index),
-              clearOnChange: (_) => clearOnChangeSchool(),
-              setOnChange: async (option, application, index) =>
+              options: ({ application }) => getSchoolOptions(application),
+              filterOptions: (
+                options,
+                { application: { answers: answers }, index },
+              ) => filterSchoolOptions(options, answers, index),
+              clearOnChange: () => clearOnChangeSchool(),
+              setOnChange: async (option, { application, index }) =>
                 setOnChangeSchool(option, application, index),
             },
             'firstProgram.id': {
               component: 'selectAsync',
               label: school.selection.firstProgramLabel,
               required: true,
-              updateOnSelect: (index) => getUpdateOnSelectFirstProgram(index),
+              updateOnSelect: ({ index }) =>
+                getUpdateOnSelectFirstProgram(index),
               loadOptions: (
                 { apolloClient, application },
-                lang,
-                activeField,
-                setValueAtIndex,
+                { locale: lang, row: activeField, setValueAtIndex },
               ) =>
                 loadProgramOptions(
                   apolloClient,
@@ -98,7 +99,10 @@ export const schoolSection = buildSection({
                   setValueAtIndex,
                   'secondProgram.id',
                 ),
-              setOnChange: async (option, application, index, activeField) =>
+              setOnChange: async (
+                option,
+                { application, index, row: activeField },
+              ) =>
                 setOnChangeFirstProgram(
                   option,
                   application,
@@ -109,14 +113,14 @@ export const schoolSection = buildSection({
             firstProgramAlert: {
               component: 'alertMessage',
               alertType: 'info',
-              message: (application, _activeField, index, locale) =>
+              message: ({ application, index, locale }) =>
                 getProgramApplicationMessage(
                   'firstProgram',
                   application.answers,
                   index,
                   locale,
                 ),
-              condition: (application, _activeField, index, locale) =>
+              condition: ({ application, index, locale }) =>
                 getConditionProgramApplicationMessage(
                   'firstProgram',
                   application.answers,
@@ -127,18 +131,17 @@ export const schoolSection = buildSection({
             'secondProgram.id': {
               component: 'selectAsync',
               label: school.selection.secondProgramLabel,
-              required: (_, activeField) =>
+              required: ({ row: activeField }) =>
                 getRequireSecondProgram(activeField),
-              isClearable: (_, activeField) =>
+              isClearable: ({ row: activeField }) =>
                 getIsClearableSecondProgram(activeField),
-              condition: (_, activeField) =>
+              condition: ({ row: activeField }) =>
                 getConditionSecondProgram(activeField),
-              updateOnSelect: (index) => getUpdateOnSelectSecondProgram(index),
+              updateOnSelect: ({ index }) =>
+                getUpdateOnSelectSecondProgram(index),
               loadOptions: (
                 { apolloClient, application },
-                lang,
-                activeField,
-                setValueAtIndex,
+                { locale: lang, row: activeField, setValueAtIndex },
               ) =>
                 loadProgramOptions(
                   apolloClient,
@@ -148,20 +151,20 @@ export const schoolSection = buildSection({
                   setValueAtIndex,
                   'firstProgram.id',
                 ),
-              setOnChange: async (option, _, index, activeField) =>
+              setOnChange: async (option, { index, row: activeField }) =>
                 setOnChangeSecondProgram(option, index, activeField),
             },
             secondProgramAlert: {
               component: 'alertMessage',
               alertType: 'info',
-              message: (application, _, index, locale) =>
+              message: ({ application, index, locale }) =>
                 getProgramApplicationMessage(
                   'secondProgram',
                   application.answers,
                   index,
                   locale,
                 ),
-              condition: (application, _, index, locale) =>
+              condition: ({ application, index, locale }) =>
                 getConditionProgramApplicationMessage(
                   'secondProgram',
                   application.answers,
@@ -172,14 +175,17 @@ export const schoolSection = buildSection({
             'thirdLanguage.code': {
               component: 'select',
               label: school.selection.thirdLanguageLabel,
-              required: (_, activeField) =>
+              required: ({ row: activeField }) =>
                 getRequireThirdLanguage(activeField),
               isClearable: true,
-              condition: (application, activeField) =>
+              condition: ({ application, row: activeField }) =>
                 getConditionThirdLanguage(application, activeField),
-              options: (application, activeField) =>
+              options: ({ application, row: activeField }) =>
                 getThirdLanguageOptions(application, activeField),
-              setOnChange: async (option, application, index, activeField) =>
+              setOnChange: async (
+                option,
+                { application, index, row: activeField },
+              ) =>
                 setOnChangeThirdLanguage(
                   option,
                   application,
@@ -190,14 +196,17 @@ export const schoolSection = buildSection({
             'fallbackThirdLanguage.code': {
               component: 'select',
               label: school.selection.fallbackThirdLanguageLabel,
-              required: (_, activeField) =>
+              required: ({ row: activeField }) =>
                 getRequireFallbackThirdLanguage(activeField),
               isClearable: true,
-              condition: (application, activeField) =>
+              condition: ({ application, row: activeField }) =>
                 getConditionFallbackThirdLanguage(application, activeField),
-              options: (application, activeField) =>
+              options: ({ application, row: activeField }) =>
                 getFallbackThirdLanguageOptions(application, activeField),
-              setOnChange: async (option, application, index, activeField) =>
+              setOnChange: async (
+                option,
+                { application, index, row: activeField },
+              ) =>
                 setOnChangeFallbackThirdLanguage(
                   option,
                   application,
@@ -209,11 +218,14 @@ export const schoolSection = buildSection({
               component: 'select',
               label: school.selection.nordicLanguageLabel,
               isClearable: true,
-              condition: (application, activeField) =>
+              condition: ({ application, row: activeField }) =>
                 getConditionNordicLanguage(application, activeField),
-              options: (application, activeField) =>
+              options: ({ application, row: activeField }) =>
                 getNordicLanguageOptions(application, activeField),
-              setOnChange: async (option, application, index, activeField) =>
+              setOnChange: async (
+                option,
+                { application, index, row: activeField },
+              ) =>
                 setOnChangeNordicLanguage(
                   option,
                   application,
@@ -224,7 +236,7 @@ export const schoolSection = buildSection({
             requestDormitory: {
               component: 'checkbox',
               options: getRequestDormitoryOptions(),
-              condition: (application, activeField) =>
+              condition: ({ application, row: activeField }) =>
                 getConditionRequestDormitory(application, activeField),
             },
           },

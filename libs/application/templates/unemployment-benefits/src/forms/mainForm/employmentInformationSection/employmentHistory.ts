@@ -28,8 +28,6 @@ import {
 import { CurrentEmploymentInAnswers, EmploymentStatus } from '../../../shared'
 import { getJobCodeOptions, getJobInfo } from '../../../utils/getJobCodeOptions'
 import { getRskOptions } from '../../../utils/getRskOptions'
-import { Locale } from '@island.is/shared/types'
-
 export const employmentHistorySubSection = buildSubSection({
   id: 'employmentHistorySubSection',
   title: employmentMessages.employmentHistory.general.sectionTitle,
@@ -130,11 +128,7 @@ export const employmentHistorySubSection = buildSubSection({
               label: coreMessages.nationalId,
               width: 'half',
               readonly: true,
-              defaultValue: (
-                application: Application,
-                _activeField: Record<string, string>,
-                index: number,
-              ) => {
+              defaultValue: ({ application, index }) => {
                 const nationalId = getChosenEmployerNationalId(
                   index,
                   application,
@@ -147,11 +141,7 @@ export const employmentHistorySubSection = buildSubSection({
               label: coreMessages.name,
               width: 'half',
               readonly: true,
-              defaultValue: (
-                application: Application,
-                _activeField: Record<string, string>,
-                index: number,
-              ) => {
+              defaultValue: ({ application, index }) => {
                 const name = getChosenEmployerName(index, application)
                 return name
               },
@@ -161,12 +151,7 @@ export const employmentHistorySubSection = buildSubSection({
               label: employmentMessages.employmentHistory.labels.lastJobTitle,
               width: 'half',
               readonly: true,
-              defaultValue: (
-                application: Application,
-                _activeField: Record<string, string>,
-                index: number,
-                locale: Locale,
-              ) => {
+              defaultValue: ({ application, index, locale }) => {
                 const repeaterJobs =
                   getValueViaPath<CurrentEmploymentInAnswers[]>(
                     application.answers,
@@ -204,7 +189,7 @@ export const employmentHistorySubSection = buildSubSection({
               required: true,
               max: 100,
               allowNegative: false,
-              condition: (application, _activeField, index) => {
+              condition: ({ application, index }) => {
                 return (
                   !hasDataFromCurrentStatus(application.answers, index) ||
                   (hasEmployer(application.answers) &&
@@ -215,18 +200,14 @@ export const employmentHistorySubSection = buildSubSection({
                     ))
                 )
               },
-              readonly: (application, _, index) => {
+              readonly: ({ application, index }) => {
                 return hasDataFromCurrentStatusItem(
                   application.answers,
                   index,
                   'percentage',
                 )
               },
-              defaultValue: (
-                application: Application,
-                _activeField: Record<string, string>,
-                index: number,
-              ) => {
+              defaultValue: ({ application, index }) => {
                 return getDefaultFromCurrentStatus(
                   application.answers,
                   index,
@@ -239,25 +220,21 @@ export const employmentHistorySubSection = buildSubSection({
               required: true,
               label: employmentMessages.employmentHistory.labels.lastJobEndDate,
               width: 'half',
-              condition: (application, _activeField, index) => {
+              condition: ({ application, index }) => {
                 if (hasDataFromCurrentStatus(application.answers, index)) {
                   return isEmployed(application.answers)
                 }
 
                 return false
               },
-              readonly: (application, _, index) => {
+              readonly: ({ application, index }) => {
                 return hasDataFromCurrentStatusItem(
                   application.answers,
                   index,
                   'predictedEndDate',
                 )
               },
-              defaultValue: (
-                application: Application,
-                _activeField: Record<string, string>,
-                index: number,
-              ) => {
+              defaultValue: ({ application, index }) => {
                 return getDefaultFromCurrentStatus(
                   application.answers,
                   index,
@@ -272,7 +249,7 @@ export const employmentHistorySubSection = buildSubSection({
                 employmentMessages.employmentHistory.labels.lastOldJobEndDate,
               width: 'half',
               maxDate: new Date(),
-              condition: (application, _activeField, index) => {
+              condition: ({ application, index }) => {
                 return !hasDataFromCurrentStatus(application.answers, index)
               },
             },
@@ -308,22 +285,22 @@ export const employmentHistorySubSection = buildSubSection({
             nationalIdWithName: {
               component: 'select',
               isClearable: true,
-              required: (application) => {
+              required: ({ application }) => {
                 return isUnemployed(application.answers)
               },
               label:
                 employmentMessages.employmentHistory.labels.employerSelectLabel,
-              options: (application, _, _locale, formatMessage) =>
+              options: ({ application, formatMessage }) =>
                 getRskOptions(application, formatMessage),
             },
             employer: {
               component: 'nationalIdWithName',
-              required: (application) => {
+              required: ({ application }) => {
                 return isUnemployed(application.answers)
               },
               searchPersons: true,
               searchCompanies: true,
-              condition: (_, activeField) => {
+              condition: ({ row: activeField }) => {
                 const nationalIdChosen = activeField?.nationalIdWithName
                   ? activeField?.nationalIdWithName
                   : ''
@@ -335,10 +312,10 @@ export const employmentHistorySubSection = buildSubSection({
               isClearable: true,
               label: employmentMessages.employmentHistory.labels.lastJobTitle,
               width: 'half',
-              required: (application) => {
+              required: ({ application }) => {
                 return isUnemployed(application.answers)
               },
-              options: (application, _activeField, locale) =>
+              options: ({ application, locale }) =>
                 getJobCodeOptions(application, locale),
             },
             percentage: {
@@ -351,7 +328,7 @@ export const employmentHistorySubSection = buildSubSection({
               max: 100,
               placeholder: '1-100%',
               allowNegative: false,
-              required: (application) => {
+              required: ({ application }) => {
                 return isUnemployed(application.answers)
               },
             },

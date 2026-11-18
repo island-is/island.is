@@ -177,14 +177,18 @@ export const MainForm = buildForm({
                       component: 'select',
                       label: m.application.educationLevelOfStudyLabel,
                       width: 'half',
-                      options: (application, _activeValues, lang) =>
+                      options: ({ application, locale: lang }) =>
                         getLevelsOfStudyOptions(application, lang as Locale),
                     },
                     degree: {
                       component: 'select',
                       label: m.application.educationDegreeLabel,
                       width: 'half',
-                      options: (application, activeValues, lang) =>
+                      options: ({
+                        application,
+                        row: activeValues,
+                        locale: lang,
+                      }) =>
                         getDegreeOptions(
                           application,
                           lang as Locale,
@@ -196,7 +200,11 @@ export const MainForm = buildForm({
                       component: 'select',
                       label: m.application.educationCourseOfStudyLabel,
                       width: 'half',
-                      options: (application, activeValues, lang) =>
+                      options: ({
+                        application,
+                        row: activeValues,
+                        locale: lang,
+                      }) =>
                         getCourseOfStudy(
                           application,
                           activeValues?.levelOfStudy ?? '',
@@ -298,7 +306,7 @@ export const MainForm = buildForm({
                       component: 'select',
                       label: m.application.languageNameLabel,
                       width: 'half',
-                      options: (application, _activeValues, lang) =>
+                      options: ({ application, locale: lang }) =>
                         getLanguageOptions(
                           application.externalData,
                           lang as Locale,
@@ -308,7 +316,7 @@ export const MainForm = buildForm({
                       component: 'select',
                       label: m.application.languageAbilityLabel,
                       width: 'half',
-                      options: (application, _activeValues, lang) =>
+                      options: ({ application, locale: lang }) =>
                         getLanguageAbilityOptions(
                           application.externalData,
                           lang as Locale,

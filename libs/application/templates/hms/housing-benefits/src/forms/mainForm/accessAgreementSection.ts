@@ -102,15 +102,18 @@ export const accessAgreementSection = buildSection({
               component: 'select',
               width: 'full',
               label: m.assigneeDraft.umgengnissamningurSelectChildTitle,
-              options: (application, activeValues) =>
+              options: ({ application, row: activeValues }) =>
                 mainFormAccessAgreementChildOptions(application, activeValues),
-              required: (_application, activeValues) => {
+              required: ({ row: activeValues }) => {
                 const files = activeValues?.file as
                   | Array<{ key: string; name: string }>
                   | undefined
                 return Array.isArray(files) && files.length > 0
               },
-              filterOptions: (options, formValues, index) =>
+              filterOptions: (
+                options,
+                { application: { answers: formValues }, index },
+              ) =>
                 filterAccessAgreementChildNationalIdOptions(
                   options,
                   getMainFormAccessAgreementRepeater(formValues),

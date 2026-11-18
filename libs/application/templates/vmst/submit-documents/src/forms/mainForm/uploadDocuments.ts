@@ -79,7 +79,7 @@ export const uploadDocumentsSection = buildSection({
               label: udm.typeLabel,
               width: 'full',
               required: true,
-              options: (application) => {
+              options: ({ application }) => {
                 const attachmentTypes =
                   getValueViaPath<{ id: string; name: string }[]>(
                     application.externalData,
@@ -109,7 +109,7 @@ export const uploadDocumentsSection = buildSection({
               component: 'fileUpload',
               label: udm.fileLabel,
               uploadAccept: '.pdf,.docx,.rtf,.doc,.jpg,.jpeg,.png,.heic',
-              condition: (_, activeField) => {
+              condition: ({ row: activeField }) => {
                 const checkbox =
                   activeField?.checkbox as unknown as Array<string>
                 if (checkbox && checkbox.includes(YES)) return false
@@ -118,7 +118,7 @@ export const uploadDocumentsSection = buildSection({
             },
             comment: {
               component: 'input',
-              required: (_, activeField) => {
+              required: ({ row: activeField }) => {
                 const checkbox =
                   activeField?.checkbox as unknown as Array<string>
                 if (checkbox && checkbox.includes(YES)) return true

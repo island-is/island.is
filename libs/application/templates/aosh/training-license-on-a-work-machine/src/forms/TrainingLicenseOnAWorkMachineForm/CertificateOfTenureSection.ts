@@ -9,7 +9,6 @@ import {
 import { assigneeInformation, certificateOfTenure } from '../../lib/messages'
 import { setOnMachineNumberChange } from '../../utils/setOnMachineNumberChange'
 import { formatDate } from '../../utils'
-import { Application } from '@island.is/api/schema'
 import { TrainingLicenseOnAWorkMachine } from '../..'
 
 export const certificateOfTenureSection = buildSection({
@@ -53,17 +52,13 @@ export const certificateOfTenureSection = buildSection({
               component: 'input',
               label: certificateOfTenure.labels.machineNumber,
               width: 'half',
-              clearOnChange: (index) => [
+              clearOnChange: ({ index }) => [
                 `certificateOfTenure[${index}].machineType`,
                 `certificateOfTenure[${index}].practicalRight`,
               ],
               setOnChange: async (
                 value,
-                application,
-                index,
-                _activeField,
-                apolloClient,
-                lang,
+                { application, index, apolloClient, locale: lang },
               ) =>
                 setOnMachineNumberChange(
                   value,
@@ -87,7 +82,7 @@ export const certificateOfTenureSection = buildSection({
             machineNumberAlert: {
               component: 'alertMessage',
               alertType: 'warning',
-              condition: (_, activeField) => {
+              condition: ({ row: activeField }) => {
                 return (
                   (!!activeField?.unknownPracticalRight ||
                     !!activeField?.wrongPracticalRight ||
@@ -99,7 +94,7 @@ export const certificateOfTenureSection = buildSection({
                   false
                 )
               },
-              message: (_, activeField) => {
+              message: ({ row: activeField }) => {
                 if (activeField?.unknownPracticalRight) {
                   return certificateOfTenure.labels.unknownPracticalRight
                 } else if (activeField?.wrongPracticalRight) {
@@ -125,7 +120,7 @@ export const certificateOfTenureSection = buildSection({
               component: 'alertMessage',
               alertType: 'error',
               marginTop: 0,
-              condition: (_, activeField) => {
+              condition: ({ row: activeField }) => {
                 return !!activeField?.machineTypeDoesNotMatch
               },
               message: certificateOfTenure.labels.machineTypeDoesNotMatchAlert,
@@ -135,7 +130,7 @@ export const certificateOfTenureSection = buildSection({
               label: certificateOfTenure.labels.dateFrom,
               width: 'half',
               placeholder: certificateOfTenure.labels.datePlaceholder,
-              maxDate: (_, activeField) => {
+              maxDate: ({ row: activeField }) => {
                 const dateTo =
                   (activeField &&
                     getValueViaPath<string>(activeField, 'dateTo')) ||
@@ -150,7 +145,7 @@ export const certificateOfTenureSection = buildSection({
               label: certificateOfTenure.labels.dateTo,
               width: 'half',
               placeholder: certificateOfTenure.labels.datePlaceholder,
-              minDate: (_, activeField) => {
+              minDate: ({ row: activeField }) => {
                 const dateFrom =
                   activeField &&
                   getValueViaPath<string>(activeField, 'dateFrom')
@@ -185,7 +180,7 @@ export const certificateOfTenureSection = buildSection({
               component: 'alertMessage',
               alertType: 'info',
               marginTop: 0,
-              condition: (_, activeField) => {
+              condition: ({ row: activeField }) => {
                 return activeField?.isContractor?.includes('yes') ?? false
               },
               message: assigneeInformation.labels.isContractorAlert,
@@ -210,10 +205,7 @@ export const certificateOfTenureSection = buildSection({
             },
             date: {
               component: 'hiddenInput',
-              defaultValue: (
-                _application: Application,
-                activeField: Record<string, string>,
-              ) => {
+              defaultValue: ({ row: activeField }) => {
                 const dateFrom = activeField?.dateFrom
                   ? formatDate(activeField?.dateFrom)
                   : ''

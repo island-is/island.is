@@ -117,7 +117,8 @@ export const fieldsRepeaterSubsection = buildSubSection({
             },
             inputWithIndexinLabel: {
               component: 'input',
-              label: (index) => `Regular input with index in label: ${index}`,
+              label: ({ index }) =>
+                `Regular input with index in label: ${index}`,
               width: 'full',
               type: 'text',
             },

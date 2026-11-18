@@ -5,7 +5,6 @@ import {
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
 import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { isSocialInsurance } from '../../../utils/conditions'
@@ -84,7 +83,7 @@ export const socialInsuranceSection = buildSubSection({
               label: m.application.paymentType,
               width: 'half',
               required: true,
-              options: (application) => {
+              options: ({ application }) => {
                 const incomeTypes =
                   getValueViaPath<Array<{ id?: string; name?: string }>>(
                     application.externalData,
@@ -112,7 +111,7 @@ export const socialInsuranceSection = buildSubSection({
               largeButtons: false,
               width: 'half',
               defaultValue: PaymentFrequency.ONE_TIME,
-              clearOnChange: (index: number) => [
+              clearOnChange: ({ index }) => [
                 `registerSocialInsurance[${index}].dateTo`,
               ],
               options: [
@@ -131,24 +130,24 @@ export const socialInsuranceSection = buildSubSection({
               label: m.application.dateFrom,
               width: 'half',
               required: true,
-              clearOnChange: (index: number) => [
+              clearOnChange: ({ index }) => [
                 `registerSocialInsurance[${index}].dateTo`,
               ],
-              minDate: getCurrentMonthStartDate,
-              maxDate: getMaxRegistrationDate,
+              minDate: () => getCurrentMonthStartDate(),
+              maxDate: () => getMaxRegistrationDate(),
             },
             dateTo: {
               component: 'date',
               label: m.application.dateTo,
               width: 'half',
-              disabled: (_application, activeField) =>
+              disabled: ({ row: activeField }) =>
                 activeField?.paymentFrequency === PaymentFrequency.ONE_TIME,
-              placeholder: (_application, activeField) =>
+              placeholder: ({ row: activeField }) =>
                 activeField?.paymentFrequency === PaymentFrequency.MONTHLY
                   ? m.application.indefinitePeriod
                   : '',
-              maxDate: getMaxRegistrationDate,
-              minDate: (_application, activeField) => {
+              maxDate: () => getMaxRegistrationDate(),
+              minDate: ({ row: activeField }) => {
                 const fromDate = activeField?.dateFrom
                 if (fromDate) {
                   return new Date(fromDate)
@@ -161,10 +160,8 @@ export const socialInsuranceSection = buildSubSection({
             // so this function stays idempotent across renders.
             validationId: {
               component: 'hiddenInput',
-              defaultValue: (
-                _application: Application,
-                activeField?: Record<string, string>,
-              ) => activeField?.validationId ?? uuid(),
+              defaultValue: ({ row: activeField }) =>
+                activeField?.validationId ?? uuid(),
             },
           },
           table: {

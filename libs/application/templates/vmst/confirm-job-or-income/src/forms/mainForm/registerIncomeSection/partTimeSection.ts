@@ -5,7 +5,6 @@ import {
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
 import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import {
@@ -99,19 +98,19 @@ export const partTimeSection = buildSubSection({
               label: m.application.jobStart,
               width: 'half',
               required: true,
-              clearOnChange: (index: number) => [
+              clearOnChange: ({ index }) => [
                 `registerPartTime[${index}].jobEnd`,
               ],
-              minDate: getCurrentMonthStartDate,
-              maxDate: getMaxRegistrationDate,
+              minDate: () => getCurrentMonthStartDate(),
+              maxDate: () => getMaxRegistrationDate(),
             },
             jobEnd: {
               component: 'date',
               label: m.application.jobEnd,
               width: 'half',
               placeholder: m.application.indefinitePeriod,
-              maxDate: getMaxRegistrationDate,
-              minDate: (_application, activeField) => {
+              maxDate: () => getMaxRegistrationDate(),
+              minDate: ({ row: activeField }) => {
                 const fromDate = activeField?.jobStart
                 if (fromDate) {
                   return new Date(fromDate)
@@ -144,10 +143,8 @@ export const partTimeSection = buildSubSection({
             // time causes an infinite update loop.
             validationId: {
               component: 'hiddenInput',
-              defaultValue: (
-                _application: Application,
-                activeField?: Record<string, string>,
-              ) => activeField?.validationId ?? uuid(),
+              defaultValue: ({ row: activeField }) =>
+                activeField?.validationId ?? uuid(),
             },
           },
           table: {

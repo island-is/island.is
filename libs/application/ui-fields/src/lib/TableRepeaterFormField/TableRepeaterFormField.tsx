@@ -108,7 +108,13 @@ export const TableRepeaterFormField: FC<Props> = ({
   const tableHeader =
     typeof table?.header === 'function'
       ? table.header(watchedAnswers, application.externalData)
-      : table?.header ?? buildDefaultTableHeader(tableItems)
+      : table?.header ??
+        buildDefaultTableHeader(tableItems, {
+          application: watchedApplication,
+          locale: locale as Locale,
+          formatMessage,
+          apolloClient,
+        })
   const tableRows =
     typeof table?.rows === 'function'
       ? table.rows(watchedAnswers, application.externalData)

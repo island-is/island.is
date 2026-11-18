@@ -94,19 +94,19 @@ const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           applicantNationalId: {
             component: 'hiddenInput',
             displayInTable: false,
-            defaultValue: (application: Application) => application.applicant,
+            defaultValue: ({ application }) => application.applicant,
           },
           otherGuardianNationalId: {
             component: 'hiddenInput',
             displayInTable: false,
-            defaultValue: (application: Application) =>
+            defaultValue: ({ application }) =>
               getOtherGuardian(application.answers, application.externalData)
                 ?.nationalId,
           },
           childNationalId: {
             component: 'hiddenInput',
             displayInTable: false,
-            defaultValue: (application: Application) =>
+            defaultValue: ({ application }) =>
               getApplicationAnswers(application.answers).childNationalId,
           },
         },

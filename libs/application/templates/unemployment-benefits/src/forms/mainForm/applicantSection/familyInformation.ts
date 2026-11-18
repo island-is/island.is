@@ -7,7 +7,6 @@ import {
 import { applicant as applicantMessages } from '../../../lib/messages'
 import {
   ApplicantChildCustodyInformationV3,
-  Application,
   ExternalData,
 } from '@island.is/application/types'
 
@@ -42,11 +41,7 @@ export const familyInformationSubSection = buildSubSection({
               readonly: true,
               component: 'input',
               width: 'half',
-              defaultValue: (
-                application: Application,
-                _activeField: Record<string, string>,
-                index: number,
-              ) => {
+              defaultValue: ({ application, index }) => {
                 const children =
                   getValueViaPath<ApplicantChildCustodyInformationV3[]>(
                     application.externalData,
@@ -62,11 +57,7 @@ export const familyInformationSubSection = buildSubSection({
               readonly: true,
               component: 'input',
               width: 'half',
-              defaultValue: (
-                application: Application,
-                _activeField: Record<string, string>,
-                index: number,
-              ) => {
+              defaultValue: ({ application, index }) => {
                 const children =
                   getValueViaPath<ApplicantChildCustodyInformationV3[]>(
                     application.externalData,

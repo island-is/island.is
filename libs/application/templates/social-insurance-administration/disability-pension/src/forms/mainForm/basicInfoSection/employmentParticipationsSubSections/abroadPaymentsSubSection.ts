@@ -5,7 +5,7 @@ import {
   buildTableRepeaterField,
   YES,
 } from '@island.is/application/core'
-import { Application, FormValue } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/types'
 import { SectionRouteEnum } from '../../../../types/routes'
 import {
   getApplicationAnswers,
@@ -53,7 +53,7 @@ export const abroadPaymentsSubSection = buildMultiField({
           width: 'half',
           isSearchable: true,
           displayInTable: false,
-          options: (application: Application) => {
+          options: ({ application }) => {
             const { countries = [] } = getApplicationExternalData(
               application.externalData,
             )
@@ -66,7 +66,7 @@ export const abroadPaymentsSubSection = buildMultiField({
         countryDisplay: {
           component: 'hiddenInput',
           updateValueObj: {
-            valueModifier: (application, activeField) => {
+            valueModifier: ({ application, row: activeField }) => {
               if (!activeField) {
                 return ''
               }

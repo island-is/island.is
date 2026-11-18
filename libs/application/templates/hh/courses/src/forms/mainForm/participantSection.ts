@@ -85,9 +85,9 @@ export const participantSection = buildSection({
               label: m.participant.participantWorkplace,
               width: 'half',
               displayInTable: false,
-              condition: (application: Application) =>
+              condition: ({ application }) =>
                 isCourseForProfessionals(application.answers),
-              defaultValue: (application: Application) =>
+              defaultValue: ({ application }) =>
                 getValueViaPath<string>(application.answers, 'workplace') ?? '',
             },
             jobTitle: {
@@ -95,9 +95,9 @@ export const participantSection = buildSection({
               label: m.participant.participantJobTitle,
               width: 'half',
               displayInTable: false,
-              condition: (application: Application) =>
+              condition: ({ application }) =>
                 isCourseForProfessionals(application.answers),
-              defaultValue: (application: Application) =>
+              defaultValue: ({ application }) =>
                 getValueViaPath<string>(application.answers, 'jobTitle') ?? '',
             },
           },

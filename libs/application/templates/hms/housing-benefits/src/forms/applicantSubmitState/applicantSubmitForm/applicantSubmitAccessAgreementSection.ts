@@ -55,10 +55,13 @@ export const applicantSubmitAccessAgreementSection = buildSection({
               component: 'select',
               width: 'full',
               label: m.assigneeDraft.umgengnissamningurSelectChildTitle,
-              options: (application) =>
+              options: ({ application }) =>
                 applicantSubmitAccessAgreementChildOptions(application),
               required: true,
-              filterOptions: (options, formValues, index) => {
+              filterOptions: (
+                options,
+                { application: { answers: formValues }, index },
+              ) => {
                 const answersObj = formValues as FormValue
                 const applicantRaw = getValueViaPath<string>(
                   answersObj,

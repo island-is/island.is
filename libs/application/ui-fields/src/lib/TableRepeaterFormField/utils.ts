@@ -1,4 +1,4 @@
-import { RepeaterItem } from '@island.is/application/types'
+import { RepeaterItem, RepeaterItemContext } from '@island.is/application/types'
 import { coreMessages } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
 
@@ -90,14 +90,17 @@ const handleVehiclePermnoWithInfoItem = <T>(
   })
 }
 
-export const buildDefaultTableHeader = (items: Array<RepeaterItem>) =>
+export const buildDefaultTableHeader = (
+  items: Array<RepeaterItem>,
+  ctx: Omit<RepeaterItemContext, 'index' | 'row'>,
+) =>
   items
     .map((item, index) =>
       // nationalIdWithName is a special case where the value is an object of name and nationalId
       item.component === 'nationalIdWithName'
         ? [coreMessages.name, coreMessages.nationalId]
         : typeof item.label === 'function'
-        ? item.label(index)
+        ? item.label({ ...ctx, index })
         : item.label,
     )
     .flat(2)

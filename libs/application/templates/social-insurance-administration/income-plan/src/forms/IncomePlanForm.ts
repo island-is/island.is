@@ -120,7 +120,7 @@ export const IncomePlanForm: Form = buildForm({
                   displayInTable: false,
                   width: 'half',
                   isSearchable: true,
-                  options: (application) => {
+                  options: ({ application }) => {
                     const { categorizedIncomeTypes } =
                       getApplicationExternalData(application.externalData)
 
@@ -137,7 +137,7 @@ export const IncomePlanForm: Form = buildForm({
                   width: 'half',
                   isSearchable: true,
                   updateValueObj: {
-                    valueModifier: (application, activeField) => {
+                    valueModifier: ({ application, row: activeField }) => {
                       const { categorizedIncomeTypes } =
                         getApplicationExternalData(application.externalData)
 
@@ -152,7 +152,7 @@ export const IncomePlanForm: Form = buildForm({
                     },
                     watchValues: 'incomeCategory',
                   },
-                  options: (application, activeField) => {
+                  options: ({ application, row: activeField }) => {
                     const { categorizedIncomeTypes } =
                       getApplicationExternalData(application.externalData)
 
@@ -171,7 +171,7 @@ export const IncomePlanForm: Form = buildForm({
                       .selectCurrency,
                   isSearchable: true,
                   updateValueObj: {
-                    valueModifier: (_, activeField) => {
+                    valueModifier: ({ row: activeField }) => {
                       const defaultCurrency =
                         activeField?.incomeType === FOREIGN_BASIC_PENSION ||
                         activeField?.incomeType === FOREIGN_PENSION ||
@@ -186,7 +186,7 @@ export const IncomePlanForm: Form = buildForm({
                     },
                     watchValues: 'incomeType',
                   },
-                  options: (application, activeField) => {
+                  options: ({ application, row: activeField }) => {
                     const { currencies } = getApplicationExternalData(
                       application.externalData,
                     )
@@ -233,7 +233,7 @@ export const IncomePlanForm: Form = buildForm({
                   displayInTable: false,
                   currency: true,
                   updateValueObj: {
-                    valueModifier: (_, activeField) => {
+                    valueModifier: ({ row: activeField }) => {
                       const unevenAndEmploymentIncome =
                         activeField?.unevenIncomePerYear?.[0] !== YES ||
                         (activeField?.incomeCategory !== INCOME &&
@@ -253,7 +253,7 @@ export const IncomePlanForm: Form = buildForm({
                     watchValues: 'income',
                   },
                   suffix: '',
-                  condition: (_, activeField) => {
+                  condition: ({ row: activeField }) => {
                     const unevenAndEmploymentIncome =
                       activeField?.unevenIncomePerYear?.[0] !== YES ||
                       (activeField?.incomeCategory !== INCOME &&
@@ -276,7 +276,7 @@ export const IncomePlanForm: Form = buildForm({
                   displayInTable: false,
                   currency: true,
                   updateValueObj: {
-                    valueModifier: (_, activeField) => {
+                    valueModifier: ({ row: activeField }) => {
                       const unevenAndEmploymentIncome =
                         activeField?.unevenIncomePerYear?.[0] !== YES ||
                         (activeField?.incomeCategory !== INCOME &&
@@ -296,7 +296,7 @@ export const IncomePlanForm: Form = buildForm({
                     watchValues: 'income',
                   },
                   suffix: '',
-                  condition: (_, activeField) => {
+                  condition: ({ row: activeField }) => {
                     const unevenAndEmploymentIncome =
                       activeField?.unevenIncomePerYear?.[0] !== YES ||
                       (activeField?.incomeCategory !== INCOME &&
@@ -317,11 +317,11 @@ export const IncomePlanForm: Form = buildForm({
                   width: 'half',
                   type: 'number',
                   currency: true,
-                  disabled: (_, activeField) => {
+                  disabled: ({ row: activeField }) => {
                     return activeField?.income === RatioType.MONTHLY
                   },
                   updateValueObj: {
-                    valueModifier: (_, activeField) => {
+                    valueModifier: ({ row: activeField }) => {
                       if (
                         activeField?.income === RatioType.MONTHLY &&
                         activeField?.incomeCategory === INCOME &&
@@ -363,7 +363,7 @@ export const IncomePlanForm: Form = buildForm({
 
                       return undefined
                     },
-                    watchValues: (activeField) => {
+                    watchValues: ({ row: activeField }) => {
                       if (
                         activeField?.income === RatioType.MONTHLY &&
                         activeField?.incomeCategory === INCOME &&
@@ -400,7 +400,7 @@ export const IncomePlanForm: Form = buildForm({
                     },
                   },
                   suffix: '',
-                  condition: (_, activeField) => {
+                  condition: ({ row: activeField }) => {
                     return (
                       activeField?.income === RatioType.YEARLY ||
                       activeField?.income === RatioType.MONTHLY
@@ -424,7 +424,7 @@ export const IncomePlanForm: Form = buildForm({
                   ],
                   backgroundColor: 'blue',
                   displayInTable: false,
-                  condition: (_, activeField) => {
+                  condition: ({ row: activeField }) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
                       activeField?.incomeCategory === INCOME
@@ -440,7 +440,7 @@ export const IncomePlanForm: Form = buildForm({
                   displayInTable: false,
                   currency: true,
                   suffix: '',
-                  condition: (_, activeField) => {
+                  condition: ({ row: activeField }) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
                       activeField?.incomeCategory === INCOME &&
@@ -457,7 +457,7 @@ export const IncomePlanForm: Form = buildForm({
                   displayInTable: false,
                   currency: true,
                   suffix: '',
-                  condition: (_, activeField) => {
+                  condition: ({ row: activeField }) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
                       activeField?.incomeCategory === INCOME &&
@@ -474,7 +474,7 @@ export const IncomePlanForm: Form = buildForm({
                   displayInTable: false,
                   currency: true,
                   suffix: '',
-                  condition: (_, activeField) => {
+                  condition: ({ row: activeField }) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
                       activeField?.incomeCategory === INCOME &&
@@ -491,7 +491,7 @@ export const IncomePlanForm: Form = buildForm({
                   displayInTable: false,
                   currency: true,
                   suffix: '',
-                  condition: (_, activeField) => {
+                  condition: ({ row: activeField }) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
                       activeField?.incomeCategory === INCOME &&
@@ -508,7 +508,7 @@ export const IncomePlanForm: Form = buildForm({
                   displayInTable: false,
                   currency: true,
                   suffix: '',
-                  condition: (_, activeField) => {
+                  condition: ({ row: activeField }) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
                       activeField?.incomeCategory === INCOME &&
@@ -525,7 +525,7 @@ export const IncomePlanForm: Form = buildForm({
                   displayInTable: false,
                   currency: true,
                   suffix: '',
-                  condition: (_, activeField) => {
+                  condition: ({ row: activeField }) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
                       activeField?.incomeCategory === INCOME &&
@@ -542,7 +542,7 @@ export const IncomePlanForm: Form = buildForm({
                   displayInTable: false,
                   currency: true,
                   suffix: '',
-                  condition: (_, activeField) => {
+                  condition: ({ row: activeField }) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
                       activeField?.incomeCategory === INCOME &&
@@ -559,7 +559,7 @@ export const IncomePlanForm: Form = buildForm({
                   displayInTable: false,
                   currency: true,
                   suffix: '',
-                  condition: (_, activeField) => {
+                  condition: ({ row: activeField }) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
                       activeField?.incomeCategory === INCOME &&
@@ -576,7 +576,7 @@ export const IncomePlanForm: Form = buildForm({
                   displayInTable: false,
                   currency: true,
                   suffix: '',
-                  condition: (_, activeField) => {
+                  condition: ({ row: activeField }) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
                       activeField?.incomeCategory === INCOME &&
@@ -593,7 +593,7 @@ export const IncomePlanForm: Form = buildForm({
                   displayInTable: false,
                   currency: true,
                   suffix: '',
-                  condition: (_, activeField) => {
+                  condition: ({ row: activeField }) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
                       activeField?.incomeCategory === INCOME &&
@@ -610,7 +610,7 @@ export const IncomePlanForm: Form = buildForm({
                   displayInTable: false,
                   currency: true,
                   suffix: '',
-                  condition: (_, activeField) => {
+                  condition: ({ row: activeField }) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
                       activeField?.incomeCategory === INCOME &&
@@ -627,7 +627,7 @@ export const IncomePlanForm: Form = buildForm({
                   displayInTable: false,
                   currency: true,
                   suffix: '',
-                  condition: (_, activeField) => {
+                  condition: ({ row: activeField }) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
                       activeField?.incomeCategory === INCOME &&

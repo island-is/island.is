@@ -141,11 +141,8 @@ const FreightPairingSubSection = (freightIndex: number) =>
             fields: {
               convoyId: {
                 component: 'hiddenInput',
-                defaultValue: (
-                  application: Application,
-                  _: unknown,
-                  index: number,
-                ) => getConvoyItem(application.answers, index)?.convoyId,
+                defaultValue: ({ application, index }) =>
+                  getConvoyItem(application.answers, index)?.convoyId,
                 displayInTable: false,
               },
               exemptionForTitle: {

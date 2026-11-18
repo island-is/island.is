@@ -1,9 +1,10 @@
 import '@testing-library/jest-dom'
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
   buildFieldsRepeaterField,
   buildTableRepeaterField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   FieldsRepeaterField,
@@ -67,7 +68,30 @@ const repeaters = [
   },
 ]
 
+const input = (label: RegExp | string) =>
+  screen.getByRole('textbox', { name: label })
+
 describe.each(repeaters)('$name row fields', ({ open, validate }) => {
+  it('I16: callbacks see the live answers in ctx.application', async () => {
+    await open({
+      name: { component: 'input', label: 'Heiti' },
+      extra: {
+        component: 'input',
+        label: 'Auka',
+        condition: ({ application }) =>
+          getValueViaPath(application.answers, 'people[0].name') !== 'fela',
+      },
+    })
+
+    expect(input(/Auka/)).toBeInTheDocument()
+    await userEvent.type(input(/Heiti/), 'fela')
+
+    await waitFor(() =>
+      expect(
+        screen.queryByRole('textbox', { name: /Auka/ }),
+      ).not.toBeInTheDocument(),
+    )
+  })
   it('I10: field errors show on the row', async () => {
     const harness = await open(
       { name: { component: 'input', label: 'Heiti' } },

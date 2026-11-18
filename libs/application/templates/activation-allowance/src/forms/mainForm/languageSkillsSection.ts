@@ -78,14 +78,16 @@ export const languageSkillsSection = buildSection({
               width: 'half',
               label: languageSkills.labels.language,
               required: true,
-              options: getLanguagesForRepeater,
+              options: ({ application, row, locale }) =>
+                getLanguagesForRepeater(application, row, locale),
             },
             skills: {
               component: 'select',
               label: languageSkills.labels.skills,
               width: 'half',
               required: true,
-              options: getLanguageSkillsRepeater,
+              options: ({ application, row, locale }) =>
+                getLanguageSkillsRepeater(application, row, locale),
             },
           },
         }),

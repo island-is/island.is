@@ -28,7 +28,7 @@ export const academicBackgroundSection = buildSection({
               label: academicBackground.labels.levelOfStudy,
               component: 'select',
               required: true,
-              options: (application, _, locale) => {
+              options: ({ application, locale }) => {
                 const education =
                   getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
                     application.externalData,
@@ -44,12 +44,7 @@ export const academicBackgroundSection = buildSection({
                   })) ?? []
                 )
               },
-              setOnChange: async (
-                optionValue,
-                application,
-                index,
-                _activeField,
-              ) => {
+              setOnChange: async (optionValue, { application, index }) => {
                 // This setOnChange is responsible for auto-filling degree and subject if there is only 1 option to select
                 const education =
                   getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
@@ -86,7 +81,7 @@ export const academicBackgroundSection = buildSection({
               component: 'select',
               required: true,
 
-              options: (application, activeField, locale) => {
+              options: ({ application, row: activeField, locale }) => {
                 const education =
                   getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
                     application.externalData,
@@ -111,7 +106,7 @@ export const academicBackgroundSection = buildSection({
               label: academicBackground.labels.subject,
               component: 'select',
               required: true,
-              options: (application, activeField) => {
+              options: ({ application, row: activeField }) => {
                 const education = getValueViaPath<
                   GaldurDomainModelsEducationProgramDTO[]
                 >(
@@ -141,7 +136,7 @@ export const academicBackgroundSection = buildSection({
               component: 'select',
               placeholder: academicBackground.labels.endOfStudiesPlaceholder,
               required: true,
-              disabled: (_application, activeField) => {
+              disabled: ({ row: activeField }) => {
                 const isNotFinished =
                   activeField?.isStillStudying as unknown as Array<string>
                 if (!isNotFinished || isNotFinished.length < 1) return false
@@ -167,7 +162,7 @@ export const academicBackgroundSection = buildSection({
                   label: academicBackground.labels.currentlyStudying,
                 },
               ],
-              clearOnChange: (index: number) => [
+              clearOnChange: ({ index }) => [
                 `academicBackground.education[${index}].endOfStudy`,
               ],
             },

@@ -5,7 +5,6 @@ import {
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
 import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { isContractWork } from '../../../utils/conditions'
@@ -77,19 +76,19 @@ export const contractWorkSection = buildSubSection({
               label: m.application.jobStart,
               width: 'half',
               required: true,
-              clearOnChange: (index: number) => [
+              clearOnChange: ({ index }) => [
                 `registerContractWork[${index}].workEnds`,
               ],
-              minDate: getCurrentMonthStartDate,
-              maxDate: getMaxRegistrationDate,
+              minDate: () => getCurrentMonthStartDate(),
+              maxDate: () => getMaxRegistrationDate(),
             },
             workEnds: {
               component: 'date',
               label: m.application.workEnds,
               width: 'half',
               required: true,
-              maxDate: getMaxRegistrationDate,
-              minDate: (_application, activeField) => {
+              maxDate: () => getMaxRegistrationDate(),
+              minDate: ({ row: activeField }) => {
                 const fromDate = activeField?.contractJobStart
                 if (fromDate) {
                   return new Date(fromDate)
@@ -102,10 +101,8 @@ export const contractWorkSection = buildSubSection({
             // function stays idempotent across renders.
             validationId: {
               component: 'hiddenInput',
-              defaultValue: (
-                _application: Application,
-                activeField?: Record<string, string>,
-              ) => activeField?.validationId ?? uuid(),
+              defaultValue: ({ row: activeField }) =>
+                activeField?.validationId ?? uuid(),
             },
           },
           table: {

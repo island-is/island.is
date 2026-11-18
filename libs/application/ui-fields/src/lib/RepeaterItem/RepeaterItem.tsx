@@ -11,7 +11,9 @@ import {
   Application,
   FieldComponents,
   FieldTypes,
+  MaybeWithRepeaterItemContext,
   RepeaterItem,
+  RepeaterItemContext,
   RepeaterOptionValue,
   SetFieldLoadingState,
   SetSubmitButtonDisabled,
@@ -76,12 +78,12 @@ const TAKES_DEFAULT_VALUE = new Set([
 const READS_STORED_ANSWER = new Set(['select', 'radio', 'checkbox', 'date'])
 
 const resolve = <T,>(
-  value: T | ((...args: never[]) => T),
-  ...args: unknown[]
+  value: MaybeWithRepeaterItemContext<T>,
+  ctx: RepeaterItemContext,
 ): T =>
   typeof value === 'function'
-    ? (value as (...args: unknown[]) => T)(...args)
-    : (value as T)
+    ? (value as (ctx: RepeaterItemContext) => T)(ctx)
+    : value
 
 export const Item = ({
   application,
@@ -125,9 +127,16 @@ export const Item = ({
 
   const id = `${dataId}[${index}].${itemId}`
   const activeValues = index >= 0 && values ? values[index] : undefined
+  const ctx: RepeaterItemContext = {
+    application: { ...application, answers: getValues() },
+    row: activeValues,
+    index,
+    locale: lang,
+    formatMessage,
+    apolloClient,
+  }
 
-  const watchIds =
-    updateValueObj && resolve(updateValueObj.watchValues, activeValues)
+  const watchIds = updateValueObj && resolve(updateValueObj.watchValues, ctx)
   const watchedValues = Array.isArray(watchIds)
     ? watchIds.map((key) => activeValues?.[key])
     : watchIds
@@ -147,7 +156,7 @@ export const Item = ({
       Array.isArray(watchedValues) &&
       watchedValues.every((value) => value === undefined)
     if (updateValueObj && !allUndefined) {
-      setValue(id, updateValueObj.valueModifier(application, activeValues))
+      setValue(id, updateValueObj.valueModifier(ctx))
     }
   }, [watchedValues, updateValueObj, activeValues, setValue, id])
 
@@ -161,7 +170,7 @@ export const Item = ({
 
   const resolvedOptions =
     typeof options === 'function'
-      ? options(application, activeValues, lang, formatMessage)
+      ? options(ctx)
       : options?.map((option) => ({
           ...option,
           label: formatText(option.label, application, formatMessage),
@@ -170,44 +179,36 @@ export const Item = ({
           }),
         })) ?? []
   const translatedOptions = item.filterOptions
-    ? item.filterOptions(resolvedOptions, getValues(), index)
+    ? item.filterOptions(resolvedOptions, ctx)
     : resolvedOptions
 
-  const readonlyVal = resolve(readonly, application, activeValues, index)
-  const disabledVal = resolve(disabled, application, activeValues, index)
-  const requiredVal = resolve(required, application, activeValues)
-  const isClearableVal = resolve(isClearable, application, activeValues)
-  const clearOnChangeVal = resolve(clearOnChange, index)
-  const labelVal = resolve(label, index)
-  const placeholderVal = resolve(placeholder, application, activeValues)
+  const readonlyVal = resolve(readonly, ctx)
+  const disabledVal = resolve(disabled, ctx)
+  const requiredVal = resolve(required, ctx)
+  const isClearableVal = resolve(isClearable, ctx)
+  const clearOnChangeVal = resolve(clearOnChange, ctx)
+  const labelVal = resolve(label, ctx)
+  const placeholderVal = resolve(placeholder, ctx)
 
   const storedAnswer = READS_STORED_ANSWER.has(component)
     ? getValueViaPath(application.answers, id)
     : undefined
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const defaultVal: any = TAKES_DEFAULT_VALUE.has(component)
-    ? storedAnswer ??
-      resolve(defaultValue, application, activeValues, index, lang)
+    ? storedAnswer ?? resolve(defaultValue, ctx)
     : undefined
 
   const setOnChangeFunc =
     setOnChange &&
     (async (optionValue: RepeaterOptionValue) =>
       typeof setOnChange === 'function'
-        ? setOnChange(
-            optionValue,
-            { ...application, answers: getValues() },
-            index,
-            activeValues,
-            apolloClient,
-            lang,
-          )
+        ? setOnChange(optionValue, {
+            ...ctx,
+            application: { ...application, answers: getValues() },
+          })
         : setOnChange)
 
-  const hidden =
-    typeof condition === 'function'
-      ? !condition(application, activeValues, index, lang)
-      : condition
+  const hidden = typeof condition === 'function' ? !condition(ctx) : condition
   if (hidden) {
     return null
   }
@@ -216,8 +217,8 @@ export const Item = ({
     switch (item.component) {
       case 'date':
         return {
-          maxDate: resolve(item.maxDate, application, activeValues),
-          minDate: resolve(item.minDate, application, activeValues),
+          maxDate: resolve(item.maxDate, ctx),
+          minDate: resolve(item.minDate, ctx),
           locale: lang,
         }
       case 'nationalIdWithName':
@@ -257,10 +258,13 @@ export const Item = ({
               isSearchable: item.isSearchable,
               isMulti: item.isMulti,
               loadOptions: (c) =>
-                item.loadOptions(c, lang, activeValues, (subKey, value) => {
-                  setValue(`${dataId}[${index}].${subKey}`, value)
+                item.loadOptions(c, {
+                  ...ctx,
+                  setValueAtIndex: (subKey, value) => {
+                    setValue(`${dataId}[${index}].${subKey}`, value)
+                  },
                 }),
-              updateOnSelect: resolve(item.updateOnSelect, index),
+              updateOnSelect: resolve(item.updateOnSelect, ctx),
               disabled: disabledVal,
               required: requiredVal,
               isClearable: isClearableVal,
@@ -294,14 +298,8 @@ export const Item = ({
               component: FieldComponents.ALERT_MESSAGE,
               children: undefined,
               alertType: item.alertType,
-              title: resolve(item.title, application, activeValues),
-              message: resolve(
-                item.message,
-                application,
-                activeValues,
-                index,
-                lang,
-              ),
+              title: resolve(item.title, ctx),
+              message: resolve(item.message, ctx),
               marginTop: item.marginTop,
               marginBottom: item.marginBottom,
             }}
@@ -317,7 +315,7 @@ export const Item = ({
               type: FieldTypes.VEHICLE_PERMNO_WITH_INFO,
               component: FieldComponents.VEHICLE_PERMNO_WITH_INFO,
               children: undefined,
-              required: item.required,
+              required: requiredVal,
               loadValidation: item.loadValidation,
               permnoLabel: item.permnoLabel,
               makeAndColorLabel: item.makeAndColorLabel,

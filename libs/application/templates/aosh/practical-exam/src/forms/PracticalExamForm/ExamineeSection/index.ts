@@ -8,11 +8,10 @@ import {
 } from '@island.is/application/core'
 import { examinee, shared } from '../../../lib/messages'
 import { getAllCountryCodes } from '@island.is/shared/utils'
-import { Application, FormValue } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/types'
 import { SelfOrOthers, TrueOrFalse } from '../../../utils/enums'
 import { submitExaminees } from '../../../utils/submitExaminees'
 import { ExamineeType } from '../../../lib/dataSchema'
-import { Locale } from '@island.is/shared/types'
 export const examineeSection = buildSection({
   id: 'examineeSection',
   title: examinee.general.sectionTitle,
@@ -67,11 +66,7 @@ export const examineeSection = buildSection({
               width: 'half',
               displayInTable: false,
               required: true,
-              options: (
-                _application: Application,
-                _activeField: Record<string, string> | undefined,
-                locale: Locale | undefined,
-              ) => {
+              options: ({ locale }) => {
                 const iceland = {
                   name: 'Iceland',
                   name_is: 'Ísland',
