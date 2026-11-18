@@ -22,7 +22,7 @@ import {
   suppressLockScreen,
   useAuthStore,
 } from '@/stores/auth-store'
-import { preferencesStore } from '@/stores/preferences-store'
+import { APP_LOCK_TIMEOUT_MS } from '@/constants/auth'
 import { useUiStore } from '@/stores/ui-store'
 import { DeviceLock } from '@/components/device-bound-auth/device-lock'
 import { ElectronicIdConfirmation } from '@/components/device-bound-auth/electronic-id-confirmation'
@@ -153,7 +153,6 @@ export default function AppLockScreen() {
         biometricAutoPromptedForCurrentLock,
         authorizeResult,
       } = authStore.getState()
-      const { appLockTimeout } = preferencesStore.getState()
 
       if (lockScreenActivatedAt === undefined) {
         if (router.canGoBack()) {
@@ -164,7 +163,7 @@ export default function AppLockScreen() {
 
       // Without tokens (after a restart) there's no skipping the lock.
       const elapsed = Date.now() - lockScreenActivatedAt
-      if (elapsed < appLockTimeout && authorizeResult) {
+      if (elapsed < APP_LOCK_TIMEOUT_MS && authorizeResult) {
         unlockApp()
         return
       }

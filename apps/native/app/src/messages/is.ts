@@ -195,10 +195,6 @@ export const is = {
     'Með því að eyða aðgangslykli getur þú ekki skráð þig sjálfkrafa á Ísland.is',
   'settings.security.removePasskeyButton': 'Eyða',
   'settings.security.removePasskeyCancelButton': 'Hætta við',
-  'settings.security.appLockTimeoutLabel': 'Biðtími skjálæsingar',
-  'settings.security.appLockTimeoutDescription':
-    'Tíminn þar til skjálæsing fer í gang',
-  'settings.security.appLockTimeoutSeconds': 'sek.',
   'settings.about.groupTitle': 'Um appið',
   'settings.about.versionLabel': 'Útgáfa',
   'settings.about.logoutLabel': 'Útskrá',

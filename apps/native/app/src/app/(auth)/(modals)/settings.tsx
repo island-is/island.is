@@ -110,14 +110,8 @@ export default function SettingsScreen() {
   const intl = useIntl()
   const theme = useTheme()
 
-  const {
-    dismiss,
-    dismissed,
-    locale,
-    setLocale,
-    appLockTimeout,
-    hasCreatedPasskey,
-  } = usePreferencesStore()
+  const { dismiss, dismissed, locale, setLocale, hasCreatedPasskey } =
+    usePreferencesStore()
 
   const isInfoDismissed = dismissed.includes('userSettingsInformational')
   const {
@@ -605,35 +599,6 @@ export default function SettingsScreen() {
               />
             </PressableHighlight>
           )}
-          <MenuCell
-            title={intl.formatMessage({
-              id: 'settings.security.appLockTimeoutLabel',
-            })}
-            subtitle={intl.formatMessage({
-              id: 'settings.security.appLockTimeoutDescription',
-            })}
-            value={`${intl.formatNumber(Math.floor(appLockTimeout / 1000), {
-              style: 'decimal',
-              unitDisplay: 'short',
-              unit: 'second',
-            })} ${intl.formatMessage({
-              id: 'settings.security.appLockTimeoutSeconds',
-            })}`}
-            options={[5, 10, 15].map((seconds) => ({
-              id: String(seconds * 1000),
-              title: `${intl.formatNumber(seconds, {
-                style: 'decimal',
-                unitDisplay: 'long',
-                unit: 'second',
-              })} ${intl.formatMessage({
-                id: 'settings.security.appLockTimeoutSeconds',
-              })}`,
-            }))}
-            selected={String(appLockTimeout)}
-            onSelect={(id) => {
-              preferencesStore.setState({ appLockTimeout: Number(id) })
-            }}
-          />
           <PressableHighlight
             onPress={() =>
               openBrowserAsync(

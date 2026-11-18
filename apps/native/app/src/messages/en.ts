@@ -196,10 +196,6 @@ export const en: TranslatedMessages = {
     'By deleting your passkey you can not sign in automatically to Island.is with the app',
   'settings.security.removePasskeyButton': 'Delete',
   'settings.security.removePasskeyCancelButton': 'Cancel',
-  'settings.security.appLockTimeoutLabel': 'App lock timeout',
-  'settings.security.appLockTimeoutDescription':
-    'Time until app lock will appear',
-  'settings.security.appLockTimeoutSeconds': 'sec.',
   'settings.about.groupTitle': 'About',
   'settings.about.versionLabel': 'Version',
   'settings.about.logoutLabel': 'Logout',

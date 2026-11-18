@@ -49,7 +49,6 @@ export interface PreferencesStore {
   walletPassDismissedInfoAlerts: Record<string, boolean>
   locale: Locale
   appearanceMode: AppearanceMode
-  appLockTimeout: number
   setLocale(locale: Locale): void
   setAppearanceMode(appearanceMode: AppearanceMode): void
   dismiss(key: string, value?: boolean): void
@@ -88,7 +87,6 @@ const defaultPreferences = {
   notificationsApplicationStatusUpdates: true,
   dismissed: [] as string[],
   walletPassDismissedInfoAlerts: {} as Record<string, boolean>,
-  appLockTimeout: 5000,
 }
 
 export const preferencesStore = create<PreferencesStore>()(
