@@ -11,12 +11,29 @@ import { mapLocalesToFieldApis } from '../../utils'
 const LIST_ITEM_CONTENT_TYPE_ID = 'genericListItem'
 
 const createLocaleToFieldMapping = (sdk: EditorExtensionSDK) => {
-  return {
-    internalTitle: mapLocalesToFieldApis(
-      [sdk.locales.default],
-      sdk,
-      'internalTitle',
+  const defaultLocale = [sdk.locales.default]
+
+  // Filter tags are shared between lists, so only allow linking to existing tags
+  const filterTags = Object.fromEntries(
+    Object.entries(mapLocalesToFieldApis(defaultLocale, sdk, 'filterTags')).map(
+      ([locale, fieldSdk]) => [
+        locale,
+        {
+          ...fieldSdk,
+          parameters: {
+            ...fieldSdk.parameters,
+            instance: {
+              showCreateEntityAction: false,
+              showLinkEntityAction: true,
+            },
+          },
+        },
+      ],
     ),
+  )
+
+  return {
+    internalTitle: mapLocalesToFieldApis(defaultLocale, sdk, 'internalTitle'),
     searchInputPlaceholder: mapLocalesToFieldApis(
       sdk.locales.available,
       sdk,
@@ -26,6 +43,24 @@ const createLocaleToFieldMapping = (sdk: EditorExtensionSDK) => {
       sdk.locales.available,
       sdk,
       'cardIntroTemplate',
+    ),
+    itemType: mapLocalesToFieldApis(defaultLocale, sdk, 'itemType'),
+    filterTags,
+    alphabeticallyOrderFilterTags: mapLocalesToFieldApis(
+      defaultLocale,
+      sdk,
+      'alphabeticallyOrderFilterTags',
+    ),
+    orderBy: mapLocalesToFieldApis(defaultLocale, sdk, 'orderBy'),
+    textSearchOrder: mapLocalesToFieldApis(
+      defaultLocale,
+      sdk,
+      'textSearchOrder',
+    ),
+    showSearchInput: mapLocalesToFieldApis(
+      defaultLocale,
+      sdk,
+      'showSearchInput',
     ),
   }
 }
@@ -125,6 +160,57 @@ export const GenericListEditor = () => {
         localeToFieldMapping={localeToFieldMapping}
         sdk={sdk}
         helpText="This text will be copied to the Card Intro field of a newly created List Item"
+      />
+
+      <ContentfulField
+        fieldID="itemType"
+        displayName="Item Type"
+        localeToFieldMapping={localeToFieldMapping}
+        sdk={sdk}
+        widgetId="dropdown"
+        helpText="Clickable items open the item page, its file or its external link"
+      />
+
+      <ContentfulField
+        fieldID="showSearchInput"
+        displayName="Show Search Input"
+        localeToFieldMapping={localeToFieldMapping}
+        sdk={sdk}
+        widgetId="boolean"
+      />
+
+      <ContentfulField
+        fieldID="filterTags"
+        displayName="Filter Tags"
+        localeToFieldMapping={localeToFieldMapping}
+        sdk={sdk}
+        widgetId="entryLinksEditor"
+      />
+
+      <ContentfulField
+        fieldID="alphabeticallyOrderFilterTags"
+        displayName="Alphabetically Order Filter Tags"
+        localeToFieldMapping={localeToFieldMapping}
+        sdk={sdk}
+        widgetId="boolean"
+      />
+
+      <ContentfulField
+        fieldID="orderBy"
+        displayName="Order By"
+        localeToFieldMapping={localeToFieldMapping}
+        sdk={sdk}
+        widgetId="dropdown"
+        helpText="Default ordered by date (and if items have no date then the default ordering is by title) but you can change how items are ordered"
+      />
+
+      <ContentfulField
+        fieldID="textSearchOrder"
+        displayName="Text Search Order"
+        localeToFieldMapping={localeToFieldMapping}
+        sdk={sdk}
+        widgetId="dropdown"
+        helpText="How the search results are ordered when user has written something in the search input field"
       />
 
       <Box>
