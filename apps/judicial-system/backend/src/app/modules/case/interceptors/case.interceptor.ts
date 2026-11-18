@@ -731,13 +731,48 @@ const isProsecutionVerdictAppealTimelineEvent = (
   )
 }
 
+// Greinargerð overview lists every party's filed statement for defence users
+// who can download appeal files. Deadlines stay own-party only; these SENT
+// rows are the restricted filing-status signal that list needs (including
+// co-defendants and unscoped prosecution filings). Legacy defender backfill
+// names no party and must not count as the prosecution's.
+const isVerdictAppealStatementFilingStatusEvent = (
+  eventLog: AppealEventLog,
+  theCase: Case,
+): boolean => {
+  if (eventLog.eventType !== AppealEventType.APPEAL_STATEMENT_SENT) {
+    return false
+  }
+
+  if (!eventLog.defendantId && !eventLog.civilClaimantId) {
+    return eventLog.userRole !== UserRole.DEFENDER
+  }
+
+  if (
+    eventLog.defendantId &&
+    theCase.defendants?.some(
+      (defendant) => defendant.id === eventLog.defendantId,
+    )
+  ) {
+    return true
+  }
+
+  return Boolean(
+    eventLog.civilClaimantId &&
+      theCase.civilClaimants?.some(
+        (civilClaimant) => civilClaimant.id === eventLog.civilClaimantId,
+      ),
+  )
+}
+
 const shouldKeepVerdictAppealEventLogForDefenceUser = (
   eventLog: AppealEventLog,
   theCase: Case,
   partyIds: { defendantIds: Set<string>; civilClaimantIds: Set<string> },
 ): boolean =>
   isVerdictAppealPartyRow(eventLog, partyIds) ||
-  isProsecutionVerdictAppealTimelineEvent(eventLog, theCase)
+  isProsecutionVerdictAppealTimelineEvent(eventLog, theCase) ||
+  isVerdictAppealStatementFilingStatusEvent(eventLog, theCase)
 
 const serializeVerdictAppealStatementDeadline = (
   deadline: NonNullable<AppealCase['statementDeadlines']>[number],

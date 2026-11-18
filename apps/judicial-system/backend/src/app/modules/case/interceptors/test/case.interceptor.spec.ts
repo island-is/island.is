@@ -1084,6 +1084,11 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     defendantId: 'other_defendant',
     eventType: AppealEventType.APPEAL_STATEMENT_SENT,
   }
+  const prosecutionStatementEvent = {
+    id: 'prosecution_statement_event',
+    eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+    userRole: UserRole.PROSECUTOR,
+  }
   const coDefendantProsecutionAppeal = {
     id: 'co_defendant_prosecution_appeal',
     defendantId: 'other_defendant',
@@ -1105,6 +1110,7 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     const appealEventLogs = [
       ownEvent,
       otherStatementEvent,
+      prosecutionStatementEvent,
       coDefendantProsecutionAppeal,
     ]
 
@@ -1158,7 +1164,7 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     mockHandle.mockReset()
   })
 
-  it('keeps own-party rows and co-defendant prosecution appeal events', async () => {
+  it('keeps own-party rows, co-defendant statement filings, and prosecution appeal events', async () => {
     const theCase = makeIndictmentWithVerdictAppeal()
     mockRequest.mockImplementationOnce(() => ({
       user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
@@ -1188,6 +1194,8 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     ).toEqual(['own_deadline'])
     expect(result.verdictAppealCase.appealEventLogs.map((e) => e.id)).toEqual([
       'own_event',
+      'other_statement_event',
+      'prosecution_statement_event',
       'co_defendant_prosecution_appeal',
     ])
   })
@@ -1223,6 +1231,7 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     expect(result.verdictAppealCase.appealEventLogs.map((e) => e.id)).toEqual([
       'own_event',
       'other_statement_event',
+      'prosecution_statement_event',
       'co_defendant_prosecution_appeal',
     ])
   })

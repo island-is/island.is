@@ -167,6 +167,50 @@ const IndictmentOverview: FC = () => {
     [router, workingCase.id],
   )
 
+  const showReopenNotice =
+    Boolean(workingCase.reopenReason) && !isCompletedCase(workingCase.state)
+
+  const showVerdictStatusAlerts = Boolean(
+    workingCase.defendants?.some((defendant) => defendant.verdict),
+  )
+
+  const showServiceNotices =
+    !caseIsClosed &&
+    Boolean(
+      workingCase.defendants?.some(
+        (defendant) =>
+          Boolean(defendant.alternativeServiceDescription) ||
+          Boolean(
+            defendant.subpoenas?.some((subpoena) =>
+              isSuccessfulServiceStatus(subpoena.serviceStatus),
+            ),
+          ),
+      ),
+    )
+
+  const shouldShowDefenderVerdictTimelineCard = (
+    defendant: Defendant,
+  ): boolean =>
+    Boolean(
+      defendant.verdict &&
+        (hasVerdictServiceDecision(defendant.verdict) ||
+          canDefenderFileVerdictStatementOf(workingCase, defendant, user)),
+    )
+
+  const showVerdictTimelineCards =
+    displayVerdictTimeline &&
+    Boolean(
+      workingCase.defendants?.some((defendant) =>
+        shouldShowDefenderVerdictTimelineCard(defendant),
+      ),
+    )
+
+  const showTopNotices =
+    showReopenNotice ||
+    showVerdictStatusAlerts ||
+    showVerdictTimelineCards ||
+    showServiceNotices
+
   // Actions on the defendant's verdict timeline card: appeal / withdraw, and
   // for Landsréttur-confirmed advocates, send greinargerð when still open.
   const getVerdictTimelineMenuItems = (
@@ -267,79 +311,79 @@ const IndictmentOverview: FC = () => {
           <PageTitle>{caseIsClosed ? 'Máli lokið' : 'Yfirlit ákæru'}</PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
           <div className={stack({ gap: 5 })}>
-            <div className={stack({ gap: 2 })}>
-              {workingCase.reopenReason && !isCompletedCase(workingCase.state) && (
-                <AlertMessage
-                  title="Mál enduropnað"
-                  message={
-                    <Text variant="small" whiteSpace="preWrap">
-                      {workingCase.reopenReason}
-                    </Text>
-                  }
-                  type="info"
-                />
-              )}
-              {workingCase.defendants?.map(
-                (defendant) =>
-                  defendant.verdict && (
-                    <VerdictStatusAlert
-                      key={`${defendant.id}${defendant.verdict.id}`}
-                      defendant={defendant}
-                      verdict={defendant.verdict}
-                    />
-                  ),
-              )}
-              {displayVerdictTimeline &&
-                workingCase.defendants?.map(
+            {showTopNotices && (
+              <div className={stack({ gap: 2 })}>
+                {showReopenNotice && (
+                  <AlertMessage
+                    title="Mál enduropnað"
+                    message={
+                      <Text variant="small" whiteSpace="preWrap">
+                        {workingCase.reopenReason}
+                      </Text>
+                    }
+                    type="info"
+                  />
+                )}
+                {workingCase.defendants?.map(
                   (defendant) =>
-                    defendant.verdict &&
-                    hasVerdictServiceDecision(defendant.verdict) && (
-                      <Box
-                        key={`${defendant.id}${defendant.verdict.id}-timeline`}
-                        dataTestId="defenderVerdictTimelineCard"
-                      >
-                        <DefenderVerdictTimelineCard
-                          defendant={defendant}
-                          verdictAppealCase={workingCase.verdictAppealCase}
-                          contextMenuItems={getVerdictTimelineMenuItems(
-                            defendant,
-                          )}
-                        />
-                      </Box>
+                    defendant.verdict && (
+                      <VerdictStatusAlert
+                        key={`${defendant.id}${defendant.verdict.id}`}
+                        defendant={defendant}
+                        verdict={defendant.verdict}
+                      />
                     ),
                 )}
-              {!caseIsClosed &&
-                workingCase.defendants?.map((defendant) => (
-                  <Fragment key={defendant.id}>
-                    {defendant.alternativeServiceDescription && (
-                      <AlternativeServiceAnnouncement
-                        alternativeServiceDescription={
-                          defendant.alternativeServiceDescription
-                        }
-                        defendantName={defendant.name}
-                      />
-                    )}
-                    {defendant.subpoenas
-                      ?.filter((subpoena) =>
-                        isSuccessfulServiceStatus(subpoena.serviceStatus),
-                      )
-                      .map((subpoena) => (
-                        <ServiceAnnouncement
-                          key={`${defendant.id}${subpoena.id}`}
-                          defendant={defendant}
-                          subpoena={subpoena}
+                {displayVerdictTimeline &&
+                  workingCase.defendants?.map(
+                    (defendant) =>
+                      shouldShowDefenderVerdictTimelineCard(defendant) && (
+                        <Box
+                          key={`${defendant.id}${defendant.verdict?.id}-timeline`}
+                          dataTestId="defenderVerdictTimelineCard"
+                        >
+                          <DefenderVerdictTimelineCard
+                            defendant={defendant}
+                            verdictAppealCase={workingCase.verdictAppealCase}
+                            contextMenuItems={getVerdictTimelineMenuItems(
+                              defendant,
+                            )}
+                          />
+                        </Box>
+                      ),
+                  )}
+                {!caseIsClosed &&
+                  workingCase.defendants?.map((defendant) => (
+                    <Fragment key={defendant.id}>
+                      {defendant.alternativeServiceDescription && (
+                        <AlternativeServiceAnnouncement
+                          alternativeServiceDescription={
+                            defendant.alternativeServiceDescription
+                          }
+                          defendantName={defendant.name}
                         />
-                      ))}
-                  </Fragment>
-                ))}
-            </div>
+                      )}
+                      {defendant.subpoenas
+                        ?.filter((subpoena) =>
+                          isSuccessfulServiceStatus(subpoena.serviceStatus),
+                        )
+                        .map((subpoena) => (
+                          <ServiceAnnouncement
+                            key={`${defendant.id}${subpoena.id}`}
+                            defendant={defendant}
+                            subpoena={subpoena}
+                          />
+                        ))}
+                    </Fragment>
+                  ))}
+              </div>
+            )}
             <AppealRulingModifiedAlert />
             <RulingModifiedAlert />
             {caseHasBeenReceivedByCourt &&
               workingCase.court &&
               latestDate?.date &&
-              workingCase.indictmentDecision !==
-                IndictmentDecision.COMPLETING &&
+              workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
               workingCase.indictmentDecision !==
                 IndictmentDecision.REDISTRIBUTING &&
               caseIsClosed === false && (
@@ -379,8 +423,7 @@ const IndictmentOverview: FC = () => {
                   judgeName={workingCase.judge?.name}
                 />
               )}
-            {workingCase.appealCase?.appealState ===
-              AppealCaseState.COMPLETED &&
+            {workingCase.appealCase?.appealState === AppealCaseState.COMPLETED &&
               workingCase.appealCase?.appealConclusion && (
                 <Conclusion
                   title="Úrskurðarorð Landsréttar"
@@ -392,9 +435,7 @@ const IndictmentOverview: FC = () => {
               workingCase.verdictAppealCase.appealConclusion && (
                 <Conclusion
                   title="Dómsorð Landsréttar"
-                  conclusionText={
-                    workingCase.verdictAppealCase.appealConclusion
-                  }
+                  conclusionText={workingCase.verdictAppealCase.appealConclusion}
                 />
               )}
             {displayVerdictTimeline && <VerdictAppealFiles />}

@@ -40,6 +40,7 @@ import {
   isPublicProsecutionOfficeUser,
   isPublicProsecutionUser,
   isSameAppealBench,
+  isSameAppealStatementParty,
   verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
 
@@ -1236,6 +1237,27 @@ export class AppealCaseService {
         if (hasFiledAppealStatement(appealCase.appealEventLogs, partyRow)) {
           throw new BadRequestException(
             `The party has already filed its statement in appeal case ${appealCase.id} of case ${theCase.id}`,
+          )
+        }
+
+        const hasStatementFile = (theCase.caseFiles ?? []).some(
+          (caseFile) =>
+            caseFile.category ===
+              CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT &&
+            caseFile.state === CaseFileState.STORED_IN_RVG &&
+            (caseFile.rulingFileId ?? null) === null &&
+            isSameAppealStatementParty(
+              {
+                defendantId: caseFile.defendantId,
+                civilClaimantId: caseFile.civilClaimantId,
+              },
+              partyRow,
+            ),
+        )
+
+        if (!hasStatementFile) {
+          throw new BadRequestException(
+            `No verdict appeal statement file for the party on appeal case ${appealCase.id} of case ${theCase.id}`,
           )
         }
       }

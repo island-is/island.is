@@ -5,16 +5,18 @@ import {
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
+  AppealEventType,
   AppealSummonsAction,
   canIssueAppealSummons,
   canPerformAppealSummonsAction,
-  hasFiledAppealStatement,
   isCourtOfAppealsUser,
   isDefenceUser,
   isProsecutionUser,
   isPublicProsecutionOfficeUser,
   isPublicProsecutionUser,
+  isSameAppealStatementParty,
   isSuccessfulVerdictServiceStatus,
+  UserRole,
   verdictAppealDeclarationFileCategories,
   verdictAppealStatementFileCategories,
 } from '@island.is/judicial-system/types'
@@ -119,10 +121,40 @@ export const canDefenceUserAccessVerdictAppealFiles = (
   )
 }
 
+// The APPEAL_STATEMENT_SENT row for this party, if any. Used both as the
+// filed gate and as the cutoff so a later orphan upload (e.g. a second tab
+// after the party already filed) does not appear as part of that filing.
+const findFiledAppealStatementEvent = (
+  eventLogs:
+    | {
+        eventType?: string | null
+        userRole?: string | null
+        defendantId?: string | null
+        civilClaimantId?: string | null
+        created?: string | Date | null
+      }[]
+    | null
+    | undefined,
+  party: { defendantId?: string | null; civilClaimantId?: string | null },
+) =>
+  eventLogs?.find(
+    (eventLog) =>
+      eventLog.eventType === AppealEventType.APPEAL_STATEMENT_SENT &&
+      isSameAppealStatementParty(eventLog, party) &&
+      // Legacy defender backfill names no party; same exclusion as
+      // hasFiledAppealStatement.
+      !(
+        !eventLog.defendantId &&
+        !eventLog.civilClaimantId &&
+        eventLog.userRole === UserRole.DEFENDER
+      ),
+  )
+
 // Greinargerð visibility mirrors kærumál once the party has filed: court of
 // appeals, prosecution, and defence users who can download appeal files see
 // every party's confirmed statement. Incomplete uploads stay off the overview
-// until APPEAL_STATEMENT_SENT exists for that party.
+// until APPEAL_STATEMENT_SENT exists for that party. Only files present at
+// that filing (created on or before the event) are listed.
 export const canViewVerdictAppealStatementFile = (
   workingCase: Pick<
     WorkingCase,
@@ -130,7 +162,7 @@ export const canViewVerdictAppealStatementFile = (
   >,
   file: Pick<
     CaseFile,
-    'category' | 'defendantId' | 'civilClaimantId' | 'rulingFileId'
+    'category' | 'defendantId' | 'civilClaimantId' | 'rulingFileId' | 'created'
   >,
   user: User | undefined,
 ): boolean => {
@@ -152,12 +184,21 @@ export const canViewVerdictAppealStatementFile = (
     return false
   }
 
-  return hasFiledAppealStatement(
+  const party = {
+    defendantId: file.defendantId,
+    civilClaimantId: file.civilClaimantId,
+  }
+  const filedEvent = findFiledAppealStatementEvent(
     workingCase.verdictAppealCase?.appealEventLogs,
-    {
-      defendantId: file.defendantId,
-      civilClaimantId: file.civilClaimantId,
-    },
+    party,
+  )
+
+  if (!filedEvent?.created || !file.created) {
+    return false
+  }
+
+  return (
+    new Date(file.created).getTime() <= new Date(filedEvent.created).getTime()
   )
 }
 
@@ -234,8 +275,17 @@ export const getVerdictAppealFileGroupKey = (
 
 export const getVerdictAppealFileGroupTitle = (
   group: VerdictAppealFileGroup,
-): string | undefined =>
-  group.defendant?.name ?? group.civilClaimant?.name ?? 'Ákæruvaldið'
+): string | undefined => {
+  if (group.defendant) {
+    return group.defendant.name || undefined
+  }
+
+  if (group.civilClaimant) {
+    return group.civilClaimant.name || undefined
+  }
+
+  return 'Ákæruvaldið'
+}
 
 // Who sent the row in. Prefer the filer stored on the file so a later
 // advocate replacement does not re-attribute an earlier upload. Fall back to
@@ -259,9 +309,17 @@ export const getVerdictAppealFileSentInBy = (
   }
 
   if (group.civilClaimant) {
+    // Stored filer identity must not pick up a later spokesperson's role.
+    if (storedName) {
+      const initials = getInitials(storedName)
+
+      return initials
+        ? `Sendandi (${initials}) sendi inn`
+        : 'Sendandi sendi inn'
+    }
+
     const initials = getInitials(
-      storedName ??
-        group.civilClaimant.appealSpokespersonName ??
+      group.civilClaimant.appealSpokespersonName ??
         group.civilClaimant.spokespersonName,
     )
     const role =

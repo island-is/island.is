@@ -8,6 +8,8 @@ import {
   AppealCaseState,
   AppealCaseType,
   AppealEventType,
+  CaseFileCategory,
+  CaseFileState,
   CaseType,
   User,
   UserRole,
@@ -209,6 +211,14 @@ describe('LimitedAccessAppealCaseController - Create event log', () => {
           appealDefenderNationalId: defenderNationalId,
         },
       ],
+      caseFiles: [
+        {
+          id: uuid(),
+          category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          state: CaseFileState.STORED_IN_RVG,
+          defendantId,
+        },
+      ],
     } as unknown as Case
     let then: Then
 
@@ -242,6 +252,41 @@ describe('LimitedAccessAppealCaseController - Create event log', () => {
         { transaction },
       )
       expect(then.error).toBeUndefined()
+    })
+  })
+
+  describe('appeal-confirmed defender sends a verdict-appeal statement without a statement file', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants: [
+        {
+          id: defendantId,
+          isAppealDefenderConfirmed: true,
+          appealDefenderNationalId: defenderNationalId,
+        },
+      ],
+      caseFiles: [],
+    } as unknown as Case
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        theCase,
+        {
+          eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+          defendantId,
+        },
+        verdictAppealCase,
+      )
+    })
+
+    it('should reject the request', () => {
+      expect(then.error).toBeDefined()
+      expect(then.error.message).toBe(
+        `No verdict appeal statement file for the party on appeal case ${appealCaseId} of case ${caseId}`,
+      )
+      expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
     })
   })
 

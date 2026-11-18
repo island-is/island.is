@@ -286,6 +286,7 @@ describe('getVerdictAppealFileGroups', () => {
     party: { defendantId?: string; civilClaimantId?: string } = {
       defendantId: 'own_client_id',
     },
+    filedAt = '2026-06-05T14:00:00.000Z',
   ): WorkingCase =>
     ({
       ...theCase(caseFiles),
@@ -299,6 +300,7 @@ describe('getVerdictAppealFileGroups', () => {
             eventType: AppealEventType.APPEAL_STATEMENT_SENT,
             defendantId: party.defendantId,
             civilClaimantId: party.civilClaimantId,
+            created: filedAt,
           },
         ],
       },
@@ -400,8 +402,67 @@ describe('getVerdictAppealFileGroups', () => {
     expect(getVerdictAppealFileGroupKey(groups[0])).toBe('claimant_id')
     expect(getVerdictAppealFileGroupTitle(groups[0])).toBe('Bótakröfuhafi')
     expect(getVerdictAppealFileSentInBy(groups[0], groups[0].files[0])).toBe(
-      'Lögmaður (GL) sendi inn',
+      'Sendandi (GL) sendi inn',
     )
+  })
+
+  it('should not label an unnamed civil claimant as the prosecution', () => {
+    const theCaseWithClaimant = {
+      ...withFiledStatement([], { civilClaimantId: 'claimant_id' }),
+      civilClaimants: [
+        {
+          id: 'claimant_id',
+          name: null,
+          appealSpokespersonName: 'Lóa Lögmaður',
+          appealSpokespersonIsLawyer: true,
+        },
+      ],
+      caseFiles: [
+        {
+          id: 'cc-statement',
+          civilClaimantId: 'claimant_id',
+          category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+          created: '2026-06-05T13:34:00.000Z',
+          name: 'cc-statement.pdf',
+        },
+      ],
+    } as WorkingCase
+
+    const groups = getVerdictAppealFileGroups(
+      theCaseWithClaimant,
+      mockUser(UserRole.PROSECUTOR),
+    )
+
+    expect(groups).toHaveLength(1)
+    expect(getVerdictAppealFileGroupTitle(groups[0])).toBeUndefined()
+    expect(getVerdictAppealFileGroupTitle(groups[0])).not.toBe('Ákæruvaldið')
+  })
+
+  it('should hide a statement uploaded after the party already filed', () => {
+    const groups = getVerdictAppealFileGroups(
+      withFiledStatement(
+        [
+          file(
+            'filed-statement',
+            'own_client_id',
+            CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+            '2026-06-05T13:34:00.000Z',
+          ),
+          file(
+            'orphan-statement',
+            'own_client_id',
+            CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+            '2026-06-05T15:00:00.000Z',
+          ),
+        ],
+        { defendantId: 'own_client_id' },
+        '2026-06-05T14:00:00.000Z',
+      ),
+      mockUser(UserRole.COURT_OF_APPEALS_JUDGE),
+    )
+
+    expect(groups).toHaveLength(1)
+    expect(groups[0].files.map((f) => f.id)).toEqual(['filed-statement'])
   })
 
   it('should put the prosecution greinargerð in its own group', () => {
@@ -460,6 +521,7 @@ describe('canViewVerdictAppealStatementFile', () => {
         {
           eventType: AppealEventType.APPEAL_STATEMENT_SENT,
           defendantId: 'own_client_id',
+          created: '2026-06-05T14:00:00.000Z',
         },
       ],
     },
@@ -468,6 +530,7 @@ describe('canViewVerdictAppealStatementFile', () => {
   const statement = {
     category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
     defendantId: 'own_client_id',
+    created: '2026-06-05T13:34:00.000Z',
   }
 
   it.each([UserRole.COURT_OF_APPEALS_JUDGE, UserRole.PROSECUTOR])(
