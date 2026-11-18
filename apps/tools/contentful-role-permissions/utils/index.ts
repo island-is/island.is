@@ -7,7 +7,6 @@ import {
   RoleProps,
   TagProps,
 } from 'contentful-management'
-import type { ActionType } from 'contentful-management/dist/typings/entities/role'
 import slugify from '@sindresorhus/slugify'
 
 import { sortAlpha } from '@island.is/shared/utils'
@@ -15,9 +14,13 @@ import { sortAlpha } from '@island.is/shared/utils'
 import {
   contentfulManagementAccessToken,
   environmentId,
+  READABLE_BY_ALL_TAG_ID,
   spaceId,
 } from '../constants'
 import type { CheckboxState } from '../types'
+
+// contentful-management's ConstraintType doesn't list the `in` operator the API supports
+type Condition = Record<string, unknown>
 
 let client: PlainClientAPI | null = null
 
@@ -142,19 +145,28 @@ export const extractInitialReadonlyCheckboxStateFromRolesAndContentTypes = (
   )
 }
 
+const hasAllPolicies = (role: RoleProps, policies: Role['policies']) =>
+  policies.every((p1) =>
+    role.policies.find((p2) => JSON.stringify(p1) === JSON.stringify(p2)),
+  )
+
 export const extractInitialRoleNamesThatCanReadAllAssetsFromRoles = (
   roles: RoleProps[],
   tagsMap: Map<string, string>,
 ): string[] => {
   const roleNames: string[] = []
   for (const role of roles) {
-    const policies = []
-    applyAssetPolicies(policies, true, tagsMap.get(slugify(role.name)))
-    if (
-      policies.every((p1) =>
-        role.policies.find((p2) => JSON.stringify(p1) === JSON.stringify(p2)),
-      )
-    ) {
+    const tagId = tagsMap.get(slugify(role.name))
+
+    // Roles that can only read assets with their tag also have every policy a
+    // "can read all assets" role has, so rule those out first
+    const readScopedPolicies: Role['policies'] = []
+    applyAssetPolicies(readScopedPolicies, false, tagId)
+    if (hasAllPolicies(role, readScopedPolicies)) continue
+
+    const readAllPolicies: Role['policies'] = []
+    applyAssetPolicies(readAllPolicies, true, tagId)
+    if (hasAllPolicies(role, readAllPolicies)) {
       roleNames.push(role.name)
     }
   }
@@ -183,37 +195,75 @@ export const applyAssetPolicies = (
     },
   })
 
-  let disallowedActions: ActionType[] = ['read']
+  const ownerOrCreator: Condition[] = [
+    {
+      in: [{ doc: 'metadata.tags.sys.id' }, [tagId]],
+    },
+    {
+      equals: [{ doc: 'sys.createdBy.sys.id' }, 'User.current()'],
+    },
+  ]
 
-  if (allowReadingAllAssets) {
-    disallowedActions = [
+  if (!allowReadingAllAssets) {
+    // The readable-by-all tag lets other organizations read the asset
+    policies.push({
+      actions: ['read'],
+      effect: 'deny',
+      constraint: {
+        and: [
+          { equals: [{ doc: 'sys.type' }, 'Asset'] },
+          {
+            not: {
+              or: [
+                ...ownerOrCreator,
+                {
+                  in: [
+                    { doc: 'metadata.tags.sys.id' },
+                    [READABLE_BY_ALL_TAG_ID],
+                  ],
+                },
+              ],
+            },
+          },
+        ],
+      },
+    })
+  }
+
+  // Editing is always denied separately, so being able to read an asset
+  // (e.g. because of the readable-by-all tag) never means being able to edit it
+  policies.push({
+    actions: [
       'update',
       'delete',
       'publish',
       'unpublish',
       'archive',
       'unarchive',
-    ]
-  }
-
-  policies.push({
-    actions: disallowedActions,
+    ],
     effect: 'deny',
     constraint: {
       and: [
         { equals: [{ doc: 'sys.type' }, 'Asset'] },
         {
           not: {
-            or: [
-              {
-                in: [{ doc: 'metadata.tags.sys.id' }, [tagId]],
-              },
-              {
-                equals: [{ doc: 'sys.createdBy.sys.id' }, 'User.current()'],
-              },
-            ],
+            or: ownerOrCreator,
           },
         },
+      ],
+    },
+  })
+}
+
+// Every organization can read entries with the readable-by-all tag, whatever their content type
+export const applyReadableByAllEntryPolicy = (policies: Role['policies']) => {
+  policies.push({
+    actions: ['read'],
+    effect: 'allow',
+    constraint: {
+      and: [
+        { equals: [{ doc: 'sys.type' }, 'Entry'] },
+        { in: [{ doc: 'metadata.tags.sys.id' }, [READABLE_BY_ALL_TAG_ID]] },
       ],
     },
   })
@@ -281,24 +331,29 @@ export const applyEntryEditPolicies = (
     allContentTypeIds.add(id)
   }
 
+  const ownerOrCreator: Condition[] = [
+    { equals: [{ doc: 'sys.createdBy.sys.id' }, 'User.current()'] },
+    { in: [{ doc: 'metadata.tags.sys.id' }, [tagId]] },
+  ]
+
+  const readDeniedContentTypeIds: string[] = []
+
   for (const id of allContentTypeIds) {
     if (!scopedEditableContentTypeIds.has(id)) continue
 
-    const actions: ActionType[] = [
-      'update',
-      'delete',
-      'publish',
-      'unpublish',
-      'archive',
-      'unarchive',
-    ]
-
     if (!globallyReadableContentTypeIds.has(id)) {
-      actions.push('read')
+      readDeniedContentTypeIds.push(id)
     }
 
     policies.push({
-      actions,
+      actions: [
+        'update',
+        'delete',
+        'publish',
+        'unpublish',
+        'archive',
+        'unarchive',
+      ],
       effect: 'deny',
       constraint: {
         and: [
@@ -308,16 +363,43 @@ export const applyEntryEditPolicies = (
           },
           {
             not: {
-              or: [
-                { equals: [{ doc: 'sys.createdBy.sys.id' }, 'User.current()'] },
-                { in: [{ doc: 'metadata.tags.sys.id' }, [tagId]] },
-              ],
+              or: ownerOrCreator,
             },
           },
         ],
       },
     })
   }
+
+  if (readDeniedContentTypeIds.length === 0) return
+
+  // Reading is denied in a single policy so the readable-by-all tag can let other organizations read,
+  // without giving them edit access (edit access is still decided by the policies above)
+  policies.push({
+    actions: ['read'],
+    effect: 'deny',
+    constraint: {
+      and: [
+        { equals: [{ doc: 'sys.type' }, 'Entry'] },
+        {
+          in: [
+            { doc: 'sys.contentType.sys.id' },
+            readDeniedContentTypeIds.sort(),
+          ],
+        },
+        {
+          not: {
+            or: [
+              ...ownerOrCreator,
+              {
+                in: [{ doc: 'metadata.tags.sys.id' }, [READABLE_BY_ALL_TAG_ID]],
+              },
+            ],
+          },
+        },
+      ],
+    },
+  })
 }
 
 export const narrowDownCheckboxState = (

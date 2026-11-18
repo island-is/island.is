@@ -243,7 +243,7 @@ export const is = {
   'user.natreg.maritalStatusValue': `{
     maritalStatus,
     select,
-    MARRIED {Gift (kvæntur) eða staðfest samvist}
+    MARRIED {Gift(ur)}
     UNMARRIED {Ógift (ókvæntur)}
     WIDOWED {Ekkill, ekkja}
     SEPARATED {Skilin(n) að borði og sæng}

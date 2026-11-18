@@ -9,7 +9,7 @@ export const bankTransfer = defineMessages({
   disclaimer: {
     id: 'payments:bankTransfer.disclaimer',
     defaultMessage:
-      'Borgaðu á öruggan og einfaldan hátt beint úr bankaappinu þínu',
+      'Notaðu bankareikning tengdan þinni kennitölu. Borgaðu á öruggan og einfaldan hátt beint úr bankaappinu þínu',
     description: 'Disclaimer banner shown on the bank-transfer payment view',
   },
   confirm: {
@@ -82,6 +82,12 @@ export const bankTransfer = defineMessages({
     defaultMessage: 'Sláðu inn gilda kennitölu einstaklings.',
     description:
       'Validation error when the approver national id is not a valid national id of an individual (e.g. a company). EN: "Enter a valid national id of an individual."',
+  },
+  payerNationalId: {
+    id: 'payments:bankTransfer.payerNationalId',
+    defaultMessage: 'Kennitala greiðanda',
+    description:
+      'Label for the read-only national id of an individual payer, whose bank account must be linked to it. EN: "National id of payer"',
   },
   companyNationalId: {
     id: 'payments:bankTransfer.companyNationalId',

@@ -48,6 +48,7 @@ import type { VerdictTimelineItem } from './VerdictTimelineBody'
 import VerdictTimelineBody from './VerdictTimelineBody'
 import {
   canRegisterVerdictAppeal,
+  canWithdrawVerdictAppeal,
   isAfterVerdictAppealDeadline,
   withAppealDefender,
 } from './VerdictTimelineCard.logic'
@@ -421,12 +422,12 @@ const VerdictTimelineCard: FC<Props> = (props) => {
               )
             },
           },
-          // An appeal that exists as an appeal case can only be withdrawn on
-          // it, and that path is closed while verdict appeals are hidden, so
-          // the action is not offered then rather than offered to fail.
-          ...(verdict?.appealDate &&
-          (isVerdictAppealRegistrationEnabled ||
-            !workingCase.verdictAppealCase?.id)
+          ...(canWithdrawVerdictAppeal(
+            workingCase,
+            defendant,
+            user,
+            isVerdictAppealRegistrationEnabled,
+          )
             ? [
                 {
                   title: 'Afturkalla áfrýjun',
