@@ -1,5 +1,9 @@
-import { Redirect, Stack, useRouter } from 'expo-router'
+import { Href, Redirect, Stack, useRouter } from 'expo-router'
 import React, { useEffect } from 'react'
+
+// The tabs, at whichever tab they start on. Typed routes only list the
+// tabs' own screens.
+const HOME = '/(auth)/(tabs)' as Href
 
 /**
  * A link to a screen the app doesn't have, such as Cognito's return link in
@@ -18,7 +22,7 @@ export default function NotFoundScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false, animation: 'none' }} />
-      {!canGoBack && <Redirect href="/(auth)/(tabs)" />}
+      {!canGoBack && <Redirect href={HOME} />}
     </>
   )
 }
