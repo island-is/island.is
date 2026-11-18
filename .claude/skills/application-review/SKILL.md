@@ -139,7 +139,7 @@ Each prompt carries:
   Suppressions M)";
 - a scratch-file prefix unique to the lens (`<scratchpad>/review-N-<lens>`).
   Lenses run in parallel, so each writes only under its own prefix;
-- the path to its lens file, plus
+- the path to its lens file, plus `libs/application/AGENTS.md`,
   `.claude/skills/application-review/framework-rules.md` and
   `.claude/skills/application-review/suppressions.md`, to read first;
 - this brief:
@@ -173,7 +173,8 @@ finding, try to disprove it:
   `PaymentPending` that renders the outcome; a field may already catch the
   error.
 - Check how the user reaches it: is the state listed, when is `pruneAt`
-  set, does the page need a session? See `framework-rules.md`.
+  set, does the page need a session? See `libs/application/AGENTS.md` and
+  `framework-rules.md`.
 - Check that each precondition holds, and weigh how often.
 - Check the decisions list and suppressions once more against the
   scenario, not only the code.
