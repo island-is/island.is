@@ -73,15 +73,10 @@ interface ColumnTextProps {
 const ColumnText = ({ text, isOpen, isInaccessible }: ColumnTextProps) => (
   <Box width="full" textAlign="left" paddingLeft={1}>
     <Inline space={1} alignY="center">
-      <Text
-        variant="medium"
-        fontWeight={isOpen ? 'semiBold' : 'regular'}
-      >
+      <Text variant="medium" fontWeight={isOpen ? 'semiBold' : 'regular'}>
         {text}
       </Text>
-      {isInaccessible && (
-        <Icon icon="lockClosed" size="small" ariaHidden />
-      )}
+      {isInaccessible && <Icon icon="lockClosed" size="small" ariaHidden />}
     </Inline>
   </Box>
 )
@@ -426,19 +421,21 @@ export const TableRow = ({
       icon: 'star' as const,
       iconType: 'outline' as const,
       onClick: async () => {
-        const { data: formData } = await getForm({
-          variables: { input: { id } },
-        })
-        const form = formData?.formSystemForm?.form
-        if (!form || !hasEnglishForAllNameFields(form)) {
-          toast.warning(formatMessage(m.translationNeededError))
-          return
-        }
-        if (!form || !hasZendeskSettingsForPublish(form)) {
-          toast.warning(formatMessage(m.zendeskSettingsNeededError))
-          return
-        }
+        let publishAttempted = false
         try {
+          const { data: formData } = await getForm({
+            variables: { input: { id } },
+          })
+          const form = formData?.formSystemForm?.form
+          if (!form || !hasEnglishForAllNameFields(form)) {
+            toast.warning(formatMessage(m.translationNeededError))
+            return
+          }
+          if (!hasZendeskSettingsForPublish(form)) {
+            toast.warning(formatMessage(m.zendeskSettingsNeededError))
+            return
+          }
+          publishAttempted = true
           const { data } = await updateFormStatus({
             variables: {
               input: {
@@ -471,14 +468,48 @@ export const TableRow = ({
               .filter((form) => form.id !== returnedForm.id)
           })
         } catch (error) {
+          console.error('Error publishing form:', error)
+          if (publishAttempted) {
+            try {
+              const { data: formsData, error: refreshError } = await getForms({
+                variables: { input: { nationalId: organizationNationalId } },
+              })
+              if (refreshError) throw refreshError
+              const refreshedForms: FormSystemForm[] | undefined =
+                formsData?.formSystemForms?.forms
+              if (!refreshedForms) throw new Error('Missing forms list')
+              setFormsState(refreshedForms)
+
+              if (
+                refreshedForms.some(
+                  (form) =>
+                    form.id === id && form.status === FormStatus.PUBLISHED,
+                )
+              ) {
+                return
+              }
+            } catch (refreshError) {
+              console.error(
+                'Error refreshing forms after publishing:',
+                refreshError,
+              )
+              toast.warning(
+                formatMessage({
+                  id: 'publishChangedFormOutcomeUnknown',
+                  defaultMessage:
+                    'Ekki tókst að staðfesta hvort eyðublaðið var gefið út. Endurhlaðaðu síðuna áður en þú reynir aftur.',
+                }),
+              )
+              return
+            }
+          }
           toast.error(
             formatMessage({
-              id: 'publishChangedFormError',
+              id: 'publishChangedFormFailed',
               defaultMessage:
-                'Ekki er hægt að gefa þetta breytta form út því upprunalega formið er komið í geymslu (archived).',
+                'Ekki er hægt að gefa út breytt eyðublað ef upphaflega útgefna formið hefur verið tekið úr útgáfu. Ef þetta á ekki við, vinsamlegast reyndu aftur.',
             }),
           )
-          console.error('Error publishing form:', error)
         }
       },
     }

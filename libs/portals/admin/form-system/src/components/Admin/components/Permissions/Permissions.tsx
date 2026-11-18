@@ -5,6 +5,7 @@ import * as styles from '../../../tableHeader.css'
 import { Permission } from './Permission'
 
 const SECTIONS = [
+  { key: 'certifications', type: 'certificate' as const },
   { key: 'lists', type: 'list' as const },
   { key: 'inputFields', type: 'field' as const },
 ] as const

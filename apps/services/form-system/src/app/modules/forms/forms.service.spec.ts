@@ -3,6 +3,7 @@ import {
   ApplicationStatus,
   FieldTypesEnum,
   FormStatus,
+  ListTypesEnum,
   SectionTypes,
 } from '@island.is/form-system/shared'
 import { AdminPortalScope } from '@island.is/auth/scopes'
@@ -14,6 +15,42 @@ import { Form } from './models/form.model'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
 import { ApplicationJsonDto } from '../applications/models/dto/application.json.dto'
 import { User } from '@island.is/auth-nest-tools'
+import { ListTypes } from '../../dataTypes/listTypes/listType.model'
+
+describe('FormsService list permissions', () => {
+  it('includes common lists once and only permitted non-common lists', async () => {
+    const commonLists = [...ListTypes]
+    const permittedList = {
+      ...commonLists[0],
+      id: 'permitted-list',
+      isCommon: false,
+    }
+    const unpermittedList = {
+      ...permittedList,
+      id: 'unpermitted-list',
+    }
+    const service = Object.assign(Object.create(FormsService.prototype), {
+      organizationModel: {
+        findByPk: jest.fn().mockResolvedValue({
+          organizationPermissions: [
+            { permission: ListTypesEnum.CURRENCIES },
+            { permission: ListTypesEnum.ORGANIZATIONS },
+            { permission: permittedList.id },
+          ],
+        }),
+      },
+    }) as FormsService
+    ListTypes.push(permittedList, unpermittedList)
+
+    try {
+      const result = await service['getListTypes']('organization')
+
+      expect(result).toEqual([...commonLists, permittedList])
+    } finally {
+      ListTypes.splice(commonLists.length)
+    }
+  })
+})
 
 describe.each(['archive', 'publish replacement'])(
   'FormsService draft cleanup when using %s',

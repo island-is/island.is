@@ -1372,10 +1372,12 @@ export class FormsService {
       include: [OrganizationPermission],
     })
 
-    const uncommonListTypes = ListTypes.filter((listType) =>
-      organization?.organizationPermissions?.some(
-        (item) => item.permission === listType.id,
-      ),
+    const uncommonListTypes = ListTypes.filter(
+      (listType) =>
+        !listType.isCommon &&
+        organization?.organizationPermissions?.some(
+          (item) => item.permission === listType.id,
+        ),
     )
 
     const organizationListTypes = commonListTypes.concat(uncommonListTypes)
