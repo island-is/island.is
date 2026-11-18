@@ -70,7 +70,7 @@ import { DebouncedDatePicker } from './components/DebouncedDatePicker'
 import { m } from './translations.strings'
 import * as styles from './CourtAgendas.css'
 
-const ITEMS_PER_PAGE = 50
+const ITEMS_PER_PAGE = 20
 const DEBOUNCE_TIME_IN_MS = 500
 const COURTS_FRONTPAGE_HREF = '/s/domstolar'
 
