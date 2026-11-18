@@ -3360,11 +3360,10 @@ export const isPeriodsContinuous = (
   if (!prevPeriod || !nextPeriod) {
     return false
   }
-  const prevEndDate = new Date(prevPeriod?.endDate)
-  const nextStartDate = new Date(nextPeriod?.startDate)
+  // Calendar dates: `new Date('2027-11-01')` is midnight UTC, which can fall on
+  // another day where the period is checked
+  const prevEndDate = parseISO(prevPeriod.endDate)
+  const nextStartDate = parseISO(nextPeriod.startDate)
 
-  if (isSameDay(prevEndDate, addDays(nextStartDate, -1))) {
-    return true
-  }
-  return false
+  return isSameDay(prevEndDate, addDays(nextStartDate, -1))
 }
