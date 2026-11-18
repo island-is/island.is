@@ -11,6 +11,15 @@ describe('dataSchema', () => {
       expect(medicalCertificateSchema.safeParse([]).success).toBe(false)
     })
 
+    it('rejects more than one file', () => {
+      expect(
+        medicalCertificateSchema.safeParse([
+          { name: 'vottord.pdf', key: 'vottord-key' },
+          { name: 'vottord2.pdf', key: 'vottord2-key' },
+        ]).success,
+      ).toBe(false)
+    })
+
     it('accepts a single file', () => {
       expect(
         medicalCertificateSchema.safeParse([
@@ -102,6 +111,20 @@ describe('dataSchema', () => {
       expect(
         !result.success && result.error.issues.map((issue) => issue.path),
       ).toEqual([['address'], ['postalCode']])
+    })
+
+    it('rejects a postal code that is not in the postal code list', () => {
+      const result = licenseSchema.safeParse({
+        plasticCard: YES,
+        deliveryMethod: DeliveryMethod.OTHER_ADDRESS,
+        address: 'Nönnugata 1',
+        postalCode: '101.5',
+      })
+
+      expect(result.success).toBe(false)
+      expect(!result.success && result.error.issues[0].path).toEqual([
+        'postalCode',
+      ])
     })
 
     it('accepts another address without a recipient', () => {

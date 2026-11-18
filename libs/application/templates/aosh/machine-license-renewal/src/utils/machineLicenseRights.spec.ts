@@ -1,5 +1,10 @@
 import { WorkMachineLicenseDto } from '@island.is/clients/seminars-ver'
-import { getOtherRights, getRenewableRights } from './machineLicenseRights'
+import {
+  formatDate,
+  formatRightName,
+  getOtherRights,
+  getRenewableRights,
+} from './machineLicenseRights'
 
 const workMachineLicense: WorkMachineLicenseDto = {
   workMachineRightsDtos: [
@@ -49,6 +54,43 @@ describe('machineLicenseRights', () => {
           workMachineRightsRenewedDtos: null,
         }),
       ).toEqual(workMachineLicense.workMachineRightsDtos)
+    })
+  })
+
+  describe('formatDate', () => {
+    it('formats a date-only value', () => {
+      expect(formatDate('2025-08-30')).toBe('30.08.2025')
+    })
+
+    it('returns an empty string for a value that cannot be parsed', () => {
+      expect(formatDate('30.08.2025')).toBe('')
+    })
+  })
+
+  describe('formatRightName', () => {
+    it('uses the English name in English', () => {
+      expect(
+        formatRightName(
+          {
+            category: 'J',
+            categoryName: 'Lyftarar',
+            categoryNameEn: 'Forklifts',
+          },
+          'en',
+        ),
+      ).toBe('J - Forklifts')
+    })
+
+    it('falls back to the Icelandic name when there is no English name', () => {
+      expect(
+        formatRightName({ category: 'J', categoryName: 'Lyftarar' }, 'en'),
+      ).toBe('J - Lyftarar')
+    })
+
+    it('shows only the category when there is no name', () => {
+      expect(formatRightName({ category: 'J', categoryName: null }, 'is')).toBe(
+        'J',
+      )
     })
   })
 })

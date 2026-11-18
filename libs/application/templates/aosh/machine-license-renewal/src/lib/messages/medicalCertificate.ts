@@ -14,7 +14,7 @@ export const medicalCertificate = {
     },
     description: {
       id: 'aosh.mlr.application:medicalCertificate.general.description',
-      defaultMessage: 'Endurnýjun á réttindum krefjast læknisvottorðs.',
+      defaultMessage: 'Endurnýjun á réttindum krefst læknisvottorðs.',
       description: 'Description of medical certificate screen',
     },
   }),

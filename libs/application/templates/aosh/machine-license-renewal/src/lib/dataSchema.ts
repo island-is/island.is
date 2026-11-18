@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { NO, YES } from '@island.is/application/core'
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
+import { postalCodes } from '@island.is/shared/utils'
 import { DeliveryMethod } from '../utils/constants'
 import { medicalCertificate } from './messages'
 
@@ -35,7 +36,10 @@ const LicenseSchema = z
       if (!license.address?.trim()) {
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['address'] })
       }
-      if (!license.postalCode?.trim()) {
+      if (
+        !license.postalCode ||
+        !postalCodes.includes(Number(license.postalCode))
+      ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ['postalCode'],
@@ -47,9 +51,11 @@ const LicenseSchema = z
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: applicantInformationSchema({ emailAndPhoneReadOnly: true }),
-  medicalCertificate: z.array(FileSchema).refine((files) => files.length > 0, {
-    params: medicalCertificate.errors.required,
-  }),
+  medicalCertificate: z
+    .array(FileSchema)
+    .refine((files) => files.length === 1, {
+      params: medicalCertificate.errors.required,
+    }),
   license: LicenseSchema,
   overview: z.object({
     agreement: z.array(z.literal(YES)).nonempty(),
