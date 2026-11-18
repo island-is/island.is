@@ -24,7 +24,7 @@ const { VALIDATE_LATEST_PERIOD } = AnswerValidationConstants
 const validatePeriodRepeaterFields = (
   periods: Period[] | undefined,
 ): AnswerValidationError | undefined => {
-  const periodDictionary = periods as unknown as Record<string, Period>
+  const periodDictionary = (periods as unknown) as Record<string, Period>
   const validations: ValidateField<Period>[] = [
     {
       fieldName: 'startDate',
@@ -60,6 +60,35 @@ const validatePeriodRepeaterFields = (
       return result
     }
   }
+}
+
+const periodFields: (keyof Period)[] = [
+  'startDate',
+  'endDate',
+  'ratio',
+  'firstPeriodStart',
+]
+
+/**
+ * The period the applicant just changed: a new one, or one whose dates differ
+ * from the saved answers, e.g. an earlier period reached with the browser's
+ * back button. Falls back to the last period.
+ */
+const getEditedPeriodIndex = (
+  periods: Period[],
+  savedPeriods: Period[] | undefined,
+) => {
+  for (let index = periods.length - 1; index >= 0; index--) {
+    const saved = savedPeriods?.[index]
+    if (
+      !saved ||
+      periodFields.some((field) => periods[index]?.[field] !== saved[field])
+    ) {
+      return index
+    }
+  }
+
+  return periods.length - 1
 }
 
 export const validateLatestPeriodValidationSection = (
@@ -119,10 +148,14 @@ export const validateLatestPeriodValidationSection = (
     }
   }
 
-  const latestPeriodIndex = periods.length - 1
+  const latestPeriodIndex = getEditedPeriodIndex(
+    periods,
+    getValueViaPath<Period[]>(application.answers, 'periods'),
+  )
   const latestPeriod = periods[latestPeriodIndex]
-  const expectedDateOfBirthOrAdoptionDateOrBirthDate =
-    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
+  const expectedDateOfBirthOrAdoptionDateOrBirthDate = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(
+    application,
+  )
 
   if (!expectedDateOfBirthOrAdoptionDateOrBirthDate) {
     return {
@@ -131,10 +164,12 @@ export const validateLatestPeriodValidationSection = (
     }
   }
 
-  const otherPeriods = periods.slice(0, latestPeriodIndex)
-  const validOtherPeriods = filterValidPeriods(otherPeriods)
+  const validOtherPeriods = filterValidPeriods(periods).filter(
+    ({ rawIndex }) => rawIndex !== latestPeriodIndex,
+  )
 
-  const isFirstPeriod = validOtherPeriods.length === 0
+  const isFirstPeriod =
+    latestPeriodIndex === 0 || validOtherPeriods.length === 0
 
   const buildError = buildValidationError(
     VALIDATE_LATEST_PERIOD,

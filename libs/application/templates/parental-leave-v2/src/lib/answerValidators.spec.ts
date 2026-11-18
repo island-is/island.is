@@ -780,6 +780,29 @@ describe('when constructing a new period', () => {
         undefined,
       )
     })
+
+    // E.g. an earlier period reached again with the browser's back button
+    it('reports on an earlier period whose dates were changed', () => {
+      const saved = [first, later]
+      const withSaved = {
+        ...futureApplication,
+        answers: { ...futureApplication.answers, periods: saved },
+      }
+
+      expect(
+        answerValidators[VALIDATE_LATEST_PERIOD](
+          [{ ...first, endDate: day(5) }, later],
+          withSaved,
+        ),
+      ).toStrictEqual({
+        message: errorMessages.periodsEndDateMinimumPeriod,
+        path: 'periods[0].endDate',
+        values: { minPeriodDays: 14 },
+      })
+      expect(
+        answerValidators[VALIDATE_LATEST_PERIOD](saved, withSaved),
+      ).toEqual(undefined)
+    })
   })
 })
 
