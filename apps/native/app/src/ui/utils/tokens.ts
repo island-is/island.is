@@ -250,13 +250,13 @@ const dark: Tokens = {
   feedback: {
     information: {
       backgroundMinimal: darkTinted, // name
-      border: darkBorder, // GUESS: no blue dark border in the export
+      border: blue300, // GUESS: warning and success borders use the hue's vivid tone, not darkBorder
       foreground: blue300, // family
     },
     success: {
-      background: darkMintBg, // name
-      border: darkBorder, // GUESS: no mint dark border in the export
-      foreground: mint300, // GUESS: mint family rule unconfirmed
+      background: darkMintBg, // screens
+      border: mint400, // screens: the success alert border is #00E4CA
+      foreground: mint300, // screens: the success alert icon is #99F4EA
     },
     warning: {
       background: darkYellowBg, // screens: alert fill measured as #3B3519
@@ -265,7 +265,7 @@ const dark: Tokens = {
     },
     error: {
       background: darkRedBg, // name
-      border: darkBorder, // GUESS: no red dark border in the export
+      border: red300, // GUESS: warning and success borders use the hue's vivid tone, not darkBorder
       borderContrast: red300, // family: red->300, from interactive-foreground-red
       foreground: red300, // family
       foregroundContrast: red300, // family
