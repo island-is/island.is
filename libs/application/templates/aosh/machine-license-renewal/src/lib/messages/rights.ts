@@ -42,8 +42,8 @@ export const rights = {
     },
     validTo: {
       id: 'aosh.mlr.application:rights.labels.validTo',
-      defaultMessage: 'Gildir til: {validTo}',
-      description: 'Valid to date shown below each rights table title',
+      defaultMessage: 'Gildir til',
+      description: 'Table header for valid to',
     },
   }),
 }

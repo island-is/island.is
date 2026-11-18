@@ -46,9 +46,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const deliveryAddress = getValueViaPath<string>(answers, 'license.address')
 
-  const deliveryPostalCodeAndCity = getValueViaPath<string>(
+  const deliveryPostalCode = getValueViaPath<string>(
     answers,
-    'license.postalCodeAndCity',
+    'license.postalCode',
   )
 
   const deliveryRecipient = getValueViaPath<string>(
@@ -68,7 +68,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     plasticCard,
     deliveryMethod,
     deliveryAddress,
-    deliveryPostalCodeAndCity,
+    deliveryPostalCode,
     deliveryRecipient,
   }
 }

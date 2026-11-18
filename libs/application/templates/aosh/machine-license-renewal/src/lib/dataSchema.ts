@@ -16,7 +16,8 @@ const LicenseSchema = z
     // clearOnChange resets the field to an empty string
     deliveryMethod: z.nativeEnum(DeliveryMethod).or(z.literal('')).optional(),
     address: z.string().optional(),
-    postalCodeAndCity: z.string().optional(),
+    // The select resets a cleared value that is not an option to null
+    postalCode: z.string().nullish(),
     recipient: z.string().optional(),
   })
   .superRefine((license, ctx) => {
@@ -34,10 +35,10 @@ const LicenseSchema = z
       if (!license.address?.trim()) {
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['address'] })
       }
-      if (!license.postalCodeAndCity?.trim()) {
+      if (!license.postalCode?.trim()) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          path: ['postalCodeAndCity'],
+          path: ['postalCode'],
         })
       }
     }

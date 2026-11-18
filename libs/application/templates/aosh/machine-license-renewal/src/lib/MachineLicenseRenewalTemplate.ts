@@ -13,6 +13,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  defineTemplateApi,
   FormModes,
   InstitutionNationalIds,
   VerifyPaymentApi,
@@ -22,12 +23,12 @@ import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
 import {
   IdentityApi,
-  MachineLicenseRightsApi,
+  WorkMachineLicenseApi,
   MockableVinnueftirlitidPaymentCatalogApi,
   UserProfileApiWithValidation,
   VinnueftirlitidPaymentCatalogApi,
 } from '../dataProviders'
-import { Events, Roles, States } from '../utils/constants'
+import { ApiActions, Events, Roles, States } from '../utils/constants'
 import { getChargeItems } from '../utils/getChargeItems'
 import { dataSchema } from './dataSchema'
 import { application as applicationMessages, prerequisites } from './messages'
@@ -81,7 +82,7 @@ const template: ApplicationTemplate<
               api: [
                 IdentityApi,
                 UserProfileApiWithValidation,
-                MachineLicenseRightsApi,
+                WorkMachineLicenseApi,
                 VinnueftirlitidPaymentCatalogApi,
                 MockableVinnueftirlitidPaymentCatalogApi,
               ],
@@ -135,9 +136,14 @@ const template: ApplicationTemplate<
         organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
         chargeItems: getChargeItems,
         submitTarget: States.COMPLETED,
+        showSubmitErrorReason: true,
         onExit: [
-          // TODO: Confirm the payment with Vinnueftirlitið before moving to the completed state
           VerifyPaymentApi.configure({
+            triggerEvent: DefaultEvents.SUBMIT,
+          }),
+          defineTemplateApi({
+            action: ApiActions.verifyPaymentReceived,
+            order: 1,
             triggerEvent: DefaultEvents.SUBMIT,
           }),
         ],
@@ -148,7 +154,9 @@ const template: ApplicationTemplate<
           progress: 1,
           status: FormModes.COMPLETED,
           lifecycle: pruneAfterDays(30),
-          // TODO: Add an onEntry submit action that sends the renewal to Vinnueftirlitið once their renewal endpoint exists
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           actionCard: {
             tag: {
               label: applicationMessages.actionCardDone,

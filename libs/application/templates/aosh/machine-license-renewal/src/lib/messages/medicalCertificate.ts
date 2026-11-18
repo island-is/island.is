@@ -42,5 +42,12 @@ export const medicalCertificate = {
       defaultMessage: 'Hlaða þarf upp læknisvottorði',
       description: 'Error when no medical certificate is uploaded',
     },
+    notFound: {
+      id: 'aosh.mlr.application:medicalCertificate.errors.notFound',
+      defaultMessage:
+        'Ekki tókst að sækja læknisvottorðið. Vinsamlegast reyndu aftur.',
+      description:
+        'Error when the uploaded medical certificate cannot be fetched on submission',
+    },
   }),
 }

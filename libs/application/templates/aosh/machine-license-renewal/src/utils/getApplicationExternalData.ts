@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { MachineLicenseRights } from './types'
+import { WorkMachineLicenseDto } from '@island.is/clients/seminars-ver'
 
 export const getApplicationExternalData = (
   externalData: Application['externalData'],
@@ -30,9 +30,14 @@ export const getApplicationExternalData = (
     'identity.data.address.city',
   )
 
-  const machineLicenseRights = getValueViaPath<MachineLicenseRights>(
+  const workMachineLicense = getValueViaPath<WorkMachineLicenseDto>(
     externalData,
-    'machineLicenseRights.data',
+    'workMachineLicense.data',
+  )
+
+  const paymentId = getValueViaPath<string>(
+    externalData,
+    'createCharge.data.id',
   )
 
   return {
@@ -41,6 +46,7 @@ export const getApplicationExternalData = (
     applicantAddress,
     applicantPostalCode,
     applicantCity,
-    machineLicenseRights,
+    workMachineLicense,
+    paymentId,
   }
 }

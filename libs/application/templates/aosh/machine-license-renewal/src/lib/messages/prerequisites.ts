@@ -65,4 +65,17 @@ export const prerequisites = {
       description: 'Machine license rights data provider subtitle',
     },
   }),
+  errors: defineMessages({
+    noRightsToRenewTitle: {
+      id: 'aosh.mlr.application:prerequisites.errors.noRightsToRenewTitle',
+      defaultMessage: 'Engin réttindi til endurnýjunar',
+      description: 'Title of error when the applicant has no rights to renew',
+    },
+    noRightsToRenew: {
+      id: 'aosh.mlr.application:prerequisites.errors.noRightsToRenew',
+      defaultMessage:
+        'Þú ert ekki með vinnuvélaréttindi sem hægt er að endurnýja. Hægt er að endurnýja vinnuvélaréttindi þegar sex mánuðir eru eftir af gildistíma.',
+      description: 'Error when the applicant has no rights to renew',
+    },
+  }),
 }

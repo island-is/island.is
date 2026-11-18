@@ -16,9 +16,9 @@ export const UserProfileApiWithValidation = UserProfileApi.configure({
   },
 })
 
-export const MachineLicenseRightsApi = defineTemplateApi({
-  action: ApiActions.getMachineLicenseRights,
-  externalDataId: 'machineLicenseRights',
+export const WorkMachineLicenseApi = defineTemplateApi({
+  action: ApiActions.getWorkMachineLicense,
+  externalDataId: 'workMachineLicense',
 })
 
 export const VinnueftirlitidPaymentCatalogApi = PaymentCatalogApi.configure({
@@ -36,7 +36,7 @@ export const MockableVinnueftirlitidPaymentCatalogApi =
         {
           performingOrgID: InstitutionNationalIds.VINNUEFTIRLITID,
           chargeType: 'string',
-          chargeItemCode: ChargeItemCode.AOSH_MACHINE_LICENSE_RENEWAL,
+          chargeItemCode: ChargeItemCode.AOSH_MACHINE_LICENSE_RENEWAL_VJ261,
           chargeItemName: 'Endurútgáfa vinnuvélaskírteins og nýréttindi',
           priceAmount: 8677,
         },

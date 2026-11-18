@@ -1,18 +1,39 @@
 import format from 'date-fns/format'
-import { rights as rightsMessages } from '../lib/messages'
-import { MachineLicenseRight } from './types'
+import parseISO from 'date-fns/parseISO'
+import {
+  WorkMachineLicenseDto,
+  WorkMachineRightDto,
+} from '@island.is/clients/seminars-ver'
+import { Locale } from '@island.is/shared/types'
 
-export const formatDate = (date: string) => format(new Date(date), 'dd.MM.yyyy')
+export const formatDate = (date: string) => format(parseISO(date), 'dd.MM.yyyy')
 
-export const formatRightName = (right: MachineLicenseRight) =>
-  `${right.flokkur} - ${right.fulltHeiti}`
+export const formatRightName = (right: WorkMachineRightDto, locale: Locale) =>
+  `${right.category} - ${
+    locale === 'en'
+      ? right.categoryNameEn ?? right.categoryName
+      : right.categoryName
+  }`
 
-export const getValidToDescription = (rights: MachineLicenseRight[]) => {
-  const validTo = rights[0]?.stjorna
-  return validTo
-    ? {
-        ...rightsMessages.labels.validTo,
-        values: { validTo: formatDate(validTo) },
-      }
-    : ''
+const getRenewableCategories = (workMachineLicense?: WorkMachineLicenseDto) =>
+  new Set(
+    (workMachineLicense?.workMachineRightsRenewedDtos ?? []).map(
+      (right) => right.category,
+    ),
+  )
+
+export const getRenewableRights = (
+  workMachineLicense?: WorkMachineLicenseDto,
+) => {
+  const renewableCategories = getRenewableCategories(workMachineLicense)
+  return (workMachineLicense?.workMachineRightsDtos ?? []).filter((right) =>
+    renewableCategories.has(right.category),
+  )
+}
+
+export const getOtherRights = (workMachineLicense?: WorkMachineLicenseDto) => {
+  const renewableCategories = getRenewableCategories(workMachineLicense)
+  return (workMachineLicense?.workMachineRightsDtos ?? []).filter(
+    (right) => !renewableCategories.has(right.category),
+  )
 }

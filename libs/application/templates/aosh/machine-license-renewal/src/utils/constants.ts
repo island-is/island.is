@@ -16,7 +16,9 @@ export enum Roles {
 }
 
 export enum ApiActions {
-  getMachineLicenseRights = 'getMachineLicenseRights',
+  getWorkMachineLicense = 'getWorkMachineLicense',
+  submitApplication = 'submitApplication',
+  verifyPaymentReceived = 'verifyPaymentReceived',
 }
 
 export enum DeliveryMethod {

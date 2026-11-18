@@ -8,4 +8,12 @@ export const payment = {
       description: 'Title of payment section',
     },
   }),
+  errors: defineMessages({
+    paymentNotReceived: {
+      id: 'aosh.mlr.application:payment.errors.paymentNotReceived',
+      defaultMessage:
+        'Greiðslan hefur ekki enn borist Vinnueftirlitinu. Vinsamlegast reyndu aftur eftir smá stund.',
+      description: 'Error when Vinnueftirlitið has not received the payment',
+    },
+  }),
 }

@@ -1,14 +1,17 @@
 import {
   buildDescriptionField,
+  buildInteractiveTableField,
   buildMultiField,
   buildSection,
-  buildStaticTableField,
 } from '@island.is/application/core'
 import { rights } from '../../lib/messages'
+import { hasOtherRights } from '../../utils/conditions'
 import { getApplicationExternalData } from '../../utils/getApplicationExternalData'
 import {
+  formatDate,
   formatRightName,
-  getValidToDescription,
+  getOtherRights,
+  getRenewableRights,
 } from '../../utils/machineLicenseRights'
 
 export const rightsSection = buildSection({
@@ -27,40 +30,39 @@ export const rightsSection = buildSection({
             values: {
               licenseNumber:
                 getApplicationExternalData(application.externalData)
-                  .machineLicenseRights?.licenseNumber ?? '',
+                  .workMachineLicense?.licenseNumber ?? '',
             },
           }),
           titleVariant: 'h4',
         }),
-        buildStaticTableField({
+        buildInteractiveTableField({
+          id: 'rights.renewableRights',
           title: rights.labels.renewableRightsTitle,
-          description: (application) =>
-            getValidToDescription(
-              getApplicationExternalData(application.externalData)
-                .machineLicenseRights?.renewableRights ?? [],
-            ),
           marginTop: 4,
-          header: [rights.labels.right],
-          rows: (application) =>
-            (
+          header: [rights.labels.right, rights.labels.validTo],
+          rows: (application, _field, locale) =>
+            getRenewableRights(
               getApplicationExternalData(application.externalData)
-                .machineLicenseRights?.renewableRights ?? []
-            ).map((right) => [formatRightName(right)]),
+                .workMachineLicense,
+            ).map((right) => [
+              formatRightName(right, locale),
+              right.validUntil ? formatDate(right.validUntil) : '',
+            ]),
         }),
-        buildStaticTableField({
+        buildInteractiveTableField({
+          id: 'rights.otherRights',
           title: rights.labels.otherRightsTitle,
-          description: (application) =>
-            getValidToDescription(
-              getApplicationExternalData(application.externalData)
-                .machineLicenseRights?.otherRights ?? [],
-            ),
+          condition: hasOtherRights,
           marginTop: 4,
-          header: [rights.labels.right],
-          rows: (application) =>
-            (
+          header: [rights.labels.right, rights.labels.validTo],
+          rows: (application, _field, locale) =>
+            getOtherRights(
               getApplicationExternalData(application.externalData)
-                .machineLicenseRights?.otherRights ?? []
-            ).map((right) => [formatRightName(right)]),
+                .workMachineLicense,
+            ).map((right) => [
+              formatRightName(right, locale),
+              right.validUntil ? formatDate(right.validUntil) : '',
+            ]),
         }),
       ],
     }),

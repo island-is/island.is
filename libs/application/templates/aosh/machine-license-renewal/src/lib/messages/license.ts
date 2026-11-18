@@ -45,10 +45,10 @@ export const license = {
       defaultMessage: 'Heimilisfang',
       description: 'Address label',
     },
-    postalCodeAndCity: {
-      id: 'aosh.mlr.application:license.labels.postalCodeAndCity',
-      defaultMessage: 'Póstnúmer og staður',
-      description: 'Postal code and city label',
+    postalCode: {
+      id: 'aosh.mlr.application:license.labels.postalCode',
+      defaultMessage: 'Póstnúmer',
+      description: 'Postal code label',
     },
     recipient: {
       id: 'aosh.mlr.application:license.labels.recipient',

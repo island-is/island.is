@@ -10,6 +10,9 @@ import {
   CourseApi,
   RegistrationApi,
   IndividualApi,
+  WorkMachineLicenseApi,
+  PaymentRecievedApi,
+  WorkMachineLicenseRenewalApplicationApi,
 } from '../../gen/fetch'
 import { SeminarsClientConfig } from './seminars.config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
@@ -50,6 +53,21 @@ export const exportedApis = [
   {
     api: IndividualApi,
     provide: IndividualApi,
+    acceptHeader: 'application/json',
+  },
+  {
+    api: WorkMachineLicenseApi,
+    provide: WorkMachineLicenseApi,
+    acceptHeader: 'application/json',
+  },
+  {
+    api: PaymentRecievedApi,
+    provide: PaymentRecievedApi,
+    acceptHeader: 'application/json',
+  },
+  {
+    api: WorkMachineLicenseRenewalApplicationApi,
+    provide: WorkMachineLicenseRenewalApplicationApi,
     acceptHeader: 'application/json',
   },
 ].map(({ api, provide, acceptHeader }) => ({

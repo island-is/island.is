@@ -9,7 +9,7 @@ import { DefaultEvents, FormModes } from '@island.is/application/types'
 import { AoshLogo } from '@island.is/application/assets/institution-logos'
 import {
   IdentityApi,
-  MachineLicenseRightsApi,
+  WorkMachineLicenseApi,
   MockableVinnueftirlitidPaymentCatalogApi,
   UserProfileApiWithValidation,
   VinnueftirlitidPaymentCatalogApi,
@@ -43,7 +43,7 @@ export const Prerequisites = buildForm({
               subTitle: prerequisites.userProfile.subTitle,
             }),
             buildDataProviderItem({
-              provider: MachineLicenseRightsApi,
+              provider: WorkMachineLicenseApi,
               title: prerequisites.machineLicenseRights.title,
               subTitle: prerequisites.machineLicenseRights.subTitle,
             }),

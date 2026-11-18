@@ -2,11 +2,13 @@ import {
   buildMultiField,
   buildRadioField,
   buildSection,
+  buildSelectField,
   buildTextField,
   coreMessages,
   NO,
   YES,
 } from '@island.is/application/core'
+import { postalCodes } from '@island.is/shared/utils'
 import { license } from '../../lib/messages'
 import { isOtherAddress, wantsPlasticCard } from '../../utils/conditions'
 import { DeliveryMethod } from '../../utils/constants'
@@ -29,7 +31,7 @@ export const licenseSection = buildSection({
           clearOnChange: [
             'license.deliveryMethod',
             'license.address',
-            'license.postalCodeAndCity',
+            'license.postalCode',
             'license.recipient',
           ],
           options: [
@@ -45,7 +47,7 @@ export const licenseSection = buildSection({
           condition: wantsPlasticCard,
           clearOnChange: [
             'license.address',
-            'license.postalCodeAndCity',
+            'license.postalCode',
             'license.recipient',
           ],
           options: (application) => [
@@ -69,12 +71,16 @@ export const licenseSection = buildSection({
           required: true,
           condition: isOtherAddress,
         }),
-        buildTextField({
-          id: 'license.postalCodeAndCity',
-          title: license.labels.postalCodeAndCity,
+        buildSelectField({
+          id: 'license.postalCode',
+          title: license.labels.postalCode,
           width: 'half',
           required: true,
           condition: isOtherAddress,
+          options: postalCodes.map((code) => ({
+            value: `${code}`,
+            label: `${code}`,
+          })),
         }),
         buildTextField({
           id: 'license.recipient',

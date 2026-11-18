@@ -1,4 +1,4 @@
-import { coreMessages, YES } from '@island.is/application/core'
+import { coreMessages } from '@island.is/application/core'
 import {
   AttachmentItem,
   ExternalData,
@@ -7,12 +7,13 @@ import {
 } from '@island.is/application/types'
 import { format as formatKennitala } from 'kennitala'
 import { formatNumber } from 'libphonenumber-js'
+import { Locale } from '@island.is/shared/types'
 import { license as licenseMessages, overview } from '../lib/messages'
 import { formatAddress, getLegalDomicile } from './address'
-import { DeliveryMethod } from './constants'
+import { isOtherAddress, wantsPlasticCard } from './conditions'
 import { getApplicationAnswers } from './getApplicationAnswers'
 import { getApplicationExternalData } from './getApplicationExternalData'
-import { formatRightName } from './machineLicenseRights'
+import { formatRightName, getRenewableRights } from './machineLicenseRights'
 
 const withValue = (
   message: typeof overview.labels[keyof typeof overview.labels],
@@ -61,8 +62,10 @@ export const getApplicantOverviewItems = (
 export const getRightsOverviewItems = (
   _answers: FormValue,
   externalData: ExternalData,
+  _userNationalId: string,
+  locale: Locale,
 ): Array<KeyValueItem> => {
-  const { machineLicenseRights } = getApplicationExternalData(externalData)
+  const { workMachineLicense } = getApplicationExternalData(externalData)
 
   return [
     {
@@ -71,9 +74,11 @@ export const getRightsOverviewItems = (
       valueText: [
         withValue(
           overview.labels.licenseNumber,
-          machineLicenseRights?.licenseNumber,
+          workMachineLicense?.licenseNumber ?? undefined,
         ),
-        ...(machineLicenseRights?.renewableRights ?? []).map(formatRightName),
+        ...getRenewableRights(workMachineLicense).map((right) =>
+          formatRightName(right, locale),
+        ),
       ],
     },
   ]
@@ -92,44 +97,37 @@ export const getLicenseOverviewItems = (
   answers: FormValue,
   externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const {
-    plasticCard,
-    deliveryMethod,
-    deliveryAddress,
-    deliveryPostalCodeAndCity,
-    deliveryRecipient,
-  } = getApplicationAnswers(answers)
+  const { deliveryAddress, deliveryPostalCode, deliveryRecipient } =
+    getApplicationAnswers(answers)
 
   const items: Array<KeyValueItem> = [
     {
       width: 'full',
       keyText: overview.labels.plasticCard,
-      valueText:
-        plasticCard === YES ? coreMessages.radioYes : coreMessages.radioNo,
+      valueText: wantsPlasticCard(answers)
+        ? coreMessages.radioYes
+        : coreMessages.radioNo,
     },
   ]
 
-  if (plasticCard !== YES) {
+  if (!wantsPlasticCard(answers)) {
     return items
   }
 
   items.push({
     width: 'full',
     keyText: overview.labels.deliveryMethod,
-    valueText:
-      deliveryMethod === DeliveryMethod.OTHER_ADDRESS
-        ? [
-            [deliveryAddress, deliveryPostalCodeAndCity]
-              .filter(Boolean)
-              .join(', '),
-            deliveryRecipient
-              ? withValue(overview.labels.recipient, deliveryRecipient)
-              : null,
-          ].filter((x) => x !== null)
-        : {
-            ...licenseMessages.labels.legalDomicile,
-            values: { address: getLegalDomicile(externalData) },
-          },
+    valueText: isOtherAddress(answers)
+      ? [
+          formatAddress(deliveryAddress, deliveryPostalCode ?? undefined),
+          deliveryRecipient
+            ? withValue(overview.labels.recipient, deliveryRecipient)
+            : null,
+        ].filter((x) => x !== null)
+      : {
+          ...licenseMessages.labels.legalDomicile,
+          values: { address: getLegalDomicile(externalData) },
+        },
   })
 
   return items

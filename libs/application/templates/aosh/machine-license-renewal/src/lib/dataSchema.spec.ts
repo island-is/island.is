@@ -31,7 +31,7 @@ describe('dataSchema', () => {
           plasticCard: NO,
           deliveryMethod: '',
           address: '',
-          postalCodeAndCity: '',
+          postalCode: '',
           recipient: '',
         }).success,
       ).toBe(true)
@@ -73,7 +73,19 @@ describe('dataSchema', () => {
           plasticCard: YES,
           deliveryMethod: DeliveryMethod.LEGAL_DOMICILE,
           address: '',
-          postalCodeAndCity: '',
+          postalCode: '',
+          recipient: '',
+        }).success,
+      ).toBe(true)
+    })
+
+    it('accepts delivery to legal domicile after the postal code select was reset', () => {
+      expect(
+        licenseSchema.safeParse({
+          plasticCard: YES,
+          deliveryMethod: DeliveryMethod.LEGAL_DOMICILE,
+          address: '',
+          postalCode: null,
           recipient: '',
         }).success,
       ).toBe(true)
@@ -89,7 +101,7 @@ describe('dataSchema', () => {
       expect(result.success).toBe(false)
       expect(
         !result.success && result.error.issues.map((issue) => issue.path),
-      ).toEqual([['address'], ['postalCodeAndCity']])
+      ).toEqual([['address'], ['postalCode']])
     })
 
     it('accepts another address without a recipient', () => {
@@ -98,7 +110,7 @@ describe('dataSchema', () => {
           plasticCard: YES,
           deliveryMethod: DeliveryMethod.OTHER_ADDRESS,
           address: 'Nönnugata 1',
-          postalCodeAndCity: '101 Reykjavík',
+          postalCode: '101',
         }).success,
       ).toBe(true)
     })
