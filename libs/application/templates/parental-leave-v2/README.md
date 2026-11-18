@@ -146,7 +146,7 @@ Constants are in `src/config.ts`. Rights are counted in days, and a month of rig
 
 - **Start:** not more than 1 month before the date of birth (`minimumPeriodStartBeforeExpectedDateOfBirth`), and not later than 15 days before the child turns 2. A first period that starts on the estimated or actual date of birth, or the adoption date, is checked from that date.
 - **End:** before the child turns 2 (`usageMaxMonths`).
-- **Minimum length:** 14 calendar days (`MINIMUM_PERIOD_LENGTH`), unlike rights, which are counted in 30-day months. A shorter period is allowed when it starts the day after another period ends. Periods already over, unless they started this month, and periods VMST has paid or approved are not checked.
+- **Minimum length:** 14 calendar days (`MINIMUM_PERIOD_LENGTH`), unlike rights, which are counted in 30-day months. A shorter period is allowed when it starts the day after another period ends. Periods already over, unless they started this month, are not checked. On Continue from a period screen, periods that came from VMST (those with an `approved` field, even `false`) are not checked; the whole-plan check skips periods VMST has paid or approved.
 - **Which period is checked:** on Continue from a period screen, the period whose dates or ratio differ from the saved answers, a new one or an earlier one reached again, otherwise the last one.
 
 ### Parental leave template API module
