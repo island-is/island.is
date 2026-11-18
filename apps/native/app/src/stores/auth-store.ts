@@ -2,14 +2,14 @@ import { Alert, Platform } from 'react-native'
 import Keychain from 'react-native-keychain'
 import { deleteToken } from '@react-native-firebase/messaging'
 
-import { bundleId } from '../config'
+import { bundleId, getConfig } from '../config'
 import { LOCK_SCREEN_SUPPRESS_MAX_MS } from '../constants/auth'
 import { getIntl } from '../components/providers/locale-provider'
 import { getApolloClientAsync } from '../graphql/client-instance'
 import { preferencesStore } from './preferences-store'
 import { notificationsStore } from './notifications-store'
 import { getFeatureFlagValue } from '../lib/feature-flag-client'
-import { getIasClient, getIasIssuer, isNativeLogin } from '../lib/ias'
+import { getIasClient, isNativeLogin } from '../lib/ias'
 import type { IasTokens } from '../lib/ias'
 import {
   DeletePasskeyDocument,
@@ -132,9 +132,9 @@ export const authStore = create<AuthStore>((set, get) => ({
   cognitoAuthUrl: undefined,
   cookies: '',
   async fetchUserInfo(skipRefresh = false, skipLogoutIfRefreshFailed = false) {
-    // A native login's tokens come from IAS, which testing builds can point
-    // elsewhere. Its userinfo still only reads Bearer, even for DPoP tokens.
-    const issuer = getIasIssuer()
+    // A native login's tokens come from IAS. Its userinfo still only reads
+    // Bearer, even for DPoP tokens.
+    const issuer = getConfig().idsIssuer
     // Detect expired token
     const expiresAt = get().authorizeResult?.accessTokenExpirationDate ?? 0
 

@@ -29,12 +29,6 @@ const keychainStorage: IasStorage = {
   },
 }
 
-/** The IAS for native login, which testing builds can point elsewhere. */
-export function getIasIssuer() {
-  const { iasIssuer, idsIssuer } = getConfig()
-  return iasIssuer ?? idsIssuer
-}
-
 /** Native login tokens are DPoP-bound to the install key; browser ones aren't. */
 export function isNativeLogin(tokens: { tokenType?: string } | undefined) {
   return tokens?.tokenType === 'DPoP'
@@ -44,8 +38,7 @@ let current: { key: string; client: IasClient } | undefined
 
 /** The client for the selected environment. */
 export function getIasClient(): IasClient {
-  const { id, idsScopes } = getConfig()
-  const issuer = getIasIssuer()
+  const { id, idsIssuer: issuer, idsScopes } = getConfig()
   const clientId = getClientId()
   const key = `${id} ${issuer} ${clientId}`
   if (current?.key !== key) {

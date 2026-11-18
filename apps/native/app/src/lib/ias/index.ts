@@ -1,4 +1,4 @@
-export { getIasClient, getIasIssuer, isNativeLogin } from './app-client'
+export { getIasClient, isNativeLogin } from './app-client'
 export { createIasClient } from './client'
 export type { DeviceDetails, IasClientOptions } from './client'
 export {

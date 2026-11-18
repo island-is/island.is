@@ -15,17 +15,6 @@ import { Button, token } from '@/ui'
 import { SelectionMenu } from 'react-native-platform-components'
 import { cognitoAuthUrl } from '../../graphql/client'
 
-// The feature deployment for native login: IAS and the API that trusts it.
-// The switcher doesn't list it, so this is what it would have given.
-const FEATURE_ENVIRONMENT: EnvironmentConfig = {
-  ...environments.dev,
-  id: 'featnative-app-login',
-  label: 'featnative-app-login',
-  apiUrl: 'https://featnative-app-login-beta.dev01.devland.is/api',
-  baseUrl: 'https://featnative-app-login-beta.dev01.devland.is',
-  iasIssuer: 'https://featnative-app-login.identity-server.dev01.devland.is',
-}
-
 const DebugHost = styled.View`
   background-color: ${token((t) => t.background.brandMinimal)};
   height: 360px;
@@ -121,7 +110,6 @@ export function DebugInfo() {
 
   const [showEnvPicker, setShowEnvPicker] = React.useState(false)
   const [envs, setEnvs] = React.useState<EnvironmentConfig[]>([])
-  const iasIssuer = useEnvironmentStore((state) => state.environment.iasIssuer)
   const onEnvironmentPress = () => {
     if (loading) return
 
@@ -198,21 +186,6 @@ export function DebugInfo() {
         <DebugRow title="Bundle" value={config.bundleId} />
         <DebugRow title="IDS" value={environment?.idsIssuer ?? 'N/A'} />
         <DebugRow title="API" value={environment?.apiUrl ?? 'N/A'} />
-        <DebugRow
-          title="IAS"
-          value={iasIssuer?.replace(/^https:\/\//, '') ?? 'Same as IDS'}
-          actions={[
-            iasIssuer
-              ? {
-                  title: '(Reset)',
-                  onPress: () => actions.setEnvironment(environments.dev),
-                }
-              : {
-                  title: '(Feature)',
-                  onPress: () => actions.setEnvironment(FEATURE_ENVIRONMENT),
-                },
-          ]}
-        />
         <DebugRow
           title="Cognito"
           value={isCognitoAuth ? `Yes (exp ${cognitoMinutes}m)` : 'No'}
