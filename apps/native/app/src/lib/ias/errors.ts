@@ -85,10 +85,38 @@ export function isAttestationChallengeUnknown(error: unknown) {
   )
 }
 
+/** Why the phone couldn't attest its install key: the codes IAS counts. */
+export type AttestationFailureReason =
+  | 'not_supported'
+  | 'generate_key_failed'
+  | 'attest_key_failed'
+  | 'server_unavailable'
+  | 'key_generation_failed'
+  | 'no_certificate_chain'
+  | 'unknown'
+
+/** The phone couldn't attest its install key, so IAS was never asked. */
+export class DeviceAttestationError extends Error {
+  constructor(
+    readonly reason: AttestationFailureReason,
+    /** The device key error behind it, if any */
+    readonly cause?: unknown,
+  ) {
+    super(
+      `The phone couldn't attest: ${reason}${
+        cause instanceof Error ? ` (${cause.message})` : ''
+      }`,
+    )
+    this.name = 'DeviceAttestationError'
+  }
+}
+
 /** iOS: Apple's App Attest service is down. It works again later. */
 export function isAppAttestUnavailable(error: unknown) {
-  const code: DeviceKeyErrorCode = 'ERR_DEVICE_KEY_ATTESTATION_UNAVAILABLE'
-  return (error as { code?: unknown } | null)?.code === code
+  return (
+    error instanceof DeviceAttestationError &&
+    error.reason === 'server_unavailable'
+  )
 }
 
 /**

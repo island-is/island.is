@@ -1,5 +1,10 @@
-import type { DeviceKey } from '../../../modules/device-keys'
+import type {
+  DeviceKey,
+  DeviceKeyErrorCode,
+} from '../../../modules/device-keys'
+import type { AttestationFailureReason } from './errors'
 import {
+  DeviceAttestationError,
   getIasErrorCode,
   IasError,
   isAppAttestUnavailable,
@@ -10,6 +15,7 @@ import {
 import { attestationPop, deviceKeyAssertion, dpopProof } from './jwt'
 import { sleep } from './sleep'
 import type {
+  AttestationEvidence,
   CibaRequest,
   IasClient,
   IasDevice,
@@ -88,6 +94,25 @@ const encodeForm = (values: Record<string, string>) =>
         `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
     )
     .join('&')
+
+/** IAS's reason when the phone couldn't create the platform evidence. */
+function evidenceFailureReason(
+  os: IasDevice['os'],
+  error: unknown,
+): AttestationFailureReason {
+  const code = (error as { code?: DeviceKeyErrorCode } | null)?.code
+  switch (code) {
+    case 'ERR_DEVICE_KEY_ATTESTATION_UNSUPPORTED':
+      return 'not_supported'
+    case 'ERR_DEVICE_KEY_ATTESTATION_UNAVAILABLE':
+      return 'server_unavailable'
+    case 'ERR_DEVICE_KEY_ATTESTATION_KEY_FAILED':
+      return 'generate_key_failed'
+    default:
+      // Only App Attest does more than read the key's certificates.
+      return os === 'ios' ? 'attest_key_failed' : 'unknown'
+  }
+}
 
 /** The in-flight promise while one runs, so concurrent callers share it. */
 function shared<T>(run: () => Promise<T>): () => Promise<T> {
@@ -173,14 +198,16 @@ export function createIasClient(options: IasClientOptions): IasClient {
   /**
    * A new install key, attested (spec section 1). Starts again with a new
    * challenge once when IAS no longer knows the first, and a little later
-   * when Apple's service is down.
+   * when Apple's service is down. When the phone still can't attest, IAS is
+   * told why.
    */
   const attestNewInstall = shared(async (): Promise<StoredAttestation> => {
     let challengeRenewed = false
     let appAttestRetries = 0
     for (;;) {
+      const challenge = await getAttestationChallenge()
       try {
-        return await attestInstall()
+        return await attestInstall(challenge)
       } catch (error) {
         if (isAttestationChallengeUnknown(error) && !challengeRenewed) {
           challengeRenewed = true
@@ -190,19 +217,27 @@ export function createIasClient(options: IasClientOptions): IasClient {
         ) {
           await sleep(APP_ATTEST_RETRY_DELAYS_MS[appAttestRetries++])
         } else {
+          if (error instanceof DeviceAttestationError) {
+            // IAS never saw this challenge, so it can carry the report.
+            void reportAttestationFailure(challenge, error.reason)
+          }
           throw error
         }
       }
     }
   })
 
-  async function attestInstall(): Promise<StoredAttestation> {
-    const challenge = await getAttestationChallenge()
-    // On Android the key's attestation certificate carries the challenge.
-    const key = await device.generateInstallKey(
-      device.os === 'android' ? challenge : undefined,
-    )
-    const evidence = await device.attestInstallKey(key, challenge)
+  async function attestInstall(challenge: string): Promise<StoredAttestation> {
+    let key: DeviceKey
+    try {
+      // On Android the key's attestation certificate carries the challenge.
+      key = await device.generateInstallKey(
+        device.os === 'android' ? challenge : undefined,
+      )
+    } catch (error) {
+      throw new DeviceAttestationError('key_generation_failed', error)
+    }
+    const evidence = await createEvidence(key, challenge)
     const body = {
       clientId,
       jwk: key.publicJwk,
@@ -216,6 +251,52 @@ export function createIasClient(options: IasClientOptions): IasClient {
       { json: body },
     )
     return saveAttestation(response, key, 'POST /app/attestation')
+  }
+
+  async function createEvidence(
+    key: DeviceKey,
+    challenge: string,
+  ): Promise<AttestationEvidence> {
+    let evidence: AttestationEvidence
+    try {
+      evidence = await device.attestInstallKey(key, challenge)
+    } catch (error) {
+      throw new DeviceAttestationError(
+        evidenceFailureReason(device.os, error),
+        error,
+      )
+    }
+    // The key's certificate and at least the one that signed it.
+    if (
+      evidence.platform === 'android' &&
+      evidence.certificateChain.length < 2
+    ) {
+      throw new DeviceAttestationError('no_certificate_chain')
+    }
+    return evidence
+  }
+
+  /**
+   * Tells IAS the phone couldn't attest, so the device is counted. Nothing
+   * comes of it for the person, so its own failures are ignored.
+   */
+  async function reportAttestationFailure(
+    challenge: string,
+    reason: AttestationFailureReason,
+  ) {
+    try {
+      await request('POST', '/app/attestation', {
+        json: {
+          clientId,
+          platform: device.os === 'ios' ? 'apple' : 'android',
+          challenge,
+          error: reason,
+          ...options.deviceDetails,
+        },
+      })
+    } catch {
+      // Network or IAS errors: the next failure is reported again.
+    }
   }
 
   /** Same install key, no new evidence. Needs an app login. */
