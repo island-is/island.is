@@ -148,7 +148,7 @@ export function signWithInstallKey(data: string): Promise<string> {
 /**
  * Shows the biometric prompt and signs like `signWithInstallKey`. Rejects
  * with ERR_DEVICE_KEY_INVALIDATED without prompting when the enrolled
- * biometrics changed since the key was created.
+ * biometrics changed, or were all removed, since the key was created.
  */
 export function signWithBiometricKey(
   data: string,

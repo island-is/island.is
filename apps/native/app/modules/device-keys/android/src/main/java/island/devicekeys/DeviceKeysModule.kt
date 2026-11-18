@@ -218,6 +218,14 @@ class DeviceKeysModule : Module() {
       return promise.reject(exception("FAILED", "Could not prepare the signature", e))
     }
 
+    // Removing every fingerprint doesn't invalidate the key on every phone, but
+    // it can't be used again: enrolling one invalidates it. As on iOS.
+    if (BiometricManager.from(activity).canAuthenticate(BIOMETRIC_STRONG) ==
+      BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED
+    ) {
+      return promise.reject(exception("INVALIDATED", "The enrolled biometrics were removed"))
+    }
+
     val callback = object : BiometricPrompt.AuthenticationCallback() {
       override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
         try {
@@ -257,7 +265,8 @@ class DeviceKeysModule : Module() {
     BiometricPrompt.ERROR_TIMEOUT -> "CANCELLED"
     BiometricPrompt.ERROR_LOCKOUT,
     BiometricPrompt.ERROR_LOCKOUT_PERMANENT -> "LOCKOUT"
-    BiometricPrompt.ERROR_NO_BIOMETRICS,
+    // Removed while the prompt was up.
+    BiometricPrompt.ERROR_NO_BIOMETRICS -> "INVALIDATED"
     BiometricPrompt.ERROR_HW_NOT_PRESENT,
     BiometricPrompt.ERROR_HW_UNAVAILABLE,
     BiometricPrompt.ERROR_SECURITY_UPDATE_REQUIRED -> "BIOMETRICS_UNAVAILABLE"
