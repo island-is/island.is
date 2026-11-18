@@ -42,6 +42,8 @@ export const en: TranslatedMessages = {
     "Couldn't confirm the code. Please start again.",
   'login.error.declined': 'User not found.',
   'login.error.expired': 'The request timed out. Try again.',
+  'login.error.deviceCheckUnavailable':
+    "Couldn't log you in right now. Try again in a few minutes.",
   'login.error.failed': "Couldn't log you in. Try again.",
 
   // app lock

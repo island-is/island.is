@@ -74,6 +74,24 @@ export function isAppLoginRemoved(error: unknown) {
 }
 
 /**
+ * IAS no longer knows the attestation challenge: it expired, e.g. while the
+ * app was in the background, or was used already. A new one works.
+ */
+export function isAttestationChallengeUnknown(error: unknown) {
+  return (
+    error instanceof IasError &&
+    error.endpoint === 'POST /app/attestation' &&
+    error.code === 'invalid_grant'
+  )
+}
+
+/** iOS: Apple's App Attest service is down. It works again later. */
+export function isAppAttestUnavailable(error: unknown) {
+  const code: DeviceKeyErrorCode = 'ERR_DEVICE_KEY_ATTESTATION_UNAVAILABLE'
+  return (error as { code?: unknown } | null)?.code === code
+}
+
+/**
  * IAS refused an electronic ID request over a limit: requests per install,
  * logins per phone number or kennitala, SMS codes per number, or requests
  * still waiting for an answer. Nothing was sent.

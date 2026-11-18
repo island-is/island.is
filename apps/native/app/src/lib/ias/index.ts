@@ -4,6 +4,7 @@ export type { DeviceDetails, IasClientOptions } from './client'
 export {
   getIasErrorCode,
   IasError,
+  isAppAttestUnavailable,
   isAppLoginRemoved,
   isBiometricKeyInvalidated,
   isTooManyElectronicIdRequests,

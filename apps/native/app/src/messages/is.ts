@@ -41,6 +41,8 @@ export const is = {
     'Ekki tókst að staðfesta kóða. Vinsamlegast byrjaðu upp á nýtt.',
   'login.error.declined': 'Notandi finnst ekki.',
   'login.error.expired': 'Beiðnin rann út. Reyndu aftur.',
+  'login.error.deviceCheckUnavailable':
+    'Ekki tókst að skrá þig inn eins og er. Reyndu aftur eftir nokkrar mínútur.',
   'login.error.failed': 'Ekki tókst að skrá þig inn. Reyndu aftur.',
 
   // app lock

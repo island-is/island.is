@@ -2,7 +2,9 @@ import type { DeviceKey } from '../../../modules/device-keys'
 import {
   getIasErrorCode,
   IasError,
+  isAppAttestUnavailable,
   isAppLoginRemoved,
+  isAttestationChallengeUnknown,
   isBiometricKeyInvalidated,
 } from './errors'
 import { attestationPop, deviceKeyAssertion, dpopProof } from './jwt'
@@ -75,6 +77,9 @@ const CIBA_GRANT = 'urn:openid:params:grant-type:ciba'
 const DEVICE_KEY_GRANT = 'urn:island.is:params:oauth:grant-type:device-key'
 // Renew a little early, for clock skew between the app and IAS.
 const RENEW_MARGIN_MS = 60_000
+// When Apple's App Attest service is down, the waits before trying again.
+// Most outages are short; the person is waiting to log in meanwhile.
+const APP_ATTEST_RETRY_DELAYS_MS = [2_000, 4_000]
 
 const encodeForm = (values: Record<string, string>) =>
   Object.entries(values)
@@ -165,8 +170,33 @@ export function createIasClient(options: IasClientOptions): IasClient {
     return challenge
   }
 
-  /** A new install key, attested (spec section 1). */
+  /**
+   * A new install key, attested (spec section 1). Starts again with a new
+   * challenge once when IAS no longer knows the first, and a little later
+   * when Apple's service is down.
+   */
   const attestNewInstall = shared(async (): Promise<StoredAttestation> => {
+    let challengeRenewed = false
+    let appAttestRetries = 0
+    for (;;) {
+      try {
+        return await attestInstall()
+      } catch (error) {
+        if (isAttestationChallengeUnknown(error) && !challengeRenewed) {
+          challengeRenewed = true
+        } else if (
+          isAppAttestUnavailable(error) &&
+          appAttestRetries < APP_ATTEST_RETRY_DELAYS_MS.length
+        ) {
+          await sleep(APP_ATTEST_RETRY_DELAYS_MS[appAttestRetries++])
+        } else {
+          throw error
+        }
+      }
+    }
+  })
+
+  async function attestInstall(): Promise<StoredAttestation> {
     const challenge = await getAttestationChallenge()
     // On Android the key's attestation certificate carries the challenge.
     const key = await device.generateInstallKey(
@@ -186,7 +216,7 @@ export function createIasClient(options: IasClientOptions): IasClient {
       { json: body },
     )
     return saveAttestation(response, key, 'POST /app/attestation')
-  })
+  }
 
   /** Same install key, no new evidence. Needs an app login. */
   const renew = shared(async () => {
