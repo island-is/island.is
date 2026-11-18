@@ -70,9 +70,8 @@ export const incomePlanSubSection = buildSubSection({
           width: 'half',
           isSearchable: true,
           options: ({ externalData }) => {
-            const { categorizedIncomeTypes = [] } = getApplicationExternalData(
-              externalData,
-            )
+            const { categorizedIncomeTypes = [] } =
+              getApplicationExternalData(externalData)
             return getCategoriesOptions(categorizedIncomeTypes)
           },
         },
@@ -87,9 +86,8 @@ export const incomePlanSubSection = buildSubSection({
             watchValues: 'incomeCategory',
           },
           options: ({ externalData }, activeField) => {
-            const { categorizedIncomeTypes = [] } = getApplicationExternalData(
-              externalData,
-            )
+            const { categorizedIncomeTypes = [] } =
+              getApplicationExternalData(externalData)
 
             return getTypesOptions(
               categorizedIncomeTypes,
