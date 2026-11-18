@@ -9,30 +9,30 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    # TEMPORARY (chore/upgrade-nx-22): Storybook 10 requires Node >= 20.19, but the
-    # arc-shared runner image is on older Node. This overrides the Node version for
-    # all CI jobs so we can validate the pipeline on Node 22 before the platform team
-    # bumps the runner image. Runs before Corepack so yarn binds to the new Node.
-    # REMOVE once the arc-shared runner image is updated.
-    - name: Setup Node (temporary override)
-      uses: actions/setup-node@v4
-      with:
-        node-version: 22
+    # Node comes from the ARC runner image (island-is/infrastructure
+    # `internal-services/actions-runner/Dockerfile`), which must have the exact version of
+    # `engines.node` in package.json. Fails here when they differ: bump the runner image together
+    # with package.json.
+    - name: Check node version
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        expected="v$(jq -r '.engines.node' package.json)"
+        actual="$(node -v)"
+        ls -l "$(which node)"
+        if [[ "$actual" != "$expected" ]]; then
+          echo "::error title=Node version::The runner has Node $actual, package.json wants $expected. Update NODE_VERSION in the ARC runner image (island-is/infrastructure internal-services/actions-runner/Dockerfile)."
+          exit 1
+        fi
+        echo "Node $actual"
 
     - name: Corepack
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       run: |
         corepack enable
-
-    - name: Check node version
-      working-directory: ${{ inputs.working-directory }}
-      shell: bash
-      run: |
-        set -euo pipefail
-        node -v
         yarn --version
-        ls -l "$(which node)"
 
     - name: Get Cache Directory Paths
       working-directory: ${{ inputs.working-directory }}
