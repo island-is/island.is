@@ -57,8 +57,10 @@ export const en: TranslatedMessages = {
     'Too many electronic ID requests for now. Try again in a few minutes.',
   'applock.logout': 'Log out',
   'biometrics.close': 'Close',
-  'biometrics.notAllowedMessage':
-    "{biometricType} isn't allowed for the Ísland.is app. You can allow it in your device settings.",
+  'biometrics.turnedOffTitle': '{biometricType} is turned off for Ísland.is',
+  'biometrics.turnedOffMessage':
+    'Turn on {biometricType} for Ísland.is in your device settings.',
+  'biometrics.notNow': 'Not now',
   'biometrics.openSettings': 'Open settings',
 
   // log in again after the update
@@ -99,6 +101,11 @@ export const en: TranslatedMessages = {
     'Your device does not support biometrics',
   'onboarding.biometrics.useBiometricsButtonText': 'Use {biometricType}',
   'onboarding.biometrics.skipButtonText': 'Skip for now',
+  'onboarding.biometrics.turnedOffTitle':
+    'Allow {biometricType} for the Ísland.is app',
+  'onboarding.biometrics.turnedOffBody':
+    '{biometricType} is turned off for Ísland.is in your device settings. Without {biometricType} you open the app with electronic ID every time.',
+  'onboarding.biometrics.openSettingsButton': 'Open device settings',
   'onboarding.biometrics.type.faceId': 'Face ID',
   'onboarding.biometrics.type.biometrics': 'biometrics',
   'onboarding.biometrics.type.fingerprint': 'fingerprint',

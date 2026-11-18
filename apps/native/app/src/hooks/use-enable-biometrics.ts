@@ -57,20 +57,24 @@ export function useEnableBiometrics({
       { biometricType: biometricType.text },
     )
     if (result.error === 'not_available') {
-      // What iOS says once the person hasn't allowed it for the app.
+      // What iOS says once the person has turned it off for the app.
       Alert.alert(
-        title,
         intl.formatMessage(
-          { id: 'biometrics.notAllowedMessage' },
+          { id: 'biometrics.turnedOffTitle' },
+          { biometricType: biometricType.text },
+        ),
+        intl.formatMessage(
+          { id: 'biometrics.turnedOffMessage' },
           { biometricType: biometricType.text },
         ),
         [
           {
-            text: intl.formatMessage({ id: 'biometrics.close' }),
+            text: intl.formatMessage({ id: 'biometrics.notNow' }),
             style: 'cancel',
           },
           {
             text: intl.formatMessage({ id: 'biometrics.openSettings' }),
+            isPreferred: true,
             onPress: () => void Linking.openSettings(),
           },
         ],

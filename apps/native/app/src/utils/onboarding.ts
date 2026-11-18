@@ -1,4 +1,7 @@
-import { hasHardwareAsync } from 'expo-local-authentication'
+import {
+  hasHardwareAsync,
+  supportedAuthenticationTypesAsync,
+} from 'expo-local-authentication'
 import { router } from 'expo-router'
 import { isIos } from './devices'
 import { androidIsVersion33OrAbove } from './versions-check'
@@ -37,13 +40,17 @@ export async function getNextOnboardingStep(): Promise<
     hasOnboardedPrivacy,
   } = preferencesStore.getState()
 
-  const hasHardware = await hasHardwareAsync()
-  if (hasHardware) {
+  // iOS says there's no hardware also when biometrics are turned off for this
+  // app. The step then says where to turn them on, so only a phone without
+  // any skips it.
+  const hasBiometrics =
+    (await hasHardwareAsync()) ||
+    (isIos && (await supportedAuthenticationTypesAsync()).length > 0)
+  if (hasBiometrics) {
     if (!hasOnboardedBiometrics) {
       return 'biometrics'
     }
   } else {
-    // No biometric hardware — skip that step
     preferencesStore.setState({ hasOnboardedBiometrics: true })
   }
 

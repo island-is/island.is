@@ -120,8 +120,15 @@ export default function SettingsScreen() {
   } = usePreferencesStore()
 
   const isInfoDismissed = dismissed.includes('userSettingsInformational')
-  const { authenticationTypes, isEnrolledBiometrics } = useUiStore()
+  const { authenticationTypes, isEnrolledBiometrics, hasBiometricHardware } =
+    useUiStore()
   const biometricType = useBiometricType(authenticationTypes)
+  // Turned off for this app in the phone's settings: turning it on here says
+  // where to turn it back on.
+  const isBiometricsTurnedOff =
+    Platform.OS === 'ios' &&
+    authenticationTypes.length > 0 &&
+    !hasBiometricHardware
   const isPasskeyEnabled = useFeatureFlag('isPasskeyEnabled', false)
 
   // Biometrics are a key registered with IAS.
@@ -531,7 +538,7 @@ export default function SettingsScreen() {
                 ? intl.formatMessage({
                     id: 'onboarding.biometrics.noAuthenticationTypes',
                   })
-                : isEnrolledBiometrics
+                : isEnrolledBiometrics || isBiometricsTurnedOff
                 ? intl.formatMessage(
                     { id: 'settings.security.enableBiometricsDescription' },
                     { biometricType: biometricType.text },
@@ -545,7 +552,10 @@ export default function SettingsScreen() {
               <View>
                 <Switch
                   onValueChange={(value) => void onBiometricsChange(value)}
-                  disabled={!isEnrolledBiometrics || isEnabling}
+                  disabled={
+                    (!isEnrolledBiometrics && !isBiometricsTurnedOff) ||
+                    isEnabling
+                  }
                   value={hasBiometricKey}
                   thumbColor={Platform.select({
                     android: theme.tokens.app.background.neutral,

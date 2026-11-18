@@ -56,8 +56,10 @@ export const is = {
     'Of margar beiðnir um rafræn skilríki í bili. Reyndu aftur eftir nokkrar mínútur.',
   'applock.logout': 'Útskrá',
   'biometrics.close': 'Loka',
-  'biometrics.notAllowedMessage':
-    '{biometricType} er ekki leyft fyrir Ísland.is appið. Þú getur leyft það í stillingum tækisins.',
+  'biometrics.turnedOffTitle': 'Slökkt er á {biometricType} fyrir Ísland.is',
+  'biometrics.turnedOffMessage':
+    'Kveiktu á {biometricType} fyrir Ísland.is í stillingum tækisins.',
+  'biometrics.notNow': 'Ekki núna',
   'biometrics.openSettings': 'Opna stillingar',
 
   // log in again after the update
@@ -97,6 +99,11 @@ export const is = {
     'Tækið hjá þér er ekki með stuðning fyrir lífkenni',
   'onboarding.biometrics.useBiometricsButtonText': 'Nota {biometricType}',
   'onboarding.biometrics.skipButtonText': 'Sleppa því í bili',
+  'onboarding.biometrics.turnedOffTitle':
+    'Leyfðu {biometricType} fyrir Ísland.is appið',
+  'onboarding.biometrics.turnedOffBody':
+    'Slökkt er á {biometricType} fyrir Ísland.is í stillingum tækisins. Án {biometricType} opnar þú appið með rafrænum skilríkjum í hvert skipti.',
+  'onboarding.biometrics.openSettingsButton': 'Opna stillingar tækisins',
   'onboarding.biometrics.type.faceId': 'Face ID',
   'onboarding.biometrics.type.biometrics': 'lífkenni',
   'onboarding.biometrics.type.fingerprint': 'fingrafar',

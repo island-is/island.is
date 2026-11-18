@@ -1,5 +1,6 @@
 import {
   AuthenticationType,
+  hasHardwareAsync,
   isEnrolledAsync,
   supportedAuthenticationTypesAsync,
 } from 'expo-local-authentication'
@@ -18,6 +19,11 @@ export interface UIStore {
   applicationQuery: string
   authenticationTypes: AuthenticationType[]
   isEnrolledBiometrics: boolean
+  /**
+   * False on a phone without biometrics, and on iOS also when the person has
+   * turned them off for this app. Then the type is still known.
+   */
+  hasBiometricHardware: boolean
   setInboxQuery(query: string): void
   setApplicationQuery(query: string): void
 }
@@ -33,6 +39,7 @@ export const uiStore = create<UIStore>((set) => ({
   applicationQuery: '',
   authenticationTypes: [],
   isEnrolledBiometrics: false,
+  hasBiometricHardware: true,
   setInboxQuery(inboxQuery: string) {
     set({ inboxQuery })
   },
@@ -50,6 +57,9 @@ function updateBiometricsStatus() {
   })
   isEnrolledAsync().then((isEnrolledBiometrics) => {
     uiStore.setState({ isEnrolledBiometrics })
+  })
+  hasHardwareAsync().then((hasBiometricHardware) => {
+    uiStore.setState({ hasBiometricHardware })
   })
 }
 
