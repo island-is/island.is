@@ -3,7 +3,7 @@ import { Image } from 'react-native'
 import styled from 'styled-components/native'
 import closeIcon from '../../assets/icons/close.png'
 import { useTokenColor } from '../../utils'
-import { font } from '../../utils/font'
+import { Typography } from '../typography/typography'
 
 const Host = styled.Pressable`
   overflow: hidden;
@@ -13,14 +13,6 @@ const Host = styled.Pressable`
   align-items: center;
   justify-content: center;
   padding: 8px;
-`
-
-const Text = styled.Text`
-  ${font({
-    fontSize: 14,
-    fontWeight: '600',
-    color: ({ theme }) => theme.tokens.interactive.foreground.primary,
-  })}
 `
 
 interface FilterChipProps {
@@ -52,17 +44,19 @@ export function FilterChip({
         ),
       })}
     >
-      <Text
-        style={{
-          color: tokenColor(
-            active
-              ? (t) => t.interactive.foreground.invert
-              : (t) => t.interactive.foreground.primary,
-          ),
-        }}
+      <Typography
+        size={14}
+        lineHeight={18}
+        weight="600"
+        maxFontSizeMultiplier={1.5}
+        color={tokenColor(
+          active
+            ? (t) => t.interactive.foreground.invert
+            : (t) => t.interactive.foreground.primary,
+        )}
       >
         {title}
-      </Text>
+      </Typography>
       {closable && (
         <Image
           source={closeIcon}

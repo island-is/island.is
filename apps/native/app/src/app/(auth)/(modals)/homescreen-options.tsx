@@ -144,7 +144,7 @@ export default function HomeOptionsScreen() {
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: theme.color.white }}
+      style={{ flex: 1, backgroundColor: theme.tokens.background.invert }}
       nestedScrollEnabled
       alwaysBounceVertical={false}
       contentInsetAdjustmentBehavior="automatic"
@@ -190,10 +190,12 @@ export default function HomeOptionsScreen() {
               <Switch
                 onValueChange={item.onValueChange}
                 value={item.enabled}
-                thumbColor={Platform.select({ android: theme.color.dark100 })}
+                thumbColor={Platform.select({
+                  android: theme.tokens.app.background.neutral,
+                })}
                 trackColor={{
-                  false: theme.color.dark200,
-                  true: theme.color.blue400,
+                  false: theme.tokens.app.border.neutral,
+                  true: theme.tokens.interactive.background.primary,
                 }}
               />
             </View>

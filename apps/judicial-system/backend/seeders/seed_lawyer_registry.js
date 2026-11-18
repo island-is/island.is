@@ -13,6 +13,7 @@ const testLawyers = [
     phone_number: '0000000',
     practice: 'Test Lögmannsstofa',
     is_litigator: true,
+    has_court_of_appeals_rights: true,
   },
 ]
 

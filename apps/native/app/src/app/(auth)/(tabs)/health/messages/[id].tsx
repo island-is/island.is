@@ -510,7 +510,7 @@ export default function HealthMessageDetailScreen() {
                       style={{
                         width: 24,
                         height: 24,
-                        tintColor: theme.color.blue400,
+                        tintColor: theme.tokens.interactive.foreground.primary,
                         marginHorizontal: 8,
                       }}
                     />
@@ -525,7 +525,7 @@ export default function HealthMessageDetailScreen() {
                       style={{
                         width: 24,
                         height: 24,
-                        tintColor: theme.color.blue400,
+                        tintColor: theme.tokens.interactive.foreground.primary,
                         marginHorizontal: 8,
                       }}
                     />

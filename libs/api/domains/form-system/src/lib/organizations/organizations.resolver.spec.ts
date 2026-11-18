@@ -1,8 +1,25 @@
-import { User } from '@island.is/auth-nest-tools'
+import { ScopesGuard, User } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
+import { Reflector } from '@nestjs/core'
+import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host'
 import { OrganizationTitleByNationalIdDataLoader } from '@island.is/cms'
 import { NotFoundException } from '@nestjs/common'
 import { OrganizationsResolver } from './organizations.resolver'
 import { OrganizationsService } from './organizations.service'
+
+describe('OrganizationsResolver.updateOrganizationLogo scopes', () => {
+  it.each([
+    { scope: [], allowed: false },
+    { scope: [AdminPortalScope.formSystem], allowed: true },
+  ])('allows=$allowed with scopes $scope', ({ scope, allowed }) => {
+    const context = new ExecutionContextHost(
+      [{ auth: { scope } }],
+      OrganizationsResolver,
+      OrganizationsResolver.prototype.updateOrganizationLogo,
+    )
+    expect(new ScopesGuard(new Reflector()).canActivate(context)).toBe(allowed)
+  })
+})
 
 describe('OrganizationsResolver.createOrganization', () => {
   const createOrganization = jest.fn()

@@ -13,10 +13,16 @@ The config has two halves, both editor-authored display structure only:
 - `outputSections` -- grouping, ordering, labels, markdown copy and
   presentation hints for the calculation result.
 
-Neither half carries field types, requiredness, options, number semantics or
+Neither half carries field types, requiredness, options, bounds or
 dependencies. That metadata comes from `TaxCalculator.inputFields` and
 `TaxCalculator.outputFields` in `libs/api/domains/tax-calculators`, and joins
 to this config by `key`.
+
+The one exception is the optional `numberType` (`currency | count | year |
+percentage | plain`) on number input values, output values, output item fields
+and the output total. It overrides the number semantic the API infers, for
+numbers RSK's spec can't tell apart (a year or a count would otherwise render
+as currency).
 
 ## Running unit tests
 

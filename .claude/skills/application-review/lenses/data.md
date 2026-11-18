@@ -52,7 +52,7 @@ submission is blocked, or money is wrong. It is medium otherwise.
     sends) with what the gate tests. A field submit reads only to log does
     not count. Gating on an optional payload, such as an image binary,
     where the record's id would do, is the usual stricter case.
-- **Why:** answers never delete (see framework-rules), so hidden values are
+- **Why:** answers never delete (see `libs/application/AGENTS.md`), so hidden values are
   validated, which blocks submit, or sent, which delivers wrong data.
 - **Severity:** high.
 - **Precedent:** #23495, #23716, #20891, #20392, #22548.
@@ -64,8 +64,7 @@ submission is blocked, or money is wrong. It is medium otherwise.
   `buildHiddenInput` with no default that zod then requires.
 - **Why:** it writes `''`, so `z.number()`, `z.nativeEnum()`, array and
   object schemas, and option filtering fail. Any unfiltered screen later in
-  the form surfaces that error invisibly (see framework-rules: single-field,
-  repeater child, provider and id-less multiField screens).
+  the form surfaces that error invisibly (see `libs/application/AGENTS.md`, Validation).
 - **Severity:** high when the schema rejects `''` and an unfiltered screen
   follows the clear, because submit is blocked. Medium otherwise.
 - **Precedent:** #23716, #21177, #20540, #20393.
@@ -169,3 +168,29 @@ submission is blocked, or money is wrong. It is medium otherwise.
   medium otherwise.
 - **Precedent:** #21672, #21042, #23774, #23749, #20798.
 - **Limit:** apply Suppressions A first.
+
+## D11. Stored external data over edited answers
+
+- **Flag:** in a template with an edit or change flow, a submit mapper or
+  rights/period calculation that prefers stored `externalData` (an
+  institution's earlier record) over an answer the edit form writes:
+  `externalData.x ?? answers.x`, or `if (externalData.x) { … }` that never
+  reads `answers.x`. List the keys each edit form writes, then trace every
+  one to the mapper.
+- **Why:** the stored record is the state before the edit. When it wins,
+  the change the user made never reaches the institution.
+- **Severity:** high.
+- **Precedent:** #24339.
+
+## D12. External codes classified by pattern
+
+- **Flag:** an institution's code (rights unit, status, category)
+  classified with `endsWith`, `startsWith`, `includes` or a regex. Find the
+  full list of codes, in a constant, fixture, OpenAPI spec or README, and
+  check every code lands in the right branch, combined codes especially.
+  When no list is in the repo, say so and ask.
+- **Why:** combined codes (`M-L-GR-SJ`) fail a suffix test and fall through
+  to `undefined` or the wrong branch.
+- **Severity:** high when it steers what is sent or who may apply; medium
+  otherwise.
+- **Precedent:** #24339.

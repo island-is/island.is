@@ -93,18 +93,21 @@ export const getSalaryAnalysisResult = (
     : undefined
 }
 
+// Answer first, like getBenchmarkVerdict: the stored result is the shell's
+// page-load copy (see above), so after a reload it can describe an analysis
+// older than the one the results screen just ran and mirrored here.
 export const salaryAnalysisNeedsImprovementPlan = (
   answers: FormValue,
   externalData?: ExternalData,
 ): boolean => {
-  const result = getSalaryAnalysisResult(externalData)
-  if (result) return hasMinimumSetOutliersInResult(result)
-
   const answerFlag = getValueViaPath<boolean>(
     answers,
     'salaryAnalysis.hasMinimumSetOutliers',
   )
-  return answerFlag === true
+  if (typeof answerFlag === 'boolean') return answerFlag
+
+  const result = getSalaryAnalysisResult(externalData)
+  return result ? hasMinimumSetOutliersInResult(result) : false
 }
 
 // DRAFT only. Postponing deliberately satisfies this — that is what the

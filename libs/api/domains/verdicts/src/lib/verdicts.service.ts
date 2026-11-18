@@ -1,7 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
-import type { ConfigType } from '@nestjs/config'
-import type { EnhancedFetchAPI } from '@island.is/clients/middlewares'
-import { parse } from 'node-html-parser'
+import { Injectable } from '@nestjs/common'
 import { VerdictsClientService } from '@island.is/clients/verdicts'
 import { VerdictsInput } from './dto/verdicts.input'
 import { VerdictByIdResponse, VerdictsResponse } from './dto/verdicts.response'
@@ -18,19 +15,12 @@ import { ScheduleTypesResponse } from './dto/scheduleTypes.response'
 import { SupremeCourtAppealsInput } from './dto/supremeCourtAppeals.input'
 import { SupremeCourtAppealsResponse } from './dto/supremeCourtAppeals.response'
 import { CourtOfAppealAppealsResponse } from './dto/courtOfAppealAppeals.response'
-import { VerdictsApiModuleConfig } from './verdicts.config'
-import { VERDICTS_FETCH } from './verdicts.fetch'
+import { CourtOfAppealAppealsInput } from './dto/courtOfAppealAppeals.input'
 import { SupremeCourtDeterminationCaseTypesResponse } from './dto/supremeCourtDeterminationCaseTypes.response'
 
 @Injectable()
 export class VerdictsService {
-  constructor(
-    private readonly verdictsClientService: VerdictsClientService,
-    @Inject(VerdictsApiModuleConfig.KEY)
-    private readonly config: ConfigType<typeof VerdictsApiModuleConfig>,
-    @Inject(VERDICTS_FETCH)
-    private readonly fetch: EnhancedFetchAPI,
-  ) {}
+  constructor(private readonly verdictsClientService: VerdictsClientService) {}
 
   async getVerdicts(input: VerdictsInput): Promise<VerdictsResponse> {
     const response = await this.verdictsClientService.getVerdicts({
@@ -117,44 +107,10 @@ export class VerdictsService {
     return this.verdictsClientService.getSupremeCourtAppeals(input)
   }
 
-  async getCourtOfAppealAppeals(): Promise<CourtOfAppealAppealsResponse> {
-    const items: CourtOfAppealAppealsResponse['items'] = []
-
-    const response = await this.fetch(this.config.courtOfAppealAppealsUrl)
-    const html = await response.text()
-    const dom = parse(html)
-
-    const cards = dom.querySelectorAll('.sentence.box.sentencelist.clearfix')
-
-    for (let i = 0; i < cards.length; i++) {
-      const card = cards[i]
-
-      const caseNumber = card.querySelector('h2')?.textContent?.trim()
-      if (!caseNumber) continue
-
-      const appealDate = card.querySelector('.dags')?.textContent?.trim()
-
-      const verdictDate = card
-        .querySelector('.scheduled-info.green')
-        ?.textContent?.trim()
-
-      card.querySelector('.dags')?.remove()
-
-      const title = card.querySelector('.casetitle')?.textContent?.trim() ?? ''
-
-      items.push({
-        id: String(i),
-        title,
-        caseNumber,
-        appealDate,
-        verdictDate,
-      })
-    }
-
-    return {
-      items,
-      total: items.length,
-    }
+  async getCourtOfAppealAppeals(
+    input: CourtOfAppealAppealsInput,
+  ): Promise<CourtOfAppealAppealsResponse> {
+    return this.verdictsClientService.getCourtOfAppealAppeals(input)
   }
 
   async getScheduleTypes(): Promise<ScheduleTypesResponse> {

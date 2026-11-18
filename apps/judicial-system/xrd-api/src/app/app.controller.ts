@@ -112,6 +112,34 @@ export class AppController {
     }
   }
 
+  @Get('defenders/court-of-appeals')
+  @ApiOkResponse({
+    type: [Defender],
+    description:
+      'Returns litigators with rights to appear before Landsréttur (court of appeals)',
+  })
+  @ApiResponse({
+    status: 502,
+    description: 'Failed to retrieve court of appeals defenders',
+  })
+  async getCourtOfAppealsLawyers(): Promise<Defender[]> {
+    try {
+      this.logger.debug(
+        'Retrieving court of appeals litigators from lawyer registry',
+      )
+
+      return await this.appService.getCourtOfAppealsLitigators()
+    } catch (error) {
+      this.logger.error('Failed to retrieve court of appeals lawyers', {
+        error,
+      })
+
+      throw new BadGatewayException(
+        'Failed to retrieve court of appeals lawyers',
+      )
+    }
+  }
+
   // update by police subpoena id
   @Patch('subpoena/:policeSubpoenaId')
   @ApiResponse({ status: 400, description: 'Invalid input' })

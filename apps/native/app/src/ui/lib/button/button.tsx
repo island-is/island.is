@@ -15,6 +15,7 @@ import {
 import styled, { useTheme } from 'styled-components/native'
 import { TokenSelector, useTokenColor } from '../../utils'
 import { fontByWeight } from '../../utils/font'
+import { useFontScale } from '../typography/typography'
 
 interface ButtonBaseProps extends Omit<PressableProps, 'style'> {
   isTransparent?: boolean
@@ -221,6 +222,22 @@ export function Button({
   const isUtility = variant === 'utility' || variant === 'utilityFilled'
   const smallPadding =
     size === 'small' ? smallPaddingVertical[variant] : undefined
+  // Capped at 150 % so the label doesn't outgrow the button. textProps can
+  // lower the cap or turn scaling off.
+  const textCap = textProps?.maxFontSizeMultiplier
+  const fontScale = useFontScale(
+    textCap && textCap >= 1 ? Math.min(textCap, 1.5) : 1.5,
+    textProps?.allowFontScaling,
+  )
+  const { fontSize, lineHeight, letterSpacing } = {
+    ...textStyles[variant],
+    ...textStyle,
+  }
+  const scaledText = {
+    fontSize: fontSize && fontSize * fontScale,
+    lineHeight: lineHeight && lineHeight * fontScale,
+    letterSpacing: letterSpacing && letterSpacing * fontScale,
+  }
 
   const getColours = (pressed: boolean) =>
     colours[variant][
@@ -308,12 +325,14 @@ export function Button({
               {title && (
                 <Text
                   {...textProps}
+                  allowFontScaling={false}
                   isUtility={isUtility}
                   style={[
                     textStyles[variant],
                     { color: textColor },
                     ellipsis ? { flexShrink: 1 } : undefined,
                     textStyle,
+                    scaledText,
                   ]}
                   numberOfLines={ellipsis ? 1 : undefined}
                   ellipsizeMode={ellipsis ? 'tail' : undefined}

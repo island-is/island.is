@@ -63,7 +63,7 @@ const WithdrawnAppealCase = () => {
         <PageTitle>{strings.title}</PageTitle>
         <Box component="section" marginBottom={5}>
           <SectionHeading title={core.appealCaseNumberHeading} />
-          <CaseNumberInput />
+          <CaseNumberInput appealCase={targetAppealCase} />
         </Box>
         <Box component="section">
           <SectionHeading

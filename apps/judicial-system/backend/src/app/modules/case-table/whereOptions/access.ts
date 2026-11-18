@@ -22,6 +22,7 @@ import { CaseAccessOptions, CaseIncludes } from '../caseTable.types'
 import {
   buildEventLogExistsCondition,
   buildHasAppealedVerdictCondition,
+  buildHasSentAppealSummonsCondition,
   buildIsSentToPrisonAdminExistsCondition,
 } from './conditions'
 
@@ -38,7 +39,6 @@ import {
 // association itself keeps its own version.
 const courtOfAppealsAccessIncludes: CaseIncludes = {
   appealCase: { attributes: [], required: false },
-  verdictAppealCase: { attributes: [], required: false },
 }
 
 const courtOfAppealsRequestCasesAccessWhereOptions = {
@@ -92,17 +92,16 @@ const courtOfAppealsIndictmentsAccessWhereOptions = {
         AND ac."appeal_received_by_court_date" IS NOT NULL
     )`),
     // An appealed verdict reaches the court earlier than an appealed ruling
-    // does. The clauses above all wait for receipt; a verdict appeal is filed
-    // and then waits for the court to pick it up, so the court has to see it
-    // from the moment it is filed or it could never receive it at all (owner,
-    // 2026-09-17). Every state of one is therefore the court's to see, so this
-    // asks only that the appeal exists.
+    // does. The clauses above all wait for receipt; a verdict appeal waits for
+    // the court to pick it up, so the court has to see it before receiving it
+    // or it could never receive it at all. What opens it to the court is the
+    // first appeal summons sent there, and from then on every state of the
+    // appeal is the court's to see.
     //
-    // The verdictAppealCase association is scoped to appeal_type = VERDICT, so
-    // the join having found a row is the whole of the question. The combined
-    // rule asks for that join, which is why this can be an alias reference
-    // rather than the correlated EXISTS it used to be.
-    { '$verdictAppealCase.id$': { [Op.not]: null } },
+    // This arm admits the case. A list of verdict appeals has to ask the same
+    // question again for itself: a case can pass on any of the arms above
+    // while its verdict appeal is still unsent.
+    buildHasSentAppealSummonsCondition(),
   ],
 }
 

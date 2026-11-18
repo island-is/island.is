@@ -281,7 +281,11 @@ export const DocumentListItem = ({
                     >
                       {/* Shrinks so a long file name wraps inside the chip
                           instead of pushing it past the message body. */}
-                      <Typography variant="eyebrow" style={{ flexShrink: 1 }}>
+                      <Typography
+                        variant="eyebrow"
+                        maxFontSizeMultiplier={1.5}
+                        style={{ flexShrink: 1 }}
+                      >
                         {attachment.label}
                       </Typography>
                       <AttachmentIcon>
