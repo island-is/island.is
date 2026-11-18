@@ -251,10 +251,7 @@ const canDefenceUserViewCaseFile = ({
         CaseFileCategory.PROSECUTOR_VERDICT_APPEAL_STATEMENT_CASE_FILE
 
     const hasConfirmedAppealAppointment =
-      Defendant.isConfirmedAppealDefenderOfDefendant(
-        nationalId,
-        defendants,
-      ) ||
+      Defendant.isConfirmedAppealDefenderOfDefendant(nationalId, defendants) ||
       CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
         nationalId,
         civilClaimants,
