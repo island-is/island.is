@@ -5,6 +5,7 @@ import { router } from 'expo-router'
 import styled from 'styled-components'
 
 import { Button, theme, Typography } from '@/ui'
+import { useTheme } from 'styled-components/native'
 import { FilteringCheckbox } from '@/components/filtering-checkbox'
 import {
   healthMessagesFilterStore,
@@ -19,6 +20,7 @@ const ButtonContainer = styled(View)`
 `
 
 export default function HealthMessagesFilterScreen() {
+  const { tokens } = useTheme()
   const intl = useIntl()
   const store = useHealthMessagesFilterStore()
 
@@ -71,8 +73,8 @@ export default function HealthMessagesFilterScreen() {
                 weight="400"
                 color={
                   isSelected
-                    ? theme.tokens.interactive.foreground.primary
-                    : theme.tokens.foreground.primaryMinimal
+                    ? tokens.interactive.foreground.primary
+                    : tokens.foreground.primaryMinimal
                 }
               >
                 {intl.formatMessage({ id: 'inbox.filterClearButton' })}

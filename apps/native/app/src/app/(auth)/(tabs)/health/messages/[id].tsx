@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useTheme } from 'styled-components/native'
 import { gql, useApolloClient } from '@apollo/client'
 import { useIntl } from 'react-intl'
 import {
@@ -98,6 +99,7 @@ const replyBlockedMessageId = (
 }
 
 export default function HealthMessageDetailScreen() {
+  const { tokens } = useTheme()
   const { id, justCreated } = useLocalSearchParams<{
     id: string
     justCreated?: string
@@ -510,7 +512,7 @@ export default function HealthMessageDetailScreen() {
                       style={{
                         width: 24,
                         height: 24,
-                        tintColor: theme.tokens.interactive.foreground.primary,
+                        tintColor: tokens.interactive.foreground.primary,
                         marginHorizontal: 8,
                       }}
                     />
@@ -525,7 +527,7 @@ export default function HealthMessageDetailScreen() {
                       style={{
                         width: 24,
                         height: 24,
-                        tintColor: theme.tokens.interactive.foreground.primary,
+                        tintColor: tokens.interactive.foreground.primary,
                         marginHorizontal: 8,
                       }}
                     />
