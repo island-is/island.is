@@ -32,6 +32,7 @@ export default function TabLayout() {
   usePreferencesStore((s) => s.hasOnboardedNotifications)
   usePreferencesStore((s) => s.hasOnboardedPrivacy)
   useUiStore((s) => s.authenticationTypes.length)
+  useUiStore((s) => s.hasStrongBiometricHardware)
   const isLocked = useAuthStore((s) => s.lockScreenActivatedAt !== undefined)
   const isSignedIn = useAuthStore((s) => !!s.nativeUser)
   const isOnboarding = usePathname().startsWith('/onboarding')

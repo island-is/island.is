@@ -6,25 +6,20 @@ import { preferencesStore } from '../stores/preferences-store'
 import { uiStore } from '../stores/ui-store'
 import { hasStrongBiometricHardwareAsync } from './biometrics'
 
+type OnboardingStep = 'biometrics' | 'notifications' | 'privacy'
+
 /**
- * The onboarding step to come back to after an unlock, for someone who left
- * part way through. That includes biometrics: turning them on for the app in
- * the phone's settings restarts the app.
+ * The first step not done yet, or null when onboarding is done.
+ * `hasBiometrics`: biometrics that can unlock the app, also when they're
+ * turned off for it. iOS then says there's no hardware, and the step says
+ * where to turn them on, so only a phone without any skips it.
  */
-export function getUnfinishedOnboardingStep():
-  | 'biometrics'
-  | 'notifications'
-  | 'privacy'
-  | null {
+function getFirstStepLeft(hasBiometrics: boolean): OnboardingStep | null {
   const {
     hasOnboardedBiometrics,
     hasOnboardedNotifications,
     hasOnboardedPrivacy,
   } = preferencesStore.getState()
-  // Biometrics that can unlock the app, also when they're turned off for it.
-  const { authenticationTypes, hasStrongBiometricHardware } = uiStore.getState()
-  const hasBiometrics =
-    hasStrongBiometricHardware || (isIos && authenticationTypes.length > 0)
   if (hasBiometrics && !hasOnboardedBiometrics) {
     return 'biometrics'
   }
@@ -38,43 +33,29 @@ export function getUnfinishedOnboardingStep():
 }
 
 /**
+ * The onboarding step to come back to after an unlock, for someone who left
+ * part way through. That includes biometrics: turning them on for the app in
+ * the phone's settings restarts the app.
+ */
+export function getUnfinishedOnboardingStep(): OnboardingStep | null {
+  const { authenticationTypes, hasStrongBiometricHardware } = uiStore.getState()
+  return getFirstStepLeft(
+    hasStrongBiometricHardware || (isIos && authenticationTypes.length > 0),
+  )
+}
+
+/**
  * Returns the next onboarding step that needs to be completed,
  * or null if onboarding is done.
  */
-export async function getNextOnboardingStep(): Promise<
-  'biometrics' | 'notifications' | 'privacy' | null
-> {
-  const {
-    hasOnboardedNotifications,
-    hasOnboardedBiometrics,
-    hasOnboardedPrivacy,
-  } = preferencesStore.getState()
-
-  // iOS says there's no hardware also when biometrics are turned off for this
-  // app. The step then says where to turn them on, so only a phone without
-  // any that can unlock the app skips it.
+export async function getNextOnboardingStep(): Promise<OnboardingStep | null> {
   const hasBiometrics =
     (await hasStrongBiometricHardwareAsync()) ||
     (isIos && (await supportedAuthenticationTypesAsync()).length > 0)
-  if (hasBiometrics) {
-    if (!hasOnboardedBiometrics) {
-      return 'biometrics'
-    }
-  } else {
+  if (!hasBiometrics) {
     preferencesStore.setState({ hasOnboardedBiometrics: true })
   }
-
-  if (isIos || androidIsVersion33OrAbove()) {
-    if (!hasOnboardedNotifications) {
-      return 'notifications'
-    }
-  }
-
-  if (!hasOnboardedPrivacy) {
-    return 'privacy'
-  }
-
-  return null
+  return getFirstStepLeft(hasBiometrics)
 }
 
 /**
