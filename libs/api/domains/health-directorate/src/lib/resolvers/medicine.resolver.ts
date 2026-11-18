@@ -9,7 +9,10 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import type { StepUpClaims } from '@island.is/auth/step-up'
+import {
+  StepUpTokenRejectedError,
+  type StepUpClaims,
+} from '@island.is/auth/step-up'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
@@ -26,6 +29,7 @@ import {
 import { HealthDirectorateResponse } from '.././dto/response.dto'
 import { HealthDirectorateService } from '.././health-directorate.service'
 import {
+  hashGrant,
   MedicineDelegationStepUpService,
   type MedicineDelegationStepUpOutcome,
 } from '.././medicine-delegation-step-up.service'
@@ -182,7 +186,7 @@ export class MedicineResolver {
         namespace,
         action: 'startMedicineDelegationStepUp',
         resources: input.nationalId,
-        meta: { method: stepUp.method },
+        meta: { method: stepUp.method, grant: hashGrant(user, input) },
       })
       return {
         success: false,
@@ -213,13 +217,19 @@ export class MedicineResolver {
       outcome = await this.stepUp.check(user, input.authReqId, input.delegation)
     } catch (error) {
       // An authentication that was made, but not by this person or not for this grant.
-      if (error instanceof ForbiddenException) {
+      if (
+        error instanceof ForbiddenException ||
+        error instanceof StepUpTokenRejectedError
+      ) {
         this.auditService.audit({
           auth: user,
           namespace,
           action: 'refuseMedicineDelegationStepUp',
           resources: input.delegation.nationalId,
-          meta: { reason: error.message },
+          meta: {
+            reason: error.message,
+            grant: hashGrant(user, input.delegation),
+          },
         })
       }
       throw error
@@ -257,6 +267,7 @@ export class MedicineResolver {
         to: input.to?.toISOString(),
         lookup: input.lookup === true,
         stepUp: stepUp != null,
+        grant: hashGrant(user, input),
         ...(stepUp && {
           stepUpAcr: stepUp.acr,
           stepUpAuthTime: stepUp.authTime.toISOString(),

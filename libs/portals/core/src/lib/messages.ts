@@ -238,6 +238,6 @@ export const m = defineMessages({
   stepUpUnavailable: {
     id: 'portals:step-up-unavailable',
     defaultMessage:
-      'Ekki er hægt að staðfesta með rafrænum skilríkjum, t.d. ef þú skráðir þig inn með skilríkjum á korti eða staðfesting er ekki í boði eins og er.',
+      'Ekki er hægt að staðfesta með rafrænum skilríkjum, t.d. ef þú skráðir þig inn með skilríkjum á korti eða staðfesting er ekki í boði eins og er. Aðgerðin var ekki framkvæmd.',
   },
 })

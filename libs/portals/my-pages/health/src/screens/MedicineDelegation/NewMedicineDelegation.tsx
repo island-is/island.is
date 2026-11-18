@@ -235,7 +235,11 @@ const NewMedicineDelegation = () => {
             onConfirmed={handleCreated}
             onRetry={handleSubmit}
             retrying={loading}
-            context={formState?.name}
+            context={`${formatMessage(messages.medicineDelegation)}: ${
+              formState?.name ?? ''
+            }`}
+            // An answer can be lost after the delegation was saved, and the next check then says expired.
+            messages={{ expired: messages.medicineDelegationStepUpExpired }}
             onBack={handleClose}
           />
         </Modal>

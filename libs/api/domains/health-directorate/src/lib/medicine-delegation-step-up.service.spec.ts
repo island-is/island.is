@@ -123,7 +123,7 @@ describe('MedicineDelegationStepUpService', () => {
 
       expect(ciba.start).toHaveBeenCalledWith({
         userToken: 'Bearer user-token',
-        bindingMessage: 'Lyfjaumboð til Jón Jónsson',
+        bindingMessage: 'Lyfjaheimild: Jón Jónsson',
         contextHash: hashGrant(user, input),
       })
     })

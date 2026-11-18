@@ -25,7 +25,8 @@ export const MEDICINE_DELEGATION_CIBA_CLIENT = 'MedicineDelegationCibaClient'
 
 const FAKE_LOGIN_ACR = '0'
 
-const BINDING_MESSAGE_PREFIX = 'Lyfjaumboð til '
+// A colon, so the name can stay in the nominative the registry gives it.
+const BINDING_MESSAGE_PREFIX = 'Lyfjaheimild: '
 const BINDING_MESSAGE_MAX_LENGTH = 100
 
 /**
