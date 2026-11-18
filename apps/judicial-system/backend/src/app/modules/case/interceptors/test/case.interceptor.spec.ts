@@ -1084,6 +1084,11 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     defendantId: 'other_defendant',
     eventType: AppealEventType.APPEAL_STATEMENT_SENT,
   }
+  const prosecutionStatementEvent = {
+    id: 'prosecution_statement_event',
+    eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+    userRole: UserRole.PROSECUTOR,
+  }
   const coDefendantProsecutionAppeal = {
     id: 'co_defendant_prosecution_appeal',
     defendantId: 'other_defendant',
@@ -1105,6 +1110,7 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     const appealEventLogs = [
       ownEvent,
       otherStatementEvent,
+      prosecutionStatementEvent,
       coDefendantProsecutionAppeal,
     ]
 
@@ -1158,7 +1164,7 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     mockHandle.mockReset()
   })
 
-  it('keeps own-party rows and co-defendant prosecution appeal events', async () => {
+  it('keeps own-party rows, co-defendant statement filings, and prosecution appeal events', async () => {
     const theCase = makeIndictmentWithVerdictAppeal()
     mockRequest.mockImplementationOnce(() => ({
       user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
@@ -1188,8 +1194,35 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     ).toEqual(['own_deadline'])
     expect(result.verdictAppealCase.appealEventLogs.map((e) => e.id)).toEqual([
       'own_event',
+      'other_statement_event',
+      'prosecution_statement_event',
       'co_defendant_prosecution_appeal',
     ])
+    // Co-party / unscoped prosecution SENT rows are filing-status only.
+    expect(
+      result.verdictAppealCase.appealEventLogs.find(
+        (e) => e.id === 'other_statement_event',
+      ),
+    ).toEqual({
+      id: 'other_statement_event',
+      eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+      defendantId: 'other_defendant',
+      created: undefined,
+      userRole: undefined,
+      civilClaimantId: undefined,
+    })
+    expect(
+      result.verdictAppealCase.appealEventLogs.find(
+        (e) => e.id === 'prosecution_statement_event',
+      ),
+    ).toEqual({
+      id: 'prosecution_statement_event',
+      eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+      userRole: UserRole.PROSECUTOR,
+      created: undefined,
+      defendantId: undefined,
+      civilClaimantId: undefined,
+    })
   })
 
   it('leaves verdict-appeal deadlines unfiltered for non-defence users', async () => {
@@ -1223,6 +1256,7 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     expect(result.verdictAppealCase.appealEventLogs.map((e) => e.id)).toEqual([
       'own_event',
       'other_statement_event',
+      'prosecution_statement_event',
       'co_defendant_prosecution_appeal',
     ])
   })
@@ -1366,6 +1400,42 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
 
     expect(result.verdictAppealCase.statementDeadlines).toEqual([
       expect.objectContaining({ id: 'own_deadline', isExpired: true }),
+    ])
+
+    jest.restoreAllMocks()
+  })
+
+  it('keeps a midnight statement deadline open through its calendar day', async () => {
+    // own_deadline is 2026-11-15T00:00:00.000Z; the party has that whole day.
+    jest
+      .spyOn(Date, 'now')
+      .mockReturnValue(new Date('2026-11-15T12:00:00.000Z').getTime())
+
+    const theCase = makeIndictmentWithVerdictAppeal()
+    mockRequest.mockImplementationOnce(() => ({
+      user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+    }))
+    mockHandle.mockReturnValueOnce(of(theCase))
+
+    const interceptor = new CaseInterceptor({
+      findOriginalAncestorId: (c: { id?: string }) => Promise.resolve(c.id),
+    } as unknown as CaseRepositoryService)
+
+    const result = (await firstValueFrom(
+      interceptor.intercept(
+        {
+          switchToHttp: () => ({ getRequest: mockRequest }),
+        } as unknown as ExecutionContext,
+        { handle: mockHandle } as unknown as CallHandler,
+      ),
+    )) as {
+      verdictAppealCase: {
+        statementDeadlines: { id: string; isExpired?: boolean }[]
+      }
+    }
+
+    expect(result.verdictAppealCase.statementDeadlines).toEqual([
+      expect.objectContaining({ id: 'own_deadline', isExpired: false }),
     ])
 
     jest.restoreAllMocks()
