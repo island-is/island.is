@@ -4,6 +4,7 @@ import type {
 } from '../../../modules/device-keys'
 import type { AttestationFailureReason } from './errors'
 import {
+  AttestationLostError,
   DeviceAttestationError,
   getIasErrorCode,
   IasError,
@@ -313,11 +314,17 @@ export function createIasClient(options: IasClientOptions): IasClient {
     return attestation
   })
 
+  /**
+   * A client attestation to send. Only `allowNewKey` (before login) may make
+   * a new install key: after login the app login is bound to this one.
+   * `refused`: IAS refused the stored one although it hasn't expired.
+   */
   async function ensureAttested(
     allowNewKey: boolean,
+    refused = false,
   ): Promise<StoredAttestation> {
     const current = await currentAttestation()
-    if (current && isFresh(current)) {
+    if (current && isFresh(current) && !refused) {
       return current
     }
     if (current) {
@@ -328,6 +335,9 @@ export function createIasClient(options: IasClientOptions): IasClient {
           throw error
         }
       }
+    }
+    if (!allowNewKey) {
+      throw new AttestationLostError()
     }
     return attestNewInstall()
   }
@@ -447,11 +457,12 @@ export function createIasClient(options: IasClientOptions): IasClient {
     }
 
     let response = await send(method, path, requestOptions)
-    // An expired or invalid attestation: renew it and retry once.
+    // An expired or invalid attestation: renew it, or before login attest a
+    // new key when there's no app login to renew with, and retry once.
     if (requestOptions.attested && response.status === 401) {
       const { error } = await readError(response.clone())
       if (error === 'invalid_client') {
-        await renew()
+        await ensureAttested(requestOptions.allowNewKey ?? false, true)
         response = await send(method, path, requestOptions)
       }
     }

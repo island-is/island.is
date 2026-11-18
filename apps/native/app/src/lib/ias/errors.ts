@@ -62,6 +62,23 @@ export function getIasErrorCode(
 }
 
 /**
+ * The install's client attestation is gone, e.g. its keychain item was lost,
+ * so its app login can't be used: renewal needs it. Fails as IAS refuses a
+ * renewal without an app login, so the person logs in again.
+ */
+export class AttestationLostError extends IasError {
+  constructor() {
+    super(
+      'invalid_grant',
+      'This install has no client attestation',
+      0,
+      'POST /app/attestation/renew',
+    )
+    this.name = 'AttestationLostError'
+  }
+}
+
+/**
  * The install has no app login any more (renewal refused), so the session
  * is gone and the person logs in again.
  */
