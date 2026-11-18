@@ -5,8 +5,9 @@ lists framework behaviour that a single template does not reveal.
 
 ## Layout
 
-- A template's server actions live in
-  `template-api-modules/src/lib/modules/templates/<path>`.
+- A template's server actions usually live in
+  `template-api-modules/src/lib/modules/templates/<path>`; some modules are
+  renamed.
 - Adding an application type: follow "Making a new application" in
   `templates/examples/README.md`.
 - Settled business rules belong in a template's README, under a heading such
@@ -41,11 +42,12 @@ lists framework behaviour that a single template does not reveal.
   let a comparison of two fields pass when either is absent, and re-check
   the pair on submit. `.partial()` is also shallow.
 - **The client shows only errors for the current screen's ids.**
-  Single-field, repeater-child and provider screens, and multiFields whose
-  visible children lack ids, filter nothing: an error anywhere in the form
+  Single-field and provider screens, and multiFields whose visible
+  children lack ids, filter nothing: an error anywhere in the form
   blocks Continue with no message.
-- **Zod custom messages are translated only from a namespaced descriptor**
-  (`params: m.x`, id `namespace:key`).
+- **Only `.refine` and `.superRefine` messages reach the user,** translated
+  from a namespaced descriptor (`params: m.x`, id `namespace:key`). Built-in
+  checks such as `.min(1, m.x)` show the generic error.
 
 ## Answers and saving
 
@@ -84,8 +86,9 @@ lists framework behaviour that a single template does not reveal.
 - **`read: 'all'` or `write: 'all'` sends every answer and all of
   `externalData` to that browser.** Give explicit key lists to any role
   that must not see other parties' data.
-- **The client cannot write `externalData`,** so what a server action
-  stored there can be trusted.
+- **The client cannot write `externalData` directly,** but it can re-run
+  any provider in its role's `api` list. Trust a stored value only as far
+  as the inputs its action read.
 - **A data provider needs its `actionId` in the role's `api` list and its
   `externalDataId` in `write.externalData`.**
 - **Delegations are refused unless the template sets
@@ -94,7 +97,9 @@ lists framework behaviour that a single template does not reveal.
 ## State machine and template API
 
 - **A transition runs onExit, then onEntry, then persists.** Answers sent
-  with the event persist only if the state changes and both succeed.
+  with the event persist only if the transition changes something and both
+  succeed. A targetless `assign` or a self-transition counts as a change:
+  it re-runs the current state's onEntry.
 - **Put side effects for an event with a `cond` in the target state's
   `onEntry`.** `onExit` runs before the `cond` is checked, even when the
   state does not change.
@@ -106,8 +111,9 @@ lists framework behaviour that a single template does not reveal.
   `status: 'failure'`, a `reason` and `data: {}`,** unless the action sets
   `shouldPersistToExternalData: false`. Test `.status`, not `.data`.
 - **Actions run in groups by `order`:** groups in sequence, members in
-  parallel. Use non-negative integers: negative or fractional orders run
-  last.
+  parallel. Every group runs, even after a failure, so check an earlier
+  result's `.status` before using it. Use non-negative integers: negative or
+  fractional orders run last.
 - **Actions run with the caller's `auth`.** If an assignee can fire the
   event, give a shared provider (`nationalRegistry`, `userProfile`) its own
   `externalDataId`.
@@ -135,8 +141,7 @@ lists framework behaviour that a single template does not reveal.
   party-specific.
 - **Every listed application is serialized in one `Promise.all`.** Catch
   errors in your card functions and return a fallback: one throw breaks the
-  whole my-pages list. Only a failed template load is skipped, and only in
-  the admin list.
+  whole my-pages list.
 
 ## Client and translations
 
