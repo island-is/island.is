@@ -7,6 +7,7 @@ import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseState,
   AppealCaseType,
+  AppealEventType,
   CaseFileCategory,
   CaseFileState,
   CaseOrigin,
@@ -435,12 +436,17 @@ describe('FileController - Create case file', () => {
   describe('verdict appeal statement with rulingFileId', () => {
     const caseId = uuid()
     const rulingFileId = uuid()
+    const defendantId = uuid()
     const theCase = {
       id: caseId,
       verdictAppealCase: {
         id: uuid(),
         appealType: AppealCaseType.VERDICT,
         appealState: AppealCaseState.RECEIVED,
+        statementDeadlines: [
+          { defendantId, deadline: new Date('2099-01-01') },
+        ],
+        appealEventLogs: [],
       },
     } as Case
     const uuId = uuid()
@@ -449,6 +455,7 @@ describe('FileController - Create case file', () => {
       category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
       key: `${caseId}/${uuId}/statement.pdf`,
       size: 99,
+      defendantId,
       rulingFileId,
     }
     let then: Then
@@ -492,6 +499,83 @@ describe('FileController - Create case file', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
       expect(then.error.message).toBe(
         `Cannot upload a verdict appeal statement when the verdict appeal of case ${caseId} is missing, completed, or withdrawn`,
+      )
+    })
+  })
+
+  describe('verdict appeal statement after the party has filed', () => {
+    const caseId = uuid()
+    const defendantId = uuid()
+    const theCase = {
+      id: caseId,
+      verdictAppealCase: {
+        id: uuid(),
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.RECEIVED,
+        statementDeadlines: [
+          { defendantId, deadline: new Date('2099-01-01') },
+        ],
+        appealEventLogs: [
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            defendantId,
+          },
+        ],
+      },
+    } as Case
+    const createCaseFile: CreateFileDto = {
+      type: 'text/plain',
+      category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+      key: `${caseId}/${uuid()}/statement.pdf`,
+      size: 99,
+      defendantId,
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(caseId, createCaseFile, theCase)
+    })
+
+    it('should reject the upload', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(then.error.message).toBe(
+        `Cannot upload a verdict appeal statement after case ${caseId} party has already filed`,
+      )
+    })
+  })
+
+  describe('verdict appeal statement after the deadline has expired', () => {
+    const caseId = uuid()
+    const defendantId = uuid()
+    const theCase = {
+      id: caseId,
+      verdictAppealCase: {
+        id: uuid(),
+        appealType: AppealCaseType.VERDICT,
+        appealState: AppealCaseState.RECEIVED,
+        statementDeadlines: [
+          { defendantId, deadline: new Date('2020-01-01') },
+        ],
+        appealEventLogs: [],
+      },
+    } as Case
+    const createCaseFile: CreateFileDto = {
+      type: 'text/plain',
+      category: CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+      key: `${caseId}/${uuid()}/statement.pdf`,
+      size: 99,
+      defendantId,
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(caseId, createCaseFile, theCase)
+    })
+
+    it('should reject the upload', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(then.error.message).toBe(
+        `Cannot upload a verdict appeal statement when the statement deadline for case ${caseId} is missing or has expired`,
       )
     })
   })

@@ -25,6 +25,8 @@ import {
   CaseState,
   CourtDocumentType,
   EventType,
+  findAppealStatementDeadline,
+  hasFiledAppealStatement,
   indictmentAdditionalCaseFileCategories,
   isCompletedCase,
   isDistrictCourtUser,
@@ -38,7 +40,11 @@ import { nowFactory } from '../../factories'
 import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
 import { hasConfirmableCaseFileCategories } from '../../formatters/confirmation/confirmedPdf'
 import { queueMessagesAfterCommit } from '../../middleware'
-import { findAppealCaseOfCaseFile, isVerdictAppealOver } from '../appeal-case'
+import {
+  findAppealCaseOfCaseFile,
+  isStatementDeadlineExpired,
+  isVerdictAppealOver,
+} from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
 import { CourtDocumentFolder, CourtService } from '../court'
@@ -416,14 +422,40 @@ export class FileService {
       ].includes(createFile.category)
 
     // Verdict-appeal statements only belong on an open verdict appeal. The
-    // overview CTA already hides once the appeal is over; enforce the same
-    // rule here so a direct upload cannot bypass it.
+    // overview CTA already hides once the appeal is over, the party has filed,
+    // or the deadline has passed; enforce the same here so a direct upload
+    // cannot bypass it.
     if (isVerdictAppealStatementCategory) {
       const verdictAppealCase = theCase.verdictAppealCase
 
       if (!verdictAppealCase || isVerdictAppealOver(verdictAppealCase)) {
         throw new BadRequestException(
           `Cannot upload a verdict appeal statement when the verdict appeal of case ${theCase.id} is missing, completed, or withdrawn`,
+        )
+      }
+
+      const party = {
+        defendantId: createFile.defendantId,
+        civilClaimantId: createFile.civilClaimantId,
+      }
+
+      if (hasFiledAppealStatement(verdictAppealCase.appealEventLogs, party)) {
+        throw new BadRequestException(
+          `Cannot upload a verdict appeal statement after case ${theCase.id} party has already filed`,
+        )
+      }
+
+      const statementDeadline = findAppealStatementDeadline(
+        verdictAppealCase.statementDeadlines,
+        party,
+      )
+
+      if (
+        !statementDeadline?.deadline ||
+        isStatementDeadlineExpired(statementDeadline.deadline)
+      ) {
+        throw new BadRequestException(
+          `Cannot upload a verdict appeal statement when the statement deadline for case ${theCase.id} is missing or has expired`,
         )
       }
     }
