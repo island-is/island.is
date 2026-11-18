@@ -7,6 +7,7 @@ import {
 
 import {
   CaseFileCategory,
+  hasFiledAppealStatement,
   isDefenceUser,
   isIndictmentCase,
   isRequestCase,
@@ -66,28 +67,70 @@ export class LimitedAccessDeleteCaseFileGuard implements CanActivate {
       return false
     }
 
-    if (
-      (defendantId &&
-        Defendant.isConfirmedDefenderOfDefendant(
+    const defendant = theCase.defendants?.find((d) => d.id === defendantId)
+    const civilClaimant = theCase.civilClaimants?.find(
+      (c) => c.id === civilClaimantId,
+    )
+
+    const isDistrictConfirmed =
+      (defendant &&
+        Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [
+          defendant,
+        ])) ||
+      (civilClaimant &&
+        CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(user.nationalId, [
+          civilClaimant,
+        ]))
+
+    // Confirmed appeal advocates may remove their own greinargerð (and its
+    // attachments) until that party has filed (APPEAL_STATEMENT_SENT). After
+    // filing, DeleteAppealCaseFileGuard locks on SENT and again once Landsréttur
+    // has a case number. Checked before the district list so a dual-confirmed
+    // advocate is not blocked from deleting a pre-filing statement by the
+    // narrower district set.
+    const isAppealConfirmed =
+      (defendant &&
+        Defendant.isConfirmedAppealDefenderOfDefendant(user.nationalId, [
+          defendant,
+        ])) ||
+      (civilClaimant &&
+        CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
           user.nationalId,
-          theCase.defendants?.filter((d) => d.id === caseFile.defendantId),
-        )) ||
-      (civilClaimantId &&
-        CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
-          user.nationalId,
-          theCase.civilClaimants?.filter(
-            (c) => c.id === caseFile.civilClaimantId,
-          ),
+          [civilClaimant],
         ))
+
+    if (
+      isAppealConfirmed &&
+      [
+        CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+        CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT_CASE_FILE,
+      ].includes(category)
     ) {
-      // The user controls this case file
-      return [
+      // Once the party has filed, the PDF must stay — deleting it would leave
+      // APPEAL_STATEMENT_SENT with no statement and block a new filing.
+      if (
+        hasFiledAppealStatement(theCase.verdictAppealCase?.appealEventLogs, {
+          defendantId,
+          civilClaimantId,
+        })
+      ) {
+        return false
+      }
+
+      return true
+    }
+
+    if (
+      isDistrictConfirmed &&
+      [
         CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
         CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
         CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
       ].includes(category)
+    ) {
+      return true
     }
 
     return false

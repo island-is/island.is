@@ -252,6 +252,54 @@ describe('getDefenderVerdictTimelineItems', () => {
       ])
     })
 
+    it('should replace the deadline with the sent date once filed', () => {
+      expect(
+        items(served, {
+          appealState: AppealCaseState.RECEIVED,
+          statementDeadlines: [
+            {
+              id: 'deadline_id',
+              defendantId: 'defendant_id',
+              deadline: '2026-09-14T00:00:00.000Z',
+              isExpired: false,
+            },
+          ],
+          appealEventLogs: [
+            {
+              id: 'event_id',
+              created: '2026-09-10T12:00:00.000Z',
+              eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+              defendantId: 'defendant_id',
+            },
+          ],
+        }),
+      ).toEqual([
+        { text: 'Dómur birtur 01.06.2026' },
+        { text: 'Dómfelldi áfrýjaði 04.06.2026', tone: 'critical' },
+        { text: 'Greinargerð send 10.09.2026' },
+      ])
+    })
+
+    it('should report a filed statement even without a portal deadline', () => {
+      expect(
+        items(served, {
+          appealState: AppealCaseState.RECEIVED,
+          appealEventLogs: [
+            {
+              id: 'event_id',
+              created: '2026-09-10T12:00:00.000Z',
+              eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+              defendantId: 'defendant_id',
+            },
+          ],
+        }),
+      ).toEqual([
+        { text: 'Dómur birtur 01.06.2026' },
+        { text: 'Dómfelldi áfrýjaði 04.06.2026', tone: 'critical' },
+        { text: 'Greinargerð send 10.09.2026' },
+      ])
+    })
+
     it('should leave the statement deadline off a completed appeal', () => {
       expect(
         items(served, {

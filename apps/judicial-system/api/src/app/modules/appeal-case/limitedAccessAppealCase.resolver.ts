@@ -14,6 +14,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import {
   AppealCaseType,
+  AppealEventType,
   Feature,
   type User,
 } from '@island.is/judicial-system/types'
@@ -68,7 +69,19 @@ export class LimitedAccessAppealCaseResolver {
     @Args('input', { type: () => CreateAppealEventLogInput })
     input: CreateAppealEventLogInput,
   ): Promise<AppealCase> {
-    const { caseId, appealCaseId, eventType } = input
+    const { caseId, appealCaseId, eventType, defendantId, civilClaimantId } =
+      input
+
+    // Party-scoped APPEAL_STATEMENT_SENT is the verdict-appeal filing write.
+    // Create is already gated on the flag; keep the same door closed here so a
+    // hidden feature cannot be finished through a direct event-log call.
+    if (
+      eventType === AppealEventType.APPEAL_STATEMENT_SENT &&
+      (defendantId || civilClaimantId) &&
+      this.featureService.isHidden(Feature.INDICTMENT_APPEAL)
+    ) {
+      throw new ForbiddenException('Indictment appeals are not available')
+    }
 
     this.logger.debug(
       `Creating appeal event log ${eventType} on limited access appeal case ${appealCaseId} of case ${caseId}`,
@@ -78,6 +91,8 @@ export class LimitedAccessAppealCaseResolver {
       caseId,
       appealCaseId,
       eventType,
+      defendantId,
+      civilClaimantId,
     )
   }
 

@@ -7,11 +7,13 @@ import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import {
   DEFENDER_INDICTMENT_CASE_ADD_FILES_ROUTE,
   DEFENDER_INDICTMENT_CASE_APPEAL_ROUTE,
+  DEFENDER_INDICTMENT_CASE_STATEMENT_ROUTE,
   getStandardUserDashboardRoute,
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   Feature,
+  hasFiledAppealStatement,
   isCompletedCase,
   isRulingOrDismissalCase,
   isSuccessfulServiceStatus,
@@ -68,7 +70,10 @@ import {
   shouldDisplayGeneratedPdfFiles,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { getVerdictAppealAction } from './verdictAppealActions.logic'
+import {
+  canDefenderFileVerdictStatementOf,
+  getVerdictAppealAction,
+} from './verdictAppealActions.logic'
 
 interface ServiceAnnouncementProps {
   defendant: Defendant
@@ -163,12 +168,79 @@ const IndictmentOverview: FC = () => {
     [router, workingCase.id],
   )
 
-  // The one appeal action the verdict timeline card offers for a defendant:
-  // file a verdict appeal, or take back the one this defender filed. Which, if either,
-  // is decided by getVerdictAppealAction.
+  const showReopenNotice =
+    Boolean(workingCase.reopenReason) && !isCompletedCase(workingCase.state)
+
+  const showVerdictStatusAlerts = Boolean(
+    workingCase.defendants?.some((defendant) => defendant.verdict),
+  )
+
+  const showServiceNotices =
+    !caseIsClosed &&
+    Boolean(
+      workingCase.defendants?.some(
+        (defendant) =>
+          Boolean(defendant.alternativeServiceDescription) ||
+          Boolean(
+            defendant.subpoenas?.some((subpoena) =>
+              isSuccessfulServiceStatus(subpoena.serviceStatus),
+            ),
+          ),
+      ),
+    )
+
+  const shouldShowDefenderVerdictTimelineCard = (
+    defendant: Defendant,
+  ): boolean => {
+    if (!defendant.verdict) {
+      return false
+    }
+
+    if (hasVerdictServiceDecision(defendant.verdict)) {
+      return true
+    }
+
+    // Statement CTA / filed status without a service decision — keep the card
+    // after filing so "Greinargerð send" remains visible.
+    if (canDefenderFileVerdictStatementOf(workingCase, defendant, user)) {
+      return true
+    }
+
+    const appeal = workingCase.verdictAppealCase
+    if (
+      !appeal ||
+      appeal.appealState === AppealCaseState.COMPLETED ||
+      appeal.appealState === AppealCaseState.WITHDRAWN
+    ) {
+      return false
+    }
+
+    // Landsréttur can record a statement without setting a portal deadline.
+    return hasFiledAppealStatement(appeal.appealEventLogs, {
+      defendantId: defendant.id,
+    })
+  }
+
+  const showVerdictTimelineCards =
+    displayVerdictTimeline &&
+    Boolean(
+      workingCase.defendants?.some((defendant) =>
+        shouldShowDefenderVerdictTimelineCard(defendant),
+      ),
+    )
+
+  const showTopNotices =
+    showReopenNotice ||
+    showVerdictStatusAlerts ||
+    showVerdictTimelineCards ||
+    showServiceNotices
+
+  // Actions on the defendant's verdict timeline card: appeal / withdraw, and
+  // for Landsréttur-confirmed advocates, send greinargerð when still open.
   const getVerdictTimelineMenuItems = (
     defendant: Defendant,
   ): ContextMenuItem[] => {
+    const items: ContextMenuItem[] = []
     const action = getVerdictAppealAction(
       workingCase,
       defendant,
@@ -176,27 +248,47 @@ const IndictmentOverview: FC = () => {
       features.includes(Feature.INDICTMENT_APPEAL),
     )
 
+    // Appeal / withdraw stay behind the service-decision gate. The card can
+    // mount earlier for greinargerð, but widening withdrawal was not in scope.
+    const canOfferVerdictAppealAction = hasVerdictServiceDecision(
+      defendant.verdict,
+    )
+
     switch (action) {
       case 'APPEAL':
-        return [
-          {
+        if (canOfferVerdictAppealAction) {
+          items.push({
             title: 'Áfrýja dómi',
             onClick: () =>
               router.push(
                 `${DEFENDER_INDICTMENT_CASE_APPEAL_ROUTE}/${workingCase.id}?defendantId=${defendant.id}`,
               ),
-          },
-        ]
+          })
+        }
+        break
       case 'WITHDRAW':
-        return [
-          {
+        if (canOfferVerdictAppealAction) {
+          items.push({
             title: 'Afturkalla áfrýjun',
             onClick: () => setWithdrawingAppealFor(defendant),
-          },
-        ]
+          })
+        }
+        break
       default:
-        return []
+        break
     }
+
+    if (canDefenderFileVerdictStatementOf(workingCase, defendant, user)) {
+      items.push({
+        title: 'Senda greinargerð',
+        onClick: () =>
+          router.push(
+            `${DEFENDER_INDICTMENT_CASE_STATEMENT_ROUTE}/${workingCase.id}?defendantId=${defendant.id}`,
+          ),
+      })
+    }
+
+    return items
   }
 
   const handleWithdrawVerdictAppeal = async () => {
@@ -252,77 +344,74 @@ const IndictmentOverview: FC = () => {
         <FormContentContainer>
           <PageTitle>{caseIsClosed ? 'Máli lokið' : 'Yfirlit ákæru'}</PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
-          {workingCase.reopenReason && !isCompletedCase(workingCase.state) && (
-            <Box marginBottom={2}>
-              <AlertMessage
-                title="Mál enduropnað"
-                message={
-                  <Text variant="small" whiteSpace="preWrap">
-                    {workingCase.reopenReason}
-                  </Text>
-                }
-                type="info"
-              />
-            </Box>
-          )}
-          {workingCase.defendants?.map(
-            (defendant) =>
-              defendant.verdict && (
-                <Box
-                  key={`${defendant.id}${defendant.verdict.id}`}
-                  marginBottom={2}
-                >
-                  <VerdictStatusAlert
-                    defendant={defendant}
-                    verdict={defendant.verdict}
-                  />
-                </Box>
-              ),
-          )}
-          {displayVerdictTimeline &&
-            workingCase.defendants?.map(
-              (defendant) =>
-                defendant.verdict &&
-                hasVerdictServiceDecision(defendant.verdict) && (
-                  <Box
-                    key={`${defendant.id}${defendant.verdict.id}-timeline`}
-                    marginBottom={2}
-                    dataTestId="defenderVerdictTimelineCard"
-                  >
-                    <DefenderVerdictTimelineCard
-                      defendant={defendant}
-                      verdictAppealCase={workingCase.verdictAppealCase}
-                      contextMenuItems={getVerdictTimelineMenuItems(defendant)}
-                    />
-                  </Box>
-                ),
-            )}
-          {!caseIsClosed &&
-            workingCase.defendants?.map((defendant) => (
-              <Fragment key={defendant.id}>
-                {defendant.alternativeServiceDescription && (
-                  <AlternativeServiceAnnouncement
-                    alternativeServiceDescription={
-                      defendant.alternativeServiceDescription
+          <div className={stack({ gap: 5 })}>
+            {showTopNotices && (
+              <div className={stack({ gap: 2 })}>
+                {showReopenNotice && (
+                  <AlertMessage
+                    title="Mál enduropnað"
+                    message={
+                      <Text variant="small" whiteSpace="preWrap">
+                        {workingCase.reopenReason}
+                      </Text>
                     }
-                    defendantName={defendant.name}
+                    type="info"
                   />
                 )}
-                {defendant.subpoenas
-                  ?.filter((subpoena) =>
-                    isSuccessfulServiceStatus(subpoena.serviceStatus),
-                  )
-                  .map((subpoena) => (
-                    <Box key={`${defendant.id}${subpoena.id}`} marginBottom={2}>
-                      <ServiceAnnouncement
+                {workingCase.defendants?.map(
+                  (defendant) =>
+                    defendant.verdict && (
+                      <VerdictStatusAlert
+                        key={`${defendant.id}${defendant.verdict.id}`}
                         defendant={defendant}
-                        subpoena={subpoena}
+                        verdict={defendant.verdict}
                       />
-                    </Box>
+                    ),
+                )}
+                {displayVerdictTimeline &&
+                  workingCase.defendants?.map(
+                    (defendant) =>
+                      shouldShowDefenderVerdictTimelineCard(defendant) && (
+                        <Box
+                          key={`${defendant.id}${defendant.verdict?.id}-timeline`}
+                          dataTestId="defenderVerdictTimelineCard"
+                        >
+                          <DefenderVerdictTimelineCard
+                            defendant={defendant}
+                            verdictAppealCase={workingCase.verdictAppealCase}
+                            contextMenuItems={getVerdictTimelineMenuItems(
+                              defendant,
+                            )}
+                          />
+                        </Box>
+                      ),
+                  )}
+                {!caseIsClosed &&
+                  workingCase.defendants?.map((defendant) => (
+                    <Fragment key={defendant.id}>
+                      {defendant.alternativeServiceDescription && (
+                        <AlternativeServiceAnnouncement
+                          alternativeServiceDescription={
+                            defendant.alternativeServiceDescription
+                          }
+                          defendantName={defendant.name}
+                        />
+                      )}
+                      {defendant.subpoenas
+                        ?.filter((subpoena) =>
+                          isSuccessfulServiceStatus(subpoena.serviceStatus),
+                        )
+                        .map((subpoena) => (
+                          <ServiceAnnouncement
+                            key={`${defendant.id}${subpoena.id}`}
+                            defendant={defendant}
+                            subpoena={subpoena}
+                          />
+                        ))}
+                    </Fragment>
                   ))}
-              </Fragment>
-            ))}
-          <div className={stack({ gap: 5 })}>
+              </div>
+            )}
             <AppealRulingModifiedAlert />
             <RulingModifiedAlert />
             {caseHasBeenReceivedByCourt &&

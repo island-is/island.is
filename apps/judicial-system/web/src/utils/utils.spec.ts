@@ -14,6 +14,7 @@ import type {
 import {
   AppealCaseState,
   AppealDecisionPartyRole,
+  AppealEventType,
   CaseAppealDecision,
   CaseFileCategory,
   CaseType,
@@ -33,6 +34,7 @@ import {
   getDefaultDefendantGender,
   getDefenceUserMatchingPartyIds,
   getDefenceUserPartyIds,
+  getVerdictAppealStatementParty,
   hasAcceptedRulingOrderInCourt,
   hasSentNotification,
   isAppealFileCategoryVisible,
@@ -2166,6 +2168,141 @@ describe('getDefenceUserPartyIds', () => {
       { defendantId: 'appeal_client' },
       { civilClaimantId: 'claimant_id' },
     ])
+  })
+})
+
+describe('getVerdictAppealStatementParty', () => {
+  const defender = {
+    role: UserRole.DEFENDER,
+    nationalId: '0101302989',
+  } as User
+
+  const twoConfirmedDefendants = {
+    type: CaseType.INDICTMENT,
+    defendants: [
+      {
+        id: 'earlier_id',
+        isAppealDefenderConfirmed: true,
+        appealDefenderNationalId: '0101302989',
+      },
+      {
+        id: 'later_id',
+        isAppealDefenderConfirmed: true,
+        appealDefenderNationalId: '0101302989',
+      },
+    ],
+  }
+
+  it('selects the confirmed party with the earliest open deadline', () => {
+    expect(
+      getVerdictAppealStatementParty(
+        {
+          ...twoConfirmedDefendants,
+          verdictAppealCase: {
+            statementDeadlines: [
+              {
+                defendantId: 'earlier_id',
+                deadline: '2026-01-10',
+                isExpired: false,
+              },
+              {
+                defendantId: 'later_id',
+                deadline: '2026-01-20',
+                isExpired: false,
+              },
+            ],
+          },
+        } as WorkingCase,
+        defender,
+      ),
+    ).toEqual({ defendantId: 'earlier_id' })
+  })
+
+  it('skips a party that has already filed and selects the next open deadline', () => {
+    expect(
+      getVerdictAppealStatementParty(
+        {
+          ...twoConfirmedDefendants,
+          verdictAppealCase: {
+            statementDeadlines: [
+              {
+                defendantId: 'earlier_id',
+                deadline: '2026-01-10',
+                isExpired: false,
+              },
+              {
+                defendantId: 'later_id',
+                deadline: '2026-01-20',
+                isExpired: false,
+              },
+            ],
+            appealEventLogs: [
+              {
+                eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+                defendantId: 'earlier_id',
+              },
+            ],
+          },
+        } as WorkingCase,
+        defender,
+      ),
+    ).toEqual({ defendantId: 'later_id' })
+  })
+
+  it('skips a party whose deadline has expired', () => {
+    expect(
+      getVerdictAppealStatementParty(
+        {
+          ...twoConfirmedDefendants,
+          verdictAppealCase: {
+            statementDeadlines: [
+              {
+                defendantId: 'earlier_id',
+                deadline: '2026-01-10',
+                isExpired: true,
+              },
+              {
+                defendantId: 'later_id',
+                deadline: '2026-01-20',
+                isExpired: false,
+              },
+            ],
+          },
+        } as WorkingCase,
+        defender,
+      ),
+    ).toEqual({ defendantId: 'later_id' })
+  })
+
+  it('returns undefined when every confirmed party is ineligible', () => {
+    expect(
+      getVerdictAppealStatementParty(
+        {
+          ...twoConfirmedDefendants,
+          verdictAppealCase: {
+            statementDeadlines: [
+              {
+                defendantId: 'earlier_id',
+                deadline: '2026-01-10',
+                isExpired: true,
+              },
+              {
+                defendantId: 'later_id',
+                deadline: '2026-01-20',
+                isExpired: false,
+              },
+            ],
+            appealEventLogs: [
+              {
+                eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+                defendantId: 'later_id',
+              },
+            ],
+          },
+        } as WorkingCase,
+        defender,
+      ),
+    ).toBeUndefined()
   })
 })
 

@@ -28,8 +28,10 @@ import {
   CaseFileState,
   CaseIndictmentRulingDecision,
   CaseOrigin,
+  findAppealStatementDeadline,
   getAppealJudgeUserIds,
   hasAllAppealJudges,
+  hasFiledAppealStatement,
   IndictmentCaseNotificationType,
   isCompletedCase,
   isDefenceUser,
@@ -38,6 +40,7 @@ import {
   isPublicProsecutionOfficeUser,
   isPublicProsecutionUser,
   isSameAppealBench,
+  isSameAppealStatementParty,
   verdictAppealDeclarationFileCategories,
 } from '@island.is/judicial-system/types'
 
@@ -52,6 +55,7 @@ import {
   AppealEventLogRepositoryService,
   Case,
   CaseRepositoryService,
+  CivilClaimant,
   CreateAppealCase,
   Defendant,
   DefendantRepositoryService,
@@ -72,6 +76,8 @@ import {
   findUserRulingOrderAppealDecision,
   hasStandingVerdictAppeal,
   isInCourtRulingOrderAppeal,
+  isStatementDeadlineExpired,
+  isVerdictAppealOver,
   resolveDefenceParties,
   standingVerdictAppellants,
   userRulingOrderAppealDecisions,
@@ -110,8 +116,6 @@ export class AppealCaseService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  // Every defence party (defendant / civil claimant) the user currently, and
-  // confirmedly, represents on the case. A defence event is recorded once per
   // Writes appeal event-log rows with an actor snapshot of who performed the
   // event. Defenders are not system users, so userId is null and
   // national_id/name identify them (plus the defence party); for
@@ -881,8 +885,6 @@ export class AppealCaseService {
         request,
         transaction,
       )
-    } else if (actor === 'DEFENDER') {
-      await this.recordAppealingDefender(theCase, defendant, transaction)
     }
 
     // AppealCase is the source of truth for who appealed; verdict.appealDate is
@@ -1022,48 +1024,6 @@ export class AppealCaseService {
       theCase.id,
       defendantId,
       appealDefender,
-      { transaction },
-    )
-  }
-
-  // A defender appealing in the system is the defendant's confirmed defender
-  // of record, so that record names the appeal defender. Unconfirmed, like the
-  // one the office registers: access follows once the court of appeals
-  // confirms them.
-  //
-  // Only while the appeal says nothing about this defendant's counsel. The
-  // court of appeals may already have named a defender or recorded a waiver -
-  // on an appeal the prosecution filed first - and that stance is not
-  // overwritten, nor is a confirmed defender set back to unconfirmed.
-  private async recordAppealingDefender(
-    theCase: Case,
-    defendant: Defendant,
-    transaction: Transaction,
-  ): Promise<void> {
-    const isAppealDefenderSettled =
-      Boolean(
-        defendant.appealDefenderName ||
-          defendant.appealDefenderNationalId ||
-          defendant.appealDefenderEmail ||
-          defendant.appealDefenderPhoneNumber,
-      ) ||
-      (defendant.isAppealDefenderWaived !== null &&
-        defendant.isAppealDefenderWaived !== undefined)
-
-    if (isAppealDefenderSettled) {
-      return
-    }
-
-    await this.defendantRepositoryService.update(
-      theCase.id,
-      defendant.id,
-      {
-        appealDefenderName: defendant.defenderName ?? null,
-        appealDefenderNationalId: defendant.defenderNationalId ?? null,
-        appealDefenderEmail: defendant.defenderEmail ?? null,
-        appealDefenderPhoneNumber: defendant.defenderPhoneNumber ?? null,
-        isAppealDefenderConfirmed: false,
-      },
       { transaction },
     )
   }
@@ -1213,16 +1173,203 @@ export class AppealCaseService {
     eventType: AppealEventType,
     user: User,
     transaction: Transaction,
+    party?: { defendantId?: string; civilClaimantId?: string },
   ): Promise<AppealCase> {
     this.logger.debug(
       `Recording appeal event ${eventType} for appeal case ${appealCase.id} of case ${theCase.id}`,
     )
 
-    await this.writeEventLog(theCase, appealCase, eventType, user, transaction)
+    const requiresScopedParty =
+      appealCase.appealType === AppealCaseType.VERDICT &&
+      eventType === AppealEventType.APPEAL_STATEMENT_SENT
+
+    // Party IDs select the single-party write path only for verdict-appeal
+    // statements. Ruling-appeal statements stay collective (writeEventLog) —
+    // a stray party ID must not shrink that write to one represented party.
+    if (!requiresScopedParty && (party?.defendantId || party?.civilClaimantId)) {
+      throw new BadRequestException(
+        'defendantId and civilClaimantId are only allowed for verdict appeal statement events',
+      )
+    }
+
+    // Verdict-appeal statements are per party. Require an explicit party so we
+    // never fall back to writing one row for every party the defence user
+    // represents. File create requires Landsréttur confirmation for these
+    // categories — the event log must match that bar.
+    if (requiresScopedParty) {
+      if (!party?.defendantId && !party?.civilClaimantId) {
+        throw new BadRequestException(
+          'Verdict appeal statement events require defendantId or civilClaimantId',
+        )
+      }
+
+      if (isVerdictAppealOver(appealCase)) {
+        throw new BadRequestException(
+          `Cannot record a statement for completed or withdrawn appeal case ${appealCase.id} of case ${theCase.id}`,
+        )
+      }
+
+      const partyRow = this.resolveScopedDefenceParty(
+        theCase,
+        user,
+        party ?? {},
+        { appealConfirmationOnly: true },
+      )
+
+      const statementDeadline = findAppealStatementDeadline(
+        appealCase.statementDeadlines,
+        partyRow,
+      )?.deadline
+
+      if (!statementDeadline) {
+        throw new BadRequestException(
+          `No statement deadline for the party on appeal case ${appealCase.id} of case ${theCase.id}`,
+        )
+      }
+
+      if (
+        isStatementDeadlineExpired(
+          new Date(statementDeadline),
+          new Date(Date.now()),
+        )
+      ) {
+        throw new BadRequestException(
+          `The statement deadline for the party on appeal case ${appealCase.id} of case ${theCase.id} has expired`,
+        )
+      }
+
+      if (hasFiledAppealStatement(appealCase.appealEventLogs, partyRow)) {
+        throw new BadRequestException(
+          `The party has already filed its statement in appeal case ${appealCase.id} of case ${theCase.id}`,
+        )
+      }
+
+      const hasStatementFile = (theCase.caseFiles ?? []).some(
+        (caseFile) =>
+          caseFile.category ===
+            CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT &&
+          caseFile.state === CaseFileState.STORED_IN_RVG &&
+          caseFile.isKeyAccessible &&
+          (caseFile.rulingFileId ?? null) === null &&
+          isSameAppealStatementParty(
+            {
+              defendantId: caseFile.defendantId,
+              civilClaimantId: caseFile.civilClaimantId,
+            },
+            partyRow,
+          ),
+      )
+
+      if (!hasStatementFile) {
+        throw new BadRequestException(
+          `No verdict appeal statement file for the party on appeal case ${appealCase.id} of case ${theCase.id}`,
+        )
+      }
+
+      await this.writeEventLogRows(
+        theCase,
+        appealCase,
+        eventType,
+        user,
+        [partyRow],
+        transaction,
+      )
+    } else {
+      await this.writeEventLog(
+        theCase,
+        appealCase,
+        eventType,
+        user,
+        transaction,
+      )
+    }
 
     this.dispatchEventNotifications(eventType, theCase, appealCase, user)
 
     return appealCase
+  }
+
+  // Validates that the defence user is confirmed for the named party and
+  // returns a single party row for writeEventLogRows. Verdict-appeal statement
+  // events require Landsréttur confirmation only (appealConfirmationOnly).
+  private resolveScopedDefenceParty(
+    theCase: Case,
+    user: User,
+    party: { defendantId?: string; civilClaimantId?: string },
+    options: { appealConfirmationOnly?: boolean } = {},
+  ): { defendantId?: string; civilClaimantId?: string } {
+    const { appealConfirmationOnly = false } = options
+
+    if (party.defendantId && party.civilClaimantId) {
+      throw new BadRequestException(
+        'Provide either defendantId or civilClaimantId, not both',
+      )
+    }
+
+    if (party.defendantId) {
+      const defendant = theCase.defendants?.find(
+        (d) => d.id === party.defendantId,
+      )
+
+      if (!defendant) {
+        throw new BadRequestException(
+          `Defendant ${party.defendantId} of case ${theCase.id} does not exist`,
+        )
+      }
+
+      const isAppealConfirmed = Defendant.isConfirmedAppealDefenderOfDefendant(
+        user.nationalId,
+        [defendant],
+      )
+      const isDistrictConfirmed =
+        !appealConfirmationOnly &&
+        Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
+
+      if (!isAppealConfirmed && !isDistrictConfirmed) {
+        throw new ForbiddenException(
+          appealConfirmationOnly
+            ? `Current user is not a confirmed appeal defender of defendant ${party.defendantId}`
+            : `Current user is not a confirmed defender of defendant ${party.defendantId}`,
+        )
+      }
+
+      return { defendantId: defendant.id }
+    }
+
+    if (party.civilClaimantId) {
+      const civilClaimant = theCase.civilClaimants?.find(
+        (c) => c.id === party.civilClaimantId,
+      )
+
+      if (!civilClaimant) {
+        throw new BadRequestException(
+          `Civil claimant ${party.civilClaimantId} of case ${theCase.id} does not exist`,
+        )
+      }
+
+      const isAppealConfirmed =
+        CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
+          user.nationalId,
+          [civilClaimant],
+        )
+      const isDistrictConfirmed =
+        !appealConfirmationOnly &&
+        CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(user.nationalId, [
+          civilClaimant,
+        ])
+
+      if (!isAppealConfirmed && !isDistrictConfirmed) {
+        throw new ForbiddenException(
+          appealConfirmationOnly
+            ? `Current user is not a confirmed appeal spokesperson of civil claimant ${party.civilClaimantId}`
+            : `Current user is not a confirmed spokesperson of civil claimant ${party.civilClaimantId}`,
+        )
+      }
+
+      return { civilClaimantId: civilClaimant.id }
+    }
+
+    throw new BadRequestException('Missing defendantId or civilClaimantId')
   }
 
   // Side-effect dispatch keyed on eventType — mirror EventLogService's
