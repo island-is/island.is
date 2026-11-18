@@ -86,4 +86,36 @@ describe('TransferRights', () => {
 
     expect(lastRadio().field.defaultValue).toBe(TransferRightsOption.NONE)
   })
+
+  it('writes the shown selection to transferRights before any click', () => {
+    const values = renderTransferRights('editTransferRights', {
+      ...answers,
+      editTransferRights: TransferRightsOption.REQUEST,
+    })
+
+    expect(values()).toEqual(
+      expect.objectContaining({
+        transferRights: TransferRightsOption.REQUEST,
+        requestRights: { isRequestingRights: 'yes', requestDays: '1' },
+      }),
+    )
+  })
+
+  // Giving is disabled here: the manually entered other parent has no
+  // right of access
+  it('falls back to no transfer when the saved option can no longer be chosen', () => {
+    const values = renderTransferRights('editTransferRights', {
+      ...answers,
+      editTransferRights: TransferRightsOption.GIVE,
+      giveRights: { isGivingRights: 'yes', giveDays: '30' },
+    })
+
+    expect(lastRadio().field.defaultValue).toBe(TransferRightsOption.NONE)
+    expect(values()).toEqual(
+      expect.objectContaining({
+        transferRights: TransferRightsOption.NONE,
+        giveRights: { isGivingRights: 'no', giveDays: '0' },
+      }),
+    )
+  })
 })
