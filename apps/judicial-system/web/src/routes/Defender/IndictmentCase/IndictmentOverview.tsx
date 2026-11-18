@@ -383,7 +383,8 @@ const IndictmentOverview: FC = () => {
             {caseHasBeenReceivedByCourt &&
               workingCase.court &&
               latestDate?.date &&
-              workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
+              workingCase.indictmentDecision !==
+                IndictmentDecision.COMPLETING &&
               workingCase.indictmentDecision !==
                 IndictmentDecision.REDISTRIBUTING &&
               caseIsClosed === false && (
@@ -423,7 +424,8 @@ const IndictmentOverview: FC = () => {
                   judgeName={workingCase.judge?.name}
                 />
               )}
-            {workingCase.appealCase?.appealState === AppealCaseState.COMPLETED &&
+            {workingCase.appealCase?.appealState ===
+              AppealCaseState.COMPLETED &&
               workingCase.appealCase?.appealConclusion && (
                 <Conclusion
                   title="Úrskurðarorð Landsréttar"
@@ -435,7 +437,9 @@ const IndictmentOverview: FC = () => {
               workingCase.verdictAppealCase.appealConclusion && (
                 <Conclusion
                   title="Dómsorð Landsréttar"
-                  conclusionText={workingCase.verdictAppealCase.appealConclusion}
+                  conclusionText={
+                    workingCase.verdictAppealCase.appealConclusion
+                  }
                 />
               )}
             {displayVerdictTimeline && <VerdictAppealFiles />}
