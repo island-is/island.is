@@ -291,7 +291,9 @@ function NativeLock({
       nationalId={nationalId}
       biometricType={unlock.isBiometricsEnabled ? biometricType : undefined}
       status={
-        unlock.status === 'prompting' || unlock.status === 'failed'
+        unlock.status === 'prompting' ||
+        unlock.status === 'failed' ||
+        unlock.status === 'lockedOut'
           ? unlock.status
           : 'idle'
       }

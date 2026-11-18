@@ -48,8 +48,11 @@ export const en: TranslatedMessages = {
   'applock.openWithBiometrics': 'Open with {biometricType}',
   'applock.useElectronicId': 'Use electronic ID',
   'applock.openWithElectronicId': 'Open with electronic ID',
-  'applock.biometricsFailedTitle': '{biometricType} failed',
+  'applock.biometricsFailedTitle': 'Authentication failed',
   'applock.biometricsFailedMessage': 'Try again or use electronic ID.',
+  'applock.biometricsLockedOutTitle': '{biometricType} is turned off',
+  'applock.biometricsLockedOutMessage':
+    'Too many failed attempts. Open the app with electronic ID.',
   'applock.electronicIdFailedTitle': "Couldn't open the app",
   'biometrics.enableFailedTitle': "Couldn't turn on {biometricType}",
   'electronicId.error.tryAgain': 'Try again.',

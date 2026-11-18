@@ -48,7 +48,8 @@ const ButtonStack = styled.View`
  * - `prompting`: the system biometric prompt is up
  * - `failed`: biometrics failed or the prompt was cancelled
  */
-export type DeviceLockStatus = 'idle' | 'prompting' | 'failed'
+/** `lockedOut`: too many failed attempts, so the phone turned biometrics off */
+export type DeviceLockStatus = 'idle' | 'prompting' | 'failed' | 'lockedOut'
 
 /**
  * Why electronic ID didn't open the app:
@@ -92,6 +93,8 @@ export function DeviceLock({
   // iOS. The provider's are the window's.
   const insets = useSafeAreaInsets()
   const isPrompting = status === 'prompting'
+  // Locked out, electronic ID is the only way in for now.
+  const offersBiometrics = !!biometricType && status !== 'lockedOut'
 
   return (
     <Host style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
@@ -117,20 +120,26 @@ export function DeviceLock({
           />
         ) : (
           biometricType &&
-          status === 'failed' && (
+          (status === 'failed' || status === 'lockedOut') && (
             <Alert
               type="error"
               size="small"
               hasBorder
-              // "lífkenni tókst ekki" starts a sentence here, unlike elsewhere.
-              title={upperFirst(
-                intl.formatMessage(
-                  { id: 'applock.biometricsFailedTitle' },
-                  { biometricType },
-                ),
-              )}
+              title={
+                status === 'lockedOut'
+                  ? intl.formatMessage(
+                      { id: 'applock.biometricsLockedOutTitle' },
+                      { biometricType },
+                    )
+                  : intl.formatMessage({
+                      id: 'applock.biometricsFailedTitle',
+                    })
+              }
               message={intl.formatMessage({
-                id: 'applock.biometricsFailedMessage',
+                id:
+                  status === 'lockedOut'
+                    ? 'applock.biometricsLockedOutMessage'
+                    : 'applock.biometricsFailedMessage',
               })}
             />
           )
@@ -140,7 +149,7 @@ export function DeviceLock({
           nationalId={nationalId}
           onLogoutPress={onLogoutPress}
         />
-        {biometricType ? (
+        {offersBiometrics ? (
           <ButtonStack>
             <Button
               title={intl.formatMessage(
@@ -170,8 +179,4 @@ export function DeviceLock({
       </Footer>
     </Host>
   )
-}
-
-function upperFirst(text: string) {
-  return text.charAt(0).toUpperCase() + text.slice(1)
 }

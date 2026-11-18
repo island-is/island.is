@@ -263,7 +263,8 @@ class DeviceKeysModule : Module() {
     BiometricPrompt.ERROR_NEGATIVE_BUTTON,
     BiometricPrompt.ERROR_CANCELED,
     BiometricPrompt.ERROR_TIMEOUT -> "CANCELLED"
-    BiometricPrompt.ERROR_LOCKOUT,
+    // 30 seconds; after several of those it lasts until the phone is unlocked.
+    BiometricPrompt.ERROR_LOCKOUT -> "LOCKOUT_TEMPORARY"
     BiometricPrompt.ERROR_LOCKOUT_PERMANENT -> "LOCKOUT"
     // Removed while the prompt was up.
     BiometricPrompt.ERROR_NO_BIOMETRICS -> "INVALIDATED"

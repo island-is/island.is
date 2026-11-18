@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Alert } from 'react-native'
+import { Alert, AppState } from 'react-native'
 
 import { getDeviceKeyErrorCode } from '../../modules/device-keys'
 import type { ElectronicIdError } from '@/components/device-bound-auth/device-lock'
@@ -19,7 +19,12 @@ export type NativeUnlockStatus =
   | 'idle'
   | 'prompting'
   | 'failed'
+  // Too many failed attempts: the phone has turned biometrics off for now.
+  | 'lockedOut'
   | 'electronicId'
+
+// How long Android's temporary lockout lasts.
+const TEMPORARY_LOCKOUT_MS = 30_000
 
 /** IAS no longer has the app login: logged out elsewhere, or idle too long. */
 const isAppLoginGone = (error: unknown) =>
@@ -45,6 +50,27 @@ export function useNativeUnlock({
   // itself a modal, would end up behind it.
   const electronicId = useElectronicIdUnlock('unlock', { inline: true })
   const ias = getIasClient()
+  const lockoutTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
+
+  // Biometrics are offered again once the lockout may be over: the phone was
+  // unlocked with its passcode while the app was away, or Android's 30
+  // seconds have passed. If it isn't, a tap says so without a prompt.
+  const endLockout = () => {
+    clearTimeout(lockoutTimer.current)
+    setStatus((current) => (current === 'lockedOut' ? 'idle' : current))
+  }
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active') {
+        endLockout()
+      }
+    })
+    return () => {
+      subscription.remove()
+      clearTimeout(lockoutTimer.current)
+    }
+  }, [])
 
   const unlockWithBiometrics = async () => {
     if (!ias.isBiometricsEnabled() || electronicId.isPending()) {
@@ -71,7 +97,7 @@ export function useNativeUnlock({
         return
       }
       if (isBiometricKeyInvalidated(error)) {
-        // The client turned biometrics off. Same message as the PIN lock's.
+        // The client turned biometrics off.
         Alert.alert(
           intl.formatMessage({ id: 'biometrics.enrollmentChanged.title' }),
           intl.formatMessage({ id: 'biometrics.enrollmentChanged.message' }),
@@ -79,7 +105,18 @@ export function useNativeUnlock({
         setStatus('idle')
         return
       }
-      // Lockout, or IAS refused the key: electronic ID still works.
+      const code = getDeviceKeyErrorCode(error)
+      if (
+        code === 'ERR_DEVICE_KEY_LOCKOUT' ||
+        code === 'ERR_DEVICE_KEY_LOCKOUT_TEMPORARY'
+      ) {
+        setStatus('lockedOut')
+        if (code === 'ERR_DEVICE_KEY_LOCKOUT_TEMPORARY') {
+          lockoutTimer.current = setTimeout(endLockout, TEMPORARY_LOCKOUT_MS)
+        }
+        return
+      }
+      // IAS refused the key, or anything else: electronic ID still works.
       console.warn('Biometric unlock failed', error)
       setStatus('failed')
     }

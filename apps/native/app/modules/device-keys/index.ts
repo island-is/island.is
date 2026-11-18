@@ -52,7 +52,10 @@ export interface BiometricPromptOptions {
 
 export type DeviceKeyErrorCode =
   | 'ERR_DEVICE_KEY_CANCELLED'
+  // Too many failed attempts: until the phone is unlocked with its passcode.
   | 'ERR_DEVICE_KEY_LOCKOUT'
+  // Android: the same, but only for 30 seconds.
+  | 'ERR_DEVICE_KEY_LOCKOUT_TEMPORARY'
   // The enrolled biometrics changed since the biometric key was created.
   | 'ERR_DEVICE_KEY_INVALIDATED'
   | 'ERR_DEVICE_KEY_NOT_FOUND'
