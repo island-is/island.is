@@ -272,6 +272,7 @@ export const authStore = create<AuthStore>((set, get) => ({
         userInfo: undefined,
         nativeUser: undefined,
         lockScreenActivatedAt: undefined,
+        lockScreenPushPending: false,
       }),
       true,
     )
