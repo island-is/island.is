@@ -48,7 +48,6 @@ export default function LoginIdentifierScreen() {
         })
       }
       onSubmit={onSubmit}
-      onBackPress={() => router.back()}
       loading={loading}
       error={error && intl.formatMessage({ id: loginErrorMessageId[error] })}
     />

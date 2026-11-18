@@ -55,7 +55,6 @@ interface LoginIdentifierProps {
   onChangeValue(digits: string): void
   onSubmit(): void
   onChangeMethod(method: LoginMethod): void
-  onBackPress(): void
   loading?: boolean
   error?: string
 }
@@ -70,7 +69,6 @@ export function LoginIdentifier({
   onChangeValue,
   onSubmit,
   onChangeMethod,
-  onBackPress,
   loading,
   error,
 }: LoginIdentifierProps) {
@@ -81,7 +79,7 @@ export function LoginIdentifier({
     <Host>
       <ScrollView keyboardShouldPersistTaps="handled">
         <Content>
-          <LoginHeader onBackPress={onBackPress} />
+          <LoginHeader />
           <Heading>
             <Typography variant="heading2" textAlign="center">
               {intl.formatMessage({ id: 'login.identifier.title' })}
