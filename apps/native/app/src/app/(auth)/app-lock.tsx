@@ -170,10 +170,8 @@ export default function AppLockScreen() {
       }
 
       // Past the grace period the tokens go: the unlock gets new ones from IAS.
-      await authStore.getState().lockNative()
-      if (unmounted) {
-        return
-      }
+      // They're gone at once; the prompt doesn't wait for the revocation.
+      void authStore.getState().lockNative()
 
       if (biometricAutoPromptedForCurrentLock) {
         return
