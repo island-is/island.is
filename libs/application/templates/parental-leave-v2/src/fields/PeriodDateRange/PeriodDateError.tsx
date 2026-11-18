@@ -10,6 +10,8 @@ import { getPeriodIndex } from '../../lib/parentalLeaveUtils'
  * Errors the period answer validator reports on the dates `PeriodDateRange`
  * writes, e.g. a period shorter than the minimum, shown under the date and
  * ratio fields rather than on the date picker, which then cannot be opened.
+ * Errors on the periods as a whole, e.g. using more days than the rights, are
+ * shown here too, as nothing else on the screen shows them.
  */
 export const PeriodDateError: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   field,
@@ -31,6 +33,7 @@ export const PeriodDateError: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     .map((name) =>
       getErrorViaPath(errors ?? {}, `periods[${currentIndex}].${name}`),
     )
+    .concat(getErrorViaPath(errors ?? {}, 'periods'))
     .find((error) => typeof error === 'string' && error !== '')
 
   if (!message) {

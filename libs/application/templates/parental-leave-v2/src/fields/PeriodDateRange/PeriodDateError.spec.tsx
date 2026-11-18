@@ -49,4 +49,11 @@ describe('PeriodDateError', () => {
 
     expect(container.textContent).toBe('')
   })
+
+  // E.g. using more days than the rights, which nothing else shows
+  it('shows an error on the periods as a whole', () => {
+    renderError({ periods: 'Too many days' })
+
+    expect(screen.getByText('Too many days')).toBeTruthy()
+  })
 })
