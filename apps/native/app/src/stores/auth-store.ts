@@ -208,18 +208,29 @@ export const authStore = create<AuthStore>((set, get) => ({
   }),
   async loginNative(tokens) {
     set({ authorizeResult: tokens })
-    const userInfo = await get().fetchUserInfo(true)
-    if (!userInfo) {
-      throw new Error('No user info for the native login')
+    let userInfo: UserInfo
+    try {
+      userInfo = await get().fetchUserInfo(true)
+      if (!userInfo) {
+        throw new Error('No user info for the native login')
+      }
+      await Keychain.setGenericPassword(
+        KEYCHAIN_NATIVE_USER_KEY,
+        JSON.stringify(userInfo),
+        {
+          service: KEYCHAIN_NATIVE_USER_KEY,
+          accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+        },
+      )
+    } catch (error) {
+      // Not logged in after all: no tokens without a user, and no app login
+      // left behind on IAS.
+      set({ authorizeResult: undefined, userInfo: undefined })
+      void getIasClient()
+        .logout(tokens.refreshToken)
+        .catch((e) => console.log('Failed to end the app login', e))
+      throw error
     }
-    await Keychain.setGenericPassword(
-      KEYCHAIN_NATIVE_USER_KEY,
-      JSON.stringify(userInfo),
-      {
-        service: KEYCHAIN_NATIVE_USER_KEY,
-        accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
-      },
-    )
     preferencesStore.setState({ hasLoggedIn: true, showReloginNotice: false })
     set({ nativeUser: userInfo })
     return userInfo
