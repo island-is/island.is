@@ -19,7 +19,8 @@ lists framework behaviour that a single template does not reveal.
 - Placeholders: `<project>` is the `name` in the template's `project.json`
   (`application-templates-rental-agreement`); `<path>` is its directory
   under `libs/application/templates/` (`hms/rental-agreement`).
-- Test a template: `yarn nx test <project>`. Faster, without nx:
+- Test a template: `yarn nx test <project>`. To skip nx startup and
+  pass jest flags directly:
   `NX_TASK_TARGET_PROJECT=<project> yarn jest -c libs/application/templates/<path>/<jest-config>`,
   where `<jest-config>` is the template's own `jest.config.ts` or `.js`.
   Without the variable, path aliases fail.
