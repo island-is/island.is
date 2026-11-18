@@ -75,6 +75,9 @@ export const DEFAULT_EDITABLE_ENTRY_TYPE_IDS = [
   'lifeEventPage',
   'footerItem',
   'customPage',
+  'sectionHeading',
+  'sectionWithVideo',
+  'powerBiSlice',
 ]
 
 export const DEFAULT_READ_ONLY_ENTRY_IDS = [
