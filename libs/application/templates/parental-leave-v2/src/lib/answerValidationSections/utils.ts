@@ -5,6 +5,7 @@ import addDays from 'date-fns/addDays'
 import isThisMonth from 'date-fns/isThisMonth'
 import isValid from 'date-fns/isValid'
 import format from 'date-fns/format'
+import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
 import {
   AnswerValidationError,
   NO,
@@ -25,14 +26,17 @@ import {
 import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   minimumRatio,
-  minPeriodDays,
   usageMaxMonths,
   usageMinMonths,
 } from '../../config'
 import { errorMessages } from '../messages'
-import { calculatePeriodLength } from '../directorateOfLabour.utils'
 import { Period } from '../../types'
 import { MessageDescriptor } from 'react-intl'
+
+// The minimum length is in calendar days, both ends included. Rights are still
+// counted in 30 day months by `calculatePeriodLength`.
+const isShorterThanMinimum = (start: Date, end: Date) =>
+  differenceInCalendarDays(end, start) + 1 < MINIMUM_PERIOD_LENGTH
 
 const hasBeenAnswered = (answer: unknown) => answer !== undefined
 export const buildError = (
@@ -152,7 +156,7 @@ export const findShortPeriodWithoutPredecessor = (
       return false
     }
 
-    return calculatePeriodLength(start, end) < MINIMUM_PERIOD_LENGTH
+    return isShorterThanMinimum(start, end)
   })
 }
 
@@ -327,23 +331,43 @@ export const validatePeriod = (
       )
     }
 
+    // Neither end lies within another period, checked above, but the period
+    // may still span one
+    const spannedPeriod = existingPeriods.find((other) => {
+      const otherStart = other.startDate ? parseISO(other.startDate) : undefined
+      return (
+        otherStart !== undefined &&
+        isValid(otherStart) &&
+        isWithinInterval(otherStart, {
+          start: startDateValue as Date,
+          end: endDateValue,
+        })
+      )
+    })
+
+    if (spannedPeriod) {
+      return buildError(
+        useLength === YES ? 'endDateDuration' : 'endDate',
+        errorMessages.periodsSpansOtherPeriod,
+      )
+    }
+
     // Stop check period in the past from VMST
     // Sometime they changed period to less than 14 days
+    // A short period may follow any period ending the day before it, not only
+    // the last one in the list, which need not be the previous one by date.
     if (
       !(
         endDateValue.getTime() < today.getTime() && !isThisMonth(startDateValue)
       ) &&
-      !isPeriodsContinuous(existingPeriods.at(-1), period)
+      !existingPeriods.some((other) => isPeriodsContinuous(other, period))
     ) {
-      if (
-        calculatePeriodLength(startDateValue, endDateValue) <
-        MINIMUM_PERIOD_LENGTH
-      ) {
+      if (isShorterThanMinimum(startDateValue, endDateValue)) {
         return buildError(
           useLength === YES ? 'endDateDuration' : 'endDate',
           errorMessages.periodsEndDateMinimumPeriod,
           {
-            minPeriodDays: minPeriodDays - 1,
+            minPeriodDays: MINIMUM_PERIOD_LENGTH,
           },
         )
       }

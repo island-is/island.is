@@ -19,7 +19,7 @@ import {
 } from '../../lib/parentalLeaveUtils'
 import { maxDaysToGiveOrReceive } from '../../config'
 import { TransferRightsOption } from '../../constants'
-import { NO, YES, YesOrNo } from '@island.is/application/core'
+import { NO, YES, YesOrNo, getValueViaPath } from '@island.is/application/core'
 
 const getDefaultValue = (
   isRequestingRights: YesOrNo,
@@ -103,10 +103,29 @@ export const TransferRights: FC<
   )
   const maxMultipleBirthsDays = getMaxMultipleBirthsDays(application.answers)
 
+  const requestDisabled =
+    hasMultipleBirths === YES && multipleBirthsRequestDays === 0
+  const giveDisabled =
+    (hasMultipleBirths === YES &&
+      multipleBirthsRequestDays === maxMultipleBirthsDays) ||
+    !canTransferRights
+
+  // The change form saves the selection under its own id, `editTransferRights`
+  const ownAnswer =
+    typeof field.id === 'string'
+      ? getValueViaPath<TransferRightsOption>(application.answers, field.id)
+      : undefined
+  const savedSelection =
+    ownAnswer ??
+    transferRights ??
+    getDefaultValue(isRequestingRights, isGivingRights)
+
+  // A saved option that can no longer be chosen must not set its days
   const defaultValue =
-    transferRights !== undefined
-      ? transferRights
-      : getDefaultValue(isRequestingRights, isGivingRights)
+    (savedSelection === TransferRightsOption.REQUEST && requestDisabled) ||
+    (savedSelection === TransferRightsOption.GIVE && giveDisabled)
+      ? TransferRightsOption.NONE
+      : savedSelection
 
   const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
@@ -116,8 +135,16 @@ export const TransferRights: FC<
   const onSelect = (selected: string) => {
     const option = selected as TransferRightsOption
 
+    setValue('transferRights', option)
     setHiddenValues(calculateHiddenValues(option, requestDays, giveDays))
   }
+
+  // Keep `transferRights` in line with the selection shown, also before a click
+  useEffect(() => {
+    if (defaultValue !== undefined) {
+      setValue('transferRights', defaultValue)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setValue(
@@ -151,18 +178,14 @@ export const TransferRights: FC<
               parentalLeaveFormMessages.shared.transferRightsRequest,
             ),
             value: TransferRightsOption.REQUEST,
-            disabled:
-              hasMultipleBirths === YES && multipleBirthsRequestDays === 0,
+            disabled: requestDisabled,
           },
           {
             label: formatMessage(
               parentalLeaveFormMessages.shared.transferRightsGive,
             ),
             value: TransferRightsOption.GIVE,
-            disabled:
-              (hasMultipleBirths === YES &&
-                multipleBirthsRequestDays === maxMultipleBirthsDays) ||
-              !canTransferRights,
+            disabled: giveDisabled,
           },
         ],
         backgroundColor: 'blue',
