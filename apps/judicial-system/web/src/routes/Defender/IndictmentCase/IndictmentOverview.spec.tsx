@@ -1,3 +1,5 @@
+import type { FetchResult } from '@apollo/client'
+import { ApolloLink, Observable } from '@apollo/client'
 import type { MockedResponse } from '@apollo/client/testing'
 import { MockedProvider } from '@apollo/client/testing'
 import { render, screen, waitFor, within } from '@testing-library/react'
@@ -101,13 +103,40 @@ const completedCase = (
   ],
 })
 
+// A link that answers nothing until the test settles a pending operation
+// itself, and that tells how often an operation was sent.
+const heldLink = () => {
+  const sent: { name: string; fail: () => void }[] = []
+
+  const link = new ApolloLink(
+    (operation) =>
+      new Observable<FetchResult>((observer) => {
+        sent.push({
+          name: operation.operationName,
+          fail: () => observer.error(new Error('Failed')),
+        })
+      }),
+  )
+
+  return {
+    link,
+    timesSent: (name: string) =>
+      sent.filter((operation) => operation.name === name).length,
+    fail: (name: string) =>
+      sent
+        .filter((operation) => operation.name === name)
+        .forEach((operation) => operation.fail()),
+  }
+}
+
 const renderOverview = (
   theCase: WorkingCase,
   features: Feature[] = [],
   mocks: MockedResponse[] = [],
+  link?: ApolloLink,
 ) =>
   render(
-    <MockedProvider mocks={mocks} addTypename={false}>
+    <MockedProvider mocks={mocks} addTypename={false} link={link}>
       <FeatureContext.Provider value={{ features, isLoading: false }}>
         <UserContextWrapper
           userRole={UserRole.DEFENDER}
@@ -256,26 +285,15 @@ describe('Defender IndictmentOverview', () => {
   })
 
   it('closes the confirmation on Escape without accepting the verdict', async () => {
-    const accept = jest.fn(() => ({
-      data: { limitedAccessAcceptVerdict: { defendantId: 'own_client_id' } },
-    }))
+    const { link, timesSent } = heldLink()
 
     renderOverview(
       completedCase(CaseIndictmentRulingDecision.RULING, {
         defendersConfirmed: true,
       }),
       [Feature.INDICTMENT_APPEAL],
-      [
-        {
-          request: {
-            query: LimitedAccessAcceptVerdictDocument,
-            variables: {
-              input: { caseId: 'test_id', defendantId: 'own_client_id' },
-            },
-          },
-          result: accept,
-        },
-      ],
+      [],
+      link,
     )
 
     const timelineCards = await screen.findAllByTestId(
@@ -298,31 +316,19 @@ describe('Defender IndictmentOverview', () => {
         screen.queryByRole('button', { name: 'Já, una dómi' }),
       ).not.toBeInTheDocument(),
     )
-    expect(accept).not.toHaveBeenCalled()
+    expect(timesSent('LimitedAccessAcceptVerdict')).toBe(0)
   })
 
   it('keeps the confirmation open and locked while the verdict is being accepted', async () => {
+    const { link, timesSent, fail } = heldLink()
+
     renderOverview(
       completedCase(CaseIndictmentRulingDecision.RULING, {
         defendersConfirmed: true,
       }),
       [Feature.INDICTMENT_APPEAL],
-      [
-        {
-          request: {
-            query: LimitedAccessAcceptVerdictDocument,
-            variables: {
-              input: { caseId: 'test_id', defendantId: 'own_client_id' },
-            },
-          },
-          result: {
-            data: {
-              limitedAccessAcceptVerdict: { defendantId: 'own_client_id' },
-            },
-          },
-          delay: Infinity,
-        },
-      ],
+      [],
+      link,
     )
 
     const timelineCards = await screen.findAllByTestId(
@@ -343,12 +349,19 @@ describe('Defender IndictmentOverview', () => {
     await waitFor(() =>
       expect(screen.getByRole('button', { name: 'Hætta við' })).toBeDisabled(),
     )
+    expect(timesSent('LimitedAccessAcceptVerdict')).toBe(1)
 
     await userEvent.keyboard('{Escape}')
 
-    expect(
-      screen.getByRole('button', { name: 'Hætta við' }),
-    ).toBeInTheDocument()
+    // A confirmation that Escape had started closing would stay in the
+    // document, disabled, until its exit ended. Only one still open takes the
+    // failed answer and gives its buttons back.
+    fail('LimitedAccessAcceptVerdict')
+
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Hætta við' })).toBeEnabled(),
+    )
+    expect(screen.getByRole('button', { name: 'Já, una dómi' })).toBeEnabled()
   })
 
   it('offers to withdraw once the verdict has been appealed', async () => {
