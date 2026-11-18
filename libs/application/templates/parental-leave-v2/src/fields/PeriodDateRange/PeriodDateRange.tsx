@@ -189,9 +189,10 @@ export const PeriodDateRange: FC<
             parentalLeaveFormMessages.endDate.placeholder,
           )}
           locale="is"
+          // The minimum length counts both the start and end day
           minDate={
             startDateValue
-              ? addDays(parseISO(startDateValue), minPeriodDays)
+              ? addDays(parseISO(startDateValue), minPeriodDays - 1)
               : minDate
           }
           maxDate={maxDate}

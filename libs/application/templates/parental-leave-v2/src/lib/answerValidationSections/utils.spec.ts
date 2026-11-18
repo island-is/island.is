@@ -111,6 +111,23 @@ describe('findShortPeriodWithoutPredecessor', () => {
     ).toBeUndefined()
   })
 
+  // Rights count every month as 30 days, the minimum counts calendar days
+  it('counts the minimum in calendar days, whatever the month length', () => {
+    const march = {
+      startDate: '2030-03-18',
+      endDate: '2030-03-31',
+      ratio: '100',
+    }
+    const february = {
+      startDate: '2030-02-17',
+      endDate: '2030-02-28',
+      ratio: '100',
+    }
+
+    expect(findShortPeriodWithoutPredecessor([march])).toBeUndefined()
+    expect(findShortPeriodWithoutPredecessor([february])).toBe(february)
+  })
+
   it('skips periods VMST has paid or approved, and periods already over', () => {
     expect(
       findShortPeriodWithoutPredecessor([{ ...short, approved: true }]),

@@ -771,6 +771,21 @@ describe('when constructing a new period', () => {
       })
     })
 
+    // Rights count every month as 30 days, the minimum counts calendar days
+    it('accepts 14 calendar days ending on the 31st', () => {
+      let month = addMonths(FUTURE_DOB_DATE, 3)
+      while (
+        new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate() !== 31
+      ) {
+        month = addMonths(month, 1)
+      }
+      const end = new Date(month.getFullYear(), month.getMonth(), 31)
+
+      expect(
+        validateLatest([first], formatDate(addDays(end, -13)), formatDate(end)),
+      ).toEqual(undefined)
+    })
+
     it('accepts it straight after the period before it', () => {
       expect(validateLatest([first], day(31), day(36))).toEqual(undefined)
     })
