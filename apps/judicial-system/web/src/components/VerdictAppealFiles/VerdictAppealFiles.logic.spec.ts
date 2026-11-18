@@ -171,7 +171,7 @@ describe('getVerdictAppealFileGroups', () => {
     )
 
     expect(groups).toHaveLength(1)
-    expect(groups[0].defendant.id).toBe('own_client_id')
+    expect(groups[0].defendant?.id).toBe('own_client_id')
     expect(groups[0].files.map((f) => f.id)).toEqual([
       'declaration',
       'attachment',

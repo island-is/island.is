@@ -86,7 +86,7 @@ export const canDefenceUserAccessVerdictAppealFiles = (
   workingCase: Pick<WorkingCase, 'defendants' | 'civilClaimants'>,
   user: User | undefined,
 ): boolean => {
-  if (!isDefenceUser(user) || !user.nationalId) {
+  if (!user || !user.nationalId || !isDefenceUser(user)) {
     return false
   }
 
