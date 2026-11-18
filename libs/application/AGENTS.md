@@ -128,10 +128,15 @@ lists framework behaviour that a single template does not reveal.
   Give every state `meta.lifecycle`.
 - **Pruning keeps only `adminDataConfig` keys.** A malformed key (a second
   `.$.`, a leading `$.`, no array before `.$.`) makes pruning fail.
-- **Card text, `pendingAction`, `name` and `historyLogs` are shown to every
-  viewer, admins included, and computed for every listed application in
-  one `Promise.all`.** Show only what every party may see, and catch errors
-  with a fallback: one throw breaks the whole my-pages list.
+- **Card `title`, `description`, `name` and history messages are the same
+  for every viewer,** admins included, so show only what every party may
+  see. A function-form `pendingAction` or `includeSubjectAndActor` receives
+  the viewer's `role`, `nationalId` and `isAdmin`; branch there for anything
+  party-specific.
+- **Every listed application is serialized in one `Promise.all`.** Catch
+  errors in your card functions and return a fallback: one throw breaks the
+  whole my-pages list. Only a failed template load is skipped, and only in
+  the admin list.
 
 ## Client and translations
 
