@@ -18,11 +18,19 @@ import {
 } from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
 import {
+  MedicineDelegationCheckStepUpInput,
   MedicineDelegationCreateOrDeleteInput,
   MedicineDelegationInput,
 } from '.././dto/medicineDelegation.input'
 import { HealthDirectorateResponse } from '.././dto/response.dto'
 import { HealthDirectorateService } from '.././health-directorate.service'
+import { MedicineDelegationStepUpService } from '.././medicine-delegation-step-up.service'
+import {
+  MedicineDelegationCreateResponse,
+  MedicineDelegationStepUpMethod,
+  MedicineDelegationStepUpResult,
+  MedicineDelegationStepUpStatus,
+} from '.././models/medicineDelegationStepUp.model'
 import { MedicineDelegations } from '.././models/medicineDelegation.model'
 import { MedicineHistory } from '.././models/medicineHistory.model'
 import { MedicineDispensationsATCInput } from '.././models/medicineHistoryATC.dto'
@@ -37,7 +45,10 @@ import { PrescriptionRenewalTarget } from '.././models/renewalTarget.model'
 @Audit({ namespace: '@island.is/api/health-directorate' })
 @Resolver()
 export class MedicineResolver {
-  constructor(private api: HealthDirectorateService) {}
+  constructor(
+    private api: HealthDirectorateService,
+    private stepUp: MedicineDelegationStepUpService,
+  ) {}
 
   /* Prescriptions */
   @Query(() => Prescriptions, {
@@ -147,17 +158,59 @@ export class MedicineResolver {
   }
 
   /* Add new Prescription Delegation */
-  @Mutation(() => HealthDirectorateResponse, {
+  @Mutation(() => MedicineDelegationCreateResponse, {
     name: 'healthDirectorateMedicineDelegationCreate',
   })
   @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthMedicineDelegationPageEnabled)
-  postMedicineDelegation(
+  async postMedicineDelegation(
     @Args('input') input: MedicineDelegationCreateOrDeleteInput,
     @CurrentUser() user: User,
-  ): Promise<HealthDirectorateResponse> {
+  ): Promise<MedicineDelegationCreateResponse> {
+    if (await this.stepUp.isRequired(user)) {
+      // Nothing is saved until the person has authenticated for this grant.
+      const stepUp = await this.stepUp.start(user, input)
+      return {
+        success: false,
+        stepUp: {
+          ...stepUp,
+          method: MedicineDelegationStepUpMethod[stepUp.method],
+        },
+      }
+    }
+
     return this.api.postMedicineDelegation(user, input)
+  }
+
+  /* Finish a Prescription Delegation that waits for electronic ID. A mutation: it saves, and must not be cached. */
+  @Mutation(() => MedicineDelegationStepUpResult, {
+    name: 'healthDirectorateMedicineDelegationCheckStepUp',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  @FeatureFlag(Features.servicePortalHealthMedicineDelegationPageEnabled)
+  async checkMedicineDelegationStepUp(
+    @Args('input') input: MedicineDelegationCheckStepUpInput,
+    @CurrentUser() user: User,
+  ): Promise<MedicineDelegationStepUpResult> {
+    const status = await this.stepUp.check(
+      user,
+      input.authReqId,
+      input.delegation,
+    )
+    if (status !== 'confirmed') {
+      return {
+        status: MedicineDelegationStepUpStatus[status],
+        success: false,
+      }
+    }
+
+    const { success } = await this.api.postMedicineDelegation(
+      user,
+      input.delegation,
+    )
+    return { status: MedicineDelegationStepUpStatus.confirmed, success }
   }
 
   /* Delete prescription Delegation */

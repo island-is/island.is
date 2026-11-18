@@ -44,6 +44,7 @@ export * from './components/PortalRouter'
 export * from './components/PortalPageLoader'
 export * from './components/PortalHeaderSlot'
 export * from './components/Table/Table'
+export * from './components/StepUpAuthentication/StepUpAuthentication'
 
 // queries
 export * from './queries/ServicePortalPage.generated'

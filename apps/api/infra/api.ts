@@ -198,6 +198,11 @@ export const serviceSetup = (services: {
         prod: 'https://innskra.island.is',
       },
       AUTH_REQUIRE_DPOP: 'false',
+      STEP_UP_ALLOW_FAKE_LOGIN: {
+        dev: 'true',
+        staging: 'false',
+        prod: 'false',
+      },
       MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: {
         dev: 'http://financial-aid-backend',
         staging: 'http://financial-aid-backend',
@@ -474,6 +479,7 @@ export const serviceSetup = (services: {
       INTELLECTUAL_PROPERTY_API_KEY: '/k8s/api/IP_API_KEY',
       VEHICLES_ALLOW_CO_OWNERS: '/k8s/api/VEHICLES_ALLOW_CO_OWNERS',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
+      STEP_UP_CIBA_CLIENT_SECRET: '/k8s/api/STEP_UP_CIBA_CLIENT_SECRET',
       FINANCIAL_STATEMENTS_INAO_CLIENT_ID:
         '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID',
       FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET:
