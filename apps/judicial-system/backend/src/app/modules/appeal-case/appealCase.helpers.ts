@@ -6,6 +6,7 @@ import {
   type AppealStatementParty,
   CaseAppealDecision,
   isDefenceUser,
+  isIndictmentCase,
   isProsecutionUser,
   isRequestCase,
   prosecutionRoles,
@@ -48,6 +49,44 @@ export const findAppealCaseOfCaseFile = (
   }
 
   return theCase.appealCase
+}
+
+// Defendants and civil claimants a defence user represents on an indictment —
+// district and/or appeal confirmation. Empty for request cases (collective
+// defence, no per-party rows) and when the national id matches no party.
+export const resolveDefenceParties = (
+  theCase: Case,
+  nationalId: string,
+): { defendantId?: string; civilClaimantId?: string }[] => {
+  if (!isIndictmentCase(theCase.type)) {
+    return []
+  }
+
+  const parties: { defendantId?: string; civilClaimantId?: string }[] = []
+
+  for (const defendant of theCase.defendants ?? []) {
+    if (
+      Defendant.isConfirmedDefenderOfDefendant(nationalId, [defendant]) ||
+      Defendant.isConfirmedAppealDefenderOfDefendant(nationalId, [defendant])
+    ) {
+      parties.push({ defendantId: defendant.id })
+    }
+  }
+
+  for (const civilClaimant of theCase.civilClaimants ?? []) {
+    if (
+      CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(nationalId, [
+        civilClaimant,
+      ]) ||
+      CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(nationalId, [
+        civilClaimant,
+      ])
+    ) {
+      parties.push({ civilClaimantId: civilClaimant.id })
+    }
+  }
+
+  return parties
 }
 
 // A verdict appeal has two sides. The defence side is a defendant appealing -

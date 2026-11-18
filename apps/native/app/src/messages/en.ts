@@ -191,7 +191,7 @@ export const en: TranslatedMessages = {
   'user.natreg.maritalStatusValue': `{
     maritalStatus,
     select,
-    MARRIED {Married or registered partnership}
+    MARRIED {Married}
     UNMARRIED {Unmarried}
     WIDOWED {Widowed}
     SEPARATED {Separated}

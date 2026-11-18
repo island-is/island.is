@@ -263,18 +263,23 @@ const canAppealsCourtUserAccessRequestCase = (theCase: Case): boolean => {
 }
 
 // An appealed verdict reaches the court earlier than an appealed ruling does.
-// Every clause above waits for receipt; a verdict appeal is filed and then
-// waits for the court to pick it up, so the court has to see it from the
-// moment it is filed or it could never receive it at all. Every state of one
-// is the court's to see, which is what the case table access rule says too -
-// the two have to agree, or the court gets a row in a list that it cannot
-// open.
+// Every clause above waits for receipt; a verdict appeal waits for the court
+// to pick it up, so the court has to see it before receiving it or it could
+// never receive it at all. What opens it to the court is the first appeal
+// summons sent there: until then the appeal is still being prepared by the
+// public prosecution and is none of the court's business. A sent summons can
+// be neither unsent nor deleted, so access never closes again, and from then
+// on every state of the appeal is the court's to see.
 //
-// The association is scoped to appeal_type = VERDICT, so its presence is the
-// whole of the question.
+// The case table access rule says the same thing - the two have to agree, or
+// the court gets a row in a list that it cannot open.
+//
+// Both associations are scoped - the appeal to appeal_type = VERDICT, the
+// summonses to those with a send date - so a non-empty list is the whole of
+// the question.
 const canAppealsCourtUserAccessCaseVerdictAppealCase = (
   theCase: Case,
-): boolean => Boolean(theCase.verdictAppealCase)
+): boolean => Boolean(theCase.verdictAppealCase?.sentAppealSummonses?.length)
 
 const canAppealsCourtUserAccessIndictmentCase = (theCase: Case): boolean => {
   return (

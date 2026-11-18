@@ -46,6 +46,15 @@ export const draftRetryGoalsAndActionsSection = buildSection({
           },
           { mode: 'retry' },
         ),
+        // Changes here reach DMR at once and count as the company's reply,
+        // like the Editor's; nothing is kept in answers.
+        buildCustomField(
+          {
+            id: 'equalityAttachments',
+            component: 'EqualityAttachments',
+          },
+          { mode: 'retry' },
+        ),
         buildSubmitField({
           id: 'draftRetrySubmit',
           title: messages.draftRetry.submitButton,

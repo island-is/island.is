@@ -2,7 +2,11 @@ import { expect } from '@playwright/test'
 import faker from 'faker'
 import { urls } from '../../../support/urls'
 import { verifyRequestCompletion } from '../../../support/api-tools'
-import { chooseDocument, getDaysFromNow } from '../utils/helpers'
+import {
+  chooseDocument,
+  getDaysFromNow,
+  randomAppealCaseNumber,
+} from '../utils/helpers'
 import { test } from '../utils/judicialSystemTest'
 import {
   judgeCompletesIndictmentWithVerdict,
@@ -84,6 +88,20 @@ test.describe.serial('Verdict appeal tests', () => {
     await expect(page).toHaveURL(
       new RegExp(`/landsrettur/afryjun/yfirlit/${caseId}(\\?.*)?$`),
     )
+    await page.getByTestId('continueButton').click()
+
+    // Registration: the court does not move on without its own case number.
+    // The bench is assigned later, so it is left empty here.
+    await expect(page).toHaveURL(
+      new RegExp(
+        `/landsrettur/afryjun/skraning-og-uthlutun/${caseId}(\\?.*)?$`,
+      ),
+    )
+    await page.getByText('Mál nr. *').fill(randomAppealCaseNumber())
+    await Promise.all([
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateAppealCase'),
+      page.getByText('Mál nr. *').press('Tab'),
+    ])
     // The defender page refetches the case as it opens. Acting before that
     // settles lets the refetch overwrite the answer given below.
     await Promise.all([
