@@ -61,6 +61,7 @@ import { stripEmptyFormValue } from './strip-empty-answers'
 import { isAnswerKeyWritable, splitWritableAnswers } from './writable-answers'
 import { buildStepper } from './stepper-builder'
 import { buildFooterButtons } from './footer-builder'
+import { toApplicationSnapshot } from './screen-position'
 import {
   ScreenDto,
   PageDto,
@@ -159,20 +160,6 @@ interface ScreenRenderContext {
   form: Form
   bffUser: BffUser
   screens: FormScreen[]
-}
-
-type ApplicationSnapshotInput = Partial<ApplicationWithAttachments> & {
-  toJSON?: () => Partial<ApplicationWithAttachments>
-}
-
-const toApplicationSnapshot = (
-  application: ApplicationSnapshotInput,
-): Partial<ApplicationWithAttachments> => {
-  if (typeof application.toJSON === 'function') {
-    return application.toJSON()
-  }
-
-  return { ...application }
 }
 
 @Injectable()
