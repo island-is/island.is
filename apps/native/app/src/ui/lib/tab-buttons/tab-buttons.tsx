@@ -1,5 +1,6 @@
 import SegmentedControl from '@react-native-segmented-control/segmented-control'
 import React from 'react'
+import { Platform } from 'react-native'
 import { useTheme } from 'styled-components/native'
 
 interface TabButton {
@@ -14,7 +15,8 @@ interface TabButtonProps {
 }
 
 // The system's segmented control on iOS. On Android the library draws its own
-// version of it.
+// version of it, which fades to 40% when disabled: its raised slider then shows
+// a grey box. There it keeps its look and ignores taps instead.
 export const TabButtons = ({
   buttons,
   selectedTab,
@@ -27,10 +29,12 @@ export const TabButtons = ({
     <SegmentedControl
       values={buttons.map(({ title }) => title)}
       selectedIndex={selectedTab}
-      onChange={({ nativeEvent }) =>
-        setSelectedTab(nativeEvent.selectedSegmentIndex)
-      }
-      enabled={!disabled}
+      onChange={({ nativeEvent }) => {
+        if (!disabled) {
+          setSelectedTab(nativeEvent.selectedSegmentIndex)
+        }
+      }}
+      enabled={Platform.OS === 'android' || !disabled}
       activeFontStyle={{ color: theme.tokens.interactive.foreground.primary }}
       // Follow the app's theme, not the system's.
       appearance={theme.isDark ? 'dark' : 'light'}
