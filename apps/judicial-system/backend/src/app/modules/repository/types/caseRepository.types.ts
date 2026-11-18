@@ -1293,13 +1293,6 @@ export const getLimitedAccessCaseInclude = (
           order: [['created', 'ASC']],
           separate: true,
         },
-        {
-          model: AppealStatementDeadline,
-          as: 'statementDeadlines',
-          required: false,
-          order: [['created', 'ASC']],
-          separate: true,
-        },
       ],
     },
     {
