@@ -83,9 +83,11 @@ export class LimitedAccessDeleteCaseFileGuard implements CanActivate {
         ]))
 
     // Confirmed appeal advocates may remove their own greinargerð (and its
-    // attachments) until Landsréttur has registered a case number. Checked
-    // before the district list so a dual-confirmed advocate is not blocked
-    // from deleting a verdict-appeal statement by the narrower district set.
+    // attachments) until that party has filed (APPEAL_STATEMENT_SENT). After
+    // filing, DeleteAppealCaseFileGuard also locks once Landsréttur has a case
+    // number. Checked before the district list so a dual-confirmed advocate is
+    // not blocked from deleting a pre-filing statement by the narrower district
+    // set.
     const isAppealConfirmed =
       (defendant &&
         Defendant.isConfirmedAppealDefenderOfDefendant(user.nationalId, [

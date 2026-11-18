@@ -3,6 +3,7 @@ import {
   CaseState,
   CaseType,
   DefendantEventType,
+  hasFiledAppealStatement,
   isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
@@ -10,6 +11,7 @@ import {
   isPrisonStaffUser,
   isRequestCase,
   User,
+  verdictAppealStatementFileCategories,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -195,6 +197,49 @@ const canDefenceUserViewCaseFileOfIndictmentCase = (
   return allowedCaseFileCategories.includes(caseFileCategory)
 }
 
+// Incomplete greinargerð uploads stay private to the party's own confirmed
+// defender/advocate until APPEAL_STATEMENT_SENT. Co-parties and prosecution
+// drafts must not leak through limited-access listing or download.
+const canDefenceUserViewVerdictAppealStatementFile = (
+  nationalId: string,
+  caseFileCategory: CaseFileCategory,
+  defendants: Defendant[] | undefined,
+  civilClaimants: CivilClaimant[] | undefined,
+  defendantId: string | undefined,
+  civilClaimantId: string | null | undefined,
+  appealEventLogs: Parameters<typeof hasFiledAppealStatement>[0],
+): boolean => {
+  if (!verdictAppealStatementFileCategories.includes(caseFileCategory)) {
+    return true
+  }
+
+  const party = { defendantId, civilClaimantId }
+  const defendant = defendants?.find((d) => d.id === defendantId)
+  const civilClaimant = civilClaimants?.find((c) => c.id === civilClaimantId)
+
+  const isOwnParty = Boolean(
+    (defendant &&
+      (Defendant.isConfirmedDefenderOfDefendant(nationalId, [defendant]) ||
+        Defendant.isConfirmedAppealDefenderOfDefendant(nationalId, [
+          defendant,
+        ]))) ||
+      (civilClaimant &&
+        (CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(nationalId, [
+          civilClaimant,
+        ]) ||
+          CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
+            nationalId,
+            [civilClaimant],
+          ))),
+  )
+
+  if (isOwnParty) {
+    return true
+  }
+
+  return hasFiledAppealStatement(appealEventLogs, party)
+}
+
 const canDefenceUserViewCaseFile = ({
   nationalId,
   userName,
@@ -209,6 +254,7 @@ const canDefenceUserViewCaseFile = ({
   civilClaimantId,
   fileCreated,
   isRulingOrderInConfirmedCourtSession,
+  appealEventLogs,
 }: {
   nationalId: string
   userName: string
@@ -223,6 +269,7 @@ const canDefenceUserViewCaseFile = ({
   civilClaimantId?: string | null
   fileCreated?: Date
   isRulingOrderInConfirmedCourtSession?: boolean
+  appealEventLogs?: Parameters<typeof hasFiledAppealStatement>[0]
 }) => {
   if (isRequestCase(caseType)) {
     return canDefenceUserViewCaseFileOfRequestCase(caseState, caseFileCategory)
@@ -316,6 +363,20 @@ const canDefenceUserViewCaseFile = ({
       return false
     }
 
+    if (
+      !canDefenceUserViewVerdictAppealStatementFile(
+        nationalId,
+        caseFileCategory,
+        defendants,
+        civilClaimants,
+        defendantId,
+        civilClaimantId,
+        appealEventLogs,
+      )
+    ) {
+      return false
+    }
+
     return canDefenceUserViewCivilClaimCaseFile(nationalId, {
       category: caseFileCategory,
       civilClaimantId,
@@ -360,6 +421,7 @@ export const canLimitedAccessUserViewCaseFile = ({
   civilClaimantId,
   fileCreated,
   isRulingOrderInConfirmedCourtSession,
+  appealEventLogs,
 }: {
   user: User
   caseType: CaseType
@@ -373,6 +435,7 @@ export const canLimitedAccessUserViewCaseFile = ({
   civilClaimantId?: string | null
   fileCreated?: Date
   isRulingOrderInConfirmedCourtSession?: boolean
+  appealEventLogs?: Parameters<typeof hasFiledAppealStatement>[0]
 }) => {
   if (!caseFileCategory) {
     return false
@@ -393,6 +456,7 @@ export const canLimitedAccessUserViewCaseFile = ({
       civilClaimantId,
       fileCreated,
       isRulingOrderInConfirmedCourtSession,
+      appealEventLogs,
     })
   }
 
