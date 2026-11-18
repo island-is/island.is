@@ -43,10 +43,8 @@ export const createBindingMessage = (recipientName: string) => {
 }
 
 export type MedicineDelegationStepUpOutcome =
-  | 'pending'
-  | 'confirmed'
-  | 'denied'
-  | 'expired'
+  | { status: 'pending' | 'denied' | 'expired' }
+  | { status: 'confirmed'; claims: StepUpClaims }
 
 /**
  * Granting a pharmacy delegation needs a fresh electronic ID authentication of
@@ -105,11 +103,11 @@ export class MedicineDelegationStepUpService {
   ): Promise<MedicineDelegationStepUpOutcome> {
     const result = await this.cibaClient.poll(authReqId)
     if (result.status !== 'authenticated') {
-      return result.status
+      return { status: result.status }
     }
 
     this.assertStepUp(user, input, result.claims)
-    return 'confirmed'
+    return { status: 'confirmed', claims: result.claims }
   }
 
   private assertStepUp(

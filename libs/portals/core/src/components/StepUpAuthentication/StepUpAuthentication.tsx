@@ -84,6 +84,7 @@ export const StepUpAuthentication = ({
   const [state, setState] = useState<State>({ name: 'waiting' })
   const pollTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const unmounted = useRef(false)
+  const deadline = useRef(Date.now() + stepUp.expiresIn * 1000)
 
   // In refs, so parent re-renders don't restart polling while a check is in flight.
   const checkRef = useRef(check)
@@ -99,6 +100,11 @@ export const StepUpAuthentication = ({
         status = await checkRef.current()
       } catch (error) {
         status = error === 'refused' ? 'refused' : 'pending'
+      }
+
+      // The request has run out, whatever an unreachable server says.
+      if (status === 'pending' && Date.now() > deadline.current) {
+        status = 'expired'
       }
 
       if (unmounted.current) {

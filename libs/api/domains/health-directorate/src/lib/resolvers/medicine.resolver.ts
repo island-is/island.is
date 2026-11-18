@@ -1,6 +1,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
-import { UseGuards } from '@nestjs/common'
+import { ForbiddenException, UseGuards } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -9,8 +9,9 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import type { StepUpClaims } from '@island.is/auth/step-up'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Audit } from '@island.is/nest/audit'
+import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   FeatureFlag,
   FeatureFlagGuard,
@@ -24,7 +25,10 @@ import {
 } from '.././dto/medicineDelegation.input'
 import { HealthDirectorateResponse } from '.././dto/response.dto'
 import { HealthDirectorateService } from '.././health-directorate.service'
-import { MedicineDelegationStepUpService } from '.././medicine-delegation-step-up.service'
+import {
+  MedicineDelegationStepUpService,
+  type MedicineDelegationStepUpOutcome,
+} from '.././medicine-delegation-step-up.service'
 import {
   MedicineDelegationCreateResponse,
   MedicineDelegationStepUpMethod,
@@ -41,13 +45,16 @@ import { Prescriptions } from '.././models/prescriptions.model'
 import { HealthDirectorateRenewalInput } from '.././models/renewal.input'
 import { PrescriptionRenewalTarget } from '.././models/renewalTarget.model'
 
+const namespace = '@island.is/api/health-directorate'
+
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@Audit({ namespace: '@island.is/api/health-directorate' })
+@Audit({ namespace })
 @Resolver()
 export class MedicineResolver {
   constructor(
     private api: HealthDirectorateService,
     private stepUp: MedicineDelegationStepUpService,
+    private auditService: AuditService,
   ) {}
 
   /* Prescriptions */
@@ -157,11 +164,10 @@ export class MedicineResolver {
     return this.api.getMedicineDelegations(user, locale, input)
   }
 
-  /* Add new Prescription Delegation */
+  /* Add new Prescription Delegation. Audited by hand: who it is for, and whether electronic ID confirmed it. */
   @Mutation(() => MedicineDelegationCreateResponse, {
     name: 'healthDirectorateMedicineDelegationCreate',
   })
-  @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthMedicineDelegationPageEnabled)
   async postMedicineDelegation(
@@ -171,6 +177,13 @@ export class MedicineResolver {
     if (await this.stepUp.isRequired(user)) {
       // Nothing is saved until the person has authenticated for this grant.
       const stepUp = await this.stepUp.start(user, input)
+      this.auditService.audit({
+        auth: user,
+        namespace,
+        action: 'startMedicineDelegationStepUp',
+        resources: input.nationalId,
+        meta: { method: stepUp.method },
+      })
       return {
         success: false,
         stepUp: {
@@ -180,28 +193,41 @@ export class MedicineResolver {
       }
     }
 
-    return this.api.postMedicineDelegation(user, input)
+    const result = await this.api.postMedicineDelegation(user, input)
+    this.auditGrant(user, input, result.success)
+    return result
   }
 
   /* Finish a Prescription Delegation that waits for electronic ID. A mutation: it saves, and must not be cached. */
   @Mutation(() => MedicineDelegationStepUpResult, {
     name: 'healthDirectorateMedicineDelegationCheckStepUp',
   })
-  @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthMedicineDelegationPageEnabled)
   async checkMedicineDelegationStepUp(
     @Args('input') input: MedicineDelegationCheckStepUpInput,
     @CurrentUser() user: User,
   ): Promise<MedicineDelegationStepUpResult> {
-    const status = await this.stepUp.check(
-      user,
-      input.authReqId,
-      input.delegation,
-    )
-    if (status !== 'confirmed') {
+    let outcome: MedicineDelegationStepUpOutcome
+    try {
+      outcome = await this.stepUp.check(user, input.authReqId, input.delegation)
+    } catch (error) {
+      // An authentication that was made, but not by this person or not for this grant.
+      if (error instanceof ForbiddenException) {
+        this.auditService.audit({
+          auth: user,
+          namespace,
+          action: 'refuseMedicineDelegationStepUp',
+          resources: input.delegation.nationalId,
+          meta: { reason: error.message },
+        })
+      }
+      throw error
+    }
+
+    if (outcome.status !== 'confirmed') {
       return {
-        status: MedicineDelegationStepUpStatus[status],
+        status: MedicineDelegationStepUpStatus[outcome.status],
         success: false,
       }
     }
@@ -210,7 +236,33 @@ export class MedicineResolver {
       user,
       input.delegation,
     )
+    this.auditGrant(user, input.delegation, success, outcome.claims)
     return { status: MedicineDelegationStepUpStatus.confirmed, success }
+  }
+
+  private auditGrant(
+    user: User,
+    input: MedicineDelegationCreateOrDeleteInput,
+    success: boolean,
+    stepUp?: StepUpClaims,
+  ) {
+    this.auditService.audit({
+      auth: user,
+      namespace,
+      action: 'postMedicineDelegation',
+      resources: input.nationalId,
+      meta: {
+        success,
+        from: input.from?.toISOString(),
+        to: input.to?.toISOString(),
+        lookup: input.lookup === true,
+        stepUp: stepUp != null,
+        ...(stepUp && {
+          stepUpAcr: stepUp.acr,
+          stepUpAuthTime: stepUp.authTime.toISOString(),
+        }),
+      },
+    })
   }
 
   /* Delete prescription Delegation */

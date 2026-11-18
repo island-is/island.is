@@ -1,4 +1,7 @@
+import { ForbiddenException } from '@nestjs/common'
+
 import type { User } from '@island.is/auth-nest-tools'
+import type { AuditService } from '@island.is/nest/audit'
 
 import type { HealthDirectorateService } from '../health-directorate.service'
 import type { MedicineDelegationStepUpService } from '../medicine-delegation-step-up.service'
@@ -22,11 +25,13 @@ const setup = () => {
     start: jest.fn(),
     check: jest.fn(),
   }
+  const audit = { audit: jest.fn() }
   const resolver = new MedicineResolver(
     api as unknown as HealthDirectorateService,
     stepUp as unknown as MedicineDelegationStepUpService,
+    audit as unknown as AuditService,
   )
-  return { resolver, api, stepUp }
+  return { resolver, api, stepUp, audit }
 }
 
 describe('MedicineResolver pharmacy delegations', () => {
@@ -73,8 +78,8 @@ describe('MedicineResolver pharmacy delegations', () => {
   it.each(['pending', 'denied', 'expired'] as const)(
     'saves nothing while the step-up is %s',
     async (status) => {
-      const { resolver, api, stepUp } = setup()
-      stepUp.check.mockResolvedValue(status)
+      const { resolver, api, stepUp, audit } = setup()
+      stepUp.check.mockResolvedValue({ status })
 
       const result = await resolver.checkMedicineDelegationStepUp(
         { authReqId: 'req', delegation: input },
@@ -83,12 +88,15 @@ describe('MedicineResolver pharmacy delegations', () => {
 
       expect(result).toEqual({ status, success: false })
       expect(api.postMedicineDelegation).not.toHaveBeenCalled()
+      expect(audit.audit).not.toHaveBeenCalled()
     },
   )
 
-  it('saves nothing when the authentication is refused', async () => {
-    const { resolver, api, stepUp } = setup()
-    stepUp.check.mockRejectedValue(new Error('not for this delegation'))
+  it('saves nothing when the authentication is refused, and records it', async () => {
+    const { resolver, api, stepUp, audit } = setup()
+    stepUp.check.mockRejectedValue(
+      new ForbiddenException('not for this delegation'),
+    )
 
     await expect(
       resolver.checkMedicineDelegationStepUp(
@@ -97,11 +105,23 @@ describe('MedicineResolver pharmacy delegations', () => {
       ),
     ).rejects.toThrow('not for this delegation')
     expect(api.postMedicineDelegation).not.toHaveBeenCalled()
+    expect(audit.audit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: 'refuseMedicineDelegationStepUp',
+        resources: input.nationalId,
+      }),
+    )
   })
 
   it('saves the checked delegation once the step-up is confirmed', async () => {
-    const { resolver, api, stepUp } = setup()
-    stepUp.check.mockResolvedValue('confirmed')
+    const { resolver, api, stepUp, audit } = setup()
+    stepUp.check.mockResolvedValue({
+      status: 'confirmed',
+      claims: {
+        acr: 'eidas-loa-high',
+        authTime: new Date('2026-11-18T12:00:00Z'),
+      },
+    })
 
     const result = await resolver.checkMedicineDelegationStepUp(
       { authReqId: 'req', delegation: input },
@@ -111,5 +131,37 @@ describe('MedicineResolver pharmacy delegations', () => {
     expect(stepUp.check).toHaveBeenCalledWith(user, 'req', input)
     expect(api.postMedicineDelegation).toHaveBeenCalledWith(user, input)
     expect(result).toEqual({ status: 'confirmed', success: true })
+    expect(audit.audit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: 'postMedicineDelegation',
+        resources: input.nationalId,
+        meta: expect.objectContaining({
+          success: true,
+          stepUp: true,
+          stepUpAcr: 'eidas-loa-high',
+        }),
+      }),
+    )
+  })
+
+  it('reports a confirmed step-up whose delegation could not be saved', async () => {
+    const { resolver, api, stepUp, audit } = setup()
+    stepUp.check.mockResolvedValue({
+      status: 'confirmed',
+      claims: { acr: 'eidas-loa-high', authTime: new Date() },
+    })
+    api.postMedicineDelegation.mockResolvedValue({ success: false })
+
+    const result = await resolver.checkMedicineDelegationStepUp(
+      { authReqId: 'req', delegation: input },
+      user,
+    )
+
+    expect(result).toEqual({ status: 'confirmed', success: false })
+    expect(audit.audit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        meta: expect.objectContaining({ success: false, stepUp: true }),
+      }),
+    )
   })
 })

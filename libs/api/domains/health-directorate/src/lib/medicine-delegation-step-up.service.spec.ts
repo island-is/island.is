@@ -165,7 +165,7 @@ describe('MedicineDelegationStepUpService', () => {
         const { service, ciba } = setup()
         ciba.poll.mockResolvedValue({ status })
 
-        expect(await service.check(user, 'req', input)).toBe(status)
+        expect(await service.check(user, 'req', input)).toEqual({ status })
       },
     )
 
@@ -176,7 +176,10 @@ describe('MedicineDelegationStepUpService', () => {
         claims: claimsFor(),
       })
 
-      expect(await service.check(user, 'req', input)).toBe('confirmed')
+      expect(await service.check(user, 'req', input)).toMatchObject({
+        status: 'confirmed',
+        claims: { nationalId: user.nationalId },
+      })
       expect(ciba.poll).toHaveBeenCalledWith('req')
     })
 
@@ -220,7 +223,7 @@ describe('MedicineDelegationStepUpService', () => {
         claims: claimsFor({ acr: '0' }),
       })
 
-      expect(await service.check(user, 'req', input)).toBe('confirmed')
+      expect((await service.check(user, 'req', input)).status).toBe('confirmed')
     })
 
     it('expects the actor when acting for someone else', async () => {
@@ -237,7 +240,9 @@ describe('MedicineDelegationStepUpService', () => {
         }),
       })
 
-      expect(await service.check(acting, 'req', input)).toBe('confirmed')
+      expect((await service.check(acting, 'req', input)).status).toBe(
+        'confirmed',
+      )
     })
   })
 
