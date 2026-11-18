@@ -172,10 +172,18 @@ export const authStore = create<AuthStore>((set, get) => ({
       return
     }
 
+    // The app locked, logged out or unlocked again while the refresh was out:
+    // that session is over, and its tokens mustn't come back.
+    const isSuperseded = () => get().authorizeResult !== authorizeResult
+
     let tokens
     try {
       tokens = await getIasClient().refresh(authorizeResult.refreshToken)
     } catch (e) {
+      // The lock revokes the refresh token, so this one may fail for that.
+      if (isSuperseded()) {
+        throw e
+      }
       if (!skipLogout && isLogoutError(e as Error & { code?: string })) {
         Alert.alert(
           intl.formatMessage({ id: 'login.expiredTitle' }),
@@ -186,6 +194,13 @@ export const authStore = create<AuthStore>((set, get) => ({
         router.replace('/login')
       }
       throw e
+    }
+
+    if (isSuperseded()) {
+      void getIasClient()
+        .revoke(tokens.refreshToken)
+        .catch((error) => console.log('Failed to revoke the refresh', error))
+      return
     }
 
     // A native login's tokens stay in memory: a restart needs an unlock.
