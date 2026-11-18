@@ -115,6 +115,10 @@ const NewMedicineDelegation = () => {
   }
 
   const handleSubmit = () => {
+    // A second click would start a second step-up and a second prompt on the phone.
+    if (loading) {
+      return
+    }
     if (formState?.nationalId && formState?.dateFrom && formState?.dateTo) {
       const input: DelegationInput = {
         nationalId: formState.nationalId,

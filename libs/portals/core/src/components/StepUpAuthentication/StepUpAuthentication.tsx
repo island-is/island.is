@@ -104,7 +104,7 @@ export const StepUpAuthentication = ({
 
       // The request has run out, whatever an unreachable server says.
       if (status === 'pending' && Date.now() > deadline.current) {
-        status = 'expired'
+        status = 'timed_out'
       }
 
       if (unmounted.current) {
