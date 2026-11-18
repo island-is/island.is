@@ -304,7 +304,7 @@ export const TableRepeaterFormField: FC<Props> = ({
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
-      {showFieldName && (
+      {showFieldName && title && (
         <Text variant={titleVariant} marginBottom={2}>
           {formatTextWithLocale(
             title,
