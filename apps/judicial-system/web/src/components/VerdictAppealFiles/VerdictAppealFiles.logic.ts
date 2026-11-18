@@ -16,9 +16,9 @@ import {
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type { ContextMenuItem } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
-  CaseFileCategory,
   type AppealSummons,
   type CaseFile,
+  CaseFileCategory,
   type CivilClaimant,
   type Defendant,
   type User,
