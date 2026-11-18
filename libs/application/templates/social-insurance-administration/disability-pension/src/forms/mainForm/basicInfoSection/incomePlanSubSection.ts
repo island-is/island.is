@@ -70,8 +70,9 @@ export const incomePlanSubSection = buildSubSection({
           width: 'half',
           isSearchable: true,
           options: ({ externalData }) => {
-            const { categorizedIncomeTypes = [] } =
-              getApplicationExternalData(externalData)
+            const { categorizedIncomeTypes = [] } = getApplicationExternalData(
+              externalData,
+            )
             return getCategoriesOptions(categorizedIncomeTypes)
           },
         },
@@ -86,8 +87,9 @@ export const incomePlanSubSection = buildSubSection({
             watchValues: 'incomeCategory',
           },
           options: ({ externalData }, activeField) => {
-            const { categorizedIncomeTypes = [] } =
-              getApplicationExternalData(externalData)
+            const { categorizedIncomeTypes = [] } = getApplicationExternalData(
+              externalData,
+            )
 
             return getTypesOptions(
               categorizedIncomeTypes,
@@ -110,9 +112,14 @@ export const incomePlanSubSection = buildSubSection({
             },
             watchValues: 'incomeType',
           },
-          loadOptions: async ({ apolloClient }, _, activeField) => {
+          loadOptions: async (
+            { apolloClient, application },
+            _,
+            activeField,
+          ) => {
             const { data } = await apolloClient.query<Query>({
               query: siaGeneralCurrenciesQuery,
+              variables: { applicationId: application.id },
             })
 
             const hideISKCurrency = isForeignCurrency(activeField) ? ISK : ''

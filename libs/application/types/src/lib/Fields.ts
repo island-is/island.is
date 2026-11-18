@@ -1267,6 +1267,7 @@ export interface OverviewField extends BaseField {
     userNationalId: string,
     apolloClient: ApolloClient<object>,
     locale: Locale,
+    application?: Application,
   ) => Promise<KeyValueItem[]>
   attachments?: (
     answers: FormValue,

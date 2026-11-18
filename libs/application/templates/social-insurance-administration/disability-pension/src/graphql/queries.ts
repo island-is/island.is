@@ -1,8 +1,14 @@
 import gql from 'graphql-tag'
 
 export const siaDisabilityPensionCertificateQuery = gql`
-  query SiaDisabilityPensionCertificate($locale: String!) {
-    socialInsuranceDisabilityPensionCertificate(locale: $locale) {
+  query SiaDisabilityPensionCertificate(
+    $locale: String!
+    $applicationId: String
+  ) {
+    socialInsuranceDisabilityPensionCertificate(
+      locale: $locale
+      applicationId: $applicationId
+    ) {
       referenceId
       doctor {
         name
@@ -46,17 +52,17 @@ export const siaDisabilityPensionCertificateQuery = gql`
 `
 
 export const siaGeneralCurrenciesQuery = gql`
-  query SocialInsuranceGeneralCurrencies {
+  query SocialInsuranceGeneralCurrencies($applicationId: String) {
     socialInsuranceGeneral {
-      currencies
+      currencies(applicationId: $applicationId)
     }
   }
 `
 
 export const siaGeneralLanguagesQuery = gql`
-  query SocialInsuranceGeneralLanguages {
+  query SocialInsuranceGeneralLanguages($applicationId: String) {
     socialInsuranceGeneral {
-      languages {
+      languages(applicationId: $applicationId) {
         value
         label
       }
@@ -65,9 +71,9 @@ export const siaGeneralLanguagesQuery = gql`
 `
 
 export const siaGeneralProfessionsQuery = gql`
-  query SocialInsuranceGeneralProfessions {
+  query SocialInsuranceGeneralProfessions($applicationId: String) {
     socialInsuranceGeneral {
-      professions {
+      professions(applicationId: $applicationId) {
         value
         label
         needsFurtherInformation
@@ -77,9 +83,9 @@ export const siaGeneralProfessionsQuery = gql`
 `
 
 export const siaGeneralProfessionActivitiesQuery = gql`
-  query SocialInsuranceGeneralProfessionActivities {
+  query SocialInsuranceGeneralProfessionActivities($applicationId: String) {
     socialInsuranceGeneral {
-      professionActivities {
+      professionActivities(applicationId: $applicationId) {
         value
         label
         needsFurtherInformation

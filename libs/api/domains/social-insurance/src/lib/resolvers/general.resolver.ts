@@ -83,8 +83,14 @@ export class GeneralResolver {
   @ResolveField('currencies', () => [String], {
     nullable: true,
   })
-  resolveCurrencies(@CurrentUser() user: User) {
-    return this.generalService.getCurrencies(user)
+  resolveCurrencies(
+    @CurrentUser() user: User,
+    @Args('applicationId', { type: () => String, nullable: true })
+    applicationId?: string,
+  ) {
+    return withApplicationGuidContext(applicationId, () =>
+      this.generalService.getCurrencies(user),
+    )
   }
 
   @ResolveField('languages', () => [GenericKeyValueStringObject], {
@@ -94,8 +100,12 @@ export class GeneralResolver {
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
+    @Args('applicationId', { type: () => String, nullable: true })
+    applicationId?: string,
   ) {
-    return this.generalService.getLanguages(user, locale)
+    return withApplicationGuidContext(applicationId, () =>
+      this.generalService.getLanguages(user, locale),
+    )
   }
 
   @ResolveField('maritalStatuses', () => [GenericKeyValueNumberObject], {
@@ -126,14 +136,26 @@ export class GeneralResolver {
   @ResolveField('professions', () => [GenericKeyValueStringObject], {
     nullable: true,
   })
-  resolveProfessions(@CurrentUser() user: User) {
-    return this.professionService.getProfessionsInDto(user)
+  resolveProfessions(
+    @CurrentUser() user: User,
+    @Args('applicationId', { type: () => String, nullable: true })
+    applicationId?: string,
+  ) {
+    return withApplicationGuidContext(applicationId, () =>
+      this.professionService.getProfessionsInDto(user),
+    )
   }
 
   @ResolveField('professionActivities', () => [GenericKeyValueStringObject], {
     nullable: true,
   })
-  resolveProfessionActivities(@CurrentUser() user: User) {
-    return this.professionService.getProfessionActivitiesInDto(user)
+  resolveProfessionActivities(
+    @CurrentUser() user: User,
+    @Args('applicationId', { type: () => String, nullable: true })
+    applicationId?: string,
+  ) {
+    return withApplicationGuidContext(applicationId, () =>
+      this.professionService.getProfessionActivitiesInDto(user),
+    )
   }
 }
