@@ -56,6 +56,10 @@ export const estatesMessages = defineMessages({
     id: 'sp.estates:basic-info-title',
     defaultMessage: 'Grunnupplýsingar dánarbús',
   },
+  estateManager: {
+    id: 'sp.estates:estate-manager',
+    defaultMessage: 'Skiptastjóri',
+  },
   tabHeirs: {
     id: 'sp.estates:tab-heirs',
     defaultMessage: 'Erfingjar',

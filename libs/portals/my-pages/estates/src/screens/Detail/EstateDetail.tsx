@@ -58,7 +58,7 @@ export const EstateDetail = () => {
   const { id } = useParams<{ id: string }>()
   const [activePdf, setActivePdf] = useState<{
     url: string
-    title: string
+    title?: string
   } | null>(null)
 
   const { data, loading, error } = useEstateDetailQuery({
@@ -72,8 +72,10 @@ export const EstateDetail = () => {
   const formatDate = (date?: string | null) =>
     date ? formatDateOnly(date) : undefined
 
-  // TODO: confirm representative vs. estateManager priority with Sýslumenn
-  const agentName = estate?.representative?.name ?? estate?.estateManager?.name
+  const agentName = estate?.estateManager?.name ?? estate?.representative?.name
+  const agentLabel = estate?.estateManager?.name
+    ? formatMessage(em.estateManager)
+    : estate?.representative?.text
 
   const latestDocuments = [...(estate?.documents ?? [])]
     .sort((a, b) => (b.documentDate ?? '').localeCompare(a.documentDate ?? ''))
@@ -133,7 +135,7 @@ export const EstateDetail = () => {
                   <Text variant="h5">{estate.deceased?.nationalId?.value}</Text>
                 </DetailField>
                 {agentName && (
-                  <DetailField label={estate.representative?.text}>
+                  <DetailField label={agentLabel}>
                     <Text variant="h5">{agentName}</Text>
                   </DetailField>
                 )}
@@ -412,22 +414,24 @@ export const EstateDetail = () => {
                           downloadUrl
                             ? {
                                 label: formatMessage(m.view),
-                                ariaLabel: `${formatMessage(m.view)}: ${
-                                  doc.name ?? ''
-                                }`,
+                                ariaLabel: doc.name
+                                  ? `${formatMessage(m.view)}: ${doc.name}`
+                                  : formatMessage(m.view),
                                 variant: 'text',
-                                icon: 'open',
+                                icon: 'copy',
                                 iconType: 'outline',
                                 onClick: () =>
                                   setActivePdf({
                                     url: downloadUrl,
-                                    title: doc.name ?? '',
+                                    title: doc.name ?? undefined,
                                   }),
                               }
                             : url
                             ? {
                                 label,
-                                ariaLabel: `${label}: ${doc.name ?? ''}`,
+                                ariaLabel: doc.name
+                                  ? `${label}: ${doc.name}`
+                                  : label,
                                 variant: 'text',
                                 icon: 'arrowForward',
                                 onClick: () =>

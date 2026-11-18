@@ -34,7 +34,7 @@ export const EstateFiles = () => {
   const [announcement, setAnnouncement] = useState('')
   const [activePdf, setActivePdf] = useState<{
     url: string
-    title: string
+    title?: string
   } | null>(null)
   const searchTouched = useRef(false)
 
@@ -153,22 +153,22 @@ export const EstateFiles = () => {
                   downloadUrl
                     ? {
                         label: formatMessage(m.view),
-                        ariaLabel: `${formatMessage(m.view)}: ${
-                          doc.name ?? ''
-                        }`,
+                        ariaLabel: doc.name
+                          ? `${formatMessage(m.view)}: ${doc.name}`
+                          : formatMessage(m.view),
                         variant: 'text',
-                        icon: 'open',
+                        icon: 'copy',
                         iconType: 'outline',
                         onClick: () =>
                           setActivePdf({
                             url: downloadUrl,
-                            title: doc.name ?? '',
+                            title: doc.name ?? undefined,
                           }),
                       }
                     : url
                     ? {
                         label,
-                        ariaLabel: `${label}: ${doc.name ?? ''}`,
+                        ariaLabel: doc.name ? `${label}: ${doc.name}` : label,
                         variant: 'text',
                         icon: 'arrowForward',
                         onClick: () =>
