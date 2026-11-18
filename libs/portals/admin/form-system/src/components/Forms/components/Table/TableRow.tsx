@@ -73,15 +73,10 @@ interface ColumnTextProps {
 const ColumnText = ({ text, isOpen, isInaccessible }: ColumnTextProps) => (
   <Box width="full" textAlign="left" paddingLeft={1}>
     <Inline space={1} alignY="center">
-      <Text
-        variant="medium"
-        fontWeight={isOpen ? 'semiBold' : 'regular'}
-      >
+      <Text variant="medium" fontWeight={isOpen ? 'semiBold' : 'regular'}>
         {text}
       </Text>
-      {isInaccessible && (
-        <Icon icon="lockClosed" size="small" ariaHidden />
-      )}
+      {isInaccessible && <Icon icon="lockClosed" size="small" ariaHidden />}
     </Inline>
   </Box>
 )
