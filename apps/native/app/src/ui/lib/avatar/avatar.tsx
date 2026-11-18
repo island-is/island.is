@@ -33,7 +33,10 @@ interface AvatarProps {
 export function Avatar({ name, isSmall }: AvatarProps) {
   return (
     <Host isSmall={isSmall}>
-      <Text isSmall={isSmall}>{getInitials(name)}</Text>
+      {/* The circle is a fixed size: larger text would cut the initials. */}
+      <Text isSmall={isSmall} maxFontSizeMultiplier={1.3}>
+        {getInitials(name)}
+      </Text>
     </Host>
   )
 }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
@@ -8,10 +8,16 @@ import illustration from '@/assets/illustrations/onboarding-biometrics.png'
 import { Alert, Button, token } from '@/ui'
 import { LockUserCard } from './lock-user-card'
 
-const Host = styled.View`
+// Scrolls only when it doesn't fit, e.g. with very large text on a small
+// phone: then the buttons can still be reached.
+const Host = styled.ScrollView`
   flex: 1;
-  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
   background-color: ${token((t) => t.background.invert)};
+`
+
+const Content = styled.View`
+  flex-grow: 1;
+  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const Logo = styled.Image`
@@ -27,6 +33,9 @@ const IllustrationWrapper = styled.View`
   justify-content: center;
   margin-vertical: ${({ theme }) => theme.spacing[3]}px;
 `
+
+// Smaller than this the illustration can't be made out, so it's left out.
+const MIN_ILLUSTRATION_HEIGHT = 100
 
 const Illustration = styled.Image`
   width: 75%;
@@ -92,91 +101,105 @@ export function DeviceLock({
   // The lock is a full-screen modal, where SafeAreaView gets no insets on
   // iOS. The provider's are the window's.
   const insets = useSafeAreaInsets()
+  // The space left for the illustration: less on a small phone, with large
+  // text, or when a message is up.
+  const [illustrationHeight, setIllustrationHeight] = useState<number>()
+  const showsIllustration =
+    illustrationHeight === undefined ||
+    illustrationHeight >= MIN_ILLUSTRATION_HEIGHT
   const isPrompting = status === 'prompting'
   // Locked out, electronic ID is the only way in for now.
   const offersBiometrics = !!biometricType && status !== 'lockedOut'
 
   return (
-    <Host style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
-      <Logo source={logo} resizeMode="contain" />
-      <IllustrationWrapper>
-        <Illustration source={illustration} resizeMode="contain" />
-      </IllustrationWrapper>
-      <Footer>
-        {electronicIdError ? (
-          <Alert
-            type="error"
-            size="small"
-            hasBorder
-            title={intl.formatMessage({
-              id: 'applock.electronicIdFailedTitle',
-            })}
-            message={intl.formatMessage({
-              id:
-                electronicIdError === 'tooManyRequests'
-                  ? 'electronicId.error.tooManyRequests'
-                  : 'electronicId.error.tryAgain',
-            })}
-          />
-        ) : (
-          biometricType &&
-          (status === 'failed' || status === 'lockedOut') && (
+    <Host contentContainerStyle={{ flexGrow: 1 }} alwaysBounceVertical={false}>
+      <Content style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
+        <Logo source={logo} resizeMode="contain" />
+        <IllustrationWrapper
+          onLayout={(event) =>
+            setIllustrationHeight(event.nativeEvent.layout.height)
+          }
+        >
+          {showsIllustration && (
+            <Illustration source={illustration} resizeMode="contain" />
+          )}
+        </IllustrationWrapper>
+        <Footer>
+          {electronicIdError ? (
             <Alert
               type="error"
               size="small"
               hasBorder
-              title={
-                status === 'lockedOut'
-                  ? intl.formatMessage(
-                      { id: 'applock.biometricsLockedOutTitle' },
-                      { biometricType },
-                    )
-                  : intl.formatMessage({
-                      id: 'applock.biometricsFailedTitle',
-                    })
-              }
+              title={intl.formatMessage({
+                id: 'applock.electronicIdFailedTitle',
+              })}
               message={intl.formatMessage({
                 id:
+                  electronicIdError === 'tooManyRequests'
+                    ? 'electronicId.error.tooManyRequests'
+                    : 'electronicId.error.tryAgain',
+              })}
+            />
+          ) : (
+            biometricType &&
+            (status === 'failed' || status === 'lockedOut') && (
+              <Alert
+                type="error"
+                size="small"
+                hasBorder
+                title={
                   status === 'lockedOut'
-                    ? 'applock.biometricsLockedOutMessage'
-                    : 'applock.biometricsFailedMessage',
-              })}
-            />
-          )
-        )}
-        <LockUserCard
-          name={name}
-          nationalId={nationalId}
-          onLogoutPress={onLogoutPress}
-        />
-        {offersBiometrics ? (
-          <ButtonStack>
-            <Button
-              title={intl.formatMessage(
-                { id: 'applock.openWithBiometrics' },
-                { biometricType },
-              )}
-              onPress={onBiometricsPress}
-              disabled={isPrompting}
-            />
-            <Button
-              isOutlined
-              title={intl.formatMessage({ id: 'applock.useElectronicId' })}
-              onPress={onElectronicIdPress}
-              disabled={isPrompting}
-            />
-          </ButtonStack>
-        ) : (
-          <ButtonStack>
-            <Button
-              title={intl.formatMessage({
-                id: 'applock.openWithElectronicId',
-              })}
-              onPress={onElectronicIdPress}
-            />
-          </ButtonStack>
-        )}
-      </Footer>
+                    ? intl.formatMessage(
+                        { id: 'applock.biometricsLockedOutTitle' },
+                        { biometricType },
+                      )
+                    : intl.formatMessage({
+                        id: 'applock.biometricsFailedTitle',
+                      })
+                }
+                message={intl.formatMessage({
+                  id:
+                    status === 'lockedOut'
+                      ? 'applock.biometricsLockedOutMessage'
+                      : 'applock.biometricsFailedMessage',
+                })}
+              />
+            )
+          )}
+          <LockUserCard
+            name={name}
+            nationalId={nationalId}
+            onLogoutPress={onLogoutPress}
+          />
+          {offersBiometrics ? (
+            <ButtonStack>
+              <Button
+                title={intl.formatMessage(
+                  { id: 'applock.openWithBiometrics' },
+                  { biometricType },
+                )}
+                onPress={onBiometricsPress}
+                disabled={isPrompting}
+              />
+              <Button
+                isOutlined
+                title={intl.formatMessage({ id: 'applock.useElectronicId' })}
+                onPress={onElectronicIdPress}
+                disabled={isPrompting}
+              />
+            </ButtonStack>
+          ) : (
+            <ButtonStack>
+              <Button
+                title={intl.formatMessage({
+                  id: 'applock.openWithElectronicId',
+                })}
+                onPress={onElectronicIdPress}
+              />
+            </ButtonStack>
+          )}
+        </Footer>
+      </Content>
     </Host>
   )
 }
