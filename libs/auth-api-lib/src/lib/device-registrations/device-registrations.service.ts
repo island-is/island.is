@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op } from 'sequelize'
+import { DatabaseError, Op, UniqueConstraintError } from 'sequelize'
 
 import { DeviceRegistration } from './device-registration.model'
 import {
@@ -8,6 +8,14 @@ import {
   SaveDeviceRegistrationDto,
   UpdateDeviceRegistrationDto,
 } from './dto/device-registration.dto'
+
+const SAVE_ATTEMPTS = 3
+const DEADLOCK_DETECTED = '40P01'
+
+const isConflict = (error: unknown): boolean =>
+  error instanceof UniqueConstraintError ||
+  (error instanceof DatabaseError &&
+    (error.original as { code?: string })?.code === DEADLOCK_DETECTED)
 
 @Injectable()
 export class DeviceRegistrationsService {
@@ -33,6 +41,19 @@ export class DeviceRegistrationsService {
    * install key can only belong to one person.
    */
   async save(input: SaveDeviceRegistrationDto): Promise<DeviceRegistrationDto> {
+    // Two logins racing for the same person or install key: the loser starts over.
+    for (let attempt = 1; ; attempt++) {
+      try {
+        return await this.saveOnce(input)
+      } catch (error) {
+        if (attempt >= SAVE_ATTEMPTS || !isConflict(error)) throw error
+      }
+    }
+  }
+
+  private saveOnce(
+    input: SaveDeviceRegistrationDto,
+  ): Promise<DeviceRegistrationDto> {
     return this.deviceRegistrationModel.sequelize!.transaction(
       async (transaction) => {
         await this.deviceRegistrationModel.destroy({
@@ -59,6 +80,7 @@ export class DeviceRegistrationsService {
         const existing = await this.deviceRegistrationModel.findOne({
           where: { nationalId: input.nationalId, clientId: input.clientId },
           transaction,
+          lock: transaction.LOCK.UPDATE,
         })
 
         const registration = existing

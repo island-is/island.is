@@ -55,7 +55,7 @@ export class DeviceRegistrationsController {
     @Param('thumbprint') thumbprint: string,
     @Query('clientId') clientId: string,
   ): Promise<DeviceRegistrationDto> {
-    if (!clientId) {
+    if (typeof clientId !== 'string' || !clientId) {
       throw new BadRequestException('clientId is required')
     }
 

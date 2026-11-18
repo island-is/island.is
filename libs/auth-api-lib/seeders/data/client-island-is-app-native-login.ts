@@ -24,13 +24,28 @@ const CLIENT_ID = '@island.is/app'
 /** The testing app's own client in production; configured where it exists. */
 const TESTING_CLIENT_ID = '@island.is/island.dev-appid'
 
+const clientExists = async (
+  queryInterface: QueryInterface,
+  clientId: string,
+) => {
+  const [clients] = await queryInterface.sequelize.query(
+    'select 1 from client where client_id = :clientId',
+    { replacements: { clientId } },
+  )
+  return clients.length > 0
+}
+
+/** An existing client keeps its own grants, scopes and redirect URIs. */
+const createClientIfMissing =
+  (options: Parameters<typeof createClient>[0]) =>
+  async (queryInterface: QueryInterface) => {
+    if (await clientExists(queryInterface, options.clientId)) return
+    await createClient(options)(queryInterface)
+  }
+
 const configureNativeLogin =
   (clientId: string) => async (queryInterface: QueryInterface) => {
-    const [clients] = await queryInterface.sequelize.query(
-      'select 1 from client where client_id = :clientId',
-      { replacements: { clientId } },
-    )
-    if (clients.length === 0) {
+    if (!(await clientExists(queryInterface, clientId))) {
       console.log(`Skipping "${clientId}": the client does not exist here.`)
       return
     }
@@ -61,8 +76,8 @@ const configureNativeLogin =
 export const up = compose(
   createCibaGrantType,
   createDeviceKeyGrantType,
-  // Only creates the client where it doesn't exist yet, i.e. locally.
-  createClient({
+  // Only where it doesn't exist yet, i.e. locally.
+  createClientIfMissing({
     clientId: CLIENT_ID,
     clientType: 'native',
     displayName: 'Ísland.is appið',

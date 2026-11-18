@@ -162,7 +162,12 @@ export const verifyDpopProof = ({
     throw new DpopError('Missing DPoP proof')
   }
 
-  const decoded = jwt.decode(header, { complete: true })
+  let decoded: jwt.Jwt | null
+  try {
+    decoded = jwt.decode(header, { complete: true })
+  } catch {
+    decoded = null
+  }
   if (!decoded || typeof decoded.payload === 'string') {
     throw new DpopError('DPoP proof is not a JWT')
   }
@@ -184,6 +189,11 @@ export const verifyDpopProof = ({
     }) as jwt.JwtPayload
   } catch {
     throw new DpopError('DPoP proof signature is not valid')
+  }
+
+  // Required by RFC 9449, but the nonce decides freshness, not the phone's clock.
+  if (typeof payload.iat !== 'number' || !Number.isFinite(payload.iat)) {
+    throw new DpopError('DPoP proof needs iat')
   }
 
   if (payload.htm !== request.method) {
