@@ -590,7 +590,7 @@ export class VerdictsClientService {
     const shouldFetchGoproAgendas = hasNoCourtFilter || goproCourts.length > 0
 
     const pageNumber = input.page ?? 1
-    const itemsPerPage = 10
+    const itemsPerPage = 50
 
     const { goproCourtAgendasApi } = await this.getAuthenticatedGoproApis()
 
