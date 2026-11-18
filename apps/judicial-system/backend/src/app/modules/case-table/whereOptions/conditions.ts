@@ -97,6 +97,28 @@ export const buildHasDefendantWithNullReviewDecisionCondition = (
     )
   `)
 
+// The verdict appeal on this case has had an appeal summons sent to the court
+// of appeals. That is what opens a verdict appeal to the court: until then the
+// appeal is still being prepared by the public prosecution. A sent summons can
+// be neither unsent nor deleted, so once true this stays true.
+//
+// canAppealsCourtUserAccessCaseVerdictAppealCase in case.filter.ts is the same
+// rule for opening a case; keep the two in step.
+//
+// Correlated to "Case".id through the appeal, so no join is needed and the
+// predicate survives the subSELECT that a LIMIT forces.
+export const buildHasSentAppealSummonsCondition = () =>
+  Sequelize.literal(`
+    EXISTS (
+      SELECT 1
+      FROM "appeal_summons" s
+      JOIN "appeal_case" ac ON ac."id" = s."appeal_case_id"
+      WHERE ac."case_id" = "Case"."id"
+        AND ac."appeal_type" = 'VERDICT'
+        AND s."sent_to_court_of_appeals_date" IS NOT NULL
+    )
+  `)
+
 // A verdict on this case has been appealed - by the defence, which the office
 // records as an appeal date on the verdict, or by the prosecution, whose
 // reviewer recorded a decision to appeal.

@@ -211,8 +211,16 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
       return { delivered: true }
     }
 
+    const caseUrl =
+      civilClaimant.hasAppealSpokesperson !== false &&
+      civilClaimant.appealSpokespersonNationalId
+        ? `${this.config.clientUrl}${DEFENDER_INDICTMENT_CASE_ROUTE}/${theCase.id}`
+        : undefined
+
     // Not through sendEmails: that one writes to the district court's
     // spokesperson, and the appeal has its own advocate on its own columns.
+    // When caseUrl is set the body already carries an <a>, so the base
+    // service skips its portal closing line; without one it appends as usual.
     const recipient = await this.sendEmail({
       subject: appealAdvocateAssignedSubject(),
       html: appealAdvocateAssignedBody(
@@ -220,6 +228,7 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
           ? 'lögmann einkaréttarkröfuhafa'
           : 'réttargæslumann einkaréttarkröfuhafa',
         theCase.verdictAppealCase?.appealCaseNumber,
+        caseUrl,
       ),
       recipientName: civilClaimant.appealSpokespersonName,
       recipientEmail: civilClaimant.appealSpokespersonEmail,

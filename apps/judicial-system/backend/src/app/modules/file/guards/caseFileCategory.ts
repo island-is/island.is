@@ -157,12 +157,19 @@ const getDefenceUserIndictmentCaseFileCategories = (
   defendants?: Defendant[],
   civilClaimants?: CivilClaimant[],
 ) => {
+  // Confirmed appeal advocates see the same indictment file set as a district
+  // defender with case-file access — whether or not they were the héraðsverjandi.
   if (
     Defendant.isConfirmedDefenderOfDefendantWithCaseFileAccess(
       nationalId,
       defendants,
     ) ||
     CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+      nationalId,
+      civilClaimants,
+    ) ||
+    Defendant.isConfirmedAppealDefenderOfDefendant(nationalId, defendants) ||
+    CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
       nationalId,
       civilClaimants,
     )
@@ -243,12 +250,21 @@ const canDefenceUserViewCaseFile = ({
         caseFileCategory === CaseFileCategory.CRIMINAL_RECORD_UPDATE) &&
       defendantId
     ) {
+      const defendant = defendants?.find((d) => d.id === defendantId)
+      const isAppealDefenderOfDefendant =
+        Boolean(defendant) &&
+        Defendant.isConfirmedAppealDefenderOfDefendant(
+          nationalId,
+          defendant ? [defendant] : undefined,
+        )
+
       if (
         !Defendant.isConfirmedDefenderOfSpecificDefendantWithCaseFileAccess(
           nationalId,
           defendantId,
           defendants,
-        )
+        ) &&
+        !isAppealDefenderOfDefendant
       ) {
         return false
       }
@@ -396,7 +412,11 @@ export const getDefenderVisiblePoliceCaseNumbers = (
 
   const myDefendants = (defendants ?? []).filter(
     (d) =>
-      d.isDefenderChoiceConfirmed && d.defenderNationalId === userNationalId,
+      (d.isDefenderChoiceConfirmed &&
+        d.defenderNationalId === userNationalId) ||
+      (d.isAppealDefenderConfirmed &&
+        !d.isAppealDefenderWaived &&
+        d.appealDefenderNationalId === userNationalId),
   )
 
   const assignedToMe = new Set(
@@ -416,10 +436,13 @@ export const getSpokespersonVisiblePoliceCaseNumbers = (
 ): string[] => {
   const myClaimants = (civilClaimants ?? []).filter(
     (civilClaimant) =>
-      civilClaimant.hasSpokesperson &&
-      civilClaimant.isSpokespersonConfirmed &&
-      civilClaimant.caseFilesSharedWithSpokesperson &&
-      civilClaimant.spokespersonNationalId === userNationalId,
+      (civilClaimant.hasSpokesperson &&
+        civilClaimant.isSpokespersonConfirmed &&
+        civilClaimant.caseFilesSharedWithSpokesperson &&
+        civilClaimant.spokespersonNationalId === userNationalId) ||
+      (civilClaimant.hasAppealSpokesperson !== false &&
+        civilClaimant.isAppealSpokespersonConfirmed &&
+        civilClaimant.appealSpokespersonNationalId === userNationalId),
   )
 
   if (myClaimants.length === 0) {
@@ -463,12 +486,15 @@ export const getDefenceUserVisiblePoliceCaseNumbers = (
   civilClaimants: CivilClaimant[] | undefined,
   allPoliceCaseNumbers: string[],
 ): string[] => {
-  const isDefender = Defendant.isConfirmedDefenderOfDefendant(
-    userNationalId,
-    defendants,
-  )
+  const isDefender =
+    Defendant.isConfirmedDefenderOfDefendant(userNationalId, defendants) ||
+    Defendant.isConfirmedAppealDefenderOfDefendant(userNationalId, defendants)
   const isSpokesperson =
     CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+      userNationalId,
+      civilClaimants,
+    ) ||
+    CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
       userNationalId,
       civilClaimants,
     )

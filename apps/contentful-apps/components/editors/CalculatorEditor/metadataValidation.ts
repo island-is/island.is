@@ -53,7 +53,12 @@ export const hasMetadataValidationError = (
       if (!metadata) return true
       const itemFields = field.itemFields ?? []
       if (itemFields.length === 0) return false
-      if (metadata.type !== TaxCalculatorOutputFieldType.Array) return true
+      if (
+        metadata.type !== TaxCalculatorOutputFieldType.Array &&
+        metadata.type !== TaxCalculatorOutputFieldType.Object
+      ) {
+        return true
+      }
       const allowedKeys = new Set(
         (metadata.itemFields ?? []).map((item) => item.key),
       )

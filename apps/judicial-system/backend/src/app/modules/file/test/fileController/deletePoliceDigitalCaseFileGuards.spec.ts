@@ -1,9 +1,19 @@
+import { RolesGuard } from '@island.is/judicial-system/auth'
+
 import { verifyGuards, verifyInterceptors } from '../../../../test'
-import { CaseOriginalAncestorInterceptor, CaseWriteGuard } from '../../../case'
+import {
+  CaseExistsGuard,
+  CaseOriginalAncestorInterceptor,
+  CaseWriteGuard,
+} from '../../../case'
 import { FileController } from '../../file.controller'
 
 describe('FileController - Delete police digital case file guards', () => {
-  verifyGuards(FileController, 'deletePoliceDigitalCaseFile', [CaseWriteGuard])
+  verifyGuards(FileController, 'deletePoliceDigitalCaseFile', [
+    CaseExistsGuard,
+    RolesGuard,
+    CaseWriteGuard,
+  ])
 
   verifyInterceptors(FileController, 'deletePoliceDigitalCaseFile', [
     CaseOriginalAncestorInterceptor,

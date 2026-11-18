@@ -205,9 +205,19 @@ export class AppService {
   }
 
   async getLitigators(): Promise<LawyerRegistry[]> {
+    return this.getLawyersByType(LawyerType.LITIGATORS)
+  }
+
+  async getCourtOfAppealsLitigators(): Promise<LawyerRegistry[]> {
+    return this.getLawyersByType(LawyerType.COURT_OF_APPEALS_LITIGATORS)
+  }
+
+  private async getLawyersByType(
+    lawyerType: LawyerType,
+  ): Promise<LawyerRegistry[]> {
     try {
       const res = await fetch(
-        `${this.config.backend.url}/api/lawyer-registry?lawyerType=${LawyerType.LITIGATORS}`,
+        `${this.config.backend.url}/api/lawyer-registry?lawyerType=${lawyerType}`,
         {
           method: 'GET',
           headers: {
@@ -228,9 +238,14 @@ export class AppService {
 
       throw new BadRequestException()
     } catch (error) {
-      this.logger.error('Failed to retrieve litigator lawyers', error)
+      this.logger.error('Failed to retrieve lawyers from lawyer registry', {
+        error,
+        lawyerType,
+      })
 
-      throw new BadRequestException('Failed to retrieve litigator lawyers')
+      throw new BadRequestException(
+        'Failed to retrieve lawyers from lawyer registry',
+      )
     }
   }
 

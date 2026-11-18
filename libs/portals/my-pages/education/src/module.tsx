@@ -1,8 +1,10 @@
 import { lazy } from 'react'
 import { ApiScope } from '@island.is/auth/scopes'
+import { Features } from '@island.is/react/feature-flags'
 import { UniversityCareersStudyType } from '@island.is/api/schema'
 import { PortalModule } from '@island.is/portals/core'
 import { EducationPaths } from './lib/paths'
+import { primarySchoolKeyInfoMessages as kim } from './lib/messages'
 import { Navigate } from 'react-router-dom'
 import { primarySchoolStudentLoader } from './screens/PrimarySchool/PrimarySchoolStudent/PrimarySchoolStudent.loader'
 import {
@@ -72,7 +74,34 @@ const PrimarySchoolAssessment = lazy(() =>
   ),
 )
 
+const PrimarySchoolContactAdd = lazy(() =>
+  import(
+    './screens/PrimarySchool/PrimarySchoolOverview/keyInfo/edit/EmergencyContactAdd'
+  ),
+)
+
+const PrimarySchoolContactEdit = lazy(() =>
+  import(
+    './screens/PrimarySchool/PrimarySchoolOverview/keyInfo/edit/EmergencyContactEdit'
+  ),
+)
+
+const PrimarySchoolLanguageEdit = lazy(() =>
+  import(
+    './screens/PrimarySchool/PrimarySchoolOverview/keyInfo/edit/LanguageProfileEdit'
+  ),
+)
+
+const PrimarySchoolHealthEdit = lazy(() =>
+  import(
+    './screens/PrimarySchool/PrimarySchoolOverview/keyInfo/edit/HealthProfileEdit'
+  ),
+)
+
 const PRIMARY_SCHOOL_FLAG = 'PrimarySchool'
+// Key information (lykilupplýsingar) has its own flag, so the edit screens can
+// stay unreachable while the rest of the primary-school page is live.
+const KEY_INFO_FLAG = Features.isServicePortalPrimarySchoolKeyInfoEnabled
 const MICRO_CREDENTIALS_FLAG = 'UniversityMicroCredentials'
 
 export const educationModule: PortalModule = {
@@ -132,6 +161,74 @@ export const educationModule: PortalModule = {
       element: (
         <PrimarySchoolStudentWrapper>
           <PrimarySchoolOverview />
+        </PrimarySchoolStudentWrapper>
+      ),
+    },
+    {
+      name: 'Bæta við aðstandanda',
+      path: EducationPaths.PrimarySchoolContactAdd,
+      key: KEY_INFO_FLAG,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
+      loader: primarySchoolStudentLoader({ userInfo, ...rest }),
+      element: (
+        <PrimarySchoolStudentWrapper
+          hideTabs
+          title={kim.contactAddTitle}
+          intro={kim.contactAddIntro}
+        >
+          <PrimarySchoolContactAdd />
+        </PrimarySchoolStudentWrapper>
+      ),
+    },
+    {
+      name: 'Breyta tengslum',
+      path: EducationPaths.PrimarySchoolContactEdit,
+      key: KEY_INFO_FLAG,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
+      loader: primarySchoolStudentLoader({ userInfo, ...rest }),
+      element: (
+        <PrimarySchoolStudentWrapper
+          hideTabs
+          title={kim.contactEditTitle}
+          intro={kim.contactEditIntro}
+        >
+          <PrimarySchoolContactEdit />
+        </PrimarySchoolStudentWrapper>
+      ),
+    },
+    {
+      name: 'Breyta tungumálaumhverfi',
+      path: EducationPaths.PrimarySchoolLanguageEdit,
+      key: KEY_INFO_FLAG,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
+      loader: primarySchoolStudentLoader({ userInfo, ...rest }),
+      element: (
+        <PrimarySchoolStudentWrapper
+          hideTabs
+          title={kim.languageEditTitle}
+          intro={kim.languageEditIntro}
+        >
+          <PrimarySchoolLanguageEdit />
+        </PrimarySchoolStudentWrapper>
+      ),
+    },
+    {
+      name: 'Breyta heilsufarsupplýsingum',
+      path: EducationPaths.PrimarySchoolHealthEdit,
+      key: KEY_INFO_FLAG,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
+      loader: primarySchoolStudentLoader({ userInfo, ...rest }),
+      element: (
+        <PrimarySchoolStudentWrapper
+          hideTabs
+          title={kim.healthEditTitle}
+          intro={kim.healthEditIntro}
+        >
+          <PrimarySchoolHealthEdit />
         </PrimarySchoolStudentWrapper>
       ),
     },

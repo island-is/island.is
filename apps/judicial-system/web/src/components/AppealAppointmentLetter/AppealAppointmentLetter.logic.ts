@@ -56,10 +56,10 @@ const letterRow = (
  *
  * The court of appeals writes it and the public prosecution office is copied
  * on it, so both see every letter on the case. A defence user sees the letter
- * of the party they act for - the one the district court confirmed them for,
- * which is the same test every other party document on the case applies -
- * and no other: a defender of one of the accused is not party to what the
- * court sent the other's. Nobody else is offered it.
+ * of the party they act for - confirmed by the district court or as the
+ * appeal advocate the court of appeals confirmed - and no other: a defender
+ * of one of the accused is not party to what the court sent the other's.
+ * Nobody else is offered it.
  *
  * The limited access route refuses on the same grounds, so a row offered
  * here is one that opens.
@@ -81,18 +81,26 @@ export const canViewAppealAppointmentLetter = (
 
   if (defendant) {
     return Boolean(
-      defendant.isDefenderChoiceConfirmed &&
+      (defendant.isDefenderChoiceConfirmed &&
         defendant.defenderNationalId &&
-        ownIds.includes(defendant.defenderNationalId),
+        ownIds.includes(defendant.defenderNationalId)) ||
+        (defendant.isAppealDefenderConfirmed &&
+          !defendant.isAppealDefenderWaived &&
+          defendant.appealDefenderNationalId &&
+          ownIds.includes(defendant.appealDefenderNationalId)),
     )
   }
 
   if (civilClaimant) {
     return Boolean(
-      civilClaimant.hasSpokesperson &&
+      (civilClaimant.hasSpokesperson &&
         civilClaimant.isSpokespersonConfirmed &&
         civilClaimant.spokespersonNationalId &&
-        ownIds.includes(civilClaimant.spokespersonNationalId),
+        ownIds.includes(civilClaimant.spokespersonNationalId)) ||
+        (civilClaimant.hasAppealSpokesperson !== false &&
+          civilClaimant.isAppealSpokespersonConfirmed &&
+          civilClaimant.appealSpokespersonNationalId &&
+          ownIds.includes(civilClaimant.appealSpokespersonNationalId)),
     )
   }
 

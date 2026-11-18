@@ -1,6 +1,7 @@
 import { ApplicationWithAttachments } from '@island.is/application/types'
 import { ExemptionType } from '@island.is/clients/hms-housing-benefits'
 import {
+  collectApplicationFileEntries,
   getApplicantAddressForSubmission,
   getApplicantExemptionNumber,
   mapApplicationToHousingBenefitsModel,
@@ -128,7 +129,7 @@ describe('getApplicantExemptionNumber', () => {
   ])('maps %p to %p', (reason, expected) => {
     expect(
       getApplicantExemptionNumber({
-        exemptionCheckbox: ['yes'],
+        legalDomicileOption: 'exemption',
         exemptionReason: reason,
       }),
     ).toBe(expected)
@@ -138,10 +139,10 @@ describe('getApplicantExemptionNumber', () => {
     expect(getApplicantExemptionNumber({})).toBeUndefined()
   })
 
-  it('returns undefined when a reason is left over but the checkbox is unticked', () => {
+  it('returns undefined when a reason is left over but the national registry option is selected', () => {
     expect(
       getApplicantExemptionNumber({
-        exemptionCheckbox: [],
+        legalDomicileOption: 'nationalRegistry',
         exemptionReason: 'studies',
       }),
     ).toBeUndefined()
@@ -150,7 +151,7 @@ describe('getApplicantExemptionNumber', () => {
   it('returns undefined for an unknown reason', () => {
     expect(
       getApplicantExemptionNumber({
-        exemptionCheckbox: ['yes'],
+        legalDomicileOption: 'exemption',
         exemptionReason: 'somethingElse',
       }),
     ).toBeUndefined()
@@ -161,7 +162,7 @@ describe('mapApplicationToHousingBenefitsModel exemptionNumber', () => {
   it('sets exemptionNumber only on the applicant entry', () => {
     const model = mapApplicationToHousingBenefitsModel(
       createApplication({
-        exemptionCheckbox: ['yes'],
+        legalDomicileOption: 'exemption',
         exemptionReason: 'work',
         householdMembersTableRepeater: [
           { nationalIdWithName: { nationalId: MEMBER_ID, name: 'Member' } },
@@ -180,5 +181,25 @@ describe('mapApplicationToHousingBenefitsModel exemptionNumber', () => {
     const model = mapApplicationToHousingBenefitsModel(createApplication())
 
     expect(model.householdMembers?.[0].exemptionNumber).toBeUndefined()
+  })
+})
+
+describe('collectApplicationFileEntries applicant-submit access agreements', () => {
+  const file = (key: string) => ({ key, name: `${key}.pdf` })
+
+  it('collects files stored under the applicant kennitala', () => {
+    const entries = collectApplicationFileEntries(
+      createApplication({
+        [APPLICANT_ID]: {
+          applicantSubmitAccessAgreementRepeater: [
+            { childNationalId: MEMBER_ID, file: [file('scoped')] },
+          ],
+        },
+      }),
+      APPLICANT_ID,
+    )
+
+    expect(entries.map((e) => e.key)).toEqual(['scoped'])
+    expect(entries[0].kennitala).toBe(APPLICANT_ID)
   })
 })

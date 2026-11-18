@@ -133,6 +133,7 @@ export const TabButtons = ({
                     isSelected={isSelected}
                     textAlign="center"
                     numberOfLines={1}
+                    maxFontSizeMultiplier={1.5}
                   >
                     {button.title}
                   </TabText>

@@ -57,7 +57,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
   name: 'Example state transfers',
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: 'Stafrænt Ísland',
   dataSchema: exampleSchema,
   featureFlag: Features.exampleApplication,

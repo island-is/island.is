@@ -52,13 +52,53 @@ describe('DefenceAdvocateOfPartyGuard', () => {
     ).toThrow(ForbiddenException)
   })
 
-  // The district court's confirmation is what grants access to the case; a
-  // defender picked but not yet confirmed does not act for the party.
+  // A defender picked but not yet confirmed by either court does not act
+  // for the party.
   it('keeps an unconfirmed defender away', () => {
     expect(() =>
       activate({
         user: { currentUser: defender },
         defendant: { ...ownDefendant, isDefenderChoiceConfirmed: false },
+      }),
+    ).toThrow(ForbiddenException)
+  })
+
+  it('lets a confirmed appeal defender at their own client', () => {
+    expect(
+      activate({
+        user: { currentUser: defender },
+        defendant: {
+          id: 'appeal-defendant-id',
+          isAppealDefenderConfirmed: true,
+          appealDefenderNationalId: '0101302989',
+        },
+      }),
+    ).toBe(true)
+  })
+
+  it('keeps an unconfirmed appeal defender away', () => {
+    expect(() =>
+      activate({
+        user: { currentUser: defender },
+        defendant: {
+          id: 'appeal-defendant-id',
+          isAppealDefenderConfirmed: false,
+          appealDefenderNationalId: '0101302989',
+        },
+      }),
+    ).toThrow(ForbiddenException)
+  })
+
+  it('keeps a waived appeal defender away', () => {
+    expect(() =>
+      activate({
+        user: { currentUser: defender },
+        defendant: {
+          id: 'appeal-defendant-id',
+          isAppealDefenderConfirmed: true,
+          isAppealDefenderWaived: true,
+          appealDefenderNationalId: '0101302989',
+        },
       }),
     ).toThrow(ForbiddenException)
   })
@@ -80,6 +120,33 @@ describe('DefenceAdvocateOfPartyGuard', () => {
       activate({
         user: { currentUser: defender },
         civilClaimant: { ...ownClaimant, spokespersonNationalId: '0909713459' },
+      }),
+    ).toThrow(ForbiddenException)
+  })
+
+  it('lets a confirmed appeal spokesperson at their own claimant', () => {
+    expect(
+      activate({
+        user: { currentUser: defender },
+        civilClaimant: {
+          id: 'appeal-claimant-id',
+          isAppealSpokespersonConfirmed: true,
+          appealSpokespersonNationalId: '0101302989',
+        },
+      }),
+    ).toBe(true)
+  })
+
+  it('keeps a removed appeal spokesperson away', () => {
+    expect(() =>
+      activate({
+        user: { currentUser: defender },
+        civilClaimant: {
+          id: 'appeal-claimant-id',
+          hasAppealSpokesperson: false,
+          isAppealSpokespersonConfirmed: true,
+          appealSpokespersonNationalId: '0101302989',
+        },
       }),
     ).toThrow(ForbiddenException)
   })

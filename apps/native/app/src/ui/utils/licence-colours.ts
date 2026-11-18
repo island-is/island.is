@@ -73,4 +73,8 @@ export const scanResultColours = {
   imageBackground: '#e2c4d1',
   label: '#8D6679',
   divider: 'rgba(98, 80, 88, 1)',
+  photo: 'rgba(255, 255, 255, 0.2)',
 }
+
+// Veil over the barcode while it is offline or failed to load
+export const licenceBarcodeVeil = 'rgba(255, 255, 255, 0.4)'

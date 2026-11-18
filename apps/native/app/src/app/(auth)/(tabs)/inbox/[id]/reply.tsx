@@ -39,7 +39,7 @@ const Row = styled(Container)<{
   paddingBottom: theme.spacing[paddingVertical],
   ...(hasBottomBorder && {
     borderBottomWidth: theme.border.width.hairline,
-    borderBottomColor: theme.color.blue200,
+    borderBottomColor: theme.tokens.border.primary,
   }),
 }))
 
