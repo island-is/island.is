@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 export default {
   displayName: 'sdf-unit-tests',
   preset: './jest.preset.js',

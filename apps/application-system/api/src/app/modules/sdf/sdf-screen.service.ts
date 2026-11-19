@@ -79,7 +79,7 @@ import { createSdfProblem } from './problem-details'
 import { type ZodIssue, ZodIssueCode } from 'zod'
 
 try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+   
   const { setFileScope } = require('@vanilla-extract/css/fileScope')
   setFileScope('sdf-server-shim', 'application-system-api')
 } catch {
