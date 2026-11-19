@@ -116,6 +116,9 @@ export type AttestationFailureReason =
 
 /** The phone couldn't attest its install key, so IAS was never asked. */
 export class DeviceAttestationError extends Error {
+  /** The system's own error code behind it, e.g. "DCError 3", if known */
+  readonly detail?: string
+
   constructor(
     readonly reason: AttestationFailureReason,
     /** The device key error behind it, if any */
@@ -127,7 +130,20 @@ export class DeviceAttestationError extends Error {
       }`,
     )
     this.name = 'DeviceAttestationError'
+    this.detail = systemErrorCode(cause)
   }
+}
+
+/**
+ * The system error code the device keys module puts in brackets at the end
+ * of its message, e.g. "OSStatus -25293". IAS takes it in attestation error
+ * reports as long as it's a code: letters, digits, space and `.-_:`, at most
+ * 60 characters, never a message.
+ */
+function systemErrorCode(error: unknown): string | undefined {
+  const message = error instanceof Error ? error.message : ''
+  const codes = message.match(/\[[A-Za-z0-9 ._:-]{1,60}\]/g)
+  return codes?.[codes.length - 1].slice(1, -1)
 }
 
 /**

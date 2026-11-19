@@ -50,6 +50,11 @@ export interface BiometricPromptOptions {
   cancel: string
 }
 
+/**
+ * A failure's message can end with the system's own error code in brackets,
+ * e.g. "[DCError 3]" or "[KeyStoreException -1000]", for IAS's attestation
+ * error reports.
+ */
 export type DeviceKeyErrorCode =
   | 'ERR_DEVICE_KEY_CANCELLED'
   // Too many failed attempts: until the phone is unlocked with its passcode.

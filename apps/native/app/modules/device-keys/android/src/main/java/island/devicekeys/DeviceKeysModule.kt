@@ -98,10 +98,30 @@ class DeviceKeysModule : Module() {
         generateKeyPair(alias, attestationChallenge, strongBox = false)
       }
     } catch (e: Exception) {
-      throw exception("FAILED", "Could not create the key", e)
+      // Expo passes on only the code and the message, so the system code goes
+      // in brackets at the end of the message, where the JS client reads it.
+      throw exception("FAILED", "Could not create the key [${systemCode(e)}]", e)
     }
 
     return describe(alias)
+  }
+
+  // The system's own code for a failure, for IAS's attestation error reports,
+  // which take a code and never a message: "KeyStoreException -1000" where
+  // Android has the number (13 and later), else the innermost exception's class.
+  private fun systemCode(error: Throwable): String {
+    var cause: Throwable? = error
+    while (cause != null) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && cause is android.security.KeyStoreException) {
+        return "KeyStoreException ${cause.numericErrorCode}"
+      }
+      cause = cause.cause
+    }
+    var innermost = error
+    while (innermost.cause != null && innermost.cause !== innermost) {
+      innermost = innermost.cause!!
+    }
+    return innermost.javaClass.simpleName
   }
 
   // Falls back to the TEE on any StrongBox failure, not only

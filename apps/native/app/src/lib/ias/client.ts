@@ -271,7 +271,7 @@ export function createIasClient(options: IasClientOptions): IasClient {
         } else {
           if (error instanceof DeviceAttestationError) {
             // IAS never saw this challenge, so it can carry the report.
-            void reportAttestationFailure(challenge, error.reason)
+            void reportAttestationFailure(challenge, error.reason, error.detail)
           }
           throw error
         }
@@ -335,6 +335,8 @@ export function createIasClient(options: IasClientOptions): IasClient {
   async function reportAttestationFailure(
     challenge: string,
     reason: AttestationFailureReason,
+    /** The system's own error code, e.g. "DCError 3": only logged by IAS */
+    detail?: string,
   ) {
     try {
       await request('POST', '/app/attestation', {
@@ -343,6 +345,7 @@ export function createIasClient(options: IasClientOptions): IasClient {
           platform: device.os === 'ios' ? 'apple' : 'android',
           challenge,
           error: reason,
+          ...(detail ? { errorDetail: detail } : {}),
           ...options.deviceDetails,
         },
       })
