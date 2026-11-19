@@ -1,7 +1,7 @@
 import type { FC, PropsWithChildren } from 'react'
 import { useState } from 'react'
 import addDays from 'date-fns/addDays'
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import {
@@ -314,6 +314,36 @@ describe('VerdictAppealStatus', () => {
     }
   })
 
+  // The save is over before the next page has opened, and a choice made in
+  // between would be left behind just the same.
+  it('holds the choice still until the next page has opened', async () => {
+    let finishNavigation: (navigated: boolean) => void = () => undefined
+    mockPush.mockImplementationOnce(
+      () =>
+        new Promise<boolean>((resolve) => {
+          finishNavigation = resolve
+        }),
+    )
+    renderPage()
+
+    await userEvent.click(screen.getByLabelText('Lokið'))
+    await userEvent.click(screen.getByTestId('continueButton'))
+
+    await waitFor(() => expect(mockPush).toHaveBeenCalled())
+
+    for (const radio of screen.getAllByRole('radio')) {
+      expect(radio).toBeDisabled()
+    }
+    expect(screen.getByTestId('continueButton')).toBeDisabled()
+
+    // Navigation that came to nothing gives the page back to the court.
+    await act(async () => finishNavigation(false))
+
+    for (const radio of screen.getAllByRole('radio')) {
+      expect(radio).toBeEnabled()
+    }
+  })
+
   it('stays on the page when the status could not be saved', async () => {
     mockUpdateAppealCase.mockResolvedValue(undefined)
     renderPage()
@@ -323,6 +353,8 @@ describe('VerdictAppealStatus', () => {
 
     await waitFor(() => expect(mockUpdateAppealCase).toHaveBeenCalled())
     expect(mockPush).not.toHaveBeenCalled()
+
+    await waitFor(() => expect(screen.getByLabelText('Lokið')).toBeEnabled())
   })
 
   it('writes nothing when the saved status is left as it is', async () => {

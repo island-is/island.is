@@ -100,6 +100,9 @@ const VerdictAppealStatus = () => {
   const [editingSessionId, setEditingSessionId] = useState<string>()
   const [isConfirmingChanges, setIsConfirmingChanges] = useState(false)
   const [sessionToDelete, setSessionToDelete] = useState<AppealCourtSession>()
+  // Held from the moment the court moves on until the next page has opened,
+  // so the status cannot be changed behind a save that is already on its way.
+  const [isLeaving, setIsLeaving] = useState(false)
 
   // Derived rather than set in an effect: the case arrives after the first
   // render, and the choice the court makes on the page always wins.
@@ -175,11 +178,28 @@ const VerdictAppealStatus = () => {
     return true
   }
 
-  const continueToSummary = async () => {
-    if (await saveStatus()) {
-      await navigateTo(COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE)
+  // Leaves for another step, saving the status first unless told not to, and
+  // stays on the page when it could not be saved.
+  const leaveFor = async (destination: string, saveFirst = true) => {
+    setIsLeaving(true)
+
+    try {
+      if (saveFirst) {
+        const saved = await saveStatus()
+
+        if (!saved) {
+          return
+        }
+      }
+
+      await navigateTo(destination)
+    } finally {
+      setIsLeaving(false)
     }
   }
+
+  const continueToSummary = () =>
+    leaveFor(COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE)
 
   const handleContinue = async () => {
     if (hasSessionToBook) {
@@ -203,11 +223,9 @@ const VerdictAppealStatus = () => {
       return
     }
 
-    if (stepIsValid && !hasSessionToBook && !(await saveStatus())) {
-      return
-    }
+    const hasSettledStatus = stepIsValid && !hasSessionToBook
 
-    await navigateTo(destination)
+    await leaveFor(destination, hasSettledStatus)
   }
 
   const bookSession = async () => {
@@ -395,7 +413,7 @@ const VerdictAppealStatus = () => {
                     label={verdictAppealStatusLabels[value]}
                     checked={status === value}
                     onChange={() => chooseStatus(value)}
-                    disabled={isUpdatingAppealCase}
+                    disabled={isUpdatingAppealCase || isLeaving}
                     large
                     backgroundColor="white"
                   />
@@ -440,7 +458,7 @@ const VerdictAppealStatus = () => {
               {
                 text: core.continue,
                 icon: 'arrowForward',
-                disabled: !stepIsValid || isUpdatingAppealCase,
+                disabled: !stepIsValid || isUpdatingAppealCase || isLeaving,
                 onClick: handleContinue,
                 testId: 'continueButton',
               },
