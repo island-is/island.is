@@ -8,8 +8,6 @@ import { Application } from '../routes/Application'
 import { Applications } from '../routes/Applications'
 import { AssignApplication } from '../routes/AssignApplication'
 
-export const BASE_PATH = '/umsoknir'
-
 /**
  * Creates routes for application-system. All routes are defined here.
  */
