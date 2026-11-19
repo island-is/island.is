@@ -50,7 +50,10 @@ const LicenseSchema = z
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  applicant: applicantInformationSchema({ emailAndPhoneReadOnly: true }),
+  applicant: applicantInformationSchema({
+    emailRequired: true,
+    phoneRequired: true,
+  }),
   medicalCertificate: z
     .array(FileSchema)
     .refine((files) => files.length === 1, {

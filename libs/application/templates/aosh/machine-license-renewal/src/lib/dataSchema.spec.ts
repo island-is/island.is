@@ -2,10 +2,43 @@ import { NO, YES } from '@island.is/application/core'
 import { DeliveryMethod } from '../utils/constants'
 import { dataSchema } from './dataSchema'
 
+const applicantSchema = dataSchema.shape.applicant
 const medicalCertificateSchema = dataSchema.shape.medicalCertificate
 const licenseSchema = dataSchema.shape.license
 
+const applicant = {
+  name: 'Jón Jónsson',
+  nationalId: '0101302399',
+  address: 'Brekkugata 12',
+  postalCode: '111',
+  city: 'Reykjavík',
+  email: 'jon@example.com',
+  phoneNumber: '+3545556677',
+}
+
 describe('dataSchema', () => {
+  describe('applicant', () => {
+    it('accepts a valid email and phone number', () => {
+      expect(applicantSchema.safeParse(applicant).success).toBe(true)
+    })
+
+    it.each(['', 'jon@'])('rejects the email "%s"', (email) => {
+      const result = applicantSchema.safeParse({ ...applicant, email })
+
+      expect(result.success).toBe(false)
+      expect(!result.success && result.error.issues[0].path).toEqual(['email'])
+    })
+
+    it.each(['', '123'])('rejects the phone number "%s"', (phoneNumber) => {
+      const result = applicantSchema.safeParse({ ...applicant, phoneNumber })
+
+      expect(result.success).toBe(false)
+      expect(!result.success && result.error.issues[0].path).toEqual([
+        'phoneNumber',
+      ])
+    })
+  })
+
   describe('medicalCertificate', () => {
     it('rejects an empty list of files', () => {
       expect(medicalCertificateSchema.safeParse([]).success).toBe(false)

@@ -9,7 +9,7 @@ export const prerequisites = {
     },
     title: {
       id: 'aosh.mlr.application:prerequisites.general.title',
-      defaultMessage: 'Endurnýjun vinnuvélaskírteinis',
+      defaultMessage: 'Gagnaöflun',
       description: 'Title of prerequisites screen',
     },
     subTitle: {
@@ -36,7 +36,8 @@ export const prerequisites = {
     },
     subTitle: {
       id: 'aosh.mlr.application:prerequisites.nationalRegistry.subTitle',
-      defaultMessage: 'Hér sækjum við nafn, kennitölu og heimilisfang',
+      defaultMessage:
+        'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
       description: 'National registry data provider subtitle',
     },
   }),

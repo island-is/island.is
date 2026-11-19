@@ -25,7 +25,7 @@ Data fetching from National Registry, User profile, The Administration of Occupa
 
 The applicant goes through the following screens:
 
-1. **Applicant:** personal information from National Registry and User profile.
+1. **Applicant:** personal information from National Registry, and email and phone number from User profile. The applicant can change the email and phone number for this application, which does not update User profile. Both are required.
 2. **Rights:** the license number, the rights that will be renewed and other valid rights. The table of other valid rights is hidden when all rights are renewable. Right names are shown in English (`categoryNameEn`) when the application is in English, with the Icelandic name (`categoryName`) as a fallback. This also applies to the overview.
 3. **Medical certificate:** upload of a medical certificate.
 4. **License:** whether the applicant wants a plastic card. If so, the card is either sent to the applicant's legal domicile or to another address with an optional recipient. The postal code for another address is selected from the shared list of Icelandic postal codes (`postalCodes` in `@island.is/shared/utils`).

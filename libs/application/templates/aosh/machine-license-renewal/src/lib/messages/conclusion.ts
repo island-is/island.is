@@ -25,7 +25,7 @@ export const conclusion = {
     expandableDescription: {
       id: 'aosh.mlr.application:conclusion.general.expandableDescription#markdown',
       defaultMessage:
-        'Skírteinin verða bæði aðgengileg á mínum síðum Ísland.is, í appinu og einnig send á heimilisfang ef óskað var eftir því. Tilkynningin verður send þegar skírteini hafa verið gerð aðgengileg.',
+        'Uppfært skírteini verður sýnilegt á mínum síðum, í appinu og einnig sent á heimilisfang ef óskað var eftir því. Tilkynning verður send þegar skírteinið hefur verið gert aðgengilegt.',
       description: 'Conclusion expandable description',
     },
   }),
