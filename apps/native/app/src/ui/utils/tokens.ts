@@ -285,7 +285,10 @@ const dark: Tokens = {
     },
     tags: {
       blue: {
-        background: darkSurface, // figma
+        // The export gives this darkSurface, which is the card colour, so the
+        // pill disappears. Every other tag hue has its own tint. The designs
+        // use information/background-minimal here, so follow those.
+        background: darkTinted,
         accent: blue300, // figma
         border: blue300, // figma
       },
