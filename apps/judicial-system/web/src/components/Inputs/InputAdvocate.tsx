@@ -114,7 +114,7 @@ const InputAdvocate: FC<Props> = ({
 
         name = lawyer ? lawyer.name : label
         nationalId = lawyer ? lawyer.nationalId : null
-        email = lawyer ? lawyer.email : null
+        email = lawyer ? lawyer.email.trim() : null
         phoneNumber = lawyer ? lawyer.phoneNr : null
       }
 
@@ -127,7 +127,9 @@ const InputAdvocate: FC<Props> = ({
 
   const handleEmailChange = useCallback(
     (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const email = replaceTabs(event.target.value)
+      // An email never has surrounding whitespace, and a pasted address often
+      // does, so it is dropped as it is entered.
+      const email = replaceTabs(event.target.value).trim()
 
       removeErrorMessageIfValid(
         ['email-format'],
@@ -143,11 +145,19 @@ const InputAdvocate: FC<Props> = ({
 
   const handleEmailBlur = useCallback(
     (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const email = replaceTabs(event.target.value)
+      const email = replaceTabs(event.target.value).trim()
 
-      validateAndSetErrorMessage(['email-format'], email, setEmailErrorMessage)
+      const isValid = validateAndSetErrorMessage(
+        ['email-format'],
+        email,
+        setEmailErrorMessage,
+      )
 
-      onEmailSave(email || null)
+      // An invalid email is not saved: its error message is gone after a
+      // reload, while the stored value would still fail step validation.
+      if (isValid) {
+        onEmailSave(email || null)
+      }
     },
     [onEmailSave],
   )
@@ -172,13 +182,15 @@ const InputAdvocate: FC<Props> = ({
     (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const phoneNumber = replaceTabs(event.target.value)
 
-      validateAndSetErrorMessage(
+      const isValid = validateAndSetErrorMessage(
         ['phonenumber'],
         phoneNumber,
         setPhoneNumberErrorMessage,
       )
 
-      onPhoneNumberSave(phoneNumber || null)
+      if (isValid) {
+        onPhoneNumberSave(phoneNumber || null)
+      }
     },
     [onPhoneNumberSave],
   )
