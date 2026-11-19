@@ -56,6 +56,11 @@ and
 yarn start services-user-profile
 ```
 
+## Decisions
+
+- The applicant chooses the certificate language (Icelandic or English) in the first step, the `prerequisites` state, before data collection. The certificate is fetched once, in data collection, so the language must be known by then, and the site language is not necessarily the language the applicant needs the certificate in.
+- Applications started before the language step existed have no chosen language and fall back to the site language.
+
 ## Running unit tests
 
 Run `nx test application-templates-no-debt-certificate` to execute the unit tests via [Jest](https://jestjs.io).
