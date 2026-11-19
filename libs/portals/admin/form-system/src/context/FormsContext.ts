@@ -6,6 +6,10 @@ import { FormsLocationState } from '../lib/utils/interfaces'
 export interface IFormsContext {
   forms: FormSystemForm[]
   setForms: Dispatch<SetStateAction<FormSystemForm[]>>
+  getOrganizationGeneration: () => number
+  refreshForms: (
+    organizationGeneration: number,
+  ) => Promise<FormSystemForm[] | undefined>
   organizations: Option<string>[]
   setOrganizations: Dispatch<SetStateAction<Option<string>[]>>
   isAdmin: boolean
@@ -33,6 +37,12 @@ export const FormsContext = createContext<IFormsContext>({
   forms: [],
   setForms: function (_value: SetStateAction<FormSystemForm[]>): void {
     throw new Error('setForms function not implemented')
+  },
+  getOrganizationGeneration: () => {
+    throw new Error('getOrganizationGeneration function not implemented')
+  },
+  refreshForms: async () => {
+    throw new Error('refreshForms function not implemented')
   },
   organizations: [],
   setOrganizations: function (_value: SetStateAction<Option<string>[]>): void {
