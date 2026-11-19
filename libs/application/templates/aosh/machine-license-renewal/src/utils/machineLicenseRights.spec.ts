@@ -87,6 +87,15 @@ describe('machineLicenseRights', () => {
       ).toBe('J - Lyftarar')
     })
 
+    it('falls back to the Icelandic name when the English name is blank', () => {
+      expect(
+        formatRightName(
+          { category: 'J', categoryName: 'Lyftarar', categoryNameEn: ' ' },
+          'en',
+        ),
+      ).toBe('J - Lyftarar')
+    })
+
     it('shows only the category when there is no name', () => {
       expect(formatRightName({ category: 'J', categoryName: null }, 'is')).toBe(
         'J',

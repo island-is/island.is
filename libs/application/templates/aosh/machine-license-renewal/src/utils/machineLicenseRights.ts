@@ -15,7 +15,7 @@ export const formatDate = (date: string) => {
 export const formatRightName = (right: WorkMachineRightDto, locale: Locale) => {
   const name =
     locale === 'en'
-      ? right.categoryNameEn ?? right.categoryName
+      ? right.categoryNameEn?.trim() || right.categoryName
       : right.categoryName
 
   return [right.category, name].filter(Boolean).join(' - ')
