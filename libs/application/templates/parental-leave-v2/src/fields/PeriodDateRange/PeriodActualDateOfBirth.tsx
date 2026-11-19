@@ -133,10 +133,12 @@ export const PeriodActualDateOfBirth: FC<
         onChange={(e) => handleChange(e.target.checked)}
       />
       {startsOnActualDob && (
-        <Box marginTop={2} paddingLeft={1}>
+        <Box marginTop={2}>
           <Checkbox
             id={`periods-${currentIndex}-adjustLength`}
             name={`periods-${currentIndex}-adjustLength`}
+            large
+            backgroundColor="blue"
             label={formatMessage(
               parentalLeaveFormMessages.endDate.adjustPeriodLength,
             )}

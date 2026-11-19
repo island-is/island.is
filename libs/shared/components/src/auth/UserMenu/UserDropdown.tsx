@@ -12,7 +12,7 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { hasNotificationScopes, UserProfileScope } from '@island.is/auth/scopes'
-import { useAuth, useUserInfo } from '@island.is/react-spa/bff'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { sharedMessages, userMessages } from '@island.is/shared/translations'
 import { checkDelegation, isCompany } from '@island.is/shared/utils'
 import cn from 'classnames'
@@ -28,7 +28,7 @@ interface UserDropdownProps {
   dropdownState: 'open' | 'closed'
   setDropdownState: Dispatch<SetStateAction<'closed' | 'open'>>
   onLogout?: () => void
-  onSwitchUser: (nationalId: string) => void
+  onSwitchUser: (nationalId?: string) => void
   fullscreen: boolean
   showActorButton: boolean
   showDropdownLanguage: boolean
@@ -49,7 +49,6 @@ export const UserDropdown = ({
   const onClose = () => {
     setDropdownState('closed')
   }
-  const { switchUser } = useAuth()
   const actor = user.profile.actor
   const isDelegation = checkDelegation(user)
   const userName = user.profile.name
@@ -142,7 +141,7 @@ export const UserDropdown = ({
               <UserDropdownItem
                 text={formatMessage(userMessages.switchUser)}
                 icon={{ icon: 'reload', type: 'outline' }}
-                onClick={() => switchUser()}
+                onClick={() => onSwitchUser()}
               />
 
               {hasAccessToUserProfileInfo && !actor && (

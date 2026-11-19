@@ -8,6 +8,7 @@ import {
   calculateExistingNumberOfDays,
   calculateMinPercentageForPeriod,
 } from './directorateOfLabour.utils'
+import { calculateDaysUsedByPeriods } from './parentalLeaveUtils'
 
 describe('daysToMonths', () => {
   it('should return 6 months for the default period', () => {
@@ -428,7 +429,8 @@ describe('calculateMaxPercentageForPeriod', () => {
     ).toBe(1)
   })
 
-  it('should calculate 49% for full year with a full normal rights', () => {
+  // Counted like the rights check: the period's length times the ratio, rounded
+  it('should calculate 50% for full year with a full normal rights', () => {
     const fullRights = 30 * 6
 
     expect(
@@ -437,10 +439,10 @@ describe('calculateMaxPercentageForPeriod', () => {
         new Date(2023, 2, 13),
         fullRights,
       ),
-    ).toBe(0.49)
+    ).toBe(0.5)
   })
 
-  it('should calculate 61% for full year with a full normal rights', () => {
+  it('should calculate 62% for full year with a full normal rights', () => {
     const fullRightsWithMaxRequestedDays = 30 * 6 + 45
 
     expect(
@@ -449,7 +451,34 @@ describe('calculateMaxPercentageForPeriod', () => {
         new Date(2023, 2, 13),
         fullRightsWithMaxRequestedDays,
       ),
-    ).toBe(0.61)
+    ).toBe(0.62)
+  })
+
+  it('should return the highest ratio whose days fit, not an estimate', () => {
+    // 28 days long: 8% uses 2 days, 9% uses 3
+    const start = new Date(2022, 0, 17)
+    const end = new Date(2022, 1, 14)
+
+    expect(calculateMaxPercentageForPeriod(start, end, 2)).toBe(0.08)
+    expect(
+      calculateDaysUsedByPeriods([
+        {
+          startDate: '2022-01-17',
+          endDate: '2022-02-14',
+          ratio: '8',
+        },
+      ]),
+    ).toBe(2)
+  })
+
+  it('should return null when not even 1% fits', () => {
+    expect(
+      calculateMaxPercentageForPeriod(
+        new Date(2022, 2, 14),
+        new Date(2023, 2, 13),
+        0,
+      ),
+    ).toBe(null)
   })
 
   describe('calculateMinPercentageForPeriod', () => {

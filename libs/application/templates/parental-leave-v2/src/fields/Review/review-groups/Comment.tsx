@@ -18,7 +18,7 @@ export const Comment = ({
       <ReviewGroup
         isLast
         isEditable={editable}
-        editAction={() => goToScreen?.('comment')}
+        editAction={() => goToScreen?.('commentScreen')}
       >
         <GridRow>
           <GridColumn span={['10/12', '10/12', '10/12', '10/12']}>

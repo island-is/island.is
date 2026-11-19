@@ -28,6 +28,7 @@ import {
 import {
   AppealCase,
   AppealCourtSession,
+  AppealSummons,
   Case,
   CaseRepositoryService,
 } from '../../repository'
@@ -83,13 +84,16 @@ const rejectedRoles = Object.values(UserRole).filter(
 )
 
 // A verdict appeal with one court session: the court of appeals sees a
-// verdict appeal from the moment it is filed.
+// verdict appeal once an appeal summons has been sent to it.
 const verdictAppeal = () =>
   ({
     id: appealCaseId,
     appealType: AppealCaseType.VERDICT,
     appealState: AppealCaseState.APPEALED,
     courtSessions: [{ id: appealCourtSessionId } as AppealCourtSession],
+    sentAppealSummonses: [
+      { id: uuid(), sentToCourtOfAppealsDate: new Date() } as AppealSummons,
+    ],
   } as AppealCase)
 
 // A completed indictment case whose verdict has been appealed: writable by
