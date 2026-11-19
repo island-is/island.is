@@ -79,7 +79,6 @@ import { createSdfProblem } from './problem-details'
 import { type ZodIssue, ZodIssueCode } from 'zod'
 
 try {
-   
   const { setFileScope } = require('@vanilla-extract/css/fileScope')
   setFileScope('sdf-server-shim', 'application-system-api')
 } catch {

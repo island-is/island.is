@@ -1,4 +1,3 @@
- 
 export default {
   displayName: 'example-inputs-v2',
   preset: '../../../../../../jest.preset.js',
