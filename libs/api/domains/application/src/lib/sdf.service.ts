@@ -18,13 +18,13 @@ export class SdfService {
 
   async getScreen(
     applicationId: string,
-    step: number | undefined,
+    screen: string | undefined,
     locale: Locale,
     auth: Auth,
   ): Promise<ScreenDto> {
     return this.sdfApiWithAuth(auth).sdfControllerGetScreen({
       applicationId,
-      step,
+      screen,
       locale,
     })
   }
@@ -33,7 +33,7 @@ export class SdfService {
     applicationId: string,
     actionType: string,
     answers: Record<string, unknown> | undefined,
-    lastKnownPageIndex: number | undefined,
+    screen: string,
     locale: Locale,
     auth: Auth,
     fieldIds?: string[],
@@ -46,7 +46,7 @@ export class SdfService {
         actionType: actionType as ExecuteActionDtoActionTypeEnum,
         answers,
         locale,
-        lastKnownPageIndex,
+        screen,
         fieldIds,
         event,
         refetchTemplateApiActions,
@@ -56,8 +56,8 @@ export class SdfService {
 
   /**
    * Wraps the shared `/sdf/:id/action` endpoint in VALIDATE mode. Returns only
-   * validation errors and live-computed display values for the current page —
-   * no fresh screen snapshot is produced.
+   * validation errors and live-computed display values for the screen the
+   * client is on — no fresh screen snapshot is produced.
    */
   async validate(
     applicationId: string,
@@ -65,7 +65,7 @@ export class SdfService {
     fieldIds: string[] | undefined,
     locale: Locale,
     auth: Auth,
-    lastKnownPageIndex?: number,
+    screen: string,
   ): Promise<SdfValidateResponseShape> {
     const result = await this.sdfApiWithAuth(auth).sdfControllerExecuteAction({
       applicationId,
@@ -74,7 +74,7 @@ export class SdfService {
         answers,
         locale,
         fieldIds,
-        lastKnownPageIndex,
+        screen,
       },
     })
     return result as unknown as SdfValidateResponseShape
