@@ -432,11 +432,7 @@ export const Footer = ({
         return
       }
 
-      const completedSaved = await saveCurrentScreen(true)
-      if (!completedSaved) return
-
       increment()
-
       dispatch({
         type: 'SUBMITTED',
         payload: {
@@ -444,6 +440,8 @@ export const Footer = ({
           screenError: emptyScreenError,
         },
       })
+
+      await saveCurrentScreen(true)
     } catch (error) {
       console.error('Error submitting application', error)
       dispatch({

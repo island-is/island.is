@@ -11,25 +11,43 @@ import { FormSystemForm } from '@island.is/api/schema'
 import { FormStatus } from '@island.is/form-system/enums'
 import { toast } from '@island.is/island-ui/core'
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { ComponentProps, ReactNode, useState } from 'react'
-import { FormsContext } from '../../../../context/FormsContext'
+import { ReactNode, useContext, useEffect } from 'react'
+import { FormsContext, IFormsContext } from '../../../../context/FormsContext'
+import { FormsProvider } from '../../../../context/FormsProvider'
 import { TableRow } from './TableRow'
 
 const mockUpdateFormStatus = jest.fn<(options: unknown) => Promise<unknown>>()
 const mockGetForm = jest.fn<(options: unknown) => Promise<unknown>>()
 const mockGetForms = jest.fn<(options: unknown) => Promise<unknown>>()
+const mockGetAdmin = jest.fn<(options: unknown) => Promise<unknown>>()
+
+const deferred = () => {
+  let resolve!: (value: unknown) => void
+  const promise = new Promise((res) => {
+    resolve = res
+  })
+  return { promise, resolve }
+}
 
 jest.mock('@apollo/client', () => ({
   ...jest.requireActual<typeof import('@apollo/client')>('@apollo/client'),
   useLazyQuery: (query: unknown) => [
-    query === 'GET_FORMS' ? mockGetForms : mockGetForm,
+    query === 'GET_FORMS'
+      ? mockGetForms
+      : query === 'GET_ORGANIZATION_ADMIN'
+      ? mockGetAdmin
+      : mockGetForm,
   ],
   useMutation: () => [mockUpdateFormStatus],
 }))
-jest.mock('@island.is/form-system/graphql', () => ({ GET_FORMS: 'GET_FORMS' }))
+jest.mock('@island.is/form-system/graphql', () => ({
+  GET_FORMS: 'GET_FORMS',
+  GET_ORGANIZATION_ADMIN: 'GET_ORGANIZATION_ADMIN',
+}))
 jest.mock('@island.is/form-system/ui', () => ({
   m: {
     publish: { defaultMessage: 'Publish' },
+    translationNeededError: { defaultMessage: 'Translation needed' },
   },
 }))
 jest.mock('@island.is/shared/utils', () => ({
@@ -141,7 +159,12 @@ describe('inaccessible forms', () => {
 
 describe('publishing a form', () => {
   beforeEach(() => {
+    mockGetForm.mockReset()
+    mockUpdateFormStatus.mockReset()
     mockGetForms.mockReset()
+    mockGetAdmin.mockReset().mockResolvedValue({
+      data: { formSystemOrganizationAdmin: {} },
+    })
     jest.spyOn(console, 'error').mockImplementation(() => undefined)
   })
 
@@ -150,35 +173,82 @@ describe('publishing a form', () => {
     jest.clearAllMocks()
   })
 
-  const renderChangedForm = () => {
-    const setFormsState =
-      jest.fn<ComponentProps<typeof TableRow>['setFormsState']>()
-    render(
-      <FormsContext.Consumer>
-        {(context) => (
-          <FormsContext.Provider
-            value={{ ...context, organizationNationalId: '1234567890' }}
-          >
+  const createForm = (
+    overrides: Partial<FormSystemForm> = {},
+  ): FormSystemForm => ({
+    id: 'changed-form',
+    name: { is: 'Changed form', en: 'Changed form' },
+    status: FormStatus.PUBLISHED_BEING_CHANGED,
+    slug: 'form-i-breytingu',
+    created: '2026-01-01T00:00:00Z',
+    modified: '2026-01-01T00:00:00Z',
+    allowProceedOnValidationFail: false,
+    draftDaysToLive: 0,
+    enableApplicationPdfDownload: false,
+    hasSummaryScreen: false,
+    isInaccessible: true,
+    isTranslated: true,
+    submissionDaysToLive: 0,
+    validateEligibility: false,
+    ...overrides,
+  })
+
+  const renderChangedForm = (form = createForm()) => {
+    const forms = [form]
+    const formsUpdated = jest.fn<(forms: FormSystemForm[]) => void>()
+    let latestContext: IFormsContext
+    const Rows = () => {
+      const context = useContext(FormsContext)
+      latestContext = context
+      useEffect(() => {
+        if (context.forms !== forms) formsUpdated(context.forms)
+      }, [context.forms])
+      return (
+        <>
+          {context.forms.map((form) => (
             <TableRow
-              id="changed-form"
-              name="Changed form"
-              slug="form-i-breytingu"
-              status={FormStatus.PUBLISHED_BEING_CHANGED}
-              isInaccessible
+              key={form.id}
+              id={form.id}
+              name={form.name?.is ?? ''}
+              slug={form.slug ?? ''}
+              status={form.status}
+              isInaccessible={form.isInaccessible}
               isHeader={false}
-              setFormsState={setFormsState}
+              setFormsState={context.setForms}
             />
-          </FormsContext.Provider>
-        )}
-      </FormsContext.Consumer>,
+          ))}
+        </>
+      )
+    }
+    render(
+      <FormsProvider
+        formsLoader={{
+          forms,
+          organizations: [],
+          organizationId: 'organization',
+          organizationNationalId: '1234567890',
+          isAdmin: false,
+          applications: [],
+          selectedCertificationTypes: [],
+          selectedListTypes: [],
+          selectedFieldTypes: [],
+          certificationTypes: [],
+          listTypes: [],
+          fieldTypes: [],
+          submissionUrls: [],
+          organizationDelegations: [],
+        }}
+      >
+        <Rows />
+      </FormsProvider>,
     )
-    return setFormsState
+    return { formsUpdated, getContext: () => latestContext }
   }
 
   it.each([FormStatus.IN_DEVELOPMENT, FormStatus.PUBLISHED_BEING_CHANGED])(
     'clears the inaccessible lock and notice after publishing from %s',
     async (status) => {
-      const form: FormSystemForm = {
+      const form = createForm({
         id: 'form',
         name: { is: 'Test form', en: 'Test form' },
         status,
@@ -186,17 +256,7 @@ describe('publishing a form', () => {
           status === FormStatus.PUBLISHED_BEING_CHANGED
             ? 'form-i-breytingu'
             : 'form',
-        created: '2026-01-01T00:00:00Z',
-        modified: '2026-01-01T00:00:00Z',
-        allowProceedOnValidationFail: false,
-        draftDaysToLive: 0,
-        enableApplicationPdfDownload: false,
-        hasSummaryScreen: false,
-        isInaccessible: true,
-        isTranslated: true,
-        submissionDaysToLive: 0,
-        validateEligibility: false,
-      }
+      })
       mockGetForm.mockResolvedValue({
         data: { formSystemForm: { form } },
       })
@@ -207,21 +267,7 @@ describe('publishing a form', () => {
           },
         },
       })
-      const FormRow = () => {
-        const [forms, setForms] = useState([form])
-        return (
-          <TableRow
-            id={forms[0].id}
-            name={forms[0].name?.is ?? ''}
-            slug={forms[0].slug ?? ''}
-            status={forms[0].status}
-            isInaccessible={forms[0].isInaccessible}
-            isHeader={false}
-            setFormsState={setForms}
-          />
-        )
-      }
-      render(<FormRow />)
+      renderChangedForm(form)
       fireEvent.click(screen.getByText('Test form'))
       expect(screen.queryByTestId('icon-lockClosed')).not.toBeNull()
       expect(
@@ -262,26 +308,32 @@ describe('publishing a form', () => {
         data: { formSystemForm: { form: { id: 'changed-form' } } },
       })
       const refreshedForms = [
-        { id: 'changed-form', status: FormStatus.PUBLISHED_BEING_CHANGED },
+        createForm({
+          status: FormStatus.IN_DEVELOPMENT,
+          isInaccessible: true,
+          name: { is: 'Refreshed form' },
+        }),
       ]
       mockGetForms.mockResolvedValue({
         data: { formSystemForms: { forms: refreshedForms } },
       })
       if (failsWhileLoading) {
-        mockGetForm.mockRejectedValueOnce(error)
+        mockGetForm.mockResolvedValueOnce({ error })
       }
-      const setFormsState = renderChangedForm()
+      const { formsUpdated } = renderChangedForm()
       fireEvent.click(screen.getByRole('button', { name: 'Publish' }))
 
       await waitFor(() =>
         expect(toast.error).toHaveBeenCalledWith(
-          'Ekki er hægt að gefa út breytt eyðublað ef upphaflega útgefna formið hefur verið tekið úr útgáfu. Ef þetta á ekki við, vinsamlegast reyndu aftur.',
+          failsWhileLoading
+            ? 'Ekki tókst að sækja eyðublaðið. Vinsamlegast reyndu aftur.'
+            : 'Ekki er hægt að gefa út breytt eyðublað ef upphaflega útgefna formið hefur verið tekið úr útgáfu. Ef þetta á ekki við, vinsamlegast reyndu aftur.',
         ),
       )
       if (failsWhileLoading) {
         expect(mockUpdateFormStatus).not.toHaveBeenCalled()
         expect(mockGetForms).not.toHaveBeenCalled()
-        expect(setFormsState).not.toHaveBeenCalled()
+        expect(formsUpdated).not.toHaveBeenCalled()
       } else {
         expect(mockUpdateFormStatus).toHaveBeenCalledWith({
           variables: {
@@ -294,8 +346,10 @@ describe('publishing a form', () => {
         expect(mockGetForms).toHaveBeenCalledWith({
           variables: { input: { nationalId: '1234567890' } },
         })
-        expect(setFormsState).toHaveBeenCalledWith(refreshedForms)
+        expect(formsUpdated).toHaveBeenCalledWith(refreshedForms)
+        expect(screen.queryByText('Refreshed form')).not.toBeNull()
       }
+      expect(toast.warning).not.toHaveBeenCalled()
       expect(screen.queryByTestId('icon-lockClosed')).not.toBeNull()
       expect(console.error).toHaveBeenCalledWith(
         'Error publishing form:',
@@ -318,18 +372,18 @@ describe('publishing a form', () => {
       }),
     )
     const refreshedForms = [
-      {
+      createForm({
         id: 'changed-form',
         status: FormStatus.PUBLISHED,
         slug: 'form',
         isInaccessible: false,
-      },
+      }),
     ]
-    const setFormsState = renderChangedForm()
+    const { formsUpdated } = renderChangedForm()
     fireEvent.click(screen.getByRole('button', { name: 'Publish' }))
 
     await waitFor(() => expect(mockGetForms).toHaveBeenCalledTimes(1))
-    expect(setFormsState).not.toHaveBeenCalled()
+    expect(formsUpdated).not.toHaveBeenCalled()
     expect(toast.error).not.toHaveBeenCalled()
     expect(toast.warning).not.toHaveBeenCalled()
 
@@ -337,7 +391,144 @@ describe('publishing a form', () => {
       finishRefresh({ data: { formSystemForms: { forms: refreshedForms } } })
     })
 
-    expect(setFormsState).toHaveBeenCalledWith(refreshedForms)
+    expect(formsUpdated).toHaveBeenCalledWith(refreshedForms)
+    expect(screen.queryByTestId('icon-lockClosed')).toBeNull()
+    expect(toast.error).not.toHaveBeenCalled()
+    expect(toast.warning).not.toHaveBeenCalled()
+  })
+
+  it('warns about an unknown outcome when the refreshed revision is still being changed', async () => {
+    mockGetForm.mockResolvedValue({
+      data: { formSystemForm: { form: createForm() } },
+    })
+    mockUpdateFormStatus.mockRejectedValue(new Error('Publish request failed'))
+    mockGetForms.mockResolvedValue({
+      data: { formSystemForms: { forms: [createForm()] } },
+    })
+    const { formsUpdated } = renderChangedForm()
+    fireEvent.click(screen.getByRole('button', { name: 'Publish' }))
+
+    await waitFor(() => expect(formsUpdated).toHaveBeenCalledTimes(1))
+    expect(toast.warning).toHaveBeenCalledWith(
+      'Ekki tókst að staðfesta hvort eyðublaðið var gefið út. Endurhlaðaðu síðuna áður en þú reynir aftur.',
+    )
+    expect(toast.error).not.toHaveBeenCalled()
+  })
+
+  it('keeps the translation warning for a successfully loaded form missing English text', async () => {
+    mockGetForm.mockResolvedValue({
+      data: { formSystemForm: { form: createForm({ name: { is: 'Form' } }) } },
+    })
+    renderChangedForm()
+    fireEvent.click(screen.getByRole('button', { name: 'Publish' }))
+
+    await waitFor(() =>
+      expect(toast.warning).toHaveBeenCalledWith('Translation needed'),
+    )
+    expect(toast.error).not.toHaveBeenCalled()
+    expect(mockUpdateFormStatus).not.toHaveBeenCalled()
+    expect(mockGetForms).not.toHaveBeenCalled()
+  })
+
+  it('discards a stale recovery response and retries without losing a copied form', async () => {
+    mockGetForm.mockResolvedValue({
+      data: { formSystemForm: { form: createForm() } },
+    })
+    mockUpdateFormStatus.mockRejectedValue(new Error('File cleanup failed'))
+    const first = deferred()
+    const retry = deferred()
+    mockGetForms
+      .mockReturnValueOnce(first.promise)
+      .mockReturnValueOnce(retry.promise)
+    const { formsUpdated, getContext } = renderChangedForm()
+    fireEvent.click(screen.getByRole('button', { name: 'Publish' }))
+    await waitFor(() => expect(mockGetForms).toHaveBeenCalledTimes(1))
+
+    const copy = createForm({
+      id: 'copy',
+      name: { is: 'Copied form' },
+      status: FormStatus.IN_DEVELOPMENT,
+      isInaccessible: false,
+    })
+    act(() => getContext().setForms((forms) => [copy, ...forms]))
+    expect(screen.queryByText('Copied form')).not.toBeNull()
+    const published = createForm({
+      status: FormStatus.PUBLISHED,
+      isInaccessible: false,
+    })
+    await act(async () => {
+      first.resolve({ data: { formSystemForms: { forms: [published] } } })
+    })
+    expect(mockGetForms).toHaveBeenCalledTimes(2)
+    expect(screen.queryByText('Copied form')).not.toBeNull()
+    expect(formsUpdated).not.toHaveBeenCalledWith([published])
+
+    await act(async () => {
+      retry.resolve({ data: { formSystemForms: { forms: [copy, published] } } })
+    })
+    expect(getContext().forms).toEqual([copy, published])
+    expect(screen.queryByTestId('icon-lockClosed')).toBeNull()
+    expect(toast.error).not.toHaveBeenCalled()
+    expect(toast.warning).not.toHaveBeenCalled()
+  })
+
+  it("does not replace another organization's list with a pending recovery response", async () => {
+    mockGetForm.mockResolvedValue({
+      data: { formSystemForm: { form: createForm() } },
+    })
+    mockUpdateFormStatus.mockRejectedValue(new Error('File cleanup failed'))
+    const refresh = deferred()
+    const otherForm = createForm({
+      id: 'other-form',
+      name: { is: 'Organization B form' },
+      status: FormStatus.IN_DEVELOPMENT,
+      isInaccessible: false,
+    })
+    mockGetForms.mockReturnValueOnce(refresh.promise).mockResolvedValueOnce({
+      data: { formSystemForms: { forms: [otherForm] } },
+    })
+    const { getContext } = renderChangedForm()
+    fireEvent.click(screen.getByRole('button', { name: 'Publish' }))
+    await waitFor(() => expect(mockGetForms).toHaveBeenCalledTimes(1))
+
+    await act(async () => {
+      await getContext().handleOrganizationChange?.({ value: 'organization-b' })
+    })
+    await act(async () => {
+      refresh.resolve({ data: { formSystemForms: { forms: [] } } })
+    })
+    expect(getContext().organizationNationalId).toBe('organization-b')
+    expect(getContext().forms).toEqual([otherForm])
+    expect(screen.queryByText('Organization B form')).not.toBeNull()
+    expect(mockGetForms).toHaveBeenCalledTimes(2)
+    expect(toast.error).not.toHaveBeenCalled()
+    expect(toast.warning).not.toHaveBeenCalled()
+  })
+
+  it('captures the selection generation before publishing, including switching away and back', async () => {
+    mockGetForm.mockResolvedValue({
+      data: { formSystemForm: { form: createForm() } },
+    })
+    let rejectPublish!: (error: Error) => void
+    mockUpdateFormStatus.mockReturnValueOnce(
+      new Promise((_resolve, reject) => {
+        rejectPublish = reject
+      }),
+    )
+    mockGetForms.mockResolvedValue({ data: { formSystemForms: { forms: [] } } })
+    const { getContext } = renderChangedForm()
+    fireEvent.click(screen.getByRole('button', { name: 'Publish' }))
+    await waitFor(() => expect(mockUpdateFormStatus).toHaveBeenCalledTimes(1))
+
+    await act(async () => {
+      await getContext().handleOrganizationChange?.({ value: 'organization-b' })
+    })
+    await act(async () => {
+      await getContext().handleOrganizationChange?.({ value: '1234567890' })
+    })
+    await act(async () => rejectPublish(new Error('File cleanup failed')))
+    expect(getContext().organizationNationalId).toBe('1234567890')
+    expect(mockGetForms).toHaveBeenCalledTimes(2)
     expect(toast.error).not.toHaveBeenCalled()
     expect(toast.warning).not.toHaveBeenCalled()
   })
@@ -365,7 +556,7 @@ describe('publishing a form', () => {
     })
     mockUpdateFormStatus.mockRejectedValue(new Error('Publish request failed'))
     mockGetForms.mockImplementation(refresh)
-    const setFormsState = renderChangedForm()
+    const { formsUpdated } = renderChangedForm()
     fireEvent.click(screen.getByRole('button', { name: 'Publish' }))
 
     await waitFor(() =>
@@ -373,7 +564,7 @@ describe('publishing a form', () => {
         'Ekki tókst að staðfesta hvort eyðublaðið var gefið út. Endurhlaðaðu síðuna áður en þú reynir aftur.',
       ),
     )
-    expect(setFormsState).not.toHaveBeenCalled()
+    expect(formsUpdated).not.toHaveBeenCalled()
     expect(toast.error).not.toHaveBeenCalled()
     expect(console.error).toHaveBeenCalledWith(
       'Error refreshing forms after publishing:',

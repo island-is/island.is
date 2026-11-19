@@ -68,6 +68,7 @@ interface UploadedFileProps {
   defaultBackgroundColor?: StatusColor
   icons?: Icons
   hideIcons?: boolean
+  removeDisabled?: boolean
   onRemoveClick?: (file: UploadFile) => void
   onRetryClick?: (file: UploadFile) => void
   onOpenFile?: (file: UploadFile) => void
@@ -78,6 +79,7 @@ export const UploadedFile: FC<UploadedFileProps> = (props) => {
     file,
     defaultBackgroundColor,
     hideIcons,
+    removeDisabled = false,
     onRemoveClick,
     onRetryClick,
     onOpenFile,
@@ -211,6 +213,7 @@ export const UploadedFile: FC<UploadedFileProps> = (props) => {
             </button>
           ) : (
             <button
+              disabled={removeDisabled}
               onClick={(evt) => handleClick(evt, onRemoveClick)}
               aria-label="Fjarlægja skrá"
             >
@@ -233,6 +236,8 @@ interface Props {
   description?: string
   buttonLabel?: string
   disabled?: boolean
+  // Removal can remain available when selecting new files is disabled.
+  removeDisabled?: boolean
   accept?: string | string[]
   // Enable upload of multiple files
   multiple?: boolean
@@ -256,6 +261,7 @@ export const InputFileUpload: FC<Props> = (props) => {
     description,
     buttonLabel = 'Velja skjöl til að hlaða upp',
     disabled = false,
+    removeDisabled = false,
     accept,
     multiple = true,
     maxSize,
@@ -337,6 +343,7 @@ export const InputFileUpload: FC<Props> = (props) => {
               file={file}
               defaultBackgroundColor={defaultFileBackgroundColor}
               hideIcons={hideIcons}
+              removeDisabled={removeDisabled}
               onRemoveClick={onRemove}
               onRetryClick={onRetry}
               onOpenFile={onOpenFile}

@@ -92,8 +92,13 @@ export const TableRow = ({
   url,
   isInaccessible = false,
 }: Props) => {
-  const { isAdmin, organizations, organizationNationalId } =
-    useContext(FormsContext)
+  const {
+    isAdmin,
+    organizations,
+    organizationNationalId,
+    getOrganizationGeneration,
+    refreshForms,
+  } = useContext(FormsContext)
   const [isOpen, setIsOpen] = useState(false)
   const [
     selectedCopyOrganizationNationalId,
@@ -421,13 +426,24 @@ export const TableRow = ({
       icon: 'star' as const,
       iconType: 'outline' as const,
       onClick: async () => {
+        const organizationGeneration = getOrganizationGeneration()
+        const showUnknownOutcome = () =>
+          toast.warning(
+            formatMessage({
+              id: 'publishChangedFormOutcomeUnknown',
+              defaultMessage:
+                'Ekki tókst að staðfesta hvort eyðublaðið var gefið út. Endurhladdu síðuna áður en þú reynir aftur. ATH. Ekki er hægt að gefa út breytt eyðublað ef upphaflega formið hefur verið tekið úr útgáfu.',
+            }),
+          )
         let publishAttempted = false
         try {
-          const { data: formData } = await getForm({
+          const { data: formData, error: loadError } = await getForm({
             variables: { input: { id } },
           })
+          if (loadError) throw loadError
           const form = formData?.formSystemForm?.form
-          if (!form || !hasEnglishForAllNameFields(form)) {
+          if (!form) throw new Error('Missing form')
+          if (!hasEnglishForAllNameFields(form)) {
             toast.warning(formatMessage(m.translationNeededError))
             return
           }
@@ -469,37 +485,41 @@ export const TableRow = ({
           })
         } catch (error) {
           console.error('Error publishing form:', error)
+          if (organizationGeneration !== getOrganizationGeneration()) return
+          if (!publishAttempted) {
+            toast.error(
+              formatMessage({
+                id: 'publishChangedFormLoadFailed',
+                defaultMessage:
+                  'Ekki tókst að sækja eyðublaðið. Vinsamlegast reyndu aftur.',
+              }),
+            )
+            return
+          }
           if (publishAttempted) {
             try {
-              const { data: formsData, error: refreshError } = await getForms({
-                variables: { input: { nationalId: organizationNationalId } },
-              })
-              if (refreshError) throw refreshError
-              const refreshedForms: FormSystemForm[] | undefined =
-                formsData?.formSystemForms?.forms
-              if (!refreshedForms) throw new Error('Missing forms list')
-              setFormsState(refreshedForms)
+              const refreshedForms = await refreshForms(organizationGeneration)
+              if (!refreshedForms) return
 
+              const refreshedForm = refreshedForms.find(
+                (form) => form.id === id,
+              )
+              if (refreshedForm?.status === FormStatus.PUBLISHED) {
+                return
+              }
               if (
-                refreshedForms.some(
-                  (form) =>
-                    form.id === id && form.status === FormStatus.PUBLISHED,
-                )
+                refreshedForm?.status === FormStatus.PUBLISHED_BEING_CHANGED
               ) {
+                showUnknownOutcome()
                 return
               }
             } catch (refreshError) {
+              if (organizationGeneration !== getOrganizationGeneration()) return
               console.error(
                 'Error refreshing forms after publishing:',
                 refreshError,
               )
-              toast.warning(
-                formatMessage({
-                  id: 'publishChangedFormOutcomeUnknown',
-                  defaultMessage:
-                    'Ekki tókst að staðfesta hvort eyðublaðið var gefið út. Endurhlaðaðu síðuna áður en þú reynir aftur.',
-                }),
-              )
+              showUnknownOutcome()
               return
             }
           }
@@ -702,6 +722,8 @@ export const TableRow = ({
     formatMessage,
     exportForm,
     getForms,
+    getOrganizationGeneration,
+    refreshForms,
     updateFormStatus,
     copyFormToOrganization,
     organizationNationalId,

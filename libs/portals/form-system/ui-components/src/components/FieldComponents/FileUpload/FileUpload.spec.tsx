@@ -228,6 +228,60 @@ it('keeps uploads enabled for an application', () => {
   expect(calls[calls.length - 1][0].disabled).toBe(false)
 })
 
+it.each([{ isNavigating: true }, { submitted: true }])(
+  'does not remove an attachment or call DELETE_FILE while %o',
+  async (state) => {
+    const dispatch = jest.fn()
+    render(
+      <FileUpload
+        item={{
+          ...item,
+          values: [{ id: 'value', json: { s3Key: ['application/file.pdf'] } }],
+        }}
+        state={{ application: { id: 'application' }, ...state }}
+        dispatch={dispatch}
+      />,
+      { wrapper: Wrapper },
+    )
+    const latestProps = () =>
+      jest.mocked(InputFileUpload).mock.calls.slice(-1)[0][0]
+    expect(latestProps().removeDisabled).toBe(true)
+    const originalFiles = latestProps().files
+
+    await act(async () => latestProps().onRemove?.(originalFiles[0]))
+
+    expect(latestProps().files).toEqual(originalFiles)
+    expect(mutate).not.toHaveBeenCalled()
+    expect(dispatch).not.toHaveBeenCalled()
+  },
+)
+
+it('allows removal when only the upload configuration is disabled', async () => {
+  const dispatch = jest.fn()
+  render(
+    <FileUpload
+      item={{
+        ...item,
+        fieldSettings: { ...item.fieldSettings, fileTypes: '' },
+        values: [{ id: 'value', json: { s3Key: ['application/file.pdf'] } }],
+      }}
+      state={{ application: { id: 'application' } }}
+      dispatch={dispatch}
+    />,
+    { wrapper: Wrapper },
+  )
+  const latestProps = () =>
+    jest.mocked(InputFileUpload).mock.calls.slice(-1)[0][0]
+  expect(latestProps().disabled).toBe(true)
+  expect(latestProps().removeDisabled).not.toBe(true)
+  mutate.mockResolvedValue({})
+
+  await act(async () => latestProps().onRemove?.(latestProps().files[0]))
+
+  expect(mutate).toHaveBeenCalledTimes(1)
+  expect(latestProps().files).toEqual([])
+})
+
 const deferred = () => {
   let resolve!: () => void
   let reject!: (error: Error) => void
@@ -384,7 +438,7 @@ it('does not start an upload when navigation has reserved the guard before a ren
   expect(dispatch).not.toHaveBeenCalledWith({ type: 'FINISH_FILE_UPLOAD' })
 })
 
-it('commits simultaneous upload keys and form values before releasing uploads in Strict Mode', async () => {
+it('commits out-of-order upload keys and form values before releasing uploads in Strict Mode', async () => {
   let getFormValues!: ReturnType<typeof useForm>['getValues']
   const ObserveForm = () => {
     getFormValues = useFormContext().getValues
@@ -401,6 +455,8 @@ it('commits simultaneous upload keys and form values before releasing uploads in
       })
     }
   })
+  const firstStore = deferred()
+  const secondStore = deferred()
   mutate
     .mockResolvedValueOnce({
       data: { createUploadUrl: { url: 'url', fields: { key: 'first' } } },
@@ -408,7 +464,8 @@ it('commits simultaneous upload keys and form values before releasing uploads in
     .mockResolvedValueOnce({
       data: { createUploadUrl: { url: 'url', fields: { key: 'second' } } },
     })
-    .mockResolvedValue({})
+    .mockReturnValueOnce(firstStore.promise)
+    .mockReturnValueOnce(secondStore.promise)
   jest.mocked(uploadToS3).mockResolvedValue(undefined)
   render(
     <StrictMode>
@@ -432,6 +489,12 @@ it('commits simultaneous upload keys and form values before releasing uploads in
     ])
   })
 
+  expect(finished).toEqual([])
+  await act(async () => secondStore.resolve())
+  expect(finished).toEqual([
+    { keys: ['application/second'], form: ['application/second'] },
+  ])
+  await act(async () => firstStore.resolve())
   expect(
     dispatch.mock.calls.filter(([action]) => action.type === 'SET_FILES'),
   ).toHaveLength(2)
@@ -440,9 +503,4 @@ it('commits simultaneous upload keys and form values before releasing uploads in
     keys: ['application/first', 'application/second'],
     form: ['application/first', 'application/second'],
   })
-  expect(
-    finished.every(
-      ({ keys, form }) => keys.length > 0 && keys.join() === form.join(),
-    ),
-  ).toBe(true)
 })

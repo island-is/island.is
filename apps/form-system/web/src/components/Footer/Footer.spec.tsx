@@ -1,13 +1,24 @@
 import { useLazyQuery, useMutation } from '@apollo/client'
+import { FormSystemScreen } from '@island.is/api/schema'
 import { SectionTypes } from '@island.is/form-system/enums'
+import { SAVE_SCREEN, SUBMIT_APPLICATION } from '@island.is/form-system/graphql'
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { ButtonHTMLAttributes, ReactNode } from 'react'
+import {
+  ButtonHTMLAttributes,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useState,
+} from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { Footer } from './Footer'
 import { getPaymentFlow } from '../../utils/payment'
-import { uploadNavigationReducer } from '../../reducers/applicationReducer'
-import { ApplicationState } from '@island.is/form-system/ui'
+import {
+  applicationReducer,
+  uploadNavigationReducer,
+} from '../../reducers/applicationReducer'
+import { Action, ApplicationState } from '@island.is/form-system/ui'
 
 jest.mock('./Footer.css', () => ({ buttonContainer: 'buttonContainer' }))
 jest.mock('../../context/ApplicationProvider', () => ({
@@ -55,18 +66,36 @@ jest.mock('@island.is/island-ui/core', () => ({
 
 const dispatch = jest.fn()
 const mutate = jest.fn()
+const submitApplication = jest.fn()
+const otherMutation = jest.fn()
 
 beforeEach(() => {
   jest.clearAllMocks()
   dispatch.mockReset()
+  mutate.mockReset()
+  submitApplication.mockReset()
+  otherMutation.mockReset().mockResolvedValue({})
   jest.mocked(getPaymentFlow).mockReturnValue({
     shouldShowPay: false,
     onSubmit: false,
   })
   mutate.mockResolvedValue({})
+  submitApplication.mockResolvedValue({
+    data: { submitFormSystemApplication: { submissionFailed: false } },
+  })
   jest
     .mocked(useMutation)
-    .mockReturnValue([mutate, { loading: false }] as never)
+    .mockImplementation(
+      (operation) =>
+        [
+          operation === SUBMIT_APPLICATION
+            ? submitApplication
+            : operation === SAVE_SCREEN
+            ? mutate
+            : otherMutation,
+          { loading: false },
+        ] as never,
+    )
   jest
     .mocked(useLazyQuery)
     .mockReturnValue([mutate, { loading: false }] as never)
@@ -75,16 +104,6 @@ beforeEach(() => {
 it.each(['Continue', 'Back', 'Submit'])(
   'blocks an upload selected while %s is saving before navigating or submitting',
   async (button) => {
-    let guard: Pick<
-      ApplicationState,
-      'pendingUploads' | 'isNavigating' | 'submitted'
-    > = {}
-    dispatch.mockImplementation((action) => {
-      const next = uploadNavigationReducer(guard, action)
-      if (action.type.startsWith('START_') && next === guard) return false
-      guard = next
-      return true
-    })
     if (button === 'Submit') {
       jest.mocked(getPaymentFlow).mockReturnValue({
         shouldShowPay: false,
@@ -96,22 +115,27 @@ it.each(['Continue', 'Back', 'Submit'])(
       finishSave = resolve
     })
     mutate.mockReturnValueOnce(saving)
-    renderFooter('TEXTBOX')
+    const { getState } = renderFooter('TEXTBOX', false, 0, '123')
 
     fireEvent.click(screen.getByRole('button', { name: button }))
     await waitFor(() => expect(mutate).toHaveBeenCalledTimes(1))
-    expect(guard.isNavigating).toBe(true)
+    expect(getState().isNavigating).toBe(true)
     expect(dispatch({ type: 'START_FILE_UPLOAD' })).toBe(false)
     expect(dispatch({ type: 'START_NAVIGATION' })).toBe(false)
+    const direction = button === 'Back' ? 'DECREMENT' : 'INCREMENT'
+    expect(dispatch).not.toHaveBeenCalledWith({ type: direction })
+    expect(submitApplication).not.toHaveBeenCalled()
 
     await act(async () => finishSave({}))
     await waitFor(() =>
       expect(dispatch).toHaveBeenCalledWith({ type: 'FINISH_NAVIGATION' }),
     )
-    expect(dispatch).toHaveBeenCalledWith({
-      type: button === 'Back' ? 'DECREMENT' : 'INCREMENT',
-    })
-    expect(guard.submitted).toBe(button === 'Submit' ? true : undefined)
+    if (button === 'Submit') {
+      expect(submitApplication).toHaveBeenCalledTimes(1)
+      expect(getState().submitted).toBe(true)
+    } else {
+      expect(dispatch).toHaveBeenCalledWith({ type: direction })
+    }
   },
 )
 
@@ -125,30 +149,32 @@ it.each(['save', 'submission'])(
       shouldShowPay: false,
       onSubmit: true,
     })
-    let guard: Pick<
-      ApplicationState,
-      'pendingUploads' | 'isNavigating' | 'submitted'
-    > = {}
-    dispatch.mockImplementation((action) => {
-      const next = uploadNavigationReducer(guard, action)
-      if (action.type.startsWith('START_') && next === guard) return false
-      guard = next
-      return true
-    })
-    if (phase === 'submission') {
-      // Saving the input screen and dependencies precedes submission.
-      mutate.mockResolvedValueOnce({}).mockResolvedValueOnce({})
-    }
-    mutate.mockRejectedValueOnce(new Error('Request failed'))
-    renderFooter('TEXTBOX')
+    const failedOperation = phase === 'submission' ? submitApplication : mutate
+    failedOperation.mockRejectedValueOnce(new Error('Request failed'))
+    const { getState } = renderFooter('TEXTBOX', false, 0, '123')
     fireEvent.click(screen.getByRole('button', { name: 'Submit' }))
     await waitFor(() =>
       expect(dispatch).toHaveBeenCalledWith({ type: 'FINISH_NAVIGATION' }),
     )
-    expect(guard.isNavigating).toBe(false)
-    expect(dispatch({ type: 'START_FILE_UPLOAD' })).toBe(true)
-    dispatch({ type: 'FINISH_FILE_UPLOAD' })
-    fireEvent.click(screen.getByRole('button', { name: 'Submit' }))
+    expect(getState().isNavigating).toBe(false)
+    if (phase === 'submission') {
+      expect(submitApplication).toHaveBeenCalledTimes(1)
+      expect(submitApplication).toHaveBeenCalledWith({
+        variables: { input: { id: 'application' } },
+      })
+      await expect(submitApplication.mock.results[0].value).rejects.toThrow(
+        'Request failed',
+      )
+    } else {
+      expect(submitApplication).not.toHaveBeenCalled()
+    }
+    act(() => {
+      expect(dispatch({ type: 'START_FILE_UPLOAD' })).toBe(true)
+      dispatch({ type: 'FINISH_FILE_UPLOAD' })
+    })
+    const retry = screen.getByRole('button', { name: 'Submit' })
+    expect(retry.hasAttribute('disabled')).toBe(false)
+    fireEvent.click(retry)
     await waitFor(() =>
       expect(dispatch).toHaveBeenCalledWith({
         type: 'SUBMITTED',
@@ -164,8 +190,8 @@ it('does not validate, save or submit if an upload reserves the guard before a r
     shouldShowPay: false,
     onSubmit: true,
   })
+  const { validator } = renderFooter('TEXTBOX')
   dispatch.mockReturnValue(false)
-  renderFooter('TEXTBOX')
 
   await act(async () => {
     fireEvent.click(screen.getByRole('button', { name: 'Submit' }))
@@ -173,37 +199,105 @@ it('does not validate, save or submit if an upload reserves the guard before a r
 
   expect(dispatch.mock.calls).toEqual([[{ type: 'START_NAVIGATION' }]])
   expect(mutate).not.toHaveBeenCalled()
+  expect(submitApplication).not.toHaveBeenCalled()
+  expect(validator).not.toHaveBeenCalled()
+})
+
+it('keeps a successfully submitted application locked when saving completion fails', async () => {
+  const error = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+  jest.mocked(getPaymentFlow).mockReturnValue({
+    shouldShowPay: false,
+    onSubmit: true,
+  })
+  mutate
+    .mockResolvedValueOnce({})
+    .mockRejectedValueOnce(new Error('Could not save completion'))
+  const { getState } = renderFooter('TEXTBOX', false, 0, '123')
+  fireEvent.click(screen.getByRole('button', { name: 'Submit' }))
+
+  await waitFor(() => {
+    expect(getState().submitted).toBe(true)
+    expect(getState().isNavigating).toBe(false)
+    expect(getState().screenError?.hasError).toBe(true)
+  })
+  expect(dispatch({ type: 'START_FILE_UPLOAD' })).toBe(false)
+  expect(dispatch({ type: 'START_NAVIGATION' })).toBe(false)
+  expect(submitApplication).toHaveBeenCalledTimes(1)
+  error.mockRestore()
 })
 
 const renderFooter = (
   fieldType = 'NUMBERBOX',
   isHidden = false,
   pendingUploads = 0,
+  initialValue = '12',
 ) => {
-  const section = { id: 'section', sectionType: SectionTypes.INPUT }
-  const context = {
-    state: {
-      pendingUploads,
-      currentScreen: {
-        data: { id: 'screen', fields: [{ id: 'number', fieldType, isHidden }] },
+  const inputScreen: FormSystemScreen = {
+    id: 'screen',
+    sectionId: 'section',
+    isHidden: false,
+    fields: [
+      {
+        id: 'number',
+        screenId: 'screen',
+        fieldType,
+        isHidden,
+        isPartOfMultiset: false,
+        isRequired: false,
+        name: { is: 'Number' },
       },
-      currentSection: { index: 1, data: section },
-      sections: [section],
-      application: { id: 'application', allowProceedOnValidationFail: true },
-    },
-    dispatch,
-  } as unknown as ReturnType<typeof useApplicationContext>
-  jest.mocked(useApplicationContext).mockReturnValue(context)
+    ],
+  }
+  const section = {
+    id: 'section',
+    sectionType: SectionTypes.INPUT,
+    isHidden: false,
+    screens: [inputScreen],
+  }
+  const initialState: ApplicationState = {
+    pendingUploads,
+    currentScreen: { index: 0, data: inputScreen },
+    currentSection: { index: 1, data: section },
+    sections: [
+      { id: 'premises', sectionType: SectionTypes.PREMISES, isHidden: false },
+      section,
+      { id: 'completed', sectionType: SectionTypes.COMPLETED, isHidden: false },
+    ],
+    screens: [inputScreen],
+    application: { id: 'application', allowProceedOnValidationFail: true },
+  }
+  let latestState = initialState
+  let guard = initialState
+  let setState!: Dispatch<SetStateAction<ApplicationState>>
+  dispatch.mockImplementation((action: Action) => {
+    const next = uploadNavigationReducer(guard, action)
+    if (action.type.startsWith('START_') && next === guard) return false
+    guard = next
+    setState((state) => applicationReducer(state, action))
+    return true
+  })
+  const validator = jest.fn(
+    (value: string) => value.length === 3 || 'Invalid length',
+  )
 
   const Wrapper = () => {
-    const methods = useForm({ defaultValues: { number: ['12'] } })
+    const [state, updateState] = useState(initialState)
+    latestState = state
+    setState = updateState
+    jest.mocked(useApplicationContext).mockReturnValue({
+      state,
+      dispatch,
+      validateEligibility: false,
+      enableApplicationPdfDownload: false,
+    })
+    const methods = useForm({ defaultValues: { number: [initialValue] } })
     return (
       <FormProvider {...methods}>
         <Controller
           name="number.0"
           control={methods.control}
           rules={{
-            validate: (value) => value.length === 3 || 'Invalid length',
+            validate: validator,
           }}
           render={({ field }) => <input aria-label="Number" {...field} />}
         />
@@ -211,13 +305,14 @@ const renderFooter = (
       </FormProvider>
     )
   }
-  const view = render(<Wrapper />)
-  return (pendingUploads: number) => {
-    jest.mocked(useApplicationContext).mockReturnValue({
-      ...context,
-      state: { ...context.state, pendingUploads },
-    })
-    view.rerender(<Wrapper />)
+  render(<Wrapper />)
+  return {
+    validator,
+    getState: () => latestState,
+    setPendingUploads: (pendingUploads: number) => {
+      guard = { ...guard, pendingUploads }
+      act(() => setState((state) => ({ ...state, pendingUploads })))
+    },
   }
 }
 
@@ -237,7 +332,7 @@ it.each([1, 2])(
 )
 
 it('re-enables both navigation directions only after the last upload finishes', async () => {
-  const setPendingUploads = renderFooter('TEXTBOX', false, 2)
+  const { setPendingUploads } = renderFooter('TEXTBOX', false, 2)
   setPendingUploads(1)
   expect(
     screen.getByRole('button', { name: 'Continue' }).hasAttribute('disabled'),

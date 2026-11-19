@@ -288,6 +288,7 @@ export const FileUpload = ({
 
   const onRemove = useCallback(
     (file: UploadFile) => {
+      if (state?.isNavigating || state?.submitted) return
       if (applicationId) {
         deleteFile({
           variables: {
@@ -316,6 +317,8 @@ export const FileUpload = ({
     },
     [
       applicationId,
+      state?.isNavigating,
+      state?.submitted,
       deleteFile,
       dispatch,
       updateFiles,
@@ -362,6 +365,7 @@ export const FileUpload = ({
             !item.fieldSettings?.maxFiles
           }
           onChange={onChange}
+          removeDisabled={state?.isNavigating || state?.submitted}
           onRemove={onRemove}
           onRetry={onRetry}
           errorMessage={fieldState.error?.message ?? error}
