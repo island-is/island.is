@@ -267,6 +267,39 @@ describe('useFormActions', () => {
         expect(replaceState).not.toHaveBeenCalled()
       })
 
+      it('drops a refresh that started during a navigation and finishes after it', async () => {
+        const nextPageResponse = deferred<SdfScreen>()
+        const refetchResponse = deferred<SdfScreen>()
+        ;(executeAction as jest.Mock).mockImplementation(
+          (_id: string, actionType: string) =>
+            actionType === 'NEXT_PAGE'
+              ? nextPageResponse.promise
+              : refetchResponse.promise,
+        )
+        const { result } = renderHook(() => useFormActions('app-1', screen), {
+          wrapper,
+        })
+
+        await act(async () => {
+          await result.current.nextPage()
+        })
+        await act(async () => {
+          await result.current.refetch()
+        })
+        await act(async () => {
+          nextPageResponse.resolve(page2)
+          await Promise.resolve()
+        })
+        await act(async () => {
+          refetchResponse.resolve(screen)
+          await Promise.resolve()
+        })
+
+        expect(result.current.screen.page.id).toBe('page-2')
+        expect(replaceState).not.toHaveBeenCalled()
+        expect(window.location.search).toContain('screen=page-2')
+      })
+
       it('still applies a navigation when a refresh started after it', async () => {
         const nextPageResponse = deferred<SdfScreen>()
         ;(executeAction as jest.Mock).mockImplementation(

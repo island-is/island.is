@@ -39,6 +39,8 @@ export const useFormActions = (
   // later move. A request that moves the user takes a new turn and so
   // supersedes every request before it; one that only refreshes the current
   // screen keeps the current turn, so any move started after it supersedes it.
+  // A refresh is also dropped when the user is no longer on the screen it was
+  // for, which covers a move that finished before it.
   const latestTurnRef = useRef(0)
   const takeTurn = useCallback(
     (isNavigation: boolean) =>
@@ -94,7 +96,11 @@ export const useFormActions = (
       try {
         const requestedId = screenIdRef.current
         const result = await fetchScreen(applicationId, requestedId, lang)
-        if (!isActive || turn !== latestTurnRef.current) {
+        if (
+          !isActive ||
+          turn !== latestTurnRef.current ||
+          requestedId !== screenIdRef.current
+        ) {
           return
         }
         showScreen(
@@ -173,7 +179,11 @@ export const useFormActions = (
           ? refetchTargets
           : undefined
       const claimedScreenId = screenIdRef.current
-      const turn = takeTurn(NAVIGATING_ACTIONS.has(actionType))
+      const isNavigation = NAVIGATING_ACTIONS.has(actionType)
+      const turn = takeTurn(isNavigation)
+      const isSuperseded = () =>
+        turn !== latestTurnRef.current ||
+        (!isNavigation && claimedScreenId !== screenIdRef.current)
 
       updatePendingRefetchTargets(targets, 1)
 
@@ -189,7 +199,7 @@ export const useFormActions = (
             event,
             refetchTemplateApiActions,
           )
-          if (turn !== latestTurnRef.current) {
+          if (isSuperseded()) {
             return
           }
           showScreen(
@@ -211,7 +221,7 @@ export const useFormActions = (
           setAnswerSnapshot(answersRef.current)
           forceRender((n) => n + 1)
         } catch (e) {
-          if (turn === latestTurnRef.current) {
+          if (!isSuperseded()) {
             setError(e instanceof Error ? e.message : 'Action failed')
           }
         } finally {
