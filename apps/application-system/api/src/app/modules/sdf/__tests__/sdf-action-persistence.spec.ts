@@ -1684,57 +1684,105 @@ describe('SDF action persistence', () => {
   })
 })
 
-// Loading a screen without a step, as on a page reload, uses the saved page.
-// Only an application with no saved page resumes at the first unanswered one.
-describe('SDF screen load without a step', () => {
+// A screen request names the screen to show by its id. With no id, or an id
+// that no shown screen has, it resumes at the first unanswered page. The saved
+// page plays no part, and nothing is saved.
+describe('SDF screen request by screen id', () => {
   beforeEach(() => jest.clearAllMocks())
 
-  it.each<
-    Pick<PersistenceCase, 'label' | 'form' | 'saves'> &
-      Pick<ApplicationRow, 'pageIndex' | 'answers'> & { screenIndex: number }
-  >([
+  it.each<{
+    label: string
+    form: PersistenceCase['form']
+    pageIndex: ApplicationRow['pageIndex']
+    answers: ApplicationRow['answers']
+    screen?: string
+    pageId: string
+    fallsBack: boolean
+  }>([
     {
-      label: 'stays on the first page when it is the saved one',
+      label: 'shows the screen it is asked for',
+      form: twoPageForm,
+      pageIndex: 0,
+      answers: {},
+      screen: 'page1',
+      pageId: 'page1',
+      fallsBack: false,
+    },
+    {
+      label: 'resumes at the first unanswered page when no id is given',
       form: twoPageForm,
       pageIndex: 0,
       answers: { field0: 'value' },
-      saves: [],
-      screenIndex: 0,
+      pageId: 'page1',
+      fallsBack: false,
     },
     {
-      label: 'resumes at the first unanswered page when none is saved',
+      label: 'ignores the saved page',
       form: twoPageForm,
-      pageIndex: null,
-      answers: { field0: 'value' },
-      saves: [{ pageIndex: 1 }],
-      screenIndex: 1,
+      pageIndex: 1,
+      answers: {},
+      pageId: 'page0',
+      fallsBack: false,
     },
     {
-      label: 'skips a hidden first page when none is saved',
+      label: 'resumes when no screen has the id',
+      form: twoPageForm,
+      pageIndex: 0,
+      answers: {},
+      screen: 'nowhere',
+      pageId: 'page0',
+      fallsBack: true,
+    },
+    {
+      label: 'resumes when the screen is hidden',
+      form: hiddenFirstPageForm,
+      pageIndex: 0,
+      answers: {},
+      screen: 'page0',
+      pageId: 'page1',
+      fallsBack: true,
+    },
+    {
+      label: 'skips a hidden first page when resuming',
       form: hiddenFirstPageForm,
       pageIndex: null,
       answers: {},
-      saves: [{ pageIndex: 1 }],
-      screenIndex: 1,
+      pageId: 'page1',
+      fallsBack: false,
     },
-  ])('$label', async ({ form, pageIndex, answers, saves, screenIndex }) => {
-    const row = createApplicationRow({ pageIndex, answers })
-    getApplicationTemplateByTypeIdMock.mockResolvedValue(
-      createTemplate(form, permissiveSchema, 'all'),
-    )
-    const { controller, applicationService } = buildController(row, {
-      persistingAction: succeeded,
-      ephemeralAction: succeeded,
-      changeState: transitioned,
-    })
+  ])(
+    '$label',
+    async ({ form, pageIndex, answers, screen, pageId, fallsBack }) => {
+      const row = createApplicationRow({ pageIndex, answers })
+      getApplicationTemplateByTypeIdMock.mockResolvedValue(
+        createTemplate(form, permissiveSchema, 'all'),
+      )
+      const { controller, applicationService, logger } = buildController(row, {
+        persistingAction: succeeded,
+        ephemeralAction: succeeded,
+        changeState: transitioned,
+      })
 
-    const screen = await controller.getScreen(row.id, undefined, 'is', {
-      nationalId: APPLICANT,
-    } as User)
+      const response = await controller.getScreen(row.id, screen, 'is', {
+        nationalId: APPLICANT,
+      } as User)
 
-    expect(screen.page.index).toBe(screenIndex)
-    expect(
-      applicationService.update.mock.calls.map(([, data]) => data),
-    ).toEqual(saves)
-  })
+      expect(response.page.id).toBe(pageId)
+      expect(applicationService.update).not.toHaveBeenCalled()
+      expect(
+        logger.warn.mock.calls.filter(
+          ([message]) => message === 'SDF screen request fell back to resume',
+        ),
+      ).toEqual(
+        fallsBack
+          ? [
+              [
+                'SDF screen request fell back to resume',
+                { claimedScreenId: screen },
+              ],
+            ]
+          : [],
+      )
+    },
+  )
 })

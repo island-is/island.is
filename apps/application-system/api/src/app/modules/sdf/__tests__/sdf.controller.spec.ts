@@ -10,6 +10,7 @@ const user = { nationalId: '0101302989' } as User
 
 const buildController = () => {
   const sdfScreenService = {
+    getScreenById: jest.fn().mockResolvedValue({}),
     handleSubmit: jest.fn().mockResolvedValue({}),
     goToPage: jest.fn().mockResolvedValue({}),
   }
@@ -22,6 +23,52 @@ const buildController = () => {
 // Only the fields a request under test carries; the rest are irrelevant here.
 const actionDto = (fields: Partial<ExecuteActionDto>) =>
   fields as ExecuteActionDto
+
+describe('SdfController.getScreen', () => {
+  it('asks the service for the screen with the given id and locale', async () => {
+    const { controller, sdfScreenService } = buildController()
+
+    await controller.getScreen(APPLICATION_ID, 'page1', 'en', user)
+
+    expect(sdfScreenService.getScreenById).toHaveBeenCalledWith(
+      APPLICATION_ID,
+      'page1',
+      'en',
+      user,
+    )
+  })
+
+  it('passes no id, and the Icelandic locale, when neither is given', async () => {
+    const { controller, sdfScreenService } = buildController()
+
+    await controller.getScreen(APPLICATION_ID, undefined, undefined, user)
+
+    expect(sdfScreenService.getScreenById).toHaveBeenCalledWith(
+      APPLICATION_ID,
+      undefined,
+      'is',
+      user,
+    )
+  })
+
+  it('treats a repeated screen parameter, which arrives as an array, as no id', async () => {
+    const { controller, sdfScreenService } = buildController()
+
+    await controller.getScreen(
+      APPLICATION_ID,
+      ['page0', 'page1'] as unknown as string,
+      'is',
+      user,
+    )
+
+    expect(sdfScreenService.getScreenById).toHaveBeenCalledWith(
+      APPLICATION_ID,
+      undefined,
+      'is',
+      user,
+    )
+  })
+})
 
 describe('SdfController.executeAction — SUBMIT', () => {
   it.each([

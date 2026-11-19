@@ -51,11 +51,11 @@ export class SdfController {
   })
   @ApiParam({ name: 'applicationId', type: String })
   @ApiQuery({
-    name: 'step',
+    name: 'screen',
     required: false,
-    type: Number,
+    type: String,
     description:
-      'Optional override for deep-linking. Omit to use the persisted page index.',
+      'The id of the screen to show. Omit it, or give an id that is not shown, to get the screen to resume on.',
   })
   @ApiQuery({ name: 'locale', required: false, type: String })
   @ApiOkResponse({ type: ScreenDto })
@@ -65,29 +65,14 @@ export class SdfController {
   })
   async getScreen(
     @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
-    @Query('step') step?: string,
+    @Query('screen') screen?: string,
     @Query('locale') locale?: string,
     @CurrentUser() user?: User,
   ): Promise<ScreenDto> {
-    let pageIndexOverride: number | undefined
-    if (step !== undefined) {
-      const n = parseInt(step, 10)
-      if (!Number.isFinite(n) || n < 0) {
-        throw new BadRequestException(
-          createSdfProblem({
-            type: 'https://island.is/problems/application-system/sdf/bad-request',
-            title: 'Bad request',
-            status: 400,
-            detail: 'step must be a non-negative integer',
-            instance: `/sdf/${applicationId}/screen`,
-          }),
-        )
-      }
-      pageIndexOverride = n
-    }
-    return this.sdfScreenService.getScreen(
+    return this.sdfScreenService.getScreenById(
       applicationId,
-      pageIndexOverride,
+      // A repeated query parameter arrives as an array, which names no screen.
+      typeof screen === 'string' ? screen : undefined,
       (locale ?? 'is') as Locale,
       user!,
     )

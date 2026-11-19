@@ -458,7 +458,9 @@ export class ComponentDto {
 }
 
 export class PageDto {
-  @ApiProperty()
+  @ApiProperty({
+    description: 'The id of the screen, as given in a screen request.',
+  })
   id!: string
 
   @ApiProperty()

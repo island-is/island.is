@@ -61,7 +61,11 @@ import { stripEmptyFormValue } from './strip-empty-answers'
 import { isAnswerKeyWritable, splitWritableAnswers } from './writable-answers'
 import { buildStepper } from './stepper-builder'
 import { buildFooterButtons } from './footer-builder'
-import { toApplicationSnapshot } from './screen-position'
+import {
+  resolveClaimedScreen,
+  resumeIndex,
+  toApplicationSnapshot,
+} from './screen-position'
 import {
   ScreenDto,
   PageDto,
@@ -87,6 +91,10 @@ interface AdapterOptions {
   // Whether the screen is the last one, and so shows submit buttons, is then
   // decided from the saved one.
   storedApplication?: ApplicationWithAttachments
+  // Set when the screen shown is the one a client asks for by id, or the one to
+  // resume on when it gives none. The saved page is not used and nothing is
+  // saved.
+  clientScreen?: { claimedId?: string }
 }
 
 type ApplicationTemplate = Awaited<
@@ -186,6 +194,21 @@ export class SdfScreenService {
     return application as ApplicationWithAttachments
   }
 
+  /**
+   * The screen with the id `claimedScreenId` when it is shown, otherwise the
+   * screen to resume on. Nothing is saved.
+   */
+  async getScreenById(
+    applicationId: string,
+    claimedScreenId: string | undefined,
+    locale: Locale,
+    user: User,
+  ): Promise<ScreenDto> {
+    return this.getScreen(applicationId, undefined, locale, user, {
+      clientScreen: { claimedId: claimedScreenId },
+    })
+  }
+
   async getScreen(
     applicationId: string,
     pageIndexOverride: number | undefined,
@@ -205,14 +228,22 @@ export class SdfScreenService {
     const { application, filteredApplication, form, bffUser, screens } = context
 
     const step5Start = Date.now()
-    const resolvedIndex = await this.resolvePageIndex(
-      applicationId,
-      application,
-      screens,
-      filteredApplication.answers,
-      pageIndexOverride,
-      Boolean(options.ephemeral),
-    )
+    const resolvedIndex = options.clientScreen
+      ? this.resolveClientScreenIndex(
+          screens,
+          filteredApplication.answers,
+          application,
+          bffUser,
+          options.clientScreen.claimedId,
+        )
+      : await this.resolvePageIndex(
+          applicationId,
+          application,
+          screens,
+          filteredApplication.answers,
+          pageIndexOverride,
+          Boolean(options.ephemeral),
+        )
     const currentScreen = screens[resolvedIndex]
     this.logTiming('Step 5: Resolve Current Screen', step5Start)
 
@@ -380,6 +411,33 @@ export class SdfScreenService {
         iss: '',
       },
     }
+  }
+
+  // The index of the claimed screen when it is shown; otherwise, or when no id
+  // is given, the index to resume on. A claim that is not shown is logged.
+  private resolveClientScreenIndex(
+    screens: FormScreen[],
+    answers: FormValue,
+    application: ApplicationWithAttachments,
+    bffUser: BffUser,
+    claimedId?: string,
+  ): number {
+    if (claimedId) {
+      const claim = resolveClaimedScreen(
+        screens,
+        claimedId,
+        application as Application,
+        bffUser,
+      )
+      if (claim.valid) {
+        return claim.index
+      }
+      this.logger.warn('SDF screen request fell back to resume', {
+        claimedScreenId: claimedId.slice(0, 200),
+      })
+    }
+
+    return resumeIndex(screens, answers)
   }
 
   private async resolvePageIndex(
@@ -1518,7 +1576,7 @@ export class SdfScreenService {
       user,
     )
     return {
-      id: resolveFormItemId(screen, application, user) || `page-${index}`,
+      id: resolveFormItemId(screen, application, user),
       index,
       sectionIndex: screen.sectionIndex ?? 0,
       subSectionIndex: screen.subSectionIndex ?? 0,
