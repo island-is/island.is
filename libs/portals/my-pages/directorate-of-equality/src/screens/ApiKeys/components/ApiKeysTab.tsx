@@ -35,49 +35,39 @@ export const ApiKeysTab = ({
   const isServiceProvider = !!serviceProviderApprovedAt
   const [createOpen, setCreateOpen] = useState(false)
   const [issuedKey, setIssuedKey] = useState<string | null>(null)
-  const [
-    revokeTarget,
-    setRevokeTarget,
-  ] = useState<DirectorateOfEqualityApiKey | null>(null)
+  const [revokeTarget, setRevokeTarget] =
+    useState<DirectorateOfEqualityApiKey | null>(null)
   const [showInactive, setShowInactive] = useState(false)
   const createButtonRef = useRef<HTMLButtonElement>(null)
   const triggerRef = useRef<HTMLElement | null>(null)
-  const {
-    data,
-    loading,
-    error,
-    refetch,
-  } = useDirectorateOfEqualityApiKeysQuery()
+  const { data, loading, error, refetch } =
+    useDirectorateOfEqualityApiKeysQuery()
   const items = data?.directorateOfEqualityApiKeys.items ?? []
   const active = items.filter((apiKey) => getApiKeyState(apiKey) === 'active')
   const inactive = items.filter((apiKey) => getApiKeyState(apiKey) !== 'active')
-  const [
-    revokeKey,
-    { loading: revoking },
-  ] = useDirectorateOfEqualityRevokeApiKeyMutation({
-    onCompleted: (result) => {
-      if (!result.directorateOfEqualityRevokeApiKey.success) {
-        toast.error(formatMessage(messages.mutationError))
-        return
-      }
-      setRevokeTarget(null)
-      toast.success(formatMessage(messages.apiKeyRevoked))
-      refetch()
-      focusAfterClose(createButtonRef.current)
-    },
-    onError: () => toast.error(formatMessage(messages.mutationError)),
-  })
-  const [
-    issueKey,
-    { loading: issuing },
-  ] = useDirectorateOfEqualityIssueApiKeyMutation({
-    onCompleted: (result) => {
-      setIssuedKey(result.directorateOfEqualityIssueApiKey.key)
-      setCreateOpen(true)
-      refetch()
-    },
-    onError: () => toast.error(formatMessage(messages.mutationError)),
-  })
+  const [revokeKey, { loading: revoking }] =
+    useDirectorateOfEqualityRevokeApiKeyMutation({
+      onCompleted: (result) => {
+        if (!result.directorateOfEqualityRevokeApiKey.success) {
+          toast.error(formatMessage(messages.mutationError))
+          return
+        }
+        setRevokeTarget(null)
+        toast.success(formatMessage(messages.apiKeyRevoked))
+        refetch()
+        focusAfterClose(createButtonRef.current)
+      },
+      onError: () => toast.error(formatMessage(messages.mutationError)),
+    })
+  const [issueKey, { loading: issuing }] =
+    useDirectorateOfEqualityIssueApiKeyMutation({
+      onCompleted: (result) => {
+        setIssuedKey(result.directorateOfEqualityIssueApiKey.key)
+        setCreateOpen(true)
+        refetch()
+      },
+      onError: () => toast.error(formatMessage(messages.mutationError)),
+    })
 
   const handleCreateClose = () => {
     setCreateOpen(false)

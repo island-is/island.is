@@ -157,63 +157,66 @@ const useMockMutation = <TVariables, TData>(
   return [mutate, { loading }]
 }
 
-export const useDirectorateOfEqualityServiceProvidersQuery = (): MockRefetchableQueryResult<{
-  directorateOfEqualityServiceProviders: {
-    items: DirectorateOfEqualityServiceProvider[]
-  }
-}> => {
-  const loading = useMockCachedLoading(false, 'serviceProviders')
-  const { refetch } = useMockRefetch()
-  const data = {
+export const useDirectorateOfEqualityServiceProvidersQuery =
+  (): MockRefetchableQueryResult<{
     directorateOfEqualityServiceProviders: {
-      items: [...mockStore.serviceProviders],
-    },
-  }
-  return {
-    data: loading ? undefined : data,
-    loading,
-    error: undefined,
-    refetch,
-  }
-}
-
-export const useDirectorateOfEqualityAvailableServiceProvidersQuery = (): MockQueryResult<{
-  directorateOfEqualityAvailableServiceProviders: {
-    items: DirectorateOfEqualityAvailableServiceProvider[]
-  }
-}> => {
-  const loading = useMockLoading(false, 'availableServiceProviders')
-  const data = useMemo(
-    () => ({
-      directorateOfEqualityAvailableServiceProviders: {
-        items: MOCK_APPROVED_SERVICE_PROVIDERS.filter(
-          (provider) =>
-            !mockStore.serviceProviders.some(
-              (granted) => granted.nationalId === provider.nationalId,
-            ),
-        ),
+      items: DirectorateOfEqualityServiceProvider[]
+    }
+  }> => {
+    const loading = useMockCachedLoading(false, 'serviceProviders')
+    const { refetch } = useMockRefetch()
+    const data = {
+      directorateOfEqualityServiceProviders: {
+        items: [...mockStore.serviceProviders],
       },
-    }),
-    [],
-  )
-  return { data: loading ? undefined : data, loading, error: undefined }
-}
+    }
+    return {
+      data: loading ? undefined : data,
+      loading,
+      error: undefined,
+      refetch,
+    }
+  }
 
-export const useDirectorateOfEqualityApiKeysQuery = (): MockRefetchableQueryResult<{
-  directorateOfEqualityApiKeys: { items: DirectorateOfEqualityApiKey[] }
-}> => {
-  const loading = useMockCachedLoading(false, 'apiKeys')
-  const { refetch } = useMockRefetch()
-  const data = {
-    directorateOfEqualityApiKeys: { items: [...mockStore.apiKeys] },
+export const useDirectorateOfEqualityAvailableServiceProvidersQuery =
+  (): MockQueryResult<{
+    directorateOfEqualityAvailableServiceProviders: {
+      items: DirectorateOfEqualityAvailableServiceProvider[]
+    }
+  }> => {
+    const loading = useMockLoading(false, 'availableServiceProviders')
+    const data = useMemo(
+      () => ({
+        directorateOfEqualityAvailableServiceProviders: {
+          items: MOCK_APPROVED_SERVICE_PROVIDERS.filter(
+            (provider) =>
+              !mockStore.serviceProviders.some(
+                (granted) => granted.nationalId === provider.nationalId,
+              ),
+          ),
+        },
+      }),
+      [],
+    )
+    return { data: loading ? undefined : data, loading, error: undefined }
   }
-  return {
-    data: loading ? undefined : data,
-    loading,
-    error: undefined,
-    refetch,
+
+export const useDirectorateOfEqualityApiKeysQuery =
+  (): MockRefetchableQueryResult<{
+    directorateOfEqualityApiKeys: { items: DirectorateOfEqualityApiKey[] }
+  }> => {
+    const loading = useMockCachedLoading(false, 'apiKeys')
+    const { refetch } = useMockRefetch()
+    const data = {
+      directorateOfEqualityApiKeys: { items: [...mockStore.apiKeys] },
+    }
+    return {
+      data: loading ? undefined : data,
+      loading,
+      error: undefined,
+      refetch,
+    }
   }
-}
 
 export const useDirectorateOfEqualityIssueApiKeyMutation = (
   options?: MockMutationOptions<{

@@ -35,26 +35,21 @@ export const GrantServiceProviderModal = ({
   const { formatMessage } = useLocale()
   const [selected, setSelected] = useState<string | null>(null)
   const [showError, setShowError] = useState(false)
-  const {
-    data,
-    loading,
-    error,
-  } = useDirectorateOfEqualityAvailableServiceProvidersQuery()
+  const { data, loading, error } =
+    useDirectorateOfEqualityAvailableServiceProvidersQuery()
   const providers =
     data?.directorateOfEqualityAvailableServiceProviders.items ?? []
-  const [
-    grant,
-    { loading: granting },
-  ] = useDirectorateOfEqualityGrantServiceProviderMutation({
-    onCompleted: (result) => {
-      if (!result.directorateOfEqualityGrantServiceProvider.success) {
-        toast.error(formatMessage(messages.mutationError))
-        return
-      }
-      onGranted()
-    },
-    onError: () => toast.error(formatMessage(messages.mutationError)),
-  })
+  const [grant, { loading: granting }] =
+    useDirectorateOfEqualityGrantServiceProviderMutation({
+      onCompleted: (result) => {
+        if (!result.directorateOfEqualityGrantServiceProvider.success) {
+          toast.error(formatMessage(messages.mutationError))
+          return
+        }
+        onGranted()
+      },
+      onError: () => toast.error(formatMessage(messages.mutationError)),
+    })
 
   const handleConfirm = () => {
     if (!selected) {

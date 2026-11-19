@@ -198,12 +198,13 @@ export const MOCK_SERVICE_PROVIDERS: DirectorateOfEqualityServiceProvider[] = [
   },
 ]
 
-export const MOCK_APPROVED_SERVICE_PROVIDERS: DirectorateOfEqualityAvailableServiceProvider[] = [
-  { nationalId: '4507231690', name: 'Kjarni' },
-  { nationalId: '5402697509', name: 'Orri' },
-  { nationalId: '5005101370', name: 'Prufulykill' },
-  { nationalId: '6905120350', name: 'Bókhaldsstofan ehf.' },
-]
+export const MOCK_APPROVED_SERVICE_PROVIDERS: DirectorateOfEqualityAvailableServiceProvider[] =
+  [
+    { nationalId: '4507231690', name: 'Kjarni' },
+    { nationalId: '5402697509', name: 'Orri' },
+    { nationalId: '5005101370', name: 'Prufulykill' },
+    { nationalId: '6905120350', name: 'Bókhaldsstofan ehf.' },
+  ]
 
 export const MOCK_API_KEYS: DirectorateOfEqualityApiKey[] =
   MOCK_SCENARIO === 'notServiceProvider'

@@ -25,9 +25,8 @@ export class DirectorateOfEqualityService {
     input: SubmissionsInput,
   ): Promise<Submissions> {
     this.assertCompany(user)
-    const { reports } = await this.directorateOfEqualityClientService.getReports(
-      user,
-    )
+    const { reports } =
+      await this.directorateOfEqualityClientService.getReports(user)
     return {
       items: reports
         .map(mapSubmission)
