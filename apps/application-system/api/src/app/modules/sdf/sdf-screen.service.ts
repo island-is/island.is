@@ -65,10 +65,12 @@ import {
   resolveClaimedScreen,
   resumeIndex,
   toApplicationSnapshot,
+  toWorkingApplication,
 } from './screen-position'
 import {
   ScreenDto,
   PageDto,
+  SdfNoticeCode,
   ValidationErrorDto,
   ValidateResponseDto,
 } from './dto/screen.dto'
@@ -95,6 +97,12 @@ interface AdapterOptions {
   // resume on when it gives none. The saved page is not used and nothing is
   // saved.
   clientScreen?: { claimedId?: string }
+  // Added to the screen returned.
+  notice?: SdfNoticeCode
+}
+
+const noticeMessages = {
+  [SdfNoticeCode.SCREEN_UNAVAILABLE]: coreMessages.screenUnavailableNotice,
 }
 
 type ApplicationTemplate = Awaited<
@@ -311,6 +319,12 @@ export class SdfScreenService {
       footer,
       locale,
       answers: Object.keys(pageAnswers).length > 0 ? pageAnswers : undefined,
+      ...(options.notice && {
+        notice: {
+          code: options.notice,
+          message: resolver.resolve(noticeMessages[options.notice]),
+        },
+      }),
     }
   }
 
@@ -860,22 +874,12 @@ export class SdfScreenService {
     answers: Record<string, unknown>,
     locale: Locale,
     user: User,
-    lastKnownPageIndex?: number,
+    claimedScreenId: string,
   ): Promise<ScreenDto> {
     const application = await this.requireApplicationForUser(
       applicationId,
       user,
     )
-
-    const currentPageIndex: number = application.pageIndex ?? 0
-
-    if (lastKnownPageIndex !== undefined) {
-      if (currentPageIndex !== lastKnownPageIndex) {
-        throw new ConflictException(
-          `Idempotency check failed: lastKnownPageIndex ${lastKnownPageIndex} does not match persisted ${currentPageIndex}`,
-        )
-      }
-    }
 
     const template = await getApplicationTemplateByTypeId(application.typeId)
     const roleInState = this.resolveRoleInState(application, template, user)
@@ -888,14 +892,54 @@ export class SdfScreenService {
       answers,
     )
     const mergedAnswers = applyFlatAnswers(application.answers, writableAnswers)
+    const bffUser = this.buildBffUser(user, locale)
 
-    const currentScreen = await this.getCurrentScreen(
-      application,
+    // Whether the screen the client is on is shown is judged against the saved
+    // data with this request's answers.
+    const workingScreens = await this.buildScreens(
+      toWorkingApplication(application, mergedAnswers),
       template,
-      currentPageIndex,
       locale,
       user,
     )
+    const claim = workingScreens
+      ? resolveClaimedScreen(
+          workingScreens,
+          claimedScreenId,
+          application as Application,
+          bffUser,
+        )
+      : undefined
+    if (!workingScreens || !claim?.valid) {
+      return this.resumeWithNotice(
+        applicationId,
+        SdfActionType.NEXT_PAGE,
+        claimedScreenId,
+        locale,
+        user,
+      )
+    }
+
+    // Which of its fields are validated and given defaults comes from the saved
+    // data. The working screen stands in when the saved data does not show it.
+    const storedScreens = await this.buildScreens(
+      application,
+      template,
+      locale,
+      user,
+    )
+    const storedClaim = storedScreens
+      ? resolveClaimedScreen(
+          storedScreens,
+          claimedScreenId,
+          application as Application,
+          bffUser,
+        )
+      : undefined
+    const currentScreen =
+      storedScreens && storedClaim?.valid
+        ? storedScreens[storedClaim.index]
+        : workingScreens[claim.index]
 
     applyResolvedFieldDefaults(
       currentScreen,
@@ -918,19 +962,16 @@ export class SdfScreenService {
       locale,
     )
     if (validationErrors.length > 0) {
-      const workingApplication = {
-        ...toApplicationSnapshot(application),
-        answers: mergedAnswers,
-      } as ApplicationWithAttachments
       const screen = await this.getScreen(
         applicationId,
-        currentPageIndex,
+        undefined,
         locale,
         user,
         {
           ephemeral: true,
-          application: workingApplication,
+          application: toWorkingApplication(application, mergedAnswers),
           storedApplication: application,
+          clientScreen: { claimedId: claimedScreenId },
         },
       )
       screen.page.errors = validationErrors
@@ -942,6 +983,9 @@ export class SdfScreenService {
         ? [...application.applicantActors, user.actor.nationalId]
         : application.applicantActors
 
+    // The providers store their results on `application`, so the screens are
+    // compiled again afterwards to decide what follows.
+    let nextScreens = workingScreens
     if (isExternalDataProviderScreen(currentScreen)) {
       await this.runScreenDataProviders(
         currentScreen,
@@ -951,39 +995,30 @@ export class SdfScreenService {
         user,
         locale,
       )
-
-      const newPageIndex = await this.resolveAdvancedPageIndex(
-        application,
-        template,
-        mergedAnswers,
-        currentPageIndex,
-        locale,
-        user,
-      )
-      await this.applicationService.update(applicationId, {
-        answers: stripEmptyFormValue(mergedAnswers),
-        applicantActors,
-        pageIndex: newPageIndex,
-      })
-
-      return this.getScreen(applicationId, undefined, locale, user)
+      nextScreens =
+        (await this.buildScreens(
+          toWorkingApplication(application, mergedAnswers),
+          template,
+          locale,
+          user,
+        )) ?? workingScreens
     }
 
-    const newPageIndex = await this.resolveAdvancedPageIndex(
-      application,
-      template,
-      mergedAnswers,
-      currentPageIndex,
-      locale,
-      user,
-    )
     await this.applicationService.update(applicationId, {
       answers: stripEmptyFormValue(mergedAnswers),
       applicantActors,
-      pageIndex: newPageIndex,
     })
 
-    return this.getScreen(applicationId, undefined, locale, user)
+    return this.getScreen(applicationId, undefined, locale, user, {
+      clientScreen: {
+        claimedId: this.nextScreenId(
+          nextScreens,
+          claim.index,
+          application,
+          bffUser,
+        ),
+      },
+    })
   }
 
   private async buildScreens(
@@ -1045,28 +1080,40 @@ export class SdfScreenService {
     return screens[resolvedIndex]
   }
 
-  private async resolveAdvancedPageIndex(
+  // The id of the next shown screen after the one at `index`. On the last shown
+  // screen there is no next one, so it is that screen's own id.
+  private nextScreenId(
+    screens: FormScreen[],
+    index: number,
     application: ApplicationWithAttachments,
-    template: Awaited<ReturnType<typeof getApplicationTemplateByTypeId>>,
-    mergedAnswers: FormValue,
-    currentPageIndex: number,
+    bffUser: BffUser,
+  ): string {
+    const nextIndex = moveToScreen(screens, index + 1, true)
+    return resolveFormItemId(
+      screens[screens[nextIndex]?.isNavigable ? nextIndex : index],
+      application as Application,
+      bffUser,
+    )
+  }
+
+  // Saves nothing and returns the screen to resume on, with a notice that the
+  // screen the client acted on is not available.
+  private async resumeWithNotice(
+    applicationId: string,
+    action: SdfActionType,
+    claimedScreenId: string,
     locale: Locale,
     user: User,
-  ): Promise<number> {
-    const target = currentPageIndex + 1
-    const workingApplication = {
-      ...toApplicationSnapshot(application),
-      answers: mergedAnswers,
-    } as ApplicationWithAttachments
-    const screens = await this.buildScreens(
-      workingApplication,
-      template,
-      locale,
-      user,
-    )
-    if (!screens) return target
+  ): Promise<ScreenDto> {
+    this.logger.warn('SDF action fell back to resume', {
+      action,
+      claimedScreenId: claimedScreenId.slice(0, 200),
+    })
 
-    return moveToScreen(screens, target, true)
+    return this.getScreen(applicationId, undefined, locale, user, {
+      clientScreen: {},
+      notice: SdfNoticeCode.SCREEN_UNAVAILABLE,
+    })
   }
 
   async goToPreviousPage(

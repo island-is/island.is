@@ -92,7 +92,7 @@ export class SdfController {
     type: SdfProblemDetailsDto,
   })
   @ApiConflictResponse({
-    description: 'The client page index is stale for a write action.',
+    description: "The request conflicts with the application's current state.",
     type: SdfProblemDetailsDto,
   })
   async executeAction(
@@ -122,7 +122,7 @@ export class SdfController {
           dto.answers ?? {},
           locale,
           user!,
-          dto.lastKnownPageIndex,
+          this.requireScreen(dto, applicationId),
         )
 
       case SdfActionType.PREV_PAGE:
@@ -174,6 +174,23 @@ export class SdfController {
           }),
         )
     }
+  }
+
+  // `screen` is optional on the DTO because only some action types use it; the
+  // ones that do must reject a missing or empty value.
+  private requireScreen(dto: ExecuteActionDto, applicationId: string): string {
+    if (!dto.screen) {
+      throw new BadRequestException(
+        createSdfProblem({
+          type: 'https://island.is/problems/application-system/sdf/bad-request',
+          title: 'Bad request',
+          status: 400,
+          detail: `screen is required for ${dto.actionType}`,
+          instance: `/sdf/${applicationId}/action`,
+        }),
+      )
+    }
+    return dto.screen
   }
 
   // `event` is optional on the DTO because only some action types use it;

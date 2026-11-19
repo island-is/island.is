@@ -11,6 +11,7 @@ const user = { nationalId: '0101302989' } as User
 const buildController = () => {
   const sdfScreenService = {
     getScreenById: jest.fn().mockResolvedValue({}),
+    persistAnswersAndAdvance: jest.fn().mockResolvedValue({}),
     handleSubmit: jest.fn().mockResolvedValue({}),
     goToPage: jest.fn().mockResolvedValue({}),
   }
@@ -66,6 +67,43 @@ describe('SdfController.getScreen', () => {
       undefined,
       'is',
       user,
+    )
+  })
+})
+
+describe('SdfController.executeAction — NEXT_PAGE', () => {
+  it.each([
+    ['missing', undefined],
+    ['empty', ''],
+  ])(
+    'rejects with 400 when screen is %s, and never reaches the service',
+    async (_label, screen) => {
+      const { controller, sdfScreenService } = buildController()
+      const dto = actionDto({ actionType: SdfActionType.NEXT_PAGE, screen })
+
+      await expect(
+        controller.executeAction(APPLICATION_ID, dto, user),
+      ).rejects.toBeInstanceOf(BadRequestException)
+      expect(sdfScreenService.persistAnswersAndAdvance).not.toHaveBeenCalled()
+    },
+  )
+
+  it('forwards the screen the client is on', async () => {
+    const { controller, sdfScreenService } = buildController()
+    const dto = actionDto({
+      actionType: SdfActionType.NEXT_PAGE,
+      answers: { foo: 'bar' },
+      screen: 'page1',
+    })
+
+    await controller.executeAction(APPLICATION_ID, dto, user)
+
+    expect(sdfScreenService.persistAnswersAndAdvance).toHaveBeenCalledWith(
+      APPLICATION_ID,
+      { foo: 'bar' },
+      'is',
+      user,
+      'page1',
     )
   })
 })

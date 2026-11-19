@@ -152,7 +152,7 @@ describe('SdfScreenService — write-permission check on persisting action-run p
           {},
           'is',
           { nationalId: application.applicant } as never,
-          0,
+          'edp',
         ),
       ).rejects.toThrow()
 
@@ -185,7 +185,7 @@ describe('SdfScreenService — write-permission check on persisting action-run p
         {},
         'is',
         { nationalId: application.applicant } as never,
-        0,
+        'edp',
       )
 
       expect(
@@ -216,7 +216,7 @@ describe('SdfScreenService — write-permission check on persisting action-run p
         {},
         'is',
         { nationalId: application.applicant } as never,
-        0,
+        'edp',
       )
 
       expect(

@@ -34,10 +34,18 @@ export class ExecuteActionDto {
   readonly locale!: string
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({
+    description:
+      'The id of the screen the client is on. Required for NEXT_PAGE. If no shown screen has the id, nothing is saved and the response is the screen to resume on, with a notice.',
+  })
+  readonly screen?: string
+
+  @IsOptional()
   @IsNumber()
   @ApiPropertyOptional({
     description:
-      'NEXT_PAGE: the page index the client believes is current; a mismatch is rejected with 409 before anything is saved. VALIDATE: the page to compute display values for. Ignored by other actions.',
+      'VALIDATE: the page to compute display values for. Ignored by other actions.',
   })
   readonly lastKnownPageIndex?: number
 

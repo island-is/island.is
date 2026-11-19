@@ -22,6 +22,7 @@ import { createApplicationTemplate } from '@island.is/application/testing'
 import type { User } from '@island.is/auth-nest-tools'
 import { z } from 'zod'
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   HttpException,
@@ -222,6 +223,74 @@ const hideablePageForm = () =>
     ],
   })
 
+// The middle page is shown only when `wantsMiddle` is 'yes'.
+const conditionalMiddlePageForm = () =>
+  buildForm({
+    id: 'form',
+    title: 'Form',
+    children: [
+      buildSection({
+        id: 'section',
+        title: 'Section',
+        children: [
+          buildMultiField({
+            id: 'page0',
+            title: 'Page 0',
+            children: [buildTextField({ id: 'field0', title: 'Field 0' })],
+          }),
+          buildMultiField({
+            id: 'page1',
+            title: 'Page 1',
+            condition: (answers) => answers.wantsMiddle === 'yes',
+            children: [buildTextField({ id: 'field1', title: 'Field 1' })],
+          }),
+          buildMultiField({
+            id: 'page2',
+            title: 'Page 2',
+            children: [buildTextField({ id: 'field2', title: 'Field 2' })],
+          }),
+        ],
+      }),
+    ],
+  })
+
+// Page 1 is shown only once the provider has returned a result.
+const providerGatesPageForm = () =>
+  buildForm({
+    id: 'form',
+    title: 'Form',
+    children: [
+      buildSection({
+        id: 'section',
+        title: 'Section',
+        children: [
+          buildExternalDataProvider({
+            id: 'edp',
+            title: 'External data',
+            dataProviders: [
+              buildDataProviderItem({
+                provider: providerApi,
+                title: 'Provider',
+              }),
+            ],
+          }),
+          buildMultiField({
+            id: 'page1',
+            title: 'Page 1',
+            condition: (_answers, externalData) =>
+              externalData[providerApi.action]?.status === 'success',
+            children: [buildTextField({ id: 'field1', title: 'Field 1' })],
+          }),
+          buildMultiField({
+            id: 'page2',
+            title: 'Page 2',
+            children: [buildTextField({ id: 'field2', title: 'Field 2' })],
+          }),
+        ],
+      }),
+    ],
+  })
+
 const dataProviderOnlyForm = () =>
   buildForm({
     id: 'form',
@@ -382,15 +451,16 @@ const buildController = (
     async (app: ApplicationWithAttachments, ...rest: unknown[]) => {
       const apis = [rest[2] as TemplateApi | TemplateApi[]].flat()
       if (!results.persistingAction.hasError) {
-        row.externalData = {
-          ...row.externalData,
-          ...Object.fromEntries(
-            apis.map((api) => [
-              api.action,
-              { status: 'success', data: {}, date: new Date() },
-            ]),
-          ),
-        }
+        const resultsByAction = Object.fromEntries(
+          apis.map((api) => [
+            api.action,
+            { status: 'success' as const, data: {}, date: new Date() },
+          ]),
+        )
+        row.externalData = { ...row.externalData, ...resultsByAction }
+        // The real runner also assigns the results on the application it is
+        // given, which the caller keeps using.
+        app.externalData = { ...app.externalData, ...resultsByAction }
         applyConcurrentState()
       }
       return { ...results.persistingAction, updatedApplication: app }
@@ -506,6 +576,10 @@ interface PersistenceCase {
   footerActionTypes?: string[]
   // When set, the page index of the returned Screen.
   screenIndex?: number
+  // When set, the id of the page of the returned Screen.
+  pageId?: string
+  // The code of the notice on the returned Screen. Defaults to no notice.
+  noticeCode?: string
 }
 
 const SUBMIT_EVENT = DefaultEvents.APPROVE
@@ -545,11 +619,10 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       dto: {
         actionType: SdfActionType.NEXT_PAGE,
         answers: { field0: 'value' },
-        lastKnownPageIndex: 0,
+        screen: 'page0',
       },
-      saves: [
-        { answers: { field0: 'value' }, applicantActors: [], pageIndex: 1 },
-      ],
+      saves: [{ answers: { field0: 'value' }, applicantActors: [] }],
+      pageId: 'page1',
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [],
@@ -561,9 +634,9 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       dto: {
         actionType: SdfActionType.NEXT_PAGE,
         answers: newAnswers,
-        lastKnownPageIndex: 0,
+        screen: 'page0',
       },
-      saves: [{ answers: mergedAnswers, applicantActors: [], pageIndex: 1 }],
+      saves: [{ answers: mergedAnswers, applicantActors: [] }],
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [],
@@ -577,13 +650,12 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       dto: {
         actionType: SdfActionType.NEXT_PAGE,
         answers: { applicant: { name: 'B' }, 'applicant.phone': '1' },
-        lastKnownPageIndex: 0,
+        screen: 'page0',
       },
       saves: [
         {
           answers: { applicant: { name: 'B', phone: '1' } },
           applicantActors: [],
-          pageIndex: 1,
         },
       ],
       persistingActions: [],
@@ -599,9 +671,9 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       dto: {
         actionType: SdfActionType.NEXT_PAGE,
         answers: { field0: '' },
-        lastKnownPageIndex: 0,
+        screen: 'page0',
       },
-      saves: [{ answers: {}, applicantActors: [], pageIndex: 1 }],
+      saves: [{ answers: {}, applicantActors: [] }],
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [],
@@ -614,13 +686,12 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       dto: {
         actionType: SdfActionType.NEXT_PAGE,
         answers: { applicant: { name: 'B' } },
-        lastKnownPageIndex: 0,
+        screen: 'page0',
       },
       saves: [
         {
           answers: { applicant: { name: 'B', phone: '+354' } },
           applicantActors: [],
-          pageIndex: 1,
         },
       ],
       persistingActions: [],
@@ -634,13 +705,12 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       dto: {
         actionType: SdfActionType.NEXT_PAGE,
         answers: { field0: 'value' },
-        lastKnownPageIndex: 0,
+        screen: 'page0',
       },
       saves: [
         {
           answers: { field0: 'value' },
           applicantActors: [ACTOR],
-          pageIndex: 1,
         },
       ],
       persistingActions: [],
@@ -654,9 +724,10 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       dto: {
         actionType: SdfActionType.NEXT_PAGE,
         answers: {},
-        lastKnownPageIndex: 0,
+        screen: 'edp',
       },
-      saves: [{ answers: {}, applicantActors: [], pageIndex: 1 }],
+      saves: [{ answers: {}, applicantActors: [] }],
+      pageId: 'page1',
       persistingActions: [
         {
           actions: [providerApi.action],
@@ -674,7 +745,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       dto: {
         actionType: SdfActionType.NEXT_PAGE,
         answers: {},
-        lastKnownPageIndex: 0,
+        screen: 'edp',
       },
       rejects: { message: /Provider failed/ },
       saves: [],
@@ -697,7 +768,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       dto: {
         actionType: SdfActionType.NEXT_PAGE,
         answers: { field0: '' },
-        lastKnownPageIndex: 0,
+        screen: 'page0',
       },
       validationErrors: ['field0'],
       validationMessages: [field0Required.defaultMessage],
@@ -713,7 +784,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       dto: {
         actionType: SdfActionType.NEXT_PAGE,
         answers: {},
-        lastKnownPageIndex: 0,
+        screen: 'edp',
       },
       validationErrors: ['edp'],
       saves: [],
@@ -722,16 +793,126 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       stateChanges: [],
     },
     {
-      label: 'with a stale lastKnownPageIndex',
+      label: 'without a screen',
       form: twoPageForm,
       dto: {
         actionType: SdfActionType.NEXT_PAGE,
         answers: { field0: 'value' },
-        lastKnownPageIndex: 1,
       },
-      rejects: { type: ConflictException, message: /Idempotency check failed/ },
+      rejects: { type: BadRequestException },
       saves: [],
       persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      label: 'from a screen no screen has the id of',
+      form: twoPageForm,
+      dto: {
+        actionType: SdfActionType.NEXT_PAGE,
+        answers: { field0: 'value' },
+        screen: 'nowhere',
+      },
+      saves: [],
+      pageId: 'page0',
+      noticeCode: 'screen-unavailable',
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      label: 'from a screen the saved answers hide',
+      form: conditionalMiddlePageForm,
+      dto: {
+        actionType: SdfActionType.NEXT_PAGE,
+        answers: {},
+        screen: 'page1',
+      },
+      saves: [],
+      pageId: 'page0',
+      noticeCode: 'screen-unavailable',
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      // Whether the screen is shown is judged against the saved answers with
+      // the ones in the request.
+      label: 'from a screen only the answers in the request show',
+      form: conditionalMiddlePageForm,
+      dto: {
+        actionType: SdfActionType.NEXT_PAGE,
+        answers: { wantsMiddle: 'yes' },
+        screen: 'page1',
+      },
+      saves: [{ answers: { wantsMiddle: 'yes' }, applicantActors: [] }],
+      pageId: 'page2',
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      label: 'to a page the answers in the request show',
+      form: conditionalMiddlePageForm,
+      dto: {
+        actionType: SdfActionType.NEXT_PAGE,
+        answers: { wantsMiddle: 'yes' },
+        screen: 'page0',
+      },
+      saves: [{ answers: { wantsMiddle: 'yes' }, applicantActors: [] }],
+      pageId: 'page1',
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      label: 'past a page the answers in the request hide',
+      form: conditionalMiddlePageForm,
+      dto: {
+        actionType: SdfActionType.NEXT_PAGE,
+        answers: { field0: 'a' },
+        screen: 'page0',
+      },
+      saves: [{ answers: { field0: 'a' }, applicantActors: [] }],
+      pageId: 'page2',
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      // There is nothing to advance to, so it stays on the page.
+      label: 'from the last shown page',
+      form: hideablePageForm,
+      dto: {
+        actionType: SdfActionType.NEXT_PAGE,
+        answers: { field0: 'hide' },
+        screen: 'page0',
+      },
+      saves: [{ answers: { field0: 'hide' }, applicantActors: [] }],
+      pageId: 'page0',
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      // The provider's result decides which page follows, so the screens are
+      // compiled again after it has run.
+      label: 'from a data-provider screen whose result shows the next page',
+      form: providerGatesPageForm,
+      dto: {
+        actionType: SdfActionType.NEXT_PAGE,
+        answers: {},
+        screen: 'edp',
+      },
+      saves: [{ answers: {}, applicantActors: [] }],
+      pageId: 'page1',
+      persistingActions: [
+        {
+          actions: [providerApi.action],
+          event: DefaultEvents.SUBMIT,
+          answers: {},
+        },
+      ],
       ephemeralActions: [],
       stateChanges: [],
     },
@@ -743,13 +924,12 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       dto: {
         actionType: SdfActionType.NEXT_PAGE,
         answers: { field0: 'value', field1: 'changed' },
-        lastKnownPageIndex: 0,
+        screen: 'page0',
       },
       saves: [
         {
           answers: { field0: 'value', field1: 'stored' },
           applicantActors: [],
-          pageIndex: 1,
         },
       ],
       persistingActions: [],
@@ -767,13 +947,12 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       dto: {
         actionType: SdfActionType.NEXT_PAGE,
         answers: { field0: 'v', 'applicant.phone': '1' },
-        lastKnownPageIndex: 0,
+        screen: 'page0',
       },
       saves: [
         {
           answers: { field0: 'v', applicant: { phone: '1' } },
           applicantActors: [],
-          pageIndex: 1,
         },
       ],
       persistingActions: [],
@@ -789,13 +968,12 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       dto: {
         actionType: SdfActionType.NEXT_PAGE,
         answers: { field0: 'value', field1: 'stored' },
-        lastKnownPageIndex: 0,
+        screen: 'page0',
       },
       saves: [
         {
           answers: { field0: 'value', field1: 'stored' },
           applicantActors: [],
-          pageIndex: 1,
         },
       ],
       persistingActions: [],
@@ -810,13 +988,12 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       dto: {
         actionType: SdfActionType.NEXT_PAGE,
         answers: { 'applicant.phone': '1', 'items[0]': 'a' },
-        lastKnownPageIndex: 0,
+        screen: 'page0',
       },
       saves: [
         {
           answers: { applicant: { phone: '1' } },
           applicantActors: [],
-          pageIndex: 1,
         },
       ],
       persistingActions: [],
@@ -831,9 +1008,9 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       dto: {
         actionType: SdfActionType.NEXT_PAGE,
         answers: { field0: 'value' },
-        lastKnownPageIndex: 0,
+        screen: 'page0',
       },
-      saves: [{ answers: {}, applicantActors: [], pageIndex: 1 }],
+      saves: [{ answers: {}, applicantActors: [] }],
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [],
@@ -846,9 +1023,9 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       dto: {
         actionType: SdfActionType.NEXT_PAGE,
         answers: {},
-        lastKnownPageIndex: 0,
+        screen: 'page0',
       },
-      saves: [{ answers: {}, applicantActors: [], pageIndex: 1 }],
+      saves: [{ answers: {}, applicantActors: [] }],
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [],
@@ -860,7 +1037,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       dto: {
         actionType: SdfActionType.NEXT_PAGE,
         answers: { field0: 'value' },
-        lastKnownPageIndex: 0,
+        screen: 'page0',
       },
       rejects: { type: ForbiddenException },
       saves: [],
@@ -875,7 +1052,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       dto: {
         actionType: SdfActionType.NEXT_PAGE,
         answers: { field0: 'value' },
-        lastKnownPageIndex: 0,
+        screen: 'page0',
       },
       rejects: { type: ForbiddenException },
       saves: [],
@@ -1626,6 +1803,12 @@ describe('SDF action persistence', () => {
       }
       if (c.screenIndex !== undefined) {
         expect((response as ScreenDto).page.index).toBe(c.screenIndex)
+      }
+      if (c.pageId !== undefined) {
+        expect((response as ScreenDto).page.id).toBe(c.pageId)
+      }
+      if (c.actionType !== SdfActionType.VALIDATE) {
+        expect((response as ScreenDto).notice?.code).toBe(c.noticeCode)
       }
       if (c.footerActionTypes) {
         expect(

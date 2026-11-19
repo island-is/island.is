@@ -329,7 +329,7 @@ describe('SdfScreenService validation gates', () => {
       {},
       'is',
       { nationalId: application.applicant } as never,
-      0,
+      'page0',
     )
 
     expect(screen.page.errors).toEqual([

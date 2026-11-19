@@ -331,6 +331,13 @@ export const coreMessages = defineMessages({
     description:
       'Accessible label for the checkbox that selects every row of an interactive table',
   },
+  screenUnavailableNotice: {
+    id: 'application.system:core.screenUnavailableNotice',
+    defaultMessage:
+      'Síðan sem þú varst á er ekki lengur í boði og ekkert var vistað. Farðu yfir þessa síðu og haltu áfram.',
+    description:
+      'Notice shown when the page a user acted on is no longer available, so nothing was saved and they are taken to another page',
+  },
 })
 
 export const coreDefaultFieldMessages = defineMessages({
