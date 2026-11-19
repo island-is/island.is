@@ -167,6 +167,11 @@ export function useNativeUnlock({
       }
       authStore.getState().unlockNative(tokens)
       setStatus('idle')
+      // Approved while the app is away: the lock stays until it's back, so
+      // the code goes now. In front, it stays up as the lock closes.
+      if (AppState.currentState === 'background') {
+        electronicId.close()
+      }
       // Closes the lock along with the sheet on top of it.
       onUnlocked()
     } catch (error) {
