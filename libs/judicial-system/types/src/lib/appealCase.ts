@@ -23,6 +23,18 @@ export enum AppealCaseType {
   VERDICT = 'VERDICT',
 }
 
+// How far the court of appeals has come with a verdict appeal, as the court
+// itself records it. Null until the court has recorded one. It is not the
+// appeal's state: an appeal the court marks COMPLETED here is still RECEIVED
+// until it is completed through its own transition.
+export enum VerdictAppealStatus {
+  STATEMENT_DEADLINE_GRANTED = 'STATEMENT_DEADLINE_GRANTED',
+  COURT_SESSION_SCHEDULED = 'COURT_SESSION_SCHEDULED',
+  POSTPONED = 'POSTPONED',
+  UNDER_ADVISEMENT = 'UNDER_ADVISEMENT',
+  COMPLETED = 'COMPLETED',
+}
+
 export enum AppealCaseTransition {
   RECEIVE_APPEAL = 'RECEIVE_APPEAL',
   COMPLETE_APPEAL = 'COMPLETE_APPEAL',

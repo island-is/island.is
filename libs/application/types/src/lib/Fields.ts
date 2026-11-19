@@ -1078,7 +1078,7 @@ export interface InteractiveTableField extends BaseField {
   header:
     | InteractiveTableHeaderCell[]
     | ((application: Application) => InteractiveTableHeaderCell[])
-  rows: StaticText[][] | ((application: Application) => StaticText[][])
+  rows: MaybeWithApplicationAndFieldAndLocale<StaticText[][]>
   titleVariant?: TitleVariants
   selectable?: boolean
   inputColumn?: {
@@ -1267,6 +1267,7 @@ export interface OverviewField extends BaseField {
     userNationalId: string,
     apolloClient: ApolloClient<object>,
     locale: Locale,
+    application?: Application,
   ) => Promise<KeyValueItem[]>
   attachments?: (
     answers: FormValue,

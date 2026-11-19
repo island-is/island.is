@@ -136,13 +136,21 @@ compiles every route on first visit, which blows the suite's 15s request waits
 and makes it look flaky. Do not "fix" that by raising timeouts or rerunning.
 
 - Run it with `yarn playwright test -c apps/system-e2e/src --project judicial-system`,
-  or `/js-e2e` in Claude Code. The skill lives in `apps/judicial-system/.claude/skills`,
-  so from a session started at the repo root it only appears after Claude has
+  or with a skill in Claude Code: `/js-e2e` runs against the backend and api
+  you already have up on the default ports, and `/js-e2e-standalone` prepares
+  the checkout and starts its own stack on free ports beside yours. The skills
+  live in `apps/judicial-system/.claude/skills`,
+  so from a session started at the repo root they only appear after Claude has
   touched a file in this app (or after `/add-dir apps/judicial-system`).
-  When nothing listens on port 4200 the Playwright
-  config builds the production bundle and serves it itself; a dev server on
-  that port is reused as-is (slow, avoid). The port cannot change: the dev S3
-  upload bucket only allows the `localhost:4200` origin.
+  The Playwright config builds the production bundle and serves it itself on
+  port 4200, or on `JUDICIAL_SYSTEM_WEB_PORT` when that is set; whatever
+  already listens on 4200 is reused as-is, so a dev server there is slow
+  (avoid), while on any other port a server that is already there fails the
+  run. The served bundle reaches the api at `INTERNAL_API_URL` (default
+  `http://localhost:3333`). `js-e2e-standalone` sets both to run on free ports next to
+  a stack on the defaults. The dev S3 upload bucket only allows the
+  `localhost:4200` origin, so on any other port the config starts the browser
+  with `--disable-web-security` to let uploads through.
 - Before running: backend migrations applied and seeders run
   (`yarn nx run judicial-system-backend:migrate` and `:seed`). A stale schema
   makes every case creation fail with a 500, and the e2e defender

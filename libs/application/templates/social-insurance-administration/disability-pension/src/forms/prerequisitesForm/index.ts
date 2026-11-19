@@ -16,7 +16,6 @@ import {
 import * as m from '../../lib/messages'
 import { socialInsuranceAdministrationMessage as sm } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
-  SocialInsuranceAdministrationWithholdingTaxApi,
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationEducationLevelsApi,
   SocialInsuranceAdministrationCountriesApi,
@@ -83,12 +82,9 @@ export const Prerequisites = buildForm({
               subTitle: m.prerequisite.incomeText,
             }),
             buildDataProviderItem({
-              provider: SocialInsuranceAdministrationWithholdingTaxApi,
+              provider: SocialInsuranceAdministrationCategorizedIncomeTypesApi,
               title: sm.pre.socialInsuranceAdministrationPrivacyTitle,
               subTitle: m.dataHandling.dataFetchText,
-            }),
-            buildDataProviderItem({
-              provider: SocialInsuranceAdministrationCategorizedIncomeTypesApi,
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationEducationLevelsApi,

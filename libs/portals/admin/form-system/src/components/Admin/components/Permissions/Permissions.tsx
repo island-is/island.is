@@ -15,7 +15,7 @@ export const Permissions = () => {
   return (
     <>
       <Box display={['none', 'none', 'block']} className={styles.header}>
-        <GridRow>
+        <GridRow align="center">
           {SECTIONS.map(({ key }) => (
             <GridColumn key={key} span="4/12">
               <Box marginLeft={1}>
@@ -28,7 +28,7 @@ export const Permissions = () => {
         </GridRow>
       </Box>
 
-      <GridRow>
+      <GridRow align="center">
         {SECTIONS.map(({ key, type }) => (
           <GridColumn key={type} span={['12/12', '12/12', '4/12']}>
             {/* Per-section title — mobile only */}

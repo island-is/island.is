@@ -764,6 +764,7 @@ Array [
   "case.verdictAppealCase.statementDeadlines.id",
   "case.verdictAppealCase.statementDeadlines.isExpired",
   "case.verdictAppealCase.statementDeadlines.modified",
+  "case.verdictAppealCase.verdictAppealStatus",
   "case.victims.hasLawyer",
   "case.victims.hasNationalId",
   "case.victims.id",
@@ -2181,6 +2182,7 @@ Array [
   "updateAppealCase.isAppealCustodyIsolation",
   "updateAppealCase.prosecutorStatementDate",
   "updateAppealCase.requestAppealRulingNotToBePublished",
+  "updateAppealCase.verdictAppealStatus",
 ]
 `;
 

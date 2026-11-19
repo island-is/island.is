@@ -2,6 +2,7 @@ mutation UpdateAppealCase($input: UpdateAppealCaseInput!) {
   updateAppealCase(input: $input) {
     id
     appealState
+    verdictAppealStatus
     appealCaseNumber
     appealReceivedByCourtDate
     prosecutorStatementDate
