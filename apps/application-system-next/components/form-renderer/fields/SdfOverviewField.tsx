@@ -69,7 +69,7 @@ const RenderItem = ({ item }: { item: OverviewItem }) => {
 
 export const SdfOverviewField = ({
   component,
-  dispatch,
+  goToScreen,
 }: FieldRendererProps) => {
   const { formatMessage } = useLocale()
   const items = component.overviewItems ?? []
@@ -78,9 +78,8 @@ export const SdfOverviewField = ({
   const isEditable = Boolean(component.backId)
 
   const handleEdit = () => {
-    if (component.backId && dispatch) {
-      // GO_TO_PAGE carries the destination page id in the `event` argument.
-      dispatch('GO_TO_PAGE', undefined, undefined, component.backId)
+    if (component.backId && goToScreen) {
+      goToScreen(component.backId)
     }
   }
 

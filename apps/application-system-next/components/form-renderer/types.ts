@@ -15,6 +15,7 @@ export interface FormRendererProps {
   answers: Record<string, unknown>
   onAnswerChange: (fieldId: string, value: unknown) => void
   dispatch?: SdfFormDispatch
+  goToScreen?: (screenId: string) => void
   /**
    * Optional live-computed values for `SdfDisplayField` components. The backend
    * recomputes these from the VALIDATE action in response to form input; the
@@ -30,6 +31,7 @@ export interface ComponentSwitchProps {
   answers: Record<string, unknown>
   onAnswerChange: (fieldId: string, value: unknown) => void
   dispatch?: SdfFormDispatch
+  goToScreen?: (screenId: string) => void
   displayValues?: Record<string, string>
   pendingRefetchTargets?: string[]
 }
@@ -42,6 +44,7 @@ export interface FieldRendererProps {
   onAnswerChange: (fieldId: string, value: unknown) => void
   handleChange: (value: unknown) => void
   dispatch?: SdfFormDispatch
+  goToScreen?: (screenId: string) => void
   displayValues?: Record<string, string>
   pendingRefetchTargets: string[]
   isRefetchPending: boolean

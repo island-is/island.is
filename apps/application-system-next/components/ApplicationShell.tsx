@@ -46,6 +46,7 @@ export const ApplicationShell = ({
     prevPage,
     submit,
     dispatch,
+    goToScreen,
   } = useFormActions(applicationId, initialScreen)
 
   // The back button label is the only client-rendered text on the form shell
@@ -160,6 +161,7 @@ export const ApplicationShell = ({
                           answers={answers.current}
                           onAnswerChange={onAnswerChange}
                           dispatch={dispatch}
+                          goToScreen={goToScreen}
                           displayValues={displayValues}
                           pendingRefetchTargets={pendingRefetchTargets}
                         />
