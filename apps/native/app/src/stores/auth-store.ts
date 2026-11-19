@@ -461,14 +461,16 @@ async function restoreNativeUser(): Promise<boolean> {
     console.log('Unable to read the native login: ', err)
     return false
   }
+  // The keychain survives reinstalling on iOS: a fresh install doesn't pick
+  // up the login from before, not even while it's cleared.
+  if (!preferencesStore.getState().hasLoggedIn && Platform.OS === 'ios') {
+    await endAppLogin()
+    await forceLogout()
+    return false
+  }
+
   // Locked, so userinfo can't be fetched: the stored copy is the same data.
   authStore.setState({ nativeUser, userInfo: nativeUser })
-
-  // The keychain survives reinstalling on iOS: a fresh install shouldn't
-  // pick up the login from before.
-  if (!preferencesStore.getState().hasLoggedIn && Platform.OS === 'ios') {
-    await forceLogout()
-  }
   return true
 }
 
