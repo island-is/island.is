@@ -70,6 +70,8 @@ interface ElectronicIdConfirmationProps {
   biometricType?: string
   /** The code the person compares against the one on their phone. */
   verificationCode: string
+  /** Approved, and being finished: too late to cancel. */
+  isFinishing?: boolean
   onCancelPress(): void
   /** Shows the link to confirm in the Auðkenni app instead. */
   onAuthenticatorAppPress?(): void
@@ -84,6 +86,7 @@ export function ElectronicIdConfirmation({
   fullScreen = false,
   biometricType,
   verificationCode,
+  isFinishing,
   onCancelPress,
   onAuthenticatorAppPress,
 }: ElectronicIdConfirmationProps) {
@@ -154,6 +157,7 @@ export function ElectronicIdConfirmation({
           isOutlined
           title={intl.formatMessage({ id: 'electronicId.cancel' })}
           onPress={onCancelPress}
+          disabled={isFinishing}
         />
       </Footer>
     </Host>
