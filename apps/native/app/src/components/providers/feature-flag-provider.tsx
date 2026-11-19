@@ -44,8 +44,10 @@ const FeatureFlagContext = createContext<FeatureFlagClient>({
 export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
   children,
 }) => {
-  const { authorizeResult } = useAuthStore()
-  const isAuthenticated = !!authorizeResult
+  const { authorizeResult, nativeUser } = useAuthStore()
+  // Also while locked, without tokens: a lock isn't a logout, so the flags
+  // and what they show stay. A query waits for the unlock.
+  const isAuthenticated = !!authorizeResult || !!nativeUser
   const { data, refetch } = useQuery<{
     featureFlags: { flags: FeatureFlagRecord }
   }>(FEATURE_FLAGS_QUERY, {
@@ -55,18 +57,25 @@ export const FeatureFlagProvider: FC<React.PropsWithChildren<{}>> = ({
   const flagsFromQuery = isAuthenticated ? data?.featureFlags?.flags : undefined
   const flags = flagsFromQuery ?? EMPTY_FLAGS
 
-  // Also triggers on token refresh (~5min), which is acceptable.
+  // New tokens: a login, an unlock, or a refresh (~5min), which is acceptable.
   const prevAuthRef = useRef(authorizeResult)
   useEffect(() => {
     if (prevAuthRef.current !== authorizeResult) {
       prevAuthRef.current = authorizeResult
       if (authorizeResult) {
         refetch()
-      } else {
-        setFeatureFlagCache({})
       }
     }
   }, [authorizeResult, refetch])
+
+  // Logged out, also from the lock.
+  const wasAuthenticatedRef = useRef(isAuthenticated)
+  useEffect(() => {
+    if (wasAuthenticatedRef.current && !isAuthenticated) {
+      setFeatureFlagCache({})
+    }
+    wasAuthenticatedRef.current = isAuthenticated
+  }, [isAuthenticated])
 
   useEffect(() => {
     if (flagsFromQuery) {
