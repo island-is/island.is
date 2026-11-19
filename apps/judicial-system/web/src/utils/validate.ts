@@ -28,6 +28,7 @@ import {
   IndictmentCountOffense,
   IndictmentDecision,
   SessionArrangements,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { isNonEmptyArray } from './arrayHelpers'
@@ -947,6 +948,25 @@ export const isVerdictAppealConclusionFieldsValid = (
       appealCase.appealRulingType &&
       validate([[appealCase.appealConclusion, ['empty']]]).isValid,
   )
+
+// Where the appeal stands holds the court only once it says the appeal is
+// finished: then how it ended has to be on record. The document is not asked
+// about here - whether it has finished uploading is known to the page alone,
+// which holds the court itself until it has.
+export const isVerdictAppealStatusStepValid = (
+  appealCase:
+    | Pick<
+        AppealCase,
+        | 'verdictAppealStatus'
+        | 'appealRulingDecision'
+        | 'appealRulingType'
+        | 'appealConclusion'
+      >
+    | undefined
+    | null,
+): boolean =>
+  appealCase?.verdictAppealStatus !== VerdictAppealStatus.COMPLETED ||
+  isVerdictAppealConclusionFieldsValid(appealCase)
 
 export const isCourtOfAppealWithdrawnCaseStepValid = (
   workingCase: WorkingCase,

@@ -34,6 +34,7 @@ import {
   SessionArrangements,
   SubpoenaType,
   UserRole,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
@@ -72,6 +73,7 @@ import {
   isRulingValidRC,
   isSubpoenaStepValid,
   isVerdictAppealConclusionFieldsValid,
+  isVerdictAppealStatusStepValid,
   validate,
 } from './validate'
 
@@ -2932,5 +2934,47 @@ describe('isNullOrUndefined', () => {
 
   test.each([0, '', false, [], {}])('is false for %j', (value) => {
     expect(isNullOrUndefined(value)).toBe(false)
+  })
+})
+
+describe('isVerdictAppealStatusStepValid', () => {
+  const recorded = {
+    appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+    appealRulingType: AppealRulingType.VERDICT,
+    appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+  }
+
+  test('holds nobody without an appeal or before a status is saved', () => {
+    expect(isVerdictAppealStatusStepValid(undefined)).toBe(true)
+    expect(isVerdictAppealStatusStepValid({})).toBe(true)
+  })
+
+  test('holds nobody on a status other than finished', () => {
+    expect(
+      isVerdictAppealStatusStepValid({
+        verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+      }),
+    ).toBe(true)
+  })
+
+  test('holds a finished appeal until how it ended is on record', () => {
+    expect(
+      isVerdictAppealStatusStepValid({
+        verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+      }),
+    ).toBe(false)
+    expect(
+      isVerdictAppealStatusStepValid({
+        ...recorded,
+        appealConclusion: ' ',
+        verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+      }),
+    ).toBe(false)
+    expect(
+      isVerdictAppealStatusStepValid({
+        ...recorded,
+        verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+      }),
+    ).toBe(true)
   })
 })

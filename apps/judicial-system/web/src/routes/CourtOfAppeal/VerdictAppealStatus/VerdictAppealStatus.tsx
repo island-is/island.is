@@ -33,6 +33,7 @@ import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.c
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
 
+import RegisterConclusion from './RegisterConclusion'
 import ScheduleCourtSession from './ScheduleCourtSession'
 import type { AppealCourtSessionDraft } from './VerdictAppealStatus.logic'
 import {
@@ -61,6 +62,10 @@ import {
  * the status asks for - a session being called is booked first. The page
  * opens on the saved status; an appeal from before the status was kept has
  * none, and is on "Boða til þinghalds" when it has a session.
+ *
+ * An appeal the court marks as finished is where it records how it ended:
+ * the form for that opens under "Lokið", saves each answer as it is given,
+ * and holds the court on the page until all of it is in place.
  *
  * Not gated behind the feature flag, for the reason the defender step gives:
  * the stepper section this page belongs to only renders for a verdict appeal,
@@ -106,12 +111,16 @@ const VerdictAppealStatus = () => {
   // The same, for the stepper, which nothing disables: a ref, so a second
   // click that lands before the next render is turned away too.
   const isLeavingRef = useRef(false)
+  // Reported by the form that records how the appeal ended, which alone knows
+  // whether its document has finished uploading.
+  const [isConclusionRecorded, setIsConclusionRecorded] = useState(false)
 
   // Derived rather than set in an effect: the case arrives after the first
   // render, and the choice the court makes on the page always wins.
   const status =
     chosenStatus ?? getInitialVerdictAppealStatus(verdictAppealCase)
   const isSchedulingSession = status === Status.COURT_SESSION_SCHEDULED
+  const isRecordingConclusion = status === Status.COMPLETED
   const isEditingSession = editingSessionId !== undefined
   const hasSessionToBook =
     isSchedulingSession &&
@@ -135,10 +144,12 @@ const VerdictAppealStatus = () => {
 
   // Calling a session is settled by a complete form, or by one already
   // booked with the form left alone. A form the court has started on is
-  // neither, and nor is one holding a session being changed.
+  // neither, and nor is one holding a session being changed. A finished
+  // appeal is settled once the court has recorded how it ended.
   const stepIsValid =
     status !== undefined &&
     !isEditingSession &&
+    (!isRecordingConclusion || isConclusionRecorded) &&
     (!isSchedulingSession ||
       hasSessionToBook ||
       (bookedSessions.length > 0 && isAppealCourtSessionEmpty(courtSession)))
@@ -445,6 +456,11 @@ const VerdictAppealStatus = () => {
               onEdit={startEditing}
               onDelete={setSessionToDelete}
             />
+          </Box>
+        </ExpandingSection>
+        <ExpandingSection show={isRecordingConclusion}>
+          <Box paddingTop={5}>
+            <RegisterConclusion onValidityChange={setIsConclusionRecorded} />
           </Box>
         </ExpandingSection>
       </FormContentContainer>

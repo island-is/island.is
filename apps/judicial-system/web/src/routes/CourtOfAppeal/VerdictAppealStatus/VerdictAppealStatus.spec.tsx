@@ -11,15 +11,21 @@ import {
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 import {
+  AppealCaseRulingDecision,
   AppealCaseState,
   AppealCaseType,
   AppealCourtSessionType,
+  AppealRulingType,
+  CaseFileCategory,
   CaseState,
   CaseType,
   UserRole,
   VerdictAppealStatus as Status,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
+import {
+  mockCase,
+  mockCaseFile,
+} from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   ApolloProviderWrapper,
   IntlProviderWrapper,
@@ -110,6 +116,24 @@ const caseWithBookedSession = {
   verdictAppealCase: {
     ...theCase.verdictAppealCase,
     courtSessions: [bookedSession],
+  },
+} as unknown as WorkingCase
+
+// An appeal the court has marked as finished, with how it ended on record.
+const finishedCase = {
+  ...theCase,
+  caseFiles: [
+    {
+      ...mockCaseFile(CaseFileCategory.VERDICT_APPEAL_RULING),
+      name: 'domur-landsrettar.pdf',
+    },
+  ],
+  verdictAppealCase: {
+    ...theCase.verdictAppealCase,
+    verdictAppealStatus: Status.COMPLETED,
+    appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+    appealRulingType: AppealRulingType.VERDICT,
+    appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
   },
 } as unknown as WorkingCase
 
@@ -326,7 +350,7 @@ describe('VerdictAppealStatus', () => {
     )
     renderPage()
 
-    await userEvent.click(screen.getByLabelText('Lokið'))
+    await userEvent.click(screen.getByLabelText('Dómtekið'))
     await userEvent.click(screen.getByTestId('continueButton'))
 
     await waitFor(() => expect(mockPush).toHaveBeenCalled())
@@ -372,13 +396,13 @@ describe('VerdictAppealStatus', () => {
     mockUpdateAppealCase.mockResolvedValue(undefined)
     renderPage()
 
-    await userEvent.click(screen.getByLabelText('Lokið'))
+    await userEvent.click(screen.getByLabelText('Dómtekið'))
     await userEvent.click(screen.getByTestId('continueButton'))
 
     await waitFor(() => expect(mockUpdateAppealCase).toHaveBeenCalled())
     expect(mockPush).not.toHaveBeenCalled()
 
-    await waitFor(() => expect(screen.getByLabelText('Lokið')).toBeEnabled())
+    await waitFor(() => expect(screen.getByLabelText('Dómtekið')).toBeEnabled())
   })
 
   it('writes nothing when the saved status is left as it is', async () => {
@@ -539,6 +563,101 @@ describe('VerdictAppealStatus', () => {
     )
   })
 
+  describe('a finished appeal', () => {
+    it('asks how the appeal ended only once the court says it is finished', async () => {
+      renderPage()
+
+      expect(
+        screen.queryByRole('group', { name: 'Lyktir' }),
+      ).not.toBeInTheDocument()
+
+      await userEvent.click(screen.getByLabelText('Lokið'))
+
+      expect(
+        await screen.findByRole('group', { name: 'Lyktir' }),
+      ).toBeInTheDocument()
+
+      await userEvent.click(screen.getByLabelText('Dómtekið'))
+
+      await waitFor(() =>
+        expect(
+          screen.queryByRole('group', { name: 'Lyktir' }),
+        ).not.toBeInTheDocument(),
+      )
+    })
+
+    it('holds the court on the page until how it ended is on record', async () => {
+      renderPage()
+
+      await userEvent.click(screen.getByLabelText('Lokið'))
+
+      expect(screen.getByTestId('continueButton')).toBeDisabled()
+
+      // Leaving it for another status lets the court go again.
+      await userEvent.click(screen.getByLabelText('Dómtekið'))
+
+      expect(screen.getByTestId('continueButton')).toBeEnabled()
+    })
+
+    it('opens on what the court recorded and lets it continue', async () => {
+      renderPage(finishedCase)
+
+      expect(screen.getByLabelText('Lokið')).toBeChecked()
+      expect(screen.getByLabelText('Staðfesting')).toBeChecked()
+      expect(screen.getByLabelText('Dómur')).toBeChecked()
+      expect(screen.getByText('domur-landsrettar.pdf')).toBeInTheDocument()
+
+      await waitFor(() =>
+        expect(screen.getByTestId('continueButton')).toBeEnabled(),
+      )
+
+      await userEvent.click(screen.getByTestId('continueButton'))
+
+      // The status was already saved, so the court just moves on.
+      expect(mockUpdateAppealCase).not.toHaveBeenCalled()
+      await waitFor(() =>
+        expect(mockPush).toHaveBeenCalledWith(
+          `${COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE}/case-id?appealCaseId=verdict-appeal`,
+        ),
+      )
+    })
+
+    it('saves the outcome when it is picked and the status when the court continues', async () => {
+      renderPage({
+        ...finishedCase,
+        verdictAppealCase: {
+          ...finishedCase.verdictAppealCase,
+          verdictAppealStatus: Status.UNDER_ADVISEMENT,
+          appealRulingDecision: null,
+          appealRulingType: null,
+        },
+      } as unknown as WorkingCase)
+
+      await userEvent.click(screen.getByLabelText('Lokið'))
+      await userEvent.click(await screen.findByLabelText('Staðfesting'))
+
+      expect(mockUpdateAppealCase).toHaveBeenCalledWith(
+        'case-id',
+        'verdict-appeal',
+        {
+          appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+          appealRulingType: AppealRulingType.VERDICT,
+        },
+      )
+
+      await waitFor(() =>
+        expect(screen.getByTestId('continueButton')).toBeEnabled(),
+      )
+      await userEvent.click(screen.getByTestId('continueButton'))
+
+      expect(mockUpdateAppealCase).toHaveBeenLastCalledWith(
+        'case-id',
+        'verdict-appeal',
+        { verdictAppealStatus: Status.COMPLETED },
+      )
+    })
+  })
+
   describe('a booked session', () => {
     const openMenu = async () => {
       await userEvent.click(
@@ -597,7 +716,7 @@ describe('VerdictAppealStatus', () => {
       await clickMenuItem('Breyta þinghaldi')
       expect(await screen.findByText('Verið að breyta')).toBeInTheDocument()
 
-      await userEvent.click(screen.getByLabelText('Lokið'))
+      await userEvent.click(screen.getByLabelText('Dómtekið'))
 
       expect(
         screen.queryByRole('button', { name: 'Hætta við' }),
