@@ -2,6 +2,7 @@ import { ApplicationWithAttachments } from '@island.is/application/types'
 import { MileageOriginCode } from '@island.is/application/templates/temporary-vehicle-export'
 import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { MileageReadingApi } from '@island.is/clients/vehicles-mileage'
+import { FetchError } from '@island.is/clients/middlewares'
 import { RskKilometragjaldReimbursementClient } from '@island.is/clients/rsk/kilometragjald-reimbursement'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { Logger } from '@island.is/logging'
@@ -114,11 +115,48 @@ describe('TemporaryVehicleExportService', () => {
     expect(result.originCode).toBe(MileageOriginCode.DEPARTURE)
   })
 
+  it('uses the latest reading at Samgöngustofa without registering a new one', async () => {
+    const { service, mileageApi } = createService()
+
+    const result = await service.registerDepartureMileage(
+      props({
+        ...answers,
+        departure: {
+          date: '2026-06-01',
+          useLatestMileage: 'yes',
+          latestMileage: '10000',
+        },
+      }),
+    )
+
+    expect(mileageApi.rootPostRaw).not.toHaveBeenCalled()
+    expect(result).toMatchObject({ permno: PERMNO, mileage: 10000 })
+    expect(result.originCode).toBeUndefined()
+  })
+
+  it('rejects the latest reading when a newer one has been registered', async () => {
+    const { service, mileageApi } = createService()
+
+    await expect(
+      service.registerDepartureMileage(
+        props({
+          ...answers,
+          departure: {
+            date: '2026-06-01',
+            useLatestMileage: 'yes',
+            latestMileage: '9000',
+          },
+        }),
+      ),
+    ).rejects.toThrow(TemplateApiError)
+    expect(mileageApi.rootPostRaw).not.toHaveBeenCalled()
+  })
+
   it('updates the reading when one was already registered today', async () => {
     const { service, mileageApi } = createService()
     mileageApi.rootPostRaw.mockResolvedValue({ raw: { status: 200 } })
 
-    await service.registerArrivalMileage(props(answers))
+    await service.submitArrival(props(answers))
 
     expect(mileageApi.rootPut).toHaveBeenCalledWith({
       putMileageReadingModel: {
@@ -156,10 +194,18 @@ describe('TemporaryVehicleExportService', () => {
     expect(mileageApi.rootPostRaw).not.toHaveBeenCalled()
   })
 
-  it('sends the trip and documents to Skatturinn', async () => {
-    const { service, skatturinn } = createService()
+  it('registers the arrival mileage and sends the trip and documents to Skatturinn', async () => {
+    const { service, mileageApi, skatturinn } = createService()
 
-    const result = await service.submitToSkatturinn(props(answers))
+    const result = await service.submitArrival(props(answers))
+
+    expect(mileageApi.rootPostRaw).toHaveBeenCalledWith({
+      postMileageReadingModel: {
+        permno: PERMNO,
+        mileage: 14500,
+        originCode: MileageOriginCode.ARRIVAL,
+      },
+    })
 
     expect(skatturinn.submitApplication).toHaveBeenCalledWith(
       expect.objectContaining({ authorization: 'Bearer token' }),
@@ -167,19 +213,52 @@ describe('TemporaryVehicleExportService', () => {
         fastnr: PERMNO,
         departureDate: '2026-06-01',
         departureMileage: 12000,
+        useExistingMileageRegistration: false,
         arrivalDate: '2026-06-20',
         arrivalMileage: 14500,
         files: [{ fileName: 'booking.pdf', content: Buffer.from('a') }],
       },
     )
-    expect(result).toEqual({ id: 42, status: 'Open' })
+    expect(result.mileage.originCode).toBe(MileageOriginCode.ARRIVAL)
+    expect(result.skatturinn).toEqual({ id: 42, status: 'Open' })
+  })
+
+  it('does not send the trip to Skatturinn when the arrival mileage is rejected', async () => {
+    const { service, mileageApi, skatturinn } = createService()
+    mileageApi.rootPostRaw.mockRejectedValue(new Error('400'))
+
+    await expect(service.submitArrival(props(answers))).rejects.toThrow(
+      TemplateApiError,
+    )
+    expect(skatturinn.submitApplication).not.toHaveBeenCalled()
+  })
+
+  it("shows Samgöngustofa's reason when a reading is rejected", async () => {
+    const { service, mileageApi } = createService()
+    const error = Object.create(FetchError.prototype) as FetchError
+    Object.assign(error, {
+      status: 400,
+      body: {
+        Errors: [
+          { warnSever: 'W', errorMess: 'Km staða fer yfir hámark per dag' },
+        ],
+      },
+    })
+    mileageApi.rootPostRaw.mockRejectedValue(error)
+
+    await expect(service.submitArrival(props(answers))).rejects.toMatchObject({
+      problem: {
+        status: 400,
+        errorReason: { summary: 'Km staða fer yfir hámark per dag' },
+      },
+    })
   })
 
   it('fails the submission when Skatturinn rejects it', async () => {
     const { service, skatturinn } = createService()
     skatturinn.submitApplication.mockRejectedValue(new Error('400'))
 
-    await expect(service.submitToSkatturinn(props(answers))).rejects.toThrow(
+    await expect(service.submitArrival(props(answers))).rejects.toThrow(
       TemplateApiError,
     )
   })

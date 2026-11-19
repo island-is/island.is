@@ -88,6 +88,9 @@
                     "type": "integer",
                     "format": "int32"
                   },
+                  "UseExistingMileageRegistration": {
+                    "type": "boolean"
+                  },
                   "Files": {
                     "type": "array",
                     "items": {
@@ -111,6 +114,9 @@
                   "style": "form"
                 },
                 "ArrivalMileage": {
+                  "style": "form"
+                },
+                "UseExistingMileageRegistration": {
                   "style": "form"
                 },
                 "Files": {
@@ -218,6 +224,9 @@
             "type": "integer",
             "format": "int32",
             "nullable": true
+          },
+          "useExistingMileageRegistration": {
+            "type": "boolean"
           },
           "createdDate": {
             "type": "string",

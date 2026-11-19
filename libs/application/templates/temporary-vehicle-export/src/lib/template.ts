@@ -21,7 +21,11 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
-import { EligibleVehiclesApi } from '../dataProviders'
+import {
+  EligibleVehiclesApi,
+  IdentityApi,
+  UserProfileApi,
+} from '../dataProviders'
 import { ApiActions, Events, Roles, States } from '../types'
 import { MAX_DAYS_ABROAD } from '../utils/constants'
 import { getSelectedPermno } from '../utils/helpers'
@@ -72,7 +76,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [EligibleVehiclesApi],
+              api: [EligibleVehiclesApi, IdentityApi, UserProfileApi],
               delete: true,
             },
           ],
@@ -147,12 +151,10 @@ const template: ApplicationTemplate<
             ],
           },
           onExit: [
+            // One action so the trip is only sent to Skatturinn after the
+            // arrival mileage has been registered at Samgöngustofa
             defineTemplateApi({
-              action: ApiActions.registerArrivalMileage,
-              triggerEvent: DefaultEvents.SUBMIT,
-            }),
-            defineTemplateApi({
-              action: ApiActions.submitToSkatturinn,
+              action: ApiActions.submitArrival,
               triggerEvent: DefaultEvents.SUBMIT,
             }),
           ],

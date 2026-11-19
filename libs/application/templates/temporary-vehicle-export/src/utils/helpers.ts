@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { YES, getValueViaPath } from '@island.is/application/core'
 import { ExternalData, FormValue } from '@island.is/application/types'
 import { EligibleVehicle } from '../types'
 
@@ -31,8 +31,39 @@ export const parseMileage = (value?: string | number): number | undefined => {
   return Number.isInteger(mileage) && mileage >= 0 ? mileage : undefined
 }
 
+/**
+ * Whether the applicant uses the latest mileage registered at Samgöngustofa as
+ * the departure mileage instead of registering a new one
+ */
+export const usesLatestMileage = (answers: FormValue): boolean =>
+  getValueViaPath<string>(answers, 'departure.useLatestMileage') === YES
+
 export const getDepartureMileage = (answers: FormValue) =>
-  parseMileage(getValueViaPath<string>(answers, 'departure.mileage'))
+  parseMileage(
+    getValueViaPath<string>(
+      answers,
+      usesLatestMileage(answers)
+        ? 'departure.latestMileage'
+        : 'departure.mileage',
+    ),
+  )
+
+/**
+ * The departure date is asked for only when a new mileage is registered. When
+ * the latest reading at Samgöngustofa is used, the reading date is the
+ * departure date, unless Samgöngustofa returned no date for it.
+ */
+export const usesLatestMileageDate = (answers: FormValue): boolean =>
+  usesLatestMileage(answers) &&
+  !!getValueViaPath<string>(answers, 'departure.latestMileageReadDate')
+
+export const getDepartureDate = (answers: FormValue): string | undefined =>
+  getValueViaPath<string>(
+    answers,
+    usesLatestMileageDate(answers)
+      ? 'departure.latestMileageReadDate'
+      : 'departure.date',
+  )
 
 export const getArrivalMileage = (answers: FormValue) =>
   parseMileage(getValueViaPath<string>(answers, 'arrival.mileage'))
@@ -59,6 +90,18 @@ export const endOfToday = (): Date => {
   const today = new Date()
   today.setHours(23, 59, 59, 999)
   return today
+}
+
+export const startOfDaysAgo = (days: number): Date => {
+  const date = new Date()
+  date.setDate(date.getDate() - days)
+  date.setHours(0, 0, 0, 0)
+  return date
+}
+
+export const isNotBeforeDaysAgo = (value: string | undefined, days: number) => {
+  const date = toDate(value)
+  return !!date && date >= startOfDaysAgo(days)
 }
 
 export const isTodayOrEarlier = (value?: string): boolean => {

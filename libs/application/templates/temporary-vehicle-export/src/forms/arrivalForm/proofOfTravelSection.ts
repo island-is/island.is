@@ -4,7 +4,11 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { PROOF_OF_TRAVEL_FILE_TYPES } from '../../utils/constants'
+import {
+  PROOF_OF_TRAVEL_FILE_TYPES,
+  PROOF_OF_TRAVEL_MAX_FILES,
+  PROOF_OF_TRAVEL_MAX_TOTAL_SIZE,
+} from '../../utils/constants'
 
 export const proofOfTravelSection = buildSection({
   id: 'proofOfTravelSection',
@@ -19,6 +23,8 @@ export const proofOfTravelSection = buildSection({
           id: 'proofOfTravel',
           uploadMultiple: true,
           uploadAccept: PROOF_OF_TRAVEL_FILE_TYPES,
+          maxFileCount: PROOF_OF_TRAVEL_MAX_FILES,
+          totalMaxSize: PROOF_OF_TRAVEL_MAX_TOTAL_SIZE,
           uploadHeader: m.proofOfTravel.uploadHeader,
           uploadDescription: m.proofOfTravel.uploadDescription,
         }),

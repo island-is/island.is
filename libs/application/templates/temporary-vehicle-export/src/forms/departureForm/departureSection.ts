@@ -1,8 +1,11 @@
 import {
+  NO,
+  YES,
   buildDateField,
   buildDescriptionField,
   buildHiddenInput,
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildTextField,
 } from '@island.is/application/core'
@@ -12,7 +15,12 @@ import {
   formatMileage,
   getSelectedVehicle,
   getVehicleLabel,
+  startOfDaysAgo,
+  usesLatestMileage,
+  usesLatestMileageDate,
 } from '../../utils/helpers'
+import { formatDate } from '../../utils/getOverviewItems'
+import { MAX_DAYS_BACK } from '../../utils/constants'
 
 export const departureSection = buildSection({
   id: 'departureSection',
@@ -43,12 +51,47 @@ export const departureSection = buildSection({
               : ''
           },
         }),
+        buildRadioField({
+          id: 'departure.useLatestMileage',
+          title: m.departure.useLatestMileageTitle,
+          titleVariant: 'h5',
+          largeButtons: false,
+          defaultValue: NO,
+          condition: (answers, externalData) =>
+            getSelectedVehicle(answers, externalData)?.latestMileage !==
+            undefined,
+          options: (application) => {
+            const vehicle = getSelectedVehicle(
+              application.answers,
+              application.externalData,
+            )
+            const mileage = formatMileage(vehicle?.latestMileage)
+            const date = formatDate(vehicle?.latestMileageReadDate)
+            return [
+              {
+                value: YES,
+                label: date
+                  ? {
+                      ...m.departure.useLatestMileage,
+                      values: { mileage, date },
+                    }
+                  : {
+                      ...m.departure.useLatestMileageWithoutDate,
+                      values: { mileage },
+                    },
+              },
+              { value: NO, label: m.departure.registerNewMileage },
+            ]
+          },
+        }),
         buildDateField({
           id: 'departure.date',
           title: m.departure.date,
           width: 'half',
           required: true,
+          minDate: () => startOfDaysAgo(MAX_DAYS_BACK),
           maxDate: () => new Date(),
+          condition: (answers) => !usesLatestMileageDate(answers),
         }),
         buildTextField({
           id: 'departure.mileage',
@@ -58,6 +101,13 @@ export const departureSection = buildSection({
           required: true,
           thousandSeparator: true,
           suffix: ' km',
+          condition: (answers) => !usesLatestMileage(answers),
+        }),
+        buildHiddenInput({
+          id: 'departure.latestMileageReadDate',
+          defaultValue: (application: Application) =>
+            getSelectedVehicle(application.answers, application.externalData)
+              ?.latestMileageReadDate,
         }),
         buildHiddenInput({
           id: 'departure.latestMileage',

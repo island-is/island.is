@@ -1,6 +1,14 @@
 import { z } from 'zod'
+import { NO, YES } from '@island.is/application/core'
 import { m } from './messages'
-import { isTodayOrEarlier, parseMileage, toDate } from '../utils/helpers'
+import {
+  isNotBeforeDaysAgo,
+  isTodayOrEarlier,
+  parseMileage,
+  toDate,
+  usesLatestMileageDate,
+} from '../utils/helpers'
+import { MAX_DAYS_BACK, PROOF_OF_TRAVEL_MAX_FILES } from '../utils/constants'
 
 const fileSchema = z.object({
   name: z.string(),
@@ -12,21 +20,63 @@ const pastOrPresentDate = z
   .string()
   .refine(isTodayOrEarlier, { params: m.errors.dateInFuture })
 
+const departureDate = pastOrPresentDate.refine(
+  (value) => isNotBeforeDaysAgo(value, MAX_DAYS_BACK),
+  { params: m.errors.departureDateTooEarly },
+)
+
+const arrivalDate = pastOrPresentDate.refine(
+  (value) => isNotBeforeDaysAgo(value, MAX_DAYS_BACK),
+  { params: m.errors.arrivalDateTooEarly },
+)
+
 const mileage = z.string().refine((value) => (parseMileage(value) ?? 0) > 0, {
   params: m.errors.mileageInvalid,
 })
 
 const departureSchema = z
   .object({
-    date: pastOrPresentDate,
-    mileage,
+    // Not asked when the latest reading, and so its date, is used
+    date: departureDate.optional(),
+    // Only asked when the vehicle has a registered mileage
+    useLatestMileage: z.enum([YES, NO]).optional(),
+    mileage: z.string().optional(),
     // Latest reading at Samgöngustofa, filled in from external data
     latestMileage: z.string().optional(),
+    latestMileageReadDate: z.string().optional(),
   })
-  .superRefine(({ mileage, latestMileage }, ctx) => {
+  .superRefine((departure, ctx) => {
+    const { useLatestMileage, mileage, latestMileage } = departure
+    if (!usesLatestMileageDate({ departure }) && !departure.date) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        params: m.errors.departureDateRequired,
+        path: ['date'],
+      })
+    }
+
     const latest = parseMileage(latestMileage)
+    if (useLatestMileage === YES) {
+      if (latest === undefined) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          params: m.errors.mileageInvalid,
+          path: ['useLatestMileage'],
+        })
+      }
+      return
+    }
+
     const current = parseMileage(mileage)
-    if (latest !== undefined && current !== undefined && current < latest) {
+    if (!current) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        params: m.errors.mileageInvalid,
+        path: ['mileage'],
+      })
+      return
+    }
+    if (latest !== undefined && current < latest) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         params: m.errors.mileageLowerThanLatest,
@@ -37,7 +87,7 @@ const departureSchema = z
 
 const arrivalSchema = z
   .object({
-    date: pastOrPresentDate,
+    date: arrivalDate,
     mileage,
     // Copied from the departure answers so they can be compared here
     departureDate: z.string().optional(),
@@ -76,7 +126,7 @@ export const dataSchema = z.object({
   }),
   departure: departureSchema,
   arrival: arrivalSchema,
-  proofOfTravel: z.array(fileSchema).min(1),
+  proofOfTravel: z.array(fileSchema).min(1).max(PROOF_OF_TRAVEL_MAX_FILES),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

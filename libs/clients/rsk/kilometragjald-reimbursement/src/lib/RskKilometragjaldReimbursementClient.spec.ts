@@ -8,6 +8,7 @@ const input = {
   fastnr: 'AB123',
   departureDate: '2026-06-01',
   departureMileage: 12000,
+  useExistingMileageRegistration: true,
   arrivalDate: '2026-06-20',
   arrivalMileage: 14500,
   files: [
@@ -68,6 +69,7 @@ describe('RskKilometragjaldReimbursementClient', () => {
     const body = init.body.toString()
     expect(body).toContain('name="Fastnr"\r\n\r\nAB123')
     expect(body).toContain('name="DepartureDate"\r\n\r\n2026-06-01')
+    expect(body).toContain('name="UseExistingMileageRegistration"\r\n\r\ntrue')
     expect(body).toContain('name="ArrivalMileage"\r\n\r\n14500')
     expect(body).toContain('name="Files"; filename="booking.pdf"')
     expect(body).toContain('Content-Type: application/pdf')

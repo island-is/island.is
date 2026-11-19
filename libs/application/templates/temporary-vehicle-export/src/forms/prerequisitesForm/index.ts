@@ -1,13 +1,19 @@
 import {
   buildDataProviderItem,
+  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
+  buildMultiField,
   buildSection,
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
 import { DefaultEvents, FormModes } from '@island.is/application/types'
-import { EligibleVehiclesApi } from '../../dataProviders'
+import {
+  EligibleVehiclesApi,
+  IdentityApi,
+  UserProfileApi,
+} from '../../dataProviders'
 import { m } from '../../lib/messages'
 
 export const Prerequisites = buildForm({
@@ -15,6 +21,22 @@ export const Prerequisites = buildForm({
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   children: [
+    buildSection({
+      id: 'about',
+      tabTitle: m.about.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'aboutMultiField',
+          title: m.about.title,
+          children: [
+            buildDescriptionField({
+              id: 'about.description',
+              description: m.about.description,
+            }),
+          ],
+        }),
+      ],
+    }),
     buildSection({
       id: 'conditions',
       tabTitle: m.prerequisites.tabTitle,
@@ -28,6 +50,16 @@ export const Prerequisites = buildForm({
               provider: EligibleVehiclesApi,
               title: m.prerequisites.vehiclesTitle,
               subTitle: m.prerequisites.vehiclesSubTitle,
+            }),
+            buildDataProviderItem({
+              provider: IdentityApi,
+              title: m.prerequisites.nationalRegistryTitle,
+              subTitle: m.prerequisites.nationalRegistrySubTitle,
+            }),
+            buildDataProviderItem({
+              provider: UserProfileApi,
+              title: m.prerequisites.userProfileTitle,
+              subTitle: m.prerequisites.userProfileSubTitle,
             }),
           ],
           submitField: buildSubmitField({

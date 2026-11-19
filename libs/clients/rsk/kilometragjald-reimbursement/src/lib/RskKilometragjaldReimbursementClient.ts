@@ -23,6 +23,11 @@ export interface SubmitReimbursementInput {
   /** yyyy-MM-dd */
   departureDate: string
   departureMileage: number
+  /**
+   * The departure mileage is the latest reading already registered at
+   * Samgöngustofa, not one registered for this trip
+   */
+  useExistingMileageRegistration: boolean
   /** yyyy-MM-dd */
   arrivalDate: string
   arrivalMileage: number
@@ -61,6 +66,10 @@ export class RskKilometragjaldReimbursementClient {
     form.append('Fastnr', input.fastnr)
     form.append('DepartureDate', input.departureDate)
     form.append('DepartureMileage', input.departureMileage.toString())
+    form.append(
+      'UseExistingMileageRegistration',
+      input.useExistingMileageRegistration.toString(),
+    )
     form.append('ArrivalDate', input.arrivalDate)
     form.append('ArrivalMileage', input.arrivalMileage.toString())
     input.files.forEach((file) =>

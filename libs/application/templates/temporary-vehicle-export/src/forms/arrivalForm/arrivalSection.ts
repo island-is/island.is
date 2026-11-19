@@ -5,15 +5,21 @@ import {
   buildMultiField,
   buildSection,
   buildTextField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { formatDate } from '../../utils/getOverviewItems'
-import { formatMileage, getDepartureMileage, toDate } from '../../utils/helpers'
+import {
+  formatMileage,
+  getDepartureDate,
+  getDepartureMileage,
+  startOfDaysAgo,
+  toDate,
+} from '../../utils/helpers'
+import { MAX_DAYS_BACK } from '../../utils/constants'
 
-const getDepartureDate = (application: Application) =>
-  getValueViaPath<string>(application.answers, 'departure.date')
+const getApplicationDepartureDate = (application: Application) =>
+  getDepartureDate(application.answers)
 
 export const arrivalSection = buildSection({
   id: 'arrivalSection',
@@ -30,7 +36,7 @@ export const arrivalSection = buildSection({
           message: (application) => ({
             ...m.arrival.departureInfo,
             values: {
-              date: formatDate(getDepartureDate(application)),
+              date: formatDate(getApplicationDepartureDate(application)),
               mileage: formatMileage(getDepartureMileage(application.answers)),
             },
           }),
@@ -40,7 +46,12 @@ export const arrivalSection = buildSection({
           title: m.arrival.date,
           width: 'half',
           required: true,
-          minDate: (application) => toDate(getDepartureDate(application)),
+          minDate: (application) => {
+            // Today or up to MAX_DAYS_BACK days back, but not before departure
+            const earliest = startOfDaysAgo(MAX_DAYS_BACK)
+            const departure = toDate(getApplicationDepartureDate(application))
+            return departure && departure > earliest ? departure : earliest
+          },
           maxDate: () => new Date(),
         }),
         buildTextField({
@@ -54,7 +65,7 @@ export const arrivalSection = buildSection({
         }),
         buildHiddenInput({
           id: 'arrival.departureDate',
-          defaultValue: getDepartureDate,
+          defaultValue: getApplicationDepartureDate,
         }),
         buildHiddenInput({
           id: 'arrival.departureMileage',

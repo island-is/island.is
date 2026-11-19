@@ -10,6 +10,7 @@ import { m } from '../lib/messages'
 import {
   formatMileage,
   getArrivalMileage,
+  getDepartureDate,
   getDepartureMileage,
   getMileageDrivenAbroad,
   getSelectedVehicle,
@@ -34,7 +35,7 @@ export const getDepartureOverviewItems = (
   {
     width: 'half',
     keyText: m.overview.departureDate,
-    valueText: formatDate(getValueViaPath<string>(answers, 'departure.date')),
+    valueText: formatDate(getDepartureDate(answers)),
   },
   {
     width: 'half',

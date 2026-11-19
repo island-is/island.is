@@ -7,21 +7,25 @@ import {
   VehicleSearchApi,
 } from '@island.is/clients/vehicles'
 import { MileageReadingApi } from '@island.is/clients/vehicles-mileage'
+import { FetchError } from '@island.is/clients/middlewares'
 import { RskKilometragjaldReimbursementClient } from '@island.is/clients/rsk/kilometragjald-reimbursement'
 import { TemplateApiError } from '@island.is/nest/problem'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
+  ArrivalSubmission,
   EligibleVehicle,
   EligibleVehiclesResponse,
   MileageOriginCode,
   RegisteredMileage,
   SkatturinnSubmission,
   getArrivalMileage,
+  getDepartureDate,
   getDepartureMileage,
   getSelectedPermno,
   m,
   toDate,
+  usesLatestMileage,
 } from '@island.is/application/templates/temporary-vehicle-export'
 import format from 'date-fns/format'
 import { BaseTemplateApiService } from '../../base-template-api.service'
@@ -99,6 +103,10 @@ export class TemporaryVehicleExportService extends BaseTemplateApiService {
     const permno = getSelectedPermno(application.answers)
     const mileage = getDepartureMileage(application.answers)
 
+    if (usesLatestMileage(application.answers)) {
+      return this.verifyLatestMileage(auth, permno, mileage)
+    }
+
     return this.registerMileage(
       auth,
       permno,
@@ -107,7 +115,19 @@ export class TemporaryVehicleExportService extends BaseTemplateApiService {
     )
   }
 
-  async registerArrivalMileage({
+  /**
+   * Registers the arrival mileage at Samgöngustofa and then sends the trip to
+   * Skatturinn. Skatturinn is not called if the registration fails.
+   */
+  async submitArrival(
+    props: TemplateApiModuleActionProps,
+  ): Promise<ArrivalSubmission> {
+    const mileage = await this.registerArrivalMileage(props)
+    const skatturinn = await this.submitToSkatturinn(props)
+    return { mileage, skatturinn }
+  }
+
+  private async registerArrivalMileage({
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<RegisteredMileage> {
@@ -122,7 +142,7 @@ export class TemporaryVehicleExportService extends BaseTemplateApiService {
     ) {
       throw new TemplateApiError(
         {
-          title: m.errors.mileageLowerThanDeparture,
+          title: m.errors.registerMileageFailed,
           summary: m.errors.mileageLowerThanDeparture,
         },
         400,
@@ -137,15 +157,13 @@ export class TemporaryVehicleExportService extends BaseTemplateApiService {
     )
   }
 
-  async submitToSkatturinn({
+  private async submitToSkatturinn({
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<SkatturinnSubmission> {
     const { answers } = application
     const permno = getSelectedPermno(answers)
-    const departureDate = toIsoDate(
-      getValueViaPath<string>(answers, 'departure.date'),
-    )
+    const departureDate = toIsoDate(getDepartureDate(answers))
     const departureMileage = getDepartureMileage(answers)
     const arrivalDate = toIsoDate(
       getValueViaPath<string>(answers, 'arrival.date'),
@@ -162,7 +180,7 @@ export class TemporaryVehicleExportService extends BaseTemplateApiService {
       throw new TemplateApiError(
         {
           title: m.errors.submitToSkatturinnFailed,
-          summary: 'Missing trip information in application answers',
+          summary: m.errors.missingTripInformation,
         },
         400,
       )
@@ -175,7 +193,7 @@ export class TemporaryVehicleExportService extends BaseTemplateApiService {
       throw new TemplateApiError(
         {
           title: m.errors.submitToSkatturinnFailed,
-          summary: 'Could not read proof of travel attachments',
+          summary: m.errors.proofOfTravelUnreadable,
         },
         400,
       )
@@ -188,6 +206,7 @@ export class TemporaryVehicleExportService extends BaseTemplateApiService {
           fastnr: permno,
           departureDate,
           departureMileage,
+          useExistingMileageRegistration: usesLatestMileage(answers),
           arrivalDate,
           arrivalMileage,
           files: files.map((file) => ({
@@ -205,11 +224,55 @@ export class TemporaryVehicleExportService extends BaseTemplateApiService {
       throw new TemplateApiError(
         {
           title: m.errors.submitToSkatturinnFailed,
-          summary: m.errors.submitToSkatturinnFailed,
+          summary: m.errors.tryAgainLater,
         },
         500,
       )
     }
+  }
+
+  /**
+   * Used instead of registering a departure reading when the applicant uses
+   * the latest reading at Samgöngustofa. Makes sure no newer reading has been
+   * registered since the application fetched it.
+   */
+  private async verifyLatestMileage(
+    auth: Auth,
+    permno: string | undefined,
+    mileage: number | undefined,
+  ): Promise<RegisteredMileage> {
+    if (!permno || mileage === undefined) {
+      throw new TemplateApiError(
+        {
+          title: m.errors.registerMileageFailed,
+          summary: 'Missing permno or latest mileage in application answers',
+        },
+        400,
+      )
+    }
+
+    const vehicle = await this.getEligibleVehicle(auth, permno)
+    if (!vehicle) {
+      throw new TemplateApiError(
+        {
+          title: m.errors.registerMileageFailed,
+          summary: m.errors.vehicleNotFound,
+        },
+        400,
+      )
+    }
+
+    if (vehicle.latestMileage !== mileage) {
+      throw new TemplateApiError(
+        {
+          title: m.errors.registerMileageFailed,
+          summary: m.errors.latestMileageChanged,
+        },
+        400,
+      )
+    }
+
+    return { permno, mileage, readDate: vehicle.latestMileageReadDate }
   }
 
   /**
@@ -238,7 +301,7 @@ export class TemporaryVehicleExportService extends BaseTemplateApiService {
     if (!vehicle) {
       throw new TemplateApiError(
         {
-          title: m.errors.vehicleNotFound,
+          title: m.errors.registerMileageFailed,
           summary: m.errors.vehicleNotFound,
         },
         400,
@@ -251,7 +314,7 @@ export class TemporaryVehicleExportService extends BaseTemplateApiService {
     ) {
       throw new TemplateApiError(
         {
-          title: m.errors.mileageLowerThanLatest,
+          title: m.errors.registerMileageFailed,
           summary: m.errors.mileageLowerThanLatest,
         },
         400,
@@ -297,10 +360,17 @@ export class TemporaryVehicleExportService extends BaseTemplateApiService {
         'Temporary vehicle export: registering mileage at Samgöngustofa failed',
         { originCode, error },
       )
+      const reason = getSamgongustofaErrorMessage(error)
+      if (reason) {
+        throw new TemplateApiError(
+          { title: m.errors.mileageRejected, summary: reason },
+          400,
+        )
+      }
       throw new TemplateApiError(
         {
           title: m.errors.registerMileageFailed,
-          summary: m.errors.registerMileageFailed,
+          summary: m.errors.tryAgainLater,
         },
         500,
       )
@@ -322,6 +392,23 @@ export class TemporaryVehicleExportService extends BaseTemplateApiService {
       .flatMap(toEligibleVehicle)
       .find((vehicle) => vehicle.permno.trim().toUpperCase() === wanted)
   }
+}
+
+/**
+ * Samgöngustofa explains a rejected reading in `Errors[].errorMess`, e.g. when
+ * the mileage rises more than is allowed per day since the last reading
+ */
+const getSamgongustofaErrorMessage = (error: unknown): string | undefined => {
+  if (!(error instanceof FetchError)) {
+    return undefined
+  }
+  const body = error.body as
+    | { Errors?: Array<{ errorMess?: string | null }> | null }
+    | undefined
+  const messages = (body?.Errors ?? [])
+    .map((item) => item.errorMess?.trim())
+    .filter((message): message is string => !!message)
+  return messages.length > 0 ? messages.join(' ') : undefined
 }
 
 const toIsoDate = (value?: string): string | undefined => {

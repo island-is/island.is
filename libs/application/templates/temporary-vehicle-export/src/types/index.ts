@@ -18,8 +18,7 @@ export enum Roles {
 export enum ApiActions {
   getEligibleVehicles = 'getEligibleVehicles',
   registerDepartureMileage = 'registerDepartureMileage',
-  registerArrivalMileage = 'registerArrivalMileage',
-  submitToSkatturinn = 'submitToSkatturinn',
+  submitArrival = 'submitArrival',
 }
 
 /**
@@ -47,7 +46,8 @@ export interface EligibleVehiclesResponse {
 export interface RegisteredMileage {
   permno: string
   mileage: number
-  originCode: MileageOriginCode
+  /** Not set when the latest reading at Samgöngustofa was used as it is */
+  originCode?: MileageOriginCode
   readDate?: string
 }
 
@@ -55,4 +55,9 @@ export interface RegisteredMileage {
 export interface SkatturinnSubmission {
   id: number
   status: string
+}
+
+export interface ArrivalSubmission {
+  mileage: RegisteredMileage
+  skatturinn: SkatturinnSubmission
 }
