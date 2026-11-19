@@ -14,6 +14,10 @@ import {
   writeScreenHistory,
 } from '../lib/screenNavigation'
 
+// Actions that move the user to another screen. The others (REFETCH, ...) only
+// refresh the screen the user is on.
+const NAVIGATING_ACTIONS = new Set(['NEXT_PAGE', 'PREV_PAGE', 'SUBMIT'])
+
 export const useFormActions = (
   applicationId: string,
   initialScreen: SdfScreen,
@@ -31,9 +35,16 @@ export const useFormActions = (
   // The screen the user is on. Sent with every action so the server can tell
   // which screen the answers belong to.
   const screenIdRef = useRef(initialScreen.page.id)
-  // Orders screen fetches started by navigation (links, back/forward) so a slow
-  // earlier response cannot replace a later one.
-  const latestNavigationRef = useRef(0)
+  // Orders screen requests so a slow response cannot replace the screen of a
+  // later move. A request that moves the user takes a new turn and so
+  // supersedes every request before it; one that only refreshes the current
+  // screen keeps the current turn, so any move started after it supersedes it.
+  const latestTurnRef = useRef(0)
+  const takeTurn = useCallback(
+    (isNavigation: boolean) =>
+      isNavigation ? ++latestTurnRef.current : latestTurnRef.current,
+    [],
+  )
   const pendingTargetCountsRef = useRef<Record<string, number>>({})
   const [pendingRefetchTargets, setPendingRefetchTargets] = useState<string[]>(
     [],
@@ -78,11 +89,12 @@ export const useFormActions = (
     }
     let isActive = true
     localeRef.current = lang
+    const turn = takeTurn(false)
     startTransition(async () => {
       try {
         const requestedId = screenIdRef.current
         const result = await fetchScreen(applicationId, requestedId, lang)
-        if (!isActive) {
+        if (!isActive || turn !== latestTurnRef.current) {
           return
         }
         showScreen(
@@ -108,7 +120,7 @@ export const useFormActions = (
     return () => {
       isActive = false
     }
-  }, [lang, applicationId, showScreen])
+  }, [lang, applicationId, showScreen, takeTurn])
 
   const setAnswer = useCallback((fieldId: string, value: unknown) => {
     answersRef.current = { ...answersRef.current, [fieldId]: value }
@@ -161,6 +173,7 @@ export const useFormActions = (
           ? refetchTargets
           : undefined
       const claimedScreenId = screenIdRef.current
+      const turn = takeTurn(NAVIGATING_ACTIONS.has(actionType))
 
       updatePendingRefetchTargets(targets, 1)
 
@@ -176,6 +189,9 @@ export const useFormActions = (
             event,
             refetchTemplateApiActions,
           )
+          if (turn !== latestTurnRef.current) {
+            return
+          }
           showScreen(
             result,
             getHistoryAction({
@@ -195,13 +211,15 @@ export const useFormActions = (
           setAnswerSnapshot(answersRef.current)
           forceRender((n) => n + 1)
         } catch (e) {
-          setError(e instanceof Error ? e.message : 'Action failed')
+          if (turn === latestTurnRef.current) {
+            setError(e instanceof Error ? e.message : 'Action failed')
+          }
         } finally {
           updatePendingRefetchTargets(targets, -1)
         }
       })
     },
-    [applicationId, updatePendingRefetchTargets, showScreen],
+    [applicationId, updatePendingRefetchTargets, showScreen, takeTurn],
   )
 
   // Fetches a screen the address bar names (`requestedId`) or, for a link
@@ -209,7 +227,7 @@ export const useFormActions = (
   const loadScreen = useCallback(
     (requestedId: string | undefined, source: 'url' | 'navigation') => {
       setError(null)
-      const navigationId = ++latestNavigationRef.current
+      const turn = takeTurn(true)
       startTransition(async () => {
         try {
           const currentId = screenIdRef.current
@@ -218,7 +236,7 @@ export const useFormActions = (
             requestedId,
             localeRef.current,
           )
-          if (navigationId !== latestNavigationRef.current) {
+          if (turn !== latestTurnRef.current) {
             return
           }
           showScreen(
@@ -243,13 +261,13 @@ export const useFormActions = (
           setAnswerSnapshot(answersRef.current)
           forceRender((n) => n + 1)
         } catch (e) {
-          if (navigationId === latestNavigationRef.current) {
+          if (turn === latestTurnRef.current) {
             setError(e instanceof Error ? e.message : 'Action failed')
           }
         }
       })
     },
-    [applicationId, showScreen],
+    [applicationId, showScreen, takeTurn],
   )
 
   // Back/forward changes the address bar without a page load, so show the

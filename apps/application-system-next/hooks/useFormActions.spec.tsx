@@ -200,6 +200,105 @@ describe('useFormActions', () => {
       expect(replaceState).not.toHaveBeenCalled()
     })
 
+    describe('responses arriving out of order', () => {
+      const page3: SdfScreen = {
+        ...screen,
+        page: { ...screen.page, id: 'page-3', index: 2 },
+      }
+      const deferred = <T,>() => {
+        let resolve: (value: T) => void = () => undefined
+        const promise = new Promise<T>((r) => {
+          resolve = r
+        })
+        return { promise, resolve }
+      }
+
+      it('drops a slow action response once the user has gone back', async () => {
+        const nextPageResponse = deferred<SdfScreen>()
+        ;(executeAction as jest.Mock).mockReturnValue(nextPageResponse.promise)
+        ;(fetchScreen as jest.Mock).mockResolvedValue(screen)
+        const { result } = renderHook(() => useFormActions('app-1', screen), {
+          wrapper,
+        })
+
+        await act(async () => {
+          await result.current.nextPage()
+        })
+        window.history.replaceState(null, '', '/?screen=page-0')
+        await act(async () => {
+          window.dispatchEvent(new PopStateEvent('popstate'))
+          await Promise.resolve()
+        })
+        await act(async () => {
+          nextPageResponse.resolve(page2)
+          await Promise.resolve()
+        })
+
+        expect(result.current.screen.page.id).toBe('page-1')
+        expect(pushState).not.toHaveBeenCalled()
+      })
+
+      it('drops a slow refresh once a navigation has completed', async () => {
+        const refetchResponse = deferred<SdfScreen>()
+        ;(executeAction as jest.Mock).mockImplementation(
+          (_id: string, actionType: string) =>
+            actionType === 'REFETCH'
+              ? refetchResponse.promise
+              : Promise.resolve(page2),
+        )
+        const { result } = renderHook(() => useFormActions('app-1', screen), {
+          wrapper,
+        })
+
+        await act(async () => {
+          await result.current.refetch()
+        })
+        await act(async () => {
+          await result.current.nextPage()
+        })
+        expect(result.current.screen.page.id).toBe('page-2')
+
+        await act(async () => {
+          refetchResponse.resolve(screen)
+          await Promise.resolve()
+        })
+
+        expect(result.current.screen.page.id).toBe('page-2')
+        expect(replaceState).not.toHaveBeenCalled()
+      })
+
+      it('still applies a navigation when a refresh started after it', async () => {
+        const nextPageResponse = deferred<SdfScreen>()
+        ;(executeAction as jest.Mock).mockImplementation(
+          (_id: string, actionType: string) =>
+            actionType === 'NEXT_PAGE'
+              ? nextPageResponse.promise
+              : Promise.resolve(screen),
+        )
+        const { result } = renderHook(() => useFormActions('app-1', screen), {
+          wrapper,
+        })
+
+        await act(async () => {
+          await result.current.nextPage()
+        })
+        await act(async () => {
+          await result.current.refetch()
+        })
+        await act(async () => {
+          nextPageResponse.resolve(page3)
+          await Promise.resolve()
+        })
+
+        expect(result.current.screen.page.id).toBe('page-3')
+        expect(pushState).toHaveBeenCalledWith(
+          null,
+          '',
+          expect.stringContaining('screen=page-3'),
+        )
+      })
+    })
+
     it('goToScreen fetches the screen and pushes it', async () => {
       ;(fetchScreen as jest.Mock).mockResolvedValue(page2)
       const { result } = renderHook(() => useFormActions('app-1', screen), {
