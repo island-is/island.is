@@ -1,9 +1,14 @@
-import { RequestSharedWithDefender } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  completedRequestCaseStates,
+  RequestSharedWithDefender,
+} from '@island.is/judicial-system/types'
 
 import {
   getMostPermissiveRequestSharedWithDefender,
   getMostPermissiveRequestSharedWithDefenderForNationalId,
   getMostPermissiveRequestSharedWithDefenderForRecipient,
+  isRequestSharedWithDefender,
 } from '../requestSharedWithDefender.logic'
 
 describe('getMostPermissiveRequestSharedWithDefender', () => {
@@ -178,5 +183,65 @@ describe('getMostPermissiveRequestSharedWithDefenderForRecipient', () => {
         { email, nationalId },
       ),
     ).toBe(RequestSharedWithDefender.COURT_DATE)
+  })
+})
+
+describe('isRequestSharedWithDefender', () => {
+  const nationalId = '0101010101'
+  const defendantsSharedAt = (
+    requestSharedWithDefender: RequestSharedWithDefender | null,
+  ) => [{ defenderNationalId: nationalId, requestSharedWithDefender }]
+
+  test.each(completedRequestCaseStates)(
+    'is shared once the case is %s, whatever the prosecutor chose',
+    (state) => {
+      expect(
+        isRequestSharedWithDefender({
+          state,
+          defendants: defendantsSharedAt(RequestSharedWithDefender.NOT_SHARED),
+          nationalId,
+          hasArraignmentDate: false,
+        }),
+      ).toBe(true)
+    },
+  )
+
+  test.each`
+    requestSharedWithDefender                    | hasArraignmentDate | expected
+    ${RequestSharedWithDefender.READY_FOR_COURT} | ${false}           | ${true}
+    ${RequestSharedWithDefender.COURT_DATE}      | ${true}            | ${true}
+    ${RequestSharedWithDefender.COURT_DATE}      | ${false}           | ${false}
+    ${RequestSharedWithDefender.NOT_SHARED}      | ${true}            | ${false}
+    ${null}                                      | ${true}            | ${false}
+  `(
+    'is $expected for an open case shared at $requestSharedWithDefender when hasArraignmentDate is $hasArraignmentDate',
+    ({ requestSharedWithDefender, hasArraignmentDate, expected }) => {
+      expect(
+        isRequestSharedWithDefender({
+          state: CaseState.RECEIVED,
+          defendants: defendantsSharedAt(requestSharedWithDefender),
+          nationalId,
+          hasArraignmentDate,
+        }),
+      ).toBe(expected)
+    },
+  )
+
+  test("is not shared through another defendant's more permissive choice", () => {
+    expect(
+      isRequestSharedWithDefender({
+        state: CaseState.RECEIVED,
+        defendants: [
+          ...defendantsSharedAt(RequestSharedWithDefender.NOT_SHARED),
+          {
+            defenderNationalId: '0202020202',
+            requestSharedWithDefender:
+              RequestSharedWithDefender.READY_FOR_COURT,
+          },
+        ],
+        nationalId,
+        hasArraignmentDate: true,
+      }),
+    ).toBe(false)
   })
 })

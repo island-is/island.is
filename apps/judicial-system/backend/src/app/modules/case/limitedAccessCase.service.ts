@@ -11,12 +11,14 @@ import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseFileCategory,
   hasGeneratedCourtRecordPdf,
+  isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
   isRequestCase,
   isRulingOrderWithoutDocument,
 } from '@island.is/judicial-system/types'
 
+import { isRequestSharedWithDefender } from '../defendant/requestSharedWithDefender.logic'
 import {
   canLimitedAccessUserViewCaseFile,
   FileService,
@@ -31,6 +33,7 @@ import {
   CaseFile,
   CaseRepositoryService,
   CivilClaimant,
+  DateLog,
   Defendant,
 } from '../repository'
 import { PdfService } from './pdf.service'
@@ -311,28 +314,48 @@ export class LimitedAccessCaseService {
       )
     }
 
+    // The zip is available while the case is still open, so each generated
+    // document is held to the same condition as its own download: the request
+    // follows the prosecutor's sharing choice, and the court record and ruling
+    // are drafts until the case is completed.
     if (isRequestCase(theCase.type)) {
-      promises.push(
-        this.tryAddGeneratedPdfToFilesToZip(
-          this.pdfService.getRequestPdf(theCase),
-          'Krafa.pdf',
-          filesToZip,
-        ),
-        this.tryAddGeneratedPdfToFilesToZip(
-          this.pdfService.getCourtRecordPdf(theCase, user),
-          'Þingbók.pdf',
-          filesToZip,
-        ),
-      )
-
-      if (!theCase.isCompletedWithoutRuling) {
+      if (
+        isRequestSharedWithDefender({
+          state: theCase.state,
+          defendants: theCase.defendants,
+          nationalId: user.nationalId,
+          hasArraignmentDate: Boolean(
+            DateLog.arraignmentDate(theCase.dateLogs),
+          ),
+        })
+      ) {
         promises.push(
           this.tryAddGeneratedPdfToFilesToZip(
-            this.pdfService.getRulingPdf(theCase),
-            'Úrskurður.pdf',
+            this.pdfService.getRequestPdf(theCase),
+            'Krafa.pdf',
             filesToZip,
           ),
         )
+      }
+
+      if (isCompletedCase(theCase.state)) {
+        promises.push(
+          this.tryAddGeneratedPdfToFilesToZip(
+            this.pdfService.getCourtRecordPdf(theCase, user),
+            'Þingbók.pdf',
+            filesToZip,
+          ),
+        )
+
+        if (!theCase.isCompletedWithoutRuling) {
+          promises.push(
+            this.tryAddGeneratedPdfToFilesToZip(
+              this.pdfService.getRulingPdf(theCase),
+              'Úrskurður.pdf',
+              filesToZip,
+            ),
+          )
+        }
       }
     }
 

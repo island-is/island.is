@@ -9,15 +9,18 @@ import * as styles from './ZipButton.css'
 interface Props {
   caseId: string
   courtCaseNumber?: string | null
+  policeCaseNumbers?: string[] | null
 }
 
 const ZipButton: FC<Props> = (props) => {
-  const { caseId, courtCaseNumber } = props
+  const { caseId, courtCaseNumber, policeCaseNumbers } = props
+  // The court has not assigned a case number yet early in the process
+  const caseNumber = courtCaseNumber || policeCaseNumbers?.[0]
 
   return (
     <a
       href={`${api.apiUrl}/api/case/${caseId}/limitedAccess/allFiles`}
-      download={`mal_${courtCaseNumber}`}
+      download={caseNumber ? `mal_${caseNumber}` : 'mal'}
       className={styles.downloadAllButton}
     >
       <Button
