@@ -24,6 +24,7 @@ import type {
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCivilClaimants } from '@island.is/judicial-system-web/src/utils/hooks'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { isAdvocateContactValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { strings } from './Advocates.strings'
 import * as styles from './Advocates.css'
@@ -259,7 +260,13 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             onClick={() => {
               setDisplayModal(true)
             }}
-            disabled={workingCase.state === CaseState.CORRECTING}
+            disabled={
+              workingCase.state === CaseState.CORRECTING ||
+              !isAdvocateContactValid(
+                civilClaimant.spokespersonEmail,
+                civilClaimant.spokespersonPhoneNumber,
+              )
+            }
           >
             {formatMessage(
               {
