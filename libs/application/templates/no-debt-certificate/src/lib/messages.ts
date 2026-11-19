@@ -31,11 +31,6 @@ export const m = defineMessages({
     defaultMessage: 'Ensku',
     description: 'Option for an English certificate',
   },
-  continue: {
-    id: 'ndc.application:continue',
-    defaultMessage: 'Áfram',
-    description: 'Continue button',
-  },
   externalDataSection: {
     id: 'ndc.application:externalData.section',
     defaultMessage: 'Gagnaöflun',

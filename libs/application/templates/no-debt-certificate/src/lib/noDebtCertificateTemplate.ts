@@ -71,7 +71,7 @@ const template: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
-              write: 'all',
+              write: { answers: ['certificateLanguage'] },
             },
           ],
         },

@@ -7,6 +7,7 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { DebtCollectorLogo } from '@island.is/application/assets/institution-logos'
+import { coreMessages } from '@island.is/application/core'
 import { m } from '../lib/messages'
 import { CertificateLanguage } from '../lib/constants'
 
@@ -47,7 +48,7 @@ export const Prerequisites: Form = buildForm({
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: m.continue,
+                  name: coreMessages.buttonNext,
                   type: 'primary',
                 },
               ],
@@ -55,16 +56,6 @@ export const Prerequisites: Form = buildForm({
           ],
         }),
       ],
-    }),
-    buildSection({
-      id: 'externalData',
-      title: m.externalDataSection,
-      children: [],
-    }),
-    buildSection({
-      id: 'confirmation',
-      title: m.confirmation,
-      children: [],
     }),
   ],
 })

@@ -13,11 +13,6 @@ export const Approved: Form = buildForm({
   mode: FormModes.APPROVED,
   children: [
     buildSection({
-      id: 'certificateLanguageSection',
-      title: m.certificateLanguageSection,
-      children: [],
-    }),
-    buildSection({
       id: 'externalData',
       title: m.externalDataSection,
       children: [],
