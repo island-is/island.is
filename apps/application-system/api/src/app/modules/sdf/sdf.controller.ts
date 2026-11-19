@@ -69,7 +69,7 @@ export class SdfController {
     @Query('locale') locale?: string,
     @CurrentUser() user?: User,
   ): Promise<ScreenDto> {
-    return this.sdfScreenService.getScreenById(
+    return this.sdfScreenService.getScreen(
       applicationId,
       // A repeated query parameter arrives as an array, which names no screen.
       typeof screen === 'string' ? screen : undefined,
@@ -131,16 +131,6 @@ export class SdfController {
           locale,
           user!,
           this.requireScreen(dto, applicationId),
-        )
-
-      case SdfActionType.GO_TO_PAGE:
-        // The destination page id rides on `event` (see SdfActionType). Without
-        // it no page can match, and the request would silently be a no-op.
-        return this.sdfScreenService.goToPage(
-          applicationId,
-          this.requireEvent(dto, applicationId),
-          locale,
-          user!,
         )
 
       case SdfActionType.REFETCH:

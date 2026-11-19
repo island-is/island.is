@@ -131,7 +131,7 @@ const createEdpTemplate = (write: 'all' | { externalData: string[] }) =>
 describe('SdfScreenService — write-permission check on persisting action-run paths', () => {
   describe('persistAnswersAndAdvance (NEXT_PAGE, EXTERNAL_DATA_PROVIDER branch)', () => {
     it('rejects triggering a data provider outside the role’s write.externalData', async () => {
-      const application = createApplication({ pageIndex: 0 })
+      const application = createApplication()
       getApplicationTemplateByTypeIdMock.mockResolvedValue(
         createEdpTemplate({ externalData: ['someOtherProvider'] }),
       )
@@ -163,7 +163,7 @@ describe('SdfScreenService — write-permission check on persisting action-run p
     })
 
     it('allows it when the role has write access to the provider', async () => {
-      const application = createApplication({ pageIndex: 0 })
+      const application = createApplication()
       getApplicationTemplateByTypeIdMock.mockResolvedValue(
         createEdpTemplate({ externalData: ['restrictedProvider'] }),
       )
@@ -194,7 +194,7 @@ describe('SdfScreenService — write-permission check on persisting action-run p
     })
 
     it('allows it when the role has write: "all"', async () => {
-      const application = createApplication({ pageIndex: 0 })
+      const application = createApplication()
       getApplicationTemplateByTypeIdMock.mockResolvedValue(
         createEdpTemplate('all'),
       )

@@ -383,7 +383,7 @@ const createTemplate = (
     },
   })
 
-type ApplicationRow = ApplicationWithAttachments & { pageIndex: number | null }
+type ApplicationRow = ApplicationWithAttachments
 
 const createApplicationRow = (
   overrides: Partial<ApplicationRow>,
@@ -405,7 +405,6 @@ const createApplicationRow = (
     institution: 'Test institution',
     progress: 0,
     pruned: false,
-    pageIndex: 0,
     ...overrides,
   } as unknown as ApplicationRow)
 
@@ -1158,63 +1157,6 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       stateChanges: [],
     },
   ],
-  [SdfActionType.GO_TO_PAGE]: [
-    {
-      label: 'to another page',
-      form: twoPageForm,
-      dto: { actionType: SdfActionType.GO_TO_PAGE, event: 'page1' },
-      saves: [{ pageIndex: 1 }],
-      persistingActions: [],
-      ephemeralActions: [],
-      stateChanges: [],
-    },
-    {
-      // With answers saved, the first page must not be taken as "no page
-      // saved yet" and resumed at the first unanswered page.
-      label: 'to the first page of an application with answers',
-      form: twoPageForm,
-      application: { pageIndex: 1, answers: { field0: 'value' } },
-      dto: { actionType: SdfActionType.GO_TO_PAGE, event: 'page0' },
-      saves: [{ pageIndex: 0 }],
-      persistingActions: [],
-      ephemeralActions: [],
-      stateChanges: [],
-      screenIndex: 0,
-    },
-    {
-      // Going to the first page saves it, so the reload that follows does not
-      // resume at the first unanswered page instead.
-      label: 'to the first page of an application with no saved page',
-      form: twoPageForm,
-      application: { pageIndex: null, answers: { field0: 'value' } },
-      dto: { actionType: SdfActionType.GO_TO_PAGE, event: 'page0' },
-      saves: [{ pageIndex: 0 }],
-      persistingActions: [],
-      ephemeralActions: [],
-      stateChanges: [],
-      screenIndex: 0,
-    },
-    {
-      label: 'to the current page',
-      form: twoPageForm,
-      application: { pageIndex: 1 },
-      dto: { actionType: SdfActionType.GO_TO_PAGE, event: 'page1' },
-      saves: [],
-      persistingActions: [],
-      ephemeralActions: [],
-      stateChanges: [],
-    },
-    {
-      label: 'to an unknown page',
-      form: twoPageForm,
-      application: { pageIndex: 1 },
-      dto: { actionType: SdfActionType.GO_TO_PAGE, event: 'noSuchPage' },
-      saves: [],
-      persistingActions: [],
-      ephemeralActions: [],
-      stateChanges: [],
-    },
-  ],
   // These rows send a non-default event, so a hardcoded 'SUBMIT' anywhere on
   // the way to changeState shows up.
   [SdfActionType.SUBMIT]: [
@@ -1755,8 +1697,6 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
   ],
   [SdfActionType.REFETCH]: [
     {
-      // With these answers and pageIndex 0, a non-ephemeral getScreen would
-      // save a "resume" pageIndex, so this row also guards that flag.
       label: 'running one of the role actions',
       form: twoPageForm,
       dto: {
@@ -2221,15 +2161,14 @@ describe('SDF action persistence', () => {
 })
 
 // A screen request names the screen to show by its id. With no id, or an id
-// that no shown screen has, it resumes at the first unanswered page. The saved
-// page plays no part, and nothing is saved.
+// that no shown screen has, it resumes at the first unanswered page. Nothing is
+// saved.
 describe('SDF screen request by screen id', () => {
   beforeEach(() => jest.clearAllMocks())
 
   it.each<{
     label: string
     form: PersistenceCase['form']
-    pageIndex: ApplicationRow['pageIndex']
     answers: ApplicationRow['answers']
     screen?: string
     pageId: string
@@ -2238,7 +2177,6 @@ describe('SDF screen request by screen id', () => {
     {
       label: 'shows the screen it is asked for',
       form: twoPageForm,
-      pageIndex: 0,
       answers: {},
       screen: 'page1',
       pageId: 'page1',
@@ -2247,23 +2185,13 @@ describe('SDF screen request by screen id', () => {
     {
       label: 'resumes at the first unanswered page when no id is given',
       form: twoPageForm,
-      pageIndex: 0,
       answers: { field0: 'value' },
       pageId: 'page1',
       fallsBack: false,
     },
     {
-      label: 'ignores the saved page',
-      form: twoPageForm,
-      pageIndex: 1,
-      answers: {},
-      pageId: 'page0',
-      fallsBack: false,
-    },
-    {
       label: 'resumes when no screen has the id',
       form: twoPageForm,
-      pageIndex: 0,
       answers: {},
       screen: 'nowhere',
       pageId: 'page0',
@@ -2272,7 +2200,6 @@ describe('SDF screen request by screen id', () => {
     {
       label: 'resumes when the screen is hidden',
       form: hiddenFirstPageForm,
-      pageIndex: 0,
       answers: {},
       screen: 'page0',
       pageId: 'page1',
@@ -2281,44 +2208,40 @@ describe('SDF screen request by screen id', () => {
     {
       label: 'skips a hidden first page when resuming',
       form: hiddenFirstPageForm,
-      pageIndex: null,
       answers: {},
       pageId: 'page1',
       fallsBack: false,
     },
-  ])(
-    '$label',
-    async ({ form, pageIndex, answers, screen, pageId, fallsBack }) => {
-      const row = createApplicationRow({ pageIndex, answers })
-      getApplicationTemplateByTypeIdMock.mockResolvedValue(
-        createTemplate(form, permissiveSchema, 'all'),
-      )
-      const { controller, applicationService, logger } = buildController(row, {
-        persistingAction: succeeded,
-        ephemeralAction: succeeded,
-        changeState: transitioned,
-      })
+  ])('$label', async ({ form, answers, screen, pageId, fallsBack }) => {
+    const row = createApplicationRow({ answers })
+    getApplicationTemplateByTypeIdMock.mockResolvedValue(
+      createTemplate(form, permissiveSchema, 'all'),
+    )
+    const { controller, applicationService, logger } = buildController(row, {
+      persistingAction: succeeded,
+      ephemeralAction: succeeded,
+      changeState: transitioned,
+    })
 
-      const response = await controller.getScreen(row.id, screen, 'is', {
-        nationalId: APPLICANT,
-      } as User)
+    const response = await controller.getScreen(row.id, screen, 'is', {
+      nationalId: APPLICANT,
+    } as User)
 
-      expect(response.page.id).toBe(pageId)
-      expect(applicationService.update).not.toHaveBeenCalled()
-      expect(
-        logger.warn.mock.calls.filter(
-          ([message]) => message === 'SDF screen request fell back to resume',
-        ),
-      ).toEqual(
-        fallsBack
-          ? [
-              [
-                'SDF screen request fell back to resume',
-                { claimedScreenId: screen },
-              ],
-            ]
-          : [],
-      )
-    },
-  )
+    expect(response.page.id).toBe(pageId)
+    expect(applicationService.update).not.toHaveBeenCalled()
+    expect(
+      logger.warn.mock.calls.filter(
+        ([message]) => message === 'SDF screen request fell back to resume',
+      ),
+    ).toEqual(
+      fallsBack
+        ? [
+            [
+              'SDF screen request fell back to resume',
+              { claimedScreenId: screen },
+            ],
+          ]
+        : [],
+    )
+  })
 })

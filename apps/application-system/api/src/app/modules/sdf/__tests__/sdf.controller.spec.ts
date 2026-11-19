@@ -10,13 +10,12 @@ const user = { nationalId: '0101302989' } as User
 
 const buildController = () => {
   const sdfScreenService = {
-    getScreenById: jest.fn().mockResolvedValue({}),
+    getScreen: jest.fn().mockResolvedValue({}),
     persistAnswersAndAdvance: jest.fn().mockResolvedValue({}),
     goToPreviousPage: jest.fn().mockResolvedValue({}),
     handleRefetch: jest.fn().mockResolvedValue({}),
     validateFields: jest.fn().mockResolvedValue({ errors: [] }),
     handleSubmit: jest.fn().mockResolvedValue({}),
-    goToPage: jest.fn().mockResolvedValue({}),
   }
   const controller = new SdfController(
     sdfScreenService as unknown as SdfScreenService,
@@ -34,7 +33,7 @@ describe('SdfController.getScreen', () => {
 
     await controller.getScreen(APPLICATION_ID, 'page1', 'en', user)
 
-    expect(sdfScreenService.getScreenById).toHaveBeenCalledWith(
+    expect(sdfScreenService.getScreen).toHaveBeenCalledWith(
       APPLICATION_ID,
       'page1',
       'en',
@@ -47,7 +46,7 @@ describe('SdfController.getScreen', () => {
 
     await controller.getScreen(APPLICATION_ID, undefined, undefined, user)
 
-    expect(sdfScreenService.getScreenById).toHaveBeenCalledWith(
+    expect(sdfScreenService.getScreen).toHaveBeenCalledWith(
       APPLICATION_ID,
       undefined,
       'is',
@@ -65,7 +64,7 @@ describe('SdfController.getScreen', () => {
       user,
     )
 
-    expect(sdfScreenService.getScreenById).toHaveBeenCalledWith(
+    expect(sdfScreenService.getScreen).toHaveBeenCalledWith(
       APPLICATION_ID,
       undefined,
       'is',
@@ -279,41 +278,6 @@ describe('SdfController.executeAction — SUBMIT', () => {
       'is',
       user,
       'page1',
-    )
-  })
-})
-
-describe('SdfController.executeAction — GO_TO_PAGE', () => {
-  it.each([
-    ['missing', undefined],
-    ['empty', ''],
-  ])(
-    'rejects with 400 when event (the page id) is %s, and never reaches the service',
-    async (_label, event) => {
-      const { controller, sdfScreenService } = buildController()
-      const dto = actionDto({ actionType: SdfActionType.GO_TO_PAGE, event })
-
-      await expect(
-        controller.executeAction(APPLICATION_ID, dto, user),
-      ).rejects.toBeInstanceOf(BadRequestException)
-      expect(sdfScreenService.goToPage).not.toHaveBeenCalled()
-    },
-  )
-
-  it('forwards the event as the destination page id', async () => {
-    const { controller, sdfScreenService } = buildController()
-    const dto = actionDto({
-      actionType: SdfActionType.GO_TO_PAGE,
-      event: 'applicantPage',
-    })
-
-    await controller.executeAction(APPLICATION_ID, dto, user)
-
-    expect(sdfScreenService.goToPage).toHaveBeenCalledWith(
-      APPLICATION_ID,
-      'applicantPage',
-      'is',
-      user,
     )
   })
 })
