@@ -60,11 +60,16 @@ describe('getVerdictAppealOverviewHeaderLines', () => {
       getVerdictAppealOverviewHeaderLines({
         courtCaseNumber: 'S-14/2026',
         rulingDate: '2026-03-10T17:25:24.000Z',
+        defendants: [{ name: 'Jón Jónsson' }],
         verdictAppealCase: {
+          // Distinct from the generated fallback so a missing caseName wire
+          // cannot make this assertion pass by accident.
+          caseName: 'Ákæruvaldið gegn Atla Atlassyni',
           appealEventLogs: [appealedAt('2026-09-09T10:05:24.576Z')],
         },
       } as HeaderCase),
     ).toEqual([
+      'Ákæruvaldið gegn Atla Atlassyni',
       'Héraðsdómsmál S-14/2026',
       'Dómsuppkvaðning 10. mars 2026',
       'Áfrýjun barst Landsrétti 9. september 2026',
@@ -79,8 +84,19 @@ describe('getVerdictAppealOverviewHeaderLines', () => {
       getVerdictAppealOverviewHeaderLines({
         courtCaseNumber: 'S-14/2026',
         rulingDate: null,
+        defendants: [],
         verdictAppealCase: null,
       } as HeaderCase),
     ).toEqual(['Héraðsdómsmál S-14/2026'])
+  })
+
+  it('falls back to declined defendant names when no case name is stored', () => {
+    expect(
+      getVerdictAppealOverviewHeaderLines({
+        courtCaseNumber: 'S-14/2026',
+        defendants: [{ name: 'Jón Jónsson' }],
+        verdictAppealCase: { appealEventLogs: [] },
+      } as HeaderCase),
+    ).toEqual(['Ákæruvaldið gegn Jóni Jónssyni', 'Héraðsdómsmál S-14/2026'])
   })
 })

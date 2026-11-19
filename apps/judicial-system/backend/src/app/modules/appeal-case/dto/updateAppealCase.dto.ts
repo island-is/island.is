@@ -27,6 +27,11 @@ export class UpdateAppealCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
+  readonly caseName?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
   readonly appealAssistantId?: string
 
   // The whole bench, in order: when present it replaces the judges of the

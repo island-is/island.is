@@ -80,10 +80,16 @@ describe('getAppealAppointmentSentence', () => {
 describe('getAppealAppointmentCaseTitleLines', () => {
   // Three lines, which is how a court document heads a case.
   it('breaks the case title the way the letter sets it', () => {
-    expect(getAppealAppointmentCaseTitleLines('Gervimanni Jónssyni')).toEqual([
-      'Ákæruvaldið',
-      'gegn',
-      'Gervimanni Jónssyni',
+    expect(
+      getAppealAppointmentCaseTitleLines(
+        'Ákæruvaldið gegn Gervimanni Jónssyni',
+      ),
+    ).toEqual(['Ákæruvaldið', 'gegn', 'Gervimanni Jónssyni'])
+  })
+
+  it('keeps a free-form case name on one line', () => {
+    expect(getAppealAppointmentCaseTitleLines('Sérstakt heiti')).toEqual([
+      'Sérstakt heiti',
     ])
   })
 })
@@ -107,10 +113,10 @@ describe('getAppealAppointmentAddresseeLines', () => {
 })
 
 describe('getAppealAppointmentCaseTitle', () => {
-  it('names the case after the accused, whoever is appointed', () => {
-    expect(getAppealAppointmentCaseTitle('Gervimanni Jónssyni')).toBe(
-      'Ákæruvaldið gegn Gervimanni Jónssyni',
-    )
+  it('uses the stored case name as-is', () => {
+    expect(
+      getAppealAppointmentCaseTitle('Ákæruvaldið gegn Gervimanni Jónssyni'),
+    ).toBe('Ákæruvaldið gegn Gervimanni Jónssyni')
   })
 })
 
@@ -118,7 +124,7 @@ describe('getAppealAppointmentBody', () => {
   const letter = {
     courtName: 'Héraðsdóms Reykjavíkur',
     courtCaseNumber: 'S-4275/2025',
-    defendantName: 'Gervimanni Jónssyni',
+    defendantName: 'Ákæruvaldið gegn Gervimanni Jónssyni',
     appealCaseNumber: '593/2026',
     appealSummonsDate: '2026-06-22T00:00:00.000Z',
   }
@@ -158,7 +164,7 @@ describe('createAppealAppointmentLetter', () => {
   const letter = {
     kind: AppealAppointmentKind.DEFENDER,
     advocateName: 'Þórður Már Jónsson',
-    defendantName: 'Gervimanni Jónssyni',
+    defendantName: 'Ákæruvaldið gegn Gervimanni Jónssyni',
     courtName: 'Héraðsdóms Reykjavíkur',
     courtCaseNumber: 'S-4275/2025',
     appealCaseNumber: '593/2026',

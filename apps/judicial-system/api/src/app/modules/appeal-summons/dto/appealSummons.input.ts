@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer'
+import { Transform, Type } from 'class-transformer'
 import {
   Allow,
   ArrayMinSize,
@@ -60,6 +60,13 @@ export class CreateAppealSummonsInput {
   readonly caseId!: string
 
   @Allow()
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @IsString()
+  @IsNotEmpty()
+  @Field(() => String)
+  readonly caseName!: string
+
+  @Allow()
   @IsArray()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
@@ -79,6 +86,13 @@ export class UpdateAppealSummonsInput {
   @IsUUID()
   @Field(() => ID)
   readonly appealSummonsId!: string
+
+  @Allow()
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @IsString()
+  @IsNotEmpty()
+  @Field(() => String)
+  readonly caseName!: string
 
   @Allow()
   @IsArray()

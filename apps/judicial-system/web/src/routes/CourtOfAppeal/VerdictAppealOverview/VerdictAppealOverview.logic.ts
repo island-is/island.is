@@ -1,4 +1,7 @@
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  resolveAppealCaseName,
+} from '@island.is/judicial-system/formatters'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { AppealEventType } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -43,10 +46,20 @@ export const getVerdictAppealReceivedDate = (
 export const getVerdictAppealOverviewHeaderLines = (
   theCase: Pick<
     WorkingCase,
-    'courtCaseNumber' | 'rulingDate' | 'verdictAppealCase'
+    'courtCaseNumber' | 'rulingDate' | 'verdictAppealCase' | 'defendants'
   >,
 ): string[] => {
   const lines: string[] = []
+
+  const caseName = resolveAppealCaseName(
+    theCase.verdictAppealCase?.caseName,
+    (theCase.defendants ?? []).map((defendant) => defendant.name),
+    { decline: true },
+  )
+
+  if (caseName && caseName !== 'Ákæruvaldið') {
+    lines.push(caseName)
+  }
 
   if (theCase.courtCaseNumber) {
     lines.push(`Héraðsdómsmál ${theCase.courtCaseNumber}`)

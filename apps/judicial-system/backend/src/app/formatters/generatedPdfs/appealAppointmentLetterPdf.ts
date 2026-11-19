@@ -94,18 +94,21 @@ const COPY_BLOCK_GAP = 24
 const COPY_BLOCK_BOTTOM_GAP = 14
 
 /** How a criminal case is named: the prosecution against the accused. */
-export const getAppealAppointmentCaseTitle = (defendantName: string) =>
-  `Ákæruvaldið gegn ${defendantName}`
+export const getAppealAppointmentCaseTitle = (caseName: string) => caseName
 
 /**
- * The same title as the letter heads itself with: three lines, which is how a
- * court document names a case.
+ * The same title as the letter heads itself with: three lines when the stored
+ * name follows "Ákæruvaldið gegn …", otherwise a single line for free-form edits.
  */
-export const getAppealAppointmentCaseTitleLines = (defendantName: string) => [
-  'Ákæruvaldið',
-  'gegn',
-  defendantName,
-]
+export const getAppealAppointmentCaseTitleLines = (caseName: string) => {
+  const prefix = 'Ákæruvaldið gegn '
+
+  if (caseName.startsWith(prefix)) {
+    return ['Ákæruvaldið', 'gegn', caseName.slice(prefix.length)]
+  }
+
+  return [caseName]
+}
 
 /** The court of appeals number, or what stands in for it until one is recorded. */
 export const getAppealCaseNumberOrPlaceholder = (

@@ -75,6 +75,9 @@ export class AppealCase {
   readonly appealCaseNumber?: string
 
   @Field(() => String, { nullable: true })
+  readonly caseName?: string
+
+  @Field(() => String, { nullable: true })
   readonly appealReceivedByCourtDate?: string
 
   @Field(() => String, { nullable: true })

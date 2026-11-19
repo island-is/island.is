@@ -3,7 +3,10 @@ import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  resolveAppealCaseName,
+} from '@island.is/judicial-system/formatters'
 import DateLabel from '@island.is/judicial-system-web/src/components/DateLabel/DateLabel'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/DateLabel/RulingDateLabel'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
@@ -12,6 +15,7 @@ import RestrictionTags from '@island.is/judicial-system-web/src/components/Restr
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   AppealCaseState,
+  AppealCaseType,
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CaseNumbers } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components'
@@ -34,10 +38,29 @@ const CaseTitleInfoAndTags: FC = () => {
     : undefined
   const rulingOrderFileName = rulingOrderFile?.userGeneratedFilename
   const courtCaseNumberPrefix = `${workingCase.courtCaseNumber ?? ''} `
+  // Verdict appeals use the editable style-of-cause (or a Beygla fallback),
+  // not the generic indictment state title ("Máli lokið"). Prefer a stored
+  // name even when it is only "Ákæruvaldið"; fall back to the case-state
+  // title only when there is neither a stored name nor any defendant to name.
+  const isVerdictAppeal =
+    targetAppealCase?.appealType === AppealCaseType.VERDICT
+  const hasStoredAppealCaseName = Boolean(targetAppealCase?.caseName?.trim())
+  const hasNamedDefendant = (workingCase.defendants ?? []).some((defendant) =>
+    Boolean(defendant.name?.trim()),
+  )
+  const verdictAppealCaseName = isVerdictAppeal
+    ? resolveAppealCaseName(
+        targetAppealCase?.caseName,
+        (workingCase.defendants ?? []).map((defendant) => defendant.name),
+        { decline: true },
+      )
+    : undefined
   const title = rulingOrderFile
     ? (rulingOrderFileName?.startsWith(courtCaseNumberPrefix)
         ? rulingOrderFileName.slice(courtCaseNumberPrefix.length)
         : rulingOrderFileName) ?? 'Úrskurður'
+    : verdictAppealCaseName && (hasStoredAppealCaseName || hasNamedDefendant)
+    ? verdictAppealCaseName
     : titleForCase(formatMessage, workingCase)
 
   return (

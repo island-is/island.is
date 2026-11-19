@@ -33,6 +33,7 @@ import { AwsS3Service } from '../aws-s3'
 import { PdfService } from '../case'
 import { PoliceService } from '../police'
 import {
+  AppealCaseRepositoryService,
   AppealEventLogRepositoryService,
   AppealSummons,
   AppealSummonsRepositoryService,
@@ -51,6 +52,7 @@ export class AppealSummonsService {
   constructor(
     private readonly appealSummonsRepositoryService: AppealSummonsRepositoryService,
     private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
+    private readonly appealCaseRepositoryService: AppealCaseRepositoryService,
     private readonly caseRepositoryService: CaseRepositoryService,
     private readonly pdfService: PdfService,
     private readonly awsS3Service: AwsS3Service,
@@ -107,6 +109,17 @@ export class AppealSummonsService {
     )
 
     const resolvedDefendants = this.resolveDefendants(theCase, dto)
+    const caseName = dto.caseName.trim()
+
+    if (!caseName) {
+      throw new BadRequestException('caseName must not be empty')
+    }
+
+    await this.appealCaseRepositoryService.update(
+      appealCase.id,
+      { caseName },
+      { transaction },
+    )
 
     const summons = await this.appealSummonsRepositoryService.create(
       { caseId: theCase.id, appealCaseId: appealCase.id },
@@ -171,6 +184,24 @@ export class AppealSummonsService {
     }
 
     const resolvedDefendants = this.resolveDefendants(theCase, dto, summons)
+    const appealCaseId = summons.appealCaseId ?? theCase.verdictAppealCase?.id
+    const caseName = dto.caseName.trim()
+
+    if (!appealCaseId) {
+      throw new BadRequestException(
+        `Appeal summons ${summons.id} has no appeal case to update`,
+      )
+    }
+
+    if (!caseName) {
+      throw new BadRequestException('caseName must not be empty')
+    }
+
+    await this.appealCaseRepositoryService.update(
+      appealCaseId,
+      { caseName },
+      { transaction },
+    )
 
     if (summons.confirmedDate) {
       // Rejected if a concurrent send already went through.

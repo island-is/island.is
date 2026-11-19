@@ -116,6 +116,15 @@ export class AppealCase extends Model {
   appealCaseNumber?: string
 
   /**********
+   * Style-of-cause for the appeal ("Ákæruvaldið gegn …"), entered when the
+   * appeal summons is issued and reused in later documents and CoA headers.
+   * Nullable so older summonses keep working via a computed fallback.
+   **********/
+  @Column({ type: DataType.TEXT, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  caseName?: string
+
+  /**********
    * The time and date that the court marked an appeal as received
    **********/
   @Column({ type: DataType.DATE, allowNull: true })
