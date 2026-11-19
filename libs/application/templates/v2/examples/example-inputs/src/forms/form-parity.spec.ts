@@ -106,7 +106,11 @@ const normalizeMainFormParityAst = (value: unknown): unknown => {
     return Object.fromEntries(
       entries.map(([entryKey, entryValue]) => [
         entryKey,
-        normalizeMainFormParityAst(entryValue),
+        // SDF needs every screen to have an id, and a page holding only the
+        // static table takes the table's id. The legacy table has an empty id.
+        entryKey === 'id' && entryValue === 'staticTable'
+          ? ''
+          : normalizeMainFormParityAst(entryValue),
       ]),
     )
   }
