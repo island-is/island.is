@@ -734,13 +734,24 @@ export class CardPaymentService {
       throw e
     }
 
-    const data = await this.parsePaymentGatewayResponseAndHandleErrors({
+    const charge = await this.parsePaymentGatewayResponseAndHandleErrors({
       paymentFlowId,
       response,
       schema: CardPaymentSuccessSchema,
       errorSchema: CardPaymentErrorSchema,
       errorMessage: 'Failed to charge Apple Pay payment',
     })
+
+    // When the gateway sends neither maskedCardNumber nor lastFourInPan (see
+    // CardPaymentSuccessSchema), the last four digits of the card number in
+    // the decrypted token take their place: the device's card number, which
+    // is what the gateway charged
+    const data = charge.maskedCardNumber
+      ? charge
+      : {
+          ...charge,
+          maskedCardNumber: `************${decryptedData.cardNumber.slice(-4)}`,
+        }
 
     this.logger.info(`${logPrefix} Apple Pay charge succeeded`, {
       paymentFlowId,
@@ -1331,7 +1342,8 @@ export class CardPaymentService {
     onErrorBeforeThrow,
   }: {
     response: Response
-    schema: z.ZodType<TOut>
+    // The input is left open for schemas that transform, see CardPaymentSuccessSchema
+    schema: z.ZodType<TOut, z.ZodTypeDef, unknown>
     errorSchema: z.ZodType<TErrOut>
     errorMessage: string
     paymentFlowId?: string
@@ -1352,10 +1364,28 @@ export class CardPaymentService {
     }
 
     const rawData = await response.json()
+    // Field names only, never their values: the response carries card data
+    const responseFields =
+      rawData && typeof rawData === 'object' ? Object.keys(rawData) : []
 
     const successParsed = schema.safeParse(rawData)
 
     if (successParsed.success) {
+      // CardPaymentSuccessSchema fills in a missing maskedCardNumber, so the
+      // gateway's answer is logged to show what it sends in its place
+      if (
+        'maskedCardNumber' in successParsed.data &&
+        !responseFields.includes('maskedCardNumber')
+      ) {
+        const { responseCode, correlationID } = rawData as Record<
+          string,
+          unknown
+        >
+        this.logger.warn(
+          `${logPrefix}Payment gateway approved without a maskedCardNumber`,
+          { responseCode, correlationID, responseFields },
+        )
+      }
       return successParsed.data
     }
 
@@ -1388,6 +1418,8 @@ export class CardPaymentService {
     this.logger.error(`${logPrefix}Failed to parse payment gateway response`, {
       responseCode,
       responseDescription,
+      isSuccess: raw?.isSuccess,
+      responseFields,
       timestamp: new Date().toISOString(),
       parseError: successParsed.error,
     })
