@@ -3,6 +3,7 @@ import { convertFormToScreens } from '@island.is/application/screen-compiler'
 import type { Application, FormValue } from '@island.is/application/types'
 
 import {
+  findScreenIndex,
   resolveClaimedScreen,
   resumeIndex,
   toApplicationSnapshot,
@@ -104,6 +105,62 @@ describe('resumeIndex', () => {
     const answers = { firstField: 'a', lastField: 'b' }
 
     expect(resumeIndex(buildScreens(answers), answers)).toBe(2)
+  })
+})
+
+describe('resumeIndex with a hidden last screen', () => {
+  // The last page is hidden unless `showLast` is 'yes'.
+  const buildScreensWithHiddenLast = (answers: FormValue = {}) => {
+    const form = new FormBuilder('form', 'Form')
+      .addSection('section', 'Section', (section) => {
+        section
+          .addPage('first', 'First', (page) => {
+            page.addTextField('firstField', 'First field')
+          })
+          .addPage('second', 'Second', (page) => {
+            page.addTextField('secondField', 'Second field')
+          })
+          .addPage(
+            'last',
+            'Last',
+            (page) => {
+              page.addTextField('lastField', 'Last field')
+            },
+            { showWhen: (answers) => answers.showLast === 'yes' },
+          )
+      })
+      .build()
+
+    return convertFormToScreens(form, answers, {}, null)
+  }
+
+  it('lands on the last shown screen when the screens after it are hidden', () => {
+    const answers = { firstField: 'a', secondField: 'b' }
+
+    expect(resumeIndex(buildScreensWithHiddenLast(answers), answers)).toBe(1)
+  })
+
+  it('lands on the last screen once it is shown', () => {
+    const answers = { firstField: 'a', secondField: 'b', showLast: 'yes' }
+
+    expect(resumeIndex(buildScreensWithHiddenLast(answers), answers)).toBe(2)
+  })
+})
+
+describe('findScreenIndex', () => {
+  it('finds a hidden screen too', () => {
+    expect(findScreenIndex(buildScreens(), 'extra', application)).toBe(1)
+  })
+
+  it('returns -1 for an unknown or empty id', () => {
+    expect(findScreenIndex(buildScreens(), 'nowhere', application)).toBe(-1)
+    expect(findScreenIndex(buildScreens(), '', application)).toBe(-1)
+  })
+
+  it('counts the first screen when several share an id', () => {
+    const screens = [...buildScreens(), ...buildScreens()]
+
+    expect(findScreenIndex(screens, 'last', application)).toBe(2)
   })
 })
 

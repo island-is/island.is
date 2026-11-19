@@ -291,6 +291,43 @@ const providerGatesPageForm = () =>
     ],
   })
 
+// Page 1 is shown until the provider has returned a result.
+const providerHidesPageForm = () =>
+  buildForm({
+    id: 'form',
+    title: 'Form',
+    children: [
+      buildSection({
+        id: 'section',
+        title: 'Section',
+        children: [
+          buildExternalDataProvider({
+            id: 'edp',
+            title: 'External data',
+            dataProviders: [
+              buildDataProviderItem({
+                provider: providerApi,
+                title: 'Provider',
+              }),
+            ],
+          }),
+          buildMultiField({
+            id: 'page1',
+            title: 'Page 1',
+            condition: (_answers, externalData) =>
+              externalData[providerApi.action]?.status !== 'success',
+            children: [buildTextField({ id: 'field1', title: 'Field 1' })],
+          }),
+          buildMultiField({
+            id: 'page2',
+            title: 'Page 2',
+            children: [buildTextField({ id: 'field2', title: 'Field 2' })],
+          }),
+        ],
+      }),
+    ],
+  })
+
 const dataProviderOnlyForm = () =>
   buildForm({
     id: 'form',
@@ -420,6 +457,7 @@ const buildController = (
   results: {
     persistingAction: ActionResult
     ephemeralAction: ActionResult
+    ephemeralStoresResults?: boolean
     changeState: Record<string, unknown>
   },
   // When set, every write (`update` or a persisting action) also moves the row
@@ -444,11 +482,30 @@ const buildController = (
   }
   // Both action mocks return the application they were given, like the real
   // ones. Returning the fixture instead would drop the request's answers.
-  const echoApplication = (result: ActionResult) =>
-    jest.fn(async (app: ApplicationWithAttachments) => ({
-      ...result,
-      updatedApplication: app,
-    }))
+  // With `storesResults`, the returned copy also holds a successful result per
+  // action, as the real ephemeral runner leaves on the application it returns.
+  const echoApplication = (result: ActionResult, storesResults = false) =>
+    jest.fn(async (app: ApplicationWithAttachments, ...rest: unknown[]) => {
+      if (!storesResults) {
+        return { ...result, updatedApplication: app }
+      }
+      const apis = [rest[2] as TemplateApi | TemplateApi[]].flat()
+      return {
+        ...result,
+        updatedApplication: {
+          ...app,
+          externalData: {
+            ...app.externalData,
+            ...Object.fromEntries(
+              apis.map((api) => [
+                api.action,
+                { status: 'success' as const, data: {}, date: new Date() },
+              ]),
+            ),
+          },
+        },
+      }
+    })
   // Like the real one, a successful persisting action stores each action's
   // result in the row's externalData.
   const performActionOnApplication = jest.fn(
@@ -474,6 +531,7 @@ const buildController = (
     performActionOnApplication,
     performEphemeralActionOnApplication: echoApplication(
       results.ephemeralAction,
+      results.ephemeralStoresResults,
     ),
     changeState: jest.fn().mockResolvedValue(results.changeState),
   }
@@ -544,6 +602,9 @@ interface PersistenceCase {
   dto: Omit<ExecuteActionDto, 'locale'>
   persistingActionResult?: ActionResult
   ephemeralActionResult?: ActionResult
+  // When true, the ephemeral action leaves a successful result per action in
+  // the externalData of the application it returns.
+  ephemeralStoresResults?: boolean
   changeStateResult?: Record<string, unknown>
   // When set, the action must fail with an error matching all given fields.
   // The fields below then describe what still happened before it failed.
@@ -610,11 +671,11 @@ const writesField0: ReadWriteValues = {
 
 // One entry per SdfActionType, each with at least one row. A row states what
 // the action saves, which template API actions it runs with which event, and
-// what it passes to changeState. Some rows cover failures: NEXT_PAGE with a
-// stale page index, NEXT_PAGE and REFETCH with a failing action, NEXT_PAGE and
-// SUBMIT blocked by validation, SUBMIT from a screen that is not the last,
-// and SUBMIT with a failed, unmatched or concurrent state change. A new action
-// type fails the coverage test until it has an entry with a row.
+// what it passes to changeState. Some rows cover failures: NEXT_PAGE from a
+// screen that is not shown, NEXT_PAGE and REFETCH with a failing action,
+// NEXT_PAGE and SUBMIT blocked by validation, SUBMIT from a screen that is not
+// the last, and SUBMIT with a failed, unmatched or concurrent state change. A
+// new action type fails the coverage test until it has an entry with a row.
 const cases: Record<SdfActionType, PersistenceCase[]> = {
   [SdfActionType.NEXT_PAGE]: [
     {
@@ -1756,6 +1817,29 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       footerActionTypes: ['SUBMIT'],
     },
     {
+      // What the action fetched is only shown: it does not decide which
+      // screens exist, so the screen the user is on stays, without a notice.
+      label: 'with fetched data that hides the screen the user is on',
+      form: providerHidesPageForm,
+      ephemeralStoresResults: true,
+      dto: {
+        actionType: SdfActionType.REFETCH,
+        refetchTemplateApiActions: [providerApi.action],
+        screen: 'page1',
+      },
+      saves: [],
+      persistingActions: [],
+      ephemeralActions: [
+        {
+          actions: [providerApi.action],
+          event: SdfActionType.REFETCH,
+          answers: {},
+        },
+      ],
+      stateChanges: [],
+      pageId: 'page1',
+    },
+    {
       label: 'requesting an action the role does not have',
       form: twoPageForm,
       dto: {
@@ -2055,6 +2139,7 @@ describe('SDF action persistence', () => {
         {
           persistingAction: c.persistingActionResult ?? succeeded,
           ephemeralAction: c.ephemeralActionResult ?? succeeded,
+          ephemeralStoresResults: c.ephemeralStoresResults,
           changeState: c.changeStateResult ?? transitioned,
         },
         c.concurrentState,

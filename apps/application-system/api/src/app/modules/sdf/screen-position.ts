@@ -57,9 +57,7 @@ export const resolveClaimedScreen = (
     return { valid: false }
   }
 
-  const index = screens.findIndex(
-    (screen) => resolveFormItemId(screen, application, user) === claimedId,
-  )
+  const index = findScreenIndex(screens, claimedId, application, user)
 
   return index >= 0 && screens[index].isNavigable
     ? { valid: true, index }
@@ -67,10 +65,34 @@ export const resolveClaimedScreen = (
 }
 
 /**
+ * The index of the first screen with the id `id`, shown or not, or -1 when
+ * there is none.
+ */
+export const findScreenIndex = (
+  screens: FormScreen[],
+  id: string,
+  application: Application,
+  user?: BffUser,
+): number =>
+  id
+    ? screens.findIndex(
+        (screen) => resolveFormItemId(screen, application, user) === id,
+      )
+    : -1
+
+/**
  * The index of the screen to resume on: the first shown screen that is not
- * fully answered by `answers`, or the last screen when all of them are.
+ * fully answered by `answers`, or the last shown screen when all of them are.
  */
 export const resumeIndex = (
   screens: FormScreen[],
   answers: FormValue,
-): number => moveToScreen(screens, findCurrentScreen(screens, answers), true)
+): number => {
+  const index = moveToScreen(screens, findCurrentScreen(screens, answers), true)
+
+  // Moving forward past the end returns the last screen even when it is
+  // hidden, so step back to the nearest shown one.
+  return screens[index]?.isNavigable
+    ? index
+    : moveToScreen(screens, index, false)
+}

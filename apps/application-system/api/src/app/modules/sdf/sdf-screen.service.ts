@@ -61,6 +61,7 @@ import { isAnswerKeyWritable, splitWritableAnswers } from './writable-answers'
 import { buildStepper } from './stepper-builder'
 import { buildFooterButtons } from './footer-builder'
 import {
+  findScreenIndex,
   resolveClaimedScreen,
   resumeIndex,
   toApplicationSnapshot,
@@ -86,8 +87,10 @@ try {
 }
 
 interface AdapterOptions {
-  ephemeral?: boolean
   application?: ApplicationWithAttachments
+  // When true, the caller has already checked the claimed screen is shown, so
+  // `application` is used to render it without checking again.
+  claimedScreenChecked?: boolean
   // Added to the screen returned.
   notice?: SdfNoticeCode
 }
@@ -212,13 +215,25 @@ export class SdfScreenService {
     const { application, filteredApplication, form, bffUser, screens } = context
 
     const step5Start = Date.now()
-    const resolvedIndex = this.resolveScreenIndex(
-      screens,
-      filteredApplication.answers,
-      application,
-      bffUser,
-      claimedScreenId,
-    )
+    const checkedIndex =
+      options.claimedScreenChecked && claimedScreenId
+        ? findScreenIndex(
+            screens,
+            claimedScreenId,
+            application as Application,
+            bffUser,
+          )
+        : -1
+    const resolvedIndex =
+      checkedIndex >= 0
+        ? checkedIndex
+        : this.resolveScreenIndex(
+            screens,
+            filteredApplication.answers,
+            application,
+            bffUser,
+            claimedScreenId,
+          )
     const currentScreen = screens[resolvedIndex]
     this.logTiming('Step 5: Resolve Current Screen', step5Start)
 
@@ -636,9 +651,11 @@ export class SdfScreenService {
       }
     }
 
+    // The claim was judged above against saved data. What the actions fetched
+    // is only shown, so it must not move the user to another screen.
     return this.getScreen(applicationId, claimedScreenId, locale, user, {
-      ephemeral: true,
       application: workingApplication,
+      claimedScreenChecked: true,
     })
   }
 
@@ -901,7 +918,6 @@ export class SdfScreenService {
         locale,
         user,
         {
-          ephemeral: true,
           application: toWorkingApplication(application, mergedAnswers),
         },
       )
@@ -1320,7 +1336,6 @@ export class SdfScreenService {
         locale,
         user,
         {
-          ephemeral: true,
           application: toWorkingApplication(application, submitMergedAnswers),
         },
       )
@@ -1422,7 +1437,7 @@ export class SdfScreenService {
 
     // No transition matched this event (e.g. every guard failed). Legacy
     // returns the unchanged application silently; here we reject instead of
-    // resetting the page cursor as if it had succeeded. The state's onExit
+    // returning the screen as if it had succeeded. The state's onExit
     // actions have already run (as in legacy): guards may depend on data they
     // fetch, so this can't be checked before them.
     if (!result.hasChanged && !result.hasMatchedTransition) {
