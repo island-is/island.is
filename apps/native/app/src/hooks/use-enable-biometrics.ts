@@ -1,5 +1,5 @@
 import { authenticateAsync, hasHardwareAsync } from 'expo-local-authentication'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Alert, Linking, Platform } from 'react-native'
 
@@ -37,6 +37,16 @@ export function useEnableBiometrics({
   const biometricType = useBiometricType(authenticationTypes)
   const [isEnabling, setIsEnabling] = useState(false)
   const electronicId = useElectronicIdUnlock('enableBiometrics', { inline })
+  // Counts the attempts. A newer one, cancel() or leaving the screen stops an
+  // earlier one before it starts electronic ID or uses its answer: the checks
+  // before electronic ID leave a moment to skip the step.
+  const attempt = useRef(0)
+  useEffect(
+    () => () => {
+      attempt.current++
+    },
+    [],
+  )
 
   /**
    * Says where to set biometrics up on a phone that has none yet. iOS can't
@@ -138,29 +148,36 @@ export function useEnableBiometrics({
     if (electronicId.isPending()) {
       return false
     }
+    const current = ++attempt.current
+    const isCurrent = () => attempt.current === current
     setIsEnabling(true)
     let enabled = false
     try {
       // Not when it's turned off for the app on iOS: then it has no hardware
       // either, and confirmBiometrics() says where to turn it on.
-      if (
-        (await hasHardwareAsync()) &&
-        !(await isStrongBiometricsEnrolledAsync())
-      ) {
+      const isNotEnrolled =
+        (await hasHardwareAsync()) && !(await isStrongBiometricsEnrolledAsync())
+      if (!isCurrent()) {
+        return false
+      }
+      if (isNotEnrolled) {
         showNotEnrolledAlert()
         return false
       }
-      if (!(await confirmBiometrics())) {
+      if (!(await confirmBiometrics()) || !isCurrent()) {
         return false
       }
       const tokens = await electronicId.unlock()
+      if (!isCurrent()) {
+        return false
+      }
       // As with an unlock, the earlier refresh token stops working.
       authStore.getState().unlockNative(tokens)
       await getIasClient().enableBiometrics(tokens.accessToken)
       enabled = true
       return true
     } catch (error) {
-      if (!isCancelled(error)) {
+      if (!isCancelled(error) && isCurrent()) {
         console.warn('Enabling biometrics failed', error)
         Alert.alert(
           intl.formatMessage(
@@ -185,9 +202,16 @@ export function useEnableBiometrics({
     }
   }
 
+  /** Stops an attempt in progress, e.g. when the person skips the step. */
+  const cancel = () => {
+    attempt.current++
+    electronicId.cancel()
+  }
+
   return {
     isEnabling,
     enableBiometrics,
+    cancel,
     /** With `inline`: shown while electronic ID waits. */
     verificationCode: electronicId.verificationCode,
     cancelElectronicId: electronicId.cancel,

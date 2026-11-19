@@ -27,8 +27,13 @@ export default function BiometricsScreen() {
   const isTurnedOff =
     Platform.OS === 'ios' && authTypes.length > 0 && !hasHardware
   // The electronic ID approval is shown in place of this step.
-  const { isEnabling, enableBiometrics, verificationCode, cancelElectronicId } =
-    useEnableBiometrics({ inline: true })
+  const {
+    isEnabling,
+    enableBiometrics,
+    cancel,
+    verificationCode,
+    cancelElectronicId,
+  } = useEnableBiometrics({ inline: true })
 
   useEffect(() => {
     Promise.all([
@@ -62,6 +67,8 @@ export default function BiometricsScreen() {
   }
 
   const onSkipPress = () => {
+    // Also a "Nota" tap still checking the phone's biometrics.
+    cancel()
     preferencesStore.setState({ hasOnboardedBiometrics: true })
     nextOnboardingStep()
   }
