@@ -944,6 +944,11 @@ export class VerdictsClientService {
         break
     }
 
+    if (items.length < total)
+      this.logger.warn(
+        `Court of Appeal appeals list was cut off at ${items.length} of ${total} cases, consider paginating it`,
+      )
+
     const seenCaseNumbers = new Set<string>()
     const appeals = items
       .filter((item) => {
