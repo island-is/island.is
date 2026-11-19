@@ -199,7 +199,15 @@ export class AdminNotificationDeliveriesInput {
 }
 
 @InputType()
-export class NotificationsInput extends PaginationInput() {}
+export class NotificationsInput extends PaginationInput() {
+  @Field(() => Boolean, {
+    nullable: true,
+    defaultValue: false,
+    description:
+      'Include notifications that were not sent because of the user priority or category settings',
+  })
+  includeUnsent?: boolean
+}
 
 @ObjectType('Notifications')
 export class NotificationsResponse extends PaginatedResponse(Notification) {

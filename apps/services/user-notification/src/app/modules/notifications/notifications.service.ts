@@ -60,6 +60,14 @@ const ALLOWED_REPLACE_PROPS: Array<keyof HnippTemplate> = [
   'clickActionUrl',
 ]
 
+/**
+ * Notifications held back by the recipient's priority or category settings
+ * are stored with wasSent=false and hidden from user-facing queries unless
+ * explicitly requested.
+ */
+const sentFilter = (includeUnsent = false) =>
+  includeUnsent ? {} : { wasSent: true }
+
 type SenderOrganization = {
   title: string
 }
@@ -389,6 +397,7 @@ export class NotificationsService {
       orderOption: [['id', 'DESC']],
       where: {
         recipient: nationalId,
+        ...sentFilter(query.includeUnsent),
         // Callers with @island.is/internal see all their own notifications,
         // regardless of scope (recipient still restricts to their own).
         ...(scopes.includes(ApiScope.internal)
@@ -461,6 +470,7 @@ export class NotificationsService {
         where: {
           recipient: user.nationalId,
           read: false,
+          ...sentFilter(),
         },
       })
       return { unreadCount }
@@ -555,6 +565,7 @@ export class NotificationsService {
         where: {
           recipient: user.nationalId,
           seen: false,
+          ...sentFilter(),
         },
       })
       return { unseenCount }
@@ -570,7 +581,7 @@ export class NotificationsService {
     try {
       await this.notificationModel.update(
         { seen: true },
-        { where: { recipient: user.nationalId, seen: false } },
+        { where: { recipient: user.nationalId, seen: false, ...sentFilter() } },
       )
     } catch (error) {
       this.logger.error('Error marking all notifications as seen:', error)
@@ -584,7 +595,7 @@ export class NotificationsService {
     try {
       await this.notificationModel.update(
         { read: true },
-        { where: { recipient: user.nationalId, read: false } },
+        { where: { recipient: user.nationalId, read: false, ...sentFilter() } },
       )
     } catch (error) {
       this.logger.error('Error marking all notifications as read:', error)
