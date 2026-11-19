@@ -26,6 +26,12 @@ import {
 } from '@island.is/clients/social-insurance-administration'
 import type { GeneralParent } from '../socialInsurance.type'
 
+const DEPRECATED_APPLICATION_ID = {
+  type: () => String,
+  nullable: true,
+  deprecationReason: 'Use socialInsuranceGeneral(applicationId:) instead',
+}
+
 @Resolver(() => General)
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/social-insurance' })
@@ -51,9 +57,12 @@ export class GeneralResolver {
   resolveUnions(
     @CurrentUser() user: User,
     @Parent() { applicationId }: GeneralParent,
+    @Args('applicationId', DEPRECATED_APPLICATION_ID)
+    deprecatedApplicationId?: string,
   ) {
-    return withApplicationGuidContext(applicationId, () =>
-      this.generalService.getUnions(user),
+    return withApplicationGuidContext(
+      applicationId ?? deprecatedApplicationId,
+      () => this.generalService.getUnions(user),
     )
   }
 
@@ -63,9 +72,12 @@ export class GeneralResolver {
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
     @Parent() { applicationId }: GeneralParent,
+    @Args('applicationId', DEPRECATED_APPLICATION_ID)
+    deprecatedApplicationId?: string,
   ) {
-    return withApplicationGuidContext(applicationId, () =>
-      this.service.getCountries(user, locale),
+    return withApplicationGuidContext(
+      applicationId ?? deprecatedApplicationId,
+      () => this.service.getCountries(user, locale),
     )
   }
 
@@ -75,9 +87,12 @@ export class GeneralResolver {
   resolveEducationalInstitution(
     @CurrentUser() user: User,
     @Parent() { applicationId }: GeneralParent,
+    @Args('applicationId', DEPRECATED_APPLICATION_ID)
+    deprecatedApplicationId?: string,
   ) {
-    return withApplicationGuidContext(applicationId, () =>
-      this.educationService.getEducationalInstitutions(user),
+    return withApplicationGuidContext(
+      applicationId ?? deprecatedApplicationId,
+      () => this.educationService.getEducationalInstitutions(user),
     )
   }
 
