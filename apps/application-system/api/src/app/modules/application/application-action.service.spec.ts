@@ -15,9 +15,11 @@ import {
   TemplateApi,
   defineTemplateApi,
 } from '@island.is/application/types'
+import type { User } from '@island.is/auth-nest-tools'
 
 describe('ApplicationActionService', () => {
   const application = createApplication()
+  const auth = { nationalId: application.applicant } as User
   let service: ApplicationActionService
   let mockIntlService: any
   let mockTemplateApiActionRunner: any
@@ -32,6 +34,18 @@ describe('ApplicationActionService', () => {
 
     mockTemplateApiActionRunner = {
       run: jest.fn().mockResolvedValue({
+        ...application,
+        externalData: {
+          ...application.externalData,
+          someDataId: {
+            data: {},
+            date: new Date(),
+            status: 200,
+          },
+        },
+        hasError: false,
+      }),
+      runEphemeral: jest.fn().mockResolvedValue({
         ...application,
         externalData: {
           ...application.externalData,
@@ -199,6 +213,62 @@ describe('ApplicationActionService', () => {
     })
   })
 
+  describe('performEphemeralActionOnApplication', () => {
+    const baseApi: TemplateApi = defineTemplateApi({
+      action: 'someAction',
+      externalDataId: 'someDataId',
+    })
+
+    const template = createApplicationTemplate()
+
+    beforeEach(() => {
+      mockTemplateApiActionRunner.run.mockClear()
+      mockTemplateApiActionRunner.runEphemeral.mockClear()
+    })
+
+    it('runs template APIs without persisting external data', async () => {
+      await service.performEphemeralActionOnApplication(
+        application,
+        template,
+        auth,
+        [baseApi],
+        'en',
+        'REFETCH',
+      )
+
+      expect(mockTemplateApiActionRunner.runEphemeral).toHaveBeenCalledWith(
+        expect.anything(),
+        [baseApi],
+        expect.anything(),
+        expect.anything(),
+        expect.anything(),
+      )
+      expect(mockTemplateApiActionRunner.run).not.toHaveBeenCalled()
+    })
+
+    it('does not run submit-only actions during refetch', async () => {
+      const submitApi = baseApi.configure({
+        triggerEvent: DefaultEvents.SUBMIT,
+      })
+
+      const result = await service.performEphemeralActionOnApplication(
+        application,
+        template,
+        auth,
+        [submitApi],
+        'en',
+        'REFETCH',
+      )
+
+      expect(result).toEqual({
+        updatedApplication: application,
+        hasError: false,
+      })
+      expect(mockTemplateApiActionRunner.runEphemeral).not.toHaveBeenCalled()
+      expect(mockTemplateApiActionRunner.run).not.toHaveBeenCalled()
+    })
+  })
+
   describe('changeState', () => {
     it('should return error if application update fails', async () => {
       mockApplicationService.updateApplicationState.mockRejectedValueOnce(
@@ -220,5 +290,57 @@ describe('ApplicationActionService', () => {
         error: 'Could not update application',
       })
     })
+
+    // The fixture template with only draft's transitions replaced, so the real
+    // ApplicationTemplateHelper decides whether the event matched.
+    const templateWithDraftTransitions = (
+      on: Record<string, unknown>,
+    ): ReturnType<typeof createApplicationTemplate> => {
+      const base = createApplicationTemplate()
+      return {
+        ...base,
+        stateMachineConfig: {
+          ...base.stateMachineConfig,
+          states: {
+            ...base.stateMachineConfig.states,
+            draft: { ...base.stateMachineConfig.states.draft, on },
+          },
+        },
+      } as typeof base
+    }
+
+    it.each([
+      [
+        'no transition matched (every guard failed)',
+        { SUBMIT: [{ target: 'inReview', cond: () => false }] },
+        false,
+      ],
+      [
+        'a no-op self-transition matched',
+        { SUBMIT: { target: 'draft' } },
+        true,
+      ],
+    ])(
+      'passes hasMatchedTransition through and persists nothing when %s',
+      async (_label, on, expectedMatch) => {
+        const result = await service.changeState(
+          createApplication({ state: 'draft' }),
+          templateWithDraftTransitions(on),
+          'SUBMIT',
+          auth,
+          'en',
+        )
+
+        expect(result).toMatchObject({
+          hasChanged: false,
+          hasMatchedTransition: expectedMatch,
+          hasError: false,
+        })
+        expect(
+          mockApplicationService.updateApplicationState,
+        ).not.toHaveBeenCalled()
+        expect(mockHistoryService.saveStateTransition).not.toHaveBeenCalled()
+      },
+    )
   })
 })

@@ -15,6 +15,7 @@ import { Features } from '@island.is/feature-flags'
 import { AllowedDelegation } from './ApplicationAllowedDelegations'
 import { CodeOwners } from '@island.is/shared/constants'
 
+export type TranslationNamespaces = string | (string | string[])[]
 export interface ApplicationTemplate<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,
@@ -35,7 +36,7 @@ export interface ApplicationTemplate<
   readonly newApplicationButtonLabel?: StaticText
   readonly applicationText?: StaticText
   readonly institution?: StaticText
-  readonly translationNamespaces?: string[]
+  readonly translationNamespaces?: TranslationNamespaces
   readonly allowMultipleApplicationsInDraft?: boolean
   readonly initialQueryParameter?: string
   readonly allowedDelegations?: AllowedDelegation[]

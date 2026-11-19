@@ -4,9 +4,19 @@ import {
   buildMultiField,
   buildDescriptionField,
   buildTextField,
+  expr,
   getValueViaPath,
   buildRadioField,
 } from '@island.is/application/core'
+
+const toCurrencyNumber = (value: string | undefined): number => {
+  if (!value) {
+    return 0
+  }
+
+  const normalized = value.replace(/[^\d,-]/g, '').replace(',', '.')
+  return Number(normalized || 0)
+}
 
 export const displayFieldSubsection = buildSubSection({
   id: 'displayFieldSubsection',
@@ -48,10 +58,21 @@ export const displayFieldSubsection = buildSubSection({
           variant: 'currency',
           label: 'Sum of inputs 1, 2 and 3',
           rightAlign: true,
+          clientValueExpression: expr.sum(
+            expr.get('input1'),
+            expr.get('input2'),
+            expr.get('input3'),
+          ),
           value: (answers) => {
-            const value1 = Number(getValueViaPath<string>(answers, 'input1'))
-            const value2 = Number(getValueViaPath<string>(answers, 'input2'))
-            const value3 = Number(getValueViaPath<string>(answers, 'input3'))
+            const value1 = toCurrencyNumber(
+              getValueViaPath<string>(answers, 'input1'),
+            )
+            const value2 = toCurrencyNumber(
+              getValueViaPath<string>(answers, 'input2'),
+            )
+            const value3 = toCurrencyNumber(
+              getValueViaPath<string>(answers, 'input3'),
+            )
             return `${value1 + value2 + value3}`
           },
         }),

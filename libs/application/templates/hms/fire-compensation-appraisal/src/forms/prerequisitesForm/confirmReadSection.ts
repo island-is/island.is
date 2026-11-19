@@ -5,6 +5,7 @@ import {
   //buildTitleField,
   YES,
 } from '@island.is/application/core'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import * as m from '../../lib/messages'
 
 export const confirmReadSection = buildSection({
@@ -34,6 +35,25 @@ export const confirmReadSection = buildSection({
             },
           ],
         }),
+        // Dev/local-only escape hatch so the payment flow can be tested without
+        // a reachable charge-FJS service. Ticking this persists
+        // `shouldUseMockPayment`, which makes the shared `Payment.createCharge`
+        // action fabricate a fulfilled charge. The field is omitted entirely in
+        // production, and `createCharge` additionally refuses mock payments
+        // there — so it cannot affect real payments.
+        ...(!isRunningOnEnvironment('production')
+          ? [
+              buildCheckboxField({
+                id: 'shouldUseMockPayment',
+                options: [
+                  {
+                    label: 'Enable mock payment (dev only)',
+                    value: YES,
+                  },
+                ],
+              }),
+            ]
+          : []),
         // TODO: put this back in when properties can be fetched without national id
         // buildTitleField({
         //   title: m.realEstateMessages.otherPropertiesTitle,
