@@ -55,18 +55,6 @@ export interface IasClient {
   revoke(refreshToken: string): Promise<void>
   /** Removes the app login on IAS and the biometric key. */
   logout(refreshToken?: string): Promise<void>
-
-  /**
-   * The `DPoP` header for an API request sent with
-   * `Authorization: DPoP <accessToken>`.
-   */
-  createDpopProof(
-    method: string,
-    url: string,
-    accessToken: string,
-    /** The latest `DPoP-Nonce` from the server the request goes to */
-    nonce?: string,
-  ): Promise<string>
 }
 
 export interface CibaRequest {

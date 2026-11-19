@@ -345,14 +345,13 @@ export function createIasClient(options: IasClientOptions): IasClient {
   async function createProof(
     method: string,
     url: string,
-    { accessToken, nonce }: { accessToken?: string; nonce?: string } = {},
+    nonce?: string,
   ): Promise<string> {
     return dpopProof(signWithInstallKey, {
       jwk: requireInstallKey().publicJwk,
       method,
       url,
       jti: device.randomUUID(),
-      ath: accessToken ? await device.sha256(accessToken) : undefined,
       nonce,
     })
   }
@@ -384,7 +383,7 @@ export function createIasClient(options: IasClientOptions): IasClient {
       )
     }
     if (dpop) {
-      headers.DPoP = await createProof(method, url, { nonce: nonces.dpop })
+      headers.DPoP = await createProof(method, url, nonces.dpop)
     }
     if (accessToken) {
       headers.Authorization = `DPoP ${accessToken}`
@@ -690,10 +689,6 @@ export function createIasClient(options: IasClientOptions): IasClient {
       } finally {
         device.deleteBiometricKey()
       }
-    },
-
-    createDpopProof(method, url, accessToken, nonce) {
-      return createProof(method, url, { accessToken, nonce })
     },
   }
 }

@@ -128,9 +128,5 @@ export function createMockIasClient({
       await sleep(300)
       biometrics = false
     },
-
-    async createDpopProof() {
-      return 'mock-dpop-proof'
-    },
   }
 }
