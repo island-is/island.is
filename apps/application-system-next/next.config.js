@@ -47,7 +47,7 @@ const nextConfig = {
                     loader.options?.insert
                   ) {
                     loader.options.insert = function (styleTag) {
-                      var target =
+                      const target =
                         document.head || document.querySelector('head')
                       if (target) {
                         target.appendChild(styleTag)

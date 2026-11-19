@@ -74,7 +74,6 @@ export const AppUserProfileLocale = () => {
     // Re-evaluate only when a locale *source* resolves (token on auth, profile
     // on query) — never on a plain `lang` change — so we don't fight an
     // in-session toggle from the language switcher.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileLocale, tokenLocale])
 
   return null
