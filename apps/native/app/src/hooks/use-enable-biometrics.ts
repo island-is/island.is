@@ -5,7 +5,11 @@ import { Alert, Linking, Platform } from 'react-native'
 
 import { getSystemIntl } from '@/components/providers/locale-provider'
 import { getIasClient, isTooManyElectronicIdRequests } from '@/lib/ias'
-import { authStore, whileSystemDialog } from '@/stores/auth-store'
+import {
+  authStore,
+  isLockPastGracePeriod,
+  whileSystemDialog,
+} from '@/stores/auth-store'
 import { useUiStore } from '@/stores/ui-store'
 import { isStrongBiometricsEnrolledAsync } from '@/utils/biometrics'
 import { useBiometricType } from './use-biometric-type'
@@ -171,8 +175,14 @@ export function useEnableBiometrics({
       if (!isCurrent()) {
         return false
       }
-      // As with an unlock, the earlier refresh token stops working.
-      authStore.getState().unlockNative(tokens)
+      // As with an unlock, the earlier refresh token stops working, so these
+      // replace the tokens. Approved after the app locked for good, they only
+      // register the key: the lock gets new ones, and the dead ones go now.
+      if (isLockPastGracePeriod()) {
+        void authStore.getState().lockNative()
+      } else {
+        authStore.getState().unlockNative(tokens)
+      }
       await getIasClient().enableBiometrics(tokens.accessToken)
       enabled = true
       return true

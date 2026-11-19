@@ -3,7 +3,10 @@ import Keychain from 'react-native-keychain'
 import { deleteToken } from '@react-native-firebase/messaging'
 
 import { bundleId, getConfig } from '../config'
-import { LOCK_SCREEN_SUPPRESS_MAX_MS } from '../constants/auth'
+import {
+  APP_LOCK_TIMEOUT_MS,
+  LOCK_SCREEN_SUPPRESS_MAX_MS,
+} from '../constants/auth'
 import { getIntl } from '../components/providers/locale-provider'
 import { getApolloClientAsync } from '../graphql/client-instance'
 import { didPreferencesLoad, preferencesStore } from './preferences-store'
@@ -364,6 +367,15 @@ export async function whileSystemDialog<T>(show: () => Promise<T>) {
 export function isSystemDialogShowing() {
   const until = authStore.getState().systemDialogUntil
   return until != null && Date.now() < until
+}
+
+/**
+ * Locked for longer than the grace period: only an unlock opens the app, and
+ * the tokens from before it are about to go.
+ */
+export function isLockPastGracePeriod() {
+  const lockedAt = authStore.getState().lockScreenActivatedAt
+  return lockedAt !== undefined && Date.now() - lockedAt >= APP_LOCK_TIMEOUT_MS
 }
 
 // True if the lock screen is in an auth-required state (not just a mask).
