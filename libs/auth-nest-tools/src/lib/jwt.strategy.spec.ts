@@ -1,3 +1,5 @@
+import jwt from 'jsonwebtoken'
+
 import { JwtStrategy } from './jwt.strategy'
 import { Request } from 'express'
 import { JwtPayload } from './jwt.payload'
@@ -236,5 +238,22 @@ describe('JwtStrategy#validate', () => {
     // Assert
     expect(user.nationalId).toEqual(payload.client_nationalId)
     expect(personUser.nationalId).toEqual('1234567890')
+  })
+
+  it('refuses a JWT that is not an access token, like a client attestation', async () => {
+    const attestation = jwt.sign({ sub: '@island.is/app' }, 'secret', {
+      header: { alg: 'HS256', typ: 'oauth-client-attestation+jwt' },
+    })
+    const request = {
+      ...fakeRequest,
+      headers: {
+        ...fakeRequest.headers,
+        authorization: `Bearer ${attestation}`,
+      },
+    } as Request
+
+    await expect(jwtStrategy.validate(request, fakePayload)).rejects.toThrow(
+      'Not an access token',
+    )
   })
 })
