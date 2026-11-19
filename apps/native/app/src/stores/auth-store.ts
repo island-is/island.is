@@ -175,10 +175,12 @@ export const authStore = create<AuthStore>((set, get) => ({
     // The app locked, logged out or unlocked again while the refresh was out:
     // that session is over, and its tokens mustn't come back.
     const isSuperseded = () => get().authorizeResult !== authorizeResult
+    // The issuer the refresh token is from, also if the environment changes.
+    const ias = getIasClient()
 
     let tokens
     try {
-      tokens = await getIasClient().refresh(authorizeResult.refreshToken)
+      tokens = await ias.refresh(authorizeResult.refreshToken)
     } catch (e) {
       // The lock revokes the refresh token, so this one may fail for that.
       if (isSuperseded()) {
@@ -197,7 +199,7 @@ export const authStore = create<AuthStore>((set, get) => ({
     }
 
     if (isSuperseded()) {
-      void getIasClient()
+      void ias
         .revoke(tokens.refreshToken)
         .catch((error) => console.log('Failed to revoke the refresh', error))
       return
