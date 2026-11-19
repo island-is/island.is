@@ -57,8 +57,15 @@ export function useNativeUnlock({
   )
   // The auto-prompt and a tap can come together.
   const isUnlockingWithBiometrics = useRef(false)
-  // Logging out from the lock while an unlock is out leaves nothing to open.
-  const isStillLoggedIn = () => !!authStore.getState().nativeUser
+  // Logging out from the lock while an unlock is out leaves nothing to open,
+  // also while the logout is still running, or once someone else logged in.
+  const watchSession = () => {
+    const { session } = authStore.getState()
+    return () => {
+      const state = authStore.getState()
+      return state.session === session && !!state.nativeUser
+    }
+  }
 
   // Biometrics are offered again once the lockout may be over: the phone was
   // unlocked with its passcode while the app was away, or Android's 30
@@ -89,6 +96,7 @@ export function useNativeUnlock({
       return
     }
     isUnlockingWithBiometrics.current = true
+    const isCurrent = watchSession()
     setElectronicIdError(undefined)
     setStatus('prompting')
     try {
@@ -97,14 +105,14 @@ export function useNativeUnlock({
         // The system's dialog: its own text is in the phone's language.
         cancel: getSystemIntl().formatMessage({ id: 'biometrics.close' }),
       })
-      if (!isStillLoggedIn()) {
+      if (!isCurrent()) {
         return
       }
       authStore.getState().unlockNative(tokens)
       setStatus('idle')
       onUnlocked()
     } catch (error) {
-      if (!isStillLoggedIn()) {
+      if (!isCurrent()) {
         return
       }
       if (isAppLoginGone(error)) {
@@ -149,11 +157,12 @@ export function useNativeUnlock({
     if (electronicId.isPending()) {
       return
     }
+    const isCurrent = watchSession()
     setElectronicIdError(undefined)
     setStatus('electronicId')
     try {
       const tokens = await electronicId.unlock()
-      if (!isStillLoggedIn()) {
+      if (!isCurrent()) {
         return
       }
       authStore.getState().unlockNative(tokens)
@@ -161,7 +170,7 @@ export function useNativeUnlock({
       // Closes the lock along with the sheet on top of it.
       onUnlocked()
     } catch (error) {
-      if (!isStillLoggedIn()) {
+      if (!isCurrent()) {
         return
       }
       if (isAppLoginGone(error)) {

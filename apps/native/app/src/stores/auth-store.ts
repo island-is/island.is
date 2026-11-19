@@ -64,6 +64,11 @@ interface AuthStore {
   systemDialogUntil: number | undefined
   // Auto-prompt biometrics at most once per lock session (loop guard).
   biometricAutoPromptedForCurrentLock: boolean
+  /**
+   * Changes when someone logs in and when a logout starts, so work started
+   * for an earlier login, such as an unlock, can tell it's out of date.
+   */
+  session: number
   isCogitoAuth: boolean
   cognitoDismissCount: number
   cognitoAuthUrl?: string
@@ -127,6 +132,7 @@ export const authStore = create<AuthStore>((set, get) => ({
   lockScreenSuppressedUntil: undefined,
   systemDialogUntil: undefined,
   biometricAutoPromptedForCurrentLock: false,
+  session: 0,
   isCogitoAuth: false,
   cognitoDismissCount: 0,
   cognitoAuthUrl: undefined,
@@ -209,7 +215,7 @@ export const authStore = create<AuthStore>((set, get) => ({
     set({ authorizeResult: { ...authorizeResult, ...tokens } })
   }),
   async loginNative(tokens) {
-    set({ authorizeResult: tokens })
+    set((state) => ({ authorizeResult: tokens, session: state.session + 1 }))
     let userInfo: UserInfo
     try {
       userInfo = await get().fetchUserInfo(true)
@@ -254,6 +260,10 @@ export const authStore = create<AuthStore>((set, get) => ({
     set({ authorizeResult: tokens })
   },
   async logout(skipPasskeyDeletion = false) {
+    // Before the first wait: an unlock that finishes during the logout is for
+    // the session being ended.
+    set((state) => ({ session: state.session + 1 }))
+
     // Clear all MMKV storages
     clearAllStorages()
 
