@@ -405,7 +405,8 @@ export class FileController {
 
     // The transaction CaseExistsForUpdateGuard opened - see createCaseFile.
     // Given a transaction, the service removes the file from S3 only after
-    // the commit, so a rollback leaves both the row and the object in place.
+    // the request has committed, so a rollback or a failed commit leaves
+    // both the row and the object in place.
     const transaction = await getOrCreateTransaction(this.sequelize)
 
     return this.fileService.deleteCaseFile(theCase, caseFile, transaction)
