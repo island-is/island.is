@@ -458,7 +458,9 @@ export class ComponentDto {
 }
 
 export class PageDto {
-  @ApiProperty()
+  @ApiProperty({
+    description: 'The id of the screen, as given in a screen request.',
+  })
   id!: string
 
   @ApiProperty()
@@ -552,6 +554,20 @@ export class HeaderDto {
   logo?: string
 }
 
+export enum SdfNoticeCode {
+  // The screen the client acted on is no longer available. Nothing was saved,
+  // and the screen returned is the one to resume on.
+  SCREEN_UNAVAILABLE = 'screen-unavailable',
+}
+
+export class NoticeDto {
+  @ApiProperty({ enum: SdfNoticeCode })
+  code!: SdfNoticeCode
+
+  @ApiProperty({ description: 'The notice, translated for the locale.' })
+  message!: string
+}
+
 export class ScreenDto {
   @ApiProperty()
   applicationId!: string
@@ -575,6 +591,13 @@ export class ScreenDto {
     description: 'Persisted answers for the current page fields',
   })
   answers?: Record<string, unknown>
+
+  @ApiPropertyOptional({
+    type: NoticeDto,
+    description:
+      'Set when the action was not carried out as asked, for example because the screen it was sent from is no longer available.',
+  })
+  notice?: NoticeDto
 }
 
 export class ValidateResponseDto {

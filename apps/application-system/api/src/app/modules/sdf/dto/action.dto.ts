@@ -2,7 +2,6 @@ import {
   IsString,
   IsObject,
   IsOptional,
-  IsNumber,
   IsEnum,
   IsArray,
 } from 'class-validator'
@@ -11,9 +10,6 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 export enum SdfActionType {
   NEXT_PAGE = 'NEXT_PAGE',
   PREV_PAGE = 'PREV_PAGE',
-  // Jump directly to a known page by id (overview "Breyta"/edit button). The
-  // destination page id is carried in the `event` field.
-  GO_TO_PAGE = 'GO_TO_PAGE',
   SUBMIT = 'SUBMIT',
   REFETCH = 'REFETCH',
   VALIDATE = 'VALIDATE',
@@ -34,12 +30,12 @@ export class ExecuteActionDto {
   readonly locale!: string
 
   @IsOptional()
-  @IsNumber()
+  @IsString()
   @ApiPropertyOptional({
     description:
-      'NEXT_PAGE: the page index the client believes is current; a mismatch is rejected with 409 before anything is saved. VALIDATE: the page to compute display values for. Ignored by other actions.',
+      'The id of the screen the client is on. Required for every action. If no shown screen has the id, nothing is saved and the response is the screen to resume on, with a notice. VALIDATE answers with no errors instead.',
   })
-  readonly lastKnownPageIndex?: number
+  readonly screen?: string
 
   @IsOptional()
   @IsArray()
@@ -53,9 +49,7 @@ export class ExecuteActionDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({
-    description:
-      'For SUBMIT (required): the state-machine event name to fire. For ' +
-      'GO_TO_PAGE: the destination page id.',
+    description: 'For SUBMIT (required): the state-machine event name to fire.',
   })
   readonly event?: string
 

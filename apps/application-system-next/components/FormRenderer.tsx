@@ -18,6 +18,7 @@ export const FormRenderer = ({
   answers,
   onAnswerChange,
   dispatch,
+  goToScreen,
   displayValues,
   pendingRefetchTargets = [],
 }: FormRendererProps) => {
@@ -78,6 +79,7 @@ export const FormRenderer = ({
               answers={answers}
               onAnswerChange={onAnswerChange}
               dispatch={dispatch}
+              goToScreen={goToScreen}
               displayValues={displayValues}
               pendingRefetchTargets={pendingRefetchTargets}
             />
@@ -98,6 +100,7 @@ export const FormRenderer = ({
                   answers={answers}
                   onAnswerChange={onAnswerChange}
                   dispatch={dispatch}
+                  goToScreen={goToScreen}
                   displayValues={displayValues}
                   pendingRefetchTargets={pendingRefetchTargets}
                 />

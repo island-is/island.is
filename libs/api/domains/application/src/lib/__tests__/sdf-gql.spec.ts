@@ -5,6 +5,7 @@ import {
   SdfActionType,
   SdfGetScreenInput,
   SdfExecuteActionInput,
+  SdfNoticeCode,
 } from '../sdf.model'
 import type { User } from '@island.is/auth-nest-tools'
 import type { SdfApi, ScreenDto, ComponentDto } from '../../../gen/fetch'
@@ -107,14 +108,14 @@ describe('SDF GraphQL Layer', () => {
 
       const input: SdfGetScreenInput = {
         applicationId: MOCK_APP_ID,
-        step: 0,
+        screen: 'page-0',
       }
 
       const result = await resolver.getScreen(input, 'is', mockUser)
 
       expect(sdfService.getScreen).toHaveBeenCalledWith(
         MOCK_APP_ID,
-        0,
+        'page-0',
         'is',
         mockUser,
       )
@@ -134,7 +135,7 @@ describe('SDF GraphQL Layer', () => {
       expect(result.footer.canGoBack).toBe(false)
     })
 
-    it('should pass undefined step when not provided', async () => {
+    it('should pass undefined screen when not provided', async () => {
       sdfService.getScreen.mockResolvedValue(createMockScreenDto())
 
       const input: SdfGetScreenInput = {
@@ -177,7 +178,7 @@ describe('SDF GraphQL Layer', () => {
       sdfService.getScreen.mockResolvedValue(dto)
 
       const result = await resolver.getScreen(
-        { applicationId: MOCK_APP_ID, step: 0 },
+        { applicationId: MOCK_APP_ID, screen: 'page-0' },
         'is',
         mockUser,
       )
@@ -223,7 +224,7 @@ describe('SDF GraphQL Layer', () => {
         applicationId: MOCK_APP_ID,
         actionType: SdfActionType.NEXT_PAGE,
         answers: JSON.stringify({ applicantName: 'John Doe' }),
-        lastKnownPageIndex: 0,
+        screen: 'page-0',
       }
 
       const result = await resolver.executeAction(input, 'is', mockUser)
@@ -232,7 +233,7 @@ describe('SDF GraphQL Layer', () => {
         MOCK_APP_ID,
         SdfActionType.NEXT_PAGE,
         { applicantName: 'John Doe' },
-        0,
+        'page-0',
         'is',
         mockUser,
         undefined,
@@ -250,7 +251,7 @@ describe('SDF GraphQL Layer', () => {
       const input: SdfExecuteActionInput = {
         applicationId: MOCK_APP_ID,
         actionType: SdfActionType.PREV_PAGE,
-        lastKnownPageIndex: 1,
+        screen: 'page-1',
       }
 
       await resolver.executeAction(input, 'is', mockUser)
@@ -259,7 +260,7 @@ describe('SDF GraphQL Layer', () => {
         MOCK_APP_ID,
         SdfActionType.PREV_PAGE,
         undefined,
-        1,
+        'page-1',
         'is',
         mockUser,
         undefined,
@@ -274,7 +275,7 @@ describe('SDF GraphQL Layer', () => {
       const input: SdfExecuteActionInput = {
         applicationId: MOCK_APP_ID,
         actionType: SdfActionType.REFETCH,
-        lastKnownPageIndex: 0,
+        screen: 'page-0',
       }
 
       await resolver.executeAction(input, 'is', mockUser)
@@ -283,7 +284,7 @@ describe('SDF GraphQL Layer', () => {
         MOCK_APP_ID,
         SdfActionType.REFETCH,
         undefined,
-        0,
+        'page-0',
         'is',
         mockUser,
         undefined,
@@ -314,7 +315,7 @@ describe('SDF GraphQL Layer', () => {
         applicationId: MOCK_APP_ID,
         actionType: SdfActionType.VALIDATE,
         answers: JSON.stringify({ applicantName: 'A' }),
-        lastKnownPageIndex: 0,
+        screen: 'page-0',
         fieldIds: ['applicantName'],
       }
 
@@ -324,7 +325,7 @@ describe('SDF GraphQL Layer', () => {
         MOCK_APP_ID,
         SdfActionType.VALIDATE,
         { applicantName: 'A' },
-        0,
+        'page-0',
         'is',
         mockUser,
         ['applicantName'],
@@ -353,7 +354,7 @@ describe('SDF GraphQL Layer', () => {
       const input: SdfExecuteActionInput = {
         applicationId: MOCK_APP_ID,
         actionType: SdfActionType.SUBMIT,
-        lastKnownPageIndex: 2,
+        screen: 'page-2',
         event: 'APPROVE',
       }
 
@@ -363,7 +364,7 @@ describe('SDF GraphQL Layer', () => {
         MOCK_APP_ID,
         SdfActionType.SUBMIT,
         undefined,
-        2,
+        'page-2',
         'is',
         mockUser,
         undefined,
@@ -378,7 +379,7 @@ describe('SDF GraphQL Layer', () => {
       const input: SdfExecuteActionInput = {
         applicationId: MOCK_APP_ID,
         actionType: SdfActionType.NEXT_PAGE,
-        lastKnownPageIndex: 0,
+        screen: 'page-0',
       }
 
       await resolver.executeAction(input, 'is', mockUser)
@@ -387,7 +388,7 @@ describe('SDF GraphQL Layer', () => {
         MOCK_APP_ID,
         SdfActionType.NEXT_PAGE,
         undefined,
-        0,
+        'page-0',
         'is',
         mockUser,
         undefined,
@@ -398,7 +399,7 @@ describe('SDF GraphQL Layer', () => {
   })
 
   describe('validate mutation', () => {
-    it('passes the current page index override to the REST validate action', async () => {
+    it('passes the screen to the REST validate action', async () => {
       sdfService.validate.mockResolvedValue({
         errors: [],
         displayValues: { displayField: '77' },
@@ -409,7 +410,7 @@ describe('SDF GraphQL Layer', () => {
         actionType: SdfActionType.VALIDATE,
         answers: JSON.stringify({ input1: '23', input2: '23', input3: '31' }),
         fieldIds: [],
-        lastKnownPageIndex: 7,
+        screen: 'page-7',
       }
 
       const result = await resolver.validate(input, 'is', mockUser)
@@ -420,13 +421,51 @@ describe('SDF GraphQL Layer', () => {
         [],
         'is',
         mockUser,
-        7,
+        'page-7',
       )
       expect(result.displayValues).toEqual({ displayField: '77' })
     })
   })
 
   describe('REST-to-GQL mapping integrity', () => {
+    it('should map the notice of a response', async () => {
+      sdfService.executeAction.mockResolvedValue(
+        createMockScreenDto({
+          notice: {
+            code: 'screen-unavailable' as never,
+            message: 'The page is no longer available',
+          },
+        }),
+      )
+
+      const result = await resolver.executeAction(
+        {
+          applicationId: MOCK_APP_ID,
+          actionType: SdfActionType.NEXT_PAGE,
+          screen: 'page-0',
+        },
+        'is',
+        mockUser,
+      )
+
+      expect(result.notice).toEqual({
+        code: SdfNoticeCode.SCREEN_UNAVAILABLE,
+        message: 'The page is no longer available',
+      })
+    })
+
+    it('should map no notice when the response has none', async () => {
+      sdfService.getScreen.mockResolvedValue(createMockScreenDto())
+
+      const result = await resolver.getScreen(
+        { applicationId: MOCK_APP_ID },
+        'is',
+        mockUser,
+      )
+
+      expect(result.notice).toBeUndefined()
+    })
+
     it('should map stepper with multiple sections and subsections', async () => {
       const dto = createMockScreenDto({
         stepper: {
@@ -454,7 +493,7 @@ describe('SDF GraphQL Layer', () => {
       sdfService.getScreen.mockResolvedValue(dto)
 
       const result = await resolver.getScreen(
-        { applicationId: MOCK_APP_ID, step: 3 },
+        { applicationId: MOCK_APP_ID, screen: 'page-3' },
         'is',
         mockUser,
       )
@@ -540,12 +579,12 @@ describe('SdfService', () => {
 
     const service = new SdfService(mockSdfApi as unknown as SdfApi)
 
-    await service.getScreen(MOCK_APP_ID, 0, 'is', mockUser)
+    await service.getScreen(MOCK_APP_ID, 'page-0', 'is', mockUser)
 
     expect(mockWithMiddleware).toHaveBeenCalled()
     expect(mockGetScreen).toHaveBeenCalledWith({
       applicationId: MOCK_APP_ID,
-      step: 0,
+      screen: 'page-0',
       locale: 'is',
     })
   })
@@ -567,7 +606,7 @@ describe('SdfService', () => {
       MOCK_APP_ID,
       SdfActionType.NEXT_PAGE,
       { name: 'test' },
-      0,
+      'page-0',
       'is',
       mockUser,
     )
@@ -579,7 +618,7 @@ describe('SdfService', () => {
         actionType: SdfActionType.NEXT_PAGE,
         answers: { name: 'test' },
         locale: 'is',
-        lastKnownPageIndex: 0,
+        screen: 'page-0',
         fieldIds: undefined,
         event: undefined,
         refetchTemplateApiActions: undefined,
@@ -587,7 +626,7 @@ describe('SdfService', () => {
     })
   })
 
-  it('should pass validate page index overrides to sdfControllerExecuteAction', async () => {
+  it('should pass the screen of a validate action to sdfControllerExecuteAction', async () => {
     const mockExecuteAction = jest.fn().mockResolvedValue({
       errors: [],
       displayValues: { displayField: '77' },
@@ -609,7 +648,7 @@ describe('SdfService', () => {
       [],
       'is',
       mockUser,
-      7,
+      'page-7',
     )
 
     expect(mockExecuteAction).toHaveBeenCalledWith({
@@ -619,7 +658,7 @@ describe('SdfService', () => {
         answers: { input1: '23', input2: '23', input3: '31' },
         locale: 'is',
         fieldIds: [],
-        lastKnownPageIndex: 7,
+        screen: 'page-7',
       },
     })
   })

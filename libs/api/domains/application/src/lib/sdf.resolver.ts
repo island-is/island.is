@@ -10,6 +10,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import { SdfService } from './sdf.service'
 import {
+  SdfNoticeCode,
   SdfScreen,
   SdfValidateResult,
   SdfValidateResponseShape,
@@ -66,6 +67,12 @@ const mapRestScreenToGql = (dto: ScreenDto): SdfScreen => {
       dto.answers === undefined || dto.answers === null
         ? undefined
         : (dto.answers as Record<string, unknown>),
+    notice: dto.notice
+      ? {
+          code: dto.notice.code as unknown as SdfNoticeCode,
+          message: dto.notice.message,
+        }
+      : undefined,
   }
 }
 
@@ -83,7 +90,7 @@ export class SdfResolver {
   ): Promise<SdfScreen> {
     const dto = await this.sdfService.getScreen(
       input.applicationId,
-      input.step,
+      input.screen ?? undefined,
       locale,
       user,
     )
@@ -105,7 +112,7 @@ export class SdfResolver {
       input.applicationId,
       input.actionType,
       answers,
-      input.lastKnownPageIndex ?? undefined,
+      input.screen,
       locale,
       user,
       input.fieldIds,
@@ -138,7 +145,7 @@ export class SdfResolver {
       input.fieldIds ?? undefined,
       locale,
       user,
-      input.lastKnownPageIndex ?? undefined,
+      input.screen,
     )
 
     return {

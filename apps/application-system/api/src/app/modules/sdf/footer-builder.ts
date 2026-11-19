@@ -29,7 +29,7 @@ function mapCallToActionType(): string {
   // which are always state-machine transition events (SUBMIT, PAYMENT, APPROVE,
   // REJECT, ABORT, ...). They must dispatch SUBMIT carrying the event name so
   // the backend advances the XState machine — never NEXT_PAGE, which only moves
-  // the page cursor and would no-op on the final screen. (Page navigation is
+  // to the next screen and would no-op on the final screen. (Page navigation is
   // synthesized separately in `buildFooter` for non-final screens.)
   return SdfActionType.SUBMIT
 }

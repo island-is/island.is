@@ -302,6 +302,7 @@ describe('SdfScreenService handleRefetch', () => {
       [lookupApi.action],
       'is',
       { nationalId: application.applicant },
+      'page',
     )
 
     expect(applicationService.update).not.toHaveBeenCalled()
@@ -383,6 +384,7 @@ describe('SdfScreenService handleRefetch', () => {
         [lookupApi.action],
         'is',
         { nationalId: application.applicant },
+        'page',
       ),
     ).resolves.toMatchObject({
       applicationId: application.id,
@@ -394,10 +396,9 @@ describe('SdfScreenService handleRefetch', () => {
     )
   })
 
-  it('keeps persisted page index during ephemeral refetch even when answers would infer a later page', async () => {
+  it('shows the claimed page during ephemeral refetch even when answers would infer a later page', async () => {
     const application = {
       ...createApplication(),
-      pageIndex: 0,
       answers: {},
     }
     const template = createApplicationTemplate({
@@ -456,6 +457,7 @@ describe('SdfScreenService handleRefetch', () => {
       [lookupApi.action],
       'is',
       { nationalId: application.applicant },
+      'page0',
     )
 
     expect(screen.page.index).toBe(0)
@@ -465,7 +467,6 @@ describe('SdfScreenService handleRefetch', () => {
   it('includes answers referenced by current page client expressions', async () => {
     const application = {
       ...createApplication(),
-      pageIndex: 1,
       answers: {
         previousPageAnswer: 'yes',
         currentPageAnswer: 'visible',
@@ -516,7 +517,7 @@ describe('SdfScreenService handleRefetch', () => {
       {},
     )
 
-    const screen = await service.getScreen(application.id, undefined, 'is', {
+    const screen = await service.getScreen(application.id, 'page1', 'is', {
       nationalId: application.applicant,
     })
 
@@ -583,6 +584,7 @@ describe('SdfScreenService handleRefetch', () => {
       [],
       'is',
       { nationalId: application.applicant },
+      'page',
     )
 
     expect(result.displayValues).toEqual({ serverDisplay: '42' })

@@ -4,21 +4,18 @@ import { ShellSkeleton } from '../../../components/ShellSkeleton'
 
 interface ApplicationPageProps {
   params: Promise<{ slug: string; id: string }>
-  searchParams: Promise<{ step?: string }>
+  searchParams: Promise<{ screen?: string }>
 }
 
 const ApplicationPage = async ({
   params,
   searchParams,
 }: ApplicationPageProps) => {
-  const [{ id }, { step }] = await Promise.all([params, searchParams])
+  const [{ id }, { screen }] = await Promise.all([params, searchParams])
 
   return (
     <Suspense fallback={<ShellSkeleton />}>
-      <InitialScreenGate
-        applicationId={id}
-        step={step ? parseInt(step, 10) : undefined}
-      />
+      <InitialScreenGate applicationId={id} screen={screen} />
     </Suspense>
   )
 }

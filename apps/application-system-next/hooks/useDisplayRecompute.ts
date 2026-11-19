@@ -45,7 +45,7 @@ export const useDisplayRecompute = (
   components: SdfComponentData[],
   answers: Record<string, unknown>,
   locale: string,
-  pageIndex?: number,
+  screenId: string,
 ): Record<string, string> => {
   const [overlay, setOverlay] = useState<Record<string, string>>({})
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -73,10 +73,10 @@ export const useDisplayRecompute = (
       try {
         const result = await validateAction(
           applicationId,
+          screenId,
           answers,
           [],
           locale,
-          pageIndex,
         )
         if (requestId !== requestCounterRef.current) return
         setOverlay(result.displayValues ?? {})
@@ -95,7 +95,7 @@ export const useDisplayRecompute = (
     serializedCurrentPageAnswers,
     applicationId,
     locale,
-    pageIndex,
+    screenId,
     shouldRecompute,
   ])
 

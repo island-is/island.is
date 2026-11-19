@@ -63,7 +63,7 @@ describe('useDisplayRecompute', () => {
 
     const { result, rerender } = renderHook(
       ({ answers }) =>
-        useDisplayRecompute('app-1', components, answers, 'is', 7),
+        useDisplayRecompute('app-1', components, answers, 'is', 'page-7'),
       {
         initialProps: { answers: {} as Record<string, unknown> },
       },
@@ -90,10 +90,10 @@ describe('useDisplayRecompute', () => {
     expect(result.current).toEqual({ displayField: '356' })
     expect(validateAction).toHaveBeenLastCalledWith(
       'app-1',
+      'page-7',
       { input1: '2', input2: '32', input3: '322' },
       [],
       'is',
-      7,
     )
   })
 
@@ -104,7 +104,7 @@ describe('useDisplayRecompute', () => {
         clientComputedComponents,
         { input1: '23', input2: '23', input3: '31' },
         'is',
-        7,
+        'page-7',
       ),
     )
 
@@ -123,7 +123,7 @@ describe('useDisplayRecompute', () => {
 
     const { rerender } = renderHook(
       ({ answers }) =>
-        useDisplayRecompute('app-1', components, answers, 'is', 7),
+        useDisplayRecompute('app-1', components, answers, 'is', 'page-7'),
       {
         initialProps: {
           answers: { input1: '1', previousPageAnswer: 'a' } as Record<
@@ -155,7 +155,7 @@ describe('useDisplayRecompute', () => {
     ;(validateAction as jest.Mock).mockRejectedValue(new Error('network down'))
 
     renderHook(() =>
-      useDisplayRecompute('app-1', components, { input1: '1' }, 'is', 7),
+      useDisplayRecompute('app-1', components, { input1: '1' }, 'is', 'page-7'),
     )
 
     await act(async () => {

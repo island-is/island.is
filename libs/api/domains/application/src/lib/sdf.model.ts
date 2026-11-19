@@ -15,14 +15,18 @@ import graphqlTypeJson from 'graphql-type-json'
 export enum SdfActionType {
   NEXT_PAGE = 'NEXT_PAGE',
   PREV_PAGE = 'PREV_PAGE',
-  // Jump directly to a known page by id (e.g. the overview "Breyta"/edit
-  // button). The destination page id is carried in `event`.
-  GO_TO_PAGE = 'GO_TO_PAGE',
   SUBMIT = 'SUBMIT',
   REFETCH = 'REFETCH',
   VALIDATE = 'VALIDATE',
 }
 registerEnumType(SdfActionType, { name: 'SdfActionType' })
+
+export enum SdfNoticeCode {
+  // The screen the client acted on is no longer available. Nothing was saved,
+  // and the screen returned is the one to resume on.
+  SCREEN_UNAVAILABLE = 'screen-unavailable',
+}
+registerEnumType(SdfNoticeCode, { name: 'SdfNoticeCode' })
 
 export enum SdfButtonVariant {
   PRIMARY = 'PRIMARY',
@@ -1854,6 +1858,15 @@ export class SdfHeader {
   logo?: string
 }
 
+@ObjectType('SdfNotice')
+export class SdfNotice {
+  @Field(() => SdfNoticeCode)
+  code!: SdfNoticeCode
+
+  @Field({ description: 'The notice, translated for the locale.' })
+  message!: string
+}
+
 @ObjectType('SdfScreen')
 export class SdfScreen {
   @Field()
@@ -1876,6 +1889,13 @@ export class SdfScreen {
 
   @Field(() => graphqlTypeJson, { nullable: true })
   answers?: Record<string, unknown>
+
+  @Field(() => SdfNotice, {
+    nullable: true,
+    description:
+      'Set when the action was not carried out as asked, for example because the screen it was sent from is no longer available.',
+  })
+  notice?: SdfNotice
 }
 
 // ---------------------------------------------------------------------------
@@ -1887,14 +1907,12 @@ export class SdfGetScreenInput {
   @Field()
   applicationId!: string
 
-  @Field(() => Int, {
+  @Field({
     nullable: true,
     description:
-      'Optional override for deep-linking. Omit to use the persisted page index.',
-    deprecationReason:
-      'The backend now tracks page index in the database. Only use for deep-link overrides.',
+      'The id of the screen to show. Omit it, or give an id that is not shown, to get the screen to resume on.',
   })
-  step?: number
+  screen?: string
 }
 
 @InputType('SdfExecuteActionInput')
@@ -1908,11 +1926,11 @@ export class SdfExecuteActionInput {
   @Field({ nullable: true })
   answers?: string
 
-  @Field(() => Int, {
-    nullable: true,
-    deprecationReason: 'The backend now tracks page index in the database.',
+  @Field({
+    description:
+      'The id of the screen the client is on. If no shown screen has the id, nothing is saved and the response is the screen to resume on, with a notice.',
   })
-  lastKnownPageIndex?: number
+  screen!: string
 
   @Field(() => [String], { nullable: true })
   fieldIds?: string[]

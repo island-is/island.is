@@ -3,7 +3,7 @@ import { FormItemTypes, SubSection } from '@island.is/application/types'
 
 const staticTablePage = new PageBuilder('', '')
 
-staticTablePage.addStaticTableField('', 'Static table', {
+staticTablePage.addStaticTableField('staticTable', 'Static table', {
   // Header, rows and summary can also be functions that access external data or answers
   header: [
     'Table heading 1',

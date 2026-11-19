@@ -46,6 +46,7 @@ export const ApplicationShell = ({
     prevPage,
     submit,
     dispatch,
+    goToScreen,
   } = useFormActions(applicationId, initialScreen)
 
   // The back button label is the only client-rendered text on the form shell
@@ -81,7 +82,7 @@ export const ApplicationShell = ({
     screen.page.components,
     answerSnapshot,
     screen.locale ?? 'is',
-    screen.page.index,
+    screen.page.id,
   )
 
   React.useEffect(() => {
@@ -138,6 +139,15 @@ export const ApplicationShell = ({
                         </Box>
                       )}
 
+                      {screen.notice && (
+                        <Box marginBottom={3}>
+                          <AlertMessage
+                            type="info"
+                            message={screen.notice.message}
+                          />
+                        </Box>
+                      )}
+
                       {error && (
                         <Box marginBottom={3}>
                           <AlertMessage type="error" title={error} />
@@ -151,6 +161,7 @@ export const ApplicationShell = ({
                           answers={answers.current}
                           onAnswerChange={onAnswerChange}
                           dispatch={dispatch}
+                          goToScreen={goToScreen}
                           displayValues={displayValues}
                           pendingRefetchTargets={pendingRefetchTargets}
                         />
