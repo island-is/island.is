@@ -52,6 +52,33 @@ describe('FormsService list permissions', () => {
   })
 })
 
+describe('FormsService form list', () => {
+  it('includes the original form ID for derived revisions', async () => {
+    const user = { nationalId: 'owner', scope: [] } as unknown as User
+    const service = Object.assign(Object.create(FormsService.prototype), {
+      organizationModel: {
+        findOne: jest.fn().mockResolvedValue({ id: 'organization' }),
+        findAll: jest.fn().mockResolvedValue([]),
+      },
+      formModel: {
+        findAll: jest.fn().mockResolvedValue([
+          {
+            id: 'revision',
+            derivedFrom: 'original-form',
+            status: FormStatus.PUBLISHED_BEING_CHANGED,
+          },
+        ]),
+      },
+    }) as FormsService
+
+    const result = await service.findAll(user, user.nationalId)
+
+    expect(result.forms).toEqual([
+      expect.objectContaining({ id: 'revision', derivedFrom: 'original-form' }),
+    ])
+  })
+})
+
 describe.each(['archive', 'publish replacement'])(
   'FormsService draft cleanup when using %s',
   (action) => {
@@ -113,8 +140,10 @@ describe.each(['archive', 'publish replacement'])(
         destroy: jest.fn().mockResolvedValue(1),
       }
       const commit = jest.fn().mockResolvedValue(undefined)
+      const findRevision = jest.fn().mockResolvedValue(null)
       const service = Object.assign(Object.create(FormsService.prototype), {
         formModel: {
+          findOne: findRevision,
           findByPk: jest.fn(async (id) =>
             id === replacement.id ? replacement : form,
           ),
@@ -157,7 +186,41 @@ describe.each(['archive', 'publish replacement'])(
         applicationEventModel,
         fileService,
         commit,
+        findRevision,
       }
+    }
+
+    if (action === 'archive') {
+      it('requires deleting an active derived revision before unpublishing', async () => {
+        const {
+          updateStatus,
+          form,
+          replacement,
+          findRevision,
+          transaction,
+          applicationModel,
+          fileService,
+          commit,
+        } = setup()
+        findRevision.mockResolvedValueOnce(replacement)
+
+        await expect(updateStatus()).rejects.toThrow(
+          'Delete the form being changed',
+        )
+
+        expect(findRevision).toHaveBeenCalledWith({
+          where: {
+            derivedFrom: form.id,
+            status: FormStatus.PUBLISHED_BEING_CHANGED,
+          },
+          transaction,
+        })
+        expect(form.status).toBe(FormStatus.PUBLISHED)
+        expect(form.save).not.toHaveBeenCalled()
+        expect(applicationModel.findAll).not.toHaveBeenCalled()
+        expect(fileService.deleteFileFromStorage).not.toHaveBeenCalled()
+        expect(commit).not.toHaveBeenCalled()
+      })
     }
 
     it('deletes only drafts for the archived form, including test drafts and their files', async () => {

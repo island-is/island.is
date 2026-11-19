@@ -162,6 +162,7 @@ export class FormsService {
       'status',
       'draftDaysToLive',
       'submissionDaysToLive',
+      'derivedFrom',
       'allowProceedOnValidationFail',
       'isInaccessible',
       'validateEligibility',
@@ -903,6 +904,19 @@ export class FormsService {
       await form.reload({ transaction, lock: Transaction.LOCK.UPDATE })
       if (form.status !== FormStatus.PUBLISHED) {
         throw new ConflictException(`Form with id '${id}' is not published`)
+      }
+
+      const revision = await this.formModel.findOne({
+        where: {
+          derivedFrom: id,
+          status: FormStatus.PUBLISHED_BEING_CHANGED,
+        },
+        transaction,
+      })
+      if (revision) {
+        throw new ConflictException(
+          `Delete the form being changed from form '${id}' before unpublishing it.`,
+        )
       }
 
       const slug = form.slug

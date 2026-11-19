@@ -93,6 +93,7 @@ export const TableRow = ({
   isInaccessible = false,
 }: Props) => {
   const {
+    forms,
     isAdmin,
     organizations,
     organizationNationalId,
@@ -432,7 +433,7 @@ export const TableRow = ({
             formatMessage({
               id: 'publishChangedFormOutcomeUnknown',
               defaultMessage:
-                'Ekki tókst að staðfesta hvort eyðublaðið var gefið út. Endurhladdu síðuna áður en þú reynir aftur. ATH. Ekki er hægt að gefa út breytt eyðublað ef upphaflega formið hefur verið tekið úr útgáfu.',
+                'Ekki tókst að staðfesta hvort eyðublaðið var gefið út. Endurhladdu síðuna áður en þú reynir aftur.',
             }),
           )
         let publishAttempted = false
@@ -670,6 +671,23 @@ export const TableRow = ({
               : formatMessage(m.delete)
           }
           onConfirm={async () => {
+            if (
+              status === FormStatus.PUBLISHED &&
+              forms.some(
+                (form) =>
+                  form.derivedFrom === id &&
+                  form.status === FormStatus.PUBLISHED_BEING_CHANGED,
+              )
+            ) {
+              toast.warning(
+                formatMessage({
+                  id: 'unpublishFormWithRevisionWarning',
+                  defaultMessage:
+                    'Ekki er hægt að taka eyðublaðið úr útgáfu meðan útgáfa þess er í breytingu.',
+                }),
+              )
+              return
+            }
             try {
               const { data } = await updateFormStatus({
                 variables: {
@@ -715,6 +733,7 @@ export const TableRow = ({
       del,
     ]
   }, [
+    forms,
     id,
     slug,
     status,

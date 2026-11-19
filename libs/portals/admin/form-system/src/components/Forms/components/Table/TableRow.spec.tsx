@@ -47,6 +47,8 @@ jest.mock('@island.is/form-system/graphql', () => ({
 jest.mock('@island.is/form-system/ui', () => ({
   m: {
     publish: { defaultMessage: 'Publish' },
+    delete: { defaultMessage: 'Delete' },
+    unpublish: { defaultMessage: 'Unpublish' },
     translationNeededError: { defaultMessage: 'Translation needed' },
   },
 }))
@@ -90,21 +92,35 @@ jest.mock('@island.is/island-ui/core', () => {
     Box: Container,
     Button: () => null,
     GridColumn: Container,
-    DialogPrompt: () => null,
+    DialogPrompt: ({
+      buttonTextConfirm,
+      onConfirm,
+    }: {
+      buttonTextConfirm: string
+      onConfirm: () => Promise<void>
+    }) => <button onClick={onConfirm}>{buttonTextConfirm}</button>,
     Divider: () => null,
     DropdownMenu: ({
       items,
     }: {
-      items: { title: string; onClick?: () => Promise<unknown> }[]
+      items: {
+        title: string
+        onClick?: () => Promise<unknown>
+        render?: () => ReactNode
+      }[]
     }) => (
       <>
         {items
-          .filter((item) => item.title === 'Publish')
-          .map((item) => (
-            <button key={item.title} onClick={item.onClick}>
-              {item.title}
-            </button>
-          ))}
+          .filter((item) => item.title === 'Publish' || item.render)
+          .map((item) =>
+            item.render ? (
+              <div key={item.title}>{item.render()}</div>
+            ) : (
+              <button key={item.title} onClick={item.onClick}>
+                {item.title}
+              </button>
+            ),
+          )}
       </>
     ),
     Icon: ({ icon, color }: { icon: string; color?: string }) => (
@@ -193,8 +209,11 @@ describe('publishing a form', () => {
     ...overrides,
   })
 
-  const renderChangedForm = (form = createForm()) => {
-    const forms = [form]
+  const renderChangedForm = (
+    form = createForm(),
+    otherForms: FormSystemForm[] = [],
+  ) => {
+    const forms = [form, ...otherForms]
     const formsUpdated = jest.fn<(forms: FormSystemForm[]) => void>()
     let latestContext: IFormsContext
     const Rows = () => {
@@ -244,6 +263,64 @@ describe('publishing a form', () => {
     )
     return { formsUpdated, getContext: () => latestContext }
   }
+
+  it('requires deleting the derived revision before unpublishing its original', async () => {
+    const original = createForm({
+      id: 'original-form',
+      status: FormStatus.PUBLISHED,
+    })
+    const revision = createForm({
+      name: { is: 'Revision' },
+      derivedFrom: original.id,
+    })
+    const { getContext } = renderChangedForm(original, [revision])
+    fireEvent.click(screen.getByRole('button', { name: 'Unpublish' }))
+
+    await waitFor(() =>
+      expect(toast.warning).toHaveBeenCalledWith(
+        'Fyrst þarf að eyða útgáfunni sem er í breytingu áður en hægt er að taka eyðublaðið úr útgáfu.',
+      ),
+    )
+    expect(mockUpdateFormStatus).not.toHaveBeenCalled()
+    expect(getContext().forms).toEqual([original, revision])
+
+    mockUpdateFormStatus.mockResolvedValue({
+      data: { updateFormSystemFormStatus: { form: null } },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Delete' }))
+    await waitFor(() => expect(screen.queryByText('Revision')).toBeNull())
+    fireEvent.click(screen.getByRole('button', { name: 'Unpublish' }))
+    await waitFor(() =>
+      expect(mockUpdateFormStatus).toHaveBeenLastCalledWith({
+        variables: {
+          input: {
+            id: original.id,
+            updateFormStatusDto: { newStatus: FormStatus.ARCHIVED },
+          },
+        },
+      }),
+    )
+  })
+
+  it.each([
+    { derivedFrom: 'other-form', status: FormStatus.PUBLISHED_BEING_CHANGED },
+    { derivedFrom: 'original-form', status: FormStatus.IN_DEVELOPMENT },
+  ])(
+    'allows unpublishing without an active derived revision (%o)',
+    async (related) => {
+      mockUpdateFormStatus.mockResolvedValue({
+        data: { updateFormSystemFormStatus: { form: null } },
+      })
+      renderChangedForm(
+        createForm({ id: 'original-form', status: FormStatus.PUBLISHED }),
+        [createForm(related)],
+      )
+      fireEvent.click(screen.getByRole('button', { name: 'Unpublish' }))
+
+      await waitFor(() => expect(mockUpdateFormStatus).toHaveBeenCalledTimes(1))
+      expect(toast.warning).not.toHaveBeenCalled()
+    },
+  )
 
   it.each([FormStatus.IN_DEVELOPMENT, FormStatus.PUBLISHED_BEING_CHANGED])(
     'clears the inaccessible lock and notice after publishing from %s',
