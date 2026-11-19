@@ -11,7 +11,7 @@ import { useLocale } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
 
 import {
-  calculatePeriodLength,
+  calculateDaysUsedAtPercentage,
   calculateMaxPercentageForPeriod,
   calculateMinPercentageForPeriod,
 } from '../../lib/directorateOfLabour.utils'
@@ -99,13 +99,10 @@ export const PeriodPercentage: FC<
       return { minPercentage: min, maxPercentage: min }
     }
 
-    const periodLengthWithMaxPercentage = calculatePeriodLength(
-      start,
-      end,
-      max / 100,
-    )
-
-    if (periodLengthWithMaxPercentage < remainingRights && max < 100) {
+    if (
+      calculateDaysUsedAtPercentage(start, end, max) < remainingRights &&
+      max < 100
+    ) {
       setCanChooseRemainingDays(true)
       setMaxPercentageValue(`${max + 1}`)
       return { minPercentage: min, maxPercentage: max + 1 }
