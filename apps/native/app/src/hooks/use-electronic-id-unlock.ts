@@ -17,9 +17,9 @@ export function closeElectronicIdSheet() {
   if (electronicIdStore.getState().sheetRequestId === undefined) {
     return
   }
-  // Cleared first, so a second call can't close the screen under it.
+  // The sheet closes itself on this, when it's on top: not by going back
+  // from whatever is, which may be the lock that came up over it.
   electronicIdStore.setState({ sheetRequestId: undefined })
-  router.back()
 }
 
 /**

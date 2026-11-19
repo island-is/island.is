@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router'
+import { useNavigation, useRouter } from 'expo-router'
 import React, { useEffect } from 'react'
 
 import { ElectronicIdConfirmation } from '@/components/device-bound-auth/electronic-id-confirmation'
@@ -15,9 +15,31 @@ import { useUiStore } from '@/stores/ui-store'
  */
 export default function ElectronicIdScreen() {
   const router = useRouter()
+  const navigation = useNavigation()
   const { purpose, verificationCode } = useElectronicIdStore()
   const { authenticationTypes } = useUiStore()
   const biometricType = useBiometricType(authenticationTypes)?.text
+
+  // Closed from outside once the request has ended (closeElectronicIdSheet).
+  // iOS can't take a sheet out from under another, so with the lock over it
+  // this one goes once it's on top again, after the unlock.
+  useEffect(() => {
+    const { requestId } = electronicIdStore.getState()
+    const closeIfOnTop = () => {
+      if (
+        electronicIdStore.getState().sheetRequestId !== requestId &&
+        navigation.isFocused()
+      ) {
+        navigation.goBack()
+      }
+    }
+    const unsubscribeStore = electronicIdStore.subscribe(closeIfOnTop)
+    const unsubscribeFocus = navigation.addListener('focus', closeIfOnTop)
+    return () => {
+      unsubscribeStore()
+      unsubscribeFocus()
+    }
+  }, [navigation])
 
   useEffect(() => {
     // The request this opened for, not one started after it closes.
