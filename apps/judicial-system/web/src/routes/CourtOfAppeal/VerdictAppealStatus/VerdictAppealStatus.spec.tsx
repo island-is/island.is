@@ -344,6 +344,30 @@ describe('VerdictAppealStatus', () => {
     }
   })
 
+  // Nothing disables the stepper, so a second step picked while the first
+  // leave is on its way must not start another save or navigation.
+  it('ignores a second stepper choice while it is already leaving', async () => {
+    let finishNavigation: (navigated: boolean) => void = () => undefined
+    mockPush.mockImplementationOnce(
+      () =>
+        new Promise<boolean>((resolve) => {
+          finishNavigation = resolve
+        }),
+    )
+    renderPage()
+
+    await userEvent.click(screen.getByLabelText('Frestun'))
+    await userEvent.click(screen.getByRole('button', { name: 'Verjandi' }))
+    await waitFor(() => expect(mockPush).toHaveBeenCalledTimes(1))
+
+    await userEvent.click(screen.getByRole('button', { name: 'Verjandi' }))
+
+    expect(mockPush).toHaveBeenCalledTimes(1)
+    expect(mockUpdateAppealCase).toHaveBeenCalledTimes(1)
+
+    await act(async () => finishNavigation(true))
+  })
+
   it('stays on the page when the status could not be saved', async () => {
     mockUpdateAppealCase.mockResolvedValue(undefined)
     renderPage()

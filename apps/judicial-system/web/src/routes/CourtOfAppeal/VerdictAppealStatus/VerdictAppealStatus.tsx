@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
@@ -103,6 +103,9 @@ const VerdictAppealStatus = () => {
   // Held from the moment the court moves on until the next page has opened,
   // so the status cannot be changed behind a save that is already on its way.
   const [isLeaving, setIsLeaving] = useState(false)
+  // The same, for the stepper, which nothing disables: a ref, so a second
+  // click that lands before the next render is turned away too.
+  const isLeavingRef = useRef(false)
 
   // Derived rather than set in an effect: the case arrives after the first
   // render, and the choice the court makes on the page always wins.
@@ -179,8 +182,15 @@ const VerdictAppealStatus = () => {
   }
 
   // Leaves for another step, saving the status first unless told not to, and
-  // stays on the page when it could not be saved.
+  // stays on the page when it could not be saved. One leave at a time: a
+  // second one asked for while the first is on its way is ignored, so the
+  // court ends up where the first one was headed and nothing is saved twice.
   const leaveFor = async (destination: string, saveFirst = true) => {
+    if (isLeavingRef.current) {
+      return
+    }
+
+    isLeavingRef.current = true
     setIsLeaving(true)
 
     try {
@@ -194,6 +204,7 @@ const VerdictAppealStatus = () => {
 
       await navigateTo(destination)
     } finally {
+      isLeavingRef.current = false
       setIsLeaving(false)
     }
   }
