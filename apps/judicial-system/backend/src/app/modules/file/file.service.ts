@@ -4,6 +4,7 @@ import { v4 as uuid } from 'uuid'
 
 import {
   BadRequestException,
+  ForbiddenException,
   forwardRef,
   Inject,
   Injectable,
@@ -24,7 +25,9 @@ import {
   CaseState,
   CourtDocumentType,
   EventType,
+  indictmentAdditionalCaseFileCategories,
   isCompletedCase,
+  isDistrictCourtUser,
   isIndictmentCase,
   isRequestCase,
   isRulingOrderWithoutDocument,
@@ -143,6 +146,7 @@ export class FileService {
       case CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE:
       case CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE:
       case CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE:
+      case CaseFileCategory.COURT_CASE_FILE:
       case CaseFileCategory.CRIMINAL_RECORD:
       case CaseFileCategory.COST_BREAKDOWN:
       case CaseFileCategory.CIVIL_CLAIM:
@@ -385,6 +389,15 @@ export class FileService {
   ): Promise<CaseFile> {
     const { key, rulingFileId } = createFile
 
+    if (
+      createFile.category === CaseFileCategory.COURT_CASE_FILE &&
+      !isDistrictCourtUser(user)
+    ) {
+      throw new ForbiddenException(
+        'Only district court users can create court case files',
+      )
+    }
+
     const regExp = new RegExp(`^${theCase.id}/.{36}/(.*)$`)
 
     if (!regExp.test(key)) {
@@ -453,9 +466,13 @@ export class FileService {
     return file
   }
 
-  // Files of an indictment case are delivered to the police and the courts as
-  // they arrive. Also used when a ruling order pronounced orally is written up,
-  // which is the first moment that file has a document to deliver.
+  // Additional case files of an indictment case are delivered to the police
+  // and the courts as they arrive. Mid-case ruling orders are delivered to the
+  // courts here too, but never to the police from this path — LÖKE gets them
+  // on case completion when they are linked in a confirmed court session (see
+  // addMessagesForMidCaseRulingOrdersToPolice). Also used when a ruling order
+  // pronounced orally is written up, which is the first moment that file has a
+  // document to deliver to the courts.
   private addMessagesForIndictmentCaseFileDeliveryToQueue(
     theCase: Case,
     file: CaseFile,
@@ -465,18 +482,20 @@ export class FileService {
       !isIndictmentCase(theCase.type) ||
       !file.category ||
       ![
-        CaseFileCategory.PROSECUTOR_CASE_FILE,
-        CaseFileCategory.DEFENDANT_CASE_FILE,
-        CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
-        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
-        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+        ...indictmentAdditionalCaseFileCategories,
         CaseFileCategory.COURT_INDICTMENT_RULING_ORDER,
       ].includes(file.category)
     ) {
       return
     }
 
-    if (theCase.origin === CaseOrigin.LOKE) {
+    // Mid-case ruling orders wait for case completion before going to LÖKE.
+    // Write-ups after completion go through case correction and are delivered
+    // when the case is completed again, not from here.
+    if (
+      theCase.origin === CaseOrigin.LOKE &&
+      file.category !== CaseFileCategory.COURT_INDICTMENT_RULING_ORDER
+    ) {
       queueMessagesAfterCommit({
         type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
         user,
@@ -569,13 +588,7 @@ export class FileService {
       [CaseState.SUBMITTED, CaseState.RECEIVED].includes(theCase.state) &&
       theCase.withCourtSessions &&
       file.category &&
-      [
-        CaseFileCategory.PROSECUTOR_CASE_FILE,
-        CaseFileCategory.DEFENDANT_CASE_FILE,
-        CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
-        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
-        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
-      ].includes(file.category)
+      indictmentAdditionalCaseFileCategories.includes(file.category)
     ) {
       await this.courtDocumentRepositoryService.create(
         theCase.id,
@@ -839,8 +852,10 @@ export class FileService {
 
     const updatedCaseFile = updatedCaseFiles[0]
 
-    // The ruling finally has a document to deliver, which is what createCaseFile
-    // would have queued had the ruling arrived as an upload in the first place.
+    // The ruling finally has a document to deliver to the court (police delivery
+    // waits for case completion when the ruling is linked in a confirmed court
+    // session), which is what createCaseFile would have queued had the ruling
+    // arrived as an upload in the first place.
     this.addMessagesForIndictmentCaseFileDeliveryToQueue(
       theCase,
       updatedCaseFile,

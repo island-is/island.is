@@ -1,8 +1,6 @@
 import isSameDay from 'date-fns/isSameDay'
 import PDFDocument from 'pdfkit'
 
-import { FormatMessage } from '@island.is/cms-translations'
-
 import {
   capitalize,
   formatDate,
@@ -32,7 +30,6 @@ import {
 } from '../pdfHelpers'
 
 export const formatCourtEndDate = (
-  formatMessage: FormatMessage,
   courtStartDate?: Date,
   courtEndTime?: Date,
 ): string => {
@@ -44,12 +41,11 @@ export const formatCourtEndDate = (
             : formatDate(courtEndTime, 'd. MMMM'),
         endTime: formatDate(courtEndTime, 'p'),
       })
-    : formatMessage(courtRecord.inSession)
+    : courtRecord.inSession
 }
 
 const constructRestrictionCourtRecordPdf = (
   theCase: Case,
-  formatMessage: FormatMessage,
   user?: User,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
@@ -67,7 +63,7 @@ const constructRestrictionCourtRecordPdf = (
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
-  const title = formatMessage(courtRecord.title)
+  const title = courtRecord.title
 
   setTitle(doc, title)
   addCoatOfArms(doc)
@@ -75,7 +71,7 @@ const constructRestrictionCourtRecordPdf = (
   setLineGap(doc, 4)
   addLargeHeading(
     doc,
-    theCase.court?.name ?? formatMessage(courtRecord.missingCourt),
+    theCase.court?.name ?? courtRecord.missingCourt,
     'Times-Roman',
   )
   setLineGap(doc, 2)
@@ -115,16 +111,13 @@ const constructRestrictionCourtRecordPdf = (
 
   if (!theCase.isClosedCourtHidden) {
     addEmptyLines(doc)
-    addNormalJustifiedText(
-      doc,
-      formatMessage(courtRecord.closedCourtAnnouncement),
-    )
+    addNormalJustifiedText(doc, courtRecord.closedCourtAnnouncement)
   }
 
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    `${formatMessage(courtRecord.prosecutorIs)} ${
+    `${courtRecord.prosecutorIs} ${
       theCase.prosecutorsOffice?.name ?? courtRecord.missingDistrict
     }.`,
   )
@@ -150,28 +143,20 @@ const constructRestrictionCourtRecordPdf = (
 
   if (theCase.courtAttendees?.trim()) {
     addEmptyLines(doc)
-    addNormalText(
-      doc,
-      formatMessage(courtRecord.attendeesHeading),
-      'Times-Bold',
-    )
+    addNormalText(doc, courtRecord.attendeesHeading, 'Times-Bold')
     addEmptyLines(doc)
 
     addNormalJustifiedText(doc, theCase.courtAttendees, 'Times-Roman')
   }
 
   addEmptyLines(doc)
-  addNormalText(
-    doc,
-    formatMessage(courtRecord.courtDocuments.heading),
-    'Times-Bold',
-  )
+  addNormalText(doc, courtRecord.courtDocuments.heading, 'Times-Bold')
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
     `${formatIcuMessage(courtRecord.courtDocuments.request, {
       caseTypes: formatRequestCaseType(theCase.type),
-    })} ${formatMessage(courtRecord.courtDocuments.announcement)}`,
+    })} ${courtRecord.courtDocuments.announcement}`,
     'Times-Roman',
   )
 
@@ -188,23 +173,22 @@ const constructRestrictionCourtRecordPdf = (
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    theCase.sessionBookings ??
-      formatMessage(courtRecord.missingSessionBookings),
+    theCase.sessionBookings ?? courtRecord.missingSessionBookings,
   )
   setLineGap(doc, 3)
   addEmptyLines(doc, 2)
   setLineGap(doc, 16)
-  addMediumHeading(doc, formatMessage(courtRecord.conclusionHeading))
+  addMediumHeading(doc, courtRecord.conclusionHeading)
   setLineGap(doc, 1)
   addNormalJustifiedText(
     doc,
-    theCase.conclusion ?? formatMessage(courtRecord.missingConclusion),
+    theCase.conclusion ?? courtRecord.missingConclusion,
   )
 
   addEmptyLines(doc)
   addNormalCenteredText(
     doc,
-    theCase.judge?.name ?? formatMessage(courtRecord.missingJudge),
+    theCase.judge?.name ?? courtRecord.missingJudge,
     'Times-Bold',
   )
 
@@ -228,11 +212,7 @@ const constructRestrictionCourtRecordPdf = (
   addEmptyLines(doc)
   addNormalText(
     doc,
-    formatCourtEndDate(
-      formatMessage,
-      theCase.courtStartDate,
-      theCase.courtEndTime,
-    ),
+    formatCourtEndDate(theCase.courtStartDate, theCase.courtEndTime),
   )
   addFooter(
     doc,
@@ -254,7 +234,6 @@ const constructRestrictionCourtRecordPdf = (
 
 const constructInvestigationCourtRecordPdf = (
   theCase: Case,
-  formatMessage: FormatMessage,
   user?: User,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
@@ -274,7 +253,7 @@ const constructInvestigationCourtRecordPdf = (
 
   const isCaseCompletedWithRuling = !theCase.isCompletedWithoutRuling
 
-  const title = formatMessage(courtRecord.title)
+  const title = courtRecord.title
 
   setTitle(doc, title)
   addCoatOfArms(doc)
@@ -282,7 +261,7 @@ const constructInvestigationCourtRecordPdf = (
   setLineGap(doc, 4)
   addLargeHeading(
     doc,
-    theCase.court?.name ?? formatMessage(courtRecord.missingCourt),
+    theCase.court?.name ?? courtRecord.missingCourt,
     'Times-Roman',
   )
   setLineGap(doc, 2)
@@ -322,16 +301,13 @@ const constructInvestigationCourtRecordPdf = (
 
   if (!theCase.isClosedCourtHidden) {
     addEmptyLines(doc)
-    addNormalJustifiedText(
-      doc,
-      formatMessage(courtRecord.closedCourtAnnouncement),
-    )
+    addNormalJustifiedText(doc, courtRecord.closedCourtAnnouncement)
   }
 
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    `${formatMessage(courtRecord.prosecutorIs)} ${
+    `${courtRecord.prosecutorIs} ${
       theCase.prosecutorsOffice?.name ?? courtRecord.missingDistrict
     }.`,
   )
@@ -357,28 +333,20 @@ const constructInvestigationCourtRecordPdf = (
 
   if (theCase.courtAttendees?.trim()) {
     addEmptyLines(doc)
-    addNormalText(
-      doc,
-      formatMessage(courtRecord.attendeesHeading),
-      'Times-Bold',
-    )
+    addNormalText(doc, courtRecord.attendeesHeading, 'Times-Bold')
     addEmptyLines(doc)
 
     addNormalJustifiedText(doc, theCase.courtAttendees, 'Times-Roman')
   }
 
   addEmptyLines(doc)
-  addNormalText(
-    doc,
-    formatMessage(courtRecord.courtDocuments.heading),
-    'Times-Bold',
-  )
+  addNormalText(doc, courtRecord.courtDocuments.heading, 'Times-Bold')
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
     `${formatIcuMessage(courtRecord.courtDocuments.request, {
       caseTypes: formatRequestCaseType(theCase.type),
-    })} ${formatMessage(courtRecord.courtDocuments.announcement)}`,
+    })} ${courtRecord.courtDocuments.announcement}`,
     'Times-Roman',
   )
 
@@ -395,8 +363,7 @@ const constructInvestigationCourtRecordPdf = (
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    theCase.sessionBookings ??
-      formatMessage(courtRecord.missingSessionBookings),
+    theCase.sessionBookings ?? courtRecord.missingSessionBookings,
   )
   setLineGap(doc, 3)
 
@@ -404,19 +371,19 @@ const constructInvestigationCourtRecordPdf = (
   if (isCaseCompletedWithRuling) {
     setLineGap(doc, 16)
 
-    addMediumHeading(doc, formatMessage(courtRecord.conclusionHeading))
+    addMediumHeading(doc, courtRecord.conclusionHeading)
 
     setLineGap(doc, 1)
 
     addNormalJustifiedText(
       doc,
-      theCase.conclusion ?? formatMessage(courtRecord.missingConclusion),
+      theCase.conclusion ?? courtRecord.missingConclusion,
     )
 
     addEmptyLines(doc)
     addNormalCenteredText(
       doc,
-      theCase.judge?.name ?? formatMessage(courtRecord.missingJudge),
+      theCase.judge?.name ?? courtRecord.missingJudge,
       'Times-Bold',
     )
   }
@@ -441,11 +408,7 @@ const constructInvestigationCourtRecordPdf = (
   addEmptyLines(doc)
   addNormalText(
     doc,
-    formatCourtEndDate(
-      formatMessage,
-      theCase.courtStartDate,
-      theCase.courtEndTime,
-    ),
+    formatCourtEndDate(theCase.courtStartDate, theCase.courtEndTime),
   )
   addFooter(
     doc,
@@ -467,27 +430,22 @@ const constructInvestigationCourtRecordPdf = (
 
 const constructCourtRecordPdf = (
   theCase: Case,
-  formatMessage: FormatMessage,
   user?: User,
 ): Promise<Buffer> => {
   return isRestrictionCase(theCase.type)
-    ? constructRestrictionCourtRecordPdf(theCase, formatMessage, user)
-    : constructInvestigationCourtRecordPdf(theCase, formatMessage, user)
+    ? constructRestrictionCourtRecordPdf(theCase, user)
+    : constructInvestigationCourtRecordPdf(theCase, user)
 }
 
-export const getCourtRecordPdfAsString = (
-  theCase: Case,
-  formatMessage: FormatMessage,
-): Promise<string> => {
-  return constructCourtRecordPdf(theCase, formatMessage).then((buffer) =>
+export const getCourtRecordPdfAsString = (theCase: Case): Promise<string> => {
+  return constructCourtRecordPdf(theCase).then((buffer) =>
     buffer.toString('binary'),
   )
 }
 
 export const getCourtRecordPdfAsBuffer = (
   theCase: Case,
-  formatMessage: FormatMessage,
   user?: User,
 ): Promise<Buffer> => {
-  return constructCourtRecordPdf(theCase, formatMessage, user)
+  return constructCourtRecordPdf(theCase, user)
 }

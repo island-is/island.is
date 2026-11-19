@@ -17,6 +17,7 @@ const lawyerRegistryInfo = {
   phoneNr: '5555555',
   practice: 'Reykjavík',
   isLitigator: true,
+  hasCourtOfAppealsRights: true,
 }
 
 const staffUser = {

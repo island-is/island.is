@@ -9,6 +9,8 @@ import { useLocale } from '@island.is/localization'
 import { HTMLDump, HTMLText } from '@island.is/regulations'
 import { RegulationImpactSchema } from '../../lib/dataSchema'
 import { regulation } from '../../lib/messages'
+import { Addition } from '../../utils/amendingMismatches'
+import { AmendingMismatches } from './AmendingMismatches'
 import { BaseChanges } from './BaseChanges'
 import * as s from './TextComparison.css'
 
@@ -18,6 +20,8 @@ type TextComparisonProps = {
   impacts: RegulationImpactSchema[]
   /** Base64-encoded advert HTML */
   advertHtml?: string
+  /** The advert's appendixes, content base64-encoded */
+  additions?: Addition[]
   confirmed: boolean
   onConfirmedChange: (confirmed: boolean) => void
 }
@@ -25,6 +29,7 @@ type TextComparisonProps = {
 export const TextComparison = ({
   impacts,
   advertHtml,
+  additions,
   confirmed,
   onConfirmedChange,
 }: TextComparisonProps) => {
@@ -58,6 +63,11 @@ export const TextComparison = ({
             <HTMLDump className={s.text} html={html} />
           </Box>
         </Box>
+        <AmendingMismatches
+          impacts={impacts}
+          html={advertHtml}
+          additions={additions}
+        />
         <Checkbox
           name="amendingTextConfirmed"
           label={f(msg.confirm)}

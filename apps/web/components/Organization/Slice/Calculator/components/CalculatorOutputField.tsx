@@ -1,3 +1,5 @@
+import { useId } from 'react'
+
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import type { Locale } from '@island.is/shared/types'
 import type { CalculatorOutputValueField } from '@island.is/tax-calculators'
@@ -5,6 +7,8 @@ import { TaxCalculatorOutputFieldType } from '@island.is/web/graphql/schema'
 
 import type { OutputContractField } from '../contract'
 import { formatOutputValue } from '../utils/format'
+import { outputSemantic } from '../utils/numberType'
+import { hasItemFields } from '../utils/outputDiagnostics'
 import { itemValue, type OutputValue } from '../utils/outputValues'
 import { localized } from '../utils/text'
 
@@ -23,17 +27,23 @@ export const CalculatorOutputField = ({
   value,
   locale,
 }: Props) => {
+  const labelId = useId()
   const emphasis = field.variant === 'emphasis'
 
-  const heading = <Text variant={emphasis ? 'h4' : 'default'}>{label}</Text>
-
-  if (contractField.type === TaxCalculatorOutputFieldType.Array) {
-    const rows = value.arrayValue ?? []
+  if (hasItemFields(contractField.type)) {
+    const rows =
+      contractField.type === TaxCalculatorOutputFieldType.Array
+        ? value.arrayValue ?? []
+        : value.objectValue
+        ? [value.objectValue]
+        : []
     const itemFields = contractField.itemFields ?? []
 
     return (
-      <Box>
-        {heading}
+      <Box role="group" aria-labelledby={labelId}>
+        <Text id={labelId} variant={emphasis ? 'h4' : 'default'}>
+          {label}
+        </Text>
         <Stack space={2}>
           {rows.flatMap((row, index) => {
             const items = (field.itemFields ?? []).flatMap((itemField) => {
@@ -50,7 +60,7 @@ export const CalculatorOutputField = ({
 
               const formatted = formatOutputValue(
                 scalar,
-                contractItemField.semantic,
+                outputSemantic(contractItemField, itemField.numberType),
                 locale,
               )
               if (formatted === undefined) return []
@@ -62,8 +72,12 @@ export const CalculatorOutputField = ({
                   justifyContent="spaceBetween"
                   columnGap={2}
                 >
-                  <Text>{itemLabel}</Text>
-                  <Text fontWeight="semiBold">{formatted}</Text>
+                  <Box component="dt">
+                    <Text>{itemLabel}</Text>
+                  </Box>
+                  <Box component="dd">
+                    <Text fontWeight="semiBold">{formatted}</Text>
+                  </Box>
                 </Box>,
               ]
             })
@@ -71,8 +85,8 @@ export const CalculatorOutputField = ({
             if (items.length === 0) return []
 
             return [
-              <Box key={index} paddingLeft={2}>
-                <Stack space={0}>{items}</Stack>
+              <Box key={index} component="dl" paddingLeft={2}>
+                {items}
               </Box>,
             ]
           })}
@@ -81,18 +95,31 @@ export const CalculatorOutputField = ({
     )
   }
 
-  const formatted = formatOutputValue(value, contractField.semantic, locale)
+  const formatted = formatOutputValue(
+    value,
+    outputSemantic(contractField, field.numberType),
+    locale,
+  )
   if (formatted === undefined) return null
 
   return (
-    <Box display="flex" justifyContent="spaceBetween" columnGap={2}>
-      {heading}
-      <Text
-        variant={emphasis ? 'h4' : 'default'}
-        fontWeight={emphasis ? 'semiBold' : 'regular'}
-      >
-        {formatted}
-      </Text>
+    <Box
+      component="dl"
+      display="flex"
+      justifyContent="spaceBetween"
+      columnGap={2}
+    >
+      <Box component="dt">
+        <Text variant={emphasis ? 'h4' : 'default'}>{label}</Text>
+      </Box>
+      <Box component="dd">
+        <Text
+          variant={emphasis ? 'h4' : 'default'}
+          fontWeight={emphasis ? 'semiBold' : 'regular'}
+        >
+          {formatted}
+        </Text>
+      </Box>
     </Box>
   )
 }

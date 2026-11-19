@@ -90,10 +90,7 @@ describe('InternalCaseController - Deliver request to police', () => {
     })
 
     it('should deliver the request to police', async () => {
-      expect(getRequestPdfAsString).toHaveBeenCalledWith(
-        theCase,
-        expect.any(Function),
-      )
+      expect(getRequestPdfAsString).toHaveBeenCalledWith(theCase)
       expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
         user,
         caseId,

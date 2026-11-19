@@ -115,12 +115,6 @@
     },
     "docker-next": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-next`"
-    },
-    "extract-strings": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/judicial-system/web/{messages/**/*,**/*.strings}.{js,ts,tsx}'"
-      }
     }
   }
 }

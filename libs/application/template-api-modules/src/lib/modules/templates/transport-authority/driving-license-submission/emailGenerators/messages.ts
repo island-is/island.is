@@ -83,6 +83,30 @@ export const m = {
       },
     ],
   } as Record<string, NextStepsSection[] | undefined>,
+  digitalFlow: {
+    greeting: 'Góðan dag',
+    nextStepsTitle: 'Næstu skref',
+    'B-temp': {
+      heading:
+        'Umsókn þín um ökunám hefur verið móttekin og verður nú yfirfarin.',
+      list: [
+        'Þegar búið er að yfirfara gögn er námsheimild gefin út og hægt að hefja ökunám.',
+        'Þegar þú hefur lokið ökunámi og staðist bæði bóklegt og verklegt ökupróf er ökuskírteinið pantað og afhent samkvæmt þeim afhendingarmáta sem þú valdir, heimsent eða sótt á valda skrifstofu sýslumanns, að jafnaði um sjö dögum síðar.',
+      ],
+    },
+    'B-full-no-health': {
+      paragraph:
+        'Umsókn þín um fullnaðarskírteini hefur verið móttekin og ökuskírteinið pantað og verður afhent samkvæmt þeim afhendingarmáta sem þú valdir, heimsent eða sótt á valda skrifstofu sýslumanns (%s), að jafnaði um sjö dögum síðar. Þú getur uppfært ökuskírteinið þitt í Ísland.is appinu.',
+    },
+    'B-full-health': {
+      heading:
+        'Umsókn þín um fullnaðarskírteini hefur verið móttekin og verður nú yfirfarin.',
+      list: [
+        'Meðfylgjandi gögn verða nú yfirfarin og ökuskírteini pantað. Athugið að ef fylgigögn eru röng eða vantar getur verið að umsókninni verði hafnað. Ef umsókn er hafnað þarf að óska eftir endurgreiðslu og senda inn nýja umsókn.',
+        'Ökuskírteini er afhent samkvæmt þeim afhendingarmáta sem þú valdir, heimsent eða sótt á valda skrifstofu sýslumanns (%s), að jafnaði um sjö dögum síðar. Þú getur uppfært ökuskírteinið þitt í Ísland.is appinu.',
+      ],
+    },
+  },
 }
 
 export type NextStepsSection = {

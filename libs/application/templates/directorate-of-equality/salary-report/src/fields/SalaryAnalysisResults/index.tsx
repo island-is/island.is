@@ -36,7 +36,7 @@ import {
 import type { ReportEmployeeDto } from '../../utils/types'
 import { deriveWageGapState, formatPercentMagnitude } from '../../utils/wageGap'
 import { formatHourlyWage } from '../EmployeesEditor/utils'
-import { PayComponentsTable } from './PayComponentsTable'
+import { PayComponentsChart } from './PayComponentsChart'
 import { PayDispersionTable } from './PayDispersionTable'
 import { SalaryDistributionChart } from './SalaryDistributionChart'
 
@@ -601,7 +601,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
         payDispersion={result?.payDispersion}
       />
 
-      <PayComponentsTable data={payComponents} />
+      <PayComponentsChart data={payComponents} />
 
       <PayDispersionTable payDispersion={result?.payDispersion} />
     </Box>

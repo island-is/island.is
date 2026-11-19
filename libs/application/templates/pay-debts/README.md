@@ -3,7 +3,7 @@
 ## About
 
 Application for paying debts owed to the Icelandic state ("Greiðum
-ríkinu", `ApplicationTypes.PAY_DEBTS`, slug `greidum-rikinu`). The
+ríkinu", `ApplicationTypes.PAY_DEBTS`, slug `greida-skuld`). The
 applicant picks one or more outstanding debts fetched from Fjársýsla
 ríkisins (FJS) and pays them through services-payments.
 
@@ -35,9 +35,9 @@ amount.
 
 ## URLs
 
-- [Local - http://localhost:4242/umsoknir/greidum-rikinu](http://localhost:4242/umsoknir/greidum-rikinu)
-- [Dev - https://beta.dev01.devland.is/umsoknir/greidum-rikinu](https://beta.dev01.devland.is/umsoknir/greidum-rikinu)
-- [Production - https://island.is/umsoknir/greidum-rikinu](https://island.is/umsoknir/greidum-rikinu)
+- [Local - http://localhost:4242/umsoknir/greida-skuld](http://localhost:4242/umsoknir/greida-skuld)
+- [Dev - https://beta.dev01.devland.is/umsoknir/greida-skuld](https://beta.dev01.devland.is/umsoknir/greida-skuld)
+- [Production - https://island.is/umsoknir/greida-skuld](https://island.is/umsoknir/greida-skuld)
 
 ## Access
 
@@ -142,7 +142,7 @@ If you only need the backend (e.g. hitting `localhost:3333/swagger`
 directly), `yarn dev application-system-api` on its own is enough — it
 chains the same `api` + X-Road proxy.
 
-Once everything is running, open [http://localhost:4242/umsoknir/greidum-rikinu](http://localhost:4242/umsoknir/greidum-rikinu).
+Once everything is running, open [http://localhost:4242/umsoknir/greida-skuld](http://localhost:4242/umsoknir/greida-skuld).
 
 ### X-Road
 

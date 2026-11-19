@@ -1,6 +1,9 @@
 import { Stack } from 'expo-router'
 
-import { tabScreenOptions } from '../../../../constants/screen-options'
+import {
+  sheetHeaderTitleOptions,
+  tabScreenOptions,
+} from '../../../../constants/screen-options'
 
 export const unstable_settings = {
   initialRouteName: 'index',
@@ -24,6 +27,7 @@ export default function WalletLayout() {
       <Stack.Screen
         name="scanner/index"
         options={{
+          ...sheetHeaderTitleOptions,
           presentation: 'modal',
         }}
       />

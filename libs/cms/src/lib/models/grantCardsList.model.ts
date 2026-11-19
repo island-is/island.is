@@ -7,6 +7,7 @@ import { GrantList } from './grantList.model'
 import { GraphQLJSONObject } from 'graphql-type-json'
 import { GetGrantsInput } from '../dto/getGrants.input'
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
+import { GenericTag, mapGenericTag } from './genericTag.model'
 
 enum CardSorting {
   ALPHABETICAL,
@@ -40,6 +41,24 @@ export class GrantCardsList {
 
   @CacheField(() => CardSorting, { nullable: true })
   sorting?: CardSorting
+
+  @Field(() => Boolean, { nullable: true })
+  showSearchInput?: boolean
+
+  @Field(() => String, { nullable: true })
+  searchInputPlaceholder?: string
+
+  @CacheField(() => [GenericTag], { nullable: true })
+  filterTags?: GenericTag[]
+
+  @Field(() => Boolean, { nullable: true })
+  alphabeticallyOrderFilterTags?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  showPagination?: boolean
+
+  @Field(() => [String], { nullable: true })
+  fundIds?: string[]
 }
 
 export const mapGrantCardsList = ({
@@ -61,6 +80,13 @@ export const mapGrantCardsList = ({
       fields.grantCardsListSorting === 'Alphabetical'
         ? CardSorting.ALPHABETICAL
         : CardSorting.MOST_RECENTLY_UPDATED_FIRST,
+    showSearchInput: fields.grantCardsListShowSearchInput ?? false,
+    searchInputPlaceholder: fields.grantCardsListSearchInputPlaceholder,
+    filterTags: fields.grantCardsListFilterTags?.map(mapGenericTag) ?? [],
+    alphabeticallyOrderFilterTags:
+      fields.grantCardsListAlphabeticallyOrderFilterTags ?? false,
+    showPagination: fields.grantCardsListShowPagination ?? false,
+    fundIds: fields.grantCardListFunds?.map((f) => f.sys.id) ?? [],
     resolvedGrantsList: {
       lang:
         sys.locale === 'is-IS'

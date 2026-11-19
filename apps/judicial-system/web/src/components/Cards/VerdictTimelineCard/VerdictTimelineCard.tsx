@@ -48,6 +48,7 @@ import type { VerdictTimelineItem } from './VerdictTimelineBody'
 import VerdictTimelineBody from './VerdictTimelineBody'
 import {
   canRegisterVerdictAppeal,
+  canWithdrawVerdictAppeal,
   isAfterVerdictAppealDeadline,
   withAppealDefender,
 } from './VerdictTimelineCard.logic'
@@ -421,12 +422,12 @@ const VerdictTimelineCard: FC<Props> = (props) => {
               )
             },
           },
-          // An appeal that exists as an appeal case can only be withdrawn on
-          // it, and that path is closed while verdict appeals are hidden, so
-          // the action is not offered then rather than offered to fail.
-          ...(verdict?.appealDate &&
-          (isVerdictAppealRegistrationEnabled ||
-            !workingCase.verdictAppealCase?.id)
+          ...(canWithdrawVerdictAppeal(
+            workingCase,
+            defendant,
+            user,
+            isVerdictAppealRegistrationEnabled,
+          )
             ? [
                 {
                   title: 'Afturkalla áfrýjun',
@@ -687,7 +688,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
           text={`Mál ${workingCase.courtCaseNumber} verður afturkallað.\nÁkærði: ${modalVisible.defendant.name}.`}
           buttons={[
             {
-              text: formatMessage(core.cancel),
+              text: core.cancel,
               onClick: () => setModalVisible(undefined),
               variant: 'ghost',
             },
@@ -716,7 +717,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
           text={`Máli ${workingCase.courtCaseNumber} verður lokið án fullnustu gagnvart ákærða ${modalVisible.defendant.name}.\nAthugið að ekki er hægt að afturkalla þessa aðgerð.`}
           buttons={[
             {
-              text: formatMessage(core.cancel),
+              text: core.cancel,
               onClick: () => setModalVisible(undefined),
               variant: 'ghost',
             },
@@ -766,7 +767,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
           } verður afturkölluð.`}
           buttons={[
             {
-              text: formatMessage(core.cancel),
+              text: core.cancel,
               onClick: () => setModalVisible(undefined),
               variant: 'ghost',
             },
@@ -789,7 +790,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
           )}.\nViltu skrá áfrýjunina?`}
           buttons={[
             {
-              text: formatMessage(core.cancel),
+              text: core.cancel,
               onClick: () => setModalVisible(undefined),
               variant: 'ghost',
             },

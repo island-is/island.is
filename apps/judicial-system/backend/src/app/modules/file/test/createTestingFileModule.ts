@@ -3,8 +3,6 @@ import { Sequelize } from 'sequelize-typescript'
 
 import { Test } from '@nestjs/testing'
 
-import { IntlService } from '@island.is/cms-translations'
-import { createTestIntl } from '@island.is/cms-translations/test'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigModule, ConfigType } from '@island.is/nest/config'
 
@@ -18,7 +16,10 @@ import { queueMessagesAfterCommit } from '../../../middleware'
 import { AwsS3Service } from '../../aws-s3'
 import { CaseService } from '../../case'
 import { CourtService } from '../../court'
-import { CaseFileRepositoryService } from '../../repository'
+import {
+  CaseFileRepositoryService,
+  CourtDocumentRepositoryService,
+} from '../../repository'
 import { fileModuleConfig } from '../file.config'
 import { FileController } from '../file.controller'
 import { FileService } from '../file.service'
@@ -50,17 +51,6 @@ export const createTestingFileModule = async () => {
       CaseService,
       CourtService,
       AwsS3Service,
-      {
-        provide: IntlService,
-        useValue: {
-          useIntl: async () => ({
-            formatMessage: createTestIntl({
-              onError: jest.fn(),
-              locale: 'is-IS',
-            }).formatMessage,
-          }),
-        },
-      },
       {
         provide: LOGGER_PROVIDER,
         useValue: {
@@ -104,6 +94,11 @@ export const createTestingFileModule = async () => {
     CaseFileRepositoryService,
   )
 
+  const courtDocumentRepositoryService =
+    fileModule.get<CourtDocumentRepositoryService>(
+      CourtDocumentRepositoryService,
+    )
+
   const fileConfig = fileModule.get<ConfigType<typeof fileModuleConfig>>(
     fileModuleConfig.KEY,
   )
@@ -141,6 +136,7 @@ export const createTestingFileModule = async () => {
     awsS3Service,
     courtService,
     caseFileRepositoryService,
+    courtDocumentRepositoryService,
     fileConfig,
     fileService,
     policeDigitalCaseFileService,

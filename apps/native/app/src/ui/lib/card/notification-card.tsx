@@ -1,28 +1,20 @@
 import React, { isValidElement } from 'react'
 import { FormattedDate } from 'react-intl'
-import { ColorValue, Image, ImageSourcePropType } from 'react-native'
+import { Image, ImageSourcePropType } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
-import { dynamicColor } from '../../utils/dynamic-color'
+import { token } from '../../utils/dynamic-color'
 import { Typography } from '../typography/typography'
 
 const Host = styled.TouchableHighlight<{ unread?: boolean }>`
-  background-color: ${dynamicColor((props) => ({
-    dark: props.unread ? props.theme.shades.dark.shade300 : 'transparent',
-    light: props.unread ? props.theme.color.blue100 : 'transparent',
-  }))};
+  background-color: ${({ theme, unread }) =>
+    unread ? theme.tokens.background.brandMinimal : 'transparent'};
 `
 
 const Cell = styled.View`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
   padding-vertical: ${({ theme }) => theme.spacing[3]}px;
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
-  border-bottom-color: ${dynamicColor(
-    ({ theme }) => ({
-      light: theme.color.blue200,
-      dark: theme.shades.dark.shade400,
-    }),
-    true,
-  )};
+  border-bottom-color: ${token((t) => t.border.primary)};
 `
 
 const Container = styled.View`
@@ -40,7 +32,9 @@ const Heading = styled.View`
 
 const Icon = styled.View<{ unread?: boolean }>`
   background-color: ${({ theme, unread }) =>
-    unread ? theme.color.white : theme.color.blue100};
+    unread
+      ? theme.tokens.background.invert
+      : theme.tokens.background.brandMinimal};
   height: 42px;
   width: 42px;
   align-items: center;
@@ -63,7 +57,6 @@ interface CardProps {
   message: string
   unread?: boolean
   actions?: Array<{ text: string; onPress(id: string | number): void }>
-  underlayColor?: ColorValue
   testID?: string
   onPress(id: number | string): void
 }
@@ -76,14 +69,14 @@ export function NotificationCard({
   date,
   icon,
   unread,
-  underlayColor,
   testID,
 }: CardProps) {
   const theme = useTheme()
   return (
     <Host
       onPress={() => onPress(id)}
-      underlayColor={underlayColor ?? theme.shade.shade400}
+      underlayColor={theme.tokens.app.background.pressed}
+      activeOpacity={1}
       unread={unread}
       testID={testID}
     >

@@ -3,7 +3,7 @@ import { SafeAreaView, ScrollView, View } from 'react-native'
 import { useTheme } from 'styled-components/native'
 
 import externalLinkIcon from '@/assets/icons/external-link.png'
-import { MoreInfoContiner } from '@/components/more-info-container/more-info-container'
+import { MoreInfoContainer } from '@/components/more-info-container/more-info-container'
 import { getConfig } from '@/config'
 import { GetFinanceStatus } from '@/graphql/types/finance.types'
 import { useGetFinanceStatusQuery } from '@/graphql/types/schema'
@@ -12,7 +12,7 @@ import { useBrowser } from '@/hooks/use-browser'
 import {
   Alert,
   Button,
-  Heading,
+  SectionHeader,
   Skeleton,
   TableViewCell,
   Typography,
@@ -67,14 +67,8 @@ export default function FinanceScreen() {
     <Skeleton
       key={id}
       active
-      backgroundColor={{
-        dark: theme.shades.dark.shade300,
-        light: theme.color.blue100,
-      }}
-      overlayColor={{
-        dark: theme.shades.dark.shade200,
-        light: theme.color.blue200,
-      }}
+      backgroundColor={theme.tokens.background.brandMinimal}
+      overlayColor={theme.tokens.background.brandLighter}
       overlayOpacity={1}
       height={80}
       style={{
@@ -111,12 +105,12 @@ export default function FinanceScreen() {
     <ScrollView style={{ flex: 1 }} testID={testIDs.SCREEN_FINANCE}>
       <StackScreen networkStatus={res.networkStatus} />
       <SafeAreaView style={{ marginHorizontal: 16 }}>
-        <Heading>
+        <SectionHeader>
           <FormattedMessage
             id="finance.heading.title"
             defaultMessage="Staða við ríkissjóð og stofnanir"
           />
-        </Heading>
+        </SectionHeader>
         <Typography>
           <FormattedMessage
             id="finance.heading.subtitle"
@@ -181,7 +175,7 @@ export default function FinanceScreen() {
             isUtilityButton
             icon={externalLinkIcon}
             disabled={!scheduleButtonVisible}
-            iconStyle={{ tintColor: theme.color.dark300 }}
+            iconStyle={{ tintColor: theme.tokens.foreground.primaryMinimal }}
             style={{ flex: 1 }}
             onPress={() =>
               openBrowser(
@@ -215,7 +209,7 @@ export default function FinanceScreen() {
           paddingVertical: 12,
         }}
       >
-        <MoreInfoContiner externalLinks={externalLinks} />
+        <MoreInfoContainer externalLinks={externalLinks} />
       </View>
     </ScrollView>
   )

@@ -1,4 +1,5 @@
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import { MessageType } from '@island.is/judicial-system/message'
@@ -19,13 +20,18 @@ import {
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
 import { nowFactory } from '../../../../factories'
-import { queueMessagesAfterCommit } from '../../../../middleware'
+import {
+  getOrCreateTransaction,
+  queueMessagesAfterCommit,
+} from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
 import {
   AppealCase,
   AppealCaseRepositoryService,
   AppealEventLogRepositoryService,
   Case,
   CaseRepositoryService,
+  DefendantRepositoryService,
   VerdictRepositoryService,
 } from '../../../repository'
 import { CreateAppealCaseDto } from '../../dto/createAppealCase.dto'
@@ -87,7 +93,10 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
         {
           id: defendantId,
           isDefenderChoiceConfirmed: true,
+          defenderName: 'Lára Lögmann',
           defenderNationalId,
+          defenderEmail: 'lara@dummy.dd',
+          defenderPhoneNumber: '0000001',
           verdicts: [verdict],
         },
       ],
@@ -102,7 +111,9 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
   let mockAppealCaseRepositoryService: AppealCaseRepositoryService
   let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
   let mockCaseRepositoryService: CaseRepositoryService
+  let mockDefendantRepositoryService: DefendantRepositoryService
   let mockVerdictRepositoryService: VerdictRepositoryService
+  let mockSequelize: Sequelize
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -114,6 +125,7 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
       appealCaseRepositoryService,
       appealEventLogRepositoryService,
       caseRepositoryService,
+      defendantRepositoryService,
       verdictRepositoryService,
       sequelize,
     } = await createTestingAppealCaseModule()
@@ -121,16 +133,17 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
     mockCaseRepositoryService = caseRepositoryService
+    mockDefendantRepositoryService = defendantRepositoryService
     mockVerdictRepositoryService = verdictRepositoryService
 
     const mockNowFactory = nowFactory as jest.Mock
     mockNowFactory.mockReturnValue(now)
 
+    mockSequelize = sequelize
+
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
     ;(mockAppealCaseRepositoryService.create as jest.Mock).mockResolvedValue(
       createdAppealCase,
     )
@@ -144,10 +157,25 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
     givenWhenThen = async (theCase, createDto) => {
       const then = {} as Then
 
-      await limitedAccessAppealCaseController
-        .create(caseId, defender, theCase, createDto)
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      // The route is guarded by LimitedAccessCaseExistsForUpdateGuard, so the
+      // request transaction is already open - and holding a lock on this case
+      // row - by the time the handler runs. Guards do not execute in
+      // controller unit tests, so the request context and that transaction
+      // are set up here instead.
+      try {
+        await runInRequestContext(async () => {
+          await getOrCreateTransaction(mockSequelize)
+
+          then.result = await limitedAccessAppealCaseController.create(
+            caseId,
+            defender,
+            theCase,
+            createDto,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }
@@ -220,6 +248,24 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
       )
     })
 
+    // The court of appeals still confirms the defender; until then the record
+    // grants no access.
+    it('should record the defender of record as the unconfirmed appeal defender', () => {
+      expect(mockDefendantRepositoryService.update).toHaveBeenCalledTimes(1)
+      expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        defendantId,
+        {
+          appealDefenderName: 'Lára Lögmann',
+          appealDefenderNationalId: defenderNationalId,
+          appealDefenderEmail: 'lara@dummy.dd',
+          appealDefenderPhoneNumber: '0000001',
+          isAppealDefenderConfirmed: false,
+        },
+        { transaction },
+      )
+    })
+
     // The notification to the public prosecution office is its own story, and none of the
     // ruling appeal notifications apply to a verdict appeal.
     // The public prosecution is told when a defender files through the portal.
@@ -235,6 +281,43 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
           type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_APPEALED,
         },
       })
+    })
+  })
+
+  // The court of appeals can settle a defendant's counsel on an appeal the
+  // prosecution filed, before that defendant's own defender appeals.
+  describe.each`
+    stance                               | appealDefender
+    ${'named an appeal defender'}        | ${{ appealDefenderName: 'Njáll Nýr', isAppealDefenderConfirmed: true }}
+    ${'recorded that counsel is waived'} | ${{ isAppealDefenderWaived: true }}
+    ${'recorded that counsel is kept'}   | ${{ isAppealDefenderWaived: false }}
+  `('when the court of appeals has $stance', ({ appealDefender }) => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        buildCase({
+          defendants: [
+            {
+              id: defendantId,
+              isDefenderChoiceConfirmed: true,
+              defenderName: 'Lára Lögmann',
+              defenderNationalId,
+              verdicts: [verdict],
+              ...appealDefender,
+            },
+          ],
+        } as unknown as Partial<Case>),
+        dto,
+      )
+    })
+
+    it('should appeal without touching the appeal defender', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledTimes(
+        1,
+      )
+      expect(mockDefendantRepositoryService.update).not.toHaveBeenCalled()
     })
   })
 

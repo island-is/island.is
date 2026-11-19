@@ -12,20 +12,20 @@ import { useBrowser } from '@/hooks/use-browser'
 import { useAuthStore, authStore as rawAuthStore } from '@/stores/auth-store'
 import { useEnvironmentStore } from '@/stores/environment-store'
 import { preferencesStore } from '@/stores/preferences-store'
-import { Button, dynamicColor, font, Illustration } from '@/ui'
+import { Button, font, Illustration, token } from '@/ui'
 import { nextOnboardingStep } from '@/utils/onboarding'
 import { testIDs } from '@/utils/test-ids'
 
 const Host = styled.View`
   flex: 1;
-  background-color: ${dynamicColor('background')};
+  background-color: ${token((t) => t.background.invert)};
 `
 
 const Title = styled.Text`
   ${font({
     fontWeight: '600',
     fontSize: 26,
-    color: (props) => ({ light: props.theme.color.dark400, dark: 'white' }),
+    color: ({ theme }) => theme.tokens.foreground.primary,
   })}
   text-align: center;
   margin-top: 32px;
@@ -41,7 +41,7 @@ const BottomRow = styled.View`
 const LightButtonText = styled.Text`
   ${font({
     fontWeight: '600',
-    color: (props) => props.theme.color.blue400,
+    color: ({ theme }) => theme.tokens.interactive.foreground.primary,
   })}
 `
 

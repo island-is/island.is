@@ -4,6 +4,7 @@ import { urls } from '../../../support/urls'
 import { verifyRequestCompletion } from '../../../support/api-tools'
 import { test } from '../utils/judicialSystemTest'
 import {
+  chooseCourtDecision,
   getDaysFromNow,
   randomCourtCaseNumber,
   randomPoliceCaseNumber,
@@ -161,7 +162,7 @@ test.describe.serial('Search warrant tests', () => {
 
     // Ruling
     await expect(page).toHaveURL(`/domur/rannsoknarheimild/urskurdur/${caseId}`)
-    await page.getByText('Krafa samþykkt').click()
+    await chooseCourtDecision(page, 'Krafa samþykkt')
     await Promise.all([
       page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),

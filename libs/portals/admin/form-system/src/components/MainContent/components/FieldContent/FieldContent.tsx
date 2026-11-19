@@ -2,6 +2,8 @@ import { FormSystemField } from '@island.is/api/schema'
 import { FieldTypesEnum } from '@island.is/form-system/ui'
 import {
   Box,
+  Checkbox,
+  Divider,
   Input,
   Stack,
   ToggleSwitchCheckbox,
@@ -19,11 +21,15 @@ import { ZendeskSettings } from './components/ZendeskSettings/ZendeskSettings'
 interface Props {
   identifierEditingEnabled: boolean
   setIdentifierEditingEnabled: (enabled: boolean) => void
+  fieldPreviewEnabled: boolean
+  setFieldPreviewEnabled: (enabled: boolean) => void
 }
 
 export const FieldContent = ({
   identifierEditingEnabled,
   setIdentifierEditingEnabled,
+  fieldPreviewEnabled,
+  setFieldPreviewEnabled,
 }: Props) => {
   const {
     control,
@@ -47,7 +53,18 @@ export const FieldContent = ({
       <Stack space={2}>
         <BaseInput />
         <FieldSettings />
-        <Preview data={currentItem} />
+        <Divider />
+        <Box display="flex" alignItems="center">
+          <Checkbox
+            name="enableFieldPreview"
+            label="Sjá sýnishorn"
+            checked={fieldPreviewEnabled}
+            onChange={(event) => setFieldPreviewEnabled(event.target.checked)}
+          />
+        </Box>
+        {fieldPreviewEnabled && (
+          <Preview key={currentItem.id} data={currentItem} />
+        )}
         {hasZendeskSettings && currentItem.fieldSettings && (
           <ZendeskSettings fieldSettings={currentItem.fieldSettings} />
         )}

@@ -72,6 +72,12 @@ export const debtsSection = buildSection({
           condition: (_answers, externalData) =>
             hasFetchedDebts(externalData) && hasMoreDebts(externalData),
         }),
+        buildCustomField({
+          id: 'salaryWithholdingBanner',
+          component: 'SalaryWithholdingBanner',
+          doesNotRequireAnswer: true,
+          condition: hasDebtsToPay,
+        }),
         buildInteractiveTableField({
           id: 'selectedDebts',
           condition: hasDebtsToPay,
@@ -128,10 +134,7 @@ export const debtsSection = buildSection({
             info: (application) =>
               getDebts(application).map((debt) =>
                 debt.salaryPayerName
-                  ? {
-                      ...messages.table.salaryWithholdingInfo,
-                      values: { payerName: debt.salaryPayerName },
-                    }
+                  ? messages.table.salaryWithholdingInfo
                   : undefined,
               ),
           },

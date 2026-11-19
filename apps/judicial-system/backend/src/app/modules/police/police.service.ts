@@ -288,6 +288,7 @@ export class PoliceService {
     private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(forwardRef(() => IndictmentCountService))
     private readonly indictmentCountService: IndictmentCountService,
+    @Inject(EmailService)
     private readonly emailService: EmailService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
@@ -1498,7 +1499,7 @@ export class PoliceService {
 
           return {
             serviceStatus: serviceStatus,
-            deliveredToDefenderNationalId:
+            defenderNationalId:
               nationalIdTransformer({ value: response.defenderNationalId }) ??
               undefined,
             comment: response.comment ?? undefined,

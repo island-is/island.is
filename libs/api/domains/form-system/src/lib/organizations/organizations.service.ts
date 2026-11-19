@@ -13,6 +13,7 @@ import {
 } from '../../dto/organization.input'
 import { OrganizationAdmin } from '../../models/organizationAdmin.model'
 import { OrganizationZendeskInstanceInput } from '../../dto/organizationZendeskInstance.input'
+import { OrganizationLogoInput } from '../../dto/organizationLogo.input'
 
 @Injectable()
 export class OrganizationsService {
@@ -57,6 +58,15 @@ export class OrganizationsService {
     )
 
     return response as OrganizationAdmin
+  }
+
+  async updateOrganizationLogo(
+    auth: User,
+    input: OrganizationLogoInput,
+  ): Promise<void> {
+    await this.organizationsApiWithAuth(auth).organizationsControllerUpdateLogo(
+      { organizationLogoDto: input },
+    )
   }
 
   async updateOrganizationZendeskInstance(

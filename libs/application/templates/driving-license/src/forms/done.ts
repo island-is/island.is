@@ -1,9 +1,61 @@
 import { buildForm, getValueViaPath, YES } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import {
+  ExternalData,
+  Form,
+  FormModes,
+  FormValue,
+} from '@island.is/application/types'
+import { Jurisdiction } from '@island.is/clients/driving-license'
 import { m } from '../lib/messages'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
-import { B_FULL_RENEWAL_65, B_TEMP, BE } from '../lib/constants'
-import { needsHealthCertificateCondition } from '../lib/utils'
+import { B_FULL, B_FULL_RENEWAL_65, B_TEMP, BE, Pickup } from '../lib/constants'
+import {
+  isRedesignedBTempOrBFull,
+  needsHealthCertificateCondition,
+} from '../lib/utils'
+
+const isRedesignedBFull = (answers: FormValue) =>
+  answers.applicationFor === B_FULL && isRedesignedBTempOrBFull(answers)
+
+const needsHealthCertificate = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => needsHealthCertificateCondition(YES)(answers, externalData)
+
+const getDeliveryLocation = (
+  answers: FormValue,
+  externalData: ExternalData,
+): string | undefined => {
+  if (getValueViaPath(answers, 'delivery.deliveryMethod') !== Pickup.DISTRICT) {
+    return undefined
+  }
+  const jurisdictionId = getValueViaPath<string | number>(
+    answers,
+    'delivery.jurisdiction',
+  )
+  const jurisdictions =
+    getValueViaPath<Jurisdiction[]>(externalData, 'jurisdictions.data') ?? []
+  return jurisdictions.find(({ id }) => `${id}` === `${jurisdictionId}`)?.name
+}
+
+const redesignedBFullDescription = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const health = needsHealthCertificate(answers, externalData)
+  const deliveryLocation = getDeliveryLocation(answers, externalData)
+  if (deliveryLocation) {
+    return {
+      ...(health
+        ? m.nextStepsDescriptionBFullHealthPickup
+        : m.nextStepsDescriptionBFullNoHealthPickup),
+      values: { deliveryLocation },
+    }
+  }
+  return health
+    ? m.nextStepsDescriptionBFullHealthPost
+    : m.nextStepsDescriptionBFullNoHealthPost
+}
 
 export const done: Form = buildForm({
   id: 'done',
@@ -12,8 +64,11 @@ export const done: Form = buildForm({
     buildFormConclusionSection({
       multiFieldTitle: m.applicationDone,
       alertTitle: m.applicationDone,
-      alertMessage: ({ answers }) =>
-        answers.applicationFor === B_TEMP
+      alertMessage: ({ answers, externalData }) =>
+        isRedesignedBFull(answers) &&
+        needsHealthCertificate(answers, externalData)
+          ? m.applicationDoneAlertMessageBFullHealthRedesigned
+          : answers.applicationFor === B_TEMP
           ? m.applicationDoneAlertMessage
           : answers.applicationFor === BE
           ? m.applicationDoneAlertMessageBE
@@ -24,14 +79,18 @@ export const done: Form = buildForm({
           : m.applicationDoneAlertMessageBFull,
       expandableHeader: m.nextStepsTitle,
       expandableIntro: ({ answers }) =>
-        answers.applicationFor === BE
+        isRedesignedBFull(answers)
+          ? ''
+          : answers.applicationFor === BE
           ? m.nextStepsIntroBE
           : answers.applicationFor === B_FULL_RENEWAL_65 &&
             getValueViaPath(answers, 'is65RenewalRedesignEnabled') === true
           ? m.nextStepsIntro65RenewalRedesigned
           : m.nextStepsIntroDefault,
       expandableDescription: ({ answers, externalData }) =>
-        answers.applicationFor === B_TEMP
+        isRedesignedBFull(answers)
+          ? redesignedBFullDescription(answers, externalData)
+          : answers.applicationFor === B_TEMP
           ? m.nextStepsDescription
           : answers.applicationFor === BE
           ? m.nextStepsDescriptionBE

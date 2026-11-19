@@ -2,7 +2,7 @@ import { useIntl } from 'react-intl'
 import { ScrollView, View } from 'react-native'
 import { router, Stack, useLocalSearchParams } from 'expo-router'
 
-import { Divider, Input, InputRow, NavigationBarSheet, Problem } from '@/ui'
+import { Divider, InfoLine, InfoLineRow, StatusMessage } from '@/ui'
 import { useGetAssetQuery } from '@/graphql/types/schema'
 import { testIDs } from '@/utils/test-ids'
 import { StackScreen } from '../../../../../components/stack-screen'
@@ -35,11 +35,11 @@ export default function AssetsDetailScreen() {
         closeable
       />
       {!isValidId ? (
-        <Problem withContainer />
+        <StatusMessage withContainer />
       ) : (
         <View>
-          <InputRow>
-            <Input
+          <InfoLineRow>
+            <InfoLine
               loading={isLoading}
               label={intl.formatMessage({
                 id: 'assetsDetail.propertyNumber',
@@ -49,9 +49,9 @@ export default function AssetsDetailScreen() {
               noBorder
               isCompact
             />
-          </InputRow>
-          <InputRow>
-            <Input
+          </InfoLineRow>
+          <InfoLineRow>
+            <InfoLine
               loading={isLoading}
               label={intl.formatMessage(
                 { id: 'assetsDetail.activeAppraisal' },
@@ -66,7 +66,7 @@ export default function AssetsDetailScreen() {
               noBorder
               isCompact
             />
-            <Input
+            <InfoLine
               loading={isLoading}
               label={intl.formatMessage(
                 { id: 'assetsDetail.plannedAppraisal' },
@@ -81,14 +81,14 @@ export default function AssetsDetailScreen() {
               noBorder
               isCompact
             />
-          </InputRow>
+          </InfoLineRow>
 
           <Divider spacing={2} style={{ marginHorizontal: 16 }} />
 
           {(unitsOfUse?.unitsOfUse ?? []).map((unit, index) => (
             <View key={`${unit?.propertyNumber}-${index}`}>
-              <InputRow>
-                <Input
+              <InfoLineRow>
+                <InfoLine
                   loading={isLoading}
                   label={intl.formatMessage({
                     id: 'assetsDetail.explanation',
@@ -97,7 +97,7 @@ export default function AssetsDetailScreen() {
                   noBorder
                   isCompact
                 />
-                <Input
+                <InfoLine
                   loading={isLoading}
                   label={intl.formatMessage({
                     id: 'assetsDetail.displaySize',
@@ -106,10 +106,10 @@ export default function AssetsDetailScreen() {
                   noBorder
                   isCompact
                 />
-              </InputRow>
+              </InfoLineRow>
 
-              <InputRow>
-                <Input
+              <InfoLineRow>
+                <InfoLine
                   loading={isLoading}
                   label={intl.formatMessage({
                     id: 'assetsDetail.municipality',
@@ -118,7 +118,7 @@ export default function AssetsDetailScreen() {
                   noBorder
                   isCompact
                 />
-                <Input
+                <InfoLine
                   loading={isLoading}
                   label={intl.formatMessage({
                     id: 'assetsDetail.postNumber',
@@ -127,11 +127,11 @@ export default function AssetsDetailScreen() {
                   noBorder
                   isCompact
                 />
-              </InputRow>
+              </InfoLineRow>
 
-              <InputRow>
+              <InfoLineRow>
                 {unit?.buildYearDisplay ? (
-                  <Input
+                  <InfoLine
                     loading={isLoading}
                     label={intl.formatMessage({
                       id: 'assetsDetail.buildYearDisplay',
@@ -141,14 +141,14 @@ export default function AssetsDetailScreen() {
                     isCompact
                   />
                 ) : null}
-                <Input
+                <InfoLine
                   loading={isLoading}
                   label={intl.formatMessage({ id: 'assetsDetail.marking' })}
                   value={unit?.marking}
                   noBorder
                   isCompact
                 />
-              </InputRow>
+              </InfoLineRow>
               {index + 1 < (unitsOfUse?.unitsOfUse ?? []).length && (
                 <Divider spacing={2} style={{ marginHorizontal: 16 }} />
               )}

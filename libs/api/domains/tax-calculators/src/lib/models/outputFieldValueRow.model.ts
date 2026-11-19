@@ -2,9 +2,9 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 import { OutputScalarValue } from './outputScalarValue.model'
 
-/* Wrapper preserves each array row as a distinct value. */
+/* Wrapper preserves each row as a distinct value. */
 @ObjectType('TaxCalculatorOutputFieldValueRow', {
-  description: 'Row in an array output.',
+  description: 'Row in an array or object output.',
 })
 export class OutputFieldValueRow {
   @Field(() => [OutputScalarValue], {

@@ -8,10 +8,17 @@ const getIconFolder = () =>
   IS_PROD ? './assets/images/island_is' : './assets/images/island_dev'
 const getGoogleServicesFile = () =>
   IS_PROD ? `GoogleService-Info.plist` : `GoogleService-Info.dev.plist`
+// Today's UTC date as yy.mm.dd, matching the auto-release version format.
+const getDateVersion = () =>
+  new Date().toISOString().slice(2, 10).replaceAll('-', '.')
 
 export default ({ config }) => {
   return {
     ...config,
+    // Auto-release builds set the marketing version (yy.mm.dd) during
+    // prebuild; other builds use today's date so they are never older than a
+    // released version.
+    version: process.env.APP_VERSION || getDateVersion(),
     displayName: getAppName(),
     icon: `${getIconFolder()}/icon.png`,
     scheme: getUniqueIdentifier(),

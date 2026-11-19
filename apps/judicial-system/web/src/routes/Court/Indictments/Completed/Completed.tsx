@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { useCallback, useContext, useState } from 'react'
-import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
@@ -58,8 +57,6 @@ type modal =
 
 const Completed: FC = () => {
   const { user } = useContext(UserContext)
-
-  const { formatMessage } = useIntl()
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { deliverCaseVerdict } = useVerdict()
@@ -211,7 +208,7 @@ const Completed: FC = () => {
         notFound={caseNotFound}
         onNavigationTo={handleNavigationTo}
       >
-        <PageHeader title={formatMessage(titles.court.indictments.completed)} />
+        <PageHeader title={titles.court.indictments.completed} />
         <FormContentContainer>
           <PageTitle>{strings.heading}</PageTitle>
           <CourtCaseInfo workingCase={workingCase} />

@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
@@ -22,9 +21,22 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
-import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CaseNumberInput } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components'
-import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { useAppealCaseUsersQuery } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components/AppealRoles/appealCaseUsers.generated'
+import {
+  type AssistantSelectOption,
+  type BenchSlot,
+  buildAppealCaseUpdate,
+  getAssistantOptions,
+  getBenchSlots,
+  getJudgeOptions,
+  getNewlyAssignedUserIds,
+  hasUnsavedRoleChanges,
+  isAnyRoleUnfilled,
+  type JudgeSelectOption,
+  setBenchSeat,
+  toPreviewAppealCase,
+} from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components/AppealRoles/appealRoles.logic'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   useAppealCase,
@@ -37,28 +49,12 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtOfAppealCaseStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import {
-  type BenchSlot,
-  buildAppealCaseUpdate,
-  getBenchSlots,
-  getNewlyAssignedUserIds,
-  getSelectedJudgeIds,
-  hasUnsavedRoleChanges,
-  isAnyRoleUnfilled,
-  toPreviewAppealCase,
-} from './AppealCase.logic'
-import { useAppealCaseUsersQuery } from './appealCaseUsers.generated'
 import { appealCase as strings } from './AppealCase.strings'
-
-type JudgeSelectOption = ReactSelectOption & { judge: User }
-type AssistantSelectOption = ReactSelectOption & { assistant: User }
 
 const AppealCase: FC = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const targetAppealCase = useTargetAppealCaseByAppealCaseId()
   const { updateAppealCase, isUpdatingAppealCase } = useAppealCase()
-
-  const { formatMessage } = useIntl()
   const router = useRouter()
 
   const [modalVisible, setModalVisible] = useState<boolean>(false)
@@ -87,23 +83,8 @@ const AppealCase: FC = () => {
     errorPolicy: 'all',
   })
 
-  const assistants = (usersData?.users ?? [])
-    .filter((user: User) => user.role === UserRole.COURT_OF_APPEALS_ASSISTANT)
-    .map((assistant: User) => {
-      return { label: assistant.name ?? '', value: assistant.id, assistant }
-    })
-
-  const selectedJudgeIds = getSelectedJudgeIds(judges)
-
-  const judgeOptions = (usersData?.users ?? [])
-    .filter(
-      (user: User) =>
-        user.role === UserRole.COURT_OF_APPEALS_JUDGE &&
-        !selectedJudgeIds.includes(user.id),
-    )
-    .map((judge: User) => {
-      return { label: judge.name ?? '', value: judge.id, judge }
-    })
+  const assistants = getAssistantOptions(usersData?.users)
+  const judgeOptions = getJudgeOptions(usersData?.users, judges)
 
   const roles = { appealAssistant, judges }
 
@@ -120,9 +101,7 @@ const AppealCase: FC = () => {
       : 'Halda áfram'
 
   const handleChangedJudge = (seat: number, judge: User) => {
-    setJudges((prev) =>
-      prev.map((slot, index) => (index === seat ? judge : slot)),
-    )
+    setJudges((prev) => setBenchSeat(prev, seat, judge))
   }
 
   const previousUrl = appendAppealCaseIdQuery(
@@ -191,15 +170,11 @@ const AppealCase: FC = () => {
           <PageTitle>{strings.title}</PageTitle>
           <div className={stack({ gap: 5 })}>
             <Box component="section">
-              <SectionHeading
-                title={formatMessage(core.appealCaseNumberHeading)}
-              />
-              <CaseNumberInput />
+              <SectionHeading title={core.appealCaseNumberHeading} />
+              <CaseNumberInput appealCase={targetAppealCase} />
             </Box>
             <Box component="section">
-              <SectionHeading
-                title={formatMessage(core.appealAssistantHeading)}
-              />
+              <SectionHeading title={core.appealAssistantHeading} />
               <Select
                 name="assistant"
                 label={strings.assistantLabel}
@@ -222,7 +197,7 @@ const AppealCase: FC = () => {
               />
             </Box>
             <Box component="section">
-              <SectionHeading title={formatMessage(core.appealJudgesHeading)} />
+              <SectionHeading title={core.appealJudgesHeading} />
               <BlueBox>
                 <div className={stack({ gap: 2 })}>
                   {judges.map((judge, seat) => (

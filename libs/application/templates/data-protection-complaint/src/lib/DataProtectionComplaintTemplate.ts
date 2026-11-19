@@ -31,7 +31,7 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT,
   name: application.name,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: application.institutionName,
   dataSchema: DataProtectionComplaintSchema,
   translationNamespaces:

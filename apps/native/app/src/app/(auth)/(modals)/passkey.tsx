@@ -11,7 +11,7 @@ import {
 import styled, { useTheme } from 'styled-components/native'
 import { router, useLocalSearchParams, useNavigation } from 'expo-router'
 
-import { Button, Typography, NavigationBarSheet, LinkText } from '@/ui'
+import { Button, LinkText, token, Typography } from '@/ui'
 import logo from '@/assets/logo/logo-64w.png'
 import externalLink from '@/assets/icons/external-link.png'
 import illustrationSrc from '@/assets/illustrations/digital-services-m1-dots.png'
@@ -75,8 +75,7 @@ const LoadingOverlay = styled.View`
   right: 0;
   z-index: 999;
 
-  background-color: #000;
-  opacity: ${({ theme }) => (theme.isDark ? 0.6 : 0.4)};
+  background-color: ${token((t) => t.app.overlay.scrim)};
   width: 100%;
   height: 100%;
 `
@@ -108,12 +107,6 @@ export default function PasskeyScreen() {
 
   return (
     <View style={{ flex: 1 }} testID={testIDs.SCREEN_PASSKEY}>
-      <NavigationBarSheet
-        componentId="passkey"
-        title={''}
-        onClosePress={() => router.back()}
-        style={{ marginHorizontal: 16 }}
-      />
       <SafeAreaView edges={['bottom']} style={{ flex: 1 }}>
         <Host isSmallDevice={isSmallDevice}>
           <Image
@@ -257,7 +250,7 @@ export default function PasskeyScreen() {
         <LoadingOverlay>
           <ActivityIndicator
             size="large"
-            color={theme.color.white}
+            color={theme.tokens.foreground.invert}
             style={{ marginTop: theme.spacing[4] }}
           />
         </LoadingOverlay>

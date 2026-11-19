@@ -16,20 +16,21 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const navigationTheme = useMemo(() => {
+    const { tokens, tokenModes } = selectedTheme
     return {
       dark: selectedTheme.isDark,
       colors: {
-        primary: selectedTheme.color.blue400,
+        primary: tokens.interactive.foreground.primary,
         background: (Platform.OS === 'ios'
           ? DynamicColorIOS({
-              light: selectedTheme.shade.background,
-              dark: selectedTheme.shade.background,
+              light: tokenModes.light.background.invert,
+              dark: tokenModes.dark.background.invert,
             })
-          : selectedTheme.shade.background) as string,
-        card: selectedTheme.shade.shade200,
-        text: selectedTheme.shade.foreground,
-        border: selectedTheme.shade.shade300,
-        notification: selectedTheme.color.red400,
+          : tokens.background.invert) as string,
+        card: tokens.app.background.neutral,
+        text: tokens.foreground.primary,
+        border: tokens.app.border.subtle,
+        notification: tokens.feedback.error.foreground,
       },
       fonts: {
         regular: {

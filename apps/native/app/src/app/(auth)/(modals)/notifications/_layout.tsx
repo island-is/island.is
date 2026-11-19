@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { Platform } from 'react-native'
 import {
   modalScreenOptions,
+  sheetHeaderTitleOptions,
   tabScreenOptions,
 } from '../../../../constants/screen-options'
 
@@ -14,6 +15,7 @@ export default function NotificationsLayout() {
         name="index"
         options={{
           ...tabScreenOptions,
+          ...sheetHeaderTitleOptions,
           headerTitle: intl.formatMessage({ id: 'notifications.screenTitle' }),
           // Sheet root: dismissed with the close item, so no back chevron.
           ...(Platform.OS === 'ios' && {

@@ -213,7 +213,7 @@ export const HealthMessageIntro = ({
           paddingHorizontal: theme.spacing[2],
           paddingTop: theme.spacing[1],
           paddingBottom: Math.max(homeIndicatorInset, theme.spacing[3]),
-          backgroundColor: theme.color.white,
+          backgroundColor: theme.tokens.background.invert,
         }}
       >
         {loading ? (

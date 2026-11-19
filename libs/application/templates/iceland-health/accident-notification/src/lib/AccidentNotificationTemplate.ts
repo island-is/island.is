@@ -50,7 +50,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.ACCIDENT_NOTIFICATION,
   name: application.general.name,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: application.general.institutionName,
   translationNamespaces:
     ApplicationConfigurations.AccidentNotification.translation,

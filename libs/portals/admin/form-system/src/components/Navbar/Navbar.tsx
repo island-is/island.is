@@ -10,12 +10,13 @@ import {
 import { SectionTypes } from '@island.is/form-system/enums'
 import {
   CREATE_SECTION,
+  DELETE_SECTION,
   UPDATE_SECTION_DISPLAY_ORDER,
 } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
 import { Box, Button } from '@island.is/island-ui/core'
 import cn from 'classnames'
-import { useContext, useMemo } from 'react'
+import { useContext, useMemo, useRef, useState } from 'react'
 import AnimateHeight from 'react-animate-height'
 import { createPortal } from 'react-dom'
 import { useIntl } from 'react-intl'
@@ -44,6 +45,8 @@ export const Navbar = () => {
   const { formatMessage } = useIntl()
   const { activeItem, form, isReadOnly } = control
   const { sections, screens, fields } = form
+  const additionPendingRef = useRef(false)
+  const [isAddingSection, setIsAddingSection] = useState(false)
 
   const inputSections = useMemo(
     () =>
@@ -149,6 +152,7 @@ export const Navbar = () => {
   }, [fields])
 
   const [createSection, { loading }] = useMutation(CREATE_SECTION)
+  const [deleteSection] = useMutation(DELETE_SECTION)
   const [updateDisplayOrder] = useMutation(UPDATE_SECTION_DISPLAY_ORDER)
 
   const {
@@ -174,19 +178,72 @@ export const Navbar = () => {
   }
 
   const addSection = async () => {
+    if (additionPendingRef.current || isReadOnly) return
+    additionPendingRef.current = true
+    setIsAddingSection(true)
     try {
+      const summaryIndex = sections?.findIndex(
+        (section) => section?.sectionType === SectionTypes.SUMMARY,
+      )
+      const insertionIndex =
+        summaryIndex !== undefined && summaryIndex !== -1
+          ? summaryIndex
+          : sections?.length ?? 0
       const newSection = await createSection({
         variables: {
           input: {
             createSectionDto: {
               formId: form.id,
-              displayOrder: sections?.length ?? 0,
+              displayOrder:
+                Math.max(
+                  -1,
+                  ...(sections ?? []).map(
+                    (section) => section?.displayOrder ?? -1,
+                  ),
+                ) + 1,
             },
           },
         },
       })
 
       if (newSection && !loading) {
+        const updatedSections = (sections ?? []).map((s) => ({
+          id: s?.id,
+        }))
+        updatedSections.splice(insertionIndex, 0, {
+          id: newSection.data?.createFormSystemSection.id,
+        })
+
+        try {
+          await updateDisplayOrder({
+            variables: {
+              input: {
+                updateSectionsDisplayOrderDto: {
+                  sectionsDisplayOrderDto: updatedSections,
+                },
+              },
+            },
+          })
+        } catch (error) {
+          await deleteSection({
+            variables: {
+              input: { id: newSection.data?.createFormSystemSection.id },
+            },
+          })
+          await updateDisplayOrder({
+            variables: {
+              input: {
+                updateSectionsDisplayOrderDto: {
+                  sectionsDisplayOrderDto: (sections ?? []).map((section) => ({
+                    id: section?.id,
+                  })),
+                },
+              },
+            },
+          })
+          throw error
+        }
+
         controlDispatch({
           type: 'ADD_SECTION',
           payload: {
@@ -195,26 +252,12 @@ export const Navbar = () => {
             ) as FormSystemSection,
           },
         })
-
-        const updatedSections = sections?.map((s) => ({
-          id: s?.id,
-        }))
-
-        updateDisplayOrder({
-          variables: {
-            input: {
-              updateSectionsDisplayOrderDto: {
-                sectionsDisplayOrderDto: [
-                  ...(updatedSections ?? []),
-                  { id: newSection.data?.createFormSystemSection.id },
-                ],
-              },
-            },
-          },
-        })
       }
     } catch (err: any) {
       console.error('Error creating section:', err.message)
+    } finally {
+      additionPendingRef.current = false
+      setIsAddingSection(false)
     }
   }
 
@@ -494,7 +537,7 @@ export const Navbar = () => {
           variant="ghost"
           size="small"
           onClick={addSection}
-          disabled={isReadOnly}
+          disabled={isReadOnly || isAddingSection}
         >
           {formatMessage(m.addSection)}
         </Button>

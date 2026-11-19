@@ -72,4 +72,9 @@ export class CreateUserDto {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   readonly canManageMessageSuspension?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly canManageServiceInterruptionBanner?: boolean
 }

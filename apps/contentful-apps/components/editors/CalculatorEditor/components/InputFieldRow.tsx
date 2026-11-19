@@ -1,4 +1,6 @@
 import {
+  Box,
+  Button,
   Checkbox,
   FormControl,
   IconButton,
@@ -13,13 +15,16 @@ import {
   type CalculatorInputValueField,
 } from '@island.is/tax-calculators'
 
+import { TaxCalculatorInputFieldType } from '../../../../graphql/schema'
 import type { InputFieldContract } from '../contract'
+import { MONTH_COUNT, monthOptionLabels } from '../utils'
 import {
   controlForField,
   isSameText,
   placeholderFor,
 } from './inputFieldControl'
 import { LocalizedTextFields } from './LocalizedTextFields'
+import { NumberTypeSelect } from './NumberTypeSelect'
 import * as styles from './CalculatorEditor.css'
 
 interface Props {
@@ -77,13 +82,16 @@ export const InputFieldRow = ({
                 key,
                 optionLabels: undefined,
                 optionLabelsEnabled: undefined,
+                numberType: undefined,
               }
               /* Refreshes untouched placeholders from the selected field. */
               if (
                 controlForField(contract.get(key))?.kind === 'choice' ||
                 isSameText(
                   field.placeholder,
-                  field.key ? placeholderFor(field.key, contract) : undefined,
+                  field.key
+                    ? placeholderFor(field.key, contract, field.numberType)
+                    : undefined,
                 )
               ) {
                 patch.placeholder = placeholderFor(key, contract)
@@ -161,6 +169,54 @@ export const InputFieldRow = ({
         </Text>
       )}
 
+      {field.key && (
+        <>
+          <LocalizedTextFields
+            label="Field label"
+            value={field.label}
+            isDisabled={isDisabled}
+            onChange={(next) => onChange({ label: next })}
+            clearWhenEmpty
+          />
+          {controlForField(contract.get(field.key), field.numberType)?.kind ===
+            'text' && (
+            <LocalizedTextFields
+              label="Field placeholder"
+              value={field.placeholder}
+              isDisabled={isDisabled}
+              onChange={(next) => onChange({ placeholder: next })}
+              clearWhenEmpty
+            />
+          )}
+          {contractField?.type === TaxCalculatorInputFieldType.Number && (
+            <NumberTypeSelect
+              fieldKey={field.key}
+              value={field.numberType}
+              inferred={contractField.semantic}
+              isDisabled={isDisabled}
+              onChange={(numberType) => {
+                const patch: Partial<CalculatorInputValueField> = { numberType }
+                if (
+                  controlForField(contractField, numberType)?.kind ===
+                    'choice' ||
+                  isSameText(
+                    field.placeholder,
+                    placeholderFor(field.key, contract, field.numberType),
+                  )
+                ) {
+                  patch.placeholder = placeholderFor(
+                    field.key,
+                    contract,
+                    numberType,
+                  )
+                }
+                onChange(patch)
+              }}
+            />
+          )}
+        </>
+      )}
+
       {contractField?.options && contractField.options.length > 0 && (
         <Checkbox
           isChecked={hasOptionLabels}
@@ -170,6 +226,24 @@ export const InputFieldRow = ({
         >
           Translate the options
         </Checkbox>
+      )}
+
+      {hasOptionLabels && contractField?.options?.length === MONTH_COUNT && (
+        <Box>
+          <Button
+            size="small"
+            variant="secondary"
+            aria-label={`Fill in month names: ${field.key}`}
+            isDisabled={isDisabled}
+            onClick={() =>
+              onChange({
+                optionLabels: monthOptionLabels(contractField.options),
+              })
+            }
+          >
+            Fill in month names
+          </Button>
+        </Box>
       )}
 
       {hasOptionLabels &&
@@ -196,27 +270,6 @@ export const InputFieldRow = ({
           {String(contractField.dependsOn.equals)} — set by the calculator, not
           editable here.
         </Text>
-      )}
-
-      {field.key && (
-        <>
-          <LocalizedTextFields
-            label="Field label"
-            value={field.label}
-            isDisabled={isDisabled}
-            onChange={(next) => onChange({ label: next })}
-            clearWhenEmpty
-          />
-          {controlForField(contract.get(field.key))?.kind === 'text' && (
-            <LocalizedTextFields
-              label="Field placeholder"
-              value={field.placeholder}
-              isDisabled={isDisabled}
-              onChange={(next) => onChange({ placeholder: next })}
-              clearWhenEmpty
-            />
-          )}
-        </>
       )}
     </Stack>
   )

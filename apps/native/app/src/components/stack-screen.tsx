@@ -93,9 +93,16 @@ export function StackScreen({
     (props?: NativeStackHeaderItemProps) => {
       const currentLeftItems =
         callbackOrValue(options?.headerLeftItems, props) || []
-      return [...currentLeftItems]
+      // On iOS sheets the offline item goes on the left: any custom view among
+      // the right items pushes the title off-centre, however narrow it is.
+      return [
+        ...currentLeftItems,
+        closeable && Platform.OS === 'ios'
+          ? navbarOfflineItem(networkStatus)
+          : undefined,
+      ].filter(Boolean) as NativeStackHeaderItem[]
     },
-    [options?.headerLeftItems],
+    [options?.headerLeftItems, networkStatus, closeable],
   )
 
   const headerRightItems = useCallback(
@@ -104,7 +111,9 @@ export function StackScreen({
         callbackOrValue(options?.headerRightItems, props) || []
 
       const result = [
-        navbarOfflineItem(networkStatus),
+        closeable && Platform.OS === 'ios'
+          ? undefined
+          : navbarOfflineItem(networkStatus),
         ...currentRightItems,
         closeable && Platform.OS === 'ios' ? navbarCloseItem() : undefined,
       ].filter(Boolean) as NativeStackHeaderItem[]
@@ -137,7 +146,8 @@ export function StackScreen({
   return (
     <Stack.Screen
       options={{
-        ...(options?.headerLeftItems !== undefined && {
+        ...((options?.headerLeftItems !== undefined ||
+          (closeable && Platform.OS === 'ios')) && {
           unstable_headerLeftItems: headerLeftItems,
         }),
         headerLeft,

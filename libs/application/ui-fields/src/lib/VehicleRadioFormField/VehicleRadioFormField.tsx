@@ -44,13 +44,11 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
     itemType,
     itemList,
     shouldValidateErrorMessages,
-    shouldValidateDebtStatus,
     shouldValidateRenewal,
     alertMessageErrorTitle,
     validationErrorMessages,
     validationErrorFallbackMessage,
     inputErrorMessage,
-    debtStatusErrorMessage,
     renewalExpiresAtTag,
     validateRenewal,
   } = field
@@ -110,8 +108,7 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
     for (const [index, vehicle] of vehicles.entries()) {
       const hasValidationError =
         shouldValidateErrorMessages && !!vehicle.validationErrorMessages?.length
-      const hasDebtError = shouldValidateDebtStatus && !vehicle.isDebtLess
-      const disabled = hasValidationError || hasDebtError
+      const disabled = hasValidationError
 
       options.push({
         value: `${index}`,
@@ -125,7 +122,7 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
                 {vehicle.color} - {vehicle.permno}
               </Text>
             </Box>
-            {disabled && (
+            {hasValidationError && (
               <Box marginTop={2}>
                 <AlertMessage
                   type="error"
@@ -140,43 +137,32 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
                   message={
                     <Box>
                       <BulletList>
-                        {hasDebtError && (
-                          <Bullet>
-                            {debtStatusErrorMessage &&
+                        {vehicle.validationErrorMessages?.map((error) => {
+                          const message =
+                            validationErrorMessages &&
+                            formatMessage(
+                              getValueViaPath<MessageDescriptor>(
+                                validationErrorMessages,
+                                error.errorNo || '',
+                              ) || '',
+                            )
+                          const defaultMessage = error.defaultMessage
+                          const fallbackMessage =
+                            (validationErrorFallbackMessage &&
                               formatText(
-                                debtStatusErrorMessage,
+                                validationErrorFallbackMessage,
                                 application,
                                 formatMessage,
-                              )}
-                          </Bullet>
-                        )}
-                        {hasValidationError &&
-                          vehicle.validationErrorMessages?.map((error) => {
-                            const message =
-                              validationErrorMessages &&
-                              formatMessage(
-                                getValueViaPath<MessageDescriptor>(
-                                  validationErrorMessages,
-                                  error.errorNo || '',
-                                ) || '',
-                              )
-                            const defaultMessage = error.defaultMessage
-                            const fallbackMessage =
-                              (validationErrorFallbackMessage &&
-                                formatText(
-                                  validationErrorFallbackMessage,
-                                  application,
-                                  formatMessage,
-                                )) +
-                              ' - ' +
-                              error.errorNo
+                              )) +
+                            ' - ' +
+                            error.errorNo
 
-                            return (
-                              <Bullet>
-                                {message || defaultMessage || fallbackMessage}
-                              </Bullet>
-                            )
-                          })}
+                          return (
+                            <Bullet>
+                              {message || defaultMessage || fallbackMessage}
+                            </Bullet>
+                          )
+                        })}
                       </BulletList>
                     </Box>
                   }
@@ -185,7 +171,7 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
             )}
           </Box>
         ),
-        disabled: disabled,
+        disabled,
       })
     }
   } else if (itemType === 'PLATE') {

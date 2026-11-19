@@ -7,7 +7,6 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { GraphQLModule } from '@nestjs/graphql'
 
-import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { ProblemModule } from '@island.is/nest/problem'
 
 import {
@@ -40,6 +39,7 @@ import {
   InstitutionModule,
   MessageSuspensionModule,
   PoliceModule,
+  ServiceInterruptionBannerModule,
   StatisticsModule,
   SubpoenaModule,
   UserModule,
@@ -83,13 +83,13 @@ const autoSchemaFile = production
     FileModule,
     InstitutionModule,
     FeatureModule,
-    CmsTranslationsModule,
     PoliceModule,
     EventLogModule,
     VictimModule,
     VerdictModule,
     CaseTableModule,
     MessageSuspensionModule,
+    ServiceInterruptionBannerModule,
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
       isGlobal: true,

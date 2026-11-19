@@ -2,13 +2,16 @@ import { Inject, Injectable } from '@nestjs/common'
 import { User, withAuthContext } from '@island.is/auth-nest-tools'
 import { data } from '@island.is/clients/middlewares'
 import {
+  addApplicationEqualityAttachment,
   analyzeApplicationSalaryReport,
   createApplicationReportDraft,
+  deleteApplicationEqualityAttachment,
   deleteApplicationReportDraft,
   editApplicationEqualityContent,
   editApplicationOutliers,
   getApplicationActiveEqualityReport,
   getApplicationBlankExcelTemplate,
+  getApplicationEqualityAttachments,
   getApplicationEqualityContentPdf,
   getApplicationCompany,
   getApplicationDraftAnalysis,
@@ -29,6 +32,7 @@ import {
   listApplicationDraftOutlierGroups,
   listApplicationDraftRoles,
   listApplicationDraftRolesWithSteps,
+  presignApplicationEqualityAttachment,
   presignApplicationImportUpload,
   submitApplicationReportComment,
   submitApplicationReportDraft,
@@ -55,11 +59,14 @@ import type {
   GetDraftOutlierGroupsResponseDto,
   GetDraftRolesResponseDto,
   GetDraftRolesWithStepsResponseDto,
+  GetReportAttachmentsResponseDto,
   GetReportOutliersResponseDto,
   ImportKeyDto,
   GetSubCriterionCatalogResponseDto,
   ParsedReportDto,
   PresignUploadResponseDto,
+  ReportAttachmentDto,
+  ReportAttachmentExtensionEnum,
   SalaryAnalysisRequestDto,
   SalaryAnalysisResponseDto,
   SalaryReportEligibilityDto,
@@ -208,6 +215,63 @@ export class DirectorateOfEqualityClientService {
       user,
       () => presignApplicationImportUpload(),
       'Failed to presign salary report upload',
+    )
+  }
+
+  // Fylgiskjöl on an EQUALITY report. The bytes never pass through here:
+  // presign hands back an S3 URL the browser PUTs to, and add registers the
+  // staged key. DMR allows changes only while the report is DRAFT or IN_REVIEW.
+  async presignEqualityAttachment(
+    user: User,
+    providerId: string,
+    extension: ReportAttachmentExtensionEnum,
+  ): Promise<PresignUploadResponseDto> {
+    return this.unwrap(
+      user,
+      () =>
+        presignApplicationEqualityAttachment({
+          path: { providerId },
+          body: { extension },
+        }),
+      'Failed to presign equality attachment upload',
+    )
+  }
+
+  async addEqualityAttachment(
+    user: User,
+    providerId: string,
+    body: { key: string; filename: string },
+  ): Promise<ReportAttachmentDto> {
+    return this.unwrap(
+      user,
+      () => addApplicationEqualityAttachment({ path: { providerId }, body }),
+      'Failed to add equality attachment',
+    )
+  }
+
+  async getEqualityAttachments(
+    user: User,
+    providerId: string,
+  ): Promise<GetReportAttachmentsResponseDto> {
+    return this.unwrap(
+      user,
+      () => getApplicationEqualityAttachments({ path: { providerId } }),
+      'Failed to get equality attachments',
+    )
+  }
+
+  async deleteEqualityAttachment(
+    user: User,
+    providerId: string,
+    attachmentId: string,
+  ): Promise<void> {
+    return this.unwrap(
+      user,
+      () =>
+        deleteApplicationEqualityAttachment({
+          path: { providerId, attachmentId },
+        }),
+      'Failed to delete equality attachment',
     )
   }
 
