@@ -7,6 +7,12 @@ import {
   fetchScreen,
   SdfScreen,
 } from '../lib/graphql'
+import {
+  getHistoryAction,
+  HistoryAction,
+  readScreenIdFromSearch,
+  writeScreenHistory,
+} from '../lib/screenNavigation'
 
 export const useFormActions = (
   applicationId: string,
@@ -22,14 +28,19 @@ export const useFormActions = (
   const [answerSnapshot, setAnswerSnapshot] = useState<Record<string, unknown>>(
     initialScreen.answers ?? {},
   )
-  const pageIndexRef = useRef(initialScreen.page.index)
+  // The screen the user is on. Sent with every action so the server can tell
+  // which screen the answers belong to.
+  const screenIdRef = useRef(initialScreen.page.id)
+  // Orders screen fetches started by navigation (links, back/forward) so a slow
+  // earlier response cannot replace a later one.
+  const latestNavigationRef = useRef(0)
   const pendingTargetCountsRef = useRef<Record<string, number>>({})
   const [pendingRefetchTargets, setPendingRefetchTargets] = useState<string[]>(
     [],
   )
   const [, forceRender] = useState(0)
 
-  // When the page index changes, merge the server snapshot for that screen.
+  // When the screen changes, merge the server snapshot for that screen.
   // Server values must win over answersRef — ref can still hold stale choices from
   // before PREV_PAGE / NEXT_PAGE (e.g. needsWaterAccess) and would break
   // server-evaluated showWhen.
@@ -39,7 +50,20 @@ export const useFormActions = (
       setAnswerSnapshot(answersRef.current)
       forceRender((n) => n + 1)
     }
-  }, [screen.page.index])
+  }, [screen.page.id])
+
+  // Shows a screen the server returned and brings the address bar in line.
+  const showScreen = useCallback(
+    (result: SdfScreen, historyAction: HistoryAction) => {
+      screenIdRef.current = result.page.id
+      localeRef.current = result.locale ?? localeRef.current
+      setScreen(result)
+      if (historyAction !== 'none') {
+        writeScreenHistory(historyAction, result.page.id)
+      }
+    },
+    [],
+  )
 
   // SDF screen text (labels, descriptions, button copy) is resolved
   // server-side per locale, so the IS/EN switcher cannot translate the form on
@@ -56,17 +80,19 @@ export const useFormActions = (
     localeRef.current = lang
     startTransition(async () => {
       try {
-        const result = await fetchScreen(
-          applicationId,
-          pageIndexRef.current,
-          lang,
-        )
+        const requestedId = screenIdRef.current
+        const result = await fetchScreen(applicationId, requestedId, lang)
         if (!isActive) {
           return
         }
-        pageIndexRef.current = result.page.index
-        localeRef.current = result.locale ?? lang
-        setScreen(result)
+        showScreen(
+          result,
+          getHistoryAction({
+            source: 'url',
+            requestedId,
+            responseId: result.page.id,
+          }),
+        )
         answersRef.current = {
           ...(result.answers ?? {}),
           ...answersRef.current,
@@ -82,7 +108,7 @@ export const useFormActions = (
     return () => {
       isActive = false
     }
-  }, [lang, applicationId])
+  }, [lang, applicationId, showScreen])
 
   const setAnswer = useCallback((fieldId: string, value: unknown) => {
     answersRef.current = { ...answersRef.current, [fieldId]: value }
@@ -127,7 +153,6 @@ export const useFormActions = (
       event?: string,
       refetchTemplateApiActions?: string[],
       refetchTargets?: string[],
-      lastKnownPageIndex?: number,
     ) => {
       setError(null)
       const mergedAnswers = { ...answersRef.current, ...extraAnswers }
@@ -135,6 +160,7 @@ export const useFormActions = (
         actionType === 'REFETCH' && refetchTargets?.length
           ? refetchTargets
           : undefined
+      const claimedScreenId = screenIdRef.current
 
       updatePendingRefetchTargets(targets, 1)
 
@@ -143,16 +169,22 @@ export const useFormActions = (
           const result = await gqlExecuteAction(
             applicationId,
             actionType,
+            claimedScreenId,
             Object.keys(mergedAnswers).length > 0 ? mergedAnswers : undefined,
             localeRef.current,
             fieldIds,
             event,
             refetchTemplateApiActions,
-            lastKnownPageIndex,
           )
-          pageIndexRef.current = result.page.index
-          localeRef.current = result.locale ?? localeRef.current
-          setScreen(result)
+          showScreen(
+            result,
+            getHistoryAction({
+              source: 'navigation',
+              currentId: claimedScreenId,
+              responseId: result.page.id,
+              hasNotice: !!result.notice,
+            }),
+          )
           // Always merge; never replace with result.answers alone — it only contains
           // fields present on the current page in the DB snapshot, and would drop keys
           // needed for client-side clientShowWhen on the page we navigate to.
@@ -169,22 +201,76 @@ export const useFormActions = (
         }
       })
     },
-    [applicationId, updatePendingRefetchTargets],
+    [applicationId, updatePendingRefetchTargets, showScreen],
   )
 
-  const nextPage = useCallback(
-    () =>
-      dispatch(
-        'NEXT_PAGE',
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        screen.page.index,
-      ),
-    [dispatch, screen.page.index],
+  // Fetches a screen the address bar names (`requestedId`) or, for a link
+  // inside the form, one the user chose (`source: 'navigation'`).
+  const loadScreen = useCallback(
+    (requestedId: string | undefined, source: 'url' | 'navigation') => {
+      setError(null)
+      const navigationId = ++latestNavigationRef.current
+      startTransition(async () => {
+        try {
+          const currentId = screenIdRef.current
+          const result = await fetchScreen(
+            applicationId,
+            requestedId,
+            localeRef.current,
+          )
+          if (navigationId !== latestNavigationRef.current) {
+            return
+          }
+          showScreen(
+            result,
+            source === 'url'
+              ? getHistoryAction({
+                  source,
+                  requestedId,
+                  responseId: result.page.id,
+                })
+              : getHistoryAction({
+                  source,
+                  currentId,
+                  responseId: result.page.id,
+                  hasNotice: false,
+                }),
+          )
+          answersRef.current = {
+            ...answersRef.current,
+            ...(result.answers ?? {}),
+          }
+          setAnswerSnapshot(answersRef.current)
+          forceRender((n) => n + 1)
+        } catch (e) {
+          if (navigationId === latestNavigationRef.current) {
+            setError(e instanceof Error ? e.message : 'Action failed')
+          }
+        }
+      })
+    },
+    [applicationId, showScreen],
   )
+
+  // Back/forward changes the address bar without a page load, so show the
+  // screen it now names.
+  useEffect(() => {
+    const onPopState = () => {
+      const requestedId = readScreenIdFromSearch(window.location.search)
+      if (requestedId !== screenIdRef.current) {
+        loadScreen(requestedId, 'url')
+      }
+    }
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [loadScreen])
+
+  const goToScreen = useCallback(
+    (id: string) => loadScreen(id, 'navigation'),
+    [loadScreen],
+  )
+
+  const nextPage = useCallback(() => dispatch('NEXT_PAGE'), [dispatch])
 
   const prevPage = useCallback(() => dispatch('PREV_PAGE'), [dispatch])
 
@@ -208,6 +294,7 @@ export const useFormActions = (
     prevPage,
     submit,
     refetch,
+    goToScreen,
     dispatch,
   }
 }

@@ -63,6 +63,16 @@ export interface SdfScreen {
     canGoBack: boolean
   }
   answers?: Record<string, unknown>
+  notice?: SdfNotice
+}
+
+/**
+ * Set when the server returned a different screen than the one the client
+ * claimed, so the client can tell the user why the page changed.
+ */
+export interface SdfNotice {
+  code: 'SCREEN_UNAVAILABLE'
+  message: string
 }
 
 export interface SdfStepperSection {
@@ -745,6 +755,7 @@ export const GET_SCREEN_QUERY = `
         canGoBack
       }
       answers
+      notice { code message }
     }
   }
 `
@@ -809,6 +820,7 @@ export const EXECUTE_ACTION_MUTATION = `
       }
       footer { buttons { id text variant actionType } canGoBack }
       answers
+      notice { code message }
     }
   }
 `
@@ -987,7 +999,7 @@ const parseGraphqlResponse = async (res: Response): Promise<GraphqlPayload> => {
 
 export const fetchScreen = async (
   applicationId: string,
-  step?: number,
+  screen?: string,
   locale = 'is',
   forwardedHeaders?: ForwardAuthHeaders,
 ): Promise<SdfScreen> => {
@@ -999,7 +1011,7 @@ export const fetchScreen = async (
       body: JSON.stringify({
         query: GET_SCREEN_QUERY,
         variables: {
-          input: { applicationId, step },
+          input: { applicationId, screen },
           locale,
         },
       }),
@@ -1012,8 +1024,8 @@ export const fetchScreen = async (
   if (json.errors) {
     throw new Error(json.errors[0]?.message ?? 'GraphQL error')
   }
-  const screen = extractOperationResult<SdfScreen>(json, 'applicationSdfScreen')
-  if (!screen) {
+  const result = extractOperationResult<SdfScreen>(json, 'applicationSdfScreen')
+  if (!result) {
     throw new Error(
       `Malformed GraphQL response: missing applicationSdfScreen. Payload keys: ${Object.keys(
         json ?? {},
@@ -1021,10 +1033,10 @@ export const fetchScreen = async (
     )
   }
   return {
-    ...screen,
+    ...result,
     page: {
-      ...screen.page,
-      components: normalizeAliasedComponentValues(screen.page.components),
+      ...result.page,
+      components: normalizeAliasedComponentValues(result.page.components),
     },
   }
 }
@@ -1051,10 +1063,10 @@ export const VALIDATE_MUTATION = `
  */
 export const validateAction = async (
   applicationId: string,
+  screen: string,
   answers?: Record<string, unknown>,
   fieldIds?: string[],
   locale = 'is',
-  lastKnownPageIndex?: number,
 ): Promise<SdfValidateResult> => {
   const res = await fetch(getGraphqlEndpoint('ApplicationSdfValidate'), {
     method: 'POST',
@@ -1065,9 +1077,9 @@ export const validateAction = async (
         input: {
           applicationId,
           actionType: 'VALIDATE',
+          screen,
           answers: answers ? JSON.stringify(answers) : undefined,
           fieldIds,
-          lastKnownPageIndex,
         },
         locale,
       },
@@ -1097,12 +1109,12 @@ export const validateAction = async (
 export const executeAction = async (
   applicationId: string,
   actionType: string,
+  screen: string,
   answers?: Record<string, unknown>,
   locale = 'is',
   fieldIds?: string[],
   event?: string,
   refetchTemplateApiActions?: string[],
-  lastKnownPageIndex?: number,
 ): Promise<SdfScreen> => {
   const res = await fetch(getGraphqlEndpoint('ApplicationSdfAction'), {
     method: 'POST',
@@ -1113,11 +1125,11 @@ export const executeAction = async (
         input: {
           applicationId,
           actionType,
+          screen,
           answers: answers ? JSON.stringify(answers) : undefined,
           fieldIds,
           event,
           refetchTemplateApiActions,
-          lastKnownPageIndex,
         },
         locale,
       },
@@ -1130,8 +1142,8 @@ export const executeAction = async (
   if (json.errors) {
     throw new Error(json.errors[0]?.message ?? 'GraphQL error')
   }
-  const screen = extractOperationResult<SdfScreen>(json, 'applicationSdfAction')
-  if (!screen) {
+  const result = extractOperationResult<SdfScreen>(json, 'applicationSdfAction')
+  if (!result) {
     throw new Error(
       `Malformed GraphQL response: missing applicationSdfAction. Payload keys: ${Object.keys(
         json ?? {},
@@ -1139,10 +1151,10 @@ export const executeAction = async (
     )
   }
   return {
-    ...screen,
+    ...result,
     page: {
-      ...screen.page,
-      components: normalizeAliasedComponentValues(screen.page.components),
+      ...result.page,
+      components: normalizeAliasedComponentValues(result.page.components),
     },
   }
 }

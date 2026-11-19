@@ -81,7 +81,7 @@ export const ApplicationShell = ({
     screen.page.components,
     answerSnapshot,
     screen.locale ?? 'is',
-    screen.page.index,
+    screen.page.id,
   )
 
   React.useEffect(() => {
@@ -135,6 +135,15 @@ export const ApplicationShell = ({
                       {screen.header.description && (
                         <Box marginBottom={3}>
                           <Markdown>{screen.header.description}</Markdown>
+                        </Box>
+                      )}
+
+                      {screen.notice && (
+                        <Box marginBottom={3}>
+                          <AlertMessage
+                            type="info"
+                            message={screen.notice.message}
+                          />
                         </Box>
                       )}
 

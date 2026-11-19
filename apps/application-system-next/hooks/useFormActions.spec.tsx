@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react'
 import { IntlProvider } from 'react-intl'
 
 import type { SdfScreen } from '../lib/graphql'
-import { executeAction } from '../lib/graphql'
+import { executeAction, fetchScreen } from '../lib/graphql'
 import { useFormActions } from './useFormActions'
 
 jest.mock('../lib/graphql', () => ({
@@ -82,6 +82,143 @@ describe('useFormActions', () => {
     })
 
     expect(result.current.pendingRefetchTargets).toEqual([])
+  })
+
+  describe('screen navigation', () => {
+    const page2: SdfScreen = {
+      ...screen,
+      page: { ...screen.page, id: 'page-2', index: 1 },
+    }
+    let pushState: jest.SpyInstance
+    let replaceState: jest.SpyInstance
+
+    beforeEach(() => {
+      pushState = jest.spyOn(window.history, 'pushState')
+      replaceState = jest.spyOn(window.history, 'replaceState')
+    })
+
+    afterEach(() => {
+      jest.restoreAllMocks()
+    })
+
+    it('sends the current screen id with every action and pushes the new one', async () => {
+      ;(executeAction as jest.Mock).mockResolvedValue(page2)
+      const { result } = renderHook(() => useFormActions('app-1', screen), {
+        wrapper,
+      })
+
+      await act(async () => {
+        await result.current.nextPage()
+      })
+
+      expect(executeAction).toHaveBeenCalledWith(
+        'app-1',
+        'NEXT_PAGE',
+        'page-1',
+        undefined,
+        'is',
+        undefined,
+        undefined,
+        undefined,
+      )
+      expect(result.current.screen.page.id).toBe('page-2')
+      expect(pushState).toHaveBeenCalledWith(
+        null,
+        '',
+        expect.stringContaining('screen=page-2'),
+      )
+
+      await act(async () => {
+        await result.current.prevPage()
+      })
+
+      expect(executeAction).toHaveBeenLastCalledWith(
+        'app-1',
+        'PREV_PAGE',
+        'page-2',
+        undefined,
+        'is',
+        undefined,
+        undefined,
+        undefined,
+      )
+    })
+
+    it('replaces the history entry when the response carries a notice', async () => {
+      ;(executeAction as jest.Mock).mockResolvedValue({
+        ...page2,
+        notice: { code: 'SCREEN_UNAVAILABLE', message: 'Not available' },
+      })
+      const { result } = renderHook(() => useFormActions('app-1', screen), {
+        wrapper,
+      })
+
+      await act(async () => {
+        await result.current.nextPage()
+      })
+
+      expect(pushState).not.toHaveBeenCalled()
+      expect(replaceState).toHaveBeenCalledWith(
+        null,
+        '',
+        expect.stringContaining('screen=page-2'),
+      )
+      expect(result.current.screen.notice?.message).toBe('Not available')
+    })
+
+    it('leaves the address bar alone when the screen does not change', async () => {
+      ;(executeAction as jest.Mock).mockResolvedValue(screen)
+      const { result } = renderHook(() => useFormActions('app-1', screen), {
+        wrapper,
+      })
+
+      await act(async () => {
+        await result.current.nextPage()
+      })
+
+      expect(pushState).not.toHaveBeenCalled()
+      expect(replaceState).not.toHaveBeenCalled()
+    })
+
+    it('fetches the screen named by the address bar on back/forward', async () => {
+      ;(fetchScreen as jest.Mock).mockResolvedValue(page2)
+      const { result } = renderHook(() => useFormActions('app-1', screen), {
+        wrapper,
+      })
+
+      window.history.replaceState(null, '', '/?screen=page-2')
+      replaceState.mockClear()
+      await act(async () => {
+        window.dispatchEvent(new PopStateEvent('popstate'))
+        await Promise.resolve()
+      })
+
+      expect(fetchScreen).toHaveBeenCalledWith('app-1', 'page-2', 'is')
+      expect(result.current.screen.page.id).toBe('page-2')
+      // The address bar already names the screen that was shown.
+      expect(pushState).not.toHaveBeenCalled()
+      expect(replaceState).not.toHaveBeenCalled()
+    })
+
+    it('goToScreen fetches the screen and pushes it', async () => {
+      ;(fetchScreen as jest.Mock).mockResolvedValue(page2)
+      const { result } = renderHook(() => useFormActions('app-1', screen), {
+        wrapper,
+      })
+
+      await act(async () => {
+        result.current.goToScreen('page-2')
+        await Promise.resolve()
+      })
+
+      expect(fetchScreen).toHaveBeenCalledWith('app-1', 'page-2', 'is')
+      expect(result.current.screen.page.id).toBe('page-2')
+      expect(pushState).toHaveBeenCalledWith(
+        null,
+        '',
+        expect.stringContaining('screen=page-2'),
+      )
+    })
   })
 
   it('publishes a fresh answer snapshot when local answers change', () => {
