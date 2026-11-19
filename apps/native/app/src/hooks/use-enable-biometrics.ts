@@ -40,6 +40,8 @@ export function useEnableBiometrics({
   const { authenticationTypes } = useUiStore()
   const biometricType = useBiometricType(authenticationTypes)
   const [isEnabling, setIsEnabling] = useState(false)
+  // Approved, and the key is being registered: too late to cancel.
+  const [isFinishing, setIsFinishing] = useState(false)
   const electronicId = useElectronicIdUnlock('enableBiometrics', { inline })
   // Counts the attempts. A newer one, cancel() or leaving the screen stops an
   // earlier one before it starts electronic ID or uses its answer: the checks
@@ -155,6 +157,7 @@ export function useEnableBiometrics({
     const current = ++attempt.current
     const isCurrent = () => attempt.current === current
     setIsEnabling(true)
+    setIsFinishing(false)
     let enabled = false
     try {
       // Not when it's turned off for the app on iOS: then it has no hardware
@@ -175,6 +178,7 @@ export function useEnableBiometrics({
       if (!isCurrent()) {
         return false
       }
+      setIsFinishing(true)
       // As with an unlock, the earlier refresh token stops working, so these
       // replace the tokens. Approved after the app locked for good, they only
       // register the key: the lock gets new ones, and the dead ones go now.
@@ -210,6 +214,7 @@ export function useEnableBiometrics({
         // on. A sheet closes, and so does either one if registering failed.
         if (!enabled || !inline) {
           electronicId.close()
+          setIsFinishing(false)
         }
         setIsEnabling(false)
       }
@@ -228,6 +233,8 @@ export function useEnableBiometrics({
     cancel,
     /** With `inline`: shown while electronic ID waits. */
     verificationCode: electronicId.verificationCode,
+    /** With `inline`: approved, so the code's Cancel is off. */
+    isFinishing,
     cancelElectronicId: electronicId.cancel,
   }
 }

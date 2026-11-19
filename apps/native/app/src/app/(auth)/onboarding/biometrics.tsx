@@ -32,6 +32,7 @@ export default function BiometricsScreen() {
     enableBiometrics,
     cancel,
     verificationCode,
+    isFinishing,
     cancelElectronicId,
   } = useEnableBiometrics({ inline: true })
 
@@ -80,6 +81,7 @@ export default function BiometricsScreen() {
         fullScreen
         biometricType={biometricType.text}
         verificationCode={verificationCode}
+        isFinishing={isFinishing}
         onCancelPress={cancelElectronicId}
       />
     )
