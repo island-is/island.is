@@ -53,16 +53,16 @@ export const siaDisabilityPensionCertificateQuery = gql`
 
 export const siaGeneralCurrenciesQuery = gql`
   query SocialInsuranceGeneralCurrencies($applicationId: String) {
-    socialInsuranceGeneral {
-      currencies(applicationId: $applicationId)
+    socialInsuranceGeneral(applicationId: $applicationId) {
+      currencies
     }
   }
 `
 
 export const siaGeneralLanguagesQuery = gql`
   query SocialInsuranceGeneralLanguages($applicationId: String) {
-    socialInsuranceGeneral {
-      languages(applicationId: $applicationId) {
+    socialInsuranceGeneral(applicationId: $applicationId) {
+      languages {
         value
         label
       }
@@ -72,8 +72,8 @@ export const siaGeneralLanguagesQuery = gql`
 
 export const siaGeneralProfessionsQuery = gql`
   query SocialInsuranceGeneralProfessions($applicationId: String) {
-    socialInsuranceGeneral {
-      professions(applicationId: $applicationId) {
+    socialInsuranceGeneral(applicationId: $applicationId) {
+      professions {
         value
         label
         needsFurtherInformation
@@ -84,8 +84,8 @@ export const siaGeneralProfessionsQuery = gql`
 
 export const siaGeneralProfessionActivitiesQuery = gql`
   query SocialInsuranceGeneralProfessionActivities($applicationId: String) {
-    socialInsuranceGeneral {
-      professionActivities(applicationId: $applicationId) {
+    socialInsuranceGeneral(applicationId: $applicationId) {
+      professionActivities {
         value
         label
         needsFurtherInformation

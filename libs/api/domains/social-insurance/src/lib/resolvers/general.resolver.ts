@@ -8,7 +8,7 @@ import {
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { UseGuards } from '@nestjs/common'
-import { Query, Resolver, ResolveField, Args } from '@nestjs/graphql'
+import { Query, Resolver, ResolveField, Args, Parent } from '@nestjs/graphql'
 import { Country } from '../models/general/country.model'
 import { EducationalInstitution } from '../models/general/educationalInstitution.model'
 import { Union } from '../models/general/union.model'
@@ -24,6 +24,7 @@ import {
   SocialInsuranceAdministrationProfessionService,
   withApplicationGuidContext,
 } from '@island.is/clients/social-insurance-administration'
+import type { GeneralParent } from '../socialInsurance.type'
 
 @Resolver(() => General)
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -39,15 +40,17 @@ export class GeneralResolver {
   ) {}
 
   @Query(() => General, { name: 'socialInsuranceGeneral' })
-  async getGeneral() {
-    return {}
+  getGeneral(
+    @Args('applicationId', { type: () => String, nullable: true })
+    applicationId?: string,
+  ): GeneralParent {
+    return { applicationId }
   }
 
   @ResolveField('unions', () => [Union], { nullable: true })
   resolveUnions(
     @CurrentUser() user: User,
-    @Args('applicationId', { type: () => String, nullable: true })
-    applicationId?: string,
+    @Parent() { applicationId }: GeneralParent,
   ) {
     return withApplicationGuidContext(applicationId, () =>
       this.generalService.getUnions(user),
@@ -59,8 +62,7 @@ export class GeneralResolver {
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
-    @Args('applicationId', { type: () => String, nullable: true })
-    applicationId?: string,
+    @Parent() { applicationId }: GeneralParent,
   ) {
     return withApplicationGuidContext(applicationId, () =>
       this.service.getCountries(user, locale),
@@ -72,8 +74,7 @@ export class GeneralResolver {
   })
   resolveEducationalInstitution(
     @CurrentUser() user: User,
-    @Args('applicationId', { type: () => String, nullable: true })
-    applicationId?: string,
+    @Parent() { applicationId }: GeneralParent,
   ) {
     return withApplicationGuidContext(applicationId, () =>
       this.educationService.getEducationalInstitutions(user),
@@ -85,8 +86,7 @@ export class GeneralResolver {
   })
   resolveCurrencies(
     @CurrentUser() user: User,
-    @Args('applicationId', { type: () => String, nullable: true })
-    applicationId?: string,
+    @Parent() { applicationId }: GeneralParent,
   ) {
     return withApplicationGuidContext(applicationId, () =>
       this.generalService.getCurrencies(user),
@@ -100,8 +100,7 @@ export class GeneralResolver {
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
-    @Args('applicationId', { type: () => String, nullable: true })
-    applicationId?: string,
+    @Parent() { applicationId }: GeneralParent,
   ) {
     return withApplicationGuidContext(applicationId, () =>
       this.generalService.getLanguages(user, locale),
@@ -138,8 +137,7 @@ export class GeneralResolver {
   })
   resolveProfessions(
     @CurrentUser() user: User,
-    @Args('applicationId', { type: () => String, nullable: true })
-    applicationId?: string,
+    @Parent() { applicationId }: GeneralParent,
   ) {
     return withApplicationGuidContext(applicationId, () =>
       this.professionService.getProfessionsInDto(user),
@@ -151,8 +149,7 @@ export class GeneralResolver {
   })
   resolveProfessionActivities(
     @CurrentUser() user: User,
-    @Args('applicationId', { type: () => String, nullable: true })
-    applicationId?: string,
+    @Parent() { applicationId }: GeneralParent,
   ) {
     return withApplicationGuidContext(applicationId, () =>
       this.professionService.getProfessionActivitiesInDto(user),
