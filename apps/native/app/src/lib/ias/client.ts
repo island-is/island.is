@@ -53,6 +53,7 @@ interface RequestOptions {
   allowNewKey?: boolean
   /** A DPoP proof, for token requests */
   dpop?: boolean
+  /** Sent as `Authorization: DPoP`, always with a proof that hashes it */
   accessToken?: string
   form?: Record<string, string>
   json?: unknown
@@ -404,13 +405,15 @@ export function createIasClient(options: IasClientOptions): IasClient {
   async function createProof(
     method: string,
     url: string,
-    nonce?: string,
+    { nonce, accessToken }: { nonce?: string; accessToken?: string },
   ): Promise<string> {
     return dpopProof(signWithInstallKey, {
       jwk: requireInstallKey().publicJwk,
       method,
       url,
       jti: device.randomUUID(),
+      // A proof that comes with an access token is bound to it (RFC 9449).
+      ath: accessToken ? await device.sha256(accessToken) : undefined,
       nonce,
     })
   }
@@ -441,8 +444,12 @@ export function createIasClient(options: IasClientOptions): IasClient {
         },
       )
     }
-    if (dpop) {
-      headers.DPoP = await createProof(method, url, nonces.dpop)
+    // An access token is only ever sent with a proof.
+    if (dpop || accessToken) {
+      headers.DPoP = await createProof(method, url, {
+        nonce: nonces.dpop,
+        accessToken,
+      })
     }
     if (accessToken) {
       headers.Authorization = `DPoP ${accessToken}`
