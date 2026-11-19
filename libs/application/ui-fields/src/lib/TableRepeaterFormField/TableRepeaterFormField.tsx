@@ -367,9 +367,9 @@ export const TableRepeaterFormField: FC<Props> = ({
                       .findIndex((f) => f.id === field.id)
 
                     const rowContext = cellContext(
-                      customMappedValues.length
+                      (customMappedValues.length
                         ? customMappedValues[index]
-                        : values[index],
+                        : values[index]) ?? {},
                       displayIndex,
                     )
                     const {
