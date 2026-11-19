@@ -5,7 +5,8 @@ import { useUserInfo } from '@island.is/react-spa/bff'
 import { LoadingScreen } from '@island.is/react/components'
 import { useRef } from 'react'
 import { m } from '../lib/messages'
-import { BASE_PATH, routes } from '../lib/routes'
+import { BASE_PATH } from '../lib/basePath'
+import { routes } from '../lib/routes'
 
 export const Router = () => {
   const { formatMessage } = useLocale()
