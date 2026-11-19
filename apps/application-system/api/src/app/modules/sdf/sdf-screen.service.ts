@@ -1011,9 +1011,10 @@ export class SdfScreenService {
 
     return this.getScreen(applicationId, undefined, locale, user, {
       clientScreen: {
-        claimedId: this.nextScreenId(
+        claimedId: this.adjacentScreenId(
           nextScreens,
           claim.index,
+          true,
           application,
           bffUser,
         ),
@@ -1080,17 +1081,22 @@ export class SdfScreenService {
     return screens[resolvedIndex]
   }
 
-  // The id of the next shown screen after the one at `index`. On the last shown
-  // screen there is no next one, so it is that screen's own id.
-  private nextScreenId(
+  // The id of the next shown screen after the one at `index`, or before it when
+  // not moving forward. When there is none that way, it is that screen's own id.
+  private adjacentScreenId(
     screens: FormScreen[],
     index: number,
+    isMovingForward: boolean,
     application: ApplicationWithAttachments,
     bffUser: BffUser,
   ): string {
-    const nextIndex = moveToScreen(screens, index + 1, true)
+    const adjacentIndex = moveToScreen(
+      screens,
+      isMovingForward ? index + 1 : index - 1,
+      isMovingForward,
+    )
     return resolveFormItemId(
-      screens[screens[nextIndex]?.isNavigable ? nextIndex : index],
+      screens[screens[adjacentIndex]?.isNavigable ? adjacentIndex : index],
       application as Application,
       bffUser,
     )
@@ -1120,23 +1126,45 @@ export class SdfScreenService {
     applicationId: string,
     locale: Locale,
     user: User,
+    claimedScreenId: string,
   ): Promise<ScreenDto> {
     const application = await this.requireApplicationForUser(
       applicationId,
       user,
     )
 
-    const currentPageIndex: number = (application as any).pageIndex ?? 0
-
     const template = await getApplicationTemplateByTypeId(application.typeId)
     const screens = await this.buildScreens(application, template, locale, user)
+    const bffUser = this.buildBffUser(user, locale)
+    const claim = screens
+      ? resolveClaimedScreen(
+          screens,
+          claimedScreenId,
+          application as Application,
+          bffUser,
+        )
+      : undefined
+    if (!screens || !claim?.valid) {
+      return this.resumeWithNotice(
+        applicationId,
+        SdfActionType.PREV_PAGE,
+        claimedScreenId,
+        locale,
+        user,
+      )
+    }
 
-    const newPageIndex =
-      screens && currentPageIndex > 0
-        ? moveToScreen(screens, currentPageIndex - 1, false)
-        : 0
-
-    return this.getScreen(applicationId, newPageIndex, locale, user)
+    return this.getScreen(applicationId, undefined, locale, user, {
+      clientScreen: {
+        claimedId: this.adjacentScreenId(
+          screens,
+          claim.index,
+          false,
+          application,
+          bffUser,
+        ),
+      },
+    })
   }
 
   async goToPage(

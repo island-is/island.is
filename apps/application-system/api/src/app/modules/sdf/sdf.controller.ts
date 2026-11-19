@@ -130,6 +130,7 @@ export class SdfController {
           applicationId,
           locale,
           user!,
+          this.requireScreen(dto, applicationId),
         )
 
       case SdfActionType.GO_TO_PAGE:

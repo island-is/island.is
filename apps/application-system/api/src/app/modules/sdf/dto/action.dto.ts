@@ -37,7 +37,7 @@ export class ExecuteActionDto {
   @IsString()
   @ApiPropertyOptional({
     description:
-      'The id of the screen the client is on. Required for NEXT_PAGE. If no shown screen has the id, nothing is saved and the response is the screen to resume on, with a notice.',
+      'The id of the screen the client is on. Required for NEXT_PAGE and PREV_PAGE. If no shown screen has the id, nothing is saved and the response is the screen to resume on, with a notice.',
   })
   readonly screen?: string
 
