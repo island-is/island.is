@@ -203,12 +203,16 @@ export function useEnableBiometrics({
       }
       return false
     } finally {
-      // In place, the code stays up after a success while the caller moves
-      // on. A sheet closes, and so does either one if registering failed.
-      if (!enabled || !inline) {
-        electronicId.close()
+      // A newer attempt has its own code and spinner: an older one leaves
+      // them alone.
+      if (isCurrent()) {
+        // In place, the code stays up after a success while the caller moves
+        // on. A sheet closes, and so does either one if registering failed.
+        if (!enabled || !inline) {
+          electronicId.close()
+        }
+        setIsEnabling(false)
       }
-      setIsEnabling(false)
     }
   }
 
