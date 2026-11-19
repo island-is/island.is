@@ -364,6 +364,9 @@ const field1Schema = z.object({ field1: z.string().min(1) }).passthrough()
 const field0AndField1Schema = z
   .object({ field0: z.string().min(1), field1: z.string().min(1) })
   .passthrough()
+const field0AndField2Schema = z
+  .object({ field0: z.string().min(1), field2: z.string().min(1) })
+  .passthrough()
 // Requires field0 the way templates do, with their own namespaced message.
 const field0Required = {
   id: 'example.application:field0.required',
@@ -1488,6 +1491,26 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       validationErrors: ['field0'],
       pageId: 'page0',
       saves: [{ answers: { wantsMiddle: 'yes', field2: 'value' } }],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      // The page the user submits from is checked first: its errors come back
+      // and nothing is saved, even though page 0 fails too. Page 0 is only
+      // reached once this page is valid.
+      label: 'when the screen submitted from and an earlier screen both fail',
+      form: conditionalMiddlePageForm,
+      dataSchema: field0AndField2Schema,
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        answers: {},
+        screen: 'page2',
+      },
+      validationErrors: ['field2'],
+      pageId: 'page2',
+      saves: [],
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [],
