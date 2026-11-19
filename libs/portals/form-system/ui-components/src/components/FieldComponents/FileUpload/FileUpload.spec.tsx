@@ -229,15 +229,16 @@ it('keeps uploads enabled for an application', () => {
 })
 
 it.each([{ isNavigating: true }, { submitted: true }])(
-  'does not remove an attachment or call DELETE_FILE while %o',
+  'hides attachment actions and prevents removal while %o, restoring actions afterward',
   async (state) => {
     const dispatch = jest.fn()
-    render(
+    const uploadedItem = {
+      ...item,
+      values: [{ id: 'value', json: { s3Key: ['application/file.pdf'] } }],
+    }
+    const { rerender } = render(
       <FileUpload
-        item={{
-          ...item,
-          values: [{ id: 'value', json: { s3Key: ['application/file.pdf'] } }],
-        }}
+        item={uploadedItem}
         state={{ application: { id: 'application' }, ...state }}
         dispatch={dispatch}
       />,
@@ -245,7 +246,7 @@ it.each([{ isNavigating: true }, { submitted: true }])(
     )
     const latestProps = () =>
       jest.mocked(InputFileUpload).mock.calls.slice(-1)[0][0]
-    expect(latestProps().removeDisabled).toBe(true)
+    expect(latestProps().hideIcons).toBe(true)
     const originalFiles = latestProps().files
 
     await act(async () => latestProps().onRemove?.(originalFiles[0]))
@@ -253,6 +254,15 @@ it.each([{ isNavigating: true }, { submitted: true }])(
     expect(latestProps().files).toEqual(originalFiles)
     expect(mutate).not.toHaveBeenCalled()
     expect(dispatch).not.toHaveBeenCalled()
+
+    rerender(
+      <FileUpload
+        item={uploadedItem}
+        state={{ application: { id: 'application' } }}
+        dispatch={dispatch}
+      />,
+    )
+    expect(latestProps().hideIcons).not.toBe(true)
   },
 )
 
@@ -273,7 +283,7 @@ it('allows removal when only the upload configuration is disabled', async () => 
   const latestProps = () =>
     jest.mocked(InputFileUpload).mock.calls.slice(-1)[0][0]
   expect(latestProps().disabled).toBe(true)
-  expect(latestProps().removeDisabled).not.toBe(true)
+  expect(latestProps().hideIcons).not.toBe(true)
   mutate.mockResolvedValue({})
 
   await act(async () => latestProps().onRemove?.(latestProps().files[0]))

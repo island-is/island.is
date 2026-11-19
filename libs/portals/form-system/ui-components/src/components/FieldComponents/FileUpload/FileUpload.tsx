@@ -365,7 +365,7 @@ export const FileUpload = ({
             !item.fieldSettings?.maxFiles
           }
           onChange={onChange}
-          removeDisabled={state?.isNavigating || state?.submitted}
+          hideIcons={state?.isNavigating || state?.submitted}
           onRemove={onRemove}
           onRetry={onRetry}
           errorMessage={fieldState.error?.message ?? error}
