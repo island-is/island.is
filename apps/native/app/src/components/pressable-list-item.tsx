@@ -35,10 +35,10 @@ export const PressableListItem = memo(
       () => selectable && selectedItems.includes(item.id),
       [selectable, selectedItems, item.id],
     )
-    const icon = useMemo(() => getSenderLogo(item.sender, 75), [
-      item.sender,
-      getSenderLogo,
-    ])
+    const icon = useMemo(
+      () => getSenderLogo(item.sender, 75),
+      [item.sender, getSenderLogo],
+    )
 
     const toggleSelectItem = useCallback(() => {
       if (isSelected) {
