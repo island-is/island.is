@@ -280,12 +280,8 @@ export const authStore = create<AuthStore>((set, get) => ({
 
     const { authorizeResult, nativeUser } = get()
     if (nativeUser || isNativeLogin(authorizeResult)) {
-      try {
-        // Ends the app login on IAS, not just this session. Works locked too.
-        await getIasClient().logout(authorizeResult?.refreshToken ?? undefined)
-      } catch (e) {
-        console.log('Failed to end the app login', e)
-      }
+      // Ends the app login on IAS, not just this session. Works locked too.
+      await endAppLogin(authorizeResult?.refreshToken ?? undefined)
     }
 
     const client = await getApolloClientAsync()
@@ -474,6 +470,21 @@ async function restoreNativeUser(): Promise<boolean> {
     await forceLogout()
   }
   return true
+}
+
+// Logging out waits this long for IAS at most. The phone is cleared either
+// way, and ending the app login on IAS carries on in the background.
+const END_APP_LOGIN_WAIT_MS = 5_000
+
+/** Ends the install's app login on IAS. */
+async function endAppLogin(refreshToken?: string) {
+  const ending = getIasClient()
+    .logout(refreshToken)
+    .catch((e) => console.log('Failed to end the app login', e))
+  await Promise.race([
+    ending,
+    new Promise((resolve) => setTimeout(resolve, END_APP_LOGIN_WAIT_MS)),
+  ])
 }
 
 async function forceLogout(): Promise<void> {

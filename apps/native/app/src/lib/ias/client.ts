@@ -184,6 +184,9 @@ export function createIasClient(options: IasClientOptions): IasClient {
   const signWithInstallKey = (data: string) => device.signWithInstallKey(data)
 
   let cachedAttestation: StoredAttestation | null | undefined
+  // A logout still ending the app login on IAS, after the app stopped
+  // waiting for it. A login waits, so it can't remove the new app login.
+  let loggingOut: Promise<unknown> = Promise.resolve()
   // IAS's latest nonces, from any response: proofs are fresh by these, not by
   // the phone's clock. Kept in memory only.
   const nonces: { challenge?: string; dpop?: string } = {}
@@ -600,7 +603,8 @@ export function createIasClient(options: IasClientOptions): IasClient {
       return device.getInstallKey()?.thumbprint ?? null
     },
 
-    startLogin(loginHint, { smsCode } = {}) {
+    async startLogin(loginHint, { smsCode } = {}) {
+      await loggingOut
       return startCiba(loginHint, { smsCode, allowNewKey: true })
     },
 
@@ -739,16 +743,20 @@ export function createIasClient(options: IasClientOptions): IasClient {
 
     revoke,
 
-    async logout(refreshToken) {
-      try {
-        if (refreshToken) {
-          // Best effort: DELETE /app/device ends the sessions anyway.
-          await revoke(refreshToken).catch(() => undefined)
+    logout(refreshToken) {
+      const ending = (async () => {
+        try {
+          if (refreshToken) {
+            // Best effort: DELETE /app/device ends the sessions anyway.
+            await revoke(refreshToken).catch(() => undefined)
+          }
+          await request('DELETE', '/app/device', { attested: true })
+        } finally {
+          device.deleteBiometricKey()
         }
-        await request('DELETE', '/app/device', { attested: true })
-      } finally {
-        device.deleteBiometricKey()
-      }
+      })()
+      loggingOut = ending.catch(() => undefined)
+      return ending
     },
   }
 }
