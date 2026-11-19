@@ -131,6 +131,11 @@ async function fetchWithTimeout(
   }
 }
 
+/** The request didn't reach IAS, or got no answer in time. */
+const isUnreachable = (error: unknown) =>
+  (error instanceof TypeError && /network request/i.test(error.message)) ||
+  (error instanceof Error && error.name === 'TimeoutError')
+
 const encodeForm = (values: Record<string, string>) =>
   Object.entries(values)
     .map(
@@ -608,6 +613,10 @@ export function createIasClient(options: IasClientOptions): IasClient {
     async waitForApproval(ciba, { signal } = {}) {
       let interval = ciba.interval
       const deadline = Date.now() + ciba.expiresIn * 1000
+      // A poll that didn't reach IAS, e.g. while iOS kept the app suspended
+      // as the person approved in Auðkennisappið. Polling goes on; it's only
+      // the answer if no later poll gets through.
+      let unreachable: unknown
       while (Date.now() < deadline) {
         await sleep(interval * 1000, signal)
         try {
@@ -619,12 +628,20 @@ export function createIasClient(options: IasClientOptions): IasClient {
           )
         } catch (error) {
           const code = getIasErrorCode(error)
+          if (isUnreachable(error)) {
+            unreachable = error
+            continue
+          }
+          unreachable = undefined
           if (code === 'slow_down') {
             interval += 5
           } else if (code !== 'authorization_pending') {
             throw error
           }
         }
+      }
+      if (unreachable) {
+        throw unreachable
       }
       throw new IasError(
         'expired_token',
