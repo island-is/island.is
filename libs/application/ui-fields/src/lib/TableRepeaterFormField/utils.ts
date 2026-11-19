@@ -99,12 +99,12 @@ export const buildDefaultTableHeader = (
   ctx: Omit<RepeaterItemContext, 'index' | 'row'>,
 ) =>
   items
-    .map((item, index) =>
+    .map((item) =>
       // nationalIdWithName is a special case where the value is an object of name and nationalId
       item.component === 'nationalIdWithName'
         ? [coreMessages.name, coreMessages.nationalId]
         : typeof item.label === 'function'
-        ? item.label({ ...ctx, index })
+        ? item.label({ ...ctx, index: 0 })
         : item.label,
     )
     .flat(2)
