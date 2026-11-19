@@ -59,6 +59,7 @@ import {
   getMaxMultipleBirthsDays,
   getMultipleBirthsDays,
   getMultipleBirthRequestDays,
+  getRightsIntro,
   getMaxMultipleBirthsInMonths,
   getMaxMultipleBirthsAndDefaultMonths,
   getAvailablePersonalRightsInDays,
@@ -467,6 +468,86 @@ describe('getMultipleBirthsDays', () => {
     const res = getMultipleBirthsDays(application)
 
     expect(res).toEqual(80)
+  })
+})
+
+describe('getRightsIntro', () => {
+  const rightsApplication = (answers: FormValue) =>
+    buildApplication({
+      answers: { selectedChild: '0', ...answers },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2027-03-04',
+              },
+            ],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+  it('should show only the personal months when nothing is requested', () => {
+    expect(
+      getRightsIntro(
+        rightsApplication({
+          otherParentObj: { chooseOtherParent: MANUAL },
+          multipleBirths: { hasMultipleBirths: NO },
+        }),
+      ),
+    ).toEqual({ months: 6, requestedDays: 0 })
+  })
+
+  it('should add the days requested from the other parent', () => {
+    expect(
+      getRightsIntro(
+        rightsApplication({
+          otherParentObj: { chooseOtherParent: MANUAL },
+          requestRights: { isRequestingRights: YES, requestDays: '45' },
+        }),
+      ),
+    ).toEqual({ months: 6, requestedDays: 45 })
+  })
+
+  it('should not count days given to the other parent', () => {
+    expect(
+      getRightsIntro(
+        rightsApplication({
+          otherParentObj: { chooseOtherParent: MANUAL },
+          giveRights: { isGivingRights: YES, giveDays: '30' },
+        }),
+      ),
+    ).toEqual({ months: 6, requestedDays: 0 })
+  })
+
+  it('should add the requested multiple births days', () => {
+    expect(
+      getRightsIntro(
+        rightsApplication({
+          otherParentObj: { chooseOtherParent: MANUAL },
+          multipleBirths: { hasMultipleBirths: YES, multipleBirths: '2' },
+          multipleBirthsRequestDays: '60',
+        }),
+      ),
+    ).toEqual({ months: 6, requestedDays: 60 })
+  })
+
+  it('should give a single parent the extra months and all multiple births days', () => {
+    const answers = {
+      otherParentObj: { chooseOtherParent: SINGLE },
+      multipleBirths: { hasMultipleBirths: YES, multipleBirths: '2' },
+    }
+
+    expect(getRightsIntro(rightsApplication(answers))).toEqual({
+      months: 12,
+      requestedDays: getMaxMultipleBirthsDays(answers),
+    })
   })
 })
 

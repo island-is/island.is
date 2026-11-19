@@ -26,4 +26,6 @@ export interface JwtPayload {
   acr?: string
   idp?: string
   auth_time?: number
+  /** RFC 9449: the token is bound to the key with this thumbprint. */
+  cnf?: { jkt?: string }
 }
