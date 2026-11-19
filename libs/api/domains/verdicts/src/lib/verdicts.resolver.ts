@@ -18,7 +18,6 @@ import { ScheduleTypesResponse } from './dto/scheduleTypes.response'
 import { SupremeCourtAppealsResponse } from './dto/supremeCourtAppeals.response'
 import { SupremeCourtAppealsInput } from './dto/supremeCourtAppeals.input'
 import { CourtOfAppealAppealsResponse } from './dto/courtOfAppealAppeals.response'
-import { CourtOfAppealAppealsInput } from './dto/courtOfAppealAppeals.input'
 import { SupremeCourtDeterminationCaseTypesResponse } from './dto/supremeCourtDeterminationCaseTypes.response'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
@@ -125,12 +124,8 @@ export class VerdictsResolver {
   @Query(() => CourtOfAppealAppealsResponse, {
     name: 'webCourtOfAppealAppeals',
   })
-  async courtOfAppealAppeals(
-    @Args('input', { nullable: true }) input?: CourtOfAppealAppealsInput,
-  ): Promise<CourtOfAppealAppealsResponse> {
-    return this.verdictsService.getCourtOfAppealAppeals({
-      page: input?.page ?? 1,
-    })
+  async courtOfAppealAppeals(): Promise<CourtOfAppealAppealsResponse> {
+    return this.verdictsService.getCourtOfAppealAppeals()
   }
 
   @CacheControl(defaultCache)
