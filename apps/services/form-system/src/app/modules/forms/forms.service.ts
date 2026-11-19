@@ -162,6 +162,7 @@ export class FormsService {
       'status',
       'draftDaysToLive',
       'submissionDaysToLive',
+      'derivedFrom',
       'allowProceedOnValidationFail',
       'isInaccessible',
       'validateEligibility',
@@ -905,6 +906,19 @@ export class FormsService {
         throw new ConflictException(`Form with id '${id}' is not published`)
       }
 
+      const revision = await this.formModel.findOne({
+        where: {
+          derivedFrom: id,
+          status: FormStatus.PUBLISHED_BEING_CHANGED,
+        },
+        transaction,
+      })
+      if (revision) {
+        throw new ConflictException(
+          `Delete the form being changed from form '${id}' before unpublishing it.`,
+        )
+      }
+
       const slug = form.slug
       const fileKeys = await this.deleteDraftApplications(id, transaction)
 
@@ -1036,13 +1050,21 @@ export class FormsService {
     id: string,
     form: Form,
   ): Promise<FormResponseDto> {
-    const copyForm = await this.copyForm(
-      id,
-      true,
-      form.isInaccessible,
-      `${form.slug}-i-breytingu`,
-      undefined,
-    )
+    const copyForm = await this.sequelize.transaction(async (transaction) => {
+      await form.reload({ transaction, lock: Transaction.LOCK.UPDATE })
+      if (form.status !== FormStatus.PUBLISHED) {
+        throw new ConflictException(`Form with id '${id}' is not published`)
+      }
+
+      return this.copyForm(
+        id,
+        true,
+        form.isInaccessible,
+        `${form.slug}-i-breytingu`,
+        undefined,
+        transaction,
+      )
+    })
     const formResponse = await this.buildFormResponse(copyForm)
 
     if (!formResponse) {
@@ -1372,10 +1394,12 @@ export class FormsService {
       include: [OrganizationPermission],
     })
 
-    const uncommonListTypes = ListTypes.filter((listType) =>
-      organization?.organizationPermissions?.some(
-        (item) => item.permission === listType.id,
-      ),
+    const uncommonListTypes = ListTypes.filter(
+      (listType) =>
+        !listType.isCommon &&
+        organization?.organizationPermissions?.some(
+          (item) => item.permission === listType.id,
+        ),
     )
 
     const organizationListTypes = commonListTypes.concat(uncommonListTypes)

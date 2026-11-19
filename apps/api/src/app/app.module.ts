@@ -253,10 +253,7 @@ import { UmbodsmadurSkuldaraClientConfig } from '@island.is/clients/ums-cost-of-
 import { emailModuleConfig } from '@island.is/email-service'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 import { VerdictsClientConfig } from '@island.is/clients/verdicts'
-import {
-  VerdictsApiModuleConfig,
-  VerdictsModule,
-} from '@island.is/api/domains/verdicts'
+import { VerdictsModule } from '@island.is/api/domains/verdicts'
 import {
   SecondarySchoolClientConfig,
   SecondarySchoolPublicClientConfig,
@@ -555,7 +552,6 @@ const environment = getConfig
         ZendeskServiceConfig,
         emailModuleConfig,
         VerdictsClientConfig,
-        VerdictsApiModuleConfig,
         SecondarySchoolClientConfig,
         SecondarySchoolPublicClientConfig,
         NationalRegistryV3ApplicationsClientConfig,
