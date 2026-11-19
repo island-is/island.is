@@ -302,6 +302,7 @@ describe('SdfScreenService handleRefetch', () => {
       [lookupApi.action],
       'is',
       { nationalId: application.applicant },
+      'page',
     )
 
     expect(applicationService.update).not.toHaveBeenCalled()
@@ -383,6 +384,7 @@ describe('SdfScreenService handleRefetch', () => {
         [lookupApi.action],
         'is',
         { nationalId: application.applicant },
+        'page',
       ),
     ).resolves.toMatchObject({
       applicationId: application.id,
@@ -394,7 +396,7 @@ describe('SdfScreenService handleRefetch', () => {
     )
   })
 
-  it('keeps persisted page index during ephemeral refetch even when answers would infer a later page', async () => {
+  it('shows the claimed page during ephemeral refetch even when answers would infer a later page', async () => {
     const application = {
       ...createApplication(),
       pageIndex: 0,
@@ -456,6 +458,7 @@ describe('SdfScreenService handleRefetch', () => {
       [lookupApi.action],
       'is',
       { nationalId: application.applicant },
+      'page0',
     )
 
     expect(screen.page.index).toBe(0)
@@ -583,6 +586,7 @@ describe('SdfScreenService handleRefetch', () => {
       [],
       'is',
       { nationalId: application.applicant },
+      'page',
     )
 
     expect(result.displayValues).toEqual({ serverDisplay: '42' })

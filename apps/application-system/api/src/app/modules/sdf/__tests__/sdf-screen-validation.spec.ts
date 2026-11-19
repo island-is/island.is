@@ -352,6 +352,7 @@ describe('SdfScreenService validation gates', () => {
       ['someRequiredField', 'approveExternalData'],
       'is',
       user,
+      'page0',
     )
     const one = await service.validateFields(
       application.id,
@@ -359,6 +360,7 @@ describe('SdfScreenService validation gates', () => {
       ['someRequiredField'],
       'is',
       user,
+      'page0',
     )
 
     expect(both.errors.map((e) => e.componentId).sort()).toEqual([
@@ -385,6 +387,7 @@ describe('SdfScreenService validation gates', () => {
         [],
         'is',
         { nationalId: application.applicant } as never,
+        'page0',
       )
 
       expect(result.errors).toEqual([])

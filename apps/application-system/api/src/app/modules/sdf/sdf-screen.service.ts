@@ -89,10 +89,6 @@ try {
 interface AdapterOptions {
   ephemeral?: boolean
   application?: ApplicationWithAttachments
-  // The saved application, when `application` is an unsaved working copy.
-  // Whether the screen is the last one, and so shows submit buttons, is then
-  // decided from the saved one.
-  storedApplication?: ApplicationWithAttachments
   // Set when the screen shown is the one a client asks for by id, or the one to
   // resume on when it gives none. The saved page is not used and nothing is
   // saved.
@@ -108,10 +104,6 @@ const noticeMessages = {
 type ApplicationTemplate = Awaited<
   ReturnType<typeof getApplicationTemplateByTypeId>
 >
-
-type ApplicationWithPageIndex = ApplicationWithAttachments & {
-  pageIndex?: number | null
-}
 
 type ScreenWithDescription = FormScreen & {
   description?: Parameters<FormTextResolver['resolve']>[0]
@@ -285,19 +277,11 @@ export class SdfScreenService {
     this.logTiming('Step 7: Build Page', step7Start)
 
     const step8Start = Date.now()
-    const storedScreens = options.storedApplication
-      ? this.compileScreens(
-          form,
-          options.storedApplication,
-          context.roleInState,
-          bffUser,
-        )
-      : screens
     const footer = this.buildFooter(
       context,
       currentScreen,
       resolvedIndex,
-      isLastNavigableScreen(storedScreens, resolvedIndex),
+      isLastNavigableScreen(screens, resolvedIndex),
       resolver,
     )
     this.logTiming('Step 8: Build Footer', step8Start)
@@ -606,6 +590,7 @@ export class SdfScreenService {
     refetchTemplateApiActions: string[] | undefined,
     locale: Locale,
     user: User,
+    claimedScreenId: string,
   ): Promise<ScreenDto> {
     const application = await this.requireApplicationForUser(
       applicationId,
@@ -628,10 +613,34 @@ export class SdfScreenService {
     )
     const mergedAnswers = applyFlatAnswers(application.answers, writableAnswers)
 
-    let workingApplication = {
-      ...toApplicationSnapshot(application),
-      answers: mergedAnswers,
-    } as ApplicationWithAttachments
+    // Whether the screen the client is on is shown is judged against the saved
+    // data with this request's answers, as for the other actions. What the
+    // actions below fetch is only shown, never counted.
+    const screens = await this.buildScreens(
+      toWorkingApplication(application, mergedAnswers),
+      template,
+      locale,
+      user,
+    )
+    const claim = screens
+      ? resolveClaimedScreen(
+          screens,
+          claimedScreenId,
+          application as Application,
+          this.buildBffUser(user, locale),
+        )
+      : undefined
+    if (!screens || !claim?.valid) {
+      return this.resumeWithNotice(
+        applicationId,
+        SdfActionType.REFETCH,
+        claimedScreenId,
+        locale,
+        user,
+      )
+    }
+
+    let workingApplication = toWorkingApplication(application, mergedAnswers)
 
     const helper = new ApplicationTemplateHelper(
       workingApplication as Application,
@@ -692,7 +701,7 @@ export class SdfScreenService {
     return this.getScreen(applicationId, undefined, locale, user, {
       ephemeral: true,
       application: workingApplication,
-      storedApplication: application,
+      clientScreen: { claimedId: claimedScreenId },
     })
   }
 
@@ -702,7 +711,7 @@ export class SdfScreenService {
     fieldIds: string[],
     locale: Locale,
     user: User,
-    pageIndexOverride?: number,
+    claimedScreenId: string,
   ): Promise<ValidateResponseDto> {
     const application = await this.requireApplicationForUser(
       applicationId,
@@ -726,6 +735,27 @@ export class SdfScreenService {
     )
     const errors: ValidationErrorDto[] = []
     const mergedAnswers = applyFlatAnswers(application.answers, writableAnswers)
+
+    // There is nothing to validate or compute for a screen that is not shown,
+    // judged against the saved data with this request's answers. The next
+    // action the client sends from it is told so.
+    const workingScreens = await this.buildScreens(
+      toWorkingApplication(application, mergedAnswers),
+      template,
+      locale,
+      user,
+    )
+    const claim = workingScreens
+      ? resolveClaimedScreen(
+          workingScreens,
+          claimedScreenId,
+          application as Application,
+          this.buildBffUser(user, locale),
+        )
+      : undefined
+    if (!workingScreens || !claim?.valid) {
+      return { errors: [] }
+    }
 
     const helper = new ApplicationTemplateHelper(
       application as Application,
@@ -769,14 +799,18 @@ export class SdfScreenService {
       }
     }
 
-    const displayValues = await this.computeDisplayValues(
+    const displayValues = this.computeDisplayValues(
       application,
-      template,
+      await this.fieldScopeScreen(
+        application,
+        template,
+        locale,
+        user,
+        claimedScreenId,
+        workingScreens[claim.index],
+      ),
       mergedAnswers,
-      locale,
-      user,
       formatResolver,
-      pageIndexOverride,
     )
 
     return {
@@ -788,39 +822,13 @@ export class SdfScreenService {
     }
   }
 
-  private async computeDisplayValues(
+  private computeDisplayValues(
     application: ApplicationWithAttachments,
-    template: Awaited<ReturnType<typeof getApplicationTemplateByTypeId>>,
+    currentScreen: FormScreen,
     mergedAnswers: Record<string, unknown>,
-    locale: Locale,
-    user: User,
     resolver: FormTextResolver,
-    pageIndexOverride?: number,
-  ): Promise<Record<string, string>> {
+  ): Record<string, string> {
     const results: Record<string, string> = {}
-
-    const pageIndex: number =
-      pageIndexOverride ??
-      (application as ApplicationWithPageIndex).pageIndex ??
-      0
-    let currentScreen: FormScreen | undefined
-    try {
-      currentScreen = await this.getCurrentScreen(
-        application,
-        template,
-        pageIndex,
-        locale,
-        user,
-      )
-    } catch (e) {
-      this.logger.debug(
-        'computeDisplayValues: failed to resolve current screen',
-        e,
-      )
-      return results
-    }
-
-    if (!currentScreen) return results
 
     const displayFields: Array<Record<string, unknown>> = []
     const maybeScreen = currentScreen as unknown as Record<string, unknown>
@@ -958,7 +966,6 @@ export class SdfScreenService {
         {
           ephemeral: true,
           application: toWorkingApplication(application, mergedAnswers),
-          storedApplication: application,
           clientScreen: { claimedId: claimedScreenId },
         },
       )
@@ -1053,20 +1060,6 @@ export class SdfScreenService {
       roleInState,
     )
     return convertFormToScreens(form, answers, externalData, bffUser)
-  }
-
-  private async getCurrentScreen(
-    application: ApplicationWithAttachments,
-    template: Awaited<ReturnType<typeof getApplicationTemplateByTypeId>>,
-    pageIndex: number,
-    locale: Locale,
-    user: User,
-  ): Promise<FormScreen | undefined> {
-    const screens = await this.buildScreens(application, template, locale, user)
-    if (!screens) return undefined
-
-    const resolvedIndex = moveToScreen(screens, pageIndex, true)
-    return screens[resolvedIndex]
   }
 
   // The screen whose fields are validated and given defaults for the claimed
@@ -1432,7 +1425,6 @@ export class SdfScreenService {
         {
           ephemeral: true,
           application: toWorkingApplication(application, submitMergedAnswers),
-          storedApplication: application,
           clientScreen: { claimedId: claimedScreenId },
         },
       )

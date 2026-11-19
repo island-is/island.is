@@ -113,7 +113,7 @@ export class SdfController {
           dto.fieldIds ?? [],
           locale,
           user!,
-          dto.lastKnownPageIndex,
+          this.requireScreen(dto, applicationId),
         )
 
       case SdfActionType.NEXT_PAGE:
@@ -150,6 +150,7 @@ export class SdfController {
           dto.refetchTemplateApiActions,
           locale,
           user!,
+          this.requireScreen(dto, applicationId),
         )
 
       case SdfActionType.SUBMIT:

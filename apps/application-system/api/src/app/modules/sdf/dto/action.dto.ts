@@ -2,7 +2,6 @@ import {
   IsString,
   IsObject,
   IsOptional,
-  IsNumber,
   IsEnum,
   IsArray,
 } from 'class-validator'
@@ -37,17 +36,9 @@ export class ExecuteActionDto {
   @IsString()
   @ApiPropertyOptional({
     description:
-      'The id of the screen the client is on. Required for NEXT_PAGE, PREV_PAGE and SUBMIT. If no shown screen has the id, nothing is saved and the response is the screen to resume on, with a notice.',
+      'The id of the screen the client is on. Required for every action except GO_TO_PAGE. If no shown screen has the id, nothing is saved and the response is the screen to resume on, with a notice. VALIDATE answers with no errors instead.',
   })
   readonly screen?: string
-
-  @IsOptional()
-  @IsNumber()
-  @ApiPropertyOptional({
-    description:
-      'VALIDATE: the page to compute display values for. Ignored by other actions.',
-  })
-  readonly lastKnownPageIndex?: number
 
   @IsOptional()
   @IsArray()

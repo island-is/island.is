@@ -13,6 +13,8 @@ const buildController = () => {
     getScreenById: jest.fn().mockResolvedValue({}),
     persistAnswersAndAdvance: jest.fn().mockResolvedValue({}),
     goToPreviousPage: jest.fn().mockResolvedValue({}),
+    handleRefetch: jest.fn().mockResolvedValue({}),
+    validateFields: jest.fn().mockResolvedValue({ errors: [] }),
     handleSubmit: jest.fn().mockResolvedValue({}),
     goToPage: jest.fn().mockResolvedValue({}),
   }
@@ -137,6 +139,84 @@ describe('SdfController.executeAction — PREV_PAGE', () => {
 
     expect(sdfScreenService.goToPreviousPage).toHaveBeenCalledWith(
       APPLICATION_ID,
+      'is',
+      user,
+      'page1',
+    )
+  })
+})
+
+describe('SdfController.executeAction — REFETCH', () => {
+  it.each([
+    ['missing', undefined],
+    ['empty', ''],
+  ])(
+    'rejects with 400 when screen is %s, and never reaches the service',
+    async (_label, screen) => {
+      const { controller, sdfScreenService } = buildController()
+      const dto = actionDto({ actionType: SdfActionType.REFETCH, screen })
+
+      await expect(
+        controller.executeAction(APPLICATION_ID, dto, user),
+      ).rejects.toBeInstanceOf(BadRequestException)
+      expect(sdfScreenService.handleRefetch).not.toHaveBeenCalled()
+    },
+  )
+
+  it('forwards the screen the client is on', async () => {
+    const { controller, sdfScreenService } = buildController()
+    const dto = actionDto({
+      actionType: SdfActionType.REFETCH,
+      answers: { foo: 'bar' },
+      refetchTemplateApiActions: ['lookup'],
+      screen: 'page1',
+    })
+
+    await controller.executeAction(APPLICATION_ID, dto, user)
+
+    expect(sdfScreenService.handleRefetch).toHaveBeenCalledWith(
+      APPLICATION_ID,
+      { foo: 'bar' },
+      ['lookup'],
+      'is',
+      user,
+      'page1',
+    )
+  })
+})
+
+describe('SdfController.executeAction — VALIDATE', () => {
+  it.each([
+    ['missing', undefined],
+    ['empty', ''],
+  ])(
+    'rejects with 400 when screen is %s, and never reaches the service',
+    async (_label, screen) => {
+      const { controller, sdfScreenService } = buildController()
+      const dto = actionDto({ actionType: SdfActionType.VALIDATE, screen })
+
+      await expect(
+        controller.executeAction(APPLICATION_ID, dto, user),
+      ).rejects.toBeInstanceOf(BadRequestException)
+      expect(sdfScreenService.validateFields).not.toHaveBeenCalled()
+    },
+  )
+
+  it('forwards the screen the client is on', async () => {
+    const { controller, sdfScreenService } = buildController()
+    const dto = actionDto({
+      actionType: SdfActionType.VALIDATE,
+      answers: { foo: 'bar' },
+      fieldIds: ['foo'],
+      screen: 'page1',
+    })
+
+    await controller.executeAction(APPLICATION_ID, dto, user)
+
+    expect(sdfScreenService.validateFields).toHaveBeenCalledWith(
+      APPLICATION_ID,
+      { foo: 'bar' },
+      ['foo'],
       'is',
       user,
       'page1',
