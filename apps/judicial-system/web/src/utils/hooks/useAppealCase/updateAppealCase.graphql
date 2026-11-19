@@ -28,6 +28,7 @@ mutation UpdateAppealCase($input: UpdateAppealCaseInput!) {
       }
     }
     appealRulingDecision
+    appealRulingType
     appealConclusion
     appealRulingModifiedHistory
     requestAppealRulingNotToBePublished

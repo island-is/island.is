@@ -13,6 +13,7 @@ import {
   AppealCaseRulingDecision,
   AppealCaseState,
   AppealDecisionPartyRole,
+  AppealRulingType,
   CaseAppealDecision,
   CaseDecision,
   CaseFileCategory,
@@ -70,6 +71,7 @@ import {
   isRulingValidIC,
   isRulingValidRC,
   isSubpoenaStepValid,
+  isVerdictAppealConclusionFieldsValid,
   validate,
 } from './validate'
 
@@ -2860,6 +2862,44 @@ describe('isCourtOfAppealRulingStepFieldsValid', () => {
         appealRulingDecision: AppealCaseRulingDecision.DISCONTINUED,
       } as AppealCase),
     ).toBe(true)
+  })
+})
+
+describe('isVerdictAppealConclusionFieldsValid', () => {
+  const recorded = {
+    appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+    appealRulingType: AppealRulingType.VERDICT,
+    appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+  }
+
+  test('is true with an outcome, a type and concluding words', () => {
+    expect(isVerdictAppealConclusionFieldsValid(recorded)).toBe(true)
+  })
+
+  test('is false without an appeal', () => {
+    expect(isVerdictAppealConclusionFieldsValid(undefined)).toBe(false)
+    expect(isVerdictAppealConclusionFieldsValid(null)).toBe(false)
+  })
+
+  test.each([
+    ['an outcome', { ...recorded, appealRulingDecision: null }],
+    ['a type', { ...recorded, appealRulingType: null }],
+    ['concluding words', { ...recorded, appealConclusion: null }],
+    ['anything but spaces for words', { ...recorded, appealConclusion: '  ' }],
+  ])('is false without %s', (_, appealCase) => {
+    expect(isVerdictAppealConclusionFieldsValid(appealCase)).toBe(false)
+  })
+
+  // A ruling appeal that was discontinued has no conclusion; a verdict appeal
+  // is given one whatever the outcome.
+  test('requires concluding words when the appeal was discontinued', () => {
+    expect(
+      isVerdictAppealConclusionFieldsValid({
+        ...recorded,
+        appealRulingDecision: AppealCaseRulingDecision.DISCONTINUED,
+        appealConclusion: null,
+      }),
+    ).toBe(false)
   })
 })
 

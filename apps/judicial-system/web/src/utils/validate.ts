@@ -930,6 +930,24 @@ export const isCourtOfAppealRulingStepValid = (
   )
 }
 
+// What the court records about how a verdict appeal ended. Unlike a ruling
+// appeal's, every outcome takes concluding words, and the court also says
+// whether it ends with a verdict or a ruling.
+export const isVerdictAppealConclusionFieldsValid = (
+  appealCase:
+    | Pick<
+        AppealCase,
+        'appealRulingDecision' | 'appealRulingType' | 'appealConclusion'
+      >
+    | undefined
+    | null,
+): boolean =>
+  Boolean(
+    appealCase?.appealRulingDecision &&
+      appealCase.appealRulingType &&
+      validate([[appealCase.appealConclusion, ['empty']]]).isValid,
+  )
+
 export const isCourtOfAppealWithdrawnCaseStepValid = (
   workingCase: WorkingCase,
 ): boolean => {
