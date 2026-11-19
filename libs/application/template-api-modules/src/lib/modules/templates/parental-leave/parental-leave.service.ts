@@ -428,7 +428,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       return fileContent
     } catch (e) {
-      this.logger.error('Cannot get ' + fileUpload + ' attachment', { e })
+      this.logger.error('Cannot get ' + fileUpload + ' attachment', e)
       throw new Error('Failed to get the ' + fileUpload + ' attachment')
     }
   }
@@ -1087,7 +1087,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       return applicationInformation.periods
     } catch (e) {
       this.logger.warn(
-        `Could not fetch applicationInformation on applicationId: ${application.id} with error: ${e}`,
+        `Could not fetch applicationInformation on applicationId: ${application.id}`,
+        e,
       )
     }
 
@@ -1114,7 +1115,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       return applicationInformation.applicationFundId || null
     } catch (e) {
       this.logger.warn(
-        `Could not fetch applicationFundId on applicationId: ${application.id} with error: ${e}`,
+        `Could not fetch applicationFundId on applicationId: ${application.id}`,
+        e,
       )
     }
 
@@ -1133,7 +1135,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       return applicationRights
     } catch (e) {
       this.logger.warn(
-        `Could not fetch applicationRights on nationalId with error: ${e}`,
+        `Could not fetch applicationRights on applicationId: ${application.id}`,
+        e,
       )
     }
 
@@ -1152,7 +1155,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       return { otherParentId, otherParentName }
     } catch (e) {
       this.logger.warn(
-        `Could not fetch otherParent on applicationId: ${application.id} with error: ${e}`,
+        `Could not fetch otherParent on applicationId: ${application.id}`,
+        e,
       )
     }
 
