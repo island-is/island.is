@@ -720,7 +720,9 @@ describe('public prosecution appealed verdict cell generators', () => {
       [VerdictAppealStatus.COURT_SESSION_SCHEDULED, 'mint', 'Á dagskrá'],
       [VerdictAppealStatus.POSTPONED, 'purple', 'Frestað'],
       [VerdictAppealStatus.UNDER_ADVISEMENT, 'mint', 'Dómtekið'],
-      [VerdictAppealStatus.COMPLETED, 'darkerBlue', 'Lokið'],
+      // Nothing about the appeal changes outside the court of appeals until
+      // the appeal itself is completed.
+      [VerdictAppealStatus.COMPLETED, 'mint', 'Dómtekið'],
     ])(
       'tags the appeal by the status the court of appeals recorded: %s',
       (verdictAppealStatus, color, text) => {
@@ -736,6 +738,24 @@ describe('public prosecution appealed verdict cell generators', () => {
         )
 
         expect(cell.value).toEqual({ color, text })
+      },
+    )
+
+    it.each([undefined, VerdictAppealStatus.COMPLETED])(
+      'tags the appeal as completed once the appeal itself is completed',
+      (verdictAppealStatus) => {
+        const cell = caseTableCellGenerators.verdictAppealProgress.generate(
+          row({
+            appeal: {
+              appealState: AppealCaseState.COMPLETED,
+              verdictAppealStatus,
+              appealCaseNumber: '526/2026',
+            },
+          }),
+          user,
+        )
+
+        expect(cell.value).toEqual({ color: 'darkerBlue', text: 'Lokið' })
       },
     )
 
@@ -756,7 +776,7 @@ describe('public prosecution appealed verdict cell generators', () => {
         verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
       })
       const completed = sortValue({
-        verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+        appealState: AppealCaseState.COMPLETED,
       })
 
       expect([completed, underAdvisement, postponed, scheduled].sort()).toEqual(

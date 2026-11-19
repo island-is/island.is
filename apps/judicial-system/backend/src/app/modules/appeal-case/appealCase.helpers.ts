@@ -159,15 +159,21 @@ export const standingVerdictAppealEvents = (
 //   - SCHEDULED: the court of appeals has called a session that is yet to be
 //     held.
 // An appeal that has not been sent has no stage yet, and neither does one that
-// is over - completed or withdrawn - since none of these describes it.
+// was withdrawn, since none of these describes it.
 //
 // Those four are read off what has happened to the appeal, and are what a list
 // shows until the court of appeals records a status of its own. Once it has,
 // the recorded status decides the stage instead, and adds the three only the
 // court can say:
 //   - POSTPONED: the court has postponed the appeal;
-//   - UNDER_ADVISEMENT: the appeal has been heard and awaits judgment;
-//   - COMPLETED: the court has marked the appeal as finished.
+//   - UNDER_ADVISEMENT: the appeal has been heard and awaits judgment.
+//
+// COMPLETED is not something the court records its way to: it is read off the
+// state of the appeal, and shows only once the appeal itself is completed. A
+// recorded status of completed is the court's own working note until then -
+// nothing about the appeal may change for anyone else before it is concluded -
+// so a list keeps the appeal under advisement, which is where an appeal
+// stands before it is finished.
 export type VerdictAppealProgress =
   | 'SENT'
   | 'RECEIVED'
@@ -185,7 +191,7 @@ const recordedVerdictAppealProgress: Record<
   [VerdictAppealStatus.COURT_SESSION_SCHEDULED]: 'SCHEDULED',
   [VerdictAppealStatus.POSTPONED]: 'POSTPONED',
   [VerdictAppealStatus.UNDER_ADVISEMENT]: 'UNDER_ADVISEMENT',
-  [VerdictAppealStatus.COMPLETED]: 'COMPLETED',
+  [VerdictAppealStatus.COMPLETED]: 'UNDER_ADVISEMENT',
 }
 
 // An appeal the court of appeals has concluded, or that was withdrawn: nothing
@@ -264,8 +270,12 @@ export const verdictAppealProgress = (
   >,
   now: Date,
 ): VerdictAppealProgress | undefined => {
-  if (isVerdictAppealOver(appealCase)) {
+  if (appealCase.appealState === AppealCaseState.WITHDRAWN) {
     return undefined
+  }
+
+  if (appealCase.appealState === AppealCaseState.COMPLETED) {
+    return 'COMPLETED'
   }
 
   if (appealCase.verdictAppealStatus) {

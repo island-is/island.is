@@ -694,23 +694,33 @@ describe('verdict appeal progress', () => {
     ).toBe('RECEIVED')
   })
 
-  // None of the stages describes an appeal that is over, and the leftovers of
-  // its steps - a number, a session still in the calendar - would say otherwise.
-  it.each([AppealCaseState.COMPLETED, AppealCaseState.WITHDRAWN])(
-    'has no stage once the appeal is %s',
-    (appealState) => {
-      expect(
-        verdictAppealProgress(
-          appealCase({
-            appealState,
-            appealCaseNumber: '526/2026',
-            courtSessions: [session(AppealCourtSessionType.MAIN_HEARING, 10)],
-          }),
-          now,
-        ),
-      ).toBeUndefined()
-    },
-  )
+  // None of the stages describes a withdrawn appeal, and the leftovers of its
+  // steps - a number, a session still in the calendar - would say otherwise.
+  it('has no stage once the appeal is withdrawn', () => {
+    expect(
+      verdictAppealProgress(
+        appealCase({
+          appealState: AppealCaseState.WITHDRAWN,
+          appealCaseNumber: '526/2026',
+          courtSessions: [session(AppealCourtSessionType.MAIN_HEARING, 10)],
+        }),
+        now,
+      ),
+    ).toBeUndefined()
+  })
+
+  it('is completed once the appeal itself is completed', () => {
+    expect(
+      verdictAppealProgress(
+        appealCase({
+          appealState: AppealCaseState.COMPLETED,
+          appealCaseNumber: '526/2026',
+          courtSessions: [session(AppealCourtSessionType.MAIN_HEARING, 10)],
+        }),
+        now,
+      ),
+    ).toBe('COMPLETED')
+  })
 
   // What the court of appeals records outranks what can be read off the
   // appeal: here everything else says a session is still ahead.
@@ -719,7 +729,8 @@ describe('verdict appeal progress', () => {
     [VerdictAppealStatus.COURT_SESSION_SCHEDULED, 'SCHEDULED'],
     [VerdictAppealStatus.POSTPONED, 'POSTPONED'],
     [VerdictAppealStatus.UNDER_ADVISEMENT, 'UNDER_ADVISEMENT'],
-    [VerdictAppealStatus.COMPLETED, 'COMPLETED'],
+    // The court's own note until the appeal itself is completed.
+    [VerdictAppealStatus.COMPLETED, 'UNDER_ADVISEMENT'],
   ])('takes the stage from the recorded status %s', (status, progress) => {
     expect(
       verdictAppealProgress(
@@ -737,26 +748,35 @@ describe('verdict appeal progress', () => {
   it('takes the stage from the recorded status when nothing else gives one', () => {
     expect(
       verdictAppealProgress(
-        appealCase({ verdictAppealStatus: VerdictAppealStatus.COMPLETED }),
+        appealCase({ verdictAppealStatus: VerdictAppealStatus.POSTPONED }),
+        now,
+      ),
+    ).toBe('POSTPONED')
+  })
+
+  it('has no stage once the appeal is withdrawn, whatever status was recorded', () => {
+    expect(
+      verdictAppealProgress(
+        appealCase({
+          appealState: AppealCaseState.WITHDRAWN,
+          verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+        }),
+        now,
+      ),
+    ).toBeUndefined()
+  })
+
+  it('is completed once the appeal itself is completed, whatever status was recorded', () => {
+    expect(
+      verdictAppealProgress(
+        appealCase({
+          appealState: AppealCaseState.COMPLETED,
+          verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+        }),
         now,
       ),
     ).toBe('COMPLETED')
   })
-
-  it.each([AppealCaseState.COMPLETED, AppealCaseState.WITHDRAWN])(
-    'has no stage once the appeal is %s, whatever status was recorded',
-    (appealState) => {
-      expect(
-        verdictAppealProgress(
-          appealCase({
-            appealState,
-            verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
-          }),
-          now,
-        ),
-      ).toBeUndefined()
-    },
-  )
 
   describe('the session to show', () => {
     const held = session(AppealCourtSessionType.PREPARATORY_HEARING, -20)

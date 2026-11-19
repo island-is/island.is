@@ -1066,9 +1066,10 @@ const verdictAppealProgressTags: Record<
 }
 
 // How far the appeal has come: the status the court of appeals has recorded,
-// and until it has, what can be read off the appeal. Empty until the appeal
-// has been sent to the court of appeals, and for a verdict appealed before
-// appeal cases were kept.
+// and until it has, what can be read off the appeal. "Lokið" comes from the
+// state of the appeal, never from the recorded status. Empty until the appeal
+// has been sent to the court of appeals, for a withdrawn appeal, and for a
+// verdict appealed before appeal cases were kept.
 const verdictAppealProgress: CaseTableCellGenerator<TagValue> = {
   includes: {
     verdictAppealCase: {
