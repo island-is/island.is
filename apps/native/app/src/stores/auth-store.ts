@@ -31,6 +31,7 @@ import { router } from 'expo-router'
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
 const KEYCHAIN_NATIVE_USER_KEY = `@islandis_${bundleId}_native`
 const INVALID_REFRESH_TOKEN_ERROR = 'invalid_grant'
+const USER_INFO_TIMEOUT_MS = 30_000
 const UNAUTHORIZED_USER_INFO = 'Got 401 when fetching user info'
 
 interface UserInfo {
@@ -152,11 +153,29 @@ export const authStore = create<AuthStore>((set, get) => ({
       await get().refresh(skipLogoutIfRefreshFailed)
     }
 
-    const res = await fetch(`${issuer.replace(/\/$/, '')}/connect/userinfo`, {
-      headers: {
-        Authorization: `Bearer ${get().authorizeResult?.accessToken}`,
-      },
-    })
+    // A login waits for this with no way to cancel it, so it has a limit. As
+    // a TimeoutError, not an AbortError, it fails the login rather than
+    // looking like the person cancelled it.
+    const controller = new AbortController()
+    const timer = setTimeout(() => controller.abort(), USER_INFO_TIMEOUT_MS)
+    let res: Response
+    try {
+      res = await fetch(`${issuer.replace(/\/$/, '')}/connect/userinfo`, {
+        headers: {
+          Authorization: `Bearer ${get().authorizeResult?.accessToken}`,
+        },
+        signal: controller.signal,
+      })
+    } catch (error) {
+      if (controller.signal.aborted) {
+        throw Object.assign(new Error("Userinfo didn't answer in time"), {
+          name: 'TimeoutError',
+        })
+      }
+      throw error
+    } finally {
+      clearTimeout(timer)
+    }
 
     if (res.status === 401) {
       // Attempt to refresh the access token
