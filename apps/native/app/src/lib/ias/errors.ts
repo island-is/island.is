@@ -79,14 +79,16 @@ export class AttestationLostError extends IasError {
 }
 
 /**
- * The install has no app login any more (renewal refused), so the session
- * is gone and the person logs in again.
+ * The install can't use its app login any more, so the session is gone and
+ * the person logs in again. IAS refused the renewal: it no longer has the
+ * app login (invalid_grant), or not the install key the proof is from
+ * (invalid_client).
  */
 export function isAppLoginRemoved(error: unknown) {
   return (
     error instanceof IasError &&
     error.endpoint === 'POST /app/attestation/renew' &&
-    error.code === 'invalid_grant'
+    (error.code === 'invalid_grant' || error.code === 'invalid_client')
   )
 }
 

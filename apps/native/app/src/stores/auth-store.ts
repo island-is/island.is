@@ -9,7 +9,7 @@ import { getApolloClientAsync } from '../graphql/client-instance'
 import { preferencesStore } from './preferences-store'
 import { notificationsStore } from './notifications-store'
 import { getFeatureFlagValue } from '../lib/feature-flag-client'
-import { getIasClient, isNativeLogin } from '../lib/ias'
+import { getIasClient, isAppLoginRemoved, isNativeLogin } from '../lib/ias'
 import type { IasTokens } from '../lib/ias'
 import {
   DeletePasskeyDocument,
@@ -118,7 +118,8 @@ const isLogoutError = (e: Error & { code?: string }) => {
   return (
     e.code === INVALID_REFRESH_TOKEN_ERROR ||
     e.message === INVALID_REFRESH_TOKEN_ERROR ||
-    e.message === UNAUTHORIZED_USER_INFO
+    e.message === UNAUTHORIZED_USER_INFO ||
+    isAppLoginRemoved(e)
   )
 }
 
