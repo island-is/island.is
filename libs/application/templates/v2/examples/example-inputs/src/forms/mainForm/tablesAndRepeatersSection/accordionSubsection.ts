@@ -41,6 +41,7 @@ export const addAccordionSubsection = (
                   item
                     .addTextField('accordionTextField', 'Full name', {
                       placeholder: 'Enter your full name',
+                      required: true,
                     })
                     .addTextField('accordionEmailField', 'Email', {
                       placeholder: 'Enter your email',
@@ -67,6 +68,7 @@ export const addAccordionSubsection = (
                 children: createAccordionItemFields((item) => {
                   item
                     .addCheckboxField('accordionCheckboxField', '', {
+                      required: true,
                       options: [
                         {
                           value: 'agree',
