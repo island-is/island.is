@@ -103,6 +103,11 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
     ]
   }
 
+  // The condition that a summons on the case's verdict appeal has been sent to
+  // the court of appeals.
+  const SENT_APPEAL_SUMMONS =
+    /FROM "appeal_summons" s[\s\S]*?ac\."case_id" = "Case"\."id"[\s\S]*?ac\."appeal_type" = 'VERDICT'[\s\S]*?s\."sent_to_court_of_appeals_date" IS NOT NULL/
+
   const joinedAliases = (sql: string): string[] => [
     ...new Set(
       [...sql.matchAll(/ AS "([A-Za-z][A-Za-z0-9]*)"/g)].map((m) => m[1]),
@@ -160,24 +165,10 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
 
       expect(sql).toMatch(/appeal_type.{0,20}'RULING'/)
 
-      // The alias is present: the access rule reads it, and asks for the join
-      // itself. What must not happen is the list selecting on it. So the join
-      // stays outer - an inner one would narrow the list to verdict appeals -
-      // and in the predicate the only column read is the id the access rule
-      // tests for null. The join's own ON clause is excluded, since matching
-      // the association scope is what a join is.
-      expect(sql).not.toMatch(/INNER JOIN "appeal_case" AS "verdictAppealCase"/)
-
-      const predicate = sql.slice(sql.indexOf(' WHERE '))
-
-      expect(predicate).toContain('"verdictAppealCase"."id" IS NOT NULL')
-      expect([
-        ...new Set(
-          [...predicate.matchAll(/"verdictAppealCase"\."(\w+)"/g)].map(
-            (m) => m[1],
-          ),
-        ),
-      ]).toEqual(['id'])
+      // The access rule admits a verdict appeal through a correlated EXISTS of
+      // its own, so these lists have no reason to join the verdict appeal at
+      // all - and a list that did would be selecting on it.
+      expect(sql).not.toMatch(/ AS "verdictAppealCase"/)
     })
 
     // The selection is driven by the verdict appeal: an inner join on the
@@ -195,6 +186,29 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
         /INNER JOIN "appeal_case" AS "verdictAppealCase"[\s\S]*?"verdictAppealCase"\."appeal_type" = 'VERDICT'/,
       )
       expect(sql).not.toMatch(/INNER JOIN "appeal_case" AS "appealCase"/)
+    })
+
+    // The access options admit a case, not an appeal: a case the court reaches
+    // through a ruling appeal passes them while its verdict appeal has no
+    // summons sent. So the lists have to require the sent summons outside the
+    // access options' OR - with those options taken out of the predicate, the
+    // condition must still be there.
+    it.each([
+      CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_IN_PROGRESS,
+      CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED,
+    ])('requires a sent appeal summons in %s itself', async (tableType) => {
+      const sql = await sqlForTable(tableType, courtOfAppealsUser)
+      const accessSql = await sqlForAccessOptions()
+
+      const predicate = sql.slice(sql.indexOf(' WHERE ') + ' WHERE '.length)
+      const accessPredicate = accessSql
+        .slice(accessSql.indexOf(' WHERE ') + ' WHERE '.length)
+        .replace(/;$/, '')
+
+      expect(predicate).toContain(accessPredicate)
+      expect(predicate.replace(accessPredicate, '')).toMatch(
+        SENT_APPEAL_SUMMONS,
+      )
     })
 
     // The access options name the ruling appeal by alias, so every list that
@@ -224,13 +238,20 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
 
       expect(sql).toMatch(/appeal_type" = 'VERDICT'/)
 
+      // A verdict appeal is the court's only once an appeal summons has been
+      // sent to it. Without the send date the court would see every appeal
+      // the public prosecution is still preparing.
+      const verdictArm = sql
+        .split(' OR ')
+        .find((arm) => arm.includes(`"appeal_type" = 'VERDICT'`))
+
+      expect(verdictArm).toMatch(SENT_APPEAL_SUMMONS)
+
       const indictmentArms = sql
         .split(' OR ')
         .filter((arm) => arm.includes('INDICTMENT'))
 
       for (const arm of indictmentArms) {
-        // Case insensitive: the verdict arm now requires the appeal through the
-        // `verdictAppealCase` alias rather than a lower case column name.
         expect(arm).toMatch(/appeal/i)
       }
     })
