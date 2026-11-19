@@ -196,6 +196,7 @@ describe('SdfScreenService validation gates', () => {
       { approveExternalData: false },
       'is',
       { nationalId: application.applicant } as never,
+      'approveExternalData',
     )
 
     expect(screen.page.errors).toEqual([
@@ -230,13 +231,14 @@ describe('SdfScreenService validation gates', () => {
       { approveExternalData: true },
       'is',
       { nationalId: application.applicant } as never,
+      'approveExternalData',
     )
 
     expect(screen.page.errors ?? []).toEqual([])
     expect(applicationActionService.changeState).toHaveBeenCalled()
   })
 
-  it('handleSubmit rejects with 409, and keeps the page cursor, when no transition handles the event', async () => {
+  it('handleSubmit rejects with 409 when no transition handles the event', async () => {
     const application = createApplication({ pageIndex: 0 })
     getApplicationTemplateByTypeIdMock.mockResolvedValue(
       createTemplate(() => Promise.resolve(createExternalDataForm())),
@@ -265,13 +267,9 @@ describe('SdfScreenService validation gates', () => {
         { approveExternalData: true },
         'is',
         { nationalId: application.applicant } as never,
+        'approveExternalData',
       ),
     ).rejects.toBeInstanceOf(ConflictException)
-
-    const savedPageIndexes = applicationService.update.mock.calls.filter(
-      ([, data]) => 'pageIndex' in data,
-    )
-    expect(savedPageIndexes).toEqual([])
   })
 
   it('handleSubmit accepts a matched no-op self-transition', async () => {
@@ -303,6 +301,7 @@ describe('SdfScreenService validation gates', () => {
         { approveExternalData: true },
         'is',
         { nationalId: application.applicant } as never,
+        'approveExternalData',
       ),
     ).resolves.toBeDefined()
   })

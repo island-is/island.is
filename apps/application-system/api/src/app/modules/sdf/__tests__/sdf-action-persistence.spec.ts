@@ -322,6 +322,11 @@ const strictSchema = z.object({
   field0: z.string().min(1),
   edp: z.literal(true),
 })
+// Used by the SUBMIT rows that check the pages before the one submitted from.
+const field1Schema = z.object({ field1: z.string().min(1) }).passthrough()
+const field0AndField1Schema = z
+  .object({ field0: z.string().min(1), field1: z.string().min(1) })
+  .passthrough()
 // Requires field0 the way templates do, with their own namespaced message.
 const field0Required = {
   id: 'example.application:field0.required',
@@ -1214,20 +1219,16 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
   // the way to changeState shows up.
   [SdfActionType.SUBMIT]: [
     {
-      // changeState must get the answers that were just saved. The last save
-      // is getScreen resuming the page cursor, on the form's only page.
+      // changeState must get the answers that were just saved.
       label: 'with answers',
       form: onePageForm,
       dto: {
         actionType: SdfActionType.SUBMIT,
         event: SUBMIT_EVENT,
         answers: { field0: 'value' },
+        screen: 'page0',
       },
-      saves: [
-        { answers: { field0: 'value' } },
-        { pageIndex: null },
-        { pageIndex: 0 },
-      ],
+      saves: [{ answers: { field0: 'value' } }],
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [{ answers: { field0: 'value' }, event: SUBMIT_EVENT }],
@@ -1240,12 +1241,9 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         actionType: SdfActionType.SUBMIT,
         event: SUBMIT_EVENT,
         answers: newAnswers,
+        screen: 'page0',
       },
-      saves: [
-        { answers: mergedAnswers },
-        { pageIndex: null },
-        { pageIndex: 0 },
-      ],
+      saves: [{ answers: mergedAnswers }],
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [{ answers: mergedAnswers, event: SUBMIT_EVENT }],
@@ -1258,12 +1256,9 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         actionType: SdfActionType.SUBMIT,
         event: SUBMIT_EVENT,
         answers: { applicant: { name: 'B' }, 'applicant.phone': '1' },
+        screen: 'page0',
       },
-      saves: [
-        { answers: { applicant: { name: 'B', phone: '1' } } },
-        { pageIndex: null },
-        { pageIndex: 0 },
-      ],
+      saves: [{ answers: { applicant: { name: 'B', phone: '1' } } }],
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [
@@ -1281,12 +1276,9 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         actionType: SdfActionType.SUBMIT,
         event: SUBMIT_EVENT,
         answers: { field0: 'value' },
+        screen: 'page0',
       },
-      saves: [
-        { answers: { field0: 'value' }, applicantActors: [ACTOR] },
-        { pageIndex: null },
-        { pageIndex: 0 },
-      ],
+      saves: [{ answers: { field0: 'value' }, applicantActors: [ACTOR] }],
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [{ answers: { field0: 'value' }, event: SUBMIT_EVENT }],
@@ -1295,12 +1287,12 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       label: 'by a delegated actor, without answers',
       form: onePageForm,
       user: { actor: { nationalId: ACTOR } } as Partial<User>,
-      dto: { actionType: SdfActionType.SUBMIT, event: SUBMIT_EVENT },
-      saves: [
-        { applicantActors: [ACTOR] },
-        { pageIndex: null },
-        { pageIndex: 0 },
-      ],
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        screen: 'page0',
+      },
+      saves: [{ applicantActors: [ACTOR] }],
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [{ answers: {}, event: SUBMIT_EVENT }],
@@ -1308,8 +1300,12 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
     {
       label: 'without answers',
       form: onePageForm,
-      dto: { actionType: SdfActionType.SUBMIT, event: SUBMIT_EVENT },
-      saves: [{ pageIndex: null }, { pageIndex: 0 }],
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        screen: 'page0',
+      },
+      saves: [],
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [{ answers: {}, event: SUBMIT_EVENT }],
@@ -1319,8 +1315,12 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       // providers before the state change. Only those the screen declares.
       label: 'from a data-provider screen',
       form: dataProviderOnlyForm,
-      dto: { actionType: SdfActionType.SUBMIT, event: SUBMIT_EVENT },
-      saves: [{ pageIndex: null }, { pageIndex: 0 }],
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        screen: 'edp',
+      },
+      saves: [],
       persistingActions: [
         {
           actions: [providerApi.action],
@@ -1342,7 +1342,11 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       label: 'from a data-provider screen the role may not write',
       form: dataProviderOnlyForm,
       write: { answers: ['field0'] },
-      dto: { actionType: SdfActionType.SUBMIT, event: SUBMIT_EVENT },
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        screen: 'edp',
+      },
       rejects: { type: ForbiddenException, message: /providerAction/ },
       saves: [],
       persistingActions: [],
@@ -1356,6 +1360,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         actionType: SdfActionType.SUBMIT,
         event: SUBMIT_EVENT,
         answers: { field0: 'value' },
+        screen: 'page0',
       },
       rejects: {
         type: ConflictException,
@@ -1363,6 +1368,123 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
           'https://island.is/problems/application-system/sdf/submit-not-on-last-screen',
       },
       saves: [],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      label: 'without a screen',
+      form: onePageForm,
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        answers: { field0: 'value' },
+      },
+      rejects: { type: BadRequestException },
+      saves: [],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      label: 'from a screen no screen has the id of',
+      form: onePageForm,
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        answers: { field0: 'value' },
+        screen: 'nowhere',
+      },
+      saves: [],
+      pageId: 'page0',
+      noticeCode: 'screen-unavailable',
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      label: 'from a screen the saved answers hide',
+      form: conditionalMiddlePageForm,
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        answers: { field2: 'value' },
+        screen: 'page1',
+      },
+      saves: [],
+      pageId: 'page0',
+      noticeCode: 'screen-unavailable',
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      // The answers on the last page are valid, so they are saved before the
+      // user is sent to the page that is not.
+      label: 'when an earlier screen fails validation',
+      form: twoPageForm,
+      dataSchema: strictSchema,
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        answers: { field1: 'value' },
+        screen: 'page1',
+      },
+      validationErrors: ['field0'],
+      pageId: 'page0',
+      saves: [{ answers: { field1: 'value' } }],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      // Page 1 is hidden, so its required field does not count.
+      label: 'when an earlier screen is hidden by the answers',
+      form: conditionalMiddlePageForm,
+      dataSchema: field1Schema,
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        answers: { field2: 'value' },
+        screen: 'page2',
+      },
+      saves: [{ answers: { field2: 'value' } }],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [{ answers: { field2: 'value' }, event: SUBMIT_EVENT }],
+    },
+    {
+      // The submitted answers show page 1, so its required field counts.
+      label: 'when the answers show an earlier screen that fails validation',
+      form: conditionalMiddlePageForm,
+      dataSchema: field1Schema,
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        answers: { wantsMiddle: 'yes', field2: 'value' },
+        screen: 'page2',
+      },
+      validationErrors: ['field1'],
+      pageId: 'page1',
+      saves: [{ answers: { wantsMiddle: 'yes', field2: 'value' } }],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [],
+    },
+    {
+      // Pages 0 and 1 both fail; the user is sent to the first.
+      label: 'when several earlier screens fail validation',
+      form: conditionalMiddlePageForm,
+      dataSchema: field0AndField1Schema,
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        answers: { wantsMiddle: 'yes', field2: 'value' },
+        screen: 'page2',
+      },
+      validationErrors: ['field0'],
+      pageId: 'page0',
+      saves: [{ answers: { wantsMiddle: 'yes', field2: 'value' } }],
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [],
@@ -1376,6 +1498,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         actionType: SdfActionType.SUBMIT,
         event: SUBMIT_EVENT,
         answers: { field0: 'value' },
+        screen: 'page0',
       },
       rejects: {
         type: ConflictException,
@@ -1391,7 +1514,11 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       label: 'from a data-provider screen when the state changes meanwhile',
       form: dataProviderOnlyForm,
       concurrentState: 'completed',
-      dto: { actionType: SdfActionType.SUBMIT, event: SUBMIT_EVENT },
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        screen: 'edp',
+      },
       rejects: {
         type: ConflictException,
         problemType:
@@ -1411,48 +1538,29 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
     {
       label: 'from the last of two pages',
       form: twoPageForm,
-      application: { pageIndex: 1 },
       dto: {
         actionType: SdfActionType.SUBMIT,
         event: SUBMIT_EVENT,
         answers: { field1: 'value' },
+        screen: 'page1',
       },
-      saves: [
-        { answers: { field1: 'value' } },
-        { pageIndex: null },
-        { pageIndex: 0 },
-      ],
+      saves: [{ answers: { field1: 'value' } }],
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [{ answers: { field1: 'value' }, event: SUBMIT_EVENT }],
     },
     {
-      // The saved answers hide page 1; the submitted ones would show it.
-      label: 'from a page the saved answers make the last',
+      // Whether the screen is the last is judged against the saved answers with
+      // the submitted ones. The saved answers hide page 1, but the submitted
+      // ones show it, so page 0 is not the last.
+      label: 'from a page the submitted answers no longer make the last',
       form: hideablePageForm,
       application: { answers: { field0: 'hide' } },
       dto: {
         actionType: SdfActionType.SUBMIT,
         event: SUBMIT_EVENT,
         answers: { field0: 'show' },
-      },
-      saves: [
-        { answers: { field0: 'show' } },
-        { pageIndex: null },
-        { pageIndex: 1 },
-      ],
-      persistingActions: [],
-      ephemeralActions: [],
-      stateChanges: [{ answers: { field0: 'show' }, event: SUBMIT_EVENT }],
-    },
-    {
-      // The saved answers show page 1; the submitted ones would hide it.
-      label: 'from a page only the submitted answers make the last',
-      form: hideablePageForm,
-      dto: {
-        actionType: SdfActionType.SUBMIT,
-        event: SUBMIT_EVENT,
-        answers: { field0: 'hide' },
+        screen: 'page0',
       },
       rejects: {
         type: ConflictException,
@@ -1465,10 +1573,29 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
       stateChanges: [],
     },
     {
+      // The saved answers show page 1, but the submitted ones hide it.
+      label: 'from a page the submitted answers make the last',
+      form: hideablePageForm,
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        answers: { field0: 'hide' },
+        screen: 'page0',
+      },
+      saves: [{ answers: { field0: 'hide' } }],
+      persistingActions: [],
+      ephemeralActions: [],
+      stateChanges: [{ answers: { field0: 'hide' }, event: SUBMIT_EVENT }],
+    },
+    {
       label: 'from a data-provider screen when the provider fails',
       form: dataProviderOnlyForm,
       persistingActionResult: providerFailed,
-      dto: { actionType: SdfActionType.SUBMIT, event: SUBMIT_EVENT },
+      dto: {
+        actionType: SdfActionType.SUBMIT,
+        event: SUBMIT_EVENT,
+        screen: 'edp',
+      },
       rejects: { message: /Provider failed/ },
       saves: [],
       persistingActions: [
@@ -1489,6 +1616,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         actionType: SdfActionType.SUBMIT,
         event: SUBMIT_EVENT,
         answers: { field0: '' },
+        screen: 'page0',
       },
       validationErrors: ['field0'],
       saves: [],
@@ -1504,6 +1632,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         actionType: SdfActionType.SUBMIT,
         event: SUBMIT_EVENT,
         answers: { field0: '' },
+        screen: 'page0',
       },
       validationErrors: ['field0'],
       validationMessages: [field0Required.defaultMessage],
@@ -1521,12 +1650,9 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         actionType: SdfActionType.SUBMIT,
         event: SUBMIT_EVENT,
         answers: { field0: 'value', other: 'changed' },
+        screen: 'page0',
       },
-      saves: [
-        { answers: { field0: 'value', other: 'stored' } },
-        { pageIndex: null },
-        { pageIndex: 0 },
-      ],
+      saves: [{ answers: { field0: 'value', other: 'stored' } }],
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [
@@ -1543,16 +1669,16 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         actionType: SdfActionType.SUBMIT,
         event: SUBMIT_EVENT,
         answers: { other: 'changed' },
+        screen: 'page0',
       },
-      saves: [{ pageIndex: null }, { pageIndex: 0 }],
+      saves: [],
       persistingActions: [],
       ephemeralActions: [],
       stateChanges: [{ answers: {}, event: SUBMIT_EVENT }],
       droppedChangedKeys: ['other'],
     },
     // The two rows below document current behaviour: the answers are saved
-    // before the state change is attempted, and only the pageIndex reset is
-    // skipped when it fails.
+    // before the state change is attempted, and stay saved when it fails.
     {
       label: 'when the state change fails',
       form: onePageForm,
@@ -1560,6 +1686,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         actionType: SdfActionType.SUBMIT,
         event: SUBMIT_EVENT,
         answers: { field0: 'value' },
+        screen: 'page0',
       },
       changeStateResult: {
         hasError: true,
@@ -1579,6 +1706,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         actionType: SdfActionType.SUBMIT,
         event: SUBMIT_EVENT,
         answers: { field0: 'value' },
+        screen: 'page0',
       },
       changeStateResult: {
         hasError: false,
@@ -1598,6 +1726,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         actionType: SdfActionType.SUBMIT,
         event: UNPERMITTED_EVENT,
         answers: { field0: 'value' },
+        screen: 'page0',
       },
       rejects: { type: ForbiddenException },
       saves: [],
@@ -1614,6 +1743,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
         actionType: SdfActionType.SUBMIT,
         event: SUBMIT_EVENT,
         answers: { field0: 'value' },
+        screen: 'page0',
       },
       rejects: { type: ForbiddenException },
       saves: [],

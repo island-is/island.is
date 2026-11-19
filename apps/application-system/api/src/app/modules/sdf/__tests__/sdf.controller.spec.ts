@@ -161,12 +161,33 @@ describe('SdfController.executeAction — SUBMIT', () => {
     },
   )
 
-  it('forwards the given event unchanged (no SUBMIT fallback)', async () => {
+  it.each([
+    ['missing', undefined],
+    ['empty', ''],
+  ])(
+    'rejects with 400 when screen is %s, and never reaches the service',
+    async (_label, screen) => {
+      const { controller, sdfScreenService } = buildController()
+      const dto = actionDto({
+        actionType: SdfActionType.SUBMIT,
+        event: 'APPROVE',
+        screen,
+      })
+
+      await expect(
+        controller.executeAction(APPLICATION_ID, dto, user),
+      ).rejects.toBeInstanceOf(BadRequestException)
+      expect(sdfScreenService.handleSubmit).not.toHaveBeenCalled()
+    },
+  )
+
+  it('forwards the given event unchanged (no SUBMIT fallback), and the screen', async () => {
     const { controller, sdfScreenService } = buildController()
     const dto = actionDto({
       actionType: SdfActionType.SUBMIT,
       event: 'APPROVE',
       answers: { foo: 'bar' },
+      screen: 'page1',
     })
 
     await controller.executeAction(APPLICATION_ID, dto, user)
@@ -177,6 +198,7 @@ describe('SdfController.executeAction — SUBMIT', () => {
       { foo: 'bar' },
       'is',
       user,
+      'page1',
     )
   })
 })

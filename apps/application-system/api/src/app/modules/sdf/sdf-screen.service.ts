@@ -920,26 +920,14 @@ export class SdfScreenService {
       )
     }
 
-    // Which of its fields are validated and given defaults comes from the saved
-    // data. The working screen stands in when the saved data does not show it.
-    const storedScreens = await this.buildScreens(
+    const currentScreen = await this.fieldScopeScreen(
       application,
       template,
       locale,
       user,
+      claimedScreenId,
+      workingScreens[claim.index],
     )
-    const storedClaim = storedScreens
-      ? resolveClaimedScreen(
-          storedScreens,
-          claimedScreenId,
-          application as Application,
-          bffUser,
-        )
-      : undefined
-    const currentScreen =
-      storedScreens && storedClaim?.valid
-        ? storedScreens[storedClaim.index]
-        : workingScreens[claim.index]
 
     applyResolvedFieldDefaults(
       currentScreen,
@@ -1079,6 +1067,38 @@ export class SdfScreenService {
 
     const resolvedIndex = moveToScreen(screens, pageIndex, true)
     return screens[resolvedIndex]
+  }
+
+  // The screen whose fields are validated and given defaults for the claimed
+  // screen. It comes from the saved data; `workingScreen`, the same screen as
+  // the saved data plus the request's answers show it, stands in when the saved
+  // data does not show it.
+  private async fieldScopeScreen(
+    application: ApplicationWithAttachments,
+    template: ApplicationTemplate,
+    locale: Locale,
+    user: User,
+    claimedScreenId: string,
+    workingScreen: FormScreen,
+  ): Promise<FormScreen> {
+    const storedScreens = await this.buildScreens(
+      application,
+      template,
+      locale,
+      user,
+    )
+    const storedClaim = storedScreens
+      ? resolveClaimedScreen(
+          storedScreens,
+          claimedScreenId,
+          application as Application,
+          this.buildBffUser(user, locale),
+        )
+      : undefined
+
+    return storedScreens && storedClaim?.valid
+      ? storedScreens[storedClaim.index]
+      : workingScreen
   }
 
   // The id of the next shown screen after the one at `index`, or before it when
@@ -1318,6 +1338,7 @@ export class SdfScreenService {
     answers: Record<string, unknown> | undefined,
     locale: Locale,
     user: User,
+    claimedScreenId: string,
   ): Promise<ScreenDto> {
     let application = await this.requireApplicationForUser(applicationId, user)
     const checkedState = application.state
@@ -1340,8 +1361,6 @@ export class SdfScreenService {
       this.getWritePermissions(application, template, role),
       answers,
     )
-    const currentPageIndex: number =
-      (application as ApplicationWithPageIndex).pageIndex ?? 0
     // The writable answers are validated as sent, so a cleared field reaches
     // the schema as `''` and the template's own messages apply. Empty strings
     // are stripped only when saving.
@@ -1349,24 +1368,53 @@ export class SdfScreenService {
       application.answers,
       writableAnswers,
     )
-    const screens = await this.buildScreens(application, template, locale, user)
-    const screenIndex = screens
-      ? moveToScreen(screens, currentPageIndex, true)
-      : currentPageIndex
-    const currentScreen = screens?.[screenIndex]
-    // Rejects a SUBMIT unless the saved page is the last navigable screen,
-    // judged from the saved answers.
-    if (screens && !isLastNavigableScreen(screens, screenIndex)) {
+    const bffUser = this.buildBffUser(user, locale)
+
+    // Whether the screen the client is on is shown, and whether it is the last
+    // one, is judged against the saved data with this request's answers.
+    const workingScreens = await this.buildScreens(
+      toWorkingApplication(application, submitMergedAnswers),
+      template,
+      locale,
+      user,
+    )
+    const claim = workingScreens
+      ? resolveClaimedScreen(
+          workingScreens,
+          claimedScreenId,
+          application as Application,
+          bffUser,
+        )
+      : undefined
+    if (!workingScreens || !claim?.valid) {
+      return this.resumeWithNotice(
+        applicationId,
+        SdfActionType.SUBMIT,
+        claimedScreenId,
+        locale,
+        user,
+      )
+    }
+    if (!isLastNavigableScreen(workingScreens, claim.index)) {
       throw new ConflictException(
         createSdfProblem({
           type: 'https://island.is/problems/application-system/sdf/submit-not-on-last-screen',
           title: 'Submit not on last screen',
           status: 409,
-          detail: `Page ${screenIndex} is not the last screen`,
+          detail: 'The screen is not the last screen',
           instance: `/sdf/${applicationId}/action`,
         }),
       )
     }
+
+    const currentScreen = await this.fieldScopeScreen(
+      application,
+      template,
+      locale,
+      user,
+      claimedScreenId,
+      workingScreens[claim.index],
+    )
     const validationErrors = await this.validateScreenAnswers(
       currentScreen,
       template,
@@ -1376,22 +1424,51 @@ export class SdfScreenService {
       locale,
     )
     if (validationErrors.length > 0) {
-      const workingApplication = {
-        ...toApplicationSnapshot(application),
-        answers: submitMergedAnswers,
-      } as ApplicationWithAttachments
       const screen = await this.getScreen(
         applicationId,
-        currentPageIndex,
+        undefined,
         locale,
         user,
         {
           ephemeral: true,
-          application: workingApplication,
+          application: toWorkingApplication(application, submitMergedAnswers),
           storedApplication: application,
+          clientScreen: { claimedId: claimedScreenId },
         },
       )
       screen.page.errors = validationErrors
+      return screen
+    }
+
+    // The rest of the form is checked too. The answers on this screen are
+    // valid, so they are saved before the user is sent to the first screen
+    // that is not.
+    const invalidScreen = await this.firstInvalidScreenBefore(
+      workingScreens,
+      claim.index,
+      template,
+      application,
+      submitMergedAnswers,
+      writableAnswers,
+      locale,
+      bffUser,
+    )
+    if (invalidScreen) {
+      await this.saveSubmittedAnswers(
+        applicationId,
+        application,
+        writableAnswers,
+        submitMergedAnswers,
+        user,
+      )
+      const screen = await this.getScreen(
+        applicationId,
+        undefined,
+        locale,
+        user,
+        { clientScreen: { claimedId: invalidScreen.id } },
+      )
+      screen.page.errors = invalidScreen.errors
       return screen
     }
 
@@ -1408,21 +1485,14 @@ export class SdfScreenService {
         )
       : false
 
-    const hasAnswers = Object.keys(writableAnswers).length > 0
-    const actorToRecord = isNewActor(application, user)
-      ? user.actor?.nationalId
-      : undefined
-    if (hasAnswers || actorToRecord) {
-      await this.applicationService.update(applicationId, {
-        ...(hasAnswers && {
-          answers: stripEmptyFormValue(submitMergedAnswers),
-        }),
-        ...(actorToRecord && {
-          applicantActors: [...application.applicantActors, actorToRecord],
-        }),
-      })
-    }
-    if (hasAnswers || actorToRecord || ranDataProviders) {
+    const savedAnswers = await this.saveSubmittedAnswers(
+      applicationId,
+      application,
+      writableAnswers,
+      submitMergedAnswers,
+      user,
+    )
+    if (savedAnswers || ranDataProviders) {
       application = await this.requireApplicationForUser(applicationId, user)
       // The event was checked against the state loaded first, so the re-read
       // copy must still be in that state. This only compares the two loads;
@@ -1483,12 +1553,71 @@ export class SdfScreenService {
       )
     }
 
-    // The new state may have a different form, so no page is saved for it.
-    await this.applicationService.update(applicationId, {
-      pageIndex: null,
+    // The new state may have a different form, so no screen is asked for.
+    return this.getScreen(applicationId, undefined, locale, user, {
+      clientScreen: {},
     })
+  }
 
-    return this.getScreen(applicationId, undefined, locale, user)
+  // Saves the writable answers, merged with the saved ones, and records a new
+  // delegated actor. Returns whether anything was saved.
+  private async saveSubmittedAnswers(
+    applicationId: string,
+    application: ApplicationWithAttachments,
+    writableAnswers: Record<string, unknown>,
+    mergedAnswers: FormValue,
+    user: User,
+  ): Promise<boolean> {
+    const hasAnswers = Object.keys(writableAnswers).length > 0
+    const actorToRecord = isNewActor(application, user)
+      ? user.actor?.nationalId
+      : undefined
+    if (!hasAnswers && !actorToRecord) {
+      return false
+    }
+
+    await this.applicationService.update(applicationId, {
+      ...(hasAnswers && { answers: stripEmptyFormValue(mergedAnswers) }),
+      ...(actorToRecord && {
+        applicantActors: [...application.applicantActors, actorToRecord],
+      }),
+    })
+    return true
+  }
+
+  // The first shown screen before `index` whose answers do not validate, with
+  // its errors.
+  private async firstInvalidScreenBefore(
+    screens: FormScreen[],
+    index: number,
+    template: ApplicationTemplate,
+    application: ApplicationWithAttachments,
+    mergedAnswers: FormValue,
+    writableAnswers: Record<string, unknown>,
+    locale: Locale,
+    bffUser: BffUser,
+  ): Promise<{ id: string; errors: ValidationErrorDto[] } | undefined> {
+    for (const screen of screens.slice(0, index)) {
+      if (!screen.isNavigable) {
+        continue
+      }
+      const errors = await this.validateScreenAnswers(
+        screen,
+        template,
+        application,
+        mergedAnswers,
+        writableAnswers,
+        locale,
+      )
+      if (errors.length > 0) {
+        return {
+          id: resolveFormItemId(screen, application as Application, bffUser),
+          errors,
+        }
+      }
+    }
+
+    return undefined
   }
 
   private async loadForm(

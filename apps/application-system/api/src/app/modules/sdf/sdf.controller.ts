@@ -162,6 +162,7 @@ export class SdfController {
           dto.answers,
           locale,
           user!,
+          this.requireScreen(dto, applicationId),
         )
 
       default:
