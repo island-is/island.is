@@ -57,6 +57,16 @@ export default function AppLockScreen() {
   }
 
   const unlockApp = () => {
+    // Approved while the app is away, e.g. in Auðkennisappið: the lock stays,
+    // with the grace period starting now. Coming back soon opens the app,
+    // coming back later asks again.
+    if (AppState.currentState === 'background') {
+      authStore.setState({
+        lockScreenActivatedAt: Date.now(),
+        biometricAutoPromptedForCurrentLock: false,
+      })
+      return
+    }
     // The user just authenticated, so the device is unlocked — refresh the canary.
     void ensureDeviceUnlockCanary()
     authStore.setState({
