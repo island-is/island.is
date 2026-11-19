@@ -6,7 +6,7 @@ import { bundleId, getConfig } from '../config'
 import { LOCK_SCREEN_SUPPRESS_MAX_MS } from '../constants/auth'
 import { getIntl } from '../components/providers/locale-provider'
 import { getApolloClientAsync } from '../graphql/client-instance'
-import { preferencesStore } from './preferences-store'
+import { didPreferencesLoad, preferencesStore } from './preferences-store'
 import { notificationsStore } from './notifications-store'
 import { getFeatureFlagValue } from '../lib/feature-flag-client'
 import { getIasClient, isAppLoginRemoved, isNativeLogin } from '../lib/ias'
@@ -475,11 +475,17 @@ async function restoreNativeUser(): Promise<boolean> {
     return false
   }
   // The keychain survives reinstalling on iOS: a fresh install doesn't pick
-  // up the login from before, not even while it's cleared.
+  // up the login from before, not even while it's cleared. Preferences that
+  // couldn't be read say nothing about a reinstall, so the login stands, and
+  // the flag is saved again.
   if (!preferencesStore.getState().hasLoggedIn && Platform.OS === 'ios') {
-    await endAppLogin()
-    await forceLogout()
-    return false
+    if (!didPreferencesLoad()) {
+      preferencesStore.setState({ hasLoggedIn: true })
+    } else {
+      await endAppLogin()
+      await forceLogout()
+      return false
+    }
   }
 
   // Locked, so userinfo can't be fetched: the stored copy is the same data.

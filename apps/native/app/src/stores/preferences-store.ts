@@ -93,6 +93,7 @@ let preferencesLoadedResolve!: () => void
 const preferencesLoaded = new Promise<void>((resolve) => {
   preferencesLoadedResolve = resolve
 })
+let preferencesLoadFailed = false
 
 export const preferencesStore = create<PreferencesStore>()(
   persist(
@@ -137,6 +138,7 @@ export const preferencesStore = create<PreferencesStore>()(
       onRehydrateStorage: () => (_state, error) => {
         if (error) {
           console.warn('Could not load the preferences', error)
+          preferencesLoadFailed = true
         }
         preferencesLoadedResolve()
       },
@@ -166,6 +168,15 @@ export const preferencesStore = create<PreferencesStore>()(
  */
 export function waitForPreferences(): Promise<void> {
   return preferencesLoaded
+}
+
+/**
+ * Whether the saved preferences were read, once waitForPreferences() has
+ * resolved. If not, the store has the defaults, which say nothing about the
+ * person, e.g. that they've never logged in.
+ */
+export function didPreferencesLoad() {
+  return !preferencesLoadFailed
 }
 
 export const usePreferencesStore = <U = PreferencesStore>(
