@@ -70,24 +70,30 @@ export class MachineLicenseRenewalService extends BaseTemplateApiService {
       deliveryRecipient,
     } = getApplicationAnswers(application.answers)
 
-    const { paymentId } = getApplicationExternalData(application.externalData)
+    const { applicantName, paymentId } = getApplicationExternalData(
+      application.externalData,
+    )
 
     const medicalCertificate = await this.getMedicalCertificate(application)
+
+    const plasticCard = wantsPlasticCard(application.answers)
 
     const renewalApplication: WorkMachineLicenseRenewalApplicationDto = {
       applicationId: application.id,
       paymentId,
       email: applicantEmail,
       phoneNumber: applicantPhoneNumber,
-      wouldLikePlasticCard: wantsPlasticCard(application.answers),
-      sendToLegalAddress: isLegalDomicile(application.answers),
+      wouldLikePlasticCard: plasticCard,
+      sendToLegalAddress: plasticCard
+        ? isLegalDomicile(application.answers)
+        : undefined,
       sendToAddress: isOtherAddress(application.answers)
         ? {
             address: deliveryAddress,
             postalCode: deliveryPostalCode
               ? Number(deliveryPostalCode)
               : undefined,
-            addressedTo: deliveryRecipient,
+            addressedTo: deliveryRecipient?.trim() || applicantName,
           }
         : undefined,
       medicalCertificate,

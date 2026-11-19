@@ -37,7 +37,7 @@ Payment for the renewal through the payment state, with the charge item code `VJ
 
 ### Completed
 
-The application is submitted to The Administration of Occupational Safety and Health, including the medical certificate, plastic card and delivery information and the payment id. The applicant receives confirmation that the application has been received.
+The application is submitted to The Administration of Occupational Safety and Health, including the medical certificate, plastic card and delivery information and the payment id. The delivery method (`sendToLegalAddress`) is only sent when the applicant wants a plastic card. When the card is sent to another address without a recipient, the applicant's name is sent as the recipient. The applicant receives confirmation that the application has been received.
 
 ## Feature flag
 
