@@ -256,4 +256,36 @@ describe('JwtStrategy#validate', () => {
       'Not an access token',
     )
   })
+
+  it.each(['at+jwt', 'application/at+jwt', 'JWT', undefined])(
+    'accepts an access token with typ %s',
+    async (typ) => {
+      const token = jwt.sign({ sub: 'sub' }, 'secret', {
+        header: { alg: 'HS256', ...(typ && { typ }) },
+      })
+      const request = {
+        ...fakeRequest,
+        headers: { ...fakeRequest.headers, authorization: `Bearer ${token}` },
+      } as Request
+
+      const user = await jwtStrategy.validate(request, fakePayload)
+
+      expect(user.authorization).toEqual(`Bearer ${token}`)
+    },
+  )
+
+  it('checks a token sent in the body too', async () => {
+    const attestation = jwt.sign({ sub: '@island.is/app' }, 'secret', {
+      header: { alg: 'HS256', typ: 'oauth-client-attestation+jwt' },
+    })
+    const request = {
+      headers: { 'user-agent': 'test user agent' },
+      body: { __accessToken: attestation },
+      ip: '1.1.1.1',
+    } as unknown as Request
+
+    await expect(jwtStrategy.validate(request, fakePayload)).rejects.toThrow(
+      'Not an access token',
+    )
+  })
 })
