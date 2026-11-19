@@ -243,10 +243,7 @@ export const newSchoolSubSection = buildSubSection({
                   .alternativeSpecialEducationDepartmentPlaceholder,
               isSearchable: true,
               isClearable: true,
-              filterOptions: (
-                options,
-                { application: { answers: answers }, index },
-              ) => {
+              filterOptions: (options, { application: { answers }, index }) => {
                 const {
                   selectedSchoolId,
                   alternativeSpecialEducationDepartment,

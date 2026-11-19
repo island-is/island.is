@@ -111,10 +111,8 @@ export const assigneeInformationSection = buildSection({
                     }) ?? []
                 )
               },
-              filterOptions: (
-                options,
-                { application: { answers: answers }, index },
-              ) => filterWorkMachineOptions(options, answers, index),
+              filterOptions: (options, { application: { answers }, index }) =>
+                filterWorkMachineOptions(options, answers, index),
             },
             alertMessage: {
               component: 'alertMessage',

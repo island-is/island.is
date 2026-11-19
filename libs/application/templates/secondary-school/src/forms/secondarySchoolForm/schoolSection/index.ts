@@ -73,10 +73,8 @@ export const schoolSection = buildSection({
               label: school.selection.schoolLabel,
               required: true,
               options: ({ application }) => getSchoolOptions(application),
-              filterOptions: (
-                options,
-                { application: { answers: answers }, index },
-              ) => filterSchoolOptions(options, answers, index),
+              filterOptions: (options, { application: { answers }, index }) =>
+                filterSchoolOptions(options, answers, index),
               clearOnChange: () => clearOnChangeSchool(),
               setOnChange: async (option, { application, index }) =>
                 setOnChangeSchool(option, application, index),
