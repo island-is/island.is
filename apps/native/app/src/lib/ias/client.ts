@@ -87,6 +87,48 @@ const RENEW_MARGIN_MS = 60_000
 // When Apple's App Attest service is down, the waits before trying again.
 // Most outages are short; the person is waiting to log in meanwhile.
 const APP_ATTEST_RETRY_DELAYS_MS = [2_000, 4_000]
+// How long a request to IAS may take before it counts as failed: without a
+// limit a stalled connection waits forever on Android.
+const REQUEST_TIMEOUT_MS = 30_000
+
+/**
+ * fetch, failing with a TimeoutError when IAS doesn't answer in time. The
+ * caller's own `signal` still cancels it, as an AbortError.
+ */
+async function fetchWithTimeout(
+  url: string,
+  init: Omit<RequestInit, 'signal'>,
+  signal?: AbortSignal,
+): Promise<Response> {
+  const controller = new AbortController()
+  const abort = () => controller.abort()
+  if (signal?.aborted) {
+    controller.abort()
+  } else {
+    signal?.addEventListener('abort', abort)
+  }
+  let timedOut = false
+  const timer = setTimeout(() => {
+    timedOut = true
+    controller.abort()
+  }, REQUEST_TIMEOUT_MS)
+  try {
+    return await fetch(url, { ...init, signal: controller.signal })
+  } catch (error) {
+    if (timedOut) {
+      throw Object.assign(
+        new Error(
+          `IAS didn't answer in ${REQUEST_TIMEOUT_MS / 1000} s: ${url}`,
+        ),
+        { name: 'TimeoutError' },
+      )
+    }
+    throw error
+  } finally {
+    clearTimeout(timer)
+    signal?.removeEventListener('abort', abort)
+  }
+}
 
 /**
  * IAS refused the renewal's proof, e.g. the install key it knows is gone.
@@ -412,7 +454,11 @@ export function createIasClient(options: IasClientOptions): IasClient {
       body = JSON.stringify(json)
     }
 
-    const response = await fetch(url, { method, headers, body, signal })
+    const response = await fetchWithTimeout(
+      url,
+      { method, headers, body },
+      signal,
+    )
     nonces.challenge =
       response.headers.get('OAuth-Client-Attestation-Challenge') ??
       nonces.challenge
