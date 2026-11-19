@@ -42,6 +42,27 @@ const isFullGoproSlugSelection = (
   if (set.size !== fullSet.length) return false
   return fullSet.every((slug) => set.has(slug))
 }
+const APPEAL_CASES_PER_REQUEST = 100
+// Safety limit so a misbehaving upstream can't make us loop forever
+const APPEAL_CASES_MAX_PAGES = 50
+
+// Case numbers look like "892/2026", sort by year and then number
+const parseCaseNumber = (caseNumber: string) => {
+  const [number, year] = caseNumber.split('/').map((part) => parseInt(part, 10))
+  return {
+    number: Number.isNaN(number) ? 0 : number,
+    year: Number.isNaN(year) ? 0 : year,
+  }
+}
+
+const compareCaseNumbersDescending = (a: string, b: string) => {
+  const caseA = parseCaseNumber(a)
+  const caseB = parseCaseNumber(b)
+  if (caseA.year !== caseB.year) return caseB.year - caseA.year
+  if (caseA.number !== caseB.number) return caseB.number - caseA.number
+  return b.localeCompare(a)
+}
+
 const GOPRO_ID_PREFIX = 'g-'
 const SUPREME_COURT_ID_PREFIX = 's-'
 const VERDICT_BR_SENTINEL = 'ISLANDISVERDICTBRTOKEN'
@@ -881,37 +902,77 @@ export class VerdictsClientService {
     }
   }
 
-  async getCourtOfAppealAppeals(input: { page: number }) {
+  async getCourtOfAppealAppeals() {
     const { goproCaseApi } = await this.getAuthenticatedGoproApis()
-    const response = await goproCaseApi.getPublishedAppealCasesV2({
-      pageNumber: Math.max(1, input.page ?? 1),
-      itemsPerPage: ITEMS_PER_PAGE,
-      orderBy: 'publishdate',
-      orderDirection: 'desc',
-    })
 
-    if (response.succeeded === false) {
-      throw new Error(
-        response.message ||
-          'Failed to fetch published appeal cases from Court of Appeal',
+    const items: NonNullable<
+      Awaited<
+        ReturnType<typeof goproCaseApi.getPublishedAppealCasesV2>
+      >['items']
+    > = []
+    let total = 0
+
+    // GoPro only serves the list in pages, so fetch them all to be able to show
+    // and sort the whole list at once
+    for (
+      let pageNumber = 1;
+      pageNumber <= APPEAL_CASES_MAX_PAGES;
+      pageNumber += 1
+    ) {
+      const response = await goproCaseApi.getPublishedAppealCasesV2({
+        pageNumber,
+        itemsPerPage: APPEAL_CASES_PER_REQUEST,
+        orderBy: 'casenumber',
+        orderDirection: 'desc',
+      })
+
+      if (response.succeeded === false) {
+        throw new Error(
+          response.message ||
+            'Failed to fetch published appeal cases from Court of Appeal',
+        )
+      }
+
+      const pageItems = response.items ?? []
+      items.push(...pageItems)
+      total = response.total ?? 0
+
+      if (
+        pageItems.length < APPEAL_CASES_PER_REQUEST ||
+        pageNumber * APPEAL_CASES_PER_REQUEST >= total
       )
+        break
     }
 
+    if (items.length < total)
+      this.logger.warn(
+        `Court of Appeal appeals list was cut off at ${items.length} of ${total} cases, consider paginating it`,
+      )
+
+    const seenCaseNumbers = new Set<string>()
+    const appeals = items
+      .filter((item) => {
+        if (!item.recordId || !item.caseNumber) return false
+        const caseNumber = item.caseNumber.trim()
+        if (seenCaseNumbers.has(caseNumber)) return false
+        seenCaseNumbers.add(caseNumber)
+        return true
+      })
+      .map((item) => ({
+        id: item.recordId as string,
+        title: (item.caseTitleRaw ?? '').replace(/\s+/g, ' ').trim(),
+        caseNumber: (item.caseNumber as string).trim(),
+        status: item.status || null,
+        appealDate:
+          item.appealDate && isValidDate(item.appealDate)
+            ? item.appealDate.toISOString()
+            : null,
+      }))
+      .sort((a, b) => compareCaseNumbersDescending(a.caseNumber, b.caseNumber))
+
     return {
-      total: response.total ?? 0,
-      items: (response.items ?? [])
-        .filter((item) => Boolean(item.recordId) && Boolean(item.caseNumber))
-        .map((item) => ({
-          id: item.recordId as string,
-          title: (item.caseTitleRaw ?? '').replace(/\s+/g, ' ').trim(),
-          caseNumber: item.caseNumber as string,
-          status: item.status || null,
-          appealDate:
-            item.appealDate && isValidDate(item.appealDate)
-              ? item.appealDate.toISOString()
-              : null,
-        })),
-      input,
+      total: appeals.length,
+      items: appeals,
     }
   }
 

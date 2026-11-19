@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client'
 
 export const GET_COURT_OF_APPEAL_APPEALS_QUERY = gql`
-  query GetCourtOfAppealAppeals($input: WebCourtOfAppealAppealsInput!) {
-    webCourtOfAppealAppeals(input: $input) {
+  query GetCourtOfAppealAppeals {
+    webCourtOfAppealAppeals {
       items {
         id
         title
@@ -11,9 +11,6 @@ export const GET_COURT_OF_APPEAL_APPEALS_QUERY = gql`
         appealDate
       }
       total
-      input {
-        page
-      }
     }
   }
 `
