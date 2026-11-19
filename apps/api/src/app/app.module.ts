@@ -68,6 +68,7 @@ import { IdentityModule } from '@island.is/api/domains/identity'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { OfficialJournalOfIcelandModule } from '@island.is/api/domains/official-journal-of-iceland'
 import { DirectorateOfEqualityApplicationModule } from '@island.is/api/domains/directorate-of-equality-application'
+import { DirectorateOfEqualityModule } from '@island.is/api/domains/directorate-of-equality'
 import { OfficialJournalOfIcelandApplicationModule } from '@island.is/api/domains/official-journal-of-iceland-application'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
@@ -331,6 +332,7 @@ const environment = getConfig
     }),
     LicenseServiceModule,
     DirectorateOfEqualityClientModule,
+    DirectorateOfEqualityModule,
     DirectorateOfLabourModule,
     FeatureFlagsApiModule,
     FileUploadModule,

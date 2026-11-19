@@ -6,8 +6,6 @@ import {
   MOCK_COMPANY,
   MOCK_EQUALITY_PLANS,
   MOCK_GRANTED_BY_NATIONAL_ID,
-  MOCK_PLAN_SUBMISSIONS,
-  MOCK_REPORT_SUBMISSIONS,
   MOCK_REPORTS,
   MOCK_SERVICE_PROVIDERS,
 } from './data'
@@ -21,8 +19,6 @@ import {
   DirectorateOfEqualityMutationResult,
   DirectorateOfEqualityReport,
   DirectorateOfEqualityServiceProvider,
-  DirectorateOfEqualitySubmission,
-  DirectorateOfEqualitySubmissionType,
 } from './types'
 
 const MOCK_DELAY_MS = 400
@@ -73,29 +69,6 @@ export const useDirectorateOfEqualityCompanyQuery = (): MockQueryResult<{
     [],
   )
   return { data: loading ? undefined : data, loading, error: undefined }
-}
-
-export const useDirectorateOfEqualitySubmissionsQuery = (options: {
-  variables: { input: { type: DirectorateOfEqualitySubmissionType } }
-  skip?: boolean
-}): MockQueryResult<{
-  directorateOfEqualitySubmissions: { items: DirectorateOfEqualitySubmission[] }
-}> => {
-  const { type } = options.variables.input
-  const skip = options.skip ?? false
-  const loading = useMockLoading(skip, type)
-  const data = useMemo(
-    () => ({
-      directorateOfEqualitySubmissions: {
-        items:
-          type === DirectorateOfEqualitySubmissionType.EQUALITY_PLAN
-            ? MOCK_PLAN_SUBMISSIONS
-            : MOCK_REPORT_SUBMISSIONS,
-      },
-    }),
-    [type],
-  )
-  return { data: loading || skip ? undefined : data, loading, error: undefined }
 }
 
 export const useDirectorateOfEqualityEqualityPlanQuery = (options: {

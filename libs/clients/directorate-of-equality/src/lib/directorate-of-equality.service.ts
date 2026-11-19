@@ -17,6 +17,7 @@ import {
   getApplicationReport,
   getApplicationReportDraft,
   getApplicationReportOutliers,
+  getApplicationReports,
   importApplicationReportDraftWorkbook,
   getApplicationReportComments,
   getApplicationSalaryReportEligibility,
@@ -37,15 +38,16 @@ import {
   withdrawApplicationReport,
 } from '../../gen/fetch'
 import type {
+  ApplicationCompanyDto,
   ApplicationReportCommentDto,
   ApplicationReportDetailDto,
-  CompanyDto,
   CreateDraftReportDto,
   CreateReportResponseDto,
   DraftDetailDto,
   EditEqualityContentDto,
   EditOutliersDto,
   EqualityReportSummaryDto,
+  GetApplicationReportsResponseDto,
   GetDraftCriteriaResponseDto,
   GetDraftCriteriaTreeResponseDto,
   GetDraftEmployeesResponseDto,
@@ -89,11 +91,19 @@ export class DirectorateOfEqualityClientService {
     }
   }
 
-  async getCompany(user: User): Promise<CompanyDto> {
+  async getCompany(user: User): Promise<ApplicationCompanyDto> {
     return this.unwrap(
       user,
       () => getApplicationCompany(),
       'Failed to get company data from DOE',
+    )
+  }
+
+  async getReports(user: User): Promise<GetApplicationReportsResponseDto> {
+    return this.unwrap(
+      user,
+      () => getApplicationReports(),
+      'Failed to get reports',
     )
   }
 

@@ -10,10 +10,8 @@ import {
   DirectorateOfEqualityGender,
   DirectorateOfEqualityPayComponents,
   DirectorateOfEqualityReport,
-  DirectorateOfEqualitySubmission,
   DirectorateOfEqualitySubmissionStatus,
   DirectorateOfEqualityServiceProvider,
-  DirectorateOfEqualitySubmissionType,
 } from './types'
 
 export type MockScenario =
@@ -41,72 +39,6 @@ export const MOCK_COMPANY: DirectorateOfEqualityCompany = {
   serviceProviderApprovedAt:
     MOCK_SCENARIO === 'notServiceProvider' ? null : '2026-10-20',
 }
-
-export const MOCK_PLAN_SUBMISSIONS: DirectorateOfEqualitySubmission[] =
-  MOCK_SCENARIO === 'noSubmissions'
-    ? []
-    : [
-        {
-          id: 'ja-2025-00231',
-          type: DirectorateOfEqualitySubmissionType.EQUALITY_PLAN,
-          status: DirectorateOfEqualitySubmissionStatus.IN_REVIEW,
-          submittedAt: '2025-10-14',
-          periodFrom: 2025,
-          periodTo: 2028,
-          year: null,
-        },
-        {
-          id: 'ja-2022-00187',
-          type: DirectorateOfEqualitySubmissionType.EQUALITY_PLAN,
-          status: DirectorateOfEqualitySubmissionStatus.APPROVED,
-          submittedAt: '2022-03-03',
-          periodFrom: 2022,
-          periodTo: 2025,
-          year: null,
-        },
-        {
-          id: 'ja-2019-00042',
-          type: DirectorateOfEqualitySubmissionType.EQUALITY_PLAN,
-          status: DirectorateOfEqualitySubmissionStatus.APPROVED,
-          submittedAt: '2019-02-28',
-          periodFrom: 2019,
-          periodTo: 2022,
-          year: null,
-        },
-      ]
-
-export const MOCK_REPORT_SUBMISSIONS: DirectorateOfEqualitySubmission[] =
-  MOCK_SCENARIO === 'noSubmissions'
-    ? []
-    : [
-        {
-          id: 'lg-2025-00102',
-          type: DirectorateOfEqualitySubmissionType.SALARY_REPORT,
-          status: DirectorateOfEqualitySubmissionStatus.IN_REVIEW,
-          submittedAt: '2025-09-30',
-          periodFrom: null,
-          periodTo: null,
-          year: 2025,
-        },
-        {
-          id: 'lg-2024-00051',
-          type: DirectorateOfEqualitySubmissionType.SALARY_REPORT,
-          status: DirectorateOfEqualitySubmissionStatus.APPROVED,
-          submittedAt: '2024-02-29',
-          periodFrom: null,
-          periodTo: null,
-          year: 2023,
-        },
-        {
-          id: 'lg-2023-00019',
-          type: DirectorateOfEqualitySubmissionType.SALARY_REPORT,
-          status: DirectorateOfEqualitySubmissionStatus.REJECTED,
-          submittedAt: '2023-03-15',
-          periodFrom: null,
-          periodTo: null,
-          year: 2022,
-        },
-      ]
 
 export const MOCK_EQUALITY_PLANS: DirectorateOfEqualityEqualityPlan[] = [
   {

@@ -45,9 +45,17 @@ export const messages = defineMessages({
     id: 'sp.directorate-of-equality:plan-title',
     defaultMessage: 'Jafnréttisáætlun {from}–{to}',
   },
+  planTitleNoPeriod: {
+    id: 'sp.directorate-of-equality:plan-title-no-period',
+    defaultMessage: 'Jafnréttisáætlun',
+  },
   reportTitle: {
     id: 'sp.directorate-of-equality:report-title',
     defaultMessage: 'Skýrsla {year}',
+  },
+  reportTitleNoYear: {
+    id: 'sp.directorate-of-equality:report-title-no-year',
+    defaultMessage: 'Skýrsla',
   },
   submittedOn: {
     id: 'sp.directorate-of-equality:submitted-on',
@@ -64,6 +72,14 @@ export const messages = defineMessages({
   statusRejected: {
     id: 'sp.directorate-of-equality:status-rejected',
     defaultMessage: 'Hafnað',
+  },
+  statusSuperseded: {
+    id: 'sp.directorate-of-equality:status-superseded',
+    defaultMessage: 'Úrelt',
+  },
+  statusWithdrawn: {
+    id: 'sp.directorate-of-equality:status-withdrawn',
+    defaultMessage: 'Dregin til baka',
   },
   openApplication: {
     id: 'sp.directorate-of-equality:open-application',

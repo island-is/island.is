@@ -1,5 +1,11 @@
 import { useNavigate } from 'react-router-dom'
 
+import {
+  DirectorateOfEqualitySubmission,
+  DirectorateOfEqualitySubmissionChannel,
+  DirectorateOfEqualitySubmissionStatus,
+  DirectorateOfEqualitySubmissionType,
+} from '@island.is/api/schema'
 import { ActionCard, ProblemTemplate, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { ActionCardLoader, formatDate } from '@island.is/portals/my-pages/core'
@@ -12,12 +18,10 @@ import {
 import { messages } from '../../lib/messages'
 import { DirectorateOfEqualityPaths } from '../../lib/paths'
 import { getStatusTag } from '../../lib/status'
-import { useDirectorateOfEqualitySubmissionsQuery } from '../../mocks/hooks'
-import {
-  DirectorateOfEqualitySubmission,
-  DirectorateOfEqualitySubmissionStatus,
-  DirectorateOfEqualitySubmissionType,
-} from '../../mocks/types'
+import { useDirectorateOfEqualitySubmissionsQuery } from './SubmissionsTabContent.generated'
+
+const getYear = (date?: string | null) =>
+  date ? new Date(date).getFullYear() : null
 
 export const SubmissionsTabContent = ({
   type,
@@ -34,7 +38,21 @@ export const SubmissionsTabContent = ({
     skip: !hasAccess,
   })
   const items: DirectorateOfEqualitySubmission[] =
-    data?.directorateOfEqualitySubmissions.items ?? []
+    data?.directorateOfEqualitySubmissions?.items ?? []
+
+  const getHeading = (item: DirectorateOfEqualitySubmission) => {
+    if (isPlan) {
+      const from = getYear(item.approvedAt)
+      const to = getYear(item.validUntil)
+      return from && to
+        ? formatMessage(messages.planTitle, { from, to })
+        : formatMessage(messages.planTitleNoPeriod)
+    }
+    const year = getYear(item.salaryDataPeriod)
+    return year
+      ? formatMessage(messages.reportTitle, { year })
+      : formatMessage(messages.reportTitleNoYear)
+  }
 
   if (!hasAccess) {
     return (
@@ -79,27 +97,29 @@ export const SubmissionsTabContent = ({
   return (
     <Stack space={2}>
       {items.map((item) => {
-        const heading = isPlan
-          ? formatMessage(messages.planTitle, {
-              from: item.periodFrom,
-              to: item.periodTo,
-            })
-          : formatMessage(messages.reportTitle, { year: item.year })
+        const heading = getHeading(item)
+        const canOpenApplication =
+          item.status === DirectorateOfEqualitySubmissionStatus.IN_REVIEW &&
+          item.submittedVia === DirectorateOfEqualitySubmissionChannel.ISLAND_IS
 
         return (
           <ActionCard
             key={item.id}
             heading={heading}
             headingVariant="h4"
-            text={formatMessage(messages.submittedOn, {
-              date: formatDate(item.submittedAt),
-            })}
+            text={
+              item.submittedAt
+                ? formatMessage(messages.submittedOn, {
+                    date: formatDate(item.submittedAt),
+                  })
+                : undefined
+            }
             tag={{
               ...getStatusTag(item.status, formatMessage),
               outlined: true,
             }}
             cta={
-              item.status === DirectorateOfEqualitySubmissionStatus.IN_REVIEW
+              canOpenApplication
                 ? {
                     label: formatMessage(messages.openApplication),
                     ariaLabel: formatMessage(
@@ -134,7 +154,7 @@ export const SubmissionsTabContent = ({
                         (isPlan
                           ? DirectorateOfEqualityPaths.PlanDetail
                           : DirectorateOfEqualityPaths.ReportDetail
-                        ).replace(':id', item.id),
+                        ).replace(':id', encodeURIComponent(item.id)),
                       ),
                   }
             }

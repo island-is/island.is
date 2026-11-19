@@ -2,9 +2,10 @@ export { DirectorateOfEqualityClientService } from './lib/directorate-of-equalit
 export { DirectorateOfEqualityClientModule } from './lib/directorate-of-equality.module'
 export { DirectorateOfEqualityClientConfig } from './lib/directorate-of-equality.config'
 export type {
+  ApplicationCompanyDto,
   ApplicationReportCommentDto,
   ApplicationReportDetailDto,
-  CompanyDto,
+  ApplicationReportListItemDto,
   CreateReportResponseDto,
   DraftAssignmentDto,
   DraftCriterionWithSubCriteriaDto,
@@ -17,6 +18,7 @@ export type {
   EditOutliersDto,
   EmployeeOutlierGroupDto,
   EqualityReportSummaryDto,
+  GetApplicationReportsResponseDto,
   GetDraftCriteriaResponseDto,
   GetDraftCriteriaTreeResponseDto,
   GetDraftEmployeesResponseDto,
@@ -62,6 +64,7 @@ export type {
   WageGapTwofoldDto,
 } from '../gen/fetch'
 export {
+  ApplicationReportChannelEnum,
   CompanySizeEnum,
   EqualityCoverageSourceEnum,
   ReportCriterionTypeEnum,

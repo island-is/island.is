@@ -1,12 +1,10 @@
-export enum DirectorateOfEqualitySubmissionType {
-  EQUALITY_PLAN = 'EQUALITY_PLAN',
-  SALARY_REPORT = 'SALARY_REPORT',
-}
-export enum DirectorateOfEqualitySubmissionStatus {
-  IN_REVIEW = 'IN_REVIEW',
-  APPROVED = 'APPROVED',
-  REJECTED = 'REJECTED',
-}
+import { DirectorateOfEqualitySubmissionStatus } from '@island.is/api/schema'
+
+export {
+  DirectorateOfEqualitySubmissionStatus,
+  DirectorateOfEqualitySubmissionType,
+} from '@island.is/api/schema'
+
 export enum DirectorateOfEqualityGapDirection {
   WOMEN = 'WOMEN',
   MEN = 'MEN',
@@ -27,16 +25,6 @@ export type DirectorateOfEqualityCompany = {
   salaryReportRequired: boolean
   nextSalaryReportDeadline: string | null
   serviceProviderApprovedAt: string | null
-}
-
-export type DirectorateOfEqualitySubmission = {
-  id: string
-  type: DirectorateOfEqualitySubmissionType
-  status: DirectorateOfEqualitySubmissionStatus
-  submittedAt: string
-  periodFrom: number | null
-  periodTo: number | null
-  year: number | null
 }
 
 export type DirectorateOfEqualityEqualityPlan = {
