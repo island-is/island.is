@@ -88,6 +88,15 @@ const RENEW_MARGIN_MS = 60_000
 // Most outages are short; the person is waiting to log in meanwhile.
 const APP_ATTEST_RETRY_DELAYS_MS = [2_000, 4_000]
 
+/**
+ * IAS refused the renewal's proof, e.g. the install key it knows is gone.
+ * Before login that's solved as when the app login is gone: with a new key.
+ */
+const isRenewalRefused = (error: unknown) =>
+  error instanceof IasError &&
+  error.endpoint === 'POST /app/attestation/renew' &&
+  error.code === 'invalid_client'
+
 const encodeForm = (values: Record<string, string>) =>
   Object.entries(values)
     .map(
@@ -331,7 +340,12 @@ export function createIasClient(options: IasClientOptions): IasClient {
       try {
         return await renew()
       } catch (error) {
-        if (!(allowNewKey && isAppLoginRemoved(error))) {
+        if (
+          !(
+            allowNewKey &&
+            (isAppLoginRemoved(error) || isRenewalRefused(error))
+          )
+        ) {
           throw error
         }
       }
