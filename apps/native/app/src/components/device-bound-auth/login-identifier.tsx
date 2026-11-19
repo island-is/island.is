@@ -39,6 +39,26 @@ export const loginHintLength: Record<LoginMethod, number> = {
   app: 10,
 }
 
+/**
+ * The digits IAS expects, from what was typed, pasted or filled in. A whole
+ * phone number with Iceland's country code ("+354 868 1234", "00354…") is
+ * the number without it, not its first seven digits.
+ */
+export function toLoginHint(method: LoginMethod, text: string) {
+  const digits = text.replace(/\D/g, '')
+  const length = loginHintLength[method]
+  if (method === 'sim') {
+    const countryCode = ['354', '00354'].find(
+      (code) =>
+        digits.length === code.length + length && digits.startsWith(code),
+    )
+    if (countryCode) {
+      return digits.slice(countryCode.length)
+    }
+  }
+  return digits.slice(0, length)
+}
+
 // 8681234 → "868-1234", 0101302989 → "010130-2989"
 export function formatLoginHint(method: LoginMethod, digits: string) {
   const split = method === 'sim' ? 3 : 6
@@ -125,11 +145,7 @@ export function LoginIdentifier({
                   : 'login.identifier.nationalIdLabel',
             })}
             value={formatLoginHint(method, value)}
-            onChange={(text) =>
-              onChangeValue(
-                text.replace(/\D/g, '').slice(0, loginHintLength[method]),
-              )
-            }
+            onChange={(text) => onChangeValue(toLoginHint(method, text))}
             placeholder={method === 'sim' ? '000-0000' : '000000-0000'}
             keyboardType="number-pad"
             textContentType={method === 'sim' ? 'telephoneNumber' : 'none'}
