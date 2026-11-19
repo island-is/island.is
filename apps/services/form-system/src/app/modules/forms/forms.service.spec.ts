@@ -9,6 +9,7 @@ import {
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { randomUUID } from 'crypto'
 import { Transaction, UniqueConstraintError } from 'sequelize'
+import { ConflictException } from '@nestjs/common'
 
 import { FormsService } from './forms.service'
 import { Form } from './models/form.model'
@@ -349,6 +350,103 @@ describe.each(['archive', 'publish replacement'])(
     )
   },
 )
+
+describe('FormsService changing a published form', () => {
+  const setup = () => {
+    const user = { nationalId: 'owner', scope: [] } as unknown as User
+    const transaction = { id: 'transaction' }
+    const form = {
+      id: 'published-form',
+      organizationNationalId: user.nationalId,
+      status: FormStatus.PUBLISHED,
+      slug: 'form',
+      isInaccessible: false,
+      reload: jest.fn().mockResolvedValue(undefined),
+    }
+    const revision = { id: 'revision' }
+    const response = { form: revision }
+    const copyForm = jest.fn().mockResolvedValue(revision)
+    const buildFormResponse = jest.fn().mockResolvedValue(response)
+    const commit = jest.fn()
+    const service = Object.assign(Object.create(FormsService.prototype), {
+      formModel: { findByPk: jest.fn().mockResolvedValue(form) },
+      sequelize: {
+        transaction: jest.fn(async (callback) => {
+          const result = await callback(transaction)
+          commit()
+          return result
+        }),
+      },
+      copyForm,
+      buildFormResponse,
+    }) as FormsService
+    return {
+      changeForm: () =>
+        service.updateStatus(user, form.id, {
+          newStatus: FormStatus.PUBLISHED_BEING_CHANGED,
+        }),
+      form,
+      transaction,
+      copyForm,
+      buildFormResponse,
+      commit,
+      response,
+    }
+  }
+
+  it('locks the original and creates its revision in the same transaction', async () => {
+    const {
+      changeForm,
+      form,
+      transaction,
+      copyForm,
+      buildFormResponse,
+      commit,
+      response,
+    } = setup()
+    form.reload.mockImplementationOnce(async () => {
+      form.slug = 'current-form'
+      form.isInaccessible = true
+    })
+
+    await expect(changeForm()).resolves.toBe(response)
+
+    expect(form.reload).toHaveBeenCalledWith({
+      transaction,
+      lock: Transaction.LOCK.UPDATE,
+    })
+    expect(copyForm).toHaveBeenCalledWith(
+      form.id,
+      true,
+      true,
+      'current-form-i-breytingu',
+      undefined,
+      transaction,
+    )
+    expect(form.reload.mock.invocationCallOrder[0]).toBeLessThan(
+      copyForm.mock.invocationCallOrder[0],
+    )
+    expect(copyForm.mock.invocationCallOrder[0]).toBeLessThan(
+      commit.mock.invocationCallOrder[0],
+    )
+    expect(commit.mock.invocationCallOrder[0]).toBeLessThan(
+      buildFormResponse.mock.invocationCallOrder[0],
+    )
+  })
+
+  it('rejects a revision if the original was archived before acquiring its lock', async () => {
+    const { changeForm, form, copyForm, commit, buildFormResponse } = setup()
+    form.reload.mockImplementationOnce(async () => {
+      form.status = FormStatus.ARCHIVED
+    })
+
+    await expect(changeForm()).rejects.toThrow(ConflictException)
+
+    expect(copyForm).not.toHaveBeenCalled()
+    expect(commit).not.toHaveBeenCalled()
+    expect(buildFormResponse).not.toHaveBeenCalled()
+  })
+})
 
 describe('FormsService publishing a form in development', () => {
   it.each([false, true])(

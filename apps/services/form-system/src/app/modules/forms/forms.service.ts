@@ -1050,13 +1050,21 @@ export class FormsService {
     id: string,
     form: Form,
   ): Promise<FormResponseDto> {
-    const copyForm = await this.copyForm(
-      id,
-      true,
-      form.isInaccessible,
-      `${form.slug}-i-breytingu`,
-      undefined,
-    )
+    const copyForm = await this.sequelize.transaction(async (transaction) => {
+      await form.reload({ transaction, lock: Transaction.LOCK.UPDATE })
+      if (form.status !== FormStatus.PUBLISHED) {
+        throw new ConflictException(`Form with id '${id}' is not published`)
+      }
+
+      return this.copyForm(
+        id,
+        true,
+        form.isInaccessible,
+        `${form.slug}-i-breytingu`,
+        undefined,
+        transaction,
+      )
+    })
     const formResponse = await this.buildFormResponse(copyForm)
 
     if (!formResponse) {

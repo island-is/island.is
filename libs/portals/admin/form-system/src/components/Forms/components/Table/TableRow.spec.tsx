@@ -278,7 +278,7 @@ describe('publishing a form', () => {
 
     await waitFor(() =>
       expect(toast.warning).toHaveBeenCalledWith(
-        'Fyrst þarf að eyða útgáfunni sem er í breytingu áður en hægt er að taka eyðublaðið úr útgáfu.',
+        'Ekki er hægt að taka eyðublaðið úr útgáfu meðan útgáfa þess er í breytingu.',
       ),
     )
     expect(mockUpdateFormStatus).not.toHaveBeenCalled()
