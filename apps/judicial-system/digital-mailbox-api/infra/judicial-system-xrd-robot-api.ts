@@ -33,6 +33,15 @@ export const serviceSetup = (services: {
       BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN',
       LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY',
     })
+    .replicaCount({
+      // Scaled to zero in dev only
+      dev: { min: 0, max: 0, default: 0 },
+      // bypassReplicaClamp applies to staging too, so pin it to the
+      // {1,2,1} it would otherwise be clamped to
+      staging: { min: 1, max: 2, default: 1 },
+      // prod has no block and keeps the env defaults
+      bypassReplicaClamp: true,
+    })
     .liveness('/liveness')
     .readiness('/liveness')
     .ingress({

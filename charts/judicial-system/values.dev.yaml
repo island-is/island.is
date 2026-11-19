@@ -287,14 +287,6 @@ judicial-system-digital-mailbox-api:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: 90
-        nginxRequestsIrate: 5
-      replicas:
-        max: 2
-        min: 1
   httpRoute:
     primary-gw:
       hostnames:
@@ -315,9 +307,9 @@ judicial-system-digital-mailbox-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 1
-    max: 2
-    min: 1
+    default: 0
+    max: 0
+    min: 0
   resources:
     limits:
       cpu: '400m'
