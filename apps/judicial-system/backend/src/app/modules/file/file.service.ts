@@ -160,7 +160,6 @@ export class FileService {
       case CaseFileCategory.DEFENDANT_APPEAL_BRIEF:
       case CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE:
       case CaseFileCategory.APPEAL_RULING:
-      case CaseFileCategory.VERDICT_APPEAL_RULING:
         courtDocumentFolder = CourtDocumentFolder.APPEAL_DOCUMENTS
         break
       default:
@@ -724,6 +723,14 @@ export class FileService {
     file: CaseFile,
     user: User,
   ): Promise<UploadFileToCourtResponse> {
+    // The destination is the district court's own system, which the court of
+    // appeals' judgment or ruling on a verdict appeal must not reach.
+    if (file.category === CaseFileCategory.VERDICT_APPEAL_RULING) {
+      throw new ForbiddenException(
+        `File ${file.id} of case ${theCase.id} is a verdict appeal ruling and is not uploaded to court`,
+      )
+    }
+
     if (file.state === CaseFileState.STORED_IN_COURT) {
       return { success: true }
     }
