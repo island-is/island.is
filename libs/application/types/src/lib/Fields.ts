@@ -113,9 +113,17 @@ export type MaybeWithRepeaterItemContext<T> =
   | T
   | ((ctx: RepeaterItemContext) => T)
 
-type MaybeWithIndexAndApplication<T> =
-  | T
-  | ((index: number, application: Application) => T)
+export type RepeaterFieldContext = {
+  application: Application
+  locale: Locale
+  formatMessage: FormatMessage
+}
+
+export type RepeaterRowContext = RepeaterFieldContext & { index: number }
+
+type MaybeWithRepeaterFieldContext<T> = T | ((ctx: RepeaterFieldContext) => T)
+
+type MaybeWithRepeaterRowContext<T> = T | ((ctx: RepeaterRowContext) => T)
 
 export type MaybeWithAnswersAndExternalData<T> =
   | T
@@ -856,32 +864,15 @@ export type TableRepeaterField = BaseField & {
   addItemButtonText?: StaticText
   cancelButtonText?: StaticText
   saveItemButtonText?: StaticText
-  getStaticTableData?: (application: Application) => Record<string, string>[]
+  getStaticTableData?: (ctx: RepeaterFieldContext) => Record<string, string>[]
   removeButtonTooltipText?: StaticText
-  /** Shown on hover when `canRemoveRow` returns false. No tooltip if omitted. */
+  /** Shown on hover when `rowProps` returns `canRemove: false`. No tooltip if omitted. */
   removeButtonDisabledTooltipText?: StaticText
   editButtonTooltipText?: StaticText
-  /** Shown on hover when `canEditRow` returns false. No tooltip if omitted. */
+  /** Shown on hover when `rowProps` returns `canEdit: false`. No tooltip if omitted. */
   editButtonDisabledTooltipText?: StaticText
   editField?: boolean
   titleVariant?: TitleVariants
-  /** Per row gate for the delete button. Defaults to every row being removable. */
-  canRemoveRow?: (
-    application: Application,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    row: Record<string, any>,
-    index: number,
-  ) => boolean
-  /**
-   * Per row gate for the edit button. Only applies when `editField` is true.
-   * Defaults to every row being editable.
-   */
-  canEditRow?: (
-    application: Application,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    row: Record<string, any>,
-    index: number,
-  ) => boolean
   fields: Record<string, RepeaterItem>
   onSubmitLoad?(c: TableContext): Promise<{
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -895,7 +886,13 @@ export type TableRepeaterField = BaseField & {
   maxRows?: number
   table?: {
     columns?: TableRepeaterColumn[]
-    rowProps?: (ctx: TableRepeaterCellContext) => { disabled?: boolean }
+    rowProps?: (ctx: TableRepeaterCellContext) => {
+      disabled?: boolean
+      /** Gate for the delete button. Defaults to true. */
+      canRemove?: boolean
+      /** Gate for the edit button. Only applies when `editField` is true. Defaults to true. */
+      canEdit?: boolean
+    }
   }
   initActiveFieldIfEmpty?: boolean
   /**
@@ -908,23 +905,23 @@ export type FieldsRepeaterField = BaseField & {
   readonly type: FieldTypes.FIELDS_REPEATER
   component: FieldComponents.FIELDS_REPEATER
   titleVariant?: TitleVariants
-  formTitle?: MaybeWithIndexAndApplication<StaticText>
+  formTitle?: MaybeWithRepeaterRowContext<StaticText>
   formTitleVariant?: TitleVariants
   formTitleNumbering?: 'prefix' | 'suffix' | 'none'
   removeItemButtonText?: StaticText
   addItemButtonText?: StaticText
   saveItemButtonText?: StaticText
   hideRemoveButton?: boolean
-  hideAddButton?: MaybeWithApplication<boolean>
+  hideAddButton?: MaybeWithRepeaterFieldContext<boolean>
   displayTitleAsAccordion?: boolean
-  itemCondition?: MaybeWithIndexAndApplication<boolean>
+  itemCondition?: MaybeWithRepeaterRowContext<boolean>
   fields: Record<string, RepeaterItem>
   /**
    * Maximum rows that can be added to the table.
    * When the maximum is reached, the button to add a new row is disabled.
    */
-  minRows?: MaybeWithAnswersAndExternalData<number>
-  maxRows?: MaybeWithAnswersAndExternalData<number>
+  minRows?: MaybeWithRepeaterFieldContext<number>
+  maxRows?: MaybeWithRepeaterFieldContext<number>
 }
 
 export type AccordionItemTag = {

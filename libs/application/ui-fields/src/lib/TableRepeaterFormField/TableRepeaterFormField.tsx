@@ -79,8 +79,6 @@ export const TableRepeaterFormField: FC<Props> = ({
     editButtonTooltipText = coreMessages.editFieldText,
     editButtonDisabledTooltipText,
     editField = false,
-    canRemoveRow,
-    canEditRow,
     maxRows,
     onSubmitLoad,
     loadErrorMessage,
@@ -129,7 +127,11 @@ export const TableRepeaterFormField: FC<Props> = ({
   )
   const activeField = activeIndex >= 0 ? fields[activeIndex] : null
 
-  const staticData = getStaticTableData?.(watchedApplication)
+  const staticData = getStaticTableData?.({
+    application: watchedApplication,
+    locale: locale as Locale,
+    formatMessage,
+  })
 
   // Update other form values (if necessary) after saving a single row
   const updateFormAfterSavingRow = async () => {
@@ -370,15 +372,11 @@ export const TableRepeaterFormField: FC<Props> = ({
                         : values[index],
                       displayIndex,
                     )
-                    const rowDisabled = table?.rowProps?.(rowContext).disabled
-
-                    const canRemove = canRemoveRow
-                      ? canRemoveRow(
-                          watchedApplication,
-                          values[index] ?? {},
-                          index,
-                        )
-                      : true
+                    const {
+                      disabled: rowDisabled,
+                      canRemove = true,
+                      canEdit: rowCanEdit = true,
+                    } = table?.rowProps?.(rowContext) ?? {}
 
                     const removeTooltipText = canRemove
                       ? removeButtonTooltipText
@@ -403,14 +401,7 @@ export const TableRepeaterFormField: FC<Props> = ({
                       </button>
                     )
 
-                    const canEdit =
-                      editField && canEditRow
-                        ? canEditRow(
-                            watchedApplication,
-                            values[index] ?? {},
-                            index,
-                          )
-                        : true
+                    const canEdit = !editField || rowCanEdit
 
                     const editTooltipText = canEdit
                       ? editButtonTooltipText

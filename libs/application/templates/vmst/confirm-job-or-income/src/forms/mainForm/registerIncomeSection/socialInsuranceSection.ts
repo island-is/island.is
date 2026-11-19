@@ -20,7 +20,7 @@ import {
 } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
 import { buildIncomeDescriptionFields } from './incomeDescriptionFields'
-import { buildCanEditRow, buildCanRemoveRow } from '../../../utils/reconcile'
+import { buildPersistedRowProps } from '../../../utils/reconcile'
 import {
   getSocialInsuranceDefaults,
   toSocialInsuranceRow,
@@ -67,14 +67,8 @@ export const socialInsuranceSection = buildSubSection({
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
           defaultValue: getSocialInsuranceDefaults,
-          canRemoveRow: buildCanRemoveRow(
-            socialInsuranceValidationProps.persistedPath,
-          ),
           removeButtonDisabledTooltipText: m.application.removeLineNotAllowed,
           editField: true,
-          canEditRow: buildCanEditRow(
-            socialInsuranceValidationProps.persistedPath,
-          ),
           editButtonDisabledTooltipText: m.application.editLineNotAllowed,
           marginTop: 2,
           fields: {
@@ -196,6 +190,9 @@ export const socialInsuranceSection = buildSubSection({
                 value: ({ row }) => formatIsCurrency(row.amountPerMonth ?? ''),
               },
             ],
+            rowProps: buildPersistedRowProps(
+              socialInsuranceValidationProps.persistedPath,
+            ),
           },
         }),
         buildCustomField(

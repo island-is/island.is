@@ -17,9 +17,8 @@ import { formatIsCurrency, formatIsDate } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
 import { buildIncomeDescriptionFields } from './incomeDescriptionFields'
 import {
-  buildCanEditRow,
-  buildCanRemoveRow,
   buildEmployerSSNDelete,
+  buildPersistedRowProps,
 } from '../../../utils/reconcile'
 import {
   getCasualWorkDefaults,
@@ -78,12 +77,8 @@ export const casualWorkSection = buildSubSection({
           hideTableHeaderIfEmpty: true,
           marginTop: 2,
           defaultValue: getCasualWorkDefaults,
-          canRemoveRow: buildCanRemoveRow(
-            casualWorkValidationProps.persistedPath,
-          ),
           removeButtonDisabledTooltipText: m.application.removeLineNotAllowed,
           editField: true,
-          canEditRow: buildCanEditRow(casualWorkValidationProps.persistedPath),
           editButtonDisabledTooltipText: m.application.editLineNotAllowed,
           fields: {
             company: {
@@ -200,6 +195,9 @@ export const casualWorkSection = buildSubSection({
                 value: ({ row }) => formatIsCurrency(row.estimatedIncome ?? ''),
               },
             ],
+            rowProps: buildPersistedRowProps(
+              casualWorkValidationProps.persistedPath,
+            ),
           },
         }),
         buildAlertMessageField({

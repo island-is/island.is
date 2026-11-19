@@ -208,7 +208,7 @@ export const newSchoolSubSection = buildSubSection({
             primarySchoolMessages.newSchool
               .removeAlternativeSpecialEducationDepartmentButton,
           minRows: 1,
-          maxRows: (answers, externalData) => {
+          maxRows: ({ application: { answers, externalData } }) => {
             const { schoolMunicipality } = getApplicationAnswers(answers)
 
             const specialEducationDepartmentsInMunicipality =

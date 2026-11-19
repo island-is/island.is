@@ -238,7 +238,7 @@ export const custodianSubSection = buildSubSection({
         // Other contacts
         buildFieldsRepeaterField({
           id: 'otherContacts',
-          formTitle: (index) => {
+          formTitle: ({ index }) => {
             return {
               ...userInformation.otherContact.subtitle,
               values: {

@@ -75,21 +75,21 @@ export const currentSituationSubSection = buildSubSection({
         }),
         buildFieldsRepeaterField({
           id: 'currentSituation.currentSituationRepeater',
-          minRows: (answers) => {
+          minRows: ({ application: { answers } }) => {
             return isEmployedAtAll(answers) ? 1 : 0
           },
-          maxRows: (answers) => {
+          maxRows: ({ application: { answers } }) => {
             return isEmployed(answers) ? 1 : 10
           },
           marginTop: 0,
-          formTitle: (index) => {
+          formTitle: ({ index }) => {
             return {
               ...employmentMessages.currentSituation.labels
                 .jobRepeaterEmployment,
               values: { index: index + 1 },
             }
           },
-          hideAddButton: (application) => {
+          hideAddButton: ({ application }) => {
             const employed = isEmployed(application.answers)
             return employed
           },

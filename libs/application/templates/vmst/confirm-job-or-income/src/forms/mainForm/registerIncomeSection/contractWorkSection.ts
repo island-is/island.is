@@ -15,7 +15,7 @@ import {
 import { formatIsDate } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
 import { buildIncomeDescriptionFields } from './incomeDescriptionFields'
-import { buildCanEditRow, buildCanRemoveRow } from '../../../utils/reconcile'
+import { buildPersistedRowProps } from '../../../utils/reconcile'
 import {
   getContractWorkDefaults,
   toContractWorkRow,
@@ -60,14 +60,8 @@ export const contractWorkSection = buildSubSection({
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
           defaultValue: getContractWorkDefaults,
-          canRemoveRow: buildCanRemoveRow(
-            contractWorkValidationProps.persistedPath,
-          ),
           removeButtonDisabledTooltipText: m.application.removeLineNotAllowed,
           editField: true,
-          canEditRow: buildCanEditRow(
-            contractWorkValidationProps.persistedPath,
-          ),
           editButtonDisabledTooltipText: m.application.editLineNotAllowed,
           marginTop: 2,
           fields: {
@@ -116,6 +110,9 @@ export const contractWorkSection = buildSubSection({
                 value: ({ row }) => formatIsDate(row.workEnds ?? ''),
               },
             ],
+            rowProps: buildPersistedRowProps(
+              contractWorkValidationProps.persistedPath,
+            ),
           },
         }),
         buildCustomField(

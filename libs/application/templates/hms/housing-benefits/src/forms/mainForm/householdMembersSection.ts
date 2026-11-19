@@ -53,7 +53,7 @@ export const householdMembersSection = buildSection({
             m.draftMessages.householdMembersSection.addMemberButton,
           editField: true,
           maxRows: 20,
-          getStaticTableData: (application: Application) =>
+          getStaticTableData: ({ application }) =>
             getRentalAgreementTenantsForStaticTable(application),
           defaultValue: (application: Application) =>
             getHouseholdMembersTableRepeaterDefaultValue(application),

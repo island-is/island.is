@@ -63,7 +63,7 @@ export const languageSubSection = buildSubSection({
           formTitleNumbering: 'none',
           addItemButtonText: differentNeedsMessages.language.addLanguage,
           removeItemButtonText: differentNeedsMessages.language.removeLanguage,
-          minRows: (answers) => {
+          minRows: ({ application: { answers } }) => {
             const { languageEnvironment } = getApplicationAnswers(answers)
 
             return languageEnvironment ===

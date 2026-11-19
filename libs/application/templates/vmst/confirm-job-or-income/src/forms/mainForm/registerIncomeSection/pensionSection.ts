@@ -20,7 +20,7 @@ import {
 } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
 import { buildIncomeDescriptionFields } from './incomeDescriptionFields'
-import { buildCanEditRow, buildCanRemoveRow } from '../../../utils/reconcile'
+import { buildPersistedRowProps } from '../../../utils/reconcile'
 import { getPensionDefaults, toPensionRow } from '../../../utils/persistedRows'
 import {
   isOneTimePayment,
@@ -66,10 +66,8 @@ export const pensionSection = buildSubSection({
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
           defaultValue: getPensionDefaults,
-          canRemoveRow: buildCanRemoveRow(pensionValidationProps.persistedPath),
           removeButtonDisabledTooltipText: m.application.removeLineNotAllowed,
           editField: true,
-          canEditRow: buildCanEditRow(pensionValidationProps.persistedPath),
           editButtonDisabledTooltipText: m.application.editLineNotAllowed,
           marginTop: 2,
           fields: {
@@ -223,6 +221,9 @@ export const pensionSection = buildSubSection({
                 value: ({ row }) => formatIsCurrency(row.amountPerMonth ?? ''),
               },
             ],
+            rowProps: buildPersistedRowProps(
+              pensionValidationProps.persistedPath,
+            ),
           },
         }),
         buildCustomField(

@@ -38,7 +38,7 @@ export const tableRepeaterSubsection = buildSubSection({
           editButtonTooltipText: 'Custom Edit item text',
           editField: true,
           maxRows: 10,
-          getStaticTableData: (_application) => {
+          getStaticTableData: () => {
             // Possibility to populate the table with data from the answers or external data
             // Populated data will not be editable or deletable
             return [

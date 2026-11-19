@@ -50,7 +50,8 @@ export const addHouseholdMemberSection = buildSection({
             m.draftMessages.householdMembersSection.addMemberButton,
           editField: true,
           maxRows: 20,
-          getStaticTableData: getAddHouseholdMemberStaticTableData,
+          getStaticTableData: ({ application }) =>
+            getAddHouseholdMemberStaticTableData(application),
           defaultValue: getAddHouseholdMemberTableRepeaterDefaultValue,
           fields: {
             nationalIdWithName: {

@@ -8,6 +8,7 @@ import {
 import {
   FieldBaseProps,
   FieldsRepeaterField,
+  RepeaterFieldContext,
 } from '@island.is/application/types'
 import {
   Accordion,
@@ -64,6 +65,7 @@ export const FieldsRepeaterFormField = ({
 
   const { control, getValues, setValue } = useFormContext()
   const user = useUserInfo()
+  const { formatMessage, lang: locale } = useLocale()
   const answers = getValues()
   const resolvedId = resolveFieldId({ id }, application, user)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -79,14 +81,20 @@ export const FieldsRepeaterFormField = ({
   const stableApplication = useMemo(() => application, [application])
   const stableAnswers = useMemo(() => answers, [answers])
 
+  const fieldContext: RepeaterFieldContext = {
+    application: {
+      ...application,
+      answers: { ...application.answers, ...answers },
+    },
+    locale: locale as Locale,
+    formatMessage,
+  }
+  const rowContext = (index: number) => ({ ...fieldContext, index })
+
   const minRowsValue =
-    typeof minRows === 'function'
-      ? minRows(answers, application.externalData)
-      : minRows
+    typeof minRows === 'function' ? minRows(fieldContext) : minRows
   const maxRowsValue =
-    typeof maxRows === 'function'
-      ? maxRows(answers, application.externalData)
-      : maxRows
+    typeof maxRows === 'function' ? maxRows(fieldContext) : maxRows
 
   const [numberOfItems, setNumberOfItems] = useState(
     Math.max(numberOfItemsInAnswers ?? 0, minRowsValue),
@@ -113,8 +121,6 @@ export const FieldsRepeaterFormField = ({
       ...rawItems[key],
     }
   })
-
-  const { formatMessage, lang: locale } = useLocale()
 
   const { remove } = useFieldArray({
     control: control,
@@ -171,13 +177,13 @@ export const FieldsRepeaterFormField = ({
     return itemCondition === undefined
       ? true
       : typeof itemCondition === 'function'
-      ? itemCondition(index, updatedApplication)
+      ? itemCondition(rowContext(index))
       : itemCondition
   }
 
   const showAddButton =
     typeof hideAddButton === 'function'
-      ? !hideAddButton(updatedApplication)
+      ? !hideAddButton(fieldContext)
       : !hideAddButton
   const showRemoveButton = !hideRemoveButton && numberOfItems > minRowsValue
 
@@ -221,7 +227,7 @@ export const FieldsRepeaterFormField = ({
                         {formTitle &&
                           formatTextWithLocale(
                             typeof formTitle === 'function'
-                              ? formTitle(i, updatedApplication)
+                              ? formTitle(rowContext(i))
                               : formTitle,
                             application,
                             locale as Locale,
@@ -245,7 +251,7 @@ export const FieldsRepeaterFormField = ({
 
                 const resolvedTitle = formTitle
                   ? typeof formTitle === 'function'
-                    ? formTitle(i, updatedApplication)
+                    ? formTitle(rowContext(i))
                     : formTitle
                   : ''
                 const formattedTitle = resolvedTitle

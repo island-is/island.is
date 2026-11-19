@@ -20,9 +20,8 @@ import { formatIsCurrency, formatIsDate } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
 import { buildIncomeDescriptionFields } from './incomeDescriptionFields'
 import {
-  buildCanEditRow,
-  buildCanRemoveRow,
   buildEmployerSSNDelete,
+  buildPersistedRowProps,
 } from '../../../utils/reconcile'
 import {
   getPartTimeDefaults,
@@ -76,12 +75,8 @@ export const partTimeSection = buildSubSection({
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
           defaultValue: getPartTimeDefaults,
-          canRemoveRow: buildCanRemoveRow(
-            partTimeValidationProps.persistedPath,
-          ),
           removeButtonDisabledTooltipText: m.application.removeLineNotAllowed,
           editField: true,
-          canEditRow: buildCanEditRow(partTimeValidationProps.persistedPath),
           editButtonDisabledTooltipText: m.application.editLineNotAllowed,
           marginTop: 2,
           fields: {
@@ -179,6 +174,9 @@ export const partTimeSection = buildSubSection({
                 value: ({ row }) => formatIsCurrency(row.estimatedIncome ?? ''),
               },
             ],
+            rowProps: buildPersistedRowProps(
+              partTimeValidationProps.persistedPath,
+            ),
           },
         }),
         buildAlertMessageField({

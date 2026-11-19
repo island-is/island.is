@@ -53,7 +53,7 @@ export const partiesSubsection = buildSubSection({
           maxRows: 10,
           fields: landLordInfoTableFields,
           table: applicantTableConfig,
-          getStaticTableData: (application: Application) => {
+          getStaticTableData: ({ application }) => {
             return staticPartyTableData(application, ApplicantsRole.LANDLORD)
           },
         }),
@@ -168,7 +168,7 @@ export const partiesSubsection = buildSubSection({
           maxRows: 10,
           fields: applicantTableFields,
           table: applicantTableConfig,
-          getStaticTableData: (application: Application) => {
+          getStaticTableData: ({ application }) => {
             return staticPartyTableData(application, ApplicantsRole.TENANT)
           },
         }),

@@ -91,20 +91,20 @@ export const accessAgreementSection = buildSection({
             ),
           marginTop: 2,
           width: 'full',
-          minRows: (answers, externalData) =>
+          minRows: ({ application: { answers, externalData } }) =>
             assigneeAccessAgreementRepeaterMinRows(answers, externalData),
-          maxRows: (answers, externalData) =>
+          maxRows: ({ application: { answers, externalData } }) =>
             assigneeAccessAgreementRepeaterMaxRows(answers, externalData),
           defaultValue: (application: Application) =>
             buildAssigneeAccessAgreementRepeaterDefaultRows(application),
-          formTitle: (index) => ({
+          formTitle: ({ index }) => ({
             ...m.assigneeDraft.umgengnissamningurRepeaterFormTitle,
             values: { index: index + 1 },
           }),
           formTitleVariant: 'h3',
           formTitleNumbering: 'none',
           addItemButtonText: m.assigneeDraft.umgengnissamningurRepeaterAddItem,
-          hideAddButton: (application) => {
+          hideAddButton: ({ application }) => {
             const assigneeId =
               getAssigneeNationalIdForUmgengnissamningurForm(application)
             if (!assigneeId) {

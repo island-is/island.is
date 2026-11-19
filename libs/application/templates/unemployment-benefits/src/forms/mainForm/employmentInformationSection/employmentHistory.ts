@@ -95,7 +95,7 @@ export const employmentHistorySubSection = buildSubSection({
         buildFieldsRepeaterField({
           id: 'employmentHistory.currentJobs',
           hideAddButton: true,
-          minRows: (answers: FormValue) => {
+          minRows: ({ application: { answers } }) => {
             const currentSituationRepeater =
               getValueViaPath<Array<CurrentEmploymentInAnswers>>(
                 answers,
@@ -275,7 +275,7 @@ export const employmentHistorySubSection = buildSubSection({
         buildFieldsRepeaterField({
           id: 'employmentHistory.lastJobs',
           marginTop: 0,
-          minRows: (formValue) => {
+          minRows: ({ application: { answers: formValue } }) => {
             return isUnemployed(formValue) ? 1 : 0
           },
           formTitle:

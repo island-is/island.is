@@ -82,8 +82,12 @@ describe('FieldsRepeater', () => {
 
     expect(inputs()).toHaveLength(2)
     expect(minRows).toHaveBeenCalledWith(
-      expect.any(Object),
-      expect.objectContaining({ source: expect.anything() }),
+      expect.objectContaining({
+        application: expect.objectContaining({
+          answers: expect.any(Object),
+          externalData: expect.objectContaining({ source: expect.anything() }),
+        }),
+      }),
     )
   })
 

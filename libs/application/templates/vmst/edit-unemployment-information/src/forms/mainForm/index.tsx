@@ -171,7 +171,8 @@ export const MainForm = buildForm({
                   addItemButtonText: m.application.addNewEducation,
                   saveItemButtonText: m.application.addNewEducation,
                   editField: true,
-                  getStaticTableData: getEducationStaticTableData,
+                  getStaticTableData: ({ application }) =>
+                    getEducationStaticTableData(application),
                   fields: {
                     levelOfStudy: {
                       component: 'select',
@@ -316,7 +317,8 @@ export const MainForm = buildForm({
                   addItemButtonText: m.application.addLanguageLabel,
                   saveItemButtonText: m.application.addLanguageLabel,
                   editField: true,
-                  getStaticTableData: getLanguageStaticTableData,
+                  getStaticTableData: ({ application }) =>
+                    getLanguageStaticTableData(application),
                   fields: {
                     language: {
                       component: 'select',

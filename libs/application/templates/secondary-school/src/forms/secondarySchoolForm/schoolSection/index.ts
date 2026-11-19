@@ -59,12 +59,12 @@ export const schoolSection = buildSection({
           id: 'selection',
           titleVariant: 'h5',
           formTitleNumbering: 'none',
-          formTitle: (index) => getFormTitle(index),
+          formTitle: ({ index }) => getFormTitle(index),
           addItemButtonText: school.selection.addButtonLabel,
           removeItemButtonText: school.selection.removeButtonLabel,
-          minRows: (answers, externalData) =>
+          minRows: ({ application: { answers, externalData } }) =>
             getRowsLimitCount(answers, externalData).min,
-          maxRows: (answers, externalData) =>
+          maxRows: ({ application: { answers, externalData } }) =>
             getRowsLimitCount(answers, externalData).max,
           marginTop: 0,
           fields: {

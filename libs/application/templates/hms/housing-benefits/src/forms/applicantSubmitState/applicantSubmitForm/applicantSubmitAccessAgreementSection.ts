@@ -41,9 +41,17 @@ export const applicantSubmitAccessAgreementSection = buildSection({
             ),
           marginTop: 0,
           width: 'full',
-          minRows: applicantSubmitAccessAgreementRepeaterMinRows,
-          maxRows: applicantSubmitAccessAgreementRepeaterMaxRows,
-          formTitle: (index) => ({
+          minRows: ({ application }) =>
+            applicantSubmitAccessAgreementRepeaterMinRows(
+              application.answers,
+              application.externalData,
+            ),
+          maxRows: ({ application }) =>
+            applicantSubmitAccessAgreementRepeaterMaxRows(
+              application.answers,
+              application.externalData,
+            ),
+          formTitle: ({ index }) => ({
             ...m.assigneeDraft.umgengnissamningurRepeaterFormTitle,
             values: { index: index + 1 },
           }),

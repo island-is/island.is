@@ -71,23 +71,23 @@ export const accessAgreementSection = buildSection({
           id: MAIN_FORM_ACCESS_AGREEMENT_REPEATER_ID,
           marginTop: 2,
           width: 'full',
-          minRows: (answers, externalData) =>
+          minRows: ({ application: { answers, externalData } }) =>
             mainFormAccessAgreementRepeaterMinRows(answers, externalData),
-          maxRows: (answers, externalData) =>
+          maxRows: ({ application: { answers, externalData } }) =>
             mainFormAccessAgreementRepeaterMaxRows(answers, externalData),
           defaultValue: (application: Application) =>
             buildMainFormAccessAgreementRepeaterDefaultRows(
               application.answers,
               application.externalData,
             ),
-          formTitle: (index) => ({
+          formTitle: ({ index }) => ({
             ...m.assigneeDraft.umgengnissamningurRepeaterFormTitle,
             values: { index: index + 1 },
           }),
           formTitleVariant: 'h3',
           formTitleNumbering: 'none',
           addItemButtonText: m.assigneeDraft.umgengnissamningurRepeaterAddItem,
-          hideAddButton: (application) => {
+          hideAddButton: ({ application }) => {
             const maxRows = mainFormAccessAgreementRepeaterMaxRows(
               application.answers,
               application.externalData,
