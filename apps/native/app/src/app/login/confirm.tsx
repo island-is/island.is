@@ -45,16 +45,22 @@ export default function LoginConfirmScreen() {
       return
     }
     const controller = new AbortController()
+    // Cancelled, so this screen is gone: an answer that comes anyway, e.g.
+    // a renewal still out, mustn't log in or send the number screen back.
+    const isCancelledHere = () => controller.signal.aborted
     getIasClient()
       .waitForApproval(request, { signal: controller.signal })
       .then(async (tokens) => {
+        if (isCancelledHere()) {
+          return
+        }
         setIsFinishing(true)
         await authStore.getState().loginNative(tokens)
         await nextOnboardingStep()
         nativeLoginStore.setState({ loginHint: '', request: undefined })
       })
       .catch((error) => {
-        if (isCancelled(error)) {
+        if (isCancelled(error) || isCancelledHere()) {
           return
         }
         console.warn('Native login failed', error)
