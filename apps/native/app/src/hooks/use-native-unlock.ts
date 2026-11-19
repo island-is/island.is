@@ -51,6 +51,11 @@ export function useNativeUnlock({
   const electronicId = useElectronicIdUnlock('unlock', { inline: true })
   const ias = getIasClient()
   const lockoutTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
+  // Outlasts the electronic ID tried meanwhile, which has its own status.
+  const isLockedOut = useRef(false)
+  // Where electronic ID leaves the lock when it doesn't open the app.
+  const statusAfterElectronicId = () =>
+    isLockedOut.current ? 'lockedOut' : 'idle'
   // A native key read: once, and again after an unlock may have changed it.
   const [isBiometricsEnabled, setIsBiometricsEnabled] = useState(() =>
     ias.isBiometricsEnabled(),
@@ -72,6 +77,7 @@ export function useNativeUnlock({
   // seconds have passed. If it isn't, a tap says so without a prompt.
   const endLockout = () => {
     clearTimeout(lockoutTimer.current)
+    isLockedOut.current = false
     setStatus((current) => (current === 'lockedOut' ? 'idle' : current))
   }
 
@@ -137,6 +143,7 @@ export function useNativeUnlock({
         code === 'ERR_DEVICE_KEY_LOCKOUT' ||
         code === 'ERR_DEVICE_KEY_LOCKOUT_TEMPORARY'
       ) {
+        isLockedOut.current = true
         setStatus('lockedOut')
         if (code === 'ERR_DEVICE_KEY_LOCKOUT_TEMPORARY') {
           lockoutTimer.current = setTimeout(endLockout, TEMPORARY_LOCKOUT_MS)
@@ -188,7 +195,7 @@ export function useNativeUnlock({
           isTooManyElectronicIdRequests(error) ? 'tooManyRequests' : 'failed',
         )
       }
-      setStatus('idle')
+      setStatus(statusAfterElectronicId())
     }
   }
 

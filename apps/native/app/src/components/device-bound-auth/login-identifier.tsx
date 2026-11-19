@@ -100,6 +100,12 @@ export function LoginIdentifier({
 }: LoginIdentifierProps) {
   const intl = useIntl()
   const isComplete = value.length === loginHintLength[method]
+  const fieldLabel = intl.formatMessage({
+    id:
+      method === 'sim'
+        ? 'login.identifier.phoneLabel'
+        : 'login.identifier.nationalIdLabel',
+  })
 
   return (
     <Host>
@@ -138,12 +144,10 @@ export function LoginIdentifier({
           <TextField
             // Remount so autoFocus and the keyboard type follow the method.
             key={method}
-            label={intl.formatMessage({
-              id:
-                method === 'sim'
-                  ? 'login.identifier.phoneLabel'
-                  : 'login.identifier.nationalIdLabel',
-            })}
+            label={fieldLabel}
+            // The label is shown apart from the input: screen readers need it
+            // on the input itself.
+            accessibilityLabel={fieldLabel}
             value={formatLoginHint(method, value)}
             onChange={(text) => onChangeValue(toLoginHint(method, text))}
             placeholder={method === 'sim' ? '000-0000' : '000000-0000'}

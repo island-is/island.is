@@ -477,22 +477,28 @@ export function createIasClient(options: IasClientOptions): IasClient {
   }
 
   async function readError(response: Response) {
-    let body: { error?: string; error_description?: string } = {}
+    let body: Record<string, unknown> = {}
     const text = await response.text()
     try {
-      body = text ? JSON.parse(text) : {}
+      const parsed: unknown = text ? JSON.parse(text) : {}
+      // Also `null` or a bare string is valid JSON.
+      if (parsed && typeof parsed === 'object') {
+        body = parsed as Record<string, unknown>
+      }
     } catch {
       // Not JSON: fall back to the status and WWW-Authenticate.
     }
+    const field = (name: string) =>
+      typeof body[name] === 'string' ? (body[name] as string) : undefined
     // Bearer/DPoP-protected endpoints put the error in WWW-Authenticate.
     const challenge = response.headers.get('WWW-Authenticate') ?? ''
     return {
       error:
-        body.error ??
+        field('error') ??
         /error="([^"]*)"/.exec(challenge)?.[1] ??
         `http_${response.status}`,
       description:
-        body.error_description ??
+        field('error_description') ??
         /error_description="([^"]*)"/.exec(challenge)?.[1],
     }
   }

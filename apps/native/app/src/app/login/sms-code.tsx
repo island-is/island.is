@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { formatLoginHint } from '@/components/device-bound-auth/login-identifier'
@@ -24,10 +24,22 @@ export default function LoginSmsCodeScreen() {
   const [loading, setLoading] = useState(false)
   const [failure, setFailure] = useState<LoginErrorResult>()
 
+  // Back while IAS checks the code: its answer doesn't move on from here.
+  const isMounted = useRef(true)
+  useEffect(
+    () => () => {
+      isMounted.current = false
+    },
+    [],
+  )
+
   const onSubmit = async () => {
     setLoading(true)
     setFailure(undefined)
     const result = await startNativeLogin({ smsCode: code })
+    if (!isMounted.current) {
+      return
+    }
     setLoading(false)
     if ('next' in result) {
       if (result.next === 'confirm') {

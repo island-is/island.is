@@ -86,7 +86,8 @@ export function toLoginError(error: unknown): LoginError {
   if (isTooManyElectronicIdRequests(error)) {
     return 'tooManyRequests'
   }
-  if (code === 'access_denied') {
+  // unknown_user_id: IAS can say outright that it doesn't know the person.
+  if (code === 'access_denied' || code === 'unknown_user_id') {
     return 'declined'
   }
   if (code === 'expired_token') {

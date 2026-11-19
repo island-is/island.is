@@ -23,8 +23,11 @@ const Side = styled.View<{ side: 'left' | 'right' }>`
   ${({ side }) => side}: 0;
 `
 
-// Round, raised buttons like the system's own header buttons.
-export const HeaderButton = styled.TouchableOpacity`
+// Round, raised buttons like the system's own header buttons. 40 high, and
+// 48 to tap, as Android recommends.
+export const HeaderButton = styled.TouchableOpacity.attrs({
+  hitSlop: { top: 4, bottom: 4, left: 4, right: 4 },
+})`
   min-width: 40px;
   height: 40px;
   padding-horizontal: ${({ theme }) => theme.spacing[1]}px;

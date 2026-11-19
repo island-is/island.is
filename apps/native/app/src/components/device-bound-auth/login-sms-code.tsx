@@ -74,6 +74,11 @@ export function LoginSmsCode({
           </Heading>
           <TextField
             label={intl.formatMessage({ id: 'login.smsCode.label' })}
+            // The label is shown apart from the input: screen readers need it
+            // on the input itself.
+            accessibilityLabel={intl.formatMessage({
+              id: 'login.smsCode.label',
+            })}
             value={value}
             onChange={(text) =>
               onChangeValue(text.replace(/\D/g, '').slice(0, codeLength))

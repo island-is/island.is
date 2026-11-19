@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { LoginIdentifier } from '@/components/device-bound-auth/login-identifier'
@@ -19,13 +19,25 @@ export default function LoginIdentifierScreen() {
   const [loading, setLoading] = useState(false)
   const isOffline = useIsOffline()
 
+  // Left while IAS starts the login: its answer doesn't move on from here.
+  const isMounted = useRef(true)
+
   // An error is about the last try: leaving this screen takes it away.
-  useEffect(() => () => nativeLoginStore.setState({ error: undefined }), [])
+  useEffect(
+    () => () => {
+      isMounted.current = false
+      nativeLoginStore.setState({ error: undefined })
+    },
+    [],
+  )
 
   const onSubmit = async () => {
     setLoading(true)
     nativeLoginStore.setState({ error: undefined })
     const result = await startNativeLogin()
+    if (!isMounted.current) {
+      return
+    }
     setLoading(false)
     if ('error' in result) {
       nativeLoginStore.setState({ error: result.error })

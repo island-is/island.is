@@ -1,4 +1,4 @@
-import { useNavigation, useRouter } from 'expo-router'
+import { Href, useNavigation, useRouter } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 import { BackHandler } from 'react-native'
 
@@ -12,6 +12,10 @@ import {
 } from '@/lib/native-login'
 import { authStore } from '@/stores/auth-store'
 import { nextOnboardingStep } from '@/utils/onboarding'
+
+// The tabs, at whichever tab they start on. Typed routes only list the
+// tabs' own screens.
+const HOME = '/(auth)/(tabs)' as Href
 
 /**
  * Waits while the person approves the login on their phone. Going back
@@ -56,7 +60,14 @@ export default function LoginConfirmScreen() {
         }
         setIsFinishing(true)
         await authStore.getState().loginNative(tokens)
-        await nextOnboardingStep()
+        try {
+          await nextOnboardingStep()
+        } catch (error) {
+          // Logged in already, so not a failed login: the tabs resume
+          // whatever onboarding is left.
+          console.warn('Could not start onboarding', error)
+          router.replace(HOME)
+        }
         nativeLoginStore.setState({ loginHint: '', request: undefined })
       })
       .catch((error) => {

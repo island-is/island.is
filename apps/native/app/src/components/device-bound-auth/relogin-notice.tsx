@@ -19,6 +19,10 @@ const Host = styled(SafeAreaView)`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
 `
 
+// Scrolls only when it doesn't fit, e.g. with very large text on a small
+// phone: the login button, the only way on, stays reachable.
+const Content = styled.ScrollView``
+
 const Heading = styled.View`
   margin-top: ${({ theme }) => theme.spacing[6]}px;
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
@@ -83,30 +87,35 @@ export function ReloginNotice({
       {/* The debug panel handles the bottom inset itself. */}
       <Host edges={showDebugInfo ? ['top'] : ['top', 'bottom']}>
         <LoginHeader />
-        <Heading>
-          <Typography variant="heading2" textAlign="center">
-            {intl.formatMessage({ id: 'relogin.title' })}
-          </Typography>
-          <Typography variant="body2" textAlign="center">
-            <FormattedMessage id="relogin.body" values={bold} />
-          </Typography>
-          <Typography variant="body2" textAlign="center">
-            {intl.formatMessage({ id: 'relogin.description' })}
-          </Typography>
-        </Heading>
-        {showDebugInfo ? (
-          <Spacer />
-        ) : (
-          <IllustrationWrapper>
-            <Illustration source={illustration} resizeMode="contain" />
-          </IllustrationWrapper>
-        )}
-        <Footer>
-          <Button
-            title={intl.formatMessage({ id: 'relogin.loginButton' })}
-            onPress={onLoginPress}
-          />
-        </Footer>
+        <Content
+          contentContainerStyle={{ flexGrow: 1 }}
+          alwaysBounceVertical={false}
+        >
+          <Heading>
+            <Typography variant="heading2" textAlign="center">
+              {intl.formatMessage({ id: 'relogin.title' })}
+            </Typography>
+            <Typography variant="body2" textAlign="center">
+              <FormattedMessage id="relogin.body" values={bold} />
+            </Typography>
+            <Typography variant="body2" textAlign="center">
+              {intl.formatMessage({ id: 'relogin.description' })}
+            </Typography>
+          </Heading>
+          {showDebugInfo ? (
+            <Spacer />
+          ) : (
+            <IllustrationWrapper>
+              <Illustration source={illustration} resizeMode="contain" />
+            </IllustrationWrapper>
+          )}
+          <Footer>
+            <Button
+              title={intl.formatMessage({ id: 'relogin.loginButton' })}
+              onPress={onLoginPress}
+            />
+          </Footer>
+        </Content>
       </Host>
       {showDebugInfo && <DebugInfo />}
     </Root>
