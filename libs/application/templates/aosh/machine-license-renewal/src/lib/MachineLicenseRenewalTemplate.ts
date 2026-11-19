@@ -51,7 +51,7 @@ const template: ApplicationTemplate<
     states: {
       [States.PREREQUISITES]: {
         meta: {
-          name: 'Skilyrði',
+          name: States.PREREQUISITES,
           progress: 0,
           status: FormModes.DRAFT,
           lifecycle: EphemeralStateLifeCycle,
@@ -96,7 +96,7 @@ const template: ApplicationTemplate<
       },
       [States.DRAFT]: {
         meta: {
-          name: 'Endurnýjun vinnuvélaskírteinis',
+          name: States.DRAFT,
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: pruneAfterDays(30),
@@ -135,7 +135,7 @@ const template: ApplicationTemplate<
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
         chargeItems: getChargeItems,
-        submitTarget: States.COMPLETED,
+        submitTarget: States.SUBMITTED,
         showSubmitErrorReason: true,
         onExit: [
           VerifyPaymentApi.configure({
@@ -148,23 +148,116 @@ const template: ApplicationTemplate<
           }),
         ],
       }),
-      [States.COMPLETED]: {
+      [States.SUBMITTED]: {
         meta: {
-          name: 'Completed',
+          name: States.SUBMITTED,
           progress: 1,
-          status: FormModes.COMPLETED,
-          lifecycle: pruneAfterDays(30),
+          status: FormModes.IN_PROGRESS,
+          lifecycle: pruneAfterDays(365),
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
           }),
           actionCard: {
             tag: {
-              label: applicationMessages.actionCardDone,
+              label: applicationMessages.actionCardSubmitted,
               variant: 'blueberry',
             },
             pendingAction: {
               title: corePendingActionMessages.applicationReceivedTitle,
+              content: applicationMessages.pendingActionSubmittedDescription,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationApproved,
+                onEvent: DefaultEvents.APPROVE,
+              },
+              {
+                logMessage: coreHistoryMessages.applicationRejected,
+                onEvent: DefaultEvents.REJECT,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/completedForm').then((module) =>
+                  Promise.resolve(module.completedForm),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ORGANIZATION,
+              formLoader: () =>
+                import('../forms/completedForm').then((module) =>
+                  Promise.resolve(module.completedForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+              ],
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: { target: States.APPROVED },
+          [DefaultEvents.REJECT]: { target: States.REJECTED },
+        },
+      },
+      [States.APPROVED]: {
+        meta: {
+          name: States.APPROVED,
+          progress: 1,
+          status: FormModes.APPROVED,
+          lifecycle: pruneAfterDays(30),
+          // TODO: Send a Hnipp notification to the applicant on entry. Use throwOnError: false so a failed notification does not fail the APPROVE call from AOSH.
+          actionCard: {
+            tag: {
+              label: applicationMessages.actionCardApproved,
+              variant: 'mint',
+            },
+            pendingAction: {
+              title: coreHistoryMessages.applicationApproved,
+              content: applicationMessages.pendingActionApprovedDescription,
               displayStatus: 'success',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/completedForm').then((module) =>
+                  Promise.resolve(module.completedForm),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+      [States.REJECTED]: {
+        meta: {
+          name: States.REJECTED,
+          progress: 1,
+          status: FormModes.REJECTED,
+          lifecycle: pruneAfterDays(30),
+          actionCard: {
+            tag: {
+              label: applicationMessages.actionCardRejected,
+              variant: 'red',
+            },
+            pendingAction: {
+              title: coreHistoryMessages.applicationRejected,
+              content: applicationMessages.pendingActionRejectedDescription,
+              displayStatus: 'error',
             },
           },
           roles: [
@@ -187,6 +280,9 @@ const template: ApplicationTemplate<
   ): ApplicationRole | undefined {
     if (nationalId === application.applicant) {
       return Roles.APPLICANT
+    }
+    if (nationalId === InstitutionNationalIds.VINNUEFTIRLITID) {
+      return Roles.ORGANIZATION
     }
     return undefined
   },

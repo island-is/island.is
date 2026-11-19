@@ -33,13 +33,27 @@ The applicant goes through the following screens:
 
 ### Payment
 
-Payment for the renewal through the payment state, with the charge item code `VJ261` (`AOSH_MACHINE_LICENSE_RENEWAL_VJ261`). Before the application moves to the completed state, the payment is verified with island.is and The Administration of Occupational Safety and Health confirms that it has received the payment.
+Payment for the renewal through the payment state, with the charge item code `VJ261` (`AOSH_MACHINE_LICENSE_RENEWAL_VJ261`). Before the application moves to the submitted state, the payment is verified with island.is and The Administration of Occupational Safety and Health confirms that it has received the payment.
 
-### Completed
+### Submitted
 
 The application is submitted to The Administration of Occupational Safety and Health, including the email and phone number from the application, the medical certificate, plastic card and delivery information and the payment id. The applicant receives confirmation that the application has been received.
 
 The delivery method (`sendToLegalAddress`) is only sent when the applicant wants a plastic card. When the card is sent to another address without a recipient, the applicant's name is sent as the recipient.
+
+The application stays in this state while The Administration of Occupational Safety and Health processes it, and is pruned after 365 days.
+
+The Administration of Occupational Safety and Health moves it to the approved or rejected state by calling `PUT /applications/{id}/submit` on the application system API with the event `APPROVE` or `REJECT`, authenticated with its own kennitala (`InstitutionNationalIds.VINNUEFTIRLITID`).
+
+`mapUserToRole` maps that kennitala to the `organization` role, which can only send these two events. It has no read or write access, so the response to the call contains no answers or external data. A repeated event is refused, because neither event is valid after the first one.
+
+### Approved
+
+The Administration of Occupational Safety and Health has approved the application and renewed the rights.
+
+### Rejected
+
+The Administration of Occupational Safety and Health has rejected the application, for example because documents are missing. The applicant cannot add documents in the application. The Administration of Occupational Safety and Health contacts the applicant directly.
 
 ## Feature flag
 

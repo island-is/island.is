@@ -11,10 +11,39 @@ export const application = defineMessages({
     defaultMessage: 'Vinnueftirlitið',
     description: `Institution's name`,
   },
-  actionCardDone: {
-    id: 'aosh.mlr.application:actionCardDone',
+  actionCardSubmitted: {
+    id: 'aosh.mlr.application:actionCardSubmitted',
     defaultMessage: 'Móttekin',
+    description: 'Action card tag when the application is being processed',
+  },
+  actionCardApproved: {
+    id: 'aosh.mlr.application:actionCardApproved',
+    defaultMessage: 'Samþykkt',
+    description: 'Action card tag when the application has been approved',
+  },
+  actionCardRejected: {
+    id: 'aosh.mlr.application:actionCardRejected',
+    defaultMessage: 'Hafnað',
+    description: 'Action card tag when the application has been rejected',
+  },
+  pendingActionSubmittedDescription: {
+    id: 'aosh.mlr.application:pendingActionSubmittedDescription',
+    defaultMessage: 'Umsóknin er í vinnslu hjá Vinnueftirlitinu.',
     description:
-      'Description of application state/status when application is done',
+      'Action card description when the application is being processed',
+  },
+  pendingActionApprovedDescription: {
+    id: 'aosh.mlr.application:pendingActionApprovedDescription',
+    defaultMessage:
+      'Vinnueftirlitið hefur samþykkt umsóknina og endurnýjað réttindin.',
+    description:
+      'Action card description when the application has been approved',
+  },
+  pendingActionRejectedDescription: {
+    id: 'aosh.mlr.application:pendingActionRejectedDescription',
+    defaultMessage:
+      'Vinnueftirlitið hefur hafnað umsókninni og mun hafa samband við þig.',
+    description:
+      'Action card description when the application has been rejected',
   },
 })
