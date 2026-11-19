@@ -1,13 +1,15 @@
 import each from 'jest-each'
 import { v4 as uuid } from 'uuid'
 
-import { NotFoundException } from '@nestjs/common'
+import { ForbiddenException, NotFoundException } from '@nestjs/common'
 
 import {
   CaseFileCategory,
   CaseFileState,
   CaseType,
+  InstitutionType,
   User,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { createTestingFileModule } from '../createTestingFileModule'
@@ -297,6 +299,39 @@ describe('FileController - Upload case file to court', () => {
 
     it('should return success', () => {
       expect(then.result).toEqual({ success: false })
+    })
+  })
+
+  describe('verdict appeal ruling', () => {
+    const user = {
+      id: uuid(),
+      role: UserRole.COURT_OF_APPEALS_ASSISTANT,
+      institution: { type: InstitutionType.COURT_OF_APPEALS },
+    } as User
+    const caseId = uuid()
+    const theCase = { id: caseId, courtCaseNumber: 'S-999/2021' } as Case
+    const fileId = uuid()
+    const caseFile = {
+      id: fileId,
+      key: `${caseId}/${uuid()}/test.pdf`,
+      isKeyAccessible: true,
+      category: CaseFileCategory.VERDICT_APPEAL_RULING,
+    } as CaseFile
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(caseId, fileId, user, theCase, caseFile)
+    })
+
+    it('should refuse the upload, whoever asks', () => {
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+    })
+
+    it('should not read the file or reach the court system', () => {
+      expect(mockAwsS3Service.objectExists).not.toHaveBeenCalled()
+      expect(mockAwsS3Service.getObject).not.toHaveBeenCalled()
+      expect(mockCourtService.createDocument).not.toHaveBeenCalled()
+      expect(mockCaseFileRepositoryService.updateById).not.toHaveBeenCalled()
     })
   })
 
