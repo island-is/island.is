@@ -487,7 +487,7 @@ describe('publishing a form', () => {
 
     await waitFor(() => expect(formsUpdated).toHaveBeenCalledTimes(1))
     expect(toast.warning).toHaveBeenCalledWith(
-      'Ekki tókst að staðfesta hvort eyðublaðið var gefið út. Endurhlaðaðu síðuna áður en þú reynir aftur.',
+      'Ekki tókst að staðfesta hvort eyðublaðið var gefið út. Endurhladdu síðuna áður en þú reynir aftur.',
     )
     expect(toast.error).not.toHaveBeenCalled()
   })
@@ -638,7 +638,7 @@ describe('publishing a form', () => {
 
     await waitFor(() =>
       expect(toast.warning).toHaveBeenCalledWith(
-        'Ekki tókst að staðfesta hvort eyðublaðið var gefið út. Endurhlaðaðu síðuna áður en þú reynir aftur.',
+        'Ekki tókst að staðfesta hvort eyðublaðið var gefið út. Endurhladdu síðuna áður en þú reynir aftur.',
       ),
     )
     expect(formsUpdated).not.toHaveBeenCalled()
