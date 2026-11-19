@@ -100,19 +100,6 @@ export type RepeaterFields =
 
 type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
 
-export type RepeaterItemContext = {
-  application: Application
-  row?: Record<string, string>
-  index: number
-  locale: Locale
-  formatMessage: FormatMessage
-  apolloClient: ApolloClient<object>
-}
-
-export type MaybeWithRepeaterItemContext<T> =
-  | T
-  | ((ctx: RepeaterItemContext) => T)
-
 export type RepeaterFieldContext = {
   application: Application
   locale: Locale
@@ -120,6 +107,15 @@ export type RepeaterFieldContext = {
 }
 
 export type RepeaterRowContext = RepeaterFieldContext & { index: number }
+
+export type RepeaterItemContext = RepeaterRowContext & {
+  row?: Record<string, string>
+  apolloClient: ApolloClient<object>
+}
+
+export type MaybeWithRepeaterItemContext<T> =
+  | T
+  | ((ctx: RepeaterItemContext) => T)
 
 type MaybeWithRepeaterFieldContext<T> = T | ((ctx: RepeaterFieldContext) => T)
 
@@ -146,7 +142,7 @@ export type RepeaterItem = {
    * Defaults to true
    */
   displayInTable?: boolean
-  label?: MaybeWithRepeaterItemContext<StaticText>
+  label?: StaticText | ((ctx: Pick<RepeaterItemContext, 'index'>) => StaticText)
   phoneLabel?: StaticText
   emailLabel?: StaticText
   customNameLabel?: StaticText
@@ -842,12 +838,9 @@ export type ApplicationActionCardProps = Modify<
   }
 >
 
-export type TableRepeaterCellContext = {
-  application: Application
+export type TableRepeaterCellContext = RepeaterFieldContext & {
   row: Record<string, string>
   displayIndex: number
-  locale: Locale
-  formatMessage: FormatMessage
 }
 
 export type TableRepeaterColumn = {

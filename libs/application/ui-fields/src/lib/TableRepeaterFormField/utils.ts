@@ -1,8 +1,4 @@
-import {
-  RepeaterItem,
-  RepeaterItemContext,
-  TableRepeaterColumn,
-} from '@island.is/application/types'
+import { RepeaterItem, TableRepeaterColumn } from '@island.is/application/types'
 import { coreMessages } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
 
@@ -94,17 +90,14 @@ const handleVehiclePermnoWithInfoItem = <T>(
   })
 }
 
-export const buildDefaultTableHeader = (
-  items: Array<RepeaterItem>,
-  ctx: Omit<RepeaterItemContext, 'index' | 'row'>,
-) =>
+export const buildDefaultTableHeader = (items: Array<RepeaterItem>) =>
   items
     .map((item) =>
       // nationalIdWithName is a special case where the value is an object of name and nationalId
       item.component === 'nationalIdWithName'
         ? [coreMessages.name, coreMessages.nationalId]
         : typeof item.label === 'function'
-        ? item.label({ ...ctx, index: 0 })
+        ? item.label({ index: 0 })
         : item.label,
     )
     .flat(2)
@@ -127,9 +120,8 @@ export const buildDefaultTableRows = (
 
 export const buildDefaultColumns = (
   items: Array<RepeaterItem & { id: string }>,
-  ctx: Omit<RepeaterItemContext, 'index' | 'row'>,
 ): TableRepeaterColumn[] => {
-  const header = buildDefaultTableHeader(items, ctx)
+  const header = buildDefaultTableHeader(items)
   return buildDefaultTableRows(items).map((value, index) => ({
     header: header[index] ?? '',
     value,

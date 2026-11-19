@@ -5,7 +5,6 @@ import type {
   FormText,
   RadioField,
   RepeaterItem,
-  RepeaterItemContext,
   StaticText,
   TableRepeaterField,
 } from '@island.is/application/types'
@@ -27,9 +26,7 @@ import {
 } from './preview-stub.util'
 
 const resolveLabel = (label: RepeaterItem['label']): StaticText | undefined =>
-  typeof label === 'function'
-    ? label({ index: 0 } as RepeaterItemContext)
-    : label
+  typeof label === 'function' ? label({ index: 0 }) : label
 
 export const mapRepeaterItemToFieldType = (item: RepeaterItem): string => {
   switch (item.component) {

@@ -103,14 +103,7 @@ export const TableRepeaterFormField: FC<Props> = ({
     ...rawItems[key],
   }))
   const tableItems = items.filter((x) => x.displayInTable !== false)
-  const columns =
-    table?.columns ??
-    buildDefaultColumns(tableItems, {
-      application: watchedApplication,
-      locale: locale as Locale,
-      formatMessage,
-      apolloClient,
-    })
+  const columns = table?.columns ?? buildDefaultColumns(tableItems)
   const { fields, append, remove, update } = useFieldArray({
     control: methods.control,
     name: resolvedId,
