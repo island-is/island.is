@@ -1,6 +1,6 @@
 import SegmentedControl from '@react-native-segmented-control/segmented-control'
 import React from 'react'
-import { PixelRatio, Platform } from 'react-native'
+import { PixelRatio, Platform, View } from 'react-native'
 import { useTheme } from 'styled-components/native'
 
 interface TabButton {
@@ -27,7 +27,8 @@ const ANDROID_FONT_SIZE = 14
 
 // The system's segmented control on iOS. On Android the library draws its own
 // version of it, which fades to 40% when disabled: its raised slider then shows
-// a grey box. There it keeps its look and ignores taps instead.
+// a grey box. There it keeps its look and ignores taps instead, and TalkBack
+// skips it, since it would offer segments that do nothing.
 export const TabButtons = ({
   buttons,
   selectedTab,
@@ -42,7 +43,7 @@ export const TabButtons = ({
     (ANDROID_FONT_SIZE * Math.min(fontScale, ANDROID_MAX_FONT_SCALE)) /
     fontScale
 
-  return (
+  const control = (
     <SegmentedControlWithTestIds
       values={titles}
       // Android reads these out as the segments' names.
@@ -64,5 +65,14 @@ export const TabButtons = ({
       // Follow the app's theme, not the system's.
       appearance={theme.isDark ? 'dark' : 'light'}
     />
+  )
+
+  if (Platform.OS !== 'android') {
+    return control
+  }
+  return (
+    <View importantForAccessibility={disabled ? 'no-hide-descendants' : 'auto'}>
+      {control}
+    </View>
   )
 }
