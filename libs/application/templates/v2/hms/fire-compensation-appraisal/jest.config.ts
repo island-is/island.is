@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 export default {
   displayName: 'fire-compensation-appraisal-sdf',
   preset: '../../../../../../jest.preset.js',
