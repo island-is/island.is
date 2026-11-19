@@ -46,6 +46,19 @@ const normalizeFormAst = (value: unknown): unknown => {
   return value
 }
 
+// Legacy examples that the v2 example leaves out because SDF cannot render them
+// yet. Remove an id from this list once SDF supports the feature and the v2
+// example has the same section.
+const LEGACY_EXAMPLES_NOT_SUPPORTED_IN_SDF = [
+  // SDF has no server-side mapper for the interactive table or its sticky
+  // footer (`field-mappers/index.ts`).
+  'interactiveTableSubsection',
+  // The SDF accordion mapper (`accordion.mapper.ts`) does not carry the item
+  // `tag`, so the tag variants would render without their tags.
+  'accordionTagVariantsDescription',
+  'accordionTagVariants',
+]
+
 const normalizeMainFormParityAst = (value: unknown): unknown => {
   const normalized = normalizeFormAst(value)
 
@@ -61,6 +74,7 @@ const normalizeMainFormParityAst = (value: unknown): unknown => {
               'multiplyInput2',
               'multiplyInput3',
               'displayFieldProduct',
+              ...LEGACY_EXAMPLES_NOT_SUPPORTED_IN_SDF,
             ].includes(String((entry as { id?: unknown }).id))
           ),
       )
