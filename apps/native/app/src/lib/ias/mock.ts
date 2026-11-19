@@ -37,7 +37,12 @@ export function createMockIasClient({
 
     async startLogin(loginHint, { smsCode } = {}) {
       await sleep(500)
-      if (loginHint.endsWith('000') && smsCode !== MOCK_SMS_CODE) {
+      // Once the tries are used, the right code doesn't work either: only a
+      // new one, after starting again.
+      if (
+        loginHint.endsWith('000') &&
+        (smsCode !== MOCK_SMS_CODE || smsAttemptsLeft <= 0)
+      ) {
         if (!smsCode) {
           smsAttemptsLeft = 3
           throw new IasError(
@@ -47,7 +52,7 @@ export function createMockIasClient({
             'POST /connect/ciba',
           )
         }
-        smsAttemptsLeft -= 1
+        smsAttemptsLeft = Math.max(0, smsAttemptsLeft - 1)
         throw new IasError(
           'access_denied',
           `invalid_sms_code: ${smsAttemptsLeft} attempts remaining`,
