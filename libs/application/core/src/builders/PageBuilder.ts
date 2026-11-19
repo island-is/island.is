@@ -25,6 +25,7 @@ import {
   RadioField,
   RecordObject,
   SelectField,
+  ScaleField,
   SliderField,
   StaticCheck,
   FormText,
@@ -64,6 +65,7 @@ import {
   buildPhoneField,
   buildRadioField,
   buildSelectField,
+  buildScaleField,
   buildSliderField,
   buildSubmitField,
   buildStaticTableField,
@@ -222,6 +224,7 @@ type SelectFieldOptions<TSchema = unknown> = Omit<
     options: OptionList | DynamicOptions<TSchema> | SelectField['options']
     refetchTargets?: string[]
   }
+type ScaleFieldOptions = FieldBuilderOptions<ScaleField>
 type SliderFieldOptions = FieldBuilderOptions<SliderField>
 type SubmitFieldOptions = Omit<
   SubmitField,
@@ -1029,6 +1032,11 @@ export class PageBuilder<TSchema = unknown> {
 
   addTitleField(title: FormText, opts?: TitleFieldOptions): this {
     this.fields.push(buildTitleField({ title, ...opts }))
+    return this
+  }
+
+  addScaleField(id: string, title: FormText, opts: ScaleFieldOptions): this {
+    this.fields.push(buildScaleField({ id, title, ...opts }))
     return this
   }
 

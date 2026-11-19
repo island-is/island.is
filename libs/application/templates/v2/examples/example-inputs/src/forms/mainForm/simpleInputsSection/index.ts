@@ -7,6 +7,7 @@ import { phoneSubsection } from './phoneSubsection'
 import { dateSubsection } from './dateSubsection'
 import { fileUploadSubsection } from './fileUploadSubsection'
 import { sliderSubsection } from './sliderSubsection'
+import { scaleSubSection } from './scaleSubSection'
 import { companySearchSubsection } from './companySearchSubsection'
 import { asyncSelectSubsection } from './asyncSelectSubsection'
 import { displayFieldSubsection } from './displayFieldSubsection'
@@ -27,5 +28,6 @@ export const simpleInputsSection: Section = {
     dateSubsection,
     fileUploadSubsection,
     sliderSubsection,
+    scaleSubSection,
   ],
 }
