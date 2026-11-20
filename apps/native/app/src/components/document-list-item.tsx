@@ -240,7 +240,11 @@ export const DocumentListItem = ({
                     >
                       <Image
                         source={copyIcon}
-                        style={{ width: 16, height: 16 }}
+                        style={{
+                          tintColor: theme.tokens.foreground.brand,
+                          width: 16,
+                          height: 16,
+                        }}
                         resizeMode="contain"
                       />
                     </TouchableOpacity>
@@ -300,7 +304,11 @@ export const DocumentListItem = ({
                         ) : (
                           <Image
                             source={documentIcon}
-                            style={{ width: ICON_SIZE, height: ICON_SIZE }}
+                            style={{
+                              tintColor: theme.tokens.foreground.brand,
+                              width: ICON_SIZE,
+                              height: ICON_SIZE,
+                            }}
                             resizeMode="contain"
                           />
                         )}

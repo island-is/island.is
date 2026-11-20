@@ -147,8 +147,9 @@ export const StatusMessageTemplate = ({
 }: StatusMessageTemplateProps) => {
   const theme = useTheme()
   const { openBrowser } = useBrowser()
-  const { borderColor, tagColor, tagBackgroundColor } =
-    getColorsByVariant(variant)
+  const { borderColor, tagColor, tagBackgroundColor } = getColorsByVariant(
+    variant,
+  )
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -208,6 +209,7 @@ export const StatusMessageTemplate = ({
                 {detailLink.text}
               </Typography>
               <Icon
+                tintColor={theme.tokens.foreground.brand}
                 style={{ width: theme.spacing[2], height: theme.spacing[2] }}
                 source={externalLinkIcon}
               />

@@ -215,6 +215,7 @@ const light = {
     // code-only
     overlay: {
       scrim: 'rgba(0, 0, 0, 0.5)',
+      foreground: white,
     },
     // code-only
     shadow: {
@@ -235,7 +236,7 @@ export type TokenSelector = (tokens: Tokens) => string
 const dark: Tokens = {
   background: {
     invert: darkSurface, // figma
-    brand: darkHeader, // figma
+    brand: blue300, // inferred
     brandLighter: darkActive, // figma
     brandMinimal: darkCanvas, // figma
     brandSecondary: darkPurpleBg, // figma
@@ -333,7 +334,7 @@ const dark: Tokens = {
     background: {
       primary: blue300, // figma
       primaryActive: blueberry300, // figma
-      primaryDisabled: darkSurface, // figma
+      primaryDisabled: darkDisabled, // inferred
       primaryMinimal: darkTinted, // figma
       primaryMinimalActive: darkSelection, // figma
       focus: mint400, // figma
@@ -412,6 +413,7 @@ const dark: Tokens = {
     },
     overlay: {
       scrim: darkScrim, // no figma equivalent
+      foreground: dark100, // no figma equivalent
     },
     shadow: {
       brand: 'rgba(153, 192, 255, 0.2)', // figma

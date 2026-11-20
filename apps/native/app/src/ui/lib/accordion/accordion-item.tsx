@@ -109,7 +109,11 @@ export function AccordionItem({
           >
             <Image
               source={isOpen ? minus : plus}
-              style={{ width: theme.spacing[2], height: theme.spacing[2] }}
+              style={{
+                width: theme.spacing[2],
+                height: theme.spacing[2],
+                tintColor: theme.tokens.foreground.brand,
+              }}
             />
           </PlusMinus>
         </Pressable>

@@ -139,9 +139,12 @@ export function ListItem({
       source={
         selectable && selected ? checkmarkIcon : (icon as ImageSourcePropType)
       }
-      style={
-        selectable && selected ? styles.selectedIconImage : styles.iconImage
-      }
+      style={[
+        selectable && selected ? styles.selectedIconImage : styles.iconImage,
+        selectable && selected
+          ? { tintColor: tokens.foreground.brand }
+          : undefined,
+      ]}
     />
   )
   return (

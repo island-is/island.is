@@ -261,13 +261,15 @@ export default function SettingsScreen() {
           [
             {
               text: intl.formatMessage({
-                id: 'settings.communication.notificationsBlockedAlertCancelButton',
+                id:
+                  'settings.communication.notificationsBlockedAlertCancelButton',
               }),
               style: 'cancel',
             },
             {
               text: intl.formatMessage({
-                id: 'settings.communication.notificationsBlockedAlertOpenSettingsButton',
+                id:
+                  'settings.communication.notificationsBlockedAlertOpenSettingsButton',
               }),
               onPress: onNotificationsBlockedPress,
             },
@@ -379,7 +381,11 @@ export default function SettingsScreen() {
               >
                 <Image
                   source={editIcon as any}
-                  style={{ width: 19, height: 19 }}
+                  style={{
+                    tintColor: theme.tokens.foreground.brand,
+                    width: 19,
+                    height: 19,
+                  }}
                 />
               </TouchableOpacity>
             }
@@ -400,7 +406,11 @@ export default function SettingsScreen() {
               >
                 <Image
                   source={editIcon as any}
-                  style={{ width: 19, height: 19 }}
+                  style={{
+                    tintColor: theme.tokens.foreground.brand,
+                    width: 19,
+                    height: 19,
+                  }}
                 />
               </TouchableOpacity>
             }
@@ -423,7 +433,11 @@ export default function SettingsScreen() {
               >
                 <Image
                   source={editIcon as any}
-                  style={{ width: 19, height: 19 }}
+                  style={{
+                    tintColor: theme.tokens.foreground.brand,
+                    width: 19,
+                    height: 19,
+                  }}
                 />
               </TouchableOpacity>
             }
@@ -522,7 +536,13 @@ export default function SettingsScreen() {
               accessory={
                 <Image
                   source={chevronForward}
-                  style={{ width: 24, height: 24 }}
+                  style={{
+                    tintColor: theme.isDark
+                      ? theme.tokens.foreground.primaryMinimal
+                      : undefined,
+                    width: 24,
+                    height: 24,
+                  }}
                 />
               }
             />
@@ -605,7 +625,13 @@ export default function SettingsScreen() {
                 accessory={
                   <Image
                     source={chevronForward}
-                    style={{ width: 24, height: 24 }}
+                    style={{
+                      tintColor: theme.isDark
+                        ? theme.tokens.foreground.primaryMinimal
+                        : undefined,
+                      width: 24,
+                      height: 24,
+                    }}
                   />
                 }
               />
@@ -657,7 +683,13 @@ export default function SettingsScreen() {
               accessory={
                 <Image
                   source={chevronForward}
-                  style={{ width: 24, height: 24 }}
+                  style={{
+                    tintColor: theme.isDark
+                      ? theme.tokens.foreground.primaryMinimal
+                      : undefined,
+                    width: 24,
+                    height: 24,
+                  }}
                 />
               }
             />

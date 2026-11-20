@@ -15,12 +15,17 @@ import { Skeleton } from '../skeleton/skeleton'
 import { ExpirationProgressBar } from '../../../components/progress-bar/expiration-progress-bar'
 import { GenericLicenseType } from '../../../graphql/types/schema'
 import { isString } from '../../../utils/is-string'
-import { licenceFallback, licenceForeground } from '../../utils/licence-colours'
 import IconStatusNonVerified from '../../assets/card/danger.png'
 import IconStatusVerified from '../../assets/card/is-verified.png'
 import { LicenseCardPresets } from './license-list-card'
-import { dynamicColor, token } from '../../utils/dynamic-color'
-import { licenceBarcodeVeil, licenceColours } from '../../utils/licence-colours'
+import { dynamicColor } from '../../utils/dynamic-color'
+import {
+  licenceBarcodeBackground,
+  licenceBarcodeVeil,
+  licenceColours,
+  licenceFallback,
+  licenceForeground,
+} from '../../utils/licence-colours'
 import { Typography } from '../typography/typography'
 import { screenWidth } from '../../../utils/dimensions'
 import { BARCODE_MAX_WIDTH } from '@/constants/wallet.constants'
@@ -55,7 +60,7 @@ const BarcodeWrapper = styled.View<{ minHeight?: number }>`
 
 const BarcodeContainer = styled.View`
   flex: 1;
-  background-color: ${token((t) => t.background.invert)};
+  background-color: ${licenceBarcodeBackground};
   padding: ${({ theme }) => theme.spacing.smallGutter}px;
   align-items: center;
   justify-content: center;
@@ -313,7 +318,11 @@ export function LicenseCard({
       {allowLicenseBarcode && (error || showBarcodeOfflineMessage) && (
         <BarcodeWrapper minHeight={barcodeHeight}>
           <BarcodeContainer style={{ backgroundColor: licenceBarcodeVeil }}>
-            <OfflineMessage variant="body3" style={{ opacity: 1 }}>
+            <OfflineMessage
+              variant="body3"
+              color={licenceForeground}
+              style={{ opacity: 1 }}
+            >
               {intl.formatMessage({
                 id: error
                   ? badSessionError

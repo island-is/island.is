@@ -1,8 +1,10 @@
 import { usePreferencesStore } from '@/stores/preferences-store'
 import { getThemeWithPreferences } from '@/utils/get-theme-with-preferences'
 import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native'
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import {
+  Appearance,
+  ColorSchemeName,
   DynamicColorIOS,
   Platform,
   StatusBar,
@@ -12,11 +14,27 @@ import { ThemeProvider as StyledThemeProvider } from 'styled-components'
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const appearanceMode = usePreferencesStore((s) => s.appearanceMode)
-  const systemScheme = useColorScheme()
+  const reportedScheme = useColorScheme()
+
+  const lastRealScheme = useRef<ColorSchemeName>(reportedScheme)
+  if (reportedScheme === 'light' || reportedScheme === 'dark') {
+    lastRealScheme.current = reportedScheme
+  }
+  const systemScheme =
+    reportedScheme === 'light' || reportedScheme === 'dark'
+      ? reportedScheme
+      : lastRealScheme.current
+
   const selectedTheme = useMemo(
     () => getThemeWithPreferences({ appearanceMode }, systemScheme),
     [appearanceMode, systemScheme],
   )
+
+  useEffect(() => {
+    Appearance.setColorScheme(
+      appearanceMode === 'automatic' ? 'unspecified' : appearanceMode,
+    )
+  }, [appearanceMode])
 
   useEffect(() => {
     StatusBar.setBarStyle(

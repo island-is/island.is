@@ -108,7 +108,12 @@ export const LinkRowButton = ({
         <Content>
           {link.icon && (
             <IconWrapper>
-              <Icon source={link.icon} width={ICON_SIZE} height={ICON_SIZE} />
+              <Icon
+                tintColor={tokens.foreground.brand}
+                source={link.icon}
+                width={ICON_SIZE}
+                height={ICON_SIZE}
+              />
             </IconWrapper>
           )}
           <Typography

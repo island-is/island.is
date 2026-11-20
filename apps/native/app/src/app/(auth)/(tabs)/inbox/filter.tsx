@@ -18,6 +18,7 @@ import {
   DatePickerInput,
   theme,
   Typography,
+  useTokenColor,
 } from '@/ui'
 import { FilteringCheckbox } from '../../../../components/filtering-checkbox'
 import {
@@ -40,6 +41,7 @@ const DatePickerContainer = styled(View)`
 export default function FilterScreen() {
   const intl = useIntl()
   const store = useInboxFilterStore()
+  const tokenColor = useTokenColor()
 
   // Local editing state (initialized from store)
   const [opened, setOpened] = useState(store.opened)
@@ -137,11 +139,11 @@ export default function FilterScreen() {
               <Typography
                 size={15}
                 weight="400"
-                color={
+                color={tokenColor((t) =>
                   isSelected
-                    ? theme.tokens.interactive.foreground.primary
-                    : theme.tokens.foreground.primaryMinimal
-                }
+                    ? t.interactive.foreground.primary
+                    : t.foreground.primaryMinimal,
+                )}
               >
                 {intl.formatMessage({ id: 'inbox.filterClearButton' })}
               </Typography>

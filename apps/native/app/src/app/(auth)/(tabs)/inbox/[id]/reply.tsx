@@ -2,7 +2,7 @@ import { router, useLocalSearchParams } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Keyboard, KeyboardAvoidingView, ScrollView } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import { StackScreen } from '@/components/stack-screen'
 
@@ -69,11 +69,8 @@ const EmailIconWrapper = styled(Pressable)`
 `
 
 export default function DocumentReplyScreen() {
-  const {
-    id: documentId,
-    senderName,
-    subject,
-  } = useLocalSearchParams<{
+  const theme = useTheme()
+  const { id: documentId, senderName, subject } = useLocalSearchParams<{
     id: string
     senderName: string
     subject: string
@@ -91,25 +88,27 @@ export default function DocumentReplyScreen() {
   const [message, setMessage] = useState('')
   const [hasShownModal, setHasShownModal] = useState(false)
 
-  const [sendMessage, { loading: sendMessageLoading }] =
-    useDocumentReplyMutation({
-      refetchQueries: [GetDocumentDocument],
-      onCompleted: (data) => {
-        if (data.documentsV2Reply?.id) {
-          setMessage('')
-          router.back()
-        } else {
-          toast.error(
-            intl.formatMessage({ id: 'documentReply.sendMessageError' }),
-            {
-              message: intl.formatMessage({
-                id: 'documentReply.pleaseTryAgain',
-              }),
-            },
-          )
-        }
-      },
-    })
+  const [
+    sendMessage,
+    { loading: sendMessageLoading },
+  ] = useDocumentReplyMutation({
+    refetchQueries: [GetDocumentDocument],
+    onCompleted: (data) => {
+      if (data.documentsV2Reply?.id) {
+        setMessage('')
+        router.back()
+      } else {
+        toast.error(
+          intl.formatMessage({ id: 'documentReply.sendMessageError' }),
+          {
+            message: intl.formatMessage({
+              id: 'documentReply.pleaseTryAgain',
+            }),
+          },
+        )
+      }
+    },
+  })
 
   const onSendPress = () => {
     if (!userProfile?.email) {
@@ -203,6 +202,11 @@ export default function DocumentReplyScreen() {
                     source={require('@/assets/icons/chevron-forward.png')}
                     width={16}
                     height={16}
+                    tintColor={
+                      theme.isDark
+                        ? theme.tokens.foreground.primaryMinimal
+                        : undefined
+                    }
                   />
                 </EmailIconWrapper>
               </Row>

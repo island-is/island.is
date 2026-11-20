@@ -53,7 +53,14 @@ export function LinkText({
         {children}
       </Text>
       {icon && (
-        <Image source={icon} style={{ paddingBottom: 1, marginLeft: 3 }} />
+        <Image
+          source={icon}
+          style={{
+            paddingBottom: 1,
+            marginLeft: 3,
+            tintColor: theme.tokens.interactive.foreground.primary,
+          }}
+        />
       )}
     </Host>
   )

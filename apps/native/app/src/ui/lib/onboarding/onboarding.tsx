@@ -73,6 +73,7 @@ const LinkText = styled.Text`
 const LinkIcon = styled.Image`
   width: 14px;
   height: 14px;
+  tint-color: ${token((t) => t.interactive.foreground.primary)};
 `
 
 const IllustrationWrapper = styled.View`

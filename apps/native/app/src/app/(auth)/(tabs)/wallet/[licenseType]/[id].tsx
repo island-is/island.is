@@ -407,7 +407,7 @@ export default function WalletPassScreen() {
           <LoadingOverlay>
             <ActivityIndicator
               size="large"
-              color={theme.tokens.foreground.invert}
+              color={theme.tokens.app.overlay.foreground}
               style={{ marginTop: theme.spacing[4] }}
             />
           </LoadingOverlay>

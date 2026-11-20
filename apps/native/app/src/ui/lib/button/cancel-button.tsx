@@ -44,6 +44,7 @@ export function CancelButton({
           <Image
             source={arrow}
             style={{
+              tintColor: theme.tokens.foreground.brand,
               width: 10,
               height: 10,
               transform: [{ rotate: '-180deg' }],
@@ -59,7 +60,14 @@ export function CancelButton({
           {title}
         </Title>
         {!arrowBack && (
-          <Image source={arrow} style={{ width: 10, height: 10 }} />
+          <Image
+            source={arrow}
+            style={{
+              tintColor: theme.tokens.foreground.brand,
+              width: 10,
+              height: 10,
+            }}
+          />
         )}
       </Wrapper>
     </Host>

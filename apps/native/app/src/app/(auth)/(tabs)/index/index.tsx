@@ -479,7 +479,11 @@ export default function HomeScreen() {
                     >
                       <Image
                         source={require('@/assets/icons/notifications.png')}
-                        style={{ width: 24, height: 24 }}
+                        style={{
+                          tintColor: theme.tokens.foreground.brand,
+                          width: 24,
+                          height: 24,
+                        }}
                       />
                     </LiquidGlass>
                   ) : (
@@ -493,7 +497,11 @@ export default function HomeScreen() {
                     >
                       <Image
                         source={require('@/assets/icons/notifications.png')}
-                        style={{ width: 24, height: 24 }}
+                        style={{
+                          tintColor: theme.tokens.foreground.brand,
+                          width: 24,
+                          height: 24,
+                        }}
                       />
                     </View>
                   )}

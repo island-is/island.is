@@ -137,7 +137,12 @@ const HeadingSection: React.FC<HeadingSectionProps> = ({
                 {chevron ? (
                   <ChevronRight />
                 ) : (
-                  showIcon && <Image source={externalLinkIcon} />
+                  showIcon && (
+                    <Image
+                      tintColor={theme.tokens.foreground.brand}
+                      source={externalLinkIcon}
+                    />
+                  )
                 )}
               </>
             )}
@@ -184,7 +189,10 @@ const ExternalLink: React.FC<ExternalLinkProps> = ({
         >
           <FormattedMessage id={text} />
         </Typography>
-        <Image source={externalLinkIcon} />
+        <Image
+          tintColor={theme.tokens.foreground.brand}
+          source={externalLinkIcon}
+        />
       </View>
     </TouchableOpacity>
   )
@@ -908,7 +916,8 @@ export default function HealthOverviewScreen() {
                 warningText={
                   !isMedicinePeriodActive
                     ? intl.formatMessage({
-                        id: 'health.overview.medicinePurchaseNoActivePeriodWarning',
+                        id:
+                          'health.overview.medicinePurchaseNoActivePeriodWarning',
                       })
                     : ''
                 }

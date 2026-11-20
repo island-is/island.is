@@ -147,6 +147,7 @@ export function QuestionnaireCard({
                 <Image
                   source={timeOutlineIcon as ImageSourcePropType}
                   style={{
+                    tintColor: theme.tokens.foreground.brand,
                     width: 16,
                     height: 16,
                     marginRight: theme.spacing.smallGutter,
@@ -168,7 +169,13 @@ export function QuestionnaireCard({
               />
               <Image
                 source={chevronForward}
-                style={{ width: 24, height: 24 }}
+                style={{
+                  tintColor: theme.isDark
+                    ? theme.tokens.foreground.primaryMinimal
+                    : undefined,
+                  width: 24,
+                  height: 24,
+                }}
               />
             </RightContent>
           </ContentRow>
