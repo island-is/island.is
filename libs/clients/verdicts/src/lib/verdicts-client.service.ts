@@ -886,8 +886,6 @@ export class VerdictsClientService {
     const response = await goproCaseApi.getPublishedAppealCasesV2({
       pageNumber: Math.max(1, input.page ?? 1),
       itemsPerPage: ITEMS_PER_PAGE,
-      orderBy: 'publishdate',
-      orderDirection: 'desc',
     })
 
     if (response.succeeded === false) {
