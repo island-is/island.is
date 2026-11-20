@@ -7,10 +7,12 @@ import {
   UpdatedAt,
   ForeignKey,
   BelongsTo,
+  HasMany,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { MeActorProfileDto } from '../dto/actor-profile.dto'
 import { Emails } from './emails.model'
+import { ActorBlockedNotification } from './actorBlockedNotification.model'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 
 @Table({
@@ -107,6 +109,13 @@ export class ActorProfile extends Model {
     as: 'emails',
   })
   emails?: Emails
+
+  @HasMany(() => ActorBlockedNotification, {
+    foreignKey: 'actorProfileId',
+    sourceKey: 'id',
+    as: 'blockedNotifications',
+  })
+  blockedNotifications?: ActorBlockedNotification[]
 
   toDto(): MeActorProfileDto {
     return {

@@ -13,8 +13,10 @@ import {
   NationalRegistryV3ClientService,
 } from '@island.is/clients/national-registry-v3'
 import {
+  ActorProfileDto,
   UserProfileDto,
   UserProfileControllerFindUserProfileIncludeEnum as UserProfileInclude,
+  UserProfileControllerGetActorProfileIncludeEnum as ActorProfileInclude,
   V2UsersApi,
 } from '@island.is/clients/user-profile'
 import type { Logger } from '@island.is/logging'
@@ -220,7 +222,7 @@ export class NotificationsWorkerService {
     category,
     messageId,
   }: {
-    userProfile?: UserProfileDto
+    userProfile?: Pick<UserProfileDto, 'blockedCategories'>
     senderId?: string
     category: string | null
     messageId: string
@@ -265,11 +267,44 @@ export class NotificationsWorkerService {
       return
     }
 
-    const actorProfile =
-      await this.userProfileApi.userProfileControllerGetActorProfile({
-        xParamToNationalId: args.recipient,
-        xParamFromNationalId: args.onBehalfOf.nationalId,
-      })
+    // Blocked categories are the actor profile's own, and the feature flag is
+    // evaluated for the delegate (the recipient).
+    const includeBlockedCategories = await this.shouldIncludeBlockedCategories({
+      nationalId: args.recipient,
+      senderId: args.senderId,
+      urgent: args.urgent,
+      messageId,
+    })
+
+    let actorProfile: ActorProfileDto | undefined
+    if (includeBlockedCategories) {
+      try {
+        actorProfile =
+          await this.userProfileApi.userProfileControllerGetActorProfile({
+            xParamToNationalId: args.recipient,
+            xParamFromNationalId: args.onBehalfOf.nationalId,
+            include: [ActorProfileInclude.NotificationSettings],
+          })
+      } catch {
+        // Fail open: blocked categories are optional, so retry without them
+        // rather than dropping the notification.
+        this.logger.warn(
+          'Failed to fetch actor profile with notification settings, retrying without',
+          { messageId },
+        )
+        actorProfile =
+          await this.userProfileApi.userProfileControllerGetActorProfile({
+            xParamToNationalId: args.recipient,
+            xParamFromNationalId: args.onBehalfOf.nationalId,
+          })
+      }
+    } else {
+      actorProfile =
+        await this.userProfileApi.userProfileControllerGetActorProfile({
+          xParamToNationalId: args.recipient,
+          xParamFromNationalId: args.onBehalfOf.nationalId,
+        })
+    }
 
     if (!actorProfile) {
       this.logger.info('No actor profile found for user', { messageId })
@@ -338,13 +373,20 @@ export class NotificationsWorkerService {
       ])
 
     // Email only: the actor profile's preferences never affect SMS, which uses
-    // the delegate's own profile. Urgent notifications bypass the filter.
-    const shouldSendNotification = this.shouldDeliverByPriority({
-      profile: actorProfile,
-      priorityType: template.priorityType,
-      urgent: args.urgent,
-      messageId,
-    })
+    // the delegate's own profile. Urgent notifications bypass both filters.
+    const shouldSendNotification =
+      this.shouldDeliverByPriority({
+        profile: actorProfile,
+        priorityType: template.priorityType,
+        urgent: args.urgent,
+        messageId,
+      }) &&
+      !this.isCategoryBlocked({
+        userProfile: actorProfile,
+        senderId: args.senderId,
+        category: toTemplateCategory(template.hnippCategoryIs),
+        messageId,
+      })
 
     const dbRecord = await this.createActorNotificationDbRecord(
       args,

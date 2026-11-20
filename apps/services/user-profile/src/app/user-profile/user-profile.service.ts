@@ -1419,6 +1419,23 @@ export class UserProfileService {
     return this.getSingleActorProfile({ toNationalId, fromNationalId })
   }
 
+  /**
+   * Throws BadRequestException unless the user has an incoming delegation
+   * from fromNationalId.
+   */
+  async verifyIncomingDelegation(
+    toNationalId: string,
+    fromNationalId: string,
+  ): Promise<void> {
+    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+
+    if (
+      !incomingDelegations.data.some((d) => d.fromNationalId === fromNationalId)
+    ) {
+      throw new BadRequestException('Delegation does not exist')
+    }
+  }
+
   /* Private methods */
 
   private async getIncomingDelegations(nationalId: string) {
