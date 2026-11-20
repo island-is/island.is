@@ -63,6 +63,7 @@ const renderFamily = (
   state?: ApplicationState,
   valueIndex = 0,
   registryData?: Record<string, unknown>,
+  fieldSettings?: FormSystemField['fieldSettings'],
 ) => {
   const dispatch = jest.fn()
   const registryRequest = jest.fn()
@@ -87,7 +88,7 @@ const renderFamily = (
     id: 'family',
     fieldType: FieldTypesEnum.FAMILY,
     name: { is: 'Family' },
-    fieldSettings: { familyType },
+    fieldSettings: { familyType, ...fieldSettings },
     values: [
       {
         json: {
@@ -231,6 +232,88 @@ it.each([
         placeholder: null,
       },
     })
+  },
+)
+
+it.each([
+  {
+    showBiologicalChildren: true,
+    showChildrenInCustody: true,
+    expected: ['Biological child', 'Shared child', 'Custody child'],
+  },
+  {
+    showBiologicalChildren: true,
+    showChildrenInCustody: false,
+    expected: ['Biological child', 'Shared child'],
+  },
+  {
+    showBiologicalChildren: false,
+    showChildrenInCustody: true,
+    expected: ['Shared child', 'Custody child'],
+  },
+  {
+    showBiologicalChildren: false,
+    showChildrenInCustody: false,
+    expected: [],
+  },
+])(
+  'displays and caches only enabled child sources: %j',
+  async ({ expected, ...fieldSettings }) => {
+    const { dispatch } = renderFamily(
+      FamilyTypes.CHILD,
+      false,
+      undefined,
+      0,
+      {
+        nationalRegistryPerson: {
+          biologicalChildren: [
+            {
+              nationalId: '0101202989',
+              fullName: 'Biological child',
+              details: null,
+            },
+            {
+              nationalId: '0101212989',
+              fullName: 'Shared child',
+              details: null,
+            },
+          ],
+          childCustody: [
+            {
+              nationalId: '0101212989',
+              fullName: 'Shared child',
+              details: null,
+            },
+            {
+              nationalId: '0101222989',
+              fullName: 'Custody child',
+              details: null,
+            },
+          ],
+          spouse: null,
+        },
+      },
+      fieldSettings,
+    )
+
+    await waitFor(() => {
+      expect(dispatch).toHaveBeenCalledWith({
+        type: 'SET_FIELD_LIST',
+        payload: {
+          id: 'family',
+          list: expected.map((name) => ({
+            id: expect.any(String),
+            label: { is: name, en: name },
+            value: expect.any(String),
+            isSelected: false,
+          })),
+          placeholder: null,
+        },
+      })
+    })
+    expect(
+      screen.queryAllByRole('option').map((option) => option.textContent),
+    ).toEqual(expected)
   },
 )
 

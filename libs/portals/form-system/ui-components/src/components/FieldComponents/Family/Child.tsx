@@ -45,11 +45,18 @@ type FamilyMembersData = {
   } | null
 }
 
-const getChildren = (data?: FamilyMembersData) =>
+const getChildren = (
+  data: FamilyMembersData | undefined,
+  settings: FormSystemField['fieldSettings'],
+) =>
   uniqBy(
     [
-      ...(data?.nationalRegistryPerson?.biologicalChildren ?? []),
-      ...(data?.nationalRegistryPerson?.childCustody ?? []),
+      ...(settings?.showBiologicalChildren ?? true
+        ? data?.nationalRegistryPerson?.biologicalChildren ?? []
+        : []),
+      ...(settings?.showChildrenInCustody ?? true
+        ? data?.nationalRegistryPerson?.childCustody ?? []
+        : []),
     ],
     (child) => child.nationalId,
   )
@@ -66,7 +73,7 @@ export const Child = ({
   const { data, loading } = useQuery<FamilyMembersData>(GET_FAMILY_MEMBERS, {
     skip: isPreview || cached,
     onCompleted: (data) => {
-      const children = getChildren(data)
+      const children = getChildren(data, item.fieldSettings)
       dispatch?.({
         type: 'SET_FIELD_LIST',
         payload: {
@@ -91,7 +98,7 @@ export const Child = ({
   const fieldName = `${item.id}.${valueIndex}`
   const selectedNationalId = getValue(item, 'nationalId', valueIndex) ?? ''
 
-  const children = getChildren(data)
+  const children = getChildren(data, item.fieldSettings)
   const options: FamilyOption[] = cached
     ? (item.list ?? []).flatMap((listItem) =>
         listItem?.value
