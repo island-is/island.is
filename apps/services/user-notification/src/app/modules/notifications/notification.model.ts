@@ -104,6 +104,17 @@ export class Notification extends Model<
   })
   sourceType?: HnippTemplateSourceType | null
 
+  /**
+   * Optional deadline from the create request, for display only. Stored as
+   * timestamptz, i.e. an instant in time.
+   */
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    field: 'deadline',
+  })
+  deadline?: Date | null
+
   @Column({
     type: DataType.JSON,
     allowNull: false,
