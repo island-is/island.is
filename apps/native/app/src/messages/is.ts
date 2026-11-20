@@ -821,6 +821,14 @@ export const is = {
   'updateApp.button': 'Uppfæra',
   'updateApp.buttonSkip': 'Sleppa',
 
+  // health - intro
+  'health.intro.title': 'Heilsugögnin þín eru komin í appið',
+  'health.intro.body':
+    'Í Heilsu sérðu upplýsingar um lyf, tímabókanir, bólusetningar og fleira. Vinsamlegast athugið að heilsugögn geta innihaldið viðkvæmar persónuupplýsingar.',
+  'health.intro.privacyLink': 'Nánar um persónuvernd',
+  'health.intro.viewHealth': 'Skoða heilsu',
+  'health.intro.close': 'Loka',
+
   // health - overview
   'health.overview.screenTitle': 'Heilsa',
   'health.overview.title': 'Heilsan mín',

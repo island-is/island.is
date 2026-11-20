@@ -59,6 +59,7 @@ import { INCLUDED_LICENSE_TYPES } from '@/constants/wallet.constants'
 import { GenericLicenseType, useGetProfileQuery } from '@/graphql/types/schema'
 import { useAndroidNotificationPermission } from '@/hooks/use-android-notification-permission'
 import { useDeepLinkHandling } from '@/hooks/use-deep-link-handling'
+import { useHealthIntro } from '@/hooks/use-health-intro'
 import { useLocale } from '@/hooks/use-locale'
 import { useNotificationsStore } from '@/stores/notifications-store'
 import {
@@ -147,6 +148,7 @@ export default function HomeScreen() {
   )
 
   useDeepLinkHandling()
+  useHealthIntro()
 
   const applicationsRes = useListApplicationsQuery({
     skip: !applicationsWidgetEnabled,

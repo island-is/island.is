@@ -823,6 +823,14 @@ export const en: TranslatedMessages = {
   'updateApp.button': 'Update',
   'updateApp.buttonSkip': 'Skip',
 
+  // health - intro
+  'health.intro.title': 'Your health data is now in the app',
+  'health.intro.body':
+    'In Health you can see information about medicines, appointments, vaccinations and more. Please note that health data can contain sensitive personal information.',
+  'health.intro.privacyLink': 'More about privacy',
+  'health.intro.viewHealth': 'View health',
+  'health.intro.close': 'Close',
+
   // health - overview
   'health.overview.screenTitle': 'Health',
   'health.overview.title': 'My health',
