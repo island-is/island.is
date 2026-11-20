@@ -1,46 +1,25 @@
 import {
-  coreDefaultFieldMessages,
-  DEFAULT_ALLOWED_FILE_TYPES,
-  DEFAULT_FILE_SIZE_LIMIT,
-  DEFAULT_TOTAL_FILE_SIZE_SUM,
   formatText,
   getErrorViaPath,
   getValueViaPath,
 } from '@island.is/application/core'
 import {
   Application,
-  FieldComponents,
-  FieldTypes,
-  MaybeWithRepeaterItemContext,
   RepeaterItem,
   RepeaterItemContext,
   RepeaterOptionValue,
   SetFieldLoadingState,
   SetSubmitButtonDisabled,
 } from '@island.is/application/types'
-import { GridColumn, Text } from '@island.is/island-ui/core'
+import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { ComponentType, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 import isEqual from 'lodash/isEqual'
-import {
-  CheckboxController,
-  DatePickerController,
-  InputController,
-  RadioController,
-  SelectController,
-  PhoneInputController,
-} from '@island.is/shared/form-fields'
-import { NationalIdWithName } from '@island.is/application/ui-components'
-import { AsyncSelectFormField } from '../AsyncSelectFormField/AsyncSelectFormField'
 import { useApolloClient } from '@apollo/client'
-import { HiddenInputFormField } from '../HiddenInputFormField/HiddenInputFormField'
-import { AlertMessageFormField } from '../AlertMessageFormField/AlertMessageFormField'
 import * as styles from './RepeaterItem.css'
-import { VehiclePermnoWithInfoFormField } from '../VehiclePermnoWithInfoFormField/VehiclePermnoWithInfoFormField'
-import { DescriptionFormField } from '../DescriptionFormField/DescriptionFormField'
-import { FileUploadFormField } from '../FileUploadFormField/FileUploadFormField'
 import { RecordObject } from '@island.is/shared/types'
+import { getFieldType, resolve } from './fieldTypes'
 
 interface ItemFieldProps {
   application: Application
@@ -54,36 +33,6 @@ interface ItemFieldProps {
   setSubmitButtonDisabled?: SetSubmitButtonDisabled
   compactLayout?: boolean
 }
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const controllers: Record<string, ComponentType<any>> = {
-  input: InputController,
-  select: SelectController,
-  checkbox: CheckboxController,
-  date: DatePickerController,
-  radio: RadioController,
-  nationalIdWithName: NationalIdWithName,
-  phone: PhoneInputController,
-}
-
-const TAKES_DEFAULT_VALUE = new Set([
-  'input',
-  'select',
-  'radio',
-  'checkbox',
-  'date',
-  'hiddenInput',
-  'nationalIdWithName',
-])
-const READS_STORED_ANSWER = new Set(['select', 'radio', 'checkbox', 'date'])
-
-const resolve = <T,>(
-  value: MaybeWithRepeaterItemContext<T>,
-  ctx: RepeaterItemContext,
-): T =>
-  typeof value === 'function'
-    ? (value as (ctx: RepeaterItemContext) => T)(ctx)
-    : value
 
 export const Item = ({
   application,
@@ -190,11 +139,11 @@ export const Item = ({
   const labelVal = resolve(label, ctx)
   const placeholderVal = resolve(placeholder, ctx)
 
-  const storedAnswer = READS_STORED_ANSWER.has(component)
+  const fieldType = getFieldType(component)
+  const storedAnswer = fieldType.readsStoredAnswer
     ? getValueViaPath(application.answers, id)
     : undefined
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const defaultVal: any = TAKES_DEFAULT_VALUE.has(component)
+  const defaultVal = fieldType.takesDefaultValue
     ? storedAnswer ?? resolve(defaultValue, ctx)
     : undefined
 
@@ -213,220 +162,36 @@ export const Item = ({
     return null
   }
 
-  const controllerProps = () => {
-    switch (item.component) {
-      case 'date':
-        return {
-          maxDate: resolve(item.maxDate, ctx),
-          minDate: resolve(item.minDate, ctx),
-          locale: lang,
-        }
-      case 'nationalIdWithName':
-        return {
-          nationalIdDefaultValue:
-            defaultVal?.nationalId ?? item.nationalIdDefaultValue,
-          nameDefaultValue: defaultVal?.name ?? item.nameDefaultValue,
-        }
-      case 'input':
-        return {
-          suffix: item.suffix
-            ? formatText(item.suffix, application, formatMessage)
-            : undefined,
-        }
-      case 'phone':
-        return { disableDropdown: !(item.enableCountrySelector ?? false) }
-      default:
-        return {}
-    }
-  }
-
-  const renderField = () => {
-    switch (item.component) {
-      case 'selectAsync':
-        return (
-          <AsyncSelectFormField
-            application={application}
-            error={fieldError}
-            field={{
-              id,
-              title: labelVal,
-              placeholder: placeholderVal,
-              type: FieldTypes.ASYNC_SELECT,
-              component: FieldComponents.ASYNC_SELECT,
-              children: undefined,
-              backgroundColor,
-              isSearchable: item.isSearchable,
-              isMulti: item.isMulti,
-              loadOptions: (c) =>
-                item.loadOptions(c, {
-                  ...ctx,
-                  setValueAtIndex: (subKey, value) => {
-                    setValue(`${dataId}[${index}].${subKey}`, value)
-                  },
-                }),
-              updateOnSelect: resolve(item.updateOnSelect, ctx),
-              disabled: disabledVal,
-              required: requiredVal,
-              isClearable: isClearableVal,
-              defaultValue: defaultVal,
-              clearOnChange: clearOnChangeVal,
-              setOnChange: setOnChangeFunc,
-              loadingError: item.loadingError,
-            }}
-          />
-        )
-      case 'hiddenInput':
-        return (
-          <HiddenInputFormField
-            application={application}
-            field={{
-              id,
-              type: FieldTypes.HIDDEN_INPUT,
-              component: FieldComponents.HIDDEN_INPUT,
-              children: undefined,
-              defaultValue: defaultVal,
-            }}
-          />
-        )
-      case 'alertMessage':
-        return (
-          <AlertMessageFormField
-            application={application}
-            field={{
-              id,
-              type: FieldTypes.ALERT_MESSAGE,
-              component: FieldComponents.ALERT_MESSAGE,
-              children: undefined,
-              alertType: item.alertType,
-              title: resolve(item.title, ctx),
-              message: resolve(item.message, ctx),
-              marginTop: item.marginTop,
-              marginBottom: item.marginBottom,
-            }}
-          />
-        )
-      case 'vehiclePermnoWithInfo':
-        return (
-          <VehiclePermnoWithInfoFormField
-            application={application}
-            errors={errors}
-            field={{
-              id,
-              type: FieldTypes.VEHICLE_PERMNO_WITH_INFO,
-              component: FieldComponents.VEHICLE_PERMNO_WITH_INFO,
-              children: undefined,
-              required: requiredVal,
-              loadValidation: item.loadValidation,
-              permnoLabel: item.permnoLabel,
-              makeAndColorLabel: item.makeAndColorLabel,
-              errorTitle: item.errorTitle,
-              fallbackErrorMessage: item.fallbackErrorMessage,
-              validationFailedErrorMessage: item.validationFailedErrorMessage,
-              isTrailer: item.isTrailer ?? false,
-            }}
-          />
-        )
-      case 'description':
-        return (
-          <DescriptionFormField
-            application={application}
-            showFieldName
-            field={{
-              id,
-              type: FieldTypes.DESCRIPTION,
-              component: FieldComponents.DESCRIPTION,
-              children: undefined,
-              title: item.title,
-              titleVariant: item.titleVariant,
-              showRequiredStar: requiredVal,
-            }}
-          />
-        )
-      case 'fileUpload':
-        return (
-          <FileUploadFormField
-            application={application}
-            error={fieldError}
-            showFieldName
-            setFieldLoadingState={setFieldLoadingState}
-            setSubmitButtonDisabled={setSubmitButtonDisabled}
-            field={{
-              id,
-              type: FieldTypes.FILEUPLOAD,
-              component: FieldComponents.FILEUPLOAD,
-              children: undefined,
-              uploadHeader:
-                item.uploadHeader ||
-                coreDefaultFieldMessages.defaultFileUploadHeader,
-              introduction: item.introduction,
-              uploadDescription:
-                item.uploadDescription ||
-                coreDefaultFieldMessages.defaultFileUploadDescription,
-              uploadButtonLabel:
-                item.uploadButtonLabel ||
-                coreDefaultFieldMessages.defaultFileUploadButtonLabel,
-              uploadMultiple: item.uploadMultiple,
-              uploadAccept: item.uploadAccept ?? DEFAULT_ALLOWED_FILE_TYPES,
-              maxSize: item.maxSize ?? DEFAULT_FILE_SIZE_LIMIT,
-              maxSizeErrorText: item.maxSizeErrorText,
-              totalMaxSize: item.totalMaxSize ?? DEFAULT_TOTAL_FILE_SIZE_SUM,
-              maxFileCount: item.maxFileCount,
-              forImageUpload: item.forImageUpload,
-            }}
-          />
-        )
-      default: {
-        const Controller = controllers[item.component]
-        return (
-          <>
-            {item.component === 'radio' && labelVal && (
-              <Text variant="h4" as="h4" id={id + 'title'} marginBottom={3}>
-                {formatText(labelVal, application, formatMessage)}
-              </Text>
-            )}
-            <Controller
-              id={id}
-              name={id}
-              label={formatText(labelVal, application, formatMessage)}
-              options={translatedOptions}
-              placeholder={formatText(
-                placeholderVal,
-                application,
-                formatMessage,
-              )}
-              split={
-                width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1'
-              }
-              error={fieldError}
-              control={control}
-              readOnly={readonlyVal}
-              disabled={disabledVal}
-              required={requiredVal}
-              isClearable={isClearableVal}
-              defaultValue={defaultVal}
-              backgroundColor={backgroundColor}
-              onChange={() => {
-                if (error) {
-                  clearErrors(id)
-                }
-              }}
-              application={application}
-              large={true}
-              clearOnChange={clearOnChangeVal}
-              clearOnChangeDefaultValue={clearOnChangeDefaultValue}
-              setOnChange={setOnChangeFunc}
-              {...props}
-              {...controllerProps()}
-            />
-          </>
-        )
+  const controllerProps = {
+    id,
+    name: id,
+    label: formatText(labelVal, application, formatMessage),
+    options: translatedOptions,
+    placeholder: formatText(placeholderVal, application, formatMessage),
+    split: width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1',
+    error: fieldError,
+    control,
+    readOnly: readonlyVal,
+    disabled: disabledVal,
+    required: requiredVal,
+    isClearable: isClearableVal,
+    defaultValue: defaultVal,
+    backgroundColor,
+    onChange: () => {
+      if (error) {
+        clearErrors(id)
       }
-    }
+    },
+    application,
+    large: true,
+    clearOnChange: clearOnChangeVal,
+    clearOnChangeDefaultValue,
+    setOnChange: setOnChangeFunc,
+    ...props,
   }
 
-  const radioOrCheckbox = component === 'radio' || component === 'checkbox'
   const span =
-    radioOrCheckbox || width === 'full'
+    fieldType.fullWidth || width === 'full'
       ? '1/1'
       : width === 'half'
       ? '1/2'
@@ -436,14 +201,34 @@ export const Item = ({
     <GridColumn
       span={['1/1', '1/1', '1/1', span]}
       {...(compactLayout && {
-        position: component === 'hiddenInput' ? 'absolute' : 'relative',
-        className:
-          component === 'nationalIdWithName' || component === 'selectAsync'
-            ? styles.removePaddingTop
-            : undefined,
+        position: fieldType.compact?.absolute ? 'absolute' : 'relative',
+        className: fieldType.compact?.removePaddingTop
+          ? styles.removePaddingTop
+          : undefined,
       })}
     >
-      {renderField()}
+      {fieldType.render({
+        item,
+        id,
+        ctx,
+        application,
+        errors,
+        fieldError,
+        label: labelVal,
+        placeholder: placeholderVal,
+        disabled: disabledVal,
+        required: requiredVal,
+        isClearable: isClearableVal,
+        clearOnChange: clearOnChangeVal,
+        defaultValue: defaultVal,
+        backgroundColor,
+        setOnChange: setOnChangeFunc,
+        setValueInRow: (key, value) =>
+          setValue(`${dataId}[${index}].${key}`, value),
+        controllerProps,
+        setFieldLoadingState,
+        setSubmitButtonDisabled,
+      })}
     </GridColumn>
   )
 }

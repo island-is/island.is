@@ -9,6 +9,7 @@ import {
 import {
   FieldsRepeaterField,
   RepeaterItem,
+  RepeaterItemContext,
   Schema,
   TableRepeaterField,
 } from '@island.is/application/types'
@@ -68,10 +69,17 @@ const repeaters = [
   },
 ]
 
+const countrySelect = () =>
+  document.querySelector(
+    '[data-testid^="country-code-select-"] input',
+  ) as HTMLInputElement
+
 const input = (label: RegExp | string) =>
   screen.getByRole('textbox', { name: label })
 
-describe.each(repeaters)('$name row fields', ({ open, validate }) => {
+describe.each(repeaters)('$name row fields', ({ name, open, validate }) => {
+  const isTable = name === 'TableRepeater'
+
   it('I16: callbacks see the live answers in ctx.application', async () => {
     await open({
       name: { component: 'input', label: 'Heiti' },
@@ -116,5 +124,146 @@ describe.each(repeaters)('$name row fields', ({ open, validate }) => {
     await validate(harness)
 
     expect(await screen.findByText('Ógilt gildi')).toBeInTheDocument()
+  })
+
+  it('I6: defaultValue as a function fills the field', async () => {
+    const defaultValue = jest.fn((_ctx: RepeaterItemContext) => 'Sjálfgefið')
+    await open({ name: { component: 'input', label: 'Heiti', defaultValue } })
+
+    expect(input(/Heiti/)).toHaveValue('Sjálfgefið')
+    expect(defaultValue.mock.calls.at(-1)?.[0]).toMatchObject({
+      index: 0,
+      locale: 'is',
+    })
+  })
+
+  it('I11: hiddenInput writes its default value', async () => {
+    const { getForm } = await open({
+      name: { component: 'input', label: 'Heiti' },
+      secret: { component: 'hiddenInput', defaultValue: 'falið' },
+    })
+
+    await waitFor(() =>
+      expect(getForm().getValues('people.0.secret')).toBe('falið'),
+    )
+  })
+
+  it('I15: alertMessage and description render their text', async () => {
+    await open({
+      note: {
+        component: 'description',
+        title: 'Lýsing á röð',
+      },
+      warning: {
+        component: 'alertMessage',
+        title: 'Athugið',
+        message: 'Skilaboð í röð',
+        alertType: 'warning',
+      },
+    })
+
+    expect(screen.getByText('Lýsing á röð')).toBeInTheDocument()
+    expect(screen.getByText('Athugið')).toBeInTheDocument()
+    expect(screen.getByText('Skilaboð í röð')).toBeInTheDocument()
+  })
+
+  it('I15: fileUpload renders its upload area', async () => {
+    await open({
+      files: {
+        component: 'fileUpload',
+        uploadHeader: 'Dragðu skjöl hingað',
+        uploadButtonLabel: 'Velja skjöl',
+      },
+    })
+
+    expect(screen.getByText('Dragðu skjöl hingað')).toBeInTheDocument()
+    expect(screen.getByText('Velja skjöl')).toBeInTheDocument()
+  })
+
+  it('I6: nationalIdWithName honours defaultValue and nationalIdDefaultValue', async () => {
+    const defaultValue = jest.fn(() => ({
+      nationalId: '0101302989',
+      name: 'Anna',
+    }))
+    await open({
+      fromDefault: { component: 'nationalIdWithName', defaultValue },
+      seeded: {
+        component: 'nationalIdWithName',
+        nationalIdDefaultValue: '0101307789',
+      },
+    })
+
+    const [fromDefault, seeded] = screen.getAllByRole('textbox', {
+      name: /Kennitala/,
+    })
+    expect(fromDefault).toHaveValue('010130-2989')
+    expect(seeded).toHaveValue('010130-7789')
+    expect(defaultValue).toHaveBeenCalled()
+  })
+
+  it('I12: selectAsync loadOptions runs on mount and can write into the row', async () => {
+    const loadOptions = jest.fn(
+      async (
+        _context: unknown,
+        {
+          setValueAtIndex,
+        }: { setValueAtIndex: (key: string, value: string) => void },
+      ) => {
+        setValueAtIndex('echo', 'sótt')
+        return [{ value: 'a', label: 'Kostur A' }]
+      },
+    )
+    const { getForm } = await open({
+      choice: { component: 'selectAsync', label: 'Val', loadOptions },
+      echo: { component: 'input', label: 'Bergmál' },
+    })
+
+    await waitFor(() =>
+      expect(getForm().getValues('people.0.echo')).toBe('sótt'),
+    )
+    expect(loadOptions).toHaveBeenCalledWith(
+      expect.objectContaining({ apolloClient: expect.anything() }),
+      expect.objectContaining({
+        locale: 'is',
+        row: undefined,
+        setValueAtIndex: expect.any(Function),
+      }),
+    )
+  })
+
+  it('I13: date minDate and maxDate as functions of the row', async () => {
+    const minDate = jest.fn(
+      (_ctx: RepeaterItemContext) => new Date('2026-01-01'),
+    )
+    const maxDate = jest.fn(
+      (_ctx: RepeaterItemContext) => new Date('2026-12-31'),
+    )
+    await open({
+      when: { component: 'date', label: 'Dagsetning', minDate, maxDate },
+    })
+
+    expect(screen.getByLabelText(/Dagsetning/)).toBeInTheDocument()
+    const expectedCtx = expect.objectContaining({
+      application: expect.objectContaining({ id: 'test-application' }),
+      row: isTable ? { isUnsaved: true } : undefined,
+    })
+    expect(minDate).toHaveBeenLastCalledWith(expectedCtx)
+    expect(maxDate).toHaveBeenLastCalledWith(expectedCtx)
+  })
+
+  it('I14: phone country selector is locked by default', async () => {
+    await open({ phone: { component: 'phone', label: 'Sími' } })
+
+    const select = countrySelect()
+    expect(select.disabled).toBe(true)
+  })
+
+  it('I14: enableCountrySelector unlocks it', async () => {
+    await open({
+      phone: { component: 'phone', label: 'Sími', enableCountrySelector: true },
+    })
+
+    const select = countrySelect()
+    expect(select.disabled).toBe(false)
   })
 })

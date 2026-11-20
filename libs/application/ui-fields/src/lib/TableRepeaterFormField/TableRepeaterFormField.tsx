@@ -31,8 +31,8 @@ import { FC, useEffect, useRef, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import {
   buildDefaultColumns,
-  handleCustomMappedValues,
   setObjectWithNestedKey,
+  toTableRows,
 } from './utils'
 import { Item } from '../RepeaterItem/RepeaterItem'
 import { Locale } from '@island.is/shared/types'
@@ -113,7 +113,7 @@ export const TableRepeaterFormField: FC<Props> = ({
     control: methods.control,
     name: resolvedId,
   })
-  const customMappedValues = handleCustomMappedValues(tableItems, values)
+  const tableRows = toTableRows(tableItems, values)
 
   const [activeIndex, setActiveIndex] = useState(
     fields?.findIndex((x) => x?.isUnsaved) ?? -1,
@@ -360,9 +360,7 @@ export const TableRepeaterFormField: FC<Props> = ({
                       .findIndex((f) => f.id === field.id)
 
                     const rowContext = cellContext(
-                      (customMappedValues.length
-                        ? customMappedValues[index]
-                        : values[index]) ?? {},
+                      tableRows?.[index] ?? {},
                       displayIndex,
                     )
                     const {
