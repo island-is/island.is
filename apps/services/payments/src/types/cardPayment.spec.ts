@@ -1,5 +1,7 @@
 import {
+  CardPaymentErrorSchema,
   CardPaymentSuccessSchema,
+  CardVerificationSuccessSchema,
   GooglePayWalletTransactionSuccessSchema,
   RefundSuccessSchema,
 } from './cardPayment'
@@ -135,5 +137,71 @@ describe('RefundSuccessSchema', () => {
     })
 
     expect(result.success).toBe(false)
+  })
+})
+
+describe('the gateway responses accept what the service does not use missing', () => {
+  it('accepts an approved charge with only what is stored with the payment and sent to FJS', () => {
+    const result = CardPaymentSuccessSchema.safeParse({
+      isSuccess: true,
+      responseCode: '00-I',
+      acquirerReferenceNumber: 'arn',
+      authorizationCode: 'auth',
+      cardInformation: {
+        cardScheme: 'M',
+        cardUsage: 'Credit',
+      },
+    })
+
+    expect(result.success).toBe(true)
+  })
+
+  it('accepts market information with fields missing', () => {
+    const result = CardPaymentSuccessSchema.safeParse({
+      isSuccess: true,
+      responseCode: '00-I',
+      acquirerReferenceNumber: 'arn',
+      authorizationCode: 'auth',
+      cardInformation: {
+        cardScheme: 'M',
+        cardUsage: 'Credit',
+      },
+      marketInformation: {},
+    })
+
+    expect(result.success).toBe(true)
+  })
+
+  it('does not accept an approved charge without what the payment is stored with', () => {
+    const result = CardPaymentSuccessSchema.safeParse({
+      isSuccess: true,
+      responseCode: '00-I',
+      cardInformation: {
+        cardScheme: 'M',
+        cardUsage: 'Credit',
+      },
+    })
+
+    expect(result.success).toBe(false)
+  })
+
+  it('accepts a 3-D Secure verification with only what the payer is sent to verify with', () => {
+    const result = CardVerificationSuccessSchema.safeParse({
+      isSuccess: true,
+      responseCode: '00',
+      postUrl: 'https://acs.example/3ds',
+      verificationFields: [{ name: 'creq', value: 'abc' }],
+    })
+
+    expect(result.success).toBe(true)
+  })
+
+  it('reads a decline without a correlation id or response time as a decline', () => {
+    const result = CardPaymentErrorSchema.safeParse({
+      isSuccess: false,
+      responseCode: '51',
+    })
+
+    expect(result.success).toBe(true)
   })
 })

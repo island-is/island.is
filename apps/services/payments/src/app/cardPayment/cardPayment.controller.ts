@@ -272,7 +272,11 @@ export class CardPaymentController {
 
       const { paymentResult } = requireStepResult(result.context, 'CHARGE_CARD')
 
-      return { ...paymentResult, correlationId: paymentResult.correlationID }
+      return {
+        ...paymentResult,
+        correlationId:
+          paymentResult.correlationID ?? context.trackingData.correlationId,
+      }
     } catch (e) {
       // The rollback left a debt payment that may be registered with FJS as it is, see
       // keepDebtPayment: the payer paid, like when the webhook fails.
@@ -289,7 +293,11 @@ export class CardPaymentController {
           message: 'Card payment completed successfully',
         })
 
-        return { ...paymentResult, correlationId: paymentResult.correlationID }
+        return {
+          ...paymentResult,
+          correlationId:
+            paymentResult.correlationID ?? context.trackingData.correlationId,
+        }
       }
 
       const refundSucceeded = context.metadata?.refundSucceeded === true
@@ -383,7 +391,11 @@ export class CardPaymentController {
         },
       )
 
-      return { ...paymentResult, correlationId: paymentResult.correlationID }
+      return {
+        ...paymentResult,
+        correlationId:
+          paymentResult.correlationID ?? context.trackingData.correlationId,
+      }
     } catch (e) {
       // The rollback left a debt payment that may be registered with FJS as it is, see
       // keepDebtPayment: the payer paid, like when the webhook fails.
@@ -400,7 +412,11 @@ export class CardPaymentController {
           message: 'Apple Pay payment completed successfully',
         })
 
-        return { ...paymentResult, correlationId: paymentResult.correlationID }
+        return {
+          ...paymentResult,
+          correlationId:
+            paymentResult.correlationID ?? context.trackingData.correlationId,
+        }
       }
 
       const refundSucceeded = context.metadata?.refundSucceeded === true
@@ -516,7 +532,11 @@ export class CardPaymentController {
 
     return {
       status: 'paid',
-      payment: { ...paymentResult, correlationId: paymentResult.correlationID },
+      payment: {
+        ...paymentResult,
+        correlationId:
+          paymentResult.correlationID ?? context.trackingData.correlationId,
+      },
     }
   }
 
@@ -569,7 +589,11 @@ export class CardPaymentController {
       },
     )
 
-    return { ...paymentResult, correlationId: paymentResult.correlationID }
+    return {
+      ...paymentResult,
+      correlationId:
+        paymentResult.correlationID ?? context.trackingData.correlationId,
+    }
   }
 
   /**

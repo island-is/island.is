@@ -42,17 +42,24 @@ const CardInformationSchema = z.object({
 })
 
 const MarketInformationSchema = z.object({
-  merchantCountry: z.string(),
-  marketName: z.string().nullable(),
-  acquirerRegion: z.string(),
+  merchantCountry: z.string().optional(),
+  marketName: z.string().optional().nullable(),
+  acquirerRegion: z.string().optional(),
 })
 
+/*
+ * The gateway's responses only require the fields the service reads, the
+ * database stores in a NOT NULL column or FJS is sent. When the gateway leaves
+ * out a field the service requires, an approved charge or refund is taken for a
+ * failure while the money has moved, as on 19 Nov 2026, so every other field is
+ * optional.
+ */
 const PaymentGatewayApiResponseSchema = z.object({
   isSuccess: z.boolean(),
   responseCode: z.string(),
   responseDescription: z.string().optional(),
-  responseTime: z.string(), // HH:mm:ss
-  correlationID: z.string(),
+  responseTime: z.string().optional(), // HH:mm:ss
+  correlationID: z.string().optional(),
 })
 
 const PaymentGatewaySuccessSchema = PaymentGatewayApiResponseSchema.extend({
@@ -73,10 +80,11 @@ const PaymentGatewayErrorSchema = PaymentGatewayApiResponseSchema.extend({
  */
 export const CardPaymentSuccessSchema = PaymentGatewaySuccessSchema.extend({
   isSuccess: z.literal(true),
+  // Stored with the payment and sent to FJS, or used to refund the charge
   acquirerReferenceNumber: z.string(),
-  transactionID: z.string(),
   authorizationCode: z.string(),
-  transactionLifecycleId: z.string(),
+  transactionID: z.string().optional(),
+  transactionLifecycleId: z.string().optional(),
   maskedCardNumber: z.string().optional(),
   lastFourInPan: z.string().optional(),
   cardInformation: CardInformationSchema,
@@ -86,7 +94,7 @@ export const CardPaymentSuccessSchema = PaymentGatewaySuccessSchema.extend({
   authenticationMethod: z.string().optional(),
   authorizedAmount: z.number().optional(),
   marketInformation: MarketInformationSchema.optional(),
-  authorizationIdentifier: z.string(),
+  authorizationIdentifier: z.string().optional(),
 }).transform(({ maskedCardNumber, lastFourInPan, ...charge }) => ({
   ...charge,
   maskedCardNumber:
@@ -125,10 +133,11 @@ const FieldSchema = z.object({
 /** Card verification success: includes 3DS redirect data */
 export const CardVerificationSuccessSchema = PaymentGatewaySuccessSchema.extend(
   {
-    cardVerificationRawResponse: z.string(),
+    // The payer's browser posts verificationFields to postUrl for 3-D Secure
     postUrl: z.string(),
     verificationFields: z.array(FieldSchema),
-    additionalFields: z.array(FieldSchema),
+    cardVerificationRawResponse: z.string().optional(),
+    additionalFields: z.array(FieldSchema).optional(),
     scriptPath: z.string().optional(),
     cardInformation: CardInformationSchema.optional(),
     threeDSMessageVersion: z.string().optional(),

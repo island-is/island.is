@@ -8,17 +8,22 @@ export class ChargeCardResponse {
   @IsString()
   acquirerReferenceNumber!: string
 
-  @ApiProperty({ description: 'Transaction ID', type: String })
+  @ApiPropertyOptional({ description: 'Transaction ID', type: String })
   @IsString()
-  transactionID!: string
+  @IsOptional()
+  transactionID?: string
 
   @ApiProperty({ description: 'Authorization code', type: String })
   @IsString()
   authorizationCode!: string
 
-  @ApiProperty({ description: 'Transaction lifecycle ID', type: String })
+  @ApiPropertyOptional({
+    description: 'Transaction lifecycle ID',
+    type: String,
+  })
   @IsString()
-  transactionLifecycleId!: string
+  @IsOptional()
+  transactionLifecycleId?: string
 
   @ApiProperty({ description: 'Masked card number', type: String })
   @IsString()
@@ -35,9 +40,13 @@ export class ChargeCardResponse {
   @IsObject()
   cardInformation!: CardInformation
 
-  @ApiProperty({ description: 'Authorization identifier', type: String })
+  @ApiPropertyOptional({
+    description: 'Authorization identifier',
+    type: String,
+  })
   @IsString()
-  authorizationIdentifier!: string
+  @IsOptional()
+  authorizationIdentifier?: string
 
   @ApiProperty({ description: 'Response code from the charge', type: String })
   @IsString()
@@ -51,9 +60,13 @@ export class ChargeCardResponse {
   @IsOptional()
   responseDescription?: string
 
-  @ApiProperty({ description: 'Response time of the charge', type: String })
+  @ApiPropertyOptional({
+    description: 'Response time of the charge',
+    type: String,
+  })
   @IsString()
-  responseTime!: string
+  @IsOptional()
+  responseTime?: string
 
   @ApiProperty({ description: 'Correlation ID for tracking', type: String })
   @IsString()
