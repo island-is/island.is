@@ -93,14 +93,22 @@ export const benefitsFromAnotherCountrySubSection = buildSubSection({
             },
           },
           table: {
-            format: {
-              country: (value) => value?.split('::')[1],
-            },
-            header: [
-              medicalAndRehabilitationPaymentsFormMessage.generalInformation
-                .country,
-              medicalAndRehabilitationPaymentsFormMessage.generalInformation
-                .countryIdNumber,
+            columns: [
+              {
+                header:
+                  medicalAndRehabilitationPaymentsFormMessage.generalInformation
+                    .country,
+                value: ({ row }) => {
+                  const value = row.country ?? ''
+                  return value?.split('::')[1]
+                },
+              },
+              {
+                header:
+                  medicalAndRehabilitationPaymentsFormMessage.generalInformation
+                    .countryIdNumber,
+                value: 'nationalId',
+              },
             ],
           },
         }),

@@ -94,37 +94,47 @@ const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           applicantNationalId: {
             component: 'hiddenInput',
             displayInTable: false,
-            defaultValue: (application: Application) => application.applicant,
+            defaultValue: ({ application }) => application.applicant,
           },
           otherGuardianNationalId: {
             component: 'hiddenInput',
             displayInTable: false,
-            defaultValue: (application: Application) =>
+            defaultValue: ({ application }) =>
               getOtherGuardian(application.answers, application.externalData)
                 ?.nationalId,
           },
           childNationalId: {
             component: 'hiddenInput',
             displayInTable: false,
-            defaultValue: (application: Application) =>
+            defaultValue: ({ application }) =>
               getApplicationAnswers(application.answers).childNationalId,
           },
         },
         table: {
-          format: {
-            phoneNumber: (value) =>
-              value ? formatPhoneNumber(removeCountryCode(value)) : '',
-            nationalId: (value) => (value ? formatKennitala(value) : ''),
-            relation: (value) =>
-              value
-                ? getSelectedOptionLabel(relationFriggOptions, value) ?? ''
-                : '',
-          },
-          header: [
-            sharedMessages.fullName,
-            sharedMessages.nationalId,
-            sharedMessages.phoneNumber,
-            sharedMessages.relation,
+          columns: [
+            { header: sharedMessages.fullName, value: 'name' },
+            {
+              header: sharedMessages.nationalId,
+              value: ({ row }) =>
+                row.nationalId ? formatKennitala(row.nationalId) : '',
+            },
+            {
+              header: sharedMessages.phoneNumber,
+              value: ({ row }) =>
+                row.phoneNumber
+                  ? formatPhoneNumber(removeCountryCode(row.phoneNumber))
+                  : '',
+            },
+            {
+              header: sharedMessages.relation,
+              value: ({ row }) =>
+                row.relation
+                  ? getSelectedOptionLabel(
+                      relationFriggOptions,
+                      row.relation,
+                    ) ?? ''
+                  : '',
+            },
           ],
         },
       }}

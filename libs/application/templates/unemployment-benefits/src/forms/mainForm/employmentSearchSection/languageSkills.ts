@@ -5,9 +5,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { employmentSearch as employmentSearchMessages } from '../../../lib/messages'
-import { Application } from '@island.is/application/types'
 import { GaldurDomainModelsSelectItem } from '@island.is/clients/vmst-unemployment'
-import { Locale } from '@island.is/shared/types'
 import { LanguageIds } from '../../../shared'
 
 export const languageSkillsSubSection = buildSubSection({
@@ -29,7 +27,7 @@ export const languageSkillsSubSection = buildSubSection({
               label: employmentSearchMessages.languageSkills.language,
               component: 'select',
               width: 'half',
-              options: (application, _, locale) => {
+              options: ({ application, locale }) => {
                 const languages =
                   getValueViaPath<Array<GaldurDomainModelsSelectItem>>(
                     application.externalData,
@@ -48,18 +46,13 @@ export const languageSkillsSubSection = buildSubSection({
                       '',
                   }))
               },
-              readonly: (_application, _, index) => {
+              readonly: ({ index }) => {
                 if (index !== undefined && index < 2) {
                   return true
                 }
                 return false
               },
-              defaultValue: (
-                application: Application,
-                _activeField: Record<string, string>,
-                index: number,
-                locale: Locale,
-              ) => {
+              defaultValue: ({ application, index, locale }) => {
                 const languages =
                   getValueViaPath<Array<GaldurDomainModelsSelectItem>>(
                     application.externalData,
@@ -83,7 +76,7 @@ export const languageSkillsSubSection = buildSubSection({
               label: employmentSearchMessages.languageSkills.skill,
               component: 'select',
               width: 'half',
-              options: (application, _, locale) => {
+              options: ({ application, locale }) => {
                 const languageSkills =
                   getValueViaPath<Array<GaldurDomainModelsSelectItem>>(
                     application.externalData,

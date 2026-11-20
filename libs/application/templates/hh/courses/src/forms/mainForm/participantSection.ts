@@ -61,12 +61,14 @@ export const participantSection = buildSection({
             ]
           },
           table: {
-            rows: ['name', 'nationalId', 'email', 'phone'],
-            header: [
-              m.participant.participantName,
-              m.participant.participantNationalId,
-              m.participant.participantEmail,
-              m.participant.participantPhone,
+            columns: [
+              { header: m.participant.participantName, value: 'name' },
+              {
+                header: m.participant.participantNationalId,
+                value: 'nationalId',
+              },
+              { header: m.participant.participantEmail, value: 'email' },
+              { header: m.participant.participantPhone, value: 'phone' },
             ],
           },
           fields: {
@@ -85,9 +87,9 @@ export const participantSection = buildSection({
               label: m.participant.participantWorkplace,
               width: 'half',
               displayInTable: false,
-              condition: (application: Application) =>
+              condition: ({ application }) =>
                 isCourseForProfessionals(application.answers),
-              defaultValue: (application: Application) =>
+              defaultValue: ({ application }) =>
                 getValueViaPath<string>(application.answers, 'workplace') ?? '',
             },
             jobTitle: {
@@ -95,9 +97,9 @@ export const participantSection = buildSection({
               label: m.participant.participantJobTitle,
               width: 'half',
               displayInTable: false,
-              condition: (application: Application) =>
+              condition: ({ application }) =>
                 isCourseForProfessionals(application.answers),
-              defaultValue: (application: Application) =>
+              defaultValue: ({ application }) =>
                 getValueViaPath<string>(application.answers, 'jobTitle') ?? '',
             },
           },

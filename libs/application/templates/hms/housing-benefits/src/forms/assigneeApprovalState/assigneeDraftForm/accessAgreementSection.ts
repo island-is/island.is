@@ -91,20 +91,20 @@ export const accessAgreementSection = buildSection({
             ),
           marginTop: 2,
           width: 'full',
-          minRows: (answers, externalData) =>
+          minRows: ({ application: { answers, externalData } }) =>
             assigneeAccessAgreementRepeaterMinRows(answers, externalData),
-          maxRows: (answers, externalData) =>
+          maxRows: ({ application: { answers, externalData } }) =>
             assigneeAccessAgreementRepeaterMaxRows(answers, externalData),
           defaultValue: (application: Application) =>
             buildAssigneeAccessAgreementRepeaterDefaultRows(application),
-          formTitle: (index) => ({
+          formTitle: ({ index }) => ({
             ...m.assigneeDraft.umgengnissamningurRepeaterFormTitle,
             values: { index: index + 1 },
           }),
           formTitleVariant: 'h3',
           formTitleNumbering: 'none',
           addItemButtonText: m.assigneeDraft.umgengnissamningurRepeaterAddItem,
-          hideAddButton: (application) => {
+          hideAddButton: ({ application }) => {
             const assigneeId =
               getAssigneeNationalIdForUmgengnissamningurForm(application)
             if (!assigneeId) {
@@ -127,15 +127,18 @@ export const accessAgreementSection = buildSection({
               component: 'select',
               width: 'full',
               label: m.assigneeDraft.umgengnissamningurSelectChildTitle,
-              options: (application, activeValues) =>
+              options: ({ application, row: activeValues }) =>
                 assigneeAccessAgreementChildOptions(application, activeValues),
-              required: (_application, activeValues) => {
+              required: ({ row: activeValues }) => {
                 const files = activeValues?.file as
                   | Array<{ key: string; name: string }>
                   | undefined
                 return Array.isArray(files) && files.length > 0
               },
-              filterOptions: (options, formValues, index) => {
+              filterOptions: (
+                options,
+                { application: { answers: formValues }, index },
+              ) => {
                 const repeater = findAssigneeAccessAgreementRepeater(
                   formValues as FormValue,
                 )

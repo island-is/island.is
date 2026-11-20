@@ -238,7 +238,7 @@ export const custodianSubSection = buildSubSection({
         // Other contacts
         buildFieldsRepeaterField({
           id: 'otherContacts',
-          formTitle: (index) => {
+          formTitle: ({ index }) => {
             return {
               ...userInformation.otherContact.subtitle,
               values: {
@@ -262,11 +262,13 @@ export const custodianSubSection = buildSubSection({
               showEmailField: true,
               emailLabel: userInformation.otherContact.email,
               emailRequired: true,
-              clearOnChange: (index) => [`otherContacts[${index}].person.name`],
+              clearOnChange: ({ index }) => [
+                `otherContacts[${index}].person.name`,
+              ],
             },
             applicantNationalId: {
               component: 'hiddenInput',
-              defaultValue: (application: Application) => {
+              defaultValue: ({ application }) => {
                 return application.applicant
               },
             },

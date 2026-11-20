@@ -171,20 +171,25 @@ export const MainForm = buildForm({
                   addItemButtonText: m.application.addNewEducation,
                   saveItemButtonText: m.application.addNewEducation,
                   editField: true,
-                  getStaticTableData: getEducationStaticTableData,
+                  getStaticTableData: ({ application }) =>
+                    getEducationStaticTableData(application),
                   fields: {
                     levelOfStudy: {
                       component: 'select',
                       label: m.application.educationLevelOfStudyLabel,
                       width: 'half',
-                      options: (application, _activeValues, lang) =>
+                      options: ({ application, locale: lang }) =>
                         getLevelsOfStudyOptions(application, lang as Locale),
                     },
                     degree: {
                       component: 'select',
                       label: m.application.educationDegreeLabel,
                       width: 'half',
-                      options: (application, activeValues, lang) =>
+                      options: ({
+                        application,
+                        row: activeValues,
+                        locale: lang,
+                      }) =>
                         getDegreeOptions(
                           application,
                           lang as Locale,
@@ -196,7 +201,11 @@ export const MainForm = buildForm({
                       component: 'select',
                       label: m.application.educationCourseOfStudyLabel,
                       width: 'half',
-                      options: (application, activeValues, lang) =>
+                      options: ({
+                        application,
+                        row: activeValues,
+                        locale: lang,
+                      }) =>
                         getCourseOfStudy(
                           application,
                           activeValues?.levelOfStudy ?? '',
@@ -213,23 +222,39 @@ export const MainForm = buildForm({
                     },
                   },
                   table: {
-                    header: [
-                      m.application.educationLevelOfStudyLabel,
-                      m.application.educationDegreeLabel,
-                      m.application.educationCourseOfStudyLabel,
-                      m.application.educationEndLabel,
+                    columns: [
+                      {
+                        header: m.application.educationLevelOfStudyLabel,
+                        value: ({ row, displayIndex, application }) =>
+                          formatLevelOfStudy(
+                            row.levelOfStudy ?? '',
+                            displayIndex,
+                            application,
+                          ),
+                      },
+                      {
+                        header: m.application.educationDegreeLabel,
+                        value: ({ row, displayIndex, application }) =>
+                          formatDegree(
+                            row.degree ?? '',
+                            displayIndex,
+                            application,
+                          ),
+                      },
+                      {
+                        header: m.application.educationCourseOfStudyLabel,
+                        value: ({ row, displayIndex, application }) =>
+                          formatCourseOfStudy(
+                            row.courseOfStudy ?? '',
+                            displayIndex,
+                            application,
+                          ),
+                      },
+                      {
+                        header: m.application.educationEndLabel,
+                        value: 'endDate',
+                      },
                     ],
-                    rows: [
-                      'levelOfStudy',
-                      'degree',
-                      'courseOfStudy',
-                      'endDate',
-                    ],
-                    format: {
-                      levelOfStudy: formatLevelOfStudy,
-                      degree: formatDegree,
-                      courseOfStudy: formatCourseOfStudy,
-                    },
                   },
                 }),
               ],
@@ -292,13 +317,14 @@ export const MainForm = buildForm({
                   addItemButtonText: m.application.addLanguageLabel,
                   saveItemButtonText: m.application.addLanguageLabel,
                   editField: true,
-                  getStaticTableData: getLanguageStaticTableData,
+                  getStaticTableData: ({ application }) =>
+                    getLanguageStaticTableData(application),
                   fields: {
                     language: {
                       component: 'select',
                       label: m.application.languageNameLabel,
                       width: 'half',
-                      options: (application, _activeValues, lang) =>
+                      options: ({ application, locale: lang }) =>
                         getLanguageOptions(
                           application.externalData,
                           lang as Locale,
@@ -308,7 +334,7 @@ export const MainForm = buildForm({
                       component: 'select',
                       label: m.application.languageAbilityLabel,
                       width: 'half',
-                      options: (application, _activeValues, lang) =>
+                      options: ({ application, locale: lang }) =>
                         getLanguageAbilityOptions(
                           application.externalData,
                           lang as Locale,
@@ -316,15 +342,26 @@ export const MainForm = buildForm({
                     },
                   },
                   table: {
-                    header: [
-                      m.application.languageNameLabel,
-                      m.application.languageAbilityLabel,
+                    columns: [
+                      {
+                        header: m.application.languageNameLabel,
+                        value: ({ row, displayIndex, application }) =>
+                          formatLanguage(
+                            row.language ?? '',
+                            displayIndex,
+                            application,
+                          ),
+                      },
+                      {
+                        header: m.application.languageAbilityLabel,
+                        value: ({ row, displayIndex, application }) =>
+                          formatLanguageSkill(
+                            row.skill ?? '',
+                            displayIndex,
+                            application,
+                          ),
+                      },
                     ],
-                    rows: ['language', 'skill'],
-                    format: {
-                      language: formatLanguage,
-                      skill: formatLanguageSkill,
-                    },
                   },
                 }),
               ],

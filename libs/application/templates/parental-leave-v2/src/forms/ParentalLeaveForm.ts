@@ -917,7 +917,7 @@ export const ParentalLeaveForm: Form = buildForm({
                         },
                       ],
                       displayInTable: false,
-                      condition: (application) => {
+                      condition: ({ application }) => {
                         const { applicationType, employerLastSixMonths } =
                           getApplicationAnswers(application.answers)
 
@@ -930,16 +930,29 @@ export const ParentalLeaveForm: Form = buildForm({
                     },
                   },
                   table: {
-                    header: [
-                      parentalLeaveFormMessages.employer.emailHeader,
-                      parentalLeaveFormMessages.employer.phoneNumberHeader,
-                      parentalLeaveFormMessages.employer.ratioHeader,
+                    columns: [
+                      {
+                        header: parentalLeaveFormMessages.employer.emailHeader,
+                        value: 'email',
+                      },
+                      {
+                        header:
+                          parentalLeaveFormMessages.employer.phoneNumberHeader,
+                        value: ({ row }) => {
+                          const value = row.phoneNumber ?? ''
+                          return formatPhoneNumber(
+                            removeCountryCode(value ?? ''),
+                          )
+                        },
+                      },
+                      {
+                        header: parentalLeaveFormMessages.employer.ratioHeader,
+                        value: ({ row }) => {
+                          const value = row.ratio ?? ''
+                          return `${value}%`
+                        },
+                      },
                     ],
-                    format: {
-                      phoneNumber: (value) =>
-                        formatPhoneNumber(removeCountryCode(value ?? '')),
-                      ratio: (value) => `${value}%`,
-                    },
                   },
                 }),
               ],

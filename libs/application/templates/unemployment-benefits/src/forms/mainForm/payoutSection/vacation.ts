@@ -69,7 +69,7 @@ export const vacationSubSection = buildSubSection({
               width: 'half',
               required: true,
               minDate: new Date(),
-              maxDate: getVacationMaxDate,
+              maxDate: () => getVacationMaxDate(),
             },
             endDate: {
               component: 'date',
@@ -77,7 +77,7 @@ export const vacationSubSection = buildSubSection({
               width: 'half',
               required: true,
               minDate: new Date(),
-              maxDate: getVacationMaxDate,
+              maxDate: () => getVacationMaxDate(),
             },
           },
         }),

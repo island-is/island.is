@@ -366,7 +366,7 @@ export const educationHistorySubSection = buildSubSection({
               label: educationMessages.labels.levelOfStudyLabel,
               component: 'select',
               required: true,
-              options: (application, _, locale) => {
+              options: ({ application, locale }) => {
                 locale = locale ? locale : 'is'
                 return getLevelsOfStudyOptions(application, locale)
               },
@@ -375,7 +375,7 @@ export const educationHistorySubSection = buildSubSection({
               label: educationMessages.labels.schoolDegreeLabel,
               component: 'select',
               required: true,
-              options: (application, activeField, locale) => {
+              options: ({ application, row: activeField, locale }) => {
                 const levelOfStudy = (activeField?.levelOfStudy as string) ?? ''
                 locale = locale ? locale : 'is'
                 return getDegreeOptions(application, locale, levelOfStudy)
@@ -385,7 +385,7 @@ export const educationHistorySubSection = buildSubSection({
               label: educationMessages.labels.courseOfStudyLabel,
               component: 'select',
               required: true,
-              options: (application, activeField, locale) => {
+              options: ({ application, row: activeField, locale }) => {
                 const levelOfStudy = (activeField?.levelOfStudy as string) ?? ''
                 const degreeAnswer = (activeField?.degree as string) ?? ''
 
@@ -402,7 +402,7 @@ export const educationHistorySubSection = buildSubSection({
               label: educationMessages.labels.endOfStudies,
               component: 'select',
               placeholder: educationMessages.labels.endOfStudiesPlaceholder,
-              options: getYearOptions,
+              options: () => getYearOptions(),
             },
             unfinishedStudy: {
               component: 'checkbox',
@@ -414,7 +414,7 @@ export const educationHistorySubSection = buildSubSection({
                   label: educationMessages.labels.endOfStudiesPlaceholder,
                 },
               ],
-              clearOnChange: (index: number) => [
+              clearOnChange: ({ index }) => [
                 `educationHistory.educationHistory[${index}].endOfStudy`,
               ],
             },

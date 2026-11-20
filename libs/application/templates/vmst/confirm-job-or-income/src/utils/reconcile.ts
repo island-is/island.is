@@ -1,5 +1,8 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import {
+  Application,
+  TableRepeaterCellContext,
+} from '@island.is/application/types'
 import { PaymentFrequency } from './constants'
 
 export type ReconcileEntry = Record<string, unknown> & { isRemoved?: boolean }
@@ -275,3 +278,10 @@ const buildPersistedRowGate =
 
 export const buildCanRemoveRow = buildPersistedRowGate('canDelete')
 export const buildCanEditRow = buildPersistedRowGate('canEdit')
+
+export const buildPersistedRowProps =
+  (persistedPath: string) =>
+  ({ application, row }: TableRepeaterCellContext) => ({
+    canRemove: buildCanRemoveRow(persistedPath)(application, row),
+    canEdit: buildCanEditRow(persistedPath)(application, row),
+  })

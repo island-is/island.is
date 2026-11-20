@@ -113,7 +113,7 @@ const FreightPairingSubSection = (freightIndex: number) =>
           buildFieldsRepeaterField({
             id: `freightPairing.${freightIndex}.items`,
             displayTitleAsAccordion: true,
-            formTitle: (convoyIndex, application) => {
+            formTitle: ({ index: convoyIndex, application }) => {
               const convoyItem = getConvoyItem(application.answers, convoyIndex)
               if (!convoyItem) return ''
               return {
@@ -132,7 +132,7 @@ const FreightPairingSubSection = (freightIndex: number) =>
             condition: (answers) =>
               getSelectedConvoyIdsInFreightPairing(answers, freightIndex)
                 .length > 0,
-            itemCondition: (convoyIndex, application) =>
+            itemCondition: ({ index: convoyIndex, application }) =>
               checkHasSelectedConvoyInFreightPairing(
                 application.answers,
                 freightIndex,
@@ -141,11 +141,8 @@ const FreightPairingSubSection = (freightIndex: number) =>
             fields: {
               convoyId: {
                 component: 'hiddenInput',
-                defaultValue: (
-                  application: Application,
-                  _: unknown,
-                  index: number,
-                ) => getConvoyItem(application.answers, index)?.convoyId,
+                defaultValue: ({ application, index }) =>
+                  getConvoyItem(application.answers, index)?.convoyId,
                 displayInTable: false,
               },
               exemptionForTitle: {

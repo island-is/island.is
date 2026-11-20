@@ -69,7 +69,7 @@ export const otherBenefitsSubSection = buildSubSection({
               component: 'select',
               label: payoutMessages.otherBenefits.typeOfPayment,
               required: true,
-              options: (application, _, locale) => {
+              options: ({ application, locale }) => {
                 const incomeTypes =
                   getValueViaPath<
                     GaldurDomainModelsSettingsIncomeTypesIncomeTypeCategoryDTO[]
@@ -85,10 +85,10 @@ export const otherBenefitsSubSection = buildSubSection({
                       : incomeTypes.english ?? incomeTypes.name) ?? '',
                 }))
               },
-              clearOnChange: (index) => [
+              clearOnChange: ({ index }) => [
                 `otherBenefits.payments[${index}].paymentAmount`,
               ],
-              setOnChange: async (option, application, index) => {
+              setOnChange: async (option, { application, index }) => {
                 // Since sickenss payments only has one income type, we are not displaying the subType
                 // dropdown and need to select the only possible value
                 let defaultSubtype: string | undefined
@@ -119,7 +119,7 @@ export const otherBenefitsSubSection = buildSubSection({
               component: 'select',
               label: payoutMessages.otherBenefits.subTypeOfPayment,
               required: true,
-              condition: (application, activeField, _) => {
+              condition: ({ application, row: activeField }) => {
                 if (
                   !activeField ||
                   activeField.typeOfPayment ===
@@ -140,7 +140,7 @@ export const otherBenefitsSubSection = buildSubSection({
 
                 return !!subTypes && subTypes.length > 0
               },
-              options: (application, activeField, locale) => {
+              options: ({ application, row: activeField, locale }) => {
                 if (!activeField) {
                   return []
                 }
@@ -168,7 +168,7 @@ export const otherBenefitsSubSection = buildSubSection({
               component: 'select',
               label: payoutMessages.otherBenefits.privatePensionFundPayer,
               required: true,
-              condition: (application, activeField, _) => {
+              condition: ({ row: activeField }) => {
                 if (!activeField) {
                   return false
                 }
@@ -178,7 +178,7 @@ export const otherBenefitsSubSection = buildSubSection({
                   PaymentTypeIds.SUPPLEMENTARY_FUND_TYPE_ID
                 )
               },
-              options: (application) => {
+              options: ({ application }) => {
                 const privatePensionFunds =
                   getValueViaPath<
                     GaldurDomainModelsSettingsPensionFundsPensionFundDTO[]
@@ -199,7 +199,7 @@ export const otherBenefitsSubSection = buildSubSection({
               component: 'select',
               label: payoutMessages.otherBenefits.pensionFundPayer,
               required: true,
-              condition: (application, activeField, _) => {
+              condition: ({ row: activeField }) => {
                 if (!activeField) {
                   return false
                 }
@@ -209,7 +209,7 @@ export const otherBenefitsSubSection = buildSubSection({
                   PaymentTypeIds.PENSION_FUND_TYPE_ID
                 )
               },
-              options: (application) => {
+              options: ({ application }) => {
                 const pensionFunds =
                   getValueViaPath<
                     GaldurDomainModelsSettingsPensionFundsPensionFundDTO[]
@@ -230,7 +230,7 @@ export const otherBenefitsSubSection = buildSubSection({
               component: 'select',
               label: payoutMessages.otherBenefits.unionPayer,
               required: true,
-              condition: (application, activeField, _) => {
+              condition: ({ row: activeField }) => {
                 if (!activeField) {
                   return false
                 }
@@ -240,7 +240,7 @@ export const otherBenefitsSubSection = buildSubSection({
                   PaymentTypeIds.SICKNESS_PAYMENTS_TYPE_ID
                 )
               },
-              options: (application) => {
+              options: ({ application }) => {
                 const unions =
                   getValueViaPath<GaldurDomainModelsSettingsUnionsUnionDTO[]>(
                     application.externalData,
@@ -259,7 +259,7 @@ export const otherBenefitsSubSection = buildSubSection({
               message:
                 payoutMessages.otherBenefits
                   .payedFromPrivatePensionFundAlertMessage,
-              condition: (application, activeField, _) => {
+              condition: ({ row: activeField }) => {
                 if (!activeField) {
                   return false
                 }
@@ -276,7 +276,7 @@ export const otherBenefitsSubSection = buildSubSection({
               currency: true,
               type: 'number',
               required: true,
-              condition: (application, activeField, _) => {
+              condition: ({ row: activeField }) => {
                 if (!activeField) {
                   return false
                 }
@@ -294,7 +294,7 @@ export const otherBenefitsSubSection = buildSubSection({
               required: true,
               label: payoutMessages.otherBenefits.dateFrom,
               width: 'half',
-              condition: (application, activeField, _) => {
+              condition: ({ row: activeField }) => {
                 if (!activeField) {
                   return false
                 }
@@ -311,7 +311,7 @@ export const otherBenefitsSubSection = buildSubSection({
               required: true,
               label: payoutMessages.otherBenefits.dateTo,
               width: 'half',
-              condition: (application, activeField, _) => {
+              condition: ({ row: activeField }) => {
                 if (!activeField) {
                   return false
                 }
@@ -330,7 +330,7 @@ export const otherBenefitsSubSection = buildSubSection({
                 payoutMessages.otherBenefits.sickessAllowanceFileHeader,
               uploadDescription: applicationMessages.fileUploadAcceptFiles,
               uploadMultiple: true,
-              condition: (application, activeField, _) => {
+              condition: ({ row: activeField }) => {
                 if (!activeField) {
                   return false
                 }
@@ -347,7 +347,7 @@ export const otherBenefitsSubSection = buildSubSection({
               uploadHeader: payoutMessages.otherBenefits.paymentPlanFileHeader,
               uploadDescription: applicationMessages.fileUploadAcceptFiles,
               uploadMultiple: true,
-              condition: (application, activeField, _) => {
+              condition: ({ row: activeField }) => {
                 if (!activeField) {
                   return false
                 }

@@ -134,19 +134,35 @@ export const HomeSupportForm: Form = buildForm({
                 },
               },
               table: {
-                format: {
-                  phone: (value) => formatPhoneNumber(value),
-                  mainContact: (value) =>
-                    value?.includes(YES)
-                      ? coreMessages.radioYes
-                      : coreMessages.radioNo,
-                },
-                header: [
-                  applicantInformationMessages.labels.name,
-                  applicantInformationMessages.labels.email,
-                  applicantInformationMessages.labels.tel,
-                  m.application.contacts.relation,
-                  m.application.contacts.mainContact,
+                columns: [
+                  {
+                    header: applicantInformationMessages.labels.name,
+                    value: 'name',
+                  },
+                  {
+                    header: applicantInformationMessages.labels.email,
+                    value: 'email',
+                  },
+                  {
+                    header: applicantInformationMessages.labels.tel,
+                    value: ({ row }) => {
+                      const value = row.phone ?? ''
+                      return formatPhoneNumber(value)
+                    },
+                  },
+                  {
+                    header: m.application.contacts.relation,
+                    value: 'relation',
+                  },
+                  {
+                    header: m.application.contacts.mainContact,
+                    value: ({ row }) => {
+                      const value = row.mainContact ?? ''
+                      return value?.includes(YES)
+                        ? coreMessages.radioYes
+                        : coreMessages.radioNo
+                    },
+                  },
                 ],
               },
             }),

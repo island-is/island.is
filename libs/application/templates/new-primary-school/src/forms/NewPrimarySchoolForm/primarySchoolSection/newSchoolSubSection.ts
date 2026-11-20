@@ -208,7 +208,7 @@ export const newSchoolSubSection = buildSubSection({
             primarySchoolMessages.newSchool
               .removeAlternativeSpecialEducationDepartmentButton,
           minRows: 1,
-          maxRows: (answers, externalData) => {
+          maxRows: ({ application: { answers, externalData } }) => {
             const { schoolMunicipality } = getApplicationAnswers(answers)
 
             const specialEducationDepartmentsInMunicipality =
@@ -233,7 +233,7 @@ export const newSchoolSubSection = buildSubSection({
           fields: {
             department: {
               component: 'select',
-              label: (index) => ({
+              label: ({ index }) => ({
                 ...primarySchoolMessages.newSchool
                   .alternativeSpecialEducationDepartment,
                 values: { index: index + 2 },
@@ -243,7 +243,7 @@ export const newSchoolSubSection = buildSubSection({
                   .alternativeSpecialEducationDepartmentPlaceholder,
               isSearchable: true,
               isClearable: true,
-              filterOptions: (options, answers, index) => {
+              filterOptions: (options, { application: { answers }, index }) => {
                 const {
                   selectedSchoolId,
                   alternativeSpecialEducationDepartment,
@@ -261,7 +261,7 @@ export const newSchoolSubSection = buildSubSection({
                     option.value !== selectedSchoolId,
                 )
               },
-              options: (application) =>
+              options: ({ application }) =>
                 getSpecialEducationDepartmentsInMunicipality(
                   application.answers,
                   application.externalData,

@@ -38,10 +38,9 @@ export const tableRepeaterSubsection = buildSubSection({
           editButtonTooltipText: 'Custom Edit item text',
           editField: true,
           maxRows: 10,
-          getStaticTableData: (_application) => {
+          getStaticTableData: () => {
             // Possibility to populate the table with data from the answers or external data
             // Populated data will not be editable or deletable
-            // The prepopulated data will not be automatically run through the format function
             return [
               {
                 input: 'John Doe',
@@ -186,32 +185,29 @@ export const tableRepeaterSubsection = buildSubSection({
             },
             inputWithIndexinLabel: {
               component: 'input',
-              label: (index) => `Regular input with index in label: ${index}`,
+              label: ({ index }) =>
+                `Regular input with index in label: ${index}`,
               width: 'full',
               type: 'text',
             },
           },
           table: {
-            // Format values for display in the table
-            // In the format function, you can use the value, index in the repeater and the application object
-            format: {
-              input: (value, _i, _application) => {
-                return `${value} - custom format`
+            // Columns for the table. If not provided, the labels from the fields will be used
+            columns: [
+              {
+                header: 'Input',
+                value: ({ row }) => `${row.input ?? ''} - custom format`,
               },
-              nationalIdWithName: (value) => {
-                return `${value} - custom format`
-              },
-            },
-            // Overwrite header for the table. If not provided, the labels from the fields will be used
-            header: [
-              'Input',
-              'Select',
-              'Radio',
-              'Checkbox',
-              'Date',
-              'Name',
-              'NationalId',
-              'Phone',
+              { header: 'Select', value: 'select' },
+              { header: 'Radio', value: 'radio' },
+              { header: 'Checkbox', value: 'checkbox' },
+              { header: 'Date', value: 'date' },
+              { header: 'Name', value: 'name' },
+              { header: 'NationalId', value: 'nationalId' },
+              { header: 'Phone', value: 'phone' },
+              { header: 'Async 1', value: 'selectAsyncPrimary' },
+              { header: 'Async 2', value: 'selectAsyncReliant' },
+              { header: 'Indexed', value: 'inputWithIndexinLabel' },
             ],
           },
         }),

@@ -5,7 +5,6 @@ import {
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
 import { uuid } from 'uuidv4'
 import * as m from '../../../lib/messages'
 import { isPension } from '../../../utils/conditions'
@@ -21,7 +20,7 @@ import {
 } from '../../../utils/formatters'
 import { IncomeValidationFieldProps } from '../../../fields/IncomeValidation'
 import { buildIncomeDescriptionFields } from './incomeDescriptionFields'
-import { buildCanEditRow, buildCanRemoveRow } from '../../../utils/reconcile'
+import { buildPersistedRowProps } from '../../../utils/reconcile'
 import { getPensionDefaults, toPensionRow } from '../../../utils/persistedRows'
 import {
   isOneTimePayment,
@@ -67,10 +66,8 @@ export const pensionSection = buildSubSection({
           addItemButtonText: m.application.addLine,
           hideTableHeaderIfEmpty: true,
           defaultValue: getPensionDefaults,
-          canRemoveRow: buildCanRemoveRow(pensionValidationProps.persistedPath),
           removeButtonDisabledTooltipText: m.application.removeLineNotAllowed,
           editField: true,
-          canEditRow: buildCanEditRow(pensionValidationProps.persistedPath),
           editButtonDisabledTooltipText: m.application.editLineNotAllowed,
           marginTop: 2,
           fields: {
@@ -79,7 +76,7 @@ export const pensionSection = buildSubSection({
               label: m.application.paymentType,
               width: 'half',
               required: true,
-              options: (application) => {
+              options: ({ application }) => {
                 const incomeTypes =
                   getValueViaPath<Array<{ id?: string; name?: string }>>(
                     application.externalData,
@@ -97,7 +94,7 @@ export const pensionSection = buildSubSection({
               label: m.application.pensionFund,
               width: 'half',
               required: true,
-              options: (application) => {
+              options: ({ application }) => {
                 const pensionFunds =
                   getValueViaPath<Array<{ id?: string; name?: string }>>(
                     application.externalData,
@@ -116,7 +113,7 @@ export const pensionSection = buildSubSection({
               required: true,
               width: 'half',
               defaultValue: PaymentFrequency.ONE_TIME,
-              clearOnChange: (index: number) => [
+              clearOnChange: ({ index }) => [
                 `registerPension[${index}].dateTo`,
               ],
               options: [
@@ -135,24 +132,24 @@ export const pensionSection = buildSubSection({
               label: m.application.dateFrom,
               width: 'half',
               required: true,
-              clearOnChange: (index: number) => [
+              clearOnChange: ({ index }) => [
                 `registerPension[${index}].dateTo`,
               ],
-              minDate: getCurrentMonthStartDate,
-              maxDate: getMaxRegistrationDate,
+              minDate: () => getCurrentMonthStartDate(),
+              maxDate: () => getMaxRegistrationDate(),
             },
             dateTo: {
               component: 'date',
               label: m.application.dateTo,
               width: 'half',
-              disabled: (_application, activeField) =>
+              disabled: ({ row: activeField }) =>
                 activeField?.paymentFrequency === PaymentFrequency.ONE_TIME,
-              placeholder: (_application, activeField) =>
+              placeholder: ({ row: activeField }) =>
                 activeField?.paymentFrequency === PaymentFrequency.MONTHLY
                   ? m.application.indefinitePeriod
                   : '',
-              maxDate: getMaxRegistrationDate,
-              minDate: (_application, activeField) => {
+              maxDate: () => getMaxRegistrationDate(),
+              minDate: ({ row: activeField }) => {
                 const fromDate = activeField?.dateFrom
                 if (fromDate) {
                   return new Date(fromDate)
@@ -174,53 +171,59 @@ export const pensionSection = buildSubSection({
             // function stays idempotent across renders.
             validationId: {
               component: 'hiddenInput',
-              defaultValue: (
-                _application: Application,
-                activeField?: Record<string, string>,
-              ) => activeField?.validationId ?? uuid(),
+              defaultValue: ({ row: activeField }) =>
+                activeField?.validationId ?? uuid(),
             },
           },
           table: {
-            header: [
-              m.application.tableHeaderPensionFund,
-              m.application.tableHeaderPaymentType,
-              m.application.tableHeaderDateFrom,
-              m.application.tableHeaderDateTo,
-              m.application.tableHeaderAmount,
-            ],
-            rows: [
-              'pensionFund',
-              'pensionType',
-              'dateFrom',
-              'dateTo',
-              'amountPerMonth',
-            ],
-            format: {
-              pensionFund: (value, _displayIndex, application) => {
-                if (!value || !application) return ''
-                const pensionFunds =
-                  getValueViaPath<Array<{ id?: string; name?: string }>>(
-                    application.externalData,
-                    'pensionFunds.data',
-                  ) ?? []
-                const fund = pensionFunds.find((f) => f.id === value)
-                return fund?.name ?? value
+            columns: [
+              {
+                header: m.application.tableHeaderPensionFund,
+                value: ({ row, application }) => {
+                  const value = row.pensionFund ?? ''
+                  if (!value || !application) return ''
+                  const pensionFunds =
+                    getValueViaPath<Array<{ id?: string; name?: string }>>(
+                      application.externalData,
+                      'pensionFunds.data',
+                    ) ?? []
+                  const fund = pensionFunds.find((f) => f.id === value)
+                  return fund?.name ?? value
+                },
               },
-              pensionType: (value, _displayIndex, application) => {
-                if (!value || !application) return ''
-                const incomeTypes =
-                  getValueViaPath<Array<{ id?: string; name?: string }>>(
-                    application.externalData,
-                    'incomeTypes.data.pensionTypes',
-                  ) ?? []
-                const type = incomeTypes.find((t) => t.id === value)
-                return type?.name ?? value
+              {
+                header: m.application.tableHeaderPaymentType,
+                value: ({ row, application }) => {
+                  const value = row.pensionType ?? ''
+                  if (!value || !application) return ''
+                  const incomeTypes =
+                    getValueViaPath<Array<{ id?: string; name?: string }>>(
+                      application.externalData,
+                      'incomeTypes.data.pensionTypes',
+                    ) ?? []
+                  const type = incomeTypes.find((t) => t.id === value)
+                  return type?.name ?? value
+                },
               },
-              dateFrom: formatIsDate,
-              dateTo: (value, _displayIndex, _application, row) =>
-                formatIsDateOrIndefinite(value, row?.paymentFrequency),
-              amountPerMonth: formatIsCurrency,
-            },
+              {
+                header: m.application.tableHeaderDateFrom,
+                value: ({ row }) => formatIsDate(row.dateFrom ?? ''),
+              },
+              {
+                header: m.application.tableHeaderDateTo,
+                value: ({ row }) => {
+                  const value = row.dateTo ?? ''
+                  return formatIsDateOrIndefinite(value, row?.paymentFrequency)
+                },
+              },
+              {
+                header: m.application.tableHeaderAmount,
+                value: ({ row }) => formatIsCurrency(row.amountPerMonth ?? ''),
+              },
+            ],
+            rowProps: buildPersistedRowProps(
+              pensionValidationProps.persistedPath,
+            ),
           },
         }),
         buildCustomField(

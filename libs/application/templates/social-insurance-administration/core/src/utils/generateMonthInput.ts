@@ -11,7 +11,7 @@ export const generateMonthInput = (label: MessageDescriptor): RepeaterItem => {
     displayInTable: false,
     currency: true,
     suffix: '',
-    condition: (_, activeField) => {
+    condition: ({ row: activeField }) => {
       return shouldShowIncomePlanMonths(activeField)
     },
   }

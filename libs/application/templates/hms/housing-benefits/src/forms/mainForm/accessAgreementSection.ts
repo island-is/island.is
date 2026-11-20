@@ -71,23 +71,23 @@ export const accessAgreementSection = buildSection({
           id: MAIN_FORM_ACCESS_AGREEMENT_REPEATER_ID,
           marginTop: 2,
           width: 'full',
-          minRows: (answers, externalData) =>
+          minRows: ({ application: { answers, externalData } }) =>
             mainFormAccessAgreementRepeaterMinRows(answers, externalData),
-          maxRows: (answers, externalData) =>
+          maxRows: ({ application: { answers, externalData } }) =>
             mainFormAccessAgreementRepeaterMaxRows(answers, externalData),
           defaultValue: (application: Application) =>
             buildMainFormAccessAgreementRepeaterDefaultRows(
               application.answers,
               application.externalData,
             ),
-          formTitle: (index) => ({
+          formTitle: ({ index }) => ({
             ...m.assigneeDraft.umgengnissamningurRepeaterFormTitle,
             values: { index: index + 1 },
           }),
           formTitleVariant: 'h3',
           formTitleNumbering: 'none',
           addItemButtonText: m.assigneeDraft.umgengnissamningurRepeaterAddItem,
-          hideAddButton: (application) => {
+          hideAddButton: ({ application }) => {
             const maxRows = mainFormAccessAgreementRepeaterMaxRows(
               application.answers,
               application.externalData,
@@ -102,15 +102,18 @@ export const accessAgreementSection = buildSection({
               component: 'select',
               width: 'full',
               label: m.assigneeDraft.umgengnissamningurSelectChildTitle,
-              options: (application, activeValues) =>
+              options: ({ application, row: activeValues }) =>
                 mainFormAccessAgreementChildOptions(application, activeValues),
-              required: (_application, activeValues) => {
+              required: ({ row: activeValues }) => {
                 const files = activeValues?.file as
                   | Array<{ key: string; name: string }>
                   | undefined
                 return Array.isArray(files) && files.length > 0
               },
-              filterOptions: (options, formValues, index) =>
+              filterOptions: (
+                options,
+                { application: { answers: formValues }, index },
+              ) =>
                 filterAccessAgreementChildNationalIdOptions(
                   options,
                   getMainFormAccessAgreementRepeater(formValues),

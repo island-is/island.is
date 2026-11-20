@@ -5,14 +5,14 @@ import {
   buildSection,
   buildTableRepeaterField,
   getValueViaPath,
+  coreMessages,
 } from '@island.is/application/core'
 import { examinee, shared } from '../../../lib/messages'
 import { getAllCountryCodes } from '@island.is/shared/utils'
-import { Application, FormValue } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/types'
 import { SelfOrOthers, TrueOrFalse } from '../../../utils/enums'
 import { submitExaminees } from '../../../utils/submitExaminees'
 import { ExamineeType } from '../../../lib/dataSchema'
-import { Locale } from '@island.is/shared/types'
 export const examineeSection = buildSection({
   id: 'examineeSection',
   title: examinee.general.sectionTitle,
@@ -67,11 +67,7 @@ export const examineeSection = buildSection({
               width: 'half',
               displayInTable: false,
               required: true,
-              options: (
-                _application: Application,
-                _activeField: Record<string, string> | undefined,
-                locale: Locale | undefined,
-              ) => {
+              options: ({ locale }) => {
                 const iceland = {
                   name: 'Iceland',
                   name_is: 'Ísland',
@@ -101,9 +97,19 @@ export const examineeSection = buildSection({
             },
           },
           table: {
-            format: {
-              phone: (value) => `${value.slice(0, 3)}-${value.slice(3)}`,
-            },
+            rowProps: ({ row }) => ({ disabled: row.disabled === 'true' }),
+            columns: [
+              { header: coreMessages.name, value: 'name' },
+              { header: coreMessages.nationalId, value: 'nationalId' },
+              { header: shared.labels.email, value: 'email' },
+              {
+                header: shared.labels.phone,
+                value: ({ row }) => {
+                  const value = row.phone ?? ''
+                  return `${value.slice(0, 3)}-${value.slice(3)}`
+                },
+              },
+            ],
           },
           onSubmitLoad: async ({ apolloClient, application, tableItems }) => {
             const validationPaths = await submitExaminees(

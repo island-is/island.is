@@ -53,7 +53,7 @@ export const householdMembersSection = buildSection({
             m.draftMessages.householdMembersSection.addMemberButton,
           editField: true,
           maxRows: 20,
-          getStaticTableData: (application: Application) =>
+          getStaticTableData: ({ application }) =>
             getRentalAgreementTenantsForStaticTable(application),
           defaultValue: (application: Application) =>
             getHouseholdMembersTableRepeaterDefaultValue(application),
@@ -66,11 +66,17 @@ export const householdMembersSection = buildSection({
             },
           },
           table: {
-            header: [
-              m.draftMessages.householdMembersSection.nameColumn,
-              m.draftMessages.householdMembersSection.nationalIdColumn,
+            columns: [
+              {
+                header: m.draftMessages.householdMembersSection.nameColumn,
+                value: 'name',
+              },
+              {
+                header:
+                  m.draftMessages.householdMembersSection.nationalIdColumn,
+                value: 'nationalId',
+              },
             ],
-            rows: ['name', 'nationalId'],
           },
         }),
         buildHiddenInput({

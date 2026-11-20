@@ -25,6 +25,9 @@ import {
   extractStaticId,
 } from './preview-stub.util'
 
+const resolveLabel = (label: RepeaterItem['label']): StaticText | undefined =>
+  typeof label === 'function' ? label({ index: 0 }) : label
+
 export const mapRepeaterItemToFieldType = (item: RepeaterItem): string => {
   switch (item.component) {
     case 'input': {
@@ -75,11 +78,13 @@ export const buildTableRepeaterColumnHeaderDescriptors = (
   )
   const tableItems = items.filter((x) => x.displayInTable !== false)
 
-  const tableHeader = tr.table?.header
-  if (Array.isArray(tableHeader) && tableHeader.length > 0) {
+  const columns = tr.table?.columns
+  if (columns && columns.length > 0) {
     const out: MessageDescriptorInfo[] = []
-    for (const h of tableHeader) {
-      out.push(...extractMessageDescriptorsFromFormText(h as FormText))
+    for (const column of columns) {
+      out.push(
+        ...extractMessageDescriptorsFromFormText(column.header as FormText),
+      )
     }
     return out
   }
@@ -110,8 +115,7 @@ export const buildTableRepeaterColumnHeaderDescriptors = (
       if (!lab) {
         continue
       }
-      const st =
-        typeof lab === 'function' ? (lab as (i: number) => StaticText)(0) : lab
+      const st = resolveLabel(lab)
       out.push(...extractMessageDescriptorsFromFormText(st as FormText))
     }
   }
@@ -163,8 +167,7 @@ export const walkRepeaterItemToScreen = (
     pushText(sa.loadingError)
   } else if ('label' in item && item.label) {
     const lab = item.label
-    const st =
-      typeof lab === 'function' ? (lab as (i: number) => StaticText)(0) : lab
+    const st = resolveLabel(lab)
     descriptors.push(...extractMessageDescriptorsFromFormText(st as FormText))
   }
   if (item.component === 'phone' && item.phoneLabel) {
@@ -211,9 +214,7 @@ export const walkRepeaterItemToScreen = (
       return undefined
     }
     const lab = item.label
-    return typeof lab === 'function'
-      ? (lab as (i: number) => StaticText)(0)
-      : lab
+    return resolveLabel(lab)
   })()
 
   const title = extractStaticText(labelStatic)

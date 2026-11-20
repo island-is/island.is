@@ -34,18 +34,18 @@ export const FreightLongTermCreateSubSection = buildSubSection({
           editField: true,
           initActiveFieldIfEmpty: true,
           table: {
-            header: [
-              freight.labels.freightNumberTableHeader,
-              freight.labels.freightName,
-            ],
-            format: {
-              index: (_value, displayIndex) => {
-                return {
-                  ...freight.labels.freightNumber,
-                  values: { number: displayIndex + 1 },
-                }
+            columns: [
+              {
+                header: freight.labels.freightNumberTableHeader,
+                value: ({ displayIndex }) => {
+                  return {
+                    ...freight.labels.freightNumber,
+                    values: { number: displayIndex + 1 },
+                  }
+                },
               },
-            },
+              { header: freight.labels.freightName, value: 'name' },
+            ],
           },
           onSubmitLoad: async ({ tableItems }) => {
             const index = tableItems.length - 1
