@@ -17,7 +17,11 @@ import type { CardPaymentSagaMetadata } from './cardPayment.orchestrator'
  * message an unreadable answer always had, so the endpoints answer as before.
  */
 export class GatewayApprovedUnreadableError extends BadRequestException {
-  constructor(public readonly responseFields: string[]) {
+  constructor(
+    public readonly responseFields: string[],
+    /** The gateway's code: a Google Pay decryption's Q8 is not a charge */
+    public readonly responseCode?: string,
+  ) {
     super('Failed to parse payment gateway response')
     this.name = 'GatewayApprovedUnreadableError'
     Object.setPrototypeOf(this, GatewayApprovedUnreadableError.prototype)

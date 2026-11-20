@@ -932,12 +932,14 @@ export class CardPaymentService {
       if (declined) {
         throw e
       }
-      // Approved but unreadable is a charge, anything else an unknown outcome
+      // Approved but unreadable is a charge, unless it is the decryption of a
+      // card saved in the Google account (Q8), which charges nothing; anything
+      // else is an unknown outcome
       throw new GooglePayUnsettledChargeError(
         (e as Error).message,
         paymentTrackingData,
         undefined,
-        e instanceof GatewayApprovedUnreadableError,
+        e instanceof GatewayApprovedUnreadableError && e.responseCode !== 'Q8',
       )
     }
 
@@ -1458,7 +1460,10 @@ export class CardPaymentService {
 
     // An approved charge has moved money: the charge step refunds it
     if (raw?.isSuccess === true) {
-      throw new GatewayApprovedUnreadableError(responseFields)
+      throw new GatewayApprovedUnreadableError(
+        responseFields,
+        typeof responseCode === 'string' ? responseCode : undefined,
+      )
     }
 
     throw new BadRequestException('Failed to parse payment gateway response')

@@ -2825,6 +2825,38 @@ describe('CardPaymentController', () => {
         )
         expect(refundCalls().length).toBeGreaterThanOrEqual(1)
       })
+
+      it('does not take a saved card decryption the service could not read for a charge', async () => {
+        const { googlePayCardInformation, ...decryption } = decryptionResponse()
+        mockFetch({
+          // Q8 charges nothing, but the card is missing its expiry month
+          decryption: () =>
+            gatewayResponse({
+              ...decryption,
+              googlePayCardInformation: {
+                ...googlePayCardInformation,
+                expirationMonth: null,
+              },
+            }),
+          refund: () =>
+            ({
+              json: async () => ({}),
+              text: async () => 'No transaction found',
+              status: 400,
+              statusText: 'Bad Request',
+              ok: false,
+            } as Response),
+        })
+
+        const response = await charge(token())
+
+        // An unknown outcome: the payer is not told a refund failed
+        expect(response.status).toBe(400)
+        expect(response.body.detail).not.toBe(
+          CardErrorCode.RefundFailedAfterPaymentError,
+        )
+        expect(cardVerificationCalls()).toHaveLength(0)
+      })
     })
 
     describe('a device token, which the gateway charges when it decrypts it', () => {
