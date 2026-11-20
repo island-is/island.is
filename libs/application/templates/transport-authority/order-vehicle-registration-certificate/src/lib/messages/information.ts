@@ -12,11 +12,6 @@ export const information = {
       defaultMessage: 'Upplýsingar',
       description: 'Title of information page',
     },
-    description: {
-      id: 'ta.ovrc.application:information.general.description',
-      defaultMessage: 'Skráningarskírteini er aðeins sent á lögheimili eigenda',
-      description: 'Description of information page',
-    },
   }),
   labels: {
     pickVehicle: defineMessages({
@@ -124,6 +119,54 @@ export const information = {
         id: 'ta.ovrc.application:information.labels.owner.error',
         defaultMessage: 'Það kom upp villa við að sækja upplýsingar um bifreið',
         description: 'Owner error message',
+      },
+    }),
+    sendToAddress: defineMessages({
+      description: {
+        id: 'ta.ovrc.application:information.labels.sendToAddress.description',
+        defaultMessage:
+          'Skráningarskírteinið er sent á lögheimili eiganda nema óskað sé eftir að fá það sent á annað heimilisfang.',
+        description: 'Send to address description',
+      },
+      checkbox: {
+        id: 'ta.ovrc.application:information.labels.sendToAddress.checkbox',
+        defaultMessage: 'Senda skráningarskírteinið á annað heimilisfang',
+        description: 'Send to another address checkbox label',
+      },
+      name: {
+        id: 'ta.ovrc.application:information.labels.sendToAddress.name',
+        defaultMessage: 'Nafn viðtakanda',
+        description: 'Send to address recipient name label',
+      },
+      address1: {
+        id: 'ta.ovrc.application:information.labels.sendToAddress.address1',
+        defaultMessage: 'Heimilisfang viðtakanda',
+        description: 'Send to address address line 1 label',
+      },
+      address2: {
+        id: 'ta.ovrc.application:information.labels.sendToAddress.address2',
+        defaultMessage: 'Heimilisfang 2',
+        description: 'Send to address address line 2 label',
+      },
+      apartment: {
+        id: 'ta.ovrc.application:information.labels.sendToAddress.apartment',
+        defaultMessage: 'Íbúð',
+        description: 'Send to address apartment label',
+      },
+      postalCode: {
+        id: 'ta.ovrc.application:information.labels.sendToAddress.postalCode',
+        defaultMessage: 'Póstnúmer viðtakanda',
+        description: 'Send to address postal code label',
+      },
+      city: {
+        id: 'ta.ovrc.application:information.labels.sendToAddress.city',
+        defaultMessage: 'Staður',
+        description: 'Send to address city label',
+      },
+      country: {
+        id: 'ta.ovrc.application:information.labels.sendToAddress.country',
+        defaultMessage: 'Land',
+        description: 'Send to address country label',
       },
     }),
     coOwner: defineMessages({

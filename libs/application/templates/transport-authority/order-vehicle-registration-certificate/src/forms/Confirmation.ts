@@ -8,6 +8,7 @@ import {
 } from '../lib/messages'
 import { TransportAuthorityLogo } from '@island.is/application/assets/institution-logos'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import { isSendToOtherAddress } from '../utils'
 
 export const Confirmation: Form = buildForm({
   id: 'ConfirmationForm',
@@ -33,7 +34,10 @@ export const Confirmation: Form = buildForm({
       alertTitle: confirmation.general.alertTitle,
       alertMessage: confirmation.general.alertMessage,
       expandableHeader: confirmation.general.accordionTitle,
-      expandableDescription: confirmation.general.accordionText,
+      expandableDescription: (application) =>
+        isSendToOtherAddress(application.answers)
+          ? confirmation.general.accordionTextOtherAddress
+          : confirmation.general.accordionText,
     }),
   ],
 })
