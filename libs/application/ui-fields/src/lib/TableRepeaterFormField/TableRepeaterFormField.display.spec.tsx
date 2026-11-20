@@ -247,4 +247,96 @@ describe('TableRepeater table display', () => {
       /disabled/i,
     )
   })
+
+  it('T24: rowProps canRemove false makes delete a no-op with the disabled tooltip', async () => {
+    const rowProps = jest.fn(({ row }: { row: Record<string, string> }) => ({
+      canRemove: row.name !== 'Anna',
+    }))
+    const { getForm, application } = setup(
+      {
+        table: { rowProps },
+        removeButtonDisabledTooltipText: 'Ekki hægt að eyða',
+      },
+      saved([{ name: 'Anna' }, { name: 'Bára' }]),
+    )
+
+    const locked = screen.getByRole('button', {
+      description: 'Ekki hægt að eyða',
+    })
+    expect(locked).toHaveAttribute('aria-disabled', 'true')
+    await userEvent.click(locked)
+
+    expect(tableRows()).toEqual(['Anna', 'Bára'])
+    expect(getForm().getValues('people.0.isRemoved')).toBeUndefined()
+    expect(rowProps).toHaveBeenCalledWith(
+      expect.objectContaining({
+        application: expect.objectContaining({ id: application.id }),
+        row: expect.objectContaining({ name: 'Anna' }),
+      }),
+    )
+  })
+
+  it('T24: rowProps canRemove false without disabled tooltip text shows no tooltip', () => {
+    setup(
+      { table: { rowProps: () => ({ canRemove: false }) } },
+      saved([{ name: 'Anna' }]),
+    )
+
+    expect(deleteButtons()).toHaveLength(0)
+    expect(bodyRows()[0].querySelector('button')).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    )
+  })
+
+  it('T25: rowProps canEdit false makes edit a no-op with the disabled tooltip', async () => {
+    setup(
+      {
+        editField: true,
+        table: { rowProps: ({ row }) => ({ canEdit: row.name !== 'Anna' }) },
+        editButtonDisabledTooltipText: 'Ekki hægt að breyta',
+      },
+      saved([{ name: 'Anna' }, { name: 'Bára' }]),
+    )
+
+    const locked = screen.getByRole('button', {
+      description: 'Ekki hægt að breyta',
+    })
+    expect(locked).toHaveAttribute('aria-disabled', 'true')
+    await userEvent.click(locked)
+
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
+    expect(tableRows()).toEqual(['Anna', 'Bára'])
+  })
+
+  it('T25: without editField there are no edit buttons and canEdit is ignored', () => {
+    setup(
+      { table: { rowProps: () => ({ canEdit: false }) } },
+      saved([{ name: 'Anna' }]),
+    )
+
+    expect(screen.queryByTestId('icon-pencil')).not.toBeInTheDocument()
+  })
+
+  it('T25b: a locked edit button stays hoverable while another row is open', async () => {
+    setup(
+      {
+        editField: true,
+        table: { rowProps: ({ row }) => ({ canEdit: row.name !== 'Anna' }) },
+        editButtonDisabledTooltipText: 'Ekki hægt að breyta',
+      },
+      saved([{ name: 'Anna' }, { name: 'Bára' }]),
+    )
+
+    await userEvent.click(
+      screen.getByRole('button', { description: 'Breyta færslu' }),
+    )
+
+    expect(tableRows()).toEqual(['Anna'])
+    const locked = screen.getByRole('button', {
+      description: 'Ekki hægt að breyta',
+    })
+    expect(locked).toHaveAttribute('aria-disabled', 'true')
+    expect(locked).not.toBeDisabled()
+  })
 })
