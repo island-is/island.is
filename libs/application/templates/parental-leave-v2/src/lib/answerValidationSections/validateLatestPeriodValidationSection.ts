@@ -62,6 +62,35 @@ const validatePeriodRepeaterFields = (
   }
 }
 
+const periodFields: (keyof Period)[] = [
+  'startDate',
+  'endDate',
+  'ratio',
+  'firstPeriodStart',
+]
+
+/**
+ * The period the applicant just changed: a new one, or one whose dates differ
+ * from the saved answers, e.g. an earlier period reached with the browser's
+ * back button. Falls back to the last period.
+ */
+const getEditedPeriodIndex = (
+  periods: Period[],
+  savedPeriods: Period[] | undefined,
+) => {
+  for (let index = periods.length - 1; index >= 0; index--) {
+    const saved = savedPeriods?.[index]
+    if (
+      !saved ||
+      periodFields.some((field) => periods[index]?.[field] !== saved[field])
+    ) {
+      return index
+    }
+  }
+
+  return periods.length - 1
+}
+
 export const validateLatestPeriodValidationSection = (
   newAnswer: unknown,
   application: Application,
@@ -119,7 +148,10 @@ export const validateLatestPeriodValidationSection = (
     }
   }
 
-  const latestPeriodIndex = periods.length - 1
+  const latestPeriodIndex = getEditedPeriodIndex(
+    periods,
+    getValueViaPath<Period[]>(application.answers, 'periods'),
+  )
   const latestPeriod = periods[latestPeriodIndex]
   const expectedDateOfBirthOrAdoptionDateOrBirthDate =
     getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
@@ -131,10 +163,12 @@ export const validateLatestPeriodValidationSection = (
     }
   }
 
-  const otherPeriods = periods.slice(0, latestPeriodIndex)
-  const validOtherPeriods = filterValidPeriods(otherPeriods)
+  const validOtherPeriods = filterValidPeriods(periods).filter(
+    ({ rawIndex }) => rawIndex !== latestPeriodIndex,
+  )
 
-  const isFirstPeriod = validOtherPeriods.length === 0
+  const isFirstPeriod =
+    latestPeriodIndex === 0 || validOtherPeriods.length === 0
 
   const buildError = buildValidationError(
     VALIDATE_LATEST_PERIOD,
@@ -162,8 +196,10 @@ export const validateLatestPeriodValidationSection = (
     return undefined
   }
 
+  // Its position now, not a `rawIndex` saved before a period was deleted, or
+  // the overlap check would skip the period that now has that index
   const validatedField = validatePeriod(
-    latestPeriod,
+    { ...latestPeriod, rawIndex: latestPeriodIndex },
     isFirstPeriod,
     validOtherPeriods,
     application,

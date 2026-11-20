@@ -137,6 +137,21 @@ export const calculatePeriodLength = (
   return cost
 }
 
+/**
+ * Days of rights a period uses at a ratio, counted as the rights check
+ * (`calculateDaysUsedByPeriods`) counts them: the period's length times the
+ * ratio, rounded once.
+ */
+export const calculateDaysUsedAtPercentage = (
+  start: Date,
+  end: Date,
+  percentage: number,
+) => Math.round((calculatePeriodLength(start, end) * percentage) / 100)
+
+/**
+ * The highest ratio, as a fraction, whose days fit in `rights`, or null when
+ * not even 1% fits.
+ */
 export const calculateMaxPercentageForPeriod = (
   start: Date,
   end: Date,
@@ -144,24 +159,13 @@ export const calculateMaxPercentageForPeriod = (
 ): number | null => {
   const fullLength = calculatePeriodLength(start, end)
 
-  if (fullLength <= rights) {
-    return 1
+  for (let percentage = 100; percentage > 0; percentage -= 1) {
+    if (Math.round((fullLength * percentage) / 100) <= rights) {
+      return percentage / 100
+    }
   }
 
-  let percentage = Math.round((rights / fullLength) * 100)
-  let lengthWithPercentage = calculatePeriodLength(start, end, percentage)
-
-  while (lengthWithPercentage > rights && percentage > 0) {
-    percentage -= 1
-
-    lengthWithPercentage = calculatePeriodLength(start, end, percentage / 100)
-  }
-
-  if (lengthWithPercentage > rights) {
-    return null
-  }
-
-  return percentage / 100
+  return null
 }
 
 export const calculateMinPercentageForPeriod = (

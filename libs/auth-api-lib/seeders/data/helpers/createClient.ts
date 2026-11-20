@@ -14,6 +14,7 @@ type GrantType =
   | 'client_credentials'
   | 'urn:ietf:params:oauth:grant-type:token-exchange'
   | 'urn:openid:params:grant-type:ciba'
+  | 'urn:island.is:params:oauth:grant-type:device-key'
 
 interface ClientOptions {
   /**

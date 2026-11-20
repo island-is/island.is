@@ -1059,6 +1059,17 @@ export class GrantCardsListResolver {
       return {}
     }
   }
+
+  @ResolveField(() => [GenericTag], { nullable: true })
+  async filterTags(
+    @Parent() { filterTags, alphabeticallyOrderFilterTags }: GrantCardsList,
+  ) {
+    const tags = [...(filterTags ?? [])]
+    if (alphabeticallyOrderFilterTags) {
+      tags.sort(sortAlpha('title'))
+    }
+    return tags
+  }
 }
 
 @Resolver(() => LastCallsForGrants)

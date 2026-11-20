@@ -63,14 +63,22 @@ const PaymentGatewayErrorSchema = PaymentGatewayApiResponseSchema.extend({
   isSuccess: z.literal(false),
 })
 
-/** Card payment (charge) success: full transaction data */
+/**
+ * Card payment (charge) success: full transaction data. Since 19 Nov 2026 the
+ * gateway leaves maskedCardNumber out of Apple Pay and Google Pay charges, so
+ * an approved charge is accepted without it. The card's last four digits
+ * (lastFourInPan, returned for token transactions) stand in for it, or an
+ * empty string when those are missing too, for what stores it and the PAN
+ * sent to FJS, which only holds the card's last digits and is optional there.
+ */
 export const CardPaymentSuccessSchema = PaymentGatewaySuccessSchema.extend({
   isSuccess: z.literal(true),
   acquirerReferenceNumber: z.string(),
   transactionID: z.string(),
   authorizationCode: z.string(),
   transactionLifecycleId: z.string(),
-  maskedCardNumber: z.string(),
+  maskedCardNumber: z.string().optional(),
+  lastFourInPan: z.string().optional(),
   cardInformation: CardInformationSchema,
   transactionType: z.string().optional(),
   isCardPresent: z.boolean().optional(),
@@ -79,20 +87,31 @@ export const CardPaymentSuccessSchema = PaymentGatewaySuccessSchema.extend({
   authorizedAmount: z.number().optional(),
   marketInformation: MarketInformationSchema.optional(),
   authorizationIdentifier: z.string(),
-})
+}).transform(({ maskedCardNumber, lastFourInPan, ...charge }) => ({
+  ...charge,
+  maskedCardNumber:
+    maskedCardNumber ?? (lastFourInPan ? `************${lastFourInPan}` : ''),
+}))
 
 /** Card payment (charge) error: transaction fields omitted or partial */
 export const CardPaymentErrorSchema = PaymentGatewayErrorSchema
 
-/** Refund success: full transaction data */
+/**
+ * Refund success. Nothing reads the transaction data of a refund, it is only
+ * kept in the refund event's metadata, so a refund the gateway approved is
+ * accepted whatever of it comes back. Requiring it turned approved refunds
+ * into failures when the gateway left acquirerReferenceNumber and
+ * authorizationIdentifier out (19 Nov 2026): the retry then failed, as the
+ * payment was refunded already, and the rollback kept a refunded payment paid.
+ */
 export const RefundSuccessSchema = PaymentGatewaySuccessSchema.extend({
   isSuccess: z.literal(true),
-  acquirerReferenceNumber: z.string(),
-  transactionID: z.string(),
-  transactionLifecycleId: z.string(),
-  maskedCardNumber: z.string(),
-  cardInformation: CardInformationSchema,
-  authorizationIdentifier: z.string(),
+  acquirerReferenceNumber: z.string().optional(),
+  transactionID: z.string().optional(),
+  transactionLifecycleId: z.string().optional(),
+  maskedCardNumber: z.string().optional(),
+  cardInformation: CardInformationSchema.optional(),
+  authorizationIdentifier: z.string().optional(),
 })
 
 /** Refund error: transaction fields omitted or partial */

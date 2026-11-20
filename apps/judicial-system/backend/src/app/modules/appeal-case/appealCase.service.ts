@@ -881,6 +881,8 @@ export class AppealCaseService {
         request,
         transaction,
       )
+    } else if (actor === 'DEFENDER') {
+      await this.recordAppealingDefender(theCase, defendant, transaction)
     }
 
     // AppealCase is the source of truth for who appealed; verdict.appealDate is
@@ -1024,6 +1026,48 @@ export class AppealCaseService {
     )
   }
 
+  // A defender appealing in the system is the defendant's confirmed defender
+  // of record, so that record names the appeal defender. Unconfirmed, like the
+  // one the office registers: access follows once the court of appeals
+  // confirms them.
+  //
+  // Only while the appeal says nothing about this defendant's counsel. The
+  // court of appeals may already have named a defender or recorded a waiver -
+  // on an appeal the prosecution filed first - and that stance is not
+  // overwritten, nor is a confirmed defender set back to unconfirmed.
+  private async recordAppealingDefender(
+    theCase: Case,
+    defendant: Defendant,
+    transaction: Transaction,
+  ): Promise<void> {
+    const isAppealDefenderSettled =
+      Boolean(
+        defendant.appealDefenderName ||
+          defendant.appealDefenderNationalId ||
+          defendant.appealDefenderEmail ||
+          defendant.appealDefenderPhoneNumber,
+      ) ||
+      (defendant.isAppealDefenderWaived !== null &&
+        defendant.isAppealDefenderWaived !== undefined)
+
+    if (isAppealDefenderSettled) {
+      return
+    }
+
+    await this.defendantRepositoryService.update(
+      theCase.id,
+      defendant.id,
+      {
+        appealDefenderName: defendant.defenderName ?? null,
+        appealDefenderNationalId: defendant.defenderNationalId ?? null,
+        appealDefenderEmail: defendant.defenderEmail ?? null,
+        appealDefenderPhoneNumber: defendant.defenderPhoneNumber ?? null,
+        isAppealDefenderConfirmed: false,
+      },
+      { transaction },
+    )
+  }
+
   // The appeal defender belongs to the appeal concerning that defendant.
   // Cleared once no appeal for them remains on either side — kept while a
   // prosecution appeal against them still stands after a defence withdrawal.
@@ -1056,6 +1100,15 @@ export class AppealCaseService {
     this.logger.debug(
       `Updating appeal case ${appealCase.id} of case ${theCase.id}`,
     )
+
+    if (
+      update.verdictAppealStatus &&
+      appealCase.appealType !== AppealCaseType.VERDICT
+    ) {
+      throw new BadRequestException(
+        `Appeal case ${appealCase.id} is not a verdict appeal and has no verdict appeal status`,
+      )
+    }
 
     // The bench is not a column: it is replaced as rows, below.
     const { appealJudgeIds, ...columnUpdate } = update
