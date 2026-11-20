@@ -83,6 +83,47 @@ describe('ADD_SECTION', () => {
   })
 })
 
+describe('CHANGE_FIELD_TYPE', () => {
+  it.each([FieldTypesEnum.TEXTBOX, FieldTypesEnum.PAYMENT_QUANTITY])(
+    'resets multiset membership when switching from %s',
+    (fieldType) => {
+      const field: FormSystemField = {
+        id: 'field',
+        name: { is: 'Field' },
+        screenId: 'screen',
+        isRequired: false,
+        isPartOfMultiset: true,
+        fieldType,
+      }
+      const otherField = { ...field, id: 'other-field' }
+      const state = createState()
+      state.activeItem = { type: 'Field', data: field }
+      state.form.fields = [field, otherField]
+      const update = jest.fn()
+
+      const result = controlReducer(state, {
+        type: 'CHANGE_FIELD_TYPE',
+        payload: {
+          newValue: FieldTypesEnum.FILE,
+          fieldSettings: {},
+          update,
+        },
+      })
+
+      expect(result.activeItem.data).toEqual(
+        expect.objectContaining({
+          fieldType: FieldTypesEnum.FILE,
+          isPartOfMultiset: false,
+        }),
+      )
+      expect(result.form.fields?.[0]).toBe(result.activeItem.data)
+      expect(result.form.fields?.[1]).toBe(otherField)
+      expect(field.isPartOfMultiset).toBe(true)
+      expect(update).toHaveBeenCalledWith(result.activeItem)
+    },
+  )
+})
+
 describe('currency sum selection cleanup', () => {
   const createField = (field: Partial<FormSystemField>): FormSystemField => ({
     id: 'field',

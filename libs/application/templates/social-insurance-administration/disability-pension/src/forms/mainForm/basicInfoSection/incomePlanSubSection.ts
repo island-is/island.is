@@ -111,9 +111,13 @@ export const incomePlanSubSection = buildSubSection({
             },
             watchValues: 'incomeType',
           },
-          loadOptions: async ({ apolloClient }, { row: activeField }) => {
+          loadOptions: async (
+            { apolloClient, application },
+            { row: activeField },
+          ) => {
             const { data } = await apolloClient.query<Query>({
               query: siaGeneralCurrenciesQuery,
+              variables: { applicationId: application.id },
             })
 
             const hideISKCurrency = isForeignCurrency(activeField) ? ISK : ''
