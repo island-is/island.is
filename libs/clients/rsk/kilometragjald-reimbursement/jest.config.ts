@@ -12,5 +12,6 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/clients/rsk/kilometragjald-reimbursement',
+  coverageDirectory:
+    '<rootDir>/coverage/libs/clients/rsk/kilometragjald-reimbursement',
 }

@@ -41,29 +41,29 @@ const createService = () => {
   const logger = { error: jest.fn(), warn: jest.fn() }
 
   const service = new TemporaryVehicleExportService(
-    ({
+    {
       withMiddleware: () => vehiclesApi,
-    } as unknown) as VehicleSearchApi,
-    ({ withMiddleware: () => mileageApi } as unknown) as MileageReadingApi,
-    (attachmentService as unknown) as AttachmentS3Service,
-    (skatturinn as unknown) as RskKilometragjaldReimbursementClient,
-    (logger as unknown) as Logger,
+    } as unknown as VehicleSearchApi,
+    { withMiddleware: () => mileageApi } as unknown as MileageReadingApi,
+    attachmentService as unknown as AttachmentS3Service,
+    skatturinn as unknown as RskKilometragjaldReimbursementClient,
+    logger as unknown as Logger,
   )
 
   return { service, vehiclesApi, mileageApi, skatturinn }
 }
 
 const props = (answers: object) =>
-  (({
-    application: ({
+  ({
+    application: {
       id: 'application-id',
       applicant: '0000000000',
       answers,
       externalData: {},
       attachments: {},
-    } as unknown) as ApplicationWithAttachments,
+    } as unknown as ApplicationWithAttachments,
     auth: { nationalId: '0000000000', authorization: 'Bearer token' },
-  } as unknown) as TemplateApiModuleActionProps)
+  } as unknown as TemplateApiModuleActionProps)
 
 const answers = {
   vehicle: { permno: PERMNO },
