@@ -13,8 +13,14 @@ import {
   InferAttributes,
   InferCreationAttributes,
 } from 'sequelize'
-import { HNIPP_TEMPLATE_PRIORITY_TYPES } from './dto/hnippTemplate.response'
-import type { HnippTemplatePriorityType } from './dto/hnippTemplate.response'
+import {
+  HNIPP_TEMPLATE_PRIORITY_TYPES,
+  HNIPP_TEMPLATE_SOURCE_TYPES,
+} from './dto/hnippTemplate.response'
+import type {
+  HnippTemplatePriorityType,
+  HnippTemplateSourceType,
+} from './dto/hnippTemplate.response'
 
 interface ArgItem {
   key: string
@@ -90,6 +96,13 @@ export class Notification extends Model<
     field: 'priority_type',
   })
   priorityType?: HnippTemplatePriorityType
+
+  @Column({
+    type: DataType.ENUM(...HNIPP_TEMPLATE_SOURCE_TYPES),
+    allowNull: true,
+    field: 'source_type',
+  })
+  sourceType?: HnippTemplateSourceType | null
 
   @Column({
     type: DataType.JSON,

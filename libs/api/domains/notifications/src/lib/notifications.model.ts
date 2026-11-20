@@ -27,6 +27,17 @@ registerEnumType(NotificationPriorityType, {
   name: 'NotificationPriorityType',
 })
 
+/** Values match the source types of the user-notification service */
+export enum NotificationSourceType {
+  MAIL = 'Mail',
+  EVENT = 'Event',
+  GENERAL = 'General',
+}
+
+registerEnumType(NotificationSourceType, {
+  name: 'NotificationSourceType',
+})
+
 @ObjectType()
 export class NotificationMetadata {
   @Field(() => GraphQLISODateTime)
@@ -49,6 +60,9 @@ export class NotificationMetadata {
 
   @Field(() => NotificationPriorityType, { nullable: true })
   priorityType?: NotificationPriorityType
+
+  @Field(() => NotificationSourceType)
+  sourceType!: NotificationSourceType
 }
 
 @ObjectType()

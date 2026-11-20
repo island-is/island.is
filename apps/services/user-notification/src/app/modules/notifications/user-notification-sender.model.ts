@@ -13,12 +13,14 @@ import {
 } from 'sequelize'
 import {
   HNIPP_TEMPLATE_PRIORITY_TYPES,
+  HNIPP_TEMPLATE_SOURCE_TYPES,
   HnippTemplatePriorityType,
+  HnippTemplateSourceType,
 } from './dto/hnippTemplate.response'
 
 /**
  * Tracks which sender templates have sent notifications to a recipient, with
- * the latest category and priority type of each template. Unlike
+ * the latest category, priority type and source type of each template. Unlike
  * user_notification, rows here are not pruned by the cleanup job.
  */
 @Table({
@@ -83,4 +85,15 @@ export class UserNotificationSender extends Model<
     field: 'priority_type',
   })
   priorityType!: HnippTemplatePriorityType | null
+
+  /**
+   * Latest source type of the template, updated on every send. Null for rows
+   * recorded before source types were stored.
+   */
+  @Column({
+    type: DataType.ENUM(...HNIPP_TEMPLATE_SOURCE_TYPES),
+    allowNull: true,
+    field: 'source_type',
+  })
+  sourceType!: HnippTemplateSourceType | null
 }
