@@ -47,6 +47,7 @@ export const FamilySettings = () => {
       {currentItem.fieldSettings?.familyType === FamilyTypes.CHILD && (
         <Stack space={2}>
           <Checkbox
+            name="showBiologicalChildren"
             large
             label="Sýna kynbörn"
             subLabel="Sýnir kynbörn viðkomandi samkvæmt Þjóðskrá, óháð forsjá."
@@ -64,6 +65,7 @@ export const FamilySettings = () => {
             }
           />
           <Checkbox
+            name="showChildrenInCustody"
             large
             label="Sýna börn í forsjá"
             subLabel="Sýnir börn sem viðkomandi fer með forsjá yfir samkvæmt Þjóðskrá, óháð skyldleika."

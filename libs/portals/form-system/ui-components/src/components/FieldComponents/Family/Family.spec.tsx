@@ -323,26 +323,26 @@ it.each([
   {
     settings: undefined,
     expected: [
-      'Biological child (mock)',
-      'Biological child in custody (mock)',
-      'Child in custody (mock)',
+      'Kynbarn (mock)',
+      'Kynbarn í forsjá (mock)',
+      'Barn í forsjá (mock)',
     ],
   },
   {
     settings: { showBiologicalChildren: true, showChildrenInCustody: true },
     expected: [
-      'Biological child (mock)',
-      'Biological child in custody (mock)',
-      'Child in custody (mock)',
+      'Kynbarn (mock)',
+      'Kynbarn í forsjá (mock)',
+      'Barn í forsjá (mock)',
     ],
   },
   {
     settings: { showBiologicalChildren: true, showChildrenInCustody: false },
-    expected: ['Biological child (mock)', 'Biological child in custody (mock)'],
+    expected: ['Kynbarn (mock)', 'Kynbarn í forsjá (mock)'],
   },
   {
     settings: { showBiologicalChildren: false, showChildrenInCustody: true },
-    expected: ['Biological child in custody (mock)', 'Child in custody (mock)'],
+    expected: ['Kynbarn í forsjá (mock)', 'Barn í forsjá (mock)'],
   },
   {
     settings: { showBiologicalChildren: false, showChildrenInCustody: false },

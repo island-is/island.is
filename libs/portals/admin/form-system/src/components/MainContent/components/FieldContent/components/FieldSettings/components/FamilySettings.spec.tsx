@@ -13,6 +13,7 @@ jest.mock('@island.is/island-ui/core', () => ({
   Box: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   Stack: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   Checkbox: ({
+    name,
     label,
     subLabel,
     large,
@@ -20,6 +21,7 @@ jest.mock('@island.is/island-ui/core', () => ({
     disabled,
     onChange,
   }: {
+    name?: string
     label: string
     subLabel?: string
     large?: boolean
@@ -27,16 +29,20 @@ jest.mock('@island.is/island-ui/core', () => ({
     disabled: boolean
     onChange: React.ChangeEventHandler<HTMLInputElement>
   }) => (
-    <label data-large={large}>
-      {label}
-      {large && subLabel && <span>{subLabel}</span>}
+    <div>
       <input
         type="checkbox"
+        id={name}
+        name={name}
         checked={checked}
         disabled={disabled}
         onChange={onChange}
       />
-    </label>
+      <label htmlFor={name} data-large={large}>
+        {label}
+        {large && subLabel && <span>{subLabel}</span>}
+      </label>
+    </div>
   ),
   Select: ({
     label,
@@ -95,12 +101,25 @@ const renderSettings = (
 }
 
 it('shows separate large child source checkboxes with explanatory sublabels', () => {
-  renderSettings({ familyType: FamilyTypes.CHILD })
+  const { controlDispatch, updateActiveItem } = renderSettings({
+    familyType: FamilyTypes.CHILD,
+  })
 
   const biological = screen.getByRole('checkbox', { name: /Sýna kynbörn/ })
   const custody = screen.getByRole('checkbox', { name: /Sýna börn í forsjá/ })
-  expect(biological.closest('label')?.getAttribute('data-large')).toBe('true')
-  expect(custody.closest('label')?.getAttribute('data-large')).toBe('true')
+  expect(biological.id).not.toBe(custody.id)
+  expect(
+    screen
+      .getByText('Sýna kynbörn')
+      .closest('label')
+      ?.getAttribute('data-large'),
+  ).toBe('true')
+  expect(
+    screen
+      .getByText('Sýna börn í forsjá')
+      .closest('label')
+      ?.getAttribute('data-large'),
+  ).toBe('true')
   expect(
     screen.getByText(
       'Sýnir kynbörn viðkomandi samkvæmt Þjóðskrá, óháð forsjá.',
@@ -111,6 +130,24 @@ it('shows separate large child source checkboxes with explanatory sublabels', ()
       'Sýnir börn sem viðkomandi fer með forsjá yfir samkvæmt Þjóðskrá, óháð skyldleika.',
     ),
   ).toBeTruthy()
+  fireEvent.click(screen.getByText('Sýna kynbörn'))
+  expect(controlDispatch).toHaveBeenCalledWith({
+    type: 'SET_ANY_FIELD_SETTING',
+    payload: {
+      property: 'showBiologicalChildren',
+      value: false,
+      update: updateActiveItem,
+    },
+  })
+  fireEvent.click(screen.getByText('Sýna börn í forsjá'))
+  expect(controlDispatch).toHaveBeenCalledWith({
+    type: 'SET_ANY_FIELD_SETTING',
+    payload: {
+      property: 'showChildrenInCustody',
+      value: false,
+      update: updateActiveItem,
+    },
+  })
 })
 
 it.each([false, true])(
