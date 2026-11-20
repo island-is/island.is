@@ -128,6 +128,21 @@ describe('TableRepeater rows', () => {
       { name: 'Anna', isUnsaved: false },
     ])
   })
+
+  it('T7 (known issue): Cancel while editing keeps the new value', async () => {
+    const { getForm } = setup()
+    await addRow('Anna')
+
+    await userEvent.click(editButtons()[0])
+    await userEvent.clear(nameInput())
+    await userEvent.type(nameInput(), 'Bára')
+    await userEvent.click(screen.getByRole('button', { name: 'Hætta við' }))
+
+    expect(tableRows()).toEqual(['Bára'])
+    expect(getForm().getValues('people')).toEqual([
+      { name: 'Bára', isUnsaved: false },
+    ])
+  })
   it('T8: Edit buttons are disabled while another row is open', async () => {
     setup()
     await addRow('Anna')
@@ -218,6 +233,28 @@ describe('TableRepeater rows', () => {
 
     expect(nameInput()).toHaveValue('Bá')
     expect(tableRows()).toEqual(['Anna'])
+  })
+
+  it('T13b: a stored removed row stays hidden, does not count and is purged on Next', async () => {
+    const { getForm, submit } = setup(
+      { maxRows: 2 },
+      {
+        people: [
+          { name: 'Anna', isUnsaved: false, isRemoved: true },
+          { name: 'Bára', isUnsaved: false },
+        ],
+      },
+    )
+
+    expect(tableRows()).toEqual(['Bára'])
+    expect(addButton()).toBeEnabled()
+
+    expect(await submit()).toEqual({ outcome: 'submitted' })
+    await waitFor(() =>
+      expect(getForm().getValues('people')).toEqual([
+        { name: 'Bára', isUnsaved: false },
+      ]),
+    )
   })
 
   it('T14: maxRows disables Add; removed rows do not count', async () => {

@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom'
 import { screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { buildTableRepeaterField } from '@island.is/application/core'
 import {
   FormValue,
@@ -57,6 +58,8 @@ const tableRows = () =>
   )
 const deleteButtons = () =>
   screen.queryAllByRole('button', { description: /Eyða/ })
+const editButtons = () =>
+  screen.queryAllByRole('button', { description: /Breyta/ })
 
 describe('TableRepeater table display', () => {
   it('T15: default header comes from labels; displayInTable: false is left out', () => {
@@ -144,6 +147,62 @@ describe('TableRepeater table display', () => {
       }),
     )
   })
+
+  it('T19b: while a saved row is open for editing, the others keep their display index', async () => {
+    setup(
+      {
+        editField: true,
+        table: {
+          columns: [
+            {
+              header: 'Heiti',
+              value: ({ row, displayIndex }) => `${displayIndex}:${row.name}`,
+            },
+          ],
+        },
+      },
+      saved([{ name: 'Anna' }, { name: 'Bára' }, { name: 'Dóra' }]),
+    )
+
+    await userEvent.click(editButtons()[0])
+
+    expect(tableRows()).toEqual(['1:Bára', '2:Dóra'])
+  })
+
+  it('T21: hideTableHeaderIfEmpty hides the table until a saved row exists', async () => {
+    setup({ hideTableHeaderIfEmpty: true })
+
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: /Bæta við/ }))
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
+
+    await userEvent.type(screen.getByRole('textbox'), 'Anna')
+    await userEvent.click(screen.getByRole('button', { name: 'Vista' }))
+    expect(screen.getByRole('table')).toBeInTheDocument()
+  })
+
+  it('T21: without hideTableHeaderIfEmpty the empty table shows its header', () => {
+    setup({})
+
+    expect(headerCells()).toEqual(['Heiti'])
+    expect(bodyRows()).toHaveLength(0)
+  })
+
+  it('T21b: hideTableHeaderIfEmpty hides the table while its only saved row is open for editing', async () => {
+    setup(
+      { editField: true, hideTableHeaderIfEmpty: true },
+      saved([{ name: 'Anna' }]),
+    )
+
+    expect(screen.getByRole('table')).toBeInTheDocument()
+
+    await userEvent.click(editButtons()[0])
+
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
+    expect(screen.getByRole('textbox')).toHaveValue('Anna')
+  })
+
   it('T22: static rows come first, without buttons, in column order', () => {
     setup(
       {
