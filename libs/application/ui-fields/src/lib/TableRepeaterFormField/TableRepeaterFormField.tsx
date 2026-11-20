@@ -17,11 +17,8 @@ import {
   Button,
   ErrorMessage,
   GridRow,
-  Icon,
   Stack,
-  Table as T,
   Text,
-  Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useUserInfo } from '@island.is/react-spa/bff'
@@ -29,6 +26,11 @@ import { FieldDescription } from '@island.is/shared/form-fields'
 import { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { buildDefaultColumns, toTableRows } from './utils'
+import {
+  RepeaterTable,
+  RepeaterTableRow,
+  RowActionButton,
+} from './RepeaterTable'
 import {
   TableRepeaterForm,
   TableRepeaterRow,
@@ -173,6 +175,70 @@ export const TableRepeaterFormField: FC<Props> = ({
       : formatText(value as FormText, application, formatMessage)
   }
 
+  const tooltipText = (text?: FormText) =>
+    text ? formatText(text, application, formatMessage) : undefined
+
+  const staticRows = (): RepeaterTableRow[] =>
+    (staticData ?? []).map((item, index) => ({
+      key: index,
+      cells: columns.map((column) =>
+        renderCell(column, cellContext(item, index)),
+      ),
+    }))
+
+  const answerRows = (): RepeaterTableRow[] =>
+    values
+      ? fields.flatMap((field, index) => {
+          if (!isShown(index)) return []
+
+          const rowContext = cellContext(
+            tableRows?.[index] ?? {},
+            displayIndex(index),
+          )
+          const {
+            disabled,
+            canRemove = true,
+            canEdit: rowCanEdit = true,
+          } = table?.rowProps?.(rowContext) ?? {}
+          const canEdit = !editField || rowCanEdit
+
+          return {
+            key: field.id,
+            disabled,
+            cells: columns.map((column) => renderCell(column, rowContext)),
+            actions: (
+              <>
+                <RowActionButton
+                  icon="trash"
+                  locked={!canRemove}
+                  tooltip={tooltipText(
+                    canRemove
+                      ? removeButtonTooltipText
+                      : removeButtonDisabledTooltipText,
+                  )}
+                  onClick={() => removeRow(index)}
+                />
+                &nbsp;&nbsp;
+                {editField && (
+                  <RowActionButton
+                    icon="pencil"
+                    iconSize="small"
+                    locked={!canEdit}
+                    disabled={canEdit && activeIndex !== -1}
+                    tooltip={tooltipText(
+                      canEdit
+                        ? editButtonTooltipText
+                        : editButtonDisabledTooltipText,
+                    )}
+                    onClick={() => editRow(index)}
+                  />
+                )}
+              </>
+            ),
+          }
+        })
+      : []
+
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
       {showFieldName && title && (
@@ -200,137 +266,12 @@ export const TableRepeaterFormField: FC<Props> = ({
           {(!hideTableHeaderIfEmpty ||
             staticData?.length ||
             fields.some((_, i) => isShown(i))) && (
-            <T.Table>
-              <T.Head>
-                <T.Row>
-                  <T.HeadData></T.HeadData>
-                  {columns.map((column, index) => (
-                    <T.HeadData key={index}>
-                      {formatText(
-                        column.header ?? '',
-                        application,
-                        formatMessage,
-                      )}
-                    </T.HeadData>
-                  ))}
-                </T.Row>
-              </T.Head>
-              <T.Body>
-                {staticData &&
-                  staticData.map((item, index) => (
-                    <T.Row key={index}>
-                      <T.Data></T.Data>
-                      {columns.map((column, idx) => (
-                        <T.Data key={`static-${idx}`}>
-                          {renderCell(column, cellContext(item, index))}
-                        </T.Data>
-                      ))}
-                    </T.Row>
-                  ))}
-                {values &&
-                  fields.map((field, index) => {
-                    if (!isShown(index)) return null
-
-                    const rowContext = cellContext(
-                      tableRows?.[index] ?? {},
-                      displayIndex(index),
-                    )
-                    const {
-                      disabled: rowDisabled,
-                      canRemove = true,
-                      canEdit: rowCanEdit = true,
-                    } = table?.rowProps?.(rowContext) ?? {}
-
-                    const removeTooltipText = canRemove
-                      ? removeButtonTooltipText
-                      : removeButtonDisabledTooltipText
-
-                    // aria-disabled rather than disabled so the tooltip still
-                    // receives hover events on locked rows
-                    const removeButton = (
-                      <button
-                        type="button"
-                        aria-disabled={!canRemove}
-                        style={canRemove ? undefined : { cursor: 'default' }}
-                        onClick={canRemove ? () => removeRow(index) : undefined}
-                      >
-                        <Icon
-                          icon="trash"
-                          type="outline"
-                          color={canRemove ? 'blue400' : 'dark300'}
-                        />
-                      </button>
-                    )
-
-                    const canEdit = !editField || rowCanEdit
-
-                    const editTooltipText = canEdit
-                      ? editButtonTooltipText
-                      : editButtonDisabledTooltipText
-
-                    const editButton = (
-                      <button
-                        type="button"
-                        aria-disabled={!canEdit}
-                        style={canEdit ? undefined : { cursor: 'default' }}
-                        onClick={canEdit ? () => editRow(index) : undefined}
-                        disabled={canEdit && activeIndex !== -1}
-                      >
-                        <Icon
-                          icon="pencil"
-                          color={canEdit ? 'blue400' : 'dark300'}
-                          type="outline"
-                          size="small"
-                        />
-                      </button>
-                    )
-
-                    return (
-                      <T.Row key={field.id}>
-                        <T.Data>
-                          <Box display="flex" alignItems="center">
-                            {removeTooltipText ? (
-                              <Tooltip
-                                placement="left"
-                                text={formatText(
-                                  removeTooltipText,
-                                  application,
-                                  formatMessage,
-                                )}
-                              >
-                                {removeButton}
-                              </Tooltip>
-                            ) : (
-                              removeButton
-                            )}
-                            &nbsp;&nbsp;
-                            {editField &&
-                              (editTooltipText ? (
-                                <Tooltip
-                                  placement="left"
-                                  text={formatText(
-                                    editTooltipText,
-                                    application,
-                                    formatMessage,
-                                  )}
-                                >
-                                  {editButton}
-                                </Tooltip>
-                              ) : (
-                                editButton
-                              ))}
-                          </Box>
-                        </T.Data>
-                        {columns.map((column, idx) => (
-                          <T.Data key={idx} disabled={rowDisabled}>
-                            {renderCell(column, rowContext)}
-                          </T.Data>
-                        ))}
-                      </T.Row>
-                    )
-                  })}
-              </T.Body>
-            </T.Table>
+            <RepeaterTable
+              headers={columns.map((column) =>
+                formatText(column.header ?? '', application, formatMessage),
+              )}
+              rows={[...staticRows(), ...answerRows()]}
+            />
           )}
           {activeField ? (
             <Stack space={2} key={activeField.id}>
