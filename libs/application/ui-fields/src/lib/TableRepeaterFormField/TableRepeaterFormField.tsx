@@ -1,6 +1,5 @@
 import {
   coreMessages,
-  coreErrorMessages,
   formatText,
   formatTextWithLocale,
   resolveFieldId,
@@ -27,29 +26,22 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { FieldDescription } from '@island.is/shared/form-fields'
-import { FC, useEffect, useRef, useState } from 'react'
-import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
+import { FC, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
+import { buildDefaultColumns, toTableRows } from './utils'
 import {
-  buildDefaultColumns,
-  setObjectWithNestedKey,
-  toTableRows,
-} from './utils'
+  TableRepeaterForm,
+  TableRepeaterRow,
+  useTableRows,
+} from './useTableRows'
 import { Item } from '../RepeaterItem/RepeaterItem'
 import { Locale } from '@island.is/shared/types'
 import { useApolloClient } from '@apollo/client/react'
-import { uuid } from 'uuidv4'
 import { getDefaultValue } from '../../getDefaultValue'
 
 interface Props extends FieldBaseProps {
   field: TableRepeaterField
 }
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type TableRepeaterRow = Record<string, any> & {
-  isUnsaved?: boolean
-  isRemoved?: boolean
-}
-type TableRepeaterForm = Record<string, TableRepeaterRow[]>
 
 export const TableRepeaterFormField: FC<Props> = ({
   application,
@@ -90,8 +82,6 @@ export const TableRepeaterFormField: FC<Props> = ({
   const { formatMessage, lang: locale } = useLocale()
   const user = useUserInfo()
   const [loadError, setLoadError] = useState<boolean>(false)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [isEditing, setIsEditing] = useState(false)
 
   const methods = useFormContext<TableRepeaterForm>()
   const watchedAnswers = methods.watch() ?? application.answers
@@ -104,21 +94,6 @@ export const TableRepeaterFormField: FC<Props> = ({
   }))
   const tableItems = items.filter((x) => x.displayInTable !== false)
   const columns = table?.columns ?? buildDefaultColumns(tableItems)
-  const { fields, append, remove, update } = useFieldArray({
-    control: methods.control,
-    name: resolvedId,
-  })
-
-  const values = useWatch({
-    control: methods.control,
-    name: resolvedId,
-  })
-  const tableRows = toTableRows(tableItems, values)
-
-  const [activeIndex, setActiveIndex] = useState(
-    fields?.findIndex((x) => x?.isUnsaved) ?? -1,
-  )
-  const activeField = activeIndex >= 0 ? fields[activeIndex] : null
 
   const staticData = getStaticTableData?.({
     application: watchedApplication,
@@ -127,7 +102,7 @@ export const TableRepeaterFormField: FC<Props> = ({
   })
 
   // Update other form values (if necessary) after saving a single row
-  const updateFormAfterSavingRow = async () => {
+  const updateFormAfterSavingRow = async (rows: TableRepeaterRow[]) => {
     if (!onSubmitLoad) {
       return
     }
@@ -137,7 +112,7 @@ export const TableRepeaterFormField: FC<Props> = ({
       const submitResponse = await onSubmitLoad({
         apolloClient,
         application,
-        tableItems: values,
+        tableItems: rows,
       })
 
       submitResponse.dictionaryOfItems.forEach((x) => {
@@ -149,47 +124,28 @@ export const TableRepeaterFormField: FC<Props> = ({
     }
   }
 
-  const safeUpdate = (index: number, changes: Partial<TableRepeaterRow>) => {
-    const current = methods.getValues(`${resolvedId}.${index}`) || {}
-    update(index, { ...current, ...changes })
-  }
-
-  const handleSaveItem = async (index: number) => {
-    const isValid = await methods.trigger(`${resolvedId}[${index}]`, {
-      shouldFocus: true,
-    })
-
-    if (isValid) {
-      safeUpdate(index, { isUnsaved: false })
-      setActiveIndex(-1)
-      await updateFormAfterSavingRow()
-      setIsEditing(false)
-    }
-  }
-
-  const handleCancelItem = (index: number) => {
-    setActiveIndex(-1)
-    if (!isEditing) {
-      remove(index)
-    }
-    setIsEditing(false)
-  }
-
-  const handleNewItem = () => {
-    append({ isUnsaved: true })
-    setActiveIndex(fields.length)
-    methods.clearErrors()
-  }
-
-  const handleRemoveItem = (index: number) => {
-    safeUpdate(index, { isRemoved: true })
-    if (activeIndex === index) setActiveIndex(-1)
-  }
-
-  const handleEditItem = (index: number) => {
-    setActiveIndex(index)
-    setIsEditing(true)
-  }
+  const {
+    fields,
+    values,
+    activeIndex,
+    activeField,
+    savedCount,
+    isShown,
+    displayIndex,
+    errorMessage,
+    addRow,
+    saveRow,
+    cancelRow,
+    removeRow,
+    editRow,
+  } = useTableRows({
+    id: resolvedId,
+    initActiveFieldIfEmpty,
+    getDefaultRows: () => getDefaultValue(data, application, locale),
+    onSaved: updateFormAfterSavingRow,
+    setBeforeSubmitCallback,
+  })
+  const tableRows = toTableRows(tableItems, values)
 
   const cellContext = (
     row: Record<string, string>,
@@ -217,78 +173,6 @@ export const TableRepeaterFormField: FC<Props> = ({
       : formatText(value as FormText, application, formatMessage)
   }
 
-  // If the list is empty and initActiveFieldIfEmpty=true,
-  // start with one row opened in edit mode
-  useEffect(() => {
-    const oldValues = methods.getValues(resolvedId) || []
-    if (initActiveFieldIfEmpty && oldValues.length === 0) {
-      // Using setObjectValue to handle nested ids
-      const newValues = {}
-      setObjectWithNestedKey(newValues, resolvedId, [{ isUnsaved: true }])
-      methods.reset({
-        ...newValues,
-      })
-      setActiveIndex(0)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // Initialize with default values on mount
-  // only if no existing values are present and defaultValues is defined/non-empty
-  useEffect(() => {
-    const defaultValues = getDefaultValue(data, application, locale)
-    const oldValues = methods.getValues(resolvedId) || []
-    if (defaultValues && oldValues.length === 0) {
-      // Using setObjectValue to handle nested ids
-      const newValues = {}
-      setObjectWithNestedKey(newValues, resolvedId, defaultValues)
-      const existingValues = methods.getValues()
-      methods.reset({
-        ...existingValues,
-        ...newValues,
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // Keep activeIndex in a ref so setBeforeSubmit callback always has latest value
-  const activeIndexRef = useRef(activeIndex)
-  useEffect(() => {
-    activeIndexRef.current = activeIndex
-  }, [activeIndex])
-
-  // Register a beforeSubmit callback that blocks form submission until the active registration is completed
-  // Persist a unique callback ID across renders to avoid re-registering in setBeforeSubmitCallback
-  const callbackIdRef = useRef(`TableRepeaterFormField-${uuid()}`)
-  useEffect(() => {
-    setBeforeSubmitCallback?.(
-      async () => {
-        if (activeIndexRef.current !== -1) {
-          setErrorMessage(
-            formatMessage(coreErrorMessages.needToFinishRegistration),
-          )
-          return [
-            false,
-            formatMessage(coreErrorMessages.needToFinishRegistration),
-          ]
-        }
-
-        // Remove deleted rows
-        // Iterate in reverse so removing doesn't break indices
-        for (let i = fields.length - 1; i >= 0; i--) {
-          const row = fields[i]
-          if (row.isRemoved) {
-            remove(i)
-          }
-        }
-
-        setErrorMessage(null)
-        return [true, null]
-      },
-      { allowMultiple: true, customCallbackId: callbackIdRef.current },
-    )
-  }, [fields, formatMessage, remove, setBeforeSubmitCallback])
-
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
       {showFieldName && title && (
@@ -315,9 +199,7 @@ export const TableRepeaterFormField: FC<Props> = ({
         <Stack space={4}>
           {(!hideTableHeaderIfEmpty ||
             staticData?.length ||
-            fields.some(
-              (f, i) => i !== activeIndex && !f.isUnsaved && !f.isRemoved,
-            )) && (
+            fields.some((_, i) => isShown(i))) && (
             <T.Table>
               <T.Head>
                 <T.Row>
@@ -347,21 +229,11 @@ export const TableRepeaterFormField: FC<Props> = ({
                   ))}
                 {values &&
                   fields.map((field, index) => {
-                    if (
-                      index === activeIndex ||
-                      field.isUnsaved ||
-                      field.isRemoved
-                    )
-                      return null
-
-                    // Compute display index (based only on visible rows)
-                    const displayIndex = fields
-                      .filter((f) => !f.isUnsaved && !f.isRemoved)
-                      .findIndex((f) => f.id === field.id)
+                    if (!isShown(index)) return null
 
                     const rowContext = cellContext(
                       tableRows?.[index] ?? {},
-                      displayIndex,
+                      displayIndex(index),
                     )
                     const {
                       disabled: rowDisabled,
@@ -380,9 +252,7 @@ export const TableRepeaterFormField: FC<Props> = ({
                         type="button"
                         aria-disabled={!canRemove}
                         style={canRemove ? undefined : { cursor: 'default' }}
-                        onClick={
-                          canRemove ? () => handleRemoveItem(index) : undefined
-                        }
+                        onClick={canRemove ? () => removeRow(index) : undefined}
                       >
                         <Icon
                           icon="trash"
@@ -403,9 +273,7 @@ export const TableRepeaterFormField: FC<Props> = ({
                         type="button"
                         aria-disabled={!canEdit}
                         style={canEdit ? undefined : { cursor: 'default' }}
-                        onClick={
-                          canEdit ? () => handleEditItem(index) : undefined
-                        }
+                        onClick={canEdit ? () => editRow(index) : undefined}
                         disabled={canEdit && activeIndex !== -1}
                       >
                         <Icon
@@ -493,16 +361,13 @@ export const TableRepeaterFormField: FC<Props> = ({
                   <Button
                     variant="ghost"
                     type="button"
-                    onClick={() => handleCancelItem(activeIndex)}
+                    onClick={() => cancelRow(activeIndex)}
                   >
                     {formatText(cancelButtonText, application, formatMessage)}
                   </Button>
                 </Box>
                 <Box marginLeft={2}>
-                  <Button
-                    type="button"
-                    onClick={() => handleSaveItem(activeIndex)}
-                  >
+                  <Button type="button" onClick={() => saveRow(activeIndex)}>
                     {formatText(saveItemButtonText, application, formatMessage)}
                   </Button>
                 </Box>
@@ -513,14 +378,9 @@ export const TableRepeaterFormField: FC<Props> = ({
               <Button
                 variant="ghost"
                 type="button"
-                onClick={handleNewItem}
+                onClick={addRow}
                 icon="add"
-                disabled={
-                  maxRows
-                    ? fields.filter((x) => !x.isUnsaved && !x.isRemoved)
-                        .length >= maxRows
-                    : false
-                }
+                disabled={maxRows ? savedCount >= maxRows : false}
               >
                 {formatText(addItemButtonText, application, formatMessage)}
               </Button>
