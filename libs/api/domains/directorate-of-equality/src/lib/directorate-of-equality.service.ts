@@ -66,9 +66,8 @@ export class DirectorateOfEqualityService {
     input: SubmissionsInput,
   ): Promise<Submissions> {
     this.assertCompany(user)
-    const { reports } = await this.directorateOfEqualityClientService.getReports(
-      user,
-    )
+    const { reports } =
+      await this.directorateOfEqualityClientService.getReports(user)
     return {
       items: reports
         .map(mapSubmission)
@@ -156,8 +155,11 @@ export class DirectorateOfEqualityService {
       this.directorateOfEqualityClientService.getCompany(user),
     ])
     const providerKeys = company.isServiceProvider
-      ? (await this.directorateOfEqualityClientService.getPartnerClientKeys(user))
-          .keys
+      ? (
+          await this.directorateOfEqualityClientService.getPartnerClientKeys(
+            user,
+          )
+        ).keys
       : []
     return {
       items: [
@@ -204,10 +206,7 @@ export class DirectorateOfEqualityService {
         input.id,
       )
     } else {
-      await this.directorateOfEqualityClientService.revokeApiKey(
-        user,
-        input.id,
-      )
+      await this.directorateOfEqualityClientService.revokeApiKey(user, input.id)
     }
     return { success: true }
   }

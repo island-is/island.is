@@ -26,34 +26,26 @@ import { ServiceProviderCard } from './ServiceProviderCard'
 export const ServiceProvidersTab = () => {
   const { formatMessage } = useLocale()
   const [grantOpen, setGrantOpen] = useState(false)
-  const [
-    revokeTarget,
-    setRevokeTarget,
-  ] = useState<DirectorateOfEqualityServiceProvider | null>(null)
+  const [revokeTarget, setRevokeTarget] =
+    useState<DirectorateOfEqualityServiceProvider | null>(null)
   const grantButtonRef = useRef<HTMLButtonElement>(null)
   const triggerRef = useRef<HTMLElement | null>(null)
-  const {
-    data,
-    loading,
-    error,
-    refetch,
-  } = useDirectorateOfEqualityServiceProvidersQuery()
-  const [
-    revokeProvider,
-    { loading: revoking },
-  ] = useDirectorateOfEqualityRevokeServiceProviderMutation({
-    onCompleted: (result) => {
-      if (!result.directorateOfEqualityRevokeServiceProvider.success) {
-        toast.error(formatMessage(messages.mutationError))
-        return
-      }
-      setRevokeTarget(null)
-      toast.success(formatMessage(messages.serviceProviderRevoked))
-      refetch()
-      focusAfterClose(grantButtonRef.current)
-    },
-    onError: () => toast.error(formatMessage(messages.mutationError)),
-  })
+  const { data, loading, error, refetch } =
+    useDirectorateOfEqualityServiceProvidersQuery()
+  const [revokeProvider, { loading: revoking }] =
+    useDirectorateOfEqualityRevokeServiceProviderMutation({
+      onCompleted: (result) => {
+        if (!result.directorateOfEqualityRevokeServiceProvider.success) {
+          toast.error(formatMessage(messages.mutationError))
+          return
+        }
+        setRevokeTarget(null)
+        toast.success(formatMessage(messages.serviceProviderRevoked))
+        refetch()
+        focusAfterClose(grantButtonRef.current)
+      },
+      onError: () => toast.error(formatMessage(messages.mutationError)),
+    })
   const providers = data?.directorateOfEqualityServiceProviders?.items ?? []
 
   return (
