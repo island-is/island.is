@@ -9,6 +9,7 @@ const DESCRIPTION_REASONS = [
   'invalid_sms_code',
   'new_login_restricted',
   'too_many_requests',
+  'no_app_login',
 ] as const
 
 export type IasErrorCode =
@@ -82,13 +83,17 @@ export class AttestationLostError extends IasError {
  * The install can't use its app login any more, so the session is gone and
  * the person logs in again. IAS refused the renewal: it no longer has the
  * app login (invalid_grant), or not the install key the proof is from
- * (invalid_client).
+ * (invalid_client). Or IAS says so (no_app_login), e.g. to a biometric
+ * unlock after the person logged in on another phone.
  */
 export function isAppLoginRemoved(error: unknown) {
+  if (!(error instanceof IasError)) {
+    return false
+  }
   return (
-    error instanceof IasError &&
-    error.endpoint === 'POST /app/attestation/renew' &&
-    (error.code === 'invalid_grant' || error.code === 'invalid_client')
+    error.code === 'no_app_login' ||
+    (error.endpoint === 'POST /app/attestation/renew' &&
+      (error.code === 'invalid_grant' || error.code === 'invalid_client'))
   )
 }
 
