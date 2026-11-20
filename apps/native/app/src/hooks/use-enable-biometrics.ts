@@ -156,6 +156,9 @@ export function useEnableBiometrics({
     }
     const current = ++attempt.current
     const isCurrent = () => attempt.current === current
+    // A logout ends the session: an approval that comes after mustn't bring
+    // tokens back or register a key.
+    const { session } = authStore.getState()
     setIsEnabling(true)
     setIsFinishing(false)
     let enabled = false
@@ -175,7 +178,7 @@ export function useEnableBiometrics({
         return false
       }
       const tokens = await electronicId.unlock()
-      if (!isCurrent()) {
+      if (!isCurrent() || authStore.getState().session !== session) {
         return false
       }
       setIsFinishing(true)
