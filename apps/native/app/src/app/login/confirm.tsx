@@ -1,5 +1,5 @@
 import { Href, useNavigation, useRouter } from 'expo-router'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { BackHandler } from 'react-native'
 
 import { ElectronicIdConfirmation } from '@/components/device-bound-auth/electronic-id-confirmation'
@@ -28,18 +28,25 @@ export default function LoginConfirmScreen() {
   // Approved: the login is being finished and can't be cancelled any more,
   // or it would carry on behind the number screen.
   const [isFinishing, setIsFinishing] = useState(false)
+  // The same for Cancel and Android back, which can come before the screen
+  // has re-rendered with it.
+  const isFinishingRef = useRef(false)
+  const setFinishing = (value: boolean) => {
+    isFinishingRef.current = value
+    setIsFinishing(value)
+  }
 
   useEffect(() => {
     navigation.setOptions({ gestureEnabled: !isFinishing })
-    if (!isFinishing) {
-      return
-    }
+  }, [isFinishing, navigation])
+
+  useEffect(() => {
     const subscription = BackHandler.addEventListener(
       'hardwareBackPress',
-      () => true,
+      () => isFinishingRef.current,
     )
     return () => subscription.remove()
-  }, [isFinishing, navigation])
+  }, [])
 
   // The request this screen opened with: clearing it from the store after
   // the login mustn't send this screen back.
@@ -58,7 +65,7 @@ export default function LoginConfirmScreen() {
         if (isCancelledHere()) {
           return
         }
-        setIsFinishing(true)
+        setFinishing(true)
         await authStore.getState().loginNative(tokens)
         try {
           await nextOnboardingStep()
@@ -75,7 +82,7 @@ export default function LoginConfirmScreen() {
           return
         }
         console.warn('Native login failed', error)
-        setIsFinishing(false)
+        setFinishing(false)
         nativeLoginStore.setState({ error: toLoginError(error) })
         router.back()
       })
@@ -88,7 +95,11 @@ export default function LoginConfirmScreen() {
       purpose="login"
       verificationCode={request?.verificationCode ?? ''}
       isFinishing={isFinishing}
-      onCancelPress={() => router.back()}
+      onCancelPress={() => {
+        if (!isFinishingRef.current) {
+          router.back()
+        }
+      }}
     />
   )
 }
