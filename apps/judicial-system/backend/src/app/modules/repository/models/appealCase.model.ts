@@ -19,6 +19,7 @@ import {
   AppealCaseType,
   AppealRulingType,
   UserRole,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
 
 import { AppealCaseJudge } from './appealCaseJudge.model'
@@ -108,6 +109,19 @@ export class AppealCase extends Model {
   })
   @ApiProperty({ enum: AppealCaseState })
   appealState!: AppealCaseState
+
+  /**********
+   * How far the court of appeals has come with a verdict appeal, as the court
+   * records it - null until it has recorded one, and always null for a ruling
+   * appeal
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(VerdictAppealStatus),
+  })
+  @ApiPropertyOptional({ enum: VerdictAppealStatus })
+  verdictAppealStatus?: VerdictAppealStatus
 
   /**********
    * The appeal case number assigned in the court of appeals

@@ -94,6 +94,7 @@ export {
   AppealDecisionPartyRole,
   getStatementDeadline,
   CaseAppealDecision,
+  VerdictAppealStatus,
   APPEAL_JUDGE_COUNT,
   MAX_APPEAL_JUDGE_COUNT,
   getOrderedAppealJudges,

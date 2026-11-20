@@ -590,7 +590,7 @@ export class VerdictsClientService {
     const shouldFetchGoproAgendas = hasNoCourtFilter || goproCourts.length > 0
 
     const pageNumber = input.page ?? 1
-    const itemsPerPage = 10
+    const itemsPerPage = 20
 
     const { goproCourtAgendasApi } = await this.getAuthenticatedGoproApis()
 
@@ -886,7 +886,7 @@ export class VerdictsClientService {
     const response = await goproCaseApi.getPublishedAppealCasesV2({
       pageNumber: Math.max(1, input.page ?? 1),
       itemsPerPage: ITEMS_PER_PAGE,
-      orderBy: 'publishdate',
+      orderBy: 'casenumber',
       orderDirection: 'desc',
     })
 

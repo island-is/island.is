@@ -1759,6 +1759,7 @@ export interface UpdateAppealCase
     | 'appealIsolationToDate'
     | 'rulingFileId'
     | 'appealDate'
+    | 'verdictAppealStatus'
   > {
   appealState?: AppealCase['appealState']
 }

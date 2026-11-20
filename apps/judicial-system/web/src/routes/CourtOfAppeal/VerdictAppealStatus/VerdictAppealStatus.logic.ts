@@ -2,23 +2,14 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { appealCourtSessionTypeNames } from '@island.is/judicial-system/types'
 import { getProsecutionVerdictAppealDate } from '@island.is/judicial-system-web/src/components/Cards/VerdictTimelineCard/prosecutionVerdictAppeal.logic'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { AppealCourtSessionType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  AppealCourtSessionType,
+  VerdictAppealStatus,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import type { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 
-/**
- * Where the Court of Appeals stands with a verdict appeal.
- *
- * Held in page state only: nothing in the backend stores the status, so the
- * values are defined here rather than in the shared types.
- */
-export enum VerdictAppealStatus {
-  STATEMENT_DEADLINE_GRANTED = 'STATEMENT_DEADLINE_GRANTED',
-  COURT_SESSION_SCHEDULED = 'COURT_SESSION_SCHEDULED',
-  POSTPONED = 'POSTPONED',
-  UNDER_ADVISEMENT = 'UNDER_ADVISEMENT',
-  COMPLETED = 'COMPLETED',
-}
-
+// Where the Court of Appeals stands with a verdict appeal, as the court words
+// each status on its own page.
 export const verdictAppealStatusLabels: Record<VerdictAppealStatus, string> = {
   [VerdictAppealStatus.STATEMENT_DEADLINE_GRANTED]: 'Veita greinargerðafrest',
   [VerdictAppealStatus.COURT_SESSION_SCHEDULED]: 'Boða til þinghalds',
@@ -35,6 +26,22 @@ export const verdictAppealStatuses: VerdictAppealStatus[] = [
   VerdictAppealStatus.UNDER_ADVISEMENT,
   VerdictAppealStatus.COMPLETED,
 ]
+
+/**
+ * The status the page opens on: the one the court saved, and for an appeal
+ * that has none yet, calling a session when one is already booked - the
+ * sessions were kept before the status was.
+ */
+export const getInitialVerdictAppealStatus = (
+  verdictAppealCase?: {
+    verdictAppealStatus?: VerdictAppealStatus | null
+    courtSessions?: unknown[] | null
+  } | null,
+): VerdictAppealStatus | undefined =>
+  verdictAppealCase?.verdictAppealStatus ??
+  ((verdictAppealCase?.courtSessions ?? []).length > 0
+    ? VerdictAppealStatus.COURT_SESSION_SCHEDULED
+    : undefined)
 
 /**
  * The type options the session form offers, in the order the court reads
