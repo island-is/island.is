@@ -1,4 +1,4 @@
-import { ServiceBuilder, ref, service } from '../../../infra/src/dsl/dsl'
+import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 import {
   Base,
   Client,
@@ -10,6 +10,7 @@ import {
   HealthInsurance,
   MmsPrimarySchool,
   RentalService,
+  RskKilometerFee,
   UniversityCareers,
   Vehicles,
   VMSTUnemployment,
@@ -75,6 +76,7 @@ export const serviceSetup = (services: {
       HealthDirectorateHealthService,
       HealthInsurance,
       Vehicles,
+      RskKilometerFee,
       UniversityCareers,
       WorkMachines,
       Education,
