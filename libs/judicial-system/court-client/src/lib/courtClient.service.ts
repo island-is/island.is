@@ -39,6 +39,8 @@ import {
   CreateThingbokApi,
   CreateThingbokRequest,
   CredentialsData,
+  UpdateCaseWithDefendantApi,
+  UpdateCaseWithDefendantData,
   UpdateCaseWithProsecutorApi,
   UpdateCaseWithProsecutorData,
 } from '../../gen/fetch'
@@ -57,6 +59,11 @@ export type UpdateCaseWithProsecutorArgs = Omit<
   UpdateCaseWithProsecutorData,
   'authenticationToken'
 >
+export type UpdateCaseWithDefendantArgs = Omit<
+  UpdateCaseWithDefendantData,
+  'authenticationToken'
+>
+
 const stripResult = (str: string): string => {
   if (str[0] !== '"') {
     return str
@@ -189,6 +196,10 @@ export abstract class CourtClientService {
     courtId: string,
     args: UpdateCaseWithProsecutorArgs,
   ): Promise<string>
+  abstract updateCaseWithDefendant(
+    courtId: string,
+    args: UpdateCaseWithDefendantArgs,
+  ): Promise<string>
   abstract uploadStream(
     courtId: string,
     args: UploadStreamArgs,
@@ -203,6 +214,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
   private readonly createThingbokApi: CreateThingbokApi
   private readonly createEmailApi: CreateEmailApi
   private readonly updateCaseWithProsecutorApi: UpdateCaseWithProsecutorApi
+  private readonly updateCaseWithDefendantApi: UpdateCaseWithDefendantApi
   private readonly uploadStreamApi: UploadStreamApi
   private readonly courtsCredentials: CourtsCredentials
   private readonly connectionState: { [key: string]: ConnectionState } = {}
@@ -247,6 +259,9 @@ export class CourtClientServiceImplementation implements CourtClientService {
     this.createThingbokApi = new CreateThingbokApi(providerConfiguration)
     this.createEmailApi = new CreateEmailApi(providerConfiguration)
     this.updateCaseWithProsecutorApi = new UpdateCaseWithProsecutorApi(
+      providerConfiguration,
+    )
+    this.updateCaseWithDefendantApi = new UpdateCaseWithDefendantApi(
       providerConfiguration,
     )
     this.uploadStreamApi = new UploadStreamApi(basePath, defaultHeaders, agent)
@@ -555,6 +570,52 @@ export class CourtClientServiceImplementation implements CourtClientService {
     })
   }
 
+  async updateCaseWithDefendant(
+    courtId: string,
+    args: UpdateCaseWithDefendantArgs,
+  ): Promise<string> {
+    return this.authenticatedRequest(courtId, (authenticationToken) =>
+      this.updateCaseWithDefendantApi.updateCaseWithDefendant({
+        updateCaseWithDefendantData: { ...args, authenticationToken },
+      }),
+    ).catch((reason: CourtClientError) => {
+      this.logger.warn('Court client error - updateCaseWithDefendant', {
+        courtId,
+        reason,
+      })
+
+      if (
+        typeof reason.message === 'string' &&
+        reason.message.startsWith("Can't find defendant with IdNumber")
+      ) {
+        throw new NotFoundException(reason)
+      }
+
+      if (
+        reason.message ===
+        "UpdateCaseWithDefendant: 'Defendant.IdNumber' parameter is required and should be valid and provided"
+      ) {
+        throw new BadRequestException({
+          ...reason,
+          message: 'Defendant national id is missing',
+          detail: reason.message,
+        })
+      }
+
+      if (
+        reason.message ===
+        "UpdateCaseWithDefendant: 'Defendant.IdNumber' parameter is NOT valid."
+      ) {
+        throw new BadRequestException(
+          reason,
+          'Defendant national id is not valid',
+        )
+      }
+
+      throw this.handleParticipantError(courtId, reason)
+    })
+  }
+
   async uploadStream(courtId: string, args: UploadStreamArgs): Promise<string> {
     return this.authenticatedRequest(courtId, (authenticationToken) =>
       this.uploadStreamApi.uploadStream(authenticationToken, args),
@@ -598,6 +659,13 @@ export class CourtClientServiceUnavailableImplementation
   async updateCaseWithProsecutor(
     _courtId: string,
     _args: UpdateCaseWithProsecutorArgs,
+  ): Promise<string> {
+    throw new ServiceUnavailableException('Court API is not available')
+  }
+
+  async updateCaseWithDefendant(
+    _courtId: string,
+    _args: UpdateCaseWithDefendantArgs,
   ): Promise<string> {
     throw new ServiceUnavailableException('Court API is not available')
   }
