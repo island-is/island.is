@@ -5,7 +5,7 @@ import {
   isNotBeforeDaysAgo,
   isTodayOrEarlier,
   parseMileage,
-  toDate,
+  toCalendarDay,
   usesLatestMileage,
   usesLatestMileageDate,
 } from '../utils/helpers'
@@ -96,8 +96,8 @@ const arrivalSchema = z
     departureMileage: z.string().optional(),
   })
   .superRefine(({ date, mileage, departureDate, departureMileage }, ctx) => {
-    const arrival = toDate(date)
-    const departure = toDate(departureDate)
+    const arrival = toCalendarDay(date)
+    const departure = toCalendarDay(departureDate)
     if (arrival && departure && arrival < departure) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,

@@ -1,5 +1,6 @@
 import { YES, getValueViaPath } from '@island.is/application/core'
 import parseISO from 'date-fns/parseISO'
+import startOfDay from 'date-fns/startOfDay'
 import { ExternalData, FormValue } from '@island.is/application/types'
 import { EligibleVehicle } from '../types'
 
@@ -93,6 +94,16 @@ export const toDate = (value?: string): Date | undefined => {
   if (!value) return undefined
   const date = parseISO(value)
   return Number.isNaN(date.getTime()) ? undefined : date
+}
+
+/**
+ * The local calendar day of a date answer. Use this to compare a date-only
+ * answer with a timestamp, e.g. a reading date from Samgöngustofa, so that
+ * the same day is equal in every time zone.
+ */
+export const toCalendarDay = (value?: string): Date | undefined => {
+  const date = toDate(value)
+  return date ? startOfDay(date) : undefined
 }
 
 export const endOfToday = (): Date => {

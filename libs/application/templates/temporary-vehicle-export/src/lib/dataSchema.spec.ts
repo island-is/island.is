@@ -212,6 +212,20 @@ describe('temporary vehicle export dataSchema', () => {
     })
   })
 
+  it('accepts a same-day arrival when the departure is a later timestamp that day', () => {
+    // A reused reading date is a timestamp. In a timezone ahead of UTC a
+    // midnight UTC reading falls later in the day than a date-only arrival,
+    // which this local noon timestamp reproduces in any timezone.
+    const day = daysFromToday(-1)
+    const result = arrival.safeParse({
+      date: day,
+      mileage: '15000',
+      departureDate: `${day}T12:00:00`,
+      departureMileage: '12000',
+    })
+    expect(result.error?.issues).toBeUndefined()
+  })
+
   it('rejects an arrival mileage below the departure mileage', () => {
     const result = arrival.safeParse({
       date: yesterday(),

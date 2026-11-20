@@ -176,13 +176,18 @@ export class TemporaryVehicleExportService extends BaseTemplateApiService {
     }
 
     // A retry after Skatturinn failed must not register the arrival again,
-    // since a newer reading may have been registered in the meantime
-    const registered = await this.findRegisteredArrival(
-      auth,
-      permno,
-      mileage,
-      getDepartureDate(application.answers),
-    )
+    // since a newer reading may have been registered in the meantime. When no
+    // km were driven the lookup could match the reading reused at departure,
+    // so the arrival is then registered again, which changes nothing.
+    const registered =
+      mileage !== departureMileage
+        ? await this.findRegisteredArrival(
+            auth,
+            permno,
+            mileage,
+            getDepartureDate(application.answers),
+          )
+        : undefined
     if (registered) {
       return registered
     }

@@ -266,6 +266,31 @@ describe('TemporaryVehicleExportService', () => {
     })
   })
 
+  it('registers the arrival when no km were driven, even if a KOMA reading has the same mileage', async () => {
+    const { service, mileageApi } = createService()
+    // E.g. the departure reused an earlier trip's arrival reading
+    mileageApi.getMileageReading.mockResolvedValue([
+      {
+        internalId: 8,
+        originCode: MileageOriginCode.ARRIVAL,
+        mileage: 12000,
+        readDate: new Date('2026-06-01'),
+      },
+    ])
+
+    await service.submitArrival(
+      props({ ...answers, arrival: { ...answers.arrival, mileage: '12000' } }),
+    )
+
+    expect(mileageApi.rootPostRaw).toHaveBeenCalledWith({
+      postMileageReadingModel: {
+        permno: PERMNO,
+        mileage: 12000,
+        originCode: MileageOriginCode.ARRIVAL,
+      },
+    })
+  })
+
   it('rejects an arrival before the stored departure date without registering it', async () => {
     const { service, mileageApi, skatturinn } = createService()
 

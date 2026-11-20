@@ -14,7 +14,7 @@ import {
   getDepartureDate,
   getDepartureMileage,
   startOfDaysAgo,
-  toDate,
+  toCalendarDay,
 } from '../../utils/helpers'
 import { MAX_DAYS_BACK } from '../../utils/constants'
 
@@ -49,7 +49,9 @@ export const arrivalSection = buildSection({
           minDate: (application) => {
             // Today or up to MAX_DAYS_BACK days back, but not before departure
             const earliest = startOfDaysAgo(MAX_DAYS_BACK)
-            const departure = toDate(getApplicationDepartureDate(application))
+            const departure = toCalendarDay(
+              getApplicationDepartureDate(application),
+            )
             return departure && departure > earliest ? departure : earliest
           },
           maxDate: () => new Date(),
