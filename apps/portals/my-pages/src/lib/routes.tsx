@@ -10,12 +10,10 @@ export const createRoutes = (moduleRoutes: RouteObject[]): RouteObject[] => [
     element: (
       <>
         <Root />
-        <ScrollRestoration
-          getKey={(location) => {
-            // Always scroll to top when the pathname changes
-            return location.pathname
-          }}
-        />
+        {/* Keyed per history entry (the default): new navigations start at the
+            top, back/forward restores. Keying by pathname restored stale
+            positions on every revisit. */}
+        <ScrollRestoration />
       </>
     ),
     children: moduleRoutes,
