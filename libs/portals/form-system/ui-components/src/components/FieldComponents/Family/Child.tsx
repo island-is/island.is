@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client'
 import { FormSystemField } from '@island.is/api/schema'
+import { FamilyTypes, FieldTypesEnum } from '@island.is/form-system/enums'
 import { GET_FAMILY_MEMBERS } from '@island.is/form-system/graphql'
 import {
   Box,
@@ -14,6 +15,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { Action } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
 import { m } from '../../../lib/messages'
+import { previewMockData } from '../../../lib/previewMockData'
 
 interface Props {
   item: FormSystemField
@@ -69,7 +71,7 @@ export const Child = ({
 }: Props) => {
   const { lang, formatMessage } = useLocale()
   const { control, trigger } = useFormContext()
-  const cached = (item.list?.length ?? 0) > 0
+  const cached = !isPreview && (item.list?.length ?? 0) > 0
   const { data, loading } = useQuery<FamilyMembersData>(GET_FAMILY_MEMBERS, {
     skip: isPreview || cached,
     onCompleted: (data) => {
@@ -98,7 +100,12 @@ export const Child = ({
   const fieldName = `${item.id}.${valueIndex}`
   const selectedNationalId = getValue(item, 'nationalId', valueIndex) ?? ''
 
-  const children = getChildren(data, item.fieldSettings)
+  const children = getChildren(
+    isPreview
+      ? previewMockData[FieldTypesEnum.FAMILY][FamilyTypes.CHILD]
+      : data,
+    item.fieldSettings,
+  )
   const options: FamilyOption[] = cached
     ? (item.list ?? []).flatMap((listItem) =>
         listItem?.value

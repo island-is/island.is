@@ -64,6 +64,7 @@ const renderFamily = (
   valueIndex = 0,
   registryData?: Record<string, unknown>,
   fieldSettings?: FormSystemField['fieldSettings'],
+  list?: FormSystemField['list'],
 ) => {
   const dispatch = jest.fn()
   const registryRequest = jest.fn()
@@ -89,6 +90,7 @@ const renderFamily = (
     fieldType: FieldTypesEnum.FAMILY,
     name: { is: 'Family' },
     fieldSettings: { familyType, ...fieldSettings },
+    list,
     values: [
       {
         json: {
@@ -316,6 +318,86 @@ it.each([
     ).toEqual(expected)
   },
 )
+
+it.each([
+  {
+    settings: undefined,
+    expected: [
+      'Biological child (mock)',
+      'Biological child in custody (mock)',
+      'Child in custody (mock)',
+    ],
+  },
+  {
+    settings: { showBiologicalChildren: true, showChildrenInCustody: true },
+    expected: [
+      'Biological child (mock)',
+      'Biological child in custody (mock)',
+      'Child in custody (mock)',
+    ],
+  },
+  {
+    settings: { showBiologicalChildren: true, showChildrenInCustody: false },
+    expected: ['Biological child (mock)', 'Biological child in custody (mock)'],
+  },
+  {
+    settings: { showBiologicalChildren: false, showChildrenInCustody: true },
+    expected: ['Biological child in custody (mock)', 'Child in custody (mock)'],
+  },
+  {
+    settings: { showBiologicalChildren: false, showChildrenInCustody: false },
+    expected: [],
+  },
+])(
+  'uses mock children for the enabled preview sources without fetching or caching: %j',
+  ({ settings, expected }) => {
+    const { registryRequest, dispatch } = renderFamily(
+      FamilyTypes.CHILD,
+      true,
+      undefined,
+      0,
+      undefined,
+      settings,
+      [
+        {
+          id: 'existing-child',
+          label: { is: 'Existing child' },
+          value: '0101232989',
+        },
+      ],
+    )
+
+    expect(
+      screen.queryAllByRole('option').map((option) => option.textContent),
+    ).toEqual(expected)
+    expect(registryRequest).not.toHaveBeenCalled()
+    expect(dispatch).not.toHaveBeenCalled()
+  },
+)
+
+it('keeps using cached real children outside preview', () => {
+  const { registryRequest, dispatch } = renderFamily(
+    FamilyTypes.CHILD,
+    false,
+    undefined,
+    0,
+    undefined,
+    undefined,
+    [
+      {
+        id: 'existing-child',
+        label: { is: 'Existing child' },
+        value: '0101232989',
+      },
+    ],
+  )
+
+  expect(
+    screen.getAllByRole('option').map((option) => option.textContent),
+  ).toEqual(['Existing child'])
+  expect(registryRequest).not.toHaveBeenCalled()
+  expect(dispatch).not.toHaveBeenCalled()
+})
 
 it.each([0, 1])(
   'displays and persists the logged-in individual in read-only fields at value index %s without a registry request',

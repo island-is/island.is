@@ -12,6 +12,21 @@ present in both lists appear once, matched by national ID. Disabling both
 produces an empty list. The selected list is cached on the field for subsequent
 renders.
 
+## Preview mock data
+
+Edit [`src/lib/previewMockData.ts`](src/lib/previewMockData.ts) to maintain
+sample data, grouped by field type and, where relevant, subtype. Field
+components use this data only when `isPreview` is true, which is shared by the
+admin inline preview and preview modal. To support another field type, add its
+data to this file and consume it in that component's preview path instead of
+requesting live data.
+
+The CHILD mock includes a biological-only child, a custody-only child, and a
+child in both lists. The normal child-source settings filter these fixtures, so
+enabling both shows three unique children and disabling both shows none.
+Preview mock lists ignore cached real children and are not written to the field
+configuration.
+
 ## Running unit tests
 
 Run `yarn nx test portals-form-system-ui` to execute the unit tests via [Jest](https://jestjs.io).
