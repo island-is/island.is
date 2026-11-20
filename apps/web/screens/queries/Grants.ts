@@ -26,13 +26,6 @@ export const GET_GRANTS_QUERY = gql`
             title
           }
         }
-        typeTag {
-          id
-          title
-          genericTagGroup {
-            title
-          }
-        }
         fund {
           id
           title
@@ -77,7 +70,7 @@ export const GET_GRANT_QUERY = gql`
         id
         title
       }
-      typeTag {
+      typeTags {
         id
         title
       }

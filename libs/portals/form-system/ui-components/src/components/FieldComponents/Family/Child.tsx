@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client'
 import { FormSystemField } from '@island.is/api/schema'
+import { FamilyTypes, FieldTypesEnum } from '@island.is/form-system/enums'
 import { GET_FAMILY_MEMBERS } from '@island.is/form-system/graphql'
 import {
   Box,
@@ -8,11 +9,13 @@ import {
   SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import uniqBy from 'lodash/uniqBy'
 import { Dispatch } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Action } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
 import { m } from '../../../lib/messages'
+import { previewMockData } from '../../../lib/previewMockData'
 
 interface Props {
   item: FormSystemField
@@ -37,6 +40,29 @@ type RegistryChild = {
   details?: { name?: { fullName?: string | null } | null } | null
 }
 
+type FamilyMembersData = {
+  nationalRegistryPerson?: {
+    biologicalChildren?: RegistryChild[] | null
+    childCustody?: RegistryChild[] | null
+  } | null
+}
+
+const getChildren = (
+  data: FamilyMembersData | undefined,
+  settings: FormSystemField['fieldSettings'],
+) =>
+  uniqBy(
+    [
+      ...(settings?.showBiologicalChildren ?? true
+        ? data?.nationalRegistryPerson?.biologicalChildren ?? []
+        : []),
+      ...(settings?.showChildrenInCustody ?? true
+        ? data?.nationalRegistryPerson?.childCustody ?? []
+        : []),
+    ],
+    (child) => child.nationalId,
+  )
+
 export const Child = ({
   item,
   valueIndex = 0,
@@ -45,12 +71,11 @@ export const Child = ({
 }: Props) => {
   const { lang, formatMessage } = useLocale()
   const { control, trigger } = useFormContext()
-  const cached = (item.list?.length ?? 0) > 0
-  const { data, loading } = useQuery(GET_FAMILY_MEMBERS, {
+  const cached = !isPreview && (item.list?.length ?? 0) > 0
+  const { data, loading } = useQuery<FamilyMembersData>(GET_FAMILY_MEMBERS, {
     skip: isPreview || cached,
     onCompleted: (data) => {
-      const children = (data?.nationalRegistryPerson?.biologicalChildren ??
-        []) as RegistryChild[]
+      const children = getChildren(data, item.fieldSettings)
       dispatch?.({
         type: 'SET_FIELD_LIST',
         payload: {
@@ -75,8 +100,12 @@ export const Child = ({
   const fieldName = `${item.id}.${valueIndex}`
   const selectedNationalId = getValue(item, 'nationalId', valueIndex) ?? ''
 
-  const children = (data?.nationalRegistryPerson?.biologicalChildren ??
-    []) as RegistryChild[]
+  const children = getChildren(
+    isPreview
+      ? previewMockData[FieldTypesEnum.FAMILY][FamilyTypes.CHILD]
+      : data,
+    item.fieldSettings,
+  )
   const options: FamilyOption[] = cached
     ? (item.list ?? []).flatMap((listItem) =>
         listItem?.value

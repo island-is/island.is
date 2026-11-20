@@ -55,7 +55,53 @@ const newName: Lawyer = {
   hasCourtOfAppealsRights: true,
 }
 
-const lawyers = [firstWithoutEmail, secondWithoutEmail, oldName, newName]
+const paddedEmail: Lawyer = {
+  id: 'row-padded-email',
+  name: 'Bil Prufuson',
+  practice: 'Stofa C',
+  email: ' padded@dummy.dd ',
+  phoneNr: '0000004',
+  nationalId: '0000000004',
+  isLitigator: true,
+  hasCourtOfAppealsRights: false,
+}
+
+const lawyers = [
+  firstWithoutEmail,
+  secondWithoutEmail,
+  oldName,
+  newName,
+  paddedEmail,
+]
+
+const renderContactFields = (contact: {
+  email?: string
+  phoneNumber?: string
+}) => {
+  const handlers = {
+    onEmailChange: jest.fn(),
+    onEmailSave: jest.fn(),
+    onPhoneNumberChange: jest.fn(),
+    onPhoneNumberSave: jest.fn(),
+  }
+
+  render(
+    <IntlProviderWrapper>
+      <LawyerRegistryContext.Provider value={{ lawyers }}>
+        <InputAdvocate
+          advocateType="litigator"
+          name="Test Verjandi"
+          email={contact.email}
+          phoneNumber={contact.phoneNumber}
+          onAdvocateChange={jest.fn()}
+          {...handlers}
+        />
+      </LawyerRegistryContext.Provider>
+    </IntlProviderWrapper>,
+  )
+
+  return handlers
+}
 
 const renderPicker = (
   onAdvocateChange: jest.Mock,
@@ -147,5 +193,101 @@ describe('InputAdvocate', () => {
     fireEvent.keyDown(input, { key: 'Backspace' })
 
     expect(onAdvocateChange).toHaveBeenCalledWith(null, null, null, null)
+  })
+
+  it('trims the email of the selected lawyer', () => {
+    const onAdvocateChange = jest.fn()
+    renderPicker(onAdvocateChange)
+
+    pickLawyer(paddedEmail)
+
+    expect(onAdvocateChange).toHaveBeenCalledWith(
+      paddedEmail.name,
+      paddedEmail.nationalId,
+      'padded@dummy.dd',
+      paddedEmail.phoneNr,
+    )
+  })
+
+  it('trims an email as it is entered', () => {
+    const { onEmailChange } = renderContactFields({})
+
+    fireEvent.change(screen.getByTestId('defenderEmail'), {
+      target: { value: ' testverjandi@dummy.dd ' },
+    })
+
+    expect(onEmailChange).toHaveBeenCalledWith('testverjandi@dummy.dd')
+  })
+
+  it('saves an email without its surrounding whitespace', () => {
+    const { onEmailSave } = renderContactFields({
+      email: 'testverjandi@dummy.dd ',
+    })
+
+    fireEvent.blur(screen.getByTestId('defenderEmail'))
+
+    expect(onEmailSave).toHaveBeenCalledWith('testverjandi@dummy.dd')
+    expect(
+      screen.queryByText('Netfang ekki á réttu formi'),
+    ).not.toBeInTheDocument()
+  })
+
+  it('hands the trimmed email back when a padded one is saved unedited', () => {
+    const { onEmailChange } = renderContactFields({
+      email: ' testverjandi@dummy.dd ',
+    })
+
+    fireEvent.blur(screen.getByTestId('defenderEmail'))
+
+    expect(onEmailChange).toHaveBeenCalledWith('testverjandi@dummy.dd')
+  })
+
+  it('does not report a change when the saved email was already trimmed', () => {
+    const { onEmailChange } = renderContactFields({
+      email: 'testverjandi@dummy.dd',
+    })
+
+    fireEvent.blur(screen.getByTestId('defenderEmail'))
+
+    expect(onEmailChange).not.toHaveBeenCalled()
+  })
+
+  it('does not save an invalid email', () => {
+    const { onEmailSave, onEmailChange } = renderContactFields({
+      email: ' testverjandi ',
+    })
+
+    fireEvent.blur(screen.getByTestId('defenderEmail'))
+
+    expect(onEmailChange).not.toHaveBeenCalled()
+    expect(onEmailSave).not.toHaveBeenCalled()
+    expect(screen.getByText('Netfang ekki á réttu formi')).toBeInTheDocument()
+  })
+
+  it('saves a cleared email', () => {
+    const { onEmailSave } = renderContactFields({ email: '' })
+
+    fireEvent.blur(screen.getByTestId('defenderEmail'))
+
+    expect(onEmailSave).toHaveBeenCalledWith(null)
+  })
+
+  it('does not save an invalid phone number', () => {
+    const { onPhoneNumberSave } = renderContactFields({ phoneNumber: '123' })
+
+    fireEvent.blur(screen.getByTestId('defenderPhoneNumber'))
+
+    expect(onPhoneNumberSave).not.toHaveBeenCalled()
+    expect(screen.getByText('Dæmi: 555-5555')).toBeInTheDocument()
+  })
+
+  it('saves a valid phone number', () => {
+    const { onPhoneNumberSave } = renderContactFields({
+      phoneNumber: '0000000',
+    })
+
+    fireEvent.blur(screen.getByTestId('defenderPhoneNumber'))
+
+    expect(onPhoneNumberSave).toHaveBeenCalledWith('000-0000')
   })
 })

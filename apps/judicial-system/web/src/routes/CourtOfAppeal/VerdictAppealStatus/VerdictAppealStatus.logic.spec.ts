@@ -3,11 +3,13 @@ import {
   AppealCourtSessionType,
   AppealEventType,
   UserRole,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import type { AppealCourtSessionDraft } from './VerdictAppealStatus.logic'
 import {
   formatAppealCourtSessionDetails,
+  getInitialVerdictAppealStatus,
   getVerdictAppealStatusHeaderLines,
   isAppealCourtSessionComplete,
   isAppealCourtSessionEmpty,
@@ -133,4 +135,33 @@ describe('court session draft', () => {
       courtRoom: undefined,
     })
   })
+})
+
+describe('getInitialVerdictAppealStatus', () => {
+  const session = { id: 'session-1' }
+
+  it('is the saved status, sessions or not', () => {
+    expect(
+      getInitialVerdictAppealStatus({
+        verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+        courtSessions: [session],
+      }),
+    ).toBe(VerdictAppealStatus.UNDER_ADVISEMENT)
+  })
+
+  it('is calling a session for an appeal with a session and no saved status', () => {
+    expect(
+      getInitialVerdictAppealStatus({
+        verdictAppealStatus: null,
+        courtSessions: [session],
+      }),
+    ).toBe(VerdictAppealStatus.COURT_SESSION_SCHEDULED)
+  })
+
+  it.each([undefined, null, {}, { courtSessions: [] }])(
+    'is none when nothing is saved and nothing is booked: %j',
+    (verdictAppealCase) => {
+      expect(getInitialVerdictAppealStatus(verdictAppealCase)).toBeUndefined()
+    },
+  )
 })
