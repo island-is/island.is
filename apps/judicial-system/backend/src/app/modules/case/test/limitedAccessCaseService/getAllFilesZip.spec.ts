@@ -5,7 +5,9 @@ import {
   CaseFileCategory,
   CaseState,
   CaseType,
+  DateType,
   DefendantEventType,
+  RequestSharedWithDefender,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -58,6 +60,21 @@ const makeIndictmentCase = (overrides: Partial<Case> = {}): Case =>
     ...overrides,
   } as Case)
 
+const makeRequestCase = (overrides: Partial<Case> = {}): Case =>
+  ({
+    id: uuid(),
+    type: CaseType.CUSTODY,
+    state: CaseState.RECEIVED,
+    defendants: [
+      makeDefendant({
+        requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+      }),
+    ],
+    caseFiles: [],
+    dateLogs: [],
+    ...overrides,
+  } as Case)
+
 describe('LimitedAccessCaseService - getAllFilesZip', () => {
   let limitedAccessCaseService: LimitedAccessCaseService
   let mockPdfService: PdfService
@@ -94,6 +111,9 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
     jest
       .spyOn(mockPdfService, 'getCourtRecordPdfForIndictmentCase')
       .mockResolvedValue(pdfBuffer)
+    jest.spyOn(mockPdfService, 'getRequestPdf').mockResolvedValue(pdfBuffer)
+    jest.spyOn(mockPdfService, 'getCourtRecordPdf').mockResolvedValue(pdfBuffer)
+    jest.spyOn(mockPdfService, 'getRulingPdf').mockResolvedValue(pdfBuffer)
     jest
       .spyOn(mockFileService, 'getCaseFileFromS3')
       .mockResolvedValue(pdfBuffer)
@@ -102,6 +122,137 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
   afterEach(() => {
     zipFilesSpy.mockRestore()
     jest.restoreAllMocks()
+  })
+
+  describe('request case that is still open', () => {
+    const arraignmentDateLogs = [
+      { dateType: DateType.ARRAIGNMENT_DATE, date: new Date('2026-11-20') },
+    ] as Case['dateLogs']
+
+    it('should not include the request when it is not shared with the defender', async () => {
+      const theCase = makeRequestCase({ dateLogs: arraignmentDateLogs })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockPdfService.getRequestPdf).not.toHaveBeenCalled()
+    })
+
+    it('should not include a request shared at court date before a court date is set', async () => {
+      const theCase = makeRequestCase({
+        defendants: [
+          makeDefendant({
+            requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+          }),
+        ],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockPdfService.getRequestPdf).not.toHaveBeenCalled()
+    })
+
+    it('should include a request shared at court date once a court date is set', async () => {
+      const theCase = makeRequestCase({
+        defendants: [
+          makeDefendant({
+            requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+          }),
+        ],
+        dateLogs: arraignmentDateLogs,
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockPdfService.getRequestPdf).toHaveBeenCalledWith(theCase)
+    })
+
+    it('should include a request shared when ready for court', async () => {
+      const theCase = makeRequestCase({
+        state: CaseState.SUBMITTED,
+        defendants: [
+          makeDefendant({
+            requestSharedWithDefender:
+              RequestSharedWithDefender.READY_FOR_COURT,
+          }),
+        ],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockPdfService.getRequestPdf).toHaveBeenCalledWith(theCase)
+    })
+
+    it('should not include the draft court record or ruling', async () => {
+      const theCase = makeRequestCase({
+        defendants: [
+          makeDefendant({
+            requestSharedWithDefender:
+              RequestSharedWithDefender.READY_FOR_COURT,
+          }),
+        ],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockPdfService.getCourtRecordPdf).not.toHaveBeenCalled()
+      expect(mockPdfService.getRulingPdf).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('completed request case', () => {
+    it('should include the request, court record and ruling even when the request was never shared', async () => {
+      const theCase = makeRequestCase({ state: CaseState.ACCEPTED })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockPdfService.getRequestPdf).toHaveBeenCalledWith(theCase)
+      expect(mockPdfService.getCourtRecordPdf).toHaveBeenCalledWith(
+        theCase,
+        user,
+      )
+      expect(mockPdfService.getRulingPdf).toHaveBeenCalledWith(theCase)
+    })
+
+    it('should not include a ruling when the case was completed without one', async () => {
+      const theCase = makeRequestCase({
+        state: CaseState.ACCEPTED,
+        isCompletedWithoutRuling: true,
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockPdfService.getCourtRecordPdf).toHaveBeenCalled()
+      expect(mockPdfService.getRulingPdf).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('indictment case that is still open', () => {
+    it('should include the indictment and case files record for a defender with case file access', async () => {
+      const theCase = makeIndictmentCase({ state: CaseState.RECEIVED })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockPdfService.getIndictmentPdf).toHaveBeenCalledWith(
+        theCase,
+        transaction,
+      )
+      expect(mockPdfService.getCaseFilesRecordPdf).toHaveBeenCalledWith(
+        theCase,
+        '007-2026-1',
+      )
+    })
+
+    it('should not include generated documents for a defender without case file access', async () => {
+      const theCase = makeIndictmentCase({
+        state: CaseState.RECEIVED,
+        defendants: [makeDefendant({ caseFilesSharedWithDefender: false })],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockPdfService.getIndictmentPdf).not.toHaveBeenCalled()
+      expect(mockPdfService.getCaseFilesRecordPdf).not.toHaveBeenCalled()
+    })
   })
 
   describe('subpoenas', () => {
