@@ -18,7 +18,7 @@ import {
   isRulingOrderWithoutDocument,
 } from '@island.is/judicial-system/types'
 
-import { isRequestSharedWithDefender } from '../defendant/requestSharedWithDefender.logic'
+import { isRequestSharedWithDefender } from '../defendant'
 import {
   canLimitedAccessUserViewCaseFile,
   FileService,

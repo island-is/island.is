@@ -8,7 +8,7 @@ import {
 
 import { type User } from '@island.is/judicial-system/types'
 
-import { isRequestSharedWithDefender } from '../../defendant/requestSharedWithDefender.logic'
+import { isRequestSharedWithDefender } from '../../defendant'
 import { Case, DateLog } from '../../repository'
 
 @Injectable()
