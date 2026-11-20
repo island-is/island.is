@@ -1,5 +1,8 @@
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  AppealRulingType,
+  CaseIndictmentRulingDecision,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { getVerdictAppealConclusions } from './VerdictAppealConclusions.logic'
 
@@ -82,6 +85,19 @@ describe('getVerdictAppealConclusions', () => {
         signedBy: ['Ásgeir Magnússon', 'Hildur Briem', 'Jón Höskuldsson'],
       },
     ])
+  })
+
+  it('titles the court of appeals words for a ruling when it ended with one', () => {
+    expect(
+      getVerdictAppealConclusions(
+        caseWith({
+          verdictAppealCase: {
+            appealRulingType: AppealRulingType.RULING,
+            appealConclusion: 'Málinu er vísað frá Landsrétti.',
+          },
+        } as Partial<ConclusionCase>),
+      )[0].title,
+    ).toBe('Úrskurðarorð Landsréttar')
   })
 
   it('leaves out a judge seat that was never filled', () => {
