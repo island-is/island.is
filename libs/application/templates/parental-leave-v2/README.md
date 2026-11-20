@@ -116,10 +116,42 @@ If the applicant has given birth and it has been less than 6 months they can app
 - **Rights transfers in a change:** the change form is prefilled with the days VMST holds as requested (the `FSAL-GR` right) or given (the full personal right less VMST's personal right). A changed transfer adjusts VMST's rights (`getVMSTRightsWithTransfer`) for both the periods limit and the rights sent to VMST.
 - **The other parent:** cannot be the applicant (`otherParentValidationSection`). The other parent in the answers is sent to VMST; VMST's stored one is only the fallback.
 - **Periods:**
-  - A period may not start or end inside another period (`dateIsWithinOtherPeriods`).
-  - A period shorter than 14 days must start the day after another period ends. This is checked for the whole plan on Continue from the periods screen and again in `validateApplication` before anything is sent to VMST.
+  - A period may not start or end inside another period (`dateIsWithinOtherPeriods`), or start before and end after one.
+  - A period shorter than 14 calendar days, counting the first and last day, must start the day after another period ends. This is checked for the whole plan on Continue from the periods screen and again in `validateApplication` before anything is sent to VMST.
   - A period that has started can only be deleted if VMST has not approved it, it started this month and it is before the 24th (`formatPeriods`).
 - **Mock data:** outside production the applicant can choose mock data, which never calls VMST (`shouldUseMockData` in the template API module). A sent mock application holds `MOCK_APPLICATION_FUND_ID`. Mock data is never used in production.
+
+### Calculations
+
+Constants are in `src/config.ts`. Rights are counted in days, and a month of rights is 30 days (`DAYS_IN_MONTH`).
+
+#### Rights
+
+- **Personal rights:** 6 months (`defaultMonths`). The days left come from VMST (`remainingDays` on the child). A single parent gets 6 more months (`additionalSingleParentMonths`).
+- **Transfer between parents:** the primary parent, with a spouse or a manually entered other parent, can ask for or give up to 45 days (`maxDaysToGiveOrReceive`). Requested days are added and given days subtracted. The secondary parent's days already include the transfer, as VMST holds it.
+- **Multiple births:** each child after the first adds 180 days (`multipleBirthsDefaultDays`) of shared rights. A single parent gets all of them; otherwise the primary parent chooses how many to take (`multipleBirthsRequestDays`).
+- **Total:** `getAvailableRightsInDays` adds these up: days left from VMST, single parent days, transferred days and multiple births days. When VMST holds the leave (a change), its rights adjusted by the transfer are used instead (`getVMSTRightsWithTransfer`).
+- **Rights screen:** shows the personal months (6, or 12 for a single parent) and the days on top of them: requested from the other parent plus multiple births days (`getRightsIntro`).
+
+#### Days used by a period
+
+`calculatePeriodLength` counts the days of rights a period lasts, month by month. A whole calendar month counts as 30 days, whatever its length. A stretch that ends on the last day of a month counts as if the month had 30 days, so 18.03–31.03 lasts 13 days and 15.02–28.02 lasts 16.
+
+The rights check (`calculateDaysUsedByPeriods`) multiplies each period's length by its ratio and rounds once per period, then adds the periods up: 17.01–14.02 (28 days) at 10% uses 3 days. A period set to use all remaining days (`daysToUse`) uses exactly that many. The days used by all periods may not exceed the rights.
+
+`calculatePeriodLength` can also apply a ratio itself, rounding each month separately, which can give a different total (2 days in the example). The lowest ratio offered (`calculateMinPercentageForPeriod`) is found that way; the rights check and the highest ratio offered are not.
+
+#### Ratio
+
+- At least 1% (`minimumRatio`), and at most 100%.
+- The highest ratio offered is the highest one whose days, counted as the rights check counts them, fit in the rights left (`calculateMaxPercentageForPeriod`). A warning shows when that is below 100%. When even that ratio leaves days unused, one step higher is offered, which uses exactly the remaining days.
+
+#### Period dates
+
+- **Start:** not more than 1 month before the date of birth (`minimumPeriodStartBeforeExpectedDateOfBirth`), and not later than 15 days before the child turns 2. A first period that starts on the estimated or actual date of birth, or the adoption date, is checked from that date.
+- **End:** before the child turns 2 (`usageMaxMonths`).
+- **Minimum length:** 14 calendar days (`MINIMUM_PERIOD_LENGTH`), unlike rights, which are counted in 30-day months. A shorter period is allowed when it starts the day after another period ends. Periods already over, unless they started this month, are not checked. On Continue from a period screen, periods that came from VMST (those with an `approved` field, even `false`) are not checked; the whole-plan check skips periods VMST has paid or approved.
+- **Which period is checked:** on Continue from a period screen, the period whose dates or ratio differ from the saved answers, a new one or an earlier one reached again, otherwise the last one.
 
 ### Parental leave template API module
 

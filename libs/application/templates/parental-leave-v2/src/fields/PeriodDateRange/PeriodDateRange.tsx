@@ -19,8 +19,8 @@ import {
   getMinimumStartDate,
   getPeriodIndex,
 } from '../../lib/parentalLeaveUtils'
-import { minPeriodDays, usageMaxMonths } from '../../config'
-import { StartDateOptions } from '../../constants'
+import { usageMaxMonths } from '../../config'
+import { MINIMUM_PERIOD_LENGTH, StartDateOptions } from '../../constants'
 
 type PeriodDateRangeProps = FieldBaseProps & CustomField
 
@@ -189,9 +189,10 @@ export const PeriodDateRange: FC<
             parentalLeaveFormMessages.endDate.placeholder,
           )}
           locale="is"
+          // The minimum length counts both the start and end day
           minDate={
             startDateValue
-              ? addDays(parseISO(startDateValue), minPeriodDays)
+              ? addDays(parseISO(startDateValue), MINIMUM_PERIOD_LENGTH - 1)
               : minDate
           }
           maxDate={maxDate}

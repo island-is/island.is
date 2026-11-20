@@ -863,6 +863,7 @@ export class CmsElasticsearchService {
       sort,
       status,
       categories,
+      tagGroups,
       types,
       organizations,
       funds,
@@ -932,7 +933,17 @@ export class CmsElasticsearchService {
 
     const tagFilters: Array<Array<string>> = []
 
-    if (categories) {
+    const everyCategoryHasTagGroup =
+      !!tagGroups &&
+      !!categories &&
+      categories.length > 0 &&
+      categories.every((category) =>
+        Object.values(tagGroups).some((group) => group.includes(category)),
+      )
+
+    if (categories && tagGroups && everyCategoryHasTagGroup) {
+      must.push(...generateGenericTagGroupQueries(categories, tagGroups))
+    } else if (categories) {
       tagFilters.push(categories)
     }
     if (types) {

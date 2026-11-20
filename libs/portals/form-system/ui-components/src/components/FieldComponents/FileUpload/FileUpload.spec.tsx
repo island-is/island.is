@@ -2,10 +2,11 @@ import { useMutation } from '@apollo/client'
 import { FormSystemField } from '@island.is/api/schema'
 import { FileUploadStatus, InputFileUpload } from '@island.is/island-ui/core'
 import { act, render } from '@testing-library/react'
-import { ReactNode } from 'react'
+import { ReactNode, StrictMode } from 'react'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { IntlProvider } from 'react-intl'
 import { ApplicationState } from '../../../lib'
+import { uploadToS3 } from '../../../lib/s3Upload'
 import { FileUpload } from './FileUpload'
 
 jest.mock('@apollo/client', () => ({
@@ -15,7 +16,11 @@ jest.mock('@apollo/client', () => ({
 
 jest.mock('@island.is/island-ui/core', () => ({
   InputFileUpload: jest.fn(() => null),
-  FileUploadStatus: { done: 'done' },
+  FileUploadStatus: { done: 'done', uploading: 'uploading', error: 'error' },
+}))
+
+jest.mock('../../../lib/s3Upload', () => ({
+  uploadToS3: jest.fn(),
 }))
 
 const item: FormSystemField = {
@@ -41,6 +46,7 @@ const mutate = jest.fn()
 
 beforeEach(() => {
   jest.clearAllMocks()
+  mutate.mockReset()
   jest
     .mocked(useMutation)
     .mockReturnValue([mutate, {}] as unknown as ReturnType<typeof useMutation>)
@@ -220,4 +226,291 @@ it('keeps uploads enabled for an application', () => {
   )
   const calls = jest.mocked(InputFileUpload).mock.calls
   expect(calls[calls.length - 1][0].disabled).toBe(false)
+})
+
+it.each([{ isNavigating: true }, { submitted: true }])(
+  'hides attachment actions and prevents removal while %o, restoring actions afterward',
+  async (state) => {
+    const dispatch = jest.fn()
+    const uploadedItem = {
+      ...item,
+      values: [{ id: 'value', json: { s3Key: ['application/file.pdf'] } }],
+    }
+    const { rerender } = render(
+      <FileUpload
+        item={uploadedItem}
+        state={{ application: { id: 'application' }, ...state }}
+        dispatch={dispatch}
+      />,
+      { wrapper: Wrapper },
+    )
+    const latestProps = () =>
+      jest.mocked(InputFileUpload).mock.calls.slice(-1)[0][0]
+    expect(latestProps().hideIcons).toBe(true)
+    const originalFiles = latestProps().files
+
+    await act(async () => latestProps().onRemove?.(originalFiles[0]))
+
+    expect(latestProps().files).toEqual(originalFiles)
+    expect(mutate).not.toHaveBeenCalled()
+    expect(dispatch).not.toHaveBeenCalled()
+
+    rerender(
+      <FileUpload
+        item={uploadedItem}
+        state={{ application: { id: 'application' } }}
+        dispatch={dispatch}
+      />,
+    )
+    expect(latestProps().hideIcons).not.toBe(true)
+  },
+)
+
+it('allows removal when only the upload configuration is disabled', async () => {
+  const dispatch = jest.fn()
+  render(
+    <FileUpload
+      item={{
+        ...item,
+        fieldSettings: { ...item.fieldSettings, fileTypes: '' },
+        values: [{ id: 'value', json: { s3Key: ['application/file.pdf'] } }],
+      }}
+      state={{ application: { id: 'application' } }}
+      dispatch={dispatch}
+    />,
+    { wrapper: Wrapper },
+  )
+  const latestProps = () =>
+    jest.mocked(InputFileUpload).mock.calls.slice(-1)[0][0]
+  expect(latestProps().disabled).toBe(true)
+  expect(latestProps().hideIcons).not.toBe(true)
+  mutate.mockResolvedValue({})
+
+  await act(async () => latestProps().onRemove?.(latestProps().files[0]))
+
+  expect(mutate).toHaveBeenCalledTimes(1)
+  expect(latestProps().files).toEqual([])
+})
+
+const deferred = () => {
+  let resolve!: () => void
+  let reject!: (error: Error) => void
+  const promise = new Promise<void>((res, rej) => {
+    resolve = res
+    reject = rej
+  })
+  return { promise, resolve, reject }
+}
+
+it('tracks concurrent uploads through permanent storage and releases failed uploads and retries', async () => {
+  const dispatch = jest.fn()
+  const firstUpload = deferred()
+  const secondUpload = deferred()
+  const firstStore = deferred()
+  const retryUpload = deferred()
+  mutate
+    .mockResolvedValueOnce({
+      data: {
+        createUploadUrl: { url: 'upload-url', fields: { key: 'first' } },
+      },
+    })
+    .mockResolvedValueOnce({
+      data: {
+        createUploadUrl: { url: 'upload-url', fields: { key: 'second' } },
+      },
+    })
+    .mockReturnValueOnce(firstStore.promise)
+    .mockResolvedValueOnce({
+      data: {
+        createUploadUrl: { url: 'upload-url', fields: { key: 'retry' } },
+      },
+    })
+    .mockResolvedValueOnce({})
+  jest
+    .mocked(uploadToS3)
+    .mockReturnValueOnce(firstUpload.promise)
+    .mockReturnValueOnce(secondUpload.promise)
+    .mockReturnValueOnce(retryUpload.promise)
+  render(
+    <FileUpload
+      item={{ ...item, fieldSettings: { ...item.fieldSettings, maxFiles: 2 } }}
+      state={{ application: { id: 'application' } }}
+      dispatch={dispatch}
+    />,
+    { wrapper: Wrapper },
+  )
+  const latestProps = () =>
+    jest.mocked(InputFileUpload).mock.calls.slice(-1)[0][0]
+  const lifecycleActions = () =>
+    dispatch.mock.calls
+      .map(([action]) => action.type)
+      .filter((type) => type !== 'SET_FILES')
+
+  await act(async () => {
+    latestProps().onChange?.([
+      new File(['first'], 'first.pdf'),
+      new File(['second'], 'second.pdf'),
+    ])
+  })
+  expect(lifecycleActions()).toEqual(['START_FILE_UPLOAD', 'START_FILE_UPLOAD'])
+
+  await act(async () => firstUpload.resolve())
+  expect(mutate).toHaveBeenCalledTimes(3)
+  expect(lifecycleActions()).not.toContain('FINISH_FILE_UPLOAD')
+
+  await act(async () => firstStore.resolve())
+  expect(lifecycleActions()).toEqual([
+    'START_FILE_UPLOAD',
+    'START_FILE_UPLOAD',
+    'FINISH_FILE_UPLOAD',
+  ])
+  expect(latestProps().files[0].status).toBe(FileUploadStatus.done)
+
+  await act(async () => secondUpload.reject(new Error('Upload failed')))
+  expect(lifecycleActions()).toEqual([
+    'START_FILE_UPLOAD',
+    'START_FILE_UPLOAD',
+    'FINISH_FILE_UPLOAD',
+    'FINISH_FILE_UPLOAD',
+  ])
+  expect(latestProps().files[1].status).toBe(FileUploadStatus.error)
+
+  await act(async () => latestProps().onRetry?.(latestProps().files[1]))
+  expect(lifecycleActions().slice(-1)).toEqual(['START_FILE_UPLOAD'])
+  await act(async () => retryUpload.resolve())
+  expect(lifecycleActions().slice(-2)).toEqual([
+    'START_FILE_UPLOAD',
+    'FINISH_FILE_UPLOAD',
+  ])
+  expect(latestProps().files[1].status).toBe(FileUploadStatus.done)
+})
+
+it.each(['presigned URL', 'permanent storage'])(
+  'releases the navigation lock when fetching %s fails',
+  async (phase) => {
+    const dispatch = jest.fn()
+    if (phase === 'presigned URL') {
+      mutate.mockRejectedValueOnce(new Error('Could not create upload URL'))
+    } else {
+      mutate
+        .mockResolvedValueOnce({
+          data: {
+            createUploadUrl: { url: 'upload-url', fields: { key: 'file' } },
+          },
+        })
+        .mockRejectedValueOnce(new Error('Could not store file'))
+      jest.mocked(uploadToS3).mockResolvedValueOnce(undefined)
+    }
+    render(
+      <FileUpload
+        item={item}
+        state={{ application: { id: 'application' } }}
+        dispatch={dispatch}
+      />,
+      { wrapper: Wrapper },
+    )
+    await act(async () => {
+      const calls = jest.mocked(InputFileUpload).mock.calls
+      calls[calls.length - 1][0].onChange?.([new File(['test'], 'test.pdf')])
+    })
+
+    expect(dispatch.mock.calls.map(([action]) => action.type)).toEqual([
+      'START_FILE_UPLOAD',
+      'FINISH_FILE_UPLOAD',
+    ])
+    const calls = jest.mocked(InputFileUpload).mock.calls
+    expect(calls[calls.length - 1][0].files[0].status).toBe(
+      FileUploadStatus.error,
+    )
+  },
+)
+
+it('does not start an upload when navigation has reserved the guard before a render', async () => {
+  const dispatch = jest.fn(() => false)
+  render(
+    <FileUpload
+      item={item}
+      state={{ application: { id: 'application' } }}
+      dispatch={dispatch}
+    />,
+    { wrapper: Wrapper },
+  )
+  const latestProps = () =>
+    jest.mocked(InputFileUpload).mock.calls.slice(-1)[0][0]
+
+  await act(async () => {
+    latestProps().onChange?.([new File(['test'], 'test.pdf')])
+  })
+
+  expect(dispatch).toHaveBeenCalledWith({ type: 'START_FILE_UPLOAD' })
+  expect(mutate).not.toHaveBeenCalled()
+  expect(latestProps().files).toEqual([])
+  expect(dispatch).not.toHaveBeenCalledWith({ type: 'FINISH_FILE_UPLOAD' })
+})
+
+it('commits out-of-order upload keys and form values before releasing uploads in Strict Mode', async () => {
+  let getFormValues!: ReturnType<typeof useForm>['getValues']
+  const ObserveForm = () => {
+    getFormValues = useFormContext().getValues
+    return null
+  }
+  let savedKeys: string[] = []
+  const finished: { keys: string[]; form: string[] }[] = []
+  const dispatch = jest.fn((action) => {
+    if (action.type === 'SET_FILES') savedKeys = action.payload.value
+    if (action.type === 'FINISH_FILE_UPLOAD') {
+      finished.push({
+        keys: savedKeys,
+        form: getFormValues(`${item.id}.0`),
+      })
+    }
+  })
+  const firstStore = deferred()
+  const secondStore = deferred()
+  mutate
+    .mockResolvedValueOnce({
+      data: { createUploadUrl: { url: 'url', fields: { key: 'first' } } },
+    })
+    .mockResolvedValueOnce({
+      data: { createUploadUrl: { url: 'url', fields: { key: 'second' } } },
+    })
+    .mockReturnValueOnce(firstStore.promise)
+    .mockReturnValueOnce(secondStore.promise)
+  jest.mocked(uploadToS3).mockResolvedValue(undefined)
+  render(
+    <StrictMode>
+      <ObserveForm />
+      <FileUpload
+        item={{
+          ...item,
+          fieldSettings: { ...item.fieldSettings, maxFiles: 2 },
+        }}
+        state={{ application: { id: 'application' } }}
+        dispatch={dispatch}
+      />
+    </StrictMode>,
+    { wrapper: Wrapper },
+  )
+  await act(async () => {
+    const calls = jest.mocked(InputFileUpload).mock.calls
+    calls[calls.length - 1][0].onChange?.([
+      new File(['first'], 'first.pdf'),
+      new File(['second'], 'second.pdf'),
+    ])
+  })
+
+  expect(finished).toEqual([])
+  await act(async () => secondStore.resolve())
+  expect(finished).toEqual([
+    { keys: ['application/second'], form: ['application/second'] },
+  ])
+  await act(async () => firstStore.resolve())
+  expect(
+    dispatch.mock.calls.filter(([action]) => action.type === 'SET_FILES'),
+  ).toHaveLength(2)
+  expect(finished).toHaveLength(2)
+  expect(finished[1]).toEqual({
+    keys: ['application/first', 'application/second'],
+    form: ['application/first', 'application/second'],
+  })
 })

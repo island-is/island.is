@@ -11,6 +11,26 @@ export const m = defineMessages({
     defaultMessage: 'Skuldleysisvottorð',
     description: `NoDebtCertificate`,
   },
+  certificateLanguageSection: {
+    id: 'ndc.application:certificateLanguageSection',
+    defaultMessage: 'Tungumál',
+    description: 'Section title for choosing the certificate language',
+  },
+  certificateLanguageTitle: {
+    id: 'ndc.application:certificateLanguageTitle',
+    defaultMessage: 'Á hvaða tungumáli viltu fá vottorðið?',
+    description: 'Title of the certificate language screen',
+  },
+  certificateLanguageIcelandic: {
+    id: 'ndc.application:certificateLanguageIcelandic',
+    defaultMessage: 'Íslensku',
+    description: 'Option for an Icelandic certificate',
+  },
+  certificateLanguageEnglish: {
+    id: 'ndc.application:certificateLanguageEnglish',
+    defaultMessage: 'Ensku',
+    description: 'Option for an English certificate',
+  },
   externalDataSection: {
     id: 'ndc.application:externalData.section',
     defaultMessage: 'Gagnaöflun',
