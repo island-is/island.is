@@ -1,0 +1,41 @@
+{
+  "name": "clients-rsk-kilometragjald-reimbursement",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/rsk/kilometragjald-reimbursement/src",
+  "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/clients/rsk/kilometragjald-reimbursement"
+      ],
+      "options": {
+        "jestConfig": "libs/clients/rsk/kilometragjald-reimbursement/jest.config.ts"
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl --fail --silent --show-error -H \"Accept: application/json\" -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" \"http://localhost:8081/r1/IS-DEV/GOV/10006/Skatturinn/getOpenAPI?serviceCode=Kilometragjald-reimbursement\" -o _raw.tmp",
+          "jq 'if (.openapi and (.paths | length > 0)) then empty else error(\"getOpenAPI did not return an OpenAPI document - is the X-Road proxy running on port 8081?\") end' _raw.tmp",
+          "jq '.components.schemas.ProblemDetails.additionalProperties = false' _raw.tmp > _.tmp && mv _.tmp _raw.tmp",
+          "mv _raw.tmp src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/rsk/kilometragjald-reimbursement"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/rsk/kilometragjald-reimbursement/gen/fetch -i libs/clients/rsk/kilometragjald-reimbursement/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  }
+}

@@ -571,6 +571,11 @@ export const institutionMapper = {
     slug: InstitutionTypes.VINNUMALASTOFNUN,
     contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
   },
+  [ApplicationTypes.TEMPORARY_VEHICLE_EXPORT]: {
+    nationalId: InstitutionNationalIds.INNHEIMTUMADUR,
+    slug: InstitutionTypes.INNHEIMTUMADUR,
+    contentfulId: InstitutionContentfulIds.INNHEIMTUMADUR,
+  },
   [ApplicationTypes.FJARSKIPTASTOFA_SELF_ASSESSMENT]: {
     nationalId: InstitutionNationalIds.FJARSKIPTASTOFA,
     slug: InstitutionTypes.FJARSKIPTASTOFA,

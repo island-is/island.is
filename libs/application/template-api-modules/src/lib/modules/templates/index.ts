@@ -32,6 +32,8 @@ import { ActivationAllowanceModule } from './activation-allowance/activation-all
 import { ActivationAllowanceService } from './activation-allowance/activation-allowance.service'
 import { CarRentalFeeCategoryModule } from './car-rental-fee-category/car-rental-fee-category.module'
 import { CarRentalFeeCategoryService } from './car-rental-fee-category/car-rental-fee-category.service'
+import { TemporaryVehicleExportModule } from './temporary-vehicle-export/temporary-vehicle-export.module'
+import { TemporaryVehicleExportService } from './temporary-vehicle-export/temporary-vehicle-export.service'
 import { TerminateRentalAgreementModule } from './hms/terminate-rental-agreement/terminate-rental-agreement.module'
 import { TerminateRentalAgreementService } from './hms/terminate-rental-agreement/terminate-rental-agreement.service'
 import { FireCompensationAppraisalModule } from './hms/fire-compensation-appraisal/fire-compensation-appraisal.module'
@@ -287,6 +289,7 @@ export const modules = [
   TrainingLicenseOnAWorkMachineTemplateModule,
   UnemploymentBenefitsModule,
   CarRentalFeeCategoryModule,
+  TemporaryVehicleExportModule,
   CarRentalDayrateReturnsModule,
   PracticalExamTemplateModule,
   ExampleFolderStructureAndConventionsModule,
@@ -393,6 +396,7 @@ export const services = [
   TrainingLicenseOnAWorkMachineTemplateService,
   UnemploymentBenefitsService,
   CarRentalFeeCategoryService,
+  TemporaryVehicleExportService,
   CarRentalDayrateReturnsService,
   PracticalExamTemplateService,
   ExampleFolderStructureAndConventionsService,
