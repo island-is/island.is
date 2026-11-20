@@ -1,4 +1,5 @@
 import { Box, Stack, Text } from '@island.is/island-ui/core'
+import { DirectorateOfEqualityImprovementAction } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import {
   formatDate,
@@ -7,7 +8,6 @@ import {
 } from '@island.is/portals/my-pages/core'
 
 import { messages } from '../../../lib/messages'
-import { DirectorateOfEqualityImprovementAction } from '../../../mocks/types'
 
 export const ImprovementPlan = ({
   actions,
@@ -26,16 +26,16 @@ export const ImprovementPlan = ({
       <Stack space={4}>
         {actions.map((action, index) => (
           <InfoLineStack
-            key={index}
+            key={action.id}
             label={formatMessage(messages.actionGroup, { number: index + 1 })}
           >
             <InfoLine
               label={messages.deviationReason}
-              content={action.reason}
+              content={action.reason ?? ''}
             />
             <InfoLine
               label={messages.correctionPlan}
-              content={action.correctionPlan}
+              content={action.correctionPlan ?? ''}
             />
             <InfoLine
               label={messages.actionDeadline}
@@ -43,11 +43,11 @@ export const ImprovementPlan = ({
             />
             <InfoLine
               label={messages.responsibleName}
-              content={action.responsibleName}
+              content={action.responsibleName ?? ''}
             />
             <InfoLine
               label={messages.responsibleTitle}
-              content={action.responsibleTitle}
+              content={action.responsibleTitle ?? ''}
             />
           </InfoLineStack>
         ))}

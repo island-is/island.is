@@ -1,0 +1,9 @@
+query DirectorateOfEqualityCompany {
+  directorateOfEqualityCompany {
+    equalityPlanRequired
+    nextEqualityPlanDeadline
+    salaryReportRequired
+    nextSalaryReportDeadline
+    serviceProviderApprovedAt
+  }
+}

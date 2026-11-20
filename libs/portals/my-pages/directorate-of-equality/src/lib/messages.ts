@@ -435,9 +435,9 @@ export const messages = defineMessages({
     id: 'sp.directorate-of-equality:national-id-line',
     defaultMessage: 'Kennitala: {nationalId}',
   },
-  grantedLine: {
-    id: 'sp.directorate-of-equality:granted-line',
-    defaultMessage: 'Veitt: {date} · Veitt af: {nationalId}',
+  grantedByLine: {
+    id: 'sp.directorate-of-equality:granted-by-line',
+    defaultMessage: 'Veitt: {date} · Veitt af: {name}',
   },
   noServiceProvidersTitle: {
     id: 'sp.directorate-of-equality:no-service-providers-title',
@@ -709,5 +709,22 @@ export const messages = defineMessages({
   noActiveKeysMessage: {
     id: 'sp.directorate-of-equality:no-active-keys-message',
     defaultMessage: 'Fyrirtækið hefur engan virkan lykil.',
+  },
+  analysisPeriodAverage: {
+    id: 'sp.directorate-of-equality:analysis-period-average',
+    defaultMessage: 'Meðaltal tólf mánaða',
+  },
+  notComputable: {
+    id: 'sp.directorate-of-equality:not-computable',
+    defaultMessage:
+      'Ekki er hægt að reikna þessa niðurstöðu út frá innsendum gögnum.',
+  },
+  chartLegendPayDispersion: {
+    id: 'sp.directorate-of-equality:chart-legend-pay-dispersion',
+    defaultMessage: 'Ábending',
+  },
+  downloadPlanError: {
+    id: 'sp.directorate-of-equality:download-plan-error',
+    defaultMessage: 'Ekki tókst að sækja jafnréttisáætlunina.',
   },
 })

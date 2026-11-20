@@ -1,18 +1,18 @@
 import { matchPath, useLocation } from 'react-router-dom'
 
-// import { ApiScope } from '@island.is/auth/scopes'
+import { ApiScope } from '@island.is/auth/scopes'
+import { DirectorateOfEqualitySubmissionType } from '@island.is/api/schema'
 import { useNamespaces } from '@island.is/localization'
-// import { useUserInfo } from '@island.is/react-spa/bff'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 import { SubmissionsTabContent } from '../../components/SubmissionsTabContent/SubmissionsTabContent'
 import { SubmissionsWrapper } from '../../components/SubmissionsWrapper/SubmissionsWrapper'
 import { NAMESPACE } from '../../lib/constants'
 import { DirectorateOfEqualityPaths } from '../../lib/paths'
-import { DirectorateOfEqualitySubmissionType } from '../../mocks/types'
 
 const Submissions = () => {
   useNamespaces(NAMESPACE)
-  // const userInfo = useUserInfo()
+  const userInfo = useUserInfo()
   const { pathname } = useLocation()
   const isReports = !!matchPath(DirectorateOfEqualityPaths.Reports, pathname)
 
@@ -30,13 +30,11 @@ const Submissions = () => {
             ? DirectorateOfEqualitySubmissionType.SALARY_REPORT
             : DirectorateOfEqualitySubmissionType.EQUALITY_PLAN
         }
-        // TODO: restore scope check
-        // hasAccess={userInfo.scopes.includes(
-        //   isReports
-        //     ? ApiScope.directorateOfEqualitySalary
-        //     : ApiScope.directorateOfEquality,
-        // )}
-        hasAccess
+        hasAccess={userInfo.scopes.includes(
+          isReports
+            ? ApiScope.directorateOfEqualitySalary
+            : ApiScope.directorateOfEquality,
+        )}
       />
     </SubmissionsWrapper>
   )

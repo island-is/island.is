@@ -16,7 +16,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import { messages } from '../../lib/messages'
 import { directorateOfEqualityNavigation } from '../../lib/navigation'
 import { DirectorateOfEqualityPaths } from '../../lib/paths'
-import { useDirectorateOfEqualityCompanyQuery } from '../../mocks/hooks'
+import { useDirectorateOfEqualityCompanyQuery } from '../../lib/company.generated'
 
 export const SubmissionsWrapper = ({
   pathname,

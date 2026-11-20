@@ -1,4 +1,4 @@
-import { DirectorateOfEqualityApiKey } from '../mocks/types'
+import { DirectorateOfEqualityApiKey } from '@island.is/api/schema'
 
 export type ApiKeyState = 'active' | 'revoked' | 'expired'
 

@@ -4,28 +4,28 @@ import {
   StatisticCard,
   Text,
 } from '@island.is/island-ui/core'
+import {
+  DirectorateOfEqualityAdjustedGap,
+  DirectorateOfEqualityGapDirection,
+} from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 
 import { formatPercent } from '../../../lib/format'
 import { messages } from '../../../lib/messages'
-import {
-  DirectorateOfEqualityAdjustedGap,
-  DirectorateOfEqualityGapDirection,
-} from '../../../mocks/types'
 
 export const directionMessage = (
   direction: DirectorateOfEqualityGapDirection,
 ) =>
-  direction === DirectorateOfEqualityGapDirection.WOMEN
+  direction === DirectorateOfEqualityGapDirection.FEMALE
     ? messages.directionWomen
-    : direction === DirectorateOfEqualityGapDirection.MEN
+    : direction === DirectorateOfEqualityGapDirection.MALE
     ? messages.directionMen
     : messages.directionNone
 
 export const AdjustedGap = ({
   gap,
 }: {
-  gap: DirectorateOfEqualityAdjustedGap
+  gap?: DirectorateOfEqualityAdjustedGap | null
 }) => {
   const { formatMessage } = useLocale()
   return (
@@ -34,35 +34,44 @@ export const AdjustedGap = ({
         {formatMessage(messages.adjustedGapTitle)}
       </Text>
       <Text marginBottom={3}>{formatMessage(messages.adjustedGapIntro)}</Text>
-      <Box display="flex" marginBottom={3}>
-        <StatisticCard
-          title={formatMessage(messages.adjustedGapTitle)}
-          content={formatMessage(messages.gapWithDirection, {
-            value: formatPercent(gap.percent, 2),
-            direction: formatMessage(directionMessage(gap.direction)),
-          })}
-          subtext={formatMessage(messages.benchmark, {
-            benchmark: formatPercent(gap.benchmarkPercent, 2),
-          })}
-          color="purple"
-        />
-      </Box>
-      {gap.withinBenchmark ? (
-        <AlertMessage
-          type="success"
-          title={formatMessage(messages.withinBenchmarkTitle)}
-          message={formatMessage(messages.withinBenchmarkMessage, {
-            benchmark: formatPercent(gap.benchmarkPercent, 2),
-          })}
-        />
+      {!gap ? (
+        <Text variant="small" color="dark300">
+          {formatMessage(messages.notComputable)}
+        </Text>
       ) : (
-        <AlertMessage
-          type="warning"
-          title={formatMessage(messages.overBenchmarkTitle)}
-          message={formatMessage(messages.overBenchmarkMessage, {
-            count: gap.outlierCount,
-          })}
-        />
+        <>
+          <Box display="flex" marginBottom={3}>
+            <StatisticCard
+              title={formatMessage(messages.adjustedGapTitle)}
+              content={formatMessage(messages.gapWithDirection, {
+                value: formatPercent(gap.percent, 2),
+                direction: formatMessage(directionMessage(gap.direction)),
+              })}
+              subtext={formatMessage(messages.benchmark, {
+                benchmark: formatPercent(gap.benchmarkPercent, 2),
+              })}
+              color="purple"
+            />
+          </Box>
+          {gap.withinBenchmark === true && (
+            <AlertMessage
+              type="success"
+              title={formatMessage(messages.withinBenchmarkTitle)}
+              message={formatMessage(messages.withinBenchmarkMessage, {
+                benchmark: formatPercent(gap.benchmarkPercent, 2),
+              })}
+            />
+          )}
+          {gap.withinBenchmark === false && (
+            <AlertMessage
+              type="warning"
+              title={formatMessage(messages.overBenchmarkTitle)}
+              message={formatMessage(messages.overBenchmarkMessage, {
+                count: gap.outlierCount,
+              })}
+            />
+          )}
+        </>
       )}
     </>
   )

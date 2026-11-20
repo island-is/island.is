@@ -8,6 +8,7 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
+import { DirectorateOfEqualityServiceProvider } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { ActionCardLoader } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
@@ -17,8 +18,7 @@ import { messages } from '../../../lib/messages'
 import {
   useDirectorateOfEqualityRevokeServiceProviderMutation,
   useDirectorateOfEqualityServiceProvidersQuery,
-} from '../../../mocks/hooks'
-import { DirectorateOfEqualityServiceProvider } from '../../../mocks/types'
+} from './ServiceProvidersTab.generated'
 import { ConfirmRevokeModal } from './ConfirmRevokeModal'
 import { GrantServiceProviderModal } from './GrantServiceProviderModal'
 import { ServiceProviderCard } from './ServiceProviderCard'
@@ -54,7 +54,7 @@ export const ServiceProvidersTab = () => {
     },
     onError: () => toast.error(formatMessage(messages.mutationError)),
   })
-  const providers = data?.directorateOfEqualityServiceProviders.items ?? []
+  const providers = data?.directorateOfEqualityServiceProviders?.items ?? []
 
   return (
     <Box paddingTop={4}>
@@ -89,7 +89,7 @@ export const ServiceProvidersTab = () => {
           <Stack space={2}>
             {providers.map((provider) => (
               <ServiceProviderCard
-                key={provider.nationalId}
+                key={provider.id}
                 provider={provider}
                 onRevoke={(target, trigger) => {
                   triggerRef.current = trigger
@@ -125,7 +125,7 @@ export const ServiceProvidersTab = () => {
           loading={revoking}
           onConfirm={() =>
             revokeProvider({
-              variables: { input: { nationalId: revokeTarget.nationalId } },
+              variables: { input: { id: revokeTarget.id } },
             })
           }
           onClose={() => {

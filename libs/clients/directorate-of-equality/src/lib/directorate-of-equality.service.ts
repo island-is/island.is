@@ -3,6 +3,17 @@ import { User, withAuthContext } from '@island.is/auth-nest-tools'
 import { data } from '@island.is/clients/middlewares'
 import {
   addApplicationEqualityAttachment,
+  getApplicationApiKeys,
+  getApplicationPartnerClient,
+  getApplicationPartnerClientKeys,
+  getApplicationPartnerDelegations,
+  getApplicationPartnerProviders,
+  grantApplicationPartnerDelegation,
+  issueApplicationApiKey,
+  issueApplicationPartnerClientKey,
+  revokeApplicationApiKey,
+  revokeApplicationPartnerClientKey,
+  revokeApplicationPartnerDelegation,
   analyzeApplicationSalaryReport,
   createApplicationReportDraft,
   deleteApplicationEqualityAttachment,
@@ -42,6 +53,19 @@ import {
   withdrawApplicationReport,
 } from '../../gen/fetch'
 import type {
+  ApiKeyDto,
+  CompanyPartnerDelegationDto,
+  CreateApiKeyDto,
+  CreatePartnerClientKeyDto,
+  GetApiKeysResponseDto,
+  GetCompanyPartnerDelegationsResponseDto,
+  GetPartnerClientKeysResponseDto,
+  GetPartnerProvidersResponseDto,
+  GrantPartnerDelegationDto,
+  IssuedApiKeyDto,
+  IssuedPartnerClientKeyDto,
+  PartnerClientDto,
+  PartnerClientKeyDto,
   ApplicationCompanyDto,
   ApplicationReportCommentDto,
   ApplicationReportDetailDto,
@@ -543,6 +567,115 @@ export class DirectorateOfEqualityClientService {
       user,
       () => listApplicationDraftOutlierGroups({ path: { providerId } }),
       'Failed to list draft outlier groups',
+    )
+  }
+
+  async getPartnerClient(user: User): Promise<PartnerClientDto> {
+    return this.unwrap(
+      user,
+      () => getApplicationPartnerClient(),
+      'Failed to get partner client',
+    )
+  }
+
+  async getApiKeys(user: User): Promise<GetApiKeysResponseDto> {
+    return this.unwrap(
+      user,
+      () => getApplicationApiKeys(),
+      'Failed to get API keys',
+    )
+  }
+
+  async issueApiKey(
+    user: User,
+    body: CreateApiKeyDto,
+  ): Promise<IssuedApiKeyDto> {
+    return this.unwrap(
+      user,
+      () => issueApplicationApiKey({ body }),
+      'Failed to issue API key',
+    )
+  }
+
+  async revokeApiKey(user: User, id: string): Promise<ApiKeyDto> {
+    return this.unwrap(
+      user,
+      () => revokeApplicationApiKey({ path: { id } }),
+      'Failed to revoke API key',
+    )
+  }
+
+  async getPartnerClientKeys(
+    user: User,
+  ): Promise<GetPartnerClientKeysResponseDto> {
+    return this.unwrap(
+      user,
+      () => getApplicationPartnerClientKeys(),
+      'Failed to get partner client keys',
+    )
+  }
+
+  async issuePartnerClientKey(
+    user: User,
+    body: CreatePartnerClientKeyDto,
+  ): Promise<IssuedPartnerClientKeyDto> {
+    return this.unwrap(
+      user,
+      () => issueApplicationPartnerClientKey({ body }),
+      'Failed to issue partner client key',
+    )
+  }
+
+  async revokePartnerClientKey(
+    user: User,
+    id: string,
+  ): Promise<PartnerClientKeyDto> {
+    return this.unwrap(
+      user,
+      () => revokeApplicationPartnerClientKey({ path: { id } }),
+      'Failed to revoke partner client key',
+    )
+  }
+
+  async getPartnerProviders(
+    user: User,
+  ): Promise<GetPartnerProvidersResponseDto> {
+    return this.unwrap(
+      user,
+      () => getApplicationPartnerProviders(),
+      'Failed to get partner providers',
+    )
+  }
+
+  async getPartnerDelegations(
+    user: User,
+  ): Promise<GetCompanyPartnerDelegationsResponseDto> {
+    return this.unwrap(
+      user,
+      () => getApplicationPartnerDelegations(),
+      'Failed to get partner delegations',
+    )
+  }
+
+  async grantPartnerDelegation(
+    user: User,
+    body: GrantPartnerDelegationDto,
+  ): Promise<CompanyPartnerDelegationDto> {
+    return this.unwrap(
+      user,
+      () => grantApplicationPartnerDelegation({ body }),
+      'Failed to grant partner delegation',
+    )
+  }
+
+  async revokePartnerDelegation(
+    user: User,
+    id: string,
+  ): Promise<CompanyPartnerDelegationDto> {
+    return this.unwrap(
+      user,
+      () => revokeApplicationPartnerDelegation({ path: { id } }),
+      'Failed to revoke partner delegation',
     )
   }
 }

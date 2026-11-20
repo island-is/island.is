@@ -1,8 +1,9 @@
 import { useParams } from 'react-router-dom'
 
-import { Button } from '@island.is/island-ui/core'
+import { Button, toast } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  downloadLink,
   formatDate,
   formatNationalId,
   InfoLine,
@@ -16,7 +17,13 @@ import { Problem } from '@island.is/react-spa/shared'
 import { NAMESPACE } from '../../lib/constants'
 import { messages } from '../../lib/messages'
 import { getStatusTag } from '../../lib/status'
-import { useDirectorateOfEqualityEqualityPlanQuery } from '../../mocks/hooks'
+import {
+  useDirectorateOfEqualityEqualityPlanPdfLazyQuery,
+  useDirectorateOfEqualityEqualityPlanQuery,
+} from './EqualityPlanDetail.generated'
+
+const getYear = (date?: string | null) =>
+  date ? new Date(date).getFullYear() : null
 
 const EqualityPlanDetail = () => {
   useNamespaces(NAMESPACE)
@@ -26,16 +33,36 @@ const EqualityPlanDetail = () => {
     variables: { input: { id } },
   })
   const plan = data?.directorateOfEqualityEqualityPlan
+  const from = getYear(plan?.approvedAt)
+  const to = getYear(plan?.validUntil)
+  const [getPdf, { loading: pdfLoading }] =
+    useDirectorateOfEqualityEqualityPlanPdfLazyQuery({
+      fetchPolicy: 'no-cache',
+    })
+
+  const onDownload = async () => {
+    const { data: pdfData } = await getPdf({ variables: { input: { id } } })
+    const content = pdfData?.directorateOfEqualityEqualityPlanPdf?.content
+    if (!content) {
+      toast.error(formatMessage(messages.downloadPlanError))
+      return
+    }
+    downloadLink(
+      content,
+      'application/pdf',
+      plan?.documentFileName ??
+        `${plan?.identifier ?? formatMessage(messages.planTitleNoPeriod)}.pdf`,
+    )
+  }
 
   return (
     <IntroWrapper
       title={
-        plan
-          ? formatMessage(messages.planTitle, {
-              from: plan.periodFrom,
-              to: plan.periodTo,
-            })
-          : formatMessage(coreMessages.equalityPlan)
+        !plan
+          ? formatMessage(coreMessages.equalityPlan)
+          : from && to
+          ? formatMessage(messages.planTitle, { from, to })
+          : formatMessage(messages.planTitleNoPeriod)
       }
       intro={formatMessage(messages.planDetailIntro)}
       loading={loading}
@@ -43,20 +70,24 @@ const EqualityPlanDetail = () => {
         slug: JAFNRETTISSTOFA_SLUG,
         tooltip: formatMessage(coreMessages.equalityTooltip),
       }}
-      buttonGroup={{
-        actions: [
-          <Button
-            key="download"
-            variant="ghost"
-            size="small"
-            icon="download"
-            iconType="outline"
-            disabled
-          >
-            {formatMessage(messages.downloadPlan)}
-          </Button>,
-        ],
-      }}
+      buttonGroup={
+        plan?.hasPdf
+          ? {
+              actions: [
+                <Button
+                  key="download"
+                  variant="utility"
+                  icon="download"
+                  iconType="outline"
+                  loading={pdfLoading}
+                  onClick={onDownload}
+                >
+                  {formatMessage(messages.downloadPlan)}
+                </Button>,
+              ],
+            }
+          : undefined
+      }
     >
       {error && !loading ? (
         <Problem error={error} noBorder={false} />
@@ -66,7 +97,7 @@ const EqualityPlanDetail = () => {
         <InfoLineStack label={messages.planInfo}>
           <InfoLine
             label={messages.identifier}
-            content={plan?.identifier}
+            content={plan?.identifier ?? undefined}
             loading={loading}
           />
           <InfoLine
@@ -95,22 +126,24 @@ const EqualityPlanDetail = () => {
               loading={loading}
             />
           )}
-          <InfoLine
-            label={messages.company}
-            content={
-              plan
-                ? formatMessage(messages.companyWithNationalId, {
-                    name: plan.companyName,
-                    nationalId: formatNationalId(plan.companyNationalId),
-                  })
-                : undefined
-            }
-            loading={loading}
-          />
-          {(loading || plan?.fileName) && (
+          {loading ? (
+            <InfoLine label={messages.company} loading />
+          ) : (
+            plan?.companies.map((company) => (
+              <InfoLine
+                key={company.nationalId}
+                label={messages.company}
+                content={formatMessage(messages.companyWithNationalId, {
+                  name: company.name,
+                  nationalId: formatNationalId(company.nationalId),
+                })}
+              />
+            ))
+          )}
+          {(loading || plan?.documentFileName) && (
             <InfoLine
               label={messages.document}
-              content={plan?.fileName ?? undefined}
+              content={plan?.documentFileName ?? undefined}
               loading={loading}
             />
           )}

@@ -1,0 +1,19 @@
+query DirectorateOfEqualityServiceProviders {
+  directorateOfEqualityServiceProviders {
+    items {
+      id
+      name
+      nationalId
+      grantedAt
+      grantedByName
+    }
+  }
+}
+
+mutation DirectorateOfEqualityRevokeServiceProvider(
+  $input: DirectorateOfEqualityRevokeServiceProviderInput!
+) {
+  directorateOfEqualityRevokeServiceProvider(input: $input) {
+    success
+  }
+}

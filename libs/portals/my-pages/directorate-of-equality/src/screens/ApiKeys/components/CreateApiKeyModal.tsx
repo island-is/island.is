@@ -12,6 +12,7 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
+import { DirectorateOfEqualityApiKeyType } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { m as coreMessages, Modal } from '@island.is/portals/my-pages/core'
 
@@ -21,7 +22,6 @@ import {
   ValidityMonths,
 } from '../../../lib/apiKeys'
 import { messages } from '../../../lib/messages'
-import { DirectorateOfEqualityApiKeyType } from '../../../mocks/types'
 
 export const CreateApiKeyModal = ({
   isServiceProvider,
@@ -139,9 +139,10 @@ export const CreateApiKeyModal = ({
           </Box>
           <Box marginTop={2}>
             <Button
-              variant="utility"
+              variant="ghost"
               size="small"
               icon="copy"
+              iconType="outline"
               onClick={() =>
                 copyToClipboard(issuedKey)
                   ? toast.success(formatMessage(messages.copyKeySuccess))

@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom'
 
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { DirectorateOfEqualitySalaryDataBasis } from '@island.is/api/schema'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatDate,
@@ -16,12 +17,20 @@ import { Problem } from '@island.is/react-spa/shared'
 import { NAMESPACE } from '../../lib/constants'
 import { messages } from '../../lib/messages'
 import { getStatusTag } from '../../lib/status'
-import { useDirectorateOfEqualityReportQuery } from '../../mocks/hooks'
 import { AdjustedGap } from './components/AdjustedGap'
 import { ImprovementPlan } from './components/ImprovementPlan'
 import { MeanHourlyWage } from './components/MeanHourlyWage'
-import { PayComponentsTable } from './components/PayComponentsTable'
 import { WageDistribution } from './components/WageDistribution'
+import { useDirectorateOfEqualityReportQuery } from './ReportDetail.generated'
+
+const getYear = (date?: string | null) =>
+  date ? new Date(date).getFullYear() : null
+
+const formatMonth = (date: string) =>
+  new Date(date).toLocaleDateString('is-IS', {
+    month: 'long',
+    year: 'numeric',
+  })
 
 const ReportDetail = () => {
   useNamespaces(NAMESPACE)
@@ -31,33 +40,28 @@ const ReportDetail = () => {
     variables: { input: { id } },
   })
   const report = data?.directorateOfEqualityReport
+  const year = getYear(report?.salaryDataPeriod)
+  const analysisPeriod =
+    report?.salaryDataBasis === DirectorateOfEqualitySalaryDataBasis.AVERAGE
+      ? formatMessage(messages.analysisPeriodAverage)
+      : report?.salaryDataPeriod
+      ? formatMonth(report.salaryDataPeriod)
+      : undefined
 
   return (
     <IntroWrapper
       title={
-        report
-          ? formatMessage(messages.reportTitle, { year: report.year })
-          : formatMessage(coreMessages.equalityReport)
+        !report
+          ? formatMessage(coreMessages.equalityReport)
+          : year
+          ? formatMessage(messages.reportTitle, { year })
+          : formatMessage(messages.reportTitleNoYear)
       }
       intro={formatMessage(messages.reportDetailIntro)}
       loading={loading}
       serviceProvider={{
         slug: JAFNRETTISSTOFA_SLUG,
         tooltip: formatMessage(coreMessages.equalityTooltip),
-      }}
-      buttonGroup={{
-        actions: [
-          <Button
-            key="download"
-            variant="ghost"
-            size="small"
-            icon="download"
-            iconType="outline"
-            disabled
-          >
-            {formatMessage(messages.downloadReport)}
-          </Button>,
-        ],
       }}
     >
       {error && !loading ? (
@@ -69,7 +73,7 @@ const ReportDetail = () => {
           <InfoLineStack label={messages.reportInfo}>
             <InfoLine
               label={messages.identifier}
-              content={report?.identifier}
+              content={report?.identifier ?? undefined}
               loading={loading}
             />
             <InfoLine
@@ -93,23 +97,27 @@ const ReportDetail = () => {
                 loading={loading}
               />
             )}
-            <InfoLine
-              label={messages.analysisPeriod}
-              content={report?.analysisPeriod}
-              loading={loading}
-            />
-            <InfoLine
-              label={messages.company}
-              content={
-                report
-                  ? formatMessage(messages.companyWithNationalId, {
-                      name: report.companyName,
-                      nationalId: formatNationalId(report.companyNationalId),
-                    })
-                  : undefined
-              }
-              loading={loading}
-            />
+            {(loading || analysisPeriod) && (
+              <InfoLine
+                label={messages.analysisPeriod}
+                content={analysisPeriod}
+                loading={loading}
+              />
+            )}
+            {loading ? (
+              <InfoLine label={messages.company} loading />
+            ) : (
+              report?.companies.map((company) => (
+                <InfoLine
+                  key={company.nationalId}
+                  label={messages.company}
+                  content={formatMessage(messages.companyWithNationalId, {
+                    name: company.name,
+                    nationalId: formatNationalId(company.nationalId),
+                  })}
+                />
+              ))
+            )}
           </InfoLineStack>
           {report && (
             <Box marginTop={8}>
@@ -130,9 +138,6 @@ const ReportDetail = () => {
               </Box>
               <Box marginBottom={8}>
                 <WageDistribution distribution={report.distribution} />
-              </Box>
-              <Box marginBottom={8}>
-                <PayComponentsTable data={report.payComponents} />
               </Box>
               {report.improvementPlan.length > 0 && (
                 <Box marginBottom={8}>

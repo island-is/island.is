@@ -1,13 +1,13 @@
-import { Box, Button, Tag, Text } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import { formatDate, formatNationalId } from '@island.is/portals/my-pages/core'
-
-import { getApiKeyState } from '../../../lib/apiKeys'
-import { messages } from '../../../lib/messages'
 import {
   DirectorateOfEqualityApiKey,
   DirectorateOfEqualityApiKeyType,
-} from '../../../mocks/types'
+} from '@island.is/api/schema'
+import { Box, Button, Tag, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { formatDate } from '@island.is/portals/my-pages/core'
+
+import { getApiKeyState } from '../../../lib/apiKeys'
+import { messages } from '../../../lib/messages'
 
 const TAG_VARIANTS = {
   active: 'mint',
@@ -78,9 +78,9 @@ export const ApiKeyCard = ({
       <Text marginTop={1}>
         {formatMessage(messages.keyCreatedLine, {
           date: formatDate(apiKey.createdAt),
-          createdBy: apiKey.createdByNationalId
-            ? formatNationalId(apiKey.createdByNationalId)
-            : formatMessage(messages.keyCreatedByDoe),
+          createdBy: apiKey.createdByDirectorate
+            ? formatMessage(messages.keyCreatedByDoe)
+            : apiKey.createdByName ?? '–',
         })}
       </Text>
       <Box

@@ -23,7 +23,7 @@ import { messages } from '../../../lib/messages'
 import {
   useDirectorateOfEqualityAvailableServiceProvidersQuery,
   useDirectorateOfEqualityGrantServiceProviderMutation,
-} from '../../../mocks/hooks'
+} from './GrantServiceProviderModal.generated'
 
 export const GrantServiceProviderModal = ({
   onClose,
@@ -41,7 +41,7 @@ export const GrantServiceProviderModal = ({
     error,
   } = useDirectorateOfEqualityAvailableServiceProvidersQuery()
   const providers =
-    data?.directorateOfEqualityAvailableServiceProviders.items ?? []
+    data?.directorateOfEqualityAvailableServiceProviders?.items ?? []
   const [
     grant,
     { loading: granting },
@@ -61,7 +61,7 @@ export const GrantServiceProviderModal = ({
       setShowError(true)
       return
     }
-    grant({ variables: { input: { nationalId: selected } } })
+    grant({ variables: { input: { id: selected } } })
   }
 
   return (
@@ -126,17 +126,17 @@ export const GrantServiceProviderModal = ({
             <Stack space={2}>
               {providers.map((provider) => (
                 <RadioButton
-                  key={provider.nationalId}
-                  id={`grant-service-provider-${provider.nationalId}`}
+                  key={provider.id}
+                  id={`grant-service-provider-${provider.id}`}
                   name="grant-service-provider"
-                  value={provider.nationalId}
+                  value={provider.id}
                   label={provider.name}
                   subLabel={formatMessage(messages.nationalIdLine, {
                     nationalId: formatNationalId(provider.nationalId),
                   })}
-                  checked={selected === provider.nationalId}
+                  checked={selected === provider.id}
                   onChange={() => {
-                    setSelected(provider.nationalId)
+                    setSelected(provider.id)
                     setShowError(false)
                   }}
                   large

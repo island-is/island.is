@@ -9,7 +9,7 @@ import { Problem } from '@island.is/react-spa/shared'
 
 import { NAMESPACE } from '../../lib/constants'
 import { messages } from '../../lib/messages'
-import { useDirectorateOfEqualityCompanyQuery } from '../../mocks/hooks'
+import { useDirectorateOfEqualityCompanyQuery } from '../../lib/company.generated'
 import { ApiKeysTab } from './components/ApiKeysTab'
 import { ServiceProvidersTab } from './components/ServiceProvidersTab'
 

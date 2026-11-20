@@ -1,7 +1,7 @@
 import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
 
-// import { ApiScope } from '@island.is/auth/scopes'
+import { ApiScope } from '@island.is/auth/scopes'
 import { PortalModule } from '@island.is/portals/core'
 import { m } from '@island.is/portals/my-pages/core'
 import { Features } from '@island.is/react/feature-flags'
@@ -19,7 +19,7 @@ export const directorateOfEqualityModule: PortalModule = {
   name: m.equality,
   featureFlag: Features.isServicePortalEqualityPageEnabled,
   enabled: ({ isCompany }) => isCompany,
-  routes: () => [
+  routes: ({ userInfo }) => [
     {
       name: m.equality,
       path: DirectorateOfEqualityPaths.Root,
@@ -41,10 +41,8 @@ export const directorateOfEqualityModule: PortalModule = {
     {
       name: m.equalityPlan,
       path: DirectorateOfEqualityPaths.PlanDetail,
-      // TODO: restore scope check
-      // enabled: userInfo.scopes.includes(ApiScope.directorateOfEquality),
-      // requiredScopes: [ApiScope.directorateOfEquality],
-      enabled: true,
+      enabled: userInfo.scopes.includes(ApiScope.directorateOfEquality),
+      requiredScopes: [ApiScope.directorateOfEquality],
       element: <EqualityPlanDetail />,
     },
     {
@@ -56,19 +54,15 @@ export const directorateOfEqualityModule: PortalModule = {
     {
       name: m.equalityReport,
       path: DirectorateOfEqualityPaths.ReportDetail,
-      // TODO: restore scope check
-      // enabled: userInfo.scopes.includes(ApiScope.directorateOfEqualitySalary),
-      // requiredScopes: [ApiScope.directorateOfEqualitySalary],
-      enabled: true,
+      enabled: userInfo.scopes.includes(ApiScope.directorateOfEqualitySalary),
+      requiredScopes: [ApiScope.directorateOfEqualitySalary],
       element: <ReportDetail />,
     },
     {
       name: m.equalityApiKeys,
       path: DirectorateOfEqualityPaths.ApiKeys,
-      // TODO: restore together with ApiScope.directorateOfEqualityCompany in servicePortalScopes
-      // enabled: userInfo.scopes.includes(ApiScope.directorateOfEqualityCompany),
-      // requiredScopes: [ApiScope.directorateOfEqualityCompany],
-      enabled: true,
+      enabled: userInfo.scopes.includes(ApiScope.directorateOfEqualityCompany),
+      requiredScopes: [ApiScope.directorateOfEqualityCompany],
       element: <ApiKeys />,
     },
   ],

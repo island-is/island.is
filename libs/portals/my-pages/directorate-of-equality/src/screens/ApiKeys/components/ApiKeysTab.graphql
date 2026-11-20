@@ -1,0 +1,33 @@
+query DirectorateOfEqualityApiKeys {
+  directorateOfEqualityApiKeys {
+    items {
+      id
+      keyId
+      type
+      label
+      createdAt
+      createdByName
+      createdByDirectorate
+      expiresAt
+      lastUsedAt
+      revokedAt
+    }
+  }
+}
+
+mutation DirectorateOfEqualityIssueApiKey(
+  $input: DirectorateOfEqualityIssueApiKeyInput!
+) {
+  directorateOfEqualityIssueApiKey(input: $input) {
+    id
+    key
+  }
+}
+
+mutation DirectorateOfEqualityRevokeApiKey(
+  $input: DirectorateOfEqualityRevokeApiKeyInput!
+) {
+  directorateOfEqualityRevokeApiKey(input: $input) {
+    success
+  }
+}

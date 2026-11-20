@@ -5,6 +5,12 @@ import {
   ScatterChartPoint,
   Text,
 } from '@island.is/island-ui/core'
+import {
+  DirectorateOfEqualityDistribution,
+  DirectorateOfEqualityDistributionPoint,
+  DirectorateOfEqualityGender,
+  DirectorateOfEqualityMarkedKind,
+} from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 
 import {
@@ -13,25 +19,41 @@ import {
   formatThousands,
 } from '../../../lib/format'
 import { messages } from '../../../lib/messages'
-import {
-  DirectorateOfEqualityDistribution,
-  DirectorateOfEqualityDistributionPoint,
-  DirectorateOfEqualityGender,
-} from '../../../mocks/types'
 
 export const WageDistribution = ({
   distribution,
 }: {
-  distribution: DirectorateOfEqualityDistribution
+  distribution?: DirectorateOfEqualityDistribution | null
 }) => {
   const { formatMessage } = useLocale()
+
+  if (!distribution) {
+    return (
+      <Box>
+        <Text variant="h4" as="h3" marginBottom={1}>
+          {formatMessage(messages.chartTitle)}
+        </Text>
+        <Text variant="small" color="dark300">
+          {formatMessage(messages.notComputable)}
+        </Text>
+      </Box>
+    )
+  }
+
+  const markedLabel =
+    distribution.markedKind === DirectorateOfEqualityMarkedKind.MINIMUM_SET
+      ? formatMessage(messages.chartLegendOutlier)
+      : distribution.markedKind ===
+        DirectorateOfEqualityMarkedKind.PAY_DISPERSION
+      ? formatMessage(messages.chartLegendPayDispersion)
+      : undefined
 
   const toPoint = (
     point: DirectorateOfEqualityDistributionPoint,
   ): ScatterChartPoint => ({
     x: point.score,
     y: point.wage,
-    marked: point.isOutlier,
+    marked: point.marked,
     tooltip: {
       title: formatMessage(
         point.gender === DirectorateOfEqualityGender.MALE
@@ -41,16 +63,17 @@ export const WageDistribution = ({
       rows: [
         {
           label: formatMessage(messages.chartXAxis),
-          value: String(point.score),
+          value: String(Math.round(point.score)),
         },
         {
           label: formatMessage(messages.chartTooltipWage),
           value: formatHourlyWage(point.wage),
         },
       ],
-      note: point.isOutlier
-        ? { text: formatMessage(messages.chartLegendOutlier), color: 'red600' }
-        : undefined,
+      note:
+        point.marked && markedLabel
+          ? { text: markedLabel, color: 'red600' }
+          : undefined,
     },
   })
 
@@ -64,7 +87,7 @@ export const WageDistribution = ({
     (p) => p.gender === DirectorateOfEqualityGender.MALE,
   )
   const female = distribution.points.filter(
-    (p) => p.gender === DirectorateOfEqualityGender.FEMALE,
+    (p) => p.gender !== DirectorateOfEqualityGender.MALE,
   )
 
   return (
@@ -88,19 +111,19 @@ export const WageDistribution = ({
             points: female.map(toPoint),
           },
         ]}
-        line={{
-          name: formatMessage(messages.chartLegendExpected),
-          color: 'roseTinted400',
-          points: distribution.expectedLine.map((p) => ({
-            x: p.score,
-            y: p.wage,
-          })),
-        }}
-        markedLegendLabel={
-          distribution.points.some((p) => p.isOutlier)
-            ? formatMessage(messages.chartLegendOutlier)
+        line={
+          distribution.expectedLine.length > 0
+            ? {
+                name: formatMessage(messages.chartLegendExpected),
+                color: 'roseTinted400',
+                points: distribution.expectedLine.map((p) => ({
+                  x: p.score,
+                  y: p.wage,
+                })),
+              }
             : undefined
         }
+        markedLegendLabel={markedLabel}
         xAxis={{
           label: formatMessage(messages.chartXAxis),
           domain: [0, xMax],
@@ -117,29 +140,33 @@ export const WageDistribution = ({
       <Text variant="small" color="dark300" marginTop={2}>
         {formatMessage(messages.chartNote)}
       </Text>
-      <Box display="flex" columnGap={2} flexWrap="wrap" marginTop={1}>
-        <Text variant="small" fontWeight="semiBold">
-          {formatMessage(messages.increasePer100)}
-        </Text>
-        <Text variant="small">{`${formatPercent(
-          distribution.increasePer100PointsPercent,
-          1,
-        )}%`}</Text>
-        <Text variant="small" color="dark300">
-          {formatMessage(messages.increasePer100Hint)}
-        </Text>
-      </Box>
-      <Box display="flex" columnGap={2} flexWrap="wrap" marginTop={1}>
-        <Text variant="small" fontWeight="semiBold">
-          {formatMessage(messages.expectedAtMean)}
-        </Text>
-        <Text variant="small">
-          {formatHourlyWage(distribution.expectedWageAtMeanScore)}
-        </Text>
-        <Text variant="small" color="dark300">
-          {formatMessage(messages.expectedAtMeanHint)}
-        </Text>
-      </Box>
+      {distribution.increasePer100PointsPercent != null && (
+        <Box display="flex" columnGap={2} flexWrap="wrap" marginTop={1}>
+          <Text variant="small" fontWeight="semiBold">
+            {formatMessage(messages.increasePer100)}
+          </Text>
+          <Text variant="small">{`${formatPercent(
+            distribution.increasePer100PointsPercent,
+            1,
+          )}%`}</Text>
+          <Text variant="small" color="dark300">
+            {formatMessage(messages.increasePer100Hint)}
+          </Text>
+        </Box>
+      )}
+      {distribution.expectedWageAtMeanScore != null && (
+        <Box display="flex" columnGap={2} flexWrap="wrap" marginTop={1}>
+          <Text variant="small" fontWeight="semiBold">
+            {formatMessage(messages.expectedAtMean)}
+          </Text>
+          <Text variant="small">
+            {formatHourlyWage(distribution.expectedWageAtMeanScore)}
+          </Text>
+          <Text variant="small" color="dark300">
+            {formatMessage(messages.expectedAtMeanHint)}
+          </Text>
+        </Box>
+      )}
       <Box marginTop={2}>
         <Divider />
       </Box>

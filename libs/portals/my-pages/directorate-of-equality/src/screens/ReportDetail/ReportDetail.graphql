@@ -1,0 +1,53 @@
+query DirectorateOfEqualityReport($input: DirectorateOfEqualityDetailInput!) {
+  directorateOfEqualityReport(input: $input) {
+    id
+    status
+    identifier
+    submittedAt
+    approvedAt
+    companies {
+      name
+      nationalId
+    }
+    salaryDataBasis
+    salaryDataPeriod
+    adjustedGap {
+      percent
+      direction
+      benchmarkPercent
+      withinBenchmark
+      outlierCount
+    }
+    rawGap {
+      percent
+      direction
+    }
+    meanHourlyWage {
+      male
+      female
+    }
+    distribution {
+      points {
+        score
+        wage
+        gender
+        marked
+      }
+      markedKind
+      expectedLine {
+        score
+        wage
+      }
+      increasePer100PointsPercent
+      expectedWageAtMeanScore
+    }
+    improvementPlan {
+      id
+      reason
+      correctionPlan
+      deadline
+      responsibleName
+      responsibleTitle
+    }
+  }
+}

@@ -9,6 +9,7 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
+import { DirectorateOfEqualityApiKey } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { ActionCardLoader, formatDate } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
@@ -20,8 +21,7 @@ import {
   useDirectorateOfEqualityApiKeysQuery,
   useDirectorateOfEqualityIssueApiKeyMutation,
   useDirectorateOfEqualityRevokeApiKeyMutation,
-} from '../../../mocks/hooks'
-import { DirectorateOfEqualityApiKey } from '../../../mocks/types'
+} from './ApiKeysTab.generated'
 import { ApiKeyCard } from './ApiKeyCard'
 import { ConfirmRevokeModal } from './ConfirmRevokeModal'
 import { CreateApiKeyModal } from './CreateApiKeyModal'
@@ -48,7 +48,7 @@ export const ApiKeysTab = ({
     error,
     refetch,
   } = useDirectorateOfEqualityApiKeysQuery()
-  const items = data?.directorateOfEqualityApiKeys.items ?? []
+  const items = data?.directorateOfEqualityApiKeys?.items ?? []
   const active = items.filter((apiKey) => getApiKeyState(apiKey) === 'active')
   const inactive = items.filter((apiKey) => getApiKeyState(apiKey) !== 'active')
   const [
@@ -204,7 +204,11 @@ export const ApiKeysTab = ({
           confirmLabel={formatMessage(messages.revokeKey)}
           loading={revoking}
           onConfirm={() =>
-            revokeKey({ variables: { input: { id: revokeTarget.id } } })
+            revokeKey({
+              variables: {
+                input: { id: revokeTarget.id, type: revokeTarget.type },
+              },
+            })
           }
           onClose={() => {
             setRevokeTarget(null)

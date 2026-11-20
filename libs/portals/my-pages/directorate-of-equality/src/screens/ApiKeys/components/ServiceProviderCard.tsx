@@ -1,9 +1,9 @@
+import { DirectorateOfEqualityServiceProvider } from '@island.is/api/schema'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatDate, formatNationalId } from '@island.is/portals/my-pages/core'
 
 import { messages } from '../../../lib/messages'
-import { DirectorateOfEqualityServiceProvider } from '../../../mocks/types'
 
 export const ServiceProviderCard = ({
   provider,
@@ -42,9 +42,9 @@ export const ServiceProviderCard = ({
         marginTop={1}
       >
         <Text>
-          {formatMessage(messages.grantedLine, {
+          {formatMessage(messages.grantedByLine, {
             date: formatDate(provider.grantedAt),
-            nationalId: formatNationalId(provider.grantedByNationalId),
+            name: provider.grantedByName ?? '–',
           })}
         </Text>
         <Button
