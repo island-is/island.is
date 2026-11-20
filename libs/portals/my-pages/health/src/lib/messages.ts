@@ -1520,10 +1520,6 @@ export const messages = defineMessages({
     id: 'sp.health:referral-not-found-detail',
     defaultMessage: 'Engin tilvísun finnst með þessu skráningarnúmeri. ',
   },
-  reason: {
-    defaultMessage: 'Ástæða',
-    id: 'sp.health:reason',
-  },
   regimentMedicine: {
     defaultMessage: 'Lyfjakúrar',
     id: 'sp.health:regiment-medicine',

@@ -114,13 +114,6 @@ const ReferralsDetail: React.FC = () => {
             }
             loading={loading}
           />
-          <InfoLine
-            label={messages.reason}
-            content={
-              referral?.reason || formatMessage(messages.noDataRegistered)
-            }
-            loading={loading}
-          />
           {referral?.diagnoses && (
             <InfoLine
               label={messages.diagnoses}
