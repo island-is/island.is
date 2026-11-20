@@ -1,10 +1,11 @@
-import { ServiceBuilder, ref, service } from '../../../infra/src/dsl/dsl'
+import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 import {
   Base,
   Client,
   DistrictCommissionersLicenses,
   DistrictCommissionersPCard,
   Education,
+  Estates,
   Finance,
   HealthDirectorateHealthService,
   HealthInsurance,
@@ -25,7 +26,10 @@ export const serviceSetup = (services: {
     .serviceAccount('download-service')
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
+        /* TODO: WIP — REVERT BEFORE MERGE (feat/add-estates)
+         * ref() bypasses the feature-deploy IDS rewrite so Sýslumenn gets dev01-issued tokens.
+         * Restore to 'https://identity-server.dev01.devland.is'. */
+        dev: ref(() => 'https://identity-server.dev01.devland.is'),
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
@@ -83,6 +87,7 @@ export const serviceSetup = (services: {
       RentalService,
       MmsPrimarySchool,
       VMSTUnemployment,
+      Estates,
     )
     .ingress({
       primary: {

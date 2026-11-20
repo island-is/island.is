@@ -1,0 +1,98 @@
+query EstateDetail($input: EstatesCaseInput!) {
+  estate(input: $input) {
+    id
+    caseId {
+      label
+      value
+    }
+    deceased {
+      title
+      name {
+        label
+        value
+      }
+      nationalId {
+        label
+        value
+      }
+      dateOfDeath {
+        label
+        value
+      }
+    }
+    representative {
+      name
+      nationalId
+      text
+    }
+    estateManager {
+      name
+      nationalId
+    }
+    status {
+      code
+      text
+      isOpen
+    }
+    nextSteps {
+      code
+      description
+      detailedDescription
+      stepStatus {
+        code
+        text
+      }
+      action {
+        type
+        label
+        url
+        method
+      }
+    }
+    deadline {
+      description
+      detailedDescription
+      dueDate
+      daysRemaining
+    }
+    progress {
+      title
+      steps {
+        order
+        code
+        state
+        completedDate
+        description
+        information
+        action {
+          type
+          label
+          url
+          method
+        }
+      }
+    }
+    inheritors {
+      name
+      nationalId
+      relation {
+        code
+        text
+      }
+    }
+    documents {
+      name
+      documentTypeDescription
+      documentDate
+      availability
+      islandIsDocumentId
+      downloadServiceUrl
+      requestAction {
+        type
+        label
+        url
+        method
+      }
+    }
+  }
+}
