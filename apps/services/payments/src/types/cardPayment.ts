@@ -96,16 +96,22 @@ export const CardPaymentSuccessSchema = PaymentGatewaySuccessSchema.extend({
 /** Card payment (charge) error: transaction fields omitted or partial */
 export const CardPaymentErrorSchema = PaymentGatewayErrorSchema
 
-/** Refund success: full transaction data */
+/**
+ * Refund success. Nothing reads the transaction data of a refund, it is only
+ * kept in the refund event's metadata, so a refund the gateway approved is
+ * accepted whatever of it comes back. Requiring it turned approved refunds
+ * into failures when the gateway left acquirerReferenceNumber and
+ * authorizationIdentifier out (19 Nov 2026): the retry then failed, as the
+ * payment was refunded already, and the rollback kept a refunded payment paid.
+ */
 export const RefundSuccessSchema = PaymentGatewaySuccessSchema.extend({
   isSuccess: z.literal(true),
-  acquirerReferenceNumber: z.string(),
-  transactionID: z.string(),
-  transactionLifecycleId: z.string(),
-  // Optional for the same reason as the charge's, nothing reads it here
+  acquirerReferenceNumber: z.string().optional(),
+  transactionID: z.string().optional(),
+  transactionLifecycleId: z.string().optional(),
   maskedCardNumber: z.string().optional(),
-  cardInformation: CardInformationSchema,
-  authorizationIdentifier: z.string(),
+  cardInformation: CardInformationSchema.optional(),
+  authorizationIdentifier: z.string().optional(),
 })
 
 /** Refund error: transaction fields omitted or partial */
