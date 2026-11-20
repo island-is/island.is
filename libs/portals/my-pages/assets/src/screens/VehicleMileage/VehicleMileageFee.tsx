@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { ReactNode, useMemo, useState } from 'react'
 
 import {
   VehiclesMileageFeeDifferenceOutcome,
@@ -31,6 +31,8 @@ import * as styles from './VehicleMileage.css'
 
 const columnHelper = createColumnHelper<VehiclesMileageFeePeriod>()
 
+const strong = (chunks: ReactNode) => <strong>{chunks}</strong>
+
 const formatDifference = (value: number) =>
   `${value > 0 ? '+' : ''}${amountFormat(value)}`
 
@@ -53,13 +55,14 @@ const DifferenceInfo = ({
       text={
         <Stack space={1}>
           <Text variant="small">
-            {formatMessage(messages.mileageFeeTooltipRefunded)}
+            {formatMessage(messages.mileageFeeTooltipRefunded, { strong })}
           </Text>
           <Text variant="small">
-            {formatMessage(messages.mileageFeeTooltipAdded)}
+            {formatMessage(messages.mileageFeeTooltipAdded, { strong })}
           </Text>
           <Text variant="small">
             {formatMessage(messages.mileageFeeTooltipReversed, {
+              strong,
               threshold: amountFormat(reversalThreshold),
             })}
           </Text>
@@ -178,7 +181,40 @@ export const VehicleMileageFee = ({ permno }: Props) => {
         enableSorting: false,
       }),
       columnHelper.accessor('confirmedFee', {
-        header: formatMessage(messages.mileageFeeConfirmed),
+        header: () => (
+          <Inline space={1} alignY="center" justifyContent="flexEnd">
+            {formatMessage(messages.mileageFeeConfirmed)}
+            <Tooltip
+              text={
+                <Stack space={1}>
+                  <Text variant="small">
+                    {formatMessage(messages.mileageFeeEstimatedAmountTooltip, {
+                      strong,
+                    })}
+                  </Text>
+                  <Text variant="small">
+                    {formatMessage(messages.mileageFeeConfirmedAmountTooltip, {
+                      strong,
+                    })}
+                  </Text>
+                </Stack>
+              }
+            >
+              <button
+                type="button"
+                className={styles.tooltipButton}
+                aria-label={formatMessage(messages.mileageFeeAmountTooltipInfo)}
+              >
+                <Icon
+                  icon="informationCircle"
+                  type="outline"
+                  size="small"
+                  color="blue400"
+                />
+              </button>
+            </Tooltip>
+          </Inline>
+        ),
         cell: ({ getValue }) => amountFormat(getValue()) || '-',
         footer: () => amountFormat(fee?.confirmedFeeTotal),
         meta: { align: 'right' },

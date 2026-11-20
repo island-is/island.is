@@ -1423,11 +1423,26 @@ export const vehicleMessage = defineMessages({
   },
   mileageFeeEstimated: {
     id: 'sp.vehicles:mileage-fee-estimated',
-    defaultMessage: 'Áætlað gjald',
+    defaultMessage: 'Bráðabirgðagreiðsla',
   },
   mileageFeeConfirmed: {
     id: 'sp.vehicles:mileage-fee-confirmed',
-    defaultMessage: 'Staðfest gjald',
+    defaultMessage: 'Endanlegt gjald',
+  },
+  mileageFeeEstimatedAmountTooltip: {
+    id: 'sp.vehicles:mileage-fee-estimated-amount-tooltip',
+    defaultMessage:
+      '<strong>Bráðabirgðagreiðsla:</strong> Byggir á áætluðum meðalakstri þínum frá fyrri skráningum eða áætlun ríkisskattstjóra ef ekki eru til tvær skráningar.',
+  },
+  mileageFeeConfirmedAmountTooltip: {
+    id: 'sp.vehicles:mileage-fee-confirmed-amount-tooltip',
+    defaultMessage:
+      '<strong>Endanlegt gjald:</strong> Álagning byggð á raunakstri. Gerður er upp mismunur á áætluðum akstri og raunakstri á tímabilinu.',
+  },
+  mileageFeeAmountTooltipInfo: {
+    id: 'sp.vehicles:mileage-fee-amount-tooltip-info',
+    defaultMessage:
+      'Skýring á merkingarmun milli bráðabirgðagjalds og endanlegs gjalds',
   },
   mileageFeeDifference: {
     id: 'sp.vehicles:mileage-fee-difference',
@@ -1436,17 +1451,17 @@ export const vehicleMessage = defineMessages({
   mileageFeeTooltipRefunded: {
     id: 'sp.vehicles:mileage-fee-tooltip-refunded',
     defaultMessage:
-      'Mínus (-): Upphæðin er endurgreidd á skráðan bankareikning.',
+      '<strong>Mínus (-):</strong> Upphæðin er endurgreidd eða skuldajafnað upp í önnur opinber gjöld.',
   },
   mileageFeeTooltipAdded: {
     id: 'sp.vehicles:mileage-fee-tooltip-added',
     defaultMessage:
-      'Plús (+): Upphæðin bætist við næsta reikning og greiðist með honum.',
+      '<strong>Plús (+):</strong> Upphæðin innheimt með næsta reikning',
   },
   mileageFeeTooltipReversed: {
     id: 'sp.vehicles:mileage-fee-tooltip-reversed',
     defaultMessage:
-      'Undir {threshold}: Upphæðin er bakfærð og engin greiðsla eða endurgreiðsla fer fram.',
+      '<strong>Plús (+) {threshold} eða lægra:</strong> Kílómetragjald fellur niður.',
   },
   mileageFeeTotal: {
     id: 'sp.vehicles:mileage-fee-total',
