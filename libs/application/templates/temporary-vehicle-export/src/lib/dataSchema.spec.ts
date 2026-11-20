@@ -1,9 +1,12 @@
 import { dataSchema } from './dataSchema'
+import { m } from './messages'
 import {
   getDepartureDate,
   getDepartureMileage,
   getMileageDrivenAbroad,
   parseMileage,
+  toDate,
+  usesLatestMileage,
 } from '../utils/helpers'
 
 const yesterday = () => {
@@ -101,6 +104,31 @@ describe('temporary vehicle export dataSchema', () => {
     ).toBe(false)
   })
 
+  it('ignores a saved manual date when the latest reading and its date are used', () => {
+    expect(
+      departure.safeParse({
+        date: daysFromToday(-10),
+        useLatestMileage: 'yes',
+        latestMileage: '12000',
+        latestMileageReadDate: '2026-01-05T00:00:00.000Z',
+      }).success,
+    ).toBe(true)
+  })
+
+  it('ignores a saved choice of the latest reading when the vehicle has none', () => {
+    const answers = {
+      departure: { useLatestMileage: 'yes', latestMileage: '' },
+    }
+    expect(usesLatestMileage(answers)).toBe(false)
+    expect(
+      departure.safeParse({
+        ...answers.departure,
+        date: yesterday(),
+        mileage: '12000',
+      }).success,
+    ).toBe(true)
+  })
+
   it('rejects a departure date in the future', () => {
     const result = departure.safeParse({ date: tomorrow(), mileage: '100' })
     expect(result.success).toBe(false)
@@ -169,14 +197,19 @@ describe('temporary vehicle export dataSchema', () => {
   })
 
   it('rejects an arrival before the departure date', () => {
+    // Both dates are within the three-day limit, so only the order fails
     const result = arrival.safeParse({
-      date: '2026-01-01',
+      date: daysFromToday(-2),
       mileage: '15000',
-      departureDate: '2026-01-10',
+      departureDate: daysFromToday(-1),
       departureMileage: '12000',
     })
     expect(result.success).toBe(false)
-    expect(result.error?.issues[0].path).toEqual(['date'])
+    expect(result.error?.issues).toHaveLength(1)
+    expect(result.error?.issues[0]).toMatchObject({
+      path: ['date'],
+      params: m.errors.arrivalBeforeDeparture,
+    })
   })
 
   it('rejects an arrival mileage below the departure mileage', () => {
@@ -203,6 +236,13 @@ describe('temporary vehicle export dataSchema', () => {
 })
 
 describe('mileage helpers', () => {
+  it('reads date-only answers as local calendar dates', () => {
+    const date = toDate('2026-11-20')
+    expect([date?.getFullYear(), date?.getMonth(), date?.getDate()]).toEqual([
+      2026, 10, 20,
+    ])
+  })
+
   it('parses mileage answers', () => {
     expect(parseMileage('12000')).toBe(12000)
     expect(parseMileage('')).toBeUndefined()
@@ -223,6 +263,7 @@ describe('mileage helpers', () => {
   it('uses the reading date as departure date with the latest reading', () => {
     const departure = {
       date: '2026-11-10',
+      latestMileage: '12000',
       latestMileageReadDate: '2026-05-19T00:00:00.000Z',
     }
     expect(getDepartureDate({ departure })).toBe('2026-11-10')

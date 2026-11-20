@@ -39,6 +39,23 @@ One application covers one vehicle and one trip abroad.
 
 Departure answers are read-only after the departure has been registered.
 
+## Decisions
+
+- **Backdated dates:** Samgöngustofa always records a mileage reading with
+  today's date, and its API does not accept a date. When the applicant picks
+  a departure or arrival date up to 3 days back, Skatturinn gets the chosen
+  date while the reading at Samgöngustofa has the registration date. The two
+  dates are accepted to differ.
+- **Reusing the latest reading:** its reading date is the departure date. At
+  departure the reading is checked against Samgöngustofa again, and the
+  departure is rejected if the mileage or the date has changed since the
+  application fetched it.
+- **Retries:** if Skatturinn fails after the arrival mileage was registered,
+  a retry finds that `KOMA` reading (same mileage, on or after departure) and
+  does not register it again.
+- The arrival date is checked against the stored departure date on the
+  server, not only in the schema.
+
 ## Testing
 
 Use a test person who owns or operates a vehicle that pays the kilometre fee.

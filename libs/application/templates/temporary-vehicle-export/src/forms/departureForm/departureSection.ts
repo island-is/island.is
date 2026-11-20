@@ -105,9 +105,11 @@ export const departureSection = buildSection({
         }),
         buildHiddenInput({
           id: 'departure.latestMileageReadDate',
+          // An empty string, not undefined, so a value saved for another
+          // vehicle is cleared
           defaultValue: (application: Application) =>
             getSelectedVehicle(application.answers, application.externalData)
-              ?.latestMileageReadDate,
+              ?.latestMileageReadDate ?? '',
         }),
         buildHiddenInput({
           id: 'departure.latestMileage',
@@ -115,7 +117,7 @@ export const departureSection = buildSection({
             getSelectedVehicle(
               application.answers,
               application.externalData,
-            )?.latestMileage?.toString(),
+            )?.latestMileage?.toString() ?? '',
         }),
       ],
     }),

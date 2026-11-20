@@ -20,4 +20,12 @@ yarn nx run clients-rsk-kilometragjald-reimbursement:codegen/backend-client
 
 ## Running unit tests
 
+The tests import the generated client from the Git-ignored `gen/fetch`
+directory, so generate it first. This reads the checked-in
+`src/clientConfig.json`, so no X-Road proxy is needed:
+
+```bash
+yarn nx run clients-rsk-kilometragjald-reimbursement:codegen/backend-client
+```
+
 Run `nx test clients-rsk-kilometragjald-reimbursement` to execute the unit tests via [Jest](https://jestjs.io).

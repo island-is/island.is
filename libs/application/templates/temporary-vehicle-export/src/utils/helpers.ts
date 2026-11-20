@@ -1,4 +1,5 @@
 import { YES, getValueViaPath } from '@island.is/application/core'
+import parseISO from 'date-fns/parseISO'
 import { ExternalData, FormValue } from '@island.is/application/types'
 import { EligibleVehicle } from '../types'
 
@@ -33,10 +34,14 @@ export const parseMileage = (value?: string | number): number | undefined => {
 
 /**
  * Whether the applicant uses the latest mileage registered at Samgöngustofa as
- * the departure mileage instead of registering a new one
+ * the departure mileage instead of registering a new one. A saved choice is
+ * ignored when the selected vehicle has no registered reading, e.g. after the
+ * applicant changed vehicle.
  */
 export const usesLatestMileage = (answers: FormValue): boolean =>
-  getValueViaPath<string>(answers, 'departure.useLatestMileage') === YES
+  getValueViaPath<string>(answers, 'departure.useLatestMileage') === YES &&
+  parseMileage(getValueViaPath<string>(answers, 'departure.latestMileage')) !==
+    undefined
 
 export const getDepartureMileage = (answers: FormValue) =>
   parseMileage(
@@ -80,9 +85,13 @@ export const getMileageDrivenAbroad = (
 export const formatMileage = (mileage?: number): string =>
   mileage === undefined ? '' : `${mileage.toLocaleString('de-DE')} km`
 
+/**
+ * Date-only answers (yyyy-MM-dd) are read as local calendar dates, not UTC
+ * midnight, so they keep their day in every time zone
+ */
 export const toDate = (value?: string): Date | undefined => {
   if (!value) return undefined
-  const date = new Date(value)
+  const date = parseISO(value)
   return Number.isNaN(date.getTime()) ? undefined : date
 }
 

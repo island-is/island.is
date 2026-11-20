@@ -104,7 +104,15 @@ export class TemporaryVehicleExportService extends BaseTemplateApiService {
     const mileage = getDepartureMileage(application.answers)
 
     if (usesLatestMileage(application.answers)) {
-      return this.verifyLatestMileage(auth, permno, mileage)
+      return this.verifyLatestMileage(
+        auth,
+        permno,
+        mileage,
+        getValueViaPath<string>(
+          application.answers,
+          'departure.latestMileageReadDate',
+        ),
+      )
     }
 
     return this.registerMileage(
@@ -122,6 +130,24 @@ export class TemporaryVehicleExportService extends BaseTemplateApiService {
   async submitArrival(
     props: TemplateApiModuleActionProps,
   ): Promise<ArrivalSubmission> {
+    // The schema compares the arrival date with a copy of the departure date
+    // that the client writes, so it is checked here against the stored one
+    // before anything is registered
+    const { answers } = props.application
+    const arrivalDate = toIsoDate(
+      getValueViaPath<string>(answers, 'arrival.date'),
+    )
+    const departureDate = toIsoDate(getDepartureDate(answers))
+    if (arrivalDate && departureDate && arrivalDate < departureDate) {
+      throw new TemplateApiError(
+        {
+          title: m.errors.submitToSkatturinnFailed,
+          summary: m.errors.arrivalBeforeDeparture,
+        },
+        400,
+      )
+    }
+
     const mileage = await this.registerArrivalMileage(props)
     const skatturinn = await this.submitToSkatturinn(props)
     return { mileage, skatturinn }
@@ -149,12 +175,66 @@ export class TemporaryVehicleExportService extends BaseTemplateApiService {
       )
     }
 
+    // A retry after Skatturinn failed must not register the arrival again,
+    // since a newer reading may have been registered in the meantime
+    const registered = await this.findRegisteredArrival(
+      auth,
+      permno,
+      mileage,
+      getDepartureDate(application.answers),
+    )
+    if (registered) {
+      return registered
+    }
+
     return this.registerMileage(
       auth,
       permno,
       mileage,
       MileageOriginCode.ARRIVAL,
     )
+  }
+
+  /**
+   * Finds an arrival reading with this mileage registered since the departure,
+   * i.e. by an earlier attempt to submit this application
+   */
+  private async findRegisteredArrival(
+    auth: Auth,
+    permno: string | undefined,
+    mileage: number | undefined,
+    departureDate: string | undefined,
+  ): Promise<RegisteredMileage | undefined> {
+    const since = toIsoDate(departureDate)
+    if (!permno || mileage === undefined || !since) {
+      return undefined
+    }
+    try {
+      const readings = await this.mileageApiWithAuth(auth).getMileageReading({
+        permno,
+      })
+      const reading = readings.find(
+        (item) =>
+          item.originCode === MileageOriginCode.ARRIVAL &&
+          item.mileage === mileage &&
+          (toIsoDate(item.readDate) ?? '') >= since,
+      )
+      return reading
+        ? {
+            permno,
+            mileage,
+            originCode: MileageOriginCode.ARRIVAL,
+            readDate: reading.readDate?.toISOString(),
+          }
+        : undefined
+    } catch (error) {
+      // Registering again is handled by registerMileage, so carry on
+      this.logger.warn(
+        'Temporary vehicle export: could not look up earlier arrival readings',
+        { error },
+      )
+      return undefined
+    }
   }
 
   private async submitToSkatturinn({
@@ -240,6 +320,7 @@ export class TemporaryVehicleExportService extends BaseTemplateApiService {
     auth: Auth,
     permno: string | undefined,
     mileage: number | undefined,
+    readDate: string | undefined,
   ): Promise<RegisteredMileage> {
     if (!permno || mileage === undefined) {
       throw new TemplateApiError(
@@ -262,7 +343,12 @@ export class TemporaryVehicleExportService extends BaseTemplateApiService {
       )
     }
 
-    if (vehicle.latestMileage !== mileage) {
+    // The reading date is sent to Skatturinn as the departure date, so it
+    // must also be the one the applicant saw
+    if (
+      vehicle.latestMileage !== mileage ||
+      toIsoDate(vehicle.latestMileageReadDate) !== toIsoDate(readDate)
+    ) {
       throw new TemplateApiError(
         {
           title: m.errors.registerMileageFailed,
@@ -411,8 +497,8 @@ const getSamgongustofaErrorMessage = (error: unknown): string | undefined => {
   return messages.length > 0 ? messages.join(' ') : undefined
 }
 
-const toIsoDate = (value?: string): string | undefined => {
-  const date = toDate(value)
+const toIsoDate = (value?: string | Date): string | undefined => {
+  const date = value instanceof Date ? value : toDate(value)
   return date ? format(date, 'yyyy-MM-dd') : undefined
 }
 

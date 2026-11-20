@@ -152,6 +152,27 @@ describe('TemporaryVehicleExportService', () => {
     expect(mileageApi.rootPostRaw).not.toHaveBeenCalled()
   })
 
+  it('rejects the latest reading when its date has changed', async () => {
+    const { service, vehiclesApi } = createService()
+    vehiclesApi.currentvehicleswithmileageandinspGet.mockResolvedValue({
+      data: [{ ...vehicle, latestMileageReadDate: new Date('2026-06-02') }],
+      totalPages: 1,
+    })
+
+    await expect(
+      service.registerDepartureMileage(
+        props({
+          ...answers,
+          departure: {
+            useLatestMileage: 'yes',
+            latestMileage: '10000',
+            latestMileageReadDate: '2026-05-01T00:00:00.000Z',
+          },
+        }),
+      ),
+    ).rejects.toThrow(TemplateApiError)
+  })
+
   it('updates the reading when one was already registered today', async () => {
     const { service, mileageApi } = createService()
     mileageApi.rootPostRaw.mockResolvedValue({ raw: { status: 200 } })
@@ -221,6 +242,48 @@ describe('TemporaryVehicleExportService', () => {
     )
     expect(result.mileage.originCode).toBe(MileageOriginCode.ARRIVAL)
     expect(result.skatturinn).toEqual({ id: 42, status: 'Open' })
+  })
+
+  it('does not register the arrival again when a retry finds it registered', async () => {
+    const { service, mileageApi, skatturinn } = createService()
+    mileageApi.getMileageReading.mockResolvedValue([
+      {
+        internalId: 8,
+        originCode: MileageOriginCode.ARRIVAL,
+        mileage: 14500,
+        readDate: new Date('2026-06-20'),
+      },
+    ])
+
+    const result = await service.submitArrival(props(answers))
+
+    expect(mileageApi.rootPostRaw).not.toHaveBeenCalled()
+    expect(mileageApi.rootPut).not.toHaveBeenCalled()
+    expect(skatturinn.submitApplication).toHaveBeenCalled()
+    expect(result.mileage).toMatchObject({
+      mileage: 14500,
+      originCode: MileageOriginCode.ARRIVAL,
+    })
+  })
+
+  it('rejects an arrival before the stored departure date without registering it', async () => {
+    const { service, mileageApi, skatturinn } = createService()
+
+    await expect(
+      service.submitArrival(
+        props({
+          ...answers,
+          arrival: {
+            ...answers.arrival,
+            date: '2026-05-20',
+            // A tampered copy of the departure date must not be trusted
+            departureDate: '2026-05-01',
+          },
+        }),
+      ),
+    ).rejects.toThrow(TemplateApiError)
+    expect(mileageApi.rootPostRaw).not.toHaveBeenCalled()
+    expect(skatturinn.submitApplication).not.toHaveBeenCalled()
   })
 
   it('does not send the trip to Skatturinn when the arrival mileage is rejected', async () => {

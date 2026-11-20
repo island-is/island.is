@@ -6,6 +6,7 @@ import {
   isTodayOrEarlier,
   parseMileage,
   toDate,
+  usesLatestMileage,
   usesLatestMileageDate,
 } from '../utils/helpers'
 import { MAX_DAYS_BACK, PROOF_OF_TRAVEL_MAX_FILES } from '../utils/constants'
@@ -20,11 +21,6 @@ const pastOrPresentDate = z
   .string()
   .refine(isTodayOrEarlier, { params: m.errors.dateInFuture })
 
-const departureDate = pastOrPresentDate.refine(
-  (value) => isNotBeforeDaysAgo(value, MAX_DAYS_BACK),
-  { params: m.errors.departureDateTooEarly },
-)
-
 const arrivalDate = pastOrPresentDate.refine(
   (value) => isNotBeforeDaysAgo(value, MAX_DAYS_BACK),
   { params: m.errors.arrivalDateTooEarly },
@@ -36,8 +32,10 @@ const mileage = z.string().refine((value) => (parseMileage(value) ?? 0) > 0, {
 
 const departureSchema = z
   .object({
-    // Not asked when the latest reading, and so its date, is used
-    date: departureDate.optional(),
+    // Not asked when the latest reading, and so its date, is used. Checked
+    // below only when it is used, since a date saved before the applicant
+    // chose the latest reading stays in the answers.
+    date: z.string().optional(),
     // Only asked when the vehicle has a registered mileage
     useLatestMileage: z.enum([YES, NO]).optional(),
     mileage: z.string().optional(),
@@ -46,26 +44,30 @@ const departureSchema = z
     latestMileageReadDate: z.string().optional(),
   })
   .superRefine((departure, ctx) => {
-    const { useLatestMileage, mileage, latestMileage } = departure
-    if (!usesLatestMileageDate({ departure }) && !departure.date) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        params: m.errors.departureDateRequired,
-        path: ['date'],
-      })
+    const { date, mileage, latestMileage } = departure
+    if (!usesLatestMileageDate({ departure })) {
+      const dateError = !date
+        ? m.errors.departureDateRequired
+        : !isTodayOrEarlier(date)
+        ? m.errors.dateInFuture
+        : !isNotBeforeDaysAgo(date, MAX_DAYS_BACK)
+        ? m.errors.departureDateTooEarly
+        : undefined
+      if (dateError) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          params: dateError,
+          path: ['date'],
+        })
+      }
+    }
+
+    // The latest reading is then the departure mileage
+    if (usesLatestMileage({ departure })) {
+      return
     }
 
     const latest = parseMileage(latestMileage)
-    if (useLatestMileage === YES) {
-      if (latest === undefined) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          params: m.errors.mileageInvalid,
-          path: ['useLatestMileage'],
-        })
-      }
-      return
-    }
 
     const current = parseMileage(mileage)
     if (!current) {
