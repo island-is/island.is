@@ -31,7 +31,7 @@ import { MileageFeeService } from '../services/mileageFee.service'
 export class VehiclesMileageFeeResolver {
   constructor(private readonly mileageFeeService: MileageFeeService) {}
 
-  @Query(() => MileageFee, { name: 'vehicleMileageFee', nullable: true })
+  @Query(() => MileageFee, { name: 'vehiclesMileageFee', nullable: true })
   @Audit()
   getVehicleMileageFee(
     @Args('input') input: GetVehicleMileageFeeInput,

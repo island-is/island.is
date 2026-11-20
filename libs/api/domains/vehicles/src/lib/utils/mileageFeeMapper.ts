@@ -15,8 +15,11 @@ const differenceOutcomeMap: Record<
   Reversed: MileageFeeDifferenceOutcome.REVERSED,
 }
 
-const getYears = (firstYear: number): number[] => {
+const FIRST_FEE_YEAR = 2024
+
+const getYears = (firstRegistrationYear: number): number[] => {
   const currentYear = new Date().getFullYear()
+  const firstYear = Math.max(firstRegistrationYear, FIRST_FEE_YEAR)
   const years: number[] = []
   for (let year = currentYear; year >= firstYear; year--) {
     years.push(year)

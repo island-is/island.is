@@ -1,5 +1,5 @@
 query GetVehicleMileageFee($input: VehiclesMileageFeeInput!) {
-  vehicleMileageFee(input: $input) {
+  vehiclesMileageFee(input: $input) {
     years
     periods {
       year

@@ -145,13 +145,13 @@ export const VehicleMileageFee = ({ permno }: Props) => {
   const { data, loading, error } = useGetVehicleMileageFeeQuery({
     variables: { input: { permno, year } },
     onCompleted: (result) => {
-      if (result.vehicleMileageFee) {
-        setLastYears(result.vehicleMileageFee.years)
+      if (result.vehiclesMileageFee) {
+        setLastYears(result.vehiclesMileageFee.years)
       }
     },
   })
 
-  const fee = error ? undefined : data?.vehicleMileageFee
+  const fee = error ? undefined : data?.vehiclesMileageFee
   const years = fee?.years ?? lastYears
   const selectedYear = year ?? years[0]
   const yearOptions = years.map((y) => ({

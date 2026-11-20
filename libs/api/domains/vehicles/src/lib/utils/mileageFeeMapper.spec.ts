@@ -61,6 +61,15 @@ describe('mapMileageFee', () => {
     expect(result.years).toEqual([2026, 2025, 2024])
   })
 
+  it('starts the years at 2024 for a vehicle first registered before 2024', () => {
+    const result = mapMileageFee(
+      { ...fee, firstRegistration: { year: 2015, month: 6 } },
+      2026,
+      'https://dl.test',
+    )
+    expect(result.years).toEqual([2026, 2025, 2024])
+  })
+
   it('maps one period per month and leaves the unsettled last period without confirmed values', () => {
     const result = mapMileageFee(fee, 2026, 'https://dl.test')
     expect(result.periods).toHaveLength(4)
