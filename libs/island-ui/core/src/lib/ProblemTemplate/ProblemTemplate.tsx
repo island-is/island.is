@@ -17,6 +17,7 @@ export type ProblemTemplateBaseProps = {
   imgAlt?: string
   noBorder?: boolean
   titleSize?: 'h1' | 'h2' | 'h3' | 'h4'
+  titleAs?: 'h1' | 'h2' | 'h3' | 'h4'
   /**
    * If true, the out most container will be expanded to fill the available space.
    */
@@ -79,6 +80,7 @@ export const ProblemTemplate = ({
   dataTestId,
   expand,
   titleSize = 'h1',
+  titleAs,
 }: ProblemTemplateProps) => {
   const convertedVariant = variantToColour(variant)
   return (
@@ -116,7 +118,7 @@ export const ProblemTemplate = ({
           <Icon size="large" type="filled" {...getIconProps(variant)} />
         </Box>
       )}
-      <Text variant={titleSize} as={titleSize} color="dark400">
+      <Text variant={titleSize} as={titleAs ?? titleSize} color="dark400">
         {title}
       </Text>
       <Text whiteSpace="preLine">{message}</Text>

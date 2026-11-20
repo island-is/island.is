@@ -1,18 +1,5 @@
-import { FC, ReactNode } from 'react'
-import {
-  CartesianGrid,
-  Legend,
-  ResponsiveContainer,
-  Scatter,
-  ScatterChart,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts'
-import type { TooltipContentProps } from 'recharts'
-import { Box, Divider, Text } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
-import { useLocale } from '@island.is/localization'
+import { FC } from 'react'
+
 import type {
   SalaryAnalysisResponseDto,
   SalaryByGenderAndScoreDto,
@@ -20,14 +7,22 @@ import type {
   WageGapEmployeeDto,
   WageGapPooledFitDto,
 } from '@island.is/clients/directorate-of-equality'
+import {
+  Box,
+  Divider,
+  ScatterChart,
+  ScatterChartPoint,
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+
 import { messages } from '../../lib/messages'
-import { formatHourlyWage } from '../EmployeesEditor/utils'
 import {
   formatDeviationLabel,
   formatSalaryAnalysisGenderLabel,
 } from '../../utils/salaryAnalysisLabels'
 import { hasIdentifiableRegressionFit } from '../../utils/wageGap'
-import * as styles from './SalaryDistributionChart.css'
+import { formatHourlyWage } from '../EmployeesEditor/utils'
 
 type PayDispersionDto = SalaryAnalysisResponseDto['payDispersion']
 
@@ -81,214 +76,67 @@ const isMarked = (
   )
 }
 
-const NoSymbol = () => <g />
-
-const EmployeeDot = ({
-  cx,
-  cy,
-  fill,
-  payload,
-}: {
-  cx?: number
-  cy?: number
-  fill?: string
-  payload?: ChartPoint
-}) => {
-  if (cx == null || cy == null) return null
-  const marked = payload?.marked === true
-
-  return (
-    <g>
-      <circle cx={cx} cy={cy} r={10} fill="transparent" />
-      <circle
-        cx={cx}
-        cy={cy}
-        r={marked ? 6 : 4}
-        fill={fill}
-        fillOpacity={marked ? 1 : 0.8}
-        stroke={marked ? theme.color.dark400 : 'none'}
-        strokeWidth={marked ? 2 : 0}
-        pointerEvents="none"
-      />
-    </g>
-  )
-}
-
-const isChartPoint = (datum: unknown): datum is ChartPoint =>
-  typeof datum === 'object' &&
-  datum !== null &&
-  'employee' in datum &&
-  'gender' in datum
-
-const ChartTooltip = ({
-  active,
-  payload,
-  markedLabel,
-  markedIsDeviation,
-  formatMessage,
-}: Partial<TooltipContentProps<number, string>> & {
-  markedLabel: string | null
-  markedIsDeviation: boolean
-  formatMessage: ReturnType<typeof useLocale>['formatMessage']
-}) => {
-  const datum = active ? payload?.[0]?.payload : undefined
-  if (!isChartPoint(datum)) return null
-
+const toScatterPoint = (
+  point: ChartPoint,
+  markedLabel: string | null,
+  markedIsDeviation: boolean,
+  formatMessage: ReturnType<typeof useLocale>['formatMessage'],
+): ScatterChartPoint => {
   const tooltipMessages = messages.salaryAnalysis.chartTooltip
-  const employee = datum.employee
-  const rows: [string, string][] = []
+  const employee = point.employee
+  const rows: { label: string; value: string }[] = []
 
   if (employee) {
-    rows.push([
-      formatMessage(tooltipMessages.gender),
-      formatSalaryAnalysisGenderLabel(employee.gender, formatMessage),
-    ])
+    rows.push({
+      label: formatMessage(tooltipMessages.gender),
+      value: formatSalaryAnalysisGenderLabel(employee.gender, formatMessage),
+    })
   }
-  rows.push([
-    formatMessage(tooltipMessages.score),
-    String(Math.round(datum.score)),
-  ])
-  rows.push([
-    formatMessage(tooltipMessages.salary),
-    formatHourlyWage(datum.regularHourlyWage),
-  ])
-
+  rows.push({
+    label: formatMessage(tooltipMessages.score),
+    value: String(Math.round(point.score)),
+  })
+  rows.push({
+    label: formatMessage(tooltipMessages.salary),
+    value: formatHourlyWage(point.regularHourlyWage),
+  })
   if (employee) {
-    rows.push([
-      formatMessage(tooltipMessages.expected),
-      formatHourlyWage(employee.expectedHourlyWage),
-    ])
-    rows.push([
-      formatMessage(tooltipMessages.deviation),
+    rows.push({
+      label: formatMessage(tooltipMessages.expected),
+      value: formatHourlyWage(employee.expectedHourlyWage),
+    })
+    rows.push({
+      label: formatMessage(tooltipMessages.deviation),
       // The shared helper, not a locally assembled string: this is the same
       // figure the úrbótaáætlun and ábendingar tables show, so it goes through
       // the same localised `deviationCell` template rather than hardcoding the
       // "{value}% ({status})" shape a third time.
-      formatDeviationLabel(
+      value: formatDeviationLabel(
         employee.deviationPercent,
         employee.payStatus,
         formatMessage,
       ),
-    ])
-  }
-
-  return (
-    <Box
-      background="white"
-      borderRadius="standard"
-      padding={2}
-      style={{
-        border: `1px solid ${theme.color.blue200}`,
-        boxShadow: '0 2px 8px rgba(0, 0, 60, 0.12)',
-      }}
-    >
-      <Text variant="small" fontWeight="semiBold">
-        {employee
-          ? `${formatMessage(tooltipMessages.employee)} ${employee.ordinal}`
-          : formatMessage(messages.salaryAnalysis.chart.title)}
-      </Text>
-      {rows.map(([label, value]) => (
-        <Box key={label} display="flex" columnGap={1}>
-          <Text variant="small" color="dark350">
-            {label}:
-          </Text>
-          <Text variant="small">{value}</Text>
-        </Box>
-      ))}
-      {datum.marked && markedLabel && (
-        <Box marginTop={1}>
-          {/* Red only for frávik — the same slot carries "Ábending" when the
-              óskýrt gap is within the benchmark, which is advisory, not a
-              breach. */}
-          <Text
-            variant="small"
-            fontWeight="semiBold"
-            color={markedIsDeviation ? 'red600' : undefined}
-          >
-            {markedLabel}
-          </Text>
-        </Box>
-      )}
-    </Box>
-  )
-}
-
-const ChartLegend = ({
-  hasMale,
-  hasFemale,
-  hasCurve,
-  markedLabel,
-}: {
-  hasMale: boolean
-  hasFemale: boolean
-  hasCurve: boolean
-  markedLabel: string | null
-}) => {
-  const { formatMessage } = useLocale()
-  const items: { label: string; swatch: ReactNode }[] = []
-  const dot = (fill: string) => (
-    <svg width={12} height={12} aria-hidden>
-      <circle cx={6} cy={6} r={5} fill={fill} fillOpacity={0.8} />
-    </svg>
-  )
-
-  if (hasMale) {
-    items.push({
-      label: formatMessage(messages.salaryAnalysis.chart.legendMale),
-      swatch: dot(theme.color.blue400),
-    })
-  }
-  if (hasFemale) {
-    items.push({
-      label: formatMessage(messages.salaryAnalysis.chart.legendNonMale),
-      swatch: dot(theme.color.purple400),
-    })
-  }
-  if (hasCurve) {
-    items.push({
-      label: formatMessage(messages.salaryAnalysis.chart.legendCurve),
-      swatch: (
-        <svg width={16} height={12} aria-hidden>
-          <line
-            x1={0}
-            y1={6}
-            x2={16}
-            y2={6}
-            stroke={theme.color.roseTinted400}
-            strokeWidth={2.5}
-          />
-        </svg>
-      ),
-    })
-  }
-  if (markedLabel) {
-    items.push({
-      label: markedLabel,
-      swatch: (
-        <svg width={14} height={14} aria-hidden>
-          <circle
-            cx={7}
-            cy={7}
-            r={5}
-            fill="none"
-            stroke={theme.color.dark400}
-            strokeWidth={2}
-          />
-        </svg>
-      ),
     })
   }
 
-  return (
-    <Box display="flex" justifyContent="center" columnGap={3} flexWrap="wrap">
-      {items.map((item) => (
-        <Box key={item.label} display="flex" alignItems="center" columnGap={1}>
-          {item.swatch}
-          <Text variant="small">{item.label}</Text>
-        </Box>
-      ))}
-    </Box>
-  )
+  return {
+    x: point.score,
+    y: point.regularHourlyWage,
+    marked: point.marked,
+    tooltip: {
+      title: employee
+        ? `${formatMessage(tooltipMessages.employee)} ${employee.ordinal}`
+        : formatMessage(messages.salaryAnalysis.chart.title),
+      rows,
+      note:
+        point.marked && markedLabel
+          ? {
+              text: markedLabel,
+              color: markedIsDeviation ? 'red600' : undefined,
+            }
+          : undefined,
+    },
+  }
 }
 
 /**
@@ -442,116 +290,61 @@ export const SalaryDistributionChart: FC<Props> = ({
     Math.round(yMax * fraction),
   )
 
+  const tooltipMarkedLabel = hasMarked ? markedLabel : null
+  const toPoint = (point: ChartPoint) =>
+    toScatterPoint(point, tooltipMarkedLabel, markedIsDeviation, formatMessage)
+
   return (
     <Box display="flex" flexDirection="column" rowGap={2} marginBottom={4}>
-      <Text variant="h4">{formatMessage(m.title)}</Text>
+      <Text variant="h4" as="h3">
+        {formatMessage(m.title)}
+      </Text>
       <Text>{formatMessage(m.intro)}</Text>
 
-      <ResponsiveContainer
-        width="100%"
-        height={420}
-        className={styles.chartFocus}
-      >
-        <ScatterChart margin={{ top: 24, right: 0, left: 0, bottom: 24 }}>
-          <CartesianGrid vertical={false} stroke={theme.color.blue200} />
-          <XAxis
-            type="number"
-            dataKey="score"
-            domain={[0, xAxisMax]}
-            ticks={Array.from(
-              { length: Math.ceil(xAxisMax / 250) + 1 },
-              (_, i) => i * 250,
-            )}
-            stroke={theme.color.blue200}
-            tickLine={false}
-            tick={{ fill: theme.color.black, fontSize: 14 }}
-            label={{
-              value: formatMessage(m.xAxisLabel),
-              position: 'insideBottomRight',
-              dx: 5,
-              dy: 10,
-              fontWeight: 'bold',
-              fill: theme.color.black,
-              fontSize: 14,
-            }}
-          />
-          <YAxis
-            type="number"
-            dataKey="regularHourlyWage"
-            domain={[0, yMax]}
-            ticks={yTicks}
-            tickFormatter={formatSalary}
-            stroke={theme.color.blue200}
-            tickLine={false}
-            tick={{ fill: theme.color.black, fontSize: 14 }}
-            width={Y_AXIS_WIDTH}
-            label={{
-              value: formatMessage(m.yAxisLabel),
-              position: 'insideTop',
-              offset: -22,
-              fontWeight: 'bold',
-              fill: theme.color.black,
-              fontSize: 14,
-              dx: 32,
-            }}
-          />
-          <Tooltip
-            cursor={false}
-            isAnimationActive={false}
-            shared={false}
-            content={
-              <ChartTooltip
-                markedLabel={hasMarked ? markedLabel : null}
-                markedIsDeviation={markedIsDeviation}
-                formatMessage={formatMessage}
-              />
-            }
-          />
-          <Legend
-            wrapperStyle={{ paddingTop: 16 }}
-            content={
-              <ChartLegend
-                hasMale={malePoints.length > 0}
-                hasFemale={femalePoints.length > 0}
-                hasCurve={regressionData.length > 0}
-                markedLabel={hasMarked ? markedLabel : null}
-              />
-            }
-          />
-          {malePoints.length > 0 && (
-            <Scatter
-              name={formatMessage(messages.salaryAnalysis.chart.legendMale)}
-              data={malePoints}
-              fill={theme.color.blue400}
-              legendType="none"
-              shape={<EmployeeDot />}
-            />
-          )}
-          {femalePoints.length > 0 && (
-            <Scatter
-              name={formatMessage(messages.salaryAnalysis.chart.legendNonMale)}
-              data={femalePoints}
-              fill={theme.color.purple400}
-              legendType="none"
-              shape={<EmployeeDot />}
-            />
-          )}
-          {regressionData.length > 0 && (
-            <Scatter
-              data={regressionData}
-              name={formatMessage(m.legendCurve)}
-              line={{
-                stroke: theme.color.roseTinted400,
-                strokeWidth: 2.5,
-              }}
-              lineType="joint"
-              shape={<NoSymbol />}
-              legendType="none"
-              isAnimationActive={false}
-            />
-          )}
-        </ScatterChart>
-      </ResponsiveContainer>
+      <ScatterChart
+        title={formatMessage(m.title)}
+        description={formatMessage(m.intro)}
+        series={[
+          {
+            name: formatMessage(m.legendMale),
+            color: 'blue400',
+            points: malePoints.map(toPoint),
+          },
+          {
+            name: formatMessage(m.legendNonMale),
+            color: 'purple400',
+            points: femalePoints.map(toPoint),
+          },
+        ]}
+        line={
+          regressionData.length > 0
+            ? {
+                name: formatMessage(m.legendCurve),
+                color: 'roseTinted400',
+                points: regressionData.map((point) => ({
+                  x: point.score,
+                  y: point.regularHourlyWage,
+                })),
+              }
+            : undefined
+        }
+        markedLegendLabel={tooltipMarkedLabel ?? undefined}
+        xAxis={{
+          label: formatMessage(m.xAxisLabel),
+          domain: [0, xAxisMax],
+          ticks: Array.from(
+            { length: Math.ceil(xAxisMax / 250) + 1 },
+            (_, i) => i * 250,
+          ),
+        }}
+        yAxis={{
+          label: formatMessage(m.yAxisLabel),
+          domain: [0, yMax],
+          ticks: yTicks,
+          tickFormatter: formatSalary,
+          width: Y_AXIS_WIDTH,
+        }}
+      />
 
       <RegressionReadout fit={fit} />
 

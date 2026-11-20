@@ -19,7 +19,7 @@ import {
   type PayComponentsBreakdown,
 } from '../../utils/payComponents'
 import { formatSignedPercentMagnitude } from '../../utils/wageGap'
-import * as styles from './SalaryDistributionChart.css'
+import * as styles from './PayComponentsChart.css'
 
 const MALE_COLOR = theme.color.blue400
 const FEMALE_COLOR = theme.color.purple400
