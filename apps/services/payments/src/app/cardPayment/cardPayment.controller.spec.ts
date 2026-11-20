@@ -333,6 +333,54 @@ describe('CardPaymentController', () => {
       fetchSpy.mockRestore()
     })
 
+    it('sends the payer to 3-D Secure when the gateway verifies without card information or a correlation id', async () => {
+      const fetchSpy = jest
+        .spyOn(global, 'fetch')
+        .mockImplementation(async (url) => {
+          if (typeof url === 'string' && url.includes('/CardVerification')) {
+            return {
+              json: async () => ({
+                isSuccess: true,
+                responseCode: null,
+                postUrl: 'https://acs.example/3ds',
+                verificationFields: [{ name: 'creq', value: 'abc' }],
+                cardInformation: null,
+                correlationID: null,
+              }),
+              status: 200,
+              ok: true,
+            } as Response
+          }
+          return {
+            json: async () => ({ isSuccess: true }),
+            status: 200,
+            ok: true,
+          } as Response
+        })
+
+      const response = await server.post('/v1/payments/card/verify').send({
+        cardNumber: '4242424242424242',
+        expiryMonth: 12,
+        expiryYear: new Date().getFullYear() - 2000,
+        paymentFlowId,
+      } as VerifyCardInput)
+
+      expect(response.status).toBe(201)
+      expect(response.body).toMatchObject({
+        isSuccess: true,
+        postUrl: 'https://acs.example/3ds',
+        verificationFields: [{ name: 'creq', value: 'abc' }],
+      })
+      // The verification this attempt started, the one its callback goes by
+      const status = await cacheManager.get<CachePaymentFlowStatus>(
+        paymentFlowId,
+      )
+      expect(response.body.correlationId).toBe(status?.correlationId)
+      expect(response.body.correlationId).toEqual(expect.any(String))
+
+      fetchSpy.mockRestore()
+    })
+
     it('it should generate the correct cache payloads (cache and fetch) when verify is called with a valid card', async () => {
       const verificationUrl = '/CardVerification'
 

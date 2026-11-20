@@ -182,11 +182,16 @@ export class CardPaymentService {
       errorMessage: `Failed to verify card (${paymentFlowId})`,
     })
 
+    // Nothing reads the verification's card information: the payment is
+    // stored with the charge's. Logged to show if the gateway stops sending it.
     if (!data.cardInformation?.cardScheme || !data.cardInformation?.cardUsage) {
-      throw new BadRequestException(CardErrorCode.VerificationFailed)
+      this.logger.warn(
+        `[${paymentFlowId}] Payment gateway verified without card information`,
+        { correlationId },
+      )
     }
 
-    return data
+    return { ...data, correlationID: data.correlationID ?? correlationId }
   }
 
   getMdPayload(md: string): MdNormalised {
