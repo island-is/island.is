@@ -27,7 +27,13 @@ const UserProfile = () => {
     false,
   )
 
-  return isNotificationsV2PageEnabled ? (
+  const { value: isOnlyActionablePriorityNotificationsEnabled } =
+    useFeatureFlag(Features.isOnlyActionablePriorityNotificationsEnabled, false)
+
+  const shouldDisplayNewVersion =
+    isNotificationsV2PageEnabled && isOnlyActionablePriorityNotificationsEnabled
+
+  return shouldDisplayNewVersion ? (
     <>
       <IntroWrapper
         marginBottom={2}

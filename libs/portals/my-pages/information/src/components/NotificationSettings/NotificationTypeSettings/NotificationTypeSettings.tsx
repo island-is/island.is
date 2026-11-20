@@ -223,7 +223,6 @@ export const NotificationTypeSettings = () => {
                           <ToggleSwitchButton
                             label={category.label}
                             checked={!category.blocked}
-                            disabled={onlyActionablePriorityNotifications}
                             hiddenLabel
                             className={styles.toggleButton}
                             onChange={(checked) =>
