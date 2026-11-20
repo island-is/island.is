@@ -8,12 +8,14 @@ import {
   CaseState,
   ServiceRequirement,
   UserRole,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
+  canDefenderAcceptVerdictOf,
   canDefenderAppealVerdictOf,
   canDefenderWithdrawVerdictAppealOf,
-  getVerdictAppealAction,
+  getVerdictAppealActions,
   isConfirmedDefenderOf,
 } from './verdictAppealActions.logic'
 
@@ -240,46 +242,177 @@ describe('verdictAppealActions', () => {
     })
   })
 
-  describe('getVerdictAppealAction', () => {
-    it('should offer nothing while the feature is hidden', () => {
-      expect(
-        getVerdictAppealAction(theCase(), defendant(), user, false),
-      ).toBeUndefined()
-    })
+  describe('canDefenderAcceptVerdictOf', () => {
+    const verdict = {
+      id: 'verdict_id',
+      serviceRequirement: ServiceRequirement.REQUIRED,
+      serviceDate: '2026-06-01T13:31:00.000Z',
+    }
 
-    it('should offer to appeal an appealable verdict', () => {
-      expect(getVerdictAppealAction(theCase(), defendant(), user, true)).toBe(
-        'APPEAL',
+    it('should allow the confirmed defender of a served verdict', () => {
+      expect(canDefenderAcceptVerdictOf(theCase(), defendant(), user)).toBe(
+        true,
       )
     })
 
-    it('should offer to withdraw an appealed verdict', () => {
+    it('should allow while the defendant has taken the appeal period', () => {
       expect(
-        getVerdictAppealAction(
-          theCase({ verdictAppealCase: { id: 'appeal_case_id' } }),
+        canDefenderAcceptVerdictOf(
+          theCase(),
+          defendant({
+            verdict: {
+              ...verdict,
+              appealDecision: VerdictAppealDecision.POSTPONE,
+            },
+          }),
+          user,
+        ),
+      ).toBe(true)
+    })
+
+    it('should refuse after the appeal deadline has passed', () => {
+      expect(
+        canDefenderAcceptVerdictOf(
+          theCase(),
+          defendant({ isVerdictAppealDeadlineExpired: true }),
+          user,
+        ),
+      ).toBe(false)
+    })
+
+    it('should refuse a verdict that is already accepted', () => {
+      expect(
+        canDefenderAcceptVerdictOf(
+          theCase(),
+          defendant({
+            verdict: {
+              ...verdict,
+              appealDecision: VerdictAppealDecision.ACCEPT,
+            },
+          }),
+          user,
+        ),
+      ).toBe(false)
+    })
+
+    it('should refuse an appealed verdict', () => {
+      expect(
+        canDefenderAcceptVerdictOf(
+          theCase(),
+          defendant({
+            verdict: { ...verdict, appealDate: '2026-06-04T13:34:00.000Z' },
+          }),
+          user,
+        ),
+      ).toBe(false)
+    })
+
+    it('should refuse a verdict that has not been served', () => {
+      expect(
+        canDefenderAcceptVerdictOf(
+          theCase(),
           defendant({
             verdict: {
               id: 'verdict_id',
               serviceRequirement: ServiceRequirement.REQUIRED,
-              serviceDate: '2026-06-01T13:31:00.000Z',
-              appealDate: '2026-06-04T13:34:00.000Z',
+            },
+          }),
+          user,
+        ),
+      ).toBe(false)
+    })
+
+    it('should refuse another defendant of the case', () => {
+      expect(
+        canDefenderAcceptVerdictOf(
+          theCase(),
+          defendant({ defenderNationalId: '2222222222' }),
+          user,
+        ),
+      ).toBe(false)
+    })
+
+    it('should refuse a case that did not end in a ruling', () => {
+      expect(
+        canDefenderAcceptVerdictOf(
+          theCase({
+            indictmentRulingDecision: CaseIndictmentRulingDecision.FINE,
+          }),
+          defendant(),
+          user,
+        ),
+      ).toBe(false)
+    })
+  })
+
+  describe('getVerdictAppealActions', () => {
+    const verdict = {
+      id: 'verdict_id',
+      serviceRequirement: ServiceRequirement.REQUIRED,
+      serviceDate: '2026-06-01T13:31:00.000Z',
+    }
+
+    it('should offer nothing while the feature is hidden', () => {
+      expect(
+        getVerdictAppealActions(theCase(), defendant(), user, false),
+      ).toEqual([])
+    })
+
+    it('should offer to appeal or accept an appealable verdict', () => {
+      expect(
+        getVerdictAppealActions(theCase(), defendant(), user, true),
+      ).toEqual(['APPEAL', 'ACCEPT'])
+    })
+
+    it('should offer nothing once the appeal deadline has passed', () => {
+      expect(
+        getVerdictAppealActions(
+          theCase(),
+          defendant({ isVerdictAppealDeadlineExpired: true }),
+          user,
+          true,
+        ),
+      ).toEqual([])
+    })
+
+    it('should still offer to appeal an accepted verdict within the deadline', () => {
+      expect(
+        getVerdictAppealActions(
+          theCase(),
+          defendant({
+            verdict: {
+              ...verdict,
+              appealDecision: VerdictAppealDecision.ACCEPT,
             },
           }),
           user,
           true,
         ),
-      ).toBe('WITHDRAW')
+      ).toEqual(['APPEAL'])
+    })
+
+    it('should offer only to withdraw an appealed verdict', () => {
+      expect(
+        getVerdictAppealActions(
+          theCase({ verdictAppealCase: { id: 'appeal_case_id' } }),
+          defendant({
+            verdict: { ...verdict, appealDate: '2026-06-04T13:34:00.000Z' },
+          }),
+          user,
+          true,
+        ),
+      ).toEqual(['WITHDRAW'])
     })
 
     it('should offer nothing for a defendant this defender does not represent', () => {
       expect(
-        getVerdictAppealAction(
+        getVerdictAppealActions(
           theCase(),
           defendant({ defenderNationalId: '2222222222' }),
           user,
           true,
         ),
-      ).toBeUndefined()
+      ).toEqual([])
     })
   })
 })

@@ -17,6 +17,7 @@ import {
   RepositoryModule,
 } from '..'
 import { InternalVerdictController } from './internalVerdict.controller'
+import { LimitedAccessVerdictController } from './limitedAccessVerdict.controller'
 import { VerdictController } from './verdict.controller'
 import { VerdictService } from './verdict.service'
 
@@ -36,7 +37,11 @@ import { VerdictService } from './verdict.service'
       load: [auditTrailModuleConfig],
     }),
   ],
-  controllers: [VerdictController, InternalVerdictController],
+  controllers: [
+    VerdictController,
+    InternalVerdictController,
+    LimitedAccessVerdictController,
+  ],
   providers: [VerdictService],
   exports: [VerdictService],
 })
