@@ -66,12 +66,13 @@ export class VerifyCardResponse {
   @IsOptional()
   scriptPath?: string
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Response code from the verification',
     type: String,
   })
   @IsString()
-  responseCode!: string
+  @IsOptional()
+  responseCode?: string
 
   @ApiPropertyOptional({
     description: 'Response time of the verification',

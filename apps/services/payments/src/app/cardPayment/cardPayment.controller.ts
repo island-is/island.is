@@ -258,6 +258,7 @@ export class CardPaymentController {
     const context = createCardPaymentContext(paymentFlowId, chargeCardInput)
     const saga = createCardPaymentSaga(
       this.cardPaymentService,
+      this.refundService,
       this.paymentFlowService,
       this.logger,
     )

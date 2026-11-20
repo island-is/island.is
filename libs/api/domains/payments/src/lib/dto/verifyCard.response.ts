@@ -74,8 +74,11 @@ export class VerifyCardResponse {
   })
   scriptPath?: string
 
-  @Field(() => String, { description: 'Response code from the verification' })
-  responseCode!: string
+  @Field(() => String, {
+    description: 'Response code from the verification',
+    nullable: true,
+  })
+  responseCode?: string
 
   @Field(() => String, {
     description: 'Response time of the verification',

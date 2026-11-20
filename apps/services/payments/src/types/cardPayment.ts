@@ -32,34 +32,49 @@ export interface PaymentTrackingData {
   paymentDate: Date
 }
 
+/*
+ * The gateway's responses only require the fields the service can not work
+ * without: isSuccess, what a charge is stored with and FJS is sent, what the
+ * payer is sent to 3-D Secure with, the Apple Pay session and the decrypted
+ * Google Pay card. Every other field is optional, missing or null alike: the
+ * gateway's API marks almost every field nullable, and on 19 Nov 2026 it left
+ * out fields the service required, which turned approved charges and refunds
+ * into failures while the money had moved. An approved charge that lacks a
+ * required field is refunded, see GatewayApprovedUnreadableError.
+ */
+
+/** A field the gateway may leave out or answer with null, read as missing */
+const optional = <T extends z.ZodTypeAny>(schema: T) =>
+  schema.nullish().transform((value) => value ?? undefined)
+
 const CardInformationSchema = z.object({
+  // Stored with the payment and sent to FJS as the card type and debit or credit
   cardScheme: z.string(),
-  issuingCountry: z.string().optional().nullable(),
   cardUsage: z.string(),
-  cardCategory: z.string().optional().nullable(),
-  outOfScaScope: z.boolean().optional().nullable(),
-  cardProductCategory: z.string().optional().nullable(),
+  issuingCountry: optional(z.string()),
+  cardCategory: optional(z.string()),
+  outOfScaScope: optional(z.boolean()),
+  cardProductCategory: optional(z.string()),
+})
+
+/** The card information of a refund or a 3-D Secure verification, which nothing reads */
+const UnreadCardInformationSchema = CardInformationSchema.extend({
+  cardScheme: optional(z.string()),
+  cardUsage: optional(z.string()),
 })
 
 const MarketInformationSchema = z.object({
-  merchantCountry: z.string().optional(),
-  marketName: z.string().optional().nullable(),
-  acquirerRegion: z.string().optional(),
+  merchantCountry: optional(z.string()),
+  marketName: optional(z.string()),
+  acquirerRegion: optional(z.string()),
 })
 
-/*
- * The gateway's responses only require the fields the service reads, the
- * database stores in a NOT NULL column or FJS is sent. When the gateway leaves
- * out a field the service requires, an approved charge or refund is taken for a
- * failure while the money has moved, as on 19 Nov 2026, so every other field is
- * optional.
- */
 const PaymentGatewayApiResponseSchema = z.object({
   isSuccess: z.boolean(),
-  responseCode: z.string(),
-  responseDescription: z.string().optional(),
-  responseTime: z.string().optional(), // HH:mm:ss
-  correlationID: z.string().optional(),
+  responseCode: optional(z.string()),
+  responseDescription: optional(z.string()),
+  responseTime: optional(z.string()), // HH:mm:ss
+  correlationID: optional(z.string()),
 })
 
 const PaymentGatewaySuccessSchema = PaymentGatewayApiResponseSchema.extend({
@@ -83,18 +98,18 @@ export const CardPaymentSuccessSchema = PaymentGatewaySuccessSchema.extend({
   // Stored with the payment and sent to FJS, or used to refund the charge
   acquirerReferenceNumber: z.string(),
   authorizationCode: z.string(),
-  transactionID: z.string().optional(),
-  transactionLifecycleId: z.string().optional(),
-  maskedCardNumber: z.string().optional(),
-  lastFourInPan: z.string().optional(),
+  transactionID: optional(z.string()),
+  transactionLifecycleId: optional(z.string()),
+  maskedCardNumber: optional(z.string()),
+  lastFourInPan: optional(z.string()),
   cardInformation: CardInformationSchema,
-  transactionType: z.string().optional(),
-  isCardPresent: z.boolean().optional(),
-  currency: z.string().optional(),
-  authenticationMethod: z.string().optional(),
-  authorizedAmount: z.number().optional(),
-  marketInformation: MarketInformationSchema.optional(),
-  authorizationIdentifier: z.string().optional(),
+  transactionType: optional(z.string()),
+  isCardPresent: optional(z.boolean()),
+  currency: optional(z.string()),
+  authenticationMethod: optional(z.string()),
+  authorizedAmount: optional(z.number()),
+  marketInformation: optional(MarketInformationSchema),
+  authorizationIdentifier: optional(z.string()),
 }).transform(({ maskedCardNumber, lastFourInPan, ...charge }) => ({
   ...charge,
   maskedCardNumber:
@@ -114,12 +129,12 @@ export const CardPaymentErrorSchema = PaymentGatewayErrorSchema
  */
 export const RefundSuccessSchema = PaymentGatewaySuccessSchema.extend({
   isSuccess: z.literal(true),
-  acquirerReferenceNumber: z.string().optional(),
-  transactionID: z.string().optional(),
-  transactionLifecycleId: z.string().optional(),
-  maskedCardNumber: z.string().optional(),
-  cardInformation: CardInformationSchema.optional(),
-  authorizationIdentifier: z.string().optional(),
+  acquirerReferenceNumber: optional(z.string()),
+  transactionID: optional(z.string()),
+  transactionLifecycleId: optional(z.string()),
+  maskedCardNumber: optional(z.string()),
+  cardInformation: optional(UnreadCardInformationSchema),
+  authorizationIdentifier: optional(z.string()),
 })
 
 /** Refund error: transaction fields omitted or partial */
@@ -136,11 +151,11 @@ export const CardVerificationSuccessSchema = PaymentGatewaySuccessSchema.extend(
     // The payer's browser posts verificationFields to postUrl for 3-D Secure
     postUrl: z.string(),
     verificationFields: z.array(FieldSchema),
-    cardVerificationRawResponse: z.string().optional(),
-    additionalFields: z.array(FieldSchema).optional(),
-    scriptPath: z.string().optional(),
-    cardInformation: CardInformationSchema.optional(),
-    threeDSMessageVersion: z.string().optional(),
+    cardVerificationRawResponse: optional(z.string()),
+    additionalFields: optional(z.array(FieldSchema)),
+    scriptPath: optional(z.string()),
+    cardInformation: optional(UnreadCardInformationSchema),
+    threeDSMessageVersion: optional(z.string()),
   },
 )
 

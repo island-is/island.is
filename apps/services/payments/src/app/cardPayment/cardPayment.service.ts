@@ -66,6 +66,7 @@ import {
   GooglePayUnsettledChargeError,
 } from './googlePay/googlePay.utils'
 import { GooglePayChargeInput } from './googlePay/dtos'
+import { GatewayApprovedUnreadableError } from './approvedUnreadableCharge'
 import {
   ChargeCardInput,
   VerificationCallbackInput,
@@ -1082,17 +1083,26 @@ export class CardPaymentService {
 
     const { paymentsGatewayApiUrl } = this.config.paymentGateway
 
-    const data = await this.sendGooglePayCharge({
-      paymentFlowId,
-      gatewayUrl: `${paymentsGatewayApiUrl}/Payment/CardPayment`,
-      requestOptions: generateGooglePaySavedCardChargeRequestOptions({
-        card,
-        verificationData,
-        paymentApiConfig: this.config.paymentGateway,
-        paymentTrackingData,
-        amount,
-      }),
-    })
+    let data: CardPaymentSuccessResponse
+    try {
+      data = await this.sendGooglePayCharge({
+        paymentFlowId,
+        gatewayUrl: `${paymentsGatewayApiUrl}/Payment/CardPayment`,
+        requestOptions: generateGooglePaySavedCardChargeRequestOptions({
+          card,
+          verificationData,
+          paymentApiConfig: this.config.paymentGateway,
+          paymentTrackingData,
+          amount,
+        }),
+      })
+    } catch (e) {
+      // Approved but unreadable: the charge saga refunds it by the correlation id
+      if (e instanceof GatewayApprovedUnreadableError) {
+        throw new GooglePayUnsettledChargeError(e.message, paymentTrackingData)
+      }
+      throw e
+    }
 
     await this.clearVerification(paymentFlowId, correlationId)
     try {
@@ -1330,7 +1340,7 @@ export class CardPaymentService {
     TOut extends { isSuccess: true },
     TErrOut extends {
       isSuccess: false
-      responseCode: string
+      responseCode?: string
       responseDescription?: string
     },
   >({
@@ -1344,7 +1354,7 @@ export class CardPaymentService {
     response: Response
     // The input is left open for schemas that transform, see CardPaymentSuccessSchema
     schema: z.ZodType<TOut, z.ZodTypeDef, unknown>
-    errorSchema: z.ZodType<TErrOut>
+    errorSchema: z.ZodType<TErrOut, z.ZodTypeDef, unknown>
     errorMessage: string
     paymentFlowId?: string
     /** Called when !isSuccess, before throwing. Used for refund's INVALID_3D_SECURE_DATA cache cleanup. */
@@ -1423,6 +1433,11 @@ export class CardPaymentService {
       timestamp: new Date().toISOString(),
       parseError: successParsed.error,
     })
+
+    // An approved charge has moved money: the charge step refunds it
+    if (raw?.isSuccess === true) {
+      throw new GatewayApprovedUnreadableError(responseFields)
+    }
 
     throw new BadRequestException('Failed to parse payment gateway response')
   }

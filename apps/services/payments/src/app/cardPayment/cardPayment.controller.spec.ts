@@ -1561,6 +1561,109 @@ describe('CardPaymentController', () => {
         fetchSpy.mockRestore()
       })
 
+      it('refunds a charge the gateway approves without what the payment is stored with', async () => {
+        const walletPaymentCorrelationIds: string[] = []
+        const refundedCorrelationIds: string[] = []
+
+        const fetchSpy = jest
+          .spyOn(global, 'fetch')
+          .mockImplementation(async (url, init?: RequestInit) => {
+            const body = init?.body ? JSON.parse(init.body as string) : {}
+            if (typeof url === 'string') {
+              if (url.includes(ON_UPDATE_URL)) {
+                return {
+                  json: async () => ({ isSuccess: true }),
+                  status: 200,
+                  ok: true,
+                } as Response
+              } else if (url.includes('/Payment/WalletPayment')) {
+                walletPaymentCorrelationIds.push(body.correlationId)
+                // Approved, but null where the payment needs a value
+                return {
+                  json: async () => ({
+                    isSuccess: true,
+                    responseCode: '00-I',
+                    acquirerReferenceNumber: null,
+                    authorizationCode: 'auth',
+                    cardInformation: { cardScheme: 'V', cardUsage: 'Debit' },
+                    correlationID: body.correlationId,
+                  }),
+                  status: 200,
+                  ok: true,
+                } as Response
+              } else if (url.includes('/Payment/RefundWithCorrelationId')) {
+                refundedCorrelationIds.push(body.originalCorrelationId)
+                return {
+                  json: async () => ({
+                    isSuccess: true,
+                    responseCode: '00-I',
+                    refundOperation: 'Refund',
+                  }),
+                  status: 200,
+                  ok: true,
+                } as Response
+              }
+            }
+
+            return {
+              json: async () => ({ error: 'Missing handler' }),
+              status: 500,
+              ok: false,
+            } as Response
+          })
+
+        const getPaymentFlowDetailsSpy = jest
+          .spyOn(PaymentFlowService.prototype, 'getPaymentFlowDetails')
+          .mockResolvedValue({
+            id: paymentFlowId,
+            organisationId: '5534567890',
+            payerNationalId: '1234567890',
+            charges: [],
+            availablePaymentMethods: [PaymentMethod.CARD],
+            onUpdateUrl: ON_UPDATE_URL,
+            created: new Date(),
+            modified: new Date(),
+            isDeleted: false,
+          })
+
+        const getPaymentFlowChargeDetailsSpy = jest
+          .spyOn(PaymentFlowService.prototype, 'getPaymentFlowChargeDetails')
+          .mockResolvedValue({
+            catalogItems: charges.map((charge) => ({
+              ...charge,
+              priceAmount: charge.price,
+              performingOrgID: 'TODO',
+              chargeItemName: 'TODO',
+              paymentOptions: ['CARD', 'CLAIM'],
+            })),
+            totalPrice: 1000,
+            firstProductTitle: 'TODO',
+          })
+
+        const getPaymentFlowStatusSpy = jest
+          .spyOn(PaymentFlowService.prototype, 'getPaymentFlowStatus')
+          .mockResolvedValue({
+            paymentStatus: PaymentStatus.UNPAID,
+            updatedAt: new Date(),
+          })
+
+        const response = await server
+          .post('/v1/payments/card/apple-pay/charge')
+          .send(getApplePayChargeInput())
+
+        expect(response.status).toBe(400)
+        expect(response.body.detail).toBe(
+          CardErrorCode.RefundedBecauseOfSystemError,
+        )
+        expect(walletPaymentCorrelationIds).toHaveLength(1)
+        expect(refundedCorrelationIds).toEqual(walletPaymentCorrelationIds)
+
+        getPaymentFlowDetailsSpy.mockRestore()
+        getPaymentFlowChargeDetailsSpy.mockRestore()
+        getPaymentFlowStatusSpy.mockRestore()
+        fetchSpy.mockRestore()
+      })
+
       it('should throw an error if trying to charge an invalid payment flow', async () => {
         const fetchSpy = jest
           .spyOn(global, 'fetch')

@@ -283,6 +283,7 @@ export const createGooglePaySettlementSteps = <
         settlement: ctx.stepResults.SETTLE_DEBT,
         message: `Google Pay payment completed successfully`,
         paymentResult: getPaymentResult(ctx),
+        correlationId: ctx.trackingData.correlationId,
       })
     },
   },

@@ -7,6 +7,7 @@ export class ChargeCardResponse {
 
   @Field(() => String, {
     description: 'The response code from the payment provider',
+    nullable: true,
   })
-  responseCode!: string
+  responseCode?: string
 }

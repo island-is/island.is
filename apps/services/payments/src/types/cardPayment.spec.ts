@@ -205,3 +205,97 @@ describe('the gateway responses accept what the service does not use missing', (
     expect(result.success).toBe(true)
   })
 })
+
+describe('the gateway responses read null as missing', () => {
+  it('accepts an approved charge with null in every field it does not require', () => {
+    const result = CardPaymentSuccessSchema.parse({
+      isSuccess: true,
+      responseCode: null,
+      responseDescription: null,
+      responseTime: null,
+      correlationID: null,
+      acquirerReferenceNumber: 'arn',
+      authorizationCode: 'auth',
+      transactionID: null,
+      transactionLifecycleId: null,
+      maskedCardNumber: null,
+      lastFourInPan: null,
+      cardInformation: {
+        cardScheme: 'V',
+        cardUsage: 'Debit',
+        issuingCountry: null,
+        cardCategory: null,
+        outOfScaScope: null,
+        cardProductCategory: null,
+      },
+      transactionType: null,
+      isCardPresent: null,
+      currency: null,
+      authenticationMethod: null,
+      authorizedAmount: null,
+      marketInformation: null,
+      authorizationIdentifier: null,
+    })
+
+    expect(result.responseCode).toBeUndefined()
+    expect(result.transactionID).toBeUndefined()
+    expect(result.maskedCardNumber).toBe('')
+  })
+
+  it.each(['acquirerReferenceNumber', 'authorizationCode'])(
+    'does not accept an approved charge with %s null',
+    (field) => {
+      const result = CardPaymentSuccessSchema.safeParse({
+        isSuccess: true,
+        acquirerReferenceNumber: 'arn',
+        authorizationCode: 'auth',
+        cardInformation: { cardScheme: 'V', cardUsage: 'Debit' },
+        [field]: null,
+      })
+
+      expect(result.success).toBe(false)
+    },
+  )
+
+  it('accepts an approved refund with null in every field', () => {
+    const result = RefundSuccessSchema.safeParse({
+      isSuccess: true,
+      responseCode: null,
+      responseTime: null,
+      correlationID: null,
+      acquirerReferenceNumber: null,
+      transactionID: null,
+      transactionLifecycleId: null,
+      maskedCardNumber: null,
+      cardInformation: { cardScheme: null, cardUsage: null },
+      authorizationIdentifier: null,
+    })
+
+    expect(result.success).toBe(true)
+  })
+
+  it('accepts a 3-D Secure verification with null in every field it does not require', () => {
+    const result = CardVerificationSuccessSchema.safeParse({
+      isSuccess: true,
+      responseCode: null,
+      postUrl: 'https://acs.example/3ds',
+      verificationFields: [{ name: 'creq', value: 'abc' }],
+      cardVerificationRawResponse: null,
+      additionalFields: null,
+      scriptPath: null,
+      cardInformation: null,
+      threeDSMessageVersion: null,
+    })
+
+    expect(result.success).toBe(true)
+  })
+
+  it('reads a decline with a null response code as a decline', () => {
+    const result = CardPaymentErrorSchema.safeParse({
+      isSuccess: false,
+      responseCode: null,
+    })
+
+    expect(result.success).toBe(true)
+  })
+})

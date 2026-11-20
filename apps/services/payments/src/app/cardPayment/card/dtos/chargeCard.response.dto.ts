@@ -48,9 +48,13 @@ export class ChargeCardResponse {
   @IsOptional()
   authorizationIdentifier?: string
 
-  @ApiProperty({ description: 'Response code from the charge', type: String })
+  @ApiPropertyOptional({
+    description: 'Response code from the charge',
+    type: String,
+  })
   @IsString()
-  responseCode!: string
+  @IsOptional()
+  responseCode?: string
 
   @ApiPropertyOptional({
     description: 'Description of the response',
