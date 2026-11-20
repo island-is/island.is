@@ -35,6 +35,7 @@ export function getThemeWithPreferences(
     colorScheme: themeKey,
     ...theme,
     ...themes[themeKey],
+    mode: themeKey,
     tokens: theme.tokenModes[themeKey],
   }
 }

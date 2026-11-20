@@ -20,7 +20,13 @@ import LogoAOSH from '../../assets/card/vinnueftirlitid-logo.png'
 import BackgroundVinnuvelar from '../../assets/card/vinnuvelar-bg.png'
 import BackgroundHuntingCard from '../../assets/card/veidikort-bg.png'
 import { font } from '../../utils'
-import { licenceColours, scanResultColours } from '../../utils/licence-colours'
+import {
+  licenceAccent,
+  licenceFallback,
+  licenceForeground,
+  licenceColours,
+  scanResultColours,
+} from '../../utils/licence-colours'
 
 const Host = styled.View<{ backgroundColor: string }>`
   border-radius: 16px;
@@ -59,7 +65,7 @@ const SubtitleText = styled.Text`
     fontWeight: '600',
     fontSize: 13,
     lineHeight: 15,
-    color: ({ theme }) => theme.tokens.foreground.primary,
+    color: licenceForeground,
   })}
 `
 
@@ -71,7 +77,7 @@ const Title = styled.Text`
   margin-bottom: 4px;
   ${font({
     fontWeight: '600',
-    color: ({ theme }) => theme.tokens.foreground.primary,
+    color: licenceForeground,
   })}
 `
 
@@ -115,7 +121,7 @@ const Value = styled.Text`
     fontWeight: '600',
     fontSize: 13,
     lineHeight: 15,
-    color: ({ theme }) => theme.tokens.foreground.primary,
+    color: licenceForeground,
   })}
 `
 
@@ -162,7 +168,7 @@ const Copy = styled.Text`
     fontSize: 14,
     lineHeight: 18,
     fontWeight: '300',
-    color: ({ theme }) => theme.tokens.foreground.primary,
+    color: licenceForeground,
   })}
   margin-bottom: 8px;
 `
@@ -259,8 +265,7 @@ export function ScanResultCard({
   const cardTitle = title ?? preset?.title
   const backgroundImage = preset?.backgroundImage
   const colours = type !== 'Unknown' ? licenceColours[type] : undefined
-  const backgroundColor =
-    colours?.background ?? theme.tokens.background.brandMinimal
+  const backgroundColor = colours?.background ?? licenceFallback.background
   const logo = preset?.logo
 
   return (
@@ -275,7 +280,7 @@ export function ScanResultCard({
             <SubtitleIcon>
               {loading ? (
                 <ActivityIndicator
-                  color={theme.tokens.foreground.brand}
+                  color={licenceAccent}
                   animating
                   size="small"
                   style={{ transform: [{ scale: 0.8 }] }}

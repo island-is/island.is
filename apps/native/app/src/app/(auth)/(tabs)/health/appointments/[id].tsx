@@ -224,6 +224,7 @@ export default function AppointmentDetailScreen() {
         {intl.formatMessage({ id: 'health.appointments.seeMore' })}
       </Typography>
       <Icon
+        tintColor={theme.tokens.foreground.brand}
         source={externalLink as ImageSourcePropType}
         width={16}
         height={16}
@@ -531,6 +532,7 @@ export default function AppointmentDetailScreen() {
                           })}
                         </Typography>
                         <Icon
+                          tintColor={theme.tokens.foreground.brand}
                           source={externalLink as ImageSourcePropType}
                           width={16}
                           height={16}
@@ -557,6 +559,7 @@ export default function AppointmentDetailScreen() {
                         })}
                       </Typography>
                       <Icon
+                        tintColor={theme.tokens.foreground.brand}
                         source={externalLink as ImageSourcePropType}
                         width={16}
                         height={16}

@@ -136,7 +136,10 @@ export const DatePickerInput = ({
             {!selectedDate ? placeholder ?? '' : intl.formatDate(selectedDate)}
           </DateSelected>
         </View>
-        <Image source={calendarIcon} />
+        <Image
+          source={calendarIcon}
+          style={{ tintColor: theme.tokens.foreground.brand }}
+        />
       </DateInput>
       {Platform.OS === 'ios' && (
         <Modal visible={openDatePicker} transparent>
@@ -153,13 +156,18 @@ export const DatePickerInput = ({
             <Animated.View
               style={[
                 styles,
-                { backgroundColor: 'white', padding: 4, borderRadius: 8 },
+                {
+                  backgroundColor: theme.tokens.background.invert,
+                  padding: 4,
+                  borderRadius: 8,
+                },
               ]}
             >
               <DatePicker
                 value={pickedDate ?? selectedDate ?? new Date()}
                 maximumDate={maxDate}
                 minimumDate={minDate}
+                themeVariant={theme.isDark ? 'dark' : 'light'}
                 onChange={(e) => {
                   const date = e.nativeEvent?.timestamp
                     ? new Date(e.nativeEvent.timestamp)
@@ -186,6 +194,7 @@ export const DatePickerInput = ({
                 />
                 <Button
                   title={intl.formatMessage({ id: 'inbox.filterDateConfirm' })}
+                  color={theme.tokens.interactive.foreground.primary}
                   disabled={
                     pickedDate?.toISOString() === selectedDate?.toISOString() &&
                     !!selectedDate

@@ -1,7 +1,7 @@
 import React from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Image, TouchableOpacity, View } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import chevronForward from '@/assets/icons/chevron-forward.png'
 import { HealthDirectorateMedicineDelegationItem } from '@/graphql/types/schema'
@@ -34,6 +34,7 @@ export function MedicineDelegationCard({
   delegation,
   onPress,
 }: MedicineDelegationCardProps) {
+  const theme = useTheme()
   const intl = useIntl()
 
   return (
@@ -88,7 +89,13 @@ export function MedicineDelegationCard({
       <View>
         <Image
           source={chevronForward}
-          style={{ width: 24, height: 24 }}
+          style={{
+            width: 24,
+            height: 24,
+            tintColor: theme.isDark
+              ? theme.tokens.foreground.primaryMinimal
+              : undefined,
+          }}
           resizeMode="contain"
         />
       </View>

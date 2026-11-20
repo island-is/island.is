@@ -6,18 +6,39 @@ import {
   blue600,
   blueberry100,
   blueberry200,
+  blueberry300,
   blueberry400,
+  blueberry600,
   dark100,
   dark200,
   dark300,
   dark400,
+  darkActive,
+  darkBerryBg,
+  darkBorder,
+  darkCanvas,
+  darkDisabled,
+  darkHeader,
+  darkMintBg,
+  darkPurpleBg,
+  darkRedBg,
+  darkRoseBg,
+  darkRoseLighter,
+  darkScrim,
+  darkSelection,
+  darkShadowCard,
+  darkSurface,
+  darkTinted,
+  darkYellowBg,
   mint100,
   mint200,
+  mint300,
   mint400,
   mint600,
   mint800,
   purple100,
   purple200,
+  purple300,
   purple400,
   red100,
   red200,
@@ -75,7 +96,15 @@ const light = {
     success: {
       background: mint100,
       border: mint200,
+      // Decorative accent. Figma warns it does not have enough contrast on
+      // the light success surface, so icons and text use foregroundContrast.
       foreground: mint400,
+      foregroundContrast: mint800,
+    },
+    // Progress meters and bars
+    progress: {
+      background: mint200,
+      foreground: mint800,
     },
     warning: {
       background: yellow200,
@@ -152,6 +181,10 @@ const light = {
   app: {
     background: {
       pressed: '#e6ebf5',
+      // code-only: navigation header surface. White in light, matching the
+      // old explicit headerStyle; Figma gives dark mode its own colour
+      // (color/app/dark/header).
+      header: white,
       // code-only: grey surface behind grouped content
       neutral: dark100,
       // code-only: pressed search field
@@ -182,6 +215,7 @@ const light = {
     // code-only
     overlay: {
       scrim: 'rgba(0, 0, 0, 0.5)',
+      foreground: white,
     },
     // code-only
     shadow: {
@@ -194,10 +228,203 @@ const light = {
 export type Tokens = typeof light
 export type TokenSelector = (tokens: Tokens) => string
 
-// Dark mode is off in the app, so the dark slot mirrors light for now.
+// Dark mode. Values marked confirmed were read from the dark frames in Figma.
+// Everything else is derived: `name` means a Figma dark surface matches the
+// token's role, `family` means a hue rule taken from a confirmed sibling,
+// `inferred` means reasoned from the light value's role. `figma` means the
+// value comes from the Test - Colors Tokens export.
+const dark: Tokens = {
+  background: {
+    invert: darkSurface, // figma
+    brand: blue300, // inferred
+    brandLighter: darkActive, // figma
+    brandMinimal: darkCanvas, // figma
+    brandSecondary: darkPurpleBg, // figma
+    brandSecondaryLighter: darkSelection, // figma
+    brandSecondaryMinimal: darkTinted, // figma
+  },
+  foreground: {
+    primary: dark100, // figma
+    primaryMinimal: dark200, // figma
+    brand: blue300, // figma
+    brandContrast: blue200, // figma
+    brandSecondary: purple300, // figma
+    invert: dark400, // figma
+  },
+  border: {
+    primary: darkBorder, // figma
+    primaryContrast: dark300, // figma
+    invert: dark100, // figma
+  },
+  feedback: {
+    information: {
+      backgroundMinimal: darkTinted, // figma
+      border: blue300, // figma
+      foreground: blue300, // figma
+    },
+    success: {
+      background: darkMintBg, // figma
+      border: mint400, // figma
+      foreground: mint400, // figma
+      foregroundContrast: mint300, // figma
+    },
+    progress: {
+      background: darkMintBg, // figma
+      foreground: mint400, // figma
+    },
+    warning: {
+      background: darkYellowBg, // figma
+      border: yellow600, // figma
+      foreground: yellow400, // figma
+    },
+    error: {
+      background: darkRedBg, // figma
+      border: red300, // figma
+      borderContrast: red200, // figma
+      foreground: red300, // figma
+      foregroundContrast: red200, // figma
+    },
+    tags: {
+      blue: {
+        // The export gives this darkSurface, which is the card colour, so the
+        // pill disappears. Every other tag hue has its own tint. The designs
+        // use information/background-minimal here, so follow those.
+        background: darkTinted,
+        accent: blue300, // figma
+        border: blue300, // figma
+      },
+      darkerBlue: {
+        background: darkSelection, // figma
+        accent: dark100, // figma
+        border: dark100, // figma
+      },
+      red: {
+        background: darkRedBg, // figma
+        accent: red300, // figma
+        border: red300, // figma
+      },
+      purple: {
+        background: darkPurpleBg, // figma
+        accent: purple300, // figma
+        border: purple300, // figma
+      },
+      rose: {
+        background: darkRoseBg, // figma
+        accent: roseTinted200, // figma
+        border: darkBorder, // no figma equivalent
+      },
+      blueberry: {
+        background: darkBerryBg, // figma
+        accent: blueberry200, // figma
+        border: blueberry200, // figma
+      },
+      mint: {
+        background: darkMintBg, // figma
+        accent: mint400, // figma
+        border: mint400, // figma
+      },
+      yellow: {
+        background: darkYellowBg, // figma
+        accent: yellow400, // figma
+        border: yellow400, // figma
+      },
+    },
+  },
+  interactive: {
+    background: {
+      primary: blue300, // figma
+      primaryActive: blueberry300, // figma
+      primaryDisabled: darkDisabled, // inferred
+      primaryMinimal: darkTinted, // figma
+      primaryMinimalActive: darkSelection, // figma
+      focus: mint400, // figma
+      invert: darkSurface, // figma
+      destructive: red300, // figma
+      destructiveActive: red200, // figma
+      destructiveDisabled: darkRedBg, // figma
+    },
+    foreground: {
+      primary: blue300, // figma
+      primaryActive: blueberry200, // figma
+      primaryContrast: blue200, // figma
+      primaryDisabled: darkDisabled, // figma
+      default: dark200, // figma
+      disabled: darkDisabled, // figma
+      invert: dark400, // figma
+      invertActive: dark400, // figma
+      destructive: red300, // figma
+      destructiveActive: red200, // figma
+      destructiveDisabled: darkDisabled, // figma
+    },
+    border: {
+      borderPrimary: blue300, // figma
+      borderPrimaryMinimal: dark300, // figma
+      borderActive: blue200, // figma
+      borderDisabled: darkBorder, // figma
+      active: blue300, // figma
+      focus: mint400, // figma
+      invert: dark100, // figma
+      invertActive: blue200, // figma
+      destructiveDefault: red300, // figma
+      destructiveActive: red200, // figma
+      destructiveDisabled: darkBorder, // figma
+    },
+  },
+  app: {
+    background: {
+      pressed: darkActive, // no figma equivalent
+      header: darkHeader, // no figma equivalent
+      neutral: darkTinted, // no figma equivalent
+      neutralActive: darkActive, // no figma equivalent
+    },
+    fill: {
+      errorLighter: darkRedBg, // no figma equivalent
+      roseLighter: darkRoseLighter, // no figma equivalent
+    },
+    foreground: {
+      successContrast: mint300, // no figma equivalent
+    },
+    border: {
+      neutral: darkBorder, // no figma equivalent
+      subtle: darkBorder, // no figma equivalent
+      muted: darkBorder, // no figma equivalent
+    },
+    tags: {
+      white: {
+        background: darkSurface, // no figma equivalent
+        accent: blue300, // no figma equivalent
+        border: darkBorder, // no figma equivalent
+      },
+      dark: {
+        background: darkSelection, // no figma equivalent
+        accent: dark100, // no figma equivalent
+        border: darkBorder, // no figma equivalent
+      },
+      disabled: {
+        background: darkTinted, // no figma equivalent
+        accent: darkDisabled, // no figma equivalent
+        border: darkBorder, // no figma equivalent
+      },
+      warn: {
+        background: darkYellowBg, // no figma equivalent
+        accent: dark100, // no figma equivalent
+        border: yellow600, // no figma equivalent
+      },
+    },
+    overlay: {
+      scrim: darkScrim, // no figma equivalent
+      foreground: dark100, // no figma equivalent
+    },
+    shadow: {
+      brand: 'rgba(153, 192, 255, 0.2)', // figma
+      card: darkShadowCard, // no figma equivalent
+    },
+  },
+}
+
 export const tokenModes: { light: Tokens; dark: Tokens } = {
   light,
-  dark: light,
+  dark,
 }
 
 export const tokens = tokenModes.light

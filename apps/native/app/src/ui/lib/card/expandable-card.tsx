@@ -201,6 +201,7 @@ export const ExpandableCard = ({
                     style={{
                       width: 16,
                       height: 16,
+                      tintColor: theme.tokens.foreground.brand,
                       transform: [{ rotate: arrowTransform }],
                     }}
                   />

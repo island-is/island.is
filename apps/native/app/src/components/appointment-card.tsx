@@ -161,7 +161,16 @@ export function AppointmentCard({
           </Details>
         </Data>
         <ChevronIcon>
-          <Image source={chevronForward} style={{ width: 24, height: 24 }} />
+          <Image
+            source={chevronForward}
+            style={{
+              tintColor: theme.isDark
+                ? theme.tokens.foreground.primaryMinimal
+                : undefined,
+              width: 24,
+              height: 24,
+            }}
+          />
         </ChevronIcon>
       </Container>
     </Host>

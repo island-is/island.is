@@ -1,10 +1,8 @@
 import React from 'react'
-import { Image } from 'react-native'
 import styled from 'styled-components/native'
 
-import checkedIcon from '../../assets/icons/checkbox-checked.png'
-import uncheckedIcon from '../../assets/icons/checkbox-unchecked.png'
-import { token } from '../../utils'
+import tickIcon from '../../assets/icons/checkbox-tick.png'
+import { dynamicColor, token } from '../../utils'
 import { Typography } from '../typography/typography'
 
 const Host = styled.Pressable<{
@@ -20,6 +18,40 @@ const Host = styled.Pressable<{
   border-bottom-width: ${({ theme, borderBottom }) =>
     borderBottom ? theme.border.width.standard : 0}px;
   border-bottom-color: ${token((t) => t.border.primary)};
+`
+
+const Box = styled.View<{ isChecked: boolean }>`
+  width: 24px;
+  height: 24px;
+  border-radius: ${({ theme }) => theme.border.radius.standard};
+  border-width: ${({ theme, isChecked }) =>
+    isChecked ? 0 : theme.border.width.standard}px;
+  border-color: ${dynamicColor<{ isChecked: boolean }>(
+    ({ theme, isChecked }) => ({
+      light: isChecked
+        ? theme.tokenModes.light.interactive.background.primary
+        : theme.tokenModes.light.border.primary,
+      dark: isChecked
+        ? theme.tokenModes.dark.interactive.background.primary
+        : theme.tokenModes.dark.border.primary,
+    }),
+  )};
+  background-color: ${dynamicColor<{ isChecked: boolean }>(
+    ({ theme, isChecked }) => ({
+      light: isChecked
+        ? theme.tokenModes.light.interactive.background.primary
+        : theme.tokenModes.light.background.invert,
+      dark: isChecked
+        ? theme.tokenModes.dark.interactive.background.primary
+        : theme.tokenModes.dark.background.invert,
+    }),
+  )};
+`
+
+const Tick = styled.Image`
+  width: 24px;
+  height: 24px;
+  tint-color: ${token((t) => t.interactive.foreground.invert)};
 `
 
 interface CheckboxProps {
@@ -42,6 +74,7 @@ export const Checkbox = ({
       borderBottom={borderBottom}
       onPress={onPress}
       accessibilityRole="checkbox"
+      accessibilityState={{ checked }}
       accessible
       isFullWidth={isFullWidth}
     >
@@ -53,7 +86,7 @@ export const Checkbox = ({
       >
         {label}
       </Typography>
-      <Image source={checked ? checkedIcon : uncheckedIcon} />
+      <Box isChecked={checked}>{checked && <Tick source={tickIcon} />}</Box>
     </Host>
   )
 }

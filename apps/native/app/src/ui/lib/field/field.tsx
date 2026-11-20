@@ -1,7 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Image, TouchableOpacity, ViewStyle } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import { setStringAsync } from 'expo-clipboard'
 
 import { Skeleton } from '../skeleton/skeleton'
@@ -53,6 +53,7 @@ export function Field({
   size = 'small',
   style,
 }: FieldProps) {
+  const theme = useTheme()
   const intl = useIntl()
 
   if (value === '') {
@@ -85,7 +86,11 @@ export function Field({
             >
               <Image
                 source={copyIcon}
-                style={{ width: 24, height: 24 }}
+                style={{
+                  width: 24,
+                  height: 24,
+                  tintColor: theme.tokens.foreground.brand,
+                }}
                 resizeMode="contain"
               />
             </TouchableOpacity>

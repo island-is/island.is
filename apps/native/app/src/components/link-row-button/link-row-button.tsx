@@ -1,9 +1,9 @@
 import { ImageSourcePropType, Pressable, TextStyle, View } from 'react-native'
 import externalLinkIcon from '../../assets/icons/external-link.png'
 import cheveronForwardIcon from '../../assets/icons/chevron-forward.png'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import { useBrowser } from '../../hooks/use-browser'
-import { Icon, theme, Typography } from '../../ui'
+import { Icon, Typography } from '../../ui'
 import { Href, useRouter } from 'expo-router'
 
 export interface LinkItem {
@@ -96,6 +96,8 @@ export const LinkRowButton = ({
     }
   }
 
+  const { tokens } = useTheme()
+
   return (
     <Host $hasBorder={borderBottom}>
       <Container
@@ -106,12 +108,17 @@ export const LinkRowButton = ({
         <Content>
           {link.icon && (
             <IconWrapper>
-              <Icon source={link.icon} width={ICON_SIZE} height={ICON_SIZE} />
+              <Icon
+                tintColor={tokens.foreground.brand}
+                source={link.icon}
+                width={ICON_SIZE}
+                height={ICON_SIZE}
+              />
             </IconWrapper>
           )}
           <Typography
             weight={fontWeight}
-            color={theme.tokens.foreground.primary}
+            color={tokens.foreground.primary}
             size={fontSize}
           >
             {link.title}
@@ -119,7 +126,7 @@ export const LinkRowButton = ({
         </Content>
         <Icon
           source={link.isExternal ? externalLinkIcon : cheveronForwardIcon}
-          tintColor={theme.tokens.foreground.primaryMinimal}
+          tintColor={tokens.foreground.primaryMinimal}
           width={20}
           height={20}
         />

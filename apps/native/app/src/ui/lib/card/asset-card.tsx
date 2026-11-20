@@ -1,6 +1,6 @@
 import React from 'react'
 import { Image } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import chevronForward from '../../assets/icons/chevron-forward.png'
 import { token } from '../../utils'
 import { font } from '../../utils/font'
@@ -53,6 +53,8 @@ interface AssetCardProps {
 }
 
 export function AssetCard({ address, city, number }: AssetCardProps) {
+  const theme = useTheme()
+
   return (
     <Host>
       <Content>
@@ -62,7 +64,16 @@ export function AssetCard({ address, city, number }: AssetCardProps) {
         </Text>
       </Content>
       <Icon>
-        <Image source={chevronForward} style={{ width: 24, height: 24 }} />
+        <Image
+          source={chevronForward}
+          style={{
+            width: 24,
+            height: 24,
+            tintColor: theme.isDark
+              ? theme.tokens.foreground.primaryMinimal
+              : undefined,
+          }}
+        />
       </Icon>
     </Host>
   )

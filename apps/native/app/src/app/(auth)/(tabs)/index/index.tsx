@@ -446,7 +446,17 @@ export default function HomeScreen() {
             {
               type: 'custom',
               element: (
-                <Image source={require('@/assets/logo/home-logo.png')} />
+                <Image
+                  source={require('@/assets/logo/home-logo.png')}
+                  // The artwork is navy with colour accents, which all but
+                  // disappears on the dark header. The dark design flattens
+                  // the whole logo to one light colour.
+                  style={
+                    theme.isDark
+                      ? { tintColor: theme.tokens.foreground.primary }
+                      : undefined
+                  }
+                />
               ),
               hidesSharedBackground: true,
             },
@@ -469,7 +479,11 @@ export default function HomeScreen() {
                     >
                       <Image
                         source={require('@/assets/icons/notifications.png')}
-                        style={{ width: 24, height: 24 }}
+                        style={{
+                          tintColor: theme.tokens.foreground.brand,
+                          width: 24,
+                          height: 24,
+                        }}
                       />
                     </LiquidGlass>
                   ) : (
@@ -483,7 +497,11 @@ export default function HomeScreen() {
                     >
                       <Image
                         source={require('@/assets/icons/notifications.png')}
-                        style={{ width: 24, height: 24 }}
+                        style={{
+                          tintColor: theme.tokens.foreground.brand,
+                          width: 24,
+                          height: 24,
+                        }}
                       />
                     </View>
                   )}

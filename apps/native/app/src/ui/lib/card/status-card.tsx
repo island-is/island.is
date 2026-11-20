@@ -96,6 +96,7 @@ export function StatusCard({
           <Image
             source={timeOutlineIcon as ImageSourcePropType}
             style={{
+              tintColor: theme.tokens.foreground.brand,
               width: 16,
               height: 16,
               marginRight: theme.spacing.smallGutter,

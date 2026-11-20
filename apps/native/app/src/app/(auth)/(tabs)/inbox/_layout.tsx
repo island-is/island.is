@@ -4,7 +4,6 @@ import {
   tabScreenOptions,
 } from '../../../../constants/screen-options'
 import { useIntl } from 'react-intl'
-import { theme } from '@/ui'
 
 export const unstable_settings = {
   initialRouteName: 'index',
@@ -53,7 +52,6 @@ export default function InboxLayout() {
           headerShown: false,
           ...tabScreenOptions,
           headerTransparent: false,
-          headerStyle: { backgroundColor: theme.tokens.background.invert },
           title: intl.formatMessage({
             id: 'documentDetail.buttonCommunications',
           }),

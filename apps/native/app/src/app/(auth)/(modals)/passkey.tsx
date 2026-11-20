@@ -147,7 +147,10 @@ export default function PasskeyScreen() {
             >
               <LinkText>
                 <FormattedMessage id="passkeys.furtherInformation" />{' '}
-                <Image source={externalLink} />
+                <Image
+                  tintColor={theme.tokens.foreground.brand}
+                  source={externalLink}
+                />
               </LinkText>
             </TouchableOpacity>
           </LinkWrapper>
@@ -250,7 +253,7 @@ export default function PasskeyScreen() {
         <LoadingOverlay>
           <ActivityIndicator
             size="large"
-            color={theme.tokens.foreground.invert}
+            color={theme.tokens.app.overlay.foreground}
             style={{ marginTop: theme.spacing[4] }}
           />
         </LoadingOverlay>

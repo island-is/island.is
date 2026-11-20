@@ -7,6 +7,7 @@ import {
 } from 'react-native'
 
 import { NetworkStatus } from '@apollo/client'
+import { useTheme } from 'styled-components/native'
 import { useNetInfo } from '@react-native-community/netinfo'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import cloudOfflineIcon from '../../assets/icons/cloud-offline-outline.png'
@@ -20,6 +21,7 @@ export const OfflineIcon = ({
   networkStatus?: NetworkStatus | NetworkStatus[]
 }) => {
   const debug = false // __DEV__;
+  const theme = useTheme()
 
   const netInfo = useNetInfo()
 
@@ -86,7 +88,11 @@ export const OfflineIcon = ({
             </Text>
             {!netInfo.isConnected || !netInfo.isInternetReachable ? (
               <Image
-                style={{ width: 24, height: 24 }}
+                style={{
+                  width: 24,
+                  height: 24,
+                  tintColor: theme.tokens.foreground.brand,
+                }}
                 source={cloudOfflineIcon}
               />
             ) : isFetching || isLoading ? (
@@ -159,7 +165,14 @@ export const OfflineIcon = ({
   if (!netInfo.isConnected || !netInfo.isInternetReachable) {
     return (
       <Pressable onPress={onOfflinePress}>
-        <Image style={{ width: 24, height: 24 }} source={cloudOfflineIcon} />
+        <Image
+          style={{
+            width: 24,
+            height: 24,
+            tintColor: theme.tokens.foreground.brand,
+          }}
+          source={cloudOfflineIcon}
+        />
       </Pressable>
     )
   }

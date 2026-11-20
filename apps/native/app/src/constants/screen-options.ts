@@ -2,7 +2,6 @@ import { router, StackScreenProps } from 'expo-router'
 import { NativeStackHeaderItem } from '@react-navigation/native-stack'
 import { Platform } from 'react-native'
 import { navbarCloseItem } from '../components/navbar/navbar-items'
-import { theme } from '../ui'
 
 export const blueBackItem = ({
   canGoBack,
@@ -15,7 +14,7 @@ export const blueBackItem = ({
           type: 'button',
           label: '',
           icon: { type: 'sfSymbol', name: 'chevron.backward' },
-          tintColor: theme.tokens.interactive.foreground.primary,
+          // Colour comes from the navigation theme's `primary`.
           onPress: () => router.back(),
         },
       ]
@@ -24,10 +23,8 @@ export const blueBackItem = ({
 export const tabScreenOptions: StackScreenProps['options'] = {
   headerShown: true,
   headerTransparent: Platform.OS === 'ios',
-  headerStyle:
-    Platform.OS === 'android'
-      ? { backgroundColor: theme.tokens.background.invert }
-      : undefined,
+  // The header background comes from the navigation theme's `card` colour so
+  // it follows light/dark. Setting it here would pin it to one theme.
   headerShadowVisible: false,
   headerBackButtonDisplayMode: 'minimal',
   // The blue chevron back item uses an SF Symbol, which is iOS-only. On
@@ -60,14 +57,8 @@ export const modalScreenOptions: StackScreenProps['options'] = {
     headerBackVisible: false,
     unstable_headerLeftItems: () => [],
   }),
-  headerStyle: {
-    backgroundColor: theme.tokens.background.invert,
-  },
-  // Match the header; otherwise the sheet body falls back to the navigation
-  // theme's grey background, which shows on iPad.
-  contentStyle: {
-    backgroundColor: theme.tokens.background.invert,
-  },
+  // Header and body colours come from the navigation theme (`card` and
+  // `background`) so they follow light/dark.
   ...sheetHeaderTitleOptions,
   sheetGrabberVisible: true,
   sheetCornerRadius: 16,

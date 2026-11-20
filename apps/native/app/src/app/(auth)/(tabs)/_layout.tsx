@@ -1,10 +1,9 @@
 import { NativeTabs } from 'expo-router/unstable-native-tabs'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
-import { Redirect, useNavigation, usePathname } from 'expo-router'
+import { Redirect, useNavigation, usePathname, useSegments } from 'expo-router'
 import { usePreferencesStore } from '@/stores/preferences-store'
 import { isOnboarded } from '@/utils/onboarding'
-import { theme } from '../../../ui'
 import { Image, Platform, StyleSheet, View } from 'react-native'
 import { useTheme } from 'styled-components'
 import { useIntl } from 'react-intl'
@@ -16,6 +15,7 @@ export const unstable_settings = {
 
 export default function TabLayout() {
   const intl = useIntl()
+  const theme = useTheme()
   const tabsHidden = useUiStore((s) => s.tabsHidden)
   const hasOnboardedPinCode = usePreferencesStore((s) => s.hasOnboardedPinCode)
   const hasOnboardedBiometrics = usePreferencesStore(
@@ -24,6 +24,16 @@ export default function TabLayout() {
   const hasOnboardedNotifications = usePreferencesStore(
     (s) => s.hasOnboardedNotifications,
   )
+
+  const segments = useSegments() as string[]
+  const tabsIndex = segments.indexOf('(tabs)')
+  const homeTabSelected =
+    tabsIndex === -1 ? null : (segments[tabsIndex + 1] ?? 'index') === 'index'
+  const lastHomeTabSelected = useRef(homeTabSelected ?? true)
+  if (homeTabSelected !== null) {
+    lastHomeTabSelected.current = homeTabSelected
+  }
+  const homeTabActive = homeTabSelected ?? lastHomeTabSelected.current
 
   const onboarded = isOnboarded()
 
@@ -46,19 +56,31 @@ export default function TabLayout() {
         backgroundColor={
           Platform.OS === 'android' ? theme.tokens.background.invert : undefined
         }
-        indicatorColor="#e4e4f0"
+        // Light keeps its original value so this change is dark-only.
+        indicatorColor={
+          theme.isDark ? theme.tokens.app.background.pressed : '#e4e4f0'
+        }
         labelStyle={{
           fontFamily: 'IBMPlexSans_400Regular',
           fontSize: 11,
           color: theme.tokens.foreground.primary,
           selected: {
-            color: theme.tokens.interactive.foreground.primary,
+            color: theme.isDark
+              ? theme.tokens.foreground.primary
+              : theme.tokens.interactive.foreground.primary,
           },
           default: {
             color: theme.tokens.foreground.primary,
           },
         }}
-        iconColor={theme.tokens.interactive.foreground.primary}
+        iconColor={{
+          default: theme.isDark
+            ? theme.tokens.foreground.primary
+            : theme.tokens.interactive.foreground.primary,
+          selected: theme.isDark
+            ? theme.tokens.foreground.primary
+            : theme.tokens.interactive.foreground.primary,
+        }}
         hidden={tabsHidden}
         screenListeners={{
           tabPress: (e) => uiStore.setState({ focusedTab: e.target }),
@@ -73,7 +95,7 @@ export default function TabLayout() {
               default: require('@/assets/icons/tabbar-mail.png'),
               selected: require('@/assets/icons/tabbar-mail-selected.png'),
             }}
-            renderingMode="original"
+            renderingMode="template"
           />
         </NativeTabs.Trigger>
 
@@ -86,7 +108,7 @@ export default function TabLayout() {
               default: require('@/assets/icons/tabbar-wallet.png'),
               selected: require('@/assets/icons/tabbar-wallet-selected.png'),
             }}
-            renderingMode="original"
+            renderingMode="template"
           />
         </NativeTabs.Trigger>
         <NativeTabs.Trigger name="index">
@@ -97,10 +119,12 @@ export default function TabLayout() {
           </NativeTabs.Trigger.Label>
           <NativeTabs.Trigger.Icon
             src={{
-              default: require('@/assets/icons/home-icon-inactive.png'),
+              default: homeTabActive
+                ? require('@/assets/icons/home-icon-active.png')
+                : require('@/assets/icons/home-icon-inactive.png'),
               selected: require('@/assets/icons/home-icon-active.png'),
             }}
-            renderingMode="original"
+            renderingMode={homeTabActive ? 'original' : 'template'}
           />
         </NativeTabs.Trigger>
         <NativeTabs.Trigger name="health">
@@ -112,7 +136,7 @@ export default function TabLayout() {
               default: require('@/assets/icons/tabbar-health.png'),
               selected: require('@/assets/icons/tabbar-health-selected.png'),
             }}
-            renderingMode="original"
+            renderingMode="template"
           />
         </NativeTabs.Trigger>
         <NativeTabs.Trigger name="more">
@@ -121,7 +145,7 @@ export default function TabLayout() {
           </NativeTabs.Trigger.Label>
           <NativeTabs.Trigger.Icon
             src={require('@/assets/icons/tabbar-more.png')}
-            renderingMode="original"
+            renderingMode="template"
           />
         </NativeTabs.Trigger>
       </NativeTabs>

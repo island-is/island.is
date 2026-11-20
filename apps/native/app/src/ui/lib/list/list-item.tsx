@@ -11,6 +11,7 @@ import {
 
 import starFilledIcon from '../../../assets/icons/star-filled.png'
 import checkmarkIcon from '../../assets/icons/checkmark.png'
+import { useTheme } from 'styled-components/native'
 import { theme } from '@/ui/utils'
 import { Icon as UIIcon } from '../icon/icon'
 import { Label } from '../label/label'
@@ -20,15 +21,10 @@ const styles = StyleSheet.create({
   host: {
     flexDirection: 'row',
     borderBottomWidth: theme.border.width.standard,
-    borderBottomColor: theme.tokens.border.primary,
-  },
-  hostUnread: {
-    backgroundColor: theme.tokens.background.brandMinimal,
   },
   icon: {
     marginVertical: theme.spacing[3],
     marginHorizontal: theme.spacing[2],
-    backgroundColor: theme.tokens.background.brandMinimal,
     height: 42,
     width: 42,
     alignItems: 'center',
@@ -36,12 +32,8 @@ const styles = StyleSheet.create({
     borderRadius: 42,
     flexDirection: 'column',
   },
-  iconUnread: {
-    backgroundColor: theme.tokens.background.invert,
-  },
   iconSelectable: {
     borderWidth: theme.border.width.standard,
-    borderColor: theme.tokens.border.primary,
   },
   iconImage: {
     width: 24,
@@ -91,7 +83,6 @@ const styles = StyleSheet.create({
   starImage: {
     width: 16,
     height: 16,
-    tintColor: theme.tokens.foreground.brand,
   },
 })
 
@@ -141,26 +132,42 @@ export function ListItem({
   onPressIcon,
 }: ListItemProps) {
   const intl = useIntl()
+  const { tokens } = useTheme()
   const hasTitle = !!title
   const iconImage = (
     <Image
       source={
         selectable && selected ? checkmarkIcon : (icon as ImageSourcePropType)
       }
-      style={
-        selectable && selected ? styles.selectedIconImage : styles.iconImage
-      }
+      style={[
+        selectable && selected ? styles.selectedIconImage : styles.iconImage,
+        selectable && selected
+          ? { tintColor: tokens.foreground.brand }
+          : undefined,
+      ]}
     />
   )
   return (
     <SafeAreaView
-      style={[styles.host, unread && unreadBackground && styles.hostUnread]}
+      style={[
+        styles.host,
+        { borderBottomColor: tokens.border.primary },
+        unread &&
+          unreadBackground && {
+            backgroundColor: tokens.background.brandMinimal,
+          },
+      ]}
     >
       <View
         style={[
           styles.icon,
-          unread && styles.iconUnread,
-          selectable && !selected && styles.iconSelectable,
+          { backgroundColor: tokens.background.brandMinimal },
+          unread && { backgroundColor: tokens.background.invert },
+          selectable &&
+            !selected && [
+              styles.iconSelectable,
+              { borderColor: tokens.border.primary },
+            ],
         ]}
       >
         {/* Only wrap in a Pressable when the icon has its own action —
@@ -190,7 +197,7 @@ export function ListItem({
                   source={require('../../../assets/icons/reply.png')}
                   width={12}
                   height={12}
-                  tintColor={theme.tokens.foreground.primary}
+                  tintColor={tokens.foreground.primary}
                 />
               )}
               {attachment && (
@@ -198,7 +205,7 @@ export function ListItem({
                   source={require('../../../assets/icons/attachment.png')}
                   width={16}
                   height={16}
-                  tintColor={theme.tokens.foreground.primary}
+                  tintColor={tokens.foreground.primary}
                 />
               )}
             </View>
@@ -226,7 +233,10 @@ export function ListItem({
             </Typography>
           )}
           {starred && (
-            <Image source={starFilledIcon} style={styles.starImage} />
+            <Image
+              source={starFilledIcon}
+              style={[styles.starImage, { tintColor: tokens.foreground.brand }]}
+            />
           )}
           {urgent && (
             <Label color="urgent" icon>

@@ -96,6 +96,7 @@ export function PromptModal() {
                   keyboardType={options.keyboardType ?? 'default'}
                   placeholder={options.placeholder}
                   placeholderTextColor={theme.tokens.foreground.primaryMinimal}
+                  keyboardAppearance={theme.isDark ? 'dark' : 'light'}
                   returnKeyType="done"
                   onSubmitEditing={handlePositive}
                   autoCorrect={false}

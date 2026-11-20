@@ -61,7 +61,15 @@ export function MileageCell({
               {intl.formatMessage({ id: 'vehicle.mileage.editRecordButton' })}
             </Typography>
           )}
-          {editable && <Image source={clock} style={{ marginLeft: 4 }} />}
+          {editable && (
+            <Image
+              source={clock}
+              style={{
+                tintColor: theme.tokens.foreground.brand,
+                marginLeft: 4,
+              }}
+            />
+          )}
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <Typography>{subtitle}</Typography>

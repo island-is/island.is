@@ -136,7 +136,11 @@ export function InfoLine({
                   >
                     <Image
                       source={CopyIcon}
-                      style={{ width: 24, height: 24 }}
+                      style={{
+                        tintColor: theme.tokens.foreground.brand,
+                        width: 24,
+                        height: 24,
+                      }}
                       resizeMode="contain"
                     />
                   </TouchableOpacity>

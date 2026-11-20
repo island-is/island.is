@@ -78,7 +78,9 @@ export function Skeleton(props: SkeletonProps) {
       ? props.backgroundColor
       : {
           light: props.backgroundColor ?? DEFAULT_BACKGROUND,
-          dark: props.backgroundColor ?? DEFAULT_BACKGROUND,
+          dark:
+            props.backgroundColor ??
+            theme.tokenModes.dark.background.brandLighter,
         },
   )
 
