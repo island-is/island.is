@@ -35,6 +35,10 @@ export class MeActorProfileDto {
   @IsOptional()
   @IsBoolean()
   readonly emailVerified?: boolean | null
+
+  @ApiProperty({ type: Boolean })
+  @IsBoolean()
+  onlyActionablePriorityNotifications!: boolean
 }
 
 export class ActorProfileDto {
@@ -71,6 +75,10 @@ export class ActorProfileDto {
   @IsOptional()
   @IsUUID(4)
   readonly emailsId?: string
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly onlyActionablePriorityNotifications!: boolean
 }
 
 export class ActorProfileDetailsDto {
@@ -110,6 +118,11 @@ export class PatchActorProfileDto {
   @IsOptional()
   @IsUUID(4)
   emailsId?: string
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  onlyActionablePriorityNotifications?: boolean
 }
 
 export class PaginatedActorProfileDto {

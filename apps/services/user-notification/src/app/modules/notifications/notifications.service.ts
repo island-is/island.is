@@ -622,6 +622,7 @@ export class NotificationsService {
         'messageId',
         'userNotificationId',
         'recipient',
+        'wasSent',
         'created',
       ],
     })
