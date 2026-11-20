@@ -18,7 +18,7 @@ query DirectorateOfEqualityApiKeys {
 mutation DirectorateOfEqualityIssueApiKey(
   $input: DirectorateOfEqualityIssueApiKeyInput!
 ) {
-  directorateOfEqualityIssueApiKey(input: $input) {
+  issueDirectorateOfEqualityApiKey(input: $input) {
     id
     key
   }
@@ -27,7 +27,7 @@ mutation DirectorateOfEqualityIssueApiKey(
 mutation DirectorateOfEqualityRevokeApiKey(
   $input: DirectorateOfEqualityRevokeApiKeyInput!
 ) {
-  directorateOfEqualityRevokeApiKey(input: $input) {
+  revokeDirectorateOfEqualityApiKey(input: $input) {
     success
   }
 }

@@ -36,13 +36,15 @@ export const GrantServiceProviderModal = ({
   const [selected, setSelected] = useState<string | null>(null)
   const [showError, setShowError] = useState(false)
   const { data, loading, error } =
-    useDirectorateOfEqualityAvailableServiceProvidersQuery()
+    useDirectorateOfEqualityAvailableServiceProvidersQuery({
+      fetchPolicy: 'network-only',
+    })
   const providers =
     data?.directorateOfEqualityAvailableServiceProviders?.items ?? []
   const [grant, { loading: granting }] =
     useDirectorateOfEqualityGrantServiceProviderMutation({
       onCompleted: (result) => {
-        if (!result.directorateOfEqualityGrantServiceProvider.success) {
+        if (!result.grantDirectorateOfEqualityServiceProvider.success) {
           toast.error(formatMessage(messages.mutationError))
           return
         }

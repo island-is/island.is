@@ -33,7 +33,7 @@ export class EqualityPlan {
 
   @Field(() => Boolean, {
     description:
-      'True when the plan was uploaded as a PDF and can be fetched with directorateOfEqualityEqualityPlanPdf; false when it was written in the editor',
+      'True when the plan is approved or superseded and can be fetched with directorateOfEqualityReportPdf',
   })
   hasPdf!: boolean
 }

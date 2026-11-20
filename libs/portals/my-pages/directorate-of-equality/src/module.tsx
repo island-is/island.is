@@ -41,8 +41,13 @@ export const directorateOfEqualityModule: PortalModule = {
     {
       name: m.equalityPlan,
       path: DirectorateOfEqualityPaths.PlanDetail,
-      enabled: userInfo.scopes.includes(ApiScope.directorateOfEquality),
-      requiredScopes: [ApiScope.directorateOfEquality],
+      enabled:
+        userInfo.scopes.includes(ApiScope.directorateOfEqualityCompany) &&
+        userInfo.scopes.includes(ApiScope.directorateOfEquality),
+      requiredScopes: [
+        ApiScope.directorateOfEqualityCompany,
+        ApiScope.directorateOfEquality,
+      ],
       element: <EqualityPlanDetail />,
     },
     {
@@ -54,8 +59,13 @@ export const directorateOfEqualityModule: PortalModule = {
     {
       name: m.equalityReport,
       path: DirectorateOfEqualityPaths.ReportDetail,
-      enabled: userInfo.scopes.includes(ApiScope.directorateOfEqualitySalary),
-      requiredScopes: [ApiScope.directorateOfEqualitySalary],
+      enabled:
+        userInfo.scopes.includes(ApiScope.directorateOfEqualityCompany) &&
+        userInfo.scopes.includes(ApiScope.directorateOfEqualitySalary),
+      requiredScopes: [
+        ApiScope.directorateOfEqualityCompany,
+        ApiScope.directorateOfEqualitySalary,
+      ],
       element: <ReportDetail />,
     },
     {

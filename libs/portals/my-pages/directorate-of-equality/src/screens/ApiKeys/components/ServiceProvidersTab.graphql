@@ -13,7 +13,7 @@ query DirectorateOfEqualityServiceProviders {
 mutation DirectorateOfEqualityRevokeServiceProvider(
   $input: DirectorateOfEqualityRevokeServiceProviderInput!
 ) {
-  directorateOfEqualityRevokeServiceProvider(input: $input) {
+  revokeDirectorateOfEqualityServiceProvider(input: $input) {
     success
   }
 }

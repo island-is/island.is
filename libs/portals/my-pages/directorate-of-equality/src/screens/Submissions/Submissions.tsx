@@ -30,11 +30,14 @@ const Submissions = () => {
             ? DirectorateOfEqualitySubmissionType.SALARY_REPORT
             : DirectorateOfEqualitySubmissionType.EQUALITY_PLAN
         }
-        hasAccess={userInfo.scopes.includes(
-          isReports
-            ? ApiScope.directorateOfEqualitySalary
-            : ApiScope.directorateOfEquality,
-        )}
+        hasAccess={
+          userInfo.scopes.includes(ApiScope.directorateOfEqualityCompany) &&
+          userInfo.scopes.includes(
+            isReports
+              ? ApiScope.directorateOfEqualitySalary
+              : ApiScope.directorateOfEquality,
+          )
+        }
       />
     </SubmissionsWrapper>
   )

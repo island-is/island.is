@@ -43,13 +43,19 @@ export class AccessResolver {
     private readonly directorateOfEqualityService: DirectorateOfEqualityService,
   ) {}
 
-  @Query(() => Company, { name: 'directorateOfEqualityCompany', nullable: true })
+  @Query(() => Company, {
+    name: 'directorateOfEqualityCompany',
+    nullable: true,
+  })
   @Audit()
   company(@CurrentUser() user: User): Promise<Company | null> {
     return this.directorateOfEqualityService.getCompany(user)
   }
 
-  @Query(() => ApiKeys, { name: 'directorateOfEqualityApiKeys', nullable: true })
+  @Query(() => ApiKeys, {
+    name: 'directorateOfEqualityApiKeys',
+    nullable: true,
+  })
   @Audit()
   apiKeys(@CurrentUser() user: User): Promise<ApiKeys | null> {
     return this.directorateOfEqualityService.getApiKeys(user)
@@ -77,7 +83,7 @@ export class AccessResolver {
     return this.directorateOfEqualityService.getAvailableServiceProviders(user)
   }
 
-  @Mutation(() => IssuedApiKey, { name: 'directorateOfEqualityIssueApiKey' })
+  @Mutation(() => IssuedApiKey, { name: 'issueDirectorateOfEqualityApiKey' })
   @Audit()
   issueApiKey(
     @Args('input') input: IssueApiKeyInput,
@@ -87,7 +93,7 @@ export class AccessResolver {
   }
 
   @Mutation(() => MutationResult, {
-    name: 'directorateOfEqualityRevokeApiKey',
+    name: 'revokeDirectorateOfEqualityApiKey',
   })
   @Audit()
   revokeApiKey(
@@ -98,7 +104,7 @@ export class AccessResolver {
   }
 
   @Mutation(() => MutationResult, {
-    name: 'directorateOfEqualityGrantServiceProvider',
+    name: 'grantDirectorateOfEqualityServiceProvider',
   })
   @Audit()
   grantServiceProvider(
@@ -109,7 +115,7 @@ export class AccessResolver {
   }
 
   @Mutation(() => MutationResult, {
-    name: 'directorateOfEqualityRevokeServiceProvider',
+    name: 'revokeDirectorateOfEqualityServiceProvider',
   })
   @Audit()
   revokeServiceProvider(

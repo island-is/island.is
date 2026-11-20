@@ -15,6 +15,7 @@ import {
   EQUALITY_PLAN_APPLICATION_SLUG,
   SALARY_REPORT_APPLICATION_SLUG,
 } from '../../lib/constants'
+import { getPeriodYear } from '../../lib/format'
 import { messages } from '../../lib/messages'
 import { DirectorateOfEqualityPaths } from '../../lib/paths'
 import { getStatusTag } from '../../lib/status'
@@ -48,7 +49,7 @@ export const SubmissionsTabContent = ({
         ? formatMessage(messages.planTitle, { from, to })
         : formatMessage(messages.planTitleNoPeriod)
     }
-    const year = getYear(item.salaryDataPeriod)
+    const year = getPeriodYear(item.salaryDataPeriod)
     return year
       ? formatMessage(messages.reportTitle, { year })
       : formatMessage(messages.reportTitleNoYear)
@@ -136,7 +137,7 @@ export const SubmissionsTabContent = ({
                           isPlan
                             ? EQUALITY_PLAN_APPLICATION_SLUG
                             : SALARY_REPORT_APPLICATION_SLUG
-                        }`,
+                        }/${encodeURIComponent(item.id)}`,
                         '_blank',
                         'noopener',
                       ),

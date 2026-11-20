@@ -61,14 +61,30 @@ export class DirectorateOfEqualityResolver {
   }
 
   @Query(() => Pdf, {
-    name: 'directorateOfEqualityEqualityPlanPdf',
+    name: 'directorateOfEqualityReportPdf',
     nullable: true,
+    description:
+      'The signed-off equality plan or salary report as a PDF; only when hasPdf is true',
   })
   @Audit()
-  equalityPlanPdf(
+  reportPdf(
     @Args('input') input: DetailInput,
     @CurrentUser() user: User,
   ): Promise<Pdf | null> {
-    return this.directorateOfEqualityService.getEqualityPlanPdf(user, input)
+    return this.directorateOfEqualityService.getReportPdf(user, input)
+  }
+
+  @Query(() => Pdf, {
+    name: 'directorateOfEqualityImprovementPlanPdf',
+    nullable: true,
+    description:
+      'The salary report úrbótaáætlun as a PDF; only when hasPdf is true and the improvement plan is not empty',
+  })
+  @Audit()
+  improvementPlanPdf(
+    @Args('input') input: DetailInput,
+    @CurrentUser() user: User,
+  ): Promise<Pdf | null> {
+    return this.directorateOfEqualityService.getImprovementPlanPdf(user, input)
   }
 }

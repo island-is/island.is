@@ -1,9 +1,8 @@
 import { useParams } from 'react-router-dom'
 
-import { Button, toast } from '@island.is/island-ui/core'
+import { Button } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  downloadLink,
   formatDate,
   formatNationalId,
   InfoLine,
@@ -17,10 +16,8 @@ import { Problem } from '@island.is/react-spa/shared'
 import { NAMESPACE } from '../../lib/constants'
 import { messages } from '../../lib/messages'
 import { getStatusTag } from '../../lib/status'
-import {
-  useDirectorateOfEqualityEqualityPlanPdfLazyQuery,
-  useDirectorateOfEqualityEqualityPlanQuery,
-} from './EqualityPlanDetail.generated'
+import { usePdfDownload } from '../../lib/usePdfDownload'
+import { useDirectorateOfEqualityEqualityPlanQuery } from './EqualityPlanDetail.generated'
 
 const getYear = (date?: string | null) =>
   date ? new Date(date).getFullYear() : null
@@ -35,35 +32,16 @@ const EqualityPlanDetail = () => {
   const plan = data?.directorateOfEqualityEqualityPlan
   const from = getYear(plan?.approvedAt)
   const to = getYear(plan?.validUntil)
-  const [getPdf, { loading: pdfLoading }] =
-    useDirectorateOfEqualityEqualityPlanPdfLazyQuery({
-      fetchPolicy: 'no-cache',
-    })
-
-  const onDownload = async () => {
-    const { data: pdfData } = await getPdf({ variables: { input: { id } } })
-    const content = pdfData?.directorateOfEqualityEqualityPlanPdf?.content
-    if (!content) {
-      toast.error(formatMessage(messages.downloadPlanError))
-      return
-    }
-    downloadLink(
-      content,
-      'application/pdf',
-      plan?.documentFileName ??
-        `${plan?.identifier ?? formatMessage(messages.planTitleNoPeriod)}.pdf`,
-    )
-  }
+  const { downloadReportPdf, reportPdfLoading } = usePdfDownload(id)
+  const title = !plan
+    ? formatMessage(coreMessages.equalityPlan)
+    : from && to
+    ? formatMessage(messages.planTitle, { from, to })
+    : formatMessage(messages.planTitleNoPeriod)
 
   return (
     <IntroWrapper
-      title={
-        !plan
-          ? formatMessage(coreMessages.equalityPlan)
-          : from && to
-          ? formatMessage(messages.planTitle, { from, to })
-          : formatMessage(messages.planTitleNoPeriod)
-      }
+      title={title}
       intro={formatMessage(messages.planDetailIntro)}
       loading={loading}
       serviceProvider={{
@@ -79,8 +57,8 @@ const EqualityPlanDetail = () => {
                   variant="utility"
                   icon="download"
                   iconType="outline"
-                  loading={pdfLoading}
-                  onClick={onDownload}
+                  loading={reportPdfLoading}
+                  onClick={() => downloadReportPdf(title)}
                 >
                   {formatMessage(messages.downloadPlan)}
                 </Button>,

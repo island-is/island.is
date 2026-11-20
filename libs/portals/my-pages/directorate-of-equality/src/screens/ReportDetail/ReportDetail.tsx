@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom'
 
 import { DirectorateOfEqualitySalaryDataBasis } from '@island.is/api/schema'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatDate,
@@ -15,54 +15,91 @@ import {
 import { Problem } from '@island.is/react-spa/shared'
 
 import { NAMESPACE } from '../../lib/constants'
+import { formatPeriodMonth, getPeriodYear } from '../../lib/format'
 import { messages } from '../../lib/messages'
 import { getStatusTag } from '../../lib/status'
+import { usePdfDownload } from '../../lib/usePdfDownload'
 import { AdjustedGap } from './components/AdjustedGap'
 import { ImprovementPlan } from './components/ImprovementPlan'
 import { MeanHourlyWage } from './components/MeanHourlyWage'
 import { WageDistribution } from './components/WageDistribution'
 import { useDirectorateOfEqualityReportQuery } from './ReportDetail.generated'
 
-const getYear = (date?: string | null) =>
-  date ? new Date(date).getFullYear() : null
-
-const formatMonth = (date: string) =>
-  new Date(date).toLocaleDateString('is-IS', {
-    month: 'long',
-    year: 'numeric',
-  })
-
 const ReportDetail = () => {
   useNamespaces(NAMESPACE)
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const { id } = useParams() as { id: string }
   const { data, loading, error } = useDirectorateOfEqualityReportQuery({
     variables: { input: { id } },
   })
   const report = data?.directorateOfEqualityReport
-  const year = getYear(report?.salaryDataPeriod)
+  const year = getPeriodYear(report?.salaryDataPeriod)
   const analysisPeriod =
     report?.salaryDataBasis === DirectorateOfEqualitySalaryDataBasis.AVERAGE
       ? formatMessage(messages.analysisPeriodAverage)
       : report?.salaryDataPeriod
-      ? formatMonth(report.salaryDataPeriod)
+      ? formatPeriodMonth(report.salaryDataPeriod, lang)
       : undefined
+  const {
+    downloadReportPdf,
+    reportPdfLoading,
+    downloadImprovementPlanPdf,
+    improvementPlanPdfLoading,
+  } = usePdfDownload(id)
+  const title = !report
+    ? formatMessage(coreMessages.equalityReport)
+    : year
+    ? formatMessage(messages.reportTitle, { year })
+    : formatMessage(messages.reportTitleNoYear)
+  const improvementPlanTitle = formatMessage(messages.improvementPlanTitle)
 
   return (
     <IntroWrapper
-      title={
-        !report
-          ? formatMessage(coreMessages.equalityReport)
-          : year
-          ? formatMessage(messages.reportTitle, { year })
-          : formatMessage(messages.reportTitleNoYear)
-      }
+      title={title}
       intro={formatMessage(messages.reportDetailIntro)}
       loading={loading}
       serviceProvider={{
         slug: JAFNRETTISSTOFA_SLUG,
         tooltip: formatMessage(coreMessages.equalityTooltip),
       }}
+      buttonGroup={
+        report?.hasPdf
+          ? {
+              actions: [
+                <Button
+                  key="download-report"
+                  variant="utility"
+                  icon="download"
+                  iconType="outline"
+                  loading={reportPdfLoading}
+                  onClick={() => downloadReportPdf(title)}
+                >
+                  {formatMessage(messages.downloadReport)}
+                </Button>,
+                ...(report.improvementPlan.length > 0
+                  ? [
+                      <Button
+                        key="download-improvement-plan"
+                        variant="utility"
+                        icon="download"
+                        iconType="outline"
+                        loading={improvementPlanPdfLoading}
+                        onClick={() =>
+                          downloadImprovementPlanPdf(
+                            year
+                              ? `${improvementPlanTitle} ${year}`
+                              : improvementPlanTitle,
+                          )
+                        }
+                      >
+                        {formatMessage(messages.downloadImprovementPlan)}
+                      </Button>,
+                    ]
+                  : []),
+              ],
+            }
+          : undefined
+      }
     >
       {error && !loading ? (
         <Problem error={error} noBorder={false} />

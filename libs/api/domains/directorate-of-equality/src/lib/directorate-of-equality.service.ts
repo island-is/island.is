@@ -2,6 +2,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common'
 import kennitala from 'kennitala'
 
 import type { User } from '@island.is/auth-nest-tools'
+import { ApiScope } from '@island.is/auth/scopes'
 import {
   CreateApiKeyDto,
   DirectorateOfEqualityClientService,
@@ -25,10 +26,14 @@ import {
   mapReport,
   mapServiceProvider,
   mapSubmission,
+  mapSubmissionType,
 } from './mapper'
 import { ApiKeys, IssuedApiKey } from './models/apiKey.model'
 import { Company } from './models/company.model'
-import { DirectorateOfEqualityApiKeyType } from './models/enums'
+import {
+  DirectorateOfEqualityApiKeyType,
+  DirectorateOfEqualitySubmissionType,
+} from './models/enums'
 import { EqualityPlan } from './models/equalityPlan.model'
 import { ImprovementAction } from './models/improvementAction.model'
 import { MutationResult } from './models/mutationResult.model'
@@ -41,6 +46,18 @@ import {
 import { Submissions } from './models/submissions.model'
 
 const OUTLIERS_PAGE_SIZE = 100
+
+const toPdf = async (file: Blob): Promise<Pdf> => ({
+  content: Buffer.from(await file.arrayBuffer()).toString('base64'),
+})
+
+const SUBMISSION_SCOPES: Record<DirectorateOfEqualitySubmissionType, ApiScope> =
+  {
+    [DirectorateOfEqualitySubmissionType.EQUALITY_PLAN]:
+      ApiScope.directorateOfEquality,
+    [DirectorateOfEqualitySubmissionType.SALARY_REPORT]:
+      ApiScope.directorateOfEqualitySalary,
+  }
 
 const COMPANY_KEY_SCOPES: NonNullable<CreateApiKeyDto['scopes']> = [
   'salary:submit',
@@ -61,15 +78,26 @@ export class DirectorateOfEqualityService {
     }
   }
 
+  private assertSubmissionScope(
+    user: User,
+    type: DirectorateOfEqualitySubmissionType,
+  ) {
+    if (!user.scope.includes(SUBMISSION_SCOPES[type])) {
+      throw new ForbiddenException()
+    }
+  }
+
   async getSubmissions(
     user: User,
     input: SubmissionsInput,
   ): Promise<Submissions> {
     this.assertCompany(user)
-    const { reports } =
-      await this.directorateOfEqualityClientService.getReports(user)
+    this.assertSubmissionScope(user, input.type)
+    const response = await this.directorateOfEqualityClientService.getReports(
+      user,
+    )
     return {
-      items: reports
+      items: (response?.reports ?? [])
         .map(mapSubmission)
         .filter((submission) => submission.type === input.type),
     }
@@ -80,6 +108,10 @@ export class DirectorateOfEqualityService {
     input: DetailInput,
   ): Promise<EqualityPlan | null> {
     this.assertCompany(user)
+    this.assertSubmissionScope(
+      user,
+      DirectorateOfEqualitySubmissionType.EQUALITY_PLAN,
+    )
     const report = await this.directorateOfEqualityClientService.getReport(
       user,
       input.id,
@@ -89,16 +121,33 @@ export class DirectorateOfEqualityService {
       : null
   }
 
-  async getEqualityPlanPdf(user: User, input: DetailInput): Promise<Pdf> {
+  async getReportPdf(user: User, input: DetailInput): Promise<Pdf> {
     this.assertCompany(user)
-    const file =
-      await this.directorateOfEqualityClientService.getEqualityContentPdf(
+    const report = await this.directorateOfEqualityClientService.getReport(
+      user,
+      input.id,
+    )
+    this.assertSubmissionScope(user, mapSubmissionType(report.type))
+    return toPdf(
+      await this.directorateOfEqualityClientService.getReportPdf(
         user,
         input.id,
-      )
-    return {
-      content: Buffer.from(await file.arrayBuffer()).toString('base64'),
-    }
+      ),
+    )
+  }
+
+  async getImprovementPlanPdf(user: User, input: DetailInput): Promise<Pdf> {
+    this.assertCompany(user)
+    this.assertSubmissionScope(
+      user,
+      DirectorateOfEqualitySubmissionType.SALARY_REPORT,
+    )
+    return toPdf(
+      await this.directorateOfEqualityClientService.getReportImprovementPlanPdf(
+        user,
+        input.id,
+      ),
+    )
   }
 
   async getReport(
@@ -106,6 +155,10 @@ export class DirectorateOfEqualityService {
     input: DetailInput,
   ): Promise<ReportWithContext | null> {
     this.assertCompany(user)
+    this.assertSubmissionScope(
+      user,
+      DirectorateOfEqualitySubmissionType.SALARY_REPORT,
+    )
     const report = await this.directorateOfEqualityClientService.getReport(
       user,
       input.id,

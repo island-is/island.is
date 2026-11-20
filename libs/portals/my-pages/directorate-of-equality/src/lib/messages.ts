@@ -723,8 +723,12 @@ export const messages = defineMessages({
     id: 'sp.directorate-of-equality:chart-legend-pay-dispersion',
     defaultMessage: 'Ábending',
   },
-  downloadPlanError: {
-    id: 'sp.directorate-of-equality:download-plan-error',
-    defaultMessage: 'Ekki tókst að sækja jafnréttisáætlunina.',
+  downloadImprovementPlan: {
+    id: 'sp.directorate-of-equality:download-improvement-plan',
+    defaultMessage: 'Sækja úrbótaáætlun',
+  },
+  downloadPdfError: {
+    id: 'sp.directorate-of-equality:download-pdf-error',
+    defaultMessage: 'Ekki tókst að sækja skjalið. Reyndu aftur síðar.',
   },
 })

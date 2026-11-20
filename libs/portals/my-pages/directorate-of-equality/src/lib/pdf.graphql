@@ -1,0 +1,15 @@
+query DirectorateOfEqualityReportPdf(
+  $input: DirectorateOfEqualityDetailInput!
+) {
+  directorateOfEqualityReportPdf(input: $input) {
+    content
+  }
+}
+
+query DirectorateOfEqualityImprovementPlanPdf(
+  $input: DirectorateOfEqualityDetailInput!
+) {
+  directorateOfEqualityImprovementPlanPdf(input: $input) {
+    content
+  }
+}

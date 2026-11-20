@@ -11,7 +11,7 @@ query DirectorateOfEqualityAvailableServiceProviders {
 mutation DirectorateOfEqualityGrantServiceProvider(
   $input: DirectorateOfEqualityGrantServiceProviderInput!
 ) {
-  directorateOfEqualityGrantServiceProvider(input: $input) {
+  grantDirectorateOfEqualityServiceProvider(input: $input) {
     success
   }
 }

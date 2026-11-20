@@ -34,11 +34,11 @@ export class Report {
   @Field(() => DirectorateOfEqualitySalaryDataBasis, { nullable: true })
   salaryDataBasis?: DirectorateOfEqualitySalaryDataBasis | null
 
-  @Field(() => String, {
+  @Field(() => Date, {
     nullable: true,
-    description: 'The payroll month, as YYYY-MM-01',
+    description: 'The first day of the payroll month, at UTC midnight',
   })
-  salaryDataPeriod?: string | null
+  salaryDataPeriod?: Date | null
 
   @Field(() => AdjustedGap, {
     nullable: true,
@@ -48,8 +48,7 @@ export class Report {
 
   @Field(() => Gap, {
     nullable: true,
-    description:
-      'Unadjusted gap on arithmetic means; null when not computable',
+    description: 'Unadjusted gap on arithmetic means; null when not computable',
   })
   rawGap?: Gap | null
 
@@ -58,6 +57,12 @@ export class Report {
 
   @Field(() => Distribution, { nullable: true })
   distribution?: Distribution | null
+
+  @Field(() => Boolean, {
+    description:
+      'True when the report is approved or superseded and can be fetched with directorateOfEqualityReportPdf',
+  })
+  hasPdf!: boolean
 }
 
 export type ReportWithContext = Report & {

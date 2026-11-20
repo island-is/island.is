@@ -964,6 +964,140 @@
         "tags": ["Application"]
       }
     },
+    "/api/v1/application/reports/{providerId}/pdf": {
+      "get": {
+        "operationId": "getApplicationReportPdf",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "description": "Read handle from `GET /application/reports`: the bare island.is application UUID, `partner:<provider’s own id>` for a report a service provider filed, or `system:<id>` for one Jafnréttisstofa entered. URL-encode it as one segment. Resolved only among reports whose parent company is the authenticated company.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Generates the signed-off report as a PDF — \"Jafnlaunaúttekt\" for a salary report, \"Jafnréttisáætlun\" for an equality report — from the report as it stands. For an `APPROVED` report this matches the document the approval notice attached. A `SUPERSEDED` report shows its validity as closed at supersession. Only for reports in status `APPROVED` or `SUPERSEDED`; 404 for any other status, as for a report that is not the company’s. 503 when too many PDFs are being generated; retry shortly. Takes any read handle from `GET /application/reports`, whichever channel filed the report.",
+            "content": {
+              "application/pdf": {
+                "schema": { "type": "string", "format": "binary" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
+    "/api/v1/application/reports/{providerId}/pdf/urbotaaetlun": {
+      "get": {
+        "operationId": "getApplicationReportImprovementPlanPdf",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "description": "Read handle from `GET /application/reports`: the bare island.is application UUID, `partner:<provider’s own id>` for a report a service provider filed, or `system:<id>` for one Jafnréttisstofa entered. URL-encode it as one segment. Resolved only among reports whose parent company is the authenticated company.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Generates the úrbótaáætlun (the lágmarksmengi grouped by the groups the company defined, each with its ástæða, aðgerð and signature) as a PDF. Only for reports in status `APPROVED` or `SUPERSEDED`. Salary reports only — 400 for an equality report. 404 when the report has no outlier groups (a compliant company has no plan, and its report PDF states that as a finding), and for any other status, as for a report that is not the company’s. 503 when too many PDFs are being generated; retry shortly.",
+            "content": {
+              "application/pdf": {
+                "schema": { "type": "string", "format": "binary" }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "",
+        "tags": ["Application"]
+      }
+    },
     "/api/v1/application/reports/{providerId}/outliers": {
       "get": {
         "description": "Paginated list of the report's employee outliers. Split out from the report-detail payload because a single salary report can carry hundreds of rows. Ordered by role title and then by the employee's ordinal within the report — the same grouped-by-role order the draft employee lists serve. Read-only across channels: takes any read handle from `GET /application/reports`. Changing the explanations (`PUT …/outliers`) is island.is-only.",

@@ -76,6 +76,12 @@ export const mapSubmissionStatus = (
   }
 }
 
+const mapSalaryDataPeriod = (period?: string | null): Date | null =>
+  period ? new Date(`${period.slice(0, 10)}T00:00:00Z`) : null
+
+const hasPdf = (status: ReportStatusEnum) =>
+  status === ReportStatusEnum.APPROVED || status === ReportStatusEnum.SUPERSEDED
+
 const mapSubmissionChannel = (
   channel: ApplicationReportChannelEnum,
 ): DirectorateOfEqualitySubmissionChannel => {
@@ -100,7 +106,7 @@ export const mapSubmission = (
   submittedAt: report.submittedAt ?? null,
   approvedAt: report.approvedAt ?? null,
   validUntil: report.validUntil ?? null,
-  salaryDataPeriod: report.salaryDataPeriod ?? null,
+  salaryDataPeriod: mapSalaryDataPeriod(report.salaryDataPeriod),
 })
 
 const mapDirection = (
@@ -237,7 +243,7 @@ export const mapEqualityPlan = (
   validUntil: report.validUntil ?? null,
   companies: mapCompanies(report.companies),
   documentFileName: report.equalityReportContentFilename ?? null,
-  hasPdf: report.equalityReportContentType === 'PDF',
+  hasPdf: hasPdf(report.status),
 })
 
 export const mapReport = (
@@ -253,7 +259,7 @@ export const mapReport = (
     approvedAt: report.approvedAt ?? null,
     companies: mapCompanies(report.companies),
     salaryDataBasis: mapSalaryDataBasis(report.salaryDataBasis),
-    salaryDataPeriod: report.salaryDataPeriod ?? null,
+    salaryDataPeriod: mapSalaryDataPeriod(report.salaryDataPeriod),
     adjustedGap: decomposition ? mapAdjustedGap(decomposition) : null,
     rawGap: decomposition ? mapRawGap(decomposition) : null,
     meanHourlyWage: decomposition ? mapMeanHourlyWage(decomposition) : null,
@@ -261,6 +267,7 @@ export const mapReport = (
       decomposition && report.result
         ? mapDistribution(decomposition, report.result.payDispersion)
         : null,
+    hasPdf: hasPdf(report.status),
     includesImprovementPlan: report.includesImprovementPlan,
   }
 }

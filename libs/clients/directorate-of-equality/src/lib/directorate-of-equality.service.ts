@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { User, withAuthContext } from '@island.is/auth-nest-tools'
-import { data } from '@island.is/clients/middlewares'
+import { data, dataOr404Null } from '@island.is/clients/middlewares'
 import {
   addApplicationEqualityAttachment,
   getApplicationApiKeys,
@@ -30,7 +30,9 @@ import {
   getApplicationEqualityReportTemplateDocx,
   getApplicationReport,
   getApplicationReportDraft,
+  getApplicationReportImprovementPlanPdf,
   getApplicationReportOutliers,
+  getApplicationReportPdf,
   getApplicationReports,
   importApplicationReportDraftWorkbook,
   getApplicationReportComments,
@@ -130,12 +132,20 @@ export class DirectorateOfEqualityClientService {
     )
   }
 
-  async getReports(user: User): Promise<GetApplicationReportsResponseDto> {
-    return this.unwrap(
-      user,
-      () => getApplicationReports(),
-      'Failed to get reports',
-    )
+  async getReports(
+    user: User,
+  ): Promise<GetApplicationReportsResponseDto | null> {
+    try {
+      return await dataOr404Null(
+        withAuthContext(user, () => getApplicationReports()),
+      )
+    } catch (error) {
+      this.logger.error('Failed to get reports', {
+        context: LOGGING_CONTEXT,
+        error,
+      })
+      throw error
+    }
   }
 
   async getActiveEqualityReport(user: User): Promise<EqualityReportSummaryDto> {
@@ -200,6 +210,25 @@ export class DirectorateOfEqualityClientService {
       user,
       () => getApplicationReport({ path: { providerId } }),
       'Failed to get report',
+    )
+  }
+
+  async getReportPdf(user: User, providerId: string): Promise<Blob | File> {
+    return this.unwrap(
+      user,
+      () => getApplicationReportPdf({ path: { providerId } }),
+      'Failed to get report PDF',
+    )
+  }
+
+  async getReportImprovementPlanPdf(
+    user: User,
+    providerId: string,
+  ): Promise<Blob | File> {
+    return this.unwrap(
+      user,
+      () => getApplicationReportImprovementPlanPdf({ path: { providerId } }),
+      'Failed to get report improvement plan PDF',
     )
   }
 

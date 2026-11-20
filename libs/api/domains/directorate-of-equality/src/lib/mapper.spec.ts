@@ -217,7 +217,7 @@ describe('mapSubmission', () => {
       submittedAt,
       approvedAt: null,
       validUntil: null,
-      salaryDataPeriod: '2026-01-01',
+      salaryDataPeriod: new Date('2026-01-01T00:00:00Z'),
     })
   })
 })
@@ -250,9 +250,7 @@ describe('mapAdjustedGap', () => {
   })
 
   it('returns null when the gap is not computable', () => {
-    expect(
-      mapAdjustedGap(decomposition({ oskyrtAvailable: false })),
-    ).toBeNull()
+    expect(mapAdjustedGap(decomposition({ oskyrtAvailable: false }))).toBeNull()
   })
 })
 
@@ -383,17 +381,24 @@ describe('mapReport', () => {
   })
 })
 
-describe('mapEqualityPlan', () => {
-  it('has a PDF only when the plan was uploaded as one', () => {
-    const equalityPlan = reportDetail({ type: ReportTypeEnum.EQUALITY })
-
+describe('hasPdf', () => {
+  it.each([
+    [ReportStatusEnum.APPROVED, true],
+    [ReportStatusEnum.SUPERSEDED, true],
+    [ReportStatusEnum.SUBMITTED, false],
+    [ReportStatusEnum.IN_REVIEW, false],
+    [ReportStatusEnum.DENIED, false],
+    [ReportStatusEnum.WITHDRAWN, false],
+  ])('is %s → %s for plans and reports', (status, expected) => {
     expect(
       mapEqualityPlan(
         'provider-id',
-        { ...equalityPlan, equalityReportContentType: 'PDF' },
+        reportDetail({ type: ReportTypeEnum.EQUALITY, status }),
       ).hasPdf,
-    ).toBe(true)
-    expect(mapEqualityPlan('provider-id', equalityPlan).hasPdf).toBe(false)
+    ).toBe(expected)
+    expect(mapReport('provider-id', reportDetail({ status })).hasPdf).toBe(
+      expected,
+    )
   })
 })
 
@@ -401,7 +406,11 @@ const delegation = (
   overrides: Partial<CompanyPartnerDelegationDto> = {},
 ): CompanyPartnerDelegationDto => ({
   id: 'delegation-1',
-  provider: { id: 'provider-1', name: 'Launaþjónustan ehf.', nationalId: '5501010001' },
+  provider: {
+    id: 'provider-1',
+    name: 'Launaþjónustan ehf.',
+    nationalId: '5501010001',
+  },
   scopes: ['salary:submit'],
   grantedAt: new Date('2026-10-01'),
   grantedByNationalId: '0000000000',
@@ -482,7 +491,11 @@ describe('mapAvailableServiceProviders', () => {
     expect(
       mapAvailableServiceProviders(
         [
-          { id: 'provider-1', name: 'Launaþjónustan ehf.', nationalId: '5501010001' },
+          {
+            id: 'provider-1',
+            name: 'Launaþjónustan ehf.',
+            nationalId: '5501010001',
+          },
           { id: 'provider-2', name: 'Bókhald hf.', nationalId: '5501010002' },
         ],
         [delegation()],

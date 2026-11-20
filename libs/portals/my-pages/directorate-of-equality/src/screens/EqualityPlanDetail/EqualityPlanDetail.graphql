@@ -16,11 +16,3 @@ query DirectorateOfEqualityEqualityPlan(
     hasPdf
   }
 }
-
-query DirectorateOfEqualityEqualityPlanPdf(
-  $input: DirectorateOfEqualityDetailInput!
-) {
-  directorateOfEqualityEqualityPlanPdf(input: $input) {
-    content
-  }
-}

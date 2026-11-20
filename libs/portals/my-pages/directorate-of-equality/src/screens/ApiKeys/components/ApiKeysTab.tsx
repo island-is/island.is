@@ -43,33 +43,44 @@ export const ApiKeysTab = ({
   const { data, loading, error, refetch } =
     useDirectorateOfEqualityApiKeysQuery()
   const items = data?.directorateOfEqualityApiKeys?.items ?? []
-  const active = items.filter((apiKey) => getApiKeyState(apiKey) === 'active')
-  const inactive = items.filter((apiKey) => getApiKeyState(apiKey) !== 'active')
+  const now = new Date()
+  const active = items.filter(
+    (apiKey) => getApiKeyState(apiKey, now) === 'active',
+  )
+  const inactive = items.filter(
+    (apiKey) => getApiKeyState(apiKey, now) !== 'active',
+  )
   const [revokeKey, { loading: revoking }] =
     useDirectorateOfEqualityRevokeApiKeyMutation({
-      onCompleted: (result) => {
-        if (!result.directorateOfEqualityRevokeApiKey.success) {
+      onCompleted: (result, options) => {
+        if (!result.revokeDirectorateOfEqualityApiKey.success) {
           toast.error(formatMessage(messages.mutationError))
           return
         }
-        setRevokeTarget(null)
         toast.success(formatMessage(messages.apiKeyRevoked))
         refetch()
-        focusAfterClose(createButtonRef.current)
+        if (revokeTarget?.id === options?.variables?.input.id) {
+          setRevokeTarget(null)
+          focusAfterClose(createButtonRef.current)
+        }
       },
       onError: () => toast.error(formatMessage(messages.mutationError)),
     })
   const [issueKey, { loading: issuing }] =
     useDirectorateOfEqualityIssueApiKeyMutation({
       onCompleted: (result) => {
-        setIssuedKey(result.directorateOfEqualityIssueApiKey.key)
-        setCreateOpen(true)
+        setIssuedKey(result.issueDirectorateOfEqualityApiKey.key)
         refetch()
       },
       onError: () => toast.error(formatMessage(messages.mutationError)),
     })
 
   const handleCreateClose = () => {
+    setCreateOpen(false)
+    focusAfterClose(createButtonRef.current)
+  }
+
+  const handleIssuedClose = () => {
     setCreateOpen(false)
     setIssuedKey(null)
     focusAfterClose(createButtonRef.current)
@@ -174,14 +185,26 @@ export const ApiKeysTab = ({
           </Stack>
         </Box>
       )}
-      {createOpen && (
+      {issuedKey ? (
         <CreateApiKeyModal
+          key="issued"
           isServiceProvider={isServiceProvider}
-          issuing={issuing}
+          issuing={false}
           issuedKey={issuedKey}
-          onSubmit={(input) => issueKey({ variables: { input } })}
-          onClose={handleCreateClose}
+          onSubmit={() => undefined}
+          onClose={handleIssuedClose}
         />
+      ) : (
+        createOpen && (
+          <CreateApiKeyModal
+            key="create"
+            isServiceProvider={isServiceProvider}
+            issuing={issuing}
+            issuedKey={null}
+            onSubmit={(input) => issueKey({ variables: { input } })}
+            onClose={handleCreateClose}
+          />
+        )
       )}
       {revokeTarget && (
         <ConfirmRevokeModal

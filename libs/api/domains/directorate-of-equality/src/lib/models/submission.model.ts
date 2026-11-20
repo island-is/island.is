@@ -35,9 +35,10 @@ export class Submission {
   @Field(() => Date, { nullable: true })
   validUntil?: Date | null
 
-  @Field(() => String, {
+  @Field(() => Date, {
     nullable: true,
-    description: 'Salary reports only: the payroll month, as YYYY-MM-01',
+    description:
+      'Salary reports only: the first day of the payroll month, at UTC midnight',
   })
-  salaryDataPeriod?: string | null
+  salaryDataPeriod?: Date | null
 }

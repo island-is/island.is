@@ -25,7 +25,9 @@ import { ServiceProviderCard } from './ServiceProviderCard'
 
 export const ServiceProvidersTab = () => {
   const { formatMessage } = useLocale()
-  const [grantOpen, setGrantOpen] = useState(false)
+  const [grantSession, setGrantSession] = useState<number | null>(null)
+  const grantSessionRef = useRef<number | null>(null)
+  const grantSessionCount = useRef(0)
   const [revokeTarget, setRevokeTarget] =
     useState<DirectorateOfEqualityServiceProvider | null>(null)
   const grantButtonRef = useRef<HTMLButtonElement>(null)
@@ -34,19 +36,33 @@ export const ServiceProvidersTab = () => {
     useDirectorateOfEqualityServiceProvidersQuery()
   const [revokeProvider, { loading: revoking }] =
     useDirectorateOfEqualityRevokeServiceProviderMutation({
-      onCompleted: (result) => {
-        if (!result.directorateOfEqualityRevokeServiceProvider.success) {
+      onCompleted: (result, options) => {
+        if (!result.revokeDirectorateOfEqualityServiceProvider.success) {
           toast.error(formatMessage(messages.mutationError))
           return
         }
-        setRevokeTarget(null)
         toast.success(formatMessage(messages.serviceProviderRevoked))
         refetch()
-        focusAfterClose(grantButtonRef.current)
+        if (revokeTarget?.id === options?.variables?.input.id) {
+          setRevokeTarget(null)
+          focusAfterClose(grantButtonRef.current)
+        }
       },
       onError: () => toast.error(formatMessage(messages.mutationError)),
     })
   const providers = data?.directorateOfEqualityServiceProviders?.items ?? []
+
+  const openGrant = () => {
+    grantSessionCount.current += 1
+    grantSessionRef.current = grantSessionCount.current
+    setGrantSession(grantSessionCount.current)
+  }
+
+  const closeGrant = () => {
+    grantSessionRef.current = null
+    setGrantSession(null)
+    focusAfterClose(grantButtonRef.current)
+  }
 
   return (
     <Box paddingTop={4}>
@@ -59,7 +75,7 @@ export const ServiceProvidersTab = () => {
           ref={grantButtonRef}
           size="small"
           icon="add"
-          onClick={() => setGrantOpen(true)}
+          onClick={openGrant}
         >
           {formatMessage(messages.grantServiceProvider)}
         </Button>
@@ -92,17 +108,16 @@ export const ServiceProvidersTab = () => {
           </Stack>
         )}
       </Box>
-      {grantOpen && (
+      {grantSession !== null && (
         <GrantServiceProviderModal
-          onClose={() => {
-            setGrantOpen(false)
-            focusAfterClose(grantButtonRef.current)
-          }}
+          key={grantSession}
+          onClose={closeGrant}
           onGranted={() => {
-            setGrantOpen(false)
             toast.success(formatMessage(messages.serviceProviderGranted))
             refetch()
-            focusAfterClose(grantButtonRef.current)
+            if (grantSessionRef.current === grantSession) {
+              closeGrant()
+            }
           }}
         />
       )}
