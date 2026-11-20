@@ -2,6 +2,13 @@
 
 This library was generated with [Nx](https://nx.dev).
 
+## Family fields
+
+The FAMILY / CHILD dropdown combines National Registry `biologicalChildren`
+(legal parentage) and `childCustody` (custody) results. Children present in both
+lists appear once, matched by national ID. The combined list is cached on the
+field for subsequent renders.
+
 ## Running unit tests
 
-Run `nx test portals-form-system-ui-components` to execute the unit tests via [Jest](https://jestjs.io).
+Run `yarn nx test portals-form-system-ui` to execute the unit tests via [Jest](https://jestjs.io).

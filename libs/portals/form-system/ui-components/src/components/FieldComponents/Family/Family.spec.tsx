@@ -31,7 +31,21 @@ jest.mock('@island.is/island-ui/core', () => ({
   Box: ({ children }: { children: ReactNode }) => <>{children}</>,
   LoadingDots: () => null,
   SkeletonLoader: () => null,
-  Select: ({ label }: { label: string }) => <select aria-label={label} />,
+  Select: ({
+    label,
+    options,
+  }: {
+    label: string
+    options: { label: string; value: { nationalId: string } }[]
+  }) => (
+    <select aria-label={label}>
+      {options.map((option) => (
+        <option key={option.value.nationalId} value={option.value.nationalId}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+  ),
   Input: ({
     label,
     value,
@@ -48,6 +62,7 @@ const renderFamily = (
   isPreview?: boolean,
   state?: ApplicationState,
   valueIndex = 0,
+  registryData?: Record<string, unknown>,
 ) => {
   const dispatch = jest.fn()
   const registryRequest = jest.fn()
@@ -59,8 +74,10 @@ const renderFamily = (
       [
         {
           request: { query: GET_FAMILY_MEMBERS },
-          result: { data: { nationalRegistryPerson: null } },
-          delay: Infinity,
+          result: {
+            data: registryData ?? { nationalRegistryPerson: null },
+          },
+          delay: registryData ? 0 : Infinity,
         },
       ],
       false,
@@ -142,6 +159,78 @@ it.each([FamilyTypes.CHILD, FamilyTypes.SPOUSE])(
     const { registryRequest } = renderFamily(familyType)
 
     expect(registryRequest).toHaveBeenCalledTimes(1)
+  },
+)
+
+it.each([
+  {
+    biologicalChildren: [
+      { nationalId: '0101202989', fullName: 'Biological child' },
+      { nationalId: '0101212989', fullName: 'Shared child' },
+    ],
+    childCustody: [
+      { nationalId: '0101212989', fullName: 'Shared child' },
+      {
+        nationalId: '0101222989',
+        fullName: null,
+        details: { name: { fullName: 'Custody child' } },
+      },
+    ],
+    expected: [
+      { nationalId: '0101202989', name: 'Biological child' },
+      { nationalId: '0101212989', name: 'Shared child' },
+      { nationalId: '0101222989', name: 'Custody child' },
+    ],
+  },
+  {
+    biologicalChildren: null,
+    childCustody: [{ nationalId: '0101222989', fullName: 'Custody child' }],
+    expected: [{ nationalId: '0101222989', name: 'Custody child' }],
+  },
+  {
+    biologicalChildren: [
+      { nationalId: '0101202989', fullName: 'Biological child' },
+    ],
+    childCustody: null,
+    expected: [{ nationalId: '0101202989', name: 'Biological child' }],
+  },
+])(
+  'displays and caches the combined children without duplicates (case $#)',
+  async ({ biologicalChildren, childCustody, expected }) => {
+    const { dispatch } = renderFamily(FamilyTypes.CHILD, false, undefined, 0, {
+      nationalRegistryPerson: {
+        biologicalChildren:
+          biologicalChildren?.map((child) => ({ details: null, ...child })) ??
+          null,
+        childCustody:
+          childCustody?.map((child) => ({ details: null, ...child })) ?? null,
+        spouse: null,
+      },
+    })
+
+    await waitFor(() => {
+      expect(
+        screen.getAllByRole('option').map((option) => option.textContent),
+      ).toEqual(expected.map((child) => child.name))
+    })
+    expect(
+      screen
+        .getAllByRole('option')
+        .map((option) => (option as HTMLOptionElement).value),
+    ).toEqual(expected.map((child) => child.nationalId))
+    expect(dispatch).toHaveBeenCalledWith({
+      type: 'SET_FIELD_LIST',
+      payload: {
+        id: 'family',
+        list: expected.map(({ nationalId, name }) => ({
+          id: nationalId,
+          label: { is: name, en: name },
+          value: nationalId,
+          isSelected: false,
+        })),
+        placeholder: null,
+      },
+    })
   },
 )
 

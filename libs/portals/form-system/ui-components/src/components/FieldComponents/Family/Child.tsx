@@ -8,6 +8,7 @@ import {
   SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import uniqBy from 'lodash/uniqBy'
 import { Dispatch } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Action } from '../../../lib'
@@ -37,6 +38,22 @@ type RegistryChild = {
   details?: { name?: { fullName?: string | null } | null } | null
 }
 
+type FamilyMembersData = {
+  nationalRegistryPerson?: {
+    biologicalChildren?: RegistryChild[] | null
+    childCustody?: RegistryChild[] | null
+  } | null
+}
+
+const getChildren = (data?: FamilyMembersData) =>
+  uniqBy(
+    [
+      ...(data?.nationalRegistryPerson?.biologicalChildren ?? []),
+      ...(data?.nationalRegistryPerson?.childCustody ?? []),
+    ],
+    (child) => child.nationalId,
+  )
+
 export const Child = ({
   item,
   valueIndex = 0,
@@ -46,11 +63,10 @@ export const Child = ({
   const { lang, formatMessage } = useLocale()
   const { control, trigger } = useFormContext()
   const cached = (item.list?.length ?? 0) > 0
-  const { data, loading } = useQuery(GET_FAMILY_MEMBERS, {
+  const { data, loading } = useQuery<FamilyMembersData>(GET_FAMILY_MEMBERS, {
     skip: isPreview || cached,
     onCompleted: (data) => {
-      const children = (data?.nationalRegistryPerson?.biologicalChildren ??
-        []) as RegistryChild[]
+      const children = getChildren(data)
       dispatch?.({
         type: 'SET_FIELD_LIST',
         payload: {
@@ -75,8 +91,7 @@ export const Child = ({
   const fieldName = `${item.id}.${valueIndex}`
   const selectedNationalId = getValue(item, 'nationalId', valueIndex) ?? ''
 
-  const children = (data?.nationalRegistryPerson?.biologicalChildren ??
-    []) as RegistryChild[]
+  const children = getChildren(data)
   const options: FamilyOption[] = cached
     ? (item.list ?? []).flatMap((listItem) =>
         listItem?.value
