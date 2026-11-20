@@ -576,4 +576,9 @@ export const institutionMapper = {
     slug: InstitutionTypes.FJARSKIPTASTOFA,
     contentfulId: InstitutionContentfulIds.FJARSKIPTASTOFA,
   },
+  [ApplicationTypes.SPEECH_THERAPY_WAITING_LIST_REGISTRATION]: {
+    nationalId: InstitutionNationalIds.SJUKRATRYGGINGAR_ISLANDS,
+    slug: InstitutionTypes.SJUKRATRYGGINGAR_ISLANDS,
+    contentfulId: InstitutionContentfulIds.SJUKRATRYGGINGAR_ISLANDS,
+  },
 }

@@ -175,6 +175,20 @@ export const HealthInsurance = new XroadConf({
   },
 })
 
+export const HealthInsuranceSpeechTherapy = new XroadConf({
+  env: {
+    XROAD_HEALTH_INSURANCE_SPEECH_THERAPY_PATH: {
+      dev: 'IS-DEV/GOV/10007/SJUKRA-Protected/speech',
+      staging: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/speech',
+      prod: 'IS/GOV/4804080550/SJUKRA-Protected/speech',
+    },
+  },
+  secrets: {
+    XROAD_HEALTH_INSURANCE_SPEECH_THERAPY_API_KEY:
+      '/k8s/application-system-api/HEALTH_INSURANCE_SPEECH_THERAPY_API_KEY',
+  },
+})
+
 export const RskProcuring = new XroadConf({
   env: {
     XROAD_RSK_PROCURING_PATH: {

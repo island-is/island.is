@@ -64,6 +64,7 @@ import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-pro
 import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { VmstClientConfig } from '@island.is/clients/vmst'
 import { RightsPortalClientConfig } from '@island.is/clients/icelandic-health-insurance/rights-portal'
+import { SpeechTherapyClientConfig } from '@island.is/clients/icelandic-health-insurance/speech-therapy'
 import { FriggClientConfig } from '@island.is/clients/mms/frigg'
 import { smsModuleConfig } from '@island.is/nova-sms'
 import { emailModuleConfig } from '@island.is/email-service'
@@ -148,6 +149,7 @@ import { FjarskiptastofaSelfAssessmentClientConfig } from '@island.is/clients/fj
         HealthInsuranceV2ClientConfig,
         VmstClientConfig,
         RightsPortalClientConfig,
+        SpeechTherapyClientConfig,
         FriggClientConfig,
         smsModuleConfig,
         emailModuleConfig,
