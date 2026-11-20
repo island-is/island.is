@@ -7,13 +7,17 @@ import type {
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { getOpenAppealStatementDeadlineItem } from './appealStatementDeadlineItem.logic'
 import { getProsecutionVerdictAppealItem } from './prosecutionVerdictAppeal.logic'
 import type { VerdictTimelineItem } from './VerdictTimelineBody'
 import { withAppealDefender } from './VerdictTimelineCard.logic'
 
 interface ReviewerVerdictTimeline {
   defendant: Defendant
-  verdictAppealCase?: Pick<AppealCase, 'appealEventLogs'> | null
+  verdictAppealCase?: Pick<
+    AppealCase,
+    'appealState' | 'appealEventLogs' | 'statementDeadlines'
+  > | null
   // The prosecution's own deadline to appeal, which runs from the ruling date
   // and is therefore the same for every defendant of the case.
   indictmentAppealDeadline?: string | null
@@ -70,6 +74,17 @@ export const getReviewerVerdictTimelineItems = ({
         indictmentAppealDeadline,
       )}`,
     })
+  }
+
+  // Greinargerðarfrest for the prosecution once Landsréttur has set one.
+  // No party ids — that is how prosecution deadlines are stored.
+  const statementDeadlineItem = getOpenAppealStatementDeadlineItem(
+    verdictAppealCase,
+    {},
+  )
+
+  if (statementDeadlineItem) {
+    items.push(statementDeadlineItem)
   }
 
   return items

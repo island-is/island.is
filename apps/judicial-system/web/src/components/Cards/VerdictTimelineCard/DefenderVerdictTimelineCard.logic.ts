@@ -5,18 +5,15 @@ import {
   getDefendantVerdictAppealDecisionLabel,
   getServiceRequirementText,
 } from '@island.is/judicial-system/formatters'
-import { findAppealStatementDeadline } from '@island.is/judicial-system/types'
 import { getAppealExpirationInfo } from '@island.is/judicial-system-web/src/components/InfoCard/DefendantInfo/DefendantInfo.logic'
 import type {
   AppealCase,
   Defendant,
   Verdict,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  AppealCaseState,
-  ServiceRequirement,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { ServiceRequirement } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { getOpenAppealStatementDeadlineItem } from './appealStatementDeadlineItem.logic'
 import { getProsecutionVerdictAppealItem } from './prosecutionVerdictAppeal.logic'
 import type { VerdictTimelineItem } from './VerdictTimelineBody'
 import { strings } from './VerdictTimelineCard.strings'
@@ -130,23 +127,13 @@ export const getDefenderVerdictTimelineItems = ({
   }
 
   // Greinargerðarfrest for this defendant while the verdict appeal is open.
-  // Completed / withdrawn appeals leave the outcome off this card for now.
-  if (
-    verdictAppealCase?.appealState !== AppealCaseState.COMPLETED &&
-    verdictAppealCase?.appealState !== AppealCaseState.WITHDRAWN
-  ) {
-    const statementDeadline = findAppealStatementDeadline(
-      verdictAppealCase?.statementDeadlines,
-      { defendantId },
-    )
+  const statementDeadlineItem = getOpenAppealStatementDeadlineItem(
+    verdictAppealCase,
+    { defendantId },
+  )
 
-    if (statementDeadline?.deadline) {
-      items.push({
-        text: `Frestur til að skila greinargerð ${
-          statementDeadline.isExpired ? 'rann út' : 'er til'
-        } ${formatDate(statementDeadline.deadline)}`,
-      })
-    }
+  if (statementDeadlineItem) {
+    items.push(statementDeadlineItem)
   }
 
   return items
