@@ -8,7 +8,6 @@ import {
   Box,
   Button,
   Icon,
-  Inline,
   Select,
   Stack,
   Text,
@@ -141,18 +140,19 @@ interface Props {
 export const VehicleMileageFee = ({ permno }: Props) => {
   const { formatMessage } = useLocale()
   const [year, setYear] = useState<number>()
-  const [years, setYears] = useState<number[]>([])
+  const [lastYears, setLastYears] = useState<number[]>([])
 
   const { data, loading, error } = useGetVehicleMileageFeeQuery({
     variables: { input: { permno, year } },
     onCompleted: (result) => {
       if (result.vehicleMileageFee) {
-        setYears(result.vehicleMileageFee.years)
+        setLastYears(result.vehicleMileageFee.years)
       }
     },
   })
 
   const fee = error ? undefined : data?.vehicleMileageFee
+  const years = fee?.years ?? lastYears
   const selectedYear = year ?? years[0]
   const yearOptions = years.map((y) => ({
     label: y.toString(),
@@ -182,8 +182,8 @@ export const VehicleMileageFee = ({ permno }: Props) => {
       }),
       columnHelper.accessor('confirmedFee', {
         header: () => (
-          <Inline space={1} alignY="center" justifyContent="flexEnd">
-            {formatMessage(messages.mileageFeeConfirmed)}
+          <>
+            {formatMessage(messages.mileageFeeConfirmed)}{' '}
             <Tooltip
               text={
                 <Stack space={1}>
@@ -213,7 +213,7 @@ export const VehicleMileageFee = ({ permno }: Props) => {
                 />
               </button>
             </Tooltip>
-          </Inline>
+          </>
         ),
         cell: ({ getValue }) => amountFormat(getValue()) || '-',
         footer: () => amountFormat(fee?.confirmedFeeTotal),
@@ -222,10 +222,12 @@ export const VehicleMileageFee = ({ permno }: Props) => {
       }),
       columnHelper.accessor('difference', {
         header: () => (
-          <Inline space={1} alignY="center" justifyContent="flexEnd">
-            {formatMessage(messages.mileageFeeDifference)}
-            <DifferenceInfo reversalThreshold={fee?.reversalThreshold} />
-          </Inline>
+          <>
+            {formatMessage(messages.mileageFeeDifference)}{' '}
+            {fee && (
+              <DifferenceInfo reversalThreshold={fee.reversalThreshold} />
+            )}
+          </>
         ),
         cell: ({ row }) => <DifferenceValue period={row.original} />,
         meta: { align: 'right' },

@@ -477,6 +477,7 @@ const VehicleMileage = () => {
               label={formatMessage(messages.mileageTabsLabel)}
               tabs={[
                 {
+                  id: 'mileage-history',
                   label: formatMessage(messages.mileageHistoryTab),
                   content: (
                     <Box marginTop={6}>
@@ -486,12 +487,14 @@ const VehicleMileage = () => {
                   ),
                 },
                 {
+                  id: 'mileage-fee',
                   label: formatMessage(messages.mileageFeeTab),
                   content: <VehicleMileageFee permno={id} />,
                 },
               ]}
               contentBackground="transparent"
-              selected="0"
+              selected="mileage-history"
+              onlyRenderSelectedTab
               size="xs"
             />
           ) : (

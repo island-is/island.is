@@ -9,9 +9,21 @@ export const link = style({
 export const yearSelect = style({ minWidth: 160 })
 
 export const tooltipButton = style({
-  display: 'flex',
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  minWidth: 24,
+  minHeight: 24,
+  verticalAlign: 'middle',
   padding: 0,
   border: 0,
+  borderRadius: theme.border.radius.standard,
   background: 'none',
   cursor: 'pointer',
+  selectors: {
+    '&:focus-visible': {
+      outline: `3px solid ${theme.color.mint400}`,
+      outlineOffset: 2,
+    },
+  },
 })
