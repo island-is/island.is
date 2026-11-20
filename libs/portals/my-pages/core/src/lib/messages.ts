@@ -1487,6 +1487,11 @@ export const m = defineMessages({
     defaultMessage: 'Efnisyfirlit',
     description: 'Table of contents',
   },
+  seeAll: {
+    id: 'service.portal:see-all',
+    defaultMessage: 'Sjá allt',
+    description: 'Mobile menu button label',
+  },
   myCategories: {
     id: 'service.portal:my-categories',
     defaultMessage: 'Mínir flokkar',

@@ -102,22 +102,9 @@ export const SearchMenu = ({
           flexDirection="column"
           className={sidemenuStyles.wrapper}
         >
-          <Box display="flex" flexDirection="row" alignItems="center">
-            <Box
-              borderRadius="full"
-              background="blue100"
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              className={sidemenuStyles.overviewIcon}
-              marginRight="p2"
-            >
-              <Icon icon="search" type="outline" color="blue400" />
-            </Box>
-            <Text variant="h4" id={headingId}>
-              {formatMessage(m.searchLabel)}
-            </Text>
-          </Box>
+          <Text variant="h4" id={headingId}>
+            {formatMessage(m.searchLabel)}
+          </Text>
           <Box marginTop={2} className={searchInputStyles.wrapper}>
             <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
               <AsyncSearch

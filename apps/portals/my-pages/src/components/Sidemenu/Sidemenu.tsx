@@ -2,7 +2,6 @@ import {
   Box,
   GridContainer,
   Hidden,
-  Icon,
   ModalBase,
   Text,
   usePreventBodyScroll,
@@ -57,14 +56,17 @@ const Sidemenu = ({
     <Box display="flex" justifyContent="flexEnd">
       <Box
         position="relative"
-        background="white"
-        padding={2}
+        background={isMobile ? 'blue100' : 'white'}
+        // Desktop matches the notification menu's content inset
+        paddingTop={isMobile ? 2 : 4}
+        paddingBottom={2}
+        paddingX={isMobile ? 2 : 4}
         borderRadius="large"
         display="flex"
         flexDirection="column"
         height={isMobile ? 'full' : undefined}
         className={cn(
-          isMobile ? styles.fullScreen : styles.dropdown,
+          isMobile ? styles.fullScreen : [styles.dropdown, styles.dropdownWide],
           styles.container,
         )}
         style={
@@ -77,20 +79,7 @@ const Sidemenu = ({
         }
       >
         <Box display="flex" flexDirection="column" className={styles.wrapper}>
-          <Box display="flex" flexDirection="row" alignItems="center">
-            <Box
-              borderRadius="full"
-              background="blue100"
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              className={styles.overviewIcon}
-              marginRight={'p2'}
-            >
-              <Icon icon="dots" />
-            </Box>
-            <Text variant="h4">{formatMessage(m.overview)}</Text>
-          </Box>
+          <Text variant="h4">{formatMessage(m.overview)}</Text>
           <Box className={styles.navWrapper}>
             {navChildren.map(
               (navRoot, index) =>
