@@ -1,6 +1,7 @@
 import type { FC } from 'react'
 import { Fragment, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
@@ -61,6 +62,7 @@ import {
   useAppealCase,
   useAppealCaseBanner,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   isCaseCivilClaimantSpokesperson,
@@ -68,7 +70,8 @@ import {
   shouldDisplayGeneratedPdfFiles,
 } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { getVerdictAppealAction } from './verdictAppealActions.logic'
+import type { VerdictAppealAction } from './verdictAppealActions.logic'
+import { getVerdictAppealActions } from './verdictAppealActions.logic'
 
 interface ServiceAnnouncementProps {
   defendant: Defendant
@@ -127,6 +130,10 @@ const IndictmentOverview: FC = () => {
   // The defendant whose verdict appeal the user is about to withdraw, while the
   // confirmation is open.
   const [withdrawingAppealFor, setWithdrawingAppealFor] = useState<Defendant>()
+  const { acceptVerdict, isAcceptingVerdict } = useVerdict()
+  // The defendant whose verdict the user is about to accept, while the
+  // confirmation is open.
+  const [acceptingVerdictFor, setAcceptingVerdictFor] = useState<Defendant>()
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
 
@@ -163,40 +170,53 @@ const IndictmentOverview: FC = () => {
     [router, workingCase.id],
   )
 
-  // The one appeal action the verdict timeline card offers for a defendant:
-  // file a verdict appeal, or take back the one this defender filed. Which, if either,
-  // is decided by getVerdictAppealAction.
+  // What the verdict timeline card offers for a defendant: file a verdict
+  // appeal, register that the defendant accepts the verdict, or take back the
+  // appeal this defender filed. Which is decided by getVerdictAppealActions.
   const getVerdictTimelineMenuItems = (
     defendant: Defendant,
   ): ContextMenuItem[] => {
-    const action = getVerdictAppealAction(
+    const menuItems: Record<VerdictAppealAction, ContextMenuItem> = {
+      APPEAL: {
+        title: 'Áfrýja dómi',
+        onClick: () =>
+          router.push(
+            `${DEFENDER_INDICTMENT_CASE_APPEAL_ROUTE}/${workingCase.id}?defendantId=${defendant.id}`,
+          ),
+      },
+      ACCEPT: {
+        title: 'Una dómi',
+        onClick: () => setAcceptingVerdictFor(defendant),
+      },
+      WITHDRAW: {
+        title: 'Afturkalla áfrýjun',
+        onClick: () => setWithdrawingAppealFor(defendant),
+      },
+    }
+
+    return getVerdictAppealActions(
       workingCase,
       defendant,
       user,
       features.includes(Feature.INDICTMENT_APPEAL),
-    )
+    ).map((action) => menuItems[action])
+  }
 
-    switch (action) {
-      case 'APPEAL':
-        return [
-          {
-            title: 'Áfrýja dómi',
-            onClick: () =>
-              router.push(
-                `${DEFENDER_INDICTMENT_CASE_APPEAL_ROUTE}/${workingCase.id}?defendantId=${defendant.id}`,
-              ),
-          },
-        ]
-      case 'WITHDRAW':
-        return [
-          {
-            title: 'Afturkalla áfrýjun',
-            onClick: () => setWithdrawingAppealFor(defendant),
-          },
-        ]
-      default:
-        return []
+  const handleAcceptVerdict = async () => {
+    if (!acceptingVerdictFor) {
+      return
     }
+
+    const accepted = await acceptVerdict(workingCase.id, acceptingVerdictFor.id)
+
+    if (!accepted) {
+      return
+    }
+
+    setAcceptingVerdictFor(undefined)
+    // The card reads the defendant's position off the verdict, so the whole
+    // case is reloaded.
+    refreshCase()
   }
 
   const handleWithdrawVerdictAppeal = async () => {
@@ -377,6 +397,16 @@ const IndictmentOverview: FC = () => {
                   conclusionText={workingCase.appealCase?.appealConclusion}
                 />
               )}
+            {workingCase.verdictAppealCase?.appealState ===
+              AppealCaseState.COMPLETED &&
+              workingCase.verdictAppealCase.appealConclusion && (
+                <Conclusion
+                  title="Dómsorð Landsréttar"
+                  conclusionText={
+                    workingCase.verdictAppealCase.appealConclusion
+                  }
+                />
+              )}
             {displayVerdictTimeline && <VerdictAppealFiles />}
             <AllIndictmentCaseFiles
               displayGeneratedPDFs={displayGeneratedPDFs}
@@ -411,27 +441,50 @@ const IndictmentOverview: FC = () => {
           <FormFooter previousUrl={getStandardUserDashboardRoute(user)} />
         </FormContentContainer>
         {appealModals}
-        {withdrawingAppealFor && (
-          <Modal
-            title="Afturkalla áfrýjun"
-            text={`Ertu viss um að þú viljir afturkalla áfrýjun dóms fyrir ${
-              withdrawingAppealFor.name ?? 'dómfellda'
-            }?`}
-            buttons={[
-              {
-                text: 'Hætta við',
-                onClick: () => setWithdrawingAppealFor(undefined),
-                variant: 'ghost',
-              },
-              {
-                text: 'Afturkalla',
-                onClick: handleWithdrawVerdictAppeal,
-                colorScheme: 'destructive',
-                isLoading: isTransitioningAppealCase,
-              },
-            ]}
-          />
-        )}
+        <AnimatePresence>
+          {acceptingVerdictFor && (
+            <Modal
+              title="Una dómi"
+              text={`Ertu viss um að þú viljir skrá að ${
+                acceptingVerdictFor.name ?? 'dómfelldi'
+              } unir dómi? Ríkissaksóknari fær tilkynningu.`}
+              buttons={[
+                {
+                  text: 'Hætta við',
+                  onClick: () => setAcceptingVerdictFor(undefined),
+                  variant: 'ghost',
+                },
+                { text: 'Já, una dómi', onClick: handleAcceptVerdict },
+              ]}
+              onClose={() => setAcceptingVerdictFor(undefined)}
+              loading={isAcceptingVerdict}
+            />
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {withdrawingAppealFor && (
+            <Modal
+              title="Afturkalla áfrýjun"
+              text={`Ertu viss um að þú viljir afturkalla áfrýjun dóms fyrir ${
+                withdrawingAppealFor.name ?? 'dómfellda'
+              }?`}
+              buttons={[
+                {
+                  text: 'Hætta við',
+                  onClick: () => setWithdrawingAppealFor(undefined),
+                  variant: 'ghost',
+                },
+                {
+                  text: 'Afturkalla',
+                  onClick: handleWithdrawVerdictAppeal,
+                  colorScheme: 'destructive',
+                },
+              ]}
+              onClose={() => setWithdrawingAppealFor(undefined)}
+              loading={isTransitioningAppealCase}
+            />
+          )}
+        </AnimatePresence>
       </PageLayout>
     </>
   )

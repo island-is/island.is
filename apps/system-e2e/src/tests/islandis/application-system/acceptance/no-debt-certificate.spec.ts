@@ -4,7 +4,7 @@ import { session } from '../../../../support/session'
 import { createApplication } from '../../../../support/application'
 import { label } from '../../../../support/i18n'
 import { m as messages } from '@island.is/application/templates/no-debt-certificate'
-import { switchUser } from '../../../../support/login'
+import { coreMessages } from '@island.is/application/core'
 
 const homeUrl = '/umsoknir/skuldleysisvottord'
 
@@ -27,7 +27,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
   },
 })
 
-applicationTest.describe('Data protection complaint application', () => {
+applicationTest.describe('No debt certificate application', () => {
   applicationTest(
     'User should be able to submit the application as a company',
     async ({ applicationPage }) => {
@@ -46,6 +46,18 @@ applicationTest.describe('Data protection complaint application', () => {
       await applicationTest.step('Create application', async () => {
         await createApplication(page)
       })
+
+      await applicationTest.step(
+        'Choose the certificate language',
+        async () => {
+          await page
+            .getByLabel(label(messages.certificateLanguageIcelandic))
+            .check()
+          await page
+            .getByRole('button', { name: label(coreMessages.buttonNext) })
+            .click()
+        },
+      )
 
       await applicationTest.step(
         'Proceed with the application and reach the submitted state',

@@ -59,6 +59,7 @@ interface Props {
   status?: string
   url?: string
   lastModifiedBy?: string
+  isInaccessible?: boolean
 }
 
 const PATH = getStaticEnv('SI_PUBLIC_FORM_SYSTEM_URL')
@@ -66,13 +67,17 @@ const PATH = getStaticEnv('SI_PUBLIC_FORM_SYSTEM_URL')
 interface ColumnTextProps {
   text: string | number
   isOpen: boolean
+  isInaccessible: boolean
 }
 
-const ColumnText = ({ text, isOpen }: ColumnTextProps) => (
+const ColumnText = ({ text, isOpen, isInaccessible }: ColumnTextProps) => (
   <Box width="full" textAlign="left" paddingLeft={1}>
-    <Text variant="medium" fontWeight={isOpen ? 'semiBold' : 'regular'}>
-      {text}
-    </Text>
+    <Inline space={1} alignY="center">
+      <Text variant="medium" fontWeight={isOpen ? 'semiBold' : 'regular'}>
+        {text}
+      </Text>
+      {isInaccessible && <Icon icon="lockClosed" size="small" ariaHidden />}
+    </Inline>
   </Box>
 )
 
@@ -85,9 +90,16 @@ export const TableRow = ({
   slug,
   status,
   url,
+  isInaccessible = false,
 }: Props) => {
-  const { isAdmin, organizations, organizationNationalId } =
-    useContext(FormsContext)
+  const {
+    forms,
+    isAdmin,
+    organizations,
+    organizationNationalId,
+    getOrganizationGeneration,
+    refreshForms,
+  } = useContext(FormsContext)
   const [isOpen, setIsOpen] = useState(false)
   const [
     selectedCopyOrganizationNationalId,
@@ -395,7 +407,13 @@ export const TableRow = ({
           })
           setFormsState((prevForms) =>
             prevForms.map((form) =>
-              form.id === id ? { ...form, status: FormStatus.PUBLISHED } : form,
+              form.id === id
+                ? {
+                    ...form,
+                    status: FormStatus.PUBLISHED,
+                    isInaccessible: false,
+                  }
+                : form,
             ),
           )
         } catch (error) {
@@ -409,19 +427,32 @@ export const TableRow = ({
       icon: 'star' as const,
       iconType: 'outline' as const,
       onClick: async () => {
-        const { data: formData } = await getForm({
-          variables: { input: { id } },
-        })
-        const form = formData?.formSystemForm?.form
-        if (!form || !hasEnglishForAllNameFields(form)) {
-          toast.warning(formatMessage(m.translationNeededError))
-          return
-        }
-        if (!form || !hasZendeskSettingsForPublish(form)) {
-          toast.warning(formatMessage(m.zendeskSettingsNeededError))
-          return
-        }
+        const organizationGeneration = getOrganizationGeneration()
+        const showUnknownOutcome = () =>
+          toast.warning(
+            formatMessage({
+              id: 'publishChangedFormOutcomeUnknown',
+              defaultMessage:
+                'Ekki tókst að staðfesta hvort eyðublaðið var gefið út. Endurhladdu síðuna áður en þú reynir aftur.',
+            }),
+          )
+        let publishAttempted = false
         try {
+          const { data: formData, error: loadError } = await getForm({
+            variables: { input: { id } },
+          })
+          if (loadError) throw loadError
+          const form = formData?.formSystemForm?.form
+          if (!form) throw new Error('Missing form')
+          if (!hasEnglishForAllNameFields(form)) {
+            toast.warning(formatMessage(m.translationNeededError))
+            return
+          }
+          if (!hasZendeskSettingsForPublish(form)) {
+            toast.warning(formatMessage(m.zendeskSettingsNeededError))
+            return
+          }
+          publishAttempted = true
           const { data } = await updateFormStatus({
             variables: {
               input: {
@@ -443,6 +474,7 @@ export const TableRow = ({
                   ? {
                       ...form,
                       status: FormStatus.PUBLISHED,
+                      isInaccessible: false,
                       slug:
                         slug === publishedSlug + '-i-breytingu'
                           ? publishedSlug
@@ -454,6 +486,51 @@ export const TableRow = ({
           })
         } catch (error) {
           console.error('Error publishing form:', error)
+          if (organizationGeneration !== getOrganizationGeneration()) return
+          if (!publishAttempted) {
+            toast.error(
+              formatMessage({
+                id: 'publishChangedFormLoadFailed',
+                defaultMessage:
+                  'Ekki tókst að sækja eyðublaðið. Vinsamlegast reyndu aftur.',
+              }),
+            )
+            return
+          }
+          if (publishAttempted) {
+            try {
+              const refreshedForms = await refreshForms(organizationGeneration)
+              if (!refreshedForms) return
+
+              const refreshedForm = refreshedForms.find(
+                (form) => form.id === id,
+              )
+              if (refreshedForm?.status === FormStatus.PUBLISHED) {
+                return
+              }
+              if (
+                refreshedForm?.status === FormStatus.PUBLISHED_BEING_CHANGED
+              ) {
+                showUnknownOutcome()
+                return
+              }
+            } catch (refreshError) {
+              if (organizationGeneration !== getOrganizationGeneration()) return
+              console.error(
+                'Error refreshing forms after publishing:',
+                refreshError,
+              )
+              showUnknownOutcome()
+              return
+            }
+          }
+          toast.error(
+            formatMessage({
+              id: 'publishChangedFormFailed',
+              defaultMessage:
+                'Ekki er hægt að gefa út breytt eyðublað ef upphaflega útgefna formið hefur verið tekið úr útgáfu. Ef þetta á ekki við, vinsamlegast reyndu aftur.',
+            }),
+          )
         }
       },
     }
@@ -594,6 +671,23 @@ export const TableRow = ({
               : formatMessage(m.delete)
           }
           onConfirm={async () => {
+            if (
+              status === FormStatus.PUBLISHED &&
+              forms.some(
+                (form) =>
+                  form.derivedFrom === id &&
+                  form.status === FormStatus.PUBLISHED_BEING_CHANGED,
+              )
+            ) {
+              toast.warning(
+                formatMessage({
+                  id: 'unpublishFormWithRevisionWarning',
+                  defaultMessage:
+                    'Ekki er hægt að taka eyðublaðið úr útgáfu meðan útgáfa þess er í breytingu.',
+                }),
+              )
+              return
+            }
             try {
               const { data } = await updateFormStatus({
                 variables: {
@@ -639,6 +733,7 @@ export const TableRow = ({
       del,
     ]
   }, [
+    forms,
     id,
     slug,
     status,
@@ -646,6 +741,8 @@ export const TableRow = ({
     formatMessage,
     exportForm,
     getForms,
+    getOrganizationGeneration,
+    refreshForms,
     updateFormStatus,
     copyFormToOrganization,
     organizationNationalId,
@@ -709,7 +806,11 @@ export const TableRow = ({
                 size="small"
                 color="blue600"
               />
-              <ColumnText text={name ? name : ''} isOpen={isOpen} />
+              <ColumnText
+                text={name ? name : ''}
+                isOpen={isOpen}
+                isInaccessible={isInaccessible}
+              />
             </Inline>
           </Column>
           <Column span="2/12" hiddenBelow="md">
@@ -797,6 +898,16 @@ export const TableRow = ({
         <Box paddingTop={1} paddingBottom={2} paddingLeft={1}>
           <Column span="12/12">
             <Stack space={1}>
+              {isInaccessible && (
+                <Row>
+                  <Text variant="medium">
+                    {formatMessage({
+                      id: 'formInaccessible',
+                      defaultMessage: 'Eyðublaðið er ekki aðgengilegt.',
+                    })}
+                  </Text>
+                </Row>
+              )}
               <Row>
                 <Inline space={2}>
                   <Text variant="medium">

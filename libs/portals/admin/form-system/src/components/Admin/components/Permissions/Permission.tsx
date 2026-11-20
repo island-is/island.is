@@ -150,6 +150,7 @@ export const Permission = ({ type }: Props) => {
               key={permission.id}
               name={permission?.name?.is ?? ''}
               checked={isSelected(permission.id ?? '')}
+              disabled={type === 'certificate'}
               onChange={async (e) => {
                 if (e.target.checked) {
                   await addPermission(permission.id ?? '')

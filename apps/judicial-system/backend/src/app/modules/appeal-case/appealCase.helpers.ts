@@ -1,20 +1,24 @@
 import {
+  AppealCaseState,
   AppealDecisionPartyRole,
   AppealEventType,
   AppealOrigin,
   type AppealStatementParty,
   CaseAppealDecision,
   isDefenceUser,
+  isIndictmentCase,
   isProsecutionUser,
   isRequestCase,
   prosecutionRoles,
   type User,
   UserRole,
   verdictAppealFileCategories,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
 
 import {
   AppealCase,
+  AppealCourtSession,
   AppealDecision,
   AppealEventLog,
   Case,
@@ -48,6 +52,44 @@ export const findAppealCaseOfCaseFile = (
   return theCase.appealCase
 }
 
+// Defendants and civil claimants a defence user represents on an indictment —
+// district and/or appeal confirmation. Empty for request cases (collective
+// defence, no per-party rows) and when the national id matches no party.
+export const resolveDefenceParties = (
+  theCase: Case,
+  nationalId: string,
+): { defendantId?: string; civilClaimantId?: string }[] => {
+  if (!isIndictmentCase(theCase.type)) {
+    return []
+  }
+
+  const parties: { defendantId?: string; civilClaimantId?: string }[] = []
+
+  for (const defendant of theCase.defendants ?? []) {
+    if (
+      Defendant.isConfirmedDefenderOfDefendant(nationalId, [defendant]) ||
+      Defendant.isConfirmedAppealDefenderOfDefendant(nationalId, [defendant])
+    ) {
+      parties.push({ defendantId: defendant.id })
+    }
+  }
+
+  for (const civilClaimant of theCase.civilClaimants ?? []) {
+    if (
+      CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(nationalId, [
+        civilClaimant,
+      ]) ||
+      CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(nationalId, [
+        civilClaimant,
+      ])
+    ) {
+      parties.push({ civilClaimantId: civilClaimant.id })
+    }
+  }
+
+  return parties
+}
+
 // A verdict appeal has two sides. The defence side is a defendant appealing -
 // through their defender in the system, or registered by the public
 // prosecution office on a letter; the prosecution side is the public
@@ -71,7 +113,17 @@ export const verdictAppellantSide = (
 // ran still counts. Events without a defendant are not verdict appeal events.
 export const standingVerdictAppellants = (
   appealCase: Pick<AppealCase, 'appealEventLogs'>,
-): VerdictAppellant[] => {
+): VerdictAppellant[] =>
+  standingVerdictAppealEvents(appealCase).map((eventLog) => ({
+    defendantId: eventLog.defendantId as string,
+    side: verdictAppellantSide(eventLog.userRole),
+  }))
+
+// The APPEALED event behind each standing appellant, for the callers that need
+// more than who appealed - the event's timestamp is when the prosecution filed.
+export const standingVerdictAppealEvents = (
+  appealCase: Pick<AppealCase, 'appealEventLogs'>,
+): AppealEventLog[] => {
   const latestByAppellant = new Map<string, AppealEventLog>()
 
   for (const eventLog of appealCase.appealEventLogs ?? []) {
@@ -93,12 +145,164 @@ export const standingVerdictAppellants = (
     }
   }
 
-  return Array.from(latestByAppellant.values())
-    .filter((eventLog) => eventLog.eventType === AppealEventType.APPEALED)
-    .map((eventLog) => ({
-      defendantId: eventLog.defendantId as string,
-      side: verdictAppellantSide(eventLog.userRole),
-    }))
+  return Array.from(latestByAppellant.values()).filter(
+    (eventLog) => eventLog.eventType === AppealEventType.APPEALED,
+  )
+}
+
+// How far a verdict appeal has come, as the public prosecution follows it. The
+// stages are read off what each step leaves behind rather than stored, and the
+// furthest one reached wins:
+//   - SENT: an appeal summons has gone to the court of appeals;
+//   - RECEIVED: the court of appeals has given the appeal a case number;
+//   - STATEMENT_DEADLINES: a party has a statement deadline still running;
+//   - SCHEDULED: the court of appeals has called a session that is yet to be
+//     held.
+// An appeal that has not been sent has no stage yet, and neither does one that
+// was withdrawn, since none of these describes it.
+//
+// Those four are read off what has happened to the appeal, and are what a list
+// shows until the court of appeals records a status of its own. Once it has,
+// the recorded status decides the stage instead, and adds the three only the
+// court can say:
+//   - POSTPONED: the court has postponed the appeal;
+//   - UNDER_ADVISEMENT: the appeal has been heard and awaits judgment.
+//
+// COMPLETED is not something the court records its way to: it is read off the
+// state of the appeal, and shows only once the appeal itself is completed. A
+// recorded status of completed is the court's own working note until then -
+// nothing about the appeal may change for anyone else before it is concluded -
+// so a list keeps the appeal under advisement, which is where an appeal
+// stands before it is finished.
+export type VerdictAppealProgress =
+  | 'SENT'
+  | 'RECEIVED'
+  | 'STATEMENT_DEADLINES'
+  | 'SCHEDULED'
+  | 'POSTPONED'
+  | 'UNDER_ADVISEMENT'
+  | 'COMPLETED'
+
+const recordedVerdictAppealProgress: Record<
+  VerdictAppealStatus,
+  VerdictAppealProgress
+> = {
+  [VerdictAppealStatus.STATEMENT_DEADLINE_GRANTED]: 'STATEMENT_DEADLINES',
+  [VerdictAppealStatus.COURT_SESSION_SCHEDULED]: 'SCHEDULED',
+  [VerdictAppealStatus.POSTPONED]: 'POSTPONED',
+  [VerdictAppealStatus.UNDER_ADVISEMENT]: 'UNDER_ADVISEMENT',
+  [VerdictAppealStatus.COMPLETED]: 'UNDER_ADVISEMENT',
+}
+
+// An appeal the court of appeals has concluded, or that was withdrawn: nothing
+// about its progress or its calendar is current any more.
+export const isVerdictAppealOver = (
+  appealCase: Pick<AppealCase, 'appealState'>,
+): boolean =>
+  appealCase.appealState === AppealCaseState.COMPLETED ||
+  appealCase.appealState === AppealCaseState.WITHDRAWN
+
+// The session the court of appeals holds next: the earliest one still ahead.
+export const nextAppealCourtSession = (
+  appealCase: Pick<AppealCase, 'courtSessions'>,
+  now: Date,
+): AppealCourtSession | undefined =>
+  (appealCase.courtSessions ?? [])
+    .filter((session) => session.sessionDate >= now)
+    .sort((a, b) => a.sessionDate.getTime() - b.sessionDate.getTime())[0]
+
+// The session a list shows for a verdict appeal, or 'POSTPONED' when the court
+// of appeals has postponed it and there is none to show.
+//
+// The status the court has recorded decides, the way the district court's
+// decision decides its court date: while the court is calling sessions, that
+// is the next one, or the last one held when none is ahead - the status says
+// the appeal is still on the calendar, which explains a date that has passed.
+// Any other recorded status means no session is current. Until the court has
+// recorded one, only a session still ahead is shown.
+export const currentAppealCourtSession = (
+  appealCase: Pick<
+    AppealCase,
+    'appealState' | 'verdictAppealStatus' | 'courtSessions'
+  >,
+  now: Date,
+): AppealCourtSession | 'POSTPONED' | undefined => {
+  if (isVerdictAppealOver(appealCase)) {
+    return undefined
+  }
+
+  const next = nextAppealCourtSession(appealCase, now)
+
+  switch (appealCase.verdictAppealStatus) {
+    case undefined:
+    case null:
+      return next
+    case VerdictAppealStatus.COURT_SESSION_SCHEDULED:
+      return (
+        next ??
+        [...(appealCase.courtSessions ?? [])].sort(
+          (a, b) => b.sessionDate.getTime() - a.sessionDate.getTime(),
+        )[0]
+      )
+    case VerdictAppealStatus.POSTPONED:
+      return 'POSTPONED'
+    default:
+      return undefined
+  }
+}
+
+const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000
+
+// A statement deadline is a day, stored as the midnight that day starts on,
+// and the party has the whole of it: the deadline runs until the day is over.
+const isStatementDeadlineRunning = (deadline: Date, now: Date): boolean =>
+  now.getTime() < deadline.getTime() + DAY_IN_MILLISECONDS
+
+export const verdictAppealProgress = (
+  appealCase: Pick<
+    AppealCase,
+    | 'appealState'
+    | 'verdictAppealStatus'
+    | 'appealCaseNumber'
+    | 'sentAppealSummonses'
+    | 'courtSessions'
+    | 'statementDeadlines'
+  >,
+  now: Date,
+): VerdictAppealProgress | undefined => {
+  if (appealCase.appealState === AppealCaseState.WITHDRAWN) {
+    return undefined
+  }
+
+  if (appealCase.appealState === AppealCaseState.COMPLETED) {
+    return 'COMPLETED'
+  }
+
+  if (appealCase.verdictAppealStatus) {
+    return recordedVerdictAppealProgress[appealCase.verdictAppealStatus]
+  }
+
+  if (nextAppealCourtSession(appealCase, now)) {
+    return 'SCHEDULED'
+  }
+
+  if (
+    (appealCase.statementDeadlines ?? []).some((statementDeadline) =>
+      isStatementDeadlineRunning(statementDeadline.deadline, now),
+    )
+  ) {
+    return 'STATEMENT_DEADLINES'
+  }
+
+  if (appealCase.appealCaseNumber) {
+    return 'RECEIVED'
+  }
+
+  if ((appealCase.sentAppealSummonses ?? []).length > 0) {
+    return 'SENT'
+  }
+
+  return undefined
 }
 
 export const hasStandingVerdictAppeal = (

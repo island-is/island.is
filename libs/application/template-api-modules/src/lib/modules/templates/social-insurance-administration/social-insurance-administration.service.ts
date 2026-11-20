@@ -88,8 +88,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   /**
    * SÍ wants the island.is application id on every request made for the
-   * medical and rehabilitation payments application, so run its actions in a
-   * context that the SÍ client reads the id from.
+   * medical and rehabilitation payments and disability pension applications,
+   * so run their actions in a context that the SÍ client reads the id from.
    */
   override async performAction(
     action: ApplicationApiAction,
@@ -102,7 +102,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
     if (
       application?.typeId ===
-      ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS
+        ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS ||
+      application?.typeId === ApplicationTypes.DISABILITY_PENSION
     ) {
       return withApplicationGuidContext(application.id, () =>
         super.performAction(action, handleError),

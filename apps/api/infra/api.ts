@@ -198,6 +198,7 @@ export const serviceSetup = (services: {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      AUTH_REQUIRE_DPOP: 'false',
       MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: {
         dev: 'http://financial-aid-backend',
         staging: 'http://financial-aid-backend',
@@ -533,8 +534,6 @@ export const serviceSetup = (services: {
         '/k8s/api/LANDSPITALI_PAYMENT_ORGANISATION_ID',
       VERDICTS_SUPREME_COURT_BEARER_TOKEN:
         '/k8s/api/VERDICTS_SUPREME_COURT_BEARER_TOKEN',
-      VERDICTS_LANDSRETTUR_APPEALS_URL:
-        '/k8s/api/VERDICTS_LANDSRETTUR_APPEALS_URL',
       FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH:
         '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH',
       FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID:

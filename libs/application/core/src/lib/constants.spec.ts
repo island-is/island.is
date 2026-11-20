@@ -1,5 +1,13 @@
-import { Answer } from '@island.is/application/types'
-import { YES, NO, hasYes, YesOrNo } from './constants'
+import { Answer, StateLifeCycle } from '@island.is/application/types'
+import {
+  YES,
+  NO,
+  hasYes,
+  YesOrNo,
+  DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
+  pruneAfterDays,
+} from './constants'
 
 describe('hasYes', () => {
   const stringThatIsYes: Answer = YES
@@ -62,5 +70,36 @@ describe('hasYes', () => {
 
   it('should return false for empty array', () => {
     expect(hasYes([])).toEqual(false)
+  })
+})
+
+describe('lifecycle presets', () => {
+  it('can be extended with hideFromApplicationSystemOverview when listed', () => {
+    const lifecycle: StateLifeCycle = {
+      ...DefaultStateLifeCycle,
+      hideFromApplicationSystemOverview: true,
+    }
+
+    expect(lifecycle.shouldBeListed).toBe(true)
+    expect(lifecycle.hideFromApplicationSystemOverview).toBe(true)
+  })
+
+  it('can still be overridden to not be listed', () => {
+    const lifecycle: StateLifeCycle = {
+      ...pruneAfterDays(90),
+      shouldBeListed: false,
+    }
+
+    expect(lifecycle.shouldBeListed).toBe(false)
+  })
+
+  it('does not allow hideFromApplicationSystemOverview when not listed', () => {
+    // @ts-expect-error shouldBeListed: false already hides the application everywhere
+    const lifecycle: StateLifeCycle = {
+      ...EphemeralStateLifeCycle,
+      hideFromApplicationSystemOverview: true,
+    }
+
+    expect(lifecycle.shouldBeListed).toBe(false)
   })
 })

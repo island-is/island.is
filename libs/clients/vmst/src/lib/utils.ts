@@ -2,7 +2,7 @@ import fetch from 'isomorphic-fetch'
 import { logger } from '@island.is/logging'
 import omit from 'lodash/omit'
 import pick from 'lodash/pick'
-import { ApplicationRights } from '../../gen/fetch'
+import { ApplicationRight } from '../../gen/fetch'
 
 // A parental leave request body:
 type Init = {
@@ -48,7 +48,78 @@ type Init = {
   }[]
   testData: string
   otherParentBlocked: boolean
-  applicationRights: ApplicationRights[]
+  applicationRights: ApplicationRight[]
+}
+
+const MAX_REASON_LENGTH = 300
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value)
+
+const parseJson = (text: string): unknown => {
+  if (!text) {
+    return undefined
+  }
+  try {
+    return JSON.parse(text)
+  } catch {
+    return undefined
+  }
+}
+
+const collapse = (text: string): string => {
+  const collapsed = text
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+  return collapsed.length > MAX_REASON_LENGTH
+    ? `${collapsed.slice(0, MAX_REASON_LENGTH)}…`
+    : collapsed
+}
+
+/**
+ * What is safe to log about a VMST error body: its error code and the names of
+ * the fields it rejected. VMST's messages are left out because they may repeat
+ * the submitted values, such as national ids or bank accounts, and so is a body
+ * that is not JSON.
+ */
+export const describeVmstErrorBody = (rawBody: string): string => {
+  const parsed = parseJson(rawBody)
+
+  if (!isRecord(parsed)) {
+    return ''
+  }
+
+  const parts: string[] = []
+  const { errorCode, errors } = parsed
+
+  if (
+    (typeof errorCode === 'string' && errorCode) ||
+    typeof errorCode === 'number'
+  ) {
+    parts.push(String(errorCode))
+  }
+
+  if (isRecord(errors) && Object.keys(errors).length > 0) {
+    parts.push(`fields: ${Object.keys(errors).join(', ')}`)
+  }
+
+  return collapse(parts.join('; '))
+}
+
+/**
+ * What is safe to log about a failed VMST call. In production the generated
+ * client rejects with the raw `Response`; only the safe parts of its body are
+ * kept. The wrapped fetch already rejects with a safe message.
+ */
+export const describeVmstError = async (error: unknown): Promise<string> => {
+  if (error instanceof Response) {
+    const body = await error.text().catch(() => '')
+    const reason = describeVmstErrorBody(body)
+    return `${error.status} ${error.statusText}${reason ? `: ${reason}` : ''}`
+  }
+
+  return error instanceof Error ? error.message : String(error)
 }
 
 export const createWrappedFetchWithLogging = (
@@ -102,7 +173,7 @@ export const createWrappedFetchWithLogging = (
           },
           response: {
             status_text: response.statusText,
-            body: undefined,
+            body: undefined as Record<string, unknown> | undefined,
           },
         }
 
@@ -114,13 +185,16 @@ export const createWrappedFetchWithLogging = (
             },
           })
         } else {
-          let responseBody = await response.json()
-          responseBody = pick(responseBody, [
-            'hasError',
-            'hasActivePregnancy',
-            'errorCode',
-            'status',
-          ])
+          const rawBody = await response.text().catch(() => '')
+          const parsedBody = parseJson(rawBody)
+          const responseBody = isRecord(parsedBody)
+            ? pick(parsedBody, [
+                'hasError',
+                'hasActivePregnancy',
+                'errorCode',
+                'status',
+              ])
+            : undefined
           vmstMetadata.response.body = responseBody
           logger.error(`Failed fetching from VMST`, {
             vmst: {
@@ -128,7 +202,25 @@ export const createWrappedFetchWithLogging = (
               success: false,
             },
           })
-          return reject(requestBody)
+          // Previously rejected with `requestBody`, which handed callers back
+          // their own request as the "error". Reject with a real Error so the
+          // response fields are what surfaces upstream.
+          const reason = describeVmstErrorBody(rawBody)
+          return reject(
+            Object.assign(
+              new Error(
+                reason
+                  ? `${response.status} ${response.statusText}: ${reason}`
+                  : `${response.status} ${response.statusText}`,
+              ),
+              {
+                name: 'VmstError',
+                status: response.status,
+                statusText: response.statusText,
+                body: responseBody,
+              },
+            ),
+          )
         }
 
         return resolve(response)

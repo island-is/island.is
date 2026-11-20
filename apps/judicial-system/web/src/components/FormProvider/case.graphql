@@ -3,6 +3,7 @@ query Case($input: CaseQueryInput!) {
     id
     created
     type
+    originalAncestorId
     splitCases {
       ...SplitCaseFields
     }
@@ -255,6 +256,7 @@ query Case($input: CaseQueryInput!) {
       id
       appealState
       appealType
+      verdictAppealStatus
       appealCaseNumber
       appealConclusion
       appealAssistant {
@@ -275,6 +277,7 @@ query Case($input: CaseQueryInput!) {
         defendantId
         civilClaimantId
         deadline
+        isExpired
       }
       appealJudges {
         id

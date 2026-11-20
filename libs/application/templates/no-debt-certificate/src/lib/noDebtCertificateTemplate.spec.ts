@@ -34,6 +34,24 @@ const buildApplication = (
 
 describe('No Debt Certificate Application Template', () => {
   describe('state transitions', () => {
+    it('should start in prerequisites so the certificate language is chosen first', () => {
+      expect(NoDebtCertificateTemplate.stateMachineConfig.initial).toBe(
+        States.PREREQUISITES,
+      )
+    })
+
+    it('should transition from prerequisites to draft', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({ state: States.PREREQUISITES }),
+        NoDebtCertificateTemplate,
+      )
+      const [hasChanged, newState] = helper.changeState({
+        type: DefaultEvents.SUBMIT,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(States.DRAFT)
+    })
+
     it('should transition from draft to completed', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication(),

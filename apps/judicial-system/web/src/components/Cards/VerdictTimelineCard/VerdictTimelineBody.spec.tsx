@@ -67,4 +67,29 @@ describe('VerdictTimelineBody', () => {
     expectToBeSettled(bullet('requirement'))
     expectToEnterAnimated(bullet('served'))
   })
+
+  // The bullet stays open while FadeSwap changes its text, so the list does
+  // not close one row and open another. FadeSwap plays the old text out first,
+  // which jsdom never finishes, so the old text is what is still on screen.
+  it('should keep an item with an id in place when its text changes', () => {
+    const { rerender } = render(
+      <VerdictTimelineBody
+        eyebrow="Jón"
+        items={[item('served'), { id: 'stance', text: 'postpones' }]}
+      />,
+    )
+    const row = screen.getByText('• postpones').closest('div')
+      ?.parentElement as HTMLElement
+
+    rerender(
+      <VerdictTimelineBody
+        eyebrow="Jón"
+        items={[item('served'), { id: 'stance', text: 'accepts' }]}
+      />,
+    )
+
+    expect(row).toBeInTheDocument()
+    expect(row).not.toHaveStyle({ height: '0px' })
+    expectToBeSettled(bullet('served'))
+  })
 })

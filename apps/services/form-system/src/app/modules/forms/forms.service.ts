@@ -18,6 +18,7 @@ import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { AssetTypes, FamilyTypes } from '@island.is/form-system/enums'
 import {
+  ApplicationStatus,
   FieldTypesEnum,
   FormStatus,
   SectionTypes,
@@ -50,6 +51,7 @@ import { Option } from '../../dataTypes/option.model'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { Application } from '../applications/models/application.model'
+import { ApplicationEvent } from '../applications/models/applicationEvent.model'
 import { Value } from '../applications/models/value.model'
 import { FieldDto } from '../fields/models/dto/field.dto'
 import { Field } from '../fields/models/field.model'
@@ -105,6 +107,8 @@ export class FormsService {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     private readonly fileService: FileService,
+    @InjectModel(ApplicationEvent)
+    private readonly applicationEventModel: typeof ApplicationEvent,
   ) {}
 
   async findAll(user: User, nationalId: string): Promise<FormResponseDto> {
@@ -158,6 +162,7 @@ export class FormsService {
       'status',
       'draftDaysToLive',
       'submissionDaysToLive',
+      'derivedFrom',
       'allowProceedOnValidationFail',
       'isInaccessible',
       'validateEligibility',
@@ -871,6 +876,10 @@ export class FormsService {
 
         for (const application of applications) {
           await this.cleanupApplicationFiles(application, transaction)
+          await this.applicationEventModel.destroy({
+            where: { applicationId: application.id },
+            transaction,
+          })
           await application.destroy({ transaction })
         }
 
@@ -889,10 +898,30 @@ export class FormsService {
   }
 
   async archiveForm(id: string, form: Form): Promise<FormResponseDto> {
-    const slug = form.slug
     let copyForm: Form | undefined
 
-    await this.sequelize.transaction(async (transaction) => {
+    const fileKeys = await this.sequelize.transaction(async (transaction) => {
+      await form.reload({ transaction, lock: Transaction.LOCK.UPDATE })
+      if (form.status !== FormStatus.PUBLISHED) {
+        throw new ConflictException(`Form with id '${id}' is not published`)
+      }
+
+      const revision = await this.formModel.findOne({
+        where: {
+          derivedFrom: id,
+          status: FormStatus.PUBLISHED_BEING_CHANGED,
+        },
+        transaction,
+      })
+      if (revision) {
+        throw new ConflictException(
+          `Delete the form being changed from form '${id}' before unpublishing it.`,
+        )
+      }
+
+      const slug = form.slug
+      const fileKeys = await this.deleteDraftApplications(id, transaction)
+
       form.status = FormStatus.ARCHIVED
       form.slug = `${form.slug}-archived-${Date.now()}`
       await form.save({ transaction })
@@ -905,7 +934,13 @@ export class FormsService {
         undefined,
         transaction,
       )
+
+      return fileKeys
     })
+
+    await Promise.all(
+      fileKeys.map((key) => this.fileService.deleteFileFromStorage(key)),
+    )
 
     if (!copyForm) {
       throw new Error('Error copying form')
@@ -936,8 +971,22 @@ export class FormsService {
       throw new NotFoundException(`Form with id '${derivedFromId}' not found`)
     }
 
-    await this.sequelize.transaction(async (transaction) => {
+    const fileKeys = await this.sequelize.transaction(async (transaction) => {
       try {
+        await formToBeArchived.reload({
+          transaction,
+          lock: Transaction.LOCK.UPDATE,
+        })
+        if (formToBeArchived.status !== FormStatus.PUBLISHED) {
+          throw new ConflictException(
+            `Form with id '${derivedFromId}' is not published`,
+          )
+        }
+        await formToBePublished.reload({
+          transaction,
+          lock: Transaction.LOCK.UPDATE,
+        })
+
         const applications = await this.applicationModel.findAll({
           where: { formId: id },
           include: [
@@ -956,6 +1005,11 @@ export class FormsService {
           await application.destroy({ transaction })
         }
 
+        const fileKeys = await this.deleteDraftApplications(
+          derivedFromId,
+          transaction,
+        )
+
         const slugToBeArchived = formToBeArchived.slug
         formToBeArchived.status = FormStatus.ARCHIVED
         formToBeArchived.slug = `${
@@ -970,12 +1024,18 @@ export class FormsService {
         formToBePublished.status = FormStatus.PUBLISHED
         formToBePublished.isInaccessible = false
         await formToBePublished.save({ transaction })
+
+        return fileKeys
       } catch (error) {
         throw new InternalServerErrorException(
           `Unexpected error publishing form '${id}'.`,
         )
       }
     })
+
+    await Promise.all(
+      fileKeys.map((key) => this.fileService.deleteFileFromStorage(key)),
+    )
 
     const formResponse = await this.buildFormResponse(formToBeArchived)
 
@@ -990,13 +1050,21 @@ export class FormsService {
     id: string,
     form: Form,
   ): Promise<FormResponseDto> {
-    const copyForm = await this.copyForm(
-      id,
-      true,
-      form.isInaccessible,
-      `${form.slug}-i-breytingu`,
-      undefined,
-    )
+    const copyForm = await this.sequelize.transaction(async (transaction) => {
+      await form.reload({ transaction, lock: Transaction.LOCK.UPDATE })
+      if (form.status !== FormStatus.PUBLISHED) {
+        throw new ConflictException(`Form with id '${id}' is not published`)
+      }
+
+      return this.copyForm(
+        id,
+        true,
+        form.isInaccessible,
+        `${form.slug}-i-breytingu`,
+        undefined,
+        transaction,
+      )
+    })
     const formResponse = await this.buildFormResponse(copyForm)
 
     if (!formResponse) {
@@ -1030,10 +1098,44 @@ export class FormsService {
     return new FormResponseDto()
   }
 
-  private async cleanupApplicationFiles(
+  private async deleteDraftApplications(
+    formId: string,
+    transaction: Transaction,
+  ): Promise<string[]> {
+    const applications = await this.applicationModel.findAll({
+      where: { formId, status: ApplicationStatus.DRAFT },
+      include: [
+        {
+          model: Value,
+          as: 'values',
+          separate: true,
+          where: { fieldType: FieldTypesEnum.FILE },
+          required: false,
+        },
+      ],
+      transaction,
+      lock: Transaction.LOCK.UPDATE,
+    })
+
+    const fileKeys: string[] = []
+    for (const application of applications) {
+      fileKeys.push(
+        ...this.getApplicationFiles(application).map(({ key }) => key),
+      )
+      await this.applicationEventModel.destroy({
+        where: { applicationId: application.id },
+        transaction,
+      })
+      await application.destroy({ transaction })
+    }
+
+    return fileKeys
+  }
+
+  private getApplicationFiles(
     application: Application,
-    transaction?: Transaction,
-  ): Promise<void> {
+  ): { key: string; valueId: string }[] {
+    const files: { key: string; valueId: string }[] = []
     for (const value of application.values ?? []) {
       if (value.fieldType !== FieldTypesEnum.FILE) continue
 
@@ -1062,8 +1164,19 @@ export class FormsService {
       this.logger.debug(`Deleting s3Keys for value ${value.id}:`, s3Keys)
 
       for (const key of s3Keys) {
-        await this.fileService.deleteFile(key, value.id, transaction)
+        files.push({ key, valueId: value.id })
       }
+    }
+
+    return files
+  }
+
+  private async cleanupApplicationFiles(
+    application: Application,
+    transaction?: Transaction,
+  ): Promise<void> {
+    for (const { key, valueId } of this.getApplicationFiles(application)) {
+      await this.fileService.deleteFile(key, valueId, transaction)
     }
   }
 
@@ -1281,10 +1394,12 @@ export class FormsService {
       include: [OrganizationPermission],
     })
 
-    const uncommonListTypes = ListTypes.filter((listType) =>
-      organization?.organizationPermissions?.some(
-        (item) => item.permission === listType.id,
-      ),
+    const uncommonListTypes = ListTypes.filter(
+      (listType) =>
+        !listType.isCommon &&
+        organization?.organizationPermissions?.some(
+          (item) => item.permission === listType.id,
+        ),
     )
 
     const organizationListTypes = commonListTypes.concat(uncommonListTypes)
@@ -1639,6 +1754,7 @@ export class FormsService {
     const sections: Section[] = []
     const screens: Screen[] = []
     const fields: Field[] = []
+    const currencyFieldIds = new Map<string, string>()
     const listItems: ListItem[] = []
     const formCertificationTypes: FormCertificationType[] = []
 
@@ -1663,6 +1779,9 @@ export class FormsService {
         for (const field of screen.fields) {
           const newField = field.toJSON()
           newField.id = uuidV4()
+          if (field.fieldType === FieldTypesEnum.ISK_NUMBERBOX) {
+            currencyFieldIds.set(field.id, newField.id)
+          }
           newField.identifier = field.identifier
           newField.screenId = newScreen.id
           newField.created = new Date()
@@ -1686,6 +1805,22 @@ export class FormsService {
             }
           }
         }
+      }
+    }
+    for (const field of fields) {
+      if (
+        field.fieldType !== FieldTypesEnum.ISK_SUMBOX ||
+        !field.fieldSettings?.fieldsToSum
+      ) {
+        continue
+      }
+
+      field.fieldSettings = {
+        ...field.fieldSettings,
+        fieldsToSum: field.fieldSettings.fieldsToSum.flatMap((fieldId) => {
+          const copiedFieldId = currencyFieldIds.get(fieldId)
+          return copiedFieldId ? [copiedFieldId] : []
+        }),
       }
     }
     newForm.dependencies = deps

@@ -131,7 +131,12 @@ export class RefundService {
       throw new BadRequestException(mapToCardErrorCode(responseCode))
     }
 
+    const raw = rawData as Record<string, unknown> | null
     this.logger.error(`${logPrefix}Failed to parse payment gateway response`, {
+      responseCode: raw?.responseCode,
+      isSuccess: raw?.isSuccess,
+      // Field names only, never their values: the response carries card data
+      responseFields: raw && typeof raw === 'object' ? Object.keys(raw) : [],
       error: successParsed.error,
     })
     throw new BadRequestException('Failed to parse payment gateway response')

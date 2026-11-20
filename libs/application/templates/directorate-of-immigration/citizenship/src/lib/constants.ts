@@ -2,6 +2,8 @@ import { DefaultEvents } from '@island.is/application/types'
 
 export type Events = { type: DefaultEvents.SUBMIT | DefaultEvents.ABORT }
 
+export const MIN_DATE = '1900-01-01'
+
 export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',

@@ -12,24 +12,36 @@ export interface RannisGrantDto extends GrantBase {
   isOpen?: boolean
 }
 
+const toOptionalString = (value: unknown): string | undefined =>
+  value === null || value === undefined || value === ''
+    ? undefined
+    : String(value)
+
 export const mapRannisGrant = (
   grantItem: RannisGrantItem,
-): RannisGrantDto | undefined =>
-  mapGrant('id' in grantItem ? grantItem.id : grantItem.fundid, grantItem)
+): RannisGrantDto | undefined => {
+  const id = toOptionalString(
+    'id' in grantItem ? grantItem.id : grantItem.fundid,
+  )
+  if (!id) {
+    return undefined
+  }
+  return mapGrant(id, grantItem)
+}
 
 const mapGrant = (
   id: string,
   grantItem: RannisGrantItem,
 ): RannisGrantDto | undefined => {
   return {
-    id: id,
-    fundId: grantItem.fundid,
+    id,
+    fundId: toOptionalString(grantItem.fundid),
     name: grantItem.fund_name,
     dateFrom: grantItem.datefrom
       ? parseDateSafely(grantItem.datefrom)
       : undefined,
     dateTo: grantItem.dateto ? parseDateSafely(grantItem.dateto) : undefined,
     url: grantItem.fund_url,
-    isOpen: grantItem.is_open === '1',
+    isOpen: String(grantItem.is_open) === '1',
   }
 }

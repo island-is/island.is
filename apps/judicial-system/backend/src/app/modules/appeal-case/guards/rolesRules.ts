@@ -10,7 +10,6 @@ import {
 import { AppealCase, Case } from '../../repository'
 import {
   canWithdrawCaseLevelAppeal,
-  hasStandingVerdictAppeal,
   isInCourtRulingOrderAppeal,
   userHasActiveInCourtAppeal,
 } from '../appealCase.helpers'
@@ -30,6 +29,7 @@ const courtOfAppealsUpdateFields: (keyof UpdateAppealCaseDto)[] = [
   'appealValidToDate',
   'isAppealCustodyIsolation',
   'appealIsolationToDate',
+  'verdictAppealStatus',
 ]
 
 // Court of appeals update rules
@@ -127,21 +127,17 @@ const userAppealedAppealCase = (request: {
     return false
   }
 
-  // A verdict appeal is per defendant on both sides, so the prosecution is an
-  // appellant of the requested defendant's appeal, not of the case: the
-  // prosecution reviewer withdraws the prosecution's appeal regarding one
-  // defendant, and only where one stands. The defence rules for verdict appeals
-  // go through the per-party branch of userIsAppellant below.
+  // The prosecution's verdict appeal is the reviewer's review decision, so it is
+  // withdrawn by changing that decision, which withdraws the appeal in the same
+  // transaction (see handleVerdictAppealUpdates in the defendant service).
+  // Withdrawing it here would leave the decision standing at appeal with no
+  // appeal behind it. The defence rules for verdict appeals go through the
+  // per-party branch of userIsAppellant below.
   if (
     appealCase.appealType === AppealCaseType.VERDICT &&
     isProsecutionUser(user)
   ) {
-    const defendantId = request.body?.defendantId
-
-    return Boolean(
-      defendantId &&
-        hasStandingVerdictAppeal(appealCase, defendantId, 'PROSECUTION'),
-    )
+    return false
   }
 
   // In-court ruling-order appeals are per party and withdrawn on the decision

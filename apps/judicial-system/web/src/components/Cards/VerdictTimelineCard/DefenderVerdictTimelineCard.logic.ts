@@ -5,17 +5,25 @@ import {
   getDefendantVerdictAppealDecisionLabel,
   getServiceRequirementText,
 } from '@island.is/judicial-system/formatters'
+import { findAppealStatementDeadline } from '@island.is/judicial-system/types'
 import { getAppealExpirationInfo } from '@island.is/judicial-system-web/src/components/InfoCard/DefendantInfo/DefendantInfo.logic'
 import type {
   AppealCase,
   Defendant,
   Verdict,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { ServiceRequirement } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  AppealCaseState,
+  ServiceRequirement,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { getProsecutionVerdictAppealItem } from './prosecutionVerdictAppeal.logic'
 import type { VerdictTimelineItem } from './VerdictTimelineBody'
 import { strings } from './VerdictTimelineCard.strings'
+
+// Names the bullet that shows where the defendant stands on the verdict: the
+// stance they took, or the appeal that came of it.
+const STANCE_ITEM_ID = 'stance'
 
 /**
  * Whether there is anything yet to tell the defence about a verdict. Until the
@@ -32,7 +40,10 @@ interface DefenderVerdictTimeline {
   verdict: Verdict
   verdictAppealDeadline?: Defendant['verdictAppealDeadline']
   isVerdictAppealDeadlineExpired?: Defendant['isVerdictAppealDeadlineExpired']
-  verdictAppealCase?: Pick<AppealCase, 'appealEventLogs'> | null
+  verdictAppealCase?: Pick<
+    AppealCase,
+    'appealState' | 'appealEventLogs' | 'statementDeadlines'
+  > | null
   formatMessage: IntlShape['formatMessage']
 }
 
@@ -95,9 +106,12 @@ export const getDefenderVerdictTimelineItems = ({
   }
 
   // The stance the defendant took at service only matters while it is still open
-  // which way they will go, so an appeal takes its place in the list.
+  // which way they will go, so an appeal takes its place in the list. It is the
+  // same bullet either way, so filing or withdrawing an appeal swaps the text
+  // in place.
   if (verdict.appealDate) {
     items.push({
+      id: STANCE_ITEM_ID,
       text: `Dómfelldi áfrýjaði ${formatDate(verdict.appealDate)}`,
       tone: 'critical',
     })
@@ -107,7 +121,7 @@ export const getDefenderVerdictTimelineItems = ({
     )
 
     if (appealDecisionLabel) {
-      items.push({ text: appealDecisionLabel })
+      items.push({ id: STANCE_ITEM_ID, text: appealDecisionLabel })
     }
   }
 
@@ -120,6 +134,26 @@ export const getDefenderVerdictTimelineItems = ({
 
   if (prosecutionAppealItem) {
     items.push(prosecutionAppealItem)
+  }
+
+  // Greinargerðarfrest for this defendant while the verdict appeal is open.
+  // Completed / withdrawn appeals leave the outcome off this card for now.
+  if (
+    verdictAppealCase?.appealState !== AppealCaseState.COMPLETED &&
+    verdictAppealCase?.appealState !== AppealCaseState.WITHDRAWN
+  ) {
+    const statementDeadline = findAppealStatementDeadline(
+      verdictAppealCase?.statementDeadlines,
+      { defendantId },
+    )
+
+    if (statementDeadline?.deadline) {
+      items.push({
+        text: `Frestur til að skila greinargerð ${
+          statementDeadline.isExpired ? 'rann út' : 'er til'
+        } ${formatDate(statementDeadline.deadline)}`,
+      })
+    }
   }
 
   return items

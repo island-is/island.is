@@ -10,6 +10,7 @@ import {
   ExtensionPublishedVerdictApi,
   ExtensionPublishedBookingApi,
   ExtensionLawyerApi,
+  ExtensionPublishedCaseApi,
   ExternalIntegrationAPISecurityApi,
 } from '../../gen/fetch/gopro'
 import {
@@ -140,6 +141,7 @@ export class VerdictsClientService {
     private readonly supremeCourtApi: DefaultApi,
     private readonly goproCourtAgendasApi: ExtensionPublishedBookingApi,
     private readonly goproLawyersApi: ExtensionLawyerApi,
+    private readonly goproCaseApi: ExtensionPublishedCaseApi,
     private readonly goproAuthenticationApi: ExternalIntegrationAPISecurityApi,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
@@ -164,6 +166,7 @@ export class VerdictsClientService {
       goproCourtAgendasApi:
         this.goproCourtAgendasApi.withMiddleware(middleware),
       goproLawyersApi: this.goproLawyersApi.withMiddleware(middleware),
+      goproCaseApi: this.goproCaseApi.withMiddleware(middleware),
     }
   }
 
@@ -587,7 +590,7 @@ export class VerdictsClientService {
     const shouldFetchGoproAgendas = hasNoCourtFilter || goproCourts.length > 0
 
     const pageNumber = input.page ?? 1
-    const itemsPerPage = 10
+    const itemsPerPage = 20
 
     const { goproCourtAgendasApi } = await this.getAuthenticatedGoproApis()
 
@@ -873,6 +876,40 @@ export class VerdictsClientService {
           appealPolicyDate: item.appealPolicyDate,
           registrationDate: item.registrationDate,
           verdictDate: item.verdictDate,
+        })),
+      input,
+    }
+  }
+
+  async getCourtOfAppealAppeals(input: { page: number }) {
+    const { goproCaseApi } = await this.getAuthenticatedGoproApis()
+    const response = await goproCaseApi.getPublishedAppealCasesV2({
+      pageNumber: Math.max(1, input.page ?? 1),
+      itemsPerPage: ITEMS_PER_PAGE,
+      orderBy: 'casenumber',
+      orderDirection: 'desc',
+    })
+
+    if (response.succeeded === false) {
+      throw new Error(
+        response.message ||
+          'Failed to fetch published appeal cases from Court of Appeal',
+      )
+    }
+
+    return {
+      total: response.total ?? 0,
+      items: (response.items ?? [])
+        .filter((item) => Boolean(item.recordId) && Boolean(item.caseNumber))
+        .map((item) => ({
+          id: item.recordId as string,
+          title: (item.caseTitleRaw ?? '').replace(/\s+/g, ' ').trim(),
+          caseNumber: item.caseNumber as string,
+          status: item.status || null,
+          appealDate:
+            item.appealDate && isValidDate(item.appealDate)
+              ? item.appealDate.toISOString()
+              : null,
         })),
       input,
     }
