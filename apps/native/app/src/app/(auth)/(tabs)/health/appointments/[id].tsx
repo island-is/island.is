@@ -161,8 +161,8 @@ export default function AppointmentDetailScreen() {
     }, []),
   )
 
-  const appointmentFromCache = useFragment_experimental<HealthDirectorateAppointment>(
-    {
+  const appointmentFromCache =
+    useFragment_experimental<HealthDirectorateAppointment>({
       fragment: AppointmentFragmentFragmentDoc,
       fragmentName: 'AppointmentFragment',
       from: {
@@ -170,28 +170,20 @@ export default function AppointmentDetailScreen() {
         id: appointmentId,
       },
       returnPartialData: true,
-    },
-  )
+    })
 
-  const {
-    data,
-    loading,
-    error,
-    networkStatus,
-    refetch,
-  } = useGetAppointmentDetailQuery({
-    variables: { id: appointmentId ?? '' },
-    skip: !appointmentId,
-  })
+  const { data, loading, error, networkStatus, refetch } =
+    useGetAppointmentDetailQuery({
+      variables: { id: appointmentId ?? '' },
+      skip: !appointmentId,
+    })
 
-  const [
-    cancelAppointment,
-    { loading: cancelling },
-  ] = useCancelAppointmentMutation({
-    // Not awaited: a failed list refetch would reject the mutation and
-    // hide the outcome below.
-    refetchQueries: ['getAppointments'],
-  })
+  const [cancelAppointment, { loading: cancelling }] =
+    useCancelAppointmentMutation({
+      // Not awaited: a failed list refetch would reject the mutation and
+      // hide the outcome below.
+      refetchQueries: ['getAppointments'],
+    })
 
   const appointment =
     data?.healthDirectorateAppointment ?? appointmentFromCache?.data
@@ -339,10 +331,11 @@ export default function AppointmentDetailScreen() {
       : 'health.appointments.videoCallInfoWithLink'
     : 'health.appointments.videoCallInfoNoLink'
 
-  const { weekday, date: dateStr, time } = formatAppointmentDate(
-    intl,
-    appointment?.date,
-  )
+  const {
+    weekday,
+    date: dateStr,
+    time,
+  } = formatAppointmentDate(intl, appointment?.date)
 
   // Whether cancelling is offered at all, and until when, is the server's
   // call - never inferred from the appointment date on the client.

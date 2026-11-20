@@ -261,15 +261,13 @@ export default function SettingsScreen() {
           [
             {
               text: intl.formatMessage({
-                id:
-                  'settings.communication.notificationsBlockedAlertCancelButton',
+                id: 'settings.communication.notificationsBlockedAlertCancelButton',
               }),
               style: 'cancel',
             },
             {
               text: intl.formatMessage({
-                id:
-                  'settings.communication.notificationsBlockedAlertOpenSettingsButton',
+                id: 'settings.communication.notificationsBlockedAlertOpenSettingsButton',
               }),
               onPress: onNotificationsBlockedPress,
             },

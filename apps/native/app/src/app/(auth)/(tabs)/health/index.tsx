@@ -916,8 +916,7 @@ export default function HealthOverviewScreen() {
                 warningText={
                   !isMedicinePeriodActive
                     ? intl.formatMessage({
-                        id:
-                          'health.overview.medicinePurchaseNoActivePeriodWarning',
+                        id: 'health.overview.medicinePurchaseNoActivePeriodWarning',
                       })
                     : ''
                 }

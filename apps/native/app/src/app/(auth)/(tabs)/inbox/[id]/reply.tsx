@@ -70,7 +70,11 @@ const EmailIconWrapper = styled(Pressable)`
 
 export default function DocumentReplyScreen() {
   const theme = useTheme()
-  const { id: documentId, senderName, subject } = useLocalSearchParams<{
+  const {
+    id: documentId,
+    senderName,
+    subject,
+  } = useLocalSearchParams<{
     id: string
     senderName: string
     subject: string
@@ -88,27 +92,25 @@ export default function DocumentReplyScreen() {
   const [message, setMessage] = useState('')
   const [hasShownModal, setHasShownModal] = useState(false)
 
-  const [
-    sendMessage,
-    { loading: sendMessageLoading },
-  ] = useDocumentReplyMutation({
-    refetchQueries: [GetDocumentDocument],
-    onCompleted: (data) => {
-      if (data.documentsV2Reply?.id) {
-        setMessage('')
-        router.back()
-      } else {
-        toast.error(
-          intl.formatMessage({ id: 'documentReply.sendMessageError' }),
-          {
-            message: intl.formatMessage({
-              id: 'documentReply.pleaseTryAgain',
-            }),
-          },
-        )
-      }
-    },
-  })
+  const [sendMessage, { loading: sendMessageLoading }] =
+    useDocumentReplyMutation({
+      refetchQueries: [GetDocumentDocument],
+      onCompleted: (data) => {
+        if (data.documentsV2Reply?.id) {
+          setMessage('')
+          router.back()
+        } else {
+          toast.error(
+            intl.formatMessage({ id: 'documentReply.sendMessageError' }),
+            {
+              message: intl.formatMessage({
+                id: 'documentReply.pleaseTryAgain',
+              }),
+            },
+          )
+        }
+      },
+    })
 
   const onSendPress = () => {
     if (!userProfile?.email) {

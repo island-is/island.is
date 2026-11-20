@@ -25,9 +25,8 @@ export const OfflineIcon = ({
 
   const netInfo = useNetInfo()
 
-  const networkStatuses = (Array.isArray(networkStatus)
-    ? networkStatus
-    : [networkStatus]
+  const networkStatuses = (
+    Array.isArray(networkStatus) ? networkStatus : [networkStatus]
   ).filter(Boolean) as NetworkStatus[]
 
   const loading = networkStatuses.some(

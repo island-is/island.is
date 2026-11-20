@@ -147,9 +147,8 @@ export const StatusMessageTemplate = ({
 }: StatusMessageTemplateProps) => {
   const theme = useTheme()
   const { openBrowser } = useBrowser()
-  const { borderColor, tagColor, tagBackgroundColor } = getColorsByVariant(
-    variant,
-  )
+  const { borderColor, tagColor, tagBackgroundColor } =
+    getColorsByVariant(variant)
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
