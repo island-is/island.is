@@ -39,11 +39,8 @@ class CardInformation {
 
 @ObjectType('PaymentsVerifyCardResponse')
 export class VerifyCardResponse {
-  @Field(() => String, {
-    description: 'Raw response from card verification',
-    nullable: true,
-  })
-  cardVerificationRawResponse?: string
+  @Field(() => String, { description: 'Raw response from card verification' })
+  cardVerificationRawResponse!: string
 
   @Field(() => String, { description: 'Post URL for verification' })
   postUrl!: string
@@ -51,22 +48,16 @@ export class VerifyCardResponse {
   @Field(() => [VerificationField], { description: 'Verification fields' })
   verificationFields!: VerificationField[]
 
-  @Field(() => [VerificationField], {
-    description: 'Additional fields',
-    nullable: true,
-  })
-  additionalFields?: VerificationField[]
+  @Field(() => [VerificationField], { description: 'Additional fields' })
+  additionalFields!: VerificationField[]
 
   @Field(() => Boolean, {
     description: 'Indicates if the verification was successful',
   })
   isSuccess!: boolean
 
-  @Field(() => CardInformation, {
-    description: 'Card information',
-    nullable: true,
-  })
-  cardInformation?: CardInformation
+  @Field(() => CardInformation, { description: 'Card information' })
+  cardInformation!: CardInformation
 
   @Field(() => String, {
     description: 'Script path for further actions',
@@ -74,15 +65,9 @@ export class VerifyCardResponse {
   })
   scriptPath?: string
 
-  @Field(() => String, {
-    description: 'Response code from the verification',
-    nullable: true,
-  })
-  responseCode?: string
+  @Field(() => String, { description: 'Response code from the verification' })
+  responseCode!: string
 
-  @Field(() => String, {
-    description: 'Response time of the verification',
-    nullable: true,
-  })
-  responseTime?: string
+  @Field(() => String, { description: 'Response time of the verification' })
+  responseTime!: string
 }

@@ -183,15 +183,24 @@ export class CardPaymentService {
     })
 
     // Nothing reads the verification's card information: the payment is
-    // stored with the charge's. Logged to show if the gateway stops sending it.
-    if (!data.cardInformation?.cardScheme || !data.cardInformation?.cardUsage) {
+    // stored with the charge's. Passed on only when complete, as the response
+    // types promise its card scheme and usage, and logged when it is not, to
+    // show if the gateway stops sending it.
+    const { cardInformation, ...verification } = data
+    const hasCardInformation =
+      !!cardInformation?.cardScheme && !!cardInformation?.cardUsage
+    if (!hasCardInformation) {
       this.logger.warn(
         `[${paymentFlowId}] Payment gateway verified without card information`,
         { correlationId },
       )
     }
 
-    return { ...data, correlationID: data.correlationID ?? correlationId }
+    return {
+      ...verification,
+      ...(hasCardInformation ? { cardInformation } : {}),
+      correlationID: verification.correlationID ?? correlationId,
+    }
   }
 
   getMdPayload(md: string): MdNormalised {
