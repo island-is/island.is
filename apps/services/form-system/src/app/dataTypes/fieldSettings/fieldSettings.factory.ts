@@ -108,8 +108,22 @@ export class FieldSettingsFactory {
         keys = ['assetType', 'isDropdown', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.FAMILY:
-        keys = ['familyType', ...keys]
-        return this.pickSettings(fieldSettings, keys)
+      case FieldTypesEnum.CHILD:
+        keys = [
+          'familyType',
+          'showBiologicalChildren',
+          'showChildrenInCustody',
+          ...keys,
+        ]
+        return this.pickSettings(
+          {
+            ...fieldSettings,
+            showBiologicalChildren:
+              fieldSettings.showBiologicalChildren ?? true,
+            showChildrenInCustody: fieldSettings.showChildrenInCustody ?? true,
+          },
+          keys,
+        )
       default:
         return this.pickSettings(fieldSettings, keys)
     }
