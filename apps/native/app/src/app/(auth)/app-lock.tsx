@@ -1,15 +1,18 @@
 import { StackActions } from '@react-navigation/native'
 import { useNavigation, useRouter } from 'expo-router'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   Alert,
   AppState,
   BackHandler,
+  Image,
   InteractionManager,
   Platform,
   View,
 } from 'react-native'
+
+import splashImage from '../../../assets/images/island_is/splashscreen.png'
 
 import {
   clearPendingDeepLink,
@@ -36,8 +39,15 @@ import {
 import { testIDs } from '@/utils/test-ids'
 import { useBrowser } from '@/hooks/use-browser'
 
+// The native splash screen's, from app.config.js: it's white in dark mode too.
+const SPLASH_BACKGROUND = '#ffffff'
+const SPLASH_IMAGE_SIZE = 200
+
 export default function AppLockScreen() {
   const router = useRouter()
+  // Looks like the splash screen until the check on return finds the app
+  // locked. Back within the time limit, the lock closes without showing.
+  const [isLocked, setIsLocked] = useState(false)
   const navigation = useNavigation()
   const logout = useAuthStore(({ logout }) => logout)
   const nativeUser = useAuthStore(({ nativeUser }) => nativeUser)
@@ -179,6 +189,7 @@ export default function AppLockScreen() {
         return
       }
 
+      setIsLocked(true)
       // Past the grace period the tokens go: the unlock gets new ones from IAS.
       // They're gone at once; the prompt doesn't wait for the revocation.
       void authStore.getState().lockNative()
@@ -236,6 +247,11 @@ export default function AppLockScreen() {
         confirmVisibleThenRun()
       } else {
         cancelPendingConfirm()
+        // The splash again while away, e.g. in the app switcher, but not
+        // under the biometric prompt it opened itself.
+        if (nativeUnlockRef.current.status !== 'prompting') {
+          setIsLocked(false)
+        }
       }
     })
 
@@ -254,12 +270,29 @@ export default function AppLockScreen() {
 
   return (
     <View testID={testIDs.SCREEN_APP_LOCK} style={{ flex: 1 }}>
-      <NativeLock
-        name={nativeUser.name}
-        nationalId={nativeUser.nationalId}
-        unlock={nativeUnlock}
-        onLogoutPress={handleLogout}
-      />
+      {isLocked ? (
+        <NativeLock
+          name={nativeUser.name}
+          nationalId={nativeUser.nationalId}
+          unlock={nativeUnlock}
+          onLogoutPress={handleLogout}
+        />
+      ) : (
+        <View
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: SPLASH_BACKGROUND,
+          }}
+        >
+          <Image
+            source={splashImage}
+            style={{ width: SPLASH_IMAGE_SIZE, height: SPLASH_IMAGE_SIZE }}
+            resizeMode="contain"
+          />
+        </View>
+      )}
     </View>
   )
 }
