@@ -38,7 +38,6 @@ export class OrderVehicleRegistrationCertificateService extends BaseTemplateApiS
   }
 
   private getSendToAddress(
-    applicationId: string,
     answers: OrderVehicleRegistrationCertificateAnswers,
   ): SendToAddress | undefined {
     if (!isSendToOtherAddress(answers)) {
@@ -64,7 +63,6 @@ export class OrderVehicleRegistrationCertificateService extends BaseTemplateApiS
       this.logger.error(
         'Incomplete send to address, registration card print not requested',
         {
-          applicationId,
           context: LOGGING_CONTEXT,
           missingFields,
         },
@@ -106,7 +104,7 @@ export class OrderVehicleRegistrationCertificateService extends BaseTemplateApiS
     const answers =
       application.answers as OrderVehicleRegistrationCertificateAnswers
     const permno = answers?.pickVehicle?.plate
-    const sendToAddress = this.getSendToAddress(application.id, answers)
+    const sendToAddress = this.getSendToAddress(answers)
 
     try {
       await this.vehiclePrintingClient.requestRegistrationCardPrint(
@@ -116,7 +114,6 @@ export class OrderVehicleRegistrationCertificateService extends BaseTemplateApiS
       )
     } catch (e) {
       this.logger.error('Failed to request registration card print', {
-        applicationId: application.id,
         context: LOGGING_CONTEXT,
         sendToOtherAddress: !!sendToAddress,
       })
@@ -124,7 +121,6 @@ export class OrderVehicleRegistrationCertificateService extends BaseTemplateApiS
     }
 
     this.logger.debug('Requested registration card print', {
-      applicationId: application.id,
       context: LOGGING_CONTEXT,
       sendToOtherAddress: !!sendToAddress,
     })

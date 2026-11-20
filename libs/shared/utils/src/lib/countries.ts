@@ -10,7 +10,11 @@ export const getCountryByCode = (code: string): Country | undefined => {
   return countryCodes.find((country) => country.code === code) ?? undefined
 }
 
-export const getAllCountryCodes = (locale: 'is' | 'en' | string = 'en') => {
+export const getAllCountryCodes = (locale?: 'is' | 'en' | string) => {
+  if (!locale) {
+    return countryCodes
+  }
+
   const isIcelandic = locale === 'is'
   const displayName = (country: Country) =>
     isIcelandic ? country.name_is ?? country.name : country.name
