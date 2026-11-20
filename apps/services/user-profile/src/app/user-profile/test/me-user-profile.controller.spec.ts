@@ -2877,11 +2877,52 @@ describe('MeUserProfileController', () => {
               categoryLabel: healthLabel,
             },
           ],
+          blockedSenders: [],
         })
       })
     })
 
     describe('POST /v2/me/notification-settings', () => {
+      it("should block and unblock a sender without touching the sender's categories", async () => {
+        await fixtureFactory.createUserProfile({
+          nationalId: testUser.nationalId,
+        })
+        await fixtureFactory.createBlockedNotification({
+          nationalId: testUser.nationalId,
+          senderId,
+        })
+        const expectedCategories = [
+          {
+            key: `${senderId}-almennt`,
+            senderId,
+            category: 'almennt',
+            categoryLabel: generalLabel,
+          },
+        ]
+
+        const blockRes = await server
+          .post(endpoint)
+          .send({ senders: [{ senderId, blocked: true }] })
+
+        expect(blockRes.status).toBe(204)
+        const afterBlock = await server.get(endpoint)
+        expect(afterBlock.body).toMatchObject({
+          blockedCategories: expectedCategories,
+          blockedSenders: [{ senderId }],
+        })
+
+        const unblockRes = await server
+          .post(endpoint)
+          .send({ senders: [{ senderId, blocked: false }] })
+
+        expect(unblockRes.status).toBe(204)
+        const afterUnblock = await server.get(endpoint)
+        expect(afterUnblock.body).toMatchObject({
+          blockedCategories: expectedCategories,
+          blockedSenders: [],
+        })
+      })
+
       it('should block all given categories', async () => {
         await fixtureFactory.createUserProfile({
           nationalId: testUser.nationalId,

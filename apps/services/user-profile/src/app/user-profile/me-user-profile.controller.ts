@@ -320,12 +320,14 @@ export class MeUserProfileController {
   @Get('/notification-settings')
   @Documentation({
     description:
-      'Get notification settings for the current user, including the sender categories the user has blocked.',
+      'Get notification settings for the current user, including the senders and sender categories the user has blocked.',
     response: { status: 200, type: NotificationSettingsDto },
   })
   @Audit<NotificationSettingsDto>({
-    resources: (settings) =>
-      settings.blockedCategories.map((blockedCategory) => blockedCategory.key),
+    resources: (settings) => [
+      ...settings.blockedCategories.map(({ key }) => key),
+      ...settings.blockedSenders.map(({ senderId }) => senderId),
+    ],
   })
   findNotificationSettings(
     @CurrentUser() user: User,
@@ -337,7 +339,7 @@ export class MeUserProfileController {
   @Scopes(UserProfileScope.write)
   @Documentation({
     description:
-      'Blocks or unblocks notifications in the given sender categories for the current user.',
+      'Blocks or unblocks notifications from the given senders and sender categories for the current user.',
     response: { status: 204 },
   })
   updateNotificationSettings(
@@ -345,9 +347,13 @@ export class MeUserProfileController {
     @Body() input: UpdateNotificationSettingsDto,
   ): Promise<void> {
     const keysWhere = (blocked: boolean) =>
-      input.categories
+      (input.categories ?? [])
         .filter((category) => category.blocked === blocked)
         .map(({ senderId, category }) => toCategoryKey(senderId, category))
+    const sendersWhere = (blocked: boolean) =>
+      (input.senders ?? [])
+        .filter((sender) => sender.blocked === blocked)
+        .map(({ senderId }) => senderId)
 
     return this.auditService.auditPromise(
       {
@@ -355,12 +361,14 @@ export class MeUserProfileController {
         namespace,
         action: 'updateNotificationSettings',
         resources: user.nationalId,
-        meta: { blocked: keysWhere(true), unblocked: keysWhere(false) },
+        meta: {
+          blocked: keysWhere(true),
+          unblocked: keysWhere(false),
+          blockedSenders: sendersWhere(true),
+          unblockedSenders: sendersWhere(false),
+        },
       },
-      this.notificationSettingsService.updateCategories(
-        user.nationalId,
-        input.categories,
-      ),
+      this.notificationSettingsService.updateSettings(user.nationalId, input),
     )
   }
 

@@ -101,7 +101,7 @@ export class UserProfileController {
         include: {
           required: false,
           description:
-            'Comma separated list of optional data to include in the response, e.g. notificationSettings returns the sender categories the user has blocked',
+            'Comma separated list of optional data to include in the response, e.g. notificationSettings returns the senders and sender categories the user has blocked',
           type: 'string',
           isArray: true,
           enum: UserProfileInclude,
@@ -121,6 +121,7 @@ export class UserProfileController {
     resources: (profile) => [
       profile.nationalId,
       ...(profile.blockedCategories ?? []).map(({ key }) => key),
+      ...(profile.blockedSenders ?? []).map(({ senderId }) => senderId),
     ],
   })
   @Scopes(
@@ -160,10 +161,10 @@ export class UserProfileController {
       return userProfile
     }
 
-    const { blockedCategories } =
+    const { blockedCategories, blockedSenders } =
       await this.notificationSettingsService.findSettings(nationalId)
 
-    return { ...userProfile, blockedCategories }
+    return { ...userProfile, blockedCategories, blockedSenders }
   }
 
   @Get('/.to-national-id/actor-profiles/.from-national-id')

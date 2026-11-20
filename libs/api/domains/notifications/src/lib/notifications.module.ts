@@ -1,5 +1,6 @@
 import { UserNotificationClientModule } from '@island.is/clients/user-notification'
 import { UserProfileClientModule } from '@island.is/clients/user-profile'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 import { Module } from '@nestjs/common'
 
@@ -15,7 +16,11 @@ import { NotificationSettingsResolver } from './notificationSettings.resolver'
 import { NotificationSettingsService } from './notificationSettings.service'
 
 @Module({
-  imports: [UserNotificationClientModule, UserProfileClientModule],
+  imports: [
+    UserNotificationClientModule,
+    UserProfileClientModule,
+    FeatureFlagModule,
+  ],
   providers: [
     NotificationsResolver,
     NotificationsListResolver,

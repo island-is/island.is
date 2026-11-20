@@ -23,6 +23,11 @@ export class NotificationSenderSetting {
 
   @Field(() => [NotificationCategorySetting])
   categories!: NotificationCategorySetting[]
+
+  @Field({
+    description: 'True if all notifications from the sender are blocked',
+  })
+  blocked!: boolean
 }
 
 @ObjectType()
@@ -47,9 +52,21 @@ export class NotificationCategoryInput {
 }
 
 @InputType()
+export class NotificationSenderInput {
+  @Field()
+  senderId!: string
+
+  @Field()
+  blocked!: boolean
+}
+
+@InputType()
 export class UpdateNotificationCategoriesInput {
   @Field(() => [NotificationCategoryInput], { nullable: true })
   categories?: NotificationCategoryInput[]
+
+  @Field(() => [NotificationSenderInput], { nullable: true })
+  senders?: NotificationSenderInput[]
 
   @Field(() => Boolean, { nullable: true })
   onlyActionablePriorityNotifications?: boolean

@@ -14,6 +14,7 @@ import {
   BlockedNotification,
   CategoryLabel,
 } from '../src/app/user-profile/models/blockedNotification.model'
+import { BlockedNotificationSender } from '../src/app/user-profile/models/blockedNotificationSender.model'
 import { uuid } from 'uuidv4'
 
 export class FixtureFactory {
@@ -190,6 +191,21 @@ export class FixtureFactory {
       category,
       categoryLabel,
       created,
+    })
+  }
+
+  async createBlockedNotificationSender({
+    nationalId,
+    senderId,
+  }: {
+    nationalId: string
+    senderId: string
+  }) {
+    const blockedNotificationSenderModel = this.get(BlockedNotificationSender)
+
+    return blockedNotificationSenderModel.create<BlockedNotificationSender>({
+      nationalId,
+      senderId,
     })
   }
 
