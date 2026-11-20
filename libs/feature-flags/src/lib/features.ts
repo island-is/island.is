@@ -43,6 +43,7 @@ export enum Features {
   isFjarskiptastofaSelfAssessmentEnabled = 'isFjarskiptastofaSelfAssessmentEnabled',
   isConfirmJobOrIncomeEnabled = 'isConfirmJobOrIncomeEnabled',
   parentalLeaveV2 = 'isParentalLeaveV2Enabled',
+  machineLicenseRenewal = 'isMachineLicenseRenewalEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',

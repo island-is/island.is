@@ -1,3 +1,5 @@
+import { MachineLicenseRenewalModule } from './aosh/machine-license-renewal/machine-license-renewal.module'
+import { MachineLicenseRenewalService } from './aosh/machine-license-renewal/machine-license-renewal.service'
 import { FjarskiptastofaSelfAssessmentModule } from './fjarskiptastofa/self-assessment/self-assessment.module'
 import { FjarskiptastofaSelfAssessmentService } from './fjarskiptastofa/self-assessment/self-assessment.service'
 import { PayDebtsModule } from './pay-debts/pay-debts.module'
@@ -311,6 +313,7 @@ export const modules = [
   DirectorateOfEqualityModule,
   PayDebtsModule,
   U2CertificateModule,
+  MachineLicenseRenewalModule,
   FjarskiptastofaSelfAssessmentModule,
 ]
 
@@ -417,5 +420,6 @@ export const services = [
   DirectorateOfEqualityService,
   PayDebtsService,
   U2CertificateService,
+  MachineLicenseRenewalService,
   FjarskiptastofaSelfAssessmentService,
 ]

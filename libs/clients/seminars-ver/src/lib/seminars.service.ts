@@ -10,6 +10,12 @@ import {
   IndividualApi,
   IndividualDTO,
   IndividualCourseValidationDto,
+  PaymentRecievedApi,
+  PaymentRecievedDto,
+  WorkMachineLicenseApi,
+  WorkMachineLicenseDto,
+  WorkMachineLicenseRenewalApplicationApi,
+  WorkMachineLicenseRenewalApplicationDto,
 } from '../../gen/fetch'
 
 @Injectable()
@@ -19,6 +25,9 @@ export class SeminarsClientService {
     private readonly companyApi: CompanyApi,
     private readonly registrationApi: RegistrationApi,
     private readonly individualApi: IndividualApi,
+    private readonly workMachineLicenseApi: WorkMachineLicenseApi,
+    private readonly paymentRecievedApi: PaymentRecievedApi,
+    private readonly workMachineLicenseRenewalApplicationApi: WorkMachineLicenseRenewalApplicationApi,
   ) {}
 
   private courseApiWithAuth = (user: User) =>
@@ -29,6 +38,14 @@ export class SeminarsClientService {
     this.registrationApi.withMiddleware(new AuthMiddleware(user as Auth))
   private individualApiWithAuth = (user: User) =>
     this.individualApi.withMiddleware(new AuthMiddleware(user as Auth))
+  private workMachineLicenseApiWithAuth = (user: User) =>
+    this.workMachineLicenseApi.withMiddleware(new AuthMiddleware(user as Auth))
+  private paymentRecievedApiWithAuth = (user: User) =>
+    this.paymentRecievedApi.withMiddleware(new AuthMiddleware(user as Auth))
+  private workMachineLicenseRenewalApplicationApiWithAuth = (user: User) =>
+    this.workMachineLicenseRenewalApplicationApi.withMiddleware(
+      new AuthMiddleware(user as Auth),
+    )
 
   async getSeminar(auth: User, courseId: string): Promise<CourseDTO> {
     return this.courseApiWithAuth(auth).apiCourseCourseIdGet({
@@ -37,7 +54,7 @@ export class SeminarsClientService {
   }
 
   async getAllSeminars(auth: User): Promise<Array<CourseDTO>> {
-    return this.courseApiWithAuth(auth).apiCourseGet()
+    return this.courseApiWithAuth(auth).apiCourseGet({})
   }
 
   async isCompanyValid(auth: User, nationalId: string): Promise<CompanyDTO> {
@@ -68,6 +85,38 @@ export class SeminarsClientService {
           email: individual.email,
         })),
       },
+    })
+  }
+
+  async getWorkMachineLicense(
+    auth: User,
+    applicationId: string,
+  ): Promise<WorkMachineLicenseDto> {
+    return this.workMachineLicenseApiWithAuth(auth).apiWorkMachineLicenseGet({
+      xCorrelationID: applicationId,
+    })
+  }
+
+  async getPaymentReceived(
+    auth: User,
+    applicationId: string,
+    paymentId: string,
+  ): Promise<PaymentRecievedDto> {
+    return this.paymentRecievedApiWithAuth(auth).apiPaymentRecievedPaymentIdGet(
+      { paymentId, xCorrelationID: applicationId },
+    )
+  }
+
+  async submitWorkMachineLicenseRenewalApplication(
+    auth: User,
+    applicationId: string,
+    application: WorkMachineLicenseRenewalApplicationDto,
+  ): Promise<void> {
+    return this.workMachineLicenseRenewalApplicationApiWithAuth(
+      auth,
+    ).apiWorkMachineLicenseRenewalApplicationPost({
+      xCorrelationID: applicationId,
+      workMachineLicenseRenewalApplicationDto: application,
     })
   }
 }
