@@ -16,7 +16,8 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../../repository'
+import { Case, CaseFile } from '../../repository'
+import { canUserAccessCaseFileCategory } from './caseFileCategory'
 
 @Injectable()
 export class ViewCaseFileGuard implements CanActivate {
@@ -33,6 +34,12 @@ export class ViewCaseFileGuard implements CanActivate {
 
     if (!theCase) {
       throw new InternalServerErrorException('Missing case')
+    }
+
+    const caseFile: CaseFile | undefined = request.caseFile
+
+    if (!canUserAccessCaseFileCategory(user, caseFile?.category)) {
+      throw new ForbiddenException(`Forbidden for ${user.role}`)
     }
 
     if (isProsecutionUser(user)) {

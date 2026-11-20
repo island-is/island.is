@@ -1102,6 +1102,15 @@ export class AppealCaseService {
     )
 
     if (
+      update.appealRulingType &&
+      appealCase.appealType !== AppealCaseType.VERDICT
+    ) {
+      throw new BadRequestException(
+        `Appeal case ${appealCase.id} is not a verdict appeal and has no ruling type`,
+      )
+    }
+
+    if (
       update.verdictAppealStatus &&
       appealCase.appealType !== AppealCaseType.VERDICT
     ) {
