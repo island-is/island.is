@@ -1110,6 +1110,18 @@ export class AppealCaseService {
       )
     }
 
+    // Correcting a concluded verdict appeal is not supported: its document is
+    // stamped as confirmed on the day it was concluded, and what the court
+    // recorded then has to stay what the stamp vouches for.
+    if (
+      appealCase.appealType === AppealCaseType.VERDICT &&
+      appealCase.appealState === AppealCaseState.COMPLETED
+    ) {
+      throw new ForbiddenException(
+        `Verdict appeal ${appealCase.id} has been completed and cannot be updated`,
+      )
+    }
+
     if (
       update.verdictAppealStatus &&
       appealCase.appealType !== AppealCaseType.VERDICT
@@ -1280,14 +1292,20 @@ export class AppealCaseService {
       )
     }
 
-    // Withdrawal is the only transition a verdict appeal supports so far. The
-    // ones that carry a ruling appeal to and through the court of appeals were
-    // written for that, and the court of appeals work has to take them on for
-    // verdict appeals deliberately - until then they are refused rather than
+    if (
+      transition === AppealCaseTransition.COMPLETE_APPEAL &&
+      appealCase.appealType === AppealCaseType.VERDICT
+    ) {
+      return this.completeVerdictAppeal(theCase, appealCase, transaction)
+    }
+
+    // Withdrawal and completion are the only transitions a verdict appeal
+    // supports. The others carry a ruling appeal to and through the court of
+    // appeals and were written for that, so they are refused rather than
     // applied to a case they were never checked against.
     if (appealCase.appealType === AppealCaseType.VERDICT) {
       throw new ForbiddenException(
-        `Verdict appeals cannot be transitioned with ${transition} yet`,
+        `Verdict appeals cannot be transitioned with ${transition}`,
       )
     }
 
@@ -1580,6 +1598,62 @@ export class AppealCaseService {
     // The appeal still stands for the other appellants - no state change and no
     // notification.
     return { caseUpdate: {}, appealCaseUpdate: {}, appealCase }
+  }
+
+  // The court of appeals concludes a verdict appeal once everything about how
+  // it ended is on record: the outcome, whether it is a judgment or a ruling,
+  // the concluding words and the document itself.
+  //
+  // Nothing is announced. The outcome stays with the court until it is
+  // released, so no message is queued and nothing is delivered - which is why
+  // this does not go through applyTransition, where completing an appeal
+  // notifies the parties and delivers the ruling.
+  private async completeVerdictAppeal(
+    theCase: Case,
+    appealCase: AppealCase,
+    transaction: Transaction,
+  ): Promise<AppealTransitionResult & { appealCase: AppealCase }> {
+    // A verdict appeal is never received the way a ruling appeal is: it stays
+    // appealed from the day it is filed until it is concluded or withdrawn.
+    if (appealCase.appealState !== AppealCaseState.APPEALED) {
+      throw new ForbiddenException(
+        `The appeal transition ${AppealCaseTransition.COMPLETE_APPEAL} cannot be applied to a verdict appeal in state ${appealCase.appealState}`,
+      )
+    }
+
+    const hasRulingFile = (theCase.caseFiles ?? []).some(
+      (file) =>
+        file.category === CaseFileCategory.VERDICT_APPEAL_RULING &&
+        Boolean(file.key),
+    )
+
+    if (
+      !appealCase.appealRulingDecision ||
+      !appealCase.appealRulingType ||
+      !appealCase.appealConclusion?.trim() ||
+      !hasRulingFile
+    ) {
+      throw new BadRequestException(
+        `Verdict appeal ${appealCase.id} cannot be completed before its outcome, ruling type, conclusion and ruling document are in place`,
+      )
+    }
+
+    this.logger.debug(
+      `Completing verdict appeal ${appealCase.id} of case ${theCase.id}`,
+    )
+
+    const appealCaseUpdate: UpdateAppealCase = {
+      appealState: AppealCaseState.COMPLETED,
+      appealRulingDate: nowFactory(),
+    }
+
+    const updatedAppealCase = await this.appealCaseRepositoryService.update(
+      appealCase.id,
+      appealCaseUpdate,
+      { transaction },
+    )
+
+    return { caseUpdate: {}, appealCaseUpdate, appealCase: updatedAppealCase }
   }
 
   private async applyTransition(

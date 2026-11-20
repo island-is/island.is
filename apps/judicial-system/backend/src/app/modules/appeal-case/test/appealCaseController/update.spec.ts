@@ -8,6 +8,7 @@ import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseNotificationType,
+  AppealCaseState,
   AppealCaseType,
   AppealRulingType,
   CaseFileCategory,
@@ -281,6 +282,25 @@ describe('AppealCaseController - Update', () => {
       const then = await givenWhenThen(theCase, appealCase, update)
 
       expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('a completed verdict appeal', () => {
+    const theCase = { id: caseId, type: CaseType.INDICTMENT } as Case
+    const appealCase = {
+      id: appealCaseId,
+      caseId,
+      appealType: AppealCaseType.VERDICT,
+      appealState: AppealCaseState.COMPLETED,
+    } as AppealCase
+
+    it('should refuse every update', async () => {
+      const then = await givenWhenThen(theCase, appealCase, {
+        appealConclusion: 'Conclusion',
+      })
+
+      expect(then.error).toBeInstanceOf(ForbiddenException)
       expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
     })
   })

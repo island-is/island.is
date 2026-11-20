@@ -168,11 +168,10 @@ export const standingVerdictAppealEvents = (
 //   - POSTPONED: the court has postponed the appeal;
 //   - UNDER_ADVISEMENT: the appeal has been heard and awaits judgment.
 //
-// COMPLETED is not something the court records its way to: it is read off the
-// state of the appeal, and shows only once the appeal itself is completed. A
-// recorded status of completed is the court's own working note until then -
-// nothing about the appeal may change for anyone else before it is concluded -
-// so a list keeps the appeal under advisement, which is where an appeal
+// COMPLETED is not shown yet. Nothing about how an appeal ended may change for
+// anyone outside the court of appeals before the court releases the outcome,
+// so neither a recorded status of completed nor the completed appeal itself
+// moves a list: it keeps the appeal under advisement, which is where an appeal
 // stands before it is finished.
 export type VerdictAppealProgress =
   | 'SENT'
@@ -274,8 +273,12 @@ export const verdictAppealProgress = (
     return undefined
   }
 
+  // A concluded appeal is not shown as concluded yet. This is read by lists
+  // outside the court of appeals, and until the court releases the outcome
+  // nothing about the appeal may change for anyone else, so it stays under
+  // advisement - where a recorded status of completed leaves it too.
   if (appealCase.appealState === AppealCaseState.COMPLETED) {
-    return 'COMPLETED'
+    return 'UNDER_ADVISEMENT'
   }
 
   if (appealCase.verdictAppealStatus) {

@@ -185,8 +185,11 @@ describe('createConfirmedPdf', () => {
     ])
   })
 
-  it('draws only the court on a court record', async () => {
-    await createConfirmedPdf(confirmation, pdf, CaseFileCategory.COURT_RECORD)
+  it.each([
+    CaseFileCategory.COURT_RECORD,
+    CaseFileCategory.VERDICT_APPEAL_RULING,
+  ] as const)('draws only the court on a %s', async (category) => {
+    await createConfirmedPdf(confirmation, pdf, category)
 
     const boxes = rectangles().slice(3)
 
