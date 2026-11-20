@@ -90,43 +90,26 @@ const handleVehiclePermnoWithInfoItem = <T>(
   })
 }
 
-export const buildDefaultTableHeader = (items: Array<RepeaterItem>) =>
-  items
-    .map((item) =>
-      // nationalIdWithName is a special case where the value is an object of name and nationalId
-      item.component === 'nationalIdWithName'
-        ? [coreMessages.name, coreMessages.nationalId]
-        : typeof item.label === 'function'
-        ? item.label({ index: 0 })
-        : item.label,
-    )
-    .flat(2)
-
-export const buildDefaultTableRows = (
-  items: Array<RepeaterItem & { id: string }>,
-) =>
-  items
-    .map((item) => {
-      // nationalIdWithName is a special case where the value is an object of name and nationalId
-      if (item.component === 'nationalIdWithName') {
-        return ['name', 'nationalId']
-      } else if (item.component === 'vehiclePermnoWithInfo') {
-        return `${item.id}.permno`
-      } else {
-        return item.id
-      }
-    })
-    .flat(2)
-
 export const buildDefaultColumns = (
   items: Array<RepeaterItem & { id: string }>,
-): TableRepeaterColumn[] => {
-  const header = buildDefaultTableHeader(items)
-  return buildDefaultTableRows(items).map((value, index) => ({
-    header: header[index] ?? '',
-    value,
-  }))
-}
+): TableRepeaterColumn[] =>
+  items.flatMap((item): TableRepeaterColumn | TableRepeaterColumn[] => {
+    if (item.component === 'nationalIdWithName') {
+      return [
+        { header: coreMessages.name, value: 'name' },
+        { header: coreMessages.nationalId, value: 'nationalId' },
+      ]
+    }
+    const label =
+      typeof item.label === 'function' ? item.label({ index: 0 }) : item.label
+    return {
+      header: label ?? '',
+      value:
+        item.component === 'vehiclePermnoWithInfo'
+          ? `${item.id}.permno`
+          : item.id,
+    }
+  })
 
 export const setObjectWithNestedKey = <T extends Record<string, unknown>>(
   obj: T,

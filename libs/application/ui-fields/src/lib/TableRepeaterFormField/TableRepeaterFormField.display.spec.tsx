@@ -59,6 +59,45 @@ const deleteButtons = () =>
   screen.queryAllByRole('button', { description: /Eyða/ })
 
 describe('TableRepeater table display', () => {
+  it('T15: default header comes from labels; displayInTable: false is left out', () => {
+    setup(
+      {
+        fields: {
+          name: { component: 'input', label: 'Heiti' },
+          age: { component: 'input', label: 'Aldur', displayInTable: false },
+        },
+      },
+      saved([{ name: 'Anna', age: '30' }]),
+    )
+
+    expect(headerCells()).toEqual(['Heiti'])
+    expect(tableRows()).toEqual(['Anna'])
+  })
+
+  it('T16: nationalIdWithName gives a name and a formatted national ID column', () => {
+    setup(
+      { fields: { person: { component: 'nationalIdWithName' } } },
+      saved([{ person: { name: 'Anna', nationalId: '0101302989' } }]),
+    )
+
+    expect(headerCells()).toEqual(['Nafn', 'Kennitala'])
+    expect(tableRows()).toEqual(['Anna | 010130-2989'])
+  })
+
+  it('T17: vehiclePermnoWithInfo shows the permno', () => {
+    setup(
+      {
+        fields: {
+          vehicle: { component: 'vehiclePermnoWithInfo', label: 'Ökutæki' },
+        },
+      },
+      saved([{ vehicle: { permno: 'AB123', makeAndColor: 'Volvo, rauður' } }]),
+    )
+
+    expect(headerCells()).toEqual(['Ökutæki'])
+    expect(tableRows()).toEqual(['AB123'])
+  })
+
   it('T18: columns set headings and values in their own order', () => {
     setup(
       {
