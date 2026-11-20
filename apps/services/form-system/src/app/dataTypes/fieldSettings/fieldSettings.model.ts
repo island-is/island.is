@@ -168,6 +168,16 @@ export class FieldSettings {
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
+  showBiologicalChildren?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  showChildrenInCustody?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
   hasDescription?: boolean
 
   @IsOptional()
