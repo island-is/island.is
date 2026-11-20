@@ -156,10 +156,17 @@ const InputAdvocate: FC<Props> = ({
       // An invalid email is not saved: its error message is gone after a
       // reload, while the stored value would still fail step validation.
       if (isValid) {
+        // A stored email can still have surrounding whitespace. Saving does
+        // not touch the caller's state, so the state gets the saved value
+        // here, or step validation would keep reading the padded one.
+        if (email !== event.target.value) {
+          onEmailChange(email || null)
+        }
+
         onEmailSave(email || null)
       }
     },
-    [onEmailSave],
+    [onEmailChange, onEmailSave],
   )
 
   const handlePhoneNumberChange = useCallback(

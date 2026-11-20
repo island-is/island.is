@@ -232,11 +232,34 @@ describe('InputAdvocate', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('does not save an invalid email', () => {
-    const { onEmailSave } = renderContactFields({ email: 'testverjandi' })
+  it('hands the trimmed email back when a padded one is saved unedited', () => {
+    const { onEmailChange } = renderContactFields({
+      email: ' testverjandi@dummy.dd ',
+    })
 
     fireEvent.blur(screen.getByTestId('defenderEmail'))
 
+    expect(onEmailChange).toHaveBeenCalledWith('testverjandi@dummy.dd')
+  })
+
+  it('does not report a change when the saved email was already trimmed', () => {
+    const { onEmailChange } = renderContactFields({
+      email: 'testverjandi@dummy.dd',
+    })
+
+    fireEvent.blur(screen.getByTestId('defenderEmail'))
+
+    expect(onEmailChange).not.toHaveBeenCalled()
+  })
+
+  it('does not save an invalid email', () => {
+    const { onEmailSave, onEmailChange } = renderContactFields({
+      email: ' testverjandi ',
+    })
+
+    fireEvent.blur(screen.getByTestId('defenderEmail'))
+
+    expect(onEmailChange).not.toHaveBeenCalled()
     expect(onEmailSave).not.toHaveBeenCalled()
     expect(screen.getByText('Netfang ekki á réttu formi')).toBeInTheDocument()
   })
