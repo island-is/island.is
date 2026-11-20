@@ -5,6 +5,7 @@ import { BadRequestException, ForbiddenException } from '@nestjs/common'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealCaseState,
   CaseFileCategory,
   CaseFileState,
   CaseOrigin,
@@ -451,6 +452,30 @@ describe('FileController - Create case file', () => {
 
       it('should not queue any messages', () => {
         expect(mockQueuedMessages).toEqual([])
+      })
+    })
+
+    describe('created once the verdict appeal has been completed', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        then = await createCaseFileAs(
+          caseId,
+          createCaseFile,
+          {
+            ...theCase,
+            verdictAppealCase: {
+              id: uuid(),
+              appealState: AppealCaseState.COMPLETED,
+            },
+          } as Case,
+          courtOfAppealsUser,
+        )
+      })
+
+      it('should forbid creation', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(mockCaseFileRepositoryService.create).not.toHaveBeenCalled()
       })
     })
 

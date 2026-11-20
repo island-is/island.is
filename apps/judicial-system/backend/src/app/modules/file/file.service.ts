@@ -19,6 +19,7 @@ import type { ConfigType } from '@island.is/nest/config'
 import { stripPdfExtension } from '@island.is/judicial-system/formatters'
 import { MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealCaseState,
   CaseFileCategory,
   CaseFileState,
   CaseOrigin,
@@ -73,6 +74,10 @@ interface CreateFile extends CreateFileDto {
 // <uuid>/<uuid>/<filename>
 // As uuid-s have length 36, the filename starts at position 82 in the key.
 const NAME_BEGINS_INDEX = 74
+
+// There is one court of appeals, and no judge or institution is recorded on a
+// verdict appeal's conclusion to read its name from.
+const COURT_OF_APPEALS_NAME = 'Landsréttur'
 
 @Injectable()
 export class FileService {
@@ -177,6 +182,11 @@ export class FileService {
     if (!hasConfirmableCaseFileCategories(file.category)) {
       return undefined
     }
+
+    if (file.category === CaseFileCategory.VERDICT_APPEAL_RULING) {
+      return this.confirmVerdictAppealRuling(theCase, file, pdf)
+    }
+
     const hasRulingDateConfirmation =
       theCase.rulingDate &&
       (file.category === CaseFileCategory.RULING ||
@@ -242,6 +252,53 @@ export class FileService {
       })
   }
 
+  // The court of appeals' judgment or ruling on a verdict appeal is confirmed
+  // by the court as a whole on the day it concludes the appeal: no judge
+  // confirms it in the system, so the stamp carries the court and that date.
+  private async confirmVerdictAppealRuling(
+    theCase: Case,
+    file: CaseFile,
+    pdf: Buffer,
+  ): Promise<string | undefined> {
+    const verdictAppealCase = theCase.verdictAppealCase
+
+    if (
+      verdictAppealCase?.appealState !== AppealCaseState.COMPLETED ||
+      !verdictAppealCase.appealRulingDate
+    ) {
+      return undefined
+    }
+
+    try {
+      const confirmedPdf = await createConfirmedPdf(
+        {
+          actor: '',
+          institution: COURT_OF_APPEALS_NAME,
+          date: verdictAppealCase.appealRulingDate,
+        },
+        pdf,
+        CaseFileCategory.VERDICT_APPEAL_RULING,
+      )
+
+      const { hash, hashAlgorithm, binaryPdf } = getCaseFileHash(confirmedPdf)
+
+      // No need to wait for the update to finish
+      this.caseFileRepositoryService.updateById(file.id, {
+        hash,
+        hashAlgorithm,
+      })
+
+      return binaryPdf
+    } catch (reason) {
+      this.logger.error(
+        `Failed to create confirmed verdict appeal ruling for case ${theCase.id}`,
+        { reason },
+      )
+
+      return undefined
+    }
+  }
+
   private shouldGetConfirmedDocument = (file: CaseFile, theCase: Case) => {
     // Only case files in indictment cases can be confirmed
     if (!isIndictmentCase(theCase.type)) {
@@ -260,6 +317,15 @@ export class FileService {
     if (
       file.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER &&
       file.submissionDate
+    ) {
+      return true
+    }
+
+    // The court of appeals' judgment or ruling on a verdict appeal is
+    // confirmed when the court concludes the appeal
+    if (
+      file.category === CaseFileCategory.VERDICT_APPEAL_RULING &&
+      theCase.verdictAppealCase?.appealState === AppealCaseState.COMPLETED
     ) {
       return true
     }
@@ -411,6 +477,15 @@ export class FileService {
     ) {
       throw new BadRequestException(
         `Case ${theCase.id} has no verdict appeal to rule on`,
+      )
+    }
+
+    if (
+      createFile.category === CaseFileCategory.VERDICT_APPEAL_RULING &&
+      theCase.verdictAppealCase?.appealState === AppealCaseState.COMPLETED
+    ) {
+      throw new ForbiddenException(
+        `The verdict appeal of case ${theCase.id} has been completed`,
       )
     }
 

@@ -39,6 +39,7 @@ import {
   ServiceRequirement,
   User,
   UserRole,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
 
 import { getRequestTransaction } from '../../../middleware'
@@ -894,6 +895,12 @@ const getVerdictAppealOutcomeOverride = (
         appealRulingDate: undefined,
         ...(verdictAppealCase.appealState === AppealCaseState.COMPLETED
           ? { appealState: AppealCaseState.APPEALED }
+          : {}),
+        // The status the court records for itself says the same thing, so it
+        // is held where the lists hold it: under advisement.
+        ...(verdictAppealCase.verdictAppealStatus ===
+        VerdictAppealStatus.COMPLETED
+          ? { verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT }
           : {}),
       }
 
