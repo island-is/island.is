@@ -48,8 +48,7 @@ export class Report {
 
   @Field(() => Gap, {
     nullable: true,
-    description:
-      'Unadjusted gap on arithmetic means; null when not computable',
+    description: 'Unadjusted gap on arithmetic means; null when not computable',
   })
   rawGap?: Gap | null
 

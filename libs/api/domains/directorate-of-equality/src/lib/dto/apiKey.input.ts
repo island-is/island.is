@@ -1,5 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsDate, IsEnum, IsOptional, IsString, MaxLength } from 'class-validator'
+import {
+  IsDate,
+  IsEnum,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator'
 
 import { DirectorateOfEqualityApiKeyType } from '../models/enums'
 

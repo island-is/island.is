@@ -250,9 +250,7 @@ describe('mapAdjustedGap', () => {
   })
 
   it('returns null when the gap is not computable', () => {
-    expect(
-      mapAdjustedGap(decomposition({ oskyrtAvailable: false })),
-    ).toBeNull()
+    expect(mapAdjustedGap(decomposition({ oskyrtAvailable: false }))).toBeNull()
   })
 })
 
@@ -388,10 +386,10 @@ describe('mapEqualityPlan', () => {
     const equalityPlan = reportDetail({ type: ReportTypeEnum.EQUALITY })
 
     expect(
-      mapEqualityPlan(
-        'provider-id',
-        { ...equalityPlan, equalityReportContentType: 'PDF' },
-      ).hasPdf,
+      mapEqualityPlan('provider-id', {
+        ...equalityPlan,
+        equalityReportContentType: 'PDF',
+      }).hasPdf,
     ).toBe(true)
     expect(mapEqualityPlan('provider-id', equalityPlan).hasPdf).toBe(false)
   })
@@ -401,7 +399,11 @@ const delegation = (
   overrides: Partial<CompanyPartnerDelegationDto> = {},
 ): CompanyPartnerDelegationDto => ({
   id: 'delegation-1',
-  provider: { id: 'provider-1', name: 'Launaþjónustan ehf.', nationalId: '5501010001' },
+  provider: {
+    id: 'provider-1',
+    name: 'Launaþjónustan ehf.',
+    nationalId: '5501010001',
+  },
   scopes: ['salary:submit'],
   grantedAt: new Date('2026-10-01'),
   grantedByNationalId: '0000000000',
@@ -482,7 +484,11 @@ describe('mapAvailableServiceProviders', () => {
     expect(
       mapAvailableServiceProviders(
         [
-          { id: 'provider-1', name: 'Launaþjónustan ehf.', nationalId: '5501010001' },
+          {
+            id: 'provider-1',
+            name: 'Launaþjónustan ehf.',
+            nationalId: '5501010001',
+          },
           { id: 'provider-2', name: 'Bókhald hf.', nationalId: '5501010002' },
         ],
         [delegation()],

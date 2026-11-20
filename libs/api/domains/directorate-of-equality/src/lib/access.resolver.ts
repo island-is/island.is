@@ -43,13 +43,19 @@ export class AccessResolver {
     private readonly directorateOfEqualityService: DirectorateOfEqualityService,
   ) {}
 
-  @Query(() => Company, { name: 'directorateOfEqualityCompany', nullable: true })
+  @Query(() => Company, {
+    name: 'directorateOfEqualityCompany',
+    nullable: true,
+  })
   @Audit()
   company(@CurrentUser() user: User): Promise<Company | null> {
     return this.directorateOfEqualityService.getCompany(user)
   }
 
-  @Query(() => ApiKeys, { name: 'directorateOfEqualityApiKeys', nullable: true })
+  @Query(() => ApiKeys, {
+    name: 'directorateOfEqualityApiKeys',
+    nullable: true,
+  })
   @Audit()
   apiKeys(@CurrentUser() user: User): Promise<ApiKeys | null> {
     return this.directorateOfEqualityService.getApiKeys(user)
