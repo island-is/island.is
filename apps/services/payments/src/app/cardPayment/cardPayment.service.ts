@@ -932,9 +932,12 @@ export class CardPaymentService {
       if (declined) {
         throw e
       }
+      // Approved but unreadable is a charge, anything else an unknown outcome
       throw new GooglePayUnsettledChargeError(
         (e as Error).message,
         paymentTrackingData,
+        undefined,
+        e instanceof GatewayApprovedUnreadableError,
       )
     }
 

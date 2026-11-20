@@ -2797,6 +2797,34 @@ describe('CardPaymentController', () => {
         expect(response.body.detail).toBe(CardErrorCode.VerificationFailed)
         expect(refundCalls().length).toBeGreaterThanOrEqual(1)
       })
+
+      it('tells the payer the refund failed when the gateway charged a device token the service could not read', async () => {
+        mockFetch({
+          // Approved, but null where the payment needs a value
+          decryption: () =>
+            gatewayResponse({
+              ...chargeResponse(),
+              acquirerReferenceNumber: null,
+            }),
+          refund: () =>
+            ({
+              json: async () => ({}),
+              text: async () => 'INTERNAL_SERVER_ERROR',
+              status: 500,
+              statusText: 'Internal Server Error',
+              ok: false,
+            } as Response),
+        })
+
+        const response = await charge(token())
+
+        // A charge, not an unknown outcome: the payer hears the refund failed
+        expect(response.status).toBe(400)
+        expect(response.body.detail).toBe(
+          CardErrorCode.RefundFailedAfterPaymentError,
+        )
+        expect(refundCalls().length).toBeGreaterThanOrEqual(1)
+      })
     })
 
     describe('a device token, which the gateway charges when it decrypts it', () => {

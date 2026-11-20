@@ -2,7 +2,10 @@ import { Logger } from '@island.is/logging'
 import { retry } from '@island.is/shared/utils/server'
 
 import { PaymentMethod, RefundType } from '../../../types'
-import { CardPaymentSuccessResponse } from '../../../types/cardPayment'
+import {
+  CardPaymentSuccessResponse,
+  RefundSuccessResponse,
+} from '../../../types/cardPayment'
 import {
   ContextWithStepResults,
   requireStepResult,
@@ -60,32 +63,14 @@ export const refundUnsettledGooglePayCharge = async ({
     { outcomeKnown: approved, error: error.message },
   )
 
+  let refund: RefundSuccessResponse
   try {
-    const refund = await retry(() =>
+    refund = await retry(() =>
       refundService.refundWithCorrelationId({
         paymentFlowId: ctx.paymentFlowId,
         paymentTrackingData,
       }),
     )
-
-    await paymentFlowService.logPaymentFlowUpdate({
-      paymentFlowId: ctx.paymentFlowId,
-      type: 'error',
-      occurredAt: new Date(),
-      paymentMethod: PaymentMethod.CARD,
-      reason: 'payment_failed',
-      message: 'Card payment refunded: failed to complete payment processing.',
-      metadata: {
-        payment: paymentResult,
-        refund,
-        // Ties the refund to the payment, see PaymentFlowService.isCardPaymentRefunded
-        correlationId,
-        originalError: error.message,
-        reasonForRefund: RefundType.PAYMENT_FAILURE,
-      },
-    })
-
-    ctx.metadata = { ...ctx.metadata, refundSucceeded: true, refund }
   } catch (refundError) {
     if (approved) {
       logger.error(
@@ -113,6 +98,35 @@ export const refundUnsettledGooglePayCharge = async ({
         originalError: error.message,
         error: (refundError as Error).message,
       },
+    )
+    return
+  }
+
+  // Recorded before the event, so an event that fails to log does not report
+  // the refund as failed
+  ctx.metadata = { ...ctx.metadata, refundSucceeded: true, refund }
+
+  try {
+    await paymentFlowService.logPaymentFlowUpdate({
+      paymentFlowId: ctx.paymentFlowId,
+      type: 'error',
+      occurredAt: new Date(),
+      paymentMethod: PaymentMethod.CARD,
+      reason: 'payment_failed',
+      message: 'Card payment refunded: failed to complete payment processing.',
+      metadata: {
+        payment: paymentResult,
+        refund,
+        // Ties the refund to the payment, see PaymentFlowService.isCardPaymentRefunded
+        correlationId,
+        originalError: error.message,
+        reasonForRefund: RefundType.PAYMENT_FAILURE,
+      },
+    })
+  } catch (logError) {
+    logger.error(
+      `[${ctx.paymentFlowId}] Refunded a Google Pay wallet transaction the saga can not settle, but failed to log the refund event`,
+      { correlationId, error: (logError as Error).message },
     )
   }
 }
