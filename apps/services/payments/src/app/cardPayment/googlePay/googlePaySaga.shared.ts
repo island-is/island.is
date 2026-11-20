@@ -34,7 +34,7 @@ export type GooglePaySagaContext =
  * step did not complete, so this is not a compensation the orchestrator runs:
  * the charge step calls it itself. A refund that goes through is reported
  * like the compensation's, and the controller answers the payer accordingly.
- * When it does not go through: a charge the gateway confirmed is CRITICAL and
+ * When it does not go through: a charge the gateway approved is CRITICAL and
  * the payer hears the refund failed; an unknown outcome most likely means
  * nothing was charged, so the refund found no payment, and it is logged for
  * reconciliation by the correlation id should one turn up.
@@ -52,12 +52,12 @@ export const refundUnsettledGooglePayCharge = async ({
   paymentFlowService: PaymentFlowService
   logger: Logger
 }): Promise<void> => {
-  const { paymentTrackingData, paymentResult } = error
+  const { paymentTrackingData, paymentResult, approved } = error
   const { correlationId } = paymentTrackingData
 
   logger.warn(
     `[${ctx.paymentFlowId}] Refunding a Google Pay wallet transaction the saga can not settle (correlationId: ${correlationId})`,
-    { outcomeKnown: paymentResult !== undefined, error: error.message },
+    { outcomeKnown: approved, error: error.message },
   )
 
   try {
@@ -87,12 +87,12 @@ export const refundUnsettledGooglePayCharge = async ({
 
     ctx.metadata = { ...ctx.metadata, refundSucceeded: true, refund }
   } catch (refundError) {
-    if (paymentResult) {
+    if (approved) {
       logger.error(
         `[${ctx.paymentFlowId}] CRITICAL: Accepted Google Pay payment but failed to refund. Manual intervention required.`,
         {
           correlationId,
-          acquirerReferenceNumber: paymentResult.acquirerReferenceNumber,
+          acquirerReferenceNumber: paymentResult?.acquirerReferenceNumber,
           error: (refundError as Error).message,
         },
       )

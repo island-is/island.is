@@ -43,38 +43,41 @@ export interface PaymentTrackingData {
  * required field is refunded, see GatewayApprovedUnreadableError.
  */
 
-/** A field the gateway may leave out or answer with null, read as missing */
-const optional = <T extends z.ZodTypeAny>(schema: T) =>
+/**
+ * A field the gateway may leave out or answer with null, read as missing.
+ * Zod's own .optional() rejects null, so gateway fields do not use it.
+ */
+const missingOrNull = <T extends z.ZodTypeAny>(schema: T) =>
   schema.nullish().transform((value) => value ?? undefined)
 
 const CardInformationSchema = z.object({
   // Stored with the payment and sent to FJS as the card type and debit or credit
   cardScheme: z.string(),
   cardUsage: z.string(),
-  issuingCountry: optional(z.string()),
-  cardCategory: optional(z.string()),
-  outOfScaScope: optional(z.boolean()),
-  cardProductCategory: optional(z.string()),
+  issuingCountry: missingOrNull(z.string()),
+  cardCategory: missingOrNull(z.string()),
+  outOfScaScope: missingOrNull(z.boolean()),
+  cardProductCategory: missingOrNull(z.string()),
 })
 
 /** The card information of a refund or a 3-D Secure verification, which nothing reads */
 const UnreadCardInformationSchema = CardInformationSchema.extend({
-  cardScheme: optional(z.string()),
-  cardUsage: optional(z.string()),
+  cardScheme: missingOrNull(z.string()),
+  cardUsage: missingOrNull(z.string()),
 })
 
 const MarketInformationSchema = z.object({
-  merchantCountry: optional(z.string()),
-  marketName: optional(z.string()),
-  acquirerRegion: optional(z.string()),
+  merchantCountry: missingOrNull(z.string()),
+  marketName: missingOrNull(z.string()),
+  acquirerRegion: missingOrNull(z.string()),
 })
 
 const PaymentGatewayApiResponseSchema = z.object({
   isSuccess: z.boolean(),
-  responseCode: optional(z.string()),
-  responseDescription: optional(z.string()),
-  responseTime: optional(z.string()), // HH:mm:ss
-  correlationID: optional(z.string()),
+  responseCode: missingOrNull(z.string()),
+  responseDescription: missingOrNull(z.string()),
+  responseTime: missingOrNull(z.string()), // HH:mm:ss
+  correlationID: missingOrNull(z.string()),
 })
 
 const PaymentGatewaySuccessSchema = PaymentGatewayApiResponseSchema.extend({
@@ -98,18 +101,18 @@ export const CardPaymentSuccessSchema = PaymentGatewaySuccessSchema.extend({
   // Stored with the payment and sent to FJS, or used to refund the charge
   acquirerReferenceNumber: z.string(),
   authorizationCode: z.string(),
-  transactionID: optional(z.string()),
-  transactionLifecycleId: optional(z.string()),
-  maskedCardNumber: optional(z.string()),
-  lastFourInPan: optional(z.string()),
+  transactionID: missingOrNull(z.string()),
+  transactionLifecycleId: missingOrNull(z.string()),
+  maskedCardNumber: missingOrNull(z.string()),
+  lastFourInPan: missingOrNull(z.string()),
   cardInformation: CardInformationSchema,
-  transactionType: optional(z.string()),
-  isCardPresent: optional(z.boolean()),
-  currency: optional(z.string()),
-  authenticationMethod: optional(z.string()),
-  authorizedAmount: optional(z.number()),
-  marketInformation: optional(MarketInformationSchema),
-  authorizationIdentifier: optional(z.string()),
+  transactionType: missingOrNull(z.string()),
+  isCardPresent: missingOrNull(z.boolean()),
+  currency: missingOrNull(z.string()),
+  authenticationMethod: missingOrNull(z.string()),
+  authorizedAmount: missingOrNull(z.number()),
+  marketInformation: missingOrNull(MarketInformationSchema),
+  authorizationIdentifier: missingOrNull(z.string()),
 }).transform(({ maskedCardNumber, lastFourInPan, ...charge }) => ({
   ...charge,
   maskedCardNumber:
@@ -129,12 +132,12 @@ export const CardPaymentErrorSchema = PaymentGatewayErrorSchema
  */
 export const RefundSuccessSchema = PaymentGatewaySuccessSchema.extend({
   isSuccess: z.literal(true),
-  acquirerReferenceNumber: optional(z.string()),
-  transactionID: optional(z.string()),
-  transactionLifecycleId: optional(z.string()),
-  maskedCardNumber: optional(z.string()),
-  cardInformation: optional(UnreadCardInformationSchema),
-  authorizationIdentifier: optional(z.string()),
+  acquirerReferenceNumber: missingOrNull(z.string()),
+  transactionID: missingOrNull(z.string()),
+  transactionLifecycleId: missingOrNull(z.string()),
+  maskedCardNumber: missingOrNull(z.string()),
+  cardInformation: missingOrNull(UnreadCardInformationSchema),
+  authorizationIdentifier: missingOrNull(z.string()),
 })
 
 /** Refund error: transaction fields omitted or partial */
@@ -151,11 +154,11 @@ export const CardVerificationSuccessSchema = PaymentGatewaySuccessSchema.extend(
     // The payer's browser posts verificationFields to postUrl for 3-D Secure
     postUrl: z.string(),
     verificationFields: z.array(FieldSchema),
-    cardVerificationRawResponse: optional(z.string()),
-    additionalFields: optional(z.array(FieldSchema)),
-    scriptPath: optional(z.string()),
-    cardInformation: optional(UnreadCardInformationSchema),
-    threeDSMessageVersion: optional(z.string()),
+    cardVerificationRawResponse: missingOrNull(z.string()),
+    additionalFields: missingOrNull(z.array(FieldSchema)),
+    scriptPath: missingOrNull(z.string()),
+    cardInformation: missingOrNull(UnreadCardInformationSchema),
+    threeDSMessageVersion: missingOrNull(z.string()),
   },
 )
 

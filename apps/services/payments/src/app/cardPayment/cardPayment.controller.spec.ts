@@ -2549,6 +2549,37 @@ describe('CardPaymentController', () => {
       expect(chargeCalls()).toHaveLength(1)
     })
 
+    it('refunds a saved card charge the gateway approves without what the payment is stored with', async () => {
+      // Approved, but null where the payment needs a value
+      mockFetch({
+        cardPayment: () =>
+          gatewayResponse({
+            ...chargeResponse(),
+            acquirerReferenceNumber: null,
+          }),
+      })
+      const googlePayToken = token()
+
+      expect((await charge(googlePayToken)).status).toBe(201)
+      const [[, verificationInit]] = cardVerificationCalls()
+      expect(
+        (await completeVerification(JSON.parse(verificationInit.body))).status,
+      ).toBe(201)
+
+      const response = await chargeVerified(googlePayToken)
+
+      expect(response.status).toBe(400)
+      expect(response.body.detail).toBe(
+        CardErrorCode.RefundedBecauseOfSystemError,
+      )
+      const [[, chargeInit]] = chargeCalls()
+      const [[, refundInit]] = refundCalls()
+      expect(refundCalls()).toHaveLength(1)
+      expect(JSON.parse(refundInit.body).originalCorrelationId).toBe(
+        JSON.parse(chargeInit.body).correlationId,
+      )
+    })
+
     it('does not charge a saved card that has not passed 3-D Secure', async () => {
       mockFetch()
       const googlePayToken = token()

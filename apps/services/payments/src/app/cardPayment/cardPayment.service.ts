@@ -1099,7 +1099,12 @@ export class CardPaymentService {
     } catch (e) {
       // Approved but unreadable: the charge saga refunds it by the correlation id
       if (e instanceof GatewayApprovedUnreadableError) {
-        throw new GooglePayUnsettledChargeError(e.message, paymentTrackingData)
+        throw new GooglePayUnsettledChargeError(
+          e.message,
+          paymentTrackingData,
+          undefined,
+          true,
+        )
       }
       throw e
     }

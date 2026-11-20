@@ -6,6 +6,7 @@ import { retry } from '@island.is/shared/utils/server'
 import { PaymentMethod, PaymentTrackingData, RefundType } from '../../types'
 import type { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import type { RefundService } from '../refund/refund.service'
+import type { RefundSuccessResponse } from '../../types/cardPayment'
 import type { CardPaymentSagaMetadata } from './cardPayment.orchestrator'
 
 /**
@@ -55,31 +56,14 @@ export const refundApprovedUnreadableCharge = async ({
     { responseFields: error.responseFields },
   )
 
+  let refund: RefundSuccessResponse
   try {
-    const refund = await retry(() =>
+    refund = await retry(() =>
       refundService.refundWithCorrelationId({
         paymentFlowId: ctx.paymentFlowId,
         paymentTrackingData: ctx.trackingData,
       }),
     )
-
-    await paymentFlowService.logPaymentFlowUpdate({
-      paymentFlowId: ctx.paymentFlowId,
-      type: 'error',
-      occurredAt: new Date(),
-      paymentMethod: PaymentMethod.CARD,
-      reason: 'payment_failed',
-      message: 'Card payment refunded: failed to complete payment processing.',
-      metadata: {
-        refund,
-        // Ties the refund to this payment, see PaymentFlowService.isCardPaymentRefunded
-        correlationId,
-        originalError: error.message,
-        reasonForRefund: RefundType.PAYMENT_FAILURE,
-      },
-    })
-
-    ctx.metadata = { ...ctx.metadata, refundSucceeded: true, refund }
   } catch (refundError) {
     logger.error(
       `[${ctx.paymentFlowId}] CRITICAL: The gateway approved a charge the service could not read and the refund failed. Manual intervention required.`,
@@ -95,5 +79,33 @@ export const refundApprovedUnreadableCharge = async ({
       refundSucceeded: false,
       refundError: (refundError as Error).message,
     }
+    return
+  }
+
+  // Recorded before the event, so an event that fails to log does not report
+  // the refund as failed
+  ctx.metadata = { ...ctx.metadata, refundSucceeded: true, refund }
+
+  try {
+    await paymentFlowService.logPaymentFlowUpdate({
+      paymentFlowId: ctx.paymentFlowId,
+      type: 'error',
+      occurredAt: new Date(),
+      paymentMethod: PaymentMethod.CARD,
+      reason: 'payment_failed',
+      message: 'Card payment refunded: failed to complete payment processing.',
+      metadata: {
+        refund,
+        // Ties the refund to this payment, see PaymentFlowService.isCardPaymentRefunded
+        correlationId,
+        originalError: error.message,
+        reasonForRefund: RefundType.PAYMENT_FAILURE,
+      },
+    })
+  } catch (logError) {
+    logger.error(
+      `[${ctx.paymentFlowId}] Refunded a charge the gateway approved but the service could not read, but failed to log the refund event`,
+      { correlationId, error: (logError as Error).message },
+    )
   }
 }
