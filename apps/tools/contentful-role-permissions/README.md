@@ -30,6 +30,8 @@ Essentially there are 3 things we can change per role:
 - What content types an organization can edit instances of with a given tag
 - We can also change whether or not an organization can see all assets (they still can only edit assets with their tag) or if they can only see and edit assets with a given tag.
 
+Entries and assets tagged with `readable-by-all` (tag id `readableByAll`) can be read by every organization, so organizations can link to each other's content. The tag only adds read access: whoever could edit the content before (the owning organization) still can, and other organizations still can't. Each role gets a policy that allows reading tagged entries of any content type, the single policy per role that denies reading entries lets the tag through, and editing is still denied per content type. For assets, editing is always denied in its own policy, so a tagged asset of another organization can be read but not edited.
+
 And since the entire Contentful user management procedure relies on tags, we implemented a entry tagging bot which’ll tag an entry when it’s created (by looking at the role of the user who created the entry). The code for the entry tagging bot also lives in the Github monorepo: `apps/services/contentful-entry-tagger`
 
 ## Code owners and maintainers

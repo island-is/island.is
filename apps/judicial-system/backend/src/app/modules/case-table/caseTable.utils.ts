@@ -33,7 +33,14 @@ import { userAccessIncludes } from './caseTable.whereOptions'
 
 const getIsMyCaseAttributes = (user: User): string[] => {
   if (isProsecutionUser(user)) {
-    return ['creatingProsecutorId', 'prosecutorId', 'indictmentApproverId']
+    return [
+      'creatingProsecutorId',
+      'prosecutorId',
+      'indictmentApproverId',
+      // Not part of the general rule below: read by the one list that has a
+      // rule of its own, the public prosecution's appealed cases.
+      'appealProsecutorId',
+    ]
   }
 
   if (isDistrictCourtUser(user)) {
@@ -418,19 +425,29 @@ export const canDeleteCase = (
 
 // Mirrors the appeal-case module's withdrawal authorization
 // (userAppealedAppealCase in appeal-case/guards/rolesRules.ts) for the appeals
-// shown in the case tables. The row's appeal slot only ever holds the
-// case-level appeal (request case and dismissed indictment appeals) -
-// ruling-order appeals are withdrawn from the ruling order's context menu on the
-// case screen instead. So it shares the guard's case-level eligibility check
+// shown in the case tables. Only the case-level appeal (request case and
+// dismissed indictment appeals) is withdrawn from a list - ruling-order appeals
+// are withdrawn from the ruling order's context menu on the case screen
+// instead. So it shares the guard's case-level eligibility check
 // (canWithdrawCaseLevelAppeal): the appellant is read from the APPEALED event
 // log, with request-case prosecution precedence.
+//
+// A verdict appeal is never withdrawn from a list either: each side withdraws
+// per defendant, from that defendant's card on the case screen. The row says
+// so itself, because the case-level check would otherwise pass - any
+// prosecution user counts as the appellant of an appeal the prosecution made,
+// and a verdict list fetches the events that say it did.
 export const canCancelAppeal = (
   theCase: Pick<
     CaseTableRowCase,
-    'type' | 'appeal' | 'defendants' | 'civilClaimants'
+    'type' | 'appeal' | 'appealSource' | 'defendants' | 'civilClaimants'
   >,
   user: User,
 ): boolean => {
+  if (theCase.appealSource === 'verdictAppealCase') {
+    return false
+  }
+
   const appealCase = theCase.appeal
 
   // An appeal can only be withdrawn before the court of appeals has ruled
@@ -448,7 +465,12 @@ export const canCancelAppeal = (
 export const getContextMenuActions = (
   theCase: Pick<
     CaseTableRowCase,
-    'type' | 'state' | 'appeal' | 'defendants' | 'civilClaimants'
+    | 'type'
+    | 'state'
+    | 'appeal'
+    | 'appealSource'
+    | 'defendants'
+    | 'civilClaimants'
   >,
   user: User,
 ): ContextMenuCaseActionType[] => {

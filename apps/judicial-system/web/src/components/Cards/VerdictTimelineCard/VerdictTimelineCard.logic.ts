@@ -31,6 +31,26 @@ export const canRegisterVerdictAppeal = (
   !defendant.isSentToPrisonAdmin &&
   !defendant.isClosedWithoutEnforcement
 
+// Whether the public prosecution office may withdraw the defendant's verdict
+// appeal from the card. Only the office: a public prosecution prosecutor
+// reaches this card too, once a verdict appeal stands, but the defendant's
+// appeal is not theirs to withdraw and the prosecution's own is withdrawn by
+// changing the review decision - the backend refuses it through the transition
+// route, where it would leave the decision standing at appeal.
+//
+// An appeal that exists as an appeal case can only be withdrawn on it, and that
+// path is closed while verdict appeals are hidden, so the action is not offered
+// then rather than offered to fail.
+export const canWithdrawVerdictAppeal = (
+  workingCase: Pick<WorkingCase, 'verdictAppealCase'>,
+  defendant: Defendant,
+  user: User | undefined,
+  isVerdictAppealRegistrationEnabled: boolean,
+): boolean =>
+  isPublicProsecutionOfficeUser(user) &&
+  Boolean(defendant.verdict?.appealDate) &&
+  (isVerdictAppealRegistrationEnabled || !workingCase.verdictAppealCase?.id)
+
 // The deadline runs until the end of its last day, and the appeal date is date
 // only, so an appeal on the last day itself is still timely.
 export const isAfterVerdictAppealDeadline = (

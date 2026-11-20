@@ -4,10 +4,66 @@ import {
   BadRequestException,
   ConflictException,
   ForbiddenException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common'
+import { getModelToken } from '@nestjs/sequelize'
+import { Test } from '@nestjs/testing'
+import { Sequelize } from 'sequelize-typescript'
+import { Form } from '../forms/models/form.model'
 import { Organization } from './models/organization.model'
 import { OrganizationsService } from './organizations.service'
+import { validate } from 'class-validator'
+import { OrganizationLogoDto } from './models/dto/organizationLogo.dto'
+import { ListTypesEnum } from '@island.is/form-system/shared'
+
+describe('OrganizationsService.findAdmin', () => {
+  it('includes currencies and organizations as common lists without explicit permissions', async () => {
+    const nationalId = '1234567890'
+    const user: User = {
+      nationalId,
+      scope: [AdminPortalScope.formSystemAdmin],
+      authorization: '',
+      client: '',
+    }
+    const module = await Test.createTestingModule({
+      providers: [
+        OrganizationsService,
+        {
+          provide: getModelToken(Organization),
+          useValue: {
+            findOne: jest.fn().mockResolvedValue({
+              id: 'organization',
+              organizationPermissions: [],
+              delegations: [],
+            }),
+            findAll: jest.fn().mockResolvedValue([{ nationalId }]),
+          },
+        },
+        { provide: getModelToken(Form), useValue: {} },
+        { provide: Sequelize, useValue: {} },
+      ],
+    }).compile()
+    const service = module.get(OrganizationsService)
+
+    const result = await service.findAdmin(user, nationalId)
+
+    expect(result.ListTypes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: ListTypesEnum.CURRENCIES,
+          name: { is: 'Gjaldmiðlar', en: 'Currencies' },
+          isCommon: true,
+        }),
+        expect.objectContaining({
+          id: ListTypesEnum.ORGANIZATIONS,
+          name: { is: 'Stofnanir', en: 'Organizations' },
+          isCommon: true,
+        }),
+      ]),
+    )
+  })
+})
 
 describe('OrganizationsService.create', () => {
   const originalEnvironment = process.env.name
@@ -25,6 +81,148 @@ describe('OrganizationsService.create', () => {
     process.env.name = 'dev'
     process.env.NODE_ENV = 'test'
     findOrCreate.mockReset()
+  })
+
+  describe('OrganizationsService.updateLogo', () => {
+    const nationalId = '1234567890'
+    const logo = 'https://images.ctfassets.net/space/logo/organization.png'
+    const transaction = { LOCK: { UPDATE: 'UPDATE' } }
+    const findOne = jest.fn()
+    const save = jest.fn()
+    let service: OrganizationsService
+    let organization: {
+      nationalId: string
+      logo: { is: string | null; en: string | null } | null
+      save: typeof save
+    }
+    let user: User
+
+    beforeEach(async () => {
+      jest.clearAllMocks()
+      organization = {
+        nationalId,
+        logo: { is: 'old-logo', en: 'english-logo' },
+        save,
+      }
+      user = {
+        nationalId,
+        scope: [],
+        authorization: '',
+        client: '',
+      }
+      findOne.mockResolvedValue(organization)
+      const module = await Test.createTestingModule({
+        providers: [
+          OrganizationsService,
+          { provide: getModelToken(Organization), useValue: { findOne } },
+          { provide: getModelToken(Form), useValue: {} },
+          {
+            provide: Sequelize,
+            useValue: {
+              transaction: (
+                callback: (value: typeof transaction) => Promise<void>,
+              ) => callback(transaction),
+            },
+          },
+        ],
+      }).compile()
+      service = module.get(OrganizationsService)
+    })
+
+    it('saves logo.is and preserves logo.en for the organization owner', async () => {
+      await service.updateLogo(user, { nationalId, logo })
+
+      expect(organization.logo).toEqual({ is: logo, en: 'english-logo' })
+      expect(findOne).toHaveBeenCalledWith({
+        where: { nationalId },
+        transaction,
+        lock: transaction.LOCK.UPDATE,
+      })
+      expect(save).toHaveBeenCalledWith({ transaction })
+    })
+
+    it('allows an administrator to initialize a null logo', async () => {
+      organization.logo = null
+      user.nationalId = '0987654321'
+      user.scope = [AdminPortalScope.formSystemAdmin]
+
+      await service.updateLogo(user, { nationalId, logo })
+
+      expect(organization.logo).toEqual({ is: logo, en: '' })
+      expect(save).toHaveBeenCalledWith({ transaction })
+    })
+
+    it.each([
+      'https://example.com/logo.png',
+      'http://images.ctfassets.net/logo.png',
+      'https://images.ctfassets.net.example.com/logo.png',
+      'not-a-url',
+    ])(
+      'rejects invalid logo URL %s before accessing the database',
+      async (invalidLogo) => {
+        await expect(
+          service.updateLogo(user, { nationalId, logo: invalidLogo }),
+        ).rejects.toThrow(BadRequestException)
+        expect(findOne).not.toHaveBeenCalled()
+        expect(save).not.toHaveBeenCalled()
+      },
+    )
+
+    it('clears logo.is while preserving logo.en', async () => {
+      await service.updateLogo(user, { nationalId, logo: '' })
+
+      expect(organization.logo).toEqual({ is: '', en: 'english-logo' })
+      expect(save).toHaveBeenCalledWith({ transaction })
+    })
+
+    it('accepts an empty string logo', async () => {
+      const dto = Object.assign(new OrganizationLogoDto(), {
+        nationalId,
+        logo: '',
+      })
+
+      await expect(validate(dto)).resolves.toEqual([])
+    })
+
+    it.each([undefined, null, 'not-a-url'])(
+      'rejects an invalid or omitted logo (%s)',
+      async (invalidLogo) => {
+        const dto = Object.assign(new OrganizationLogoDto(), {
+          nationalId,
+          logo: invalidLogo,
+        })
+
+        expect(await validate(dto)).toEqual([
+          expect.objectContaining({ property: 'logo' }),
+        ])
+      },
+    )
+
+    it('rejects updates to another organization', async () => {
+      user.nationalId = '0987654321'
+
+      await expect(
+        service.updateLogo(user, { nationalId, logo }),
+      ).rejects.toThrow(UnauthorizedException)
+      expect(save).not.toHaveBeenCalled()
+    })
+
+    it('rejects missing organizations', async () => {
+      findOne.mockResolvedValue(null)
+
+      await expect(
+        service.updateLogo(user, { nationalId, logo }),
+      ).rejects.toThrow(NotFoundException)
+      expect(save).not.toHaveBeenCalled()
+    })
+
+    it('propagates persistence failures', async () => {
+      save.mockRejectedValueOnce(new Error('Database unavailable'))
+
+      await expect(
+        service.updateLogo(user, { nationalId, logo }),
+      ).rejects.toThrow('Database unavailable')
+    })
   })
 
   afterAll(() => {

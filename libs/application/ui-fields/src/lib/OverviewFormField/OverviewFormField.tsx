@@ -96,6 +96,7 @@ export const OverviewFormField = ({
         userInfo?.profile?.nationalId,
         apolloClient,
         locale,
+        application,
       )
       const filteredLoadedItems = loaded?.filter(
         (item) =>

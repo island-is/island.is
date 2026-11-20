@@ -1,0 +1,280 @@
+import { getValueViaPath, NO, YES } from '@island.is/application/core'
+import { Application, ApplicationContext } from '@island.is/application/types'
+import addMonths from 'date-fns/addMonths'
+import { postPruneMarginMonths, usageMaxMonths } from '../config'
+import {
+  ApplicationAction,
+  MOCK_APPLICATION_FUND_ID,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
+  States,
+} from '../constants'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+  employersHaveChanged,
+  getChangeBaseline,
+  getExpectedDateOfBirthOrAdoptionDateOrBirthDate,
+  normalize,
+  periodsHaveChanged,
+  requiresOtherParentApproval,
+  requiresOtherParentApprovalForEdits,
+  residentGrantIsOpenForApplication,
+  vmstFirstPeriodStartToAnswer,
+} from '../lib/parentalLeaveUtils'
+import { EmployerRow, Period } from '../types'
+
+export const allEmployersHaveApproved = (context: ApplicationContext) => {
+  const employers = getValueViaPath<EmployerRow[]>(
+    context.application.answers,
+    'employers',
+  )
+  if (!employers) {
+    return false
+  }
+
+  // We need to check if the employer has opened the application (has a value in 'reviewerNationalRegistryId')
+  // because it is not recorded if the employer has approved the application until after this check
+  // Employer does not need to approve application if "stillEmployed" is NO
+  return employers.every(
+    (e) => !!e.reviewerNationalRegistryId || e.stillEmployed === NO,
+  )
+}
+
+export const hasEmployer = (context: ApplicationContext) => {
+  const { application } = context
+  const { isReceivingUnemploymentBenefits, isSelfEmployed, employers } =
+    getApplicationAnswers(application.answers)
+
+  const applicationType = (
+    application.answers as {
+      applicationType: { option: string }
+    }
+  )?.applicationType
+
+  // Added this check for applications that is in the db already so they can go through to next state
+  if (applicationType === undefined) {
+    if (isReceivingUnemploymentBenefits !== undefined) {
+      return isSelfEmployed === NO && isReceivingUnemploymentBenefits === NO
+    }
+    return isSelfEmployed === NO
+  } else {
+    if (applicationType.option === PARENTAL_LEAVE) {
+      return isSelfEmployed === NO && isReceivingUnemploymentBenefits === NO
+    } else if (
+      (applicationType.option === PARENTAL_GRANT ||
+        applicationType.option === PARENTAL_GRANT_STUDENTS) &&
+      employers !== undefined
+    ) {
+      return employers.some((employer) => employer.stillEmployed === YES)
+    } else {
+      return false
+    }
+  }
+}
+
+export const needsOtherParentApproval = (context: ApplicationContext) => {
+  return requiresOtherParentApproval(
+    context.application.answers,
+    context.application.externalData,
+  )
+}
+
+const EDIT_FLOW_REVIEW_STATES: string[] = [
+  States.OTHER_PARENT_APPROVAL_FOR_EDITS,
+  States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+  States.EMPLOYER_APPROVE_EDITS,
+  States.VINNUMALASTOFNUN_APPROVE_EDITS,
+]
+
+/**
+ * What the applicant is told before taking an application back from review.
+ *
+ * A first-time application goes back to DRAFT. On resubmit every approval is
+ * asked for again, because `clearEmployers` resets employer approvals. In the
+ * edit flow, only the parties the new changes concern review them again, and
+ * that is not known until the applicant has made them.
+ */
+export const getReapprovalAfterEdit = (application: Application) => {
+  if (EDIT_FLOW_REVIEW_STATES.includes(application.state)) {
+    return { isEditFlow: true, otherParent: false, employer: false }
+  }
+
+  const context = { application } as ApplicationContext
+  return {
+    isEditFlow: false,
+    otherParent: needsOtherParentApproval(context),
+    employer: hasEmployer(context),
+  }
+}
+
+export const needsOtherParentApprovalForEdits = (
+  context: ApplicationContext,
+) => {
+  return requiresOtherParentApprovalForEdits(
+    context.application.answers,
+    context.application.externalData,
+  )
+}
+
+export const hasEmployerRelevantChange = (context: ApplicationContext) => {
+  if (!hasEmployer(context)) {
+    return false
+  }
+
+  const { application } = context
+  const baseline = getChangeBaseline(application.externalData)
+
+  if (!baseline) {
+    return true
+  }
+
+  const { employers, isSelfEmployed, periods } = getApplicationAnswers(
+    application.answers,
+  )
+
+  const employersChanged =
+    isSelfEmployed !== YES &&
+    employersHaveChanged(baseline.employers, employers ?? [])
+  const selfEmployedChanged =
+    normalize(baseline.employment.isSelfEmployed) !== normalize(isSelfEmployed)
+  const periodsChanged = periodsHaveChanged(baseline.periods, periods ?? [])
+
+  return employersChanged || selfEmployedChanged || periodsChanged
+}
+
+export const disableResidenceGrantApplication = (dateOfBirth: string) => {
+  if (!residentGrantIsOpenForApplication(dateOfBirth)) return false
+  return true
+}
+
+/**
+ * True when this application was created to change an already submitted one.
+ * Drives the prerequisites routing straight into the change form instead of the
+ * full draft form.
+ */
+export const isChangeApplication = (context: ApplicationContext) => {
+  const { applicationAction } = getApplicationAnswers(
+    context.application.answers,
+  )
+  return applicationAction === ApplicationAction.CHANGE
+}
+
+/**
+ * True once VMST has a record of this application: its own `sendApplication`
+ * returned an id, or `setApplicationFundId` stored one for a first-time
+ * application. Used to hide the delete button from states like DRAFT that can
+ * be re-entered after VMST approval — once VMST has the application, deleting
+ * it from our side would leave the two systems out of sync.
+ */
+export const hasBeenSubmittedToVMST = (application: Application) => {
+  const navIdData = getValueViaPath<string>(
+    application.externalData,
+    'navId.data',
+  )
+  const rawNavId = getValueViaPath<string>(application.externalData, 'navId')
+  const sendApplicationId = getValueViaPath<string>(
+    application.externalData,
+    'sendApplication.data.id',
+  )
+  // Survives a failed resend, which overwrites `sendApplication`
+  const sentToVMSTId = getValueViaPath<string>(
+    application.externalData,
+    'sentToVMST.data.id',
+  )
+  // The mock fund id is handed out without ever contacting VMST.
+  const isRealId = (id: unknown): id is string =>
+    typeof id === 'string' && !!id && id !== MOCK_APPLICATION_FUND_ID
+
+  if (isRealId(sendApplicationId) || isRealId(sentToVMSTId)) {
+    return true
+  }
+
+  // A change application inherits its predecessor's fund id into `navId` before
+  // its own `sendApplication` runs. That id is not evidence VMST has this row.
+  const { applicationAction } = getApplicationAnswers(application.answers)
+  if (applicationAction === ApplicationAction.CHANGE) {
+    return false
+  }
+
+  return isRealId(navIdData) || isRealId(rawNavId)
+}
+
+/**
+ * When the ids kept after pruning (`adminDataConfig`) are deleted. They link
+ * the applicant's VMST leave, listed by case number, to the island.is id of the
+ * application that started it, which VMST needs to look the leave up and
+ * change it. A leave can be changed until `usageMaxMonths` after the child's
+ * date. A change or residence grant (`initialQuery`), or an application VMST
+ * never received, starts no leave and gets the default.
+ */
+export const getPostPruneDate = (
+  application: Pick<Application, 'answers' | 'externalData'>,
+): Date | undefined => {
+  const fullApplication = application as Application
+
+  if (
+    getValueViaPath(fullApplication.answers, 'initialQuery') ||
+    !hasBeenSubmittedToVMST(fullApplication)
+  ) {
+    return undefined
+  }
+
+  const childDate = new Date(
+    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(fullApplication) ?? '',
+  )
+
+  return isNaN(childDate.getTime())
+    ? undefined
+    : addMonths(childDate, usageMaxMonths + postPruneMarginMonths)
+}
+
+/** True when this application was created to apply for the residence grant. */
+export const isResidenceGrantApplication = (context: ApplicationContext) => {
+  const { applicationAction } = getApplicationAnswers(
+    context.application.answers,
+  )
+  return applicationAction === ApplicationAction.RESIDENCE_GRANT
+}
+
+/**
+ * True when the application uses mock data and should bypass VMST approval.
+ * Read from the fund id the server writes, which it never does in production,
+ * not from the `mock.useMockData` answer, which the applicant can write.
+ */
+export const isMockApplication = (context: ApplicationContext) => {
+  const { applicationFundId } = getApplicationExternalData(
+    context.application.externalData,
+  )
+
+  return (
+    applicationFundId === MOCK_APPLICATION_FUND_ID &&
+    !isChangeApplication(context)
+  )
+}
+
+export const restructureVMSTPeriods = (
+  externalData: Application['externalData'],
+): Period[] => {
+  const { VMSTPeriods } = getApplicationExternalData(externalData)
+
+  const newPeriods: Period[] = []
+  VMSTPeriods?.forEach((period, index) => {
+    const rightsCodePeriod = (period.rightsCodePeriod ?? '').split(',')[0]
+    const obj = {
+      startDate: period.from,
+      endDate: period.to,
+      ratio: period.ratio.split(',')[0],
+      rawIndex: index,
+      firstPeriodStart: vmstFirstPeriodStartToAnswer(period),
+      rightCodePeriod: rightsCodePeriod,
+      daysToUse: period.days ?? undefined,
+      paid: period.paid,
+      approved: period.approved,
+    }
+    newPeriods.push(obj)
+  })
+
+  return newPeriods
+}
