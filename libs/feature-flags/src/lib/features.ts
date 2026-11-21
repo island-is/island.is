@@ -153,6 +153,9 @@ export enum Features {
 
   isDelegationConfirmationEnabled = 'isDelegationConfirmationEnabled',
 
+  // Granting a pharmacy delegation needs an electronic ID step-up
+  isHealthMedicineDelegationStepUpEnabled = 'isHealthMedicineDelegationStepUpEnabled',
+
   shouldSendEmailNotificationsToDelegations = 'shouldSendEmailNotificationsToDelegations',
 
   shouldSendEmailNotificationsToCompanyUserProfiles = 'shouldSendEmailNotificationsToCompanyUserProfiles',

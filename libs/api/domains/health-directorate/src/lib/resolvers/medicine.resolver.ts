@@ -1,6 +1,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
-import { UseGuards } from '@nestjs/common'
+import { ForbiddenException, UseGuards } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -9,8 +9,12 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import {
+  StepUpTokenRejectedError,
+  type StepUpClaims,
+} from '@island.is/auth/step-up'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Audit } from '@island.is/nest/audit'
+import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   FeatureFlag,
   FeatureFlagGuard,
@@ -18,11 +22,23 @@ import {
 } from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
 import {
+  MedicineDelegationCheckStepUpInput,
   MedicineDelegationCreateOrDeleteInput,
   MedicineDelegationInput,
 } from '.././dto/medicineDelegation.input'
 import { HealthDirectorateResponse } from '.././dto/response.dto'
 import { HealthDirectorateService } from '.././health-directorate.service'
+import {
+  hashGrant,
+  MedicineDelegationStepUpService,
+  type MedicineDelegationStepUpOutcome,
+} from '.././medicine-delegation-step-up.service'
+import {
+  MedicineDelegationCreateResponse,
+  MedicineDelegationStepUpMethod,
+  MedicineDelegationStepUpResult,
+  MedicineDelegationStepUpStatus,
+} from '.././models/medicineDelegationStepUp.model'
 import { MedicineDelegations } from '.././models/medicineDelegation.model'
 import { MedicineHistory } from '.././models/medicineHistory.model'
 import { MedicineDispensationsATCInput } from '.././models/medicineHistoryATC.dto'
@@ -33,11 +49,17 @@ import { Prescriptions } from '.././models/prescriptions.model'
 import { HealthDirectorateRenewalInput } from '.././models/renewal.input'
 import { PrescriptionRenewalTarget } from '.././models/renewalTarget.model'
 
+const namespace = '@island.is/api/health-directorate'
+
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@Audit({ namespace: '@island.is/api/health-directorate' })
+@Audit({ namespace })
 @Resolver()
 export class MedicineResolver {
-  constructor(private api: HealthDirectorateService) {}
+  constructor(
+    private api: HealthDirectorateService,
+    private stepUp: MedicineDelegationStepUpService,
+    private auditService: AuditService,
+  ) {}
 
   /* Prescriptions */
   @Query(() => Prescriptions, {
@@ -146,18 +168,112 @@ export class MedicineResolver {
     return this.api.getMedicineDelegations(user, locale, input)
   }
 
-  /* Add new Prescription Delegation */
-  @Mutation(() => HealthDirectorateResponse, {
+  /* Add new Prescription Delegation. Audited by hand: who it is for, and whether electronic ID confirmed it. */
+  @Mutation(() => MedicineDelegationCreateResponse, {
     name: 'healthDirectorateMedicineDelegationCreate',
   })
-  @Audit()
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthMedicineDelegationPageEnabled)
-  postMedicineDelegation(
+  async postMedicineDelegation(
     @Args('input') input: MedicineDelegationCreateOrDeleteInput,
     @CurrentUser() user: User,
-  ): Promise<HealthDirectorateResponse> {
-    return this.api.postMedicineDelegation(user, input)
+  ): Promise<MedicineDelegationCreateResponse> {
+    if (await this.stepUp.isRequired(user)) {
+      // Nothing is saved until the person has authenticated for this grant.
+      const stepUp = await this.stepUp.start(user, input)
+      this.auditService.audit({
+        auth: user,
+        namespace,
+        action: 'startMedicineDelegationStepUp',
+        resources: input.nationalId,
+        meta: { method: stepUp.method, grant: hashGrant(user, input) },
+      })
+      return {
+        success: false,
+        stepUp: {
+          ...stepUp,
+          method: MedicineDelegationStepUpMethod[stepUp.method],
+        },
+      }
+    }
+
+    const result = await this.api.postMedicineDelegation(user, input)
+    this.auditGrant(user, input, result.success)
+    return result
+  }
+
+  /* Finish a Prescription Delegation that waits for electronic ID. A mutation: it saves, and must not be cached. */
+  @Mutation(() => MedicineDelegationStepUpResult, {
+    name: 'healthDirectorateMedicineDelegationCheckStepUp',
+  })
+  @Scopes(ApiScope.internal, ApiScope.health)
+  @FeatureFlag(Features.servicePortalHealthMedicineDelegationPageEnabled)
+  async checkMedicineDelegationStepUp(
+    @Args('input') input: MedicineDelegationCheckStepUpInput,
+    @CurrentUser() user: User,
+  ): Promise<MedicineDelegationStepUpResult> {
+    let outcome: MedicineDelegationStepUpOutcome
+    try {
+      outcome = await this.stepUp.check(user, input.authReqId, input.delegation)
+    } catch (error) {
+      // An authentication that can't be accepted: not this person's, not for this grant, or not a token we can verify.
+      if (
+        error instanceof ForbiddenException ||
+        error instanceof StepUpTokenRejectedError
+      ) {
+        this.auditService.audit({
+          auth: user,
+          namespace,
+          action: 'refuseMedicineDelegationStepUp',
+          resources: input.delegation.nationalId,
+          meta: {
+            reason: error.message,
+            grant: hashGrant(user, input.delegation),
+          },
+        })
+      }
+      throw error
+    }
+
+    if (outcome.status !== 'confirmed') {
+      return {
+        status: MedicineDelegationStepUpStatus[outcome.status],
+        success: false,
+      }
+    }
+
+    const { success } = await this.api.postMedicineDelegation(
+      user,
+      input.delegation,
+    )
+    this.auditGrant(user, input.delegation, success, outcome.claims)
+    return { status: MedicineDelegationStepUpStatus.confirmed, success }
+  }
+
+  private auditGrant(
+    user: User,
+    input: MedicineDelegationCreateOrDeleteInput,
+    success: boolean,
+    stepUp?: StepUpClaims,
+  ) {
+    this.auditService.audit({
+      auth: user,
+      namespace,
+      action: 'postMedicineDelegation',
+      resources: input.nationalId,
+      meta: {
+        success,
+        from: input.from?.toISOString(),
+        to: input.to?.toISOString(),
+        lookup: input.lookup === true,
+        stepUp: stepUp != null,
+        grant: hashGrant(user, input),
+        ...(stepUp && {
+          stepUpAcr: stepUp.acr,
+          stepUpAuthTime: stepUp.authTime.toISOString(),
+        }),
+      },
+    })
   }
 
   /* Delete prescription Delegation */

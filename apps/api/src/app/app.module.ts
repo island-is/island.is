@@ -221,7 +221,10 @@ import {
 import { UniversityGatewayApiClientConfig } from '@island.is/clients/university-gateway-api'
 import { FormSystemClientConfig } from '@island.is/clients/form-system'
 import { FormSystemModule } from '@island.is/api/domains/form-system'
-import { HealthDirectorateModule } from '@island.is/api/domains/health-directorate'
+import {
+  HealthDirectorateModule,
+  MedicineDelegationStepUpConfig,
+} from '@island.is/api/domains/health-directorate'
 
 import { VehiclesMileageClientConfig } from '@island.is/clients/vehicles-mileage'
 
@@ -512,6 +515,7 @@ const environment = getConfig
         HealthDirectorateClientConfig,
         HealthDirectorateVaccinationsClientConfig,
         HealthDirectorateHealthClientConfig,
+        MedicineDelegationStepUpConfig,
         OfficialJournalOfIcelandClientConfig,
         OfficialJournalOfIcelandApplicationClientConfig,
         LegalGazetteClientConfig,

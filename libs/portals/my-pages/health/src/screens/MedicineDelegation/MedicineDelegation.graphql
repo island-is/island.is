@@ -33,6 +33,22 @@ mutation PostMedicineDelegation(
     __typename
     success
     message
+    stepUp {
+      authReqId
+      method
+      verificationCode
+      interval
+      expiresIn
+    }
+  }
+}
+
+mutation CheckMedicineDelegationStepUp(
+  $input: HealthDirectorateMedicineDelegationCheckStepUpInput!
+) {
+  healthDirectorateMedicineDelegationCheckStepUp(input: $input) {
+    status
+    success
   }
 }
 

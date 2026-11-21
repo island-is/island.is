@@ -163,4 +163,81 @@ export const m = defineMessages({
     id: 'portals:table-sort-hint',
     defaultMessage: 'Takkar í dálkahausum stýra röðun þess dálks',
   },
+  stepUpTitle: {
+    id: 'portals:step-up-title',
+    defaultMessage: 'Staðfestu með rafrænum skilríkjum',
+  },
+  stepUpFailedTitle: {
+    id: 'portals:step-up-failed-title',
+    defaultMessage: 'Auðkenning tókst ekki',
+  },
+  stepUpMethodSim: {
+    id: 'portals:step-up-method-sim',
+    defaultMessage: 'Rafræn skilríki í síma',
+  },
+  stepUpMethodApp: {
+    id: 'portals:step-up-method-app',
+    defaultMessage: 'Auðkennisappið',
+  },
+  stepUpBack: {
+    id: 'portals:step-up-back',
+    defaultMessage: 'Til baka',
+  },
+  stepUpRetry: {
+    id: 'portals:step-up-retry',
+    defaultMessage: 'Reyna aftur',
+  },
+  stepUpYourSecurityCode: {
+    id: 'portals:step-up-your-security-code',
+    defaultMessage: 'Öryggistalan þín er:',
+  },
+  stepUpSecurityCodeConfirmMessage: {
+    id: 'portals:step-up-security-code-confirm-message',
+    defaultMessage: 'Staðfestu ef sama tala birtist í símanum þínum.',
+  },
+  stepUpSecurityCodeConfirmMessageApp: {
+    id: 'portals:step-up-security-code-confirm-message-app',
+    defaultMessage: 'Staðfestu ef sama tala birtist í Auðkennisappinu.',
+  },
+  stepUpSecurityCodeConfirmSubtitle: {
+    id: 'portals:step-up-security-code-confirm-subtitle',
+    defaultMessage: 'Öryggistalan er ekki PIN-númer skilríkjanna.',
+  },
+  stepUpDeniedTitle: {
+    id: 'portals:step-up-denied-title',
+    defaultMessage: 'Hætt við auðkenningu',
+  },
+  stepUpDenied: {
+    id: 'portals:step-up-denied',
+    defaultMessage:
+      'Hætt var við auðkenninguna og aðgerðin var ekki framkvæmd.',
+  },
+  stepUpTimedOutTitle: {
+    id: 'portals:step-up-timed-out-title',
+    defaultMessage: 'Tíminn rann út',
+  },
+  stepUpTimedOut: {
+    id: 'portals:step-up-timed-out',
+    defaultMessage:
+      'Auðkenningin var ekki staðfest í tæka tíð og aðgerðin var ekki framkvæmd.',
+  },
+  stepUpExpiredTitle: {
+    id: 'portals:step-up-expired-title',
+    defaultMessage: 'Tíminn rann út',
+  },
+  stepUpExpired: {
+    id: 'portals:step-up-expired',
+    defaultMessage:
+      'Auðkenningin rann út og aðgerðin var ekki framkvæmd. Þú getur reynt aftur.',
+  },
+  stepUpRefused: {
+    id: 'portals:step-up-refused',
+    defaultMessage:
+      'Ekki tókst að staðfesta auðkenninguna og aðgerðin var ekki framkvæmd. Þú getur reynt aftur.',
+  },
+  stepUpUnavailable: {
+    id: 'portals:step-up-unavailable',
+    defaultMessage:
+      'Ekki er hægt að staðfesta með rafrænum skilríkjum, t.d. ef þú skráðir þig inn með skilríkjum á korti eða staðfesting er ekki í boði eins og er. Aðgerðin var ekki framkvæmd.',
+  },
 })
