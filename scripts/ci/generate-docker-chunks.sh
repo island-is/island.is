@@ -18,7 +18,9 @@ if echo "$LAST_COMMIT_FILES" | grep -q ".github/actions/force-build.mjs"; then
   export TEST_EVERYTHING=true
 fi
 
-if [[ (-n "$BRANCH" && -n "$AFFECTED_ALL" && "$AFFECTED_ALL" == "7913-$BRANCH") || (-n "$NX_AFFECTED_ALL" && "$NX_AFFECTED_ALL" == "true") || (-n "$TEST_EVERYTHING" && "$TEST_EVERYTHING" == "true") ]]; then
+# CI_CONFIG_HASH is set when a pull request changes the CI configuration, which is tested by
+# building every image. See `ci-config-hash.mjs`
+if [[ (-n "$BRANCH" && -n "$AFFECTED_ALL" && "$AFFECTED_ALL" == "7913-$BRANCH") || (-n "$NX_AFFECTED_ALL" && "$NX_AFFECTED_ALL" == "true") || (-n "$TEST_EVERYTHING" && "$TEST_EVERYTHING" == "true") || -n "${CI_CONFIG_HASH:-}" ]]; then
   EXTRA_ARGS=""
 else
   EXTRA_ARGS=(--affected --base "$BASE" --head "$HEAD")
