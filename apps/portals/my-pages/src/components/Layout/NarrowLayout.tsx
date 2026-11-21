@@ -1,4 +1,4 @@
-import { Box, Hidden, Icon, NavigationItem } from '@island.is/island-ui/core'
+import { Box, Icon, NavigationItem } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { useHeaderVisibility } from '../../context/HeaderVisibilityContext'
@@ -206,14 +206,12 @@ export const NarrowLayout = ({
                 titleIcon={activeParent?.icon}
                 singleAccordion
                 isMenuDialog={true}
+                menuFooter={sidebarFooter}
               />
             </Box>
           )}
         <ModuleAlertBannerSection />
         {children}
-        {!isMobileTakeover && sidebarFooter && (
-          <Hidden above="sm">{sidebarFooter}</Hidden>
-        )}
       </Box>
     </SidebarLayout>
   )
