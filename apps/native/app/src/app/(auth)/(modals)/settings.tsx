@@ -1,6 +1,5 @@
 import { useApolloClient } from '@apollo/client'
 import * as Application from 'expo-application'
-import { authenticateAsync } from 'expo-local-authentication'
 import { useRouter } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -25,6 +24,8 @@ import {
   useDeletePasskeyMutation,
   useGetProfileQuery,
 } from '@/graphql/types/schema'
+import { useEnableBiometrics } from '@/hooks/use-enable-biometrics'
+import { getIasClient } from '@/lib/ias'
 import { authStore } from '@/stores/auth-store'
 import {
   Locale,
@@ -109,22 +110,42 @@ export default function SettingsScreen() {
   const intl = useIntl()
   const theme = useTheme()
 
-  const {
-    dismiss,
-    dismissed,
-    locale,
-    setLocale,
-    hasAcceptedBiometrics,
-    useBiometrics,
-    setUseBiometrics,
-    appLockTimeout,
-    hasCreatedPasskey,
-  } = usePreferencesStore()
+  const { dismiss, dismissed, locale, setLocale, hasCreatedPasskey } =
+    usePreferencesStore()
 
   const isInfoDismissed = dismissed.includes('userSettingsInformational')
-  const { authenticationTypes, isEnrolledBiometrics } = useUiStore()
+  const {
+    authenticationTypes,
+    isEnrolledBiometrics,
+    hasBiometricHardware,
+    hasStrongBiometricHardware,
+  } = useUiStore()
   const biometricType = useBiometricType(authenticationTypes)
+  // Turned off for this app in the phone's settings: turning it on here says
+  // where to turn it back on.
+  const isBiometricsTurnedOff =
+    Platform.OS === 'ios' &&
+    authenticationTypes.length > 0 &&
+    !hasBiometricHardware
+  // Biometrics that can unlock the app: on Android not weak ones only.
+  const supportsBiometrics = hasStrongBiometricHardware || isBiometricsTurnedOff
   const isPasskeyEnabled = useFeatureFlag('isPasskeyEnabled', false)
+
+  // Biometrics are a key registered with IAS.
+  const { isEnabling, enableBiometrics } = useEnableBiometrics()
+  const [hasBiometricKey, setHasBiometricKey] = useState(() =>
+    getIasClient().isBiometricsEnabled(),
+  )
+  const onBiometricsChange = async (value: boolean) => {
+    if (value) {
+      await enableBiometrics()
+    } else {
+      await getIasClient()
+        .disableBiometrics()
+        .catch((error) => console.warn('Turning off biometrics failed', error))
+    }
+    setHasBiometricKey(getIasClient().isBiometricsEnabled())
+  }
 
   const userProfile = useGetProfileQuery()
   const [deletePasskey] = useDeletePasskeyMutation()
@@ -507,69 +528,38 @@ export default function SettingsScreen() {
         <TableViewGroup
           header={intl.formatMessage({ id: 'settings.security.groupTitle' })}
         >
-          <PressableHighlight
-            onPress={() => router.navigate('/onboarding/pin?from=settings')}
-          >
-            <TableViewCell
-              title={intl.formatMessage({
-                id: 'settings.security.changePinLabel',
-              })}
-              subtitle={intl.formatMessage({
-                id: 'settings.security.changePinDescription',
-              })}
-              accessory={
-                <Image
-                  source={chevronForward}
-                  style={{ width: 24, height: 24 }}
-                />
-              }
-            />
-          </PressableHighlight>
           <TableViewCell
             title={intl.formatMessage(
-              { id: 'settings.security.useBiometricsLabel' },
+              { id: 'settings.security.enableBiometricsLabel' },
               { biometricType: biometricType.text },
             )}
             subtitle={
-              authenticationTypes.length === 0
+              !supportsBiometrics
                 ? intl.formatMessage({
                     id: 'onboarding.biometrics.noAuthenticationTypes',
                   })
-                : isEnrolledBiometrics
+                : isEnrolledBiometrics || isBiometricsTurnedOff
                 ? intl.formatMessage(
-                    { id: 'settings.security.useBiometricsDescription' },
+                    { id: 'settings.security.enableBiometricsDescription' },
                     { biometricType: biometricType.text },
                   )
                 : intl.formatMessage(
-                    { id: 'onboarding.biometrics.notEnrolled' },
+                    {
+                      id:
+                        Platform.OS === 'android'
+                          ? 'onboarding.biometrics.strongNotEnrolled'
+                          : 'onboarding.biometrics.notEnrolled',
+                    },
                     { biometricType: biometricType.text },
                   )
             }
             accessory={
               <View>
                 <Switch
-                  onValueChange={(value) => {
-                    if (value && !hasAcceptedBiometrics) {
-                      authenticateAsync({
-                        disableDeviceFallback: true,
-                        fallbackLabel: '',
-                        cancelLabel: intl.formatMessage({
-                          id: 'biometrics.cancel',
-                        }),
-                      }).then((result) => {
-                        if (result.success) {
-                          setUseBiometrics(true)
-                          preferencesStore.setState({
-                            hasAcceptedBiometrics: true,
-                          })
-                        }
-                      })
-                    } else {
-                      setUseBiometrics(value)
-                    }
-                  }}
-                  disabled={!isEnrolledBiometrics}
-                  value={useBiometrics}
+                  onValueChange={(value) => void onBiometricsChange(value)}
+                  // Without biometrics set up, a tap says where to do it.
+                  disabled={!supportsBiometrics || isEnabling}
+                  value={hasBiometricKey}
                   thumbColor={Platform.select({
                     android: theme.tokens.app.background.neutral,
                   })}
@@ -609,35 +599,6 @@ export default function SettingsScreen() {
               />
             </PressableHighlight>
           )}
-          <MenuCell
-            title={intl.formatMessage({
-              id: 'settings.security.appLockTimeoutLabel',
-            })}
-            subtitle={intl.formatMessage({
-              id: 'settings.security.appLockTimeoutDescription',
-            })}
-            value={`${intl.formatNumber(Math.floor(appLockTimeout / 1000), {
-              style: 'decimal',
-              unitDisplay: 'short',
-              unit: 'second',
-            })} ${intl.formatMessage({
-              id: 'settings.security.appLockTimeoutSeconds',
-            })}`}
-            options={[5, 10, 15].map((seconds) => ({
-              id: String(seconds * 1000),
-              title: `${intl.formatNumber(seconds, {
-                style: 'decimal',
-                unitDisplay: 'long',
-                unit: 'second',
-              })} ${intl.formatMessage({
-                id: 'settings.security.appLockTimeoutSeconds',
-              })}`,
-            }))}
-            selected={String(appLockTimeout)}
-            onSelect={(id) => {
-              preferencesStore.setState({ appLockTimeout: Number(id) })
-            }}
-          />
           <PressableHighlight
             onPress={() =>
               openBrowserAsync(

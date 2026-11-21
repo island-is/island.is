@@ -98,10 +98,30 @@ class DeviceKeysModule : Module() {
         generateKeyPair(alias, attestationChallenge, strongBox = false)
       }
     } catch (e: Exception) {
-      throw exception("FAILED", "Could not create the key", e)
+      // Expo passes on only the code and the message, so the system code goes
+      // in brackets at the end of the message, where the JS client reads it.
+      throw exception("FAILED", "Could not create the key [${systemCode(e)}]", e)
     }
 
     return describe(alias)
+  }
+
+  // The system's own code for a failure, for IAS's attestation error reports,
+  // which take a code and never a message: "KeyStoreException -1000" where
+  // Android has the number (13 and later), else the innermost exception's class.
+  private fun systemCode(error: Throwable): String {
+    var cause: Throwable? = error
+    while (cause != null) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && cause is android.security.KeyStoreException) {
+        return "KeyStoreException ${cause.numericErrorCode}"
+      }
+      cause = cause.cause
+    }
+    var innermost = error
+    while (innermost.cause != null && innermost.cause !== innermost) {
+      innermost = innermost.cause!!
+    }
+    return innermost.javaClass.simpleName
   }
 
   // Falls back to the TEE on any StrongBox failure, not only
@@ -218,6 +238,14 @@ class DeviceKeysModule : Module() {
       return promise.reject(exception("FAILED", "Could not prepare the signature", e))
     }
 
+    // Removing every fingerprint doesn't invalidate the key on every phone, but
+    // it can't be used again: enrolling one invalidates it. As on iOS.
+    if (BiometricManager.from(activity).canAuthenticate(BIOMETRIC_STRONG) ==
+      BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED
+    ) {
+      return promise.reject(exception("INVALIDATED", "The enrolled biometrics were removed"))
+    }
+
     val callback = object : BiometricPrompt.AuthenticationCallback() {
       override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
         try {
@@ -255,9 +283,11 @@ class DeviceKeysModule : Module() {
     BiometricPrompt.ERROR_NEGATIVE_BUTTON,
     BiometricPrompt.ERROR_CANCELED,
     BiometricPrompt.ERROR_TIMEOUT -> "CANCELLED"
-    BiometricPrompt.ERROR_LOCKOUT,
+    // 30 seconds; after several of those it lasts until the phone is unlocked.
+    BiometricPrompt.ERROR_LOCKOUT -> "LOCKOUT_TEMPORARY"
     BiometricPrompt.ERROR_LOCKOUT_PERMANENT -> "LOCKOUT"
-    BiometricPrompt.ERROR_NO_BIOMETRICS,
+    // Removed while the prompt was up.
+    BiometricPrompt.ERROR_NO_BIOMETRICS -> "INVALIDATED"
     BiometricPrompt.ERROR_HW_NOT_PRESENT,
     BiometricPrompt.ERROR_HW_UNAVAILABLE,
     BiometricPrompt.ERROR_SECURITY_UPDATE_REQUIRED -> "BIOMETRICS_UNAVAILABLE"

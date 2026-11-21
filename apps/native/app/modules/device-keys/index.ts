@@ -50,9 +50,17 @@ export interface BiometricPromptOptions {
   cancel: string
 }
 
+/**
+ * A failure's message can end with the system's own error code in brackets,
+ * e.g. "[DCError 3]" or "[KeyStoreException -1000]", for IAS's attestation
+ * error reports.
+ */
 export type DeviceKeyErrorCode =
   | 'ERR_DEVICE_KEY_CANCELLED'
+  // Too many failed attempts: until the phone is unlocked with its passcode.
   | 'ERR_DEVICE_KEY_LOCKOUT'
+  // Android: the same, but only for 30 seconds.
+  | 'ERR_DEVICE_KEY_LOCKOUT_TEMPORARY'
   // The enrolled biometrics changed since the biometric key was created.
   | 'ERR_DEVICE_KEY_INVALIDATED'
   | 'ERR_DEVICE_KEY_NOT_FOUND'
@@ -148,7 +156,7 @@ export function signWithInstallKey(data: string): Promise<string> {
 /**
  * Shows the biometric prompt and signs like `signWithInstallKey`. Rejects
  * with ERR_DEVICE_KEY_INVALIDATED without prompting when the enrolled
- * biometrics changed since the key was created.
+ * biometrics changed, or were all removed, since the key was created.
  */
 export function signWithBiometricKey(
   data: string,

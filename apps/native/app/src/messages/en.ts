@@ -8,31 +8,92 @@ export const en: TranslatedMessages = {
   'button.seeMore': 'See more',
 
   // login
-  'login.welcomeMessage': 'Log in to the app with electronic ID',
-  'login.loginButtonText': 'Login',
   'login.languageButtonText': 'Íslenska',
-  'login.needHelpButtonText': 'Need help?',
   'login.outdatedBrowserTitle': 'Outdated browser',
   'login.outdatedBrowserMessage':
     'You have an unsupported browser version, please update it through the Play Store.',
   'login.outdatedBrowserUpdateButton': 'Update',
   'login.outdatedBrowserCancelButton': 'Cancel',
-  'login.networkErrorTitle': 'Network error',
-  'login.networkErrorMessage':
-    '\nCould not contact the login service.\n\nPlease check your device internet connection or try again later.',
   'login.expiredTitle': 'Session expired',
-  'login.expiredScopesMessage':
-    'Updated permissions required, please login again.',
-  'login.expiredMissingUserMessage':
-    'Could not fetch user information, please login again.',
   'login.expiredMessage': 'Please log in again.',
+  'login.back': 'Back',
+  'login.welcome.title': 'All public services in one place',
+  'login.welcome.loginButton': 'Log in',
+  'login.welcome.terms': 'Terms',
+  'login.welcome.help': 'Help',
+  'login.identifier.title': 'Log in',
+  'login.identifier.subtitle': 'Choose how you want to log in.',
+  'login.identifier.method.sim': 'Electronic ID',
+  'login.identifier.method.app': 'Auðkenni app',
+  'login.identifier.phoneLabel': 'Phone number',
+  'login.identifier.nationalIdLabel': 'National ID number',
+  'login.identifier.submit': 'Authenticate',
+  'login.smsCode.title': 'Two-factor authentication',
+  'login.smsCode.subtitle':
+    "As you're logging in on a new device, we've sent a code to {phoneNumber}.",
+  'login.smsCode.label': 'Security code',
+  'login.smsCode.submit': 'Confirm',
+  'login.smsCode.next': 'After this you continue to log in with electronic ID.',
+  'login.error.newLoginRestricted':
+    "You've restricted logins from unknown devices. Log in to My pages on a known device to turn this off.",
+  'login.error.wrongSmsCode': 'Wrong code. {attemptsLeft} attempts left.',
+  'login.error.wrongSmsCodeLastAttempt': 'Wrong code. One attempt left.',
+  'login.error.smsCodeAttemptsUsed':
+    "Couldn't confirm the code. Please start again.",
+  'login.error.declined': 'User not found.',
+  'login.error.expired': 'The request timed out. Try again.',
+  'login.error.deviceCheckUnavailable':
+    "Couldn't log you in right now. Try again in a few minutes.",
+  'login.error.unsupportedDeviceTitle': "Couldn't log you in on this device",
+  'login.error.unsupportedDevice':
+    "This device may not meet the app's requirements. Update the app and the operating system, then try again.",
+  'login.error.failed': "Couldn't log you in. Try again.",
 
   // app lock
-  'applock.title': 'Enter a 4-digit PIN',
-  'applock.attempts': 'attempts left',
-  'applock.attempt': 'attempt left',
-  'applock.usePin': 'Use PIN',
-  'biometrics.cancel': 'Cancel',
+  'applock.openWithBiometrics': 'Open with {biometricType}',
+  'applock.useElectronicId': 'Use electronic ID',
+  'applock.openWithElectronicId': 'Open with electronic ID',
+  'applock.biometricsFailedTitle': 'Authentication failed',
+  'applock.biometricsFailedMessage': 'Try again or use electronic ID.',
+  'applock.biometricsLockedOutTitle': '{biometricType} is turned off',
+  'applock.biometricsLockedOutMessage':
+    'Too many failed attempts. Open the app with electronic ID.',
+  'applock.electronicIdFailedTitle': "Couldn't open the app",
+  'biometrics.enableFailedTitle': "Couldn't turn on {biometricType}",
+  'electronicId.error.tryAgain': 'Try again.',
+  'electronicId.error.tooManyRequests':
+    'Too many electronic ID requests for now. Try again in a few minutes.',
+  'applock.logout': 'Log out',
+  'biometrics.close': 'Close',
+  'biometrics.turnedOffTitle': '{biometricType} is turned off for Ísland.is',
+  'biometrics.turnedOffMessage':
+    'Turn on {biometricType} for Ísland.is in your device settings.',
+  'biometrics.notNow': 'Not now',
+  'biometrics.notEnrolledTitle': 'No biometrics set up',
+  'biometrics.notEnrolledTitle.android': 'No fingerprint set up',
+  'biometrics.notEnrolledMessage.ios':
+    "Set up {biometricType} in your phone's settings to open the app with it.",
+  'biometrics.openSettings': 'Open settings',
+
+  // log in again after the update
+  'relogin.title': 'Log in',
+  'relogin.body':
+    'A PIN can no longer be used to log in to <b>the Ísland.is app.</b>',
+  'relogin.description':
+    'Log in with electronic ID. After that you can use Face ID or fingerprint.',
+  'relogin.loginButton': 'Log in with electronic ID',
+
+  // waiting for approval with electronic ID
+  'electronicId.title': 'Confirm the authentication',
+  'electronicId.subtitle.login': 'Request sent to your phone',
+  'electronicId.subtitle.unlock': 'The Ísland.is app',
+  'electronicId.subtitle.enableBiometrics':
+    'Turn on {biometricType} in the Ísland.is app',
+  'electronicId.codeLabel': 'Security code',
+  'electronicId.instructions':
+    'Confirm if the same number appears on your phone. The security code is not your electronic ID PIN.',
+  'electronicId.useAuthenticatorApp': 'Confirm with the Auðkenni app',
+  'electronicId.cancel': 'Cancel',
 
   // onboarding
   'onboarding.notifications.title': 'Allow notifications',
@@ -43,38 +104,34 @@ export const en: TranslatedMessages = {
   'onboarding.notifications.decideLaterButtonText': 'Skip for now',
   'onboarding.appLock.title':
     'Screen lock ensures that no one can open the app except you.',
-  'onboarding.appLock.choosePinButtonText': 'Choose PIN',
-  'onboarding.pinCode.enterPin': 'Choose 4-digit PIN',
-  'onboarding.pinCode.confirmPin': 'Confirm the 4-digit PIN',
-  'onboarding.pinCode.goBackButtonText': 'Go back',
-  'onboarding.pinCode.cancelButtonText': 'Cancel',
-  'onboarding.pinCode.nonMatchingPinCodes': 'The numbers did not match',
   'onboarding.biometrics.title': 'Allow biometrics',
-  'onboarding.biometrics.body':
-    'You can also use {biometricType} to access the app without entering a PIN.',
+  'onboarding.biometrics.bodyWithoutPin':
+    'Open the app with {biometricType}. If you skip this, you will need electronic ID every time.',
+  'onboarding.biometrics.strongNotEnrolled':
+    'Only fingerprint or secure face unlock can be used to open the app. Set one up in your device settings.',
   'onboarding.biometrics.notEnrolled':
     "Your device supports {biometricType} but you haven't enrolled into it yet.",
   'onboarding.biometrics.noAuthenticationTypes':
     'Your device does not support biometrics',
   'onboarding.biometrics.useBiometricsButtonText': 'Use {biometricType}',
   'onboarding.biometrics.skipButtonText': 'Skip for now',
+  'onboarding.biometrics.turnedOffTitle':
+    'Allow {biometricType} for the Ísland.is app',
+  'onboarding.biometrics.turnedOffBody':
+    '{biometricType} is turned off for Ísland.is in your device settings. Without {biometricType} you open the app with electronic ID every time.',
+  'onboarding.biometrics.openSettingsButton': 'Open device settings',
   'onboarding.biometrics.type.faceId': 'Face ID',
   'onboarding.biometrics.type.biometrics': 'biometrics',
   'onboarding.biometrics.type.fingerprint': 'fingerprint',
   'onboarding.biometrics.type.iris': 'iris scanner',
   'biometrics.enrollmentChanged.title': 'Biometrics turned off',
   'biometrics.enrollmentChanged.message':
-    'The biometrics registered on this device have changed. Unlock the app with your PIN and turn biometrics back on in settings.',
-  'onboarding.pinKeypad.accessibilityLabel.faceId': 'Use FaceID',
-  'onboarding.pinKeypad.accessibilityLabel.iris': 'Use Iris',
-  'onboarding.pinKeypad.accessibilityLabel.fingerprint': 'Use fingerprint',
-  'onboarding.pinKeypad.accessibilityLabel.delete': 'Delete character',
+    'The biometrics registered on this device have changed. Unlock the app with electronic ID and turn biometrics back on in settings.',
   'onboarding.privacy.title': 'Privacy',
   'onboarding.privacy.body':
     "You can read Digital Iceland's policy on the handling of personal data on Ísland.is",
   'onboarding.privacy.linkText': 'Privacy policy of Ísland.is',
   'onboarding.privacy.continueButtonText': 'Continue',
-  'pinCode.updated': 'PIN code updated',
 
   // personal info screen
   'personalInfo.screenTitle': 'Personal info',
@@ -129,11 +186,9 @@ export const en: TranslatedMessages = {
   'settings.security.privacyTitle': 'Privacy Policy',
   'settings.security.privacySubTitle': 'Digital Iceland',
   'settings.security.groupTitle': 'Security and privacy',
-  'settings.security.changePinLabel': 'Change PIN',
-  'settings.security.changePinDescription': 'Choose a new 4-digit PIN number',
-  'settings.security.useBiometricsLabel': 'Use {biometricType}',
-  'settings.security.useBiometricsDescription':
-    'With {biometricType} you don’t need to enter PIN',
+  'settings.security.enableBiometricsLabel': 'Turn on {biometricType}',
+  'settings.security.enableBiometricsDescription':
+    'Otherwise you open the app with electronic ID',
   'settings.security.createPasskeyLabel': 'Create a passkey',
   'settings.security.createPasskeyDescription':
     'To automatically sign in to Island.is through the app in this device',
@@ -146,10 +201,6 @@ export const en: TranslatedMessages = {
     'By deleting your passkey you can not sign in automatically to Island.is with the app',
   'settings.security.removePasskeyButton': 'Delete',
   'settings.security.removePasskeyCancelButton': 'Cancel',
-  'settings.security.appLockTimeoutLabel': 'App lock timeout',
-  'settings.security.appLockTimeoutDescription':
-    'Time until app lock will appear',
-  'settings.security.appLockTimeoutSeconds': 'sec.',
   'settings.about.groupTitle': 'About',
   'settings.about.versionLabel': 'Version',
   'settings.about.logoutLabel': 'Logout',
@@ -732,6 +783,9 @@ export const en: TranslatedMessages = {
 
   // offline
   'offline.title': 'No internet connection',
+  'offline.openAppMessage':
+    'Connect your device to the internet to open the app.',
+  'offline.loginMessage': 'Connect your device to the internet to log in.',
   'offline.message': 'Information has not been updated.',
 
   // problem
@@ -768,6 +822,14 @@ export const en: TranslatedMessages = {
     'You are about to use an old version of the Island.is app. Please update the app to be able to continue.',
   'updateApp.button': 'Update',
   'updateApp.buttonSkip': 'Skip',
+
+  // health - intro
+  'health.intro.title': 'Your health data is now in the app',
+  'health.intro.body':
+    'In Health you can see information about medicines, appointments, vaccinations and more. Please note that health data can contain sensitive personal information.',
+  'health.intro.privacyLink': 'More about privacy',
+  'health.intro.viewHealth': 'View health',
+  'health.intro.close': 'Close',
 
   // health - overview
   'health.overview.screenTitle': 'Health',

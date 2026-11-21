@@ -119,7 +119,7 @@ export function Onboarding({
     <Host {...rest}>
       <Content>
         <LogoImage source={logo} resizeMode="contain" />
-        <Typography weight="600" size={26} lineHeight={32}>
+        <Typography textAlign="center" weight="600" size={26} lineHeight={32}>
           {title}
         </Typography>
         <Typography textAlign="center" weight="300" size={16} lineHeight={24}>

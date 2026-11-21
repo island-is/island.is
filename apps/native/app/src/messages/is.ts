@@ -6,31 +6,94 @@ export const is = {
   'button.moreInfoHere': 'Nánari upplýsingar hér',
   'button.seeMore': 'Sjá nánar',
   // login
-  'login.welcomeMessage': 'Skráðu þig inn í appið með rafrænum skilríkjum',
-  'login.loginButtonText': 'Skrá inn',
   'login.languageButtonText': 'English',
-  'login.needHelpButtonText': 'Þarftu aðstoð?',
   'login.outdatedBrowserTitle': 'Gamall vafri',
   'login.outdatedBrowserMessage':
     'Vafrinn þinn er of gamall, vinsamlegast uppfærið hann í gegnum Play Store',
   'login.outdatedBrowserUpdateButton': 'Uppfæra',
   'login.outdatedBrowserCancelButton': 'Hætta við',
-  'login.networkErrorTitle': 'Villa kom upp',
-  'login.networkErrorMessage':
-    '\nEkki náðist samband við innskráningarþjónustu.\n\nVinsamlegast athugið netsamband á tækinu eða reynið aftur síðar.',
   'login.expiredTitle': 'Innskráning útrunnin',
-  'login.expiredScopesMessage':
-    'Uppfærð réttindi vantar, vinsamlegast skráðu þig inn aftur.',
-  'login.expiredMissingUserMessage':
-    'Tókst ekki að sækja notendaupplýsingar, vinsamlegast skráðu þig inn aftur.',
   'login.expiredMessage': 'Vinsamlegast skráðu þig inn aftur.',
+  'login.back': 'Til baka',
+  'login.welcome.title': 'Öll opinber þjónusta á einum stað',
+  'login.welcome.loginButton': 'Innskráning',
+  'login.welcome.terms': 'Skilmálar',
+  'login.welcome.help': 'Aðstoð',
+  'login.identifier.title': 'Skráðu þig inn',
+  'login.identifier.subtitle': 'Veldu hvernig þú vilt skrá þig inn.',
+  'login.identifier.method.sim': 'Rafræn skilríki',
+  'login.identifier.method.app': 'Auðkennisapp',
+  'login.identifier.phoneLabel': 'Símanúmer',
+  'login.identifier.nationalIdLabel': 'Kennitala',
+  'login.identifier.submit': 'Auðkenna',
+  'login.smsCode.title': 'Tveggja þátta auðkenning',
+  'login.smsCode.subtitle':
+    'Þar sem þú ert að skrá þig inn á nýju tæki höfum við sent þér kóða í síma {phoneNumber}.',
+  'login.smsCode.label': 'Öryggiskóði',
+  'login.smsCode.submit': 'Staðfesta',
+  'login.smsCode.next':
+    'Eftir auðkenningu ferðu áfram í innskráningu með rafrænum skilríkjum.',
+  'login.error.newLoginRestricted':
+    'Þú ert með virka takmörkun á innskráningu af óþekktum tækjum. Skráðu þig inn á Mínar síður á þekktu tæki til að afvirkja hana.',
+  'login.error.wrongSmsCode': 'Rangur kóði. {attemptsLeft} tilraunir eftir.',
+  'login.error.wrongSmsCodeLastAttempt': 'Rangur kóði. Ein tilraun eftir.',
+  'login.error.smsCodeAttemptsUsed':
+    'Ekki tókst að staðfesta kóða. Vinsamlegast byrjaðu upp á nýtt.',
+  'login.error.declined': 'Notandi finnst ekki.',
+  'login.error.expired': 'Beiðnin rann út. Reyndu aftur.',
+  'login.error.deviceCheckUnavailable':
+    'Ekki tókst að skrá þig inn eins og er. Reyndu aftur eftir nokkrar mínútur.',
+  'login.error.unsupportedDeviceTitle':
+    'Ekki tókst að skrá þig inn í þessu tæki',
+  'login.error.unsupportedDevice':
+    'Tækið uppfyllir mögulega ekki skilyrði appsins. Uppfærðu appið og stýrikerfið og reyndu aftur.',
+  'login.error.failed': 'Ekki tókst að skrá þig inn. Reyndu aftur.',
 
   // app lock
-  'applock.title': 'Sláðu inn 4 tölustafa PIN',
-  'applock.attempts': 'tilraunir eftir',
-  'applock.attempt': 'tilraun eftir',
-  'applock.usePin': 'Nota PIN',
-  'biometrics.cancel': 'Hætta við',
+  'applock.openWithBiometrics': 'Opna með {biometricType}',
+  'applock.useElectronicId': 'Nota rafræn skilríki',
+  'applock.openWithElectronicId': 'Opna með rafrænum skilríkjum',
+  'applock.biometricsFailedTitle': 'Auðkenning tókst ekki',
+  'applock.biometricsFailedMessage': 'Reyndu aftur eða notaðu rafræn skilríki.',
+  'applock.biometricsLockedOutTitle': 'Slökkt er á {biometricType}',
+  'applock.biometricsLockedOutMessage':
+    'Of margar tilraunir mistókust. Opnaðu appið með rafrænum skilríkjum.',
+  'applock.electronicIdFailedTitle': 'Ekki tókst að opna appið',
+  'biometrics.enableFailedTitle': 'Ekki tókst að virkja {biometricType}',
+  'electronicId.error.tryAgain': 'Reyndu aftur.',
+  'electronicId.error.tooManyRequests':
+    'Of margar beiðnir um rafræn skilríki í bili. Reyndu aftur eftir nokkrar mínútur.',
+  'applock.logout': 'Útskrá',
+  'biometrics.close': 'Loka',
+  'biometrics.turnedOffTitle': 'Slökkt er á {biometricType} fyrir Ísland.is',
+  'biometrics.turnedOffMessage':
+    'Kveiktu á {biometricType} fyrir Ísland.is í stillingum tækisins.',
+  'biometrics.notNow': 'Ekki núna',
+  'biometrics.notEnrolledTitle': 'Engin lífkenni skráð',
+  'biometrics.notEnrolledTitle.android': 'Fingrafar ekki skráð',
+  'biometrics.notEnrolledMessage.ios':
+    'Settu upp {biometricType} í stillingum símans til að opna appið með því.',
+  'biometrics.openSettings': 'Opna stillingar',
+
+  // log in again after the update
+  'relogin.title': 'Skráðu þig inn',
+  'relogin.body':
+    'Ekki er lengur hægt að nota PIN-númer til að skrá sig inn í <b>Ísland.is appið.</b>',
+  'relogin.description':
+    'Skráðu þig inn með rafrænum skilríkjum. Eftir það má nota Face ID eða fingrafar.',
+  'relogin.loginButton': 'Innskráning með rafrænum skilríkjum',
+
+  // waiting for approval with electronic ID
+  'electronicId.title': 'Staðfestu auðkenninguna',
+  'electronicId.subtitle.login': 'Beiðni send í síma',
+  'electronicId.subtitle.unlock': 'Ísland.is appið',
+  'electronicId.subtitle.enableBiometrics':
+    'Virkja {biometricType} í Ísland.is appinu',
+  'electronicId.codeLabel': 'Öryggistala',
+  'electronicId.instructions':
+    'Staðfestu ef sama tala birtist í símanum þínum. Öryggistalan er ekki PIN-númer skilríkjanna.',
+  'electronicId.useAuthenticatorApp': 'Staðfesta með Auðkennisappinu',
+  'electronicId.cancel': 'Hætta við',
 
   // onboarding
   'onboarding.notifications.title': 'Leyfa tilkynningar',
@@ -40,39 +103,34 @@ export const is = {
   'onboarding.notifications.decideLaterButtonText': 'Sleppa því í bili',
   'onboarding.appLock.title':
     'Skjálæsing tryggir að enginn geti opnað appið nema þú.',
-  'onboarding.appLock.choosePinButtonText': 'Velja PIN',
-  'onboarding.pinCode.enterPin': 'Veldu 4 tölustafa PIN',
-  'onboarding.pinCode.confirmPin': 'Staðfestu PIN-númerið',
-  'onboarding.pinCode.goBackButtonText': 'Til baka',
-  'onboarding.pinCode.cancelButtonText': 'Hætta við',
-  'onboarding.pinCode.nonMatchingPinCodes': 'Númerin pössuðu ekki saman',
   'onboarding.biometrics.title': 'Leyfa lífkenni',
-  'onboarding.biometrics.body':
-    'Þú getur einnig notað {biometricType} til að opna appið án þess að slá inn PIN.',
+  'onboarding.biometrics.bodyWithoutPin':
+    'Opnaðu appið með {biometricType}. Ef þú sleppir því þarftu rafræn skilríki í hvert skipti.',
+  'onboarding.biometrics.strongNotEnrolled':
+    'Aðeins er hægt að nota fingrafar eða örugga andlitsgreiningu til að opna appið. Settu það upp í stillingum tækisins.',
   'onboarding.biometrics.notEnrolled':
     'Tækið þitt styður {biometricType} en þú hefur ekki virkjað það.',
   'onboarding.biometrics.noAuthenticationTypes':
     'Tækið hjá þér er ekki með stuðning fyrir lífkenni',
   'onboarding.biometrics.useBiometricsButtonText': 'Nota {biometricType}',
   'onboarding.biometrics.skipButtonText': 'Sleppa því í bili',
+  'onboarding.biometrics.turnedOffTitle':
+    'Leyfðu {biometricType} fyrir Ísland.is appið',
+  'onboarding.biometrics.turnedOffBody':
+    'Slökkt er á {biometricType} fyrir Ísland.is í stillingum tækisins. Án {biometricType} opnar þú appið með rafrænum skilríkjum í hvert skipti.',
+  'onboarding.biometrics.openSettingsButton': 'Opna stillingar tækisins',
   'onboarding.biometrics.type.faceId': 'Face ID',
   'onboarding.biometrics.type.biometrics': 'lífkenni',
   'onboarding.biometrics.type.fingerprint': 'fingrafar',
   'onboarding.biometrics.type.iris': 'augnskanna',
   'biometrics.enrollmentChanged.title': 'Slökkt á lífkennum',
   'biometrics.enrollmentChanged.message':
-    'Lífkennin sem skráð eru í tækinu hafa breyst. Opnaðu appið með PIN-númerinu og kveiktu aftur á lífkennum í stillingum.',
-  'onboarding.pinKeypad.accessibilityLabel.iris': 'Nota augnskannaauðkenningu',
-  'onboarding.pinKeypad.accessibilityLabel.fingerprint':
-    'Nota fingrafarsauðkenningu',
-  'onboarding.pinKeypad.accessibilityLabel.faceId': 'Nota andlitsauðkenningu',
-  'onboarding.pinKeypad.accessibilityLabel.delete': 'Eyða staf',
+    'Lífkennin sem skráð eru í tækinu hafa breyst. Opnaðu appið með rafrænum skilríkjum og kveiktu aftur á lífkennum í stillingum.',
   'onboarding.privacy.title': 'Persónuvernd',
   'onboarding.privacy.body':
     'Hægt er að kynna sér stefnu Stafræns Íslands um meðferð persónuupplýsinga á Ísland.is',
   'onboarding.privacy.linkText': 'Persónuverndastefna Ísland.is',
   'onboarding.privacy.continueButtonText': 'Halda áfram',
-  'pinCode.updated': 'PIN-númeri breytt',
 
   // personal info screen
   'personalInfo.screenTitle': 'Persónuupplýsingar',
@@ -129,11 +187,9 @@ export const is = {
   'settings.security.privacyTitle': 'Persónuverndarstefna',
   'settings.security.privacySubTitle': 'Stafrænt Íslands',
   'settings.security.groupTitle': 'Öryggi og persónuvernd',
-  'settings.security.changePinLabel': 'Breyta PIN',
-  'settings.security.changePinDescription': 'Veldu nýtt 4 stafa PIN-númer',
-  'settings.security.useBiometricsLabel': 'Nota {biometricType}',
-  'settings.security.useBiometricsDescription':
-    'Þannig sleppur þú við að nota PIN-númerið',
+  'settings.security.enableBiometricsLabel': 'Virkja {biometricType}',
+  'settings.security.enableBiometricsDescription':
+    'Annars opnar þú appið með rafrænum skilríkjum',
   'settings.security.createPasskeyLabel': 'Búa til aðgangslykil',
   'settings.security.createPasskeyDescription':
     'Til að skrá þig inn sjálfkrafa á Ísland.is í þessu tæki',
@@ -145,10 +201,6 @@ export const is = {
     'Með því að eyða aðgangslykli getur þú ekki skráð þig sjálfkrafa á Ísland.is',
   'settings.security.removePasskeyButton': 'Eyða',
   'settings.security.removePasskeyCancelButton': 'Hætta við',
-  'settings.security.appLockTimeoutLabel': 'Biðtími skjálæsingar',
-  'settings.security.appLockTimeoutDescription':
-    'Tíminn þar til skjálæsing fer í gang',
-  'settings.security.appLockTimeoutSeconds': 'sek.',
   'settings.about.groupTitle': 'Um appið',
   'settings.about.versionLabel': 'Útgáfa',
   'settings.about.logoutLabel': 'Útskrá',
@@ -732,6 +784,8 @@ export const is = {
 
   // offline
   'offline.title': 'Ekkert netsamband',
+  'offline.openAppMessage': 'Tengdu tækið við net til að opna appið.',
+  'offline.loginMessage': 'Tengdu tækið við net til að skrá þig inn.',
   'offline.message': 'Upplýsingar hafa ekki verið uppfærðar.',
 
   // problems
@@ -766,6 +820,14 @@ export const is = {
     'Þú ert að fara að nota gamla útgáfu af Ísland.is appinu. Vinsamlegast uppfærðu appið til að halda áfram.',
   'updateApp.button': 'Uppfæra',
   'updateApp.buttonSkip': 'Sleppa',
+
+  // health - intro
+  'health.intro.title': 'Heilsugögnin þín eru komin í appið',
+  'health.intro.body':
+    'Í Heilsu sérðu upplýsingar um lyf, tímabókanir, bólusetningar og fleira. Vinsamlegast athugið að heilsugögn geta innihaldið viðkvæmar persónuupplýsingar.',
+  'health.intro.privacyLink': 'Nánar um persónuvernd',
+  'health.intro.viewHealth': 'Skoða heilsu',
+  'health.intro.close': 'Loka',
 
   // health - overview
   'health.overview.screenTitle': 'Heilsa',

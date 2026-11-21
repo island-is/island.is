@@ -19,6 +19,24 @@ export const getIntl = () => {
   })
 }
 
+/**
+ * For text inside the system's own dialogs, like the Face ID prompt. The rest
+ * of those is in the phone's language, which can't be Icelandic on iOS, so
+ * this follows the phone rather than the app.
+ */
+export const getSystemIntl = () => {
+  const phoneLocale = Intl.DateTimeFormat().resolvedOptions().locale
+  const locale = phoneLocale.startsWith('is') ? 'is-IS' : 'en-US'
+  return createIntl({
+    locale,
+    messages: locale === 'is-IS' ? is : en,
+    onError() {
+      // noop
+    },
+    timeZone: 'UTC',
+  })
+}
+
 export const LocaleProvider = ({ children }: { children: React.ReactNode }) => {
   const { locale } = usePreferencesStore()
 

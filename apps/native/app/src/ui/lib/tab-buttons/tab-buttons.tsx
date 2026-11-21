@@ -1,51 +1,7 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import styled, { useTheme } from 'styled-components/native'
-import {
-  Animated,
-  Dimensions,
-  LayoutChangeEvent,
-  StyleSheet,
-  View,
-  useWindowDimensions,
-} from 'react-native'
-import { Typography } from '../typography/typography'
-
-const Host = styled.View`
-  border-radius: ${({ theme }) => theme.border.radius.large};
-  justify-content: center;
-  background-color: ${({ theme }) => theme.tokens.background.brandMinimal};
-  position: relative;
-`
-
-const Tabs = styled.View`
-  flex-direction: row;
-`
-
-const TabText = styled(Typography)<{ isSelected: boolean }>`
-  color: ${({ isSelected, theme }) =>
-    isSelected
-      ? theme.tokens.interactive.foreground.primary
-      : theme.tokens.foreground.primary};
-  font-weight: ${({ isSelected }) => (isSelected ? '600' : '400')};
-`
-
-const Tab = styled.Pressable<{ isSelected: boolean }>`
-  height: 40px;
-  border-radius: 6px;
-  flex: 1;
-`
-
-const ActiveBackground = styled(Animated.View)<{ buttonWidth: number }>`
-  position: absolute;
-
-  background-color: ${({ theme }) => theme.tokens.background.invert};
-  border-radius: 6px;
-  margin-horizontal: 2px;
-  height: 38px;
-  width: ${({ buttonWidth }) => buttonWidth}px;
-  border-width: 1px;
-  border-color: ${({ theme }) => theme.tokens.border.primary};
-`
+import SegmentedControl from '@react-native-segmented-control/segmented-control'
+import React from 'react'
+import { PixelRatio, Platform, View } from 'react-native'
+import { useTheme } from 'styled-components/native'
 
 interface TabButton {
   title: string
@@ -55,94 +11,68 @@ interface TabButtonProps {
   buttons: TabButton[]
   selectedTab: number
   setSelectedTab: (index: number) => void
+  disabled?: boolean
 }
 
-function getButtonWidth(numButtons: number, containerWidth: number) {
-  return containerWidth / numButtons
-}
+// The library takes `testIDS` but leaves it out of its types.
+const SegmentedControlWithTestIds = SegmentedControl as React.ComponentType<
+  React.ComponentProps<typeof SegmentedControl> & { testIDS?: string[] }
+>
 
-const tabContentStyle = {
-  flex: 1,
-  justifyContent: 'center' as const,
-  alignItems: 'center' as const,
-  paddingHorizontal: 4,
-}
+// On Android the library draws the control itself, 32 high with anything
+// taller cut off, so its titles only grow this much with the text size.
+const ANDROID_MAX_FONT_SCALE = 1.3
+// The library's size for them, before the text size is applied.
+const ANDROID_FONT_SIZE = 14
 
+// The system's segmented control on iOS. On Android the library draws its own
+// version of it, which fades to 40% when disabled: its raised slider then shows
+// a grey box. There it keeps its look and ignores taps instead, and TalkBack
+// skips it, since it would offer segments that do nothing.
 export const TabButtons = ({
   buttons,
   selectedTab,
   setSelectedTab,
+  disabled,
 }: TabButtonProps) => {
-  const [containerWidth, setContainerWidth] = useState(
-    Dimensions.get('window').width,
-  )
-  const [buttonWidth, setButtonWidth] = useState(
-    getButtonWidth(buttons.length, containerWidth),
-  )
+  const theme = useTheme()
+  const titles = buttons.map(({ title }) => title)
+  const fontScale = PixelRatio.getFontScale()
+  // The text size scales this again: the result is at most the cap.
+  const androidFontSize =
+    (ANDROID_FONT_SIZE * Math.min(fontScale, ANDROID_MAX_FONT_SCALE)) /
+    fontScale
 
-  const translateX = useRef(new Animated.Value(0)).current
-
-  const onTabPress = useCallback(
-    (index: number) => {
-      setSelectedTab(index)
-    },
-    [buttonWidth, translateX, setSelectedTab],
-  )
-
-  useEffect(() => {
-    Animated.spring(translateX, {
-      toValue: selectedTab * buttonWidth,
-      useNativeDriver: true,
-      overshootClamping: true,
-      mass: 1,
-    }).start()
-  }, [selectedTab, buttonWidth])
-
-  useEffect(
-    () => setButtonWidth(getButtonWidth(buttons.length, containerWidth)),
-    [buttons.length, containerWidth],
-  )
-
-  const onLayout = useCallback(
-    (e: LayoutChangeEvent) => setContainerWidth(e.nativeEvent.layout.width),
-    [buttons],
+  const control = (
+    <SegmentedControlWithTestIds
+      values={titles}
+      // Android reads these out as the segments' names.
+      testIDS={titles}
+      selectedIndex={selectedTab}
+      onChange={({ nativeEvent }) => {
+        if (!disabled) {
+          setSelectedTab(nativeEvent.selectedSegmentIndex)
+        }
+      }}
+      enabled={Platform.OS === 'android' || !disabled}
+      fontStyle={
+        Platform.OS === 'android' ? { fontSize: androidFontSize } : undefined
+      }
+      activeFontStyle={{
+        color: theme.tokens.interactive.foreground.primary,
+        ...(Platform.OS === 'android' && { fontSize: androidFontSize }),
+      }}
+      // Follow the app's theme, not the system's.
+      appearance={theme.isDark ? 'dark' : 'light'}
+    />
   )
 
+  if (Platform.OS !== 'android') {
+    return control
+  }
   return (
-    <Host accessibilityRole="tablist" onLayout={onLayout}>
-      <ActiveBackground
-        buttonWidth={buttonWidth}
-        style={{ transform: [{ translateX: translateX }] }}
-      />
-      <Tabs>
-        {buttons.map((button, index) => {
-          const isSelected = selectedTab === index
-          return (
-            <Tab
-              key={index}
-              onPress={() => onTabPress(index)}
-              isSelected={isSelected}
-              accessibilityRole="tab"
-              accessibilityState={{ selected: isSelected }}
-              accessibilityLabel={`${button.title} tab`}
-            >
-              <View style={StyleSheet.absoluteFill} pointerEvents="none">
-                <View style={tabContentStyle}>
-                  <TabText
-                    variant="body3"
-                    isSelected={isSelected}
-                    textAlign="center"
-                    numberOfLines={1}
-                    maxFontSizeMultiplier={1.5}
-                  >
-                    {button.title}
-                  </TabText>
-                </View>
-              </View>
-            </Tab>
-          )
-        })}
-      </Tabs>
-    </Host>
+    <View importantForAccessibility={disabled ? 'no-hide-descendants' : 'auto'}>
+      {control}
+    </View>
   )
 }

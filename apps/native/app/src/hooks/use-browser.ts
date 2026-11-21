@@ -2,6 +2,7 @@ import { Passkey } from 'react-native-passkey'
 import {
   authStore,
   clearLockScreenSuppression,
+  isAppLockEnabled,
   suppressLockScreen,
 } from '@/stores/auth-store'
 import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
@@ -36,8 +37,10 @@ export const openAndSuppressBrowser = async (url: string) => {
     sub.remove()
     clearLockScreenSuppression()
     // iOS' SFSafariViewController doesn't toggle host AppState on close, so
-    // the AuthLayout listener won't fire — push the lock ourselves.
-    if (backgroundedAt !== null) {
+    // the AuthLayout listener won't fire — push the lock ourselves. Only
+    // when there's a login to lock: logged out, the lock would never mount
+    // and its pending push would block every lock after the next login.
+    if (backgroundedAt !== null && isAppLockEnabled()) {
       authStore.setState({
         lockScreenActivatedAt: backgroundedAt,
         biometricAutoPromptedForCurrentLock: false,
