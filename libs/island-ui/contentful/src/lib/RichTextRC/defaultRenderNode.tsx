@@ -12,7 +12,10 @@ import {
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
-import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
+import {
+  getOrganizationPageUrlPrefix,
+  getProjectPageUrlPrefix,
+} from '@island.is/shared/utils'
 import Hyperlink from '../Hyperlink/Hyperlink'
 import AssetLink from '../AssetLink/AssetLink'
 import * as styles from './RichText.css'
@@ -349,6 +352,31 @@ export const defaultRenderNodeObject: RenderNode = {
         return (
           <Hyperlink
             href={`/${prefix}/${entry.fields.organizationPage.fields.slug}/${entry.fields.slug}`}
+          >
+            {children}
+          </Hyperlink>
+        )
+      }
+      case 'projectPage': {
+        if (!entry?.fields?.slug) return <Text as="span">{children}</Text>
+        const prefix = getProjectPageUrlPrefix(entry.sys?.locale)
+        return (
+          <Hyperlink href={`/${prefix}/${entry.fields.slug}`}>
+            {children}
+          </Hyperlink>
+        )
+      }
+      // A project subpage that is a chapter in a parent subpage is linked to directly,
+      // since the subpage has no field pointing to the parent subpage it belongs to
+      case 'projectSubpage':
+      case 'projectParentSubpage': {
+        if (!entry?.fields?.slug || !entry.fields.projectPage?.fields?.slug) {
+          return <Text as="span">{children}</Text>
+        }
+        const prefix = getProjectPageUrlPrefix(entry.sys?.locale)
+        return (
+          <Hyperlink
+            href={`/${prefix}/${entry.fields.projectPage.fields.slug}/${entry.fields.slug}`}
           >
             {children}
           </Hyperlink>

@@ -186,6 +186,21 @@ export const pruneEntryHyperlink = (node: any) => {
         },
       },
     }
+  } else if (
+    (contentTypeId === 'projectSubpage' ||
+      contentTypeId === 'projectParentSubpage') &&
+    target.fields?.projectPage?.fields
+  ) {
+    node.data.target = {
+      ...target,
+      fields: {
+        ...extractPrimitiveFields(target.fields),
+        projectPage: {
+          ...target.fields.projectPage,
+          fields: extractPrimitiveFields(target.fields.projectPage.fields),
+        },
+      },
+    }
   } else if (contentTypeId === 'price' && target.fields?.organization?.fields) {
     node.data.target = {
       ...target,

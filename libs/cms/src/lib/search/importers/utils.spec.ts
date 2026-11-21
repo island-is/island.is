@@ -132,6 +132,39 @@ describe('pruning entry hyperlink nodes', () => {
     expect(node.data.target.fields.slug).toBe(organizationParentSubpageSlug)
   })
 
+  it.each(['projectSubpage', 'projectParentSubpage'])(
+    'should keep the project page slug for %s content types',
+    (contentTypeId) => {
+      const projectPage = {
+        sys: { contentType: { sys: { id: 'projectPage' } } },
+        fields: {
+          slug: 'project-slug',
+          content: { nodeType: 'document', content: [] },
+        },
+      }
+      const node = {
+        data: {
+          target: {
+            sys: { contentType: { sys: { id: contentTypeId } } },
+            fields: {
+              slug: 'subpage-slug',
+              projectPage,
+              content: { nodeType: 'document', content: [] },
+            },
+          },
+        },
+      }
+
+      pruneEntryHyperlink(node)
+
+      expect(node.data.target.fields.slug).toBe('subpage-slug')
+      expect(node.data.target.fields.projectPage.fields).toEqual({
+        slug: 'project-slug',
+      })
+      expect(node.data.target.fields).not.toHaveProperty('content')
+    },
+  )
+
   it('should handle subArticle content types correctly', () => {
     const subArticleSlug = 'some-slug'
     const articleSlug = 'some-other-slug'
