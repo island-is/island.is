@@ -22,7 +22,7 @@ import { KeyInfoSection } from '../PrimarySchool/PrimarySchoolOverview/keyInfo/K
 import { MOCK_CONTACT, MOCK_REGISTERED_BY } from './mockContact'
 
 const NO_DATA = false
-const HAS_CONTACT = true
+const HAS_CONTACT = false
 
 export const EducationOverview = () => {
   useNamespaces('sp.education-overview')
@@ -77,7 +77,7 @@ export const EducationOverview = () => {
                   name: MOCK_REGISTERED_BY,
                 })}
                 action={
-                  <Button size="small" onClick={goToEdit}>
+                  <Button size="small" nowrap onClick={goToEdit}>
                     {formatMessage(om.registerButton)}
                   </Button>
                 }
