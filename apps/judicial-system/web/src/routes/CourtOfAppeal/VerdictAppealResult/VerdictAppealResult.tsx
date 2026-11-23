@@ -3,10 +3,7 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import {
-  COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
-  getStandardUserDashboardRoute,
-} from '@island.is/judicial-system/consts'
+import { COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE } from '@island.is/judicial-system/consts'
 import {
   FormContentContainer,
   FormContext,
@@ -15,7 +12,6 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
-  UserContext,
   VerdictAppealFiles,
 } from '@island.is/judicial-system-web/src/components'
 import { AppealCaseState } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -32,13 +28,13 @@ import VerdictAppealRulingDocument from '../VerdictAppealSummary/VerdictAppealRu
  * documents it ended with.
  *
  * Only a finished appeal has anything to show here, so one that is not is
- * sent to the summary, where the court confirms it. Corrections are made on
- * the status step, which stays open after the appeal is finished.
+ * sent to the summary, where the court confirms it. The appeal stays open to
+ * corrections once finished: the stepper keeps every earlier step reachable,
+ * and the way back leads to the summary.
  */
 const VerdictAppealResult = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { user } = useContext(UserContext)
   // Read directly rather than through the shared resolver, for the reason
   // the overview gives.
   const verdictAppealCase = workingCase.verdictAppealCase
@@ -55,16 +51,16 @@ const VerdictAppealResult = () => {
     Boolean(workingCase.id) &&
     !isCompleted
 
+  const summaryUrl = appendAppealCaseIdQuery(
+    `${COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
+    verdictAppealCase?.id,
+  )
+
   useEffect(() => {
     if (shouldRedirect) {
-      router.replace(
-        appendAppealCaseIdQuery(
-          `${COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
-          verdictAppealCase?.id,
-        ),
-      )
+      router.replace(summaryUrl)
     }
-  }, [shouldRedirect, router, workingCase.id, verdictAppealCase?.id])
+  }, [shouldRedirect, router, summaryUrl])
 
   const handleNavigationTo = (destination: string) =>
     router.push(
@@ -101,7 +97,7 @@ const VerdictAppealResult = () => {
         </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
-        <FormFooter previousUrl={getStandardUserDashboardRoute(user)} />
+        <FormFooter previousUrl={summaryUrl} />
       </FormContentContainer>
     </PageLayout>
   )

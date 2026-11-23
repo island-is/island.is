@@ -1553,7 +1553,8 @@ const useSections = (
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE) ||
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE) ||
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE) ||
-        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE),
+        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE) ||
+        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE),
       children: [
         {
           name: 'Yfirlit',
@@ -1704,18 +1705,49 @@ const useSections = (
                   )
               : undefined,
         },
+        // The finished appeal is read on a page of its own, which only an
+        // appeal the court has confirmed has. As a step of this section it
+        // keeps every earlier step in the panel, so the court can go back and
+        // correct any of them.
+        ...(targetAppealCase?.appealState === AppealCaseState.COMPLETED
+          ? [
+              {
+                name: 'Máli lokið',
+                isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE),
+                href: appendAppealCaseIdQuery(
+                  `${COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
+                  targetAppealCase.id,
+                ),
+                onClick:
+                  !isActive(COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE) &&
+                  validateFormStepper(
+                    isValid,
+                    [
+                      COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
+                      COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
+                      COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
+                      COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
+                      COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
+                    ],
+                    workingCase,
+                  ) &&
+                  onNavigationTo
+                    ? async () =>
+                        await onNavigationTo(
+                          COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE,
+                        )
+                    : undefined,
+              },
+            ]
+          : []),
       ],
     },
-    // The finished appeal, read on its own page once the court has confirmed
-    // how it ended. Lit only on that page, so the section before it is the
-    // one the panel marks on every step of the proceeding; the panel then
-    // draws "Dómur Landsréttar" as done. A section has no link of its own:
-    // the summary leads here once the appeal is finished. It also keeps the
-    // connecting line running below "Dómur Landsréttar": the stepper draws
-    // none below its last section.
+    // Never active, and has no steps. It is here because the stepper draws no
+    // connecting line below its last section: without it the line stops at
+    // "Dómur Landsréttar" and its steps hang beside a gap.
     {
       name: 'Niðurstaða',
-      isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE),
+      isActive: false,
       children: [],
     },
   ]

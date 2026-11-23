@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
 import { COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE } from '@island.is/judicial-system/consts'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
@@ -147,6 +148,16 @@ describe('VerdictAppealResult', () => {
     expect(screen.getByText('domur-landsrettar.pdf')).toBeInTheDocument()
     expect(screen.queryByTestId('continueButton')).not.toBeInTheDocument()
     expect(mockReplace).not.toHaveBeenCalled()
+  })
+
+  it('goes back to the summary of the same appeal', async () => {
+    renderPage(finishedCase)
+
+    await userEvent.click(screen.getByTestId('previousButton'))
+
+    expect(mockPush).toHaveBeenCalledWith(
+      `${COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE}/case-id?appealCaseId=verdict-appeal`,
+    )
   })
 
   it('sends an appeal that is not finished to the summary', async () => {
