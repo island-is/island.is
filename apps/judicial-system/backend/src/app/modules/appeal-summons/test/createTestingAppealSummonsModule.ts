@@ -14,6 +14,7 @@ import { AwsS3Service } from '../../aws-s3'
 import { CaseService, PdfService } from '../../case'
 import { PoliceService } from '../../police'
 import {
+  AppealCaseRepositoryService,
   AppealEventLogRepositoryService,
   AppealSummonsRepositoryService,
   CaseRepositoryService,
@@ -27,6 +28,7 @@ jest.mock('../../aws-s3/awsS3.service')
 jest.mock('../../police/police.service')
 jest.mock('../../repository/services/appealSummonsRepository.service')
 jest.mock('../../repository/services/appealEventLogRepository.service')
+jest.mock('../../repository/services/appealCaseRepository.service')
 jest.mock('../../repository/services/caseRepository.service')
 
 export const createTestingAppealSummonsModule = async () => {
@@ -44,6 +46,7 @@ export const createTestingAppealSummonsModule = async () => {
       AwsS3Service,
       PoliceService,
       CaseRepositoryService,
+      AppealCaseRepositoryService,
       AppealSummonsRepositoryService,
       AppealEventLogRepositoryService,
       {
@@ -70,6 +73,11 @@ export const createTestingAppealSummonsModule = async () => {
       AppealEventLogRepositoryService,
     )
 
+  const appealCaseRepositoryService =
+    appealSummonsModule.get<AppealCaseRepositoryService>(
+      AppealCaseRepositoryService,
+    )
+
   const pdfService = appealSummonsModule.get<PdfService>(PdfService)
 
   const awsS3Service = appealSummonsModule.get<AwsS3Service>(AwsS3Service)
@@ -93,6 +101,7 @@ export const createTestingAppealSummonsModule = async () => {
   return {
     appealSummonsRepositoryService,
     appealEventLogRepositoryService,
+    appealCaseRepositoryService,
     pdfService,
     awsS3Service,
     policeService,

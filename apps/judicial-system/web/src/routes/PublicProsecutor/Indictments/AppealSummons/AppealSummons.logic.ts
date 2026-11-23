@@ -1,4 +1,8 @@
-import { formatNationalId } from '@island.is/judicial-system/formatters'
+import {
+  formatAppealCaseName,
+  formatNationalId,
+  resolveAppealCaseName,
+} from '@island.is/judicial-system/formatters'
 import {
   AppealSummonsAppellantSide,
   prosecutionRoles,
@@ -277,12 +281,33 @@ export const buildAppealSummonsFormSections = (
   return sections
 }
 
+/**
+ * Prefill for "Heiti máls": decline each defendant name into þágufall via
+ * Beygla and wrap as "Ákæruvaldið gegn …". Users can amend the field when
+ * Beygla guesses wrong.
+ */
+export const prefillAppealCaseName = (
+  names: (string | undefined | null)[],
+): string => formatAppealCaseName(names, { decline: true })
+
+/**
+ * Value shown in the Heiti máls field: a stored name when the appeal already
+ * has one, otherwise the Beygla-declined prefill.
+ */
+export const resolveAppealSummonsCaseName = (
+  storedCaseName: string | undefined | null,
+  defendantNames: (string | undefined | null)[],
+): string =>
+  resolveAppealCaseName(storedCaseName, defendantNames, { decline: true })
+
 export const isAppealSummonsFormReady = (
   sections: Pick<AppealSummonsFormSection, 'included' | 'claims'>[],
+  caseName: string,
 ): boolean => {
   const included = sections.filter((section) => section.included)
 
   return (
+    caseName.trim().length > 0 &&
     included.length > 0 &&
     included.every((section) => section.claims.trim().length > 0)
   )
