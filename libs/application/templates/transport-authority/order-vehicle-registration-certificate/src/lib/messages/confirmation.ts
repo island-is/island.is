@@ -29,5 +29,13 @@ export const confirmation = {
         `* Staðfesting/kvittun verður send í rafræn skjöl á island.is\n`,
       description: 'Confirmation accordion text',
     },
+    accordionTextOtherAddress: {
+      id: 'ta.ovrc.application:confirmation.general.accordionTextOtherAddress',
+      defaultMessage:
+        `* Skírteinið verður sent í pósti á heimilisfangið sem tilgreint var í umsókninni\n` +
+        `* Staðfesting/kvittun verður send í rafræn skjöl á island.is\n`,
+      description:
+        'Confirmation accordion text when the certificate is sent to another address',
+    },
   }),
 }
