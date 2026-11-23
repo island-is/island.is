@@ -12,6 +12,10 @@ import {
   educationAssessmentGateLoader,
 } from './screens/PrimarySchool/PrimarySchool/PrimarySchoolGate.loader'
 
+const EducationOverview = lazy(() =>
+  import('./screens/EducationOverview/EducationOverview'),
+)
+
 const EducationCareer = lazy(() =>
   import('../../education-career/src/screens/EducationCareer/EducationCareer'),
 )
@@ -113,7 +117,15 @@ export const educationModule: PortalModule = {
       path: EducationPaths.EducationRoot,
       enabled: userInfo.scopes.includes(ApiScope.education),
       requiredScopes: [ApiScope.education],
-      element: <Navigate to={EducationPaths.EducationPrimarySchool} replace />,
+      element: <Navigate to={EducationPaths.EducationOverview} replace />,
+    },
+
+    {
+      name: 'Yfirlit',
+      path: EducationPaths.EducationOverview,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
+      element: <EducationOverview />,
     },
 
     // Grunnskóli - Primary school

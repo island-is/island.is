@@ -271,7 +271,8 @@ export const primarySchoolKeyInfoMessages = defineMessages({
     defaultMessage: 'Engar upplýsingar um tungumálaumhverfi eru skráðar.',
   },
   languageProfileEmptyDescription: {
-    id: 'sp.education-primary-school:key-info-language-profile-empty-description',
+    id:
+      'sp.education-primary-school:key-info-language-profile-empty-description',
     defaultMessage: 'Þú getur skráð upplýsingarnar með því að smella á Breyta.',
   },
   healthProfileEmpty: {
@@ -442,5 +443,41 @@ export const uniMessages = defineMessages({
     defaultMessage: 'Námsstig',
     description:
       'Level of study label (used instead of degree for micro-credentials)',
+  },
+})
+
+export const educationOverviewMessages = defineMessages({
+  intro: {
+    id: 'sp.education-overview:intro',
+    defaultMessage:
+      'Hér er yfirlit yfir skólagöngu þína. Einnig sjást hér upplýsingar um skólagöngu barna í þinni forsjá upp að 18 ára aldri. Skólagögn eru ekki öll aðgengileg á rafrænan hátt enn sem komið er en þau munu birtast hér eftir því sem fram vindur.',
+    description: 'Education overview (landing page) intro',
+  },
+  noData: {
+    id: 'sp.education-overview:no-data',
+    defaultMessage: 'Engar upplýsingar um menntun fundust.',
+    description: 'Education overview message when no data is found',
+  },
+  contactTitle: {
+    id: 'sp.education-overview:contact-title',
+    defaultMessage: 'Ég sem tengiliður',
+    description: 'Title of the own contact information section',
+  },
+  contactDescription: {
+    id: 'sp.education-overview:contact-description',
+    defaultMessage:
+      'Þessar upplýsingar sjá skólar barna sem eru í þinni forsjá eða þú hefur verið skráður sem aðstandandi hjá. Þær eru notaðar til að hafa samband við þig ef svo ber undir.',
+    description: 'Description of the own contact information section',
+  },
+  communicationLanguage: {
+    id: 'sp.education-overview:communication-language',
+    defaultMessage: 'Tungumál í samskiptum',
+    description: 'Label for the preferred communication language',
+  },
+  contactSource: {
+    id: 'sp.education-overview:contact-source',
+    defaultMessage:
+      'Upplýsingar eru geymdar í nemendagrunni MMS og sóttar þaðan.',
+    description: 'Notice on where the contact information is stored',
   },
 })

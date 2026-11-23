@@ -16,6 +16,11 @@ export const educationNavigation: PortalNavigationItem = {
   },
   children: [
     {
+      name: m.overview,
+      searchHide: true,
+      path: EducationPaths.EducationOverview,
+    },
+    {
       name: m.educationGrunnskoli,
       description: m.educationPrimarySchoolIntro,
       searchTags: [m.educationAssessment],
