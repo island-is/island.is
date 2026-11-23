@@ -12,7 +12,29 @@ import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 
 import { useUserInfo } from '@island.is/react-spa/bff'
+import cn from 'classnames'
 import * as styles from './ScreenFooter.css'
+
+export const isScreenFooterVisible = ({
+  activeScreenIndex,
+  numberOfScreens,
+  renderLastScreenButton,
+  mode,
+}: {
+  activeScreenIndex: number
+  numberOfScreens: number
+  renderLastScreenButton?: boolean
+  mode?: FormModes
+}) => {
+  const isLastScreen = activeScreenIndex === numberOfScreens - 1
+
+  return !(
+    (isLastScreen && !renderLastScreenButton) ||
+    (mode !== FormModes.IN_PROGRESS &&
+      mode !== FormModes.DRAFT &&
+      mode !== FormModes.NOT_STARTED)
+  )
+}
 
 interface FooterProps {
   application: Application
@@ -29,6 +51,8 @@ interface FooterProps {
   submitButtonDisabled?: boolean
   nextButtonText?: FormText
   canGoBack: boolean
+  sticky?: boolean
+  isStuck?: boolean
 }
 
 type SubmitButton = Omit<ButtonTypes, 'circle'> & {
@@ -81,6 +105,8 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
   submitButtonDisabled,
   nextButtonText,
   canGoBack,
+  sticky = false,
+  isStuck = false,
 }) => {
   const { formatMessage } = useLocale()
   const user = useUserInfo()
@@ -96,10 +122,12 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
   }
 
   if (
-    (isLastScreen && !renderLastScreenButton) ||
-    (mode !== FormModes.IN_PROGRESS &&
-      mode !== FormModes.DRAFT &&
-      mode !== FormModes.NOT_STARTED)
+    !isScreenFooterVisible({
+      activeScreenIndex,
+      numberOfScreens,
+      renderLastScreenButton,
+      mode,
+    })
   ) {
     return null
   }
@@ -148,7 +176,14 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
   }
 
   return (
-    <Box marginTop={7} className={styles.buttonContainer}>
+    <Box
+      marginTop={7}
+      className={cn(styles.buttonContainer, {
+        [styles.sticky]: sticky,
+        [styles.stuck]: sticky && isStuck,
+      })}
+      data-testid="screen-footer"
+    >
       <GridColumn
         span={['12/12', '12/12', '10/12', '7/9']}
         offset={['0', '0', '1/12', '1/9']}

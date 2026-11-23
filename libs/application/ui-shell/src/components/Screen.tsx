@@ -54,7 +54,8 @@ import { resolver } from '../validation/resolver'
 import FormRepeater from './FormRepeater'
 import FormExternalDataProvider from './FormExternalDataProvider'
 import { extractAnswersToSubmitFromScreen, findSubmitField } from '../utils'
-import ScreenFooter from './ScreenFooter'
+import ScreenFooter, { isScreenFooterVisible } from './ScreenFooter'
+import * as footerStyles from './ScreenFooter.css'
 import RefetchContext from '../context/RefetchContext'
 import { Locale } from '@island.is/shared/types'
 import { useUserInfo } from '@island.is/react-spa/bff'
@@ -396,6 +397,43 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     window.scrollTo(0, target)
   }, [activeScreenIndex, isMobile])
 
+  // Overview/confirmation screens keep their submit actions in view while the content is taller than the viewport
+  const stickyFooter =
+    submitField?.placement === 'footer' &&
+    submitField.stickyFooter !== false &&
+    screen.type !== FormItemTypes.EXTERNAL_DATA_PROVIDER &&
+    isScreenFooterVisible({
+      activeScreenIndex,
+      numberOfScreens,
+      renderLastScreenButton,
+      mode,
+    })
+  // Rendered right after the footer: while it is below the viewport the footer is stuck
+  const [footerSentinel, setFooterSentinel] = useState<HTMLDivElement | null>(
+    null,
+  )
+  const [isFooterStuck, setIsFooterStuck] = useState(false)
+
+  useEffect(() => {
+    setIsFooterStuck(false)
+  }, [activeScreenIndex])
+
+  useEffect(() => {
+    if (!footerSentinel || typeof IntersectionObserver === 'undefined') {
+      return
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      const viewportBottom = entry.rootBounds?.bottom ?? window.innerHeight
+      setIsFooterStuck(
+        !entry.isIntersecting && entry.boundingClientRect.top >= viewportBottom,
+      )
+    })
+    observer.observe(footerSentinel)
+
+    return () => observer.disconnect()
+  }, [footerSentinel])
+
   const onUpdateRepeater = async (newRepeaterItems: unknown[]) => {
     if (!resolvedScreenId) {
       return {}
@@ -443,6 +481,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
         display="flex"
         flexDirection="column"
         justifyContent="spaceBetween"
+        position={stickyFooter ? 'relative' : undefined}
         key={resolvedScreenId || screen.type}
         height="full"
         onSubmit={handleSubmit(onSubmit)}
@@ -561,7 +600,16 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
           loading={loading}
           canProceed={!isLoadingOrPending}
           nextButtonText={nextButtonText}
+          sticky={stickyFooter}
+          isStuck={isFooterStuck}
         />
+        {stickyFooter && (
+          <div
+            ref={setFooterSentinel}
+            aria-hidden
+            className={footerStyles.stickySentinel}
+          />
+        )}
       </Box>
     </FormProvider>
   )

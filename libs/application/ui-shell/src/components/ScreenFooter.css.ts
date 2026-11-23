@@ -18,6 +18,52 @@ export const buttonContainer = style({
   },
 })
 
+export const sticky = style({
+  position: 'sticky',
+  bottom: 0,
+  // Content such as the ReviewGroup edit buttons uses zIndex.header, and must scroll underneath
+  zIndex: theme.zIndex.aboveHeader,
+  background: theme.color.white,
+  transition: 'box-shadow 150ms ease',
+
+  // Below md the form fills the screen, so let the footer bleed past the GridContainer padding
+  marginLeft: -theme.spacing[2],
+  marginRight: -theme.spacing[2],
+  paddingLeft: theme.spacing[2],
+  paddingRight: theme.spacing[2],
+
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      marginLeft: -theme.spacing[3],
+      marginRight: -theme.spacing[3],
+      paddingLeft: theme.spacing[3],
+      paddingRight: theme.spacing[3],
+    },
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      marginLeft: 0,
+      marginRight: 0,
+      paddingLeft: 0,
+      paddingRight: 0,
+    },
+  },
+})
+
+// Applied while the footer is detached from its natural position, i.e. there is more content below
+export const stuck = style({
+  // Negative spread equal to the blur keeps the shadow off the left and right edges
+  boxShadow: '0 -10px 12px -12px rgba(0, 0, 0, 0.16)',
+})
+
+export const stickySentinel = style({
+  // Out of flow so it does not take part in the form's space-between layout; marks the footer's natural bottom edge
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  height: 1,
+  pointerEvents: 'none',
+})
+
 export const linkNoStyle = style({
   ':hover': {
     textDecoration: 'none',
