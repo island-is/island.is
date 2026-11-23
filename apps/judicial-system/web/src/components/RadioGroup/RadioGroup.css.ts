@@ -3,11 +3,16 @@ import { style } from '@vanilla-extract/css'
 // Strip the user-agent fieldset chrome (border/padding/margin) and the implicit
 // min-width so the fieldset can be dropped into existing flex/grid layouts
 // without changing the visual result.
+//
+// Positioned so a visually hidden legend is placed against the fieldset. Left
+// to an ancestor further out, the legend escapes the clipping of a block that
+// is sliding closed around the group and holds the page's height open.
 export const fieldset = style({
   border: 0,
   margin: 0,
   padding: 0,
   minWidth: 0,
+  position: 'relative',
 })
 
 // Keeps the legend available to assistive technology while hiding it visually,

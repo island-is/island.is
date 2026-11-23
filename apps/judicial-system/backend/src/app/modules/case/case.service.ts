@@ -412,20 +412,12 @@ export class CaseService {
     user: TUser,
   ): void {
     for (const defendant of theCase.defendants ?? []) {
-      queueMessagesAfterCommit(
-        {
-          type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-          user,
-          caseId: theCase.id,
-          elementId: defendant.id,
-        },
-        {
-          type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
-          user,
-          caseId: theCase.id,
-          elementId: defendant.id,
-        },
-      )
+      queueMessagesAfterCommit({
+        type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
+        user,
+        caseId: theCase.id,
+        elementId: defendant.id,
+      })
     }
   }
 
