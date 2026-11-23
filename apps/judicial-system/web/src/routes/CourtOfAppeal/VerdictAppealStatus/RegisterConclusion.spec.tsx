@@ -116,6 +116,7 @@ const renderForm = (theCase: WorkingCase = caseWith()) =>
 describe('RegisterConclusion', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockUpdateAppealCase.mockResolvedValue({ id: 'verdict-appeal' })
   })
 
   it('offers no outcome and no type until the court picks one', () => {
@@ -218,6 +219,121 @@ describe('RegisterConclusion', () => {
 
     expect(await screen.findByText('Reitur má ekki vera tómur')).toBeVisible()
     expect(mockUpdateAppealCase).not.toHaveBeenCalled()
+  })
+
+  it('stores two quick type changes in the order they were made', async () => {
+    let resolveFirst: (value: unknown) => void = () => undefined
+    mockUpdateAppealCase.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveFirst = resolve
+        }),
+    )
+
+    renderForm(caseWith(recordedOutcome))
+
+    await userEvent.click(screen.getByRole('radio', { name: 'Úrskurður' }))
+    await userEvent.click(screen.getByRole('radio', { name: 'Dómur' }))
+
+    expect(mockUpdateAppealCase).toHaveBeenCalledTimes(1)
+    expect(mockUpdateAppealCase).toHaveBeenLastCalledWith(
+      'case-id',
+      'verdict-appeal',
+      { appealRulingType: AppealRulingType.RULING },
+    )
+
+    resolveFirst({ id: 'verdict-appeal' })
+
+    await waitFor(() => expect(mockUpdateAppealCase).toHaveBeenCalledTimes(2))
+    expect(mockUpdateAppealCase).toHaveBeenLastCalledWith(
+      'case-id',
+      'verdict-appeal',
+      { appealRulingType: AppealRulingType.VERDICT },
+    )
+    expect(screen.getByRole('radio', { name: 'Dómur' })).toBeChecked()
+  })
+
+  describe('a save that fails', () => {
+    it('leaves the outcome unpicked', async () => {
+      mockUpdateAppealCase.mockResolvedValueOnce(undefined)
+      renderForm(
+        caseWith({ appealConclusion: recordedOutcome.appealConclusion }, [
+          rulingFile,
+        ]),
+      )
+
+      await userEvent.click(screen.getByRole('radio', { name: 'Staðfesting' }))
+
+      await waitFor(() =>
+        expect(
+          screen.getByRole('radio', { name: 'Staðfesting' }),
+        ).not.toBeChecked(),
+      )
+      expect(onValidityChange).toHaveBeenLastCalledWith(false)
+    })
+
+    it('leaves the type unpicked when it came with the first outcome', async () => {
+      mockUpdateAppealCase.mockResolvedValueOnce(undefined)
+      renderForm()
+
+      await userEvent.click(screen.getByRole('radio', { name: 'Staðfesting' }))
+
+      await waitFor(() =>
+        expect(screen.getByRole('radio', { name: 'Dómur' })).not.toBeChecked(),
+      )
+      expect(
+        screen.getByRole('radio', { name: 'Staðfesting' }),
+      ).not.toBeChecked()
+    })
+
+    it('returns to the outcome the appeal holds', async () => {
+      mockUpdateAppealCase.mockResolvedValueOnce(undefined)
+      renderForm(caseWith(recordedOutcome, [rulingFile]))
+
+      await userEvent.click(
+        screen.getByRole('radio', { name: 'Fellt úr gildi' }),
+      )
+
+      await waitFor(() =>
+        expect(
+          screen.getByRole('radio', { name: 'Staðfesting' }),
+        ).toBeChecked(),
+      )
+      expect(
+        screen.getByRole('radio', { name: 'Fellt úr gildi' }),
+      ).not.toBeChecked()
+      expect(screen.getByRole('radio', { name: 'Dómur' })).toBeChecked()
+      expect(onValidityChange).toHaveBeenLastCalledWith(true)
+    })
+
+    it('keeps the concluding words in the field but not as recorded', async () => {
+      mockUpdateAppealCase.mockResolvedValueOnce(undefined)
+      renderForm(
+        caseWith({ ...recordedOutcome, appealConclusion: null }, [rulingFile]),
+      )
+      const field = screen.getByPlaceholderText('Hvert er dómsorð Landsréttar?')
+
+      await userEvent.type(field, 'Óraskað')
+      await userEvent.tab()
+
+      await waitFor(() => expect(mockUpdateAppealCase).toHaveBeenCalledTimes(1))
+      await waitFor(() =>
+        expect(onValidityChange).toHaveBeenLastCalledWith(false),
+      )
+      expect(field).toHaveValue('Óraskað')
+
+      await userEvent.type(field, ' dómur')
+      await userEvent.tab()
+
+      await waitFor(() =>
+        expect(onValidityChange).toHaveBeenLastCalledWith(true),
+      )
+      expect(mockUpdateAppealCase).toHaveBeenLastCalledWith(
+        'case-id',
+        'verdict-appeal',
+        { appealConclusion: 'Óraskað dómur' },
+      )
+    })
   })
 
   // A ruling appeal on the same case keeps its ruling in a category of its
