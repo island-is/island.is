@@ -1,0 +1,537 @@
+{
+  "schemes": [],
+  "swagger": "2.0",
+  "info": {
+    "description": "IAS-authenticated applicant API for employment lookup and certificate requests.\nProtected employment-history endpoints require a Bearer token issued by the island.is auth service (IAS) for the authenticated person.",
+    "title": "Job History Certificate API",
+    "contact": {},
+    "version": "4.0.0"
+  },
+  "host": "",
+  "basePath": "/",
+  "paths": {
+    "/employment-history/eligibility": {
+      "get": {
+        "security": [
+          {
+            "iasAccessToken": []
+          }
+        ],
+        "description": "True exactly when the preview would list at least one institution. A person with only 0% rows, or whose rows cancel out, gets false. Call it before showing the application screens. No case is created. Identity comes exclusively from the IAS access token; query parameters and bodies are rejected.",
+        "produces": ["application/json"],
+        "tags": ["applicant"],
+        "summary": "Check whether the authenticated applicant has employment history",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.ApplicantEligibility"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "type": "string",
+                "description": "Diagnostic correlation"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/httpapi.ErrorResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "type": "string",
+                "description": "Diagnostic correlation"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/httpapi.ErrorResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "type": "string",
+                "description": "Diagnostic correlation"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/httpapi.ErrorResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "type": "string",
+                "description": "Diagnostic correlation"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/employment-history/preview": {
+      "get": {
+        "security": [
+          {
+            "iasAccessToken": []
+          }
+        ],
+        "description": "Returns one entry per institution, in certificate order, with a stable id and the earliest start and latest end date of its certificate lines. No employment percentages, positions or unions are returned. A person without history gets an empty list. previewVersion must be sent with the application; it changes whenever the underlying history changes. No case, signature or delivery is created. Identity comes exclusively from the IAS access token; query parameters and bodies are rejected.",
+        "produces": ["application/json"],
+        "tags": ["applicant"],
+        "summary": "Preview the institutions the applicant can include",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.ApplicantPreview"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "type": "string",
+                "description": "Diagnostic correlation"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/httpapi.ErrorResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "type": "string",
+                "description": "Diagnostic correlation"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/httpapi.ErrorResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "type": "string",
+                "description": "Diagnostic correlation"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/httpapi.ErrorResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "type": "string",
+                "description": "Diagnostic correlation"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/employment-history/requests": {
+      "post": {
+        "security": [
+          {
+            "iasAccessToken": []
+          }
+        ],
+        "description": "Requires the previewVersion of the preview shown, a non-empty institutionIds list from that preview and includeUnion. comment is optional. Checks run in this order: a retried Idempotency-Key replays the stored case before any source read (a different body with the same key is 409); no employment history is 404 with no case; a changed history is 409 code preview_changed with no side effects; an unknown institution id is 400. The response never says whether staff handle the application: 201 means the certificate was delivered to the mailbox, 202 means it is being processed. A signing failure before the application is stored is 500 with no case; retry with the same key.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["applicant"],
+        "summary": "Apply for a certificate with the chosen institutions and union setting",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "One key per application; reuse on retries and token refresh",
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "Applicant choices; no national ID or delivery selection",
+            "name": "request",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/models.ApplicantRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/httpapi.ApplicantCertificateDeliveryResponse"
+            },
+            "headers": {
+              "X-Case-ID": {
+                "type": "string",
+                "description": "Certificate case ID"
+              },
+              "X-Request-ID": {
+                "type": "string",
+                "description": "Diagnostic correlation"
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/httpapi.ApplicantCertificateAcceptedResponse"
+            },
+            "headers": {
+              "X-Case-ID": {
+                "type": "string",
+                "description": "Certificate case ID"
+              },
+              "X-Request-ID": {
+                "type": "string",
+                "description": "Diagnostic correlation"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/httpapi.ErrorResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "type": "string",
+                "description": "Diagnostic correlation"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/httpapi.ErrorResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "type": "string",
+                "description": "Diagnostic correlation"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/httpapi.ErrorResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "type": "string",
+                "description": "Diagnostic correlation"
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "schema": {
+              "$ref": "#/definitions/httpapi.ErrorResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "type": "string",
+                "description": "Diagnostic correlation"
+              }
+            }
+          },
+          "413": {
+            "description": "Request Entity Too Large",
+            "schema": {
+              "$ref": "#/definitions/httpapi.ErrorResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "type": "string",
+                "description": "Diagnostic correlation"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/httpapi.ErrorResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "type": "string",
+                "description": "Diagnostic correlation"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/employment-history/requests/{caseId}/status": {
+      "get": {
+        "security": [
+          {
+            "iasAccessToken": []
+          }
+        ],
+        "description": "Returns status only for requests owned by the authenticated applicant. Other requests return 404. deliveryStatus is processing, sent_to_mailbox or closed. documentId is present when sent; closure, with the message to show, only when closed.",
+        "produces": ["application/json"],
+        "tags": ["applicant"],
+        "summary": "Get certificate request status",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Certificate case ID",
+            "name": "caseId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/httpapi.ApplicantCertificateStatusResponse"
+            },
+            "headers": {
+              "X-Case-ID": {
+                "type": "string",
+                "description": "Certificate case ID"
+              },
+              "X-Request-ID": {
+                "type": "string",
+                "description": "Diagnostic correlation for this HTTP call"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/httpapi.ErrorResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "type": "string",
+                "description": "Diagnostic correlation for this HTTP call"
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/httpapi.ErrorResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "type": "string",
+                "description": "Diagnostic correlation for this HTTP call"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/httpapi.ErrorResponse"
+            },
+            "headers": {
+              "X-Request-ID": {
+                "type": "string",
+                "description": "Diagnostic correlation for this HTTP call"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "httpapi.ApplicantCertificateAcceptedResponse": {
+      "type": "object",
+      "properties": {
+        "caseId": {
+          "type": "string"
+        },
+        "deliveryStatus": {
+          "description": "DeliveryStatus is one of:\n- processing: the application is accepted and the certificate is on its way. Poll the status route.\n- closed: the application was closed without a certificate (only when replaying a closed application's key).",
+          "type": "string",
+          "enum": ["processing", "closed"],
+          "example": "processing"
+        }
+      }
+    },
+    "httpapi.ApplicantCertificateDeliveryResponse": {
+      "type": "object",
+      "properties": {
+        "caseId": {
+          "type": "string"
+        },
+        "deliveryStatus": {
+          "description": "DeliveryStatus is one of:\n- sent_to_mailbox: the certificate was published to the applicant's mailbox. This does not mean the applicant opened it.",
+          "type": "string",
+          "enum": ["sent_to_mailbox"],
+          "example": "sent_to_mailbox"
+        },
+        "documentId": {
+          "type": "string"
+        }
+      }
+    },
+    "httpapi.ApplicantCertificateStatusResponse": {
+      "type": "object",
+      "properties": {
+        "caseId": {
+          "type": "string"
+        },
+        "closure": {
+          "description": "Closure is present only when deliveryStatus is closed.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/models.Closure"
+            }
+          ]
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "deliveryStatus": {
+          "description": "DeliveryStatus is one of:\n- processing: the application is accepted and the certificate is on its way.\n- sent_to_mailbox: the certificate was published to the applicant's mailbox, not necessarily opened.\n- closed: the application was closed without a certificate; closure holds the message to show.",
+          "type": "string",
+          "enum": ["processing", "sent_to_mailbox", "closed"],
+          "example": "sent_to_mailbox"
+        },
+        "documentId": {
+          "description": "DocumentID is present when deliveryStatus is sent_to_mailbox.",
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      }
+    },
+    "httpapi.ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Code identifies a conflict the client can act on: preview_changed (409) means the history changed since the preview; fetch it again.",
+          "type": "string",
+          "example": "preview_changed"
+        },
+        "error": {
+          "type": "string"
+        },
+        "requestId": {
+          "description": "RequestID is diagnostic correlation, matching X-Request-ID; never a case ID.",
+          "type": "string"
+        }
+      }
+    },
+    "models.ApplicantEligibility": {
+      "type": "object",
+      "properties": {
+        "hasEmploymentHistory": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "models.ApplicantPreview": {
+      "type": "object",
+      "properties": {
+        "institutions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/models.PreviewInstitution"
+          }
+        },
+        "personName": {
+          "type": "string",
+          "example": "Gervimaður Ameríka"
+        },
+        "previewVersion": {
+          "description": "PreviewVersion binds a submission to this preview: \"v2:\" and 64 hex characters.",
+          "type": "string",
+          "example": "v2:3b0c6a5e9d1f4a7c8e2b0d6f1a3c5e7b9d0f2a4c6e8b1d3f5a7c9e0b2d4f6a8c"
+        }
+      }
+    },
+    "models.ApplicantRequest": {
+      "type": "object",
+      "required": ["includeUnion", "institutionIds", "previewVersion"],
+      "properties": {
+        "comment": {
+          "description": "Comment is optional; at most 4,000 characters after trimming. Blank counts as absent; null is rejected.",
+          "type": "string",
+          "example": "Vantar starf hjá Prófunarstofnun D."
+        },
+        "includeUnion": {
+          "description": "IncludeUnion shows union names on the certificate.",
+          "type": "boolean",
+          "example": true
+        },
+        "institutionIds": {
+          "description": "InstitutionIDs lists the preview institutions to include; at least one.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": ["inst_3f9c0a1b2d4e"]
+        },
+        "previewVersion": {
+          "description": "PreviewVersion is the previewVersion of the preview the applicant saw.",
+          "type": "string",
+          "example": "v2:3b0c6a5e9d1f4a7c8e2b0d6f1a3c5e7b9d0f2a4c6e8b1d3f5a7c9e0b2d4f6a8c"
+        }
+      }
+    },
+    "models.Closure": {
+      "type": "object",
+      "properties": {
+        "closedAt": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string",
+          "example": "Málinu hefur verið lokað. Nánari upplýsingar berast í gegnum þjónustuver Ísland.is."
+        }
+      }
+    },
+    "models.PreviewInstitution": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "description": "From is the earliest start date of the institution's certificate lines (YYYY-MM-DD).",
+          "type": "string",
+          "example": "2025-01-01"
+        },
+        "id": {
+          "type": "string",
+          "example": "inst_3f9c0a1b2d4e"
+        },
+        "name": {
+          "type": "string",
+          "example": "Prófunarstofnun B"
+        },
+        "to": {
+          "description": "To is the latest end date of the institution's certificate lines (YYYY-MM-DD).",
+          "type": "string",
+          "example": "2025-06-20"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "iasAccessToken": {
+      "description": "Bearer IAS access token for the applicant, obtained by token exchange: scope @fjs.is/starfsvottord, client_id @island.is/clients/application-system, JOSE typ at+jwt and a person nationalId (subjectType, when present, must be person). act may only name earlier clients (client_id, optionally a nested act). Self-service only; delegation and client-credentials tokens are rejected. During the switch-over, test and dev also accept the forwarded IAS user access token without the scope; production accepts exchanged tokens only.",
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}

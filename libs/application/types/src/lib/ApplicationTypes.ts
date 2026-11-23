@@ -113,6 +113,7 @@ export enum ApplicationTypes {
   PAY_DEBTS = 'PayDebts',
   U2_CERTIFICATE = 'U2Certificate',
   FJARSKIPTASTOFA_SELF_ASSESSMENT = 'FjarskiptastofaSelfAssessment',
+  EMPLOYMENT_CERTIFICATE = 'EmploymentCertificate',
 }
 
 export const ApplicationConfigurations = {
@@ -575,5 +576,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.FJARSKIPTASTOFA_SELF_ASSESSMENT]: {
     slug: 'sjalfsmat-fjarskiptastofu',
     translation: ['fjs.sa.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.EMPLOYMENT_CERTIFICATE]: {
+    slug: 'starfsvottord',
+    translation: ['fjs.ec.application', 'uiForms.application'],
   },
 }

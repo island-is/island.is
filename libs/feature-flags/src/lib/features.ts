@@ -43,6 +43,8 @@ export enum Features {
   isFjarskiptastofaSelfAssessmentEnabled = 'isFjarskiptastofaSelfAssessmentEnabled',
   isConfirmJobOrIncomeEnabled = 'isConfirmJobOrIncomeEnabled',
   parentalLeaveV2 = 'isParentalLeaveV2Enabled',
+  // Fjársýsla ríkisins: employment certificate for government jobs (starfsvottorð)
+  isEmploymentCertificateApplicationEnabled = 'isEmploymentCertificateApplicationEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',

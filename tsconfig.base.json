@@ -480,6 +480,9 @@
       "@island.is/application/templates/fjarskiptastofa/self-assessment": [
         "libs/application/templates/fjarskiptastofa/self-assessment/src/index.ts"
       ],
+      "@island.is/application/templates/fjs/employment-certificate": [
+        "libs/application/templates/fjs/employment-certificate/src/index.ts"
+      ],
       "@island.is/application/templates/funding-government-projects": [
         "libs/application/templates/funding-government-projects/src/index.ts"
       ],
@@ -869,6 +872,9 @@
       ],
       "@island.is/clients/fjs/bank-info": [
         "libs/clients/fjs/bank-info/src/index.ts"
+      ],
+      "@island.is/clients/fjs/employment-certificate": [
+        "libs/clients/fjs/employment-certificate/src/index.ts"
       ],
       "@island.is/clients/form-system": [
         "libs/clients/form-system/src/index.ts"

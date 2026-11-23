@@ -576,4 +576,9 @@ export const institutionMapper = {
     slug: InstitutionTypes.FJARSKIPTASTOFA,
     contentfulId: InstitutionContentfulIds.FJARSKIPTASTOFA,
   },
+  [ApplicationTypes.EMPLOYMENT_CERTIFICATE]: {
+    nationalId: InstitutionNationalIds.FJARSYSLA_RIKISINS,
+    slug: InstitutionTypes.FJARSYSLA_RIKISINS,
+    contentfulId: InstitutionContentfulIds.FJARSYSLA_RIKISINS,
+  },
 }

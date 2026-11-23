@@ -1,0 +1,39 @@
+{
+  "name": "clients-fjs-employment-certificate",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/fjs/employment-certificate/src",
+  "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/clients/fjs/employment-certificate/jest.config.ts"
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "test -n \"$FJS_EMPLOYMENT_CERTIFICATE_DIRECT_URL\" || (echo 'Set FJS_EMPLOYMENT_CERTIFICATE_DIRECT_URL first, see the README' && exit 1)",
+          "curl -fsS \"$FJS_EMPLOYMENT_CERTIFICATE_DIRECT_URL/openapi.json\" -o src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/fjs/employment-certificate"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-ts -f libs/clients/fjs/employment-certificate/src/lib/openapi-ts.config.ts"
+      },
+      "inputs": ["schema-files", "{projectRoot}/src/lib/openapi-ts.config.ts"],
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  }
+}
