@@ -36,6 +36,7 @@ export const ContactEdit = () => {
             backgroundColor="blue"
             name="contact-phone"
             type="tel"
+            size="sm"
             label={formatMessage(m.telNumber)}
             value={phone}
             onChange={(event) => setPhone(event.target.value)}
@@ -44,15 +45,16 @@ export const ContactEdit = () => {
             backgroundColor="blue"
             name="contact-email"
             type="email"
+            size="sm"
             label={formatMessage(m.email)}
             value={email}
             onChange={(event) => setEmail(event.target.value)}
           />
           <Box display="flex" justifyContent="flexEnd" columnGap={2}>
-            <Button variant="ghost" onClick={goBack}>
+            <Button variant="ghost" size="small" onClick={goBack}>
               {formatMessage(kim.cancel)}
             </Button>
-            <Button disabled={!isDirty} onClick={handleSave}>
+            <Button size="small" disabled={!isDirty} onClick={handleSave}>
               {formatMessage(kim.confirm)}
             </Button>
           </Box>
