@@ -22,6 +22,21 @@ export const SdfRadioField = ({
 
   const optionList = component.options ?? []
 
+  const renderOption = (opt: { label: string; value: string }) => (
+    <RadioButton
+      id={`${component.id}-${opt.value}`}
+      name={component.id ?? ''}
+      label={opt.label}
+      value={opt.value}
+      checked={currentValue === opt.value}
+      disabled={component.disabled}
+      onChange={() => handleChange(opt.value)}
+      hasError={!!error}
+      large
+      backgroundColor="blue"
+    />
+  )
+
   return (
     <Box {...getSdfFieldMargins(component)} paddingTop={0} width="full">
       {radioLabel ? (
@@ -41,20 +56,7 @@ export const SdfRadioField = ({
           >
             {optionList.map((opt) => (
               <Box key={opt.value} flexGrow={1} minWidth={0}>
-                <Box width="full">
-                  <RadioButton
-                    id={`${component.id}-${opt.value}`}
-                    name={component.id ?? ''}
-                    label={opt.label}
-                    value={opt.value}
-                    checked={currentValue === opt.value}
-                    disabled={component.disabled}
-                    onChange={() => handleChange(opt.value)}
-                    hasError={!!error}
-                    large
-                    backgroundColor="blue"
-                  />
-                </Box>
+                <Box width="full">{renderOption(opt)}</Box>
               </Box>
             ))}
           </Box>
@@ -73,18 +75,7 @@ export const SdfRadioField = ({
               paddingBottom={0}
               paddingTop={2}
             >
-              <RadioButton
-                id={`${component.id}-${opt.value}`}
-                name={component.id ?? ''}
-                label={opt.label}
-                value={opt.value}
-                checked={currentValue === opt.value}
-                disabled={component.disabled}
-                onChange={() => handleChange(opt.value)}
-                hasError={!!error}
-                large
-                backgroundColor="blue"
-              />
+              {renderOption(opt)}
             </GridColumn>
           ))}
           {error ? (
