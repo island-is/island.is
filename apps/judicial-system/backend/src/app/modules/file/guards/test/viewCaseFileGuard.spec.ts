@@ -27,6 +27,7 @@ interface Then {
 type GivenWhenThen = () => Then
 
 describe('View Case File Guard', () => {
+  const caseFile = { category: CaseFileCategory.COURT_RECORD }
   const mockRequest = jest.fn()
   let givenWhenThen: GivenWhenThen
 
@@ -113,6 +114,7 @@ describe('View Case File Guard', () => {
               },
             },
             case: { state },
+            caseFile,
           }))
 
           then = givenWhenThen()
@@ -142,6 +144,7 @@ describe('View Case File Guard', () => {
             },
           },
           case: { state },
+          caseFile,
         }))
 
         then = givenWhenThen()
@@ -173,6 +176,7 @@ describe('View Case File Guard', () => {
             },
           },
           case: { state },
+          caseFile,
         }))
 
         then = givenWhenThen()
@@ -202,6 +206,7 @@ describe('View Case File Guard', () => {
             },
           },
           case: { state },
+          caseFile,
         }))
 
         then = givenWhenThen()
@@ -233,6 +238,7 @@ describe('View Case File Guard', () => {
             },
           },
           case: { state },
+          caseFile,
         }))
 
         then = givenWhenThen()
@@ -260,6 +266,7 @@ describe('View Case File Guard', () => {
             },
           },
           case: { state },
+          caseFile,
         }))
 
         then = givenWhenThen()
@@ -288,6 +295,7 @@ describe('View Case File Guard', () => {
             },
           },
           case: { state },
+          caseFile,
         }))
 
         then = givenWhenThen()
@@ -317,6 +325,7 @@ describe('View Case File Guard', () => {
         mockRequest.mockImplementationOnce(() => ({
           user: { currentUser: { role } },
           case: { state },
+          caseFile,
         }))
 
         then = givenWhenThen()
@@ -359,6 +368,25 @@ describe('View Case File Guard', () => {
     it('should throw InternalServerErrorException', () => {
       expect(then.error).toBeInstanceOf(InternalServerErrorException)
       expect(then.error.message).toBe('Missing case')
+    })
+  })
+
+  describe('missing case file', () => {
+    const user = {} as User
+    let then: Then
+
+    beforeEach(() => {
+      mockRequest.mockImplementationOnce(() => ({
+        user: { currentUser: user },
+        case: { state: CaseState.COMPLETED },
+      }))
+
+      then = givenWhenThen()
+    })
+
+    it('should throw InternalServerErrorException', () => {
+      expect(then.error).toBeInstanceOf(InternalServerErrorException)
+      expect(then.error.message).toBe('Missing case file')
     })
   })
 })

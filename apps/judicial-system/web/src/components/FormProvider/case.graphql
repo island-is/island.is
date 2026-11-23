@@ -258,6 +258,8 @@ query Case($input: CaseQueryInput!) {
       appealType
       verdictAppealStatus
       appealCaseNumber
+      appealRulingDecision
+      appealRulingType
       caseName
       appealConclusion
       appealAssistant {
