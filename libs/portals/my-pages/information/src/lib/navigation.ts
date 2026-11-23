@@ -61,6 +61,11 @@ export const informationNavigation: PortalNavigationItem = {
           searchHide: true,
           path: InformationPaths.SettingsNotifications,
         },
+        {
+          name: m.mySettingsAppLogins,
+          searchHide: true,
+          path: InformationPaths.SettingsAppLogins,
+        },
       ],
     },
     {

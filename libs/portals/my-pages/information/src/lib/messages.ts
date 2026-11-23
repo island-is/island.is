@@ -801,3 +801,60 @@ export const contractsMessages = defineMessages({
     description: 'The type of property being rented out',
   },
 })
+
+export const mAppLogins = defineMessages({
+  intro: {
+    id: 'sp.settings:app-logins-intro',
+    defaultMessage:
+      'Hér sérðu hvar þú ert innskráð(ur) í appi. Hvert app getur aðeins verið innskráð á einu tæki í einu, svo innskráning í öðrum síma kemur í stað þeirrar sem fyrir er. Ef þú fjarlægir innskráningu skráist appið út á því tæki.',
+  },
+  empty: {
+    id: 'sp.settings:app-logins-empty',
+    defaultMessage: 'Þú ert ekki innskráð(ur) í neinu appi.',
+  },
+  unknownDevice: {
+    id: 'sp.settings:app-logins-unknown-device',
+    defaultMessage: 'Óþekkt tæki',
+  },
+  lastUsed: {
+    id: 'sp.settings:app-logins-last-used',
+    defaultMessage: 'Síðast notað {date}',
+  },
+  loginSim: {
+    id: 'sp.settings:app-logins-login-sim',
+    defaultMessage: 'Rafræn skilríki í síma',
+  },
+  loginApp: {
+    id: 'sp.settings:app-logins-login-app',
+    defaultMessage: 'Auðkennisapp',
+  },
+  biometrics: {
+    id: 'sp.settings:app-logins-biometrics',
+    defaultMessage: 'Lífkenni',
+  },
+  remove: {
+    id: 'sp.settings:app-logins-remove',
+    defaultMessage: 'Fjarlægja',
+  },
+  removeTitle: {
+    id: 'sp.settings:app-logins-remove-title',
+    defaultMessage: 'Fjarlægja innskráningu?',
+  },
+  removeText: {
+    id: 'sp.settings:app-logins-remove-text',
+    defaultMessage:
+      '{app} á {device} skráist út. Til að nota appið aftur á því tæki þarf að skrá sig inn með rafrænum skilríkjum.',
+  },
+  cancel: {
+    id: 'sp.settings:app-logins-cancel',
+    defaultMessage: 'Hætta við',
+  },
+  removed: {
+    id: 'sp.settings:app-logins-removed',
+    defaultMessage: 'Innskráningin var fjarlægð',
+  },
+  removeError: {
+    id: 'sp.settings:app-logins-remove-error',
+    defaultMessage: 'Ekki tókst að fjarlægja innskráninguna',
+  },
+})
