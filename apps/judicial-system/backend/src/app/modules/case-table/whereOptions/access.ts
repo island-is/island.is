@@ -372,6 +372,45 @@ export const defenceRequestCasesAccessWhereOptions = (user: User) => {
   }
 }
 
+// The cases this user holds at the court of appeals: confirmed there as the
+// appeal defender of a defendant or the appeal spokesperson of a civil
+// claimant. Two of the ways into the access options below, and the whole
+// membership rule of the defence list of appealed verdicts - shared so the two
+// cannot drift apart.
+//
+// Subqueries rather than joins, so the predicate survives the subSELECT that a
+// LIMIT forces and leaves the defendants a list shows unfiltered.
+export const defenceVerdictAppealAdvocateWhereOptions = (user: User) => {
+  const userNationalId = sanitizeNationalId(user.nationalId)
+
+  return [
+    {
+      // confirmed appeal defender on a verdict appeal
+      id: {
+        [Op.in]: literal(`
+          (SELECT case_id
+            FROM defendant
+            WHERE appeal_defender_national_id = '${userNationalId}'
+              AND is_appeal_defender_confirmed = true
+              AND is_appeal_defender_waived IS DISTINCT FROM true)
+        `),
+      },
+    },
+    {
+      // confirmed appeal spokesperson on a verdict appeal
+      id: {
+        [Op.in]: literal(`
+          (SELECT case_id
+            FROM civil_claimant
+            WHERE appeal_spokesperson_national_id = '${userNationalId}'
+              AND is_appeal_spokesperson_confirmed = true
+              AND has_appeal_spokesperson IS DISTINCT FROM false)
+        `),
+      },
+    },
+  ]
+}
+
 export const defenceIndictmentsAccessWhereOptions = (user: User) => {
   const userNationalId = sanitizeNationalId(user.nationalId)
 
@@ -407,30 +446,7 @@ export const defenceIndictmentsAccessWhereOptions = (user: User) => {
           `),
         },
       },
-      {
-        // confirmed appeal defender on a verdict appeal
-        id: {
-          [Op.in]: literal(`
-            (SELECT case_id
-              FROM defendant
-              WHERE appeal_defender_national_id = '${userNationalId}'
-                AND is_appeal_defender_confirmed = true
-                AND is_appeal_defender_waived IS DISTINCT FROM true)
-          `),
-        },
-      },
-      {
-        // confirmed appeal spokesperson on a verdict appeal
-        id: {
-          [Op.in]: literal(`
-            (SELECT case_id
-              FROM civil_claimant
-              WHERE appeal_spokesperson_national_id = '${userNationalId}'
-                AND is_appeal_spokesperson_confirmed = true
-                AND has_appeal_spokesperson IS DISTINCT FROM false)
-          `),
-        },
-      },
+      ...defenceVerdictAppealAdvocateWhereOptions(user),
     ],
   }
 }

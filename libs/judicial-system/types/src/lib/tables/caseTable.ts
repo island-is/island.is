@@ -9,6 +9,7 @@ import {
   defenceIndictmentsAppealed,
   defenceIndictmentsCompleted,
   defenceIndictmentsInProgress,
+  defenceIndictmentsVerdictAppealed,
   defenceRequestCasesAppealed,
   defenceRequestCasesCompleted,
   defenceRequestCasesInProgress,
@@ -138,5 +139,6 @@ export const caseTables: Record<CaseTableType, CaseTable> = {
   DEFENCE_REQUEST_CASES_COMPLETED: defenceRequestCasesCompleted,
   DEFENCE_INDICTMENTS_IN_PROGRESS: defenceIndictmentsInProgress,
   DEFENCE_INDICTMENTS_APPEALED: defenceIndictmentsAppealed,
+  DEFENCE_INDICTMENTS_VERDICT_APPEALED: defenceIndictmentsVerdictAppealed,
   DEFENCE_INDICTMENTS_COMPLETED: defenceIndictmentsCompleted,
 }

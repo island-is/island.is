@@ -42,6 +42,9 @@ const prosecutorInitials: CaseTableColumn = { title: 'Ákærandi' }
 // appeal, so they cannot share the appealCase-backed columns above even where
 // the title is the same.
 const verdictAppealCaseNumber: CaseTableColumn = { title: 'Málsnúmer' }
+// The number of whichever case-level appeal came last, on a list that holds
+// both appealed rulings and appealed verdicts.
+const latestAppealCaseNumber: CaseTableColumn = { title: 'Málsnúmer' }
 const districtCourtRulingDate: CaseTableColumn = { title: 'Dómur héraðsdóms' }
 const verdictAppealAppellant: CaseTableColumn = { title: 'Áfrýjað af' }
 const verdictAppealState: CaseTableColumn = { title: 'Staða' }
@@ -89,6 +92,7 @@ export const caseTableColumns = {
   prosecutor,
   prosecutorInitials,
   verdictAppealCaseNumber,
+  latestAppealCaseNumber,
   districtCourtRulingDate,
   verdictAppealAppellant,
   verdictAppealState,

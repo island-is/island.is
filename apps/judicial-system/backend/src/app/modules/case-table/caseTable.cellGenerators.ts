@@ -559,6 +559,17 @@ const verdictAppealCaseNumber: CaseTableCellGenerator<StringGroupValue> = {
   },
 }
 
+// For a list whose rows are about whichever case-level appeal came last - see
+// presentLatestCaseAppealAsRowAppeal - so both have to be joined for the row
+// to choose between.
+const latestAppealCaseNumber: CaseTableCellGenerator<StringGroupValue> = {
+  ...caseNumber,
+  includes: {
+    ...caseNumber.includes,
+    verdictAppealCase: { attributes: ['appealCaseNumber'] },
+  },
+}
+
 const defendants: CaseTableCellGenerator<StringGroupValue> = {
   includes: {
     defendants: {
@@ -1705,6 +1716,7 @@ export const caseTableCellGenerators: Record<
   // a title of their own.
   districtCourtRulingDate: rulingDate,
   verdictAppealCaseNumber,
+  latestAppealCaseNumber,
   verdictAppealAppellant,
   verdictAppealState,
   verdictAppealHead,
