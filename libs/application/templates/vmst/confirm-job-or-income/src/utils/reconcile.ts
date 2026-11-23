@@ -282,6 +282,7 @@ export const buildCanEditRow = buildPersistedRowGate('canEdit')
 export const buildPersistedRowProps =
   (persistedPath: string) =>
   ({ application, row }: TableRepeaterCellContext) => ({
+    disabled: row.disabled === 'true',
     canRemove: buildCanRemoveRow(persistedPath)(application, row),
     canEdit: buildCanEditRow(persistedPath)(application, row),
   })
