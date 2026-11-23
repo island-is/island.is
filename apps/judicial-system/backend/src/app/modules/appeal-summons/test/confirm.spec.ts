@@ -41,9 +41,10 @@ describe('AppealSummonsController - Confirm', () => {
     },
   } as User
 
+  const caseName = 'Ákæruvaldið gegn Jóni Jónssyni'
   const theCase = {
     id: caseId,
-    verdictAppealCase: { id: appealCaseId } as AppealCase,
+    verdictAppealCase: { id: appealCaseId, caseName } as AppealCase,
   } as Case
 
   const draft = {
@@ -147,13 +148,13 @@ describe('AppealSummonsController - Confirm', () => {
       user,
       afterConfirm,
       undefined,
-      { cacheInS3: false },
+      { cacheInS3: false, caseName },
     )
     expect(mockAppealSummonsRepositoryService.update).toHaveBeenNthCalledWith(
       2,
       summonsId,
       caseId,
-      { hash, hashAlgorithm: HashAlgorithm.SHA256 },
+      { hash, hashAlgorithm: HashAlgorithm.SHA256, caseName },
       { transaction },
     )
     expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(

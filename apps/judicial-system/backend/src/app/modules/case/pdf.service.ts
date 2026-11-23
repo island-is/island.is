@@ -591,8 +591,13 @@ export class PdfService {
 
     // Preview / draft: issuer is whoever is generating the PDF. Confirmed:
     // stamp and issuer must be the recorded confirmer — never the downloader.
-    // Preview may pass a not-yet-saved caseName; otherwise use the stored one.
-    const caseName = options?.caseName ?? theCase.verdictAppealCase?.caseName
+    // Case name: explicit preview/confirm override, else the name frozen on a
+    // confirmed summons (so later appeal_case.caseName edits cannot change
+    // those bytes), else the live appeal-case name.
+    const caseName =
+      options?.caseName ??
+      summons?.caseName ??
+      theCase.verdictAppealCase?.caseName
     let generatedPdf: Buffer
 
     if (summons?.confirmedDate) {

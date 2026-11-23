@@ -341,20 +341,29 @@ export class AppealSummonsService {
     }
 
     // Generate without caching: upload only after commit so a rolled-back
-    // confirmation cannot leave a confirmed PDF in S3. Hash stays in-tx.
+    // confirmation cannot leave a confirmed PDF in S3. Hash and the case name
+    // that went into those bytes stay in-tx.
+    const caseName = appealCase.caseName?.trim()
+
+    if (!caseName) {
+      throw new BadRequestException(
+        `Appeal case ${appealCase.id} has no case name; cannot confirm summons`,
+      )
+    }
+
     const pdf = await this.pdfService.getAppealSummonsPdf(
       theCase,
       user,
       confirmed,
       undefined,
-      { cacheInS3: false },
+      { cacheInS3: false, caseName },
     )
     const { hash, hashAlgorithm } = getCaseFileHash(pdf)
 
     await this.appealSummonsRepositoryService.update(
       summons.id,
       theCase.id,
-      { hash, hashAlgorithm },
+      { hash, hashAlgorithm, caseName },
       { transaction },
     )
 
