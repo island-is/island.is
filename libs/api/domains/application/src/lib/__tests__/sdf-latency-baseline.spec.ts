@@ -240,7 +240,7 @@ describe('Phase 3 Gate — Latency Baseline (GQL layer)', () => {
     for (let i = 0; i < ITERATIONS; i++) {
       const start = performance.now()
       await resolver.getScreen(
-        { applicationId: MOCK_APP_ID, step: 2 },
+        { applicationId: MOCK_APP_ID, screen: 'page-2' },
         'is',
         mockUser,
       )
@@ -275,7 +275,7 @@ describe('Phase 3 Gate — Latency Baseline (GQL layer)', () => {
           applicantName: 'Test User',
           applicantEmail: 'test@test.is',
         }),
-        lastKnownPageIndex: 2,
+        screen: 'page-2',
       }
 
       const start = performance.now()
@@ -307,7 +307,7 @@ describe('Phase 3 Gate — Latency Baseline (GQL layer)', () => {
       const input: SdfExecuteActionInput = {
         applicationId: MOCK_APP_ID,
         actionType: SdfActionType.REFETCH,
-        lastKnownPageIndex: 2,
+        screen: 'page-2',
       }
 
       const start = performance.now()

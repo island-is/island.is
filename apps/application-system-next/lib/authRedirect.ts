@@ -3,7 +3,7 @@ interface ProtectedApplicationUrlInput {
   protocol?: string
   slug: string
   id: string
-  step?: number
+  screen?: string
 }
 
 const isLocalHost = (host?: string): boolean =>
@@ -15,10 +15,10 @@ export const buildProtectedApplicationUrl = ({
   protocol,
   slug,
   id,
-  step,
+  screen,
 }: ProtectedApplicationUrlInput): string => {
   const path = `/umsoknir/${slug}/${id}${
-    step !== undefined ? `?step=${step}` : ''
+    screen !== undefined ? `?screen=${encodeURIComponent(screen)}` : ''
   }`
 
   if (!host) {

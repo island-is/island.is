@@ -294,7 +294,7 @@ component.onSelectRefetchTemplateApis = ['lookupSomething']
 component.refetchTargets = ['dependentFieldId']
 ```
 
-The frontend dispatches a `REFETCH` action. The backend recomputes the screen with an in-memory answer snapshot and runs allowed template API actions through the ephemeral path. `REFETCH` must not persist answers, page index, or external data.
+The frontend dispatches a `REFETCH` action. The backend recomputes the screen with an in-memory answer snapshot and runs allowed template API actions through the ephemeral path. `REFETCH` must not persist answers or external data. It is display-only: the screen it returns is built from the in-memory snapshot and is not used to judge which screens exist.
 
 For display-only recalculation without fetching external data, use `VALIDATE`; it can return `displayValues` for the current page without returning a full screen.
 

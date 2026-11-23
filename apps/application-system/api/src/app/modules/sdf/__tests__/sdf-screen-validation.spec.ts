@@ -172,7 +172,7 @@ describe('SdfScreenService validation gates', () => {
   beforeEach(() => jest.clearAllMocks())
 
   it('handleSubmit blocks the transition when the EDP approval is unchecked', async () => {
-    const application = createApplication({ pageIndex: 0 })
+    const application = createApplication()
     getApplicationTemplateByTypeIdMock.mockResolvedValue(
       createTemplate(() => Promise.resolve(createExternalDataForm())),
     )
@@ -196,6 +196,7 @@ describe('SdfScreenService validation gates', () => {
       { approveExternalData: false },
       'is',
       { nationalId: application.applicant } as never,
+      'approveExternalData',
     )
 
     expect(screen.page.errors).toEqual([
@@ -206,7 +207,7 @@ describe('SdfScreenService validation gates', () => {
   })
 
   it('handleSubmit allows the transition when the EDP approval is checked', async () => {
-    const application = createApplication({ pageIndex: 0 })
+    const application = createApplication()
     getApplicationTemplateByTypeIdMock.mockResolvedValue(
       createTemplate(() => Promise.resolve(createExternalDataForm())),
     )
@@ -230,14 +231,15 @@ describe('SdfScreenService validation gates', () => {
       { approveExternalData: true },
       'is',
       { nationalId: application.applicant } as never,
+      'approveExternalData',
     )
 
     expect(screen.page.errors ?? []).toEqual([])
     expect(applicationActionService.changeState).toHaveBeenCalled()
   })
 
-  it('handleSubmit rejects with 409, and keeps the page cursor, when no transition handles the event', async () => {
-    const application = createApplication({ pageIndex: 0 })
+  it('handleSubmit rejects with 409 when no transition handles the event', async () => {
+    const application = createApplication()
     getApplicationTemplateByTypeIdMock.mockResolvedValue(
       createTemplate(() => Promise.resolve(createExternalDataForm())),
     )
@@ -265,17 +267,13 @@ describe('SdfScreenService validation gates', () => {
         { approveExternalData: true },
         'is',
         { nationalId: application.applicant } as never,
+        'approveExternalData',
       ),
     ).rejects.toBeInstanceOf(ConflictException)
-
-    const savedPageIndexes = applicationService.update.mock.calls.filter(
-      ([, data]) => 'pageIndex' in data,
-    )
-    expect(savedPageIndexes).toEqual([])
   })
 
   it('handleSubmit accepts a matched no-op self-transition', async () => {
-    const application = createApplication({ pageIndex: 0 })
+    const application = createApplication()
     getApplicationTemplateByTypeIdMock.mockResolvedValue(
       createTemplate(() => Promise.resolve(createExternalDataForm())),
     )
@@ -303,12 +301,13 @@ describe('SdfScreenService validation gates', () => {
         { approveExternalData: true },
         'is',
         { nationalId: application.applicant } as never,
+        'approveExternalData',
       ),
     ).resolves.toBeDefined()
   })
 
   it('persistAnswersAndAdvance still blocks a missing required field on NEXT_PAGE', async () => {
-    const application = createApplication({ pageIndex: 0 })
+    const application = createApplication()
     getApplicationTemplateByTypeIdMock.mockResolvedValue(
       createTemplate(() => Promise.resolve(createTwoPageForm())),
     )
@@ -329,7 +328,7 @@ describe('SdfScreenService validation gates', () => {
       {},
       'is',
       { nationalId: application.applicant } as never,
-      0,
+      'page0',
     )
 
     expect(screen.page.errors).toEqual([
@@ -339,7 +338,7 @@ describe('SdfScreenService validation gates', () => {
   })
 
   it('validateFields only returns errors for the requested fields', async () => {
-    const application = createApplication({ pageIndex: 0 })
+    const application = createApplication()
     getApplicationTemplateByTypeIdMock.mockResolvedValue(
       createTemplate(() => Promise.resolve(createTwoPageForm())),
     )
@@ -353,6 +352,7 @@ describe('SdfScreenService validation gates', () => {
       ['someRequiredField', 'approveExternalData'],
       'is',
       user,
+      'page0',
     )
     const one = await service.validateFields(
       application.id,
@@ -360,6 +360,7 @@ describe('SdfScreenService validation gates', () => {
       ['someRequiredField'],
       'is',
       user,
+      'page0',
     )
 
     expect(both.errors.map((e) => e.componentId).sort()).toEqual([
@@ -372,7 +373,7 @@ describe('SdfScreenService validation gates', () => {
   })
 
   it('validateFields skips validation when no fields are requested', async () => {
-    const application = createApplication({ pageIndex: 0 })
+    const application = createApplication()
     getApplicationTemplateByTypeIdMock.mockResolvedValue(
       createTemplate(() => Promise.resolve(createTwoPageForm())),
     )
@@ -386,6 +387,7 @@ describe('SdfScreenService validation gates', () => {
         [],
         'is',
         { nationalId: application.applicant } as never,
+        'page0',
       )
 
       expect(result.errors).toEqual([])

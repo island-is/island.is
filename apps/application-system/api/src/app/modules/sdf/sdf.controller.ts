@@ -51,11 +51,11 @@ export class SdfController {
   })
   @ApiParam({ name: 'applicationId', type: String })
   @ApiQuery({
-    name: 'step',
+    name: 'screen',
     required: false,
-    type: Number,
+    type: String,
     description:
-      'Optional override for deep-linking. Omit to use the persisted page index.',
+      'The id of the screen to show. Omit it, or give an id that is not shown, to get the screen to resume on.',
   })
   @ApiQuery({ name: 'locale', required: false, type: String })
   @ApiOkResponse({ type: ScreenDto })
@@ -65,29 +65,14 @@ export class SdfController {
   })
   async getScreen(
     @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
-    @Query('step') step?: string,
+    @Query('screen') screen?: string,
     @Query('locale') locale?: string,
     @CurrentUser() user?: User,
   ): Promise<ScreenDto> {
-    let pageIndexOverride: number | undefined
-    if (step !== undefined) {
-      const n = parseInt(step, 10)
-      if (!Number.isFinite(n) || n < 0) {
-        throw new BadRequestException(
-          createSdfProblem({
-            type: 'https://island.is/problems/application-system/sdf/bad-request',
-            title: 'Bad request',
-            status: 400,
-            detail: 'step must be a non-negative integer',
-            instance: `/sdf/${applicationId}/screen`,
-          }),
-        )
-      }
-      pageIndexOverride = n
-    }
     return this.sdfScreenService.getScreen(
       applicationId,
-      pageIndexOverride,
+      // A repeated query parameter arrives as an array, which names no screen.
+      typeof screen === 'string' ? screen : undefined,
       (locale ?? 'is') as Locale,
       user!,
     )
@@ -107,7 +92,7 @@ export class SdfController {
     type: SdfProblemDetailsDto,
   })
   @ApiConflictResponse({
-    description: 'The client page index is stale for a write action.',
+    description: "The request conflicts with the application's current state.",
     type: SdfProblemDetailsDto,
   })
   async executeAction(
@@ -128,7 +113,7 @@ export class SdfController {
           dto.fieldIds ?? [],
           locale,
           user!,
-          dto.lastKnownPageIndex,
+          this.requireScreen(dto, applicationId),
         )
 
       case SdfActionType.NEXT_PAGE:
@@ -137,7 +122,7 @@ export class SdfController {
           dto.answers ?? {},
           locale,
           user!,
-          dto.lastKnownPageIndex,
+          this.requireScreen(dto, applicationId),
         )
 
       case SdfActionType.PREV_PAGE:
@@ -145,16 +130,7 @@ export class SdfController {
           applicationId,
           locale,
           user!,
-        )
-
-      case SdfActionType.GO_TO_PAGE:
-        // The destination page id rides on `event` (see SdfActionType). Without
-        // it no page can match, and the request would silently be a no-op.
-        return this.sdfScreenService.goToPage(
-          applicationId,
-          this.requireEvent(dto, applicationId),
-          locale,
-          user!,
+          this.requireScreen(dto, applicationId),
         )
 
       case SdfActionType.REFETCH:
@@ -164,6 +140,7 @@ export class SdfController {
           dto.refetchTemplateApiActions,
           locale,
           user!,
+          this.requireScreen(dto, applicationId),
         )
 
       case SdfActionType.SUBMIT:
@@ -176,6 +153,7 @@ export class SdfController {
           dto.answers,
           locale,
           user!,
+          this.requireScreen(dto, applicationId),
         )
 
       default:
@@ -189,6 +167,23 @@ export class SdfController {
           }),
         )
     }
+  }
+
+  // `screen` is optional on the DTO because only some action types use it; the
+  // ones that do must reject a missing or empty value.
+  private requireScreen(dto: ExecuteActionDto, applicationId: string): string {
+    if (!dto.screen) {
+      throw new BadRequestException(
+        createSdfProblem({
+          type: 'https://island.is/problems/application-system/sdf/bad-request',
+          title: 'Bad request',
+          status: 400,
+          detail: `screen is required for ${dto.actionType}`,
+          instance: `/sdf/${applicationId}/action`,
+        }),
+      )
+    }
+    return dto.screen
   }
 
   // `event` is optional on the DTO because only some action types use it;

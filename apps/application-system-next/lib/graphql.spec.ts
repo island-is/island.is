@@ -7,10 +7,10 @@ import {
   normalizeAliasedComponentValues,
   buildGraphqlHeaders,
   extractOperationResult,
+  executeAction,
   fetchScreen,
   validateAction,
 } from './graphql'
-import type { ForwardAuthHeaders } from './graphql'
 
 describe('graphql SDF queries', () => {
   const schema = buildSchema(
@@ -117,74 +117,6 @@ describe('graphql SDF queries', () => {
     expect(result).toEqual({ id: 'screen-2' })
   })
 
-  it('uses the local bff service directly for server-side screen fetches in local development', async () => {
-    const fetchMock = jest.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      text: async () =>
-        JSON.stringify({
-          data: {
-            applicationSdfScreen: {
-              applicationId: 'app-1',
-              locale: 'is',
-              header: { title: 'Title' },
-              stepper: {
-                sections: [],
-                activeSectionIndex: 0,
-                activeSubSectionIndex: 0,
-              },
-              page: {
-                id: 'page-1',
-                index: 0,
-                sectionIndex: 0,
-                subSectionIndex: 0,
-                components: [],
-                errors: [],
-              },
-              footer: {
-                buttons: [],
-                canGoBack: false,
-              },
-            },
-          },
-        }),
-    } as Response)
-    ;(
-      globalThis as typeof globalThis & {
-        fetch: typeof fetch
-      }
-    ).fetch = fetchMock as typeof fetch
-    const windowDescriptor = Object.getOwnPropertyDescriptor(
-      globalThis,
-      'window',
-    )
-    Object.defineProperty(globalThis, 'window', {
-      value: undefined,
-      configurable: true,
-    })
-
-    try {
-      const headers: ForwardAuthHeaders = {
-        cookie: 'sid=123',
-        authorization: undefined,
-        host: 'localhost:4250',
-        protocol: 'http',
-      }
-      await fetchScreen('app-1', undefined, 'is', headers)
-    } finally {
-      if (windowDescriptor) {
-        Object.defineProperty(globalThis, 'window', windowDescriptor)
-      }
-    }
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      'http://localhost:3010/bff/api/graphql?op=ApplicationSdfScreen',
-      expect.objectContaining({
-        method: 'POST',
-      }),
-    )
-  })
-
   it('surfaces problem-detail unauthorized responses as http errors', async () => {
     const fetchMock = jest.fn().mockResolvedValue({
       ok: false,
@@ -209,7 +141,7 @@ describe('graphql SDF queries', () => {
     })
   })
 
-  it('sends lastKnownPageIndex with validate actions', async () => {
+  it('sends the screen id with validate actions', async () => {
     const fetchMock = jest.fn().mockResolvedValue({
       ok: true,
       status: 200,
@@ -231,21 +163,48 @@ describe('graphql SDF queries', () => {
 
     await validateAction(
       'app-1',
+      'page-7',
       { input1: '23', input2: '23', input3: '31' },
       [],
       'is',
-      7,
     )
 
     const [, init] = fetchMock.mock.calls[0]
     const body = JSON.parse(String(init.body)) as {
       variables: {
         input: {
-          lastKnownPageIndex?: number
+          screen?: string
         }
       }
     }
 
-    expect(body.variables.input.lastKnownPageIndex).toBe(7)
+    expect(body.variables.input.screen).toBe('page-7')
+  })
+
+  it('sends the screen id with fetch and action requests', async () => {
+    const fetchMock = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      text: async () => JSON.stringify({ data: {} }),
+    } as Response)
+    ;(
+      globalThis as typeof globalThis & {
+        fetch: typeof fetch
+      }
+    ).fetch = fetchMock as typeof fetch
+
+    // The empty payload makes both calls reject; only the request matters.
+    await fetchScreen('app-1', 'page-3').catch(() => undefined)
+    await executeAction('app-1', 'NEXT_PAGE', 'page-3').catch(() => undefined)
+
+    const inputs = fetchMock.mock.calls.map(
+      ([, init]) => JSON.parse(String(init.body)).variables.input,
+    )
+    expect(inputs[0]).toEqual({ applicationId: 'app-1', screen: 'page-3' })
+    expect(inputs[1]).toMatchObject({
+      applicationId: 'app-1',
+      actionType: 'NEXT_PAGE',
+      screen: 'page-3',
+    })
   })
 })

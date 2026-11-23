@@ -510,7 +510,6 @@ export class ApplicationService {
         | 'pruneAt'
         | 'postPruned'
         | 'postPruneAt'
-        | 'pageIndex'
       >
     >,
   ) {

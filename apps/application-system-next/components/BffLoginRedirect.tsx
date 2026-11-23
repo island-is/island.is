@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { ShellSkeleton } from './ShellSkeleton'
 import { buildBffLoginUrl } from '../lib/authRedirect'
+import { replaceLocation } from '../lib/navigation'
 
 interface BffLoginRedirectProps {
   targetLinkUri: string
@@ -12,7 +13,7 @@ export const BffLoginRedirect = ({ targetLinkUri }: BffLoginRedirectProps) => {
   const loginUrl = buildBffLoginUrl(targetLinkUri)
 
   useEffect(() => {
-    window.location.replace(loginUrl)
+    replaceLocation(loginUrl)
   }, [loginUrl])
 
   return (

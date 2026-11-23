@@ -104,6 +104,7 @@ export const ComponentSwitch = ({
   answers,
   onAnswerChange,
   dispatch,
+  goToScreen,
   displayValues,
   pendingRefetchTargets = [],
 }: ComponentSwitchProps) => {
@@ -148,6 +149,7 @@ export const ComponentSwitch = ({
       onAnswerChange={onAnswerChange}
       handleChange={handleChange}
       dispatch={dispatch}
+      goToScreen={goToScreen}
       displayValues={displayValues}
       pendingRefetchTargets={pendingRefetchTargets}
       isRefetchPending={isRefetchPending}

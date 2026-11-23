@@ -3,18 +3,19 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { fetchScreen, GraphqlHttpError, type SdfScreen } from '../lib/graphql'
+import { getHistoryAction, writeScreenHistory } from '../lib/screenNavigation'
 import { ApplicationShell } from './ApplicationShell'
 import { BffLoginRedirect } from './BffLoginRedirect'
 import { ShellSkeleton } from './ShellSkeleton'
 
 interface InitialScreenGateProps {
   applicationId: string
-  step?: number
+  screen?: string
 }
 
 export const InitialScreenGate = ({
   applicationId,
-  step,
+  screen: requestedScreenId,
 }: InitialScreenGateProps) => {
   const [screen, setScreen] = useState<SdfScreen | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -30,10 +31,21 @@ export const InitialScreenGate = ({
   useEffect(() => {
     let isActive = true
 
-    fetchScreen(applicationId, step, initialLangRef.current)
+    fetchScreen(applicationId, requestedScreenId, initialLangRef.current)
       .then((nextScreen) => {
         if (!isActive) {
           return
+        }
+
+        // Make the address bar name the screen shown (the link may have had no
+        // screen, or one the server replaced), so every history entry has one.
+        const historyAction = getHistoryAction({
+          source: 'url',
+          requestedId: requestedScreenId,
+          responseId: nextScreen.page.id,
+        })
+        if (historyAction !== 'none') {
+          writeScreenHistory(historyAction, nextScreen.page.id)
         }
 
         setScreen(nextScreen)
@@ -63,7 +75,7 @@ export const InitialScreenGate = ({
     return () => {
       isActive = false
     }
-  }, [applicationId, step])
+  }, [applicationId, requestedScreenId])
 
   if (loginTarget) {
     return <BffLoginRedirect targetLinkUri={loginTarget} />
