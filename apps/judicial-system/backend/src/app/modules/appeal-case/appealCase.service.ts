@@ -1204,7 +1204,10 @@ export class AppealCaseService {
     // Party IDs select the single-party write path only for verdict-appeal
     // statements. Ruling-appeal statements stay collective (writeEventLog) —
     // a stray party ID must not shrink that write to one represented party.
-    if (!requiresScopedParty && (party?.defendantId || party?.civilClaimantId)) {
+    if (
+      !requiresScopedParty &&
+      (party?.defendantId || party?.civilClaimantId)
+    ) {
       throw new BadRequestException(
         'defendantId and civilClaimantId are only allowed for verdict appeal statement events',
       )
