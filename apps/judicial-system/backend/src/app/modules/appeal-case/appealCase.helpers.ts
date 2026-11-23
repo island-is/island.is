@@ -5,6 +5,7 @@ import {
   AppealOrigin,
   type AppealStatementParty,
   CaseAppealDecision,
+  isCourtOfAppealsUser,
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
@@ -26,6 +27,32 @@ import {
   CivilClaimant,
   Defendant,
 } from '../repository'
+
+// How the court of appeals concludes a verdict appeal is its own until it is
+// released: every other user is presented with an appeal still in progress,
+// whatever the court has saved on it and whether or not it has completed it.
+export const getVerdictAppealOutcomeOverride = (
+  verdictAppealCase: AppealCase,
+  user: User | undefined,
+) =>
+  isCourtOfAppealsUser(user)
+    ? {}
+    : {
+        appealRulingDecision: undefined,
+        appealRulingType: undefined,
+        appealConclusion: undefined,
+        appealRulingModifiedHistory: undefined,
+        appealRulingDate: undefined,
+        ...(verdictAppealCase.appealState === AppealCaseState.COMPLETED
+          ? { appealState: AppealCaseState.APPEALED }
+          : {}),
+        // The status the court records for itself says the same thing, so it
+        // is held where the lists hold it: under advisement.
+        ...(verdictAppealCase.verdictAppealStatus ===
+        VerdictAppealStatus.COMPLETED
+          ? { verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT }
+          : {}),
+      }
 
 // The appeal case a case file belongs to: the ruling-order appeal the file
 // carries in its rulingFileId, the verdict appeal for an appeal declaration or

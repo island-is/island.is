@@ -41,6 +41,7 @@ import {
   areAppealDecisionsComplete,
   getIndictmentCountWarningMessage,
   isAdminUserFormValid,
+  isAdvocateContactValid,
   isConclusionStepValid,
   isCourtHearingArrangemenstStepValidRC,
   isCourtHearingArrangementsStepValidIC,
@@ -2295,6 +2296,29 @@ describe('isDefenderStepValid', () => {
 
       expect(isDefenderStepValid(workingCase)).toBe(false)
     })
+  })
+})
+
+describe('isAdvocateContactValid', () => {
+  test.each([
+    [undefined, undefined],
+    [null, null],
+    ['', ''],
+    ['verjandi@dummy.dd', undefined],
+    [undefined, '555-5555'],
+    ['verjandi@dummy.dd', '5555555'],
+  ])('is true for email %p and phone number %p', (email, phoneNumber) => {
+    expect(isAdvocateContactValid(email, phoneNumber)).toBe(true)
+  })
+
+  test.each([
+    ['verjandi', undefined],
+    ['verjandi@dummy.dd ', undefined],
+    [undefined, '123'],
+    ['verjandi@dummy.dd', '123'],
+    ['verjandi', '555-5555'],
+  ])('is false for email %p and phone number %p', (email, phoneNumber) => {
+    expect(isAdvocateContactValid(email, phoneNumber)).toBe(false)
   })
 })
 

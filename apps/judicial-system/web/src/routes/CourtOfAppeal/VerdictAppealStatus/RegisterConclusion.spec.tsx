@@ -116,6 +116,7 @@ const renderForm = (theCase: WorkingCase = caseWith()) =>
 describe('RegisterConclusion', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockUpdateAppealCase.mockResolvedValue({ id: 'verdict-appeal' })
   })
 
   it('offers no outcome and no type until the court picks one', () => {
@@ -156,7 +157,10 @@ describe('RegisterConclusion', () => {
     expect(mockUpdateAppealCase).toHaveBeenCalledWith(
       'case-id',
       'verdict-appeal',
-      { appealRulingDecision: AppealCaseRulingDecision.REPEAL },
+      {
+        appealRulingDecision: AppealCaseRulingDecision.REPEAL,
+        appealRulingType: AppealRulingType.RULING,
+      },
     )
     expect(screen.getByRole('radio', { name: 'Úrskurður' })).toBeChecked()
   })
@@ -174,7 +178,10 @@ describe('RegisterConclusion', () => {
     expect(mockUpdateAppealCase).toHaveBeenCalledWith(
       'case-id',
       'verdict-appeal',
-      { appealRulingType: AppealRulingType.RULING },
+      {
+        appealRulingDecision: recordedOutcome.appealRulingDecision,
+        appealRulingType: AppealRulingType.RULING,
+      },
     )
     expect(
       screen.getByRole('heading', { name: /Úrskurðarorð/ }),
@@ -218,6 +225,129 @@ describe('RegisterConclusion', () => {
 
     expect(await screen.findByText('Reitur má ekki vera tómur')).toBeVisible()
     expect(mockUpdateAppealCase).not.toHaveBeenCalled()
+  })
+
+  it('stores two quick type changes in the order they were made', async () => {
+    let resolveFirst: (value: unknown) => void = () => undefined
+    mockUpdateAppealCase.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveFirst = resolve
+        }),
+    )
+
+    renderForm(caseWith(recordedOutcome))
+
+    await userEvent.click(screen.getByRole('radio', { name: 'Úrskurður' }))
+    await userEvent.click(screen.getByRole('radio', { name: 'Dómur' }))
+
+    expect(mockUpdateAppealCase).toHaveBeenCalledTimes(1)
+    expect(mockUpdateAppealCase).toHaveBeenLastCalledWith(
+      'case-id',
+      'verdict-appeal',
+      {
+        appealRulingDecision: recordedOutcome.appealRulingDecision,
+        appealRulingType: AppealRulingType.RULING,
+      },
+    )
+
+    resolveFirst({ id: 'verdict-appeal' })
+
+    await waitFor(() => expect(mockUpdateAppealCase).toHaveBeenCalledTimes(2))
+    expect(mockUpdateAppealCase).toHaveBeenLastCalledWith(
+      'case-id',
+      'verdict-appeal',
+      {
+        appealRulingDecision: recordedOutcome.appealRulingDecision,
+        appealRulingType: AppealRulingType.VERDICT,
+      },
+    )
+    expect(screen.getByRole('radio', { name: 'Dómur' })).toBeChecked()
+  })
+
+  // The first save writes the outcome with its type. Were the second to send
+  // only the type, the outcome on the form would never reach the appeal.
+  it('stores the outcome with a type chosen while its own save fails', async () => {
+    let resolveFirst: (value: unknown) => void = () => undefined
+    mockUpdateAppealCase.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveFirst = resolve
+        }),
+    )
+
+    renderForm()
+
+    await userEvent.click(screen.getByRole('radio', { name: 'Staðfesting' }))
+    await userEvent.click(screen.getByRole('radio', { name: 'Úrskurður' }))
+
+    resolveFirst(undefined)
+
+    await waitFor(() => expect(mockUpdateAppealCase).toHaveBeenCalledTimes(2))
+    expect(mockUpdateAppealCase).toHaveBeenLastCalledWith(
+      'case-id',
+      'verdict-appeal',
+      {
+        appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+        appealRulingType: AppealRulingType.RULING,
+      },
+    )
+    expect(screen.getByRole('radio', { name: 'Staðfesting' })).toBeChecked()
+    expect(screen.getByRole('radio', { name: 'Úrskurður' })).toBeChecked()
+  })
+
+  describe('a save that fails', () => {
+    it('leaves the outcome unpicked', async () => {
+      mockUpdateAppealCase.mockResolvedValueOnce(undefined)
+      renderForm(
+        caseWith({ appealConclusion: recordedOutcome.appealConclusion }, [
+          rulingFile,
+        ]),
+      )
+
+      await userEvent.click(screen.getByRole('radio', { name: 'Staðfesting' }))
+
+      await waitFor(() =>
+        expect(
+          screen.getByRole('radio', { name: 'Staðfesting' }),
+        ).not.toBeChecked(),
+      )
+      expect(onValidityChange).toHaveBeenLastCalledWith(false)
+    })
+
+    it('leaves the type unpicked when it came with the first outcome', async () => {
+      mockUpdateAppealCase.mockResolvedValueOnce(undefined)
+      renderForm()
+
+      await userEvent.click(screen.getByRole('radio', { name: 'Staðfesting' }))
+
+      await waitFor(() =>
+        expect(screen.getByRole('radio', { name: 'Dómur' })).not.toBeChecked(),
+      )
+      expect(
+        screen.getByRole('radio', { name: 'Staðfesting' }),
+      ).not.toBeChecked()
+    })
+
+    it('returns to the outcome the appeal holds', async () => {
+      mockUpdateAppealCase.mockResolvedValueOnce(undefined)
+      renderForm(caseWith(recordedOutcome, [rulingFile]))
+
+      await userEvent.click(
+        screen.getByRole('radio', { name: 'Fellt úr gildi' }),
+      )
+
+      await waitFor(() =>
+        expect(
+          screen.getByRole('radio', { name: 'Staðfesting' }),
+        ).toBeChecked(),
+      )
+      expect(
+        screen.getByRole('radio', { name: 'Fellt úr gildi' }),
+      ).not.toBeChecked()
+      expect(screen.getByRole('radio', { name: 'Dómur' })).toBeChecked()
+      expect(onValidityChange).toHaveBeenLastCalledWith(true)
+    })
   })
 
   // A ruling appeal on the same case keeps its ruling in a category of its

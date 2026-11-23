@@ -2334,6 +2334,9 @@ export interface IGrantFields {
 
   /** Type tag */
   grantTypeTag?: IGenericTag | undefined
+
+  /** Type tags */
+  grantTypeTags?: IGenericTag[] | undefined
 }
 
 /** Grant is a part of "Styrkjatorg". */

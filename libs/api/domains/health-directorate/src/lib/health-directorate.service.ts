@@ -416,7 +416,6 @@ export class HealthDirectorateService {
           validUntilDate: item.validUntilDate,
           stateDisplay: item.statusDisplay,
           status: mapReferralStatusValueToStatus(item.statusValue),
-          reason: item.reasonForReferral,
           diagnoses: item.diagnoses?.join(', '),
           fromContactInfo: item.fromContactInfo,
           toContactInfo: item.toContactInfo,

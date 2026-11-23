@@ -6,6 +6,7 @@ import { retry } from '@island.is/shared/utils/server'
 import { PaymentMethod, RefundType } from '../../../types'
 import { requireStepResult } from '../../../utils/orchestrator'
 import { PaymentFlowService } from '../../paymentFlow/paymentFlow.service'
+import { RefundService } from '../../refund/refund.service'
 import {
   CardPaymentContext,
   CardPaymentSagaDefinition,
@@ -17,6 +18,10 @@ import {
   settleDebtStep,
 } from '../cardPayment.debt'
 import { ChargeCardInput } from './dtos'
+import {
+  GatewayApprovedUnreadableError,
+  refundApprovedUnreadableCharge,
+} from '../approvedUnreadableCharge'
 
 export const createCardPaymentContext = (
   paymentFlowId: string,
@@ -42,6 +47,7 @@ export const createCardPaymentContext = (
 
 export const createCardPaymentSaga = (
   cardPaymentService: CardPaymentService,
+  refundService: RefundService,
   paymentFlowService: PaymentFlowService,
   logger: Logger,
 ): CardPaymentSagaDefinition => [
@@ -62,13 +68,28 @@ export const createCardPaymentSaga = (
         `[${ctx.paymentFlowId}][correlationId: ${ctx.trackingData.correlationId}][rrn: ${ctx.trackingData.merchantReferenceData}] Charging card`,
       )
 
-      const paymentResult = await cardPaymentService.charge({
-        chargeCardInput: ctx.input,
-        paymentTrackingData: ctx.trackingData,
-        amount: totalPrice,
-      })
+      try {
+        const paymentResult = await cardPaymentService.charge({
+          chargeCardInput: ctx.input,
+          paymentTrackingData: ctx.trackingData,
+          amount: totalPrice,
+        })
 
-      return { paymentResult }
+        return { paymentResult }
+      } catch (error) {
+        // The step did not complete, so its compensation will not run: a
+        // charge the gateway approved is refunded here
+        if (error instanceof GatewayApprovedUnreadableError) {
+          await refundApprovedUnreadableCharge({
+            ctx,
+            error,
+            refundService,
+            paymentFlowService,
+            logger,
+          })
+        }
+        throw error
+      }
     },
     compensate: async (ctx) => {
       if (await keepDebtPayment({ cardPaymentService, logger, ctx })) {
@@ -194,6 +215,7 @@ export const createCardPaymentSaga = (
         settlement: ctx.stepResults.SETTLE_DEBT,
         message: `Card payment completed successfully`,
         paymentResult,
+        correlationId: ctx.trackingData.correlationId,
       })
     },
   },

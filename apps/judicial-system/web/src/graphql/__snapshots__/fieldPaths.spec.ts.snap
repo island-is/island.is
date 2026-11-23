@@ -1215,6 +1215,12 @@ Array [
 ]
 `;
 
+exports[`GraphQL operations select these field paths LimitedAccessAcceptVerdict 1`] = `
+Array [
+  "limitedAccessAcceptVerdict.defendantId",
+]
+`;
+
 exports[`GraphQL operations select these field paths LimitedAccessCase 1`] = `
 Array [
   "limitedAccessCase.appealCase.appealAssistant.id",

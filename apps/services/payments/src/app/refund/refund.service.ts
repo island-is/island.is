@@ -83,7 +83,7 @@ export class RefundService {
     TOut extends { isSuccess: true },
     TErrOut extends {
       isSuccess: false
-      responseCode: string
+      responseCode?: string
       responseDescription?: string
     },
   >({
@@ -94,8 +94,8 @@ export class RefundService {
     paymentFlowId,
   }: {
     response: Response
-    schema: z.ZodType<TOut>
-    errorSchema: z.ZodType<TErrOut>
+    schema: z.ZodType<TOut, z.ZodTypeDef, unknown>
+    errorSchema: z.ZodType<TErrOut, z.ZodTypeDef, unknown>
     errorMessage: string
     paymentFlowId?: string
   }): Promise<TOut> {

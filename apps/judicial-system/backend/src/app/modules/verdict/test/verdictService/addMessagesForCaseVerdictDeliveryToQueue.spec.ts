@@ -5,6 +5,7 @@ import { MessageType } from '@island.is/judicial-system/message'
 import {
   ServiceRequirement,
   type User as TUser,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 import { createTestingVerdictModule } from '../createTestingVerdictModule'
@@ -164,6 +165,38 @@ describe('VerdictService - addMessagesForCaseVerdictDeliveryToQueue', () => {
         defendantHasRequestedAppeal: true,
         isAcquittedByPublicProsecutionOffice: true,
       }),
+      { transaction },
+    )
+  })
+
+  // The stance was taken on the served copy; the new copy is served afresh,
+  // so it is taken again rather than carried over.
+  it("does not carry the defendant's stance onto the replacement verdict", async () => {
+    const existingVerdict = {
+      id: existingVerdictId,
+      created: new Date('2026-01-01'),
+      externalPoliceDocumentId: uuid(),
+      serviceRequirement: ServiceRequirement.REQUIRED,
+      serviceInformationForDefendant: [],
+      isDefaultJudgement: false,
+      appealDecision: VerdictAppealDecision.ACCEPT,
+    } as unknown as Verdict
+
+    const theCase = {
+      id: caseId,
+      defendants: [
+        { id: defendantId, verdicts: [existingVerdict] } as Defendant,
+      ],
+    } as Case
+
+    await verdictService.addMessagesForCaseVerdictDeliveryToQueue(
+      theCase,
+      user,
+      transaction,
+    )
+
+    expect(mockVerdictRepositoryService.create).toHaveBeenCalledWith(
+      expect.not.objectContaining({ appealDecision: expect.anything() }),
       { transaction },
     )
   })
