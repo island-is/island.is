@@ -10,6 +10,7 @@ import {
   COURT_OF_APPEAL_SUMMARY_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
@@ -356,6 +357,7 @@ export type stepValidationsType = {
   [COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE]: () => boolean
   [COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE]: () => boolean
   [COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE]: () => boolean
+  [COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE]: () => boolean
 }
 
 // COA step validations operate on the appeal-case row identified by the
@@ -483,8 +485,11 @@ export const stepValidations = (
     // leaving it half done.
     [COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE]: () =>
       validations.isVerdictAppealStatusStepValid(appealCase),
-    // Nothing follows the summary, so nothing asks whether it is complete.
+    // The summary is only read: what finishes the appeal is the court
+    // confirming it there, not moving past it.
     [COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE]: () => true,
+    // The finished appeal, which is only read.
+    [COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE]: () => true,
   }
 }
 

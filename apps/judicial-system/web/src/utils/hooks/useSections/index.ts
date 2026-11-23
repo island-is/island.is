@@ -11,6 +11,7 @@ import {
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
@@ -1705,13 +1706,16 @@ const useSections = (
         },
       ],
     },
-    // The outcome, which this court has not reached and has no screens for.
-    // Named anyway, because it is in the design and because the stepper draws
-    // no connecting line below its last section - without this the line stops
-    // at "Dómur Landsréttar" and its sub-steps hang beside a gap.
+    // The finished appeal, read on its own page once the court has confirmed
+    // how it ended. Lit only on that page, so the section before it is the
+    // one the panel marks on every step of the proceeding; the panel then
+    // draws "Dómur Landsréttar" as done. A section has no link of its own:
+    // the summary leads here once the appeal is finished. It also keeps the
+    // connecting line running below "Dómur Landsréttar": the stepper draws
+    // none below its last section.
     {
       name: 'Niðurstaða',
-      isActive: false,
+      isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE),
       children: [],
     },
   ]

@@ -7,6 +7,7 @@ import {
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
@@ -418,6 +419,49 @@ describe('useSections getSections', () => {
       const sections = appealSections(caseWithBothAppeals, coaUser)
 
       expect(sections[0].children[2].onClick).toBeUndefined()
+    })
+
+    // The finished appeal is read on a page of its own, which lights the
+    // last section in place of the proceeding's steps, so the panel draws
+    // those as done.
+    it('marks only the outcome section on the finished appeal', () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE
+
+      const finished = {
+        ...caseWithBothAppeals,
+        verdictAppealCase: {
+          ...caseWithBothAppeals.verdictAppealCase,
+          appealState: AppealCaseState.COMPLETED,
+        },
+      } as unknown as WorkingCase
+      const { result } = renderHook(() => useSections(), {
+        wrapper: makeWrapper(finished),
+      })
+      const sections = result.current.getSections(finished, coaUser)
+
+      expect(sections.filter((s) => s.isActive).map((s) => s.name)).toEqual([
+        'Niðurstaða',
+      ])
+      expect(sections.at(-1)).toStrictEqual({
+        name: 'Niðurstaða',
+        isActive: true,
+        children: [],
+      })
+    })
+
+    it('leaves the outcome section unmarked on the summary', () => {
+      mockAppealCaseId = 'verdict-appeal'
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE
+
+      const { result } = renderHook(() => useSections(), {
+        wrapper: makeWrapper(caseWithBothAppeals),
+      })
+      const sections = result.current.getSections(caseWithBothAppeals, coaUser)
+
+      expect(sections.filter((s) => s.isActive).map((s) => s.name)).toEqual([
+        'Dómur Landsréttar',
+      ])
     })
 
     it('leaves the ruling appeal sections alone when it names that one', () => {

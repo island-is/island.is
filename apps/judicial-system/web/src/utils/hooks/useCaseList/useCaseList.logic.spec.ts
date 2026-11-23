@@ -2,6 +2,7 @@ import {
   COURT_OF_APPEAL_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_RESULT_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { Feature } from '@island.is/judicial-system/types'
@@ -60,12 +61,11 @@ describe('getCourtOfAppealsRouteForRow', () => {
     ).toBe(COURT_OF_APPEAL_RESULT_ROUTE)
   })
 
-  // A verdict appeal goes to its own page whatever state it is in - both of
+  // A verdict appeal goes to its own pages whatever state it is in - both of
   // the court's verdict lists open it.
   it.each([
     AppealCaseState.APPEALED,
     AppealCaseState.RECEIVED,
-    AppealCaseState.COMPLETED,
     AppealCaseState.WITHDRAWN,
   ])('opens the verdict appeal page for a %s verdict appeal', (appealState) => {
     const theCase = {
@@ -79,6 +79,21 @@ describe('getCourtOfAppealsRouteForRow', () => {
 
     expect(getCourtOfAppealsRouteForRow(theCase, 'verdict-appeal')).toBe(
       COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
+    )
+  })
+
+  it('opens the verdict appeal result page for a completed verdict appeal', () => {
+    const theCase = {
+      id: 'case-id',
+      verdictAppealCase: {
+        id: 'verdict-appeal',
+        appealState: AppealCaseState.COMPLETED,
+        appealType: AppealCaseType.VERDICT,
+      },
+    } as unknown as WorkingCase
+
+    expect(getCourtOfAppealsRouteForRow(theCase, 'verdict-appeal')).toBe(
+      COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE,
     )
   })
 

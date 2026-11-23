@@ -2,6 +2,7 @@ import {
   COURT_OF_APPEAL_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_RESULT_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
+  COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { Feature } from '@island.is/judicial-system/types'
@@ -53,7 +54,9 @@ export const getCourtOfAppealsRouteForRow = (
   )
 
   if (targetAppealCase?.appealType === AppealCaseType.VERDICT) {
-    return COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE
+    return targetAppealCase.appealState === AppealCaseState.COMPLETED
+      ? COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE
+      : COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE
   }
 
   return targetAppealCase?.appealState === AppealCaseState.COMPLETED
