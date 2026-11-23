@@ -1,3 +1,5 @@
+import faker from 'faker'
+
 import type { InstitutionUser } from '@island.is/judicial-system/types'
 import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
 import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -14,10 +16,18 @@ import {
 } from './DefendantInfo.logic'
 import { strings } from './DefendantInfo.strings'
 
+const defendantName = faker.name.findName()
+const defenderName = faker.name.findName()
+const appealDefenderName = faker.name.findName()
+const defenderEmail = faker.internet.email()
+const appealDefenderEmail = faker.internet.email()
+const defenderPhoneNumber = faker.phone.phoneNumber()
+const appealDefenderPhoneNumber = faker.phone.phoneNumber()
+
 const defendantWith = (overrides: Partial<Defendant>): Defendant =>
   ({
     id: 'defendant-id',
-    name: 'Jón Sigurður Jónsson',
+    name: defendantName,
     ...overrides,
   } as Defendant)
 
@@ -323,12 +333,12 @@ describe('DefendantInfo', () => {
 
   describe('getInfoCardDefender', () => {
     const defendant = defendantWith({
-      defenderName: 'Lára Lögmann',
-      defenderEmail: 'lara@lawyers.is',
-      defenderPhoneNumber: '5555555',
-      appealDefenderName: 'Brynjar Sveinsson',
-      appealDefenderEmail: 'brynjar@lawyers.is',
-      appealDefenderPhoneNumber: '1111111',
+      defenderName,
+      defenderEmail,
+      defenderPhoneNumber,
+      appealDefenderName,
+      appealDefenderEmail,
+      appealDefenderPhoneNumber,
     })
 
     test('prefers the appeal defender for court of appeals users', () => {
@@ -340,9 +350,9 @@ describe('DefendantInfo', () => {
           ),
         }),
       ).toEqual({
-        name: 'Brynjar Sveinsson',
-        email: 'brynjar@lawyers.is',
-        phoneNumber: '1111111',
+        name: appealDefenderName,
+        email: appealDefenderEmail,
+        phoneNumber: appealDefenderPhoneNumber,
       })
     })
 
@@ -354,7 +364,7 @@ describe('DefendantInfo', () => {
             InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
           ),
         }).name,
-      ).toBe('Brynjar Sveinsson')
+      ).toBe(appealDefenderName)
     })
 
     test('prefers the appeal defender for public prosecutors', () => {
@@ -365,7 +375,7 @@ describe('DefendantInfo', () => {
             InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
           ),
         }).name,
-      ).toBe('Brynjar Sveinsson')
+      ).toBe(appealDefenderName)
     })
 
     test('keeps the district-court defender for other roles', () => {
@@ -377,9 +387,9 @@ describe('DefendantInfo', () => {
           ),
         }),
       ).toEqual({
-        name: 'Lára Lögmann',
-        email: 'lara@lawyers.is',
-        phoneNumber: '5555555',
+        name: defenderName,
+        email: defenderEmail,
+        phoneNumber: defenderPhoneNumber,
       })
     })
 
@@ -387,8 +397,8 @@ describe('DefendantInfo', () => {
       expect(
         getInfoCardDefender(
           defendantWith({
-            defenderName: 'Lára Lögmann',
-            defenderEmail: 'lara@lawyers.is',
+            defenderName,
+            defenderEmail,
           }),
           {
             user: userWith(
@@ -397,7 +407,7 @@ describe('DefendantInfo', () => {
             ),
           },
         ).name,
-      ).toBe('Lára Lögmann')
+      ).toBe(defenderName)
     })
   })
 
