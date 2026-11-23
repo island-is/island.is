@@ -272,10 +272,12 @@ const convertFormNodeToScreens = (
   let newScreens: FormScreen[] = []
 
   if (children) {
+    // The same for every child, so it is built once per node.
+    const sections = getSectionsInForm(form, answers, externalData, user)
+
     for (let i = 0; i < children.length; i++) {
       const child = children[i]
       if (!child) continue
-      const sections = getSectionsInForm(form, answers, externalData, user)
 
       if (child.type === FormItemTypes.SECTION) {
         subSectionIndex = -1

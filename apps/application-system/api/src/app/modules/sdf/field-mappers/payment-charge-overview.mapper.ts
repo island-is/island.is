@@ -1,5 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
+import { formatCurrency } from '@island.is/shared/utils'
 
 import { ComponentDto } from '../dto/screen.dto'
 import { FormTextResolver } from '../i18n-resolver.service'
@@ -24,9 +25,6 @@ type SelectedChargeListItem = {
   extraLabel?: unknown
 }
 
-const formatIsk = (value: number): string =>
-  value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
-
 const buildPaymentChargeOverviewFields = (
   raw: PaymentChargeOverviewRaw,
   application: Application,
@@ -48,7 +46,7 @@ const buildPaymentChargeOverviewFields = (
       paymentChargeHeading: heading,
       paymentChargeLines: [],
       paymentChargeTotalLabel: totalLabel,
-      paymentChargeTotalAmount: formatIsk(0),
+      paymentChargeTotalAmount: formatCurrency(0),
     }
   }
 
@@ -77,7 +75,7 @@ const buildPaymentChargeOverviewFields = (
     return {
       description,
       quantity: String(quantity),
-      amount: formatIsk(unit * quantity),
+      amount: formatCurrency(unit * quantity),
     }
   })
 
@@ -94,7 +92,7 @@ const buildPaymentChargeOverviewFields = (
     paymentChargeHeading: heading,
     paymentChargeLines: merged,
     paymentChargeTotalLabel: totalLabel,
-    paymentChargeTotalAmount: formatIsk(totalPrice),
+    paymentChargeTotalAmount: formatCurrency(totalPrice),
   }
 }
 
