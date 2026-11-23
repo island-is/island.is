@@ -2,17 +2,20 @@ import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
-import { ForbiddenException } from '@nestjs/common'
+import { BadRequestException, ForbiddenException } from '@nestjs/common'
 
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseNotificationType,
+  AppealCaseType,
+  AppealRulingType,
   CaseFileCategory,
   CaseType,
   InstitutionType,
   User,
   UserRole,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
 
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
@@ -193,6 +196,92 @@ describe('AppealCaseController - Update', () => {
     // An update announces nothing, so nothing waits for the commit.
     it('should register nothing to run after the commit', () => {
       expect(transactionContext?.afterCommit).toHaveLength(0)
+    })
+  })
+
+  describe('a ruling type is set on a verdict appeal', () => {
+    const theCase = { id: caseId, type: CaseType.INDICTMENT } as Case
+    const appealCase = {
+      id: appealCaseId,
+      caseId,
+      appealType: AppealCaseType.VERDICT,
+    } as AppealCase
+    const update = { appealRulingType: AppealRulingType.RULING }
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(theCase, appealCase, update)
+    })
+
+    it('should store the ruling type', () => {
+      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+        appealCaseId,
+        { appealRulingType: AppealRulingType.RULING },
+        { transaction },
+      )
+      expect(then.result.appealRulingType).toBe(AppealRulingType.RULING)
+    })
+  })
+
+  describe('a ruling type is set on a ruling appeal', () => {
+    const theCase = { id: caseId, type: CaseType.CUSTODY } as Case
+    const appealCase = {
+      id: appealCaseId,
+      caseId,
+      appealType: AppealCaseType.RULING,
+    } as AppealCase
+    const update = {
+      appealRulingType: AppealRulingType.VERDICT,
+      appealConclusion: 'Conclusion',
+    }
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(theCase, appealCase, update)
+    })
+
+    it('should throw BadRequestException and store nothing', () => {
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('verdict appeal status', () => {
+    const theCase = { id: caseId, type: CaseType.INDICTMENT } as Case
+    const update = { verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT }
+
+    it('should store the status on a verdict appeal', async () => {
+      const appealCase = {
+        id: appealCaseId,
+        caseId,
+        appealType: AppealCaseType.VERDICT,
+      } as AppealCase
+
+      const then = await givenWhenThen(theCase, appealCase, update)
+
+      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+        appealCaseId,
+        { verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT },
+        { transaction },
+      )
+      expect(then.result.verdictAppealStatus).toBe(
+        VerdictAppealStatus.UNDER_ADVISEMENT,
+      )
+    })
+
+    // The status belongs to the verdict appeal's own steps; a ruling appeal
+    // has none, so the column must stay empty there.
+    it('should refuse the status on a ruling appeal', async () => {
+      const appealCase = {
+        id: appealCaseId,
+        caseId,
+        appealType: AppealCaseType.RULING,
+      } as AppealCase
+
+      const then = await givenWhenThen(theCase, appealCase, update)
+
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
     })
   })
 

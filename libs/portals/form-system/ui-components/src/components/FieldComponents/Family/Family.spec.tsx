@@ -31,7 +31,21 @@ jest.mock('@island.is/island-ui/core', () => ({
   Box: ({ children }: { children: ReactNode }) => <>{children}</>,
   LoadingDots: () => null,
   SkeletonLoader: () => null,
-  Select: ({ label }: { label: string }) => <select aria-label={label} />,
+  Select: ({
+    label,
+    options,
+  }: {
+    label: string
+    options: { label: string; value: { nationalId: string } }[]
+  }) => (
+    <select aria-label={label}>
+      {options.map((option) => (
+        <option key={option.value.nationalId} value={option.value.nationalId}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+  ),
   Input: ({
     label,
     value,
@@ -48,6 +62,9 @@ const renderFamily = (
   isPreview?: boolean,
   state?: ApplicationState,
   valueIndex = 0,
+  registryData?: Record<string, unknown>,
+  fieldSettings?: FormSystemField['fieldSettings'],
+  list?: FormSystemField['list'],
 ) => {
   const dispatch = jest.fn()
   const registryRequest = jest.fn()
@@ -59,8 +76,10 @@ const renderFamily = (
       [
         {
           request: { query: GET_FAMILY_MEMBERS },
-          result: { data: { nationalRegistryPerson: null } },
-          delay: Infinity,
+          result: {
+            data: registryData ?? { nationalRegistryPerson: null },
+          },
+          delay: registryData ? 0 : Infinity,
         },
       ],
       false,
@@ -70,7 +89,8 @@ const renderFamily = (
     id: 'family',
     fieldType: FieldTypesEnum.FAMILY,
     name: { is: 'Family' },
-    fieldSettings: { familyType },
+    fieldSettings: { familyType, ...fieldSettings },
+    list,
     values: [
       {
         json: {
@@ -144,6 +164,240 @@ it.each([FamilyTypes.CHILD, FamilyTypes.SPOUSE])(
     expect(registryRequest).toHaveBeenCalledTimes(1)
   },
 )
+
+it.each([
+  {
+    biologicalChildren: [
+      { nationalId: '0101202989', fullName: 'Biological child' },
+      { nationalId: '0101212989', fullName: 'Shared child' },
+    ],
+    childCustody: [
+      { nationalId: '0101212989', fullName: 'Shared child' },
+      {
+        nationalId: '0101222989',
+        fullName: null,
+        details: { name: { fullName: 'Custody child' } },
+      },
+    ],
+    expected: [
+      { nationalId: '0101202989', name: 'Biological child' },
+      { nationalId: '0101212989', name: 'Shared child' },
+      { nationalId: '0101222989', name: 'Custody child' },
+    ],
+  },
+  {
+    biologicalChildren: null,
+    childCustody: [{ nationalId: '0101222989', fullName: 'Custody child' }],
+    expected: [{ nationalId: '0101222989', name: 'Custody child' }],
+  },
+  {
+    biologicalChildren: [
+      { nationalId: '0101202989', fullName: 'Biological child' },
+    ],
+    childCustody: null,
+    expected: [{ nationalId: '0101202989', name: 'Biological child' }],
+  },
+])(
+  'displays and caches the combined children without duplicates (case $#)',
+  async ({ biologicalChildren, childCustody, expected }) => {
+    const { dispatch } = renderFamily(FamilyTypes.CHILD, false, undefined, 0, {
+      nationalRegistryPerson: {
+        biologicalChildren:
+          biologicalChildren?.map((child) => ({ details: null, ...child })) ??
+          null,
+        childCustody:
+          childCustody?.map((child) => ({ details: null, ...child })) ?? null,
+        spouse: null,
+      },
+    })
+
+    await waitFor(() => {
+      expect(
+        screen.getAllByRole('option').map((option) => option.textContent),
+      ).toEqual(expected.map((child) => child.name))
+    })
+    expect(
+      screen
+        .getAllByRole('option')
+        .map((option) => (option as HTMLOptionElement).value),
+    ).toEqual(expected.map((child) => child.nationalId))
+    expect(dispatch).toHaveBeenCalledWith({
+      type: 'SET_FIELD_LIST',
+      payload: {
+        id: 'family',
+        list: expected.map(({ nationalId, name }) => ({
+          id: nationalId,
+          label: { is: name, en: name },
+          value: nationalId,
+          isSelected: false,
+        })),
+        placeholder: null,
+      },
+    })
+  },
+)
+
+it.each([
+  {
+    showBiologicalChildren: true,
+    showChildrenInCustody: true,
+    expected: ['Biological child', 'Shared child', 'Custody child'],
+  },
+  {
+    showBiologicalChildren: true,
+    showChildrenInCustody: false,
+    expected: ['Biological child', 'Shared child'],
+  },
+  {
+    showBiologicalChildren: false,
+    showChildrenInCustody: true,
+    expected: ['Shared child', 'Custody child'],
+  },
+  {
+    showBiologicalChildren: false,
+    showChildrenInCustody: false,
+    expected: [],
+  },
+])(
+  'displays and caches only enabled child sources: %j',
+  async ({ expected, ...fieldSettings }) => {
+    const { dispatch } = renderFamily(
+      FamilyTypes.CHILD,
+      false,
+      undefined,
+      0,
+      {
+        nationalRegistryPerson: {
+          biologicalChildren: [
+            {
+              nationalId: '0101202989',
+              fullName: 'Biological child',
+              details: null,
+            },
+            {
+              nationalId: '0101212989',
+              fullName: 'Shared child',
+              details: null,
+            },
+          ],
+          childCustody: [
+            {
+              nationalId: '0101212989',
+              fullName: 'Shared child',
+              details: null,
+            },
+            {
+              nationalId: '0101222989',
+              fullName: 'Custody child',
+              details: null,
+            },
+          ],
+          spouse: null,
+        },
+      },
+      fieldSettings,
+    )
+
+    await waitFor(() => {
+      expect(dispatch).toHaveBeenCalledWith({
+        type: 'SET_FIELD_LIST',
+        payload: {
+          id: 'family',
+          list: expected.map((name) => ({
+            id: expect.any(String),
+            label: { is: name, en: name },
+            value: expect.any(String),
+            isSelected: false,
+          })),
+          placeholder: null,
+        },
+      })
+    })
+    expect(
+      screen.queryAllByRole('option').map((option) => option.textContent),
+    ).toEqual(expected)
+  },
+)
+
+it.each([
+  {
+    settings: undefined,
+    expected: [
+      'Kynbarn (mock)',
+      'Kynbarn í forsjá (mock)',
+      'Barn í forsjá (mock)',
+    ],
+  },
+  {
+    settings: { showBiologicalChildren: true, showChildrenInCustody: true },
+    expected: [
+      'Kynbarn (mock)',
+      'Kynbarn í forsjá (mock)',
+      'Barn í forsjá (mock)',
+    ],
+  },
+  {
+    settings: { showBiologicalChildren: true, showChildrenInCustody: false },
+    expected: ['Kynbarn (mock)', 'Kynbarn í forsjá (mock)'],
+  },
+  {
+    settings: { showBiologicalChildren: false, showChildrenInCustody: true },
+    expected: ['Kynbarn í forsjá (mock)', 'Barn í forsjá (mock)'],
+  },
+  {
+    settings: { showBiologicalChildren: false, showChildrenInCustody: false },
+    expected: [],
+  },
+])(
+  'uses mock children for the enabled preview sources without fetching or caching: %j',
+  ({ settings, expected }) => {
+    const { registryRequest, dispatch } = renderFamily(
+      FamilyTypes.CHILD,
+      true,
+      undefined,
+      0,
+      undefined,
+      settings,
+      [
+        {
+          id: 'existing-child',
+          label: { is: 'Existing child' },
+          value: '0101232989',
+        },
+      ],
+    )
+
+    expect(
+      screen.queryAllByRole('option').map((option) => option.textContent),
+    ).toEqual(expected)
+    expect(registryRequest).not.toHaveBeenCalled()
+    expect(dispatch).not.toHaveBeenCalled()
+  },
+)
+
+it('keeps using cached real children outside preview', () => {
+  const { registryRequest, dispatch } = renderFamily(
+    FamilyTypes.CHILD,
+    false,
+    undefined,
+    0,
+    undefined,
+    undefined,
+    [
+      {
+        id: 'existing-child',
+        label: { is: 'Existing child' },
+        value: '0101232989',
+      },
+    ],
+  )
+
+  expect(
+    screen.getAllByRole('option').map((option) => option.textContent),
+  ).toEqual(['Existing child'])
+  expect(registryRequest).not.toHaveBeenCalled()
+  expect(dispatch).not.toHaveBeenCalled()
+})
 
 it.each([0, 1])(
   'displays and persists the logged-in individual in read-only fields at value index %s without a registry request',

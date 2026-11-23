@@ -77,4 +77,23 @@ describe('getEnteringItemStaggerIndices', () => {
       getEnteringItemStaggerIndices(new Set(), items('served', 'stance')),
     ).toEqual([0, 1])
   })
+
+  // The defendant's stance is one bullet whichever stance it shows.
+  it('should not let an item with an id enter when only its text changes', () => {
+    expect(
+      getEnteringItemStaggerIndices(new Set(['served', 'stance']), [
+        { text: 'served' },
+        { id: 'stance', text: 'accepts' },
+      ]),
+    ).toEqual([undefined, undefined])
+  })
+
+  it('should let an item with an id enter when it was not shown before', () => {
+    expect(
+      getEnteringItemStaggerIndices(new Set(['served']), [
+        { text: 'served' },
+        { id: 'stance', text: 'accepts' },
+      ]),
+    ).toEqual([undefined, 0])
+  })
 })

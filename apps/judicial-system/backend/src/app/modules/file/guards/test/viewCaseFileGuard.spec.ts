@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common'
 
 import {
+  CaseFileCategory,
   CaseState,
   completedCaseStates,
   courtOfAppealsRoles,
@@ -44,6 +45,55 @@ describe('View Case File Guard', () => {
 
       return then
     }
+  })
+
+  describe('verdict appeal ruling', () => {
+    const request = (role: UserRole, type: InstitutionType) => ({
+      user: { currentUser: { role, institution: { type } } },
+      case: { state: CaseState.COMPLETED },
+      caseFile: { category: CaseFileCategory.VERDICT_APPEAL_RULING },
+    })
+
+    describe.each(courtOfAppealsRoles)('role %s', (role) => {
+      let then: Then
+
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() =>
+          request(role, InstitutionType.COURT_OF_APPEALS),
+        )
+
+        then = givenWhenThen()
+      })
+
+      it('should activate', () => {
+        expect(then.result).toBe(true)
+      })
+    })
+
+    describe.each([
+      ...prosecutionRoles.map(
+        (role) => [role, InstitutionType.POLICE_PROSECUTORS_OFFICE] as const,
+      ),
+      ...publicProsecutionOfficeRoles.map(
+        (role) => [role, InstitutionType.PUBLIC_PROSECUTORS_OFFICE] as const,
+      ),
+      ...districtCourtRoles.map(
+        (role) => [role, InstitutionType.DISTRICT_COURT] as const,
+      ),
+    ])('role %s at %s', (role, type) => {
+      let then: Then
+
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() => request(role, type))
+
+        then = givenWhenThen()
+      })
+
+      it('should throw ForbiddenException', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(then.error.message).toBe(`Forbidden for ${role}`)
+      })
+    })
   })
 
   describe.each(prosecutionRoles)('role %s', (role) => {

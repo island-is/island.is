@@ -23,6 +23,18 @@ export enum AppealCaseType {
   VERDICT = 'VERDICT',
 }
 
+// How far the court of appeals has come with a verdict appeal, as the court
+// itself records it. Null until the court has recorded one. It is not the
+// appeal's state: an appeal the court marks COMPLETED here is still RECEIVED
+// until it is completed through its own transition.
+export enum VerdictAppealStatus {
+  STATEMENT_DEADLINE_GRANTED = 'STATEMENT_DEADLINE_GRANTED',
+  COURT_SESSION_SCHEDULED = 'COURT_SESSION_SCHEDULED',
+  POSTPONED = 'POSTPONED',
+  UNDER_ADVISEMENT = 'UNDER_ADVISEMENT',
+  COMPLETED = 'COMPLETED',
+}
+
 export enum AppealCaseTransition {
   RECEIVE_APPEAL = 'RECEIVE_APPEAL',
   COMPLETE_APPEAL = 'COMPLETE_APPEAL',
@@ -52,6 +64,14 @@ export enum AppealCaseRulingDecision {
   DISMISSED_FROM_COURT = 'DISMISSED_FROM_COURT',
   REMAND = 'REMAND',
   DISCONTINUED = 'DISCONTINUED',
+}
+
+// Whether the court of appeals concludes a verdict appeal with a judgment
+// (VERDICT, dómur) or with a ruling (RULING, úrskurður). The court chooses:
+// the ruling decision does not determine it. A ruling appeal has none.
+export enum AppealRulingType {
+  VERDICT = 'VERDICT',
+  RULING = 'RULING',
 }
 
 export const getStatementDeadline = (appealReceived: Date): Date => {
