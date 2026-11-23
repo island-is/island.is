@@ -912,8 +912,8 @@ export class VerdictsClientService {
     > = []
     let total = 0
 
-    // GoPro only serves the list in pages, so fetch them all to be able to show
-    // and sort the whole list at once
+    // GoPro only serves the list in pages and can't order it by case number,
+    // so fetch every page and sort the whole list ourselves
     for (
       let pageNumber = 1;
       pageNumber <= APPEAL_CASES_MAX_PAGES;
@@ -922,8 +922,6 @@ export class VerdictsClientService {
       const response = await goproCaseApi.getPublishedAppealCasesV2({
         pageNumber,
         itemsPerPage: APPEAL_CASES_PER_REQUEST,
-        orderBy: 'casenumber',
-        orderDirection: 'desc',
       })
 
       if (response.succeeded === false) {
