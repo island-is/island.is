@@ -20,7 +20,8 @@ export const buttonContainer = style({
 
 export const sticky = style({
   position: 'sticky',
-  bottom: 0,
+  // -1px makes the footer slightly overflow the viewport while pinned, which is how ScreenFooter detects it is stuck
+  bottom: -1,
   // Content such as the ReviewGroup edit buttons uses zIndex.header, and must scroll underneath
   zIndex: theme.zIndex.aboveHeader,
   background: theme.color.white,
@@ -52,16 +53,6 @@ export const sticky = style({
 export const stuck = style({
   // Negative spread equal to the blur keeps the shadow off the left and right edges
   boxShadow: '0 -10px 12px -12px rgba(0, 0, 0, 0.16)',
-})
-
-export const stickySentinel = style({
-  // Out of flow so it does not take part in the form's space-between layout; marks the footer's natural bottom edge
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  height: 1,
-  pointerEvents: 'none',
 })
 
 export const linkNoStyle = style({

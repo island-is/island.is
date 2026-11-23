@@ -45,11 +45,11 @@ const triggerIntersection = (isBelowViewport: boolean) =>
   act(async () => {
     intersectionCallback?.(
       [
-        {
-          isIntersecting: !isBelowViewport,
-          boundingClientRect: { top: isBelowViewport ? 2000 : 400 },
+        ({
+          intersectionRatio: isBelowViewport ? 0.99 : 1,
+          boundingClientRect: { bottom: isBelowViewport ? 801 : 600 },
           rootBounds: { bottom: 800 },
-        } as unknown as IntersectionObserverEntry,
+        } as unknown) as IntersectionObserverEntry,
       ],
       {} as IntersectionObserver,
     )
@@ -145,8 +145,7 @@ describe('ScreenFooter', () => {
 
   beforeEach(() => {
     intersectionCallback = undefined
-    window.IntersectionObserver =
-      MockIntersectionObserver as unknown as typeof IntersectionObserver
+    window.IntersectionObserver = (MockIntersectionObserver as unknown) as typeof IntersectionObserver
     window.scrollTo = jest.fn()
   })
 

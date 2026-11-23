@@ -9,7 +9,7 @@ import {
 } from '@island.is/application/types'
 import { Box, Button, ButtonTypes, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 
 import { useUserInfo } from '@island.is/react-spa/bff'
 import cn from 'classnames'
@@ -52,7 +52,6 @@ interface FooterProps {
   nextButtonText?: FormText
   canGoBack: boolean
   sticky?: boolean
-  isStuck?: boolean
 }
 
 type SubmitButton = Omit<ButtonTypes, 'circle'> & {
@@ -106,10 +105,37 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
   nextButtonText,
   canGoBack,
   sticky = false,
-  isStuck = false,
 }) => {
   const { formatMessage } = useLocale()
   const user = useUserInfo()
+  const [footerElement, setFooterElement] = useState<HTMLElement | null>(null)
+  const [isStuck, setIsStuck] = useState(false)
+
+  useEffect(() => {
+    if (
+      !sticky ||
+      !footerElement ||
+      typeof IntersectionObserver === 'undefined'
+    ) {
+      return
+    }
+
+    // The sticky footer sits at bottom: -1px, so while it is pinned over content it is not fully visible
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const viewportBottom = entry.rootBounds?.bottom ?? window.innerHeight
+        setIsStuck(
+          entry.intersectionRatio < 1 &&
+            entry.boundingClientRect.bottom > viewportBottom,
+        )
+      },
+      { threshold: 1 },
+    )
+    observer.observe(footerElement)
+
+    return () => observer.disconnect()
+  }, [sticky, footerElement])
+
   const hasSubmitField = submitField !== undefined
   const isLastScreen = activeScreenIndex === numberOfScreens - 1
   const showGoBack = canGoBack && (!isLastScreen || renderLastScreenBackButton)
@@ -177,6 +203,7 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
 
   return (
     <Box
+      ref={setFooterElement}
       marginTop={7}
       className={cn(styles.buttonContainer, {
         [styles.sticky]: sticky,
