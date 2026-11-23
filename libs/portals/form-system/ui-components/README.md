@@ -27,6 +27,11 @@ enabling both shows three unique children and disabling both shows none.
 Preview mock lists ignore cached real children and are not written to the field
 configuration.
 
+Bank account fields do not request or prefill profile bank information in
+preview, even when it is cached. When `fetchBankAccountFromMyPages` is enabled
+(the default), they prefill the mock bank account instead. Saved values and
+manual edits are preserved.
+
 ## Running unit tests
 
 Run `yarn nx test portals-form-system-ui` to execute the unit tests via [Jest](https://jestjs.io).
