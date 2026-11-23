@@ -46,9 +46,19 @@ jest.mock('@island.is/form-system/graphql', () => ({
 }))
 jest.mock('@island.is/form-system/ui', () => ({
   m: {
+    edit: { defaultMessage: 'Edit' },
     publish: { defaultMessage: 'Publish' },
     delete: { defaultMessage: 'Delete' },
     unpublish: { defaultMessage: 'Unpublish' },
+    deleteFormWarning: { defaultMessage: 'Delete this form?' },
+    unpublishFormWarning: { defaultMessage: 'Unpublish this form?' },
+    unpublishFormWithRevisionWarning: {
+      defaultMessage: 'Unpublish this form? The revision will also be deleted.',
+    },
+    publishedFormRevisionCreatedWarning: {
+      defaultMessage:
+        'Revision created. Unpublishing the original form will delete this revision.',
+    },
     translationNeededError: { defaultMessage: 'Translation needed' },
   },
 }))
@@ -93,12 +103,19 @@ jest.mock('@island.is/island-ui/core', () => {
     Button: () => null,
     GridColumn: Container,
     DialogPrompt: ({
+      description,
       buttonTextConfirm,
       onConfirm,
     }: {
+      description: string
       buttonTextConfirm: string
       onConfirm: () => Promise<void>
-    }) => <button onClick={onConfirm}>{buttonTextConfirm}</button>,
+    }) => (
+      <>
+        <span>{description}</span>
+        <button onClick={onConfirm}>{buttonTextConfirm}</button>
+      </>
+    ),
     Divider: () => null,
     DropdownMenu: ({
       items,
@@ -111,7 +128,10 @@ jest.mock('@island.is/island-ui/core', () => {
     }) => (
       <>
         {items
-          .filter((item) => item.title === 'Publish' || item.render)
+          .filter(
+            (item) =>
+              item.title === 'Publish' || item.title === 'Edit' || item.render,
+          )
           .map((item) =>
             item.render ? (
               <div key={item.title}>{item.render()}</div>
@@ -264,7 +284,90 @@ describe('publishing a form', () => {
     return { formsUpdated, getContext: () => latestContext }
   }
 
-  it('requires deleting the derived revision before unpublishing its original', async () => {
+  it('warns after creating a revision and removes it from state when the original is unpublished', async () => {
+    const original = createForm({
+      id: 'original-form',
+      status: FormStatus.PUBLISHED,
+      slug: 'form',
+    })
+    const revision = createForm({ derivedFrom: original.id })
+    const creation = deferred()
+    mockGetForms.mockResolvedValue({
+      data: { formSystemForms: { forms: [original] } },
+    })
+    mockUpdateFormStatus.mockReturnValueOnce(creation.promise)
+    const { getContext } = renderChangedForm(original)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Edit' }))
+
+    await waitFor(() =>
+      expect(mockUpdateFormStatus).toHaveBeenCalledWith({
+        variables: {
+          input: {
+            id: original.id,
+            updateFormStatusDto: {
+              newStatus: FormStatus.PUBLISHED_BEING_CHANGED,
+            },
+          },
+        },
+      }),
+    )
+    expect(toast.warning).not.toHaveBeenCalled()
+
+    await act(async () => {
+      creation.resolve({
+        data: { updateFormSystemFormStatus: { form: revision } },
+      })
+    })
+
+    expect(getContext().forms).toEqual([revision, original])
+    expect(toast.warning).toHaveBeenCalledTimes(1)
+    expect(toast.warning).toHaveBeenCalledWith(
+      'Revision created. Unpublishing the original form will delete this revision.',
+    )
+
+    const unpublishedCopy = createForm({
+      id: 'unpublished-copy',
+      status: FormStatus.IN_DEVELOPMENT,
+    })
+    mockUpdateFormStatus.mockResolvedValueOnce({
+      data: { updateFormSystemFormStatus: { form: unpublishedCopy } },
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Unpublish' }))
+
+    await waitFor(() => expect(getContext().forms).toEqual([unpublishedCopy]))
+  })
+
+  it.each(['request failure', 'missing revision'])(
+    'does not show the revision-created warning on %s',
+    async (failure) => {
+      const original = createForm({ status: FormStatus.PUBLISHED })
+      mockGetForms.mockResolvedValue({
+        data: { formSystemForms: { forms: [original] } },
+      })
+      if (failure === 'request failure') {
+        mockUpdateFormStatus.mockRejectedValue(new Error('Creation failed'))
+      } else {
+        mockUpdateFormStatus.mockResolvedValue({
+          data: { updateFormSystemFormStatus: { form: null } },
+        })
+      }
+      const { getContext } = renderChangedForm(original)
+
+      fireEvent.click(screen.getByRole('button', { name: 'Edit' }))
+
+      await waitFor(() =>
+        expect(toast.error).toHaveBeenCalledWith(
+          'Ekki tókst að breyta útgefnu eyðublaði.',
+        ),
+      )
+      expect(toast.warning).not.toHaveBeenCalled()
+      expect(getContext().forms).toEqual([original])
+    },
+  )
+
+  it('warns about deleting the revision and removes it when unpublishing succeeds', async () => {
     const original = createForm({
       id: 'original-form',
       status: FormStatus.PUBLISHED,
@@ -273,25 +376,23 @@ describe('publishing a form', () => {
       name: { is: 'Revision' },
       derivedFrom: original.id,
     })
-    const { getContext } = renderChangedForm(original, [revision])
-    fireEvent.click(screen.getByRole('button', { name: 'Unpublish' }))
-
-    await waitFor(() =>
-      expect(toast.warning).toHaveBeenCalledWith(
-        'Ekki er hægt að taka eyðublaðið úr útgáfu meðan útgáfa þess er í breytingu.',
-      ),
-    )
-    expect(mockUpdateFormStatus).not.toHaveBeenCalled()
-    expect(getContext().forms).toEqual([original, revision])
-
-    mockUpdateFormStatus.mockResolvedValue({
-      data: { updateFormSystemFormStatus: { form: null } },
+    const unpublishedCopy = createForm({
+      id: 'unpublished-copy',
+      status: FormStatus.IN_DEVELOPMENT,
     })
-    fireEvent.click(screen.getByRole('button', { name: 'Delete' }))
-    await waitFor(() => expect(screen.queryByText('Revision')).toBeNull())
+    mockUpdateFormStatus.mockResolvedValue({
+      data: { updateFormSystemFormStatus: { form: unpublishedCopy } },
+    })
+    const { getContext } = renderChangedForm(original, [revision])
+    expect(
+      screen.queryByText(
+        'Unpublish this form? The revision will also be deleted.',
+      ),
+    ).not.toBeNull()
     fireEvent.click(screen.getByRole('button', { name: 'Unpublish' }))
+
     await waitFor(() =>
-      expect(mockUpdateFormStatus).toHaveBeenLastCalledWith({
+      expect(mockUpdateFormStatus).toHaveBeenCalledWith({
         variables: {
           input: {
             id: original.id,
@@ -300,6 +401,29 @@ describe('publishing a form', () => {
         },
       }),
     )
+    await waitFor(() => expect(getContext().forms).toEqual([unpublishedCopy]))
+    expect(mockUpdateFormStatus).toHaveBeenCalledTimes(1)
+    expect(toast.warning).not.toHaveBeenCalled()
+  })
+
+  it('retains the original and its revision when unpublishing fails', async () => {
+    const original = createForm({
+      id: 'original-form',
+      status: FormStatus.PUBLISHED,
+    })
+    const revision = createForm({ derivedFrom: original.id })
+    mockUpdateFormStatus.mockRejectedValue(new Error('Unpublish failed'))
+    const { getContext } = renderChangedForm(original, [revision])
+
+    fireEvent.click(screen.getByRole('button', { name: 'Unpublish' }))
+
+    await waitFor(() =>
+      expect(console.error).toHaveBeenCalledWith(
+        'Error deleting form:',
+        expect.any(Error),
+      ),
+    )
+    expect(getContext().forms).toEqual([original, revision])
   })
 
   it.each([
@@ -311,14 +435,45 @@ describe('publishing a form', () => {
       mockUpdateFormStatus.mockResolvedValue({
         data: { updateFormSystemFormStatus: { form: null } },
       })
-      renderChangedForm(
+      const relatedForm = createForm(related)
+      const { getContext } = renderChangedForm(
         createForm({ id: 'original-form', status: FormStatus.PUBLISHED }),
-        [createForm(related)],
+        [relatedForm],
       )
+      expect(
+        screen.queryByText(
+          'Unpublish this form? The revision will also be deleted.',
+        ),
+      ).not.toBeNull()
       fireEvent.click(screen.getByRole('button', { name: 'Unpublish' }))
 
       await waitFor(() => expect(mockUpdateFormStatus).toHaveBeenCalledTimes(1))
+      await waitFor(() => expect(getContext().forms).toEqual([relatedForm]))
       expect(toast.warning).not.toHaveBeenCalled()
+    },
+  )
+
+  it('warns about revision deletion even when no revision is loaded', () => {
+    renderChangedForm(createForm({ status: FormStatus.PUBLISHED }))
+
+    expect(
+      screen.queryByText(
+        'Unpublish this form? The revision will also be deleted.',
+      ),
+    ).not.toBeNull()
+  })
+
+  it.each([FormStatus.IN_DEVELOPMENT, FormStatus.PUBLISHED_BEING_CHANGED])(
+    'keeps the ordinary delete confirmation for %s',
+    (status) => {
+      renderChangedForm(createForm({ status }))
+
+      expect(screen.queryByText('Delete this form?')).not.toBeNull()
+      expect(
+        screen.queryByText(
+          'Unpublish this form? The revision will also be deleted.',
+        ),
+      ).toBeNull()
     },
   )
 
