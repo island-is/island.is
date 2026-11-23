@@ -89,6 +89,9 @@ export class Grant {
   @CacheField(() => GenericTag, { nullable: true })
   typeTag?: GenericTag
 
+  @CacheField(() => [GenericTag], { nullable: true })
+  typeTags?: Array<GenericTag>
+
   @CacheField(() => Fund, { nullable: true })
   fund?: Fund
 }
@@ -158,6 +161,14 @@ const parseDate = (date?: string, time?: number): string | undefined => {
   return addHours(parsedDate, time).toISOString()
 }
 
+// The multi-value field replaces the single one when filled in; the two are never merged
+const mapTypeTags = (fields: IGrantFields): Array<GenericTag> => {
+  if (fields.grantTypeTags?.length) {
+    return fields.grantTypeTags.map((tag) => mapGenericTag(tag))
+  }
+  return fields.grantTypeTag ? [mapGenericTag(fields.grantTypeTag)] : []
+}
+
 export const mapGrant = ({ fields, sys }: IGrant): Grant => {
   const dateFrom = parseDate(fields.grantDateFrom, fields.grantOpenFromHour)
   const dateTo = parseDate(fields.grantDateTo, fields.grantOpenToHour)
@@ -204,5 +215,6 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => {
     typeTag: fields.grantTypeTag
       ? mapGenericTag(fields.grantTypeTag)
       : undefined,
+    typeTags: mapTypeTags(fields),
   }
 }

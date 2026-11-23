@@ -34,7 +34,6 @@ import { getApplicationExternalData } from '../utils'
 import {
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
-  SocialInsuranceAdministrationWithholdingTaxApi,
   SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
   SocialInsuranceAdministrationEducationLevelsApi,
@@ -133,7 +132,6 @@ const template: ApplicationTemplate<
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationCategorizedIncomeTypesApi,
                 SocialInsuranceAdministrationCurrenciesApi,
-                SocialInsuranceAdministrationWithholdingTaxApi,
                 SocialInsuranceAdministrationLatestIncomePlan,
                 SocialInsuranceAdministrationEducationLevelsApi,
                 SocialInsuranceAdministrationSelfAssessmentQuestionsApi,

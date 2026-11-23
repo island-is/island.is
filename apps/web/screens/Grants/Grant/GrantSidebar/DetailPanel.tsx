@@ -32,6 +32,11 @@ const DetailPanel: React.FC<DetailPanelProps> = ({
     [grant, formatMessage, locale],
   )
 
+  const typeTitles = useMemo(
+    () => grant?.typeTags?.map((tag) => tag.title).filter(Boolean) ?? [],
+    [grant],
+  )
+
   const detailPanelData = useMemo(
     () =>
       [
@@ -90,13 +95,13 @@ const DetailPanel: React.FC<DetailPanelProps> = ({
         ),
         generateLine(
           'type',
-          formatMessage(m.single.type),
-          grant?.typeTag?.title ? (
-            <Text variant="medium">{grant.typeTag?.title}</Text>
+          formatMessage(typeTitles.length > 1 ? m.single.types : m.single.type),
+          typeTitles.length > 0 ? (
+            <Text variant="medium">{typeTitles.join(', ')}</Text>
           ) : undefined,
         ),
       ].filter(isDefined) ?? [],
-    [grant, formatMessage, linkResolver, status],
+    [grant, formatMessage, linkResolver, status, typeTitles],
   )
   return (
     <Box

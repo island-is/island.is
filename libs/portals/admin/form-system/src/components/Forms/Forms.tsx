@@ -377,6 +377,7 @@ export const Forms = () => {
                 name={f?.name?.is ?? ''}
                 isHeader={false}
                 translated={f?.isTranslated ?? false}
+                isInaccessible={f?.isInaccessible ?? false}
                 slug={f?.slug ?? ''}
                 beenPublished={f?.beenPublished ?? false}
                 setFormsState={setForms}

@@ -5,9 +5,17 @@ import {
   buildSubSection,
   buildDescriptionField,
   buildCustomField,
+  buildCheckboxField,
+  buildSelectField,
+  YES,
 } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
+import { getAllCountryCodes } from '@island.is/shared/utils'
 import { information } from '../../../lib/messages'
-import { getSelectedVehicle } from '../../../utils'
+import { getSelectedVehicle, isSendToOtherAddress } from '../../../utils'
+
+const showOtherAddress = (formValue: FormValue) =>
+  isSendToOtherAddress(formValue)
 
 export const vehicleSubSection = buildSubSection({
   id: 'vehicle',
@@ -16,7 +24,6 @@ export const vehicleSubSection = buildSubSection({
     buildMultiField({
       id: 'vehicleMultiField',
       title: information.labels.vehicle.pageTitle,
-      description: information.general.description,
       children: [
         buildDescriptionField({
           id: 'vehicle.title',
@@ -123,6 +130,85 @@ export const vehicleSubSection = buildSubSection({
           },
           defaultValue: (application: Application) =>
             application.externalData?.identity?.data?.address?.postalCode,
+        }),
+        buildDescriptionField({
+          id: 'sendToAddress.description',
+          description: information.labels.sendToAddress.description,
+          space: 3,
+        }),
+        buildCheckboxField({
+          id: 'sendToAddress.useOtherAddress',
+          large: false,
+          backgroundColor: 'white',
+          defaultValue: [],
+          options: [
+            {
+              value: YES,
+              label: information.labels.sendToAddress.checkbox,
+            },
+          ],
+        }),
+        buildTextField({
+          id: 'sendToAddress.name',
+          title: information.labels.sendToAddress.name,
+          width: 'full',
+          required: true,
+          maxLength: 100,
+          condition: showOtherAddress,
+        }),
+        buildTextField({
+          id: 'sendToAddress.address1',
+          title: information.labels.sendToAddress.address1,
+          width: 'half',
+          required: true,
+          maxLength: 100,
+          condition: showOtherAddress,
+        }),
+        buildTextField({
+          id: 'sendToAddress.address2',
+          title: information.labels.sendToAddress.address2,
+          width: 'half',
+          maxLength: 100,
+          condition: showOtherAddress,
+        }),
+        buildTextField({
+          id: 'sendToAddress.apartment',
+          title: information.labels.sendToAddress.apartment,
+          width: 'half',
+          maxLength: 20,
+          condition: showOtherAddress,
+        }),
+        buildTextField({
+          id: 'sendToAddress.postalCode',
+          title: information.labels.sendToAddress.postalCode,
+          width: 'half',
+          required: true,
+          maxLength: 20,
+          condition: showOtherAddress,
+        }),
+        buildTextField({
+          id: 'sendToAddress.city',
+          title: information.labels.sendToAddress.city,
+          width: 'half',
+          required: true,
+          maxLength: 100,
+          condition: showOtherAddress,
+        }),
+        buildSelectField({
+          id: 'sendToAddress.country',
+          title: information.labels.sendToAddress.country,
+          width: 'half',
+          required: true,
+          defaultValue: 'IS',
+          condition: showOtherAddress,
+          options: (_application, _field, locale) =>
+            getAllCountryCodes(locale).map((country) => ({
+              value: country.code,
+              label:
+                locale === 'is'
+                  ? country.name_is ?? country.name
+                  : country.name,
+            })),
         }),
       ],
     }),

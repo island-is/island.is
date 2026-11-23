@@ -28,6 +28,8 @@ interface EntryListSearchProps {
   itemsPerPage?: number
   onEntryClick?: (entry: EntryProps) => void
   query?: QueryOptions
+  /** Changing this value fetches the list again, e.g. after an entry was created outside of the list */
+  refreshKey?: number
 }
 
 export const EntryListSearch = ({
@@ -37,6 +39,7 @@ export const EntryListSearch = ({
   contentTypeTitleField,
   onEntryClick,
   query,
+  refreshKey,
 }: EntryListSearchProps) => {
   const sdk = useSDK()
   const cma = useCMA()
@@ -77,7 +80,7 @@ export const EntryListSearch = ({
       }
     },
     SEARCH_DEBOUNCE_TIME_IN_MS,
-    [page, searchValue, counter],
+    [page, searchValue, counter, refreshKey],
   )
 
   return (

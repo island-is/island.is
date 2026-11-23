@@ -22,7 +22,8 @@ import { GET_COURT_OF_APPEAL_APPEALS_QUERY } from '@island.is/web/screens/querie
 
 import { m } from './translation.strings'
 
-const ITEMS_PER_PAGE = 10
+const ITEMS_PER_PAGE = 100
+const SKELETON_ITEM_COUNT = 10
 // Leaves room above the list so the page title stays in view
 const SCROLL_OFFSET = 180
 
@@ -73,7 +74,7 @@ const LandsretturCourtOfAppealAppeals = ({
           height={150}
           width="100%"
           borderRadius="large"
-          repeat={ITEMS_PER_PAGE}
+          repeat={SKELETON_ITEM_COUNT}
           space={3}
         />
       )}

@@ -26,6 +26,7 @@ export const uploadToS3 = async (
     const request = new XMLHttpRequest()
     request.withCredentials = true
     request.responseType = 'json'
+    request.timeout = 5 * 60 * 1000
 
     request.upload.addEventListener('progress', (event) => {
       if (event.lengthComputable) {
@@ -33,17 +34,16 @@ export const uploadToS3 = async (
       }
     })
 
-    request.upload.addEventListener('error', (event) => {
-      if (event.lengthComputable) {
-        reject('Failed to upload file to S3')
-      }
-    })
+    const rejectUpload = () => reject(new Error('Failed to upload file to S3'))
+    request.addEventListener('error', rejectUpload)
+    request.addEventListener('abort', rejectUpload)
+    request.addEventListener('timeout', rejectUpload)
 
     request.addEventListener('load', () => {
       if (request.status >= 200 && request.status < 300) {
         resolve(file)
       } else {
-        reject('Failed to upload file to S3')
+        rejectUpload()
       }
     })
 

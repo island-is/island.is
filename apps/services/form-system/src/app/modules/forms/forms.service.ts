@@ -162,6 +162,7 @@ export class FormsService {
       'status',
       'draftDaysToLive',
       'submissionDaysToLive',
+      'derivedFrom',
       'allowProceedOnValidationFail',
       'isInaccessible',
       'validateEligibility',
@@ -905,8 +906,39 @@ export class FormsService {
         throw new ConflictException(`Form with id '${id}' is not published`)
       }
 
+      const revisions = await this.formModel.findAll({
+        where: {
+          derivedFrom: id,
+          status: FormStatus.PUBLISHED_BEING_CHANGED,
+        },
+        transaction,
+      })
+      const fileKeys: string[] = []
+      for (const revision of revisions) {
+        const applications = await this.applicationModel.findAll({
+          where: { formId: revision.id },
+          include: [
+            {
+              model: Value,
+              as: 'values',
+              separate: true,
+              where: { fieldType: FieldTypesEnum.FILE },
+              required: false,
+            },
+          ],
+          transaction,
+          lock: Transaction.LOCK.UPDATE,
+        })
+        for (const application of applications) {
+          fileKeys.push(
+            ...this.getApplicationFiles(application).map(({ key }) => key),
+          )
+        }
+        await revision.destroy({ transaction })
+      }
+
       const slug = form.slug
-      const fileKeys = await this.deleteDraftApplications(id, transaction)
+      fileKeys.push(...(await this.deleteDraftApplications(id, transaction)))
 
       form.status = FormStatus.ARCHIVED
       form.slug = `${form.slug}-archived-${Date.now()}`
@@ -1036,13 +1068,21 @@ export class FormsService {
     id: string,
     form: Form,
   ): Promise<FormResponseDto> {
-    const copyForm = await this.copyForm(
-      id,
-      true,
-      form.isInaccessible,
-      `${form.slug}-i-breytingu`,
-      undefined,
-    )
+    const copyForm = await this.sequelize.transaction(async (transaction) => {
+      await form.reload({ transaction, lock: Transaction.LOCK.UPDATE })
+      if (form.status !== FormStatus.PUBLISHED) {
+        throw new ConflictException(`Form with id '${id}' is not published`)
+      }
+
+      return this.copyForm(
+        id,
+        true,
+        form.isInaccessible,
+        `${form.slug}-i-breytingu`,
+        undefined,
+        transaction,
+      )
+    })
     const formResponse = await this.buildFormResponse(copyForm)
 
     if (!formResponse) {
@@ -1372,10 +1412,12 @@ export class FormsService {
       include: [OrganizationPermission],
     })
 
-    const uncommonListTypes = ListTypes.filter((listType) =>
-      organization?.organizationPermissions?.some(
-        (item) => item.permission === listType.id,
-      ),
+    const uncommonListTypes = ListTypes.filter(
+      (listType) =>
+        !listType.isCommon &&
+        organization?.organizationPermissions?.some(
+          (item) => item.permission === listType.id,
+        ),
     )
 
     const organizationListTypes = commonListTypes.concat(uncommonListTypes)
@@ -1400,6 +1442,7 @@ export class FormsService {
       'status',
       'draftDaysToLive',
       'submissionDaysToLive',
+      'derivedFrom',
       'allowProceedOnValidationFail',
       'isInaccessible',
       'validateEligibility',
