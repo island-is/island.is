@@ -18,7 +18,7 @@ import {
 } from '@island.is/clients/payments'
 
 import { VerifyCardInput } from './dto/verifyCard.input'
-import { PayerRequestInfo } from './payments.utils'
+import { PayerRequestInfo, toVerifyCardResponse } from './payments.utils'
 import { VerifyCardResponse } from './dto/verifyCard.response'
 import { ChargeCardInput } from './dto/chargeCard.input'
 import { ChargeCardResponse } from './dto/chargeCard.response'
@@ -108,13 +108,13 @@ export class PaymentsService {
     })
   }
 
-  verifyCard(
+  async verifyCard(
     verifyCardInput: VerifyCardInput,
     payerRequestInfo: PayerRequestInfo,
   ): Promise<VerifyCardResponse> {
     const { browserInfo, ...cardInput } = verifyCardInput
 
-    return this.paymentsApi.cardPaymentControllerVerify({
+    const verification = await this.paymentsApi.cardPaymentControllerVerify({
       verifyCardInput: {
         ...cardInput,
         // ip, userAgent and acceptHeader describe the payer's request as
@@ -126,6 +126,8 @@ export class PaymentsService {
         },
       },
     })
+
+    return toVerifyCardResponse(verification)
   }
 
   async verifyCardCallback(
@@ -181,7 +183,8 @@ export class PaymentsService {
 
     return {
       isSuccess,
-      responseCode,
+      // Declines come back as errors, so this is an approval's, which nothing reads
+      responseCode: responseCode ?? '',
     }
   }
 
@@ -282,7 +285,8 @@ export class PaymentsService {
 
     return {
       isSuccess,
-      responseCode,
+      // Declines come back as errors, so this is an approval's, which nothing reads
+      responseCode: responseCode ?? '',
     }
   }
 
@@ -308,9 +312,9 @@ export class PaymentsService {
       status,
       payment: payment && {
         isSuccess: payment.isSuccess,
-        responseCode: payment.responseCode,
+        responseCode: payment.responseCode ?? '',
       },
-      verification,
+      verification: verification && toVerifyCardResponse(verification),
     }
   }
 
@@ -324,7 +328,8 @@ export class PaymentsService {
 
     return {
       isSuccess,
-      responseCode,
+      // Declines come back as errors, so this is an approval's, which nothing reads
+      responseCode: responseCode ?? '',
     }
   }
 }

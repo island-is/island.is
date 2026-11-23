@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   IsArray,
   IsBoolean,
@@ -19,12 +19,13 @@ class VerificationField {
 }
 
 export class VerifyCardResponse {
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Raw response from card verification',
     type: String,
   })
   @IsString()
-  cardVerificationRawResponse!: string
+  @IsOptional()
+  cardVerificationRawResponse?: string
 
   @ApiProperty({ description: 'Post URL for verification', type: String })
   @IsString()
@@ -37,9 +38,13 @@ export class VerifyCardResponse {
   @IsArray()
   verificationFields!: VerificationField[]
 
-  @ApiProperty({ description: 'Additional fields', type: [VerificationField] })
+  @ApiPropertyOptional({
+    description: 'Additional fields',
+    type: [VerificationField],
+  })
   @IsArray()
-  additionalFields!: VerificationField[]
+  @IsOptional()
+  additionalFields?: VerificationField[]
 
   @ApiProperty({
     description: 'Indicates if the verification was successful',
@@ -48,28 +53,34 @@ export class VerifyCardResponse {
   @IsBoolean()
   isSuccess!: boolean
 
-  @ApiProperty({ description: 'Card information', type: CardInformation })
+  @ApiPropertyOptional({
+    description: 'Card information',
+    type: CardInformation,
+  })
   @IsObject()
-  cardInformation!: CardInformation
+  @IsOptional()
+  cardInformation?: CardInformation
 
   @ApiProperty({ description: 'Script path for further actions', type: String })
   @IsString()
   @IsOptional()
   scriptPath?: string
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Response code from the verification',
     type: String,
   })
   @IsString()
-  responseCode!: string
+  @IsOptional()
+  responseCode?: string
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Response time of the verification',
     type: String,
   })
   @IsString()
-  responseTime!: string
+  @IsOptional()
+  responseTime?: string
 
   @ApiProperty({ description: 'Correlation ID for tracking', type: String })
   @IsString()

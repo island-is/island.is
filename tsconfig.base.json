@@ -66,6 +66,9 @@
       "@island.is/api/domains/customs-general": [
         "libs/api/domains/customs-general/src/index.ts"
       ],
+      "@island.is/api/domains/directorate-of-equality": [
+        "libs/api/domains/directorate-of-equality/src/index.ts"
+      ],
       "@island.is/api/domains/directorate-of-equality-application": [
         "libs/api/domains/directorate-of-equality-application/src/index.ts"
       ],
@@ -582,14 +585,14 @@
       "@island.is/application/templates/parental-leave": [
         "libs/application/templates/parental-leave/src/index.ts"
       ],
-      "@island.is/application/templates/parental-leave/messages": [
-        "libs/application/templates/parental-leave/src/lib/messages.ts"
-      ],
       "@island.is/application/templates/parental-leave-v2": [
         "libs/application/templates/parental-leave-v2/src/index.ts"
       ],
       "@island.is/application/templates/parental-leave-v2/messages": [
         "libs/application/templates/parental-leave-v2/src/lib/messages.ts"
+      ],
+      "@island.is/application/templates/parental-leave/messages": [
+        "libs/application/templates/parental-leave/src/lib/messages.ts"
       ],
       "@island.is/application/templates/passport": [
         "libs/application/templates/passport/src/index.ts"
@@ -1175,6 +1178,7 @@
         "libs/island-ui/contentful/src/index.ts"
       ],
       "@island.is/island-ui/core": ["libs/island-ui/core/src/index.ts"],
+      "@island.is/island-ui/core/charts": ["libs/island-ui/core/src/charts.ts"],
       "@island.is/island-ui/core/types": ["libs/island-ui/core/types.ts"],
       "@island.is/island-ui/theme": ["libs/island-ui/theme/src/index.ts"],
       "@island.is/island-ui/utils": ["libs/island-ui/utils/src/index.ts"],
@@ -1286,6 +1290,9 @@
       ],
       "@island.is/portals/my-pages/core/messages": [
         "libs/portals/my-pages/core/src/lib/messages.ts"
+      ],
+      "@island.is/portals/my-pages/directorate-of-equality": [
+        "libs/portals/my-pages/directorate-of-equality/src/index.ts"
       ],
       "@island.is/portals/my-pages/documents": [
         "libs/portals/my-pages/documents/src/index.ts"

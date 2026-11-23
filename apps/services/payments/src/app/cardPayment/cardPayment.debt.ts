@@ -132,6 +132,7 @@ export const notifyKeptDebtPayment = async ({
       settlement: undefined,
       message,
       paymentResult,
+      correlationId: ctx.trackingData.correlationId,
     })
   } catch (error) {
     logger.error(
@@ -193,6 +194,7 @@ export const notifyPaymentCompleted = async ({
   settlement,
   message,
   paymentResult,
+  correlationId,
 }: {
   paymentFlowService: PaymentFlowService
   logger: Logger
@@ -201,6 +203,8 @@ export const notifyPaymentCompleted = async ({
   settlement: SettleDebtStepResult | undefined
   message: string
   paymentResult: CardPaymentSuccessResponse
+  /** The saga's, which the gateway echoes in paymentResult only when it answers with it */
+  correlationId: string
 }): Promise<void> => {
   const isDebtFlow = paymentFlow.type === 'debt'
 
@@ -215,6 +219,8 @@ export const notifyPaymentCompleted = async ({
         message,
         metadata: {
           payment: paymentResult,
+          // Ties the event to this payment, see PaymentFlowService.hasPaymentCompletedEvent
+          correlationId,
         },
       },
       {

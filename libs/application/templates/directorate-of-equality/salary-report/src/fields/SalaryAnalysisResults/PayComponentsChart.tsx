@@ -19,7 +19,7 @@ import {
   type PayComponentsBreakdown,
 } from '../../utils/payComponents'
 import { formatSignedPercentMagnitude } from '../../utils/wageGap'
-import * as styles from './SalaryDistributionChart.css'
+import * as styles from './PayComponentsChart.css'
 
 const MALE_COLOR = theme.color.blue400
 const FEMALE_COLOR = theme.color.purple400
@@ -60,7 +60,7 @@ const ComponentChart = ({
 
   return (
     <Box flexGrow={1} style={{ minWidth: 0, flexBasis: 0 }}>
-      <Text variant="h5" textAlign="center">
+      <Text variant="h5" as="h4" textAlign="center">
         {title}
       </Text>
       <Box role="img" aria-label={ariaLabel}>
@@ -175,7 +175,7 @@ export const PayComponentsChart = ({ data }: Props) => {
 
   return (
     <Box marginBottom={4}>
-      <Text variant="h4" marginBottom={1}>
+      <Text variant="h4" as="h3" marginBottom={1}>
         {formatMessage(t.heading)}
       </Text>
       <Text marginBottom={3}>{formatMessage(t.description)}</Text>
