@@ -12,6 +12,7 @@ import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { useCreateVerdictsMutation } from './createVerdicts.generated'
 import { useDeliverCaseVerdictMutation } from './deliverCaseVerdict.generated'
+import { useLimitedAccessAcceptVerdictMutation } from './limitedAccessAcceptVerdict.generated'
 import { useUpdateVerdictMutation } from './updateVerdict.generated'
 import { useVerdictQuery } from './verdict.generated'
 
@@ -84,6 +85,26 @@ const useVerdict = (currentVerdict?: Verdict) => {
     [updateVerdictMutation],
   )
 
+  const [acceptVerdictMutation, { loading: isAcceptingVerdict }] =
+    useLimitedAccessAcceptVerdictMutation()
+
+  // A defender registers that the defendant accepts the verdict.
+  const acceptVerdict = useCallback(
+    async (caseId: string, defendantId: string) => {
+      try {
+        const { data } = await acceptVerdictMutation({
+          variables: { input: { caseId, defendantId } },
+        })
+
+        return Boolean(data?.limitedAccessAcceptVerdict)
+      } catch {
+        toast.error('Upp kom villa við að skrá afstöðu til dóms')
+        return false
+      }
+    },
+    [acceptVerdictMutation],
+  )
+
   const setAndSendVerdictToServer = useCallback(
     (
       update: UpdateVerdictInput,
@@ -137,6 +158,8 @@ const useVerdict = (currentVerdict?: Verdict) => {
     verdictLoading: skip ? false : verdictLoading,
     setAndSendVerdictToServer,
     createVerdicts,
+    acceptVerdict,
+    isAcceptingVerdict,
     deliverCaseVerdict,
     updateDefendantVerdictState,
   }

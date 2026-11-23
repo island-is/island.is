@@ -4,7 +4,6 @@ import { SOCIAL_INSURANCE_NAMESPACE } from '../../../lib/messages'
 import {
   CardLoader,
   IntroWrapper,
-  LinkButton,
   m as coreMessages,
   TRYGGINGASTOFNUN_SLUG,
 } from '@island.is/portals/my-pages/core'
@@ -80,18 +79,6 @@ const PersonalTaxCredit = () => {
       serviceProvider={{
         slug: TRYGGINGASTOFNUN_SLUG,
         tooltip: formatMessage(coreMessages.socialInsuranceTooltip),
-      }}
-      buttonGroup={{
-        actions: [
-          <LinkButton
-            key="my-info-settings"
-            to="/min-gogn/stillingar/"
-            text={formatMessage(coreMessages.userInfo)}
-            variant="utility"
-            icon="arrowForward"
-            size="small"
-          />,
-        ],
       }}
     >
       {loading ? (

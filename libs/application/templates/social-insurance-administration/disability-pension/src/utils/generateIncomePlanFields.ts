@@ -74,9 +74,10 @@ export const generateIncomePlanFields = (): Record<string, RepeaterItem> => {
           isForeignCurrency(activeField) ? null : ISK,
         watchValues: 'incomeType',
       },
-      loadOptions: async ({ apolloClient }, _, activeField) => {
+      loadOptions: async ({ apolloClient, application }, _, activeField) => {
         const { data } = await apolloClient.query<Query>({
           query: siaGeneralCurrenciesQuery,
+          variables: { applicationId: application.id },
         })
 
         return getCurrencies(

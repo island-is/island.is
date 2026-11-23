@@ -1,0 +1,5 @@
+mutation LimitedAccessAcceptVerdict($input: AcceptVerdictInput!) {
+  limitedAccessAcceptVerdict(input: $input) {
+    defendantId
+  }
+}

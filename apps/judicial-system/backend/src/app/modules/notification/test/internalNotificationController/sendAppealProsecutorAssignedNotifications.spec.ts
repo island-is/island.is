@@ -82,7 +82,7 @@ describe('InternalNotificationController - Send appeal prosecutor assigned notif
       then = await givenWhenThen(theCase)
     })
 
-    it('should send the email the design asked for', () => {
+    it('should tell the prosecutor that the appeal has been assigned to them', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],

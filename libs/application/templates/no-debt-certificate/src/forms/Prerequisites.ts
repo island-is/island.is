@@ -57,5 +57,15 @@ export const Prerequisites: Form = buildForm({
         }),
       ],
     }),
+    buildSection({
+      id: 'externalData',
+      title: m.externalDataSection,
+      children: [],
+    }),
+    buildSection({
+      id: 'confirmation',
+      title: m.confirmation,
+      children: [],
+    }),
   ],
 })
