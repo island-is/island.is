@@ -1176,6 +1176,20 @@ export const m = defineMessages({
       'Ertu viss um að þú viljir taka úr útgáfu formið: {formName}',
     description: 'Are you sure you want to unpublish the form: {formName}',
   },
+  unpublishFormWithRevisionWarning: {
+    id: 'form.system:unpublish-form-with-revision-warning',
+    defaultMessage:
+      'Ertu viss um að þú viljir taka úr útgáfu formið: {formName}? Eyðublaðinu sem er í stöðunni „Útgefið í breytingu“ verður einnig eytt.',
+    description:
+      'Are you sure you want to unpublish the form: {formName}? The derived form in the Published being changed state will also be deleted.',
+  },
+  publishedFormRevisionCreatedWarning: {
+    id: 'form.system:published-form-revision-created-warning',
+    defaultMessage:
+      'Eyðublað í stöðunni „Útgefið í breytingu“ hefur verið búið til. Ef upprunalega eyðublaðið er tekið úr útgáfu verður nýja eyðublaðinu eytt.',
+    description:
+      'A form in the Published being changed state has been created. If the original form is unpublished, the new form will be deleted.',
+  },
   previewField: {
     id: 'form.system:preview-field',
     defaultMessage: 'Sýnishorn',

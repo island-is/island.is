@@ -914,9 +914,7 @@ export class FormsService {
         transaction,
       })
       if (revision) {
-        throw new ConflictException(
-          `Delete the form being changed from form '${id}' before unpublishing it.`,
-        )
+        await revision.destroy({ transaction })
       }
 
       const slug = form.slug
@@ -1424,6 +1422,7 @@ export class FormsService {
       'status',
       'draftDaysToLive',
       'submissionDaysToLive',
+      'derivedFrom',
       'allowProceedOnValidationFail',
       'isInaccessible',
       'validateEligibility',
