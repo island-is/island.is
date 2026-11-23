@@ -282,11 +282,19 @@ export class FileService {
 
       const { hash, hashAlgorithm, binaryPdf } = getCaseFileHash(confirmedPdf)
 
-      // No need to wait for the update to finish
-      this.caseFileRepositoryService.updateById(file.id, {
-        hash,
-        hashAlgorithm,
-      })
+      // A hash that is not stored only means the document is stamped again
+      // the next time it is opened, so the stamped document is still returned
+      try {
+        await this.caseFileRepositoryService.updateById(file.id, {
+          hash,
+          hashAlgorithm,
+        })
+      } catch (reason) {
+        this.logger.error(
+          `Failed to store the hash of the confirmed verdict appeal ruling for case ${theCase.id}`,
+          { reason },
+        )
+      }
 
       return binaryPdf
     } catch (reason) {
