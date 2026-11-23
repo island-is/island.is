@@ -1393,6 +1393,108 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:entries-per-page',
     defaultMessage: 'Fj. á síðu:',
   },
+  mileageTabsLabel: {
+    id: 'sp.vehicles:mileage-tabs-label',
+    defaultMessage: 'Veldu yfirlit',
+  },
+  mileageHistoryTab: {
+    id: 'sp.vehicles:mileage-history-tab',
+    defaultMessage: 'Skráningarsaga',
+  },
+  mileageFeeTab: {
+    id: 'sp.vehicles:mileage-fee-tab',
+    defaultMessage: 'Kílómetragjald',
+  },
+  mileageFeeTitle: {
+    id: 'sp.vehicles:mileage-fee-title',
+    defaultMessage: 'Yfirlit kílómetragjalds',
+  },
+  mileageFeeYear: {
+    id: 'sp.vehicles:mileage-fee-year',
+    defaultMessage: 'Veldu ár',
+  },
+  mileageFeeDownload: {
+    id: 'sp.vehicles:mileage-fee-download',
+    defaultMessage: 'Sækja í Excel',
+  },
+  mileageFeePeriod: {
+    id: 'sp.vehicles:mileage-fee-period',
+    defaultMessage: 'Tímabil',
+  },
+  mileageFeeEstimated: {
+    id: 'sp.vehicles:mileage-fee-estimated',
+    defaultMessage: 'Bráðabirgðagreiðsla',
+  },
+  mileageFeeConfirmed: {
+    id: 'sp.vehicles:mileage-fee-confirmed',
+    defaultMessage: 'Endanlegt gjald',
+  },
+  mileageFeeEstimatedAmountTooltip: {
+    id: 'sp.vehicles:mileage-fee-estimated-amount-tooltip',
+    defaultMessage:
+      '<strong>Bráðabirgðagreiðsla:</strong> Byggir á áætluðum meðalakstri þínum frá fyrri skráningum eða áætlun ríkisskattstjóra ef ekki eru til tvær skráningar.',
+  },
+  mileageFeeConfirmedAmountTooltip: {
+    id: 'sp.vehicles:mileage-fee-confirmed-amount-tooltip',
+    defaultMessage:
+      '<strong>Endanlegt gjald:</strong> Álagning byggð á raunakstri. Gerður er upp mismunur á áætluðum akstri og raunakstri á tímabilinu.',
+  },
+  mileageFeeAmountTooltipInfo: {
+    id: 'sp.vehicles:mileage-fee-amount-tooltip-info',
+    defaultMessage:
+      'Skýring á merkingarmun milli bráðabirgðagjalds og endanlegs gjalds',
+  },
+  mileageFeeDifference: {
+    id: 'sp.vehicles:mileage-fee-difference',
+    defaultMessage: 'Mismunur',
+  },
+  mileageFeeTooltipRefunded: {
+    id: 'sp.vehicles:mileage-fee-tooltip-refunded',
+    defaultMessage:
+      '<strong>Mínus (-):</strong> Upphæðin er endurgreidd eða skuldajafnað upp í önnur opinber gjöld.',
+  },
+  mileageFeeTooltipAdded: {
+    id: 'sp.vehicles:mileage-fee-tooltip-added',
+    defaultMessage:
+      '<strong>Plús (+):</strong> Upphæðin innheimt með næsta reikning',
+  },
+  mileageFeeTooltipReversed: {
+    id: 'sp.vehicles:mileage-fee-tooltip-reversed',
+    defaultMessage:
+      '<strong>Plús (+) {threshold} eða lægra:</strong> Kílómetragjald fellur niður.',
+  },
+  mileageFeeTotal: {
+    id: 'sp.vehicles:mileage-fee-total',
+    defaultMessage: 'Samtals:',
+  },
+  mileageFeeNoPeriods: {
+    id: 'sp.vehicles:mileage-fee-no-periods',
+    defaultMessage: 'Engar færslur fundust fyrir valið ár',
+  },
+  mileageFeeNotFound: {
+    id: 'sp.vehicles:mileage-fee-not-found',
+    defaultMessage: 'Engar upplýsingar um kílómetragjald fundust',
+  },
+  mileageFeeOutcomeAdded: {
+    id: 'sp.vehicles:mileage-fee-outcome-added',
+    defaultMessage: 'Bætist við næsta reikning',
+  },
+  mileageFeeOutcomeRefunded: {
+    id: 'sp.vehicles:mileage-fee-outcome-refunded',
+    defaultMessage: 'Endurgreitt',
+  },
+  mileageFeeOutcomeReversed: {
+    id: 'sp.vehicles:mileage-fee-outcome-reversed',
+    defaultMessage: 'Bakfært',
+  },
+  mileageFeeDifferenceInfo: {
+    id: 'sp.vehicles:mileage-fee-difference-info',
+    defaultMessage: 'Skýring á mismun',
+  },
+  mileageFeeYearLoaded: {
+    id: 'sp.vehicles:mileage-fee-year-loaded',
+    defaultMessage: 'Kílómetragjald fyrir {year}',
+  },
 })
 
 export const ipMessages = defineMessages({
