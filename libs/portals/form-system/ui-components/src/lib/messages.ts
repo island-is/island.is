@@ -1179,9 +1179,9 @@ export const m = defineMessages({
   unpublishFormWithRevisionWarning: {
     id: 'form.system:unpublish-form-with-revision-warning',
     defaultMessage:
-      'Ertu viss um að þú viljir taka úr útgáfu formið: {formName}? Eyðublaðinu sem er í stöðunni „Útgefið í breytingu“ verður einnig eytt.',
+      'Ertu viss um að þú viljir taka úr útgáfu formið: {formName}? Öllum tengdum eyðublöðum í stöðunni „Útgefið í breytingu“, ef einhver eru, verður einnig eytt.',
     description:
-      'Are you sure you want to unpublish the form: {formName}? The derived form in the Published being changed state will also be deleted.',
+      'Are you sure you want to unpublish the form: {formName}? Any derived forms in the Published being changed state will also be deleted.',
   },
   publishedFormRevisionCreatedWarning: {
     id: 'form.system:published-form-revision-created-warning',

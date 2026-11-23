@@ -94,9 +94,11 @@ Archiving a published form deletes all of its draft applications, including test
 drafts, their application events, and their uploaded files. This also applies when publishing a replacement
 archives the previous form version. Non-draft applications are retained.
 
-Unpublishing also deletes the form derived from it in the
-`published_being_changed` state, within the same transaction. The confirmation
-dialog warns the user before deleting that revision.
+Unpublishing also deletes all forms derived from it in the
+`published_being_changed` state, within the same transaction. Uploaded file keys
+from all of those revisions' applications are collected before the rows are
+deleted, and the files are removed from storage after commit. The confirmation
+dialog always warns about revision deletion, even if the local list is stale.
 Creating an editable revision also shows a toast warning that unpublishing the
 original form will delete the revision.
 Form responses include the revision's original form ID (`derivedFrom`) so the

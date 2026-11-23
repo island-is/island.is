@@ -364,7 +364,8 @@ export const TableRow = ({
             },
           })
           const returnedForm = data?.updateFormSystemFormStatus?.form
-          if (!returnedForm?.id) throw new Error('Missing created form revision')
+          if (!returnedForm?.id)
+            throw new Error('Missing created form revision')
           setFormsState((prevForms) => [returnedForm, ...prevForms])
           toast.warning(formatMessage(m.publishedFormRevisionCreatedWarning))
         } catch (error) {
@@ -615,12 +616,6 @@ export const TableRow = ({
       return 'trash' as const
     }
 
-    const hasDerivedRevision = forms.some(
-      (form) =>
-        form.derivedFrom === id &&
-        form.status === FormStatus.PUBLISHED_BEING_CHANGED,
-    )
-
     const del = {
       title: formatMessage(m.delete),
       icon: getDelIcon(),
@@ -636,12 +631,9 @@ export const TableRow = ({
           ariaLabel={`delete-form-${id}`}
           description={
             status === FormStatus.PUBLISHED
-              ? formatMessage(
-                  hasDerivedRevision
-                    ? m.unpublishFormWithRevisionWarning
-                    : m.unpublishFormWarning,
-                  { formName: name },
-                )
+              ? formatMessage(m.unpublishFormWithRevisionWarning, {
+                  formName: name,
+                })
               : formatMessage(m.deleteFormWarning, { formName: name })
           }
           disclosureElement={

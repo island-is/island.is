@@ -50,6 +50,7 @@ jest.mock('@island.is/form-system/ui', () => ({
     publish: { defaultMessage: 'Publish' },
     delete: { defaultMessage: 'Delete' },
     unpublish: { defaultMessage: 'Unpublish' },
+    deleteFormWarning: { defaultMessage: 'Delete this form?' },
     unpublishFormWarning: { defaultMessage: 'Unpublish this form?' },
     unpublishFormWithRevisionWarning: {
       defaultMessage: 'Unpublish this form? The revision will also be deleted.',
@@ -439,12 +440,40 @@ describe('publishing a form', () => {
         createForm({ id: 'original-form', status: FormStatus.PUBLISHED }),
         [relatedForm],
       )
-      expect(screen.queryByText('Unpublish this form?')).not.toBeNull()
+      expect(
+        screen.queryByText(
+          'Unpublish this form? The revision will also be deleted.',
+        ),
+      ).not.toBeNull()
       fireEvent.click(screen.getByRole('button', { name: 'Unpublish' }))
 
       await waitFor(() => expect(mockUpdateFormStatus).toHaveBeenCalledTimes(1))
       await waitFor(() => expect(getContext().forms).toEqual([relatedForm]))
       expect(toast.warning).not.toHaveBeenCalled()
+    },
+  )
+
+  it('warns about revision deletion even when no revision is loaded', () => {
+    renderChangedForm(createForm({ status: FormStatus.PUBLISHED }))
+
+    expect(
+      screen.queryByText(
+        'Unpublish this form? The revision will also be deleted.',
+      ),
+    ).not.toBeNull()
+  })
+
+  it.each([FormStatus.IN_DEVELOPMENT, FormStatus.PUBLISHED_BEING_CHANGED])(
+    'keeps the ordinary delete confirmation for %s',
+    (status) => {
+      renderChangedForm(createForm({ status }))
+
+      expect(screen.queryByText('Delete this form?')).not.toBeNull()
+      expect(
+        screen.queryByText(
+          'Unpublish this form? The revision will also be deleted.',
+        ),
+      ).toBeNull()
     },
   )
 

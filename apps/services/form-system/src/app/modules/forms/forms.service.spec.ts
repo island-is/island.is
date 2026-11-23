@@ -167,10 +167,10 @@ describe.each(['archive', 'publish replacement'])(
         destroy: jest.fn().mockResolvedValue(1),
       }
       const commit = jest.fn().mockResolvedValue(undefined)
-      const findRevision = jest.fn().mockResolvedValue(null)
+      const findRevisions = jest.fn().mockResolvedValue([])
       const service = Object.assign(Object.create(FormsService.prototype), {
         formModel: {
-          findOne: findRevision,
+          findAll: findRevisions,
           findByPk: jest.fn(async (id) =>
             id === replacement.id ? replacement : form,
           ),
@@ -213,50 +213,109 @@ describe.each(['archive', 'publish replacement'])(
         applicationEventModel,
         fileService,
         commit,
-        findRevision,
+        findRevisions,
       }
     }
 
     if (action === 'archive') {
-      it('deletes the active derived revision in the unpublish transaction', async () => {
+      it('deletes every active derived revision and their uploaded files after commit', async () => {
         const {
           updateStatus,
           form,
           replacement,
-          findRevision,
+          findRevisions,
           transaction,
           commit,
+          applications,
+          applicationModel,
+          fileService,
         } = setup()
-        findRevision.mockResolvedValueOnce(replacement)
+        const secondRevision = {
+          ...replacement,
+          id: 'second-revision',
+          destroy: jest.fn().mockResolvedValue(undefined),
+        }
+        findRevisions.mockResolvedValueOnce([replacement, secondRevision])
+        const revisionApplications = [
+          replacement.id,
+          replacement.id,
+          secondRevision.id,
+        ].map((formId, index) => ({
+          ...applications[index],
+          id: `revision-application-${index}`,
+          formId,
+          status:
+            index === 0 ? ApplicationStatus.DRAFT : ApplicationStatus.COMPLETED,
+          values: [
+            {
+              id: `revision-value-${index}`,
+              fieldType: FieldTypesEnum.FILE,
+              json: { s3Key: [`revision-file-${index}`] },
+            },
+          ],
+        }))
+        applications.push(...revisionApplications)
+        replacement.destroy.mockImplementationOnce(async () => {
+          for (const application of revisionApplications) {
+            if (application.formId === replacement.id) application.values = []
+          }
+        })
 
         await updateStatus()
 
-        expect(findRevision).toHaveBeenCalledWith({
+        expect(findRevisions).toHaveBeenCalledWith({
           where: {
             derivedFrom: form.id,
             status: FormStatus.PUBLISHED_BEING_CHANGED,
           },
           transaction,
         })
-        expect(replacement.destroy).toHaveBeenCalledWith({ transaction })
-        expect(replacement.destroy.mock.invocationCallOrder[0]).toBeLessThan(
-          commit.mock.invocationCallOrder[0],
-        )
+        for (const revision of [replacement, secondRevision]) {
+          expect(applicationModel.findAll).toHaveBeenCalledWith(
+            expect.objectContaining({
+              where: { formId: revision.id },
+              transaction,
+            }),
+          )
+          expect(revision.destroy).toHaveBeenCalledWith({ transaction })
+          expect(revision.destroy.mock.invocationCallOrder[0]).toBeLessThan(
+            commit.mock.invocationCallOrder[0],
+          )
+        }
+        for (const index of [0, 1, 2]) {
+          expect(fileService.deleteFileFromStorage).toHaveBeenCalledWith(
+            `revision-file-${index}`,
+          )
+        }
+        expect(fileService.deleteFileFromStorage).toHaveBeenCalledTimes(5)
         expect(form.status).toBe(FormStatus.ARCHIVED)
         expect(form.save).toHaveBeenCalledWith({ transaction })
         expect(commit).toHaveBeenCalledTimes(1)
       })
 
       it('does not unpublish if deleting the derived revision fails', async () => {
-        const { updateStatus, form, replacement, findRevision, commit } =
-          setup()
-        findRevision.mockResolvedValueOnce(replacement)
+        const {
+          updateStatus,
+          form,
+          replacement,
+          findRevisions,
+          commit,
+          applications,
+          fileService,
+        } = setup()
+        findRevisions.mockResolvedValueOnce([replacement])
+        applications.push({
+          ...applications[0],
+          id: 'revision-application',
+          formId: replacement.id,
+        })
         replacement.destroy.mockRejectedValueOnce(new Error('Deletion failed'))
 
         await expect(updateStatus()).rejects.toThrow('Deletion failed')
 
         expect(form.save).not.toHaveBeenCalled()
         expect(commit).not.toHaveBeenCalled()
+        expect(fileService.deleteFileFromStorage).not.toHaveBeenCalled()
       })
     }
 
