@@ -480,15 +480,6 @@ export class FileService {
       )
     }
 
-    if (
-      createFile.category === CaseFileCategory.VERDICT_APPEAL_RULING &&
-      theCase.verdictAppealCase?.appealState === AppealCaseState.COMPLETED
-    ) {
-      throw new ForbiddenException(
-        `The verdict appeal of case ${theCase.id} has been completed`,
-      )
-    }
-
     const regExp = new RegExp(`^${theCase.id}/.{36}/(.*)$`)
 
     if (!regExp.test(key)) {

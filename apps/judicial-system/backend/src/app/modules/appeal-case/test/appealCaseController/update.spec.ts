@@ -295,13 +295,19 @@ describe('AppealCaseController - Update', () => {
       appealState: AppealCaseState.COMPLETED,
     } as AppealCase
 
-    it('should refuse every update', async () => {
+    // The court can still correct what it recorded: the outcome stays with it
+    // until it is released.
+    it('should store the update', async () => {
       const then = await givenWhenThen(theCase, appealCase, {
         appealConclusion: 'Conclusion',
       })
 
-      expect(then.error).toBeInstanceOf(ForbiddenException)
-      expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+      expect(then.error).toBeUndefined()
+      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+        appealCaseId,
+        { appealConclusion: 'Conclusion' },
+        { transaction },
+      )
     })
   })
 

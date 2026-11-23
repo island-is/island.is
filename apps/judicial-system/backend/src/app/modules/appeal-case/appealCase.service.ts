@@ -1110,18 +1110,6 @@ export class AppealCaseService {
       )
     }
 
-    // Correcting a concluded verdict appeal is not supported: its document is
-    // stamped as confirmed on the day it was concluded, and what the court
-    // recorded then has to stay what the stamp vouches for.
-    if (
-      appealCase.appealType === AppealCaseType.VERDICT &&
-      appealCase.appealState === AppealCaseState.COMPLETED
-    ) {
-      throw new ForbiddenException(
-        `Verdict appeal ${appealCase.id} has been completed and cannot be updated`,
-      )
-    }
-
     if (
       update.verdictAppealStatus &&
       appealCase.appealType !== AppealCaseType.VERDICT

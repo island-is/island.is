@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common'
 
 import {
-  AppealCaseState,
   CaseFileCategory,
   courtOfAppealsRoles,
   InstitutionType,
@@ -153,37 +152,6 @@ describe('Delete Appeal Case File Guard', () => {
           'Only court of appeals users can delete this file',
         )
       })
-    })
-  })
-
-  describe('verdict appeal ruling of a completed appeal', () => {
-    let then: Then
-
-    beforeEach(() => {
-      mockRequest.mockImplementationOnce(() => ({
-        user: {
-          currentUser: {
-            role: UserRole.COURT_OF_APPEALS_ASSISTANT,
-            institution: { type: InstitutionType.COURT_OF_APPEALS },
-          },
-        },
-        case: {
-          verdictAppealCase: {
-            id: uuid(),
-            appealState: AppealCaseState.COMPLETED,
-          },
-        },
-        caseFile: { category: CaseFileCategory.VERDICT_APPEAL_RULING },
-      }))
-
-      then = givenWhenThen()
-    })
-
-    it('should throw ForbiddenException', () => {
-      expect(then.error).toBeInstanceOf(ForbiddenException)
-      expect(then.error.message).toBe(
-        'Forbidden when the verdict appeal has been completed',
-      )
     })
   })
 
