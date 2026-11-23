@@ -59,8 +59,8 @@ describe('defence appealed verdicts case list', () => {
     )
   }
 
-  const APPEAL_DEFENDER = `appeal_defender_national_id = '1111111111' AND is_appeal_defender_confirmed = true`
-  const APPEAL_SPOKESPERSON = `appeal_spokesperson_national_id = '1111111111' AND is_appeal_spokesperson_confirmed = true`
+  const APPEAL_DEFENDER = `defendant.appeal_defender_national_id = '1111111111' AND defendant.is_appeal_defender_confirmed = true`
+  const APPEAL_SPOKESPERSON = `civil_claimant.appeal_spokesperson_national_id = '1111111111' AND civil_claimant.is_appeal_spokesperson_confirmed = true`
 
   // Once in the access options, where it is one of four ways in, and once more
   // as the list's own rule. A single occurrence would mean the district court

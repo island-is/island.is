@@ -16,8 +16,8 @@ import {
 import {
   defenceIndictmentsAccessWhereOptions,
   defenceRequestCasesAccessWhereOptions,
-  defenceVerdictAppealAdvocateWhereOptions,
 } from './access'
+import { buildIsConfirmedVerdictAppealAdvocateCondition } from './conditions'
 
 // Defence request cases
 
@@ -147,7 +147,7 @@ export const defenceIndictmentsVerdictAppealedWhereOptions = (
   where: {
     [Op.and]: [
       defenceIndictmentsAccessWhereOptions(user),
-      { [Op.or]: defenceVerdictAppealAdvocateWhereOptions(user) },
+      buildIsConfirmedVerdictAppealAdvocateCondition(user.nationalId),
       {
         '$verdictAppealCase.appeal_state$': [
           AppealCaseState.APPEALED,
