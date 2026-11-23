@@ -472,13 +472,15 @@ describe('FileController - Create case file', () => {
     const caseId = uuid()
     const rulingFileId = uuid()
     const defendantId = uuid()
+    const openDeadline = new Date()
+    openDeadline.setDate(openDeadline.getDate() + 14)
     const theCase = {
       id: caseId,
       verdictAppealCase: {
         id: uuid(),
         appealType: AppealCaseType.VERDICT,
         appealState: AppealCaseState.RECEIVED,
-        statementDeadlines: [{ defendantId, deadline: new Date('2099-01-01') }],
+        statementDeadlines: [{ defendantId, deadline: openDeadline }],
         appealEventLogs: [],
       },
     } as Case
@@ -544,13 +546,15 @@ describe('FileController - Create case file', () => {
   describe('verdict appeal statement after the party has filed', () => {
     const caseId = uuid()
     const defendantId = uuid()
+    const openDeadline = new Date()
+    openDeadline.setDate(openDeadline.getDate() + 14)
     const theCase = {
       id: caseId,
       verdictAppealCase: {
         id: uuid(),
         appealType: AppealCaseType.VERDICT,
         appealState: AppealCaseState.RECEIVED,
-        statementDeadlines: [{ defendantId, deadline: new Date('2099-01-01') }],
+        statementDeadlines: [{ defendantId, deadline: openDeadline }],
         appealEventLogs: [
           {
             eventType: AppealEventType.APPEAL_STATEMENT_SENT,
@@ -626,13 +630,15 @@ describe('FileController - Create case file', () => {
 
   describe('verdict appeal defence statement without a party id', () => {
     const caseId = uuid()
+    const openDeadline = new Date()
+    openDeadline.setDate(openDeadline.getDate() + 14)
     const theCase = {
       id: caseId,
       verdictAppealCase: {
         id: uuid(),
         appealType: AppealCaseType.VERDICT,
         appealState: AppealCaseState.RECEIVED,
-        statementDeadlines: [{ deadline: new Date('2099-01-01') }],
+        statementDeadlines: [{ deadline: openDeadline }],
         appealEventLogs: [],
       },
     } as Case

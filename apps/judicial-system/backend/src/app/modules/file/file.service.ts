@@ -790,7 +790,10 @@ export class FileService {
       const deleteFromS3 = () => this.tryDeleteFileFromS3(theCase, file)
 
       if (transaction) {
-        registerAfterCommit(deleteFromS3)
+        // AfterCommitCallback is Promise<void>; do not return Promise<boolean>.
+        registerAfterCommit(async () => {
+          await deleteFromS3()
+        })
       } else {
         deleteFromS3()
       }

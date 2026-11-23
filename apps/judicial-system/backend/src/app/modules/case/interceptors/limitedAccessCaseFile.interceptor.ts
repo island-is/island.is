@@ -22,46 +22,52 @@ export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map((theCase) => {
-        const caseFiles = theCase.caseFiles?.filter(
-          ({
-            id,
-            category,
-            submittedBy,
-            fileRepresentative,
-            defendantId,
-            created,
-            civilClaimantId,
-          }: {
-            id: string
-            category: CaseFileCategory
-            submittedBy: string
-            fileRepresentative: string
-            defendantId?: string
-            created?: Date
-            civilClaimantId?: string | null
-          }) =>
-            canLimitedAccessUserViewCaseFile({
-              user,
-              caseType: theCase.type,
-              caseState: theCase.state,
+        // Mutate the Sequelize instance in place. Spreading it would drop
+        // dataValues attributes and leave CaseInterceptor without toJSON().
+        // This interceptor must run before CaseInterceptor redacts co-party
+        // APPEAL_STATEMENT_SENT rows that the file filter still needs.
+        if (theCase.caseFiles) {
+          theCase.caseFiles = theCase.caseFiles.filter(
+            ({
+              id,
+              category,
               submittedBy,
               fileRepresentative,
-              caseFileCategory: category,
-              defendants: theCase.defendants,
-              civilClaimants: theCase.civilClaimants,
               defendantId,
-              fileCreated: created,
+              created,
               civilClaimantId,
-              isRulingOrderInConfirmedCourtSession:
-                isRulingOrderInConfirmedCourtSession(id, theCase.courtSessions),
-              appealEventLogs: theCase.verdictAppealCase?.appealEventLogs,
-            }),
-        )
-
-        return {
-          ...theCase,
-          caseFiles,
+            }: {
+              id: string
+              category: CaseFileCategory
+              submittedBy: string
+              fileRepresentative: string
+              defendantId?: string
+              created?: Date
+              civilClaimantId?: string | null
+            }) =>
+              canLimitedAccessUserViewCaseFile({
+                user,
+                caseType: theCase.type,
+                caseState: theCase.state,
+                submittedBy,
+                fileRepresentative,
+                caseFileCategory: category,
+                defendants: theCase.defendants,
+                civilClaimants: theCase.civilClaimants,
+                defendantId,
+                fileCreated: created,
+                civilClaimantId,
+                isRulingOrderInConfirmedCourtSession:
+                  isRulingOrderInConfirmedCourtSession(
+                    id,
+                    theCase.courtSessions,
+                  ),
+                appealEventLogs: theCase.verdictAppealCase?.appealEventLogs,
+              }),
+          )
         }
+
+        return theCase
       }),
     )
   }
