@@ -363,10 +363,11 @@ export const TableRow = ({
               },
             },
           })
-          setFormsState((prevForms) => {
-            const returnedForm = data.updateFormSystemFormStatus.form
-            return [returnedForm, ...prevForms]
-          })
+          const returnedForm = data?.updateFormSystemFormStatus?.form
+          if (!returnedForm?.id)
+            throw new Error('Missing created form revision')
+          setFormsState((prevForms) => [returnedForm, ...prevForms])
+          toast.warning(formatMessage(m.publishedFormRevisionCreatedWarning))
         } catch (error) {
           toast.error(
             formatMessage({
@@ -630,7 +631,9 @@ export const TableRow = ({
           ariaLabel={`delete-form-${id}`}
           description={
             status === FormStatus.PUBLISHED
-              ? formatMessage(m.unpublishFormWarning, { formName: name })
+              ? formatMessage(m.unpublishFormWithRevisionWarning, {
+                  formName: name,
+                })
               : formatMessage(m.deleteFormWarning, { formName: name })
           }
           disclosureElement={
@@ -671,23 +674,6 @@ export const TableRow = ({
               : formatMessage(m.delete)
           }
           onConfirm={async () => {
-            if (
-              status === FormStatus.PUBLISHED &&
-              forms.some(
-                (form) =>
-                  form.derivedFrom === id &&
-                  form.status === FormStatus.PUBLISHED_BEING_CHANGED,
-              )
-            ) {
-              toast.warning(
-                formatMessage({
-                  id: 'unpublishFormWithRevisionWarning',
-                  defaultMessage:
-                    'Ekki er hægt að taka eyðublaðið úr útgáfu meðan útgáfa þess er í breytingu.',
-                }),
-              )
-              return
-            }
             try {
               const { data } = await updateFormStatus({
                 variables: {
@@ -698,7 +684,15 @@ export const TableRow = ({
                 },
               })
               setFormsState((prevForms) => {
-                const filtered = prevForms.filter((form) => form.id !== id)
+                const filtered = prevForms.filter(
+                  (form) =>
+                    form.id !== id &&
+                    !(
+                      status === FormStatus.PUBLISHED &&
+                      form.derivedFrom === id &&
+                      form.status === FormStatus.PUBLISHED_BEING_CHANGED
+                    ),
+                )
                 const returnedForm = data.updateFormSystemFormStatus.form
                 return returnedForm ? [returnedForm, ...filtered] : filtered
               })

@@ -932,7 +932,7 @@ export class PaymentFlowService {
         | { correlationId?: string; payment?: { correlationID?: string } }
         | undefined
 
-      // Card payments carry the id the gateway echoed, bank transfers their own
+      // Events from before card payments carried their own id only have the one the gateway echoed
       return (
         (metadata?.correlationId ?? metadata?.payment?.correlationID) ===
         correlationId
