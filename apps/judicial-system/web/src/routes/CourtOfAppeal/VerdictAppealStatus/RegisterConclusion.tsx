@@ -260,6 +260,7 @@ const RegisterConclusion: FC<Props> = ({ onValidityChange }) => {
           name="verdict-appeal-ruling"
           files={rulingFiles}
           accept="application/pdf"
+          multiple={false}
           title="Dragðu gögn hingað til að hlaða upp"
           description={formatMessage(
             {

@@ -367,6 +367,21 @@ describe('RegisterConclusion', () => {
     expect(screen.queryByText('urskurdur-kaera.pdf')).not.toBeInTheDocument()
   })
 
+  it('takes one document', () => {
+    const { unmount } = renderForm()
+
+    expect(
+      screen.getByRole('button', { name: 'Velja gögn til að hlaða upp' }),
+    ).toBeInTheDocument()
+
+    unmount()
+    renderForm(caseWith(recordedOutcome, [rulingFile]))
+
+    expect(
+      screen.queryByRole('button', { name: 'Velja gögn til að hlaða upp' }),
+    ).not.toBeInTheDocument()
+  })
+
   describe('validity', () => {
     it('is in place with an outcome, a type, the words and the document', async () => {
       renderForm(caseWith(recordedOutcome, [rulingFile]))
