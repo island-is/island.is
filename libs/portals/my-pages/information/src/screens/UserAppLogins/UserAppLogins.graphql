@@ -1,0 +1,16 @@
+query GetAuthAppLogins {
+  authAppLogins {
+    id
+    clientId
+    clientName
+    platform
+    deviceName
+    loginIdp
+    biometrics
+    lastUsed
+  }
+}
+
+mutation RevokeAuthAppLogin($id: ID!) {
+  authRevokeAppLogin(id: $id)
+}

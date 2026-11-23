@@ -144,6 +144,9 @@ export enum Features {
   // Disable new login restrictions
   disableNewDeviceLogins = 'disableNewDeviceLogins',
 
+  // App logins on My Pages
+  isMyPagesAppLoginsEnabled = 'isMyPagesAppLoginsEnabled',
+
   // Notifications
   isNotificationEmailWorkerEnabled = 'isnotificationemailworkerenabled',
   isServicePortalOnlyActionablePriorityNotificationsEnabled = 'isServicePortalOnlyActionablePriorityNotificationsEnabled',

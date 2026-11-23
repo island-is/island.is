@@ -33,6 +33,9 @@ const UserProfileSettings = lazy(() =>
 const UserNotificationsSettings = lazy(() =>
   import('./screens/UserNotifications/UserNotifications'),
 )
+const UserAppLogins = lazy(() =>
+  import('./screens/UserAppLogins/UserAppLogins'),
+)
 
 const UserContractsOverview = lazy(() =>
   import('./screens/UserContracts/UserContractsOverview/UserContractsOverview'),
@@ -128,6 +131,15 @@ export const informationModule: PortalModule = {
         enabled: hasSettingsAccess && !isActor,
         navHide: isActor,
         element: <UserNotificationsSettings />,
+      },
+      {
+        name: m.mySettingsAppLogins,
+        path: InformationPaths.SettingsAppLogins,
+        enabled: scopes.includes(ApiScope.internal) && !isActor,
+        navHide: isActor,
+        requiredScopes: [ApiScope.internal],
+        key: Features.isMyPagesAppLoginsEnabled,
+        element: <UserAppLogins />,
       },
       {
         name: m.notifications,

@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { DatabaseError, Op, UniqueConstraintError } from 'sequelize'
 
+import { Client } from '../clients/models/client.model'
 import { DeviceRegistration } from './device-registration.model'
+import { AppLoginDto } from './dto/app-login.dto'
 import {
   DeviceRegistrationDto,
   SaveDeviceRegistrationDto,
@@ -22,7 +24,44 @@ export class DeviceRegistrationsService {
   constructor(
     @InjectModel(DeviceRegistration)
     private readonly deviceRegistrationModel: typeof DeviceRegistration,
+    @InjectModel(Client)
+    private readonly clientModel: typeof Client,
   ) {}
+
+  async findAllForUser(nationalId: string): Promise<AppLoginDto[]> {
+    const registrations = await this.deviceRegistrationModel.findAll({
+      where: { nationalId },
+      order: [['lastUsed', 'DESC']],
+    })
+    if (registrations.length === 0) return []
+
+    const clients = await this.clientModel.findAll({
+      attributes: ['clientId', 'clientName'],
+      where: { clientId: [...new Set(registrations.map((r) => r.clientId))] },
+    })
+    const names = new Map(clients.map((c) => [c.clientId, c.clientName]))
+
+    return registrations.map((r) => ({
+      id: r.id,
+      clientId: r.clientId,
+      clientName: names.get(r.clientId) ?? null,
+      platform: r.platform,
+      deviceName: r.deviceName ?? null,
+      loginIdp: r.loginIdp,
+      biometrics: !!r.biometricKeyThumbprint,
+      created: r.created,
+      lastUsed: r.lastUsed,
+    }))
+  }
+
+  /** Removes one of the person's own app logins. False when they have none with this id. */
+  async deleteForUser(nationalId: string, id: string): Promise<boolean> {
+    const deleted = await this.deviceRegistrationModel.destroy({
+      where: { id, nationalId },
+    })
+
+    return deleted > 0
+  }
 
   async findByInstallKey(
     clientId: string,

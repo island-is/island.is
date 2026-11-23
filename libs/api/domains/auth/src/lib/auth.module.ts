@@ -19,7 +19,9 @@ import { DomainService } from './services/domain.service'
 import { MeDelegationConfirmationsService } from './services/meDelegationConfirmations.service'
 import { MeDelegationsService } from './services/meDelegations.service'
 import { LoginRestrictionResolver } from './resolvers/loginRestriction.resolver'
+import { AppLoginResolver } from './resolvers/appLogin.resolver'
 import { LoginRestrictionService } from './services/loginRestriction.service'
+import { AppLoginService } from './services/appLogin.service'
 import { ConsentTenantsResolver } from './resolvers/consentTenants.resolver'
 import { DelegationResolver } from './resolvers/delegation.resolver'
 import {
@@ -67,6 +69,8 @@ import { ScopeCategoriesResolver } from './resolvers/scopeCategories.resolver'
     ConsentTenantsService,
     LoginRestrictionResolver,
     LoginRestrictionService,
+    AppLoginResolver,
+    AppLoginService,
     PasskeyService,
     PasskeyResolver,
     ScopeCategoriesResolver,

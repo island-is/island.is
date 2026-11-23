@@ -990,6 +990,10 @@ export const m = defineMessages({
     id: 'service.portal:my-settings-notifications',
     defaultMessage: 'Tilkynningar',
   },
+  mySettingsAppLogins: {
+    id: 'service.portal:my-settings-app-logins',
+    defaultMessage: 'Innskráning í appi',
+  },
   lists: {
     id: 'service.portal:lists',
     defaultMessage: 'Listar',

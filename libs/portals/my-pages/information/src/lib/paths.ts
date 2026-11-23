@@ -6,6 +6,7 @@ export enum InformationPaths {
   MyContractsDetail = '/min-gogn/samningar/:id',
   Settings = '/min-gogn/stillingar/',
   SettingsNotifications = '/min-gogn/stillingar/tilkynningar',
+  SettingsAppLogins = '/min-gogn/stillingar/innskraning-i-appi',
   ChildCustody = '/min-gogn/yfirlit/barn/:baseId',
   BioChild = '/min-gogn/yfirlit/fjolskylda/:baseId',
   Spouse = '/min-gogn/yfirlit/maki/',
