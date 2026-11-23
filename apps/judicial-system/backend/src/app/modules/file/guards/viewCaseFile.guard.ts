@@ -38,7 +38,11 @@ export class ViewCaseFileGuard implements CanActivate {
 
     const caseFile: CaseFile | undefined = request.caseFile
 
-    if (!canUserAccessCaseFileCategory(user, caseFile?.category)) {
+    if (!caseFile) {
+      throw new InternalServerErrorException('Missing case file')
+    }
+
+    if (!canUserAccessCaseFileCategory(user, caseFile.category)) {
       throw new ForbiddenException(`Forbidden for ${user.role}`)
     }
 
