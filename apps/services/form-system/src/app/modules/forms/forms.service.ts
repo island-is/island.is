@@ -906,21 +906,39 @@ export class FormsService {
         throw new ConflictException(`Form with id '${id}' is not published`)
       }
 
-      const revision = await this.formModel.findOne({
+      const revisions = await this.formModel.findAll({
         where: {
           derivedFrom: id,
           status: FormStatus.PUBLISHED_BEING_CHANGED,
         },
         transaction,
       })
-      if (revision) {
-        throw new ConflictException(
-          `Delete the form being changed from form '${id}' before unpublishing it.`,
-        )
+      const fileKeys: string[] = []
+      for (const revision of revisions) {
+        const applications = await this.applicationModel.findAll({
+          where: { formId: revision.id },
+          include: [
+            {
+              model: Value,
+              as: 'values',
+              separate: true,
+              where: { fieldType: FieldTypesEnum.FILE },
+              required: false,
+            },
+          ],
+          transaction,
+          lock: Transaction.LOCK.UPDATE,
+        })
+        for (const application of applications) {
+          fileKeys.push(
+            ...this.getApplicationFiles(application).map(({ key }) => key),
+          )
+        }
+        await revision.destroy({ transaction })
       }
 
       const slug = form.slug
-      const fileKeys = await this.deleteDraftApplications(id, transaction)
+      fileKeys.push(...(await this.deleteDraftApplications(id, transaction)))
 
       form.status = FormStatus.ARCHIVED
       form.slug = `${form.slug}-archived-${Date.now()}`
@@ -1424,6 +1442,7 @@ export class FormsService {
       'status',
       'draftDaysToLive',
       'submissionDaysToLive',
+      'derivedFrom',
       'allowProceedOnValidationFail',
       'isInaccessible',
       'validateEligibility',

@@ -42,7 +42,11 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { getRequestTransaction } from '../../../middleware'
-import { hasOutOfCourtAppeal, resolveDefenceParties } from '../../appeal-case'
+import {
+  getVerdictAppealOutcomeOverride,
+  hasOutOfCourtAppeal,
+  resolveDefenceParties,
+} from '../../appeal-case'
 import { getMostPermissiveRequestSharedWithDefenderForNationalId } from '../../defendant/requestSharedWithDefender.logic'
 import {
   canUserAccessCaseFileCategory,

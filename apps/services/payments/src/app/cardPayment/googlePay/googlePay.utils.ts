@@ -15,15 +15,18 @@ import { PaymentTrackingData } from '../../../types'
  * saga being able to settle it. Either the request was sent and no answer the
  * saga can act on came back, so the outcome is unknown (`paymentResult`
  * absent), or the gateway charged the token under a correlation id that is
- * not the saga's (`paymentResult` present). Carries the tracking data a
- * refund goes by. A decline is not this: the gateway then said nothing was
- * charged.
+ * not the saga's (`paymentResult` present), or it approved a charge whose
+ * answer lacks what the payment needs (`approved` without `paymentResult`).
+ * Carries the tracking data a refund goes by. A decline is not this: the
+ * gateway then said nothing was charged.
  */
 export class GooglePayUnsettledChargeError extends Error {
   constructor(
     message: string,
     public readonly paymentTrackingData: PaymentTrackingData,
     public readonly paymentResult?: CardPaymentSuccessResponse,
+    /** Whether the gateway said it charged, so the outcome is known */
+    public readonly approved = paymentResult !== undefined,
   ) {
     super(message)
     this.name = 'GooglePayUnsettledChargeError'

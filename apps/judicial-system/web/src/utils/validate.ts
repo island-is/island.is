@@ -669,6 +669,16 @@ export const isSubpoenaStepValid = (
   return isArraignmentDateValid && Boolean(validateDefendants(defendants))
 }
 
+// Both are optional, so an empty value is valid.
+export const isAdvocateContactValid = (
+  email?: string | null,
+  phoneNumber?: string | null,
+): boolean =>
+  validate([
+    [email, ['email-format']],
+    [phoneNumber, ['phonenumber']],
+  ]).isValid
+
 export const isDefenderStepValid = (workingCase: WorkingCase): boolean => {
   const hasAtLeastOneDefendant = isNonEmptyArray(workingCase.defendants)
   const defendantsAreValid = () =>

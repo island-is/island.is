@@ -37,7 +37,7 @@ import {
 import { nowFactory } from '../../factories'
 import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
 import { hasConfirmableCaseFileCategories } from '../../formatters/confirmation/confirmedPdf'
-import { queueMessagesAfterCommit } from '../../middleware'
+import { queueMessagesAfterCommit, registerAfterCommit } from '../../middleware'
 import { findAppealCaseOfCaseFile } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
@@ -711,8 +711,22 @@ export class FileService {
     const success = await this.deleteFileFromDatabase(file.id, transaction)
 
     if (success && isRequestCase(theCase.type)) {
-      // Fire and forget, no need to wait for the result
-      this.tryDeleteFileFromS3(theCase, file)
+      if (transaction) {
+        // Delete only once the request's work is durable, so a rolled-back
+        // delete cannot leave a live case file whose object S3 has already
+        // removed. Not transaction.afterCommit: Sequelize runs those hooks
+        // even when the COMMIT itself fails. Still fire and forget: the
+        // callback starts the delete and does not wait for it, as the
+        // interceptor awaits its callbacks before the response is sent.
+        // Nothing is left to reject either, tryDeleteFileFromS3 catches and
+        // logs every failure.
+        registerAfterCommit(async () => {
+          this.tryDeleteFileFromS3(theCase, file)
+        })
+      } else {
+        // Fire and forget, no need to wait for the result
+        this.tryDeleteFileFromS3(theCase, file)
+      }
     }
 
     return { success }
