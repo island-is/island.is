@@ -145,12 +145,8 @@ export default function PasskeyScreen() {
                 )
               }
             >
-              <LinkText>
-                <FormattedMessage id="passkeys.furtherInformation" />{' '}
-                <Image
-                  tintColor={theme.tokens.foreground.brand}
-                  source={externalLink}
-                />
+              <LinkText icon={externalLink}>
+                <FormattedMessage id="passkeys.furtherInformation" />
               </LinkText>
             </TouchableOpacity>
           </LinkWrapper>

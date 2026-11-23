@@ -31,6 +31,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   )
 
   useEffect(() => {
+    if (Platform.OS === 'web') {
+      return
+    }
     Appearance.setColorScheme(
       appearanceMode === 'automatic' ? 'unspecified' : appearanceMode,
     )

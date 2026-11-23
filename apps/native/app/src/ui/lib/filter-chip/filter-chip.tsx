@@ -1,6 +1,6 @@
 import React from 'react'
 import { Image } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 import closeIcon from '../../assets/icons/close.png'
 import { useTokenColor } from '../../utils'
 import { Typography } from '../typography/typography'
@@ -30,7 +30,6 @@ export function FilterChip({
   onPress,
   active,
 }: FilterChipProps) {
-  const theme = useTheme()
   const tokenColor = useTokenColor()
   return (
     <Host
@@ -65,7 +64,11 @@ export function FilterChip({
             width: 16,
             height: 16,
             marginTop: 1,
-            tintColor: theme.tokens.foreground.brand,
+            tintColor: tokenColor(
+              active
+                ? (t) => t.interactive.foreground.invert
+                : (t) => t.interactive.foreground.primary,
+            ),
           }}
         />
       )}
