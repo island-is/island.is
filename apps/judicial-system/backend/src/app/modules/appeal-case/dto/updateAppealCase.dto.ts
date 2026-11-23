@@ -14,6 +14,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
   AppealCaseRulingDecision,
+  AppealRulingType,
   MAX_APPEAL_JUDGE_COUNT,
   UserRole,
   VerdictAppealStatus,
@@ -55,6 +56,11 @@ export class UpdateAppealCaseDto {
   @IsEnum(AppealCaseRulingDecision)
   @ApiPropertyOptional({ enum: AppealCaseRulingDecision })
   readonly appealRulingDecision?: AppealCaseRulingDecision
+
+  @IsOptional()
+  @IsEnum(AppealRulingType)
+  @ApiPropertyOptional({ enum: AppealRulingType })
+  readonly appealRulingType?: AppealRulingType
 
   @IsOptional()
   @Type(() => Date)

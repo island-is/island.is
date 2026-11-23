@@ -4,6 +4,7 @@ import {
   CaseType,
   DefendantEventType,
   isCompletedCase,
+  isCourtOfAppealsUser,
   isDefenceUser,
   isIndictmentCase,
   isPrisonAdminUser,
@@ -19,6 +20,16 @@ import {
   DefendantEventLog,
 } from '../../repository'
 import { canDefenceUserViewCivilClaimCaseFile } from './civilClaimFileVisibility'
+
+// The court of appeals' judgment or ruling on a verdict appeal belongs to
+// that court alone: nobody else is shown it, can fetch it, upload it or
+// remove it. It is named in none of the category lists below for that reason.
+export const canUserAccessCaseFileCategory = (
+  user: User | undefined,
+  category?: CaseFileCategory | null,
+): boolean =>
+  category !== CaseFileCategory.VERDICT_APPEAL_RULING ||
+  isCourtOfAppealsUser(user)
 
 // A ruling order uploaded during the course of a case is only visible to
 // parties (everyone except district-court users) once it has been added to a
