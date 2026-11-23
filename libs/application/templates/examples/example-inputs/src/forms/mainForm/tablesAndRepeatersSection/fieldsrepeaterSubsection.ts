@@ -78,6 +78,7 @@ export const fieldsRepeaterSubsection = buildSubSection({
             phone: {
               component: 'phone',
               label: 'Phone',
+              enableCountrySelector: true,
             },
             selectAsyncPrimary: {
               component: 'selectAsync',
