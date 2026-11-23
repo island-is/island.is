@@ -485,4 +485,25 @@ export const educationOverviewMessages = defineMessages({
     defaultMessage: 'Breyta tengiliðaupplýsingum',
     description: 'Title of the own contact information edit screen',
   },
+  registeredTitle: {
+    id: 'sp.education-overview:registered-title',
+    defaultMessage: 'Þú hefur verið skráð/ur sem aðstandandi',
+    description: 'Title of the notice shown when no contact info is recorded',
+  },
+  registeredMessage: {
+    id: 'sp.education-overview:registered-message',
+    defaultMessage:
+      '{name} skráði þig sem aðstandanda barns. Skráðu símanúmer, netfang og tungumál svo skólinn geti haft samband við þig ef svo ber undir.',
+    description: 'Notice shown when no contact info is recorded',
+  },
+  registerButton: {
+    id: 'sp.education-overview:register-button',
+    defaultMessage: 'Skrá upplýsingar',
+    description: 'Button that opens the contact information edit screen',
+  },
+  notRegistered: {
+    id: 'sp.education-overview:not-registered',
+    defaultMessage: 'Ekki skráð',
+    description: 'Shown when a contact value is not recorded',
+  },
 })

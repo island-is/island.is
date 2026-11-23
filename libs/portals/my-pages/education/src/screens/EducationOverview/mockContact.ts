@@ -3,3 +3,5 @@ export const MOCK_CONTACT = {
   email: 'netfang@example.is',
   language: 'Íslenska',
 }
+
+export const MOCK_REGISTERED_BY = 'Nafn Nafnason'

@@ -1,4 +1,11 @@
-import { Box, Button, Divider, Icon, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Divider,
+  Icon,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   InfoLine,
@@ -12,14 +19,18 @@ import { educationOverviewMessages as om } from '../../lib/messages'
 import { useNavigate } from 'react-router-dom'
 import { EducationPaths } from '../../lib/paths'
 import { KeyInfoSection } from '../PrimarySchool/PrimarySchoolOverview/keyInfo/KeyInfoSection'
-import { MOCK_CONTACT } from './mockContact'
+import { MOCK_CONTACT, MOCK_REGISTERED_BY } from './mockContact'
 
 const NO_DATA = false
+const HAS_CONTACT = true
 
 export const EducationOverview = () => {
   useNamespaces('sp.education-overview')
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
+
+  const goToEdit = () => navigate(EducationPaths.EducationOverviewContactEdit)
+  const notRegistered = formatMessage(om.notRegistered)
 
   return (
     <IntroWrapper
@@ -44,30 +55,50 @@ export const EducationOverview = () => {
         <KeyInfoSection
           title={om.contactTitle}
           action={
-            <Button
-              variant="text"
-              icon="pencil"
-              size="small"
-              onClick={() =>
-                navigate(EducationPaths.EducationOverviewContactEdit)
-              }
-            >
-              {formatMessage(sharedMessages.edit)}
-            </Button>
+            HAS_CONTACT && (
+              <Button
+                variant="text"
+                icon="pencil"
+                size="small"
+                onClick={goToEdit}
+              >
+                {formatMessage(sharedMessages.edit)}
+              </Button>
+            )
           }
         >
           <Text paddingBottom={2}>{formatMessage(om.contactDescription)}</Text>
+          {!HAS_CONTACT && (
+            <Box paddingY={2}>
+              <AlertMessage
+                type="info"
+                title={formatMessage(om.registeredTitle)}
+                message={formatMessage(om.registeredMessage, {
+                  name: MOCK_REGISTERED_BY,
+                })}
+                action={
+                  <Button size="small" onClick={goToEdit}>
+                    {formatMessage(om.registerButton)}
+                  </Button>
+                }
+              />
+            </Box>
+          )}
           <InfoLine
             label={m.telNumber}
-            content={MOCK_CONTACT.phone}
+            content={HAS_CONTACT ? MOCK_CONTACT.phone : notRegistered}
             paddingY={3}
           />
           <Divider />
-          <InfoLine label={m.email} content={MOCK_CONTACT.email} paddingY={3} />
+          <InfoLine
+            label={m.email}
+            content={HAS_CONTACT ? MOCK_CONTACT.email : notRegistered}
+            paddingY={3}
+          />
           <Divider />
           <InfoLine
             label={om.communicationLanguage}
-            content={MOCK_CONTACT.language}
+            content={HAS_CONTACT ? MOCK_CONTACT.language : notRegistered}
             paddingY={3}
           />
           <Divider />
