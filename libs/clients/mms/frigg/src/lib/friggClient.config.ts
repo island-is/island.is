@@ -31,6 +31,8 @@ export const FriggClientConfig = defineConfig<z.infer<typeof schema>>({
       MMSScope.studentHealthRead,
       MMSScope.studentInfoModify,
       MMSScope.studentHealthModify,
+      MMSScope.personContactRead,
+      MMSScope.personContactModify,
     ],
   }),
 })
