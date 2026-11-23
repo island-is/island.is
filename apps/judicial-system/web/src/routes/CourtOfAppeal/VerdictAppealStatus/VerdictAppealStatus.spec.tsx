@@ -808,6 +808,16 @@ describe('VerdictAppealStatus', () => {
       expect(screen.getByTestId('continueButton')).toBeEnabled()
     })
 
+    it('turns a second document away while one is listed', async () => {
+      const { container } = renderPage(finishedCase)
+
+      await chooseRulingDocument(container)
+
+      expect(mockHandleUpload).not.toHaveBeenCalled()
+      expect(screen.queryByText('nyr-domur.pdf')).not.toBeInTheDocument()
+      expect(screen.getByText('domur-landsrettar.pdf')).toBeInTheDocument()
+    })
+
     it('keeps a document it has removed away when the court picks another status and comes back', async () => {
       renderPage(finishedCase)
 

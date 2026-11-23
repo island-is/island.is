@@ -498,14 +498,21 @@ const VerdictAppealStatus = () => {
           <Box paddingTop={5}>
             <RegisterConclusion
               rulingFiles={rulingFiles}
-              onUpload={(files) =>
+              onUpload={(files) => {
+                // The appeal takes one ruling document. The upload box still
+                // accepts a drop with a document listed, so that is turned
+                // away here until the listed one is removed.
+                if (rulingFiles.length > 0) {
+                  return
+                }
+
                 handleUpload(
                   addUploadFiles(files, {
                     category: CaseFileCategory.VERDICT_APPEAL_RULING,
                   }),
                   updateUploadFile,
                 )
-              }
+              }}
               onRemove={(file) => handleRemove(file, removeUploadFile)}
               onRetry={(file) => handleRetry(file, updateUploadFile)}
               onOpenFile={(file) => onOpenFile(file)}
