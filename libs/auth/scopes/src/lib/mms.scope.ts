@@ -11,4 +11,6 @@ export enum MMSScope {
   studentHealthRead = '@mms.is/student.health.read',
   studentInfoModify = '@mms.is/student.info.modify',
   studentHealthModify = '@mms.is/student.health.modify',
+  personContactRead = '@mms.is/person.contact.read',
+  personContactModify = '@mms.is/person.contact.modify',
 }
