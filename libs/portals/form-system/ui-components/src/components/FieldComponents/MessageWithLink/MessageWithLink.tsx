@@ -40,7 +40,7 @@ export const MessageWithLink = ({ item }: Props) => {
         <Box overflow="hidden">
           <Text whiteSpace="breakSpaces" textAlign="justify">
             {HtmlParser(
-              sanitizeHtml(item?.description?.[lang] ?? '', {
+              sanitizeHtml(item?.informationText?.[lang] ?? '', {
                 allowedTags: ['em', 'strong'],
                 allowedAttributes: {},
               }),

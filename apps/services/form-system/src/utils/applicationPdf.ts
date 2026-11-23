@@ -389,10 +389,13 @@ const drawField = (
   document: PDFKit.PDFDocument,
   field: {
     name: { is: string }
-    description?: { is?: string; en?: string }
+    informationText?: { is?: string; en?: string }
     isRequired?: boolean
     fieldType: string
-    fieldSettings?: { isAddressRequired?: boolean }
+    fieldSettings?: {
+      isAddressRequired?: boolean
+      subLabel?: { is?: string; en?: string }
+    }
     values?: Array<{ json?: unknown }>
   },
   showLabel: boolean,
@@ -402,11 +405,15 @@ const drawField = (
     drawMessage(
       document,
       textFor(field.name, locale),
-      textFor(field.description, locale),
+      textFor(field.informationText, locale),
     )
     return
   }
 
+  const informationText = textFor(field.informationText, locale)
+  if (field.fieldType !== FieldTypesEnum.APPLICANT && informationText.trim()) {
+    drawMessage(document, '', informationText)
+  }
   const lines = fieldLines(field, locale)
   drawValue(
     document,
@@ -417,6 +424,10 @@ const drawField = (
     lines.length > 0,
     lines.some((line) => line.prefix) ? lines : undefined,
   )
+  if (field.fieldType === FieldTypesEnum.CHECKBOX) {
+    const subLabel = textFor(field.fieldSettings?.subLabel, locale)
+    if (subLabel.trim()) drawMessage(document, '', subLabel)
+  }
 }
 
 const drawScreenHeading = (document: PDFKit.PDFDocument, name: string) => {

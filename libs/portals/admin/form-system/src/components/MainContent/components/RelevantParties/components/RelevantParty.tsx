@@ -18,6 +18,7 @@ import {
 import { useContext, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ControlContext } from '../../../../../context/ControlContext'
+import { FieldTextInput } from '../../FieldContent/components/FieldTextInput'
 
 interface Props {
   applicantType: FormSystemFormApplicant
@@ -246,6 +247,16 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
           />
         </GridColumn>
       </GridRow>
+      <Box marginTop={2} marginBottom={2}>
+        <Stack space={2}>
+          <FieldTextInput
+            field={currentApplicant}
+            property="tooltip"
+            label={formatMessage(m.tooltip)}
+            englishLabel={formatMessage(m.tooltipEnglish)}
+          />
+        </Stack>
+      </Box>
       <GridRow marginBottom={1} marginTop={1}>
         {currentApplicant?.fieldSettings?.isEmailRequired !== undefined &&
           currentApplicant.fieldSettings?.isEmailRequired !== null && (

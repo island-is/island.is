@@ -23,6 +23,7 @@ import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 import { ControlContext } from '../../../../../context/ControlContext'
 import { NavbarSelectStatus } from '../../../../../lib/utils/interfaces'
+import { FieldTextInput } from './FieldTextInput'
 
 export const BaseInput = () => {
   const {
@@ -86,19 +87,6 @@ export const BaseInput = () => {
       .sort((a, b) =>
         a.label.localeCompare(b.label, 'is', { sensitivity: 'base' }),
       ) ?? []
-
-  const renderDescription = () => {
-    if (currentItem.fieldType === FieldTypesEnum.MESSAGE) {
-      return true
-    }
-    if (
-      currentItem.fieldType === FieldTypesEnum.TEXTBOX &&
-      currentItem.fieldSettings?.hasDescription
-    ) {
-      return true
-    }
-    return false
-  }
 
   const listItemIds =
     currentItem.list
@@ -213,85 +201,25 @@ export const BaseInput = () => {
           />
         </Column>
       </Row>
-      {/* Description  */}
-      {renderDescription() && (
-        <>
-          {currentItem.fieldType === FieldTypesEnum.MESSAGE && (
-            <Row>
-              <Column span="10/10">
-                <Text variant="small">
-                  {'Lýsingin getur innihaldið HTML-tögin <strong> fyrir feitletrun og <em> fyrir skáletrun. ' +
-                    'Hvert opnunartag þarf samsvarandi lokunartag, t.d. <strong> og </strong>. ' +
-                    'Dæmi: <strong>Feitletraður texti</strong> og <em>Skáletraður texti</em>.'}
-                </Text>
-              </Column>
-            </Row>
-          )}
-          <Row>
-            <Column span="10/10">
-              <Input
-                label={formatMessage(m.description)}
-                name="description"
-                value={currentItem?.description?.is ?? ''}
-                textarea
-                backgroundColor="blue"
-                readOnly={isReadOnly}
-                onFocus={(e) => setFocus(e.target.value)}
-                onBlur={(e) => e.target.value !== focus && updateActiveItem()}
-                onChange={(e) =>
-                  controlDispatch({
-                    type: 'CHANGE_DESCRIPTION',
-                    payload: {
-                      lang: 'is',
-                      newValue: e.target.value,
-                    },
-                  })
-                }
-              />
-            </Column>
-          </Row>
-          <Row>
-            <Column span="10/10">
-              <Input
-                label={formatMessage(m.descriptionEnglish)}
-                name="description"
-                value={currentItem?.description?.en ?? ''}
-                textarea
-                backgroundColor="blue"
-                readOnly={isReadOnly}
-                onFocus={async (e) => {
-                  if (
-                    !currentItem?.description?.en &&
-                    currentItem?.description?.is !== ''
-                  ) {
-                    const translation = await getTranslation(
-                      currentItem?.description?.is ?? '',
-                    )
-                    controlDispatch({
-                      type: 'CHANGE_DESCRIPTION',
-                      payload: {
-                        lang: 'en',
-                        newValue: translation.translation,
-                      },
-                    })
-                  }
-                  setFocus(e.target.value)
-                }}
-                onBlur={(e) => e.target.value !== focus && updateActiveItem()}
-                onChange={(e) =>
-                  controlDispatch({
-                    type: 'CHANGE_DESCRIPTION',
-                    payload: {
-                      lang: 'en',
-                      newValue: e.target.value,
-                    },
-                  })
-                }
-              />
-            </Column>
-          </Row>
-        </>
+      {currentItem.fieldType === FieldTypesEnum.MESSAGE && (
+        <Text variant="small">
+          {'Textinn getur innihaldið HTML-tögin <strong> fyrir feitletrun og <em> fyrir skáletrun. ' +
+            'Hvert opnunartag þarf samsvarandi lokunartag, t.d. <strong> og </strong>. ' +
+            'Dæmi: <strong>Feitletraður texti</strong> og <em>Skáletraður texti</em>.'}
+        </Text>
       )}
+      {currentItem.fieldType !== FieldTypesEnum.APPLICANT && (
+        <FieldTextInput
+          property="informationText"
+          label={formatMessage(m.informationText)}
+          englishLabel={formatMessage(m.informationTextEnglish)}
+        />
+      )}
+      <FieldTextInput
+        property="tooltip"
+        label={formatMessage(m.tooltip)}
+        englishLabel={formatMessage(m.tooltipEnglish)}
+      />
       {/* Required checkbox */}
       {screen?.isMulti &&
         currentItem.fieldType !== FieldTypesEnum.FILE &&

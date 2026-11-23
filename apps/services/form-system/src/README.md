@@ -85,6 +85,20 @@ header and footer positions are unchanged. Logos are loaded from Contentful as
 PNG images; organizations without an Icelandic logo produce PDFs without one.
 Logo download failures are logged and do not block user or X-Road PDF downloads.
 
+## Field content migration
+
+The field-content migration renames `field.description` to
+`field.information_text`, adds localized `field.tooltip`, and removes
+`field_settings.hasDescription`. Existing text/number descriptions move to
+`tooltip`; checkbox descriptions move to `field_settings.subLabel`; message
+bodies remain in `information_text`. Checkboxes with nonempty sublabels retain
+the large layout. Existing version-1 form exports are converted on import.
+
+Apply migrations before starting the updated service. Field APIs no longer
+expose or accept `description` or `hasDescription`; clients use
+`informationText`, `tooltip`, and `fieldSettings.subLabel`. PDFs include
+information text and checkbox sublabels, but not tooltip help.
+
 ## Publishing and archiving forms
 
 Publishing a form in development deletes its applications' events before deleting

@@ -3,6 +3,28 @@ import { validateSync } from 'class-validator'
 import { FieldSettingsFactory } from './fieldSettings.factory'
 import { FieldSettings } from './fieldSettings.model'
 
+it('preserves localized checkbox sublabels and removes the obsolete visibility flag', () => {
+  const subLabel = { is: 'Undirtexti', en: 'Sublabel' }
+  const settings = Object.assign(new FieldSettings(), {
+    isLarge: true,
+    subLabel,
+    hasDescription: false,
+  })
+
+  const checkbox = FieldSettingsFactory.getClass(
+    FieldTypesEnum.CHECKBOX,
+    settings,
+  )
+  expect(checkbox).toMatchObject({ isLarge: true, subLabel })
+  expect(checkbox).not.toHaveProperty('hasDescription')
+  expect(
+    FieldSettingsFactory.getClass(FieldTypesEnum.TEXTBOX, settings),
+  ).not.toHaveProperty('subLabel')
+  expect(
+    FieldSettingsFactory.getClass(FieldTypesEnum.NUMBERBOX, settings),
+  ).not.toHaveProperty('hasDescription')
+})
+
 it.each([
   { showBiologicalChildren: true, showChildrenInCustody: true },
   { showBiologicalChildren: true, showChildrenInCustody: false },

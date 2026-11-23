@@ -1,10 +1,60 @@
-import { SectionTypes } from '@island.is/form-system/shared'
+import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/shared'
 import PDFDocument from 'pdfkit'
 import { ApplicationDto } from '../app/modules/applications/models/dto/application.dto'
 import { buildApplicationPdf } from './applicationPdf'
+import { FieldDto } from '../app/modules/fields/models/dto/field.dto'
+import { ScreenDto } from '../app/modules/screens/models/dto/screen.dto'
+import { SectionDto } from '../app/modules/sections/models/dto/section.dto'
 
 describe('buildApplicationPdf layout', () => {
   afterEach(() => jest.restoreAllMocks())
+
+  it('includes information and checkbox sublabels, renders message bodies once, and omits tooltips', async () => {
+    const text = jest.spyOn(PDFDocument.prototype, 'text')
+    await buildApplicationPdf({
+      sections: [
+        Object.assign(new SectionDto(), {
+          name: { is: 'Section' },
+          sectionType: SectionTypes.INPUT,
+          screens: [
+            Object.assign(new ScreenDto(), {
+              name: { is: 'Screen' },
+              fields: [
+                Object.assign(new FieldDto(), {
+                  name: { is: 'Input' },
+                  fieldType: FieldTypesEnum.CHECKBOX,
+                  informationText: { is: 'Instructions' },
+                  tooltip: { is: 'Tooltip help' },
+                  fieldSettings: {
+                    isLarge: true,
+                    subLabel: { is: 'Sublabel' },
+                  },
+                  values: [{ json: { checkboxValue: true } }],
+                }),
+                Object.assign(new FieldDto(), {
+                  name: { is: 'Message' },
+                  fieldType: FieldTypesEnum.MESSAGE,
+                  informationText: { is: 'Message body' },
+                }),
+                Object.assign(new FieldDto(), {
+                  name: { is: 'Applicant' },
+                  fieldType: FieldTypesEnum.APPLICANT,
+                  informationText: { is: 'Excluded applicant instructions' },
+                }),
+              ],
+            }),
+          ],
+        }),
+      ],
+    })
+
+    const content = text.mock.calls.map(([value]) => value)
+    expect(content).toContain('Instructions')
+    expect(content).toContain('Sublabel')
+    expect(content.filter((value) => value === 'Message body')).toHaveLength(1)
+    expect(content).not.toContain('Tooltip help')
+    expect(content).not.toContain('Excluded applicant instructions')
+  })
 
   it.each([
     {

@@ -2,6 +2,19 @@
 
 This library was generated with [Nx](https://nx.dev).
 
+## Field content
+
+Fields store localized `informationText` above their inputs and localized
+`tooltip` help text. `MESSAGE` uses `informationText` as its body instead of
+rendering a second information block. Applicant fields do not use
+`informationText`. Large checkboxes store their localized
+sublabel in `fieldSettings.subLabel`. Content is displayed only when the active
+language contains non-whitespace text; no `hasDescription` flag is required.
+
+The editor preserves the `isLarge` checkbox and prevents disabling it while a
+sublabel exists in either language. Information and tooltip editors are always
+available. Preview and live applications use the same content rendering.
+
 ## Family fields
 
 The FAMILY / CHILD dropdown uses `showBiologicalChildren` and
