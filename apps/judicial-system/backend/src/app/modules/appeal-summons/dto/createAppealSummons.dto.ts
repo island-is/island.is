@@ -1,4 +1,4 @@
-import { Transform, Type } from 'class-transformer'
+import { Type } from 'class-transformer'
 import {
   ArrayMinSize,
   IsArray,
@@ -22,7 +22,6 @@ export class AppealSummonsDefendantDto {
 }
 
 export class CreateAppealSummonsDto {
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ type: String })

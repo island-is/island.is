@@ -207,7 +207,7 @@ export const buildAppealAppointmentLetter = (params: {
     clientName: defendant?.name,
     // Prefer the case name entered on the appeal summons; older appeals fall
     // back to the abbreviated "Ákæruvaldið gegn …" string the letter used before.
-    defendantName: resolveAppealCaseName(appealCase.caseName, [
+    caseName: resolveAppealCaseName(appealCase.caseName, [
       getAppealAppointmentDefendantNames(
         (theCase.defendants ?? [])
           .map((d) => d.name)

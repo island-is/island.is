@@ -26,8 +26,8 @@ export interface AppealAppointmentLetter {
   advocateName: string
   /** Their firm, as the lawyer register records it. */
   advocatePractice?: string | null
-  /** The accused, who names the case whichever advocate is appointed. */
-  defendantName: string
+  /** Style-of-cause for the appeal ("Ákæruvaldið gegn …" or a free-form edit). */
+  caseName: string
   /**
    * The party this advocate is appointed to, which the appointing sentence
    * names. Only a defender's letter carries one - the injured party is not
@@ -93,21 +93,23 @@ const COPY_LINE_HEIGHT = 17
 const COPY_BLOCK_GAP = 24
 const COPY_BLOCK_BOTTOM_GAP = 14
 
-/** How a criminal case is named: the prosecution against the accused. */
-export const getAppealAppointmentCaseTitle = (caseName: string) => caseName
-
 /**
  * The same title as the letter heads itself with: three lines when the stored
- * name follows "Ákæruvaldið gegn …", otherwise a single line for free-form edits.
+ * name contains " gegn ", otherwise a single line for free-form edits.
  */
 export const getAppealAppointmentCaseTitleLines = (caseName: string) => {
-  const prefix = 'Ákæruvaldið gegn '
+  const separator = ' gegn '
+  const index = caseName.indexOf(separator)
 
-  if (caseName.startsWith(prefix)) {
-    return ['Ákæruvaldið', 'gegn', caseName.slice(prefix.length)]
+  if (index === -1) {
+    return [caseName]
   }
 
-  return [caseName]
+  return [
+    caseName.slice(0, index),
+    'gegn',
+    caseName.slice(index + separator.length),
+  ]
 }
 
 /** The court of appeals number, or what stands in for it until one is recorded. */
@@ -202,16 +204,14 @@ export const getAppealAppointmentBody = (
     AppealAppointmentLetter,
     | 'courtName'
     | 'courtCaseNumber'
-    | 'defendantName'
+    | 'caseName'
     | 'appealCaseNumber'
     | 'appealSummonsDate'
   >,
 ) =>
   `Landsrétti hefur borist dómur ${letter.courtName} í máli nr. ${
     letter.courtCaseNumber
-  }; ${getAppealAppointmentCaseTitle(
-    letter.defendantName,
-  )} sem áfrýjað var með áfrýjunarstefnu útgefinni ${
+  }; ${letter.caseName} sem áfrýjað var með áfrýjunarstefnu útgefinni ${
     letter.appealSummonsDate
       ? formatDate(letter.appealSummonsDate, 'PPP')
       : NOT_RECORDED
@@ -379,7 +379,7 @@ export const createAppealAppointmentLetter = (
 
   addEmptyLines(doc)
 
-  for (const line of getAppealAppointmentCaseTitleLines(letter.defendantName)) {
+  for (const line of getAppealAppointmentCaseTitleLines(letter.caseName)) {
     addNormalPlusText(doc, line, 'Times-Bold')
   }
 

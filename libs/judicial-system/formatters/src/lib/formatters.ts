@@ -594,22 +594,14 @@ export const getWordByGender = (
  */
 export const formatAppealDefendantNames = (
   names: (string | undefined | null)[],
-): string => {
-  const listed = names.filter(
-    (name): name is string =>
-      name !== undefined && name !== null && name !== '',
+): string =>
+  enumerate(
+    names.filter(
+      (name): name is string =>
+        name !== undefined && name !== null && name !== '',
+    ),
+    'og',
   )
-
-  if (listed.length === 0) {
-    return ''
-  }
-
-  if (listed.length === 1) {
-    return listed[0]
-  }
-
-  return `${listed.slice(0, -1).join(', ')} og ${listed[listed.length - 1]}`
-}
 
 type AppealCaseNameOptions = {
   /**
@@ -634,12 +626,13 @@ export const formatAppealCaseName = (
     : names
   const against = formatAppealDefendantNames(prepared)
 
-  return against ? `Ákæruvaldið gegn ${against}` : 'Ákæruvaldið'
+  return against ? `Ákæruvaldið gegn ${against}` : ''
 }
 
 /**
  * Prefer a stored appeal case name; otherwise build the style-of-cause from
- * the defendant names (optionally declined into þágufall).
+ * the defendant names (optionally declined into þágufall). Returns an empty
+ * string when neither a stored name nor any defendant name is available.
  */
 export const resolveAppealCaseName = (
   caseName: string | undefined | null,

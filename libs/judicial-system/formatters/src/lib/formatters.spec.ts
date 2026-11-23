@@ -519,8 +519,8 @@ describe('formatAppealCaseName', () => {
     )
   })
 
-  test('falls back to Ákæruvaldið alone when no names are given', () => {
-    expect(formatAppealCaseName([])).toBe('Ákæruvaldið')
+  test('returns an empty string when no names are given', () => {
+    expect(formatAppealCaseName([])).toBe('')
   })
 
   test('declines nominative names into þágufall when asked', () => {
@@ -537,10 +537,18 @@ describe('resolveAppealCaseName', () => {
     )
   })
 
+  test('keeps an explicitly stored Ákæruvaldið name', () => {
+    expect(resolveAppealCaseName('Ákæruvaldið', ['Jón'])).toBe('Ákæruvaldið')
+  })
+
   test('builds the style-of-cause when the stored name is missing', () => {
     expect(resolveAppealCaseName(null, ['Jón Jónsson'])).toBe(
       'Ákæruvaldið gegn Jón Jónsson',
     )
+  })
+
+  test('returns an empty string when there is neither a stored name nor defendants', () => {
+    expect(resolveAppealCaseName(null, [])).toBe('')
   })
 
   test('declines fallback names into þágufall when asked', () => {

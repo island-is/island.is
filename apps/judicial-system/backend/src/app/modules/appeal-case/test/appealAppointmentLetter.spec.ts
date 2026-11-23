@@ -79,7 +79,7 @@ describe('buildAppealAppointmentLetter', () => {
       advocateName: 'Þórður Már Jónsson',
       advocatePractice: undefined,
       clientName: 'Gervimaður Jónsson',
-      defendantName: 'Ákæruvaldið gegn Gervimaður Jónsson',
+      caseName: 'Ákæruvaldið gegn Gervimaður Jónsson',
       courtName: 'Héraðsdóms Reykjavíkur',
       courtCaseNumber: 'S-4275/2025',
       appealCaseNumber: '593/2026',
@@ -328,7 +328,7 @@ describe('buildAppealAppointmentLetter', () => {
         defendant: defendant(),
       })
 
-      expect(letter?.defendantName).toBe(expected)
+      expect(letter?.caseName).toBe(expected)
     })
 
     it('prefers a case name stored on the appeal case', () => {
@@ -341,7 +341,7 @@ describe('buildAppealAppointmentLetter', () => {
         defendant: defendant(),
       })
 
-      expect(letter?.defendantName).toBe('Ákæruvaldið gegn Páli Pálssyni')
+      expect(letter?.caseName).toBe('Ákæruvaldið gegn Páli Pálssyni')
     })
   })
 

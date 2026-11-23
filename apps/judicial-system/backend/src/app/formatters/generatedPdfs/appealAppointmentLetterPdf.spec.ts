@@ -3,7 +3,6 @@ import {
   createAppealAppointmentLetter,
   getAppealAppointmentAddresseeLines,
   getAppealAppointmentBody,
-  getAppealAppointmentCaseTitle,
   getAppealAppointmentCaseTitleLines,
   getAppealAppointmentSentence,
   getAppealAppointmentSubject,
@@ -92,6 +91,14 @@ describe('getAppealAppointmentCaseTitleLines', () => {
       'Sérstakt heiti',
     ])
   })
+
+  it('splits on gegn even when the left side is not Ákæruvaldið', () => {
+    expect(getAppealAppointmentCaseTitleLines('X gegn Y')).toEqual([
+      'X',
+      'gegn',
+      'Y',
+    ])
+  })
 })
 
 describe('getAppealAppointmentAddresseeLines', () => {
@@ -112,19 +119,11 @@ describe('getAppealAppointmentAddresseeLines', () => {
   })
 })
 
-describe('getAppealAppointmentCaseTitle', () => {
-  it('uses the stored case name as-is', () => {
-    expect(
-      getAppealAppointmentCaseTitle('Ákæruvaldið gegn Gervimanni Jónssyni'),
-    ).toBe('Ákæruvaldið gegn Gervimanni Jónssyni')
-  })
-})
-
 describe('getAppealAppointmentBody', () => {
   const letter = {
     courtName: 'Héraðsdóms Reykjavíkur',
     courtCaseNumber: 'S-4275/2025',
-    defendantName: 'Ákæruvaldið gegn Gervimanni Jónssyni',
+    caseName: 'Ákæruvaldið gegn Gervimanni Jónssyni',
     appealCaseNumber: '593/2026',
     appealSummonsDate: '2026-06-22T00:00:00.000Z',
   }
@@ -164,7 +163,7 @@ describe('createAppealAppointmentLetter', () => {
   const letter = {
     kind: AppealAppointmentKind.DEFENDER,
     advocateName: 'Þórður Már Jónsson',
-    defendantName: 'Ákæruvaldið gegn Gervimanni Jónssyni',
+    caseName: 'Ákæruvaldið gegn Gervimanni Jónssyni',
     courtName: 'Héraðsdóms Reykjavíkur',
     courtCaseNumber: 'S-4275/2025',
     appealCaseNumber: '593/2026',
