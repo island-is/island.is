@@ -31,10 +31,11 @@ module.exports = {
       await queryInterface.sequelize.query(
         `UPDATE "field"
          SET "field_settings" = COALESCE("field_settings", '{}'::jsonb)
-               || jsonb_build_object('subLabel', "information_text"::jsonb)
-               || CASE WHEN btrim(COALESCE("information_text"->>'is', '')) <> ''
-                         OR btrim(COALESCE("information_text"->>'en', '')) <> ''
-                  THEN '{"isLarge":true}'::jsonb ELSE '{}'::jsonb END,
+               || jsonb_build_object('subLabel',
+                    CASE WHEN "field_settings"->'isLarge' = 'false'::jsonb
+                      THEN '{"is":"","en":""}'::jsonb
+                      ELSE "information_text"::jsonb
+                    END),
              "information_text" = '{"is":"","en":""}'::json
          WHERE "field_type" = 'CHECKBOX'`,
         { transaction },

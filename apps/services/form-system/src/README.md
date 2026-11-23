@@ -91,8 +91,9 @@ The field-content migration renames `field.description` to
 `field.information_text`, adds localized `field.tooltip`, and removes
 `field_settings.hasDescription`. Existing text/number descriptions move to
 `tooltip`; checkbox descriptions move to `field_settings.subLabel`; message
-bodies remain in `information_text`. Checkboxes with nonempty sublabels retain
-the large layout. Existing version-1 form exports are converted on import.
+bodies remain in `information_text`. The migration preserves checkbox `isLarge`
+values and clears both sublabel languages when `isLarge` is false. Existing
+version-1 form exports are converted on import.
 
 Apply migrations before starting the updated service. Field APIs no longer
 expose or accept `description` or `hasDescription`; clients use

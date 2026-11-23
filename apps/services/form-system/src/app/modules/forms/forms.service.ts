@@ -545,7 +545,7 @@ export class FormsService {
 
     return JSON.stringify({
       format: 'island.is/form-system',
-      version: 1,
+      version: 2,
       form: form.toJSON(),
     })
   }
@@ -564,7 +564,9 @@ export class FormsService {
     try {
       parsed = formExportSchema.parse(JSON.parse(input.formJson))
     } catch {
-      throw new BadRequestException('Invalid or unsupported form export')
+      throw new BadRequestException(
+        'Invalid or unsupported form export. Generate a new export file and try again.',
+      )
     }
 
     const organization = await this.organizationModel.findOne({

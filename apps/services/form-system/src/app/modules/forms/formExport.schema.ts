@@ -8,47 +8,22 @@ const node = z
   .object({ id: z.string().uuid(), identifier: z.string() })
   .passthrough()
 const listItem = node.extend({ displayOrder: z.number().int() })
-const field = node
-  .extend({
-    name: language,
-    displayOrder: z.number().int(),
-    fieldType: z
-      .string()
-      .refine((value) => Object.values(FieldTypesEnum).includes(value)),
-    informationText: language.nullish(),
-    tooltip: language.nullish(),
-    description: language.nullish(),
-    fieldSettings: z
-      .object({
-        subLabel: language.nullish(),
-        hasDescription: z.boolean().nullish(),
-      })
-      .passthrough()
-      .nullish(),
-    list: z.array(listItem).nullish(),
-  })
-  .transform(({ description, fieldSettings, ...field }) => {
-    const { hasDescription: _hasDescription, ...settings } = fieldSettings ?? {}
-    if (description) {
-      if (
-        field.fieldType === FieldTypesEnum.TEXTBOX ||
-        field.fieldType === FieldTypesEnum.NUMBERBOX
-      ) {
-        field.tooltip ??= description
-      } else if (field.fieldType === FieldTypesEnum.CHECKBOX) {
-        settings.subLabel ??= description
-      } else {
-        field.informationText ??= description
-      }
-    }
-    if (
-      field.fieldType === FieldTypesEnum.CHECKBOX &&
-      (['is', 'en'] as const).some((lang) => settings.subLabel?.[lang]?.trim())
-    ) {
-      settings.isLarge = true
-    }
-    return { ...field, fieldSettings: settings }
-  })
+const field = node.extend({
+  name: language,
+  displayOrder: z.number().int(),
+  fieldType: z
+    .string()
+    .refine((value) => Object.values(FieldTypesEnum).includes(value)),
+  informationText: language.nullish(),
+  tooltip: language.nullish(),
+  fieldSettings: z
+    .object({
+      subLabel: language.nullish(),
+    })
+    .passthrough()
+    .nullish(),
+  list: z.array(listItem).nullish(),
+})
 const screen = node.extend({
   name: language,
   displayOrder: z.number().int(),
@@ -65,7 +40,7 @@ const section = node.extend({
 
 export const formExportSchema = z.object({
   format: z.literal('island.is/form-system'),
-  version: z.literal(1),
+  version: z.literal(2),
   form: node.extend({
     name: language,
     slug: z.string().nullish(),
