@@ -1,4 +1,7 @@
-import { Box, Text } from '@island.is/island-ui/core'
+import React from 'react'
+
+import { Box } from '../Box/Box'
+import { Text } from '../Text/Text'
 
 export type StatisticCardProps = {
   title: string
