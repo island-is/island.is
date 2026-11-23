@@ -152,8 +152,19 @@ const RegisterConclusion: FC<Props> = ({ onValidityChange }) => {
       key: `${caseId}:${appealCaseId}:rulingChoice`,
       confirmed,
       value,
+      // The whole choice, not only what changed: a save queued behind one
+      // that fails then still stores everything the form shows.
       persist: async () =>
-        Boolean(await updateAppealCase(caseId, appealCaseId, update)),
+        Boolean(
+          await updateAppealCase(caseId, appealCaseId, {
+            ...(value.appealRulingDecision
+              ? { appealRulingDecision: value.appealRulingDecision }
+              : {}),
+            ...(value.appealRulingType
+              ? { appealRulingType: value.appealRulingType }
+              : {}),
+          }),
+        ),
       rollback: (choice) => revert(caseId, appealCaseId, choice),
     })
   }
