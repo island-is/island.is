@@ -4,6 +4,7 @@
     "outDir": "../../../../dist/out-tsc",
     "module": "commonjs",
     "moduleResolution": "node10",
+    "noPropertyAccessFromIndexSignature": false,
     "types": ["jest", "node"]
   },
   "include": [

@@ -93,16 +93,17 @@ describe('EstatesDocumentsController — getEstateDocumentPdf', () => {
     expect(res.headers['x-content-type-options']).toBe('nosniff')
   })
 
-  it('maps a null document to a 404 problem+json response', async () => {
+  it('maps a null document to a 404 problem+json response, without auditing', async () => {
     fakeEstatesClient.getDocument.mockResolvedValue(null)
 
     const res = await post()
 
     expect(res.status).toBe(404)
     expect(res.headers['content-type']).toContain('application/problem+json')
+    expect(fakeAudit.audit).not.toHaveBeenCalled()
   })
 
-  it('maps an empty documentContentBase64 to a 404 problem+json response', async () => {
+  it('maps an empty documentContentBase64 to a 404 problem+json response, without auditing', async () => {
     fakeEstatesClient.getDocument.mockResolvedValue({
       fileName: 'erfdaskra.pdf',
       documentContentBase64: '',
@@ -112,6 +113,7 @@ describe('EstatesDocumentsController — getEstateDocumentPdf', () => {
 
     expect(res.status).toBe(404)
     expect(res.headers['content-type']).toContain('application/problem+json')
+    expect(fakeAudit.audit).not.toHaveBeenCalled()
   })
 
   it('lets a client error propagate untouched to ProblemModule, resulting in a 500 problem+json response', async () => {
