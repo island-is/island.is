@@ -829,6 +829,21 @@ export const slices = gql`
     maxNumberOfCards
     sorting
     alwaysDisplayResultsAsCards
+    showSearchInput
+    searchInputPlaceholder
+    alphabeticallyOrderFilterTags
+    showPagination
+    fundIds
+    filterTags {
+      id
+      title
+      slug
+      genericTagGroup {
+        id
+        title
+        slug
+      }
+    }
     resolvedGrantsList {
       total
       items {
@@ -845,13 +860,6 @@ export const slices = gql`
         status
         statusText
         categoryTags {
-          id
-          title
-          genericTagGroup {
-            title
-          }
-        }
-        typeTag {
           id
           title
           genericTagGroup {

@@ -69,6 +69,7 @@ const createApplicationWithDob = (dob: string): Application => ({
           {
             expectedDateOfBirth: dob,
             parentalRelation: ParentalRelations.primary,
+            remainingDays: 180,
           },
         ],
       },
@@ -735,6 +736,193 @@ describe('when constructing a new period', () => {
     it('accepts a period that overlaps none of the earlier periods', () => {
       expect(validateLatest('2021-05-01', '2021-05-31')).toEqual(undefined)
     })
+  })
+
+  describe('a period shorter than the minimum', () => {
+    const day = (offset: number) => formatDate(addDays(FUTURE_DOB_DATE, offset))
+    const first = {
+      firstPeriodStart: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
+      startDate: day(0),
+      useLength: NO,
+      endDate: day(30),
+      ratio: '100',
+    }
+    const later = {
+      startDate: day(60),
+      useLength: NO,
+      endDate: day(90),
+      ratio: '100',
+    }
+    const validateLatest = (
+      periods: Record<string, unknown>[],
+      startDate: string,
+      endDate: string,
+    ) =>
+      answerValidators[VALIDATE_LATEST_PERIOD](
+        [...periods, { startDate, useLength: NO, endDate, ratio: '100' }],
+        futureApplication,
+      )
+
+    it('names the minimum length in the error', () => {
+      expect(validateLatest([first], day(40), day(45))).toStrictEqual({
+        message: errorMessages.periodsEndDateMinimumPeriod,
+        path: 'periods[1].endDate',
+        values: { minPeriodDays: 14 },
+      })
+    })
+
+    // Rights count every month as 30 days, the minimum counts calendar days
+    it('accepts 14 calendar days ending on the 31st', () => {
+      let month = addMonths(FUTURE_DOB_DATE, 3)
+      while (
+        new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate() !== 31
+      ) {
+        month = addMonths(month, 1)
+      }
+      const end = new Date(month.getFullYear(), month.getMonth(), 31)
+
+      expect(
+        validateLatest([first], formatDate(addDays(end, -13)), formatDate(end)),
+      ).toEqual(undefined)
+    })
+
+    it('accepts it straight after the period before it', () => {
+      expect(validateLatest([first], day(31), day(36))).toEqual(undefined)
+    })
+
+    // The period before it by date need not be the last one in the list
+    it('accepts it straight after a period that is not the last one entered', () => {
+      expect(validateLatest([first, later], day(31), day(36))).toEqual(
+        undefined,
+      )
+    })
+
+    // E.g. an earlier period reached again with the browser's back button
+    it('reports on an earlier period whose dates were changed', () => {
+      const saved = [first, later]
+      const withSaved = {
+        ...futureApplication,
+        answers: { ...futureApplication.answers, periods: saved },
+      }
+
+      expect(
+        answerValidators[VALIDATE_LATEST_PERIOD](
+          [{ ...first, endDate: day(5) }, later],
+          withSaved,
+        ),
+      ).toStrictEqual({
+        message: errorMessages.periodsEndDateMinimumPeriod,
+        path: 'periods[0].endDate',
+        values: { minPeriodDays: 14 },
+      })
+      expect(
+        answerValidators[VALIDATE_LATEST_PERIOD](saved, withSaved),
+      ).toEqual(undefined)
+    })
+  })
+
+  describe('a period overlapping another', () => {
+    const day = (offset: number) => formatDate(addDays(FUTURE_DOB_DATE, offset))
+    const first = {
+      firstPeriodStart: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
+      startDate: day(0),
+      useLength: NO,
+      endDate: day(30),
+      ratio: '100',
+    }
+    const later = {
+      startDate: day(60),
+      useLength: NO,
+      endDate: day(90),
+      ratio: '100',
+    }
+
+    it('rejects a new period that spans another one', () => {
+      expect(
+        answerValidators[VALIDATE_LATEST_PERIOD](
+          [
+            first,
+            later,
+            {
+              startDate: day(40),
+              useLength: NO,
+              endDate: day(100),
+              ratio: '100',
+            },
+          ],
+          futureApplication,
+        ),
+      ).toStrictEqual({
+        message: errorMessages.periodsSpansOtherPeriod,
+        path: 'periods[2].endDate',
+        values: {},
+      })
+    })
+
+    it('accepts a new period right after another one', () => {
+      expect(
+        answerValidators[VALIDATE_LATEST_PERIOD](
+          [
+            first,
+            later,
+            {
+              startDate: day(91),
+              useLength: NO,
+              endDate: day(110),
+              ratio: '100',
+            },
+          ],
+          futureApplication,
+        ),
+      ).toEqual(undefined)
+    })
+
+    // A `rawIndex` saved before a deletion must not hide the period now there
+    it('rejects an edit overlapping the period at its stale saved index', () => {
+      const moved = {
+        startDate: day(120),
+        useLength: NO,
+        endDate: day(140),
+        ratio: '100',
+        rawIndex: 2,
+      }
+      const saved = [first, moved, later]
+      const withSaved = {
+        ...futureApplication,
+        answers: { ...futureApplication.answers, periods: saved },
+      }
+
+      expect(
+        answerValidators[VALIDATE_LATEST_PERIOD](
+          [first, { ...moved, startDate: day(70), endDate: day(100) }, later],
+          withSaved,
+        ),
+      ).toStrictEqual({
+        message: errorMessages.periodsStartDateOverlaps,
+        path: 'periods[1].startDate',
+        values: {},
+      })
+    })
+  })
+
+  it('rejects future periods that use more days than the rights', () => {
+    const start = FUTURE_DOB_DATE
+    const result = answerValidators[VALIDATE_LATEST_PERIOD](
+      [
+        {
+          firstPeriodStart: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
+          startDate: formatDate(start),
+          useLength: NO,
+          endDate: formatDate(addMonths(start, 7)),
+          ratio: '100',
+        },
+      ],
+      futureApplication,
+    )
+
+    expect(result).toEqual(
+      expect.objectContaining({ message: errorMessages.periodsExceedRights }),
+    )
   })
 })
 

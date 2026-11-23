@@ -15,6 +15,7 @@ type UserMenuProps = {
   showLanguageSwitcher?: boolean
   showActorButton?: boolean
   onButtonClick?: () => void
+  switchUserTargetLink?: string
 }
 
 export const UserMenu = ({
@@ -27,6 +28,7 @@ export const UserMenu = ({
   showActorButton = true,
   iconOnlyMobile = false,
   onButtonClick,
+  switchUserTargetLink,
 }: UserMenuProps) => {
   const [dropdownState, setDropdownState] = useState<'closed' | 'open'>(
     'closed',
@@ -71,9 +73,9 @@ export const UserMenu = ({
           setDropdownState('closed')
           signOut()
         }}
-        onSwitchUser={(nationalId: string) => {
+        onSwitchUser={(nationalId?: string) => {
           setDropdownState('closed')
-          switchUser(nationalId)
+          switchUser(nationalId, switchUserTargetLink)
         }}
         fullscreen={fullscreen}
         showDropdownLanguage={showDropdownLanguage}

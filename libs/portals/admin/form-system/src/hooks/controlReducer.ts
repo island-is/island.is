@@ -691,6 +691,7 @@ export const controlReducer = (
         data: {
           ...currentData,
           fieldType: newValue,
+          isPartOfMultiset: false,
           fieldSettings: removeTypename(fieldSettings),
           list: isListType ? currentData.list : [],
         },
@@ -700,7 +701,7 @@ export const controlReducer = (
       )
 
       if (currentData.fieldType === FieldTypesEnum.PAYMENT_QUANTITY) {
-        newFields = form.fields?.map((field) => {
+        newFields = newFields?.map((field) => {
           if (
             field?.fieldType === FieldTypesEnum.PAYMENT &&
             field.fieldSettings?.paymentQuantityId === currentData.id

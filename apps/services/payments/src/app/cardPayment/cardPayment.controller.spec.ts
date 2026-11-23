@@ -991,6 +991,94 @@ describe('CardPaymentController', () => {
 
       fetchSpy.mockRestore()
     })
+
+    it('refunds once when the gateway approves the refund without its transaction references', async () => {
+      const confirmationId = uuid()
+      await cardPaymentDetailsModel.create({
+        id: confirmationId,
+        paymentFlowId,
+        maskedCardNumber: '****1234',
+        acquirerReferenceNumber: 'arn-123',
+        authorizationCode: 'auth-123',
+        cardScheme: 'Visa',
+        totalPrice: 1000,
+        cardUsage: 'credit',
+        merchantReferenceData: 'merchant-ref',
+      })
+
+      await paymentFulfillmentModel.create({
+        paymentFlowId,
+        paymentMethod: 'card',
+        confirmationRefId: confirmationId,
+      })
+
+      // What the gateway answered approved refunds with on 19 Nov 2026: no
+      // acquirerReferenceNumber or authorizationIdentifier
+      const fetchSpy = jest
+        .spyOn(global, 'fetch')
+        .mockImplementation(async (url) => {
+          if (
+            typeof url === 'string' &&
+            url.includes('/Payment/RefundWithCorrelationId')
+          ) {
+            return {
+              json: async () => ({
+                transactionID: 'tx-refund',
+                transactionLifecycleId: 'tlc-refund',
+                isSuccess: true,
+                cardInformation: {
+                  cardScheme: 'Visa',
+                  cardUsage: 'credit',
+                },
+                isCardPresent: false,
+                refundOperation: 'Refund',
+                authenticationMethod: 'NONE',
+                authorizedAmount: 100000,
+                responseCode: '00-I',
+                responseDescription: 'Approved or completed successfully',
+                responseTime: '12:00:00',
+                correlationID: uuid(),
+              }),
+              status: 200,
+              ok: true,
+            } as Response
+          }
+          return {
+            json: async () => ({ error: 'Missing handler' }),
+            status: 500,
+            ok: false,
+          } as Response
+        })
+
+      const refundInput: RefundPaymentInput = {
+        paymentFlowId,
+        reasonForRefund: 'fulfillment_failure',
+      }
+
+      const response = await server
+        .post('/v1/payments/refund')
+        .send(refundInput)
+
+      expect(response.status).toBe(201)
+      expect(response.body.success).toBe(true)
+      expect(response.body.refundMethod).toBe('payment_gateway')
+
+      // A retry would refund again, which the gateway refuses
+      const refundCalls = fetchSpy.mock.calls.filter(
+        ([url]) =>
+          typeof url === 'string' &&
+          url.includes('/Payment/RefundWithCorrelationId'),
+      )
+      expect(refundCalls).toHaveLength(1)
+
+      // The payment stays refunded, so the worker does not register it with FJS
+      const confirmationAfter = await cardPaymentDetailsModel.findByPk(
+        confirmationId,
+      )
+      expect(confirmationAfter?.isDeleted).toBe(true)
+
+      fetchSpy.mockRestore()
+    })
   })
 
   it('should throw an error if success event to upstream system fails', async () => {
@@ -1357,6 +1445,114 @@ describe('CardPaymentController', () => {
         expect(response.status).toBe(201)
         expect(response.body).toHaveProperty('correlationId')
         expect(response.body.isSuccess).toBe(true)
+
+        getPaymentFlowDetailsSpy.mockRestore()
+        getPaymentFlowChargeDetailsSpy.mockRestore()
+        getPaymentFlowStatusSpy.mockRestore()
+        fjsSpy.mockRestore()
+        fetchSpy.mockRestore()
+      })
+
+      it('charges when the gateway leaves out the masked card number, with the decrypted card number in its place', async () => {
+        // What the gateway answered Apple Pay charges with on 19 Nov 2026
+        const approvedCharge = {
+          acquirerReferenceNumber: 'string',
+          transactionID: 'string',
+          authorizationCode: 'string',
+          transactionLifecycleId: 'string',
+          isSuccess: true,
+          cardInformation: {
+            cardScheme: 'Visa',
+            issuingCountry: 'IS',
+            cardUsage: 'string',
+            cardCategory: 'string',
+            outOfScaScope: false,
+          },
+          authorizationIdentifier: uuid(),
+          responseCode: '00-I',
+          responseDescription: 'Approved or completed successfully',
+          responseTime: '12:00:00',
+          correlationID: uuid(),
+        }
+
+        const fetchSpy = jest
+          .spyOn(global, 'fetch')
+          .mockImplementation(async (url) => {
+            if (typeof url === 'string') {
+              if (url.includes(ON_UPDATE_URL)) {
+                return {
+                  json: async () => ({ isSuccess: true }),
+                  status: 200,
+                  ok: true,
+                } as Response
+              } else if (url.includes('/Payment/WalletPayment')) {
+                return {
+                  json: async () => approvedCharge,
+                  status: 200,
+                  ok: true,
+                } as Response
+              }
+            }
+
+            return {
+              json: async () => ({ error: 'Missing handler' }),
+              status: 500,
+              ok: false,
+            } as Response
+          })
+
+        const getPaymentFlowDetailsSpy = jest
+          .spyOn(PaymentFlowService.prototype, 'getPaymentFlowDetails')
+          .mockResolvedValue({
+            id: paymentFlowId,
+            organisationId: '5534567890',
+            payerNationalId: '1234567890',
+            charges: [],
+            availablePaymentMethods: [PaymentMethod.CARD],
+            onUpdateUrl: ON_UPDATE_URL,
+            created: new Date(),
+            modified: new Date(),
+            isDeleted: false,
+          })
+
+        const getPaymentFlowChargeDetailsSpy = jest
+          .spyOn(PaymentFlowService.prototype, 'getPaymentFlowChargeDetails')
+          .mockResolvedValue({
+            catalogItems: charges.map((charge) => ({
+              ...charge,
+              priceAmount: charge.price,
+              performingOrgID: 'TODO',
+              chargeItemName: 'TODO',
+              paymentOptions: ['CARD', 'CLAIM'],
+            })),
+            totalPrice: 1000,
+            firstProductTitle: 'TODO',
+          })
+
+        const getPaymentFlowStatusSpy = jest
+          .spyOn(PaymentFlowService.prototype, 'getPaymentFlowStatus')
+          .mockResolvedValue({
+            paymentStatus: PaymentStatus.UNPAID,
+            updatedAt: new Date(),
+          })
+
+        const fjsSpy = jest
+          .spyOn(ChargeFjsV2ClientService.prototype, 'createCharge')
+          .mockReturnValue(
+            Promise.resolve({
+              user4: 'string',
+              receptionID: 'string',
+            } as ChargeResponse),
+          )
+
+        const response = await server
+          .post('/v1/payments/card/apple-pay/charge')
+          .send(getApplePayChargeInput())
+
+        expect(response.status).toBe(201)
+        expect(response.body.isSuccess).toBe(true)
+        // The last four digits of the card number decryptSpy answers with
+        expect(response.body.maskedCardNumber).toBe('************4693')
 
         getPaymentFlowDetailsSpy.mockRestore()
         getPaymentFlowChargeDetailsSpy.mockRestore()

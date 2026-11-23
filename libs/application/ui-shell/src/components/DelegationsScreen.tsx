@@ -21,11 +21,18 @@ import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import * as kennitala from 'kennitala'
 import { format as formatKennitala } from 'kennitala'
 import intersection from 'lodash/intersection'
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Delegation, DelegationsScreenDataType, ScreenType } from '../types'
 import * as styles from './DelegationsScreen.css'
 import { LoadingShell } from './LoadingShell'
+import { useHeaderInfo } from '../context/HeaderInfoProvider'
 
 enum DelegationType {
   LegalGuardian = 'LegalGuardian',
@@ -54,6 +61,14 @@ export const DelegationsScreen = ({
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+  const { setHideDelegationBanner } = useHeaderInfo()
+  const isLoading = screenData.screenType === ScreenType.LOADING
+
+  useLayoutEffect(() => {
+    if (isLoading) return
+    setHideDelegationBanner(true)
+    return () => setHideDelegationBanner(false)
+  }, [isLoading, setHideDelegationBanner])
 
   const paramString = searchParams.size
     ? '&' +

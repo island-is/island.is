@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
@@ -23,7 +23,11 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import RadioGroup from '@island.is/judicial-system-web/src/components/RadioGroup/RadioGroup'
-import type { AppealCourtSession } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  type AppealCourtSession,
+  VerdictAppealStatus as Status,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import useAppealCase from '@island.is/judicial-system-web/src/utils/hooks/useAppealCase'
 import useAppealCourtSession from '@island.is/judicial-system-web/src/utils/hooks/useAppealCourtSession'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
@@ -32,11 +36,11 @@ import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/util
 import ScheduleCourtSession from './ScheduleCourtSession'
 import type { AppealCourtSessionDraft } from './VerdictAppealStatus.logic'
 import {
+  getInitialVerdictAppealStatus,
   getVerdictAppealStatusHeaderLines,
   isAppealCourtSessionComplete,
   isAppealCourtSessionEmpty,
   toAppealCourtSessionDraft,
-  VerdictAppealStatus as Status,
   verdictAppealStatuses,
   verdictAppealStatusLabels,
 } from './VerdictAppealStatus.logic'
@@ -49,9 +53,14 @@ import {
  * appeal, after the court confirms, and the booked ones are listed under the
  * form. Each has a menu to change it - the form then holds that session and
  * the footer saves the changes instead of continuing - or to cancel it, after
- * the court confirms. The status itself is not saved - there is no column
- * for it - so it is held in page state, and read back from the sessions: an
- * appeal with one is on "Boða til þinghalds" when the page opens.
+ * the court confirms.
+ *
+ * The status is saved on the appeal the way the district court's decision is
+ * saved on the case: the choice is held in page state and written when the
+ * court moves on, by the continue button or the stepper, together with what
+ * the status asks for - a session being called is booked first. The page
+ * opens on the saved status; an appeal from before the status was kept has
+ * none, and is on "Boða til þinghalds" when it has a session.
  *
  * Not gated behind the feature flag, for the reason the defender step gives:
  * the stepper section this page belongs to only renders for a verdict appeal,
@@ -75,6 +84,7 @@ const VerdictAppealStatus = () => {
     deleteAppealCourtSession,
     isDeletingAppealCourtSession,
   } = useAppealCourtSession()
+  const { updateAppealCase, isUpdatingAppealCase } = useAppealCase()
 
   // Earliest session first, like a calendar, the way the parties' agenda card
   // reads too, and sorted here so a session the court books or moves lands by
@@ -90,12 +100,17 @@ const VerdictAppealStatus = () => {
   const [editingSessionId, setEditingSessionId] = useState<string>()
   const [isConfirmingChanges, setIsConfirmingChanges] = useState(false)
   const [sessionToDelete, setSessionToDelete] = useState<AppealCourtSession>()
+  // Held from the moment the court moves on until the next page has opened,
+  // so the status cannot be changed behind a save that is already on its way.
+  const [isLeaving, setIsLeaving] = useState(false)
+  // The same, for the stepper, which nothing disables: a ref, so a second
+  // click that lands before the next render is turned away too.
+  const isLeavingRef = useRef(false)
 
   // Derived rather than set in an effect: the case arrives after the first
   // render, and the choice the court makes on the page always wins.
   const status =
-    chosenStatus ??
-    (bookedSessions.length > 0 ? Status.COURT_SESSION_SCHEDULED : undefined)
+    chosenStatus ?? getInitialVerdictAppealStatus(verdictAppealCase)
   const isSchedulingSession = status === Status.COURT_SESSION_SCHEDULED
   const isEditingSession = editingSessionId !== undefined
   const hasSessionToBook =
@@ -128,30 +143,100 @@ const VerdictAppealStatus = () => {
       hasSessionToBook ||
       (bookedSessions.length > 0 && isAppealCourtSessionEmpty(courtSession)))
 
-  const continueToSummary = () =>
-    navigateTo(COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE)
+  // Says whether the status on the page is the one on the appeal, saving it
+  // when it is not. Nothing is written when the court changed nothing.
+  const saveStatus = async (): Promise<boolean> => {
+    if (!verdictAppealCase || !status) {
+      return false
+    }
 
-  const handleContinue = () => {
+    if (status === verdictAppealCase.verdictAppealStatus) {
+      return true
+    }
+
+    const updated = await updateAppealCase(
+      workingCase.id,
+      verdictAppealCase.id,
+      { verdictAppealStatus: status },
+    )
+
+    if (!updated) {
+      return false
+    }
+
+    // Written into the working case so the page opens on it when the court
+    // comes back, without a refetch.
+    setWorkingCase((previous) =>
+      previous.verdictAppealCase
+        ? {
+            ...previous,
+            verdictAppealCase: {
+              ...previous.verdictAppealCase,
+              verdictAppealStatus: status,
+            },
+          }
+        : previous,
+    )
+
+    return true
+  }
+
+  // Leaves for another step, saving the status first unless told not to, and
+  // stays on the page when it could not be saved. One leave at a time: a
+  // second one asked for while the first is on its way is ignored, so the
+  // court ends up where the first one was headed and nothing is saved twice.
+  const leaveFor = async (destination: string, saveFirst = true) => {
+    if (isLeavingRef.current) {
+      return
+    }
+
+    isLeavingRef.current = true
+    setIsLeaving(true)
+
+    try {
+      if (saveFirst) {
+        const saved = await saveStatus()
+
+        if (!saved) {
+          return
+        }
+      }
+
+      await navigateTo(destination)
+    } finally {
+      isLeavingRef.current = false
+      setIsLeaving(false)
+    }
+  }
+
+  const continueToSummary = () =>
+    leaveFor(COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE)
+
+  const handleContinue = async () => {
     if (hasSessionToBook) {
       setIsConfirmingSession(true)
 
       return
     }
 
-    continueToSummary()
+    await continueToSummary()
   }
 
   // The stepper's link to the summary is the continue button by another
   // name: a session the court has filled in is confirmed and booked first,
-  // whichever of the two takes them there.
+  // whichever of the two takes them there. Any other step saves a status the
+  // court has settled on its way out, and leaves one it has not - a session
+  // half filled in, or filled in and not yet confirmed - unsaved.
   const handleNavigationTo = async (destination: string) => {
     if (destination === COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE) {
-      handleContinue()
+      await handleContinue()
 
       return
     }
 
-    await navigateTo(destination)
+    const hasSettledStatus = stepIsValid && !hasSessionToBook
+
+    await leaveFor(destination, hasSettledStatus)
   }
 
   const bookSession = async () => {
@@ -194,7 +279,9 @@ const VerdictAppealStatus = () => {
     )
     setCourtSession({})
     setIsConfirmingSession(false)
-    continueToSummary()
+    // The status is saved after the session it stands on, so the appeal is
+    // never on the calendar without one.
+    await continueToSummary()
   }
 
   const startEditing = (session: AppealCourtSession) => {
@@ -288,8 +375,9 @@ const VerdictAppealStatus = () => {
           }
         : previous,
     )
-    // The status is read from the sessions until the court picks one, so
-    // cancelling the last one would otherwise fold the form away under them.
+    // An appeal with no saved status reads it from the sessions until the
+    // court picks one, so cancelling the last one would otherwise fold the
+    // form away under them.
     setChosenStatus((chosen) => chosen ?? Status.COURT_SESSION_SCHEDULED)
     setSessionToDelete(undefined)
 
@@ -336,6 +424,7 @@ const VerdictAppealStatus = () => {
                     label={verdictAppealStatusLabels[value]}
                     checked={status === value}
                     onChange={() => chooseStatus(value)}
+                    disabled={isUpdatingAppealCase || isLeaving}
                     large
                     backgroundColor="white"
                   />
@@ -380,7 +469,7 @@ const VerdictAppealStatus = () => {
               {
                 text: core.continue,
                 icon: 'arrowForward',
-                disabled: !stepIsValid,
+                disabled: !stepIsValid || isUpdatingAppealCase || isLeaving,
                 onClick: handleContinue,
                 testId: 'continueButton',
               },
