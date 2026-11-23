@@ -137,13 +137,17 @@ describe('PdfService - getAppealSummonsPdf', () => {
     } as Case
     ;(createAppealSummons as jest.Mock).mockClear()
 
-    await pdfService.getAppealSummonsPdf(caseWithUpdatedName, user as never, {
-      id: summonsId,
-      confirmedDate: new Date('2026-06-05T09:15:00.000Z'),
-      caseName: frozenCaseName,
-      confirmedBy: user,
-      defendants: [],
-    } as AppealSummons)
+    await pdfService.getAppealSummonsPdf(
+      caseWithUpdatedName,
+      user as never,
+      {
+        id: summonsId,
+        confirmedDate: new Date('2026-06-05T09:15:00.000Z'),
+        caseName: frozenCaseName,
+        confirmedBy: user,
+        defendants: [],
+      } as AppealSummons,
+    )
 
     expect(createAppealSummons).toHaveBeenCalledWith(
       caseWithUpdatedName,
