@@ -12,8 +12,7 @@ import type { VerdictTimelineItem } from './VerdictTimelineBody'
  * Greinargerðarfrest for one party while the verdict appeal is still open.
  * Completed / withdrawn appeals leave the outcome off the timeline card.
  *
- * `isExpired` is set by the defence limited-access interceptor; when it is
- * missing (full-access prosecution payloads), fall back to the client clock.
+ * Expiry comes from the backend `isExpired` flag (whole-day rule).
  */
 export const getOpenAppealStatementDeadlineItem = (
   verdictAppealCase:
@@ -38,13 +37,9 @@ export const getOpenAppealStatementDeadlineItem = (
     return undefined
   }
 
-  const isExpired =
-    statementDeadline.isExpired ??
-    Date.now() >= new Date(statementDeadline.deadline).getTime()
-
   return {
     text: `Frestur til að skila greinargerð ${
-      isExpired ? 'rann út' : 'er til'
+      statementDeadline.isExpired ? 'rann út' : 'er til'
     } ${formatDate(statementDeadline.deadline)}`,
   }
 }

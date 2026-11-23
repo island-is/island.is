@@ -9,6 +9,7 @@ export {
   InCourtAppellant,
   inCourtAppellantsFromDecisions,
   isOutOfCourtAppealEvent,
+  isStatementDeadlineExpired,
   isVerdictAppealOver,
   nextAppealCourtSession,
   resolveDefenceParties,

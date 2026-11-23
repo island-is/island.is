@@ -174,7 +174,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
     [verdict?.serviceRequirement],
   )
 
-  const leadingTextItems = useMemo(() => {
+  const textItems = useMemo(() => {
     const items: VerdictTimelineItem[] = []
 
     const pushIf = (condition: boolean, message: string | null) => {
@@ -242,21 +242,14 @@ const VerdictTimelineCard: FC<Props> = (props) => {
       items.push(prosecutionAppealItem)
     }
 
-    return items
-  }, [
-    appealExpirationInfo.date,
-    appealExpirationInfo.message,
-    defendant,
-    formatMessage,
-    isFine,
-    isServiceRequired,
-    serviceRequirementText,
-    verdict,
-    workingCase.verdictAppealCase,
-  ])
+    const statementDeadlineItem = getOpenAppealStatementDeadlineItem(
+      workingCase.verdictAppealCase,
+      {},
+    )
 
-  const trailingTextItems = useMemo(() => {
-    const items: VerdictTimelineItem[] = []
+    if (statementDeadlineItem) {
+      items.push(statementDeadlineItem)
+    }
 
     if (defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin) {
       items.push({
@@ -284,20 +277,17 @@ const VerdictTimelineCard: FC<Props> = (props) => {
     }
 
     return items
-  }, [defendant, formatMessage])
-
-  // Outside the memo so the client-clock expiry fallback is re-read on each
-  // render (prosecution payloads often omit server `isExpired`).
-  const statementDeadlineItem = getOpenAppealStatementDeadlineItem(
+  }, [
+    appealExpirationInfo.date,
+    appealExpirationInfo.message,
+    defendant,
+    formatMessage,
+    isFine,
+    isServiceRequired,
+    serviceRequirementText,
+    verdict,
     workingCase.verdictAppealCase,
-    {},
-  )
-
-  const textItems = [
-    ...leadingTextItems,
-    ...(statementDeadlineItem ? [statementDeadlineItem] : []),
-    ...trailingTextItems,
-  ]
+  ])
 
   const handleDateChange = (
     date: Date | undefined,

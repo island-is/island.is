@@ -41,7 +41,11 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { getRequestTransaction } from '../../../middleware'
-import { hasOutOfCourtAppeal, resolveDefenceParties } from '../../appeal-case'
+import {
+  hasOutOfCourtAppeal,
+  isStatementDeadlineExpired,
+  resolveDefenceParties,
+} from '../../appeal-case'
 import { getMostPermissiveRequestSharedWithDefenderForNationalId } from '../../defendant/requestSharedWithDefender.logic'
 import { isRulingOrderInConfirmedCourtSession } from '../../file/guards/caseFileCategory'
 import { canDefenceUserViewCivilClaimCaseFile } from '../../file/guards/civilClaimFileVisibility'
@@ -739,8 +743,8 @@ const serializeVerdictAppealStatementDeadline = (
   deadline: NonNullable<AppealCase['statementDeadlines']>[number],
 ) => ({
   ...deadline.toJSON(),
-  // Same clock as isStatementDeadlineExpired on kæra appealCase rows.
-  isExpired: Date.now() >= new Date(deadline.deadline).getTime(),
+  // Whole-day rule: midnight rows stay open through the deadline date.
+  isExpired: isStatementDeadlineExpired(new Date(deadline.deadline)),
 })
 
 const transformVerdictAppealCaseForUser = (
@@ -952,17 +956,26 @@ const transformCase = (
   // Defence users only see their own parties' verdict-appeal deadlines and
   // event logs. An empty party filter would otherwise match prosecution rows
   // (null/null), and other defendants' greinargerðarfrest is not theirs.
-  // Non-defence keeps theCase.toJSON()'s nested verdictAppealCase as-is.
-  const verdictAppealCaseOverride =
-    theCase.verdictAppealCase && isDefence && user
-      ? {
-          verdictAppealCase: transformVerdictAppealCaseForUser(
-            theCase.verdictAppealCase,
-            theCase,
-            user,
-          ),
-        }
-      : {}
+  // Non-defence keeps every deadline, but still gets server `isExpired` so
+  // the web does not fall back to the browser clock.
+  const verdictAppealCaseOverride = theCase.verdictAppealCase
+    ? {
+        verdictAppealCase:
+          isDefence && user
+            ? transformVerdictAppealCaseForUser(
+                theCase.verdictAppealCase,
+                theCase,
+                user,
+              )
+            : {
+                ...theCase.verdictAppealCase.toJSON(),
+                statementDeadlines:
+                  theCase.verdictAppealCase.statementDeadlines?.map(
+                    serializeVerdictAppealStatementDeadline,
+                  ),
+              },
+      }
+    : {}
 
   const caseLevelAppealInfo = getCaseLevelAppealInfo(theCase)
 

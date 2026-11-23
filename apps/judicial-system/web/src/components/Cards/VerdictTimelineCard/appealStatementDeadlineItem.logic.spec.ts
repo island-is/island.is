@@ -8,13 +8,13 @@ describe('getOpenAppealStatementDeadlineItem', () => {
     statementDeadlines: [
       {
         id: 'prosecution_deadline',
-        deadline: '2026-09-14T23:59:59.999Z',
+        deadline: '2026-09-14T00:00:00.000Z',
         isExpired: false,
       },
       {
         id: 'defendant_deadline',
         defendantId: 'defendant_id',
-        deadline: '2026-09-20T23:59:59.999Z',
+        deadline: '2026-09-20T00:00:00.000Z',
         isExpired: false,
       },
     ],
@@ -44,7 +44,7 @@ describe('getOpenAppealStatementDeadlineItem', () => {
           statementDeadlines: [
             {
               id: 'prosecution_deadline',
-              deadline: '2026-09-14T23:59:59.999Z',
+              deadline: '2026-09-14T00:00:00.000Z',
               isExpired: true,
             },
           ],

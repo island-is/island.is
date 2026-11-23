@@ -186,8 +186,13 @@ const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000
 
 // A statement deadline is a day, stored as the midnight that day starts on,
 // and the party has the whole of it: the deadline runs until the day is over.
+export const isStatementDeadlineExpired = (
+  deadline: Date,
+  now: Date = new Date(Date.now()),
+): boolean => now.getTime() >= deadline.getTime() + DAY_IN_MILLISECONDS
+
 const isStatementDeadlineRunning = (deadline: Date, now: Date): boolean =>
-  now.getTime() < deadline.getTime() + DAY_IN_MILLISECONDS
+  !isStatementDeadlineExpired(deadline, now)
 
 export const verdictAppealProgress = (
   appealCase: Pick<
