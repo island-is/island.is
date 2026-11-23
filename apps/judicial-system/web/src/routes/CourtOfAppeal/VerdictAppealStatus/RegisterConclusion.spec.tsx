@@ -348,35 +348,6 @@ describe('RegisterConclusion', () => {
       expect(screen.getByRole('radio', { name: 'Dómur' })).toBeChecked()
       expect(onValidityChange).toHaveBeenLastCalledWith(true)
     })
-
-    it('keeps the concluding words in the field but not as recorded', async () => {
-      mockUpdateAppealCase.mockResolvedValueOnce(undefined)
-      renderForm(
-        caseWith({ ...recordedOutcome, appealConclusion: null }, [rulingFile]),
-      )
-      const field = screen.getByPlaceholderText('Hvert er dómsorð Landsréttar?')
-
-      await userEvent.type(field, 'Óraskað')
-      await userEvent.tab()
-
-      await waitFor(() => expect(mockUpdateAppealCase).toHaveBeenCalledTimes(1))
-      await waitFor(() =>
-        expect(onValidityChange).toHaveBeenLastCalledWith(false),
-      )
-      expect(field).toHaveValue('Óraskað')
-
-      await userEvent.type(field, ' dómur')
-      await userEvent.tab()
-
-      await waitFor(() =>
-        expect(onValidityChange).toHaveBeenLastCalledWith(true),
-      )
-      expect(mockUpdateAppealCase).toHaveBeenLastCalledWith(
-        'case-id',
-        'verdict-appeal',
-        { appealConclusion: 'Óraskað dómur' },
-      )
-    })
   })
 
   // A ruling appeal on the same case keeps its ruling in a category of its

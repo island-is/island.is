@@ -1,5 +1,5 @@
 import type { FC } from 'react'
-import { useContext, useEffect, useRef } from 'react'
+import { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -75,11 +75,10 @@ const rulingChoiceOf = (
  * verdict or a ruling only words the form; it is saved as a verdict with the
  * first outcome the court picks, so what the form shows is what is stored.
  *
- * The choices show on the form at once and the saves of each field run one at
- * a time in the order they were made. A save that fails puts the working case
- * back to what the appeal last held, so the form is only valid with what is
- * stored. The concluding words the court typed stay in the field to be saved
- * again.
+ * The outcome and its type show on the form at once and their saves run one
+ * at a time in the order they were made. One that fails puts the working case
+ * back to the choice the appeal last held. The concluding words are saved the
+ * way every debounced field is.
  */
 const RegisterConclusion: FC<Props> = ({ onValidityChange }) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
@@ -106,24 +105,11 @@ const RegisterConclusion: FC<Props> = ({ onValidityChange }) => {
   )
 
   const saveRulingChoice = useSerializedSave<RulingChoice>()
-  const saveConclusion = useSerializedSave<string | null | undefined>()
 
-  // The concluding words the appeal held before the court started typing. The
-  // field writes each keystroke into the working case, so by the time the
-  // words are saved the working case no longer tells what is stored.
-  const storedConclusion = useRef<{
-    key: string
-    value: string | null | undefined
-  }>(undefined)
-
-  // Puts the working case back to what the appeal holds. The component
+  // Puts the working case back to the choice the appeal holds. The component
   // outlives a case change, so a save that fails after the court has moved on
   // must not touch the other case.
-  const revert = (
-    caseId: string,
-    appealCaseId: string,
-    update: Partial<AppealCase>,
-  ) =>
+  const revert = (caseId: string, appealCaseId: string, update: RulingChoice) =>
     setWorkingCase((previous) =>
       previous.id === caseId
         ? applyAppealCaseUpdate(previous, appealCaseId, update)
@@ -174,15 +160,6 @@ const RegisterConclusion: FC<Props> = ({ onValidityChange }) => {
     validations: ['empty'],
     onChange: (appealConclusion) => {
       if (verdictAppealCase) {
-        const key = `${workingCase.id}:${verdictAppealCase.id}:appealConclusion`
-
-        if (storedConclusion.current?.key !== key) {
-          storedConclusion.current = {
-            key,
-            value: verdictAppealCase.appealConclusion,
-          }
-        }
-
         setWorkingCase((previous) =>
           applyAppealCaseUpdate(previous, verdictAppealCase.id, {
             appealConclusion,
@@ -191,32 +168,11 @@ const RegisterConclusion: FC<Props> = ({ onValidityChange }) => {
       }
     },
     onSave: (appealConclusion) => {
-      if (!verdictAppealCase) {
-        return
+      if (verdictAppealCase) {
+        updateAppealCase(workingCase.id, verdictAppealCase.id, {
+          appealConclusion,
+        })
       }
-
-      const caseId = workingCase.id
-      const appealCaseId = verdictAppealCase.id
-      const key = `${caseId}:${appealCaseId}:appealConclusion`
-      const stored = storedConclusion.current
-
-      saveConclusion({
-        key,
-        confirmed:
-          stored?.key === key
-            ? stored.value
-            : verdictAppealCase.appealConclusion,
-        value: appealConclusion,
-        persist: async () =>
-          Boolean(
-            await updateAppealCase(caseId, appealCaseId, { appealConclusion }),
-          ),
-        // Only the working case: the field keeps what the court typed
-        rollback: (confirmedConclusion) =>
-          revert(caseId, appealCaseId, {
-            appealConclusion: confirmedConclusion,
-          }),
-      })
     },
   })
 
