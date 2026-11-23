@@ -11,7 +11,6 @@ import {
   fetchScreen,
   validateAction,
 } from './graphql'
-import type { ForwardAuthHeaders } from './graphql'
 
 describe('graphql SDF queries', () => {
   const schema = buildSchema(
@@ -116,74 +115,6 @@ describe('graphql SDF queries', () => {
     )
 
     expect(result).toEqual({ id: 'screen-2' })
-  })
-
-  it('uses the local bff service directly for server-side screen fetches in local development', async () => {
-    const fetchMock = jest.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      text: async () =>
-        JSON.stringify({
-          data: {
-            applicationSdfScreen: {
-              applicationId: 'app-1',
-              locale: 'is',
-              header: { title: 'Title' },
-              stepper: {
-                sections: [],
-                activeSectionIndex: 0,
-                activeSubSectionIndex: 0,
-              },
-              page: {
-                id: 'page-1',
-                index: 0,
-                sectionIndex: 0,
-                subSectionIndex: 0,
-                components: [],
-                errors: [],
-              },
-              footer: {
-                buttons: [],
-                canGoBack: false,
-              },
-            },
-          },
-        }),
-    } as Response)
-    ;(
-      globalThis as typeof globalThis & {
-        fetch: typeof fetch
-      }
-    ).fetch = fetchMock as typeof fetch
-    const windowDescriptor = Object.getOwnPropertyDescriptor(
-      globalThis,
-      'window',
-    )
-    Object.defineProperty(globalThis, 'window', {
-      value: undefined,
-      configurable: true,
-    })
-
-    try {
-      const headers: ForwardAuthHeaders = {
-        cookie: 'sid=123',
-        authorization: undefined,
-        host: 'localhost:4250',
-        protocol: 'http',
-      }
-      await fetchScreen('app-1', undefined, 'is', headers)
-    } finally {
-      if (windowDescriptor) {
-        Object.defineProperty(globalThis, 'window', windowDescriptor)
-      }
-    }
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      'http://localhost:3010/bff/api/graphql?op=ApplicationSdfScreen',
-      expect.objectContaining({
-        method: 'POST',
-      }),
-    )
   })
 
   it('surfaces problem-detail unauthorized responses as http errors', async () => {

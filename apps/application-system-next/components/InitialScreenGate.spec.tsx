@@ -45,14 +45,11 @@ jest.mock('./BffLoginRedirect', () => ({
 const mockedFetchScreen = fetchScreen as jest.MockedFunction<typeof fetchScreen>
 
 describe('InitialScreenGate', () => {
-  const originalLocation = window.location
-
   afterEach(() => {
     jest.clearAllMocks()
-    Object.defineProperty(window, 'location', {
-      configurable: true,
-      value: originalLocation,
-    })
+    // A test cannot replace `window.location`, so it sets the URL through
+    // the history instead.
+    window.history.replaceState(null, '', '/')
   })
 
   it('loads the screen in the browser and renders the application shell', async () => {
@@ -87,17 +84,15 @@ describe('InitialScreenGate', () => {
       expect(mockedFetchScreen).toHaveBeenCalledWith('app-1', 'page-2', 'is')
     })
 
-    expect(screen.getByText('shell:app-1:Test title')).toBeTruthy()
+    expect(await screen.findByText('shell:app-1:Test title')).toBeTruthy()
   })
 
   it('falls back to bff login redirect when the browser fetch gets a 401', async () => {
-    Object.defineProperty(window, 'location', {
-      configurable: true,
-      value: {
-        ...originalLocation,
-        href: 'http://localhost:4250/umsoknir/example-inputs/app-1?screen=page-2',
-      },
-    })
+    window.history.replaceState(
+      null,
+      '',
+      '/umsoknir/example-inputs/app-1?screen=page-2',
+    )
 
     mockedFetchScreen.mockRejectedValue(
       new GraphqlHttpError(401, 'Unauthorized', 'Missing sid cookie'),
@@ -109,7 +104,7 @@ describe('InitialScreenGate', () => {
 
     expect(
       await screen.findByText(
-        'redirect:http://localhost:4250/umsoknir/example-inputs/app-1?screen=page-2',
+        `redirect:${window.location.origin}/umsoknir/example-inputs/app-1?screen=page-2`,
       ),
     ).toBeTruthy()
   })
