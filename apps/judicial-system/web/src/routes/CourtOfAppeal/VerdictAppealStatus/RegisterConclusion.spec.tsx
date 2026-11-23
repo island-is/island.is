@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
+import { FileUploadStatus } from '@island.is/island-ui/core'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 import type { AppealCase } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -16,10 +17,8 @@ import {
   CaseType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  mockCase,
-  mockCaseFile,
-} from '@island.is/judicial-system-web/src/utils/mocks'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
+import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   ApolloProviderWrapper,
   IntlProviderWrapper,
@@ -44,15 +43,11 @@ jest.mock('next/router', () => ({
   },
 }))
 
-const caseWith = (
-  verdictAppealCase: Partial<AppealCase> = {},
-  caseFiles: WorkingCase['caseFiles'] = [],
-) =>
+const caseWith = (verdictAppealCase: Partial<AppealCase> = {}) =>
   ({
     ...mockCase(CaseType.INDICTMENT),
     id: 'case-id',
     state: CaseState.COMPLETED,
-    caseFiles,
     verdictAppealCase: {
       id: 'verdict-appeal',
       appealState: AppealCaseState.APPEALED,
@@ -61,9 +56,12 @@ const caseWith = (
     },
   } as unknown as WorkingCase)
 
-const rulingFile = {
-  ...mockCaseFile(CaseFileCategory.VERDICT_APPEAL_RULING),
+const rulingFile: TUploadFile = {
+  id: 'ruling-file',
   name: 'domur-landsrettar.pdf',
+  status: FileUploadStatus.done,
+  percent: 100,
+  category: CaseFileCategory.VERDICT_APPEAL_RULING,
 }
 
 const recordedOutcome = {
@@ -98,15 +96,22 @@ const StatefulFormContext: FC<PropsWithChildren<{ theCase: WorkingCase }>> = ({
   )
 }
 
-const onValidityChange = jest.fn()
-
-const renderForm = (theCase: WorkingCase = caseWith()) =>
+const renderForm = (
+  theCase: WorkingCase = caseWith(),
+  rulingFiles: TUploadFile[] = [],
+) =>
   render(
     <IntlProviderWrapper>
       <ApolloProviderWrapper>
         <UserContextWrapper userRole={UserRole.COURT_OF_APPEALS_ASSISTANT}>
           <StatefulFormContext theCase={theCase}>
-            <RegisterConclusion onValidityChange={onValidityChange} />
+            <RegisterConclusion
+              rulingFiles={rulingFiles}
+              onUpload={jest.fn()}
+              onRemove={jest.fn()}
+              onRetry={jest.fn()}
+              onOpenFile={jest.fn()}
+            />
           </StatefulFormContext>
         </UserContextWrapper>
       </ApolloProviderWrapper>
@@ -300,9 +305,7 @@ describe('RegisterConclusion', () => {
     it('leaves the outcome unpicked', async () => {
       mockUpdateAppealCase.mockResolvedValueOnce(undefined)
       renderForm(
-        caseWith({ appealConclusion: recordedOutcome.appealConclusion }, [
-          rulingFile,
-        ]),
+        caseWith({ appealConclusion: recordedOutcome.appealConclusion }),
       )
 
       await userEvent.click(screen.getByRole('radio', { name: 'Staðfesting' }))
@@ -312,7 +315,6 @@ describe('RegisterConclusion', () => {
           screen.getByRole('radio', { name: 'Staðfesting' }),
         ).not.toBeChecked(),
       )
-      expect(onValidityChange).toHaveBeenLastCalledWith(false)
     })
 
     it('leaves the type unpicked when it came with the first outcome', async () => {
@@ -331,7 +333,7 @@ describe('RegisterConclusion', () => {
 
     it('returns to the outcome the appeal holds', async () => {
       mockUpdateAppealCase.mockResolvedValueOnce(undefined)
-      renderForm(caseWith(recordedOutcome, [rulingFile]))
+      renderForm(caseWith(recordedOutcome))
 
       await userEvent.click(
         screen.getByRole('radio', { name: 'Fellt úr gildi' }),
@@ -346,70 +348,29 @@ describe('RegisterConclusion', () => {
         screen.getByRole('radio', { name: 'Fellt úr gildi' }),
       ).not.toBeChecked()
       expect(screen.getByRole('radio', { name: 'Dómur' })).toBeChecked()
-      expect(onValidityChange).toHaveBeenLastCalledWith(true)
     })
   })
 
-  // A ruling appeal on the same case keeps its ruling in a category of its
-  // own, and it has no place among this appeal's documents.
-  it('lists only the verdict appeal document', () => {
-    renderForm(
-      caseWith(recordedOutcome, [
-        rulingFile,
-        {
-          ...mockCaseFile(CaseFileCategory.APPEAL_RULING),
-          name: 'urskurdur-kaera.pdf',
-        },
-      ]),
-    )
+  // Which of the case's files belong here is the page's to decide; the form
+  // lists the ones it is given.
+  it('lists the document it is given', () => {
+    renderForm(caseWith(recordedOutcome), [rulingFile])
 
     expect(screen.getByText('domur-landsrettar.pdf')).toBeInTheDocument()
-    expect(screen.queryByText('urskurdur-kaera.pdf')).not.toBeInTheDocument()
   })
 
-  describe('validity', () => {
-    it('is in place with an outcome, a type, the words and the document', async () => {
-      renderForm(caseWith(recordedOutcome, [rulingFile]))
+  it('takes one document', () => {
+    const { unmount } = renderForm()
 
-      await waitFor(() =>
-        expect(onValidityChange).toHaveBeenLastCalledWith(true),
-      )
-    })
+    expect(
+      screen.getByRole('button', { name: 'Velja gögn til að hlaða upp' }),
+    ).toBeInTheDocument()
 
-    it('is not in place without the document', async () => {
-      renderForm(caseWith(recordedOutcome))
+    unmount()
+    renderForm(caseWith(recordedOutcome), [rulingFile])
 
-      await waitFor(() =>
-        expect(onValidityChange).toHaveBeenLastCalledWith(false),
-      )
-    })
-
-    it('is not in place without the concluding words', async () => {
-      renderForm(
-        caseWith({ ...recordedOutcome, appealConclusion: null }, [rulingFile]),
-      )
-
-      await waitFor(() =>
-        expect(onValidityChange).toHaveBeenLastCalledWith(false),
-      )
-    })
-
-    it('follows the form as the court fills it in', async () => {
-      renderForm(
-        caseWith({ appealConclusion: recordedOutcome.appealConclusion }, [
-          rulingFile,
-        ]),
-      )
-
-      await waitFor(() =>
-        expect(onValidityChange).toHaveBeenLastCalledWith(false),
-      )
-
-      await userEvent.click(screen.getByRole('radio', { name: 'Staðfesting' }))
-
-      await waitFor(() =>
-        expect(onValidityChange).toHaveBeenLastCalledWith(true),
-      )
-    })
+    expect(
+      screen.queryByRole('button', { name: 'Velja gögn til að hlaða upp' }),
+    ).not.toBeInTheDocument()
   })
 })

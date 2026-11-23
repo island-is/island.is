@@ -101,6 +101,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       appealState
       appealType
       appealCaseNumber
+      caseName
       appealConclusion
       appealRulingDate
       appealRulingDecision

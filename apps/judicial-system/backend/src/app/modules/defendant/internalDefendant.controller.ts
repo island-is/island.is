@@ -68,36 +68,6 @@ export class InternalDefendantController {
     DefendantExistsGuard,
   )
   @Post(
-    `${messageEndpoint[MessageType.DELIVERY_TO_COURT_DEFENDANT]}/:defendantId`,
-  )
-  @ApiCreatedResponse({
-    type: DeliverResponse,
-    description: 'Delivers a case file to court',
-  })
-  deliverDefendantToCourt(
-    @Param('caseId') caseId: string,
-    @Param('defendantId') defendantId: string,
-    @CurrentCase() theCase: Case,
-    @CurrentDefendant() defendant: Defendant,
-    @Body() deliverDefendantToCourtDto: DeliverDto,
-  ): Promise<DeliverResponse> {
-    this.logger.debug(
-      `Delivering defendant ${defendantId} of case ${caseId} to court`,
-    )
-
-    return this.defendantService.deliverDefendantToCourt(
-      theCase,
-      defendant,
-      deliverDefendantToCourtDto.user,
-    )
-  }
-
-  @UseGuards(
-    CaseExistsGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
-    DefendantExistsGuard,
-  )
-  @Post(
     `${
       messageEndpoint[MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT]
     }/:defendantId`,
