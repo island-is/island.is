@@ -45,6 +45,7 @@ query DirectorateOfEqualityReport($input: DirectorateOfEqualityDetailInput!) {
     }
     improvementPlan {
       id
+      name
       reason
       correctionPlan
       deadline

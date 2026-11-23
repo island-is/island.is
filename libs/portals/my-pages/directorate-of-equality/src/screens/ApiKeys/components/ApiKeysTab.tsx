@@ -4,7 +4,6 @@ import {
   AlertMessage,
   Box,
   Button,
-  ProblemTemplate,
   Stack,
   Text,
   toast,
@@ -122,9 +121,9 @@ export const ApiKeysTab = ({
         {loading && <ActionCardLoader repeat={2} />}
         {!loading && error && <Problem error={error} noBorder={false} />}
         {!loading && !error && active.length === 0 && (
-          <ProblemTemplate
-            variant="info"
-            tag={formatMessage(messages.serviceProviderTag)}
+          <Problem
+            type="no_data"
+            noBorder={false}
             title={formatMessage(
               inactive.length > 0
                 ? messages.noActiveKeysTitle
@@ -136,7 +135,7 @@ export const ApiKeysTab = ({
                 : messages.noCompanyKeysMessage,
             )}
             imgSrc="./assets/images/nodata.svg"
-            titleAs="h3"
+            titleSize="h3"
           />
         )}
         {!loading && !error && active.length > 0 && (
@@ -162,7 +161,7 @@ export const ApiKeysTab = ({
             size="small"
             icon={showInactive ? 'chevronUp' : 'chevronDown'}
             aria-expanded={showInactive}
-            aria-controls="doe-inactive-keys"
+            aria-controls={showInactive ? 'doe-inactive-keys' : undefined}
             onClick={() => setShowInactive((value) => !value)}
           >
             {formatMessage(

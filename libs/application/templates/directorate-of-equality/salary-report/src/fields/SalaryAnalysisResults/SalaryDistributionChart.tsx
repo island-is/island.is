@@ -303,8 +303,8 @@ export const SalaryDistributionChart: FC<Props> = ({
         title={formatMessage(m.title)}
         dataTable={{
           caption: formatMessage(m.title),
-          seriesHeader: formatMessage(
-            messages.salaryAnalysis.chartTooltip.gender,
+          titleHeader: formatMessage(
+            messages.salaryAnalysis.chartTooltip.employee,
           ),
           noteHeader: tooltipMarkedLabel ?? undefined,
         }}

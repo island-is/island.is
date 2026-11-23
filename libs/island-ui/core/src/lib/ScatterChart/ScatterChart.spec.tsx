@@ -34,12 +34,13 @@ describe('ScatterChart', () => {
   })
 
   it('renders the points as a table when dataTable is given', () => {
-    const { getByRole, getAllByRole } = render(
+    const { container, getByRole, getAllByRole } = render(
       <ScatterChart
         title="Dreifing"
         dataTable={{
           caption: 'Dreifing',
-          seriesHeader: 'Kyn',
+          titleHeader: 'Starfsmaður',
+          seriesHeader: 'Hópur',
           noteHeader: 'Frávik',
         }}
         series={[
@@ -52,7 +53,7 @@ describe('ScatterChart', () => {
                 y: 4000,
                 marked: true,
                 tooltip: {
-                  title: 'Karl',
+                  title: 'Starfsmaður 1',
                   rows: [
                     { label: 'Kyn', value: 'Karl' },
                     { label: 'Stig', value: '100' },
@@ -70,11 +71,22 @@ describe('ScatterChart', () => {
     expect(getByRole('table', { name: 'Dreifing' })).toBeTruthy()
     expect(
       getAllByRole('columnheader').map((cell) => cell.textContent),
-    ).toEqual(['Kyn', 'Stig', 'Frávik'])
+    ).toEqual(['Starfsmaður', 'Hópur', 'Kyn', 'Stig', 'Frávik'])
+    expect(getAllByRole('rowheader').map((cell) => cell.textContent)).toEqual([
+      'Starfsmaður 1',
+    ])
     expect(getAllByRole('cell').map((cell) => cell.textContent)).toEqual([
       'Karlar',
+      'Karl',
       '100',
       'Frávik',
     ])
+    const chart = container.querySelector('[aria-hidden="true"]')
+    expect(chart).toBeTruthy()
+    expect(
+      chart?.querySelectorAll(
+        'a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      ).length,
+    ).toBe(0)
   })
 })

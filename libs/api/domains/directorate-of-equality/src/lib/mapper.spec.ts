@@ -1,16 +1,12 @@
-import {
+import type {
   ApiKeyDto,
-  ApiKeyOriginEnum,
   ApplicationCompanyDto,
-  ApplicationReportChannelEnum,
   ApplicationReportDetailDto,
-  CompanyObligationStatusEnum,
   CompanyPartnerDelegationDto,
   CompanyReportDto,
   PayDispersionDto,
   ReportEmployeeOutlierDto,
   ReportStatusEnum,
-  ReportTypeEnum,
   WageGapDecompositionDto,
   WageGapEmployeeDto,
 } from '@island.is/clients/directorate-of-equality'
@@ -156,8 +152,8 @@ const reportDetail = (
   overrides: Partial<ApplicationReportDetailDto> = {},
 ): ApplicationReportDetailDto => ({
   id: 'internal-report-id',
-  type: ReportTypeEnum.SALARY,
-  status: ReportStatusEnum.APPROVED,
+  type: 'SALARY',
+  status: 'APPROVED',
   companies: [company()],
   equalityReportContentType: 'HTML',
   includesImprovementPlan: true,
@@ -167,30 +163,15 @@ const reportDetail = (
 })
 
 describe('mapSubmissionStatus', () => {
-  it.each([
-    [ReportStatusEnum.DRAFT, DirectorateOfEqualitySubmissionStatus.IN_REVIEW],
-    [
-      ReportStatusEnum.SUBMITTED,
-      DirectorateOfEqualitySubmissionStatus.IN_REVIEW,
-    ],
-    [
-      ReportStatusEnum.POSTPONED,
-      DirectorateOfEqualitySubmissionStatus.IN_REVIEW,
-    ],
-    [
-      ReportStatusEnum.IN_REVIEW,
-      DirectorateOfEqualitySubmissionStatus.IN_REVIEW,
-    ],
-    [ReportStatusEnum.APPROVED, DirectorateOfEqualitySubmissionStatus.APPROVED],
-    [ReportStatusEnum.DENIED, DirectorateOfEqualitySubmissionStatus.REJECTED],
-    [
-      ReportStatusEnum.SUPERSEDED,
-      DirectorateOfEqualitySubmissionStatus.SUPERSEDED,
-    ],
-    [
-      ReportStatusEnum.WITHDRAWN,
-      DirectorateOfEqualitySubmissionStatus.WITHDRAWN,
-    ],
+  it.each<[ReportStatusEnum, DirectorateOfEqualitySubmissionStatus]>([
+    ['DRAFT', DirectorateOfEqualitySubmissionStatus.IN_REVIEW],
+    ['SUBMITTED', DirectorateOfEqualitySubmissionStatus.IN_REVIEW],
+    ['POSTPONED', DirectorateOfEqualitySubmissionStatus.IN_REVIEW],
+    ['IN_REVIEW', DirectorateOfEqualitySubmissionStatus.IN_REVIEW],
+    ['APPROVED', DirectorateOfEqualitySubmissionStatus.APPROVED],
+    ['DENIED', DirectorateOfEqualitySubmissionStatus.REJECTED],
+    ['SUPERSEDED', DirectorateOfEqualitySubmissionStatus.SUPERSEDED],
+    ['WITHDRAWN', DirectorateOfEqualitySubmissionStatus.WITHDRAWN],
   ])('maps %s to %s', (status, expected) => {
     expect(mapSubmissionStatus(status)).toBe(expected)
   })
@@ -203,10 +184,10 @@ describe('mapSubmission', () => {
     expect(
       mapSubmission({
         providerId: 'partner:abc',
-        submittedVia: ApplicationReportChannelEnum.SERVICE_PROVIDER,
+        submittedVia: 'SERVICE_PROVIDER',
         importedFromExcel: true,
-        type: ReportTypeEnum.SALARY,
-        status: ReportStatusEnum.SUBMITTED,
+        type: 'SALARY',
+        status: 'SUBMITTED',
         submittedAt,
         salaryDataPeriod: '2026-01-01',
       }),
@@ -386,17 +367,17 @@ describe('mapReport', () => {
 })
 
 describe('PDF download URLs', () => {
-  it.each([
-    [ReportStatusEnum.APPROVED, true],
-    [ReportStatusEnum.SUPERSEDED, true],
-    [ReportStatusEnum.SUBMITTED, false],
-    [ReportStatusEnum.IN_REVIEW, false],
-    [ReportStatusEnum.DENIED, false],
-    [ReportStatusEnum.WITHDRAWN, false],
+  it.each<[ReportStatusEnum, boolean]>([
+    ['APPROVED', true],
+    ['SUPERSEDED', true],
+    ['SUBMITTED', false],
+    ['IN_REVIEW', false],
+    ['DENIED', false],
+    ['WITHDRAWN', false],
   ])('status %s has a PDF: %s', (status, expected) => {
     const plan = mapEqualityPlan(
       'partner:1',
-      reportDetail({ type: ReportTypeEnum.EQUALITY, status }),
+      reportDetail({ type: 'EQUALITY', status }),
       DOWNLOAD_BASE_URL,
     )
     const report = mapReport(
@@ -442,21 +423,39 @@ const delegation = (
   ...overrides,
 })
 
+const companyDto = (
+  overrides: Partial<ApplicationCompanyDto> = {},
+): ApplicationCompanyDto => ({
+  id: 'company',
+  name: 'Fyrirtæki ehf.',
+  employeeCountCategory: 'UNKNOWN',
+  nationalId: '5501010000',
+  status: 'ACTIVE',
+  salaryReportRequired: false,
+  salaryReportRequiredOverride: false,
+  finesStarted: false,
+  quarantined: false,
+  sector: 'UNKNOWN',
+  sectorOverride: false,
+  reportStatus: 'MISSING_EQUALITY_REPORT',
+  equalityObligationStatus: 'MISSING',
+  salaryObligationStatus: 'MISSING',
+  equalityReportOverdue: false,
+  salaryReportOverdue: false,
+  hasLegacyReports: false,
+  isServiceProvider: false,
+  ...overrides,
+})
+
 describe('mapCompany', () => {
   it('derives the obligations from the obligation statuses', () => {
     const approvedAt = new Date('2026-01-15')
-    const company = {
-      equalityObligationStatus: CompanyObligationStatusEnum.MISSING,
-      salaryObligationStatus: CompanyObligationStatusEnum.NOT_REQUIRED,
+    const company = companyDto({
+      equalityObligationStatus: 'MISSING',
+      salaryObligationStatus: 'NOT_REQUIRED',
       nextEqualityReportDueAt: new Date('2027-01-01'),
       nextSalaryReportDueAt: null,
-    } as Pick<
-      ApplicationCompanyDto,
-      | 'equalityObligationStatus'
-      | 'salaryObligationStatus'
-      | 'nextEqualityReportDueAt'
-      | 'nextSalaryReportDueAt'
-    > as ApplicationCompanyDto
+    })
 
     expect(mapCompany(company, approvedAt)).toEqual({
       equalityPlanRequired: true,
@@ -475,7 +474,7 @@ describe('mapApiKey', () => {
       companyId: 'company',
       keyId: 'abc',
       scopes: ['report:read'],
-      createdVia: ApiKeyOriginEnum.ADMIN,
+      createdVia: 'ADMIN',
       createdByNationalId: '0000000000',
       createdAt: new Date('2026-11-01'),
     }

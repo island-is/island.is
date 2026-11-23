@@ -3,7 +3,7 @@ import {
   DirectorateOfEqualitySubmissionStatus,
   DirectorateOfEqualitySubmissionType,
 } from '@island.is/api/schema'
-import { ProblemTemplate, Stack } from '@island.is/island-ui/core'
+import { Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   ActionCard,
@@ -51,19 +51,19 @@ export const SubmissionsTabContent = ({
       const to = getYear(item.validUntil)
       return from && to
         ? formatMessage(messages.planTitle, { from, to })
-        : formatMessage(messages.planTitleNoPeriod)
+        : formatMessage(coreMessages.equalityPlan)
     }
     const year = getPeriodYear(item.salaryDataPeriod)
     return year
       ? formatMessage(messages.reportTitle, { year })
-      : formatMessage(messages.reportTitleNoYear)
+      : formatMessage(coreMessages.equalityReport)
   }
 
   if (!hasAccess) {
     return (
-      <ProblemTemplate
-        variant="info"
-        tag={formatMessage(messages.serviceProviderTag)}
+      <Problem
+        type="no_data"
+        noBorder={false}
         title={formatMessage(messages.noAccessTitle)}
         message={formatMessage(
           isPlan
@@ -86,9 +86,9 @@ export const SubmissionsTabContent = ({
 
   if (items.length === 0) {
     return (
-      <ProblemTemplate
-        variant="info"
-        tag={formatMessage(messages.serviceProviderTag)}
+      <Problem
+        type="no_data"
+        noBorder={false}
         title={formatMessage(messages.noSubmissionsTitle)}
         message={formatMessage(
           isPlan ? messages.noPlansMessage : messages.noReportsMessage,

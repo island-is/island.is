@@ -11,7 +11,7 @@ import {
   YAxis,
 } from 'recharts'
 
-import { Colors, theme } from '@island.is/island-ui/theme'
+import { Colors, helperStyles, theme } from '@island.is/island-ui/theme'
 
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
@@ -47,7 +47,8 @@ export type ScatterChartAxis = {
 
 export type ScatterChartDataTable = {
   caption: string
-  seriesHeader: string
+  titleHeader: string
+  seriesHeader?: string
   noteHeader?: string
 }
 
@@ -252,18 +253,23 @@ const ChartDataTable = ({
   const entries = series.flatMap((item) =>
     item.points.map((point) => ({ seriesName: item.name, point })),
   )
-  const columns = (
-    entries
-      .find(({ point }) => point.tooltip)
-      ?.point.tooltip?.rows.map((row) => row.label) ?? []
-  ).filter((label) => label !== dataTable.seriesHeader)
+  const columns = [
+    ...new Set(
+      entries.flatMap(
+        ({ point }) => point.tooltip?.rows.map((row) => row.label) ?? [],
+      ),
+    ),
+  ]
 
   return (
-    <table className={styles.visuallyHidden}>
+    <table className={helperStyles.srOnly}>
       <caption>{dataTable.caption}</caption>
       <thead>
         <tr>
-          <th scope="col">{dataTable.seriesHeader}</th>
+          <th scope="col">{dataTable.titleHeader}</th>
+          {dataTable.seriesHeader && (
+            <th scope="col">{dataTable.seriesHeader}</th>
+          )}
           {columns.map((column) => (
             <th key={column} scope="col">
               {column}
@@ -275,7 +281,8 @@ const ChartDataTable = ({
       <tbody>
         {entries.map(({ seriesName, point }, index) => (
           <tr key={index}>
-            <td>{seriesName}</td>
+            <th scope="row">{point.tooltip?.title ?? seriesName}</th>
+            {dataTable.seriesHeader && <td>{seriesName}</td>}
             {columns.map((column) => (
               <td key={column}>
                 {point.tooltip?.rows.find((row) => row.label === column)

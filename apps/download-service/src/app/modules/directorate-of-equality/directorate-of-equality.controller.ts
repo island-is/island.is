@@ -6,6 +6,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  ServiceUnavailableException,
   StreamableFile,
   UseGuards,
 } from '@nestjs/common'
@@ -13,6 +14,7 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiServiceUnavailableResponse,
 } from '@nestjs/swagger'
 import kennitala from 'kennitala'
 
@@ -29,6 +31,7 @@ import {
   DirectorateOfEqualityClientService,
   ReportTypeEnum,
 } from '@island.is/clients/directorate-of-equality'
+import { FetchError } from '@island.is/clients/middlewares'
 import { AuditService } from '@island.is/nest/audit'
 import {
   FeatureFlag,
@@ -44,11 +47,25 @@ const REPORT_TYPE_SCOPES: Record<ReportTypeEnum, ApiScope> = {
   [ReportTypeEnum.SALARY]: ApiScope.directorateOfEqualitySalary,
 }
 
+const fetchPdf = async (request: () => Promise<Blob>) => {
+  try {
+    return await request()
+  } catch (error) {
+    if (error instanceof FetchError && error.status === 404) {
+      throw new NotFoundException('PDF not found')
+    }
+    if (error instanceof FetchError && error.status === 503) {
+      throw new ServiceUnavailableException('PDF generation is busy')
+    }
+    throw error
+  }
+}
+
 const toPdfFile = async (file: Blob, fileName: string) => {
   const buffer = Buffer.from(await file.arrayBuffer())
   return new StreamableFile(buffer, {
     type: 'application/pdf',
-    disposition: `inline; filename="${fileName}"`,
+    disposition: `inline; filename="${fileName.replace(/[^\w.-]/g, '_')}"`,
     length: buffer.length,
   })
 }
@@ -91,12 +108,15 @@ export class DirectorateOfEqualityController {
   })
   @ApiForbiddenResponse({ type: HttpProblemResponse })
   @ApiNotFoundResponse({ type: HttpProblemResponse })
+  @ApiServiceUnavailableResponse({ type: HttpProblemResponse })
   async getReportPdf(
     @Param() { id }: ReportParamsDto,
     @CurrentUser() user: User,
   ) {
     const report = await this.getOwnReport(user, id)
-    const file = await this.directorateOfEqualityService.getReportPdf(user, id)
+    const file = await fetchPdf(() =>
+      this.directorateOfEqualityService.getReportPdf(user, id),
+    )
 
     this.auditService.audit({
       action: 'getDirectorateOfEqualityReportPdf',
@@ -117,6 +137,7 @@ export class DirectorateOfEqualityController {
   })
   @ApiForbiddenResponse({ type: HttpProblemResponse })
   @ApiNotFoundResponse({ type: HttpProblemResponse })
+  @ApiServiceUnavailableResponse({ type: HttpProblemResponse })
   async getImprovementPlanPdf(
     @Param() { id }: ReportParamsDto,
     @CurrentUser() user: User,
@@ -125,11 +146,9 @@ export class DirectorateOfEqualityController {
     if (report.type !== ReportTypeEnum.SALARY) {
       throw new NotFoundException('Report not found')
     }
-    const file =
-      await this.directorateOfEqualityService.getReportImprovementPlanPdf(
-        user,
-        id,
-      )
+    const file = await fetchPdf(() =>
+      this.directorateOfEqualityService.getReportImprovementPlanPdf(user, id),
+    )
 
     this.auditService.audit({
       action: 'getDirectorateOfEqualityImprovementPlanPdf',

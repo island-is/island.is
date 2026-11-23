@@ -43,17 +43,9 @@ export const messages = defineMessages({
     id: 'sp.directorate-of-equality:plan-title',
     defaultMessage: 'Jafnréttisáætlun {from}–{to}',
   },
-  planTitleNoPeriod: {
-    id: 'sp.directorate-of-equality:plan-title-no-period',
-    defaultMessage: 'Jafnréttisáætlun',
-  },
   reportTitle: {
     id: 'sp.directorate-of-equality:report-title',
     defaultMessage: 'Skýrsla {year}',
-  },
-  reportTitleNoYear: {
-    id: 'sp.directorate-of-equality:report-title-no-year',
-    defaultMessage: 'Skýrsla',
   },
   submittedOn: {
     id: 'sp.directorate-of-equality:submitted-on',
@@ -82,10 +74,6 @@ export const messages = defineMessages({
   openApplicationAriaLabel: {
     id: 'sp.directorate-of-equality:open-application-aria-label',
     defaultMessage: 'Opna umsókn {title} (opnast í nýjum flipa)',
-  },
-  serviceProviderTag: {
-    id: 'sp.directorate-of-equality:service-provider-tag',
-    defaultMessage: 'Jafnréttisstofa',
   },
   noAccessTitle: {
     id: 'sp.directorate-of-equality:no-access-title',
@@ -555,10 +543,6 @@ export const messages = defineMessages({
   grantPermissionScoring: {
     id: 'sp.directorate-of-equality:grant-permission-scoring',
     defaultMessage: 'skrá, breyta og eyða starfsmati fyrirtækisins.',
-  },
-  serviceProvider: {
-    id: 'sp.directorate-of-equality:service-provider',
-    defaultMessage: 'Þjónustuaðili',
   },
   grantConfirm: {
     id: 'sp.directorate-of-equality:grant-confirm',

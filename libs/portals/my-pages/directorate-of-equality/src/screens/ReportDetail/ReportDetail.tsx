@@ -15,11 +15,11 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 
-import { ContentColumn } from '../../components/ContentColumn/ContentColumn'
 import { StatusTag } from '../../components/StatusTag/StatusTag'
 import { NAMESPACE } from '../../lib/constants'
 import { formatPeriodMonth, getPeriodYear } from '../../lib/format'
 import { messages } from '../../lib/messages'
+import { getStatusTag } from '../../lib/status'
 import { AdjustedGap } from './components/AdjustedGap'
 import { ImprovementPlan } from './components/ImprovementPlan'
 import { MeanHourlyWage } from './components/MeanHourlyWage'
@@ -45,12 +45,13 @@ const ReportDetail = () => {
     ? formatMessage(coreMessages.equalityReport)
     : year
     ? formatMessage(messages.reportTitle, { year })
-    : formatMessage(messages.reportTitleNoYear)
+    : formatMessage(coreMessages.equalityReport)
   const pdfUrl = report?.pdfUrl
   const improvementPlanPdfUrl = report?.improvementPlanPdfUrl
 
   return (
     <IntroWrapper
+      desktopContentSpan="10/12"
       title={title}
       intro={formatMessage(messages.reportDetailIntro)}
       loading={loading}
@@ -89,19 +90,20 @@ const ReportDetail = () => {
           : undefined
       }
     >
-      <ContentColumn>
-        {error && !loading ? (
-          <Problem error={error} noBorder={false} />
-        ) : !loading && !report ? (
-          <Problem type="not_found" noBorder={false} />
-        ) : (
-          <>
-            <InfoLineStack label={messages.reportInfo}>
-              <InfoLine
-                label={messages.identifier}
-                content={report?.identifier ?? undefined}
-                loading={loading}
-              />
+      {error && !loading ? (
+        <Problem error={error} noBorder={false} />
+      ) : !loading && !report ? (
+        <Problem type="not_found" noBorder={false} />
+      ) : (
+        <>
+          <InfoLineStack label={messages.reportInfo}>
+            <InfoLine
+              label={messages.identifier}
+              content={report?.identifier ?? undefined}
+              loading={loading}
+            />
+            {(loading ||
+              (report && getStatusTag(report.status, formatMessage))) && (
               <InfoLine
                 label={coreMessages.status}
                 content={
@@ -109,70 +111,70 @@ const ReportDetail = () => {
                 }
                 loading={loading}
               />
+            )}
+            <InfoLine
+              label={messages.submitted}
+              content={formatDate(report?.submittedAt)}
+              loading={loading}
+            />
+            {(loading || report?.approvedAt) && (
               <InfoLine
-                label={messages.submitted}
-                content={formatDate(report?.submittedAt)}
+                label={coreMessages.approved}
+                content={formatDate(report?.approvedAt)}
                 loading={loading}
               />
-              {(loading || report?.approvedAt) && (
-                <InfoLine
-                  label={coreMessages.approved}
-                  content={formatDate(report?.approvedAt)}
-                  loading={loading}
-                />
-              )}
-              {(loading || analysisPeriod) && (
-                <InfoLine
-                  label={messages.analysisPeriod}
-                  content={analysisPeriod}
-                  loading={loading}
-                />
-              )}
-              {loading ? (
-                <InfoLine label={messages.company} loading />
-              ) : (
-                report?.companies.map((company) => (
-                  <InfoLine
-                    key={company.nationalId}
-                    label={messages.company}
-                    content={formatMessage(messages.companyWithNationalId, {
-                      name: company.name,
-                      nationalId: formatNationalId(company.nationalId),
-                    })}
-                  />
-                ))
-              )}
-            </InfoLineStack>
-            {report && (
-              <Box marginTop={8}>
-                <Text variant="h3" as="h2" marginBottom={1}>
-                  {formatMessage(messages.resultsTitle)}
-                </Text>
-                <Text marginBottom={6}>
-                  {formatMessage(messages.resultsIntro)}
-                </Text>
-                <Box marginBottom={8}>
-                  <AdjustedGap gap={report.adjustedGap} />
-                </Box>
-                <Box marginBottom={8}>
-                  <MeanHourlyWage
-                    wage={report.meanHourlyWage}
-                    rawGap={report.rawGap}
-                  />
-                </Box>
-                <Box marginBottom={8}>
-                  <WageDistribution distribution={report.distribution} />
-                </Box>
-                {report.improvementPlan.length > 0 && (
-                  <Box marginBottom={8}>
-                    <ImprovementPlan actions={report.improvementPlan} />
-                  </Box>
-                )}
-              </Box>
             )}
-          </>
-        )}
-      </ContentColumn>
+            {(loading || analysisPeriod) && (
+              <InfoLine
+                label={messages.analysisPeriod}
+                content={analysisPeriod}
+                loading={loading}
+              />
+            )}
+            {loading ? (
+              <InfoLine label={messages.company} loading />
+            ) : (
+              report?.companies.map((company) => (
+                <InfoLine
+                  key={company.nationalId}
+                  label={messages.company}
+                  content={formatMessage(messages.companyWithNationalId, {
+                    name: company.name,
+                    nationalId: formatNationalId(company.nationalId),
+                  })}
+                />
+              ))
+            )}
+          </InfoLineStack>
+          {report && (
+            <Box marginTop={8}>
+              <Text variant="h3" as="h2" marginBottom={1}>
+                {formatMessage(messages.resultsTitle)}
+              </Text>
+              <Text marginBottom={6}>
+                {formatMessage(messages.resultsIntro)}
+              </Text>
+              <Box marginBottom={8}>
+                <AdjustedGap gap={report.adjustedGap} />
+              </Box>
+              <Box marginBottom={8}>
+                <MeanHourlyWage
+                  wage={report.meanHourlyWage}
+                  rawGap={report.rawGap}
+                />
+              </Box>
+              <Box marginBottom={8}>
+                <WageDistribution distribution={report.distribution} />
+              </Box>
+              {report.improvementPlan.length > 0 && (
+                <Box marginBottom={8}>
+                  <ImprovementPlan actions={report.improvementPlan} />
+                </Box>
+              )}
+            </Box>
+          )}
+        </>
+      )}
     </IntroWrapper>
   )
 }

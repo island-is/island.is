@@ -14,10 +14,10 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 
-import { ContentColumn } from '../../components/ContentColumn/ContentColumn'
 import { StatusTag } from '../../components/StatusTag/StatusTag'
 import { NAMESPACE } from '../../lib/constants'
 import { messages } from '../../lib/messages'
+import { getStatusTag } from '../../lib/status'
 import { useDirectorateOfEqualityEqualityPlanQuery } from './EqualityPlanDetail.generated'
 
 const getYear = (date?: string | null) =>
@@ -38,10 +38,11 @@ const EqualityPlanDetail = () => {
     ? formatMessage(coreMessages.equalityPlan)
     : from && to
     ? formatMessage(messages.planTitle, { from, to })
-    : formatMessage(messages.planTitleNoPeriod)
+    : formatMessage(coreMessages.equalityPlan)
 
   return (
     <IntroWrapper
+      desktopContentSpan="10/12"
       title={title}
       intro={formatMessage(messages.planDetailIntro)}
       loading={loading}
@@ -67,66 +68,66 @@ const EqualityPlanDetail = () => {
           : undefined
       }
     >
-      <ContentColumn>
-        {error && !loading ? (
-          <Problem error={error} noBorder={false} />
-        ) : !loading && !plan ? (
-          <Problem type="not_found" noBorder={false} />
-        ) : (
-          <InfoLineStack label={messages.planInfo}>
-            <InfoLine
-              label={messages.identifier}
-              content={plan?.identifier ?? undefined}
-              loading={loading}
-            />
+      {error && !loading ? (
+        <Problem error={error} noBorder={false} />
+      ) : !loading && !plan ? (
+        <Problem type="not_found" noBorder={false} />
+      ) : (
+        <InfoLineStack label={messages.planInfo}>
+          <InfoLine
+            label={messages.identifier}
+            content={plan?.identifier ?? undefined}
+            loading={loading}
+          />
+          {(loading || (plan && getStatusTag(plan.status, formatMessage))) && (
             <InfoLine
               label={coreMessages.status}
               content={plan ? <StatusTag status={plan.status} /> : undefined}
               loading={loading}
             />
+          )}
+          <InfoLine
+            label={messages.submitted}
+            content={formatDate(plan?.submittedAt)}
+            loading={loading}
+          />
+          {(loading || plan?.approvedAt) && (
             <InfoLine
-              label={messages.submitted}
-              content={formatDate(plan?.submittedAt)}
+              label={coreMessages.approved}
+              content={formatDate(plan?.approvedAt)}
               loading={loading}
             />
-            {(loading || plan?.approvedAt) && (
+          )}
+          {(loading || plan?.validUntil) && (
+            <InfoLine
+              label={coreMessages.validTo}
+              content={formatDate(plan?.validUntil)}
+              loading={loading}
+            />
+          )}
+          {loading ? (
+            <InfoLine label={messages.company} loading />
+          ) : (
+            plan?.companies.map((company) => (
               <InfoLine
-                label={coreMessages.approved}
-                content={formatDate(plan?.approvedAt)}
-                loading={loading}
+                key={company.nationalId}
+                label={messages.company}
+                content={formatMessage(messages.companyWithNationalId, {
+                  name: company.name,
+                  nationalId: formatNationalId(company.nationalId),
+                })}
               />
-            )}
-            {(loading || plan?.validUntil) && (
-              <InfoLine
-                label={coreMessages.validTo}
-                content={formatDate(plan?.validUntil)}
-                loading={loading}
-              />
-            )}
-            {loading ? (
-              <InfoLine label={messages.company} loading />
-            ) : (
-              plan?.companies.map((company) => (
-                <InfoLine
-                  key={company.nationalId}
-                  label={messages.company}
-                  content={formatMessage(messages.companyWithNationalId, {
-                    name: company.name,
-                    nationalId: formatNationalId(company.nationalId),
-                  })}
-                />
-              ))
-            )}
-            {(loading || plan?.documentFileName) && (
-              <InfoLine
-                label={messages.document}
-                content={plan?.documentFileName ?? undefined}
-                loading={loading}
-              />
-            )}
-          </InfoLineStack>
-        )}
-      </ContentColumn>
+            ))
+          )}
+          {(loading || plan?.documentFileName) && (
+            <InfoLine
+              label={messages.document}
+              content={plan?.documentFileName ?? undefined}
+              loading={loading}
+            />
+          )}
+        </InfoLineStack>
+      )}
     </IntroWrapper>
   )
 }

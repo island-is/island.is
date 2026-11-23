@@ -102,7 +102,7 @@ export const WageDistribution = ({
         title={formatMessage(messages.chartTitle)}
         dataTable={{
           caption: formatMessage(messages.chartTitle),
-          seriesHeader: formatMessage(coreMessages.gender),
+          titleHeader: formatMessage(coreMessages.gender),
           noteHeader: markedLabel,
         }}
         series={[

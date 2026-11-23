@@ -1,13 +1,6 @@
 import { useRef, useState } from 'react'
 
-import {
-  Box,
-  Button,
-  ProblemTemplate,
-  Stack,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
+import { Box, Button, Stack, Text, toast } from '@island.is/island-ui/core'
 import { DirectorateOfEqualityServiceProvider } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { ActionCardLoader } from '@island.is/portals/my-pages/core'
@@ -84,13 +77,13 @@ export const ServiceProvidersTab = () => {
         {loading && <ActionCardLoader repeat={2} />}
         {!loading && error && <Problem error={error} noBorder={false} />}
         {!loading && !error && providers.length === 0 && (
-          <ProblemTemplate
-            variant="info"
-            tag={formatMessage(messages.serviceProviderTag)}
+          <Problem
+            type="no_data"
+            noBorder={false}
             title={formatMessage(messages.noServiceProvidersTitle)}
             message={formatMessage(messages.noServiceProvidersMessage)}
             imgSrc="./assets/images/nodata.svg"
-            titleAs="h3"
+            titleSize="h3"
           />
         )}
         {!loading && !error && providers.length > 0 && (

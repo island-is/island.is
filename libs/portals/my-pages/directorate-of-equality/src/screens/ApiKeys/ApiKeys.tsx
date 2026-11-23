@@ -8,7 +8,6 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 
-import { ContentColumn } from '../../components/ContentColumn/ContentColumn'
 import { NAMESPACE } from '../../lib/constants'
 import { messages } from '../../lib/messages'
 import { useDirectorateOfEqualityCompanyQuery } from '../../lib/company.generated'
@@ -40,6 +39,7 @@ const ApiKeys = () => {
 
   return (
     <IntroWrapper
+      desktopContentSpan="10/12"
       title={formatMessage(coreMessages.equalityApiKeys)}
       intro={formatMessage(messages.apiKeysIntro)}
       serviceProvider={{
@@ -47,21 +47,19 @@ const ApiKeys = () => {
         tooltip: formatMessage(coreMessages.equalityTooltip),
       }}
     >
-      <ContentColumn>
-        {error && !loading && <Problem error={error} noBorder={false} />}
-        {loading && <CardLoader />}
-        {!loading && !error && (
-          <Box marginTop={2}>
-            <Tabs
-              label={formatMessage(coreMessages.equalityApiKeys)}
-              selected="service-providers"
-              contentBackground="transparent"
-              onlyRenderSelectedTab
-              tabs={tabs}
-            />
-          </Box>
-        )}
-      </ContentColumn>
+      {error && !loading && <Problem error={error} noBorder={false} />}
+      {loading && <CardLoader />}
+      {!loading && !error && (
+        <Box marginTop={2}>
+          <Tabs
+            label={formatMessage(coreMessages.equalityApiKeys)}
+            selected="service-providers"
+            contentBackground="transparent"
+            onlyRenderSelectedTab
+            tabs={tabs}
+          />
+        </Box>
+      )}
     </IntroWrapper>
   )
 }

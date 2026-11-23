@@ -15,6 +15,20 @@ export const ImprovementPlan = ({
   actions: DirectorateOfEqualityImprovementAction[]
 }) => {
   const { formatMessage } = useLocale()
+  const visibleActions = actions.filter((action) =>
+    [
+      action.reason,
+      action.correctionPlan,
+      action.deadline,
+      action.responsibleName,
+      action.responsibleTitle,
+    ].some(Boolean),
+  )
+
+  if (visibleActions.length === 0) {
+    return null
+  }
+
   return (
     <Box>
       <Text variant="h4" as="h3" marginBottom={1}>
@@ -24,7 +38,7 @@ export const ImprovementPlan = ({
         {formatMessage(messages.improvementPlanIntro)}
       </Text>
       <Stack space={4}>
-        {actions.map((action, index) => (
+        {visibleActions.map((action, index) => (
           <InfoLineStack
             key={action.id}
             label={formatMessage(messages.actionGroup, { number: index + 1 })}
