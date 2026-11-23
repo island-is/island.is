@@ -1287,16 +1287,6 @@ export class AppealCaseService {
       return this.completeVerdictAppeal(theCase, appealCase, transaction)
     }
 
-    // Withdrawal and completion are the only transitions a verdict appeal
-    // supports. The others carry a ruling appeal to and through the court of
-    // appeals and were written for that, so they are refused rather than
-    // applied to a case they were never checked against.
-    if (appealCase.appealType === AppealCaseType.VERDICT) {
-      throw new ForbiddenException(
-        `Verdict appeals cannot be transitioned with ${transition}`,
-      )
-    }
-
     // Withdrawing an in-court ruling-order appeal is per party: only the
     // withdrawing party's decision is marked, and the appeal case is not
     // withdrawn until every appealing party has withdrawn.
@@ -1601,13 +1591,11 @@ export class AppealCaseService {
     appealCase: AppealCase,
     transaction: Transaction,
   ): Promise<AppealTransitionResult & { appealCase: AppealCase }> {
-    // A verdict appeal is never received the way a ruling appeal is: it stays
-    // appealed from the day it is filed until it is concluded or withdrawn.
-    if (appealCase.appealState !== AppealCaseState.APPEALED) {
-      throw new ForbiddenException(
-        `The appeal transition ${AppealCaseTransition.COMPLETE_APPEAL} cannot be applied to a verdict appeal in state ${appealCase.appealState}`,
-      )
-    }
+    const { caseUpdate, appealCaseUpdate } = transitionAppealCase(
+      AppealCaseTransition.COMPLETE_APPEAL,
+      theCase,
+      appealCase,
+    )
 
     const hasRulingFile = (theCase.caseFiles ?? []).some(
       (file) =>
@@ -1630,18 +1618,13 @@ export class AppealCaseService {
       `Completing verdict appeal ${appealCase.id} of case ${theCase.id}`,
     )
 
-    const appealCaseUpdate: UpdateAppealCase = {
-      appealState: AppealCaseState.COMPLETED,
-      appealRulingDate: nowFactory(),
-    }
-
     const updatedAppealCase = await this.appealCaseRepositoryService.update(
       appealCase.id,
       appealCaseUpdate,
       { transaction },
     )
 
-    return { caseUpdate: {}, appealCaseUpdate, appealCase: updatedAppealCase }
+    return { caseUpdate, appealCaseUpdate, appealCase: updatedAppealCase }
   }
 
   private async applyTransition(
