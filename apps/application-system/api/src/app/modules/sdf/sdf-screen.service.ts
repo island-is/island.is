@@ -202,18 +202,14 @@ export class SdfScreenService {
     user: User,
     options: AdapterOptions = {},
   ): Promise<ScreenDto> {
-    const startTime = Date.now()
-
     const context = await this.resolveScreenRenderContext(
       applicationId,
       locale,
       user,
       options,
-      startTime,
     )
     const { application, filteredApplication, form, bffUser, screens } = context
 
-    const step5Start = Date.now()
     const checkedIndex =
       options.claimedScreenChecked && claimedScreenId
         ? findScreenIndex(
@@ -234,9 +230,7 @@ export class SdfScreenService {
             claimedScreenId,
           )
     const currentScreen = screens[resolvedIndex]
-    this.logTiming('Step 5: Resolve Current Screen', step5Start)
 
-    const step6Start = Date.now()
     const resolver = await this.i18nResolverService.createResolver(
       application as Application,
       locale,
@@ -253,9 +247,7 @@ export class SdfScreenService {
       currentScreen?.subSectionIndex ?? 0,
       resolver,
     )
-    this.logTiming('Step 6: Build Stepper', step6Start)
 
-    const step7Start = Date.now()
     const page = this.buildPage(
       currentScreen,
       resolvedIndex,
@@ -263,9 +255,7 @@ export class SdfScreenService {
       filteredApplication,
       bffUser,
     )
-    this.logTiming('Step 7: Build Page', step7Start)
 
-    const step8Start = Date.now()
     const footer = this.buildFooter(
       context,
       currentScreen,
@@ -273,7 +263,6 @@ export class SdfScreenService {
       isLastNavigableScreen(screens, resolvedIndex),
       resolver,
     )
-    this.logTiming('Step 8: Build Footer', step8Start)
 
     const header = this.buildHeader(context, currentScreen, resolver)
 
@@ -281,8 +270,6 @@ export class SdfScreenService {
       currentScreen,
       filteredApplication,
     )
-
-    this.logTiming('Total pipeline', startTime)
 
     return {
       applicationId,
@@ -306,34 +293,25 @@ export class SdfScreenService {
     locale: Locale,
     user: User,
     options: AdapterOptions,
-    pipelineStartTime: number,
   ): Promise<ScreenRenderContext> {
     const application =
       options.application ??
       (await this.requireApplicationForUser(applicationId, user))
-    this.logTiming('Step 1: Load Application', pipelineStartTime)
 
-    const step2Start = Date.now()
     const template = await getApplicationTemplateByTypeId(application.typeId)
-    this.logTiming('Step 2: Load Template', step2Start)
 
-    const step3Start = Date.now()
     const roleInState = this.resolveRoleInState(application, template, user)
     const form = await this.loadForm(roleInState, application)
-    this.logTiming('Step 3: Resolve Role & Form', step3Start)
 
     // Security-critical: filter answers/external data by role before rendering.
-    const step35Start = Date.now()
     const { answers: filteredAnswers, externalData: filteredExternalData } =
       this.filterDataByRole(application, roleInState)
-    this.logTiming('Step 3.5: Role-Based Data Filtering', step35Start)
     const filteredApplication: ApplicationWithAttachments = {
       ...application,
       answers: filteredAnswers,
       externalData: filteredExternalData,
     }
 
-    const step4Start = Date.now()
     const bffUser = this.buildBffUser(user, locale)
     const screens = convertFormToScreens(
       form,
@@ -341,7 +319,6 @@ export class SdfScreenService {
       filteredExternalData,
       bffUser,
     )
-    this.logTiming('Step 4: Compile Form to Screens', step4Start)
 
     return {
       application,
@@ -1709,10 +1686,5 @@ export class SdfScreenService {
     }
 
     return message
-  }
-
-  private logTiming(label: string, startTime: number) {
-    const elapsed = Date.now() - startTime
-    this.logger.debug(`AstAdapter ${label}: ${elapsed}ms`)
   }
 }
