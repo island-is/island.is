@@ -36,12 +36,10 @@ export const useOwnContact = () => {
     fetchPolicy: 'cache-and-network',
   })
 
-  const [
-    updateMutation,
-    { loading: saving },
-  ] = useEducationUpdateOwnContactMutation({
-    refetchQueries: [{ query: EducationOwnContactDocument }],
-  })
+  const [updateMutation, { loading: saving }] =
+    useEducationUpdateOwnContactMutation({
+      refetchQueries: [{ query: EducationOwnContactDocument }],
+    })
 
   const contact = data?.educationOwnContact ?? null
 

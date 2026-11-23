@@ -38,7 +38,7 @@ const fetchError = ({
 
 const problemOf = (error: unknown) => {
   expect(error).toBeInstanceOf(ProblemError)
-  return ((error as ProblemError).problem as unknown) as Record<string, unknown>
+  return (error as ProblemError).problem as unknown as Record<string, unknown>
 }
 
 describe('toMmsKeyInfoProblem', () => {
