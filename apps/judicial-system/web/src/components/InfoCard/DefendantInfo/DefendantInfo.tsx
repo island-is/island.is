@@ -28,6 +28,7 @@ import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.c
 import {
   getAppealExpirationInfo,
   getDefendantTagConfig,
+  getInfoCardDefender,
   getVerdictViewDateText,
 } from './DefendantInfo.logic'
 import { strings } from './DefendantInfo.strings'
@@ -119,16 +120,29 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
   } = props
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-  const hasDefender = defendant.defenderName || defender?.name
+  const displayedDefender = getInfoCardDefender(defendant, {
+    user,
+    fallback: {
+      name: defender?.name,
+      email: defender?.email,
+      phoneNumber: defender?.phoneNumber,
+    },
+  })
+  const hasDefender = Boolean(
+    displayedDefender.name ||
+      displayedDefender.email ||
+      displayedDefender.phoneNumber,
+  )
   const defenderLabel =
     defender?.sessionArrangement ===
     SessionArrangements.ALL_PRESENT_SPOKESPERSON
       ? strings.spokesperson
       : strings.defender
-  const defenderName = defendant.defenderName || defender?.name
-  const defenderEmail = defendant.defenderEmail || defender?.email
-  const defenderPhoneNumber =
-    defendant.defenderPhoneNumber || defender?.phoneNumber
+  const {
+    name: defenderName,
+    email: defenderEmail,
+    phoneNumber: defenderPhoneNumber,
+  } = displayedDefender
 
   const appealExpirationInfo = getAppealExpirationInfo({
     verdictAppealDeadline: defendant.verdictAppealDeadline,
