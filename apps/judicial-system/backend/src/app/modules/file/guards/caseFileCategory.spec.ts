@@ -2,6 +2,8 @@ import {
   CaseFileCategory,
   CaseState,
   CaseType,
+  courtOfAppealsRoles,
+  InstitutionType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -9,6 +11,7 @@ import {
 import { CivilClaimant, CourtSession, Defendant } from '../../repository'
 import {
   canLimitedAccessUserViewCaseFile,
+  canUserAccessCaseFileCategory,
   getConfirmedDefendantsForDefender,
   getDefenceUserCaseFileCategories,
   getDefenceUserVisiblePoliceCaseNumbers,
@@ -572,6 +575,88 @@ describe('getDefenceUserCaseFileCategories - appeal confirmation', () => {
     expect(categories).toContain(
       CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
     )
+  })
+})
+
+describe('verdict appeal ruling', () => {
+  const nationalId = '1234567890'
+  const category = CaseFileCategory.VERDICT_APPEAL_RULING
+
+  it.each(courtOfAppealsRoles)('is accessible to %s', (role) => {
+    const user = {
+      role,
+      institution: { type: InstitutionType.COURT_OF_APPEALS },
+    } as User
+
+    expect(canUserAccessCaseFileCategory(user, category)).toBe(true)
+  })
+
+  it.each([
+    [UserRole.PROSECUTOR, InstitutionType.POLICE_PROSECUTORS_OFFICE],
+    [UserRole.PROSECUTOR, InstitutionType.PUBLIC_PROSECUTORS_OFFICE],
+    [UserRole.DISTRICT_COURT_JUDGE, InstitutionType.DISTRICT_COURT],
+    [UserRole.PRISON_SYSTEM_STAFF, InstitutionType.PRISON_ADMIN],
+    [UserRole.DEFENDER, undefined],
+  ])('is not accessible to %s at %s', (role, type) => {
+    const user = { role, institution: type ? { type } : undefined } as User
+
+    expect(canUserAccessCaseFileCategory(user, category)).toBe(false)
+  })
+
+  it('is not accessible without a user', () => {
+    expect(canUserAccessCaseFileCategory(undefined, category)).toBe(false)
+  })
+
+  it('leaves every other category alone', () => {
+    const others = Object.values(CaseFileCategory).filter(
+      (other) => other !== category,
+    )
+
+    expect(
+      others.every((other) => canUserAccessCaseFileCategory(undefined, other)),
+    ).toBe(true)
+    expect(canUserAccessCaseFileCategory(undefined, undefined)).toBe(true)
+  })
+
+  it('is not among the categories of a confirmed appeal defender', () => {
+    const categories = getDefenceUserCaseFileCategories(
+      nationalId,
+      CaseType.INDICTMENT,
+      [
+        makeDefendant({
+          appealDefenderNationalId: nationalId,
+          isAppealDefenderConfirmed: true,
+        }),
+      ],
+    )
+
+    expect(categories).not.toContain(category)
+  })
+
+  it.each([
+    [UserRole.DEFENDER, undefined],
+    [UserRole.PRISON_SYSTEM_STAFF, InstitutionType.PRISON],
+    [UserRole.PRISON_SYSTEM_STAFF, InstitutionType.PRISON_ADMIN],
+  ])('cannot be viewed by limited access user %s at %s', (role, type) => {
+    const canView = canLimitedAccessUserViewCaseFile({
+      user: {
+        nationalId,
+        name: 'Limited Access User',
+        role,
+        institution: type ? { type } : undefined,
+      } as User,
+      caseType: CaseType.INDICTMENT,
+      caseState: CaseState.COMPLETED,
+      caseFileCategory: category,
+      defendants: [
+        makeDefendant({
+          appealDefenderNationalId: nationalId,
+          isAppealDefenderConfirmed: true,
+        }),
+      ],
+    })
+
+    expect(canView).toBe(false)
   })
 })
 

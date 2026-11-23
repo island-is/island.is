@@ -170,8 +170,7 @@ export const m = defineMessages({
   },
   personalTaxCreditDescription: {
     id: 'sp.social-insurance-maintenance:personal-tax-credit-description',
-    defaultMessage:
-      'Persónuafsláttur er 72.492 kr. á mánuði á árinu 2026. Bankareikningurinn sem greitt er inn á má nálgast undir “Mínar upplýsingar”.',
+    defaultMessage: 'Persónuafsláttur er 72.492 kr. á mánuði á árinu 2026.',
   },
   registerPersonalTaxCredit: {
     id: 'sp.social-insurance-maintenance:register-personal-tax-credit',

@@ -14,8 +14,10 @@ import { ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
   AppealCaseRulingDecision,
+  AppealRulingType,
   MAX_APPEAL_JUDGE_COUNT,
   UserRole,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
 
 export class UpdateAppealCaseDto {
@@ -56,6 +58,11 @@ export class UpdateAppealCaseDto {
   readonly appealRulingDecision?: AppealCaseRulingDecision
 
   @IsOptional()
+  @IsEnum(AppealRulingType)
+  @ApiPropertyOptional({ enum: AppealRulingType })
+  readonly appealRulingType?: AppealRulingType
+
+  @IsOptional()
   @Type(() => Date)
   @IsDate()
   @ApiPropertyOptional({ type: Date })
@@ -77,4 +84,10 @@ export class UpdateAppealCaseDto {
   @IsEnum(UserRole, { each: true })
   @ApiPropertyOptional({ enum: UserRole, isArray: true })
   readonly requestAppealRulingNotToBePublished?: UserRole[]
+
+  // Only a verdict appeal has one; the service rejects it on a ruling appeal.
+  @IsOptional()
+  @IsEnum(VerdictAppealStatus)
+  @ApiPropertyOptional({ enum: VerdictAppealStatus })
+  readonly verdictAppealStatus?: VerdictAppealStatus
 }

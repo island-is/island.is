@@ -13,7 +13,7 @@ import {
   coreHistoryMessages,
   pruneAfterDays,
 } from '@island.is/application/core'
-import { Events, States, Roles } from './constants'
+import { CertificateLanguage, Events, States, Roles } from './constants'
 import { z } from 'zod'
 import { m } from './messages'
 import { NoDebtCertificateApi } from '../dataProviders'
@@ -21,6 +21,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { CodeOwners } from '@island.is/shared/constants'
 
 const NoDebtCertificateSchema = z.object({
+  certificateLanguage: z.nativeEnum(CertificateLanguage),
   approveExternalData: z.boolean().refine((v) => v),
 })
 
@@ -43,8 +44,41 @@ const template: ApplicationTemplate<
     },
   ],
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITES,
     states: {
+      [States.PREREQUISITES]: {
+        meta: {
+          name: 'Umsókn um skuldleysisvottorð',
+          status: 'draft',
+          actionCard: {
+            tag: {
+              label: m.actionCardDraft,
+              variant: 'blue',
+            },
+          },
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Prerequisites').then((module) =>
+                  Promise.resolve(module.Prerequisites),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Áfram',
+                  type: 'primary',
+                },
+              ],
+              write: { answers: ['certificateLanguage'] },
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
+        },
+      },
       [States.DRAFT]: {
         meta: {
           name: 'Umsókn um skuldleysisvottorð',

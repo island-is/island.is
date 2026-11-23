@@ -866,13 +866,6 @@ export const slices = gql`
             title
           }
         }
-        typeTag {
-          id
-          title
-          genericTagGroup {
-            title
-          }
-        }
         fund {
           id
           title
