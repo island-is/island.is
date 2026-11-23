@@ -17,6 +17,10 @@ import {
   settleDebtStep,
 } from '../cardPayment.debt'
 import { ApplePayChargeInput } from './dtos'
+import {
+  GatewayApprovedUnreadableError,
+  refundApprovedUnreadableCharge,
+} from '../approvedUnreadableCharge'
 
 export const createApplePayPaymentContext = (
   paymentFlowId: string,
@@ -75,13 +79,28 @@ export const createApplePayPaymentSaga = (
         `[${ctx.paymentFlowId}][correlationId: ${ctx.trackingData.correlationId}][rrn: ${ctx.trackingData.merchantReferenceData}] Charging Apple Pay`,
       )
 
-      const paymentResult = await cardPaymentService.chargeApplePay(
-        ctx.input,
-        ctx.trackingData,
-        totalPrice,
-      )
+      try {
+        const paymentResult = await cardPaymentService.chargeApplePay(
+          ctx.input,
+          ctx.trackingData,
+          totalPrice,
+        )
 
-      return { paymentResult }
+        return { paymentResult }
+      } catch (error) {
+        // The step did not complete, so its compensation will not run: a
+        // charge the gateway approved is refunded here
+        if (error instanceof GatewayApprovedUnreadableError) {
+          await refundApprovedUnreadableCharge({
+            ctx,
+            error,
+            refundService,
+            paymentFlowService,
+            logger,
+          })
+        }
+        throw error
+      }
     },
     compensate: async (ctx) => {
       if (await keepDebtPayment({ cardPaymentService, logger, ctx })) {
@@ -206,6 +225,7 @@ export const createApplePayPaymentSaga = (
         settlement: ctx.stepResults.SETTLE_DEBT,
         message: `Apple Pay payment completed successfully`,
         paymentResult,
+        correlationId: ctx.trackingData.correlationId,
       })
     },
   },

@@ -1,5 +1,9 @@
+import type { FetchResult } from '@apollo/client'
+import { ApolloLink, Observable } from '@apollo/client'
+import type { MockedResponse } from '@apollo/client/testing'
 import { MockedProvider } from '@apollo/client/testing'
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { Feature } from '@island.is/judicial-system/types'
@@ -17,6 +21,7 @@ import {
   UserRole,
   VerdictAppealDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { LimitedAccessAcceptVerdictDocument } from '@island.is/judicial-system-web/src/utils/hooks/useVerdict/limitedAccessAcceptVerdict.generated'
 import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   FormContextWrapper,
@@ -99,9 +104,40 @@ const completedCase = (
   ],
 })
 
-const renderOverview = (theCase: WorkingCase, features: Feature[] = []) =>
+// A link that answers nothing until the test settles a pending operation
+// itself, and that tells how often an operation was sent.
+const heldLink = () => {
+  const sent: { name: string; fail: () => void }[] = []
+
+  const link = new ApolloLink(
+    (operation) =>
+      new Observable<FetchResult>((observer) => {
+        sent.push({
+          name: operation.operationName,
+          fail: () => observer.error(new Error('Failed')),
+        })
+      }),
+  )
+
+  return {
+    link,
+    timesSent: (name: string) =>
+      sent.filter((operation) => operation.name === name).length,
+    fail: (name: string) =>
+      sent
+        .filter((operation) => operation.name === name)
+        .forEach((operation) => operation.fail()),
+  }
+}
+
+const renderOverview = (
+  theCase: WorkingCase,
+  features: Feature[] = [],
+  mocks: MockedResponse[] = [],
+  link?: ApolloLink,
+) =>
   render(
-    <MockedProvider mocks={[]} addTypename={false}>
+    <MockedProvider mocks={mocks} addTypename={false} link={link}>
       <FeatureContext.Provider value={{ features, isLoading: false }}>
         <UserContextWrapper
           userRole={UserRole.DEFENDER}
@@ -177,6 +213,156 @@ describe('Defender IndictmentOverview', () => {
     )
 
     expect(menuButtonOf(timelineCards[0])).not.toBeInTheDocument()
+  })
+
+  it('offers to appeal or accept a verdict the defendant can still appeal', async () => {
+    renderOverview(
+      completedCase(CaseIndictmentRulingDecision.RULING, {
+        defendersConfirmed: true,
+      }),
+      [Feature.INDICTMENT_APPEAL],
+    )
+
+    const timelineCards = await screen.findAllByTestId(
+      'defenderVerdictTimelineCard',
+    )
+    const menuButton = menuButtonOf(timelineCards[0])
+
+    if (!menuButton) {
+      throw new Error('The card has no menu')
+    }
+
+    await userEvent.click(menuButton)
+
+    expect(await screen.findByText('Áfrýja dómi')).toBeInTheDocument()
+    expect(screen.getByText('Una dómi')).toBeInTheDocument()
+  })
+
+  it('accepts the verdict only after the defender confirms', async () => {
+    const accept = jest.fn(() => ({
+      data: { limitedAccessAcceptVerdict: { defendantId: 'own_client_id' } },
+    }))
+
+    renderOverview(
+      completedCase(CaseIndictmentRulingDecision.RULING, {
+        defendersConfirmed: true,
+      }),
+      [Feature.INDICTMENT_APPEAL],
+      [
+        {
+          request: {
+            query: LimitedAccessAcceptVerdictDocument,
+            variables: {
+              input: { caseId: 'test_id', defendantId: 'own_client_id' },
+            },
+          },
+          result: accept,
+        },
+      ],
+    )
+
+    const timelineCards = await screen.findAllByTestId(
+      'defenderVerdictTimelineCard',
+    )
+    const menuButton = menuButtonOf(timelineCards[0])
+
+    if (!menuButton) {
+      throw new Error('The card has no menu')
+    }
+
+    await userEvent.click(menuButton)
+    await userEvent.click(await screen.findByText('Una dómi'))
+
+    expect(
+      await screen.findByText(
+        'Ertu viss um að þú viljir skrá að Eigin sakborningur unir dómi? Ríkissaksóknari fær tilkynningu.',
+      ),
+    ).toBeInTheDocument()
+    expect(accept).not.toHaveBeenCalled()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Já, una dómi' }))
+
+    await waitFor(() => expect(accept).toHaveBeenCalledTimes(1))
+  })
+
+  it('closes the confirmation on Escape without accepting the verdict', async () => {
+    const { link, timesSent } = heldLink()
+
+    renderOverview(
+      completedCase(CaseIndictmentRulingDecision.RULING, {
+        defendersConfirmed: true,
+      }),
+      [Feature.INDICTMENT_APPEAL],
+      [],
+      link,
+    )
+
+    const timelineCards = await screen.findAllByTestId(
+      'defenderVerdictTimelineCard',
+    )
+    const menuButton = menuButtonOf(timelineCards[0])
+
+    if (!menuButton) {
+      throw new Error('The card has no menu')
+    }
+
+    await userEvent.click(menuButton)
+    await userEvent.click(await screen.findByText('Una dómi'))
+    await screen.findByRole('button', { name: 'Já, una dómi' })
+
+    await userEvent.keyboard('{Escape}')
+
+    await waitFor(() =>
+      expect(
+        screen.queryByRole('button', { name: 'Já, una dómi' }),
+      ).not.toBeInTheDocument(),
+    )
+    expect(timesSent('LimitedAccessAcceptVerdict')).toBe(0)
+  })
+
+  it('keeps the confirmation open and locked while the verdict is being accepted', async () => {
+    const { link, timesSent, fail } = heldLink()
+
+    renderOverview(
+      completedCase(CaseIndictmentRulingDecision.RULING, {
+        defendersConfirmed: true,
+      }),
+      [Feature.INDICTMENT_APPEAL],
+      [],
+      link,
+    )
+
+    const timelineCards = await screen.findAllByTestId(
+      'defenderVerdictTimelineCard',
+    )
+    const menuButton = menuButtonOf(timelineCards[0])
+
+    if (!menuButton) {
+      throw new Error('The card has no menu')
+    }
+
+    await userEvent.click(menuButton)
+    await userEvent.click(await screen.findByText('Una dómi'))
+    await userEvent.click(
+      await screen.findByRole('button', { name: 'Já, una dómi' }),
+    )
+
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Hætta við' })).toBeDisabled(),
+    )
+    expect(timesSent('LimitedAccessAcceptVerdict')).toBe(1)
+
+    await userEvent.keyboard('{Escape}')
+
+    // A confirmation that Escape had started closing would stay in the
+    // document, disabled, until its exit ended. Only one still open takes the
+    // failed answer and gives its buttons back.
+    fail('LimitedAccessAcceptVerdict')
+
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Hætta við' })).toBeEnabled(),
+    )
+    expect(screen.getByRole('button', { name: 'Já, una dómi' })).toBeEnabled()
   })
 
   it('offers to withdraw once the verdict has been appealed', async () => {

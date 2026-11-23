@@ -30,6 +30,16 @@ lists framework behaviour that a single template does not reveal.
   is stale: run `yarn nx run <client-project>:codegen/backend-client`
   (or `yarn codegen`).
 
+## Review and debugging
+
+- **To review an application change,** suggest that the engineer run
+  `/application-review` with a PR number, a branch, or nothing for the
+  working tree. Only the engineer can start it.
+- **Before asking for logs, errors or database rows,** ask the engineer to
+  pass them through `scripts/scrub.mjs`, which masks personal data and
+  secrets: `pbpaste | node scripts/scrub.mjs | pbcopy`. `--help` lists the
+  options.
+
 ## Validation
 
 - **Each request is validated alone,** against `dataSchema.partial()` and

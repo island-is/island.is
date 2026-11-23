@@ -1061,6 +1061,24 @@ export class AppealCaseService {
       `Updating appeal case ${appealCase.id} of case ${theCase.id}`,
     )
 
+    if (
+      update.appealRulingType &&
+      appealCase.appealType !== AppealCaseType.VERDICT
+    ) {
+      throw new BadRequestException(
+        `Appeal case ${appealCase.id} is not a verdict appeal and has no ruling type`,
+      )
+    }
+
+    if (
+      update.verdictAppealStatus &&
+      appealCase.appealType !== AppealCaseType.VERDICT
+    ) {
+      throw new BadRequestException(
+        `Appeal case ${appealCase.id} is not a verdict appeal and has no verdict appeal status`,
+      )
+    }
+
     // The bench is not a column: it is replaced as rows, below.
     const { appealJudgeIds, ...columnUpdate } = update
     const data: UpdateAppealCase = { ...columnUpdate }

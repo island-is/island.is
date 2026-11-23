@@ -38,11 +38,9 @@ export const Deadline = () => {
             Þegar form er tekið úr útgáfu fer það í geymslu og verður ekki hægt
             að nálgast það lengur. Svo er formið afritað með sama slug (sömu
             slóð) og vistað í stöðunni "Í vinnslu" og að auki verður hakað í
-            "Loka fyrir aðgengi að umsóknarforminu" svo að það sé ekki hægt að
-            nálgast það lengur.
-            <br /> Það er gert til þess að sá sem opnar formið eftir að
-            fresturinn er útrunninn kemst ekki óvænt inn í formið í vinnslu og
-            sendir inn test-umsókn.
+            "Loka fyrir aðgengi að umsóknarforminu".
+            <br /> Ef til er form í stöðunni "Útgefið í breytingu" verður því
+            eytt.
           </Text>
         </Column>
       </Row>

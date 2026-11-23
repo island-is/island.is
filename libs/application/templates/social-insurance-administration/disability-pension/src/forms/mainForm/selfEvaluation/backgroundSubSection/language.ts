@@ -17,9 +17,10 @@ export const languageField = buildMultiField({
       width: 'full',
       isSearchable: true,
       placeholder: m.questions.chooseLanguage,
-      loadOptions: async ({ apolloClient }) => {
+      loadOptions: async ({ apolloClient, application }) => {
         const { data } = await apolloClient.query<Query>({
           query: siaGeneralLanguagesQuery,
+          variables: { applicationId: application.id },
         })
 
         return (

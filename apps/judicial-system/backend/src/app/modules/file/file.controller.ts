@@ -363,9 +363,11 @@ export class FileController {
     }
 
     // The transaction CaseExistsForUpdateGuard opened - see createCaseFile.
-    // The checks above read the court sessions off the case that guard
-    // loaded, and everything that confirms a court session locks the same
-    // row, so the file cannot be filed in a confirmed session meanwhile.
+    // The checks above read the file and the court sessions off the case
+    // that guard loaded. Everything that confirms a court session locks the
+    // same row, and so does deleting a file through this controller, so the
+    // file can neither be filed in a confirmed session nor deleted here
+    // meanwhile. The limited access delete does not take the lock.
     const transaction = await getOrCreateTransaction(this.sequelize)
 
     return this.fileService.rejectCaseFile(theCase, caseFile, transaction)
@@ -403,7 +405,9 @@ export class FileController {
 
     // The transaction CaseExistsForUpdateGuard opened - see createCaseFile.
     // Holds the case row so DeleteAppealCaseFileGuard's SENT / case-number
-    // read cannot race a concurrent APPEAL_STATEMENT_SENT commit.
+    // read cannot race a concurrent APPEAL_STATEMENT_SENT commit. Given a
+    // transaction, the service removes the file from S3 only after the
+    // request has committed, so a rollback leaves both the row and the object.
     const transaction = await getOrCreateTransaction(this.sequelize)
 
     return this.fileService.deleteCaseFile(theCase, caseFile, transaction)

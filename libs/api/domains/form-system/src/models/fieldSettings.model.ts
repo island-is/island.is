@@ -95,6 +95,12 @@ export class FieldSettings {
   familyType?: string
 
   @Field(() => Boolean, { nullable: true })
+  showBiologicalChildren?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  showChildrenInCustody?: boolean
+
+  @Field(() => Boolean, { nullable: true })
   hasDescription?: boolean
 
   @Field(() => Boolean, { nullable: true })

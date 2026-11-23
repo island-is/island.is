@@ -42,12 +42,16 @@ import {
 
 import { getRequestTransaction } from '../../../middleware'
 import {
+  getVerdictAppealOutcomeOverride,
   hasOutOfCourtAppeal,
   isStatementDeadlineExpired,
   resolveDefenceParties,
 } from '../../appeal-case'
 import { getMostPermissiveRequestSharedWithDefenderForNationalId } from '../../defendant/requestSharedWithDefender.logic'
-import { isRulingOrderInConfirmedCourtSession } from '../../file/guards/caseFileCategory'
+import {
+  canUserAccessCaseFileCategory,
+  isRulingOrderInConfirmedCourtSession,
+} from '../../file/guards/caseFileCategory'
 import { canDefenceUserViewCivilClaimCaseFile } from '../../file/guards/civilClaimFileVisibility'
 import {
   AppealCase,
@@ -757,18 +761,8 @@ const transformVerdictAppealCaseForUser = (
     defenceUser.nationalId,
   )
 
-  // Draft Landsréttur conclusion/decision stay off the wire until the appeal
-  // is completed — including after reopen, when the previous ruling fields
-  // remain on the row while state is RECEIVED again.
   return {
     ...appealCase.toJSON(),
-    ...(appealCase.appealState === AppealCaseState.COMPLETED
-      ? {}
-      : {
-          appealConclusion: undefined,
-          appealRulingDecision: undefined,
-          appealRulingDate: undefined,
-        }),
     statementDeadlines: appealCase.statementDeadlines
       ?.filter((deadline) => isVerdictAppealPartyRow(deadline, partyIds))
       .map(serializeVerdictAppealStatementDeadline),
@@ -956,17 +950,20 @@ const transformCase = (
   // Defence users only see their own parties' verdict-appeal deadlines and
   // event logs. An empty party filter would otherwise match prosecution rows
   // (null/null), and other defendants' greinargerðarfrest is not theirs.
-  // Non-defence keeps theCase.toJSON()'s nested verdictAppealCase as-is.
-  const verdictAppealCaseOverride =
-    theCase.verdictAppealCase && isDefence && user
-      ? {
-          verdictAppealCase: transformVerdictAppealCaseForUser(
-            theCase.verdictAppealCase,
-            theCase,
-            user,
-          ),
-        }
-      : {}
+  const verdictAppealCaseOverride = theCase.verdictAppealCase
+    ? {
+        verdictAppealCase: {
+          ...(isDefence && user
+            ? transformVerdictAppealCaseForUser(
+                theCase.verdictAppealCase,
+                theCase,
+                user,
+              )
+            : theCase.verdictAppealCase.toJSON()),
+          ...getVerdictAppealOutcomeOverride(theCase.verdictAppealCase, user),
+        },
+      }
+    : {}
 
   const caseLevelAppealInfo = getCaseLevelAppealInfo(theCase)
 
@@ -1008,7 +1005,8 @@ const transformCase = (
       civilClaimants: theCase.civilClaimants,
     }),
     caseFiles: theCase.caseFiles
-      ?.filter(
+      ?.filter((file) => canUserAccessCaseFileCategory(user, file.category))
+      .filter(
         (file) =>
           // The user must be known
           user &&

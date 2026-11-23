@@ -1058,6 +1058,15 @@ export class BackendService {
     )
   }
 
+  limitedAccessAcceptVerdict(
+    caseId: string,
+    defendantId: string,
+  ): Promise<Verdict> {
+    return this.post(
+      `case/${caseId}/limitedAccess/defendant/${defendantId}/verdict/accept`,
+    )
+  }
+
   limitedAccessTransitionAppealCase(
     caseId: string,
     appealCaseId: string,

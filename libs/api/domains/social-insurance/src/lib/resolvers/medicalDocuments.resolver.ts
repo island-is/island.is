@@ -68,8 +68,12 @@ export class MedicalDocumentsResolver {
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
+    @Args('applicationId', { type: () => String, nullable: true })
+    applicationId?: string,
   ) {
-    return this.service.getDisabilityPensionCertificate(user, locale)
+    return withApplicationGuidContext(applicationId, () =>
+      this.service.getDisabilityPensionCertificate(user, locale),
+    )
   }
 
   @Query(() => ConfirmedTreatment, {

@@ -22,7 +22,6 @@ query GetReferralsDetail(
     data {
       ...Referral
       createdDate
-      reason
       diagnoses
       fromContactInfo {
         name

@@ -8,17 +8,22 @@ export class ApplePayChargeResponse {
   @IsString()
   acquirerReferenceNumber!: string
 
-  @ApiProperty({ description: 'Transaction ID', type: String })
+  @ApiPropertyOptional({ description: 'Transaction ID', type: String })
   @IsString()
-  transactionID!: string
+  @IsOptional()
+  transactionID?: string
 
   @ApiProperty({ description: 'Authorization code', type: String })
   @IsString()
   authorizationCode!: string
 
-  @ApiProperty({ description: 'Transaction lifecycle ID', type: String })
+  @ApiPropertyOptional({
+    description: 'Transaction lifecycle ID',
+    type: String,
+  })
   @IsString()
-  transactionLifecycleId!: string
+  @IsOptional()
+  transactionLifecycleId?: string
 
   @ApiProperty({
     description: 'Masked card number returned by the payment gateway',
@@ -38,13 +43,21 @@ export class ApplePayChargeResponse {
   @IsObject()
   cardInformation!: CardInformation
 
-  @ApiProperty({ description: 'Authorization identifier', type: String })
+  @ApiPropertyOptional({
+    description: 'Authorization identifier',
+    type: String,
+  })
   @IsString()
-  authorizationIdentifier!: string
+  @IsOptional()
+  authorizationIdentifier?: string
 
-  @ApiProperty({ description: 'Response code from the charge', type: String })
+  @ApiPropertyOptional({
+    description: 'Response code from the charge',
+    type: String,
+  })
   @IsString()
-  responseCode!: string
+  @IsOptional()
+  responseCode?: string
 
   @ApiPropertyOptional({
     description: 'Description of the response',
@@ -54,9 +67,13 @@ export class ApplePayChargeResponse {
   @IsOptional()
   responseDescription?: string
 
-  @ApiProperty({ description: 'Response time of the charge', type: String })
+  @ApiPropertyOptional({
+    description: 'Response time of the charge',
+    type: String,
+  })
   @IsString()
-  responseTime!: string
+  @IsOptional()
+  responseTime?: string
 
   @ApiProperty({ description: 'Correlation ID for tracking', type: String })
   @IsString()

@@ -1461,7 +1461,7 @@ export const messages = {
       },
       overall: {
         id: 'doe.sr.application:salaryAnalysis.components.overall',
-        defaultMessage: 'Allir',
+        defaultMessage: 'Öll',
       },
       gapRow: {
         id: 'doe.sr.application:salaryAnalysis.components.gapRow',

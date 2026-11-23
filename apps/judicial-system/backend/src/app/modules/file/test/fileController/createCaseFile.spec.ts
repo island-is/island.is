@@ -421,6 +421,96 @@ describe('FileController - Create case file', () => {
     })
   })
 
+  describe('verdict appeal ruling', () => {
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+      type: indictmentCases[0],
+      verdictAppealCase: { id: uuid() },
+    } as Case
+    const createCaseFile: CreateFileDto = {
+      type: 'application/pdf',
+      key: `${caseId}/${uuid()}/test.pdf`,
+      size: 99,
+      category: CaseFileCategory.VERDICT_APPEAL_RULING,
+    }
+    const courtOfAppealsUser = {
+      id: uuid(),
+      role: UserRole.COURT_OF_APPEALS_ASSISTANT,
+      institution: { type: InstitutionType.COURT_OF_APPEALS },
+    } as User
+
+    describe.each([
+      [UserRole.PROSECUTOR, InstitutionType.POLICE_PROSECUTORS_OFFICE],
+      [UserRole.PROSECUTOR, InstitutionType.PUBLIC_PROSECUTORS_OFFICE],
+      [UserRole.DISTRICT_COURT_JUDGE, InstitutionType.DISTRICT_COURT],
+    ])('created by %s at %s', (role, type) => {
+      let then: Then
+
+      beforeEach(async () => {
+        then = await createCaseFileAs(caseId, createCaseFile, theCase, {
+          id: uuid(),
+          role,
+          institution: { type },
+        } as User)
+      })
+
+      it('should forbid creation', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(mockCaseFileRepositoryService.create).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('created by a court of appeals user', () => {
+      const caseFile = {
+        ...createCaseFile,
+        id: uuid(),
+        name: 'test.pdf',
+        state: CaseFileState.STORED_IN_RVG,
+      }
+      let then: Then
+
+      beforeEach(async () => {
+        const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
+        mockCreate.mockResolvedValueOnce(caseFile)
+
+        then = await createCaseFileAs(
+          caseId,
+          createCaseFile,
+          theCase,
+          courtOfAppealsUser,
+        )
+      })
+
+      it('should create the file', () => {
+        expect(then.error).toBeUndefined()
+        expect(then.result).toBe(caseFile)
+      })
+
+      it('should not queue any messages', () => {
+        expect(mockQueuedMessages).toEqual([])
+      })
+    })
+
+    describe('created on a case without a verdict appeal', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        then = await createCaseFileAs(
+          caseId,
+          createCaseFile,
+          { id: caseId, type: indictmentCases[0] } as Case,
+          courtOfAppealsUser,
+        )
+      })
+
+      it('should refuse creation', () => {
+        expect(then.error).toBeInstanceOf(BadRequestException)
+        expect(mockCaseFileRepositoryService.create).not.toHaveBeenCalled()
+      })
+    })
+  })
+
   describe('malformed key', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case

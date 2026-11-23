@@ -26,6 +26,10 @@ import { getProsecutionVerdictAppealItem } from './prosecutionVerdictAppeal.logi
 import type { VerdictTimelineItem } from './VerdictTimelineBody'
 import { strings } from './VerdictTimelineCard.strings'
 
+// Names the bullet that shows where the defendant stands on the verdict: the
+// stance they took, or the appeal that came of it.
+const STANCE_ITEM_ID = 'stance'
+
 /**
  * Whether there is anything yet to tell the defence about a verdict. Until the
  * public prosecution office has decided whether the verdict must be served, the
@@ -107,9 +111,12 @@ export const getDefenderVerdictTimelineItems = ({
   }
 
   // The stance the defendant took at service only matters while it is still open
-  // which way they will go, so an appeal takes its place in the list.
+  // which way they will go, so an appeal takes its place in the list. It is the
+  // same bullet either way, so filing or withdrawing an appeal swaps the text
+  // in place.
   if (verdict.appealDate) {
     items.push({
+      id: STANCE_ITEM_ID,
       text: `Dómfelldi áfrýjaði ${formatDate(verdict.appealDate)}`,
       tone: 'critical',
     })
@@ -119,7 +126,7 @@ export const getDefenderVerdictTimelineItems = ({
     )
 
     if (appealDecisionLabel) {
-      items.push({ text: appealDecisionLabel })
+      items.push({ id: STANCE_ITEM_ID, text: appealDecisionLabel })
     }
   }
 

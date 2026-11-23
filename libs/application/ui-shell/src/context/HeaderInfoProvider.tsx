@@ -15,6 +15,8 @@ interface Info {
 interface HeaderInfoProvider {
   info: Info
   setInfo: Dispatch<SetStateAction<Info>>
+  hideDelegationBanner: boolean
+  setHideDelegationBanner: Dispatch<SetStateAction<boolean>>
 }
 
 export const HeaderInfoContext = createContext<HeaderInfoProvider>({
@@ -23,6 +25,8 @@ export const HeaderInfoContext = createContext<HeaderInfoProvider>({
     institutionName: undefined,
   },
   setInfo: () => undefined,
+  hideDelegationBanner: false,
+  setHideDelegationBanner: () => undefined,
 })
 
 export const HeaderInfoProvider: FC<React.PropsWithChildren<unknown>> = ({
@@ -33,11 +37,15 @@ export const HeaderInfoProvider: FC<React.PropsWithChildren<unknown>> = ({
     institutionName: undefined,
   })
 
+  const [hideDelegationBanner, setHideDelegationBanner] = useState(false)
+
   return (
     <HeaderInfoContext.Provider
       value={{
         info,
         setInfo,
+        hideDelegationBanner,
+        setHideDelegationBanner,
       }}
     >
       {children}
