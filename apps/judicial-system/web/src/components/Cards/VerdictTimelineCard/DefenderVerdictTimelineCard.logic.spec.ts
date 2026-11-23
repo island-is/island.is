@@ -287,7 +287,11 @@ describe('getDefenderVerdictTimelineItems', () => {
         }),
       ).toEqual([
         { text: 'Dómur birtur 01.06.2026' },
-        { text: 'Dómfelldi áfrýjaði 04.06.2026', tone: 'critical' },
+        {
+          id: 'stance',
+          text: 'Dómfelldi áfrýjaði 04.06.2026',
+          tone: 'critical',
+        },
         { text: 'Greinargerð send 10.09.2026' },
       ])
     })
@@ -307,7 +311,11 @@ describe('getDefenderVerdictTimelineItems', () => {
         }),
       ).toEqual([
         { text: 'Dómur birtur 01.06.2026' },
-        { text: 'Dómfelldi áfrýjaði 04.06.2026', tone: 'critical' },
+        {
+          id: 'stance',
+          text: 'Dómfelldi áfrýjaði 04.06.2026',
+          tone: 'critical',
+        },
         { text: 'Greinargerð send 10.09.2026' },
       ])
     })
