@@ -37,6 +37,7 @@ export enum CaseFileCategory {
   COURT_CASE_FILE = 'COURT_CASE_FILE', // Dómari: Viðbótargögn í dómsal
   APPEAL_COURT_RECORD = 'APPEAL_COURT_RECORD',
   APPEAL_RULING = 'APPEAL_RULING',
+  VERDICT_APPEAL_RULING = 'VERDICT_APPEAL_RULING', // Landsréttur: Dómur eða úrskurður í áfrýjun
   CIVIL_CLAIM = 'CIVIL_CLAIM',
   SENT_TO_PRISON_ADMIN_FILE = 'SENT_TO_PRISON_ADMIN_FILE',
   COURT_INDICTMENT_RULING_ORDER = 'COURT_INDICTMENT_RULING_ORDER', // dómari: úrskurðarskjal undir rekstri máls

@@ -6,6 +6,7 @@ export {
   buildInCourtAppealedEvent,
   currentAppealCourtSession,
   findAppealCaseOfCaseFile,
+  getVerdictAppealOutcomeOverride,
   hasOutOfCourtAppeal,
   InCourtAppellant,
   inCourtAppellantsFromDecisions,
