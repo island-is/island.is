@@ -292,7 +292,9 @@ export const VehicleMileageFee = ({ permno }: Props) => {
               backgroundColor="white"
               options={yearOptions}
               value={yearOptions.find((o) => o.value === selectedYear) ?? null}
-              onChange={(option) => option && setYear(option.value)}
+              onChange={(option) =>
+                option && option.value !== selectedYear && setYear(option.value)
+              }
               isDisabled={years.length === 0}
             />
           </Box>
