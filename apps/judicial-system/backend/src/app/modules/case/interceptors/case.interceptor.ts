@@ -27,7 +27,6 @@ import {
   getStatementDeadline,
   hasDatePassed,
   isCompletedCase,
-  isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
   isIndictmentCase,
@@ -42,7 +41,11 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { getRequestTransaction } from '../../../middleware'
-import { hasOutOfCourtAppeal, resolveDefenceParties } from '../../appeal-case'
+import {
+  getVerdictAppealOutcomeOverride,
+  hasOutOfCourtAppeal,
+  resolveDefenceParties,
+} from '../../appeal-case'
 import { getMostPermissiveRequestSharedWithDefenderForNationalId } from '../../defendant/requestSharedWithDefender.logic'
 import {
   canUserAccessCaseFileCategory,
@@ -876,26 +879,6 @@ const getAppealRulingOverride = (appealCase: AppealCase, isDefence: boolean) =>
         appealIsolationToDate: undefined,
       }
     : {}
-
-// How the court of appeals concludes a verdict appeal is its own until it is
-// released: every other user is presented with an appeal still in progress,
-// whatever the court has saved on it and whether or not it has completed it.
-const getVerdictAppealOutcomeOverride = (
-  verdictAppealCase: AppealCase,
-  user: User | undefined,
-) =>
-  isCourtOfAppealsUser(user)
-    ? {}
-    : {
-        appealRulingDecision: undefined,
-        appealRulingType: undefined,
-        appealConclusion: undefined,
-        appealRulingModifiedHistory: undefined,
-        appealRulingDate: undefined,
-        ...(verdictAppealCase.appealState === AppealCaseState.COMPLETED
-          ? { appealState: AppealCaseState.APPEALED }
-          : {}),
-      }
 
 const transformCase = (
   theCase: Case,
