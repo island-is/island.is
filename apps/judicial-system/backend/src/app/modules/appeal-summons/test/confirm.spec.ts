@@ -4,7 +4,9 @@ import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
 
+import { MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealCaseNotificationType,
   AppealEventType,
   HashAlgorithm,
   InstitutionType,
@@ -15,6 +17,7 @@ import {
 import { createTestingAppealSummonsModule } from './createTestingAppealSummonsModule'
 
 import { getCaseFileHash } from '../../../formatters'
+import { queueMessagesAfterCommit } from '../../../middleware'
 import { PdfService } from '../../case'
 import {
   AppealCase,
@@ -24,6 +27,8 @@ import {
   Case,
 } from '../../repository'
 import { AppealSummonsController } from '../appealSummons.controller'
+
+jest.mock('../../../middleware/queueMessagesAfterCommit')
 
 describe('AppealSummonsController - Confirm', () => {
   const caseId = uuid()
@@ -83,6 +88,7 @@ describe('AppealSummonsController - Confirm', () => {
     mockTransaction.mockImplementation(
       (fn: (transaction: Transaction) => Promise<unknown>) => fn(transaction),
     )
+    ;(queueMessagesAfterCommit as jest.Mock).mockClear()
   })
 
   it('confirms a draft, freezes the hash and logs the event', async () => {
@@ -170,6 +176,15 @@ describe('AppealSummonsController - Confirm', () => {
       },
       { transaction },
     )
+    expect(queueMessagesAfterCommit).toHaveBeenCalledWith({
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
+      user,
+      caseId,
+      elementId: appealCaseId,
+      body: {
+        type: AppealCaseNotificationType.APPEAL_SUMMONS_CONFIRMED,
+      },
+    })
     expect(transaction.afterCommit).toHaveBeenCalled()
     expect(mockPdfService.uploadAppealSummonsPdf).toHaveBeenCalledWith(
       theCase,

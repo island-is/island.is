@@ -342,6 +342,16 @@ export class AppealSummonsService {
       { transaction },
     )
 
+    queueMessagesAfterCommit({
+      type: MessageType.APPEAL_CASE_NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      elementId: appealCase.id,
+      body: {
+        type: AppealCaseNotificationType.APPEAL_SUMMONS_CONFIRMED,
+      },
+    })
+
     const result = await this.appealSummonsRepositoryService.findByIdAndCaseId(
       summons.id,
       theCase.id,
