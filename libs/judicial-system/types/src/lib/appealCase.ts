@@ -66,6 +66,14 @@ export enum AppealCaseRulingDecision {
   DISCONTINUED = 'DISCONTINUED',
 }
 
+// Whether the court of appeals concludes a verdict appeal with a judgment
+// (VERDICT, dómur) or with a ruling (RULING, úrskurður). The court chooses:
+// the ruling decision does not determine it. A ruling appeal has none.
+export enum AppealRulingType {
+  VERDICT = 'VERDICT',
+  RULING = 'RULING',
+}
+
 export const getStatementDeadline = (appealReceived: Date): Date => {
   return addDays(appealReceived, 1)
 }
