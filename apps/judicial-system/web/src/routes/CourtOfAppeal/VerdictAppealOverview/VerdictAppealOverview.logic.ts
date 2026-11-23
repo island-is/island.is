@@ -41,7 +41,10 @@ export const getVerdictAppealReceivedDate = (
  * begun as readily as on a finished one.
  */
 export const getVerdictAppealOverviewHeaderLines = (
-  theCase: Pick<WorkingCase, 'courtCaseNumber' | 'rulingDate' | 'verdictAppealCase'>,
+  theCase: Pick<
+    WorkingCase,
+    'courtCaseNumber' | 'rulingDate' | 'verdictAppealCase'
+  >,
 ): string[] => {
   const lines: string[] = []
 
