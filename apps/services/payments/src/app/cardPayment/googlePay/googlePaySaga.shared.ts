@@ -2,7 +2,10 @@ import { Logger } from '@island.is/logging'
 import { retry } from '@island.is/shared/utils/server'
 
 import { PaymentMethod, RefundType } from '../../../types'
-import { CardPaymentSuccessResponse } from '../../../types/cardPayment'
+import {
+  CardPaymentSuccessResponse,
+  RefundSuccessResponse,
+} from '../../../types/cardPayment'
 import {
   ContextWithStepResults,
   requireStepResult,
@@ -34,7 +37,7 @@ export type GooglePaySagaContext =
  * step did not complete, so this is not a compensation the orchestrator runs:
  * the charge step calls it itself. A refund that goes through is reported
  * like the compensation's, and the controller answers the payer accordingly.
- * When it does not go through: a charge the gateway confirmed is CRITICAL and
+ * When it does not go through: a charge the gateway approved is CRITICAL and
  * the payer hears the refund failed; an unknown outcome most likely means
  * nothing was charged, so the refund found no payment, and it is logged for
  * reconciliation by the correlation id should one turn up.
@@ -52,47 +55,29 @@ export const refundUnsettledGooglePayCharge = async ({
   paymentFlowService: PaymentFlowService
   logger: Logger
 }): Promise<void> => {
-  const { paymentTrackingData, paymentResult } = error
+  const { paymentTrackingData, paymentResult, approved } = error
   const { correlationId } = paymentTrackingData
 
   logger.warn(
     `[${ctx.paymentFlowId}] Refunding a Google Pay wallet transaction the saga can not settle (correlationId: ${correlationId})`,
-    { outcomeKnown: paymentResult !== undefined, error: error.message },
+    { outcomeKnown: approved, error: error.message },
   )
 
+  let refund: RefundSuccessResponse
   try {
-    const refund = await retry(() =>
+    refund = await retry(() =>
       refundService.refundWithCorrelationId({
         paymentFlowId: ctx.paymentFlowId,
         paymentTrackingData,
       }),
     )
-
-    await paymentFlowService.logPaymentFlowUpdate({
-      paymentFlowId: ctx.paymentFlowId,
-      type: 'error',
-      occurredAt: new Date(),
-      paymentMethod: PaymentMethod.CARD,
-      reason: 'payment_failed',
-      message: 'Card payment refunded: failed to complete payment processing.',
-      metadata: {
-        payment: paymentResult,
-        refund,
-        // Ties the refund to the payment, see PaymentFlowService.isCardPaymentRefunded
-        correlationId,
-        originalError: error.message,
-        reasonForRefund: RefundType.PAYMENT_FAILURE,
-      },
-    })
-
-    ctx.metadata = { ...ctx.metadata, refundSucceeded: true, refund }
   } catch (refundError) {
-    if (paymentResult) {
+    if (approved) {
       logger.error(
         `[${ctx.paymentFlowId}] CRITICAL: Accepted Google Pay payment but failed to refund. Manual intervention required.`,
         {
           correlationId,
-          acquirerReferenceNumber: paymentResult.acquirerReferenceNumber,
+          acquirerReferenceNumber: paymentResult?.acquirerReferenceNumber,
           error: (refundError as Error).message,
         },
       )
@@ -113,6 +98,35 @@ export const refundUnsettledGooglePayCharge = async ({
         originalError: error.message,
         error: (refundError as Error).message,
       },
+    )
+    return
+  }
+
+  // Recorded before the event, so an event that fails to log does not report
+  // the refund as failed
+  ctx.metadata = { ...ctx.metadata, refundSucceeded: true, refund }
+
+  try {
+    await paymentFlowService.logPaymentFlowUpdate({
+      paymentFlowId: ctx.paymentFlowId,
+      type: 'error',
+      occurredAt: new Date(),
+      paymentMethod: PaymentMethod.CARD,
+      reason: 'payment_failed',
+      message: 'Card payment refunded: failed to complete payment processing.',
+      metadata: {
+        payment: paymentResult,
+        refund,
+        // Ties the refund to the payment, see PaymentFlowService.isCardPaymentRefunded
+        correlationId,
+        originalError: error.message,
+        reasonForRefund: RefundType.PAYMENT_FAILURE,
+      },
+    })
+  } catch (logError) {
+    logger.error(
+      `[${ctx.paymentFlowId}] Refunded a Google Pay wallet transaction the saga can not settle, but failed to log the refund event`,
+      { correlationId, error: (logError as Error).message },
     )
   }
 }
@@ -283,6 +297,7 @@ export const createGooglePaySettlementSteps = <
         settlement: ctx.stepResults.SETTLE_DEBT,
         message: `Google Pay payment completed successfully`,
         paymentResult: getPaymentResult(ctx),
+        correlationId: ctx.trackingData.correlationId,
       })
     },
   },
