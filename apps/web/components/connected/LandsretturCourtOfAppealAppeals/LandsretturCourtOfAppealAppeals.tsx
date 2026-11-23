@@ -1,9 +1,13 @@
+import { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useQuery } from '@apollo/client'
+import { parseAsInteger, useQueryState } from 'next-usequerystate'
+import { useLazyQuery } from '@apollo/client'
 
 import {
   AlertMessage,
   Box,
+  LoadingDots,
+  Pagination,
   SkeletonLoader,
   Stack,
   Text,
@@ -18,7 +22,10 @@ import { GET_COURT_OF_APPEAL_APPEALS_QUERY } from '@island.is/web/screens/querie
 
 import { m } from './translation.strings'
 
+const ITEMS_PER_PAGE = 100
 const SKELETON_ITEM_COUNT = 10
+// Leaves room above the list so the page title stays in view
+const SCROLL_OFFSET = 180
 
 interface LandsretturCourtOfAppealAppealsProps {
   slice: ConnectedComponent
@@ -29,16 +36,39 @@ const LandsretturCourtOfAppealAppeals = ({
 }: LandsretturCourtOfAppealAppealsProps) => {
   const { formatMessage } = useIntl()
   const { format } = useDateUtils()
+  const appealListTop = useRef<HTMLDivElement>(null)
 
-  const { data, loading, error } = useQuery<
+  const [_page, setPage] = useQueryState(
+    'page',
+    parseAsInteger.withOptions({
+      clearOnDefault: true,
+    }),
+  )
+  const page = _page ?? 1
+
+  const [appeals, setAppeals] =
+    useState<GetCourtOfAppealAppealsQuery['webCourtOfAppealAppeals']>()
+
+  const [fetchAppeals, { loading, error }] = useLazyQuery<
     GetCourtOfAppealAppealsQuery,
     GetCourtOfAppealAppealsQueryVariables
-  >(GET_COURT_OF_APPEAL_APPEALS_QUERY, { ssr: false })
+  >(GET_COURT_OF_APPEAL_APPEALS_QUERY, {
+    onCompleted(data) {
+      setAppeals(data.webCourtOfAppealAppeals)
+    },
+  })
 
-  const appeals = data?.webCourtOfAppealAppeals
+  useEffect(() => {
+    fetchAppeals({
+      variables: {
+        input: { page },
+      },
+    })
+  }, [page, fetchAppeals])
 
   return (
     <Stack space={3}>
+      <div ref={appealListTop} />
       {loading && !appeals && (
         <SkeletonLoader
           height={150}
@@ -47,6 +77,11 @@ const LandsretturCourtOfAppealAppeals = ({
           repeat={SKELETON_ITEM_COUNT}
           space={3}
         />
+      )}
+      {loading && appeals && (
+        <Box display="flex" justifyContent="center">
+          <LoadingDots />
+        </Box>
       )}
       {error && (
         <AlertMessage
@@ -95,6 +130,34 @@ const LandsretturCourtOfAppealAppeals = ({
               </Stack>
             </Box>
           ))}
+          {appeals.total > ITEMS_PER_PAGE && (
+            <Pagination
+              page={page}
+              totalItems={appeals.total}
+              itemsPerPage={ITEMS_PER_PAGE}
+              renderLink={(page, className, children) => (
+                <button
+                  className={className}
+                  onClick={() => {
+                    setPage(page)
+                    const listTop = appealListTop.current
+                    // Only scroll back up if the top of the list is out of view
+                    if (!listTop || listTop.getBoundingClientRect().top >= 0)
+                      return
+                    window.scrollTo({
+                      top:
+                        listTop.getBoundingClientRect().top +
+                        window.scrollY -
+                        SCROLL_OFFSET,
+                      behavior: 'instant',
+                    })
+                  }}
+                >
+                  {children}
+                </button>
+              )}
+            />
+          )}
         </Stack>
       )}
     </Stack>

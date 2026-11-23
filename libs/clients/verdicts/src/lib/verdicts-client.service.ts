@@ -42,9 +42,7 @@ const isFullGoproSlugSelection = (
   if (set.size !== fullSet.length) return false
   return fullSet.every((slug) => set.has(slug))
 }
-const APPEAL_CASES_PER_REQUEST = 100
-// Safety limit so a misbehaving upstream can't make us loop forever
-const APPEAL_CASES_MAX_PAGES = 50
+const COURT_OF_APPEAL_APPEALS_PER_PAGE = 100
 
 // Case numbers look like "892/2026", sort by year and then number
 const parseCaseNumber = (caseNumber: string) => {
@@ -902,75 +900,48 @@ export class VerdictsClientService {
     }
   }
 
-  async getCourtOfAppealAppeals() {
+  async getCourtOfAppealAppeals(input: { page: number }) {
     const { goproCaseApi } = await this.getAuthenticatedGoproApis()
+    // GoPro can't order appeal cases by case number yet, so we use its default
+    // order (publish date) and sort each page by case number ourselves
+    const response = await goproCaseApi.getPublishedAppealCasesV2({
+      pageNumber: Math.max(1, input.page ?? 1),
+      itemsPerPage: COURT_OF_APPEAL_APPEALS_PER_PAGE,
+    })
 
-    const items: NonNullable<
-      Awaited<
-        ReturnType<typeof goproCaseApi.getPublishedAppealCasesV2>
-      >['items']
-    > = []
-    let total = 0
-
-    // GoPro only serves the list in pages and can't order it by case number,
-    // so fetch every page and sort the whole list ourselves
-    for (
-      let pageNumber = 1;
-      pageNumber <= APPEAL_CASES_MAX_PAGES;
-      pageNumber += 1
-    ) {
-      const response = await goproCaseApi.getPublishedAppealCasesV2({
-        pageNumber,
-        itemsPerPage: APPEAL_CASES_PER_REQUEST,
-      })
-
-      if (response.succeeded === false) {
-        throw new Error(
-          response.message ||
-            'Failed to fetch published appeal cases from Court of Appeal',
-        )
-      }
-
-      const pageItems = response.items ?? []
-      items.push(...pageItems)
-      total = response.total ?? 0
-
-      if (
-        pageItems.length < APPEAL_CASES_PER_REQUEST ||
-        pageNumber * APPEAL_CASES_PER_REQUEST >= total
+    if (response.succeeded === false) {
+      throw new Error(
+        response.message ||
+          'Failed to fetch published appeal cases from Court of Appeal',
       )
-        break
     }
 
-    if (items.length < total)
-      this.logger.warn(
-        `Court of Appeal appeals list was cut off at ${items.length} of ${total} cases, consider paginating it`,
-      )
-
     const seenCaseNumbers = new Set<string>()
-    const appeals = items
-      .filter((item) => {
-        if (!item.recordId || !item.caseNumber) return false
-        const caseNumber = item.caseNumber.trim()
-        if (seenCaseNumbers.has(caseNumber)) return false
-        seenCaseNumbers.add(caseNumber)
-        return true
-      })
-      .map((item) => ({
-        id: item.recordId as string,
-        title: (item.caseTitleRaw ?? '').replace(/\s+/g, ' ').trim(),
-        caseNumber: (item.caseNumber as string).trim(),
-        status: item.status || null,
-        appealDate:
-          item.appealDate && isValidDate(item.appealDate)
-            ? item.appealDate.toISOString()
-            : null,
-      }))
-      .sort((a, b) => compareCaseNumbersDescending(a.caseNumber, b.caseNumber))
 
     return {
-      total: appeals.length,
-      items: appeals,
+      total: response.total ?? 0,
+      items: (response.items ?? [])
+        .filter((item) => {
+          const caseNumber = item.caseNumber?.trim()
+          if (!item.recordId || !caseNumber || seenCaseNumbers.has(caseNumber))
+            return false
+          seenCaseNumbers.add(caseNumber)
+          return true
+        })
+        .map((item) => ({
+          id: item.recordId as string,
+          title: (item.caseTitleRaw ?? '').replace(/\s+/g, ' ').trim(),
+          caseNumber: (item.caseNumber as string).trim(),
+          status: item.status || null,
+          appealDate:
+            item.appealDate && isValidDate(item.appealDate)
+              ? item.appealDate.toISOString()
+              : null,
+        }))
+        .sort((a, b) =>
+          compareCaseNumbersDescending(a.caseNumber, b.caseNumber),
+        ),
+      input,
     }
   }
 
