@@ -14,6 +14,7 @@ import {
   Post,
   Res,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
 import { InjectConnection } from '@nestjs/sequelize'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
@@ -74,6 +75,7 @@ import {
   publicProsecutorStaffCreateRule,
   publicProsecutorStaffTransitionRule,
 } from './guards/rolesRules'
+import { VerdictAppealOutcomeInterceptor } from './interceptors/verdictAppealOutcome.interceptor'
 import { AppealAppointmentLetterService } from './appealAppointmentLetter.service'
 import { AppealCaseService } from './appealCase.service'
 
@@ -143,6 +145,7 @@ export class AppealCaseController {
     publicProsecutorStaffCreateRule,
   )
   @Post('case/:caseId/appealCase')
+  @UseInterceptors(VerdictAppealOutcomeInterceptor)
   @ApiCreatedResponse({
     type: AppealCase,
     description: 'Creates a new appeal case',
@@ -195,6 +198,7 @@ export class AppealCaseController {
     courtOfAppealsAssistantUpdateRule,
   )
   @Patch('case/:caseId/appealCase/:appealCaseId')
+  @UseInterceptors(VerdictAppealOutcomeInterceptor)
   @ApiOkResponse({
     type: AppealCase,
     description: 'Updates an existing appeal case',
@@ -248,6 +252,7 @@ export class AppealCaseController {
   )
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Post('case/:caseId/appealCase/:appealCaseId/eventLog')
+  @UseInterceptors(VerdictAppealOutcomeInterceptor)
   @ApiCreatedResponse({
     type: AppealCase,
     description: 'Records an appeal event and dispatches mapped side effects',
@@ -296,6 +301,7 @@ export class AppealCaseController {
     courtOfAppealsAssistantTransitionRule,
   )
   @Patch('case/:caseId/appealCase/:appealCaseId/state')
+  @UseInterceptors(VerdictAppealOutcomeInterceptor)
   @ApiOkResponse({
     type: AppealCase,
     description: 'Transitions an appeal case to a new state',

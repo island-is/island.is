@@ -1,6 +1,6 @@
 import type { GraphQLContext } from '@island.is/auth-nest-tools'
 
-import { getPayerRequestInfo } from './payments.utils'
+import { getPayerRequestInfo, toVerifyCardResponse } from './payments.utils'
 
 type Req = GraphQLContext['req']
 
@@ -92,5 +92,39 @@ describe('getPayerRequestInfo', () => {
     })
 
     expect(getPayerRequestInfo(req).userAgent).toBe('Mozilla/5.0')
+  })
+})
+
+describe('toVerifyCardResponse', () => {
+  const verification = {
+    postUrl: 'https://acs.example/3ds',
+    verificationFields: [{ name: 'creq', value: 'abc' }],
+    scriptPath: 'https://acs.example/script.js',
+    isSuccess: true,
+    correlationId: 'correlation-id',
+  }
+
+  it('keeps the non-null fields of the GraphQL type when the gateway left them out', () => {
+    expect(toVerifyCardResponse(verification)).toMatchObject({
+      ...verification,
+      cardVerificationRawResponse: '',
+      additionalFields: [],
+      cardInformation: { cardScheme: '', cardUsage: '' },
+      responseCode: '',
+      responseTime: '',
+    })
+  })
+
+  it('passes on what the gateway sent', () => {
+    const full = {
+      ...verification,
+      cardVerificationRawResponse: 'raw',
+      additionalFields: [{ name: 'a', value: 'b' }],
+      cardInformation: { cardScheme: 'V', cardUsage: 'Debit' },
+      responseCode: '00',
+      responseTime: '12:00:00',
+    }
+
+    expect(toVerifyCardResponse(full)).toEqual(full)
   })
 })

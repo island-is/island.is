@@ -16,6 +16,7 @@ import {
 import { MessageService } from '@island.is/judicial-system/message'
 
 import { CaseService, InternalCaseService, PdfService } from '../../case'
+import { LimitedAccessCaseService } from '../../case/limitedAccessCase.service'
 import { DefendantService } from '../../defendant'
 import { EventService } from '../../event'
 import { EventLogService } from '../../event-log'
@@ -29,12 +30,14 @@ import {
 } from '../../repository'
 import { UserService } from '../../user'
 import { InternalVerdictController } from '../internalVerdict.controller'
+import { LimitedAccessVerdictController } from '../limitedAccessVerdict.controller'
 import { VerdictController } from '../verdict.controller'
 import { VerdictService } from '../verdict.service'
 
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../case/case.service')
+jest.mock('../../case/limitedAccessCase.service')
 jest.mock('../../police/police.service')
 jest.mock('../../file/file.service')
 jest.mock('../../case/pdf.service')
@@ -54,11 +57,16 @@ export const createTestingVerdictModule = async () => {
         load: [sharedAuthModuleConfig, auditTrailModuleConfig],
       }),
     ],
-    controllers: [VerdictController, InternalVerdictController],
+    controllers: [
+      VerdictController,
+      InternalVerdictController,
+      LimitedAccessVerdictController,
+    ],
     providers: [
       SharedAuthModule,
       MessageService,
       CaseService,
+      LimitedAccessCaseService,
       InternalCaseService,
       PoliceService,
       FileService,
@@ -119,6 +127,11 @@ export const createTestingVerdictModule = async () => {
   const internalVerdictController =
     verdictModule.get<InternalVerdictController>(InternalVerdictController)
 
+  const limitedAccessVerdictController =
+    verdictModule.get<LimitedAccessVerdictController>(
+      LimitedAccessVerdictController,
+    )
+
   const sequelize = verdictModule.get<Sequelize>(Sequelize)
 
   verdictModule.close()
@@ -126,6 +139,7 @@ export const createTestingVerdictModule = async () => {
   return {
     verdictController,
     internalVerdictController,
+    limitedAccessVerdictController,
     verdictService,
     policeService,
     eventService,

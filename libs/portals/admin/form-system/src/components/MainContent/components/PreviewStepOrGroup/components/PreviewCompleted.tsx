@@ -114,7 +114,11 @@ export const PreviewCompleted = ({ form }: { form: FormSystemForm }) => {
           {title}
         </Text>
       )}
-      <AlertMessage type="success" title={header} message={text} />
+      <AlertMessage
+        type="success"
+        title={header}
+        message={<Text whiteSpace="breakSpaces">{text}</Text>}
+      />
       {infos.length > 0 && (
         <Box
           width="full"

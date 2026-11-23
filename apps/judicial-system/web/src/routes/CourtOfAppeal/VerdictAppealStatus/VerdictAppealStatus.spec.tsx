@@ -1,7 +1,7 @@
 import type { FC, PropsWithChildren } from 'react'
 import { useState } from 'react'
 import addDays from 'date-fns/addDays'
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import {
@@ -17,6 +17,7 @@ import {
   CaseState,
   CaseType,
   UserRole,
+  VerdictAppealStatus as Status,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
 import {
@@ -31,6 +32,19 @@ const mockPush = jest.fn()
 const mockCreateAppealCourtSession = jest.fn()
 const mockUpdateAppealCourtSession = jest.fn()
 const mockDeleteAppealCourtSession = jest.fn()
+const mockUpdateAppealCase = jest.fn()
+let mockIsUpdatingAppealCase = false
+
+jest.mock(
+  '@island.is/judicial-system-web/src/utils/hooks/useAppealCase',
+  () => ({
+    __esModule: true,
+    default: () => ({
+      updateAppealCase: mockUpdateAppealCase,
+      isUpdatingAppealCase: mockIsUpdatingAppealCase,
+    }),
+  }),
+)
 
 jest.mock(
   '@island.is/judicial-system-web/src/utils/hooks/useAppealCourtSession',
@@ -190,6 +204,9 @@ describe('VerdictAppealStatus', () => {
     mockCreateAppealCourtSession.mockReset()
     mockUpdateAppealCourtSession.mockReset()
     mockDeleteAppealCourtSession.mockReset()
+    mockUpdateAppealCase.mockReset()
+    mockIsUpdatingAppealCase = false
+    mockUpdateAppealCase.mockResolvedValue({ id: 'verdict-appeal' })
   })
 
   it('names the case and who appealed', () => {
@@ -249,8 +266,155 @@ describe('VerdictAppealStatus', () => {
     )
   })
 
-  // The status is not saved, so a booked session is what says the court
-  // chose to call one. Opening the page reads that back.
+  it('opens on the status the court saved', () => {
+    renderPage({
+      ...caseWithBookedSession,
+      verdictAppealCase: {
+        ...caseWithBookedSession.verdictAppealCase,
+        verdictAppealStatus: Status.UNDER_ADVISEMENT,
+      },
+    } as unknown as WorkingCase)
+
+    expect(screen.getByLabelText('Dómtekið')).toBeChecked()
+    expect(screen.getByTestId('continueButton')).toBeEnabled()
+  })
+
+  // The choice is held on the page until the court moves on, the way the
+  // district court's decision is.
+  it('saves the chosen status when the court continues, not when it is chosen', async () => {
+    renderPage()
+
+    await userEvent.click(screen.getByLabelText('Dómtekið'))
+
+    expect(mockUpdateAppealCase).not.toHaveBeenCalled()
+
+    await userEvent.click(screen.getByTestId('continueButton'))
+
+    expect(mockUpdateAppealCase).toHaveBeenCalledWith(
+      'case-id',
+      'verdict-appeal',
+      { verdictAppealStatus: Status.UNDER_ADVISEMENT },
+    )
+    await waitFor(() =>
+      expect(mockPush).toHaveBeenCalledWith(
+        `${COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE}/case-id?appealCaseId=verdict-appeal`,
+      ),
+    )
+  })
+
+  // A choice made while the save is under way would be left behind: the
+  // earlier one is stored and the page moves on.
+  it('holds the choice still while the status is being saved', () => {
+    mockIsUpdatingAppealCase = true
+
+    renderPage()
+
+    for (const radio of screen.getAllByRole('radio')) {
+      expect(radio).toBeDisabled()
+    }
+  })
+
+  // The save is over before the next page has opened, and a choice made in
+  // between would be left behind just the same.
+  it('holds the choice still until the next page has opened', async () => {
+    let finishNavigation: (navigated: boolean) => void = () => undefined
+    mockPush.mockImplementationOnce(
+      () =>
+        new Promise<boolean>((resolve) => {
+          finishNavigation = resolve
+        }),
+    )
+    renderPage()
+
+    await userEvent.click(screen.getByLabelText('Lokið'))
+    await userEvent.click(screen.getByTestId('continueButton'))
+
+    await waitFor(() => expect(mockPush).toHaveBeenCalled())
+
+    for (const radio of screen.getAllByRole('radio')) {
+      expect(radio).toBeDisabled()
+    }
+    expect(screen.getByTestId('continueButton')).toBeDisabled()
+
+    // Navigation that came to nothing gives the page back to the court.
+    await act(async () => finishNavigation(false))
+
+    for (const radio of screen.getAllByRole('radio')) {
+      expect(radio).toBeEnabled()
+    }
+  })
+
+  // Nothing disables the stepper, so a second step picked while the first
+  // leave is on its way must not start another save or navigation.
+  it('ignores a second stepper choice while it is already leaving', async () => {
+    let finishNavigation: (navigated: boolean) => void = () => undefined
+    mockPush.mockImplementationOnce(
+      () =>
+        new Promise<boolean>((resolve) => {
+          finishNavigation = resolve
+        }),
+    )
+    renderPage()
+
+    await userEvent.click(screen.getByLabelText('Frestun'))
+    await userEvent.click(screen.getByRole('button', { name: 'Verjandi' }))
+    await waitFor(() => expect(mockPush).toHaveBeenCalledTimes(1))
+
+    await userEvent.click(screen.getByRole('button', { name: 'Verjandi' }))
+
+    expect(mockPush).toHaveBeenCalledTimes(1)
+    expect(mockUpdateAppealCase).toHaveBeenCalledTimes(1)
+
+    await act(async () => finishNavigation(true))
+  })
+
+  it('stays on the page when the status could not be saved', async () => {
+    mockUpdateAppealCase.mockResolvedValue(undefined)
+    renderPage()
+
+    await userEvent.click(screen.getByLabelText('Lokið'))
+    await userEvent.click(screen.getByTestId('continueButton'))
+
+    await waitFor(() => expect(mockUpdateAppealCase).toHaveBeenCalled())
+    expect(mockPush).not.toHaveBeenCalled()
+
+    await waitFor(() => expect(screen.getByLabelText('Lokið')).toBeEnabled())
+  })
+
+  it('writes nothing when the saved status is left as it is', async () => {
+    renderPage({
+      ...theCase,
+      verdictAppealCase: {
+        ...theCase.verdictAppealCase,
+        verdictAppealStatus: Status.POSTPONED,
+      },
+    } as unknown as WorkingCase)
+
+    await userEvent.click(screen.getByTestId('continueButton'))
+
+    await waitFor(() => expect(mockPush).toHaveBeenCalled())
+    expect(mockUpdateAppealCase).not.toHaveBeenCalled()
+  })
+
+  // The stepper is another way off the page, and a status the court has
+  // settled on goes with it.
+  it('saves a settled status when the stepper leads to another step', async () => {
+    renderPage()
+
+    await userEvent.click(screen.getByLabelText('Frestun'))
+    await userEvent.click(screen.getByRole('button', { name: 'Verjandi' }))
+
+    expect(mockUpdateAppealCase).toHaveBeenCalledWith(
+      'case-id',
+      'verdict-appeal',
+      { verdictAppealStatus: Status.POSTPONED },
+    )
+    await waitFor(() => expect(mockPush).toHaveBeenCalled())
+  })
+
+  // An appeal from before the status was kept has none, so a booked session
+  // is what says the court chose to call one. Opening the page reads that
+  // back.
   it('opens on the session status with the booked session listed', () => {
     renderPage(caseWithBookedSession)
 
@@ -266,9 +430,17 @@ describe('VerdictAppealStatus', () => {
 
     await userEvent.click(screen.getByTestId('continueButton'))
 
+    await waitFor(() =>
+      expect(mockPush).toHaveBeenCalledWith(
+        `${COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE}/case-id?appealCaseId=verdict-appeal`,
+      ),
+    )
     expect(mockCreateAppealCourtSession).not.toHaveBeenCalled()
-    expect(mockPush).toHaveBeenCalledWith(
-      `${COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE}/case-id?appealCaseId=verdict-appeal`,
+    // The status read off the booked session is saved on the way.
+    expect(mockUpdateAppealCase).toHaveBeenCalledWith(
+      'case-id',
+      'verdict-appeal',
+      { verdictAppealStatus: Status.COURT_SESSION_SCHEDULED },
     )
   })
 
@@ -300,6 +472,15 @@ describe('VerdictAppealStatus', () => {
         courtRoom: '1',
       }),
     )
+    // Saved after the session it stands on.
+    expect(mockUpdateAppealCase).toHaveBeenCalledWith(
+      'case-id',
+      'verdict-appeal',
+      { verdictAppealStatus: Status.COURT_SESSION_SCHEDULED },
+    )
+    expect(
+      mockCreateAppealCourtSession.mock.invocationCallOrder[0],
+    ).toBeLessThan(mockUpdateAppealCase.mock.invocationCallOrder[0])
   })
 
   // The list reads earliest session first, so one booked for tomorrow goes

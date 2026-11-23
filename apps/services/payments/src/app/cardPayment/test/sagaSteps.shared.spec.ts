@@ -121,8 +121,8 @@ const sagaConfigs: SagaConfig[] = [
   {
     name: 'CardPayment',
     createContext: createCardPaymentContext,
-    createSaga: (cardService, _refundService, flowService, logger) =>
-      createCardPaymentSaga(cardService, flowService, logger),
+    createSaga: (cardService, refundService, flowService, logger) =>
+      createCardPaymentSaga(cardService, refundService, flowService, logger),
     chargeStepName: 'CHARGE_CARD',
     getInput: getChargeCardInput,
     expectedNotifyMessage: 'Card payment completed successfully',
@@ -174,7 +174,12 @@ describe('Card Payment Saga - Shared Steps', () => {
       const mockRefund = {} as RefundService
       const mockFlow = {} as PaymentFlowService
 
-      const cardSaga = createCardPaymentSaga(mockCard, mockFlow, mockLogger)
+      const cardSaga = createCardPaymentSaga(
+        mockCard,
+        mockRefund,
+        mockFlow,
+        mockLogger,
+      )
       const appleSaga = createApplePayPaymentSaga(
         mockCard,
         mockRefund,
@@ -329,7 +334,10 @@ describe('Card Payment Saga - Shared Steps', () => {
           type: 'success',
           reason: 'payment_completed',
           message: config.expectedNotifyMessage,
-          metadata: { payment: mockPaymentResult },
+          metadata: {
+            payment: mockPaymentResult,
+            correlationId: context.trackingData.correlationId,
+          },
         }),
         expect.objectContaining({ useRetry: true, throwOnError: true }),
       )

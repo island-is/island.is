@@ -72,9 +72,10 @@ export const previousEmploymentField = buildMultiField({
         const { previousEmployment } = getApplicationAnswers(formValue)
         return previousEmployment?.hasEmployment === YES
       },
-      loadOptions: async ({ apolloClient }) => {
+      loadOptions: async ({ apolloClient, application }) => {
         const { data } = await apolloClient.query<Query>({
           query: siaGeneralProfessionsQuery,
+          variables: { applicationId: application.id },
         })
 
         return (
@@ -122,9 +123,10 @@ export const previousEmploymentField = buildMultiField({
         const { previousEmployment } = getApplicationAnswers(formValue)
         return previousEmployment?.hasEmployment === YES
       },
-      loadOptions: async ({ apolloClient }) => {
+      loadOptions: async ({ apolloClient, application }) => {
         const { data } = await apolloClient.query<Query>({
           query: siaGeneralProfessionActivitiesQuery,
+          variables: { applicationId: application.id },
         })
 
         return (

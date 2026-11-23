@@ -18,6 +18,7 @@ import {
   createMockPaymentFlowService,
   getApplePayChargeInput,
 } from '../test/sagaTestUtils'
+import { GatewayApprovedUnreadableError } from '../approvedUnreadableCharge'
 
 const resolved = <T>(v: T): never => v as never
 
@@ -152,6 +153,70 @@ describe('Apple Pay Payment Saga - CHARGE_APPLE_PAY step specific', () => {
         }),
       )
       expect(context.metadata?.refundSucceeded).toBe(true)
+    })
+  })
+
+  describe('CHARGE_APPLE_PAY approved but unreadable', () => {
+    const run = async () => {
+      const input = getApplePayChargeInput()
+      const context = createApplePayPaymentContext(input.paymentFlowId, input)
+      const saga = createApplePayPaymentSaga(
+        mockCardPaymentService,
+        mockRefundService,
+        mockPaymentFlowService,
+        mockLogger,
+      )
+      const orchestrator = new PaymentOrchestrator<
+        ApplePayPaymentContext,
+        ApplePayPaymentStepResults
+      >(mockLogger, mockPaymentFlowService)
+
+      await expect(orchestrator.execute(saga, context)).rejects.toThrow(
+        'Failed to parse payment gateway response',
+      )
+
+      return context
+    }
+
+    beforeEach(() => {
+      mockCardPaymentService.chargeApplePay.mockRejectedValue(
+        new GatewayApprovedUnreadableError(['isSuccess', 'responseCode']),
+      )
+    })
+
+    it('refunds the charge by its correlation id', async () => {
+      const context = await run()
+
+      expect(mockRefundService.refundWithCorrelationId).toHaveBeenCalledTimes(1)
+      expect(mockRefundService.refundWithCorrelationId).toHaveBeenCalledWith({
+        paymentFlowId: context.paymentFlowId,
+        paymentTrackingData: context.trackingData,
+      })
+      expect(context.metadata?.refundSucceeded).toBe(true)
+      expect(mockPaymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          reason: 'payment_failed',
+          metadata: expect.objectContaining({
+            correlationId: context.trackingData.correlationId,
+          }),
+        }),
+      )
+    })
+
+    it('logs a refund that fails as CRITICAL', async () => {
+      mockRefundService.refundWithCorrelationId.mockRejectedValue(
+        new Error('Internal Server Error'),
+      )
+
+      const context = await run()
+
+      expect(context.metadata?.refundSucceeded).toBe(false)
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        expect.stringContaining('CRITICAL'),
+        expect.objectContaining({
+          correlationId: context.trackingData.correlationId,
+        }),
+      )
     })
   })
 })

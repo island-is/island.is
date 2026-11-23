@@ -345,6 +345,21 @@ describe('SocialInsuranceAdministrationService', () => {
       )
     })
 
+    it('runs disability pension actions in the application guid context', async () => {
+      const { application, result } = performGetCurrencies(
+        ApplicationTypes.DISABILITY_PENSION,
+      )
+
+      await expect(result).resolves.toEqual({
+        success: true,
+        response: ['ISK'],
+      })
+      expect(withApplicationGuidContext).toHaveBeenCalledWith(
+        application.id,
+        expect.any(Function),
+      )
+    })
+
     it('does not set the application guid context for other applications', async () => {
       const { result } = performGetCurrencies(ApplicationTypes.OLD_AGE_PENSION)
 

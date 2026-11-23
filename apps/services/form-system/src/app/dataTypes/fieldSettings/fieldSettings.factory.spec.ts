@@ -3,6 +3,54 @@ import { validateSync } from 'class-validator'
 import { FieldSettingsFactory } from './fieldSettings.factory'
 import { FieldSettings } from './fieldSettings.model'
 
+it.each([
+  { showBiologicalChildren: true, showChildrenInCustody: true },
+  { showBiologicalChildren: true, showChildrenInCustody: false },
+  { showBiologicalChildren: false, showChildrenInCustody: true },
+  { showBiologicalChildren: false, showChildrenInCustody: false },
+])('preserves child source settings: %j', (sources) => {
+  const settings = Object.assign(new FieldSettings(), sources)
+
+  for (const type of [FieldTypesEnum.FAMILY, FieldTypesEnum.CHILD]) {
+    expect(FieldSettingsFactory.getClass(type, settings)).toMatchObject(sources)
+  }
+  expect(validateSync(settings)).toEqual([])
+  expect(
+    FieldSettingsFactory.getClass(FieldTypesEnum.TEXTBOX, settings),
+  ).not.toHaveProperty('showBiologicalChildren')
+})
+
+it.each([undefined, null])(
+  'defaults unset child source settings to true: %s',
+  (value) => {
+    const settings = Object.assign(new FieldSettings(), {
+      showBiologicalChildren: value,
+      showChildrenInCustody: value,
+    })
+
+    expect(
+      FieldSettingsFactory.getClass(FieldTypesEnum.FAMILY, settings),
+    ).toMatchObject({
+      showBiologicalChildren: true,
+      showChildrenInCustody: true,
+    })
+  },
+)
+
+it.each(['showBiologicalChildren', 'showChildrenInCustody'])(
+  'rejects non-boolean %s',
+  (property) => {
+    const settings = Object.assign(new FieldSettings(), { [property]: 'true' })
+
+    expect(validateSync(settings)).toEqual([
+      expect.objectContaining({
+        property,
+        constraints: { isBoolean: expect.any(String) },
+      }),
+    ])
+  },
+)
+
 it.each([{ fieldsToSum: [] }, { fieldsToSum: ['first', 'second'] }])(
   'preserves selected currency field IDs: $fieldsToSum',
   ({ fieldsToSum }) => {

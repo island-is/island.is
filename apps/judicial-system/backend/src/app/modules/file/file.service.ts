@@ -37,7 +37,7 @@ import {
 import { nowFactory } from '../../factories'
 import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
 import { hasConfirmableCaseFileCategories } from '../../formatters/confirmation/confirmedPdf'
-import { queueMessagesAfterCommit } from '../../middleware'
+import { queueMessagesAfterCommit, registerAfterCommit } from '../../middleware'
 import { findAppealCaseOfCaseFile } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
@@ -56,6 +56,7 @@ import { AttachRulingOrderDocumentDto } from './dto/attachRulingOrderDocument.dt
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFileDto } from './dto/updateFile.dto'
+import { canUserAccessCaseFileCategory } from './guards/caseFileCategory'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { DeliverResponse } from './models/deliver.response'
 import { PresignedPost } from './models/presignedPost.model'
@@ -398,6 +399,21 @@ export class FileService {
       )
     }
 
+    if (!canUserAccessCaseFileCategory(user, createFile.category)) {
+      throw new ForbiddenException(
+        'Only court of appeals users can create a verdict appeal ruling',
+      )
+    }
+
+    if (
+      createFile.category === CaseFileCategory.VERDICT_APPEAL_RULING &&
+      !theCase.verdictAppealCase
+    ) {
+      throw new BadRequestException(
+        `Case ${theCase.id} has no verdict appeal to rule on`,
+      )
+    }
+
     const regExp = new RegExp(`^${theCase.id}/.{36}/(.*)$`)
 
     if (!regExp.test(key)) {
@@ -695,8 +711,22 @@ export class FileService {
     const success = await this.deleteFileFromDatabase(file.id, transaction)
 
     if (success && isRequestCase(theCase.type)) {
-      // Fire and forget, no need to wait for the result
-      this.tryDeleteFileFromS3(theCase, file)
+      if (transaction) {
+        // Delete only once the request's work is durable, so a rolled-back
+        // delete cannot leave a live case file whose object S3 has already
+        // removed. Not transaction.afterCommit: Sequelize runs those hooks
+        // even when the COMMIT itself fails. Still fire and forget: the
+        // callback starts the delete and does not wait for it, as the
+        // interceptor awaits its callbacks before the response is sent.
+        // Nothing is left to reject either, tryDeleteFileFromS3 catches and
+        // logs every failure.
+        registerAfterCommit(async () => {
+          this.tryDeleteFileFromS3(theCase, file)
+        })
+      } else {
+        // Fire and forget, no need to wait for the result
+        this.tryDeleteFileFromS3(theCase, file)
+      }
     }
 
     return { success }
@@ -707,6 +737,14 @@ export class FileService {
     file: CaseFile,
     user: User,
   ): Promise<UploadFileToCourtResponse> {
+    // The destination is the district court's own system, which the court of
+    // appeals' judgment or ruling on a verdict appeal must not reach.
+    if (file.category === CaseFileCategory.VERDICT_APPEAL_RULING) {
+      throw new ForbiddenException(
+        `File ${file.id} of case ${theCase.id} is a verdict appeal ruling and is not uploaded to court`,
+      )
+    }
+
     if (file.state === CaseFileState.STORED_IN_COURT) {
       return { success: true }
     }

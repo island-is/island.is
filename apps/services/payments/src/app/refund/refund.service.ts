@@ -83,7 +83,7 @@ export class RefundService {
     TOut extends { isSuccess: true },
     TErrOut extends {
       isSuccess: false
-      responseCode: string
+      responseCode?: string
       responseDescription?: string
     },
   >({
@@ -94,8 +94,8 @@ export class RefundService {
     paymentFlowId,
   }: {
     response: Response
-    schema: z.ZodType<TOut>
-    errorSchema: z.ZodType<TErrOut>
+    schema: z.ZodType<TOut, z.ZodTypeDef, unknown>
+    errorSchema: z.ZodType<TErrOut, z.ZodTypeDef, unknown>
     errorMessage: string
     paymentFlowId?: string
   }): Promise<TOut> {
@@ -131,7 +131,12 @@ export class RefundService {
       throw new BadRequestException(mapToCardErrorCode(responseCode))
     }
 
+    const raw = rawData as Record<string, unknown> | null
     this.logger.error(`${logPrefix}Failed to parse payment gateway response`, {
+      responseCode: raw?.responseCode,
+      isSuccess: raw?.isSuccess,
+      // Field names only, never their values: the response carries card data
+      responseFields: raw && typeof raw === 'object' ? Object.keys(raw) : [],
       error: successParsed.error,
     })
     throw new BadRequestException('Failed to parse payment gateway response')
