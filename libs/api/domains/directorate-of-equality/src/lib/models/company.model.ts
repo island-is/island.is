@@ -6,18 +6,18 @@ export class Company {
   equalityPlanRequired!: boolean
 
   @Field(() => Date, { nullable: true })
-  nextEqualityPlanDeadline?: Date | null
+  nextEqualityPlanDeadline?: Date
 
   @Field(() => Boolean)
   salaryReportRequired!: boolean
 
   @Field(() => Date, { nullable: true })
-  nextSalaryReportDeadline?: Date | null
+  nextSalaryReportDeadline?: Date
 
   @Field(() => Date, {
     nullable: true,
     description:
       'When the company was approved as a service provider; null when it is not one',
   })
-  serviceProviderApprovedAt?: Date | null
+  serviceProviderApprovedAt?: Date
 }

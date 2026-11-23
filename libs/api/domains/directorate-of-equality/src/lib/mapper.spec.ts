@@ -39,6 +39,8 @@ import {
   DirectorateOfEqualitySubmissionType,
 } from './models/enums'
 
+const DOWNLOAD_BASE_URL = 'https://island.is'
+
 const company = (
   overrides: Partial<CompanyReportDto> = {},
 ): CompanyReportDto => ({
@@ -213,10 +215,10 @@ describe('mapSubmission', () => {
       type: DirectorateOfEqualitySubmissionType.SALARY_REPORT,
       status: DirectorateOfEqualitySubmissionStatus.IN_REVIEW,
       submittedVia: DirectorateOfEqualitySubmissionChannel.SERVICE_PROVIDER,
-      identifier: null,
+      identifier: undefined,
       submittedAt,
-      approvedAt: null,
-      validUntil: null,
+      approvedAt: undefined,
+      validUntil: undefined,
       salaryDataPeriod: new Date('2026-01-01T00:00:00Z'),
     })
   })
@@ -244,19 +246,21 @@ describe('mapAdjustedGap', () => {
       percent: 4.5,
       direction: DirectorateOfEqualityGapDirection.FEMALE,
       benchmarkPercent: 3.9,
-      withinBenchmark: null,
+      withinBenchmark: undefined,
       outlierCount: 1,
     })
   })
 
   it('returns null when the gap is not computable', () => {
-    expect(mapAdjustedGap(decomposition({ oskyrtAvailable: false }))).toBeNull()
+    expect(
+      mapAdjustedGap(decomposition({ oskyrtAvailable: false })),
+    ).toBeUndefined()
   })
 })
 
 describe('mapRawGap', () => {
   it('returns null when the raw gap is not computable', () => {
-    expect(mapRawGap(decomposition({ rawGapAvailable: false }))).toBeNull()
+    expect(mapRawGap(decomposition({ rawGapAvailable: false }))).toBeUndefined()
   })
 })
 
@@ -286,7 +290,7 @@ describe('mapDistribution', () => {
       payDispersion(),
     )
 
-    expect(result?.markedKind).toBeNull()
+    expect(result?.markedKind).toBeUndefined()
     expect(result?.points.some((point) => point.marked)).toBe(false)
   })
 
@@ -305,8 +309,8 @@ describe('mapDistribution', () => {
     )
 
     expect(result?.expectedLine).toEqual([])
-    expect(result?.increasePer100PointsPercent).toBeNull()
-    expect(result?.expectedWageAtMeanScore).toBeNull()
+    expect(result?.increasePer100PointsPercent).toBeUndefined()
+    expect(result?.expectedWageAtMeanScore).toBeUndefined()
   })
 
   it('derives the expected line and figures from the fit', () => {
@@ -322,7 +326,7 @@ describe('mapDistribution', () => {
   it('returns null without employees', () => {
     expect(
       mapDistribution(decomposition({ employees: [] }), payDispersion()),
-    ).toBeNull()
+    ).toBeUndefined()
   })
 })
 
@@ -354,7 +358,7 @@ describe('mapImprovementPlan', () => {
       },
       {
         id: 'group-2',
-        name: null,
+        name: undefined,
         reason: 'Ástæða',
         correctionPlan: 'Hækka laun',
         deadline,
@@ -367,21 +371,21 @@ describe('mapImprovementPlan', () => {
 
 describe('mapReport', () => {
   it('leaves every analysis section null when the report has no result', () => {
-    const report = mapReport('provider-id', reportDetail())
+    const report = mapReport('provider-id', reportDetail(), DOWNLOAD_BASE_URL)
 
     expect(report).toMatchObject({
       id: 'provider-id',
       status: DirectorateOfEqualitySubmissionStatus.APPROVED,
-      adjustedGap: null,
-      rawGap: null,
-      meanHourlyWage: null,
-      distribution: null,
+      adjustedGap: undefined,
+      rawGap: undefined,
+      meanHourlyWage: undefined,
+      distribution: undefined,
       includesImprovementPlan: true,
     })
   })
 })
 
-describe('hasPdf', () => {
+describe('PDF download URLs', () => {
   it.each([
     [ReportStatusEnum.APPROVED, true],
     [ReportStatusEnum.SUPERSEDED, true],
@@ -389,16 +393,36 @@ describe('hasPdf', () => {
     [ReportStatusEnum.IN_REVIEW, false],
     [ReportStatusEnum.DENIED, false],
     [ReportStatusEnum.WITHDRAWN, false],
-  ])('is %s → %s for plans and reports', (status, expected) => {
-    expect(
-      mapEqualityPlan(
-        'provider-id',
-        reportDetail({ type: ReportTypeEnum.EQUALITY, status }),
-      ).hasPdf,
-    ).toBe(expected)
-    expect(mapReport('provider-id', reportDetail({ status })).hasPdf).toBe(
-      expected,
+  ])('status %s has a PDF: %s', (status, expected) => {
+    const plan = mapEqualityPlan(
+      'partner:1',
+      reportDetail({ type: ReportTypeEnum.EQUALITY, status }),
+      DOWNLOAD_BASE_URL,
     )
+    const report = mapReport(
+      'partner:1',
+      reportDetail({ status }),
+      DOWNLOAD_BASE_URL,
+    )
+    const pdfUrl = `${DOWNLOAD_BASE_URL}/download/v1/directorate-of-equality/reports/partner%3A1/pdf`
+
+    expect(plan.pdfUrl).toBe(expected ? pdfUrl : undefined)
+    expect(report.pdfUrl).toBe(expected ? pdfUrl : undefined)
+    expect(report.improvementPlanPdfUrl).toBe(
+      expected
+        ? `${DOWNLOAD_BASE_URL}/download/v1/directorate-of-equality/reports/partner%3A1/improvement-plan-pdf`
+        : undefined,
+    )
+  })
+
+  it('has no improvement-plan URL without an improvement plan', () => {
+    expect(
+      mapReport(
+        'provider-id',
+        reportDetail({ includesImprovementPlan: false }),
+        DOWNLOAD_BASE_URL,
+      ).improvementPlanPdfUrl,
+    ).toBeUndefined()
   })
 })
 
@@ -438,7 +462,7 @@ describe('mapCompany', () => {
       equalityPlanRequired: true,
       nextEqualityPlanDeadline: new Date('2027-01-01'),
       salaryReportRequired: false,
-      nextSalaryReportDeadline: null,
+      nextSalaryReportDeadline: undefined,
       serviceProviderApprovedAt: approvedAt,
     })
   })
@@ -462,13 +486,13 @@ describe('mapApiKey', () => {
       id: 'key-1',
       keyId: 'abc',
       type: DirectorateOfEqualityApiKeyType.COMPANY,
-      label: null,
+      label: undefined,
       createdAt: new Date('2026-11-01'),
-      createdByName: null,
+      createdByName: undefined,
       createdByDirectorate: true,
-      expiresAt: null,
-      lastUsedAt: null,
-      revokedAt: null,
+      expiresAt: undefined,
+      lastUsedAt: undefined,
+      revokedAt: undefined,
     })
     expect(JSON.stringify(mapped)).not.toContain('0000000000')
   })

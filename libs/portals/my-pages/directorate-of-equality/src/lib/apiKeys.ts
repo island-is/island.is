@@ -1,9 +1,7 @@
-import { DirectorateOfEqualityApiKey } from '@island.is/api/schema'
-
 export type ApiKeyState = 'active' | 'revoked' | 'expired'
 
 export const getApiKeyState = (
-  apiKey: Pick<DirectorateOfEqualityApiKey, 'revokedAt' | 'expiresAt'>,
+  apiKey: { revokedAt?: string | null; expiresAt?: string | null },
   now: Date = new Date(),
 ): ApiKeyState => {
   if (apiKey.revokedAt) {

@@ -9,12 +9,3 @@ export class GrantServiceProviderInput {
   @IsString()
   id!: string
 }
-
-@InputType('DirectorateOfEqualityRevokeServiceProviderInput')
-export class RevokeServiceProviderInput {
-  @Field(() => String, {
-    description: 'Id from directorateOfEqualityServiceProviders',
-  })
-  @IsString()
-  id!: string
-}

@@ -13,6 +13,7 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 
+import { ContentColumn } from '../ContentColumn/ContentColumn'
 import { messages } from '../../lib/messages'
 import { directorateOfEqualityNavigation } from '../../lib/navigation'
 import { DirectorateOfEqualityPaths } from '../../lib/paths'
@@ -49,71 +50,77 @@ export const SubmissionsWrapper = ({
         tooltip: formatMessage(coreMessages.equalityTooltip),
       }}
     >
-      {error && !loading && <Problem error={error} noBorder={false} />}
-      {!error && (
-        <InfoLineStack label={messages.submissionObligations}>
-          <InfoLine
-            label={messages.equalityPlanRequired}
-            content={formatMessage(
-              company?.equalityPlanRequired ? messages.yes : messages.no,
-            )}
-            loading={loading}
-          />
-          {(loading || company?.equalityPlanRequired) && (
+      <ContentColumn>
+        {error && !loading && <Problem error={error} noBorder={false} />}
+        {!error && (
+          <InfoLineStack label={messages.submissionObligations}>
             <InfoLine
-              label={messages.nextEqualityPlanDeadline}
-              content={formatDate(company?.nextEqualityPlanDeadline)}
+              label={messages.equalityPlanRequired}
+              content={formatMessage(
+                company?.equalityPlanRequired
+                  ? coreMessages.yes
+                  : coreMessages.no,
+              )}
               loading={loading}
             />
-          )}
-          <InfoLine
-            label={messages.salaryReportRequired}
-            content={formatMessage(
-              company?.salaryReportRequired ? messages.yes : messages.no,
+            {(loading || company?.equalityPlanRequired) && (
+              <InfoLine
+                label={messages.nextEqualityPlanDeadline}
+                content={formatDate(company?.nextEqualityPlanDeadline)}
+                loading={loading}
+              />
             )}
-            loading={loading}
-          />
-          {(loading || company?.salaryReportRequired) && (
             <InfoLine
-              label={messages.nextSalaryReportDeadline}
-              content={formatDate(company?.nextSalaryReportDeadline)}
+              label={messages.salaryReportRequired}
+              content={formatMessage(
+                company?.salaryReportRequired
+                  ? coreMessages.yes
+                  : coreMessages.no,
+              )}
               loading={loading}
             />
-          )}
-        </InfoLineStack>
-      )}
-      {company && !isObliged && (
-        <Box marginTop={6}>
-          <AlertMessage
-            type="info"
-            message={
-              <Text variant="small">
-                {formatMessage(messages.notObligedMessage)}{' '}
-                <LinkV2
-                  href={formatMessage(messages.notObligedLinkUrl)}
-                  color="blue400"
-                  underline="normal"
-                  underlineVisibility="always"
-                  newTab
-                >
-                  {formatMessage(messages.notObligedLinkText)}
-                </LinkV2>
-                .
-              </Text>
-            }
-          />
-        </Box>
-      )}
-      {company && isObliged && (
-        <Box marginTop={6}>
-          <TabNavigation
-            label={formatMessage(coreMessages.equalitySubmissions)}
-            pathname={pathname}
-            items={tabs}
-          />
-          <Box marginTop={4}>{children}</Box>
-        </Box>
-      )}
+            {(loading || company?.salaryReportRequired) && (
+              <InfoLine
+                label={messages.nextSalaryReportDeadline}
+                content={formatDate(company?.nextSalaryReportDeadline)}
+                loading={loading}
+              />
+            )}
+          </InfoLineStack>
+        )}
+        {company && !isObliged && (
+          <Box marginTop={6}>
+            <AlertMessage
+              type="info"
+              message={
+                <Text variant="small">
+                  {formatMessage(messages.notObligedMessage)}{' '}
+                  <LinkV2
+                    href={formatMessage(messages.notObligedLinkUrl)}
+                    color="blue400"
+                    underline="normal"
+                    underlineVisibility="always"
+                    newTab
+                  >
+                    {formatMessage(messages.notObligedLinkText)}
+                  </LinkV2>
+                  .
+                </Text>
+              }
+            />
+          </Box>
+        )}
+        {company && (
+          <Box marginTop={6}>
+            <TabNavigation
+              label={formatMessage(coreMessages.equalitySubmissions)}
+              pathname={pathname}
+              items={tabs}
+            />
+            <Box marginTop={4}>{children}</Box>
+          </Box>
+        )}
+      </ContentColumn>
     </IntroWrapper>
   )
 }

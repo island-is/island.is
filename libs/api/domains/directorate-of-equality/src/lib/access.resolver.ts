@@ -19,18 +19,16 @@ import {
 import { CodeOwners } from '@island.is/shared/constants'
 
 import { DirectorateOfEqualityService } from './directorate-of-equality.service'
-import { IssueApiKeyInput, RevokeApiKeyInput } from './dto/apiKey.input'
-import {
-  GrantServiceProviderInput,
-  RevokeServiceProviderInput,
-} from './dto/serviceProvider.input'
-import { ApiKeys, IssuedApiKey } from './models/apiKey.model'
+import { GrantServiceProviderInput } from './dto/grantServiceProvider.input'
+import { IssueApiKeyInput } from './dto/issueApiKey.input'
+import { RevokeApiKeyInput } from './dto/revokeApiKey.input'
+import { RevokeServiceProviderInput } from './dto/revokeServiceProvider.input'
+import { ApiKeys } from './models/apiKeys.model'
+import { AvailableServiceProviders } from './models/availableServiceProviders.model'
 import { Company } from './models/company.model'
+import { IssuedApiKey } from './models/issuedApiKey.model'
 import { MutationResult } from './models/mutationResult.model'
-import {
-  AvailableServiceProviders,
-  ServiceProviders,
-} from './models/serviceProvider.model'
+import { ServiceProviders } from './models/serviceProviders.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Scopes(ApiScope.directorateOfEqualityCompany)

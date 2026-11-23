@@ -1,12 +1,14 @@
-import { Box, SkeletonLoader, Tabs } from '@island.is/island-ui/core'
+import { Box, Tabs } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  CardLoader,
   IntroWrapper,
   JAFNRETTISSTOFA_SLUG,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 
+import { ContentColumn } from '../../components/ContentColumn/ContentColumn'
 import { NAMESPACE } from '../../lib/constants'
 import { messages } from '../../lib/messages'
 import { useDirectorateOfEqualityCompanyQuery } from '../../lib/company.generated'
@@ -45,19 +47,21 @@ const ApiKeys = () => {
         tooltip: formatMessage(coreMessages.equalityTooltip),
       }}
     >
-      {error && !loading && <Problem error={error} noBorder={false} />}
-      {loading && <SkeletonLoader height={48} repeat={3} space={2} />}
-      {!loading && !error && (
-        <Box marginTop={2}>
-          <Tabs
-            label={formatMessage(coreMessages.equalityApiKeys)}
-            selected="service-providers"
-            contentBackground="transparent"
-            onlyRenderSelectedTab
-            tabs={tabs}
-          />
-        </Box>
-      )}
+      <ContentColumn>
+        {error && !loading && <Problem error={error} noBorder={false} />}
+        {loading && <CardLoader />}
+        {!loading && !error && (
+          <Box marginTop={2}>
+            <Tabs
+              label={formatMessage(coreMessages.equalityApiKeys)}
+              selected="service-providers"
+              contentBackground="transparent"
+              onlyRenderSelectedTab
+              tabs={tabs}
+            />
+          </Box>
+        )}
+      </ContentColumn>
     </IntroWrapper>
   )
 }

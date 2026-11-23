@@ -4,7 +4,7 @@ import {
 } from '@island.is/api/schema'
 import { Box, Button, Tag, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatDate } from '@island.is/portals/my-pages/core'
+import { formatDate, m as coreMessages } from '@island.is/portals/my-pages/core'
 
 import { getApiKeyState } from '../../../lib/apiKeys'
 import { messages } from '../../../lib/messages'
@@ -16,7 +16,7 @@ const TAG_VARIANTS = {
 } as const
 
 const TAG_MESSAGES = {
-  active: messages.keyActive,
+  active: coreMessages.valid,
   revoked: messages.keyRevoked,
   expired: messages.keyExpired,
 } as const

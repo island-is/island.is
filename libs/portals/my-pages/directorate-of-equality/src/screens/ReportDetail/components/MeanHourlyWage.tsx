@@ -17,6 +17,7 @@ export const MeanHourlyWage = ({
   rawGap?: DirectorateOfEqualityGap | null
 }) => {
   const { formatMessage } = useLocale()
+  const hourlyWageUnit = formatMessage(messages.hourlyWageUnit)
   const male = wage?.male
   const female = wage?.female
   return (
@@ -40,11 +41,15 @@ export const MeanHourlyWage = ({
         >
           <StatisticCard
             title={formatMessage(messages.meanHourlyWageMale)}
-            content={male == null ? '–' : formatHourlyWage(male)}
+            content={
+              male == null ? '–' : formatHourlyWage(male, hourlyWageUnit)
+            }
           />
           <StatisticCard
             title={formatMessage(messages.meanHourlyWageFemale)}
-            content={female == null ? '–' : formatHourlyWage(female)}
+            content={
+              female == null ? '–' : formatHourlyWage(female, hourlyWageUnit)
+            }
           />
         </Box>
       )}

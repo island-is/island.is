@@ -11,7 +11,8 @@ query DirectorateOfEqualityReport($input: DirectorateOfEqualityDetailInput!) {
     }
     salaryDataBasis
     salaryDataPeriod
-    hasPdf
+    pdfUrl
+    improvementPlanPdfUrl
     adjustedGap {
       percent
       direction

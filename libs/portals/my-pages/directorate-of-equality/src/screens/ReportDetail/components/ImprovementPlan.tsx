@@ -29,26 +29,36 @@ export const ImprovementPlan = ({
             key={action.id}
             label={formatMessage(messages.actionGroup, { number: index + 1 })}
           >
-            <InfoLine
-              label={messages.deviationReason}
-              content={action.reason ?? ''}
-            />
-            <InfoLine
-              label={messages.correctionPlan}
-              content={action.correctionPlan ?? ''}
-            />
-            <InfoLine
-              label={messages.actionDeadline}
-              content={formatDate(action.deadline)}
-            />
-            <InfoLine
-              label={messages.responsibleName}
-              content={action.responsibleName ?? ''}
-            />
-            <InfoLine
-              label={messages.responsibleTitle}
-              content={action.responsibleTitle ?? ''}
-            />
+            {action.reason && (
+              <InfoLine
+                label={messages.deviationReason}
+                content={action.reason}
+              />
+            )}
+            {action.correctionPlan && (
+              <InfoLine
+                label={messages.correctionPlan}
+                content={action.correctionPlan}
+              />
+            )}
+            {action.deadline && (
+              <InfoLine
+                label={messages.actionDeadline}
+                content={formatDate(action.deadline)}
+              />
+            )}
+            {action.responsibleName && (
+              <InfoLine
+                label={messages.responsibleName}
+                content={action.responsibleName}
+              />
+            )}
+            {action.responsibleTitle && (
+              <InfoLine
+                label={messages.responsibleTitle}
+                content={action.responsibleTitle}
+              />
+            )}
           </InfoLineStack>
         ))}
       </Stack>

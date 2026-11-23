@@ -32,4 +32,49 @@ describe('ScatterChart', () => {
     )
     expect(baseElement).toBeTruthy()
   })
+
+  it('renders the points as a table when dataTable is given', () => {
+    const { getByRole, getAllByRole } = render(
+      <ScatterChart
+        title="Dreifing"
+        dataTable={{
+          caption: 'Dreifing',
+          seriesHeader: 'Kyn',
+          noteHeader: 'Frávik',
+        }}
+        series={[
+          {
+            name: 'Karlar',
+            color: 'blue400',
+            points: [
+              {
+                x: 100,
+                y: 4000,
+                marked: true,
+                tooltip: {
+                  title: 'Karl',
+                  rows: [
+                    { label: 'Kyn', value: 'Karl' },
+                    { label: 'Stig', value: '100' },
+                  ],
+                  note: { text: 'Frávik' },
+                },
+              },
+            ],
+          },
+        ]}
+        xAxis={{ label: 'Starfsmatsstig', domain: [0, 250], ticks: [0, 250] }}
+        yAxis={{ label: 'kr./klst.', domain: [0, 6000], ticks: [0, 6000] }}
+      />,
+    )
+    expect(getByRole('table', { name: 'Dreifing' })).toBeTruthy()
+    expect(
+      getAllByRole('columnheader').map((cell) => cell.textContent),
+    ).toEqual(['Kyn', 'Stig', 'Frávik'])
+    expect(getAllByRole('cell').map((cell) => cell.textContent)).toEqual([
+      'Karlar',
+      '100',
+      'Frávik',
+    ])
+  })
 })

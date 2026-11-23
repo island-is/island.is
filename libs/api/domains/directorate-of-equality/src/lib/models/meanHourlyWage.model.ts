@@ -6,11 +6,11 @@ export class MeanHourlyWage {
     nullable: true,
     description: 'Arithmetic mean regular hourly wage, kr./klst.',
   })
-  male?: number | null
+  male?: number
 
   @Field(() => Float, {
     nullable: true,
     description: 'Arithmetic mean regular hourly wage, kr./klst.',
   })
-  female?: number | null
+  female?: number
 }

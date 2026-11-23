@@ -15,23 +15,12 @@ export class IssueApiKeyInput {
   @IsOptional()
   @IsString()
   @MaxLength(100)
-  label?: string | null
+  label?: string
 
   @Field(() => Date, { nullable: true, description: 'Omit for no expiry' })
   @IsOptional()
   @IsDate()
-  expiresAt?: Date | null
-
-  @Field(() => DirectorateOfEqualityApiKeyType)
-  @IsEnum(DirectorateOfEqualityApiKeyType)
-  type!: DirectorateOfEqualityApiKeyType
-}
-
-@InputType('DirectorateOfEqualityRevokeApiKeyInput')
-export class RevokeApiKeyInput {
-  @Field(() => String)
-  @IsString()
-  id!: string
+  expiresAt?: Date
 
   @Field(() => DirectorateOfEqualityApiKeyType)
   @IsEnum(DirectorateOfEqualityApiKeyType)

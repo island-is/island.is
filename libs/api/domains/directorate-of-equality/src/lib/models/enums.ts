@@ -11,12 +11,14 @@ export enum DirectorateOfEqualitySubmissionStatus {
   REJECTED = 'REJECTED',
   SUPERSEDED = 'SUPERSEDED',
   WITHDRAWN = 'WITHDRAWN',
+  UNKNOWN = 'UNKNOWN',
 }
 
 export enum DirectorateOfEqualitySubmissionChannel {
   ISLAND_IS = 'ISLAND_IS',
   SERVICE_PROVIDER = 'SERVICE_PROVIDER',
   DIRECTORATE = 'DIRECTORATE',
+  UNKNOWN = 'UNKNOWN',
 }
 
 registerEnumType(DirectorateOfEqualitySubmissionType, {
@@ -39,6 +41,7 @@ export enum DirectorateOfEqualityGender {
   MALE = 'MALE',
   FEMALE = 'FEMALE',
   NEUTRAL = 'NEUTRAL',
+  UNKNOWN = 'UNKNOWN',
 }
 
 export enum DirectorateOfEqualityMarkedKind {

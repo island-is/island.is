@@ -74,9 +74,6 @@ export { TopicCard } from './lib/TopicCard/TopicCard'
 export { CategoryCard } from './lib/CategoryCard/CategoryCard'
 export * from './lib/StatisticCard/StatisticCard'
 
-// Charts
-export * from './lib/ScatterChart/ScatterChart'
-
 // Core
 export { ButtonDeprecated } from './lib/ButtonDeprecated/Button'
 export * from './lib/Button/Button'

@@ -26,8 +26,6 @@ export const messages = defineMessages({
     id: 'sp.directorate-of-equality:next-salary-report-deadline',
     defaultMessage: 'Næstu skil skýrslu',
   },
-  yes: { id: 'sp.directorate-of-equality:yes', defaultMessage: 'Já' },
-  no: { id: 'sp.directorate-of-equality:no', defaultMessage: 'Nei' },
   notObligedMessage: {
     id: 'sp.directorate-of-equality:not-obliged-message',
     defaultMessage:
@@ -65,14 +63,6 @@ export const messages = defineMessages({
     id: 'sp.directorate-of-equality:status-in-review',
     defaultMessage: 'Til yfirferðar',
   },
-  statusApproved: {
-    id: 'sp.directorate-of-equality:status-approved',
-    defaultMessage: 'Samþykkt',
-  },
-  statusRejected: {
-    id: 'sp.directorate-of-equality:status-rejected',
-    defaultMessage: 'Hafnað',
-  },
   statusSuperseded: {
     id: 'sp.directorate-of-equality:status-superseded',
     defaultMessage: 'Úrelt',
@@ -85,7 +75,6 @@ export const messages = defineMessages({
     id: 'sp.directorate-of-equality:open-application',
     defaultMessage: 'Opna umsókn',
   },
-  view: { id: 'sp.directorate-of-equality:view', defaultMessage: 'Skoða' },
   viewAriaLabel: {
     id: 'sp.directorate-of-equality:view-aria-label',
     defaultMessage: 'Skoða {title}',
@@ -142,18 +131,9 @@ export const messages = defineMessages({
     id: 'sp.directorate-of-equality:identifier',
     defaultMessage: 'Auðkenni',
   },
-  status: { id: 'sp.directorate-of-equality:status', defaultMessage: 'Staða' },
   submitted: {
     id: 'sp.directorate-of-equality:submitted',
     defaultMessage: 'Send inn',
-  },
-  approved: {
-    id: 'sp.directorate-of-equality:approved',
-    defaultMessage: 'Samþykkt',
-  },
-  validUntil: {
-    id: 'sp.directorate-of-equality:valid-until',
-    defaultMessage: 'Gildir til',
   },
   company: {
     id: 'sp.directorate-of-equality:company',
@@ -320,49 +300,10 @@ export const messages = defineMessages({
     id: 'sp.directorate-of-equality:expected-at-mean-hint',
     defaultMessage: 'Punktur á línunni við meðalstig starfsmanna',
   },
-  payComponentsTitle: {
-    id: 'sp.directorate-of-equality:pay-components-title',
-    defaultMessage: 'Viðbótarlaun og aukagreiðslur',
-  },
-  payComponentsIntro: {
-    id: 'sp.directorate-of-equality:pay-components-intro',
-    defaultMessage:
-      'Meðaltal viðbótarlauna og aukagreiðslna á mánuði, eftir kyni. Krónur á mánuði — ekki tímakaup, og ekki deilt með greiddum stundum.',
-  },
-  payComponentsGender: {
-    id: 'sp.directorate-of-equality:pay-components-gender',
-    defaultMessage: 'Kyn',
-  },
-  payComponentsAdditional: {
-    id: 'sp.directorate-of-equality:pay-components-additional',
-    defaultMessage: 'Viðbótarlaun',
-  },
-  payComponentsBonus: {
-    id: 'sp.directorate-of-equality:pay-components-bonus',
-    defaultMessage: 'Aukagreiðslur',
-  },
-  payComponentsTotal: {
-    id: 'sp.directorate-of-equality:pay-components-total',
-    defaultMessage: 'Samtals',
-  },
   male: { id: 'sp.directorate-of-equality:male', defaultMessage: 'Karl' },
   female: {
     id: 'sp.directorate-of-equality:female',
     defaultMessage: 'Kona/kynsegin',
-  },
-  all: { id: 'sp.directorate-of-equality:all', defaultMessage: 'Allir' },
-  payComponentsGapRow: {
-    id: 'sp.directorate-of-equality:pay-components-gap-row',
-    defaultMessage: 'Hlutfallslegur munur',
-  },
-  rowWithCount: {
-    id: 'sp.directorate-of-equality:row-with-count',
-    defaultMessage: '{label} ({count})',
-  },
-  payComponentsFootnote: {
-    id: 'sp.directorate-of-equality:pay-components-footnote',
-    defaultMessage:
-      'Jákvæð tala merkir að meðaltal karla sé hærra fyrir liðinn. Ekki leiðrétt fyrir starfsmatsstigum og ekki borið saman við viðmiðið.',
   },
   improvementPlanTitle: {
     id: 'sp.directorate-of-equality:improvement-plan-title',
@@ -472,10 +413,6 @@ export const messages = defineMessages({
     id: 'sp.directorate-of-equality:key-fallback-title',
     defaultMessage: 'Aðgangslykill',
   },
-  keyActive: {
-    id: 'sp.directorate-of-equality:key-active',
-    defaultMessage: 'Í gildi',
-  },
   keyRevoked: {
     id: 'sp.directorate-of-equality:key-revoked',
     defaultMessage: 'Afturkallaður',
@@ -583,10 +520,6 @@ export const messages = defineMessages({
   keyValue: {
     id: 'sp.directorate-of-equality:key-value',
     defaultMessage: 'Aðgangslykill',
-  },
-  copyKey: {
-    id: 'sp.directorate-of-equality:copy-key',
-    defaultMessage: 'Afrita',
   },
   copyKeySuccess: {
     id: 'sp.directorate-of-equality:copy-key-success',
@@ -727,8 +660,8 @@ export const messages = defineMessages({
     id: 'sp.directorate-of-equality:download-improvement-plan',
     defaultMessage: 'Sækja úrbótaáætlun',
   },
-  downloadPdfError: {
-    id: 'sp.directorate-of-equality:download-pdf-error',
-    defaultMessage: 'Ekki tókst að sækja skjalið. Reyndu aftur síðar.',
+  hourlyWageUnit: {
+    id: 'sp.directorate-of-equality:hourly-wage-unit',
+    defaultMessage: 'kr./klst.',
   },
 })

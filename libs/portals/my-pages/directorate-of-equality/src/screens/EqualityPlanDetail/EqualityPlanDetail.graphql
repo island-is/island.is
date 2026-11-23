@@ -13,6 +13,6 @@ query DirectorateOfEqualityEqualityPlan(
       nationalId
     }
     documentFileName
-    hasPdf
+    pdfUrl
   }
 }

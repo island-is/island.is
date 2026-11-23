@@ -19,7 +19,9 @@ import {
   WageGapPooledFitDto,
 } from '@island.is/clients/directorate-of-equality'
 
+import { AdjustedGap } from './models/adjustedGap.model'
 import { ApiKey } from './models/apiKey.model'
+import { AvailableServiceProvider } from './models/availableServiceProvider.model'
 import { Company } from './models/company.model'
 import { Distribution } from './models/distribution.model'
 import {
@@ -33,15 +35,12 @@ import {
   DirectorateOfEqualitySubmissionType,
 } from './models/enums'
 import { EqualityPlan } from './models/equalityPlan.model'
-import { AdjustedGap, Gap } from './models/gap.model'
+import { Gap } from './models/gap.model'
 import { ImprovementAction } from './models/improvementAction.model'
 import { MeanHourlyWage } from './models/meanHourlyWage.model'
 import { ReportWithContext } from './models/report.model'
 import { ReportCompany } from './models/reportCompany.model'
-import {
-  AvailableServiceProvider,
-  ServiceProvider,
-} from './models/serviceProvider.model'
+import { ServiceProvider } from './models/serviceProvider.model'
 import { Submission } from './models/submission.model'
 
 const CURVE_SAMPLES = 48
@@ -54,15 +53,26 @@ type IdentifiableFit = WageGapPooledFitDto & {
 
 export const mapSubmissionType = (
   type: ReportTypeEnum,
-): DirectorateOfEqualitySubmissionType =>
-  type === ReportTypeEnum.EQUALITY
-    ? DirectorateOfEqualitySubmissionType.EQUALITY_PLAN
-    : DirectorateOfEqualitySubmissionType.SALARY_REPORT
+): DirectorateOfEqualitySubmissionType | undefined => {
+  switch (type) {
+    case ReportTypeEnum.EQUALITY:
+      return DirectorateOfEqualitySubmissionType.EQUALITY_PLAN
+    case ReportTypeEnum.SALARY:
+      return DirectorateOfEqualitySubmissionType.SALARY_REPORT
+    default:
+      return undefined
+  }
+}
 
 export const mapSubmissionStatus = (
   status: ReportStatusEnum,
 ): DirectorateOfEqualitySubmissionStatus => {
   switch (status) {
+    case ReportStatusEnum.DRAFT:
+    case ReportStatusEnum.SUBMITTED:
+    case ReportStatusEnum.POSTPONED:
+    case ReportStatusEnum.IN_REVIEW:
+      return DirectorateOfEqualitySubmissionStatus.IN_REVIEW
     case ReportStatusEnum.APPROVED:
       return DirectorateOfEqualitySubmissionStatus.APPROVED
     case ReportStatusEnum.DENIED:
@@ -72,40 +82,59 @@ export const mapSubmissionStatus = (
     case ReportStatusEnum.WITHDRAWN:
       return DirectorateOfEqualitySubmissionStatus.WITHDRAWN
     default:
-      return DirectorateOfEqualitySubmissionStatus.IN_REVIEW
+      return DirectorateOfEqualitySubmissionStatus.UNKNOWN
   }
 }
 
-const mapSalaryDataPeriod = (period?: string | null): Date | null =>
-  period ? new Date(`${period.slice(0, 10)}T00:00:00Z`) : null
+const mapSalaryDataPeriod = (period?: string | null): Date | undefined =>
+  period ? new Date(`${period.slice(0, 10)}T00:00:00Z`) : undefined
 
 const hasPdf = (status: ReportStatusEnum) =>
   status === ReportStatusEnum.APPROVED || status === ReportStatusEnum.SUPERSEDED
+
+const reportDownloadUrl = (
+  downloadBaseUrl: string,
+  providerId: string,
+  file: 'pdf' | 'improvement-plan-pdf',
+) =>
+  `${downloadBaseUrl}/download/v1/directorate-of-equality/reports/${encodeURIComponent(
+    providerId,
+  )}/${file}`
 
 const mapSubmissionChannel = (
   channel: ApplicationReportChannelEnum,
 ): DirectorateOfEqualitySubmissionChannel => {
   switch (channel) {
+    case ApplicationReportChannelEnum.ISLAND_IS:
+      return DirectorateOfEqualitySubmissionChannel.ISLAND_IS
     case ApplicationReportChannelEnum.SERVICE_PROVIDER:
       return DirectorateOfEqualitySubmissionChannel.SERVICE_PROVIDER
     case ApplicationReportChannelEnum.DIRECTORATE:
       return DirectorateOfEqualitySubmissionChannel.DIRECTORATE
     default:
-      return DirectorateOfEqualitySubmissionChannel.ISLAND_IS
+      return DirectorateOfEqualitySubmissionChannel.UNKNOWN
   }
 }
 
 export const mapSubmission = (
   report: ApplicationReportListItemDto,
+): Submission | undefined => {
+  const type = mapSubmissionType(report.type)
+  return type ? mapKnownSubmission(report, type) : undefined
+}
+
+const mapKnownSubmission = (
+  report: ApplicationReportListItemDto,
+  type: DirectorateOfEqualitySubmissionType,
 ): Submission => ({
   id: report.providerId,
-  type: mapSubmissionType(report.type),
+  type,
   status: mapSubmissionStatus(report.status),
   submittedVia: mapSubmissionChannel(report.submittedVia),
-  identifier: report.identifier ?? null,
-  submittedAt: report.submittedAt ?? null,
-  approvedAt: report.approvedAt ?? null,
-  validUntil: report.validUntil ?? null,
+  identifier: report.identifier ?? undefined,
+  submittedAt: report.submittedAt ?? undefined,
+  approvedAt: report.approvedAt ?? undefined,
+  validUntil: report.validUntil ?? undefined,
   salaryDataPeriod: mapSalaryDataPeriod(report.salaryDataPeriod),
 })
 
@@ -120,21 +149,27 @@ const mapDirection = (
 
 const mapGender = (
   gender: 'MALE' | 'FEMALE' | 'NEUTRAL',
-): DirectorateOfEqualityGender =>
-  gender === 'MALE'
-    ? DirectorateOfEqualityGender.MALE
-    : gender === 'FEMALE'
-    ? DirectorateOfEqualityGender.FEMALE
-    : DirectorateOfEqualityGender.NEUTRAL
+): DirectorateOfEqualityGender => {
+  switch (gender) {
+    case 'MALE':
+      return DirectorateOfEqualityGender.MALE
+    case 'FEMALE':
+      return DirectorateOfEqualityGender.FEMALE
+    case 'NEUTRAL':
+      return DirectorateOfEqualityGender.NEUTRAL
+    default:
+      return DirectorateOfEqualityGender.UNKNOWN
+  }
+}
 
 const mapSalaryDataBasis = (
   basis?: SalaryDataBasisEnum | null,
-): DirectorateOfEqualitySalaryDataBasis | null =>
+): DirectorateOfEqualitySalaryDataBasis | undefined =>
   basis === SalaryDataBasisEnum.MONTH
     ? DirectorateOfEqualitySalaryDataBasis.MONTH
     : basis === SalaryDataBasisEnum.AVERAGE
     ? DirectorateOfEqualitySalaryDataBasis.AVERAGE
-    : null
+    : undefined
 
 export const mapCompanies = (companies: CompanyReportDto[]): ReportCompany[] =>
   [...companies]
@@ -153,34 +188,34 @@ const isIdentifiableFit = (
 
 export const mapAdjustedGap = (
   d: WageGapDecompositionDto,
-): AdjustedGap | null =>
+): AdjustedGap | undefined =>
   d.oskyrtAvailable && d.oskyrtPercent != null
     ? {
         percent: d.oskyrtPercent,
         direction: mapDirection(d.oskyrtDirection),
         benchmarkPercent: d.benchmarkPercent,
-        withinBenchmark: d.oskyrtWithinBenchmark ?? null,
+        withinBenchmark: d.oskyrtWithinBenchmark ?? undefined,
         outlierCount: d.minimumSetSize,
       }
-    : null
+    : undefined
 
-export const mapRawGap = (d: WageGapDecompositionDto): Gap | null =>
+export const mapRawGap = (d: WageGapDecompositionDto): Gap | undefined =>
   d.rawGapAvailable && d.rawGapPercent != null
     ? { percent: d.rawGapPercent, direction: mapDirection(d.rawGapDirection) }
-    : null
+    : undefined
 
 export const mapMeanHourlyWage = (
   d: WageGapDecompositionDto,
 ): MeanHourlyWage => ({
-  male: d.meanHourlyWageMale ?? null,
-  female: d.meanHourlyWageFemale ?? null,
+  male: d.meanHourlyWageMale ?? undefined,
+  female: d.meanHourlyWageFemale ?? undefined,
 })
 
 export const mapDistribution = (
   d: WageGapDecompositionDto,
   payDispersion: PayDispersionDto,
-): Distribution | null => {
-  if (d.employees.length === 0) return null
+): Distribution | undefined => {
+  if (d.employees.length === 0) return undefined
 
   const markedKind =
     d.oskyrtWithinBenchmark === false
@@ -189,7 +224,7 @@ export const mapDistribution = (
         payDispersion.available &&
         payDispersion.population === 'ALL_EMPLOYEES'
       ? DirectorateOfEqualityMarkedKind.PAY_DISPERSION
-      : null
+      : undefined
   const dispersionOrdinals = new Set(
     payDispersion.employees.map((employee) => employee.employeeOrdinal),
   )
@@ -216,7 +251,7 @@ export const mapDistribution = (
 
   return {
     points,
-    markedKind: points.some((point) => point.marked) ? markedKind : null,
+    markedKind: points.some((point) => point.marked) ? markedKind : undefined,
     expectedLine: hasFit
       ? Array.from({ length: CURVE_SAMPLES + 1 }, (_, i) => {
           const score = from + ((to - from) * i) / CURVE_SAMPLES
@@ -225,49 +260,62 @@ export const mapDistribution = (
       : [],
     increasePer100PointsPercent: hasFit
       ? (Math.exp(fit.slope * 100) - 1) * 100
-      : null,
+      : undefined,
     expectedWageAtMeanScore:
-      hasFit && fit.xMean != null ? predict(fit.xMean) : null,
+      hasFit && fit.xMean != null ? predict(fit.xMean) : undefined,
   }
 }
 
 export const mapEqualityPlan = (
   providerId: string,
   report: ApplicationReportDetailDto,
+  downloadBaseUrl: string,
 ): EqualityPlan => ({
   id: providerId,
   status: mapSubmissionStatus(report.status),
-  identifier: report.identifier ?? null,
-  submittedAt: report.submittedAt ?? null,
-  approvedAt: report.approvedAt ?? null,
-  validUntil: report.validUntil ?? null,
+  identifier: report.identifier ?? undefined,
+  submittedAt: report.submittedAt ?? undefined,
+  approvedAt: report.approvedAt ?? undefined,
+  validUntil: report.validUntil ?? undefined,
   companies: mapCompanies(report.companies),
-  documentFileName: report.equalityReportContentFilename ?? null,
-  hasPdf: hasPdf(report.status),
+  documentFileName: report.equalityReportContentFilename ?? undefined,
+  pdfUrl: hasPdf(report.status)
+    ? reportDownloadUrl(downloadBaseUrl, providerId, 'pdf')
+    : undefined,
 })
 
 export const mapReport = (
   providerId: string,
   report: ApplicationReportDetailDto,
+  downloadBaseUrl: string,
 ): ReportWithContext => {
   const decomposition = report.result?.wageGapDecomposition
+  const withPdf = hasPdf(report.status)
   return {
     id: providerId,
     status: mapSubmissionStatus(report.status),
-    identifier: report.identifier ?? null,
-    submittedAt: report.submittedAt ?? null,
-    approvedAt: report.approvedAt ?? null,
+    identifier: report.identifier ?? undefined,
+    submittedAt: report.submittedAt ?? undefined,
+    approvedAt: report.approvedAt ?? undefined,
     companies: mapCompanies(report.companies),
     salaryDataBasis: mapSalaryDataBasis(report.salaryDataBasis),
     salaryDataPeriod: mapSalaryDataPeriod(report.salaryDataPeriod),
-    adjustedGap: decomposition ? mapAdjustedGap(decomposition) : null,
-    rawGap: decomposition ? mapRawGap(decomposition) : null,
-    meanHourlyWage: decomposition ? mapMeanHourlyWage(decomposition) : null,
+    adjustedGap: decomposition ? mapAdjustedGap(decomposition) : undefined,
+    rawGap: decomposition ? mapRawGap(decomposition) : undefined,
+    meanHourlyWage: decomposition
+      ? mapMeanHourlyWage(decomposition)
+      : undefined,
     distribution:
       decomposition && report.result
         ? mapDistribution(decomposition, report.result.payDispersion)
-        : null,
-    hasPdf: hasPdf(report.status),
+        : undefined,
+    pdfUrl: withPdf
+      ? reportDownloadUrl(downloadBaseUrl, providerId, 'pdf')
+      : undefined,
+    improvementPlanPdfUrl:
+      withPdf && report.includesImprovementPlan
+        ? reportDownloadUrl(downloadBaseUrl, providerId, 'improvement-plan-pdf')
+        : undefined,
     includesImprovementPlan: report.includesImprovementPlan,
   }
 }
@@ -280,12 +328,12 @@ export const mapImprovementPlan = (
     if (!byGroup.has(outlier.groupId)) {
       byGroup.set(outlier.groupId, {
         id: outlier.groupId,
-        name: outlier.groupName ?? null,
-        reason: outlier.reason ?? null,
-        correctionPlan: outlier.action ?? null,
-        deadline: outlier.remedyDate ?? null,
-        responsibleName: outlier.signatureName ?? null,
-        responsibleTitle: outlier.signatureRole ?? null,
+        name: outlier.groupName ?? undefined,
+        reason: outlier.reason ?? undefined,
+        correctionPlan: outlier.action ?? undefined,
+        deadline: outlier.remedyDate ?? undefined,
+        responsibleName: outlier.signatureName ?? undefined,
+        responsibleTitle: outlier.signatureRole ?? undefined,
       })
     }
   }
@@ -294,15 +342,15 @@ export const mapImprovementPlan = (
 
 export const mapCompany = (
   company: ApplicationCompanyDto,
-  serviceProviderApprovedAt: Date | null,
+  serviceProviderApprovedAt?: Date,
 ): Company => ({
   equalityPlanRequired:
     company.equalityObligationStatus !==
     CompanyObligationStatusEnum.NOT_REQUIRED,
-  nextEqualityPlanDeadline: company.nextEqualityReportDueAt ?? null,
+  nextEqualityPlanDeadline: company.nextEqualityReportDueAt ?? undefined,
   salaryReportRequired:
     company.salaryObligationStatus !== CompanyObligationStatusEnum.NOT_REQUIRED,
-  nextSalaryReportDeadline: company.nextSalaryReportDueAt ?? null,
+  nextSalaryReportDeadline: company.nextSalaryReportDueAt ?? undefined,
   serviceProviderApprovedAt,
 })
 
@@ -313,13 +361,13 @@ export const mapApiKey = (
   id: apiKey.id,
   keyId: apiKey.keyId,
   type,
-  label: apiKey.label ?? null,
+  label: apiKey.label ?? undefined,
   createdAt: apiKey.createdAt,
-  createdByName: apiKey.createdByName ?? null,
+  createdByName: apiKey.createdByName ?? undefined,
   createdByDirectorate: apiKey.createdVia === ApiKeyOriginEnum.ADMIN,
-  expiresAt: apiKey.expiresAt ?? null,
-  lastUsedAt: apiKey.lastUsedAt ?? null,
-  revokedAt: apiKey.revokedAt ?? null,
+  expiresAt: apiKey.expiresAt ?? undefined,
+  lastUsedAt: apiKey.lastUsedAt ?? undefined,
+  revokedAt: apiKey.revokedAt ?? undefined,
 })
 
 export const mapServiceProvider = (
@@ -329,7 +377,7 @@ export const mapServiceProvider = (
   name: delegation.provider.name,
   nationalId: delegation.provider.nationalId,
   grantedAt: delegation.grantedAt,
-  grantedByName: delegation.grantedByName ?? null,
+  grantedByName: delegation.grantedByName ?? undefined,
 })
 
 export const mapAvailableServiceProviders = (

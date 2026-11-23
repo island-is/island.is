@@ -7,13 +7,11 @@ import type {
   WageGapEmployeeDto,
   WageGapPooledFitDto,
 } from '@island.is/clients/directorate-of-equality'
+import { Box, Divider, Text } from '@island.is/island-ui/core'
 import {
-  Box,
-  Divider,
   ScatterChart,
   ScatterChartPoint,
-  Text,
-} from '@island.is/island-ui/core'
+} from '@island.is/island-ui/core/charts'
 import { useLocale } from '@island.is/localization'
 
 import { messages } from '../../lib/messages'
@@ -303,7 +301,13 @@ export const SalaryDistributionChart: FC<Props> = ({
 
       <ScatterChart
         title={formatMessage(m.title)}
-        description={formatMessage(m.intro)}
+        dataTable={{
+          caption: formatMessage(m.title),
+          seriesHeader: formatMessage(
+            messages.salaryAnalysis.chartTooltip.gender,
+          ),
+          noteHeader: tooltipMarkedLabel ?? undefined,
+        }}
         series={[
           {
             name: formatMessage(m.legendMale),
@@ -313,6 +317,7 @@ export const SalaryDistributionChart: FC<Props> = ({
           {
             name: formatMessage(m.legendNonMale),
             color: 'purple400',
+            shape: 'diamond',
             points: femalePoints.map(toPoint),
           },
         ]}

@@ -149,7 +149,7 @@ export const CreateApiKeyModal = ({
                   : toast.error(formatMessage(messages.copyKeyError))
               }
             >
-              {formatMessage(messages.copyKey)}
+              {formatMessage(coreMessages.copy)}
             </Button>
           </Box>
         </>

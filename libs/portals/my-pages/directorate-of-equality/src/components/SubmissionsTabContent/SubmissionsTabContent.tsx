@@ -1,14 +1,16 @@
-import { useNavigate } from 'react-router-dom'
-
 import {
-  DirectorateOfEqualitySubmission,
   DirectorateOfEqualitySubmissionChannel,
   DirectorateOfEqualitySubmissionStatus,
   DirectorateOfEqualitySubmissionType,
 } from '@island.is/api/schema'
-import { ActionCard, ProblemTemplate, Stack } from '@island.is/island-ui/core'
+import { ProblemTemplate, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { ActionCardLoader, formatDate } from '@island.is/portals/my-pages/core'
+import {
+  ActionCard,
+  ActionCardLoader,
+  formatDate,
+  m as coreMessages,
+} from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 
 import {
@@ -32,16 +34,18 @@ export const SubmissionsTabContent = ({
   hasAccess: boolean
 }) => {
   const { formatMessage } = useLocale()
-  const navigate = useNavigate()
   const isPlan = type === DirectorateOfEqualitySubmissionType.EQUALITY_PLAN
   const { data, loading, error } = useDirectorateOfEqualitySubmissionsQuery({
     variables: { input: { type } },
     skip: !hasAccess,
   })
-  const items: DirectorateOfEqualitySubmission[] =
-    data?.directorateOfEqualitySubmissions?.items ?? []
+  const items = data?.directorateOfEqualitySubmissions?.items ?? []
 
-  const getHeading = (item: DirectorateOfEqualitySubmission) => {
+  const getHeading = (item: {
+    approvedAt?: string | null
+    validUntil?: string | null
+    salaryDataPeriod?: string | null
+  }) => {
     if (isPlan) {
       const from = getYear(item.approvedAt)
       const to = getYear(item.validUntil)
@@ -99,6 +103,7 @@ export const SubmissionsTabContent = ({
     <Stack space={2}>
       {items.map((item) => {
         const heading = getHeading(item)
+        const statusTag = getStatusTag(item.status, formatMessage)
         const canOpenApplication =
           item.status === DirectorateOfEqualitySubmissionStatus.IN_REVIEW &&
           item.submittedVia === DirectorateOfEqualitySubmissionChannel.ISLAND_IS
@@ -107,7 +112,6 @@ export const SubmissionsTabContent = ({
           <ActionCard
             key={item.id}
             heading={heading}
-            headingVariant="h4"
             text={
               item.submittedAt
                 ? formatMessage(messages.submittedOn, {
@@ -115,48 +119,35 @@ export const SubmissionsTabContent = ({
                   })
                 : undefined
             }
-            tag={{
-              ...getStatusTag(item.status, formatMessage),
-              outlined: true,
-            }}
+            tag={statusTag ? { ...statusTag, outlined: true } : undefined}
             cta={
               canOpenApplication
                 ? {
                     label: formatMessage(messages.openApplication),
+                    variant: 'text',
+                    size: 'small',
                     ariaLabel: formatMessage(
                       messages.openApplicationAriaLabel,
                       { title: heading },
                     ),
-                    variant: 'text',
-                    size: 'small',
-                    icon: 'open',
-                    iconType: 'outline',
-                    onClick: () =>
-                      window.open(
-                        `${document.location.origin}/umsoknir/${
-                          isPlan
-                            ? EQUALITY_PLAN_APPLICATION_SLUG
-                            : SALARY_REPORT_APPLICATION_SLUG
-                        }/${encodeURIComponent(item.id)}`,
-                        '_blank',
-                        'noopener',
-                      ),
+                    url: `${document.location.origin}/umsoknir/${
+                      isPlan
+                        ? EQUALITY_PLAN_APPLICATION_SLUG
+                        : SALARY_REPORT_APPLICATION_SLUG
+                    }/${encodeURIComponent(item.id)}`,
                   }
                 : {
-                    label: formatMessage(messages.view),
+                    label: formatMessage(coreMessages.view),
+                    variant: 'text',
+                    size: 'small',
                     ariaLabel: formatMessage(messages.viewAriaLabel, {
                       title: heading,
                     }),
-                    variant: 'text',
-                    size: 'small',
                     icon: 'arrowForward',
-                    onClick: () =>
-                      navigate(
-                        (isPlan
-                          ? DirectorateOfEqualityPaths.PlanDetail
-                          : DirectorateOfEqualityPaths.ReportDetail
-                        ).replace(':id', encodeURIComponent(item.id)),
-                      ),
+                    url: (isPlan
+                      ? DirectorateOfEqualityPaths.PlanDetail
+                      : DirectorateOfEqualityPaths.ReportDetail
+                    ).replace(':id', encodeURIComponent(item.id)),
                   }
             }
           />

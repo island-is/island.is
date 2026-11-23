@@ -1,37 +1,8 @@
 import { Field, Float, ObjectType } from '@nestjs/graphql'
 
-import {
-  DirectorateOfEqualityGender,
-  DirectorateOfEqualityMarkedKind,
-} from './enums'
-
-@ObjectType('DirectorateOfEqualityDistributionPoint')
-export class DistributionPoint {
-  @Field(() => Float, { description: 'Job evaluation score (starfsmatsstig)' })
-  score!: number
-
-  @Field(() => Float, { description: 'Regular hourly wage, kr./klst.' })
-  wage!: number
-
-  @Field(() => DirectorateOfEqualityGender)
-  gender!: DirectorateOfEqualityGender
-
-  @Field(() => Boolean, {
-    description: 'See DirectorateOfEqualityDistribution.markedKind',
-  })
-  marked!: boolean
-}
-
-@ObjectType('DirectorateOfEqualityExpectedWage')
-export class ExpectedWage {
-  @Field(() => Float)
-  score!: number
-
-  @Field(() => Float, {
-    description: 'Expected regular hourly wage at this score, kr./klst.',
-  })
-  wage!: number
-}
+import { DistributionPoint } from './distributionPoint.model'
+import { DirectorateOfEqualityMarkedKind } from './enums'
+import { ExpectedWage } from './expectedWage.model'
 
 @ObjectType('DirectorateOfEqualityDistribution')
 export class Distribution {
@@ -42,7 +13,7 @@ export class Distribution {
     nullable: true,
     description: 'Null when no point is marked',
   })
-  markedKind?: DirectorateOfEqualityMarkedKind | null
+  markedKind?: DirectorateOfEqualityMarkedKind
 
   @Field(() => [ExpectedWage], {
     description:
@@ -54,11 +25,11 @@ export class Distribution {
     nullable: true,
     description: 'Percent increase in expected wage per 100 score points',
   })
-  increasePer100PointsPercent?: number | null
+  increasePer100PointsPercent?: number
 
   @Field(() => Float, {
     nullable: true,
     description: 'Expected regular hourly wage at the mean score, kr./klst.',
   })
-  expectedWageAtMeanScore?: number | null
+  expectedWageAtMeanScore?: number
 }

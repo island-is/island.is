@@ -45,8 +45,15 @@ export type ScatterChartAxis = {
   width?: number
 }
 
+export type ScatterChartDataTable = {
+  caption: string
+  seriesHeader: string
+  noteHeader?: string
+}
+
 export interface ScatterChartProps {
   series: ScatterChartSeries[]
+  dataTable?: ScatterChartDataTable
   line?: {
     name: string
     color: Colors
@@ -235,8 +242,59 @@ const ChartLegend = ({
   )
 }
 
+const ChartDataTable = ({
+  dataTable,
+  series,
+}: {
+  dataTable: ScatterChartDataTable
+  series: ScatterChartSeries[]
+}) => {
+  const entries = series.flatMap((item) =>
+    item.points.map((point) => ({ seriesName: item.name, point })),
+  )
+  const columns = (
+    entries
+      .find(({ point }) => point.tooltip)
+      ?.point.tooltip?.rows.map((row) => row.label) ?? []
+  ).filter((label) => label !== dataTable.seriesHeader)
+
+  return (
+    <table className={styles.visuallyHidden}>
+      <caption>{dataTable.caption}</caption>
+      <thead>
+        <tr>
+          <th scope="col">{dataTable.seriesHeader}</th>
+          {columns.map((column) => (
+            <th key={column} scope="col">
+              {column}
+            </th>
+          ))}
+          {dataTable.noteHeader && <th scope="col">{dataTable.noteHeader}</th>}
+        </tr>
+      </thead>
+      <tbody>
+        {entries.map(({ seriesName, point }, index) => (
+          <tr key={index}>
+            <td>{seriesName}</td>
+            {columns.map((column) => (
+              <td key={column}>
+                {point.tooltip?.rows.find((row) => row.label === column)
+                  ?.value ?? ''}
+              </td>
+            ))}
+            {dataTable.noteHeader && (
+              <td>{point.marked ? point.tooltip?.note?.text ?? '' : ''}</td>
+            )}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
+}
+
 export const ScatterChart = ({
   series,
+  dataTable,
   line,
   markedLegendLabel,
   xAxis,
@@ -249,7 +307,7 @@ export const ScatterChart = ({
   const visibleLine = line && line.points.length > 0 ? line : undefined
   const axisTick = { fill: theme.color.black, fontSize: 14 }
 
-  return (
+  const chart = (
     <ResponsiveContainer
       width="100%"
       height={height}
@@ -258,6 +316,7 @@ export const ScatterChart = ({
       <RechartsScatterChart
         title={title}
         desc={description}
+        accessibilityLayer={!dataTable}
         margin={{ top: 24, right: 0, left: 0, bottom: 24 }}
       >
         <CartesianGrid vertical={false} stroke={theme.color.blue200} />
@@ -339,5 +398,16 @@ export const ScatterChart = ({
         )}
       </RechartsScatterChart>
     </ResponsiveContainer>
+  )
+
+  if (!dataTable) {
+    return chart
+  }
+
+  return (
+    <>
+      <ChartDataTable dataTable={dataTable} series={visibleSeries} />
+      <div aria-hidden="true">{chart}</div>
+    </>
   )
 }

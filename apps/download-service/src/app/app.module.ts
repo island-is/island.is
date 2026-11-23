@@ -2,6 +2,10 @@ import { Module } from '@nestjs/common'
 
 import { AuthModule } from '@island.is/auth-nest-tools'
 import {
+  DirectorateOfEqualityClientConfig,
+  DirectorateOfEqualityClientModule,
+} from '@island.is/clients/directorate-of-equality'
+import {
   DocumentsClientModule,
   DocumentClientConfig,
 } from '@island.is/clients/documents'
@@ -21,6 +25,7 @@ import {
 } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 
+import { DirectorateOfEqualityController } from './modules/directorate-of-equality/directorate-of-equality.controller'
 import { DocumentController } from './modules/documents/document.controller'
 import { DocumentsInfraController } from './modules/infra/documentsInfra.controller'
 import { FinanceDocumentController } from './modules/finance-documents/document.controller'
@@ -100,6 +105,7 @@ import {
     OccupationalLicensesController,
     RentalAgreementsController,
     VmstAttachmentController,
+    DirectorateOfEqualityController,
   ],
   imports: [
     AuditModule.forRoot(environment.audit),
@@ -120,6 +126,7 @@ import {
     HmsRentalAgreementClientModule,
     PrimarySchoolClientModule,
     VmstUnemploymentClientModule,
+    DirectorateOfEqualityClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -146,6 +153,7 @@ import {
         PrimarySchoolClientConfig,
         VmstUnemploymentClientConfig,
         EducationDocumentsConfig,
+        DirectorateOfEqualityClientConfig,
       ],
     }),
   ],

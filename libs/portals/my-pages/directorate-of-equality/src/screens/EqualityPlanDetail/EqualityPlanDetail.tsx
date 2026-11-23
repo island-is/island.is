@@ -5,6 +5,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatDate,
   formatNationalId,
+  formSubmit,
   InfoLine,
   InfoLineStack,
   IntroWrapper,
@@ -13,10 +14,10 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 
+import { ContentColumn } from '../../components/ContentColumn/ContentColumn'
+import { StatusTag } from '../../components/StatusTag/StatusTag'
 import { NAMESPACE } from '../../lib/constants'
 import { messages } from '../../lib/messages'
-import { getStatusTag } from '../../lib/status'
-import { usePdfDownload } from '../../lib/usePdfDownload'
 import { useDirectorateOfEqualityEqualityPlanQuery } from './EqualityPlanDetail.generated'
 
 const getYear = (date?: string | null) =>
@@ -32,7 +33,7 @@ const EqualityPlanDetail = () => {
   const plan = data?.directorateOfEqualityEqualityPlan
   const from = getYear(plan?.approvedAt)
   const to = getYear(plan?.validUntil)
-  const { downloadReportPdf, reportPdfLoading } = usePdfDownload(id)
+  const pdfUrl = plan?.pdfUrl
   const title = !plan
     ? formatMessage(coreMessages.equalityPlan)
     : from && to
@@ -49,7 +50,7 @@ const EqualityPlanDetail = () => {
         tooltip: formatMessage(coreMessages.equalityTooltip),
       }}
       buttonGroup={
-        plan?.hasPdf
+        pdfUrl
           ? {
               actions: [
                 <Button
@@ -57,8 +58,7 @@ const EqualityPlanDetail = () => {
                   variant="utility"
                   icon="download"
                   iconType="outline"
-                  loading={reportPdfLoading}
-                  onClick={() => downloadReportPdf(title)}
+                  onClick={() => formSubmit(pdfUrl)}
                 >
                   {formatMessage(messages.downloadPlan)}
                 </Button>,
@@ -67,66 +67,66 @@ const EqualityPlanDetail = () => {
           : undefined
       }
     >
-      {error && !loading ? (
-        <Problem error={error} noBorder={false} />
-      ) : !loading && !plan ? (
-        <Problem type="not_found" noBorder={false} />
-      ) : (
-        <InfoLineStack label={messages.planInfo}>
-          <InfoLine
-            label={messages.identifier}
-            content={plan?.identifier ?? undefined}
-            loading={loading}
-          />
-          <InfoLine
-            label={messages.status}
-            content={
-              plan ? getStatusTag(plan.status, formatMessage).label : undefined
-            }
-            loading={loading}
-          />
-          <InfoLine
-            label={messages.submitted}
-            content={formatDate(plan?.submittedAt)}
-            loading={loading}
-          />
-          {(loading || plan?.approvedAt) && (
+      <ContentColumn>
+        {error && !loading ? (
+          <Problem error={error} noBorder={false} />
+        ) : !loading && !plan ? (
+          <Problem type="not_found" noBorder={false} />
+        ) : (
+          <InfoLineStack label={messages.planInfo}>
             <InfoLine
-              label={messages.approved}
-              content={formatDate(plan?.approvedAt)}
+              label={messages.identifier}
+              content={plan?.identifier ?? undefined}
               loading={loading}
             />
-          )}
-          {(loading || plan?.validUntil) && (
             <InfoLine
-              label={messages.validUntil}
-              content={formatDate(plan?.validUntil)}
+              label={coreMessages.status}
+              content={plan ? <StatusTag status={plan.status} /> : undefined}
               loading={loading}
             />
-          )}
-          {loading ? (
-            <InfoLine label={messages.company} loading />
-          ) : (
-            plan?.companies.map((company) => (
+            <InfoLine
+              label={messages.submitted}
+              content={formatDate(plan?.submittedAt)}
+              loading={loading}
+            />
+            {(loading || plan?.approvedAt) && (
               <InfoLine
-                key={company.nationalId}
-                label={messages.company}
-                content={formatMessage(messages.companyWithNationalId, {
-                  name: company.name,
-                  nationalId: formatNationalId(company.nationalId),
-                })}
+                label={coreMessages.approved}
+                content={formatDate(plan?.approvedAt)}
+                loading={loading}
               />
-            ))
-          )}
-          {(loading || plan?.documentFileName) && (
-            <InfoLine
-              label={messages.document}
-              content={plan?.documentFileName ?? undefined}
-              loading={loading}
-            />
-          )}
-        </InfoLineStack>
-      )}
+            )}
+            {(loading || plan?.validUntil) && (
+              <InfoLine
+                label={coreMessages.validTo}
+                content={formatDate(plan?.validUntil)}
+                loading={loading}
+              />
+            )}
+            {loading ? (
+              <InfoLine label={messages.company} loading />
+            ) : (
+              plan?.companies.map((company) => (
+                <InfoLine
+                  key={company.nationalId}
+                  label={messages.company}
+                  content={formatMessage(messages.companyWithNationalId, {
+                    name: company.name,
+                    nationalId: formatNationalId(company.nationalId),
+                  })}
+                />
+              ))
+            )}
+            {(loading || plan?.documentFileName) && (
+              <InfoLine
+                label={messages.document}
+                content={plan?.documentFileName ?? undefined}
+                loading={loading}
+              />
+            )}
+          </InfoLineStack>
+        )}
+      </ContentColumn>
     </IntroWrapper>
   )
 }

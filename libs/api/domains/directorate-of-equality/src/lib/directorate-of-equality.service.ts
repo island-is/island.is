@@ -1,4 +1,5 @@
-import { ForbiddenException, Injectable } from '@nestjs/common'
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common'
+import type { ConfigType } from '@nestjs/config'
 import kennitala from 'kennitala'
 
 import type { User } from '@island.is/auth-nest-tools'
@@ -9,13 +10,16 @@ import {
   ReportEmployeeOutlierDto,
   ReportTypeEnum,
 } from '@island.is/clients/directorate-of-equality'
+import { FetchError, handle404 } from '@island.is/clients/middlewares'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { DownloadServiceConfig } from '@island.is/nest/config'
 
-import { IssueApiKeyInput, RevokeApiKeyInput } from './dto/apiKey.input'
 import { DetailInput } from './dto/detail.input'
-import {
-  GrantServiceProviderInput,
-  RevokeServiceProviderInput,
-} from './dto/serviceProvider.input'
+import { GrantServiceProviderInput } from './dto/grantServiceProvider.input'
+import { IssueApiKeyInput } from './dto/issueApiKey.input'
+import { RevokeApiKeyInput } from './dto/revokeApiKey.input'
+import { RevokeServiceProviderInput } from './dto/revokeServiceProvider.input'
 import { SubmissionsInput } from './dto/submissions.input'
 import {
   mapApiKey,
@@ -26,9 +30,9 @@ import {
   mapReport,
   mapServiceProvider,
   mapSubmission,
-  mapSubmissionType,
 } from './mapper'
-import { ApiKeys, IssuedApiKey } from './models/apiKey.model'
+import { ApiKeys } from './models/apiKeys.model'
+import { AvailableServiceProviders } from './models/availableServiceProviders.model'
 import { Company } from './models/company.model'
 import {
   DirectorateOfEqualityApiKeyType,
@@ -36,20 +40,18 @@ import {
 } from './models/enums'
 import { EqualityPlan } from './models/equalityPlan.model'
 import { ImprovementAction } from './models/improvementAction.model'
+import { IssuedApiKey } from './models/issuedApiKey.model'
 import { MutationResult } from './models/mutationResult.model'
-import { Pdf } from './models/pdf.model'
 import { ReportWithContext } from './models/report.model'
-import {
-  AvailableServiceProviders,
-  ServiceProviders,
-} from './models/serviceProvider.model'
+import { ServiceProviders } from './models/serviceProviders.model'
+import { Submission } from './models/submission.model'
 import { Submissions } from './models/submissions.model'
 
 const OUTLIERS_PAGE_SIZE = 100
+const MAX_OUTLIER_PAGES = 50
 
-const toPdf = async (file: Blob): Promise<Pdf> => ({
-  content: Buffer.from(await file.arrayBuffer()).toString('base64'),
-})
+const isSubmission = (submission?: Submission): submission is Submission =>
+  !!submission
 
 const SUBMISSION_SCOPES: Record<DirectorateOfEqualitySubmissionType, ApiScope> =
   {
@@ -70,6 +72,11 @@ const COMPANY_KEY_SCOPES: NonNullable<CreateApiKeyDto['scopes']> = [
 export class DirectorateOfEqualityService {
   constructor(
     private readonly directorateOfEqualityClientService: DirectorateOfEqualityClientService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    @Inject(DownloadServiceConfig.KEY)
+    private readonly downloadServiceConfig: ConfigType<
+      typeof DownloadServiceConfig
+    >,
   ) {}
 
   private assertCompany(user: User) {
@@ -87,6 +94,12 @@ export class DirectorateOfEqualityService {
     }
   }
 
+  private getReportDetail(user: User, id: string) {
+    return this.directorateOfEqualityClientService
+      .getReport(user, id)
+      .catch(handle404)
+  }
+
   async getSubmissions(
     user: User,
     input: SubmissionsInput,
@@ -99,6 +112,7 @@ export class DirectorateOfEqualityService {
     return {
       items: (response?.reports ?? [])
         .map(mapSubmission)
+        .filter(isSubmission)
         .filter((submission) => submission.type === input.type),
     }
   }
@@ -112,42 +126,10 @@ export class DirectorateOfEqualityService {
       user,
       DirectorateOfEqualitySubmissionType.EQUALITY_PLAN,
     )
-    const report = await this.directorateOfEqualityClientService.getReport(
-      user,
-      input.id,
-    )
-    return report.type === ReportTypeEnum.EQUALITY
-      ? mapEqualityPlan(input.id, report)
+    const report = await this.getReportDetail(user, input.id)
+    return report?.type === ReportTypeEnum.EQUALITY
+      ? mapEqualityPlan(input.id, report, this.downloadServiceConfig.baseUrl)
       : null
-  }
-
-  async getReportPdf(user: User, input: DetailInput): Promise<Pdf> {
-    this.assertCompany(user)
-    const report = await this.directorateOfEqualityClientService.getReport(
-      user,
-      input.id,
-    )
-    this.assertSubmissionScope(user, mapSubmissionType(report.type))
-    return toPdf(
-      await this.directorateOfEqualityClientService.getReportPdf(
-        user,
-        input.id,
-      ),
-    )
-  }
-
-  async getImprovementPlanPdf(user: User, input: DetailInput): Promise<Pdf> {
-    this.assertCompany(user)
-    this.assertSubmissionScope(
-      user,
-      DirectorateOfEqualitySubmissionType.SALARY_REPORT,
-    )
-    return toPdf(
-      await this.directorateOfEqualityClientService.getReportImprovementPlanPdf(
-        user,
-        input.id,
-      ),
-    )
   }
 
   async getReport(
@@ -159,12 +141,9 @@ export class DirectorateOfEqualityService {
       user,
       DirectorateOfEqualitySubmissionType.SALARY_REPORT,
     )
-    const report = await this.directorateOfEqualityClientService.getReport(
-      user,
-      input.id,
-    )
-    return report.type === ReportTypeEnum.SALARY
-      ? mapReport(input.id, report)
+    const report = await this.getReportDetail(user, input.id)
+    return report?.type === ReportTypeEnum.SALARY
+      ? mapReport(input.id, report, this.downloadServiceConfig.baseUrl)
       : null
   }
 
@@ -175,7 +154,7 @@ export class DirectorateOfEqualityService {
     const outliers: ReportEmployeeOutlierDto[] = []
     let page = 1
     let hasNextPage = true
-    while (hasNextPage) {
+    while (hasNextPage && page <= MAX_OUTLIER_PAGES) {
       const response =
         await this.directorateOfEqualityClientService.getReportOutliers(
           user,
@@ -187,6 +166,12 @@ export class DirectorateOfEqualityService {
       hasNextPage = response.paging.hasNextPage
       page += 1
     }
+    if (hasNextPage) {
+      this.logger.warn('Stopped paging report outliers at the page limit', {
+        reportId: providerId,
+        maxPages: MAX_OUTLIER_PAGES,
+      })
+    }
     return mapImprovementPlan(outliers)
   }
 
@@ -197,8 +182,8 @@ export class DirectorateOfEqualityService {
     )
     const partnerClient = company.isServiceProvider
       ? await this.directorateOfEqualityClientService.getPartnerClient(user)
-      : null
-    return mapCompany(company, partnerClient?.createdAt ?? null)
+      : undefined
+    return mapCompany(company, partnerClient?.createdAt ?? undefined)
   }
 
   async getApiKeys(user: User): Promise<ApiKeys> {
@@ -287,9 +272,16 @@ export class DirectorateOfEqualityService {
     input: GrantServiceProviderInput,
   ): Promise<MutationResult> {
     this.assertCompany(user)
-    await this.directorateOfEqualityClientService.grantPartnerDelegation(user, {
-      partnerClientId: input.id,
-    })
+    try {
+      await this.directorateOfEqualityClientService.grantPartnerDelegation(
+        user,
+        { partnerClientId: input.id },
+      )
+    } catch (error) {
+      if (!(error instanceof FetchError && error.status === 409)) {
+        throw error
+      }
+    }
     return { success: true }
   }
 

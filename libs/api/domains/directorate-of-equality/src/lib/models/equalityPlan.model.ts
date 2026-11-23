@@ -14,26 +14,27 @@ export class EqualityPlan {
   status!: DirectorateOfEqualitySubmissionStatus
 
   @Field(() => String, { nullable: true })
-  identifier?: string | null
+  identifier?: string
 
   @Field(() => Date, { nullable: true })
-  submittedAt?: Date | null
+  submittedAt?: Date
 
   @Field(() => Date, { nullable: true })
-  approvedAt?: Date | null
+  approvedAt?: Date
 
   @Field(() => Date, { nullable: true })
-  validUntil?: Date | null
+  validUntil?: Date
 
   @Field(() => [ReportCompany], { description: 'Parent company first' })
   companies!: ReportCompany[]
 
   @Field(() => String, { nullable: true })
-  documentFileName?: string | null
+  documentFileName?: string
 
-  @Field(() => Boolean, {
+  @Field(() => String, {
+    nullable: true,
     description:
-      'True when the plan is approved or superseded and can be fetched with directorateOfEqualityReportPdf',
+      'Download-service URL of the signed-off plan as a PDF; set only when the plan is approved or superseded',
   })
-  hasPdf!: boolean
+  pdfUrl?: string
 }

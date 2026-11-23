@@ -22,7 +22,6 @@ import { DirectorateOfEqualityService } from './directorate-of-equality.service'
 import { DetailInput } from './dto/detail.input'
 import { SubmissionsInput } from './dto/submissions.input'
 import { EqualityPlan } from './models/equalityPlan.model'
-import { Pdf } from './models/pdf.model'
 import { Submissions } from './models/submissions.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -58,33 +57,5 @@ export class DirectorateOfEqualityResolver {
     @CurrentUser() user: User,
   ): Promise<EqualityPlan | null> {
     return this.directorateOfEqualityService.getEqualityPlan(user, input)
-  }
-
-  @Query(() => Pdf, {
-    name: 'directorateOfEqualityReportPdf',
-    nullable: true,
-    description:
-      'The signed-off equality plan or salary report as a PDF; only when hasPdf is true',
-  })
-  @Audit()
-  reportPdf(
-    @Args('input') input: DetailInput,
-    @CurrentUser() user: User,
-  ): Promise<Pdf | null> {
-    return this.directorateOfEqualityService.getReportPdf(user, input)
-  }
-
-  @Query(() => Pdf, {
-    name: 'directorateOfEqualityImprovementPlanPdf',
-    nullable: true,
-    description:
-      'The salary report úrbótaáætlun as a PDF; only when hasPdf is true and the improvement plan is not empty',
-  })
-  @Audit()
-  improvementPlanPdf(
-    @Args('input') input: DetailInput,
-    @CurrentUser() user: User,
-  ): Promise<Pdf | null> {
-    return this.directorateOfEqualityService.getImprovementPlanPdf(user, input)
   }
 }

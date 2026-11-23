@@ -24,21 +24,21 @@ export class Submission {
   submittedVia!: DirectorateOfEqualitySubmissionChannel
 
   @Field(() => String, { nullable: true })
-  identifier?: string | null
+  identifier?: string
 
   @Field(() => Date, { nullable: true })
-  submittedAt?: Date | null
+  submittedAt?: Date
 
   @Field(() => Date, { nullable: true })
-  approvedAt?: Date | null
+  approvedAt?: Date
 
   @Field(() => Date, { nullable: true })
-  validUntil?: Date | null
+  validUntil?: Date
 
   @Field(() => Date, {
     nullable: true,
     description:
       'Salary reports only: the first day of the payroll month, at UTC midnight',
   })
-  salaryDataPeriod?: Date | null
+  salaryDataPeriod?: Date
 }

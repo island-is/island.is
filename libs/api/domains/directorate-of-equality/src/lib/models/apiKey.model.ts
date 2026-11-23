@@ -16,7 +16,7 @@ export class ApiKey {
   type!: DirectorateOfEqualityApiKeyType
 
   @Field(() => String, { nullable: true })
-  label?: string | null
+  label?: string
 
   @Field(() => Date)
   createdAt!: Date
@@ -25,7 +25,7 @@ export class ApiKey {
     nullable: true,
     description: 'Name of the person who created the key on island.is',
   })
-  createdByName?: string | null
+  createdByName?: string
 
   @Field(() => Boolean, {
     description: 'True when Jafnréttisstofa created the key',
@@ -33,28 +33,11 @@ export class ApiKey {
   createdByDirectorate!: boolean
 
   @Field(() => Date, { nullable: true, description: 'Null means no expiry' })
-  expiresAt?: Date | null
+  expiresAt?: Date
 
   @Field(() => Date, { nullable: true })
-  lastUsedAt?: Date | null
+  lastUsedAt?: Date
 
   @Field(() => Date, { nullable: true })
-  revokedAt?: Date | null
-}
-
-@ObjectType('DirectorateOfEqualityApiKeys')
-export class ApiKeys {
-  @Field(() => [ApiKey], { description: 'Newest first' })
-  items!: ApiKey[]
-}
-
-@ObjectType('DirectorateOfEqualityIssuedApiKey')
-export class IssuedApiKey {
-  @Field(() => ID)
-  id!: string
-
-  @Field(() => String, {
-    description: 'The full key — returned only once, never retrievable again',
-  })
-  key!: string
+  revokedAt?: Date
 }

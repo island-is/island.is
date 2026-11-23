@@ -1,10 +1,8 @@
+import { Box, Divider, Text } from '@island.is/island-ui/core'
 import {
-  Box,
-  Divider,
   ScatterChart,
   ScatterChartPoint,
-  Text,
-} from '@island.is/island-ui/core'
+} from '@island.is/island-ui/core/charts'
 import {
   DirectorateOfEqualityDistribution,
   DirectorateOfEqualityDistributionPoint,
@@ -12,6 +10,7 @@ import {
   DirectorateOfEqualityMarkedKind,
 } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
+import { m as coreMessages } from '@island.is/portals/my-pages/core'
 
 import {
   formatHourlyWage,
@@ -26,6 +25,7 @@ export const WageDistribution = ({
   distribution?: DirectorateOfEqualityDistribution | null
 }) => {
   const { formatMessage } = useLocale()
+  const hourlyWageUnit = formatMessage(messages.hourlyWageUnit)
 
   if (!distribution) {
     return (
@@ -67,7 +67,7 @@ export const WageDistribution = ({
         },
         {
           label: formatMessage(messages.chartTooltipWage),
-          value: formatHourlyWage(point.wage),
+          value: formatHourlyWage(point.wage, hourlyWageUnit),
         },
       ],
       note:
@@ -87,7 +87,9 @@ export const WageDistribution = ({
     (p) => p.gender === DirectorateOfEqualityGender.MALE,
   )
   const female = distribution.points.filter(
-    (p) => p.gender !== DirectorateOfEqualityGender.MALE,
+    (p) =>
+      p.gender === DirectorateOfEqualityGender.FEMALE ||
+      p.gender === DirectorateOfEqualityGender.NEUTRAL,
   )
 
   return (
@@ -98,7 +100,11 @@ export const WageDistribution = ({
       <Text marginBottom={3}>{formatMessage(messages.chartIntro)}</Text>
       <ScatterChart
         title={formatMessage(messages.chartTitle)}
-        description={formatMessage(messages.chartIntro)}
+        dataTable={{
+          caption: formatMessage(messages.chartTitle),
+          seriesHeader: formatMessage(coreMessages.gender),
+          noteHeader: markedLabel,
+        }}
         series={[
           {
             name: formatMessage(messages.chartLegendMale),
@@ -108,6 +114,7 @@ export const WageDistribution = ({
           {
             name: formatMessage(messages.chartLegendFemale),
             color: 'purple400',
+            shape: 'diamond',
             points: female.map(toPoint),
           },
         ]}
@@ -137,9 +144,11 @@ export const WageDistribution = ({
           width: 95,
         }}
       />
-      <Text variant="small" color="dark300" marginTop={2}>
-        {formatMessage(messages.chartNote)}
-      </Text>
+      <Box marginTop={2}>
+        <Text variant="small" color="dark300">
+          {formatMessage(messages.chartNote)}
+        </Text>
+      </Box>
       {distribution.increasePer100PointsPercent != null && (
         <Box display="flex" columnGap={2} flexWrap="wrap" marginTop={1}>
           <Text variant="small" fontWeight="semiBold">
@@ -160,7 +169,10 @@ export const WageDistribution = ({
             {formatMessage(messages.expectedAtMean)}
           </Text>
           <Text variant="small">
-            {formatHourlyWage(distribution.expectedWageAtMeanScore)}
+            {formatHourlyWage(
+              distribution.expectedWageAtMeanScore,
+              hourlyWageUnit,
+            )}
           </Text>
           <Text variant="small" color="dark300">
             {formatMessage(messages.expectedAtMeanHint)}

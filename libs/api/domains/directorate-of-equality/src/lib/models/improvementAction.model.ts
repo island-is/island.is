@@ -6,23 +6,23 @@ export class ImprovementAction {
   id!: string
 
   @Field(() => String, { nullable: true })
-  name?: string | null
+  name?: string
 
   @Field(() => String, { nullable: true })
-  reason?: string | null
+  reason?: string
 
   @Field(() => String, { nullable: true })
-  correctionPlan?: string | null
+  correctionPlan?: string
 
   @Field(() => Date, {
     nullable: true,
     description: 'Date the improvements are committed to be done by',
   })
-  deadline?: Date | null
+  deadline?: Date
 
   @Field(() => String, { nullable: true })
-  responsibleName?: string | null
+  responsibleName?: string
 
   @Field(() => String, { nullable: true })
-  responsibleTitle?: string | null
+  responsibleTitle?: string
 }

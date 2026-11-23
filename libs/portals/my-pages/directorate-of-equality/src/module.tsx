@@ -23,19 +23,22 @@ export const directorateOfEqualityModule: PortalModule = {
     {
       name: m.equality,
       path: DirectorateOfEqualityPaths.Root,
-      enabled: true,
+      enabled: userInfo.scopes.includes(ApiScope.directorateOfEqualityCompany),
+      requiredScopes: [ApiScope.directorateOfEqualityCompany],
       element: <Navigate to={DirectorateOfEqualityPaths.Plans} replace />,
     },
     {
       name: m.equalitySubmissions,
       path: DirectorateOfEqualityPaths.Submissions,
-      enabled: true,
+      enabled: userInfo.scopes.includes(ApiScope.directorateOfEqualityCompany),
+      requiredScopes: [ApiScope.directorateOfEqualityCompany],
       element: <Navigate to={DirectorateOfEqualityPaths.Plans} replace />,
     },
     {
       name: m.equalityPlans,
       path: DirectorateOfEqualityPaths.Plans,
-      enabled: true,
+      enabled: userInfo.scopes.includes(ApiScope.directorateOfEqualityCompany),
+      requiredScopes: [ApiScope.directorateOfEqualityCompany],
       element: <Submissions />,
     },
     {
@@ -53,7 +56,8 @@ export const directorateOfEqualityModule: PortalModule = {
     {
       name: m.equalityReports,
       path: DirectorateOfEqualityPaths.Reports,
-      enabled: true,
+      enabled: userInfo.scopes.includes(ApiScope.directorateOfEqualityCompany),
+      requiredScopes: [ApiScope.directorateOfEqualityCompany],
       element: <Submissions />,
     },
     {

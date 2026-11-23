@@ -161,6 +161,8 @@ export const ApiKeysTab = ({
             variant="text"
             size="small"
             icon={showInactive ? 'chevronUp' : 'chevronDown'}
+            aria-expanded={showInactive}
+            aria-controls="doe-inactive-keys"
             onClick={() => setShowInactive((value) => !value)}
           >
             {formatMessage(
@@ -173,7 +175,7 @@ export const ApiKeysTab = ({
         </Box>
       )}
       {inactive.length > 0 && showInactive && (
-        <Box marginTop={3}>
+        <Box id="doe-inactive-keys" marginTop={3}>
           <Stack space={2}>
             {inactive.map((apiKey) => (
               <ApiKeyCard
