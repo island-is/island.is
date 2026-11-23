@@ -98,12 +98,9 @@ export const useTableRows = ({
     setIsEditing(true)
   }
 
-  // If the list is empty and initActiveFieldIfEmpty=true,
-  // start with one row opened in edit mode
   useEffect(() => {
     const oldValues = methods.getValues(id) || []
     if (initActiveFieldIfEmpty && oldValues.length === 0) {
-      // Using setObjectValue to handle nested ids
       const newValues = {}
       setObjectWithNestedKey(newValues, id, [{ isUnsaved: true }])
       methods.reset({
@@ -114,13 +111,10 @@ export const useTableRows = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Initialize with default values on mount
-  // only if no existing values are present and defaultValues is defined/non-empty
   useEffect(() => {
     const defaultValues = getDefaultRows()
     const oldValues = methods.getValues(id) || []
     if (defaultValues && oldValues.length === 0) {
-      // Using setObjectValue to handle nested ids
       const newValues = {}
       setObjectWithNestedKey(newValues, id, defaultValues)
       const existingValues = methods.getValues()
@@ -138,7 +132,6 @@ export const useTableRows = ({
     activeIndexRef.current = activeIndex
   }, [activeIndex])
 
-  // Register a beforeSubmit callback that blocks form submission until the active registration is completed
   // Persist a unique callback ID across renders to avoid re-registering in setBeforeSubmitCallback
   const callbackIdRef = useRef(`TableRepeaterFormField-${uuid()}`)
   useEffect(() => {
@@ -154,7 +147,6 @@ export const useTableRows = ({
           ]
         }
 
-        // Remove deleted rows
         // Iterate in reverse so removing doesn't break indices
         for (let i = fields.length - 1; i >= 0; i--) {
           const row = fields[i]

@@ -93,7 +93,6 @@ export const Item = ({
     : undefined
 
   useEffect(() => {
-    // We need to deep compare the watched values to avoid unnecessary re-renders
     if (
       !watchedValues ||
       isEqual(prevWatchedValuesRef.current, watchedValues)
