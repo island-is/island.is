@@ -9,9 +9,11 @@ import {
   LanguageProfileOutput,
   MnarSurApi,
   Option,
+  OwnContactOutput,
   UpdateEmergencyContactInput,
   UpdateHealthProfileInput,
   UpdateLanguageProfileInput,
+  UpdateOwnContactInput,
 } from '../../gen/fetch'
 
 /**
@@ -166,6 +168,21 @@ export class FriggKeyInfoClientService {
     return this.mnarSurWithAuth(user).replaceLanguageProfile({
       childId,
       updateLanguageProfileInput: input,
+    })
+  }
+
+  /* -- Own contact --------------------------------------------------------- */
+
+  getOwnContact(user: User): Promise<OwnContactOutput> {
+    return this.mnarSurWithAuth(user).getContact()
+  }
+
+  updateOwnContact(
+    user: User,
+    input: UpdateOwnContactInput,
+  ): Promise<OwnContactOutput> {
+    return this.mnarSurWithAuth(user).replaceContact({
+      updateOwnContactInput: input,
     })
   }
 }

@@ -58,6 +58,30 @@ const MMS_CODE_PATTERN = /^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$/
 export interface MmsKeyInfoProblem extends HttpProblem {
   mmsCode: string
   mmsRequestId?: string
+  /** Fields a 400 VALIDATION names in `errors[]` (contract v0.4 §4.2), e.g.
+   * `phone`. Only the field names are passed on, not the messages. */
+  mmsFields?: string[]
+}
+
+const FIELD_PATTERN = /^([a-z][A-Za-z0-9]*(?:\.[A-Za-z0-9]+)*)\s/
+
+const fieldsFromErrors = (
+  body: Record<string, unknown>,
+  knownFields: string[],
+): string[] => {
+  const errors = body['errors']
+  if (!Array.isArray(errors) || knownFields.length === 0) return []
+  const fields = errors
+    .map((entry) =>
+      typeof entry === 'string' ? FIELD_PATTERN.exec(entry)?.[1] : undefined,
+    )
+    .filter((field): field is string => !!field && knownFields.includes(field))
+  return [...new Set(fields)]
+}
+
+export interface MmsKeyInfoProblemOptions {
+  /** The input's field names, so `errors[]` can be matched to them. */
+  fields?: string[]
 }
 
 const PROBLEM_TYPE_BY_STATUS: Record<number, HttpProblem['type']> = {
@@ -100,7 +124,10 @@ const requestIdFromHeaders = (error: FetchError): string | undefined => {
  * A {@link ProblemError} carrying the MMS code, or the original error when the
  * response held no code to carry.
  */
-export const toMmsKeyInfoProblem = (error: unknown): unknown => {
+export const toMmsKeyInfoProblem = (
+  error: unknown,
+  options: MmsKeyInfoProblemOptions = {},
+): unknown => {
   if (!(error instanceof FetchError)) return error
 
   const body = errorBody(error)
@@ -118,16 +145,20 @@ export const toMmsKeyInfoProblem = (error: unknown): unknown => {
     mmsRequestId,
   }
 
+  const mmsFields = fieldsFromErrors(body, options.fields ?? [])
+  if (mmsFields.length > 0) problem.mmsFields = mmsFields
+
   return new ProblemError(problem, { cause: error })
 }
 
 /** Runs a frigg key-info call, translating its failures for the client. */
 export const withMmsKeyInfoProblem = async <T>(
   call: () => Promise<T>,
+  options?: MmsKeyInfoProblemOptions,
 ): Promise<T> => {
   try {
     return await call()
   } catch (error) {
-    throw toMmsKeyInfoProblem(error)
+    throw toMmsKeyInfoProblem(error, options)
   }
 }

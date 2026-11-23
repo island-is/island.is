@@ -1,0 +1,13 @@
+query EducationOwnContact {
+  educationOwnContact {
+    email
+    phone
+  }
+}
+
+mutation EducationUpdateOwnContact($input: EducationUpdateOwnContactInput!) {
+  educationUpdateOwnContact(input: $input) {
+    email
+    phone
+  }
+}

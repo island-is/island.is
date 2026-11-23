@@ -38,7 +38,7 @@ const fetchError = ({
 
 const problemOf = (error: unknown) => {
   expect(error).toBeInstanceOf(ProblemError)
-  return (error as ProblemError).problem as unknown as Record<string, unknown>
+  return ((error as ProblemError).problem as unknown) as Record<string, unknown>
 }
 
 describe('toMmsKeyInfoProblem', () => {
@@ -82,6 +82,40 @@ describe('toMmsKeyInfoProblem', () => {
     expect(problemOf(toMmsKeyInfoProblem(error))).toMatchObject({
       mmsCode: 'IS_GUARDIAN',
     })
+  })
+
+  it('passes on the field names a validation error names, not the messages', () => {
+    const error = fetchError({
+      status: 400,
+      body: {
+        statusCode: 400,
+        code: 'VALIDATION',
+        errors: [
+          'phone must be E.164: + followed by 7 to 15 digits',
+          'phone must be a string',
+          'not a field message',
+        ],
+        requestId: 'req-1',
+      },
+    })
+
+    const problem = problemOf(
+      toMmsKeyInfoProblem(error, { fields: ['email', 'phone'] }),
+    )
+
+    expect(problem.mmsFields).toEqual(['phone'])
+    expect(JSON.stringify(problem)).not.toContain('E.164')
+  })
+
+  it('leaves out mmsFields when the caller lists no fields', () => {
+    const error = fetchError({
+      status: 400,
+      body: { code: 'VALIDATION', errors: ['email must be an email'] },
+    })
+
+    expect(problemOf(toMmsKeyInfoProblem(error))).not.toHaveProperty(
+      'mmsFields',
+    )
   })
 
   it('reads only the documented field names', () => {

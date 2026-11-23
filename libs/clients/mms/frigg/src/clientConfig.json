@@ -591,6 +591,52 @@
         "summary": "Replace a child's health profile",
         "tags": ["Mínar síður"]
       }
+    },
+    "/me/contact": {
+      "get": {
+        "description": "For a guardian or an emergency contact of a child with an enrollment in effect; anyone else in the roster gets 404 NOT_FOUND. A field is `null` where nothing is recorded, which is the common case.",
+        "operationId": "getContact",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/OwnContactOutput" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "The caller's own email and phone",
+        "tags": ["Mínar síður"]
+      },
+      "patch": {
+        "description": "The whole document: both keys are required, and `null` or a blank string clears a field. The phone must be E.164; anything else is 400 VALIDATION. Two people may record the same email.",
+        "operationId": "replaceContact",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateOwnContactInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/OwnContactOutput" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Replace the caller's own email and phone",
+        "tags": ["Mínar síður"]
+      }
     }
   },
   "info": {
@@ -1595,6 +1641,42 @@
           "medicationAssistance",
           "allergies"
         ]
+      },
+      "OwnContactOutput": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "nullable": true,
+            "description": "Null where none is recorded.",
+            "example": "gudrun@example.is"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true,
+            "description": "E.164 when saved here. Null where none is recorded.",
+            "example": "+3545551234"
+          }
+        },
+        "required": ["email", "phone"]
+      },
+      "UpdateOwnContactInput": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "nullable": true,
+            "description": "The email, stored trimmed and lowercased; null or a blank string clears it.",
+            "example": "gudrun@example.is"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true,
+            "description": "The phone number in E.164 (+ followed by 7 to 15 digits); anything else is refused. Null or a blank string clears it.",
+            "example": "+3545551234"
+          }
+        },
+        "required": ["email", "phone"]
       }
     }
   }

@@ -469,11 +469,6 @@ export const educationOverviewMessages = defineMessages({
       'Þessar upplýsingar sjá skólar barna sem eru í þinni forsjá eða þú hefur verið skráður sem aðstandandi hjá. Þær eru notaðar til að hafa samband við þig ef svo ber undir.',
     description: 'Description of the own contact information section',
   },
-  communicationLanguage: {
-    id: 'sp.education-overview:communication-language',
-    defaultMessage: 'Tungumál í samskiptum',
-    description: 'Label for the preferred communication language',
-  },
   contactSource: {
     id: 'sp.education-overview:contact-source',
     defaultMessage:
@@ -493,8 +488,18 @@ export const educationOverviewMessages = defineMessages({
   registeredMessage: {
     id: 'sp.education-overview:registered-message',
     defaultMessage:
-      '{name} skráði þig sem aðstandanda barns. Skráðu símanúmer, netfang og tungumál svo skólinn geti haft samband við þig ef svo ber undir.',
+      'Skráðu símanúmer og netfang svo skólinn geti haft samband við þig ef svo ber undir.',
     description: 'Notice shown when no contact info is recorded',
+  },
+  phoneInvalid: {
+    id: 'sp.education-overview:phone-invalid',
+    defaultMessage: 'Símanúmerið er ekki á réttu sniði',
+    description: 'Shown when MMS rejects the phone number',
+  },
+  emailInvalid: {
+    id: 'sp.education-overview:email-invalid',
+    defaultMessage: 'Netfangið er ekki gilt',
+    description: 'Shown when MMS rejects the email',
   },
   registerButton: {
     id: 'sp.education-overview:register-button',

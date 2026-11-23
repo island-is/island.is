@@ -8,6 +8,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  CardLoader,
   InfoLine,
   IntroWrapper,
   m,
@@ -15,22 +16,96 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { sharedMessages } from '@island.is/shared/translations'
-import { educationOverviewMessages as om } from '../../lib/messages'
 import { useNavigate } from 'react-router-dom'
+import { educationOverviewMessages as om } from '../../lib/messages'
 import { EducationPaths } from '../../lib/paths'
 import { KeyInfoSection } from '../PrimarySchool/PrimarySchoolOverview/keyInfo/KeyInfoSection'
-import { MOCK_CONTACT, MOCK_REGISTERED_BY } from './mockContact'
-
-const NO_DATA = false
-const HAS_CONTACT = false
+import { SectionError } from '../PrimarySchool/PrimarySchoolOverview/keyInfo/SectionError'
+import { useOwnContact } from './useOwnContact'
 
 export const EducationOverview = () => {
-  useNamespaces('sp.education-overview')
+  useNamespaces(['sp.education-overview', 'sp.education-primary-school'])
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
+  const { contact, hasContact, loading, error } = useOwnContact()
 
   const goToEdit = () => navigate(EducationPaths.EducationOverviewContactEdit)
   const notRegistered = formatMessage(om.notRegistered)
+
+  const renderContent = () => {
+    if (loading) return <CardLoader />
+    if (error) return <SectionError error={error} />
+    if (!contact) {
+      return (
+        <Box marginTop={8}>
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(m.noData)}
+            message={formatMessage(om.noData)}
+            imgSrc="./assets/images/sofa.svg"
+          />
+        </Box>
+      )
+    }
+
+    return (
+      <KeyInfoSection
+        title={om.contactTitle}
+        action={
+          hasContact && (
+            <Button
+              variant="text"
+              icon="pencil"
+              size="small"
+              onClick={goToEdit}
+            >
+              {formatMessage(sharedMessages.edit)}
+            </Button>
+          )
+        }
+      >
+        <Text paddingBottom={2}>{formatMessage(om.contactDescription)}</Text>
+        {!hasContact && (
+          <Box paddingY={2}>
+            <AlertMessage
+              type="info"
+              title={formatMessage(om.registeredTitle)}
+              message={formatMessage(om.registeredMessage)}
+              action={
+                <Button size="small" nowrap onClick={goToEdit}>
+                  {formatMessage(om.registerButton)}
+                </Button>
+              }
+            />
+          </Box>
+        )}
+        <InfoLine
+          label={m.telNumber}
+          content={contact.phone || notRegistered}
+          paddingY={3}
+        />
+        <Divider />
+        <InfoLine
+          label={m.email}
+          content={contact.email || notRegistered}
+          paddingY={3}
+        />
+        <Divider />
+        <Box display="flex" alignItems="center" columnGap={1} paddingTop={2}>
+          <Icon
+            icon="informationCircle"
+            type="outline"
+            color="blue400"
+            size="small"
+          />
+          <Text variant="small" color="dark400">
+            {formatMessage(om.contactSource)}
+          </Text>
+        </Box>
+      </KeyInfoSection>
+    )
+  }
 
   return (
     <IntroWrapper
@@ -41,80 +116,7 @@ export const EducationOverview = () => {
         tooltip: formatMessage(m.mmsTooltip),
       }}
     >
-      {NO_DATA ? (
-        <Box marginTop={8}>
-          <Problem
-            type="no_data"
-            noBorder={false}
-            title={formatMessage(m.noData)}
-            message={formatMessage(om.noData)}
-            imgSrc="./assets/images/sofa.svg"
-          />
-        </Box>
-      ) : (
-        <KeyInfoSection
-          title={om.contactTitle}
-          action={
-            HAS_CONTACT && (
-              <Button
-                variant="text"
-                icon="pencil"
-                size="small"
-                onClick={goToEdit}
-              >
-                {formatMessage(sharedMessages.edit)}
-              </Button>
-            )
-          }
-        >
-          <Text paddingBottom={2}>{formatMessage(om.contactDescription)}</Text>
-          {!HAS_CONTACT && (
-            <Box paddingY={2}>
-              <AlertMessage
-                type="info"
-                title={formatMessage(om.registeredTitle)}
-                message={formatMessage(om.registeredMessage, {
-                  name: MOCK_REGISTERED_BY,
-                })}
-                action={
-                  <Button size="small" nowrap onClick={goToEdit}>
-                    {formatMessage(om.registerButton)}
-                  </Button>
-                }
-              />
-            </Box>
-          )}
-          <InfoLine
-            label={m.telNumber}
-            content={HAS_CONTACT ? MOCK_CONTACT.phone : notRegistered}
-            paddingY={3}
-          />
-          <Divider />
-          <InfoLine
-            label={m.email}
-            content={HAS_CONTACT ? MOCK_CONTACT.email : notRegistered}
-            paddingY={3}
-          />
-          <Divider />
-          <InfoLine
-            label={om.communicationLanguage}
-            content={HAS_CONTACT ? MOCK_CONTACT.language : notRegistered}
-            paddingY={3}
-          />
-          <Divider />
-          <Box display="flex" alignItems="center" columnGap={1} paddingTop={2}>
-            <Icon
-              icon="informationCircle"
-              type="outline"
-              color="blue400"
-              size="small"
-            />
-            <Text variant="small" color="dark400">
-              {formatMessage(om.contactSource)}
-            </Text>
-          </Box>
-        </KeyInfoSection>
-      )}
+      {renderContent()}
     </IntroWrapper>
   )
 }
