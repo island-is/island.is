@@ -56,4 +56,5 @@ export type OrganizationSlugType =
   | 'lyfjastofnun'
   | 'vinnumalastofnun'
   | 'stafraen-heilsa'
+  | 'jafnrettisstofa'
   | 'fjarskiptastofa'

@@ -99,20 +99,12 @@ export class DefendantService {
     defendant: Defendant,
     user: User,
   ): void {
-    queueMessagesAfterCommit(
-      {
-        type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-        user,
-        caseId: defendant.caseId,
-        elementId: defendant.id,
-      },
-      {
-        type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
-        user,
-        caseId: defendant.caseId,
-        elementId: defendant.id,
-      },
-    )
+    queueMessagesAfterCommit({
+      type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
+      user,
+      caseId: defendant.caseId,
+      elementId: defendant.id,
+    })
   }
 
   private addMessagesForIndictmentToPrisonAdminChangesToQueue(
@@ -819,12 +811,14 @@ export class DefendantService {
     )
   }
 
-  async deliverDefendantToCourt(
+  async deliverRequestDefendantToCourt(
     theCase: Case,
     defendant: Defendant,
     user: User,
   ): Promise<DeliverResponse> {
     if (!this.hasValidDefendantNationalIdForCourtDelivery(defendant)) {
+      // The court system cannot look the defendant up, so the court is asked
+      // to verify the defendants by hand.
       this.addMessagesForSendDefendantsNotUpdatedAtCourtNotificationToQueue(
         theCase,
         user,
@@ -833,36 +827,8 @@ export class DefendantService {
       return { delivered: true }
     }
 
-    return this.courtService
-      .updateCaseWithDefendant(
-        user,
-        theCase.id,
-        theCase.courtId ?? '',
-        theCase.courtCaseNumber ?? '',
-        defendant.nationalId.replace('-', ''),
-        defendant.defenderEmail,
-      )
-      .then(() => {
-        return { delivered: true }
-      })
-      .catch((reason) => {
-        this.logger.error('Failed to update case with defendant', { reason })
-
-        return { delivered: false }
-      })
-  }
-
-  async deliverRequestDefendantToCourt(
-    theCase: Case,
-    defendant: Defendant,
-    user: User,
-  ): Promise<DeliverResponse> {
-    if (!this.hasValidDefendantNationalIdForCourtDelivery(defendant)) {
-      return { delivered: true }
-    }
-
-    return this.courtService
-      .updateRequestCaseWithDefenderInfo(
+    try {
+      await this.courtService.updateRequestCaseWithDefendant(
         user,
         theCase.id,
         theCase.court?.name,
@@ -871,15 +837,16 @@ export class DefendantService {
         defendant.defenderName,
         defendant.defenderEmail,
       )
-      .then(() => ({ delivered: true }))
-      .catch((reason) => {
-        this.logger.error(
-          `Failed to deliver defender info for defendant ${defendant.id} of request case ${theCase.id}`,
-          { reason },
-        )
 
-        return { delivered: false }
-      })
+      return { delivered: true }
+    } catch (reason) {
+      this.logger.error(
+        `Failed to deliver defendant ${defendant.id} of request case ${theCase.id} to court`,
+        { reason },
+      )
+
+      return { delivered: false }
+    }
   }
 
   async deliverIndictmentDefendantToCourt(

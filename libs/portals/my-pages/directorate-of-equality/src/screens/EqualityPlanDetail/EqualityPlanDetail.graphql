@@ -1,0 +1,18 @@
+query DirectorateOfEqualityEqualityPlan(
+  $input: DirectorateOfEqualityDetailInput!
+) {
+  directorateOfEqualityEqualityPlan(input: $input) {
+    id
+    status
+    identifier
+    submittedAt
+    approvedAt
+    validUntil
+    companies {
+      name
+      nationalId
+    }
+    documentFileName
+    pdfUrl
+  }
+}

@@ -2,7 +2,7 @@ import { useGetPaperMailInfoQuery } from './getPaperMailInfo.query.generated'
 import { usePostPaperMailInfoMutation } from './postPaperMailInfo.mutation.generated'
 
 export const usePaperMail = () => {
-  const { data, loading } = useGetPaperMailInfoQuery()
+  const { data, loading, error } = useGetPaperMailInfoQuery()
 
   const [postPaperMailMutation, { data: mutationData, loading: postLoading }] =
     usePostPaperMailInfoMutation()
@@ -14,6 +14,7 @@ export const usePaperMail = () => {
       data?.getPaperMailInfo?.wantsPaper ??
       null,
     loading,
+    error,
     postLoading,
   }
 }
