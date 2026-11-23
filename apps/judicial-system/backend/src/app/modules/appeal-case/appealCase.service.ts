@@ -39,6 +39,7 @@ import {
   isPublicProsecutionUser,
   isSameAppealBench,
   verdictAppealDeclarationFileCategories,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
@@ -1470,20 +1471,29 @@ export class AppealCaseService {
     // and re-reads the freshly committed events.
     await this.lockCaseForVerdictAppeal(theCase, user, actor, transaction)
 
-    // Once the court of appeals has received the case the prosecution's
-    // decision is made. The guard loaded the appeal case before the
-    // transaction, so the state is read again under the lock.
-    if (actor === 'REVIEWER') {
-      const lockedAppealCase = await this.appealCaseRepositoryService.findById(
-        appealCase.id,
-        { transaction },
-      )
+    // The guard loaded the appeal case before the transaction, so the state is
+    // read again under the lock.
+    const lockedAppealCase = await this.appealCaseRepositoryService.findById(
+      appealCase.id,
+      { transaction },
+    )
 
-      if (lockedAppealCase?.appealState !== AppealCaseState.APPEALED) {
-        throw new ForbiddenException(
-          'The verdict appeal has been received by the court of appeals',
-        )
-      }
+    // Once the court of appeals has received the case the prosecution's
+    // decision is made.
+    if (
+      actor === 'REVIEWER' &&
+      lockedAppealCase?.appealState !== AppealCaseState.APPEALED
+    ) {
+      throw new ForbiddenException(
+        'The verdict appeal has been received by the court of appeals',
+      )
+    }
+
+    // An appeal the court of appeals has concluded has nothing left to
+    // withdraw, whoever else still stands as an appellant. The outcome stays
+    // with the court until it is released, so the refusal does not say why.
+    if (lockedAppealCase?.appealState === AppealCaseState.COMPLETED) {
+      throw new ForbiddenException('The verdict appeal cannot be withdrawn')
     }
 
     const appealEventLogs =
@@ -1579,8 +1589,8 @@ export class AppealCaseService {
   }
 
   // The court of appeals concludes a verdict appeal once everything about how
-  // it ended is on record: the outcome, whether it is a judgment or a ruling,
-  // the concluding words and the document itself.
+  // it ended is on record: a status of completed, the outcome, whether it is a
+  // judgment or a ruling, the concluding words and the document itself.
   //
   // Nothing is announced. The outcome stays with the court until it is
   // released, so no message is queued and nothing is delivered - which is why
@@ -1597,20 +1607,31 @@ export class AppealCaseService {
       appealCase,
     )
 
+    // The court of appeals can reach the case through another appeal of it
+    // while the public prosecution is still preparing this one.
+    if (!appealCase.sentAppealSummonses?.length) {
+      throw new ForbiddenException(
+        `Verdict appeal ${appealCase.id} has not been sent to the court of appeals`,
+      )
+    }
+
+    // The document is stamped when it is opened, which only a PDF can be.
     const hasRulingFile = (theCase.caseFiles ?? []).some(
       (file) =>
         file.category === CaseFileCategory.VERDICT_APPEAL_RULING &&
+        file.type === 'application/pdf' &&
         Boolean(file.key),
     )
 
     if (
+      appealCase.verdictAppealStatus !== VerdictAppealStatus.COMPLETED ||
       !appealCase.appealRulingDecision ||
       !appealCase.appealRulingType ||
       !appealCase.appealConclusion?.trim() ||
       !hasRulingFile
     ) {
       throw new BadRequestException(
-        `Verdict appeal ${appealCase.id} cannot be completed before its outcome, ruling type, conclusion and ruling document are in place`,
+        `Verdict appeal ${appealCase.id} cannot be completed before its status is completed and its outcome, ruling type, conclusion and ruling document, a PDF, are in place`,
       )
     }
 

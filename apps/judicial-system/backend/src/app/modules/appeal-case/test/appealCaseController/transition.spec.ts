@@ -22,6 +22,7 @@ import {
   InstitutionType,
   User,
   UserRole,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
 
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
@@ -178,6 +179,7 @@ describe('AppealCaseController - Transition', () => {
     const rulingFile = {
       id: uuid(),
       key: `${caseId}/${uuid()}/domur.pdf`,
+      type: 'application/pdf',
       category: CaseFileCategory.VERDICT_APPEAL_RULING,
       state: CaseFileState.STORED_IN_RVG,
       isKeyAccessible: true,
@@ -196,6 +198,8 @@ describe('AppealCaseController - Transition', () => {
       appealType: AppealCaseType.VERDICT,
       appealState: AppealCaseState.APPEALED,
       appealCaseNumber: '1/2024',
+      sentAppealSummonses: [{ id: uuid() }],
+      verdictAppealStatus: VerdictAppealStatus.COMPLETED,
       appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
       appealRulingType: AppealRulingType.VERDICT,
       appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
@@ -233,6 +237,25 @@ describe('AppealCaseController - Transition', () => {
       ['a ruling type', { appealRulingType: undefined }, theCase],
       ['a conclusion', { appealConclusion: '  ' }, theCase],
       ['a ruling document', {}, { ...theCase, caseFiles: [] } as Case],
+      [
+        'a ruling document that is a PDF',
+        {},
+        {
+          ...theCase,
+          caseFiles: [
+            {
+              ...rulingFile,
+              type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            },
+          ],
+        } as Case,
+      ],
+      [
+        'a status of completed',
+        { verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT },
+        theCase,
+      ],
+      ['a status', { verdictAppealStatus: undefined }, theCase],
     ])('should refuse without %s', async (_, missing, c) => {
       const then = await givenWhenThen(
         c as Case,
@@ -244,6 +267,26 @@ describe('AppealCaseController - Transition', () => {
       expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
       expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
     })
+
+    // The court can reach the case through a ruling appeal of it while the
+    // public prosecution is still preparing the verdict appeal.
+    it.each([
+      ['no summons', undefined],
+      ['an empty list of summonses', []],
+    ])(
+      'should refuse an appeal that has not been sent to the court, with %s',
+      async (_, sentAppealSummonses) => {
+        const then = await givenWhenThen(
+          theCase,
+          { ...recorded, sentAppealSummonses } as AppealCase,
+          AppealCaseTransition.COMPLETE_APPEAL,
+        )
+
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+        expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+      },
+    )
 
     it.each([AppealCaseState.COMPLETED, AppealCaseState.WITHDRAWN])(
       'should refuse an appeal that is %s',
