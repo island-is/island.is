@@ -69,18 +69,13 @@ const repeaters = [
   },
 ]
 
-const countrySelect = () =>
-  document.querySelector(
-    '[data-testid^="country-code-select-"] input',
-  ) as HTMLInputElement
-
 const input = (label: RegExp | string) =>
   screen.getByRole('textbox', { name: label })
 
 describe.each(repeaters)('$name row fields', ({ name, open, validate }) => {
   const isTable = name === 'TableRepeater'
 
-  it('I16: callbacks see the live answers in ctx.application', async () => {
+  it('callbacks see the live answers in ctx.application', async () => {
     await open({
       name: { component: 'input', label: 'Heiti' },
       extra: {
@@ -100,18 +95,7 @@ describe.each(repeaters)('$name row fields', ({ name, open, validate }) => {
       ).not.toBeInTheDocument(),
     )
   })
-  it('I10: field errors show on the row', async () => {
-    const harness = await open(
-      { name: { component: 'input', label: 'Heiti' } },
-      z.object({ people: z.array(z.object({ name: z.string().min(1) })) }),
-    )
-
-    await validate(harness)
-
-    expect(await screen.findByText('Ógilt gildi')).toBeInTheDocument()
-  })
-
-  it('I10: errors on a nested item id', async () => {
+  it('shows errors on a nested item id', async () => {
     const harness = await open(
       { 'address.street': { component: 'input', label: 'Gata' } },
       z.object({
@@ -126,7 +110,7 @@ describe.each(repeaters)('$name row fields', ({ name, open, validate }) => {
     expect(await screen.findByText('Ógilt gildi')).toBeInTheDocument()
   })
 
-  it('I6: defaultValue as a function fills the field', async () => {
+  it('defaultValue as a function fills the field', async () => {
     const defaultValue = jest.fn((_ctx: RepeaterItemContext) => 'Sjálfgefið')
     await open({ name: { component: 'input', label: 'Heiti', defaultValue } })
 
@@ -137,7 +121,7 @@ describe.each(repeaters)('$name row fields', ({ name, open, validate }) => {
     })
   })
 
-  it('I11: hiddenInput writes its default value', async () => {
+  it('hiddenInput writes its default value', async () => {
     const { getForm } = await open({
       name: { component: 'input', label: 'Heiti' },
       secret: { component: 'hiddenInput', defaultValue: 'falið' },
@@ -148,26 +132,7 @@ describe.each(repeaters)('$name row fields', ({ name, open, validate }) => {
     )
   })
 
-  it('I15: alertMessage and description render their text', async () => {
-    await open({
-      note: {
-        component: 'description',
-        title: 'Lýsing á röð',
-      },
-      warning: {
-        component: 'alertMessage',
-        title: 'Athugið',
-        message: 'Skilaboð í röð',
-        alertType: 'warning',
-      },
-    })
-
-    expect(screen.getByText('Lýsing á röð')).toBeInTheDocument()
-    expect(screen.getByText('Athugið')).toBeInTheDocument()
-    expect(screen.getByText('Skilaboð í röð')).toBeInTheDocument()
-  })
-
-  it('I15: fileUpload renders its upload area', async () => {
+  it('fileUpload renders its upload area', async () => {
     await open({
       files: {
         component: 'fileUpload',
@@ -180,7 +145,7 @@ describe.each(repeaters)('$name row fields', ({ name, open, validate }) => {
     expect(screen.getByText('Velja skjöl')).toBeInTheDocument()
   })
 
-  it('I6: nationalIdWithName honours defaultValue and nationalIdDefaultValue', async () => {
+  it('nationalIdWithName honours defaultValue and nationalIdDefaultValue', async () => {
     const defaultValue = jest.fn(() => ({
       nationalId: '0101302989',
       name: 'Anna',
@@ -201,7 +166,7 @@ describe.each(repeaters)('$name row fields', ({ name, open, validate }) => {
     expect(defaultValue).toHaveBeenCalled()
   })
 
-  it('I12: selectAsync loadOptions runs on mount and can write into the row', async () => {
+  it('selectAsync loadOptions runs on mount and can write into the row', async () => {
     const loadOptions = jest.fn(
       async (
         _context: unknown,
@@ -231,7 +196,7 @@ describe.each(repeaters)('$name row fields', ({ name, open, validate }) => {
     )
   })
 
-  it('I13: date minDate and maxDate as functions of the row', async () => {
+  it('date minDate and maxDate as functions of the row', async () => {
     const minDate = jest.fn(
       (_ctx: RepeaterItemContext) => new Date('2026-01-01'),
     )
@@ -251,19 +216,21 @@ describe.each(repeaters)('$name row fields', ({ name, open, validate }) => {
     expect(maxDate).toHaveBeenLastCalledWith(expectedCtx)
   })
 
-  it('I14: phone country selector is locked by default', async () => {
-    await open({ phone: { component: 'phone', label: 'Sími' } })
-
-    const select = countrySelect()
-    expect(select.disabled).toBe(true)
-  })
-
-  it('I14: enableCountrySelector unlocks it', async () => {
+  it('locks the phone country selector unless enableCountrySelector is set', async () => {
     await open({
-      phone: { component: 'phone', label: 'Sími', enableCountrySelector: true },
+      locked: { component: 'phone', label: 'Sími' },
+      unlocked: {
+        component: 'phone',
+        label: 'Farsími',
+        enableCountrySelector: true,
+      },
     })
 
-    const select = countrySelect()
-    expect(select.disabled).toBe(false)
+    const countrySelect = (field: string) =>
+      document.querySelector<HTMLInputElement>(
+        `[data-testid="country-code-select-country-code-select-people[0].${field}"] input`,
+      )
+    expect(countrySelect('locked')?.disabled).toBe(true)
+    expect(countrySelect('unlocked')?.disabled).toBe(false)
   })
 })

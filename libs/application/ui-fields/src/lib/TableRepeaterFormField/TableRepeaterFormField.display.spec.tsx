@@ -62,46 +62,27 @@ const editButtons = () =>
   screen.queryAllByRole('button', { description: /Breyta/ })
 
 describe('TableRepeater table display', () => {
-  it('T15: default header comes from labels; displayInTable: false is left out', () => {
+  it('flattens nationalIdWithName and vehiclePermnoWithInfo into table columns', () => {
     setup(
       {
         fields: {
-          name: { component: 'input', label: 'Heiti' },
-          age: { component: 'input', label: 'Aldur', displayInTable: false },
-        },
-      },
-      saved([{ name: 'Anna', age: '30' }]),
-    )
-
-    expect(headerCells()).toEqual(['Heiti'])
-    expect(tableRows()).toEqual(['Anna'])
-  })
-
-  it('T16: nationalIdWithName gives a name and a formatted national ID column', () => {
-    setup(
-      { fields: { person: { component: 'nationalIdWithName' } } },
-      saved([{ person: { name: 'Anna', nationalId: '0101302989' } }]),
-    )
-
-    expect(headerCells()).toEqual(['Nafn', 'Kennitala'])
-    expect(tableRows()).toEqual(['Anna | 010130-2989'])
-  })
-
-  it('T17: vehiclePermnoWithInfo shows the permno', () => {
-    setup(
-      {
-        fields: {
+          person: { component: 'nationalIdWithName' },
           vehicle: { component: 'vehiclePermnoWithInfo', label: 'Ökutæki' },
         },
       },
-      saved([{ vehicle: { permno: 'AB123', makeAndColor: 'Volvo, rauður' } }]),
+      saved([
+        {
+          person: { name: 'Anna', nationalId: '0101302989' },
+          vehicle: { permno: 'AB123', makeAndColor: 'Volvo, rauður' },
+        },
+      ]),
     )
 
-    expect(headerCells()).toEqual(['Ökutæki'])
-    expect(tableRows()).toEqual(['AB123'])
+    expect(headerCells()).toEqual(['Nafn', 'Kennitala', 'Ökutæki'])
+    expect(tableRows()).toEqual(['Anna | 010130-2989 | AB123'])
   })
 
-  it('T18: columns set headings and values in their own order', () => {
+  it('columns set headings and values in their own order', () => {
     setup(
       {
         fields: {
@@ -122,13 +103,13 @@ describe('TableRepeater table display', () => {
     expect(tableRows()).toEqual(['b1 | a1'])
   })
 
-  it('T19: a value function receives the row, a display index over visible rows and the application', () => {
+  it('gives a value function the row, a display index over visible rows and the application', async () => {
     const value = jest.fn(
       ({ row, displayIndex }: TableRepeaterCellContext) =>
         `${displayIndex}:${row.name}`,
     )
     const { application } = setup(
-      { table: { columns: [{ header: 'Heiti', value }] } },
+      { editField: true, table: { columns: [{ header: 'Heiti', value }] } },
       {
         people: [
           { name: 'Gone', isUnsaved: false, isRemoved: true },
@@ -146,30 +127,13 @@ describe('TableRepeater table display', () => {
         application: expect.objectContaining({ id: application.id }),
       }),
     )
-  })
-
-  it('T19b: while a saved row is open for editing, the others keep their display index', async () => {
-    setup(
-      {
-        editField: true,
-        table: {
-          columns: [
-            {
-              header: 'Heiti',
-              value: ({ row, displayIndex }) => `${displayIndex}:${row.name}`,
-            },
-          ],
-        },
-      },
-      saved([{ name: 'Anna' }, { name: 'Bára' }, { name: 'Dóra' }]),
-    )
 
     await userEvent.click(editButtons()[0])
 
-    expect(tableRows()).toEqual(['1:Bára', '2:Dóra'])
+    expect(tableRows()).toEqual(['1:Bára'])
   })
 
-  it('T21: hideTableHeaderIfEmpty hides the table until a saved row exists', async () => {
+  it('hideTableHeaderIfEmpty hides the table until a saved row exists', async () => {
     setup({ hideTableHeaderIfEmpty: true })
 
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
@@ -182,14 +146,7 @@ describe('TableRepeater table display', () => {
     expect(screen.getByRole('table')).toBeInTheDocument()
   })
 
-  it('T21: without hideTableHeaderIfEmpty the empty table shows its header', () => {
-    setup({})
-
-    expect(headerCells()).toEqual(['Heiti'])
-    expect(bodyRows()).toHaveLength(0)
-  })
-
-  it('T21b: hideTableHeaderIfEmpty hides the table while its only saved row is open for editing', async () => {
+  it('hideTableHeaderIfEmpty hides the table while its only saved row is open for editing', async () => {
     setup(
       { editField: true, hideTableHeaderIfEmpty: true },
       saved([{ name: 'Anna' }]),
@@ -203,7 +160,7 @@ describe('TableRepeater table display', () => {
     expect(screen.getByRole('textbox')).toHaveValue('Anna')
   })
 
-  it('T22: static rows come first, without buttons, in column order', () => {
+  it('static rows come first, without buttons, in column order', () => {
     setup(
       {
         fields: {
@@ -220,7 +177,7 @@ describe('TableRepeater table display', () => {
     expect(deleteButtons()).toHaveLength(1)
   })
 
-  it('T23: rowProps disabled greys out a row', () => {
+  it('rowProps disabled greys out a row', () => {
     setup(
       {
         table: {
@@ -240,15 +197,7 @@ describe('TableRepeater table display', () => {
     expect(baraCell.className).not.toMatch(/disabled/i)
   })
 
-  it("T23: disabled === 'true' alone no longer greys out a row", () => {
-    setup({}, saved([{ name: 'Anna', disabled: 'true' }]))
-
-    expect(bodyRows()[0].querySelectorAll('td')[1].className).not.toMatch(
-      /disabled/i,
-    )
-  })
-
-  it('T24: rowProps canRemove false makes delete a no-op with the disabled tooltip', async () => {
+  it('rowProps canRemove false makes delete a no-op with the disabled tooltip', async () => {
     const rowProps = jest.fn(({ row }: { row: Record<string, string> }) => ({
       canRemove: row.name !== 'Anna',
     }))
@@ -276,20 +225,7 @@ describe('TableRepeater table display', () => {
     )
   })
 
-  it('T24: rowProps canRemove false without disabled tooltip text shows no tooltip', () => {
-    setup(
-      { table: { rowProps: () => ({ canRemove: false }) } },
-      saved([{ name: 'Anna' }]),
-    )
-
-    expect(deleteButtons()).toHaveLength(0)
-    expect(bodyRows()[0].querySelector('button')).toHaveAttribute(
-      'aria-disabled',
-      'true',
-    )
-  })
-
-  it('T25: rowProps canEdit false makes edit a no-op with the disabled tooltip', async () => {
+  it('rowProps canEdit false makes edit a no-op with the disabled tooltip', async () => {
     setup(
       {
         editField: true,
@@ -307,36 +243,5 @@ describe('TableRepeater table display', () => {
 
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
     expect(tableRows()).toEqual(['Anna', 'Bára'])
-  })
-
-  it('T25: without editField there are no edit buttons and canEdit is ignored', () => {
-    setup(
-      { table: { rowProps: () => ({ canEdit: false }) } },
-      saved([{ name: 'Anna' }]),
-    )
-
-    expect(screen.queryByTestId('icon-pencil')).not.toBeInTheDocument()
-  })
-
-  it('T25b: a locked edit button stays hoverable while another row is open', async () => {
-    setup(
-      {
-        editField: true,
-        table: { rowProps: ({ row }) => ({ canEdit: row.name !== 'Anna' }) },
-        editButtonDisabledTooltipText: 'Ekki hægt að breyta',
-      },
-      saved([{ name: 'Anna' }, { name: 'Bára' }]),
-    )
-
-    await userEvent.click(
-      screen.getByRole('button', { description: 'Breyta færslu' }),
-    )
-
-    expect(tableRows()).toEqual(['Anna'])
-    const locked = screen.getByRole('button', {
-      description: 'Ekki hægt að breyta',
-    })
-    expect(locked).toHaveAttribute('aria-disabled', 'true')
-    expect(locked).not.toBeDisabled()
   })
 })

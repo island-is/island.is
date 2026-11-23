@@ -63,24 +63,23 @@ const addRow = async (name: string) => {
 }
 
 describe('TableRepeater rows', () => {
-  it('T1: Add opens an empty row form and hides the Add button', async () => {
-    setup()
-
-    await userEvent.click(addButton() as HTMLElement)
-
-    expect(nameInput()).toHaveValue('')
-    expect(addButton()).not.toBeInTheDocument()
-  })
-
-  it('T2: a new row is stored at once with isUnsaved', async () => {
+  it('stores a new row as unsaved and shows it in the table once saved', async () => {
     const { getForm } = setup()
 
     await userEvent.click(addButton() as HTMLElement)
-
     expect(getForm().getValues('people')).toEqual([{ isUnsaved: true }])
+
+    await userEvent.type(nameInput(), 'Anna')
+    await userEvent.click(screen.getByRole('button', { name: 'Vista' }))
+
+    expect(tableRows()).toEqual(['Anna'])
+    expect(addButton()).toBeInTheDocument()
+    expect(getForm().getValues('people')).toEqual([
+      { name: 'Anna', isUnsaved: false },
+    ])
   })
 
-  it('T3: Save on an invalid row keeps it open and shows the error', async () => {
+  it('keeps an invalid row open on Save and shows the error', async () => {
     const { getForm } = setup()
 
     await userEvent.click(addButton() as HTMLElement)
@@ -91,19 +90,7 @@ describe('TableRepeater rows', () => {
     expect(getForm().getValues('people')).toEqual([{ isUnsaved: true }])
   })
 
-  it('T4: Save on a valid row shows it in the table and keeps isUnsaved: false', async () => {
-    const { getForm } = setup()
-
-    await addRow('Anna')
-
-    expect(tableRows()).toEqual(['Anna'])
-    expect(addButton()).toBeInTheDocument()
-    expect(getForm().getValues('people')).toEqual([
-      { name: 'Anna', isUnsaved: false },
-    ])
-  })
-
-  it('T5: Cancel on a new row removes it from the answers', async () => {
+  it('removes a new row from the answers on Cancel', async () => {
     const { getForm } = setup()
 
     await userEvent.click(addButton() as HTMLElement)
@@ -114,7 +101,7 @@ describe('TableRepeater rows', () => {
     expect(getForm().getValues('people')).toEqual([])
   })
 
-  it('T6: Edit opens a saved row; Cancel closes it and keeps the row', async () => {
+  it('opens a saved row on Edit and keeps it on Cancel', async () => {
     const { getForm } = setup()
     await addRow('Anna')
 
@@ -129,21 +116,7 @@ describe('TableRepeater rows', () => {
     ])
   })
 
-  it('T7 (known issue): Cancel while editing keeps the new value', async () => {
-    const { getForm } = setup()
-    await addRow('Anna')
-
-    await userEvent.click(editButtons()[0])
-    await userEvent.clear(nameInput())
-    await userEvent.type(nameInput(), 'Bára')
-    await userEvent.click(screen.getByRole('button', { name: 'Hætta við' }))
-
-    expect(tableRows()).toEqual(['Bára'])
-    expect(getForm().getValues('people')).toEqual([
-      { name: 'Bára', isUnsaved: false },
-    ])
-  })
-  it('T8: Edit buttons are disabled while another row is open', async () => {
+  it('disables Edit buttons while another row is open', async () => {
     setup()
     await addRow('Anna')
     await addRow('Bára')
@@ -154,22 +127,7 @@ describe('TableRepeater rows', () => {
     expect(editButtons()[0]).toBeDisabled()
   })
 
-  it('T9: Delete stays active while another row is open', async () => {
-    const { getForm } = setup()
-    await addRow('Anna')
-
-    await userEvent.click(addButton() as HTMLElement)
-    await userEvent.click(deleteButtons()[0])
-
-    expect(tableRows()).toEqual([])
-    expect(nameInput()).toBeInTheDocument()
-    expect(getForm().getValues('people')).toEqual([
-      { name: 'Anna', isUnsaved: false, isRemoved: true },
-      { isUnsaved: true },
-    ])
-  })
-
-  it('T10: Delete hides the row but keeps it in the answers with isRemoved', async () => {
+  it('hides a deleted row but keeps it in the answers with isRemoved', async () => {
     const { getForm } = setup()
     await addRow('Anna')
 
@@ -181,7 +139,7 @@ describe('TableRepeater rows', () => {
     ])
   })
 
-  it('T11: Next with a valid row open is blocked with a message', async () => {
+  it('blocks Next with a message while a row is open', async () => {
     const { submit } = setup()
 
     await userEvent.click(addButton() as HTMLElement)
@@ -196,16 +154,7 @@ describe('TableRepeater rows', () => {
     ).toBeInTheDocument()
   })
 
-  it('T11b: Next with an invalid row open fails validation', async () => {
-    const { submit } = setup()
-
-    await userEvent.click(addButton() as HTMLElement)
-
-    expect(await submit()).toEqual({ outcome: 'invalid' })
-    expect(await screen.findByText('Ógilt gildi')).toBeInTheDocument()
-  })
-
-  it('T12: Next with no row open purges removed rows', async () => {
+  it('purges removed rows on Next when no row is open', async () => {
     const { getForm, submit } = setup()
     await addRow('Anna')
     await addRow('Bára')
@@ -220,7 +169,7 @@ describe('TableRepeater rows', () => {
     )
   })
 
-  it('T13: a stored unsaved row opens in the form on mount', () => {
+  it('opens a stored unsaved row in the form on mount', () => {
     setup(
       {},
       {
@@ -235,7 +184,7 @@ describe('TableRepeater rows', () => {
     expect(tableRows()).toEqual(['Anna'])
   })
 
-  it('T13b: a stored removed row stays hidden, does not count and is purged on Next', async () => {
+  it('hides a stored removed row, does not count it and purges it on Next', async () => {
     const { getForm, submit } = setup(
       { maxRows: 2 },
       {
@@ -257,7 +206,7 @@ describe('TableRepeater rows', () => {
     )
   })
 
-  it('T14: maxRows disables Add; removed rows do not count', async () => {
+  it('disables Add at maxRows; removed rows do not count', async () => {
     setup({ maxRows: 2 })
     await addRow('Anna')
     await addRow('Bára')

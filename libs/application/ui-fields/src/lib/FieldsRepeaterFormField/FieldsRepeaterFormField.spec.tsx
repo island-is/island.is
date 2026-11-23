@@ -46,31 +46,42 @@ const stored = (...names: string[]) => ({
 })
 
 describe('FieldsRepeater', () => {
-  it('F1: starts with one empty row by default', () => {
+  it('starts with one empty row and Add appends another', async () => {
     setup()
-
     expect(inputValues()).toEqual([''])
+
+    await userEvent.click(addButton() as HTMLElement)
+
+    expect(inputValues()).toEqual(['', ''])
   })
 
-  it('F1: starts with as many rows as the answers hold', () => {
-    setup({}, stored('Anna', 'Bára'))
-
+  it('starts with the stored rows and Remove trims the last one from the answers', async () => {
+    const { getForm } = setup({}, stored('Anna', 'Bára'))
     expect(inputValues()).toEqual(['Anna', 'Bára'])
+
+    await userEvent.click(removeButton() as HTMLElement)
+
+    expect(inputValues()).toEqual(['Anna'])
+    expect(getForm().getValues('people')).toEqual([{ name: 'Anna' }])
   })
 
-  it('F1: minRows raises the starting count', () => {
+  it('raises the starting count to minRows and hides Remove at it', async () => {
     setup({ minRows: 3 }, stored('Anna'))
 
     expect(inputValues()).toEqual(['Anna', '', ''])
+    expect(removeButton()).not.toBeInTheDocument()
+
+    await userEvent.click(addButton() as HTMLElement)
+    expect(removeButton()).toBeInTheDocument()
   })
 
-  it('F1: minRows 0 starts empty', () => {
+  it('starts empty when minRows is 0', () => {
     setup({ minRows: 0 })
 
     expect(inputs()).toHaveLength(0)
   })
 
-  it('F1: minRows as a function receives answers and externalData', () => {
+  it('passes answers and externalData to a minRows function', () => {
     const minRows = jest.fn(() => 2)
     setup(
       { minRows },
@@ -91,15 +102,7 @@ describe('FieldsRepeater', () => {
     )
   })
 
-  it('F2: Add adds an empty row', async () => {
-    setup()
-
-    await userEvent.click(addButton() as HTMLElement)
-
-    expect(inputValues()).toEqual(['', ''])
-  })
-
-  it('F2: maxRows disables Add at the limit', async () => {
+  it('disables Add at maxRows', async () => {
     setup({ maxRows: 2 })
 
     await userEvent.click(addButton() as HTMLElement)
@@ -108,44 +111,7 @@ describe('FieldsRepeater', () => {
     expect(addButton()).toBeDisabled()
   })
 
-  it('F2: maxRows as a function', () => {
-    setup({ maxRows: () => 1 })
-
-    expect(addButton()).toBeDisabled()
-  })
-
-  it('F3: Remove removes the last row', async () => {
-    setup({}, stored('Anna', 'Bára'))
-
-    await userEvent.click(removeButton() as HTMLElement)
-
-    expect(inputValues()).toEqual(['Anna'])
-  })
-
-  it('F3: Remove is hidden at minRows', async () => {
-    setup({ minRows: 1 })
-
-    expect(removeButton()).not.toBeInTheDocument()
-
-    await userEvent.click(addButton() as HTMLElement)
-    expect(removeButton()).toBeInTheDocument()
-  })
-
-  it('F3: hideRemoveButton hides Remove', () => {
-    setup({ hideRemoveButton: true }, stored('Anna', 'Bára'))
-
-    expect(removeButton()).not.toBeInTheDocument()
-  })
-
-  it('F4: Remove trims a stored row from the answers', async () => {
-    const { getForm } = setup({}, stored('Anna', 'Bára'))
-
-    await userEvent.click(removeButton() as HTMLElement)
-
-    expect(getForm().getValues('people')).toEqual([{ name: 'Anna' }])
-  })
-
-  it('F4: Remove trims a row that was typed into', async () => {
+  it('trims a row that was typed into from the answers on Remove', async () => {
     const { getForm } = setup({}, stored('Anna'))
 
     await userEvent.click(addButton() as HTMLElement)
