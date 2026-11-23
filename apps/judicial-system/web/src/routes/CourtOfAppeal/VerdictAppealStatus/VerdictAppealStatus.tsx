@@ -3,7 +3,12 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
-import { Box, RadioButton, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  FileUploadStatus,
+  RadioButton,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
@@ -25,13 +30,20 @@ import {
 import RadioGroup from '@island.is/judicial-system-web/src/components/RadioGroup/RadioGroup'
 import {
   type AppealCourtSession,
+  CaseFileCategory,
   VerdictAppealStatus as Status,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  useFileList,
+  useS3Upload,
+  useUploadFiles,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import useAppealCase from '@island.is/judicial-system-web/src/utils/hooks/useAppealCase'
 import useAppealCourtSession from '@island.is/judicial-system-web/src/utils/hooks/useAppealCourtSession'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
+import { isVerdictAppealConclusionFieldsValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import RegisterConclusion from './RegisterConclusion'
 import ScheduleCourtSession from './ScheduleCourtSession'
@@ -65,7 +77,10 @@ import {
  *
  * An appeal the court marks as finished is where it records how it ended:
  * the form for that opens under "Lokið", saves each answer as it is given,
- * and holds the court on the page until all of it is in place.
+ * and holds the court on the page until all of it is in place. The page
+ * holds the ruling document's uploads, the way the district court's
+ * conclusion does, so a document uploaded or removed under "Lokið" is still
+ * so when the court picks another status and comes back.
  *
  * Not gated behind the feature flag, for the reason the defender step gives:
  * the stepper section this page belongs to only renders for a verdict appeal,
@@ -90,6 +105,17 @@ const VerdictAppealStatus = () => {
     isDeletingAppealCourtSession,
   } = useAppealCourtSession()
   const { updateAppealCase, isUpdatingAppealCase } = useAppealCase()
+  const {
+    uploadFiles,
+    allFilesDoneOrError,
+    addUploadFiles,
+    updateUploadFile,
+    removeUploadFile,
+  } = useUploadFiles(workingCase.caseFiles)
+  const { handleUpload, handleRetry, handleRemove } = useS3Upload(
+    workingCase.id,
+  )
+  const { onOpenFile } = useFileList({ caseId: workingCase.id })
 
   // Earliest session first, like a calendar, the way the parties' agenda card
   // reads too, and sorted here so a session the court books or moves lands by
@@ -111,9 +137,6 @@ const VerdictAppealStatus = () => {
   // The same, for the stepper, which nothing disables: a ref, so a second
   // click that lands before the next render is turned away too.
   const isLeavingRef = useRef(false)
-  // Reported by the form that records how the appeal ended, which alone knows
-  // whether its document has finished uploading.
-  const [isConclusionRecorded, setIsConclusionRecorded] = useState(false)
 
   // Derived rather than set in an effect: the case arrives after the first
   // render, and the choice the court makes on the page always wins.
@@ -128,6 +151,19 @@ const VerdictAppealStatus = () => {
     isAppealCourtSessionComplete(courtSession)
   const hasChangesToSave =
     isEditingSession && isAppealCourtSessionComplete(courtSession)
+
+  // A ruling appeal on the same case keeps its ruling in a category of its
+  // own, and it has no place among this appeal's documents.
+  const rulingFiles = uploadFiles.filter(
+    (file) => file.category === CaseFileCategory.VERDICT_APPEAL_RULING,
+  )
+  // How the appeal ended is on record once the outcome, its type and the
+  // concluding words are saved, nothing is still uploading and the ruling
+  // document is in.
+  const isConclusionRecorded =
+    allFilesDoneOrError &&
+    isVerdictAppealConclusionFieldsValid(verdictAppealCase) &&
+    rulingFiles.some((file) => file.status === FileUploadStatus.done)
 
   const statementDeadlinesUrl = appendAppealCaseIdQuery(
     `${COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE}/${workingCase.id}`,
@@ -460,7 +496,20 @@ const VerdictAppealStatus = () => {
         </ExpandingSection>
         <ExpandingSection show={isRecordingConclusion}>
           <Box paddingTop={5}>
-            <RegisterConclusion onValidityChange={setIsConclusionRecorded} />
+            <RegisterConclusion
+              rulingFiles={rulingFiles}
+              onUpload={(files) =>
+                handleUpload(
+                  addUploadFiles(files, {
+                    category: CaseFileCategory.VERDICT_APPEAL_RULING,
+                  }),
+                  updateUploadFile,
+                )
+              }
+              onRemove={(file) => handleRemove(file, removeUploadFile)}
+              onRetry={(file) => handleRetry(file, updateUploadFile)}
+              onOpenFile={(file) => onOpenFile(file)}
+            />
           </Box>
         </ExpandingSection>
       </FormContentContainer>

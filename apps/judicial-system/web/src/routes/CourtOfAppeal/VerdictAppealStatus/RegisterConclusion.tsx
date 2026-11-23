@@ -1,10 +1,9 @@
 import type { FC } from 'react'
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
   Box,
-  FileUploadStatus,
   Input,
   InputFileUpload,
   RadioButton,
@@ -20,24 +19,18 @@ import type {
   AppealCase,
   UpdateAppealCaseInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  AppealRulingType,
-  CaseFileCategory,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { AppealRulingType } from '@island.is/judicial-system-web/src/graphql/schema'
+import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   useAppealCase,
   useDebouncedField,
-  useFileList,
-  useS3Upload,
   useSerializedSave,
-  useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   stack,
   twoColumn,
 } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { applyAppealCaseUpdate } from '@island.is/judicial-system-web/src/utils/utils'
-import { isVerdictAppealConclusionFieldsValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import {
   appealRulingDecisionOptions,
@@ -46,9 +39,13 @@ import {
 } from './RegisterConclusion.logic'
 
 interface Props {
-  // Told whether everything the court has to record is in place: the outcome,
-  // its type, the concluding words and an uploaded document.
-  onValidityChange?: (isValid: boolean) => void
+  // The ruling document as the page holds it, uploaded or on its way. The
+  // page owns the uploads so they outlast the form when it folds away.
+  rulingFiles: TUploadFile[]
+  onUpload: (files: File[]) => void
+  onRemove: (file: TUploadFile) => void
+  onRetry: (file: TUploadFile) => void
+  onOpenFile: (file: TUploadFile) => void
 }
 
 const rulingTypes = [AppealRulingType.VERDICT, AppealRulingType.RULING]
@@ -74,34 +71,28 @@ const rulingChoiceOf = (
  * Everything is saved on the appeal as the court fills it in. Whether it is a
  * verdict or a ruling only words the form; it is saved as a verdict with the
  * first outcome the court picks, so what the form shows is what is stored.
+ * The document is uploaded by the page, which holds the list, and the form
+ * shows what it is given.
  *
  * The outcome and its type show on the form at once and their saves run one
  * at a time in the order they were made. One that fails puts the working case
  * back to the choice the appeal last held. The concluding words are saved the
  * way every debounced field is.
  */
-const RegisterConclusion: FC<Props> = ({ onValidityChange }) => {
+const RegisterConclusion: FC<Props> = ({
+  rulingFiles,
+  onUpload,
+  onRemove,
+  onRetry,
+  onOpenFile,
+}) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const verdictAppealCase = workingCase.verdictAppealCase
   const { formatMessage } = useIntl()
   const { updateAppealCase } = useAppealCase()
-  const {
-    uploadFiles,
-    allFilesDoneOrError,
-    addUploadFiles,
-    updateUploadFile,
-    removeUploadFile,
-  } = useUploadFiles(workingCase.caseFiles)
-  const { handleUpload, handleRetry, handleRemove } = useS3Upload(
-    workingCase.id,
-  )
-  const { onOpenFile } = useFileList({ caseId: workingCase.id })
 
   const wording = getAppealRulingTypeWording(
     verdictAppealCase?.appealRulingType,
-  )
-  const rulingFiles = uploadFiles.filter(
-    (file) => file.category === CaseFileCategory.VERDICT_APPEAL_RULING,
   )
 
   const saveRulingChoice = useSerializedSave<RulingChoice>()
@@ -175,15 +166,6 @@ const RegisterConclusion: FC<Props> = ({ onValidityChange }) => {
       }
     },
   })
-
-  const isValid =
-    allFilesDoneOrError &&
-    isVerdictAppealConclusionFieldsValid(verdictAppealCase) &&
-    rulingFiles.some((file) => file.status === FileUploadStatus.done)
-
-  useEffect(() => {
-    onValidityChange?.(isValid)
-  }, [isValid, onValidityChange])
 
   return (
     <div className={stack({ gap: 5 })}>
@@ -270,17 +252,10 @@ const RegisterConclusion: FC<Props> = ({ onValidityChange }) => {
             { fileEndings: '.pdf' },
           )}
           buttonLabel="Velja gögn til að hlaða upp"
-          onChange={(files) =>
-            handleUpload(
-              addUploadFiles(files, {
-                category: CaseFileCategory.VERDICT_APPEAL_RULING,
-              }),
-              updateUploadFile,
-            )
-          }
+          onChange={(files) => onUpload(files)}
           onOpenFile={(file) => onOpenFile(file)}
-          onRemove={(file) => handleRemove(file, removeUploadFile)}
-          onRetry={(file) => handleRetry(file, updateUploadFile)}
+          onRemove={(file) => onRemove(file)}
+          onRetry={(file) => onRetry(file)}
         />
       </Box>
     </div>
