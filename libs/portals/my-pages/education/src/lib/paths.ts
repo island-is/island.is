@@ -1,6 +1,7 @@
 export enum EducationPaths {
   EducationRoot = '/menntun',
   EducationOverview = '/menntun/yfirlit',
+  EducationOverviewContactEdit = '/menntun/yfirlit/tengilidur',
   EducationPrimarySchool = '/menntun/grunnskoli',
   /** @deprecated Redirects to EducationPrimarySchool */
   EducationAssessment = '/menntun/grunnskoli/namsmat',

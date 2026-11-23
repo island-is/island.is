@@ -480,4 +480,9 @@ export const educationOverviewMessages = defineMessages({
       'Upplýsingar eru geymdar í nemendagrunni MMS og sóttar þaðan.',
     description: 'Notice on where the contact information is stored',
   },
+  contactEditTitle: {
+    id: 'sp.education-overview:contact-edit-title',
+    defaultMessage: 'Breyta tengiliðaupplýsingum',
+    description: 'Title of the own contact information edit screen',
+  },
 })

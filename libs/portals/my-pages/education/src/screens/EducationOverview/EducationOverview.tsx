@@ -9,19 +9,17 @@ import {
 import { Problem } from '@island.is/react-spa/shared'
 import { sharedMessages } from '@island.is/shared/translations'
 import { educationOverviewMessages as om } from '../../lib/messages'
+import { useNavigate } from 'react-router-dom'
+import { EducationPaths } from '../../lib/paths'
 import { KeyInfoSection } from '../PrimarySchool/PrimarySchoolOverview/keyInfo/KeyInfoSection'
+import { MOCK_CONTACT } from './mockContact'
 
 const NO_DATA = false
-
-const MOCK_CONTACT = {
-  phone: '777-7777',
-  email: 'netfang@example.is',
-  language: 'Íslenska',
-}
 
 export const EducationOverview = () => {
   useNamespaces('sp.education-overview')
   const { formatMessage } = useLocale()
+  const navigate = useNavigate()
 
   return (
     <IntroWrapper
@@ -46,7 +44,14 @@ export const EducationOverview = () => {
         <KeyInfoSection
           title={om.contactTitle}
           action={
-            <Button variant="text" icon="pencil" size="small">
+            <Button
+              variant="text"
+              icon="pencil"
+              size="small"
+              onClick={() =>
+                navigate(EducationPaths.EducationOverviewContactEdit)
+              }
+            >
               {formatMessage(sharedMessages.edit)}
             </Button>
           }

@@ -16,6 +16,10 @@ const EducationOverview = lazy(() =>
   import('./screens/EducationOverview/EducationOverview'),
 )
 
+const EducationOverviewContactEdit = lazy(() =>
+  import('./screens/EducationOverview/ContactEdit'),
+)
+
 const EducationCareer = lazy(() =>
   import('../../education-career/src/screens/EducationCareer/EducationCareer'),
 )
@@ -126,6 +130,13 @@ export const educationModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.education),
       requiredScopes: [ApiScope.education],
       element: <EducationOverview />,
+    },
+    {
+      name: 'Breyta tengiliðaupplýsingum',
+      path: EducationPaths.EducationOverviewContactEdit,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      requiredScopes: [ApiScope.education],
+      element: <EducationOverviewContactEdit />,
     },
 
     // Grunnskóli - Primary school

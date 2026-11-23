@@ -4,6 +4,7 @@ import { EducationPaths } from './paths'
 import {
   primarySchoolMessages as psm,
   primarySchoolKeyInfoMessages as kim,
+  educationOverviewMessages as om,
 } from './messages'
 
 export const educationNavigation: PortalNavigationItem = {
@@ -19,6 +20,14 @@ export const educationNavigation: PortalNavigationItem = {
       name: m.overview,
       searchHide: true,
       path: EducationPaths.EducationOverview,
+      children: [
+        {
+          name: om.contactEditTitle,
+          navHide: true,
+          searchHide: true,
+          path: EducationPaths.EducationOverviewContactEdit,
+        },
+      ],
     },
     {
       name: m.educationGrunnskoli,
