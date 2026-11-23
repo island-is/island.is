@@ -364,7 +364,8 @@ export const TableRow = ({
             },
           })
           const returnedForm = data?.updateFormSystemFormStatus?.form
-          if (!returnedForm?.id) throw new Error('Missing created form revision')
+          if (!returnedForm?.id)
+            throw new Error('Missing created form revision')
           setFormsState((prevForms) => [returnedForm, ...prevForms])
           toast.warning(formatMessage(m.publishedFormRevisionCreatedWarning))
         } catch (error) {
