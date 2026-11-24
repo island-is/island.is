@@ -240,13 +240,7 @@ const renderCaseCells = (caseRow: MockBulkCase): ReactNode[] => {
     renderLines(defendantLines),
     renderLines(typeLines, typeLines.length === 1),
     renderLines([caseRow.judgmentDate, caseRow.judgmentTime]),
-    <Tag
-      key="status"
-      variant={caseRow.statusColor}
-      outlined
-      disabled
-      truncate
-    >
+    <Tag key="status" variant={caseRow.statusColor} outlined disabled truncate>
       {caseRow.statusText}
     </Tag>,
     caseRow.judgeInitials ? <Text>{caseRow.judgeInitials}</Text> : null,
@@ -474,7 +468,11 @@ const CaseTable: FC<{
     <div className={styles.gridTable} role="table" aria-label={listId}>
       <div className={styles.gridHeader} role="row">
         {COLUMN_TITLES.map((title) => (
-          <div key={title} className={styles.gridHeaderCell} role="columnheader">
+          <div
+            key={title}
+            className={styles.gridHeaderCell}
+            role="columnheader"
+          >
             <Text fontWeight="semiBold">{title}</Text>
           </div>
         ))}
@@ -544,9 +542,7 @@ const BulkCompleteCases: FC = () => {
   const [clickFlight, setClickFlight] = useState<ClickFlight | null>(null)
   const [isStagingAnimating, setIsStagingAnimating] = useState(false)
   const skipClickRef = useRef(false)
-  const skipClickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  )
+  const skipClickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const flightFromRectRef = useRef<FlightRect | null>(null)
   const flightRafRef = useRef<number | null>(null)
   // Prevents cross-list dragOver from bouncing the item between lists.
