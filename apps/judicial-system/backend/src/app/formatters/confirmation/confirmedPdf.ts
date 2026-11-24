@@ -17,6 +17,7 @@ type ConfirmableCaseFileCategories =
   | CaseFileCategory.RULING
   | CaseFileCategory.COURT_RECORD
   | CaseFileCategory.COURT_INDICTMENT_RULING_ORDER
+  | CaseFileCategory.VERDICT_APPEAL_RULING
 
 export const hasConfirmableCaseFileCategories = (
   category: CaseFileCategory | undefined,
@@ -24,7 +25,8 @@ export const hasConfirmableCaseFileCategories = (
   return (
     category === CaseFileCategory.RULING ||
     category === CaseFileCategory.COURT_RECORD ||
-    category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER
+    category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER ||
+    category === CaseFileCategory.VERDICT_APPEAL_RULING
   )
 }
 
@@ -207,7 +209,10 @@ const getConfirmationBoxes = (
           ellipsize: true,
         },
       ]
+    // No judge confirms these in the system, so the stamp names the court
+    // alone.
     case CaseFileCategory.COURT_RECORD:
+    case CaseFileCategory.VERDICT_APPEAL_RULING:
       return [institution]
   }
 }
