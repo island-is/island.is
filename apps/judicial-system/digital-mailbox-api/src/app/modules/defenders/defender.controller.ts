@@ -35,33 +35,21 @@ export class DefenderController {
   })
   @ApiResponse({ status: 502, description: 'Failed to retrieve defenders' })
   async getLawyers(): Promise<Defender[]> {
-    try {
-      const res = await fetch(
-        `${this.config.backendUrl}/api/lawyer-registry?lawyerType=${LawyerType.LITIGATORS}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            authorization: `Bearer ${this.config.secretToken}`,
-          },
-        },
-      )
-      if (res.ok) {
-        const lawyers = await res.json()
+    return this.getLawyersByType(LawyerType.LITIGATORS)
+  }
 
-        return lawyers.map((lawyer: LawyerRegistry) => ({
-          nationalId: lawyer.nationalId,
-          name: lawyer.name,
-          practice: lawyer.practice,
-        }))
-      }
-
-      throw new BadGatewayException('Failed to retrieve litigator lawyers')
-    } catch (error) {
-      this.logger.error('Failed to retrieve litigator lawyers', error)
-
-      throw new BadGatewayException('Failed to retrieve litigator lawyers')
-    }
+  @Get('defenders/court-of-appeals')
+  @ApiOkResponse({
+    type: [Defender],
+    description:
+      'Returns litigators with rights to appear before Landsréttur (court of appeals)',
+  })
+  @ApiResponse({
+    status: 502,
+    description: 'Failed to retrieve court of appeals defenders',
+  })
+  async getCourtOfAppealsLawyers(): Promise<Defender[]> {
+    return this.getLawyersByType(LawyerType.COURT_OF_APPEALS_LITIGATORS)
   }
 
   @Get('defender/:nationalId')
@@ -101,6 +89,45 @@ export class DefenderController {
       throw new BadGatewayException(
         'Failed to retrieve lawyer from lawyer registry',
       )
+    }
+  }
+
+  private async getLawyersByType(lawyerType: LawyerType): Promise<Defender[]> {
+    const failureMessage =
+      lawyerType === LawyerType.COURT_OF_APPEALS_LITIGATORS
+        ? 'Failed to retrieve court of appeals lawyers'
+        : 'Failed to retrieve litigator lawyers'
+
+    try {
+      const res = await fetch(
+        `${this.config.backendUrl}/api/lawyer-registry?lawyerType=${lawyerType}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.secretToken}`,
+          },
+        },
+      )
+      if (res.ok) {
+        const lawyers = await res.json()
+
+        return lawyers.map((lawyer: LawyerRegistry) => ({
+          nationalId: lawyer.nationalId,
+          name: lawyer.name,
+          practice: lawyer.practice,
+        }))
+      }
+
+      throw new BadGatewayException(failureMessage)
+    } catch (error) {
+      if (error instanceof BadGatewayException) {
+        throw error
+      }
+
+      this.logger.error(failureMessage, error)
+
+      throw new BadGatewayException(failureMessage)
     }
   }
 }
