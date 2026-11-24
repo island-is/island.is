@@ -935,6 +935,11 @@ export class FormsService {
           fileKeys.push(
             ...this.getApplicationFiles(application).map(({ key }) => key),
           )
+          await this.applicationEventModel.destroy({
+            where: { applicationId: application.id },
+            transaction,
+          })
+          await application.destroy({ transaction })
         }
         await revision.destroy({ transaction })
       }

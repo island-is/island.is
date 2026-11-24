@@ -105,12 +105,16 @@ information text and checkbox sublabels, but not tooltip help.
 Publishing a form in development deletes its applications' events before deleting
 the applications, within the publishing transaction.
 
-Archiving a published form deletes all of its draft applications, including test
-drafts, their application events, and their uploaded files. This also applies when publishing a replacement
-archives the previous form version. Non-draft applications are retained.
+Archiving a published form deletes its draft applications, including test drafts,
+their application events, and their uploaded files. This also applies when
+publishing a replacement archives the previous form version. Non-draft
+applications, their events, and their files are preserved for worker pruning.
 
 Unpublishing also deletes all forms derived from it in the
-`published_being_changed` state, within the same transaction. Uploaded file keys
+`published_being_changed` state, together with all of their applications and
+application events, within the same transaction. This includes non-draft and test
+applications on those revisions. Events are deleted before their applications.
+Uploaded file keys
 from all of those revisions' applications are collected before the rows are
 deleted, and the files are removed from storage after commit. The confirmation
 dialog always warns about revision deletion, even if the local list is stale.
@@ -120,15 +124,14 @@ Form responses include the revision's original form ID (`derivedFrom`) so the
 admin portal also removes newly created revisions from state when unpublishing.
 
 Draft creation locks the form row and rechecks its status and accessibility
-inside the creation transaction. Archiving takes the same lock before draft
-cleanup, so a concurrent creation either commits before cleanup or is rejected
-after the form is archived.
+inside the creation transaction. Archiving takes the same lock, so a concurrent
+creation either commits before archiving or is rejected after the form is archived.
 
-Draft applications are locked during archive cleanup. Submission takes the same
+Draft and revision applications are locked during deletion. Submission takes the same
 row lock and verifies that the application is still a draft before sending it.
 The lock is held through the external send and the completed-status update.
 Application and form reads during submission reuse the submission transaction.
-Draft file keys are collected during database cleanup; S3 objects are deleted
+Draft and revision file keys are collected during database cleanup; S3 objects are deleted
 only after the archive transaction commits, without updating deleted values.
 Storage deletion errors are logged and surfaced after commit; the database
 cleanup remains committed.
