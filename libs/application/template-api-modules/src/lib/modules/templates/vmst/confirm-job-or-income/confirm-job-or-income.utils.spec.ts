@@ -873,9 +873,7 @@ describe('hasIncomeChanges', () => {
       registerPension: [],
     }
 
-    expect(hasIncomeChanges(buildCreateIncomesRequest(answers, {}))).toBe(
-      false,
-    )
+    expect(hasIncomeChanges(buildCreateIncomesRequest(answers, {}))).toBe(false)
   })
 
   it('returns false when persisted rows are left untouched', () => {
