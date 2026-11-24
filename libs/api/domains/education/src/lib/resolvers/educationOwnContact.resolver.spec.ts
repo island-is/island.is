@@ -44,7 +44,10 @@ describe('EducationOwnContactResolver', () => {
   describe('educationOwnContact', () => {
     it('returns the contact as MMS gives it, empty values included', async () => {
       const { resolver, keyInfoClient } = setup()
-      keyInfoClient.getOwnContact.mockResolvedValue({ email: null, phone: null })
+      keyInfoClient.getOwnContact.mockResolvedValue({
+        email: null,
+        phone: null,
+      })
 
       await expect(resolver.educationOwnContact(user)).resolves.toEqual({
         email: null,

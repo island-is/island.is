@@ -14,7 +14,7 @@ export interface OwnContactInput {
   phone: string
 }
 
-export const toE164 =(phone: string): string | null => {
+export const toE164 = (phone: string): string | null => {
   const digits = phone.replace(/[\s-]/g, '')
   if (!digits) return null
   return digits.startsWith('+') ? digits : `+354${digits}`
@@ -44,10 +44,12 @@ export const useOwnContact = () => {
     fetchPolicy: 'cache-and-network',
   })
 
-  const [updateMutation, { loading: saving }] =
-    useEducationUpdateOwnContactMutation({
-      refetchQueries: [{ query: EducationOwnContactDocument }],
-    })
+  const [
+    updateMutation,
+    { loading: saving },
+  ] = useEducationUpdateOwnContactMutation({
+    refetchQueries: [{ query: EducationOwnContactDocument }],
+  })
 
   const contact = data?.educationOwnContact ?? null
 

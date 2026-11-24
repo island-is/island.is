@@ -40,9 +40,9 @@ describe('clearedOwnContactFields', () => {
   const stored = { phone: '+3545812345', email: 'a@b.is' }
 
   it('names a stored field that was emptied', () => {
-    expect(clearedOwnContactFields(stored, { ...stored, phone: '  ' })).toEqual([
-      'phone',
-    ])
+    expect(
+      clearedOwnContactFields(stored, { ...stored, phone: '  ' }),
+    ).toEqual(['phone'])
   })
 
   it('names both when both were emptied', () => {
