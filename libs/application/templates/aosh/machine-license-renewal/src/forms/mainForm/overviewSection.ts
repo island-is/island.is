@@ -24,6 +24,7 @@ export const overviewSection = buildSection({
       children: [
         buildOverviewField({
           id: 'overview.applicant',
+          backId: 'applicant',
           items: getApplicantOverviewItems,
         }),
         buildOverviewField({

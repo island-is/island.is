@@ -17,7 +17,7 @@ export const applicant = {
     alertMessage: {
       id: 'aosh.mlr.application:applicant.labels.alertMessage',
       defaultMessage:
-        'Athugið að þetta er ekki að breyta upplýsingunum á mínum síðum',
+        'Vinsamlegast athugið að þetta er eingöngu að uppfæra upplýsingar fyrir þessa umsókn.',
       description:
         'Alert that changing email and phone number does not update my pages',
     },

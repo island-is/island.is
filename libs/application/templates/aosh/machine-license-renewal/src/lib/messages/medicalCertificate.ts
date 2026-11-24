@@ -13,9 +13,9 @@ export const medicalCertificate = {
       description: 'Title of medical certificate screen',
     },
     description: {
-      id: 'aosh.mlr.application:medicalCertificate.general.description',
+      id: 'aosh.mlr.application:medicalCertificate.general.description#markdown',
       defaultMessage:
-        'Endurnýjun á réttindum krefst læknisvottorðs. Læknisvottorð má ekki vera eldra en 6 mánaða gamalt.',
+        'Endurnýjun á réttindum krefst læknisvottorðs. Læknisvottorð má ekki vera eldra en 6 mánaða gamalt. Sjá nánar hér: [Vinnuvélaréttindi | Ísland.is](https://island.is/vinnuvelarettindi)',
       description: 'Description of medical certificate screen',
     },
   }),
