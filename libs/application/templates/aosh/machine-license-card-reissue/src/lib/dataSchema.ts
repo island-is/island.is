@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
+import { postalCodes } from '@island.is/shared/utils'
 import { AddressDeliveryType } from '../shared'
 
 const isOtherAddressFieldMissing = (
@@ -12,22 +13,25 @@ export const CardDeliverySchema = z
     type: z.nativeEnum(AddressDeliveryType),
     currentAddress: z
       .object({
-        streetAddress: z.string().optional(),
-        postalCode: z.string().optional(),
-        city: z.string().optional(),
+        streetAddress: z.string().nullish(),
+        postalCode: z.string().nullish(),
+        city: z.string().nullish(),
       })
-      .optional(),
-    address: z.string().optional(),
-    postalCodeAndCity: z.string().optional(),
-    recipient: z.string().optional(),
+      .nullish(),
+    // Nullish: SelectController sets unmatched values to null, and these fields
+    // keep stale values when the user switches back to the current address
+    address: z.string().nullish(),
+    postalCode: z.string().nullish(),
+    recipient: z.string().nullish(),
   })
   .refine(({ type, address }) => !isOtherAddressFieldMissing(type, address), {
     path: ['address'],
   })
   .refine(
-    ({ type, postalCodeAndCity }) =>
-      !isOtherAddressFieldMissing(type, postalCodeAndCity),
-    { path: ['postalCodeAndCity'] },
+    ({ type, postalCode }) =>
+      type !== AddressDeliveryType.OTHER ||
+      postalCodes.includes(Number(postalCode)),
+    { path: ['postalCode'] },
   )
 
 export const MachineLicenseCardReissueAnswersSchema = z.object({

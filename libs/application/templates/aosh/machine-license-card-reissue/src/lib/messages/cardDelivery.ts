@@ -41,10 +41,10 @@ export const cardDelivery = {
       defaultMessage: 'Heimilisfang',
       description: 'Address label',
     },
-    postalCodeAndCity: {
-      id: 'aosh.mlcr.application:cardDelivery.labels.postalCodeAndCity',
-      defaultMessage: 'Póstnúmer og staður',
-      description: 'Postal code and city label',
+    postalCode: {
+      id: 'aosh.mlcr.application:cardDelivery.labels.postalCode',
+      defaultMessage: 'Póstnúmer',
+      description: 'Postal code label',
     },
     recipient: {
       id: 'aosh.mlcr.application:cardDelivery.labels.recipient',

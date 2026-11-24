@@ -3,10 +3,12 @@ import {
   buildMultiField,
   buildRadioField,
   buildSection,
+  buildSelectField,
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
+import { postalCodes } from '@island.is/shared/utils'
 import { cardDelivery } from '../../lib/messages'
 import { AddressDeliveryType } from '../../shared'
 import { getLegalDomicileAddress } from '../../utils'
@@ -70,12 +72,16 @@ export const cardDeliverySection = buildSection({
           required: true,
           condition: isOtherAddress,
         }),
-        buildTextField({
-          id: 'cardDelivery.postalCodeAndCity',
-          title: cardDelivery.labels.postalCodeAndCity,
+        buildSelectField({
+          id: 'cardDelivery.postalCode',
+          title: cardDelivery.labels.postalCode,
           backgroundColor: 'blue',
           width: 'half',
           required: true,
+          options: postalCodes.map((code) => ({
+            value: `${code}`,
+            label: `${code}`,
+          })),
           condition: isOtherAddress,
         }),
         buildTextField({

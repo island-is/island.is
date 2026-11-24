@@ -15,7 +15,7 @@ available digitally in the island.is app.
 
 ## Clients and template-api-modules
 
-- [Client](https://github.com/island-is/island.is/tree/main/libs/clients/work-machines)
+- [Client](https://github.com/island-is/island.is/tree/main/libs/clients/seminars-ver) (X-Road service `Vinnueftirlitid-Protected/namskeid`)
 - [Template-api-module](https://github.com/island-is/island.is/blob/main/libs/application/template-api-modules/src/lib/modules/templates/aosh/machine-license-card-reissue/machine-license-card-reissue.service.ts)
 
 ## States
@@ -23,7 +23,8 @@ available digitally in the island.is app.
 ### Prerequisites
 
 Data fetching from National Registry, User profile and
-The Administration of Occupational Safety and Health (work machine licenses).
+The Administration of Occupational Safety and Health (`GET /api/WorkMachineLicense`).
+The applicant can only continue if `hasLicenseToPurchase` is true.
 
 ### Draft
 
@@ -31,8 +32,8 @@ Applicant information, delivery method for the card and an overview.
 
 ### Completed
 
-Application is submitted to Vinnueftirlitið.
-**TODO:** The submission endpoint does not exist yet, submission is currently a stub.
+The card order is submitted to Vinnueftirlitið (`POST /api/WorkMachineLicenseOrderApplication`).
+There is no fee for a card reissue.
 
 ## Localisation
 

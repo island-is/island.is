@@ -47,7 +47,7 @@ export const getCardDeliveryOverviewItems = (
   if (type === AddressDeliveryType.OTHER) {
     const address = [
       getValueViaPath<string>(answers, 'cardDelivery.address'),
-      getValueViaPath<string>(answers, 'cardDelivery.postalCodeAndCity'),
+      getValueViaPath<string>(answers, 'cardDelivery.postalCode'),
     ]
       .filter(Boolean)
       .join(', ')

@@ -26,7 +26,7 @@ const validCurrentDelivery = {
 const validOtherDelivery = {
   type: AddressDeliveryType.OTHER,
   address: 'Skólavörðustígur 2',
-  postalCodeAndCity: '101 Reykjavík',
+  postalCode: '101',
   recipient: 'Anna Jónsdóttir',
 }
 
@@ -106,6 +106,36 @@ describe('MachineLicenseCardReissueAnswersSchema', () => {
 })
 
 describe('CardDeliverySchema', () => {
+  it('accepts current address after switching back from other address', () => {
+    const result = CardDeliverySchema.safeParse({
+      ...validCurrentDelivery,
+      address: '',
+      postalCode: null,
+      recipient: '',
+    })
+    expect(result.success).toBe(true)
+  })
+
+  it('rejects other address when postal code is null', () => {
+    const result = CardDeliverySchema.safeParse({
+      ...validOtherDelivery,
+      postalCode: null,
+    })
+    expect(errorPaths(result)).toEqual(['postalCode'])
+  })
+
+  it('accepts current address when registry returns null fields', () => {
+    const result = CardDeliverySchema.safeParse({
+      type: AddressDeliveryType.CURRENT,
+      currentAddress: {
+        streetAddress: 'Laugavegur 1',
+        postalCode: null,
+        city: null,
+      },
+    })
+    expect(result.success).toBe(true)
+  })
+
   it('accepts current address without any other address fields', () => {
     expect(
       CardDeliverySchema.safeParse({ type: AddressDeliveryType.CURRENT })
@@ -139,22 +169,33 @@ describe('CardDeliverySchema', () => {
     expect(errorPaths(result)).toEqual(['address'])
   })
 
-  it('requires postal code and city when delivering to another address', () => {
+  it('requires postal code when delivering to another address', () => {
     const result = CardDeliverySchema.safeParse({
       ...validOtherDelivery,
-      postalCodeAndCity: undefined,
+      postalCode: undefined,
     })
-    expect(errorPaths(result)).toEqual(['postalCodeAndCity'])
+    expect(errorPaths(result)).toEqual(['postalCode'])
   })
+
+  it.each(['999', '1O1', 'abc', ''])(
+    'rejects postal code "%s" that is not a valid Icelandic postal code',
+    (postalCode) => {
+      const result = CardDeliverySchema.safeParse({
+        ...validOtherDelivery,
+        postalCode,
+      })
+      expect(errorPaths(result)).toEqual(['postalCode'])
+    },
+  )
 
   it('treats whitespace-only values as missing', () => {
     const result = CardDeliverySchema.safeParse({
       ...validOtherDelivery,
       address: '   ',
-      postalCodeAndCity: '  ',
+      postalCode: '  ',
     })
     expect(errorPaths(result)).toEqual(
-      expect.arrayContaining(['address', 'postalCodeAndCity']),
+      expect.arrayContaining(['address', 'postalCode']),
     )
   })
 
@@ -162,7 +203,7 @@ describe('CardDeliverySchema', () => {
     const result = CardDeliverySchema.safeParse({
       type: AddressDeliveryType.CURRENT,
       address: '',
-      postalCodeAndCity: '',
+      postalCode: '',
     })
     expect(result.success).toBe(true)
   })

@@ -6,7 +6,9 @@ import {
   getCardDeliveryOverviewItems,
 } from './getOverviewItems'
 
-const createExternalData = (address?: Record<string, string>): ExternalData =>
+const createExternalData = (
+  address?: Record<string, string | null>,
+): ExternalData =>
   ({
     identity: {
       data: { address },
@@ -29,6 +31,15 @@ describe('getLegalDomicileAddress', () => {
 
   it('returns only the street when postal code and city are missing', () => {
     const externalData = createExternalData({ streetAddress: 'Laugavegur 1' })
+    expect(getLegalDomicileAddress(externalData)).toBe('Laugavegur 1')
+  })
+
+  it('handles null postal code and city from the registry', () => {
+    const externalData = createExternalData({
+      streetAddress: 'Laugavegur 1',
+      postalCode: null,
+      city: null,
+    })
     expect(getLegalDomicileAddress(externalData)).toBe('Laugavegur 1')
   })
 
@@ -102,14 +113,14 @@ describe('getCardDeliveryOverviewItems', () => {
       cardDelivery: {
         type: AddressDeliveryType.OTHER,
         address: 'Skólavörðustígur 2',
-        postalCodeAndCity: '101 Reykjavík',
+        postalCode: '101',
         recipient: 'Anna Jónsdóttir',
       },
     }
     const [item] = getCardDeliveryOverviewItems(answers, externalData)
     expect(item.valueText).toEqual([
       expect.objectContaining({
-        values: { address: 'Skólavörðustígur 2, 101 Reykjavík' },
+        values: { address: 'Skólavörðustígur 2, 101' },
       }),
       expect.objectContaining({ values: { value: 'Anna Jónsdóttir' } }),
     ])
@@ -120,10 +131,41 @@ describe('getCardDeliveryOverviewItems', () => {
       cardDelivery: {
         type: AddressDeliveryType.OTHER,
         address: 'Skólavörðustígur 2',
-        postalCodeAndCity: '101 Reykjavík',
+        postalCode: '101',
       },
     }
     const [item] = getCardDeliveryOverviewItems(answers, externalData)
     expect(item.valueText).toHaveLength(1)
+  })
+
+  it('shows only the street when postal code is null', () => {
+    const answers: FormValue = {
+      cardDelivery: {
+        type: AddressDeliveryType.OTHER,
+        address: 'Skólavörðustígur 2',
+        postalCode: null,
+      },
+    }
+    const [item] = getCardDeliveryOverviewItems(answers, externalData)
+    expect(item.valueText).toEqual([
+      expect.objectContaining({
+        values: { address: 'Skólavörðustígur 2' },
+      }),
+    ])
+  })
+
+  it('ignores leftover other address values when switched back to current', () => {
+    const answers: FormValue = {
+      cardDelivery: {
+        type: AddressDeliveryType.CURRENT,
+        address: 'Skólavörðustígur 2',
+        postalCode: null,
+        recipient: 'Anna Jónsdóttir',
+      },
+    }
+    const [item] = getCardDeliveryOverviewItems(answers, externalData)
+    expect(item.valueText).toMatchObject({
+      values: { address: 'Laugavegur 1, 101 Reykjavík' },
+    })
   })
 })

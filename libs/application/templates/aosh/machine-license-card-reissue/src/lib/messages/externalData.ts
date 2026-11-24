@@ -61,5 +61,33 @@ export const externalData = {
       defaultMessage: 'Sóttar eru upplýsingar um vinnuvélaréttindi.',
       description: 'We will fetch work machine licenses',
     },
+    cannotOrderCardTitle: {
+      id: 'aosh.mlcr.application:externalData.ver.cannotOrderCardTitle',
+      defaultMessage: 'Ekki er hægt að panta plastkort',
+      description: 'Error title when the applicant cannot order a card',
+    },
+    cannotOrderCardSummary: {
+      id: 'aosh.mlcr.application:externalData.ver.cannotOrderCardSummary',
+      defaultMessage:
+        'Samkvæmt skrám Vinnueftirlitsins átt þú ekki vinnuvélaréttindi sem hægt er að panta plastkort fyrir.',
+      description: 'Error summary when the applicant cannot order a card',
+    },
+    dataError: {
+      id: 'aosh.mlcr.application:externalData.ver.dataError',
+      defaultMessage:
+        'Ekki tókst að sækja upplýsingar frá Vinnueftirlitinu. Vinsamlegast reyndu aftur síðar.',
+      description: 'Error when fetching data from AOSH fails',
+    },
+    submitError: {
+      id: 'aosh.mlcr.application:externalData.ver.submitError',
+      defaultMessage:
+        'Ekki tókst að senda umsóknina til Vinnueftirlitsins. Vinsamlegast reyndu aftur síðar.',
+      description: 'Error when submitting the application to AOSH fails',
+    },
+    errorTitle: {
+      id: 'aosh.mlcr.application:externalData.ver.errorTitle',
+      defaultMessage: 'Villa kom upp',
+      description: 'Generic error title',
+    },
   }),
 }
