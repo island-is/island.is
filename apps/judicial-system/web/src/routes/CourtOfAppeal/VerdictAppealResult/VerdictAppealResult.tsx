@@ -2,7 +2,7 @@ import { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
 import { COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE } from '@island.is/judicial-system/consts'
 import {
   FormContentContainer,
@@ -73,33 +73,42 @@ const VerdictAppealResult = () => {
   const headerLines = getVerdictAppealStatusHeaderLines(workingCase)
 
   return (
-    <PageLayout
-      workingCase={workingCase}
-      isLoading={isLoadingWorkingCase}
-      notFound={caseNotFound}
-      onNavigationTo={handleNavigationTo}
-    >
-      <PageHeader title={titleForCase(formatMessage, workingCase)} />
-      <FormContentContainer>
-        <div className={stack({ gap: 5 })}>
-          <Box>
-            <PageTitle marginBottom={1}>Máli lokið</PageTitle>
-            {headerLines.map((line) => (
-              <Text key={line} as="h5" variant="h5">
-                {line}
-              </Text>
-            ))}
-          </Box>
-          <InfoCardClosedIndictment />
-          <VerdictAppealConclusionBoxes workingCase={workingCase} />
-          <VerdictAppealFiles />
-          <VerdictAppealRulingDocument workingCase={workingCase} />
-        </div>
-      </FormContentContainer>
-      <FormContentContainer isFooter>
-        <FormFooter previousUrl={summaryUrl} />
-      </FormContentContainer>
-    </PageLayout>
+    <>
+      {isCompleted && (
+        <AlertBanner
+          variant="warning"
+          title="Niðurstaða skráð en ekki gefin út"
+          description="Aðilar máls sjá niðurstöðuna ekki fyrr en hún er gefin út."
+        />
+      )}
+      <PageLayout
+        workingCase={workingCase}
+        isLoading={isLoadingWorkingCase}
+        notFound={caseNotFound}
+        onNavigationTo={handleNavigationTo}
+      >
+        <PageHeader title={titleForCase(formatMessage, workingCase)} />
+        <FormContentContainer>
+          <div className={stack({ gap: 5 })}>
+            <Box>
+              <PageTitle marginBottom={1}>Máli lokið</PageTitle>
+              {headerLines.map((line) => (
+                <Text key={line} as="h5" variant="h5">
+                  {line}
+                </Text>
+              ))}
+            </Box>
+            <InfoCardClosedIndictment />
+            <VerdictAppealConclusionBoxes workingCase={workingCase} />
+            <VerdictAppealFiles />
+            <VerdictAppealRulingDocument workingCase={workingCase} />
+          </div>
+        </FormContentContainer>
+        <FormContentContainer isFooter>
+          <FormFooter previousUrl={summaryUrl} />
+        </FormContentContainer>
+      </PageLayout>
+    </>
   )
 }
 

@@ -42,6 +42,26 @@ jest.mock('@island.is/judicial-system-web/src/utils/hooks/useFileList', () => ({
   }),
 }))
 
+// The banner's own module is mocked rather than the library's index, which
+// cannot be spread from inside a mock of itself.
+jest.mock(
+  '../../../../../../../libs/island-ui/core/src/lib/AlertBanner/AlertBanner',
+  () => ({
+    AlertBanner: ({
+      title,
+      description,
+    }: {
+      title: string
+      description: string
+    }) => (
+      <div role="alert">
+        <p>{title}</p>
+        <p>{description}</p>
+      </div>
+    ),
+  }),
+)
+
 jest.mock('next/router', () => ({
   __esModule: true,
   default: { push: (url: string) => mockPush(url) },
@@ -134,6 +154,9 @@ describe('VerdictAppealResult', () => {
     renderPage(finishedCase)
 
     expect(screen.getByRole('heading', { name: 'Máli lokið' })).toBeVisible()
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Niðurstaða skráð en ekki gefin út',
+    )
     expect(
       screen.getByText('Málsnr. héraðsdóms S-123/2026'),
     ).toBeInTheDocument()
