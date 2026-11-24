@@ -18,9 +18,12 @@ const HEALTH_INTRO_DELAY_MS = 500
 const hashOf = (nationalId: string) =>
   Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, nationalId)
 
+// A failed read throws: not knowing who has seen it isn't nobody having seen
+// it, and saving over it would forget them.
 async function readSeen(): Promise<string[]> {
+  const stored = await AsyncStorage.getItem(SEEN_KEY)
   try {
-    const seen = JSON.parse((await AsyncStorage.getItem(SEEN_KEY)) ?? '[]')
+    const seen = JSON.parse(stored ?? '[]')
     return Array.isArray(seen) ? seen : []
   } catch {
     return []
