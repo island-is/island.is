@@ -37,8 +37,8 @@ import VerdictAppealConclusionBoxes from './VerdictAppealConclusionBoxes'
 import VerdictAppealRulingDocument from './VerdictAppealRulingDocument'
 import {
   canCompleteVerdictAppeal,
+  getCompletableVerdictAppealRulingFile,
   getVerdictAppealRulingDecisionLabel,
-  getVerdictAppealRulingFiles,
 } from './VerdictAppealSummary.logic'
 import * as styles from './VerdictAppealSummary.css'
 
@@ -91,7 +91,7 @@ const VerdictAppealSummary = () => {
     )
 
   const headerLines = getVerdictAppealStatusHeaderLines(workingCase)
-  const decisionLabel = getVerdictAppealRulingDecisionLabel(workingCase)
+  const decisionLabel = getVerdictAppealRulingDecisionLabel(verdictAppealCase)
   const isCompleted =
     verdictAppealCase?.appealState === AppealCaseState.COMPLETED
   const canComplete = canCompleteVerdictAppeal(workingCase)
@@ -112,7 +112,7 @@ const VerdictAppealSummary = () => {
   // A failed fetch has already told the user why: the hook toasts a failed
   // request and raises fileNotFound, shown below, for a missing file.
   const openConfirmation = async () => {
-    const rulingFile = getVerdictAppealRulingFiles(workingCase)[0]
+    const rulingFile = getCompletableVerdictAppealRulingFile(workingCase)
 
     if (!rulingFile) {
       toast.error(isRuling ? 'Úrskurður fannst ekki' : 'Dómur fannst ekki')

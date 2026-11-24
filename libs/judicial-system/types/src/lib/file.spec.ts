@@ -2,6 +2,7 @@ import {
   CaseFileCategory,
   isAppealFileDeletionLocked,
   isRulingOrderWithoutDocument,
+  isStoredVerdictAppealRulingPdf,
 } from './file'
 
 describe('isRulingOrderWithoutDocument', () => {
@@ -126,6 +127,45 @@ describe('isAppealFileDeletionLocked', () => {
     expect(
       isAppealFileDeletionLocked(CaseFileCategory.COURT_RECORD, {
         appealCaseNumber: 'LRE-1/2026',
+      }),
+    ).toBe(false)
+  })
+})
+
+describe('isStoredVerdictAppealRulingPdf', () => {
+  const rulingPdf = {
+    category: CaseFileCategory.VERDICT_APPEAL_RULING,
+    type: 'application/pdf',
+    key: 'uploads/case-id/ruling/domur.pdf',
+  }
+
+  it('should be true for a stored PDF of the ruling', () => {
+    expect(isStoredVerdictAppealRulingPdf(rulingPdf)).toBe(true)
+  })
+
+  it('should be false for a ruling that is not a PDF', () => {
+    expect(
+      isStoredVerdictAppealRulingPdf({
+        ...rulingPdf,
+        type: 'application/msword',
+      }),
+    ).toBe(false)
+  })
+
+  it('should be false for a ruling that has not been stored', () => {
+    expect(isStoredVerdictAppealRulingPdf({ ...rulingPdf, key: null })).toBe(
+      false,
+    )
+    expect(isStoredVerdictAppealRulingPdf({ ...rulingPdf, key: '' })).toBe(
+      false,
+    )
+  })
+
+  it('should be false for a PDF of another category', () => {
+    expect(
+      isStoredVerdictAppealRulingPdf({
+        ...rulingPdf,
+        category: CaseFileCategory.APPEAL_RULING,
       }),
     ).toBe(false)
   })

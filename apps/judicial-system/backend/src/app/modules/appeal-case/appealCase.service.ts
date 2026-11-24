@@ -38,6 +38,7 @@ import {
   isPublicProsecutionOfficeUser,
   isPublicProsecutionUser,
   isSameAppealBench,
+  isStoredVerdictAppealRulingPdf,
   verdictAppealDeclarationFileCategories,
   VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
@@ -1615,12 +1616,8 @@ export class AppealCaseService {
       )
     }
 
-    // The document is stamped when it is opened, which only a PDF can be.
     const hasRulingFile = (theCase.caseFiles ?? []).some(
-      (file) =>
-        file.category === CaseFileCategory.VERDICT_APPEAL_RULING &&
-        file.type === 'application/pdf' &&
-        Boolean(file.key),
+      isStoredVerdictAppealRulingPdf,
     )
 
     if (

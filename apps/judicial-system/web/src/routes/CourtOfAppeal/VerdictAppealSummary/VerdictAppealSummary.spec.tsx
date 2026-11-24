@@ -1,6 +1,6 @@
 import type { Dispatch, FC, PropsWithChildren, SetStateAction } from 'react'
 import { useState } from 'react'
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event'
 
 import { COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE } from '@island.is/judicial-system/consts'
@@ -129,6 +129,7 @@ const rulingFile = {
   ...mockCaseFile(CaseFileCategory.VERDICT_APPEAL_RULING),
   id: 'ruling-file',
   name: 'domur-landsrettar.pdf',
+  type: 'application/pdf',
   userGeneratedFilename: null,
   isKeyAccessible: true,
 }
@@ -533,6 +534,16 @@ describe('VerdictAppealSummary', () => {
     expect(screen.getAllByText('Jón Jónsson').length).toBeGreaterThan(0)
     expect(screen.getByText('Dómsorð Landsréttar')).toBeInTheDocument()
     expect(screen.queryByText('Niðurstaða Landsréttar')).not.toBeInTheDocument()
+    // With the banner gone, the info card carries the outcome.
+    const outcomeItem = screen.getByRole('heading', {
+      name: 'Lyktir',
+    }).parentElement
+
+    if (!outcomeItem) {
+      throw new Error('The outcome has no item on the info card')
+    }
+
+    expect(within(outcomeItem).getByText('Staðfesting')).toBeInTheDocument()
     expect(
       screen.queryByRole('button', { name: 'Staðfesta' }),
     ).not.toBeInTheDocument()

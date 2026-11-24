@@ -156,6 +156,18 @@ export const isRulingOrderWithoutDocument = (file: {
   Boolean(file.isPronouncedOrally) &&
   !file.key
 
+// The Court of Appeals' document that a verdict appeal can be completed with:
+// a stored PDF. The document is stamped when it is opened, which only a PDF
+// can be.
+export const isStoredVerdictAppealRulingPdf = (file: {
+  category?: CaseFileCategory | null
+  type?: string | null
+  key?: string | null
+}): boolean =>
+  file.category === CaseFileCategory.VERDICT_APPEAL_RULING &&
+  file.type === 'application/pdf' &&
+  Boolean(file.key)
+
 // MD5 was used as file hashing algorithm until (TODO: add date) but was updated to SHA256 to avoid the probability
 // of hash collision between files in our system. Since we still store MD5 alg types with each file hash
 // in the db for historical purposes, we support both types here.

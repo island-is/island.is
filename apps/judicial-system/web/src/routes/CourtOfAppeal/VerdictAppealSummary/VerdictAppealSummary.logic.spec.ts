@@ -9,6 +9,7 @@ import {
 
 import {
   canCompleteVerdictAppeal,
+  getCompletableVerdictAppealRulingFile,
   getVerdictAppealRulingDecisionLabel,
   getVerdictAppealRulingFiles,
 } from './VerdictAppealSummary.logic'
@@ -16,6 +17,8 @@ import {
 const rulingFile = {
   id: 'ruling-file',
   category: CaseFileCategory.VERDICT_APPEAL_RULING,
+  type: 'application/pdf',
+  key: 'uploads/case-id/ruling-file/domur.pdf',
 }
 
 const readyCase = {
@@ -38,6 +41,9 @@ const withAppeal = (update: Record<string, unknown>) =>
     ...readyCase,
     verdictAppealCase: { ...readyCase.verdictAppealCase, ...update },
   } as unknown as WorkingCase)
+
+const withRulingFiles = (caseFiles: Record<string, unknown>[]) =>
+  ({ ...readyCase, caseFiles } as unknown as WorkingCase)
 
 describe('canCompleteVerdictAppeal', () => {
   it('is true for an open appeal marked finished with everything recorded', () => {
@@ -78,6 +84,7 @@ describe('canCompleteVerdictAppeal', () => {
     ['outcome', { appealRulingDecision: null }],
     ['type', { appealRulingType: null }],
     ['concluding words', { appealConclusion: '' }],
+    ['concluding words, only whitespace', { appealConclusion: '   \n ' }],
   ])('is false without the %s', (_name, update) => {
     expect(canCompleteVerdictAppeal(withAppeal(update))).toBe(false)
   })
@@ -100,6 +107,36 @@ describe('canCompleteVerdictAppeal', () => {
   })
 })
 
+describe('the ruling document', () => {
+  it('is not enough without a stored key', () => {
+    const withoutKey = withRulingFiles([{ ...rulingFile, key: null }])
+
+    expect(canCompleteVerdictAppeal(withoutKey)).toBe(false)
+    expect(getCompletableVerdictAppealRulingFile(withoutKey)).toBeUndefined()
+  })
+
+  it('is not enough when it is not a PDF', () => {
+    const notPdf = withRulingFiles([
+      { ...rulingFile, type: 'application/msword' },
+    ])
+
+    expect(canCompleteVerdictAppeal(notPdf)).toBe(false)
+    expect(getCompletableVerdictAppealRulingFile(notPdf)).toBeUndefined()
+  })
+
+  it('is the stored PDF among several ruling files', () => {
+    const storedPdf = { ...rulingFile, id: 'stored-pdf' }
+    const several = withRulingFiles([
+      { ...rulingFile, id: 'unstored-pdf', key: null },
+      { ...rulingFile, id: 'stored-word', type: 'application/msword' },
+      storedPdf,
+    ])
+
+    expect(canCompleteVerdictAppeal(several)).toBe(true)
+    expect(getCompletableVerdictAppealRulingFile(several)).toEqual(storedPdf)
+  })
+})
+
 describe('getVerdictAppealRulingFiles', () => {
   it('keeps only the Court of Appeals document', () => {
     expect(getVerdictAppealRulingFiles(readyCase)).toEqual([rulingFile])
@@ -108,14 +145,15 @@ describe('getVerdictAppealRulingFiles', () => {
 
 describe('getVerdictAppealRulingDecisionLabel', () => {
   it('names the outcome', () => {
-    expect(getVerdictAppealRulingDecisionLabel(readyCase)).toBe('Staðfesting')
+    expect(
+      getVerdictAppealRulingDecisionLabel(readyCase.verdictAppealCase),
+    ).toBe('Staðfesting')
   })
 
   it('is undefined before there is one', () => {
     expect(
-      getVerdictAppealRulingDecisionLabel(
-        withAppeal({ appealRulingDecision: null }),
-      ),
+      getVerdictAppealRulingDecisionLabel({ appealRulingDecision: null }),
     ).toBeUndefined()
+    expect(getVerdictAppealRulingDecisionLabel(undefined)).toBeUndefined()
   })
 })

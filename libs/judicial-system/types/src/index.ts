@@ -138,6 +138,7 @@ export {
   verdictAppealFileCategories,
   isAppealFileDeletionLocked,
   isRulingOrderWithoutDocument,
+  isStoredVerdictAppealRulingPdf,
   PoliceFileTypeCode,
 } from './lib/file'
 

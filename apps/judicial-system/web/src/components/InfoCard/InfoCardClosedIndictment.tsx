@@ -14,6 +14,7 @@ import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayH
 import useTargetAppealCaseByAppealCaseId from '@island.is/judicial-system-web/src/utils/hooks/useTargetAppealCaseByAppealCaseId'
 
 import InfoCard from './InfoCard'
+import { shouldShowVerdictAppealOutcome } from './InfoCardClosedIndictment.logic'
 import useInfoCardItems from './useInfoCardItems'
 
 export interface Props {
@@ -49,6 +50,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     appealCaseNumber,
     appealAssistant,
     appealJudges,
+    appealRulingDecision,
     linkedCaseSections,
   } = useInfoCardItems()
 
@@ -111,6 +113,9 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
                   ...(appealAssistant ? [appealAssistant] : []),
                   ...(hasAllAppealJudges(targetAppealCase)
                     ? [appealJudges]
+                    : []),
+                  ...(shouldShowVerdictAppealOutcome(targetAppealCase, user)
+                    ? [appealRulingDecision]
                     : []),
                 ],
                 columns: 2,

@@ -34,6 +34,7 @@ import {
   CaseIndictmentRulingDecision,
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { getVerdictAppealRulingDecisionLabel } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/VerdictAppealSummary/VerdictAppealSummary.logic'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import useTargetAppealCaseByAppealCaseId from '@island.is/judicial-system-web/src/utils/hooks/useTargetAppealCaseByAppealCaseId'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
@@ -431,6 +432,12 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     ],
   }
 
+  const appealRulingDecision: Item = {
+    id: 'appeal-ruling-decision-item',
+    title: 'Lyktir',
+    values: [getVerdictAppealRulingDecisionLabel(targetAppealCase)],
+  }
+
   const indictmentReviewer: Item = {
     id: 'indictment-reviewer-item',
     title: strings.indictmentReviewer,
@@ -617,6 +624,7 @@ const useInfoCardItems = (titleAs: HeadingLevel = 'h4') => {
     appealCaseNumber,
     appealAssistant,
     appealJudges,
+    appealRulingDecision,
     indictmentReviewer,
     indictmentReviewDecision,
     indictmentReviewedDate,
