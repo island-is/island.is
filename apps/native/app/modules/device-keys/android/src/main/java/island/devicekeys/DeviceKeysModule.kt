@@ -274,6 +274,12 @@ class DeviceKeysModule : Module() {
       .setConfirmationRequired(false)
       .build()
 
+    // With the app in the background the prompt isn't shown, and nothing ever
+    // answers. A cancel instead, as when the app goes there with the prompt up.
+    if (activity.supportFragmentManager.isStateSaved) {
+      return promise.reject(exception("CANCELLED", "The app is in the background"))
+    }
+
     BiometricPrompt(activity, ContextCompat.getMainExecutor(activity), callback)
       .authenticate(promptInfo, BiometricPrompt.CryptoObject(signature))
   }
