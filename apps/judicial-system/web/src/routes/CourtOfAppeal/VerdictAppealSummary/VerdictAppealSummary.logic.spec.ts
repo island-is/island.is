@@ -10,8 +10,11 @@ import {
 import {
   canCompleteVerdictAppeal,
   getCompletableVerdictAppealRulingFile,
+  getVerdictAppealRulingDateMinDate,
   getVerdictAppealRulingDecisionLabel,
   getVerdictAppealRulingFiles,
+  isSameVerdictAppealRulingDate,
+  isVerdictAppealRulingDateInRange,
 } from './VerdictAppealSummary.logic'
 
 const rulingFile = {
@@ -33,6 +36,7 @@ const readyCase = {
     appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
     appealRulingType: AppealRulingType.VERDICT,
     appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+    appealRulingDate: '2024-01-10T00:00:00.000Z',
   },
 } as unknown as WorkingCase
 
@@ -85,6 +89,7 @@ describe('canCompleteVerdictAppeal', () => {
     ['type', { appealRulingType: null }],
     ['concluding words', { appealConclusion: '' }],
     ['concluding words, only whitespace', { appealConclusion: '   \n ' }],
+    ['date the appeal ended', { appealRulingDate: null }],
   ])('is false without the %s', (_name, update) => {
     expect(canCompleteVerdictAppeal(withAppeal(update))).toBe(false)
   })
@@ -155,5 +160,86 @@ describe('getVerdictAppealRulingDecisionLabel', () => {
       getVerdictAppealRulingDecisionLabel({ appealRulingDecision: null }),
     ).toBeUndefined()
     expect(getVerdictAppealRulingDecisionLabel(undefined)).toBeUndefined()
+  })
+})
+
+describe('isSameVerdictAppealRulingDate', () => {
+  const picked = new Date('2024-01-10T00:00:00.000Z')
+
+  it('is true for the date on record', () => {
+    expect(
+      isSameVerdictAppealRulingDate('2024-01-10T00:00:00.000Z', picked),
+    ).toBe(true)
+  })
+
+  it('is false for another date', () => {
+    expect(
+      isSameVerdictAppealRulingDate('2024-01-09T00:00:00.000Z', picked),
+    ).toBe(false)
+  })
+
+  it('is false when no date is on record', () => {
+    expect(isSameVerdictAppealRulingDate(null, picked)).toBe(false)
+    expect(isSameVerdictAppealRulingDate(undefined, picked)).toBe(false)
+  })
+})
+
+describe('getVerdictAppealRulingDateMinDate', () => {
+  it('is the start of the day of the verdict', () => {
+    expect(
+      getVerdictAppealRulingDateMinDate({
+        rulingDate: new Date(2026, 4, 20, 14, 30).toISOString(),
+        created: new Date(2026, 0, 2).toISOString(),
+      }),
+    ).toEqual(new Date(2026, 4, 20))
+  })
+
+  it('falls back to the day the case was created', () => {
+    expect(
+      getVerdictAppealRulingDateMinDate({
+        rulingDate: null,
+        created: new Date(2026, 0, 2, 9, 0).toISOString(),
+      }),
+    ).toEqual(new Date(2026, 0, 2))
+  })
+
+  it('is undefined without either', () => {
+    expect(
+      getVerdictAppealRulingDateMinDate({ rulingDate: null, created: '' }),
+    ).toBeUndefined()
+  })
+})
+
+describe('isVerdictAppealRulingDateInRange', () => {
+  const now = new Date()
+  const startOfToday = new Date(now)
+  startOfToday.setHours(0, 0, 0, 0)
+  const tomorrow = new Date(startOfToday)
+  tomorrow.setDate(tomorrow.getDate() + 1)
+  const minDate = new Date(startOfToday)
+  minDate.setDate(minDate.getDate() - 30)
+  const dayBeforeMin = new Date(minDate)
+  dayBeforeMin.setDate(dayBeforeMin.getDate() - 1)
+
+  it.each([
+    ['today', startOfToday],
+    ['the earliest day', minDate],
+  ])('accepts %s', (_, date) => {
+    expect(isVerdictAppealRulingDateInRange(date, minDate, now)).toBe(true)
+  })
+
+  it.each([
+    ['tomorrow', tomorrow],
+    ['the day before the earliest day', dayBeforeMin],
+    ['a half-typed year', new Date(202, 10, 25)],
+    ['an invalid date', new Date('not a date')],
+  ])('refuses %s', (_, date) => {
+    expect(isVerdictAppealRulingDateInRange(date, minDate, now)).toBe(false)
+  })
+
+  it('refuses every date without a lower bound', () => {
+    expect(isVerdictAppealRulingDateInRange(startOfToday, undefined, now)).toBe(
+      false,
+    )
   })
 })

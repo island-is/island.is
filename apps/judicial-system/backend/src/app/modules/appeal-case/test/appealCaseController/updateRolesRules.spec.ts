@@ -31,4 +31,22 @@ describe('AppealCaseController - Update rules', () => {
   ])('should not let a %s record the verdict appeal status', (_, rule) => {
     expect(dtoFields(rule)).not.toContain('verdictAppealStatus')
   })
+
+  it.each([
+    ['judge', courtOfAppealsJudgeUpdateRule],
+    ['registrar', courtOfAppealsRegistrarUpdateRule],
+    ['assistant', courtOfAppealsAssistantUpdateRule],
+  ])(
+    'should let a court of appeals %s record the date a verdict appeal ended',
+    (_, rule) => {
+      expect(dtoFields(rule)).toContain('appealRulingDate')
+    },
+  )
+
+  it.each([
+    ['prosecutor', prosecutorUpdateRule],
+    ['prosecutor representative', prosecutorRepresentativeUpdateRule],
+  ])('should not let a %s record the date an appeal ended', (_, rule) => {
+    expect(dtoFields(rule)).not.toContain('appealRulingDate')
+  })
 })

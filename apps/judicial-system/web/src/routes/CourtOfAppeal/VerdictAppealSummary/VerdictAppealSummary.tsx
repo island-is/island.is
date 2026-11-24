@@ -34,6 +34,7 @@ import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/util
 
 import { getVerdictAppealStatusHeaderLines } from '../VerdictAppealStatus/VerdictAppealStatus.logic'
 import VerdictAppealConclusionBoxes from './VerdictAppealConclusionBoxes'
+import VerdictAppealRulingDate from './VerdictAppealRulingDate'
 import VerdictAppealRulingDocument from './VerdictAppealRulingDocument'
 import {
   canCompleteVerdictAppeal,
@@ -204,6 +205,7 @@ const VerdictAppealSummary = () => {
             <VerdictAppealConclusionBoxes workingCase={workingCase} />
             <VerdictAppealFiles />
             <VerdictAppealRulingDocument workingCase={workingCase} />
+            <VerdictAppealRulingDate />
           </div>
         </FormContentContainer>
         <FormContentContainer isFooter>
@@ -243,7 +245,9 @@ const VerdictAppealSummary = () => {
                     <Text fontWeight="semiBold" as="span">
                       Dagsetning lykta:
                     </Text>
-                    <Text as="span">{` ${formatDate(new Date())}`}</Text>
+                    <Text as="span">{` ${
+                      formatDate(verdictAppealCase?.appealRulingDate) ?? ''
+                    }`}</Text>
                   </Box>
                   <Box as="ul" marginLeft={2}>
                     <li>

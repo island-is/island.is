@@ -19,6 +19,7 @@ import {
   UserRole,
   VerdictAppealStatus as Status,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase/useCase.logic'
 import {
   mockCase,
   mockCaseFile,
@@ -33,6 +34,7 @@ import VerdictAppealSummary from './VerdictAppealSummary'
 
 const mockPush = jest.fn()
 const mockTransitionAppealCase = jest.fn()
+const mockUpdateAppealCase = jest.fn()
 const mockGetFileUrl = jest.fn()
 const mockToastError = jest.fn()
 // Whether the server says the file is gone. The hook then raises
@@ -45,6 +47,7 @@ jest.mock(
     __esModule: true,
     default: () => ({
       transitionAppealCase: mockTransitionAppealCase,
+      updateAppealCase: mockUpdateAppealCase,
       isTransitioningAppealCase: false,
     }),
   }),
@@ -141,6 +144,7 @@ const theCase = {
   id: 'case-id',
   state: CaseState.COMPLETED,
   courtCaseNumber: 'S-123/2026',
+  rulingDate: new Date(2026, 4, 20).toISOString(),
   indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
   judge: { id: 'judge', name: 'Dómari Dómarason' },
   courtSessions: [
@@ -164,6 +168,7 @@ const theCase = {
     appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
     appealRulingType: AppealRulingType.VERDICT,
     appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+    appealRulingDate: new Date(2026, 5, 10).toISOString(),
   },
 } as unknown as WorkingCase
 
@@ -198,11 +203,14 @@ const StatefulFormContext: FC<PropsWithChildren<{ theCase: WorkingCase }>> = ({
   )
 }
 
-const renderPage = (c: WorkingCase = theCase) =>
+const renderPage = (
+  c: WorkingCase = theCase,
+  userRole: UserRole = UserRole.COURT_OF_APPEALS_JUDGE,
+) =>
   render(
     <IntlProviderWrapper>
       <ApolloProviderWrapper>
-        <UserContextWrapper userRole={UserRole.COURT_OF_APPEALS_JUDGE}>
+        <UserContextWrapper userRole={userRole}>
           <StatefulFormContext theCase={c}>
             <VerdictAppealSummary />
           </StatefulFormContext>
@@ -212,6 +220,42 @@ const renderPage = (c: WorkingCase = theCase) =>
   )
 
 const modalTitle = 'Viltu staðfesta dómsúrlausn og ljúka máli?'
+const rulingDateHeading = 'Dagsetning lykta'
+const rulingDateInstruction =
+  'Vinsamlegast skráið dagsetningu lykta, þ.e. hvenær dómur var kveðinn upp, dagsetning viðurlagaákvörðunar eða annarra lykta.'
+const rulingDateConsequence =
+  'Þessi dagsetning skilar sér til ríkissaksóknara og áfrýjunarfrestir og aðrir frestir miðast við hana.'
+
+const startOfToday = () => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  return today
+}
+
+// Today, the latest day the picker allows. With no date on record the
+// calendar opens on the current month, so the cell is found there.
+const pickToday = async () => {
+  const today = new Date()
+
+  await userEvent.click(screen.getByLabelText(/Dagsetning lykta/))
+
+  // The calendar pads its grid with the neighbouring months' days, so the
+  // number alone can match twice. Only a cell of the month on view counts.
+  const cell = screen
+    .getAllByText(String(today.getDate()))
+    .find(
+      (el) =>
+        el.className.includes('react-datepicker__day') &&
+        !el.className.includes('outside-month'),
+    )
+
+  if (!cell) {
+    throw new Error('No calendar cell for today')
+  }
+
+  await userEvent.click(cell)
+}
 const notReleasedTitle = 'Niðurstaða skráð en ekki gefin út'
 
 // Finishes the appeal the way the real transition does: it writes the
@@ -262,6 +306,8 @@ describe('VerdictAppealSummary', () => {
     mockPush.mockReset()
     mockPush.mockResolvedValue(true)
     mockTransitionAppealCase.mockReset()
+    mockUpdateAppealCase.mockReset()
+    mockUpdateAppealCase.mockResolvedValue({ id: 'verdict-appeal' })
     mockGetFileUrl.mockReset()
     mockGetFileUrl.mockResolvedValue('https://files.dummy.dd/domur.pdf')
     mockToastError.mockReset()
@@ -326,6 +372,67 @@ describe('VerdictAppealSummary', () => {
     expect(screen.getByTestId('continueButton')).toBeDisabled()
   })
 
+  it('asks for the date the appeal ended', () => {
+    renderPage()
+
+    expect(
+      screen.getByRole('heading', { name: rulingDateHeading }),
+    ).toBeInTheDocument()
+    expect(screen.getByText(rulingDateInstruction)).toBeInTheDocument()
+    expect(screen.getByText(rulingDateConsequence)).toBeInTheDocument()
+    expect(screen.getByLabelText(/Dagsetning lykta/)).toHaveValue('10.06.2026')
+  })
+
+  it('cannot be confirmed before the date the appeal ended is entered', () => {
+    renderPage(withAppeal({ appealRulingDate: null }))
+
+    expect(screen.getByTestId('continueButton')).toBeDisabled()
+  })
+
+  it('saves the date the appeal ended once it is picked', async () => {
+    renderPage(withAppeal({ appealRulingDate: null }))
+
+    await pickToday()
+
+    await waitFor(() =>
+      expect(mockUpdateAppealCase).toHaveBeenCalledWith(
+        'case-id',
+        'verdict-appeal',
+        {
+          appealRulingDate: formatDateForServer(startOfToday()),
+        },
+      ),
+    )
+    expect(mockUpdateAppealCase).toHaveBeenCalledTimes(1)
+    expect(screen.getByTestId('continueButton')).toBeEnabled()
+  })
+
+  // The working case holds only what the server stored, so a failed save
+  // cannot be confirmed with a date that is not on record.
+  it('shows the stored date again when the date cannot be saved', async () => {
+    mockUpdateAppealCase.mockResolvedValue(undefined)
+    renderPage(withAppeal({ appealRulingDate: null }))
+
+    await pickToday()
+
+    await waitFor(() => expect(mockUpdateAppealCase).toHaveBeenCalled())
+    await waitFor(() =>
+      expect(screen.getByLabelText(/Dagsetning lykta/)).toHaveValue(''),
+    )
+    expect(screen.getByTestId('continueButton')).toBeDisabled()
+  })
+
+  // The date is withheld from everyone outside the court, and the server
+  // refuses it from them.
+  it('does not ask anyone outside the Court of Appeals for the date', () => {
+    renderPage(theCase, UserRole.PROSECUTOR)
+
+    expect(
+      screen.queryByRole('heading', { name: rulingDateHeading }),
+    ).not.toBeInTheDocument()
+    expect(screen.queryByLabelText(/Dagsetning lykta/)).not.toBeInTheDocument()
+  })
+
   it('cannot be confirmed while the appeal is not marked finished', () => {
     renderPage(withAppeal({ verdictAppealStatus: Status.UNDER_ADVISEMENT }))
 
@@ -346,6 +453,8 @@ describe('VerdictAppealSummary', () => {
     expect(
       screen.getByText('Vinsamlegast rýnið skjal fyrir staðfestingu.'),
     ).toBeInTheDocument()
+    // The date on record, not the day the court confirms.
+    expect(screen.getByText('10.06.2026')).toBeInTheDocument()
     expect(
       screen.getByText(
         'Ekkert er sent við staðfestingu. Aðilar máls sjá niðurstöðuna ekki fyrr en hún er gefin út.',
@@ -399,6 +508,11 @@ describe('VerdictAppealSummary', () => {
     expect(screen.queryByText('Niðurstaða Landsréttar')).not.toBeInTheDocument()
     expect(screen.queryByTestId('continueButton')).not.toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Samantekt' })).toBeVisible()
+    // The date can still be corrected once the appeal is finished.
+    expect(
+      screen.getByRole('heading', { name: rulingDateHeading }),
+    ).toBeInTheDocument()
+    expect(screen.getByLabelText(/Dagsetning lykta/)).toBeEnabled()
     expect(mockPush).not.toHaveBeenCalled()
   })
 
