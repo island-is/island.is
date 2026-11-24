@@ -1,7 +1,10 @@
 /* eslint-disable local-rules/disallow-kennitalas */
 import { ExternalData, FormValue } from '@island.is/application/types'
 import { IncomeType } from './confirm-job-or-income.types'
-import { buildCreateIncomesRequest } from './confirm-job-or-income.utils'
+import {
+  buildCreateIncomesRequest,
+  hasIncomeChanges,
+} from './confirm-job-or-income.utils'
 
 describe('buildCreateIncomesRequest', () => {
   it('maps the selected part-time rows and omits UI-only fields', () => {
@@ -830,5 +833,98 @@ describe('buildCreateIncomesRequest', () => {
         buildCreateIncomesRequest(answers, externalData).capitalIncomePayments,
       ).toEqual([])
     })
+  })
+})
+
+describe('hasIncomeChanges', () => {
+  const persistedPartTimeJob = {
+    id: 'persisted-job-id',
+    employerSSN: '5005101370',
+    periodFrom: '2026-09-01',
+    periodTo: null,
+    ratio: 20,
+    estimatedIncome: 10000,
+    canEdit: true,
+    canDelete: true,
+  }
+  const externalData: ExternalData = {
+    income: {
+      status: 'success',
+      date: new Date(),
+      data: { partTimeJobs: [persistedPartTimeJob] },
+    },
+  }
+  const untouchedRow = {
+    validationId: persistedPartTimeJob.id,
+    company: { nationalId: '500510-1370' },
+    jobStart: '2026-09-01',
+    workPercentage: '20',
+    estimatedIncome: '10000',
+  }
+
+  it('returns false for a completely empty application', () => {
+    expect(hasIncomeChanges(buildCreateIncomesRequest({}, {}))).toBe(false)
+  })
+
+  it('returns false when income types are selected but no rows are added', () => {
+    const answers: FormValue = {
+      typeOfIncome: [IncomeType.PART_TIME, IncomeType.PENSION],
+      registerPartTime: [],
+      registerPension: [],
+    }
+
+    expect(hasIncomeChanges(buildCreateIncomesRequest(answers, {}))).toBe(false)
+  })
+
+  it('returns false when persisted rows are left untouched', () => {
+    const answers: FormValue = {
+      typeOfIncome: [IncomeType.PART_TIME],
+      registerPartTime: [untouchedRow],
+    }
+
+    expect(
+      hasIncomeChanges(buildCreateIncomesRequest(answers, externalData)),
+    ).toBe(false)
+  })
+
+  it('returns true when a row is added', () => {
+    const answers: FormValue = {
+      typeOfIncome: [IncomeType.PART_TIME],
+      registerPartTime: [
+        untouchedRow,
+        {
+          company: { nationalId: '500510-1370' },
+          jobStart: '2026-10-01',
+          workPercentage: '30',
+          estimatedIncome: '20000',
+        },
+      ],
+    }
+
+    expect(
+      hasIncomeChanges(buildCreateIncomesRequest(answers, externalData)),
+    ).toBe(true)
+  })
+
+  it('returns true when a persisted row is edited', () => {
+    const answers: FormValue = {
+      typeOfIncome: [IncomeType.PART_TIME],
+      registerPartTime: [{ ...untouchedRow, estimatedIncome: '15000' }],
+    }
+
+    expect(
+      hasIncomeChanges(buildCreateIncomesRequest(answers, externalData)),
+    ).toBe(true)
+  })
+
+  it('returns true when all persisted rows are removed', () => {
+    const answers: FormValue = {
+      typeOfIncome: [IncomeType.PART_TIME],
+      registerPartTime: [{ ...untouchedRow, isRemoved: true }],
+    }
+
+    expect(
+      hasIncomeChanges(buildCreateIncomesRequest(answers, externalData)),
+    ).toBe(true)
   })
 })
