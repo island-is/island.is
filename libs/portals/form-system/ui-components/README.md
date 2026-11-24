@@ -19,6 +19,13 @@ The editor preserves the `isLarge` checkbox and prevents disabling it while a
 sublabel exists in either language. Information and tooltip editors are always
 available. Preview and live applications use the same content rendering.
 
+## Number validation
+
+Number fields validate their configured value and digit-count limits. In live
+applications, `allowProceedOnValidationFail` permits forward navigation despite
+these errors, as it does for other inputs. Validation still runs, and the parties
+section always requires valid input.
+
 ## Family fields
 
 The FAMILY / CHILD dropdown uses `showBiologicalChildren` and
