@@ -110,10 +110,9 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import(
-                  '../forms/MachineLicenseCardReissueForm'
-                ).then((module) =>
-                  Promise.resolve(module.MachineLicenseCardReissueForm),
+                import('../forms/MachineLicenseCardReissueForm').then(
+                  (module) =>
+                    Promise.resolve(module.MachineLicenseCardReissueForm),
                 ),
               actions: [
                 {
