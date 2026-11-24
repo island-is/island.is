@@ -321,14 +321,17 @@ export const authStore = create<AuthStore>((set, get) => ({
 
     // Logged out in the app even if clearing these fails: a login left in the
     // keychain is cleared at the next start, as after a reinstall (iOS), or
-    // when its unlock finds the app login gone.
-    try {
-      const client = await getApolloClientAsync()
-      await client.clearStore()
-      await Keychain.resetGenericPassword({ service: KEYCHAIN_AUTH_KEY })
-      await Keychain.resetGenericPassword({ service: KEYCHAIN_NATIVE_USER_KEY })
-    } catch (error) {
-      console.log('Failed to clear the stored login', error)
+    // when its unlock finds the app login gone. Each on its own, so one
+    // failing doesn't keep the others.
+    const cleared = await Promise.allSettled([
+      getApolloClientAsync().then((client) => client.clearStore()),
+      Keychain.resetGenericPassword({ service: KEYCHAIN_AUTH_KEY }),
+      Keychain.resetGenericPassword({ service: KEYCHAIN_NATIVE_USER_KEY }),
+    ])
+    for (const result of cleared) {
+      if (result.status === 'rejected') {
+        console.log('Failed to clear the stored login', result.reason)
+      }
     }
     set(
       (state) => ({
