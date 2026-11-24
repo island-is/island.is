@@ -296,13 +296,13 @@ export const applicationMessages = defineMessages({
   calendarDescription: {
     id: 'osr.application:calendarDescription',
     defaultMessage:
-      'Smelltu á upphafsdag og svo á lokadag til að velja tímabil. Dagarnir á milli veljast sjálfkrafa. Smelltu á valið tímabil til að fjarlægja það.',
+      'Smelltu á komudag og svo á brottfarardag til að velja dvöl. Brottfarardagurinn telst ekki gistinótt. Ný dvöl getur hafist sama dag og önnur lýkur. Smelltu á dag innan dvalar til að fjarlægja hana.',
     description: 'Instructions for selecting date ranges',
   },
   calendarRequired: {
     id: 'osr.application:calendarRequired',
     defaultMessage:
-      'Veldu gistinætur eða merktu við að engar gistinætur séu skráðar á fyrsta skrefi.',
+      'Veldu gistinætur í dagatalinu eða merktu við „Engar gistinætur þetta ár“.',
     description: 'Validation message when no overnight dates are selected',
   },
   calendarDayAriaLabel: {
@@ -341,18 +341,18 @@ export const applicationMessages = defineMessages({
     defaultMessage: 'Fasteign nr. {number}',
     description: 'Property number label and value',
   },
-  unitNumber: {
-    id: 'osr.application:unitNumber',
+  apartmentNumber: {
+    id: 'osr.application:apartmentNumber',
     defaultMessage: 'Íbúð: {number}',
     description: 'Unit number label and value',
   },
-  guestCount: {
-    id: 'osr.application:guestCount',
+  guests: {
+    id: 'osr.application:guests',
     defaultMessage: 'Gestir: {count}',
     description: 'Guest count label and value',
   },
-  roomCount: {
-    id: 'osr.application:roomCount',
+  rooms: {
+    id: 'osr.application:rooms',
     defaultMessage: 'Herbergi: {count}',
     description: 'Room count label and value',
   },
@@ -376,11 +376,6 @@ export const applicationMessages = defineMessages({
     id: 'osr.application:overviewRegistrationTitle',
     defaultMessage: 'Skráning gistinátta {year}',
     description: 'Overnight stay overview heading',
-  },
-  propertyNameLabel: {
-    id: 'osr.application:propertyNameLabel',
-    defaultMessage: 'Heiti',
-    description: 'Property name label',
   },
   registrationNumberLabel: {
     id: 'osr.application:registrationNumberLabel',

@@ -1,15 +1,18 @@
-export interface HomeLodgingRegistration {
-  id: string
+export interface HomeLodgingYear {
   year: number
-  hasBeenSubmitted: boolean
-  name: string
+  returned: boolean
+}
+
+export interface HomeLodging {
+  id: string
+  years: HomeLodgingYear[]
   address: string
+  /** Postal code and city as returned by Sýslumenn, e.g. "101 Reykjavík". */
   postalCode: string
-  city: string
-  propertyNumber: string
-  unitNumber: string
-  guestCount: number
-  roomCount: number
+  propertyNumber?: string
+  apartmentNumber?: string
+  guests?: number
+  rooms?: number
 }
 
 export interface OvernightStayDateRange {

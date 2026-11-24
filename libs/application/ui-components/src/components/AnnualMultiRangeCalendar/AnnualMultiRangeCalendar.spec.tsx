@@ -1,6 +1,7 @@
 import { ReactNode, useState } from 'react'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { AnnualMultiRangeCalendar } from './AnnualMultiRangeCalendar'
+import { CalendarDateRange } from './utils'
 
 jest.mock('@island.is/island-ui/core', () => {
   const React = jest.requireActual<typeof import('react')>('react')
@@ -64,36 +65,70 @@ const labels = {
 }
 
 const CalendarHarness = () => {
-  const [selectedDates, setSelectedDates] = useState<string[]>([])
+  const [ranges, setRanges] = useState<CalendarDateRange[]>([])
 
   return (
     <>
-      <output data-testid="selected-dates">{selectedDates.join(',')}</output>
+      <output data-testid="ranges">
+        {ranges.map(({ from, to }) => `${from}/${to}`).join(',')}
+      </output>
       <AnnualMultiRangeCalendar
         id="test-calendar"
         year={2026}
-        selectedDates={selectedDates}
-        onChange={setSelectedDates}
+        ranges={ranges}
+        onChange={setRanges}
         labels={labels}
       />
     </>
   )
 }
 
+const clickDay = (name: string) =>
+  fireEvent.click(screen.getByRole('button', { name }))
+
 describe('AnnualMultiRangeCalendar', () => {
-  it('selects and removes a contiguous date range', () => {
+  it('selects and removes a date range', () => {
     render(<CalendarHarness />)
 
-    fireEvent.click(screen.getByRole('button', { name: '2 January 2026' }))
-    fireEvent.click(screen.getByRole('button', { name: '4 January 2026' }))
+    clickDay('2 January 2026')
+    clickDay('4 January 2026')
 
-    expect(screen.getByTestId('selected-dates').textContent).toBe(
-      '2026-01-02,2026-01-03,2026-01-04',
+    expect(screen.getByTestId('ranges').textContent).toBe(
+      '2026-01-02/2026-01-04',
     )
 
-    fireEvent.click(screen.getByRole('button', { name: '3 January 2026' }))
+    clickDay('3 January 2026')
 
-    expect(screen.getByTestId('selected-dates').textContent).toBe('')
+    expect(screen.getByTestId('ranges').textContent).toBe('')
+  })
+
+  it('keeps adjacent and touching ranges as separate ranges', () => {
+    render(<CalendarHarness />)
+
+    clickDay('1 July 2026')
+    clickDay('3 July 2026')
+    clickDay('4 July 2026')
+    clickDay('6 July 2026')
+    // The last day of a range can start the next one.
+    clickDay('6 July 2026')
+    clickDay('8 July 2026')
+
+    expect(screen.getByTestId('ranges').textContent).toBe(
+      '2026-07-01/2026-07-03,2026-07-04/2026-07-06,2026-07-06/2026-07-08',
+    )
+  })
+
+  it('cancels a pending range when its start day is picked again', () => {
+    render(<CalendarHarness />)
+
+    clickDay('2 January 2026')
+    clickDay('2 January 2026')
+    clickDay('5 January 2026')
+    clickDay('7 January 2026')
+
+    expect(screen.getByTestId('ranges').textContent).toBe(
+      '2026-01-05/2026-01-07',
+    )
   })
 
   it('moves focus between days with the arrow keys', () => {

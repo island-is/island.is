@@ -85,6 +85,7 @@ import { ContentfulTranslationConfig } from '@island.is/application/api/core'
 import { CmsTranslationConfig } from '@island.is/cms-translations'
 import { RecyclingFundClientConfig } from '@island.is/clients/recycling-fund'
 import { DirectorateOfEqualityClientConfig } from '@island.is/clients/directorate-of-equality'
+import { DistrictCommissionersHomeLodgingsClientConfig } from '@island.is/clients/district-commissioners-home-lodgings'
 
 @Module({
   imports: [
@@ -165,6 +166,7 @@ import { DirectorateOfEqualityClientConfig } from '@island.is/clients/directorat
         ZendeskServiceConfig,
         RecyclingFundClientConfig,
         DirectorateOfEqualityClientConfig,
+        DistrictCommissionersHomeLodgingsClientConfig,
         CmsTranslationConfig,
         ContentfulTranslationConfig,
       ],

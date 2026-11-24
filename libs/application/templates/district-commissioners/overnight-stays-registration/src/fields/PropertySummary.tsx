@@ -36,7 +36,7 @@ export const PropertySummary: FC<FieldBaseProps> = ({ application }) => {
         marginBottom={3}
       >
         <Text variant="h4" color="blue400">
-          {registration.name}
+          {registration.address}
         </Text>
         <Tag variant="blue" outlined>
           {registration.id}
@@ -44,33 +44,38 @@ export const PropertySummary: FC<FieldBaseProps> = ({ application }) => {
       </Box>
       <GridRow rowGap={1}>
         <GridColumn span={['12/12', '6/12']}>
-          <Text variant="small">
-            {registration.address}, {registration.postalCode}{' '}
-            {registration.city}
-          </Text>
+          <Text variant="small">{registration.postalCode}</Text>
           {ownerName && <Text variant="small">{ownerName}</Text>}
-          <Text variant="small">
-            {formatMessage(m.propertyNumber, {
-              number: registration.propertyNumber,
-            })}
-          </Text>
+          {registration.propertyNumber && (
+            <Text variant="small">
+              {formatMessage(m.propertyNumber, {
+                number: registration.propertyNumber,
+              })}
+            </Text>
+          )}
         </GridColumn>
         <GridColumn span={['12/12', '6/12']}>
-          <Text variant="small">
-            {formatMessage(m.unitNumber, {
-              number: registration.unitNumber,
-            })}
-          </Text>
-          <Text variant="small">
-            {formatMessage(m.guestCount, {
-              count: registration.guestCount,
-            })}
-          </Text>
-          <Text variant="small">
-            {formatMessage(m.roomCount, {
-              count: registration.roomCount,
-            })}
-          </Text>
+          {registration.apartmentNumber && (
+            <Text variant="small">
+              {formatMessage(m.apartmentNumber, {
+                number: registration.apartmentNumber,
+              })}
+            </Text>
+          )}
+          {registration.guests !== undefined && (
+            <Text variant="small">
+              {formatMessage(m.guests, {
+                count: registration.guests,
+              })}
+            </Text>
+          )}
+          {registration.rooms !== undefined && (
+            <Text variant="small">
+              {formatMessage(m.rooms, {
+                count: registration.rooms,
+              })}
+            </Text>
+          )}
         </GridColumn>
       </GridRow>
     </Box>

@@ -3,4 +3,4 @@ export {
   type AnnualMultiRangeCalendarLabels,
   type AnnualMultiRangeCalendarProps,
 } from './AnnualMultiRangeCalendar'
-export { getDateRanges, type CalendarDateRange } from './utils'
+export { addRange, sortRanges, type CalendarDateRange } from './utils'

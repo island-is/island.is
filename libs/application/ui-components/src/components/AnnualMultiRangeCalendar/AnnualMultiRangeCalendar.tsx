@@ -10,11 +10,14 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from './AnnualMultiRangeCalendar.css'
 import {
+  addRange,
+  CalendarDateRange,
+  findRangeToRemove,
   formatDateId,
-  getConnectedRange,
   getDateConnections,
-  getDatesBetween,
+  isDateInRange,
   shiftDate,
+  toRange,
 } from './utils'
 
 export interface AnnualMultiRangeCalendarLabels {
@@ -32,8 +35,8 @@ export interface AnnualMultiRangeCalendarLabels {
 export interface AnnualMultiRangeCalendarProps {
   id: string
   year: number
-  selectedDates: readonly string[]
-  onChange: (dates: string[]) => void
+  ranges: readonly CalendarDateRange[]
+  onChange: (ranges: CalendarDateRange[]) => void
   labels: AnnualMultiRangeCalendarLabels
   error?: string
 }
@@ -41,7 +44,7 @@ export interface AnnualMultiRangeCalendarProps {
 export const AnnualMultiRangeCalendar = ({
   id,
   year,
-  selectedDates,
+  ranges,
   onChange,
   labels,
   error,
@@ -49,7 +52,7 @@ export const AnnualMultiRangeCalendar = ({
   const [rangeStart, setRangeStart] = useState<string | null>(null)
   const [hoveredDate, setHoveredDate] = useState<string | null>(null)
   const [focusedDate, setFocusedDate] = useState(
-    selectedDates[0] ?? formatDateId(new Date(year, 0, 1)),
+    ranges[0]?.from ?? formatDateId(new Date(year, 0, 1)),
   )
   const [announcement, setAnnouncement] = useState<ReactNode>('')
   const dayRefs = useRef(new Map<string, HTMLButtonElement>())
@@ -61,11 +64,11 @@ export const AnnualMultiRangeCalendar = ({
   useEffect(() => {
     if (!focusedDate.startsWith(`${year}-`)) {
       setFocusedDate(
-        selectedDates.find((date) => date.startsWith(`${year}-`)) ??
+        ranges.find((range) => range.from.startsWith(`${year}-`))?.from ??
           formatDateId(new Date(year, 0, 1)),
       )
     }
-  }, [focusedDate, selectedDates, year])
+  }, [focusedDate, ranges, year])
 
   useEffect(() => {
     setRangeStart(null)
@@ -73,39 +76,47 @@ export const AnnualMultiRangeCalendar = ({
     setAnnouncement('')
   }, [year])
 
-  const selection = useMemo(() => new Set(selectedDates), [selectedDates])
   const preview = useMemo(
-    () =>
-      new Set(
-        rangeStart && hoveredDate
-          ? getDatesBetween(rangeStart, hoveredDate)
-          : [],
-      ),
+    () => (rangeStart && hoveredDate ? toRange(rangeStart, hoveredDate) : null),
     [hoveredDate, rangeStart],
   )
 
-  const updateSelection = (dates: string[]) => onChange([...dates].sort())
+  const isCovered = (date: string) =>
+    ranges.some((range) => isDateInRange(range, date))
+  const isRangeEdge = (date: string) =>
+    ranges.some((range) => range.from === date || range.to === date)
+  // Two days are drawn as connected only when they belong to the same range,
+  // so ranges that touch on a shared day still read as separate ranges.
+  const isJoinedInSelection = (first: string, second: string) =>
+    ranges.some(
+      (range) => isDateInRange(range, first) && isDateInRange(range, second),
+    )
+  const isJoinedInPreview = (first: string, second: string) =>
+    preview !== null &&
+    isDateInRange(preview, first) &&
+    isDateInRange(preview, second)
 
   const selectDate = (date: string) => {
     if (rangeStart) {
-      const range = getDatesBetween(rangeStart, date)
-      updateSelection([...new Set([...selectedDates, ...range])])
-      setAnnouncement(
-        labels.formatRangeSelected(
-          parseISO(range[0]),
-          parseISO(range[range.length - 1]),
-        ),
-      )
       setRangeStart(null)
       setHoveredDate(null)
+
+      // Picking the start day again cancels the pending range.
+      if (date === rangeStart) {
+        return
+      }
+
+      const range = toRange(rangeStart, date)
+      onChange(addRange(ranges, range))
+      setAnnouncement(
+        labels.formatRangeSelected(parseISO(range.from), parseISO(range.to)),
+      )
       return
     }
 
-    if (selection.has(date)) {
-      const range = getConnectedRange(date, selectedDates)
-      updateSelection(
-        selectedDates.filter((selectedDate) => !range.has(selectedDate)),
-      )
+    const rangeToRemove = findRangeToRemove(ranges, date)
+    if (rangeToRemove) {
+      onChange(ranges.filter((range) => range !== rangeToRemove))
       setAnnouncement(labels.rangeRemoved)
       return
     }
@@ -147,14 +158,14 @@ export const AnnualMultiRangeCalendar = ({
   const connectDayStyle = (
     baseStyle: string,
     date: string,
-    dates: Set<string>,
+    isJoined: (first: string, second: string) => boolean,
   ) => {
     const {
       connectsLeft,
       connectsRight,
       continuesFromPreviousMonth,
       continuesIntoNextMonth,
-    } = getDateConnections(date, dates)
+    } = getDateConnections(date, isJoined)
 
     return [
       baseStyle,
@@ -169,23 +180,19 @@ export const AnnualMultiRangeCalendar = ({
 
   const dayStyle = (date: string) => {
     if (date === rangeStart) {
-      return connectDayStyle(styles.selectedDay, date, preview)
+      return connectDayStyle(styles.selectedDay, date, isJoinedInPreview)
     }
 
-    if (selection.has(date)) {
-      const isEdge =
-        !selection.has(shiftDate(date, -1)) ||
-        !selection.has(shiftDate(date, 1))
-
+    if (isCovered(date)) {
       return connectDayStyle(
-        isEdge ? styles.selectedDay : styles.inRangeDay,
+        isRangeEdge(date) ? styles.selectedDay : styles.inRangeDay,
         date,
-        selection,
+        isJoinedInSelection,
       )
     }
 
-    return preview.has(date)
-      ? connectDayStyle(styles.previewDay, date, preview)
+    return preview && isDateInRange(preview, date)
+      ? connectDayStyle(styles.previewDay, date, isJoinedInPreview)
       : styles.calendarDay
   }
 
@@ -279,7 +286,7 @@ export const AnnualMultiRangeCalendar = ({
                       type="button"
                       aria-label={labels.formatDayAriaLabel(date)}
                       aria-pressed={
-                        selection.has(dateValue) || rangeStart === dateValue
+                        isCovered(dateValue) || rangeStart === dateValue
                       }
                       className={dayStyle(dateValue)}
                       onClick={() => selectDate(dateValue)}

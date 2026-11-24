@@ -4,12 +4,16 @@ export const getDataProviders = () => import('./dataProviders')
 export const getFields = () => import('./fields')
 
 export type {
-  HomeLodgingRegistration,
+  HomeLodging,
+  HomeLodgingYear,
   OvernightStayDateRange,
   OvernightStayMonth,
   OvernightStaySubmission,
   OvernightStaySubmissionResponse,
 } from './lib/types'
-export { buildSubmissionPayload } from './utils/homeLodgings'
+export {
+  buildSubmissionPayload,
+  getHomeLodgingYear,
+} from './utils/homeLodgings'
 
 export default template

@@ -5,7 +5,7 @@ import { buildRadioField } from '@island.is/application/core'
 
 import { useFormContext } from 'react-hook-form'
 import { applicationMessages as m } from '../lib/messages'
-import { getHomeLodgings } from '../utils/homeLodgings'
+import { getHomeLodgings, getHomeLodgingsForYear } from '../utils/homeLodgings'
 
 export const HomeLodgingPicker: FC<FieldBaseProps> = ({
   application,
@@ -17,9 +17,7 @@ export const HomeLodgingPicker: FC<FieldBaseProps> = ({
 
   const lodgings = useMemo(
     () =>
-      getHomeLodgings(application.externalData).filter(
-        (registration) => registration.year === year,
-      ),
+      getHomeLodgingsForYear(getHomeLodgings(application.externalData), year),
     [application.externalData, year],
   )
 
@@ -27,7 +25,7 @@ export const HomeLodgingPicker: FC<FieldBaseProps> = ({
   useEffect(() => {
     if (
       selectedId &&
-      !lodgings.some((registration) => registration.id === selectedId)
+      !lodgings.some(({ lodging }) => lodging.id === selectedId)
     ) {
       setValue('homeLodgingId', '', { shouldDirty: true })
     }
@@ -44,12 +42,12 @@ export const HomeLodgingPicker: FC<FieldBaseProps> = ({
       required: true,
       largeButtons: true,
       width: 'half',
-      options: lodgings.map((registration) => ({
-        value: registration.id,
-        label: registration.name,
-        subLabel: registration.id,
-        disabled: registration.hasBeenSubmitted,
-        ...(registration.hasBeenSubmitted && {
+      options: lodgings.map(({ lodging, returned }) => ({
+        value: lodging.id,
+        label: lodging.address,
+        subLabel: lodging.id,
+        disabled: returned,
+        ...(returned && {
           tooltip: m.homeLodgingAlreadySubmitted,
         }),
       })),

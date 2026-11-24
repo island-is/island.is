@@ -11,24 +11,21 @@ import {
   monthMessages,
   weekdayMessages,
 } from '../lib/messages'
-import { getOvernightDates } from '../utils/homeLodgings'
+import { getNumberOfNights, getVisits } from '../utils/homeLodgings'
 
 export const OvernightStayCalendar: FC<FieldBaseProps> = ({
   error,
   setBeforeSubmitCallback,
 }) => {
   const { formatMessage } = useLocale()
-  const { setValue, watch } = useFormContext()
+  const { setError, setValue, watch } = useFormContext()
   const year = Number(watch('year')) || new Date().getFullYear()
-  const overnightDates = watch('overnightDates')
-  const selectedDates = useMemo(
-    () => (Array.isArray(overnightDates) ? overnightDates : []),
-    [overnightDates],
+  const watchedVisits = watch('visits')
+  const visits = useMemo(
+    () => getVisits({ visits: watchedVisits }),
+    [watchedVisits],
   )
-  const numberOfNights = useMemo(
-    () => getOvernightDates(selectedDates).length,
-    [selectedDates],
-  )
+  const numberOfNights = useMemo(() => getNumberOfNights(visits), [visits])
 
   useEffect(() => {
     if (!setBeforeSubmitCallback) {
@@ -37,14 +34,18 @@ export const OvernightStayCalendar: FC<FieldBaseProps> = ({
 
     setBeforeSubmitCallback(async () => {
       if (numberOfNights === 0) {
-        return [false, formatMessage(m.calendarRequired)]
+        const message = formatMessage(m.calendarRequired)
+        // The form shell stores the returned message under the screen id,
+        // which this field never reads, so the error is set on the field too.
+        setError('visits', { type: 'manual', message })
+        return [false, message]
       }
 
       return [true, null]
     })
 
     return () => setBeforeSubmitCallback(null)
-  }, [formatMessage, numberOfNights, setBeforeSubmitCallback])
+  }, [formatMessage, numberOfNights, setBeforeSubmitCallback, setError])
 
   const labels = useMemo<AnnualMultiRangeCalendarLabels>(
     () => ({
@@ -89,9 +90,9 @@ export const OvernightStayCalendar: FC<FieldBaseProps> = ({
     <AnnualMultiRangeCalendar
       id="overnight-stay-calendar"
       year={year}
-      selectedDates={selectedDates}
-      onChange={(dates) =>
-        setValue('overnightDates', dates, {
+      ranges={visits}
+      onChange={(ranges) =>
+        setValue('visits', ranges, {
           shouldDirty: true,
           shouldValidate: true,
         })

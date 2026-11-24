@@ -4,35 +4,66 @@ import {
   FormValue,
 } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
-import { getDateRanges } from '@island.is/application/ui-components/annual-multi-range-calendar/utils'
 import {
-  HomeLodgingRegistration,
+  HomeLodging,
+  HomeLodgingYear,
   OvernightStayDateRange,
   OvernightStaySubmission,
 } from '../lib/types'
 
-/** Returns the home-lodging registrations supplied by the external data provider. */
-export const getHomeLodgings = (
-  externalData: ExternalData,
-): HomeLodgingRegistration[] =>
-  getValueViaPath<HomeLodgingRegistration[]>(
-    externalData,
-    'homeLodgings.data',
-  ) ?? []
+/** Returns the home lodgings supplied by the external data provider. */
+export const getHomeLodgings = (externalData: ExternalData): HomeLodging[] =>
+  getValueViaPath<HomeLodging[]>(externalData, 'homeLodgings.data') ?? []
 
-/** Finds the registration matching the selected lodging and year. */
+/** Returns the lodging's entry for the given year, if it must report for it. */
+export const getHomeLodgingYear = (
+  lodging: HomeLodging,
+  year: number,
+): HomeLodgingYear | undefined =>
+  lodging.years.find((item) => item.year === year)
+
+/**
+ * Returns every year at least one lodging must report for, newest first. A
+ * year is fully returned when every lodging listing it has been returned.
+ */
+export const getReportingYears = (
+  lodgings: HomeLodging[],
+): Array<{ year: number; allReturned: boolean }> => {
+  const years = new Map<number, boolean>()
+
+  for (const lodging of lodgings) {
+    for (const { year, returned } of lodging.years) {
+      years.set(year, (years.get(year) ?? true) && returned)
+    }
+  }
+
+  return [...years.entries()]
+    .sort(([a], [b]) => b - a)
+    .map(([year, allReturned]) => ({ year, allReturned }))
+}
+
+/** Returns the lodgings that must report for the given year. */
+export const getHomeLodgingsForYear = (
+  lodgings: HomeLodging[],
+  year: number,
+): Array<{ lodging: HomeLodging; returned: boolean }> =>
+  lodgings.flatMap((lodging) => {
+    const entry = getHomeLodgingYear(lodging, year)
+    return entry ? [{ lodging, returned: entry.returned }] : []
+  })
+
+/** Finds the selected lodging if it must report for the selected year. */
 export const getSelectedHomeLodging = (
   answers: FormValue,
   externalData: ExternalData,
-): HomeLodgingRegistration | undefined => {
+): HomeLodging | undefined => {
   const selectedId = getValueViaPath<string>(answers, 'homeLodgingId')
   const year = Number(getValueViaPath<string>(answers, 'year'))
-  const registrations = getHomeLodgings(externalData)
-
-  return registrations.find(
-    (registration) =>
-      registration.id === selectedId && registration.year === year,
+  const lodging = getHomeLodgings(externalData).find(
+    (item) => item.id === selectedId,
   )
+
+  return lodging && getHomeLodgingYear(lodging, year) ? lodging : undefined
 }
 
 /** Returns whether the applicant selected that there were no overnight stays. */
@@ -88,16 +119,32 @@ export const parseAmount = (value: string | number | undefined): number => {
   return Number(value.replace(/[^\d-]/g, '')) || 0
 }
 
-/**
- * Returns the dates that count as overnight stays, excluding the checkout
- * date at the end of each selected range.
- */
-export const getOvernightDates = (dates: string[]): string[] => {
-  const sortedDates = [...new Set(dates)].sort()
+const isVisit = (value: unknown): value is OvernightStayDateRange => {
+  if (!value || typeof value !== 'object') {
+    return false
+  }
 
-  return getDateRanges(sortedDates).flatMap(({ from, to }) =>
-    sortedDates.filter((date) => date >= from && date < to),
-  )
+  const { from, to } = value as Record<string, unknown>
+  return typeof from === 'string' && typeof to === 'string' && from < to
+}
+
+/**
+ * Returns the visits selected in the calendar, oldest first. A visit runs from
+ * the check-in day to the checkout day, and the checkout day is not a night.
+ * Visits are stored separately, so two guests on consecutive days stay two
+ * visits.
+ */
+export const getVisits = (answers: FormValue): OvernightStayDateRange[] => {
+  const visits = getValueViaPath<unknown>(answers, 'visits')
+
+  return (Array.isArray(visits) ? visits : [])
+    .filter(isVisit)
+    .map(({ from, to }) => ({ from, to }))
+    .sort(
+      (first, second) =>
+        first.from.localeCompare(second.from) ||
+        first.to.localeCompare(second.to),
+    )
 }
 
 /** Creates the stable answer key used to associate an amount with a date range. */
@@ -109,7 +156,7 @@ export const getDateRangeKey = ({ from, to }: OvernightStayDateRange): string =>
  * zero-based month index. The checkout date is excluded, so a visit from
  * 30 July to 2 August yields two July nights and one August night.
  */
-const getVisitNightsByMonth = ({
+export const getVisitNightsByMonth = ({
   from,
   to,
 }: OvernightStayDateRange): Map<number, number> => {
@@ -124,6 +171,53 @@ const getVisitNightsByMonth = ({
   }
 
   return nightsByMonth
+}
+
+/** Sums the nights of every visit per zero-based month index. */
+export const getNightsByMonth = (
+  visits: OvernightStayDateRange[],
+): Map<number, number> => {
+  const nightsByMonth = new Map<number, number>()
+
+  visits.forEach((visit) =>
+    getVisitNightsByMonth(visit).forEach((nights, monthIndex) =>
+      nightsByMonth.set(
+        monthIndex,
+        (nightsByMonth.get(monthIndex) ?? 0) + nights,
+      ),
+    ),
+  )
+
+  return nightsByMonth
+}
+
+export const getNumberOfNights = (visits: OvernightStayDateRange[]): number =>
+  [...getNightsByMonth(visits).values()].reduce(
+    (total, nights) => total + nights,
+    0,
+  )
+
+const pad = (value: number) => String(value).padStart(2, '0')
+
+/**
+ * Returns the part of a visit that falls in a month. `to` keeps its meaning as
+ * the checkout day: a visit continuing into the next month ends on the first
+ * day of that month, so every range's nights are `to - from`.
+ */
+export const getVisitPartInMonth = (
+  visit: OvernightStayDateRange,
+  monthIndex: number,
+): OvernightStayDateRange | undefined => {
+  const year = Number(visit.from.slice(0, 4))
+  const monthStart = `${year}-${pad(monthIndex + 1)}-01`
+  const nextMonthStart =
+    monthIndex === 11
+      ? `${year + 1}-01-01`
+      : `${year}-${pad(monthIndex + 2)}-01`
+  const from = visit.from > monthStart ? visit.from : monthStart
+  const to = visit.to < nextMonthStart ? visit.to : nextMonthStart
+
+  return from < to ? { from, to } : undefined
 }
 
 /**
@@ -261,9 +355,7 @@ export const buildSubmissionPayload = (
   // rental income, even when dates and prices from an earlier edit are still
   // stored: the calendar and pricing screens are only hidden by `condition`,
   // which leaves their answers behind.
-  const dates = hasNoOvernightStays(answers)
-    ? []
-    : [...(getValueViaPath<string[]>(answers, 'overnightDates') ?? [])].sort()
+  const visits = hasNoOvernightStays(answers) ? [] : getVisits(answers)
   const pricingMethod =
     getValueViaPath<'monthly' | 'perVisit'>(answers, 'pricing.method') ??
     'monthly'
@@ -277,58 +369,46 @@ export const buildSubmissionPayload = (
       answers,
       'pricing.perVisitAmounts',
     ) ?? {}
-  const visitRanges = getDateRanges(dates)
-  const overnightDates = getOvernightDates(dates)
+  const nightsByMonth = getNightsByMonth(visits)
 
   const nights = Array.from({ length: 12 }).flatMap((_, monthIndex) => {
-    const monthDates = dates.filter(
-      (date) => Number(date.slice(5, 7)) === monthIndex + 1,
-    )
-    const overnightMonthDates = overnightDates.filter(
-      (date) => Number(date.slice(5, 7)) === monthIndex + 1,
-    )
+    const numberOfNights = nightsByMonth.get(monthIndex) ?? 0
 
-    if (overnightMonthDates.length === 0) {
+    if (numberOfNights === 0) {
       return []
     }
 
-    const monthlyDateRanges = getDateRanges(monthDates)
-    const rentalIncome = getMonthlyRentalIncome({
-      monthIndex,
-      pricingMethod,
-      monthlyAmounts,
-      perVisitAmounts,
-      visitRanges,
+    const dateRanges = visits.flatMap((visit) => {
+      const part = getVisitPartInMonth(visit, monthIndex)
+
+      if (!part) {
+        return []
+      }
+
+      if (pricingMethod === 'monthly') {
+        return [part]
+      }
+
+      const amount = splitVisitAmountByMonth(
+        visit,
+        parseAmount(perVisitAmounts[getDateRangeKey(visit)]),
+      ).get(monthIndex)
+
+      return [amount === undefined ? part : { ...part, amount }]
     })
-
-    const dateRanges =
-      pricingMethod === 'monthly'
-        ? monthlyDateRanges
-        : monthlyDateRanges.map((monthlyRange) => {
-            const visitRange = visitRanges.find(
-              (range) =>
-                monthlyRange.from >= range.from &&
-                monthlyRange.from <= range.to,
-            )
-
-            if (!visitRange) {
-              return monthlyRange
-            }
-
-            const amount = splitVisitAmountByMonth(
-              visitRange,
-              parseAmount(perVisitAmounts[getDateRangeKey(visitRange)]),
-            ).get(monthIndex)
-
-            return amount ? { ...monthlyRange, amount } : monthlyRange
-          })
 
     return [
       {
         month: monthIndex + 1,
         dateRanges,
-        numberOfNights: overnightMonthDates.length,
-        rentalIncome,
+        numberOfNights,
+        rentalIncome: getMonthlyRentalIncome({
+          monthIndex,
+          pricingMethod,
+          monthlyAmounts,
+          perVisitAmounts,
+          visitRanges: visits,
+        }),
       },
     ]
   })

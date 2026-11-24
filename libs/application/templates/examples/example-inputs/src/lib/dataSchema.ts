@@ -28,7 +28,9 @@ const checkboxEnum = z.enum(['checkbox1', 'checkbox2', 'checkbox3'])
 export const dataSchema = z.object({
   // Prerequisites
   approveExternalData: z.boolean().refine((v) => v),
-  annualMultiRangeCalendar: z.array(z.string()).optional(),
+  annualMultiRangeCalendar: z
+    .array(z.object({ from: z.string(), to: z.string() }))
+    .optional(),
 
   // Simple inputs - text
   textInput: z.string().optional(),

@@ -13,7 +13,6 @@ import {
 } from '@island.is/island-ui/core'
 import { coreMessages, getErrorViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { getDateRanges } from '@island.is/application/ui-components/annual-multi-range-calendar/utils'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -23,7 +22,9 @@ import {
   getDateRangeKey,
   getMonthlyAmountsFromVisits,
   getNegativePerVisitAmountKeys,
-  getOvernightDates,
+  getNightsByMonth,
+  getVisitNightsByMonth,
+  getVisits,
   hasNoOvernightStays,
   parseAmount,
 } from '../utils/homeLodgings'
@@ -39,8 +40,8 @@ export const Pricing: FC<FieldBaseProps> = () => {
   const [pendingPricingMethod, setPendingPricingMethod] =
     useState<PricingMethod>('monthly')
   const [pricingModalVisible, setPricingModalVisible] = useState(false)
-  const selectedDates = (watch('overnightDates') ?? []) as string[]
-  const overnightDates = getOvernightDates(selectedDates)
+  const selectedVisits = getVisits({ visits: watch('visits') })
+  const nightsByMonth = getNightsByMonth(selectedVisits)
   const pricingMethod =
     (watch('pricing.method') as PricingMethod | undefined) ?? 'monthly'
   const noOvernightStays = hasNoOvernightStays({
@@ -49,9 +50,7 @@ export const Pricing: FC<FieldBaseProps> = () => {
   const year = Number(watch('year')) || new Date().getFullYear()
 
   const selectedMonths = monthMessages.flatMap((monthMessage, monthIndex) => {
-    const numberOfNights = overnightDates.filter(
-      (date) => Number(date.slice(5, 7)) === monthIndex + 1,
-    ).length
+    const numberOfNights = nightsByMonth.get(monthIndex) ?? 0
 
     return numberOfNights > 0
       ? [
@@ -63,13 +62,15 @@ export const Pricing: FC<FieldBaseProps> = () => {
         ]
       : []
   })
-  const selectedVisits = getDateRanges(selectedDates)
   const monthBoundaryPairs = Array.from(
     new Map(
       selectedVisits
-        .flatMap(({ from, to }) => {
-          const fromMonth = Number(from.slice(5, 7)) - 1
-          const toMonth = Number(to.slice(5, 7)) - 1
+        .flatMap((visit) => {
+          // Months are taken from the nights, so a checkout on the 1st does
+          // not count as crossing into that month.
+          const nightMonths = [...getVisitNightsByMonth(visit).keys()]
+          const fromMonth = Math.min(...nightMonths)
+          const toMonth = Math.max(...nightMonths)
 
           return Array.from(
             { length: Math.max(0, toMonth - fromMonth) },

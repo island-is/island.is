@@ -22,6 +22,7 @@ export {
   AnnualMultiRangeCalendar,
   type AnnualMultiRangeCalendarLabels,
   type AnnualMultiRangeCalendarProps,
-  getDateRanges,
+  addRange,
+  sortRanges,
   type CalendarDateRange,
 } from './components/AnnualMultiRangeCalendar'

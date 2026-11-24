@@ -113,7 +113,13 @@ export const dataSchema = z.object({
     return value
   }, z.array(z.string()).default([])),
   noOvernightStays: z.array(z.string()).default([]),
-  overnightDates: z.array(z.string()).default([]),
+  visits: z
+    .array(
+      z
+        .object({ from: z.string(), to: z.string() })
+        .refine(({ from, to }) => from < to),
+    )
+    .default([]),
   pricing: pricingSchema,
   comments: z.string().optional(),
 })

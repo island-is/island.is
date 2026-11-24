@@ -1,102 +1,76 @@
 import { randomUUID } from 'crypto'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/types'
 import {
   buildSubmissionPayload,
-  HomeLodgingRegistration,
+  getHomeLodgingYear,
+  HomeLodging,
   OvernightStaySubmissionResponse,
 } from '@island.is/application/templates/district-commissioners/overnight-stays-registration'
+import {
+  DistrictCommissionersHomeLodgingsService,
+  HomeLodgingDto,
+} from '@island.is/clients/district-commissioners-home-lodgings'
+import { User } from '@island.is/auth-nest-tools'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../../types'
 
-const laugavegur = {
-  name: 'Laugavegur 112',
-  address: 'Laugavegur 112',
-  postalCode: '101',
-  city: 'Reykjavík',
-  propertyNumber: '2296564',
-  unitNumber: '0102',
-  guestCount: 2,
-  roomCount: 1,
-}
-
-const midfellsvegur = {
-  name: 'Miðfellsvegur 7',
-  address: 'Miðfellsvegur 7',
-  postalCode: '801',
-  city: 'Bláskógabyggð',
-  propertyNumber: '2184470',
-  unitNumber: '0101',
-  guestCount: 6,
-  roomCount: 3,
-}
-
-const mockHomeLodgings: HomeLodgingRegistration[] = [
-  { id: 'HG-00004821', year: 2026, hasBeenSubmitted: false, ...laugavegur },
-  {
-    id: 'HG-00004822',
-    year: 2026,
-    hasBeenSubmitted: false,
-    ...midfellsvegur,
-  },
-  { id: 'HG-00004821', year: 2025, hasBeenSubmitted: false, ...laugavegur },
-  {
-    id: 'HG-00004822',
-    year: 2025,
-    hasBeenSubmitted: false,
-    ...midfellsvegur,
-  },
-  { id: 'HG-00004821', year: 2024, hasBeenSubmitted: false, ...laugavegur },
-  {
-    id: 'HG-00004822',
-    year: 2024,
-    hasBeenSubmitted: true,
-    ...midfellsvegur,
-  },
-  { id: 'HG-00004821', year: 2023, hasBeenSubmitted: true, ...laugavegur },
-  {
-    id: 'HG-00004822',
-    year: 2023,
-    hasBeenSubmitted: true,
-    ...midfellsvegur,
-  },
-]
+const toHomeLodging = (homeLodging: HomeLodgingDto): HomeLodging => ({
+  ...homeLodging,
+  years: [...homeLodging.years].sort((a, b) => b.year - a.year),
+})
 
 @Injectable()
 export class OvernightStaysRegistrationService extends BaseTemplateApiService {
-  constructor() {
+  constructor(
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    private readonly homeLodgingsService: DistrictCommissionersHomeLodgingsService,
+  ) {
     super(ApplicationTypes.OVERNIGHT_STAYS_REGISTRATION)
   }
 
-  async getHomeLodgings({
-    application,
-  }: TemplateApiModuleActionProps): Promise<HomeLodgingRegistration[]> {
-    if (!application.applicant) {
+  private async fetchHomeLodgings(auth: User): Promise<HomeLodging[]> {
+    try {
+      const homeLodgings = await this.homeLodgingsService.getHomeLodgings(auth)
+      return homeLodgings.map(toHomeLodging)
+    } catch (error) {
+      this.logger.error('Failed to fetch home lodgings from Sýslumenn', {
+        error,
+      })
       throw new TemplateApiError(
         {
           title: 'Ekki tókst að sækja heimagistingar',
-          summary: 'Kennitala umsækjanda vantar.',
+          summary:
+            'Villa kom upp við að sækja heimagistingar frá Sýslumönnum. Vinsamlegast reyndu aftur síðar.',
         },
-        400,
+        500,
       )
     }
-
-    return mockHomeLodgings
   }
 
+  async getHomeLodgings({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<HomeLodging[]> {
+    return this.fetchHomeLodgings(auth)
+  }
+
+  // Sýslumenn have not published the "Skila inn yfirliti" endpoint yet, so the
+  // submission itself is still mocked after validating against live data.
   async submitApplication({
     application,
+    auth,
   }: TemplateApiModuleActionProps): Promise<OvernightStaySubmissionResponse> {
     const submission = buildSubmissionPayload(application)
-    const registration = mockHomeLodgings.find(
-      (item) =>
-        item.id === submission.homeLodgingId &&
-        item.year === submission.year &&
-        !item.hasBeenSubmitted,
+    const homeLodging = (await this.fetchHomeLodgings(auth)).find(
+      (item) => item.id === submission.homeLodgingId,
     )
+    const reportingYear =
+      homeLodging && getHomeLodgingYear(homeLodging, submission.year)
 
-    if (!registration) {
+    if (!reportingYear || reportingYear.returned) {
       throw new TemplateApiError(
         {
           title: 'Ekki tókst að skila yfirliti',

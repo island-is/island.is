@@ -4,33 +4,40 @@ import {
   buildSubmissionPayload,
   getAdvertisementUrls,
   getDateRangeKey,
+  getHomeLodgingsForYear,
   getMonthlyAmountsFromVisits,
   getNegativePerVisitAmountKeys,
-  getOvernightDates,
+  getNumberOfNights,
+  getReportingYears,
   getSelectedHomeLodging,
+  getVisits,
   hasActiveAdvertisement,
   parseAmount,
   splitVisitAmountByMonth,
 } from './homeLodgings'
+import { HomeLodging } from '../lib/types'
+
+const lodging = (id: string, years: HomeLodging['years']): HomeLodging => ({
+  id,
+  years,
+  address: 'Example address',
+  postalCode: '101 Reykjavík',
+  apartmentNumber: '01',
+  guests: 2,
+  rooms: 1,
+})
 
 describe('homeLodgings', () => {
-  it('only selects a lodging matching both the id and year', () => {
-    const registration = {
-      id: 'HG-00004822',
-      year: 2026,
-      hasBeenSubmitted: false,
-      name: 'Example lodging',
-      address: 'Example address',
-      postalCode: '101',
-      city: 'Reykjavík',
-      propertyNumber: '0101',
-      unitNumber: '01',
-      guestCount: 2,
-      roomCount: 1,
-    }
+  it('only selects a lodging that must report for the selected year', () => {
+    const registration = lodging('HG00004822', [
+      { year: 2026, returned: false },
+      { year: 2024, returned: true },
+    ])
     const externalData = {
       homeLodgings: {
         data: [registration],
+        date: new Date(),
+        status: 'success' as const,
       },
     }
 
@@ -48,10 +55,48 @@ describe('homeLodgings', () => {
     ).toBeUndefined()
     expect(
       getSelectedHomeLodging(
-        { homeLodgingId: 'HG-00000000', year: '2026' },
+        { homeLodgingId: 'HG00000000', year: '2026' },
         externalData,
       ),
     ).toBeUndefined()
+  })
+
+  it('derives the reporting years from every lodging, newest first', () => {
+    const lodgings = [
+      lodging('HG1', [
+        { year: 2024, returned: false },
+        { year: 2023, returned: true },
+      ]),
+      lodging('HG2', [
+        { year: 2025, returned: false },
+        { year: 2024, returned: true },
+        { year: 2023, returned: true },
+      ]),
+    ]
+
+    expect(getReportingYears(lodgings)).toEqual([
+      { year: 2025, allReturned: false },
+      { year: 2024, allReturned: false },
+      { year: 2023, allReturned: true },
+    ])
+    expect(getReportingYears([])).toEqual([])
+  })
+
+  it('lists the lodgings that must report for a year with their status', () => {
+    const first = lodging('HG1', [{ year: 2024, returned: false }])
+    const second = lodging('HG2', [
+      { year: 2025, returned: false },
+      { year: 2024, returned: true },
+    ])
+
+    expect(getHomeLodgingsForYear([first, second], 2024)).toEqual([
+      { lodging: first, returned: false },
+      { lodging: second, returned: true },
+    ])
+    expect(getHomeLodgingsForYear([first, second], 2025)).toEqual([
+      { lodging: second, returned: false },
+    ])
+    expect(getHomeLodgingsForYear([first, second], 2026)).toEqual([])
   })
 
   it('parses whole-króna answers in every stored and formatted shape', () => {
@@ -224,16 +269,80 @@ describe('homeLodgings', () => {
     ).toBe(true)
   })
 
-  it('does not count the last day of each visit as an overnight stay', () => {
+  it('does not count the checkout day of each visit as a night', () => {
     expect(
-      getOvernightDates([
-        '2026-08-01',
-        '2026-08-02',
-        '2026-08-10',
-        '2026-08-11',
-        '2026-08-12',
+      getNumberOfNights([
+        { from: '2026-08-01', to: '2026-08-02' },
+        { from: '2026-08-10', to: '2026-08-12' },
       ]),
-    ).toEqual(['2026-08-01', '2026-08-10', '2026-08-11'])
+    ).toBe(3)
+  })
+
+  it('keeps the empty night between two visits on consecutive days', () => {
+    // Guest A checks out on the 3rd and guest B arrives on the 4th, so the
+    // night of the 3rd was not used.
+    expect(
+      getNumberOfNights([
+        { from: '2026-07-01', to: '2026-07-03' },
+        { from: '2026-07-04', to: '2026-07-06' },
+      ]),
+    ).toBe(4)
+    // A checkout and a check-in on the same day leave no empty night.
+    expect(
+      getNumberOfNights([
+        { from: '2026-07-01', to: '2026-07-03' },
+        { from: '2026-07-03', to: '2026-07-06' },
+      ]),
+    ).toBe(5)
+  })
+
+  it('reads only well-formed visits, oldest first', () => {
+    expect(
+      getVisits({
+        visits: [
+          { from: '2026-07-10', to: '2026-07-12' },
+          { from: '2026-07-05', to: '2026-07-05' },
+          { from: '2026-07-01', to: '2026-07-03' },
+          '2026-07-20',
+        ],
+      }),
+    ).toEqual([
+      { from: '2026-07-01', to: '2026-07-03' },
+      { from: '2026-07-10', to: '2026-07-12' },
+    ])
+    expect(getVisits({ visits: 'nope' })).toEqual([])
+  })
+
+  it('sends visits on consecutive days as separate date ranges', () => {
+    const firstVisit = { from: '2026-07-01', to: '2026-07-03' }
+    const secondVisit = { from: '2026-07-04', to: '2026-07-06' }
+    const application = createApplication({
+      answers: {
+        year: '2026',
+        homeLodgingId: 'HG-00004822',
+        visits: [firstVisit, secondVisit],
+        pricing: {
+          method: 'perVisit',
+          monthlyAmounts: {},
+          perVisitAmounts: {
+            [getDateRangeKey(firstVisit)]: '20000',
+            [getDateRangeKey(secondVisit)]: '0',
+          },
+        },
+      },
+    })
+
+    expect(buildSubmissionPayload(application).nights).toEqual([
+      {
+        month: 7,
+        dateRanges: [
+          { ...firstVisit, amount: 20000 },
+          { ...secondVisit, amount: 0 },
+        ],
+        numberOfNights: 4,
+        rentalIncome: 20000,
+      },
+    ])
   })
 
   it('maps per-visit amounts to separate ranges in the same month', () => {
@@ -243,12 +352,7 @@ describe('homeLodgings', () => {
       answers: {
         year: '2026',
         homeLodgingId: 'HG-00004822',
-        overnightDates: [
-          '2026-08-01',
-          '2026-08-02',
-          '2026-08-10',
-          '2026-08-11',
-        ],
+        visits: [firstVisit, secondVisit],
         pricing: {
           method: 'perVisit',
           monthlyAmounts: {},
@@ -281,7 +385,7 @@ describe('homeLodgings', () => {
         year: '2026',
         homeLodgingId: 'HG-00004822',
         noOvernightStays: ['true'],
-        overnightDates: ['2026-08-01', '2026-08-02'],
+        visits: [{ from: '2026-08-01', to: '2026-08-02' }],
         pricing: {
           method: 'monthly',
           monthlyAmounts: { month7: '175000' },
@@ -299,12 +403,7 @@ describe('homeLodgings', () => {
       answers: {
         year: '2026',
         homeLodgingId: 'HG-00004822',
-        overnightDates: [
-          '2026-07-30',
-          '2026-07-31',
-          '2026-08-01',
-          '2026-08-02',
-        ],
+        visits: [visit],
         pricing: {
           method: 'perVisit',
           monthlyAmounts: {},
@@ -320,8 +419,10 @@ describe('homeLodgings', () => {
         month: 7,
         dateRanges: [
           {
+            // The July part ends where the August part starts, so `to` is
+            // the checkout day in both.
             from: '2026-07-30',
-            to: '2026-07-31',
+            to: '2026-08-01',
             amount: 116667,
           },
         ],

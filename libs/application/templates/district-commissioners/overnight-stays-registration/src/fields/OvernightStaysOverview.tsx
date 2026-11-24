@@ -3,14 +3,15 @@ import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { Label, ReviewGroup } from '@island.is/application/ui-components'
-import { getDateRanges } from '@island.is/application/ui-components/annual-multi-range-calendar/utils'
 import { useLocale } from '@island.is/localization'
 import { applicationMessages as m, monthMessages } from '../lib/messages'
 import {
   getAdvertisementUrls,
   getMonthlyRentalIncome,
-  getOvernightDates,
+  getNightsByMonth,
+  getNumberOfNights,
   getSelectedHomeLodging,
+  getVisits,
   hasNoOvernightStays,
 } from '../utils/homeLodgings'
 import * as styles from './styles.css'
@@ -29,8 +30,8 @@ export const OvernightStaysOverview: FC<FieldBaseProps> = ({
   const { answers, externalData } = application
   const registration = getSelectedHomeLodging(answers, externalData)
   const year = getValueViaPath<string>(answers, 'year') ?? ''
-  const dates = getValueViaPath<string[]>(answers, 'overnightDates') ?? []
-  const overnightDates = getOvernightDates(dates)
+  const visitRanges = getVisits(answers)
+  const nightsByMonth = getNightsByMonth(visitRanges)
   const monthlyAmounts =
     getValueViaPath<Record<string, string | number>>(
       answers,
@@ -44,15 +45,12 @@ export const OvernightStaysOverview: FC<FieldBaseProps> = ({
   const pricingMethod =
     getValueViaPath<'monthly' | 'perVisit'>(answers, 'pricing.method') ??
     'monthly'
-  const visitRanges = getDateRanges(dates)
   const comments = getValueViaPath<string>(answers, 'comments')
   const advertisementUrls = getAdvertisementUrls(answers)
   const noOvernightStays = hasNoOvernightStays(answers)
 
   const monthlySummary = monthMessages.flatMap((monthMessage, monthIndex) => {
-    const numberOfNights = overnightDates.filter(
-      (date) => Number(date.slice(5, 7)) === monthIndex + 1,
-    ).length
+    const numberOfNights = nightsByMonth.get(monthIndex) ?? 0
     if (numberOfNights === 0) {
       return []
     }
@@ -71,7 +69,7 @@ export const OvernightStaysOverview: FC<FieldBaseProps> = ({
       },
     ]
   })
-  const totalNights = overnightDates.length
+  const totalNights = getNumberOfNights(visitRanges)
   const totalAmount = monthlySummary.reduce(
     (total, month) => total + month.amount,
     0,
@@ -91,22 +89,16 @@ export const OvernightStaysOverview: FC<FieldBaseProps> = ({
         {registration && (
           <GridRow rowGap={3}>
             <GridColumn span={['12/12', '6/12']}>
-              <Label>{formatMessage(m.propertyNameLabel)}</Label>
-              <Text>{registration.name}</Text>
+              <Label>{formatMessage(m.address)}</Label>
+              <Text>{registration.address}</Text>
             </GridColumn>
             <GridColumn span={['12/12', '6/12']}>
               <Label>{formatMessage(m.registrationNumberLabel)}</Label>
               <Text>{registration.id}</Text>
             </GridColumn>
             <GridColumn span={['12/12', '6/12']}>
-              <Label>{formatMessage(m.address)}</Label>
-              <Text>{registration.address}</Text>
-            </GridColumn>
-            <GridColumn span={['12/12', '6/12']}>
               <Label>{formatMessage(m.postalCodeAndCityLabel)}</Label>
-              <Text>
-                {registration.postalCode} {registration.city}
-              </Text>
+              <Text>{registration.postalCode}</Text>
             </GridColumn>
             <GridColumn span="12/12">
               <Label>{formatMessage(m.advertisementTitle)}</Label>

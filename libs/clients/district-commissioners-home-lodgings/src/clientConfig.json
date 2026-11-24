@@ -1,0 +1,141 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Sýslumenn - Heimagistingar fyrir Ísland.is",
+    "description": "Heimagistingar innskráðs notanda. Upstream skilgreiningin í Syslumenn-Protected/swagger lýsir svarinu ranglega sem EstatePages, svo hér er skilgreiningin skrifuð út frá raunverulegu svari þjónustunnar.",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/IslandISHeimagistingar": {
+      "get": {
+        "tags": ["IslandISHeimagistingar"],
+        "operationId": "IslandISHeimagistingar_Get",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Heimagisting"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HeimagistingVilluSvar"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "security": [
+          {
+            "JWTToken": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Heimagisting": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "years": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/HeimagistingAr"
+            }
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "nullable": true,
+            "description": "Póstnúmer og staður, t.d. \"101 Reykjavík\""
+          },
+          "apartmentNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "guests": {
+            "type": "string",
+            "nullable": true
+          },
+          "rooms": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "HeimagistingAr": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "year": {
+            "type": "string",
+            "nullable": true
+          },
+          "returned": {
+            "type": "boolean",
+            "nullable": true
+          }
+        }
+      },
+      "HeimagistingVilluSvar": {
+        "type": "object",
+        "properties": {
+          "villur": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/HeimagistingVilla"
+              }
+            ]
+          }
+        }
+      },
+      "HeimagistingVilla": {
+        "type": "object",
+        "properties": {
+          "kodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "skilabod": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "JWTToken": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  }
+}

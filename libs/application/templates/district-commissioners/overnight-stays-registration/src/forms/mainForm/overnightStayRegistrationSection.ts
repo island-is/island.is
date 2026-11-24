@@ -47,9 +47,9 @@ export const overnightStayRegistrationSection = buildSection({
               ],
             }),
             buildCustomField({
-              id: 'overnightDates',
+              id: 'visits',
               component: 'OvernightStayCalendar',
-              childInputIds: ['overnightDates'],
+              childInputIds: ['visits'],
               condition: hasOvernightStays,
             }),
           ],

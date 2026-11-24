@@ -818,6 +818,9 @@
       "@island.is/clients/disability-license": [
         "libs/clients/disability-license/src/index.ts"
       ],
+      "@island.is/clients/district-commissioners-home-lodgings": [
+        "libs/clients/district-commissioners-home-lodgings/src/index.ts"
+      ],
       "@island.is/clients/district-commissioners-licenses": [
         "libs/clients/district-commissioners-licenses/src/index.ts"
       ],

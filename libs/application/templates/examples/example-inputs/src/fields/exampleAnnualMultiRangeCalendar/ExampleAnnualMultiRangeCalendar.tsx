@@ -1,6 +1,9 @@
 import { useMemo } from 'react'
 import { AnnualMultiRangeCalendar } from '@island.is/application/ui-components'
-import type { AnnualMultiRangeCalendarLabels } from '@island.is/application/ui-components'
+import type {
+  AnnualMultiRangeCalendarLabels,
+  CalendarDateRange,
+} from '@island.is/application/ui-components'
 import { FieldBaseProps } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
@@ -27,8 +30,10 @@ export const ExampleAnnualMultiRangeCalendar = ({ error }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
   const { setValue, watch } = useFormContext()
   const year = new Date().getFullYear()
-  const watchedDates = watch('annualMultiRangeCalendar')
-  const selectedDates = Array.isArray(watchedDates) ? watchedDates : []
+  const watchedRanges = watch('annualMultiRangeCalendar')
+  const ranges: CalendarDateRange[] = Array.isArray(watchedRanges)
+    ? watchedRanges
+    : []
 
   const labels = useMemo<AnnualMultiRangeCalendarLabels>(
     () => ({
@@ -63,9 +68,9 @@ export const ExampleAnnualMultiRangeCalendar = ({ error }: FieldBaseProps) => {
     <AnnualMultiRangeCalendar
       id="example-annual-multi-range-calendar"
       year={year}
-      selectedDates={selectedDates}
-      onChange={(dates) =>
-        setValue('annualMultiRangeCalendar', dates, {
+      ranges={ranges}
+      onChange={(nextRanges) =>
+        setValue('annualMultiRangeCalendar', nextRanges, {
           shouldDirty: true,
           shouldValidate: true,
         })

@@ -14,6 +14,7 @@ import { applicationMessages as m } from '../../lib/messages'
 import {
   getAdvertisementUrls,
   getHomeLodgings,
+  getReportingYears,
   hasActiveAdvertisement,
 } from '../../utils/homeLodgings'
 
@@ -43,7 +44,7 @@ export const homeLodgingSection = buildSection({
           clearOnChange: ['homeLodgingId'],
           setOnChange: [
             {
-              key: 'overnightDates',
+              key: 'visits',
               value: [],
             },
             {
@@ -55,29 +56,19 @@ export const homeLodgingSection = buildSection({
               },
             },
           ],
-          options: ({ externalData }: Application) => {
-            const registrations = getHomeLodgings(externalData)
-            const years = registrations.map((registration) => registration.year)
-
-            return [...new Set(years)]
-              .sort((a, b) => b - a)
-              .map((year) => {
-                const hasAllBeenSubmitted = registrations
-                  .filter((registration) => registration.year === year)
-                  .every((registration) => registration.hasBeenSubmitted)
-
-                return {
-                  value: String(year),
-                  label: hasAllBeenSubmitted
-                    ? {
-                        ...m.submittedYearLabel,
-                        values: { year },
-                      }
-                    : String(year),
-                  disabled: hasAllBeenSubmitted,
-                }
-              })
-          },
+          options: ({ externalData }: Application) =>
+            getReportingYears(getHomeLodgings(externalData)).map(
+              ({ year, allReturned }) => ({
+                value: String(year),
+                label: allReturned
+                  ? {
+                      ...m.submittedYearLabel,
+                      values: { year },
+                    }
+                  : String(year),
+                disabled: allReturned,
+              }),
+            ),
         }),
         buildCustomField({
           id: 'homeLodgingPicker',
@@ -89,6 +80,13 @@ export const homeLodgingSection = buildSection({
         // children, so the values written by the custom field above need a
         // field of their own to be persisted.
         buildHiddenInput({ id: 'homeLodgingId' }),
+        // Saves the visits cleared by the year select's `setOnChange`, so the
+        // previous year's visits do not come back after a reload.
+        buildCustomField({
+          id: 'visits',
+          component: 'PersistAnswer',
+          doesNotRequireAnswer: true,
+        }),
         buildDescriptionField({
           id: 'advertisementInfo',
           title: m.advertisementTitle,
