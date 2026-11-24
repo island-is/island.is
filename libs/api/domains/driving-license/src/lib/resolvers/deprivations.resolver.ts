@@ -15,13 +15,13 @@ import { CodeOwners } from '@island.is/shared/constants'
 
 import { DrivingLicenseDeprivation } from '../models/penalty/drivingLicenseDeprivation.model'
 import { DrivingLicenseDeprivations } from '../models/penalty/drivingLicenseDeprivations.model'
-import { DeprivationService } from '../services/deprivation.service'
+import { DeprivationsService } from '../services/deprivations.service'
 
 @CodeOwner(CodeOwners.Hugsmidjan)
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => DrivingLicenseDeprivation)
-export class DeprivationResolver {
-  constructor(private readonly deprivationService: DeprivationService) {}
+export class DeprivationsResolver {
+  constructor(private readonly deprivationsService: DeprivationsService) {}
 
   @Scopes(ApiScope.internal)
   @Audit()
@@ -29,7 +29,7 @@ export class DeprivationResolver {
   drivingLicenseDeprivation(
     @CurrentUser() user: User,
   ): Promise<DrivingLicenseDeprivation | null> {
-    return this.deprivationService.getDeprivation(user)
+    return this.deprivationsService.getDeprivation(user)
   }
 
   @Scopes(ApiScope.internal)
@@ -38,6 +38,6 @@ export class DeprivationResolver {
   drivingLicenseDeprivations(
     @CurrentUser() user: User,
   ): Promise<DrivingLicenseDeprivations> {
-    return this.deprivationService.getDeprivations(user)
+    return this.deprivationsService.getDeprivations(user)
   }
 }

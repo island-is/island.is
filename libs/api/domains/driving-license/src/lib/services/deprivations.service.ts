@@ -45,7 +45,7 @@ const mapDeprivation = (
 }
 
 @Injectable()
-export class DeprivationService {
+export class DeprivationsService {
   constructor(
     private readonly drivingLicenseApi: DrivingLicenseApi,
     private readonly penaltyPointsClientService: PenaltyPointsClientService,

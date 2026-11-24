@@ -5,7 +5,7 @@ import {
 import { createCurrentUser } from '@island.is/testing/fixtures'
 
 import { DrivingLicenseDeprivationStatus } from '../models'
-import { DeprivationService } from './deprivation.service'
+import { DeprivationsService } from './deprivations.service'
 
 const user = createCurrentUser()
 
@@ -30,7 +30,7 @@ const createService = ({
   } as unknown as PenaltyPointsClientService
 
   return {
-    service: new DeprivationService(
+    service: new DeprivationsService(
       drivingLicenseApi,
       penaltyPointsClientService,
     ),
@@ -39,7 +39,7 @@ const createService = ({
   }
 }
 
-describe('DeprivationService', () => {
+describe('DeprivationsService', () => {
   describe('getDeprivation', () => {
     it('returns null when the response is empty', async () => {
       const { service } = createService({ current: null })
