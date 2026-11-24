@@ -15,6 +15,17 @@
         "jestConfig": "libs/clients/district-commissioners-home-lodgings/jest.config.ts"
       }
     },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10016/Syslumenn-Protected/swagger -H 'Accept: application/json' | jq 'def refs: [.. | objects | .[\"$ref\"]? // empty | ltrimstr(\"#/components/schemas/\")] | unique; .components.schemas as $s | .paths |= {\"/api/IslandISHeimagistingar\": .[\"/api/IslandISHeimagistingar\"]} | (.paths | refs | until(. as $n | ([$n[], ($n[] | $s[.] | refs[])] | unique) == $n; [.[], (.[] | $s[.] | refs[])] | unique)) as $keep | .components.schemas |= with_entries(select(.key | IN($keep[])))' | jq '(.components[][] | select(has(\"additionalProperties\")) | select(.additionalProperties|objects) | .additionalProperties) |= if has(\"nullable\") and .nullable == true then (.type = \"object\") else . end' > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/district-commissioners-home-lodgings"
+      }
+    },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {

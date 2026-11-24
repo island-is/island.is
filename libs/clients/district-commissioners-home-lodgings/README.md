@@ -12,26 +12,14 @@ authenticated user.
 
 ## OpenAPI document
 
-`src/clientConfig.json` is maintained by hand. The upstream document at
-`Syslumenn-Protected/swagger` describes the response of
-`IslandISHeimagistingar_Get` as `EstatePages`, but the service actually returns
-an array of home lodgings:
-
-```json
-[
-  {
-    "id": "HG00016707",
-    "years": [{ "year": "2024", "returned": false }],
-    "address": "Gervistaðir",
-    "postalCode": "101 Reykjavík",
-    "apartmentNumber": "010101",
-    "guests": "3",
-    "rooms": "1"
-  }
-]
-```
-
-Replace the document with the upstream one once it is fixed.
+`src/clientConfig.json` is generated from the upstream `Syslumenn-Protected/swagger`
+document and is not edited by hand. The `update-openapi-document` target filters
+it down to `/api/IslandISHeimagistingar` and the schemas it references, since the
+rest of that service is covered by `clients-district-commissioners-licenses` and
+`clients-syslumenn`. To refresh it, start the X-Road proxy
+(`./scripts/run-xroad-proxy.sh`) and run
+`yarn nx run clients-district-commissioners-home-lodgings:update-openapi-document`,
+then `codegen/backend-client`.
 
 ## Testing locally
 

@@ -1,4 +1,4 @@
-import { Heimagisting } from '../../gen/fetch'
+import { HeimagistingDetailKT } from '../../gen/fetch'
 
 export interface HomeLodgingYearDto {
   year: number
@@ -25,7 +25,7 @@ const toNumber = (value?: string | null): number | undefined => {
 }
 
 export const mapHomeLodgingDto = (
-  homeLodging: Heimagisting,
+  homeLodging: HeimagistingDetailKT,
 ): HomeLodgingDto | null => {
   if (!homeLodging.id) {
     return null
