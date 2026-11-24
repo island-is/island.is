@@ -633,6 +633,168 @@ describe.each(['archive', 'publish replacement'])(
   },
 )
 
+describe.each(['publishing development', 'deleting test applications'])(
+  'FormsService transactional file cleanup when %s',
+  (action) => {
+    const setup = () => {
+      const transaction = { id: 'transaction' }
+      const commit = jest.fn().mockResolvedValue(undefined)
+      const form = Object.assign(Object.create(Form.prototype) as Form, {
+        status: FormStatus.IN_DEVELOPMENT,
+        beenPublished: false,
+        isInaccessible: true,
+        save: jest.fn().mockResolvedValue(undefined),
+      })
+      const application = {
+        id: 'application',
+        values: [
+          {
+            id: 'value',
+            fieldType: FieldTypesEnum.FILE,
+            json: { s3Key: ['first-key', 'second-key'] },
+          },
+        ],
+        destroy: jest.fn().mockResolvedValue(undefined),
+      }
+      application.destroy.mockImplementation(async () => {
+        application.values = []
+      })
+      const applicationModel = {
+        findAll: jest.fn().mockResolvedValue([application]),
+      }
+      const applicationEventModel = {
+        destroy: jest.fn().mockResolvedValue(1),
+      }
+      const fileService = {
+        removeFileReference: jest.fn().mockResolvedValue(undefined),
+        deleteFileFromStorage: jest.fn().mockResolvedValue(undefined),
+      }
+      const service = Object.assign(Object.create(FormsService.prototype), {
+        applicationModel,
+        applicationEventModel,
+        fileService,
+        logger: { debug: jest.fn() },
+        sequelize: {
+          transaction: jest.fn(async (callback) => {
+            const result = await callback(transaction)
+            await commit()
+            return result
+          }),
+        },
+      }) as FormsService
+      const run = () =>
+        action === 'publishing development'
+          ? service['publishFormInDevelopment']('form', form)
+          : service['deleteApplications']('form')
+      return {
+        run,
+        transaction,
+        commit,
+        form,
+        application,
+        applicationModel,
+        applicationEventModel,
+        fileService,
+      }
+    }
+
+    it('clears references transactionally and deletes captured files only after commit', async () => {
+      const {
+        run,
+        transaction,
+        commit,
+        form,
+        application,
+        applicationModel,
+        applicationEventModel,
+        fileService,
+      } = setup()
+
+      await run()
+
+      expect(applicationModel.findAll).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            formId: 'form',
+            ...(action === 'deleting test applications' && { isTest: true }),
+          },
+          transaction,
+        }),
+      )
+      for (const [index, key] of ['first-key', 'second-key'].entries()) {
+        expect(fileService.removeFileReference).toHaveBeenNthCalledWith(
+          index + 1,
+          key,
+          'value',
+          transaction,
+        )
+        expect(
+          fileService.removeFileReference.mock.invocationCallOrder[index],
+        ).toBeLessThan(application.destroy.mock.invocationCallOrder[0])
+        expect(fileService.deleteFileFromStorage).toHaveBeenCalledWith(key)
+        expect(
+          fileService.deleteFileFromStorage.mock.invocationCallOrder[index],
+        ).toBeGreaterThan(commit.mock.invocationCallOrder[0])
+      }
+      expect(application.destroy).toHaveBeenCalledWith({ transaction })
+      expect(application.destroy.mock.invocationCallOrder[0]).toBeLessThan(
+        commit.mock.invocationCallOrder[0],
+      )
+      if (action === 'publishing development') {
+        expect(applicationEventModel.destroy).toHaveBeenCalledWith({
+          where: { applicationId: application.id },
+          transaction,
+        })
+        expect(
+          applicationEventModel.destroy.mock.invocationCallOrder[0],
+        ).toBeLessThan(application.destroy.mock.invocationCallOrder[0])
+        expect(form.save).toHaveBeenCalledWith({ transaction })
+        expect(form.status).toBe(FormStatus.PUBLISHED)
+        expect(form.beenPublished).toBe(true)
+        expect(form.isInaccessible).toBe(false)
+      }
+    })
+
+    it.each([
+      'references',
+      'application',
+      'commit',
+      ...(action === 'publishing development' ? ['save'] : []),
+    ])('leaves stored files intact when %s fails', async (failure) => {
+      const { run, form, application, fileService, commit } = setup()
+      const operation =
+        failure === 'references'
+          ? fileService.removeFileReference
+          : failure === 'application'
+          ? application.destroy
+          : failure === 'save'
+          ? form.save
+          : commit
+      operation.mockRejectedValueOnce(new Error('Transaction failed'))
+
+      await expect(run()).rejects.toThrow()
+
+      expect(fileService.deleteFileFromStorage).not.toHaveBeenCalled()
+    })
+
+    it('reports post-commit storage failure without undoing database cleanup', async () => {
+      const { run, application, fileService, commit } = setup()
+      fileService.deleteFileFromStorage.mockRejectedValueOnce(
+        new Error('Storage unavailable'),
+      )
+
+      await expect(run()).rejects.toThrow()
+
+      expect(application.destroy).toHaveBeenCalled()
+      expect(commit).toHaveBeenCalledTimes(1)
+      for (const order of fileService.deleteFileFromStorage.mock
+        .invocationCallOrder) {
+        expect(order).toBeGreaterThan(commit.mock.invocationCallOrder[0])
+      }
+    })
+  },
+)
+
 describe('FormsService file reference rollback', () => {
   it('rolls back persisted file references after a real save failure', async () => {
     const sequelize = new Sequelize({
@@ -654,9 +816,10 @@ describe('FormsService file reference rollback', () => {
       })
       await value.save()
       const save = jest.spyOn(valueModel.prototype, 'save')
+      const deleteObject = jest.fn().mockResolvedValue(true)
       const fileService = Object.assign(Object.create(FileService.prototype), {
         config: { bucket: 'bucket' },
-        s3Service: { deleteObject: jest.fn().mockResolvedValue(true) },
+        s3Service: { deleteObject },
         valueModel,
         logger: { info: jest.fn(), error: jest.fn(), warn: jest.fn() },
       }) as FileService
@@ -672,7 +835,11 @@ describe('FormsService file reference rollback', () => {
       await expect(
         sequelize.transaction(async (transaction) => {
           cleanupTransaction = transaction
-          await service['cleanupApplicationFiles'](application, transaction)
+          const keys = await service['collectApplicationFiles'](
+            application,
+            transaction,
+          )
+          expect(keys).toEqual(['file-key', 'second-key'])
           const updatedValue = await valueModel.findByPk(value.id, {
             transaction,
           })
@@ -691,6 +858,7 @@ describe('FormsService file reference rollback', () => {
       })
       const persistedValue = await valueModel.findByPk(value.id)
       expect(persistedValue?.json?.s3Key).toEqual(['file-key', 'second-key'])
+      expect(deleteObject).not.toHaveBeenCalled()
       save.mockRestore()
     } finally {
       await sequelize.close()

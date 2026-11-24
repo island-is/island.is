@@ -77,6 +77,7 @@ export const FormProvider: React.FC<{
   }
   const [control, controlDispatch] = useReducer(controlReducer, initialControl)
   const controlRef = useRef(control)
+  const fieldSaveQueue = useRef(new Map<string, Promise<void>>())
   controlRef.current = control
   const getField = useCallback(
     (fieldId: string) =>
@@ -135,6 +136,7 @@ export const FormProvider: React.FC<{
         updateSection,
         updateScreen,
         updateField,
+        fieldSaveQueue.current,
         updatedActiveItem,
       ),
     [control.activeItem, updateSection, updateScreen, updateField],

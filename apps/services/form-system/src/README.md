@@ -112,7 +112,10 @@ and drawing; line breaks are preserved. Tooltips are not included in PDFs.
 ## Publishing and archiving forms
 
 Publishing a form in development deletes its applications' events before deleting
-the applications, within the publishing transaction.
+the applications, within the publishing transaction. Attachment references are
+cleared in that transaction, and S3 objects are deleted only after commit.
+Deleting test applications follows the same post-commit storage cleanup order.
+A rollback or commit failure in either operation leaves stored attachments intact.
 
 Archiving a published form deletes its draft applications, including test drafts,
 their application events, and their uploaded files. This also applies when
@@ -146,6 +149,7 @@ objects intact. S3 deletion errors, including a false result from the storage
 service, are logged and propagated. When post-commit deletion fails, the database
 cleanup remains committed; failed objects require separate storage cleanup,
 not another archive attempt.
+File-reference cleanup accepts both key arrays and legacy single-key strings.
 
 ## Code owners and maintainers
 

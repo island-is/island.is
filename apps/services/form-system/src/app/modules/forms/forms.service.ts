@@ -861,6 +861,7 @@ export class FormsService {
     id: string,
     form: Form,
   ): Promise<FormResponseDto> {
+    const fileKeys: string[] = []
     await this.sequelize.transaction(async (transaction) => {
       try {
         const applications = await this.applicationModel.findAll({
@@ -877,7 +878,9 @@ export class FormsService {
         })
 
         for (const application of applications) {
-          await this.cleanupApplicationFiles(application, transaction)
+          fileKeys.push(
+            ...(await this.collectApplicationFiles(application, transaction)),
+          )
           await this.applicationEventModel.destroy({
             where: { applicationId: application.id },
             transaction,
@@ -895,6 +898,10 @@ export class FormsService {
         )
       }
     })
+
+    await Promise.all(
+      fileKeys.map((key) => this.fileService.deleteFileFromStorage(key)),
+    )
 
     return new FormResponseDto()
   }
@@ -1204,16 +1211,8 @@ export class FormsService {
     return files.map(({ key }) => key)
   }
 
-  private async cleanupApplicationFiles(
-    application: Application,
-    transaction?: Transaction,
-  ): Promise<void> {
-    for (const { key, valueId } of this.getApplicationFiles(application)) {
-      await this.fileService.deleteFile(key, valueId, transaction)
-    }
-  }
-
   private async deleteApplications(id: string): Promise<FormResponseDto> {
+    const fileKeys: string[] = []
     try {
       await this.sequelize.transaction(async (transaction) => {
         const applications = await this.applicationModel.findAll({
@@ -1230,10 +1229,15 @@ export class FormsService {
         })
 
         for (const application of applications) {
-          await this.cleanupApplicationFiles(application, transaction)
+          fileKeys.push(
+            ...(await this.collectApplicationFiles(application, transaction)),
+          )
           await application.destroy({ transaction })
         }
       })
+      await Promise.all(
+        fileKeys.map((key) => this.fileService.deleteFileFromStorage(key)),
+      )
     } catch (error) {
       throw new InternalServerErrorException(
         `Unexpected error deleting applications for form '${id}'.`,

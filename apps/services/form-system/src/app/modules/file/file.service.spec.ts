@@ -2,9 +2,11 @@ import { Transaction } from 'sequelize'
 import { FileService } from './file.service'
 
 describe('FileService deletion', () => {
-  const setup = () => {
+  const setup = (
+    json: { s3Key?: unknown } = { s3Key: ['file-key', 'retained-key'] },
+  ) => {
     const value = {
-      json: { s3Key: ['file-key', 'retained-key'] },
+      json,
       save: jest.fn().mockResolvedValue(undefined),
     }
     const valueModel = { findByPk: jest.fn().mockResolvedValue(value) }
@@ -82,4 +84,30 @@ describe('FileService deletion', () => {
     expect(value.save).toHaveBeenCalledWith({ transaction })
     expect(s3Service.deleteObject).not.toHaveBeenCalled()
   })
+
+  it.each([
+    { storedKeys: 'file-key', expected: [] },
+    { storedKeys: 'retained-key', expected: ['retained-key'] },
+    { storedKeys: undefined, expected: [] },
+    { storedKeys: null, expected: [] },
+    { storedKeys: 42, expected: [] },
+    { storedKeys: { key: 'file-key' }, expected: [] },
+  ])(
+    'normalizes stored keys $storedKeys before removing a reference',
+    async ({ storedKeys, expected }) => {
+      const { service, valueModel, value, s3Service } = setup({
+        s3Key: storedKeys,
+      })
+      const transaction: Transaction = Object.create(Transaction.prototype)
+
+      await service.removeFileReference('file-key', 'value-id', transaction)
+
+      expect(value.json.s3Key).toEqual(expected)
+      expect(valueModel.findByPk).toHaveBeenCalledWith('value-id', {
+        transaction,
+      })
+      expect(value.save).toHaveBeenCalledWith({ transaction })
+      expect(s3Service.deleteObject).not.toHaveBeenCalled()
+    },
+  )
 })

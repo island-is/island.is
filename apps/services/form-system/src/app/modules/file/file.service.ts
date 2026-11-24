@@ -211,9 +211,15 @@ export class FileService {
   ): Promise<void> {
     const value = await this.valueModel.findByPk(valueId, { transaction })
     if (value) {
+      const existingKeys = value.json?.s3Key
+      const keys = Array.isArray(existingKeys)
+        ? existingKeys
+        : typeof existingKeys === 'string'
+        ? [existingKeys]
+        : []
       value.json = {
         ...value.json,
-        s3Key: value.json?.s3Key?.filter((k: string) => k !== key) || [],
+        s3Key: keys.filter((k) => k !== key),
       }
 
       if (transaction) await value.save({ transaction })

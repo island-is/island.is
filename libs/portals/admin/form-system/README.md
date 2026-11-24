@@ -31,3 +31,6 @@ English edits made while a translation request is pending.
 Completed translations save that field's current data even after selection
 changes. Results for deleted fields are discarded without updating local state
 or saving.
+Full-field saves are serialized per field, including automatic translations and
+subsequent manual edits, so a delayed translation save cannot overwrite a later
+saved edit. Updates to different fields can proceed independently.
