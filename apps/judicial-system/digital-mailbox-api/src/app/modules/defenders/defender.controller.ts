@@ -82,8 +82,18 @@ export class DefenderController {
         }
       }
 
-      throw new NotFoundException('Lawyer not found in lawyer registry')
+      if (res.status === 404) {
+        throw new NotFoundException('Lawyer not found in lawyer registry')
+      }
+
+      throw new BadGatewayException(
+        'Failed to retrieve lawyer from lawyer registry',
+      )
     } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error
+      }
+
       this.logger.error('Failed to retrieve lawyer from lawyer registry', error)
 
       throw new BadGatewayException(
