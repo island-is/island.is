@@ -14,11 +14,14 @@ export const FieldInformation = ({ item }: Props) => {
     item.fieldType === FieldTypesEnum.APPLICANT
       ? ''
       : item.informationText?.[lang] ?? ''
-  const hasInputTooltip =
+  const hideStandaloneTooltip =
     item.fieldType === FieldTypesEnum.TEXTBOX ||
     item.fieldType === FieldTypesEnum.NUMBERBOX ||
-    item.fieldType === FieldTypesEnum.CHECKBOX
-  const tooltip = hasInputTooltip ? '' : item.tooltip?.[lang] ?? ''
+    item.fieldType === FieldTypesEnum.CHECKBOX ||
+    item.fieldType === FieldTypesEnum.PHONE_NUMBER ||
+    item.fieldType === FieldTypesEnum.EMAIL ||
+    item.fieldType === FieldTypesEnum.NATIONAL_ID
+  const tooltip = hideStandaloneTooltip ? '' : item.tooltip?.[lang] ?? ''
 
   if (!informationText.trim() && !tooltip.trim()) return null
 

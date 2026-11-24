@@ -4,8 +4,10 @@ import { InputHTMLAttributes, ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { IntlProvider } from 'react-intl'
 import { Checkbox } from '../FieldComponents/Checkbox/Checkbox'
+import { Email } from '../FieldComponents/Email/Email'
 import { MessageWithLink } from '../FieldComponents/MessageWithLink/MessageWithLink'
 import { NumberInput } from '../FieldComponents/NumberInput/NumberInput'
+import { PhoneNumber } from '../FieldComponents/PhoneNumber/PhoneNumber'
 import { TextInput } from '../FieldComponents/TextInput/TextInput'
 import { FieldInformation } from './FieldInformation'
 
@@ -21,8 +23,30 @@ jest.mock('@island.is/localization', () => ({
 
 jest.mock('@island.is/island-ui/core', () => ({
   Box: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  GridColumn: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  GridRow: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  Stack: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   Text: ({ children }: { children: ReactNode }) => <p>{children}</p>,
   Tooltip: ({ text }: { text: string }) => <span title={text}>Help</span>,
+  PhoneInput: ({
+    label,
+    tooltip,
+    name,
+    value,
+  }: {
+    label: string
+    tooltip?: string
+    name: string
+    value: string
+  }) => (
+    <input
+      aria-label={label}
+      title={tooltip}
+      name={name}
+      value={value}
+      readOnly
+    />
+  ),
   Input: ({
     label,
     tooltip,
@@ -86,6 +110,8 @@ const renderField = (
     TEXTBOX: TextInput,
     NUMBERBOX: NumberInput,
     CHECKBOX: Checkbox,
+    EMAIL: Email,
+    PHONE_NUMBER: PhoneNumber,
     MESSAGE: MessageWithLink,
   }
   const Component = components[fieldType as keyof typeof components]
@@ -111,7 +137,14 @@ beforeEach(() => {
   mockLang = 'is'
 })
 
-it.each(['TEXTBOX', 'NUMBERBOX', 'CHECKBOX', 'BANK_ACCOUNT', 'DROPDOWN_LIST'])(
+it.each([
+  'TEXTBOX',
+  'NUMBERBOX',
+  'CHECKBOX',
+  'EMAIL',
+  'BANK_ACCOUNT',
+  'DROPDOWN_LIST',
+])(
   'renders information above the %s input and displays its tooltip without a visibility flag',
   (fieldType) => {
     renderField(fieldType)
@@ -133,6 +166,20 @@ it('renders message information as its body only once', () => {
   expect(screen.getAllByText('Instructions')).toHaveLength(1)
 })
 
+it.each(['Instructions', ''])(
+  'omits the national ID tooltip above the input while preserving information text: %j',
+  (informationText) => {
+    renderField('NATIONAL_ID', {
+      informationText: { is: informationText },
+    })
+
+    expect(screen.queryByTitle('Help text')).toBeNull()
+    expect(screen.queryByText('Instructions') !== null).toBe(
+      Boolean(informationText),
+    )
+  },
+)
+
 it('omits applicant information text while preserving its tooltip', () => {
   renderField('APPLICANT')
 
@@ -149,18 +196,46 @@ it('renders localized information, tooltip and checkbox sublabel', () => {
   expect(screen.queryByText('Instructions')).toBeNull()
 })
 
-it.each(['TEXTBOX', 'NUMBERBOX', 'CHECKBOX', 'BANK_ACCOUNT'])(
-  'omits empty and whitespace-only content for %s',
-  (fieldType) => {
-    const { container } = renderField(fieldType, {
-      informationText: { is: ' \n ', en: 'English instructions' },
-      tooltip: { is: ' \t ', en: 'English help' },
-      fieldSettings: {
-        isLarge: true,
-        subLabel: { is: ' \n ', en: 'English sublabel' },
-      },
+it.each(['is', 'en'])('omits saved phone tooltips in %s', (lang) => {
+  mockLang = lang
+  const { container } = renderField('PHONE_NUMBER')
+
+  expect(container.querySelector('[title]')).toBeNull()
+  expect(
+    screen.getByText(lang === 'is' ? 'Instructions' : 'English instructions'),
+  ).toBeTruthy()
+})
+
+it.each(['is', 'en'])(
+  'renders the localized email tooltip only inside the input in %s',
+  (lang) => {
+    mockLang = lang
+    renderField('EMAIL', {
+      tooltip: { is: '  Help text  ', en: '  English help text  ' },
     })
-    expect(container.querySelector('[title]')).toBeNull()
-    expect(container.textContent).toBe(fieldType === 'CHECKBOX' ? 'Field' : '')
+
+    expect(
+      screen.getAllByTitle(lang === 'is' ? 'Help text' : 'English help text'),
+    ).toEqual([screen.getByRole('textbox', { name: 'Field' })])
   },
 )
+
+it.each([
+  'TEXTBOX',
+  'NUMBERBOX',
+  'CHECKBOX',
+  'PHONE_NUMBER',
+  'EMAIL',
+  'BANK_ACCOUNT',
+])('omits empty and whitespace-only content for %s', (fieldType) => {
+  const { container } = renderField(fieldType, {
+    informationText: { is: ' \n ', en: 'English instructions' },
+    tooltip: { is: ' \t ', en: 'English help' },
+    fieldSettings: {
+      isLarge: true,
+      subLabel: { is: ' \n ', en: 'English sublabel' },
+    },
+  })
+  expect(container.querySelector('[title]')).toBeNull()
+  expect(container.textContent).toBe(fieldType === 'CHECKBOX' ? 'Field' : '')
+})

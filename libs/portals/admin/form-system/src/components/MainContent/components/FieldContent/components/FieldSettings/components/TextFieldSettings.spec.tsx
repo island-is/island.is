@@ -1,9 +1,15 @@
-import { Checkbox, Input } from '@island.is/island-ui/core'
+import { FormSystemField } from '@island.is/api/schema'
+import {
+  Checkbox,
+  Input,
+  ToggleSwitchCheckbox,
+} from '@island.is/island-ui/core'
 import { expect, it, jest } from '@jest/globals'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { ComponentProps, ReactNode, useContext } from 'react'
+import { ComponentProps, ReactNode, useContext, useReducer } from 'react'
 import { IntlProvider } from 'react-intl'
 import { ControlContext } from '../../../../../../../context/ControlContext'
+import { controlReducer } from '../../../../../../../hooks/controlReducer'
 import { BaseInput } from '../../BaseInput'
 import { CheckboxSettings } from './CheckboxSettings'
 import { TextFieldSettings } from './TextFieldSettings'
@@ -48,6 +54,23 @@ jest.mock('@island.is/island-ui/core', () => ({
   Inline: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   Text: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   Select: () => null,
+  ToggleSwitchCheckbox: ({
+    label,
+    checked,
+    disabled,
+    onChange,
+  }: ComponentProps<typeof ToggleSwitchCheckbox>) => (
+    <label>
+      <input
+        type="checkbox"
+        role="switch"
+        checked={checked}
+        disabled={disabled}
+        onChange={(event) => onChange(event.target.checked)}
+      />
+      {label}
+    </label>
+  ),
   Checkbox: ({
     label,
     checked,
@@ -92,6 +115,10 @@ const renderSettings = (
   isReadOnly = false,
   subLabel = { is: '', en: '' },
   isLarge = false,
+  content: Pick<FormSystemField, 'informationText' | 'tooltip'> = {
+    informationText: { is: 'Information text', en: '' },
+    tooltip: { is: 'Help text', en: '' },
+  },
 ) => {
   const controlDispatch = jest.fn()
   const updateActiveItem = jest.fn()
@@ -101,33 +128,36 @@ const renderSettings = (
   }))
   const Settings = () => {
     const defaults = useContext(ControlContext)
+    const [control, dispatch] = useReducer(controlReducer, {
+      ...defaults.control,
+      activeItem: {
+        ...defaults.control.activeItem,
+        data: {
+          id: 'field',
+          fieldType,
+          fieldSettings: { isLarge, subLabel },
+          ...content,
+        },
+      },
+      form: { ...defaults.control.form },
+      isReadOnly,
+    })
     return (
       <ControlContext.Provider
         value={{
           ...defaults,
-          control: {
-            ...defaults.control,
-            activeItem: {
-              ...defaults.control.activeItem,
-              data: {
-                id: 'field',
-                fieldType,
-                fieldSettings: { isLarge, subLabel },
-                informationText: { is: 'Information text', en: '' },
-                tooltip: { is: 'Help text', en: '' },
-              },
-            },
-            form: { ...defaults.control.form },
-            isReadOnly,
+          control,
+          controlDispatch: (action) => {
+            controlDispatch(action)
+            dispatch(action)
           },
-          controlDispatch,
           updateActiveItem,
           setFocus,
           focus: '',
           getTranslation,
         }}
       >
-        <IntlProvider locale="is" messages={{}}>
+        <IntlProvider locale="is" defaultLocale="is" messages={{}}>
           <BaseInput />
           {fieldType === 'TEXTBOX' && <TextFieldSettings />}
           {fieldType === 'CHECKBOX' && <CheckboxSettings />}
@@ -139,8 +169,8 @@ const renderSettings = (
   return { controlDispatch, updateActiveItem, setFocus, getTranslation }
 }
 
-it.each(['TEXTBOX', 'NUMBERBOX', 'MESSAGE', 'CHECKBOX', 'BANK_ACCOUNT'])(
-  'always exposes localized information and tooltip editors for %s',
+it.each(['TEXTBOX', 'NUMBERBOX', 'CHECKBOX', 'NATIONAL_ID', 'EMAIL'])(
+  'exposes localized editors for populated information and tooltip content for %s',
   (fieldType) => {
     renderSettings(fieldType)
     expect(
@@ -155,6 +185,104 @@ it.each(['TEXTBOX', 'NUMBERBOX', 'MESSAGE', 'CHECKBOX', 'BANK_ACCOUNT'])(
     ).toBeTruthy()
   },
 )
+
+it.each(['MESSAGE', 'BANK_ACCOUNT', 'PHONE_NUMBER'])(
+  'omits the tooltip toggle and both inputs for %s without hiding information text',
+  (fieldType) => {
+    renderSettings(fieldType)
+
+    expect(screen.queryByRole('switch', { name: 'Tooltip' })).toBeNull()
+    expect(screen.queryByRole('textbox', { name: 'Tooltip' })).toBeNull()
+    expect(
+      screen.queryByRole('textbox', { name: 'English tooltip' }),
+    ).toBeNull()
+    expect(screen.getByRole('textbox', { name: 'Information' })).toBeTruthy()
+    expect(
+      screen.getByRole('textbox', { name: 'English information' }),
+    ).toBeTruthy()
+  },
+)
+
+it.each([
+  { is: 'Icelandic text', en: '' },
+  { is: '', en: 'English text' },
+  { is: ' ', en: '\n' },
+  null,
+  undefined,
+])('initializes the content toggles from both languages: %j', (text) => {
+  renderSettings('TEXTBOX', false, undefined, false, {
+    informationText: text,
+    tooltip: text,
+  })
+  const hasText = Boolean(text?.is?.trim() || text?.en?.trim())
+  for (const label of ['Information', 'Tooltip']) {
+    const toggle = screen.getByRole('switch', { name: label })
+    expect(toggle).toHaveProperty('checked', hasText)
+    expect(toggle).toHaveProperty('disabled', hasText)
+    expect(screen.queryByRole('textbox', { name: label }) !== null).toBe(
+      hasText,
+    )
+    expect(
+      screen.queryByRole('textbox', {
+        name: `English ${label.toLowerCase()}`,
+      }) !== null,
+    ).toBe(hasText)
+  }
+})
+
+it.each(['Information', 'Tooltip'])(
+  'toggles both %s language inputs independently and prevents disabling populated text',
+  (label) => {
+    const { controlDispatch } = renderSettings(
+      'TEXTBOX',
+      false,
+      undefined,
+      false,
+      {
+        informationText: { is: '', en: '' },
+        tooltip: { is: '', en: '' },
+      },
+    )
+    const toggle = screen.getByRole('switch', { name: label })
+    fireEvent.click(toggle)
+    expect(toggle).toHaveProperty('checked', true)
+    expect(
+      screen.getByRole('switch', {
+        name: label === 'Information' ? 'Tooltip' : 'Information',
+      }),
+    ).toHaveProperty('checked', false)
+    expect(controlDispatch).not.toHaveBeenCalled()
+
+    for (const name of [label, `English ${label.toLowerCase()}`]) {
+      const input = screen.getByRole('textbox', { name })
+      fireEvent.change(input, { target: { value: 'Text' } })
+      expect(toggle).toHaveProperty('disabled', true)
+      expect(toggle).toHaveProperty('checked', true)
+
+      fireEvent.change(input, { target: { value: '' } })
+      expect(toggle).toHaveProperty('disabled', false)
+      expect(toggle).toHaveProperty('checked', true)
+    }
+
+    fireEvent.click(toggle)
+    expect(toggle).toHaveProperty('checked', false)
+    expect(screen.queryByRole('textbox', { name: label })).toBeNull()
+    expect(
+      screen.queryByRole('textbox', {
+        name: `English ${label.toLowerCase()}`,
+      }),
+    ).toBeNull()
+  },
+)
+
+it('disables empty content toggles in read-only forms', () => {
+  renderSettings('TEXTBOX', true, undefined, false, {})
+  for (const label of ['Information', 'Tooltip']) {
+    const toggle = screen.getByRole('switch', { name: label })
+    expect(toggle).toHaveProperty('disabled', true)
+    expect(screen.queryByRole('textbox', { name: label })).toBeNull()
+  }
+})
 
 it.each([
   {
@@ -189,7 +317,7 @@ it.each([
         payload: { property, lang: 'en', newValue: 'Translated text' },
       }),
     )
-    expect(getTranslation).toHaveBeenCalledWith(text)
+    expect(getTranslation).toHaveBeenCalledWith('Edited text')
   },
 )
 
@@ -205,14 +333,16 @@ it.each([
   ).toBe(true)
 })
 
-it('omits the information editor for applicants while preserving the tooltip editor', () => {
+it('omits both information and tooltip editors for applicants', () => {
   renderSettings('APPLICANT')
 
   expect(screen.queryByRole('textbox', { name: 'Information' })).toBeNull()
   expect(
     screen.queryByRole('textbox', { name: 'English information' }),
   ).toBeNull()
-  expect(screen.getByRole('textbox', { name: 'Tooltip' })).toBeTruthy()
+  expect(screen.queryByRole('switch', { name: 'Tooltip' })).toBeNull()
+  expect(screen.queryByRole('textbox', { name: 'Tooltip' })).toBeNull()
+  expect(screen.queryByRole('textbox', { name: 'English tooltip' })).toBeNull()
 })
 
 it('preserves the large-checkbox setting and exposes sublabel editors only when enabled', () => {

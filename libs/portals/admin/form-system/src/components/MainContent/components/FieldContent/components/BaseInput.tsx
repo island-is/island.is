@@ -210,15 +210,19 @@ export const BaseInput = () => {
       )}
       {currentItem.fieldType !== FieldTypesEnum.APPLICANT && (
         <FieldTextInput
+          key={`${currentItem.id}-informationText`}
           property="informationText"
           label={formatMessage(m.informationText)}
           englishLabel={formatMessage(m.informationTextEnglish)}
+          withToggle
         />
       )}
       <FieldTextInput
+        key={`${currentItem.id}-tooltip`}
         property="tooltip"
         label={formatMessage(m.tooltip)}
         englishLabel={formatMessage(m.tooltipEnglish)}
+        withToggle
       />
       {/* Required checkbox */}
       {screen?.isMulti &&
