@@ -41,6 +41,7 @@ const VerdictAppealRulingDocument: FC<Props> = ({ workingCase }) => {
             workingCase.verdictAppealCase?.appealRulingType,
           ).document
         }
+        marginBottom={1}
       />
       <RenderFiles caseFiles={rulingFiles} onOpenFile={onOpen} />
       <AnimatePresence>
