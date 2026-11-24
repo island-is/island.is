@@ -11,6 +11,7 @@ import {
 import {
   AppealCaseRulingDecision,
   AppealCaseState,
+  appealCourtSessionTypeNames,
   AppealEventType,
   CaseDecision,
   CaseIndictmentRulingDecision,
@@ -43,7 +44,14 @@ import {
   VerdictInfo,
 } from '@island.is/judicial-system/types'
 
-import { standingVerdictAppellants } from '../appeal-case'
+import {
+  currentAppealCourtSession,
+  standingVerdictAppealEvents,
+  standingVerdictAppellants,
+  type VerdictAppealProgress,
+  verdictAppealProgress as getVerdictAppealProgress,
+  verdictAppellantSide,
+} from '../appeal-case'
 import { Case, DateLog, DefendantEventLog, EventLog } from '../repository'
 import {
   CaseTableCellValue,
@@ -882,6 +890,255 @@ const verdictAppealResult: CaseTableCellGenerator<TagValue> = {
   },
 }
 
+// The public prosecution's list of appealed verdicts. One row per case, so the
+// appeals regarding each defendant are folded into one answer to "who appealed,
+// and when".
+//
+// Each side is read where it is recorded. The prosecution's appeal is the
+// reviewer's decision to appeal, filed the moment it is registered, so its date
+// is the appeal event's own. The defendant's appeal may be registered long
+// after the declaration arrived, so its filing date is the one typed in on the
+// verdict.
+//
+// A verdict appealed before appeal cases were kept has no events to read. It
+// is on the list all the same - the review decision or the verdict's appeal
+// date put it there - so those two answer for it: the decision is dated by the
+// review event that recorded it, the verdict carries its own date.
+const getVerdictAppealSummary = (
+  c: CaseTableRowCase,
+): { isProsecutionAppeal: boolean; appealDate?: Date } | undefined => {
+  const standingEvents = c.appeal ? standingVerdictAppealEvents(c.appeal) : []
+  const prosecutionDates: Date[] = []
+  const defenceDates: Date[] = []
+  let hasProsecutionAppeal = false
+  let hasDefenceAppeal = false
+
+  for (const defendant of c.defendants ?? []) {
+    const standingEvent = (side: 'PROSECUTION' | 'DEFENCE') =>
+      standingEvents.find(
+        (eventLog) =>
+          eventLog.defendantId === defendant.id &&
+          verdictAppellantSide(eventLog.userRole) === side,
+      )
+
+    const prosecutionEvent = standingEvent('PROSECUTION')
+    // The decision only answers where no event does. Once the prosecution's
+    // appeal regarding this defendant is on record, the record decides - a
+    // decision left at "appeal" must not bring a withdrawn appeal back.
+    const hasProsecutionAppealOnRecord = (c.appeal?.appealEventLogs ?? []).some(
+      (eventLog) =>
+        eventLog.defendantId === defendant.id &&
+        verdictAppellantSide(eventLog.userRole) === 'PROSECUTION' &&
+        (eventLog.eventType === AppealEventType.APPEALED ||
+          eventLog.eventType === AppealEventType.APPEAL_WITHDRAWN),
+    )
+    const isAppealedByReviewDecision =
+      !hasProsecutionAppealOnRecord &&
+      defendant.indictmentReviewDecision === IndictmentCaseReviewDecision.APPEAL
+
+    if (prosecutionEvent || isAppealedByReviewDecision) {
+      hasProsecutionAppeal = true
+
+      const prosecutionDate =
+        prosecutionEvent?.created ??
+        DefendantEventLog.getEventLogDateByEventType(
+          DefendantEventType.INDICTMENT_REVIEWED,
+          defendant.eventLogs,
+        )
+
+      if (prosecutionDate) {
+        prosecutionDates.push(prosecutionDate)
+      }
+    }
+
+    const defenceEvent = standingEvent('DEFENCE')
+    // Only the latest verdict is relevant
+    const verdictAppealDate = defendant.verdicts?.[0]?.appealDate
+
+    // Unlike the review decision, the verdict date needs no check against the
+    // record: withdrawing the defendant's appeal clears the date in the same
+    // transaction that writes the withdrawal, so a date that is there is a
+    // standing appeal. It is also what puts the case on this list, so a row
+    // that ignored it would be listed with nobody named.
+    if (defenceEvent || verdictAppealDate) {
+      hasDefenceAppeal = true
+
+      const defenceDate = verdictAppealDate ?? defenceEvent?.created
+
+      if (defenceDate) {
+        defenceDates.push(defenceDate)
+      }
+    }
+  }
+
+  if (!hasProsecutionAppeal && !hasDefenceAppeal) {
+    return undefined
+  }
+
+  const dates = [...prosecutionDates, ...defenceDates]
+
+  return {
+    isProsecutionAppeal: hasProsecutionAppeal,
+    // The verdict was appealed when the first appeal was filed, whoever filed
+    // it and regarding whichever defendant.
+    appealDate:
+      dates.length > 0
+        ? new Date(Math.min(...dates.map((date) => date.getTime())))
+        : undefined,
+  }
+}
+
+const verdictAppealSummaryIncludes: CaseIncludes = {
+  defendants: {
+    attributes: ['indictmentReviewDecision'],
+    includes: {
+      eventLogs: { attributes: ['created', 'eventType'] },
+      verdicts: { attributes: ['appealDate'] },
+    },
+  },
+  verdictAppealCase: {
+    attributes: [],
+    includes: {
+      appealEventLogs: {
+        attributes: ['eventType', 'defendantId', 'userRole', 'created'],
+      },
+    },
+  },
+}
+
+// The prosecutor at the public prosecutor's office assigned to argue the
+// appeal - not the district prosecutor who brought the case, nor the one who
+// read the verdict over.
+const appealProsecutor: CaseTableCellGenerator<StringValue> = {
+  includes: { appealProsecutor: { attributes: ['name'] } },
+  generate: (c: CaseTableRowCase): CaseTableCell<StringValue> => {
+    const name = c.appealProsecutor?.name
+
+    if (!name) {
+      return generateCell()
+    }
+
+    return generateCell({ str: name }, name)
+  },
+}
+
+// Both sides may appeal the same verdict, and the list has one row per case,
+// so the prosecution takes precedence when both have - as on the court of
+// appeals' own list.
+const verdictAppealAppellantTag: CaseTableCellGenerator<TagValue> = {
+  includes: verdictAppealSummaryIncludes,
+  generate: (c: CaseTableRowCase): CaseTableCell<TagValue> => {
+    const summary = getVerdictAppealSummary(c)
+
+    if (!summary) {
+      return generateCell()
+    }
+
+    return summary.isProsecutionAppeal
+      ? generateCell({ color: 'blue', text: 'Ákæruvald' }, 'A')
+      : generateCell({ color: 'rose', text: 'Ákærði' }, 'B')
+  },
+}
+
+const verdictAppealDate: CaseTableCellGenerator<StringValue> = {
+  includes: verdictAppealSummaryIncludes,
+  generate: (c: CaseTableRowCase): CaseTableCell<StringValue> =>
+    generateDate(getVerdictAppealSummary(c)?.appealDate),
+}
+
+const verdictAppealProgressTags: Record<
+  VerdictAppealProgress,
+  { tag: TagValue; sortValue: string }
+> = {
+  SENT: { tag: { color: 'purple', text: 'Sent' }, sortValue: 'A' },
+  RECEIVED: { tag: { color: 'blueberry', text: 'Móttekið' }, sortValue: 'B' },
+  STATEMENT_DEADLINES: {
+    tag: { color: 'blue', text: 'Frestir' },
+    sortValue: 'C',
+  },
+  SCHEDULED: { tag: { color: 'mint', text: 'Á dagskrá' }, sortValue: 'D' },
+  POSTPONED: { tag: { color: 'purple', text: 'Frestað' }, sortValue: 'E' },
+  UNDER_ADVISEMENT: {
+    tag: { color: 'mint', text: 'Dómtekið' },
+    sortValue: 'F',
+  },
+  COMPLETED: { tag: { color: 'darkerBlue', text: 'Lokið' }, sortValue: 'G' },
+}
+
+// How far the appeal has come: the status the court of appeals has recorded,
+// and until it has, what can be read off the appeal. A concluded appeal stays
+// on "Dómtekið" until its outcome is released. Empty until the appeal
+// has been sent to the court of appeals, for a withdrawn appeal, and for a
+// verdict appealed before appeal cases were kept.
+const verdictAppealProgress: CaseTableCellGenerator<TagValue> = {
+  includes: {
+    verdictAppealCase: {
+      attributes: ['appealState', 'verdictAppealStatus', 'appealCaseNumber'],
+      includes: {
+        sentAppealSummonses: { attributes: [] },
+        courtSessions: { attributes: ['sessionDate'] },
+        statementDeadlines: { attributes: ['deadline'] },
+      },
+    },
+  },
+  generate: (c: CaseTableRowCase): CaseTableCell<TagValue> => {
+    const progress = c.appeal
+      ? getVerdictAppealProgress(c.appeal, new Date())
+      : undefined
+
+    if (!progress) {
+      return generateCell()
+    }
+
+    const { tag, sortValue } = verdictAppealProgressTags[progress]
+
+    return generateCell(tag, sortValue)
+  },
+}
+
+// The session the court of appeals holds next - or held last, while the status
+// it has recorded says it is still calling sessions - and "Frestað" for an
+// appeal it has postponed.
+const verdictAppealCourtSession: CaseTableCellGenerator<StringGroupValue> = {
+  includes: {
+    verdictAppealCase: {
+      attributes: ['appealState', 'verdictAppealStatus'],
+      includes: {
+        courtSessions: { attributes: ['sessionType', 'sessionDate'] },
+      },
+    },
+  },
+  generate: (c: CaseTableRowCase): CaseTableCell<StringGroupValue> => {
+    const session = c.appeal
+      ? currentAppealCourtSession(c.appeal, new Date())
+      : undefined
+
+    if (session === 'POSTPONED') {
+      // Sorted after every dated session, as the district court's postponed
+      // cases are.
+      return generateCell({ strList: ['Frestað'] }, '999999999999')
+    }
+
+    const datePart = formatDate(session?.sessionDate, 'EEE d. MMMM yyyy')
+    const timePart = formatDate(session?.sessionDate, 'HH:mm')
+    const sortValue = formatDate(session?.sessionDate, 'yyyyMMddHHmm')
+
+    if (!session || !datePart || !timePart || !sortValue) {
+      return generateCell()
+    }
+
+    return generateCell(
+      {
+        strList: [
+          appealCourtSessionTypeNames[session.sessionType],
+          `${capitalize(datePart)} kl. ${timePart}`,
+        ],
+      },
+      sortValue,
+    )
+  },
+}
+
 const created: CaseTableCellGenerator<StringValue> = {
   attributes: ['created'],
   generate: (c: CaseTableRowCase): CaseTableCell<StringValue> =>
@@ -1453,4 +1710,9 @@ export const caseTableCellGenerators: Record<
   verdictAppealHead,
   verdictAppealCompletedDate,
   verdictAppealResult,
+  appealProsecutor,
+  verdictAppealAppellantTag,
+  verdictAppealDate,
+  verdictAppealProgress,
+  verdictAppealCourtSession,
 }

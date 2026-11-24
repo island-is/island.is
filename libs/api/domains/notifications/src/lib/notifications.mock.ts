@@ -6,6 +6,7 @@ import {
   Notification,
   NotificationsInput,
   NotificationsResponse,
+  NotificationSourceType,
 } from './notifications.model'
 // import { RenderedNotificationDtoStatusEnum } from '@island.is/clients/user-notification'
 import { Locale } from '@island.is/shared/types'
@@ -47,6 +48,7 @@ export function generateMockNotification(user: User | null): Notification {
       sent,
       read: isRead,
       wasSent: true,
+      sourceType: NotificationSourceType.GENERAL,
       // status: isRead
       //   ? RenderedNotificationDtoStatusEnum.Read
       //   : RenderedNotificationDtoStatusEnum.Unread,

@@ -5,6 +5,17 @@ export interface AuthConfig {
   audience?: string | string[]
   issuer: string | string[]
   allowClientNationalId?: boolean
+  /**
+   * Refuse DPoP-bound tokens (cnf.jkt) sent without a DPoP proof. For services
+   * the app calls directly; services behind them get the token forwarded as
+   * Bearer and leave this off.
+   */
+  requireDpopForBoundTokens?: boolean
+  /**
+   * Signs the DPoP nonces, and must be the same on every instance. Without it
+   * the nonces are unsigned server timestamps.
+   */
+  dpopNonceSecret?: string
 }
 
 @Module({})

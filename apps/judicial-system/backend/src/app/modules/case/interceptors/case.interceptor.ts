@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common'
 
 import {
+  AppealCaseState,
   AppealDecisionPartyRole,
   AppealEventType,
   CaseAppealDecision,
@@ -40,9 +41,16 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { getRequestTransaction } from '../../../middleware'
-import { hasOutOfCourtAppeal } from '../../appeal-case'
+import {
+  getVerdictAppealOutcomeOverride,
+  hasOutOfCourtAppeal,
+  resolveDefenceParties,
+} from '../../appeal-case'
 import { getMostPermissiveRequestSharedWithDefenderForNationalId } from '../../defendant/requestSharedWithDefender.logic'
-import { isRulingOrderInConfirmedCourtSession } from '../../file/guards/caseFileCategory'
+import {
+  canUserAccessCaseFileCategory,
+  isRulingOrderInConfirmedCourtSession,
+} from '../../file/guards/caseFileCategory'
 import { canDefenceUserViewCivilClaimCaseFile } from '../../file/guards/civilClaimFileVisibility'
 import {
   AppealCase,
@@ -673,6 +681,100 @@ const transformCaseRepresentatives = (
   ].filter((representative) => !!representative)
 }
 
+const getDefenceUserVerdictAppealPartyIds = (
+  theCase: Case,
+  nationalId: string,
+): { defendantIds: Set<string>; civilClaimantIds: Set<string> } => {
+  const defendantIds = new Set<string>()
+  const civilClaimantIds = new Set<string>()
+
+  for (const party of resolveDefenceParties(theCase, nationalId)) {
+    if (party.defendantId) {
+      defendantIds.add(party.defendantId)
+    }
+    if (party.civilClaimantId) {
+      civilClaimantIds.add(party.civilClaimantId)
+    }
+  }
+
+  return { defendantIds, civilClaimantIds }
+}
+
+const isVerdictAppealPartyRow = (
+  row: { defendantId?: string | null; civilClaimantId?: string | null },
+  partyIds: { defendantIds: Set<string>; civilClaimantIds: Set<string> },
+): boolean =>
+  Boolean(
+    (row.defendantId && partyIds.defendantIds.has(row.defendantId)) ||
+      (row.civilClaimantId &&
+        partyIds.civilClaimantIds.has(row.civilClaimantId)),
+  )
+
+// Prosecution APPEALED / APPEAL_WITHDRAWN rows for defendants still on the
+// case — DefenderVerdictTimelineCard shows every defendant and needs these
+// for the “Ákæruvaldið áfrýjaði …” bullet on co-defendants too.
+const isProsecutionVerdictAppealTimelineEvent = (
+  eventLog: AppealEventLog,
+  theCase: Case,
+): boolean => {
+  if (
+    (eventLog.eventType !== AppealEventType.APPEALED &&
+      eventLog.eventType !== AppealEventType.APPEAL_WITHDRAWN) ||
+    !eventLog.userRole ||
+    !prosecutionRoles.includes(eventLog.userRole) ||
+    !eventLog.defendantId
+  ) {
+    return false
+  }
+
+  return Boolean(
+    theCase.defendants?.some(
+      (defendant) => defendant.id === eventLog.defendantId,
+    ),
+  )
+}
+
+const shouldKeepVerdictAppealEventLogForDefenceUser = (
+  eventLog: AppealEventLog,
+  theCase: Case,
+  partyIds: { defendantIds: Set<string>; civilClaimantIds: Set<string> },
+): boolean =>
+  isVerdictAppealPartyRow(eventLog, partyIds) ||
+  isProsecutionVerdictAppealTimelineEvent(eventLog, theCase)
+
+const serializeVerdictAppealStatementDeadline = (
+  deadline: NonNullable<AppealCase['statementDeadlines']>[number],
+) => ({
+  ...deadline.toJSON(),
+  // Same clock as isStatementDeadlineExpired on kæra appealCase rows.
+  isExpired: Date.now() >= new Date(deadline.deadline).getTime(),
+})
+
+const transformVerdictAppealCaseForUser = (
+  appealCase: AppealCase,
+  theCase: Case,
+  defenceUser: User,
+) => {
+  const partyIds = getDefenceUserVerdictAppealPartyIds(
+    theCase,
+    defenceUser.nationalId,
+  )
+
+  return {
+    ...appealCase.toJSON(),
+    statementDeadlines: appealCase.statementDeadlines
+      ?.filter((deadline) => isVerdictAppealPartyRow(deadline, partyIds))
+      .map(serializeVerdictAppealStatementDeadline),
+    appealEventLogs: appealCase.appealEventLogs?.filter((eventLog) =>
+      shouldKeepVerdictAppealEventLogForDefenceUser(
+        eventLog,
+        theCase,
+        partyIds,
+      ),
+    ),
+  }
+}
+
 const getDefenceUserDefendants = (
   theCase: Case,
   user: User,
@@ -713,18 +815,10 @@ const getDefenceUserDefendants = (
     }
   }
 
-  // Appeal-only advocates must not see co-defendant rows. District defenders
-  // keep the full list until every defendant they represent is cancelled or
-  // dismissed.
-  if (!myDistrictDefendants?.length) {
-    return {
-      defendants: myDefendants,
-      allCancelledOrDismissed: false,
-      latestCancelledOrDismissedDate: undefined,
-    }
-  }
-
-  const cancelledOrDismissedEventLogs = myDistrictDefendants.map((defendant) =>
+  // Cancelled/dismissed is evaluated across every represented defendant —
+  // district and appeal. A dismissed district client must not complete the
+  // case while an appeal-only client is still active.
+  const cancelledOrDismissedEventLogs = myDefendants.map((defendant) =>
     DefendantEventLog.getEventLogByEventType(
       [
         DefendantEventType.INDICTMENT_CANCELLED,
@@ -743,6 +837,17 @@ const getDefenceUserDefendants = (
       }, undefined)
     : undefined
 
+  // Appeal-only advocates must not see co-defendant rows. District defenders
+  // keep the full list until every defendant they represent is cancelled or
+  // dismissed.
+  if (!myDistrictDefendants?.length) {
+    return {
+      defendants: myDefendants,
+      allCancelledOrDismissed,
+      latestCancelledOrDismissedDate,
+    }
+  }
+
   // A mixed district + appeal portfolio must keep every represented defendant
   // and drop co-defendants the user does not act for. District-only lawyers
   // still see the full list until their own clients are all cancelled.
@@ -759,6 +864,21 @@ const getDefenceUserDefendants = (
     latestCancelledOrDismissedDate,
   }
 }
+
+// The court of appeals saves its ruling on the appeal case while writing it,
+// so until the appeal case is completed the ruling is a draft and is withheld
+// from defence users.
+const getAppealRulingOverride = (appealCase: AppealCase, isDefence: boolean) =>
+  isDefence && appealCase.appealState !== AppealCaseState.COMPLETED
+    ? {
+        appealRulingDecision: undefined,
+        appealConclusion: undefined,
+        appealRulingModifiedHistory: undefined,
+        appealValidToDate: undefined,
+        isAppealCustodyIsolation: undefined,
+        appealIsolationToDate: undefined,
+      }
+    : {}
 
 const transformCase = (
   theCase: Case,
@@ -808,6 +928,7 @@ const transformCase = (
           ...theCase.appealCase.toJSON(),
           ...getAppealCaseStatementDates(theCase.appealCase, theCase),
           ...getAppealCaseInfo(theCase.appealCase, theCase),
+          ...getAppealRulingOverride(theCase.appealCase, isDefence),
           appealEventLogs: undefined,
         },
       }
@@ -819,8 +940,27 @@ const transformCase = (
           ...ac.toJSON(),
           ...getAppealCaseStatementDates(ac, theCase),
           ...getAppealCaseInfo(ac, theCase),
+          ...getAppealRulingOverride(ac, isDefence),
           appealEventLogs: undefined,
         })),
+      }
+    : {}
+
+  // Defence users only see their own parties' verdict-appeal deadlines and
+  // event logs. An empty party filter would otherwise match prosecution rows
+  // (null/null), and other defendants' greinargerðarfrest is not theirs.
+  const verdictAppealCaseOverride = theCase.verdictAppealCase
+    ? {
+        verdictAppealCase: {
+          ...(isDefence && user
+            ? transformVerdictAppealCaseForUser(
+                theCase.verdictAppealCase,
+                theCase,
+                user,
+              )
+            : theCase.verdictAppealCase.toJSON()),
+          ...getVerdictAppealOutcomeOverride(theCase.verdictAppealCase, user),
+        },
       }
     : {}
 
@@ -852,6 +992,7 @@ const transformCase = (
     )?.announcement,
     ...appealCaseOverride,
     ...rulingOrderAppealCasesOverride,
+    ...verdictAppealCaseOverride,
     defendants: transformDefendants({
       defendants: transformedDefendants,
       indictmentRulingDecision: theCase.indictmentRulingDecision,
@@ -863,7 +1004,8 @@ const transformCase = (
       civilClaimants: theCase.civilClaimants,
     }),
     caseFiles: theCase.caseFiles
-      ?.filter(
+      ?.filter((file) => canUserAccessCaseFileCategory(user, file.category))
+      .filter(
         (file) =>
           // The user must be known
           user &&

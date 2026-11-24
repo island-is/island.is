@@ -71,8 +71,10 @@ export const InteractiveTableFormField: FC<Props> = ({
   )
   const rows = useMemo(
     () =>
-      typeof field.rows === 'function' ? field.rows(application) : field.rows,
-    [field.rows, application],
+      typeof field.rows === 'function'
+        ? field.rows(application, field, locale as Locale)
+        : field.rows,
+    [field, application, locale],
   )
   const footerRow = useMemo(
     () =>

@@ -1,18 +1,610 @@
 import { FamilyTypes } from '@island.is/form-system/enums'
 import {
+  ApplicationStatus,
   FieldTypesEnum,
   FormStatus,
+  ListTypesEnum,
   SectionTypes,
 } from '@island.is/form-system/shared'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { randomUUID } from 'crypto'
 import { Transaction, UniqueConstraintError } from 'sequelize'
+import { ConflictException } from '@nestjs/common'
 
 import { FormsService } from './forms.service'
 import { Form } from './models/form.model'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
 import { ApplicationJsonDto } from '../applications/models/dto/application.json.dto'
 import { User } from '@island.is/auth-nest-tools'
+import { ListTypes } from '../../dataTypes/listTypes/listType.model'
+
+describe('FormsService list permissions', () => {
+  it('includes common lists once and only permitted non-common lists', async () => {
+    const commonLists = [...ListTypes]
+    const permittedList = {
+      ...commonLists[0],
+      id: 'permitted-list',
+      isCommon: false,
+    }
+    const unpermittedList = {
+      ...permittedList,
+      id: 'unpermitted-list',
+    }
+    const service = Object.assign(Object.create(FormsService.prototype), {
+      organizationModel: {
+        findByPk: jest.fn().mockResolvedValue({
+          organizationPermissions: [
+            { permission: ListTypesEnum.CURRENCIES },
+            { permission: ListTypesEnum.ORGANIZATIONS },
+            { permission: permittedList.id },
+          ],
+        }),
+      },
+    }) as FormsService
+    ListTypes.push(permittedList, unpermittedList)
+
+    try {
+      const result = await service['getListTypes']('organization')
+
+      expect(result).toEqual([...commonLists, permittedList])
+    } finally {
+      ListTypes.splice(commonLists.length)
+    }
+  })
+})
+
+describe('FormsService form list', () => {
+  it('includes the original form ID for derived revisions', async () => {
+    const user = { nationalId: 'owner', scope: [] } as unknown as User
+    const service = Object.assign(Object.create(FormsService.prototype), {
+      organizationModel: {
+        findOne: jest.fn().mockResolvedValue({ id: 'organization' }),
+        findAll: jest.fn().mockResolvedValue([]),
+      },
+      formModel: {
+        findAll: jest.fn().mockResolvedValue([
+          {
+            id: 'revision',
+            derivedFrom: 'original-form',
+            status: FormStatus.PUBLISHED_BEING_CHANGED,
+          },
+        ]),
+      },
+    }) as FormsService
+
+    const result = await service.findAll(user, user.nationalId)
+
+    expect(result.forms).toEqual([
+      expect.objectContaining({ id: 'revision', derivedFrom: 'original-form' }),
+    ])
+  })
+})
+
+describe('FormsService form response', () => {
+  it('preserves the original form ID for newly created revisions', async () => {
+    const service = Object.assign(Object.create(FormsService.prototype), {
+      organizationModel: {
+        findByPk: jest.fn().mockResolvedValue(null),
+      },
+    }) as FormsService
+    const revision = Object.assign(Object.create(Form.prototype), {
+      id: 'revision',
+      organizationId: 'organization',
+      derivedFrom: 'original-form',
+      status: FormStatus.PUBLISHED_BEING_CHANGED,
+    }) as Form
+
+    const result = await service['setArrays'](revision)
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        id: revision.id,
+        derivedFrom: revision.derivedFrom,
+      }),
+    )
+  })
+})
+
+describe.each(['archive', 'publish replacement'])(
+  'FormsService draft cleanup when using %s',
+  (action) => {
+    const setup = () => {
+      const user = { nationalId: 'owner', scope: [] } as unknown as User
+      const transaction = { id: 'transaction' }
+      const form = {
+        id: 'published-form-id',
+        organizationNationalId: user.nationalId,
+        status: FormStatus.PUBLISHED,
+        slug: 'form',
+        reload: jest.fn().mockResolvedValue(undefined),
+        save: jest.fn().mockResolvedValue(undefined),
+      }
+      const replacement = {
+        ...form,
+        id: 'replacement-form-id',
+        derivedFrom: form.id,
+        status: FormStatus.PUBLISHED_BEING_CHANGED,
+        reload: jest.fn().mockResolvedValue(undefined),
+        save: jest.fn().mockResolvedValue(undefined),
+        destroy: jest.fn().mockResolvedValue(undefined),
+      }
+      const applications = [
+        { formId: form.id, status: ApplicationStatus.DRAFT, isTest: false },
+        { formId: form.id, status: ApplicationStatus.DRAFT, isTest: true },
+        { formId: form.id, status: ApplicationStatus.COMPLETED, isTest: false },
+        {
+          formId: 'other-form-id',
+          status: ApplicationStatus.DRAFT,
+          isTest: false,
+        },
+      ].map((application, index) => ({
+        ...application,
+        id: `application-${index}`,
+        values: [
+          {
+            id: `value-${index}`,
+            fieldType: FieldTypesEnum.FILE,
+            json: { s3Key: [`file-${index}`] },
+          },
+        ],
+        destroy: jest.fn().mockResolvedValue(undefined),
+      }))
+      const applicationModel = {
+        findAll: jest.fn(
+          async ({ where }: { where: { formId: string; status?: string } }) =>
+            applications.filter(
+              (application) =>
+                application.formId === where.formId &&
+                (!where.status || application.status === where.status),
+            ),
+        ),
+      }
+      const fileService = {
+        deleteFile: jest.fn().mockResolvedValue(undefined),
+        deleteFileFromStorage: jest.fn().mockResolvedValue(undefined),
+      }
+      const applicationEventModel = {
+        destroy: jest.fn().mockResolvedValue(1),
+      }
+      const commit = jest.fn().mockResolvedValue(undefined)
+      const findRevisions = jest.fn().mockResolvedValue([])
+      const service = Object.assign(Object.create(FormsService.prototype), {
+        formModel: {
+          findAll: findRevisions,
+          findByPk: jest.fn(async (id) =>
+            id === replacement.id ? replacement : form,
+          ),
+        },
+        applicationModel,
+        applicationEventModel,
+        fileService,
+        logger: { debug: jest.fn() },
+        sequelize: {
+          transaction: jest.fn(async (callback) => {
+            const result = await callback(transaction)
+            expect(fileService.deleteFileFromStorage).not.toHaveBeenCalled()
+            await commit()
+            return result
+          }),
+        },
+        validateZendeskSettingsForPublish: jest
+          .fn()
+          .mockResolvedValue(undefined),
+        copyForm: jest.fn().mockResolvedValue(replacement),
+        buildFormResponse: jest.fn().mockResolvedValue({}),
+      }) as FormsService
+      const updateStatus = () =>
+        service.updateStatus(
+          user,
+          action === 'archive' ? form.id : replacement.id,
+          {
+            newStatus:
+              action === 'archive' ? FormStatus.ARCHIVED : FormStatus.PUBLISHED,
+          },
+        )
+
+      return {
+        updateStatus,
+        form,
+        replacement,
+        transaction,
+        applications,
+        applicationModel,
+        applicationEventModel,
+        fileService,
+        commit,
+        findRevisions,
+      }
+    }
+
+    if (action === 'archive') {
+      it('deletes every active derived revision and their uploaded files after commit', async () => {
+        const {
+          updateStatus,
+          form,
+          replacement,
+          findRevisions,
+          transaction,
+          commit,
+          applications,
+          applicationModel,
+          fileService,
+        } = setup()
+        const secondRevision = {
+          ...replacement,
+          id: 'second-revision',
+          destroy: jest.fn().mockResolvedValue(undefined),
+        }
+        findRevisions.mockResolvedValueOnce([replacement, secondRevision])
+        const revisionApplications = [
+          replacement.id,
+          replacement.id,
+          secondRevision.id,
+        ].map((formId, index) => ({
+          ...applications[index],
+          id: `revision-application-${index}`,
+          formId,
+          status:
+            index === 0 ? ApplicationStatus.DRAFT : ApplicationStatus.COMPLETED,
+          values: [
+            {
+              id: `revision-value-${index}`,
+              fieldType: FieldTypesEnum.FILE,
+              json: { s3Key: [`revision-file-${index}`] },
+            },
+          ],
+        }))
+        applications.push(...revisionApplications)
+        replacement.destroy.mockImplementationOnce(async () => {
+          for (const application of revisionApplications) {
+            if (application.formId === replacement.id) application.values = []
+          }
+        })
+
+        await updateStatus()
+
+        expect(findRevisions).toHaveBeenCalledWith({
+          where: {
+            derivedFrom: form.id,
+            status: FormStatus.PUBLISHED_BEING_CHANGED,
+          },
+          transaction,
+        })
+        for (const revision of [replacement, secondRevision]) {
+          expect(applicationModel.findAll).toHaveBeenCalledWith(
+            expect.objectContaining({
+              where: { formId: revision.id },
+              transaction,
+            }),
+          )
+          expect(revision.destroy).toHaveBeenCalledWith({ transaction })
+          expect(revision.destroy.mock.invocationCallOrder[0]).toBeLessThan(
+            commit.mock.invocationCallOrder[0],
+          )
+        }
+        for (const index of [0, 1, 2]) {
+          expect(fileService.deleteFileFromStorage).toHaveBeenCalledWith(
+            `revision-file-${index}`,
+          )
+        }
+        expect(fileService.deleteFileFromStorage).toHaveBeenCalledTimes(5)
+        expect(form.status).toBe(FormStatus.ARCHIVED)
+        expect(form.save).toHaveBeenCalledWith({ transaction })
+        expect(commit).toHaveBeenCalledTimes(1)
+      })
+
+      it('does not unpublish if deleting the derived revision fails', async () => {
+        const {
+          updateStatus,
+          form,
+          replacement,
+          findRevisions,
+          commit,
+          applications,
+          fileService,
+        } = setup()
+        findRevisions.mockResolvedValueOnce([replacement])
+        applications.push({
+          ...applications[0],
+          id: 'revision-application',
+          formId: replacement.id,
+        })
+        replacement.destroy.mockRejectedValueOnce(new Error('Deletion failed'))
+
+        await expect(updateStatus()).rejects.toThrow('Deletion failed')
+
+        expect(form.save).not.toHaveBeenCalled()
+        expect(commit).not.toHaveBeenCalled()
+        expect(fileService.deleteFileFromStorage).not.toHaveBeenCalled()
+      })
+    }
+
+    it('deletes only drafts for the archived form, including test drafts and their files', async () => {
+      const {
+        updateStatus,
+        form,
+        replacement,
+        transaction,
+        applications,
+        applicationModel,
+        applicationEventModel,
+        fileService,
+      } = setup()
+
+      await updateStatus()
+
+      expect(form.reload).toHaveBeenCalledWith({
+        transaction,
+        lock: Transaction.LOCK.UPDATE,
+      })
+      expect(form.reload.mock.invocationCallOrder[0]).toBeLessThan(
+        applicationModel.findAll.mock.invocationCallOrder[0],
+      )
+      if (action === 'publish replacement') {
+        expect(replacement.reload).toHaveBeenCalledWith({
+          transaction,
+          lock: Transaction.LOCK.UPDATE,
+        })
+        expect(replacement.reload.mock.invocationCallOrder[0]).toBeLessThan(
+          applicationModel.findAll.mock.invocationCallOrder[0],
+        )
+      }
+      expect(applicationModel.findAll).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { formId: form.id, status: ApplicationStatus.DRAFT },
+          transaction,
+          lock: Transaction.LOCK.UPDATE,
+          include: [
+            expect.objectContaining({
+              as: 'values',
+              separate: true,
+              where: { fieldType: FieldTypesEnum.FILE },
+              required: false,
+            }),
+          ],
+        }),
+      )
+      for (const index of [0, 1]) {
+        expect(fileService.deleteFileFromStorage).toHaveBeenCalledWith(
+          `file-${index}`,
+        )
+        expect(applications[index].destroy).toHaveBeenCalledWith({
+          transaction,
+        })
+        expect(applicationEventModel.destroy).toHaveBeenCalledWith({
+          where: { applicationId: applications[index].id },
+          transaction,
+        })
+        expect(
+          applicationEventModel.destroy.mock.invocationCallOrder[index],
+        ).toBeLessThan(applications[index].destroy.mock.invocationCallOrder[0])
+      }
+      expect(applicationEventModel.destroy).toHaveBeenCalledTimes(2)
+      expect(fileService.deleteFileFromStorage).toHaveBeenCalledTimes(2)
+      expect(fileService.deleteFile).not.toHaveBeenCalled()
+      expect(applications[2].destroy).not.toHaveBeenCalled()
+      expect(applications[3].destroy).not.toHaveBeenCalled()
+      expect(form.status).toBe(FormStatus.ARCHIVED)
+      expect(form.save).toHaveBeenCalledWith({ transaction })
+    })
+
+    it('rechecks the form status under the lock before draft cleanup', async () => {
+      const { updateStatus, form, applicationModel } = setup()
+      form.reload.mockImplementationOnce(async () => {
+        form.status = FormStatus.ARCHIVED
+      })
+
+      await expect(updateStatus()).rejects.toThrow()
+
+      expect(applicationModel.findAll).not.toHaveBeenCalled()
+      expect(form.save).not.toHaveBeenCalled()
+    })
+
+    it('surfaces storage deletion failures after database cleanup has committed', async () => {
+      const { updateStatus, form, applications, fileService } = setup()
+      fileService.deleteFileFromStorage.mockRejectedValue(
+        new Error('File deletion failed'),
+      )
+
+      await expect(updateStatus()).rejects.toThrow('File deletion failed')
+
+      expect(form.save).toHaveBeenCalled()
+      expect(applications[0].destroy).toHaveBeenCalled()
+    })
+
+    it('does not delete the application or archive the form if event deletion fails', async () => {
+      const {
+        updateStatus,
+        form,
+        applications,
+        applicationEventModel,
+        fileService,
+      } = setup()
+      applicationEventModel.destroy.mockRejectedValue(
+        new Error('Event deletion failed'),
+      )
+
+      await expect(updateStatus()).rejects.toThrow()
+
+      expect(form.save).not.toHaveBeenCalled()
+      expect(applications[0].destroy).not.toHaveBeenCalled()
+      expect(fileService.deleteFileFromStorage).not.toHaveBeenCalled()
+    })
+
+    it.each(['save', 'commit'])(
+      'does not delete stored files if the archive transaction fails during %s',
+      async (failure) => {
+        const { updateStatus, form, commit, fileService } = setup()
+        const operation = failure === 'save' ? form.save : commit
+        operation.mockRejectedValue(new Error('Transaction failed'))
+
+        await expect(updateStatus()).rejects.toThrow()
+
+        expect(fileService.deleteFileFromStorage).not.toHaveBeenCalled()
+      },
+    )
+  },
+)
+
+describe('FormsService changing a published form', () => {
+  const setup = () => {
+    const user = { nationalId: 'owner', scope: [] } as unknown as User
+    const transaction = { id: 'transaction' }
+    const form = {
+      id: 'published-form',
+      organizationNationalId: user.nationalId,
+      status: FormStatus.PUBLISHED,
+      slug: 'form',
+      isInaccessible: false,
+      reload: jest.fn().mockResolvedValue(undefined),
+    }
+    const revision = { id: 'revision' }
+    const response = { form: revision }
+    const copyForm = jest.fn().mockResolvedValue(revision)
+    const buildFormResponse = jest.fn().mockResolvedValue(response)
+    const commit = jest.fn()
+    const service = Object.assign(Object.create(FormsService.prototype), {
+      formModel: { findByPk: jest.fn().mockResolvedValue(form) },
+      sequelize: {
+        transaction: jest.fn(async (callback) => {
+          const result = await callback(transaction)
+          commit()
+          return result
+        }),
+      },
+      copyForm,
+      buildFormResponse,
+    }) as FormsService
+    return {
+      changeForm: () =>
+        service.updateStatus(user, form.id, {
+          newStatus: FormStatus.PUBLISHED_BEING_CHANGED,
+        }),
+      form,
+      transaction,
+      copyForm,
+      buildFormResponse,
+      commit,
+      response,
+    }
+  }
+
+  it('locks the original and creates its revision in the same transaction', async () => {
+    const {
+      changeForm,
+      form,
+      transaction,
+      copyForm,
+      buildFormResponse,
+      commit,
+      response,
+    } = setup()
+    form.reload.mockImplementationOnce(async () => {
+      form.slug = 'current-form'
+      form.isInaccessible = true
+    })
+
+    await expect(changeForm()).resolves.toBe(response)
+
+    expect(form.reload).toHaveBeenCalledWith({
+      transaction,
+      lock: Transaction.LOCK.UPDATE,
+    })
+    expect(copyForm).toHaveBeenCalledWith(
+      form.id,
+      true,
+      true,
+      'current-form-i-breytingu',
+      undefined,
+      transaction,
+    )
+    expect(form.reload.mock.invocationCallOrder[0]).toBeLessThan(
+      copyForm.mock.invocationCallOrder[0],
+    )
+    expect(copyForm.mock.invocationCallOrder[0]).toBeLessThan(
+      commit.mock.invocationCallOrder[0],
+    )
+    expect(commit.mock.invocationCallOrder[0]).toBeLessThan(
+      buildFormResponse.mock.invocationCallOrder[0],
+    )
+  })
+
+  it('rejects a revision if the original was archived before acquiring its lock', async () => {
+    const { changeForm, form, copyForm, commit, buildFormResponse } = setup()
+    form.reload.mockImplementationOnce(async () => {
+      form.status = FormStatus.ARCHIVED
+    })
+
+    await expect(changeForm()).rejects.toThrow(ConflictException)
+
+    expect(copyForm).not.toHaveBeenCalled()
+    expect(commit).not.toHaveBeenCalled()
+    expect(buildFormResponse).not.toHaveBeenCalled()
+  })
+})
+
+describe('FormsService publishing a form in development', () => {
+  it.each([false, true])(
+    'deletes application events before applications (event deletion fails: %s)',
+    async (eventDeletionFails) => {
+      const user = { nationalId: 'owner', scope: [] } as unknown as User
+      const transaction = { id: 'transaction' }
+      const form = {
+        id: 'form-id',
+        organizationNationalId: user.nationalId,
+        status: FormStatus.IN_DEVELOPMENT,
+        save: jest.fn().mockResolvedValue(undefined),
+      }
+      const application = {
+        id: 'application-id',
+        values: [],
+        destroy: jest.fn().mockResolvedValue(undefined),
+      }
+      const applicationEventModel = {
+        destroy: eventDeletionFails
+          ? jest.fn().mockRejectedValue(new Error('Event deletion failed'))
+          : jest.fn().mockResolvedValue(1),
+      }
+      const service = Object.assign(Object.create(FormsService.prototype), {
+        formModel: { findByPk: jest.fn().mockResolvedValue(form) },
+        applicationModel: {
+          findAll: jest.fn().mockResolvedValue([application]),
+        },
+        applicationEventModel,
+        sequelize: {
+          transaction: jest.fn((callback) => callback(transaction)),
+        },
+        validateZendeskSettingsForPublish: jest
+          .fn()
+          .mockResolvedValue(undefined),
+      }) as FormsService
+
+      const publish = service.updateStatus(user, form.id, {
+        newStatus: FormStatus.PUBLISHED,
+      })
+
+      if (eventDeletionFails) {
+        await expect(publish).rejects.toThrow(
+          `Unexpected error publishing form '${form.id}'.`,
+        )
+        expect(application.destroy).not.toHaveBeenCalled()
+        expect(form.save).not.toHaveBeenCalled()
+      } else {
+        await publish
+        expect(application.destroy).toHaveBeenCalledWith({ transaction })
+        expect(
+          applicationEventModel.destroy.mock.invocationCallOrder[0],
+        ).toBeLessThan(application.destroy.mock.invocationCallOrder[0])
+        expect(form.save).toHaveBeenCalledWith({ transaction })
+      }
+
+      expect(applicationEventModel.destroy).toHaveBeenCalledWith({
+        where: { applicationId: application.id },
+        transaction,
+      })
+    },
+  )
+})
 
 describe('FormsService publishing accessibility', () => {
   it.each([FormStatus.IN_DEVELOPMENT, FormStatus.PUBLISHED_BEING_CHANGED])(
@@ -27,6 +619,7 @@ describe('FormsService publishing accessibility', () => {
         slug: 'form-i-breytingu',
         derivedFrom: 'published-form-id',
         isInaccessible: true,
+        reload: jest.fn().mockResolvedValue(undefined),
         save: jest.fn().mockImplementation(async () => {
           expect(form.status).toBe(FormStatus.PUBLISHED)
           expect(form.isInaccessible).toBe(false)
@@ -36,6 +629,7 @@ describe('FormsService publishing accessibility', () => {
         id: 'published-form-id',
         status: FormStatus.PUBLISHED,
         slug: 'form',
+        reload: jest.fn().mockResolvedValue(undefined),
         save: jest.fn().mockResolvedValue(undefined),
       }
       const service = Object.assign(Object.create(FormsService.prototype), {

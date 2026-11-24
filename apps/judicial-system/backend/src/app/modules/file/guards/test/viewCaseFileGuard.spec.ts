@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common'
 
 import {
+  CaseFileCategory,
   CaseState,
   completedCaseStates,
   courtOfAppealsRoles,
@@ -26,6 +27,7 @@ interface Then {
 type GivenWhenThen = () => Then
 
 describe('View Case File Guard', () => {
+  const caseFile = { category: CaseFileCategory.COURT_RECORD }
   const mockRequest = jest.fn()
   let givenWhenThen: GivenWhenThen
 
@@ -46,6 +48,55 @@ describe('View Case File Guard', () => {
     }
   })
 
+  describe('verdict appeal ruling', () => {
+    const request = (role: UserRole, type: InstitutionType) => ({
+      user: { currentUser: { role, institution: { type } } },
+      case: { state: CaseState.COMPLETED },
+      caseFile: { category: CaseFileCategory.VERDICT_APPEAL_RULING },
+    })
+
+    describe.each(courtOfAppealsRoles)('role %s', (role) => {
+      let then: Then
+
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() =>
+          request(role, InstitutionType.COURT_OF_APPEALS),
+        )
+
+        then = givenWhenThen()
+      })
+
+      it('should activate', () => {
+        expect(then.result).toBe(true)
+      })
+    })
+
+    describe.each([
+      ...prosecutionRoles.map(
+        (role) => [role, InstitutionType.POLICE_PROSECUTORS_OFFICE] as const,
+      ),
+      ...publicProsecutionOfficeRoles.map(
+        (role) => [role, InstitutionType.PUBLIC_PROSECUTORS_OFFICE] as const,
+      ),
+      ...districtCourtRoles.map(
+        (role) => [role, InstitutionType.DISTRICT_COURT] as const,
+      ),
+    ])('role %s at %s', (role, type) => {
+      let then: Then
+
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() => request(role, type))
+
+        then = givenWhenThen()
+      })
+
+      it('should throw ForbiddenException', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(then.error.message).toBe(`Forbidden for ${role}`)
+      })
+    })
+  })
+
   describe.each(prosecutionRoles)('role %s', (role) => {
     describe.each(Object.keys(CaseState))(
       'can view case files for %s cases',
@@ -63,6 +114,7 @@ describe('View Case File Guard', () => {
               },
             },
             case: { state },
+            caseFile,
           }))
 
           then = givenWhenThen()
@@ -92,6 +144,7 @@ describe('View Case File Guard', () => {
             },
           },
           case: { state },
+          caseFile,
         }))
 
         then = givenWhenThen()
@@ -123,6 +176,7 @@ describe('View Case File Guard', () => {
             },
           },
           case: { state },
+          caseFile,
         }))
 
         then = givenWhenThen()
@@ -152,6 +206,7 @@ describe('View Case File Guard', () => {
             },
           },
           case: { state },
+          caseFile,
         }))
 
         then = givenWhenThen()
@@ -183,6 +238,7 @@ describe('View Case File Guard', () => {
             },
           },
           case: { state },
+          caseFile,
         }))
 
         then = givenWhenThen()
@@ -210,6 +266,7 @@ describe('View Case File Guard', () => {
             },
           },
           case: { state },
+          caseFile,
         }))
 
         then = givenWhenThen()
@@ -238,6 +295,7 @@ describe('View Case File Guard', () => {
             },
           },
           case: { state },
+          caseFile,
         }))
 
         then = givenWhenThen()
@@ -267,6 +325,7 @@ describe('View Case File Guard', () => {
         mockRequest.mockImplementationOnce(() => ({
           user: { currentUser: { role } },
           case: { state },
+          caseFile,
         }))
 
         then = givenWhenThen()
@@ -309,6 +368,25 @@ describe('View Case File Guard', () => {
     it('should throw InternalServerErrorException', () => {
       expect(then.error).toBeInstanceOf(InternalServerErrorException)
       expect(then.error.message).toBe('Missing case')
+    })
+  })
+
+  describe('missing case file', () => {
+    const user = {} as User
+    let then: Then
+
+    beforeEach(() => {
+      mockRequest.mockImplementationOnce(() => ({
+        user: { currentUser: user },
+        case: { state: CaseState.COMPLETED },
+      }))
+
+      then = givenWhenThen()
+    })
+
+    it('should throw InternalServerErrorException', () => {
+      expect(then.error).toBeInstanceOf(InternalServerErrorException)
+      expect(then.error.message).toBe('Missing case file')
     })
   })
 })

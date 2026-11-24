@@ -256,7 +256,11 @@ query Case($input: CaseQueryInput!) {
       id
       appealState
       appealType
+      verdictAppealStatus
       appealCaseNumber
+      appealRulingDecision
+      appealRulingType
+      caseName
       appealConclusion
       appealAssistant {
         id
@@ -276,6 +280,7 @@ query Case($input: CaseQueryInput!) {
         defendantId
         civilClaimantId
         deadline
+        isExpired
       }
       appealJudges {
         id

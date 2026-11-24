@@ -249,17 +249,18 @@ export const CaseOverview = () => {
                         <Text>{strings.unsignedRuling}</Text>
                       )}
                     </PdfButton>
-                    <Box marginTop={7}>
-                      <ZipButton
-                        caseId={workingCase.id}
-                        courtCaseNumber={workingCase.courtCaseNumber}
-                      />
-                    </Box>
                   </>
                 )}
               </Box>
             </Box>
           )}
+          <Box marginBottom={10}>
+            <ZipButton
+              caseId={workingCase.id}
+              courtCaseNumber={workingCase.courtCaseNumber}
+              policeCaseNumbers={workingCase.policeCaseNumbers}
+            />
+          </Box>
         </FormContentContainer>
         {appealModals}
       </PageLayout>

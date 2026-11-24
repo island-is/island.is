@@ -2,7 +2,11 @@ import { expect } from '@playwright/test'
 import faker from 'faker'
 import { urls } from '../../../support/urls'
 import { verifyRequestCompletion } from '../../../support/api-tools'
-import { chooseDocument, getDaysFromNow } from '../utils/helpers'
+import {
+  chooseDocument,
+  getDaysFromNow,
+  randomAppealCaseNumber,
+} from '../utils/helpers'
 import { test } from '../utils/judicialSystemTest'
 import {
   judgeCompletesIndictmentWithVerdict,
@@ -71,6 +75,85 @@ test.describe.serial('Verdict appeal tests', () => {
     ])
   })
 
+  // The court of appeals only sees a verdict appeal once an appeal summons has
+  // been sent there: the office issues it, the public prosecutor confirms it
+  // and the office sends it on.
+  test('public prosecutor office should issue an appeal summons', async ({
+    publicProsecutorOfficePage,
+  }) => {
+    const page = publicProsecutorOfficePage
+
+    // Indictment overview
+    await Promise.all([
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+      page.goto(`/rikissaksoknari/akaera/yfirlit/${caseId}`),
+    ])
+    await page
+      .getByTestId('appealSummonses')
+      .getByRole('button', { name: 'Gefa út áfrýjunarstefnu' })
+      .click()
+
+    // Appeal summons
+    await expect(page).toHaveURL(
+      new RegExp(`/rikissaksoknari/akaera/afryjunarstefna/${caseId}(\\?.*)?$`),
+    )
+    await page
+      .getByRole('textbox', { name: 'Kröfur áfrýjanda' })
+      .fill(faker.lorem.sentence())
+    await Promise.all([
+      page.getByTestId('continueButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'CreateAppealSummons'),
+    ])
+    await expect(page).toHaveURL(
+      new RegExp(`/rikissaksoknari/akaera/yfirlit/${caseId}(\\?.*)?$`),
+    )
+  })
+
+  test('public prosecutor should confirm the appeal summons', async ({
+    publicProsecutorPage,
+  }) => {
+    const page = publicProsecutorPage
+
+    // Indictment overview
+    await Promise.all([
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+      page.goto(`/rikissaksoknari/akaera/yfirlit/${caseId}`),
+    ])
+    await page
+      .getByTestId('appealSummonses')
+      .getByRole('button', { name: 'Staðfesta' })
+      .click()
+    await Promise.all([
+      page.getByTestId('modalPrimaryButton').click(),
+      verifyRequestCompletion(page, '/api/graphql', 'ConfirmAppealSummons'),
+    ])
+  })
+
+  test('public prosecutor office should send the appeal summons to the court of appeals', async ({
+    publicProsecutorOfficePage,
+  }) => {
+    const page = publicProsecutorOfficePage
+
+    // Indictment overview
+    await Promise.all([
+      verifyRequestCompletion(page, '/api/graphql', 'Case'),
+      page.goto(`/rikissaksoknari/akaera/yfirlit/${caseId}`),
+    ])
+    await page
+      .getByTestId('appealSummonses')
+      .getByRole('button', { name: /^Valmynd fyrir Áfrýjunarstefna/ })
+      .click()
+    await page.getByRole('menuitem', { name: 'Senda til Landsréttar' }).click()
+    await Promise.all([
+      page.getByTestId('modalPrimaryButton').click(),
+      verifyRequestCompletion(
+        page,
+        '/api/graphql',
+        'SendAppealSummonsToCourtOfAppeals',
+      ),
+    ])
+  })
+
   test('court of appeals should reach the status step of the verdict appeal', async ({
     coaPage,
   }) => {
@@ -84,6 +167,20 @@ test.describe.serial('Verdict appeal tests', () => {
     await expect(page).toHaveURL(
       new RegExp(`/landsrettur/afryjun/yfirlit/${caseId}(\\?.*)?$`),
     )
+    await page.getByTestId('continueButton').click()
+
+    // Registration: the court does not move on without its own case number.
+    // The bench is assigned later, so it is left empty here.
+    await expect(page).toHaveURL(
+      new RegExp(
+        `/landsrettur/afryjun/skraning-og-uthlutun/${caseId}(\\?.*)?$`,
+      ),
+    )
+    await page.getByText('Mál nr. *').fill(randomAppealCaseNumber())
+    await Promise.all([
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateAppealCase'),
+      page.getByText('Mál nr. *').press('Tab'),
+    ])
     // The defender page refetches the case as it opens. Acting before that
     // settles lets the refetch overwrite the answer given below.
     await Promise.all([

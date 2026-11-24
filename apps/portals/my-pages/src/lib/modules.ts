@@ -1,28 +1,30 @@
 import { PortalModule } from '@island.is/portals/core'
-import { restrictionsModule } from '@island.is/portals/my-pages/restrictions'
-import { sessionsModule } from '@island.is/portals/my-pages/sessions'
+import { airDiscountModule } from '@island.is/portals/my-pages/air-discount'
 import { applicationsModule } from '@island.is/portals/my-pages/applications'
 import { assetsModule } from '@island.is/portals/my-pages/assets'
+import { consentModule } from '@island.is/portals/my-pages/consent'
+import { directorateOfEqualityModule } from '@island.is/portals/my-pages/directorate-of-equality'
 import { documentsModule } from '@island.is/portals/my-pages/documents'
 import { educationModule } from '@island.is/portals/my-pages/education'
 import { educationCareerModule } from '@island.is/portals/my-pages/education-career'
 import { educationStudentAssessmentModule } from '@island.is/portals/my-pages/education-student-assessment'
 import { financeModule } from '@island.is/portals/my-pages/finance'
-import { petitionsModule } from '@island.is/portals/my-pages/petitions'
-import {
-  informationModule,
-  companyInformationModule,
-} from '@island.is/portals/my-pages/information'
-import { licensesModule } from '@island.is/portals/my-pages/licenses'
-import { airDiscountModule } from '@island.is/portals/my-pages/air-discount'
-import { createDelegationsModule } from '@island.is/portals/shared-modules/delegations'
 import { healthModule } from '@island.is/portals/my-pages/health'
-import { indexModule } from '../module'
-import { consentModule } from '@island.is/portals/my-pages/consent'
+import {
+  companyInformationModule,
+  informationModule,
+} from '@island.is/portals/my-pages/information'
+import { lawAndOrderModule } from '@island.is/portals/my-pages/law-and-order'
+import { licensesModule } from '@island.is/portals/my-pages/licenses'
 import { occupationalLicensesModule } from '@island.is/portals/my-pages/occupational-licenses'
+import { petitionsModule } from '@island.is/portals/my-pages/petitions'
+import { restrictionsModule } from '@island.is/portals/my-pages/restrictions'
+import { sessionsModule } from '@island.is/portals/my-pages/sessions'
 import { signatureCollectionModule } from '@island.is/portals/my-pages/signature-collection'
 import { socialBenefitsModule } from '@island.is/portals/my-pages/social-benefits'
-import { lawAndOrderModule } from '@island.is/portals/my-pages/law-and-order'
+import { createDelegationsModule } from '@island.is/portals/shared-modules/delegations'
+
+import { indexModule } from '../module'
 
 /**
  * NOTE:
@@ -45,6 +47,7 @@ export const modules: PortalModule[] = [
   indexModule,
   informationModule,
   companyInformationModule,
+  directorateOfEqualityModule,
   licensesModule,
   occupationalLicensesModule,
   restrictionsModule,

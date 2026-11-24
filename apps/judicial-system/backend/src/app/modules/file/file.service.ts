@@ -19,6 +19,7 @@ import type { ConfigType } from '@island.is/nest/config'
 import { stripPdfExtension } from '@island.is/judicial-system/formatters'
 import { MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealCaseState,
   CaseFileCategory,
   CaseFileState,
   CaseOrigin,
@@ -37,7 +38,7 @@ import {
 import { nowFactory } from '../../factories'
 import { createConfirmedPdf, getCaseFileHash } from '../../formatters'
 import { hasConfirmableCaseFileCategories } from '../../formatters/confirmation/confirmedPdf'
-import { queueMessagesAfterCommit } from '../../middleware'
+import { queueMessagesAfterCommit, registerAfterCommit } from '../../middleware'
 import { findAppealCaseOfCaseFile } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
@@ -56,6 +57,7 @@ import { AttachRulingOrderDocumentDto } from './dto/attachRulingOrderDocument.dt
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFileDto } from './dto/updateFile.dto'
+import { canUserAccessCaseFileCategory } from './guards/caseFileCategory'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { DeliverResponse } from './models/deliver.response'
 import { PresignedPost } from './models/presignedPost.model'
@@ -72,6 +74,10 @@ interface CreateFile extends CreateFileDto {
 // <uuid>/<uuid>/<filename>
 // As uuid-s have length 36, the filename starts at position 82 in the key.
 const NAME_BEGINS_INDEX = 74
+
+// There is one court of appeals, and no judge or institution is recorded on a
+// verdict appeal's conclusion to read its name from.
+const COURT_OF_APPEALS_NAME = 'Landsréttur'
 
 @Injectable()
 export class FileService {
@@ -176,6 +182,11 @@ export class FileService {
     if (!hasConfirmableCaseFileCategories(file.category)) {
       return undefined
     }
+
+    if (file.category === CaseFileCategory.VERDICT_APPEAL_RULING) {
+      return this.confirmVerdictAppealRuling(theCase, file, pdf)
+    }
+
     const hasRulingDateConfirmation =
       theCase.rulingDate &&
       (file.category === CaseFileCategory.RULING ||
@@ -241,6 +252,61 @@ export class FileService {
       })
   }
 
+  // The court of appeals' judgment or ruling on a verdict appeal is confirmed
+  // by the court as a whole on the day it concludes the appeal: no judge
+  // confirms it in the system, so the stamp carries the court and that date.
+  private async confirmVerdictAppealRuling(
+    theCase: Case,
+    file: CaseFile,
+    pdf: Buffer,
+  ): Promise<string | undefined> {
+    const verdictAppealCase = theCase.verdictAppealCase
+
+    if (
+      verdictAppealCase?.appealState !== AppealCaseState.COMPLETED ||
+      !verdictAppealCase.appealRulingDate
+    ) {
+      return undefined
+    }
+
+    try {
+      const confirmedPdf = await createConfirmedPdf(
+        {
+          actor: '',
+          institution: COURT_OF_APPEALS_NAME,
+          date: verdictAppealCase.appealRulingDate,
+        },
+        pdf,
+        CaseFileCategory.VERDICT_APPEAL_RULING,
+      )
+
+      const { hash, hashAlgorithm, binaryPdf } = getCaseFileHash(confirmedPdf)
+
+      // A hash that is not stored only means the document is stamped again
+      // the next time it is opened, so the stamped document is still returned
+      try {
+        await this.caseFileRepositoryService.updateById(file.id, {
+          hash,
+          hashAlgorithm,
+        })
+      } catch (reason) {
+        this.logger.error(
+          `Failed to store the hash of the confirmed verdict appeal ruling for case ${theCase.id}`,
+          { reason },
+        )
+      }
+
+      return binaryPdf
+    } catch (reason) {
+      this.logger.error(
+        `Failed to create confirmed verdict appeal ruling for case ${theCase.id}`,
+        { reason },
+      )
+
+      return undefined
+    }
+  }
+
   private shouldGetConfirmedDocument = (file: CaseFile, theCase: Case) => {
     // Only case files in indictment cases can be confirmed
     if (!isIndictmentCase(theCase.type)) {
@@ -259,6 +325,15 @@ export class FileService {
     if (
       file.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER &&
       file.submissionDate
+    ) {
+      return true
+    }
+
+    // The court of appeals' judgment or ruling on a verdict appeal is
+    // confirmed when the court concludes the appeal
+    if (
+      file.category === CaseFileCategory.VERDICT_APPEAL_RULING &&
+      theCase.verdictAppealCase?.appealState === AppealCaseState.COMPLETED
     ) {
       return true
     }
@@ -398,6 +473,21 @@ export class FileService {
       )
     }
 
+    if (!canUserAccessCaseFileCategory(user, createFile.category)) {
+      throw new ForbiddenException(
+        'Only court of appeals users can create a verdict appeal ruling',
+      )
+    }
+
+    if (
+      createFile.category === CaseFileCategory.VERDICT_APPEAL_RULING &&
+      !theCase.verdictAppealCase
+    ) {
+      throw new BadRequestException(
+        `Case ${theCase.id} has no verdict appeal to rule on`,
+      )
+    }
+
     const regExp = new RegExp(`^${theCase.id}/.{36}/(.*)$`)
 
     if (!regExp.test(key)) {
@@ -466,9 +556,13 @@ export class FileService {
     return file
   }
 
-  // Files of an indictment case are delivered to the police and the courts as
-  // they arrive. Also used when a ruling order pronounced orally is written up,
-  // which is the first moment that file has a document to deliver.
+  // Additional case files of an indictment case are delivered to the police
+  // and the courts as they arrive. Mid-case ruling orders are delivered to the
+  // courts here too, but never to the police from this path — LÖKE gets them
+  // on case completion when they are linked in a confirmed court session (see
+  // addMessagesForMidCaseRulingOrdersToPolice). Also used when a ruling order
+  // pronounced orally is written up, which is the first moment that file has a
+  // document to deliver to the courts.
   private addMessagesForIndictmentCaseFileDeliveryToQueue(
     theCase: Case,
     file: CaseFile,
@@ -485,7 +579,13 @@ export class FileService {
       return
     }
 
-    if (theCase.origin === CaseOrigin.LOKE) {
+    // Mid-case ruling orders wait for case completion before going to LÖKE.
+    // Write-ups after completion go through case correction and are delivered
+    // when the case is completed again, not from here.
+    if (
+      theCase.origin === CaseOrigin.LOKE &&
+      file.category !== CaseFileCategory.COURT_INDICTMENT_RULING_ORDER
+    ) {
       queueMessagesAfterCommit({
         type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
         user,
@@ -685,8 +785,22 @@ export class FileService {
     const success = await this.deleteFileFromDatabase(file.id, transaction)
 
     if (success && isRequestCase(theCase.type)) {
-      // Fire and forget, no need to wait for the result
-      this.tryDeleteFileFromS3(theCase, file)
+      if (transaction) {
+        // Delete only once the request's work is durable, so a rolled-back
+        // delete cannot leave a live case file whose object S3 has already
+        // removed. Not transaction.afterCommit: Sequelize runs those hooks
+        // even when the COMMIT itself fails. Still fire and forget: the
+        // callback starts the delete and does not wait for it, as the
+        // interceptor awaits its callbacks before the response is sent.
+        // Nothing is left to reject either, tryDeleteFileFromS3 catches and
+        // logs every failure.
+        registerAfterCommit(async () => {
+          this.tryDeleteFileFromS3(theCase, file)
+        })
+      } else {
+        // Fire and forget, no need to wait for the result
+        this.tryDeleteFileFromS3(theCase, file)
+      }
     }
 
     return { success }
@@ -697,6 +811,14 @@ export class FileService {
     file: CaseFile,
     user: User,
   ): Promise<UploadFileToCourtResponse> {
+    // The destination is the district court's own system, which the court of
+    // appeals' judgment or ruling on a verdict appeal must not reach.
+    if (file.category === CaseFileCategory.VERDICT_APPEAL_RULING) {
+      throw new ForbiddenException(
+        `File ${file.id} of case ${theCase.id} is a verdict appeal ruling and is not uploaded to court`,
+      )
+    }
+
     if (file.state === CaseFileState.STORED_IN_COURT) {
       return { success: true }
     }
@@ -842,8 +964,10 @@ export class FileService {
 
     const updatedCaseFile = updatedCaseFiles[0]
 
-    // The ruling finally has a document to deliver, which is what createCaseFile
-    // would have queued had the ruling arrived as an upload in the first place.
+    // The ruling finally has a document to deliver to the court (police delivery
+    // waits for case completion when the ruling is linked in a confirmed court
+    // session), which is what createCaseFile would have queued had the ruling
+    // arrived as an upload in the first place.
     this.addMessagesForIndictmentCaseFileDeliveryToQueue(
       theCase,
       updatedCaseFile,

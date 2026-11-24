@@ -14,7 +14,12 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
-import { AppealCase, CaseRepositoryService, Defendant } from '../repository'
+import {
+  AppealCase,
+  AppealSummons,
+  CaseRepositoryService,
+  Defendant,
+} from '../repository'
 import { CaseTableResponse } from './dto/caseTable.response'
 import { SearchCasesResponse } from './dto/searchCases.response'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
@@ -135,7 +140,9 @@ export class CaseTableService {
         caseId: c.id,
         appealCaseId: c.appeal?.id,
         defendantIds: c.defendants?.map((d: Defendant) => d.id),
-        isMyCase: isMyCase(c, user),
+        isMyCase: whereOptions.isMyCase
+          ? whereOptions.isMyCase(c)
+          : isMyCase(c, user),
         actionOnRowClick: getActionOnRowClick(c, user),
         contextMenuActions: getContextMenuActions(c, user),
         cells: caseTableCellKeys.map((k) =>
@@ -246,9 +253,10 @@ export class CaseTableService {
             ]
           : []),
         // The verdict appeal is a row of its own for court of appeals users,
-        // the same as a ruling order appeal. The access rule already joins it
-        // to ask whether it exists, but only for its id - a row needs its
-        // number too, so this query joins it itself.
+        // the same as a ruling order appeal. Its sent summonses come along
+        // because they decide whether the court may see that row at all - a
+        // case can be in the result on the strength of a ruling appeal alone.
+        // `separate: true` for the same reason as the ruling order appeals.
         ...(isCoaUser
           ? [
               {
@@ -260,6 +268,15 @@ export class CaseTableService {
                   'appealCaseNumber',
                   'appealState',
                   'appealReceivedByCourtDate',
+                ],
+                include: [
+                  {
+                    model: AppealSummons,
+                    as: 'sentAppealSummonses',
+                    required: false,
+                    separate: true,
+                    attributes: ['id', 'appealCaseId'],
+                  },
                 ],
               },
             ]
@@ -346,10 +363,14 @@ export class CaseTableService {
       (a.appealState === AppealCaseState.WITHDRAWN &&
         Boolean(a.appealReceivedByCourtDate))
 
-    // A verdict appeal is the court's from the moment it is filed, which is
-    // why the access rule asks only that it exists. Reusing the rule above
-    // would keep a newly filed appeal out of search while the court's own
-    // list is already showing it.
+    // A verdict appeal is the court's once an appeal summons has been sent to
+    // it, whatever its state - the verdict arm of the same access rule.
+    // Reusing the ruling appeal rule above would keep a newly sent appeal out
+    // of search while the court's own list is already showing it; asking
+    // nothing would list an appeal still being prepared on a case the court
+    // reaches through a ruling appeal.
+    const isQualifyingVerdictAppealForCoa = (a: AppealCase): boolean =>
+      Boolean(a.sentAppealSummonses?.length)
 
     const rows = cases.flatMap((c) => {
       const caseMatchedValue = (c.get('matchedValue') as string) ?? ''
@@ -386,7 +407,8 @@ export class CaseTableService {
                 id: a.id,
                 appealCaseNumber: a.appealCaseNumber ?? null,
               })),
-            ...(c.verdictAppealCase
+            ...(c.verdictAppealCase &&
+            isQualifyingVerdictAppealForCoa(c.verdictAppealCase)
               ? [
                   {
                     id: c.verdictAppealCase.id,

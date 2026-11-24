@@ -39,6 +39,7 @@ import {
   isPublicProsecutionUser,
   isSameAppealBench,
   verdictAppealDeclarationFileCategories,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
@@ -52,7 +53,6 @@ import {
   AppealEventLogRepositoryService,
   Case,
   CaseRepositoryService,
-  CivilClaimant,
   CreateAppealCase,
   Defendant,
   DefendantRepositoryService,
@@ -73,6 +73,7 @@ import {
   findUserRulingOrderAppealDecision,
   hasStandingVerdictAppeal,
   isInCourtRulingOrderAppeal,
+  resolveDefenceParties,
   standingVerdictAppellants,
   userRulingOrderAppealDecisions,
   type VerdictAppellantSide,
@@ -112,41 +113,6 @@ export class AppealCaseService {
 
   // Every defence party (defendant / civil claimant) the user currently, and
   // confirmedly, represents on the case. A defence event is recorded once per
-  // party, so a lawyer who represents several clients appeals (or submits a
-  // statement) on behalf of all of them - the backend resolves this, the client
-  // never has to pick. Empty for request cases (collective defence, no party)
-  // and non-defence users.
-  private resolveDefenceParties(
-    theCase: Case,
-    user: User,
-  ): { defendantId?: string; civilClaimantId?: string }[] {
-    if (!isIndictmentCase(theCase.type)) {
-      return []
-    }
-
-    const parties: { defendantId?: string; civilClaimantId?: string }[] = []
-
-    for (const defendant of theCase.defendants ?? []) {
-      if (
-        Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
-      ) {
-        parties.push({ defendantId: defendant.id })
-      }
-    }
-
-    for (const civilClaimant of theCase.civilClaimants ?? []) {
-      if (
-        CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(user.nationalId, [
-          civilClaimant,
-        ])
-      ) {
-        parties.push({ civilClaimantId: civilClaimant.id })
-      }
-    }
-
-    return parties
-  }
-
   // Writes appeal event-log rows with an actor snapshot of who performed the
   // event. Defenders are not system users, so userId is null and
   // national_id/name identify them (plus the defence party); for
@@ -161,7 +127,7 @@ export class AppealCaseService {
     transaction: Transaction,
   ): Promise<void> {
     const parties = isDefenceUser(user)
-      ? this.resolveDefenceParties(theCase, user)
+      ? resolveDefenceParties(theCase, user.nationalId)
       : []
     // Prosecution and request-case collective defence carry no party, but still
     // get a single event row.
@@ -916,6 +882,8 @@ export class AppealCaseService {
         request,
         transaction,
       )
+    } else if (actor === 'DEFENDER') {
+      await this.recordAppealingDefender(theCase, defendant, transaction)
     }
 
     // AppealCase is the source of truth for who appealed; verdict.appealDate is
@@ -1059,9 +1027,51 @@ export class AppealCaseService {
     )
   }
 
-  // The appeal defender belongs to the appeal: withdrawn, there is no appeal
-  // for them to have filed, and a later registration that names nobody must
-  // not show them again.
+  // A defender appealing in the system is the defendant's confirmed defender
+  // of record, so that record names the appeal defender. Unconfirmed, like the
+  // one the office registers: access follows once the court of appeals
+  // confirms them.
+  //
+  // Only while the appeal says nothing about this defendant's counsel. The
+  // court of appeals may already have named a defender or recorded a waiver -
+  // on an appeal the prosecution filed first - and that stance is not
+  // overwritten, nor is a confirmed defender set back to unconfirmed.
+  private async recordAppealingDefender(
+    theCase: Case,
+    defendant: Defendant,
+    transaction: Transaction,
+  ): Promise<void> {
+    const isAppealDefenderSettled =
+      Boolean(
+        defendant.appealDefenderName ||
+          defendant.appealDefenderNationalId ||
+          defendant.appealDefenderEmail ||
+          defendant.appealDefenderPhoneNumber,
+      ) ||
+      (defendant.isAppealDefenderWaived !== null &&
+        defendant.isAppealDefenderWaived !== undefined)
+
+    if (isAppealDefenderSettled) {
+      return
+    }
+
+    await this.defendantRepositoryService.update(
+      theCase.id,
+      defendant.id,
+      {
+        appealDefenderName: defendant.defenderName ?? null,
+        appealDefenderNationalId: defendant.defenderNationalId ?? null,
+        appealDefenderEmail: defendant.defenderEmail ?? null,
+        appealDefenderPhoneNumber: defendant.defenderPhoneNumber ?? null,
+        isAppealDefenderConfirmed: false,
+      },
+      { transaction },
+    )
+  }
+
+  // The appeal defender belongs to the appeal concerning that defendant.
+  // Cleared once no appeal for them remains on either side — kept while a
+  // prosecution appeal against them still stands after a defence withdrawal.
   private async clearAppealDefender(
     theCase: Case,
     defendantId: string,
@@ -1091,6 +1101,24 @@ export class AppealCaseService {
     this.logger.debug(
       `Updating appeal case ${appealCase.id} of case ${theCase.id}`,
     )
+
+    if (
+      update.appealRulingType &&
+      appealCase.appealType !== AppealCaseType.VERDICT
+    ) {
+      throw new BadRequestException(
+        `Appeal case ${appealCase.id} is not a verdict appeal and has no ruling type`,
+      )
+    }
+
+    if (
+      update.verdictAppealStatus &&
+      appealCase.appealType !== AppealCaseType.VERDICT
+    ) {
+      throw new BadRequestException(
+        `Appeal case ${appealCase.id} is not a verdict appeal and has no verdict appeal status`,
+      )
+    }
 
     // The bench is not a column: it is replaced as rows, below.
     const { appealJudgeIds, ...columnUpdate } = update
@@ -1253,15 +1281,11 @@ export class AppealCaseService {
       )
     }
 
-    // Withdrawal is the only transition a verdict appeal supports so far. The
-    // ones that carry a ruling appeal to and through the court of appeals were
-    // written for that, and the court of appeals work has to take them on for
-    // verdict appeals deliberately - until then they are refused rather than
-    // applied to a case they were never checked against.
-    if (appealCase.appealType === AppealCaseType.VERDICT) {
-      throw new ForbiddenException(
-        `Verdict appeals cannot be transitioned with ${transition} yet`,
-      )
+    if (
+      transition === AppealCaseTransition.COMPLETE_APPEAL &&
+      appealCase.appealType === AppealCaseType.VERDICT
+    ) {
+      return this.completeVerdictAppeal(theCase, appealCase, transaction)
     }
 
     // Withdrawing an in-court ruling-order appeal is per party: only the
@@ -1447,20 +1471,29 @@ export class AppealCaseService {
     // and re-reads the freshly committed events.
     await this.lockCaseForVerdictAppeal(theCase, user, actor, transaction)
 
-    // Once the court of appeals has received the case the prosecution's
-    // decision is made. The guard loaded the appeal case before the
-    // transaction, so the state is read again under the lock.
-    if (actor === 'REVIEWER') {
-      const lockedAppealCase = await this.appealCaseRepositoryService.findById(
-        appealCase.id,
-        { transaction },
-      )
+    // The guard loaded the appeal case before the transaction, so the state is
+    // read again under the lock.
+    const lockedAppealCase = await this.appealCaseRepositoryService.findById(
+      appealCase.id,
+      { transaction },
+    )
 
-      if (lockedAppealCase?.appealState !== AppealCaseState.APPEALED) {
-        throw new ForbiddenException(
-          'The verdict appeal has been received by the court of appeals',
-        )
-      }
+    // Once the court of appeals has received the case the prosecution's
+    // decision is made.
+    if (
+      actor === 'REVIEWER' &&
+      lockedAppealCase?.appealState !== AppealCaseState.APPEALED
+    ) {
+      throw new ForbiddenException(
+        'The verdict appeal has been received by the court of appeals',
+      )
+    }
+
+    // An appeal the court of appeals has concluded has nothing left to
+    // withdraw, whoever else still stands as an appellant. The outcome stays
+    // with the court until it is released, so the refusal does not say why.
+    if (lockedAppealCase?.appealState === AppealCaseState.COMPLETED) {
+      throw new ForbiddenException('The verdict appeal cannot be withdrawn')
     }
 
     const appealEventLogs =
@@ -1492,8 +1525,24 @@ export class AppealCaseService {
       transaction,
     )
 
-    // The defendant's own appeal carries a mirror on the verdict and possibly an
-    // appeal defender; the prosecution's carries neither.
+    // The appeal case stands while any appellant of either side stands.
+    const remainingAppellants = standingAppellants.filter(
+      (appellant) => !isWithdrawn(appellant),
+    )
+
+    // Drop the appeal appointment once nothing remains for this defendant —
+    // including when the prosecution withdraws last after the defence already
+    // did. Leaving it would keep granting the advocate access with no appeal.
+    const defendantStillHasStandingAppeal = remainingAppellants.some(
+      (appellant) => appellant.defendantId === defendantId,
+    )
+
+    if (!defendantStillHasStandingAppeal) {
+      await this.clearAppealDefender(theCase, defendantId, transaction)
+    }
+
+    // The defendant's own appeal carries a mirror on the verdict and declaration
+    // files; the prosecution's carries neither.
     if (side === 'DEFENCE') {
       // Clear the mirror on the verdict, so the public prosecution office's
       // screen stops showing this defendant as having appealed.
@@ -1508,8 +1557,6 @@ export class AppealCaseService {
           { transaction },
         )
       }
-
-      await this.clearAppealDefender(theCase, defendantId, transaction)
 
       // Soft-delete this defendant's áfrýjunaryfirlýsing and accompanying files.
       // They are otherwise locked while a verdict appeal case exists, so leaving
@@ -1526,11 +1573,6 @@ export class AppealCaseService {
       }
     }
 
-    // The appeal case stands while any appellant of either side stands.
-    const remainingAppellants = standingAppellants.filter(
-      (appellant) => !isWithdrawn(appellant),
-    )
-
     if (remainingAppellants.length === 0) {
       return this.applyTransition(
         theCase,
@@ -1544,6 +1586,66 @@ export class AppealCaseService {
     // The appeal still stands for the other appellants - no state change and no
     // notification.
     return { caseUpdate: {}, appealCaseUpdate: {}, appealCase }
+  }
+
+  // The court of appeals concludes a verdict appeal once everything about how
+  // it ended is on record: a status of completed, the outcome, whether it is a
+  // judgment or a ruling, the concluding words and the document itself.
+  //
+  // Nothing is announced. The outcome stays with the court until it is
+  // released, so no message is queued and nothing is delivered - which is why
+  // this does not go through applyTransition, where completing an appeal
+  // notifies the parties and delivers the ruling.
+  private async completeVerdictAppeal(
+    theCase: Case,
+    appealCase: AppealCase,
+    transaction: Transaction,
+  ): Promise<AppealTransitionResult & { appealCase: AppealCase }> {
+    const { caseUpdate, appealCaseUpdate } = transitionAppealCase(
+      AppealCaseTransition.COMPLETE_APPEAL,
+      theCase,
+      appealCase,
+    )
+
+    // The court of appeals can reach the case through another appeal of it
+    // while the public prosecution is still preparing this one.
+    if (!appealCase.sentAppealSummonses?.length) {
+      throw new ForbiddenException(
+        `Verdict appeal ${appealCase.id} has not been sent to the court of appeals`,
+      )
+    }
+
+    // The document is stamped when it is opened, which only a PDF can be.
+    const hasRulingFile = (theCase.caseFiles ?? []).some(
+      (file) =>
+        file.category === CaseFileCategory.VERDICT_APPEAL_RULING &&
+        file.type === 'application/pdf' &&
+        Boolean(file.key),
+    )
+
+    if (
+      appealCase.verdictAppealStatus !== VerdictAppealStatus.COMPLETED ||
+      !appealCase.appealRulingDecision ||
+      !appealCase.appealRulingType ||
+      !appealCase.appealConclusion?.trim() ||
+      !hasRulingFile
+    ) {
+      throw new BadRequestException(
+        `Verdict appeal ${appealCase.id} cannot be completed before its status is completed and its outcome, ruling type, conclusion and ruling document, a PDF, are in place`,
+      )
+    }
+
+    this.logger.debug(
+      `Completing verdict appeal ${appealCase.id} of case ${theCase.id}`,
+    )
+
+    const updatedAppealCase = await this.appealCaseRepositoryService.update(
+      appealCase.id,
+      appealCaseUpdate,
+      { transaction },
+    )
+
+    return { caseUpdate, appealCaseUpdate, appealCase: updatedAppealCase }
   }
 
   private async applyTransition(

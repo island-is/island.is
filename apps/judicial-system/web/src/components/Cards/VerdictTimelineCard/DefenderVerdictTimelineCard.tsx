@@ -15,7 +15,10 @@ import VerdictTimelineBody from './VerdictTimelineBody'
 
 interface Props {
   defendant: Defendant
-  verdictAppealCase?: Pick<AppealCase, 'appealEventLogs'> | null
+  verdictAppealCase?: Pick<
+    AppealCase,
+    'appealState' | 'appealEventLogs' | 'statementDeadlines'
+  > | null
   // The actions this user may take on the verdict, if any. With none the card
   // is plain; a defender who does not represent this defendant should not be
   // shown a menu they cannot use.

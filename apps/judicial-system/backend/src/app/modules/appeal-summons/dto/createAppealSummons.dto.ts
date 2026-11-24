@@ -22,6 +22,11 @@ export class AppealSummonsDefendantDto {
 }
 
 export class CreateAppealSummonsDto {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ type: String })
+  readonly caseName!: string
+
   @IsArray()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })

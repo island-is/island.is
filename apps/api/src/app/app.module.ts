@@ -68,6 +68,7 @@ import { IdentityModule } from '@island.is/api/domains/identity'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { OfficialJournalOfIcelandModule } from '@island.is/api/domains/official-journal-of-iceland'
 import { DirectorateOfEqualityApplicationModule } from '@island.is/api/domains/directorate-of-equality-application'
+import { DirectorateOfEqualityModule } from '@island.is/api/domains/directorate-of-equality'
 import { OfficialJournalOfIcelandApplicationModule } from '@island.is/api/domains/official-journal-of-iceland-application'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
@@ -253,10 +254,7 @@ import { UmbodsmadurSkuldaraClientConfig } from '@island.is/clients/ums-cost-of-
 import { emailModuleConfig } from '@island.is/email-service'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 import { VerdictsClientConfig } from '@island.is/clients/verdicts'
-import {
-  VerdictsApiModuleConfig,
-  VerdictsModule,
-} from '@island.is/api/domains/verdicts'
+import { VerdictsModule } from '@island.is/api/domains/verdicts'
 import {
   SecondarySchoolClientConfig,
   SecondarySchoolPublicClientConfig,
@@ -331,6 +329,7 @@ const environment = getConfig
     }),
     LicenseServiceModule,
     DirectorateOfEqualityClientModule,
+    DirectorateOfEqualityModule,
     DirectorateOfLabourModule,
     FeatureFlagsApiModule,
     FileUploadModule,
@@ -555,7 +554,6 @@ const environment = getConfig
         ZendeskServiceConfig,
         emailModuleConfig,
         VerdictsClientConfig,
-        VerdictsApiModuleConfig,
         SecondarySchoolClientConfig,
         SecondarySchoolPublicClientConfig,
         NationalRegistryV3ApplicationsClientConfig,
