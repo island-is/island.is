@@ -48,6 +48,24 @@ export default function AppLockScreen() {
   // Looks like the splash screen until the check on return finds the app
   // locked. Back within the time limit, the lock closes without showing.
   const [isLocked, setIsLocked] = useState(false)
+  // Android draws the app as it was left when it's opened again, before the
+  // check on return can run. Past the time limit that has to be the lock,
+  // not the splash: it's the lock from then on.
+  useEffect(() => {
+    const { lockScreenActivatedAt } = authStore.getState()
+    if (
+      Platform.OS === 'ios' ||
+      isLocked ||
+      lockScreenActivatedAt === undefined
+    ) {
+      return
+    }
+    const timer = setTimeout(
+      () => setIsLocked(true),
+      Math.max(0, lockScreenActivatedAt + APP_LOCK_TIMEOUT_MS - Date.now()),
+    )
+    return () => clearTimeout(timer)
+  }, [isLocked])
   const navigation = useNavigation()
   const logout = useAuthStore(({ logout }) => logout)
   const nativeUser = useAuthStore(({ nativeUser }) => nativeUser)
@@ -247,9 +265,20 @@ export default function AppLockScreen() {
         confirmVisibleThenRun()
       } else {
         cancelPendingConfirm()
-        // The splash again while away, e.g. in the app switcher, but not
-        // under the biometric prompt it opened itself.
-        if (nativeUnlockRef.current.status !== 'prompting') {
+        // Opened again, the lock asks for biometrics again. Not after a
+        // cancel with the app still in front: the prompt doesn't send the app
+        // to the background, so cancelling doesn't bring it straight back.
+        if (nextAppState === 'background') {
+          authStore.setState({ biometricAutoPromptedForCurrentLock: false })
+        }
+        // iOS: the splash again while away, for the app switcher, but not
+        // under the biometric prompt it opened itself. Android takes the
+        // app switcher's picture before this, and shows it first when the
+        // app is opened again: the lock would flicker.
+        if (
+          Platform.OS === 'ios' &&
+          nativeUnlockRef.current.status !== 'prompting'
+        ) {
           setIsLocked(false)
         }
       }
