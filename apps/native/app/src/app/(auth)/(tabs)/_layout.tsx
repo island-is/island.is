@@ -75,11 +75,9 @@ export default function TabLayout() {
         }}
         iconColor={{
           default: theme.isDark
-            ? theme.tokens.foreground.primary
+            ? theme.tokens.interactive.foreground.default
             : theme.tokens.interactive.foreground.primary,
-          selected: theme.isDark
-            ? theme.tokens.foreground.primary
-            : theme.tokens.interactive.foreground.primary,
+          selected: theme.tokens.interactive.foreground.primary,
         }}
         hidden={tabsHidden}
         screenListeners={{
