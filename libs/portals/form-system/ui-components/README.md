@@ -11,6 +11,10 @@ rendering a second information block. Applicant fields do not use
 sublabel in `fieldSettings.subLabel`. Content is displayed only when the active
 language contains non-whitespace text; no `hasDescription` flag is required.
 
+Information text above inputs and message bodies support `<strong>` and `<em>`,
+including nested formatting, while preserving line breaks. Other HTML tags and
+all attributes are removed before rendering.
+
 The editor preserves the `isLarge` checkbox and prevents disabling it while a
 sublabel exists in either language. Information and tooltip editors are always
 available. Preview and live applications use the same content rendering.

@@ -166,6 +166,59 @@ it('renders message information as its body only once', () => {
   expect(screen.getAllByText('Instructions')).toHaveLength(1)
 })
 
+it.each(['is', 'en'])(
+  'renders nested strong and em information text in %s',
+  (lang) => {
+    mockLang = lang
+    renderField('TEXTBOX', {
+      informationText: {
+        is: 'A <strong>bold <em>instruction</em></strong>.',
+        en: 'An <em>English <strong>instruction</strong></em>.',
+      },
+    })
+
+    const instruction = screen.getByText('instruction')
+    expect(instruction.tagName).toBe(lang === 'is' ? 'EM' : 'STRONG')
+    expect(instruction.parentElement?.tagName).toBe(
+      lang === 'is' ? 'STRONG' : 'EM',
+    )
+    expect(instruction.closest('p')?.textContent).toBe(
+      lang === 'is' ? 'A bold instruction.' : 'An English instruction.',
+    )
+  },
+)
+
+it.each(['\n', '\n\n', '\r\n'])(
+  'preserves line breaks between formatted information text: %j',
+  (separator) => {
+    renderField('TEXTBOX', {
+      informationText: {
+        is: `<strong>First</strong>${separator}<em>Second</em>`,
+      },
+    })
+
+    expect(screen.getByText('First').closest('p')?.textContent).toBe(
+      `First${separator}Second`,
+    )
+  },
+)
+
+it('removes unsupported HTML and attributes from information text', () => {
+  const { container } = renderField('TEXTBOX', {
+    informationText: {
+      is: '<script>alert(1)</script><img src="x" onerror="alert(1)"><strong onclick="alert(1)" style="color:red">Safe</strong><em class="unsafe">emphasis</em><a href="javascript:alert(1)">text</a>',
+    },
+  })
+
+  expect(container.querySelector('script, img, a')).toBeNull()
+  expect(container.textContent).not.toContain('alert(1)')
+  expect(screen.getByText('Safe').attributes).toHaveLength(0)
+  expect(screen.getByText('emphasis').attributes).toHaveLength(0)
+  expect(screen.getByText('Safe').closest('p')?.textContent).toBe(
+    'Safeemphasistext',
+  )
+})
+
 it.each(['Instructions', ''])(
   'omits the national ID tooltip above the input while preserving information text: %j',
   (informationText) => {

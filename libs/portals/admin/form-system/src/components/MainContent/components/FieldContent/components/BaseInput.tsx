@@ -201,20 +201,13 @@ export const BaseInput = () => {
           />
         </Column>
       </Row>
-      {currentItem.fieldType === FieldTypesEnum.MESSAGE && (
-        <Text variant="small">
-          {'Textinn getur innihaldið HTML-tögin <strong> fyrir feitletrun og <em> fyrir skáletrun. ' +
-            'Hvert opnunartag þarf samsvarandi lokunartag, t.d. <strong> og </strong>. ' +
-            'Dæmi: <strong>Feitletraður texti</strong> og <em>Skáletraður texti</em>.'}
-        </Text>
-      )}
       {currentItem.fieldType !== FieldTypesEnum.APPLICANT && (
         <FieldTextInput
           key={`${currentItem.id}-informationText`}
           property="informationText"
           label={formatMessage(m.informationText)}
           englishLabel={formatMessage(m.informationTextEnglish)}
-          withToggle
+          withToggle={currentItem.fieldType !== FieldTypesEnum.MESSAGE}
         />
       )}
       <FieldTextInput

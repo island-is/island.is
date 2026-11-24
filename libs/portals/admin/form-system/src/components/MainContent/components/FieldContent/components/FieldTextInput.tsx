@@ -1,6 +1,11 @@
 import { FormSystemField } from '@island.is/api/schema'
 import { FieldTypesEnum } from '@island.is/form-system/enums'
-import { Input, Stack, ToggleSwitchCheckbox } from '@island.is/island-ui/core'
+import {
+  Input,
+  Stack,
+  Text,
+  ToggleSwitchCheckbox,
+} from '@island.is/island-ui/core'
 import { useContext, useState } from 'react'
 import { ControlContext } from '../../../../../context/ControlContext'
 
@@ -34,6 +39,7 @@ export const FieldTextInput = ({
       : currentItem[property]
   const hasText = Boolean(text?.is?.trim() || text?.en?.trim())
   const [enabled, setEnabled] = useState(hasText)
+  const showInputs = !withToggle || enabled || hasText
   const changeText = (lang: 'is' | 'en', newValue: string) =>
     controlDispatch({
       type: 'CHANGE_FIELD_TEXT',
@@ -69,7 +75,14 @@ export const FieldTextInput = ({
           onChange={setEnabled}
         />
       )}
-      {(!withToggle || enabled || hasText) &&
+      {showInputs && property === 'informationText' && (
+        <Text variant="small">
+          {'Upplýsingatextinn getur innihaldið HTML-tögin <strong> fyrir feitletrun og <em> fyrir skáletrun. ' +
+            'Hvert opnunartag þarf samsvarandi lokunartag, t.d. <strong> og </strong>. ' +
+            'Dæmi: <strong>Feitletraður texti</strong> og <em>Skáletraður texti</em>.'}
+        </Text>
+      )}
+      {showInputs &&
         (['is', 'en'] as const).map((lang) => (
           <Input
             key={lang}

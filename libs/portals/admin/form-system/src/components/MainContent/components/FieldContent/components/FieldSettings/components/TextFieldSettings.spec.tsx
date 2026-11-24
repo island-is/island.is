@@ -203,6 +203,42 @@ it.each(['MESSAGE', 'BANK_ACCOUNT', 'PHONE_NUMBER'])(
   },
 )
 
+it.each([false, true])(
+  'always shows both message information inputs without a toggle (read-only: %s)',
+  (isReadOnly) => {
+    renderSettings('MESSAGE', isReadOnly, undefined, false, {})
+
+    expect(screen.queryByRole('switch', { name: 'Information' })).toBeNull()
+    expect(screen.getAllByText(/Textinn getur/)).toHaveLength(1)
+    for (const name of ['Information', 'English information']) {
+      expect(screen.getByRole('textbox', { name })).toHaveProperty(
+        'readOnly',
+        isReadOnly,
+      )
+    }
+  },
+)
+
+it('shows HTML guidance above information inputs only while they are visible', () => {
+  renderSettings('TEXTBOX', false, undefined, false, {})
+
+  expect(screen.queryByText(/Textinn getur/)).toBeNull()
+  fireEvent.click(screen.getByRole('switch', { name: 'Tooltip' }))
+  expect(screen.queryByText(/Textinn getur/)).toBeNull()
+
+  fireEvent.click(screen.getByRole('switch', { name: 'Information' }))
+  const guidance = screen.getByText(/Textinn getur/)
+  for (const name of ['Information', 'English information']) {
+    expect(
+      guidance.compareDocumentPosition(screen.getByRole('textbox', { name })) &
+        4,
+    ).toBe(4)
+  }
+
+  fireEvent.click(screen.getByRole('switch', { name: 'Information' }))
+  expect(screen.queryByText(/Textinn getur/)).toBeNull()
+})
+
 it.each([
   { is: 'Icelandic text', en: '' },
   { is: '', en: 'English text' },
@@ -215,6 +251,7 @@ it.each([
     tooltip: text,
   })
   const hasText = Boolean(text?.is?.trim() || text?.en?.trim())
+  expect(screen.queryByText(/Textinn getur/) !== null).toBe(hasText)
   for (const label of ['Information', 'Tooltip']) {
     const toggle = screen.getByRole('switch', { name: label })
     expect(toggle).toHaveProperty('checked', hasText)

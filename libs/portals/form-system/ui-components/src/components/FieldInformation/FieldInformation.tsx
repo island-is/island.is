@@ -2,6 +2,7 @@ import { FormSystemField } from '@island.is/api/schema'
 import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldTypesEnum } from '../../lib/enums'
+import { renderInformationText } from '../../lib/renderInformationText'
 
 interface Props {
   item: FormSystemField
@@ -33,7 +34,9 @@ export const FieldInformation = ({ item }: Props) => {
       justifyContent="spaceBetween"
     >
       {informationText.trim() && (
-        <Text whiteSpace="breakSpaces">{informationText}</Text>
+        <Text whiteSpace="breakSpaces">
+          {renderInformationText(informationText)}
+        </Text>
       )}
       {tooltip.trim() && <Tooltip text={tooltip} />}
     </Box>
