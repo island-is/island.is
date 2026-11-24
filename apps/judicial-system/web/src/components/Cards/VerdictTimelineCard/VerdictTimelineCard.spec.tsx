@@ -717,30 +717,35 @@ describe('VerdictTimelineCard', () => {
     } as Defendant
 
     it('shows the prosecution statement deadline on a standing appeal card', async () => {
-      renderComponent(servedDefendant, CaseIndictmentRulingDecision.RULING, true, {
-        caseOverrides: {
-          verdictAppealCase: {
-            id: 'verdict_appeal_case_id',
-            appealState: AppealCaseState.RECEIVED,
-            appealEventLogs: [
-              {
-                id: 'event_id',
-                created: '2026-05-25T10:00:00.000Z',
-                eventType: AppealEventType.APPEALED,
-                defendantId: mockDefendant.id,
-                userRole: UserRole.PROSECUTOR,
-              },
-            ],
-            statementDeadlines: [
-              {
-                id: 'prosecution_deadline',
-                deadline: '2026-09-14T00:00:00.000Z',
-                isExpired: false,
-              },
-            ],
+      renderComponent(
+        servedDefendant,
+        CaseIndictmentRulingDecision.RULING,
+        true,
+        {
+          caseOverrides: {
+            verdictAppealCase: {
+              id: 'verdict_appeal_case_id',
+              appealState: AppealCaseState.RECEIVED,
+              appealEventLogs: [
+                {
+                  id: 'event_id',
+                  created: '2026-05-25T10:00:00.000Z',
+                  eventType: AppealEventType.APPEALED,
+                  defendantId: mockDefendant.id,
+                  userRole: UserRole.PROSECUTOR,
+                },
+              ],
+              statementDeadlines: [
+                {
+                  id: 'prosecution_deadline',
+                  deadline: '2026-09-14T00:00:00.000Z',
+                  isExpired: false,
+                },
+              ],
+            },
           },
         },
-      })
+      )
 
       expect(
         await screen.findByText((content) =>
@@ -752,30 +757,35 @@ describe('VerdictTimelineCard', () => {
     })
 
     it('does not show the prosecution statement deadline for a defendant outside the appeal', async () => {
-      renderComponent(servedDefendant, CaseIndictmentRulingDecision.RULING, true, {
-        caseOverrides: {
-          verdictAppealCase: {
-            id: 'verdict_appeal_case_id',
-            appealState: AppealCaseState.RECEIVED,
-            appealEventLogs: [
-              {
-                id: 'event_id',
-                created: '2026-05-25T10:00:00.000Z',
-                eventType: AppealEventType.APPEALED,
-                defendantId: 'other_defendant',
-                userRole: UserRole.PROSECUTOR,
-              },
-            ],
-            statementDeadlines: [
-              {
-                id: 'prosecution_deadline',
-                deadline: '2026-09-14T00:00:00.000Z',
-                isExpired: false,
-              },
-            ],
+      renderComponent(
+        servedDefendant,
+        CaseIndictmentRulingDecision.RULING,
+        true,
+        {
+          caseOverrides: {
+            verdictAppealCase: {
+              id: 'verdict_appeal_case_id',
+              appealState: AppealCaseState.RECEIVED,
+              appealEventLogs: [
+                {
+                  id: 'event_id',
+                  created: '2026-05-25T10:00:00.000Z',
+                  eventType: AppealEventType.APPEALED,
+                  defendantId: 'other_defendant',
+                  userRole: UserRole.PROSECUTOR,
+                },
+              ],
+              statementDeadlines: [
+                {
+                  id: 'prosecution_deadline',
+                  deadline: '2026-09-14T00:00:00.000Z',
+                  isExpired: false,
+                },
+              ],
+            },
           },
         },
-      })
+      )
 
       expect(await screen.findByText(name)).toBeInTheDocument()
       expect(
