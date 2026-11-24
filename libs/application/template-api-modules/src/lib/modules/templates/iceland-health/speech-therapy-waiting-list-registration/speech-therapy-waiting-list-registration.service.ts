@@ -2,6 +2,7 @@ import { YES } from '@island.is/application/core'
 import {
   errorMessages,
   getApplicationAnswers,
+  getSelectedChild,
 } from '@island.is/application/templates/iceland-health/speech-therapy-waiting-list-registration'
 import { ApplicationTypes } from '@island.is/application/types'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
@@ -31,9 +32,36 @@ export class SpeechTherapyWaitingListRegistrationService extends BaseTemplateApi
   }
 
   async getChildren(props: TemplateApiModuleActionProps) {
-    const children = await this.getChildrenAwaitingApproval(props)
+    const children =
+      await this.nationalRegistryV3Service.childrenCustodyInformation({
+        ...props,
+        params: undefined,
+      })
 
-    if (children.length === 0) {
+    const childrenAwaitingApproval = (
+      await Promise.all(
+        children.map(async (child) => {
+          if (!(await this.isAwaitingApproval(child.nationalId, props.auth))) {
+            return null
+          }
+
+          // childrenCustodyInformation does not include the child's address.
+          const individual =
+            await this.nationalRegistryV3Service.getOtherIndividual(
+              child.nationalId,
+              props.auth,
+            )
+
+          return {
+            nationalId: child.nationalId,
+            fullName: child.fullName,
+            address: individual?.address ?? null,
+          }
+        }),
+      )
+    ).filter((child) => child !== null)
+
+    if (childrenAwaitingApproval.length === 0) {
       throw new TemplateApiError(
         {
           title: errorMessages.noChildOnWaitingListTitle,
@@ -43,36 +71,7 @@ export class SpeechTherapyWaitingListRegistrationService extends BaseTemplateApi
       )
     }
 
-    return children
-  }
-
-  private async getChildrenAwaitingApproval(
-    props: TemplateApiModuleActionProps,
-  ) {
-    const children =
-      await this.nationalRegistryV3Service.childrenCustodyInformation({
-        ...props,
-        params: undefined,
-      })
-
-    const childrenAwaitingApproval = await Promise.all(
-      children.map(async (child) => {
-        if (!(await this.isAwaitingApproval(child.nationalId, props.auth))) {
-          return null
-        }
-
-        // childrenCustodyInformation does not include the child's address.
-        const individual =
-          await this.nationalRegistryV3Service.getOtherIndividual(
-            child.nationalId,
-            props.auth,
-          )
-
-        return { ...child, address: individual?.address ?? null }
-      }),
-    )
-
-    return childrenAwaitingApproval.filter((child) => child !== null)
+    return childrenAwaitingApproval
   }
 
   // 404: the child is not on the waiting list.
@@ -96,96 +95,51 @@ export class SpeechTherapyWaitingListRegistrationService extends BaseTemplateApi
     }
   }
 
-  // TODO: Dummy data until the Sjúkra languages endpoint is ready.
   async getLanguages({ auth }: TemplateApiModuleActionProps) {
-    // return this.digitalIcelandApiWithAuth(auth).getV1DigitalIcelandLanguages()
-    return [
-      { id: 'is', code: 'is' },
-      { id: 'en', code: 'en' },
-      { id: 'pl', code: 'pl' },
-    ]
+    return this.digitalIcelandApiWithAuth(auth).getV1DigitalIcelandLanguages()
   }
 
-  // TODO: Dummy data until the Sjúkra available locations endpoint is ready.
   async getAvailableLocations({ auth }: TemplateApiModuleActionProps) {
-    // return this.digitalIcelandApiWithAuth(
-    //   auth,
-    // ).getV1DigitalIcelandAvailableLocations()
-    return [
-      { id: 1, municipality: 'Reykjavíkurborg' },
-      { id: 2, municipality: 'Kópavogsbær' },
-      { id: 3, municipality: 'Hafnarfjarðarkaupstaður' },
-      { id: 4, municipality: 'Akureyrarbær' },
-    ]
+    return this.digitalIcelandApiWithAuth(
+      auth,
+    ).getV1DigitalIcelandAvailableLocations()
   }
 
-  // TODO: Dummy data until the Sjúkra speech pathologists endpoint is ready.
   async getSpeechPathologists({ auth }: TemplateApiModuleActionProps) {
-    // return this.digitalIcelandApiWithAuth(
-    //   auth,
-    // ).getV1DigitalIcelandSpeechPathologists()
-    return [
-      {
-        name: 'Anna Jónsdóttir',
-        kennitala: '0101302989',
-        locations: [
-          { id: 1, municipality: 'Reykjavíkurborg' },
-          { id: 2, municipality: 'Kópavogsbær' },
-        ],
-      },
-      {
-        name: 'Guðrún Sigurðardóttir',
-        kennitala: '0101304929',
-        locations: [{ id: 3, municipality: 'Hafnarfjarðarkaupstaður' }],
-      },
-      {
-        name: 'Jón Ólafsson',
-        kennitala: '0101307789',
-        locations: [{ id: 4, municipality: 'Akureyrarbær' }],
-      },
-    ]
+    return this.digitalIcelandApiWithAuth(
+      auth,
+    ).getV1DigitalIcelandSpeechPathologists()
   }
 
-  // TODO: Dummy data until the Sjúkra rejection reasons endpoint is ready.
   async getRejectionReasons({ auth }: TemplateApiModuleActionProps) {
-    // return this.digitalIcelandApiWithAuth(
-    //   auth,
-    // ).getV1DigitalIcelandRejectionReasons()
-    return [
-      {
-        id: 1,
-        isName: 'Hafna þjónustu um talþjálfun',
-        enName: 'Decline speech therapy services',
-        code: 'DECLINE_SERVICE',
-      },
-      {
-        id: 2,
-        isName: 'Barn þegar í talþjálfun',
-        enName: 'Child already in speech therapy',
-        code: 'ALREADY_IN_THERAPY',
-      },
-    ]
+    return this.digitalIcelandApiWithAuth(
+      auth,
+    ).getV1DigitalIcelandRejectionReasons()
   }
 
   async sendApplication({ auth, application }: TemplateApiModuleActionProps) {
-    const { selectedChildNationalId, waitingListConsent } =
-      getApplicationAnswers(application.answers)
+    const { waitingListConsent } = getApplicationAnswers(application.answers)
 
-    if (!selectedChildNationalId) {
-      throw new Error('Missing child national id')
+    const child = getSelectedChild(
+      application.answers,
+      application.externalData,
+    )
+
+    if (!child) {
+      throw new Error('Missing selected child')
     }
 
     const api = this.digitalIcelandApiWithAuth(auth)
 
     if (waitingListConsent === YES) {
       await api.putV1DigitalIcelandEntriesKennitala({
-        kennitala: selectedChildNationalId,
+        kennitala: child.nationalId,
         updateWaitingListEntryRequestModel:
           transformApplicationToUpdateWaitingListEntry(application),
       })
     } else {
       await api.putV1DigitalIcelandEntriesKennitalaReject({
-        kennitala: selectedChildNationalId,
+        kennitala: child.nationalId,
         waitingListEntryRejectRequestModel:
           transformApplicationToRejectWaitingListEntry(application),
       })

@@ -127,6 +127,7 @@ export const otherInformationSection = buildSection({
           placeholder: otherInformationMessages.speechTherapistPlaceholder,
           options: (application) =>
             getSpeechPathologistOptions(application.externalData),
+          isClearable: true,
         }),
         buildCheckboxField({
           id: 'otherInformation.speechTherapistConfirmation',

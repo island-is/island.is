@@ -1,8 +1,7 @@
-import {
-  Address,
-  ApplicantChildCustodyInformationV3,
-} from '@island.is/application/types'
+import { Address } from '@island.is/application/types'
 
-export type Child = ApplicantChildCustodyInformationV3 & {
-  address?: Address | null
+export type Child = {
+  nationalId: string
+  fullName: string
+  address: Address | null
 }
