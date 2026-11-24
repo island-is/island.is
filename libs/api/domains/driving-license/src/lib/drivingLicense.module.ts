@@ -1,22 +1,21 @@
 import { Module } from '@nestjs/common'
 
-import { MainResolver } from './resolvers/main.resolver'
-import { QualityPhotoResolver } from './resolvers/qualityPhoto.resolver'
-import { QualitySignatureResolver } from './resolvers/qualitySignature.resolver'
-import { PenaltyPointsResolver } from './resolvers/penaltyPoints.resolver'
-import { DeprivationsResolver } from './resolvers/deprivations.resolver'
-import { DrivingLicenseService } from './services/drivingLicense.service'
-import { PenaltyPointsService } from './services/penaltyPoints.service'
-import { DeprivationsService } from './services/deprivations.service'
 import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
 import { NationalRegistryV3ApplicationsClientModule } from '@island.is/clients/national-registry-v3-applications'
-import { FeatureFlagModule } from '@island.is/nest/feature-flags'
+
+import { DeprivationResolver } from './resolvers/deprivation.resolver'
+import { MainResolver } from './resolvers/main.resolver'
+import { PenaltyPointsResolver } from './resolvers/penaltyPoints.resolver'
+import { QualityPhotoResolver } from './resolvers/qualityPhoto.resolver'
+import { QualitySignatureResolver } from './resolvers/qualitySignature.resolver'
+import { DeprivationService } from './services/deprivation.service'
+import { DrivingLicenseService } from './services/drivingLicense.service'
+import { PenaltyPointsService } from './services/penaltyPoints.service'
 
 @Module({
   imports: [
     NationalRegistryV3ApplicationsClientModule,
     DrivingLicenseApiModule,
-    FeatureFlagModule,
   ],
   providers: [
     MainResolver,
@@ -25,8 +24,8 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
     DrivingLicenseService,
     PenaltyPointsService,
     PenaltyPointsResolver,
-    DeprivationsService,
-    DeprivationsResolver,
+    DeprivationService,
+    DeprivationResolver,
   ],
   exports: [DrivingLicenseService],
 })
