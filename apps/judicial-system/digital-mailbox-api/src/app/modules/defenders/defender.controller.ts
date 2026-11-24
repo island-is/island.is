@@ -42,7 +42,7 @@ export class DefenderController {
   @ApiOkResponse({
     type: [Defender],
     description:
-      'Returns litigators with rights to appear before Landsréttur (court of appeals)',
+      'Returns litigators with rights to appear before the court of appeals (COA)',
   })
   @ApiResponse({
     status: 502,
