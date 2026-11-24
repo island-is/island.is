@@ -7,7 +7,6 @@ import {
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
-  COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
@@ -421,22 +420,21 @@ describe('useSections getSections', () => {
       expect(sections[0].children[2].onClick).toBeUndefined()
     })
 
-    const finished = {
-      ...caseWithBothAppeals,
-      defendants: [{ id: 'd1', isAppealDefenderConfirmed: true }],
-      verdictAppealCase: {
-        ...caseWithBothAppeals.verdictAppealCase,
-        appealState: AppealCaseState.COMPLETED,
-      },
-    } as unknown as WorkingCase
-
-    // The finished appeal is read on a page of its own, which is the last
-    // step of the proceeding, so the panel keeps every earlier step in view.
-    it('marks the finished appeal as the last step of the proceeding', () => {
+    // A confirmed appeal is read on its summary, so the section keeps the
+    // same steps once the appeal is finished.
+    it('keeps the same steps once the appeal is finished', () => {
       mockAppealCaseId = 'verdict-appeal'
-      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE
+      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE
 
-      const { result } = renderHook(() => useSections(true, onNavigationTo), {
+      const finished = {
+        ...caseWithBothAppeals,
+        verdictAppealCase: {
+          ...caseWithBothAppeals.verdictAppealCase,
+          appealState: AppealCaseState.COMPLETED,
+        },
+      } as unknown as WorkingCase
+
+      const { result } = renderHook(() => useSections(), {
         wrapper: makeWrapper(finished),
       })
       const sections = result.current.getSections(finished, coaUser)
@@ -453,68 +451,8 @@ describe('useSections getSections', () => {
         'Greinargerðarfrestir',
         'Staða og lyktir',
         'Samantekt',
-        'Máli lokið',
       ])
-      expect(steps?.children.findIndex((c) => c.isActive)).toBe(6)
-      expect(steps?.children[6].href).toBe(
-        `${COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE}/case-with-both-appeals?appealCaseId=verdict-appeal`,
-      )
-      expect(steps?.children[6].onClick).toBeUndefined()
-      // Every earlier step has a link, which the panel renders for any step
-      // before the active one.
-      expect(steps?.children.slice(0, 6).every((c) => Boolean(c.href))).toBe(
-        true,
-      )
-
-      expect(sections.at(-1)).toStrictEqual({
-        name: 'Niðurstaða',
-        isActive: false,
-        children: [],
-      })
-    })
-
-    it('reaches the finished appeal from its other steps', async () => {
-      mockAppealCaseId = 'verdict-appeal'
-      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE
-      onNavigationTo.mockClear()
-
-      const sections = appealSections(finished, coaUser)
-      const { name, isActive, onClick } = sections[0].children[6]
-
-      expect(name).toBe('Máli lokið')
-      expect(isActive).toBe(false)
-      expect(onClick).toBeDefined()
-
-      await onClick?.()
-
-      expect(onNavigationTo).toHaveBeenCalledWith(
-        COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE,
-      )
-    })
-
-    it('has no finished appeal step before the appeal is finished', () => {
-      mockAppealCaseId = 'verdict-appeal'
-      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE
-
-      const sections = appealSections(caseWithBothAppeals, coaUser)
-
-      expect(sections[0].children.map((c) => c.name)).not.toContain(
-        'Máli lokið',
-      )
-    })
-
-    it('leaves the outcome section unmarked on the summary', () => {
-      mockAppealCaseId = 'verdict-appeal'
-      mockPathname = COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE
-
-      const { result } = renderHook(() => useSections(), {
-        wrapper: makeWrapper(caseWithBothAppeals),
-      })
-      const sections = result.current.getSections(caseWithBothAppeals, coaUser)
-
-      expect(sections.filter((s) => s.isActive).map((s) => s.name)).toEqual([
-        'Dómur Landsréttar',
-      ])
+      expect(steps?.children.findIndex((c) => c.isActive)).toBe(5)
     })
 
     it('leaves the ruling appeal sections alone when it names that one', () => {

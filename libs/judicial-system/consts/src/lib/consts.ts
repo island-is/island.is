@@ -156,8 +156,6 @@ export const COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE =
   '/landsrettur/afryjun/stada-og-lyktir'
 export const COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE =
   '/landsrettur/afryjun/samantekt'
-export const COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE =
-  '/landsrettur/afryjun/nidurstada'
 //#endregion Court of appeals user routes
 
 //#region District court user routes

@@ -5,17 +5,14 @@ import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import { Box, PdfViewer, Text } from '@island.is/island-ui/core'
-import {
-  COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE,
-  COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
-} from '@island.is/judicial-system/consts'
+import { COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { core } from '@island.is/judicial-system-web/messages'
 import {
   AlertBanner,
   FormContentContainer,
   FormContext,
   FormFooter,
+  InfoCardClosedIndictment,
   Modal,
   PageHeader,
   PageLayout,
@@ -51,9 +48,9 @@ import * as styles from './VerdictAppealSummary.css'
  *
  * Confirming reads the document in a modal first, the way the district court
  * confirms its own verdict. It finishes the appeal and sends nothing: the
- * parties do not see the outcome until it is published. A finished appeal
- * can still be corrected on the status step, so this page leads on to the
- * finished appeal rather than offering to confirm it again.
+ * parties do not see the outcome until it is published. Once finished, the
+ * page shows the appeal as it ended and offers nothing more to do; it can
+ * still be corrected on the status step.
  */
 const VerdictAppealSummary = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -139,7 +136,9 @@ const VerdictAppealSummary = () => {
     }
   }
 
-  // Finishes the appeal and opens it, staying in the modal when that fails.
+  // Finishes the appeal and closes the modal, staying in it when that fails.
+  // The transition writes the finished appeal into the working case, so the
+  // page then shows it as finished.
   const completeAppeal = async () => {
     if (!verdictAppealCase || isCompletingRef.current) {
       return
@@ -159,22 +158,30 @@ const VerdictAppealSummary = () => {
       if (!completed) {
         return
       }
-
-      await navigateTo(COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE)
     } finally {
       isCompletingRef.current = false
       setIsCompleting(false)
     }
+
+    closeModal()
   }
 
   return (
     <>
-      {decisionLabel && (
+      {isCompleted ? (
         <AlertBanner
           variant="warning"
-          title="Niðurstaða Landsréttar"
-          description={decisionLabel}
+          title="Niðurstaða skráð en ekki gefin út"
+          description="Aðilar máls sjá niðurstöðuna ekki fyrr en hún er gefin út."
         />
+      ) : (
+        decisionLabel && (
+          <AlertBanner
+            variant="warning"
+            title="Niðurstaða Landsréttar"
+            description={decisionLabel}
+          />
+        )
       )}
       <PageLayout
         workingCase={workingCase}
@@ -193,6 +200,7 @@ const VerdictAppealSummary = () => {
                 </Text>
               ))}
             </Box>
+            {isCompleted && <InfoCardClosedIndictment />}
             <VerdictAppealConclusionBoxes workingCase={workingCase} />
             <VerdictAppealFiles />
             <VerdictAppealRulingDocument workingCase={workingCase} />
@@ -201,26 +209,22 @@ const VerdictAppealSummary = () => {
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={statusUrl}
-            actions={[
+            actions={
               isCompleted
-                ? {
-                    text: core.continue,
-                    icon: 'arrowForward',
-                    onClick: () =>
-                      navigateTo(COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE),
-                    testId: 'continueButton',
-                  }
-                : {
-                    text: 'Staðfesta',
-                    icon: 'checkmark',
-                    disabled:
-                      !canComplete ||
-                      isFetchingRulingUrl ||
-                      isTransitioningAppealCase,
-                    onClick: openConfirmation,
-                    testId: 'continueButton',
-                  },
-            ]}
+                ? undefined
+                : [
+                    {
+                      text: 'Staðfesta',
+                      icon: 'checkmark',
+                      disabled:
+                        !canComplete ||
+                        isFetchingRulingUrl ||
+                        isTransitioningAppealCase,
+                      onClick: openConfirmation,
+                      testId: 'continueButton',
+                    },
+                  ]
+            }
           />
         </FormContentContainer>
         <AnimatePresence>

@@ -15,7 +15,8 @@ interface Props {
 /**
  * The district court's concluding words and, once the court has recorded
  * them, its own, in the boxes the ruling appeal's summary uses. The court's
- * own carry no name beneath them: the panel is named on the info card.
+ * own carry no name beneath them: the panel is named on the info card a
+ * finished appeal shows.
  */
 const VerdictAppealConclusionBoxes: FC<Props> = ({ workingCase }) => {
   const districtCourtConclusion = getDistrictCourtConclusion(workingCase)

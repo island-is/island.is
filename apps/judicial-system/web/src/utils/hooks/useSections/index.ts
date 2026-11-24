@@ -11,7 +11,6 @@ import {
   COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
-  COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
@@ -1553,8 +1552,7 @@ const useSections = (
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE) ||
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_ROUTE) ||
         isActive(COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE) ||
-        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE) ||
-        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE),
+        isActive(COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE),
       children: [
         {
           name: 'Yfirlit',
@@ -1705,46 +1703,12 @@ const useSections = (
                   )
               : undefined,
         },
-        // The finished appeal is read on a page of its own, which only an
-        // appeal the court has confirmed has. As a step of this section it
-        // keeps every earlier step in the panel, so the court can go back and
-        // correct any of them.
-        ...(targetAppealCase?.appealState === AppealCaseState.COMPLETED
-          ? [
-              {
-                name: 'Máli lokið',
-                isActive: isActive(COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE),
-                href: appendAppealCaseIdQuery(
-                  `${COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
-                  targetAppealCase.id,
-                ),
-                onClick:
-                  !isActive(COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE) &&
-                  validateFormStepper(
-                    isValid,
-                    [
-                      COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE,
-                      COURT_OF_APPEAL_VERDICT_APPEAL_DEFENDER_ROUTE,
-                      COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
-                      COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
-                      COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
-                    ],
-                    workingCase,
-                  ) &&
-                  onNavigationTo
-                    ? async () =>
-                        await onNavigationTo(
-                          COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE,
-                        )
-                    : undefined,
-              },
-            ]
-          : []),
       ],
     },
-    // Never active, and has no steps. It is here because the stepper draws no
-    // connecting line below its last section: without it the line stops at
-    // "Dómur Landsréttar" and its steps hang beside a gap.
+    // The outcome, which this court has not reached and has no screens for.
+    // Named anyway, because it is in the design and because the stepper draws
+    // no connecting line below its last section - without this the line stops
+    // at "Dómur Landsréttar" and its sub-steps hang beside a gap.
     {
       name: 'Niðurstaða',
       isActive: false,

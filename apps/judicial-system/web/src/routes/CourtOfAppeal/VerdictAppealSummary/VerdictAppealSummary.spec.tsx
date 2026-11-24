@@ -1,12 +1,9 @@
-import type { FC, PropsWithChildren } from 'react'
+import type { Dispatch, FC, PropsWithChildren, SetStateAction } from 'react'
 import { useState } from 'react'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event'
 
-import {
-  COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE,
-  COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE,
-} from '@island.is/judicial-system/consts'
+import { COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE } from '@island.is/judicial-system/consts'
 import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 import {
@@ -214,7 +211,28 @@ const renderPage = (c: WorkingCase = theCase) =>
   )
 
 const modalTitle = 'Viltu staðfesta dómsúrlausn og ljúka máli?'
-const resultUrl = `${COURT_OF_APPEAL_VERDICT_APPEAL_RESULT_ROUTE}/case-id?appealCaseId=verdict-appeal`
+const notReleasedTitle = 'Niðurstaða skráð en ekki gefin út'
+
+// Finishes the appeal the way the real transition does: it writes the
+// finished appeal into the working case through the setter it is given.
+const finishAppeal = (
+  _caseId: string,
+  _appealCaseId: string,
+  _transition: AppealCaseTransition,
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
+) => {
+  setWorkingCase((current) => ({
+    ...current,
+    verdictAppealCase: current.verdictAppealCase
+      ? {
+          ...current.verdictAppealCase,
+          appealState: AppealCaseState.COMPLETED,
+        }
+      : current.verdictAppealCase,
+  }))
+
+  return true
+}
 
 const openModal = async () => {
   await userEvent.click(screen.getByTestId('continueButton'))
@@ -358,8 +376,8 @@ describe('VerdictAppealSummary', () => {
     expect(screen.getByTestId('confirmCompleteAppealButton')).toBeEnabled()
   })
 
-  it('finishes the appeal and opens it once confirmed', async () => {
-    mockTransitionAppealCase.mockResolvedValue(true)
+  it('finishes the appeal and shows it finished once confirmed', async () => {
+    mockTransitionAppealCase.mockImplementation(finishAppeal)
     renderPage()
 
     await openModal()
@@ -372,7 +390,15 @@ describe('VerdictAppealSummary', () => {
       AppealCaseTransition.COMPLETE_APPEAL,
       expect.any(Function),
     )
-    await waitFor(() => expect(mockPush).toHaveBeenCalledWith(resultUrl))
+    expect(await screen.findByText(notReleasedTitle)).toBeInTheDocument()
+    expect(screen.getAllByText('Jón Jónsson').length).toBeGreaterThan(0)
+    await waitFor(() =>
+      expect(screen.queryByText(modalTitle)).not.toBeInTheDocument(),
+    )
+    expect(screen.queryByText('Niðurstaða Landsréttar')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('continueButton')).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Samantekt' })).toBeVisible()
+    expect(mockPush).not.toHaveBeenCalled()
   })
 
   // Without the document the page cannot be confirmed at all, so it never
@@ -458,8 +484,11 @@ describe('VerdictAppealSummary', () => {
 
     await act(async () => finishTransition(true))
 
-    await waitFor(() => expect(mockPush).toHaveBeenCalledWith(resultUrl))
+    await waitFor(() =>
+      expect(screen.queryByText(modalTitle)).not.toBeInTheDocument(),
+    )
     expect(mockTransitionAppealCase).toHaveBeenCalledTimes(1)
+    expect(mockPush).not.toHaveBeenCalled()
   })
 
   it('cannot be closed while the appeal is being finished', async () => {
@@ -490,16 +519,31 @@ describe('VerdictAppealSummary', () => {
     expect(screen.getByRole('button', { name: 'Hætta við' })).toBeEnabled()
   })
 
-  it('leads on to a finished appeal rather than confirming it again', async () => {
+  it('shows a finished appeal as it ended, with nothing more to do', () => {
     renderPage(withAppeal({ appealState: AppealCaseState.COMPLETED }))
 
+    expect(screen.getByRole('heading', { name: 'Samantekt' })).toBeVisible()
+    expect(screen.getByText(notReleasedTitle)).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'Aðilar máls sjá niðurstöðuna ekki fyrr en hún er gefin út.',
+      ),
+    ).toBeInTheDocument()
+    // The info card names the defendants, which nothing else on the page does.
+    expect(screen.getAllByText('Jón Jónsson').length).toBeGreaterThan(0)
+    expect(screen.getByText('Dómsorð Landsréttar')).toBeInTheDocument()
+    expect(screen.queryByText('Niðurstaða Landsréttar')).not.toBeInTheDocument()
     expect(
       screen.queryByRole('button', { name: 'Staðfesta' }),
     ).not.toBeInTheDocument()
+    expect(screen.queryByTestId('continueButton')).not.toBeInTheDocument()
+    expect(screen.getByTestId('previousButton')).toBeInTheDocument()
+  })
 
-    await userEvent.click(screen.getByTestId('continueButton'))
+  it('shows no info card before the appeal is finished', () => {
+    renderPage()
 
-    expect(mockPush).toHaveBeenCalledWith(resultUrl)
-    expect(mockGetFileUrl).not.toHaveBeenCalled()
+    expect(screen.queryAllByText('Jón Jónsson')).toHaveLength(0)
+    expect(screen.queryByText(notReleasedTitle)).not.toBeInTheDocument()
   })
 })
