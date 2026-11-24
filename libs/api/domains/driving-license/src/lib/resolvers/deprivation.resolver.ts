@@ -14,6 +14,7 @@ import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
 
 import { DrivingLicenseDeprivation } from '../models/penalty/drivingLicenseDeprivation.model'
+import { DrivingLicenseDeprivations } from '../models/penalty/drivingLicenseDeprivations.model'
 import { DeprivationService } from '../services/deprivation.service'
 
 @CodeOwner(CodeOwners.Hugsmidjan)
@@ -29,5 +30,14 @@ export class DeprivationResolver {
     @CurrentUser() user: User,
   ): Promise<DrivingLicenseDeprivation | null> {
     return this.deprivationService.getDeprivation(user)
+  }
+
+  @Scopes(ApiScope.internal)
+  @Audit()
+  @Query(() => DrivingLicenseDeprivations, { nullable: true })
+  drivingLicenseDeprivations(
+    @CurrentUser() user: User,
+  ): Promise<DrivingLicenseDeprivations> {
+    return this.deprivationService.getDeprivations(user)
   }
 }

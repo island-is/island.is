@@ -25,4 +25,10 @@ export class DrivingLicenseDeprivation {
       'Whether the license holder will need to retake/reapply for their license once this deprivation period ends',
   })
   retakeRequired?: boolean
+
+  @Field({
+    description:
+      'Whether this deprivation is currently in effect, based on dateFrom/dateTo',
+  })
+  active!: boolean
 }
