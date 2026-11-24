@@ -18,6 +18,7 @@ import {
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { CodeOwners } from '@island.is/shared/constants'
+import { Features } from '@island.is/feature-flags'
 import { MachineLicenseCardReissueAnswersSchema } from './dataSchema'
 import { application as applicationMessages } from './messages'
 import { IdentityApi, LicensesApi, UserProfileApi } from '../dataProviders'
@@ -34,6 +35,7 @@ const template: ApplicationTemplate<
   name: applicationMessages.name,
   codeOwner: CodeOwners.Deloitte,
   institution: applicationMessages.institutionName,
+  featureFlag: Features.machineLicenseCardReissue,
   translationNamespaces:
     ApplicationConfigurations[ApplicationTypes.MACHINE_LICENSE_CARD_REISSUE]
       .translation,
