@@ -32,6 +32,9 @@ export const AccordionSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
 
   const { titleHeading, childHeading } = extractHeadingLevels(slice)
   const showTitle = Boolean(slice.showTitle && slice.title)
+  // Only the h2 and h3 sizes are designed for slice titles, so lower levels
+  // keep their semantic element but use the h3 size
+  const titleVariant = titleHeading === 'h2' ? 'h2' : 'h3'
 
   return (
     <section
@@ -43,7 +46,7 @@ export const AccordionSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
       <Box>
         {showTitle && (
           <Text
-            variant={titleHeading}
+            variant={titleVariant}
             as={titleHeading}
             marginBottom={2}
             id={labelId}
