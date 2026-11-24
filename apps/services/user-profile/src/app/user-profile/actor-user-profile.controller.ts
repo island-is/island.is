@@ -304,7 +304,7 @@ export class ActorUserProfileController {
   @Get('/actor-profiles/.from-national-id/notification-settings')
   @Documentation({
     description:
-      'Get notification settings for the delegation from the given user, including the sender categories blocked for it.',
+      'Get notification settings for the delegation from the given user, including the senders and sender categories blocked for it.',
     request: {
       header: {
         'X-Param-From-National-Id': {
@@ -316,8 +316,10 @@ export class ActorUserProfileController {
     response: { status: 200, type: ActorNotificationSettingsDto },
   })
   @Audit<ActorNotificationSettingsDto>({
-    resources: (settings) =>
-      settings.blockedCategories.map((blockedCategory) => blockedCategory.key),
+    resources: (settings) => [
+      ...settings.blockedCategories.map(({ key }) => key),
+      ...settings.blockedSenders.map(({ senderId }) => senderId),
+    ],
   })
   findActorNotificationSettings(
     @CurrentActor() actor: User,
@@ -332,7 +334,7 @@ export class ActorUserProfileController {
   @Post('/actor-profiles/.from-national-id/notification-settings')
   @Documentation({
     description:
-      'Blocks or unblocks notifications in the given sender categories for the delegation from the given user.',
+      'Blocks or unblocks notifications from the given senders and sender categories for the delegation from the given user.',
     request: {
       header: {
         'X-Param-From-National-Id': {
@@ -348,11 +350,14 @@ export class ActorUserProfileController {
     @Headers('X-Param-From-National-Id') fromNationalId: string,
     @Body() input: UpdateNotificationSettingsDto,
   ): Promise<void> {
-    const categories = input.categories ?? []
     const keysWhere = (blocked: boolean) =>
-      categories
+      (input.categories ?? [])
         .filter((category) => category.blocked === blocked)
         .map(({ senderId, category }) => toCategoryKey(senderId, category))
+    const sendersWhere = (blocked: boolean) =>
+      (input.senders ?? [])
+        .filter((sender) => sender.blocked === blocked)
+        .map(({ senderId }) => senderId)
 
     return this.auditService.auditPromise(
       {
@@ -364,12 +369,14 @@ export class ActorUserProfileController {
           fromNationalId,
           blocked: keysWhere(true),
           unblocked: keysWhere(false),
+          blockedSenders: sendersWhere(true),
+          unblockedSenders: sendersWhere(false),
         },
       },
-      this.notificationSettingsService.updateActorCategories(
+      this.notificationSettingsService.updateActorSettings(
         actor.nationalId,
         fromNationalId,
-        categories,
+        input,
       ),
     )
   }

@@ -11,6 +11,7 @@ import { UpdateNotificationSenderDto } from './dto/blocked-sender.dto'
 import { ActorNotificationSettingsDto } from './dto/actor-notification-settings.dto'
 import { NotificationSettingsDto } from './dto/notification-settings.dto'
 import { ActorBlockedNotification } from './models/actorBlockedNotification.model'
+import { ActorBlockedNotificationSender } from './models/actorBlockedNotificationSender.model'
 import { ActorProfile } from './models/actor-profile.model'
 import { BlockedNotification } from './models/blockedNotification.model'
 import { BlockedNotificationSender } from './models/blockedNotificationSender.model'
@@ -32,6 +33,8 @@ export class NotificationSettingsService {
     private readonly blockedNotificationSenderModel: typeof BlockedNotificationSender,
     @InjectModel(ActorBlockedNotification)
     private readonly actorBlockedNotificationModel: typeof ActorBlockedNotification,
+    @InjectModel(ActorBlockedNotificationSender)
+    private readonly actorBlockedNotificationSenderModel: typeof ActorBlockedNotificationSender,
     @InjectModel(ActorProfile)
     private readonly actorProfileModel: typeof ActorProfile,
     private readonly userProfileService: UserProfileService,
@@ -167,12 +170,13 @@ export class NotificationSettingsService {
       return {
         fromNationalId,
         blockedCategories: [],
+        blockedSenders: [],
         onlyActionablePriorityNotifications: false,
       }
     }
 
-    const blockedNotifications =
-      await this.actorBlockedNotificationModel.findAll({
+    const [blockedNotifications, blockedSenders] = await Promise.all([
+      this.actorBlockedNotificationModel.findAll({
         where: { actorProfileId: actorProfile.id },
         attributes: ['senderId', 'category', 'categoryLabel'],
         order: [
@@ -180,7 +184,16 @@ export class NotificationSettingsService {
           ['senderId', 'ASC'],
           ['category', 'ASC'],
         ],
-      })
+      }),
+      this.actorBlockedNotificationSenderModel.findAll({
+        where: { actorProfileId: actorProfile.id },
+        attributes: ['senderId'],
+        order: [
+          ['created', 'ASC'],
+          ['senderId', 'ASC'],
+        ],
+      }),
+    ])
 
     return {
       fromNationalId,
@@ -192,37 +205,52 @@ export class NotificationSettingsService {
           categoryLabel,
         }),
       ),
+      blockedSenders: blockedSenders.map(({ senderId }) => ({ senderId })),
       onlyActionablePriorityNotifications:
         actorProfile.onlyActionablePriorityNotifications,
     }
   }
 
   /**
-   * Blocks or unblocks the given sender categories for an actor profile
-   * (delegation) in a single transaction. The actor profile is created if
-   * something is blocked and it does not exist yet; an existing one is never
-   * modified.
+   * Blocks or unblocks the given senders and sender categories for an actor
+   * profile (delegation) in a single transaction. If a sender or category is
+   * given more than once, the last entry wins. Sender blocks leave category
+   * blocks untouched. The actor profile is created if something is blocked
+   * and it does not exist yet; an existing one is never modified.
    */
-  async updateActorCategories(
+  async updateActorSettings(
     toNationalId: string,
     fromNationalId: string,
-    categories: UpdateNotificationCategoryDto[],
+    {
+      categories = [],
+      senders = [],
+    }: {
+      categories?: UpdateNotificationCategoryDto[]
+      senders?: UpdateNotificationSenderDto[]
+    },
   ): Promise<void> {
     await this.userProfileService.verifyIncomingDelegation(
       toNationalId,
       fromNationalId,
     )
 
-    const { toBlock, toUnblock } = this.splitCategoryUpdates(categories)
+    const { toBlock: categoriesToBlock, toUnblock: categoriesToUnblock } =
+      this.splitCategoryUpdates(categories)
+    const { toBlock: sendersToBlock, toUnblock: sendersToUnblock } =
+      this.splitSenderUpdates(senders)
 
-    if (toBlock.length === 0 && toUnblock.length === 0) {
+    const hasBlocks = categoriesToBlock.length > 0 || sendersToBlock.length > 0
+    const hasUnblocks =
+      categoriesToUnblock.length > 0 || sendersToUnblock.length > 0
+
+    if (!hasBlocks && !hasUnblocks) {
       return
     }
 
     await this.sequelize.transaction(async (transaction) => {
       let actorProfileId: string | undefined
 
-      if (toBlock.length > 0) {
+      if (hasBlocks) {
         const [actorProfile] = await this.actorProfileModel.findOrCreate({
           where: { toNationalId, fromNationalId },
           defaults: {
@@ -234,10 +262,25 @@ export class NotificationSettingsService {
           transaction,
         })
         actorProfileId = actorProfile.id
+      } else {
+        // Nothing to unblock if the actor profile doesn't exist
+        actorProfileId = (
+          await this.actorProfileModel.findOne({
+            where: { toNationalId, fromNationalId },
+            attributes: ['id'],
+            transaction,
+          })
+        )?.id
+      }
 
+      if (!actorProfileId) {
+        return
+      }
+
+      if (categoriesToBlock.length > 0) {
         await this.actorBlockedNotificationModel.bulkCreate(
-          toBlock.map(({ senderId, category, categoryLabel }) => ({
-            actorProfileId: actorProfile.id,
+          categoriesToBlock.map(({ senderId, category, categoryLabel }) => ({
+            actorProfileId,
             senderId,
             category,
             categoryLabel,
@@ -246,27 +289,34 @@ export class NotificationSettingsService {
         )
       }
 
-      if (toUnblock.length > 0) {
-        actorProfileId ??= (
-          await this.actorProfileModel.findOne({
-            where: { toNationalId, fromNationalId },
-            attributes: ['id'],
-            transaction,
-          })
-        )?.id
+      if (categoriesToUnblock.length > 0) {
+        await this.actorBlockedNotificationModel.destroy({
+          where: {
+            actorProfileId,
+            [Op.or]: categoriesToUnblock.map(({ senderId, category }) => ({
+              senderId,
+              category,
+            })),
+          },
+          transaction,
+        })
+      }
 
-        if (actorProfileId) {
-          await this.actorBlockedNotificationModel.destroy({
-            where: {
-              actorProfileId,
-              [Op.or]: toUnblock.map(({ senderId, category }) => ({
-                senderId,
-                category,
-              })),
-            },
-            transaction,
-          })
-        }
+      if (sendersToBlock.length > 0) {
+        await this.actorBlockedNotificationSenderModel.bulkCreate(
+          sendersToBlock.map(({ senderId }) => ({ actorProfileId, senderId })),
+          { ignoreDuplicates: true, transaction },
+        )
+      }
+
+      if (sendersToUnblock.length > 0) {
+        await this.actorBlockedNotificationSenderModel.destroy({
+          where: {
+            actorProfileId,
+            senderId: sendersToUnblock.map(({ senderId }) => senderId),
+          },
+          transaction,
+        })
       }
     })
   }

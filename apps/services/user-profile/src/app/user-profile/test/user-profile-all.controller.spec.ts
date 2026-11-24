@@ -346,6 +346,10 @@ describe('UserProfileController', () => {
           senderId: testNationalId2,
           category: 'almennt',
         })
+        await fixtureFactory.createActorBlockedNotificationSender({
+          actorProfileId: actorProfile.id,
+          senderId: testNationalId2,
+        })
 
         const res = await server
           .get(
@@ -365,6 +369,7 @@ describe('UserProfileController', () => {
               category: 'almennt',
             },
           ],
+          blockedSenders: [{ senderId: testNationalId2 }],
         })
       })
 

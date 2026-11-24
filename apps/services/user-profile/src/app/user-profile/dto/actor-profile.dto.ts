@@ -10,6 +10,7 @@ import {
 } from 'class-validator'
 import { PageInfoDto } from '@island.is/nest/pagination'
 import { BlockedCategoryDto } from './blocked-category.dto'
+import { BlockedSenderDto } from './blocked-sender.dto'
 import { Locale } from '../types/localeTypes'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 
@@ -88,6 +89,14 @@ export class ActorProfileDto {
   })
   @IsOptional()
   blockedCategories?: BlockedCategoryDto[]
+
+  @ApiPropertyOptional({
+    type: [BlockedSenderDto],
+    description:
+      'Senders blocked for this actor profile. Only returned when include=notificationSettings is requested.',
+  })
+  @IsOptional()
+  blockedSenders?: BlockedSenderDto[]
 }
 
 export class ActorProfileDetailsDto {

@@ -91,19 +91,7 @@ export class NotificationSettingsResolver {
   ): Promise<NotificationSettings> {
     const categories = input.categories ?? []
     const senders = input.senders ?? []
-
-    // Checked here rather than with @FeatureFlag, which would gate category
-    // settings too
-    if (senders.length > 0) {
-      const sendersEnabled = await this.featureFlagService.getValue(
-        Features.isNotificationBlockedSendersEnabled,
-        false,
-        user,
-      )
-      if (!sendersEnabled) {
-        throw new BadRequestException('Blocking senders is not enabled')
-      }
-    }
+    await this.assertSendersEnabled(user, senders)
 
     const keysWhere = (blocked: boolean) =>
       categories
@@ -211,10 +199,17 @@ export class NotificationSettingsResolver {
   ): Promise<NotificationSettings> {
     const nationalId = toValidNationalId(input.fromNationalId)
     const categories = input.categories ?? []
+    const senders = input.senders ?? []
+    await this.assertSendersEnabled(user, senders)
+
     const keysWhere = (blocked: boolean) =>
       categories
         .filter((c) => c.blocked === blocked)
         .map(({ senderId, category }) => toCategoryKey(senderId, category))
+    const sendersWhere = (blocked: boolean) =>
+      senders
+        .filter((s) => s.blocked === blocked)
+        .map(({ senderId }) => normalizeSenderId(senderId))
 
     try {
       await this.auditService.auditPromise(
@@ -222,18 +217,23 @@ export class NotificationSettingsResolver {
           auth: user,
           namespace: AUDIT_NAMESPACE,
           action: 'updateActorNotificationCategorySettings',
-          resources: categories.map(({ senderId, category }) =>
-            toCategoryKey(senderId, category),
-          ),
+          resources: [
+            ...categories.map(({ senderId, category }) =>
+              toCategoryKey(senderId, category),
+            ),
+            ...senders.map(({ senderId }) => normalizeSenderId(senderId)),
+          ],
           meta: {
             fromNationalId: nationalId,
             blocked: keysWhere(true),
             unblocked: keysWhere(false),
+            blockedSenders: sendersWhere(true),
+            unblockedSenders: sendersWhere(false),
             onlyActionablePriorityNotifications:
               input.onlyActionablePriorityNotifications,
           },
         },
-        this.updateActorSettings(user, nationalId, categories, input),
+        this.updateActorSettings(user, nationalId, categories, senders, input),
       )
     } catch (e) {
       this.logger.info(
@@ -270,13 +270,37 @@ export class NotificationSettingsResolver {
     }
   }
 
+  // Checked here rather than with @FeatureFlag, which would gate category
+  // settings too
+  private async assertSendersEnabled(
+    user: User,
+    senders: NotificationSenderInput[],
+  ): Promise<void> {
+    if (senders.length === 0) {
+      return
+    }
+
+    const sendersEnabled = await this.featureFlagService.getValue(
+      Features.isNotificationBlockedSendersEnabled,
+      false,
+      user,
+    )
+    if (!sendersEnabled) {
+      throw new BadRequestException('Blocking senders is not enabled')
+    }
+  }
+
   private async updateActorSettings(
     user: User,
     fromNationalId: string,
     categories: NotificationCategoryInput[],
+    senders: NotificationSenderInput[],
     input: UpdateActorNotificationCategoriesInput,
   ): Promise<void> {
-    await this.service.updateActorCategories(user, fromNationalId, categories)
+    await this.service.updateActorSettings(user, fromNationalId, {
+      categories,
+      senders,
+    })
 
     if (typeof input.onlyActionablePriorityNotifications === 'boolean') {
       try {
@@ -287,14 +311,15 @@ export class NotificationSettingsResolver {
         )
       } catch (e) {
         // The two writes hit separate endpoints and cannot be made atomic, so
-        // make it explicit that the category changes were already applied.
+        // make it explicit that the sender and category changes were already
+        // applied.
         this.logger.error('partial actor notification settings update', {
           category: LOG_CATEGORY,
           error: getErrorMessage(e),
         })
         throw new InternalServerErrorException(
-          categories.length > 0
-            ? 'Category settings were updated, but updating onlyActionablePriorityNotifications failed'
+          categories.length > 0 || senders.length > 0
+            ? 'Notification settings were updated, but updating onlyActionablePriorityNotifications failed'
             : 'Updating onlyActionablePriorityNotifications failed',
         )
       }

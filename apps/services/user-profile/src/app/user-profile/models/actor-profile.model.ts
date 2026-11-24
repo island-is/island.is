@@ -13,6 +13,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { MeActorProfileDto } from '../dto/actor-profile.dto'
 import { Emails } from './emails.model'
 import { ActorBlockedNotification } from './actorBlockedNotification.model'
+import { ActorBlockedNotificationSender } from './actorBlockedNotificationSender.model'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 
 @Table({
@@ -116,6 +117,13 @@ export class ActorProfile extends Model {
     as: 'blockedNotifications',
   })
   blockedNotifications?: ActorBlockedNotification[]
+
+  @HasMany(() => ActorBlockedNotificationSender, {
+    foreignKey: 'actorProfileId',
+    sourceKey: 'id',
+    as: 'blockedNotificationSenders',
+  })
+  blockedNotificationSenders?: ActorBlockedNotificationSender[]
 
   toDto(): MeActorProfileDto {
     return {

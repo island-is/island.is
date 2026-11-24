@@ -4,6 +4,7 @@ import type { OrganizationTitleByNationalIdDataLoader } from '@island.is/cms'
 import type { Logger } from '@island.is/logging'
 import type { AuditService } from '@island.is/nest/audit'
 import type { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { createNationalId } from '@island.is/testing/fixtures'
 
 import { NotificationSettingsResolver } from './notificationSettings.resolver'
 import type { NotificationSettingsService } from './notificationSettings.service'
@@ -15,6 +16,7 @@ describe('NotificationSettingsResolver', () => {
   const setup = (sendersEnabled: boolean) => {
     const service = {
       updateSettings: jest.fn().mockResolvedValue(undefined),
+      updateActorSettings: jest.fn().mockResolvedValue(undefined),
       getNotificationSettings: jest.fn().mockResolvedValue({ senders: [] }),
     }
     const auditService = {
@@ -35,7 +37,9 @@ describe('NotificationSettingsResolver', () => {
     return { resolver, service }
   }
 
-  const input = { senders: [{ senderId: '5402696029', blocked: true }] }
+  const input = {
+    senders: [{ senderId: createNationalId('company'), blocked: true }],
+  }
 
   it('should reject sender changes when the feature flag is disabled', async () => {
     const { resolver, service } = setup(false)
@@ -55,5 +59,17 @@ describe('NotificationSettingsResolver', () => {
       categories: [],
       senders: input.senders,
     })
+  })
+
+  it('should reject actor sender changes when the feature flag is disabled', async () => {
+    const { resolver, service } = setup(false)
+
+    await expect(
+      resolver.updateActorNotificationCategorySettings(user, titleLoader, {
+        ...input,
+        fromNationalId: createNationalId('person'),
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException)
+    expect(service.updateActorSettings).not.toHaveBeenCalled()
   })
 })

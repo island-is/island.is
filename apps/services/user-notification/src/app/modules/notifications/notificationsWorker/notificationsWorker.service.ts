@@ -255,9 +255,7 @@ export class NotificationsWorkerService {
     enabledBlocks,
     messageId,
   }: {
-    userProfile?: Partial<
-      Pick<UserProfileDto, 'blockedCategories' | 'blockedSenders'>
-    >
+    userProfile?: Pick<UserProfileDto, 'blockedCategories' | 'blockedSenders'>
     senderId?: string
     category: string | null
     enabledBlocks: EnabledBlocks
@@ -321,19 +319,16 @@ export class NotificationsWorkerService {
     }
 
     // Blocks are the actor profile's own, and the feature flags are evaluated
-    // for the delegate (the recipient). Actor profiles can't block senders.
-    const enabledBlocks: EnabledBlocks = {
-      ...(await this.getEnabledBlocks({
-        nationalId: args.recipient,
-        senderId: args.senderId,
-        urgent: args.urgent,
-        messageId,
-      })),
-      senders: false,
-    }
+    // for the delegate (the recipient).
+    const enabledBlocks = await this.getEnabledBlocks({
+      nationalId: args.recipient,
+      senderId: args.senderId,
+      urgent: args.urgent,
+      messageId,
+    })
 
     let actorProfile: ActorProfileDto | undefined
-    if (enabledBlocks.categories) {
+    if (enabledBlocks.categories || enabledBlocks.senders) {
       try {
         actorProfile =
           await this.userProfileApi.userProfileControllerGetActorProfile({

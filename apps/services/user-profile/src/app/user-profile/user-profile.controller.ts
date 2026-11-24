@@ -236,13 +236,13 @@ export class UserProfileController {
       return actorProfile
     }
 
-    const { blockedCategories } =
+    const { blockedCategories, blockedSenders } =
       await this.notificationSettingsService.findActorSettings(
         toNationalId,
         fromNationalId,
       )
 
-    return { ...actorProfile, blockedCategories }
+    return { ...actorProfile, blockedCategories, blockedSenders }
   }
 
   @Patch('/.national-id')

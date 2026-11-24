@@ -93,6 +93,7 @@ let mockBlockedCategories: BlockedCategoryDto[] = []
 // onlyActionablePriorityNotifications never leaks into the actor profile
 let mockActorOnlyActionable = false
 let mockActorBlockedCategories: BlockedCategoryDto[] = []
+let mockActorBlockedSenders: BlockedSenderDto[] = []
 let mockBlockedSenders: BlockedSenderDto[] = []
 
 export const MockV2UsersApi = {
@@ -136,7 +137,10 @@ export const MockV2UsersApi = {
         ...profile,
         onlyActionablePriorityNotifications: mockActorOnlyActionable,
         ...(include?.includes(UserProfileInclude.NotificationSettings)
-          ? { blockedCategories: mockActorBlockedCategories }
+          ? {
+              blockedCategories: mockActorBlockedCategories,
+              blockedSenders: mockActorBlockedSenders,
+            }
           : {}),
       })
     },
@@ -1896,6 +1900,32 @@ describe('NotificationsWorkerService', () => {
           (call) => call[0],
         )
         expect(calledNumbers).toContain(delegate.mobilePhoneNumber)
+      })
+    })
+
+    describe('blocked senders', () => {
+      const senderId = createNationalId('company')
+
+      beforeEach(() => {
+        mockActorBlockedSenders = [{ senderId }]
+      })
+
+      afterEach(() => {
+        mockActorBlockedSenders = []
+      })
+
+      it('should not email the delegate when the actor profile blocks the sender', async () => {
+        const actorNotification = await sendToActor({ senderId })
+
+        expect(actorNotification?.wasSent).toBe(false)
+        expect(emailService.sendEmail).not.toHaveBeenCalled()
+      })
+
+      it('should email the delegate for urgent notifications despite the block', async () => {
+        const actorNotification = await sendToActor({ senderId, urgent: true })
+
+        expect(actorNotification?.wasSent).toBe(true)
+        expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
       })
     })
   })

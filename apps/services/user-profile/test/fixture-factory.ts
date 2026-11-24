@@ -11,6 +11,7 @@ import { DataStatus } from '../src/app/user-profile/types/dataStatusTypes'
 import { ActorProfile } from '../src/app/user-profile/models/actor-profile.model'
 import { Emails } from '../src/app/user-profile/models/emails.model'
 import { ActorBlockedNotification } from '../src/app/user-profile/models/actorBlockedNotification.model'
+import { ActorBlockedNotificationSender } from '../src/app/user-profile/models/actorBlockedNotificationSender.model'
 import {
   BlockedNotification,
   CategoryLabel,
@@ -250,6 +251,21 @@ export class FixtureFactory {
       senderId,
       category,
       categoryLabel,
+    })
+  }
+
+  async createActorBlockedNotificationSender({
+    actorProfileId,
+    senderId,
+  }: {
+    actorProfileId: string
+    senderId: string
+  }) {
+    return this.get(
+      ActorBlockedNotificationSender,
+    ).create<ActorBlockedNotificationSender>({
+      actorProfileId,
+      senderId,
     })
   }
 }

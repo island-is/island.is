@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 import { BlockedCategoryDto } from './blocked-category.dto'
+import { BlockedSenderDto } from './blocked-sender.dto'
 
 export class ActorNotificationSettingsDto {
   @ApiProperty({
@@ -10,6 +11,9 @@ export class ActorNotificationSettingsDto {
 
   @ApiProperty({ type: [BlockedCategoryDto] })
   blockedCategories!: BlockedCategoryDto[]
+
+  @ApiProperty({ type: [BlockedSenderDto] })
+  blockedSenders!: BlockedSenderDto[]
 
   @ApiProperty()
   onlyActionablePriorityNotifications!: boolean

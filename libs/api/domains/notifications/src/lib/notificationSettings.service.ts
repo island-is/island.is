@@ -142,7 +142,7 @@ export class NotificationSettingsService {
       settings: this.mergeSettings(
         categories,
         actorSettings.blockedCategories,
-        [],
+        actorSettings.blockedSenders,
       ),
       onlyActionablePriorityNotifications:
         actorSettings.onlyActionablePriorityNotifications,
@@ -364,15 +364,19 @@ export class NotificationSettingsService {
   }
 
   /**
-   * Blocks or unblocks the given sender categories for an incoming delegation.
+   * Blocks or unblocks the given senders and sender categories for an
+   * incoming delegation in one call.
    */
-  async updateActorCategories(
+  async updateActorSettings(
     user: User,
     fromNationalId: string,
-    categories: NotificationCategoryInput[],
+    input: {
+      categories?: NotificationCategoryInput[]
+      senders?: NotificationSenderInput[]
+    },
   ): Promise<void> {
     const updates = await this.buildUpdates(
-      { categories },
+      input,
       async () => (await this.findActorSettings(user, fromNationalId)).settings,
     )
     if (!updates) {
@@ -383,7 +387,7 @@ export class NotificationSettingsService {
       user,
     ).actorUserProfileControllerUpdateActorNotificationSettings({
       xParamFromNationalId: fromNationalId,
-      updateNotificationSettingsDto: { categories: updates.categories },
+      updateNotificationSettingsDto: updates,
     })
   }
 }
