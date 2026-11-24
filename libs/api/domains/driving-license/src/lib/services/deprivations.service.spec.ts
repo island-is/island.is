@@ -165,9 +165,9 @@ describe('DeprivationsService', () => {
       const { service } = createService({
         all: [{ dateFrom: new Date('2020-01-01'), retakeLicense: true }],
       })
-      expect((await service.getDeprivations(user)).current?.retakeRequired).toBe(
-        true,
-      )
+      expect(
+        (await service.getDeprivations(user)).current?.retakeRequired,
+      ).toBe(true)
     })
   })
 })
