@@ -194,6 +194,84 @@ describe('TransferOfVehicleOwnershipTemplate review approvals', () => {
     expect(state).toBe(States.REVIEW)
   })
 
+  describe('when a buyer operator approval goes stale', () => {
+    const withBuyerCoOwnerAndOperator = (
+      answers: FormValue,
+      buyerCoOwnerAndOperator: FormValue[],
+    ): FormValue => ({ ...answers, buyerCoOwnerAndOperator })
+
+    const approveAfterChange = (changed: FormValue[]) => {
+      const application = buildApplication(
+        States.REVIEW,
+        buildAnswers({ approvedBy: [] }),
+        reviewers,
+      )
+      const [, , approvedByOperator] = send(
+        application,
+        DefaultEvents.APPROVE,
+        BUYER_OPERATOR,
+      )
+      const [, , approvedByBuyer] = send(
+        {
+          ...application,
+          answers: withBuyerCoOwnerAndOperator(
+            approvedByOperator.answers,
+            changed,
+          ),
+        },
+        DefaultEvents.APPROVE,
+        BUYER,
+      )
+      const [, , approvedBySellerCoOwner] = send(
+        {
+          ...application,
+          answers: withBuyerCoOwnerAndOperator(approvedByBuyer.answers, [
+            { nationalId: BUYER_OPERATOR, type: 'operator' },
+          ]),
+        },
+        DefaultEvents.APPROVE,
+        SELLER_CO_OWNER,
+      )
+      return { application, answers: approvedBySellerCoOwner.answers }
+    }
+
+    it('should not count it after the role was replaced and restored', () => {
+      const { application, answers } = approveAfterChange([
+        { nationalId: BUYER_OPERATOR, type: 'coOwner' },
+      ])
+
+      const [, state] = send(
+        { ...application, answers },
+        DefaultEvents.SUBMIT,
+        SELLER,
+      )
+
+      expect(answers.approvedBy).toEqual([
+        BUYER_APPROVAL,
+        SELLER_CO_OWNER_APPROVAL,
+      ])
+      expect(state).toBe(States.REVIEW)
+    })
+
+    it('should not count it after the role was removed and restored', () => {
+      const { application, answers } = approveAfterChange([
+        { nationalId: BUYER_OPERATOR, type: 'operator', wasRemoved: 'true' },
+      ])
+
+      const [, state] = send(
+        { ...application, answers },
+        DefaultEvents.SUBMIT,
+        SELLER,
+      )
+
+      expect(answers.approvedBy).toEqual([
+        BUYER_APPROVAL,
+        SELLER_CO_OWNER_APPROVAL,
+      ])
+      expect(state).toBe(States.REVIEW)
+    })
+  })
+
   it('should record every role of a buyer who is also a seller co-owner', () => {
     const application = buildApplication(
       States.REVIEW,

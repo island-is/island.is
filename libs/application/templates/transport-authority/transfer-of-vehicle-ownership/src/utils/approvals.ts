@@ -108,6 +108,15 @@ const withApprovedBy = (
   return result
 }
 
+// Drops approvals whose reviewer slot was removed or replaced, so they cannot
+// count again if the buyer later restores that slot
+const getValidApprovals = (answers: FormValue): Approval[] => {
+  const slots = getReviewerSlots(answers)
+  return getApprovedBy(answers).filter((approval) =>
+    slots.some(isSameApproval(approval)),
+  )
+}
+
 export const resetApprovals = (answers: FormValue): FormValue =>
   withApprovedBy(answers, [])
 
@@ -116,7 +125,7 @@ export const recordApproval = (
   answers: FormValue,
   nationalId: string | undefined,
 ): FormValue => {
-  const approvedBy = getApprovedBy(answers)
+  const approvedBy = getValidApprovals(answers)
   const newApprovals = getReviewerSlots(answers)
     .filter(
       (slot) =>
@@ -130,7 +139,7 @@ export const recordApproval = (
 }
 
 export const isApprovedByAllReviewers = (answers: FormValue): boolean => {
-  const approvedBy = getApprovedBy(answers)
+  const approvedBy = getValidApprovals(answers)
   return getReviewerSlots(answers).every((slot) =>
     approvedBy.some(isSameApproval(slot)),
   )
