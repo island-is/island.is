@@ -72,6 +72,15 @@ export class AppealSummons extends Model {
   @ApiPropertyOptional({ type: Date })
   confirmedDate?: Date
 
+  /**********
+   * Style-of-cause frozen into the confirmed PDF. Written with the hash at
+   * confirm so a later change to appeal_case.case_name cannot alter these
+   * bytes if the S3 cache is missing and the PDF must be regenerated.
+   **********/
+  @Column({ type: DataType.TEXT, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  caseName?: string
+
   @Column({ type: DataType.DATE, allowNull: true })
   @ApiPropertyOptional({ type: Date })
   sentToCourtOfAppealsDate?: Date

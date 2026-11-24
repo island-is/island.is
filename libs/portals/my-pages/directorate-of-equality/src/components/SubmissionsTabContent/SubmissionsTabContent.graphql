@@ -1,0 +1,17 @@
+query DirectorateOfEqualitySubmissions(
+  $input: DirectorateOfEqualitySubmissionsInput!
+) {
+  directorateOfEqualitySubmissions(input: $input) {
+    items {
+      id
+      type
+      status
+      submittedVia
+      identifier
+      submittedAt
+      approvedAt
+      validUntil
+      salaryDataPeriod
+    }
+  }
+}

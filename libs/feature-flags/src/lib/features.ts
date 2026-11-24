@@ -70,6 +70,7 @@ export enum Features {
   isServicePortalFarmersLandsPageEnabled = 'isServicePortalFarmersLandsPageEnabled',
   isServicePortalUnemploymentBenefitsPageEnabled = 'isServicePortalUnemploymentBenefitsPageEnabled',
   isServicePortalActivationAllowancePageEnabled = 'isServicePortalActivationAllowancePageEnabled',
+  isServicePortalEqualityPageEnabled = 'isServicePortalEqualityPageEnabled',
   isServicePortalHealthOldPregnanciesPageEnabled = 'isServicePortalHealthOldPregnanciesPageEnabled',
 
   // Health Aid and Nutrition Renewal feature enabled
@@ -147,6 +148,7 @@ export enum Features {
   // Notifications
   isNotificationEmailWorkerEnabled = 'isnotificationemailworkerenabled',
   isServicePortalOnlyActionablePriorityNotificationsEnabled = 'isServicePortalOnlyActionablePriorityNotificationsEnabled',
+  isServicePortalNotificationsV2PageEnabled = 'isServicePortalNotificationsV2PageEnabled',
 
   // New/updated delegation notification
   isDelegationNotificationEnabled = 'isDelegationNotificationEnabled',

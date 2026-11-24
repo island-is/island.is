@@ -478,9 +478,11 @@ export const stepValidations = (
     // can come back for the rest, so the step never holds it (owner's
     // decision).
     [COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE]: () => true,
-    // The status is not saved, so there is nothing on the case to check; the
-    // page's own isValid is what stops the court leaving it half done.
-    [COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE]: () => true,
+    // Only a finished appeal has something on it to check: how it ended. For
+    // every other status the page's own isValid is what stops the court
+    // leaving it half done.
+    [COURT_OF_APPEAL_VERDICT_APPEAL_STATUS_ROUTE]: () =>
+      validations.isVerdictAppealStatusStepValid(appealCase),
     // Nothing follows the summary, so nothing asks whether it is complete.
     [COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE]: () => true,
   }

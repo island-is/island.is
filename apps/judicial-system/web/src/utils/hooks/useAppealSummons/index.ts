@@ -46,7 +46,11 @@ const useAppealSummons = () => {
   ] = useSyncAppealSummonsServiceStatusesMutation()
 
   const createAppealSummons = useCallback(
-    async (caseId: string, defendants: AppealSummonsDefendantInput[]) => {
+    async (
+      caseId: string,
+      caseName: string,
+      defendants: AppealSummonsDefendantInput[],
+    ) => {
       try {
         if (isCreatingAppealSummons) {
           return undefined
@@ -54,7 +58,7 @@ const useAppealSummons = () => {
 
         const { data, errors } = await createAppealSummonsMutation({
           variables: {
-            input: { caseId, defendants },
+            input: { caseId, caseName, defendants },
           },
         })
 
@@ -75,6 +79,7 @@ const useAppealSummons = () => {
     async (
       caseId: string,
       appealSummonsId: string,
+      caseName: string,
       defendants: AppealSummonsDefendantInput[],
     ) => {
       try {
@@ -84,7 +89,7 @@ const useAppealSummons = () => {
 
         const { data, errors } = await updateAppealSummonsMutation({
           variables: {
-            input: { caseId, appealSummonsId, defendants },
+            input: { caseId, appealSummonsId, caseName, defendants },
           },
         })
 
@@ -245,6 +250,7 @@ const useAppealSummons = () => {
   const previewAppealSummons = useCallback(
     async (
       caseId: string,
+      caseName: string,
       defendants: AppealSummonsDefendantInput[],
       appealSummonsId?: string,
     ) => {
@@ -264,6 +270,7 @@ const useAppealSummons = () => {
               ...(token ? { authorization: `Bearer ${token}` } : {}),
             },
             body: JSON.stringify({
+              caseName,
               defendants,
               ...(appealSummonsId ? { appealSummonsId } : {}),
             }),

@@ -40,6 +40,7 @@ type ActionCardProps = {
     url?: string
     internalUrl?: string
     label: string
+    ariaLabel?: string
     variant?: ButtonTypes['variant']
     size?: ButtonSizes
     icon?: IconMapIcon
@@ -279,7 +280,11 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           {!cta.hide && (
             <Box dataTestId="action-card-cta" marginLeft={[0, 3]}>
               {cta.url ? (
-                <LinkResolver callback={cta.callback} href={cta.url}>
+                <LinkResolver
+                  callback={cta.callback}
+                  href={cta.url}
+                  aria-label={cta.ariaLabel}
+                >
                   <Button
                     icon={isExternalLink(cta.url) ? 'open' : cta.icon}
                     colorScheme="default"
@@ -297,6 +302,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
                 <Button
                   variant={cta.variant}
                   size={cta.size ?? 'small'}
+                  aria-label={cta.ariaLabel}
                   onClick={cta.onClick}
                   disabled={cta.disabled}
                   icon={cta.icon}

@@ -3,7 +3,12 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 import { useRouter } from 'next/router'
 
-import { Box, RadioButton, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  FileUploadStatus,
+  RadioButton,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE,
   COURT_OF_APPEAL_VERDICT_APPEAL_SUMMARY_ROUTE,
@@ -25,14 +30,22 @@ import {
 import RadioGroup from '@island.is/judicial-system-web/src/components/RadioGroup/RadioGroup'
 import {
   type AppealCourtSession,
+  CaseFileCategory,
   VerdictAppealStatus as Status,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  useFileList,
+  useS3Upload,
+  useUploadFiles,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import useAppealCase from '@island.is/judicial-system-web/src/utils/hooks/useAppealCase'
 import useAppealCourtSession from '@island.is/judicial-system-web/src/utils/hooks/useAppealCourtSession'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { appendAppealCaseIdQuery } from '@island.is/judicial-system-web/src/utils/utils'
+import { isVerdictAppealConclusionFieldsValid } from '@island.is/judicial-system-web/src/utils/validate'
 
+import RegisterConclusion from './RegisterConclusion'
 import ScheduleCourtSession from './ScheduleCourtSession'
 import type { AppealCourtSessionDraft } from './VerdictAppealStatus.logic'
 import {
@@ -62,6 +75,13 @@ import {
  * opens on the saved status; an appeal from before the status was kept has
  * none, and is on "Boða til þinghalds" when it has a session.
  *
+ * An appeal the court marks as finished is where it records how it ended:
+ * the form for that opens under "Lokið", saves each answer as it is given,
+ * and holds the court on the page until all of it is in place. The page
+ * holds the ruling document's uploads, the way the district court's
+ * conclusion does, so a document uploaded or removed under "Lokið" is still
+ * so when the court picks another status and comes back.
+ *
  * Not gated behind the feature flag, for the reason the defender step gives:
  * the stepper section this page belongs to only renders for a verdict appeal,
  * and none can exist while the feature is hidden.
@@ -85,6 +105,17 @@ const VerdictAppealStatus = () => {
     isDeletingAppealCourtSession,
   } = useAppealCourtSession()
   const { updateAppealCase, isUpdatingAppealCase } = useAppealCase()
+  const {
+    uploadFiles,
+    allFilesDoneOrError,
+    addUploadFiles,
+    updateUploadFile,
+    removeUploadFile,
+  } = useUploadFiles(workingCase.caseFiles)
+  const { handleUpload, handleRetry, handleRemove } = useS3Upload(
+    workingCase.id,
+  )
+  const { onOpenFile } = useFileList({ caseId: workingCase.id })
 
   // Earliest session first, like a calendar, the way the parties' agenda card
   // reads too, and sorted here so a session the court books or moves lands by
@@ -112,6 +143,7 @@ const VerdictAppealStatus = () => {
   const status =
     chosenStatus ?? getInitialVerdictAppealStatus(verdictAppealCase)
   const isSchedulingSession = status === Status.COURT_SESSION_SCHEDULED
+  const isRecordingConclusion = status === Status.COMPLETED
   const isEditingSession = editingSessionId !== undefined
   const hasSessionToBook =
     isSchedulingSession &&
@@ -119,6 +151,19 @@ const VerdictAppealStatus = () => {
     isAppealCourtSessionComplete(courtSession)
   const hasChangesToSave =
     isEditingSession && isAppealCourtSessionComplete(courtSession)
+
+  // A ruling appeal on the same case keeps its ruling in a category of its
+  // own, and it has no place among this appeal's documents.
+  const rulingFiles = uploadFiles.filter(
+    (file) => file.category === CaseFileCategory.VERDICT_APPEAL_RULING,
+  )
+  // How the appeal ended is on record once the outcome, its type and the
+  // concluding words are saved, nothing is still uploading and the ruling
+  // document is in.
+  const isConclusionRecorded =
+    allFilesDoneOrError &&
+    isVerdictAppealConclusionFieldsValid(verdictAppealCase) &&
+    rulingFiles.some((file) => file.status === FileUploadStatus.done)
 
   const statementDeadlinesUrl = appendAppealCaseIdQuery(
     `${COURT_OF_APPEAL_VERDICT_APPEAL_STATEMENT_DEADLINES_ROUTE}/${workingCase.id}`,
@@ -135,10 +180,12 @@ const VerdictAppealStatus = () => {
 
   // Calling a session is settled by a complete form, or by one already
   // booked with the form left alone. A form the court has started on is
-  // neither, and nor is one holding a session being changed.
+  // neither, and nor is one holding a session being changed. A finished
+  // appeal is settled once the court has recorded how it ended.
   const stepIsValid =
     status !== undefined &&
     !isEditingSession &&
+    (!isRecordingConclusion || isConclusionRecorded) &&
     (!isSchedulingSession ||
       hasSessionToBook ||
       (bookedSessions.length > 0 && isAppealCourtSessionEmpty(courtSession)))
@@ -444,6 +491,31 @@ const VerdictAppealStatus = () => {
               editingSessionId={editingSessionId}
               onEdit={startEditing}
               onDelete={setSessionToDelete}
+            />
+          </Box>
+        </ExpandingSection>
+        <ExpandingSection show={isRecordingConclusion}>
+          <Box paddingTop={5}>
+            <RegisterConclusion
+              rulingFiles={rulingFiles}
+              onUpload={(files) => {
+                // The appeal takes one ruling document. The upload box still
+                // accepts a drop with a document listed, so that is turned
+                // away here until the listed one is removed.
+                if (rulingFiles.length > 0) {
+                  return
+                }
+
+                handleUpload(
+                  addUploadFiles(files, {
+                    category: CaseFileCategory.VERDICT_APPEAL_RULING,
+                  }),
+                  updateUploadFile,
+                )
+              }}
+              onRemove={(file) => handleRemove(file, removeUploadFile)}
+              onRetry={(file) => handleRetry(file, updateUploadFile)}
+              onOpenFile={(file) => onOpenFile(file)}
             />
           </Box>
         </ExpandingSection>

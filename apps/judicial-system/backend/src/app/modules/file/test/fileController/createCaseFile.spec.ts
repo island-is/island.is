@@ -5,6 +5,7 @@ import { BadRequestException, ForbiddenException } from '@nestjs/common'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
+  AppealCaseState,
   CaseFileCategory,
   CaseFileState,
   CaseOrigin,
@@ -451,6 +452,40 @@ describe('FileController - Create case file', () => {
 
       it('should not queue any messages', () => {
         expect(mockQueuedMessages).toEqual([])
+      })
+    })
+
+    describe('created once the verdict appeal has been completed', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
+        mockCreate.mockResolvedValueOnce({
+          ...createCaseFile,
+          id: uuid(),
+          name: 'test.pdf',
+          state: CaseFileState.STORED_IN_RVG,
+        })
+
+        then = await createCaseFileAs(
+          caseId,
+          createCaseFile,
+          {
+            ...theCase,
+            verdictAppealCase: {
+              id: uuid(),
+              appealState: AppealCaseState.COMPLETED,
+            },
+          } as Case,
+          courtOfAppealsUser,
+        )
+      })
+
+      // The court can still replace its document: the outcome stays with it
+      // until it is released.
+      it('should create the case file', () => {
+        expect(then.error).toBeUndefined()
+        expect(mockCaseFileRepositoryService.create).toHaveBeenCalled()
       })
     })
 
