@@ -27,6 +27,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import useAppealCase from '@island.is/judicial-system-web/src/utils/hooks/useAppealCase'
 import useFileList from '@island.is/judicial-system-web/src/utils/hooks/useFileList'
+import * as styles from '@island.is/judicial-system-web/src/utils/styles/modalPdfPreview.css'
 import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
@@ -41,7 +42,6 @@ import {
   getCompletableVerdictAppealRulingFile,
   getVerdictAppealRulingDecisionLabel,
 } from './VerdictAppealSummary.logic'
-import * as styles from './VerdictAppealSummary.css'
 
 /**
  * The summary of a verdict appeal at the Court of Appeals, where the court
