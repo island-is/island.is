@@ -5,7 +5,7 @@ import { AddressDeliveryType } from '../shared'
 
 const isOtherAddressFieldMissing = (
   type: AddressDeliveryType,
-  value?: string,
+  value?: string | null,
 ) => type === AddressDeliveryType.OTHER && !value?.trim()
 
 export const CardDeliverySchema = z
