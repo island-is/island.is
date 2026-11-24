@@ -139,13 +139,14 @@ describe('getCardDeliveryOverviewItems', () => {
   })
 
   it('shows only the street when postal code is null', () => {
-    const answers: FormValue = {
+    // FormValue does not allow null, but SelectController stores null at runtime
+    const answers = {
       cardDelivery: {
         type: AddressDeliveryType.OTHER,
         address: 'Skólavörðustígur 2',
         postalCode: null,
       },
-    }
+    } as unknown as FormValue
     const [item] = getCardDeliveryOverviewItems(answers, externalData)
     expect(item.valueText).toEqual([
       expect.objectContaining({
@@ -155,14 +156,15 @@ describe('getCardDeliveryOverviewItems', () => {
   })
 
   it('ignores leftover other address values when switched back to current', () => {
-    const answers: FormValue = {
+    // FormValue does not allow null, but SelectController stores null at runtime
+    const answers = {
       cardDelivery: {
         type: AddressDeliveryType.CURRENT,
         address: 'Skólavörðustígur 2',
         postalCode: null,
         recipient: 'Anna Jónsdóttir',
       },
-    }
+    } as unknown as FormValue
     const [item] = getCardDeliveryOverviewItems(answers, externalData)
     expect(item.valueText).toMatchObject({
       values: { address: 'Laugavegur 1, 101 Reykjavík' },
