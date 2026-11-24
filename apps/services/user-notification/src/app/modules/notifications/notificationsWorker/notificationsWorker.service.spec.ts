@@ -78,7 +78,10 @@ import { NotificationsWorkerService } from './notificationsWorker.service'
 import { EmailWorkerService, EmailQueueMessage } from './emailWorker.service'
 import { SmsWorkerService, SmsQueueMessage } from './smsWorker.service'
 import { PushWorkerService, PushQueueMessage } from './pushWorker.service'
-import { HnippTemplatePriorityType } from '../dto/hnippTemplate.response'
+import type {
+  HnippTemplatePriorityType,
+  HnippTemplateSourceType,
+} from '../dto/hnippTemplate.response'
 
 const workingHoursDelta = 1000 * 60 * 60 // 1 hour
 const insideWorkingHours = new Date(2021, 1, 1, 9, 0, 0)
@@ -1158,6 +1161,7 @@ describe('NotificationsWorkerService', () => {
     const mockTemplateCategory = (
       labels: { is?: string; en?: string },
       priorityType?: HnippTemplatePriorityType,
+      sourceType?: HnippTemplateSourceType,
     ) =>
       jest
         .spyOn(notificationsService, 'getTemplate')
@@ -1166,6 +1170,7 @@ describe('NotificationsWorkerService', () => {
             hnippCategory: locale === 'en' ? labels.en : labels.is,
             hnippCategoryIs: labels.is,
             priorityType,
+            sourceType,
           }),
         )
 
@@ -1196,6 +1201,7 @@ describe('NotificationsWorkerService', () => {
         templateId: mockTemplateId,
         category: null,
         priorityType: null,
+        sourceType: 'General',
       })
     })
 
@@ -1304,6 +1310,22 @@ describe('NotificationsWorkerService', () => {
       expect(senders[0].priorityType).toBe('Actionable')
     })
 
+    it('should record the source type of the template on the sender and the notification', async () => {
+      mockTemplateCategory({ is: 'Heilbrigðismál' }, 'Actionable', 'Event')
+
+      await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
+
+      const senders = await userNotificationSenderModel.findAll()
+      expect(senders).toHaveLength(1)
+      expect(senders[0].sourceType).toBe('Event')
+
+      const notifications = await notificationModel.findAll({
+        where: { recipient: userWithNoDelegations.nationalId },
+      })
+      expect(notifications).toHaveLength(1)
+      expect(notifications[0].sourceType).toBe('Event')
+    })
+
     it('should record each template of a sender separately', async () => {
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
       mockTemplateCategory({ is: 'Heilbrigðismál', en: 'Health' })
@@ -1330,11 +1352,11 @@ describe('NotificationsWorkerService', () => {
       ])
     })
 
-    it('should keep the latest category and priority type of a template', async () => {
-      mockTemplateCategory({ is: 'Heilbrigðismál' }, 'Informative')
+    it('should keep the latest category, priority type and source type of a template', async () => {
+      mockTemplateCategory({ is: 'Heilbrigðismál' }, 'Informative', 'General')
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
 
-      mockTemplateCategory({ is: 'Skattar' }, 'Actionable')
+      mockTemplateCategory({ is: 'Skattar' }, 'Actionable', 'Mail')
       await addToQueueWithSender(userWithNoDelegations.nationalId, senderId)
 
       const senders = await userNotificationSenderModel.findAll()
@@ -1343,6 +1365,7 @@ describe('NotificationsWorkerService', () => {
         templateId: mockTemplateId,
         category: 'skattar',
         priorityType: 'Actionable',
+        sourceType: 'Mail',
       })
     })
 

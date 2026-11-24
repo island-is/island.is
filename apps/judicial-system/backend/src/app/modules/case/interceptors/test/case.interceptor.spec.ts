@@ -19,6 +19,7 @@ import {
   InstitutionType,
   StringType,
   UserRole,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
 
 import { getOrCreateTransaction } from '../../../../middleware'
@@ -1022,6 +1023,7 @@ describe('CaseInterceptor - verdict appeal outcome', () => {
         id: string
         appealState: AppealCaseState
         appealCaseNumber: string
+        verdictAppealStatus: VerdictAppealStatus
       }
       caseFiles: { id: string }[]
     }
@@ -1038,6 +1040,7 @@ describe('CaseInterceptor - verdict appeal outcome', () => {
       id: 'verdict_appeal',
       appealState,
       appealCaseNumber: '2/2024',
+      verdictAppealStatus: VerdictAppealStatus.COMPLETED,
       ...outcome,
     }
 
@@ -1127,6 +1130,12 @@ describe('CaseInterceptor - verdict appeal outcome', () => {
           })
         })
 
+        it('presents a recorded status of completed as under advisement', () => {
+          expect(then.result.verdictAppealCase.verdictAppealStatus).toBe(
+            VerdictAppealStatus.UNDER_ADVISEMENT,
+          )
+        })
+
         it('leaves the court of appeals ruling out of the case files', () => {
           expect(then.result.caseFiles.map((file) => file.id)).toEqual([
             'district_ruling',
@@ -1157,6 +1166,7 @@ describe('CaseInterceptor - verdict appeal outcome', () => {
         expect(then.result.verdictAppealCase).toMatchObject({
           ...outcome,
           appealState,
+          verdictAppealStatus: VerdictAppealStatus.COMPLETED,
         })
       })
 

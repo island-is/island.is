@@ -492,6 +492,40 @@ describe('FileController - Create case file', () => {
       })
     })
 
+    describe('created once the verdict appeal has been completed', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        const mockCreate = mockCaseFileRepositoryService.create as jest.Mock
+        mockCreate.mockResolvedValueOnce({
+          ...createCaseFile,
+          id: uuid(),
+          name: 'test.pdf',
+          state: CaseFileState.STORED_IN_RVG,
+        })
+
+        then = await createCaseFileAs(
+          caseId,
+          createCaseFile,
+          {
+            ...theCase,
+            verdictAppealCase: {
+              id: uuid(),
+              appealState: AppealCaseState.COMPLETED,
+            },
+          } as Case,
+          courtOfAppealsUser,
+        )
+      })
+
+      // The court can still replace its document: the outcome stays with it
+      // until it is released.
+      it('should create the case file', () => {
+        expect(then.error).toBeUndefined()
+        expect(mockCaseFileRepositoryService.create).toHaveBeenCalled()
+      })
+    })
+
     describe('created on a case without a verdict appeal', () => {
       let then: Then
 
