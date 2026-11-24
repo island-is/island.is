@@ -1,0 +1,6 @@
+query UserProfileSettings {
+  getUserProfile {
+    nationalId
+    onlyActionablePriorityNotifications
+  }
+}

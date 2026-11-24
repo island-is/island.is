@@ -60,6 +60,12 @@ export class CreateAppealSummonsInput {
   readonly caseId!: string
 
   @Allow()
+  @IsString()
+  @IsNotEmpty()
+  @Field(() => String)
+  readonly caseName!: string
+
+  @Allow()
   @IsArray()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
@@ -79,6 +85,12 @@ export class UpdateAppealSummonsInput {
   @IsUUID()
   @Field(() => ID)
   readonly appealSummonsId!: string
+
+  @Allow()
+  @IsString()
+  @IsNotEmpty()
+  @Field(() => String)
+  readonly caseName!: string
 
   @Allow()
   @IsArray()

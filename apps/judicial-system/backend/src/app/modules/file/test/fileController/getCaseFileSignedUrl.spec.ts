@@ -180,6 +180,19 @@ describe('FileController - Get case file signed url', () => {
           { hash: expect.any(String), hashAlgorithm: expect.any(String) },
         )
       })
+
+      it('is still stamped when its hash cannot be stored', async () => {
+        const mockUpdateById =
+          mockCaseFileRepositoryService.updateById as jest.Mock
+        mockUpdateById.mockRejectedValueOnce(new Error('Some error'))
+        const pdfDocument = await PDFDocument.create()
+        pdfDocument.addPage()
+        const pdf = Buffer.from(await pdfDocument.save())
+
+        const confirmed = await confirm(pdf)
+
+        expect(confirmed).toBeDefined()
+      })
     })
   })
 

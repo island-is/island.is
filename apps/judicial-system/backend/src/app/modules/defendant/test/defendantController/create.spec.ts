@@ -122,12 +122,6 @@ describe('DefendantController - Create', () => {
     it('should queue messages', () => {
       expect(mockQueuedMessages).toEqual([
         {
-          type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-          user,
-          caseId,
-          elementId: defendantId,
-        },
-        {
           type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
           user,
           caseId,

@@ -12,7 +12,6 @@ export const messageTypeToSuspensionCategory: Partial<
   Record<MessageType, MessageSuspensionCategory>
 > = {
   [MessageType.DELIVERY_TO_COURT_PROSECUTOR]: MessageSuspensionCategory.COURT,
-  [MessageType.DELIVERY_TO_COURT_DEFENDANT]: MessageSuspensionCategory.COURT,
   [MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT]:
     MessageSuspensionCategory.COURT,
   [MessageType.DELIVERY_TO_COURT_INDICTMENT]: MessageSuspensionCategory.COURT,

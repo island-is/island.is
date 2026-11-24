@@ -169,12 +169,6 @@ describe('DefendantController - Update', () => {
     it('should queue messages', () => {
       expect(mockQueuedMessages).toEqual([
         {
-          type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-          user,
-          caseId,
-          elementId: defendantId,
-        },
-        {
           type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
           user,
           caseId,
@@ -206,12 +200,6 @@ describe('DefendantController - Update', () => {
           },
         },
         {
-          type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-          user,
-          caseId,
-          elementId: defendantId,
-        },
-        {
           type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
           user,
           caseId,
@@ -235,12 +223,6 @@ describe('DefendantController - Update', () => {
     it('should queue court delivery messages for the defendant', () => {
       expect(mockQueuedMessages).toEqual([
         {
-          type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-          user,
-          caseId,
-          elementId: defendantId,
-        },
-        {
           type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
           user,
           caseId,
@@ -263,12 +245,6 @@ describe('DefendantController - Update', () => {
 
     it('should queue court delivery messages for the defendant', () => {
       expect(mockQueuedMessages).toEqual([
-        {
-          type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-          user,
-          caseId,
-          elementId: defendantId,
-        },
         {
           type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
           user,

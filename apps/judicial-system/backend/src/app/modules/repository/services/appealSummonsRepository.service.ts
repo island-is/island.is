@@ -39,6 +39,7 @@ export type CreateAppealSummonsDefendant = {
 export type UpdateAppealSummons = {
   confirmedById?: string | null
   confirmedDate?: Date | null
+  caseName?: string | null
   hash?: string | null
   hashAlgorithm?: HashAlgorithm | null
 }
@@ -305,6 +306,7 @@ export class AppealSummonsRepositoryService {
         {
           confirmedById: null,
           confirmedDate: null,
+          caseName: null,
           hash: null,
           hashAlgorithm: null,
         },
