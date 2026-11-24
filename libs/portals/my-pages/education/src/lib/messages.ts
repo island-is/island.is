@@ -500,6 +500,18 @@ export const educationOverviewMessages = defineMessages({
     defaultMessage: 'Netfangið er ekki gilt',
     description: 'Shown when MMS rejects the email',
   },
+  clearTitle: {
+    id: 'sp.education-overview:clear-title',
+    defaultMessage: 'Eyða skráningu',
+    description: 'Title of the modal shown before saving a cleared field',
+  },
+  clearText: {
+    id: 'sp.education-overview:clear-text',
+    defaultMessage:
+      'Ertu viss um að þú viljir eyða {fields, select, phone {símanúmerinu} email {netfanginu} other {símanúmerinu og netfanginu}}? Skólinn sér þá ekki lengur þessar upplýsingar.',
+    description:
+      'Shown before saving when a stored phone and/or email was emptied; saving empty deletes the value (contract v0.4 §7.3)',
+  },
   registerButton: {
     id: 'sp.education-overview:register-button',
     defaultMessage: 'Skrá upplýsingar',

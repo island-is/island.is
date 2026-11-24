@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import type { User } from '@island.is/auth-nest-tools'
@@ -15,6 +15,7 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { FetchError } from '@island.is/clients/middlewares'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { FriggKeyInfoClientService } from '@island.is/clients/mms/frigg'
 
 import { OwnContact } from '../models/ownContact.model'
@@ -31,7 +32,10 @@ import {
 @Scopes(ApiScope.education)
 @Resolver()
 export class EducationOwnContactResolver {
-  constructor(private readonly keyInfoClient: FriggKeyInfoClientService) {}
+  constructor(
+    private readonly keyInfoClient: FriggKeyInfoClientService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   @Query(() => OwnContact, {
     nullable: true,
@@ -45,16 +49,19 @@ export class EducationOwnContactResolver {
       return await this.keyInfoClient.getOwnContact(user)
     } catch (error) {
       if (error instanceof FetchError && error.status === 404) {
+        this.logger.info('MMS own contact: nothing to show', { status: 404 })
         return null
       }
       const problem = toMmsKeyInfoProblem(error)
-      if (
-        problem instanceof ProblemError &&
-        NOTHING_TO_SHOW_CODES.includes(
-          (problem.problem as Partial<MmsKeyInfoProblem>).mmsCode ?? '',
-        )
-      ) {
-        return null
+      if (problem instanceof ProblemError) {
+        const { status, mmsCode } = problem.problem as Partial<MmsKeyInfoProblem>
+        if (mmsCode && NOTHING_TO_SHOW_CODES.includes(mmsCode)) {
+          this.logger.info('MMS own contact: nothing to show', {
+            status,
+            mmsCode,
+          })
+          return null
+        }
       }
       throw problem
     }

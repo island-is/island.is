@@ -14,11 +14,19 @@ export interface OwnContactInput {
   phone: string
 }
 
-const toE164 = (phone: string): string | null => {
+export const toE164 =(phone: string): string | null => {
   const digits = phone.replace(/[\s-]/g, '')
   if (!digits) return null
   return digits.startsWith('+') ? digits : `+354${digits}`
 }
+
+export const clearedOwnContactFields = (
+  stored: OwnContactInput,
+  next: OwnContactInput,
+): OwnContactField[] =>
+  (['phone', 'email'] as const).filter(
+    (field) => stored[field].trim() !== '' && next[field].trim() === '',
+  )
 
 export const ownContactFieldErrors = (error: unknown): OwnContactField[] => {
   if (!(error instanceof ApolloError)) return []

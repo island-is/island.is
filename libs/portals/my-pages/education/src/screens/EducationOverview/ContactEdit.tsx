@@ -1,8 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Box, Button, Input, Stack, toast } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { CardLoader, IntroWrapper, m } from '@island.is/portals/my-pages/core'
+import {
+  CardLoader,
+  IntroWrapper,
+  m,
+  Modal,
+} from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import {
   educationOverviewMessages as om,
@@ -14,6 +19,7 @@ import { focusInput } from '../PrimarySchool/PrimarySchoolOverview/keyInfo/edit/
 import { mmsErrorMessage } from '../PrimarySchool/PrimarySchoolOverview/keyInfo/mmsError'
 import { SectionError } from '../PrimarySchool/PrimarySchoolOverview/keyInfo/SectionError'
 import {
+  clearedOwnContactFields,
   ownContactFieldErrors,
   useOwnContact,
   type OwnContactField,
@@ -36,6 +42,8 @@ export const ContactEdit = () => {
   const [phone, setPhone] = useState(storedPhone)
   const [email, setEmail] = useState(storedEmail)
   const [fieldErrors, setFieldErrors] = useState<OwnContactField[]>([])
+  const [confirmClear, setConfirmClear] = useState(false)
+  const saveButton = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     setPhone(storedPhone)
@@ -43,8 +51,25 @@ export const ContactEdit = () => {
   }, [storedPhone, storedEmail])
 
   const isDirty = phone !== storedPhone || email !== storedEmail
+  const clearedFields = clearedOwnContactFields(
+    { phone: storedPhone, email: storedEmail },
+    { phone, email },
+  )
 
   const goBack = () => navigate(EducationPaths.EducationOverview)
+
+  const handleSubmit = () => {
+    if (clearedFields.length > 0) {
+      setConfirmClear(true)
+      return
+    }
+    handleSave()
+  }
+
+  const closeClearModal = () => {
+    setConfirmClear(false)
+    saveButton.current?.focus()
+  }
 
   const handleSave = async () => {
     setFieldErrors([])
@@ -53,6 +78,7 @@ export const ContactEdit = () => {
       toast.success(formatMessage(kim.saveSuccess))
       goBack()
     } catch (saveError) {
+      setConfirmClear(false)
       const fields = ownContactFieldErrors(saveError)
       if (fields.length > 0) {
         setFieldErrors(fields)
@@ -118,15 +144,44 @@ export const ContactEdit = () => {
               {formatMessage(kim.cancel)}
             </Button>
             <Button
+              ref={saveButton}
               size="small"
               loading={saving}
               disabled={!isDirty}
-              onClick={handleSave}
+              onClick={handleSubmit}
             >
               {formatMessage(kim.confirm)}
             </Button>
           </Box>
         </Stack>
+        {confirmClear && (
+          <Modal
+            id="education-contact-clear-modal"
+            isVisible
+            initialVisibility
+            buttonsSpacing="spaceBetween"
+            onCloseModal={closeClearModal}
+            title={formatMessage(om.clearTitle)}
+            text={formatMessage(om.clearText, {
+              fields: clearedFields.length > 1 ? 'both' : clearedFields[0],
+            })}
+            buttons={[
+              {
+                id: 'education-contact-clear-cancel',
+                type: 'ghost',
+                text: formatMessage(kim.cancel),
+                onClick: closeClearModal,
+              },
+              {
+                id: 'education-contact-clear-confirm',
+                type: 'primary',
+                text: formatMessage(kim.confirm),
+                loading: saving,
+                onClick: handleSave,
+              },
+            ]}
+          />
+        )}
       </Box>
     )
   }
