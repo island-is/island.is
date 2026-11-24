@@ -2,6 +2,8 @@ import { style } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
+const GRID_COLUMNS = '1.2fr 1.4fr 1.2fr 1.4fr 1.3fr 1fr 48px'
+
 export const logoContainer = style({
   display: 'flex',
   flexDirection: 'column',
@@ -17,11 +19,14 @@ export const sectionHeader = style({
   marginBottom: theme.spacing[3],
 })
 
+// Absolutely fills gridBody (which sets minHeight while empty) so fade-out
+// does not collapse the section before the first row is in the flow.
 export const emptyStaging = style({
+  position: 'absolute',
+  inset: 0,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  minHeight: 120,
   padding: theme.spacing[3],
   border: `1px dashed ${theme.color.blue200}`,
   borderRadius: theme.border.radius.large,
@@ -35,20 +40,21 @@ export const stringGroupItem = style({
 })
 
 export const selectableRow = style({
-  cursor: 'pointer',
+  cursor: 'grab',
+  touchAction: 'none',
 
   selectors: {
     '&[aria-disabled="true"]': {
       cursor: 'default',
       opacity: 0.7,
+      touchAction: 'auto',
     },
   },
 })
 
-// Div-based table so row borders move with layoutId animations
-// (native <tr> borders do not travel with shared-element motion).
+// Margin is animated on the motion wrapper (open/collapse with the section).
 export const stagingSection = style({
-  marginBottom: theme.spacing[5],
+  width: '100%',
 })
 
 export const gridTable = style({
@@ -59,7 +65,7 @@ export const gridTable = style({
 
 export const gridHeader = style({
   display: 'grid',
-  gridTemplateColumns: '1.2fr 1.4fr 1.2fr 1.4fr 1.3fr 1fr 48px',
+  gridTemplateColumns: GRID_COLUMNS,
   alignItems: 'center',
   background: theme.color.blue100,
   borderBottom: `1px solid ${theme.color.blue200}`,
@@ -74,21 +80,81 @@ export const gridHeaderCell = style({
 export const gridBody = style({
   display: 'flex',
   flexDirection: 'column',
-  // Keep a stable layout root for shared-element row moves in both directions.
   position: 'relative',
+  minHeight: 8,
 })
 
 export const gridRow = style({
   display: 'grid',
-  gridTemplateColumns: '1.2fr 1.4fr 1.2fr 1.4fr 1.3fr 1fr 48px',
+  gridTemplateColumns: GRID_COLUMNS,
   alignItems: 'center',
-  // Border lives on the animated row container so it moves with the case.
   borderBottom: `1px solid ${theme.color.blue200}`,
   background: theme.color.white,
+})
+
+export const gridRowDragging = style({
+  opacity: 0.35,
 })
 
 export const gridCell = style({
   padding: `${theme.spacing[2]}px ${theme.spacing[3]}px`,
   textAlign: 'left',
   minWidth: 0,
+})
+
+export const menuCell = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-end',
+  paddingRight: theme.spacing[2],
+})
+
+export const contextMenuButton = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: 34,
+  height: 34,
+  borderRadius: theme.border.radius.large,
+  cursor: 'pointer',
+  transition: 'background-color .2s',
+
+  selectors: {
+    '&:hover, &[aria-expanded="true"]': {
+      backgroundColor: theme.color.blue200,
+    },
+    '&:focus-visible': {
+      outline: 'none',
+      boxShadow: `0 0 0 ${theme.border.width.large}px ${theme.border.color.focus}`,
+    },
+  },
+})
+
+export const dragPreviewMotion = style({
+  width: 'min(1344px, 92vw)',
+  transformOrigin: '50% 50%',
+  pointerEvents: 'none',
+})
+
+// Portaled click-to-move clone — sits above list overflow so the row stays visible in flight.
+export const clickFlight = style({
+  position: 'fixed',
+  zIndex: 10000,
+  pointerEvents: 'none',
+  margin: 0,
+  background: theme.color.white,
+  boxShadow: '0 8px 24px rgba(0, 61, 153, 0.16)',
+})
+
+export const dragPreview = style({
+  display: 'grid',
+  gridTemplateColumns: GRID_COLUMNS,
+  alignItems: 'center',
+  width: '100%',
+  borderRadius: theme.border.radius.large,
+  border: `1px solid ${theme.color.blue200}`,
+  background: theme.color.white,
+  boxShadow: '0 12px 28px rgba(0, 61, 153, 0.18)',
+  cursor: 'grabbing',
+  pointerEvents: 'none',
 })
