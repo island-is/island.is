@@ -1,3 +1,4 @@
+// Nest images leave this as require('beygla/strict'); keep beygla a production dep.
 import { applyCase } from 'beygla/strict'
 import { format, isValid, parseISO } from 'date-fns' // eslint-disable-line no-restricted-imports
 // Importing 'is' directly from date-fns/locale/is has caused unexpected problems
