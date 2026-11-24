@@ -22,7 +22,7 @@ const NEW_OPERATOR_APPROVAL = { nationalId: NEW_OPERATOR, role: 'operators' }
 const reviewers = [OWNER_CO_OWNER, NEW_OPERATOR]
 
 const buildApplication = (state: string, answers: FormValue): Application =>
-  (({
+  ({
     id: '123',
     typeId: ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE,
     applicant: OWNER,
@@ -35,7 +35,7 @@ const buildApplication = (state: string, answers: FormValue): Application =>
     modified: new Date(),
     created: new Date(),
     attachments: {},
-  } as unknown) as Application)
+  } as unknown as Application)
 
 const buildAnswers = (overrides: FormValue = {}): FormValue => ({
   owner: { nationalId: OWNER },

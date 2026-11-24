@@ -34,7 +34,7 @@ const buildApplication = (
   answers: FormValue,
   assignees: string[] = [],
 ): Application =>
-  (({
+  ({
     id: '123',
     typeId: ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP,
     applicant: SELLER,
@@ -47,7 +47,7 @@ const buildApplication = (
     modified: new Date(),
     created: new Date(),
     attachments: {},
-  } as unknown) as Application)
+  } as unknown as Application)
 
 const buildAnswers = (overrides: FormValue = {}): FormValue => ({
   seller: { nationalId: SELLER },

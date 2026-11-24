@@ -9,7 +9,7 @@ import TransferOfMachineOwnershipTemplate from './TransferOfMachineOwnershipTemp
 import { Roles, States } from './constants'
 
 const buildApplication = (state: string): Application =>
-  (({
+  ({
     id: '123',
     typeId: ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP,
     applicant: '1111111111',
@@ -22,7 +22,7 @@ const buildApplication = (state: string): Application =>
     modified: new Date(),
     created: new Date(),
     attachments: {},
-  } as unknown) as Application)
+  } as unknown as Application)
 
 describe('TransferOfMachineOwnershipTemplate review permissions', () => {
   const helper = new ApplicationTemplateHelper(
