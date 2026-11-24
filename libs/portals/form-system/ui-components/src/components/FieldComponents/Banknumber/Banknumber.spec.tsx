@@ -188,8 +188,12 @@ it.each([false, true])(
 
     expect(profileRequest).not.toHaveBeenCalled()
     expect(
-      screen.getAllByRole('textbox').map((input) => input.getAttribute('value')),
-    ).toEqual(previewMockData[FieldTypesEnum.BANK_ACCOUNT].bankAccount.split('-'))
+      screen
+        .getAllByRole('textbox')
+        .map((input) => input.getAttribute('value')),
+    ).toEqual(
+      previewMockData[FieldTypesEnum.BANK_ACCOUNT].bankAccount.split('-'),
+    )
     expect(dispatch).toHaveBeenCalledWith({
       type: 'SET_BANK_ACCOUNT',
       payload: {
@@ -361,7 +365,9 @@ it.each([false, true])(
     }
 
     expect(
-      screen.getAllByRole('textbox').map((input) => input.getAttribute('value')),
+      screen
+        .getAllByRole('textbox')
+        .map((input) => input.getAttribute('value')),
     ).toEqual(['', '', ''])
   },
 )
