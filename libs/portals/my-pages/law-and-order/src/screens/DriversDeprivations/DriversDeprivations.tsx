@@ -73,57 +73,54 @@ const DriversDeprivations = () => {
         )}
 
         {!loading && !error && deprivation && (
-          <Box>
-            <Box marginBottom={3}>
-              <AlertMessage
-                type="error"
-                title={
-                  <Text
-                    as="h2"
-                    variant="h5"
-                    marginBottom={deprivation.dateTo ? 1 : 0}
-                  >
-                    {formatMessage(messages.driversDeprivationsActiveTitle)}
-                  </Text>
-                }
-                message={
-                  deprivation.dateTo
-                    ? formatMessage(
-                        messages.driversDeprivationsActiveDescription,
-                        {
-                          dateTo: formatDate(deprivation.dateTo),
-                        },
-                      )
-                    : undefined
-                }
-              />
-            </Box>
-            <InfoLineStack space={1} marginBottom={0}>
-              <InfoLine
-                label={formatMessage(messages.driversDeprivationsColumnType)}
-                labelColumnSpan="5/12"
-                content={deprivation.name ?? undefined}
-              />
-              <InfoLine
-                label={formatMessage(
-                  messages.driversDeprivationsColumnDateFrom,
-                )}
-                labelColumnSpan="5/12"
-                content={formatDate(deprivation.dateFrom)}
-              />
-              <InfoLine
-                label={formatMessage(messages.driversDeprivationsColumnDateTo)}
-                labelColumnSpan="5/12"
-                content={
-                  deprivation.dateTo
-                    ? formatDate(deprivation.dateTo)
-                    : undefined
-                }
-              />
-            </InfoLineStack>
+          <Box marginBottom={3}>
+            <AlertMessage
+              type="error"
+              title={
+                <Text
+                  as="h2"
+                  variant="h5"
+                  marginBottom={deprivation.dateTo ? 1 : 0}
+                >
+                  {formatMessage(messages.driversDeprivationsActiveTitle)}
+                </Text>
+              }
+              message={
+                deprivation.dateTo
+                  ? formatMessage(
+                      messages.driversDeprivationsActiveDescription,
+                      {
+                        dateTo: formatDate(deprivation.dateTo),
+                      },
+                    )
+                  : undefined
+              }
+            />
           </Box>
         )}
       </Box>
+
+      {!loading && !error && deprivation && (
+        <InfoLineStack space={1} marginBottom={0}>
+          <InfoLine
+            label={formatMessage(messages.driversDeprivationsColumnType)}
+            labelColumnSpan="5/12"
+            content={deprivation.name ?? undefined}
+          />
+          <InfoLine
+            label={formatMessage(messages.driversDeprivationsColumnDateFrom)}
+            labelColumnSpan="5/12"
+            content={formatDate(deprivation.dateFrom)}
+          />
+          <InfoLine
+            label={formatMessage(messages.driversDeprivationsColumnDateTo)}
+            labelColumnSpan="5/12"
+            content={
+              deprivation.dateTo ? formatDate(deprivation.dateTo) : undefined
+            }
+          />
+        </InfoLineStack>
+      )}
     </IntroWrapper>
   )
 }
