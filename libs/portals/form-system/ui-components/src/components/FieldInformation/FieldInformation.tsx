@@ -19,6 +19,7 @@ export const FieldInformation = ({ item }: Props) => {
     item.fieldType === FieldTypesEnum.TEXTBOX ||
     item.fieldType === FieldTypesEnum.NUMBERBOX ||
     item.fieldType === FieldTypesEnum.CHECKBOX ||
+    item.fieldType === FieldTypesEnum.APPLICANT ||
     item.fieldType === FieldTypesEnum.PHONE_NUMBER ||
     item.fieldType === FieldTypesEnum.EMAIL ||
     item.fieldType === FieldTypesEnum.NATIONAL_ID

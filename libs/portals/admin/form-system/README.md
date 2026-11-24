@@ -23,4 +23,8 @@ Tooltip editing is only available for text, number, checkbox, email, and
 national-ID fields. National-ID tooltips appear on the editable national-ID input,
 not on the name or address fields populated by the lookup.
 Phone-number fields do not support tooltip editing or display.
+Applicant fields do not support tooltip editing or display either; saved applicant
+tooltips are ignored.
 Email tooltips appear inside the email input, not above it.
+Automatic English translations target the originating field and do not overwrite
+English edits made while a translation request is pending.

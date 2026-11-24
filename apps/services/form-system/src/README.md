@@ -92,13 +92,22 @@ The field-content migration renames `field.description` to
 `field_settings.hasDescription`. Existing text/number descriptions move to
 `tooltip`; checkbox descriptions move to `field_settings.subLabel`; message
 bodies remain in `information_text`. The migration preserves checkbox `isLarge`
-values and clears both sublabel languages when `isLarge` is false. Existing
-version-1 form exports are converted on import.
+values and clears both sublabel languages when `isLarge` is false. Text and number
+descriptions become tooltips only when the original setting was enabled.
+No legacy backup column is added. Rollback derives `hasDescription` from whether
+the restored description has nonblank text in either language; the original flag
+cannot be recovered exactly.
+Only version-2 form exports are supported by `formExportSchema` and `importForm`;
+version-1 imports fail validation and must be exported again using the updated service.
 
-Apply migrations before starting the updated service. Field APIs no longer
-expose or accept `description` or `hasDescription`; clients use
-`informationText`, `tooltip`, and `fieldSettings.subLabel`. PDFs include
-information text and checkbox sublabels, but not tooltip help.
+Apply migrations before starting the updated service. REST and GraphQL field APIs
+no longer expose or accept `description` or `hasDescription`; clients use
+`informationText`, `tooltip`, and `fieldSettings.subLabel`.
+PDF information text and checkbox sublabels use only the requested language.
+Checkbox sublabels appear on a new line directly beneath the field name, using
+the same font and size inside the field's value box.
+Information-text markup is converted to decoded plain text before measurement
+and drawing; line breaks are preserved. Tooltips are not included in PDFs.
 
 ## Publishing and archiving forms
 
@@ -114,9 +123,8 @@ Unpublishing also deletes all forms derived from it in the
 `published_being_changed` state, together with all of their applications and
 application events, within the same transaction. This includes non-draft and test
 applications on those revisions. Events are deleted before their applications.
-Uploaded file keys
-from all of those revisions' applications are collected before the rows are
-deleted, and the files are removed from storage after commit. The confirmation
+Uploaded files are removed from storage before their application rows are
+deleted, within the archive transaction. The confirmation
 dialog always warns about revision deletion, even if the local list is stale.
 Creating an editable revision also shows a toast warning that unpublishing the
 original form will delete the revision.
@@ -131,10 +139,13 @@ Draft and revision applications are locked during deletion. Submission takes the
 row lock and verifies that the application is still a draft before sending it.
 The lock is held through the external send and the completed-status update.
 Application and form reads during submission reuse the submission transaction.
-Draft and revision file keys are collected during database cleanup; S3 objects are deleted
-only after the archive transaction commits, without updating deleted values.
-Storage deletion errors are logged and surfaced after commit; the database
-cleanup remains committed.
+Draft and revision files are deleted while their database references are still
+available. Storage deletion errors are logged and abort the transaction, retaining
+the form status, applications and file keys so retrying the same status change
+can finish cleanup. S3 deletion is idempotent: a retry can safely delete a key that
+was removed before an earlier failure. If a later database write or commit fails,
+already deleted S3 objects cannot be restored; their retained keys can still be
+retried, but the affected draft attachments must not be treated as available.
 
 ## Code owners and maintainers
 

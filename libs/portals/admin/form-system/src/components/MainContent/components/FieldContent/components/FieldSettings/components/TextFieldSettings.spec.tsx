@@ -5,7 +5,7 @@ import {
   ToggleSwitchCheckbox,
 } from '@island.is/island-ui/core'
 import { expect, it, jest } from '@jest/globals'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { ComponentProps, ReactNode, useContext, useReducer } from 'react'
 import { IntlProvider } from 'react-intl'
 import { ControlContext } from '../../../../../../../context/ControlContext'
@@ -126,22 +126,30 @@ const renderSettings = (
   const getTranslation = jest.fn(async (_text: string) => ({
     translation: 'Translated text',
   }))
+  const field = {
+    id: 'field',
+    fieldType,
+    fieldSettings: { isLarge, subLabel },
+    ...content,
+  } as FormSystemField
+  const otherField = { ...field, id: 'other-field' }
+  let selectField: (field: FormSystemField) => void
   const Settings = () => {
     const defaults = useContext(ControlContext)
     const [control, dispatch] = useReducer(controlReducer, {
       ...defaults.control,
       activeItem: {
         ...defaults.control.activeItem,
-        data: {
-          id: 'field',
-          fieldType,
-          fieldSettings: { isLarge, subLabel },
-          ...content,
-        },
+        data: field,
       },
-      form: { ...defaults.control.form },
+      form: { ...defaults.control.form, fields: [field, otherField] },
       isReadOnly,
     })
+    selectField = (data) =>
+      dispatch({
+        type: 'SET_ACTIVE_ITEM',
+        payload: { activeItem: { type: 'Field', data } },
+      })
     return (
       <ControlContext.Provider
         value={{
@@ -166,7 +174,13 @@ const renderSettings = (
     )
   }
   render(<Settings />)
-  return { controlDispatch, updateActiveItem, setFocus, getTranslation }
+  return {
+    controlDispatch,
+    updateActiveItem,
+    setFocus,
+    getTranslation,
+    selectOtherField: () => selectField(otherField),
+  }
 }
 
 it.each(['TEXTBOX', 'NUMBERBOX', 'CHECKBOX', 'NATIONAL_ID', 'EMAIL'])(
@@ -209,7 +223,7 @@ it.each([false, true])(
     renderSettings('MESSAGE', isReadOnly, undefined, false, {})
 
     expect(screen.queryByRole('switch', { name: 'Information' })).toBeNull()
-    expect(screen.getAllByText(/Textinn getur/)).toHaveLength(1)
+    expect(screen.getAllByText(/Upplýsingatextinn getur/)).toHaveLength(1)
     for (const name of ['Information', 'English information']) {
       expect(screen.getByRole('textbox', { name })).toHaveProperty(
         'readOnly',
@@ -222,12 +236,12 @@ it.each([false, true])(
 it('shows HTML guidance above information inputs only while they are visible', () => {
   renderSettings('TEXTBOX', false, undefined, false, {})
 
-  expect(screen.queryByText(/Textinn getur/)).toBeNull()
+  expect(screen.queryByText(/Upplýsingatextinn getur/)).toBeNull()
   fireEvent.click(screen.getByRole('switch', { name: 'Tooltip' }))
-  expect(screen.queryByText(/Textinn getur/)).toBeNull()
+  expect(screen.queryByText(/Upplýsingatextinn getur/)).toBeNull()
 
   fireEvent.click(screen.getByRole('switch', { name: 'Information' }))
-  const guidance = screen.getByText(/Textinn getur/)
+  const guidance = screen.getByText(/Upplýsingatextinn getur/)
   for (const name of ['Information', 'English information']) {
     expect(
       guidance.compareDocumentPosition(screen.getByRole('textbox', { name })) &
@@ -236,7 +250,7 @@ it('shows HTML guidance above information inputs only while they are visible', (
   }
 
   fireEvent.click(screen.getByRole('switch', { name: 'Information' }))
-  expect(screen.queryByText(/Textinn getur/)).toBeNull()
+  expect(screen.queryByText(/Upplýsingatextinn getur/)).toBeNull()
 })
 
 it.each([
@@ -251,7 +265,7 @@ it.each([
     tooltip: text,
   })
   const hasText = Boolean(text?.is?.trim() || text?.en?.trim())
-  expect(screen.queryByText(/Textinn getur/) !== null).toBe(hasText)
+  expect(screen.queryByText(/Upplýsingatextinn getur/) !== null).toBe(hasText)
   for (const label of ['Information', 'Tooltip']) {
     const toggle = screen.getByRole('switch', { name: label })
     expect(toggle).toHaveProperty('checked', hasText)
@@ -340,7 +354,12 @@ it.each([
     fireEvent.change(input, { target: { value: 'Edited text' } })
     expect(controlDispatch).toHaveBeenCalledWith({
       type: 'CHANGE_FIELD_TEXT',
-      payload: { property, lang: 'is', newValue: 'Edited text' },
+      payload: {
+        property,
+        lang: 'is',
+        newValue: 'Edited text',
+        fieldId: 'field',
+      },
     })
     fireEvent.blur(input, { target: { value: 'Edited text' } })
     expect(updateActiveItem).toHaveBeenCalledTimes(1)
@@ -351,7 +370,12 @@ it.each([
     await waitFor(() =>
       expect(controlDispatch).toHaveBeenCalledWith({
         type: 'CHANGE_FIELD_TEXT',
-        payload: { property, lang: 'en', newValue: 'Translated text' },
+        payload: {
+          property,
+          lang: 'en',
+          newValue: 'Translated text',
+          fieldId: 'field',
+        },
       }),
     )
     expect(getTranslation).toHaveBeenCalledWith('Edited text')
@@ -370,7 +394,7 @@ it.each([
   ).toBe(true)
 })
 
-it('omits both information and tooltip editors for applicants', () => {
+it('omits applicant tooltip and information editors', () => {
   renderSettings('APPLICANT')
 
   expect(screen.queryByRole('textbox', { name: 'Information' })).toBeNull()
@@ -380,6 +404,63 @@ it('omits both information and tooltip editors for applicants', () => {
   expect(screen.queryByRole('switch', { name: 'Tooltip' })).toBeNull()
   expect(screen.queryByRole('textbox', { name: 'Tooltip' })).toBeNull()
   expect(screen.queryByRole('textbox', { name: 'English tooltip' })).toBeNull()
+})
+
+it.each(['Typed translation', ''])(
+  'does not overwrite an English edit made during translation: %j',
+  async (value) => {
+    const { getTranslation, controlDispatch } = renderSettings()
+    let resolveTranslation!: (value: { translation: string }) => void
+    getTranslation.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveTranslation = resolve
+        }),
+    )
+    const input = screen.getByRole('textbox', { name: 'English information' })
+    fireEvent.focus(input)
+    fireEvent.change(input, { target: { value: 'Typed translation' } })
+    if (!value) fireEvent.change(input, { target: { value: '' } })
+    controlDispatch.mockClear()
+
+    await act(async () =>
+      resolveTranslation({ translation: 'Late translation' }),
+    )
+
+    expect(input).toHaveProperty('value', value)
+    expect(controlDispatch).not.toHaveBeenCalled()
+  },
+)
+
+it('applies a completed translation to the originating field after selection changes', async () => {
+  const { getTranslation, controlDispatch, selectOtherField } = renderSettings()
+  let resolveTranslation!: (value: { translation: string }) => void
+  getTranslation.mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        resolveTranslation = resolve
+      }),
+  )
+  fireEvent.focus(screen.getByRole('textbox', { name: 'English information' }))
+  act(selectOtherField)
+  controlDispatch.mockClear()
+
+  await act(async () =>
+    resolveTranslation({ translation: 'Original field translation' }),
+  )
+
+  expect(controlDispatch).toHaveBeenCalledWith({
+    type: 'CHANGE_FIELD_TEXT',
+    payload: {
+      fieldId: 'field',
+      property: 'informationText',
+      lang: 'en',
+      newValue: 'Original field translation',
+    },
+  })
+  expect(
+    screen.getByRole('textbox', { name: 'English information' }),
+  ).toHaveProperty('value', '')
 })
 
 it('preserves the large-checkbox setting and exposes sublabel editors only when enabled', () => {

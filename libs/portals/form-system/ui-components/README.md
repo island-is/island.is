@@ -6,8 +6,9 @@ This library was generated with [Nx](https://nx.dev).
 
 Fields store localized `informationText` above their inputs and localized
 `tooltip` help text. `MESSAGE` uses `informationText` as its body instead of
-rendering a second information block. Applicant fields do not use
-`informationText`. Large checkboxes store their localized
+rendering a second information block. Applicant fields do not display
+`informationText` or `tooltip`, including previously saved tooltip content.
+Large checkboxes store their localized
 sublabel in `fieldSettings.subLabel`. Content is displayed only when the active
 language contains non-whitespace text; no `hasDescription` flag is required.
 
@@ -16,8 +17,9 @@ including nested formatting, while preserving line breaks. Other HTML tags and
 all attributes are removed before rendering.
 
 The editor preserves the `isLarge` checkbox and prevents disabling it while a
-sublabel exists in either language. Information and tooltip editors are always
-available. Preview and live applications use the same content rendering.
+sublabel exists in either language. Information and tooltip editors are available
+for their supported field types. Preview and live applications use the same
+content rendering.
 
 ## Number validation
 

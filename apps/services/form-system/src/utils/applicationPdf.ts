@@ -1,6 +1,7 @@
 import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/shared'
 import type { Locale } from '@island.is/shared/types'
 import PDFDocument from 'pdfkit'
+import sanitizeHtml from 'sanitize-html'
 import { getLanguageTypeForValueTypeAttribute } from '../app/dataTypes/valueTypes/valueType.helper'
 import { ApplicationDto } from '../app/modules/applications/models/dto/application.dto'
 
@@ -66,6 +67,18 @@ const textFor = (
   value: { is?: string; en?: string } | undefined,
   locale: Locale,
 ) => (locale === 'en' ? value?.en || value?.is : value?.is || value?.en) ?? ''
+
+const informationTextFor = (
+  value: { is?: string; en?: string } | undefined,
+  locale: Locale,
+) =>
+  sanitizeHtml(value?.[locale] ?? '', {
+    allowedTags: [],
+    allowedAttributes: {},
+  })
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
 
 const formatDate = (
   value: Date | string | null | undefined,
@@ -405,29 +418,30 @@ const drawField = (
     drawMessage(
       document,
       textFor(field.name, locale),
-      textFor(field.informationText, locale),
+      informationTextFor(field.informationText, locale),
     )
     return
   }
 
-  const informationText = textFor(field.informationText, locale)
+  const informationText = informationTextFor(field.informationText, locale)
   if (field.fieldType !== FieldTypesEnum.APPLICANT && informationText.trim()) {
     drawMessage(document, '', informationText)
   }
   const lines = fieldLines(field, locale)
+  const label = `${textFor(field.name, locale)}${field.isRequired ? ' *' : ''}`
+  const subLabel =
+    field.fieldType === FieldTypesEnum.CHECKBOX
+      ? field.fieldSettings?.subLabel?.[locale] ?? ''
+      : ''
   drawValue(
     document,
-    `${textFor(field.name, locale)}${field.isRequired ? ' *' : ''}`,
+    subLabel.trim() ? `${label}\n${subLabel}` : label,
     lines.map((line) => `${line.prefix}${line.text}`).join('\n') ||
       textFor(translations.noAnswer, locale),
     showLabel,
     lines.length > 0,
     lines.some((line) => line.prefix) ? lines : undefined,
   )
-  if (field.fieldType === FieldTypesEnum.CHECKBOX) {
-    const subLabel = textFor(field.fieldSettings?.subLabel, locale)
-    if (subLabel.trim()) drawMessage(document, '', subLabel)
-  }
 }
 
 const drawScreenHeading = (document: PDFKit.PDFDocument, name: string) => {

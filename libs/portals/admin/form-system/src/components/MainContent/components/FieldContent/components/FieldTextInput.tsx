@@ -6,7 +6,7 @@ import {
   Text,
   ToggleSwitchCheckbox,
 } from '@island.is/island-ui/core'
-import { useContext, useState } from 'react'
+import { useContext, useRef, useState } from 'react'
 import { ControlContext } from '../../../../../context/ControlContext'
 
 interface Props {
@@ -39,15 +39,20 @@ export const FieldTextInput = ({
       : currentItem[property]
   const hasText = Boolean(text?.is?.trim() || text?.en?.trim())
   const [enabled, setEnabled] = useState(hasText)
+  const englishRevision = useRef(0)
   const showInputs = !withToggle || enabled || hasText
-  const changeText = (lang: 'is' | 'en', newValue: string) =>
+  const changeText = (
+    lang: 'is' | 'en',
+    newValue: string,
+    fieldId = currentItem.id,
+  ) =>
     controlDispatch({
       type: 'CHANGE_FIELD_TEXT',
       payload: {
         property,
         lang,
         newValue,
-        ...(field && { fieldId: field.id }),
+        fieldId,
       },
     })
 
@@ -94,16 +99,20 @@ export const FieldTextInput = ({
             readOnly={control.isReadOnly}
             onFocus={async (event) => {
               const value = event.target.value
+              setFocus(value)
               if (
                 !control.isReadOnly &&
                 lang === 'en' &&
                 !text?.en &&
                 text?.is?.trim()
               ) {
+                const fieldId = currentItem.id
+                const revision = ++englishRevision.current
                 const translation = await getTranslation(text.is)
-                changeText('en', translation.translation)
+                if (revision === englishRevision.current) {
+                  changeText('en', translation.translation, fieldId)
+                }
               }
-              setFocus(value)
             }}
             onBlur={(event) =>
               event.target.value !== focus &&
@@ -111,7 +120,10 @@ export const FieldTextInput = ({
                 field ? { type: 'Field', data: currentItem } : undefined,
               )
             }
-            onChange={(event) => changeText(lang, event.target.value)}
+            onChange={(event) => {
+              if (lang === 'en') englishRevision.current += 1
+              changeText(lang, event.target.value)
+            }}
           />
         ))}
     </Stack>

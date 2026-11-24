@@ -233,12 +233,16 @@ it.each(['Instructions', ''])(
   },
 )
 
-it('omits applicant information text while preserving its tooltip', () => {
-  renderField('APPLICANT')
+it.each(['is', 'en'])(
+  'omits applicant information text and saved tooltips in %s',
+  (lang) => {
+    mockLang = lang
+    renderField('APPLICANT')
 
-  expect(screen.queryByText('Instructions')).toBeNull()
-  expect(screen.getByTitle('Help text')).toBeTruthy()
-})
+    expect(screen.queryByText(/instructions/i)).toBeNull()
+    expect(screen.queryByTitle(/help text/i)).toBeNull()
+  },
+)
 
 it('renders localized information, tooltip and checkbox sublabel', () => {
   mockLang = 'en'
