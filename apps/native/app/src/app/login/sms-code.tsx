@@ -26,18 +26,18 @@ export default function LoginSmsCodeScreen() {
 
   // Back while IAS checks the code: its answer doesn't move on from here.
   const isMounted = useRef(true)
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    isMounted.current = true
+    return () => {
       isMounted.current = false
-    },
-    [],
-  )
+    }
+  }, [])
 
   const onSubmit = async () => {
     setLoading(true)
     setFailure(undefined)
     const result = await startNativeLogin({ smsCode: code })
-    if (!isMounted.current) {
+    if (!isMounted.current || 'superseded' in result) {
       return
     }
     setLoading(false)

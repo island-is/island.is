@@ -23,19 +23,19 @@ export default function LoginIdentifierScreen() {
   const isMounted = useRef(true)
 
   // An error is about the last try: leaving this screen takes it away.
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    isMounted.current = true
+    return () => {
       isMounted.current = false
       nativeLoginStore.setState({ error: undefined })
-    },
-    [],
-  )
+    }
+  }, [])
 
   const onSubmit = async () => {
     setLoading(true)
     nativeLoginStore.setState({ error: undefined })
     const result = await startNativeLogin()
-    if (!isMounted.current) {
+    if (!isMounted.current || 'superseded' in result) {
       return
     }
     setLoading(false)

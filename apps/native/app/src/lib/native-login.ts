@@ -111,9 +111,15 @@ function smsAttemptsLeft(error: unknown) {
   return match ? Number(match[1]) : 0
 }
 
+/** `superseded`: a later start replaced this one, which leaves things be. */
 export type StartLoginResult =
   | { next: 'confirm' | 'smsCode' }
   | { error: LoginError; attemptsLeft?: number }
+  | { superseded: true }
+
+// The latest start: one from before it that answers last doesn't replace its
+// request.
+let latestStart = 0
 
 /**
  * Starts the electronic ID login for the number in the store. Next is the
@@ -122,12 +128,19 @@ export type StartLoginResult =
 export async function startNativeLogin({
   smsCode,
 }: { smsCode?: string } = {}): Promise<StartLoginResult> {
+  const start = ++latestStart
   const { loginHint } = nativeLoginStore.getState()
   try {
     const request = await getIasClient().startLogin(loginHint, { smsCode })
+    if (start !== latestStart) {
+      return { superseded: true }
+    }
     nativeLoginStore.setState({ request })
     return { next: 'confirm' }
   } catch (error) {
+    if (start !== latestStart) {
+      return { superseded: true }
+    }
     const code = getIasErrorCode(error)
     if (code === 'sms_code_required') {
       return { next: 'smsCode' }
