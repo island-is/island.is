@@ -279,6 +279,46 @@ export interface IAnnualReportChapter
   }
 }
 
+export interface IApplicationTypeSettingsFields {
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Application Type */
+  applicationType: string
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
+
+  /** Disable Leaving Prerequisites */
+  disableLeavingPrerequisites?: boolean | undefined
+
+  /** Blocked Title */
+  blockedTitle?: string | undefined
+
+  /** Blocked Message */
+  blockedMessage?: string | undefined
+}
+
+/** Per application type settings for the application system (island.is/umsoknir) */
+
+export interface IApplicationTypeSettings
+  extends Entry<IApplicationTypeSettingsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'applicationTypeSettings'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IAppUriFields {
   /** URI */
   uri: string
@@ -5915,6 +5955,7 @@ export type CONTENT_TYPE =
   | 'anchorPageList'
   | 'annualReport'
   | 'annualReportChapter'
+  | 'applicationTypeSettings'
   | 'appUri'
   | 'article'
   | 'articleCategory'

@@ -22,6 +22,8 @@ import {
   ErrorShell,
   DelegationsScreen,
   useApplicationNamespaces,
+  useApplicationTypeSettings,
+  ApplicationTypeBanners,
 } from '@island.is/application/ui-shell'
 import { useLocale, useLocalizedQuery } from '@island.is/localization'
 
@@ -87,6 +89,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
     : null
 
   useApplicationNamespaces(type)
+  const { banners } = useApplicationTypeSettings(type)
 
   const { data, loading, error, refetch } = useLocalizedQuery(
     APPLICATION_CARDS,
@@ -243,6 +246,7 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
 
   return (
     <Page>
+      <ApplicationTypeBanners banners={banners} />
       <GridContainer>
         {!loading && !loadingOrg && !isEmpty(data?.ApplicationSystemCard) && (
           <Box marginBottom={5}>

@@ -85,6 +85,8 @@ import { GetFeaturedSupportQNAsInput } from './dto/getFeaturedSupportQNAs.input'
 import { Locale } from '@island.is/shared/types'
 import { FeaturedArticles } from './models/featuredArticles.model'
 import { GetServicePortalAlertBannersInput } from './dto/getServicePortalAlertBanners.input'
+import { GetApplicationTypeSettingsInput } from './dto/getApplicationTypeSettings.input'
+import { ApplicationTypeSettings } from './models/applicationTypeSettings.model'
 import { GetTabSectionInput } from './dto/getTabSection.input'
 import { TabSection } from './models/tabSection.model'
 import { GenericTag } from './models/genericTag.model'
@@ -226,6 +228,14 @@ export class CmsResolver {
     @Args('input') input: GetServicePortalAlertBannersInput,
   ): Promise<AlertBanner[] | null> {
     return this.cmsContentfulService.getServicePortalAlertBanners(input)
+  }
+
+  @CacheControl({ maxAge: 10 })
+  @Query(() => [ApplicationTypeSettings])
+  getApplicationTypeSettings(
+    @Args('input') input: GetApplicationTypeSettingsInput,
+  ): Promise<ApplicationTypeSettings[]> {
+    return this.cmsContentfulService.getApplicationTypeSettings(input)
   }
 
   @CacheControl(defaultCache)

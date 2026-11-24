@@ -7,6 +7,7 @@ import {
   AttemptFailedProblem,
   BadSessionProblem,
   GatewayTimeoutProblem,
+  ApplicationTypeBlockedProblem,
 } from './problems'
 
 export type Problem =
@@ -18,3 +19,4 @@ export type Problem =
   | AttemptFailedProblem
   | BadSessionProblem
   | GatewayTimeoutProblem
+  | ApplicationTypeBlockedProblem

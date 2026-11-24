@@ -146,6 +146,23 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Ekki tókst að búa til umsókn af gerðinni: {type}',
     description: 'Failed to create application of type: {type}',
   },
+  applicationTypeBlockedTitle: {
+    id: 'application.system:applicationTypeBlocked.title',
+    defaultMessage: 'Ekki er hægt að halda áfram að svo stöddu',
+    description: 'Cannot continue at the moment',
+  },
+  applicationTypeBlockedMessage: {
+    id: 'application.system:applicationTypeBlocked.message',
+    defaultMessage:
+      'Tímabundið hefur verið lokað fyrir nýjar umsóknir af þessari gerð. Vinsamlegast reyndu aftur síðar.',
+    description:
+      'New applications of this type have been temporarily disabled. Please try again later.',
+  },
+  alertBannerCloseLabel: {
+    id: 'application.system:alertBanner.closeLabel',
+    defaultMessage: 'Loka',
+    description: 'Close label for alert banners',
+  },
   nationalId: {
     id: 'application.system:nationalId',
     defaultMessage: 'Kennitala',

@@ -18,6 +18,8 @@ import FormStepper from '../components/FormStepper'
 import Screen from '../components/Screen'
 import { useHeaderInfo } from '../context/HeaderInfoProvider'
 import { useApplicationTitle } from '../hooks/useApplicationTitle'
+import { useApplicationTypeSettings } from '../hooks/useApplicationTypeSettings'
+import { ApplicationTypeBanners } from '../components/ApplicationTypeBanners'
 import { useHistorySync } from '../hooks/useHistorySync'
 import {
   ApplicationReducer,
@@ -42,6 +44,9 @@ export const FormShell: FC<
     null,
   )
   const user = useUserInfo()
+  const { banners, leavingPrerequisitesBlock } = useApplicationTypeSettings(
+    application.typeId,
+  )
   const [state, dispatch] = useReducer(
     ApplicationReducer,
     {
@@ -106,6 +111,7 @@ export const FormShell: FC<
 
   return (
     <>
+      <ApplicationTypeBanners banners={banners} />
       <Box className={styles.alertBannerSlot} ref={setAlertBannerSlot} />
       <FormAlertBannerSlotContext.Provider value={alertBannerSlot}>
         <Box className={styles.root}>
@@ -168,6 +174,7 @@ export const FormShell: FC<
                       totalDraftScreens={getDraftSectionTotalScreens()}
                       screen={currentScreen}
                       mode={mode}
+                      leavingPrerequisitesBlock={leavingPrerequisitesBlock}
                     />
                   </Box>
                 </GridColumn>

@@ -1,0 +1,28 @@
+[
+  {
+    "applicationType": "ExampleInputs",
+    "disableLeavingPrerequisites": true,
+    "blockedTitle": "Lokað tímabundið",
+    "blockedMessage": "Vegna villu er ekki hægt að halda áfram með þessa umsókn að svo stöddu.",
+    "alertBanner": {
+      "showAlertBanner": true,
+      "bannerVariant": "warning",
+      "title": "Truflanir á umsókn",
+      "description": "Vegna bilunar er ekki hægt að hefja nýjar umsóknir af þessari gerð.",
+      "isDismissable": true,
+      "dismissedForDays": 0
+    }
+  },
+  {
+    "applicationType": "*",
+    "disableLeavingPrerequisites": false,
+    "alertBanner": {
+      "showAlertBanner": false,
+      "bannerVariant": "info",
+      "title": "Global banner",
+      "description": "Shown on every application type when showAlertBanner is true.",
+      "isDismissable": true,
+      "dismissedForDays": 0
+    }
+  }
+]

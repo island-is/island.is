@@ -11,4 +11,5 @@ export enum ProblemType {
   ATTEMPT_FAILED = 'https://docs.devland.is/reference/problems/attempt-failed',
   BAD_SESSION = 'https://docs.devland.is/reference/problems/bad-session',
   GATEWAY_TIMEOUT = 'https://httpstatuses.org/504',
+  APPLICATION_TYPE_BLOCKED = 'https://docs.devland.is/reference/problems/application-type-blocked',
 }

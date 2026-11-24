@@ -27,6 +27,14 @@ import { mapOrganizationTag } from './models/organizationTag.model'
 import { ContentfulRepository, localeMap } from './contentful.repository'
 import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { AlertBanner, mapAlertBanner } from './models/alertBanner.model'
+import {
+  ApplicationTypeSettings,
+  getApplicationTypeSettingsQueryParams,
+  mapApplicationTypeSettings,
+  sortApplicationTypeSettings,
+} from './models/applicationTypeSettings.model'
+import { GetApplicationTypeSettingsInput } from './dto/getApplicationTypeSettings.input'
+import { getLocalApplicationTypeSettingsOverride } from './applicationTypeSettings.localOverride'
 import { mapUrl, Url } from './models/url.model'
 import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
 import { mapSubpageHeader, SubpageHeader } from './models/subpageHeader.model'
@@ -1083,6 +1091,30 @@ export class CmsContentfulService {
     })
 
     return items
+  }
+
+  async getApplicationTypeSettings({
+    applicationType,
+    lang,
+  }: GetApplicationTypeSettingsInput): Promise<ApplicationTypeSettings[]> {
+    const localOverride =
+      getLocalApplicationTypeSettingsOverride(applicationType)
+    if (localOverride) {
+      return localOverride
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IApplicationTypeSettingsFields>(
+        lang,
+        getApplicationTypeSettingsQueryParams(applicationType),
+      )
+      .catch(errorHandler('getApplicationTypeSettings'))
+
+    return sortApplicationTypeSettings(
+      (result.items as types.IApplicationTypeSettings[]).map(
+        mapApplicationTypeSettings,
+      ),
+    )
   }
 
   async getUrl(slug: string, lang: string): Promise<Url | null> {

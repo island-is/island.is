@@ -138,6 +138,49 @@ It is as simple as:
 yarn nx test application-system-form
 ```
 
+## Alert banners and blocking an application type
+
+Each application type can be configured from Contentful with an
+`applicationTypeSettings` entry (field: `applicationType`, the `ApplicationTypes`
+value, or `*` for all application types). An entry can:
+
+- **Show an alert banner** by referencing an `alertBanner` entry. The banner is
+  shown on `/umsoknir/{slug}` and inside the application in every state.
+  `showAlertBanner`, `bannerVariant`, `isDismissable` and `dismissedForDays`
+  are respected.
+- **Stop users from leaving the `prerequisites` state** with
+  `disableLeavingPrerequisites`, e.g. during an outage or a severe bug.
+  Applications can still be created, and applications that are past
+  prerequisites are not affected. The optional `blockedTitle` and
+  `blockedMessage` are shown on the prerequisites screen and fall back to a
+  default message. Only templates whose initial state is named
+  `prerequisites` are affected.
+
+The block is enforced by the application system API when an event is
+submitted (`PUT applications/:id/submit`). The API caches the settings for
+about a minute and fails open: if Contentful can not be reached nothing is
+blocked.
+
+Dev reads Contentful drafts while staging and prod only read published
+entries, so test with an unpublished entry on dev. Publishing an entry makes
+it live on staging and prod at the same time.
+
+### Testing locally without Contentful
+
+Both the GraphQL API and the application system API can read the settings
+from a local JSON file instead of Contentful. This is ignored when
+`NODE_ENV` is `production`.
+
+```bash
+cp apps/application-system/applicationTypeSettings.local.example.json tmp/applicationTypeSettings.json
+APPLICATION_TYPE_SETTINGS_MOCK_FILE=$PWD/tmp/applicationTypeSettings.json yarn dev application-system-form
+```
+
+The file is an array of settings (see the example). Omitted fields get
+defaults. It is read on every request, so edit it and reload the page, no
+restart needed. Dismissed banners are remembered in a cookie unless
+`dismissedForDays` is `0`.
+
 ## Code owners and maintainers
 
-- [Norda](https://github.com/orgs/island-is/teams/norda/members)
+- [Origo](https://github.com/orgs/island-is/teams/origo/members)

@@ -104,6 +104,7 @@ import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
 import { withCodeOwner } from '@island.is/infra-tracing'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { ApplicationTypeSettingsService } from './tools/applicationTypeSettings.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -130,6 +131,7 @@ export class ApplicationController {
     private readonly templateApiActionRunner: TemplateApiActionRunner,
     private readonly applicationActionService: ApplicationActionService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly applicationTypeSettingsService: ApplicationTypeSettingsService,
   ) {}
 
   @Scopes(ApplicationScope.read)
@@ -805,6 +807,12 @@ export class ApplicationController {
     }
 
     return this.withApplicationInfo(template, existingApplication, async () => {
+      // Lets editors stop users from leaving prerequisites for a broken application type
+      await this.applicationTypeSettingsService.assertCanLeaveState(
+        existingApplication,
+        locale,
+      )
+
       // Checked against the stored application, so answers in this request cannot change the role
       await this.validationService.validateIncomingEvent(
         existingApplication as BaseApplication,

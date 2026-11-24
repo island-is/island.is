@@ -46,6 +46,13 @@ export interface GatewayTimeoutProblem extends BaseProblem {
   type: ProblemType.GATEWAY_TIMEOUT
 }
 
+export interface ApplicationTypeBlockedProblem extends BaseProblem {
+  type: ProblemType.APPLICATION_TYPE_BLOCKED
+  applicationType: string
+  blockedTitle?: string
+  blockedMessage?: string
+}
+
 export interface ProviderErrorReason {
   title: StaticText
   summary: StaticText
