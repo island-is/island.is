@@ -31,6 +31,7 @@ export const FieldTextInput = ({
     focus,
     updateActiveItem,
     getTranslation,
+    getField,
   } = useContext(ControlContext)
   const currentItem = field ?? (control.activeItem.data as FormSystemField)
   const text =
@@ -109,8 +110,32 @@ export const FieldTextInput = ({
                 const fieldId = currentItem.id
                 const revision = ++englishRevision.current
                 const translation = await getTranslation(text.is)
-                if (revision === englishRevision.current) {
+                const latestField = fieldId ? getField(fieldId) : undefined
+                if (revision === englishRevision.current && latestField) {
+                  const latestText =
+                    property === 'subLabel'
+                      ? latestField.fieldSettings?.subLabel
+                      : latestField[property]
+                  if (latestText?.en) return
                   changeText('en', translation.translation, fieldId)
+                  const translatedText = {
+                    ...latestText,
+                    en: translation.translation,
+                  }
+                  updateActiveItem({
+                    type: 'Field',
+                    data: {
+                      ...latestField,
+                      ...(property === 'subLabel'
+                        ? {
+                            fieldSettings: {
+                              ...latestField.fieldSettings,
+                              subLabel: translatedText,
+                            },
+                          }
+                        : { [property]: translatedText }),
+                    },
+                  })
                 }
               }
             }}

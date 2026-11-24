@@ -901,6 +901,7 @@ export class FormsService {
 
   async archiveForm(id: string, form: Form): Promise<FormResponseDto> {
     let copyForm: Form | undefined
+    const fileKeys: string[] = []
 
     await this.sequelize.transaction(async (transaction) => {
       await form.reload({ transaction, lock: Transaction.LOCK.UPDATE })
@@ -935,14 +936,16 @@ export class FormsService {
             where: { applicationId: application.id },
             transaction,
           })
-          await this.cleanupApplicationFiles(application, transaction)
+          fileKeys.push(
+            ...(await this.collectApplicationFiles(application, transaction)),
+          )
           await application.destroy({ transaction })
         }
         await revision.destroy({ transaction })
       }
 
       const slug = form.slug
-      await this.deleteDraftApplications(id, transaction)
+      fileKeys.push(...(await this.deleteDraftApplications(id, transaction)))
 
       form.status = FormStatus.ARCHIVED
       form.slug = `${form.slug}-archived-${Date.now()}`
@@ -957,6 +960,10 @@ export class FormsService {
         transaction,
       )
     })
+
+    await Promise.all(
+      fileKeys.map((key) => this.fileService.deleteFileFromStorage(key)),
+    )
 
     if (!copyForm) {
       throw new Error('Error copying form')
@@ -987,6 +994,7 @@ export class FormsService {
       throw new NotFoundException(`Form with id '${derivedFromId}' not found`)
     }
 
+    const fileKeys: string[] = []
     await this.sequelize.transaction(async (transaction) => {
       try {
         await formToBeArchived.reload({
@@ -1017,11 +1025,15 @@ export class FormsService {
         })
 
         for (const application of applications) {
-          await this.cleanupApplicationFiles(application, transaction)
+          fileKeys.push(
+            ...(await this.collectApplicationFiles(application, transaction)),
+          )
           await application.destroy({ transaction })
         }
 
-        await this.deleteDraftApplications(derivedFromId, transaction)
+        fileKeys.push(
+          ...(await this.deleteDraftApplications(derivedFromId, transaction)),
+        )
 
         const slugToBeArchived = formToBeArchived.slug
         formToBeArchived.status = FormStatus.ARCHIVED
@@ -1043,6 +1055,10 @@ export class FormsService {
         )
       }
     })
+
+    await Promise.all(
+      fileKeys.map((key) => this.fileService.deleteFileFromStorage(key)),
+    )
 
     const formResponse = await this.buildFormResponse(formToBeArchived)
 
@@ -1108,7 +1124,8 @@ export class FormsService {
   private async deleteDraftApplications(
     formId: string,
     transaction: Transaction,
-  ): Promise<void> {
+  ): Promise<string[]> {
+    const fileKeys: string[] = []
     const applications = await this.applicationModel.findAll({
       where: { formId, status: ApplicationStatus.DRAFT },
       include: [
@@ -1129,9 +1146,12 @@ export class FormsService {
         where: { applicationId: application.id },
         transaction,
       })
-      await this.cleanupApplicationFiles(application, transaction)
+      fileKeys.push(
+        ...(await this.collectApplicationFiles(application, transaction)),
+      )
       await application.destroy({ transaction })
     }
+    return fileKeys
   }
 
   private getApplicationFiles(
@@ -1171,6 +1191,17 @@ export class FormsService {
     }
 
     return files
+  }
+
+  private async collectApplicationFiles(
+    application: Application,
+    transaction: Transaction,
+  ): Promise<string[]> {
+    const files = this.getApplicationFiles(application)
+    for (const { key, valueId } of files) {
+      await this.fileService.removeFileReference(key, valueId, transaction)
+    }
+    return files.map(({ key }) => key)
   }
 
   private async cleanupApplicationFiles(

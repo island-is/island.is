@@ -17,7 +17,14 @@ import {
 } from '@island.is/form-system/graphql'
 import { GoogleTranslation } from '@island.is/form-system/shared'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react'
 import { useLocation } from 'react-router-dom'
 import { ControlState, controlReducer } from '../hooks/controlReducer'
 import { defaultStep } from '../lib/utils/defaultStep'
@@ -69,6 +76,14 @@ export const FormProvider: React.FC<{
     isReadOnly: isReadOnly,
   }
   const [control, controlDispatch] = useReducer(controlReducer, initialControl)
+  const controlRef = useRef(control)
+  controlRef.current = control
+  const getField = useCallback(
+    (fieldId: string) =>
+      controlRef.current.form.fields?.find((field) => field?.id === fieldId) ??
+      undefined,
+    [],
+  )
 
   const updateSection = useMutation(UPDATE_SECTION)
   const updateScreen = useMutation(UPDATE_SCREEN)
@@ -178,6 +193,7 @@ export const FormProvider: React.FC<{
       setInSettings,
       inSettings,
       updateActiveItem,
+      getField,
       focus,
       setFocus,
       updateDnD: updateDragAndDrop,
@@ -196,6 +212,7 @@ export const FormProvider: React.FC<{
     [
       control,
       controlDispatch,
+      getField,
       inListBuilder,
       selectStatus,
       selectedUrls,

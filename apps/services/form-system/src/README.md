@@ -123,8 +123,9 @@ Unpublishing also deletes all forms derived from it in the
 `published_being_changed` state, together with all of their applications and
 application events, within the same transaction. This includes non-draft and test
 applications on those revisions. Events are deleted before their applications.
-Uploaded files are removed from storage before their application rows are
-deleted, within the archive transaction. The confirmation
+Attachment keys are collected and their value references are cleared within the
+archive transaction. Uploaded files are removed from storage only after the
+transaction commits successfully. The confirmation
 dialog always warns about revision deletion, even if the local list is stale.
 Creating an editable revision also shows a toast warning that unpublishing the
 original form will delete the revision.
@@ -139,13 +140,12 @@ Draft and revision applications are locked during deletion. Submission takes the
 row lock and verifies that the application is still a draft before sending it.
 The lock is held through the external send and the completed-status update.
 Application and form reads during submission reuse the submission transaction.
-Draft and revision files are deleted while their database references are still
-available. Storage deletion errors are logged and abort the transaction, retaining
-the form status, applications and file keys so retrying the same status change
-can finish cleanup. S3 deletion is idempotent: a retry can safely delete a key that
-was removed before an earlier failure. If a later database write or commit fails,
-already deleted S3 objects cannot be restored; their retained keys can still be
-retried, but the affected draft attachments must not be treated as available.
+Draft and revision attachment references are updated using the same database
+transaction as application deletion. A rollback or commit failure leaves the S3
+objects intact. S3 deletion errors, including a false result from the storage
+service, are logged and propagated. When post-commit deletion fails, the database
+cleanup remains committed; failed objects require separate storage cleanup,
+not another archive attempt.
 
 ## Code owners and maintainers
 

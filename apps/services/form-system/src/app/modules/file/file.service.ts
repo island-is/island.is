@@ -175,7 +175,10 @@ export class FileService {
     this.logger.info(`Deleting file ${key}`)
 
     try {
-      await this.s3Service.deleteObject({ bucket, key })
+      const deleted = await this.s3Service.deleteObject({ bucket, key })
+      if (!deleted) {
+        throw new Error(`Failed to delete file '${key}' from S3`)
+      }
       this.logger.info(`Successfully deleted file ${key}`)
     } catch (error) {
       this.logger.error('Error deleting file from S3', error)
@@ -194,24 +197,31 @@ export class FileService {
 
     try {
       await this.deleteFileFromStorage(key)
-      // Update the Value to remove the S3 key reference
-      const value = await this.valueModel.findByPk(valueId, { transaction })
-      if (value) {
-        value.json = {
-          ...value.json,
-          s3Key: value.json?.s3Key?.filter((k: string) => k !== key) || [],
-        }
-
-        if (transaction) await value.save({ transaction })
-        else await value.save()
-
-        this.logger.info(`Cleared s3Key for valueId ${valueId} after deletion`)
-      } else {
-        this.logger.warn(`Value with id ${valueId} not found`)
-      }
+      await this.removeFileReference(key, valueId, transaction)
     } catch (error) {
       this.logger.error('Error deleting file from S3', error)
       throw error
+    }
+  }
+
+  async removeFileReference(
+    key: string,
+    valueId: string,
+    transaction?: Transaction,
+  ): Promise<void> {
+    const value = await this.valueModel.findByPk(valueId, { transaction })
+    if (value) {
+      value.json = {
+        ...value.json,
+        s3Key: value.json?.s3Key?.filter((k: string) => k !== key) || [],
+      }
+
+      if (transaction) await value.save({ transaction })
+      else await value.save()
+
+      this.logger.info(`Cleared s3Key for valueId ${valueId}`)
+    } else {
+      this.logger.warn(`Value with id ${valueId} not found`)
     }
   }
 }

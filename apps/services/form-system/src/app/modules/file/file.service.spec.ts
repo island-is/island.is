@@ -1,3 +1,4 @@
+import { Transaction } from 'sequelize'
 import { FileService } from './file.service'
 
 describe('FileService deletion', () => {
@@ -7,7 +8,7 @@ describe('FileService deletion', () => {
       save: jest.fn().mockResolvedValue(undefined),
     }
     const valueModel = { findByPk: jest.fn().mockResolvedValue(value) }
-    const s3Service = { deleteObject: jest.fn().mockResolvedValue(undefined) }
+    const s3Service = { deleteObject: jest.fn().mockResolvedValue(true) }
     const logger = { info: jest.fn(), error: jest.fn() }
     const service = Object.assign(Object.create(FileService.prototype), {
       config: { bucket: 'bucket' },
@@ -52,5 +53,33 @@ describe('FileService deletion', () => {
 
     expect(value.json.s3Key).toEqual(['retained-key'])
     expect(value.save).toHaveBeenCalledWith()
+  })
+
+  it('retains the file reference and propagates a false storage deletion result', async () => {
+    const { service, valueModel, value, s3Service, logger } = setup()
+    s3Service.deleteObject.mockResolvedValue(false)
+
+    await expect(service.deleteFile('file-key', 'value-id')).rejects.toThrow(
+      "Failed to delete file 'file-key' from S3",
+    )
+
+    expect(logger.error).toHaveBeenCalled()
+    expect(valueModel.findByPk).not.toHaveBeenCalled()
+    expect(value.save).not.toHaveBeenCalled()
+    expect(value.json.s3Key).toEqual(['file-key', 'retained-key'])
+  })
+
+  it('removes references transactionally without deleting stored files', async () => {
+    const { service, valueModel, value, s3Service } = setup()
+    const transaction: Transaction = Object.create(Transaction.prototype)
+
+    await service.removeFileReference('file-key', 'value-id', transaction)
+
+    expect(valueModel.findByPk).toHaveBeenCalledWith('value-id', {
+      transaction,
+    })
+    expect(value.json.s3Key).toEqual(['retained-key'])
+    expect(value.save).toHaveBeenCalledWith({ transaction })
+    expect(s3Service.deleteObject).not.toHaveBeenCalled()
   })
 })

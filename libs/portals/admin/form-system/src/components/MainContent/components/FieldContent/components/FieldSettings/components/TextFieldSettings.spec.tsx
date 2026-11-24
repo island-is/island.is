@@ -6,7 +6,13 @@ import {
 } from '@island.is/island-ui/core'
 import { expect, it, jest } from '@jest/globals'
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { ComponentProps, ReactNode, useContext, useReducer } from 'react'
+import {
+  ComponentProps,
+  ReactNode,
+  useContext,
+  useReducer,
+  useRef,
+} from 'react'
 import { IntlProvider } from 'react-intl'
 import { ControlContext } from '../../../../../../../context/ControlContext'
 import { controlReducer } from '../../../../../../../hooks/controlReducer'
@@ -134,6 +140,8 @@ const renderSettings = (
   } as FormSystemField
   const otherField = { ...field, id: 'other-field' }
   let selectField: (field: FormSystemField) => void
+  let removeOriginalField: () => void
+  let changeOriginalInformation: (text: string) => void
   const Settings = () => {
     const defaults = useContext(ControlContext)
     const [control, dispatch] = useReducer(controlReducer, {
@@ -145,10 +153,27 @@ const renderSettings = (
       form: { ...defaults.control.form, fields: [field, otherField] },
       isReadOnly,
     })
+    const controlRef = useRef(control)
+    controlRef.current = control
     selectField = (data) =>
       dispatch({
         type: 'SET_ACTIVE_ITEM',
         payload: { activeItem: { type: 'Field', data } },
+      })
+    removeOriginalField = () =>
+      dispatch({
+        type: 'REMOVE_FIELD',
+        payload: { id: field.id, skipActiveItem: true },
+      })
+    changeOriginalInformation = (newValue) =>
+      dispatch({
+        type: 'CHANGE_FIELD_TEXT',
+        payload: {
+          fieldId: field.id,
+          property: 'informationText',
+          lang: 'is',
+          newValue,
+        },
       })
     return (
       <ControlContext.Provider
@@ -163,6 +188,10 @@ const renderSettings = (
           setFocus,
           focus: '',
           getTranslation,
+          getField: (fieldId) =>
+            controlRef.current.form.fields?.find(
+              (item) => item?.id === fieldId,
+            ) ?? undefined,
         }}
       >
         <IntlProvider locale="is" defaultLocale="is" messages={{}}>
@@ -180,6 +209,10 @@ const renderSettings = (
     setFocus,
     getTranslation,
     selectOtherField: () => selectField(otherField),
+    selectOriginalField: () => selectField(field),
+    removeOriginalField: () => removeOriginalField(),
+    changeOriginalInformation: (text: string) =>
+      changeOriginalInformation(text),
   }
 }
 
@@ -379,6 +412,20 @@ it.each([
       }),
     )
     expect(getTranslation).toHaveBeenCalledWith('Edited text')
+    expect(updateActiveItem).toHaveBeenLastCalledWith({
+      type: 'Field',
+      data: expect.objectContaining({
+        id: 'field',
+        ...(property === 'subLabel'
+          ? {
+              fieldSettings: expect.objectContaining({
+                isLarge: true,
+                subLabel: { is: 'Edited text', en: 'Translated text' },
+              }),
+            }
+          : { [property]: { is: 'Edited text', en: 'Translated text' } }),
+      }),
+    })
   },
 )
 
@@ -409,7 +456,8 @@ it('omits applicant tooltip and information editors', () => {
 it.each(['Typed translation', ''])(
   'does not overwrite an English edit made during translation: %j',
   async (value) => {
-    const { getTranslation, controlDispatch } = renderSettings()
+    const { getTranslation, controlDispatch, updateActiveItem } =
+      renderSettings()
     let resolveTranslation!: (value: { translation: string }) => void
     getTranslation.mockImplementationOnce(
       () =>
@@ -429,11 +477,18 @@ it.each(['Typed translation', ''])(
 
     expect(input).toHaveProperty('value', value)
     expect(controlDispatch).not.toHaveBeenCalled()
+    expect(updateActiveItem).not.toHaveBeenCalled()
   },
 )
 
-it('applies a completed translation to the originating field after selection changes', async () => {
-  const { getTranslation, controlDispatch, selectOtherField } = renderSettings()
+it('applies and saves a completed translation using the originating field current data after selection changes', async () => {
+  const {
+    getTranslation,
+    controlDispatch,
+    updateActiveItem,
+    selectOtherField,
+    changeOriginalInformation,
+  } = renderSettings()
   let resolveTranslation!: (value: { translation: string }) => void
   getTranslation.mockImplementationOnce(
     () =>
@@ -442,7 +497,10 @@ it('applies a completed translation to the originating field after selection cha
       }),
   )
   fireEvent.focus(screen.getByRole('textbox', { name: 'English information' }))
-  act(selectOtherField)
+  act(() => {
+    selectOtherField()
+    changeOriginalInformation('Current instructions')
+  })
   controlDispatch.mockClear()
 
   await act(async () =>
@@ -461,6 +519,73 @@ it('applies a completed translation to the originating field after selection cha
   expect(
     screen.getByRole('textbox', { name: 'English information' }),
   ).toHaveProperty('value', '')
+  expect(updateActiveItem).toHaveBeenCalledWith({
+    type: 'Field',
+    data: expect.objectContaining({
+      id: 'field',
+      informationText: {
+        is: 'Current instructions',
+        en: 'Original field translation',
+      },
+    }),
+  })
+})
+
+it('preserves English edits made after returning to a field with a pending translation', async () => {
+  const {
+    getTranslation,
+    controlDispatch,
+    updateActiveItem,
+    selectOtherField,
+    selectOriginalField,
+  } = renderSettings()
+  let resolveTranslation!: (value: { translation: string }) => void
+  getTranslation.mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        resolveTranslation = resolve
+      }),
+  )
+  fireEvent.focus(screen.getByRole('textbox', { name: 'English information' }))
+  act(selectOtherField)
+  act(selectOriginalField)
+  const input = screen.getByRole('textbox', { name: 'English information' })
+  fireEvent.change(input, { target: { value: 'User translation' } })
+  controlDispatch.mockClear()
+
+  await act(async () => resolveTranslation({ translation: 'Late translation' }))
+
+  expect(input).toHaveProperty('value', 'User translation')
+  expect(controlDispatch).not.toHaveBeenCalled()
+  expect(updateActiveItem).not.toHaveBeenCalled()
+})
+
+it('discards a pending translation when its field is deleted', async () => {
+  const {
+    getTranslation,
+    controlDispatch,
+    updateActiveItem,
+    selectOtherField,
+    removeOriginalField,
+  } = renderSettings()
+  let resolveTranslation!: (value: { translation: string }) => void
+  getTranslation.mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        resolveTranslation = resolve
+      }),
+  )
+  fireEvent.focus(screen.getByRole('textbox', { name: 'English information' }))
+  act(() => {
+    selectOtherField()
+    removeOriginalField()
+  })
+  controlDispatch.mockClear()
+
+  await act(async () => resolveTranslation({ translation: 'Late translation' }))
+
+  expect(controlDispatch).not.toHaveBeenCalled()
+  expect(updateActiveItem).not.toHaveBeenCalled()
 })
 
 it('preserves the large-checkbox setting and exposes sublabel editors only when enabled', () => {

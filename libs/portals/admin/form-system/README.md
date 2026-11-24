@@ -28,3 +28,6 @@ tooltips are ignored.
 Email tooltips appear inside the email input, not above it.
 Automatic English translations target the originating field and do not overwrite
 English edits made while a translation request is pending.
+Completed translations save that field's current data even after selection
+changes. Results for deleted fields are discarded without updating local state
+or saving.
