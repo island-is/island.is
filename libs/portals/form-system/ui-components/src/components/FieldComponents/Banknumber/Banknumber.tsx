@@ -13,14 +13,17 @@ import { Dispatch, useEffect, useRef } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { Action, ApplicationState } from '../../../lib'
+import { FieldTypesEnum } from '../../../lib/enums'
 import { getValue } from '../../../lib/getValue'
 import { m } from '../../../lib/messages'
+import { previewMockData } from '../../../lib/previewMockData'
 
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
   valueIndex?: number
   state?: Partial<ApplicationState>
+  isPreview?: boolean
 }
 
 export const Banknumber = ({
@@ -28,6 +31,7 @@ export const Banknumber = ({
   dispatch,
   valueIndex = 0,
   state,
+  isPreview = false,
 }: Props) => {
   const { lang } = useLocale()
   const inputRefs = [
@@ -62,6 +66,7 @@ export const Banknumber = ({
     {
       fetchPolicy: 'cache-first',
       skip:
+        isPreview ||
         !fetchBankAccountFromMyPages ||
         hasDelegationApplicant ||
         !!bankAccountValue,
@@ -105,14 +110,20 @@ export const Banknumber = ({
       return !!getValues(name) || isDirty || isTouched
     })
 
-    if (bankAccountValue || hasExistingInput || userProfileError) {
+    if (
+      bankAccountValue ||
+      hasExistingInput ||
+      (!isPreview && userProfileError)
+    ) {
       didHydrateFromProfile.current = true
       return
     }
-    if (!userProfileData) return
+    if (!isPreview && !userProfileData) return
 
     didHydrateFromProfile.current = true
-    const bankInfo = userProfileData.getUserProfile?.bankInfo
+    const bankInfo = isPreview
+      ? previewMockData[FieldTypesEnum.BANK_ACCOUNT].bankAccount
+      : userProfileData?.getUserProfile?.bankInfo
     if (!bankInfo || !/^\d{1,4}-\d{1,2}-\d{1,6}$/.test(bankInfo)) return
 
     const parts = bankInfo.split('-')
@@ -131,6 +142,7 @@ export const Banknumber = ({
     ledgerField,
     accountField,
     bankAccountValue,
+    isPreview,
     fetchBankAccountFromMyPages,
     hasDelegationApplicant,
     userProfileData,

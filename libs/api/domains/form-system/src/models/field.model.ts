@@ -22,7 +22,10 @@ export class Field {
   displayOrder?: number
 
   @FieldType(() => LanguageType, { nullable: true })
-  description?: LanguageType
+  informationText?: LanguageType
+
+  @FieldType(() => LanguageType, { nullable: true })
+  tooltip?: LanguageType
 
   @FieldType(() => Boolean)
   isPartOfMultiset!: boolean

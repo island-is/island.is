@@ -108,7 +108,7 @@ describe.each([false, true])('navigation with active=%s', (active) => {
           id: 'message',
           fieldType: FieldTypesEnum.MESSAGE,
           name: { is: name },
-          description: { is: 'Message description' },
+          informationText: { is: 'Message description' },
         },
         active,
       )
@@ -123,7 +123,7 @@ describe.each([false, true])('navigation with active=%s', (active) => {
       {
         id: 'message',
         fieldType: FieldTypesEnum.MESSAGE,
-        description: {
+        informationText: {
           is: '<em>Formatted</em> <strong>message</strong> &amp; text',
         },
       },
@@ -140,7 +140,7 @@ describe.each([false, true])('navigation with active=%s', (active) => {
         id: 'message',
         fieldType: FieldTypesEnum.MESSAGE,
         name: { is: 'Message name' },
-        description: { is: 'Message description' },
+        informationText: { is: 'Message description' },
       },
       active,
     )
@@ -155,7 +155,7 @@ describe.each([false, true])('navigation with active=%s', (active) => {
         id: 'text',
         fieldType: FieldTypesEnum.TEXTBOX,
         name: { is: '' },
-        description: { is: 'Text description' },
+        informationText: { is: 'Text description' },
       },
       active,
     )
