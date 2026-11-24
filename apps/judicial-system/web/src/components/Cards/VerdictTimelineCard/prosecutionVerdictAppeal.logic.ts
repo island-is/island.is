@@ -82,15 +82,20 @@ export const getProsecutionVerdictAppealItem = (
 }
 
 /**
- * Whether this defendant still has a standing verdict appeal (either side).
+ * Whether this defendant still has a standing verdict appeal on either side.
  * Used to scope case-level prosecution statement-deadline bullets to cards of
  * defendants who are actually part of the appeal.
+ *
+ * Mirrors standingVerdictAppellants: each side is judged on its own latest
+ * APPEALED / APPEAL_WITHDRAWN event, so a defence withdrawal does not erase a
+ * standing prosecution appeal (and vice versa).
  */
 export const defendantHasStandingVerdictAppeal = (
   verdictAppealCase: Pick<AppealCase, 'appealEventLogs'> | null | undefined,
   defendantId: string,
 ): boolean => {
-  let latest: AppealEventLog | undefined
+  let latestProsecution: AppealEventLog | undefined
+  let latestDefence: AppealEventLog | undefined
 
   for (const eventLog of verdictAppealCase?.appealEventLogs ?? []) {
     if (
@@ -102,12 +107,25 @@ export const defendantHasStandingVerdictAppeal = (
       continue
     }
 
-    if (!latest || eventLog.created > (latest.created ?? '')) {
-      latest = eventLog
+    if (isProsecutionEvent(eventLog)) {
+      if (
+        !latestProsecution ||
+        eventLog.created > (latestProsecution.created ?? '')
+      ) {
+        latestProsecution = eventLog
+      }
+    } else if (
+      !latestDefence ||
+      eventLog.created > (latestDefence.created ?? '')
+    ) {
+      latestDefence = eventLog
     }
   }
 
-  return latest?.eventType === AppealEventType.APPEALED
+  return (
+    latestProsecution?.eventType === AppealEventType.APPEALED ||
+    latestDefence?.eventType === AppealEventType.APPEALED
+  )
 }
 
 /**
