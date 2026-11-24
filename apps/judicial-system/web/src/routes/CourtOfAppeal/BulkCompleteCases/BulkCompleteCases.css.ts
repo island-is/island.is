@@ -2,7 +2,8 @@ import { style } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
-const GRID_COLUMNS = '1.2fr 1.4fr 1.2fr 1.4fr 1.3fr 1fr 48px'
+const DATA_COLUMNS = '1.2fr 1.4fr 1.2fr 1.4fr 1.3fr 1fr'
+const GRID_COLUMNS = `${DATA_COLUMNS} 48px`
 
 export const logoContainer = style({
   display: 'flex',
@@ -19,8 +20,6 @@ export const sectionHeader = style({
   marginBottom: theme.spacing[3],
 })
 
-// Absolutely fills gridBody (which sets minHeight while empty) so fade-out
-// does not collapse the section before the first row is in the flow.
 export const emptyStaging = style({
   position: 'absolute',
   inset: 0,
@@ -42,17 +41,37 @@ export const stringGroupItem = style({
 export const selectableRow = style({
   cursor: 'grab',
   touchAction: 'none',
+})
+
+export const rowMoveButton = style({
+  gridColumn: '1 / -2',
+  display: 'grid',
+  gridTemplateColumns: DATA_COLUMNS,
+  alignItems: 'center',
+  width: '100%',
+  margin: 0,
+  padding: 0,
+  border: 'none',
+  background: 'transparent',
+  color: 'inherit',
+  font: 'inherit',
+  textAlign: 'left',
+  cursor: 'inherit',
+  touchAction: 'inherit',
 
   selectors: {
-    '&[aria-disabled="true"]': {
+    '&:disabled': {
       cursor: 'default',
       opacity: 0.7,
       touchAction: 'auto',
     },
+    '&:focus-visible': {
+      outline: 'none',
+      boxShadow: `inset 0 0 0 ${theme.border.width.large}px ${theme.border.color.focus}`,
+    },
   },
 })
 
-// Margin is animated on the motion wrapper (open/collapse with the section).
 export const stagingSection = style({
   width: '100%',
 })
@@ -115,6 +134,10 @@ export const contextMenuButton = style({
   justifyContent: 'center',
   width: 34,
   height: 34,
+  margin: 0,
+  padding: 0,
+  border: 'none',
+  background: 'transparent',
   borderRadius: theme.border.radius.large,
   cursor: 'pointer',
   transition: 'background-color .2s',
@@ -136,7 +159,6 @@ export const dragPreviewMotion = style({
   pointerEvents: 'none',
 })
 
-// Portaled click-to-move clone — sits above list overflow so the row stays visible in flight.
 export const clickFlight = style({
   position: 'fixed',
   zIndex: 10000,

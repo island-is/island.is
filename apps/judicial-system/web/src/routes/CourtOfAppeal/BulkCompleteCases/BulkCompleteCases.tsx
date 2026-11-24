@@ -1,4 +1,4 @@
-import type { CSSProperties, FC, KeyboardEvent, ReactNode } from 'react'
+import type { CSSProperties, FC, ReactNode } from 'react'
 import {
   forwardRef,
   useEffect,
@@ -66,18 +66,14 @@ const COLUMN_TITLES = [
   'Dómsformaður',
 ] as const
 
-// Mode switch: Figma is 1.4s with a ~0.5s hold — we start immediately (product ask)
-// but keep a short header → table stagger inside the expand.
 const HEIGHT_EXPAND_DURATION = 0.45
 const CONTENT_FADE_DURATION = 0.3
 const STAGING_SECTION_GAP = 40
 
-// Click-to-move (Figma Motion - Smella…): 1.0s row flight; empty fades ~12–32%.
 const CLICK_MOVE_DURATION = 1
 const EMPTY_FADE_DELAY = 0.12
 const EMPTY_FADE_DURATION = 0.2
 
-// Drag-and-drop (Figma Motion - Draga…): 1.2s with scale bump 1 → 1.02 → 1.
 const DRAG_SCALE = 1.02
 const DRAG_SCALE_IN_DURATION = 0.15
 const DROP_ANIMATION_DURATION = 300
@@ -180,7 +176,7 @@ type FlightRect = {
 type ClickFlight = {
   caseRow: MockBulkCase
   fromRect: FlightRect
-  toRect: FlightRect | null
+  frameRect: FlightRect
 }
 
 const caseRowSelector = (id: string) => `[data-case-row-id="${id}"]`
@@ -199,6 +195,18 @@ const readCaseRowRect = (id: string): FlightRect | null => {
     height: rect.height,
   }
 }
+
+const lerp = (from: number, to: number, t: number) => from + (to - from) * t
+
+const lerpRect = (from: FlightRect, to: FlightRect, t: number): FlightRect => ({
+  left: lerp(from.left, to.left, t),
+  top: lerp(from.top, to.top, t),
+  width: lerp(from.width, to.width, t),
+  height: lerp(from.height, to.height, t),
+})
+
+const easeInOutCubic = (t: number) =>
+  t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
 
 const renderLines = (lines: string[], emphasizeFirst = true): ReactNode => (
   <Box display="flex" flexDirection="column">
@@ -249,85 +257,48 @@ const rowMenuItems = (_caseRow: MockBulkCase): ContextMenuItem[] => [
   {
     title: 'Opna mál í nýjum flipa',
     icon: 'open',
-    // Mock UI — real open-case wiring lands with the API PR.
     onClick: () => undefined,
   },
 ]
+
+const CaseRowMenuButton: FC<{ caseRow: MockBulkCase }> = ({ caseRow }) => (
+  <ContextMenu
+    items={rowMenuItems(caseRow)}
+    placement="bottom-end"
+    render={
+      <button
+        type="button"
+        className={styles.contextMenuButton}
+        aria-label={`Frekari aðgerðir fyrir mál ${caseRow.caseNumbers[0]}`}
+        onPointerDown={(event) => event.stopPropagation()}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <Icon icon="ellipsisVertical" color="blue400" size="small" />
+      </button>
+    }
+  />
+)
 
 type CaseRowContentProps = {
   caseRow: MockBulkCase
   className?: string
   style?: CSSProperties
-  role?: string
-  tabIndex?: number
   showMenu?: boolean
-  'aria-disabled'?: boolean
-  'aria-label'?: string
-  onClick?: () => void
-  onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void
-} & Record<string, unknown>
+}
 
 const CaseRowContent = forwardRef<HTMLDivElement, CaseRowContentProps>(
-  (
-    {
-      caseRow,
-      className,
-      style,
-      role,
-      tabIndex,
-      showMenu = true,
-      onClick,
-      onKeyDown,
-      ...rest
-    },
-    ref,
-  ) => {
+  ({ caseRow, className, style, showMenu = true }, ref) => {
     const cells = renderCaseCells(caseRow)
 
     return (
-      // Interactive rows pass role="button" + keyboard handlers from SortableCaseRow.
-      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-      <div
-        ref={ref}
-        className={className}
-        style={style}
-        role={role ?? (onClick ? 'button' : undefined)}
-        tabIndex={tabIndex ?? (onClick ? 0 : undefined)}
-        onClick={onClick}
-        onKeyDown={onKeyDown}
-        {...rest}
-      >
+      <div ref={ref} className={className} style={style} role="row">
         {cells.map((cell, index) => (
           <div key={index} className={styles.gridCell} role="cell">
             {cell}
           </div>
         ))}
         <div className={`${styles.gridCell} ${styles.menuCell}`} role="cell">
-          {showMenu ? (
-            // Stop pointer events from reaching the row drag listeners / click-to-move.
-             
-            <div onPointerDown={(event) => event.stopPropagation()}>
-              <ContextMenu
-                items={rowMenuItems(caseRow)}
-                placement="bottom-end"
-                render={
-                  // MenuButton owns a11y; stopPropagation keeps row click-to-move from firing.
-                  // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- Ariakit MenuButton
-                  <div
-                    className={styles.contextMenuButton}
-                    aria-label={`Frekari aðgerðir fyrir mál ${caseRow.caseNumbers[0]}`}
-                    onClick={(event) => event.stopPropagation()}
-                  >
-                    <Icon
-                      icon="ellipsisVertical"
-                      color="blue400"
-                      size="small"
-                    />
-                  </div>
-                }
-              />
-            </div>
-          ) : null}
+          {showMenu ? <CaseRowMenuButton caseRow={caseRow} /> : null}
         </div>
       </div>
     )
@@ -353,51 +324,45 @@ const SortableCaseRow: FC<{
     data: { type: 'case', caseId: caseRow.id },
   })
 
+  const canMove = !disabled && Boolean(onRowClick)
+
   const style: CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition: isDragging ? transition : undefined,
     width: '100%',
-    // Slot stays for list height tween; portaled clone is the visible flight.
     opacity: isFlying ? 0 : undefined,
   }
 
   return (
-    // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- role=button + key handlers
     <div
       ref={setNodeRef}
       data-case-row-id={caseRow.id}
       style={style}
-      className={!disabled ? styles.selectableRow : undefined}
-      role={!disabled ? 'button' : 'row'}
-      tabIndex={!disabled ? 0 : undefined}
-      aria-disabled={disabled || undefined}
-      aria-label={`Mál ${caseRow.caseNumbers[0]}`}
-      {...attributes}
-      {...(!disabled ? listeners : {})}
-      onClick={() => {
-        if (!disabled && onRowClick) {
-          onRowClick(caseRow)
-        }
-      }}
-      onKeyDown={(event) => {
-        if (
-          (event.key === 'Enter' || event.key === ' ') &&
-          !disabled &&
-          onRowClick
-        ) {
-          event.preventDefault()
-          onRowClick(caseRow)
-        }
-      }}
+      className={`${styles.gridRow} ${canMove ? styles.selectableRow : ''} ${
+        isDragging ? styles.gridRowDragging : ''
+      }`}
     >
-      <CaseRowContent
-        caseRow={caseRow}
-        className={`${styles.gridRow} ${
-          isDragging ? styles.gridRowDragging : ''
-        }`}
-        role="presentation"
-        showMenu
-      />
+      <button
+        type="button"
+        className={styles.rowMoveButton}
+        disabled={!canMove}
+        aria-label={`Mál ${caseRow.caseNumbers[0]}`}
+        {...(canMove ? { ...attributes, ...listeners } : {})}
+        onClick={() => {
+          if (canMove && onRowClick) {
+            onRowClick(caseRow)
+          }
+        }}
+      >
+        {renderCaseCells(caseRow).map((cell, index) => (
+          <div key={index} className={styles.gridCell}>
+            {cell}
+          </div>
+        ))}
+      </button>
+      <div className={`${styles.gridCell} ${styles.menuCell}`}>
+        <CaseRowMenuButton caseRow={caseRow} />
+      </div>
     </div>
   )
 }
@@ -433,8 +398,6 @@ const CaseTable: FC<{
   const itemIds = useMemo(() => cases.map((c) => c.id), [cases])
   const showEmpty = cases.length === 0 && Boolean(emptyMessage)
 
-  // Animate real document-flow height so the other list is pushed gradually
-  // (Figma), instead of snapping when a row mounts/unmounts.
   useLayoutEffect(() => {
     const el = measureRef.current
     if (!el) {
@@ -478,7 +441,6 @@ const CaseTable: FC<{
             key={caseRow.id}
             caseRow={caseRow}
             className={styles.gridRow}
-            role="row"
           />
         ))
       )}
@@ -528,8 +490,6 @@ const CaseTable: FC<{
               ease: 'easeInOut',
             },
           }}
-          // Real height tween (not transform layout) so siblings are pushed in
-          // document flow. Clip so incoming rows reveal with the grow.
           style={{ overflow: 'hidden' }}
         >
           <div
@@ -587,11 +547,9 @@ const BulkCompleteCases: FC = () => {
   const skipClickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   )
-  const flyingClearTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  )
-  // Cross-list moves in onDragOver re-run collision detection; without this
-  // guard the item can bounce between lists and blow the update depth limit.
+  const flightFromRectRef = useRef<FlightRect | null>(null)
+  const flightRafRef = useRef<number | null>(null)
+  // Prevents cross-list dragOver from bouncing the item between lists.
   const recentlyMovedToNewList = useRef(false)
   const didCrossListDuringDrag = useRef(false)
 
@@ -600,7 +558,6 @@ const BulkCompleteCases: FC = () => {
     if (skipClickTimeoutRef.current !== null) {
       clearTimeout(skipClickTimeoutRef.current)
     }
-    // Clear after the browser's post-drag click so a later real click works.
     skipClickTimeoutRef.current = setTimeout(() => {
       skipClickRef.current = false
       skipClickTimeoutRef.current = null
@@ -679,12 +636,13 @@ const BulkCompleteCases: FC = () => {
   }
 
   const clearClickFlight = () => {
+    if (flightRafRef.current !== null) {
+      cancelAnimationFrame(flightRafRef.current)
+      flightRafRef.current = null
+    }
+    flightFromRectRef.current = null
     setFlyingCaseId(null)
     setClickFlight(null)
-    if (flyingClearTimeoutRef.current !== null) {
-      clearTimeout(flyingClearTimeoutRef.current)
-      flyingClearTimeoutRef.current = null
-    }
   }
 
   const handleRowClick = (caseRow: MockBulkCase, from: ListId) => {
@@ -694,66 +652,68 @@ const BulkCompleteCases: FC = () => {
     }
 
     const to: ListId = from === 'staging' ? 'source' : 'staging'
-    // Capture source rect before state moves the row out of this list.
     const fromRect = readCaseRowRect(caseRow.id)
 
     if (fromRect) {
-      setClickFlight({ caseRow, fromRect, toRect: null })
+      flightFromRectRef.current = fromRect
+      setClickFlight({ caseRow, fromRect, frameRect: fromRect })
     }
     setFlyingCaseId(caseRow.id)
     moveCaseBetweenLists(caseRow, from, to)
   }
 
-  // Aim the portal after the row has committed in the destination list.
-  // (Measuring before the move locked onto the source rect — hover in place.)
-  useLayoutEffect(() => {
+  // Follow the live destination slot while list heights are still animating.
+  useEffect(() => {
     if (!flyingCaseId) {
       return
     }
 
-    setClickFlight((prev) => {
-      if (!prev || prev.caseRow.id !== flyingCaseId || prev.toRect) {
-        return prev
-      }
-
-      const toRect = readCaseRowRect(flyingCaseId)
-      if (!toRect) {
-        return prev
-      }
-
-      const travel = Math.hypot(
-        toRect.left - prev.fromRect.left,
-        toRect.top - prev.fromRect.top,
-      )
-      // Still the pre-move node if travel is ~0; wait for the next commit.
-      if (travel < 8) {
-        return prev
-      }
-
-      return { ...prev, toRect }
-    })
-  }, [caseLists, flyingCaseId])
-
-  // End the flight after the move animation — clock starts when we have a target.
-  useEffect(() => {
-    if (!clickFlight?.toRect) {
+    const fromRect = flightFromRectRef.current
+    if (!fromRect) {
       return
     }
 
-    if (flyingClearTimeoutRef.current !== null) {
-      clearTimeout(flyingClearTimeoutRef.current)
-    }
-    flyingClearTimeoutRef.current = setTimeout(() => {
-      clearClickFlight()
-    }, CLICK_MOVE_DURATION * 1000)
+    const startedAt = performance.now()
+    const durationMs = CLICK_MOVE_DURATION * 1000
+    let lastDest: FlightRect | null = null
 
-    return () => {
-      if (flyingClearTimeoutRef.current !== null) {
-        clearTimeout(flyingClearTimeoutRef.current)
-        flyingClearTimeoutRef.current = null
+    const tick = (now: number) => {
+      const progress = Math.min(1, (now - startedAt) / durationMs)
+      const eased = easeInOutCubic(progress)
+      const liveDest = readCaseRowRect(flyingCaseId)
+      if (liveDest) {
+        lastDest = liveDest
+      }
+      const dest = lastDest ?? fromRect
+
+      setClickFlight((prev) => {
+        if (!prev || prev.caseRow.id !== flyingCaseId) {
+          return prev
+        }
+
+        return {
+          ...prev,
+          frameRect: lerpRect(fromRect, dest, eased),
+        }
+      })
+
+      if (progress < 1) {
+        flightRafRef.current = requestAnimationFrame(tick)
+      } else {
+        flightRafRef.current = null
+        clearClickFlight()
       }
     }
-  }, [clickFlight?.toRect])
+
+    flightRafRef.current = requestAnimationFrame(tick)
+
+    return () => {
+      if (flightRafRef.current !== null) {
+        cancelAnimationFrame(flightRafRef.current)
+        flightRafRef.current = null
+      }
+    }
+  }, [flyingCaseId])
 
   const handleToggle = (checked: boolean) => {
     setSelectionMode(checked)
@@ -820,7 +780,6 @@ const BulkCompleteCases: FC = () => {
         return prev
       }
 
-      // Already moved into the other list in a previous dragOver tick.
       if (overItems.some((c) => c.id === activeId)) {
         return prev
       }
@@ -851,8 +810,6 @@ const BulkCompleteCases: FC = () => {
     const { active, over, delta } = event
     setActiveCaseId(null)
 
-    // Suppress the trailing click after a real drag, or after a cross-list
-    // drop (click would bounce the row back). Tiny no-op drags still click-move.
     const dragDistance = Math.hypot(delta.x, delta.y)
     if (didCrossListDuringDrag.current || dragDistance > 12) {
       armSkipClick()
@@ -871,7 +828,6 @@ const BulkCompleteCases: FC = () => {
       const overList = findListId(overId, prev.staging, prev.source)
 
       if (!activeList || !overList || activeList !== overList) {
-        // Cross-list moves are applied in onDragOver.
         return prev
       }
 
@@ -909,7 +865,6 @@ const BulkCompleteCases: FC = () => {
             initial="collapsed"
             animate="open"
             exit="collapsed"
-            // Clip only while opening/closing so layoutId row flights aren't cropped.
             style={{
               overflow: isStagingAnimating ? 'hidden' : 'visible',
             }}
@@ -992,10 +947,7 @@ const BulkCompleteCases: FC = () => {
         <Logo />
       </div>
 
-      {/*
-        Keep DndContext mounted across the selection-mode toggle. Swapping the
-        tree remounts AnimatePresence and skips enter/exit on the staging block.
-      */}
+      {/* Keep mounted so staging enter/exit is not skipped on toggle. */}
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}
@@ -1031,33 +983,13 @@ const BulkCompleteCases: FC = () => {
         {typeof document !== 'undefined' &&
           clickFlight &&
           createPortal(
-            <motion.div
-              key={clickFlight.caseRow.id}
+            <div
               className={styles.clickFlight}
-              initial={{
-                left: clickFlight.fromRect.left,
-                top: clickFlight.fromRect.top,
-                width: clickFlight.fromRect.width,
-                height: clickFlight.fromRect.height,
-              }}
-              animate={
-                clickFlight.toRect
-                  ? {
-                      left: clickFlight.toRect.left,
-                      top: clickFlight.toRect.top,
-                      width: clickFlight.toRect.width,
-                      height: clickFlight.toRect.height,
-                    }
-                  : {
-                      left: clickFlight.fromRect.left,
-                      top: clickFlight.fromRect.top,
-                      width: clickFlight.fromRect.width,
-                      height: clickFlight.fromRect.height,
-                    }
-              }
-              transition={{
-                duration: CLICK_MOVE_DURATION,
-                ease: 'easeInOut',
+              style={{
+                left: clickFlight.frameRect.left,
+                top: clickFlight.frameRect.top,
+                width: clickFlight.frameRect.width,
+                height: clickFlight.frameRect.height,
               }}
             >
               <CaseRowContent
@@ -1065,7 +997,7 @@ const BulkCompleteCases: FC = () => {
                 className={styles.gridRow}
                 showMenu={false}
               />
-            </motion.div>,
+            </div>,
             document.body,
           )}
       </DndContext>
