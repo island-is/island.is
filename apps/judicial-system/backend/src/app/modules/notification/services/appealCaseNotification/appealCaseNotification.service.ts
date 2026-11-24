@@ -2171,6 +2171,49 @@ export class AppealCaseNotificationService extends BaseNotificationService {
   }
   //#endregion
 
+  //#region APPEAL_SUMMONS_CONFIRMED notifications
+  private async sendAppealSummonsConfirmedNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    const courtCaseNumber = theCase.courtCaseNumber ?? theCase.id
+    const courtName =
+      theCase.court?.name !== undefined && theCase.court?.name !== null
+        ? theCase.court.name
+        : undefined
+    const caseUrl = `${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}`
+
+    const subject = formatIcuMessage(
+      strings.appealSummonsConfirmedCriminalRecordEmail.subject,
+      { courtCaseNumber },
+    )
+    const html = formatIcuMessage(
+      strings.appealSummonsConfirmedCriminalRecordEmail.body,
+      {
+        courtCaseNumber,
+        courtName: applyDativeCaseToCourtName(courtName || 'héraðsdómi'),
+        linkStart: `<a href="${caseUrl}">`,
+        linkEnd: '</a>',
+        caseUrl,
+      },
+    )
+
+    const recipient = await this.sendEmail({
+      subject,
+      html,
+      recipientName: formatIcuMessage(
+        notifications.emailNames.publicProsecutorCriminalRecords,
+      ),
+      recipientEmail: this.config.email.publicProsecutorCriminalRecordsEmail,
+    })
+
+    return this.recordNotification(
+      theCase.id,
+      TrackedNotificationType.APPEAL_SUMMONS_CONFIRMED,
+      [recipient],
+    )
+  }
+  //#endregion
+
   //#region APPEAL_SUMMONS_SENT_TO_COURT_OF_APPEALS notifications
   private async sendAppealSummonsSentToCourtOfAppealsNotifications(
     theCase: Case,
@@ -2375,6 +2418,8 @@ export class AppealCaseNotificationService extends BaseNotificationService {
           appealCase,
           appealCourtSession,
         )
+      case AppealCaseNotificationType.APPEAL_SUMMONS_CONFIRMED:
+        return this.sendAppealSummonsConfirmedNotifications(theCase)
       case AppealCaseNotificationType.APPEAL_SUMMONS_SENT_TO_COURT_OF_APPEALS:
         return this.sendAppealSummonsSentToCourtOfAppealsNotifications(
           theCase,

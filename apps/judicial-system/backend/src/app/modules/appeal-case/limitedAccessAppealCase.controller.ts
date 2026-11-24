@@ -12,6 +12,7 @@ import {
   Post,
   Res,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
 import { InjectConnection } from '@nestjs/sequelize'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
@@ -55,6 +56,7 @@ import { CurrentAppealCase } from './guards/appealCase.decorator'
 import { AppealCaseExistsGuard } from './guards/appealCaseExists.guard'
 import { DefenceAdvocateOfPartyGuard } from './guards/defenceAdvocateOfParty.guard'
 import { defenderTransitionRule } from './guards/rolesRules'
+import { VerdictAppealOutcomeInterceptor } from './interceptors/verdictAppealOutcome.interceptor'
 import { AppealAppointmentLetterService } from './appealAppointmentLetter.service'
 import { AppealCaseService } from './appealCase.service'
 
@@ -105,6 +107,7 @@ export class LimitedAccessAppealCaseController {
   )
   @RolesRules(defenderRule)
   @Post('case/:caseId/limitedAccess/appealCase')
+  @UseInterceptors(VerdictAppealOutcomeInterceptor)
   @ApiCreatedResponse({
     type: AppealCase,
     description: 'Creates a new appeal case for limited access user',
@@ -151,6 +154,7 @@ export class LimitedAccessAppealCaseController {
   )
   @RolesRules(defenderRule)
   @Post('case/:caseId/limitedAccess/appealCase/:appealCaseId/eventLog')
+  @UseInterceptors(VerdictAppealOutcomeInterceptor)
   @ApiCreatedResponse({
     type: AppealCase,
     description: 'Records an appeal event and dispatches mapped side effects',
@@ -195,6 +199,7 @@ export class LimitedAccessAppealCaseController {
   )
   @RolesRules(defenderTransitionRule)
   @Patch('case/:caseId/limitedAccess/appealCase/:appealCaseId/state')
+  @UseInterceptors(VerdictAppealOutcomeInterceptor)
   @ApiOkResponse({
     type: AppealCase,
     description: 'Transitions a limited access appeal case to a new state',

@@ -2,7 +2,9 @@ import { Type } from 'class-transformer'
 import {
   ArrayMinSize,
   IsArray,
+  IsNotEmpty,
   IsOptional,
+  IsString,
   IsUUID,
   ValidateNested,
 } from 'class-validator'
@@ -12,6 +14,11 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { AppealSummonsDefendantDto } from './createAppealSummons.dto'
 
 export class PreviewAppealSummonsDto {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ type: String })
+  readonly caseName!: string
+
   @IsArray()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })

@@ -15,6 +15,55 @@ import { Organization } from './models/organization.model'
 import { OrganizationsService } from './organizations.service'
 import { validate } from 'class-validator'
 import { OrganizationLogoDto } from './models/dto/organizationLogo.dto'
+import { ListTypesEnum } from '@island.is/form-system/shared'
+
+describe('OrganizationsService.findAdmin', () => {
+  it('includes currencies and organizations as common lists without explicit permissions', async () => {
+    const nationalId = '1234567890'
+    const user: User = {
+      nationalId,
+      scope: [AdminPortalScope.formSystemAdmin],
+      authorization: '',
+      client: '',
+    }
+    const module = await Test.createTestingModule({
+      providers: [
+        OrganizationsService,
+        {
+          provide: getModelToken(Organization),
+          useValue: {
+            findOne: jest.fn().mockResolvedValue({
+              id: 'organization',
+              organizationPermissions: [],
+              delegations: [],
+            }),
+            findAll: jest.fn().mockResolvedValue([{ nationalId }]),
+          },
+        },
+        { provide: getModelToken(Form), useValue: {} },
+        { provide: Sequelize, useValue: {} },
+      ],
+    }).compile()
+    const service = module.get(OrganizationsService)
+
+    const result = await service.findAdmin(user, nationalId)
+
+    expect(result.ListTypes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: ListTypesEnum.CURRENCIES,
+          name: { is: 'Gjaldmiðlar', en: 'Currencies' },
+          isCommon: true,
+        }),
+        expect.objectContaining({
+          id: ListTypesEnum.ORGANIZATIONS,
+          name: { is: 'Stofnanir', en: 'Organizations' },
+          isCommon: true,
+        }),
+      ]),
+    )
+  })
+})
 
 describe('OrganizationsService.create', () => {
   const originalEnvironment = process.env.name

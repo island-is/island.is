@@ -2,6 +2,7 @@ import { ServiceBuilder, ref, service } from '../../../infra/src/dsl/dsl'
 import {
   Base,
   Client,
+  DirectorateOfEquality,
   DistrictCommissionersLicenses,
   DistrictCommissionersPCard,
   Education,
@@ -83,6 +84,7 @@ export const serviceSetup = (services: {
       RentalService,
       MmsPrimarySchool,
       VMSTUnemployment,
+      DirectorateOfEquality,
     )
     .ingress({
       primary: {

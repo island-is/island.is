@@ -16,6 +16,11 @@ export const NoDebtCertificateForm: Form = buildForm({
   logo: DebtCollectorLogo,
   children: [
     buildSection({
+      id: 'certificateLanguageSection',
+      title: m.certificateLanguageSection,
+      children: [],
+    }),
+    buildSection({
       id: 'externalData',
       title: m.externalDataSection,
       children: [

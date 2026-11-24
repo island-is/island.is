@@ -45,8 +45,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import {
-  isVerdictAppealOver,
-  nextAppealCourtSession,
+  currentAppealCourtSession,
   standingVerdictAppealEvents,
   standingVerdictAppellants,
   type VerdictAppealProgress,
@@ -1058,14 +1057,23 @@ const verdictAppealProgressTags: Record<
     sortValue: 'C',
   },
   SCHEDULED: { tag: { color: 'mint', text: 'Á dagskrá' }, sortValue: 'D' },
+  POSTPONED: { tag: { color: 'purple', text: 'Frestað' }, sortValue: 'E' },
+  UNDER_ADVISEMENT: {
+    tag: { color: 'mint', text: 'Dómtekið' },
+    sortValue: 'F',
+  },
+  COMPLETED: { tag: { color: 'darkerBlue', text: 'Lokið' }, sortValue: 'G' },
 }
 
-// How far the appeal has come. Empty until the appeal has been sent to the
-// court of appeals, and for a verdict appealed before appeal cases were kept.
+// How far the appeal has come: the status the court of appeals has recorded,
+// and until it has, what can be read off the appeal. A concluded appeal stays
+// on "Dómtekið" until its outcome is released. Empty until the appeal
+// has been sent to the court of appeals, for a withdrawn appeal, and for a
+// verdict appealed before appeal cases were kept.
 const verdictAppealProgress: CaseTableCellGenerator<TagValue> = {
   includes: {
     verdictAppealCase: {
-      attributes: ['appealState', 'appealCaseNumber'],
+      attributes: ['appealState', 'verdictAppealStatus', 'appealCaseNumber'],
       includes: {
         sentAppealSummonses: { attributes: [] },
         courtSessions: { attributes: ['sessionDate'] },
@@ -1088,23 +1096,28 @@ const verdictAppealProgress: CaseTableCellGenerator<TagValue> = {
   },
 }
 
-// The session the court of appeals holds next. Empty once every session it
-// called has been held - there is no status yet that a past session would
-// explain.
+// The session the court of appeals holds next - or held last, while the status
+// it has recorded says it is still calling sessions - and "Frestað" for an
+// appeal it has postponed.
 const verdictAppealCourtSession: CaseTableCellGenerator<StringGroupValue> = {
   includes: {
     verdictAppealCase: {
-      attributes: ['appealState'],
+      attributes: ['appealState', 'verdictAppealStatus'],
       includes: {
         courtSessions: { attributes: ['sessionType', 'sessionDate'] },
       },
     },
   },
   generate: (c: CaseTableRowCase): CaseTableCell<StringGroupValue> => {
-    const session =
-      c.appeal && !isVerdictAppealOver(c.appeal)
-        ? nextAppealCourtSession(c.appeal, new Date())
-        : undefined
+    const session = c.appeal
+      ? currentAppealCourtSession(c.appeal, new Date())
+      : undefined
+
+    if (session === 'POSTPONED') {
+      // Sorted after every dated session, as the district court's postponed
+      // cases are.
+      return generateCell({ strList: ['Frestað'] }, '999999999999')
+    }
 
     const datePart = formatDate(session?.sessionDate, 'EEE d. MMMM yyyy')
     const timePart = formatDate(session?.sessionDate, 'HH:mm')

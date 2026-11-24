@@ -24,6 +24,7 @@ import {
   applyDativeCaseToCourtName,
   formatDate,
   getHumanReadableCaseIndictmentRulingDecision,
+  getVerdictAppealDecision,
   lowercase,
 } from '@island.is/judicial-system/formatters'
 import {
@@ -52,6 +53,7 @@ import {
   type User,
   UserDescriptor,
   UserRole,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -2313,6 +2315,48 @@ export class CaseNotificationService extends BaseNotificationService {
   }
   //#endregion
 
+  //#region INDICTMENT_VERDICT_ACCEPTED_BY_DEFENDER notifications
+  // The public prosecution is told when a defender registers that the defendant
+  // accepts the verdict. Sent every time, like the appeal notification: the
+  // position is per defendant, so a second defendant's is news of its own.
+  private async sendIndictmentVerdictAcceptedByDefenderNotifications(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    const courtCaseNumber = theCase.courtCaseNumber ?? ''
+    const courtName = applyDativeCaseToCourtName(
+      theCase.court?.name ?? 'héraðsdómi',
+    )
+    const subject = `Afstaða í máli ${courtCaseNumber}`
+    const stance = getVerdictAppealDecision(VerdictAppealDecision.ACCEPT)
+    const link = `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">yfirlitssíðu málsins í Réttarvörslugátt</a>`
+    const body = `Verjandi hefur uppfært afstöðu dómfellda til dóms í máli ${courtCaseNumber} hjá ${courtName}.<br /><br />Afstaða: ${stance}.<br /><br />Sjá nánar á ${link}.`
+
+    const publicProsecutorEmail =
+      await this.institutionContactRepositoryService.getInstitutionContact(
+        this.config.publicProsecutorId,
+        IndictmentCaseNotificationType.INDICTMENT_VERDICT_ACCEPTED_BY_DEFENDER,
+      )
+
+    if (!publicProsecutorEmail) {
+      return { delivered: false }
+    }
+
+    const recipient = await this.sendEmail({
+      subject,
+      html: body,
+      recipientName: 'Ríkissaksóknari',
+      recipientEmail: publicProsecutorEmail,
+      skipTail: true,
+    })
+
+    return this.recordNotification(
+      theCase.id,
+      TrackedNotificationType.INDICTMENT_VERDICT_ACCEPTED_BY_DEFENDER,
+      [recipient],
+    )
+  }
+  //#endregion
+
   //#region PUBLIC_PROSECUTOR_REVIEWER_ASSIGNED notifications
   private async sendPublicProsecutorReviewerAssignedNotifications(
     theCase: Case,
@@ -2692,6 +2736,10 @@ export class CaseNotificationService extends BaseNotificationService {
         return this.sendIndictmentReopenedNotifications(theCase)
       case IndictmentCaseNotificationType.INDICTMENT_VERDICT_APPEALED:
         return this.sendIndictmentVerdictAppealedNotifications(theCase)
+      case IndictmentCaseNotificationType.INDICTMENT_VERDICT_ACCEPTED_BY_DEFENDER:
+        return this.sendIndictmentVerdictAcceptedByDefenderNotifications(
+          theCase,
+        )
       default:
         throw new InternalServerErrorException(
           `Invalid notification type ${type}`,

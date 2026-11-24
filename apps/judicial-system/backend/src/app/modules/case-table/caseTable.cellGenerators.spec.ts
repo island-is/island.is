@@ -9,6 +9,7 @@ import {
   IndictmentCaseReviewDecision,
   type User,
   UserRole,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../repository'
@@ -714,9 +715,142 @@ describe('public prosecution appealed verdict cell generators', () => {
       },
     )
 
-    // There is no status yet that a past session would explain, so the cell
-    // empties once the last session called has been held.
-    it('shows no session once every one has been held', () => {
+    it.each([
+      [VerdictAppealStatus.STATEMENT_DEADLINE_GRANTED, 'blue', 'Frestir'],
+      [VerdictAppealStatus.COURT_SESSION_SCHEDULED, 'mint', 'Á dagskrá'],
+      [VerdictAppealStatus.POSTPONED, 'purple', 'Frestað'],
+      [VerdictAppealStatus.UNDER_ADVISEMENT, 'mint', 'Dómtekið'],
+      // Nothing about the appeal changes outside the court of appeals until
+      // the appeal itself is completed.
+      [VerdictAppealStatus.COMPLETED, 'mint', 'Dómtekið'],
+    ])(
+      'tags the appeal by the status the court of appeals recorded: %s',
+      (verdictAppealStatus, color, text) => {
+        const cell = caseTableCellGenerators.verdictAppealProgress.generate(
+          row({
+            appeal: {
+              appealState: AppealCaseState.RECEIVED,
+              verdictAppealStatus,
+              appealCaseNumber: '526/2026',
+            },
+          }),
+          user,
+        )
+
+        expect(cell.value).toEqual({ color, text })
+      },
+    )
+
+    it.each([undefined, VerdictAppealStatus.COMPLETED])(
+      'keeps a completed appeal under advisement until its outcome is released',
+      (verdictAppealStatus) => {
+        const cell = caseTableCellGenerators.verdictAppealProgress.generate(
+          row({
+            appeal: {
+              appealState: AppealCaseState.COMPLETED,
+              verdictAppealStatus,
+              appealCaseNumber: '526/2026',
+            },
+          }),
+          user,
+        )
+
+        expect(cell.value).toEqual({ color: 'mint', text: 'Dómtekið' })
+      },
+    )
+
+    it('sorts the recorded statuses after the stages before them', () => {
+      const sortValue = (appeal: Record<string, unknown>) =>
+        caseTableCellGenerators.verdictAppealProgress.generate(
+          row({ appeal }),
+          user,
+        ).sortValue as string
+
+      const scheduled = sortValue({
+        verdictAppealStatus: VerdictAppealStatus.COURT_SESSION_SCHEDULED,
+      })
+      const postponed = sortValue({
+        verdictAppealStatus: VerdictAppealStatus.POSTPONED,
+      })
+      const underAdvisement = sortValue({
+        verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+      })
+      const completed = sortValue({
+        appealState: AppealCaseState.COMPLETED,
+      })
+
+      expect([completed, underAdvisement, postponed, scheduled].sort()).toEqual(
+        [scheduled, postponed, underAdvisement, completed],
+      )
+    })
+
+    it('shows the session held last while the court is still calling sessions', () => {
+      const cell = caseTableCellGenerators.verdictAppealCourtSession.generate(
+        row({
+          appeal: {
+            verdictAppealStatus: VerdictAppealStatus.COURT_SESSION_SCHEDULED,
+            courtSessions: [
+              {
+                sessionType: AppealCourtSessionType.PREPARATORY_HEARING,
+                sessionDate: daysFromNow(-20),
+              },
+              {
+                sessionType: AppealCourtSessionType.MAIN_HEARING,
+                sessionDate: daysFromNow(-3),
+              },
+            ],
+          },
+        }),
+        user,
+      )
+
+      expect((cell.value as { strList: string[] }).strList[0]).toBe(
+        'Aðalmeðferð',
+      )
+    })
+
+    it('shows a postponed appeal as postponed, after every dated session', () => {
+      const cell = caseTableCellGenerators.verdictAppealCourtSession.generate(
+        row({
+          appeal: {
+            verdictAppealStatus: VerdictAppealStatus.POSTPONED,
+            courtSessions: [
+              {
+                sessionType: AppealCourtSessionType.MAIN_HEARING,
+                sessionDate: daysFromNow(3),
+              },
+            ],
+          },
+        }),
+        user,
+      )
+
+      expect(cell.value).toEqual({ strList: ['Frestað'] })
+      expect(cell.sortValue).toBe('999999999999')
+    })
+
+    it('shows no session for an appeal taken under advisement', () => {
+      const cell = caseTableCellGenerators.verdictAppealCourtSession.generate(
+        row({
+          appeal: {
+            verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+            courtSessions: [
+              {
+                sessionType: AppealCourtSessionType.MAIN_HEARING,
+                sessionDate: daysFromNow(3),
+              },
+            ],
+          },
+        }),
+        user,
+      )
+
+      expect(cell.value).toBeUndefined()
+    })
+
+    // Until the court of appeals records a status nothing explains a past
+    // session, so the cell empties once the last session called has been held.
+    it('shows no session once every one has been held and no status is recorded', () => {
       const cell = caseTableCellGenerators.verdictAppealCourtSession.generate(
         row({
           appeal: {

@@ -1747,6 +1747,7 @@ export interface UpdateAppealCase
   extends Pick<
     AppealCase,
     | 'appealCaseNumber'
+    | 'caseName'
     | 'appealReceivedByCourtDate'
     | 'appealRulingDate'
     | 'appealAssistantId'
@@ -1759,6 +1760,7 @@ export interface UpdateAppealCase
     | 'appealIsolationToDate'
     | 'rulingFileId'
     | 'appealDate'
+    | 'verdictAppealStatus'
   > {
   appealState?: AppealCase['appealState']
 }

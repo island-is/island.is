@@ -11,6 +11,7 @@ import {
   RouteRolesGuard,
 } from '@island.is/judicial-system/auth'
 import {
+  CaseFileCategory,
   CaseState,
   CaseType,
   InstitutionType,
@@ -25,14 +26,20 @@ import { CaseExistsForUpdateGuard } from '../../../case/guards/caseExistsForUpda
 import { CaseNotCompletedGuard } from '../../../case/guards/caseNotCompleted.guard'
 import { CaseTypeGuard } from '../../../case/guards/caseType.guard'
 import { CaseWriteGuard } from '../../../case/guards/caseWrite.guard'
-import { Case, CaseFile, CaseRepositoryService } from '../../../repository'
+import {
+  AppealCase,
+  Case,
+  CaseFile,
+  CaseRepositoryService,
+} from '../../../repository'
 import { FileController } from '../../file.controller'
 import { FileService } from '../../file.service'
 import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
+import { DeleteAppealCaseFileGuard } from '../../guards/deleteAppealCaseFile.guard'
 
-// The guards of the four routes that edit a file - reject it, confirm a
-// ruling order, attach a ruling order's document, reorder the files -
-// executed rather than merely declared.
+// The guards of the five routes that edit a file - reject it, confirm a
+// ruling order, attach a ruling order's document, reorder the files, delete
+// it - executed rather than merely declared.
 //
 // The per-route *Guards.spec.ts pin the declared order, and the roles-rules
 // specs pin which rules read the case. Neither runs a guard, and a wrong
@@ -42,8 +49,8 @@ import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
 // read - passes the whole suite. This table runs them, in Nest's order, for
 // every user role on each route.
 //
-// Three of the routes have bare roles rules, so RolesGuard turns an unlisted
-// role away before the locking read. Confirming a ruling order is the fourth:
+// Four of the routes have bare roles rules, so RolesGuard turns an unlisted
+// role away before the locking read. Confirming a ruling order is the fifth:
 // its rule checks that the user is the case's registered judge, so RolesGuard
 // has to follow the read, and RouteRolesGuard - the same rule, decided on the
 // role alone - stands in front of it.
@@ -59,7 +66,9 @@ class AuthenticatedGuard extends JwtAuthUserGuard {
 
 const prosecutorsOfficeId = uuid()
 const courtId = uuid()
+const courtOfAppealsId = uuid()
 const fileId = uuid()
+const appealFileId = uuid()
 
 const userAt = (
   role: UserRole,
@@ -76,6 +85,8 @@ const prosecutionUser = (role: UserRole, officeId = prosecutorsOfficeId) =>
   userAt(role, officeId, InstitutionType.POLICE_PROSECUTORS_OFFICE)
 const courtUser = (role: UserRole, atCourtId = courtId) =>
   userAt(role, atCourtId, InstitutionType.DISTRICT_COURT)
+const courtOfAppealsUser = (role: UserRole) =>
+  userAt(role, courtOfAppealsId, InstitutionType.COURT_OF_APPEALS)
 
 // The judge registered on the cases below, and a colleague at the same court.
 const registeredJudge = courtUser(UserRole.DISTRICT_COURT_JUDGE)
@@ -102,6 +113,32 @@ const completedIndictment = (caseId: string) =>
 const receivedCustodyCase = (caseId: string) =>
   atCourt(caseId, CaseType.CUSTODY, CaseState.RECEIVED)
 
+// The court of appeals has no access to a verdict appeal until an appeal
+// summons has been sent to it.
+const indictmentWithAppealedVerdict = (caseId: string) =>
+  ({
+    ...completedIndictment(caseId),
+    verdictAppealCase: {
+      id: uuid(),
+      sentAppealSummonses: [{ id: uuid() }],
+    } as AppealCase,
+  } as Case)
+
+// A custody case the court of appeals has registered under its own case
+// number: a party's appeal file on it can no longer be deleted.
+const custodyCaseAtCourtOfAppeals = (caseId: string) =>
+  ({
+    ...receivedCustodyCase(caseId),
+    caseFiles: [
+      {
+        id: appealFileId,
+        caseId,
+        category: CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+      } as CaseFile,
+    ],
+    appealCase: { id: uuid(), appealCaseNumber: '1-2026' } as AppealCase,
+  } as Case)
+
 // A rejection by a guard after the locking read.
 interface AfterReadRejection {
   name: string
@@ -119,8 +156,10 @@ interface Route {
   // The guard that turns a role the route has no rule for away, ahead of the
   // locking read.
   roleGuard: string
-  // One user per allowed role, on a received indictment they can write.
+  // One user per allowed role, on a case they can write - a received
+  // indictment unless the route says otherwise.
   allowed: User[]
+  allowedCaseFor?: (user: User) => (caseId: string) => Case
   afterRead: AfterReadRejection[]
 }
 
@@ -228,11 +267,51 @@ const routes: Route[] = [
       },
     ],
   },
+  {
+    method: 'deleteCaseFile',
+    params: { fileId },
+    roleGuard: RolesGuard.name,
+    allowed: [
+      prosecutionUser(UserRole.PROSECUTOR),
+      prosecutionUser(UserRole.PROSECUTOR_REPRESENTATIVE),
+      ...districtCourtUsers,
+      courtOfAppealsUser(UserRole.COURT_OF_APPEALS_JUDGE),
+      courtOfAppealsUser(UserRole.COURT_OF_APPEALS_REGISTRAR),
+      courtOfAppealsUser(UserRole.COURT_OF_APPEALS_ASSISTANT),
+    ],
+    allowedCaseFor: (user) =>
+      user.institution?.type === InstitutionType.COURT_OF_APPEALS
+        ? indictmentWithAppealedVerdict
+        : receivedIndictment,
+    afterRead: [
+      {
+        name: "prosecutor at another office than the case's",
+        user: prosecutionUser(UserRole.PROSECUTOR, uuid()),
+        rejectedBy: CaseWriteGuard.name,
+        error: ForbiddenException,
+      },
+      {
+        name: 'file is not on the case',
+        user: prosecutionUser(UserRole.PROSECUTOR),
+        params: { fileId: uuid() },
+        rejectedBy: CaseFileExistsGuard.name,
+        error: NotFoundException,
+      },
+      {
+        name: 'appeal file the court of appeals has registered',
+        user: prosecutionUser(UserRole.PROSECUTOR),
+        caseFor: custodyCaseAtCourtOfAppeals,
+        params: { fileId: appealFileId },
+        rejectedBy: DeleteAppealCaseFileGuard.name,
+        error: ForbiddenException,
+      },
+    ],
+  },
 ]
 
 describe.each(routes.map((route) => [route.method, route] as const))(
   'FileController - %s guard chain',
-  (methodName, { params, roleGuard, allowed, afterRead }) => {
+  (methodName, { params, roleGuard, allowed, allowedCaseFor, afterRead }) => {
     const allowedRoles = allowed.map(({ role }) => role)
     const rejectedRoles = Object.values(UserRole).filter(
       (role) => !allowedRoles.includes(role),
@@ -295,6 +374,7 @@ describe.each(routes.map((route) => [route.method, route] as const))(
         new CaseWriteGuard(),
         new CaseFileExistsGuard({} as FileService),
         new CaseNotCompletedGuard(),
+        new DeleteAppealCaseFileGuard(),
       ]
 
       runChain = (user, caseId, overrideParams = {}) =>
@@ -315,7 +395,7 @@ describe.each(routes.map((route) => [route.method, route] as const))(
         let then: Awaited<ReturnType<typeof runChain>>
 
         beforeEach(async () => {
-          primeCase(receivedIndictment(caseId))
+          primeCase((allowedCaseFor?.(user) ?? receivedIndictment)(caseId))
 
           then = await runChain(user, caseId)
         })

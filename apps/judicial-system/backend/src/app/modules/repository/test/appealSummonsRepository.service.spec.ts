@@ -233,6 +233,7 @@ describe('AppealSummonsRepositoryService', () => {
         {
           confirmedById: null,
           confirmedDate: null,
+          caseName: null,
           hash: null,
           hashAlgorithm: null,
         },
