@@ -67,6 +67,18 @@ export const prerequisites = {
     },
   }),
   errors: defineMessages({
+    noRightsTitle: {
+      id: 'aosh.mlr.application:prerequisites.errors.noRightsTitle',
+      defaultMessage: 'Engin vinnuvélaréttindi',
+      description:
+        'Title of error when the applicant has no machine license rights',
+    },
+    noRights: {
+      id: 'aosh.mlr.application:prerequisites.errors.noRights',
+      defaultMessage:
+        'Þú ert ekki með skráð vinnuvélaréttindi hjá Vinnueftirlitinu.',
+      description: 'Error when the applicant has no machine license rights',
+    },
     noRightsToRenewTitle: {
       id: 'aosh.mlr.application:prerequisites.errors.noRightsToRenewTitle',
       defaultMessage: 'Engin réttindi til endurnýjunar',
@@ -75,8 +87,9 @@ export const prerequisites = {
     noRightsToRenew: {
       id: 'aosh.mlr.application:prerequisites.errors.noRightsToRenew',
       defaultMessage:
-        'Þú ert ekki með vinnuvélaréttindi sem hægt er að endurnýja. Hægt er að endurnýja vinnuvélaréttindi þegar sex mánuðir eru eftir af gildistíma.',
-      description: 'Error when the applicant has no rights to renew',
+        'Vinnuvélaréttindin þín eru ekki komin á endurnýjunartíma. Hægt er að endurnýja réttindi þegar sex mánuðir eða minna eru eftir af gildistíma.',
+      description:
+        'Error when the applicant has machine license rights but none that can be renewed yet',
     },
   }),
 }

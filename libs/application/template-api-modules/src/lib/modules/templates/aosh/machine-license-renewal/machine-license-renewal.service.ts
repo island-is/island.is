@@ -45,6 +45,16 @@ export class MachineLicenseRenewalService extends BaseTemplateApiService {
         application.id,
       )
 
+    if (!workMachineLicense.workMachineRightsDtos?.length) {
+      throw new TemplateApiError(
+        {
+          title: prerequisites.errors.noRightsTitle,
+          summary: prerequisites.errors.noRights,
+        },
+        400,
+      )
+    }
+
     if (!workMachineLicense.hasLicenseRightsToRenew) {
       throw new TemplateApiError(
         {

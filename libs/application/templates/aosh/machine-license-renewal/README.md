@@ -19,7 +19,7 @@ The Machine License Renewal (Endurnýjun vinnuvélaskírteinis) application allo
 
 ### Prerequisites
 
-Data fetching from National Registry, User profile, The Administration of Occupational Safety and Health (machine license rights) and the payment catalog. Applicants without machine license rights that can be renewed cannot continue.
+Data fetching from National Registry, User profile, The Administration of Occupational Safety and Health (machine license rights) and the payment catalog. Applicants cannot continue if they have no machine license rights (AOSH returns an empty `workMachineRightsDtos`), or if none of their rights can be renewed yet (`hasLicenseRightsToRenew` is false). Each case has its own error message.
 
 ### Draft
 
