@@ -192,7 +192,7 @@ export function DeviceLock({
                   { biometricType },
                 )}
                 onPress={onBiometricsPress}
-                disabled={isPrompting}
+                loading={isPrompting}
               />
               <Button
                 isOutlined
