@@ -4,6 +4,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import {
   DrivingLicenseApi,
   DtoV5DeprivationDto,
+  DtoV6DeprivationDto,
   PenaltyPointsClientService,
 } from '@island.is/clients/driving-license'
 import { isDefined } from '@island.is/shared/utils'
@@ -15,7 +16,7 @@ import {
 } from '../models'
 
 const mapDeprivation = (
-  d: DtoV5DeprivationDto,
+  d: DtoV5DeprivationDto | DtoV6DeprivationDto,
 ): DrivingLicenseDeprivation | null => {
   if (!d.dateFrom) return null
 
