@@ -5,7 +5,7 @@ import { getOrderApplicationDto } from './machine-license-card-reissue.utils'
 const applicationId = '3b3c1e7e-6b53-4d7e-9d1b-2f0f6a1c1a11'
 
 const createApplication = (cardDelivery: Record<string, unknown>) =>
-  (({
+  ({
     id: applicationId,
     answers: {
       applicant: {
@@ -16,7 +16,7 @@ const createApplication = (cardDelivery: Record<string, unknown>) =>
       },
       cardDelivery,
     },
-  } as unknown) as Application)
+  } as unknown as Application)
 
 describe('getOrderApplicationDto', () => {
   it('sends to legal address when current address is selected', () => {
