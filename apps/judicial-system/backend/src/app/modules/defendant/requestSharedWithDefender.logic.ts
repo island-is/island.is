@@ -1,4 +1,8 @@
-import { RequestSharedWithDefender } from '@island.is/judicial-system/types'
+import {
+  type CaseState,
+  isCompletedCase,
+  RequestSharedWithDefender,
+} from '@island.is/judicial-system/types'
 
 const REQUEST_SHARED_PERMISSIVENESS: Record<RequestSharedWithDefender, number> =
   {
@@ -74,6 +78,43 @@ export const getMostPermissiveRequestSharedWithDefenderForNationalId = (
 
   return getMostPermissiveRequestSharedWithDefender(
     source.map((defendant) => defendant.requestSharedWithDefender),
+  )
+}
+
+/**
+ * Whether the request of a request case is available to the given defender
+ * right now: always once the case is completed, otherwise according to the
+ * sharing timing the prosecutor chose. Shared by the request pdf guard and
+ * the all-files zip so the two cannot drift apart.
+ */
+export const isRequestSharedWithDefender = ({
+  state,
+  defendants,
+  nationalId,
+  hasArraignmentDate,
+}: {
+  state: CaseState
+  defendants: DefendantWithRequestSharing[] | null | undefined
+  nationalId?: string | null
+  hasArraignmentDate: boolean
+}): boolean => {
+  if (isCompletedCase(state)) {
+    return true
+  }
+
+  const requestSharedWithDefender =
+    getMostPermissiveRequestSharedWithDefenderForNationalId(
+      defendants,
+      nationalId,
+    )
+
+  if (requestSharedWithDefender === RequestSharedWithDefender.READY_FOR_COURT) {
+    return true
+  }
+
+  return (
+    requestSharedWithDefender === RequestSharedWithDefender.COURT_DATE &&
+    hasArraignmentDate
   )
 }
 
