@@ -40,4 +40,8 @@ export const strings = {
     subject: 'Afturköllun kæru í máli {courtCaseNumber}',
     body: '{withdrawnByProsecution, select, true {Sækjandi} other {Verjandi}} hefur afturkallað kæru í máli {courtCaseNumber}.',
   },
+  appealSummonsConfirmedCriminalRecordEmail: {
+    subject: 'Áfrýjun í máli {courtCaseNumber}',
+    body: 'Máli {courtCaseNumber} hjá {courtName} hefur verið áfrýjað. Skjöl málsins eru aðgengileg á {linkStart}{caseUrl}{linkEnd}.',
+  },
 }

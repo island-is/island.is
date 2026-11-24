@@ -39,6 +39,7 @@ import {
   DEFAULT_CATEGORY,
   DEFAULT_CATEGORY_LABEL,
   toTemplateCategory,
+  toSourceType,
 } from './utils'
 import {
   CmsService,
@@ -129,7 +130,8 @@ export class NotificationsService {
 
   /**
    * Renders a stored notification using its Hnipp template, including its
-   * priority type (falling back to the template's) and category key and label.
+   * priority and source types (falling back to the template's) and category
+   * key and label.
    * Fetches the template when it is not provided.
    * @throws InternalServerErrorException if the template cannot be rendered.
    */
@@ -171,6 +173,9 @@ export class NotificationsService {
         wasSent: notification.wasSent,
         // Notifications created before priorityType was stored fall back to the template
         priorityType: notification.priorityType ?? template.priorityType,
+        // Notifications created before sourceType was stored fall back to the template
+        sourceType:
+          notification.sourceType ?? toSourceType(template.sourceType),
         category: toTemplateCategory(template.hnippCategoryIs),
         categoryLabel:
           template.hnippCategory?.trim() || DEFAULT_CATEGORY_LABEL[locale],
@@ -194,6 +199,7 @@ export class NotificationsService {
     return res.hnippTemplateCollection.items.map((template: HnippTemplate) => ({
       ...template,
       args: template.args || [], // Ensure args is an array
+      sourceType: toSourceType(template.sourceType),
     }))
   }
 
@@ -217,7 +223,11 @@ export class NotificationsService {
     if (items.length > 0) {
       const template = items[0]
 
-      return { ...template, args: template.args || [] } // Ensure args is an array
+      return {
+        ...template,
+        args: template.args || [], // Ensure args is an array
+        sourceType: toSourceType(template.sourceType),
+      }
     } else {
       throw new NotFoundException(`Template not found for ID: ${templateId}`)
     }
