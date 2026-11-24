@@ -27,8 +27,8 @@ export default ({ config }) => {
       image: `${getIconFolder()}/splashscreen.png`,
     },
     ios: {
-      googleServicesFile: `./assets/firebase/${getGoogleServicesFile()}`,
       ...config.ios,
+      googleServicesFile: `./assets/firebase/${getGoogleServicesFile()}`,
       entitlements: {
         ...config.ios.entitlements,
         'com.apple.security.application-groups': [
