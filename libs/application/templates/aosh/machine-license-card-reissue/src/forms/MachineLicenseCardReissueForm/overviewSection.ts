@@ -1,11 +1,9 @@
 import {
-  buildCheckboxField,
   buildCustomField,
   buildMultiField,
   buildOverviewField,
   buildSection,
   buildSubmitField,
-  YES,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { overview } from '../../lib/messages'
@@ -37,19 +35,6 @@ export const overviewSection = buildSection({
           title: '',
           backId: 'cardDeliveryMultiField',
           items: getCardDeliveryOverviewItems,
-        }),
-        buildCheckboxField({
-          id: 'overview.agreementCheckbox',
-          large: true,
-          backgroundColor: 'blue',
-          marginTop: 3,
-          required: true,
-          options: [
-            {
-              value: YES,
-              label: overview.labels.agreementCheckbox,
-            },
-          ],
         }),
         buildSubmitField({
           id: 'submit',

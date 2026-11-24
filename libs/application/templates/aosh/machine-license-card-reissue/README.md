@@ -29,10 +29,6 @@ The Administration of Occupational Safety and Health (work machine licenses).
 
 Applicant information, delivery method for the card and an overview.
 
-### Payment
-
-Payment through the island.is payment flow.
-
 ### Completed
 
 Application is submitted to Vinnueftirlitið.

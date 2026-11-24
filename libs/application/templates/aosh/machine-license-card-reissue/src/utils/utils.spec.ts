@@ -1,21 +1,19 @@
 import { ExternalData, FormValue } from '@island.is/application/types'
-import { ChargeItemCode } from '@island.is/shared/constants'
 import { AddressDeliveryType } from '../shared'
 import { getLegalDomicileAddress } from './getAddressString'
-import { getChargeItems } from './getChargeItems'
 import {
   getApplicantOverviewItems,
   getCardDeliveryOverviewItems,
 } from './getOverviewItems'
 
 const createExternalData = (address?: Record<string, string>): ExternalData =>
-  ({
+  (({
     identity: {
       data: { address },
       date: new Date(),
       status: 'success',
     },
-  } as unknown as ExternalData)
+  } as unknown) as ExternalData)
 
 describe('getLegalDomicileAddress', () => {
   it('returns street, postal code and city', () => {
@@ -44,17 +42,6 @@ describe('getLegalDomicileAddress', () => {
 
   it('returns empty string when identity data is missing', () => {
     expect(getLegalDomicileAddress({} as ExternalData)).toBe('')
-  })
-})
-
-describe('getChargeItems', () => {
-  it('returns a single card reissue charge item', () => {
-    expect(getChargeItems()).toEqual([
-      {
-        code: ChargeItemCode.AOSH_MACHINE_LICENSE_CARD_REISSUE.toString(),
-        quantity: 1,
-      },
-    ])
   })
 })
 

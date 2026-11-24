@@ -8,13 +8,7 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { AoshLogo } from '@island.is/application/assets/institution-logos'
 import { application, externalData } from '../lib/messages'
-import {
-  IdentityApi,
-  LicensesApi,
-  MockableVinnueftirlitidPaymentCatalogApi,
-  UserProfileApi,
-  VinnueftirlitidPaymentCatalogApi,
-} from '../dataProviders'
+import { IdentityApi, LicensesApi, UserProfileApi } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesForm',
@@ -58,12 +52,6 @@ export const Prerequisites: Form = buildForm({
               provider: LicensesApi,
               title: externalData.ver.title,
               subTitle: externalData.ver.subTitle,
-            }),
-            buildDataProviderItem({
-              provider: VinnueftirlitidPaymentCatalogApi,
-            }),
-            buildDataProviderItem({
-              provider: MockableVinnueftirlitidPaymentCatalogApi,
             }),
           ],
         }),

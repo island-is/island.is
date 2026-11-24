@@ -1,9 +1,6 @@
 import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { AoshLogo } from '@island.is/application/assets/institution-logos'
-import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
-import { payment } from '../../lib/messages'
-import { getChargeItems } from '../../utils'
 import { conclusionSection } from '../conclusionSection'
 import { applicantSection } from './applicantSection'
 import { cardDeliverySection } from './cardDeliverySection'
@@ -19,14 +16,6 @@ export const MachineLicenseCardReissueForm: Form = buildForm({
     applicantSection,
     cardDeliverySection,
     overviewSection,
-    buildFormPaymentChargeOverviewSection({
-      sectionTitle: payment.general.sectionTitle,
-      getSelectedChargeItems: () =>
-        getChargeItems().map((x) => ({
-          chargeItemCode: x.code,
-          chargeItemQuantity: x.quantity,
-        })),
-    }),
     conclusionSection,
   ],
 })

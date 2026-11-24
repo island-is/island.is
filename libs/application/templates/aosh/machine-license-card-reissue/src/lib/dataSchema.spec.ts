@@ -34,17 +34,14 @@ const validAnswers = {
   approveExternalData: true,
   applicant: validApplicant,
   cardDelivery: validCurrentDelivery,
-  overview: { agreementCheckbox: ['yes'] },
 }
 
 const errorPaths = (result: { success: boolean; error?: unknown }) =>
   result.success
     ? []
-    : (
-        result as {
-          error: { issues: { path: (string | number)[] }[] }
-        }
-      ).error.issues.map((issue) => issue.path.join('.'))
+    : (result as {
+        error: { issues: { path: (string | number)[] }[] }
+      }).error.issues.map((issue) => issue.path.join('.'))
 
 describe('MachineLicenseCardReissueAnswersSchema', () => {
   it('accepts valid answers with delivery to current address', () => {
@@ -102,24 +99,6 @@ describe('MachineLicenseCardReissueAnswersSchema', () => {
         applicant: { ...validApplicant, phoneNumber: '123' },
       })
       expect(errorPaths(result)).toContain('applicant.phoneNumber')
-    })
-  })
-
-  describe('overview', () => {
-    it('rejects when the agreement checkbox is not checked', () => {
-      const result = MachineLicenseCardReissueAnswersSchema.safeParse({
-        ...validAnswers,
-        overview: { agreementCheckbox: [] },
-      })
-      expect(errorPaths(result)).toContain('overview.agreementCheckbox')
-    })
-
-    it('rejects an empty string value in the agreement checkbox', () => {
-      const result = MachineLicenseCardReissueAnswersSchema.safeParse({
-        ...validAnswers,
-        overview: { agreementCheckbox: [''] },
-      })
-      expect(errorPaths(result)).toContain('overview.agreementCheckbox.0')
     })
   })
 })

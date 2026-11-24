@@ -1,7 +1,6 @@
 export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
-  PAYMENT = 'payment',
   COMPLETED = 'completed',
 }
 

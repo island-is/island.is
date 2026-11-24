@@ -14,23 +14,14 @@ import {
   ApplicationTypes,
   DefaultEvents,
   defineTemplateApi,
-  InstitutionNationalIds,
 } from '@island.is/application/types'
-import { buildPaymentState } from '@island.is/application/utils'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { CodeOwners } from '@island.is/shared/constants'
 import { MachineLicenseCardReissueAnswersSchema } from './dataSchema'
 import { application as applicationMessages } from './messages'
-import {
-  IdentityApi,
-  LicensesApi,
-  MockableVinnueftirlitidPaymentCatalogApi,
-  UserProfileApi,
-  VinnueftirlitidPaymentCatalogApi,
-} from '../dataProviders'
+import { IdentityApi, LicensesApi, UserProfileApi } from '../dataProviders'
 import { ApiActions, Roles, States } from '../shared'
-import { getChargeItems } from '../utils/getChargeItems'
 
 type Events = { type: DefaultEvents.SUBMIT | DefaultEvents.ABORT }
 
@@ -86,13 +77,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [
-                IdentityApi,
-                UserProfileApi,
-                LicensesApi,
-                VinnueftirlitidPaymentCatalogApi,
-                MockableVinnueftirlitidPaymentCatalogApi,
-              ],
+              api: [IdentityApi, UserProfileApi, LicensesApi],
             },
           ],
         },
@@ -125,9 +110,10 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/MachineLicenseCardReissueForm').then(
-                  (module) =>
-                    Promise.resolve(module.MachineLicenseCardReissueForm),
+                import(
+                  '../forms/MachineLicenseCardReissueForm'
+                ).then((module) =>
+                  Promise.resolve(module.MachineLicenseCardReissueForm),
                 ),
               actions: [
                 {
@@ -142,14 +128,9 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
+          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
       },
-      [States.PAYMENT]: buildPaymentState({
-        organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
-        chargeItems: getChargeItems,
-        submitTarget: States.COMPLETED,
-      }),
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',

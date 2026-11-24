@@ -25,7 +25,7 @@ export const overview = {
     },
     submit: {
       id: 'aosh.mlcr.application:overview.general.submit',
-      defaultMessage: 'Áfram',
+      defaultMessage: 'Senda inn umsókn',
       description: 'Submit button label',
     },
   }),
@@ -81,14 +81,6 @@ export const overview = {
       id: 'aosh.mlcr.application:overview.cardDelivery.recipient',
       defaultMessage: 'Viðtakandi: {value}',
       description: 'Recipient in overview',
-    },
-  }),
-  labels: defineMessages({
-    agreementCheckbox: {
-      id: 'aosh.mlcr.application:overview.labels.agreementCheckbox#markdown',
-      defaultMessage:
-        'Ég hef kynnt mér [greiðslu- og viðskiptaskilmála](https://island.is/s/vinnueftirlitid/gjaldskra#greidslu-og-vidskiptaskilmalar) Vinnueftirlitsins',
-      description: 'Agreement checkbox label on overview screen',
     },
   }),
 }

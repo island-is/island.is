@@ -34,9 +34,6 @@ export const MachineLicenseCardReissueAnswersSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: applicantInformationSchema({ phoneRequired: true }),
   cardDelivery: CardDeliverySchema,
-  overview: z.object({
-    agreementCheckbox: z.array(z.string().min(1)).nonempty(),
-  }),
 })
 
 export type MachineLicenseCardReissueAnswers = z.TypeOf<
