@@ -211,14 +211,28 @@ export class FileService {
   ): Promise<void> {
     const value = await this.valueModel.findByPk(valueId, { transaction })
     if (value) {
-      const existingKeys = value.json?.s3Key
+      let json: unknown = value.json ?? {}
+      if (typeof json === 'string') {
+        try {
+          json = JSON.parse(json)
+        } catch (error) {
+          this.logger.error('Error parsing file value JSON', { valueId, error })
+          throw error
+        }
+      }
+      if (typeof json !== 'object' || json === null || Array.isArray(json)) {
+        const error = new Error('File value JSON must be an object')
+        this.logger.error('Error parsing file value JSON', { valueId, error })
+        throw error
+      }
+      const existingKeys = 's3Key' in json ? json.s3Key : undefined
       const keys = Array.isArray(existingKeys)
         ? existingKeys
         : typeof existingKeys === 'string'
         ? [existingKeys]
         : []
       value.json = {
-        ...value.json,
+        ...json,
         s3Key: keys.filter((k) => k !== key),
       }
 

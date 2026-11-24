@@ -81,6 +81,7 @@ import { FormDelegationDto } from './models/dto/formDelegation.dto'
 import { normalizeZendeskInstance } from '../../../utils/zendeskPartiesCustomFieldIds'
 import { ImportFormDto } from './models/dto/importForm.dto'
 import { formExportSchema } from './formExport.schema'
+import { getApplicationFiles } from '../../../utils/applicationFiles'
 
 const MAX_COPY_SLUG_RETRIES = 5
 
@@ -1161,50 +1162,11 @@ export class FormsService {
     return fileKeys
   }
 
-  private getApplicationFiles(
-    application: Application,
-  ): { key: string; valueId: string }[] {
-    const files: { key: string; valueId: string }[] = []
-    for (const value of application.values ?? []) {
-      if (value.fieldType !== FieldTypesEnum.FILE) continue
-
-      let parsed: unknown = value.json
-      if (typeof value.json === 'string') {
-        try {
-          parsed = JSON.parse(value.json)
-        } catch (error) {
-          this.logger.warn('Skipping file cleanup due to invalid value.json', {
-            valueId: value.id,
-            error,
-          })
-          continue
-        }
-      }
-
-      const rawS3Keys = (parsed as { s3Key?: unknown } | undefined)?.s3Key
-      const s3Keys: string[] = Array.isArray(rawS3Keys)
-        ? rawS3Keys.filter(
-            (k): k is string => typeof k === 'string' && k.length > 0,
-          )
-        : typeof rawS3Keys === 'string' && rawS3Keys.length > 0
-        ? [rawS3Keys]
-        : []
-
-      this.logger.debug(`Deleting s3Keys for value ${value.id}:`, s3Keys)
-
-      for (const key of s3Keys) {
-        files.push({ key, valueId: value.id })
-      }
-    }
-
-    return files
-  }
-
   private async collectApplicationFiles(
     application: Application,
     transaction: Transaction,
   ): Promise<string[]> {
-    const files = this.getApplicationFiles(application)
+    const files = getApplicationFiles(application, this.logger)
     for (const { key, valueId } of files) {
       await this.fileService.removeFileReference(key, valueId, transaction)
     }

@@ -150,6 +150,14 @@ service, are logged and propagated. When post-commit deletion fails, the databas
 cleanup remains committed; failed objects require separate storage cleanup,
 not another archive attempt.
 File-reference cleanup accepts both key arrays and legacy single-key strings.
+It also parses stringified JSON values and preserves their other properties
+when removing a key. Invalid JSON is logged and rejected without saving.
+
+Deleting an application from the applicant's "My applications" list removes its
+events and values transactionally, then deletes its uploaded S3 files after
+commit. Application ownership and delegation checks still apply. A failed
+transaction leaves the uploaded files intact; post-commit storage errors are
+logged and propagated.
 
 ## Code owners and maintainers
 

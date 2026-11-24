@@ -34,3 +34,9 @@ or saving.
 Full-field saves are serialized per field, including automatic translations and
 subsequent manual edits, so a delayed translation save cannot overwrite a later
 saved edit. Updates to different fields can proceed independently.
+
+## Publishing
+
+After a publish request fails, the forms list refreshes from persisted state:
+publishing may already have committed before attachment cleanup failed.
+If the refresh also fails, the operator is told to reload before retrying.

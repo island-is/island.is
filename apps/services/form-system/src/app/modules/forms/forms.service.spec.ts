@@ -10,7 +10,7 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 import { randomUUID } from 'crypto'
 import { Transaction, UniqueConstraintError } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
-import { ConflictException } from '@nestjs/common'
+import { ConflictException, InternalServerErrorException } from '@nestjs/common'
 
 import { FormsService } from './forms.service'
 import { Form } from './models/form.model'
@@ -779,12 +779,25 @@ describe.each(['publishing development', 'deleting test applications'])(
 
     it('reports post-commit storage failure without undoing database cleanup', async () => {
       const { run, application, fileService, commit } = setup()
-      fileService.deleteFileFromStorage.mockRejectedValueOnce(
-        new Error('Storage unavailable'),
-      )
+      const error = new Error('Storage unavailable')
+      fileService.deleteFileFromStorage.mockRejectedValueOnce(error)
 
-      await expect(run()).rejects.toThrow()
+      const result = run()
+      if (action === 'publishing development') {
+        await expect(result).rejects.toBe(error)
+      } else {
+        await expect(result).rejects.toBeInstanceOf(
+          InternalServerErrorException,
+        )
+        await expect(result).rejects.toThrow(
+          "Unexpected error deleting applications for form 'form'.",
+        )
+      }
 
+      expect(fileService.deleteFileFromStorage.mock.calls).toEqual([
+        ['first-key'],
+        ['second-key'],
+      ])
       expect(application.destroy).toHaveBeenCalled()
       expect(commit).toHaveBeenCalledTimes(1)
       for (const order of fileService.deleteFileFromStorage.mock

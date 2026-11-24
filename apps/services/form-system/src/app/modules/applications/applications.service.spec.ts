@@ -12,6 +12,249 @@ import { ApplicationsService } from './applications.service'
 import { SectionDto } from '../sections/models/dto/section.dto'
 import axios from 'axios'
 import PDFDocument from 'pdfkit'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { Value } from './models/value.model'
+
+describe('ApplicationsService.deleteApplication', () => {
+  const setup = () => {
+    const user: User = {
+      nationalId: '0101307789',
+      scope: [],
+      authorization: '',
+      client: 'test',
+    }
+    const transaction = { id: 'transaction' }
+    const commit = jest.fn().mockResolvedValue(undefined)
+    const application = {
+      id: 'application-id',
+      formId: 'form-id',
+      nationalId: user.nationalId,
+      actorNationalId: user.nationalId,
+      values: [
+        {
+          id: 'array-value',
+          fieldType: FieldTypesEnum.FILE,
+          json: { s3Key: ['first-key', 'second-key', '', null, 42] },
+        },
+        {
+          id: 'scalar-value',
+          fieldType: FieldTypesEnum.FILE,
+          json: { s3Key: 'scalar-key' },
+        },
+        {
+          id: 'serialized-value',
+          fieldType: FieldTypesEnum.FILE,
+          json: JSON.stringify({ s3Key: ['serialized-key'] }),
+        },
+        {
+          id: 'text-value',
+          fieldType: FieldTypesEnum.TEXTBOX,
+          json: { s3Key: ['not-an-attachment'] },
+        },
+      ],
+      destroy: jest.fn().mockResolvedValue(undefined),
+    }
+    const applicationModel = {
+      findByPk: jest.fn().mockResolvedValue(application),
+    }
+    const formModel = {
+      findByPk: jest.fn().mockResolvedValue({ delegations: [] }),
+    }
+    const applicationEventModel = {
+      destroy: jest.fn().mockResolvedValue(1),
+    }
+    const valueModel = {
+      destroy: jest.fn(async () => {
+        application.values = []
+        return 1
+      }),
+    }
+    const fileService = {
+      deleteFileFromStorage: jest.fn().mockResolvedValue(undefined),
+    }
+    const service = Object.assign(
+      Object.create(ApplicationsService.prototype),
+      {
+        applicationModel,
+        formModel,
+        applicationEventModel,
+        valueModel,
+        fileService,
+        logger: { debug: jest.fn(), warn: jest.fn() },
+        sequelize: {
+          transaction: jest.fn(async (callback) => {
+            const result = await callback(transaction)
+            await commit()
+            return result
+          }),
+        },
+      },
+    ) as ApplicationsService
+    const run = () => service.deleteApplication(application.id, user)
+    return {
+      run,
+      user,
+      transaction,
+      commit,
+      application,
+      applicationModel,
+      formModel,
+      applicationEventModel,
+      valueModel,
+      fileService,
+    }
+  }
+
+  it('deletes all attachment objects only after committing application, value and event deletion', async () => {
+    const {
+      run,
+      transaction,
+      commit,
+      application,
+      applicationModel,
+      formModel,
+      applicationEventModel,
+      valueModel,
+      fileService,
+    } = setup()
+
+    await run()
+
+    expect(applicationModel.findByPk).toHaveBeenCalledWith(application.id, {
+      include: [{ model: Value, as: 'values', separate: true }],
+      transaction,
+      lock: Transaction.LOCK.UPDATE,
+    })
+    expect(formModel.findByPk).toHaveBeenCalledWith(application.formId, {
+      transaction,
+    })
+    expect(applicationEventModel.destroy).toHaveBeenCalledWith({
+      where: { applicationId: application.id },
+      transaction,
+    })
+    expect(valueModel.destroy).toHaveBeenCalledWith({
+      where: { applicationId: application.id },
+      transaction,
+    })
+    expect(application.destroy).toHaveBeenCalledWith({ transaction })
+    expect(
+      applicationEventModel.destroy.mock.invocationCallOrder[0],
+    ).toBeLessThan(valueModel.destroy.mock.invocationCallOrder[0])
+    expect(valueModel.destroy.mock.invocationCallOrder[0]).toBeLessThan(
+      application.destroy.mock.invocationCallOrder[0],
+    )
+    expect(application.destroy.mock.invocationCallOrder[0]).toBeLessThan(
+      commit.mock.invocationCallOrder[0],
+    )
+    expect(fileService.deleteFileFromStorage.mock.calls).toEqual([
+      ['first-key'],
+      ['second-key'],
+      ['scalar-key'],
+      ['serialized-key'],
+    ])
+    for (const order of fileService.deleteFileFromStorage.mock
+      .invocationCallOrder) {
+      expect(order).toBeGreaterThan(commit.mock.invocationCallOrder[0])
+    }
+  })
+
+  it('still deletes an application with no attachments', async () => {
+    const { run, application, fileService, commit } = setup()
+    application.values = []
+
+    await run()
+
+    expect(application.destroy).toHaveBeenCalled()
+    expect(commit).toHaveBeenCalledTimes(1)
+    expect(fileService.deleteFileFromStorage).not.toHaveBeenCalled()
+  })
+
+  it.each(['events', 'values', 'application', 'commit'])(
+    'leaves stored attachments intact if %s deletion or commit fails',
+    async (failure) => {
+      const {
+        run,
+        application,
+        applicationEventModel,
+        valueModel,
+        fileService,
+        commit,
+      } = setup()
+      const operation =
+        failure === 'events'
+          ? applicationEventModel.destroy
+          : failure === 'values'
+          ? valueModel.destroy
+          : failure === 'application'
+          ? application.destroy
+          : commit
+      operation.mockRejectedValueOnce(new Error('Database failure'))
+
+      await expect(run()).rejects.toThrow('Database failure')
+
+      expect(fileService.deleteFileFromStorage).not.toHaveBeenCalled()
+    },
+  )
+
+  it.each(['owner', 'actor', 'delegation'])(
+    'does not delete data or stored files if the %s check fails',
+    async (failure) => {
+      const {
+        run,
+        user,
+        application,
+        formModel,
+        applicationEventModel,
+        valueModel,
+        fileService,
+      } = setup()
+      if (failure === 'owner') application.nationalId = 'other-owner'
+      if (failure === 'actor') application.actorNationalId = 'other-actor'
+      if (failure === 'delegation') {
+        user.delegationType = [AuthDelegationType.Custom]
+        formModel.findByPk.mockResolvedValueOnce({
+          delegations: ['required-scope'],
+        })
+      }
+
+      await expect(run()).rejects.toThrow('User does not have permission')
+
+      expect(applicationEventModel.destroy).not.toHaveBeenCalled()
+      expect(valueModel.destroy).not.toHaveBeenCalled()
+      expect(application.destroy).not.toHaveBeenCalled()
+      expect(fileService.deleteFileFromStorage).not.toHaveBeenCalled()
+    },
+  )
+
+  it.each(['application', 'form'])(
+    'does not delete stored files if the %s is missing',
+    async (missing) => {
+      const { run, applicationModel, formModel, fileService } = setup()
+      const model = missing === 'application' ? applicationModel : formModel
+      model.findByPk.mockResolvedValueOnce(null)
+
+      await expect(run()).rejects.toThrow('not found')
+
+      expect(fileService.deleteFileFromStorage).not.toHaveBeenCalled()
+    },
+  )
+
+  it('surfaces storage deletion failures after database cleanup has committed', async () => {
+    const { run, application, fileService, commit } = setup()
+    fileService.deleteFileFromStorage.mockRejectedValueOnce(
+      new Error('Storage unavailable'),
+    )
+
+    await expect(run()).rejects.toThrow('Storage unavailable')
+
+    expect(application.destroy).toHaveBeenCalled()
+    expect(commit).toHaveBeenCalledTimes(1)
+    for (const order of fileService.deleteFileFromStorage.mock
+      .invocationCallOrder) {
+      expect(order).toBeGreaterThan(commit.mock.invocationCallOrder[0])
+    }
+  })
+})
 
 describe('ApplicationsService.createApplicationPdf', () => {
   const nationalId = '1234567890'

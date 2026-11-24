@@ -86,6 +86,52 @@ describe('FileService deletion', () => {
   })
 
   it.each([
+    { storedKeys: ['file-key', 'retained-key'], expected: ['retained-key'] },
+    { storedKeys: 'file-key', expected: [] },
+  ])(
+    'preserves stringified JSON metadata when removing $storedKeys',
+    async ({ storedKeys, expected }) => {
+      const { service, valueModel, s3Service } = setup()
+      const metadata = { fileName: 'document.pdf', custom: { retained: true } }
+      const value = {
+        json: JSON.stringify({ ...metadata, s3Key: storedKeys }),
+        save: jest.fn().mockResolvedValue(undefined),
+      }
+      valueModel.findByPk.mockResolvedValue(value)
+      const transaction: Transaction = Object.create(Transaction.prototype)
+
+      await service.removeFileReference('file-key', 'value-id', transaction)
+
+      expect(value.json).toEqual({ ...metadata, s3Key: expected })
+      expect(valueModel.findByPk).toHaveBeenCalledWith('value-id', {
+        transaction,
+      })
+      expect(value.save).toHaveBeenCalledWith({ transaction })
+      expect(s3Service.deleteObject).not.toHaveBeenCalled()
+    },
+  )
+
+  it.each(['{invalid', 'null'])(
+    'logs and rejects invalid stringified payload %s without saving',
+    async (json) => {
+      const { service, valueModel, logger } = setup()
+      const value = { json, save: jest.fn() }
+      valueModel.findByPk.mockResolvedValue(value)
+
+      await expect(
+        service.removeFileReference('file-key', 'value-id'),
+      ).rejects.toThrow()
+
+      expect(value.json).toBe(json)
+      expect(value.save).not.toHaveBeenCalled()
+      expect(logger.error).toHaveBeenCalledWith(
+        'Error parsing file value JSON',
+        { valueId: 'value-id', error: expect.any(Error) },
+      )
+    },
+  )
+
+  it.each([
     { storedKeys: 'file-key', expected: [] },
     { storedKeys: 'retained-key', expected: ['retained-key'] },
     { storedKeys: undefined, expected: [] },
