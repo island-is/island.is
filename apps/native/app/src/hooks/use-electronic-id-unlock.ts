@@ -1,7 +1,7 @@
 import { router } from 'expo-router'
 import { useEffect, useRef, useState } from 'react'
 
-import { getIasClient } from '@/lib/ias'
+import { abortError, getIasClient } from '@/lib/ias'
 import type { IasTokens } from '@/lib/ias'
 import {
   electronicIdStore,
@@ -50,6 +50,11 @@ export function useElectronicIdUnlock(
       const request = await ias.startElectronicIdUnlock(
         purpose === 'enableBiometrics' ? { purpose: 'biometric-key' } : {},
       )
+      // Cancelled, or the caller's screen left, before IAS answered: no code
+      // to show, and no sheet.
+      if (controller.signal.aborted) {
+        throw abortError()
+      }
       if (inline) {
         setVerificationCode(request.verificationCode)
       } else {

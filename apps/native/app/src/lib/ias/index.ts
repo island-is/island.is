@@ -13,6 +13,7 @@ export {
 export type { IasErrorCode } from './errors'
 export { createMockIasClient } from './mock'
 export type { MockIasClientOptions } from './mock'
+export { abortError } from './sleep'
 export type {
   CibaRequest,
   IasClient,
