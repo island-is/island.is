@@ -42,12 +42,19 @@ import {
 
 import { getRequestTransaction } from '../../../middleware'
 import {
+  getVerdictAppealOutcomeOverride,
   hasOutOfCourtAppeal,
-  isStatementDeadlineExpired,
+  // Whole-day rule for midnight verdict-appeal statement deadlines. Distinct
+  // from the local `isStatementDeadlineExpired` in getAppealCaseInfo, which
+  // uses an exact-instant comparison for ruling-appeal statement deadlines.
+  isStatementDeadlineExpired as isMidnightStatementDeadlineExpired,
   resolveDefenceParties,
 } from '../../appeal-case'
 import { getMostPermissiveRequestSharedWithDefenderForNationalId } from '../../defendant/requestSharedWithDefender.logic'
-import { isRulingOrderInConfirmedCourtSession } from '../../file/guards/caseFileCategory'
+import {
+  canUserAccessCaseFileCategory,
+  isRulingOrderInConfirmedCourtSession,
+} from '../../file/guards/caseFileCategory'
 import { canDefenceUserViewCivilClaimCaseFile } from '../../file/guards/civilClaimFileVisibility'
 import {
   AppealCase,
@@ -744,7 +751,7 @@ const serializeVerdictAppealStatementDeadline = (
 ) => ({
   ...deadline.toJSON(),
   // Whole-day rule: midnight rows stay open through the deadline date.
-  isExpired: isStatementDeadlineExpired(new Date(deadline.deadline)),
+  isExpired: isMidnightStatementDeadlineExpired(new Date(deadline.deadline)),
 })
 
 const transformVerdictAppealCaseForUser = (
@@ -757,18 +764,8 @@ const transformVerdictAppealCaseForUser = (
     defenceUser.nationalId,
   )
 
-  // Draft Landsréttur conclusion/decision stay off the wire until the appeal
-  // is completed — including after reopen, when the previous ruling fields
-  // remain on the row while state is RECEIVED again.
   return {
     ...appealCase.toJSON(),
-    ...(appealCase.appealState === AppealCaseState.COMPLETED
-      ? {}
-      : {
-          appealConclusion: undefined,
-          appealRulingDecision: undefined,
-          appealRulingDate: undefined,
-        }),
     statementDeadlines: appealCase.statementDeadlines
       ?.filter((deadline) => isVerdictAppealPartyRow(deadline, partyIds))
       .map(serializeVerdictAppealStatementDeadline),
@@ -957,11 +954,12 @@ const transformCase = (
   // event logs. An empty party filter would otherwise match prosecution rows
   // (null/null), and other defendants' greinargerðarfrest is not theirs.
   // Non-defence keeps every deadline, but still gets server `isExpired` so
-  // the web does not fall back to the browser clock.
+  // the web does not fall back to the browser clock. Outcome masking (main)
+  // spreads last and may strip statementDeadlines when COMPLETED is hidden.
   const verdictAppealCaseOverride = theCase.verdictAppealCase
     ? {
-        verdictAppealCase:
-          isDefence && user
+        verdictAppealCase: {
+          ...(isDefence && user
             ? transformVerdictAppealCaseForUser(
                 theCase.verdictAppealCase,
                 theCase,
@@ -973,7 +971,9 @@ const transformCase = (
                   theCase.verdictAppealCase.statementDeadlines?.map(
                     serializeVerdictAppealStatementDeadline,
                   ),
-              },
+              }),
+          ...getVerdictAppealOutcomeOverride(theCase.verdictAppealCase, user),
+        },
       }
     : {}
 
@@ -1017,7 +1017,8 @@ const transformCase = (
       civilClaimants: theCase.civilClaimants,
     }),
     caseFiles: theCase.caseFiles
-      ?.filter(
+      ?.filter((file) => canUserAccessCaseFileCategory(user, file.category))
+      .filter(
         (file) =>
           // The user must be known
           user &&

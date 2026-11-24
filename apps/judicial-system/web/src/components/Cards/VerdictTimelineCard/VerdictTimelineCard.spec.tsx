@@ -11,7 +11,9 @@ import type {
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  AppealCaseState,
   AppealCaseTransition,
+  AppealEventType,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
@@ -702,6 +704,87 @@ describe('VerdictTimelineCard', () => {
         screen.queryByRole('button', { name: 'Afturkalla' }),
       ).not.toBeInTheDocument()
       expect(mockTransitionAppealCase).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('prosecution statement deadline', () => {
+    const servedDefendant = {
+      ...mockDefendant,
+      verdict: {
+        serviceRequirement: 'NOT_REQUIRED',
+        serviceDate: '2026-05-01T00:00:00.000Z',
+      },
+    } as Defendant
+
+    it('shows the prosecution statement deadline on a standing appeal card', async () => {
+      renderComponent(servedDefendant, CaseIndictmentRulingDecision.RULING, true, {
+        caseOverrides: {
+          verdictAppealCase: {
+            id: 'verdict_appeal_case_id',
+            appealState: AppealCaseState.RECEIVED,
+            appealEventLogs: [
+              {
+                id: 'event_id',
+                created: '2026-05-25T10:00:00.000Z',
+                eventType: AppealEventType.APPEALED,
+                defendantId: mockDefendant.id,
+                userRole: UserRole.PROSECUTOR,
+              },
+            ],
+            statementDeadlines: [
+              {
+                id: 'prosecution_deadline',
+                deadline: '2026-09-14T00:00:00.000Z',
+                isExpired: false,
+              },
+            ],
+          },
+        },
+      })
+
+      expect(
+        await screen.findByText((content) =>
+          content.includes(
+            'Frestur til að skila greinargerð er til 14.09.2026',
+          ),
+        ),
+      ).toBeInTheDocument()
+    })
+
+    it('does not show the prosecution statement deadline for a defendant outside the appeal', async () => {
+      renderComponent(servedDefendant, CaseIndictmentRulingDecision.RULING, true, {
+        caseOverrides: {
+          verdictAppealCase: {
+            id: 'verdict_appeal_case_id',
+            appealState: AppealCaseState.RECEIVED,
+            appealEventLogs: [
+              {
+                id: 'event_id',
+                created: '2026-05-25T10:00:00.000Z',
+                eventType: AppealEventType.APPEALED,
+                defendantId: 'other_defendant',
+                userRole: UserRole.PROSECUTOR,
+              },
+            ],
+            statementDeadlines: [
+              {
+                id: 'prosecution_deadline',
+                deadline: '2026-09-14T00:00:00.000Z',
+                isExpired: false,
+              },
+            ],
+          },
+        },
+      })
+
+      expect(await screen.findByText(name)).toBeInTheDocument()
+      expect(
+        screen.queryByText((content) =>
+          content.includes(
+            'Frestur til að skila greinargerð er til 14.09.2026',
+          ),
+        ),
+      ).not.toBeInTheDocument()
     })
   })
 })

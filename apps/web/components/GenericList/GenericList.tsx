@@ -246,6 +246,7 @@ interface GenericListProps {
   displayError: boolean
   showSearchInput?: boolean
   showSearchFilters?: boolean
+  showPagination?: boolean
 }
 
 export const GenericList = ({
@@ -261,6 +262,7 @@ export const GenericList = ({
   children,
   showSearchInput = true,
   showSearchFilters = true,
+  showPagination = true,
 }: React.PropsWithChildren<GenericListProps>) => {
   const [searchValue, setSearchValue] = useQueryState(searchQueryId)
   const [page, setPage] = useQueryState(pageQueryId, parseAsInteger)
@@ -375,11 +377,11 @@ export const GenericList = ({
   )
 
   return (
-    <Box paddingBottom={3}>
+    <Box paddingBottom={3} ref={ref}>
       <GridContainer>
         <Stack space={4}>
           {(showSearchInput || showSearchFilters) && (
-            <Box ref={ref}>
+            <Box>
               {showSearchFilters && filterCategories.length > 1 && (
                 <Stack space={4}>
                   <Stack space={3}>
@@ -539,7 +541,7 @@ export const GenericList = ({
             <Text>{noResultsFoundText}</Text>
           )}
           {totalItems > 0 && children}
-          {totalItems > ITEMS_PER_PAGE && (
+          {showPagination && totalItems > ITEMS_PER_PAGE && (
             <Pagination
               page={page ?? 1}
               itemsPerPage={ITEMS_PER_PAGE}

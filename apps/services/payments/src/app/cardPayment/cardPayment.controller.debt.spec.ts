@@ -140,7 +140,12 @@ describe('CardPaymentController — debt payments', () => {
         expect.objectContaining({
           type: 'success',
           reason: 'payment_completed',
-          metadata: { payment: expect.objectContaining({ isSuccess: true }) },
+          metadata: {
+            payment: expect.objectContaining({ isSuccess: true }),
+            // The one hasPaymentCompletedEvent was asked about
+            correlationId:
+              paymentFlowService.hasPaymentCompletedEvent.mock.calls[0][1],
+          },
         }),
         expect.objectContaining({ throwOnError: false }),
       )

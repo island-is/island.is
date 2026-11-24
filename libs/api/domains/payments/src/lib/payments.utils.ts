@@ -1,6 +1,9 @@
 import { isIP } from 'net'
 
 import type { GraphQLContext } from '@island.is/auth-nest-tools'
+import type { VerifyCardResponse as PaymentsServiceVerifyCardResponse } from '@island.is/clients/payments'
+
+import type { VerifyCardResponse } from './dto/verifyCard.response'
 
 /** Gateway limit for the EMV 3-D Secure userAgent and acceptHeader members. */
 const HEADER_MAX_LENGTH = 2048
@@ -63,3 +66,24 @@ export const getPayerRequestInfo = (
     ),
   }
 }
+
+/**
+ * The payments service's card verification as the GraphQL type, whose fields
+ * stay non-null though the payment gateway may leave out the ones the service
+ * does not need. The payments app reads postUrl, verificationFields,
+ * scriptPath, isSuccess and responseCode; the defaults only keep the schema's
+ * contract for the rest.
+ */
+export const toVerifyCardResponse = (
+  verification: PaymentsServiceVerifyCardResponse,
+): VerifyCardResponse => ({
+  ...verification,
+  cardVerificationRawResponse: verification.cardVerificationRawResponse ?? '',
+  additionalFields: verification.additionalFields ?? [],
+  cardInformation: verification.cardInformation ?? {
+    cardScheme: '',
+    cardUsage: '',
+  },
+  responseCode: verification.responseCode ?? '',
+  responseTime: verification.responseTime ?? '',
+})

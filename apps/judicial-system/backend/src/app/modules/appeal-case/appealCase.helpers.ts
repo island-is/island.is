@@ -5,6 +5,7 @@ import {
   AppealOrigin,
   type AppealStatementParty,
   CaseAppealDecision,
+  isCourtOfAppealsUser,
   isDefenceUser,
   isIndictmentCase,
   isProsecutionUser,
@@ -13,6 +14,7 @@ import {
   type User,
   UserRole,
   verdictAppealFileCategories,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -25,6 +27,38 @@ import {
   CivilClaimant,
   Defendant,
 } from '../repository'
+
+// How the court of appeals concludes a verdict appeal is its own until it is
+// released: every other user is presented with an appeal still in progress,
+// whatever the court has saved on it and whether or not it has completed it.
+export const getVerdictAppealOutcomeOverride = (
+  verdictAppealCase: AppealCase,
+  user: User | undefined,
+) =>
+  isCourtOfAppealsUser(user)
+    ? {}
+    : {
+        appealRulingDecision: undefined,
+        appealRulingType: undefined,
+        appealConclusion: undefined,
+        appealRulingModifiedHistory: undefined,
+        appealRulingDate: undefined,
+        ...(verdictAppealCase.appealState === AppealCaseState.COMPLETED
+          ? {
+              appealState: AppealCaseState.APPEALED,
+              // Masking COMPLETED as APPEALED would leave "statement deadline
+              // ran out" bullets on timeline cards forever; drop them with the
+              // outcome.
+              statementDeadlines: undefined,
+            }
+          : {}),
+        // The status the court records for itself says the same thing, so it
+        // is held where the lists hold it: under advisement.
+        ...(verdictAppealCase.verdictAppealStatus ===
+        VerdictAppealStatus.COMPLETED
+          ? { verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT }
+          : {}),
+      }
 
 // The appeal case a case file belongs to: the ruling-order appeal the file
 // carries in its rulingFileId, the verdict appeal for an appeal declaration or
@@ -158,12 +192,39 @@ export const standingVerdictAppealEvents = (
 //   - SCHEDULED: the court of appeals has called a session that is yet to be
 //     held.
 // An appeal that has not been sent has no stage yet, and neither does one that
-// is over - completed or withdrawn - since none of these describes it.
+// was withdrawn, since none of these describes it.
+//
+// Those four are read off what has happened to the appeal, and are what a list
+// shows until the court of appeals records a status of its own. Once it has,
+// the recorded status decides the stage instead, and adds the three only the
+// court can say:
+//   - POSTPONED: the court has postponed the appeal;
+//   - UNDER_ADVISEMENT: the appeal has been heard and awaits judgment.
+//
+// COMPLETED is not shown yet. Nothing about how an appeal ended may change for
+// anyone outside the court of appeals before the court releases the outcome,
+// so neither a recorded status of completed nor the completed appeal itself
+// moves a list: it keeps the appeal under advisement, which is where an appeal
+// stands before it is finished.
 export type VerdictAppealProgress =
   | 'SENT'
   | 'RECEIVED'
   | 'STATEMENT_DEADLINES'
   | 'SCHEDULED'
+  | 'POSTPONED'
+  | 'UNDER_ADVISEMENT'
+  | 'COMPLETED'
+
+const recordedVerdictAppealProgress: Record<
+  VerdictAppealStatus,
+  VerdictAppealProgress
+> = {
+  [VerdictAppealStatus.STATEMENT_DEADLINE_GRANTED]: 'STATEMENT_DEADLINES',
+  [VerdictAppealStatus.COURT_SESSION_SCHEDULED]: 'SCHEDULED',
+  [VerdictAppealStatus.POSTPONED]: 'POSTPONED',
+  [VerdictAppealStatus.UNDER_ADVISEMENT]: 'UNDER_ADVISEMENT',
+  [VerdictAppealStatus.COMPLETED]: 'UNDER_ADVISEMENT',
+}
 
 // An appeal the court of appeals has concluded, or that was withdrawn: nothing
 // about its progress or its calendar is current any more.
@@ -182,6 +243,46 @@ export const nextAppealCourtSession = (
     .filter((session) => session.sessionDate >= now)
     .sort((a, b) => a.sessionDate.getTime() - b.sessionDate.getTime())[0]
 
+// The session a list shows for a verdict appeal, or 'POSTPONED' when the court
+// of appeals has postponed it and there is none to show.
+//
+// The status the court has recorded decides, the way the district court's
+// decision decides its court date: while the court is calling sessions, that
+// is the next one, or the last one held when none is ahead - the status says
+// the appeal is still on the calendar, which explains a date that has passed.
+// Any other recorded status means no session is current. Until the court has
+// recorded one, only a session still ahead is shown.
+export const currentAppealCourtSession = (
+  appealCase: Pick<
+    AppealCase,
+    'appealState' | 'verdictAppealStatus' | 'courtSessions'
+  >,
+  now: Date,
+): AppealCourtSession | 'POSTPONED' | undefined => {
+  if (isVerdictAppealOver(appealCase)) {
+    return undefined
+  }
+
+  const next = nextAppealCourtSession(appealCase, now)
+
+  switch (appealCase.verdictAppealStatus) {
+    case undefined:
+    case null:
+      return next
+    case VerdictAppealStatus.COURT_SESSION_SCHEDULED:
+      return (
+        next ??
+        [...(appealCase.courtSessions ?? [])].sort(
+          (a, b) => b.sessionDate.getTime() - a.sessionDate.getTime(),
+        )[0]
+      )
+    case VerdictAppealStatus.POSTPONED:
+      return 'POSTPONED'
+    default:
+      return undefined
+  }
+}
+
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000
 
 // A statement deadline is a day, stored as the midnight that day starts on,
@@ -198,6 +299,7 @@ export const verdictAppealProgress = (
   appealCase: Pick<
     AppealCase,
     | 'appealState'
+    | 'verdictAppealStatus'
     | 'appealCaseNumber'
     | 'sentAppealSummonses'
     | 'courtSessions'
@@ -205,8 +307,20 @@ export const verdictAppealProgress = (
   >,
   now: Date,
 ): VerdictAppealProgress | undefined => {
-  if (isVerdictAppealOver(appealCase)) {
+  if (appealCase.appealState === AppealCaseState.WITHDRAWN) {
     return undefined
+  }
+
+  // A concluded appeal is not shown as concluded yet. This is read by lists
+  // outside the court of appeals, and until the court releases the outcome
+  // nothing about the appeal may change for anyone else, so it stays under
+  // advisement - where a recorded status of completed leaves it too.
+  if (appealCase.appealState === AppealCaseState.COMPLETED) {
+    return 'UNDER_ADVISEMENT'
+  }
+
+  if (appealCase.verdictAppealStatus) {
+    return recordedVerdictAppealProgress[appealCase.verdictAppealStatus]
   }
 
   if (nextAppealCourtSession(appealCase, now)) {

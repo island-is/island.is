@@ -44,7 +44,10 @@ import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.c
 import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { getOpenAppealStatementDeadlineItem } from './appealStatementDeadlineItem.logic'
-import { getProsecutionVerdictAppealItem } from './prosecutionVerdictAppeal.logic'
+import {
+  defendantHasStandingVerdictAppeal,
+  getProsecutionVerdictAppealItem,
+} from './prosecutionVerdictAppeal.logic'
 import type { VerdictTimelineItem } from './VerdictTimelineBody'
 import VerdictTimelineBody from './VerdictTimelineBody'
 import {
@@ -242,13 +245,23 @@ const VerdictTimelineCard: FC<Props> = (props) => {
       items.push(prosecutionAppealItem)
     }
 
-    const statementDeadlineItem = getOpenAppealStatementDeadlineItem(
-      workingCase.verdictAppealCase,
-      {},
-    )
+    // Prosecution statement deadlines are case-level (no party ids). Only show
+    // them on cards for defendants who are part of the standing appeal.
+    const defendantIsInAppeal =
+      defendantHasStandingVerdictAppeal(
+        workingCase.verdictAppealCase,
+        defendant.id,
+      ) || Boolean(defendant.verdict?.appealDate)
 
-    if (statementDeadlineItem) {
-      items.push(statementDeadlineItem)
+    if (defendantIsInAppeal) {
+      const statementDeadlineItem = getOpenAppealStatementDeadlineItem(
+        workingCase.verdictAppealCase,
+        {},
+      )
+
+      if (statementDeadlineItem) {
+        items.push(statementDeadlineItem)
+      }
     }
 
     if (defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin) {

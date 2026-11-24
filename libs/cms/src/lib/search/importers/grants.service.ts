@@ -85,15 +85,15 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
             key: string
             type: string
             value?: string
-          }> = [
-            mapped.typeTag
-              ? {
-                  key: mapped.typeTag.slug,
-                  type: 'genericTag',
-                  value: mapped.typeTag.title,
-                }
-              : null,
-          ].filter(isDefined)
+          }> = []
+
+          mapped.typeTags?.forEach((tag) => {
+            tags.push({
+              key: tag.slug,
+              type: 'genericTag',
+              value: tag.title,
+            })
+          })
 
           mapped.categoryTags?.forEach((tag) => {
             if (tag) {

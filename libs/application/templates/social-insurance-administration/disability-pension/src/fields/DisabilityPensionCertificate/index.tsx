@@ -19,13 +19,14 @@ import * as m from '../../lib/messages'
 import { Query } from '@island.is/api/schema'
 
 export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
+  application,
   setBeforeSubmitCallback,
 }) => {
   const { formatMessage, lang } = useLocale()
 
   const { data, loading } = useQuery<Query>(
     siaDisabilityPensionCertificateQuery,
-    { variables: { locale: lang } },
+    { variables: { locale: lang, applicationId: application.id } },
   )
 
   setBeforeSubmitCallback?.(async () => {

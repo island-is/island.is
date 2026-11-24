@@ -25,10 +25,12 @@ const courtOfAppealsUpdateFields: (keyof UpdateAppealCaseDto)[] = [
   'appealJudgeIds',
   'appealConclusion',
   'appealRulingDecision',
+  'appealRulingType',
   'appealRulingModifiedHistory',
   'appealValidToDate',
   'isAppealCustodyIsolation',
   'appealIsolationToDate',
+  'verdictAppealStatus',
 ]
 
 // Court of appeals update rules

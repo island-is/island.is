@@ -7,11 +7,13 @@ import {
   InstitutionType,
   User,
   UserRole,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
 
 import { AppealCase, AppealEventLog, Case, CaseFile } from '../../repository'
 import {
   appellantRepresentativeNationalIds,
+  currentAppealCourtSession,
   findAppealCaseOfCaseFile,
   hasStandingVerdictAppeal,
   nextAppealCourtSession,
@@ -692,23 +694,164 @@ describe('verdict appeal progress', () => {
     ).toBe('RECEIVED')
   })
 
-  // None of the stages describes an appeal that is over, and the leftovers of
-  // its steps - a number, a session still in the calendar - would say otherwise.
-  it.each([AppealCaseState.COMPLETED, AppealCaseState.WITHDRAWN])(
-    'has no stage once the appeal is %s',
-    (appealState) => {
+  // None of the stages describes a withdrawn appeal, and the leftovers of its
+  // steps - a number, a session still in the calendar - would say otherwise.
+  it('has no stage once the appeal is withdrawn', () => {
+    expect(
+      verdictAppealProgress(
+        appealCase({
+          appealState: AppealCaseState.WITHDRAWN,
+          appealCaseNumber: '526/2026',
+          courtSessions: [session(AppealCourtSessionType.MAIN_HEARING, 10)],
+        }),
+        now,
+      ),
+    ).toBeUndefined()
+  })
+
+  // Lists outside the court of appeals read this, and they are shown nothing
+  // of how the appeal ended until the court releases it.
+  it('stays under advisement once the appeal itself is completed', () => {
+    expect(
+      verdictAppealProgress(
+        appealCase({
+          appealState: AppealCaseState.COMPLETED,
+          appealCaseNumber: '526/2026',
+          courtSessions: [session(AppealCourtSessionType.MAIN_HEARING, 10)],
+        }),
+        now,
+      ),
+    ).toBe('UNDER_ADVISEMENT')
+  })
+
+  // What the court of appeals records outranks what can be read off the
+  // appeal: here everything else says a session is still ahead.
+  it.each([
+    [VerdictAppealStatus.STATEMENT_DEADLINE_GRANTED, 'STATEMENT_DEADLINES'],
+    [VerdictAppealStatus.COURT_SESSION_SCHEDULED, 'SCHEDULED'],
+    [VerdictAppealStatus.POSTPONED, 'POSTPONED'],
+    [VerdictAppealStatus.UNDER_ADVISEMENT, 'UNDER_ADVISEMENT'],
+    // The court's own note until the appeal itself is completed.
+    [VerdictAppealStatus.COMPLETED, 'UNDER_ADVISEMENT'],
+  ])('takes the stage from the recorded status %s', (status, progress) => {
+    expect(
+      verdictAppealProgress(
+        appealCase({
+          verdictAppealStatus: status,
+          appealCaseNumber: '526/2026',
+          courtSessions: [session(AppealCourtSessionType.MAIN_HEARING, 10)],
+          statementDeadlines: [deadline(5)],
+        }),
+        now,
+      ),
+    ).toBe(progress)
+  })
+
+  it('takes the stage from the recorded status when nothing else gives one', () => {
+    expect(
+      verdictAppealProgress(
+        appealCase({ verdictAppealStatus: VerdictAppealStatus.POSTPONED }),
+        now,
+      ),
+    ).toBe('POSTPONED')
+  })
+
+  it('has no stage once the appeal is withdrawn, whatever status was recorded', () => {
+    expect(
+      verdictAppealProgress(
+        appealCase({
+          appealState: AppealCaseState.WITHDRAWN,
+          verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+        }),
+        now,
+      ),
+    ).toBeUndefined()
+  })
+
+  it('stays under advisement once the appeal itself is completed, whatever status was recorded', () => {
+    expect(
+      verdictAppealProgress(
+        appealCase({
+          appealState: AppealCaseState.COMPLETED,
+          verdictAppealStatus: VerdictAppealStatus.POSTPONED,
+        }),
+        now,
+      ),
+    ).toBe('UNDER_ADVISEMENT')
+  })
+
+  describe('the session to show', () => {
+    const held = session(AppealCourtSessionType.PREPARATORY_HEARING, -20)
+    const heldLast = session(AppealCourtSessionType.MAIN_HEARING, -5)
+    const ahead = session(AppealCourtSessionType.VERDICT, 10)
+
+    const sessionType = (fields: Record<string, unknown>) => {
+      const current = currentAppealCourtSession(appealCase(fields), now)
+
+      return typeof current === 'object' ? current.sessionType : current
+    }
+
+    it('is the next session while no status is recorded', () => {
+      expect(sessionType({ courtSessions: [held, ahead] })).toBe(
+        AppealCourtSessionType.VERDICT,
+      )
+    })
+
+    it('is none once every session is held and no status is recorded', () => {
+      expect(sessionType({ courtSessions: [held, heldLast] })).toBeUndefined()
+    })
+
+    it('is the next session while the court is calling sessions', () => {
       expect(
-        verdictAppealProgress(
-          appealCase({
-            appealState,
-            appealCaseNumber: '526/2026',
-            courtSessions: [session(AppealCourtSessionType.MAIN_HEARING, 10)],
-          }),
-          now,
-        ),
+        sessionType({
+          verdictAppealStatus: VerdictAppealStatus.COURT_SESSION_SCHEDULED,
+          courtSessions: [held, ahead, heldLast],
+        }),
+      ).toBe(AppealCourtSessionType.VERDICT)
+    })
+
+    // The recorded status explains the date that has passed.
+    it('is the session held last while the court is calling sessions and none is ahead', () => {
+      expect(
+        sessionType({
+          verdictAppealStatus: VerdictAppealStatus.COURT_SESSION_SCHEDULED,
+          courtSessions: [held, heldLast],
+        }),
+      ).toBe(AppealCourtSessionType.MAIN_HEARING)
+    })
+
+    it('is postponed for a postponed appeal, sessions or not', () => {
+      expect(
+        sessionType({
+          verdictAppealStatus: VerdictAppealStatus.POSTPONED,
+          courtSessions: [ahead],
+        }),
+      ).toBe('POSTPONED')
+    })
+
+    it.each([
+      VerdictAppealStatus.STATEMENT_DEADLINE_GRANTED,
+      VerdictAppealStatus.UNDER_ADVISEMENT,
+      VerdictAppealStatus.COMPLETED,
+    ])('is none for an appeal recorded as %s', (status) => {
+      expect(
+        sessionType({ verdictAppealStatus: status, courtSessions: [ahead] }),
       ).toBeUndefined()
-    },
-  )
+    })
+
+    it.each([AppealCaseState.COMPLETED, AppealCaseState.WITHDRAWN])(
+      'is none once the appeal is %s',
+      (appealState) => {
+        expect(
+          sessionType({
+            appealState,
+            verdictAppealStatus: VerdictAppealStatus.COURT_SESSION_SCHEDULED,
+            courtSessions: [ahead],
+          }),
+        ).toBeUndefined()
+      },
+    )
+  })
 
   it('picks the earliest session still ahead as the next one', () => {
     const next = nextAppealCourtSession(

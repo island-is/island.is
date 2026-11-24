@@ -13,6 +13,7 @@ import {
   AppealCaseRulingDecision,
   AppealCaseState,
   AppealDecisionPartyRole,
+  AppealRulingType,
   CaseAppealDecision,
   CaseDecision,
   CaseFileCategory,
@@ -33,12 +34,14 @@ import {
   SessionArrangements,
   SubpoenaType,
   UserRole,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
   areAppealDecisionsComplete,
   getIndictmentCountWarningMessage,
   isAdminUserFormValid,
+  isAdvocateContactValid,
   isConclusionStepValid,
   isCourtHearingArrangemenstStepValidRC,
   isCourtHearingArrangementsStepValidIC,
@@ -70,6 +73,8 @@ import {
   isRulingValidIC,
   isRulingValidRC,
   isSubpoenaStepValid,
+  isVerdictAppealConclusionFieldsValid,
+  isVerdictAppealStatusStepValid,
   validate,
 } from './validate'
 
@@ -2294,6 +2299,29 @@ describe('isDefenderStepValid', () => {
   })
 })
 
+describe('isAdvocateContactValid', () => {
+  test.each([
+    [undefined, undefined],
+    [null, null],
+    ['', ''],
+    ['verjandi@dummy.dd', undefined],
+    [undefined, '555-5555'],
+    ['verjandi@dummy.dd', '5555555'],
+  ])('is true for email %p and phone number %p', (email, phoneNumber) => {
+    expect(isAdvocateContactValid(email, phoneNumber)).toBe(true)
+  })
+
+  test.each([
+    ['verjandi', undefined],
+    ['verjandi@dummy.dd ', undefined],
+    [undefined, '123'],
+    ['verjandi@dummy.dd', '123'],
+    ['verjandi', '555-5555'],
+  ])('is false for email %p and phone number %p', (email, phoneNumber) => {
+    expect(isAdvocateContactValid(email, phoneNumber)).toBe(false)
+  })
+})
+
 describe('isCourtSessionValid', () => {
   const workingCase = { defendants: [{ id: 'd1' }] } as WorkingCase
 
@@ -2863,6 +2891,44 @@ describe('isCourtOfAppealRulingStepFieldsValid', () => {
   })
 })
 
+describe('isVerdictAppealConclusionFieldsValid', () => {
+  const recorded = {
+    appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+    appealRulingType: AppealRulingType.VERDICT,
+    appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+  }
+
+  test('is true with an outcome, a type and concluding words', () => {
+    expect(isVerdictAppealConclusionFieldsValid(recorded)).toBe(true)
+  })
+
+  test('is false without an appeal', () => {
+    expect(isVerdictAppealConclusionFieldsValid(undefined)).toBe(false)
+    expect(isVerdictAppealConclusionFieldsValid(null)).toBe(false)
+  })
+
+  test.each([
+    ['an outcome', { ...recorded, appealRulingDecision: null }],
+    ['a type', { ...recorded, appealRulingType: null }],
+    ['concluding words', { ...recorded, appealConclusion: null }],
+    ['anything but spaces for words', { ...recorded, appealConclusion: '  ' }],
+  ])('is false without %s', (_, appealCase) => {
+    expect(isVerdictAppealConclusionFieldsValid(appealCase)).toBe(false)
+  })
+
+  // A ruling appeal that was discontinued has no conclusion; a verdict appeal
+  // is given one whatever the outcome.
+  test('requires concluding words when the appeal was discontinued', () => {
+    expect(
+      isVerdictAppealConclusionFieldsValid({
+        ...recorded,
+        appealRulingDecision: AppealCaseRulingDecision.DISCONTINUED,
+        appealConclusion: null,
+      }),
+    ).toBe(false)
+  })
+})
+
 describe('isCourtOfAppealWithdrawnCaseStepValid', () => {
   test('is true with a well formed appeal case number', () => {
     expect(
@@ -2892,5 +2958,47 @@ describe('isNullOrUndefined', () => {
 
   test.each([0, '', false, [], {}])('is false for %j', (value) => {
     expect(isNullOrUndefined(value)).toBe(false)
+  })
+})
+
+describe('isVerdictAppealStatusStepValid', () => {
+  const recorded = {
+    appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+    appealRulingType: AppealRulingType.VERDICT,
+    appealConclusion: 'Hinn áfrýjaði dómur skal vera óraskaður.',
+  }
+
+  test('holds nobody without an appeal or before a status is saved', () => {
+    expect(isVerdictAppealStatusStepValid(undefined)).toBe(true)
+    expect(isVerdictAppealStatusStepValid({})).toBe(true)
+  })
+
+  test('holds nobody on a status other than finished', () => {
+    expect(
+      isVerdictAppealStatusStepValid({
+        verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
+      }),
+    ).toBe(true)
+  })
+
+  test('holds a finished appeal until how it ended is on record', () => {
+    expect(
+      isVerdictAppealStatusStepValid({
+        verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+      }),
+    ).toBe(false)
+    expect(
+      isVerdictAppealStatusStepValid({
+        ...recorded,
+        appealConclusion: ' ',
+        verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+      }),
+    ).toBe(false)
+    expect(
+      isVerdictAppealStatusStepValid({
+        ...recorded,
+        verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+      }),
+    ).toBe(true)
   })
 })

@@ -8,7 +8,10 @@ import type {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { getOpenAppealStatementDeadlineItem } from './appealStatementDeadlineItem.logic'
-import { getProsecutionVerdictAppealItem } from './prosecutionVerdictAppeal.logic'
+import {
+  defendantHasStandingVerdictAppeal,
+  getProsecutionVerdictAppealItem,
+} from './prosecutionVerdictAppeal.logic'
 import type { VerdictTimelineItem } from './VerdictTimelineBody'
 import { withAppealDefender } from './VerdictTimelineCard.logic'
 
@@ -76,15 +79,22 @@ export const getReviewerVerdictTimelineItems = ({
     })
   }
 
-  // Greinargerðarfrest for the prosecution once Landsréttur has set one.
-  // No party ids — that is how prosecution deadlines are stored.
-  const statementDeadlineItem = getOpenAppealStatementDeadlineItem(
-    verdictAppealCase,
-    {},
-  )
+  // Prosecution statement deadline once the court of appeals has set one.
+  // No party ids — that is how prosecution deadlines are stored. Only show on
+  // cards for defendants who are part of the standing appeal.
+  const defendantIsInAppeal =
+    defendantHasStandingVerdictAppeal(verdictAppealCase, defendant.id) ||
+    Boolean(defendant.verdict?.appealDate)
 
-  if (statementDeadlineItem) {
-    items.push(statementDeadlineItem)
+  if (defendantIsInAppeal) {
+    const statementDeadlineItem = getOpenAppealStatementDeadlineItem(
+      verdictAppealCase,
+      {},
+    )
+
+    if (statementDeadlineItem) {
+      items.push(statementDeadlineItem)
+    }
   }
 
   return items

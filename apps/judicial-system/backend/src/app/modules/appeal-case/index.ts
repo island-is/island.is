@@ -4,7 +4,9 @@ export { transitionAppealCase } from './state/appealCase.state'
 export {
   appellantRepresentativeNationalIds,
   buildInCourtAppealedEvent,
+  currentAppealCourtSession,
   findAppealCaseOfCaseFile,
+  getVerdictAppealOutcomeOverride,
   hasOutOfCourtAppeal,
   InCourtAppellant,
   inCourtAppellantsFromDecisions,

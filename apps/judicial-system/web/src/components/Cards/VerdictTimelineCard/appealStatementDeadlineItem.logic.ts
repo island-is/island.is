@@ -9,10 +9,13 @@ import { AppealCaseState } from '@island.is/judicial-system-web/src/graphql/sche
 import type { VerdictTimelineItem } from './VerdictTimelineBody'
 
 /**
- * Greinargerðarfrest for one party while the verdict appeal is still open.
+ * Statement deadline for one party while the verdict appeal is still open.
  * Completed / withdrawn appeals leave the outcome off the timeline card.
  *
- * Expiry comes from the backend `isExpired` flag (whole-day rule).
+ * Expiry comes from the backend `isExpired` flag (whole-day rule). For
+ * non-court-of-appeals users, completed appeals are masked as APPEALED and
+ * statementDeadlines are stripped server-side, so this COMPLETED check mainly
+ * covers court-of-appeals viewers who still receive the real state.
  */
 export const getOpenAppealStatementDeadlineItem = (
   verdictAppealCase:

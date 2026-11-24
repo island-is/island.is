@@ -7,6 +7,7 @@ import {
 } from '../cardPayment.orchestrator'
 import { CardPaymentService } from '../cardPayment.service'
 import { PaymentFlowService } from '../../paymentFlow/paymentFlow.service'
+import { RefundService } from '../../refund/refund.service'
 import {
   createCardPaymentContext,
   createCardPaymentSaga,
@@ -18,16 +19,31 @@ import {
   getChargeCardInput,
   mockPaymentResult,
 } from '../test/sagaTestUtils'
+import { GatewayApprovedUnreadableError } from '../approvedUnreadableCharge'
+
+const resolved = <T>(v: T): never => v as never
+
+const createMockRefundService = (): jest.Mocked<RefundService> =>
+  ({
+    refundWithCorrelationId: jest.fn().mockResolvedValue(
+      resolved({
+        isSuccess: true,
+        acquirerReferenceNumber: 'refund-arn',
+      }),
+    ),
+  } as unknown as jest.Mocked<RefundService>)
 
 describe('Card Payment Saga - CHARGE_CARD step specific', () => {
   let mockLogger: Logger
   let mockCardPaymentService: jest.Mocked<CardPaymentService>
   let mockPaymentFlowService: jest.Mocked<PaymentFlowService>
+  let mockRefundService: jest.Mocked<RefundService>
 
   beforeEach(() => {
     mockLogger = createMockLogger()
     mockCardPaymentService = createMockCardPaymentService()
     mockPaymentFlowService = createMockPaymentFlowService()
+    mockRefundService = createMockRefundService()
   })
 
   describe('createCardPaymentContext', () => {
@@ -54,6 +70,7 @@ describe('Card Payment Saga - CHARGE_CARD step specific', () => {
       const context = createCardPaymentContext(input.paymentFlowId, input)
       const saga = createCardPaymentSaga(
         mockCardPaymentService,
+        mockRefundService,
         mockPaymentFlowService,
         mockLogger,
       )
@@ -80,6 +97,7 @@ describe('Card Payment Saga - CHARGE_CARD step specific', () => {
       const context = createCardPaymentContext(input.paymentFlowId, input)
       const saga = createCardPaymentSaga(
         mockCardPaymentService,
+        mockRefundService,
         mockPaymentFlowService,
         mockLogger,
       )
@@ -106,6 +124,7 @@ describe('Card Payment Saga - CHARGE_CARD step specific', () => {
       const context = createCardPaymentContext(input.paymentFlowId, input)
       const saga = createCardPaymentSaga(
         mockCardPaymentService,
+        mockRefundService,
         mockPaymentFlowService,
         mockLogger,
       )
@@ -132,6 +151,70 @@ describe('Card Payment Saga - CHARGE_CARD step specific', () => {
         }),
       )
       expect(context.metadata?.refundSucceeded).toBe(true)
+    })
+  })
+
+  describe('CHARGE_CARD approved but unreadable', () => {
+    const run = async () => {
+      const input = getChargeCardInput()
+      const context = createCardPaymentContext(input.paymentFlowId, input)
+      const saga = createCardPaymentSaga(
+        mockCardPaymentService,
+        mockRefundService,
+        mockPaymentFlowService,
+        mockLogger,
+      )
+      const orchestrator = new PaymentOrchestrator<
+        CardPaymentContext,
+        CardPaymentStepResults
+      >(mockLogger, mockPaymentFlowService)
+
+      await expect(orchestrator.execute(saga, context)).rejects.toThrow(
+        'Failed to parse payment gateway response',
+      )
+
+      return context
+    }
+
+    beforeEach(() => {
+      mockCardPaymentService.charge.mockRejectedValue(
+        new GatewayApprovedUnreadableError(['isSuccess', 'responseCode']),
+      )
+    })
+
+    it('refunds the charge by its correlation id', async () => {
+      const context = await run()
+
+      expect(mockRefundService.refundWithCorrelationId).toHaveBeenCalledTimes(1)
+      expect(mockRefundService.refundWithCorrelationId).toHaveBeenCalledWith({
+        paymentFlowId: context.paymentFlowId,
+        paymentTrackingData: context.trackingData,
+      })
+      expect(context.metadata?.refundSucceeded).toBe(true)
+      expect(mockPaymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          reason: 'payment_failed',
+          metadata: expect.objectContaining({
+            correlationId: context.trackingData.correlationId,
+          }),
+        }),
+      )
+    })
+
+    it('logs a refund that fails as CRITICAL', async () => {
+      mockRefundService.refundWithCorrelationId.mockRejectedValue(
+        new Error('Internal Server Error'),
+      )
+
+      const context = await run()
+
+      expect(context.metadata?.refundSucceeded).toBe(false)
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        expect.stringContaining('CRITICAL'),
+        expect.objectContaining({
+          correlationId: context.trackingData.correlationId,
+        }),
+      )
     })
   })
 })

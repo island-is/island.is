@@ -11,6 +11,8 @@ import {
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FC, useEffect } from 'react'
+import { useWatch } from 'react-hook-form'
+import { YES } from '@island.is/application/core'
 import { GET_VEHICLE_INFORMATION } from '../graphql/queries'
 import { information } from '../lib/messages'
 import { getSelectedVehicle } from '../utils'
@@ -43,6 +45,10 @@ export const MainOwner: FC<React.PropsWithChildren<FieldBaseProps>> = (
   )
 
   const owner = data?.vehiclesDetail?.currentOwnerInfo
+
+  const useOtherAddress: string[] | undefined = useWatch({
+    name: 'sendToAddress.useOtherAddress',
+  })
 
   useEffect(() => {
     setFieldLoadingState?.(loading || !!error)
@@ -97,14 +103,16 @@ export const MainOwner: FC<React.PropsWithChildren<FieldBaseProps>> = (
             />
           </GridColumn>
         </GridRow>
-        <Box marginTop={1}>
-          <AlertMessage
-            type="info"
-            message={formatMessage(information.labels.owner.alertAddress, {
-              address: owner.address || '',
-            })}
-          />
-        </Box>
+        {!useOtherAddress?.includes(YES) && (
+          <Box marginTop={1}>
+            <AlertMessage
+              type="info"
+              message={formatMessage(information.labels.owner.alertAddress, {
+                address: owner.address || '',
+              })}
+            />
+          </Box>
+        )}
       </Box>
     </Box>
   ) : error ? (

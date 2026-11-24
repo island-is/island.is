@@ -1,39 +1,40 @@
-import { PortalNavigationItem, m } from '@island.is/portals/core'
-import {
-  restrictionsNavigation,
-  restrictionsNavigationNew,
-} from '@island.is/portals/my-pages/restrictions'
-import { documentsNavigation } from '@island.is/portals/my-pages/documents'
-import { financeNavigation } from '@island.is/portals/my-pages/finance'
+import { m, PortalNavigationItem } from '@island.is/portals/core'
+import { airDiscountNavigation } from '@island.is/portals/my-pages/air-discount'
 import { applicationsNavigation } from '@island.is/portals/my-pages/applications'
 import { assetsNavigation } from '@island.is/portals/my-pages/assets'
+import {
+  consentNavigation,
+  consentNavigationNew,
+} from '@island.is/portals/my-pages/consent'
+import { ServicePortalPaths } from '@island.is/portals/my-pages/core'
+import { directorateOfEqualityNavigation } from '@island.is/portals/my-pages/directorate-of-equality'
+import { documentsNavigation } from '@island.is/portals/my-pages/documents'
 import { educationNavigation } from '@island.is/portals/my-pages/education'
+import { financeNavigation } from '@island.is/portals/my-pages/finance'
+import { healthNavigation } from '@island.is/portals/my-pages/health'
 import {
   companyInformationNavigation,
   informationNavigation,
 } from '@island.is/portals/my-pages/information'
+import { lawAndOrderNavigation } from '@island.is/portals/my-pages/law-and-order'
 import { licenseNavigation } from '@island.is/portals/my-pages/licenses'
 import { occupationalLicensesNavigation } from '@island.is/portals/my-pages/occupational-licenses'
-import { airDiscountNavigation } from '@island.is/portals/my-pages/air-discount'
-import { healthNavigation } from '@island.is/portals/my-pages/health'
+import {
+  restrictionsNavigation,
+  restrictionsNavigationNew,
+} from '@island.is/portals/my-pages/restrictions'
+import {
+  sessionsNavigation,
+  sessionsNavigationNew,
+} from '@island.is/portals/my-pages/sessions'
+import { companySignatureCollectionNavigation } from '@island.is/portals/my-pages/signature-collection'
+import { socialBenefitsNavigation } from '@island.is/portals/my-pages/social-benefits'
 import {
   delegationsNavigation,
   delegationsNavigationChildren,
   delegationsNavigationChildrenNew,
   delegationsNavigationNew,
 } from '@island.is/portals/shared-modules/delegations'
-import {
-  sessionsNavigation,
-  sessionsNavigationNew,
-} from '@island.is/portals/my-pages/sessions'
-import {
-  consentNavigation,
-  consentNavigationNew,
-} from '@island.is/portals/my-pages/consent'
-import { ServicePortalPaths } from '@island.is/portals/my-pages/core'
-import { socialBenefitsNavigation } from '@island.is/portals/my-pages/social-benefits'
-import { lawAndOrderNavigation } from '@island.is/portals/my-pages/law-and-order'
-import { companySignatureCollectionNavigation } from '@island.is/portals/my-pages/signature-collection'
 
 export const rootNavigationItem: PortalNavigationItem = {
   name: m.overview,
@@ -71,6 +72,7 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     companySignatureCollectionNavigation,
     informationNavigation,
     companyInformationNavigation,
+    directorateOfEqualityNavigation,
     socialBenefitsNavigation,
     assetsNavigation,
     financeNavigation,

@@ -473,6 +473,29 @@ export const getTransferredDaysInMonths = (
   selectedChild: ChildInformation,
 ) => daysToMonths(getTransferredDays(application, selectedChild)).toFixed(1)
 
+/**
+ * The applicant's personal months, including the extra single parent months,
+ * and the days on top of them: requested from the other parent or from the
+ * shared multiple births rights.
+ */
+export const getRightsIntro = (application: Application) => {
+  const { otherParent } = getApplicationAnswers(application.answers)
+  const months =
+    otherParent === SINGLE
+      ? defaultMonths + additionalSingleParentMonths
+      : defaultMonths
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+  const requestedDays = selectedChild
+    ? Math.max(getTransferredDays(application, selectedChild), 0) +
+      Number(getMultipleBirthsDays(application) || 0)
+    : 0
+
+  return { months, requestedDays }
+}
+
 export const getSpouse = (
   application: Application,
 ): PersonInformation['spouse'] | null => {
@@ -3337,11 +3360,10 @@ export const isPeriodsContinuous = (
   if (!prevPeriod || !nextPeriod) {
     return false
   }
-  const prevEndDate = new Date(prevPeriod?.endDate)
-  const nextStartDate = new Date(nextPeriod?.startDate)
+  // Calendar dates: `new Date('2027-11-01')` is midnight UTC, which can fall on
+  // another day where the period is checked
+  const prevEndDate = parseISO(prevPeriod.endDate)
+  const nextStartDate = parseISO(nextPeriod.startDate)
 
-  if (isSameDay(prevEndDate, addDays(nextStartDate, -1))) {
-    return true
-  }
-  return false
+  return isSameDay(prevEndDate, addDays(nextStartDate, -1))
 }

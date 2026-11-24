@@ -1,0 +1,17 @@
+query UserNotificationSettings($locale: String) {
+  userNotificationSettings(locale: $locale) {
+    senders {
+      sender {
+        id
+        title
+        logoUrl
+      }
+      categories {
+        key
+        category
+        label
+        blocked
+      }
+    }
+  }
+}

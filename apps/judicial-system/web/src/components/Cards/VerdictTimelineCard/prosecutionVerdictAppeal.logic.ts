@@ -82,6 +82,35 @@ export const getProsecutionVerdictAppealItem = (
 }
 
 /**
+ * Whether this defendant still has a standing verdict appeal (either side).
+ * Used to scope case-level prosecution statement-deadline bullets to cards of
+ * defendants who are actually part of the appeal.
+ */
+export const defendantHasStandingVerdictAppeal = (
+  verdictAppealCase: Pick<AppealCase, 'appealEventLogs'> | null | undefined,
+  defendantId: string,
+): boolean => {
+  let latest: AppealEventLog | undefined
+
+  for (const eventLog of verdictAppealCase?.appealEventLogs ?? []) {
+    if (
+      eventLog.defendantId !== defendantId ||
+      !eventLog.created ||
+      (eventLog.eventType !== AppealEventType.APPEALED &&
+        eventLog.eventType !== AppealEventType.APPEAL_WITHDRAWN)
+    ) {
+      continue
+    }
+
+    if (!latest || eventLog.created > (latest.created ?? '')) {
+      latest = eventLog
+    }
+  }
+
+  return latest?.eventType === AppealEventType.APPEALED
+}
+
+/**
  * Whether the review decision is no longer the reviewer's to change, because
  * the appeal it made has moved on.
  *

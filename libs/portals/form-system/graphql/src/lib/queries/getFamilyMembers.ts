@@ -12,6 +12,15 @@ export const GET_FAMILY_MEMBERS = gql`
           }
         }
       }
+      childCustody {
+        nationalId
+        fullName
+        details {
+          name {
+            fullName
+          }
+        }
+      }
       spouse {
         nationalId
         fullName
