@@ -34,7 +34,8 @@ const VIEWER_PAGE_PATTERNS = [
   /^https?:\/\/(www\.)?stjornartidindi\.is\/Advert\.aspx/i,
 ]
 
-const DOCUMENT_ACTIONS_PATTERN = /^https?:\/\/(www\.)?stjornartidindi\.is\/DocumentActions\.aspx/i
+const DOCUMENT_ACTIONS_PATTERN =
+  /^https?:\/\/(www\.)?stjornartidindi\.is\/DocumentActions\.aspx/i
 
 const decodeHtmlEntities = (value: string): string =>
   value

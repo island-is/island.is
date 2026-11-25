@@ -11,8 +11,8 @@ describe('required news image assignments', () => {
   }
   const source = { getPosts: jest.fn(), scrapePostSummary: jest.fn() }
   const service = new LyfjastofnunNewsImportService(
-    (cms as unknown) as CmsRepository,
-    (source as unknown) as LyfjastofnunRepository,
+    cms as unknown as CmsRepository,
+    source as unknown as LyfjastofnunRepository,
   )
   const post = {
     id: 1,

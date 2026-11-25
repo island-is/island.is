@@ -4,9 +4,9 @@ import { LOCALE } from '../constants'
 
 describe('asset reuse across importer jobs', () => {
   const getAssets = jest.fn()
-  const repository = new CmsRepository(({
+  const repository = new CmsRepository({
     getAssets,
-  } as unknown) as ManagementClientService)
+  } as unknown as ManagementClientService)
 
   beforeEach(() => getAssets.mockReset())
 
