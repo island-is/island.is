@@ -113,7 +113,12 @@ export class CaseService {
     return this.auditTrailService.audit(
       'digital-mailbox-api',
       AuditedAction.UPDATE_APPEAL_SUMMONS_COUNSEL,
-      this.updateAppealSummonsInfo(caseId, nationalId, updateAppealSummons, lang),
+      this.updateAppealSummonsInfo(
+        caseId,
+        nationalId,
+        updateAppealSummons,
+        lang,
+      ),
       nationalId,
     )
   }

@@ -341,8 +341,7 @@ export class AppealSummonsResponse {
       counselInfo: defenderChoice
         ? {
             defenderChoice,
-            defenderName:
-              !waivedRight && hasCounsel ? counselName : undefined,
+            defenderName: !waivedRight && hasCounsel ? counselName : undefined,
             canEdit,
             courtContactInfo: canEdit ? undefined : courtContactInfo,
           }

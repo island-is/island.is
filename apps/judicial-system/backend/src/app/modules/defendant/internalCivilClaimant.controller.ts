@@ -66,9 +66,7 @@ export class InternalCivilClaimantController {
     @CurrentCivilClaimant() civilClaimant: CivilClaimant,
     @Body() update: InternalUpdateCivilClaimantDto,
   ): Promise<CivilClaimant> {
-    this.logger.debug(
-      `Updating civil claimant counsel info for case ${caseId}`,
-    )
+    this.logger.debug(`Updating civil claimant counsel info for case ${caseId}`)
 
     const transaction = await getOrCreateTransaction(this.sequelize)
 
