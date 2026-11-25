@@ -304,7 +304,10 @@ const transformSpecialDivs = (html: string): string =>
         let linkMatch: RegExpExecArray | null
         while ((linkMatch = linkPattern.exec(inner)) !== null) {
           const text = stripHtml(linkMatch[2])
-          if (text) items += `<li><a href="${linkMatch[1]}">${escapeHtml(text)}</a></li>`
+          if (text)
+            items += `<li><a href="${linkMatch[1]}">${escapeHtml(
+              text,
+            )}</a></li>`
         }
         return items ? `<ul>${items}</ul>` : ''
       },
