@@ -64,10 +64,7 @@ export const dataSchema = z.object({
     .object({
       // A cleared select stores null / '' – treat both as missing instead of
       // letting z.coerce turn them into 0, which would pass validation.
-      year: z.preprocess(
-        emptyToUndefined,
-        z.coerce.number().int().min(1000),
-      ),
+      year: z.preprocess(emptyToUndefined, z.coerce.number().int().min(1000)),
       month: z.preprocess(
         emptyToUndefined,
         z.coerce.number().int().min(0).max(11),
