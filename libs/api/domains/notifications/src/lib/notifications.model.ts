@@ -63,6 +63,13 @@ export class NotificationMetadata {
 
   @Field(() => NotificationSourceType)
   sourceType!: NotificationSourceType
+
+  @Field(() => GraphQLISODateTime, {
+    nullable: true,
+    description:
+      'Deadline related to the notification, for display only. An instant in time (UTC); display it in Icelandic time (Atlantic/Reykjavik).',
+  })
+  deadline?: Date
 }
 
 @ObjectType()

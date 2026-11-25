@@ -34,7 +34,7 @@ const toNotificationSourceType = (value?: string): NotificationSourceType =>
 /**
  * Maps a rendered notification from the user-notification service to the
  * GraphQL `Notification` model, including `wasSent`, `priorityType`,
- * `sourceType` and `category`.
+ * `sourceType`, `deadline` and `category`.
  */
 export const notificationMapper = (
   notification: RenderedNotificationDto,
@@ -52,6 +52,7 @@ export const notificationMapper = (
       | NotificationPriorityType
       | undefined,
     sourceType: toNotificationSourceType(notification.sourceType),
+    deadline: notification.deadline ?? undefined,
   },
   sender: {
     id: notification.senderId,
