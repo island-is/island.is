@@ -18,7 +18,8 @@ This library was generated with [Nx](https://nx.dev).
   machine, so in `review` an answer validator only lets the buyer add rows
   or remove them: rows cannot be dropped or restored, and an approved row
   keeps its person and role. Someone who is removed and added again gets a
-  new row and must approve again.
+  new row and must approve again. A row also cannot be saved as `approved`
+  unless the server has recorded that approval.
 - `SUBMIT` in `review` moves to `completed` only when every current reviewer
   has approved.
 - Applications that entered `review` before `approvedBy` existed fall back to

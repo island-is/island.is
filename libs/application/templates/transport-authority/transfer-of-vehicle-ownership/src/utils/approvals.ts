@@ -160,6 +160,8 @@ export const isApprovedByAllReviewers = (answers: FormValue): boolean => {
 // again if the row could be restored or changed back. In review, rows can therefore
 // only be added or removed: they cannot be dropped or restored, and an approved row
 // keeps its person and role. Re-adding someone creates a new row that needs a new approval.
+// A row also cannot claim an approval the server has not recorded, since the approved
+// flags are shown to users, read by the template API and trusted by legacy applications.
 export const isAllowedReviewerRowsChange = (
   answers: FormValue,
   key: string,
@@ -172,15 +174,22 @@ export const isAllowedReviewerRowsChange = (
   if (!Array.isArray(newValue) || newValue.length < rows.length) return false
 
   const approvedBy = getApprovedBy(answers)
+  const isRecorded = (reviewer: Reviewer, index: number) =>
+    !!reviewer.nationalId &&
+    approvedBy.some(isSameApproval(getApproval(answer, reviewer, index)))
+
+  const claimsUnrecordedApproval = newValue.some((value, index) => {
+    const newRow = value as Reviewer | undefined
+    return (
+      !!newRow?.approved && !isRemoved(newRow) && !isRecorded(newRow, index)
+    )
+  })
+  if (claimsUnrecordedApproval) return false
+
   return rows.every((row, index) => {
     const newRow = newValue[index] as Reviewer | undefined
     if (isRemoved(row)) return isRemoved(newRow)
-    if (
-      !row?.nationalId ||
-      !approvedBy.some(isSameApproval(getApproval(answer, row, index)))
-    ) {
-      return true
-    }
+    if (!row || !isRecorded(row, index)) return true
     return (
       !!newRow &&
       newRow.nationalId === row.nationalId &&

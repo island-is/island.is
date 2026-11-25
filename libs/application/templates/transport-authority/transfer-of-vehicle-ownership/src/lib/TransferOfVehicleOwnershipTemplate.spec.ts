@@ -336,13 +336,72 @@ describe('TransferOfVehicleOwnershipTemplate review approvals', () => {
       const { errors } = await save(application, {
         buyerCoOwnerAndOperator: [
           { ...REMOVED_OPERATOR, nationalId: SELLER_CO_OWNER },
-          { nationalId: BUYER_CO_OWNER, type: 'coOwner', name: 'Renamed' },
-          { ...OPERATOR, approved: true },
+          {
+            nationalId: BUYER_CO_OWNER,
+            type: 'coOwner',
+            name: 'Renamed',
+            approved: true,
+          },
+          OPERATOR,
           { nationalId: SELLER, type: 'operator' },
         ],
       })
 
       expect(errors).toBeUndefined()
+    })
+
+    it('should not let a row claim an approval that was not recorded', async () => {
+      const application = buildApplication(
+        States.REVIEW,
+        buildAnswers({ approvedBy: [] }),
+        reviewers,
+      )
+
+      const forged = await save(application, {
+        buyerCoOwnerAndOperator: [{ ...OPERATOR, approved: true }],
+      })
+      const forgedNewRow = await save(application, {
+        buyerCoOwnerAndOperator: [
+          OPERATOR,
+          { nationalId: SELLER, type: 'coOwner', approved: true },
+        ],
+      })
+      const removedWithFlag = await save(application, {
+        buyerCoOwnerAndOperator: [{ ...REMOVED_OPERATOR, approved: true }],
+      })
+
+      expect(forged.errors).toBeDefined()
+      expect(forgedNewRow.errors).toBeDefined()
+      expect(removedWithFlag.errors).toBeUndefined()
+    })
+
+    it('should keep approved flags of applications that entered review before approvedBy', async () => {
+      const application = buildApplication(
+        States.REVIEW,
+        buildAnswers({
+          buyerCoOwnerAndOperator: [
+            { ...OPERATOR, approved: true },
+            { nationalId: SELLER, type: 'coOwner' },
+          ],
+        }),
+        reviewers,
+      )
+
+      const kept = await save(application, {
+        buyerCoOwnerAndOperator: [
+          { ...OPERATOR, approved: true },
+          { nationalId: SELLER, type: 'coOwner' },
+        ],
+      })
+      const forged = await save(application, {
+        buyerCoOwnerAndOperator: [
+          { ...OPERATOR, approved: true },
+          { nationalId: SELLER, type: 'coOwner', approved: true },
+        ],
+      })
+
+      expect(kept.errors).toBeUndefined()
+      expect(forged.errors).toBeDefined()
     })
 
     it('should not send the list with a co-owner or operator approval', () => {
