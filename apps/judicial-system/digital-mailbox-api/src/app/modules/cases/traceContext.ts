@@ -25,7 +25,7 @@ export const withTraceContext = (options: RequestInit): RequestInit => {
   const existing =
     options.headers instanceof Headers
       ? Object.fromEntries(options.headers.entries())
-      : ((options.headers as Record<string, string> | undefined) ?? {})
+      : (options.headers as Record<string, string> | undefined) ?? {}
 
   return {
     ...options,
