@@ -40,9 +40,7 @@ describe('asset reuse across importer jobs', () => {
     getAssets.mockResolvedValue({ ok: false, error: new Error('Unavailable') })
     await expect(
       repository.findAssetByFileName('treaty.pdf', 'ownerTest'),
-    ).rejects.toThrow(
-      'Failed to look up asset',
-    )
+    ).rejects.toThrow('Failed to look up asset')
   })
 
   it.each([

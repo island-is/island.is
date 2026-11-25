@@ -84,9 +84,7 @@ const toInlineNodes = (
     return toInlineNodes(node.childNodes, marks)
   })
 
-const trimInlineNodes = (
-  nodes: Array<Text | Inline>,
-): Array<Text | Inline> => {
+const trimInlineNodes = (nodes: Array<Text | Inline>): Array<Text | Inline> => {
   const trimEdge = (node: Text | Inline, trim: (s: string) => string) => {
     if (node.nodeType === 'text') return { ...node, value: trim(node.value) }
     return node
@@ -94,7 +92,8 @@ const trimInlineNodes = (
   const trimmed = nodes.map((node, index) => {
     let result = node
     if (index === 0) result = trimEdge(result, (s) => s.trimStart())
-    if (index === nodes.length - 1) result = trimEdge(result, (s) => s.trimEnd())
+    if (index === nodes.length - 1)
+      result = trimEdge(result, (s) => s.trimEnd())
     return result
   })
   return trimmed.filter((node) => node.nodeType !== 'text' || node.value)
@@ -142,9 +141,7 @@ const makeTableNode = (table: HTMLElement): TopLevelBlock | null => {
         .filter((cell) => tagOf(cell) === 'td' || tagOf(cell) === 'th')
         .map((cell) => ({
           nodeType:
-            tagOf(cell) === 'th'
-              ? BLOCKS.TABLE_HEADER_CELL
-              : BLOCKS.TABLE_CELL,
+            tagOf(cell) === 'th' ? BLOCKS.TABLE_HEADER_CELL : BLOCKS.TABLE_CELL,
           data: {},
           content: [
             makeInlineBlock(BLOCKS.PARAGRAPH, cell.childNodes) ?? {
@@ -160,7 +157,10 @@ const makeTableNode = (table: HTMLElement): TopLevelBlock | null => {
   return { nodeType: BLOCKS.TABLE, data: {}, content: rows } as TopLevelBlock
 }
 
-const toBlock = (node: HTMLElement, tag: string): Array<TopLevelBlock | null> => {
+const toBlock = (
+  node: HTMLElement,
+  tag: string,
+): Array<TopLevelBlock | null> => {
   if (tag in HEADING_TAG_TO_BLOCK) {
     return [makeInlineBlock(HEADING_TAG_TO_BLOCK[tag], node.childNodes)]
   }

@@ -157,9 +157,7 @@ export class RskTreatiesImportService {
     const resolvedItem = { name: item.name, tabKeys: item.tabKeys, documents }
     return mapEntryCreationDto(
       resolvedItem,
-      simple &&
-        isSimpleShape(resolvedItem) &&
-        hasUniformLinkType(documents[0]),
+      simple && isSimpleShape(resolvedItem) && hasUniformLinkType(documents[0]),
     )
   }
 
