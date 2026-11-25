@@ -38,21 +38,36 @@ export const stringGroupItem = style({
   columnGap: '4px',
 })
 
-export const selectableRow = style({
+export const rowDisabled = style({
+  cursor: 'default',
+  touchAction: 'auto',
+})
+
+/** Covers the data columns so click/drag still work on the whole row. */
+export const rowMoveButton = style({
+  position: 'absolute',
+  top: 0,
+  bottom: 0,
+  left: 0,
+  right: 48,
+  zIndex: 1,
+  margin: 0,
+  padding: 0,
+  border: 'none',
+  background: 'transparent',
   cursor: 'grab',
   touchAction: 'none',
 
   selectors: {
+    '&:disabled': {
+      cursor: 'default',
+      touchAction: 'auto',
+    },
     '&:focus-visible': {
       outline: 'none',
       boxShadow: `inset 0 0 0 ${theme.border.width.large}px ${theme.border.color.focus}`,
     },
   },
-})
-
-export const rowDisabled = style({
-  cursor: 'default',
-  touchAction: 'auto',
 })
 
 export const stagingSection = style({
@@ -87,6 +102,7 @@ export const gridBody = style({
 })
 
 export const gridRow = style({
+  position: 'relative',
   display: 'grid',
   gridTemplateColumns: GRID_COLUMNS,
   alignItems: 'center',
@@ -105,6 +121,7 @@ export const gridCell = style({
 })
 
 export const menuCell = style({
+  zIndex: 2,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'flex-end',
@@ -112,6 +129,8 @@ export const menuCell = style({
 })
 
 export const contextMenuButton = style({
+  position: 'relative',
+  zIndex: 2,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',

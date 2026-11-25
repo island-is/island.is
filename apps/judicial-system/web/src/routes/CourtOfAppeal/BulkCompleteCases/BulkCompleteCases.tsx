@@ -277,6 +277,7 @@ const CaseRowMenuButton: FC<{ caseRow: MockBulkCase }> = ({ caseRow }) => (
         aria-label={`Frekari aðgerðir fyrir mál ${caseRow.caseNumbers[0]}`}
         onPointerDown={(event) => event.stopPropagation()}
         onClick={(event) => event.stopPropagation()}
+        onKeyDown={(event) => event.stopPropagation()}
       >
         <Icon icon="ellipsisVertical" color="blue400" size="small" />
       </button>
@@ -322,8 +323,6 @@ const SortableCaseRow: FC<{
   })
 
   const canMove = !disabled && Boolean(onRowClick)
-  // Keep role="row" for the ARIA table; drop dnd-kit's role="button".
-  const { role: _sortableRole, ...sortableAttributes } = attributes
 
   const style: CSSProperties = {
     transform: CSS.Transform.toString(transform),
@@ -338,29 +337,26 @@ const SortableCaseRow: FC<{
       data-case-row-id={caseRow.id}
       style={style}
       role="row"
-      aria-label={`Mál ${caseRow.caseNumbers[0]}`}
-      className={`${styles.gridRow} ${canMove ? styles.selectableRow : ''} ${
+      className={`${styles.gridRow} ${
         isDragging ? styles.gridRowDragging : ''
       } ${disabled ? styles.rowDisabled : ''}`}
-      {...(canMove ? { ...sortableAttributes, ...listeners } : {})}
-      onClick={() => {
-        if (canMove && onRowClick) {
-          onRowClick(caseRow)
-        }
-      }}
-      onKeyDown={(event) => {
-        if (!canMove || !onRowClick) {
-          return
-        }
-
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault()
-          onRowClick(caseRow)
-        }
-      }}
     >
       <CaseRowCells caseRow={caseRow} cellRole="cell" />
       <div className={`${styles.gridCell} ${styles.menuCell}`} role="cell">
+        {canMove ? (
+          <button
+            type="button"
+            className={styles.rowMoveButton}
+            aria-label={`Mál ${caseRow.caseNumbers[0]}`}
+            {...attributes}
+            {...listeners}
+            onClick={() => {
+              if (onRowClick) {
+                onRowClick(caseRow)
+              }
+            }}
+          />
+        ) : null}
         <CaseRowMenuButton caseRow={caseRow} />
       </div>
     </div>
