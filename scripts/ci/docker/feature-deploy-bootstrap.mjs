@@ -1,6 +1,6 @@
 // @ts-check
 import { glob } from 'glob'
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import jsyaml from 'js-yaml'
 import { isMainModule } from './utils.mjs'
@@ -28,6 +28,13 @@ async function main() {
   ]
 
   for (const directory of directories) {
+    // The ids-features directory only exists when the feature has its own
+    // identity-server stack. Don't create an empty bootstrap for it otherwise.
+    if (!existsSync(directory)) {
+      console.log(`Skipping ${directory}: directory does not exist`)
+      continue
+    }
+
     const namespacesToAdd = new Set()
     const nsGrantsToAdd = new Set()
 
