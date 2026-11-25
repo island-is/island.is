@@ -322,12 +322,14 @@ const SortableCaseRow: FC<{
   })
 
   const canMove = !disabled && Boolean(onRowClick)
+  // Keep role="row" for the ARIA table; drop dnd-kit's role="button".
+  const { role: _sortableRole, ...sortableAttributes } = attributes
 
   const style: CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition: isDragging ? transition : undefined,
     width: '100%',
-    opacity: isFlying ? 0 : undefined,
+    opacity: isFlying ? 0 : disabled ? 0.7 : undefined,
   }
 
   return (
@@ -335,25 +337,30 @@ const SortableCaseRow: FC<{
       ref={setNodeRef}
       data-case-row-id={caseRow.id}
       style={style}
+      role="row"
+      aria-label={`Mál ${caseRow.caseNumbers[0]}`}
       className={`${styles.gridRow} ${canMove ? styles.selectableRow : ''} ${
         isDragging ? styles.gridRowDragging : ''
-      }`}
+      } ${disabled ? styles.rowDisabled : ''}`}
+      {...(canMove ? { ...sortableAttributes, ...listeners } : {})}
+      onClick={() => {
+        if (canMove && onRowClick) {
+          onRowClick(caseRow)
+        }
+      }}
+      onKeyDown={(event) => {
+        if (!canMove || !onRowClick) {
+          return
+        }
+
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault()
+          onRowClick(caseRow)
+        }
+      }}
     >
-      <button
-        type="button"
-        className={styles.rowMoveButton}
-        disabled={!canMove}
-        aria-label={`Mál ${caseRow.caseNumbers[0]}`}
-        {...(canMove ? { ...attributes, ...listeners } : {})}
-        onClick={() => {
-          if (canMove && onRowClick) {
-            onRowClick(caseRow)
-          }
-        }}
-      >
-        <CaseRowCells caseRow={caseRow} />
-      </button>
-      <div className={`${styles.gridCell} ${styles.menuCell}`}>
+      <CaseRowCells caseRow={caseRow} cellRole="cell" />
+      <div className={`${styles.gridCell} ${styles.menuCell}`} role="cell">
         <CaseRowMenuButton caseRow={caseRow} />
       </div>
     </div>
@@ -525,6 +532,9 @@ const BulkCompleteCases: FC = () => {
   // Prevents cross-list dragOver from bouncing the item between lists.
   const recentlyMovedToNewList = useRef(false)
   const didCrossListDuringDrag = useRef(false)
+  // Tracks transfers already decided in this drag before React re-renders.
+  const caseListsRef = useRef(caseLists)
+  caseListsRef.current = caseLists
 
   const armSkipClick = () => {
     skipClickRef.current = true
@@ -708,18 +718,20 @@ const BulkCompleteCases: FC = () => {
 
     const activeId = String(active.id)
     const overId = String(over.id)
+    const result = transferCaseAcrossLists(
+      caseListsRef.current,
+      activeId,
+      overId,
+    )
 
-    let didTransfer = false
-    setCaseLists((prev) => {
-      const result = transferCaseAcrossLists(prev, activeId, overId)
-      didTransfer = result.didTransfer
-      return result.didTransfer ? result.next : prev
-    })
-
-    if (didTransfer) {
-      recentlyMovedToNewList.current = true
-      didCrossListDuringDrag.current = true
+    if (!result.didTransfer) {
+      return
     }
+
+    recentlyMovedToNewList.current = true
+    didCrossListDuringDrag.current = true
+    caseListsRef.current = result.next
+    setCaseLists(result.next)
   }
 
   const handleDragEnd = (event: DragEndEvent) => {

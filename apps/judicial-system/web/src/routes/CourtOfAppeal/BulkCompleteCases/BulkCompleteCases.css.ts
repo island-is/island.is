@@ -41,35 +41,18 @@ export const stringGroupItem = style({
 export const selectableRow = style({
   cursor: 'grab',
   touchAction: 'none',
-})
-
-export const rowMoveButton = style({
-  gridColumn: '1 / -2',
-  display: 'grid',
-  gridTemplateColumns: DATA_COLUMNS,
-  alignItems: 'center',
-  width: '100%',
-  margin: 0,
-  padding: 0,
-  border: 'none',
-  background: 'transparent',
-  color: 'inherit',
-  font: 'inherit',
-  textAlign: 'left',
-  cursor: 'inherit',
-  touchAction: 'inherit',
 
   selectors: {
-    '&:disabled': {
-      cursor: 'default',
-      opacity: 0.7,
-      touchAction: 'auto',
-    },
     '&:focus-visible': {
       outline: 'none',
       boxShadow: `inset 0 0 0 ${theme.border.width.large}px ${theme.border.color.focus}`,
     },
   },
+})
+
+export const rowDisabled = style({
+  cursor: 'default',
+  touchAction: 'auto',
 })
 
 export const stagingSection = style({
