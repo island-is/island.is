@@ -1,10 +1,12 @@
 import {
+  AppealCaseState,
   getAppealJudges,
   getAppealJudgeUserIds,
   getOrderedAppealJudges,
   getPresidingAppealJudge,
   hasAllAppealJudges,
   isSameAppealBench,
+  isVerdictAppealConfirmed,
 } from './appealCase'
 
 const anna = { id: 'anna', name: 'Anna' }
@@ -127,5 +129,22 @@ describe('hasAllAppealJudges', () => {
     ).toBe(false)
     expect(hasAllAppealJudges({ appealJudges: [] })).toBe(false)
     expect(hasAllAppealJudges(undefined)).toBe(false)
+  })
+})
+
+describe('isVerdictAppealConfirmed', () => {
+  it.each([
+    [AppealCaseState.APPEALED, false],
+    [AppealCaseState.RECEIVED, false],
+    [AppealCaseState.READY_TO_COMPLETE, true],
+    [AppealCaseState.COMPLETED, true],
+    [AppealCaseState.WITHDRAWN, false],
+  ])('is %s -> %s', (appealState, expected) => {
+    expect(isVerdictAppealConfirmed({ appealState })).toBe(expected)
+  })
+
+  it('is false without an appeal', () => {
+    expect(isVerdictAppealConfirmed(undefined)).toBe(false)
+    expect(isVerdictAppealConfirmed(null)).toBe(false)
   })
 })

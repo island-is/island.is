@@ -1032,6 +1032,7 @@ describe('CaseInterceptor - verdict appeal outcome', () => {
   const givenWhenThen = async (
     appealState: AppealCaseState,
     currentUser: unknown,
+    verdictAppealStatus: VerdictAppealStatus | null = VerdictAppealStatus.COMPLETED,
   ): Promise<Then> => {
     const interceptor = new CaseInterceptor({
       findOriginalAncestorId: (theCase) => Promise.resolve(theCase.id),
@@ -1040,7 +1041,7 @@ describe('CaseInterceptor - verdict appeal outcome', () => {
       id: 'verdict_appeal',
       appealState,
       appealCaseNumber: '2/2024',
-      verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+      verdictAppealStatus,
       ...outcome,
     }
 
@@ -1109,40 +1110,111 @@ describe('CaseInterceptor - verdict appeal outcome', () => {
       },
     ],
   ])('when the user is %s', (_, currentUser) => {
-    describe.each([AppealCaseState.APPEALED, AppealCaseState.COMPLETED])(
-      'and the verdict appeal is %s',
-      (appealState) => {
-        let then: Then
+    describe.each([
+      AppealCaseState.APPEALED,
+      AppealCaseState.READY_TO_COMPLETE,
+    ])('and the verdict appeal is %s', (appealState) => {
+      let then: Then
 
-        beforeEach(async () => {
-          then = await givenWhenThen(appealState, currentUser)
+      beforeEach(async () => {
+        then = await givenWhenThen(appealState, currentUser)
+      })
+
+      it('withholds the outcome', () => {
+        expect(then.result.verdictAppealCase).toMatchObject(withheldOutcome)
+      })
+
+      it('presents the appeal as in progress', () => {
+        expect(then.result.verdictAppealCase).toMatchObject({
+          id: 'verdict_appeal',
+          appealState: AppealCaseState.APPEALED,
+          appealCaseNumber: '2/2024',
         })
+      })
 
-        it('withholds the outcome', () => {
-          expect(then.result.verdictAppealCase).toMatchObject(withheldOutcome)
-        })
+      it('presents a recorded status of completed as under advisement', () => {
+        expect(then.result.verdictAppealCase.verdictAppealStatus).toBe(
+          VerdictAppealStatus.UNDER_ADVISEMENT,
+        )
+      })
 
-        it('presents the appeal as in progress', () => {
-          expect(then.result.verdictAppealCase).toMatchObject({
-            id: 'verdict_appeal',
-            appealState: AppealCaseState.APPEALED,
-            appealCaseNumber: '2/2024',
-          })
-        })
+      it('leaves the court of appeals ruling out of the case files', () => {
+        expect(then.result.caseFiles.map((file) => file.id)).toEqual([
+          'district_ruling',
+        ])
+      })
+    })
 
-        it('presents a recorded status of completed as under advisement', () => {
-          expect(then.result.verdictAppealCase.verdictAppealStatus).toBe(
-            VerdictAppealStatus.UNDER_ADVISEMENT,
-          )
-        })
+    // The court can record another status after confirming. Outside the court
+    // a confirmed appeal is under advisement, whatever it records.
+    it.each([
+      VerdictAppealStatus.POSTPONED,
+      VerdictAppealStatus.COURT_SESSION_SCHEDULED,
+      null,
+    ])(
+      'presents a confirmed appeal with a recorded status %s as under advisement',
+      async (verdictAppealStatus) => {
+        const then = await givenWhenThen(
+          AppealCaseState.READY_TO_COMPLETE,
+          currentUser,
+          verdictAppealStatus,
+        )
 
-        it('leaves the court of appeals ruling out of the case files', () => {
-          expect(then.result.caseFiles.map((file) => file.id)).toEqual([
-            'district_ruling',
-          ])
+        expect(then.result.verdictAppealCase).toMatchObject({
+          appealState: AppealCaseState.APPEALED,
+          verdictAppealStatus: VerdictAppealStatus.UNDER_ADVISEMENT,
         })
       },
     )
+
+    // Before the court confirms, only a recorded status of completed is
+    // rewritten.
+    it.each([
+      VerdictAppealStatus.POSTPONED,
+      VerdictAppealStatus.COURT_SESSION_SCHEDULED,
+    ])(
+      'presents an unconfirmed appeal with a recorded status %s as recorded',
+      async (verdictAppealStatus) => {
+        const then = await givenWhenThen(
+          AppealCaseState.APPEALED,
+          currentUser,
+          verdictAppealStatus,
+        )
+
+        expect(then.result.verdictAppealCase.verdictAppealStatus).toBe(
+          verdictAppealStatus,
+        )
+      },
+    )
+
+    // A completed appeal has its outcome released to everyone who can open
+    // it; the court's ruling document stays with the court.
+    describe('and the verdict appeal is COMPLETED', () => {
+      let then: Then
+
+      beforeEach(async () => {
+        then = await givenWhenThen(AppealCaseState.COMPLETED, currentUser)
+      })
+
+      it('includes the outcome', () => {
+        expect(then.result.verdictAppealCase).toMatchObject(outcome)
+      })
+
+      it('presents the appeal as completed, with the status as recorded', () => {
+        expect(then.result.verdictAppealCase).toMatchObject({
+          id: 'verdict_appeal',
+          appealState: AppealCaseState.COMPLETED,
+          appealCaseNumber: '2/2024',
+          verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+        })
+      })
+
+      it('leaves the court of appeals ruling out of the case files', () => {
+        expect(then.result.caseFiles.map((file) => file.id)).toEqual([
+          'district_ruling',
+        ])
+      })
+    })
 
     it('still presents a withdrawn appeal as withdrawn', async () => {
       const then = await givenWhenThen(AppealCaseState.WITHDRAWN, currentUser)
@@ -1153,7 +1225,11 @@ describe('CaseInterceptor - verdict appeal outcome', () => {
     })
   })
 
-  describe.each([AppealCaseState.APPEALED, AppealCaseState.COMPLETED])(
+  describe.each([
+    AppealCaseState.APPEALED,
+    AppealCaseState.READY_TO_COMPLETE,
+    AppealCaseState.COMPLETED,
+  ])(
     'when the user is a court of appeals user and the verdict appeal is %s',
     (appealState) => {
       let then: Then
@@ -1460,8 +1536,10 @@ describe('CaseInterceptor - verdictAppealCase party filter', () => {
     expect(result.verdictAppealCase.appealRulingDate).toBeUndefined()
   })
 
-  it('withholds Landsréttur ruling fields from defence users once completed', async () => {
-    const theCase = makeIndictmentWithVerdictAppeal(AppealCaseState.COMPLETED)
+  it('withholds Landsréttur ruling fields from defence users once confirmed', async () => {
+    const theCase = makeIndictmentWithVerdictAppeal(
+      AppealCaseState.READY_TO_COMPLETE,
+    )
     mockRequest.mockImplementationOnce(() => ({
       user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
     }))

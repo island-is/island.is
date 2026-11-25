@@ -188,6 +188,32 @@ describe('case tables keep verdict appeals out of ruling appeal lists', () => {
       expect(sql).not.toMatch(/INNER JOIN "appeal_case" AS "appealCase"/)
     })
 
+    // An appeal the court has confirmed is done from the court's point of view,
+    // though its outcome is not yet released, so it belongs with the completed
+    // ones. Both the join and the predicate carry the states.
+    it('lists confirmed verdict appeals as completed', async () => {
+      const sql = await sqlForTable(
+        CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_COMPLETED,
+        courtOfAppealsUser,
+      )
+      const states =
+        /"verdictAppealCase"\."appeal_state" IN \('READY_TO_COMPLETE', 'COMPLETED', 'WITHDRAWN'\)/g
+
+      expect(sql.match(states)).toHaveLength(2)
+    })
+
+    it('keeps confirmed verdict appeals out of the appeals in progress', async () => {
+      const sql = await sqlForTable(
+        CaseTableType.COURT_OF_APPEALS_VERDICT_APPEALS_IN_PROGRESS,
+        courtOfAppealsUser,
+      )
+      const states =
+        /"verdictAppealCase"\."appeal_state" IN \('APPEALED', 'RECEIVED'\)/g
+
+      expect(sql.match(states)).toHaveLength(2)
+      expect(sql).not.toContain('READY_TO_COMPLETE')
+    })
+
     // The access options admit a case, not an appeal: a case the court reaches
     // through a ruling appeal passes them while its verdict appeal has no
     // summons sent. So the lists have to require the sent summons outside the

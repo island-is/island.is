@@ -1,8 +1,12 @@
 import addDays from 'date-fns/addDays'
 
+// READY_TO_COMPLETE belongs to verdict appeals only: the court of appeals has
+// confirmed how the appeal ended, but the outcome is not yet released. Until it
+// is completed, everyone outside the court is presented the appeal as APPEALED.
 export enum AppealCaseState {
   APPEALED = 'APPEALED',
   RECEIVED = 'RECEIVED',
+  READY_TO_COMPLETE = 'READY_TO_COMPLETE',
   COMPLETED = 'COMPLETED',
   WITHDRAWN = 'WITHDRAWN',
 }
@@ -25,8 +29,9 @@ export enum AppealCaseType {
 
 // How far the court of appeals has come with a verdict appeal, as the court
 // itself records it. Null until the court has recorded one. It is not the
-// appeal's state: an appeal the court marks COMPLETED here is still RECEIVED
-// until it is completed through its own transition.
+// appeal's state: an appeal the court marks COMPLETED here stays APPEALED until
+// the court confirms it (READY_TO_COMPLETE) and is completed only when its
+// outcome is released (COMPLETED).
 export enum VerdictAppealStatus {
   STATEMENT_DEADLINE_GRANTED = 'STATEMENT_DEADLINE_GRANTED',
   COURT_SESSION_SCHEDULED = 'COURT_SESSION_SCHEDULED',
@@ -37,10 +42,19 @@ export enum VerdictAppealStatus {
 
 export enum AppealCaseTransition {
   RECEIVE_APPEAL = 'RECEIVE_APPEAL',
+  MARK_APPEAL_READY_TO_COMPLETE = 'MARK_APPEAL_READY_TO_COMPLETE',
   COMPLETE_APPEAL = 'COMPLETE_APPEAL',
   REOPEN_APPEAL = 'REOPEN_APPEAL',
   WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
 }
+
+// Whether the court of appeals has confirmed how a verdict appeal ended: it is
+// ready to complete, or completed and released to everyone.
+export const isVerdictAppealConfirmed = (
+  appealCase: { appealState?: AppealCaseState | null } | null | undefined,
+): boolean =>
+  appealCase?.appealState === AppealCaseState.READY_TO_COMPLETE ||
+  appealCase?.appealState === AppealCaseState.COMPLETED
 
 export enum AppealDecisionPartyRole {
   PROSECUTOR = 'PROSECUTOR',
