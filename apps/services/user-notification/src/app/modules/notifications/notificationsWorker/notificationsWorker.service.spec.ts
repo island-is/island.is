@@ -96,6 +96,19 @@ let mockActorBlockedCategories: BlockedCategoryDto[] = []
 let mockActorBlockedSenders: BlockedSenderDto[] = []
 let mockBlockedSenders: BlockedSenderDto[] = []
 
+// The actor profile preferences the tests toggle. Shared by the default actor
+// profile mock and the overrides that outlive their tests, so none of them
+// can silently drop a preference.
+const getMockActorPreferences = (include?: string[]) => ({
+  onlyActionablePriorityNotifications: mockActorOnlyActionable,
+  ...(include?.includes(UserProfileInclude.NotificationSettings)
+    ? {
+        blockedCategories: mockActorBlockedCategories,
+        blockedSenders: mockActorBlockedSenders,
+      }
+    : {}),
+})
+
 export const MockV2UsersApi = {
   userProfileControllerFindUserProfile: jest.fn(
     ({
@@ -135,13 +148,7 @@ export const MockV2UsersApi = {
 
       return Promise.resolve({
         ...profile,
-        onlyActionablePriorityNotifications: mockActorOnlyActionable,
-        ...(include?.includes(UserProfileInclude.NotificationSettings)
-          ? {
-              blockedCategories: mockActorBlockedCategories,
-              blockedSenders: mockActorBlockedSenders,
-            }
-          : {}),
+        ...getMockActorPreferences(include),
       })
     },
   ),
@@ -1111,10 +1118,7 @@ describe('NotificationsWorkerService', () => {
             documentNotifications: profile?.documentNotifications ?? false,
             // This override persists for later tests, so it must keep
             // honouring what the actor profile preference tests toggle
-            onlyActionablePriorityNotifications: mockActorOnlyActionable,
-            ...(include?.includes(UserProfileInclude.NotificationSettings)
-              ? { blockedCategories: mockActorBlockedCategories }
-              : {}),
+            ...getMockActorPreferences(include),
           } as ActorProfileDto)
         })
 
