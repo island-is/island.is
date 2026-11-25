@@ -345,6 +345,7 @@ export class AppealVerdictService {
         serviceDate?: Date
         servedBy?: string
         comment?: string
+        deliveredToDefenderNationalId?: string
       }
     }> = []
 
@@ -370,7 +371,18 @@ export class AppealVerdictService {
         continue
       }
 
-      if (!isVerdictInfoChanged(policeInfo, appealVerdict)) {
+      // PoliceDocumentInfo uses defenderNationalId; the appeal verdict row
+      // stores deliveredToDefenderNationalId — map both ways at this boundary.
+      if (
+        !isVerdictInfoChanged(policeInfo, {
+          serviceStatus: appealVerdict.serviceStatus ?? undefined,
+          serviceDate: appealVerdict.serviceDate ?? undefined,
+          servedBy: appealVerdict.servedBy ?? undefined,
+          comment: appealVerdict.comment ?? undefined,
+          defenderNationalId:
+            appealVerdict.deliveredToDefenderNationalId ?? undefined,
+        })
+      ) {
         continue
       }
 
@@ -381,6 +393,7 @@ export class AppealVerdictService {
           serviceDate: policeInfo.serviceDate,
           servedBy: policeInfo.servedBy,
           comment: policeInfo.comment,
+          deliveredToDefenderNationalId: policeInfo.defenderNationalId,
         },
       })
     }

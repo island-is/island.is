@@ -93,6 +93,7 @@ describe('AppealVerdictController - Sync service statuses', () => {
       serviceStatus: VerdictServiceStatus.IN_PERSON,
       serviceDate,
       servedBy: 'Lögreglumaður',
+      defenderNationalId: '0000000000',
     })
 
     const mockRecord =
@@ -109,6 +110,7 @@ describe('AppealVerdictController - Sync service statuses', () => {
         serviceDate,
         servedBy: 'Lögreglumaður',
         comment: undefined,
+        deliveredToDefenderNationalId: '0000000000',
       },
       { transaction },
     )

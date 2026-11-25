@@ -20,7 +20,7 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import {
   CurrentHttpUser,
-  JwtAuthGuard,
+  JwtAuthUserGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
@@ -41,7 +41,7 @@ import { AppealVerdictService } from './appealVerdict.service'
 
 @Controller('api/case/:caseId/appealVerdict')
 @ApiTags('appeal verdicts')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthUserGuard, RolesGuard)
 export class AppealVerdictController {
   constructor(
     private readonly appealVerdictService: AppealVerdictService,
