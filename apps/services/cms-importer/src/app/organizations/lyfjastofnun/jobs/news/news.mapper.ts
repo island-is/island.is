@@ -1,10 +1,13 @@
 import sanitizeHtml from 'sanitize-html'
 import { HTMLElement, Node, TextNode, parse } from 'node-html-parser'
 import {
+  Block,
   BLOCKS,
+  CONTAINERS,
   Document,
   Inline,
   INLINES,
+  LIST_ITEM_BLOCKS,
   MARKS,
   Text,
   TopLevelBlock,
@@ -115,6 +118,31 @@ const makeInlineBlock = (
   return { nodeType, data: {}, content } as TopLevelBlock
 }
 
+const isTextOrInline = (node: Block | Inline | Text): boolean =>
+  node.nodeType === 'text' || node.nodeType === INLINES.HYPERLINK
+
+const coerceBlocks = (
+  nodes: Array<Block | Inline | Text>,
+  allowed: readonly string[],
+): TopLevelBlock[] =>
+  nodes.flatMap((node): TopLevelBlock[] => {
+    if (isTextOrInline(node)) return []
+    if (allowed.includes(node.nodeType)) return [node as TopLevelBlock]
+    const children = (node as Block).content
+    if (children.every(isTextOrInline)) {
+      return children.length
+        ? [
+            {
+              nodeType: BLOCKS.PARAGRAPH,
+              data: {},
+              content: children,
+            } as TopLevelBlock,
+          ]
+        : []
+    }
+    return coerceBlocks(children, allowed)
+  })
+
 const makeListNode = (
   nodeType: BLOCKS.UL_LIST | BLOCKS.OL_LIST,
   list: HTMLElement,
@@ -124,7 +152,7 @@ const makeListNode = (
     .map((li) => ({
       nodeType: BLOCKS.LIST_ITEM,
       data: {},
-      content: toBlocks(li.childNodes),
+      content: coerceBlocks(toBlocks(li.childNodes), LIST_ITEM_BLOCKS),
     }))
     .filter((item) => item.content.length > 0)
   if (items.length === 0) return null
@@ -139,18 +167,28 @@ const makeTableNode = (table: HTMLElement): TopLevelBlock | null => {
       data: {},
       content: tr.childNodes
         .filter((cell) => tagOf(cell) === 'td' || tagOf(cell) === 'th')
-        .map((cell) => ({
-          nodeType:
-            tagOf(cell) === 'th' ? BLOCKS.TABLE_HEADER_CELL : BLOCKS.TABLE_CELL,
-          data: {},
-          content: [
-            makeInlineBlock(BLOCKS.PARAGRAPH, cell.childNodes) ?? {
-              nodeType: BLOCKS.PARAGRAPH,
-              data: {},
-              content: [makeTextNode('', [])],
-            },
-          ],
-        })),
+        .map((cell) => {
+          const content = coerceBlocks(
+            toBlocks(cell.childNodes),
+            CONTAINERS[BLOCKS.TABLE_CELL],
+          )
+          return {
+            nodeType:
+              tagOf(cell) === 'th'
+                ? BLOCKS.TABLE_HEADER_CELL
+                : BLOCKS.TABLE_CELL,
+            data: {},
+            content: content.length
+              ? content
+              : [
+                  {
+                    nodeType: BLOCKS.PARAGRAPH,
+                    data: {},
+                    content: [makeTextNode('', [])],
+                  },
+                ],
+          }
+        }),
     }))
     .filter((row) => row.content.length > 0)
   if (rows.length === 0) return null
@@ -166,14 +204,14 @@ const toBlock = (
   }
   if (tag === 'p') return [makeInlineBlock(BLOCKS.PARAGRAPH, node.childNodes)]
   if (tag === 'blockquote') {
-    const paragraph = makeInlineBlock(BLOCKS.PARAGRAPH, node.childNodes)
+    const content = coerceBlocks(
+      toBlocks(node.childNodes),
+      CONTAINERS[BLOCKS.QUOTE],
+    )
     return [
-      paragraph &&
-        ({
-          nodeType: BLOCKS.QUOTE,
-          data: {},
-          content: [paragraph],
-        } as TopLevelBlock),
+      content.length
+        ? ({ nodeType: BLOCKS.QUOTE, data: {}, content } as TopLevelBlock)
+        : null,
     ]
   }
   if (tag in LIST_TAG_TO_BLOCK) {
@@ -240,6 +278,9 @@ const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
   },
 }
 
+const escapeHtml = (text: string): string =>
+  text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
 const transformSpecialDivs = (html: string): string =>
   html
     // Unwrap collapselist__item__text: keep inner content (p tags etc), strip the div wrapper.
@@ -252,7 +293,7 @@ const transformSpecialDivs = (html: string): string =>
     .replace(/<div[^>]+class="[^"]*collapselist[^"]*"[^>]*>/gi, '')
     .replace(
       /<div[^>]+class="[^"]*lightbluebox-text[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<\/div>/gi,
-      (_, inner) => `<blockquote>${stripHtml(inner)}</blockquote>`,
+      (_, inner) => `<blockquote>${escapeHtml(stripHtml(inner))}</blockquote>`,
     )
     .replace(
       /<div[^>]+class="[^"]*linklist[^"]*"[^>]*>([\s\S]*?)<\/div>/gi,
@@ -263,7 +304,7 @@ const transformSpecialDivs = (html: string): string =>
         let linkMatch: RegExpExecArray | null
         while ((linkMatch = linkPattern.exec(inner)) !== null) {
           const text = stripHtml(linkMatch[2])
-          if (text) items += `<li><a href="${linkMatch[1]}">${text}</a></li>`
+          if (text) items += `<li><a href="${linkMatch[1]}">${escapeHtml(text)}</a></li>`
         }
         return items ? `<ul>${items}</ul>` : ''
       },

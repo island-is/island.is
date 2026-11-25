@@ -27,6 +27,15 @@ const matchKeyFor = (item: LyfjastofnunScrapedItem): string | null => {
   return null
 }
 
+const countKeys = (items: LyfjastofnunScrapedItem[]): Map<string, number> => {
+  const counts = new Map<string, number>()
+  for (const item of items) {
+    const key = matchKeyFor(item)
+    if (key) counts.set(key, (counts.get(key) ?? 0) + 1)
+  }
+  return counts
+}
+
 // One repository for the whole lyfjastofnun.is site — four fetch methods,
 // two different mechanisms (HTML scrape for guidelines/lists/forms, WordPress
 // REST API for news), all reading from the same host.
@@ -175,9 +184,15 @@ export class LyfjastofnunRepository {
       if (key) enByKey.set(key, item)
     }
 
+    const isCounts = countKeys(isItems)
+    const enCounts = countKeys(enItems)
+
     const items: LyfjastofnunScrapedItem[] = isItems.map((item) => {
       const key = matchKeyFor(item)
-      const titleEn = key ? enByKey.get(key)?.title : undefined
+      const titleEn =
+        key && isCounts.get(key) === 1 && enCounts.get(key) === 1
+          ? enByKey.get(key)?.title
+          : undefined
       return { ...item, titleEn }
     })
 

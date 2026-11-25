@@ -117,6 +117,7 @@ export const guessFileContentType = (
 export const toAssetFileName = (
   fileUrl: string,
   fallbackExtension = 'pdf',
+  knownExtensions: readonly string[] = [],
 ): string | null => {
   const [path, query] = fileUrl.split('?')
   const baseName = path.split('/').pop()
@@ -124,8 +125,13 @@ export const toAssetFileName = (
   if (!query) return baseName
 
   const stem = baseName.replace(/\.[^.]+$/, '')
+  const original = /\.([^.]+)$/.exec(baseName)?.[1]
+  const extension =
+    original && knownExtensions.includes(original.toLowerCase())
+      ? original
+      : fallbackExtension
   const hash = createHash('sha1').update(fileUrl).digest('hex').slice(0, 10)
-  return `${stem}-${hash}.${fallbackExtension}`
+  return `${stem}-${hash}.${extension}`
 }
 
 export const getExistingGenericListSlugs = async (
@@ -184,7 +190,11 @@ export const resolveAsset = async (
   publish: boolean,
   fileContentTypeMap: Record<string, string>,
 ): Promise<string | null> => {
-  const fileName = toAssetFileName(fileUrl)
+  const fileName = toAssetFileName(
+    fileUrl,
+    undefined,
+    Object.keys(fileContentTypeMap),
+  )
   if (!fileName) return null
 
   const existing = await cmsRepository.findAssetByFileName(fileName, ownerTag)

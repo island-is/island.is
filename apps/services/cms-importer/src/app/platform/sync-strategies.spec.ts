@@ -21,4 +21,10 @@ describe('toAssetFileName', () => {
       ),
     ).toBe(first)
   })
+
+  it('keeps a known original extension on query URLs', () => {
+    expect(
+      toAssetFileName('https://a.is/files/umsokn.docx?v=2', 'pdf', ['docx']),
+    ).toMatch(/^umsokn-[0-9a-f]{10}\.docx$/)
+  })
 })

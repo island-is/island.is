@@ -16,6 +16,66 @@ describe('htmlToRichTextDocument', () => {
     expect(JSON.stringify(list)).toContain('"value":"B"')
   })
 
+  it('flattens a table inside a list item into paragraphs', () => {
+    const document = htmlToRichTextDocument(
+      '<ul><li>Intro<table><tr><td>A</td><td>B</td></tr></table></li></ul>',
+    )
+
+    const [list] = document.content
+    expect(list.content[0]).toMatchObject({
+      nodeType: BLOCKS.LIST_ITEM,
+      content: [
+        { nodeType: BLOCKS.PARAGRAPH, content: [{ value: 'Intro' }] },
+        { nodeType: BLOCKS.PARAGRAPH, content: [{ value: 'A' }] },
+        { nodeType: BLOCKS.PARAGRAPH, content: [{ value: 'B' }] },
+      ],
+    })
+  })
+
+  it('keeps each paragraph in a table cell separate', () => {
+    const document = htmlToRichTextDocument(
+      '<table><tr><td><p>First</p><p>Second</p></td></tr></table>',
+    )
+
+    expect(document.content).toMatchObject([
+      {
+        nodeType: BLOCKS.TABLE,
+        content: [
+          {
+            content: [
+              {
+                nodeType: BLOCKS.TABLE_CELL,
+                content: [
+                  { nodeType: BLOCKS.PARAGRAPH, content: [{ value: 'First' }] },
+                  {
+                    nodeType: BLOCKS.PARAGRAPH,
+                    content: [{ value: 'Second' }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ])
+  })
+
+  it('keeps each paragraph in a blockquote separate', () => {
+    const document = htmlToRichTextDocument(
+      '<blockquote><p>First</p><p>Second</p></blockquote>',
+    )
+
+    expect(document.content).toMatchObject([
+      {
+        nodeType: BLOCKS.QUOTE,
+        content: [
+          { nodeType: BLOCKS.PARAGRAPH, content: [{ value: 'First' }] },
+          { nodeType: BLOCKS.PARAGRAPH, content: [{ value: 'Second' }] },
+        ],
+      },
+    ])
+  })
+
   it('keeps text outside recognised blocks in source order', () => {
     const document = htmlToRichTextDocument('<p>First</p>Loose text<p>Last</p>')
 
