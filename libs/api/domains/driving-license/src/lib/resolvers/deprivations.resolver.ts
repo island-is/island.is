@@ -37,7 +37,7 @@ export class DeprivationsResolver {
   @Query(() => DrivingLicenseDeprivations, { nullable: true })
   drivingLicenseDeprivations(
     @CurrentUser() user: User,
-  ): Promise<DrivingLicenseDeprivations> {
+  ): Promise<DrivingLicenseDeprivations | null> {
     return this.deprivationsService.getDeprivations(user)
   }
 }

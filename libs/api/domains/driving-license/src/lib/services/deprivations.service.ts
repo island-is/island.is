@@ -58,10 +58,13 @@ export class DeprivationsService {
       auth: user,
     })
 
-    return d ? mapDeprivation(d) : null
+    const deprivation = d ? mapDeprivation(d) : null
+    return deprivation?.active ? deprivation : null
   }
 
-  async getDeprivations(user: User): Promise<DrivingLicenseDeprivations> {
+  async getDeprivations(
+    user: User,
+  ): Promise<DrivingLicenseDeprivations | null> {
     const deprivations = await this.penaltyPointsClientService.deprivations(
       user,
     )
@@ -71,6 +74,6 @@ export class DeprivationsService {
       .filter(isDefined)
       .sort((a, b) => b.dateFrom.getTime() - a.dateFrom.getTime())
 
-    return { current, history }
+    return current ? { current, history } : null
   }
 }

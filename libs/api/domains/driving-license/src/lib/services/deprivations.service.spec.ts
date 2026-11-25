@@ -71,10 +71,12 @@ describe('DeprivationsService', () => {
     })
 
     it('maps the deprivation', async () => {
+      const dateFrom = yearsFromNow(-1)
+      const dateTo = yearsFromNow(1)
       const { service } = createService({
         current: {
-          dateFrom: new Date('2026-01-01'),
-          dateTo: new Date('2027-01-01'),
+          dateFrom,
+          dateTo,
           licenseLost: true,
           licenseExpired: false,
           deprivationName: 'Svipting',
@@ -84,13 +86,13 @@ describe('DeprivationsService', () => {
       })
 
       expect(await service.getDeprivation(user)).toStrictEqual({
-        dateFrom: new Date('2026-01-01'),
-        dateTo: new Date('2027-01-01'),
+        dateFrom,
+        dateTo,
         status: DrivingLicenseDeprivationStatus.LOST,
         name: 'Svipting',
         type: 3,
         retakeRequired: true,
-        active: expect.any(Boolean),
+        active: true,
       })
     })
 
@@ -103,7 +105,7 @@ describe('DeprivationsService', () => {
       async (licenseLost, licenseExpired, expected) => {
         const { service } = createService({
           current: {
-            dateFrom: new Date('2026-01-01'),
+            dateFrom: yearsFromNow(-1),
             licenseLost,
             licenseExpired,
           },
@@ -113,23 +115,31 @@ describe('DeprivationsService', () => {
     )
 
     it.each([
-      ['no dateTo', yearsFromNow(-1), undefined, true],
-      ['dateTo in the future', yearsFromNow(-1), yearsFromNow(1), true],
-      ['dateFrom in the future', yearsFromNow(1), undefined, false],
-      ['dateTo in the past', yearsFromNow(-2), yearsFromNow(-1), false],
-    ])('sets active for %s', async (_, dateFrom, dateTo, expected) => {
+      ['no dateTo', yearsFromNow(-1), undefined],
+      ['dateTo in the future', yearsFromNow(-1), yearsFromNow(1)],
+    ])('returns the deprivation for %s', async (_, dateFrom, dateTo) => {
       const { service } = createService({ current: { dateFrom, dateTo } })
-      expect((await service.getDeprivation(user))?.active).toBe(expected)
+      expect((await service.getDeprivation(user))?.active).toBe(true)
+    })
+
+    it.each([
+      ['dateFrom in the future', yearsFromNow(1), undefined],
+      ['dateTo in the past', yearsFromNow(-2), yearsFromNow(-1)],
+    ])('returns null for %s', async (_, dateFrom, dateTo) => {
+      const { service } = createService({ current: { dateFrom, dateTo } })
+      expect(await service.getDeprivation(user)).toBeNull()
     })
   })
 
   describe('getDeprivations', () => {
-    it('returns no current and an empty history for an empty list', async () => {
+    it('returns null for an empty list', async () => {
       const { service } = createService({ all: [] })
-      expect(await service.getDeprivations(user)).toStrictEqual({
-        current: undefined,
-        history: [],
-      })
+      expect(await service.getDeprivations(user)).toBeNull()
+    })
+
+    it('returns null when no item has a dateFrom', async () => {
+      const { service } = createService({ all: [{ dateFrom: null }] })
+      expect(await service.getDeprivations(user)).toBeNull()
     })
 
     it('sets current to the most recent by dateFrom and puts the rest in history', async () => {
@@ -143,8 +153,8 @@ describe('DeprivationsService', () => {
 
       const response = await service.getDeprivations(user)
 
-      expect(response.current?.dateFrom).toStrictEqual(new Date('2022-06-15'))
-      expect(response.history.map((h) => h.dateFrom)).toStrictEqual([
+      expect(response?.current?.dateFrom).toStrictEqual(new Date('2022-06-15'))
+      expect(response?.history.map((h) => h.dateFrom)).toStrictEqual([
         new Date('2020-03-10'),
         new Date('2018-01-01'),
       ])
@@ -157,8 +167,8 @@ describe('DeprivationsService', () => {
 
       const response = await service.getDeprivations(user)
 
-      expect(response.current?.dateFrom).toStrictEqual(new Date('2021-01-01'))
-      expect(response.history).toStrictEqual([])
+      expect(response?.current?.dateFrom).toStrictEqual(new Date('2021-01-01'))
+      expect(response?.history).toStrictEqual([])
     })
 
     it('maps retakeLicense to retakeRequired', async () => {
@@ -166,7 +176,7 @@ describe('DeprivationsService', () => {
         all: [{ dateFrom: new Date('2020-01-01'), retakeLicense: true }],
       })
       expect(
-        (await service.getDeprivations(user)).current?.retakeRequired,
+        (await service.getDeprivations(user))?.current?.retakeRequired,
       ).toBe(true)
     })
   })
