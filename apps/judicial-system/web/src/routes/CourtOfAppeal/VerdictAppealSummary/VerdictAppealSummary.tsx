@@ -201,7 +201,11 @@ const VerdictAppealSummary = () => {
                 </Text>
               ))}
             </Box>
-            {isCompleted && <InfoCardClosedIndictment />}
+            {isCompleted && (
+              <InfoCardClosedIndictment
+                appealCase={verdictAppealCase ?? null}
+              />
+            )}
             <VerdictAppealConclusionBoxes workingCase={workingCase} />
             <VerdictAppealFiles />
             <VerdictAppealRulingDocument workingCase={workingCase} />

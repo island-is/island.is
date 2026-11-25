@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE } from '@island.is/judicial-system/consts'
@@ -46,11 +46,13 @@ const theCase = {
     id: 'ruling-appeal',
     appealState: AppealCaseState.RECEIVED,
     appealType: AppealCaseType.RULING,
+    appealCaseNumber: '100/2026',
   },
   verdictAppealCase: {
     id: 'verdict-appeal',
     appealState: AppealCaseState.RECEIVED,
     appealType: AppealCaseType.VERDICT,
+    appealCaseNumber: '555/2026',
   },
 } as unknown as WorkingCase
 
@@ -94,5 +96,20 @@ describe('VerdictAppealOverview', () => {
     expect(mockPush).toHaveBeenCalledWith(
       `${COURT_OF_APPEAL_VERDICT_APPEAL_REGISTRATION_ROUTE}/${theCase.id}?appealCaseId=verdict-appeal`,
     )
+  })
+
+  it('shows the verdict appeal on the info card when the url names no appeal', () => {
+    renderOverview()
+
+    const appealNumberItem = screen.getByRole('heading', {
+      name: 'Málsnúmer Landsréttar',
+    }).parentElement
+
+    if (!appealNumberItem) {
+      throw new Error('The appeal number has no item on the info card')
+    }
+
+    expect(within(appealNumberItem).getByText('555/2026')).toBeInTheDocument()
+    expect(screen.queryByText('100/2026')).not.toBeInTheDocument()
   })
 })
