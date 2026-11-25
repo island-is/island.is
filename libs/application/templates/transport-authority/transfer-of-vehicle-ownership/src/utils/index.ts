@@ -25,6 +25,7 @@ export { getApproveAnswers } from './getApproveAnswers'
 export { isLastReviewer } from './isLastReviewer'
 export { getRejecter } from './getRejecter'
 export * from './getReviewers'
+export * from './approvals'
 
 export const getChargeItems = (): Array<BasicChargeItem> => {
   return [

@@ -73,6 +73,8 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
         type: userMessageId as 'operator' | 'coOwner',
         wasRemoved: repeaterField.wasRemoved,
         needsAgeValidation: repeaterField.needsAgeValidation,
+        // Keeps the national ID locked for someone who has approved
+        approved: repeaterField.approved,
       }
       temp[index] = itemValue
       setCoOwnersAndOperators(temp)
