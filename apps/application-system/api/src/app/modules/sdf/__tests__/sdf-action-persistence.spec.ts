@@ -20,6 +20,8 @@ import type {
 } from '@island.is/application/types'
 import { createApplicationTemplate } from '@island.is/application/testing'
 import type { User } from '@island.is/auth-nest-tools'
+import { withCodeOwner } from '@island.is/infra-tracing'
+import { withLoggingContext } from '@island.is/logging'
 import { z } from 'zod'
 import {
   BadRequestException,
@@ -28,11 +30,11 @@ import {
   HttpException,
 } from '@nestjs/common'
 import cloneDeep from 'lodash/cloneDeep'
-import escapeRegExp from 'lodash/escapeRegExp'
 
 import { ApplicationValidationService } from '../../application/tools/applicationTemplateValidation.service'
 import { SdfController } from '../sdf.controller'
 import { SdfScreenService } from '../sdf-screen.service'
+import { createLoggerStub } from './logger-stub'
 import { ExecuteActionDto, SdfActionType } from '../dto/action.dto'
 import type {
   ScreenDto,
@@ -50,6 +52,64 @@ jest.mock('@island.is/application/template-loader', () => ({
   getApplicationTemplateByTypeId: (...args: unknown[]) =>
     getApplicationTemplateByTypeIdMock(...args),
 }))
+
+// The service attaches ids and the template's code owner to everything it logs.
+// The logging context stays real and is recorded; the code owner needs an
+// active trace span, so it runs the callback directly and is recorded too.
+jest.mock('@island.is/infra-tracing', () => ({
+  withCodeOwner: jest.fn((_codeOwner: unknown, callback: () => unknown) =>
+    callback(),
+  ),
+}))
+// Counts how many logging contexts are active, so a test can tell whether a log
+// call was made inside one. Requests run one at a time, so a counter is enough.
+let mockApplicationContextDepth = 0
+jest.mock('@island.is/logging', () => {
+  const actual = jest.requireActual('@island.is/logging')
+  return {
+    ...actual,
+    withLoggingContext: jest.fn(
+      (context: Record<string, unknown>, callback: () => unknown) => {
+        mockApplicationContextDepth++
+        const leave = () => {
+          mockApplicationContextDepth--
+        }
+        let result: unknown
+        try {
+          result = actual.withLoggingContext(context, callback)
+        } catch (error) {
+          leave()
+          throw error
+        }
+        return result instanceof Promise
+          ? result.finally(leave)
+          : (leave(), result)
+      },
+    ),
+  }
+})
+
+const clearApplicationContextCalls = () => {
+  mockApplicationContextDepth = 0
+  jest.mocked(withLoggingContext).mockClear()
+  jest.mocked(withCodeOwner).mockClear()
+}
+
+// The work of one request runs inside the application's logging context and
+// under the template's code owner.
+const expectRanInApplicationContext = (
+  template: { type: unknown; codeOwner: unknown },
+  application: { id: string },
+) => {
+  expect(withLoggingContext).toHaveBeenCalledWith(
+    { templateId: template.type, applicationId: application.id },
+    expect.any(Function),
+  )
+  expect(withCodeOwner).toHaveBeenCalledWith(
+    template.codeOwner,
+    expect.any(Function),
+  )
+}
 
 // Resolves a message descriptor to its defaultMessage, so the rows can tell a
 // template's own message from the generic default.
@@ -538,11 +598,15 @@ const buildController = (
     ),
     changeState: jest.fn().mockResolvedValue(results.changeState),
   }
-  const logger = {
-    debug: jest.fn(),
-    error: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
+  const logger = createLoggerStub()
+  // Messages logged while no application logging context was active.
+  const loggedOutsideContext: string[] = []
+  for (const level of ['debug', 'error', 'info', 'warn'] as const) {
+    logger[level].mockImplementation((message: unknown) => {
+      if (mockApplicationContextDepth === 0) {
+        loggedOutsideContext.push(String(message))
+      }
+    })
   }
   const applicationValidationService = new ApplicationValidationService(
     logger as never,
@@ -565,6 +629,7 @@ const buildController = (
     applicationService,
     applicationActionService,
     logger,
+    loggedOutsideContext,
   }
 }
 
@@ -648,6 +713,9 @@ interface PersistenceCase {
   pageId?: string
   // The code of the notice on the returned Screen. Defaults to no notice.
   noticeCode?: string
+  // True when the controller rejects the request before the service runs, so the
+  // service never enters the application's logging context.
+  rejectedByController?: boolean
 }
 
 const SUBMIT_EVENT = DefaultEvents.APPROVE
@@ -862,6 +930,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
     },
     {
       label: 'without a screen',
+      rejectedByController: true,
       form: twoPageForm,
       dto: {
         actionType: SdfActionType.NEXT_PAGE,
@@ -1190,6 +1259,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
     },
     {
       label: 'without a screen',
+      rejectedByController: true,
       form: twoPageForm,
       dto: { actionType: SdfActionType.PREV_PAGE },
       rejects: { type: BadRequestException },
@@ -1380,6 +1450,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
     },
     {
       label: 'without a screen',
+      rejectedByController: true,
       form: onePageForm,
       dto: {
         actionType: SdfActionType.SUBMIT,
@@ -1916,6 +1987,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
     },
     {
       label: 'without a screen',
+      rejectedByController: true,
       form: twoPageForm,
       dto: {
         actionType: SdfActionType.REFETCH,
@@ -2048,6 +2120,7 @@ const cases: Record<SdfActionType, PersistenceCase[]> = {
     },
     {
       label: 'without a screen',
+      rejectedByController: true,
       form: twoPageForm,
       dto: {
         actionType: SdfActionType.VALIDATE,
@@ -2143,6 +2216,7 @@ describe('SDF action persistence', () => {
   )
 
   it.each(rows)('$actionType $label', async (c) => {
+    clearApplicationContextCalls()
     const row = createApplicationRow(c.application ?? {})
     const template = createTemplate(
       c.form,
@@ -2156,17 +2230,22 @@ describe('SDF action persistence', () => {
         ? { ...template, mapUserToRole: () => c.mappedRole }
         : template,
     )
-    const { controller, applicationService, applicationActionService, logger } =
-      buildController(
-        row,
-        {
-          persistingAction: c.persistingActionResult ?? succeeded,
-          ephemeralAction: c.ephemeralActionResult ?? succeeded,
-          ephemeralStoresResults: c.ephemeralStoresResults,
-          changeState: c.changeStateResult ?? transitioned,
-        },
-        c.concurrentState,
-      )
+    const {
+      controller,
+      applicationService,
+      applicationActionService,
+      logger,
+      loggedOutsideContext,
+    } = buildController(
+      row,
+      {
+        persistingAction: c.persistingActionResult ?? succeeded,
+        ephemeralAction: c.ephemeralActionResult ?? succeeded,
+        ephemeralStoresResults: c.ephemeralStoresResults,
+        changeState: c.changeStateResult ?? transitioned,
+      },
+      c.concurrentState,
+    )
     const requestAnswersBefore = cloneDeep(c.dto.answers)
 
     const request = controller.executeAction(
@@ -2218,6 +2297,13 @@ describe('SDF action persistence', () => {
       }
     }
 
+    if (c.rejectedByController) {
+      expect(withLoggingContext).not.toHaveBeenCalled()
+    } else {
+      expectRanInApplicationContext(template, row)
+    }
+    expect(loggedOutsideContext).toEqual([])
+
     expect(
       applicationService.update.mock.calls.map(([, data]) => data),
     ).toEqual(c.saves)
@@ -2247,16 +2333,13 @@ describe('SDF action persistence', () => {
     ).toEqual(c.stateChanges)
     const droppedChangedKeys = c.droppedChangedKeys ?? []
     const droppedWarnings = logger.warn.mock.calls
-      .map(([message]) => String(message))
-      .filter((message) => message.includes('may not write'))
+      .filter(
+        ([message]) =>
+          message === 'SDF dropped changed answers the role may not write',
+      )
+      .map(([, meta]) => (meta as { keys: string[] }).keys)
     expect(droppedWarnings).toEqual(
-      droppedChangedKeys.length > 0
-        ? [
-            expect.stringMatching(
-              new RegExp(`: ${escapeRegExp(droppedChangedKeys.join(', '))}$`),
-            ),
-          ]
-        : [],
+      droppedChangedKeys.length > 0 ? [droppedChangedKeys] : [],
     )
     if (c.validatorCalls) {
       expect(answerValidator.mock.calls).toEqual(c.validatorCalls)
@@ -2321,20 +2404,23 @@ describe('SDF screen request by screen id', () => {
       fallsBack: false,
     },
   ])('$label', async ({ form, answers, screen, pageId, fallsBack }) => {
+    clearApplicationContextCalls()
     const row = createApplicationRow({ answers })
-    getApplicationTemplateByTypeIdMock.mockResolvedValue(
-      createTemplate(form, permissiveSchema, 'all'),
-    )
-    const { controller, applicationService, logger } = buildController(row, {
-      persistingAction: succeeded,
-      ephemeralAction: succeeded,
-      changeState: transitioned,
-    })
+    const template = createTemplate(form, permissiveSchema, 'all')
+    getApplicationTemplateByTypeIdMock.mockResolvedValue(template)
+    const { controller, applicationService, logger, loggedOutsideContext } =
+      buildController(row, {
+        persistingAction: succeeded,
+        ephemeralAction: succeeded,
+        changeState: transitioned,
+      })
 
     const response = await controller.getScreen(row.id, screen, 'is', {
       nationalId: APPLICANT,
     } as User)
 
+    expectRanInApplicationContext(template, row)
+    expect(loggedOutsideContext).toEqual([])
     expect(response.page.id).toBe(pageId)
     expect(applicationService.update).not.toHaveBeenCalled()
     expect(

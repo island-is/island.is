@@ -17,6 +17,13 @@ import { z } from 'zod'
 import { ConflictException } from '@nestjs/common'
 
 import { SdfScreenService } from '../sdf-screen.service'
+import { createLoggerStub } from './logger-stub'
+
+// The service tags the trace with the template's code owner, which needs an
+// active span; here the callback just runs.
+jest.mock('@island.is/infra-tracing', () => ({
+  withCodeOwner: (_codeOwner: unknown, callback: () => unknown) => callback(),
+}))
 
 const getApplicationTemplateByTypeIdMock = jest.fn()
 
@@ -151,12 +158,7 @@ const buildService = (
   applicationActionService: Record<string, jest.Mock>,
 ) =>
   new SdfScreenService(
-    {
-      debug: jest.fn(),
-      error: jest.fn(),
-      info: jest.fn(),
-      warn: jest.fn(),
-    } as never,
+    createLoggerStub() as never,
     applicationService as never,
     {
       findOneByIdAndNationalId: jest.fn().mockResolvedValue(application),

@@ -14,6 +14,13 @@ import type { Application } from '@island.is/application/types'
 import { createApplicationTemplate } from '@island.is/application/testing'
 
 import { SdfScreenService } from '../sdf-screen.service'
+import { createLoggerStub } from './logger-stub'
+
+// The service tags the trace with the template's code owner, which needs an
+// active span; here the callback just runs.
+jest.mock('@island.is/infra-tracing', () => ({
+  withCodeOwner: (_codeOwner: unknown, callback: () => unknown) => callback(),
+}))
 
 const getApplicationTemplateByTypeIdMock = jest.fn()
 
@@ -54,7 +61,7 @@ const createApplication = (): Application =>
 
 const buildService = () =>
   new SdfScreenService(
-    { debug: jest.fn(), error: jest.fn(), info: jest.fn() } as never,
+    createLoggerStub() as never,
     {} as never,
     {} as never,
     {} as never,
@@ -294,7 +301,7 @@ describe('SdfScreenService getScreen — role filtering holds at the render laye
     getApplicationTemplateByTypeIdMock.mockResolvedValue(template)
 
     const service = new SdfScreenService(
-      { debug: jest.fn(), error: jest.fn(), info: jest.fn() } as never,
+      createLoggerStub() as never,
       { update: jest.fn() } as never,
       {
         findOneByIdAndNationalId: jest.fn().mockResolvedValue(application),

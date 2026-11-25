@@ -16,6 +16,13 @@ import type { ApplicationWithAttachments } from '@island.is/application/types'
 import { createApplicationTemplate } from '@island.is/application/testing'
 
 import { SdfScreenService } from '../sdf-screen.service'
+import { createLoggerStub } from './logger-stub'
+
+// The service tags the trace with the template's code owner, which needs an
+// active span; here the callback just runs.
+jest.mock('@island.is/infra-tracing', () => ({
+  withCodeOwner: (_codeOwner: unknown, callback: () => unknown) => callback(),
+}))
 
 const getApplicationTemplateByTypeIdMock = jest.fn()
 
@@ -283,7 +290,7 @@ describe('SdfScreenService handleRefetch', () => {
     }
 
     const service = new SdfScreenService(
-      { debug: jest.fn(), error: jest.fn(), info: jest.fn() },
+      createLoggerStub() as never,
       applicationService,
       {
         findOneByIdAndNationalId: jest.fn().mockResolvedValue(application),
@@ -364,7 +371,7 @@ describe('SdfScreenService handleRefetch', () => {
     }
 
     const service = new SdfScreenService(
-      { debug: jest.fn(), error: jest.fn(), info: jest.fn() },
+      createLoggerStub() as never,
       applicationService,
       {
         findOneByIdAndNationalId: jest.fn().mockResolvedValue(applicationModel),
@@ -438,7 +445,7 @@ describe('SdfScreenService handleRefetch', () => {
     }
 
     const service = new SdfScreenService(
-      { debug: jest.fn(), error: jest.fn(), info: jest.fn() },
+      createLoggerStub() as never,
       applicationService,
       {
         findOneByIdAndNationalId: jest.fn().mockResolvedValue(application),
@@ -498,7 +505,7 @@ describe('SdfScreenService handleRefetch', () => {
     getApplicationTemplateByTypeIdMock.mockResolvedValue(template)
 
     const service = new SdfScreenService(
-      { debug: jest.fn(), error: jest.fn(), info: jest.fn() },
+      createLoggerStub() as never,
       {
         update: jest.fn(),
         updateExternalData: jest.fn(),
@@ -559,7 +566,7 @@ describe('SdfScreenService handleRefetch', () => {
     getApplicationTemplateByTypeIdMock.mockResolvedValue(template)
 
     const service = new SdfScreenService(
-      { debug: jest.fn(), error: jest.fn(), info: jest.fn() },
+      createLoggerStub() as never,
       {
         update: jest.fn(),
         updateExternalData: jest.fn(),
