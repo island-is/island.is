@@ -16,6 +16,7 @@ import {
   RelationSpouse,
 } from './constants'
 import { customZodError } from './utils/validationHelpers'
+import { DebtTypes } from '../types'
 
 const deceasedShare = {
   deceasedShare: z.string().min(1).optional(),
@@ -434,6 +435,7 @@ export const inheritanceReportSchema = z.object({
               assetNumber,
               debtType,
             }) =>
+              debtType !== DebtTypes.InsuranceInstitute &&
               [description, nationalId, propertyValuation, debtType].some(
                 (field) => field !== '',
               )
