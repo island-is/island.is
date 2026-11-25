@@ -5,21 +5,16 @@ import {
   getDefendantVerdictAppealDecisionLabel,
   getServiceRequirementText,
 } from '@island.is/judicial-system/formatters'
-import {
-  findAppealStatementDeadline,
-  findFiledAppealStatementEvent,
-} from '@island.is/judicial-system/types'
+import { findFiledAppealStatementEvent } from '@island.is/judicial-system/types'
 import { getAppealExpirationInfo } from '@island.is/judicial-system-web/src/components/InfoCard/DefendantInfo/DefendantInfo.logic'
 import type {
   AppealCase,
   Defendant,
   Verdict,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  AppealCaseState,
-  ServiceRequirement,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { ServiceRequirement } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { getOpenAppealStatementDeadlineItem } from './appealStatementDeadlineItem.logic'
 import { getProsecutionVerdictAppealItem } from './prosecutionVerdictAppeal.logic'
 import type { VerdictTimelineItem } from './VerdictTimelineBody'
 import { strings } from './VerdictTimelineCard.strings'
@@ -139,40 +134,29 @@ export const getDefenderVerdictTimelineItems = ({
     items.push(prosecutionAppealItem)
   }
 
-  // Greinargerðarfrest for this defendant while the verdict appeal is open.
-  // Once the party has filed, the sent date replaces the deadline line.
-  // Completed / withdrawn appeals leave the outcome off this card for now.
-  // Completed / withdrawn appeals leave greinargerð off this card for now.
-  if (
-    verdictAppealCase &&
-    verdictAppealCase.appealState !== AppealCaseState.COMPLETED &&
-    verdictAppealCase.appealState !== AppealCaseState.WITHDRAWN
-  ) {
-    const party = { defendantId }
-    const statementDeadline = findAppealStatementDeadline(
-      verdictAppealCase.statementDeadlines,
-      party,
+  // Greinargerð: once the party has filed, the sent date replaces the deadline
+  // line. Completed / withdrawn appeals leave this off the card for now.
+  const statementEvent = findFiledAppealStatementEvent(
+    verdictAppealCase?.appealEventLogs,
+    { defendantId },
+  )
+
+  if (statementEvent) {
+    // Filed status does not require a portal deadline — Landsréttur can
+    // record a statement received outside the system.
+    const sentDate = formatDate(statementEvent.created)
+
+    items.push({
+      text: sentDate ? `Greinargerð send ${sentDate}` : 'Greinargerð send',
+    })
+  } else {
+    const statementDeadlineItem = getOpenAppealStatementDeadlineItem(
+      verdictAppealCase,
+      { defendantId },
     )
 
-    const statementEvent = findFiledAppealStatementEvent(
-      verdictAppealCase.appealEventLogs,
-      party,
-    )
-
-    if (statementEvent) {
-      // Filed status does not require a portal deadline — Landsréttur can
-      // record a statement received outside the system.
-      const sentDate = formatDate(statementEvent.created)
-
-      items.push({
-        text: sentDate ? `Greinargerð send ${sentDate}` : 'Greinargerð send',
-      })
-    } else if (statementDeadline?.deadline) {
-      items.push({
-        text: `Frestur til að skila greinargerð ${
-          statementDeadline.isExpired ? 'rann út' : 'er til'
-        } ${formatDate(statementDeadline.deadline)}`,
-      })
+    if (statementDeadlineItem) {
+      items.push(statementDeadlineItem)
     }
   }
 

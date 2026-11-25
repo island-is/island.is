@@ -1,4 +1,5 @@
 import {
+  FormSystemField,
   FormSystemFieldType,
   FormSystemForm,
   FormSystemFormApplicant,
@@ -35,6 +36,7 @@ export interface IControlContext {
   setInSettings: Dispatch<boolean>
   inSettings: boolean
   updateActiveItem: (updatedActiveItem?: ActiveItem) => void
+  getField: (fieldId: string) => FormSystemField | undefined
   focus: string
   setFocus: Dispatch<string>
   updateDnD: (updatedForm?: FormSystemForm) => void
@@ -69,6 +71,9 @@ export const ControlContext = createContext<IControlContext>({
     throw new Error('Function not implemented.')
   },
   updateActiveItem: function (_updatedActiveItem?: ActiveItem): void {
+    throw new Error('Function not implemented.')
+  },
+  getField: function (_fieldId: string): FormSystemField | undefined {
     throw new Error('Function not implemented.')
   },
   focus: '',

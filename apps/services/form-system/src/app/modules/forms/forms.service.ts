@@ -81,6 +81,7 @@ import { FormDelegationDto } from './models/dto/formDelegation.dto'
 import { normalizeZendeskInstance } from '../../../utils/zendeskPartiesCustomFieldIds'
 import { ImportFormDto } from './models/dto/importForm.dto'
 import { formExportSchema } from './formExport.schema'
+import { getApplicationFiles } from '../../../utils/applicationFiles'
 
 const MAX_COPY_SLUG_RETRIES = 5
 
@@ -545,7 +546,7 @@ export class FormsService {
 
     return JSON.stringify({
       format: 'island.is/form-system',
-      version: 1,
+      version: 2,
       form: form.toJSON(),
     })
   }
@@ -564,7 +565,9 @@ export class FormsService {
     try {
       parsed = formExportSchema.parse(JSON.parse(input.formJson))
     } catch {
-      throw new BadRequestException('Invalid or unsupported form export')
+      throw new BadRequestException(
+        'Invalid or unsupported form export. Generate a new export file and try again.',
+      )
     }
 
     const organization = await this.organizationModel.findOne({
@@ -859,6 +862,7 @@ export class FormsService {
     id: string,
     form: Form,
   ): Promise<FormResponseDto> {
+    const fileKeys: string[] = []
     await this.sequelize.transaction(async (transaction) => {
       try {
         const applications = await this.applicationModel.findAll({
@@ -875,7 +879,9 @@ export class FormsService {
         })
 
         for (const application of applications) {
-          await this.cleanupApplicationFiles(application, transaction)
+          fileKeys.push(
+            ...(await this.collectApplicationFiles(application, transaction)),
+          )
           await this.applicationEventModel.destroy({
             where: { applicationId: application.id },
             transaction,
@@ -894,13 +900,18 @@ export class FormsService {
       }
     })
 
+    await Promise.all(
+      fileKeys.map((key) => this.fileService.deleteFileFromStorage(key)),
+    )
+
     return new FormResponseDto()
   }
 
   async archiveForm(id: string, form: Form): Promise<FormResponseDto> {
     let copyForm: Form | undefined
+    const fileKeys: string[] = []
 
-    const fileKeys = await this.sequelize.transaction(async (transaction) => {
+    await this.sequelize.transaction(async (transaction) => {
       await form.reload({ transaction, lock: Transaction.LOCK.UPDATE })
       if (form.status !== FormStatus.PUBLISHED) {
         throw new ConflictException(`Form with id '${id}' is not published`)
@@ -913,7 +924,6 @@ export class FormsService {
         },
         transaction,
       })
-      const fileKeys: string[] = []
       for (const revision of revisions) {
         const applications = await this.applicationModel.findAll({
           where: { formId: revision.id },
@@ -930,9 +940,14 @@ export class FormsService {
           lock: Transaction.LOCK.UPDATE,
         })
         for (const application of applications) {
+          await this.applicationEventModel.destroy({
+            where: { applicationId: application.id },
+            transaction,
+          })
           fileKeys.push(
-            ...this.getApplicationFiles(application).map(({ key }) => key),
+            ...(await this.collectApplicationFiles(application, transaction)),
           )
+          await application.destroy({ transaction })
         }
         await revision.destroy({ transaction })
       }
@@ -952,8 +967,6 @@ export class FormsService {
         undefined,
         transaction,
       )
-
-      return fileKeys
     })
 
     await Promise.all(
@@ -989,7 +1002,8 @@ export class FormsService {
       throw new NotFoundException(`Form with id '${derivedFromId}' not found`)
     }
 
-    const fileKeys = await this.sequelize.transaction(async (transaction) => {
+    const fileKeys: string[] = []
+    await this.sequelize.transaction(async (transaction) => {
       try {
         await formToBeArchived.reload({
           transaction,
@@ -1019,13 +1033,14 @@ export class FormsService {
         })
 
         for (const application of applications) {
-          await this.cleanupApplicationFiles(application, transaction)
+          fileKeys.push(
+            ...(await this.collectApplicationFiles(application, transaction)),
+          )
           await application.destroy({ transaction })
         }
 
-        const fileKeys = await this.deleteDraftApplications(
-          derivedFromId,
-          transaction,
+        fileKeys.push(
+          ...(await this.deleteDraftApplications(derivedFromId, transaction)),
         )
 
         const slugToBeArchived = formToBeArchived.slug
@@ -1042,8 +1057,6 @@ export class FormsService {
         formToBePublished.status = FormStatus.PUBLISHED
         formToBePublished.isInaccessible = false
         await formToBePublished.save({ transaction })
-
-        return fileKeys
       } catch (error) {
         throw new InternalServerErrorException(
           `Unexpected error publishing form '${id}'.`,
@@ -1120,6 +1133,7 @@ export class FormsService {
     formId: string,
     transaction: Transaction,
   ): Promise<string[]> {
+    const fileKeys: string[] = []
     const applications = await this.applicationModel.findAll({
       where: { formId, status: ApplicationStatus.DRAFT },
       include: [
@@ -1135,70 +1149,32 @@ export class FormsService {
       lock: Transaction.LOCK.UPDATE,
     })
 
-    const fileKeys: string[] = []
     for (const application of applications) {
-      fileKeys.push(
-        ...this.getApplicationFiles(application).map(({ key }) => key),
-      )
       await this.applicationEventModel.destroy({
         where: { applicationId: application.id },
         transaction,
       })
+      fileKeys.push(
+        ...(await this.collectApplicationFiles(application, transaction)),
+      )
       await application.destroy({ transaction })
     }
-
     return fileKeys
   }
 
-  private getApplicationFiles(
+  private async collectApplicationFiles(
     application: Application,
-  ): { key: string; valueId: string }[] {
-    const files: { key: string; valueId: string }[] = []
-    for (const value of application.values ?? []) {
-      if (value.fieldType !== FieldTypesEnum.FILE) continue
-
-      let parsed: unknown = value.json
-      if (typeof value.json === 'string') {
-        try {
-          parsed = JSON.parse(value.json)
-        } catch (error) {
-          this.logger.warn('Skipping file cleanup due to invalid value.json', {
-            valueId: value.id,
-            error,
-          })
-          continue
-        }
-      }
-
-      const rawS3Keys = (parsed as { s3Key?: unknown } | undefined)?.s3Key
-      const s3Keys: string[] = Array.isArray(rawS3Keys)
-        ? rawS3Keys.filter(
-            (k): k is string => typeof k === 'string' && k.length > 0,
-          )
-        : typeof rawS3Keys === 'string' && rawS3Keys.length > 0
-        ? [rawS3Keys]
-        : []
-
-      this.logger.debug(`Deleting s3Keys for value ${value.id}:`, s3Keys)
-
-      for (const key of s3Keys) {
-        files.push({ key, valueId: value.id })
-      }
+    transaction: Transaction,
+  ): Promise<string[]> {
+    const files = getApplicationFiles(application, this.logger)
+    for (const { key, valueId } of files) {
+      await this.fileService.removeFileReference(key, valueId, transaction)
     }
-
-    return files
-  }
-
-  private async cleanupApplicationFiles(
-    application: Application,
-    transaction?: Transaction,
-  ): Promise<void> {
-    for (const { key, valueId } of this.getApplicationFiles(application)) {
-      await this.fileService.deleteFile(key, valueId, transaction)
-    }
+    return files.map(({ key }) => key)
   }
 
   private async deleteApplications(id: string): Promise<FormResponseDto> {
+    const fileKeys: string[] = []
     try {
       await this.sequelize.transaction(async (transaction) => {
         const applications = await this.applicationModel.findAll({
@@ -1215,10 +1191,15 @@ export class FormsService {
         })
 
         for (const application of applications) {
-          await this.cleanupApplicationFiles(application, transaction)
+          fileKeys.push(
+            ...(await this.collectApplicationFiles(application, transaction)),
+          )
           await application.destroy({ transaction })
         }
       })
+      await Promise.all(
+        fileKeys.map((key) => this.fileService.deleteFileFromStorage(key)),
+      )
     } catch (error) {
       throw new InternalServerErrorException(
         `Unexpected error deleting applications for form '${id}'.`,
@@ -1519,7 +1500,8 @@ export class FormsService {
       'created',
       'modified',
       'displayOrder',
-      'description',
+      'informationText',
+      'tooltip',
       'isHidden',
       'isPartOfMultiset',
       'fieldType',

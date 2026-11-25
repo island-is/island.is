@@ -176,9 +176,10 @@ export class FieldSettings {
   showChildrenInCustody?: boolean
 
   @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional({ type: Boolean })
-  hasDescription?: boolean
+  @ValidateNested()
+  @Type(() => LanguageType)
+  @ApiPropertyOptional({ type: LanguageType })
+  subLabel?: LanguageType
 
   @IsOptional()
   @IsBoolean()
