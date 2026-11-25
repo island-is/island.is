@@ -74,7 +74,7 @@ export class AppealVerdictController {
 
     return this.auditTrailService.audit(
       user.id,
-      AuditedAction.DELIVER_TO_NATIONAL_COMMISSIONERS_OFFICE_APPEAL_VERDICT,
+      AuditedAction.SEND_APPEAL_VERDICT_TO_SERVICE,
       this.appealVerdictService.sendToService(
         theCase,
         dto.defendantIds,

@@ -139,17 +139,14 @@ export class InternalAppealVerdictController {
       `Updating appeal verdict by external police document id ${policeDocumentId} of ${theCase.id}`,
     )
 
+    // Audited at the xrd-api boundary (UPDATE_APPEAL_VERDICT), same as
+    // district verdict and appeal summons police updates — do not double-audit.
     const transaction = await getOrCreateTransaction(this.sequelize)
 
-    return this.auditTrailService.audit(
-      'digital-mailbox-api',
-      AuditedAction.UPDATE_APPEAL_VERDICT,
-      this.appealVerdictService.updatePoliceDelivery(
-        appealVerdict,
-        update,
-        transaction,
-      ),
-      policeDocumentId,
+    return this.appealVerdictService.updatePoliceDelivery(
+      appealVerdict,
+      update,
+      transaction,
     )
   }
 }
