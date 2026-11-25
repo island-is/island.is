@@ -1089,6 +1089,9 @@ describe('NotificationsWorkerService', () => {
             email: profile?.email,
             emailVerified: profile?.emailVerified ?? false,
             documentNotifications: profile?.documentNotifications ?? false,
+            // This override persists for later tests, so it must keep
+            // honouring the flag the actor profile preference tests toggle
+            onlyActionablePriorityNotifications: mockActorOnlyActionable,
           } as ActorProfileDto)
         })
 

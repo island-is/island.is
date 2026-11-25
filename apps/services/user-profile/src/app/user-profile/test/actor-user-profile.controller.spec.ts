@@ -869,6 +869,7 @@ describe('GET v2/actor/actor-profiles', () => {
       fromNationalId: testNationalId1,
       emailNotifications: false,
       emailsId: email1.id,
+      onlyActionablePriorityNotifications: false,
     })
     // Should default to true because we don't have a record for this delegation
     expect(res.body.data[1]).toStrictEqual({
@@ -876,6 +877,7 @@ describe('GET v2/actor/actor-profiles', () => {
       emailNotifications: true,
       email: null,
       emailVerified: false,
+      onlyActionablePriorityNotifications: false,
     })
 
     expect(
@@ -1001,6 +1003,7 @@ describe('GET v2/actor/actor-profiles', () => {
       emailsId: email1.id,
       email: email1.email,
       emailVerified: email1.emailStatus === DataStatus.VERIFIED,
+      onlyActionablePriorityNotifications: false,
     })
     expect(res.body.data[1]).toStrictEqual({
       fromNationalId: testNationalId2,
@@ -1008,6 +1011,7 @@ describe('GET v2/actor/actor-profiles', () => {
       emailsId: email2.id,
       email: email2.email,
       emailVerified: email2.emailStatus === DataStatus.VERIFIED,
+      onlyActionablePriorityNotifications: false,
     })
   })
 
@@ -1913,6 +1917,7 @@ describe('PATCH v2/actor/actor-profiles/.from-national-id', () => {
       emailsId: testEmail2Id,
       email: email2Data.email,
       emailVerified: email2Data.emailStatus === DataStatus.VERIFIED,
+      onlyActionablePriorityNotifications: false,
     })
 
     const actorProfile = await delegationPreferenceModel.findAll({
@@ -1946,6 +1951,7 @@ describe('PATCH v2/actor/actor-profiles/.from-national-id', () => {
       emailsId: testEmailsId,
       email: email1Data.email,
       emailVerified: email1Data.emailStatus === DataStatus.VERIFIED,
+      onlyActionablePriorityNotifications: false,
     })
 
     const actorProfile = await delegationPreferenceModel.findAll({
@@ -1985,6 +1991,7 @@ describe('PATCH v2/actor/actor-profiles/.from-national-id', () => {
       emailsId: testEmail2Id,
       email: email2Data.email,
       emailVerified: email2Data.emailStatus === DataStatus.VERIFIED,
+      onlyActionablePriorityNotifications: false,
     })
 
     const actorProfile = await delegationPreferenceModel.findAll({
