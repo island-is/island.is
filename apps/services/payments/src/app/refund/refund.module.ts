@@ -7,12 +7,14 @@ import { ChargeFjsV2ClientModule } from '@island.is/clients/charge-fjs-v2'
 import {
   PaymentFlow,
   PaymentFlowCharge,
-} from '../paymentFlow/models/paymentFlow.model'
-import { PaymentFlowEvent } from '../paymentFlow/models/paymentFlowEvent.model'
-import { FjsCharge } from '../paymentFlow/models/fjsCharge.model'
-import { CardPaymentDetails } from '../paymentFlow/models/cardPaymentDetails.model'
-import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
-import { PaymentWorkerEvent } from '../paymentFlow/models/paymentWorkerEvent.model'
+  PaymentFlowEvent,
+  FjsCharge,
+  CardPaymentDetails,
+  PaymentFulfillment,
+  PaymentWorkerEvent,
+  PaymentFlowDebt,
+  DebtSettlement,
+} from '../paymentFlow/models'
 import { BankTransferPaymentModule } from '../bankTransferPayment/bankTransferPayment.module'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
@@ -20,7 +22,9 @@ import { JwksModule } from '../jwks/jwks.module'
 import { JwksConfig } from '../jwks/jwks.config'
 import { RefundController } from './refund.controller'
 import { RefundService } from './refund.service'
+import { RefundOrchestrationService } from './refundOrchestration.service'
 import { RefundModuleConfig } from './refund.config'
+import { DebtPaymentModule } from '../debtPayment/debtPayment.module'
 
 @Module({
   imports: [
@@ -32,6 +36,8 @@ import { RefundModuleConfig } from './refund.config'
       CardPaymentDetails,
       PaymentFulfillment,
       PaymentWorkerEvent,
+      PaymentFlowDebt,
+      DebtSettlement,
     ]),
     ConfigModule.forRoot({
       isGlobal: true,
@@ -39,11 +45,12 @@ import { RefundModuleConfig } from './refund.config'
     }),
     FeatureFlagModule,
     ChargeFjsV2ClientModule,
+    DebtPaymentModule,
     JwksModule,
     BankTransferPaymentModule,
   ],
   controllers: [RefundController],
-  providers: [RefundService, PaymentFlowService],
-  exports: [RefundService],
+  providers: [RefundService, RefundOrchestrationService, PaymentFlowService],
+  exports: [RefundService, RefundOrchestrationService],
 })
 export class RefundModule {}

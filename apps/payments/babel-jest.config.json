@@ -1,0 +1,5 @@
+{
+  "babelrc": false,
+  "presets": ["@nx/next/babel"],
+  "plugins": ["@vanilla-extract/babel-plugin"]
+}

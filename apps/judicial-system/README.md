@@ -65,8 +65,6 @@ To enable writing to AWS S3 you need to be authenticated against AWS.
 
 Finally, you can enable communication with the court system via xRoad by providing appropriate values for the environment variables specified in the `xRoad` and `courtClientOptions` sections in `environment.ts`.
 
-To get latest texts from Contentful you need to provide an appropriate value for the environment variable `CONTENTFUL_ACCESS_TOKEN`.
-
 ### Unit tests
 
 ```bash
@@ -111,8 +109,6 @@ You can serve this service locally by running:
 ```bash
 yarn start judicial-system-api
 ```
-
-To get latest texts from Contentful you need to provide an appropriate value for the environment variable `CONTENTFUL_ACCESS_TOKEN`.
 
 ### Graphql playground
 
@@ -169,34 +165,23 @@ yarn test judicial-system-web
 
 ##### e2e tests
 
-The e2e test can be run within VSCode, from the "Testing" panel.
+The e2e tests live in `apps/system-e2e/src/tests/judicial-system` and are run with Playwright against a running local stack (backend, api and web). They can be run within VSCode, from the "Testing" panel, or from the command line:
 
-## Message Extraction from Contentful
-
-Running `yarn nx extract-strings judicial-system-{namespace}` in the root folder `/island.is` will extract messages from the project and create or update a Namespace entry in Contentful.
-Make sure you have the env `CONTENTFUL_ENVIRONMENT=test` to update the strings against `dev` and `staging` and `CONTENTFUL_ENVIRONMENT=master` to update against `prod`.
-
-### Example for namespaces in web:
-
-```
-yarn nx extract-strings judicial-system-web
+```bash
+yarn playwright test -c apps/system-e2e/src --project judicial-system
 ```
 
-will update namespaces:
+The suite is timed for a production build of the web app, which is also how e2e runs in CI. When nothing is listening on port 4200, the Playwright config builds the production bundle and serves it with `ENABLE_LOCAL_PROXY=true`, so `/api` is still forwarded to the local api server. If a dev server is already running on that port it is reused instead - note that in dev mode Next compiles each route on first visit, which makes the suite slow and prone to timeouts. To run against a production build manually:
 
-- judicial.system.core
-- judicial.system.restriction_cases
-- judicial.system.investigation_cases
-
-### For backend:
-
-```
-yarn nx extract-strings judicial-system-backend
+```bash
+yarn nx run judicial-system-web:build:production
+NODE_ENV=production PORT=4200 ENABLE_LOCAL_PROXY=true MOCK_NATIONAL_REGISTRY=true node dist/apps/judicial-system/web/main.js
+yarn playwright test -c apps/system-e2e/src --project judicial-system
 ```
 
-will update namespaces:
+Stop the dev server first - the production server needs port 4200, both because the dev S3 upload bucket only allows that origin in its CORS rules and because the dev server also holds port 4201 for metrics. `MOCK_NATIONAL_REGISTRY=true` keeps the fake national registry lookups the tests depend on; the web server needs nothing from the workspace `.env` files.
 
-- judicial.system.backend
+Make sure the backend database has all migrations applied first (`yarn nx run judicial-system-backend:migrate`); a stale schema makes every case creation fail with a 500. Run the seeders too (`yarn nx run judicial-system-backend:seed`) - besides the test users they add the e2e defender to the lawyer registry, which every lawyer login requires. Both commands use the development sequelize config, which is hardcoded to `localhost:5432` - stop any `yarn proxies db` on that port first, or they will run against the dev cluster's database.
 
 ## To test authentication locally
 

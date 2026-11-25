@@ -4,8 +4,10 @@ import { useTheme } from 'styled-components'
 import { Typography } from '../../ui'
 import { LinkRowButton } from '../link-row-button/link-row-button'
 
-export interface MoreInfoConteinerProps {
+export interface MoreInfoContainerProps {
   externalLinks: {
+    /** Render key, for lists where titles repeat. */
+    id?: string
     link: string
     title: string
     icon?: ImageSourcePropType
@@ -13,14 +15,16 @@ export interface MoreInfoConteinerProps {
   /** @deprecated Will be removed after full expo-router migration */
   componentId?: string
 }
-export const MoreInfoContiner = ({ externalLinks }: MoreInfoConteinerProps) => {
+export const MoreInfoContainer = ({
+  externalLinks,
+}: MoreInfoContainerProps) => {
   const theme = useTheme()
   const intl = useIntl()
 
   return (
     <View
       style={{
-        borderTopColor: theme.color.blue200,
+        borderTopColor: theme.tokens.border.primary,
       }}
     >
       <Typography variant="heading5">
@@ -33,7 +37,7 @@ export const MoreInfoContiner = ({ externalLinks }: MoreInfoConteinerProps) => {
               ...link,
               isExternal: true,
             }}
-            key={link.title}
+            key={link.id ?? link.title}
           />
         ))}
       </View>

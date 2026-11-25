@@ -1,5 +1,5 @@
 import { NetworkStatus, QueryResult } from '@apollo/client'
-import { GeneralCardSkeleton, Problem } from '../../ui'
+import { GeneralCardSkeleton, StatusMessage } from '../../ui'
 import { SafeAreaView, View } from 'react-native'
 
 export function Skeletons() {
@@ -26,14 +26,14 @@ export function EmptyComponent({ res }: { res: QueryResult<any, any> }) {
   if (res.error) {
     return (
       <View>
-        <Problem error={res.error} />
+        <StatusMessage error={res.error} />
       </View>
     )
   }
 
   return (
     <View>
-      <Problem type="no_data" />
+      <StatusMessage type="no_data" />
     </View>
   )
 }

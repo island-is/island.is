@@ -9,6 +9,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   InputName,
@@ -16,10 +17,7 @@ import {
   RequiredStar,
 } from '@island.is/judicial-system-web/src/components'
 import RadioGroup from '@island.is/judicial-system-web/src/components/RadioGroup/RadioGroup'
-import type {
-  Case,
-  Victim,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { Victim } from '@island.is/judicial-system-web/src/graphql/schema'
 import { RequestSharedWhen } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useNationalRegistry,
@@ -30,8 +28,8 @@ import { LegalRightsProtectorInputFields } from './LegalRightsProtectorInputFiel
 
 interface Props {
   victim: Victim
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
   onDelete: (victim: Victim) => void
 }
 
@@ -83,7 +81,15 @@ export const VictimInfo: React.FC<Props> = ({
     <Box marginBottom={3}>
       <BlueBox>
         <Box>
-          <Box marginBottom={2} display="flex" justifyContent="flexEnd">
+          <Box
+            marginBottom={2}
+            display="flex"
+            alignItems="center"
+            justifyContent="spaceBetween"
+          >
+            <Text as="h3" variant="h4">
+              Brotaþoli
+            </Text>
             <Button
               onClick={() => onDelete(victim)}
               colorScheme="destructive"
@@ -160,7 +166,7 @@ export const VictimInfo: React.FC<Props> = ({
             </Box>
           </Box>
         </Box>
-        <Box marginTop={4}>
+        <Box marginTop={2}>
           <LegalRightsProtectorInputFields
             victim={victim}
             workingCase={workingCase}

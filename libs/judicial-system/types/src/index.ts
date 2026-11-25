@@ -1,5 +1,7 @@
 export { Feature } from './lib/feature'
 
+export type { AuthUser, Credentials } from './lib/auth'
+
 export {
   Gender,
   DefenderChoice,
@@ -27,6 +29,7 @@ export { CourtSessionStringType } from './lib/courtSessionString'
 export {
   isSubpoenaInfoChanged,
   isVerdictInfoChanged,
+  DocumentDeliveryReceiverType,
   DocumentDeliverySupplementCode,
   DocumentDeliveryMethod,
   getServiceDateFromSupplements,
@@ -70,16 +73,53 @@ export {
 } from './lib/eventLog'
 
 export {
+  AppealSummonsAction,
+  AppealSummonsAppellantSide,
+  canIssueAppealSummons,
+  canPerformAppealSummonsAction,
+  getAppealSummonsStatus,
+} from './lib/appealSummons'
+export type {
+  AppealSummonsStatus,
+  AppealSummonsStatusFields,
+} from './lib/appealSummons'
+
+export {
   AppealCaseState,
   AppealCaseRulingDecision,
   AppealCaseTransition,
   AppealCaseType,
+  AppealRulingType,
   appealCorrectionLock,
   AppealDecisionPartyRole,
   getStatementDeadline,
   CaseAppealDecision,
+  VerdictAppealStatus,
+  APPEAL_JUDGE_COUNT,
+  MAX_APPEAL_JUDGE_COUNT,
+  getOrderedAppealJudges,
+  getAppealJudges,
+  getPresidingAppealJudge,
+  getAppealJudgeUserIds,
+  hasAllAppealJudges,
+  isSameAppealBench,
 } from './lib/appealCase'
-export type { AppealCorrectionLock } from './lib/appealCase'
+export type {
+  AppealCorrectionLock,
+  AppealJudgeFields,
+  AppealJudgesFields,
+} from './lib/appealCase'
+export {
+  AppealCourtSessionType,
+  appealCourtSessionTypeNames,
+  sortAppealCourtSessionsByDate,
+} from './lib/appealCourtSession'
+export {
+  findAppealStatementDeadline,
+  hasFiledAppealStatement,
+  isSameAppealStatementParty,
+} from './lib/appealStatementDeadline'
+export type { AppealStatementParty } from './lib/appealStatementDeadline'
 
 export { DateType, dateTypes } from './lib/dateLog'
 
@@ -92,7 +132,10 @@ export {
   CaseFileCategory,
   HashAlgorithm,
   partyAppealFileCategories,
+  indictmentAdditionalCaseFileCategories,
   verdictAppealDeclarationFileCategories,
+  verdictAppealStatementFileCategories,
+  verdictAppealFileCategories,
   isAppealFileDeletionLocked,
   isRulingOrderWithoutDocument,
   PoliceFileTypeCode,
@@ -166,7 +209,9 @@ export {
   completedCaseStates,
   isCompletedCase,
   isRulingOrDismissalCase,
+  CasePoliceState,
   hasIndictmentCaseBeenSubmittedToCourt,
+  getIndictmentCasePoliceState,
   isIndictmentCaseState,
   isRequestCaseState,
   isIndictmentCaseTransition,
@@ -229,4 +274,5 @@ export {
   ContextMenuCaseActionType,
   CaseTableType,
 } from './lib/tables/caseTableTypes'
+export type { CaseTableGroup } from './lib/tables/caseTableTypes'
 export { getCaseTableGroups } from './lib/tables/caseTableGroup'

@@ -8,6 +8,7 @@ import {
   type InputProps,
   Stack,
 } from '@island.is/island-ui/core'
+import { MarkdownText } from '@island.is/web/components'
 
 const handleInputKeyDown = (ev: { key: string; target: unknown }) => {
   if (ev.key === 'Enter') {
@@ -19,7 +20,7 @@ const handleInputKeyDown = (ev: { key: string; target: unknown }) => {
 interface DebouncedInputProps {
   value: string
   label?: string
-  tooltip?: InputProps['tooltip']
+  tooltip?: string
   name: string
   placeholder?: string
   size?: InputProps['size']
@@ -65,7 +66,17 @@ export const DebouncedInput = ({
       <Input
         size={size}
         label={label}
-        tooltip={tooltip}
+        tooltip={
+          tooltip && (
+            <MarkdownText
+              variant="small"
+              fontWeight="regular"
+              replaceNewLinesWithBreaks={false}
+            >
+              {tooltip}
+            </MarkdownText>
+          )
+        }
         name={name}
         icon={icon}
         loading={loading}

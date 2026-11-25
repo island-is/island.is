@@ -11,6 +11,7 @@ import {
   CreateXRoadRecyclingRequestDtoRequestTypeEnum,
 } from '../../gen/fetch'
 import { logger } from '@island.is/logging'
+import { shortPermno } from './shortPermno'
 
 @Injectable()
 export class RecyclingFundClientService {
@@ -60,7 +61,7 @@ export class RecyclingFundClientService {
     ).xRoadControllerCreateVehicle(request)
 
     logger.info('Car-recycling: createVehicle', {
-      permno: permno.slice(-3) ?? '',
+      permno: shortPermno(permno),
     })
     return r
   }
@@ -85,7 +86,7 @@ export class RecyclingFundClientService {
     ).xRoadControllerCreateRecyclingRequest(request)
 
     logger.info('Car-recycling:recycleVehicle', {
-      permno: permno.slice(-3) ?? '',
+      permno: shortPermno(permno),
       requestType,
     })
     return r

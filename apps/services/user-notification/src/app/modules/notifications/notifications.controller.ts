@@ -3,7 +3,7 @@ import { isCompany } from 'kennitala'
 import { DogStatsD } from '@island.is/infra-metrics'
 import { InjectQueue, QueueService } from '@island.is/message-queue'
 
-import { METRICS_PREFIX } from './utils'
+import { METRICS_PREFIX, toDeadlineIso } from './utils'
 import {
   Body,
   Controller,
@@ -176,6 +176,7 @@ export class NotificationsController {
     const sanitizedBody = {
       ...body,
       args: validArgs,
+      ...(body.deadline && { deadline: toDeadlineIso(body.deadline) }),
     }
 
     const id = await this.queue.add(sanitizedBody)
@@ -185,16 +186,15 @@ export class NotificationsController {
       recipient_type: isCompany(body.recipient) ? 'company' : 'individual',
     })
 
-    const flattenedArgs: Record<string, string> = {}
-    for (const arg of validArgs) {
-      flattenedArgs[arg.key] = arg.value
-    }
     this.logger.info('Message queued', {
       messageId: id,
-      ...flattenedArgs,
-      ...sanitizedBody,
-      args: {}, // Remove args, since they're in a better format in `flattenedArgs`
-      queue: { url: this.queue.url, name: this.queue.queueName },
+      templateId: body.templateId,
+      senderId: body.senderId,
+      queueName: this.queue.queueName,
+      args: validArgs.map(({ key, value }) => ({
+        key,
+        length: value.length,
+      })),
     })
 
     return {

@@ -1,0 +1,5 @@
+mutation DeleteAppealSummons($input: DeleteAppealSummonsInput!) {
+  deleteAppealSummons(input: $input) {
+    deleted
+  }
+}

@@ -3,6 +3,8 @@ import { AnonymityInVehicleRegistry } from './lib/dataSchema'
 
 export const getDataProviders = () => import('./dataProviders/')
 
+export * from './lib/messages'
+
 export type AnonymityInVehicleRegistryAnswers = AnonymityInVehicleRegistry
 
 export default template

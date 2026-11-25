@@ -1,15 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import {
-  Dimensions,
-  DynamicColorIOS,
-  Image,
-  Platform,
-  View,
-  useWindowDimensions,
-} from 'react-native'
+import { Dimensions, Image, View, useWindowDimensions } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
-import { dynamicColor, font } from '../../ui'
+import { font, token } from '../../ui'
 import { testIDs } from '../../utils/test-ids'
 
 interface PinKeypadProps {
@@ -45,10 +38,7 @@ const NumButtonTouchable = styled.TouchableHighlight<NumButtonTouchableProps>`
   border-radius: ${(props) => (props.size ?? 64) / 2}px;
   align-items: center;
   justify-content: center;
-  background-color: ${dynamicColor((props) => ({
-    dark: 'shade300',
-    light: props.theme.color.blue100,
-  }))};
+  background-color: ${token((t) => t.interactive.background.primaryMinimal)};
   margin: ${(props) => props.gutter ?? 16}px;
 `
 
@@ -56,10 +46,10 @@ const NumButtonText = styled.Text<{ pressed: boolean }>`
   ${font({
     fontWeight: '500',
     fontSize: 32,
-    color: (props) =>
-      props.pressed
-        ? '#ffffff'
-        : { dark: 'foreground', light: props.theme.color.blue400 },
+    color: ({ pressed, theme }) =>
+      pressed
+        ? theme.tokens.interactive.foreground.invert
+        : theme.tokens.interactive.foreground.primary,
   })}
 `
 
@@ -94,7 +84,7 @@ function NumButton({
 
   return (
     <NumButtonTouchable
-      underlayColor={theme.color.blue400}
+      underlayColor={theme.tokens.interactive.background.primary}
       onPressIn={() => setPressed(true)}
       onPressOut={() => setPressed(false)}
       onPress={() => onPress && onPress(value)}
@@ -108,15 +98,8 @@ function NumButton({
           source={icon}
           style={{
             tintColor: pressed
-              ? theme.color.white
-              : Platform.OS === 'android'
-              ? theme.isDark
-                ? theme.shade.foreground
-                : theme.color.blue400
-              : DynamicColorIOS({
-                  light: theme.color.blue400,
-                  dark: theme.shades.dark.foreground,
-                }),
+              ? theme.tokens.interactive.foreground.invert
+              : theme.tokens.interactive.foreground.primary,
           }}
         />
       ) : (

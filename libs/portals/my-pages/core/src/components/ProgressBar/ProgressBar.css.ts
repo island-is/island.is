@@ -154,6 +154,10 @@ export const textPosition = style({
   position: 'absolute',
 })
 
+export const textClickable = style({
+  cursor: 'pointer',
+})
+
 export const textMiddle = style({
   transform: 'translateX(-50%)',
 })

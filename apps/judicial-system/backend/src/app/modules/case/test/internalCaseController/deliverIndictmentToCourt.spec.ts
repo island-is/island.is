@@ -101,11 +101,7 @@ describe('InternalCaseController - Deliver indictment to court', () => {
         theCase.type,
         `${theCase.id}/indictment.pdf`,
       )
-      expect(createIndictment).toHaveBeenCalledWith(
-        theCase,
-        expect.any(Function),
-        undefined,
-      )
+      expect(createIndictment).toHaveBeenCalledWith(theCase, undefined)
       expect(mockCourtService.createDocument).toHaveBeenCalledWith(
         user,
         caseId,

@@ -80,6 +80,7 @@ import { verifyToken } from './utils/tokenUtils'
 import {
   getApplicationLifecycle,
   handleScheduledNotifications,
+  isHiddenFromApplicationSystemOverview,
   removeObjectWithKeyFromAnswers,
 } from './utils/application'
 import { DecodedAssignmentToken } from './types'
@@ -112,7 +113,7 @@ import { FeatureFlagService } from '@island.is/nest/feature-flags'
 })
 @ApiBearerAuth()
 @Controller()
-@CodeOwner(CodeOwners.NordaApplications)
+@CodeOwner(CodeOwners.ApplicationsCore)
 export class ApplicationController {
   constructor(
     private readonly applicationService: ApplicationService,
@@ -191,6 +192,13 @@ export class ApplicationController {
     description:
       'To include pruned applications in the response. Defaults to false.',
   })
+  @ApiQuery({
+    name: 'excludeHiddenFromApplicationSystemOverview',
+    required: false,
+    type: 'boolean',
+    description:
+      'To exclude applications whose current state sets lifecycle.hideFromApplicationSystemOverview. Used by the application overview (/umsoknir/:type), not my pages. Defaults to false.',
+  })
   @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
   @UseInterceptors(ApplicationSerializer)
   @Audit<ApplicationResponseDto[]>({
@@ -205,6 +213,11 @@ export class ApplicationController {
     scopeCheck?: boolean,
     @Query('showPruned', new ParseBoolPipe({ optional: true }))
     showPruned?: boolean,
+    @Query(
+      'excludeHiddenFromApplicationSystemOverview',
+      new ParseBoolPipe({ optional: true }),
+    )
+    excludeHiddenFromApplicationSystemOverview?: boolean,
   ): Promise<ApplicationResponseDto[]> {
     this.verifyUserAccess(nationalId, user)
     const applications = await this.fetchApplications(
@@ -217,6 +230,7 @@ export class ApplicationController {
       applications,
       user,
       scopeCheck ?? false,
+      excludeHiddenFromApplicationSystemOverview ?? false,
     )
   }
 
@@ -246,6 +260,7 @@ export class ApplicationController {
     applications: Application[],
     user: User,
     scopeCheck: boolean,
+    excludeHiddenFromApplicationSystemOverview: boolean,
   ): Promise<ApplicationResponseDto[]> {
     const templates: Partial<
       Record<
@@ -280,6 +295,10 @@ export class ApplicationController {
           application as BaseApplication,
           user,
           template,
+        ) &&
+        !(
+          excludeHiddenFromApplicationSystemOverview &&
+          isHiddenFromApplicationSystemOverview(application, template)
         )
       ) {
         filteredApplications.push(application)
@@ -786,6 +805,13 @@ export class ApplicationController {
     }
 
     return this.withApplicationInfo(template, existingApplication, async () => {
+      // Checked against the stored application, so answers in this request cannot change the role
+      await this.validationService.validateIncomingEvent(
+        existingApplication as BaseApplication,
+        updateApplicationStateDto.event,
+        user,
+      )
+
       const newAnswers = (updateApplicationStateDto.answers ?? {}) as FormValue
       const namespaces = await getApplicationTranslationNamespaces(
         existingApplication as BaseApplication,

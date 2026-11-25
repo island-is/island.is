@@ -34,9 +34,6 @@ export const testIDs = {
   PIN_KEYPAD_BUTTON_FINGERPRINT: 'PIN_KEYPAD_BUTTON_FINGERPRINT',
   PIN_KEYPAD_BUTTON_DELETE: 'PIN_KEYPAD_BUTTON_DELETE',
 
-  // navigation bar sheet
-  NAVBAR_SHEET_CLOSE_BUTTON: 'NAVBAR_SHEET_CLOSE_BUTTON',
-
   // screen specifics
 
   // login screen

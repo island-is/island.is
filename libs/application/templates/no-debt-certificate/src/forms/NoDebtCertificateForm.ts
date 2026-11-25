@@ -8,13 +8,18 @@ import {
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { NoDebtCertificateApi } from '../dataProviders'
-import { DistrictCommissionersLogo } from '@island.is/application/assets/institution-logos'
+import { DebtCollectorLogo } from '@island.is/application/assets/institution-logos'
 
 export const NoDebtCertificateForm: Form = buildForm({
   id: 'NoDebtCertificateFormDraft',
   mode: FormModes.DRAFT,
-  logo: DistrictCommissionersLogo,
+  logo: DebtCollectorLogo,
   children: [
+    buildSection({
+      id: 'certificateLanguageSection',
+      title: m.certificateLanguageSection,
+      children: [],
+    }),
     buildSection({
       id: 'externalData',
       title: m.externalDataSection,

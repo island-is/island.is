@@ -13,6 +13,7 @@ import {
   SectionTypes,
 } from '@island.is/form-system/ui'
 import { hasScreens } from '../utils/reducerHelpers'
+import { updatePaymentSectionVisibility } from '../utils/payment'
 import {
   decrement,
   getCompletedSectionAndScreen,
@@ -41,26 +42,19 @@ export const initialState = {
 
 export const initialReducer = (state: ApplicationState): ApplicationState => {
   const application = initializeApplication(state.application)
-  const sections: FormSystemSection[] = (application.sections ?? [])
-    .filter((s): s is FormSystemSection => s != null)
-    .sort(
-      (a, b) =>
-        (a.displayOrder ?? Number.MAX_SAFE_INTEGER) -
-        (b.displayOrder ?? Number.MAX_SAFE_INTEGER),
-    )
+  const sections: FormSystemSection[] = updatePaymentSectionVisibility(
+    (application.sections ?? [])
+      .filter((s): s is FormSystemSection => s != null)
+      .sort(
+        (a, b) =>
+          (a.displayOrder ?? Number.MAX_SAFE_INTEGER) -
+          (b.displayOrder ?? Number.MAX_SAFE_INTEGER),
+      ),
+    application.hasPayment,
+  )
   const screens = sections
     .flatMap((section) => section.screens ?? [])
     .filter(Boolean) as FormSystemScreen[]
-
-  if (application.hasPayment === false) {
-    sections.forEach((s) => {
-      if (s.sectionType === SectionTypes.PAYMENT) s.isHidden = true
-    })
-  } else {
-    sections.forEach((s) => {
-      if (s.sectionType === SectionTypes.PAYMENT) s.isHidden = false
-    })
-  }
 
   if (application.hasSummaryScreen === false) {
     sections.forEach((s) => {
@@ -139,11 +133,56 @@ const initializeApplication = (
   }
 }
 
+export const uploadNavigationReducer = <
+  T extends Pick<
+    ApplicationState,
+    'pendingUploads' | 'isNavigating' | 'submitted'
+  >,
+>(
+  state: T,
+  action: Action,
+): T => {
+  switch (action.type) {
+    case 'START_NAVIGATION':
+      if (
+        state.isNavigating ||
+        state.submitted ||
+        (state.pendingUploads ?? 0) > 0
+      ) {
+        return state
+      }
+      return { ...state, isNavigating: true }
+    case 'FINISH_NAVIGATION':
+      return { ...state, isNavigating: false }
+    case 'START_FILE_UPLOAD':
+      if (state.isNavigating || state.submitted) return state
+      return { ...state, pendingUploads: (state.pendingUploads ?? 0) + 1 }
+    case 'FINISH_FILE_UPLOAD':
+      return { ...state, pendingUploads: (state.pendingUploads ?? 0) - 1 }
+    case 'SUBMITTED':
+      return { ...state, submitted: action.payload.submitted }
+    default:
+      return state
+  }
+}
+
 export const applicationReducer = (
   state: ApplicationState,
   action: Action,
 ): ApplicationState => {
+  if (
+    (state.pendingUploads ?? 0) > 0 &&
+    ['INCREMENT', 'DECREMENT', 'INDEX_SCREEN'].includes(action.type)
+  ) {
+    return state
+  }
+
   switch (action.type) {
+    case 'START_NAVIGATION':
+    case 'FINISH_NAVIGATION':
+    case 'START_FILE_UPLOAD':
+    case 'FINISH_FILE_UPLOAD':
+      return uploadNavigationReducer(state, action)
     case 'INCREMENT': {
       const { currentSectionData, currentScreenIndex } =
         getIncrementVariables(state)

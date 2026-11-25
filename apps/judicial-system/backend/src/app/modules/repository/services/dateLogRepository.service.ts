@@ -139,4 +139,48 @@ export class DateLogRepositoryService {
       throw error
     }
   }
+
+  // Copies the date logs of the given types to another case as new rows.
+  // Which types travel is the caller's decision; how they are copied is not.
+  async copyByTypesToCase(
+    caseId: string,
+    newCaseId: string,
+    dateTypes: DateType[],
+    options: { transaction: Transaction },
+  ): Promise<void> {
+    try {
+      this.logger.debug(
+        `Copying the date logs of types ${dateTypes.join(
+          ', ',
+        )} of case ${caseId} to case ${newCaseId}`,
+      )
+
+      const dateLogs = await this.dateLogModel.findAll({
+        where: { caseId, dateType: dateTypes },
+        transaction: options.transaction,
+      })
+
+      await Promise.all(
+        dateLogs.map((dateLog) =>
+          this.dateLogModel.create(
+            { ...dateLog.toJSON(), id: undefined, caseId: newCaseId },
+            { transaction: options.transaction },
+          ),
+        ),
+      )
+
+      this.logger.debug(
+        `Copied ${dateLogs.length} date logs of case ${caseId} to case ${newCaseId}`,
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error copying the date logs of types ${dateTypes.join(
+          ', ',
+        )} of case ${caseId} to case ${newCaseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
 }

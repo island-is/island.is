@@ -12,6 +12,9 @@
       "options": {
         "outputPath": "dist/apps/services/user-profile",
         "main": "apps/services/user-profile/src/main.ts",
+        "additionalEntryPoints": [
+          "apps/services/user-profile/src/metrics-entrypoint.ts"
+        ],
         "tsConfig": "apps/services/user-profile/tsconfig.app.json",
         "generatePackageJson": true,
         "esbuildConfig": "tools/esbuild.config.js",

@@ -2,9 +2,9 @@ import type { ReactNode } from 'react'
 import { MockedProvider } from '@apollo/client/testing'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import type { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseState,
   CaseType,
@@ -33,7 +33,7 @@ jest.mock('next/router', () => ({
 window.scrollTo = jest.fn()
 
 const renderOverview = (
-  theCase: Case,
+  theCase: WorkingCase,
   userRole: UserRole,
   getCase: jest.Mock,
   isCaseUpToDate = true,
@@ -73,7 +73,7 @@ describe('Court Indictment Overview', () => {
   })
 
   it('shows the cancellation modal when a district court user opens a cancelled indictment', async () => {
-    const cancelledCase: Case = {
+    const cancelledCase: WorkingCase = {
       ...mockCase(CaseType.INDICTMENT),
       state: CaseState.WAITING_FOR_CANCELLATION,
     }
@@ -94,7 +94,7 @@ describe('Court Indictment Overview', () => {
   })
 
   it('shows case handling comments when present', () => {
-    const caseWithComments: Case = {
+    const caseWithComments: WorkingCase = {
       ...mockCase(CaseType.INDICTMENT),
       state: CaseState.RECEIVED,
       comments: 'Flýtimeðferð',
@@ -110,7 +110,7 @@ describe('Court Indictment Overview', () => {
   })
 
   it('does not show case handling comments when absent', () => {
-    const receivedCase: Case = {
+    const receivedCase: WorkingCase = {
       ...mockCase(CaseType.INDICTMENT),
       state: CaseState.RECEIVED,
       comments: null,
@@ -125,7 +125,7 @@ describe('Court Indictment Overview', () => {
   })
 
   it('does not show the cancellation modal for a received indictment', async () => {
-    const receivedCase: Case = {
+    const receivedCase: WorkingCase = {
       ...mockCase(CaseType.INDICTMENT),
       state: CaseState.RECEIVED,
     }
@@ -140,7 +140,7 @@ describe('Court Indictment Overview', () => {
   it('does not show the modal for a stale cancelled case that is not up to date', async () => {
     // Mirrors the bug where the FormProvider still holds a previously opened
     // cancelled case while the next (non-cancelled) case is being fetched.
-    const staleCancelledCase: Case = {
+    const staleCancelledCase: WorkingCase = {
       ...mockCase(CaseType.INDICTMENT),
       state: CaseState.WAITING_FOR_CANCELLATION,
     }
@@ -160,7 +160,7 @@ describe('Court Indictment Overview', () => {
   })
 
   it('redirects to the dashboard when the user cancels the modal', async () => {
-    const cancelledCase: Case = {
+    const cancelledCase: WorkingCase = {
       ...mockCase(CaseType.INDICTMENT),
       state: CaseState.WAITING_FOR_CANCELLATION,
     }
@@ -181,7 +181,7 @@ describe('Court Indictment Overview', () => {
     // The component stays mounted here (router.push is a no-op) and the case
     // remains WAITING_FOR_CANCELLATION, so this guards against the effect
     // re-triggering cancelCase once the modal has been dismissed.
-    const cancelledCase: Case = {
+    const cancelledCase: WorkingCase = {
       ...mockCase(CaseType.INDICTMENT),
       state: CaseState.WAITING_FOR_CANCELLATION,
     }

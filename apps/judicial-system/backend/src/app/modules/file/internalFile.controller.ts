@@ -22,6 +22,7 @@ import { CaseExistsGuard, CurrentCase } from '../case'
 import { isFileTooLargeForCourt } from '../court'
 import { AppealCase, Case, CaseFile } from '../repository'
 import { DeliverDto } from './dto/deliver.dto'
+import { DeliverDuplicatedCaseFileDto } from './dto/deliverDuplicatedCaseFile.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { SplitCaseFileExistsGuard } from './guards/splitCaseFileExists.guard'
 import { DeliverResponse } from './models/deliver.response'
@@ -86,6 +87,35 @@ export class InternalFileController {
 
       throw reason
     }
+  }
+
+  // Runs after the duplication of an indictment has committed; the row was
+  // created in that transaction with no object behind it.
+  @Post(
+    `${
+      messageEndpoint[MessageType.DELIVERY_TO_STORAGE_DUPLICATED_CASE_FILE]
+    }/:fileId`,
+  )
+  @ApiCreatedResponse({
+    type: DeliverResponse,
+    description: 'Copies the S3 object behind a duplicated case file',
+  })
+  deliverDuplicatedCaseFileToStorage(
+    @Param('caseId') caseId: string,
+    @Param('fileId') fileId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentCaseFile() caseFile: CaseFile,
+    @Body() deliverDuplicatedCaseFileDto: DeliverDuplicatedCaseFileDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Copying the object behind duplicated file ${fileId} of case ${caseId}`,
+    )
+
+    return this.fileService.copyDuplicatedCaseFileObject(
+      theCase,
+      caseFile,
+      deliverDuplicatedCaseFileDto.sourceKey,
+    )
   }
 
   @UseGuards(AppealCaseExistsGuard)

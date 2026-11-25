@@ -121,10 +121,9 @@ describe('PublicFlightController', () => {
 
     const user: NationalRegistryUser = {
       nationalId,
-      firstName: 'Jón',
+      givenName: 'Jón Gunnar',
+      fullName: 'Jón Gunnar Jónsson',
       gender: 'kk',
-      lastName: 'Jónsson',
-      middleName: 'Gunnar',
       address: 'Bessastaðir 1',
       postalcode: 225,
       city: 'Álftanes',

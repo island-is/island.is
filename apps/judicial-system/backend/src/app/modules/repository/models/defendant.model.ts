@@ -18,6 +18,7 @@ import {
   Gender,
   IndictmentCaseReviewDecision,
   PunishmentType,
+  RequestSharedWithDefender,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
 
@@ -68,6 +69,21 @@ export class Defendant extends Model {
       defendant.isDefenderChoiceConfirmed &&
       defendant.caseFilesSharedWithDefender &&
       defendant.defenderNationalId === defenderNationalId
+    )
+  }
+
+  // Court of appeals confirmation: the advocate recorded on the verdict appeal,
+  // distinct from the district-court defender on the same defendant row.
+  // Waived appointments stay confirmed in the row but no longer act on the appeal.
+  static isConfirmedAppealDefenderOfDefendant(
+    appealDefenderNationalId: string,
+    defendants?: Defendant[],
+  ) {
+    return defendants?.some(
+      (defendant) =>
+        defendant.isAppealDefenderConfirmed &&
+        !defendant.isAppealDefenderWaived &&
+        defendant.appealDefenderNationalId === appealDefenderNationalId,
     )
   }
 
@@ -146,6 +162,19 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: String })
   defenderPhoneNumber?: string
 
+  /**********
+   * When the prosecutor's request should become accessible to this
+   * defendant's defender - optional. Sharing timing for request cases
+   * lives on the defendant only.
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(RequestSharedWithDefender),
+  })
+  @ApiPropertyOptional({ enum: RequestSharedWithDefender })
+  requestSharedWithDefender?: RequestSharedWithDefender
+
   @Column({
     type: DataType.ENUM,
     allowNull: true,
@@ -218,6 +247,37 @@ export class Defendant extends Model {
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
   caseFilesSharedWithDefender?: boolean
+
+  // The defender who appealed the verdict, when that is not the defender of
+  // record - typically a defender with rights before the court of appeals,
+  // reaching the public prosecution office by letter. Information only: no
+  // access follows from these until the court of appeals confirms the defender.
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  appealDefenderName?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  appealDefenderNationalId?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  appealDefenderEmail?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  appealDefenderPhoneNumber?: string
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isAppealDefenderConfirmed?: boolean
+
+  // Whether the defendant wants no counsel for the appeal. Null while the
+  // court of appeals has not recorded a stance, so that an unanswered case and
+  // one that declined counsel do not look alike.
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isAppealDefenderWaived?: boolean
 
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })

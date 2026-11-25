@@ -7,7 +7,9 @@ import {
   ModalBase,
   Text,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { useState } from 'react'
+import { messages } from '../../lib/messages'
 import * as styles from './GenericRenewModal.css'
 import cn from 'classnames'
 
@@ -47,6 +49,7 @@ const GenericRenewModal = <T extends { id?: string }>({
   errorMessage,
   loading,
 }: GenericRenewModalProps<T>) => {
+  const { formatMessage } = useLocale()
   const [modalVisible, setModalVisible] = useState<boolean>(isVisible)
   const [formError, setFormError] = useState<string>()
   const columnWidth = '7/12'
@@ -82,6 +85,7 @@ const GenericRenewModal = <T extends { id?: string }>({
       onVisibilityChange={setModalVisible}
       toggleClose={toggleClose}
       removeOnClose
+      modalLabel={modalTitle}
       className={styles.modal}
     >
       <Box paddingY={[4, 4, 4, 8]} paddingX={[4, 4, 4, 12]}>
@@ -90,6 +94,7 @@ const GenericRenewModal = <T extends { id?: string }>({
             circle
             colorScheme="negative"
             icon="close"
+            aria-label={formatMessage(messages.closeModal)}
             onClick={closeModal}
             size="large"
           />

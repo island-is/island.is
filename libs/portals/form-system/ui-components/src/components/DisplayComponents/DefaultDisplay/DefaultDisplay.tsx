@@ -57,9 +57,16 @@ export const DefaultDisplay = ({
         : String(extracted)
   }
 
+  if (
+    displayValue.trim() !== '' &&
+    (item.fieldType === FieldTypesEnum.ISK_NUMBERBOX ||
+      item.fieldType === FieldTypesEnum.ISK_SUMBOX)
+  ) {
+    displayValue += ' kr.'
+  }
+
   return (
     <Box
-      component="form"
       display="flex"
       flexDirection="column"
       justifyContent="spaceBetween"

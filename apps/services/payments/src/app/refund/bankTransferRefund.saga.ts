@@ -9,9 +9,9 @@ import { environment } from '../../environments'
 import { requireStepResult } from '../../utils/orchestrator'
 import { BankTransferService } from '../bankTransferPayment/bankTransfer.service'
 import { generateBankTransferChargeFJSPayload } from '../bankTransferPayment/bankTransfer.utils'
-import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
+import { PaymentFulfillment } from '../paymentFlow/models'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
-import { RefundPaymentInput } from './dtos/refundPayment.input'
+import { RefundPaymentInput } from './dtos'
 import {
   BankTransferRefundContext,
   BankTransferRefundSagaDefinition,
@@ -45,6 +45,17 @@ export const createBankTransferRefundSaga = (
     description:
       'Validate the bank transfer payment flow is eligible for refund',
     execute: async (ctx) => {
+      // Debt payments are never refunded through this saga: there is no FJS charge to delete, and
+      // FJS has no reversal for a registered debt payment.
+      const paymentFlow = await paymentFlowService.getPaymentFlowDetails(
+        ctx.paymentFlowId,
+      )
+      if (paymentFlow?.type === 'debt') {
+        throw new BadRequestException(
+          PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded,
+        )
+      }
+
       if (ctx.paymentFulfillment.fjsChargeId) {
         return { needsFjsCreate: false as const }
       }
@@ -105,6 +116,10 @@ export const createBankTransferRefundSaga = (
       if (deletedPaymentFulfillment) {
         logger.info(
           `[${ctx.paymentFlowId}] Restoring bank transfer payment fulfillment`,
+          {
+            paymentFlowId: ctx.paymentFlowId,
+            correlationId: ctx.paymentFulfillment.confirmationRefId,
+          },
         )
         await paymentFlowService.restorePaymentFulfillment({
           paymentFlowId: ctx.paymentFlowId,
@@ -173,6 +188,11 @@ export const createBankTransferRefundSaga = (
           reasonForRefund: RefundType.FULFILLMENT_FAILURE,
           originalError: ctx.input.reasonForRefund,
         },
+        // No `rrn`: only looked up on the `needsFjsCreate` branch.
+        logContext: {
+          paymentFlowId: ctx.paymentFlowId,
+          correlationId: ctx.paymentFulfillment.confirmationRefId,
+        },
       })
 
       await paymentFlowService.deleteFjsCharge(ctx.paymentFlowId)
@@ -202,6 +222,11 @@ export const createBankTransferRefundSaga = (
           metadata: {
             action: 'deleted_fjs',
             reason: ctx.input.reasonForRefund,
+          },
+          // No `rrn` — as above.
+          logContext: {
+            paymentFlowId: ctx.paymentFlowId,
+            correlationId: ctx.paymentFulfillment.confirmationRefId,
           },
         },
         {

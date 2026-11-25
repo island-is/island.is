@@ -55,7 +55,6 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     fallbackErrorMessage,
     validationErrors,
     hasErrorTitle,
-    isNotDebtLessTag,
     requiredValidVehicleErrorMessage,
     isMachine,
     isEnergyFunds,
@@ -143,7 +142,6 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     const vehicleDisabled =
       additionalErrors &&
       ((vehicleDetails?.vehicleHasMilesOdometer && isMileCar) ||
-        !vehicleDetails?.isDebtLess ||
         !!vehicleDetails?.validationErrorMessages?.length)
 
     const permno = vehicleDisabled ? '' : vehicleDetails?.permno || ''
@@ -240,6 +238,10 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
       vehicleDetailsWithGrant.firstRegistrationDate || '',
     )
     setValue(`${field.id}.vin`, vehicleDetailsWithGrant.vin)
+    setValue(
+      `${field.id}.vehicleRegistrationCode`,
+      vehicleDetailsWithGrant.vehicleRegistrationCode,
+    )
     setValue(`${field.id}.grantAmount`, vehicleDetailsWithGrant.vehicleGrant)
     setValue(
       `${field.id}.grantItemCode`,
@@ -252,7 +254,6 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
   const vehicleDisabled =
     additionalErrors &&
     ((vehicleDetails?.vehicleHasMilesOdometer && isMileCar) ||
-      !vehicleDetails?.isDebtLess ||
       !!vehicleDetails?.validationErrorMessages?.length)
 
   const machineDisabled = machineDetails?.disabled
@@ -400,19 +401,8 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
                   }
                   message={
                     <Box>
-                      {(!vehicleDetails.isDebtLess ||
-                        !!vehicleDetails.validationErrorMessages?.length) && (
+                      {!!vehicleDetails.validationErrorMessages?.length && (
                         <BulletList>
-                          {!vehicleDetails.isDebtLess && (
-                            <Bullet key="isdebtless">
-                              {isNotDebtLessTag &&
-                                formatText(
-                                  isNotDebtLessTag,
-                                  application,
-                                  formatMessage,
-                                )}
-                            </Bullet>
-                          )}
                           {!!vehicleDetails.validationErrorMessages?.length &&
                             vehicleDetails.validationErrorMessages?.map(
                               (error) => {

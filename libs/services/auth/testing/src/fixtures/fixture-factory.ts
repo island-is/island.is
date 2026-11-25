@@ -39,6 +39,7 @@ import {
 import {
   AuthDelegationProvider,
   AuthDelegationType,
+  isPersonalRepresentativeDelegationType,
 } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { createNationalId } from '@island.is/testing/fixtures'
@@ -288,6 +289,7 @@ export class FixtureFactory {
       grantToPersonalRepresentatives:
         apiScope.grantToPersonalRepresentatives ?? false,
       isAccessControlled: apiScope.isAccessControlled ?? false,
+      requiresConfirmation: apiScope.requiresConfirmation ?? false,
       groupId: apiScope.groupId,
       domainName,
     })
@@ -325,7 +327,9 @@ export class FixtureFactory {
       case AuthDelegationType.LegalRepresentative:
         return AuthDelegationProvider.DistrictCommissionersRegistry
       default:
-        return ''
+        return isPersonalRepresentativeDelegationType(delegationType)
+          ? AuthDelegationProvider.DistrictCommissionersRegistry
+          : ''
     }
   }
 

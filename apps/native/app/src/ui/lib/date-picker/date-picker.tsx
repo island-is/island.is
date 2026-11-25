@@ -2,7 +2,7 @@ import DatePicker, {
   DateTimePickerAndroid,
 } from '@react-native-community/datetimepicker'
 import React, { useMemo, useState } from 'react'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import { useIntl } from 'react-intl'
 import { Button, Image, Modal, Platform, StyleSheet, View } from 'react-native'
 import Animated, {
@@ -11,8 +11,8 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated'
 import calendarIcon from '../../assets/icons/calendar.png'
-import { blue100 } from '../../utils'
-import { dynamicColor } from '../../utils/dynamic-color'
+import { token } from '../../utils/dynamic-color'
+import { font } from '../../utils/font'
 import { Typography } from '../typography/typography'
 
 const DateInput = styled.Pressable`
@@ -24,24 +24,12 @@ const DateInput = styled.Pressable`
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: 1px;
   border-style: solid;
-  border-color: ${dynamicColor(
-    (props) => ({
-      dark: 'shade500',
-      light: props.theme.color.blue200,
-    }),
-    true,
-  )};
-  background-color: ${dynamicColor((props) => ({
-    dark: 'shade300',
-    light: props.theme.color.blue100,
-  }))};
+  border-color: ${token((t) => t.border.primary)};
+  background-color: ${token((t) => t.background.brandMinimal)};
 `
 
 const Label = styled(Typography)`
-  color: ${dynamicColor((props) => ({
-    dark: 'foreground',
-    light: props.theme.color.blue400,
-  }))};
+  color: ${token((t) => t.foreground.brand)};
   margin-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
 `
 
@@ -49,7 +37,18 @@ const DateSelected = styled(Typography)<{ empty: boolean }>`
   padding-left: ${({ theme }) => theme.spacing[1]}px;
   padding-top: 0px;
   padding-bottom: 0px;
-  font-weight: ${({ empty }) => (empty ? 300 : 600)};
+  /* Same treatment as a TextField value: the placeholder is light and muted,
+     a picked date is semibold. Goes through font() so the weight picks the
+     matching IBM Plex face - a bare font-weight does nothing on iOS. */
+  ${font({
+    fontSize: 16,
+    lineHeight: 20,
+    fontWeight: ({ empty }) => (empty ? 400 : 600),
+    color: ({ empty, theme }) =>
+      empty
+        ? theme.tokens.foreground.primaryMinimal
+        : theme.tokens.foreground.primary,
+  })}
 `
 
 interface DatePickerProps {
@@ -69,6 +68,8 @@ export const DatePickerInput = ({
   onSelectDate,
   selectedDate,
 }: DatePickerProps) => {
+  const theme = useTheme()
+  const scrim = theme.tokens.app.overlay.scrim
   const intl = useIntl()
   const [date, setDate] = useState(selectedDate)
   const [openDatePicker, setOpenDatePicker] = useState(false)
@@ -96,11 +97,7 @@ export const DatePickerInput = ({
 
   const backdropStyle = useAnimatedStyle(() => ({
     backgroundColor: withTiming(
-      interpolateColor(
-        openDatePicker ? 1 : 0,
-        [0, 1],
-        ['rgba(0,0,0,0.0)', 'rgba(0,0,0,0.5)'],
-      ),
+      interpolateColor(openDatePicker ? 1 : 0, [0, 1], ['transparent', scrim]),
     ),
   }))
 
@@ -129,7 +126,7 @@ export const DatePickerInput = ({
       >
         <View
           style={{
-            backgroundColor: blue100,
+            backgroundColor: theme.tokens.background.brandMinimal,
             flex: 1,
           }}
           pointerEvents="none"
@@ -185,7 +182,7 @@ export const DatePickerInput = ({
                 <Button
                   title={intl.formatMessage({ id: 'inbox.filterDateCancel' })}
                   onPress={() => setOpenDatePicker(false)}
-                  color="#777777"
+                  color={theme.tokens.interactive.foreground.primary}
                 />
                 <Button
                   title={intl.formatMessage({ id: 'inbox.filterDateConfirm' })}

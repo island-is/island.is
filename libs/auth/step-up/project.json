@@ -1,0 +1,19 @@
+{
+  "name": "auth-step-up",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/auth/step-up/src",
+  "projectType": "library",
+  "tags": ["lib:nest", "scope:nest"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/auth/step-up"],
+      "options": {
+        "jestConfig": "libs/auth/step-up/jest.config.ts"
+      }
+    }
+  }
+}

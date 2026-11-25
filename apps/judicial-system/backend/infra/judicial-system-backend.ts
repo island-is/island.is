@@ -25,15 +25,15 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       },
       S3_TIME_TO_LIVE_POST: '15',
       S3_TIME_TO_LIVE_GET: '5',
-      CONTENTFUL_HOST: {
-        dev: 'preview.contentful.com',
-        staging: 'cdn.contentful.com',
-        prod: 'cdn.contentful.com',
+      LAWYER_REGISTRY_INCLUDE_TEST_LAWYERS: {
+        dev: 'true',
+        staging: 'true',
+        prod: 'false',
       },
-      CONTENTFUL_ENVIRONMENT: {
-        dev: 'test',
-        staging: 'test',
-        prod: 'master',
+      EMAIL_USE_WHITELIST: {
+        dev: 'true',
+        staging: 'true',
+        prod: 'false',
       },
       CLIENT_URL: {
         dev: ref((h) => `https://judicial-system.${h.env.domain}`),
@@ -98,7 +98,6 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET',
       ADMIN_USERS: '/k8s/judicial-system/ADMIN_USERS',
       BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN',
-      CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN',
       EVENT_URL: '/k8s/judicial-system/EVENT_URL',
       ERROR_EVENT_URL: '/k8s/judicial-system/ERROR_EVENT_URL',
       ARCHIVE_ENCRYPTION_KEY: '/k8s/judicial-system/ARCHIVE_ENCRYPTION_KEY',
@@ -122,4 +121,21 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       min: 2,
       max: 10,
       default: 2,
+    })
+    .gracefulShutdown({
+      // The preStop sleep keeps the pod serving while it is removed from the
+      // service endpoints, so a scale-down or rollout does not refuse requests
+      // still routed to it. Prod gets a longer drain window for slow requests.
+      dev: {
+        terminationGracePeriodSeconds: 30,
+        preStopSleepSeconds: 10,
+      },
+      staging: {
+        terminationGracePeriodSeconds: 30,
+        preStopSleepSeconds: 10,
+      },
+      prod: {
+        terminationGracePeriodSeconds: 60,
+        preStopSleepSeconds: 10,
+      },
     })

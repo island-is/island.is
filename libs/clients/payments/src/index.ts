@@ -22,4 +22,7 @@ export {
   VerifyBankTransferResponseFailureReasonEnum,
   GetPaymentFlowDTOLastBankTransferFailureEnum,
   GetPaymentFlowDTOBankTransferPendingStatusEnum,
+  GetPaymentFlowDTOTypeEnum,
+  GooglePayChargeResponseStatusEnum,
+  DebtInput,
 } from '../gen/fetch'

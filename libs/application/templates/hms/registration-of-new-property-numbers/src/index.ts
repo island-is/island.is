@@ -4,6 +4,6 @@ export * from './lib/dataSchema'
 export const getDataProviders = () => import('./dataProviders')
 export const getFields = () => import('./fields/')
 
-export { prereqMessages } from './lib/messages/prereqMessages'
+export * from './lib/messages'
 
 export default template

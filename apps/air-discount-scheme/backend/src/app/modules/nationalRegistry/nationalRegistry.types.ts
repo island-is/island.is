@@ -33,9 +33,8 @@ export interface NationalRegistryFamilyLookupResponse {
 
 export interface NationalRegistryUser {
   nationalId: string
-  firstName: string
-  middleName: string
-  lastName: string
+  givenName: string
+  fullName: string
   gender: Gender
   address: string
   postalcode: number

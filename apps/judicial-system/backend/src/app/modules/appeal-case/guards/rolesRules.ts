@@ -1,6 +1,8 @@
 import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
 import {
   AppealCaseTransition,
+  AppealCaseType,
+  isProsecutionUser,
   type User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -20,15 +22,15 @@ const prosecutorFields: (keyof UpdateAppealCaseDto)[] = [
 const courtOfAppealsUpdateFields: (keyof UpdateAppealCaseDto)[] = [
   'appealCaseNumber',
   'appealAssistantId',
-  'appealJudge1Id',
-  'appealJudge2Id',
-  'appealJudge3Id',
+  'appealJudgeIds',
   'appealConclusion',
   'appealRulingDecision',
+  'appealRulingType',
   'appealRulingModifiedHistory',
   'appealValidToDate',
   'isAppealCustodyIsolation',
   'appealIsolationToDate',
+  'verdictAppealStatus',
 ]
 
 // Court of appeals update rules
@@ -116,12 +118,26 @@ const userAppealedAppealCase = (request: {
   user?: { currentUser?: User }
   case?: Case
   appealCase?: AppealCase
+  body?: { defendantId?: string }
 }): boolean => {
   const user = request.user?.currentUser
   const theCase = request.case
   const appealCase = request.appealCase
 
   if (!user || !theCase || !appealCase) {
+    return false
+  }
+
+  // The prosecution's verdict appeal is the reviewer's review decision, so it is
+  // withdrawn by changing that decision, which withdraws the appeal in the same
+  // transaction (see handleVerdictAppealUpdates in the defendant service).
+  // Withdrawing it here would leave the decision standing at appeal with no
+  // appeal behind it. The defence rules for verdict appeals go through the
+  // per-party branch of userIsAppellant below.
+  if (
+    appealCase.appealType === AppealCaseType.VERDICT &&
+    isProsecutionUser(user)
+  ) {
     return false
   }
 
@@ -166,4 +182,25 @@ export const defenderTransitionRule: RolesRule = {
   dtoField: 'transition',
   dtoFieldValues: [AppealCaseTransition.WITHDRAW_APPEAL],
   canActivate: (request) => userAppealedAppealCase(request),
+}
+
+// Public prosecution office rules. The office registers verdict appeals that
+// reach it outside the system - by letter or email - and may withdraw them
+// again. It has no part in ruling appeals, so both rules are limited to verdict
+// appeals: on creation by the requested appeal type, on withdrawal by the type
+// of the appeal case being withdrawn.
+export const publicProsecutorStaffCreateRule: RolesRule = {
+  role: UserRole.PUBLIC_PROSECUTOR_STAFF,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'appealType',
+  dtoFieldValues: [AppealCaseType.VERDICT],
+}
+
+export const publicProsecutorStaffTransitionRule: RolesRule = {
+  role: UserRole.PUBLIC_PROSECUTOR_STAFF,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [AppealCaseTransition.WITHDRAW_APPEAL],
+  canActivate: (request: { appealCase?: AppealCase }) =>
+    request.appealCase?.appealType === AppealCaseType.VERDICT,
 }

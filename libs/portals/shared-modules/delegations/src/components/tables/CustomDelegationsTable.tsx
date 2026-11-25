@@ -83,12 +83,11 @@ export default function CustomDelegationsTable({
         name: person.name ?? '',
       },
     ])
-    const query = new URLSearchParams({
-      nationalId: person.nationalId ?? '',
-    })
     skipNextClear()
 
-    navigate(`${DelegationPaths.DelegationsEdit}?${query.toString()}`)
+    navigate(DelegationPaths.DelegationsEdit, {
+      state: { nationalId: person.nationalId ?? '' },
+    })
   }
 
   const onClickDelete = (person: DelegationsByPerson) => {

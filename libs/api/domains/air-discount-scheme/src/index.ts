@@ -1,1 +1,1 @@
-export * from './lib/api-domains-air-discount-scheme.module'
+export * from './lib/air-discount-scheme.module'

@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'clients-legal-gazette',
   preset: '../../../jest.preset.js',

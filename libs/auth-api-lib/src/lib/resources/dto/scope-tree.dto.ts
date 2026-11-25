@@ -17,6 +17,13 @@ export class ScopeTreeDTO {
         ? model.allowsWrite ?? false
         : false
 
+    this.requiresConfirmation =
+      model instanceof ApiScope
+        ? model.requiresConfirmation ?? false
+        : 'requiresConfirmation' in model
+        ? model.requiresConfirmation ?? false
+        : false
+
     if (model instanceof ApiScopeGroup) {
       this.children = []
     }
@@ -51,6 +58,13 @@ export class ScopeTreeDTO {
     example: false,
   })
   allowsWrite: boolean
+
+  @ApiProperty({
+    description:
+      'Whether granting this scope as a delegation requires a separate high-assurance confirmation (tvöfalt samþykki).',
+    example: false,
+  })
+  requiresConfirmation: boolean
 
   @ApiPropertyOptional({
     description:

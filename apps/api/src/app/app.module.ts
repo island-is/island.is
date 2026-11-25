@@ -12,7 +12,11 @@ import { AdministrationOfOccupationalSafetyAndHealthModule } from '@island.is/ap
 import { AirDiscountSchemeModule } from '@island.is/api/domains/air-discount-scheme'
 import { AircraftRegistryModule } from '@island.is/api/domains/aircraft-registry'
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
-import { ApplicationModule } from '@island.is/api/domains/application'
+import {
+  ApplicationModule,
+  ApplicationTranslationConfig,
+  GoogleTranslateConfig,
+} from '@island.is/api/domains/application'
 import { AssetsModule } from '@island.is/api/domains/assets'
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { AuthAdminModule } from '@island.is/api/domains/auth-admin'
@@ -64,6 +68,7 @@ import { IdentityModule } from '@island.is/api/domains/identity'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { OfficialJournalOfIcelandModule } from '@island.is/api/domains/official-journal-of-iceland'
 import { DirectorateOfEqualityApplicationModule } from '@island.is/api/domains/directorate-of-equality-application'
+import { DirectorateOfEqualityModule } from '@island.is/api/domains/directorate-of-equality'
 import { OfficialJournalOfIcelandApplicationModule } from '@island.is/api/domains/official-journal-of-iceland-application'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
@@ -83,16 +88,13 @@ import { SessionsModule } from '@island.is/api/domains/sessions'
 import { ShipRegistryModule } from '@island.is/api/domains/ship-registry'
 import { StatisticsModule } from '@island.is/api/domains/statistics'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
+import { TaxCalculatorsModule } from '@island.is/api/domains/tax-calculators'
 import { TransportAuthorityApiModule } from '@island.is/api/domains/transport-authority'
 import { UniversityGatewayApiModule } from '@island.is/api/domains/university-gateway'
 import { OpenDataModule } from '@island.is/api/domains/open-data'
 import { OneSystemsRulingsModule } from '@island.is/api/domains/one-systems-rulings'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { VehiclesModule } from '@island.is/api/domains/vehicles'
-import {
-  WatsonAssistantChatConfig,
-  WatsonAssistantChatModule,
-} from '@island.is/api/domains/watson-assistant-chat'
 import { WorkMachinesModule } from '@island.is/api/domains/work-machines'
 import { QuestionnairesModule } from '@island.is/api/domains/questionnaires'
 import { PracticalExamsModule } from '@island.is/api/domains/practical-exams'
@@ -116,6 +118,7 @@ import {
   DirectorateOfEqualityClientModule,
   DirectorateOfEqualityClientConfig,
 } from '@island.is/clients/directorate-of-equality'
+import { DirectorateOfEqualityStatisticsClientConfig } from '@island.is/clients/directorate-of-equality-statistics'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { EnergyFundsClientConfig } from '@island.is/clients/energy-funds'
 import { FinanceClientConfig } from '@island.is/clients/finance'
@@ -140,6 +143,7 @@ import {
   LegalGazetteClientConfig,
   LegalGazetteClientModule,
 } from '@island.is/clients/legal-gazette'
+import { GovernmentInvoicesClientConfig } from '@island.is/clients/government-invoices'
 import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
@@ -200,6 +204,7 @@ import { ProblemModule } from '@island.is/nest/problem'
 import { LicenseConfig } from '@island.is/services/license'
 
 import { IntellectualPropertiesModule } from '@island.is/api/domains/intellectual-properties'
+import { IcelandicGovernmentInstitutionsModule } from '@island.is/api/domains/icelandic-government-institutions'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { SignatureCollectionModule } from '@island.is/api/domains/signature-collection'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
@@ -249,10 +254,7 @@ import { UmbodsmadurSkuldaraClientConfig } from '@island.is/clients/ums-cost-of-
 import { emailModuleConfig } from '@island.is/email-service'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 import { VerdictsClientConfig } from '@island.is/clients/verdicts'
-import {
-  VerdictsApiModuleConfig,
-  VerdictsModule,
-} from '@island.is/api/domains/verdicts'
+import { VerdictsModule } from '@island.is/api/domains/verdicts'
 import {
   SecondarySchoolClientConfig,
   SecondarySchoolPublicClientConfig,
@@ -303,6 +305,7 @@ const environment = getConfig
     ApiDomainsCustomsCalculatorModule,
     FormSystemModule,
     CmsModule,
+    IcelandicGovernmentInstitutionsModule,
     DrivingLicenseModule,
     DrivingLicenseBookModule,
     EducationModule.register({
@@ -326,6 +329,7 @@ const environment = getConfig
     }),
     LicenseServiceModule,
     DirectorateOfEqualityClientModule,
+    DirectorateOfEqualityModule,
     DirectorateOfLabourModule,
     FeatureFlagsApiModule,
     FileUploadModule,
@@ -366,7 +370,6 @@ const environment = getConfig
     LegalGazetteClientModule,
     DisabilityLicenseModule,
     FiskistofaModule,
-    WatsonAssistantChatModule,
     IcelandicGovernmentInstitutionVacanciesModule,
     IcelandicMedicinesAgencyModule,
     AircraftRegistryModule,
@@ -392,6 +395,7 @@ const environment = getConfig
     FinancialStatementsInaoModule,
     VehiclesModule,
     RightsPortalModule,
+    TaxCalculatorsModule,
     AssetsModule,
     ApiDomainsHmsModule,
     HmsLoansModule,
@@ -438,10 +442,12 @@ const environment = getConfig
         SeminarsClientConfig,
         NvsPermitsClientConfig,
         AirDiscountSchemeClientConfig,
+        GovernmentInvoicesClientConfig,
         ConsultationPortalClientConfig,
         AssetsClientConfig,
         PCardClientConfig,
         DirectorateOfEqualityClientConfig,
+        DirectorateOfEqualityStatisticsClientConfig,
         DistrictCommissionersLicensesClientConfig,
         AdrAndMachineLicenseClientConfig,
         ShipRegistryClientV2Config,
@@ -515,7 +521,6 @@ const environment = getConfig
         SessionsApiClientConfig,
         PaymentsApiClientConfig,
         AuthAdminApiClientConfig,
-        WatsonAssistantChatConfig,
         PowerBiConfig,
         AuthIdsApiClientConfig,
         FinancialManagementAuthorityClientConfig,
@@ -549,7 +554,6 @@ const environment = getConfig
         ZendeskServiceConfig,
         emailModuleConfig,
         VerdictsClientConfig,
-        VerdictsApiModuleConfig,
         SecondarySchoolClientConfig,
         SecondarySchoolPublicClientConfig,
         NationalRegistryV3ApplicationsClientConfig,
@@ -558,6 +562,8 @@ const environment = getConfig
         BankInfoClientConfig,
         LandspitaliApiModuleConfig,
         CourseChargesConfig,
+        ApplicationTranslationConfig,
+        GoogleTranslateConfig,
         RecyclingFundClientConfig,
         CustomsGeneralClientConfig,
       ],

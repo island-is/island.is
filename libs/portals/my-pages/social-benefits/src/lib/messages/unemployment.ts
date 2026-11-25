@@ -1,10 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const unemploymentBenefitsMessages = defineMessages({
-  unemploymentBenefits: {
-    id: 'sp.social-benefits-unemployment:unemploymentBenefits',
-    defaultMessage: 'Atvinnuleysisbætur',
-  },
   title: {
     id: 'sp.social-benefits-unemployment:title',
     defaultMessage: 'Staðan þín',
@@ -144,5 +140,66 @@ export const unemploymentBenefitsMessages = defineMessages({
   myDataAttachmentError: {
     id: 'sp.social-benefits-unemployment:myDataAttachmentError',
     defaultMessage: 'Ekki tókst að sækja skjal',
+  },
+  incomeTitle: {
+    id: 'sp.social-benefits-unemployment:incomeTitle',
+    defaultMessage: 'Tekjur',
+  },
+  incomeIntro: {
+    id: 'sp.social-benefits-unemployment:incomeIntro',
+    defaultMessage:
+      'Hér fyrir neðan er yfirlit yfir þær tekjur sem þú hefur skráð meðfram atvinnuleysisbótum.',
+  },
+  reportedIncomeTypeHeader: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTypeHeader',
+    defaultMessage: 'Tegund greiðslu',
+  },
+  reportedIncomePayerHeader: {
+    id: 'sp.social-benefits-unemployment:reportedIncomePayerHeader',
+    defaultMessage: 'Greiðandi',
+  },
+  reportedIncomeDateHeader: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeDateHeader',
+    defaultMessage: 'Dagsetning frá',
+  },
+  reportedIncomeDateToHeader: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeDateToHeader',
+    defaultMessage: 'Dagsetning til',
+  },
+  reportedIncomeAmountHeader: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeAmountHeader',
+    defaultMessage: 'Upphæð',
+  },
+  reportedIncomeTypeIrregular: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTypeIrregular',
+    defaultMessage: 'Tilfallandi tekjur',
+  },
+  reportedIncomeTypePartTime: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTypePartTime',
+    defaultMessage: 'Hlutastarf',
+  },
+  reportedIncomeTypePension: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTypePension',
+    defaultMessage: 'Lífeyrir',
+  },
+  reportedIncomeTypeCapital: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTypeCapital',
+    defaultMessage: 'Fjármagnstekjur',
+  },
+  reportedIncomeTypeTR: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTypeTR',
+    defaultMessage: 'Greiðslur frá TR',
+  },
+  reportedIncomeTypeContractor: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTypeContractor',
+    defaultMessage: 'Verktakastarf',
+  },
+  reportedIncomeTRPayer: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeTRPayer',
+    defaultMessage: 'Tryggingastofnun',
+  },
+  reportedIncomeEmpty: {
+    id: 'sp.social-benefits-unemployment:reportedIncomeEmpty',
+    defaultMessage: 'Engar tilkynntar tekjur fundust',
   },
 })

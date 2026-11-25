@@ -10,6 +10,10 @@ query GetTemplateByTemplateId($templateId: String!, $locale: String!) {
       args
       smsPayer
       smsDelivery
+      priorityType
+      sourceType
+      hnippCategory
+      hnippCategoryIs: hnippCategory(locale: "is-IS")
     }
   }
 }
@@ -26,6 +30,19 @@ query GetTemplates($locale: String!) {
       args
       smsPayer
       smsDelivery
+      priorityType
+      sourceType
+      hnippCategory
+      hnippCategoryIs: hnippCategory(locale: "is-IS")
+    }
+  }
+}
+
+query GetTemplateCategories($templateIds: [String]!) {
+  hnippTemplateCollection(where: { templateId_in: $templateIds }, limit: 1000) {
+    items {
+      categoryIs: hnippCategory(locale: "is-IS")
+      categoryEn: hnippCategory(locale: "en")
     }
   }
 }

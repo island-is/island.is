@@ -39,6 +39,7 @@ export interface DbClient {
   require_client_secret?: boolean
   national_id?: string
   client_type?: string
+  domain_name?: string
   contact_email?: string
   supports_procuring_holders?: boolean
   supports_custom_delegation?: boolean

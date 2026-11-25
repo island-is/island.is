@@ -43,7 +43,7 @@ const HomeSupportTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.HOME_SUPPORT,
   name: application.general.name,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   dataSchema: HomeSupportSchema,
   translationNamespaces: configuration.translation,
   featureFlag: Features.homeSupport,

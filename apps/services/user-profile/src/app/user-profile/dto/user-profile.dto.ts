@@ -9,6 +9,7 @@ import {
 } from 'class-validator'
 
 import { Locale } from '../types/localeTypes'
+import { BlockedCategoryDto } from './blocked-category.dto'
 
 export class UserProfileDto {
   @ApiProperty()
@@ -82,4 +83,16 @@ export class UserProfileDto {
   @ApiProperty()
   @IsBoolean()
   readonly isRestricted?: boolean
+
+  @ApiProperty()
+  @IsBoolean()
+  onlyActionablePriorityNotifications!: boolean
+
+  @ApiPropertyOptional({
+    type: [BlockedCategoryDto],
+    description:
+      'Sender categories the user has blocked. Only returned when include=notificationSettings is requested.',
+  })
+  @IsOptional()
+  blockedCategories?: BlockedCategoryDto[]
 }

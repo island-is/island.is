@@ -27,6 +27,7 @@ import {
   getSelectedContract,
   getSelectedLandlordForPayment,
 } from './rentalAgreementUtils'
+import { isExemptionRequested } from './utils'
 
 const formatBankAccount = (
   bankAccount:
@@ -149,12 +150,7 @@ export const exemptionSectionOverviewItems = (
   _locale?: Locale,
 ): Array<KeyValueItem> => {
   const exemptionReason = getValueViaPath<string>(answers, 'exemptionReason')
-  const exemptionCheckbox = getValueViaPath<string[]>(
-    answers,
-    'exemptionCheckbox',
-  )
-  const hasExemption =
-    Array.isArray(exemptionCheckbox) && exemptionCheckbox.includes('yes')
+  const hasExemption = isExemptionRequested(answers)
 
   if (!hasExemption || !exemptionReason) {
     return [
@@ -185,36 +181,6 @@ export const exemptionSectionOverviewItems = (
   ]
 
   return items
-}
-
-export const exemptionSectionOverviewAttachments = (
-  answers: FormValue,
-  _externalData: ExternalData,
-): Array<AttachmentItem> => {
-  const exemptionReason = getValueViaPath<string>(answers, 'exemptionReason')
-  const exemptionCheckbox = getValueViaPath<string[]>(
-    answers,
-    'exemptionCheckbox',
-  )
-  const hasExemption =
-    Array.isArray(exemptionCheckbox) && exemptionCheckbox.includes('yes')
-
-  if (!hasExemption || !exemptionReason || exemptionReason === 'housing') {
-    return []
-  }
-
-  const files = getValueViaPath<Array<{ key: string; name: string }>>(
-    answers,
-    `exemptionDocuments.${exemptionReason}`,
-  )
-
-  if (!Array.isArray(files) || files.length === 0) return []
-
-  return files.map((file) => ({
-    width: 'full' as const,
-    fileName: file.name,
-    fileType: file.name?.split('.').pop(),
-  }))
 }
 
 type HouseholdMember = {
@@ -605,106 +571,6 @@ export const paymentSectionOverviewItems = (
     },
   ]
 }
-
-const extraDataDocTypeLabels = {
-  exemptionReason: m.extraDataMessages.documentExemptionReason,
-  custodyAgreement: m.extraDataMessages.documentCustodyAgreement,
-  changedCircumstances: m.extraDataMessages.documentChangedCircumstances,
-} as const
-
-type ExtraDataDocKey = keyof typeof extraDataDocTypeLabels
-
-const extraDataOverviewItemsForDocType = (
-  answers: FormValue,
-  docKey: ExtraDataDocKey,
-): Array<KeyValueItem> => {
-  const files = getValueViaPath<Array<{ key: string; name: string }>>(
-    answers,
-    `extraDataAttachments.${docKey}`,
-  )
-  const names =
-    Array.isArray(files) && files.length > 0
-      ? files.map((f) => f.name).join(', ')
-      : '—'
-  return [
-    {
-      width: 'full',
-      keyText: extraDataDocTypeLabels[docKey],
-      valueText: names,
-    },
-  ]
-}
-
-const extraDataOverviewAttachmentsForDocType = (
-  answers: FormValue,
-  docKey: ExtraDataDocKey,
-): Array<AttachmentItem> => {
-  const files = getValueViaPath<Array<{ key: string; name: string }>>(
-    answers,
-    `extraDataAttachments.${docKey}`,
-  )
-  if (!Array.isArray(files)) return []
-  return files.map((file) => ({
-    width: 'full' as const,
-    fileName: file.name,
-    fileType: file.name?.split('.').pop(),
-  }))
-}
-
-export const extraDataExemptionReasonOverviewItems = (
-  answers: FormValue,
-  _externalData: ExternalData,
-  _userNationalId?: string,
-  _locale?: Locale,
-) => extraDataOverviewItemsForDocType(answers, 'exemptionReason')
-
-export const extraDataExemptionReasonOverviewAttachments = (
-  answers: FormValue,
-  _externalData: ExternalData,
-) => extraDataOverviewAttachmentsForDocType(answers, 'exemptionReason')
-
-export const extraDataCustodyAgreementOverviewItems = (
-  answers: FormValue,
-  _externalData: ExternalData,
-  _userNationalId?: string,
-  _locale?: Locale,
-) => extraDataOverviewItemsForDocType(answers, 'custodyAgreement')
-
-export const extraDataCustodyAgreementOverviewAttachments = (
-  answers: FormValue,
-  _externalData: ExternalData,
-) => extraDataOverviewAttachmentsForDocType(answers, 'custodyAgreement')
-
-export const extraDataChangedCircumstancesOverviewItems = (
-  answers: FormValue,
-  _externalData: ExternalData,
-  _userNationalId?: string,
-  _locale?: Locale,
-): Array<KeyValueItem> => {
-  const items: Array<KeyValueItem> = []
-
-  const description = getValueViaPath<string>(
-    answers,
-    'extraDataCircumstancesInput',
-  )?.trim()
-  if (description) {
-    items.push({
-      width: 'full',
-      keyText: m.extraDataMessages.circumstancesDescriptionLabel,
-      valueText: description,
-    })
-  }
-
-  items.push(
-    ...extraDataOverviewItemsForDocType(answers, 'changedCircumstances'),
-  )
-  return items
-}
-
-export const extraDataChangedCircumstancesOverviewAttachments = (
-  answers: FormValue,
-  _externalData: ExternalData,
-) => extraDataOverviewAttachmentsForDocType(answers, 'changedCircumstances')
 
 export const assigneePersonalInfoOverviewItems = (
   answers: FormValue,

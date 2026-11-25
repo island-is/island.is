@@ -30,4 +30,12 @@ describe('formatNationalRegistryAddress', () => {
       }),
     ).toBeUndefined()
   })
+
+  it('replaces Ótilgreindu with ótilgreindu lögheimili', () => {
+    expect(
+      formatNationalRegistryAddress({
+        street: { nominative: 'Ótilgreindu' },
+      }),
+    ).toBe('ótilgreindu lögheimili')
+  })
 })

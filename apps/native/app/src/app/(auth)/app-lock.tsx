@@ -36,11 +36,12 @@ import {
   usePreferencesStore,
 } from '@/stores/preferences-store'
 import { useUiStore } from '@/stores/ui-store'
-import { dynamicColor, font } from '@/ui'
+import { font, token } from '@/ui'
 import {
   ensureDeviceUnlockCanary,
   isDeviceUnlocked,
 } from '@/utils/device-unlock-canary'
+import { verifyBiometricIntegrity } from '@/utils/biometric-integrity'
 import { testIDs } from '@/utils/test-ids'
 import { useBrowser } from '@/hooks/use-browser'
 
@@ -51,7 +52,7 @@ const Host = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: ${dynamicColor('background')};
+  background-color: ${token((t) => t.background.invert)};
 `
 
 const Title = styled.Text`
@@ -139,9 +140,18 @@ export default function AppLockScreen() {
     if (!useBiometrics || isPromptRef.current) {
       return
     }
+    // Re-reads the store: biometrics may have been turned off since render
+    // because the enrolled biometrics changed. Falls back to PIN.
+    if (!verifyBiometricIntegrity()) {
+      return
+    }
 
     isPromptRef.current = true
-    const response = await authenticateAsync()
+    const response = await authenticateAsync({
+      disableDeviceFallback: true,
+      fallbackLabel: '',
+      cancelLabel: intl.formatMessage({ id: 'applock.usePin' }),
+    })
 
     if (response.success) {
       void selectionAsync()

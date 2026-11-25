@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer'
 import {
   Allow,
   ArrayMinSize,
@@ -5,6 +6,7 @@ import {
   IsOptional,
   IsString,
   Matches,
+  ValidateNested,
 } from 'class-validator'
 import { GraphQLJSONObject } from 'graphql-type-json'
 
@@ -17,8 +19,69 @@ import type {
 } from '@island.is/judicial-system/types'
 import {
   CaseType,
+  Gender,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
+
+// A defendant created together with the case. The same fields a prosecutor
+// can enter for a defendant before the case exists.
+@InputType()
+export class CreateCaseDefendantInput {
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly noNationalId?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly nationalId?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly name?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Gender, { nullable: true })
+  readonly gender?: Gender
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly address?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly citizenship?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly defenderName?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly defenderNationalId?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly defenderEmail?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly defenderPhoneNumber?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => RequestSharedWithDefender, { nullable: true })
+  readonly requestSharedWithDefender?: RequestSharedWithDefender
+}
 
 @InputType()
 export class CreateCaseInput {
@@ -47,31 +110,6 @@ export class CreateCaseInput {
   @Allow()
   @IsOptional()
   @Field(() => String, { nullable: true })
-  readonly defenderName?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly defenderNationalId?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly defenderEmail?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly defenderPhoneNumber?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => RequestSharedWithDefender, { nullable: true })
-  readonly requestSharedWithDefender?: RequestSharedWithDefender
-
-  @Allow()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
   readonly leadInvestigator?: string
 
   @Allow()
@@ -83,4 +121,12 @@ export class CreateCaseInput {
   @IsOptional()
   @Field(() => ID, { nullable: true })
   readonly prosecutorId?: string
+
+  @Allow()
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateCaseDefendantInput)
+  @Field(() => [CreateCaseDefendantInput], { nullable: true })
+  readonly defendants?: CreateCaseDefendantInput[]
 }

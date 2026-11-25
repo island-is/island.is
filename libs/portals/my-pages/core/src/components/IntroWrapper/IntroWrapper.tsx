@@ -127,9 +127,9 @@ export const IntroWrapper = ({
               width="full"
               marginTop={4}
               display="flex"
-              flexDirection={isMobile ? 'column' : 'row'}
-              alignItems={isMobile ? 'flexStart' : 'flexEnd'}
-              rowGap={isMobile ? 2 : 0}
+              flexWrap="wrap"
+              alignItems="flexEnd"
+              rowGap={2}
               columnGap={2}
               justifyContent={
                 isMobile ? 'flexStart' : buttonGroup.alignment ?? 'flexStart'

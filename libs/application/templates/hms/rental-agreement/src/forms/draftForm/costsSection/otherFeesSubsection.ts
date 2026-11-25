@@ -17,6 +17,7 @@ import {
   otherFeesPayedByTenant,
 } from '../../../utils/rentalPeriodUtils'
 import { getOtherFeesPayeeOptions } from '../../../utils/options'
+import { EARLIEST_RENTAL_PERIOD_START_DATE } from '../../../utils/utils'
 import * as m from '../../../lib/messages'
 
 export const otherFeesSubsection = buildSubSection({
@@ -84,7 +85,7 @@ export const otherFeesSubsection = buildSubSection({
           placeholder: m.otherFees.electricityCostMeterStatusDatePlaceholder,
           width: 'half',
           condition: electricityCostPayedByTenant,
-          minDate: new Date(2023, 0, 1),
+          minDate: EARLIEST_RENTAL_PERIOD_START_DATE,
         }),
 
         // Heating cost fields
@@ -125,7 +126,7 @@ export const otherFeesSubsection = buildSubSection({
           placeholder: m.otherFees.heatingCostMeterStatusDatePlaceholder,
           width: 'half',
           condition: heatingCostPayedByTenant,
-          minDate: new Date(2023, 0, 1),
+          minDate: EARLIEST_RENTAL_PERIOD_START_DATE,
         }),
 
         // Other fees

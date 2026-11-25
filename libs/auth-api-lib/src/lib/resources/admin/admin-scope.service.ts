@@ -26,7 +26,6 @@ import {
   AdminPatchScopeDto,
   superUserScopeFields,
 } from './dto/admin-patch-scope.dto'
-import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
 import { TranslationService } from '../../translation/translation.service'
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
@@ -36,6 +35,7 @@ import {
   delegationTypeSuperUserFilter,
   SUPER_USER_DELEGATION_TYPES,
 } from '../utils/filters'
+import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
 
 /**
  * This is a service that is used to access the admin scopes
@@ -55,6 +55,8 @@ export class AdminScopeService {
     private readonly apiScopeTag: typeof ApiScopeTag,
     @InjectModel(ClientAllowedScope)
     private readonly clientAllowedScope: typeof ClientAllowedScope,
+    @InjectModel(Client)
+    private readonly clientModel: typeof Client,
     private readonly adminTranslationService: AdminTranslationService,
     private readonly translationService: TranslationService,
     private sequelize: Sequelize,
@@ -67,13 +69,16 @@ export class AdminScopeService {
     scopeName: string
     tenantId: string
   }): Promise<AdminScopeClientDto[]> {
+    await this.validateScopeBelongsToTenant(scopeName, tenantId)
+
+    // Intentionally do not filter clients by domainName: cross-tenant grants
+    // are valid and those rows must show up in the list.
     const allowedScopes = await this.clientAllowedScope.findAll({
       where: { scopeName },
       include: [
         {
           model: Client,
           where: {
-            domainName: tenantId,
             enabled: true,
           },
           required: true,
@@ -98,6 +103,7 @@ export class AdminScopeService {
       .sort((a, b) => a.clientId.localeCompare(b.clientId))
       .map((client) => ({
         clientId: client.clientId,
+        tenantId: client.domainName ?? '',
         clientType: client.clientType,
         displayName: this.adminTranslationService.createTranslatedValueDTOs({
           key: 'clientName',
@@ -105,6 +111,79 @@ export class AdminScopeService {
           translations: translationMap.get(client.clientId),
         }),
       }))
+  }
+
+  /**
+   * Updates the client list that has access to a scope.
+   * The clients being granted may live in any tenant.
+   */
+  async updateScopeClients({
+    tenantId,
+    scopeName,
+    addedClientIds,
+    removedClientIds,
+  }: {
+    tenantId: string
+    scopeName: string
+    addedClientIds: string[]
+    removedClientIds: string[]
+  }): Promise<void> {
+    await this.validateScopeBelongsToTenant(scopeName, tenantId)
+
+    // Prefer add over remove when an id appears in both lists.
+    const addedSet = new Set(addedClientIds)
+    const dedupedRemoved = removedClientIds.filter((id) => !addedSet.has(id))
+
+    const referencedIds = Array.from(new Set([...addedSet, ...dedupedRemoved]))
+    if (referencedIds.length > 0) {
+      const existing = await this.clientModel.findAll({
+        where: { clientId: { [Op.in]: referencedIds } },
+        attributes: ['clientId'],
+      })
+      const known = new Set(existing.map((c) => c.clientId))
+      const unknown = referencedIds.filter((id) => !known.has(id))
+      if (unknown.length > 0) {
+        throw new BadRequestException(
+          `Unknown clientId(s): ${unknown.join(', ')}`,
+        )
+      }
+    }
+
+    await this.sequelize.transaction(async (transaction) => {
+      if (dedupedRemoved.length > 0) {
+        await this.clientAllowedScope.destroy({
+          where: {
+            scopeName,
+            clientId: { [Op.in]: dedupedRemoved },
+          },
+          transaction,
+        })
+      }
+
+      if (addedSet.size > 0) {
+        await Promise.all(
+          Array.from(addedSet).map((clientId) =>
+            this.clientAllowedScope.findOrCreate({
+              where: { clientId, scopeName },
+              transaction,
+            }),
+          ),
+        )
+      }
+    })
+  }
+
+  private async validateScopeBelongsToTenant(
+    scopeName: string,
+    tenantId: string,
+  ): Promise<void> {
+    const scope = await this.apiScope.findOne({
+      where: { name: scopeName, domainName: tenantId },
+      attributes: ['name'],
+    })
+    if (!scope) {
+      throw new NoContentException()
+    }
   }
 
   async findAllByTenantId(tenantId: string): Promise<AdminScopeDTO[]> {
@@ -133,6 +212,41 @@ export class AdminScopeService {
           translations,
         ),
       )
+  }
+
+  async findAllPublicByTenantId(
+    tenantId: string,
+  ): Promise<Pick<AdminScopeDTO, 'name' | 'displayName' | 'description'>[]> {
+    const apiScopes = await this.apiScope.findAll({
+      where: {
+        domainName: tenantId,
+        enabled: true,
+        allowExplicitDelegationGrant: true,
+        archived: null,
+      },
+      attributes: ['name', 'displayName', 'description'],
+    })
+
+    const translations =
+      await this.adminTranslationService.getApiScopeTranslations(
+        apiScopes.map(({ name }) => name),
+      )
+
+    return apiScopes
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((apiScope) => ({
+        name: apiScope.name,
+        displayName: this.adminTranslationService.createTranslatedValueDTOs({
+          key: 'displayName',
+          defaultValueIS: apiScope.displayName,
+          translations: translations.get(apiScope.name),
+        }),
+        description: this.adminTranslationService.createTranslatedValueDTOs({
+          key: 'description',
+          defaultValueIS: apiScope.description,
+          translations: translations.get(apiScope.name),
+        }),
+      }))
   }
 
   /**

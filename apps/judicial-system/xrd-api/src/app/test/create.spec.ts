@@ -5,7 +5,6 @@ import { CaseType } from '@island.is/judicial-system/types'
 
 import appModuleConfig from '../app.config'
 import { CreateCaseDto } from '../dto/createCase.dto'
-import { Case } from '../models/case.model'
 import { createTestingAppModule } from './createTestingAppModule'
 
 jest.mock('isomorphic-fetch')

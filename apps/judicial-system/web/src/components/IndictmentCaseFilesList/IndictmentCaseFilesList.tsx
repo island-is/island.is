@@ -27,6 +27,7 @@ import {
   isPublicProsecutionUser,
   isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   FileNotFoundModal,
   PdfButton,
@@ -35,7 +36,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseFileTable } from '@island.is/judicial-system-web/src/components/Table'
 import type {
-  Case,
   CaseFile,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -45,15 +45,22 @@ import {
   CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { caseFiles } from '@island.is/judicial-system-web/src/routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
-import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   useFiledCourtDocuments,
   useFileList,
   usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isAppealFileCategoryVisible } from '@island.is/judicial-system-web/src/utils/utils'
 
+import type { CaseFilesListCase } from './IndictmentCaseFilesList.logic'
+import {
+  getIndictmentPdfDisplayName,
+  getVisibleSubpoenas,
+  shouldHideCaseFilesRecordFromDefender,
+  shouldShowPoliceDigitalCaseFilesSection,
+  shouldShowUploadedCaseFilesSection,
+} from './IndictmentCaseFilesList.logic'
 import RulingOrderAppealFilesAccordion from './RulingOrderAppealFilesAccordion'
 import RulingOrderFileRow from './RulingOrderFileRow'
 import { strings } from './IndictmentCaseFilesList.strings'
@@ -61,7 +68,7 @@ import * as styles from './IndictmentCaseFilesList.css'
 
 const getDefenderVisiblePoliceCaseNumbers = (
   userNationalId: string | undefined,
-  defendants: Case['defendants'] | undefined | null,
+  defendants: WorkingCase['defendants'] | undefined | null,
   allPoliceCaseNumbers: string[] | null | undefined,
 ) => {
   if (!userNationalId || !allPoliceCaseNumbers) {
@@ -98,8 +105,8 @@ const getDefenderVisiblePoliceCaseNumbers = (
 
 const getSpokespersonVisiblePoliceCaseNumbers = (
   userNationalId: string | undefined,
-  civilClaimants: Case['civilClaimants'] | undefined | null,
-  defendants: Case['defendants'] | undefined | null,
+  civilClaimants: WorkingCase['civilClaimants'] | undefined | null,
+  defendants: WorkingCase['defendants'] | undefined | null,
   allPoliceCaseNumbers: string[] | null | undefined,
 ) => {
   if (!userNationalId || !allPoliceCaseNumbers) {
@@ -153,8 +160,8 @@ const getSpokespersonVisiblePoliceCaseNumbers = (
 
 const getDefenceUserVisiblePoliceCaseNumbers = (
   userNationalId: string | undefined,
-  defendants: Case['defendants'] | undefined | null,
-  civilClaimants: Case['civilClaimants'] | undefined | null,
+  defendants: WorkingCase['defendants'] | undefined | null,
+  civilClaimants: WorkingCase['civilClaimants'] | undefined | null,
   allPoliceCaseNumbers: string[] | null | undefined,
 ) => {
   if (!userNationalId || !allPoliceCaseNumbers) {
@@ -214,7 +221,7 @@ const getDefenceUserVisiblePoliceCaseNumbers = (
 }
 
 interface Props {
-  workingCase: Case
+  workingCase: CaseFilesListCase
   displayGeneratedPDFs?: boolean
   displayHeading?: boolean
   forceDisplayAdditionalFiles?: boolean
@@ -294,7 +301,7 @@ const FileSection: FC<PropsWithChildren<FileSectionProps>> = (props) => {
 
 const useFilteredCaseFiles = (
   caseFiles?: CaseFile[] | null,
-  splitCases?: Case[] | null,
+  splitCases?: WorkingCase['splitCases'],
 ) => {
   return useMemo(() => {
     const splitCaseFiles =
@@ -333,6 +340,7 @@ const useFilteredCaseFiles = (
         CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE, // ákærði
         CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE, //réttargæslumaður
         CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE, // lögmaður
+        CaseFileCategory.COURT_CASE_FILE, // dómari
       ]),
       civilClaims: filterByCategories(CaseFileCategory.CIVIL_CLAIM),
       sentToPrisonAdminFiles: filterByCategories(
@@ -342,7 +350,7 @@ const useFilteredCaseFiles = (
   }, [caseFiles, splitCases])
 }
 
-const useFilePermissions = (workingCase: Case, user?: User) => {
+const useFilePermissions = (workingCase: CaseFilesListCase, user?: User) => {
   return useMemo(
     () => ({
       canViewCriminalRecordUpdate:
@@ -359,6 +367,12 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
       canViewRulings:
         isDistrictCourtUser(user) || isCompletedCase(workingCase.state),
       canViewDefendantRulings: !isDefenceUser(user),
+      // Not the court of appeals. This certifies service of the verdict, and
+      // the only list of theirs this component reaches is the ruling appeal,
+      // which is a different proceeding - it appeals a ruling order made
+      // while the case ran, not the verdict. The backend route agrees and
+      // admits neither of their roles, so offering it only produced a link
+      // that answers 403.
       canViewVerdictServiceCertificate:
         isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user),
     }),
@@ -366,7 +380,7 @@ const useFilePermissions = (workingCase: Case, user?: User) => {
   )
 }
 
-export const useSentToPrisonAdminDate = (workingCase: Case) => {
+export const useSentToPrisonAdminDate = (workingCase: CaseFilesListCase) => {
   return useMemo(() => {
     // For now we return the newest date on any defendant that has been sent to prison admin
     // but we may need to change this in the future depending on how we want to handle
@@ -414,44 +428,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const { prefixGeneratedDocumentNameWithDocumentOrder } =
     useFiledCourtDocuments()
 
-  const allSubpoenas = useMemo(
-    () => [
-      ...(workingCase.defendants?.flatMap((defendant) =>
-        (defendant.subpoenas ?? []).map((subpoena) => ({
-          defendant,
-          subpoena,
-          caseId: workingCase.id,
-        })),
-      ) ?? []),
-      ...(workingCase.splitCases?.flatMap((splitCase) =>
-        (splitCase.defendants ?? []).flatMap((defendant) =>
-          (defendant.subpoenas ?? []).map((subpoena) => ({
-            defendant,
-            subpoena,
-            caseId: workingCase.id,
-          })),
-        ),
-      ) ?? []),
-    ],
-    [workingCase],
-  )
-
-  const visibleSubpoenas = useMemo(() => {
-    if (!isDefenceUser(user)) {
-      return allSubpoenas
-    }
-
-    const normalizedUserNationalId = normalizeAndFormatNationalId(
-      user?.nationalId ?? '',
-    )
-
-    return allSubpoenas.filter(
-      ({ defendant }) =>
-        defendant.isDefenderChoiceConfirmed &&
-        defendant.defenderNationalId &&
-        normalizedUserNationalId.includes(defendant.defenderNationalId),
-    )
-  }, [allSubpoenas, user])
+  const visibleSubpoenas = getVisibleSubpoenas(workingCase, user)
 
   const showSubpoenaPdf = displayGeneratedPDFs && visibleSubpoenas.length > 0
 
@@ -472,6 +449,12 @@ const IndictmentCaseFilesList: FC<Props> = ({
   )
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
+  const hideCaseFilesRecord = shouldHideCaseFilesRecordFromDefender(
+    workingCase.id,
+    user,
+    workingCase.originalAncestorId,
+  )
+
   const visiblePoliceCaseNumbers = useMemo(
     () =>
       isDefenceUser(user)
@@ -516,9 +499,11 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const { digitalCaseFiles, digitalCaseFilesLoading, openDigitalCaseFileUrl } =
     usePoliceDigitalCaseFile()
 
-  const showDigitalCaseFilesSection =
-    (isDistrictCourtUser(user) || isCourtOfAppealsUser(user)) &&
-    (digitalCaseFilesLoading || isNonEmptyArray(digitalCaseFiles))
+  const showDigitalCaseFilesSection = shouldShowPoliceDigitalCaseFilesSection(
+    user,
+    digitalCaseFiles,
+    digitalCaseFilesLoading,
+  )
 
   const hasNoFiles =
     !showFiles && !displayGeneratedPDFs && !showDigitalCaseFilesSection
@@ -528,17 +513,15 @@ const IndictmentCaseFilesList: FC<Props> = ({
       {displayHeading && (
         <SectionHeading
           title={
-            isCourtOfAppealsUser(user)
-              ? 'Skjöl héraðsdómsmáls'
-              : formatMessage(strings.title)
+            isCourtOfAppealsUser(user) ? 'Skjöl héraðsdómsmáls' : strings.title
           }
         />
       )}
-      <div className={grid({ gap: 5 })}>
+      <div className={stack({ gap: 5 })}>
         {displayGeneratedPDFs && (
           <Box>
             <SectionHeading
-              title={formatMessage(caseFiles.indictmentSection)}
+              title={caseFiles.indictmentSection}
               marginBottom={1}
               heading="h4"
               variant="h4"
@@ -549,11 +532,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 connectedCaseParentId={connectedCaseParentId}
                 title={prefixGeneratedDocumentNameWithDocumentOrder(
                   'indictment',
-                  `Ákæra${
-                    workingCase.caseSentToCourtDate
-                      ? ` ${formatDate(workingCase.caseSentToCourtDate)}`
-                      : ''
-                  }.pdf`,
+                  getIndictmentPdfDisplayName(workingCase),
                   workingCase.id,
                 )}
                 pdfType="indictment"
@@ -566,28 +545,31 @@ const IndictmentCaseFilesList: FC<Props> = ({
         {showFiles && (
           <>
             <FileSection
-              title={formatMessage(caseFiles.criminalRecordSection)}
+              title={caseFiles.criminalRecordSection}
               files={filteredFiles.criminalRecords}
               onOpenFile={onOpen}
             />
             <FileSection
-              title={formatMessage(caseFiles.costBreakdownSection)}
+              title={caseFiles.costBreakdownSection}
               files={filteredFiles.costBreakdowns}
               onOpenFile={onOpen}
             />
           </>
         )}
-        {displayGeneratedPDFs && (
+        {displayGeneratedPDFs && !hideCaseFilesRecord && (
           <Box>
             <SectionHeading
-              title={formatMessage(strings.caseFileTitle)}
+              title={strings.caseFileTitle}
               marginBottom={1}
               heading="h4"
               variant="h4"
             />
             {visiblePoliceCaseNumbers.map((policeCaseNumber, index) => {
               const caseFilesRecordFileName = formatMessage(
-                strings.caseFileButtonText,
+                {
+                  id: strings.caseFileButtonText,
+                  defaultMessage: strings.caseFileButtonText,
+                },
                 {
                   policeCaseNumber,
                 },
@@ -613,7 +595,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
         )}
         {showFiles && (
           <FileSection
-            title={formatMessage(caseFiles.otherDocumentsSection)}
+            title={caseFiles.otherDocumentsSection}
             files={filteredFiles.others}
             onOpenFile={onOpen}
           />
@@ -621,21 +603,27 @@ const IndictmentCaseFilesList: FC<Props> = ({
         {displayGeneratedPDFs && showSubpoenaPdf && (
           <Box>
             <SectionHeading
-              title={formatMessage(strings.subpoenaTitle)}
+              title={strings.subpoenaTitle}
               marginBottom={1}
               heading="h4"
               variant="h4"
             />
             {visibleSubpoenas.map(({ defendant, subpoena, caseId }) => {
               const subpoenaFileName = formatMessage(
-                strings.subpoenaButtonText,
+                {
+                  id: strings.subpoenaButtonText,
+                  defaultMessage: strings.subpoenaButtonText,
+                },
                 {
                   name: defendant.name,
                   date: formatDate(subpoena.created),
                 },
               )
               const serviceCertificateFileName = formatMessage(
-                strings.serviceCertificateButtonText,
+                {
+                  id: strings.serviceCertificateButtonText,
+                  defaultMessage: strings.serviceCertificateButtonText,
+                },
                 { name: defendant.name },
               )
 
@@ -680,7 +668,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
           showDigitalCaseFilesSection) && (
           <>
             <FileSection
-              title={formatMessage(strings.civilClaimsTitle)}
+              title={strings.civilClaimsTitle}
               files={filteredFiles.civilClaims}
               onOpenFile={onOpen}
               shouldRender={permissions.canViewCivilClaims}
@@ -764,7 +752,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
               filteredFiles.rulingOrders.length > 0) && (
               <div>
                 <SectionHeading
-                  title={formatMessage(strings.rulingAndCourtRecordsTitle)}
+                  title={strings.rulingAndCourtRecordsTitle}
                   marginBottom={1}
                   heading="h4"
                   variant="h4"
@@ -821,7 +809,10 @@ const IndictmentCaseFilesList: FC<Props> = ({
                     }
 
                     const serviceCertificateFileName = formatMessage(
-                      strings.serviceCertificateButtonText,
+                      {
+                        id: strings.serviceCertificateButtonText,
+                        defaultMessage: strings.serviceCertificateButtonText,
+                      },
                       {
                         name: defendant.name,
                       },
@@ -881,13 +872,13 @@ const IndictmentCaseFilesList: FC<Props> = ({
               </Box>
             )}
             <FileSection
-              title={formatMessage(caseFiles.criminalRecordUpdateSection)}
+              title={caseFiles.criminalRecordUpdateSection}
               files={filteredFiles.criminalRecordUpdate}
               onOpenFile={onOpen}
               shouldRender={permissions.canViewCriminalRecordUpdate}
             />
             <FileSection
-              title={formatMessage(strings.sentToPrisonAdmin)}
+              title={strings.sentToPrisonAdmin}
               files={filteredFiles.sentToPrisonAdminFiles}
               onOpenFile={onOpen}
               shouldRender={permissions.canViewSentToPrisonAdminFiles}
@@ -902,23 +893,28 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 />
               )}
             </FileSection>
-            <Box>
-              <SectionHeading
-                title={formatMessage(strings.uploadedCaseFiles)}
-                marginBottom={3}
-                heading="h4"
-                variant="h4"
-              />
-              <CaseFileTable
-                caseFiles={filteredFiles.uploadedCaseFiles}
-                onOpenFile={onOpen}
-                canRejectFiles={
-                  isDistrictCourtUser(user) &&
-                  !connectedCaseParentId &&
-                  workingCase.state !== CaseState.CORRECTING
-                }
-              />
-            </Box>
+            {shouldShowUploadedCaseFilesSection(
+              filteredFiles.uploadedCaseFiles.length,
+              forceDisplayAdditionalFiles,
+            ) && (
+              <Box>
+                <SectionHeading
+                  title={strings.uploadedCaseFiles}
+                  marginBottom={3}
+                  heading="h4"
+                  variant="h4"
+                />
+                <CaseFileTable
+                  caseFiles={filteredFiles.uploadedCaseFiles}
+                  onOpenFile={onOpen}
+                  canRejectFiles={
+                    isDistrictCourtUser(user) &&
+                    !connectedCaseParentId &&
+                    workingCase.state !== CaseState.CORRECTING
+                  }
+                />
+              </Box>
+            )}
             <AnimatePresence>
               {fileNotFound && (
                 <FileNotFoundModal dismiss={dismissFileNotFound} />

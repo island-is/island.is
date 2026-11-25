@@ -20,5 +20,6 @@ query User($input: UserQueryInput!) {
     active
     canConfirmIndictment
     canManageMessageSuspension
+    canManageServiceInterruptionBanner
   }
 }

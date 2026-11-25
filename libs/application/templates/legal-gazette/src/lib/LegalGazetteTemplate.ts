@@ -137,6 +137,13 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
                 import('../forms/DraftForm').then((module) =>
                   Promise.resolve(module.DraftForm),
                 ),
+              actions: [
+                {
+                  event: 'SUBMIT',
+                  name: m.draft.sections.confirmation.submitButton,
+                  type: 'primary',
+                },
+              ],
               write: 'all',
               read: 'all',
               delete: true,
@@ -205,6 +212,18 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
               id: LegalGazetteRoles.ASSIGNEE,
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+              ],
             },
           ],
         },

@@ -11,7 +11,7 @@ const SameDayHelpBox = () => {
       borderColor="blue200"
       borderRadius="large"
       background="white"
-      padding={3}
+      paddingX={[2, 2, 3]}
       paddingY={2}
     >
       <Text variant="h5" as="h3" lineHeight="lg">

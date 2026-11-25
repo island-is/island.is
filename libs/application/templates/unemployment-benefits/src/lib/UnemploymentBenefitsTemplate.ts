@@ -23,7 +23,6 @@ import {
 import { application as applicationMessages } from './messages'
 import { UnemploymentApi, UserProfileApi } from '../dataProviders'
 import { ApiActions } from '../shared/constants'
-import { Features } from '@island.is/feature-flags'
 
 const UnemploymentBenefitsTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -34,7 +33,6 @@ const UnemploymentBenefitsTemplate: ApplicationTemplate<
   name: applicationMessages.name,
   codeOwner: CodeOwners.Origo,
   institution: applicationMessages.institutionName,
-  featureFlag: Features.UnemploymentBenefitsEnabled,
   translationNamespaces:
     ApplicationConfigurations.UnemploymentBenefits.translation,
   dataSchema: UnemploymentBenefitsSchema,

@@ -38,6 +38,7 @@ import {
 } from '../dataProviders'
 import {
   Events,
+  OAPEvents,
   Roles,
   States,
   Actions,
@@ -142,6 +143,12 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
                   name: 'Submit',
                   type: 'primary',
                 },
+                {
+                  event: DefaultEvents.ABORT,
+                  name: socialInsuranceAdministrationMessage.confirm
+                    .cancelButton,
+                  type: 'reject',
+                },
               ],
               write: 'all',
               delete: true,
@@ -198,6 +205,23 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              actions: [
+                {
+                  event: OAPEvents.INREVIEW,
+                  name: 'Í vinnslu',
+                  type: 'primary',
+                },
+                {
+                  event: OAPEvents.ADDITIONALDOCUMENTSREQUIRED,
+                  name: 'Kalla eftir gögnum',
+                  type: 'primary',
+                },
+                {
+                  event: OAPEvents.DISMISS,
+                  name: 'Vísa frá',
+                  type: 'reject',
+                },
+              ],
               write: 'all',
             },
           ],
@@ -246,6 +270,28 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+                {
+                  event: OAPEvents.ADDITIONALDOCUMENTSREQUIRED,
+                  name: 'Kalla eftir gögnum',
+                  type: 'primary',
+                },
+                {
+                  event: OAPEvents.DISMISS,
+                  name: 'Vísa frá',
+                  type: 'reject',
+                },
+              ],
               write: 'all',
             },
           ],
@@ -290,6 +336,14 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
                 import('../forms/AdditionalDocumentsRequired').then((val) =>
                   Promise.resolve(val.AdditionalDocumentsRequired),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: socialInsuranceAdministrationMessage.fileUpload
+                    .additionalDocumentsEditSubmit,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
             },
@@ -299,6 +353,13 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              actions: [
+                {
+                  event: OAPEvents.DISMISS,
+                  name: 'Vísa frá',
+                  type: 'reject',
+                },
+              ],
               write: 'all',
             },
           ],

@@ -13,6 +13,7 @@ import {
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
+import { runInRequestContext } from '../../../../test'
 import {
   Case,
   Defendant,
@@ -55,22 +56,20 @@ describe('LimitedAccessDefendantController - Update', () => {
 
   beforeEach(async () => {
     const {
-      queuedMessages,
+      queuedMessagesAfterCommit,
       sequelize,
       defendantRepositoryService,
       defendantEventLogRepositoryService,
       limitedAccessDefendantController,
     } = await createTestingDefendantModule()
 
-    mockQueuedMessages = queuedMessages
+    mockQueuedMessages = queuedMessagesAfterCommit
     mockDefendantRepositoryService = defendantRepositoryService
     mockDefendantEventLogRepositoryService = defendantEventLogRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
     mockUpdate.mockRejectedValue(new Error('Some error'))
@@ -83,17 +82,22 @@ describe('LimitedAccessDefendantController - Update', () => {
       const then = {} as Then
       const defendantToUse = defendantOverride ?? defendant
 
-      await limitedAccessDefendantController
-        .update(
-          caseId,
-          defendantId,
-          prisonAdminUser,
-          theCase,
-          defendantToUse,
-          defendantUpdate,
-        )
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      // Guards do not execute in controller unit tests, so the request
+      // context the handler takes its transaction from is set up here.
+      try {
+        await runInRequestContext(async () => {
+          then.result = await limitedAccessDefendantController.update(
+            caseId,
+            defendantId,
+            prisonAdminUser,
+            theCase,
+            defendantToUse,
+            defendantUpdate,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }

@@ -118,6 +118,7 @@ describe('InternalCaseController - Deliver signed court record to police', () =>
             courtDocument: Base64.btoa(courtRecordPdf),
           },
         ],
+        caseId,
       )
       expect(then.result.delivered).toEqual(true)
     })

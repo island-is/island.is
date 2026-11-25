@@ -8,6 +8,20 @@ import {
 import { useIntl } from 'react-intl'
 import round from 'lodash/round'
 import { parseAsInteger, useQueryState } from 'next-usequerystate'
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
+  Radar,
+  RadarChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
 
 import {
   Box,
@@ -17,8 +31,10 @@ import {
   RadioButton,
   Stack,
   Table,
+  Tabs,
   Text,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { ConnectedComponent } from '@island.is/web/graphql/schema'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
@@ -81,39 +97,39 @@ const ECOIForm = ({ step, stepIndex, state, setState }: ECOIFormProps) => {
                 {question}
               </Text>
               <Stack space={1}>
-                {answerOptions.map((option, answerIndex) => {
-                  const id = `${step.title}-${questionIndex}-${answerIndex}`
-                  const groupName = `${stepIndex}-${questionIndex}`
+                {answerOptions
+                  .slice(0, 4)
+                  .map((option, answerIndex) => ({ option, answerIndex }))
+                  .reverse()
+                  .map(({ option, answerIndex }) => {
+                    const id = `${step.title}-${questionIndex}-${answerIndex}`
+                    const groupName = `${stepIndex}-${questionIndex}`
 
-                  if (answerIndex > 3) {
-                    return null
-                  }
-
-                  const label =
-                    option.text ||
-                    formatMessage(
-                      m.answerLabel[
-                        String(answerIndex) as keyof typeof m.answerLabel
-                      ],
+                    const label =
+                      option.text ||
+                      formatMessage(
+                        m.answerLabel[
+                          String(answerIndex) as keyof typeof m.answerLabel
+                        ],
+                      )
+                    return (
+                      <RadioButton
+                        key={id}
+                        id={id}
+                        name={groupName}
+                        label={label}
+                        value={label}
+                        checked={
+                          questionState.selectedAnswerIndex === answerIndex
+                        }
+                        onChange={() => {
+                          questionState.selectedAnswerIndex = answerIndex
+                          questionState.answerScore = option.score
+                          setState((prevState) => ({ ...prevState }))
+                        }}
+                      />
                     )
-                  return (
-                    <RadioButton
-                      key={id}
-                      id={id}
-                      name={groupName}
-                      label={label}
-                      value={label}
-                      checked={
-                        questionState.selectedAnswerIndex === answerIndex
-                      }
-                      onChange={() => {
-                        questionState.selectedAnswerIndex = answerIndex
-                        questionState.answerScore = option.score
-                        setState((prevState) => ({ ...prevState }))
-                      }}
-                    />
-                  )
-                })}
+                  })}
               </Stack>
             </Stack>
           )
@@ -123,7 +139,7 @@ const ECOIForm = ({ step, stepIndex, state, setState }: ECOIFormProps) => {
   )
 }
 
-interface ECOICalculatorResultsProps {
+export interface ECOICalculatorResultsProps {
   categoryAverages: { title: string; average: number }[]
   totalAverage: number
 }
@@ -138,7 +154,139 @@ const getBracketText = (
   return formatMessage(m.results.bracket1Text)
 }
 
-const ECOICalculatorResults = ({
+const CHART_X_AXIS_TICKS = [0, 0.5, 1, 1.5, 2, 2.5, 3]
+const CHART_CATEGORY_LABEL_MAX_LENGTH = 30
+
+const CategoryAxisTick = (props: {
+  x?: number
+  y?: number
+  payload?: { value: string }
+}) => {
+  const { x, y, payload } = props
+  const value = payload?.value ?? ''
+  const label =
+    value.length > CHART_CATEGORY_LABEL_MAX_LENGTH
+      ? `${value.slice(0, CHART_CATEGORY_LABEL_MAX_LENGTH - 1)}…`
+      : value
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text
+        x={-8}
+        y={0}
+        dy={4}
+        textAnchor="end"
+        fontSize={13}
+        fill={theme.color.dark400}
+      >
+        {label}
+        <title>{value}</title>
+      </text>
+    </g>
+  )
+}
+
+const RADAR_CATEGORY_LABEL_LINE_LENGTH = 18
+const RADAR_CATEGORY_LABEL_MAX_LINES = 2
+const RADAR_CATEGORY_LABEL_LINE_HEIGHT = 14
+
+const splitOverlengthWord = (word: string) => {
+  if (word.length <= RADAR_CATEGORY_LABEL_LINE_LENGTH) {
+    return [word]
+  }
+  const chunkLength = RADAR_CATEGORY_LABEL_LINE_LENGTH - 1
+  const chunks: string[] = []
+  for (let i = 0; i < word.length; i += chunkLength) {
+    chunks.push(word.slice(i, i + chunkLength))
+  }
+  return chunks.map((chunk, index) =>
+    index < chunks.length - 1 ? `${chunk}-` : chunk,
+  )
+}
+
+const wrapRadarLabel = (value: string) => {
+  const lines: string[] = []
+  let currentLine = ''
+  for (const word of value.split(' ').flatMap(splitOverlengthWord)) {
+    const candidate = currentLine ? `${currentLine} ${word}` : word
+    if (candidate.length <= RADAR_CATEGORY_LABEL_LINE_LENGTH) {
+      currentLine = candidate
+    } else {
+      lines.push(currentLine)
+      currentLine = word
+    }
+  }
+  if (currentLine) lines.push(currentLine)
+
+  if (lines.length <= RADAR_CATEGORY_LABEL_MAX_LINES) {
+    return lines
+  }
+  const visibleLines = lines.slice(0, RADAR_CATEGORY_LABEL_MAX_LINES)
+  const lastLine = visibleLines[RADAR_CATEGORY_LABEL_MAX_LINES - 1]
+  visibleLines[RADAR_CATEGORY_LABEL_MAX_LINES - 1] = `${lastLine.slice(
+    0,
+    RADAR_CATEGORY_LABEL_LINE_LENGTH - 1,
+  )}…`
+  return visibleLines
+}
+
+const RadarCategoryTick = (props: {
+  x?: number
+  y?: number
+  textAnchor?: 'start' | 'middle' | 'end'
+  payload?: { value: string }
+}) => {
+  const { x = 0, y = 0, textAnchor = 'middle', payload } = props
+  const value = payload?.value ?? ''
+  const lines = wrapRadarLabel(value)
+  const firstLineOffset =
+    (-(lines.length - 1) * RADAR_CATEGORY_LABEL_LINE_HEIGHT) / 2
+  return (
+    <text
+      x={x}
+      y={y}
+      textAnchor={textAnchor}
+      fontSize={12}
+      fontWeight={600}
+      fill={theme.color.dark400}
+    >
+      {lines.map((line, index) => (
+        <tspan
+          key={index}
+          x={x}
+          dy={index === 0 ? firstLineOffset : RADAR_CATEGORY_LABEL_LINE_HEIGHT}
+        >
+          {line}
+        </tspan>
+      ))}
+      <title>{value}</title>
+    </text>
+  )
+}
+
+const BarValueLabel = (props: {
+  x?: number
+  y?: number
+  width?: number
+  height?: number
+  value?: number
+}) => {
+  const { x = 0, y = 0, width = 0, height = 0, value = 0 } = props
+  return (
+    <text
+      x={x + width - 8}
+      y={y + height / 2}
+      dy={4}
+      textAnchor="end"
+      fill={theme.color.white}
+      fontSize={13}
+      fontWeight={600}
+    >
+      {formatScore(value)}
+    </text>
+  )
+}
+
+export const ECOICalculatorResults = ({
   categoryAverages,
   totalAverage,
 }: ECOICalculatorResultsProps) => {
@@ -169,54 +317,188 @@ const ECOICalculatorResults = ({
           <Text variant="h3" as="h3">
             {formatMessage(m.results.breakdownHeading)}
           </Text>
-          <Table.Table>
-            <Table.Head>
-              <Table.Row>
-                <Table.HeadData>{''}</Table.HeadData>
-                <Table.HeadData>
-                  {formatMessage(m.results.tableCategory)}
-                </Table.HeadData>
-                <Table.HeadData align="right">
-                  {formatMessage(m.results.tableAverage)}
-                </Table.HeadData>
-              </Table.Row>
-            </Table.Head>
-            <Table.Body>
-              {categoryAverages.map((cat, index) => (
-                <Table.Row key={cat.title}>
-                  <Table.Data>{index + 1}</Table.Data>
-                  <Table.Data>{cat.title}</Table.Data>
-                  <Table.Data align="right">
-                    {formatScore(cat.average)}
-                  </Table.Data>
-                </Table.Row>
-              ))}
-            </Table.Body>
-            <Table.Foot>
-              <Table.Row>
-                <Table.Data box={{ background: 'blue100' }}>{''}</Table.Data>
-                <Table.Data
-                  box={{ background: 'blue100' }}
-                  text={{ fontWeight: 'semiBold' }}
-                >
-                  {formatMessage(m.results.totalAverage)}
-                </Table.Data>
-                <Table.Data
-                  box={{ background: 'blue100' }}
-                  text={{ fontWeight: 'semiBold' }}
-                  align="right"
-                >
-                  {formatScore(totalAverage)}
-                </Table.Data>
-              </Table.Row>
-            </Table.Foot>
-          </Table.Table>
+          <Tabs
+            label={formatMessage(m.results.breakdownHeading)}
+            selected="table"
+            contentBackground="white"
+            size="sm"
+            tabs={[
+              {
+                id: 'table',
+                label: formatMessage(m.results.tableTabLabel),
+                content: (
+                  <>
+                    <Box className={styles.tabPanelSpacer} />
+                    <Table.Table>
+                      <Table.Head>
+                        <Table.Row>
+                          <Table.HeadData>{''}</Table.HeadData>
+                          <Table.HeadData text={{ variant: 'eyebrow' }}>
+                            {formatMessage(m.results.tableCategory)}
+                          </Table.HeadData>
+                          <Table.HeadData
+                            text={{ variant: 'eyebrow' }}
+                            align="right"
+                          >
+                            {formatMessage(m.results.tableAverage)}
+                          </Table.HeadData>
+                        </Table.Row>
+                      </Table.Head>
+                      <Table.Body>
+                        {categoryAverages.map((cat, index) => (
+                          <Table.Row key={cat.title}>
+                            <Table.Data>{index + 1}</Table.Data>
+                            <Table.Data>{cat.title}</Table.Data>
+                            <Table.Data align="right">
+                              {formatScore(cat.average)}
+                            </Table.Data>
+                          </Table.Row>
+                        ))}
+                      </Table.Body>
+                    </Table.Table>
+                  </>
+                ),
+              },
+              {
+                id: 'chart',
+                label: formatMessage(m.results.chartTabLabel),
+                content: (
+                  <>
+                    <Box className={styles.tabPanelSpacer} />
+                    <Box width="full" height="full">
+                      <ResponsiveContainer
+                        width="100%"
+                        height={Math.max(
+                          380,
+                          categoryAverages.length * 42 + 40,
+                        )}
+                      >
+                        <BarChart
+                          layout="vertical"
+                          data={categoryAverages}
+                          margin={{ top: 8, right: 24, left: 8, bottom: 8 }}
+                          barCategoryGap="30%"
+                        >
+                          <CartesianGrid
+                            horizontal={false}
+                            stroke={theme.color.blue200}
+                          />
+                          <XAxis
+                            type="number"
+                            domain={[0, 3]}
+                            ticks={CHART_X_AXIS_TICKS}
+                            tickFormatter={formatScore}
+                            tickLine={false}
+                            axisLine={false}
+                            tick={{
+                              fontSize: 14,
+                              fontWeight: 400,
+                              fill: theme.color.dark400,
+                            }}
+                          />
+                          <YAxis
+                            type="category"
+                            dataKey="title"
+                            width={240}
+                            tickLine={false}
+                            axisLine={false}
+                            tick={<CategoryAxisTick />}
+                          />
+                          <Tooltip
+                            formatter={(value) => formatScore(Number(value))}
+                          />
+                          <Bar
+                            dataKey="average"
+                            fill={theme.color.blue400}
+                            barSize={20}
+                            radius={[0, 4, 4, 0]}
+                            minPointSize={26}
+                            label={<BarValueLabel />}
+                          />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </Box>
+                  </>
+                ),
+              },
+              {
+                id: 'radar',
+                label: formatMessage(m.results.radarChartTabLabel),
+                content: (
+                  <>
+                    <Box className={styles.tabPanelSpacer} />
+                    <Box width="full" height="full">
+                      <ResponsiveContainer width="100%" height={640}>
+                        <RadarChart
+                          data={categoryAverages}
+                          outerRadius="75%"
+                          margin={{ top: 16, right: 16, bottom: 16, left: 16 }}
+                        >
+                          <PolarGrid
+                            gridType="polygon"
+                            stroke={theme.color.blue200}
+                          />
+                          <PolarAngleAxis
+                            dataKey="title"
+                            tick={<RadarCategoryTick />}
+                          />
+                          <PolarRadiusAxis
+                            angle={90}
+                            domain={[0, 3]}
+                            tickCount={CHART_X_AXIS_TICKS.length}
+                            tickFormatter={formatScore}
+                            tick={{ fontSize: 12, fill: theme.color.blue400 }}
+                            axisLine={false}
+                            stroke={theme.color.blue200}
+                          />
+                          <Tooltip
+                            formatter={(value) => formatScore(Number(value))}
+                          />
+                          <Radar
+                            dataKey="average"
+                            stroke={theme.color.blue400}
+                            strokeWidth={2}
+                            fill={theme.color.blue400}
+                            fillOpacity={0.2}
+                            dot={{
+                              r: 4,
+                              fill: theme.color.blue400,
+                              stroke: theme.color.blue400,
+                            }}
+                          />
+                        </RadarChart>
+                      </ResponsiveContainer>
+                    </Box>
+                  </>
+                ),
+              },
+            ]}
+          />
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="spaceBetween"
+            width="full"
+            background="purple100"
+            borderRadius="large"
+            padding={2}
+            className={styles.totalAverageBanner}
+          >
+            <Text variant="medium" fontWeight="regular" color="dark400">
+              {formatMessage(m.results.totalAverage)}
+            </Text>
+            <Text variant="h5" fontWeight="semiBold" color="dark400">
+              {formatScore(totalAverage)}
+            </Text>
+          </Box>
         </Stack>
         <Stack space={1}>
           <Text variant="h3" as="h3">
             {formatMessage(m.results.interpretationHeading)}
           </Text>
-          <Text>{getBracketText(totalAverage, formatMessage)}</Text>
+          <MarkdownText replaceNewLinesWithBreaks={false}>
+            {getBracketText(totalAverage, formatMessage)}
+          </MarkdownText>
         </Stack>
       </Stack>
     </Stack>
@@ -309,9 +591,11 @@ export const ECOICalculator = ({ slice }: ECOICalculatorProps) => {
 
   return (
     <Stack space={8}>
-      <MarkdownText replaceNewLinesWithBreaks={false}>
-        {formatMessage(m.form.topDescription)}
-      </MarkdownText>
+      {safeStepIndex === 0 && (
+        <MarkdownText replaceNewLinesWithBreaks={false}>
+          {formatMessage(m.form.topDescription)}
+        </MarkdownText>
+      )}
       <Stack space={6}>
         <Box ref={formRef}>
           <Stack space={4}>

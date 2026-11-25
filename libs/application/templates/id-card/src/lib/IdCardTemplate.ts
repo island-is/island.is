@@ -35,7 +35,7 @@ import {
   NationalRegistryUserParentB,
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
-import { application as applicationMessage } from './messages'
+import { application as applicationMessage, review } from './messages'
 import { Events, Roles, States, ApiActions, Routes } from './constants'
 import { IdCardSchema } from './dataSchema'
 import { buildPaymentState } from '@island.is/application/utils'
@@ -149,6 +149,13 @@ const IdCardTemplate: ApplicationTemplate<
                 import('../forms/IdCardForm').then((module) =>
                   Promise.resolve(module.IdCardForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Áfram',
+                  type: 'primary',
+                },
+              ],
               write: 'all',
               delete: true,
             },
@@ -219,6 +226,11 @@ const IdCardTemplate: ApplicationTemplate<
                 ),
               actions: [
                 { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: review.buttons.reject,
+                  type: 'reject',
+                },
               ],
               write: 'all',
               api: [NationalRegistryUserParentB],

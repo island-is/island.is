@@ -5,7 +5,7 @@ import { router, Stack, useLocalSearchParams } from 'expo-router'
 import styled from 'styled-components/native'
 import trashIcon from '@/assets/icons/trash.png'
 
-import { Button, NavigationBarSheet, Typography } from '@/ui'
+import { Button, token, Typography } from '@/ui'
 import { useDeleteMedicineDelegationMutation } from '@/graphql/types/schema'
 import { StackScreen } from '../../../../../../components/stack-screen'
 
@@ -15,9 +15,14 @@ const Content = styled(ScrollView)`
   padding-bottom: ${({ theme }) => theme.spacing[4]}px;
 `
 
+const Title = styled(Typography)`
+  margin-top: ${({ theme }) => theme.spacing[1]}px;
+  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
+`
+
 const Row = styled.View`
   border-bottom-width: 1px;
-  border-color: ${({ theme }) => theme.color.blue200};
+  border-color: ${token((t) => t.border.primary)};
   padding-bottom: ${({ theme }) => theme.spacing.p1}px;
   padding-top: ${({ theme }) => theme.spacing.p1}px;
 `
@@ -30,7 +35,7 @@ const RowContent = styled.View`
 const ErrorMessage = styled(Typography)`
   margin-top: ${({ theme }) => theme.spacing[2]}px;
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
-  color: ${({ theme }) => theme.color.red600};
+  color: ${token((t) => t.feedback.error.foregroundContrast)};
 `
 
 export default function MedicineDelegationDetailScreen() {
@@ -157,6 +162,9 @@ export default function MedicineDelegationDetailScreen() {
       value: intl.formatMessage({
         id: delegation?.isActive
           ? 'health.medicineDelegation.detail.statusActive'
+          : // A permit that has not taken effect yet is not expired.
+          delegation?.status === 'awaitingApproval'
+          ? 'health.medicineDelegation.detail.statusAwaitingApproval'
           : 'health.medicineDelegation.detail.statusExpired',
       }),
     },
@@ -185,16 +193,13 @@ export default function MedicineDelegationDetailScreen() {
 
   return (
     <Content>
-      <StackScreen
-        options={{
-          title:
-            delegation?.name ??
-            intl.formatMessage({
-              id: 'health.medicineDelegation.screenTitle',
-            }),
-        }}
-        closeable
-      />
+      <StackScreen options={{ title: '' }} closeable />
+      <Title variant="heading3">
+        {delegation?.name ??
+          intl.formatMessage({
+            id: 'health.medicineDelegation.screenTitle',
+          })}
+      </Title>
       <Button
         loading={loadingRevokeMedicineDelegation}
         title={intl.formatMessage({

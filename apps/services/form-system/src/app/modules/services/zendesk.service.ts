@@ -9,6 +9,7 @@ import {
   FieldTypesEnum,
   SectionTypes,
 } from '@island.is/form-system/shared'
+import { AssetTypes } from '@island.is/form-system/enums'
 import { getLanguageTypeForValueTypeAttribute } from '../../dataTypes/valueTypes/valueType.helper'
 import { CustomField } from './models/zendeskCustomField.dto'
 import { environment } from '../../../environments'
@@ -55,11 +56,19 @@ export class ZendeskService {
     storedInstance?: string,
     storedBrandId?: string,
   ): Promise<boolean> {
-    let contactEmail = 'stafraentisland@gmail.com'
+    let zendeskUser = 'stafraentisland@gmail.com'
     let zendeskBrandId: string | undefined = undefined
     let zendeskInstance = this.SANDBOX_INSTANCE
+    const isDevelopmentEnvironment =
+      !process.env.name ||
+      process.env.name === 'dev' ||
+      process.env.name === 'local'
+    const useProductionZendesk =
+      applicationDto.isTest === false &&
+      environment.production === true &&
+      !isDevelopmentEnvironment
 
-    if (applicationDto.isTest === false && environment.production === true) {
+    if (useProductionZendesk) {
       zendeskInstance = storedInstance || this.PROD_INSTANCE
       zendeskBrandId = storedBrandId
     }
@@ -72,16 +81,16 @@ export class ZendeskService {
 
     let apiKey = this.SANDBOX_API_KEY
 
-    if (applicationDto.isTest === false && environment.production === true) {
+    if (useProductionZendesk) {
       apiKey = this.PROD_API_KEY
     }
 
     if (supportedZendeskInstance === 'heilsa') {
       apiKey = this.HEILSA_API_KEY
-      contactEmail = 'admin@stafraentisland.is'
+      zendeskUser = 'admin@stafraentisland.is'
     } else if (supportedZendeskInstance === 'haskoliislands') {
       apiKey = this.HASKOLI_ISLANDS_API_KEY
-      contactEmail = 'admin@stafraentisland.is'
+      zendeskUser = 'stafraentisland@hi.is'
     }
 
     if (!apiKey) {
@@ -89,7 +98,7 @@ export class ZendeskService {
     }
 
     const zendeskUrl = `https://${supportedZendeskInstance}.zendesk.com`
-    const username = `${contactEmail}/token`
+    const username = `${zendeskUser}/token`
     const credentials = Buffer.from(`${username}:${apiKey}`).toString('base64')
 
     const { name, email } = this.getNameAndEmail(applicationDto)
@@ -136,6 +145,7 @@ export class ZendeskService {
       attachmentTokens,
       zendeskUrl,
       credentials,
+      zendeskUser,
       name,
       email,
       isInternal,
@@ -151,6 +161,7 @@ export class ZendeskService {
         isTest: applicationDto.isTest,
         zendeskInstance: supportedZendeskInstance,
         zendeskBrandId,
+        zendeskUser,
         attachmentCount: attachmentTokens.length,
         missingAttachmentCount: missingFilenames.length,
         datadogEvent: 'form_system_application_sent_zendesk',
@@ -168,6 +179,7 @@ export class ZendeskService {
     uploadTokens: string[],
     url: string,
     credentials: string,
+    zendeskUser: string,
     name: string,
     email: string,
     isInternal: boolean,
@@ -213,6 +225,7 @@ export class ZendeskService {
             zendeskHost: serviceUrl.host,
             zendeskPath: serviceUrl.pathname,
             zendeskBrandId,
+            zendeskUser,
             hasBrandId: brandId !== undefined,
             isInternal,
             uploadTokenCount: uploadTokens.length,
@@ -235,6 +248,7 @@ export class ZendeskService {
           zendeskHost: serviceUrl.host,
           zendeskPath: serviceUrl.pathname,
           zendeskBrandId,
+          zendeskUser,
           hasBrandId: brandId !== undefined,
           isInternal,
           uploadTokenCount: uploadTokens.length,
@@ -561,7 +575,23 @@ export class ZendeskService {
                 continue
               }
 
-              const entries = Object.entries(json)
+              const assetAttributeKeys =
+                field.fieldType === FieldTypesEnum.ASSETS
+                  ? field.fieldSettings?.assetType === AssetTypes.VEHICLE
+                    ? ['color', 'model', 'registrationNumber']
+                    : field.fieldSettings?.assetType === AssetTypes.REAL_ESTATE
+                    ? [
+                        'address',
+                        'postalCode',
+                        'municipality',
+                        'propertyNumber',
+                      ]
+                    : undefined
+                  : undefined
+              const entries = Object.entries(json).filter(
+                ([key]) =>
+                  !assetAttributeKeys || assetAttributeKeys.includes(key),
+              )
               const isMultiAttribute = entries.length > 1
 
               // If multi and json is empty -> just write the itemNo (bold)
@@ -596,7 +626,8 @@ export class ZendeskService {
 
                 const val = this.formatValue(raw, field.fieldType)
                 if (
-                  field.fieldType === FieldTypesEnum.APPLICANT &&
+                  (field.fieldType === FieldTypesEnum.APPLICANT ||
+                    isMultiAttribute) &&
                   val.trim().length === 0
                 ) {
                   continue

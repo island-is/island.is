@@ -3,6 +3,8 @@ import {
   ApplicantTypesEnum,
   ApplicationEvents,
   ApplicationStatus,
+  AssetTypes,
+  FamilyTypes,
   FieldTypesEnum,
   FormStatus,
   ListTypesEnum,
@@ -14,6 +16,7 @@ import type { Locale } from '@island.is/shared/types'
 import { AuthDelegationType } from '@island.is/shared/types'
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
   HttpException,
   Inject,
@@ -22,8 +25,11 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { jwtDecode } from 'jwt-decode'
+import axios from 'axios'
 import * as kennitala from 'kennitala'
-import { Op, QueryTypes } from 'sequelize'
+import pick from 'lodash/pick'
+import { Op, QueryTypes, Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { calculatePruneAt } from '../../../utils/calculatePruneAt'
 import { getOrganizationInfoByNationalId } from '../../../utils/organizationInfo'
@@ -62,6 +68,11 @@ import { escapeLike } from './utils/escapeLike'
 import { DataFromUrlResDto } from './models/dto/dataFromUrl.response.dto'
 import { DataFromUrlReqDto } from './models/dto/dataFromUrl.request.dto'
 import { Payment } from '../payment/payment.model'
+import { buildApplicationPdf } from '../../../utils/applicationPdf'
+import { getOrganizationLogoUrl } from '../../../utils/organizationLogo'
+import { ApplicationPdfResponseDto } from './models/dto/applicationPdf.response.dto'
+import { FileService } from '../file/file.service'
+import { getApplicationFiles } from '../../../utils/applicationFiles'
 
 @Injectable()
 export class ApplicationsService {
@@ -85,13 +96,35 @@ export class ApplicationsService {
     private readonly serviceManager: ServiceManager,
     private readonly notifyService: NotifyService,
     private readonly sequelize: Sequelize,
+    private readonly fileService: FileService,
   ) {}
+
+  private isFakeUserAllowed(form: Form, user: User | null): boolean {
+    if (
+      process.env.name !== 'prod' ||
+      form.status !== FormStatus.PUBLISHED ||
+      !user
+    ) {
+      return true
+    }
+
+    const { idp } = jwtDecode<{ idp?: string }>(
+      user.authorization.replace(/^Bearer /i, ''),
+    )
+    return idp !== 'gervimadur'
+  }
 
   async create(slug: string, user: User): Promise<ApplicationResponseDto> {
     const form: Form = await this.getForm(slug)
 
     if (!form) {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
+    }
+
+    if (!this.isFakeUserAllowed(form, user)) {
+      const responseDto = new ApplicationResponseDto()
+      responseDto.isLoginTypeAllowed = false
+      return responseDto
     }
 
     if (form.isInaccessible) {
@@ -118,20 +151,41 @@ export class ApplicationsService {
 
     let newApplicationId = ''
 
-    const isTest = form.status !== FormStatus.PUBLISHED
-
-    const nationalId = user.actor?.nationalId || user.nationalId
+    const nationalId = user.nationalId
+    const actorNationalId = user.actor?.nationalId || user.nationalId
 
     try {
       await this.sequelize.transaction(async (transaction) => {
+        const lockedForm = await this.formModel.findByPk(form.id, {
+          transaction,
+          lock: Transaction.LOCK.UPDATE,
+        })
+        if (!lockedForm) {
+          throw new NotFoundException(`Form with id '${form.id}' not found`)
+        }
+        if (
+          lockedForm.isInaccessible ||
+          lockedForm.status === FormStatus.ARCHIVED
+        ) {
+          throw new ForbiddenException(
+            `Form with id '${form.id}' is inaccessible`,
+          )
+        }
+        if (lockedForm.status !== form.status) {
+          throw new ConflictException(
+            `Form with id '${form.id}' has changed status. Please try again.`,
+          )
+        }
+
         const newApplication: Application = await this.applicationModel.create(
           {
             formId: form.id,
             organizationId: form.organizationId,
-            isTest: isTest,
+            isTest: lockedForm.status !== FormStatus.PUBLISHED,
             dependencies: form.dependencies,
             status: ApplicationStatus.DRAFT,
             nationalId,
+            actorNationalId,
             draftTotalSteps: form.draftTotalSteps,
             pruneAt: calculatePruneAt(form.draftDaysToLive),
           } as Application,
@@ -160,11 +214,36 @@ export class ApplicationsService {
                     ) {
                       return
                     }
-                    const valueJson =
+                    let valueJson =
                       ValueTypeFactory.getClass(
                         field.fieldType,
                         new ValueType(),
                       ) ?? {}
+                    if (field.fieldType === FieldTypesEnum.ASSETS) {
+                      const assetType = field.fieldSettings?.assetType
+                      if (assetType === AssetTypes.REAL_ESTATE) {
+                        valueJson = pick(valueJson, [
+                          'address',
+                          'postalCode',
+                          'municipality',
+                          'propertyNumber',
+                        ])
+                      } else if (assetType === AssetTypes.VEHICLE) {
+                        valueJson = pick(valueJson, [
+                          'color',
+                          'model',
+                          'registrationNumber',
+                        ])
+                      }
+                    } else if (field.fieldType === FieldTypesEnum.FAMILY) {
+                      const keys = ['nationalId', 'name']
+                      if (
+                        field.fieldSettings?.familyType === FamilyTypes.SPOUSE
+                      ) {
+                        keys.push('maritalStatus')
+                      }
+                      valueJson = pick(valueJson, keys)
+                    }
                     if (field.fieldType === FieldTypesEnum.APPLICANT) {
                       const type = field.fieldSettings?.applicantType
                       if (type === ApplicantTypesEnum.INDIVIDUAL) {
@@ -254,7 +333,7 @@ export class ApplicationsService {
     const loginTypes = await this.getLoginTypes(user)
     const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
     if (
-      !this.doesUserMatchApplication(application, user, loginTypes) ||
+      !this.doesUserMatchApplication(application, user) ||
       !hasRequiredDelegation
     ) {
       throw new ForbiddenException(
@@ -313,15 +392,32 @@ export class ApplicationsService {
   }
 
   async submit(id: string, user?: User): Promise<SubmitApplicationResponseDto> {
+    return this.sequelize.transaction((transaction) =>
+      this.submitLocked(id, user, transaction),
+    )
+  }
+
+  private async submitLocked(
+    id: string,
+    user: User | undefined,
+    transaction: Transaction,
+  ): Promise<SubmitApplicationResponseDto> {
     const application = await this.applicationModel.findByPk(id, {
-      include: [{ model: Value, as: 'values' }],
+      transaction,
+      lock: Transaction.LOCK.UPDATE,
     })
 
     if (!application) {
       throw new NotFoundException(`Application with id '${id}' not found.`)
     }
 
-    const form = await this.formModel.findByPk(application.formId)
+    if (application.status !== ApplicationStatus.DRAFT) {
+      throw new ConflictException(`Application with id '${id}' is not a draft.`)
+    }
+
+    const form = await this.formModel.findByPk(application.formId, {
+      transaction,
+    })
 
     if (!form) {
       throw new NotFoundException(
@@ -337,7 +433,7 @@ export class ApplicationsService {
       const loginTypes = await this.getLoginTypes(user)
       const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
       if (
-        !this.doesUserMatchApplication(application, user, loginTypes) ||
+        !this.doesUserMatchApplication(application, user) ||
         !hasRequiredDelegation
       ) {
         throw new ForbiddenException(
@@ -346,7 +442,12 @@ export class ApplicationsService {
       }
     }
 
-    const applicationResponseDto = await this.getApplication(id, '', null)
+    const applicationResponseDto = await this.getApplication(
+      id,
+      '',
+      null,
+      transaction,
+    )
 
     if (!applicationResponseDto.application) {
       throw new NotFoundException(`Application DTO with id '${id}' not found.`)
@@ -365,7 +466,13 @@ export class ApplicationsService {
         !!paymentSection &&
         paymentSection.isHidden === false &&
         (paymentSection.screens ?? []).some(
-          (screen) => screen.isHidden === false,
+          (screen) =>
+            screen.isHidden === false &&
+            (screen.fields ?? []).some(
+              (field) =>
+                field.fieldType === FieldTypesEnum.PAYMENT &&
+                field.isHidden === false,
+            ),
         )
 
       if (hasVisiblePayment) {
@@ -389,14 +496,17 @@ export class ApplicationsService {
 
     applicationDto.submittedAt = new Date()
     applicationDto.status = ApplicationStatus.COMPLETED
-    const applicationEvent = await this.applicationEventModel.create({
-      applicationId: application.id,
-      eventType: ApplicationEvents.APPLICATION_SUBMITTED,
-      eventMessage: {
-        is: 'Umsókn móttekin',
-        en: 'Application submitted',
-      },
-    } as ApplicationEvent)
+    const applicationEvent = await this.applicationEventModel.create(
+      {
+        applicationId: application.id,
+        eventType: ApplicationEvents.APPLICATION_SUBMITTED,
+        eventMessage: {
+          is: 'Umsókn móttekin',
+          en: 'Application submitted',
+        },
+      } as ApplicationEvent,
+      { transaction },
+    )
     if (!applicationDto.events) {
       applicationDto.events = []
     }
@@ -417,6 +527,7 @@ export class ApplicationsService {
       zendeskBrandId = form.zendeskBrandId ?? ''
     }
 
+    // Keep the row locked through sending and saving so archiving rechecks its status.
     const success = await this.serviceManager.send(
       applicationDto,
       zendeskInstance,
@@ -424,26 +535,21 @@ export class ApplicationsService {
     )
 
     if (success) {
-      try {
-        application.status = applicationDto.status
-        application.submittedAt = applicationDto.submittedAt
-        application.pruneAt = calculatePruneAt(form.submissionDaysToLive)
-        await application.save()
-        this.logger.info('form system application submitted', {
-          applicationId: application.id,
-          formId: form.id,
-          formSlug: form.slug,
-          organizationNationalId: applicationDto.organizationNationalId,
-          isTest: application.isTest,
-          submittedWithPayment: !user,
-          datadogEvent: 'form_system_application_submitted',
-        })
-      } catch (error) {
-        await applicationEvent.destroy()
-        throw error
-      }
+      application.status = applicationDto.status
+      application.submittedAt = applicationDto.submittedAt
+      application.pruneAt = calculatePruneAt(form.submissionDaysToLive)
+      await application.save({ transaction })
+      this.logger.info('form system application submitted', {
+        applicationId: application.id,
+        formId: form.id,
+        formSlug: form.slug,
+        organizationNationalId: applicationDto.organizationNationalId,
+        isTest: application.isTest,
+        submittedWithPayment: !user,
+        datadogEvent: 'form_system_application_submitted',
+      })
     } else {
-      await applicationEvent.destroy()
+      await applicationEvent.destroy({ transaction })
     }
 
     const submitResponseDto = new SubmitApplicationResponseDto()
@@ -532,9 +638,11 @@ export class ApplicationsService {
     applicationId: string,
     slug: string,
     user: User | null,
+    transaction?: Transaction,
   ): Promise<ApplicationResponseDto> {
     try {
       const application = await this.applicationModel.findOne({
+        transaction,
         where: { id: applicationId },
         include: [
           {
@@ -559,7 +667,14 @@ export class ApplicationsService {
         application.formId,
         applicationId,
         slug,
+        transaction,
       )
+
+      if (!this.isFakeUserAllowed(form, user)) {
+        const responseDto = new ApplicationResponseDto()
+        responseDto.isLoginTypeAllowed = false
+        return responseDto
+      }
 
       if (form.isInaccessible || form.status === FormStatus.ARCHIVED) {
         const responseDto = new ApplicationResponseDto()
@@ -572,7 +687,7 @@ export class ApplicationsService {
         const loginTypes = await this.getLoginTypes(user)
         if (
           !this.isLoginAllowed(loginTypes, allowedLoginTypes) ||
-          !this.doesUserMatchApplication(application, user, loginTypes)
+          !this.doesUserMatchApplication(application, user)
         ) {
           const responseDto = new ApplicationResponseDto()
           responseDto.isLoginTypeAllowed = false
@@ -597,6 +712,9 @@ export class ApplicationsService {
       responseDto.application = applicationDto
       responseDto.isLoginTypeAllowed = true
       responseDto.isInaccessible = form.isInaccessible
+      responseDto.validateEligibility = form.validateEligibility
+      responseDto.enableApplicationPdfDownload =
+        form.enableApplicationPdfDownload
 
       return responseDto
     } catch (error) {
@@ -625,6 +743,12 @@ export class ApplicationsService {
 
     if (!form) {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
+    }
+
+    if (!this.isFakeUserAllowed(form, user)) {
+      const responseDto = new ApplicationResponseDto()
+      responseDto.isLoginTypeAllowed = false
+      return responseDto
     }
 
     if (form.isInaccessible) {
@@ -661,17 +785,94 @@ export class ApplicationsService {
     return responseDto
   }
 
+  async getApplicationPdf(
+    applicationId: string,
+    slug: string,
+    user: User,
+    locale: Locale = 'is',
+  ): Promise<ApplicationPdfResponseDto> {
+    const response = await this.getApplication(applicationId, slug, user)
+
+    if (
+      response.isInaccessible ||
+      response.isLoginTypeAllowed === false ||
+      response.hasRequiredDelegation === false ||
+      !response.application
+    ) {
+      throw new NotFoundException(
+        `Application with id '${applicationId}' not found`,
+      )
+    }
+
+    if (!response.enableApplicationPdfDownload) {
+      throw new ForbiddenException(
+        'PDF download is not enabled for this application',
+      )
+    }
+
+    if (response.application.status !== ApplicationStatus.COMPLETED) {
+      throw new BadRequestException(
+        'PDF download is only available for completed applications',
+      )
+    }
+
+    const pdf = await this.createApplicationPdf(response.application, locale)
+    return {
+      base64: pdf.toString('base64'),
+      filename: `${slug}-${applicationId}.pdf`,
+    }
+  }
+
+  async createApplicationPdf(
+    application: ApplicationDto,
+    locale: Locale = 'is',
+  ): Promise<Buffer> {
+    const organization = application.organizationNationalId
+      ? await this.organizationModel.findOne({
+          where: { nationalId: application.organizationNationalId },
+        })
+      : null
+    if (application.organizationNationalId && !organization) {
+      throw new NotFoundException(
+        `Organization with nationalId ${application.organizationNationalId} not found`,
+      )
+    }
+    const logoUrl = organization?.logo?.is
+    let logo: Buffer | undefined
+
+    if (logoUrl) {
+      const url = getOrganizationLogoUrl(logoUrl)
+      url.searchParams.set('fm', 'png')
+      url.searchParams.set('w', '240')
+      url.searchParams.set('h', '120')
+      url.searchParams.set('fit', 'pad')
+      try {
+        const response = await axios.get<ArrayBuffer>(url.toString(), {
+          responseType: 'arraybuffer',
+          timeout: 10000,
+          maxContentLength: 5 * 1024 * 1024,
+          maxRedirects: 0,
+        })
+        logo = Buffer.from(response.data)
+      } catch (error) {
+        this.logger.warn('Failed to download organization logo for PDF', {
+          applicationId: application.id,
+          error,
+        })
+      }
+    }
+
+    return buildApplicationPdf(application, locale, logo)
+  }
+
   async findAllByNationalId(
     locale: Locale,
     user: User,
   ): Promise<MyPagesApplicationResponseDto[]> {
-    const hasDelegation =
-      Array.isArray(user.delegationType) && user.delegationType.length > 0
-    const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
-
     const applications = await this.applicationModel.findAll({
       where: {
-        nationalId,
+        nationalId: user.nationalId,
+        actorNationalId: user.actor?.nationalId || user.nationalId,
         pruned: false,
         isTest: false,
       },
@@ -727,20 +928,16 @@ export class ApplicationsService {
     formId: string,
     slug: string,
   ): Promise<ApplicationDto[]> {
-    const hasDelegation =
-      Array.isArray(user.delegationType) && user.delegationType.length > 0
-    const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
-
     const applications = await this.applicationModel.findAll({
       where: {
-        nationalId,
+        nationalId: user.nationalId,
+        actorNationalId: user.actor?.nationalId || user.nationalId,
         formId,
         status: { [Op.in]: [ApplicationStatus.DRAFT] },
         pruned: false,
       },
       include: [{ model: Value, as: 'values' }],
     })
-
     const loginTypes = await this.getLoginTypes(user)
     const applicationsByUser = await this.getApplicationsByUser(
       applications,
@@ -824,40 +1021,12 @@ export class ApplicationsService {
   private doesUserMatchApplication(
     application: Application,
     user: User,
-    loginTypes: string[],
   ): boolean {
-    const hasDelegation =
-      Array.isArray(user.delegationType) && user.delegationType.length > 0
-    const nationalId = hasDelegation ? user.actor?.nationalId : user.nationalId
-    const delegatorNationalId = hasDelegation ? user.nationalId : null
-
-    const loggedInUser = application.values?.find(
-      (value) =>
-        value.fieldType === FieldTypesEnum.APPLICANT &&
-        value.json?.nationalId === nationalId &&
-        loginTypes.includes(value.json?.applicantType ?? ''),
+    return (
+      application.nationalId === user.nationalId &&
+      application.actorNationalId ===
+        (user.actor?.nationalId ?? user.nationalId)
     )
-
-    const delegator = delegatorNationalId
-      ? application.values?.find(
-          (value) =>
-            value.fieldType === FieldTypesEnum.APPLICANT &&
-            value.json?.nationalId === delegatorNationalId &&
-            loginTypes.includes(value.json?.applicantType ?? ''),
-        )
-      : null
-
-    if (hasDelegation === true) {
-      if (loggedInUser && delegator) {
-        return true
-      }
-    } else {
-      if (loggedInUser) {
-        return true
-      }
-    }
-
-    return false
   }
 
   private async getApplicationsByUser(
@@ -868,7 +1037,7 @@ export class ApplicationsService {
     const filteredApplications: Application[] = []
 
     for (const application of applications) {
-      if (this.doesUserMatchApplication(application, user, loginTypes)) {
+      if (this.doesUserMatchApplication(application, user)) {
         filteredApplications.push(application)
       }
     }
@@ -879,8 +1048,10 @@ export class ApplicationsService {
     formId: string,
     applicationId: string,
     slug: string,
+    transaction?: Transaction,
   ): Promise<Form> {
     const form = await this.formModel.findOne({
+      transaction,
       where: { id: formId },
       include: [
         {
@@ -1054,7 +1225,7 @@ export class ApplicationsService {
     const loginTypes = await this.getLoginTypes(user)
     const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
     if (
-      !this.doesUserMatchApplication(application, user, loginTypes) ||
+      !this.doesUserMatchApplication(application, user) ||
       !hasRequiredDelegation
     ) {
       throw new ForbiddenException(
@@ -1074,13 +1245,22 @@ export class ApplicationsService {
         if (this.isLastScreenInSection(currentSection, currentScreenId)) {
           if (!completedArray.includes(currentSectionId)) {
             completedArray = [...completedArray, currentSectionId]
-            draftFinishedSteps = draftFinishedSteps + 1
+            if (
+              currentSection.sectionType !== SectionTypes.PAYMENT ||
+              !form.hasSummaryScreen
+            ) {
+              draftFinishedSteps = draftFinishedSteps + 1
+            }
           }
         }
       } else {
         if (!completedArray.includes(currentSectionId)) {
           completedArray = [...completedArray, currentSectionId]
-          if (currentSection.sectionType !== SectionTypes.PREMISES) {
+          if (
+            currentSection.sectionType !== SectionTypes.PREMISES &&
+            (currentSection.sectionType !== SectionTypes.PAYMENT ||
+              !form.hasSummaryScreen)
+          ) {
             draftFinishedSteps = draftFinishedSteps + 1
           }
         }
@@ -1113,7 +1293,12 @@ export class ApplicationsService {
             completedArray = completedArray.filter(
               (id) => id !== previousSection.id,
             )
-            draftFinishedSteps = Math.max(0, draftFinishedSteps - 1)
+            if (
+              previousSection.sectionType !== SectionTypes.PAYMENT ||
+              !form.hasSummaryScreen
+            ) {
+              draftFinishedSteps = Math.max(0, draftFinishedSteps - 1)
+            }
           }
           if (this.doesSectionHaveScreen(previousSection)) {
             const lastScreenOfPreviousSection =
@@ -1136,10 +1321,46 @@ export class ApplicationsService {
       application.draftFinishedSteps = draftFinishedSteps
       application.draftTotalSteps = await this.calculateDraftTotalSteps(
         sections,
+        form.hasSummaryScreen,
       )
       await application.save({ transaction })
 
-      if (currentScreen) {
+      await Promise.all(
+        (sections ?? []).flatMap((section) =>
+          (section.screens ?? []).flatMap((screen) =>
+            (screen.fields ?? [])
+              .filter(
+                (field) =>
+                  (section.isHidden || screen.isHidden || field.isHidden) &&
+                  (field.fieldType === FieldTypesEnum.CHECKBOX ||
+                    field.fieldType === FieldTypesEnum.DROPDOWN_LIST ||
+                    field.fieldType === FieldTypesEnum.RADIO_BUTTONS),
+              )
+              .map((field) =>
+                this.valueModel.update(
+                  {
+                    json: this.sequelize.literal(
+                      `COALESCE("json", '{}'::jsonb) || ${this.sequelize.escape(
+                        JSON.stringify(
+                          field.fieldType === FieldTypesEnum.CHECKBOX
+                            ? { checkboxValue: false }
+                            : { label: null, value: null },
+                        ),
+                      )}::jsonb`,
+                    ),
+                  },
+                  { where: { applicationId, fieldId: field.id }, transaction },
+                ),
+              ),
+          ),
+        ),
+      )
+
+      if (
+        currentScreen &&
+        !currentSection.isHidden &&
+        !currentScreen.isHidden
+      ) {
         const filteredFields = currentScreen.fields?.filter(
           (field) => field.isHidden === false,
         )
@@ -1207,34 +1428,41 @@ export class ApplicationsService {
   }
 
   async deleteApplication(id: string, user: User): Promise<void> {
-    const application = await this.applicationModel.findByPk(id, {
-      include: [{ model: Value, as: 'values' }],
-    })
+    const fileKeys = await this.sequelize.transaction(async (transaction) => {
+      const application = await this.applicationModel.findByPk(id, {
+        include: [{ model: Value, as: 'values', separate: true }],
+        transaction,
+        lock: Transaction.LOCK.UPDATE,
+      })
 
-    if (!application) {
-      throw new NotFoundException(`Application with id '${id}' not found`)
-    }
+      if (!application) {
+        throw new NotFoundException(`Application with id '${id}' not found`)
+      }
 
-    const form = await this.formModel.findByPk(application.formId)
+      const form = await this.formModel.findByPk(application.formId, {
+        transaction,
+      })
 
-    if (!form) {
-      throw new NotFoundException(
-        `Form with id '${application.formId}' not found`,
+      if (!form) {
+        throw new NotFoundException(
+          `Form with id '${application.formId}' not found`,
+        )
+      }
+
+      const loginTypes = await this.getLoginTypes(user)
+      const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
+      if (
+        !this.doesUserMatchApplication(application, user) ||
+        !hasRequiredDelegation
+      ) {
+        throw new ForbiddenException(
+          `User does not have permission to delete application '${id}'`,
+        )
+      }
+
+      const keys = getApplicationFiles(application, this.logger).map(
+        ({ key }) => key,
       )
-    }
-
-    const loginTypes = await this.getLoginTypes(user)
-    const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
-    if (
-      !this.doesUserMatchApplication(application, user, loginTypes) ||
-      !hasRequiredDelegation
-    ) {
-      throw new ForbiddenException(
-        `User does not have permission to delete application '${id}'`,
-      )
-    }
-
-    await this.sequelize.transaction(async (transaction) => {
       await this.applicationEventModel.destroy({
         where: { applicationId: id },
         transaction,
@@ -1246,7 +1474,12 @@ export class ApplicationsService {
       })
 
       await application.destroy({ transaction })
+      return keys
     })
+
+    await Promise.all(
+      fileKeys.map((key) => this.fileService.deleteFileFromStorage(key)),
+    )
   }
 
   async getDataFromUrl(
@@ -1339,12 +1572,10 @@ export class ApplicationsService {
         dataFromUrlRequestDto,
       )
     } else {
-      dataFromUrlRequestDto.loggedInUserNationalId =
+      dataFromUrlRequestDto.actorNationalId =
         user.actor?.nationalId || user.nationalId
 
-      dataFromUrlRequestDto.applicantNationalId = user.actor?.nationalId
-        ? user.nationalId
-        : undefined
+      dataFromUrlRequestDto.nationalId = user.nationalId
 
       dataFromUrlRequestDto.fieldType = fieldType
       dataFromUrlRequestDto.identifier = field.identifier
@@ -1389,7 +1620,7 @@ export class ApplicationsService {
     const loginTypes = await this.getLoginTypes(user)
     const hasRequiredDelegation = this.hasDelegation(user, form.delegations)
     if (
-      !this.doesUserMatchApplication(application, user, loginTypes) ||
+      !this.doesUserMatchApplication(application, user) ||
       !hasRequiredDelegation
     ) {
       throw new ForbiddenException(
@@ -1405,11 +1636,16 @@ export class ApplicationsService {
       )
     }
 
-    const nationalId = user.actor?.nationalId || user.nationalId
+    const nationalId = user.nationalId
+    const actorNationalId = user.actor?.nationalId || user.nationalId
 
     notificationDto.nationalId = nationalId
+    notificationDto.actorNationalId = actorNationalId
 
-    if (!notificationDto.screenDto) {
+    if (
+      !notificationDto.screenDto &&
+      notificationDto.command !== NotificationCommands.VALIDATE_ELIGIBILITY
+    ) {
       throw new BadRequestException(
         `Screen was not provided in the notification DTO for application '${notificationDto.applicationId}'`,
       )
@@ -1435,28 +1671,50 @@ export class ApplicationsService {
 
     response.screen = screen
 
-    response.screen.screenError = {
-      hasError: false,
-      title: { is: '', en: '' },
-      message: { is: '', en: '' },
+    if (response.screen) {
+      response.screen.screenError = {
+        hasError: false,
+        title: { is: '', en: '' },
+        message: { is: '', en: '' },
+      }
     }
 
     if (!response.operationSuccessful) {
-      if (notificationDto.command === NotificationCommands.VALIDATE) {
-        response.screen.screenError = this.getDefaultScreenErrorValidate()
+      if (
+        notificationDto.command === NotificationCommands.VALIDATE ||
+        notificationDto.command === NotificationCommands.VALIDATE_ELIGIBILITY
+      ) {
+        const screenError = this.getDefaultScreenErrorValidate()
+        if (response.screen) {
+          response.screen.screenError = screenError
+        } else {
+          response.screenError = screenError
+        }
       }
     } else if (response.screenError?.hasError) {
-      if (notificationDto.command === NotificationCommands.VALIDATE) {
-        response.screen.screenError =
+      if (
+        notificationDto.command === NotificationCommands.VALIDATE ||
+        notificationDto.command === NotificationCommands.VALIDATE_ELIGIBILITY
+      ) {
+        const screenError =
           response.screenError.title?.is || response.screenError.message?.is
             ? response.screenError
             : this.getDefaultScreenErrorValidate()
+        if (response.screen) {
+          response.screen.screenError = screenError
+        } else {
+          response.screenError = screenError
+        }
       }
     }
 
     if (!response.operationSuccessful || response.screenError?.hasError) {
       this.logger.error(
-        `Failed to notify external service for application '${notificationDto.applicationId}' on screen: '${screen.id}' with command ${notificationDto.command}`,
+        `Failed to notify external service for application '${
+          notificationDto.applicationId
+        }'${
+          screen ? ` on screen: '${screen.id}'` : ' for premises'
+        } with command ${notificationDto.command}`,
       )
     }
 
@@ -1627,12 +1885,14 @@ export class ApplicationsService {
 
   private async calculateDraftTotalSteps(
     sections: SectionDto[] | undefined,
+    hasSummaryScreen: boolean,
   ): Promise<number> {
     sections = sections?.filter(
       (section) =>
         section.isHidden === false &&
         section.sectionType !== SectionTypes.PREMISES &&
-        section.sectionType !== SectionTypes.COMPLETED,
+        section.sectionType !== SectionTypes.COMPLETED &&
+        (section.sectionType !== SectionTypes.PAYMENT || !hasSummaryScreen),
     )
     const draftTotalSteps = sections?.length || 0
 

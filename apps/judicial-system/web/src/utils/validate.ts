@@ -1,12 +1,13 @@
-// TODO: Add tests
 import { POLICE_CASE_NUMBER_REGEX } from '@island.is/judicial-system/consts'
 import {
+  hasAllAppealJudges,
   isIndictmentCase,
   isTrafficViolationIndictmentCount,
 } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import { isRequestSharingDecidedForAllDefenders } from '@island.is/judicial-system-web/src/components/RequestCaseDefenderInfo/RequestCaseDefenderInfo.logic'
 import type {
   AppealCase,
-  Case,
   CourtSessionResponse,
   DateLog,
   Defendant,
@@ -27,6 +28,7 @@ import {
   IndictmentCountOffense,
   IndictmentDecision,
   SessionArrangements,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { isNonEmptyArray } from './arrayHelpers'
@@ -168,12 +170,20 @@ const isDefendantInvalid = (defendant: Defendant): boolean => {
 }
 
 /** Restriction cases only show the first defendant in the UI (police may sync more). */
-const firstDefendantIsInvalid = (workingCase: Case): boolean => {
+const firstDefendantIsInvalid = (workingCase: WorkingCase): boolean => {
   const first = workingCase.defendants?.[0]
   return Boolean(first && isDefendantInvalid(first))
 }
 
-const someDefendantIsInvalid = (workingCase: Case): boolean => {
+const areDefenderContactsValid = (workingCase: WorkingCase): boolean =>
+  validate(
+    (workingCase.defendants ?? []).flatMap((defendant): ValidateItem[] => [
+      [defendant.defenderEmail, ['email-format']],
+      [defendant.defenderPhoneNumber, ['phonenumber']],
+    ]),
+  ).isValid
+
+const someDefendantIsInvalid = (workingCase: WorkingCase): boolean => {
   return Boolean(
     workingCase.defendants &&
       workingCase.defendants.length > 0 &&
@@ -197,7 +207,7 @@ const areVictimsValid = (victims?: Victim[] | null): boolean => {
 }
 
 export const isRegistrationStepValid = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   caseType?: CaseType | null,
   policeCaseNumbers?: string[] | null,
 ): boolean => {
@@ -219,7 +229,7 @@ export const isRegistrationStepValid = (
  * `defendants[0]`; Police system may sync additional defendants, so only the first is validated here.
  */
 export const isDefendantStepValidRC = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   policeCaseNumbers?: string[] | null,
 ): boolean => {
   return Boolean(
@@ -227,15 +237,14 @@ export const isDefendantStepValidRC = (
       policeCaseNumbers.length > 0 &&
       (workingCase.defendants?.length ?? 0) > 0 &&
       !firstDefendantIsInvalid(workingCase) &&
-      (workingCase.defenderName
-        ? Boolean(workingCase.requestSharedWithDefender)
-        : true) &&
+      isRequestSharingDecidedForAllDefenders(
+        workingCase.defendants?.slice(0, 1),
+      ) &&
+      areDefenderContactsValid(workingCase) &&
       validate([
         ...policeCaseNumbers.map(
           (n): ValidateItem => [n, ['empty', 'police-casenumber-format']],
         ),
-        [workingCase.defenderEmail, ['email-format']],
-        [workingCase.defenderPhoneNumber, ['phonenumber']],
         workingCase.type === CaseType.TRAVEL_BAN
           ? 'valid'
           : [workingCase.leadInvestigator, ['empty']],
@@ -243,22 +252,19 @@ export const isDefendantStepValidRC = (
   )
 }
 
-export const isDefendantStepValidIC = (workingCase: Case): boolean => {
+export const isDefendantStepValidIC = (workingCase: WorkingCase): boolean => {
   return Boolean(
     (workingCase.defendants?.length ?? 0) > 0 &&
       !someDefendantIsInvalid(workingCase) &&
       areVictimsValid(workingCase.victims) &&
-      (workingCase.defenderName
-        ? Boolean(workingCase.requestSharedWithDefender)
-        : true) &&
-      validate([
-        [workingCase.defenderEmail, ['email-format']],
-        [workingCase.defenderPhoneNumber, ['phonenumber']],
-      ]).isValid,
+      isRequestSharingDecidedForAllDefenders(workingCase.defendants) &&
+      areDefenderContactsValid(workingCase),
   )
 }
 
-export const isDefendantStepValidIndictments = (workingCase: Case): boolean => {
+export const isDefendantStepValidIndictments = (
+  workingCase: WorkingCase,
+): boolean => {
   return Boolean(
     workingCase.prosecutor &&
       workingCase.policeCaseNumbers &&
@@ -281,7 +287,7 @@ export const isDefendantStepValidIndictments = (workingCase: Case): boolean => {
 }
 
 export const isHearingArrangementsStepValidRC = (
-  workingCase: Case,
+  workingCase: WorkingCase,
 ): boolean => {
   return Boolean(
     workingCase.prosecutor &&
@@ -296,7 +302,7 @@ export const isHearingArrangementsStepValidRC = (
 }
 
 export const isHearingArrangementsStepValidIC = (
-  workingCase: Case,
+  workingCase: WorkingCase,
 ): boolean => {
   return Boolean(
     workingCase.prosecutor &&
@@ -307,7 +313,7 @@ export const isHearingArrangementsStepValidIC = (
 }
 
 export const isProcessingStepValidIndictments = (
-  workingCase: Case,
+  workingCase: WorkingCase,
 ): boolean => {
   const hasAtLeastOneDefendant = (workingCase.defendants?.length ?? 0) > 0
   const defendantsAreValid =
@@ -357,7 +363,7 @@ const isSpeedingIndictmentCount = (count: IndictmentCount) =>
 
 const isIndictmentCountTrafficViolation = (
   count: IndictmentCount,
-  workingCase: Case,
+  workingCase: WorkingCase,
 ) =>
   isTrafficViolationIndictmentCount(
     count.indictmentCountSubtypes,
@@ -372,7 +378,7 @@ type IndictmentCountFieldCheck = {
 }
 
 const indictmentCountFieldChecks = (
-  workingCase: Case,
+  workingCase: WorkingCase,
 ): IndictmentCountFieldCheck[] => {
   const isTrafficViolation = (count: IndictmentCount) =>
     isIndictmentCountTrafficViolation(count, workingCase)
@@ -401,10 +407,6 @@ const indictmentCountFieldChecks = (
       warningMessage: 'Vantar atvikalýsingu',
     },
     {
-      isMissing: (count) => !count.legalArguments,
-      warningMessage: 'Vantar heimfærslu',
-    },
-    {
       isMissing: (count) =>
         isTrafficViolation(count) &&
         isSpeedingIndictmentCount(count) &&
@@ -423,7 +425,7 @@ const indictmentCountFieldChecks = (
 
 export const getIndictmentCountWarningMessage = (
   indictmentCount: IndictmentCount,
-  workingCase: Case,
+  workingCase: WorkingCase,
 ): string | undefined =>
   indictmentCountFieldChecks(workingCase).find((check) =>
     check.isMissing(indictmentCount),
@@ -431,13 +433,13 @@ export const getIndictmentCountWarningMessage = (
 
 export const isIndictmentCountComplete = (
   indictmentCount: IndictmentCount,
-  workingCase: Case,
+  workingCase: WorkingCase,
 ): boolean =>
   !indictmentCountFieldChecks(workingCase).some((check) =>
     check.isMissing(indictmentCount),
   )
 
-export const isIndictmentStepValid = (workingCase: Case): boolean => {
+export const isIndictmentStepValid = (workingCase: WorkingCase): boolean => {
   const hasValidDemands = Boolean(
     workingCase.demands &&
       (!workingCase.hasCivilClaims || workingCase.civilDemands),
@@ -456,7 +458,9 @@ export const isIndictmentStepValid = (workingCase: Case): boolean => {
   )
 }
 
-export const isPoliceDemandsStepValidRC = (workingCase: Case): boolean => {
+export const isPoliceDemandsStepValidRC = (
+  workingCase: WorkingCase,
+): boolean => {
   return validate([
     [workingCase.lawsBroken, ['empty']],
     [workingCase.requestedValidToDate, ['empty', 'date-format']],
@@ -466,7 +470,9 @@ export const isPoliceDemandsStepValidRC = (workingCase: Case): boolean => {
   ]).isValid
 }
 
-export const isPoliceDemandsStepValidIC = (workingCase: Case): boolean => {
+export const isPoliceDemandsStepValidIC = (
+  workingCase: WorkingCase,
+): boolean => {
   return validate([
     [workingCase.demands, ['empty']],
     [workingCase.lawsBroken, ['empty']],
@@ -474,7 +480,9 @@ export const isPoliceDemandsStepValidIC = (workingCase: Case): boolean => {
   ]).isValid
 }
 
-export const isPoliceReportStepValidRC = (workingCase: Case): boolean => {
+export const isPoliceReportStepValidRC = (
+  workingCase: WorkingCase,
+): boolean => {
   return validate([
     [workingCase.demands, ['empty']],
     [workingCase.caseFacts, ['empty']],
@@ -482,7 +490,9 @@ export const isPoliceReportStepValidRC = (workingCase: Case): boolean => {
   ]).isValid
 }
 
-export const isPoliceReportStepValidIC = (workingCase: Case): boolean => {
+export const isPoliceReportStepValidIC = (
+  workingCase: WorkingCase,
+): boolean => {
   return validate([
     [workingCase.caseFacts, ['empty']],
     [workingCase.legalArguments, ['empty']],
@@ -490,7 +500,7 @@ export const isPoliceReportStepValidIC = (workingCase: Case): boolean => {
 }
 
 export const isReceptionAndAssignmentStepValid = (
-  workingCase: Case,
+  workingCase: WorkingCase,
 ): boolean => {
   return Boolean(
     workingCase.judge &&
@@ -509,30 +519,30 @@ export const isReceptionAndAssignmentStepValid = (
 }
 
 export const isCourtHearingArrangemenstStepValidRC = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   arraignmentDate?: DateLog,
 ): boolean => {
-  return validate([
-    [workingCase.defenderEmail, ['email-format']],
-    [workingCase.defenderPhoneNumber, ['phonenumber']],
-    [
-      arraignmentDate
-        ? arraignmentDate.date
-        : workingCase.arraignmentDate?.date,
-      ['empty', 'date-format'],
-    ],
-  ]).isValid
+  return (
+    areDefenderContactsValid(workingCase) &&
+    validate([
+      [
+        arraignmentDate
+          ? arraignmentDate.date
+          : workingCase.arraignmentDate?.date,
+        ['empty', 'date-format'],
+      ],
+    ]).isValid
+  )
 }
 
 export const isCourtHearingArrangementsStepValidIC = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   arraignmentDate?: DateLog,
 ): boolean => {
   return Boolean(
     workingCase.sessionArrangements &&
+      areDefenderContactsValid(workingCase) &&
       validate([
-        [workingCase.defenderEmail, ['email-format']],
-        [workingCase.defenderPhoneNumber, ['phonenumber']],
         [
           arraignmentDate
             ? arraignmentDate.date
@@ -543,7 +553,7 @@ export const isCourtHearingArrangementsStepValidIC = (
   )
 }
 
-export const isRulingValidRC = (workingCase: Case): boolean => {
+export const isRulingValidRC = (workingCase: WorkingCase): boolean => {
   return validate([
     [workingCase.prosecutorDemands, ['empty']],
     [workingCase.courtCaseFacts, ['empty']],
@@ -551,7 +561,7 @@ export const isRulingValidRC = (workingCase: Case): boolean => {
   ]).isValid
 }
 
-export const isRulingValidIC = (workingCase: Case): boolean => {
+export const isRulingValidIC = (workingCase: WorkingCase): boolean => {
   if (workingCase.isCompletedWithoutRuling) {
     return true
   }
@@ -563,7 +573,7 @@ export const isRulingValidIC = (workingCase: Case): boolean => {
   ]).isValid
 }
 
-export const isCourtRecordStepValidRC = (workingCase: Case): boolean => {
+export const isCourtRecordStepValidRC = (workingCase: WorkingCase): boolean => {
   return Boolean(
     caseLevelAppealDecision(
       workingCase.appealDecisions,
@@ -585,7 +595,7 @@ export const isCourtRecordStepValidRC = (workingCase: Case): boolean => {
   )
 }
 
-export const isCourtRecordStepValidIC = (workingCase: Case): boolean => {
+export const isCourtRecordStepValidIC = (workingCase: WorkingCase): boolean => {
   const validationsWithRuling = !workingCase.isCompletedWithoutRuling
     ? [
         [workingCase.conclusion, ['empty']],
@@ -619,7 +629,7 @@ export const isCourtRecordStepValidIC = (workingCase: Case): boolean => {
 }
 
 export const isSubpoenaStepValid = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   updatedDefendants?: Defendant[] | null,
   updatedArraignmentDate?: DateLog | null,
   updatedIsArraignmentSummonsSkipped?: boolean | null,
@@ -659,7 +669,17 @@ export const isSubpoenaStepValid = (
   return isArraignmentDateValid && Boolean(validateDefendants(defendants))
 }
 
-export const isDefenderStepValid = (workingCase: Case): boolean => {
+// Both are optional, so an empty value is valid.
+export const isAdvocateContactValid = (
+  email?: string | null,
+  phoneNumber?: string | null,
+): boolean =>
+  validate([
+    [email, ['email-format']],
+    [phoneNumber, ['phonenumber']],
+  ]).isValid
+
+export const isDefenderStepValid = (workingCase: WorkingCase): boolean => {
   const hasAtLeastOneDefendant = isNonEmptyArray(workingCase.defendants)
   const defendantsAreValid = () =>
     hasAtLeastOneDefendant &&
@@ -683,7 +703,7 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
 
 export const isCourtSessionValid = (
   courtSession: CourtSessionResponse,
-  workingCase: Case,
+  workingCase: WorkingCase,
 ) => {
   return (
     (courtSession.isClosed
@@ -719,12 +739,17 @@ export const isCourtSessionValid = (
 // Each merged case with documents in a session gets its own entries booking in
 // the court record, and each is required. The set is derived from the filed
 // documents rather than from the strings, so a merged case that has never been
-// written about is missing rather than absent.
+// written about is missing rather than absent. Mirrors the backend's
+// courtSession.service.validateMergedCaseEntriesComplete, which reads the same
+// documents: the copies a merged case contributed to the session, each naming
+// the case it came from.
 export const areMergedCaseEntriesComplete = (
   courtSession: CourtSessionResponse,
 ): boolean => {
   const mergedCaseIds = new Set(
-    courtSession.mergedFiledDocuments?.map((document) => document.caseId),
+    courtSession.filedDocuments?.flatMap((document) =>
+      document.mergedFromCaseId ? [document.mergedFromCaseId] : [],
+    ),
   )
 
   return Array.from(mergedCaseIds).every(
@@ -747,7 +772,7 @@ export const areMergedCaseEntriesComplete = (
 // decision on the ruling. Mirrors the backend confirm-time validation.
 export const areAppealDecisionsComplete = (
   courtSession: CourtSessionResponse,
-  workingCase: Case,
+  workingCase: WorkingCase,
 ): boolean => {
   const { rulingFileId } = courtSession
   if (!rulingFileId) {
@@ -783,7 +808,9 @@ export const areAppealDecisionsComplete = (
   return prosecutorDecided && defendantsDecided && civilClaimantsDecided
 }
 
-export const isGeneratedIndictmentCourtRecordValid = (workingCase: Case) => {
+export const isGeneratedIndictmentCourtRecordValid = (
+  workingCase: WorkingCase,
+) => {
   return Boolean(
     workingCase.courtSessions &&
       workingCase.courtSessions.length > 0 &&
@@ -791,10 +818,10 @@ export const isGeneratedIndictmentCourtRecordValid = (workingCase: Case) => {
   )
 }
 
-export const isNoGeneratedIndictmentCourtRecord = (workingCase: Case) =>
+export const isNoGeneratedIndictmentCourtRecord = (workingCase: WorkingCase) =>
   Boolean(!workingCase.courtSessions || workingCase.courtSessions.length === 0)
 
-const isIndictmentRulingDecisionValid = (workingCase: Case) => {
+const isIndictmentRulingDecisionValid = (workingCase: WorkingCase) => {
   const isCourtRecordValid = () =>
     Boolean(
       workingCase.withCourtSessions
@@ -832,7 +859,7 @@ const isIndictmentRulingDecisionValid = (workingCase: Case) => {
   }
 }
 
-export const isConclusionStepValid = (workingCase: Case): boolean => {
+export const isConclusionStepValid = (workingCase: WorkingCase): boolean => {
   switch (workingCase.indictmentDecision) {
     case IndictmentDecision.POSTPONING:
       return Boolean(workingCase.postponedIndefinitelyExplanation)
@@ -869,15 +896,21 @@ export const isCourtOfAppealCaseStepValid = (
 ): boolean => {
   return Boolean(
     (appealCase?.appealState === AppealCaseState.WITHDRAWN ||
-      (appealCase?.appealJudge1 &&
-        appealCase?.appealJudge2 &&
-        appealCase?.appealJudge3 &&
-        appealCase?.appealAssistant)) &&
+      (hasAllAppealJudges(appealCase) && appealCase?.appealAssistant)) &&
       validate([
         [appealCase?.appealCaseNumber, ['empty', 'appeal-case-number-format']],
       ]).isValid,
   )
 }
+
+// The registration step of a verdict appeal only asks for the court's case
+// number; the bench is optional there.
+export const isVerdictAppealRegistrationStepValid = (
+  appealCase: Pick<AppealCase, 'appealCaseNumber'> | undefined | null,
+): boolean =>
+  validate([
+    [appealCase?.appealCaseNumber, ['empty', 'appeal-case-number-format']],
+  ]).isValid
 
 export const isCourtOfAppealRulingStepFieldsValid = (
   appealCase: AppealCase | undefined | null,
@@ -891,7 +924,7 @@ export const isCourtOfAppealRulingStepFieldsValid = (
 }
 
 export const isCourtOfAppealRulingStepValid = (
-  workingCase: Case,
+  workingCase: WorkingCase,
   appealCase: AppealCase | undefined | null,
 ): boolean => {
   return Boolean(
@@ -908,8 +941,45 @@ export const isCourtOfAppealRulingStepValid = (
   )
 }
 
+// What the court records about how a verdict appeal ended. Unlike a ruling
+// appeal's, every outcome takes concluding words, and the court also says
+// whether it ends with a verdict or a ruling.
+export const isVerdictAppealConclusionFieldsValid = (
+  appealCase:
+    | Pick<
+        AppealCase,
+        'appealRulingDecision' | 'appealRulingType' | 'appealConclusion'
+      >
+    | undefined
+    | null,
+): boolean =>
+  Boolean(
+    appealCase?.appealRulingDecision &&
+      appealCase.appealRulingType &&
+      validate([[appealCase.appealConclusion, ['empty']]]).isValid,
+  )
+
+// Where the appeal stands holds the court only once it says the appeal is
+// finished: then how it ended has to be on record. The document is not asked
+// about here - whether it has finished uploading is known to the page alone,
+// which holds the court itself until it has.
+export const isVerdictAppealStatusStepValid = (
+  appealCase:
+    | Pick<
+        AppealCase,
+        | 'verdictAppealStatus'
+        | 'appealRulingDecision'
+        | 'appealRulingType'
+        | 'appealConclusion'
+      >
+    | undefined
+    | null,
+): boolean =>
+  appealCase?.verdictAppealStatus !== VerdictAppealStatus.COMPLETED ||
+  isVerdictAppealConclusionFieldsValid(appealCase)
+
 export const isCourtOfAppealWithdrawnCaseStepValid = (
-  workingCase: Case,
+  workingCase: WorkingCase,
 ): boolean => {
   return validate([
     [

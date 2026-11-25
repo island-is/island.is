@@ -1,6 +1,8 @@
 import { Box, Icon, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/portals/my-pages/core'
+import { RequestDelegationButton } from '@island.is/portals/core'
+import { DocumentsScope } from '@island.is/auth/scopes'
 import * as styles from './DocumentsEmpty.css'
 
 interface Props {
@@ -51,6 +53,9 @@ export const DocumentsEmpty = ({ hasDelegationAccess }: Props) => {
           size="small"
           className={styles.lock}
         />
+      )}
+      {!hasDelegationAccess && (
+        <RequestDelegationButton scopes={[DocumentsScope.main]} />
       )}
     </Box>
   )

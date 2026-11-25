@@ -21,11 +21,14 @@ import {
   PAID_HOURS_MIN,
   SALARY_COMPONENT_GROUPS,
 } from '../../utils/constants'
+import { isStartDateAfterToday } from '../../utils/dates'
 import type { Employee } from '../../utils/types'
 import {
   EMPTY_EMPLOYEE_FORM_VALUES,
   type EmployeeFormValues,
   getSalaryComponentLabels,
+  getSalaryComponentTooltips,
+  isPaidHoursFormat,
   paidHoursFromFormValue,
   toFormValues,
 } from './utils'
@@ -34,6 +37,9 @@ type Props = {
   // Present when editing an existing employee; omitted when adding a new one.
   employee?: Employee
   roleTitleById: Record<string, string>
+  // isSaving: this form is the one syncing. disabled: any change is syncing.
+  isSaving?: boolean
+  disabled?: boolean
   onSubmit: (values: EmployeeFormValues) => void
   onCancel: () => void
 }
@@ -41,6 +47,8 @@ type Props = {
 export const EmployeeForm: FC<Props> = ({
   employee,
   roleTitleById,
+  isSaving = false,
+  disabled = false,
   onSubmit,
   onCancel,
 }) => {
@@ -58,10 +66,13 @@ export const EmployeeForm: FC<Props> = ({
   const requiredMsg = formatMessage(messages.errors.required)
 
   const componentLabels = getSalaryComponentLabels(formatMessage)
+  const componentTooltips = getSalaryComponentTooltips(formatMessage)
 
+  // Row 4 of the workbook, not the derived-total names: these head the input
+  // columns, and Viðbótarlaun / Aukagreiðslur are columns P and Q.
   const groupHeadings: Record<'additional' | 'bonus', string> = {
-    additional: formatMessage(m.additionalSalaryLabel),
-    bonus: formatMessage(m.bonusSalaryLabel),
+    additional: formatMessage(m.fixedPaymentsGroupLabel),
+    bonus: formatMessage(m.occasionalPaymentsGroupLabel),
   }
 
   const onValid = (data: EmployeeFormValues) => {
@@ -69,6 +80,18 @@ export const EmployeeForm: FC<Props> = ({
     // `rules`, so enforce the requirement here (the `required` prop is UI-only).
     if (!data.startDate) {
       methods.setError('startDate', { type: 'required', message: requiredMsg })
+      return
+    }
+    // maxDate below is what keeps future dates out: react-datepicker neither
+    // offers them nor accepts one typed in — it leaves the field's value as it
+    // was and puts that value back in the input when the calendar closes. This
+    // check is the backstop for any value that reaches the form some other way,
+    // since DMR's 400 for it would surface only as a generic save error.
+    if (isStartDateAfterToday(data.startDate, new Date())) {
+      methods.setError('startDate', {
+        type: 'max',
+        message: formatMessage(messages.errors.startDateAfterToday),
+      })
       return
     }
     // Caller resolves roleTitle/id/ordinal and preserves step assignments.
@@ -133,6 +156,7 @@ export const EmployeeForm: FC<Props> = ({
               name="startDate"
               label={formatMessage(m.startDateLabel)}
               locale={lang as Locale}
+              maxDate={new Date()}
               backgroundColor="white"
               size="sm"
               required
@@ -145,7 +169,10 @@ export const EmployeeForm: FC<Props> = ({
               name="paidHours"
               label={formatMessage(m.paidHoursInputLabel)}
               placeholder={formatMessage(m.paidHoursPlaceholder)}
-              type="number"
+              tooltip={formatMessage(m.paidHoursTooltip)}
+              // Plain text, not type="number": NumberFormat strips a pasted
+              // '.' (173.33 → 17333). paidHoursFromFormValue parses both.
+              inputMode="decimal"
               backgroundColor="white"
               size="sm"
               required
@@ -155,6 +182,9 @@ export const EmployeeForm: FC<Props> = ({
                 // a starfshlutfall carried into this field: 0,8 or 1 would
                 // otherwise pass and inflate tímakaup ~173x silently.
                 validate: (value: string) => {
+                  if (!isPaidHoursFormat(value)) {
+                    return formatMessage(m.paidHoursFormatError)
+                  }
                   const hours = paidHoursFromFormValue(value)
                   return (
                     (hours >= PAID_HOURS_MIN && hours <= PAID_HOURS_MAX) ||
@@ -170,13 +200,23 @@ export const EmployeeForm: FC<Props> = ({
               id="baseSalary"
               name="baseSalary"
               label={formatMessage(m.baseSalaryLabel)}
+              tooltip={formatMessage(m.baseSalaryTooltip)}
               type="number"
+              thousandSeparator
               backgroundColor="white"
               size="sm"
               required
               rules={{ required: requiredMsg }}
               error={errors.baseSalary?.message}
             />
+          </GridColumn>
+          {/* Sits under the hours/base-salary pair rather than in a tooltip:
+              template 2.0 narrowed what Greiddar stundir means, and a
+              manual-entry applicant has no workbook header to read it off. */}
+          <GridColumn span="12/12">
+            <Text variant="small" color="dark400">
+              {formatMessage(m.paidHoursHelperText)}
+            </Text>
           </GridColumn>
           {SALARY_COMPONENT_GROUPS.map(({ group, keys }) => (
             <Fragment key={group}>
@@ -191,7 +231,9 @@ export const EmployeeForm: FC<Props> = ({
                     id={key}
                     name={key}
                     label={componentLabels[key]}
+                    tooltip={componentTooltips[key]}
                     type="number"
+                    thousandSeparator
                     backgroundColor="white"
                     size="sm"
                   />
@@ -206,11 +248,21 @@ export const EmployeeForm: FC<Props> = ({
           justifyContent="flexEnd"
           marginTop={3}
         >
-          <Button variant="ghost" type="button" onClick={onCancel}>
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={onCancel}
+            disabled={isSaving}
+          >
             {formatMessage(m.cancelButton)}
           </Button>
           <Box marginLeft={2}>
-            <Button type="button" onClick={methods.handleSubmit(onValid)}>
+            <Button
+              type="button"
+              onClick={methods.handleSubmit(onValid)}
+              loading={isSaving}
+              disabled={disabled}
+            >
               {formatMessage(m.saveButton)}
             </Button>
           </Box>

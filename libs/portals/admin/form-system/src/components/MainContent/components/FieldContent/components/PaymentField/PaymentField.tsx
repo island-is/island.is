@@ -1,15 +1,20 @@
 import { useQuery } from '@apollo/client'
 import { FormSystemField, PaymentCatalogItem } from '@island.is/api/schema'
 import { GET_PAYMENT_CATALOG } from '@island.is/form-system/graphql'
+import { m } from '@island.is/form-system/ui'
 import {
   GridColumn as Column,
   GridRow as Row,
   Select,
+  Stack,
 } from '@island.is/island-ui/core'
 import { useContext } from 'react'
+import { useIntl } from 'react-intl'
 import { ControlContext } from '../../../../../../context/ControlContext'
+import { FieldTextInput } from '../FieldTextInput'
 
 export const PaymentField = () => {
+  const { formatMessage } = useIntl()
   const { control, controlDispatch, updateActiveItem } =
     useContext(ControlContext)
   const { isReadOnly } = control
@@ -35,7 +40,17 @@ export const PaymentField = () => {
   })
 
   return (
-    <>
+    <Stack space={2}>
+      <FieldTextInput
+        property="informationText"
+        label={formatMessage(m.informationText)}
+        englishLabel={formatMessage(m.informationTextEnglish)}
+      />
+      <FieldTextInput
+        property="tooltip"
+        label={formatMessage(m.tooltip)}
+        englishLabel={formatMessage(m.tooltipEnglish)}
+      />
       <Row>
         <Column span="6/12">
           <Select
@@ -56,9 +71,7 @@ export const PaymentField = () => {
                   chargeItemCode: paymentSettings?.chargeItemCode || '',
                   chargeItemName: paymentSettings?.chargeItemName || '',
                   chargeType: paymentSettings?.chargeType || '',
-                  performingOrgID:
-                    paymentSettings?.performingOrganizationID || '',
-                  priceAmount: paymentSettings?.priceAmount || 0,
+                  performingOrgID: paymentSettings?.performingOrgID || '',
                   update: updateActiveItem,
                 },
               })
@@ -66,6 +79,6 @@ export const PaymentField = () => {
           />
         </Column>
       </Row>
-    </>
+    </Stack>
   )
 }

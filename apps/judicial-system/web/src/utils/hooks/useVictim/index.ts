@@ -1,13 +1,13 @@
 import type { Dispatch, SetStateAction } from 'react'
 import { useCallback } from 'react'
 
-import { toast } from '@island.is/island-ui/core'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import type {
-  Case,
   CreateVictimInput,
   UpdateVictimInput,
   Victim,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { normalizeBlankStrings } from '../../formatters'
 import { useCreateVictimMutation } from './createVictim.generated'
@@ -35,7 +35,7 @@ const useVictims = () => {
           }
         }
         return null
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að bæta við brotaþola')
         return null
       }
@@ -51,7 +51,7 @@ const useVictims = () => {
         })
 
         return Boolean(data?.deleteVictim.deleted)
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að eyða brotaþola')
         return false
       }
@@ -69,7 +69,7 @@ const useVictims = () => {
         })
 
         return Boolean(data)
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að uppfæra brotaþola')
         return false
       }
@@ -79,9 +79,9 @@ const useVictims = () => {
 
   const updateVictimState = (
     update: UpdateVictimInput,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => {
-    setWorkingCase((prevWorkingCase: Case) => {
+    setWorkingCase((prevWorkingCase: WorkingCase) => {
       if (!prevWorkingCase.victims) {
         return prevWorkingCase
       }
@@ -106,7 +106,7 @@ const useVictims = () => {
 
   const addVictimToState = (
     victimId: string,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => {
     setWorkingCase((prev) => ({
       ...prev,
@@ -116,7 +116,7 @@ const useVictims = () => {
 
   const removeVictimFromState = (
     victimId: string,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => {
     setWorkingCase((prev) => ({
       ...prev,
@@ -126,7 +126,7 @@ const useVictims = () => {
 
   const updateVictimAndSetState = async (
     update: UpdateVictimInput,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => {
     const victimId = await updateVictim(update)
 
@@ -137,7 +137,7 @@ const useVictims = () => {
 
   const createVictimAndSetState = async (
     caseId: string,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => {
     const victimId = await createVictim({ caseId })
 
@@ -151,7 +151,7 @@ const useVictims = () => {
   const deleteVictimAndSetState = async (
     caseId: string,
     victim: Victim,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<WorkingCase>>,
   ) => {
     const victimDeleted = await deleteVictim(caseId, victim.id)
 

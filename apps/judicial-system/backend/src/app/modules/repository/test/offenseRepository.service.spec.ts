@@ -21,6 +21,7 @@ describe('OffenseRepositoryService', () => {
 
   let service: OffenseRepositoryService
   let model: {
+    findAll: jest.Mock
     create: jest.Mock
     update: jest.Mock
     destroy: jest.Mock
@@ -28,6 +29,7 @@ describe('OffenseRepositoryService', () => {
 
   beforeEach(async () => {
     model = {
+      findAll: jest.fn().mockResolvedValue([]),
       create: jest.fn(),
       update: jest.fn().mockResolvedValue([0, []]),
       destroy: jest.fn().mockResolvedValue(0),
@@ -48,19 +50,23 @@ describe('OffenseRepositoryService', () => {
   })
 
   describe('create', () => {
-    it('creates the offense against the indictment count', async () => {
+    it('creates the offense against the indictment count in the caller transaction', async () => {
       const created = { id: offenseId, indictmentCountId }
       model.create.mockResolvedValueOnce(created)
 
       const result = await service.create(
         indictmentCountId,
         IndictmentCountOffense.DRUNK_DRIVING,
+        { transaction },
       )
 
-      expect(model.create).toHaveBeenCalledWith({
-        indictmentCountId,
-        offense: IndictmentCountOffense.DRUNK_DRIVING,
-      })
+      expect(model.create).toHaveBeenCalledWith(
+        {
+          indictmentCountId,
+          offense: IndictmentCountOffense.DRUNK_DRIVING,
+        },
+        { transaction },
+      )
       expect(result).toBe(created)
     })
 
@@ -69,13 +75,17 @@ describe('OffenseRepositoryService', () => {
       model.create.mockRejectedValueOnce(error)
 
       await expect(
-        service.create(indictmentCountId, IndictmentCountOffense.DRUNK_DRIVING),
+        service.create(
+          indictmentCountId,
+          IndictmentCountOffense.DRUNK_DRIVING,
+          { transaction },
+        ),
       ).rejects.toThrow(error)
     })
   })
 
   describe('updateByIdAndIndictmentCount', () => {
-    it('scopes the update to the row id and the indictment count and returns the rows', async () => {
+    it('scopes the update to the row id and the indictment count in the caller transaction and returns the rows', async () => {
       const offense = { id: offenseId, substances: { ALCOHOL: '0,10' } }
       model.update.mockResolvedValueOnce([1, [offense]])
 
@@ -83,11 +93,12 @@ describe('OffenseRepositoryService', () => {
         offenseId,
         indictmentCountId,
         { substances: { ALCOHOL: '0,10' } },
+        { transaction },
       )
 
       expect(model.update).toHaveBeenCalledWith(
         { substances: { ALCOHOL: '0,10' } },
-        { where: expectedWhere, returning: true },
+        { where: expectedWhere, returning: true, transaction },
       )
       expect(result).toEqual({ numberOfAffectedRows: 1, offenses: [offense] })
     })
@@ -97,6 +108,7 @@ describe('OffenseRepositoryService', () => {
         offenseId,
         indictmentCountId,
         { substances: null },
+        { transaction },
       )
 
       expect(result).toEqual({ numberOfAffectedRows: 0, offenses: [] })
@@ -107,21 +119,30 @@ describe('OffenseRepositoryService', () => {
       model.update.mockRejectedValueOnce(error)
 
       await expect(
-        service.updateByIdAndIndictmentCount(offenseId, indictmentCountId, {}),
+        service.updateByIdAndIndictmentCount(
+          offenseId,
+          indictmentCountId,
+          {},
+          { transaction },
+        ),
       ).rejects.toThrow(error)
     })
   })
 
   describe('deleteByIdAndIndictmentCount', () => {
-    it('scopes the delete to the row id and the indictment count and reports the row count', async () => {
+    it('scopes the delete to the row id and the indictment count in the caller transaction and reports the row count', async () => {
       model.destroy.mockResolvedValueOnce(1)
 
       const result = await service.deleteByIdAndIndictmentCount(
         offenseId,
         indictmentCountId,
+        { transaction },
       )
 
-      expect(model.destroy).toHaveBeenCalledWith({ where: expectedWhere })
+      expect(model.destroy).toHaveBeenCalledWith({
+        where: expectedWhere,
+        transaction,
+      })
       expect(result).toBe(1)
     })
 
@@ -130,7 +151,9 @@ describe('OffenseRepositoryService', () => {
       model.destroy.mockRejectedValueOnce(error)
 
       await expect(
-        service.deleteByIdAndIndictmentCount(offenseId, indictmentCountId),
+        service.deleteByIdAndIndictmentCount(offenseId, indictmentCountId, {
+          transaction,
+        }),
       ).rejects.toThrow(error)
     })
   })
@@ -157,6 +180,86 @@ describe('OffenseRepositoryService', () => {
 
       await expect(
         service.deleteAllForIndictmentCount(indictmentCountId, { transaction }),
+      ).rejects.toThrow(error)
+    })
+  })
+
+  describe('copyAllForIndictmentCounts', () => {
+    const newIndictmentCountId = 'some-new-indictment-count-id'
+    const otherIndictmentCountId = 'other-indictment-count-id'
+    const newOtherIndictmentCountId = 'other-new-indictment-count-id'
+    const indictmentCountIdMap = new Map([
+      [indictmentCountId, newIndictmentCountId],
+      [otherIndictmentCountId, newOtherIndictmentCountId],
+    ])
+
+    it('loads the offenses of all the counts at once and copies each onto the copy of its count', async () => {
+      model.findAll.mockResolvedValueOnce([
+        {
+          toJSON: () => ({
+            id: 'first-offense-id',
+            indictmentCountId,
+            offense: 'DRUNK_DRIVING',
+          }),
+          indictmentCountId,
+        },
+        {
+          toJSON: () => ({
+            id: 'second-offense-id',
+            indictmentCountId: otherIndictmentCountId,
+            offense: 'SPEEDING',
+          }),
+          indictmentCountId: otherIndictmentCountId,
+        },
+      ])
+
+      await service.copyAllForIndictmentCounts(indictmentCountIdMap, {
+        transaction,
+      })
+
+      expect(model.findAll).toHaveBeenCalledWith({
+        where: {
+          indictmentCountId: [indictmentCountId, otherIndictmentCountId],
+        },
+        transaction,
+      })
+      expect(model.create).toHaveBeenCalledTimes(2)
+      expect(model.create).toHaveBeenCalledWith(
+        {
+          id: undefined,
+          indictmentCountId: newIndictmentCountId,
+          offense: 'DRUNK_DRIVING',
+        },
+        { transaction },
+      )
+      expect(model.create).toHaveBeenCalledWith(
+        {
+          id: undefined,
+          indictmentCountId: newOtherIndictmentCountId,
+          offense: 'SPEEDING',
+        },
+        { transaction },
+      )
+    })
+
+    it('does not query at all when there are no counts to copy for', async () => {
+      await service.copyAllForIndictmentCounts(new Map(), { transaction })
+
+      expect(model.findAll).not.toHaveBeenCalled()
+      expect(model.create).not.toHaveBeenCalled()
+    })
+
+    it('rethrows when a copy fails', async () => {
+      const error = new Error('Some error')
+      model.findAll.mockResolvedValueOnce([
+        { toJSON: () => ({ indictmentCountId }), indictmentCountId },
+      ])
+      model.create.mockRejectedValueOnce(error)
+
+      await expect(
+        service.copyAllForIndictmentCounts(indictmentCountIdMap, {
+          transaction,
+        }),
       ).rejects.toThrow(error)
     })
   })

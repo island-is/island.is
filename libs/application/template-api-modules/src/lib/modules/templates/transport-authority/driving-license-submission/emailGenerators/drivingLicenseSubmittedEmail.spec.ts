@@ -12,6 +12,7 @@ import {
   EmailComplete,
   EmailHeader,
   EmailNextSteps,
+  EmailDigitalFlow,
   EmailRequirements,
 } from './EmailUi'
 import { EmailTemplateGeneratorProps } from '../../../../../types'
@@ -163,6 +164,76 @@ describe('driving license submission', () => {
     expect(result?.template?.body).toEqual(generated)
   })
 
+  it('sends the 65+ wording product asked for', () => {
+    // The tests around this one compare against EmailHeader/EmailNextSteps
+    // themselves, so they pass whatever the copy says. This pins the text.
+    const result = generateDrivingLicenseSubmittedEmail({
+      application: {
+        ...application,
+        answers: {
+          ...application.answers,
+          applicationFor: 'B-full-renewal-65',
+          is65RenewalRedesignEnabled: true,
+        },
+      },
+      options,
+    })
+    const body = result?.template?.body ?? []
+    const copy = (text: string, bold = false) => ({
+      component: 'Copy',
+      context: {
+        copy: text,
+        align: 'left',
+        small: true,
+        ...(bold ? { style: 'bold' } : {}),
+      },
+    })
+
+    expect(body[1]).toMatchObject({
+      component: 'Heading',
+      context: {
+        copy: 'Umsókn þín um endurnýjun ökuskírteinis hefur verið móttekin',
+        eyebrow: 'Góðan dag Jón',
+      },
+    })
+    expect(body.slice(2)).toEqual([
+      copy('Yfirferð læknisvottorðs', true),
+      copy(
+        'Fylgi læknisvottorð umsókninni verður það yfirfarið og uppfylli það ekki skilyrði gæti umsókninni verið hafnað.',
+      ),
+      copy(
+        'Sé umsókninni hafnað þarf að óska eftir endurgreiðslu með því að senda tölvupóst á endurgreidsla@island.is og gera svo aðra umsókn þar sem gild gögn fylgja með.',
+      ),
+      copy('Pöntun og afhending ökuskírteinis', true),
+      copy(
+        'Þegar umsóknin hefur verið samþykkt verður ökuskírteinið pantað. Afhending fer eftir því sem valið er í umsóknarferlinu.',
+      ),
+      {
+        component: 'List',
+        context: {
+          items: [
+            'Skírteinið verður sent til þín, eða',
+            'þú sækir það á þann afgreiðslustað sem þú valdir.',
+          ],
+        },
+      },
+    ])
+  })
+
+  it('keeps the shared greeting for BE', () => {
+    const result = generateDrivingLicenseSubmittedEmail({
+      application: {
+        ...application,
+        answers: { ...application.answers, applicationFor: 'BE' },
+      },
+      options,
+    })
+
+    expect(result?.template?.body?.[1]).toMatchObject({
+      context: { eyebrow: 'Góðan daginn Jón' },
+    })
+  })
+
   it('keeps the legacy 65+ renewal email without next-steps prose', () => {
     const result = generateDrivingLicenseSubmittedEmail({
       application: {
@@ -195,5 +266,115 @@ describe('driving license submission', () => {
     ]
 
     expect(result?.template?.body).toEqual(generated)
+  })
+
+  it('should generate the digital-flow B-temp email', () => {
+    const result = generateDrivingLicenseSubmittedEmail({
+      application: {
+        ...application,
+        answers: {
+          ...application.answers,
+          applicationFor: 'B-temp',
+          isBTempRedesignEnabled: true,
+        },
+      },
+      options,
+    })
+
+    expect(result?.template?.body).toEqual(
+      EmailDigitalFlow({
+        applicationFor: 'B-temp',
+        needsHealthCertificate: true,
+        firstName: 'Jón',
+        selectedDistrictCommissioner: 'Sýslumaðurinn',
+      }),
+    )
+  })
+
+  it('should generate the digital-flow B-full email without health certificate for home delivery', () => {
+    const result = generateDrivingLicenseSubmittedEmail({
+      application: {
+        ...application,
+        answers: {
+          ...application.answers,
+          applicationFor: 'B-full',
+          isBFullRedesignEnabled: true,
+          healthDeclaration: { a: 'no', b: 'no' },
+          delivery: { deliveryMethod: 'post', jurisdiction: 1 },
+        },
+      },
+      options,
+    })
+
+    const body = result?.template?.body
+
+    expect(body).toEqual(
+      EmailDigitalFlow({
+        applicationFor: 'B-full',
+        needsHealthCertificate: false,
+        firstName: 'Jón',
+      }),
+    )
+    expect(JSON.stringify(body)).not.toContain('%s')
+    expect(JSON.stringify(body)).not.toContain('()')
+  })
+
+  it('should generate the digital-flow B-full email with health certificate for pickup', () => {
+    const result = generateDrivingLicenseSubmittedEmail({
+      application: {
+        ...application,
+        answers: {
+          ...application.answers,
+          applicationFor: 'B-full',
+          isBFullRedesignEnabled: true,
+          delivery: { deliveryMethod: 'district', jurisdiction: 1 },
+        },
+      },
+      options,
+    })
+
+    expect(JSON.stringify(result?.template?.body)).toContain(
+      'sýslumanns (Sýslumaðurinn)',
+    )
+  })
+
+  it('should keep the legacy email for B-temp without the redesign flag', () => {
+    const result = generateDrivingLicenseSubmittedEmail({
+      application: {
+        ...application,
+        answers: {
+          ...application.answers,
+          applicationFor: 'B-temp',
+          isBTempRedesignEnabled: false,
+        },
+      },
+      options,
+    })
+
+    expect(result?.template?.body).toEqual([
+      ...EmailHeader({ applicationFor: 'B-temp', firstName: 'Jón' }),
+      ...EmailRequirements('B-temp', true, true),
+    ])
+  })
+
+  it('should drop the delivery location for pickup at an unknown office', () => {
+    const result = generateDrivingLicenseSubmittedEmail({
+      application: {
+        ...application,
+        answers: {
+          ...application.answers,
+          applicationFor: 'B-full',
+          isBFullRedesignEnabled: true,
+          delivery: { deliveryMethod: 'district', jurisdiction: 99 },
+        },
+      },
+      options,
+    })
+
+    const body = JSON.stringify(result?.template?.body)
+
+    expect(body).not.toContain('%s')
+    expect(body).not.toContain('()')
+    expect(body).toContain('sýslumanns, að jafnaði')
   })
 })

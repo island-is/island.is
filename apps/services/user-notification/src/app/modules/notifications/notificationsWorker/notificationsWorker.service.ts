@@ -12,7 +12,11 @@ import {
   EinstaklingurDTONafnItar,
   NationalRegistryV3ClientService,
 } from '@island.is/clients/national-registry-v3'
-import { UserProfileDto, V2UsersApi } from '@island.is/clients/user-profile'
+import {
+  UserProfileDto,
+  UserProfileControllerFindUserProfileIncludeEnum as UserProfileInclude,
+  V2UsersApi,
+} from '@island.is/clients/user-profile'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -30,12 +34,25 @@ import {
   CreateHnippNotificationDto,
   InternalCreateHnippNotificationDto,
 } from '../dto/createHnippNotification.dto'
-import { HnippTemplate } from '../dto/hnippTemplate.response'
+import {
+  HnippTemplate,
+  HnippTemplatePriorityType,
+  HnippTemplateSourceType,
+} from '../dto/hnippTemplate.response'
 import { MessageProcessorService } from '../messageProcessor.service'
 import { Notification } from '../notification.model'
 import { NotificationsService } from '../notifications.service'
 import { ActorNotification } from '../actor-notification.model'
-import { mapToLocale, SmsDelivery } from '../utils'
+import { UserNotificationSender } from '../user-notification-sender.model'
+import {
+  DEFAULT_CATEGORY,
+  getErrorMessage,
+  isValidSenderId,
+  mapToLocale,
+  normalizeKennitala,
+  SmsDelivery,
+  toTemplateCategory,
+} from '../utils'
 import { EmailQueueMessage } from './emailWorker.service'
 import { SmsQueueMessage } from './smsWorker.service'
 import { PushQueueMessage } from './pushWorker.service'
@@ -75,7 +92,7 @@ const createSmsContent = ({
   template: HnippTemplate
   isEnglish: boolean
 }): string => {
-  const linkText = isEnglish ? 'View details' : 'Skoda nanar'
+  const linkText = isEnglish ? 'View details' : 'Skoða nánar'
   const namePrefix = onBehalfOf
     ? getOnBehalfOfLabel(onBehalfOf, onBehalfOfNationalId, isEnglish)
     : fullName
@@ -121,7 +138,118 @@ export class NotificationsWorkerService {
 
     @InjectModel(ActorNotification)
     private readonly actorNotificationModel: typeof ActorNotification,
+
+    @InjectModel(UserNotificationSender)
+    private readonly userNotificationSenderModel: typeof UserNotificationSender,
   ) {}
+
+  // Stopgap: lets users ignore notifications that are neither urgent nor
+  // actionable. Only the receiving user's own profile is consulted.
+  private shouldDeliverByPriority({
+    profile,
+    priorityType,
+    urgent,
+    messageId,
+  }: {
+    profile?: Pick<UserProfileDto, 'onlyActionablePriorityNotifications'>
+    priorityType: HnippTemplatePriorityType
+    urgent?: boolean
+    messageId: string
+  }): boolean {
+    const shouldDeliver =
+      !!urgent ||
+      !(
+        profile?.onlyActionablePriorityNotifications &&
+        priorityType !== 'Actionable'
+      )
+
+    if (!shouldDeliver) {
+      this.logger.info('Notification not sent because of user request', {
+        messageId,
+        urgent,
+        priorityType,
+      })
+    }
+
+    return shouldDeliver
+  }
+
+  /**
+   * The user's blocked categories are only needed (and fetched together with
+   * the user profile) for non-urgent notifications with a valid sender id
+   * while the feature flag is enabled.
+   */
+  private async shouldIncludeBlockedCategories({
+    nationalId,
+    senderId,
+    urgent,
+    messageId,
+  }: {
+    nationalId: string
+    senderId?: string
+    urgent?: boolean
+    messageId: string
+  }): Promise<boolean> {
+    if (urgent || !senderId) {
+      return false
+    }
+
+    if (!isValidSenderId(normalizeKennitala(senderId))) {
+      return false
+    }
+
+    try {
+      return await this.featureFlagService.getValue(
+        Features.isNotificationBlockedCategoriesEnabled,
+        false,
+        { nationalId } as User,
+      )
+    } catch (error: unknown) {
+      this.logger.warn(
+        'Failed to check blocked categories feature flag, proceeding with notification',
+        { messageId, error: getErrorMessage(error) },
+      )
+      return false
+    }
+  }
+
+  // Whether the recipient has blocked the notification's sender and category.
+  private isCategoryBlocked({
+    userProfile,
+    senderId,
+    category,
+    messageId,
+  }: {
+    userProfile?: UserProfileDto
+    senderId?: string
+    category: string | null
+    messageId: string
+  }): boolean {
+    // Only present when blocked categories were requested with the profile
+    if (!userProfile?.blockedCategories || !senderId) {
+      return false
+    }
+
+    const normalizedSenderId = normalizeKennitala(senderId)
+    // Templates without a category are presented to users as 'almennt'
+    const effectiveCategory = category ?? DEFAULT_CATEGORY
+
+    const blocked = userProfile.blockedCategories.some(
+      (blockedCategory) =>
+        blockedCategory.senderId === normalizedSenderId &&
+        blockedCategory.category === effectiveCategory,
+    )
+
+    if (blocked) {
+      this.logger.info('Notification not sent because category is blocked', {
+        messageId,
+        senderId: normalizedSenderId,
+        category: effectiveCategory,
+      })
+    }
+
+    return blocked
+  }
 
   private async handleActorNotification(
     args: InternalCreateHnippNotificationDto & { messageId: string },
@@ -334,10 +462,39 @@ export class NotificationsWorkerService {
     let locale: Locale = 'is'
 
     if (!isCompany(nationalId)) {
-      userProfile =
-        await this.userProfileApi.userProfileControllerFindUserProfile({
-          xParamNationalId: nationalId,
+      const includeBlockedCategories =
+        await this.shouldIncludeBlockedCategories({
+          nationalId,
+          senderId: args.senderId,
+          urgent: args.urgent,
+          messageId,
         })
+
+      if (includeBlockedCategories) {
+        try {
+          userProfile =
+            await this.userProfileApi.userProfileControllerFindUserProfile({
+              xParamNationalId: nationalId,
+              include: [UserProfileInclude.NotificationSettings],
+            })
+        } catch {
+          // Fail open: blocked categories are optional, so retry with the
+          // plain profile rather than dropping the notification.
+          this.logger.warn(
+            'Failed to fetch user profile with notification settings, retrying without',
+            { messageId },
+          )
+          userProfile =
+            await this.userProfileApi.userProfileControllerFindUserProfile({
+              xParamNationalId: nationalId,
+            })
+        }
+      } else {
+        userProfile =
+          await this.userProfileApi.userProfileControllerFindUserProfile({
+            xParamNationalId: nationalId,
+          })
+      }
 
       if (!userProfile) {
         this.logger.info('No user profile found for user', { messageId })
@@ -382,8 +539,45 @@ export class NotificationsWorkerService {
       message.templateId,
       locale,
     )
+
+    // This is a stopgap solution while we ensure better usage of notification templates.
+    // This allows users to quickly ignore notifications that are not urgent or actionable.
+    // Templates with smsDelivery ALWAYS bypass this filter for SMS only (see
+    // buildSmsPayload), so wasSent describes push/email delivery.
+    // Users can also block a sender's category; urgent notifications bypass both.
+    const shouldSendNotification =
+      this.shouldDeliverByPriority({
+        profile: userProfile,
+        priorityType: template.priorityType,
+        urgent: args.urgent,
+        messageId,
+      }) &&
+      !this.isCategoryBlocked({
+        userProfile,
+        senderId: args.senderId,
+        category: toTemplateCategory(template.hnippCategoryIs),
+        messageId,
+      })
+
     const scope = template.scope || DocumentsScope.main
-    const dbRecord = await this.createUserNotificationDbRecord(args, scope)
+    const dbRecord = await this.createUserNotificationDbRecord(
+      args,
+      scope,
+      shouldSendNotification,
+      template.priorityType,
+      template.sourceType,
+    )
+    if (dbRecord) {
+      await this.recordNotificationSender({
+        recipient: message.recipient,
+        senderId: message.senderId,
+        templateId: message.templateId,
+        category: toTemplateCategory(template.hnippCategoryIs),
+        priorityType: template.priorityType,
+        sourceType: template.sourceType,
+        messageId,
+      })
+    }
 
     // Phase 1: collect all payloads (data fetching only, no queue side effects)
     let pushPayload: PushQueueMessage | null = null
@@ -409,7 +603,8 @@ export class NotificationsWorkerService {
         this.buildPushPayload({
           messageId,
           nationalId,
-          documentNotifications: userProfile.documentNotifications,
+          documentNotifications:
+            userProfile.documentNotifications && shouldSendNotification,
           message,
           locale,
         }),
@@ -417,7 +612,8 @@ export class NotificationsWorkerService {
           messageId,
           nationalId,
           email: userProfile.email,
-          emailNotifications: userProfile.emailNotifications,
+          emailNotifications:
+            userProfile.emailNotifications && shouldSendNotification,
           fullName:
             message.onBehalfOf?.name ||
             onBehalfOfNames?.fullName ||
@@ -430,7 +626,8 @@ export class NotificationsWorkerService {
           messageId,
           nationalId,
           mobilePhoneNumber: userProfile.mobilePhoneNumber,
-          smsNotifications: userProfile.smsNotifications,
+          smsNotifications:
+            userProfile.smsNotifications && shouldSendNotification,
           formattedTemplate,
           fullName: recipientNames.shortName,
           onBehalfOf: onBehalfOfNames?.shortName,
@@ -721,6 +918,9 @@ export class NotificationsWorkerService {
   private async createUserNotificationDbRecord(
     args: CreateHnippNotificationDto & { messageId: string },
     scope: string,
+    wasSent: boolean,
+    priorityType: HnippTemplatePriorityType,
+    sourceType: HnippTemplateSourceType,
   ) {
     const { messageId, ...message } = args
     const existing = await this.notificationModel.findOne({
@@ -743,6 +943,10 @@ export class NotificationsWorkerService {
         templateId: message.templateId,
         args: message.args,
         scope,
+        wasSent,
+        priorityType,
+        sourceType,
+        deadline: message.deadline ? new Date(message.deadline) : null,
       })
       this.logger.info('notification written to db', {
         messageId,
@@ -781,6 +985,55 @@ export class NotificationsWorkerService {
         { messageId },
       )
       return false
+    }
+  }
+
+  private async recordNotificationSender({
+    recipient,
+    senderId,
+    templateId,
+    category,
+    priorityType,
+    sourceType,
+    messageId,
+  }: {
+    recipient: string
+    senderId: string | undefined
+    templateId: string
+    category: string | null
+    priorityType: HnippTemplatePriorityType
+    sourceType: HnippTemplateSourceType
+    messageId: string
+  }): Promise<void> {
+    const normalizedSenderId = senderId ? normalizeKennitala(senderId) : ''
+    if (!isValidSenderId(normalizedSenderId)) {
+      return
+    }
+
+    try {
+      // Keep the latest category, priority type and source type, since a
+      // template can change them
+      await this.userNotificationSenderModel.bulkCreate(
+        [
+          {
+            recipient,
+            senderId: normalizedSenderId,
+            templateId,
+            category,
+            priorityType: priorityType ?? null,
+            sourceType: sourceType ?? null,
+          },
+        ],
+        {
+          conflictAttributes: ['recipient', 'senderId', 'templateId'],
+          updateOnDuplicate: ['category', 'priorityType', 'sourceType'],
+        },
+      )
+    } catch (error) {
+      this.logger.warn(
+        'Failed to record notification sender, proceeding with notification',
+        { messageId, error },
+      )
     }
   }
 
@@ -876,6 +1129,8 @@ export class NotificationsWorkerService {
               args: message.args,
               senderId: message.senderId,
               messageId: messageId,
+              urgent: message.urgent,
+              deadline: message.deadline,
             },
             message.recipient,
           )

@@ -835,6 +835,60 @@ describe('getAppealCaseStatementDates', () => {
       expect(dates.civilClaimantStatementDates).toEqual([])
     })
 
+    // A statement the court files on the prosecution's behalf names no
+    // party, as the prosecution's own would; the role that wrote it does not
+    // decide whose it is.
+    it("counts a statement the court filed on the prosecution's behalf", () => {
+      const appealCase = {
+        appealEventLogs: [
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            userRole: UserRole.COURT_OF_APPEALS_ASSISTANT,
+            created: later,
+          },
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            userRole: UserRole.COURT_OF_APPEALS_ASSISTANT,
+            defendantId: 'defendant-1',
+            created: earlier,
+          },
+        ] as AppealEventLog[],
+      } as AppealCase
+      const theCase = { type: CaseType.INDICTMENT } as Case
+
+      const dates = getAppealCaseStatementDates(appealCase, theCase)
+
+      expect(dates.prosecutorStatementDate).toEqual(later)
+      expect(dates.defendantStatementDates).toEqual([
+        { defendantId: 'defendant-1', statementDate: earlier },
+      ])
+    })
+
+    // The events backfilled from the appeal case's legacy statement dates
+    // name no party; the defender's is told by its role.
+    it("does not count a legacy defender statement as the prosecution's", () => {
+      const appealCase = {
+        appealEventLogs: [
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            userRole: UserRole.PROSECUTOR,
+            created: earlier,
+          },
+          {
+            eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+            userRole: UserRole.DEFENDER,
+            created: later,
+          },
+        ] as AppealEventLog[],
+      } as AppealCase
+      const theCase = { type: CaseType.INDICTMENT } as Case
+
+      const dates = getAppealCaseStatementDates(appealCase, theCase)
+
+      expect(dates.prosecutorStatementDate).toEqual(earlier)
+      expect(dates.defendantStatementDates).toEqual([])
+    })
+
     it('returns the latest prosecutor statement date across prosecution roles', () => {
       const appealCase = {
         appealEventLogs: [

@@ -96,3 +96,67 @@ export const buildHasDefendantWithNullReviewDecisionCondition = (
         )
     )
   `)
+
+// The verdict appeal on this case has had an appeal summons sent to the court
+// of appeals. That is what opens a verdict appeal to the court: until then the
+// appeal is still being prepared by the public prosecution. A sent summons can
+// be neither unsent nor deleted, so once true this stays true.
+//
+// canAppealsCourtUserAccessCaseVerdictAppealCase in case.filter.ts is the same
+// rule for opening a case; keep the two in step.
+//
+// Correlated to "Case".id through the appeal, so no join is needed and the
+// predicate survives the subSELECT that a LIMIT forces.
+export const buildHasSentAppealSummonsCondition = () =>
+  Sequelize.literal(`
+    EXISTS (
+      SELECT 1
+      FROM "appeal_summons" s
+      JOIN "appeal_case" ac ON ac."id" = s."appeal_case_id"
+      WHERE ac."case_id" = "Case"."id"
+        AND ac."appeal_type" = 'VERDICT'
+        AND s."sent_to_court_of_appeals_date" IS NOT NULL
+    )
+  `)
+
+// A verdict on this case has been appealed - by the defence, which the office
+// records as an appeal date on the verdict, or by the prosecution, whose
+// reviewer recorded a decision to appeal.
+//
+// A defendant closed without enforcement still counts, unlike in the public
+// prosecution office's lists. Closing does not touch the appeal - it writes a
+// defendant event and nothing else - so an appeal can be standing at the court
+// of appeals against a judgment the office has decided not to enforce, and the
+// prosecutor arguing it must not lose the case.
+//
+// Correlated to "Case".id rather than expressed as a where on a defendants
+// include, because setInclude merges only attributes: an include-level where
+// would also narrow the defendants column to the appealing defendants, and the
+// EXISTS form survives the subSELECT that a LIMIT forces.
+//
+// On the defence side only the latest verdict counts: a defendant may be given a
+// new one, and the previous verdict's appeal date says nothing about where the
+// case stands now. The prosecution's side carries no such qualifier - a review
+// decision to appeal stands whatever verdicts follow.
+export const buildHasAppealedVerdictCondition = () =>
+  Sequelize.literal(`
+    EXISTS (
+      SELECT 1
+      FROM defendant
+      WHERE defendant.case_id = "Case".id
+        AND (
+          defendant.indictment_review_decision = '${IndictmentCaseReviewDecision.APPEAL}'
+          OR EXISTS (
+            SELECT 1
+            FROM verdict
+            WHERE verdict.defendant_id = defendant.id
+              AND verdict.appeal_date IS NOT NULL
+              AND verdict.created = (
+                SELECT MAX(v2.created)
+                FROM verdict v2
+                WHERE v2.defendant_id = defendant.id
+              )
+          )
+        )
+    )
+  `)

@@ -8,7 +8,10 @@ import { CourtSessionStringType } from '@island.is/judicial-system-web/src/graph
 import { areMergedCaseEntriesComplete } from './validate'
 
 describe('areMergedCaseEntriesComplete', () => {
-  const document = (caseId: string) => ({ caseId } as CourtDocumentResponse)
+  const document = (mergedFromCaseId: string) =>
+    ({ mergedFromCaseId } as CourtDocumentResponse)
+
+  const ownDocument = () => ({} as CourtDocumentResponse)
 
   const entries = (mergedCaseId: string, value: string) =>
     ({
@@ -18,13 +21,21 @@ describe('areMergedCaseEntriesComplete', () => {
     } as CourtSessionString)
 
   const session = (
-    mergedFiledDocuments?: CourtDocumentResponse[],
+    filedDocuments?: CourtDocumentResponse[],
     courtSessionStrings?: CourtSessionString[],
-  ) => ({ mergedFiledDocuments, courtSessionStrings } as CourtSessionResponse)
+  ) => ({ filedDocuments, courtSessionStrings } as CourtSessionResponse)
 
   it('should be complete when the session has no merged documents', () => {
     expect(areMergedCaseEntriesComplete(session())).toBe(true)
     expect(areMergedCaseEntriesComplete(session([]))).toBe(true)
+  })
+
+  // The case's own documents carry no merged case, and asking for entries about
+  // them would block every court session that has never seen a merge.
+  it('should be complete when the session holds only the case own documents', () => {
+    expect(
+      areMergedCaseEntriesComplete(session([ownDocument(), ownDocument()])),
+    ).toBe(true)
   })
 
   it('should be incomplete when a merged case has no entries at all', () => {

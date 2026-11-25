@@ -1,5 +1,5 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
 import { FC, useEffect, useRef, useState } from 'react'
@@ -176,6 +176,17 @@ export const CriteriaEditor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   return (
     <Box>
+      <Box display="flex" justifyContent="flexEnd" marginBottom={4}>
+        <a
+          href={formatMessage(messages.report.criteria.instructionsLink)}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Button variant="utility" icon="open" iconType="outline" as="span">
+            {formatMessage(messages.report.criteria.instructionsLabel)}
+          </Button>
+        </a>
+      </Box>
       <Text variant="h4" marginBottom={2}>
         {formatMessage(messages.report.criteria.jobFactorTitle)}
       </Text>

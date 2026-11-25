@@ -22,6 +22,7 @@ type GivenWhenThen = () => Then
 
 describe('Request Shared With Defender Guard', () => {
   const mockRequest = jest.fn()
+  const defenderNationalId = '0101010101'
   let givenWhenThen: GivenWhenThen
 
   beforeEach(() => {
@@ -50,9 +51,16 @@ describe('Request Shared With Defender Guard', () => {
 
     beforeEach(() => {
       mockRequest.mockImplementationOnce(() => ({
+        user: { currentUser: { nationalId: defenderNationalId } },
         case: {
           state,
-          requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
+          defendants: [
+            {
+              defenderNationalId,
+              requestSharedWithDefender:
+                RequestSharedWithDefender.READY_FOR_COURT,
+            },
+          ],
         },
       }))
 
@@ -71,9 +79,15 @@ describe('Request Shared With Defender Guard', () => {
 
       beforeEach(() => {
         mockRequest.mockImplementationOnce(() => ({
+          user: { currentUser: { nationalId: defenderNationalId } },
           case: {
             state,
-            requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+            defendants: [
+              {
+                defenderNationalId,
+                requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+              },
+            ],
             dateLogs: [
               { dateType: DateType.ARRAIGNMENT_DATE, date: new Date() },
             ],
@@ -94,9 +108,15 @@ describe('Request Shared With Defender Guard', () => {
 
     beforeEach(() => {
       mockRequest.mockImplementationOnce(() => ({
+        user: { currentUser: { nationalId: defenderNationalId } },
         case: {
           state: CaseState.RECEIVED,
-          requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+          defendants: [
+            {
+              defenderNationalId,
+              requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+            },
+          ],
         },
       }))
 
@@ -116,7 +136,11 @@ describe('Request Shared With Defender Guard', () => {
 
     beforeEach(() => {
       mockRequest.mockImplementationOnce(() => ({
-        case: {},
+        user: { currentUser: { nationalId: defenderNationalId } },
+        case: {
+          state: CaseState.RECEIVED,
+          defendants: [{ defenderNationalId }],
+        },
       }))
 
       then = givenWhenThen()

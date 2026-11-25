@@ -17,10 +17,9 @@ let cacheManager: CacheManager
 let nationalRegistryService: NationalRegistryService
 const user: NationalRegistryUser = {
   nationalId: '1326487905',
-  firstName: 'Jón',
+  givenName: 'Jón Gunnar',
+  fullName: 'Jón Gunnar Jónsson',
   gender: 'kk',
-  lastName: 'Jónsson',
-  middleName: 'Gunnar',
   address: 'Bessastaðir 1',
   postalcode: 900,
   city: 'Vestmannaeyjar',
@@ -98,10 +97,9 @@ describe('Create DiscountCode', () => {
       .mockImplementation(() =>
         Promise.resolve({
           nationalId: '1326487905',
-          firstName: 'Jón',
+          givenName: 'Jón Gunnar',
+          fullName: 'Jón Gunnar Jónsson',
           gender: 'kk',
-          lastName: 'Jónsson',
-          middleName: 'Gunnar',
           address: 'Bessastaðir 1',
           postalcode: 225,
           city: 'Álftanes',

@@ -10,7 +10,7 @@ import { m } from './translation.strings'
 const CustomsGeneralTransportModes = () => {
   const { formatMessage } = useIntl()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-  const [system, setSystem] = useState<'I' | 'U'>('U')
+  const [system, setSystem] = useState<'I' | 'U'>('I')
 
   const columns = [
     { key: 'code' as const, label: formatMessage(m.columnCode) },

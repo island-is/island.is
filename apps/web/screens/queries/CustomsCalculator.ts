@@ -9,6 +9,7 @@ export const GET_CUSTOMS_CALCULATOR_PRODUCT_CATEGORIES = gql`
         tariffNumber
         label
         description
+        keywords
       }
       topLevel {
         id

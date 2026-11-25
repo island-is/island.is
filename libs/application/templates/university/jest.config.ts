@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'application-templates-university',
   preset: './jest.preset.js',

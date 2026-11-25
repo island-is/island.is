@@ -1,7 +1,8 @@
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
-import { addMessagesToQueue } from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseState,
   AppealCaseType,
@@ -10,6 +11,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
+  IndictmentCaseNotificationType,
   ServiceRequirement,
   User,
   UserRole,
@@ -19,16 +21,22 @@ import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
 import { nowFactory } from '../../../../factories'
 import {
+  getOrCreateTransaction,
+  queueMessagesAfterCommit,
+} from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
+import {
   AppealCase,
   AppealCaseRepositoryService,
   AppealEventLogRepositoryService,
   Case,
   CaseRepositoryService,
+  DefendantRepositoryService,
   VerdictRepositoryService,
 } from '../../../repository'
 import { CreateAppealCaseDto } from '../../dto/createAppealCase.dto'
 
-jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../../../factories')
 
 interface Then {
@@ -85,7 +93,10 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
         {
           id: defendantId,
           isDefenderChoiceConfirmed: true,
+          defenderName: 'Lára Lögmann',
           defenderNationalId,
+          defenderEmail: 'lara@dummy.dd',
+          defenderPhoneNumber: '0000001',
           verdicts: [verdict],
         },
       ],
@@ -100,7 +111,9 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
   let mockAppealCaseRepositoryService: AppealCaseRepositoryService
   let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
   let mockCaseRepositoryService: CaseRepositoryService
+  let mockDefendantRepositoryService: DefendantRepositoryService
   let mockVerdictRepositoryService: VerdictRepositoryService
+  let mockSequelize: Sequelize
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -112,6 +125,7 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
       appealCaseRepositoryService,
       appealEventLogRepositoryService,
       caseRepositoryService,
+      defendantRepositoryService,
       verdictRepositoryService,
       sequelize,
     } = await createTestingAppealCaseModule()
@@ -119,22 +133,23 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
     mockCaseRepositoryService = caseRepositoryService
+    mockDefendantRepositoryService = defendantRepositoryService
     mockVerdictRepositoryService = verdictRepositoryService
 
     const mockNowFactory = nowFactory as jest.Mock
     mockNowFactory.mockReturnValue(now)
 
+    mockSequelize = sequelize
+
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
     ;(mockAppealCaseRepositoryService.create as jest.Mock).mockResolvedValue(
       createdAppealCase,
     )
-    ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
-      [],
-    )
+    ;(
+      mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock
+    ).mockResolvedValue(null)
     ;(
       mockCaseRepositoryService.lockByIdForUpdate as jest.Mock
     ).mockResolvedValue(true)
@@ -142,10 +157,25 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
     givenWhenThen = async (theCase, createDto) => {
       const then = {} as Then
 
-      await limitedAccessAppealCaseController
-        .create(caseId, defender, theCase, createDto)
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      // The route is guarded by LimitedAccessCaseExistsForUpdateGuard, so the
+      // request transaction is already open - and holding a lock on this case
+      // row - by the time the handler runs. Guards do not execute in
+      // controller unit tests, so the request context and that transaction
+      // are set up here instead.
+      try {
+        await runInRequestContext(async () => {
+          await getOrCreateTransaction(mockSequelize)
+
+          then.result = await limitedAccessAppealCaseController.create(
+            caseId,
+            defender,
+            theCase,
+            createDto,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }
@@ -179,8 +209,9 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
         caseId,
         transaction,
       )
-      expect(mockAppealCaseRepositoryService.findAll).toHaveBeenCalledWith({
-        where: { caseId, appealType: AppealCaseType.VERDICT },
+      expect(
+        mockAppealCaseRepositoryService.findVerdictAppealByCaseId,
+      ).toHaveBeenCalledWith(caseId, {
         transaction,
       })
     })
@@ -217,10 +248,76 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
       )
     })
 
+    // The court of appeals still confirms the defender; until then the record
+    // grants no access.
+    it('should record the defender of record as the unconfirmed appeal defender', () => {
+      expect(mockDefendantRepositoryService.update).toHaveBeenCalledTimes(1)
+      expect(mockDefendantRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        defendantId,
+        {
+          appealDefenderName: 'Lára Lögmann',
+          appealDefenderNationalId: defenderNationalId,
+          appealDefenderEmail: 'lara@dummy.dd',
+          appealDefenderPhoneNumber: '0000001',
+          isAppealDefenderConfirmed: false,
+        },
+        { transaction },
+      )
+    })
+
     // The notification to the public prosecution office is its own story, and none of the
     // ruling appeal notifications apply to a verdict appeal.
-    it('should queue no messages', () => {
-      expect(addMessagesToQueue).not.toHaveBeenCalled()
+    // The public prosecution is told when a defender files through the portal.
+    // Nothing else is queued: the court of appeals learns of the appeal when it
+    // receives it, which is the court of appeals process, not this one.
+    it('should queue the verdict appealed notification and nothing else', () => {
+      expect(queueMessagesAfterCommit).toHaveBeenCalledTimes(1)
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith({
+        type: MessageType.NOTIFICATION,
+        user: defender,
+        caseId,
+        body: {
+          type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_APPEALED,
+        },
+      })
+    })
+  })
+
+  // The court of appeals can settle a defendant's counsel on an appeal the
+  // prosecution filed, before that defendant's own defender appeals.
+  describe.each`
+    stance                               | appealDefender
+    ${'named an appeal defender'}        | ${{ appealDefenderName: 'Njáll Nýr', isAppealDefenderConfirmed: true }}
+    ${'recorded that counsel is waived'} | ${{ isAppealDefenderWaived: true }}
+    ${'recorded that counsel is kept'}   | ${{ isAppealDefenderWaived: false }}
+  `('when the court of appeals has $stance', ({ appealDefender }) => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(
+        buildCase({
+          defendants: [
+            {
+              id: defendantId,
+              isDefenderChoiceConfirmed: true,
+              defenderName: 'Lára Lögmann',
+              defenderNationalId,
+              verdicts: [verdict],
+              ...appealDefender,
+            },
+          ],
+        } as unknown as Partial<Case>),
+        dto,
+      )
+    })
+
+    it('should appeal without touching the appeal defender', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledTimes(
+        1,
+      )
+      expect(mockDefendantRepositoryService.update).not.toHaveBeenCalled()
     })
   })
 
@@ -235,12 +332,12 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
     let then: Then
 
     beforeEach(async () => {
-      ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
-        [existingAppealCase],
-      )
+      ;(
+        mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock
+      ).mockResolvedValue(existingAppealCase)
       // Another defendant is the standing appellant, not this one.
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           defendantId: uuid(),
@@ -304,14 +401,14 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
     let then: Then
 
     beforeEach(async () => {
-      ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
-        [withdrawnAppealCase],
-      )
+      ;(
+        mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock
+      ).mockResolvedValue(withdrawnAppealCase)
       ;(mockAppealCaseRepositoryService.update as jest.Mock).mockResolvedValue(
         reactivatedAppealCase,
       )
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           defendantId,
@@ -371,11 +468,11 @@ describe('LimitedAccessAppealCaseController - Create verdict appeal', () => {
     let then: Then
 
     beforeEach(async () => {
-      ;(mockAppealCaseRepositoryService.findAll as jest.Mock).mockResolvedValue(
-        [existingAppealCase],
-      )
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealCaseRepositoryService.findVerdictAppealByCaseId as jest.Mock
+      ).mockResolvedValue(existingAppealCase)
+      ;(
+        mockAppealEventLogRepositoryService.findAllForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           defendantId,

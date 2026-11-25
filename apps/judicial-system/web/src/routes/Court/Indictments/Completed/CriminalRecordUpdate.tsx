@@ -65,13 +65,10 @@ export const CriminalRecordUpdate = ({
         }
 
         // TODO: Make sure to log an event if at least one file was uploaded
-        const eventLogCreated = createEventLog({
+        await createEventLog({
           caseId: workingCase.id,
           eventType: EventType.INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT,
         })
-        if (!eventLogCreated) {
-          return
-        }
       }
       // Otherwise we don't complete uploads until
       // we handle the next button click
@@ -112,11 +109,17 @@ export const CriminalRecordUpdate = ({
           (file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
         )}
         accept="application/pdf"
-        title={formatMessage(core.uploadBoxTitle)}
-        buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-        description={formatMessage(core.uploadBoxDescription, {
-          fileEndings: '.pdf',
-        })}
+        title={core.uploadBoxTitle}
+        buttonLabel={core.uploadBoxButtonLabel}
+        description={formatMessage(
+          {
+            id: core.uploadBoxDescription,
+            defaultMessage: core.uploadBoxDescription,
+          },
+          {
+            fileEndings: '.pdf',
+          },
+        )}
         onChange={handleCriminalRecordUpdateUpload}
         onRemove={handleRemoveFile}
         onOpenFile={(file) => onOpenFile(file)}

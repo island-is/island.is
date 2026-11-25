@@ -21,6 +21,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { UNEMPLOYMENT_NAMESPACE } from '../../../lib/messages'
 import { useState } from 'react'
 import { ActionButtons } from '../components/ActionButtons'
 import { Problem } from '@island.is/react-spa/shared'
@@ -28,7 +29,7 @@ import { Problem } from '@island.is/react-spa/shared'
 const VIEWABLE_CONTENT_TYPES = ['application/pdf', 'image/png', 'image/jpeg']
 
 const MyData = () => {
-  useNamespaces('sp.social-benefits-unemployment')
+  useNamespaces(UNEMPLOYMENT_NAMESPACE)
   const { formatMessage, formatDateFns } = useLocale()
   const [pdfUrl, setPdfUrl] = useState<string | null>(null)
 

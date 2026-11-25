@@ -17,6 +17,7 @@ interface EnvironmentHeaderProps {
   title: string
   selectedEnvironment: AuthAdminEnvironment
   availableEnvironments: AuthAdminEnvironment[]
+  optionEnvironments?: AuthAdminEnvironment[]
   onChange(value: AuthAdminEnvironment): void
   preHeader?: ReactNode
   postHeader?: ReactNode
@@ -34,6 +35,7 @@ export const EnvironmentHeader = ({
   title,
   selectedEnvironment,
   availableEnvironments,
+  optionEnvironments,
   onChange,
   preHeader,
   postHeader,
@@ -41,18 +43,13 @@ export const EnvironmentHeader = ({
   const { formatMessage } = useLocale()
   const tenant = useRouteLoaderData(tenantLoaderId) as TenantLoaderResult
 
-  const options = tenant.availableEnvironments
-    .map((env) => {
-      const isAvailable = availableEnvironments.includes(env)
+  const getEnvironmentLabel = (environment: AuthAdminEnvironment) =>
+    availableEnvironments.includes(environment)
+      ? environment
+      : formatMessage(m.publishEnvironment, { environment })
 
-      const label = isAvailable
-        ? env
-        : formatMessage(m.publishEnvironment, {
-            environment: env,
-          })
-
-      return formatOption(label, env)
-    })
+  const options = (optionEnvironments ?? tenant.availableEnvironments)
+    .map((env) => formatOption(getEnvironmentLabel(env), env))
     .filter(isDefined)
 
   return (
@@ -82,7 +79,10 @@ export const EnvironmentHeader = ({
               onChange(opt.value)
             }
           }}
-          value={formatOption(selectedEnvironment, selectedEnvironment)}
+          value={formatOption(
+            getEnvironmentLabel(selectedEnvironment),
+            selectedEnvironment,
+          )}
           options={options}
         />
       </div>

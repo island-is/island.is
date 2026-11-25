@@ -1,4 +1,6 @@
+import { useQuery } from '@apollo/client'
 import { FormSystemField } from '@island.is/api/schema'
+import { ApplicantTypesEnum } from '@island.is/form-system/enums'
 import {
   GridColumn as Column,
   Input,
@@ -6,20 +8,31 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { USER_PROFILE } from '@island.is/portals/my-pages/graphql'
 import { Dispatch, useEffect, useRef } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useIntl } from 'react-intl'
-import { Action } from '../../../lib'
+import { Action, ApplicationState } from '../../../lib'
+import { FieldTypesEnum } from '../../../lib/enums'
 import { getValue } from '../../../lib/getValue'
 import { m } from '../../../lib/messages'
+import { previewMockData } from '../../../lib/previewMockData'
 
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
   valueIndex?: number
+  state?: Partial<ApplicationState>
+  isPreview?: boolean
 }
 
-export const Banknumber = ({ item, dispatch, valueIndex = 0 }: Props) => {
+export const Banknumber = ({
+  item,
+  dispatch,
+  valueIndex = 0,
+  state,
+  isPreview = false,
+}: Props) => {
   const { lang } = useLocale()
   const inputRefs = [
     useRef<HTMLInputElement | HTMLTextAreaElement>(null),
@@ -27,11 +40,42 @@ export const Banknumber = ({ item, dispatch, valueIndex = 0 }: Props) => {
     useRef<HTMLInputElement | HTMLTextAreaElement>(null),
   ]
   const { formatMessage } = useIntl()
-  const { control, watch } = useFormContext()
+  const { control, watch, getValues, getFieldState, setValue } =
+    useFormContext()
+  const didHydrateFromProfile = useRef(false)
 
   const bankField = `${item.id}.${valueIndex}_bank`
   const ledgerField = `${item.id}.${valueIndex}_ledger`
   const accountField = `${item.id}.${valueIndex}_account`
+  const savedBankAccount = getValue(item, 'bankAccount', valueIndex) ?? ''
+  const bankAccountValue = savedBankAccount === '--' ? '' : savedBankAccount
+  const fetchBankAccountFromMyPages =
+    item.fieldSettings?.fetchBankAccountFromMyPages ?? true
+  const hasDelegationApplicant =
+    state?.screens?.some((screen) =>
+      screen.fields?.some((field) =>
+        Object.values(ApplicantTypesEnum).some(
+          (type) =>
+            type !== ApplicantTypesEnum.INDIVIDUAL &&
+            type === field?.fieldSettings?.applicantType,
+        ),
+      ),
+    ) ?? false
+  const { data: userProfileData, error: userProfileError } = useQuery(
+    USER_PROFILE,
+    {
+      fetchPolicy: 'cache-first',
+      skip:
+        isPreview ||
+        !fetchBankAccountFromMyPages ||
+        hasDelegationApplicant ||
+        !!bankAccountValue,
+    },
+  )
+
+  useEffect(() => {
+    didHydrateFromProfile.current = false
+  }, [item.id, valueIndex])
 
   // Watch all three fields
   const bank = watch(bankField)
@@ -56,6 +100,58 @@ export const Banknumber = ({ item, dispatch, valueIndex = 0 }: Props) => {
     }
   }, [bank, ledger, account, dispatch, item.id, valueIndex])
 
+  useEffect(() => {
+    if (!fetchBankAccountFromMyPages || hasDelegationApplicant) return
+    if (didHydrateFromProfile.current) return
+
+    const fields = [bankField, ledgerField, accountField]
+    const hasExistingInput = fields.some((name) => {
+      const { isDirty, isTouched } = getFieldState(name)
+      return !!getValues(name) || isDirty || isTouched
+    })
+
+    if (
+      bankAccountValue ||
+      hasExistingInput ||
+      (!isPreview && userProfileError)
+    ) {
+      didHydrateFromProfile.current = true
+      return
+    }
+    if (!isPreview && !userProfileData) return
+
+    didHydrateFromProfile.current = true
+    const bankInfo = isPreview
+      ? previewMockData[FieldTypesEnum.BANK_ACCOUNT].bankAccount
+      : userProfileData?.getUserProfile?.bankInfo
+    if (!bankInfo || !/^\d{1,4}-\d{1,2}-\d{1,6}$/.test(bankInfo)) return
+
+    const parts = bankInfo.split('-')
+    fields.forEach((name, index) => {
+      setValue(name, parts[index], {
+        shouldDirty: false,
+        shouldTouch: false,
+        shouldValidate: true,
+      })
+    })
+  }, [
+    bank,
+    ledger,
+    account,
+    bankField,
+    ledgerField,
+    accountField,
+    bankAccountValue,
+    isPreview,
+    fetchBankAccountFromMyPages,
+    hasDelegationApplicant,
+    userProfileData,
+    userProfileError,
+    getValues,
+    getFieldState,
+    setValue,
+  ])
+
   // Helper for leading zeros
   const addLeadingZeros = (originalNumber: string, max: number) => {
     const zerosToAdd = max - originalNumber.length
@@ -69,7 +165,6 @@ export const Banknumber = ({ item, dispatch, valueIndex = 0 }: Props) => {
     return leadingZeros + originalNumber
   }
 
-  const bankAccountValue = getValue(item, 'bankAccount', valueIndex) ?? ''
   const [bankDefault, ledgerDefault, accountDefault] =
     bankAccountValue.split('-')
   return (

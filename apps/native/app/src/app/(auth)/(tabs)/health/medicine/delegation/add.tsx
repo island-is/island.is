@@ -2,8 +2,9 @@ import { router } from 'expo-router'
 import * as kennitala from 'kennitala'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { ScrollView, View } from 'react-native'
-import styled from 'styled-components/native'
+import { Platform, ScrollView, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import styled, { useTheme } from 'styled-components/native'
 
 import {
   useIdentityQueryLazyQuery,
@@ -13,8 +14,9 @@ import {
   Button,
   Checkbox,
   DatePickerInput,
-  Tag,
+  FilterChip,
   TextField,
+  token,
   Typography,
 } from '@/ui'
 import addMonths from 'date-fns/addMonths'
@@ -25,24 +27,16 @@ const Host = styled(View)`
   flex: 1;
 `
 
-const NavigationBarWrapper = styled(View)`
-  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
-`
-
 const Content = styled(ScrollView)`
   flex: 1;
 `
 
 const FormContainer = styled(View)`
-  flex: 1;
-  justify-content: space-between;
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
-  padding-bottom: ${({ theme }) => theme.spacing[4]}px;
 `
 
 const Header = styled(View)`
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
-  margin-top: ${({ theme }) => theme.spacing[3]}px;
 `
 
 const Fields = styled(View)`
@@ -51,7 +45,9 @@ const Fields = styled(View)`
 
 const ValidityHeading = styled(Typography)`
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
-  margin-top: ${({ theme }) => theme.spacing[4]}px;
+  /* The checkbox brings its own 16px of vertical padding, so this only tops
+     it up to a section gap instead of doubling it. */
+  margin-top: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const QuickLabelsContainer = styled(View)`
@@ -65,19 +61,13 @@ const QuickLabel = styled(View)`
 `
 
 const Actions = styled(View)`
-  margin-top: ${({ theme }) => theme.spacing[2]}px;
-  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
-  gap: ${({ theme }) => theme.spacing[2]}px;
+  margin-top: ${({ theme }) => theme.spacing[3]}px;
 `
 
 const ErrorMessage = styled(Typography)`
   margin-top: ${({ theme }) => theme.spacing[2]}px;
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
-  color: ${({ theme }) => theme.color.red600};
-`
-
-const NameField = styled(TextField)`
-  background-color: ${({ theme }) => theme.color.white};
+  color: ${token((t) => t.feedback.error.foregroundContrast)};
 `
 
 const QUICK_LABEL_TYPE = {
@@ -89,6 +79,8 @@ type QuickLabelType = typeof QUICK_LABEL_TYPE[keyof typeof QUICK_LABEL_TYPE]
 
 export default function MedicineDelegationFormScreen() {
   const intl = useIntl()
+  const theme = useTheme()
+  const insets = useSafeAreaInsets()
 
   const [nationalId, setNationalId] = useState('')
   const [name, setName] = useState('')
@@ -223,24 +215,23 @@ export default function MedicineDelegationFormScreen() {
   }
 
   return (
-    <Content
-      keyboardShouldPersistTaps="handled"
-      contentContainerStyle={{
-        justifyContent: 'space-between',
-        flex: 1,
-      }}
-      style={{ flex: 1 }}
-    >
-      <StackScreen
-        options={{
-          title: intl.formatMessage({
-            id: 'health.medicineDelegation.screenTitle',
-          }),
+    <Host>
+      <StackScreen closeable />
+      <Content
+        keyboardShouldPersistTaps="handled"
+        // The kennitala field opens a number pad, which has no return key to
+        // close the keyboard with, so a drag is what closes it. On iOS that is
+        // a drag down over the keyboard itself, leaving the rest of the form
+        // free to scroll; Android has no interactive mode, so any drag closes.
+        keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
+        // Inset the form by the keyboard so every field - and the submit
+        // button - can still be scrolled into the space above it.
+        automaticallyAdjustKeyboardInsets={Platform.OS === 'ios'}
+        contentContainerStyle={{
+          paddingBottom: theme.spacing[2] + insets.bottom,
         }}
-        closeable
-      />
-      <FormContainer>
-        <View>
+      >
+        <FormContainer>
           <Header>
             <Typography variant="heading5">
               {intl.formatMessage({
@@ -261,7 +252,7 @@ export default function MedicineDelegationFormScreen() {
               loading={loadingNames}
               errorMessage={nameError}
             />
-            <NameField
+            <TextField
               readOnly={true}
               label={intl.formatMessage({
                 id: 'health.medicineDelegation.form.nameLabel',
@@ -287,7 +278,7 @@ export default function MedicineDelegationFormScreen() {
             <QuickLabelsContainer>
               {quickLabels.map((label) => (
                 <QuickLabel key={label.value}>
-                  <Tag
+                  <FilterChip
                     title={getQuickLabels(label.value, label.type)}
                     onPress={() => {
                       setDateTo(getQuickSelectDate(label.value, label.type))
@@ -334,10 +325,11 @@ export default function MedicineDelegationFormScreen() {
               onPress={createMedicineDelegation}
               disabled={!isValid || loadingDelegateMedicineDelegation}
               loading={loadingDelegateMedicineDelegation}
+              style={{ alignSelf: 'stretch' }}
             />
           </Actions>
-        </View>
-      </FormContainer>
-    </Content>
+        </FormContainer>
+      </Content>
+    </Host>
   )
 }

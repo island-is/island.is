@@ -1,9 +1,30 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  previewWithRestrictions: {
+    id: 'form.system:preview-with-restrictions',
+    defaultMessage: 'Skoða með tengingum',
+    description: 'Preview with dependencies enabled',
+  },
+  exactNumberLength: {
+    id: 'form.system:exact-number-length',
+    defaultMessage: 'Talan verður að innihalda {length} tölustafi',
+    description: 'Exact number of digits validation message',
+  },
+  minNumberLength: {
+    id: 'form.system:min-number-length',
+    defaultMessage:
+      'Talan verður að innihalda að minnsta kosti {minLength} tölustafi',
+    description: 'Minimum number of digits validation message',
+  },
+  maxNumberLength: {
+    id: 'form.system:max-number-length',
+    defaultMessage: 'Talan má að hámarki innihalda {maxLength} tölustafi',
+    description: 'Maximum number of digits validation message',
+  },
   rootName: {
     id: 'form.system:application-builder',
-    defaultMessage: 'Umsóknarsmiður',
+    defaultMessage: 'Umsóknasmiður',
     description: 'Form builder',
   },
   showSidebar: {
@@ -25,6 +46,27 @@ export const m = defineMessages({
     id: 'form.system:new-form',
     defaultMessage: 'Nýtt',
     description: 'New',
+  },
+  exportForm: {
+    id: 'form.system:export-form',
+    defaultMessage: 'Flytja út',
+    description: 'Export',
+  },
+  importForm: {
+    id: 'form.system:import-form',
+    defaultMessage: 'Flytja inn',
+    description: 'Import',
+  },
+  exportFormError: {
+    id: 'form.system:export-form-error',
+    defaultMessage: 'Ekki tókst að flytja út eyðublað.',
+    description: 'Form export failed',
+  },
+  importFormError: {
+    id: 'form.system:import-form-error',
+    defaultMessage:
+      'Ekki tókst að flytja inn eyðublað. Athugaðu skrána og stillingar stofnunar.',
+    description: 'Form import failed',
   },
   newApplication: {
     id: 'form.system:new-application',
@@ -161,6 +203,27 @@ export const m = defineMessages({
     id: 'form.system:summary-screen',
     defaultMessage: 'Birta yfirlit áður en umsókn er send inn',
     description: 'Display summary before submission',
+  },
+  enableApplicationPdfDownload: {
+    id: 'form.system:enable-application-pdf-download',
+    defaultMessage: 'Leyfa notanda að hlaða niður umsókn sem PDF',
+    description: 'Allow the user to download the application as a PDF',
+  },
+  downloadApplicationPdf: {
+    id: 'form.system:download-application-pdf',
+    defaultMessage: 'Sækja PDF',
+    description: 'Download PDF',
+  },
+  applicationPdfDownloadDescription: {
+    id: 'form.system:application-pdf-download-description',
+    defaultMessage:
+      'Þú getur sótt umsóknina á PDF með því að smella á hnappinn',
+    description: 'Application PDF download instructions',
+  },
+  applicationPdfDownloadError: {
+    id: 'form.system:application-pdf-download-error',
+    defaultMessage: 'Ekki tókst að sækja PDF. Vinsamlegast reyndu aftur.',
+    description: 'Failed to download the application PDF. Please try again.',
   },
   payment: {
     id: 'form.system:payment',
@@ -620,7 +683,7 @@ export const m = defineMessages({
   },
   preview: {
     id: 'form.system:preview',
-    defaultMessage: 'Skoða',
+    defaultMessage: 'Skoða skjá',
     description: 'Preview',
   },
   lastModified: {
@@ -821,6 +884,11 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala',
     description: 'National ID',
   },
+  maritalStatus: {
+    id: 'form.system:marital-status',
+    defaultMessage: 'Hjúskaparstaða',
+    description: 'Marital status',
+  },
   basicErrorMessage: {
     id: 'form.system:basic-error-message',
     defaultMessage: 'Villa kom upp',
@@ -853,6 +921,13 @@ export const m = defineMessages({
     id: 'form.system:invalid-national-id',
     defaultMessage: 'Ógild kennitala',
     description: 'Invalid national ID',
+  },
+  nationalIdLookupFailed: {
+    id: 'form.system:national-id-lookup-failed',
+    defaultMessage:
+      'Leitin skilaði ekki niðurstöðu. Kennitala fannst ekki eða þjónusta ekki tiltæk.',
+    description:
+      'The search yielded no results. The ID number was not found, or the service is unavailable.',
   },
   invalidPhoneNumber: {
     id: 'form.system:invalid-phone-number',
@@ -891,9 +966,8 @@ export const m = defineMessages({
   },
   externalDataTitle: {
     id: 'form.system:external-data-title',
-    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
-    description:
-      'The following data will be retrieved electronically with your consent',
+    defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt',
+    description: 'The following information will be retrieved electronically',
   },
   externalDataHeader: {
     id: 'form.system:external-data-header',
@@ -907,30 +981,29 @@ export const m = defineMessages({
   },
   externalDataAgreement: {
     id: 'form.system:externalData.agreement',
-    defaultMessage: 'Ég hef kynnt mér ofangreint varðandi gagnaöflun',
-    description: 'I have read the above regarding data collection',
+    defaultMessage: 'Ég skil að ofangreindra upplýsinga verði aflað',
+    description:
+      'I understand that the above-mentioned information will be collected',
   },
   icelandicRegistryTitle: {
     id: 'form.system:icelandic-registry-title',
-    defaultMessage: 'Upplýsingar úr Þjóðskrá',
-    description: 'Icelandic registry',
+    defaultMessage: 'Upplýsingar frá Þjóðskrá',
+    description: 'Information from Registers Iceland',
   },
   icelandicRegistryDescription: {
     id: 'form.system:icelandic-registry-description',
-    defaultMessage: 'Upplýsingar um þig',
-    description: 'Information about you',
+    defaultMessage: 'Upplýsingar um nafn, kennitölu og lögheimili',
+    description: 'Information regarding name, National ID, and legal domicile',
   },
   myPagesTitle: {
     id: 'form.system:my-pages-title',
-    defaultMessage: 'Mínar upplýsingar á Mínum síðum Ísland.is',
-    description: 'My information on My Pages on Ísland.is',
+    defaultMessage: 'Upplýsingar frá Ísland.is',
+    description: 'Information from Ísland.is',
   },
   myPagesDescription: {
     id: 'form.system:my-pages-description',
-    defaultMessage:
-      'Upplýsingar um símanúmer og netfang til að auðvelda umsóknarferlið.',
-    description:
-      'Information about phone number and email to facilitate the application process',
+    defaultMessage: 'Upplýsingar um símanúmer og netfang',
+    description: 'Information on phone number and email address',
   },
   continue: {
     id: 'form.system:continue',
@@ -1103,6 +1176,20 @@ export const m = defineMessages({
       'Ertu viss um að þú viljir taka úr útgáfu formið: {formName}',
     description: 'Are you sure you want to unpublish the form: {formName}',
   },
+  unpublishFormWithRevisionWarning: {
+    id: 'form.system:unpublish-form-with-revision-warning',
+    defaultMessage:
+      'Ertu viss um að þú viljir taka úr útgáfu formið: {formName}? Öllum tengdum eyðublöðum í stöðunni „Útgefið í breytingu“, ef einhver eru, verður einnig eytt.',
+    description:
+      'Are you sure you want to unpublish the form: {formName}? Any derived forms in the Published being changed state will also be deleted.',
+  },
+  publishedFormRevisionCreatedWarning: {
+    id: 'form.system:published-form-revision-created-warning',
+    defaultMessage:
+      'Eyðublað í stöðunni „Útgefið í breytingu“ hefur verið búið til. Ef upprunalega eyðublaðið er tekið úr útgáfu verður nýja eyðublaðinu eytt.',
+    description:
+      'A form in the Published being changed state has been created. If the original form is unpublished, the new form will be deleted.',
+  },
   previewField: {
     id: 'form.system:preview-field',
     defaultMessage: 'Sýnishorn',
@@ -1169,10 +1256,35 @@ export const m = defineMessages({
     defaultMessage: 'Hámarksfjöldi stafa',
     description: 'Maximum text length',
   },
-  hasDescription: {
-    id: 'form.system:has-description',
-    defaultMessage: 'Hefur lýsingu',
-    description: 'Has description',
+  informationText: {
+    id: 'form.system:information-text',
+    defaultMessage: 'Upplýsingatexti',
+    description: 'Information displayed above a field, or the message body',
+  },
+  informationTextEnglish: {
+    id: 'form.system:information-text-english',
+    defaultMessage: 'Upplýsingatexti á ensku',
+    description: 'Information text in English',
+  },
+  tooltip: {
+    id: 'form.system:tooltip',
+    defaultMessage: 'Hjálpartexti',
+    description: 'Field tooltip text',
+  },
+  tooltipEnglish: {
+    id: 'form.system:tooltip-english',
+    defaultMessage: 'Hjálpartexti á ensku',
+    description: 'Field tooltip text in English',
+  },
+  subLabel: {
+    id: 'form.system:sub-label',
+    defaultMessage: 'Undirtexti',
+    description: 'Checkbox sublabel',
+  },
+  subLabelEnglish: {
+    id: 'form.system:sub-label-english',
+    defaultMessage: 'Undirtexti á ensku',
+    description: 'Checkbox sublabel in English',
   },
   inProgress: {
     id: 'form.system:in-progress',
@@ -1263,8 +1375,8 @@ export const m = defineMessages({
   },
   completedMessage: {
     id: 'form.system:completed-message',
-    defaultMessage: 'Skilaboð á lokasíðu',
-    description: 'Message on completed page',
+    defaultMessage: 'Lokasíða',
+    description: 'Completed page',
   },
   isPartOfMulti: {
     id: 'form.system:is-part-of-multi',
@@ -1292,6 +1404,11 @@ export const m = defineMessages({
       'Þetta form er í þróun og hefur ekki verið útgefið. Innsending mun ekki skila sér til afgreiðslu.',
     description:
       'This form is in development and has not been published. Submissions will not be processed.',
+  },
+  previewApplicationBanner: {
+    id: 'form.system:preview-application-banner',
+    defaultMessage: 'Þetta er forskoðun. Engin tenging er við vefþjónustur.',
+    description: 'This is a preview. We do not connect to any web services.',
   },
   applicationLifetime: {
     id: 'form.system:application-lifetime',
@@ -1329,6 +1446,11 @@ export const m = defineMessages({
     id: 'form.system:total',
     defaultMessage: 'Samtals',
     description: 'Total',
+  },
+  toPay: {
+    id: 'form.system:to-pay',
+    defaultMessage: 'Til greiðslu',
+    description: 'To pay',
   },
   price: {
     id: 'form.system:price',

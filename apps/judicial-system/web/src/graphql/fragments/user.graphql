@@ -1,0 +1,24 @@
+fragment UserFields on User {
+  id
+  name
+  title
+  email
+}
+
+fragment CurrentUserFields on User {
+  ...UserFields
+  created
+  modified
+  active
+  role
+  mobileNumber
+  nationalId
+  canConfirmIndictment
+  canManageMessageSuspension
+  canManageServiceInterruptionBanner
+  institution {
+    ...InstitutionFields
+    defaultCourtId
+    policeCaseNumberPrefix
+  }
+}

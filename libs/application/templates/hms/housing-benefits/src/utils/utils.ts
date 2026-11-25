@@ -1,4 +1,4 @@
-import { getValueViaPath, YES } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
 import {
   ApplicantChildCustodyInformationV3,
   Application,
@@ -8,6 +8,8 @@ import {
 import { BffUser } from '@island.is/shared/types'
 import * as kennitala from 'kennitala'
 import { getLandlordOptionsForSelectedContract } from './rentalAgreementUtils'
+import { assigneeExternalDataKey } from './assigneeUtils'
+import { LegalDomicileOption } from './constants'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 
@@ -310,17 +312,14 @@ export const shouldShowLandlordSelection = (
     externalData,
   } as Application).length > 1
 
-export const isExemptionRequested = (answers: FormValue) => {
-  const exemptionCheckbox = getValueViaPath<string[]>(
-    answers,
-    'exemptionCheckbox',
-  )
-  return Array.isArray(exemptionCheckbox) && exemptionCheckbox.includes(YES)
-}
+export const getLegalDomicileOption = (answers: FormValue) =>
+  getValueViaPath<LegalDomicileOption>(answers, 'legalDomicileOption')
 
-export const isExemptionReason = (answers: FormValue, reason: string) =>
-  isExemptionRequested(answers) &&
-  getValueViaPath<string>(answers, 'exemptionReason') === reason
+export const isExemptionRequested = (answers: FormValue) =>
+  getLegalDomicileOption(answers) === LegalDomicileOption.EXEMPTION
+
+export const isNationalRegistryRefetchSelected = (answers: FormValue) =>
+  getLegalDomicileOption(answers) === LegalDomicileOption.NATIONAL_REGISTRY
 
 type PersonalTaxReturnData = {
   handedInLastYear?: boolean
@@ -332,15 +331,17 @@ const getPersonalTaxReturnData = (
   nationalId?: string,
 ): PersonalTaxReturnData | undefined => {
   if (!externalData) return undefined
-  const result = nationalId
-    ? getValueViaPath<{ status: 'success'; data: PersonalTaxReturnData }>(
-        externalData,
-        `${nationalId}.assigneeTaxReturn`,
-      )
-    : getValueViaPath<{ status: 'success'; data: PersonalTaxReturnData }>(
-        externalData,
-        'getPersonalTaxReturn',
-      )
+  if (nationalId) {
+    const entry = externalData[
+      assigneeExternalDataKey(nationalId, 'assigneeTaxReturn')
+    ] as { status?: string; data?: PersonalTaxReturnData } | undefined
+    if (!entry || entry.status !== 'success') return undefined
+    return entry.data
+  }
+  const result = getValueViaPath<{
+    status: 'success'
+    data: PersonalTaxReturnData
+  }>(externalData, 'getPersonalTaxReturn')
   if (!result || result.status !== 'success') return undefined
   return result.data as PersonalTaxReturnData | undefined
 }
@@ -376,18 +377,6 @@ export const isTaxReturnFiled = (
   const data = getPersonalTaxReturnData(externalData)
   if (!data) return false
   return data.handedInLastYear === true
-}
-
-/**
- * Applicant filed a tax return within the last five years but not last year. They must
- * file last year's return before applying, so we route them to a terminal info state.
- */
-export const mustFileTaxReturnBeforeApplying = (
-  application: Application,
-): boolean => {
-  const data = getPersonalTaxReturnData(application.externalData)
-  if (!data) return false
-  return data.handedInLastFiveYears === true && data.handedInLastYear === false
 }
 
 export const hasHouseholdMembers = (answers: FormValue): boolean =>

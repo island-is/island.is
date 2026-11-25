@@ -27,7 +27,6 @@ import {
   Form,
   HeadWithSocialSharing,
   Sticky,
-  WatsonChatPanel,
 } from '@island.is/web/components'
 import { Webreader } from '@island.is/web/components'
 import {
@@ -49,8 +48,6 @@ import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import { webRichText } from '@island.is/web/utils/richText'
-
-import { defaultWatsonConfig, watsonConfig } from './config'
 
 interface LifeEventPageProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
@@ -104,10 +101,6 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
   }, [n, overviewUrl])
 
   const socialImage = lifeEvent?.featuredImage ?? lifeEvent?.image
-
-  const chatConfig =
-    watsonConfig[locale]?.[lifeEvent?.id as string] ||
-    defaultWatsonConfig[locale]
 
   return (
     <Box paddingBottom={[2, 2, 10]}>
@@ -291,7 +284,6 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
           )}
         </GridRow>
       </GridContainer>
-      {chatConfig && <WatsonChatPanel {...chatConfig} />}
     </Box>
   )
 }

@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'services-auth-delegation-api',
   preset: './jest.preset.js',
@@ -7,6 +6,8 @@ module.exports = {
   globals: {},
   testTimeout: 10000,
   testEnvironment: 'node',
+  // Serial: every setupWithAuth recreates the tables in the one shared test_db.
+  maxWorkers: 1,
   globalSetup: `${__dirname}/test/globalSetup.ts`,
   globalTeardown: `${__dirname}/test/globalTeardown.ts`,
   transform: {

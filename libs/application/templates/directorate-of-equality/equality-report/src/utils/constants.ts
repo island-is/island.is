@@ -50,6 +50,7 @@ export enum ApiActions {
   getActiveEqualityReport = 'getActiveEqualityReport',
   getEqualityReportTemplateDocx = 'getEqualityReportTemplateDocx',
   getPreviousEqualityReportContent = 'getPreviousEqualityReportContent',
+  getPreviousEqualityReportPdf = 'getPreviousEqualityReportPdf',
   createEqualityDraft = 'createEqualityDraft',
   submitEqualityDraft = 'submitEqualityDraft',
   getReportComments = 'getReportComments',

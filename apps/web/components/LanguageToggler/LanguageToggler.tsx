@@ -164,24 +164,19 @@ export const LanguageToggler = ({
       }
     }
 
-    // Special case for grants since it's a custom page and doesn't have slugs or title in english
-    if ((type as string) === 'grantsplazasearch') {
-      title = {
-        is: 'Styrkjatorg - Leit',
-        en: 'Grantsplaza - Search',
-      }
-    }
-
-    if ((type as string) === 'grantsplaza') {
-      title = {
-        is: 'Styrkjatorg',
-        en: 'Grantsplaza',
-      }
-
+    // Static CustomPage root routes take no slug/id — the entry has no real
+    // Contentful slug or title, so skip slug matching and navigate directly
+    const staticCustomPageTypes: LinkType[] = [
+      'grantsplaza',
+      'grantsplazasearch',
+      'openinvoices',
+    ]
+    if (staticCustomPageTypes.includes(type as LinkType)) {
       return goToOtherLanguagePage(
-        linkResolver('grantsplaza', [], otherLanguage).href,
+        linkResolver(type as LinkType, [], otherLanguage).href,
       )
     }
+
     // Some content models are set up such that a slug is generated from the title
     // Unfortunately, Contentful generates slug for both locales which frequently
     // results in bogus english content. Therefore we check whether the other language has a title as well.
@@ -249,6 +244,30 @@ export const LanguageToggler = ({
     <ButtonElement {...buttonElementProps}>{t.otherLanguageName}</ButtonElement>
   )
 
+  // The confirm button is hidden unless a text is set for it in the CMS
+  const confirmButtonText = gn('switchToEnglishModalConfirmButtonText', '')
+
+  const onDialogConfirm = () => {
+    const href: string = gn('switchToEnglishModalConfirmButtonHref', '')
+    if (href.startsWith('/') && !href.startsWith('//')) {
+      goToOtherLanguagePage(href)
+      return
+    }
+    if (href) {
+      try {
+        const url = new URL(href)
+        // Only allow external http(s) links, never executable schemes like javascript:
+        if (url.protocol === 'https:' || url.protocol === 'http:') {
+          window.location.href = url.href
+          return
+        }
+      } catch {
+        // Invalid URL, fall back to the homepage
+      }
+    }
+    goToOtherLanguagePage(linkResolver('homepage', [], otherLanguage).href)
+  }
+
   const Dialog = (
     <DialogPrompt
       baseId={dialogId}
@@ -260,11 +279,12 @@ export const LanguageToggler = ({
       )}
       ariaLabel="Confirm switching to english"
       disclosureElement={Disclosure}
-      onConfirm={() => {
-        goToOtherLanguagePage(linkResolver('homepage', [], otherLanguage).href)
-      }}
-      buttonTextConfirm="Go to home page"
-      buttonTextCancel="Keep viewing"
+      onConfirm={onDialogConfirm}
+      buttonTextConfirm={confirmButtonText || undefined}
+      buttonTextCancel={gn(
+        'switchToEnglishModalCancelButtonText',
+        'Keep viewing',
+      )}
     />
   )
 

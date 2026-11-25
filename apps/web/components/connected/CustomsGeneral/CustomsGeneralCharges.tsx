@@ -6,10 +6,9 @@ import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { GET_CUSTOMS_GENERAL_CHARGES } from '@island.is/web/screens/queries/CustomsGeneral'
-import { formatCurrency } from '@island.is/web/utils/currency'
 
 import { CustomsGeneralDateTable, toApiDate } from './CustomsGeneralDateTable'
-import { formatValidityDate } from './customsGeneralUtils'
+import { formatNumber, formatValidityDate } from './customsGeneralUtils'
 import { m } from './translation.strings'
 import { useDetailViewBack } from './useDetailViewBack'
 import * as styles from './CustomsGeneralCharges.css'
@@ -25,6 +24,15 @@ interface ChargeItem {
 }
 
 const LABEL_WIDTH = 220
+
+/**
+ * The API uses both '0' and null to mean "no rate set", and never populates the
+ * amount and the percentage on the same charge.
+ */
+const hasRate = (value: string): boolean => {
+  const parsed = parseFloat(value)
+  return !isNaN(parsed) && parsed !== 0
+}
 
 interface DetailViewProps {
   item: ChargeItem
@@ -104,7 +112,7 @@ const ChargeDetailView = ({ item, date, onBack }: DetailViewProps) => {
           </Box>
         )}
 
-        {item.taxtiUpphaed && !isNaN(parseFloat(item.taxtiUpphaed)) && (
+        {hasRate(item.taxtiUpphaed) && (
           <Box
             display="flex"
             flexDirection="row"
@@ -114,11 +122,14 @@ const ChargeDetailView = ({ item, date, onBack }: DetailViewProps) => {
             <Box style={{ minWidth: LABEL_WIDTH }}>
               <Text fontWeight="semiBold">{formatMessage(m.chargesTaxti)}</Text>
             </Box>
-            <Text>{formatCurrency(parseFloat(item.taxtiUpphaed))}</Text>
+            <Text>{`${formatNumber(item.taxtiUpphaed, activeLocale, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })} kr.`}</Text>
           </Box>
         )}
 
-        {item.taxtiProsenta && item.taxtiProsenta !== '0' && (
+        {hasRate(item.taxtiProsenta) && (
           <Box
             display="flex"
             flexDirection="row"
@@ -128,7 +139,10 @@ const ChargeDetailView = ({ item, date, onBack }: DetailViewProps) => {
             <Box style={{ minWidth: LABEL_WIDTH }}>
               <Text fontWeight="semiBold">{formatMessage(m.chargesTaxti)}</Text>
             </Box>
-            <Text>{item.taxtiProsenta} %</Text>
+            <Text>{`${formatNumber(item.taxtiProsenta, activeLocale, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })} %`}</Text>
           </Box>
         )}
       </Box>

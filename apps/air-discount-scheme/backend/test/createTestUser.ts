@@ -13,11 +13,10 @@ export function createTestUser(
     postalcode: postalCode,
     address: 'Testvík 2',
     city: 'Prufuborg',
-    firstName: 'Prófi',
+    givenName: 'Prófi Júnitt',
+    fullName: 'Prófi Júnitt Prófsson',
     fund,
     gender: 'kk',
-    lastName: 'Prófsson',
-    middleName: 'Júnitt',
     nationalId: nationalId,
   }
 }

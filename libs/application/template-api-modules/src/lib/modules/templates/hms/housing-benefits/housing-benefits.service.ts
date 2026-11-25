@@ -56,8 +56,10 @@ import { NationalRegistryV3Service } from '../../../shared/api/national-registry
 import { AttachmentS3Service } from '../../../shared/services'
 import { coreErrorMessages } from '@island.is/application/core'
 import {
+  assigneeTaxReturnRequiredMessages,
   getAssigneeApproverDisplayName,
   getAssigneeNationalIds,
+  taxReturnRequiredMessages,
 } from '@island.is/application/templates/hms/housing-benefits'
 import { FetchError } from '@island.is/clients/middlewares'
 import { toHousingBenefitsSubmissionTemplateApiError } from './utils'
@@ -473,6 +475,10 @@ export class HousingBenefitsService extends BaseTemplateApiService {
    * When `devMockSettings` (or legacy mock) selects a tax mock variant, returns
    * a successful mock payload immediately so HMS outages / 500s cannot fail the
    * provider or leave the UI without tax status. Otherwise calls the real API.
+   *
+   * Throws a `TemplateApiError` when the applicant has filed within the last
+   * five years but not last year, so the prereq form surfaces the error inline
+   * and lets the user retry once they've filed at Skatturinn.
    */
   async getPersonalTaxReturn({
     application,
@@ -480,25 +486,48 @@ export class HousingBenefitsService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps) {
     const taxMockMode = getPersonalTaxMockMode(application)
 
+    let result: { handedInLastYear: boolean; handedInLastFiveYears: boolean }
     if (isPersonalTaxMockEnabled(taxMockMode)) {
       this.logger.debug(`Using mock personal tax return (${taxMockMode})`)
-      return resolveMockPersonalTaxReturn(taxMockMode)
+      result = resolveMockPersonalTaxReturn(taxMockMode)
+    } else {
+      try {
+        result = await this.fetchPersonalTaxReturnFromApi(auth)
+      } catch (error) {
+        if (error instanceof TemplateApiError) {
+          throw error
+        }
+        this.logger.error('Failed to fetch personal tax return', error)
+        throw new TemplateApiError(
+          coreErrorMessages.defaultTemplateApiError,
+          500,
+        )
+      }
     }
 
-    try {
-      return await this.fetchPersonalTaxReturnFromApi(auth)
-    } catch (error) {
-      if (error instanceof TemplateApiError) {
-        throw error
-      }
-      this.logger.error('Failed to fetch personal tax return', error)
-      throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
+    if (
+      result.handedInLastFiveYears === true &&
+      result.handedInLastYear === false
+    ) {
+      throw new TemplateApiError(
+        {
+          title: taxReturnRequiredMessages.title,
+          summary: taxReturnRequiredMessages.summary,
+        },
+        400,
+      )
     }
+
+    return result
   }
 
   /**
    * Assignee tax dataprovider — same mock short-circuit as
    * {@link getPersonalTaxReturn}, keyed off assignee-prefixed mock answers.
+   *
+   * Throws a `TemplateApiError` when the assignee has filed within the last five
+   * years but not last year, so the prereq form surfaces the error inline and
+   * lets the user retry once they've filed at Skatturinn.
    */
   async getAssigneePersonalTaxReturn({
     application,
@@ -509,20 +538,39 @@ export class HousingBenefitsService extends BaseTemplateApiService {
       auth.nationalId,
     )
 
+    let result: { handedInLastYear: boolean; handedInLastFiveYears: boolean }
     if (isPersonalTaxMockEnabled(taxMockMode)) {
       this.logger.debug(`Using mock assignee tax return (${taxMockMode})`)
-      return resolveMockPersonalTaxReturn(taxMockMode)
+      result = resolveMockPersonalTaxReturn(taxMockMode)
+    } else {
+      try {
+        result = await this.fetchPersonalTaxReturnFromApi(auth)
+      } catch (error) {
+        if (error instanceof TemplateApiError) {
+          throw error
+        }
+        this.logger.error('Failed to fetch assignee tax return', error)
+        throw new TemplateApiError(
+          coreErrorMessages.defaultTemplateApiError,
+          500,
+        )
+      }
     }
 
-    try {
-      return await this.fetchPersonalTaxReturnFromApi(auth)
-    } catch (error) {
-      if (error instanceof TemplateApiError) {
-        throw error
-      }
-      this.logger.error('Failed to fetch assignee tax return', error)
-      throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
+    if (
+      result.handedInLastFiveYears === true &&
+      result.handedInLastYear === false
+    ) {
+      throw new TemplateApiError(
+        {
+          title: assigneeTaxReturnRequiredMessages.title,
+          summary: assigneeTaxReturnRequiredMessages.summary,
+        },
+        400,
+      )
     }
+
+    return result
   }
 
   async getHouseholdMembers(props: TemplateApiModuleActionProps) {

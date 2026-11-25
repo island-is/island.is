@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 import {
   FormProvider,
   useFormContext,
@@ -7,11 +7,12 @@ import {
 } from 'react-hook-form'
 import { YES } from '@island.is/application/core'
 import { RecordObject } from '@island.is/application/types'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import type { SalaryAnalysisOutlierDto } from '@island.is/clients/directorate-of-equality'
 import { messages } from '../../lib/messages'
+import { cloneOutlierGroups } from '../../utils/outlierGroups'
 import type { OutlierGroupAnswer } from '../../utils/outlierGroups'
 import { OutlierEditor } from './OutlierEditor'
 
@@ -29,6 +30,10 @@ type Props = {
   outlierGroupsFormMethods?: UseFormReturn<{
     salaryAnalysis: { outlierGroups: OutlierGroupAnswer[] }
   }>
+  onSaveGroups: (groups: OutlierGroupAnswer[]) => Promise<boolean>
+  // What the screen was seeded with — already persisted, so the editor's save
+  // buttons open in their "Vistað" state.
+  initialSavedGroups: OutlierGroupAnswer[]
 }
 
 export const OutlierGroupPanel: FC<Props> = ({
@@ -36,6 +41,8 @@ export const OutlierGroupPanel: FC<Props> = ({
   hidePostponeCheckbox,
   errors,
   outlierGroupsFormMethods,
+  onSaveGroups,
+  initialSavedGroups,
 }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
@@ -44,6 +51,15 @@ export const OutlierGroupPanel: FC<Props> = ({
   const postponed: string[] =
     useWatch({ name: 'salaryAnalysis.postponed' }) ?? []
   const isPostponed = postponed.includes(YES)
+
+  // The plan as last written to the answers buffer, held here rather than in
+  // OutlierEditor: ticking the postpone checkbox unmounts the editor while the
+  // form values live on in the parent form, so the editor's own copy would
+  // reopen as the visit-start plan and the next removal would write that over
+  // everything saved since. Cloned, so nothing here is aliased to the form.
+  const [savedGroups, setSavedGroups] = useState(() =>
+    cloneOutlierGroups(initialSavedGroups),
+  )
 
   useEffect(() => {
     if (hidePostponeCheckbox && postponed.length > 0) {
@@ -54,8 +70,32 @@ export const OutlierGroupPanel: FC<Props> = ({
 
   if (outliers.length === 0) return null
 
+  // One element, two scopes: draft phase wraps it in the local form, the review
+  // states leave it on the ambient one.
+  const editor = (
+    <OutlierEditor
+      outliers={outliers}
+      errors={errors}
+      mode={hidePostponeCheckbox ? 'postponed' : 'draft'}
+      onSaveGroups={onSaveGroups}
+      savedGroups={savedGroups}
+      onSavedGroupsChange={setSavedGroups}
+    />
+  )
+
   return (
     <Box>
+      <Box display="flex" justifyContent="flexEnd" marginBottom={4}>
+        <a
+          href={formatMessage(m.instructionsLink)}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Button variant="utility" icon="open" iconType="outline" as="span">
+            {formatMessage(m.instructionsLabel)}
+          </Button>
+        </a>
+      </Box>
       {!hidePostponeCheckbox && (
         <Box
           background="blue100"
@@ -81,19 +121,9 @@ export const OutlierGroupPanel: FC<Props> = ({
 
       {!isPostponed &&
         (outlierGroupsFormMethods ? (
-          <FormProvider {...outlierGroupsFormMethods}>
-            <OutlierEditor
-              outliers={outliers}
-              errors={errors}
-              mode={hidePostponeCheckbox ? 'postponed' : 'draft'}
-            />
-          </FormProvider>
+          <FormProvider {...outlierGroupsFormMethods}>{editor}</FormProvider>
         ) : (
-          <OutlierEditor
-            outliers={outliers}
-            errors={errors}
-            mode={hidePostponeCheckbox ? 'postponed' : 'draft'}
-          />
+          editor
         ))}
     </Box>
   )

@@ -2,10 +2,10 @@ import type { ReactNode } from 'react'
 import { MockedProvider } from '@apollo/client/testing'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import type {
-  Case,
   CaseFile,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -79,7 +79,7 @@ describe('RulingOrderFileRow - send in-court appeal to Court of appeals', () => 
       ...mockCase(CaseType.INDICTMENT),
       state: CaseState.RECEIVED,
       rulingOrderAppealCases: [inCourtAppealCase],
-    } as Case
+    } as WorkingCase
 
     const wrapInProviders = (children: ReactNode) => (
       <MockedProvider addTypename={false}>
@@ -229,7 +229,7 @@ describe('RulingOrderFileRow - hide appeal action for an accepted party', () => 
         },
       ],
       rulingOrderAppealCases: [],
-    } as unknown as Case
+    } as unknown as WorkingCase
 
     return render(
       <MockedProvider addTypename={false}>
@@ -331,7 +331,7 @@ describe('RulingOrderFileRow - withdraw an in-court appeal', () => {
           appealedInCourt: true,
         },
       ],
-    } as unknown as Case
+    } as unknown as WorkingCase
 
     return render(
       <MockedProvider addTypename={false}>
@@ -406,7 +406,7 @@ describe('RulingOrderFileRow - ruling order pronounced orally', () => {
       state: CaseState.RECEIVED,
       judge: mockJudge,
       rulingOrderAppealCases: [],
-    } as Case
+    } as WorkingCase
 
     return render(
       <MockedProvider addTypename={false}>

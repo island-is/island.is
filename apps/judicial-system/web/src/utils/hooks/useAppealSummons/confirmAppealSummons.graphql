@@ -1,0 +1,6 @@
+mutation ConfirmAppealSummons($input: ConfirmAppealSummonsInput!) {
+  confirmAppealSummons(input: $input) {
+    id
+    confirmedDate
+  }
+}

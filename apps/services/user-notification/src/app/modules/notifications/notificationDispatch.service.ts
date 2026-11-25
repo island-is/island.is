@@ -51,11 +51,6 @@ export class NotificationDispatchService {
       return
     }
 
-    this.logger.info(`Notification content for message (${messageId})`, {
-      messageId,
-      ...notification,
-    })
-
     for (const token of tokens) {
       try {
         await this.sendNotificationToToken(

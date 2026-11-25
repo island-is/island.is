@@ -1,4 +1,4 @@
-import { PDFDocument, StandardFonts } from 'pdf-lib'
+import { PDFDocument, PDFPage, StandardFonts } from 'pdf-lib'
 
 import { PdfDocument } from './pdf'
 
@@ -93,5 +93,33 @@ describe('PdfDocument mergeDocument scaling', () => {
       const { width, height } = p.getSize()
       expectA4Size(width, height)
     })
+  })
+
+  it('does not add any page when a later page of the merged document cannot be scaled', async () => {
+    const sourcePdf = await PDFDocument.create()
+    sourcePdf.addPage([400, 500])
+    sourcePdf.addPage([400, 500])
+    const sourceBuffer = Buffer.from(await sourcePdf.save())
+
+    const doc = await PdfDocument()
+    doc.addPage()
+    const pageCountBeforeMerge = doc.getPageCount()
+
+    // The first page scales fine, the second one blows up mid-merge
+    const scaleAnnotations = jest.spyOn(PDFPage.prototype, 'scaleAnnotations')
+    scaleAnnotations.mockImplementationOnce(() => undefined)
+    scaleAnnotations.mockImplementationOnce(() => {
+      throw new Error('Cannot scale page')
+    })
+
+    try {
+      await expect(doc.mergeDocument(sourceBuffer)).rejects.toThrow(
+        'Cannot scale page',
+      )
+    } finally {
+      scaleAnnotations.mockRestore()
+    }
+
+    expect(doc.getPageCount()).toBe(pageCountBeforeMerge)
   })
 })

@@ -325,6 +325,12 @@ export const coreMessages = defineMessages({
       '* Krafa hefur verið stofnuð og verið send í netbanka. \n\n * Til að fá þjónustuna sem sótt er um þarf að greiða kröfuna. \n\n * Verði krafan ekki greidd innan tveggja virkra daga mun umsóknin verða felld niður.',
     description: 'Description for payment pending invoice',
   },
+  interactiveTableSelectAll: {
+    id: 'application.system:core.interactiveTable.selectAll',
+    defaultMessage: 'Velja allar línur',
+    description:
+      'Accessible label for the checkbox that selects every row of an interactive table',
+  },
 })
 
 export const coreDefaultFieldMessages = defineMessages({
@@ -651,6 +657,19 @@ export const coreErrorMessages = defineMessages({
     defaultMessage:
       'Flokkur "{categoryName}" á ökukírteini er útrunninn eða rennur út innan 6 mánaða',
     description: 'Driving License duplicate entry validation error',
+  },
+  drivingLicensePhotoLookupFailedTitle: {
+    id: 'application.system:core.fetch.data.drivingLicensePhotoLookupFailedTitle',
+    defaultMessage: 'Ekki tókst að sækja ljósmynd',
+    description:
+      'Driving License photo lookup failed in the license or ID registry',
+  },
+  drivingLicensePhotoLookupFailedSummary: {
+    id: 'application.system:core.fetch.data.drivingLicensePhotoLookupFailedSummary',
+    defaultMessage:
+      'Ekki náðist samband við ökuskírteinaskrá eða skilríkjaskrá til að sækja ljósmyndina þína. Vinsamlegast reyndu aftur eftir smá stund. Ef villan endurtekur sig getur þú mætt með passamynd á ljósmyndapappír (4,5 cm x 3,5 cm) á næsta sýslumannsembætti.',
+    description:
+      'Driving License photo lookup failed in the license or ID registry',
   },
   drivingLicenseNoTeachingRightsTitle: {
     id: 'application.system:core.fetch.data.drivingLicenseNoTeachingRightsTitle',

@@ -1,6 +1,7 @@
 import { ApolloError } from '@apollo/client'
 import {
   InteractiveTable,
+  type InteractiveTableProps,
   type ColumnDef,
   type OnChangeFn,
   type Row,
@@ -51,6 +52,8 @@ type PortalTableProps<TData extends object> = {
   defaultSorting?: SortingState
   srCaption?: string
   meta?: TableMeta<TData>
+  /** Box overrides for the header, body and footer cells, e.g. to tighten the cell padding */
+  cellBox?: InteractiveTableProps<TData>['cellBox']
 } & (PortalWithExpander<TData> | PortalWithoutExpander)
 
 export const PortalTable = <TData extends object>({
@@ -69,6 +72,7 @@ export const PortalTable = <TData extends object>({
   defaultSorting,
   srCaption,
   meta,
+  cellBox,
 }: PortalTableProps<TData>) => {
   const { formatMessage } = useLocale()
 
@@ -97,6 +101,7 @@ export const PortalTable = <TData extends object>({
     srCaption: srCaption ?? formatMessage(m.tableCaption),
     sortHint: formatMessage(m.tableSortHint),
     meta,
+    cellBox,
   }
 
   if (renderExpandedRow && mobileTitleKey) {

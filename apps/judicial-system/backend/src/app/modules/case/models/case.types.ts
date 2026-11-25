@@ -21,6 +21,7 @@ export type MinimalCase = Omit<
   | 'sharedWithProsecutorsOffice'
   | 'courtRecordSignatory'
   | 'indictmentReviewer'
+  | 'appealProsecutor'
   | 'indictmentApprover'
   | 'civilClaimants'
   | 'victims'

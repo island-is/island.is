@@ -1,13 +1,13 @@
-import type { AppContext, AppProps } from 'next/app'
+import type { AppContext } from 'next/app'
 import App from 'next/app'
 import Head from 'next/head'
 import { ApolloProvider } from '@apollo/client'
 
-import type { Query, QueryGetTranslationsArgs } from '@island.is/api/schema'
 import { Box, ToastContainer } from '@island.is/island-ui/core'
 import { getPublicRuntimeEnv } from '@island.is/judicial-system-web/environments/runtimeEnvironment'
 import client from '@island.is/judicial-system-web/graphql/client'
 import {
+  ErrorBoundary,
   FeatureProvider,
   FormProvider,
   Header as HeaderContainer,
@@ -16,7 +16,7 @@ import {
   UserProvider,
   ViewportProvider,
 } from '@island.is/judicial-system-web/src/components'
-import { GET_TRANSLATIONS, LocaleProvider } from '@island.is/localization'
+import { LocaleProvider } from '@island.is/localization'
 import { userMonitoring } from '@island.is/user-monitoring'
 
 if (typeof window !== 'undefined') {
@@ -32,55 +32,17 @@ if (typeof window !== 'undefined') {
   }
 }
 
-const getTranslationStrings = (apolloClient: typeof client) => {
-  if (!apolloClient) {
-    return null
-  }
-  return apolloClient
-    .query<Query, QueryGetTranslationsArgs>({
-      query: GET_TRANSLATIONS,
-      variables: {
-        input: {
-          namespaces: [
-            'judicial.system.core',
-            'judicial.system.restriction_cases',
-            'judicial.system.investigation_cases',
-            'judicial.system.indictments',
-          ],
-          lang: 'is',
-        },
-      },
-    })
-    .then((content) => {
-      return content?.data?.getTranslations
-    })
-    .catch((error) => {
-      console.error(`Error fetching translations: ${error}`)
-    })
-}
-
-interface Props extends AppProps {
-  translations: { [key: string]: string }
-}
-
-class JudicialSystemApplication extends App<Props> {
+class JudicialSystemApplication extends App {
+  // Opting every page into server rendering. Without this, Next statically
+  // exports the pages at build time, and the runtime env that _document
+  // renders from process.env is baked into the build instead of being read
+  // on each request.
   static async getInitialProps(appContext: AppContext) {
-    const { ctx } = appContext
-    const pageProps = await App.getInitialProps(appContext)
-    const customContext = {
-      ...ctx,
-      apolloClient: client,
-    }
-    const translations = await getTranslationStrings(customContext.apolloClient)
-
-    return {
-      ...pageProps,
-      translations,
-    }
+    return App.getInitialProps(appContext)
   }
 
   render() {
-    const { Component, pageProps, translations } = this.props
+    const { Component, pageProps, router } = this.props
 
     return (
       <>
@@ -99,13 +61,18 @@ class JudicialSystemApplication extends App<Props> {
           <ApolloProvider client={client}>
             <FeatureProvider>
               <UserProvider>
-                <LocaleProvider locale="is" messages={translations || {}}>
+                <LocaleProvider locale="is" messages={{}}>
                   <LawyerRegistryProvider>
                     <ServiceInterruptionBanner />
                     <FormProvider>
                       <HeaderContainer />
                       <Box component="main">
-                        <Component {...pageProps} />
+                        {/* Keyed by route so a render error on one page
+                            does not keep the fallback up after the user
+                            navigates client-side to a healthy page */}
+                        <ErrorBoundary key={router.asPath}>
+                          <Component {...pageProps} />
+                        </ErrorBoundary>
                       </Box>
                       <ToastContainer />
                     </FormProvider>

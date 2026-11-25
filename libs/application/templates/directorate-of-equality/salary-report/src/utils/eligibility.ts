@@ -5,10 +5,22 @@ import {
   salaryAnalysisNeedsImprovementPlan,
 } from './salaryAnalysisNavigation'
 
-export const hasActiveEqualityReport = (ctx: ApplicationContext): boolean =>
+/**
+ * DMR's machine-readable reason for refusing a salary report, shared by the
+ * pre-flight check (`GET reports/salary/eligibility`) and the submit itself.
+ * It is the only reason left since DMR dropped the six-month renewal window.
+ */
+export const SALARY_INELIGIBILITY_MISSING_EQUALITY_REPORT =
+  'MISSING_EQUALITY_REPORT'
+
+// The guard out of PREREQUISITES. Defaults to false, but the provider it reads
+// throws rather than answering on an outage, so the transition is never
+// evaluated against externalData that failed to arrive — the default only
+// covers a shape DMR never sends.
+export const isSalaryReportEligible = (ctx: ApplicationContext): boolean =>
   getValueViaPath<boolean>(
     ctx.application.externalData,
-    'activeEqualityReport.data.hasActiveEqualityReport',
+    'salaryReportEligibility.data.eligible',
     false,
   ) === true
 

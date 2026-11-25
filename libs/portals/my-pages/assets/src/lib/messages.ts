@@ -277,6 +277,19 @@ export const farmerLandsMessages = defineMessages({
     id: 'sp.farmer-lands:subsidy-unit-price',
     defaultMessage: 'Einingaverð',
   },
+  // Subsidies stats card
+  subsidyStatsGrossAmount: {
+    id: 'sp.farmer-lands:subsidy-stats-gross-amount',
+    defaultMessage: 'Heildarupphæð',
+  },
+  subsidyStatsOffset: {
+    id: 'sp.farmer-lands:subsidy-stats-offset',
+    defaultMessage: 'Samtals skuldajöfnun',
+  },
+  subsidyStatsNetPaid: {
+    id: 'sp.farmer-lands:subsidy-stats-net-paid',
+    defaultMessage: 'Samtals útborgað',
+  },
   noFarmerLandsTitle: {
     id: 'sp.farmer-lands:no-farmer-lands-title',
     defaultMessage: 'Engar jarðir skráðar',

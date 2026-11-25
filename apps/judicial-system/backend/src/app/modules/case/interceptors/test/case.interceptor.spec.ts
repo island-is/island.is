@@ -1,18 +1,31 @@
 import { firstValueFrom, of } from 'rxjs'
+import type { Transaction } from 'sequelize'
+import type { Sequelize } from 'sequelize-typescript'
 
 import { CallHandler, ExecutionContext } from '@nestjs/common'
 
 import {
+  AppealCaseRulingDecision,
+  AppealCaseState,
+  AppealEventType,
+  AppealRulingType,
+  CaseFileCategory,
+  CaseFileState,
   CaseIndictmentRulingDecision,
+  CaseState,
   CaseType,
   DefendantEventType,
   getIndictmentAppealDeadline,
   InstitutionType,
   StringType,
   UserRole,
+  VerdictAppealStatus,
 } from '@island.is/judicial-system/types'
 
+import { getOrCreateTransaction } from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
 import {
+  Case,
   CaseRepositoryService,
   Defendant,
   DefendantEventLog,
@@ -42,9 +55,12 @@ const makeDefendant = (
   isSentToPrisonAdmin: false,
 })
 
-const makeCase = (defendants: ReturnType<typeof makeDefendant>[]) => ({
+const makeCase = (
+  defendants: ReturnType<typeof makeDefendant>[],
+  type: CaseType = CaseType.INDICTMENT,
+) => ({
   toJSON: () => ({}),
-  type: CaseType.INDICTMENT,
+  type,
   defendants,
   caseFiles: undefined,
   prosecutor: undefined,
@@ -191,6 +207,118 @@ describe('CaseInterceptor - getDefenceUserDefendants', () => {
     })
   })
 
+  describe('when the defence user is only confirmed as an appeal advocate', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const theCase = makeCase([
+        {
+          ...makeDefendant(undefined),
+          id: 'own_defendant',
+          isDefenderChoiceConfirmed: false,
+          isAppealDefenderConfirmed: true,
+          isAppealDefenderWaived: false,
+          appealDefenderNationalId: nationalId,
+          toJSON: () => ({
+            id: 'own_defendant',
+            appealDefenderNationalId: nationalId,
+          }),
+        },
+        {
+          ...makeDefendant(otherNationalId),
+          id: 'other_defendant',
+          toJSON: () => ({
+            id: 'other_defendant',
+            defenderNationalId: otherNationalId,
+          }),
+        },
+      ])
+
+      mockRequest.mockImplementationOnce(() => ({
+        user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+      }))
+      mockHandle.mockReturnValueOnce(of(theCase))
+
+      then = await givenWhenThen(theCase)
+    })
+
+    it('returns only the appeal-confirmed defendant', () => {
+      expect(then.result.defendants).toHaveLength(1)
+      expect(then.result.defendants[0]).toMatchObject({
+        id: 'own_defendant',
+        appealDefenderNationalId: nationalId,
+      })
+    })
+  })
+
+  describe('when the defence user has one district and one appeal defendant', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const theCase = makeCase([
+        {
+          ...makeDefendant(nationalId, [
+            makeEventLog(DefendantEventType.INDICTMENT_DISMISSED, dismissedAt),
+          ]),
+          id: 'district_defendant',
+          toJSON: () => ({
+            id: 'district_defendant',
+            defenderNationalId: nationalId,
+          }),
+        },
+        {
+          ...makeDefendant(undefined),
+          id: 'appeal_defendant',
+          isDefenderChoiceConfirmed: false,
+          isAppealDefenderConfirmed: true,
+          isAppealDefenderWaived: false,
+          appealDefenderNationalId: nationalId,
+          toJSON: () => ({
+            id: 'appeal_defendant',
+            appealDefenderNationalId: nationalId,
+          }),
+        },
+        {
+          ...makeDefendant(otherNationalId),
+          id: 'other_defendant',
+          toJSON: () => ({
+            id: 'other_defendant',
+            defenderNationalId: otherNationalId,
+          }),
+        },
+      ])
+
+      mockRequest.mockImplementationOnce(() => ({
+        user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+      }))
+      mockHandle.mockReturnValueOnce(of(theCase))
+
+      then = await givenWhenThen(theCase)
+    })
+
+    it('returns both represented defendants and excludes co-defendants', () => {
+      expect(then.result.defendants).toHaveLength(2)
+      expect(then.result.defendants).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ id: 'district_defendant' }),
+          expect.objectContaining({
+            id: 'appeal_defendant',
+            appealDefenderNationalId: nationalId,
+          }),
+        ]),
+      )
+      expect(then.result.defendants).not.toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ id: 'other_defendant' }),
+        ]),
+      )
+    })
+
+    it('does not complete the case from the district dismissal alone', () => {
+      expect(then.result).not.toMatchObject({ state: CaseState.COMPLETED })
+    })
+  })
+
   describe('when the defence user has confirmed defendants but none are dismissed or cancelled', () => {
     let then: Then
 
@@ -291,6 +419,69 @@ describe('CaseInterceptor - getDefenceUserDefendants', () => {
           (d) => d.defenderNationalId === nationalId,
         ),
       ).toBe(true)
+    })
+  })
+
+  describe('request case — defence user assigned to one of multiple defendants', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const assignedDefendant = {
+        ...makeDefendant(nationalId),
+        // R-cases leave choice/confirmed null (no indictment confirm workflow)
+        isDefenderChoiceConfirmed: undefined,
+      }
+      const otherDefendant = {
+        ...makeDefendant(otherNationalId),
+        isDefenderChoiceConfirmed: undefined,
+      }
+      const theCase = makeCase(
+        [assignedDefendant, otherDefendant],
+        CaseType.CUSTODY,
+      )
+
+      mockRequest.mockImplementationOnce(() => ({
+        user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+      }))
+      mockHandle.mockReturnValueOnce(of(theCase))
+
+      then = await givenWhenThen(theCase)
+    })
+
+    it('returns all defendants — request hearings cover the whole case', () => {
+      expect(then.result.defendants).toHaveLength(2)
+      expect(then.result.defendants.map((d) => d.defenderNationalId)).toEqual([
+        nationalId,
+        otherNationalId,
+      ])
+    })
+  })
+
+  describe('request case — defence user with no matching defendant defenderNationalId', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const theCase = makeCase(
+        [
+          {
+            ...makeDefendant(otherNationalId),
+            isDefenderChoiceConfirmed: undefined,
+          },
+        ],
+        CaseType.TRAVEL_BAN,
+      )
+
+      mockRequest.mockImplementationOnce(() => ({
+        user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+      }))
+      mockHandle.mockReturnValueOnce(of(theCase))
+
+      then = await givenWhenThen(theCase)
+    })
+
+    it('still returns all defendants', () => {
+      expect(then.result.defendants).toHaveLength(1)
+      expect(then.result.defendants[0].defenderNationalId).toBe(otherNationalId)
     })
   })
 
@@ -585,5 +776,897 @@ describe('CaseInterceptor - rulingModifiedHistory', () => {
     it('returns undefined for rulingModifiedHistory', () => {
       expect(then.result.rulingModifiedHistory).toBeUndefined()
     })
+  })
+})
+
+describe('CaseInterceptor - appeal ruling', () => {
+  const mockRequest = jest.fn()
+  const mockHandle = jest.fn()
+
+  const appealRuling = {
+    appealRulingDecision: AppealCaseRulingDecision.CHANGED,
+    appealConclusion: 'the appealed ruling is changed',
+    appealRulingModifiedHistory: 'the appeal ruling was corrected',
+    appealValidToDate: new Date('2024-02-01'),
+    isAppealCustodyIsolation: true,
+    appealIsolationToDate: new Date('2024-01-25'),
+  }
+  const withheldAppealRuling = {
+    appealRulingDecision: undefined,
+    appealConclusion: undefined,
+    appealRulingModifiedHistory: undefined,
+    appealValidToDate: undefined,
+    isAppealCustodyIsolation: undefined,
+    appealIsolationToDate: undefined,
+  }
+
+  const makeAppealCase = (id: string, appealState: AppealCaseState) => {
+    const appealCase = {
+      id,
+      appealState,
+      appealCaseNumber: '1/2024',
+      ...appealRuling,
+    }
+
+    return {
+      ...appealCase,
+      toJSON: () => appealCase,
+      appealEventLogs: undefined,
+    }
+  }
+
+  type AppealCaseResult = Partial<typeof appealRuling> & {
+    id: string
+    appealState: AppealCaseState
+    appealCaseNumber: string
+  }
+
+  interface Then {
+    result: {
+      appealCase: AppealCaseResult
+      rulingOrderAppealCases: AppealCaseResult[]
+    }
+    error: Error
+  }
+
+  let givenWhenThen: (
+    appealState: AppealCaseState,
+    currentUser: unknown,
+  ) => Promise<Then>
+
+  beforeEach(() => {
+    givenWhenThen = async (appealState, currentUser): Promise<Then> => {
+      const interceptor = new CaseInterceptor({
+        findOriginalAncestorId: (theCase) => Promise.resolve(theCase.id),
+      } as unknown as CaseRepositoryService)
+      const then = {} as Then
+
+      mockRequest.mockImplementationOnce(() => ({
+        user: { currentUser },
+      }))
+      mockHandle.mockReturnValueOnce(
+        of({
+          ...makeCase([]),
+          appealCase: makeAppealCase('case_level_appeal', appealState),
+          rulingOrderAppealCases: [
+            makeAppealCase('ruling_order_appeal', appealState),
+            makeAppealCase(
+              'completed_ruling_order_appeal',
+              AppealCaseState.COMPLETED,
+            ),
+          ],
+        }),
+      )
+
+      await firstValueFrom(
+        interceptor.intercept(
+          {
+            switchToHttp: () => ({ getRequest: mockRequest }),
+          } as unknown as ExecutionContext,
+          { handle: mockHandle } as unknown as CallHandler,
+        ),
+      )
+        .then((result) => (then.result = result as Then['result']))
+        .catch((error) => (then.error = error))
+
+      return then
+    }
+  })
+
+  describe.each([
+    AppealCaseState.APPEALED,
+    AppealCaseState.RECEIVED,
+    AppealCaseState.WITHDRAWN,
+  ])(
+    'when the user is a defence user and the appeal case is %s',
+    (appealState) => {
+      let then: Then
+
+      beforeEach(async () => {
+        then = await givenWhenThen(appealState, {
+          role: UserRole.DEFENDER,
+          nationalId,
+        })
+      })
+
+      it('withholds the ruling of the case level appeal', () => {
+        expect(then.result.appealCase).toMatchObject(withheldAppealRuling)
+      })
+
+      it('withholds the ruling of the ruling order appeal', () => {
+        expect(then.result.rulingOrderAppealCases[0]).toMatchObject(
+          withheldAppealRuling,
+        )
+      })
+
+      it('includes the ruling of a completed ruling order appeal', () => {
+        expect(then.result.rulingOrderAppealCases[1]).toMatchObject(
+          appealRuling,
+        )
+      })
+
+      it('includes the rest of the appeal cases', () => {
+        expect(then.result.appealCase).toMatchObject({
+          id: 'case_level_appeal',
+          appealState,
+          appealCaseNumber: '1/2024',
+        })
+        expect(then.result.rulingOrderAppealCases[0]).toMatchObject({
+          id: 'ruling_order_appeal',
+          appealState,
+          appealCaseNumber: '1/2024',
+        })
+      })
+    },
+  )
+
+  describe('when the user is a defence user and the appeal case is completed', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(AppealCaseState.COMPLETED, {
+        role: UserRole.DEFENDER,
+        nationalId,
+      })
+    })
+
+    it('includes the ruling of the case level appeal', () => {
+      expect(then.result.appealCase).toMatchObject(appealRuling)
+    })
+
+    it('includes the ruling of the ruling order appeal', () => {
+      expect(then.result.rulingOrderAppealCases[0]).toMatchObject(appealRuling)
+    })
+  })
+
+  describe.each([
+    [
+      'a prosecution user',
+      {
+        role: UserRole.PROSECUTOR,
+        nationalId,
+        institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
+      },
+    ],
+    [
+      'a prison system user',
+      {
+        role: UserRole.PRISON_SYSTEM_STAFF,
+        nationalId,
+        institution: { type: InstitutionType.PRISON },
+      },
+    ],
+    [
+      'a court of appeals user',
+      {
+        role: UserRole.COURT_OF_APPEALS_JUDGE,
+        nationalId,
+        institution: { type: InstitutionType.COURT_OF_APPEALS },
+      },
+    ],
+  ])(
+    'when the user is %s and the appeal case is not completed',
+    (_, currentUser) => {
+      let then: Then
+
+      beforeEach(async () => {
+        then = await givenWhenThen(AppealCaseState.RECEIVED, currentUser)
+      })
+
+      it('includes the ruling of the case level appeal', () => {
+        expect(then.result.appealCase).toMatchObject(appealRuling)
+      })
+
+      it('includes the ruling of the ruling order appeal', () => {
+        expect(then.result.rulingOrderAppealCases[0]).toMatchObject(
+          appealRuling,
+        )
+      })
+    },
+  )
+})
+
+describe('CaseInterceptor - verdict appeal outcome', () => {
+  const mockRequest = jest.fn()
+  const mockHandle = jest.fn()
+
+  const outcome = {
+    appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+    appealRulingType: AppealRulingType.VERDICT,
+    appealConclusion: 'the appealed judgment stands',
+    appealRulingModifiedHistory: 'the judgment was corrected',
+    appealRulingDate: new Date('2024-03-01'),
+  }
+  const withheldOutcome = {
+    appealRulingDecision: undefined,
+    appealRulingType: undefined,
+    appealConclusion: undefined,
+    appealRulingModifiedHistory: undefined,
+    appealRulingDate: undefined,
+  }
+
+  const makeFile = (id: string, category: CaseFileCategory) => {
+    const file = { id, category, state: CaseFileState.STORED_IN_RVG }
+
+    return { ...file, toJSON: () => file }
+  }
+
+  const courtOfAppealsUser = {
+    role: UserRole.COURT_OF_APPEALS_ASSISTANT,
+    nationalId,
+    institution: { type: InstitutionType.COURT_OF_APPEALS },
+  }
+
+  interface Then {
+    result: {
+      verdictAppealCase: Partial<typeof outcome> & {
+        id: string
+        appealState: AppealCaseState
+        appealCaseNumber: string
+        verdictAppealStatus: VerdictAppealStatus
+        statementDeadlines?: { id: string }[]
+      }
+      caseFiles: { id: string }[]
+    }
+  }
+
+  const givenWhenThen = async (
+    appealState: AppealCaseState,
+    currentUser: unknown,
+  ): Promise<Then> => {
+    const interceptor = new CaseInterceptor({
+      findOriginalAncestorId: (theCase) => Promise.resolve(theCase.id),
+    } as unknown as CaseRepositoryService)
+    const prosecutionDeadline = {
+      id: 'prosecution_deadline',
+      deadline: new Date('2026-09-14T00:00:00.000Z'),
+      toJSON() {
+        return {
+          id: 'prosecution_deadline',
+          deadline: new Date('2026-09-14T00:00:00.000Z'),
+        }
+      },
+    }
+    const verdictAppealCase = {
+      id: 'verdict_appeal',
+      appealState,
+      appealCaseNumber: '2/2024',
+      verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+      statementDeadlines: [prosecutionDeadline],
+      ...outcome,
+    }
+
+    mockRequest.mockImplementationOnce(() => ({ user: { currentUser } }))
+    mockHandle.mockReturnValueOnce(
+      of({
+        ...makeCase([]),
+        verdictAppealCase: {
+          ...verdictAppealCase,
+          toJSON: () => verdictAppealCase,
+        },
+        caseFiles: [
+          makeFile('district_ruling', CaseFileCategory.RULING),
+          makeFile(
+            'verdict_appeal_ruling',
+            CaseFileCategory.VERDICT_APPEAL_RULING,
+          ),
+        ],
+      }),
+    )
+
+    const result = await firstValueFrom(
+      interceptor.intercept(
+        {
+          switchToHttp: () => ({ getRequest: mockRequest }),
+        } as unknown as ExecutionContext,
+        { handle: mockHandle } as unknown as CallHandler,
+      ),
+    )
+
+    return { result: result as Then['result'] }
+  }
+
+  describe.each([
+    [
+      'a prosecution user',
+      {
+        role: UserRole.PROSECUTOR,
+        nationalId,
+        institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
+      },
+    ],
+    [
+      'a public prosecution office user',
+      {
+        role: UserRole.PUBLIC_PROSECUTOR_STAFF,
+        nationalId,
+        institution: { type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE },
+      },
+    ],
+    [
+      'a district court user',
+      {
+        role: UserRole.DISTRICT_COURT_JUDGE,
+        nationalId,
+        institution: { type: InstitutionType.DISTRICT_COURT },
+      },
+    ],
+    ['a defence user', { role: UserRole.DEFENDER, nationalId }],
+    [
+      'a prison system user',
+      {
+        role: UserRole.PRISON_SYSTEM_STAFF,
+        nationalId,
+        institution: { type: InstitutionType.PRISON },
+      },
+    ],
+  ])('when the user is %s', (_, currentUser) => {
+    describe.each([AppealCaseState.APPEALED, AppealCaseState.COMPLETED])(
+      'and the verdict appeal is %s',
+      (appealState) => {
+        let then: Then
+
+        beforeEach(async () => {
+          then = await givenWhenThen(appealState, currentUser)
+        })
+
+        it('withholds the outcome', () => {
+          expect(then.result.verdictAppealCase).toMatchObject(withheldOutcome)
+        })
+
+        it('presents the appeal as in progress', () => {
+          expect(then.result.verdictAppealCase).toMatchObject({
+            id: 'verdict_appeal',
+            appealState: AppealCaseState.APPEALED,
+            appealCaseNumber: '2/2024',
+          })
+        })
+
+        it('presents a recorded status of completed as under advisement', () => {
+          expect(then.result.verdictAppealCase.verdictAppealStatus).toBe(
+            VerdictAppealStatus.UNDER_ADVISEMENT,
+          )
+        })
+
+        it('strips statement deadlines when the completed appeal is masked', () => {
+          if (appealState !== AppealCaseState.COMPLETED) {
+            return
+          }
+
+          expect(
+            then.result.verdictAppealCase.statementDeadlines,
+          ).toBeUndefined()
+        })
+
+        it('leaves the court of appeals ruling out of the case files', () => {
+          expect(then.result.caseFiles.map((file) => file.id)).toEqual([
+            'district_ruling',
+          ])
+        })
+      },
+    )
+
+    it('still presents a withdrawn appeal as withdrawn', async () => {
+      const then = await givenWhenThen(AppealCaseState.WITHDRAWN, currentUser)
+
+      expect(then.result.verdictAppealCase.appealState).toBe(
+        AppealCaseState.WITHDRAWN,
+      )
+    })
+  })
+
+  describe.each([AppealCaseState.APPEALED, AppealCaseState.COMPLETED])(
+    'when the user is a court of appeals user and the verdict appeal is %s',
+    (appealState) => {
+      let then: Then
+
+      beforeEach(async () => {
+        then = await givenWhenThen(appealState, courtOfAppealsUser)
+      })
+
+      it('includes the outcome and the state', () => {
+        expect(then.result.verdictAppealCase).toMatchObject({
+          ...outcome,
+          appealState,
+          verdictAppealStatus: VerdictAppealStatus.COMPLETED,
+        })
+      })
+
+      it('keeps statement deadlines for the court of appeals', () => {
+        expect(then.result.verdictAppealCase.statementDeadlines).toEqual([
+          expect.objectContaining({ id: 'prosecution_deadline' }),
+        ])
+      })
+
+      it('includes the court of appeals ruling in the case files', () => {
+        expect(then.result.caseFiles.map((file) => file.id)).toEqual([
+          'district_ruling',
+          'verdict_appeal_ruling',
+        ])
+      })
+    },
+  )
+})
+
+// The interceptor runs after the handler and before the global commit
+// interceptor, so on a route whose guard locked the case row the request
+// transaction is still open and holding that lock. The ancestor read has to
+// join it: outside it, it needs a pool connection that concurrent updates of
+// the same case, blocked on the lock, are holding.
+describe('CaseInterceptor - original ancestor read', () => {
+  const mockFindOriginalAncestorId = jest.fn()
+  const theCase = makeCase([]) as unknown as Case
+  const originalAncestorId = 'original-ancestor-id'
+
+  const intercept = async () => {
+    const interceptor = new CaseInterceptor({
+      findOriginalAncestorId: mockFindOriginalAncestorId,
+    } as unknown as CaseRepositoryService)
+
+    return firstValueFrom(
+      interceptor.intercept(
+        {
+          switchToHttp: () => ({
+            getRequest: () => ({
+              user: { currentUser: { role: UserRole.PROSECUTOR, nationalId } },
+            }),
+          }),
+        } as unknown as ExecutionContext,
+        { handle: () => of(theCase) } as unknown as CallHandler,
+      ),
+    ) as Promise<{ originalAncestorId?: string }>
+  }
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+    mockFindOriginalAncestorId.mockResolvedValue(originalAncestorId)
+  })
+
+  it('reads outside a transaction on a route that opened none', async () => {
+    const result = await runInRequestContext(intercept)
+
+    expect(mockFindOriginalAncestorId).toHaveBeenCalledWith(theCase, {
+      transaction: undefined,
+    })
+    expect(result.originalAncestorId).toBe(originalAncestorId)
+  })
+
+  it('reads in the request transaction without opening another', async () => {
+    const transaction = {} as Transaction
+    const sequelize = {
+      transaction: jest.fn().mockResolvedValue(transaction),
+    } as unknown as Sequelize
+
+    // The guard that locked the case row opened the request transaction
+    // before the handler ran; guards do not run here, so it is set up by hand.
+    const result = await runInRequestContext(async () => {
+      await getOrCreateTransaction(sequelize)
+
+      return intercept()
+    })
+
+    expect(mockFindOriginalAncestorId).toHaveBeenCalledWith(theCase, {
+      transaction,
+    })
+    expect(sequelize.transaction).toHaveBeenCalledTimes(1)
+    expect(result.originalAncestorId).toBe(originalAncestorId)
+  })
+})
+
+describe('CaseInterceptor - verdictAppealCase party filter', () => {
+  const mockRequest = jest.fn()
+  const mockHandle = jest.fn()
+
+  const makeDeadline = (fields: {
+    id: string
+    defendantId?: string
+    deadline: Date
+  }) => ({
+    ...fields,
+    toJSON: () => ({ ...fields }),
+  })
+
+  const ownDeadline = makeDeadline({
+    id: 'own_deadline',
+    defendantId: 'own_defendant',
+    deadline: new Date('2026-11-15'),
+  })
+  const otherDeadline = makeDeadline({
+    id: 'other_deadline',
+    defendantId: 'other_defendant',
+    deadline: new Date('2026-11-20'),
+  })
+  const prosecutionDeadline = makeDeadline({
+    id: 'prosecution_deadline',
+    deadline: new Date('2026-11-18'),
+  })
+  const ownEvent = {
+    id: 'own_event',
+    defendantId: 'own_defendant',
+    eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+  }
+  const otherStatementEvent = {
+    id: 'other_statement_event',
+    defendantId: 'other_defendant',
+    eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+  }
+  const coDefendantProsecutionAppeal = {
+    id: 'co_defendant_prosecution_appeal',
+    defendantId: 'other_defendant',
+    eventType: AppealEventType.APPEALED,
+    userRole: UserRole.PROSECUTOR,
+  }
+
+  const draftRulingFields = {
+    appealCaseNumber: '1/2026',
+    appealConclusion: 'Draft Landsréttur conclusion',
+    appealRulingDecision: AppealCaseRulingDecision.ACCEPTING,
+    appealRulingDate: new Date('2026-12-01T12:00:00.000Z'),
+  }
+
+  const makeVerdictAppealCase = (
+    appealState: AppealCaseState = AppealCaseState.RECEIVED,
+  ) => {
+    const statementDeadlines = [ownDeadline, otherDeadline, prosecutionDeadline]
+    const appealEventLogs = [
+      ownEvent,
+      otherStatementEvent,
+      coDefendantProsecutionAppeal,
+    ]
+
+    return {
+      toJSON: () => ({
+        id: 'verdict_appeal_case_id',
+        appealState,
+        ...draftRulingFields,
+        statementDeadlines,
+        appealEventLogs,
+      }),
+      id: 'verdict_appeal_case_id',
+      appealState,
+      ...draftRulingFields,
+      statementDeadlines,
+      appealEventLogs,
+    }
+  }
+
+  const makeIndictmentWithVerdictAppeal = (appealState?: AppealCaseState) => {
+    const base = makeCase([
+      {
+        ...makeDefendant(nationalId),
+        id: 'own_defendant',
+        isAppealDefenderConfirmed: true,
+        appealDefenderNationalId: nationalId,
+      },
+      {
+        ...makeDefendant(otherNationalId),
+        id: 'other_defendant',
+        isAppealDefenderConfirmed: true,
+        appealDefenderNationalId: otherNationalId,
+      },
+    ])
+    const verdictAppealCase = makeVerdictAppealCase(appealState)
+
+    return {
+      ...base,
+      // Non-defence keeps this nested payload from toJSON(); defence rewrites
+      // it in transformVerdictAppealCaseForUser.
+      toJSON: () => ({
+        ...base.toJSON(),
+        verdictAppealCase: verdictAppealCase.toJSON(),
+      }),
+      verdictAppealCase,
+    }
+  }
+
+  beforeEach(() => {
+    mockRequest.mockReset()
+    mockHandle.mockReset()
+  })
+
+  it('keeps own-party rows and co-defendant prosecution appeal events', async () => {
+    const theCase = makeIndictmentWithVerdictAppeal()
+    mockRequest.mockImplementationOnce(() => ({
+      user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+    }))
+    mockHandle.mockReturnValueOnce(of(theCase))
+
+    const interceptor = new CaseInterceptor({
+      findOriginalAncestorId: (c: { id?: string }) => Promise.resolve(c.id),
+    } as unknown as CaseRepositoryService)
+
+    const result = (await firstValueFrom(
+      interceptor.intercept(
+        {
+          switchToHttp: () => ({ getRequest: mockRequest }),
+        } as unknown as ExecutionContext,
+        { handle: mockHandle } as unknown as CallHandler,
+      ),
+    )) as {
+      verdictAppealCase: {
+        statementDeadlines: { id: string }[]
+        appealEventLogs: { id: string }[]
+      }
+    }
+
+    expect(
+      result.verdictAppealCase.statementDeadlines.map((d) => d.id),
+    ).toEqual(['own_deadline'])
+    expect(result.verdictAppealCase.appealEventLogs.map((e) => e.id)).toEqual([
+      'own_event',
+      'co_defendant_prosecution_appeal',
+    ])
+  })
+
+  it('leaves verdict-appeal deadlines unfiltered for non-defence users', async () => {
+    const theCase = makeIndictmentWithVerdictAppeal()
+    mockRequest.mockImplementationOnce(() => ({
+      user: { currentUser: { role: UserRole.PROSECUTOR, nationalId } },
+    }))
+    mockHandle.mockReturnValueOnce(of(theCase))
+
+    const interceptor = new CaseInterceptor({
+      findOriginalAncestorId: (c: { id?: string }) => Promise.resolve(c.id),
+    } as unknown as CaseRepositoryService)
+
+    const result = (await firstValueFrom(
+      interceptor.intercept(
+        {
+          switchToHttp: () => ({ getRequest: mockRequest }),
+        } as unknown as ExecutionContext,
+        { handle: mockHandle } as unknown as CallHandler,
+      ),
+    )) as {
+      verdictAppealCase: {
+        statementDeadlines: { id: string }[]
+        appealEventLogs: { id: string }[]
+      }
+    }
+
+    expect(
+      result.verdictAppealCase.statementDeadlines.map((d) => d.id),
+    ).toEqual(['own_deadline', 'other_deadline', 'prosecution_deadline'])
+    expect(result.verdictAppealCase.appealEventLogs.map((e) => e.id)).toEqual([
+      'own_event',
+      'other_statement_event',
+      'co_defendant_prosecution_appeal',
+    ])
+  })
+
+  it('withholds draft Landsréttur ruling fields from defence users', async () => {
+    const theCase = makeIndictmentWithVerdictAppeal(AppealCaseState.RECEIVED)
+    mockRequest.mockImplementationOnce(() => ({
+      user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+    }))
+    mockHandle.mockReturnValueOnce(of(theCase))
+
+    const interceptor = new CaseInterceptor({
+      findOriginalAncestorId: (c: { id?: string }) => Promise.resolve(c.id),
+    } as unknown as CaseRepositoryService)
+
+    const result = (await firstValueFrom(
+      interceptor.intercept(
+        {
+          switchToHttp: () => ({ getRequest: mockRequest }),
+        } as unknown as ExecutionContext,
+        { handle: mockHandle } as unknown as CallHandler,
+      ),
+    )) as {
+      verdictAppealCase: {
+        appealCaseNumber?: string
+        appealConclusion?: string
+        appealRulingDecision?: AppealCaseRulingDecision
+        appealRulingDate?: Date
+      }
+    }
+
+    expect(result.verdictAppealCase.appealCaseNumber).toBe(
+      draftRulingFields.appealCaseNumber,
+    )
+    expect(result.verdictAppealCase.appealConclusion).toBeUndefined()
+    expect(result.verdictAppealCase.appealRulingDecision).toBeUndefined()
+    expect(result.verdictAppealCase.appealRulingDate).toBeUndefined()
+  })
+
+  it('withholds Landsréttur ruling fields from defence users once completed', async () => {
+    const theCase = makeIndictmentWithVerdictAppeal(AppealCaseState.COMPLETED)
+    mockRequest.mockImplementationOnce(() => ({
+      user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+    }))
+    mockHandle.mockReturnValueOnce(of(theCase))
+
+    const interceptor = new CaseInterceptor({
+      findOriginalAncestorId: (c: { id?: string }) => Promise.resolve(c.id),
+    } as unknown as CaseRepositoryService)
+
+    const result = (await firstValueFrom(
+      interceptor.intercept(
+        {
+          switchToHttp: () => ({ getRequest: mockRequest }),
+        } as unknown as ExecutionContext,
+        { handle: mockHandle } as unknown as CallHandler,
+      ),
+    )) as {
+      verdictAppealCase: {
+        appealConclusion?: string
+        appealRulingDecision?: AppealCaseRulingDecision
+        appealRulingDate?: Date
+      }
+    }
+
+    expect(result.verdictAppealCase.appealConclusion).toBeUndefined()
+    expect(result.verdictAppealCase.appealRulingDecision).toBeUndefined()
+    expect(result.verdictAppealCase.appealRulingDate).toBeUndefined()
+  })
+
+  it('leaves draft Landsréttur ruling fields visible for court of appeals users', async () => {
+    const theCase = makeIndictmentWithVerdictAppeal(AppealCaseState.RECEIVED)
+    mockRequest.mockImplementationOnce(() => ({
+      user: {
+        currentUser: {
+          role: UserRole.COURT_OF_APPEALS_ASSISTANT,
+          nationalId,
+          institution: { type: InstitutionType.COURT_OF_APPEALS },
+        },
+      },
+    }))
+    mockHandle.mockReturnValueOnce(of(theCase))
+
+    const interceptor = new CaseInterceptor({
+      findOriginalAncestorId: (c: { id?: string }) => Promise.resolve(c.id),
+    } as unknown as CaseRepositoryService)
+
+    const result = (await firstValueFrom(
+      interceptor.intercept(
+        {
+          switchToHttp: () => ({ getRequest: mockRequest }),
+        } as unknown as ExecutionContext,
+        { handle: mockHandle } as unknown as CallHandler,
+      ),
+    )) as {
+      verdictAppealCase: {
+        appealConclusion?: string
+        appealRulingDecision?: AppealCaseRulingDecision
+        appealRulingDate?: Date
+      }
+    }
+
+    expect(result.verdictAppealCase.appealConclusion).toBe(
+      draftRulingFields.appealConclusion,
+    )
+    expect(result.verdictAppealCase.appealRulingDecision).toBe(
+      draftRulingFields.appealRulingDecision,
+    )
+    expect(result.verdictAppealCase.appealRulingDate).toEqual(
+      draftRulingFields.appealRulingDate,
+    )
+  })
+
+  it('marks each statement deadline as expired from the server clock', async () => {
+    jest
+      .spyOn(Date, 'now')
+      .mockReturnValue(new Date('2026-11-16T12:00:00.000Z').getTime())
+
+    const theCase = makeIndictmentWithVerdictAppeal()
+    mockRequest.mockImplementationOnce(() => ({
+      user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+    }))
+    mockHandle.mockReturnValueOnce(of(theCase))
+
+    const interceptor = new CaseInterceptor({
+      findOriginalAncestorId: (c: { id?: string }) => Promise.resolve(c.id),
+    } as unknown as CaseRepositoryService)
+
+    const result = (await firstValueFrom(
+      interceptor.intercept(
+        {
+          switchToHttp: () => ({ getRequest: mockRequest }),
+        } as unknown as ExecutionContext,
+        { handle: mockHandle } as unknown as CallHandler,
+      ),
+    )) as {
+      verdictAppealCase: {
+        statementDeadlines: { id: string; isExpired?: boolean }[]
+      }
+    }
+
+    expect(result.verdictAppealCase.statementDeadlines).toEqual([
+      expect.objectContaining({ id: 'own_deadline', isExpired: true }),
+    ])
+
+    jest.restoreAllMocks()
+  })
+
+  it('serializes isExpired on every statement deadline for non-defence users', async () => {
+    jest
+      .spyOn(Date, 'now')
+      .mockReturnValue(new Date('2026-11-16T12:00:00.000Z').getTime())
+
+    const theCase = makeIndictmentWithVerdictAppeal()
+    mockRequest.mockImplementationOnce(() => ({
+      user: { currentUser: { role: UserRole.PROSECUTOR, nationalId } },
+    }))
+    mockHandle.mockReturnValueOnce(of(theCase))
+
+    const interceptor = new CaseInterceptor({
+      findOriginalAncestorId: (c: { id?: string }) => Promise.resolve(c.id),
+    } as unknown as CaseRepositoryService)
+
+    const result = (await firstValueFrom(
+      interceptor.intercept(
+        {
+          switchToHttp: () => ({ getRequest: mockRequest }),
+        } as unknown as ExecutionContext,
+        { handle: mockHandle } as unknown as CallHandler,
+      ),
+    )) as {
+      verdictAppealCase: {
+        statementDeadlines: { id: string; isExpired?: boolean }[]
+      }
+    }
+
+    expect(result.verdictAppealCase.statementDeadlines).toEqual([
+      expect.objectContaining({ id: 'own_deadline', isExpired: true }),
+      expect.objectContaining({ id: 'other_deadline', isExpired: false }),
+      expect.objectContaining({ id: 'prosecution_deadline', isExpired: false }),
+    ])
+
+    jest.restoreAllMocks()
+  })
+
+  it('keeps a midnight deadline open through the whole deadline day', async () => {
+    jest
+      .spyOn(Date, 'now')
+      .mockReturnValue(new Date('2026-11-15T12:00:00.000Z').getTime())
+
+    const theCase = makeIndictmentWithVerdictAppeal()
+    mockRequest.mockImplementationOnce(() => ({
+      user: { currentUser: { role: UserRole.DEFENDER, nationalId } },
+    }))
+    mockHandle.mockReturnValueOnce(of(theCase))
+
+    const interceptor = new CaseInterceptor({
+      findOriginalAncestorId: (c: { id?: string }) => Promise.resolve(c.id),
+    } as unknown as CaseRepositoryService)
+
+    const result = (await firstValueFrom(
+      interceptor.intercept(
+        {
+          switchToHttp: () => ({ getRequest: mockRequest }),
+        } as unknown as ExecutionContext,
+        { handle: mockHandle } as unknown as CallHandler,
+      ),
+    )) as {
+      verdictAppealCase: {
+        statementDeadlines: { id: string; isExpired?: boolean }[]
+      }
+    }
+
+    // own_deadline is 2026-11-15T00:00:00.000Z — still open at noon that day.
+    expect(result.verdictAppealCase.statementDeadlines).toEqual([
+      expect.objectContaining({ id: 'own_deadline', isExpired: false }),
+    ])
+
+    jest.restoreAllMocks()
   })
 })

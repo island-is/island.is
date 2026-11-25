@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'clients-one-systems-complaints-committee-rulings',
   preset: '../../../../jest.preset.js',

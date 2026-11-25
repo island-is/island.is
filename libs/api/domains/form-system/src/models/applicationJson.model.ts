@@ -18,6 +18,12 @@ export class ApplicationJsonFieldSettings {
 
   @Field(() => String, { nullable: true })
   applicantType?: string
+
+  @Field(() => String, { nullable: true })
+  assetType?: string
+
+  @Field(() => String, { nullable: true })
+  familyType?: string
 }
 
 @ObjectType('FormSystemApplicationJsonField')

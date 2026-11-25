@@ -52,8 +52,9 @@ type EmailHeaderOptions = {
 }
 
 export const EmailHeader = (opts?: EmailHeaderOptions) => {
-  const eyebrow = `${m.congratulations} ${opts?.firstName ?? ''}`.trim()
   const applicationFor = opts?.applicationFor || 'B-full'
+  const greeting = m.greeting[applicationFor] ?? m.congratulations
+  const eyebrow = `${greeting} ${opts?.firstName ?? ''}`.trim()
 
   return [
     Img('notification.jpg', 'myndskreyting'),
@@ -68,13 +69,21 @@ export const EmailHeader = (opts?: EmailHeaderOptions) => {
 export const EmailNextSteps = (
   applicationFor: DrivingLicenseApplicationFor = 'B-full',
 ) => {
-  const paragraphs = m.nextSteps[applicationFor]
+  const sections = m.nextSteps[applicationFor]
 
-  if (!paragraphs) {
+  if (!sections) {
     return []
   }
 
-  return paragraphs.map((copy) => Copy(copy, { align: 'left', small: true }))
+  // Section headings use the bold-paragraph style the in-person requirement
+  // titles below already use, so the email keeps one visual language.
+  return sections.flatMap(({ heading, paragraphs, list }) => [
+    ...(heading
+      ? [Copy(heading, { align: 'left', small: true, style: 'bold' })]
+      : []),
+    ...paragraphs.map((copy) => Copy(copy, { align: 'left', small: true })),
+    ...(list ? [List(list)] : []),
+  ])
 }
 
 type EmailCompleteOptions = {
@@ -145,5 +154,67 @@ export const EmailRequirements = (
           ),
         ]
       : []),
+  ]
+}
+
+type EmailDigitalFlowOptions = {
+  applicationFor: 'B-temp' | 'B-full'
+  needsHealthCertificate: boolean
+  firstName?: string
+  selectedDistrictCommissioner?: string
+}
+
+const withDeliveryLocation = (str: string, location?: string) =>
+  location ? str.replace('%s', () => location) : str.replace(/\s*\(%s\)/, '')
+
+export const EmailDigitalFlow = ({
+  applicationFor,
+  needsHealthCertificate,
+  firstName,
+  selectedDistrictCommissioner,
+}: EmailDigitalFlowOptions) => {
+  const texts = m.digitalFlow
+  const greeting = `${texts.greeting} ${firstName ?? ''}`.trim()
+  const image = Img('notification.jpg', 'myndskreyting')
+
+  if (applicationFor === 'B-temp') {
+    return [
+      image,
+      Heading(texts['B-temp'].heading, {
+        align: 'left',
+        small: true,
+        eyebrow: greeting,
+      }),
+      List(texts['B-temp'].list),
+    ]
+  }
+
+  if (!needsHealthCertificate) {
+    return [
+      image,
+      Copy(greeting, { align: 'left', small: true, style: 'bold' }),
+      Copy(
+        withDeliveryLocation(
+          texts['B-full-no-health'].paragraph,
+          selectedDistrictCommissioner,
+        ),
+        { align: 'left', small: true },
+      ),
+    ]
+  }
+
+  return [
+    image,
+    Heading(texts['B-full-health'].heading, {
+      align: 'left',
+      small: true,
+      eyebrow: greeting,
+    }),
+    Copy(texts.nextStepsTitle, { align: 'left', small: true, style: 'bold' }),
+    List(
+      texts['B-full-health'].list.map((str) =>
+        withDeliveryLocation(str, selectedDistrictCommissioner),
+      ),
+    ),
   ]
 }

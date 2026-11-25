@@ -1,17 +1,17 @@
 import { defineMessages } from 'react-intl'
 
 export const serviceErrors = {
-  alreadyReported: defineMessages({
+  noVehiclesFound: defineMessages({
     title: {
-      id: 'rsk.crdr.application:serviceErrors.alreadyReported.title',
-      defaultMessage: 'Rental days already registered',
-      description: 'Title for already reported rental days error',
+      id: 'rsk.crdr.application:serviceErrors.noVehiclesFound.title',
+      defaultMessage: 'Engin ökutæki skráð á daggjald fundust',
+      description: 'Title shown when the applicant has no day rate vehicles',
     },
     summary: {
-      id: 'rsk.crdr.application:serviceErrors.alreadyReported.summary',
+      id: 'rsk.crdr.application:serviceErrors.noVehiclesFound.summary',
       defaultMessage:
-        'Rental days for period {period} have already been registered for: {vehicles}',
-      description: 'Summary for already reported rental days error',
+        'Engin ökutæki skráð á daggjald fundust fyrir tímabilið {period}.',
+      description: 'Summary shown when the applicant has no day rate vehicles',
     },
   }),
   badRequest: defineMessages({
@@ -206,11 +206,6 @@ export const m = {
       defaultMessage: 'Fjöldi bifreiða sem þarf að skrá nýtingu fyrir',
       description: 'Cars that require answers count label',
     },
-    carsAlreadyReported: {
-      id: 'rsk.crdr.application:overview.cars.already.reported',
-      defaultMessage: 'Fjöldi bifreiða sem þegar hefur verið skilað fyrir',
-      description: 'Cars already reported for the period count label',
-    },
     dayRateCount: {
       id: 'rsk.crdr.application:overview.dayrate.count',
       defaultMessage: 'Fjöldi bifreiða á daggjaldi',
@@ -302,12 +297,6 @@ export const m = {
       id: 'rsk.crdr.application:table.view.empty.state',
       defaultMessage: 'Ekkert fannst fyrir þessa leit.',
       description: 'Vehicle table empty state message',
-    },
-    disabledAlreadyReported: {
-      id: 'rsk.crdr.application:table.view.disabled.already.reported',
-      defaultMessage: 'Þegar skilað - {days} útleigudagar',
-      description:
-        'Shown instead of the usage input when rental days for the period have already been filed',
     },
   }),
 

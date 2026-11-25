@@ -22,6 +22,7 @@ import { Display } from '../Display/Display'
 import { Payment } from '../Payment/Payment'
 import { useEffect, useMemo } from 'react'
 import { hasError } from '../../../../utils/validation'
+import { getVisiblePaymentFields } from '../../../../utils/payment'
 
 interface Props {
   state?: ApplicationState
@@ -70,24 +71,9 @@ export const Summary = ({ state }: Props) => {
     })
   }, [dispatch, hasAnyMissingRequired])
 
-  const hasPayment = state?.application.hasPayment
-  const paymentSection = state?.sections?.find(
-    (s) => s.sectionType === SectionTypes.PAYMENT,
-  )
-  const paymentScreens = Array.isArray(paymentSection?.screens)
-    ? paymentSection.screens.filter(
-        (s): s is NonNullable<typeof s> => s != null,
-      )
-    : []
-  const paymentFields = (paymentScreens[0]?.fields ?? [])
-    .filter((f) => f != null && !f.isHidden)
-    .filter(
-      (field): field is NonNullable<typeof field> =>
-        field != null && !field.isHidden,
-    )
-
   const displayPayment =
-    hasPayment && paymentFields != null && paymentFields.length > 0
+    state?.application.hasPayment !== false &&
+    getVisiblePaymentFields(state?.sections).length > 0
 
   const updateCompleted = useMutation(UPDATE_APPLICATION_SETTINGS)
 
@@ -128,15 +114,27 @@ export const Summary = ({ state }: Props) => {
                   field.fieldType !== FieldTypesEnum.MESSAGE,
               ) ?? []
 
-            // Render only once, outside of any multiset grouping
-            const nonMultisetFields = visibleFields.filter(
-              (f) => f.isPartOfMultiset === false,
-            )
-
-            // Grouped by value index: all values[0] across fields, then values[1], ...
-            const multisetFields = visibleFields.filter(
-              (f) => f.isPartOfMultiset !== false,
-            )
+            const firstMultisetFieldIndex = screen?.isMulti
+              ? visibleFields.findIndex(
+                  (field) => field.isPartOfMultiset !== false,
+                )
+              : -1
+            const leadingFields =
+              firstMultisetFieldIndex === -1
+                ? visibleFields
+                : visibleFields.slice(0, firstMultisetFieldIndex)
+            const multisetFields =
+              firstMultisetFieldIndex === -1
+                ? []
+                : visibleFields.filter(
+                    (field) => field.isPartOfMultiset !== false,
+                  )
+            const trailingFields =
+              firstMultisetFieldIndex === -1
+                ? []
+                : visibleFields
+                    .slice(firstMultisetFieldIndex)
+                    .filter((field) => field.isPartOfMultiset === false)
 
             const numberOfItems = Math.max(
               1,
@@ -190,7 +188,7 @@ export const Summary = ({ state }: Props) => {
                       </Box>
 
                       <Box>
-                        {nonMultisetFields.map((field, index) => (
+                        {leadingFields.map((field, index) => (
                           <Box
                             key={field.id ?? `non-multi-${index}`}
                             marginBottom={1}
@@ -248,6 +246,16 @@ export const Summary = ({ state }: Props) => {
                             </Box>
                           ),
                         )}
+                        {trailingFields.map((field) => (
+                          <Box key={field.id} marginBottom={1}>
+                            <Display
+                              field={field}
+                              requiredMissing={
+                                Boolean(field.isRequired) && hasError(field, 0)
+                              }
+                            />
+                          </Box>
+                        ))}
                       </Box>
                     </GridColumn>
 

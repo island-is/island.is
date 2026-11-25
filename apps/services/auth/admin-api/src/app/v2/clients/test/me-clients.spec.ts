@@ -1151,6 +1151,106 @@ describe('MeClientsController with auth', () => {
         })
       })
 
+      it('should converge on the submitted delegation types when added and removed are sent together', async () => {
+        // Arrange
+        const app = await setupApp({
+          AppModule,
+          SequelizeConfigService,
+          user: superUser,
+          dbType: 'postgres',
+        })
+        const server = request(app.getHttpServer())
+        await createTestClientData(app, superUser)
+
+        await updateAndAssert({
+          server,
+          body: {
+            addedDelegationTypes: [
+              AuthDelegationType.Custom,
+              AuthDelegationType.ProcurationHolder,
+            ],
+          },
+          supportedDelegationTypes: [
+            AuthDelegationType.Custom,
+            AuthDelegationType.GeneralMandate,
+            AuthDelegationType.ProcurationHolder,
+          ],
+          supportsCustomDelegation: true,
+          supportsLegalGuardians: false,
+          supportsPersonalRepresentatives: false,
+          supportsProcuringHolders: true,
+        })
+
+        // The admin portal submits the full desired state, so added can contain
+        // delegation types the client already has and removed can contain ones
+        // it never had.
+        const body: AdminPatchClientDto = {
+          addedDelegationTypes: [
+            AuthDelegationType.ProcurationHolder,
+            AuthDelegationType.LegalGuardian,
+          ],
+          removedDelegationTypes: [
+            AuthDelegationType.Custom,
+            AuthDelegationType.LegalRepresentative,
+          ],
+        }
+
+        // Act
+        await updateAndAssert({
+          server,
+          body,
+          supportedDelegationTypes: [
+            AuthDelegationType.ProcurationHolder,
+            AuthDelegationType.LegalGuardian,
+          ],
+          supportsCustomDelegation: false,
+          supportsLegalGuardians: true,
+          supportsPersonalRepresentatives: false,
+          supportsProcuringHolders: true,
+        })
+      })
+
+      it('should keep supporting personal representatives when one personal representative type is removed and another kept', async () => {
+        // Arrange
+        const app = await setupApp({
+          AppModule,
+          SequelizeConfigService,
+          user: superUser,
+          dbType: 'postgres',
+        })
+        const server = request(app.getHttpServer())
+        await createTestClientData(app, superUser)
+        const postholf = `${AuthDelegationType.PersonalRepresentative}:postholf`
+        await new FixtureFactory(app).createDelegationType({
+          id: postholf,
+          providerId: AuthDelegationProvider.PersonalRepresentativeRegistry,
+        })
+
+        await updateAndAssert({
+          server,
+          body: { addedDelegationTypes: [postholf as AuthDelegationType] },
+          supportedDelegationTypes: [postholf],
+          supportsCustomDelegation: false,
+          supportsLegalGuardians: false,
+          supportsPersonalRepresentatives: true,
+          supportsProcuringHolders: false,
+        })
+
+        // Act
+        await updateAndAssert({
+          server,
+          body: {
+            addedDelegationTypes: [postholf as AuthDelegationType],
+            removedDelegationTypes: [AuthDelegationType.PersonalRepresentative],
+          },
+          supportedDelegationTypes: [postholf],
+          supportsCustomDelegation: false,
+          supportsLegalGuardians: false,
+          supportsPersonalRepresentatives: true,
+          supportsProcuringHolders: false,
+        })
+      })
+
       it.each`
         action
         ${'added'}

@@ -57,7 +57,7 @@ import { CivilClaimantFields } from './CivilClaimantFields'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
 
-interface UpdateDefendant extends Omit<UpdateDefendantInput, 'caseId'> {}
+type UpdateDefendant = Omit<UpdateDefendantInput, 'caseId'>
 
 interface CivilClaimantAccordionLabelProps {
   label: string
@@ -284,10 +284,14 @@ const Processing: FC = () => {
       return
     }
 
+    // The claimant's civil claim files are deleted with the claimant
     setWorkingCase((prev) => ({
       ...prev,
       civilClaimants: prev.civilClaimants?.filter(
         (civilClaimant) => civilClaimant.id !== civilClaimantId,
+      ),
+      caseFiles: prev.caseFiles?.filter(
+        (caseFile) => caseFile.civilClaimantId !== civilClaimantId,
       ),
     }))
   }
@@ -301,10 +305,16 @@ const Processing: FC = () => {
       return
     }
 
+    // Turning civil claims off deletes every claimant along with their files
+    // and the civil demands case string on the backend.
     setWorkingCase((prev) => ({
       ...prev,
       hasCivilClaims,
+      civilDemands: hasCivilClaims ? prev.civilDemands : undefined,
       civilClaimants: res.civilClaimants,
+      caseFiles: hasCivilClaims
+        ? prev.caseFiles
+        : prev.caseFiles?.filter((caseFile) => !caseFile.civilClaimantId),
     }))
 
     if (hasCivilClaims) {
@@ -325,11 +335,9 @@ const Processing: FC = () => {
       onNavigationTo={handleNavigationTo}
       isValid={stepIsValid}
     >
-      <PageHeader
-        title={formatMessage(titles.prosecutor.indictments.processing)}
-      />
+      <PageHeader title={titles.prosecutor.indictments.processing} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
+        <PageTitle>{strings.heading}</PageTitle>
         <Box marginBottom={5}>
           <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
         </Box>
@@ -339,9 +347,15 @@ const Processing: FC = () => {
         {workingCase.defendants && (
           <Box component="section" marginBottom={5}>
             <SectionHeading
-              title={formatMessage(strings.defendantPlea, {
-                defendantCount: workingCase.defendants?.length ?? 0,
-              })}
+              title={formatMessage(
+                {
+                  id: strings.defendantPlea,
+                  defaultMessage: strings.defendantPlea,
+                },
+                {
+                  defendantCount: workingCase.defendants?.length ?? 0,
+                },
+              )}
               heading="h2"
               tooltip="Hægt er að velja afstöðu sakbornings til að flýta fyrir úthlutun máls"
             />
@@ -414,13 +428,10 @@ const Processing: FC = () => {
           marginBottom={workingCase.hasCivilClaims === true ? 5 : 10}
           ref={civilClaimRef}
         >
-          <SectionHeading
-            title={formatMessage(strings.civilDemandsTitle)}
-            heading="h2"
-          />
+          <SectionHeading title={strings.civilDemandsTitle} heading="h2" />
           <BlueBox>
             <SectionHeading
-              title={formatMessage(strings.isCivilClaim)}
+              title={strings.isCivilClaim}
               marginBottom={2}
               heading="h3"
               variant="h4"
@@ -431,7 +442,7 @@ const Processing: FC = () => {
                 <RadioButton
                   name="isCivilClaim"
                   id="civil_claim_yes"
-                  label={formatMessage(strings.yes)}
+                  label={strings.yes}
                   large
                   backgroundColor="white"
                   onChange={() => {
@@ -444,7 +455,7 @@ const Processing: FC = () => {
                 <RadioButton
                   name="isCivilClaim"
                   id="civil_claim_no"
-                  label={formatMessage(strings.no)}
+                  label={strings.no}
                   large
                   backgroundColor="white"
                   onChange={() => handleHasCivilClaimsChange(false)}
@@ -455,14 +466,14 @@ const Processing: FC = () => {
           </BlueBox>
         </Box>
         {workingCase.hasCivilClaims && (
-          <Box component="section" marginBottom={10}>
+          <Box component="section">
             <Accordion dividerOnTop={false}>
               {workingCase.civilClaimants?.map((civilClaimant, index) => (
                 <CivilClaimantAccordionItem
                   key={civilClaimant.id}
                   civilClaimant={civilClaimant}
                   civilClaimantIndex={index}
-                  label={`${formatMessage(strings.civilClaimant)} ${index + 1}`}
+                  label={`${strings.civilClaimant} ${index + 1}`}
                   defendantSelectionWarningText="Veldu að minnsta kosti einn ákærða"
                   caseId={workingCase.id}
                   defendants={workingCase.defendants ?? []}
@@ -490,7 +501,7 @@ const Processing: FC = () => {
                 icon="add"
                 onClick={handleCreateCivilClaimantClick}
               >
-                {formatMessage(strings.addCivilClaimant)}
+                {strings.addCivilClaimant}
               </Button>
             </Box>
           </Box>
@@ -501,7 +512,7 @@ const Processing: FC = () => {
           previousUrl={`${PROSECUTION_INDICTMENT_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               url: `${PROSECUTION_INDICTMENT_CASE_INDICTMENT_ROUTE}/${workingCase.id}`,
               disabled: !stepIsValid,

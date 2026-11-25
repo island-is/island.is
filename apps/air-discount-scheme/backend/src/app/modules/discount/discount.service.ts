@@ -1,27 +1,28 @@
-import { uuid } from 'uuidv4'
-import { Inject, Injectable } from '@nestjs/common'
-import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Cache as CacheManager } from 'cache-manager'
+import { uuid } from 'uuidv4'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import { Inject, Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
 
-import { Discount, ExplicitCode } from './discount.model'
+import { ConnectionDiscountCode } from '@island.is/air-discount-scheme/types'
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import { Flight } from '../flight/flight.model'
 import {
   AKUREYRI_FLIGHT_CODES,
   CONNECTING_FLIGHT_GRACE_PERIOD,
   REYKJAVIK_FLIGHT_CODES,
 } from '../flight/flight.service'
-import { ConnectionDiscountCode } from '@island.is/air-discount-scheme/types'
-import { User } from '../user/user.model'
-import { InjectModel } from '@nestjs/sequelize'
+import { CachedUser, User } from '../user/user.model'
 import { UserService } from '../user/user.service'
-import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { ExplicitFlight } from './dto/ExplicitFlight.dto'
+import { Discount, ExplicitCode } from './discount.model'
 import { CreateSuperExplicitDiscountCodeParams } from './dto'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 
 interface CachedDiscount {
-  user: User
+  user: CachedUser
   discountCode: string
   connectionDiscountCodes: ConnectionDiscountCode[]
   nationalId: string

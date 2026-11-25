@@ -1,9 +1,13 @@
 import { Box, Icon, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { AvatarImage, LinkResolver, m } from '@island.is/portals/my-pages/core'
+import { RequestDelegationButton } from '@island.is/portals/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
-import { hasNotificationScopes } from '@island.is/auth/scopes'
+import {
+  hasNotificationScopes,
+  notificationScopes,
+} from '@island.is/auth/scopes'
 import {
   useGetUserNotificationsOverviewQuery,
   useMarkUserNotificationAsReadMutation,
@@ -100,9 +104,12 @@ export const NotificationsBox = ({
         justifyContent="spaceBetween"
         alignItems="center"
         marginBottom={2}
-        paddingX={[4, 4, 0]}
+        paddingX={[2, 2, 0]}
       >
-        <LinkResolver href={InformationPaths.Notifications}>
+        <LinkResolver
+          href={InformationPaths.Notifications}
+          className={styles.headerLink}
+        >
           <Box
             display="flex"
             alignItems="center"
@@ -124,6 +131,7 @@ export const NotificationsBox = ({
           <LinkResolver
             href={InformationPaths.Notifications}
             aria-label={formatMessage(m.notificationsViewAll)}
+            className={styles.headerLink}
           >
             <Icon
               icon="arrowForward"
@@ -136,7 +144,7 @@ export const NotificationsBox = ({
       </Box>
 
       {loading && (
-        <Box marginTop={4} paddingX={[4, 4, 0]}>
+        <Box marginTop={4} paddingX={[2, 2, 0]}>
           <SkeletonLoader
             space={2}
             repeat={4}
@@ -148,11 +156,16 @@ export const NotificationsBox = ({
       )}
 
       {!loading && !hasDelegationAccess && (
-        <StateMessage
-          title={formatMessage(m.accessNeeded)}
-          text={formatMessage(m.accessDeniedText)}
-          imgSrc="./assets/images/jobsGrid.svg"
-        />
+        <>
+          <StateMessage
+            title={formatMessage(m.accessNeeded)}
+            text={formatMessage(m.accessDeniedText)}
+            imgSrc="./assets/images/jobsGrid.svg"
+          />
+          <Box display="flex" justifyContent="center" paddingTop={2}>
+            <RequestDelegationButton scopes={notificationScopes} />
+          </Box>
+        </>
       )}
 
       {!loading && hasDelegationAccess && error && (
@@ -183,7 +196,8 @@ export const NotificationsBox = ({
               alignItems="center"
               columnGap={2}
               paddingY={2}
-              paddingX={[4, 4, 2]}
+              paddingLeft={[1, 1, 2]}
+              paddingRight={2}
               borderTopWidth="standard"
               borderColor="blue200"
               className={unread ? styles.unreadRow : undefined}

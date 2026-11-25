@@ -71,6 +71,21 @@ export const m = {
       defaultMessage: 'Sundurliðun á niðurstöðum',
       description: 'Sundurliðun á niðurstöðum',
     },
+    tableTabLabel: {
+      id: 'web.ecoi.calculator:results.tableTabLabel',
+      defaultMessage: 'Tafla',
+      description: 'Tafla',
+    },
+    chartTabLabel: {
+      id: 'web.ecoi.calculator:results.chartTabLabel',
+      defaultMessage: 'Stöplarit',
+      description: 'Stöplarit',
+    },
+    radarChartTabLabel: {
+      id: 'web.ecoi.calculator:results.radarChartTabLabel',
+      defaultMessage: 'Köngulóargraf',
+      description: 'Köngulóargraf',
+    },
     tableCategory: {
       id: 'web.ecoi.calculator:results.tableCategory',
       defaultMessage: 'Flokkur',
@@ -94,22 +109,22 @@ export const m = {
       description: 'Túlkun',
     },
     bracket4Text: {
-      id: 'web.ecoi.calculator:results.bracket4Text',
+      id: 'web.ecoi.calculator:results.bracket4Text#markdown',
       defaultMessage: 'Vísbendingar um góða hlítni',
       description: '2,6-3,0',
     },
     bracket3Text: {
-      id: 'web.ecoi.calculator:results.bracket3Text',
+      id: 'web.ecoi.calculator:results.bracket3Text#markdown',
       defaultMessage: 'Vísbendingar um hlítni',
       description: '1,8-2,5',
     },
     bracket2Text: {
-      id: 'web.ecoi.calculator:results.bracket2Text',
+      id: 'web.ecoi.calculator:results.bracket2Text#markdown',
       defaultMessage: 'Vísbendingar um að nokkuð vanti upp á hlítni',
       description: '1,2-1,7',
     },
     bracket1Text: {
-      id: 'web.ecoi.calculator:results.bracket1Text',
+      id: 'web.ecoi.calculator:results.bracket1Text#markdown',
       defaultMessage: 'Vísbendingar um að verulega vanti upp á hlítni',
       description: '0-1,1',
     },

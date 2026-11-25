@@ -19,10 +19,6 @@ export type CreateEventLog = {
   institutionName?: string
 }
 
-interface EventLogTransactionOptions {
-  transaction?: Transaction
-}
-
 // One row per (national id, user role, institution) group, as counted by
 // countLoginsByNationalIds. The caller decides how to key it.
 export type LoginCount = {
@@ -47,7 +43,7 @@ export class EventLogRepositoryService {
     eventType: EventType,
     caseId?: string,
     userRole?: UserRole,
-    options?: EventLogTransactionOptions,
+    options?: { transaction?: Transaction },
   ): Promise<boolean> {
     try {
       this.logger.debug(
@@ -74,9 +70,40 @@ export class EventLogRepositoryService {
     }
   }
 
+  // The most recent event of any of the given types for a case - for
+  // instance, when an indictment was last confirmed or sent to court.
+  async findLatestForCaseAndTypes(
+    caseId: string,
+    eventTypes: EventType[],
+    options?: { transaction?: Transaction },
+  ): Promise<EventLog | null> {
+    try {
+      this.logger.debug(
+        `Finding the latest ${eventTypes.join(
+          '/',
+        )} event log for case ${caseId}`,
+      )
+
+      return await this.eventLogModel.findOne({
+        where: { caseId, eventType: eventTypes },
+        order: [['created', 'DESC']],
+        transaction: options?.transaction,
+      })
+    } catch (error) {
+      this.logger.error(
+        `Error finding the latest ${eventTypes.join(
+          '/',
+        )} event log for case ${caseId}:`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
   async create(
     event: CreateEventLog,
-    options?: EventLogTransactionOptions,
+    options?: { transaction?: Transaction },
   ): Promise<EventLog> {
     try {
       this.logger.debug(
@@ -126,6 +153,51 @@ export class EventLogRepositoryService {
     } catch (error) {
       this.logger.error(
         `Error counting logins for ${nationalIds.length} user(s):`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  // Copies the event logs of the given types to another case as new rows,
+  // timestamps included - the copy records that the event happened, not that
+  // it was copied. Which types travel is the caller's decision.
+  async copyByTypesToCase(
+    caseId: string,
+    newCaseId: string,
+    eventTypes: EventType[],
+    options: { transaction: Transaction },
+  ): Promise<void> {
+    try {
+      this.logger.debug(
+        `Copying the event logs of types ${eventTypes.join(
+          ', ',
+        )} of case ${caseId} to case ${newCaseId}`,
+      )
+
+      const eventLogs = await this.eventLogModel.findAll({
+        where: { caseId, eventType: eventTypes },
+        transaction: options.transaction,
+      })
+
+      await Promise.all(
+        eventLogs.map((eventLog) =>
+          this.eventLogModel.create(
+            { ...eventLog.toJSON(), id: undefined, caseId: newCaseId },
+            { transaction: options.transaction },
+          ),
+        ),
+      )
+
+      this.logger.debug(
+        `Copied ${eventLogs.length} event logs of case ${caseId} to case ${newCaseId}`,
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error copying the event logs of types ${eventTypes.join(
+          ', ',
+        )} of case ${caseId} to case ${newCaseId}:`,
         { error },
       )
 

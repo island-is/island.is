@@ -1,8 +1,11 @@
 import {
+  defenderRule,
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
   prisonSystemStaffRule,
+  prosecutorRepresentativeRule,
+  prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../../../guards'
 import { verifyRolesRules } from '../../../../test'
@@ -38,6 +41,9 @@ describe('VerdictController - Get Verdict Roles', () => {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
     publicProsecutorStaffRule,
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    defenderRule,
   ])
 })
 

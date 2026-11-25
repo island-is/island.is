@@ -19,4 +19,7 @@ export class HealthDirectorateHealthConversationVideoContent {
 
   @Field()
   isEdited!: boolean
+
+  @Field()
+  isExpired!: boolean
 }

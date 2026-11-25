@@ -9,27 +9,24 @@ import {
 import { useTheme } from 'styled-components/native'
 
 interface PressableHighlightProps extends PressableProps {
-  highlightColor?: string
   children: ReactNode
 }
 
+// Pressed rows all use `app.background.pressed`. A row's own background goes
+// on this component's style, not on the child, so the pressed colour can
+// replace it.
 export function PressableHighlight({
   children,
-  highlightColor,
   ...rest
 }: PressableHighlightProps) {
   const theme = useTheme()
-  const color =
-    highlightColor ??
-    Platform.select({
-      android: theme.isDark ? '#001333' : theme.color.blue200,
-      ios: theme.isDark ? '#001333' : theme.color.blue100,
-    })
+  const color = theme.tokens.app.background.pressed
 
   if (Platform.OS === 'ios') {
     return (
       <TouchableHighlight
         underlayColor={color}
+        activeOpacity={1}
         {...(rest as TouchableHighlightProps)}
       >
         {children}

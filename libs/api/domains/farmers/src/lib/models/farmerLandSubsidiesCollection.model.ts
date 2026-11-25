@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { PaginatedResponse } from '@island.is/nest/pagination'
 import { FarmerLandSubsidy } from './farmerLandSubsidy.model'
 import { FarmerLandSubsidyFilterOptions } from './farmerLandSubsidyFilterOptions.model'
+import { FarmerLandSubsidySummary } from './farmerLandSubsidySummary.model'
 
 @ObjectType('FarmerLandSubsidies')
 export class FarmerLandSubsidiesCollection extends PaginatedResponse(
@@ -9,4 +10,7 @@ export class FarmerLandSubsidiesCollection extends PaginatedResponse(
 ) {
   @Field(() => FarmerLandSubsidyFilterOptions, { nullable: true })
   filterOptions?: FarmerLandSubsidyFilterOptions
+
+  @Field(() => FarmerLandSubsidySummary, { nullable: true })
+  summary?: FarmerLandSubsidySummary
 }

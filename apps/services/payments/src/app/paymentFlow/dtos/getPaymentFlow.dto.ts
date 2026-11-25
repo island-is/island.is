@@ -17,6 +17,7 @@ import {
   BankTransferFailureReason,
   BankTransferPendingStatus,
 } from '../../bankTransferPayment/bankTransfer.types'
+import type { PaymentFlowType } from '../models'
 import { PageInfoDto } from '@island.is/nest/pagination'
 
 export class PaymentFlowEventDTO {
@@ -241,6 +242,20 @@ export class GetPaymentFlowDTO {
   @IsOptional()
   @IsDate()
   bankTransferExpiresAt?: Date
+
+  @ApiProperty({
+    description:
+      'True when the flow can no longer be paid and the payer has to start a new one. Only debt flows whose settlement was rejected by FJS are closed.',
+    type: Boolean,
+  })
+  isClosed!: boolean
+
+  @ApiProperty({
+    description:
+      'charge: paying catalog charges. debt: paying debts owed to the state, see POST /v1/payments/debts.',
+    enum: ['charge', 'debt'],
+  })
+  type!: PaymentFlowType
 
   @ApiPropertyOptional({
     description: 'Populated only when paymentStatus is bank_transfer_pending',

@@ -138,6 +138,7 @@ export const mapFormSystemStatisticsAdmin = (
     rejected: 0,
     approved: 0,
     institutionNationalId: statistics.institutionNationalId,
+    isFormSystem: true,
   }
 }
 

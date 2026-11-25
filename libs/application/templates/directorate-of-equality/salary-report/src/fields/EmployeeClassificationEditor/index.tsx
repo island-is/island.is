@@ -47,9 +47,9 @@ const DRAFT_EMPLOYEES_WITH_STEPS_QUERY = gql`
         baseSalary
         additionalFixedOvertime
         additionalFixedCarAllowance
-        bonusOccasionalCarAllowance
+        additionalFixedOther
         bonusOccasionalOvertime
-        bonusPayments
+        bonusOccasionalCarAllowance
         bonusOther
         additionalSalary
         bonusSalary

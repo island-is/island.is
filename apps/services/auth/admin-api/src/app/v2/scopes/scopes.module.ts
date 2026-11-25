@@ -5,6 +5,7 @@ import { MeScopesController } from './me-scopes.controller'
 import { MeClientsScopesController } from './me-clients-scopes.controller'
 import { MeScopeClientsController } from './me-scope-clients.controller'
 import { MeScopeUsersController } from './me-scope-users.controller'
+import { PublicScopesController } from './public-scopes.controller'
 
 @Module({
   imports: [ClientsModule, ResourcesModule],
@@ -13,6 +14,7 @@ import { MeScopeUsersController } from './me-scope-users.controller'
     MeClientsScopesController,
     MeScopeClientsController,
     MeScopeUsersController,
+    PublicScopesController,
   ],
 })
 export class ScopesModule {}

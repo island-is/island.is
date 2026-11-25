@@ -147,6 +147,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       title
       description
       canBeFoundInSearchResults
+      activeTranslations
       showPastEventsOption
       newsOverviewCardVariant
       topLevelNavigation {
@@ -340,6 +341,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
         width
         height
       }
+      hideFromExternalSearchEngines
     }
   }
   ${slices}
@@ -381,6 +383,7 @@ export const GET_ORGANIZATION_SUBPAGE_BY_ID_QUERY = gql`
         width
         height
       }
+      hideFromExternalSearchEngines
     }
   }
   ${slices}

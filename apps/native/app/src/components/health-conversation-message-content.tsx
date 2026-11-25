@@ -6,7 +6,50 @@ import { useTheme } from 'styled-components/native'
 import { HealthConversationMessageContentFragment } from '@/graphql/types/schema'
 import { useBrowser } from '@/hooks/use-browser'
 import { Button, Label, Typography } from '@/ui'
-import { Markdown } from '@/ui/lib/markdown/markdown'
+import { linkifyText } from '@/utils/linkify-text'
+
+const bodyTextStyle = { fontSize: 16, lineHeight: 24 }
+
+// A run of message text, with any bare URL in it rendered as a tappable link.
+// Message bodies are plain text (no markup), so URLs are not marked up as links
+// by the sender and have to be detected here.
+const MessageText = ({ text }: { text: string }) => {
+  const theme = useTheme()
+  const { openBrowser } = useBrowser()
+
+  return (
+    <>
+      {linkifyText(text).map((part, index) => {
+        const href = part.href
+        if (part.type === 'link' && href) {
+          return (
+            <Typography
+              key={index}
+              variant="body2"
+              weight="600"
+              color={theme.tokens.interactive.foreground.primary}
+              style={{ ...bodyTextStyle, textDecorationLine: 'underline' }}
+              accessibilityRole="link"
+              onPress={() => openBrowser(href)}
+            >
+              {part.value}
+            </Typography>
+          )
+        }
+        return (
+          <Typography
+            key={index}
+            variant="body2"
+            color={theme.tokens.foreground.primary}
+            style={bodyTextStyle}
+          >
+            {part.value}
+          </Typography>
+        )
+      })}
+    </>
+  )
+}
 
 // Renders a health conversation message body from the structured `content`
 // union: plain text, segmented text/link content, or a video-call card.
@@ -27,21 +70,26 @@ export const HealthConversationMessageContent = ({
   switch (content.__typename) {
     case 'HealthDirectorateHealthConversationTextContent':
       return (
-        <Markdown fontSize={16} lineHeight={24}>
-          {content.text}
-        </Markdown>
+        <Typography
+          variant="body2"
+          color={theme.tokens.foreground.primary}
+          style={bodyTextStyle}
+        >
+          <MessageText text={content.text} />
+        </Typography>
       )
 
     case 'HealthDirectorateHealthConversationSegmentedContent':
       return (
         <Typography
           variant="body2"
-          color={theme.color.dark400}
-          style={{ fontSize: 16, lineHeight: 24 }}
+          color={theme.tokens.foreground.primary}
+          style={bodyTextStyle}
         >
           {(content.segments ?? []).map((segment, index) => {
             // Treat any segment carrying an href as a link (robust to enum
-            // casing); everything else renders as text.
+            // casing); everything else renders as text — which can still hold a
+            // bare URL, so it goes through the same linkifying renderer.
             if (segment.href) {
               const href = segment.href
               return (
@@ -49,12 +97,9 @@ export const HealthConversationMessageContent = ({
                   key={index}
                   variant="body2"
                   weight="600"
-                  color={theme.color.blue400}
-                  style={{
-                    textDecorationLine: 'underline',
-                    fontSize: 16,
-                    lineHeight: 24,
-                  }}
+                  color={theme.tokens.interactive.foreground.primary}
+                  style={{ ...bodyTextStyle, textDecorationLine: 'underline' }}
+                  accessibilityRole="link"
                   onPress={() => openBrowser(href)}
                 >
                   {segment.label ?? href}
@@ -62,14 +107,10 @@ export const HealthConversationMessageContent = ({
               )
             }
             return (
-              <Typography
+              <MessageText
                 key={index}
-                variant="body2"
-                color={theme.color.dark400}
-                style={{ fontSize: 16, lineHeight: 24 }}
-              >
-                {segment.text ?? segment.label ?? ''}
-              </Typography>
+                text={segment.text ?? segment.label ?? ''}
+              />
             )
           })}
         </Typography>
@@ -84,7 +125,7 @@ export const HealthConversationMessageContent = ({
         <View
           style={{
             borderWidth: theme.border.width.standard,
-            borderColor: theme.color.blue200,
+            borderColor: theme.tokens.border.primary,
             borderRadius: theme.border.radius.large,
             padding: theme.spacing[2],
             rowGap: theme.spacing[1],
@@ -104,6 +145,12 @@ export const HealthConversationMessageContent = ({
               <Label color="danger">
                 {intl.formatMessage({
                   id: 'health.messages.videoCallCanceled',
+                })}
+              </Label>
+            ) : content.isExpired ? (
+              <Label color="primary">
+                {intl.formatMessage({
+                  id: 'health.messages.videoCallExpired',
                 })}
               </Label>
             ) : null}
@@ -128,7 +175,7 @@ export const HealthConversationMessageContent = ({
           {content.description ? (
             <Typography variant="body3">{content.description}</Typography>
           ) : null}
-          {!content.isCanceled ? (
+          {!content.isCanceled && !content.isExpired ? (
             <View style={{ marginTop: theme.spacing[1] }}>
               <Button
                 title={intl.formatMessage({

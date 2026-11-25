@@ -54,7 +54,7 @@ import { resolver } from '../validation/resolver'
 import FormRepeater from './FormRepeater'
 import FormExternalDataProvider from './FormExternalDataProvider'
 import { extractAnswersToSubmitFromScreen, findSubmitField } from '../utils'
-import ScreenFooter from './ScreenFooter'
+import ScreenFooter, { isScreenFooterVisible } from './ScreenFooter'
 import RefetchContext from '../context/RefetchContext'
 import { Locale } from '@island.is/shared/types'
 import { useUserInfo } from '@island.is/react-spa/bff'
@@ -154,7 +154,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   const [fieldLoadingState, setFieldLoadingState] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const refetch = useContext<() => void>(RefetchContext)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const [updateApplication, { loading, error: updateApplicationError }] =
     useMutation(UPDATE_APPLICATION, {
       onError: (e) => {
@@ -396,6 +396,18 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     window.scrollTo(0, target)
   }, [activeScreenIndex, isMobile])
 
+  // Overview/confirmation screens keep their submit actions in view while the content is taller than the viewport
+  const stickyFooter =
+    submitField?.placement === 'footer' &&
+    submitField.stickyFooter !== false &&
+    screen.type !== FormItemTypes.EXTERNAL_DATA_PROVIDER &&
+    isScreenFooterVisible({
+      activeScreenIndex,
+      numberOfScreens,
+      renderLastScreenButton,
+      mode,
+    })
+
   const onUpdateRepeater = async (newRepeaterItems: unknown[]) => {
     if (!resolvedScreenId) {
       return {}
@@ -476,6 +488,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
                 setFieldLoadingState={setFieldLoadingState}
                 repeater={screen}
                 onUpdateRepeater={onUpdateRepeater}
+                goToScreen={goToScreen}
               />
             ) : screen.type === FormItemTypes.MULTI_FIELD ? (
               <FormMultiField
@@ -487,6 +500,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
                 application={application}
                 goToScreen={goToScreen}
                 refetch={refetch}
+                addExternalData={addExternalData}
                 setSubmitButtonDisabled={setSubmitButtonDisabled}
                 user={user}
               />
@@ -516,6 +530,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
                   application={application}
                   goToScreen={goToScreen}
                   refetch={refetch}
+                  addExternalData={addExternalData}
                   setSubmitButtonDisabled={setSubmitButtonDisabled}
                   answerQuestions={answerQuestions}
                   user={user}
@@ -558,6 +573,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
           loading={loading}
           canProceed={!isLoadingOrPending}
           nextButtonText={nextButtonText}
+          sticky={stickyFooter}
         />
       </Box>
     </FormProvider>

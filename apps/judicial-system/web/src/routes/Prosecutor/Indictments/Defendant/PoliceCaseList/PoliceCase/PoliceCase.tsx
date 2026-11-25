@@ -209,7 +209,7 @@ export const PoliceCase: FC<Props> = ({
             variant="text"
             size="small"
           >
-            {formatMessage(strings.delete)}
+            {strings.delete}
           </Button>
         </Box>
       )}
@@ -263,9 +263,7 @@ export const PoliceCase: FC<Props> = ({
               setPoliceCaseNumberErrorMessage,
             )
           } else if (policeCaseNumberInput !== policeCaseNumber) {
-            setPoliceCaseNumberErrorMessage(
-              formatMessage(strings.policeCaseNumberExists),
-            )
+            setPoliceCaseNumberErrorMessage(strings.policeCaseNumberExists)
           } else {
             validateAndSetErrorMessage(
               ['empty', 'police-casenumber-format'],
@@ -279,14 +277,20 @@ export const PoliceCase: FC<Props> = ({
         data-testid={`policeCaseNumber${index}`}
         name="policeCaseNumber"
         autoComplete="off"
-        label={formatMessage(strings.policeCaseNumberLabel)}
-        placeholder={formatMessage(strings.policeCaseNumberPlaceholder, {
-          prefix:
-            workingCase.prosecutorsOffice?.policeCaseNumberPrefix ??
-            user?.institution?.policeCaseNumberPrefix ??
-            '',
-          year: new Date().getFullYear(),
-        })}
+        label={strings.policeCaseNumberLabel}
+        placeholder={formatMessage(
+          {
+            id: strings.policeCaseNumberPlaceholder,
+            defaultMessage: strings.policeCaseNumberPlaceholder,
+          },
+          {
+            prefix:
+              workingCase.prosecutorsOffice?.policeCaseNumberPrefix ??
+              user?.institution?.policeCaseNumberPrefix ??
+              '',
+            year: new Date().getFullYear(),
+          },
+        )}
         hasError={policeCaseNumberErrorMessage !== ''}
         errorMessage={policeCaseNumberErrorMessage}
         required
@@ -294,8 +298,8 @@ export const PoliceCase: FC<Props> = ({
       <Select
         name="case-type"
         options={options}
-        label={formatMessage(strings.indictmentTypeLabel)}
-        placeholder={formatMessage(strings.indictmentTypePlaceholder)}
+        label={strings.indictmentTypeLabel}
+        placeholder={strings.indictmentTypePlaceholder}
         onChange={(selectedOption) => {
           const indictmentSubtype = selectedOption?.value
 
@@ -323,9 +327,15 @@ export const PoliceCase: FC<Props> = ({
                   ),
                 })
               }
-              aria-label={formatMessage(strings.removeSubtype, {
-                subtype: indictmentSubtypes[subtype],
-              })}
+              aria-label={formatMessage(
+                {
+                  id: strings.removeSubtype,
+                  defaultMessage: strings.removeSubtype,
+                },
+                {
+                  subtype: indictmentSubtypes[subtype],
+                },
+              )}
             >
               <Box display="flex" alignItems="center">
                 {capitalize(indictmentSubtypes[subtype])}
@@ -338,8 +348,8 @@ export const PoliceCase: FC<Props> = ({
       <Input
         name="policeCasePlace"
         autoComplete="off"
-        label={formatMessage(strings.policeCasePlaceLabel)}
-        placeholder={formatMessage(strings.policeCasePlacePlaceholder)}
+        label={strings.policeCasePlaceLabel}
+        placeholder={strings.policeCasePlacePlaceholder}
         value={policeCaseNumberCrimeScene.place ?? ''}
         onChange={(event) =>
           setPoliceCase({

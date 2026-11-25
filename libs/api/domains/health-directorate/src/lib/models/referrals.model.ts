@@ -37,9 +37,6 @@ export class Referral {
   status?: ReferralStatusEnum
 
   @Field({ nullable: true })
-  reason?: string
-
-  @Field({ nullable: true })
   diagnoses?: string
 
   @Field({ nullable: true })

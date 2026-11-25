@@ -2,6 +2,8 @@ import {
   CaseFileCategory,
   CaseState,
   CaseType,
+  courtOfAppealsRoles,
+  InstitutionType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -9,7 +11,9 @@ import {
 import { CivilClaimant, CourtSession, Defendant } from '../../repository'
 import {
   canLimitedAccessUserViewCaseFile,
+  canUserAccessCaseFileCategory,
   getConfirmedDefendantsForDefender,
+  getDefenceUserCaseFileCategories,
   getDefenceUserVisiblePoliceCaseNumbers,
   getDefenderVisiblePoliceCaseNumbers,
   getSpokespersonVisiblePoliceCaseNumbers,
@@ -22,6 +26,10 @@ const makeDefendant = (
     id: string
     defenderNationalId: string
     isDefenderChoiceConfirmed: boolean
+    caseFilesSharedWithDefender: boolean
+    appealDefenderNationalId: string
+    isAppealDefenderConfirmed: boolean
+    isAppealDefenderWaived: boolean
     policeCaseNumbers: string[]
   }> = {},
 ): Defendant =>
@@ -29,6 +37,10 @@ const makeDefendant = (
     id: overrides.id ?? 'defendant-id',
     defenderNationalId: overrides.defenderNationalId ?? null,
     isDefenderChoiceConfirmed: overrides.isDefenderChoiceConfirmed ?? false,
+    caseFilesSharedWithDefender: overrides.caseFilesSharedWithDefender ?? false,
+    appealDefenderNationalId: overrides.appealDefenderNationalId ?? null,
+    isAppealDefenderConfirmed: overrides.isAppealDefenderConfirmed ?? false,
+    isAppealDefenderWaived: overrides.isAppealDefenderWaived ?? false,
     policeCaseNumbers: overrides.policeCaseNumbers ?? [],
   } as unknown as Defendant)
 
@@ -39,6 +51,9 @@ const makeCivilClaimant = (
     caseFilesSharedWithSpokesperson: boolean
     policeCaseNumbers: string[]
     hasSpokesperson: boolean
+    hasAppealSpokesperson: boolean
+    appealSpokespersonNationalId: string
+    isAppealSpokespersonConfirmed: boolean
   }> = {},
 ): CivilClaimant =>
   ({
@@ -47,6 +62,9 @@ const makeCivilClaimant = (
     caseFilesSharedWithSpokesperson:
       overrides.caseFilesSharedWithSpokesperson ?? true,
     spokespersonNationalId: overrides.spokespersonNationalId ?? '1234567890',
+    hasAppealSpokesperson: overrides.hasAppealSpokesperson,
+    appealSpokespersonNationalId: overrides.appealSpokespersonNationalId,
+    isAppealSpokespersonConfirmed: overrides.isAppealSpokespersonConfirmed,
     policeCaseNumbers: overrides.policeCaseNumbers ?? [],
   } as unknown as CivilClaimant)
 
@@ -499,6 +517,252 @@ describe('canLimitedAccessUserViewCaseFile - ruling order', () => {
 
   it('should show a ruling order that is in a confirmed court session', () => {
     expect(viewRulingOrder(true)).toBe(true)
+  })
+})
+
+describe('getDefenceUserCaseFileCategories - appeal confirmation', () => {
+  const nationalId = '1234567890'
+
+  it('returns the full district set for a confirmed appeal defender', () => {
+    const categories = getDefenceUserCaseFileCategories(
+      nationalId,
+      CaseType.INDICTMENT,
+      [
+        makeDefendant({
+          appealDefenderNationalId: nationalId,
+          isAppealDefenderConfirmed: true,
+        }),
+      ],
+    )
+
+    expect(categories).toContain(CaseFileCategory.CASE_FILE)
+    expect(categories).toContain(
+      CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+    )
+  })
+
+  it('returns the full district set for a confirmed appeal spokesperson', () => {
+    const categories = getDefenceUserCaseFileCategories(
+      nationalId,
+      CaseType.INDICTMENT,
+      undefined,
+      [
+        makeCivilClaimant({
+          hasAppealSpokesperson: true,
+          appealSpokespersonNationalId: nationalId,
+          isAppealSpokespersonConfirmed: true,
+        }),
+      ],
+    )
+
+    expect(categories).toContain(CaseFileCategory.CASE_FILE)
+  })
+
+  it('keeps the full district set for a confirmed district defender without appeal confirmation', () => {
+    const categories = getDefenceUserCaseFileCategories(
+      nationalId,
+      CaseType.INDICTMENT,
+      [
+        makeDefendant({
+          defenderNationalId: nationalId,
+          isDefenderChoiceConfirmed: true,
+          caseFilesSharedWithDefender: true,
+        }),
+      ],
+    )
+
+    expect(categories).toContain(CaseFileCategory.CASE_FILE)
+    expect(categories).toContain(
+      CaseFileCategory.DEFENDANT_VERDICT_APPEAL_STATEMENT,
+    )
+  })
+})
+
+describe('verdict appeal ruling', () => {
+  const nationalId = '1234567890'
+  const category = CaseFileCategory.VERDICT_APPEAL_RULING
+
+  it.each(courtOfAppealsRoles)('is accessible to %s', (role) => {
+    const user = {
+      role,
+      institution: { type: InstitutionType.COURT_OF_APPEALS },
+    } as User
+
+    expect(canUserAccessCaseFileCategory(user, category)).toBe(true)
+  })
+
+  it.each([
+    [UserRole.PROSECUTOR, InstitutionType.POLICE_PROSECUTORS_OFFICE],
+    [UserRole.PROSECUTOR, InstitutionType.PUBLIC_PROSECUTORS_OFFICE],
+    [UserRole.DISTRICT_COURT_JUDGE, InstitutionType.DISTRICT_COURT],
+    [UserRole.PRISON_SYSTEM_STAFF, InstitutionType.PRISON_ADMIN],
+    [UserRole.DEFENDER, undefined],
+  ])('is not accessible to %s at %s', (role, type) => {
+    const user = { role, institution: type ? { type } : undefined } as User
+
+    expect(canUserAccessCaseFileCategory(user, category)).toBe(false)
+  })
+
+  it('is not accessible without a user', () => {
+    expect(canUserAccessCaseFileCategory(undefined, category)).toBe(false)
+  })
+
+  it('leaves every other category alone', () => {
+    const others = Object.values(CaseFileCategory).filter(
+      (other) => other !== category,
+    )
+
+    expect(
+      others.every((other) => canUserAccessCaseFileCategory(undefined, other)),
+    ).toBe(true)
+    expect(canUserAccessCaseFileCategory(undefined, undefined)).toBe(true)
+  })
+
+  it('is not among the categories of a confirmed appeal defender', () => {
+    const categories = getDefenceUserCaseFileCategories(
+      nationalId,
+      CaseType.INDICTMENT,
+      [
+        makeDefendant({
+          appealDefenderNationalId: nationalId,
+          isAppealDefenderConfirmed: true,
+        }),
+      ],
+    )
+
+    expect(categories).not.toContain(category)
+  })
+
+  it.each([
+    [UserRole.DEFENDER, undefined],
+    [UserRole.PRISON_SYSTEM_STAFF, InstitutionType.PRISON],
+    [UserRole.PRISON_SYSTEM_STAFF, InstitutionType.PRISON_ADMIN],
+  ])('cannot be viewed by limited access user %s at %s', (role, type) => {
+    const canView = canLimitedAccessUserViewCaseFile({
+      user: {
+        nationalId,
+        name: 'Limited Access User',
+        role,
+        institution: type ? { type } : undefined,
+      } as User,
+      caseType: CaseType.INDICTMENT,
+      caseState: CaseState.COMPLETED,
+      caseFileCategory: category,
+      defendants: [
+        makeDefendant({
+          appealDefenderNationalId: nationalId,
+          isAppealDefenderConfirmed: true,
+        }),
+      ],
+    })
+
+    expect(canView).toBe(false)
+  })
+})
+
+describe('canLimitedAccessUserViewCaseFile - appeal confirmation', () => {
+  const nationalId = '1234567890'
+  const user = {
+    nationalId,
+    name: 'Appeal Defender',
+    role: UserRole.DEFENDER,
+  } as User
+
+  it('allows district case files for a confirmed appeal defender', () => {
+    const canView = canLimitedAccessUserViewCaseFile({
+      user,
+      caseType: CaseType.INDICTMENT,
+      caseState: CaseState.COMPLETED,
+      caseFileCategory: CaseFileCategory.CASE_FILE,
+      defendants: [
+        makeDefendant({
+          appealDefenderNationalId: nationalId,
+          isAppealDefenderConfirmed: true,
+        }),
+      ],
+    })
+
+    expect(canView).toBe(true)
+  })
+
+  it('denies access when the appeal defender appointment is waived', () => {
+    const categories = getDefenceUserCaseFileCategories(
+      nationalId,
+      CaseType.INDICTMENT,
+      [
+        makeDefendant({
+          appealDefenderNationalId: nationalId,
+          isAppealDefenderConfirmed: true,
+          isAppealDefenderWaived: true,
+        }),
+      ],
+    )
+
+    expect(categories).not.toContain(CaseFileCategory.CASE_FILE)
+  })
+
+  it('denies access when the appeal spokesperson has been removed', () => {
+    const categories = getDefenceUserCaseFileCategories(
+      nationalId,
+      CaseType.INDICTMENT,
+      undefined,
+      [
+        makeCivilClaimant({
+          hasAppealSpokesperson: false,
+          appealSpokespersonNationalId: nationalId,
+          isAppealSpokespersonConfirmed: true,
+          hasSpokesperson: false,
+          isSpokespersonConfirmed: false,
+          caseFilesSharedWithSpokesperson: false,
+          spokespersonNationalId: '0000000000',
+        }),
+      ],
+    )
+
+    expect(categories).not.toContain(CaseFileCategory.CASE_FILE)
+  })
+
+  it('allows criminal records for the defendant the appeal defender is confirmed for', () => {
+    const canView = canLimitedAccessUserViewCaseFile({
+      user,
+      caseType: CaseType.INDICTMENT,
+      caseState: CaseState.COMPLETED,
+      caseFileCategory: CaseFileCategory.CRIMINAL_RECORD,
+      defendantId: 'defendant-id',
+      defendants: [
+        makeDefendant({
+          id: 'defendant-id',
+          appealDefenderNationalId: nationalId,
+          isAppealDefenderConfirmed: true,
+        }),
+      ],
+    })
+
+    expect(canView).toBe(true)
+  })
+
+  it('denies criminal records for a defendant the appeal defender is not confirmed for', () => {
+    const canView = canLimitedAccessUserViewCaseFile({
+      user,
+      caseType: CaseType.INDICTMENT,
+      caseState: CaseState.COMPLETED,
+      caseFileCategory: CaseFileCategory.CRIMINAL_RECORD,
+      defendantId: 'other-defendant-id',
+      defendants: [
+        makeDefendant({
+          id: 'defendant-id',
+          appealDefenderNationalId: nationalId,
+          isAppealDefenderConfirmed: true,
+        }),
+        makeDefendant({
+          id: 'other-defendant-id',
+          appealDefenderNationalId: '9999999999',
+          isAppealDefenderConfirmed: true,
+        }),
+      ],
+    })
+
+    expect(canView).toBe(false)
   })
 })
 

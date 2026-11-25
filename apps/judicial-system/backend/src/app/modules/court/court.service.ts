@@ -35,9 +35,9 @@ import {
 
 import { EventService } from '../event'
 import {
+  Case,
   CaseRepositoryService,
   RobotLogRepositoryService,
-  User as UserModel,
 } from '../repository'
 import { courtModuleConfig } from './court.config'
 
@@ -64,7 +64,8 @@ enum RobotEmailType {
   INDICTMENT_CASE_CANCELLATION_NOTICE = 'INDICTMENT_CASE_CANCELLATION_NOTICE',
   INDICTMENT_CASE_CONCLUSION = 'INDICTMENT_CASE_CONCLUSION',
   INDICTMENT_CASE_SPOKESPERSON_INFO = 'INDICTMENT_CASE_SPOKESPERSON_INFO',
-  REQUEST_CASE_DEFENDER_INFO = 'REQUEST_CASE_DEFENDER_INFO',
+  // The value predates the name: it is what earlier robot log rows carry
+  REQUEST_CASE_DEFENDANT = 'REQUEST_CASE_DEFENDER_INFO',
 }
 
 const INDICTMENT_JUDGE_ASSIGNMENT_ROLES = [
@@ -140,21 +141,20 @@ export class CourtService {
     courtCaseNumber: string,
     fileName: string,
   ): Promise<void> {
-    const theCase = await this.caseRepositoryService
-      .findById(caseId, {
-        include: [
-          { model: UserModel, as: 'judge' },
-          { model: UserModel, as: 'registrar' },
-        ],
-      })
-      .catch((reason) => {
-        this.logger.error(
-          `Failed to look up case ${caseId} when notifying that a file was too large for the court service`,
-          { reason },
-        )
+    let theCase: Case | null = null
 
-        return null
-      })
+    try {
+      theCase = await this.caseRepositoryService.findByIdWithJudgeAndRegistrar(
+        caseId,
+      )
+    } catch (reason) {
+      // The court is still worth notifying even when the judge and the
+      // registrar cannot be looked up.
+      this.logger.error(
+        `Failed to look up case ${caseId} when notifying that a file was too large for the court service`,
+        { reason },
+      )
+    }
 
     const recipients: { name: string; address: string }[] = []
 
@@ -500,72 +500,24 @@ export class CourtService {
           return ''
         }
 
+        // Temporarily limiting noise in the error channel.
+        // Commenting out rather than deleting so we can easily revert
+        // this change if we want to see the full error in Slack again.
         this.eventService.postErrorEvent(
           'Failed to update court case with prosecutor',
           {
             caseId,
-            actor: user.name,
-            institution: user.institution?.name,
-            courtId,
-            courtCaseNumber,
-            prosecutorNationalId,
-            prosecutorsOfficeNationalId,
+            // actor: user.name,
+            // institution: user.institution?.name,
+            // courtId,
+            // courtCaseNumber,
+            // prosecutorNationalId,
+            // prosecutorsOfficeNationalId,
           },
-          reason,
+          // reason,
         )
 
         throw reason
-      })
-  }
-
-  async updateCaseWithDefendant(
-    user: User,
-    caseId: string,
-    courtId: string,
-    courtCaseNumber: string,
-    defendantNationalId: string,
-    defenderEmail?: string,
-  ): Promise<string> {
-    return this.courtClientService
-      .updateCaseWithDefendant(courtId, {
-        userIdNumber: user.nationalId,
-        caseId: courtCaseNumber,
-        defendant: {
-          idNumber: defendantNationalId,
-          lawyerEmail: defenderEmail,
-        },
-      })
-      .catch((reason) => {
-        if (reason instanceof ServiceUnavailableException) {
-          // Act as if the case was updated successfully
-          return ''
-        }
-
-        const sanitizedReason = JSON.stringify(reason)
-          .replace(
-            /Participant with id: \d{10}/g,
-            'Participant with id: **********',
-          )
-          .replace(/\) gegn(.*?)'/g, ') gegn **********')
-          .replace(
-            /defendant with IdNumber = \d{10}/g,
-            'defendant with IdNumber = **********',
-          )
-
-        this.eventService.postErrorEvent(
-          'Failed to update court case with defendant',
-          {
-            caseId,
-            actor: user.name,
-            institution: user.institution?.name,
-            courtId,
-            courtCaseNumber,
-            defenderEmail,
-          },
-          JSON.parse(sanitizedReason),
-        )
-
-        throw JSON.parse(sanitizedReason)
       })
   }
 
@@ -759,7 +711,7 @@ export class CourtService {
     }
   }
 
-  async updateRequestCaseWithDefenderInfo(
+  async updateRequestCaseWithDefendant(
     user: User,
     caseId: string,
     courtName?: string,
@@ -781,12 +733,12 @@ export class CourtService {
       return await this.sendToRobot(
         subject,
         content,
-        RobotEmailType.REQUEST_CASE_DEFENDER_INFO,
+        RobotEmailType.REQUEST_CASE_DEFENDANT,
         caseId,
       )
     } catch (error) {
       this.eventService.postErrorEvent(
-        'Failed to update request case with defender info',
+        'Failed to update request case with defendant',
         {
           caseId,
           actor: user.name,

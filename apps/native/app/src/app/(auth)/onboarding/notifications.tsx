@@ -13,13 +13,20 @@ export default function NotificationsScreen() {
 
   const onAllowPress = () => {
     requestNotificationsPermission().then(() => {
-      preferencesStore.setState({ hasOnboardedNotifications: true })
+      preferencesStore.setState({
+        hasOnboardedNotifications: true,
+        hasDeferredNotificationsOnboarding: false,
+      })
       nextOnboardingStep()
     })
   }
 
   const onSkipPress = () => {
-    preferencesStore.setState({ hasOnboardedNotifications: true })
+    // A deliberate "not now", so nothing prompts again until they ask.
+    preferencesStore.setState({
+      hasOnboardedNotifications: true,
+      hasDeferredNotificationsOnboarding: true,
+    })
     nextOnboardingStep()
   }
 

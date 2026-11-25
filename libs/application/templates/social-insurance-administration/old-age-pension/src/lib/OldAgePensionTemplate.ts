@@ -55,6 +55,7 @@ import {
   Events,
   INCOME,
   MONTH_NAMES,
+  OAPEvents,
   RatioType,
   Roles,
   States,
@@ -128,6 +129,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
           'clearBankAccountInfo',
           'clearTemp',
           'restoreAnswersFromTemp',
+          'clearIncomePlanOnOnePaymentPerYear',
           'unsetIncomePlan',
           'clearNoOtherIncomeConfirmation',
         ],
@@ -160,6 +162,12 @@ const OldAgePensionTemplate: ApplicationTemplate<
                   event: DefaultEvents.SUBMIT,
                   name: 'Submit',
                   type: 'primary',
+                },
+                {
+                  event: DefaultEvents.ABORT,
+                  name: socialInsuranceAdministrationMessage.confirm
+                    .cancelButton,
+                  type: 'reject',
                 },
               ],
               write: 'all',
@@ -218,6 +226,23 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              actions: [
+                {
+                  event: OAPEvents.INREVIEW,
+                  name: 'Í vinnslu',
+                  type: 'primary',
+                },
+                {
+                  event: OAPEvents.ADDITIONALDOCUMENTSREQUIRED,
+                  name: 'Kalla eftir gögnum',
+                  type: 'primary',
+                },
+                {
+                  event: OAPEvents.DISMISS,
+                  name: 'Vísa frá',
+                  type: 'reject',
+                },
+              ],
               write: 'all',
             },
           ],
@@ -268,6 +293,28 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+                {
+                  event: OAPEvents.ADDITIONALDOCUMENTSREQUIRED,
+                  name: 'Kalla eftir gögnum',
+                  type: 'primary',
+                },
+                {
+                  event: OAPEvents.DISMISS,
+                  name: 'Vísa frá',
+                  type: 'reject',
+                },
+              ],
               write: 'all',
             },
           ],
@@ -313,6 +360,14 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 import('../forms/AdditionalDocumentsRequired').then((val) =>
                   Promise.resolve(val.AdditionalDocumentsRequired),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: socialInsuranceAdministrationMessage.fileUpload
+                    .additionalDocumentsEditSubmit,
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
             },
@@ -322,6 +377,13 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              actions: [
+                {
+                  event: OAPEvents.DISMISS,
+                  name: 'Vísa frá',
+                  type: 'reject',
+                },
+              ],
               write: 'all',
             },
           ],
@@ -504,6 +566,24 @@ const OldAgePensionTemplate: ApplicationTemplate<
 
         if (paymentInfo?.bankAccountType === BankAccountType.FOREIGN) {
           unset(application.answers, 'paymentInfo.bank')
+        }
+
+        return context
+      }),
+      clearIncomePlanOnOnePaymentPerYear: assign((context, event) => {
+        if (event.type !== DefaultEvents.SUBMIT) {
+          return context
+        }
+
+        const { application } = context
+        const { onePaymentPerYear } = getApplicationAnswers(application.answers)
+
+        /* The income plan screens are skipped when the applicant asks for a
+           single yearly payment, so any plan populated earlier must not be
+           submitted to TR. */
+        if (onePaymentPerYear === YES) {
+          unset(application.answers, 'incomePlanTable')
+          unset(application.answers, 'incomePlan')
         }
 
         return context

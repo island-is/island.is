@@ -1,0 +1,226 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/statistics": {
+      "get": {
+        "operationId": "getStatistics",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Company counts by region, size, sector and status, validity rounds and national headcounts. Recomputed once a day.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AggregateStatisticsDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiErrorDto" }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["Statistics"]
+      }
+    }
+  },
+  "info": {
+    "title": "Directorate of Equality — Statistics API",
+    "description": "Aggregate register counts for the Jafnlaunakerfi dashboard on island.is: companies by region, size, sector and certification status, validity rounds and national headcounts. Read without a credential, takes no parameters, and is recomputed once a day.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": { "scheme": "bearer", "bearerFormat": "JWT", "type": "http" }
+    },
+    "schemas": {
+      "StatisticsCompanySizeEnum": {
+        "type": "string",
+        "enum": ["UNKNOWN", "SMALL", "MEDIUM", "LARGE"],
+        "description": "Employee size bucket. MEDIUM (25–49) and LARGE (50+) are the population the law reaches."
+      },
+      "StatisticsSectorEnum": {
+        "type": "string",
+        "enum": ["FYRIRTAEKI", "RIKISADILI", "SVEITARFELAG", "UNKNOWN"]
+      },
+      "StatisticsCertificationStatusEnum": {
+        "type": "string",
+        "enum": ["VOTTUN", "STADFESTING", "SKYRSLUGJOF", "UNCLASSIFIED", "NONE"]
+      },
+      "StatisticsCompanyCellDto": {
+        "type": "object",
+        "properties": {
+          "region": {
+            "type": "string",
+            "description": "Landshluti name, or `Óþekkt` for a company with no postcode. Every region in the reference table is listed in `regions`, including ones with no cells."
+          },
+          "size": {
+            "description": "Employee size bucket. MEDIUM (25–49) and LARGE (50+) are the population the law reaches.",
+            "allOf": [
+              { "$ref": "#/components/schemas/StatisticsCompanySizeEnum" }
+            ]
+          },
+          "sector": {
+            "allOf": [{ "$ref": "#/components/schemas/StatisticsSectorEnum" }]
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StatisticsCertificationStatusEnum"
+              }
+            ]
+          },
+          "companies": {
+            "type": "number",
+            "description": "ACTIVE companies in this cell."
+          }
+        },
+        "required": ["region", "size", "sector", "status", "companies"]
+      },
+      "StatisticsRoundCellDto": {
+        "type": "object",
+        "properties": {
+          "region": {
+            "type": "string",
+            "description": "Landshluti name, or `Óþekkt` for a company with no postcode. Every region in the reference table is listed in `regions`, including ones with no cells."
+          },
+          "size": {
+            "description": "Employee size bucket. MEDIUM (25–49) and LARGE (50+) are the population the law reaches.",
+            "allOf": [
+              { "$ref": "#/components/schemas/StatisticsCompanySizeEnum" }
+            ]
+          },
+          "sector": {
+            "allOf": [{ "$ref": "#/components/schemas/StatisticsSectorEnum" }]
+          },
+          "round": {
+            "type": "number",
+            "nullable": true,
+            "description": "Númer gildistímabils: the legacy register round plus one per approved skýrslugjöf filed since. Null when neither records one."
+          },
+          "companies": {
+            "type": "number",
+            "description": "ACTIVE companies in this cell whose salary-side status is not NONE."
+          }
+        },
+        "required": ["region", "size", "sector", "round", "companies"]
+      },
+      "StatisticsEmployeesDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StatisticsCertificationStatusEnum"
+              }
+            ]
+          },
+          "employees": {
+            "type": "number",
+            "nullable": true,
+            "description": "Headcount summed over the companies with this status that stated one. Null when fewer than `minimumCohort` companies stand behind it: render as absent, never as 0."
+          }
+        },
+        "required": ["status", "employees"]
+      },
+      "AggregateStatisticsDto": {
+        "type": "object",
+        "properties": {
+          "generatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "When these figures were computed. Shown as \"Síðast uppfært\"."
+          },
+          "expiresAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "When the figures are next recomputed. The response may be cached until then."
+          },
+          "minimumCohort": {
+            "type": "number",
+            "description": "Fewest companies behind a published headcount. Smaller groups are withheld (null)."
+          },
+          "regions": {
+            "description": "Every region value the cells can carry, in display order.",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "companies": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/StatisticsCompanyCellDto" }
+          },
+          "rounds": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/StatisticsRoundCellDto" }
+          },
+          "employees": {
+            "description": "National headcount per status, excluding NONE. Published nationally only, not by region, size or sector, because a finer breakdown would expose individual companies' headcounts.",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/StatisticsEmployeesDto" }
+          }
+        },
+        "required": [
+          "generatedAt",
+          "expiresAt",
+          "minimumCohort",
+          "regions",
+          "companies",
+          "rounds",
+          "employees"
+        ]
+      },
+      "ApiErrorDto": {
+        "type": "object",
+        "properties": {
+          "statusCode": { "type": "number" },
+          "timestamp": { "type": "string" },
+          "name": {
+            "type": "string",
+            "enum": [
+              "NotFound",
+              "ValidationError",
+              "ForeignKeyConstraintError",
+              "UniqueConstraintError",
+              "TimeoutError",
+              "Unauthorized",
+              "Forbidden",
+              "BadRequest",
+              "InternalServerError",
+              "ConnectionAcquireTimeoutError",
+              "UnknownError"
+            ],
+            "example": [
+              "NotFound",
+              "ValidationError",
+              "ForeignKeyConstraintError",
+              "UniqueConstraintError",
+              "TimeoutError",
+              "Unauthorized",
+              "Forbidden",
+              "BadRequest",
+              "InternalServerError",
+              "ConnectionAcquireTimeoutError",
+              "UnknownError"
+            ]
+          },
+          "message": { "type": "string" },
+          "translatedMessage": {
+            "type": "string",
+            "description": "User-facing, localized message safe to display directly in the client. Absent when the error has no curated translation."
+          },
+          "details": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["statusCode", "timestamp"]
+      }
+    }
+  }
+}

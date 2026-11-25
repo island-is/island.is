@@ -26,7 +26,11 @@ import { Events, States, Roles } from './constants'
 import { ApiActions } from '../shared'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { TransferOfVehicleOwnershipSchema } from './dataSchema'
-import { application as applicationMessage, information } from './messages'
+import {
+  application as applicationMessage,
+  information,
+  review,
+} from './messages'
 import { CoOwnerAndOperator, UserInformation } from '../shared'
 import { assign } from 'xstate'
 import set from 'lodash/set'
@@ -291,6 +295,23 @@ const template: ApplicationTemplate<
                 import('../forms/ReviewSeller').then((module) =>
                   Promise.resolve(module.ReviewSellerForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: review.buttons.reject,
+                  type: 'reject',
+                },
+              ],
               write: {
                 answers: [
                   'sellerCoOwner',
@@ -309,6 +330,23 @@ const template: ApplicationTemplate<
                 import('../forms/Review').then((module) =>
                   Promise.resolve(module.ReviewForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: review.buttons.reject,
+                  type: 'reject',
+                },
+              ],
               write: {
                 answers: [
                   'sellerCoOwner',
@@ -327,6 +365,23 @@ const template: ApplicationTemplate<
                 import('../forms/Review').then((module) =>
                   Promise.resolve(module.ReviewForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: review.buttons.reject,
+                  type: 'reject',
+                },
+              ],
               write: {
                 answers: [
                   'sellerCoOwner',

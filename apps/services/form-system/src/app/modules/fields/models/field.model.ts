@@ -27,7 +27,7 @@ export class Field extends Model<Field> {
   id!: string
 
   @Column({
-    type: DataType.UUID,
+    type: DataType.STRING,
     allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
@@ -58,7 +58,14 @@ export class Field extends Model<Field> {
     allowNull: false,
     defaultValue: () => new LanguageType(),
   })
-  description!: LanguageType
+  informationText!: LanguageType
+
+  @Column({
+    type: DataType.JSON,
+    allowNull: false,
+    defaultValue: () => new LanguageType(),
+  })
+  tooltip!: LanguageType
 
   @Column({
     type: DataType.BOOLEAN,

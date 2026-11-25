@@ -1,3 +1,5 @@
+import type { Transaction } from 'sequelize'
+
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
@@ -5,21 +7,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { CaseType } from '@island.is/judicial-system/types'
 
-import { AwsS3Service } from '../../aws-s3/awsS3.service'
-import { AppealCase } from '../models/appealCase.model'
 import { Case } from '../models/case.model'
-import { CaseFile } from '../models/caseFile.model'
-import { CaseString } from '../models/caseString.model'
-import { CivilClaimant } from '../models/civilClaimant.model'
-import { DateLog } from '../models/dateLog.model'
-import { Defendant } from '../models/defendant.model'
-import { DefendantEventLog } from '../models/defendantEventLog.model'
-import { EventLog } from '../models/eventLog.model'
-import { IndictmentCount } from '../models/indictmentCount.model'
-import { Offense } from '../models/offense.model'
-import { Subpoena } from '../models/subpoena.model'
-import { Verdict } from '../models/verdict.model'
-import { Victim } from '../models/victim.model'
 import { CaseDefendantPoliceCaseNumberRepositoryService } from '../services/caseDefendantPoliceCaseNumber.repository.service'
 import { CaseRepositoryService } from '../services/caseRepository.service'
 
@@ -61,33 +49,10 @@ describe('CaseRepositoryService — findOriginalAncestorId', () => {
           useValue: { debug: jest.fn(), error: jest.fn() },
         },
         { provide: getModelToken(Case), useValue: caseModel },
-        { provide: getModelToken(Defendant), useValue: mockSequelizeModel() },
-        { provide: getModelToken(Subpoena), useValue: mockSequelizeModel() },
-        { provide: getModelToken(Verdict), useValue: mockSequelizeModel() },
-        {
-          provide: getModelToken(DefendantEventLog),
-          useValue: mockSequelizeModel(),
-        },
-        { provide: getModelToken(CaseString), useValue: mockSequelizeModel() },
-        { provide: getModelToken(DateLog), useValue: mockSequelizeModel() },
-        { provide: getModelToken(EventLog), useValue: mockSequelizeModel() },
-        { provide: getModelToken(Victim), useValue: mockSequelizeModel() },
-        {
-          provide: getModelToken(IndictmentCount),
-          useValue: mockSequelizeModel(),
-        },
-        { provide: getModelToken(Offense), useValue: mockSequelizeModel() },
-        {
-          provide: getModelToken(CivilClaimant),
-          useValue: mockSequelizeModel(),
-        },
-        { provide: getModelToken(CaseFile), useValue: mockSequelizeModel() },
-        { provide: getModelToken(AppealCase), useValue: mockSequelizeModel() },
         {
           provide: CaseDefendantPoliceCaseNumberRepositoryService,
           useValue: {},
         },
-        { provide: AwsS3Service, useValue: {} },
         CaseRepositoryService,
       ],
     }).compile()
@@ -106,6 +71,23 @@ describe('CaseRepositoryService — findOriginalAncestorId', () => {
       const result = await caseRepositoryService.findOriginalAncestorId(theCase)
 
       expect(result).toBe('split-origin-id')
+      expect(caseModel.findByPk).not.toHaveBeenCalled()
+    })
+
+    // The helper only sees what the caller loaded. A limited-access read that
+    // omitted splitCaseId from its attributes left the FK undefined on the
+    // in-memory case, so the split branch was skipped and defenders got their
+    // own case id as originalAncestorId. limitedAccessCaseAttributes must
+    // keep splitCaseId for the branch above to run.
+    it('returns the case id when a split indictment was loaded without splitCaseId', async () => {
+      const theCase = {
+        id: 'split-child-id',
+        type: CaseType.INDICTMENT,
+      } as Case
+
+      const result = await caseRepositoryService.findOriginalAncestorId(theCase)
+
+      expect(result).toBe('split-child-id')
       expect(caseModel.findByPk).not.toHaveBeenCalled()
     })
 
@@ -196,6 +178,48 @@ describe('CaseRepositoryService — findOriginalAncestorId', () => {
 
       expect(result).toBe('missing-parent-id')
       expect(caseModel.findByPk).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  // The walk runs from an interceptor while the route's guard may hold the
+  // case row's lock in the request's transaction, so every parent read has to
+  // join that transaction rather than take a pool connection of its own.
+  describe('the transaction', () => {
+    const theCase = {
+      id: 'grandchild-id',
+      type: CaseType.CUSTODY,
+      parentCaseId: 'child-id',
+    } as Case
+
+    beforeEach(() => {
+      stubParentChain({ 'parent-id': null, 'child-id': 'parent-id' })
+    })
+
+    it('reads every parent in the given transaction', async () => {
+      const transaction = {} as Transaction
+
+      await caseRepositoryService.findOriginalAncestorId(theCase, {
+        transaction,
+      })
+
+      expect(caseModel.findByPk).toHaveBeenCalledTimes(2)
+      expect(caseModel.findByPk).toHaveBeenNthCalledWith(1, 'child-id', {
+        attributes: ['parentCaseId'],
+        transaction,
+      })
+      expect(caseModel.findByPk).toHaveBeenNthCalledWith(2, 'parent-id', {
+        attributes: ['parentCaseId'],
+        transaction,
+      })
+    })
+
+    it('reads without a transaction when none is given', async () => {
+      await caseRepositoryService.findOriginalAncestorId(theCase)
+
+      expect(caseModel.findByPk).toHaveBeenCalledWith('child-id', {
+        attributes: ['parentCaseId'],
+        transaction: undefined,
+      })
     })
   })
 })

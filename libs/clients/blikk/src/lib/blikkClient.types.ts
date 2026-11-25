@@ -22,6 +22,8 @@ export interface CreateBlikkPaymentRequest {
   items?: BlikkItem[]
   // Deptor -> payer
   debtorExternalId?: string
+  // The company being debited when debtorExternalId pays on its behalf (Corporate-PSU).
+  debtorCorpExternalId?: string
   debtorName?: string
   debtorBban?: string
 }

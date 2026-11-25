@@ -116,6 +116,12 @@ export class InternalNotificationController {
       appealCase,
       notificationDto.user,
       notificationDto.userIds,
+      {
+        defendantId: notificationDto.defendantId,
+        civilClaimantId: notificationDto.civilClaimantId,
+      },
+      notificationDto.appealCourtSessionId,
+      notificationDto.appealCourtSession,
     )
   }
 

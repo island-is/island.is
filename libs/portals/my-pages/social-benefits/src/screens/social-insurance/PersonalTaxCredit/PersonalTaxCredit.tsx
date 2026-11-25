@@ -1,9 +1,9 @@
 import { Box, Button, Inline, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { SOCIAL_INSURANCE_NAMESPACE } from '../../../lib/messages'
 import {
   CardLoader,
   IntroWrapper,
-  LinkButton,
   m as coreMessages,
   TRYGGINGASTOFNUN_SLUG,
 } from '@island.is/portals/my-pages/core'
@@ -19,7 +19,7 @@ import { PersonalTaxCreditTable } from './PersonalTaxCreditTable'
 import { usePersonalTaxCreditForm } from './usePersonalTaxCreditForm'
 
 const PersonalTaxCredit = () => {
-  useNamespaces('sp.social-insurance-maintenance')
+  useNamespaces(SOCIAL_INSURANCE_NAMESPACE)
   const { formatMessage } = useLocale()
 
   const { data, loading, error } = useGetPersonalTaxCreditQuery({
@@ -79,18 +79,6 @@ const PersonalTaxCredit = () => {
       serviceProvider={{
         slug: TRYGGINGASTOFNUN_SLUG,
         tooltip: formatMessage(coreMessages.socialInsuranceTooltip),
-      }}
-      buttonGroup={{
-        actions: [
-          <LinkButton
-            key="my-info-settings"
-            to="/min-gogn/stillingar/"
-            text={formatMessage(coreMessages.userInfo)}
-            variant="utility"
-            icon="arrowForward"
-            size="small"
-          />,
-        ],
       }}
     >
       {loading ? (

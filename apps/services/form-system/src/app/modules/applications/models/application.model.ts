@@ -41,6 +41,13 @@ export class Application extends Model<Application> {
   nationalId!: string
 
   @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+  })
+  actorNationalId!: string
+
+  @Column({
     type: DataType.DATE,
     allowNull: true,
     defaultValue: null,

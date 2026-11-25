@@ -8,7 +8,7 @@ import {
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { UseGuards } from '@nestjs/common'
-import { Query, Resolver, ResolveField, Args } from '@nestjs/graphql'
+import { Query, Resolver, ResolveField, Args, Parent } from '@nestjs/graphql'
 import { Country } from '../models/general/country.model'
 import { EducationalInstitution } from '../models/general/educationalInstitution.model'
 import { Union } from '../models/general/union.model'
@@ -22,7 +22,15 @@ import {
   SocialInsuranceAdministrationEducationService,
   SocialInsuranceAdministrationEmploymentService,
   SocialInsuranceAdministrationProfessionService,
+  withApplicationGuidContext,
 } from '@island.is/clients/social-insurance-administration'
+import type { GeneralParent } from '../socialInsurance.type'
+
+const DEPRECATED_APPLICATION_ID = {
+  type: () => String,
+  nullable: true,
+  deprecationReason: 'Use socialInsuranceGeneral(applicationId:) instead',
+}
 
 @Resolver(() => General)
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -38,13 +46,24 @@ export class GeneralResolver {
   ) {}
 
   @Query(() => General, { name: 'socialInsuranceGeneral' })
-  async getGeneral() {
-    return {}
+  getGeneral(
+    @Args('applicationId', { type: () => String, nullable: true })
+    applicationId?: string,
+  ): GeneralParent {
+    return { applicationId }
   }
 
   @ResolveField('unions', () => [Union], { nullable: true })
-  resolveUnions(@CurrentUser() user: User) {
-    return this.generalService.getUnions(user)
+  resolveUnions(
+    @CurrentUser() user: User,
+    @Parent() { applicationId }: GeneralParent,
+    @Args('applicationId', DEPRECATED_APPLICATION_ID)
+    deprecatedApplicationId?: string,
+  ) {
+    return withApplicationGuidContext(
+      applicationId ?? deprecatedApplicationId,
+      () => this.generalService.getUnions(user),
+    )
   }
 
   @ResolveField('countries', () => [Country], { nullable: true })
@@ -52,22 +71,41 @@ export class GeneralResolver {
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
+    @Parent() { applicationId }: GeneralParent,
+    @Args('applicationId', DEPRECATED_APPLICATION_ID)
+    deprecatedApplicationId?: string,
   ) {
-    return this.service.getCountries(user, locale)
+    return withApplicationGuidContext(
+      applicationId ?? deprecatedApplicationId,
+      () => this.service.getCountries(user, locale),
+    )
   }
 
   @ResolveField('educationalInstitutions', () => [EducationalInstitution], {
     nullable: true,
   })
-  resolveEducationalInstitution(@CurrentUser() user: User) {
-    return this.educationService.getEducationalInstitutions(user)
+  resolveEducationalInstitution(
+    @CurrentUser() user: User,
+    @Parent() { applicationId }: GeneralParent,
+    @Args('applicationId', DEPRECATED_APPLICATION_ID)
+    deprecatedApplicationId?: string,
+  ) {
+    return withApplicationGuidContext(
+      applicationId ?? deprecatedApplicationId,
+      () => this.educationService.getEducationalInstitutions(user),
+    )
   }
 
   @ResolveField('currencies', () => [String], {
     nullable: true,
   })
-  resolveCurrencies(@CurrentUser() user: User) {
-    return this.generalService.getCurrencies(user)
+  resolveCurrencies(
+    @CurrentUser() user: User,
+    @Parent() { applicationId }: GeneralParent,
+  ) {
+    return withApplicationGuidContext(applicationId, () =>
+      this.generalService.getCurrencies(user),
+    )
   }
 
   @ResolveField('languages', () => [GenericKeyValueStringObject], {
@@ -77,8 +115,11 @@ export class GeneralResolver {
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
+    @Parent() { applicationId }: GeneralParent,
   ) {
-    return this.generalService.getLanguages(user, locale)
+    return withApplicationGuidContext(applicationId, () =>
+      this.generalService.getLanguages(user, locale),
+    )
   }
 
   @ResolveField('maritalStatuses', () => [GenericKeyValueNumberObject], {
@@ -109,14 +150,24 @@ export class GeneralResolver {
   @ResolveField('professions', () => [GenericKeyValueStringObject], {
     nullable: true,
   })
-  resolveProfessions(@CurrentUser() user: User) {
-    return this.professionService.getProfessionsInDto(user)
+  resolveProfessions(
+    @CurrentUser() user: User,
+    @Parent() { applicationId }: GeneralParent,
+  ) {
+    return withApplicationGuidContext(applicationId, () =>
+      this.professionService.getProfessionsInDto(user),
+    )
   }
 
   @ResolveField('professionActivities', () => [GenericKeyValueStringObject], {
     nullable: true,
   })
-  resolveProfessionActivities(@CurrentUser() user: User) {
-    return this.professionService.getProfessionActivitiesInDto(user)
+  resolveProfessionActivities(
+    @CurrentUser() user: User,
+    @Parent() { applicationId }: GeneralParent,
+  ) {
+    return withApplicationGuidContext(applicationId, () =>
+      this.professionService.getProfessionActivitiesInDto(user),
+    )
   }
 }

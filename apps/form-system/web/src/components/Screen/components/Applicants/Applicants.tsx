@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { FormSystemField } from '@island.is/api/schema'
 import { IDENTITY_QUERY } from '@island.is/form-system/graphql'
 import {
@@ -6,10 +6,19 @@ import {
   getValue,
   IndividualApplicant,
   LegalEntity,
+  FieldInformation,
 } from '@island.is/form-system/ui'
-import { USER_PROFILE } from '@island.is/portals/my-pages/graphql'
 import { useEffect, useState } from 'react'
 import { useApplicationContext } from '../../../../context/ApplicationProvider'
+
+const APPLICANT_USER_PROFILE = gql`
+  query GetFormSystemApplicantUserProfile {
+    getUserProfile {
+      mobilePhoneNumber
+      email
+    }
+  }
+`
 
 interface Props {
   applicantField: FormSystemField
@@ -68,7 +77,7 @@ export const Applicants = ({ applicantField }: Props) => {
   }, [didHydrateFromProfile, hasEmail, hasPhoneNumber])
 
   const { data: userProfileData, error: userProfileError } = useQuery(
-    USER_PROFILE,
+    APPLICANT_USER_PROFILE,
     {
       fetchPolicy: 'cache-first',
       skip:
@@ -160,6 +169,7 @@ export const Applicants = ({ applicantField }: Props) => {
 
   return (
     <>
+      <FieldInformation item={applicantField} />
       {isIndividualType && (
         <IndividualApplicant
           applicant={applicantField}

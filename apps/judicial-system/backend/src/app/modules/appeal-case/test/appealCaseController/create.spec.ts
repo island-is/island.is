@@ -1,12 +1,10 @@
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseNotificationType,
   AppealCaseState,
@@ -28,6 +26,14 @@ import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
 import { nowFactory } from '../../../../factories'
 import {
+  getOrCreateTransaction,
+  getTransactionContext,
+  queueMessagesAfterCommit,
+  TransactionContext,
+} from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
+import { EventService } from '../../../event'
+import {
   AppealCase,
   AppealCaseRepositoryService,
   AppealDecisionRepositoryService,
@@ -36,7 +42,7 @@ import {
 } from '../../../repository'
 import { CreateAppealCaseDto } from '../../dto/createAppealCase.dto'
 
-jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 jest.mock('../../../../factories')
 
 interface Then {
@@ -74,7 +80,10 @@ describe('AppealCaseController - Create', () => {
   let mockAppealCaseRepositoryService: AppealCaseRepositoryService
   let mockAppealDecisionRepositoryService: AppealDecisionRepositoryService
   let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
+  let mockEventService: EventService
+  let mockSequelize: Sequelize
   let transaction: Transaction
+  let transactionContext: TransactionContext | undefined
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -85,21 +94,24 @@ describe('AppealCaseController - Create', () => {
       appealCaseRepositoryService,
       appealDecisionRepositoryService,
       appealEventLogRepositoryService,
+      eventService,
       sequelize,
     } = await createTestingAppealCaseModule()
 
     mockAppealCaseRepositoryService = appealCaseRepositoryService
     mockAppealDecisionRepositoryService = appealDecisionRepositoryService
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
+    mockEventService = eventService
 
     const mockNowFactory = nowFactory as jest.Mock
     mockNowFactory.mockReturnValue(now)
 
+    mockSequelize = sequelize
+    transactionContext = undefined
+
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     const mockCreate = mockAppealCaseRepositoryService.create as jest.Mock
     mockCreate.mockResolvedValue(createdAppealCase)
@@ -109,10 +121,27 @@ describe('AppealCaseController - Create', () => {
 
       const dto: CreateAppealCaseDto = { rulingFileId }
 
-      await appealCaseController
-        .create(caseId, user, theCase, dto)
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      // The route is guarded by CaseExistsForUpdateGuard, so the request
+      // transaction is already open - and holding a lock on this case row -
+      // by the time the handler runs. Guards do not execute in controller
+      // unit tests, so the request context and that transaction are set up
+      // here instead.
+      try {
+        await runInRequestContext(async () => {
+          transactionContext = getTransactionContext()
+
+          await getOrCreateTransaction(mockSequelize)
+
+          then.result = await appealCaseController.create(
+            caseId,
+            user,
+            theCase,
+            dto,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }
@@ -130,7 +159,11 @@ describe('AppealCaseController - Create', () => {
       then = await givenWhenThen(theCase, prosecutor)
     })
 
-    it('should create an appealed appeal case', () => {
+    it('should create an appealed appeal case in the transaction the guard opened, without opening another', () => {
+      // Once, by the stand-in for CaseExistsForUpdateGuard above. A second
+      // call would be the handler opening a transaction of its own, which
+      // would block on the guard's row lock and deadlock the request.
+      expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
       expect(mockAppealCaseRepositoryService.create).toHaveBeenCalledWith(
         caseId,
         {
@@ -141,6 +174,22 @@ describe('AppealCaseController - Create', () => {
         { transaction },
       )
       expect(then.result).toBe(createdAppealCase)
+    })
+
+    it('should register the create appeal event rather than posting it inline', () => {
+      expect(mockEventService.postEvent).not.toHaveBeenCalled()
+      expect(transactionContext?.afterCommit).toHaveLength(1)
+    })
+
+    it('should post the create appeal event once the transaction has committed', async () => {
+      await Promise.all(
+        (transactionContext?.afterCommit ?? []).map((callback) => callback()),
+      )
+
+      expect(mockEventService.postEvent).toHaveBeenCalledWith(
+        'CREATE_APPEAL',
+        theCase,
+      )
     })
 
     it('should not touch appeal_decision rows for an out-of-court appeal', () => {
@@ -166,7 +215,7 @@ describe('AppealCaseController - Create', () => {
     })
 
     it('should queue the appeal to court of appeals notification', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith(
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
         expect.objectContaining({
           type: MessageType.APPEAL_CASE_NOTIFICATION,
           caseId,
@@ -197,6 +246,13 @@ describe('AppealCaseController - Create', () => {
         'Only dismissed indictment cases can be appealed',
       )
       expect(mockAppealCaseRepositoryService.create).not.toHaveBeenCalled()
+    })
+
+    // Nothing was appealed, so nothing is announced - not even after a
+    // commit that will not happen.
+    it('should not register an event', () => {
+      expect(mockEventService.postEvent).not.toHaveBeenCalled()
+      expect(transactionContext?.afterCommit).toHaveLength(0)
     })
   })
 
@@ -326,6 +382,39 @@ describe('AppealCaseController - Create', () => {
     })
   })
 
+  describe('prosecution user appeals a restriction case already appealed in court', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.CUSTODY,
+      caseFiles: [
+        {
+          id: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          isKeyAccessible: true,
+          category: CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+        },
+      ],
+      appealDecisions: [
+        {
+          rulingFileId: null,
+          partyRole: AppealDecisionPartyRole.PROSECUTOR,
+          decision: CaseAppealDecision.APPEAL,
+        },
+      ],
+    } as unknown as Case
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen(theCase, prosecutor)
+    })
+
+    it('should create the appeal case but queue no messages', () => {
+      expect(then.error).toBeUndefined()
+      expect(mockAppealCaseRepositoryService.create).toHaveBeenCalled()
+      expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
+    })
+  })
+
   describe('appeal brief case files are delivered to court', () => {
     const rvgFileId = uuid()
     const theCase = {
@@ -346,7 +435,7 @@ describe('AppealCaseController - Create', () => {
     })
 
     it('should queue delivery of the appeal brief file', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith(
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
         expect.objectContaining({
           type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           caseId,

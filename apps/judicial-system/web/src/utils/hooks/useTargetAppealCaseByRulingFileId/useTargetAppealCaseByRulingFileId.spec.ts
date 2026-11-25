@@ -1,7 +1,5 @@
-import type {
-  AppealCase,
-  Case,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type { AppealCase } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { resolveTargetAppealCaseByRulingFileId } from './index'
 
@@ -16,7 +14,7 @@ describe('resolveTargetAppealCaseByRulingFileId', () => {
   const workingCase = {
     appealCase: caseLevel,
     rulingOrderAppealCases: [ro1, ro2],
-  } as Case
+  } as WorkingCase
 
   it('returns the case-level appeal when no rulingFileId is set', () => {
     expect(resolveTargetAppealCaseByRulingFileId(workingCase, undefined)).toBe(

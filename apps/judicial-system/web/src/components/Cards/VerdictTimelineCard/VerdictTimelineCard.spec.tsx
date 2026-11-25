@@ -2,18 +2,34 @@ import faker from 'faker'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { toast } from '@island.is/island-ui/core'
-import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  CaseIndictmentRulingDecision,
-  CaseType,
+import { Feature } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import type {
+  Defendant,
+  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { mockCase } from '@island.is/judicial-system-web/src/utils/mocks'
+import {
+  AppealCaseState,
+  AppealCaseTransition,
+  AppealEventType,
+  CaseIndictmentRulingDecision,
+  CaseState,
+  CaseType,
+  InstitutionType,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  mockCase,
+  mockUser,
+} from '@island.is/judicial-system-web/src/utils/mocks'
 import {
   ApolloProviderWrapper,
   FormContextWrapper,
   IntlProviderWrapper,
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import VerdictTimelineCard from './VerdictTimelineCard'
 
@@ -75,6 +91,18 @@ jest.mock('../../../utils/hooks/useDefendants', () => ({
   }),
 }))
 
+const mockTransitionAppealCase = jest.fn()
+
+jest.mock('../../../utils/hooks/useAppealCase', () => ({
+  __esModule: true,
+  default: () => ({
+    transitionAppealCase: mockTransitionAppealCase,
+    isTransitioningAppealCase: false,
+  }),
+}))
+
+const mockPush = jest.fn()
+
 jest.mock('next/router', () => ({
   useRouter() {
     return {
@@ -82,6 +110,7 @@ jest.mock('next/router', () => ({
       query: {
         id: 'test_id',
       },
+      push: mockPush,
     }
   },
 }))
@@ -102,25 +131,35 @@ describe('VerdictTimelineCard', () => {
     defendant: Defendant,
     indictmentRulingDecision = CaseIndictmentRulingDecision.RULING,
     canDefendantAppealVerdict = true,
+    {
+      features = [] as Feature[],
+      caseOverrides = {} as Partial<WorkingCase>,
+      user = mockUser(UserRole.PUBLIC_PROSECUTOR_STAFF) as User,
+    } = {},
   ) => {
     return render(
       <IntlProviderWrapper>
         <ApolloProviderWrapper>
-          <FormContextWrapper
-            theCase={{
-              ...mockCase(CaseType.INDICTMENT),
-              indictmentRulingDecision,
-              defendants: [defendant],
-              rulingDate,
-            }}
-          >
-            <VerdictTimelineCard
-              defendant={defendant}
-              canDefendantAppealVerdict={canDefendantAppealVerdict}
-            />
-            {/* Modals portal into this container, normally supplied by PageLayout */}
-            <div id="modal" />
-          </FormContextWrapper>
+          <FeatureContext.Provider value={{ features, isLoading: false }}>
+            <UserContext.Provider value={{ user }}>
+              <FormContextWrapper
+                theCase={{
+                  ...mockCase(CaseType.INDICTMENT),
+                  indictmentRulingDecision,
+                  defendants: [defendant],
+                  rulingDate,
+                  ...caseOverrides,
+                }}
+              >
+                <VerdictTimelineCard
+                  defendant={defendant}
+                  canDefendantAppealVerdict={canDefendantAppealVerdict}
+                />
+                {/* Modals portal into this container, normally supplied by PageLayout */}
+                <div id="modal" />
+              </FormContextWrapper>
+            </UserContext.Provider>
+          </FeatureContext.Provider>
         </ApolloProviderWrapper>
       </IntlProviderWrapper>,
     )
@@ -147,7 +186,7 @@ describe('VerdictTimelineCard', () => {
     renderComponent(mockDefendant)
 
     expect(await screen.findByText(name)).toBeInTheDocument()
-    expect(await screen.findByText('Birting dóms')).toBeInTheDocument()
+    expect(await screen.findByText('Dómur')).toBeInTheDocument()
   })
 
   it('shows appeal and service date pickers when conditions are met', async () => {
@@ -467,5 +506,295 @@ describe('VerdictTimelineCard', () => {
     await userEvent.click(screen.getByTestId('set-valid-defendantServiceDate'))
 
     expect(submitButton).toBeEnabled()
+  })
+
+  // With verdict appeals on, an appeal that arrives by letter is registered on
+  // its own page and becomes an appeal case; the picker that only stamped the
+  // verdict goes away.
+  describe('registering a verdict appeal', () => {
+    const servedDefendant = {
+      ...mockDefendant,
+      verdict: {
+        id: 'verdict_id',
+        serviceRequirement: 'REQUIRED',
+        serviceDate: '2026-08-01T10:00:00.000Z',
+      },
+    } as Defendant
+
+    it('offers to register the appeal from the menu instead of the date picker', async () => {
+      renderComponent(
+        servedDefendant,
+        CaseIndictmentRulingDecision.RULING,
+        true,
+        {
+          features: [Feature.INDICTMENT_APPEAL],
+          caseOverrides: { state: CaseState.COMPLETED },
+        },
+      )
+
+      expect(await screen.findByText(name)).toBeInTheDocument()
+      expect(
+        screen.queryByTestId('set-valid-defendantAppealDate'),
+      ).not.toBeInTheDocument()
+
+      await userEvent.click(
+        screen.getByRole('button', { name: `Valmynd fyrir ${name}` }),
+      )
+      await userEvent.click(await screen.findByText('Skrá áfrýjun dómfellda'))
+
+      expect(mockPush).toHaveBeenCalledWith(
+        `/rikissaksoknari/akaera/afryjun/${mockCase(CaseType.INDICTMENT).id}/${
+          mockDefendant.id
+        }`,
+      )
+    })
+
+    it('keeps the date picker and offers no registration while the feature is hidden', async () => {
+      renderComponent(
+        servedDefendant,
+        CaseIndictmentRulingDecision.RULING,
+        true,
+        { caseOverrides: { state: CaseState.COMPLETED } },
+      )
+
+      expect(
+        await screen.findByTestId('set-valid-defendantAppealDate'),
+      ).toBeInTheDocument()
+
+      await userEvent.click(
+        screen.getByRole('button', { name: `Valmynd fyrir ${name}` }),
+      )
+
+      expect(
+        screen.queryByText('Skrá áfrýjun dómfellda'),
+      ).not.toBeInTheDocument()
+    })
+
+    it('names the defender who filed the appeal in the appeal bullet', async () => {
+      renderComponent({
+        ...servedDefendant,
+        appealDefenderName: 'Vaka Dagsdóttir',
+        verdict: {
+          ...servedDefendant.verdict,
+          appealDate: '2026-08-16T00:00:00.000Z',
+        },
+      } as Defendant)
+
+      expect(
+        await screen.findByText(
+          /Dómfelldi áfrýjaði 16\.08\.2026 \(Vaka Dagsdóttir verjandi\)/,
+        ),
+      ).toBeInTheDocument()
+    })
+  })
+
+  describe('withdrawing a verdict appeal', () => {
+    const appealedDefendant = {
+      ...mockDefendant,
+      verdict: {
+        id: 'verdict_id',
+        serviceRequirement: 'REQUIRED',
+        serviceDate: '2026-08-01T10:00:00.000Z',
+        appealDate: '2026-08-16T00:00:00.000Z',
+      },
+    } as Defendant
+
+    // An appeal that exists as an appeal case is withdrawn on it, for this
+    // defendant, after confirming - not by clearing the verdict's date.
+    it('withdraws on the appeal case when one exists', async () => {
+      mockTransitionAppealCase.mockResolvedValue(true)
+
+      renderComponent(
+        appealedDefendant,
+        CaseIndictmentRulingDecision.RULING,
+        true,
+        {
+          features: [Feature.INDICTMENT_APPEAL],
+          caseOverrides: {
+            verdictAppealCase: { id: 'verdict_appeal_case_id' },
+          },
+        },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: `Valmynd fyrir ${name}` }),
+      )
+      await userEvent.click(await screen.findByText('Afturkalla áfrýjun'))
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Afturkalla' }),
+      )
+
+      await waitFor(() =>
+        expect(mockTransitionAppealCase).toHaveBeenCalledWith(
+          mockCase(CaseType.INDICTMENT).id,
+          'verdict_appeal_case_id',
+          AppealCaseTransition.WITHDRAW_APPEAL,
+          undefined,
+          mockDefendant.id,
+        ),
+      )
+    })
+
+    // Withdrawing on an appeal case is closed while verdict appeals are hidden,
+    // so the action is not offered rather than offered to fail.
+    it('offers no withdrawal for an appeal case while the feature is hidden', async () => {
+      renderComponent(
+        appealedDefendant,
+        CaseIndictmentRulingDecision.RULING,
+        true,
+        {
+          caseOverrides: {
+            verdictAppealCase: { id: 'verdict_appeal_case_id' },
+          },
+        },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: `Valmynd fyrir ${name}` }),
+      )
+
+      expect(screen.queryByText('Afturkalla áfrýjun')).not.toBeInTheDocument()
+    })
+
+    // A public prosecution prosecutor is sent to this card once a verdict
+    // appeal stands. The prosecution withdraws its appeal by changing the
+    // review decision, and the defendant's appeal is not the prosecutor's to
+    // withdraw, so the action is not offered.
+    it('offers no withdrawal to a public prosecution prosecutor', async () => {
+      const prosecutor = mockUser(UserRole.PROSECUTOR)
+
+      renderComponent(
+        appealedDefendant,
+        CaseIndictmentRulingDecision.RULING,
+        true,
+        {
+          features: [Feature.INDICTMENT_APPEAL],
+          caseOverrides: {
+            verdictAppealCase: { id: 'verdict_appeal_case_id' },
+          },
+          user: {
+            ...prosecutor,
+            institution: {
+              ...prosecutor.institution,
+              type: InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+            },
+          } as User,
+        },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: `Valmynd fyrir ${name}` }),
+      )
+
+      expect(await screen.findByText('Skráð í LÖKE')).toBeInTheDocument()
+      expect(screen.queryByText('Afturkalla áfrýjun')).not.toBeInTheDocument()
+    })
+
+    // An appeal date stamped before appeal cases existed has nothing to
+    // withdraw on; it is cleared on the verdict as before, without a modal.
+    it('clears the verdict date directly when there is no appeal case', async () => {
+      renderComponent(appealedDefendant)
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: `Valmynd fyrir ${name}` }),
+      )
+      await userEvent.click(await screen.findByText('Afturkalla áfrýjun'))
+
+      expect(
+        screen.queryByRole('button', { name: 'Afturkalla' }),
+      ).not.toBeInTheDocument()
+      expect(mockTransitionAppealCase).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('prosecution statement deadline', () => {
+    const servedDefendant = {
+      ...mockDefendant,
+      verdict: {
+        serviceRequirement: 'NOT_REQUIRED',
+        serviceDate: '2026-05-01T00:00:00.000Z',
+      },
+    } as Defendant
+
+    it('shows the prosecution statement deadline on a standing appeal card', async () => {
+      renderComponent(
+        servedDefendant,
+        CaseIndictmentRulingDecision.RULING,
+        true,
+        {
+          caseOverrides: {
+            verdictAppealCase: {
+              id: 'verdict_appeal_case_id',
+              appealState: AppealCaseState.RECEIVED,
+              appealEventLogs: [
+                {
+                  id: 'event_id',
+                  created: '2026-05-25T10:00:00.000Z',
+                  eventType: AppealEventType.APPEALED,
+                  defendantId: mockDefendant.id,
+                  userRole: UserRole.PROSECUTOR,
+                },
+              ],
+              statementDeadlines: [
+                {
+                  id: 'prosecution_deadline',
+                  deadline: '2026-09-14T00:00:00.000Z',
+                  isExpired: false,
+                },
+              ],
+            },
+          },
+        },
+      )
+
+      expect(
+        await screen.findByText((content) =>
+          content.includes(
+            'Frestur til að skila greinargerð er til 14.09.2026',
+          ),
+        ),
+      ).toBeInTheDocument()
+    })
+
+    it('does not show the prosecution statement deadline for a defendant outside the appeal', async () => {
+      renderComponent(
+        servedDefendant,
+        CaseIndictmentRulingDecision.RULING,
+        true,
+        {
+          caseOverrides: {
+            verdictAppealCase: {
+              id: 'verdict_appeal_case_id',
+              appealState: AppealCaseState.RECEIVED,
+              appealEventLogs: [
+                {
+                  id: 'event_id',
+                  created: '2026-05-25T10:00:00.000Z',
+                  eventType: AppealEventType.APPEALED,
+                  defendantId: 'other_defendant',
+                  userRole: UserRole.PROSECUTOR,
+                },
+              ],
+              statementDeadlines: [
+                {
+                  id: 'prosecution_deadline',
+                  deadline: '2026-09-14T00:00:00.000Z',
+                  isExpired: false,
+                },
+              ],
+            },
+          },
+        },
+      )
+
+      expect(await screen.findByText(name)).toBeInTheDocument()
+      expect(
+        screen.queryByText((content) =>
+          content.includes(
+            'Frestur til að skila greinargerð er til 14.09.2026',
+          ),
+        ),
+      ).not.toBeInTheDocument()
+    })
   })
 })

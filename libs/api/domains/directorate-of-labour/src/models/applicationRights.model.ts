@@ -2,18 +2,18 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class ApplicationRights {
-  @Field(() => String)
-  rightsUnit!: string
+  @Field(() => String, { nullable: true })
+  rightsUnit?: string | null
 
-  @Field(() => String)
-  rightsDescription!: string
+  @Field(() => String, { nullable: true })
+  rightsDescription?: string | null
 
-  @Field(() => String)
-  months!: string
+  @Field(() => String, { nullable: true })
+  months?: string | null
 
-  @Field(() => String)
-  days!: string
+  @Field(() => String, { nullable: true })
+  days?: string | null
 
-  @Field(() => String)
-  daysLeft!: string
+  @Field(() => String, { nullable: true })
+  daysLeft?: string | null
 }

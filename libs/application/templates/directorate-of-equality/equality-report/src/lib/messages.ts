@@ -121,9 +121,10 @@ export const messages = {
         id: 'doe.er.application:prerequisites.section.title',
         defaultMessage: 'Gagnaöflun',
       },
-      intro: {
-        id: 'doe.er.application:prerequisites.section.intro',
-        defaultMessage: equalityReportIntro,
+      description: {
+        id: 'doe.er.application:prerequisites.section.description#markdown',
+        defaultMessage:
+          'Hér má lesa nánar um [þjónustu- og gagnakerfi Jafnréttisstofu](https://island.is/s/jafnrettisstofa/thjonustu-og-gagnakerfi).',
       },
       checkboxLabel: {
         id: 'doe.er.application:prerequisites.section.checkboxLabel',
@@ -478,12 +479,18 @@ export const messages = {
       },
       editorSupportedFileTypes: {
         id: 'doe.er.application:equalityReport.information.editorSupportedFileTypes',
-        defaultMessage: 'Samþykktar skráartegundir eru: .docx, .txt',
+        defaultMessage: 'Samþykktar skráartegundir eru: .pdf, .docx, .txt',
       },
       editorUnsupportedFile: {
         id: 'doe.er.application:equalityReport.information.editorUnsupportedFile',
         defaultMessage:
-          'Ekki stutt skráarsnið. Vinsamlegast hlaðið upp .txt eða .docx skrá.',
+          'Ekki stutt skráarsnið. Vinsamlegast hlaðið upp .pdf, .docx eða .txt skrá.',
+      },
+      // PDF only. The .docx/.txt paths convert to HTML in the browser, so their
+      // size on disk says nothing about the size of what gets sent.
+      editorFileTooLarge: {
+        id: 'doe.er.application:equalityReport.information.editorFileTooLarge',
+        defaultMessage: 'Skráin er of stór. Hámarksstærð PDF skjals er 4 MB.',
       },
       editorUploadError: {
         id: 'doe.er.application:equalityReport.information.editorUploadError',
@@ -502,6 +509,83 @@ export const messages = {
       editorUploadRequired: {
         id: 'doe.er.application:equalityReport.information.editorUploadRequired',
         defaultMessage: 'Hlaðið upp jafnréttisáætlun áður en þú heldur áfram.',
+      },
+    }),
+    attachments: defineMessages({
+      title: {
+        id: 'doe.er.application:equalityReport.attachments.title',
+        defaultMessage: 'Fylgiskjöl',
+      },
+      description: {
+        id: 'doe.er.application:equalityReport.attachments.description',
+        defaultMessage:
+          'Hér getur þú sent fylgiskjöl með jafnréttisáætluninni, til dæmis aðgerðaáætlun í Excel. Leyfileg snið eru PDF, Word (.docx) og Excel (.xlsx, .xls). Hámark 6 skjöl, hvert að hámarki 4 MB. Aðeins Jafnréttisstofa sér skjölin.',
+      },
+      uploadButton: {
+        id: 'doe.er.application:equalityReport.attachments.uploadButton',
+        defaultMessage: 'Velja skjöl til að hlaða upp',
+      },
+      loadError: {
+        id: 'doe.er.application:equalityReport.attachments.loadError',
+        defaultMessage:
+          'Ekki tókst að sækja fylgiskjöl. Reyndu aftur eftir smá stund.',
+      },
+      uploadError: {
+        id: 'doe.er.application:equalityReport.attachments.uploadError',
+        defaultMessage:
+          'Ekki tókst að hlaða upp skjalinu {filename}. Reyndu aftur.',
+      },
+      rejected: {
+        id: 'doe.er.application:equalityReport.attachments.rejected',
+        defaultMessage:
+          'Jafnréttisstofa tók ekki við skjalinu {filename}. Gakktu úr skugga um að skjalið sé á leyfilegu sniði, innihaldi ekki fjölva og að innihald þess passi við skráarendinguna.',
+      },
+      rejectedWithReason: {
+        id: 'doe.er.application:equalityReport.attachments.rejectedWithReason',
+        defaultMessage:
+          'Jafnréttisstofa tók ekki við skjalinu {filename}: {reason}',
+      },
+      removeError: {
+        id: 'doe.er.application:equalityReport.attachments.removeError',
+        defaultMessage: 'Ekki tókst að eyða skjalinu {filename}. Reyndu aftur.',
+      },
+      unsupportedType: {
+        id: 'doe.er.application:equalityReport.attachments.unsupportedType',
+        defaultMessage:
+          'Skjalið {filename} er ekki á leyfilegu sniði. Leyfileg snið eru PDF, .docx, .xlsx og .xls.',
+      },
+      tooLarge: {
+        id: 'doe.er.application:equalityReport.attachments.tooLarge',
+        defaultMessage:
+          'Skjalið {filename} er of stórt. Hvert skjal má vera að hámarki 4 MB.',
+      },
+      empty: {
+        id: 'doe.er.application:equalityReport.attachments.empty',
+        defaultMessage: 'Skjalið {filename} er tómt.',
+      },
+      filenameTooLong: {
+        id: 'doe.er.application:equalityReport.attachments.filenameTooLong',
+        defaultMessage:
+          'Heiti skjalsins {filename} er of langt. Styttu heitið og reyndu aftur.',
+      },
+      limitReached: {
+        id: 'doe.er.application:equalityReport.attachments.limitReached',
+        defaultMessage:
+          'Hámarksfjölda fylgiskjala er náð. Eyddu skjali til að bæta öðru við.',
+      },
+      none: {
+        id: 'doe.er.application:equalityReport.attachments.none',
+        defaultMessage: 'Engin fylgiskjöl',
+      },
+      uploadInProgress: {
+        id: 'doe.er.application:equalityReport.attachments.uploadInProgress',
+        defaultMessage:
+          'Bíddu þar til fylgiskjölum hefur verið hlaðið upp áður en þú heldur áfram.',
+      },
+      overLimit: {
+        id: 'doe.er.application:equalityReport.attachments.overLimit',
+        defaultMessage:
+          'Aðeins má senda 6 fylgiskjöl. {count, plural, one {# skjal var ekki hlaðið upp} other {# skjöl voru ekki hlaðin upp}}.',
       },
     }),
     previousEqualityPlan: defineMessages({
@@ -538,10 +622,34 @@ export const messages = {
         id: 'doe.er.application:equalityReport.previousEqualityPlan.validUntil',
         defaultMessage: 'Gildir til',
       },
+      // Shown instead of the read-only editor when the active plan is a
+      // certificate from Jafnrettisstofa's retired register — there is no
+      // report behind it, so no content to display, copy or download.
+      legacyNotice: {
+        id: 'doe.er.application:equalityReport.previousEqualityPlan.legacyNotice',
+        defaultMessage:
+          'Jafnréttisáætlun fyrirtækisins er skráð í eldra kerfi Jafnréttisstofu og innihald hennar er ekki aðgengilegt hér.',
+      },
       loadError: {
         id: 'doe.er.application:equalityReport.previousEqualityPlan.loadError',
         defaultMessage:
           'Ekki tókst að sækja eldri jafnréttisáætlun. Vinsamlegast reynið aftur síðar.',
+      },
+      // Shown instead of the read-only editor when the earlier plan was
+      // uploaded as a PDF — there is no rich text to display or copy.
+      pdfNotice: {
+        id: 'doe.er.application:equalityReport.previousEqualityPlan.pdfNotice',
+        defaultMessage:
+          'Eldri jafnréttisáætlunin var send inn sem PDF skjal. Sæktu skjalið til að lesa það.',
+      },
+      pdfDownload: {
+        id: 'doe.er.application:equalityReport.previousEqualityPlan.pdfDownload',
+        defaultMessage: 'Sækja eldri áætlun (PDF)',
+      },
+      pdfDownloadError: {
+        id: 'doe.er.application:equalityReport.previousEqualityPlan.pdfDownloadError',
+        defaultMessage:
+          'Ekki tókst að sækja PDF skjalið. Vinsamlegast reynið aftur síðar.',
       },
       copyError: {
         id: 'doe.er.application:equalityReport.previousEqualityPlan.copyError',

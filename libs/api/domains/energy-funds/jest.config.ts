@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'api-domains-energy-funds',
   preset: '../../../../jest.preset.js',

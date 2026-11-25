@@ -5,6 +5,7 @@ import { logger } from '@island.is/logging'
 import { CleanupWorkerModule } from './cleanup-worker.module'
 import { CleanupService } from './cleanup.service'
 import { CleanupConfirmIdentityService } from '../confirm-identity/cleanup/cleanup.service'
+import { CleanupDelegationConfirmationService } from '../delegation-confirmation/cleanup/cleanup.service'
 
 export const worker = async () => {
   try {
@@ -14,6 +15,7 @@ export const worker = async () => {
 
     await app.get(CleanupService).run()
     await app.get(CleanupConfirmIdentityService).run()
+    await app.get(CleanupDelegationConfirmationService).run()
 
     await app.close()
     logger.info('Cleanup worker finished successfully.')

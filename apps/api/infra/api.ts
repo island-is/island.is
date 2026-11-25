@@ -7,6 +7,7 @@ import {
   Client,
   CriminalRecord,
   DirectorateOfEquality,
+  DirectorateOfEqualityStatistics,
   DirectorateOfImmigration,
   Disability,
   DistrictCommissionersLicenses,
@@ -55,7 +56,6 @@ import {
   UniversityCareers,
   Vehicles,
   NVSPermits,
-  VehicleServiceFjsV1,
   VehiclesMileage,
   WorkAccidents,
   WorkMachines,
@@ -161,9 +161,16 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.documentsService)}`,
       ),
       DOWNLOAD_SERVICE_BASE_PATH: {
-        prod: 'https://api.island.is',
-        dev: 'https://api.dev01.devland.is',
+        dev: ref(
+          (ctx) =>
+            `https://${
+              ctx.featureDeploymentName
+                ? `${ctx.featureDeploymentName}-api.dev01.devland.is`
+                : 'api.dev01.devland.is'
+            }`,
+        ),
         staging: 'https://api.staging01.devland.is',
+        prod: 'https://api.island.is',
       },
       ENDORSEMENT_SYSTEM_BASE_API_URL: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
@@ -190,6 +197,7 @@ export const serviceSetup = (services: {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      AUTH_REQUIRE_DPOP: 'false',
       MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: {
         dev: 'http://financial-aid-backend',
         staging: 'http://financial-aid-backend',
@@ -316,6 +324,27 @@ export const serviceSetup = (services: {
         staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
         prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
       },
+      ELFUR_CLIENT_ID: {
+        dev: '@fjs.is/stafraent-island-api-elfur',
+        staging: '@fjs.is/stafraent-island-api-elfur',
+        prod: '@fjs.is/stafraent-island-api-elfur',
+      },
+      ELFUR_BASE_PATH: {
+        dev: 'https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net',
+        staging:
+          'https://fjs-cdn-endpoint-elfur-staging-hhesbzhxabbwbqen.a03.azurefd.net',
+        prod: 'https://fjs-cdn-endpoint-elfur-prod-azescphpe7b5ecf2.a03.azurefd.net',
+      },
+      ELFUR_BASE_IDS_URL: {
+        dev: 'https://identity-server.staging01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
+      RSK_CALCULATORS_BASE_URL: {
+        dev: 'https://reiknivelarapi.rsk.is',
+        staging: 'https://reiknivelarapi.rsk.is',
+        prod: 'https://reiknivelarapi.rsk.is',
+      },
       LYFJASTOFNUN_PHARMACIES_BASE_URL: {
         dev: 'https://api.serlyfjaskra.is',
         staging: 'https://api.serlyfjaskra.is',
@@ -402,6 +431,7 @@ export const serviceSetup = (services: {
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENTID_TEST',
       DOCUMENT_PROVIDER_CLIENT_SECRET_TEST:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST',
+      ELFUR_CLIENT_SECRET: '/k8s/api/ELFUR_SI_ACCOUNT_CLIENT_SECRET',
       DOCUMENT_PROVIDER_DASHBOARD_CLIENT_SECRET:
         '/k8s/documentprovider/DOCUMENT_PROVIDER_DASHBOARD_CLIENT_SECRET',
       DOCUMENT_PROVIDER_DASHBOARD_CLIENTID:
@@ -503,8 +533,6 @@ export const serviceSetup = (services: {
         '/k8s/api/LANDSPITALI_PAYMENT_ORGANISATION_ID',
       VERDICTS_SUPREME_COURT_BEARER_TOKEN:
         '/k8s/api/VERDICTS_SUPREME_COURT_BEARER_TOKEN',
-      VERDICTS_LANDSRETTUR_APPEALS_URL:
-        '/k8s/api/VERDICTS_LANDSRETTUR_APPEALS_URL',
       FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH:
         '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH',
       FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID:
@@ -568,7 +596,6 @@ export const serviceSetup = (services: {
       Vehicles,
       VehiclesMileage,
       Passports,
-      VehicleServiceFjsV1,
       TransportAuthority,
       ChargeFjsV2,
       EnergyFunds,
@@ -582,6 +609,7 @@ export const serviceSetup = (services: {
       HousingBenefitCalculator,
       ShipRegistry,
       DirectorateOfEquality,
+      DirectorateOfEqualityStatistics,
       DirectorateOfImmigration,
       SignatureCollection,
       SocialInsuranceAdministration,

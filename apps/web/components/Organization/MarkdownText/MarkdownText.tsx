@@ -38,6 +38,7 @@ interface MarkdownTextProps {
   children: string
   color?: TextProps['color']
   variant?: TextProps['variant']
+  fontWeight?: TextProps['fontWeight']
   replaceNewLinesWithBreaks?: boolean
   /** Opens the links in a tab of their own, marked with an icon */
   openLinksInNewTab?: boolean
@@ -45,16 +46,15 @@ interface MarkdownTextProps {
   newTabLabel?: string
 }
 
-export const MarkdownText: React.FC<
-  React.PropsWithChildren<MarkdownTextProps>
-> = ({
+export const MarkdownText = ({
   children,
-  color = null,
+  color,
   variant = 'default',
+  fontWeight = 'light',
   replaceNewLinesWithBreaks = true,
   openLinksInNewTab = false,
   newTabLabel,
-}) => {
+}: MarkdownTextProps) => {
   const processedChildren = replaceNewLinesWithBreaks
     ? (children as string).replace(/\n/gi, '<br>')
     : children
@@ -68,7 +68,7 @@ export const MarkdownText: React.FC<
             p: {
               component: Text,
               props: {
-                fontWeight: 'light',
+                fontWeight,
                 color,
                 variant,
                 lineHeight: 'lg',
@@ -77,7 +77,7 @@ export const MarkdownText: React.FC<
             span: {
               component: Text,
               props: {
-                fontWeight: 'light',
+                fontWeight,
                 color,
                 variant,
                 lineHeight: 'lg',
@@ -102,6 +102,9 @@ export const MarkdownText: React.FC<
             },
             li: {
               component: Bullet,
+              props: {
+                variant,
+              },
             },
             // Links written into the text itself, rather than handed to the
             // component, so they are marked up here for all of them at once

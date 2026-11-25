@@ -37,7 +37,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.FIRE_COMPENSATION_APPRAISAL,
   name: m.miscMessages.applicationName,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: m.miscMessages.institutionName,
   featureFlag: Features.fireCompensationAppraisalEnabled,
   translationNamespaces:
@@ -164,7 +164,7 @@ const template: ApplicationTemplate<
           },
         },
       },
-      [States.PAYMENT]: buildPaymentState({
+      [States.PAYMENT]: buildPaymentState<Events>({
         organizationId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
         chargeItems: getChargeItems,
         roles: [
@@ -173,6 +173,14 @@ const template: ApplicationTemplate<
             formLoader: async () => {
               return PaymentForm
             },
+            actions: [
+              { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
+              {
+                event: DefaultEvents.ABORT,
+                name: 'Hætta við',
+                type: 'primary',
+              },
+            ],
             write: 'all',
             delete: true,
           },
@@ -181,6 +189,14 @@ const template: ApplicationTemplate<
             formLoader: async () => {
               return PaymentForm
             },
+            actions: [
+              { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
+              {
+                event: DefaultEvents.ABORT,
+                name: 'Hætta við',
+                type: 'primary',
+              },
+            ],
             write: 'all',
             delete: true,
           },
@@ -232,11 +248,8 @@ const template: ApplicationTemplate<
     application: Application,
   ): ApplicationRole | undefined => {
     const { applicantActors = [] } = application
-    if (applicantActors.length > 0) {
-      return Roles.DELEGATE
-    }
     if (nationalId === application.applicant) {
-      return Roles.APPLICANT
+      return applicantActors.length > 0 ? Roles.DELEGATE : Roles.APPLICANT
     }
     return undefined
   },

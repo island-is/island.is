@@ -26,6 +26,7 @@ import {
   CreateErrorQueryStrArgs,
   createErrorQueryStr,
 } from '../../utils/create-error-query-str'
+import { sendClientRedirect } from '../../utils/send-client-redirect'
 import { validateUri } from '../../utils/validate-uri'
 import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
@@ -413,7 +414,8 @@ export class AuthService {
         }
       }
 
-      return res.redirect(loginAttemptData.targetLinkUri)
+      // Not a 302, see sendClientRedirect
+      return sendClientRedirect(res, loginAttemptData.targetLinkUri)
     } catch (error) {
       this.logger.error('Callback login failed: ', error)
 

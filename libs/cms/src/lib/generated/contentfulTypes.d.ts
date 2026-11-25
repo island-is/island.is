@@ -834,6 +834,35 @@ export interface IChartNumberBox extends Entry<IChartNumberBoxFields> {
   }
 }
 
+export interface IChartNumberBoxGroupFields {
+  /** Internal title */
+  internalTitle: string
+
+  /** Column count */
+  columnCount?: number | undefined
+
+  /** Components */
+  components?: IChartNumberBox[] | undefined
+}
+
+export interface IChartNumberBoxGroup
+  extends Entry<IChartNumberBoxGroupFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'chartNumberBoxGroup'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IContactUsFields {
   /** Title */
   title?: string | undefined
@@ -1061,6 +1090,9 @@ export interface ICustomPageFields {
 
   /** Open Graph Image */
   ogImage?: Asset | undefined
+
+  /** Hide from external search engines */
+  hideFromExternalSearchEngines?: boolean | undefined
 }
 
 /** This content type is meant to represent a custom made page. Examples include (/starfatorg, /reglugerdir and many more).
@@ -1244,6 +1276,38 @@ export interface IEmbeddedVideo extends Entry<IEmbeddedVideoFields> {
     contentType: {
       sys: {
         id: 'embeddedVideo'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ICalculatorFields {
+  /** Internal title */
+  internalTitle: string
+
+  /** Type */
+  type:
+    | 'withholdingTaxOnWages'
+    | 'childBenefit'
+    | 'vehicleTax'
+    | 'vehicleBenefit'
+
+  /** Config json */
+  configJson: Record<string, any>
+}
+
+export interface ICalculator extends Entry<ICalculatorFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'calculator'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2270,6 +2334,9 @@ export interface IGrantFields {
 
   /** Type tag */
   grantTypeTag?: IGenericTag | undefined
+
+  /** Type tags */
+  grantTypeTags?: IGenericTag[] | undefined
 }
 
 /** Grant is a part of "Styrkjatorg". */
@@ -2312,6 +2379,21 @@ export interface IGrantCardsListFields {
 
   /** Always display results as cards */
   grantCardsAlwaysDisplayResultsAsCards?: boolean | undefined
+
+  /** Show search input */
+  grantCardsListShowSearchInput?: boolean | undefined
+
+  /** Search input placeholder */
+  grantCardsListSearchInputPlaceholder?: string | undefined
+
+  /** Filter tags */
+  grantCardsListFilterTags?: IGenericTag[] | undefined
+
+  /** Alphabetically order filter tags */
+  grantCardsListAlphabeticallyOrderFilterTags?: boolean | undefined
+
+  /** Show pagination */
+  grantCardsListShowPagination?: boolean | undefined
 }
 
 export interface IGrantCardsList extends Entry<IGrantCardsListFields> {
@@ -3628,6 +3710,7 @@ export interface IOrganizationPageFields {
         | ILatestNewsSlice
         | IFeaturedLinks
         | IOrganizationParentSubpageList
+        | IChartNumberBoxGroup
       )[]
     | undefined
 
@@ -3729,6 +3812,9 @@ export interface IOrganizationPageFields {
 
   /** Can be found in search results */
   canBeFoundInSearchResults?: boolean | undefined
+
+  /** Active translations */
+  activeTranslations?: Record<string, any> | undefined
 
   /** Show past events option */
   showPastEventsOption?: boolean | undefined
@@ -3936,6 +4022,9 @@ export interface IOrganizationSubpageFields {
 
   /** Show date of the last review */
   showDateOfTheLastReview?: boolean | undefined
+
+  /** Hide from external search engines */
+  hideFromExternalSearchEngines?: boolean | undefined
 }
 
 export interface IOrganizationSubpage
@@ -4195,6 +4284,9 @@ export interface IProjectPageFields {
   /** Secondary Sidebar */
   secondarySidebar?: ILinkGroup | undefined
 
+  /** Sidebar Cards */
+  sidebarCards?: ISidebarCard[] | undefined
+
   /** Subtitle */
   subtitle?: string | undefined
 
@@ -4282,6 +4374,9 @@ export interface IProjectPageFields {
 
   /** Alert Banner */
   alertBanner?: IAlertBanner | undefined
+
+  /** Plausible Tracking Domain */
+  trackingDomain?: string | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {
@@ -4301,7 +4396,50 @@ export interface IProjectPage extends Entry<IProjectPageFields> {
   }
 }
 
+export interface IProjectParentSubpageFields {
+  /** Project Page */
+  projectPage: IProjectPage
+
+  /** Internal Title */
+  internalTitle: string
+
+  /** Displayed Title */
+  title: string
+
+  /** Short Title */
+  shortTitle?: string | undefined
+
+  /** Slug */
+  slug: string
+
+  /** Chapters */
+  pages: IProjectSubpage[]
+}
+
+/** Navigation page for content that belongs in multiple project subpages */
+
+export interface IProjectParentSubpage
+  extends Entry<IProjectParentSubpageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'projectParentSubpage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IProjectSubpageFields {
+  /** Project Page */
+  projectPage?: IProjectPage | undefined
+
   /** Title */
   title: string
 
@@ -4690,6 +4828,7 @@ export interface ISliceConnectedComponentFields {
     | 'VERAnnouncementCalculator'
     | 'Lyfjastofnun/Pharmacies'
     | 'ECOI/Calculator'
+    | 'RSK/Calculator'
     | undefined
 
   /** Localized JSON */
@@ -5784,6 +5923,7 @@ export type CONTENT_TYPE =
   | 'auction'
   | 'bigBulletList'
   | 'bloodDonationRestriction'
+  | 'calculator'
   | 'card'
   | 'cardSection'
   | 'chart'
@@ -5866,6 +6006,7 @@ export type CONTENT_TYPE =
   | 'price'
   | 'processEntry'
   | 'projectPage'
+  | 'projectParentSubpage'
   | 'projectSubpage'
   | 'questionAndAnswer'
   | 'sectionHeading'

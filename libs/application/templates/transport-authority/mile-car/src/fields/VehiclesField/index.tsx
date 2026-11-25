@@ -27,14 +27,14 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const createGetVehicleDetailsWrapper = (
     getVehicleDetailsFunction: (variables: { permno: string }) => Promise<
       ApolloQueryResult<{
-        vehicleBasicInfoByPermno: BasicVehicleInformation
+        myVehicleMilesInfoByPermno: BasicVehicleInformation
       }>
     >,
   ) => {
     return async (plate: string) => {
       const variables = { permno: plate }
       const result = await getVehicleDetailsFunction(variables)
-      return result.data.vehicleBasicInfoByPermno
+      return result.data.myVehicleMilesInfoByPermno
     }
   }
 

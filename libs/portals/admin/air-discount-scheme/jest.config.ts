@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'portals-admin-air-discount-scheme',
   preset: './jest.preset.js',

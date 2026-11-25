@@ -16,6 +16,24 @@ export const formatSalaryAnalysisGenderLabel = (
 }
 
 /**
+ * Starfsmatsstig, as shown in the Stig column of the úrbótaáætlun and
+ * ábendingar tables.
+ *
+ * Capped at two decimals rather than printed raw: DMR computes these by summing
+ * the per-step weights, and binary floating point turns a clean 524,67 into
+ * 524.6700000000001 on the way. Two is what the underlying steps carry, so the
+ * rest is arithmetic noise, never precision the applicant could act on.
+ *
+ * `maximumFractionDigits` alone, with no minimum: a whole-numbered score reads
+ * "524", not "524,00" — trimming noise is the job here, not asserting a
+ * precision the figure may not have.
+ */
+export const formatStig = (value?: number | null): string =>
+  value == null
+    ? '—'
+    : value.toLocaleString('is-IS', { maximumFractionDigits: 2 })
+
+/**
  * "undir" / "yfir" / "á línu" — where an employee sits relative to the fitted
  * line. Shared by the úrbótaáætlun table, the ábendingar table and the chart
  * tooltip, all three of which show the same figure and must gloss it the same

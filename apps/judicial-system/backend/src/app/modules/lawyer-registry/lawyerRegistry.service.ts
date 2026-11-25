@@ -20,7 +20,9 @@ import {
   LawyerRegistryData,
   LawyerRegistryRepositoryService,
 } from '../repository'
+import { hasCourtOfAppealsRights } from './hasCourtOfAppealsRights'
 import { lawyerRegistryConfig } from './lawyerRegistry.config'
+import { testLawyers } from './testLawyers'
 
 @Injectable()
 export class LawyerRegistryService {
@@ -96,11 +98,18 @@ export class LawyerRegistryService {
       phoneNumber: lawyer.GSM ?? lawyer.Phone,
       practice: lawyer.Practice,
       isLitigator: litigatorNationalIds.has(lawyer.SSN),
+      hasCourtOfAppealsRights: hasCourtOfAppealsRights(lawyer),
     }))
 
-    await this.validateLawyers(formattedLawyers)
+    // Test environments keep the e2e lawyers across replacements, otherwise
+    // the nightly reset would lock the e2e defender out.
+    const lawyersToStore = this.config.includeTestLawyers
+      ? [...formattedLawyers, ...testLawyers]
+      : formattedLawyers
 
-    await this.lawyerRegistryRepositoryService.replaceAll(formattedLawyers, {
+    await this.validateLawyers(lawyersToStore)
+
+    await this.lawyerRegistryRepositoryService.replaceAll(lawyersToStore, {
       transaction,
     })
 
@@ -108,10 +117,16 @@ export class LawyerRegistryService {
   }
 
   async getAll(lawyerType: LawyerType) {
-    const lawyers =
-      lawyerType === LawyerType.LITIGATORS
-        ? await this.lawyerRegistryRepositoryService.findAllLitigators()
-        : await this.lawyerRegistryRepositoryService.findAll()
+    let lawyers: LawyerRegistry[]
+
+    if (lawyerType === LawyerType.LITIGATORS) {
+      lawyers = await this.lawyerRegistryRepositoryService.findAllLitigators()
+    } else if (lawyerType === LawyerType.COURT_OF_APPEALS_LITIGATORS) {
+      lawyers =
+        await this.lawyerRegistryRepositoryService.findAllCourtOfAppealsLitigators()
+    } else {
+      lawyers = await this.lawyerRegistryRepositoryService.findAll()
+    }
 
     if (!lawyers || lawyers.length === 0) {
       this.logger.error('No lawyers found in the lawyer registry')

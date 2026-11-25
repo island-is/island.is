@@ -113,6 +113,10 @@ export class PoliceController {
     return this.policeService.getAllPoliceSystemDigitalCaseFiles(
       theCase.id,
       user,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
+        policeCaseNumbers: theCase.policeCaseNumbers,
+      },
     )
   }
 

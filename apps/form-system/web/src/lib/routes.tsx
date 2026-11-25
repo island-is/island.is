@@ -3,9 +3,21 @@ import { HeaderInfoProvider } from '../context/HeaderInfoProvider'
 import { Application } from '../routes/Application'
 import { Applications } from '../routes/Applications'
 import { Layout } from '../components/Layout/Layout'
+import { ErrorShell } from '../components/ErrorShell/ErrorShell'
 import { NotFound } from '@island.is/portals/core'
+import { m } from './messages'
 
 export const BASE_PATH = '/form'
+
+const UnexpectedErrorShell = () => (
+  <ErrorShell
+    title={m.unexpectedErrorTitle}
+    subTitle={m.unexpectedErrorSubtitle}
+    description={m.unexpectedErrorDescription}
+    retryText={m.reloadPage}
+    onRetry={() => window.location.reload()}
+  />
+)
 
 export const routes: RouteObject[] = [
   {
@@ -16,9 +28,10 @@ export const routes: RouteObject[] = [
         </Layout>
       </HeaderInfoProvider>
     ),
+    errorElement: <UnexpectedErrorShell />,
     children: [
       {
-        // errorElement: <></>,  TODO: Add error element
+        errorElement: <UnexpectedErrorShell />,
         children: [
           {
             path: '/:slug',

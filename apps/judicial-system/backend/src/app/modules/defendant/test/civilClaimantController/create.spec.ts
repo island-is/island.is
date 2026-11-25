@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
+import { runInRequestContext } from '../../../../test'
 import {
   Case,
   CivilClaimant,
@@ -37,9 +38,7 @@ describe('CivilClaimantController - Create', () => {
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementationOnce(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     const mockCreate = mockCivilClaimantRepositoryService.create as jest.Mock
     mockCreate.mockResolvedValue(createdCivilClaimant)
@@ -47,10 +46,18 @@ describe('CivilClaimantController - Create', () => {
     givenWhenThen = async () => {
       const then = {} as Then
 
-      await civilClaimantController
-        .create(theCase.id, theCase)
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      // Guards do not execute in controller unit tests, so the request
+      // context the handler takes its transaction from is set up here.
+      try {
+        await runInRequestContext(async () => {
+          then.result = await civilClaimantController.create(
+            theCase.id,
+            theCase,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }

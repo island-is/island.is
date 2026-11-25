@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'application-templates-healthcare-license-certificate',
   preset: './jest.preset.js',

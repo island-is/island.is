@@ -13,7 +13,7 @@ import type { User } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useCurrentUserQuery } from './currentUser.generated'
 
-interface UserProvider {
+interface UserContextValue {
   isLoading?: boolean
   isAuthenticated?: boolean
   limitedAccess?: boolean
@@ -22,7 +22,7 @@ interface UserProvider {
   hasError?: boolean
 }
 
-export const UserContext = createContext<UserProvider>({})
+export const UserContext = createContext<UserContextValue>({})
 
 // Used for accessing the current user outside of React components
 export const userRef: { current?: User; authBypass?: boolean } = {}

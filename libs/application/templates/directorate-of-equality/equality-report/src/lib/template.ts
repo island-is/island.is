@@ -19,6 +19,7 @@ import {
   GetReportCommentsApi,
   IdentityApiProvider,
   PreviousEqualityReportContentApi,
+  PreviousEqualityReportPdfApi,
   SubmitReportCommentApi,
   SubmitEqualityDraftApi,
 } from '../dataProviders'
@@ -189,6 +190,9 @@ const template: ApplicationTemplate<
                 CreateEqualityDraftApi,
                 EqualityReportTemplateDocxApi,
                 PreviousEqualityReportContentApi,
+                // Listed purely so `updateApplicationExternalData` is permitted
+                // to invoke it on demand — never wired to a state's onEntry.
+                PreviousEqualityReportPdfApi,
               ],
               delete: true,
             },
@@ -259,6 +263,23 @@ const template: ApplicationTemplate<
               shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.EDIT,
+                  name: 'Breyta',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+              ],
               delete: false,
             },
           ],
@@ -354,6 +375,18 @@ const template: ApplicationTemplate<
               shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+              ],
               delete: false,
             },
           ],

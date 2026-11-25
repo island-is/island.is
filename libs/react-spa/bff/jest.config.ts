@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'bff',
   preset: '../../../jest.preset.js',

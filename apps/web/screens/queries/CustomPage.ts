@@ -17,6 +17,7 @@ export const GET_CUSTOM_PAGE_QUERY = gql`
       ogImage {
         ...ImageFields
       }
+      hideFromExternalSearchEngines
       alertBanner {
         showAlertBanner
         bannerVariant

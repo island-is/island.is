@@ -12,6 +12,7 @@ export const GET_PROJECT_PAGE_QUERY = gql`
       sidebar
       featuredDescription
       contentIsFullWidth
+      trackingDomain
       namespace {
         fields
       }
@@ -31,6 +32,9 @@ export const GET_PROJECT_PAGE_QUERY = gql`
           text
           url
         }
+      }
+      sidebarCards {
+        ...SidebarCardFields
       }
       footerConfig
       footerItems {
@@ -94,12 +98,18 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         title
         slug
       }
+      secondaryNewsTags {
+        id
+        title
+        slug
+      }
       projectSubpages {
         id
         title
         slug
         content {
           ...AllSlices
+          ${nestedFields}
         }
         renderSlicesAsTabs
         slices {
@@ -147,4 +157,19 @@ export const GET_PROJECT_PAGE_QUERY = gql`
   }
   ${slices}
   ${nestedOneColumnTextFields}
+`
+
+export const GET_PROJECT_PARENT_SUBPAGE_QUERY = gql`
+  query GetProjectParentSubpage($input: GetProjectParentSubpageInput!) {
+    getProjectParentSubpage(input: $input) {
+      id
+      title
+      slug
+      childLinks {
+        id
+        label
+        href
+      }
+    }
+  }
 `

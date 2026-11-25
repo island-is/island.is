@@ -183,6 +183,10 @@ export const dataSchema = z.object({
     })
     .optional(),
 
+  // Tables & repeaters - accordion
+  accordionTextField: z.string().min(1),
+  accordionCheckboxField: z.array(z.enum(['agree'])).min(1),
+
   // Tables & repeaters - tableRepeater
   tableRepeater: z
     .array(

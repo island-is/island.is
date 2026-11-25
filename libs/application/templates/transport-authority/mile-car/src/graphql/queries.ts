@@ -1,6 +1,6 @@
 export const GET_VEHICLE_INFORMATION = `
-  query GetVehiclesInformation($permno: String!) {
-    vehicleBasicInfoByPermno(permno: $permno) {
+  query GetMyVehicleMilesInfo($permno: String!) {
+    myVehicleMilesInfoByPermno(permno: $permno) {
       permno
       make
       color

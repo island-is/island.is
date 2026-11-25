@@ -120,3 +120,69 @@ export const genericError = defineMessages({
     description: 'Amount mismatch',
   },
 })
+
+export const debtPayment = defineMessages({
+  productTitle: {
+    id: 'payments:debtPayment.productTitle',
+    defaultMessage: 'Greiðsla skulda',
+    description: 'Payment of debts',
+  },
+})
+
+export const debtError = defineMessages({
+  // Shown both when the payment is rejected and when a rejected flow is opened again
+  closedTitle: {
+    id: 'payments:debtError.closedTitle',
+    defaultMessage: 'Ekki tókst að ljúka greiðslunni',
+    description: 'The payment could not be completed',
+  },
+  closed: {
+    id: 'payments:debtError.closed',
+    defaultMessage: 'Ekki er hægt að greiða þessar skuldir eins og er.',
+    description: "These debts can't be paid at the moment.",
+  },
+  // The money moved and is on its way back: a bank transfer by hand, a card by the worker
+  refundPending: {
+    id: 'payments:debtError.refundPending',
+    defaultMessage:
+      'Ekki er hægt að greiða þessar skuldir eins og er. Upphæðin sem var greidd verður endurgreidd.',
+    description:
+      "These debts can't be paid at the moment. The amount paid will be refunded.",
+  },
+  invalidTitle: {
+    id: 'payments:debtError.invalidTitle',
+    defaultMessage: 'Ekki er hægt að greiða skuldirnar',
+    description: "These debts can't be paid",
+  },
+  invalid: {
+    id: 'payments:debtError.invalid',
+    defaultMessage:
+      'Staða skuldanna gæti hafa breyst. Engin greiðsla var tekin.',
+    description:
+      'The status of your debts may have changed. No payment was taken.',
+  },
+  methodNotAllowedTitle: {
+    id: 'payments:debtError.methodNotAllowedTitle',
+    defaultMessage: 'Greiðsluleið ekki í boði',
+    description: 'Payment method not available',
+  },
+  methodNotAllowed: {
+    id: 'payments:debtError.methodNotAllowed',
+    defaultMessage:
+      'Ekki er hægt að greiða þessar skuldir með þessari greiðsluleið. Engin greiðsla var tekin. Veldu aðra greiðsluleið.',
+    description:
+      "These debts can't be paid with this payment method. No payment was taken. Please choose another payment method.",
+  },
+  unavailableTitle: {
+    id: 'payments:debtError.unavailableTitle',
+    defaultMessage: 'Ekki tókst að staðfesta skuldirnar',
+    description: "We couldn't verify your debts",
+  },
+  unavailable: {
+    id: 'payments:debtError.unavailable',
+    defaultMessage:
+      'Ekki náðist að staðfesta stöðu skuldanna. Engin greiðsla var tekin.',
+    description:
+      "We couldn't verify the status of your debts. No payment was taken.",
+  },
+})

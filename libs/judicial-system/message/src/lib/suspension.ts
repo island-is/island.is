@@ -12,7 +12,6 @@ export const messageTypeToSuspensionCategory: Partial<
   Record<MessageType, MessageSuspensionCategory>
 > = {
   [MessageType.DELIVERY_TO_COURT_PROSECUTOR]: MessageSuspensionCategory.COURT,
-  [MessageType.DELIVERY_TO_COURT_DEFENDANT]: MessageSuspensionCategory.COURT,
   [MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT]:
     MessageSuspensionCategory.COURT,
   [MessageType.DELIVERY_TO_COURT_INDICTMENT]: MessageSuspensionCategory.COURT,
@@ -71,11 +70,15 @@ export const messageTypeToSuspensionCategory: Partial<
   [MessageType.DELIVERY_TO_POLICE_SIGNED_RULING]:
     MessageSuspensionCategory.POLICE,
   [MessageType.DELIVERY_TO_POLICE_APPEAL]: MessageSuspensionCategory.POLICE,
+  [MessageType.DELIVERY_TO_POLICE_SERVICE_CERTIFICATE]:
+    MessageSuspensionCategory.POLICE,
   [MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA]:
     MessageSuspensionCategory.NATIONAL_COMMISSIONERS_OFFICE,
   [MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION]:
     MessageSuspensionCategory.NATIONAL_COMMISSIONERS_OFFICE,
   [MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT]:
+    MessageSuspensionCategory.NATIONAL_COMMISSIONERS_OFFICE,
+  [MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_APPEAL_SUMMONS]:
     MessageSuspensionCategory.NATIONAL_COMMISSIONERS_OFFICE,
 }
 

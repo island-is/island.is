@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'clients-university-application-bifrost-university',
   preset: '../../../../jest.preset.js',

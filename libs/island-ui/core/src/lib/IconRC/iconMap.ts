@@ -59,6 +59,7 @@ export type Icon =
   | 'mail'
   | 'mailOpen'
   | 'menu'
+  | 'moon'
   | 'notifications'
   | 'open'
   | 'pencil'
@@ -106,6 +107,7 @@ export type Icon =
   | 'hammer'
   | 'hourglass'
   | 'videoCam'
+  | 'translate'
 
 export default {
   filled: {
@@ -170,6 +172,7 @@ export default {
     mail: 'Mail',
     mailOpen: 'MailOpen',
     menu: 'Menu',
+    moon: 'Moon',
     notifications: 'Notifications',
     open: 'Open',
     pause: 'Pause',
@@ -215,6 +218,7 @@ export default {
     hammer: 'HammerOutline',
     hourglass: 'HourglassOutline',
     videoCam: 'VideoCam',
+    translate: 'Translate',
   },
   outline: {
     archive: 'ArchiveOutline',
@@ -278,6 +282,7 @@ export default {
     mail: 'MailOutline',
     mailOpen: 'MailOpenOutline',
     menu: 'MenuOutline',
+    moon: 'MoonOutline',
     notifications: 'NotificationsOutline',
     open: 'OpenOutline',
     pause: 'PauseOutline',
@@ -323,5 +328,6 @@ export default {
     hammer: 'HammerOutline',
     hourglass: 'HourglassOutline',
     videoCam: 'VideoCamOutline',
+    translate: 'Translate',
   },
 }

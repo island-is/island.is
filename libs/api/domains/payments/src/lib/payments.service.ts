@@ -18,7 +18,7 @@ import {
 } from '@island.is/clients/payments'
 
 import { VerifyCardInput } from './dto/verifyCard.input'
-import { PayerRequestInfo } from './payments.utils'
+import { PayerRequestInfo, toVerifyCardResponse } from './payments.utils'
 import { VerifyCardResponse } from './dto/verifyCard.response'
 import { ChargeCardInput } from './dto/chargeCard.input'
 import { ChargeCardResponse } from './dto/chargeCard.response'
@@ -32,6 +32,11 @@ import { GetPaymentFlowsResponse } from './dto/getPaymentFlows.response'
 import { ValidateApplePayMerchantResponse } from './dto/validateApplePayMerchant.response'
 import { ApplePayChargeResponse } from './dto/applePayCharge.response'
 import { ApplePayChargeInput } from './dto/applePayCharge.input'
+import {
+  GooglePayChargeInput,
+  GooglePayChargeVerifiedInput,
+} from './dto/googlePayCharge.input'
+import { GooglePayChargeResponse } from './dto/googlePayCharge.response'
 import { CreateBankTransferInput } from './dto/createBankTransfer.input'
 import { CreateBankTransferResponse } from './dto/createBankTransfer.response'
 import { VerifyBankTransferInput } from './dto/verifyBankTransfer.input'
@@ -103,13 +108,13 @@ export class PaymentsService {
     })
   }
 
-  verifyCard(
+  async verifyCard(
     verifyCardInput: VerifyCardInput,
     payerRequestInfo: PayerRequestInfo,
   ): Promise<VerifyCardResponse> {
     const { browserInfo, ...cardInput } = verifyCardInput
 
-    return this.paymentsApi.cardPaymentControllerVerify({
+    const verification = await this.paymentsApi.cardPaymentControllerVerify({
       verifyCardInput: {
         ...cardInput,
         // ip, userAgent and acceptHeader describe the payer's request as
@@ -121,6 +126,8 @@ export class PaymentsService {
         },
       },
     })
+
+    return toVerifyCardResponse(verification)
   }
 
   async verifyCardCallback(
@@ -176,7 +183,8 @@ export class PaymentsService {
 
     return {
       isSuccess,
-      responseCode,
+      // Declines come back as errors, so this is an approval's, which nothing reads
+      responseCode: responseCode ?? '',
     }
   }
 
@@ -277,7 +285,51 @@ export class PaymentsService {
 
     return {
       isSuccess,
-      responseCode,
+      // Declines come back as errors, so this is an approval's, which nothing reads
+      responseCode: responseCode ?? '',
+    }
+  }
+
+  async chargeGooglePay(
+    googlePayChargeInput: GooglePayChargeInput,
+    payerRequestInfo: PayerRequestInfo,
+  ): Promise<GooglePayChargeResponse> {
+    const { browserInfo, ...chargeInput } = googlePayChargeInput
+
+    const { status, payment, verification } =
+      await this.paymentsApi.cardPaymentControllerChargeGooglePay({
+        googlePayChargeInput: {
+          ...chargeInput,
+          // As for verifyCard: the payer's own request, derived server-side
+          browserInfo: browserInfo && {
+            ...browserInfo,
+            ...payerRequestInfo,
+          },
+        },
+      })
+
+    return {
+      status,
+      payment: payment && {
+        isSuccess: payment.isSuccess,
+        responseCode: payment.responseCode ?? '',
+      },
+      verification: verification && toVerifyCardResponse(verification),
+    }
+  }
+
+  async chargeGooglePayVerified(
+    googlePayChargeVerifiedInput: GooglePayChargeVerifiedInput,
+  ): Promise<ChargeCardResponse> {
+    const { isSuccess, responseCode } =
+      await this.paymentsApi.cardPaymentControllerChargeGooglePayVerified({
+        googlePayChargeVerifiedInput,
+      })
+
+    return {
+      isSuccess,
+      // Declines come back as errors, so this is an approval's, which nothing reads
+      responseCode: responseCode ?? '',
     }
   }
 }

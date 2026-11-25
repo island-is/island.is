@@ -5,18 +5,14 @@ import {
   GenericUserLicenseDataFieldTagType,
   GenericUserLicenseMetaLinksType,
 } from '@island.is/api/schema'
+import { Box, Divider, Icon, Text, Pagination } from '@island.is/island-ui/core'
 import {
-  Box,
-  Divider,
-  Icon,
-  Text,
-  Table as T,
-  Pagination,
-} from '@island.is/island-ui/core'
-import { InfoLine, UserInfoLine } from '@island.is/portals/my-pages/core'
+  createColumnHelper,
+  InfoLine,
+  PortalTable,
+} from '@island.is/portals/my-pages/core'
 import { useMemo, useState } from 'react'
 import ExpandableLine from '../ExpandableLine/ExpandableLine'
-import copyToClipboard from 'copy-to-clipboard'
 
 const getTagColor = (
   color: GenericUserLicenseDataFieldTagColor,
@@ -32,6 +28,7 @@ const getTagColor = (
       return
   }
 }
+const tableColumnHelper = createColumnHelper<GenericLicenseDataField>()
 export const LicenseDataFields = ({
   fields,
   licenseType,
@@ -165,45 +162,24 @@ export const LicenseDataFields = ({
               >
                 {field.label}
               </Text>
-              <T.Table>
-                <T.Head>
-                  <T.Row>
-                    {/* Double mapping needed to get to nested header and values */}
-                    {field.fields?.map((x, xIndex) => {
-                      return x?.fields?.map((y, yIndex) => {
-                        return (
-                          xIndex === 0 && (
-                            <T.HeadData
-                              key={`license-table-head-item-${xIndex}-${yIndex}`}
-                            >
-                              {y.label}
-                            </T.HeadData>
-                          )
-                        )
-                      })
-                    })}
-                  </T.Row>
-                </T.Head>
-                <T.Body>
-                  {field.fields
-                    ?.slice((page - 1) * pageSize, page * pageSize)
-                    .map((x, xIndex) => {
-                      return (
-                        <T.Row key={`license-table-item-row-${xIndex}`}>
-                          {x.fields?.map((y, yIndex) => {
-                            return (
-                              <T.Data
-                                key={`license-table-item-${xIndex}-${yIndex}`}
-                              >
-                                {y.value}
-                              </T.Data>
-                            )
-                          })}
-                        </T.Row>
-                      )
-                    })}
-                </T.Body>
-              </T.Table>
+              <PortalTable
+                columns={(field.fields?.[0]?.fields ?? []).map(
+                  (column, index) =>
+                    tableColumnHelper.display({
+                      id: `column-${index}`,
+                      header: column.label ?? '',
+                      cell: ({ row }) =>
+                        row.original.fields?.[index]?.value ?? '',
+                      enableSorting: false,
+                    }),
+                )}
+                data={
+                  field.fields?.slice((page - 1) * pageSize, page * pageSize) ??
+                  []
+                }
+                emptyMessage=""
+                mobileTitleKey="column-0"
+              />
               {field.fields && field.fields.length > pageSize && (
                 <Box marginY={3}>
                   <Pagination

@@ -38,16 +38,17 @@ export const formatRequestedCustodyRestrictions = (
 
   // No restrictions
   if (!hasRequestedCustodyRestrictions && !hasRequestedOtherRestrictions) {
-    return formatMessage(m.fallback, { caseType: type })
+    return formatMessage(
+      { id: m.fallback, defaultMessage: m.fallback },
+      { caseType: type },
+    )
   }
 
   const requestedCustodyRestrictionsText = hasRequestedCustodyRestrictions
     ? requestedCustodyRestrictions &&
       requestedCustodyRestrictions.reduce(
         (acc, restriction, index) =>
-          `${acc}${index > 0 ? '\n' : ''}${formatMessage(
-            m[restriction].title,
-          )}`,
+          `${acc}${index > 0 ? '\n' : ''}${m[restriction].title}`,
         '',
       )
     : ''
@@ -86,14 +87,17 @@ export const formatCustodyRestrictions = (
   )
 
   const formatedRestrictions = `${enumeratedRestrictions}${formatMessage(
-    m.lawSection,
+    { id: m.lawSection, defaultMessage: m.lawSection },
     {
       sectionsLength: enumeratedRestrictions.length - 1,
     },
   )}`
 
-  return formatMessage(m.ruling, {
-    restrictions: formatedRestrictions,
-    caseType: caseType,
-  })
+  return formatMessage(
+    { id: m.ruling, defaultMessage: m.ruling },
+    {
+      restrictions: formatedRestrictions,
+      caseType: caseType,
+    },
+  )
 }

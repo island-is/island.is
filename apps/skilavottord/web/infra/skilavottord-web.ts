@@ -9,9 +9,9 @@ export const serviceSetup = (services: {
     .liveness('/liveness')
     .readiness('/liveness')
     .replicaCount({
-      default: 2,
-      max: 10,
-      min: 2,
+      default: 0,
+      max: 0,
+      min: 0,
       scalingMagicNumber: 8,
     })
     .resources({
@@ -37,29 +37,5 @@ export const serviceSetup = (services: {
       NEXTAUTH_URL: '/k8s/skilavottord/web/NEXTAUTH_URL',
       DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',
       NEXTAUTH_SECRET: '/k8s/skilavottord/web/NEXTAUTH_SECRET',
-    })
-    .ingress({
-      primary: {
-        host: {
-          dev: ['beta'],
-          staging: ['beta'],
-          prod: ['', 'www.island.is'],
-        },
-        paths: ['/app/skilavottord/'],
-        extraAnnotations: {
-          dev: {
-            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-          },
-          staging: {
-            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-          },
-          prod: {
-            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-          },
-        },
-      },
     })
     .grantNamespaces('nginx-ingress-external')

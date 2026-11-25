@@ -2,6 +2,7 @@ import {
   InstitutionNationalIds,
   MockablePaymentCatalogApi,
   PaymentCatalogApi,
+  PhotoLookupCheckApi,
   defineTemplateApi,
 } from '@island.is/application/types'
 
@@ -23,4 +24,10 @@ export const MockableSyslumadurPaymentCatalogApi =
 export const DuplicateEligibilityApi = defineTemplateApi({
   action: 'canGetNewDuplicate',
   shouldPersistToExternalData: false,
+})
+
+export const DuplicatePhotoLookupCheckApi = PhotoLookupCheckApi.configure({
+  params: {
+    rlsPhotoSource: 'qualityPhoto',
+  },
 })

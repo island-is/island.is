@@ -1,5 +1,11 @@
+import slugify from '@sindresorhus/slugify'
 import type { Locale } from '@island.is/shared/types'
 import { localeMap } from '@island.is/cms'
+import {
+  DEFAULT_HNIPP_TEMPLATE_SOURCE_TYPE,
+  HNIPP_TEMPLATE_SOURCE_TYPES,
+} from './dto/hnippTemplate.response'
+import type { HnippTemplateSourceType } from './dto/hnippTemplate.response'
 
 export const METRICS_PREFIX = 'user-notification.'
 
@@ -18,6 +24,81 @@ export const mapToContentfulLocale = (locale: Locale): string =>
   locale === 'en' ? 'en' : 'is-IS'
 export const cleanString = (str: string): string =>
   str.replace(/\s+/g, ' ').trim()
+
+/**
+ * Extracts a printable message from a caught value of unknown type.
+ */
+export const getErrorMessage = (error: unknown): string => {
+  if (error instanceof Error) return error.message
+  if (typeof error === 'string') return error
+  try {
+    // JSON.stringify returns undefined for e.g. undefined, functions and symbols
+    return JSON.stringify(error) ?? 'An unknown error occurred'
+  } catch {
+    return 'An unknown error occurred'
+  }
+}
+
+/**
+ * Normalizes a sender id (kennitala) by stripping all non-digit characters,
+ * e.g. '550169-2829' -> '5501692829'.
+ */
+export const normalizeKennitala = (senderId: string): string =>
+  senderId.replace(/\D/g, '')
+
+/**
+ * A normalized sender id is valid when it is exactly 10 digits, matching the
+ * validation user-profile applies when blocking a sender.
+ */
+export const isValidSenderId = (normalizedSenderId: string): boolean =>
+  /^\d{10}$/.test(normalizedSenderId)
+
+/** Category of notifications whose template has no HnippCategory */
+export const DEFAULT_CATEGORY = 'almennt'
+export const DEFAULT_CATEGORY_LABEL = { is: 'Almennt', en: 'General' }
+
+/**
+ * Narrows a Contentful sourceType (a plain string there) to a known source
+ * type, defaulting to General when it is missing or unknown.
+ */
+export const toSourceType = (value?: string | null): HnippTemplateSourceType =>
+  HNIPP_TEMPLATE_SOURCE_TYPES.find((type) => type === value) ??
+  DEFAULT_HNIPP_TEMPLATE_SOURCE_TYPE
+
+const UTC_OFFSET_SUFFIX = /(Z|[+-]\d{2}(:?\d{2})?)$/i
+
+/**
+ * Normalizes a validated ISO 8601 deadline to a UTC ISO string. A value
+ * without a UTC offset is Icelandic time, which is UTC+0 all year (no
+ * daylight saving time), so it is never read in the server's local time zone.
+ */
+export const toDeadlineIso = (value: string): string =>
+  new Date(UTC_OFFSET_SUFFIX.test(value) ? value : `${value}Z`).toISOString()
+
+/**
+ * Slugifies an Icelandic HnippCategory label into a category key part,
+ * e.g. 'Heilbrigðismál & Æfingar' -> 'heilbrigdismal-og-aefingar'.
+ */
+export const toCategorySlug = (label: string): string =>
+  slugify(label, {
+    decamelize: false,
+    customReplacements: [
+      ['&', ' og '],
+      ['ö', 'o'],
+      ['Ö', 'o'],
+    ],
+  })
+
+/**
+ * Resolves the category of a template from its Icelandic HnippCategory, so it
+ * is the same regardless of the recipient's locale. Templates without a
+ * category resolve to null, which is presented as 'almennt'.
+ */
+export const toTemplateCategory = (isLabel?: string | null): string | null => {
+  const label = isLabel?.trim()
+  const category = label ? toCategorySlug(label) : ''
+  return category && category !== DEFAULT_CATEGORY ? category : null
+}
 
 export const extractLocaleField = (
   field: string | Record<string, string> | undefined | null,

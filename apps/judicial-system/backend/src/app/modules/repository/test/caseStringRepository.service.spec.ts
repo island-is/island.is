@@ -24,6 +24,8 @@ describe('CaseStringRepositoryService', () => {
 
   let service: CaseStringRepositoryService
   let model: {
+    findAll: jest.Mock
+    create: jest.Mock
     upsert: jest.Mock
     destroy: jest.Mock
     update: jest.Mock
@@ -31,6 +33,8 @@ describe('CaseStringRepositoryService', () => {
 
   beforeEach(async () => {
     model = {
+      findAll: jest.fn().mockResolvedValue([]),
+      create: jest.fn(),
       upsert: jest.fn().mockResolvedValue([{}, null]),
       destroy: jest.fn().mockResolvedValue(0),
       update: jest.fn().mockResolvedValue([0]),
@@ -127,6 +131,57 @@ describe('CaseStringRepositoryService', () => {
 
       await expect(
         service.updateByIdAndCase(caseStringId, caseId, {}, { transaction }),
+      ).rejects.toThrow(error)
+    })
+  })
+
+  describe('copyByTypesToCase', () => {
+    const newCaseId = 'some-new-case-id'
+    const stringTypes = [StringType.CIVIL_DEMANDS, StringType.PENALTIES]
+
+    it('copies only the case strings of the given types to the new case as new rows', async () => {
+      model.findAll.mockResolvedValueOnce([
+        {
+          toJSON: () => ({
+            id: caseStringId,
+            caseId,
+            stringType: StringType.CIVIL_DEMANDS,
+            value: 'Some demands',
+          }),
+        },
+      ])
+
+      await service.copyByTypesToCase(caseId, newCaseId, stringTypes, {
+        transaction,
+      })
+
+      expect(model.findAll).toHaveBeenCalledWith({
+        where: { caseId, stringType: stringTypes },
+        transaction,
+      })
+      expect(model.create).toHaveBeenCalledTimes(1)
+      expect(model.create).toHaveBeenCalledWith(
+        {
+          id: undefined,
+          caseId: newCaseId,
+          stringType: StringType.CIVIL_DEMANDS,
+          value: 'Some demands',
+        },
+        { transaction },
+      )
+    })
+
+    it('rethrows when a copy fails', async () => {
+      const error = new Error('Some error')
+      model.findAll.mockResolvedValueOnce([
+        { toJSON: () => ({ id: caseStringId }) },
+      ])
+      model.create.mockRejectedValueOnce(error)
+
+      await expect(
+        service.copyByTypesToCase(caseId, newCaseId, stringTypes, {
+          transaction,
+        }),
       ).rejects.toThrow(error)
     })
   })

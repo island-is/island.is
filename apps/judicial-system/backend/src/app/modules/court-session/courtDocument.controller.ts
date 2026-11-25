@@ -32,8 +32,9 @@ import {
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
 } from '../../guards'
+import { getOrCreateTransaction } from '../../middleware'
 import {
-  CaseExistsGuard,
+  CaseExistsForUpdateGuard,
   CaseTypeGuard,
   CaseWriteGuard,
   CurrentCase,
@@ -48,12 +49,33 @@ import { FiledCourtDocumentExistsGuard } from './guards/filedCourtDocumentExists
 import { UnfiledCourtDocumentExistsGuard } from './guards/unfiledCourtDocumentExists.guard'
 import { CourtDocumentService } from './courtDocument.service'
 
+// Every route here changes the case's court documents, and each decides what
+// to change from the case the guard loaded: the routes that name a session
+// find it and the document in theCase.courtSessions, fileInCourtSession finds
+// the document in theCase.unfiledCourtDocuments and checks the target session
+// against theCase.courtSessions. CaseExistsForUpdateGuard reads the case under
+// FOR UPDATE in the request's transaction, so two of these requests on one
+// case serialize on the case row and the second sees the first's commit - a
+// document cannot be filed into a session that a concurrent request has just
+// deleted, nor updated and removed from the record at the same time.
+//
+// RolesGuard runs first, ahead of the guard that takes the write lock. It
+// can, because every route's three rules are bare user roles with no
+// canActivate: none of them reads request.case, so a caller this controller
+// has no rule for is turned away before any case row is locked.
+// courtDocumentRolesRules.spec.ts pins that assumption, so a rule that starts
+// reading the case cannot silently reopen the exposure.
+//
+// The guards after the locking read all decide from request.case and so see
+// the locked row - CourtSessionExistsGuard and UnfiledCourtDocumentExistsGuard
+// directly, FiledCourtDocumentExistsGuard through the session the former
+// resolved.
 @Controller('api/case/:caseId')
 @ApiTags('court-documents')
 @UseGuards(
   JwtAuthUserGuard,
   RolesGuard,
-  CaseExistsGuard,
+  CaseExistsForUpdateGuard,
   new CaseTypeGuard(indictmentCases),
   CaseWriteGuard,
 )
@@ -84,13 +106,16 @@ export class CourtDocumentController {
       `Creating a new court document for court session ${courtSessionId} of case ${caseId}`,
     )
 
-    return this.sequelize.transaction(async (transaction) =>
-      this.courtDocumentService.createInCourtSession(
-        caseId,
-        courtSessionId,
-        { ...createDto, documentType: CourtDocumentType.EXTERNAL_DOCUMENT },
-        transaction,
-      ),
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.courtDocumentService.createInCourtSession(
+      caseId,
+      courtSessionId,
+      { ...createDto, documentType: CourtDocumentType.EXTERNAL_DOCUMENT },
+      transaction,
     )
   }
 
@@ -115,14 +140,14 @@ export class CourtDocumentController {
       `Updating court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
     )
 
-    return this.sequelize.transaction(async (transaction) =>
-      this.courtDocumentService.update(
-        caseId,
-        courtSessionId,
-        courtDocumentId,
-        updateDto,
-        transaction,
-      ),
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.courtDocumentService.update(
+      caseId,
+      courtSessionId,
+      courtDocumentId,
+      updateDto,
+      transaction,
     )
   }
 
@@ -147,6 +172,9 @@ export class CourtDocumentController {
       `Filing court document ${courtDocumentId} in court session ${fileDto.courtSessionId} of case ${caseId}`,
     )
 
+    // Decided against the locked case: the session list is the one the guard
+    // read under FOR UPDATE, so a session deleted by a concurrent request is
+    // not here to be filed into.
     if (
       !theCase.courtSessions?.some((cs) => cs.id === fileDto.courtSessionId)
     ) {
@@ -155,13 +183,13 @@ export class CourtDocumentController {
       )
     }
 
-    return this.sequelize.transaction(async (transaction) =>
-      this.courtDocumentService.fileInCourtSession(
-        caseId,
-        courtDocumentId,
-        fileDto,
-        transaction,
-      ),
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.courtDocumentService.fileInCourtSession(
+      caseId,
+      courtDocumentId,
+      fileDto,
+      transaction,
     )
   }
 
@@ -184,15 +212,15 @@ export class CourtDocumentController {
       `Deleting court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
     )
 
-    return this.sequelize.transaction(async (transaction) => {
-      const deleted = await this.courtDocumentService.delete(
-        caseId,
-        courtSessionId,
-        courtDocumentId,
-        transaction,
-      )
+    const transaction = await getOrCreateTransaction(this.sequelize)
 
-      return { deleted }
-    })
+    const deleted = await this.courtDocumentService.delete(
+      caseId,
+      courtSessionId,
+      courtDocumentId,
+      transaction,
+    )
+
+    return { deleted }
   }
 }

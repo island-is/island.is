@@ -37,8 +37,11 @@ export const EditTenant = () => {
     checkEnvironmentsSync(tenant.environments, [
       'nationalId',
       'displayName',
+      'displayNameEn',
       'description',
+      'descriptionEn',
       'contactEmail',
+      'municipalityCode',
     ])
 
   return (
@@ -52,6 +55,7 @@ export const EditTenant = () => {
             title={displayName || tenant.id || formatMessage(m.editTenant)}
             selectedEnvironment={selectedEnvironment.environment}
             availableEnvironments={tenant.availableEnvironments}
+            optionEnvironments={tenant.configuredEnvironments}
             onChange={onEnvironmentChange}
           />
         }
@@ -106,6 +110,20 @@ export const EditTenant = () => {
                 </GridColumn>
                 <GridColumn span="12/12">
                   <Input
+                    key={`displayNameEn-${selectedEnvironment.environment}`}
+                    name="displayNameEn"
+                    label={formatMessage(m.tenantDisplayNameEn)}
+                    size="sm"
+                    backgroundColor="blue"
+                    defaultValue={selectedEnvironment.displayNameEn ?? ''}
+                    errorMessage={formatErrorMessage(
+                      actionData?.errors?.displayNameEn,
+                    )}
+                    tooltip={formatMessage(m.tenantEnglishTooltip)}
+                  />
+                </GridColumn>
+                <GridColumn span="12/12">
+                  <Input
                     key={`description-${selectedEnvironment.environment}`}
                     name="description"
                     label={formatMessage(m.tenantDescription)}
@@ -122,6 +140,22 @@ export const EditTenant = () => {
                 </GridColumn>
                 <GridColumn span="12/12">
                   <Input
+                    key={`descriptionEn-${selectedEnvironment.environment}`}
+                    name="descriptionEn"
+                    label={formatMessage(m.tenantDescriptionEn)}
+                    size="sm"
+                    backgroundColor="blue"
+                    defaultValue={selectedEnvironment.descriptionEn ?? ''}
+                    errorMessage={formatErrorMessage(
+                      actionData?.errors?.descriptionEn,
+                    )}
+                    tooltip={formatMessage(m.tenantEnglishTooltip)}
+                    textarea
+                    rows={2}
+                  />
+                </GridColumn>
+                <GridColumn span="12/12">
+                  <Input
                     key={`contactEmail-${selectedEnvironment.environment}`}
                     name="contactEmail"
                     label={formatMessage(m.tenantContactEmail)}
@@ -132,6 +166,20 @@ export const EditTenant = () => {
                       actionData?.errors?.contactEmail,
                     )}
                     tooltip={formatMessage(m.tenantContactEmailTooltip)}
+                  />
+                </GridColumn>
+                <GridColumn span="12/12">
+                  <Input
+                    key={`municipalityCode-${selectedEnvironment.environment}`}
+                    name="municipalityCode"
+                    label={formatMessage(m.tenantMunicipalityCode)}
+                    size="sm"
+                    backgroundColor="blue"
+                    defaultValue={selectedEnvironment.municipalityCode ?? ''}
+                    errorMessage={formatErrorMessage(
+                      actionData?.errors?.municipalityCode,
+                    )}
+                    tooltip={formatMessage(m.tenantMunicipalityCodeTooltip)}
                   />
                 </GridColumn>
               </GridRow>

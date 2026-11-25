@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { RefreshControl, ScrollView, View } from 'react-native'
 import { router, useLocalSearchParams } from 'expo-router'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import { StackScreen } from '@/components/stack-screen'
@@ -13,14 +14,7 @@ import {
 } from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'
 import { useBrowser } from '@/hooks/use-browser'
-import {
-  Button,
-  Input,
-  InputRow,
-  NavigationBarSheet,
-  Problem,
-  Typography,
-} from '@/ui'
+import { Button, InfoLine, InfoLineRow, StatusMessage, Typography } from '@/ui'
 import { questionnaireUrls } from '@/utils/url-builder'
 import {
   getQuestionnaireOrganizationLabelId,
@@ -56,6 +50,7 @@ export default function QuestionnaireDetailScreen() {
   const theme = useTheme()
   const intl = useIntl()
   const locale = useLocale()
+  const insets = useSafeAreaInsets()
   const { openBrowser } = useBrowser()
   const shouldSkipQuery = !id || !organization
   const { data, loading, error, refetch, networkStatus } =
@@ -135,9 +130,9 @@ export default function QuestionnaireDetailScreen() {
       </View>
     )
   } else if (!loading && error && !base) {
-    errorContent = <Problem error={error} withContainer />
+    errorContent = <StatusMessage error={error} withContainer />
   } else if (!loading && !error && !base) {
-    errorContent = <Problem type="no_data" withContainer />
+    errorContent = <StatusMessage type="no_data" withContainer />
   }
 
   const isAnswered =
@@ -145,9 +140,16 @@ export default function QuestionnaireDetailScreen() {
   const isDraft = base?.status === QuestionnaireQuestionnairesStatusEnum.Draft
   const isNotAnswered =
     base?.status === QuestionnaireQuestionnairesStatusEnum.NotAnswered
+  const isExpired =
+    base?.status === QuestionnaireQuestionnairesStatusEnum.Expired
   const hasSubmissions = (questionnaire?.submissions?.length ?? 0) > 0
+  const hasSubmittedAnswer =
+    questionnaire?.submissions?.some((sub) => !sub.isDraft) ?? false
   const canSubmit = questionnaire?.canSubmit ?? false
   const canSubmitAgain = canSubmit && hasSubmissions
+  const canViewAnswer =
+    ((isAnswered || isDraft) && hasSubmissions) ||
+    (isExpired && hasSubmittedAnswer)
   const isInitialLoading = loading && !base
 
   return (
@@ -159,6 +161,9 @@ export default function QuestionnaireDetailScreen() {
       />
       <ScrollView
         style={{ flex: 1 }}
+        contentContainerStyle={{
+          paddingBottom: theme.spacing[3] + insets.bottom,
+        }}
         refreshControl={
           <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
@@ -210,7 +215,7 @@ export default function QuestionnaireDetailScreen() {
                       style={{ borderWidth: 1, borderColor: 'transparent' }}
                     />
                   )}
-                  {(isAnswered || isDraft) && hasSubmissions && (
+                  {canViewAnswer && (
                     <Button
                       title={intl.formatMessage({
                         id: 'health.questionnaires.action.view-answer',
@@ -226,8 +231,8 @@ export default function QuestionnaireDetailScreen() {
               </View>
             </Content>
 
-            <InputRow>
-              <Input
+            <InfoLineRow>
+              <InfoLine
                 size="normal"
                 loading={isInitialLoading}
                 label={intl.formatMessage({
@@ -242,9 +247,9 @@ export default function QuestionnaireDetailScreen() {
                 }
                 hideWhenEmpty
               />
-            </InputRow>
-            <InputRow>
-              <Input
+            </InfoLineRow>
+            <InfoLineRow>
+              <InfoLine
                 size="normal"
                 loading={isInitialLoading}
                 label={intl.formatMessage({
@@ -262,9 +267,9 @@ export default function QuestionnaireDetailScreen() {
                 }
                 hideWhenEmpty
               />
-            </InputRow>
-            <InputRow>
-              <Input
+            </InfoLineRow>
+            <InfoLineRow>
+              <InfoLine
                 size="normal"
                 loading={isInitialLoading}
                 label={intl.formatMessage({
@@ -275,9 +280,9 @@ export default function QuestionnaireDetailScreen() {
                 }
                 hideWhenEmpty
               />
-            </InputRow>
-            <InputRow>
-              <Input
+            </InfoLineRow>
+            <InfoLineRow>
+              <InfoLine
                 size="normal"
                 loading={isInitialLoading}
                 label={intl.formatMessage({
@@ -286,9 +291,9 @@ export default function QuestionnaireDetailScreen() {
                 value={questionnaire?.sender ?? ''}
                 hideWhenEmpty
               />
-            </InputRow>
-            <InputRow>
-              <Input
+            </InfoLineRow>
+            <InfoLineRow>
+              <InfoLine
                 size="normal"
                 loading={isInitialLoading}
                 label={intl.formatMessage({
@@ -301,7 +306,7 @@ export default function QuestionnaireDetailScreen() {
                 }
                 hideWhenEmpty
               />
-            </InputRow>
+            </InfoLineRow>
           </>
         )}
       </ScrollView>

@@ -91,6 +91,13 @@ const template: ApplicationTemplate<
                     featureFlags[DrivingLicenseFeatureFlags.ALLOW_FAKE],
                 })
               },
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.continue,
+                  type: 'primary',
+                },
+              ],
               write: 'all',
               delete: true,
               api: [
@@ -138,6 +145,13 @@ const template: ApplicationTemplate<
                 import('../forms/mainForm').then((module) =>
                   Promise.resolve(module.mainForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: m.continue,
+                  type: 'primary',
+                },
+              ],
               write: 'all',
               read: 'all',
               delete: true,
@@ -169,7 +183,6 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.completedForm),
                 ),
               read: 'all',
-              delete: true,
             },
           ],
         },

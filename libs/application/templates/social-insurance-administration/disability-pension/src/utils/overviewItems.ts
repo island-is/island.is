@@ -1,10 +1,12 @@
 import { coreMessages, YES } from '@island.is/application/core'
 import {
+  Application,
   ExternalData,
   FormValue,
   KeyValueItem,
   TableData,
 } from '@island.is/application/types'
+import type { Locale } from '@island.is/shared/types'
 import {
   formatCurrencyWithoutSuffix,
   formatPhoneNumber,
@@ -294,6 +296,8 @@ export const selfEvaluationItems = async (
   externalData: ExternalData,
   _: string,
   apolloClient: ApolloClient<object>,
+  __?: Locale,
+  application?: Application,
 ): Promise<Array<KeyValueItem>> => {
   const {
     biggestIssue,
@@ -326,12 +330,15 @@ export const selfEvaluationItems = async (
     await Promise.all([
       apolloClient.query<Query>({
         query: siaGeneralLanguagesQuery,
+        variables: { applicationId: application?.id },
       }),
       apolloClient.query<Query>({
         query: siaGeneralProfessionsQuery,
+        variables: { applicationId: application?.id },
       }),
       apolloClient.query<Query>({
         query: siaGeneralProfessionActivitiesQuery,
+        variables: { applicationId: application?.id },
       }),
     ])
 

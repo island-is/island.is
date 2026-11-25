@@ -1,18 +1,23 @@
 import React, { useCallback, useEffect, useReducer } from 'react'
 import { useIntl } from 'react-intl'
 import {
+  Alert as RNAlert,
   ImageSourcePropType,
   Linking,
+  Platform,
   SafeAreaView,
   ScrollView,
   View,
 } from 'react-native'
-import { useLocalSearchParams } from 'expo-router'
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
 
 import { StackScreen } from '@/components/stack-screen'
+import { uiStore } from '@/stores/ui-store'
+import { toast, ToastHost } from '@/components/toast'
 import { useFragment_experimental } from '@apollo/client/react/hooks'
 import styled, { useTheme } from 'styled-components/native'
 import calendarIcon from '@/assets/icons/calendar.png'
+import calendarCancelIcon from '@/assets/icons/calendar-cancel.png'
 import clockIcon from '@/assets/icons/clock.png'
 import externalLink from '@/assets/icons/external-link.png'
 import infoIcon from '@/assets/icons/info-bubble-outline.png'
@@ -23,11 +28,23 @@ import {
   AppointmentFragmentFragmentDoc,
   HealthDirectorateAppointment,
   HealthDirectorateAppointmentAssigneeType,
+  HealthDirectorateAppointmentCancelOutcome,
   HealthDirectorateAppointmentLinkType,
   HealthDirectorateAppointmentModality,
+  HealthDirectorateAppointmentStatus,
+  useCancelAppointmentMutation,
   useGetAppointmentDetailQuery,
 } from '@/graphql/types/schema'
-import { Alert, Button, Icon, Input, InputRow, Problem, Typography } from '@/ui'
+import {
+  Alert,
+  Button,
+  Icon,
+  IconRow,
+  InfoLine,
+  InfoLineRow,
+  StatusMessage,
+  Typography,
+} from '@/ui'
 import { formatAppointmentDate } from '../../../../../utils/format-appointment-date'
 
 const Header = styled.View`
@@ -40,12 +57,6 @@ const IconList = styled.View`
   gap: ${({ theme }) => theme.spacing.p2}px;
 `
 
-const IconRow = styled.View`
-  flex-direction: row;
-  align-items: center;
-  column-gap: ${({ theme }) => theme.spacing[1]}px;
-`
-
 const MapLink = styled.TouchableOpacity`
   flex-direction: row;
   align-self: flex-start;
@@ -53,7 +64,8 @@ const MapLink = styled.TouchableOpacity`
   gap: ${({ theme }) => theme.spacing.smallGutter}px;
   margin-left: ${({ theme }) => 16 + theme.spacing[1]}px;
   border-bottom-width: 1px;
-  border-bottom-color: ${({ theme }) => theme.color.blue400};
+  border-bottom-color: ${({ theme }) =>
+    theme.tokens.interactive.border.borderPrimary};
 `
 
 const LocationItem = styled.View`
@@ -65,7 +77,8 @@ const InlineLink = styled.TouchableOpacity`
   align-items: center;
   gap: ${({ theme }) => theme.spacing.smallGutter}px;
   border-bottom-width: 1px;
-  border-bottom-color: ${({ theme }) => theme.color.blue400};
+  border-bottom-color: ${({ theme }) =>
+    theme.tokens.interactive.border.borderPrimary};
 `
 
 const MoreInfoRow = styled.View`
@@ -73,23 +86,29 @@ const MoreInfoRow = styled.View`
   padding-vertical: ${({ theme }) => theme.spacing[3]}px;
   gap: ${({ theme }) => theme.spacing[1]}px;
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
-  border-bottom-color: ${({ theme }) => theme.color.blue200};
+  border-bottom-color: ${({ theme }) => theme.tokens.border.primary};
 `
 
 const EyebrowContainer = styled.View`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
   padding-top: ${({ theme }) => theme.spacing[2]}px;
-  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const ProblemContainer = styled.View`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
 `
 
+const CancelSection = styled.View`
+  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  padding-top: ${({ theme }) => theme.spacing[1]}px;
+  padding-bottom: ${({ theme }) => theme.spacing[2]}px;
+  gap: ${({ theme }) => theme.spacing[1]}px;
+`
+
 const StickyFooter = styled.View`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
   padding-top: ${({ theme }) => theme.spacing[2]}px;
-  background-color: ${({ theme }) => theme.color.white};
+  background-color: ${({ theme }) => theme.tokens.background.invert};
 `
 
 type VideoCallPhase = 'before' | 'active' | 'expired'
@@ -125,6 +144,22 @@ export default function AppointmentDetailScreen() {
   const { id: appointmentId } = useLocalSearchParams<{ id: string }>()
   const intl = useIntl()
   const theme = useTheme()
+  const router = useRouter()
+
+  // On Android a `modal` presentation still renders inside the tab navigator,
+  // so the tab bar stays visible behind it. On iOS the form sheet already
+  // covers the tabs, so leave that platform alone.
+  useFocusEffect(
+    useCallback(() => {
+      if (Platform.OS !== 'android') {
+        return
+      }
+      uiStore.setState({ tabsHidden: true })
+      return () => {
+        uiStore.setState({ tabsHidden: false })
+      }
+    }, []),
+  )
 
   const appointmentFromCache =
     useFragment_experimental<HealthDirectorateAppointment>({
@@ -137,10 +172,18 @@ export default function AppointmentDetailScreen() {
       returnPartialData: true,
     })
 
-  const { data, loading, error, networkStatus } = useGetAppointmentDetailQuery({
-    variables: { id: appointmentId ?? '' },
-    skip: !appointmentId,
-  })
+  const { data, loading, error, networkStatus, refetch } =
+    useGetAppointmentDetailQuery({
+      variables: { id: appointmentId ?? '' },
+      skip: !appointmentId,
+    })
+
+  const [cancelAppointment, { loading: cancelling }] =
+    useCancelAppointmentMutation({
+      // Not awaited: a failed list refetch would reject the mutation and
+      // hide the outcome below.
+      refetchQueries: ['getAppointments'],
+    })
 
   const appointment =
     data?.healthDirectorateAppointment ?? appointmentFromCache?.data
@@ -174,7 +217,10 @@ export default function AppointmentDetailScreen() {
     alignSelf: 'center' | 'flex-start' = 'center',
   ) => (
     <InlineLink style={{ alignSelf }} onPress={() => void openExternalUrl(url)}>
-      <Typography variant="eyebrow" color={theme.color.blue400}>
+      <Typography
+        variant="eyebrow"
+        color={theme.tokens.interactive.foreground.primary}
+      >
         {intl.formatMessage({ id: 'health.appointments.seeMore' })}
       </Typography>
       <Icon
@@ -290,6 +336,86 @@ export default function AppointmentDetailScreen() {
     time,
   } = formatAppointmentDate(intl, appointment?.date)
 
+  // Whether cancelling is offered at all, and until when, is the server's
+  // call - never inferred from the appointment date on the client.
+  const canCancel = detail?.canCancel === true
+  const isBooked =
+    appointment?.status === HealthDirectorateAppointmentStatus.Booked
+  const cancelDeadline = formatAppointmentDate(intl, detail?.canCancelBefore)
+
+  const showCancelError = useCallback(
+    (messageId: string) => {
+      toast.error(
+        intl.formatMessage({ id: 'health.appointments.cancelErrorTitle' }),
+        {
+          message: intl.formatMessage({ id: messageId }),
+          duration: 5000,
+        },
+      )
+    },
+    [intl],
+  )
+
+  const confirmCancel = useCallback(() => {
+    if (!appointmentId) {
+      return
+    }
+    cancelAppointment({ variables: { id: appointmentId } })
+      .then((res) => {
+        switch (
+          res.data?.healthDirectorateRequestAppointmentCancellation.outcome
+        ) {
+          case HealthDirectorateAppointmentCancelOutcome.Cancelled:
+            router.back()
+            // Rendered by the root ToastHost, the sheet having gone.
+            toast.success(
+              intl.formatMessage({
+                id: 'health.appointments.cancelSuccessTitle',
+              }),
+            )
+            break
+          case HealthDirectorateAppointmentCancelOutcome.Refused:
+          case HealthDirectorateAppointmentCancelOutcome.Blocked:
+            // Refetch so the detail says whether the button is still offered.
+            void refetch()
+            showCancelError('health.appointments.cancelContactProvider')
+            break
+          case HealthDirectorateAppointmentCancelOutcome.Unconfirmed:
+            // Sent but unanswered, so the button doubles as the retry.
+            showCancelError('health.appointments.cancelUnconfirmed')
+            break
+          default:
+            showCancelError('health.appointments.cancelErrorMessage')
+        }
+      })
+      .catch(() => showCancelError('health.appointments.cancelErrorMessage'))
+  }, [appointmentId, cancelAppointment, intl, refetch, router, showCancelError])
+
+  const handleCancelPress = useCallback(() => {
+    RNAlert.alert(
+      intl.formatMessage({ id: 'health.appointments.cancelPromptTitle' }),
+      intl.formatMessage({ id: 'health.appointments.cancelPromptMessage' }),
+      [
+        {
+          text: intl.formatMessage({
+            id: 'health.appointments.cancelPromptCancel',
+          }),
+          style: 'cancel',
+        },
+        {
+          text: intl.formatMessage({
+            id: 'health.appointments.cancelPromptConfirm',
+          }),
+          style: 'destructive',
+          // Marks this the preferred action, which iOS gives the prominent
+          // (filled) treatment in its alert.
+          isPreferred: true,
+          onPress: confirmCancel,
+        },
+      ],
+    )
+  }, [confirmCancel, intl])
+
   const hasMoreInfo =
     !!appointment &&
     ((appointment.practitioners?.length ?? 0) > 0 ||
@@ -318,20 +444,20 @@ export default function AppointmentDetailScreen() {
       >
         {error && !appointment && (
           <ProblemContainer>
-            <Problem
+            <StatusMessage
               type="error"
+              error={error}
               title={intl.formatMessage({ id: 'problem.error.title' })}
               message={intl.formatMessage({
                 id: 'health.appointments.errorMessage',
               })}
-              tag={error.message}
             />
           </ProblemContainer>
         )}
 
         {!loading && !error && !appointment && (
           <ProblemContainer>
-            <Problem
+            <StatusMessage
               type="no_data"
               title={intl.formatMessage({ id: 'problem.noData.title' })}
               message={intl.formatMessage({
@@ -350,96 +476,55 @@ export default function AppointmentDetailScreen() {
 
               <IconList>
                 {appointment.date && (
-                  <IconRow>
-                    <Icon
-                      source={calendarIcon as ImageSourcePropType}
-                      width={16}
-                      height={16}
-                      tintColor="blue400"
-                    />
-                    <Typography variant="body">
-                      {weekday}, {dateStr}
-                    </Typography>
+                  <IconRow icon={calendarIcon as ImageSourcePropType}>
+                    {weekday}, {dateStr}
                   </IconRow>
                 )}
 
                 {appointment.date && (
-                  <IconRow>
-                    <Icon
-                      source={clockIcon as ImageSourcePropType}
-                      width={16}
-                      height={16}
-                      tintColor="blue400"
-                    />
-                    <Typography variant="body">{time}</Typography>
+                  <IconRow icon={clockIcon as ImageSourcePropType}>
+                    {time}
                   </IconRow>
                 )}
 
                 {!!appointment.duration && (
-                  <IconRow>
-                    <Icon
-                      source={hourglassIcon as ImageSourcePropType}
-                      width={16}
-                      height={16}
-                      tintColor="blue400"
-                    />
-                    <Typography variant="body">
-                      {intl.formatMessage(
-                        { id: 'health.appointments.minutesFormat' },
-                        { minutes: appointment.duration },
-                      )}
-                    </Typography>
+                  <IconRow icon={hourglassIcon as ImageSourcePropType}>
+                    {intl.formatMessage(
+                      { id: 'health.appointments.minutesFormat' },
+                      { minutes: appointment.duration },
+                    )}
                   </IconRow>
                 )}
 
                 {isVideo && (
-                  <IconRow>
-                    <Icon
-                      source={videoCameraIcon as ImageSourcePropType}
-                      width={16}
-                      height={16}
-                      tintColor="blue400"
-                    />
-                    <Typography variant="body">
-                      {intl.formatMessage({
-                        id: 'health.appointments.videoCall',
-                      })}
-                    </Typography>
+                  <IconRow icon={videoCameraIcon as ImageSourcePropType}>
+                    {intl.formatMessage({
+                      id: 'health.appointments.videoCall',
+                    })}
                   </IconRow>
                 )}
 
                 {!isVideo && appointment.location?.name && (
                   <LocationItem>
-                    <IconRow style={{ alignItems: 'flex-start' }}>
-                      <Icon
-                        source={locationIcon as ImageSourcePropType}
-                        width={16}
-                        height={16}
-                        tintColor="blue400"
-                        style={{ marginTop: 4 }}
-                      />
-                      <View style={{ flex: 1 }}>
-                        <Typography variant="body">
-                          {[
-                            appointment.location.name,
-                            appointment.location.address,
-                            [
-                              appointment.location.postalCode,
-                              appointment.location.city,
-                            ]
-                              .filter(Boolean)
-                              .join(' '),
-                          ]
-                            .filter(Boolean)
-                            .join(', ')}
-                        </Typography>
-                      </View>
+                    <IconRow icon={locationIcon as ImageSourcePropType}>
+                      {[
+                        appointment.location.name,
+                        appointment.location.address,
+                        [
+                          appointment.location.postalCode,
+                          appointment.location.city,
+                        ]
+                          .filter(Boolean)
+                          .join(' '),
+                      ]
+                        .filter(Boolean)
+                        .join(', ')}
                     </IconRow>
                     {mapsLink && (
                       <MapLink onPress={handleOpenMap}>
                         <Typography
                           variant="eyebrow"
-                          color={theme.color.blue400}
+                          color={theme.tokens.interactive.foreground.primary}
                         >
                           {intl.formatMessage({
                             id: 'health.appointments.openMap',
@@ -457,21 +542,16 @@ export default function AppointmentDetailScreen() {
 
                 {!isVideo && locationLink && (
                   <LocationItem>
-                    <IconRow>
-                      <Icon
-                        source={infoIcon as ImageSourcePropType}
-                        width={16}
-                        height={16}
-                        tintColor="blue400"
-                      />
-                      <Typography variant="body">
-                        {intl.formatMessage({
-                          id: 'health.appointments.locationInstructions',
-                        })}
-                      </Typography>
+                    <IconRow icon={infoIcon as ImageSourcePropType}>
+                      {intl.formatMessage({
+                        id: 'health.appointments.locationInstructions',
+                      })}
                     </IconRow>
                     <MapLink onPress={() => void openExternalUrl(locationLink)}>
-                      <Typography variant="eyebrow" color={theme.color.blue400}>
+                      <Typography
+                        variant="eyebrow"
+                        color={theme.tokens.interactive.foreground.primary}
+                      >
                         {intl.formatMessage({
                           id: 'health.appointments.seeMore',
                         })}
@@ -487,9 +567,50 @@ export default function AppointmentDetailScreen() {
               </IconList>
             </Header>
 
+            {isBooked && canCancel && (
+              <CancelSection>
+                <Button
+                  title={intl.formatMessage({
+                    id: 'health.appointments.cancelAppointment',
+                  })}
+                  icon={calendarCancelIcon as ImageSourcePropType}
+                  isUtilityButton
+                  isOutlined
+                  loading={cancelling}
+                  disabled={cancelling}
+                  onPress={handleCancelPress}
+                  style={{ alignSelf: 'flex-start' }}
+                />
+                {detail?.canCancelBefore && (
+                  <Typography variant="body3">
+                    {intl.formatMessage(
+                      { id: 'health.appointments.cancelDeadline' },
+                      { date: cancelDeadline.date, time: cancelDeadline.time },
+                    )}
+                  </Typography>
+                )}
+              </CancelSection>
+            )}
+
+            {isBooked && !!detail && !canCancel && (
+              <CancelSection>
+                <Alert
+                  type="info"
+                  size="small"
+                  hasBorder
+                  message={intl.formatMessage({
+                    id: 'health.appointments.cancelNotPossible',
+                  })}
+                />
+              </CancelSection>
+            )}
+
             {hasMoreInfo && (
               <EyebrowContainer>
-                <Typography variant="eyebrow" color={theme.color.purple400}>
+                <Typography
+                  variant="eyebrow"
+                  color={theme.tokens.foreground.brandSecondary}
+                >
                   {intl.formatMessage({
                     id: 'health.appointments.moreInfo',
                   })}
@@ -498,28 +619,28 @@ export default function AppointmentDetailScreen() {
             )}
 
             {appointment.practitioners && appointment.practitioners.length > 0 && (
-              <InputRow>
-                <Input
+              <InfoLineRow>
+                <InfoLine
                   label={intl.formatMessage({
                     id: 'health.appointments.appointmentWith',
                   })}
                   value={appointment.practitioners.join(', ')}
                 />
-              </InputRow>
+              </InfoLineRow>
             )}
 
             {detail?.assignees?.map((assignee, index) => (
-              <InputRow key={`assignee-${index}`}>
-                <Input
+              <InfoLineRow key={`assignee-${index}`}>
+                <InfoLine
                   label={assigneeTypeLabel(assignee.type)}
                   value={assignee.name}
                 />
-              </InputRow>
+              </InfoLineRow>
             ))}
 
             {appointment.instruction && (
-              <InputRow>
-                <Input
+              <InfoLineRow>
+                <InfoLine
                   label={intl.formatMessage({
                     id: 'health.appointments.instructions',
                   })}
@@ -530,7 +651,7 @@ export default function AppointmentDetailScreen() {
                       : undefined
                   }
                 />
-              </InputRow>
+              </InfoLineRow>
             )}
 
             {preparationLink && (
@@ -564,39 +685,39 @@ export default function AppointmentDetailScreen() {
             ]
               .filter((line) => !!line.value)
               .map((line) => (
-                <InputRow key={line.id}>
-                  <Input
+                <InfoLineRow key={line.id}>
+                  <InfoLine
                     label={intl.formatMessage({ id: line.id })}
                     value={line.value}
                   />
-                </InputRow>
+                </InfoLineRow>
               ))}
 
             {appointment.location?.phoneNumber && (
-              <InputRow>
-                <Input
+              <InfoLineRow>
+                <InfoLine
                   label={intl.formatMessage({
                     id: 'health.appointments.phoneNumber',
                   })}
                   value={appointment.location.phoneNumber}
                 />
-              </InputRow>
+              </InfoLineRow>
             )}
 
             {appointment.location?.openingHoursText && (
-              <InputRow>
-                <Input
+              <InfoLineRow>
+                <InfoLine
                   label={intl.formatMessage({
                     id: 'health.appointments.openingHours',
                   })}
                   value={appointment.location.openingHoursText}
                 />
-              </InputRow>
+              </InfoLineRow>
             )}
 
             {appointment.location?.organization && (
-              <InputRow>
-                <Input
+              <InfoLineRow>
+                <InfoLine
                   label={intl.formatMessage({
                     id: 'health.appointments.organization',
                   })}
@@ -607,7 +728,7 @@ export default function AppointmentDetailScreen() {
                       : undefined
                   }
                 />
-              </InputRow>
+              </InfoLineRow>
             )}
           </>
         )}
@@ -633,6 +754,9 @@ export default function AppointmentDetailScreen() {
           <SafeAreaView />
         </StickyFooter>
       )}
+
+      {/* A formSheet renders above the root host, so toasts need one here. */}
+      <ToastHost ignoreTabBar />
     </View>
   )
 }

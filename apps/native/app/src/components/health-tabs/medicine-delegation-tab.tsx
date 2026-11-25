@@ -9,8 +9,9 @@ import {
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import chevronForward from '@/assets/icons/chevron-forward.png'
 import externalLinkIcon from '@/assets/icons/external-link.png'
+import eyeOffIcon from '@/assets/icons/eye-off.png'
+import eyeIcon from '@/assets/icons/eye.png'
 import plusIcon from '@/assets/icons/plus.png'
 import { useGetMedicineDelegationsQuery } from '@/graphql/types/schema'
 import { useBrowser } from '@/hooks/use-browser'
@@ -18,14 +19,13 @@ import {
   Button,
   EmptyState,
   GeneralCardSkeleton,
-  Label,
-  Problem,
-  Tag,
+  StatusMessage,
   Typography,
 } from '@/ui'
 import { NetworkStatus } from '@apollo/client'
 import { useRouter } from 'expo-router'
 import { useLocale } from '../../hooks/use-locale'
+import { MedicineDelegationCard } from '../medicine-delegation-card'
 import { StackScreen } from '../stack-screen'
 
 const Container = styled.View`
@@ -33,7 +33,10 @@ const Container = styled.View`
 `
 
 const HeaderActions = styled.View`
-  margin-top: ${({ theme }) => theme.spacing[3]}px;
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
+  /* Cards bring 16px of their own, so this tops the gap between the buttons
+     and the list up to the 24px the design asks for. */
+  margin-bottom: ${({ theme }) => theme.spacing[1]}px;
   gap: ${({ theme }) => theme.spacing[3]}px;
   align-self: flex-start;
   align-items: flex-start;
@@ -43,23 +46,7 @@ const ReadMoreButton = styled(TouchableOpacity)`
   flex-direction: row;
   align-items: center;
   border-bottom-width: 1px;
-  border-color: ${({ theme }) => theme.color.blue400};
-`
-
-const Card = styled(TouchableOpacity)`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: ${({ theme }) => theme.spacing[2]}px;
-  padding: ${({ theme }) => theme.spacing[2]}px;
-  border-radius: ${({ theme }) => theme.border.radius.large};
-  border-width: 1px;
-  border-color: ${({ theme }) => theme.color.blue200};
-`
-
-const TagContainer = styled.View`
-  margin-top: ${({ theme }) => theme.spacing[2]}px;
-  align-self: flex-start;
+  border-color: ${({ theme }) => theme.tokens.interactive.border.borderPrimary};
 `
 
 export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
@@ -112,7 +99,7 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
 
   return (
     <ScrollView
-      style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16 }}
+      style={{ flex: 1, paddingHorizontal: 16 }}
       contentInsetAdjustmentBehavior="automatic"
       refreshControl={
         <RefreshControl
@@ -139,7 +126,7 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
           >
             <Typography
               variant="eyebrow"
-              color={theme.color.blue400}
+              color={theme.tokens.interactive.foreground.primary}
               style={{ marginRight: theme.spacing.smallGutter }}
             >
               <FormattedMessage id="health.medicineDelegation.readMore" />
@@ -149,9 +136,7 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
           <View
             style={{
               flexDirection: 'row',
-              gap: theme.spacing[2],
-              justifyContent: 'space-between',
-              width: '100%',
+              gap: theme.spacing[1],
             }}
           >
             <Button
@@ -162,26 +147,36 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
               onPress={() => router.navigate('/health/medicine/delegation/add')}
               icon={plusIcon}
               iconStyle={{
-                tintColor: theme.color.white,
+                tintColor: theme.tokens.interactive.foreground.invert,
                 width: 10,
                 height: 10,
               }}
             />
-            <Button
-              isUtilityButton
-              title={intl.formatMessage({
-                id: showInactivePermits
-                  ? 'health.medicineDelegation.hideExpiredPermits'
-                  : 'health.medicineDelegation.showExpiredPermits',
-              })}
-              onPress={() => setShowInactivePermits((prev) => !prev)}
-            />
+            {/* Nothing to reveal when the user has no delegations at all -
+                but an error means we do not know that, so keep it. */}
+            {(hasDelegations || hasError) && (
+              <Button
+                isUtilityButton
+                isOutlined
+                title={intl.formatMessage({
+                  id: showInactivePermits
+                    ? 'health.medicineDelegation.hideExpiredPermits'
+                    : 'health.medicineDelegation.showExpiredPermits',
+                })}
+                onPress={() => setShowInactivePermits((prev) => !prev)}
+                iconPosition="end"
+                icon={showInactivePermits ? eyeOffIcon : eyeIcon}
+                iconStyle={{
+                  tintColor: theme.tokens.foreground.primaryMinimal,
+                }}
+              />
+            )}
           </View>
         </HeaderActions>
 
         {hasError ? (
           <View style={{ marginTop: theme.spacing[3] }}>
-            <Problem />
+            <StatusMessage error={medicineDelegationsRes.error} />
           </View>
         ) : isInitialLoading ? (
           <View style={{ paddingVertical: theme.spacing[2] }}>
@@ -192,8 +187,9 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
         ) : hasDelegations ? (
           hasVisibleDelegations ? (
             filteredDelegations.map((delegation, index) => (
-              <Card
+              <MedicineDelegationCard
                 key={`${delegation.cacheId}-${index}`}
+                delegation={delegation}
                 onPress={() => {
                   router.navigate({
                     pathname: '/health/medicine/delegation/[id]',
@@ -209,44 +205,7 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
                     },
                   })
                 }}
-                accessibilityRole="button"
-              >
-                <View>
-                  <Typography variant="heading5">{delegation.name}</Typography>
-                  <Typography>
-                    {delegation.lookup
-                      ? intl.formatMessage({
-                          id: 'health.medicineDelegation.captionPickupAndLookup',
-                        })
-                      : intl.formatMessage({
-                          id: 'health.medicineDelegation.captionPickup',
-                        })}
-                  </Typography>
-                  <TagContainer>
-                    {!delegation.isActive ? (
-                      <Label color="danger">
-                        <FormattedMessage id="health.medicineDelegation.labelExpired" />
-                      </Label>
-                    ) : (
-                      delegation.dates?.to && (
-                        <Tag
-                          title={intl.formatMessage(
-                            {
-                              id: 'health.medicineDelegation.listValidTo',
-                            },
-                            {
-                              date: intl.formatDate(delegation.dates?.to ?? ''),
-                            },
-                          )}
-                        />
-                      )
-                    )}
-                  </TagContainer>
-                </View>
-                <View>
-                  <Image source={chevronForward} />
-                </View>
-              </Card>
+              />
             ))
           ) : (
             <EmptyState

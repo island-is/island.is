@@ -199,6 +199,10 @@ export const routesTemplate = {
     is: '/styrkjatorg/styrkur/[id]',
     en: '/en/grants-plaza/grant/[id]',
   },
+  openinvoices: {
+    is: '/opnir-reikningar',
+    en: '/en/open-invoices',
+  },
   organizations: {
     is: '/s',
     en: '/en/o',
@@ -219,6 +223,14 @@ export const routesTemplate = {
     is: '/v/[slug]/frett',
     en: '/en/p/[slug]/news',
   },
+  projectevent: {
+    is: '/v/[slug]/vidburdir/[subSlug]',
+    en: '/en/p/[slug]/events/[subSlug]',
+  },
+  projecteventoverview: {
+    is: '/v/[slug]/vidburdir',
+    en: '/en/p/[slug]/events',
+  },
   projectsubpage: {
     is: '/v/[slug]/[subSlug]',
     en: '/en/p/[slug]/[subSlug]',
@@ -226,6 +238,10 @@ export const routesTemplate = {
   projectpage: {
     is: '/v/[slug]',
     en: '/en/p/[slug]',
+  },
+  projectparentsubpagechild: {
+    is: '/v/[slug]/[subSlug]/[childSlug]',
+    en: '/en/p/[slug]/[subSlug]/[childSlug]',
   },
   organizationsubpagelistitem: {
     is: '/s/[organization]/[slug]/[listItemSlug]',

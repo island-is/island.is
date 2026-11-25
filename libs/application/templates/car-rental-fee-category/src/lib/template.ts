@@ -31,7 +31,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.CAR_RENTAL_FEE_CATEGORY,
   name: m.application.name,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: m.application.institution,
   translationNamespaces:
     ApplicationConfigurations.CarRentalFeeCategory.translation,
@@ -122,7 +122,6 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.completedForm),
                 ),
               read: 'all',
-              delete: true,
             },
           ],
         },

@@ -12,6 +12,7 @@ import { useLocale } from '@island.is/localization'
 import { HealthDirectorateCertificateType } from '@island.is/api/schema'
 import { formatDate } from '@island.is/portals/my-pages/core'
 import { messages } from '../../../lib/messages'
+import { TextMarkdown } from '../../../components/TextMarkdown/TextMarkdown'
 
 export interface CertificateFormState {
   certificateType?: HealthDirectorateCertificateType
@@ -57,6 +58,7 @@ export interface CertificateRequestFormProps {
   onChange: (patch: Partial<CertificateFormState>) => void
   disabled?: boolean
   hidePaymentNotice?: boolean
+  instructions?: string | null
 }
 
 const CertificateRequestForm = ({
@@ -64,8 +66,9 @@ const CertificateRequestForm = ({
   onChange,
   disabled,
   hidePaymentNotice,
+  instructions,
 }: CertificateRequestFormProps) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
 
   return (
     <Box marginBottom={3}>
@@ -80,9 +83,15 @@ const CertificateRequestForm = ({
         </Box>
       )}
 
-      <Text variant="h5" marginBottom={2}>
-        {formatMessage(messages.healthConversationsCertificateTypeTitle)}
-      </Text>
+      {instructions ? (
+        <Box marginBottom={2}>
+          <TextMarkdown openLinksInNewTab>{instructions}</TextMarkdown>
+        </Box>
+      ) : (
+        <Text variant="h5" marginBottom={2}>
+          {formatMessage(messages.healthConversationsCertificateTypeTitle)}
+        </Text>
+      )}
       <GridRow marginBottom={3}>
         {certificateTypeOptions.map((option, index) => (
           <GridColumn
@@ -144,6 +153,7 @@ const CertificateRequestForm = ({
             }
             label={formatMessage(messages.period)}
             placeholderText={formatMessage(messages.choosePeriod)}
+            locale={lang}
             disabled={disabled}
             required
           />

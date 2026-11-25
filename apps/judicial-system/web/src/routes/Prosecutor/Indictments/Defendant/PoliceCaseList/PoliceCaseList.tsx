@@ -547,10 +547,10 @@ export const PoliceCaseList = () => {
   return (
     <Box component="section" marginBottom={5}>
       <SectionHeading
-        title={formatMessage(strings.policeCaseNumbersHeading)}
+        title={strings.policeCaseNumbersHeading}
         description={
           workingCase.origin === CaseOrigin.LOKE &&
-          formatMessage(strings.policeCaseNumbersDescription)
+          strings.policeCaseNumbersDescription
         }
       />
       {workingCase.origin === CaseOrigin.LOKE && (
@@ -610,7 +610,7 @@ export const PoliceCaseList = () => {
               policeCase.subtypes.length === 0,
           )}
         >
-          {formatMessage(strings.addPoliceCaseButtonText)}
+          {strings.addPoliceCaseButtonText}
         </Button>
       </Box>
     </Box>

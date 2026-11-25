@@ -109,6 +109,7 @@ export class EnergyFundsService {
       newRegistrationDate: basicVehicle.newregdate,
       firstRegistrationDate: basicVehicle.firstregdate,
       vin: basicVehicle.vin,
+      vehicleRegistrationCode: basicVehicle.euGroup,
     }
   }
 }

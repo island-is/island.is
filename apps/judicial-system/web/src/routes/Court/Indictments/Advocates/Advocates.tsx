@@ -1,6 +1,5 @@
 import type { FC } from 'react'
 import { useCallback, useContext } from 'react'
-import { useIntl } from 'react-intl'
 import { motion } from 'motion/react'
 import { useRouter } from 'next/router'
 import { Tooltip, TooltipAnchor, TooltipProvider } from '@ariakit/react'
@@ -21,7 +20,7 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isDefenderStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import SelectCivilClaimantAdvocate from './SelectCivilClaimantAdvocate'
@@ -79,8 +78,6 @@ const Advocates = () => {
     useContext(FormContext)
   const router = useRouter()
 
-  const { formatMessage } = useIntl()
-
   const handleNavigationTo = useCallback(
     async (destination: string) => {
       router.push(`${destination}/${workingCase.id}`)
@@ -108,9 +105,9 @@ const Advocates = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader title={formatMessage(titles.court.indictments.defender)} />
+      <PageHeader title={titles.court.indictments.defender} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <PageTitle>{strings.title}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
 
         <Box display="flex" columnGap={1} alignItems="center" marginBottom={3}>
@@ -120,7 +117,7 @@ const Advocates = () => {
             tooltipText="Ákærunni hefur ekki verið deilt með öllum verjendum"
           />
         </Box>
-        <div className={grid({ gap: 5, marginBottom: 10 })}>
+        <div className={stack({ gap: 5 })}>
           {workingCase.defendants?.map((defendant) => (
             <SelectDefender defendant={defendant} key={defendant.id} />
           ))}
@@ -133,7 +130,7 @@ const Advocates = () => {
                 marginBottom={3}
               >
                 <SectionHeading
-                  title={formatMessage(strings.civilClaimants)}
+                  title={strings.civilClaimants}
                   marginBottom={0}
                 />
                 <ConfirmationPendingWarning
@@ -141,7 +138,7 @@ const Advocates = () => {
                   tooltipText="Ákærunni hefur ekki verið deilt með öllum talsmönnum kröfuhafa"
                 />
               </Box>
-              <div className={grid({ gap: 5 })}>
+              <div className={stack({ gap: 5 })}>
                 {workingCase.civilClaimants?.map((civilClaimant) => (
                   <Box component="section" key={civilClaimant.id}>
                     <SelectCivilClaimantAdvocate
@@ -159,7 +156,7 @@ const Advocates = () => {
           previousUrl={`${DISTRICT_COURT_INDICTMENT_CASE_SUBPOENA_ROUTE}/${workingCase.id}`}
           actions={[
             {
-              text: formatMessage(core.continue),
+              text: core.continue,
               icon: 'arrowForward',
               onClick: () =>
                 handleNavigationTo(

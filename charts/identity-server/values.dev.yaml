@@ -33,14 +33,6 @@ auth-admin-web:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: 90
-        nginxRequestsIrate: 5
-      replicas:
-        max: 2
-        min: 1
   httpRoute:
     primary-gw:
       hostnames:
@@ -62,9 +54,9 @@ auth-admin-web:
   progressDeadlineSeconds: 1200
   pvcs: []
   replicaCount:
-    default: 1
-    max: 2
-    min: 1
+    default: 0
+    max: 0
+    min: 0
   resources:
     limits:
       cpu: '400m'
@@ -129,6 +121,9 @@ identity-server:
     LOG_LEVEL: 'info'
     MeUserProfileApiSettings__BaseAddress: 'https://service-portal-api.internal.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=1843 --enable-source-maps -r dd-trace/init'
+    NativeApp__AllowDevAttestation: 'true'
+    NativeApp__AllowDevelopmentBuilds: 'true'
+    NativeApp__DebugSigningCertificateDigests__0: 'FA:C6:17:45:DC:09:03:78:6F:B9:ED:E6:2A:96:2B:39:9F:73:48:F0:BB:6F:89:9B:83:32:66:75:91:03:3B:9C'
     PersistenceSettings__BaseAddress: 'http://services-auth-ids-api'
     PersistenceSettings__DelegationsCacheEnabled: 'false'
     RedisSettings__Address: 'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com'
@@ -359,6 +354,12 @@ services-auth-delegation-api:
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'servicesauth'
     DD_TRACE_DISABLED_INSTRUMENTATIONS: 'fetch'
+    DELEGATION_CONFIRMATION_ALLOW_FAKE_LOGIN: 'true'
+    DELEGATION_REQUEST_MAX_PENDING: '2'
+    DELEGATION_REQUEST_MAX_PER_DAY: '5'
+    DELEGATION_REQUEST_MAX_PER_GRANTOR_PER_DAY: '1'
+    DELEGATION_REQUEST_REJECTION_LOCK_DAYS: '365'
+    DELEGATION_REQUEST_REJECTION_LOCK_THRESHOLD: '2'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
@@ -442,6 +443,7 @@ services-auth-delegation-api:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/identity-server/CONTENTFUL_ACCESS_TOKEN'
     DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
+    DELEGATION_CONFIRMATION_CIBA_CLIENT_SECRET: '/k8s/services-auth/DELEGATION_CONFIRMATION_CIBA_CLIENT_SECRET'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'

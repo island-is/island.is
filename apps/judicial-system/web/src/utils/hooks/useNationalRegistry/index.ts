@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
+import Cookie from 'js-cookie'
 
-import { toast } from '@island.is/island-ui/core'
+import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import type {
   NationalRegistryResponseBusiness,
   NationalRegistryResponsePerson,
 } from '@island.is/judicial-system-web/src/types'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -66,7 +68,14 @@ const useNationalRegistry = (
     setBusinessData(undefined)
     setNotFound(false)
 
-    fetch(url, { signal: controller.signal })
+    // The route authenticates the session cookie and cross checks the csrf
+    // token against this header, the way the api does.
+    const csrfToken = Cookie.get(CSRF_COOKIE_NAME)
+
+    fetch(url, {
+      signal: controller.signal,
+      headers: csrfToken ? { authorization: `Bearer ${csrfToken}` } : undefined,
+    })
       .then((res) => {
         if (!res.ok) {
           throw new Error(`Request failed with status ${res.status}`)

@@ -1,4 +1,3 @@
-import { useRouter } from 'expo-router'
 import React, { useCallback, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { FlatList, Image, Pressable, RefreshControl } from 'react-native'
@@ -13,9 +12,10 @@ import {
   useGetQuestionnairesQuery,
 } from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'
-import { Problem, QuestionnaireCard, Skeleton } from '@/ui'
+import { StatusMessage, QuestionnaireCard, Skeleton } from '@/ui'
 import { createSkeletonArr } from '@/utils/create-skeleton-arr'
 import { getQuestionnaireOrganizationLabelId } from '@/utils/questionnaire-utils'
+import { pushOnce } from '@/utils/push-once'
 
 type Item = NonNullable<
   NonNullable<
@@ -24,8 +24,6 @@ type Item = NonNullable<
 >[number]
 
 export default function QuestionnairesScreen() {
-  const router = useRouter()
-
   const theme = useTheme()
   const intl = useIntl()
   const locale = useLocale()
@@ -57,12 +55,12 @@ export default function QuestionnairesScreen() {
       organization?: QuestionnaireQuestionnairesOrganizationEnum,
       title?: string,
     ) => {
-      router.navigate({
+      pushOnce({
         pathname: '/health/questionnaires/[id]',
         params: { id, organization, title },
       })
     },
-    [router],
+    [],
   )
 
   const renderItem = useCallback(
@@ -146,7 +144,9 @@ export default function QuestionnairesScreen() {
                           source={require('@/assets/icons/Ellipsis-vertical.png')}
                           width={24}
                           height={24}
-                          tintColor={theme.color.blue400}
+                          tintColor={
+                            theme.tokens.interactive.foreground.primary
+                          }
                         />
                       </Pressable>
                     </ContextMenu>
@@ -170,27 +170,21 @@ export default function QuestionnairesScreen() {
         ListEmptyComponent={
           <>
             {!loading && error && questionnaires.length === 0 ? (
-              <Problem error={error} withContainer />
+              <StatusMessage error={error} withContainer />
             ) : null}
 
             {!loading && !error && questionnaires.length === 0 ? (
-              <Problem type="no_data" withContainer />
+              <StatusMessage type="no_data" withContainer />
             ) : null}
             {isInitialLoading
               ? createSkeletonArr(4).map((item) => (
                   <Skeleton
                     key={item.id}
                     active
-                    backgroundColor={{
-                      dark: theme.shades.dark.shade300,
-                      light: theme.color.blue100,
-                    }}
-                    overlayColor={{
-                      dark: theme.shades.dark.shade200,
-                      light: theme.color.blue200,
-                    }}
+                    backgroundColor={theme.tokens.background.brandMinimal}
+                    overlayColor={theme.tokens.background.brandLighter}
                     overlayOpacity={1}
-                    height={140}
+                    height={98}
                     style={{
                       borderRadius: 8,
                       marginBottom: theme.spacing[2],

@@ -1,15 +1,11 @@
 import { style } from '@vanilla-extract/css'
-import { themeUtils } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/theme'
 
 export const rowLink = style({
   display: 'block',
   textDecoration: 'none',
-})
-
-export const titleText = style({
-  fontSize: 14,
-  lineHeight: '24px',
-  ...themeUtils.responsiveStyle({
-    md: { fontSize: 18 },
-  }),
+  ':focus-visible': {
+    outline: `3px solid ${theme.color.mint400}`,
+    outlineOffset: -3,
+  },
 })

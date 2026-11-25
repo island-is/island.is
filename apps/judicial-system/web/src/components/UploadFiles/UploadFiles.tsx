@@ -1,7 +1,6 @@
 import type { Dispatch, FC, SetStateAction } from 'react'
 import { useCallback, useEffect, useRef } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { useIntl } from 'react-intl'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import type { EditableFields } from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
@@ -24,7 +23,6 @@ interface Props {
   onDelete: (file: TUploadFile) => void
   onRename: (fileId: string, newName: string, newDisplayDate: string) => void
   setEditCount: Dispatch<SetStateAction<number>>
-  isBottomComponent?: boolean
   /**
    * Which fields of an uploaded file can be edited. Defaults to all editable
    * fields (file name and display date).
@@ -40,11 +38,8 @@ const UploadFiles: FC<Props> = (props) => {
     onDelete,
     onRename,
     setEditCount,
-    isBottomComponent,
     editableFileAttributes = editableFields,
   } = props
-  const { formatMessage } = useIntl()
-
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       const toFileWithPreview = (file: File): FileWithPreviewURL => {
@@ -96,15 +91,10 @@ const UploadFiles: FC<Props> = (props) => {
   }, [])
 
   return (
-    <div
-      className={`${styles.container} ${
-        !isBottomComponent ? styles.bottomContainer : ''
-      }`}
-      {...getRootProps()}
-    >
+    <div className={styles.container} {...getRootProps()}>
       <Box marginBottom={1}>
         <Text variant="h4" as="h4">
-          {formatMessage(strings.heading)}
+          {strings.heading}
         </Text>
       </Box>
       <Box marginBottom={2}>
@@ -112,7 +102,7 @@ const UploadFiles: FC<Props> = (props) => {
       </Box>
       <Box marginBottom={3}>
         <Button variant="ghost" size="small" icon="attach">
-          {formatMessage(strings.buttonText)}
+          {strings.buttonText}
         </Button>
       </Box>
       {files.map((file) => (

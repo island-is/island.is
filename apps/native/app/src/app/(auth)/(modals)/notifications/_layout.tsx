@@ -1,6 +1,11 @@
 import { Stack } from 'expo-router'
 import { useIntl } from 'react-intl'
-import { tabScreenOptions } from '../../../../constants/screen-options'
+import { Platform } from 'react-native'
+import {
+  modalScreenOptions,
+  sheetHeaderTitleOptions,
+  tabScreenOptions,
+} from '../../../../constants/screen-options'
 
 export default function NotificationsLayout() {
   const intl = useIntl()
@@ -10,7 +15,12 @@ export default function NotificationsLayout() {
         name="index"
         options={{
           ...tabScreenOptions,
+          ...sheetHeaderTitleOptions,
           headerTitle: intl.formatMessage({ id: 'notifications.screenTitle' }),
+          // Sheet root: dismissed with the close item, so no back chevron.
+          ...(Platform.OS === 'ios' && {
+            unstable_headerLeftItems: () => [],
+          }),
         }}
       />
       <Stack.Screen
@@ -28,6 +38,7 @@ export default function NotificationsLayout() {
           headerTitleAlign: 'center',
         }}
       />
+      <Stack.Screen name="message/new" options={modalScreenOptions} />
     </Stack>
   )
 }

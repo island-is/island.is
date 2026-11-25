@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'application-templates-driving-license-book-update-instructor',
   preset: '../../../../../jest.preset.js',

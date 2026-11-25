@@ -1,4 +1,5 @@
 import { useFormContext } from 'react-hook-form'
+import { format as formatKennitala } from 'kennitala'
 
 import { Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -9,18 +10,6 @@ import { invoice } from '../../messages'
 interface InvoicePaymentInput {
   nationalId: string
   reference: string
-}
-
-const formatNationalId = (nationalId?: string) => {
-  if (!nationalId) {
-    return ''
-  }
-
-  if (nationalId.length === 10) {
-    return `${nationalId.slice(0, 6)}-${nationalId.slice(6)}`
-  }
-
-  return nationalId
 }
 
 export const InvoicePayment = ({
@@ -40,7 +29,8 @@ export const InvoicePayment = ({
             required: true,
           })}
           size="sm"
-          value={formatNationalId(nationalId)}
+          // `format` throws on a missing value, so one is shown empty instead.
+          value={nationalId ? formatKennitala(nationalId) : ''}
           readOnly
         />
         <Input

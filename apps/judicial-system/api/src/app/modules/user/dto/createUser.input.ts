@@ -46,4 +46,9 @@ export class CreateUserInput {
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
   readonly canManageMessageSuspension?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly canManageServiceInterruptionBanner?: boolean
 }

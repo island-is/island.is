@@ -14,6 +14,7 @@ import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 import {
   AdminCreateTenantDto,
   AdminPatchTenantDto,
+  AdminTenantDto,
   Domain,
   MeTenantGuard,
   TenantDto,
@@ -78,13 +79,15 @@ export class MeTenantsController {
   @UseGuards(MeTenantGuard)
   @Documentation({
     description:
-      'Get the full tenant record for admin editing (super users only).',
-    response: { status: 200, type: Domain },
+      'Get the full tenant record for admin editing, including English translations (super users only).',
+    response: { status: 200, type: AdminTenantDto },
   })
-  @Audit<Domain>({
+  @Audit<AdminTenantDto>({
     resources: (tenant) => tenant.name,
   })
-  findByIdForAdmin(@Param('tenantId') tenantId: string): Promise<Domain> {
+  findByIdForAdmin(
+    @Param('tenantId') tenantId: string,
+  ): Promise<AdminTenantDto> {
     return this.tenantsService.findByIdForAdmin(tenantId)
   }
 
@@ -116,14 +119,14 @@ export class MeTenantsController {
   @Documentation({
     description:
       'Update an existing tenant with a partial set of properties (super users only).',
-    response: { status: 200, type: Domain },
+    response: { status: 200, type: AdminTenantDto },
   })
   update(
     @CurrentUser() user: User,
     @Param('tenantId') tenantId: string,
     @Body() input: AdminPatchTenantDto,
-  ): Promise<Domain> {
-    return this.auditService.auditPromise<Domain>(
+  ): Promise<AdminTenantDto> {
+    return this.auditService.auditPromise<AdminTenantDto>(
       {
         auth: user,
         namespace,

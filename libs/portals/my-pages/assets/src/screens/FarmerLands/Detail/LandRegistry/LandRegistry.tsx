@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { ApolloError } from '@apollo/client'
-import { Box, Table as T, Text } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   PortalTable,
@@ -23,9 +23,11 @@ interface Props {
 }
 
 const columnHelper = createColumnHelper<FarmerLandRegistryEntry>()
+const propertyColumnHelper =
+  createColumnHelper<FarmerLandRegistryEntryProperty>()
 
 export const LandRegistry = ({ landRegistry, loading, error }: Props) => {
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage } = useLocale()
 
   const columns = useMemo(
     () => [
@@ -37,56 +39,36 @@ export const LandRegistry = ({ landRegistry, loading, error }: Props) => {
         cell: ({ getValue }) => formatNationalId(getValue() ?? ''),
       }),
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [locale],
+    [formatMessage],
   )
 
   const renderExpandedRow = (row: Row<FarmerLandRegistryEntry>) => {
     const properties = row.original.properties ?? []
     if (!properties.length)
       return <EmptyTable message={formatMessage(m.noData)} />
+    const propertyColumns = [
+      propertyColumnHelper.accessor('ownershipType', {
+        header: formatMessage(fm.ownershipType),
+        enableSorting: false,
+      }),
+      propertyColumnHelper.accessor('usage', {
+        header: formatMessage(fm.usage),
+        enableSorting: false,
+      }),
+      propertyColumnHelper.accessor('share', {
+        header: formatMessage(fm.share),
+        cell: ({ getValue }) => (getValue() != null ? `${getValue()}%` : ''),
+        enableSorting: false,
+      }),
+    ]
     return (
-      <T.Table>
-        <T.Head>
-          <T.Row>
-            <T.HeadData
-              scope="col"
-              text={{ variant: 'small', fontWeight: 'semiBold' }}
-            >
-              {formatMessage(fm.ownershipType)}
-            </T.HeadData>
-            <T.HeadData
-              scope="col"
-              text={{ variant: 'small', fontWeight: 'semiBold' }}
-            >
-              {formatMessage(fm.usage)}
-            </T.HeadData>
-            <T.HeadData
-              scope="col"
-              text={{ variant: 'small', fontWeight: 'semiBold' }}
-            >
-              {formatMessage(fm.share)}
-            </T.HeadData>
-          </T.Row>
-        </T.Head>
-        <T.Body>
-          {properties.map((p: FarmerLandRegistryEntryProperty, i: number) => (
-            <T.Row key={i}>
-              <T.Data box={{ background: 'white' }}>
-                <Text variant="small">{p.ownershipType}</Text>
-              </T.Data>
-              <T.Data box={{ background: 'white' }}>
-                <Text variant="small">{p.usage}</Text>
-              </T.Data>
-              <T.Data box={{ background: 'white' }}>
-                <Text variant="small">
-                  {p.share != null ? `${p.share}%` : ''}
-                </Text>
-              </T.Data>
-            </T.Row>
-          ))}
-        </T.Body>
-      </T.Table>
+      <PortalTable
+        columns={propertyColumns}
+        data={properties}
+        emptyMessage={m.noData}
+        mobileTitleKey="ownershipType"
+        cellBox={{ body: { background: 'white' } }}
+      />
     )
   }
 
@@ -98,7 +80,7 @@ export const LandRegistry = ({ landRegistry, loading, error }: Props) => {
         loading={loading}
         error={error}
         emptyMessage={formatMessage(m.noData)}
-        mobileTitleKey="name"
+        mobileTitleKey="ownerName"
         renderExpandedRow={renderExpandedRow}
       />
     </Box>

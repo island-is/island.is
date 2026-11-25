@@ -33,7 +33,6 @@ export const PhoneNumberDisplay = ({
 
   return (
     <Box
-      component="form"
       display="flex"
       flexDirection="column"
       justifyContent="spaceBetween"

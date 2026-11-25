@@ -1,10 +1,14 @@
 export interface Lawyer {
+  // The registry row id. It is regenerated whenever the registry is replaced,
+  // so use it to tell entries apart within one list, never to store a lawyer.
+  id: string
   name: string
   practice: string
   email: string
   phoneNr: string
   nationalId: string
   isLitigator: boolean
+  hasCourtOfAppealsRights: boolean
 }
 
 export type LawyerFull = {
@@ -53,19 +57,23 @@ export type LawyerRegistry = {
   phoneNumber: string
   practice: string
   isLitigator: boolean
+  hasCourtOfAppealsRights: boolean
 }
 
 export const mapToLawyer = (lawyer: LawyerRegistry): Lawyer => {
   return {
+    id: lawyer.id,
     name: lawyer.name,
     practice: lawyer.practice,
     email: lawyer.email,
     phoneNr: lawyer.phoneNumber,
     nationalId: lawyer.nationalId.replace(/\D/g, ''), // Remove all non-numeric characters
     isLitigator: lawyer.isLitigator,
+    hasCourtOfAppealsRights: lawyer.hasCourtOfAppealsRights,
   }
 }
 
 export enum LawyerType {
   LITIGATORS = 'LITIGATORS',
+  COURT_OF_APPEALS_LITIGATORS = 'COURT_OF_APPEALS_LITIGATORS',
 }

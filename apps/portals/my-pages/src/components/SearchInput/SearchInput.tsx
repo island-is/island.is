@@ -3,7 +3,6 @@ import {
   AsyncSearchOption,
   Box,
   BoxProps,
-  Button,
   ColorSchemeContext,
   Text,
 } from '@island.is/island-ui/core'
@@ -22,9 +21,7 @@ interface Props {
   size?: 'large' | 'default'
   placeholder?: string
   buttonAriaLabel?: string
-  hideInput?: boolean
   whiteMenuBackground?: boolean
-  onButtonClick?: () => void
   onInputInitialized?: () => void
 }
 
@@ -34,9 +31,7 @@ export const SearchInput = ({
   size = 'default',
   placeholder,
   buttonAriaLabel,
-  hideInput,
   whiteMenuBackground,
-  onButtonClick,
   onInputInitialized,
 }: Props) => {
   const [query, setQuery] = useState<string>()
@@ -115,30 +110,6 @@ export const SearchInput = ({
 
     return []
   }, [query, search, whiteMenuBackground])
-
-  if (hideInput) {
-    return (
-      <Box className={styles.wrapper} {...box}>
-        <LinkResolver
-          href={SearchPaths.Search}
-          className={styles.searchButton}
-          callback={onButtonClick}
-        >
-          <Button
-            aria-label={buttonAriaLabel}
-            icon="search"
-            iconType="outline"
-            colorScheme="white"
-            size="small"
-            type="span"
-            as="span"
-            variant="utility"
-            unfocusable
-          />
-        </LinkResolver>
-      </Box>
-    )
-  }
 
   return (
     <ColorSchemeContext.Provider

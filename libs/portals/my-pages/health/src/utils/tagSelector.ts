@@ -4,6 +4,7 @@ import {
 } from '@island.is/api/schema'
 import { isDefined } from 'class-validator'
 import type { TagVariant } from '@island.is/island-ui/core'
+import { formatDate } from '@island.is/portals/my-pages/core'
 import { messages } from '../lib/messages'
 import { FormatMessage } from '@island.is/localization'
 
@@ -39,6 +40,7 @@ export const tagSelector = (
 export const permitTagSelector = (
   status: HealthDirectoratePermitStatus,
   formatMessage: FormatMessage,
+  validFrom?: string | Date | null,
 ): {
   label: string
   variant?: TagVariant | undefined
@@ -66,7 +68,11 @@ export const permitTagSelector = (
       }
     case HealthDirectoratePermitStatus.awaitingApproval:
       return {
-        label: formatMessage(messages.awaitingApproval),
+        label: validFrom
+          ? formatMessage(messages.validFromDate, {
+              date: formatDate(validFrom),
+            })
+          : formatMessage(messages.awaitingApproval),
         variant: 'darkerBlue',
         outlined: true,
       }

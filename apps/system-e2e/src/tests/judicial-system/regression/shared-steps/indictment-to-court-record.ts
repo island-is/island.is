@@ -4,6 +4,7 @@ import {
   randomPoliceCaseNumber,
   getDaysFromNow,
   randomIndictmentCourtCaseNumber,
+  selectTestDefender,
 } from '../../utils/helpers'
 
 export const prosecutorCreatesIndictmentCase = async (
@@ -51,7 +52,7 @@ export const prosecutorCreatesIndictmentCase = async (
 
   if (secondAccusedName) {
     // The case does not exist yet, so this only adds a defendant locally -
-    // it is persisted with a CreateDefendant mutation when the case is
+    // it is persisted as part of the CreateCase mutation when the case is
     // created below. Every defendant in an indictment must have an Icelandic
     // national id, and the national registry lookup is also what fills in the
     // gender the step needs to be valid, so the second defendant is looked up
@@ -85,9 +86,6 @@ export const prosecutorCreatesIndictmentCase = async (
     verifyRequestCompletion(page, '/api/graphql', 'CreateCase').then(
       (res) => (caseId = res.data.createCase.id),
     ),
-    ...(secondAccusedName
-      ? [verifyRequestCompletion(page, '/api/graphql', 'CreateDefendant')]
-      : []),
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
     page.getByRole('button', { name: 'Stofna mál' }).click(),
   ])
@@ -129,8 +127,15 @@ export const prosecutorCreatesIndictmentCase = async (
     page.getByText('Nei').last().click(),
   ])
 
+  // The indictment page saves twice as it opens: the introduction and demands
+  // autofill (UpdateCase) and the incident description editor's first
+  // debounced change (UpdateIndictmentCount). Each response replaces the
+  // indictment count in the working case, so a registration number typed
+  // before they land is wiped and the blur then saves an empty one.
   await Promise.all([
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
+    verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
+    verifyRequestCompletion(page, '/api/graphql', 'UpdateIndictmentCount'),
     page.getByTestId('continueButton').click(),
   ])
 
@@ -194,6 +199,11 @@ export const judgeReceivesIndictmentThroughAdvocates = async (
   page: Page,
   caseId: string,
   accusedName: string,
+  options?: {
+    // Assign the test defender on the advocates screen instead of the
+    // defendants waiving their right to counsel
+    assignDefender?: boolean
+  },
 ) => {
   const nextWeek = getDaysFromNow(7)
 
@@ -270,25 +280,53 @@ export const judgeReceivesIndictmentThroughAdvocates = async (
 
   await expect(page).toHaveURL(`domur/akaera/malflytjendur/${caseId}`)
 
-  // One defender choice per defendant
-  const defenderChoiceOptions = page
-    .locator('label')
-    .filter({ hasText: 'óskar ekki eftir að sé' })
-  await expect(defenderChoiceOptions.first()).toBeVisible()
-  const defenderChoiceCount = await defenderChoiceOptions.count()
-  for (let i = 0; i < defenderChoiceCount; i++) {
-    await defenderChoiceOptions.nth(i).click()
-  }
-  // One defender choice confirmation per defendant. The confirm button is
-  // removed once the choice is confirmed, so we always act on the first one
-  // still standing and wait for it to disappear before moving on.
-  const confirmDefenderChoiceButtons = page.getByRole('button', {
-    name: 'Staðfesta val',
-  })
-  for (let remaining = defenderChoiceCount; remaining > 0; remaining--) {
-    await confirmDefenderChoiceButtons.first().click()
-    await page.getByTestId('modalPrimaryButton').click()
-    await expect(confirmDefenderChoiceButtons).toHaveCount(remaining - 1)
+  if (options?.assignDefender) {
+    // Assign the test defender from the lawyer registry to every defendant;
+    // selecting fires an UpdateDefendant with the defender fields. Each
+    // defendant has its own section, and the confirm button is removed once
+    // the choice is confirmed, so we always act on the first section still
+    // standing and wait for it to disappear before moving on.
+    const unconfirmedDefenderSections = page.locator('section').filter({
+      has: page.getByRole('button', { name: 'Staðfesta val', exact: true }),
+    })
+    await expect(unconfirmedDefenderSections.first()).toBeVisible()
+    const defendantCount = await unconfirmedDefenderSections.count()
+    for (let remaining = defendantCount; remaining > 0; remaining--) {
+      const defenderSection = unconfirmedDefenderSections.first()
+      await selectTestDefender(page, defenderSection)
+      await defenderSection
+        .getByRole('button', { name: 'Staðfesta val', exact: true })
+        .click()
+      await Promise.all([
+        verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendant'),
+        page.getByTestId('modalPrimaryButton').click(),
+      ])
+      await expect(unconfirmedDefenderSections).toHaveCount(remaining - 1)
+    }
+    await expect(page.getByText('Verjandi staðfestur')).toHaveCount(
+      defendantCount,
+    )
+  } else {
+    // One defender choice per defendant
+    const defenderChoiceOptions = page
+      .locator('label')
+      .filter({ hasText: 'óskar ekki eftir að sé' })
+    await expect(defenderChoiceOptions.first()).toBeVisible()
+    const defenderChoiceCount = await defenderChoiceOptions.count()
+    for (let i = 0; i < defenderChoiceCount; i++) {
+      await defenderChoiceOptions.nth(i).click()
+    }
+    // One defender choice confirmation per defendant. The confirm button is
+    // removed once the choice is confirmed, so we always act on the first one
+    // still standing and wait for it to disappear before moving on.
+    const confirmDefenderChoiceButtons = page.getByRole('button', {
+      name: 'Staðfesta val',
+    })
+    for (let remaining = defenderChoiceCount; remaining > 0; remaining--) {
+      await confirmDefenderChoiceButtons.first().click()
+      await page.getByTestId('modalPrimaryButton').click()
+      await expect(confirmDefenderChoiceButtons).toHaveCount(remaining - 1)
+    }
   }
 
   await Promise.all([

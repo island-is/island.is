@@ -12,14 +12,7 @@ import { Roles } from '../../lib/constants'
 import { CRCFieldBaseProps } from '../../types'
 import { ContractOverview } from '../components'
 import * as style from '../Shared.css'
-
-const confirmContractTerms = 'confirmContract.terms'
-const confirmContractTimestamp = 'confirmContract.timestamp'
-
-export const confirmContractIds = [
-  confirmContractTerms,
-  confirmContractTimestamp,
-]
+import { confirmContractTerms, confirmContractTimestamp } from './constants'
 
 const Overview = ({ field, error, errors, application }: CRCFieldBaseProps) => {
   const id = field.id as string

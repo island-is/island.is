@@ -1,15 +1,34 @@
 import { m } from '@island.is/form-system/ui'
-import { Box, Checkbox, Icon, Stack, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Checkbox,
+  Icon,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
 import { useIntl } from 'react-intl'
 import { useApplicationContext } from '../../../../context/ApplicationProvider'
 
 interface Props {
+  disabled: boolean
   setExternalDataAgreement: (value: boolean) => void
+  notificationError?: {
+    hasError?: boolean
+    title?: { is?: string; en?: string }
+    message?: { is?: string; en?: string }
+  }
+  operationSuccessful?: boolean
 }
 
-export const ExternalData = ({ setExternalDataAgreement }: Props) => {
+export const ExternalData = ({
+  disabled,
+  setExternalDataAgreement,
+  notificationError,
+  operationSuccessful,
+}: Props) => {
   const { state } = useApplicationContext()
   const { application } = state
   const { lang } = useLocale()
@@ -19,6 +38,19 @@ export const ExternalData = ({ setExternalDataAgreement }: Props) => {
 
   return (
     <Box>
+      {notificationError?.hasError && !operationSuccessful && (
+        <Box marginBottom={[4, 4, 5]}>
+          <AlertMessage
+            type="error"
+            title={notificationError.title?.[lang]}
+            message={
+              <Text variant="small" whiteSpace="breakSpaces">
+                {notificationError.message?.[lang]}
+              </Text>
+            }
+          />
+        </Box>
+      )}
       <Box marginTop={2} marginBottom={5}>
         <Box marginBottom={5}>
           <Text variant="h2">{formatMessage(m.externalDataHeader)}</Text>
@@ -69,10 +101,24 @@ export const ExternalData = ({ setExternalDataAgreement }: Props) => {
           ))}
         </Stack>
       </Box>
+      {operationSuccessful && notificationError?.hasError && (
+        <Box marginBottom={3}>
+          <AlertMessage
+            type="warning"
+            title={notificationError.title?.[lang]}
+            message={
+              <Text variant="small" whiteSpace="breakSpaces">
+                {notificationError.message?.[lang]}
+              </Text>
+            }
+          />
+        </Box>
+      )}
       <Checkbox
         large={true}
         backgroundColor="blue"
         label={formatMessage(m.externalDataAgreement)}
+        disabled={disabled}
         onChange={(event) => setExternalDataAgreement(event.target.checked)}
       />
     </Box>

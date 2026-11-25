@@ -10,7 +10,7 @@ import { FinanceTransactionPeriodsProvider } from '../../components/FinanceTrans
 import FinanceTransactionPeriodsFilter from '../../components/FinanceTransactionPeriods/FinanceTransactionPeriodsFilter'
 
 const FinanceTransactionPeriods = () => {
-  useNamespaces('sp.finance-transaction-periods')
+  useNamespaces(['sp.finance-transaction-periods', 'sp.finance'])
   return (
     <DynamicWrapper>
       <FinanceTransactionPeriodsProvider>

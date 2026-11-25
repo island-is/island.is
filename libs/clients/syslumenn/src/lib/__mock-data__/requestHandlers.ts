@@ -25,6 +25,7 @@ import {
   ALCOHOL_LICENCES,
   TEMPORARY_EVENT_LICENCES,
   DEPARTED_REGISTRY_PERSON_RESPONSE,
+  ESTATE_INFO_WITH_ASSET_TYPE_NAMES_RESPONSE,
 } from './responses'
 
 export const MOCK_PROPERTY_NUMBER_OK = '2003292'
@@ -156,6 +157,21 @@ export const requestHandlers = [
   rest.post(url('/api/v1/SyslMottakaGogn'), (req, res, ctx) => {
     return res(ctx.status(200), ctx.json(DATA_UPLOAD))
   }),
+  rest.post(url('/api/UpplysingarRadstofunDanarbus'), (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json(ESTATE_INFO_WITH_ASSET_TYPE_NAMES_RESPONSE),
+    )
+  }),
+  rest.post(
+    url('/v1/Danarbu/UpplysingarUrDanarbuiErfdafjarskatt'),
+    (req, res, ctx) => {
+      return res(
+        ctx.status(200),
+        ctx.json(ESTATE_INFO_WITH_ASSET_TYPE_NAMES_RESPONSE),
+      )
+    },
+  ),
   rest.post(url('/api/VedbokavottordRegluverki'), (req, res, ctx) => {
     const body = req.body as VedbandayfirlitSkeyti
     const assetId = body.fastanumer ?? ''

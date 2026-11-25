@@ -38,7 +38,7 @@ import { useFinanceSwapHook } from '../../../utils/financeSwapHook'
 import { CustomerChargeType, CustomerRecords } from '../../../lib/types'
 
 const FinanceTransactions = () => {
-  useNamespaces('sp.finance-transactions')
+  useNamespaces(['sp.finance-transactions', 'sp.finance'])
   useFinanceSwapHook()
   const { formatMessage } = useLocale()
   const backInTheDay = sub(new Date(), {

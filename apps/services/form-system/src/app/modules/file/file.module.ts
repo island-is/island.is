@@ -5,6 +5,7 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { Value } from '../applications/models/value.model'
+import { Application } from '../applications/models/application.model'
 import { FileConfig } from './file.config'
 import { FileController } from './file.controller'
 import { FileService } from './file.service'
@@ -16,7 +17,7 @@ import { FileStorageWrapperModule } from './fileStorageWrapper'
     LoggingModule,
     ConfigModule.forFeature(FileStorageConfig),
     FileStorageWrapperModule,
-    SequelizeModule.forFeature([Value]),
+    SequelizeModule.forFeature([Value, Application]),
     ConfigModule.forFeature(FileConfig),
   ],
   controllers: [FileController],

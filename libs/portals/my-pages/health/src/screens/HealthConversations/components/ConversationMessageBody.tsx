@@ -15,6 +15,7 @@ import {
   HealthConversationVideoContentFragment,
 } from '../HealthConversationDetail.generated'
 import { linkifyText } from '../utils/linkify'
+import * as styles from '../HealthConversations.css'
 import { mapWeekday } from '../../../utils/mappers'
 
 interface Props {
@@ -26,7 +27,7 @@ const TextContent = ({
 }: {
   content: HealthConversationTextContentFragment
 }) => (
-  <Box marginBottom={4} style={{ whiteSpace: 'pre-line' }}>
+  <Box marginBottom={4} className={styles.messageTextContent}>
     <Text fontWeight="light">
       {linkifyText(content.text).map((part, index) =>
         part.type === 'link' && part.href ? (
@@ -46,7 +47,7 @@ const SegmentedContent = ({
 }: {
   content: HealthConversationSegmentedContentFragment
 }) => (
-  <Box marginBottom={4}>
+  <Box marginBottom={4} className={styles.messageSegmentedContent}>
     <Text fontWeight="light">
       {content.segments.map((segment, index) =>
         segment.type === HealthDirectorateHealthConversationSegmentType.LINK &&
@@ -79,11 +80,15 @@ const VideoContent = ({
         <Box display="flex" alignItems="center" columnGap={1}>
           <Icon icon="videoCam" size="small" color="blue400" type="outline" />
           <Text>{formatMessage(messages.appointmentModalityVideo)}</Text>
-          {content.isCanceled && (
+          {content.isCanceled ? (
             <Tag variant="red" outlined disabled>
               {formatMessage(messages.healthConversationVideoCallCanceled)}
             </Tag>
-          )}
+          ) : content.isExpired ? (
+            <Tag variant="darkerBlue" outlined disabled>
+              {formatMessage(messages.healthConversationVideoCallExpired)}
+            </Tag>
+          ) : null}
         </Box>
         {content.appointmentDate && (
           <Box display="flex" alignItems="center" columnGap={1}>
@@ -113,7 +118,7 @@ const VideoContent = ({
         </Text>
       )}
 
-      {!content.isCanceled && (
+      {!content.isCanceled && !content.isExpired && (
         <Box marginTop={3}>
           <Text marginBottom={2}>
             {formatMessage(messages.healthConversationVideoCallInstruction)}

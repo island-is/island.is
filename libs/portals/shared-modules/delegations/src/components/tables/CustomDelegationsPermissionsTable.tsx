@@ -67,6 +67,7 @@ export const CustomDelegationsPermissionsTable = ({
     __typename: 'AuthDelegationsGroupedByIdentity',
     nationalId: data.nationalId,
     type: data.type,
+    direction,
   })
 
   const handleDateChange = async (

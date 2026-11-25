@@ -276,6 +276,11 @@ const template: ApplicationTemplate<
                   type: 'primary',
                 },
                 {
+                  event: DefaultEvents.APPROVE,
+                  name: overview.general.approveButton,
+                  type: 'primary',
+                },
+                {
                   event: DefaultEvents.REJECT,
                   name: overview.general.rejectButton,
                   type: 'primary',

@@ -8,23 +8,18 @@ import locationIcon from '@/assets/icons/location.png'
 import timeOutlineIcon from '@/assets/icons/time-outline.png'
 import videoCameraIcon from '@/assets/icons/video-camera.png'
 import { HealthDirectorateAppointmentModality } from '@/graphql/types/schema'
-import { Typography } from '@/ui'
-import { dynamicColor } from '@/ui/utils/dynamic-color'
+import { Typography, token } from '@/ui'
 import { formatAppointmentDate } from '../utils/format-appointment-date'
 
 const Host = styled.TouchableHighlight`
+  flex-grow: 1;
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: ${({ theme }) => theme.border.width.standard}px;
-  border-color: ${dynamicColor(
-    ({ theme }) => ({
-      light: theme.color.blue200,
-      dark: theme.shades.dark.shade400,
-    }),
-    true,
-  )};
+  border-color: ${token((t) => t.border.primary)};
 `
 
 const Container = styled.View`
+  flex-grow: 1;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -33,8 +28,15 @@ const Container = styled.View`
 
 const Data = styled.View`
   flex-direction: column;
+  justify-content: space-between;
+  align-self: stretch;
   row-gap: ${({ theme }) => theme.spacing[1]}px;
   flex: 1;
+`
+
+const Details = styled.View`
+  flex-direction: column;
+  row-gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const HeadingContainer = styled.View`
@@ -52,7 +54,7 @@ const Row = styled.View`
 const IconImage = styled(Image)`
   width: 16px;
   height: 16px;
-  tint-color: ${({ theme }) => theme.color.blue400};
+  tint-color: ${({ theme }) => theme.tokens.foreground.brand};
 `
 
 const TimeAndDateCell = styled.View`
@@ -92,7 +94,8 @@ export function AppointmentCard({
   return (
     <Host
       onPress={() => onPress(id)}
-      underlayColor={theme.shade.shade400}
+      underlayColor={theme.tokens.app.background.pressed}
+      activeOpacity={1}
       testID={`appointment-card-${id}`}
     >
       <Container>
@@ -101,7 +104,10 @@ export function AppointmentCard({
             <Typography variant="heading5">{title}</Typography>
 
             {practitioners && practitioners.length > 0 && (
-              <Typography variant="body" color={theme.color.dark400}>
+              <Typography
+                variant="body"
+                color={theme.tokens.foreground.primary}
+              >
                 {intl.formatMessage(
                   { id: 'health.appointments.practitioners' },
                   { practitioner: practitioners.join(', ') },
@@ -110,38 +116,49 @@ export function AppointmentCard({
             )}
           </HeadingContainer>
 
-          {date && (
-            <Row>
-              <TimeAndDateCell>
-                <IconImage source={calendarIcon as ImageSourcePropType} />
-                <Typography variant="body3" color={theme.color.dark400}>
-                  {weekday}, {dateStr}
-                </Typography>
-              </TimeAndDateCell>
-              <TimeAndDateCell>
-                <IconImage source={timeOutlineIcon as ImageSourcePropType} />
-                <Typography variant="body3">{time}</Typography>
-              </TimeAndDateCell>
-            </Row>
-          )}
-
-          {modality === HealthDirectorateAppointmentModality.Video ? (
-            <Row>
-              <IconImage source={videoCameraIcon as ImageSourcePropType} />
-              <Typography variant="body3" color={theme.color.dark400}>
-                {intl.formatMessage({ id: 'health.appointments.videoCall' })}
-              </Typography>
-            </Row>
-          ) : (
-            location && (
+          <Details>
+            {date && (
               <Row>
-                <IconImage source={locationIcon as ImageSourcePropType} />
-                <Typography variant="body3" color={theme.color.dark400}>
-                  {location}
+                <TimeAndDateCell>
+                  <IconImage source={calendarIcon as ImageSourcePropType} />
+                  <Typography
+                    variant="body3"
+                    color={theme.tokens.foreground.primary}
+                  >
+                    {weekday}, {dateStr}
+                  </Typography>
+                </TimeAndDateCell>
+                <TimeAndDateCell>
+                  <IconImage source={timeOutlineIcon as ImageSourcePropType} />
+                  <Typography variant="body3">{time}</Typography>
+                </TimeAndDateCell>
+              </Row>
+            )}
+
+            {modality === HealthDirectorateAppointmentModality.Video ? (
+              <Row>
+                <IconImage source={videoCameraIcon as ImageSourcePropType} />
+                <Typography
+                  variant="body3"
+                  color={theme.tokens.foreground.primary}
+                >
+                  {intl.formatMessage({ id: 'health.appointments.videoCall' })}
                 </Typography>
               </Row>
-            )
-          )}
+            ) : (
+              location && (
+                <Row>
+                  <IconImage source={locationIcon as ImageSourcePropType} />
+                  <Typography
+                    variant="body3"
+                    color={theme.tokens.foreground.primary}
+                  >
+                    {location}
+                  </Typography>
+                </Row>
+              )
+            )}
+          </Details>
         </Data>
         <ChevronIcon>
           <Image source={chevronForward} style={{ width: 24, height: 24 }} />

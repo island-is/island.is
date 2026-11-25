@@ -33,7 +33,11 @@ import {
   CurrentVehiclesApi,
   MockableSamgongustofaPaymentCatalogApi,
 } from '../dataProviders'
-import { application as applicationMessage, information } from './messages'
+import {
+  application as applicationMessage,
+  information,
+  review,
+} from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import {
@@ -268,6 +272,23 @@ const template: ApplicationTemplate<
                 import('../forms/ReviewSeller').then((module) =>
                   Promise.resolve(module.ReviewSellerForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: review.buttons.reject,
+                  type: 'reject',
+                },
+              ],
               write: {
                 answers: [],
               },
@@ -280,6 +301,23 @@ const template: ApplicationTemplate<
                 import('../forms/Review').then((module) =>
                   Promise.resolve(module.ReviewForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: review.buttons.reject,
+                  type: 'reject',
+                },
+              ],
               write: {
                 answers: ['ownerCoOwner', 'operators', 'rejecter'],
               },

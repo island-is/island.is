@@ -1,3 +1,4 @@
+import { applyCase } from 'beygla/strict'
 import { format, isValid, parseISO } from 'date-fns' // eslint-disable-line no-restricted-imports
 // Importing 'is' directly from date-fns/locale/is has caused unexpected problems
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
@@ -46,6 +47,12 @@ export const formatRulingOrderPronouncedOrallyName = (
   pronouncedDate: Date | string,
 ): string =>
   `${courtCaseNumber ?? ''} Úrskurður ${formatDate(pronouncedDate)}`.trim()
+
+// Court record entries name the document, not the file type — clerks were
+// always stripping ".pdf" by hand in the filing UI.
+export const stripPdfExtension = (
+  fileName: string | null | undefined,
+): string => (fileName ?? '').replace(/\.pdf$/i, '')
 
 export const formatDate = (
   date: Date | string | undefined | null,
@@ -104,6 +111,21 @@ export const normalizeAndFormatNationalId = (
   nationalId?: string | null,
 ): [string, string] => {
   return [nationalId?.replace(/-/g, '') ?? '', formatNationalId(nationalId)]
+}
+
+/** Replaces Þjóðskrá/LÖKE placeholder "Ótilgreindu" with clearer wording. */
+export const normalizePersonAddress = <T extends string | null | undefined>(
+  address: T,
+): T | 'ótilgreindu lögheimili' => {
+  if (address === null || address === undefined) {
+    return address
+  }
+
+  if (address.trim().toLowerCase() === 'ótilgreindu') {
+    return 'ótilgreindu lögheimili'
+  }
+
+  return address
 }
 
 export const getInitials = (name?: string | null): string | undefined => {
@@ -190,6 +212,7 @@ export const getRoleTitleFromCaseFileCategory = (
     independentDefendant?: string
     civilClaimantSpokesperson?: string
     civilClaimantLegalSpokesperson?: string
+    court?: string
     notRegistered?: string
   },
 ) => {
@@ -204,6 +227,8 @@ export const getRoleTitleFromCaseFileCategory = (
       return overrides?.civilClaimantSpokesperson ?? 'Réttargæslumaður'
     case CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE:
       return overrides?.civilClaimantLegalSpokesperson ?? 'Lögmaður'
+    case CaseFileCategory.COURT_CASE_FILE:
+      return overrides?.court ?? 'Dómari'
     default:
       return overrides?.notRegistered ?? 'Ekki skráð'
   }
@@ -563,11 +588,81 @@ export const getWordByGender = (
   }
 }
 
+/**
+ * Joins defendant names the way appeal documents list them: one name alone,
+ * two or more as "A, B og C".
+ */
+export const formatAppealDefendantNames = (
+  names: (string | undefined | null)[],
+): string =>
+  enumerate(
+    names.filter(
+      (name): name is string =>
+        name !== undefined && name !== null && name !== '',
+    ),
+    'og',
+  )
+
+type AppealCaseNameOptions = {
+  /**
+   * Decline each nominative person name into þágufall via Beygla before
+   * joining. Use for fallbacks that should match the summons form prefill.
+   * Leave off when the names are already declined or are abbreviated strings
+   * such as "Jón Jónsson o.fl.".
+   */
+  decline?: boolean
+}
+
+/**
+ * Style-of-cause for an indictment appeal: "Ákæruvaldið gegn …". Used as the
+ * stored case name prefill and as the fallback when an older appeal has none.
+ */
+export const formatAppealCaseName = (
+  names: (string | undefined | null)[],
+  options?: AppealCaseNameOptions,
+): string => {
+  // Decline nominative names into þágufall so "gegn …" reads correctly.
+  const prepared = options?.decline
+    ? names.map((name) => (name ? applyCase('þgf', name) : name))
+    : names
+  const against = formatAppealDefendantNames(prepared)
+
+  return against ? `Ákæruvaldið gegn ${against}` : ''
+}
+
+/**
+ * Prefer a stored appeal case name; otherwise build the style-of-cause from
+ * the defendant names (optionally declined into þágufall). Returns an empty
+ * string when neither a stored name nor any defendant name is available.
+ */
+export const resolveAppealCaseName = (
+  caseName: string | undefined | null,
+  defendantNames: (string | undefined | null)[],
+  options?: AppealCaseNameOptions,
+): string => {
+  const trimmed = caseName?.trim()
+
+  if (trimmed) {
+    return trimmed
+  }
+
+  return formatAppealCaseName(defendantNames, options)
+}
+
 // þgf to dómur
 export const applyDativeCaseToCourtName = (courtName: string) => {
   const target = 'dómur'
   if (courtName.includes(target)) {
     return courtName?.replace(target, 'dómi')
+  }
+  return courtName
+}
+
+// ef to dómur ("dómi Héraðsdóms Reykjavíkur")
+export const applyGenitiveCaseToCourtName = (courtName: string) => {
+  const target = 'dómur'
+  if (courtName.includes(target)) {
+    return courtName.replace(target, 'dóms')
   }
   return courtName
 }
@@ -670,3 +765,16 @@ export const getVerdictAppealDecision = (
 // mistaken for HTML.
 export const containsHtml = (str: string): boolean =>
   /<\/?(?:p|strong|em|b|i|span|br|ul|ol|li)(?:[\s/>])/i.test(str)
+
+export const isNonBlank = (value?: string | null): value is string =>
+  Boolean(value?.trim())
+
+// Trim for optional update payloads: omit nullish fields, keep '' after trim
+// so callers can clear a stored string.
+export const trimOrUndefined = (value?: string | null): string | undefined => {
+  if (value === undefined || value === null) {
+    return undefined
+  }
+
+  return value.trim()
+}

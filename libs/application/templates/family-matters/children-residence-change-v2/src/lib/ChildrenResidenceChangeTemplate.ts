@@ -61,7 +61,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2,
   name: application.name,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   dataSchema,
   translationNamespaces: [configuration.translation],
   featureFlag: Features.childrenResidenceChangeV2,
@@ -495,11 +495,13 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
     if (id === application.applicant) {
       return Roles.ParentA
     }
-    if (application.assignees.includes(id)) {
-      return Roles.ParentB
-    }
+    // Matched before assignees: the institution is itself the assignee in
+    // waitingForOrganization.
     if (id === InstitutionNationalIds.SYSLUMENN) {
       return Roles.Organization
+    }
+    if (application.assignees.includes(id)) {
+      return Roles.ParentB
     }
     return undefined
   },

@@ -8,6 +8,8 @@ import Signees from '../../../shared/Signees'
 import ListActions from './ListActions'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 import { Skeleton } from '../../../../lib/skeletons'
+import { Problem } from '@island.is/react-spa/shared'
+import { m as coreMessages } from '@island.is/portals/my-pages/core'
 
 const collectionType = SignatureCollectionCollectionType.LocalGovernmental
 
@@ -43,8 +45,15 @@ const ViewList = () => {
             totalSignees={listInfo.numberOfSignatures ?? 0}
           />
         </Stack>
-      ) : (
+      ) : loadingList ? (
         <Skeleton />
+      ) : (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(coreMessages.noData)}
+          message={formatMessage(coreMessages.noDataFoundDetail)}
+        />
       )}
     </Box>
   )

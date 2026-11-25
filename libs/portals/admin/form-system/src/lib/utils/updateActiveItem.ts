@@ -32,6 +32,7 @@ export const updateActiveItemFn = async (
     DefaultContext,
     ApolloCache<any>
   >,
+  fieldSaveQueue: Map<string, Promise<void>>,
   currentActiveItem?: ActiveItem,
 ) => {
   const { type } = currentActiveItem ? currentActiveItem : activeItem
@@ -55,14 +56,16 @@ export const updateActiveItemFn = async (
         },
       })
     } else if (type === 'Screen') {
-      const { id, name, multiMax, isMulti, shouldValidate } = currentActiveItem
-        ? (currentActiveItem.data as FormSystemScreen)
-        : (activeItem.data as FormSystemScreen)
+      const { id, identifier, name, multiMax, isMulti, shouldValidate } =
+        currentActiveItem
+          ? (currentActiveItem.data as FormSystemScreen)
+          : (activeItem.data as FormSystemScreen)
       updateScreen({
         variables: {
           input: {
             id,
             updateScreenDto: {
+              identifier,
               name,
               multiMax: multiMax ? multiMax : 0,
               isMulti: isMulti ? isMulti : false,
@@ -74,8 +77,10 @@ export const updateActiveItemFn = async (
     } else if (type === 'Field') {
       const {
         id,
+        identifier,
         name,
-        description,
+        informationText,
+        tooltip,
         isPartOfMultiset,
         fieldSettings,
         fieldType,
@@ -84,22 +89,36 @@ export const updateActiveItemFn = async (
       } = currentActiveItem
         ? (currentActiveItem.data as FormSystemField)
         : (activeItem.data as FormSystemField)
-      updateField({
-        variables: {
-          input: {
-            id: id,
-            updateFieldDto: {
-              name,
-              description,
-              isPartOfMultiset,
-              fieldSettings,
-              fieldType,
-              isRequired: isRequired ? isRequired : false,
-              isHidden: isHidden ? isHidden : false,
+      const save = async () => {
+        await updateField({
+          variables: {
+            input: {
+              id: id,
+              updateFieldDto: {
+                identifier,
+                name,
+                informationText,
+                tooltip,
+                isPartOfMultiset,
+                fieldSettings,
+                fieldType,
+                isRequired: isRequired ? isRequired : false,
+                isHidden: isHidden ? isHidden : false,
+              },
             },
           },
-        },
-      })
+        })
+      }
+      const previousSave = fieldSaveQueue.get(id)
+      const queuedSave = previousSave ? previousSave.then(save, save) : save()
+      fieldSaveQueue.set(id, queuedSave)
+      try {
+        await queuedSave
+      } finally {
+        if (fieldSaveQueue.get(id) === queuedSave) {
+          fieldSaveQueue.delete(id)
+        }
+      }
     }
   } catch (e) {
     if (e.GraphQLError) {

@@ -5,22 +5,57 @@ import {
   getDefendantVerdictAppealDecisionLabel,
   getServiceRequirementText,
 } from '@island.is/judicial-system/formatters'
-import type { Verdict } from '@island.is/judicial-system-web/src/graphql/schema'
+import { getAppealExpirationInfo } from '@island.is/judicial-system-web/src/components/InfoCard/DefendantInfo/DefendantInfo.logic'
+import type {
+  AppealCase,
+  Defendant,
+  Verdict,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { ServiceRequirement } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { getOpenAppealStatementDeadlineItem } from './appealStatementDeadlineItem.logic'
+import { getProsecutionVerdictAppealItem } from './prosecutionVerdictAppeal.logic'
 import type { VerdictTimelineItem } from './VerdictTimelineBody'
 import { strings } from './VerdictTimelineCard.strings'
 
+// Names the bullet that shows where the defendant stands on the verdict: the
+// stance they took, or the appeal that came of it.
+const STANCE_ITEM_ID = 'stance'
+
+/**
+ * Whether there is anything yet to tell the defence about a verdict. Until the
+ * public prosecution office has decided whether the verdict must be served, the
+ * timeline has no first entry, so the card is not shown at all rather than shown
+ * empty. Decided per defendant, since each has their own verdict.
+ */
+export const hasVerdictServiceDecision = (
+  verdict?: Pick<Verdict, 'serviceRequirement'> | null,
+): boolean => Boolean(verdict?.serviceRequirement)
+
+interface DefenderVerdictTimeline {
+  defendantId: string
+  verdict: Verdict
+  verdictAppealDeadline?: Defendant['verdictAppealDeadline']
+  isVerdictAppealDeadlineExpired?: Defendant['isVerdictAppealDeadlineExpired']
+  verdictAppealCase?: Pick<
+    AppealCase,
+    'appealState' | 'appealEventLogs' | 'statementDeadlines'
+  > | null
+  formatMessage: IntlShape['formatMessage']
+}
+
 /**
  * The bullets a defence user sees about the service and appeal of one verdict.
- * Deliberately leaves out the appeal deadline, which defence users already get
- * from InfoCardClosedIndictment, and everything about enforcement, which is
- * internal to the prosecution.
+ * Leaves out enforcement details, which are internal to the prosecution.
  */
-export const getDefenderVerdictTimelineItems = (
-  verdict: Verdict,
-  formatMessage: IntlShape['formatMessage'],
-): VerdictTimelineItem[] => {
+export const getDefenderVerdictTimelineItems = ({
+  defendantId,
+  verdict,
+  verdictAppealDeadline,
+  isVerdictAppealDeadlineExpired,
+  verdictAppealCase,
+  formatMessage,
+}: DefenderVerdictTimeline): VerdictTimelineItem[] => {
   const items: VerdictTimelineItem[] = []
 
   // Once a verdict that had to be served has been served, the service date says
@@ -31,9 +66,15 @@ export const getDefenderVerdictTimelineItems = (
     verdict.serviceDate
   ) {
     items.push({
-      text: formatMessage(strings.defendantVerdictViewedDate, {
-        date: formatDate(verdict.serviceDate),
-      }),
+      text: formatMessage(
+        {
+          id: strings.defendantVerdictViewedDate,
+          defaultMessage: strings.defendantVerdictViewedDate,
+        },
+        {
+          date: formatDate(verdict.serviceDate),
+        },
+      ),
     })
   } else if (verdict.serviceRequirement) {
     const serviceRequirementText = getServiceRequirementText(
@@ -45,10 +86,29 @@ export const getDefenderVerdictTimelineItems = (
     }
   }
 
+  if (verdictAppealDeadline) {
+    const appealExpirationInfo = getAppealExpirationInfo({
+      verdictAppealDeadline,
+      isVerdictAppealDeadlineExpired,
+    })
+
+    items.push({
+      text: formatMessage(appealExpirationInfo.message, {
+        appealExpirationDate: appealExpirationInfo.date,
+        deadlineType: verdict.isDefaultJudgement
+          ? 'Endurupptökufrestur'
+          : 'Áfrýjunarfrestur',
+      }),
+    })
+  }
+
   // The stance the defendant took at service only matters while it is still open
-  // which way they will go, so an appeal takes its place in the list.
+  // which way they will go, so an appeal takes its place in the list. It is the
+  // same bullet either way, so filing or withdrawing an appeal swaps the text
+  // in place.
   if (verdict.appealDate) {
     items.push({
+      id: STANCE_ITEM_ID,
       text: `Dómfelldi áfrýjaði ${formatDate(verdict.appealDate)}`,
       tone: 'critical',
     })
@@ -58,8 +118,29 @@ export const getDefenderVerdictTimelineItems = (
     )
 
     if (appealDecisionLabel) {
-      items.push({ text: appealDecisionLabel })
+      items.push({ id: STANCE_ITEM_ID, text: appealDecisionLabel })
     }
+  }
+
+  // The prosecution may appeal a verdict regardless of what the defendant did,
+  // so its appeal is its own bullet rather than one that replaces another.
+  const prosecutionAppealItem = getProsecutionVerdictAppealItem(
+    verdictAppealCase,
+    defendantId,
+  )
+
+  if (prosecutionAppealItem) {
+    items.push(prosecutionAppealItem)
+  }
+
+  // Statement deadline for this defendant while the verdict appeal is open.
+  const statementDeadlineItem = getOpenAppealStatementDeadlineItem(
+    verdictAppealCase,
+    { defendantId },
+  )
+
+  if (statementDeadlineItem) {
+    items.push(statementDeadlineItem)
   }
 
   return items

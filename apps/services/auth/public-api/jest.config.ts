@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'services-auth-public-api',
   preset: './jest.preset.js',

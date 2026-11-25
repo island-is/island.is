@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing'
 import { getModelToken } from '@nestjs/sequelize'
+import { Op } from 'sequelize'
 
 import { CmsContentfulService } from '@island.is/cms'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
@@ -40,7 +41,7 @@ describe('ScopeService', () => {
     getDelegationScopeTags: jest.Mock
   }
   let mockDelegationResources: { findScopesInternal: jest.Mock }
-  let mockNationalRegistry: { getAddress: jest.Mock }
+  let mockNationalRegistry: { getHousing: jest.Mock }
   let mockDomainModel: { findOne: jest.Mock }
 
   beforeEach(async () => {
@@ -52,7 +53,7 @@ describe('ScopeService', () => {
       findScopesInternal: jest.fn().mockResolvedValue([]),
     }
     mockNationalRegistry = {
-      getAddress: jest.fn().mockResolvedValue(null),
+      getHousing: jest.fn().mockResolvedValue(null),
     }
     mockDomainModel = {
       findOne: jest.fn().mockResolvedValue(null),
@@ -218,8 +219,9 @@ describe('ScopeService', () => {
     })
 
     it('should create "Mitt sveitarfélag" tag when user municipality matches a domain', async () => {
-      mockNationalRegistry.getAddress.mockResolvedValue({
-        sveitarfelag: 'Kópavogur',
+      // Kópavogsbær — municipality number 1000
+      mockNationalRegistry.getHousing.mockResolvedValue({
+        logheimiliskodi: '100000100010',
       })
       mockDomainModel.findOne.mockResolvedValue({ name: '@kopavogur.is' })
 
@@ -251,9 +253,77 @@ describe('ScopeService', () => {
       expect(mittTag!.scopes[0].name).toBe('@kopavogur.is/service')
     })
 
+    it('should match domains by municipality code among the tag domains', async () => {
+      // Kópavogsbær — municipality number 1000
+      mockNationalRegistry.getHousing.mockResolvedValue({
+        logheimiliskodi: '100000100010',
+      })
+      mockDomainModel.findOne.mockResolvedValue({ name: '@kopavogur.is' })
+
+      mockCms.getDelegationScopeTags.mockResolvedValue([
+        {
+          id: 'tag-sv',
+          title: 'Sveitarfélag',
+          slug: 'sveitarfelog',
+          description: '',
+        },
+      ])
+      mockDelegationResources.findScopesInternal.mockResolvedValue([
+        {
+          ...makeScope('@kopavogur.is/service', '@kopavogur.is'),
+          tags: [{ tagId: 'tag-sv' }],
+        },
+        {
+          ...makeScope('@kopavogur.is/other', '@kopavogur.is'),
+          tags: [{ tagId: 'tag-sv' }],
+        },
+      ])
+
+      await service.findScopeTags(mockUser, 'is')
+
+      expect(mockDomainModel.findOne).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            name: { [Op.in]: ['@kopavogur.is'] },
+            municipalityCode: '1000',
+          },
+        }),
+      )
+    })
+
+    it('should not query domains for foreign legal domicile codes', async () => {
+      // Foreign domicile codes are "99" plus a country code
+      mockNationalRegistry.getHousing.mockResolvedValue({
+        logheimiliskodi: '99US00000000',
+      })
+
+      mockCms.getDelegationScopeTags.mockResolvedValue([
+        {
+          id: 'tag-sv',
+          title: 'Sveitarfélag',
+          slug: 'sveitarfelog',
+          description: '',
+        },
+      ])
+      mockDelegationResources.findScopesInternal.mockResolvedValue([
+        {
+          ...makeScope('@kopavogur.is/service', '@kopavogur.is'),
+          tags: [{ tagId: 'tag-sv' }],
+        },
+      ])
+
+      const result = await service.findScopeTags(mockUser, 'is')
+
+      expect(
+        result.find((t) => t.id === 'virtual-mitt-sveitarfelag'),
+      ).toBeUndefined()
+      expect(mockDomainModel.findOne).not.toHaveBeenCalled()
+    })
+
     it('should keep scopes in original "Sveitarfélag" tag when creating "Mitt sveitarfélag"', async () => {
-      mockNationalRegistry.getAddress.mockResolvedValue({
-        sveitarfelag: 'Kópavogur',
+      // Kópavogsbær — municipality number 1000
+      mockNationalRegistry.getHousing.mockResolvedValue({
+        logheimiliskodi: '100000100010',
       })
       mockDomainModel.findOne.mockResolvedValue({ name: '@kopavogur.is' })
 
@@ -281,8 +351,9 @@ describe('ScopeService', () => {
     })
 
     it('should pin "Mitt sveitarfélag" to the top of the list', async () => {
-      mockNationalRegistry.getAddress.mockResolvedValue({
-        sveitarfelag: 'Kópavogur',
+      // Kópavogsbær — municipality number 1000
+      mockNationalRegistry.getHousing.mockResolvedValue({
+        logheimiliskodi: '100000100010',
       })
       mockDomainModel.findOne.mockResolvedValue({ name: '@kopavogur.is' })
 
@@ -312,7 +383,7 @@ describe('ScopeService', () => {
     })
 
     it('should not create "Mitt sveitarfélag" when NatReg fails', async () => {
-      mockNationalRegistry.getAddress.mockRejectedValue(
+      mockNationalRegistry.getHousing.mockRejectedValue(
         new Error('NatReg down'),
       )
 
@@ -341,8 +412,9 @@ describe('ScopeService', () => {
     })
 
     it('should not create "Mitt sveitarfélag" when no domain matches municipality', async () => {
-      mockNationalRegistry.getAddress.mockResolvedValue({
-        sveitarfelag: 'Dalvík',
+      // Dalvíkurbyggð — municipality number 6400, no matching domain
+      mockNationalRegistry.getHousing.mockResolvedValue({
+        logheimiliskodi: '640000100010',
       })
       mockDomainModel.findOne.mockResolvedValue(null)
 
@@ -369,8 +441,9 @@ describe('ScopeService', () => {
     })
 
     it('should not create "Mitt sveitarfélag" when no "Sveitarfélag" tag exists', async () => {
-      mockNationalRegistry.getAddress.mockResolvedValue({
-        sveitarfelag: 'Kópavogur',
+      // Kópavogsbær — municipality number 1000
+      mockNationalRegistry.getHousing.mockResolvedValue({
+        logheimiliskodi: '100000100010',
       })
       mockDomainModel.findOne.mockResolvedValue({ name: '@kopavogur.is' })
 
@@ -392,10 +465,12 @@ describe('ScopeService', () => {
     })
 
     it('should not create "Mitt sveitarfélag" when user has no municipal scopes in the tag', async () => {
-      mockNationalRegistry.getAddress.mockResolvedValue({
-        sveitarfelag: 'Kópavogur',
+      // Kópavogsbær — municipality number 1000
+      mockNationalRegistry.getHousing.mockResolvedValue({
+        logheimiliskodi: '100000100010',
       })
-      mockDomainModel.findOne.mockResolvedValue({ name: '@kopavogur.is' })
+      // No domain in the tag matches the user's municipality
+      mockDomainModel.findOne.mockResolvedValue(null)
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
         {
@@ -420,8 +495,10 @@ describe('ScopeService', () => {
       expect(result).toHaveLength(1)
     })
 
-    it('should not create "Mitt sveitarfélag" when address has no sveitarfelag', async () => {
-      mockNationalRegistry.getAddress.mockResolvedValue({ sveitarfelag: null })
+    it('should not create "Mitt sveitarfélag" when there is no legal domicile code', async () => {
+      mockNationalRegistry.getHousing.mockResolvedValue({
+        logheimiliskodi: null,
+      })
 
       mockCms.getDelegationScopeTags.mockResolvedValue([
         {

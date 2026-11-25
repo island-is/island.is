@@ -1,6 +1,5 @@
 import type { FC, PropsWithChildren } from 'react'
 import { useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 
 import {
@@ -11,7 +10,7 @@ import {
   LoadingDots,
 } from '@island.is/island-ui/core'
 import { IconAndText } from '@island.is/judicial-system-web/src/routes/Prosecutor/components'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { selectableList as strings } from './SelectableList.strings'
 import * as styles from './SelectableList.css'
@@ -84,7 +83,6 @@ const SelectableList: FC<Props> = (props) => {
     warningMessage,
     onChange,
   } = props
-  const { formatMessage } = useIntl()
   const [selectableItems, setSelectableItems] = useState<SelectableItem[]>([])
   const [isHandlingCTA, setIsHandlingCTA] = useState<boolean>()
 
@@ -117,7 +115,7 @@ const SelectableList: FC<Props> = (props) => {
   const validSelectableItems = selectableItems.filter((item) => !item.invalid)
 
   return (
-    <div className={grid({ gap: 3 })}>
+    <div className={stack({ gap: 3 })}>
       <Box
         borderColor="blue200"
         borderWidth="standard"
@@ -128,11 +126,7 @@ const SelectableList: FC<Props> = (props) => {
         <Box marginBottom={2}>
           <Checkbox
             name="select-all"
-            label={
-              selectAllText
-                ? selectAllText
-                : formatMessage(strings.selectAllLabel)
-            }
+            label={selectAllText ? selectAllText : strings.selectAllLabel}
             checked={
               validSelectableItems.length > 0 &&
               validSelectableItems.every((item) => item.checked)

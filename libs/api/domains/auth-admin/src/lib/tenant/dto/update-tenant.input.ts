@@ -17,11 +17,20 @@ export class UpdateTenantInput {
   displayName?: string
 
   @Field(() => String, { nullable: true })
+  displayNameEn?: string
+
+  @Field(() => String, { nullable: true })
   description?: string
+
+  @Field(() => String, { nullable: true })
+  descriptionEn?: string
 
   @Field(() => String, { nullable: true })
   organisationLogoKey?: string
 
   @Field(() => String, { nullable: true })
   contactEmail?: string
+
+  @Field(() => String, { nullable: true })
+  municipalityCode?: string
 }

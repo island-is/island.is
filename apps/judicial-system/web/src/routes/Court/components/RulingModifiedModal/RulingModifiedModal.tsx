@@ -1,5 +1,4 @@
 import type { FC } from 'react'
-import { useIntl } from 'react-intl'
 
 import { RulingModifiedModal as BaseModal } from '@island.is/judicial-system-web/src/components'
 
@@ -16,14 +15,13 @@ const RulingModifiedModal: FC<Props> = ({
   onContinue,
   continueDisabled,
 }) => {
-  const { formatMessage } = useIntl()
   return (
     <BaseModal
       onCancel={onCancel}
       onContinue={onContinue}
       continueDisabled={continueDisabled}
-      description={formatMessage(strings.description)}
-      defaultExplanation={formatMessage(strings.autofill)}
+      description={strings.description}
+      defaultExplanation={strings.autofill}
       fieldToModify="rulingModifiedHistory"
     />
   )

@@ -65,8 +65,8 @@ export class Form {
   @Field(() => Boolean, { nullable: true })
   beenPublished?: boolean
 
-  @Field(() => Int, { nullable: true })
-  derivedFrom?: number
+  @Field(() => String, { nullable: true })
+  derivedFrom?: string
 
   @Field(() => LanguageType)
   name!: LanguageType
@@ -94,6 +94,12 @@ export class Form {
 
   @Field(() => Boolean)
   isInaccessible!: boolean
+
+  @Field(() => Boolean)
+  validateEligibility!: boolean
+
+  @Field(() => Boolean)
+  enableApplicationPdfDownload!: boolean
 
   @Field(() => Boolean)
   hasSummaryScreen!: boolean

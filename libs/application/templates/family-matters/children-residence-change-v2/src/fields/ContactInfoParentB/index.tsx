@@ -7,12 +7,7 @@ import {
 } from '@island.is/application/templates/family-matters-core/components'
 import { contactInfo } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
-
-const emailId = 'parentB.email'
-const phoneNumberId = 'parentB.phoneNumber'
-const phoneNumberPres = 'parentB.presentationPhone'
-
-export const contactInfoParentBIds = [emailId, phoneNumberId, phoneNumberPres]
+import { emailId, phoneNumberId, phoneNumberPres } from './constants'
 
 const ContactInfoParentB = ({ errors, application }: CRCFieldBaseProps) => {
   const { formatMessage } = useIntl()

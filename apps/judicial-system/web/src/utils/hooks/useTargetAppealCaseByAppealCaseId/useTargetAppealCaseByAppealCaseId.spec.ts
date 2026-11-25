@@ -1,7 +1,5 @@
-import type {
-  AppealCase,
-  Case,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
+import type { AppealCase } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { resolveTargetAppealCaseByAppealCaseId } from './index'
 
@@ -15,7 +13,7 @@ describe('resolveTargetAppealCaseByAppealCaseId', () => {
   const workingCase = {
     appealCase: caseLevel,
     rulingOrderAppealCases: [ro1, ro2],
-  } as Case
+  } as WorkingCase
 
   it('returns the case-level appeal when no query param is set', () => {
     expect(resolveTargetAppealCaseByAppealCaseId(workingCase, undefined)).toBe(
@@ -42,7 +40,7 @@ describe('resolveTargetAppealCaseByAppealCaseId', () => {
   })
 
   it('returns the case-level appeal when rulingOrderAppealCases is missing', () => {
-    const onlyCaseLevel = { appealCase: caseLevel } as Case
+    const onlyCaseLevel = { appealCase: caseLevel } as WorkingCase
 
     expect(
       resolveTargetAppealCaseByAppealCaseId(onlyCaseLevel, undefined),
@@ -50,7 +48,7 @@ describe('resolveTargetAppealCaseByAppealCaseId', () => {
   })
 
   it('returns undefined when there are no appeals at all', () => {
-    const noAppeals = {} as Case
+    const noAppeals = {} as WorkingCase
 
     expect(
       resolveTargetAppealCaseByAppealCaseId(noAppeals, undefined),

@@ -77,7 +77,7 @@ export const buildFakeCurrentLicense = (fakeData: DrivingLicenseFakeData) => {
       fakeData.remarks === YES
         ? [
             {
-              code: '',
+              code: '0.3',
               description:
                 'Gervilimur eða gervilimir/stoðtæki fyrir fætur og hendur.',
             },

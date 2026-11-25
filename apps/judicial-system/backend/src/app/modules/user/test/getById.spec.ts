@@ -46,7 +46,11 @@ describe('UserController - Get by id', () => {
     })
 
     it('should return the user', () => {
-      expect(mockUserRepositoryService.findById).toHaveBeenCalledWith(userId)
+      // A plain read: no request transaction to join.
+      expect(mockUserRepositoryService.findById).toHaveBeenCalledWith(
+        userId,
+        undefined,
+      )
       expect(then.result).toBe(user)
     })
   })

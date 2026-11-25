@@ -13,12 +13,15 @@ import {
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
-import { EphemeralStateLifeCycle } from '@island.is/application/core'
+import {
+  EphemeralStateLifeCycle,
+  coreMessages,
+} from '@island.is/application/core'
 import {
   DRAFT_ENTERED_AT_KEY,
   housingBenefitsPruneLifecycle,
 } from '../utils/lifecycle'
-import { getDraftPruneReminderScheduledNotifications } from '../utils/notifications'
+import { getApplicantReminderScheduledNotifications } from '../utils/notifications'
 import * as m from './messages'
 import {
   AssigneeUserProfileApi,
@@ -34,13 +37,9 @@ import {
   NotifyAssigneesApi,
   NotifyApplicantOnAssigneeSubmitApi,
   NotifyApplicantOnAssigneeRejectApi,
-  NotifyApplicantOnExtraDataRequestedApi,
-  NotifyApplicantOnApprovedByInstitutionApi,
-  NotifyApplicantOnRejectedByInstitutionApi,
   SubmitApplicationApi,
 } from '../dataProviders'
 import { hasRentalAgreements } from '../utils/rentalAgreementUtils'
-import { mustFileTaxReturnBeforeApplying } from '../utils/utils'
 import * as kennitala from 'kennitala'
 import {
   getAssigneeNationalIds,
@@ -55,7 +54,6 @@ import {
   hasNewHouseholdMembersNeedingApproval,
 } from '../utils/addHouseholdMemberUtils'
 import { mapUserToRole } from '../utils/mapUserToRole'
-import { buildInstitutionAssignees } from '../utils/institutionAssignees'
 import { housingBenefitsActionCards } from '../utils/actionCardMeta'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope, HmsScope } from '@island.is/auth/scopes'
@@ -68,7 +66,7 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.HOUSING_BENEFITS,
   name: m.miscMessages.applicationName,
-  codeOwner: CodeOwners.NordaApplications,
+  codeOwner: CodeOwners.Origo,
   institution: m.miscMessages.institutionName,
   translationNamespaces: ApplicationConfigurations.HousingBenefits.translation,
   featureFlag: Features.isHousingBenefitsEnabled,
@@ -133,31 +131,7 @@ const template: ApplicationTemplate<
                 !hasRentalAgreements(application),
             },
             {
-              target: States.TAX_RETURN_REQUIRED,
-              cond: ({ application }: ApplicationContext) =>
-                mustFileTaxReturnBeforeApplying(application),
-            },
-            {
               target: States.DRAFT,
-            },
-          ],
-        },
-      },
-      [States.TAX_RETURN_REQUIRED]: {
-        meta: {
-          name: 'Skattframtal vantar',
-          progress: 0.2,
-          status: FormModes.DRAFT,
-          lifecycle: EphemeralStateLifeCycle,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/noTaxReturnForm').then((module) =>
-                  Promise.resolve(module.TaxReturnRequiredForm),
-                ),
-              read: 'all',
-              delete: true,
             },
           ],
         },
@@ -188,7 +162,7 @@ const template: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: housingBenefitsPruneLifecycle,
-          scheduledNotifications: getDraftPruneReminderScheduledNotifications,
+          scheduledNotifications: getApplicantReminderScheduledNotifications,
           actionCard: housingBenefitsActionCards.draft,
           onExit: NotifyAssigneesApi,
           roles: [
@@ -201,6 +175,9 @@ const template: ApplicationTemplate<
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
+              // Allows the applicant to refetch their legal domicile from the
+              // legal domicile sub section (RefetchLegalDomicile field)
+              api: [NationalRegistryApi],
               write: 'all',
               read: 'all',
               delete: true,
@@ -227,6 +204,7 @@ const template: ApplicationTemplate<
           progress: 0.6,
           status: FormModes.IN_PROGRESS,
           lifecycle: housingBenefitsPruneLifecycle,
+          scheduledNotifications: getApplicantReminderScheduledNotifications,
           actionCard: housingBenefitsActionCards.assigneeApproval,
           onExit: [
             NotifyApplicantOnAssigneeSubmitApi,
@@ -239,6 +217,18 @@ const template: ApplicationTemplate<
                 import(
                   '../forms/assigneeApprovalState/assigneePrereqForm'
                 ).then((module) => Promise.resolve(module.AssigneePrereqForm)),
+              actions: [
+                {
+                  event: 'EDIT',
+                  name: coreMessages.buttonNext,
+                  type: 'primary',
+                },
+                {
+                  event: 'REJECT',
+                  name: m.assigneeApproval.householdMemberRejectButton,
+                  type: 'reject',
+                },
+              ],
               write: 'all',
               read: 'all',
               api: [
@@ -257,6 +247,18 @@ const template: ApplicationTemplate<
                 import('../forms/assigneeApprovalState/assigneeDraftForm').then(
                   (module) => Promise.resolve(module.AssigneeDraftForm),
                 ),
+              actions: [
+                {
+                  event: 'SUBMIT',
+                  name: m.assigneeDraftOverview.submitButton,
+                  type: 'primary',
+                },
+                {
+                  event: 'EDIT',
+                  name: coreMessages.buttonNext,
+                  type: 'primary',
+                },
+              ],
               write: 'all',
               read: 'all',
               api: [
@@ -325,6 +327,7 @@ const template: ApplicationTemplate<
           progress: 0.8,
           status: FormModes.IN_PROGRESS,
           lifecycle: housingBenefitsPruneLifecycle,
+          scheduledNotifications: getApplicantReminderScheduledNotifications,
           actionCard: housingBenefitsActionCards.applicantSubmit,
           roles: [
             {
@@ -333,6 +336,18 @@ const template: ApplicationTemplate<
                 import(
                   '../forms/applicantSubmitState/applicantSubmitForm'
                 ).then((module) => Promise.resolve(module.ApplicantSubmitForm)),
+              actions: [
+                {
+                  event: 'SUBMIT',
+                  name: m.applicantSubmitMessages.submitButton,
+                  type: 'primary',
+                },
+                {
+                  event: 'EDIT',
+                  name: 'Bæta við heimilismanni',
+                  type: 'primary',
+                },
+              ],
               read: 'all',
               write: 'all',
               delete: true,
@@ -378,6 +393,7 @@ const template: ApplicationTemplate<
           progress: 0.8,
           status: FormModes.IN_PROGRESS,
           lifecycle: housingBenefitsPruneLifecycle,
+          scheduledNotifications: getApplicantReminderScheduledNotifications,
           onExit: NotifyAssigneesApi,
           roles: [
             {
@@ -409,11 +425,10 @@ const template: ApplicationTemplate<
         },
       },
       [States.IN_REVIEW]: {
-        entry: 'assignToInstitution',
         meta: {
-          name: 'Í vinnslu',
-          progress: 0.6,
-          status: FormModes.IN_PROGRESS,
+          name: 'Móttekið',
+          progress: 1,
+          status: FormModes.COMPLETED,
           lifecycle: housingBenefitsPruneLifecycle,
           actionCard: housingBenefitsActionCards.inReview,
           onEntry: SubmitApplicationApi,
@@ -442,103 +457,6 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.inReviewForm),
                 ),
               read: 'all',
-            },
-            {
-              id: Roles.INSTITUTION,
-              formLoader: () =>
-                import('../forms/inReviewForm/institutionForm').then((module) =>
-                  Promise.resolve(module.institutionForm),
-                ),
-              write: 'all',
-              read: 'all',
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.APPROVE]: {
-            target: States.APPROVED,
-          },
-          [DefaultEvents.REJECT]: {
-            target: States.REJECTED,
-          },
-          [DefaultEvents.EDIT]: {
-            target: States.EXTRA_DATA,
-          },
-        },
-      },
-      [States.EXTRA_DATA]: {
-        entry: 'clearAssignees',
-        meta: {
-          name: 'Extra data',
-          progress: 0.65,
-          status: FormModes.IN_PROGRESS,
-          lifecycle: housingBenefitsPruneLifecycle,
-          actionCard: housingBenefitsActionCards.extraData,
-          onEntry: NotifyApplicantOnExtraDataRequestedApi,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/extraDataForm').then((module) =>
-                  Promise.resolve(module.ExtraDataForm),
-                ),
-              actions: [
-                {
-                  event: 'SUBMIT',
-                  name: m.extraDataMessages.submitButton,
-                  type: 'primary',
-                },
-              ],
-              write: 'all',
-              read: 'all',
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.IN_REVIEW,
-          },
-        },
-      },
-      [States.APPROVED]: {
-        entry: 'clearAssignees',
-        meta: {
-          name: 'Samþykkt',
-          progress: 1,
-          status: FormModes.APPROVED,
-          lifecycle: housingBenefitsPruneLifecycle,
-          actionCard: housingBenefitsActionCards.approved,
-          onEntry: NotifyApplicantOnApprovedByInstitutionApi,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/approvedForm/approvedForm').then((module) =>
-                  Promise.resolve(module.approvedForm),
-                ),
-              read: 'all',
-            },
-          ],
-        },
-      },
-      [States.REJECTED]: {
-        entry: 'clearAssignees',
-        meta: {
-          name: 'Hafnað',
-          progress: 1,
-          status: FormModes.REJECTED,
-          lifecycle: housingBenefitsPruneLifecycle,
-          actionCard: housingBenefitsActionCards.rejected,
-          onEntry: NotifyApplicantOnRejectedByInstitutionApi,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/rejectedForm/rejectedForm').then((module) =>
-                  Promise.resolve(module.rejectedForm),
-                ),
-              read: 'all',
-              delete: true,
             },
           ],
         },
@@ -625,15 +543,6 @@ const template: ApplicationTemplate<
             .map((id) => kennitala.sanitize(id))
           set(application, 'assignees', normalized)
         }
-        return context
-      }),
-      assignToInstitution: assign((context) => {
-        const { application } = context
-        set(
-          application,
-          'assignees',
-          buildInstitutionAssignees(application.assignees ?? []),
-        )
         return context
       }),
       clearAssignees: assign((context) => {

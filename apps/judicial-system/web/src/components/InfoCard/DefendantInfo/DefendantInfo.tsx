@@ -23,11 +23,12 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import {
   getAppealExpirationInfo,
   getDefendantTagConfig,
+  getInfoCardDefender,
   getVerdictViewDateText,
 } from './DefendantInfo.logic'
 import { strings } from './DefendantInfo.strings'
@@ -119,16 +120,29 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
   } = props
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-  const hasDefender = defendant.defenderName || defender?.name
+  const displayedDefender = getInfoCardDefender(defendant, {
+    user,
+    fallback: {
+      name: defender?.name,
+      email: defender?.email,
+      phoneNumber: defender?.phoneNumber,
+    },
+  })
+  const hasDefender = Boolean(
+    displayedDefender.name ||
+      displayedDefender.email ||
+      displayedDefender.phoneNumber,
+  )
   const defenderLabel =
     defender?.sessionArrangement ===
     SessionArrangements.ALL_PRESENT_SPOKESPERSON
-      ? formatMessage(strings.spokesperson)
-      : formatMessage(strings.defender)
-  const defenderName = defendant.defenderName || defender?.name
-  const defenderEmail = defendant.defenderEmail || defender?.email
-  const defenderPhoneNumber =
-    defendant.defenderPhoneNumber || defender?.phoneNumber
+      ? strings.spokesperson
+      : strings.defender
+  const {
+    name: defenderName,
+    email: defenderEmail,
+    phoneNumber: defenderPhoneNumber,
+  } = displayedDefender
 
   const appealExpirationInfo = getAppealExpirationInfo({
     verdictAppealDeadline: defendant.verdictAppealDeadline,
@@ -145,11 +159,12 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
 
   return (
     <Box display="flex" justifyContent="spaceBetween">
-      <div className={grid({ gap: 1 })}>
+      <div className={stack({ gap: 1 })}>
         <Text>
-          <Text as="span" fontWeight="semiBold">{`${formatMessage(
-            infoCardStrings.name,
-          )}: `}</Text>
+          <Text
+            as="span"
+            fontWeight="semiBold"
+          >{`${infoCardStrings.name}: `}</Text>
           <Text as="span">
             {defendant.name}
             {defendant.nationalId &&
@@ -158,9 +173,10 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           </Text>
         </Text>
         <Text>
-          <Text as="span" fontWeight="semiBold">{`${formatMessage(
-            core.addressOrResidence,
-          )}: `}</Text>
+          <Text
+            as="span"
+            fontWeight="semiBold"
+          >{`${core.addressOrResidence}: `}</Text>
           <Text as="span">
             {defendant.address ? defendant.address : 'Ekki skráð'}
           </Text>
@@ -177,7 +193,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
               breakSpaces: false,
             })
           ) : (
-            <Text as="span">{formatMessage(strings.noDefender)}</Text>
+            <Text as="span">{strings.noDefender}</Text>
           )}
         </Text>
         {displayAppealExpirationInfo && (
@@ -203,9 +219,15 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           )}
         {displaySentToPrisonAdminDate && defendant.sentToPrisonAdminDate && (
           <Text fontWeight="semiBold">
-            {formatMessage(strings.sendToPrisonAdminDate, {
-              date: formatDate(defendant.sentToPrisonAdminDate, 'PPP'),
-            })}
+            {formatMessage(
+              {
+                id: strings.sendToPrisonAdminDate,
+                defaultMessage: strings.sendToPrisonAdminDate,
+              },
+              {
+                date: formatDate(defendant.sentToPrisonAdminDate, 'PPP'),
+              },
+            )}
           </Text>
         )}
         {isPublicProsecutionOfficeUser(user) &&

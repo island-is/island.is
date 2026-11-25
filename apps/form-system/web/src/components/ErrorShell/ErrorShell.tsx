@@ -17,6 +17,7 @@ import {
   ApplicationTypes,
   StaticText,
 } from '@island.is/application/types'
+import { m as formSystemMessages } from '../../lib/messages'
 
 import * as styles from './FormShell.css'
 import Markdown from 'markdown-to-jsx'
@@ -64,6 +65,8 @@ interface Props {
   title?: StaticText
   subTitle?: StaticText
   description?: StaticText
+  onRetry?: () => void
+  retryText?: StaticText
   errorType?:
     | 'notFound'
     | 'forbidden'
@@ -81,6 +84,8 @@ export const ErrorShell: FC<React.PropsWithChildren<Props>> = ({
   title,
   subTitle,
   description,
+  onRetry,
+  retryText,
 }) => {
   const { formatMessage } = useLocale()
 
@@ -98,9 +103,6 @@ export const ErrorShell: FC<React.PropsWithChildren<Props>> = ({
         <Columns collapseBelow="lg">
           <Column width="2/3">
             <Box>
-              <Text variant="eyebrow" color="red600" marginBottom={3}>
-                {formatMessage(coreErrorScreenMessages.application)}
-              </Text>
               <Text variant="h1" as="h1" marginBottom={3}>
                 {formatMessage(
                   title ?? messageTypes[errorType ?? 'notFound'].title,
@@ -133,6 +135,11 @@ export const ErrorShell: FC<React.PropsWithChildren<Props>> = ({
               </Box>
 
               <Box display="flex" columnGap="p4">
+                {onRetry && retryText && (
+                  <Button icon="reload" onClick={onRetry}>
+                    {formatMessage(retryText)}
+                  </Button>
+                )}
                 {applicationType && (
                   <a
                     tabIndex={-1}
@@ -152,9 +159,7 @@ export const ErrorShell: FC<React.PropsWithChildren<Props>> = ({
                   href={`/minarsidur/umsoknir`}
                 >
                   <Button>
-                    {formatMessage(
-                      coreErrorScreenMessages.buttonMyApplications,
-                    )}
+                    {formatMessage(formSystemMessages.myApplications)}
                   </Button>
                 </a>
               </Box>

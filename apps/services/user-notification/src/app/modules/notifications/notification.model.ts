@@ -13,6 +13,14 @@ import {
   InferAttributes,
   InferCreationAttributes,
 } from 'sequelize'
+import {
+  HNIPP_TEMPLATE_PRIORITY_TYPES,
+  HNIPP_TEMPLATE_SOURCE_TYPES,
+} from './dto/hnippTemplate.response'
+import type {
+  HnippTemplatePriorityType,
+  HnippTemplateSourceType,
+} from './dto/hnippTemplate.response'
 
 interface ArgItem {
   key: string
@@ -73,6 +81,39 @@ export class Notification extends Model<
     field: 'scope',
   })
   scope!: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: true,
+    allowNull: false,
+    field: 'was_sent',
+  })
+  wasSent!: boolean
+
+  @Column({
+    type: DataType.ENUM(...HNIPP_TEMPLATE_PRIORITY_TYPES),
+    allowNull: true,
+    field: 'priority_type',
+  })
+  priorityType?: HnippTemplatePriorityType
+
+  @Column({
+    type: DataType.ENUM(...HNIPP_TEMPLATE_SOURCE_TYPES),
+    allowNull: true,
+    field: 'source_type',
+  })
+  sourceType?: HnippTemplateSourceType | null
+
+  /**
+   * Optional deadline from the create request, for display only. Stored as
+   * timestamptz, i.e. an instant in time.
+   */
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    field: 'deadline',
+  })
+  deadline?: Date | null
 
   @Column({
     type: DataType.JSON,

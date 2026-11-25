@@ -35,6 +35,9 @@ export class CustomPage {
 
   @CacheField(() => Image, { nullable: true })
   ogImage?: Image | null
+
+  @Field(() => Boolean, { nullable: true })
+  hideFromExternalSearchEngines?: boolean
 }
 
 export const mapCustomPage = ({
@@ -54,5 +57,6 @@ export const mapCustomPage = ({
     ogTitle: fields.ogTitle,
     ogDescription: fields.ogDescription,
     ogImage: fields.ogImage ? mapImage(fields.ogImage) : null,
+    hideFromExternalSearchEngines: fields.hideFromExternalSearchEngines,
   }
 }

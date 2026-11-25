@@ -25,7 +25,7 @@ const Stepper = () => {
 
   useEffect(() => {
     if (activeSection !== undefined) {
-      document.title = 'Umsókn - ' + sections[activeSection].name ?? ''
+      document.title = 'Umsókn - ' + (sections[activeSection].name ?? '')
     }
   }, [activeSection])
 

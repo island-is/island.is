@@ -10,9 +10,18 @@ import {
   IsOptional,
   IsUUID,
   IsBoolean,
+  IsIn,
 } from 'class-validator'
 import { Type } from 'class-transformer'
 import type { Locale } from '@island.is/shared/types'
+import {
+  HNIPP_TEMPLATE_PRIORITY_TYPES,
+  HNIPP_TEMPLATE_SOURCE_TYPES,
+} from './hnippTemplate.response'
+import type {
+  HnippTemplatePriorityType,
+  HnippTemplateSourceType,
+} from './hnippTemplate.response'
 
 export class ExtendedPaginationDto extends PaginationDto {
   @IsOptional()
@@ -126,6 +135,58 @@ export class RenderedNotificationDto {
   @ApiProperty({ example: false })
   @IsBoolean()
   seen!: boolean
+
+  @ApiProperty({
+    example: true,
+    description:
+      'Whether the notification was delivered to the recipient, false if it was suppressed e.g. by the recipient only wanting actionable notifications',
+  })
+  @IsBoolean()
+  wasSent!: boolean
+
+  @ApiPropertyOptional({
+    enum: HNIPP_TEMPLATE_PRIORITY_TYPES,
+    example: 'Actionable',
+  })
+  @IsOptional()
+  @IsIn(HNIPP_TEMPLATE_PRIORITY_TYPES)
+  priorityType?: HnippTemplatePriorityType
+
+  @ApiProperty({
+    enum: HNIPP_TEMPLATE_SOURCE_TYPES,
+    example: 'General',
+  })
+  @IsIn(HNIPP_TEMPLATE_SOURCE_TYPES)
+  sourceType!: HnippTemplateSourceType
+
+  @ApiPropertyOptional({
+    type: Date,
+    nullable: true,
+    example: '2026-12-01T16:00:00.000Z',
+    description:
+      'Deadline related to the notification, for display only. Returned in UTC; display in Icelandic time (Atlantic/Reykjavik, UTC+0 all year).',
+  })
+  @IsOptional()
+  @IsDate()
+  deadline?: Date | null
+
+  @ApiProperty({
+    example: 'heilbrigdismal',
+    description: 'Category key, null for the default category (almennt)',
+    nullable: true,
+    type: String,
+  })
+  @IsOptional()
+  @IsString()
+  category!: string | null
+
+  @ApiProperty({
+    example: 'Heilbrigðismál',
+    description:
+      'Category label from the template, localized to the requested locale',
+  })
+  @IsString()
+  categoryLabel!: string
 }
 
 export class Message {
@@ -193,6 +254,51 @@ export class UnseenNotificationsCountDto {
   @ApiProperty({ example: 42 })
   @IsInt()
   unseenCount!: number
+}
+
+export class NotificationCategoryLabelDto {
+  @ApiProperty({ example: 'Heilbrigðismál' })
+  @IsString()
+  is!: string
+
+  @ApiPropertyOptional({ example: 'Health' })
+  @IsOptional()
+  @IsString()
+  en?: string
+}
+
+export class NotificationCategoryDto {
+  @ApiProperty({
+    example: '1234567890',
+    description: 'National id of the notification sender',
+  })
+  @IsString()
+  senderId!: string
+
+  @ApiProperty({
+    example: 'heilbrigdismal',
+    description:
+      "Slugified Icelandic category label, 'almennt' for notifications without a category",
+  })
+  @IsString()
+  category!: string
+
+  @ApiProperty({ type: NotificationCategoryLabelDto })
+  @ValidateNested()
+  @Type(() => NotificationCategoryLabelDto)
+  categoryLabel!: NotificationCategoryLabelDto
+}
+
+export class NotificationCategoriesDto {
+  @ApiProperty({
+    type: [NotificationCategoryDto],
+    description:
+      'Distinct sender categories of notifications the current user has received',
+  })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => NotificationCategoryDto)
+  categories!: NotificationCategoryDto[]
 }
 
 export class ActorNotificationDto {

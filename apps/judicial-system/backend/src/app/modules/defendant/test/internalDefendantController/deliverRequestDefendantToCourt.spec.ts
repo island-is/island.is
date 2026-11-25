@@ -1,7 +1,10 @@
 import { v4 as uuid } from 'uuid'
 
-import { Message } from '@island.is/judicial-system/message'
-import { User } from '@island.is/judicial-system/types'
+import { Message, MessageType } from '@island.is/judicial-system/message'
+import {
+  RequestCaseNotificationType,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
@@ -22,21 +25,21 @@ describe('InternalDefendantController - Deliver request defendant to court', () 
   const deliverDto = { user }
   const defendantId = uuid()
   const defendantNationalId = '1234567890'
+  const defenderEmail = uuid()
+  const defenderName = 'Test Verjandi'
   const defendant = {
     id: defendantId,
     nationalId: defendantNationalId,
+    defenderEmail,
+    defenderName,
   } as Defendant
   const caseId = uuid()
   const courtName = 'Héraðsdómur Reykjavíkur'
   const courtCaseNumber = uuid()
-  const defenderEmail = uuid()
-  const defenderName = 'Test Verjandi'
   const theCase = {
     id: caseId,
     court: { name: courtName },
     courtCaseNumber,
-    defenderEmail,
-    defenderName,
   } as Case
 
   let mockQueuedMessages: Message[]
@@ -44,15 +47,18 @@ describe('InternalDefendantController - Deliver request defendant to court', () 
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { queuedMessages, courtService, internalDefendantController } =
-      await createTestingDefendantModule()
+    const {
+      queuedMessagesAfterCommit,
+      courtService,
+      internalDefendantController,
+    } = await createTestingDefendantModule()
 
-    mockQueuedMessages = queuedMessages
+    mockQueuedMessages = queuedMessagesAfterCommit
 
     mockCourtService = courtService
-    const mockUpdateRequestCaseWithDefenderInfo =
-      mockCourtService.updateRequestCaseWithDefenderInfo as jest.Mock
-    mockUpdateRequestCaseWithDefenderInfo.mockRejectedValue(
+    const mockUpdateRequestCaseWithDefendant =
+      mockCourtService.updateRequestCaseWithDefendant as jest.Mock
+    mockUpdateRequestCaseWithDefendant.mockRejectedValue(
       new Error('Robot email error'),
     )
 
@@ -78,16 +84,16 @@ describe('InternalDefendantController - Deliver request defendant to court', () 
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdateRequestCaseWithDefenderInfo =
-        mockCourtService.updateRequestCaseWithDefenderInfo as jest.Mock
-      mockUpdateRequestCaseWithDefenderInfo.mockResolvedValueOnce(uuid())
+      const mockUpdateRequestCaseWithDefendant =
+        mockCourtService.updateRequestCaseWithDefendant as jest.Mock
+      mockUpdateRequestCaseWithDefendant.mockResolvedValueOnce(uuid())
 
       then = await givenWhenThen(defendant)
     })
 
-    it('should send robot email with defender info', () => {
+    it('should send robot email with the defendant and defender info', () => {
       expect(
-        mockCourtService.updateRequestCaseWithDefenderInfo,
+        mockCourtService.updateRequestCaseWithDefendant,
       ).toHaveBeenCalledWith(
         user,
         caseId,
@@ -100,8 +106,8 @@ describe('InternalDefendantController - Deliver request defendant to court', () 
       expect(then.result).toEqual({ delivered: true })
     })
 
-    it('should not call court API', () => {
-      expect(mockCourtService.updateCaseWithDefendant).not.toHaveBeenCalled()
+    it('should not queue notification', () => {
+      expect(mockQueuedMessages).toEqual([])
     })
   })
 
@@ -134,7 +140,7 @@ describe('InternalDefendantController - Deliver request defendant to court', () 
 
     it('should not send robot email', () => {
       expect(
-        mockCourtService.updateRequestCaseWithDefenderInfo,
+        mockCourtService.updateRequestCaseWithDefendant,
       ).not.toHaveBeenCalled()
     })
 
@@ -142,8 +148,17 @@ describe('InternalDefendantController - Deliver request defendant to court', () 
       expect(then.result).toEqual({ delivered: true })
     })
 
-    it('should not queue notification', () => {
-      expect(mockQueuedMessages).toEqual([])
+    it('should ask the court to verify the defendants', () => {
+      expect(mockQueuedMessages).toEqual([
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: {
+            type: RequestCaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
+          },
+        },
+      ])
     })
   })
 
@@ -156,6 +171,10 @@ describe('InternalDefendantController - Deliver request defendant to court', () 
 
     it('should return a failure response', () => {
       expect(then.result).toEqual({ delivered: false })
+    })
+
+    it('should not queue notification', () => {
+      expect(mockQueuedMessages).toEqual([])
     })
   })
 })

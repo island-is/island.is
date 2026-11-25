@@ -35,10 +35,11 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send revoked notifications for request cases', () => {
-  const { judge, registrar, defender } = createTestUsers([
+  const { judge, registrar, defender, defender2 } = createTestUsers([
     'judge',
     'registrar',
     'defender',
+    'defender2',
   ])
   const caseId = uuid()
   const courtId = 'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf'
@@ -200,7 +201,13 @@ describe('InternalNotificationController - Send revoked notifications for reques
       creatingProsecutor: { institution: { name: prosecutorsOfficeName } },
       defenderName: defender.name,
       defenderEmail: defender.email,
-      defendants: [{ id: uuid() }],
+      defendants: [
+        {
+          id: uuid(),
+          defenderName: defender.name,
+          defenderEmail: defender.email,
+        },
+      ],
     }
 
     const previousNotifications = [
@@ -282,7 +289,13 @@ describe('InternalNotificationController - Send revoked notifications for reques
       creatingProsecutor: { institution: { name: prosecutorsOfficeName } },
       defenderName: defender.name,
       defenderEmail: defender.email,
-      defendants: [{ id: uuid() }],
+      defendants: [
+        {
+          id: uuid(),
+          defenderName: defender.name,
+          defenderEmail: defender.email,
+        },
+      ],
     }
 
     beforeEach(async () => {
@@ -296,6 +309,111 @@ describe('InternalNotificationController - Send revoked notifications for reques
         }),
       )
       expect(then.result).toEqual({ delivered: true })
+    })
+  })
+
+  describe('when multiple defendants have different defenders who were previously notified', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.TRAVEL_BAN,
+      courtId,
+      court: { name: courtName },
+      courtCaseNumber,
+      policeCaseNumbers: [policeCaseNumber],
+      judge: { name: judge.name, email: judge.email },
+      creatingProsecutor: { institution: { name: prosecutorsOfficeName } },
+      defendants: [
+        {
+          id: uuid(),
+          defenderName: defender.name,
+          defenderEmail: defender.email,
+        },
+        {
+          id: uuid(),
+          defenderName: defender2.name,
+          defenderEmail: defender2.email,
+        },
+      ],
+    }
+
+    const previousNotifications = [
+      {
+        type: TrackedNotificationType.READY_FOR_COURT,
+        recipients: [
+          { address: defender.email, success: true },
+          { address: defender2.email, success: true },
+        ],
+      } as Notification,
+    ]
+
+    beforeEach(async () => {
+      await givenWhenThen(theCase, previousNotifications)
+    })
+
+    it('should send a revoked email to each unique defender', () => {
+      const subject = `Krafa afturkölluð í máli ${courtCaseNumber}`
+      const body = `${prosecutorsOfficeName} hefur afturkallað kröfu í máli ${courtCaseNumber}.`
+
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ address: defender.email, name: defender.name }],
+          subject,
+          html: body,
+        }),
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ address: defender2.email, name: defender2.name }],
+          subject,
+          html: body,
+        }),
+      )
+    })
+  })
+
+  describe('when multiple defendants share a defender who was previously notified', () => {
+    const theCase = {
+      id: caseId,
+      type: CaseType.TRAVEL_BAN,
+      courtId,
+      court: { name: courtName },
+      courtCaseNumber,
+      policeCaseNumbers: [policeCaseNumber],
+      judge: { name: judge.name, email: judge.email },
+      creatingProsecutor: { institution: { name: prosecutorsOfficeName } },
+      defendants: [
+        {
+          id: uuid(),
+          defenderName: defender.name,
+          defenderEmail: defender.email,
+        },
+        {
+          id: uuid(),
+          defenderName: defender.name,
+          defenderEmail: defender.email,
+        },
+      ],
+    }
+
+    const previousNotifications = [
+      {
+        type: TrackedNotificationType.READY_FOR_COURT,
+        recipients: [{ address: defender.email, success: true }],
+      } as Notification,
+    ]
+
+    beforeEach(async () => {
+      await givenWhenThen(theCase, previousNotifications)
+    })
+
+    it('should send a revoked email to the defender only once', () => {
+      const defenderEmails = (
+        mockEmailService.sendEmail as jest.Mock
+      ).mock.calls.filter(
+        ([email]) => email?.to?.[0]?.address === defender.email,
+      )
+
+      expect(defenderEmails).toHaveLength(1)
     })
   })
 })

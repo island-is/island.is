@@ -19,11 +19,18 @@ import { DelegationProviderService } from './delegationProvider/delegation-provi
 import { DelegationProviderResolver } from './delegationProvider/delegation-provider.resolver'
 import { DelegationAdminResolver } from './delegationAdmin/delegation-admin.resolver'
 import { DelegationAdminService } from './delegationAdmin/delegation-admin.service'
+import {
+  DelegationOverviewDelegationResolver,
+  DelegationOverviewResolver,
+} from './delegationAdmin/delegation-overview.resolver'
+import { DelegationOverviewService } from './delegationAdmin/delegation-overview.service'
 import { GrantTypeResolver } from './grant-type/grant-type.resolver'
 import { GrantTypeService } from './grant-type/grant-type.service'
 import { IdpProviderResolver } from './idp-provider/idp-provider.resolver'
 import { IdpProviderService } from './idp-provider/idp-provider.service'
 import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegation-api'
+import { PublicAuthResolver } from './public/public-auth.resolver'
+import { PublicAuthService } from './public/public-auth.service'
 
 @Module({
   imports: [AuthAdminApiClientModule, AuthDelegationApiClientModule, CmsModule],
@@ -44,10 +51,15 @@ import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegatio
     DelegationProviderResolver,
     DelegationAdminResolver,
     DelegationAdminService,
+    DelegationOverviewResolver,
+    DelegationOverviewDelegationResolver,
+    DelegationOverviewService,
     GrantTypeResolver,
     GrantTypeService,
     IdpProviderResolver,
     IdpProviderService,
+    PublicAuthResolver,
+    PublicAuthService,
   ],
 })
 export class AuthAdminModule {}

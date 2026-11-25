@@ -39,7 +39,7 @@ describe.each(defenceRoles)('defence user %s', (role) => {
         const theCase = {
           type,
           state,
-          defenderNationalId: user.nationalId,
+          defendants: [{ defenderNationalId: user.nationalId }],
         } as Case
 
         verifyNoAccess(theCase, user)
@@ -59,8 +59,12 @@ describe.each(defenceRoles)('defence user %s', (role) => {
           const theCase = {
             type,
             state: CaseState.SUBMITTED,
-            requestSharedWithDefender: share,
-            defenderNationalId: user.nationalId,
+            defendants: [
+              {
+                defenderNationalId: user.nationalId,
+                requestSharedWithDefender: share,
+              },
+            ],
           } as Case
 
           verifyNoAccess(theCase, user)
@@ -73,18 +77,22 @@ describe.each(defenceRoles)('defence user %s', (role) => {
               const theCase = {
                 type,
                 state: CaseState.SUBMITTED,
-                requestSharedWithDefender: share,
+                defendants: [{ requestSharedWithDefender: share }],
               } as Case
 
               verifyNoAccess(theCase, user)
             })
 
-            describe('defender assigned to case', () => {
+            describe('defender assigned to a defendant', () => {
               const theCase = {
                 type,
                 state: CaseState.SUBMITTED,
-                defenderNationalId: user.nationalId,
-                requestSharedWithDefender: share,
+                defendants: [
+                  {
+                    defenderNationalId: user.nationalId,
+                    requestSharedWithDefender: share,
+                  },
+                ],
               } as Case
 
               verifyFullAccess(theCase, user)
@@ -98,7 +106,7 @@ describe.each(defenceRoles)('defence user %s', (role) => {
           const theCase = {
             type,
             state: CaseState.RECEIVED,
-            defenderNationalId: user.nationalId,
+            defendants: [{ defenderNationalId: user.nationalId }],
           } as Case
 
           verifyNoAccess(theCase, user)
@@ -108,8 +116,12 @@ describe.each(defenceRoles)('defence user %s', (role) => {
           const theCase = {
             type,
             state: CaseState.RECEIVED,
-            requestSharedWithDefender:
-              RequestSharedWithDefender.READY_FOR_COURT,
+            defendants: [
+              {
+                requestSharedWithDefender:
+                  RequestSharedWithDefender.READY_FOR_COURT,
+              },
+            ],
             dateLogs: [
               { dateType: DateType.ARRAIGNMENT_DATE, date: new Date() },
             ],
@@ -118,23 +130,27 @@ describe.each(defenceRoles)('defence user %s', (role) => {
           verifyNoAccess(theCase, user)
         })
 
-        describe('court date not set, but request shared with defender on submission and defender assigned to case', () => {
+        describe('court date not set, but request shared with defender on submission and defender assigned to a defendant', () => {
           const theCase = {
             type,
             state: CaseState.RECEIVED,
-            requestSharedWithDefender:
-              RequestSharedWithDefender.READY_FOR_COURT,
-            defenderNationalId: user.nationalId,
+            defendants: [
+              {
+                defenderNationalId: user.nationalId,
+                requestSharedWithDefender:
+                  RequestSharedWithDefender.READY_FOR_COURT,
+              },
+            ],
           } as Case
 
           verifyFullAccess(theCase, user)
         })
 
-        describe('court date set and defender assigned to case', () => {
+        describe('court date set and defender assigned to a defendant', () => {
           const theCase = {
             type,
             state: CaseState.RECEIVED,
-            defenderNationalId: user.nationalId,
+            defendants: [{ defenderNationalId: user.nationalId }],
             dateLogs: [
               { dateType: DateType.ARRAIGNMENT_DATE, date: new Date() },
             ],
@@ -159,11 +175,59 @@ describe.each(defenceRoles)('defence user %s', (role) => {
           verifyNoAccess(theCase, user)
         })
 
-        describe('defender assigned to case', () => {
+        describe('defender assigned to a defendant', () => {
           const theCase = {
             type,
             state,
-            defenderNationalId: user.nationalId,
+            defendants: [{ defenderNationalId: user.nationalId }],
+          } as Case
+
+          verifyFullAccess(theCase, user)
+        })
+      })
+
+      describe('multi-defendant defender assignment', () => {
+        describe('defender of one defendant gets access', () => {
+          const theCase = {
+            type,
+            state: CaseState.ACCEPTED,
+            defendants: [
+              { defenderNationalId: 'other-defender' },
+              { defenderNationalId: user.nationalId },
+            ],
+          } as Case
+
+          verifyFullAccess(theCase, user)
+        })
+
+        describe('unrelated defender does not get access', () => {
+          const theCase = {
+            type,
+            state: CaseState.ACCEPTED,
+            defendants: [
+              { defenderNationalId: 'other-defender' },
+              { defenderNationalId: 'another-defender' },
+            ],
+          } as Case
+
+          verifyNoAccess(theCase, user)
+        })
+
+        describe('most permissive sharing wins for the same defender national id', () => {
+          const theCase = {
+            type,
+            state: CaseState.SUBMITTED,
+            defendants: [
+              {
+                defenderNationalId: user.nationalId,
+                requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+              },
+              {
+                defenderNationalId: user.nationalId,
+                requestSharedWithDefender:
+                  RequestSharedWithDefender.READY_FOR_COURT,
+              },
+            ],
           } as Case
 
           verifyFullAccess(theCase, user)
@@ -232,6 +296,57 @@ describe.each(defenceRoles)('defence user %s', (role) => {
         } as Case
 
         verifyFullAccess(theCase, user)
+      })
+
+      describe('confirmed appeal defender assigned to case', () => {
+        const theCase = {
+          type,
+          state,
+          defendants: [
+            {},
+            {
+              appealDefenderNationalId: user.nationalId,
+              isAppealDefenderConfirmed: true,
+            },
+            {},
+          ],
+          dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, date: new Date() }],
+        } as Case
+
+        verifyFullAccess(theCase, user)
+      })
+
+      describe('unconfirmed appeal defender assigned to case', () => {
+        const theCase = {
+          type,
+          state,
+          defendants: [
+            {
+              appealDefenderNationalId: user.nationalId,
+              isAppealDefenderConfirmed: false,
+            },
+          ],
+          dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, date: new Date() }],
+        } as Case
+
+        verifyNoAccess(theCase, user)
+      })
+
+      describe('waived appeal defender with stale confirmation', () => {
+        const theCase = {
+          type,
+          state,
+          defendants: [
+            {
+              appealDefenderNationalId: user.nationalId,
+              isAppealDefenderConfirmed: true,
+              isAppealDefenderWaived: true,
+            },
+          ],
+          dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, date: new Date() }],
+        } as Case
+
+        verifyNoAccess(theCase, user)
       })
     })
 
@@ -354,6 +469,42 @@ describe.each(defenceRoles)('defence user %s', (role) => {
         } as Case
 
         verifyFullAccess(theCase, user)
+      })
+
+      describe('confirmed appeal spokesperson assigned to case', () => {
+        const theCase = {
+          type,
+          state,
+          civilClaimants: [
+            {},
+            {
+              hasAppealSpokesperson: true,
+              appealSpokespersonNationalId: user.nationalId,
+              isAppealSpokespersonConfirmed: true,
+            },
+            {},
+          ],
+          dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, date: new Date() }],
+        } as Case
+
+        verifyFullAccess(theCase, user)
+      })
+
+      describe('removed appeal spokesperson with stale confirmation', () => {
+        const theCase = {
+          type,
+          state,
+          civilClaimants: [
+            {
+              hasAppealSpokesperson: false,
+              appealSpokespersonNationalId: user.nationalId,
+              isAppealSpokespersonConfirmed: true,
+            },
+          ],
+          dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, date: new Date() }],
+        } as Case
+
+        verifyNoAccess(theCase, user)
       })
     })
   })

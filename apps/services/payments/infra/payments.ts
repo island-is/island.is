@@ -7,7 +7,12 @@ import {
   scheduledJob,
   ScheduledJobBuilder,
 } from '../../../../infra/src/dsl/dsl'
-import { Base, Client, ChargeFjsV2 } from '../../../../infra/src/dsl/xroad'
+import {
+  Base,
+  Client,
+  ChargeFjsV2,
+  FinanceV3,
+} from '../../../../infra/src/dsl/xroad'
 
 const namespace = 'services-payments'
 const serviceName = namespace
@@ -76,6 +81,17 @@ const secrets = {
   // Shared by the service and the worker: the worker transitively loads the
   // bank-transfer/Blikk modules via PaymentFlowModule, so BlikkClientConfig must resolve at boot.
   BLIKK_API_KEY: '/k8s/services-payments/BLIKK_API_KEY',
+  // The card payment gateway: the service charges and refunds cards, the worker refunds the card
+  // payments FJS rejects.
+  PAYMENTS_GATEWAY_API_SECRET:
+    '/k8s/services-payments/PAYMENTS_GATEWAY_API_SECRET',
+  PAYMENTS_GATEWAY_API_HEADER_KEY:
+    '/k8s/services-payments/PAYMENTS_GATEWAY_API_HEADER_KEY',
+  PAYMENTS_GATEWAY_API_HEADER_VALUE:
+    '/k8s/services-payments/PAYMENTS_GATEWAY_API_HEADER_VALUE',
+  PAYMENTS_GATEWAY_API_URL: '/k8s/services-payments/PAYMENTS_GATEWAY_API_URL',
+  PAYMENTS_GATEWAY_SYSTEM_CALLING:
+    '/k8s/services-payments/PAYMENTS_GATEWAY_SYSTEM_CALLING',
 }
 
 // service setup
@@ -107,16 +123,6 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
     })
     .secrets({
       ...secrets,
-      PAYMENTS_GATEWAY_API_SECRET:
-        '/k8s/services-payments/PAYMENTS_GATEWAY_API_SECRET',
-      PAYMENTS_GATEWAY_API_HEADER_KEY:
-        '/k8s/services-payments/PAYMENTS_GATEWAY_API_HEADER_KEY',
-      PAYMENTS_GATEWAY_API_HEADER_VALUE:
-        '/k8s/services-payments/PAYMENTS_GATEWAY_API_HEADER_VALUE',
-      PAYMENTS_GATEWAY_API_URL:
-        '/k8s/services-payments/PAYMENTS_GATEWAY_API_URL',
-      PAYMENTS_GATEWAY_SYSTEM_CALLING:
-        '/k8s/services-payments/PAYMENTS_GATEWAY_SYSTEM_CALLING',
       PAYMENTS_INVOICE_TOKEN_SIGNING_SECRET:
         '/k8s/services-payments/PAYMENTS_INVOICE_TOKEN_SIGNING_SECRET',
       PAYMENTS_INVOICE_TOKEN_SIGNING_ALGORITHM:
@@ -164,7 +170,7 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         public: false,
       },
     })
-    .xroad(Base, Client, ChargeFjsV2)
+    .xroad(Base, Client, ChargeFjsV2, FinanceV3)
     .readiness('/liveness')
     .liveness('/liveness')
     .grantNamespaces(
@@ -185,7 +191,7 @@ export const serviceSetupForWorker =
       .codeOwner(CodeOwners.Aranja)
       .env(env)
       .secrets(secrets)
-      .xroad(Base, Client, ChargeFjsV2)
+      .xroad(Base, Client, ChargeFjsV2, FinanceV3)
       .command('node')
       .args('main.cjs', '--job', 'worker')
       .schedule({

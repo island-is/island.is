@@ -3,6 +3,7 @@ import * as kennitala from 'kennitala'
 import { isValidPhoneNumber } from '../utils/isValidPhoneNumber'
 import { YesOrNoEnum } from '@island.is/application/core'
 import { m } from './messages'
+import { MAX_PARTICIPANTS_PER_APPLICATION } from '../utils/constants'
 
 const paymentSchema = z
   .object({
@@ -70,7 +71,24 @@ const userInformationSchema = z.object({
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  participantList: z.array(participantSchema).min(1),
+  participantList: z
+    .array(participantSchema)
+    .min(1)
+    .max(MAX_PARTICIPANTS_PER_APPLICATION)
+    .superRefine((participants, ctx) => {
+      const seen = new Set<string>()
+      participants.forEach((participant, index) => {
+        const nationalId = participant.nationalIdWithName.nationalId
+        if (seen.has(nationalId)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            params: m.participant.duplicateNationalIdError,
+            path: [index, 'nationalIdWithName', 'nationalId'],
+          })
+        }
+        seen.add(nationalId)
+      })
+    }),
   courseSelect: z.string().min(1),
   dateSelect: z.string().min(1),
   payment: paymentSchema.optional(),

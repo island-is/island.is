@@ -466,6 +466,23 @@ export const m = defineMessages({
     defaultMessage: 'Tegund umsóknar',
     description: 'Type of application for driving license',
   },
+  digitalLicenseSubSectionTitle: {
+    id: 'dl.application:digitalLicense.subSectionTitle',
+    defaultMessage: 'Stafrænt skírteini',
+    description: 'Title of the digital-licence information sub-section',
+  },
+  digitalLicenseAlertTitle: {
+    id: 'dl.application:digitalLicense.alertTitle',
+    defaultMessage: 'Athugið',
+    description: 'Title of the digital-licence information alert box',
+  },
+  digitalLicenseAlertMessage: {
+    id: 'dl.application:digitalLicense.alertMessage#markdown',
+    defaultMessage:
+      'Ökuskírteinið verður fyrst gefið út á stafrænu formi og verður aðgengilegt í Ísland.is appinu þegar afgreiðslu er lokið.\n\nPlastökuskírteinið verður framleitt um miðjan nóvember og sent í pósti á skráð lögheimili um leið og það er tilbúið.',
+    description:
+      'Body of the digital-licence information alert: licence is issued digitally first (available in the Ísland.is app), plastic card produced mid-November and mailed afterwards to the registered legal domicile',
+  },
   drivingLicenseApplyingForTitle: {
     id: 'dl.application:drivingLicenseApplyingForTitle',
     defaultMessage: 'Ég er að sækja um:',
@@ -605,6 +622,41 @@ export const m = defineMessages({
     defaultMessage:
       '[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
     description: '',
+  },
+  applicationDoneAlertMessageBFullHealthRedesigned: {
+    id: 'dl.application:applicationDoneAlertMessageBFullHealthRedesigned',
+    defaultMessage:
+      'Umsókn þín um fullnaðarskírteini hefur verið móttekin og verður nú yfirfarin.',
+    description:
+      'Application received - B-full with health certificate (digital flow)',
+  },
+  nextStepsDescriptionBFullNoHealthPickup: {
+    id: 'dl.application:nextStepsDescriptionBFullNoHealthPickup#markdown',
+    defaultMessage:
+      '* Umsókn þín um fullnaðarskírteini hefur verið móttekin og ökuskírteinið pantað og verður afhent samkvæmt þeim afhendingarmáta sem þú valdir, heimsent eða sótt á valda skrifstofu sýslumanns ({deliveryLocation}), að jafnaði um sjö dögum síðar. Þú getur uppfært ökuskírteinið þitt í Ísland.is appinu.',
+    description:
+      'Next steps - B-full, no health certificate, pickup (digital flow)',
+  },
+  nextStepsDescriptionBFullNoHealthPost: {
+    id: 'dl.application:nextStepsDescriptionBFullNoHealthPost#markdown',
+    defaultMessage:
+      '* Umsókn þín um fullnaðarskírteini hefur verið móttekin og ökuskírteinið pantað og verður afhent samkvæmt þeim afhendingarmáta sem þú valdir, heimsent eða sótt á valda skrifstofu sýslumanns, að jafnaði um sjö dögum síðar. Þú getur uppfært ökuskírteinið þitt í Ísland.is appinu.',
+    description:
+      'Next steps - B-full, no health certificate, home delivery (digital flow)',
+  },
+  nextStepsDescriptionBFullHealthPickup: {
+    id: 'dl.application:nextStepsDescriptionBFullHealthPickup#markdown',
+    defaultMessage:
+      '* Meðfylgjandi gögn verða nú yfirfarin og ökuskírteini pantað. Athugið að ef fylgigögn eru röng eða vantar getur verið að umsókninni verði hafnað. Ef umsókn er hafnað þarf að óska eftir endurgreiðslu og senda inn nýja umsókn.\n* Ökuskírteini er afhent samkvæmt þeim afhendingarmáta sem þú valdir, heimsent eða sótt á valda skrifstofu sýslumanns ({deliveryLocation}), að jafnaði um sjö dögum síðar. Þú getur uppfært ökuskírteinið þitt í Ísland.is appinu.',
+    description:
+      'Next steps - B-full with health certificate, pickup (digital flow)',
+  },
+  nextStepsDescriptionBFullHealthPost: {
+    id: 'dl.application:nextStepsDescriptionBFullHealthPost#markdown',
+    defaultMessage:
+      '* Meðfylgjandi gögn verða nú yfirfarin og ökuskírteini pantað. Athugið að ef fylgigögn eru röng eða vantar getur verið að umsókninni verði hafnað. Ef umsókn er hafnað þarf að óska eftir endurgreiðslu og senda inn nýja umsókn.\n* Ökuskírteini er afhent samkvæmt þeim afhendingarmáta sem þú valdir, heimsent eða sótt á valda skrifstofu sýslumanns, að jafnaði um sjö dögum síðar. Þú getur uppfært ökuskírteinið þitt í Ísland.is appinu.',
+    description:
+      'Next steps - B-full with health certificate, home delivery (digital flow)',
   },
   congratulationsCertificateTitle: {
     id: 'dl.application:congratulationsCertificateTitle',

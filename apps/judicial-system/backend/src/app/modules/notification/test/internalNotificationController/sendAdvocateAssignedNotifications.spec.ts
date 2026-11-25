@@ -118,10 +118,14 @@ describe('InternalNotificationController - Send advocate assigned notifications'
       type: CaseType.ADMISSION_TO_FACILITY,
       court,
       courtCaseNumber,
-      defenderEmail: defender.email,
-      defenderName: defender.name,
-      defenderNationalId: '1234567890',
-      requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+      defendants: [
+        {
+          defenderEmail: defender.email,
+          defenderName: defender.name,
+          requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+          defenderNationalId: '1234567890',
+        },
+      ],
     } as Case
 
     beforeEach(async () => {
@@ -147,9 +151,13 @@ describe('InternalNotificationController - Send advocate assigned notifications'
       type: CaseType.CUSTODY,
       court,
       courtCaseNumber,
-      defenderEmail: defender.email,
-      defenderName: defender.name,
-      requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+      defendants: [
+        {
+          defenderEmail: defender.email,
+          defenderName: defender.name,
+          requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+        },
+      ],
     } as Case
 
     beforeEach(async () => {
@@ -175,9 +183,13 @@ describe('InternalNotificationController - Send advocate assigned notifications'
       type: CaseType.CUSTODY,
       court,
       courtCaseNumber,
-      defenderEmail: defender.email,
-      defenderName: defender.name,
-      requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
+      defendants: [
+        {
+          defenderEmail: defender.email,
+          defenderName: defender.name,
+          requestSharedWithDefender: RequestSharedWithDefender.READY_FOR_COURT,
+        },
+      ],
       notifications: [
         {
           type: TrackedNotificationType.READY_FOR_COURT,
@@ -205,9 +217,13 @@ describe('InternalNotificationController - Send advocate assigned notifications'
       type: CaseType.CUSTODY,
       court,
       courtCaseNumber,
-      defenderEmail: defender.email,
-      defenderName: defender.name,
-      requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+      defendants: [
+        {
+          defenderEmail: defender.email,
+          defenderName: defender.name,
+          requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+        },
+      ],
       notifications: [
         {
           type: TrackedNotificationType.ADVOCATE_ASSIGNED,
@@ -235,10 +251,14 @@ describe('InternalNotificationController - Send advocate assigned notifications'
       type: CaseType.PHONE_TAPPING,
       court,
       courtCaseNumber,
-      defenderEmail: defender.email,
-      defenderName: defender.name,
+      defendants: [
+        {
+          defenderEmail: defender.email,
+          defenderName: defender.name,
+          requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+        },
+      ],
       sessionArrangements: SessionArrangements.PROSECUTOR_PRESENT,
-      requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
     } as Case
 
     beforeEach(async () => {
@@ -257,10 +277,14 @@ describe('InternalNotificationController - Send advocate assigned notifications'
       type: CaseType.PHONE_TAPPING,
       court,
       courtCaseNumber,
-      defenderEmail: defender.email,
-      defenderName: defender.name,
+      defendants: [
+        {
+          defenderEmail: defender.email,
+          defenderName: defender.name,
+          requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+        },
+      ],
       sessionArrangements: SessionArrangements.ALL_PRESENT,
-      requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
       victims: [
         {
           lawyerEmail: victimLawyer.email,
@@ -301,8 +325,12 @@ describe('InternalNotificationController - Send advocate assigned notifications'
       court,
       courtCaseNumber,
       // The defender is also the legal rights protector of one of the victims
-      defenderEmail: defender.email,
-      defenderName: defender.name,
+      defendants: [
+        {
+          defenderEmail: defender.email,
+          defenderName: defender.name,
+        },
+      ],
       sessionArrangements: SessionArrangements.ALL_PRESENT,
       victims: [
         {

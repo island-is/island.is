@@ -1,11 +1,16 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { FieldTypesEnum } from '@island.is/form-system/shared'
-import { IsEnum, IsOptional, ValidateNested } from 'class-validator'
+import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 import { FieldSettings } from '../../../../dataTypes/fieldSettings/fieldSettings.model'
 
 export class UpdateFieldDto {
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  identifier?: string
+
   @IsOptional()
   @ValidateNested()
   @Type(() => LanguageType)
@@ -16,7 +21,13 @@ export class UpdateFieldDto {
   @ValidateNested()
   @Type(() => LanguageType)
   @ApiPropertyOptional({ type: LanguageType })
-  description?: LanguageType
+  informationText?: LanguageType
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => LanguageType)
+  @ApiPropertyOptional({ type: LanguageType })
+  tooltip?: LanguageType
 
   @IsOptional()
   @ApiPropertyOptional({ type: Boolean })

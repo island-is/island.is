@@ -1,11 +1,13 @@
 import XLSX from 'xlsx'
+import { FormatMessage } from '@island.is/application/types'
 import { DayRateRecord } from './types'
-import { getEligibleDayRateRecords } from './dayRateRecordUtils'
 import { Locale } from '@island.is/shared/types'
+import { m } from '../lib/messages'
 
 export const generateExcelSheet = (
   dayRateRecords: DayRateRecord[],
   locale: Locale,
+  formatMessage: FormatMessage,
 ): {
   filename: string
   base64Content: string
@@ -17,19 +19,13 @@ export const generateExcelSheet = (
     .toLocaleString(locale === 'en' ? 'en-US' : 'is-IS', { month: 'short' })
     .replace(/\.$/, '')
 
-  const icelandicHeaders = [
-    'Skráningarnúmer',
-    `Fjöldi daga á daggjaldi í ${lastMonthName}`,
-    `Útleigudagar í ${lastMonthName}`,
+  const headers = [
+    formatMessage(m.tableView.tableHeaderPermno),
+    formatMessage(m.tableView.tableHeaderTotalDays),
+    formatMessage(m.tableView.tableHeaderUsedDays),
   ]
-  const englishHeaders = [
-    'Registration number',
-    `Days on day rate in ${lastMonthName}`,
-    `Used days in ${lastMonthName}`,
-  ]
-  const headers = locale === 'is' ? icelandicHeaders : englishHeaders
 
-  const rows = getEligibleDayRateRecords(dayRateRecords).map((record) => [
+  const rows = dayRateRecords.map((record) => [
     record.permno,
     record.prevPeriodTotalDays,
     '',

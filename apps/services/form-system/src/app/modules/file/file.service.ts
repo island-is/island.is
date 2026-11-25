@@ -8,6 +8,7 @@ import { Value } from '../applications/models/value.model'
 import { FileConfig } from './file.config'
 import { Sequelize } from 'sequelize-typescript'
 import { Transaction } from 'sequelize'
+import { Application } from '../applications/models/application.model'
 
 @Injectable()
 export class FileService {
@@ -19,6 +20,8 @@ export class FileService {
     private readonly fileStorageService: FileStorageService,
     @InjectModel(Value)
     private readonly valueModel: typeof Value,
+    @InjectModel(Application)
+    private readonly applicationModel: typeof Application,
     private readonly sequelize: Sequelize,
   ) {}
 
@@ -45,6 +48,7 @@ export class FileService {
       if (exists) {
         let applicationId = ''
         let key = ''
+        let isTest: boolean | undefined
         try {
           await this.sequelize.transaction(async (transaction) => {
             const value = await this.valueModel.findByPk(valueId, {
@@ -58,6 +62,17 @@ export class FileService {
 
             applicationId = value.applicationId
             key = `${applicationId}/${sourceKey}`
+
+            const application = await this.applicationModel.findByPk(
+              applicationId,
+              { transaction },
+            )
+            if (!application) {
+              throw new NotFoundException(
+                `Application with id '${applicationId}' not found`,
+              )
+            }
+            isTest = application.isTest
 
             const res =
               await this.fileStorageService.copyObjectFromUploadBucket(
@@ -88,6 +103,7 @@ export class FileService {
             key,
             fieldId,
             valueId,
+            isTest,
             datadogEvent: 'form_system_file_uploaded',
           })
 
@@ -98,6 +114,7 @@ export class FileService {
             key,
             fieldId,
             valueId,
+            isTest,
             datadogEvent: 'form_system_file_upload_failed',
             error,
           })
@@ -145,6 +162,30 @@ export class FileService {
     }
   }
 
+  async deleteFileFromStorage(key: string): Promise<void> {
+    if (!key) {
+      throw new Error('Key must be provided for deletion')
+    }
+
+    const bucket = this.config.bucket
+    if (!bucket) {
+      throw new Error('S3 bucket not configured')
+    }
+
+    this.logger.info(`Deleting file ${key}`)
+
+    try {
+      const deleted = await this.s3Service.deleteObject({ bucket, key })
+      if (!deleted) {
+        throw new Error(`Failed to delete file '${key}' from S3`)
+      }
+      this.logger.info(`Successfully deleted file ${key}`)
+    } catch (error) {
+      this.logger.error('Error deleting file from S3', error)
+      throw error
+    }
+  }
+
   async deleteFile(
     key: string,
     valueId: string,
@@ -154,35 +195,53 @@ export class FileService {
       throw new Error('Key and valueId must be provided for deletion')
     }
 
-    const bucket = this.config.bucket
-    if (!bucket) {
-      throw new Error('S3 bucket not configured')
-    }
-
-    this.logger.info(`Deleting file ${key} for valueId ${valueId}`)
-
     try {
-      await this.s3Service.deleteObject({ bucket, key })
-      this.logger.info(`Successfully deleted file ${key}`)
-
-      // Update the Value to remove the S3 key reference
-      const value = await this.valueModel.findByPk(valueId, { transaction })
-      if (value) {
-        value.json = {
-          ...value.json,
-          s3Key: value.json?.s3Key?.filter((k: string) => k !== key) || [],
-        }
-
-        if (transaction) await value.save({ transaction })
-        else await value.save()
-
-        this.logger.info(`Cleared s3Key for valueId ${valueId} after deletion`)
-      } else {
-        this.logger.warn(`Value with id ${valueId} not found`)
-      }
+      await this.deleteFileFromStorage(key)
+      await this.removeFileReference(key, valueId, transaction)
     } catch (error) {
       this.logger.error('Error deleting file from S3', error)
       throw error
+    }
+  }
+
+  async removeFileReference(
+    key: string,
+    valueId: string,
+    transaction?: Transaction,
+  ): Promise<void> {
+    const value = await this.valueModel.findByPk(valueId, { transaction })
+    if (value) {
+      let json: unknown = value.json ?? {}
+      if (typeof json === 'string') {
+        try {
+          json = JSON.parse(json)
+        } catch (error) {
+          this.logger.error('Error parsing file value JSON', { valueId, error })
+          throw error
+        }
+      }
+      if (typeof json !== 'object' || json === null || Array.isArray(json)) {
+        const error = new Error('File value JSON must be an object')
+        this.logger.error('Error parsing file value JSON', { valueId, error })
+        throw error
+      }
+      const existingKeys = 's3Key' in json ? json.s3Key : undefined
+      const keys = Array.isArray(existingKeys)
+        ? existingKeys
+        : typeof existingKeys === 'string'
+        ? [existingKeys]
+        : []
+      value.json = {
+        ...json,
+        s3Key: keys.filter((k) => k !== key),
+      }
+
+      if (transaction) await value.save({ transaction })
+      else await value.save()
+
+      this.logger.info(`Cleared s3Key for valueId ${valueId}`)
+    } else {
+      this.logger.warn(`Value with id ${valueId} not found`)
     }
   }
 }

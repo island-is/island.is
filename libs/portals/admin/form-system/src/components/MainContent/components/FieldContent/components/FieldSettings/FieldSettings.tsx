@@ -3,6 +3,8 @@ import { FieldTypesEnum } from '@island.is/form-system/enums'
 import { useContext } from 'react'
 import { ControlContext } from '../../../../../../context/ControlContext'
 import { CheckboxSettings } from './components/CheckboxSettings'
+import { FamilySettings } from './components/FamilySettings'
+import { IskSettings } from './components/IskSettings'
 import { ListSettings } from './components/ListSettings'
 import { MessageWithLinkSettings } from './components/MessageWithLinkSettings'
 import { NationalIdSettings } from './components/NationalIdSettings'
@@ -26,6 +28,7 @@ export const FieldSettings = () => {
         <TextFieldSettings />
       )}
       {currentItem.fieldType === FieldTypesEnum.NUMBERBOX && <NumberSettings />}
+      {currentItem.fieldType === FieldTypesEnum.ISK_SUMBOX && <IskSettings />}
       {currentItem.fieldType === FieldTypesEnum.DROPDOWN_LIST && (
         <ListSettings />
       )}
@@ -39,6 +42,7 @@ export const FieldSettings = () => {
         <PaymentFieldSettings />
       )}
       {currentItem.fieldType === FieldTypesEnum.ASSETS && <AssetsSettings />}
+      {currentItem.fieldType === FieldTypesEnum.FAMILY && <FamilySettings />}
       {currentItem.fieldType === FieldTypesEnum.NATIONAL_ID && (
         <NationalIdSettings />
       )}

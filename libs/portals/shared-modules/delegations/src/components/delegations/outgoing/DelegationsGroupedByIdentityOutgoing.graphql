@@ -3,6 +3,7 @@ fragment AuthApiScopeOutgoing on AuthApiScope {
   displayName
   description
   allowsWrite
+  requiresConfirmation
   thirdPartyLoginUrl
 }
 
@@ -11,6 +12,7 @@ query AuthDelegationsGroupedByIdentityOutgoing($lang: String) {
     nationalId
     name
     type
+    direction
     subjectId
     totalScopeCount
     scopes {

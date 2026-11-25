@@ -13,6 +13,7 @@ import {
   core,
   signedVerdictOverview as m,
 } from '@island.is/judicial-system-web/messages'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   DateTime,
@@ -20,10 +21,7 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import type {
-  Case,
-  UserRole,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { hasDateChanged } from '@island.is/judicial-system-web/src/utils/formHelper'
 import type { UpdateCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -31,13 +29,13 @@ import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { createCaseModifiedExplanation } from './ModifyDatesModal.logic'
 
-interface DateTime {
+interface DateTimeValue {
   value?: Date
   isValid: boolean
 }
 
 interface Props {
-  workingCase: Case
+  workingCase: WorkingCase
   onSubmit: (updateCase: UpdateCase) => Promise<boolean>
   isSendingNotification: boolean
   isUpdatingCase: boolean
@@ -45,9 +43,9 @@ interface Props {
 }
 
 const getModificationSuccessText = (
-  workingCase: Case,
-  modifiedValidToDate: DateTime | undefined,
-  modifiedIsolationToDate: DateTime | undefined,
+  workingCase: WorkingCase,
+  modifiedValidToDate: DateTimeValue | undefined,
+  modifiedIsolationToDate: DateTimeValue | undefined,
   formatMessage: IntlShape['formatMessage'],
   userRole?: UserRole | null,
 ) => {
@@ -73,16 +71,26 @@ const getModificationSuccessText = (
   )
 
   if (workingCase.type === CaseType.TRAVEL_BAN) {
-    return formatMessage(m.sections.modifyDatesModal.travelBanSuccessText, {
-      date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
-        'dagur,',
-        'dagsins',
-      )} kl. ${formatDate(modifiedValidToDate?.value, TIME_FORMAT)}`,
-      userRole,
-    })
+    return formatMessage(
+      {
+        id: m.sections.modifyDatesModal.travelBanSuccessText,
+        defaultMessage: m.sections.modifyDatesModal.travelBanSuccessText,
+      },
+      {
+        date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
+          'dagur,',
+          'dagsins',
+        )} kl. ${formatDate(modifiedValidToDate?.value, TIME_FORMAT)}`,
+        userRole,
+      },
+    )
   } else if (validToDateAndIsolationToDateAreTheSame) {
     modification = formatMessage(
-      m.sections.modifyDatesModal.validToDateAndIsolationToDateAreTheSame,
+      {
+        id: m.sections.modifyDatesModal.validToDateAndIsolationToDateAreTheSame,
+        defaultMessage:
+          m.sections.modifyDatesModal.validToDateAndIsolationToDateAreTheSame,
+      },
       {
         caseType: workingCase.type,
         date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
@@ -94,7 +102,10 @@ const getModificationSuccessText = (
   } else if (validToDateChanged || isolationToDateChanged) {
     if (validToDateChanged) {
       modification = formatMessage(
-        m.sections.modifyDatesModal.validToDateChanged,
+        {
+          id: m.sections.modifyDatesModal.validToDateChanged,
+          defaultMessage: m.sections.modifyDatesModal.validToDateChanged,
+        },
         {
           caseType: workingCase.type,
           date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
@@ -107,7 +118,10 @@ const getModificationSuccessText = (
 
     if (isolationToDateChanged) {
       const isolationText = formatMessage(
-        m.sections.modifyDatesModal.isolationDateChanged,
+        {
+          id: m.sections.modifyDatesModal.isolationDateChanged,
+          defaultMessage: m.sections.modifyDatesModal.isolationDateChanged,
+        },
         {
           date: `${formatDate(modifiedIsolationToDate?.value, 'PPPP')?.replace(
             'dagur,',
@@ -121,9 +135,15 @@ const getModificationSuccessText = (
     }
   }
 
-  return formatMessage(m.sections.modifyDatesModal.successText, {
-    modification,
-  })
+  return formatMessage(
+    {
+      id: m.sections.modifyDatesModal.successText,
+      defaultMessage: m.sections.modifyDatesModal.successText,
+    },
+    {
+      modification,
+    },
+  )
 }
 
 const getTitle = (caseType?: CaseType | null): string => {
@@ -175,9 +195,10 @@ const ModifyDatesModal: FC<Props> = ({
   isUpdatingCase,
   closeModal,
 }) => {
-  const [modifiedValidToDate, setModifiedValidToDate] = useState<DateTime>()
+  const [modifiedValidToDate, setModifiedValidToDate] =
+    useState<DateTimeValue>()
   const [modifiedIsolationToDate, setModifiedIsolationToDate] =
-    useState<DateTime>()
+    useState<DateTimeValue>()
   const [caseModifiedExplanation, setCaseModifiedExplanation] =
     useState<string>()
 
@@ -353,7 +374,7 @@ const ModifyDatesModal: FC<Props> = ({
             text={successText}
             buttons={[
               {
-                text: formatMessage(core.closeModal),
+                text: core.closeModal,
                 onClick: () => {
                   closeModal()
 
@@ -404,17 +425,17 @@ const ModifyDatesModal: FC<Props> = ({
           >
             <Box marginBottom={5}>
               <SectionHeading
-                title={formatMessage(
-                  m.sections.modifyDatesModal.reasonForChangeTitle,
-                )}
+                title={m.sections.modifyDatesModal.reasonForChangeTitle}
               />
               <Input
                 name="reason"
-                label={formatMessage(
-                  m.sections.modifyDatesModal.reasonForChangeLabel,
-                )}
+                label={m.sections.modifyDatesModal.reasonForChangeLabel}
                 placeholder={formatMessage(
-                  m.sections.modifyDatesModal.reasonForChangePlaceholder,
+                  {
+                    id: m.sections.modifyDatesModal.reasonForChangePlaceholder,
+                    defaultMessage:
+                      m.sections.modifyDatesModal.reasonForChangePlaceholder,
+                  },
                   { caseType: workingCase.type },
                 )}
                 onChange={(event) => {
@@ -436,7 +457,11 @@ const ModifyDatesModal: FC<Props> = ({
                   name="modifiedValidToDate"
                   size="sm"
                   datepickerLabel={formatMessage(
-                    m.sections.modifyDatesModal.modifiedValidToDateLabel,
+                    {
+                      id: m.sections.modifyDatesModal.modifiedValidToDateLabel,
+                      defaultMessage:
+                        m.sections.modifyDatesModal.modifiedValidToDateLabel,
+                    },
                     {
                       caseType: workingCase.type,
                     },
@@ -458,10 +483,9 @@ const ModifyDatesModal: FC<Props> = ({
                     <DateTime
                       name="modifiedIsolationToDate"
                       size="sm"
-                      datepickerLabel={formatMessage(
-                        m.sections.modifyDatesModal
-                          .modifiedIsolationToDateLabel,
-                      )}
+                      datepickerLabel={
+                        m.sections.modifyDatesModal.modifiedIsolationToDateLabel
+                      }
                       selectedDate={modifiedIsolationToDate?.value}
                       onChange={(value, valid) => {
                         setModifiedIsolationToDate({

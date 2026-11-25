@@ -45,11 +45,17 @@ export class UpdateFieldsDisplayOrderInput {
 
 @InputType('FormSystemUpdateFieldDtoInput')
 export class UpdateFieldDtoInput {
+  @Field(() => String, { nullable: true })
+  identifier?: string
+
   @Field(() => LanguageTypeInput, { nullable: true })
   name?: LanguageTypeInput
 
   @Field(() => LanguageTypeInput, { nullable: true })
-  description?: LanguageTypeInput
+  informationText?: LanguageTypeInput
+
+  @Field(() => LanguageTypeInput, { nullable: true })
+  tooltip?: LanguageTypeInput
 
   @Field(() => Boolean, { nullable: true })
   isPartOfMultiset?: boolean
@@ -95,7 +101,10 @@ export class FieldInput {
   displayOrder?: number
 
   @Field(() => LanguageTypeInput, { nullable: true })
-  description?: LanguageTypeInput
+  informationText?: LanguageTypeInput
+
+  @Field(() => LanguageTypeInput, { nullable: true })
+  tooltip?: LanguageTypeInput
 
   @Field(() => Boolean, { nullable: true })
   isPartOfMultiset?: boolean

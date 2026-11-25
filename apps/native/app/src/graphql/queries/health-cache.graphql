@@ -1,0 +1,3 @@
+query GetHealthBasicInfoFetchedAt {
+  healthBasicInfoFetchedAt @client
+}

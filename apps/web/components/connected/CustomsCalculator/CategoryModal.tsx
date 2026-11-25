@@ -1,15 +1,8 @@
-import { useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useClickAway } from 'react-use'
 
-import {
-  Box,
-  Button,
-  Icon,
-  Inline,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Button, Icon, Stack, Text } from '@island.is/island-ui/core'
 
 import { translation as translationStrings } from './translation.strings'
 import * as styles from './CategoryModal.css'
@@ -43,12 +36,25 @@ export const CategoryModal = ({
 
   const dropdownRef = useRef<HTMLDivElement>(null)
 
+  // Whether there are options below the visible part of the list, used to
+  // show a fade at the bottom so it's clear the list can be scrolled
+  const [canScrollDown, setCanScrollDown] = useState(false)
+  const updateCanScrollDown = useCallback(() => {
+    const element = dropdownRef.current
+    setCanScrollDown(
+      !!element &&
+        element.scrollTop + element.clientHeight < element.scrollHeight - 1,
+    )
+  }, [])
+  useEffect(updateCanScrollDown, [isVisible, options, updateCanScrollDown])
+
   return (
     <div ref={containerRef} style={{ position: 'relative' }}>
       <Button
         icon="filter"
         size="small"
         variant="utility"
+        colorScheme="white"
         onClick={() => setIsVisible((v) => !v)}
         disabled={isVisible}
       >
@@ -63,9 +69,17 @@ export const CategoryModal = ({
           paddingRight={1}
         >
           <Box marginBottom={topComponent ? 2 : 3}>
-            <Inline alignY="center" space={2} justifyContent="spaceBetween">
-              <Text variant="h4">{title}</Text>
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="spaceBetween"
+              columnGap={2}
+            >
+              <Box minWidth={0}>
+                <Text variant="h4">{title}</Text>
+              </Box>
               <Box
+                flexShrink={0}
                 tabIndex={0}
                 role="button"
                 aria-label={formatMessage(translationStrings.closeModal)}
@@ -80,13 +94,14 @@ export const CategoryModal = ({
               >
                 <Icon icon="close" color="blue400" size="large" />
               </Box>
-            </Inline>
+            </Box>
           </Box>
 
           <Box
             className={styles.scrollableContent}
             paddingRight={4}
             ref={dropdownRef}
+            onScroll={updateCanScrollDown}
           >
             <Stack space={2}>
               {topComponent}
@@ -136,6 +151,7 @@ export const CategoryModal = ({
               </Box>
             </Stack>
           </Box>
+          {canScrollDown && <div className={styles.scrollFade} />}
         </Box>
       )}
     </div>

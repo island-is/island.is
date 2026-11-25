@@ -20,6 +20,7 @@ export const ApplicationFragment = gql`
       ...Section
     }
     status
+    pruned
     draftFinishedSteps
     draftTotalSteps
     allowProceedOnValidationFail

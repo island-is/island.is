@@ -1,3 +1,8 @@
+import faker from 'faker'
+
+import type { InstitutionUser } from '@island.is/judicial-system/types'
+import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
+import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CaseIndictmentRulingDecision,
   ServiceRequirement,
@@ -6,7 +11,34 @@ import {
 import {
   getAppealExpirationInfo,
   getDefendantTagConfig,
+  getInfoCardDefender,
+  prefersAppealDefenderOnInfoCard,
 } from './DefendantInfo.logic'
+import { strings } from './DefendantInfo.strings'
+
+const defendantName = faker.name.findName()
+const defenderName = faker.name.findName()
+const appealDefenderName = faker.name.findName()
+const defenderEmail = faker.internet.email()
+const appealDefenderEmail = faker.internet.email()
+const defenderPhoneNumber = faker.phone.phoneNumber()
+const appealDefenderPhoneNumber = faker.phone.phoneNumber()
+
+const defendantWith = (overrides: Partial<Defendant>): Defendant =>
+  ({
+    id: 'defendant-id',
+    name: defendantName,
+    ...overrides,
+  } as Defendant)
+
+const userWith = (
+  role: UserRole,
+  institutionType: InstitutionType,
+): InstitutionUser =>
+  ({
+    role,
+    institution: { type: institutionType },
+  } as InstitutionUser)
 
 describe('DefendantInfo', () => {
   describe('getAdditionalDataSections', () => {
@@ -30,9 +62,7 @@ describe('DefendantInfo', () => {
         serviceRequirement,
       })
 
-      expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.appeal_date_not_begun_v2',
-      )
+      expect(dataSections.message.id).toStrictEqual(strings.appealDateNotBegun)
     })
 
     test('should return the correct string if serviceRequirement is NOT_APPLICABLE and verdictAppealDeadline is not provided', () => {
@@ -47,9 +77,7 @@ describe('DefendantInfo', () => {
         serviceRequirement,
       })
 
-      expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.appeal_date_not_begun_v2',
-      )
+      expect(dataSections.message.id).toStrictEqual(strings.appealDateNotBegun)
     })
 
     test('should return the correct string if serviceRequirement is NOT_REQUIRED', () => {
@@ -63,9 +91,7 @@ describe('DefendantInfo', () => {
         serviceRequirement,
       })
 
-      expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.service_not_required',
-      )
+      expect(dataSections.message.id).toStrictEqual(strings.serviceNotRequired)
     })
 
     test('should return the correct string if serviceRequirement is REQUIRED and appeal expiration date is in the future', () => {
@@ -80,7 +106,7 @@ describe('DefendantInfo', () => {
       })
 
       expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.appeal_expiration_date_v2',
+        strings.appealExpirationDate,
       )
       expect(dataSections.date).toStrictEqual('05.08.2024')
     })
@@ -97,7 +123,7 @@ describe('DefendantInfo', () => {
       })
 
       expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.appeal_expiration_date_v2',
+        strings.appealExpirationDate,
       )
       expect(dataSections.date).toStrictEqual('05.08.2024')
     })
@@ -113,9 +139,7 @@ describe('DefendantInfo', () => {
         serviceRequirement,
       })
 
-      expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.appeal_date_expired_v2',
-      )
+      expect(dataSections.message.id).toStrictEqual(strings.appealDateExpired)
       expect(dataSections.date).toStrictEqual('07.07.2024')
     })
 
@@ -130,9 +154,7 @@ describe('DefendantInfo', () => {
         serviceRequirement,
       })
 
-      expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.appeal_date_expired_v2',
-      )
+      expect(dataSections.message.id).toStrictEqual(strings.appealDateExpired)
       expect(dataSections.date).toStrictEqual('07.07.2024')
     })
   })
@@ -306,6 +328,107 @@ describe('DefendantInfo', () => {
       })
 
       expect(tag).toBeNull()
+    })
+  })
+
+  describe('getInfoCardDefender', () => {
+    const defendant = defendantWith({
+      defenderName,
+      defenderEmail,
+      defenderPhoneNumber,
+      appealDefenderName,
+      appealDefenderEmail,
+      appealDefenderPhoneNumber,
+    })
+
+    test('prefers the appeal defender for court of appeals users', () => {
+      expect(
+        getInfoCardDefender(defendant, {
+          user: userWith(
+            UserRole.COURT_OF_APPEALS_JUDGE,
+            InstitutionType.COURT_OF_APPEALS,
+          ),
+        }),
+      ).toEqual({
+        name: appealDefenderName,
+        email: appealDefenderEmail,
+        phoneNumber: appealDefenderPhoneNumber,
+      })
+    })
+
+    test('prefers the appeal defender for public prosecution office staff', () => {
+      expect(
+        getInfoCardDefender(defendant, {
+          user: userWith(
+            UserRole.PUBLIC_PROSECUTOR_STAFF,
+            InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+          ),
+        }).name,
+      ).toBe(appealDefenderName)
+    })
+
+    test('prefers the appeal defender for public prosecutors', () => {
+      expect(
+        getInfoCardDefender(defendant, {
+          user: userWith(
+            UserRole.PROSECUTOR,
+            InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
+          ),
+        }).name,
+      ).toBe(appealDefenderName)
+    })
+
+    test('keeps the district-court defender for other roles', () => {
+      expect(
+        getInfoCardDefender(defendant, {
+          user: userWith(
+            UserRole.DISTRICT_COURT_JUDGE,
+            InstitutionType.DISTRICT_COURT,
+          ),
+        }),
+      ).toEqual({
+        name: defenderName,
+        email: defenderEmail,
+        phoneNumber: defenderPhoneNumber,
+      })
+    })
+
+    test('falls back to the district-court defender when no appeal defender is set', () => {
+      expect(
+        getInfoCardDefender(
+          defendantWith({
+            defenderName,
+            defenderEmail,
+          }),
+          {
+            user: userWith(
+              UserRole.COURT_OF_APPEALS_JUDGE,
+              InstitutionType.COURT_OF_APPEALS,
+            ),
+          },
+        ).name,
+      ).toBe(defenderName)
+    })
+  })
+
+  describe('prefersAppealDefenderOnInfoCard', () => {
+    test('is true for the appeal-facing roles and false otherwise', () => {
+      expect(
+        prefersAppealDefenderOnInfoCard(
+          userWith(
+            UserRole.COURT_OF_APPEALS_ASSISTANT,
+            InstitutionType.COURT_OF_APPEALS,
+          ),
+        ),
+      ).toBe(true)
+      expect(
+        prefersAppealDefenderOnInfoCard(
+          userWith(
+            UserRole.PROSECUTOR,
+            InstitutionType.POLICE_PROSECUTORS_OFFICE,
+          ),
+        ),
+      ).toBe(false)
     })
   })
 })

@@ -9,14 +9,12 @@ import {
   RadioButton,
 } from '@island.is/island-ui/core'
 import { appealCorrectionLock } from '@island.is/judicial-system/types'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import type {
-  Case,
-  CourtSessionResponse,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { CourtSessionResponse } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   AppealDecisionPartyRole,
   CaseAppealDecision,
@@ -26,8 +24,8 @@ import { rulingOrderAppealCase } from '@island.is/judicial-system-web/src/utils/
 
 interface Props {
   courtSession: CourtSessionResponse
-  workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
+  workingCase: WorkingCase
+  setWorkingCase: Dispatch<SetStateAction<WorkingCase>>
 }
 
 // Identifies a single party's decision row for the session's ruling order.

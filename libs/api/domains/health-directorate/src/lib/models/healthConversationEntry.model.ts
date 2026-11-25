@@ -61,10 +61,12 @@ export class HealthDirectorateHealthConversationEntry {
   })
   amountIsk?: number
 
-  @Field({
-    nullable: true,
-    description:
-      'A payment the patient has already started for this certificate and which has not yet expired. When set, show a pending-payment state and poll the certificate query rather than opening a new payment intent.',
-  })
+  @Field({ nullable: true })
   pendingPaymentId?: string
+
+  @Field(() => GraphQLISODateTime, {
+    nullable: true,
+    description: 'When the open intent named by pendingPaymentId was created.',
+  })
+  pendingPaymentStartedAt?: Date
 }

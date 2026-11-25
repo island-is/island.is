@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'application-api-payment',
   preset: './jest.preset.js',

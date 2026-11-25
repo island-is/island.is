@@ -6,11 +6,9 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import {
-  isCompletedCase,
-  RequestSharedWithDefender,
-} from '@island.is/judicial-system/types'
+import { type User } from '@island.is/judicial-system/types'
 
+import { isRequestSharedWithDefender } from '../../defendant'
 import { Case, DateLog } from '../../repository'
 
 @Injectable()
@@ -19,27 +17,19 @@ export class RequestSharedWithDefenderGuard implements CanActivate {
     const request = context.switchToHttp().getRequest()
 
     const theCase: Case = request.case
+    const user: User | undefined = request.user?.currentUser
 
     if (!theCase) {
       throw new InternalServerErrorException('Missing case')
     }
 
-    // Defender can always see the request if it's in a completed state
-    if (isCompletedCase(theCase.state)) {
-      return true
-    }
-
     if (
-      theCase.requestSharedWithDefender ===
-        RequestSharedWithDefender.COURT_DATE &&
-      Boolean(DateLog.arraignmentDate(theCase.dateLogs))
-    ) {
-      return true
-    }
-
-    if (
-      theCase.requestSharedWithDefender ===
-      RequestSharedWithDefender.READY_FOR_COURT
+      isRequestSharedWithDefender({
+        state: theCase.state,
+        defendants: theCase.defendants,
+        nationalId: user?.nationalId,
+        hasArraignmentDate: Boolean(DateLog.arraignmentDate(theCase.dateLogs)),
+      })
     ) {
       return true
     }

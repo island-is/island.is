@@ -14,6 +14,7 @@ import { DefendantEventType } from '@island.is/judicial-system/types'
 
 import { Case } from './case.model'
 import { Defendant } from './defendant.model'
+import { Verdict } from './verdict.model'
 
 @Table({
   tableName: 'defendant_event_log',
@@ -85,11 +86,6 @@ export class DefendantEventLog extends Model {
   @ApiProperty({ type: Date })
   modified!: Date
 
-  @ForeignKey(() => Case)
-  @Column({ type: DataType.UUID, allowNull: false })
-  @ApiProperty({ type: String })
-  caseId!: string
-
   @ForeignKey(() => Defendant)
   @Column({ type: DataType.UUID, allowNull: false })
   @ApiProperty({ type: String })
@@ -102,6 +98,16 @@ export class DefendantEventLog extends Model {
   })
   @ApiProperty({ enum: DefendantEventType })
   eventType!: DefendantEventType
+
+  @ForeignKey(() => Case)
+  @Column({ type: DataType.UUID, allowNull: false })
+  @ApiProperty({ type: String })
+  caseId!: string
+
+  @ForeignKey(() => Verdict)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  verdictId?: string
 
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })

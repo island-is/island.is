@@ -73,6 +73,19 @@ export class Domain extends Model {
   })
   contactEmail?: string
 
+  @Column({
+    type: DataType.STRING,
+    set(this: Domain, value: string | null | undefined) {
+      this.setDataValue('municipalityCode', value?.trim() || null)
+    },
+  })
+  @ApiPropertyOptional({
+    example: '0000',
+    description:
+      'Municipality number (sveitarfélagsnúmer), used to match users to their municipality domain.',
+  })
+  municipalityCode?: string
+
   @CreatedAt
   @ApiProperty()
   readonly created!: Date

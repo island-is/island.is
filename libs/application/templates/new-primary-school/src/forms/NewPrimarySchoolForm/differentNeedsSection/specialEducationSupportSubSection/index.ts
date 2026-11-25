@@ -25,6 +25,7 @@ export const specialEducationSupportSubSection = buildSubSection({
   condition: (answers, externalData) =>
     //Business logic override as applicationConfig isn't ready on MMS side
     //Should be removed when applicationConfig is ready
+    // eslint-disable-next-line no-constant-binary-expression -- intentional override, see above
     false &&
     shouldShowPage(answers, externalData, ApplicationFeatureKey.SOCIAL_INFO) &&
     hasSpecialEducationSubType(answers, externalData),

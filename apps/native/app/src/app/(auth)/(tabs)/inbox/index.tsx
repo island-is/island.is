@@ -36,12 +36,11 @@ import {
   useInboxFilterStore,
 } from '@/stores/inbox-filter-store'
 import {
-  blue400,
   EmptyList,
   fontByWeight,
   ListItemSkeleton,
   SearchBar,
-  Tag,
+  FilterChip,
   TopLine,
   Typography,
 } from '@/ui'
@@ -94,6 +93,7 @@ const Action = ({
   label: string
   onPress: () => void
 }) => {
+  const theme = useTheme()
   const { width } = useWindowDimensions()
   const { left, right } = useSafeAreaInsets()
   const itemWidth = (width - left - right) / 3 - 32
@@ -114,7 +114,7 @@ const Action = ({
         style={{
           width: 16,
           height: 16,
-          tintColor: blue400,
+          tintColor: theme.tokens.interactive.foreground.primary,
         }}
         resizeMode="contain"
       />
@@ -451,7 +451,7 @@ export default function InboxScreen() {
           text: intl.formatMessage({
             id: 'inbox.markAllAsReadPromptConfirm',
           }),
-          style: 'destructive',
+          isPreferred: true,
           onPress: async () => {
             await markAllAsRead()
           },
@@ -549,7 +549,11 @@ export default function InboxScreen() {
       <Image
         source={icon}
         resizeMode="contain"
-        style={{ width: 20, height: 20, tintColor: theme.color.blue400 }}
+        style={{
+          width: 20,
+          height: 20,
+          tintColor: theme.tokens.interactive.foreground.primary,
+        }}
       />
     </Pressable>
   )
@@ -596,7 +600,7 @@ export default function InboxScreen() {
                       )
                     }
                   },
-                  tintColor: theme.color.blue400,
+                  tintColor: theme.tokens.interactive.foreground.primary,
                 },
               ]
             : [
@@ -613,7 +617,7 @@ export default function InboxScreen() {
                   onPress() {
                     setSelectedState((v) => !v)
                   },
-                  tintColor: theme.color.blue400,
+                  tintColor: theme.tokens.interactive.foreground.primary,
                 },
               ],
           // Always rendered via `headerRight`: the native items API breaks
@@ -624,6 +628,7 @@ export default function InboxScreen() {
               selectState ? (
                 <Pressable
                   onPress={resetSelectState}
+                  accessibilityRole="button"
                   style={{
                     height: 46,
                     justifyContent: 'center',
@@ -633,7 +638,7 @@ export default function InboxScreen() {
                   <Typography
                     size={15}
                     weight="400"
-                    color={theme.color.blue400}
+                    color={theme.tokens.interactive.foreground.primary}
                   >
                     {intl.formatMessage({ id: 'inbox.bulkSelectCancelButton' })}
                   </Typography>
@@ -668,7 +673,7 @@ export default function InboxScreen() {
         <Stack.Toolbar placement="bottom">
           <Stack.Toolbar.Button
             icon="star"
-            tintColor={blue400}
+            tintColor={theme.tokens.interactive.foreground.primary}
             onPress={onStarPress}
           >
             {intl.formatMessage({
@@ -678,7 +683,7 @@ export default function InboxScreen() {
           </Stack.Toolbar.Button>
           <Stack.Toolbar.Button
             icon="tray"
-            tintColor={blue400}
+            tintColor={theme.tokens.interactive.foreground.primary}
             onPress={onArchivePress}
           >
             {intl.formatMessage({
@@ -687,9 +692,9 @@ export default function InboxScreen() {
             })}
           </Stack.Toolbar.Button>
           <Stack.Toolbar.Button
-            tintColor={blue400}
+            tintColor={theme.tokens.interactive.foreground.primary}
             icon="envelope.open"
-            onPress={onMarkAllAsReadPress}
+            onPress={onMarkAsReadPress}
           >
             {intl.formatMessage({
               id: 'inbox.bulkSelectActionRead',
@@ -722,7 +727,7 @@ export default function InboxScreen() {
             {isFilterApplied ? (
               <TagsWrapper>
                 {opened && (
-                  <Tag
+                  <FilterChip
                     title={intl.formatMessage({
                       id: 'inbox.filterOpenedTagTitle',
                     })}
@@ -731,7 +736,7 @@ export default function InboxScreen() {
                   />
                 )}
                 {archived && (
-                  <Tag
+                  <FilterChip
                     title={intl.formatMessage({
                       id: 'inbox.filterArchivedTagTitle',
                     })}
@@ -742,7 +747,7 @@ export default function InboxScreen() {
                   />
                 )}
                 {bookmarked && (
-                  <Tag
+                  <FilterChip
                     title={intl.formatMessage({
                       id: 'inbox.filterStarredTagTitle',
                     })}
@@ -761,7 +766,7 @@ export default function InboxScreen() {
                         ?.name?.trim() ??
                       senderId
                     return (
-                      <Tag
+                      <FilterChip
                         key={senderId}
                         title={name}
                         closable
@@ -784,7 +789,7 @@ export default function InboxScreen() {
                       )?.name ??
                       categoryId
                     return (
-                      <Tag
+                      <FilterChip
                         key={categoryId}
                         title={name}
                         closable
@@ -799,7 +804,7 @@ export default function InboxScreen() {
                     )
                   })}
                 {dateFrom && (
-                  <Tag
+                  <FilterChip
                     title={`${intl.formatMessage({
                       id: 'inbox.filterDateFromLabel',
                     })} - ${intl.formatDate(dateFrom)}`}
@@ -810,7 +815,7 @@ export default function InboxScreen() {
                   />
                 )}
                 {dateTo && (
-                  <Tag
+                  <FilterChip
                     title={`${intl.formatMessage({
                       id: 'inbox.filterDateToLabel',
                     })} - ${intl.formatDate(dateTo)}`}
@@ -834,7 +839,7 @@ export default function InboxScreen() {
               <ActivityIndicator
                 size="small"
                 animating
-                color={theme.color.blue400}
+                color={theme.tokens.interactive.foreground.primary}
               />
             </LoadingWrapper>
           ) : null

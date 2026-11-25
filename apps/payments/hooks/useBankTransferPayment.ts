@@ -22,6 +22,13 @@ interface UseBankTransferPaymentProps {
 
 const toLocale = (lang?: string): Locale => (lang === 'en' ? 'en' : 'is')
 
+interface BankTransferPaymentInput {
+  // Bare digits.
+  bankAccountNumber: string
+  // Bare digits. The individual authorising the transfer when the payer is a company.
+  actorNationalId?: string
+}
+
 export const useBankTransferPayment = ({
   paymentFlowId,
   onPaymentError,
@@ -32,7 +39,10 @@ export const useBankTransferPayment = ({
     useCreateBankTransferMutation()
 
   const processBankTransferPayment = useCallback(
-    async (bankAccountNumber: string) => {
+    async ({
+      bankAccountNumber,
+      actorNationalId,
+    }: BankTransferPaymentInput) => {
       if (!paymentFlowId) {
         onPaymentError({ code: CardErrorCode.GenericDecline })
         return
@@ -45,6 +55,7 @@ export const useBankTransferPayment = ({
               paymentFlowId,
               locale: toLocale(lang),
               bankAccountNumber,
+              actorNationalId,
             },
           },
         })

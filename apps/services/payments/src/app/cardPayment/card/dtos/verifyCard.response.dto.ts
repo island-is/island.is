@@ -1,0 +1,88 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import {
+  IsArray,
+  IsBoolean,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator'
+import { CardInformation } from '../../dtos/CardInformation.dto'
+
+class VerificationField {
+  @ApiProperty({ description: 'Field name', type: String })
+  @IsString()
+  name!: string
+
+  @ApiProperty({ description: 'Field value', type: String })
+  @IsString()
+  value!: string
+}
+
+export class VerifyCardResponse {
+  @ApiPropertyOptional({
+    description: 'Raw response from card verification',
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  cardVerificationRawResponse?: string
+
+  @ApiProperty({ description: 'Post URL for verification', type: String })
+  @IsString()
+  postUrl!: string
+
+  @ApiProperty({
+    description: 'Verification fields',
+    type: [VerificationField],
+  })
+  @IsArray()
+  verificationFields!: VerificationField[]
+
+  @ApiPropertyOptional({
+    description: 'Additional fields',
+    type: [VerificationField],
+  })
+  @IsArray()
+  @IsOptional()
+  additionalFields?: VerificationField[]
+
+  @ApiProperty({
+    description: 'Indicates if the verification was successful',
+    type: Boolean,
+  })
+  @IsBoolean()
+  isSuccess!: boolean
+
+  @ApiPropertyOptional({
+    description: 'Card information',
+    type: CardInformation,
+  })
+  @IsObject()
+  @IsOptional()
+  cardInformation?: CardInformation
+
+  @ApiProperty({ description: 'Script path for further actions', type: String })
+  @IsString()
+  @IsOptional()
+  scriptPath?: string
+
+  @ApiPropertyOptional({
+    description: 'Response code from the verification',
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  responseCode?: string
+
+  @ApiPropertyOptional({
+    description: 'Response time of the verification',
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  responseTime?: string
+
+  @ApiProperty({ description: 'Correlation ID for tracking', type: String })
+  @IsString()
+  correlationId!: string
+}

@@ -41,7 +41,9 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
+import { getOrCreateTransaction } from '../../middleware'
 import {
+  CaseExistsForUpdateGuard,
   CaseExistsGuard,
   CaseReadGuard,
   CaseTypeGuard,
@@ -62,15 +64,29 @@ import {
 } from './guards/subpoenaExists.guard'
 import { SubpoenaService } from './subpoena.service'
 
+// createSubpoenas decides against the case row it reads and the defendants on
+// it: which defendants to summon, which earlier subpoenas to revoke, whether
+// to file court documents. It reads the case under FOR UPDATE through
+// CaseExistsForUpdateGuard, so the decision is made against a row no one else
+// can change until the request's transaction commits.
+//
+// That guard cannot sit at class level: getSubpoena calls the police inside a
+// transaction of its own, and the two pdf routes only read, so all three keep
+// the plain CaseExistsGuard - a lock held across an external call, or taken
+// for a read, is exactly what the locking guard must not do. Every route
+// therefore lists its own exists guard first, and CaseTypeGuard and
+// CaseReadGuard move with it: they decide from request.case, so they have to
+// follow whichever guard put the case there.
+//
+// RolesGuard stays at class level, ahead of the locking read. It can, because
+// every rule on this controller is a bare user role with no canActivate: none
+// of them reads request.case, so a caller a route has no rule for is turned
+// away before any case row is locked. subpoenaRolesRules.spec.ts pins the
+// assumption, so a rule that starts reading the case cannot silently reopen
+// the exposure.
 @Controller('api/case/:caseId')
 @ApiTags('subpoenas')
-@UseGuards(
-  JwtAuthUserGuard,
-  RolesGuard,
-  CaseExistsGuard,
-  new CaseTypeGuard(indictmentCases),
-  CaseReadGuard,
-)
+@UseGuards(JwtAuthUserGuard, RolesGuard)
 export class SubpoenaController {
   constructor(
     private readonly pdfService: PdfService,
@@ -79,6 +95,11 @@ export class SubpoenaController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
+  @UseGuards(
+    CaseExistsForUpdateGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseReadGuard,
+  )
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -102,13 +123,16 @@ export class SubpoenaController {
       )} in case ${caseId}`,
     )
 
-    return this.sequelize.transaction((transaction) =>
-      this.subpoenaService.createSubpoenasForDefendants(
-        createSubpoenasDto,
-        transaction,
-        theCase,
-        user,
-      ),
+    // The same transaction the guard read the case in - opening one of our own
+    // would block on its row lock while it waits for this handler to return,
+    // which is a deadlock rather than a race.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    return this.subpoenaService.createSubpoenasForDefendants(
+      createSubpoenasDto,
+      transaction,
+      theCase,
+      user,
     )
   }
 
@@ -120,7 +144,14 @@ export class SubpoenaController {
     districtCourtRegistrarRule,
   )
   @Get('defendant/:defendantId/subpoena/:subpoenaId')
-  @UseGuards(DefendantExistsGuard, SubpoenaExistsGuard)
+  // Calls the police inside a transaction of its own: no lock.
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseReadGuard,
+    DefendantExistsGuard,
+    SubpoenaExistsGuard,
+  )
   @ApiOkResponse({
     type: Subpoena,
     description: 'Gets the subpoena for a given defendant',
@@ -167,7 +198,13 @@ export class SubpoenaController {
   // Strictly speaking, only district court users need access to
   // split case defendants' subpoenas
   // However, giving prosecution users access does not pose a security risk
-  @UseGuards(SplitDefendantExistsGuard, SubpoenaExistsOptionalGuard)
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseReadGuard,
+    SplitDefendantExistsGuard,
+    SubpoenaExistsOptionalGuard,
+  )
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -221,7 +258,13 @@ export class SubpoenaController {
   // Strictly speaking, only district court users need access to
   // split case defendants' subpoena service certificates
   // However, giving prosecution users access does not pose a security risk
-  @UseGuards(SplitDefendantExistsGuard, SubpoenaExistsGuard)
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseReadGuard,
+    SplitDefendantExistsGuard,
+    SubpoenaExistsGuard,
+  )
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },

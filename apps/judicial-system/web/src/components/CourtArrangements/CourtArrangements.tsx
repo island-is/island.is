@@ -1,17 +1,14 @@
 import type { FC, SetStateAction } from 'react'
 import { useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 import compareAsc from 'date-fns/compareAsc'
 
 import { Box, Input } from '@island.is/island-ui/core'
+import type { WorkingCase } from '@island.is/judicial-system-web/src/components'
 import {
   BlueBox,
   DateTime,
 } from '@island.is/judicial-system-web/src/components'
-import type {
-  Case,
-  DateLog,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import type { DateLog } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TrackedNotificationType } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { UpdateCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -32,11 +29,11 @@ interface Props {
   courtRoomRequired?: boolean
 }
 
-type DateLogKey = keyof Pick<Case, 'arraignmentDate' | 'courtDate'>
+type DateLogKey = keyof Pick<WorkingCase, 'arraignmentDate' | 'courtDate'>
 
 export const useCourtArrangements = (
-  workingCase: Case,
-  setWorkingCase: (value: SetStateAction<Case>) => void,
+  workingCase: WorkingCase,
+  setWorkingCase: (value: SetStateAction<WorkingCase>) => void,
   dateKey: DateLogKey,
 ) => {
   const { setAndSendCaseToServer } = useCase()
@@ -131,8 +128,6 @@ export const CourtArrangements: FC<Props> = (props) => {
     courtRoomDisabled,
     courtRoomRequired = false,
   } = props
-  const { formatMessage } = useIntl()
-
   const [courtRoom, setCourtRoom] = useState<string>(courtDate?.location ?? '')
 
   useEffect(() => {
@@ -155,7 +150,7 @@ export const CourtArrangements: FC<Props> = (props) => {
       <Input
         data-testid="courtroom"
         name="courtroom"
-        label={formatMessage(strings.courtRoomLabel)}
+        label={strings.courtRoomLabel}
         autoComplete="off"
         value={courtRoom}
         placeholder="Skráðu inn dómsal"

@@ -1,11 +1,14 @@
 import { Request, Response } from 'express'
 
 import {
+  Body,
   Controller,
+  ForbiddenException,
   Get,
   Header,
   Inject,
   Param,
+  Post,
   Query,
   Req,
   Res,
@@ -20,9 +23,17 @@ import {
   CurrentHttpUser,
   JwtInjectBearerAuthGuard,
 } from '@island.is/judicial-system/auth'
-import { SubpoenaType, type User } from '@island.is/judicial-system/types'
-
 import {
+  Feature,
+  SubpoenaType,
+  type User,
+} from '@island.is/judicial-system/types'
+
+import { FeatureService } from '../feature/feature.service'
+import {
+  APPEAL_APPOINTMENT_LETTER_ENDPOINTS,
+  APPEAL_SUMMONS_ENDPOINTS,
+  APPEAL_SUMMONS_PREVIEW_ENDPOINT,
   CASE_FILES_RECORD_ENDPOINTS,
   COURT_RECORD_ENDPOINTS,
   CUSTODY_NOTICE_ENDPOINTS,
@@ -41,9 +52,16 @@ import { FileService } from './file.service'
 export class FileController {
   constructor(
     private readonly fileService: FileService,
+    private readonly featureService: FeatureService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
+
+  private assertVerdictAppealsAvailable() {
+    if (this.featureService.isHidden(Feature.INDICTMENT_APPEAL)) {
+      throw new ForbiddenException('Indictment appeals are not available')
+    }
+  }
 
   @Get(REQUEST_ENDPOINTS)
   @Header('Content-Type', 'application/pdf')
@@ -275,6 +293,42 @@ export class FileController {
     )
   }
 
+  // One endpoint for both parties: the party kind is in the path rather than
+  // in the pdf type, because a defender and a spokesperson are appointed by
+  // the same letter and reached through the same button.
+  @Get(APPEAL_APPOINTMENT_LETTER_ENDPOINTS)
+  @Header('Content-Type', 'application/pdf')
+  getAppealAppointmentLetterPdf(
+    @Param('id') id: string,
+    @Param('defendantId') defendantId: string,
+    @Param('civilClaimantId') civilClaimantId: string,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.logger.debug(
+      `Getting the appeal appointment letter for ${
+        defendantId
+          ? `defendant ${defendantId}`
+          : `civil claimant ${civilClaimantId}`
+      } of case ${id} as a pdf document`,
+    )
+
+    const party = defendantId
+      ? `defendant/${defendantId}`
+      : `civilClaimant/${civilClaimantId}`
+
+    return this.fileService.tryGetFile(
+      user.id,
+      AuditedAction.GET_APPEAL_APPOINTMENT_LETTER_PDF,
+      id,
+      `${party}/appealAppointmentLetter`,
+      req,
+      res,
+      'pdf',
+    )
+  }
+
   @Get(RULING_SENT_TO_PRISON_ADMIN_ENDPOINTS)
   @Header('Content-Type', 'application/pdf')
   getIndictmentRulingSentToPrisonAdminPdf(
@@ -292,6 +346,57 @@ export class FileController {
       AuditedAction.GET_INDICTMENT_RULING_SENT_TO_PRISON_ADMIN_PDF,
       id,
       `rulingSentToPrisonAdmin`,
+      req,
+      res,
+      'pdf',
+    )
+  }
+
+  @Get(APPEAL_SUMMONS_ENDPOINTS)
+  @Header('Content-Type', 'application/pdf')
+  getAppealSummonsPdf(
+    @Param('id') id: string,
+    @Param('appealSummonsId') appealSummonsId: string,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.assertVerdictAppealsAvailable()
+
+    this.logger.debug(
+      `Getting appeal summons ${appealSummonsId} of case ${id} as a pdf document`,
+    )
+
+    return this.fileService.tryGetFile(
+      user.id,
+      AuditedAction.GET_APPEAL_SUMMONS_PDF,
+      id,
+      `appealSummons/${appealSummonsId}/pdf`,
+      req,
+      res,
+      'pdf',
+    )
+  }
+
+  @Post(APPEAL_SUMMONS_PREVIEW_ENDPOINT)
+  @Header('Content-Type', 'application/pdf')
+  previewAppealSummonsPdf(
+    @Param('id') id: string,
+    @Body() body: unknown,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.assertVerdictAppealsAvailable()
+
+    this.logger.debug(`Previewing an appeal summons pdf for case ${id}`)
+
+    return this.fileService.tryPostFile(
+      user.id,
+      AuditedAction.GET_APPEAL_SUMMONS_PDF,
+      id,
+      'appealSummons/preview',
+      body,
       req,
       res,
       'pdf',

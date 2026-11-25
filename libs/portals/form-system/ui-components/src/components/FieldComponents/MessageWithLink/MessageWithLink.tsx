@@ -3,6 +3,7 @@ import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Dispatch } from 'react'
 import { Action } from '../../../lib'
+import { renderInformationText } from '../../../lib/renderInformationText'
 
 interface Props {
   item: FormSystemField
@@ -22,10 +23,10 @@ export const MessageWithLink = ({ item }: Props) => {
   const { lang } = useLocale()
   return (
     <Box
-      flexDirection="row"
+      flexDirection="column"
       display="flex"
       background="white"
-      alignItems="center"
+      alignItems="stretch"
     >
       <Box
         display="flex"
@@ -36,16 +37,13 @@ export const MessageWithLink = ({ item }: Props) => {
           <Text variant="h4">{item?.name?.[lang]}</Text>
         </Box>
         <Box overflow="hidden">
-          <Text whiteSpace="breakSpaces">{item?.description?.[lang]}</Text>
+          <Text whiteSpace="breakSpaces" textAlign="justify">
+            {renderInformationText(item?.informationText?.[lang] ?? '')}
+          </Text>
         </Box>
       </Box>
       {item.fieldSettings?.hasLink && (
-        <Box
-          alignItems="center"
-          marginLeft="auto"
-          style={{ top: '50%' }}
-          paddingLeft={1}
-        >
+        <Box display="flex" justifyContent="flexEnd" paddingTop={1}>
           <Button
             onClick={() => {
               window.open(formatUrl(item.fieldSettings?.url ?? ''), '_blank')

@@ -21,12 +21,18 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/estate'),
   [ApplicationTypes.PARENTAL_LEAVE]: () =>
     import('@island.is/application/templates/parental-leave'),
+  [ApplicationTypes.PARENTAL_LEAVE_V2]: () =>
+    import('@island.is/application/templates/parental-leave-v2'),
   [ApplicationTypes.DRIVING_LEARNERS_PERMIT]: () =>
     import(
       '@island.is/application/templates/transport-authority/driving-learners-permit'
     ),
   [ApplicationTypes.DRIVING_LICENSE]: () =>
     import('@island.is/application/templates/driving-license'),
+  [ApplicationTypes.DISTRICT_COMMISSIONER_DRIVING_LICENSE]: () =>
+    import(
+      '@island.is/application/templates/district-commissioners/driving-license'
+    ),
   [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]: () =>
     import(
       '@island.is/application/templates/transport-authority/driving-assessment-approval'
@@ -297,6 +303,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/vmst/submit-documents'),
   [ApplicationTypes.UNEMPLOYMENT_CONFIRM_TRAVEL]: () =>
     import('@island.is/application/templates/vmst/confirm-travel'),
+  [ApplicationTypes.CONFIRM_JOB_OR_INCOME]: () =>
+    import('@island.is/application/templates/vmst/confirm-job-or-income'),
   [ApplicationTypes.EQUALITY_REPORT]: () =>
     import(
       '@island.is/application/templates/directorate-of-equality/equality-report'
@@ -305,6 +313,12 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/directorate-of-equality/salary-report'
     ),
+  [ApplicationTypes.PAY_DEBTS]: () =>
+    import('@island.is/application/templates/pay-debts'),
+  [ApplicationTypes.U2_CERTIFICATE]: () =>
+    import('@island.is/application/templates/vmst/u2-certificate'),
+  [ApplicationTypes.FJARSKIPTASTOFA_SELF_ASSESSMENT]: () =>
+    import('@island.is/application/templates/fjarskiptastofa/self-assessment'),
 }
 
 export default templates

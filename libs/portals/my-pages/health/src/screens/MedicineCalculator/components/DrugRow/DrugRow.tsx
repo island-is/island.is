@@ -1,6 +1,8 @@
 import { Hidden, Icon, Table as T } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { amountFormat } from '@island.is/portals/my-pages/core'
 import { useState } from 'react'
+import { messages } from '../../../../lib/messages'
 import { QuantityCounter } from '../QuantityCounter/QuantityCounter'
 import { DrugRowDrug } from '../../../../utils/types'
 
@@ -15,6 +17,7 @@ export const DrugRow: React.FC<Props> = ({
   handleQuantityChange,
   handleRemove,
 }) => {
+  const { formatMessage } = useLocale()
   const [quantity, setQuantity] = useState(1)
 
   const handleIncrement = () => {
@@ -36,6 +39,14 @@ export const DrugRow: React.FC<Props> = ({
       <T.Data text={{ variant: 'medium' }}>
         <QuantityCounter
           quantity={quantity}
+          incrementLabel={formatMessage(
+            messages.medicineCalculatorIncreaseLabel,
+            { arg: drug.name },
+          )}
+          decrementLabel={formatMessage(
+            messages.medicineCalculatorDecreaseLabel,
+            { arg: drug.name },
+          )}
           handleDecrement={handleDecrement}
           handleIncrement={handleIncrement}
         />
@@ -48,7 +59,12 @@ export const DrugRow: React.FC<Props> = ({
       </T.Data>
       <T.Data text={{ variant: 'medium' }} align="center">
         <Hidden print>
-          <button onClick={handleRemove}>
+          <button
+            onClick={handleRemove}
+            aria-label={formatMessage(messages.medicineCalculatorRemoveLabel, {
+              arg: drug.name,
+            })}
+          >
             <Icon icon="trash" color="blue400" type="outline" size="small" />
           </button>
         </Hidden>

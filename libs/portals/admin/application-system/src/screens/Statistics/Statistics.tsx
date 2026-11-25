@@ -1,7 +1,7 @@
 import { m } from '../../lib/messages'
 import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import type { ApplicationFilters } from '../../types/filters'
+import type { ApplicationFilters, ApplicationOrigin } from '../../types/filters'
 import { StatisticsForm } from '../../components/StatisticsForm/StatisticsForm'
 import {
   useGetApplicationV2ApplicationStatisticsInstitutionAdminQuery,
@@ -43,6 +43,7 @@ const Statistics = ({
   const [error, setError] = useState<string | null>(null)
   const [selectedInstitutionNationalId, setSelectedInstitutionNationalId] =
     useState('')
+  const [selectedOrigin, setSelectedOrigin] = useState<ApplicationOrigin>()
 
   const onDateChange = (period: ApplicationFilters['period']) => {
     const dateChanging = period.from
@@ -106,11 +107,13 @@ const Statistics = ({
     ? availableOrganizations
     : undefined
 
-  const filteredDataRows = selectedInstitutionNationalId
-    ? (dataRows ?? []).filter(
-        (r) => r.institutionNationalId === selectedInstitutionNationalId,
-      )
-    : dataRows
+  const filteredDataRows = (dataRows ?? []).filter(
+    (r) =>
+      (!selectedInstitutionNationalId ||
+        r.institutionNationalId === selectedInstitutionNationalId) &&
+      (!selectedOrigin ||
+        (selectedOrigin === 'formSystem') === !!r.isFormSystem),
+  )
 
   const isLoading =
     superStatisticsLoading ||
@@ -128,6 +131,8 @@ const Statistics = ({
         organizations={statisticsOrganizationOptions} // undefined for institution admins → no dropdown rendered
         selectedInstitutionNationalId={selectedInstitutionNationalId}
         onInstitutionChange={setSelectedInstitutionNationalId}
+        selectedOrigin={selectedOrigin}
+        onOriginChange={setSelectedOrigin}
       />
       {isLoading ? (
         <Box marginTop={[3, 3, 6]}>

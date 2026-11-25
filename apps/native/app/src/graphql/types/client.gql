@@ -6,3 +6,8 @@ type Document {
   id: ID!
   archived: Boolean
 }
+
+extend type Query {
+  "When the health overview's basic-information queries last hit the network."
+  healthBasicInfoFetchedAt: String
+}

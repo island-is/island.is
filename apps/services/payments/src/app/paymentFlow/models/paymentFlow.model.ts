@@ -16,9 +16,11 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { BankTransferPayment } from '../../bankTransferPayment/models/bankTransferPayment.model'
+import { BankTransferPayment } from '../../bankTransferPayment/models'
 import { CardPaymentDetails } from './cardPaymentDetails.model'
 import { FjsCharge } from './fjsCharge.model'
+import { DebtSettlement } from './debtSettlement.model'
+import { PaymentFlowDebt } from './paymentFlowDebt.model'
 import { PaymentFlowEvent } from './paymentFlowEvent.model'
 import { PaymentFulfillment } from './paymentFulfillment.model'
 import { PaymentWorkerEvent } from './paymentWorkerEvent.model'
@@ -106,6 +108,8 @@ export class PaymentFlowCharge extends Model<
   modified!: CreationOptional<Date>
 }
 
+export type PaymentFlowType = 'charge' | 'debt'
+
 @Table({
   tableName: 'payment_flow',
 })
@@ -121,6 +125,15 @@ export class PaymentFlow extends Model<
     defaultValue: DataType.UUIDV4,
   })
   id!: CreationOptional<string>
+
+  @ApiProperty({ enum: ['charge', 'debt'] })
+  @Column({
+    type: DataType.ENUM('charge', 'debt'),
+    allowNull: false,
+    defaultValue: 'charge',
+  })
+  // Defaults to 'charge' in the database
+  type?: PaymentFlowType
 
   @ApiPropertyOptional()
   @Column({
@@ -149,6 +162,12 @@ export class PaymentFlow extends Model<
   @ApiProperty({ type: [PaymentFlowCharge] })
   @HasMany(() => PaymentFlowCharge, 'paymentFlowId')
   charges!: PaymentFlowCharge[]
+
+  @HasMany(() => PaymentFlowDebt, 'paymentFlowId')
+  debts?: PaymentFlowDebt[]
+
+  @HasOne(() => DebtSettlement, 'paymentFlowId')
+  debtSettlement?: DebtSettlement
 
   @ApiProperty({ type: [PaymentFlowEvent] })
   @HasMany(() => PaymentFlowEvent, 'paymentFlowId')

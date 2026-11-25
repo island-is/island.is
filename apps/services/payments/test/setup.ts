@@ -12,6 +12,7 @@ const enabledFeatureFlags = new Set<Features>([
   Features.isIslandisPaymentEnabled,
   Features.isIslandisBankTransferPaymentEnabled,
   Features.isIslandisInvoicePaymentEnabled,
+  Features.isIslandisDebtPaymentEnabled,
 ])
 
 export const overrideFeatureFlags = (builder: TestingModuleBuilder) =>

@@ -73,7 +73,7 @@ export const DescriptionFormField = ({
       {(field.description || field.tooltip) && (
         <Box component="div">
           {field.description && (
-            <Markdown>
+            <Markdown options={{ openLinksInNewTab: true }}>
               {formatTextWithLocale(
                 field.description,
                 updatedApplication,

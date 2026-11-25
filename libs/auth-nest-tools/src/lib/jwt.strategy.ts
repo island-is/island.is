@@ -1,21 +1,44 @@
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import { PassportStrategy } from '@nestjs/passport'
-import { Injectable } from '@nestjs/common'
+import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { Request } from 'express'
+import jwt from 'jsonwebtoken'
 import type { AuthConfig } from './auth.module'
 import { JwtPayload } from './jwt.payload'
 import { Auth } from './auth'
 import { createKeyProvider } from './create-key-provider'
+import {
+  DpopError,
+  DpopNonceError,
+  DpopNonces,
+  DpopReplayCache,
+  verifyDpopProof,
+} from './dpop'
 
 const AUTH_BODY_FIELD_NAME = '__accessToken'
 
+const DPOP_SCHEME = /^DPoP\s+(\S+)$/i
+const BEARER_SCHEME = /^Bearer\s+(\S+)$/i
+
+/**
+ * The identity server signs other JWTs with the same key, such as a native app's
+ * client attestation. Only access tokens are accepted.
+ */
+const ACCESS_TOKEN_TYPES = ['at+jwt', 'application/at+jwt', 'jwt']
+
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
+  private readonly dpopReplayCache = new DpopReplayCache()
+  private readonly dpopNonces: DpopNonces
+  /** Guards run per GraphQL root field, so one request can be validated many times. */
+  private readonly verifiedProofs = new WeakMap<Request, string>()
+
   constructor(private config: AuthConfig) {
     super({
       secretOrKeyProvider: createKeyProvider(config.issuer),
       jwtFromRequest: ExtractJwt.fromExtractors([
         ExtractJwt.fromAuthHeaderAsBearerToken(),
+        ExtractJwt.fromAuthHeaderWithScheme('DPoP'),
         ExtractJwt.fromBodyField(AUTH_BODY_FIELD_NAME),
       ]),
       ...(config.audience != null &&
@@ -33,6 +56,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         clockTolerance: 60,
       },
     })
+    this.dpopNonces = new DpopNonces(config.dpopNonceSecret)
   }
 
   private parseScopes(scopes: undefined | string | string[]): string[] {
@@ -53,7 +77,22 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     const bodyAuthorization = request.body?.[AUTH_BODY_FIELD_NAME]
+    const header = request.headers?.authorization
+    const dpopToken = header?.match(DPOP_SCHEME)?.[1]
+    const bearerToken = header?.match(BEARER_SCHEME)?.[1]
+
+    // passport-jwt reads the first two words of any header, so anything but
+    // exactly "<scheme> <token>" would let a token through unchecked here.
+    if (header && !dpopToken && !bearerToken) {
+      throw new UnauthorizedException('Malformed authorization header')
+    }
+
+    this.checkTokenType(dpopToken ?? bearerToken ?? bodyAuthorization)
+    this.checkDpop(request, payload, dpopToken)
+
+    // Forwarded to other services as Bearer: the proof was for this request only.
     const authorization =
+      (dpopToken && `Bearer ${dpopToken}`) ||
       request.headers?.authorization ||
       (bodyAuthorization && `Bearer ${bodyAuthorization}`) ||
       ''
@@ -75,6 +114,92 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       userAgent: request.headers['user-agent'],
       audkenniSimNumber: payload.audkenni_sim_number,
       delegationProvider: payload.client_delegation_provider,
+      acr: payload.acr,
+      idp: payload.idp,
+      authTime: payload.auth_time
+        ? new Date(payload.auth_time * 1000)
+        : undefined,
+      dpopJkt: payload.cnf?.jkt,
+    }
+  }
+
+  private checkTokenType(token: string | undefined) {
+    if (!token) return
+
+    const typ = jwt.decode(token, { complete: true })?.header.typ
+    if (typ && !ACCESS_TOKEN_TYPES.includes(typ.toLowerCase())) {
+      throw new UnauthorizedException('Not an access token')
+    }
+  }
+
+  /**
+   * A token sent with the DPoP scheme must come with a proof from the key it is
+   * bound to. A bound token sent as Bearer is refused only where configured.
+   */
+  private checkDpop(
+    request: Request,
+    payload: JwtPayload,
+    dpopToken: string | undefined,
+  ) {
+    const boundKey = payload.cnf?.jkt
+
+    if (!dpopToken) {
+      if (boundKey && this.config.requireDpopForBoundTokens) {
+        throw new UnauthorizedException(
+          'This token is DPoP-bound: send it with the DPoP scheme and a proof',
+        )
+      }
+      return
+    }
+
+    if (!boundKey) {
+      throw new UnauthorizedException(
+        'The DPoP scheme needs a DPoP-bound token',
+      )
+    }
+
+    // The same request and proof, already verified: not a replay.
+    const proof = request.headers['dpop']
+    if (
+      typeof proof === 'string' &&
+      this.verifiedProofs.get(request) === proof
+    ) {
+      return
+    }
+
+    // Every answer carries the nonce for the next proofs, so a client in use is never refused for one.
+    const response = request.res
+    if (response && !response.headersSent) {
+      response.setHeader('DPoP-Nonce', this.dpopNonces.create())
+    }
+
+    try {
+      verifyDpopProof({
+        request,
+        accessToken: dpopToken,
+        boundKey,
+        replayCache: this.dpopReplayCache,
+        nonces: this.dpopNonces,
+      })
+      this.verifiedProofs.set(request, proof as string)
+    } catch (error) {
+      if (error instanceof DpopNonceError) {
+        if (response && !response.headersSent) {
+          response.setHeader(
+            'WWW-Authenticate',
+            `DPoP error="use_dpop_nonce", error_description="${error.message}"`,
+          )
+        }
+        throw new UnauthorizedException({
+          statusCode: 401,
+          error: 'use_dpop_nonce',
+          message: error.message,
+        })
+      }
+      if (error instanceof DpopError) {
+        throw new UnauthorizedException(error.message)
+      }
+      throw error
     }
   }
 }

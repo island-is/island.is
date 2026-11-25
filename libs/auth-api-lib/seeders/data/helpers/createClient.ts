@@ -13,6 +13,8 @@ type GrantType =
   | 'authorization_code'
   | 'client_credentials'
   | 'urn:ietf:params:oauth:grant-type:token-exchange'
+  | 'urn:openid:params:grant-type:ciba'
+  | 'urn:island.is:params:oauth:grant-type:device-key'
 
 interface ClientOptions {
   /**
@@ -71,6 +73,8 @@ interface ClientOptions {
 
 const getClientFields = (options: ClientOptions): DbClient => ({
   client_id: options.clientId,
+  // The client id should be prefixed with the organisation domain, eg `@island.is/some-client`.
+  domain_name: options.clientId.split('/')[0],
   client_name:
     typeof options.displayName === 'string'
       ? options.displayName

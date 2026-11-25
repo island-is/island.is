@@ -1,10 +1,8 @@
 import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuid } from 'uuid'
 
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseNotificationType,
   AppealEventType,
@@ -17,13 +15,20 @@ import {
 import { createTestingAppealCaseModule } from '../createTestingAppealCaseModule'
 
 import {
+  getOrCreateTransaction,
+  getTransactionContext,
+  queueMessagesAfterCommit,
+  TransactionContext,
+} from '../../../../middleware'
+import { runInRequestContext } from '../../../../test'
+import {
   AppealCase,
   AppealEventLogRepositoryService,
   Case,
 } from '../../../repository'
 import { CreateAppealEventLogDto } from '../../dto/createAppealEventLog.dto'
 
-jest.mock('@island.is/judicial-system/message')
+jest.mock('../../../../middleware/queueMessagesAfterCommit')
 
 interface Then {
   result: AppealCase
@@ -54,7 +59,9 @@ describe('AppealCaseController - Create event log', () => {
   } as User
 
   let mockAppealEventLogRepositoryService: AppealEventLogRepositoryService
+  let mockSequelize: Sequelize
   let transaction: Transaction
+  let transactionContext: TransactionContext | undefined
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -65,11 +72,12 @@ describe('AppealCaseController - Create event log', () => {
 
     mockAppealEventLogRepositoryService = appealEventLogRepositoryService
 
+    mockSequelize = sequelize
+    transactionContext = undefined
+
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
-    mockTransaction.mockImplementation(
-      (fn: (transaction: Transaction) => unknown) => fn(transaction),
-    )
+    mockTransaction.mockResolvedValue(transaction)
 
     givenWhenThen = async (theCase, user) => {
       const then = {} as Then
@@ -78,10 +86,29 @@ describe('AppealCaseController - Create event log', () => {
         eventType: AppealEventType.APPEAL_STATEMENT_SENT,
       }
 
-      await appealCaseController
-        .createEventLog(caseId, appealCaseId, user, theCase, appealCase, dto)
-        .then((result) => (then.result = result))
-        .catch((error) => (then.error = error))
+      // The route is guarded by CaseExistsForUpdateGuard, so the request
+      // transaction is already open - and holding a lock on this case row -
+      // by the time the handler runs. Guards do not execute in controller
+      // unit tests, so the request context and that transaction are set up
+      // here instead.
+      try {
+        await runInRequestContext(async () => {
+          transactionContext = getTransactionContext()
+
+          await getOrCreateTransaction(mockSequelize)
+
+          then.result = await appealCaseController.createEventLog(
+            caseId,
+            appealCaseId,
+            user,
+            theCase,
+            appealCase,
+            dto,
+          )
+        })
+      } catch (error) {
+        then.error = error as Error
+      }
 
       return then
     }
@@ -95,7 +122,11 @@ describe('AppealCaseController - Create event log', () => {
       then = await givenWhenThen(theCase, prosecutor)
     })
 
-    it('should record the appeal event log', () => {
+    it('should record the appeal event log in the transaction the guard opened, without opening another', () => {
+      // Once, by the stand-in for CaseExistsForUpdateGuard above. A second
+      // call would be the handler opening a transaction of its own, which
+      // would block on the guard's row lock and deadlock the request.
+      expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
       expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
         {
           caseId,
@@ -113,7 +144,7 @@ describe('AppealCaseController - Create event log', () => {
     })
 
     it('should queue the appeal statement notification', () => {
-      expect(addMessagesToQueue).toHaveBeenCalledWith(
+      expect(queueMessagesAfterCommit).toHaveBeenCalledWith(
         expect.objectContaining({
           type: MessageType.APPEAL_CASE_NOTIFICATION,
           caseId,
@@ -124,6 +155,11 @@ describe('AppealCaseController - Create event log', () => {
 
     it('should return the appeal case', () => {
       expect(then.result).toBe(appealCase)
+    })
+
+    // An event log announces nothing, so nothing waits for the commit.
+    it('should register nothing to run after the commit', () => {
+      expect(transactionContext?.afterCommit).toHaveLength(0)
     })
   })
 

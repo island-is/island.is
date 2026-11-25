@@ -1,9 +1,11 @@
 import { Application } from '@island.is/api/schema'
 import {
+  buildAccordionField,
   buildMultiField,
   buildTextField,
   buildSubSection,
   buildDescriptionField,
+  buildHiddenInput,
 } from '@island.is/application/core'
 import format from 'date-fns/format'
 
@@ -61,6 +63,16 @@ export const userInformationSubSection = buildSubSection({
           variant: 'currency',
           required: true,
         }),
+        buildHiddenInput({
+          id: 'vehicleDetails.vehicleRegistrationCode',
+          defaultValue: (application: Application) => {
+            const vehicle = getSelectedVehicle(
+              application.externalData,
+              application.answers,
+            ) as VehiclesCurrentVehicle
+            return vehicle?.vehicleRegistrationCode ?? undefined
+          },
+        }),
         buildTextField({
           id: 'selectVehicle.newRegistrationDate',
           title: information.labels.vehicle.registrationDate,
@@ -76,6 +88,15 @@ export const userInformationSubSection = buildSubSection({
               format(new Date(vehicle.newRegistrationDate), 'dd.MM.yyyy')
             )
           },
+        }),
+        buildAccordionField({
+          id: 'vehicleDetails.priceHelp',
+          accordionItems: [
+            {
+              itemTitle: information.labels.vehicle.priceHelpTitle,
+              itemContent: information.labels.vehicle.priceHelpText,
+            },
+          ],
         }),
         buildDescriptionField({
           id: 'applicant.description',

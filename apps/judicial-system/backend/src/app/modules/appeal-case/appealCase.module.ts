@@ -1,6 +1,14 @@
 import { forwardRef, Module } from '@nestjs/common'
 
-import { CaseModule, EventModule, RepositoryModule, UserModule } from '..'
+import {
+  CaseModule,
+  EventModule,
+  FileModule,
+  LawyerRegistryModule,
+  RepositoryModule,
+  UserModule,
+} from '..'
+import { AppealAppointmentLetterService } from './appealAppointmentLetter.service'
 import { AppealCaseController } from './appealCase.controller'
 import { AppealCaseService } from './appealCase.service'
 import { LimitedAccessAppealCaseController } from './limitedAccessAppealCase.controller'
@@ -10,10 +18,12 @@ import { LimitedAccessAppealCaseController } from './limitedAccessAppealCase.con
     forwardRef(() => CaseModule),
     forwardRef(() => UserModule),
     forwardRef(() => EventModule),
+    forwardRef(() => FileModule),
+    forwardRef(() => LawyerRegistryModule),
     forwardRef(() => RepositoryModule),
   ],
   controllers: [AppealCaseController, LimitedAccessAppealCaseController],
-  providers: [AppealCaseService],
+  providers: [AppealCaseService, AppealAppointmentLetterService],
   exports: [AppealCaseService],
 })
 export class AppealCaseModule {}

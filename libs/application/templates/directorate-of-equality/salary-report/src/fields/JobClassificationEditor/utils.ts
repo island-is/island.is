@@ -16,7 +16,11 @@ export const buildStepMetaBySubCriterionId = (
       const steps = sc.steps.slice().sort((a, b) => a.order - b.order)
       const maxScore = steps.length ? Math.max(...steps.map((s) => s.score)) : 0
       map[sc.id] = {
-        steps: steps.map((s) => ({ order: s.order, score: s.score })),
+        steps: steps.map((s) => ({
+          order: s.order,
+          score: s.score,
+          description: s.description,
+        })),
         totalSteps: steps.length,
         maxScore,
         weight: sc.weight,

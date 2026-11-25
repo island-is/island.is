@@ -3,6 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import {
   DelegationConfig,
+  DelegationsModule,
   Grant,
   GrantsService,
   IdentityConfirmation,
@@ -13,6 +14,7 @@ import { LoggingModule } from '@island.is/logging'
 
 import { CleanupService } from './cleanup.service'
 import { CleanupConfirmIdentityService } from '../confirm-identity/cleanup/cleanup.service'
+import { CleanupDelegationConfirmationService } from '../delegation-confirmation/cleanup/cleanup.service'
 import { ConfigModule } from '@nestjs/config'
 import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
@@ -31,6 +33,7 @@ import { environment } from '../../environments'
   imports: [
     LoggingModule,
     IdentityConfirmationModule,
+    DelegationsModule,
     AuditModule.forRoot(environment.audit),
     AuthModule.register(environment.auth),
     SequelizeModule.forRootAsync({
@@ -55,6 +58,11 @@ import { environment } from '../../environments'
       envFilePath: ['.env', '.env.secret'],
     }),
   ],
-  providers: [CleanupService, GrantsService, CleanupConfirmIdentityService],
+  providers: [
+    CleanupService,
+    GrantsService,
+    CleanupConfirmIdentityService,
+    CleanupDelegationConfirmationService,
+  ],
 })
 export class CleanupWorkerModule {}

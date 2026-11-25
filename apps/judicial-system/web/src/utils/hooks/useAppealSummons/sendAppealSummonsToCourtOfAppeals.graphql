@@ -1,0 +1,8 @@
+mutation SendAppealSummonsToCourtOfAppeals(
+  $input: SendAppealSummonsToCourtOfAppealsInput!
+) {
+  sendAppealSummonsToCourtOfAppeals(input: $input) {
+    id
+    sentToCourtOfAppealsDate
+  }
+}

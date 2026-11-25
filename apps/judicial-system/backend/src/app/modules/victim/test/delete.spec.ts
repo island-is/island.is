@@ -1,7 +1,10 @@
+import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import { createTestingVictimModule } from './createTestingVictimModule'
 
+import { getOrCreateTransaction } from '../../../middleware'
+import { runInRequestContext } from '../../../test'
 import { Case, Victim, VictimRepositoryService } from '../../repository'
 import { DeleteVictimResponse } from '../models/deleteVictim.response'
 
@@ -10,20 +13,25 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (courtCaseNumber?: string) => Promise<Then>
+type GivenWhenThen = () => Promise<Then>
 
 describe('VictimController - Delete', () => {
   const caseId = uuid()
   const victimId = uuid()
 
   let mockVictimRepositoryService: VictimRepositoryService
+  let mockTransaction: jest.Mock
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { victimController, victimRepositoryService } =
+    const { victimController, victimRepositoryService, sequelize } =
       await createTestingVictimModule()
 
     mockVictimRepositoryService = victimRepositoryService
+    mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockResolvedValue(transaction)
 
     const mockDelete =
       mockVictimRepositoryService.deleteByIdAndCase as jest.Mock
@@ -33,14 +41,22 @@ describe('VictimController - Delete', () => {
       const then = {} as Then
 
       try {
-        then.result = await victimController.delete(
-          caseId,
-          victimId,
-          {
-            id: caseId,
-          } as Case,
-          { id: victimId } as Victim,
-        )
+        // The routes are guarded by MinimalCaseExistsForUpdateGuard, so the
+        // request transaction is already open by the time the handler runs.
+        // Guards do not execute in controller unit tests, so the request
+        // context is set up here instead.
+        await runInRequestContext(async () => {
+          // Stand in for the guard, which opens the request transaction
+          // before the handler runs.
+          await getOrCreateTransaction(sequelize)
+
+          then.result = await victimController.delete(
+            caseId,
+            victimId,
+            { id: caseId } as Case,
+            { id: victimId } as Victim,
+          )
+        })
       } catch (error) {
         then.error = error as Error
       }
@@ -60,10 +76,17 @@ describe('VictimController - Delete', () => {
       then = await givenWhenThen()
     })
 
-    it('should delete the victim', () => {
+    // One call to sequelize.transaction: the guard's. A handler that opened a
+    // transaction of its own - the deadlock the controller warns about - would
+    // make it two, and the mock would resolve the same stub for both.
+    it('should join the transaction the guard opened rather than open one', () => {
+      expect(mockTransaction).toHaveBeenCalledTimes(1)
+    })
+
+    it('should delete the victim under the request transaction', () => {
       expect(
         mockVictimRepositoryService.deleteByIdAndCase,
-      ).toHaveBeenCalledWith(victimId, caseId)
+      ).toHaveBeenCalledWith(victimId, caseId, { transaction })
       expect(then.result).toEqual({ deleted: true })
     })
   })

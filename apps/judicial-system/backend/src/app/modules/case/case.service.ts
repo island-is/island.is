@@ -2,7 +2,7 @@ import { option } from 'fp-ts'
 import { filterMap } from 'fp-ts/lib/Array'
 import { pipe } from 'fp-ts/lib/function'
 import pick from 'lodash/pick'
-import { literal, Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import {
   BadRequestException,
@@ -12,9 +12,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
 
-import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import {
   DokobitError,
   SigningService,
@@ -28,18 +26,15 @@ import {
   capitalize,
   formatDate,
   lowercase,
+  stripPdfExtension,
 } from '@island.is/judicial-system/formatters'
-import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageType } from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   AppealCaseState,
   AppealCaseType,
   appealCorrectionLock,
   AppealDecisionPartyRole,
-  AppealEventType,
   CaseAppealDecision,
   CaseFileCategory,
   CaseFileState,
@@ -52,6 +47,7 @@ import {
   DateType,
   DefendantEventType,
   DefendantNotificationType,
+  DefenderChoice,
   EventType,
   IndictmentCaseNotificationType,
   IndictmentDecision,
@@ -73,6 +69,7 @@ import {
   getCourtRecordPdfAsString,
   getRulingPdfAsString,
 } from '../../formatters'
+import { queueMessagesAfterCommit, registerAfterCommit } from '../../middleware'
 import {
   buildInCourtAppealedEvent,
   hasOutOfCourtAppeal,
@@ -81,10 +78,15 @@ import {
 } from '../appeal-case'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
+import { CourtSessionService } from '../court-session'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { EventLogService } from '../event-log'
-import { FileService, PoliceDigitalCaseFileService } from '../file'
+import {
+  FileService,
+  isRulingOrderInConfirmedCourtSession,
+  PoliceDigitalCaseFileService,
+} from '../file'
 import { IndictmentCountService } from '../indictment-count'
 import {
   AppealCase,
@@ -93,18 +95,15 @@ import {
   AppealDecisionRepositoryService,
   AppealEventLogRepositoryService,
   Case,
-  caseInclude,
   CaseRepositoryService,
   CaseStringRepositoryService,
   CourtDocumentRepositoryService,
-  CourtSessionRepositoryService,
   DateLog,
   DateLogRepositoryService,
   Defendant,
   DefendantEventLog,
   DefendantEventLogRepositoryService,
   EventLog,
-  Institution,
   UpdateCase,
 } from '../repository'
 import { VerdictService } from '../verdict'
@@ -114,6 +113,7 @@ import { MinimalCase } from './models/case.types'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { caseModuleConfig } from './case.config'
+import { CaseCloningService } from './caseCloning.service'
 
 type DateLogKeys = keyof Pick<UpdateCase, 'arraignmentDate' | 'courtDate'>
 
@@ -174,33 +174,19 @@ export class CaseService {
     private readonly awsS3Service: AwsS3Service,
     private readonly courtService: CourtService,
     private readonly signingService: SigningService,
-    private readonly intlService: IntlService,
     private readonly eventService: EventService,
     private readonly eventLogService: EventLogService,
     private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
-    private readonly courtSessionRepositoryService: CourtSessionRepositoryService,
+    @Inject(forwardRef(() => CourtSessionService))
+    private readonly courtSessionService: CourtSessionService,
     private readonly caseRepositoryService: CaseRepositoryService,
     private readonly appealCaseRepositoryService: AppealCaseRepositoryService,
     private readonly appealDecisionRepositoryService: AppealDecisionRepositoryService,
     private readonly appealEventLogRepositoryService: AppealEventLogRepositoryService,
     private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
+    private readonly caseCloningService: CaseCloningService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
-
-  private formatMessage: FormatMessage = () => {
-    throw new InternalServerErrorException('Format message not initialized')
-  }
-
-  private async refreshFormatMessage(): Promise<void> {
-    return this.intlService
-      .useIntl(['judicial.system.backend'], 'is')
-      .then((res) => {
-        this.formatMessage = res.formatMessage
-      })
-      .catch((reason) => {
-        this.logger.error('Unable to refresh format messages', { reason })
-      })
-  }
 
   private async uploadSignedRulingPdfToS3(
     theCase: Case,
@@ -426,20 +412,12 @@ export class CaseService {
     user: TUser,
   ): void {
     for (const defendant of theCase.defendants ?? []) {
-      addMessagesToQueue(
-        {
-          type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-          user,
-          caseId: theCase.id,
-          elementId: defendant.id,
-        },
-        {
-          type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
-          user,
-          caseId: theCase.id,
-          elementId: defendant.id,
-        },
-      )
+      queueMessagesAfterCommit({
+        type: MessageType.DELIVERY_TO_COURT_REQUEST_DEFENDANT,
+        user,
+        caseId: theCase.id,
+        elementId: defendant.id,
+      })
     }
   }
 
@@ -447,7 +425,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.DELIVERY_TO_COURT_PROSECUTOR,
       user,
       caseId: theCase.id,
@@ -458,7 +436,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -470,7 +448,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -484,7 +462,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -498,7 +476,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -508,8 +486,22 @@ export class CaseService {
     })
   }
 
+  private addMessagesForAppealProsecutorAssignedToQueue(
+    theCase: Case,
+    user: TUser,
+  ): void {
+    queueMessagesAfterCommit({
+      type: MessageType.NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      body: {
+        type: IndictmentCaseNotificationType.APPEAL_PROSECUTOR_ASSIGNED,
+      },
+    })
+  }
+
   private addMessagesForReceivedCaseToQueue(theCase: Case, user: TUser): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -518,7 +510,7 @@ export class CaseService {
 
     if (isIndictmentCase(theCase.type)) {
       if (theCase.splitCaseId) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.INDICTMENT_CASE_NOTIFICATION,
           caseId: theCase.id,
           body: {
@@ -527,20 +519,20 @@ export class CaseService {
         })
       }
 
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.DELIVERY_TO_COURT_INDICTMENT_INFO,
         user,
         caseId: theCase.id,
       })
 
       if (theCase.origin === CaseOrigin.LOKE) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_POLICE_INDICTMENT,
           user,
           caseId: theCase.id,
         })
         theCase.policeCaseNumbers.forEach((policeCaseNumber) =>
-          addMessagesToQueue({
+          queueMessagesAfterCommit({
             type: MessageType.DELIVERY_TO_POLICE_CASE_FILES_RECORD,
             user,
             caseId: theCase.id,
@@ -556,7 +548,7 @@ export class CaseService {
     user: TUser,
     assignedNationalId: string,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
       user,
       caseId: theCase.id,
@@ -568,7 +560,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.DELIVERY_TO_COURT_INDICTMENT_ARRAIGNMENT_DATE,
       user,
       caseId: theCase.id,
@@ -579,7 +571,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.DELIVERY_TO_COURT_REQUEST,
       user,
       caseId: theCase.id,
@@ -593,7 +585,7 @@ export class CaseService {
     user: TUser,
   ): void {
     for (const policeCaseNumber of theCase.policeCaseNumbers) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.DELIVERY_TO_COURT_CASE_FILES_RECORD,
         user,
         caseId: theCase.id,
@@ -611,6 +603,7 @@ export class CaseService {
       CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
       CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
       CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+      CaseFileCategory.COURT_CASE_FILE,
     ]
 
     for (const caseFile of theCase.caseFiles ?? []) {
@@ -620,7 +613,7 @@ export class CaseService {
         caseFile.category &&
         caseFilesCategories.includes(caseFile.category)
       ) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           user,
           caseId: theCase.id,
@@ -629,7 +622,7 @@ export class CaseService {
       }
     }
 
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.DELIVERY_TO_COURT_INDICTMENT,
       user,
       caseId: theCase.id,
@@ -637,7 +630,7 @@ export class CaseService {
 
     for (const defendant of theCase.defendants ?? []) {
       for (const subpoena of defendant.subpoenas ?? []) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
           user,
           caseId: theCase.id,
@@ -654,7 +647,7 @@ export class CaseService {
 
         // Only send certificates for subpoenas which have been successfully served
         if (hasSubpoenaBeenSuccessfullyServedToDefendant) {
-          addMessagesToQueue({
+          queueMessagesAfterCommit({
             type: MessageType.DELIVERY_TO_COURT_SERVICE_CERTIFICATE,
             user,
             caseId: theCase.id,
@@ -665,7 +658,7 @@ export class CaseService {
     }
 
     if (theCase.state === CaseState.WAITING_FOR_CANCELLATION) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE,
         user,
         caseId: theCase.id,
@@ -683,13 +676,26 @@ export class CaseService {
         body: { withCourtCaseNumber: false },
       })
     }
-  }
 
-  private addMessagesForDefenderEmailChangeToQueue(
-    theCase: Case,
-    user: TUser,
-  ): void {
-    this.addMessagesForDeliverDefendantToCourtToQueue(theCase, user)
+    // Sync current court roles on connect (including roles assigned before
+    // the case had a number). Later assignment changes are handled only when
+    // the court case number is unchanged — same mutual exclusion as
+    // prosecutor/defendant on R-case connect and appeal roles on connect.
+    if (theCase.judge?.nationalId) {
+      this.addMessagesForIndictmentCourtRoleAssigned(
+        theCase,
+        user,
+        theCase.judge.nationalId,
+      )
+    }
+
+    if (theCase.registrar?.nationalId) {
+      this.addMessagesForIndictmentCourtRoleAssigned(
+        theCase,
+        user,
+        theCase.registrar.nationalId,
+      )
+    }
   }
 
   private addMessagesForProsecutorChangeToQueue(
@@ -707,14 +713,14 @@ export class CaseService {
       theCase.origin === CaseOrigin.LOKE &&
       isInvestigationCase(theCase.type)
     ) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.DELIVERY_TO_POLICE_SIGNED_COURT_RECORD,
         user,
         caseId: theCase.id,
       })
     }
 
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.DELIVERY_TO_COURT_SIGNED_COURT_RECORD,
       user,
       caseId: theCase.id,
@@ -722,7 +728,7 @@ export class CaseService {
   }
 
   private addMessagesForSignedRulingToQueue(theCase: Case, user: TUser): void {
-    addMessagesToQueue(
+    queueMessagesAfterCommit(
       {
         type: MessageType.DELIVERY_TO_COURT_SIGNED_RULING,
         user,
@@ -737,7 +743,7 @@ export class CaseService {
     )
 
     if (theCase.origin === CaseOrigin.LOKE) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.DELIVERY_TO_POLICE_SIGNED_RULING,
         user,
         caseId: theCase.id,
@@ -754,7 +760,7 @@ export class CaseService {
   }
 
   private addMessagesForCompletedCaseToQueue(theCase: Case, user: TUser): void {
-    addMessagesToQueue(
+    queueMessagesAfterCommit(
       {
         type: MessageType.DELIVERY_TO_COURT_CASE_CONCLUSION,
         user,
@@ -777,7 +783,7 @@ export class CaseService {
         // We should consider migrating all existing case files to have a category in the database.
         !caseFile.category
       ) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           user,
           caseId: theCase.id,
@@ -789,7 +795,7 @@ export class CaseService {
     if (theCase.origin === CaseOrigin.LOKE) {
       // The case update and each of its documents are delivered separately,
       // so that each of them can be retried on its own
-      addMessagesToQueue(
+      queueMessagesAfterCommit(
         {
           type: MessageType.DELIVERY_TO_POLICE_CASE,
           user,
@@ -808,7 +814,7 @@ export class CaseService {
       )
 
       if (this.hasCustodyNoticeForPolice(theCase)) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_POLICE_CUSTODY_NOTICE,
           user,
           caseId: theCase.id,
@@ -818,7 +824,7 @@ export class CaseService {
 
     // kept as part of the ruling case notification type since this is a court decision to complete the case with no ruling
     if (theCase.isCompletedWithoutRuling) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
@@ -838,11 +844,41 @@ export class CaseService {
     )
       return
 
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
       user,
       caseId: theCase.id,
     })
+  }
+
+  // Mid-case ruling orders are not delivered to LÖKE on upload. Queue them when
+  // the case completes, but only those linked in a confirmed court session and
+  // with a document. Orally pronounced orders with no document yet, and rulings
+  // never linked to a confirmed session, are skipped. A later write-up goes
+  // through case correction and is delivered on the next completion.
+  private addMessagesForMidCaseRulingOrdersToPolice(
+    theCase: Case,
+    user: TUser,
+  ): void {
+    if (theCase.origin !== CaseOrigin.LOKE) {
+      return
+    }
+
+    for (const caseFile of theCase.caseFiles ?? []) {
+      if (
+        caseFile.category === CaseFileCategory.COURT_INDICTMENT_RULING_ORDER &&
+        caseFile.isKeyAccessible &&
+        caseFile.key &&
+        isRulingOrderInConfirmedCourtSession(caseFile.id, theCase.courtSessions)
+      ) {
+        queueMessagesAfterCommit({
+          type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: caseFile.id,
+        })
+      }
+    }
   }
 
   private addMessagesForCompletedIndictmentCaseToQueue(
@@ -860,7 +896,7 @@ export class CaseService {
           caseFile.category,
         )
       ) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           user,
           caseId: updatedCase.id,
@@ -869,7 +905,7 @@ export class CaseService {
       }
     }
 
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.NOTIFICATION,
       user,
       caseId: updatedCase.id,
@@ -877,7 +913,7 @@ export class CaseService {
     })
 
     if (updatedCase.withCourtSessions) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.DELIVERY_TO_COURT_COURT_RECORD,
         user,
         caseId: updatedCase.id,
@@ -887,7 +923,7 @@ export class CaseService {
     if (updatedCase.origin === CaseOrigin.LOKE) {
       // The case update and each of its documents are delivered separately,
       // so that each of them can be retried on its own
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE,
         user,
         caseId: updatedCase.id,
@@ -898,7 +934,7 @@ export class CaseService {
           caseFile.category === CaseFileCategory.COURT_RECORD &&
           caseFile.isKeyAccessible
         ) {
-          addMessagesToQueue({
+          queueMessagesAfterCommit({
             type: MessageType.DELIVERY_TO_POLICE_CASE_FILE,
             user,
             caseId: updatedCase.id,
@@ -907,8 +943,10 @@ export class CaseService {
         }
       }
 
+      this.addMessagesForMidCaseRulingOrdersToPolice(updatedCase, user)
+
       if (updatedCase.withCourtSessions) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_POLICE_COURT_RECORD,
           user,
           caseId: updatedCase.id,
@@ -922,7 +960,7 @@ export class CaseService {
     updatedCase: Case,
     user: TUser,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.NOTIFICATION,
       user,
       caseId: updatedCase.id,
@@ -930,7 +968,7 @@ export class CaseService {
     })
 
     if (updatedCase.origin === CaseOrigin.LOKE) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.DELIVERY_TO_POLICE_CASE,
         user,
         caseId: updatedCase.id,
@@ -947,7 +985,7 @@ export class CaseService {
         areCustodyDatesModified &&
         this.hasCustodyNoticeForPolice(updatedCase)
       ) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_POLICE_CUSTODY_NOTICE,
           user,
           caseId: updatedCase.id,
@@ -960,7 +998,7 @@ export class CaseService {
     user: TUser,
     theCase: Case,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -979,7 +1017,7 @@ export class CaseService {
     this.addMessagesForRevokeNotificationToQueue(user, theCase)
 
     if (theCase.courtCaseNumber) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE,
         user,
         caseId: theCase.id,
@@ -991,7 +1029,7 @@ export class CaseService {
     // or revoke those subpoenas when the case is split.
     for (const defendant of theCase.defendants ?? []) {
       for (const subpoena of defendant.subpoenas ?? []) {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION,
           user,
           caseId: theCase.id,
@@ -1005,7 +1043,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -1017,7 +1055,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -1031,7 +1069,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -1043,7 +1081,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -1057,7 +1095,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): void {
-    addMessagesToQueue({
+    queueMessagesAfterCommit({
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
@@ -1081,12 +1119,22 @@ export class CaseService {
 
         // Only send certificates for subpoenas which have been successfully served
         if (hasSubpoenaBeenSuccessfullyServedToDefendant) {
-          addMessagesToQueue({
+          queueMessagesAfterCommit({
             type: MessageType.DELIVERY_TO_COURT_SERVICE_CERTIFICATE,
             user,
             caseId: theCase.id,
             elementId: [defendant.id, subpoena.id],
           })
+          // After arraignment so defender choice on the certificate is correct.
+          // Only LOKE cases have a police case to update.
+          if (theCase.origin === CaseOrigin.LOKE) {
+            queueMessagesAfterCommit({
+              type: MessageType.DELIVERY_TO_POLICE_SERVICE_CERTIFICATE,
+              user,
+              caseId: theCase.id,
+              elementId: [defendant.id, subpoena.id],
+            })
+          }
         }
       }
     }
@@ -1121,6 +1169,8 @@ export class CaseService {
       } else if (isCompletedCase(updatedCase.state)) {
         if (isIndictment) {
           if (theCase.state === CaseState.WAITING_FOR_CANCELLATION) {
+            // Prosecutor cancellation voids the case; mid-case ruling orders are
+            // not delivered to LÖKE.
             this.addMessagesForIndictmentConclusionToQueue(updatedCase, user)
           } else {
             this.addMessagesForCompletedIndictmentCaseToQueue(updatedCase, user)
@@ -1186,7 +1236,7 @@ export class CaseService {
           if (updatedCase.splitCaseId) {
             const splitDefendant = updatedCase.defendants?.[0]
             if (splitDefendant?.id) {
-              addMessagesToQueue({
+              queueMessagesAfterCommit({
                 type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
                 user,
                 caseId: updatedCase.splitCaseId,
@@ -1210,12 +1260,40 @@ export class CaseService {
           this.addMessagesForProsecutorChangeToQueue(updatedCase, user)
         }
 
+        // Same mutual exclusion as prosecutor above and appeal roles:
+        // connect (number change) syncs current roles; this branch handles
+        // later assignment changes only.
         if (
-          !isIndictment &&
-          updatedCase.defenderEmail !== theCase.defenderEmail
+          isIndictment &&
+          ![
+            CaseState.DRAFT,
+            CaseState.SUBMITTED,
+            CaseState.WAITING_FOR_CONFIRMATION,
+          ].includes(updatedCase.state)
         ) {
-          // New defender email
-          this.addMessagesForDefenderEmailChangeToQueue(updatedCase, user)
+          // The delivery resolves one role per message, so a judge and a
+          // registrar assigned in the same update are delivered as two messages
+          if (
+            updatedCase.judge?.nationalId &&
+            updatedCase.judge.nationalId !== theCase.judge?.nationalId
+          ) {
+            this.addMessagesForIndictmentCourtRoleAssigned(
+              updatedCase,
+              user,
+              updatedCase.judge.nationalId,
+            )
+          }
+
+          if (
+            updatedCase.registrar?.nationalId &&
+            updatedCase.registrar.nationalId !== theCase.registrar?.nationalId
+          ) {
+            this.addMessagesForIndictmentCourtRoleAssigned(
+              updatedCase,
+              user,
+              updatedCase.registrar.nationalId,
+            )
+          }
         }
       }
     }
@@ -1242,30 +1320,6 @@ export class CaseService {
         this.addMessagesForDistrictCourtRegistrarAssignedToQueue(
           updatedCase,
           user,
-        )
-      }
-    }
-
-    if (
-      isIndictment &&
-      ![
-        CaseState.DRAFT,
-        CaseState.SUBMITTED,
-        CaseState.WAITING_FOR_CONFIRMATION,
-      ].includes(updatedCase.state)
-    ) {
-      const updatedRole =
-        updatedCase.judge?.nationalId !== theCase.judge?.nationalId
-          ? updatedCase.judge
-          : updatedCase.registrar?.nationalId !== theCase.registrar?.nationalId
-          ? updatedCase.registrar
-          : null
-
-      if (updatedRole?.nationalId) {
-        this.addMessagesForIndictmentCourtRoleAssigned(
-          updatedCase,
-          user,
-          updatedRole.nationalId,
         )
       }
     }
@@ -1306,6 +1360,14 @@ export class CaseService {
         user,
       )
     }
+
+    if (
+      updatedCase.appealProsecutorId &&
+      updatedCase.appealProsecutorId !== theCase.appealProsecutorId &&
+      isIndictment
+    ) {
+      this.addMessagesForAppealProsecutorAssignedToQueue(updatedCase, user)
+    }
   }
 
   async findById(
@@ -1313,13 +1375,8 @@ export class CaseService {
     allowDeleted = false,
     transaction?: Transaction,
   ): Promise<Case> {
-    const theCase = await this.caseRepositoryService.findOne({
-      include: caseInclude,
-      where: {
-        id: caseId,
-        ...(allowDeleted ? {} : { state: { [Op.not]: CaseState.DELETED } }),
-        isArchived: false,
-      },
+    const theCase = await this.caseRepositoryService.findLiveById(caseId, {
+      allowDeleted,
       transaction,
     })
 
@@ -1352,13 +1409,7 @@ export class CaseService {
   }
 
   async findMinimalById(id: string): Promise<MinimalCase> {
-    const minimalCase = await this.caseRepositoryService.findOne({
-      where: {
-        id,
-        isArchived: false,
-        state: { [Op.not]: CaseState.DELETED },
-      },
-    })
+    const minimalCase = await this.caseRepositoryService.findLiveMinimalById(id)
 
     if (!minimalCase) {
       throw new NotFoundException(`Case ${id} not found`)
@@ -1367,81 +1418,35 @@ export class CaseService {
     return minimalCase
   }
 
-  async getConnectedIndictmentCases(theCase: Case): Promise<Case[]> {
-    if (!theCase.defendants || theCase.defendants.length === 0) {
-      return []
+  /**
+   * Reads the case row with its row locked for the rest of the transaction.
+   * Used by `MinimalCaseExistsForUpdateGuard` so that a mutating route that
+   * decides against the case's own columns does so against a row no one else
+   * can change until it commits.
+   */
+  async findMinimalByIdForUpdate(
+    id: string,
+    transaction: Transaction,
+  ): Promise<MinimalCase> {
+    const minimalCase =
+      await this.caseRepositoryService.findLiveMinimalByIdForUpdate(
+        id,
+        transaction,
+      )
+
+    if (!minimalCase) {
+      throw new NotFoundException(`Case ${id} not found`)
     }
 
-    // Build "match any of these defendants" conditions
-    const defendantOrConditions = theCase.defendants.map((defendant) =>
-      defendant.noNationalId
-        ? { nationalId: defendant.nationalId, name: defendant.name }
-        : { nationalId: defendant.nationalId },
-    )
-
-    return this.caseRepositoryService.findAll({
-      include: [
-        { model: Institution, as: 'court', attributes: ['id', 'name'] },
-        {
-          model: Defendant,
-          as: 'defendants',
-          required: true,
-          attributes: ['id', 'noNationalId', 'nationalId', 'name'],
-          // At least one matching defendant per condition
-          where: { [Op.or]: defendantOrConditions },
-        },
-      ],
-      attributes: ['id', 'courtCaseNumber'],
-      where: {
-        [Op.and]: {
-          isArchived: false,
-          type: CaseType.INDICTMENT,
-          state: [CaseState.RECEIVED],
-          id: { [Op.ne]: theCase.id },
-        },
-      },
-    })
+    return minimalCase
   }
 
-  async getCandidateMergeCases(theCase: Case): Promise<Case[]> {
-    if (!theCase.defendants || theCase.defendants.length === 0) {
-      return []
-    }
+  getConnectedIndictmentCases(theCase: Case): Promise<Case[]> {
+    return this.caseRepositoryService.findConnectedIndictmentCases(theCase)
+  }
 
-    // Build "match any of these defendants" conditions
-    const defendantOrConditions = theCase.defendants.map((defendant) =>
-      defendant.noNationalId
-        ? { nationalId: defendant.nationalId, name: defendant.name }
-        : { nationalId: defendant.nationalId },
-    )
-
-    const expectedCount = theCase.defendants.length
-
-    return this.caseRepositoryService.findAll({
-      include: [
-        {
-          model: Defendant,
-          as: 'defendants',
-          required: true,
-          attributes: [],
-          // At least one matching defendant per condition
-          where: { [Op.or]: defendantOrConditions },
-        },
-      ],
-      attributes: ['id', 'courtCaseNumber'],
-      where: {
-        [Op.and]: {
-          isArchived: false,
-          id: { [Op.ne]: theCase.id },
-          type: CaseType.INDICTMENT,
-          state: CaseState.RECEIVED,
-          courtId: theCase.courtId,
-        },
-      },
-      // Ensure all defendants matched by grouping and counting
-      group: ['Case.id'],
-      having: literal(`COUNT(DISTINCT "defendants"."id") = ${expectedCount}`),
-    })
+  getCandidateMergeCases(theCase: Case): Promise<Case[]> {
+    return this.caseRepositoryService.findCandidateMergeCases(theCase)
   }
 
   async create(
@@ -1449,17 +1454,19 @@ export class CaseService {
     user: TUser,
     transaction: Transaction,
   ): Promise<Case> {
+    const { defendants, ...caseFields } = caseToCreate
+
     const theCase = await this.createCase(
       {
-        ...caseToCreate,
+        ...caseFields,
         origin: CaseOrigin.RVG,
         creatingProsecutorId: user.id,
-        prosecutorId: isIndictmentCase(caseToCreate.type)
-          ? caseToCreate.prosecutorId
+        prosecutorId: isIndictmentCase(caseFields.type)
+          ? caseFields.prosecutorId
           : user.role === UserRole.PROSECUTOR
           ? user.id
           : undefined,
-        courtId: isRequestCase(caseToCreate.type)
+        courtId: isRequestCase(caseFields.type)
           ? user.institution?.defaultCourtId
           : undefined,
         prosecutorsOfficeId: user.institution?.id,
@@ -1467,7 +1474,18 @@ export class CaseService {
       transaction,
     )
 
-    await this.defendantService.createForNewCase(theCase.id, {}, transaction)
+    // A case starts with at least one defendant. The indictment flow sends the
+    // defendants entered before the case existed so they are created in the
+    // same transaction as the case, whole or not at all. The other flows enter
+    // their defendant after creation and start from an empty one. Created one
+    // at a time so the order of the form is kept.
+    for (const defendant of defendants?.length ? defendants : [{}]) {
+      await this.defendantService.createForNewCase(
+        theCase.id,
+        defendant,
+        transaction,
+      )
+    }
 
     return this.findById(theCase.id, false, transaction)
   }
@@ -1590,15 +1608,11 @@ export class CaseService {
     // enforce it rather than rely on that.
     const existingAppealCase = theCase.appealCase
     if (existingAppealCase) {
-      const appealedEvents = await this.appealEventLogRepositoryService.findAll(
-        {
-          where: {
-            appealCaseId: existingAppealCase.id,
-            eventType: AppealEventType.APPEALED,
-          },
-          transaction,
-        },
-      )
+      const appealedEvents =
+        await this.appealEventLogRepositoryService.findAppealedEventsForAppealCase(
+          existingAppealCase.id,
+          { transaction },
+        )
 
       const lock = appealCorrectionLock({
         appealState: existingAppealCase.appealState,
@@ -1648,13 +1662,11 @@ export class CaseService {
     actor: TUser,
     transaction: Transaction,
   ): Promise<void> {
-    const existingEvents = await this.appealEventLogRepositoryService.findAll({
-      where: {
-        appealCaseId: appealCase.id,
-        eventType: AppealEventType.APPEALED,
-      },
-      transaction,
-    })
+    const existingEvents =
+      await this.appealEventLogRepositoryService.findAppealedEventsForAppealCase(
+        appealCase.id,
+        { transaction },
+      )
 
     const hasProsecutionEvent = existingEvents.some((event) =>
       prosecutionRoles.includes(event.userRole),
@@ -1883,7 +1895,9 @@ export class CaseService {
         theCase.id,
         {
           documentType: CourtDocumentType.UPLOADED_DOCUMENT,
-          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          name: stripPdfExtension(
+            caseFile.userGeneratedFilename ?? caseFile.name,
+          ),
           caseFileId: caseFile.id,
         },
         { transaction },
@@ -1898,7 +1912,9 @@ export class CaseService {
         theCase.id,
         {
           documentType: CourtDocumentType.UPLOADED_DOCUMENT,
-          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          name: stripPdfExtension(
+            caseFile.userGeneratedFilename ?? caseFile.name,
+          ),
           caseFileId: caseFile.id,
         },
         { transaction },
@@ -1931,6 +1947,7 @@ export class CaseService {
           CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
           CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
           CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+          CaseFileCategory.COURT_CASE_FILE,
           CaseFileCategory.CIVIL_CLAIM,
         ].includes(file.category),
     ) ?? []) {
@@ -1938,7 +1955,9 @@ export class CaseService {
         theCase.id,
         {
           documentType: CourtDocumentType.UPLOADED_DOCUMENT,
-          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          name: stripPdfExtension(
+            caseFile.userGeneratedFilename ?? caseFile.name,
+          ),
           caseFileId: caseFile.id,
         },
         { transaction },
@@ -2077,7 +2096,7 @@ export class CaseService {
           defendantId,
           user,
           transaction,
-          created,
+          created ? { created } : undefined,
         )
       }),
     )
@@ -2088,7 +2107,7 @@ export class CaseService {
           continue
         }
 
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CONCLUSION,
           user,
           caseId: theCase.id,
@@ -2177,6 +2196,8 @@ export class CaseService {
       theCase.courtId !== update.courtId &&
       theCase.state === CaseState.RECEIVED
 
+    const isReopeningCase = update.reopenReason !== undefined
+
     if (isReceivingCase) {
       update = transitionCase(CaseTransition.RECEIVE, theCase, user, update)
     }
@@ -2185,7 +2206,7 @@ export class CaseService {
       update = transitionCase(CaseTransition.MOVE, theCase, user, update)
     }
 
-    if (update.reopenReason !== undefined) {
+    if (isReopeningCase) {
       const header = `${capitalize(formatDate(nowFactory(), 'PPPPp'))} - ${
         user.name
       } ${lowercase(user.title)}.`
@@ -2217,6 +2238,21 @@ export class CaseService {
     // payload without mutating the original update object.
     const { defendantEventLogDecisions, ...caseUpdate }: UpdateCase = update
 
+    // Turning civil claims off deletes the claimants in the controller; clear
+    // the stored civil demands text here so a later indictment PDF cannot
+    // pick up leftover wording after the user answered "nei". Drop any
+    // civilDemands on the same update so handleCaseStringUpdates cannot
+    // upsert the string back after this delete.
+    if (caseUpdate.hasCivilClaims === false) {
+      delete caseUpdate.civilDemands
+
+      await this.caseStringRepositoryService.deleteByCaseAndType(
+        theCase.id,
+        StringType.CIVIL_DEMANDS,
+        { transaction },
+      )
+    }
+
     await this.handleDateLogUpdates(theCase, caseUpdate, transaction)
     await this.handleCaseStringUpdates(theCase, caseUpdate, transaction)
 
@@ -2244,13 +2280,10 @@ export class CaseService {
       // nothing about it, and correcting the court record cannot take it away -
       // it must survive both the rejection below and the cleanup further down.
       const appealedEvents = existingAppealCase
-        ? await this.appealEventLogRepositoryService.findAll({
-            where: {
-              appealCaseId: existingAppealCase.id,
-              eventType: AppealEventType.APPEALED,
-            },
-            transaction,
-          })
+        ? await this.appealEventLogRepositoryService.findAppealedEventsForAppealCase(
+            existingAppealCase.id,
+            { transaction },
+          )
         : []
       const appealedOutOfCourt = hasOutOfCourtAppeal(appealedEvents)
 
@@ -2457,28 +2490,46 @@ export class CaseService {
       theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.MERGE &&
       theCase.mergeCaseId
     ) {
-      const parentCase = theCase.mergeCase
+      // The COMPLETE transition has already checked that the parent case is
+      // received
 
-      if (parentCase?.state !== CaseState.RECEIVED) {
-        throw new BadRequestException(
-          `Cannot merge indictment case ${theCase.id} with parent case ${
-            parentCase?.id ?? 'unknown'
-          } in state ${parentCase?.state ?? 'unknown'}`,
+      // The parent's court sessions can change under this request: the guard
+      // locked this case's row, not the parent's. The parent's court session
+      // routes run under the parent's row lock (CaseExistsForUpdateGuard), so
+      // taking that lock here makes a confirmation of the parent's latest
+      // session, or a new session on it, either finish before the decision
+      // below or wait for this completion to commit - and the decision is
+      // taken from a fresh read under the lock, not from the guard's snapshot.
+      // Lock order is child then parent; nothing takes them the other way
+      // round - the parent's routes lock their own row and read the merged
+      // children without locking them.
+      const parentCaseLocked =
+        await this.caseRepositoryService.lockByIdForUpdate(
+          theCase.mergeCaseId,
+          transaction,
+        )
+
+      if (!parentCaseLocked) {
+        throw new InternalServerErrorException(
+          `Could not find parent case ${theCase.mergeCaseId} when completing merged case ${theCase.id}`,
         )
       }
 
-      // Update the latest court session if it is unconfirmed
+      // The merged case joins the parent's latest court session while that
+      // session is still open. Once it has been confirmed - or if the parent
+      // has no session yet - nothing happens here: the parent's next court
+      // session picks the merged case up when it is created.
       if (
-        parentCase.withCourtSessions &&
-        parentCase.courtSessions &&
-        parentCase.courtSessions.length > 0 &&
-        !parentCase.courtSessions[parentCase.courtSessions.length - 1]
-          .isConfirmed
+        theCase.mergeCase?.withCourtSessions &&
+        (await this.courtSessionService.isLatestCourtSessionOpen(
+          theCase.mergeCaseId,
+          transaction,
+        ))
       ) {
-        await this.courtSessionRepositoryService.addMergedCaseToLatestCourtSession(
-          parentCase.id,
+        await this.courtSessionService.addMergedCaseToLatestCourtSession(
+          theCase.mergeCaseId,
           theCase.id,
-          { transaction },
+          transaction,
         )
       }
     }
@@ -2508,7 +2559,7 @@ export class CaseService {
       defendantEventLogDecisions.length > 0
     ) {
       defendantEventLogDecisions.forEach(({ defendantId }) => {
-        addMessagesToQueue({
+        queueMessagesAfterCommit({
           type: MessageType.DEFENDANT_NOTIFICATION,
           caseId: updatedCase.id,
           elementId: defendantId,
@@ -2521,15 +2572,35 @@ export class CaseService {
 
     this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
 
+    // Each of these events asserts that a transition happened, so they wait
+    // for the commit: TransactionCommitInterceptor drains the callbacks after
+    // the handler has returned and the request transaction, if there is one,
+    // has committed. The update and transition routes run inside the request
+    // transaction their guard opened; createCourtCase and the two signature
+    // confirmations call this inside a transaction their handler owns and
+    // return right after it commits, which is what keeps the drain behind the
+    // commit there too. Either way an update that rolls back announces
+    // nothing. Still fire and forget: a failed announcement is logged, not
+    // returned to the caller.
     if (isReceivingCase) {
-      this.eventService.postEvent(CaseTransition.RECEIVE, updatedCase)
+      registerAfterCommit(() =>
+        this.eventService.postEvent(CaseTransition.RECEIVE, updatedCase),
+      )
     }
 
     if (requiresCourtTransition) {
-      this.eventService.postEvent(CaseTransition.MOVE, updatedCase, {
-        from: theCase.court?.name,
-        to: updatedCase?.court?.name,
-      })
+      registerAfterCommit(() =>
+        this.eventService.postEvent(CaseTransition.MOVE, updatedCase, {
+          from: theCase.court?.name,
+          to: updatedCase?.court?.name,
+        }),
+      )
+    }
+
+    if (isReopeningCase) {
+      registerAfterCommit(() =>
+        this.eventService.postEvent(CaseTransition.REOPEN, updatedCase),
+      )
     }
 
     if (returnUpdatedCase) {
@@ -2542,9 +2613,7 @@ export class CaseService {
     user: TUser,
     method: 'audkenni' | 'mobile',
   ): Promise<SigningServiceResponse> {
-    await this.refreshFormatMessage()
-
-    const pdf = await getCourtRecordPdfAsString(theCase, this.formatMessage)
+    const pdf = await getCourtRecordPdfAsString(theCase)
 
     if (method === 'audkenni') {
       return this.signingService
@@ -2673,8 +2742,7 @@ export class CaseService {
       )
     }
 
-    await this.refreshFormatMessage()
-    const pdf = await getRulingPdfAsString(theCase, this.formatMessage)
+    const pdf = await getRulingPdfAsString(theCase)
     if (method === 'audkenni') {
       return this.signingService
         .requestSignatureAudkenni(
@@ -2798,10 +2866,7 @@ export class CaseService {
       'type',
       'description',
       'policeCaseNumbers',
-      'defenderName',
-      'defenderNationalId',
-      'defenderEmail',
-      'defenderPhoneNumber',
+      'defendantWaivesRightToCounsel',
       'leadInvestigator',
       'courtId',
       'translator',
@@ -2847,6 +2912,20 @@ export class CaseService {
               gender: defendant.gender,
               address: defendant.address,
               citizenship: defendant.citizenship,
+              // Each defendant keeps its own defender and sharing timing
+              ...(isRequestCase(theCase.type)
+                ? {
+                    defenderName: defendant.defenderName,
+                    defenderNationalId: defendant.defenderNationalId,
+                    defenderEmail: defendant.defenderEmail,
+                    defenderPhoneNumber: defendant.defenderPhoneNumber,
+                    requestSharedWithDefender:
+                      defendant.requestSharedWithDefender,
+                    ...(theCase.defendantWaivesRightToCounsel
+                      ? { defenderChoice: DefenderChoice.WAIVE }
+                      : {}),
+                  }
+                : {}),
             },
             transaction,
           ),
@@ -2857,25 +2936,13 @@ export class CaseService {
     return extendedCase
   }
 
-  async duplicateIndictmentCase(
-    theCase: Case,
-    user: TUser,
-    transaction: Transaction,
-  ): Promise<Case> {
-    return this.caseRepositoryService.duplicateIndictmentToDraft(theCase.id, {
-      transaction,
-      prosecutorId: user.id,
-      prosecutorsOfficeId: user.institution?.id,
-    })
-  }
-
   async splitDefendantFromCase(
     theCase: Case,
     defendant: Defendant,
     transaction: Transaction,
   ): Promise<Case> {
-    const splitCase = await this.caseRepositoryService.split(
-      theCase.id,
+    const splitCase = await this.caseCloningService.split(
+      theCase,
       defendant.id,
       { transaction },
     )

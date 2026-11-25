@@ -5,7 +5,9 @@ import {
   CaseFileCategory,
   CaseState,
   CaseType,
+  DateType,
   DefendantEventType,
+  RequestSharedWithDefender,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -58,6 +60,21 @@ const makeIndictmentCase = (overrides: Partial<Case> = {}): Case =>
     ...overrides,
   } as Case)
 
+const makeRequestCase = (overrides: Partial<Case> = {}): Case =>
+  ({
+    id: uuid(),
+    type: CaseType.CUSTODY,
+    state: CaseState.RECEIVED,
+    defendants: [
+      makeDefendant({
+        requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED,
+      }),
+    ],
+    caseFiles: [],
+    dateLogs: [],
+    ...overrides,
+  } as Case)
+
 describe('LimitedAccessCaseService - getAllFilesZip', () => {
   let limitedAccessCaseService: LimitedAccessCaseService
   let mockPdfService: PdfService
@@ -94,6 +111,9 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
     jest
       .spyOn(mockPdfService, 'getCourtRecordPdfForIndictmentCase')
       .mockResolvedValue(pdfBuffer)
+    jest.spyOn(mockPdfService, 'getRequestPdf').mockResolvedValue(pdfBuffer)
+    jest.spyOn(mockPdfService, 'getCourtRecordPdf').mockResolvedValue(pdfBuffer)
+    jest.spyOn(mockPdfService, 'getRulingPdf').mockResolvedValue(pdfBuffer)
     jest
       .spyOn(mockFileService, 'getCaseFileFromS3')
       .mockResolvedValue(pdfBuffer)
@@ -102,6 +122,137 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
   afterEach(() => {
     zipFilesSpy.mockRestore()
     jest.restoreAllMocks()
+  })
+
+  describe('request case that is still open', () => {
+    const arraignmentDateLogs = [
+      { dateType: DateType.ARRAIGNMENT_DATE, date: new Date('2026-11-20') },
+    ] as Case['dateLogs']
+
+    it('should not include the request when it is not shared with the defender', async () => {
+      const theCase = makeRequestCase({ dateLogs: arraignmentDateLogs })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockPdfService.getRequestPdf).not.toHaveBeenCalled()
+    })
+
+    it('should not include a request shared at court date before a court date is set', async () => {
+      const theCase = makeRequestCase({
+        defendants: [
+          makeDefendant({
+            requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+          }),
+        ],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockPdfService.getRequestPdf).not.toHaveBeenCalled()
+    })
+
+    it('should include a request shared at court date once a court date is set', async () => {
+      const theCase = makeRequestCase({
+        defendants: [
+          makeDefendant({
+            requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+          }),
+        ],
+        dateLogs: arraignmentDateLogs,
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockPdfService.getRequestPdf).toHaveBeenCalledWith(theCase)
+    })
+
+    it('should include a request shared when ready for court', async () => {
+      const theCase = makeRequestCase({
+        state: CaseState.SUBMITTED,
+        defendants: [
+          makeDefendant({
+            requestSharedWithDefender:
+              RequestSharedWithDefender.READY_FOR_COURT,
+          }),
+        ],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockPdfService.getRequestPdf).toHaveBeenCalledWith(theCase)
+    })
+
+    it('should not include the draft court record or ruling', async () => {
+      const theCase = makeRequestCase({
+        defendants: [
+          makeDefendant({
+            requestSharedWithDefender:
+              RequestSharedWithDefender.READY_FOR_COURT,
+          }),
+        ],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockPdfService.getCourtRecordPdf).not.toHaveBeenCalled()
+      expect(mockPdfService.getRulingPdf).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('completed request case', () => {
+    it('should include the request, court record and ruling even when the request was never shared', async () => {
+      const theCase = makeRequestCase({ state: CaseState.ACCEPTED })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockPdfService.getRequestPdf).toHaveBeenCalledWith(theCase)
+      expect(mockPdfService.getCourtRecordPdf).toHaveBeenCalledWith(
+        theCase,
+        user,
+      )
+      expect(mockPdfService.getRulingPdf).toHaveBeenCalledWith(theCase)
+    })
+
+    it('should not include a ruling when the case was completed without one', async () => {
+      const theCase = makeRequestCase({
+        state: CaseState.ACCEPTED,
+        isCompletedWithoutRuling: true,
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockPdfService.getCourtRecordPdf).toHaveBeenCalled()
+      expect(mockPdfService.getRulingPdf).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('indictment case that is still open', () => {
+    it('should include the indictment and case files record for a defender with case file access', async () => {
+      const theCase = makeIndictmentCase({ state: CaseState.RECEIVED })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockPdfService.getIndictmentPdf).toHaveBeenCalledWith(
+        theCase,
+        transaction,
+      )
+      expect(mockPdfService.getCaseFilesRecordPdf).toHaveBeenCalledWith(
+        theCase,
+        '007-2026-1',
+      )
+    })
+
+    it('should not include generated documents for a defender without case file access', async () => {
+      const theCase = makeIndictmentCase({
+        state: CaseState.RECEIVED,
+        defendants: [makeDefendant({ caseFilesSharedWithDefender: false })],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockPdfService.getIndictmentPdf).not.toHaveBeenCalled()
+      expect(mockPdfService.getCaseFilesRecordPdf).not.toHaveBeenCalled()
+    })
   })
 
   describe('subpoenas', () => {
@@ -228,6 +379,204 @@ describe('LimitedAccessCaseService - getAllFilesZip', () => {
       expect(mockFileService.getCaseFileFromS3).toHaveBeenCalledWith(
         theCase,
         writtenUp,
+      )
+    })
+  })
+
+  describe('uploaded case files the defender can see', () => {
+    const makeAccessibleFile = (overrides: Partial<CaseFile> = {}): CaseFile =>
+      ({
+        id: uuid(),
+        name: 'uploaded.pdf',
+        category: CaseFileCategory.CASE_FILE,
+        key: `${uuid()}/${uuid()}/uploaded.pdf`,
+        isKeyAccessible: true,
+        created: new Date('2024-01-01'),
+        ...overrides,
+      } as CaseFile)
+
+    it('should include case files visible to the defender on the case itself', async () => {
+      const caseFile = makeAccessibleFile({
+        name: 'sakavottord.pdf',
+        category: CaseFileCategory.CASE_FILE,
+      })
+      const prosecutorUpload = makeAccessibleFile({
+        name: 'sækjandi.pdf',
+        category: CaseFileCategory.PROSECUTOR_CASE_FILE,
+      })
+      const courtUpload = makeAccessibleFile({
+        name: 'dómari.pdf',
+        category: CaseFileCategory.COURT_CASE_FILE,
+      })
+      const theCase = makeIndictmentCase({
+        caseFiles: [caseFile, prosecutorUpload, courtUpload],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockFileService.getCaseFileFromS3).toHaveBeenCalledWith(
+        theCase,
+        caseFile,
+      )
+      expect(mockFileService.getCaseFileFromS3).toHaveBeenCalledWith(
+        theCase,
+        prosecutorUpload,
+      )
+      expect(mockFileService.getCaseFileFromS3).toHaveBeenCalledWith(
+        theCase,
+        courtUpload,
+      )
+    })
+
+    it('should include case files from cases merged into this case', async () => {
+      const mergedFile = makeAccessibleFile({
+        name: 'merged-case-file.pdf',
+        category: CaseFileCategory.PROSECUTOR_CASE_FILE,
+      })
+      const mergedCase = {
+        id: uuid(),
+        type: CaseType.INDICTMENT,
+        state: CaseState.COMPLETED,
+        caseFiles: [mergedFile],
+      } as Case
+      const theCase = makeIndictmentCase({
+        caseFiles: [],
+        mergedCases: [mergedCase],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockFileService.getCaseFileFromS3).toHaveBeenCalledWith(
+        mergedCase,
+        mergedFile,
+      )
+    })
+
+    it('should include case files from cases split from this case', async () => {
+      const splitFile = makeAccessibleFile({
+        name: 'split-case-file.pdf',
+        category: CaseFileCategory.COURT_CASE_FILE,
+      })
+      const splitCase = {
+        id: uuid(),
+        type: CaseType.INDICTMENT,
+        state: CaseState.COMPLETED,
+        defendants: [makeDefendant()],
+        civilClaimants: [],
+        caseFiles: [splitFile],
+        courtSessions: [],
+      } as Case
+      const theCase = makeIndictmentCase({
+        caseFiles: [],
+        splitCases: [splitCase],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockFileService.getCaseFileFromS3).toHaveBeenCalledWith(
+        splitCase,
+        splitFile,
+      )
+    })
+
+    it('should include a file the defender submitted even without case-file sharing', async () => {
+      const submittedByDefender = makeAccessibleFile({
+        name: 'verjandi.pdf',
+        category: CaseFileCategory.DEFENDANT_CASE_FILE,
+        submittedBy: 'Defender Name',
+      })
+      const theCase = makeIndictmentCase({
+        defendants: [
+          makeDefendant({
+            caseFilesSharedWithDefender: false,
+          }),
+        ],
+        caseFiles: [submittedByDefender],
+      })
+      const defenderUser = {
+        ...user,
+        name: 'Defender Name',
+      } as User
+
+      await limitedAccessCaseService.getAllFilesZip(
+        theCase,
+        defenderUser,
+        transaction,
+      )
+
+      expect(mockFileService.getCaseFileFromS3).toHaveBeenCalledWith(
+        theCase,
+        submittedByDefender,
+      )
+    })
+
+    it('should include split-case files for a confirmed appeal spokesperson', async () => {
+      const appealSpokespersonNationalId = defenderNationalId
+      const splitFile = makeAccessibleFile({
+        name: 'split-appeal-spokesperson.pdf',
+        category: CaseFileCategory.CASE_FILE,
+      })
+      const splitCase = {
+        id: uuid(),
+        type: CaseType.INDICTMENT,
+        state: CaseState.COMPLETED,
+        defendants: [],
+        civilClaimants: [
+          {
+            id: uuid(),
+            hasAppealSpokesperson: true,
+            appealSpokespersonNationalId,
+            isAppealSpokespersonConfirmed: true,
+          },
+        ],
+        caseFiles: [splitFile],
+        courtSessions: [],
+      } as Case
+      const theCase = makeIndictmentCase({
+        defendants: [],
+        civilClaimants: [],
+        caseFiles: [],
+        splitCases: [splitCase],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockFileService.getCaseFileFromS3).toHaveBeenCalledWith(
+        splitCase,
+        splitFile,
+      )
+    })
+
+    it("should not include another defendant's criminal record", async () => {
+      const myDefendant = makeDefendant({ id: 'defendant-mine' })
+      const otherDefendant = makeDefendant({
+        id: 'defendant-other',
+        defenderNationalId: '0202020202',
+      })
+      const myCriminalRecord = makeAccessibleFile({
+        name: 'sakavottord-minn.pdf',
+        category: CaseFileCategory.CRIMINAL_RECORD,
+        defendantId: myDefendant.id,
+      })
+      const otherCriminalRecord = makeAccessibleFile({
+        name: 'sakavottord-annar.pdf',
+        category: CaseFileCategory.CRIMINAL_RECORD,
+        defendantId: otherDefendant.id,
+      })
+      const theCase = makeIndictmentCase({
+        defendants: [myDefendant, otherDefendant],
+        caseFiles: [myCriminalRecord, otherCriminalRecord],
+      })
+
+      await limitedAccessCaseService.getAllFilesZip(theCase, user, transaction)
+
+      expect(mockFileService.getCaseFileFromS3).toHaveBeenCalledWith(
+        theCase,
+        myCriminalRecord,
+      )
+      expect(mockFileService.getCaseFileFromS3).not.toHaveBeenCalledWith(
+        theCase,
+        otherCriminalRecord,
       )
     })
   })

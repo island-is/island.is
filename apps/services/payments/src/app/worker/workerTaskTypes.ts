@@ -4,6 +4,7 @@
  */
 export const WorkerTaskType = {
   CreateFjsCharge: 'create_fjs_charge',
+  PayFjsDebt: 'pay_fjs_debt',
 } as const
 
 export type WorkerTaskTypeValue =

@@ -8,3 +8,5 @@ export type ApplicationFilters = {
   institution?: string
   typeIdValue?: string
 }
+
+export type ApplicationOrigin = 'formSystem' | 'applicationSystem'

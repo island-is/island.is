@@ -5,6 +5,7 @@ import { data, dataOr404Null, FetchError } from '@island.is/clients/middlewares'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
+  CancelAppointmentConflictReason,
   DispensationHistoryDto,
   DispensationHistoryItemDto,
   OrganDonorDto,
@@ -17,6 +18,7 @@ import {
   donationExceptionControllerGetOrgansV1,
   meAppointmentControllerCancelAppointmentV1,
   meAppointmentControllerGetPatientAppointmentsV1,
+  meAppointmentControllerGetPatientAppointmentsV2V2,
   meAppointmentControllerGetPatientAppointmentByIdV1,
   meCertificateControllerCreateCertificateRequestV1,
   meCertificateControllerCreatePaymentIntentV1,
@@ -25,6 +27,7 @@ import {
   meConversationControllerCreateConversationV1,
   meConversationControllerGetConversationByIdV1,
   meConversationControllerGetConversationsV1,
+  meConversationControllerGetConversationsV2V2,
   meConversationControllerGetMessageAttachmentV1,
   meConversationControllerMarkConversationAsReadV1,
   meConversationControllerReplyToConversationV1,
@@ -34,6 +37,12 @@ import {
   meMessagingRecipientControllerGetMessagingRecipientsV1,
   meDonorStatusControllerGetOrganDonorStatusV1,
   meDonorStatusControllerUpdateOrganDonorStatusV1,
+  mePregnancyControllerGetActivePregnancyV1,
+  mePregnancyControllerGetPregnancyCommunicationDetailV1,
+  mePregnancyControllerGetPregnancyCommunicationsV1,
+  mePregnancyControllerGetPregnancyDocumentsV1,
+  mePregnancyControllerGetPregnancyMeasurementsV1,
+  mePregnancyControllerHasActivePregnancyV1,
   mePatientConcentEuControllerCreateEuPatientConsentForPatientV1,
   mePatientConcentEuControllerDeactivateEuPatientConsentForPatientV1,
   mePatientConcentEuControllerGetCountriesV1,
@@ -48,6 +57,7 @@ import {
   mePrescriptionDispensationControllerGetGroupedDispensationsV1,
   meReferralControllerGetReferralsV1,
   meTreatmentControllerGetTreatmentDocumentsV1,
+  meTreatmentControllerGetTreatmentQuestionnairesV1,
   meTreatmentControllerGetTreatmentV1,
   meTreatmentControllerGetTreatmentsV1,
   meWaitingListControllerGetWaitingListEntriesV1,
@@ -58,10 +68,12 @@ import {
 } from './gen/fetch'
 
 import {
+  ActivePregnancyDto,
   AppointmentBaseDto,
   AppointmentDetailDto,
   CertificateDto,
   CertificateRequestDto,
+  CommunicationDto,
   ConsentCountryDto,
   ConversationBaseDto,
   ConversationDetailDto,
@@ -73,10 +85,18 @@ import {
   CreateOrUpdatePrescriptionCommissionDto,
   CreateReplyRequestDto,
   EuPatientConsentResponseDto,
+  ExaminationCommunicationDetailDto,
+  ExaminationMeasurementDto,
   Locale,
+  MeAppointmentControllerGetPatientAppointmentsV2V2Data,
+  MeConversationControllerGetConversationsV2V2Data,
   MessagingRecipientDto,
+  PaginatedAppointmentsDto,
+  PaginatedConversationsDto,
   PaymentIntentDto,
   PaymentRequiredProblemResponse,
+  PhoneCallCommunicationDetailDto,
+  PregnancyDocumentDto,
   PrescriptionCommissionDto,
   QuestionnaireBaseDto,
   QuestionnaireDetailDto,
@@ -91,11 +111,16 @@ import {
   UserVisibleAppointmentStatuses,
 } from './gen/fetch/types.gen'
 
+import { CancelAppointmentResult } from './dtos/cancelAppointmentResult.dto'
 import { CreateCertificateRequestBody } from './dtos/createCertificateRequestBody.dto'
 
 export type AttachmentDownloadResult =
   | { status: 200; data: ArrayBuffer; contentType: string }
   | { status: 402; resourceType: string; resourceId?: string }
+
+export type PregnancyCommunicationDetailDto =
+  | ({ kind: 'EXAMINATION' } & ExaminationCommunicationDetailDto)
+  | ({ kind: 'PHONE_CALL' } & PhoneCallCommunicationDetailDto)
 
 @Injectable()
 export class HealthDirectorateHealthService {
@@ -335,6 +360,106 @@ export class HealthDirectorateHealthService {
     return donationExceptions
   }
 
+  /* Pregnancy */
+  public async hasActivePregnancy(auth: Auth): Promise<boolean | null> {
+    const result = await withAuthContext(auth, () =>
+      data(mePregnancyControllerHasActivePregnancyV1()),
+    )
+
+    return result?.hasActivePregnancy ?? null
+  }
+
+  public async getActivePregnancy(
+    auth: Auth,
+  ): Promise<ActivePregnancyDto | null> {
+    const result = await withAuthContext(auth, () =>
+      data(mePregnancyControllerGetActivePregnancyV1()),
+    )
+
+    return result?.pregnancy ?? null
+  }
+
+  public async getPregnancyCommunications(
+    auth: Auth,
+    pregnancyId: string,
+  ): Promise<CommunicationDto[] | null> {
+    const communications = await withAuthContext(auth, () =>
+      dataOr404Null(
+        mePregnancyControllerGetPregnancyCommunicationsV1({
+          path: { pregnancyId },
+        }),
+      ),
+    )
+
+    return communications ?? null
+  }
+
+  public async getPregnancyCommunicationDetail(
+    auth: Auth,
+    pregnancyId: string,
+    communicationId: string,
+  ): Promise<PregnancyCommunicationDetailDto | null> {
+    const detail = await withAuthContext(auth, () =>
+      dataOr404Null(
+        mePregnancyControllerGetPregnancyCommunicationDetailV1({
+          path: { pregnancyId, communicationId },
+        }),
+      ),
+    )
+
+    if (!detail) {
+      return null
+    }
+
+    // The generator emits no response transformer for this union response,
+    // so date fields arrive as ISO strings despite being typed as Date.
+    return {
+      ...detail,
+      dateTime: detail.dateTime ? new Date(detail.dateTime) : undefined,
+      lastUpdated: detail.lastUpdated
+        ? new Date(detail.lastUpdated)
+        : undefined,
+      subject: detail.subject
+        ? {
+            ...detail.subject,
+            date: detail.subject.date
+              ? new Date(detail.subject.date)
+              : undefined,
+          }
+        : undefined,
+    }
+  }
+
+  public async getPregnancyMeasurements(
+    auth: Auth,
+    pregnancyId: string,
+  ): Promise<ExaminationMeasurementDto[] | null> {
+    const measurements = await withAuthContext(auth, () =>
+      dataOr404Null(
+        mePregnancyControllerGetPregnancyMeasurementsV1({
+          path: { pregnancyId },
+        }),
+      ),
+    )
+
+    return measurements ?? null
+  }
+
+  public async getPregnancyDocuments(
+    auth: Auth,
+    pregnancyId: string,
+  ): Promise<PregnancyDocumentDto[] | null> {
+    const documents = await withAuthContext(auth, () =>
+      dataOr404Null(
+        mePregnancyControllerGetPregnancyDocumentsV1({
+          path: { pregnancyId },
+        }),
+      ),
+    )
+
+    return documents ?? null
+  }
+
   public async getQuestionnaires(
     auth: Auth,
     locale: Locale,
@@ -357,7 +482,7 @@ export class HealthDirectorateHealthService {
     id: string,
   ): Promise<QuestionnaireDetailDto | null> {
     const questionnaire = await withAuthContext(auth, () =>
-      data(
+      dataOr404Null(
         questionnaireControllerGetQuestionnaireDetailV1({
           path: {
             id: id,
@@ -582,6 +707,17 @@ export class HealthDirectorateHealthService {
     return appointments ?? null
   }
 
+  public async getPaginatedAppointments(
+    auth: Auth,
+    query?: MeAppointmentControllerGetPatientAppointmentsV2V2Data['query'],
+  ): Promise<PaginatedAppointmentsDto | null> {
+    const page = await withAuthContext(auth, () =>
+      data(meAppointmentControllerGetPatientAppointmentsV2V2({ query })),
+    )
+
+    return page ?? null
+  }
+
   public async getAppointmentById(
     auth: Auth,
     id: string,
@@ -597,16 +733,67 @@ export class HealthDirectorateHealthService {
     return appointment ?? null
   }
 
-  public async cancelAppointment(auth: Auth, id: string): Promise<boolean> {
-    await withAuthContext(auth, () =>
-      data(
-        meAppointmentControllerCancelAppointmentV1({
-          path: { id },
-        }),
-      ),
-    )
+  public async cancelAppointment(
+    auth: Auth,
+    id: string,
+  ): Promise<CancelAppointmentResult> {
+    try {
+      await withAuthContext(auth, () =>
+        data(
+          meAppointmentControllerCancelAppointmentV1({
+            path: { id },
+          }),
+        ),
+      )
 
-    return true
+      return 'CANCELLED'
+    } catch (e) {
+      if (e instanceof FetchError) {
+        const mapped = this.mapCancelAppointmentAnswer(e)
+        if (mapped) {
+          return mapped
+        }
+      }
+      throw e
+    }
+  }
+
+  /*
+   * Refusals and timeouts arrive as problem documents with content type
+   * application/json, so FetchError.problem is never set and the parsed
+   * document is on FetchError.body (logErrorResponseBody is enabled).
+   */
+  private mapCancelAppointmentAnswer(
+    e: FetchError,
+  ): CancelAppointmentResult | undefined {
+    const body = e.body as { errorCode?: string } | undefined
+    if (!body || typeof body !== 'object') {
+      return undefined
+    }
+
+    if (e.status === 409) {
+      if (
+        body.errorCode === CancelAppointmentConflictReason.CANCELLATION_REFUSED
+      ) {
+        return 'REFUSED'
+      }
+
+      const blockedReasons: string[] = [
+        CancelAppointmentConflictReason.NOT_CANCELLABLE,
+        CancelAppointmentConflictReason.CANCELLATION_DEADLINE_PASSED,
+        CancelAppointmentConflictReason.UNSUPPORTED_CANCEL_METHOD,
+        CancelAppointmentConflictReason.INVALID_STATUS,
+      ]
+      if (body.errorCode && blockedReasons.includes(body.errorCode)) {
+        return 'BLOCKED'
+      }
+    }
+
+    if (e.status === 504 && body.errorCode === 'ACK_NOT_CONFIRMED') {
+      return 'UNCONFIRMED'
+    }
+
+    return undefined
   }
 
   /* Conversations (Health Messages) */
@@ -622,6 +809,17 @@ export class HealthDirectorateHealthService {
           query: { status, starred },
         }),
       ),
+    )
+
+    return conversations ?? null
+  }
+
+  public async getPaginatedConversations(
+    auth: Auth,
+    query?: MeConversationControllerGetConversationsV2V2Data['query'],
+  ): Promise<PaginatedConversationsDto | null> {
+    const conversations = await withAuthContext(auth, () =>
+      data(meConversationControllerGetConversationsV2V2({ query })),
     )
 
     return conversations ?? null
@@ -834,6 +1032,21 @@ export class HealthDirectorateHealthService {
     )
 
     return treatment ?? null
+  }
+
+  public async getTreatmentQuestionnaires(
+    auth: Auth,
+    id: string,
+  ): Promise<QuestionnaireBaseDto[] | null> {
+    const questionnaires = await withAuthContext(auth, () =>
+      data(
+        meTreatmentControllerGetTreatmentQuestionnairesV1({
+          path: { id },
+        }),
+      ),
+    )
+
+    return questionnaires ?? null
   }
 
   public async getTreatmentDocuments(

@@ -44,7 +44,11 @@ export class InstitutionContact extends Model {
   @ApiProperty({ type: String })
   institutionId!: string
 
-  @Column({ type: DataType.STRING, allowNull: false, unique: true })
+  // Contacts are looked up by institution and notification type, and one
+  // address can serve several types - the public prosecution takes reopened
+  // indictments and appealed verdicts at the same address - so the value is not
+  // unique. The database has never constrained it either.
+  @Column({ type: DataType.STRING, allowNull: false })
   @ApiProperty({ type: String })
   value!: string
 

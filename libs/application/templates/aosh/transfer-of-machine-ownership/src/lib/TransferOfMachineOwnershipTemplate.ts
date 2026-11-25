@@ -27,7 +27,11 @@ import { Events, States, Roles } from './constants'
 import { ApiActions } from '../shared'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { MachineAnswersSchema } from './dataSchema'
-import { application as applicationMessage, information } from './messages'
+import {
+  application as applicationMessage,
+  information,
+  review,
+} from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import {
@@ -175,6 +179,13 @@ const template: ApplicationTemplate<
                   (module) =>
                     Promise.resolve(module.TransferOfMachineOwnershipForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Áfram',
+                  type: 'primary',
+                },
+              ],
               write: 'all',
               delete: true,
             },
@@ -282,6 +293,13 @@ const template: ApplicationTemplate<
                 import('../forms/ReviewSeller').then((module) =>
                   Promise.resolve(module.ReviewSellerForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+              ],
               write: {
                 answers: ['location', 'rejecter'],
               },
@@ -294,6 +312,18 @@ const template: ApplicationTemplate<
                 import('../forms/Review').then((module) =>
                   Promise.resolve(module.ReviewForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: review.buttons.approve,
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: review.buttons.reject,
+                  type: 'reject',
+                },
+              ],
               write: {
                 answers: ['buyer', 'buyerOperator', 'location', 'rejecter'],
               },

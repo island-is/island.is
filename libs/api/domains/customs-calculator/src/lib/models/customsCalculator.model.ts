@@ -35,6 +35,9 @@ export class BottomLevelProductCategory {
 
   @Field(() => String)
   description!: string
+
+  @Field(() => [String])
+  keywords!: string[]
 }
 
 @ObjectType()

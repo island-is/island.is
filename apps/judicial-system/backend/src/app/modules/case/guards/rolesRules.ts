@@ -16,11 +16,6 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'indictmentSubtypes',
   'description',
   'policeCaseNumbers',
-  'defenderName',
-  'defenderNationalId',
-  'defenderEmail',
-  'defenderPhoneNumber',
-  'requestSharedWithDefender',
   'isHeightenedSecurityLevel',
   'courtId',
   'leadInvestigator',
@@ -57,14 +52,12 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'penalties',
 ]
 
-const publicProsecutorFields: (keyof UpdateCaseDto)[] = ['indictmentReviewerId']
+const publicProsecutorFields: (keyof UpdateCaseDto)[] = [
+  'indictmentReviewerId',
+  'appealProsecutorId',
+]
 
 const districtCourtFields: (keyof UpdateCaseDto)[] = [
-  'defenderName',
-  'defenderNationalId',
-  'defenderEmail',
-  'defenderPhoneNumber',
-  'requestSharedWithDefender', // court users are only allowed to set "NOT_SHARED".
   'courtCaseNumber',
   'sessionArrangements',
   'arraignmentDate',
@@ -300,18 +293,25 @@ export const defenderGeneratedPdfRule: RolesRule = {
       return false
     }
 
-    // Allow if the user is a defender of a defendant of the case
+    // Same indictment-file gate as the limited-access zip: district defenders
+    // with case-file access, and confirmed appeal advocates after Landsréttur
+    // records them. RolesGuard runs before the handler, so omitting appeal
+    // advocates here 403s ákæra / skjalaskrá even when CaseReadGuard allows
+    // the case.
     if (
       Defendant.isConfirmedDefenderOfDefendantWithCaseFileAccess(
         user.nationalId,
         theCase.defendants,
-      )
-    ) {
-      return true
-    }
-
-    if (
+      ) ||
       CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+        user.nationalId,
+        theCase.civilClaimants,
+      ) ||
+      Defendant.isConfirmedAppealDefenderOfDefendant(
+        user.nationalId,
+        theCase.defendants,
+      ) ||
+      CivilClaimant.isConfirmedAppealSpokespersonOfCivilClaimant(
         user.nationalId,
         theCase.civilClaimants,
       )

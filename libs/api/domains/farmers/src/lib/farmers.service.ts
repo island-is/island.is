@@ -9,6 +9,7 @@ import {
   mapToFilterOptions,
   mapToLandBeneficiary,
   mapToLandRegistryEntry,
+  mapToSubsidySummary,
 } from './mapper'
 import { FarmerLand } from './models/farmerLand.model'
 import { FarmerLandSubsidiesCollection } from './models/farmerLandSubsidiesCollection.model'
@@ -101,6 +102,7 @@ export class FarmersService {
         endCursor: response?.next ?? undefined,
       },
       filterOptions: mapToFilterOptions(response?.filterOptions),
+      summary: mapToSubsidySummary(response?.summary),
     }
   }
 }

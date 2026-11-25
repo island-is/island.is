@@ -2,8 +2,61 @@ import type {
   PlaywrightTestConfig,
   ReporterDescription,
 } from '@playwright/test'
+import { join } from 'path'
 import './addons'
-import { urls } from './support/urls'
+import {
+  env,
+  judicialSystemDefaultLocalPort,
+  judicialSystemLocalPort,
+  urls,
+} from './support/urls'
+
+// Not read from PORT. 4200 unless JUDICIAL_SYSTEM_WEB_PORT moves it, e.g. to
+// run next to a stack that already holds 4200.
+const judicialSystemPort = judicialSystemLocalPort
+
+// The dev S3 upload bucket only allows the localhost:4200 origin in its CORS
+// rules, so from any other local port the browser would block every upload.
+// S3 itself accepts the request, so on another port the browser's CORS checks
+// are turned off instead. Local runs only - CI and remote environments keep
+// them on.
+const judicialSystemBrowserArgs =
+  env === 'local' && judicialSystemPort !== judicialSystemDefaultLocalPort
+    ? ['--disable-web-security']
+    : []
+
+/**
+ * The judicial-system suite is timed for a production build (the way CI runs
+ * e2e). In dev mode Next compiles every route on first visit, which blows the
+ * request waits and makes the suite look flaky. So for local runs of that
+ * project, build and serve the production bundle - unless something already
+ * listens on 4200 (e.g. a dev server), which is then reused as-is. A port
+ * chosen with JUDICIAL_SYSTEM_WEB_PORT is never reused: it was picked to run
+ * this checkout beside another stack, so a server already there is someone
+ * else's and the run fails instead of testing it.
+ * Port 4200 is the only origin the dev S3 bucket allows in its CORS rules;
+ * see judicialSystemBrowserArgs for how another port still uploads.
+ * The islandis project targets remote environments and needs no server.
+ */
+const judicialSystemWebServer: PlaywrightTestConfig['webServer'] =
+  env === 'local' && process.argv.some((arg) => arg.includes('judicial-system'))
+    ? {
+        command: [
+          'yarn nx run judicial-system-web:build:production',
+          // The tests use fake national ids, so the registry lookups have to
+          // answer with the fakes a dev server would use.
+          `NODE_ENV=production PORT=${judicialSystemPort} ENABLE_LOCAL_PROXY=true MOCK_NATIONAL_REGISTRY=true node dist/apps/judicial-system/web/main.js`,
+        ].join(' && '),
+        cwd: join(__dirname, '../../..'),
+        url: `http://localhost:${judicialSystemPort}/liveness`,
+        reuseExistingServer:
+          judicialSystemPort === judicialSystemDefaultLocalPort,
+        // The production build takes several minutes on a cold nx cache.
+        timeout: 15 * 60 * 1000,
+        stdout: 'ignore',
+        stderr: 'pipe',
+      }
+    : undefined
 
 /**
  * Read environment variables from file.
@@ -31,8 +84,9 @@ const config: PlaywrightTestConfig = {
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 0 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  /* The specs share one database and one server, so parallel files only
+     overload the stack - a single worker everywhere, as on CI. */
+  workers: 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ...((process.env.CI
@@ -74,6 +128,7 @@ const config: PlaywrightTestConfig = {
         /* Slows down execution in ms */
         launchOptions: {
           slowMo: 200,
+          args: judicialSystemBrowserArgs,
         },
       },
     },
@@ -138,11 +193,8 @@ const config: PlaywrightTestConfig = {
   /* Folder for test artifacts such as screenshots, videos, traces, etc. */
   outputDir: 'dist/test-results/',
 
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   port: 3000,
-  // },
+  /* Build and serve the app under test before starting the tests */
+  webServer: judicialSystemWebServer,
 }
 
 export default config

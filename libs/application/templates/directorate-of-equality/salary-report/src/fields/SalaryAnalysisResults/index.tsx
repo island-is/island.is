@@ -1,17 +1,20 @@
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
+
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { FieldBaseProps } from '@island.is/application/types'
+import type { SalaryAnalysisResponseDto } from '@island.is/clients/directorate-of-equality'
 import {
   AlertMessage,
   Box,
   Button,
   LoadingDots,
+  StatisticCard,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import type { SalaryAnalysisResponseDto } from '@island.is/clients/directorate-of-equality'
+
 import { messages } from '../../lib/messages'
 import {
   ApiActions,
@@ -19,23 +22,22 @@ import {
   ScreenIds,
   States,
 } from '../../utils/constants'
-import { formatHourlyWage } from '../EmployeesEditor/utils'
-import { deriveWageGapState, formatPercentMagnitude } from '../../utils/wageGap'
+import { buildPayComponentsBreakdown } from '../../utils/payComponents'
 import { getProviderErrorMessage } from '../../utils/providerError'
-import type { ReportEmployeeDto } from '../../utils/types'
 import {
   getProviderSuccessData,
   type ProviderExternalData,
 } from '../../utils/providerResult'
-import { buildPayComponentsBreakdown } from '../../utils/payComponents'
 import {
+  type AnalysisExternalData,
   getSalaryAnalysisResult,
   navigationAnswersForAnalysisResult,
-  type AnalysisExternalData,
 } from '../../utils/salaryAnalysisNavigation'
-import { PayComponentsTable } from './PayComponentsTable'
+import type { ReportEmployeeDto } from '../../utils/types'
+import { deriveWageGapState, formatPercentMagnitude } from '../../utils/wageGap'
+import { formatHourlyWage } from '../EmployeesEditor/utils'
+import { PayComponentsChart } from './PayComponentsChart'
 import { PayDispersionTable } from './PayDispersionTable'
-import { StatisticCard } from './StatisticsCard'
 import { SalaryDistributionChart } from './SalaryDistributionChart'
 
 type Props = FieldBaseProps
@@ -457,45 +459,17 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
         </Box>
       )}
 
-      {totals && (
-        <Box marginBottom={4}>
-          <Text variant="h4" marginBottom={2}>
-            {formatMessage(r.meanHourlyWageGroupTitle)}
+      {/* The leiðréttur gap leads, with the verdict judged on it directly
+          beneath: it is the figure the regulation sets the benchmark for. */}
+      {result && (
+        <Box marginBottom={5}>
+          <Text variant="h4" as="h3" marginBottom={1}>
+            {formatMessage(r.adjustedGapGroupTitle)}
           </Text>
-          <Box
-            display="flex"
-            columnGap={[0, 0, 0, 4]}
-            rowGap={[2, 2, 2, 0]}
-            marginTop={1}
-            flexDirection={['column', 'column', 'column', 'row']}
-          >
-            <StatisticCard
-              title={formatMessage(r.maleLabel)}
-              content={formatHourlyWage(totals.maleAverageSalary)}
-            />
-            <StatisticCard
-              title={formatMessage(r.femaleLabel)}
-              content={formatHourlyWage(totals.femaleAverageSalary)}
-            />
-          </Box>
-        </Box>
-      )}
+          <Text marginBottom={3}>{formatMessage(r.adjustedGapGroupIntro)}</Text>
 
-      {(showAdjustedGap || rawGapSubtext) && decomposition && (
-        <Box marginBottom={4}>
-          <Text variant="h4" marginBottom={2}>
-            {formatMessage(r.wageGapGroupTitle)}
-          </Text>
-
-          {showAdjustedGap && (
-            <Box
-              display="flex"
-              columnGap={[0, 0, 0, 4]}
-              rowGap={[2, 2, 2, 0]}
-              marginTop={1}
-              marginBottom={1}
-              flexDirection={['column', 'column', 'column', 'row']}
-            >
+          {showAdjustedGap && decomposition && (
+            <Box display="flex" marginBottom={3}>
               <StatisticCard
                 title={formatMessage(r.adjustedGapLabel)}
                 content={gapContent(
@@ -511,14 +485,8 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
             </Box>
           )}
 
-          {rawGapSubtext ? (
-            <Text variant="small" color="dark350">
-              {rawGapSubtext}
-            </Text>
-          ) : null}
-
           {warningMessages.length > 0 && (
-            <Box marginTop={2}>
+            <Box marginBottom={3}>
               <Text variant="small" fontWeight="semiBold">
                 {formatMessage(r.warningsTitle)}
               </Text>
@@ -529,11 +497,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
               ))}
             </Box>
           )}
-        </Box>
-      )}
 
-      {result && (
-        <Box marginBottom={isOvershoot ? 0 : 5}>
           <AlertMessage
             type={
               gapState.kind === 'withinBenchmark'
@@ -581,16 +545,53 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
                 : formatMessage(r.unknownMessage)
             }
           />
+
+          {isOvershoot && (
+            <Box marginTop={2}>
+              <AlertMessage
+                type="info"
+                title={formatMessage(r.overshootTitle)}
+                message={formatMessage(r.overshootMessage)}
+              />
+            </Box>
+          )}
         </Box>
       )}
 
-      {isOvershoot && (
-        <Box marginTop={2} marginBottom={5}>
-          <AlertMessage
-            type="info"
-            title={formatMessage(r.overshootTitle)}
-            message={formatMessage(r.overshootMessage)}
-          />
+      {/* The óleiðréttur gap is display-only context, so it sits with the
+          averages it is computed from rather than beside the gated figure. */}
+      {(totals || rawGapSubtext) && (
+        <Box marginBottom={5}>
+          <Text variant="h4" as="h3" marginBottom={1}>
+            {formatMessage(r.meanHourlyWageGroupTitle)}
+          </Text>
+          <Text marginBottom={3}>
+            {formatMessage(r.meanHourlyWageGroupIntro)}
+          </Text>
+          {totals && (
+            <Box
+              display="flex"
+              columnGap={[0, 0, 0, 4]}
+              rowGap={[2, 2, 2, 0]}
+              flexDirection={['column', 'column', 'column', 'row']}
+            >
+              <StatisticCard
+                title={formatMessage(r.maleLabel)}
+                content={formatHourlyWage(totals.maleAverageSalary)}
+              />
+              <StatisticCard
+                title={formatMessage(r.femaleLabel)}
+                content={formatHourlyWage(totals.femaleAverageSalary)}
+              />
+            </Box>
+          )}
+          {rawGapSubtext && (
+            <Box marginTop={2}>
+              <Text variant="small" color="dark350">
+                {rawGapSubtext}
+              </Text>
+            </Box>
+          )}
         </Box>
       )}
 
@@ -600,7 +601,7 @@ export const SalaryAnalysisResults: FC<React.PropsWithChildren<Props>> = ({
         payDispersion={result?.payDispersion}
       />
 
-      <PayComponentsTable data={payComponents} />
+      <PayComponentsChart data={payComponents} />
 
       <PayDispersionTable payDispersion={result?.payDispersion} />
     </Box>

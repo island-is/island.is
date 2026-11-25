@@ -23,4 +23,9 @@ export interface JwtPayload {
   }
   audkenni_sim_number?: string
   client_delegation_provider?: AuthDelegationProvider
+  acr?: string
+  idp?: string
+  auth_time?: number
+  /** RFC 9449: the token is bound to the key with this thumbprint. */
+  cnf?: { jkt?: string }
 }

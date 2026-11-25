@@ -1,6 +1,11 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { YES } from '@island.is/application/core'
+import { serviceErrors } from '../messages'
+
+const isValidPhoneNumber = (phoneNumber: string) =>
+  !!parsePhoneNumberFromString(phoneNumber)?.isValid()
 
 export const applicantInformationSchema = z
   .object({
@@ -17,7 +22,9 @@ export const applicantInformationSchema = z
     city: z.string(),
     postalCode: z.string(),
     email: z.string(),
-    phoneNumber: z.string(),
+    phoneNumber: z.string().refine(isValidPhoneNumber, {
+      params: serviceErrors.phoneNumberError,
+    }),
     password: z.string().min(4),
     otherAddressCheckbox: z.array(z.string()).optional(),
     otherAddress: z.string().optional(),

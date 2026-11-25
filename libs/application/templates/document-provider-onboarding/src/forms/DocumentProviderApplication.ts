@@ -275,7 +275,7 @@ export const DocumentProviderOnboarding: Form = buildForm({
               id: 'submit',
               placement: 'footer',
               title: m.confirmationSubmitButton,
-
+              refetchApplicationAfterSubmit: true,
               actions: [
                 {
                   event: 'SUBMIT',

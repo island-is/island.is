@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'api-domains-financial-statement-cemetery',
   preset: '../../../../jest.preset.js',

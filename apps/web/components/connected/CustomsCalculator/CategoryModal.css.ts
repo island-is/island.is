@@ -24,6 +24,31 @@ export const scrollableContent = style({
   overflowY: 'auto',
   WebkitOverflowScrolling: 'touch',
   overscrollBehavior: 'contain',
+  // Keep the scrollbar visible where browsers allow styling it, instead of
+  // only showing it while scrolling
+  scrollbarWidth: 'thin',
+  scrollbarColor: `${theme.color.blue200} transparent`,
+  selectors: {
+    '&::-webkit-scrollbar': {
+      width: 6,
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: theme.color.blue200,
+      borderRadius: 3,
+    },
+  },
+})
+
+export const scrollFade = style({
+  position: 'absolute',
+  left: 0,
+  right: 0,
+  bottom: 0,
+  height: 64,
+  borderBottomLeftRadius: theme.border.radius.large,
+  borderBottomRightRadius: theme.border.radius.large,
+  background: `linear-gradient(to bottom, rgba(255, 255, 255, 0), ${theme.color.white})`,
+  pointerEvents: 'none',
 })
 
 export const option = style({

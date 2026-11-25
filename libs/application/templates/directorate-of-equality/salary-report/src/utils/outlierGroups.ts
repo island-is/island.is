@@ -59,6 +59,61 @@ export const emptyOutlierGroupAnswer = (
   employeeOrdinals,
 })
 
+// What the "Vista" button compares to decide whether a group still matches the
+// copy last written to answers. By content rather than by identity: useWatch
+// hands back a fresh clone of its whole subtree on every keystroke, so two
+// renders never share an object.
+//
+// `id` is left out — it is bookkeeping, not something the applicant can change,
+// and a group seeded from the buffer without one gets a fresh id on the way in.
+//
+// Keep this in step with OutlierGroupAnswer, as with emptyOutlierGroupAnswer
+// above: a field added there but not here can be edited without the button ever
+// leaving its "Vistað" state.
+export const outlierGroupFingerprint = (group?: OutlierGroupAnswer): string =>
+  JSON.stringify([
+    group?.name ?? '',
+    group?.reason ?? '',
+    group?.action ?? '',
+    group?.remedyDate ?? '',
+    group?.signatureName ?? '',
+    group?.signatureRole ?? '',
+    group?.employeeOrdinals ?? [],
+  ])
+
+// react-hook-form's getValues hands back live references into the form's own
+// values, and it writes into those objects in place as the applicant types — so
+// anything meant to outlast a keystroke has to be copied out of them first.
+// (useWatch is the exception: it deep-clones its subtree on every change.)
+export const cloneOutlierGroups = (
+  groups: OutlierGroupAnswer[],
+): OutlierGroupAnswer[] =>
+  groups.map((group) => ({
+    ...group,
+    employeeOrdinals: [...(group.employeeOrdinals ?? [])],
+  }))
+
+// Where a group sits in the plan last written to the answers buffer, or -1 if
+// that plan does not hold it — what decides whether a card reads "Vistað", and
+// which entry a removal has to take out of the buffer.
+//
+// Matched by id where there is one (draft mode mints one per group), so a
+// removal higher up the list doesn't make every group below it look edited.
+// POSTPONED has no ids and falls back to the position: both arrays only ever
+// grow at the end, and a removal drops the group from both together or from
+// neither, so the positions stay in step — and a group past the end of the
+// saved set is simply not in it.
+export const savedOutlierGroupIndex = (
+  savedGroups: OutlierGroupAnswer[],
+  group: OutlierGroupAnswer | undefined,
+  index: number,
+): number => {
+  if (group?.id) {
+    return savedGroups.findIndex((candidate) => candidate.id === group.id)
+  }
+  return index < savedGroups.length ? index : -1
+}
+
 // An empty group (all its members freed by a removal) has nothing to explain,
 // so it's vacuously complete — same exemption dataSchema's superRefine makes.
 //

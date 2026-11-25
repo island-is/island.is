@@ -4,36 +4,58 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
-import { Box, Button, Icon, Text, toast } from '@island.is/island-ui/core'
-import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_SEND_TO_PRISON_ADMIN_ROUTE } from '@island.is/judicial-system/consts'
+import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
+import {
+  PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE,
+  PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_SEND_TO_PRISON_ADMIN_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   formatDate,
   getServiceRequirementText,
 } from '@island.is/judicial-system/formatters'
-import { getIndictmentAppealDeadline } from '@island.is/judicial-system/types'
+import {
+  Feature,
+  getIndictmentAppealDeadline,
+} from '@island.is/judicial-system/types'
 import { core, errors } from '@island.is/judicial-system-web/messages'
 import ContextMenuCard from '@island.is/judicial-system-web/src/components/Cards/ContextMenuCard/ContextMenuCard'
 import * as styles from '@island.is/judicial-system-web/src/components/Cards/IconCard/IconCard.css'
 import DateTime from '@island.is/judicial-system-web/src/components/DateTime/DateTime'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { getAppealExpirationInfo } from '@island.is/judicial-system-web/src/components/InfoCard/DefendantInfo/DefendantInfo.logic'
 import Modal from '@island.is/judicial-system-web/src/components/Modals/Modal/Modal'
 import SectionHeading from '@island.is/judicial-system-web/src/components/SectionHeading/SectionHeading'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import VerdictAppealDecisionChoice from '@island.is/judicial-system-web/src/components/VerdictAppealDecisionChoice/VerdictAppealDecisionChoice'
 import type { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  AppealCaseTransition,
   CaseIndictmentRulingDecision,
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   formatDateForServer,
+  useAppealCase,
   useDefendants,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
-import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { stack } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
+import { getOpenAppealStatementDeadlineItem } from './appealStatementDeadlineItem.logic'
+import {
+  defendantHasStandingVerdictAppeal,
+  getProsecutionVerdictAppealItem,
+} from './prosecutionVerdictAppeal.logic'
 import type { VerdictTimelineItem } from './VerdictTimelineBody'
 import VerdictTimelineBody from './VerdictTimelineBody'
+import {
+  canRegisterVerdictAppeal,
+  canWithdrawVerdictAppeal,
+  isAfterVerdictAppealDeadline,
+  withAppealDefender,
+} from './VerdictTimelineCard.logic'
 import { strings } from './VerdictTimelineCard.strings'
 
 interface Props {
@@ -54,16 +76,23 @@ type VisibleModal =
       type: 'CONFIRM_APPEAL_AFTER_DEADLINE'
       appealDate: Date
     }
+  | {
+      type: 'WITHDRAW_VERDICT_APPEAL'
+      appealCaseId: string
+    }
 
 const VerdictTimelineCard: FC<Props> = (props) => {
   const router = useRouter()
   const { defendant, canDefendantAppealVerdict } = props
   const { verdict } = defendant
   const { formatMessage } = useIntl()
-  const { workingCase, setWorkingCase } = useContext(FormContext)
+  const { workingCase, setWorkingCase, refreshCase } = useContext(FormContext)
+  const { user } = useContext(UserContext)
+  const { features } = useContext(FeatureContext)
   const { setAndSendDefendantToServer, updateDefendant, isUpdatingDefendant } =
     useDefendants()
   const { setAndSendVerdictToServer } = useVerdict()
+  const { transitionAppealCase, isTransitioningAppealCase } = useAppealCase()
 
   const [modalVisible, setModalVisible] = useState<VisibleModal>()
   const [pendingServiceDate, setPendingServiceDate] = useState<Date>()
@@ -91,11 +120,22 @@ const VerdictTimelineCard: FC<Props> = (props) => {
     !defendant.isClosedWithoutEnforcement &&
     !isFine
 
+  // With verdict appeals on, an appeal that arrives by letter or email is
+  // registered on its own page, from the menu, and becomes an appeal case; the
+  // date picker, which only stamped the verdict, goes away. Off, the card is as
+  // it was.
+  const isVerdictAppealRegistrationEnabled = features.includes(
+    Feature.INDICTMENT_APPEAL,
+  )
+
   // The appeal date records when an appeal actually happened, which the public
   // prosecution office may well need to register after the deadline has run out
   // - either late bookkeeping for a timely appeal, or a genuinely late appeal.
   // The latter is confirmed in a modal, see handleSetDate.
-  const showAppealDatePicker = canDefendantAppealVerdict && !verdict?.appealDate
+  const showAppealDatePicker =
+    !isVerdictAppealRegistrationEnabled &&
+    canDefendantAppealVerdict &&
+    !verdict?.appealDate
   const shouldShowAppealDatePicker =
     showAppealDatePicker && !isAppealDatePickerClosing
 
@@ -150,17 +190,29 @@ const VerdictTimelineCard: FC<Props> = (props) => {
 
     if (isFine) {
       items.push({
-        text: formatMessage(strings.fineAppealDeadline, {
-          appealDeadlineIsInThePast: defendant.isVerdictAppealDeadlineExpired,
-          appealDeadline: formatDate(defendant.verdictAppealDeadline),
-        }),
+        text: formatMessage(
+          {
+            id: strings.fineAppealDeadline,
+            defaultMessage: strings.fineAppealDeadline,
+          },
+          {
+            appealDeadlineIsInThePast: defendant.isVerdictAppealDeadlineExpired,
+            appealDeadline: formatDate(defendant.verdictAppealDeadline),
+          },
+        ),
       })
     } else if (verdict?.serviceDate) {
       pushIf(
         !!isServiceRequired,
-        formatMessage(strings.defendantVerdictViewedDate, {
-          date: formatDate(verdict?.serviceDate),
-        }),
+        formatMessage(
+          {
+            id: strings.defendantVerdictViewedDate,
+            defaultMessage: strings.defendantVerdictViewedDate,
+          },
+          {
+            date: formatDate(verdict?.serviceDate),
+          },
+        ),
       )
 
       items.push({
@@ -172,30 +224,70 @@ const VerdictTimelineCard: FC<Props> = (props) => {
         }),
       })
 
+      // Same wording as the defence card (design, 2026-09-10).
       pushIf(
         !!verdict?.appealDate,
-        formatMessage(strings.defendantAppealDate, {
-          date: formatDate(verdict?.appealDate),
-        }),
+        withAppealDefender(
+          `Dómfelldi áfrýjaði ${formatDate(verdict?.appealDate)}`,
+          defendant.appealDefenderName,
+        ),
       )
     }
 
-    pushIf(
-      !!(defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin),
-      formatMessage(strings.sendToPrisonAdminDate, {
-        date: formatDate(defendant.sentToPrisonAdminDate),
-      }),
+    // The prosecution's own appeal, which does not depend on the verdict having
+    // been served on the defendant, so it sits outside the service branch.
+    const prosecutionAppealItem = getProsecutionVerdictAppealItem(
+      workingCase.verdictAppealCase,
+      defendant.id,
     )
 
-    pushIf(
-      !!(
-        defendant.isClosedWithoutEnforcement &&
-        defendant.closedWithoutEnforcementDate
-      ),
-      `Máli lokið án fullnustu ${formatDate(
-        defendant.closedWithoutEnforcementDate,
-      )}`,
-    )
+    if (prosecutionAppealItem) {
+      items.push(prosecutionAppealItem)
+    }
+
+    // Prosecution statement deadlines are case-level (no party ids). Only show
+    // them on cards for defendants who are part of the standing appeal.
+    const defendantIsInAppeal =
+      defendantHasStandingVerdictAppeal(
+        workingCase.verdictAppealCase,
+        defendant.id,
+      ) || Boolean(defendant.verdict?.appealDate)
+
+    if (defendantIsInAppeal) {
+      const statementDeadlineItem = getOpenAppealStatementDeadlineItem(
+        workingCase.verdictAppealCase,
+        {},
+      )
+
+      if (statementDeadlineItem) {
+        items.push(statementDeadlineItem)
+      }
+    }
+
+    if (defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin) {
+      items.push({
+        text: formatMessage(
+          {
+            id: strings.sendToPrisonAdminDate,
+            defaultMessage: strings.sendToPrisonAdminDate,
+          },
+          {
+            date: formatDate(defendant.sentToPrisonAdminDate),
+          },
+        ),
+      })
+    }
+
+    if (
+      defendant.isClosedWithoutEnforcement &&
+      defendant.closedWithoutEnforcementDate
+    ) {
+      items.push({
+        text: `Máli lokið án fullnustu ${formatDate(
+          defendant.closedWithoutEnforcementDate,
+        )}`,
+      })
+    }
 
     return items
   }, [
@@ -207,19 +299,8 @@ const VerdictTimelineCard: FC<Props> = (props) => {
     isServiceRequired,
     serviceRequirementText,
     verdict,
+    workingCase.verdictAppealCase,
   ])
-
-  // The deadline runs until the end of its last day, and the picker is date
-  // only, so an appeal registered on the last day itself is still timely.
-  const isAfterAppealDeadline = (date: Date) => {
-    const { verdictAppealDeadline } = defendant
-
-    if (!verdictAppealDeadline) {
-      return false
-    }
-
-    return date.getTime() > new Date(verdictAppealDeadline).getTime()
-  }
 
   const handleDateChange = (
     date: Date | undefined,
@@ -232,7 +313,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
     }
 
     if (!valid) {
-      toast.error(formatMessage(errors.invalidDate))
+      toast.error(errors.invalidDate)
       return
     }
 
@@ -243,7 +324,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
     const date = dates[type]
 
     if (!date) {
-      toast.error(formatMessage(errors.invalidDate))
+      toast.error(errors.invalidDate)
       return
     }
 
@@ -260,7 +341,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
       // allowed, but confirmed first. Note that the picker only reaches back to
       // today, so this can only ever trigger once the deadline has passed -
       // registering a timely appeal late goes through without a prompt.
-      if (isAfterAppealDeadline(date)) {
+      if (isAfterVerdictAppealDeadline(defendant, date)) {
         setModalVisible({
           type: 'CONFIRM_APPEAL_AFTER_DEADLINE',
           appealDate: date,
@@ -301,6 +382,28 @@ const VerdictTimelineCard: FC<Props> = (props) => {
       setPendingAppealDate(undefined)
     }
   }, [isAppealDatePickerClosing, verdict?.appealDate])
+
+  // An appeal that exists as an appeal case - filed by the defender in the
+  // system, or registered by the office on a letter - is withdrawn on that
+  // appeal case, for this defendant, and the verdict's mirror follows. Only an
+  // appeal date stamped before appeal cases existed is cleared on the verdict
+  // alone.
+  const withdrawVerdictAppeal = async (appealCaseId: string) => {
+    const withdrawn = await transitionAppealCase(
+      workingCase.id,
+      appealCaseId,
+      AppealCaseTransition.WITHDRAW_APPEAL,
+      undefined,
+      defendant.id,
+    )
+
+    if (!withdrawn) {
+      return
+    }
+
+    setModalVisible(undefined)
+    refreshCase()
+  }
 
   return (
     <>
@@ -344,11 +447,26 @@ const VerdictTimelineCard: FC<Props> = (props) => {
               )
             },
           },
-          ...(verdict?.appealDate
+          ...(canWithdrawVerdictAppeal(
+            workingCase,
+            defendant,
+            user,
+            isVerdictAppealRegistrationEnabled,
+          )
             ? [
                 {
                   title: 'Afturkalla áfrýjun',
                   onClick: () => {
+                    const appealCaseId = workingCase.verdictAppealCase?.id
+
+                    if (appealCaseId) {
+                      setModalVisible({
+                        type: 'WITHDRAW_VERDICT_APPEAL',
+                        appealCaseId,
+                      })
+                      return
+                    }
+
                     setAndSendVerdictToServer(
                       {
                         caseId: workingCase.id,
@@ -454,10 +572,23 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                 },
               ]
             : []),
+          ...(isVerdictAppealRegistrationEnabled &&
+          canRegisterVerdictAppeal(workingCase, defendant, user)
+            ? [
+                {
+                  title: 'Skrá áfrýjun dómfellda',
+                  onClick: () => {
+                    router.push(
+                      `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_CASE_APPEAL_ROUTE}/${workingCase.id}/${defendant.id}`,
+                    )
+                  },
+                },
+              ]
+            : []),
         ]}
       >
         <VerdictTimelineBody
-          eyebrow={isFine ? 'Viðurlagaákvörðun' : 'Birting dóms'}
+          eyebrow={isFine ? 'Viðurlagaákvörðun' : 'Dómur'}
           items={textItems}
         >
           {showDatePickers && (
@@ -491,12 +622,10 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                   <Box className={styles.dataContainer}>
                     <DateTime
                       name="defendantAppealDate"
-                      datepickerLabel={formatMessage(
-                        strings.defendantAppealDateLabel,
-                      )}
-                      datepickerPlaceholder={formatMessage(
-                        strings.defendantAppealDatePlaceholder,
-                      )}
+                      datepickerLabel={strings.defendantAppealDateLabel}
+                      datepickerPlaceholder={
+                        strings.defendantAppealDatePlaceholder
+                      }
                       size="sm"
                       onChange={(date, valid) =>
                         handleDateChange(date, valid, 'appealDate')
@@ -509,7 +638,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                       onClick={() => handleSetDate('appealDate')}
                       disabled={!dates.appealDate}
                     >
-                      {formatMessage(strings.defendantAppealDateButtonText)}
+                      {strings.defendantAppealDateButtonText}
                     </Button>
                   </Box>
                 </motion.div>
@@ -531,12 +660,10 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                   <Box className={styles.dataContainer}>
                     <DateTime
                       name="defendantServiceDate"
-                      datepickerLabel={formatMessage(
-                        strings.defendantVerdictServiceDateLabel,
-                      )}
-                      datepickerPlaceholder={formatMessage(
-                        strings.defendantVerdictServiceDatePlaceholder,
-                      )}
+                      datepickerLabel={strings.defendantVerdictServiceDateLabel}
+                      datepickerPlaceholder={
+                        strings.defendantVerdictServiceDatePlaceholder
+                      }
                       size="sm"
                       selectedDate={dates.serviceDate}
                       onChange={(date, valid) =>
@@ -551,9 +678,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                       onClick={() => handleSetDate('serviceDate')}
                       disabled={!dates.serviceDate}
                     >
-                      {formatMessage(
-                        strings.defendantVerdictServiceDateButtonText,
-                      )}
+                      {strings.defendantVerdictServiceDateButtonText}
                     </Button>
                   </Box>
                 </motion.div>
@@ -567,7 +692,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
               initial={false}
               animate="visible"
               transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.4 }}
-              className={grid({ gap: 2, marginTop: 1 })}
+              className={stack({ gap: 2, marginTop: 1 })}
             >
               <Text variant="eyebrow">Afstaða dómfellda til dóms</Text>
               <VerdictAppealDecisionChoice
@@ -588,7 +713,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
           text={`Mál ${workingCase.courtCaseNumber} verður afturkallað.\nÁkærði: ${modalVisible.defendant.name}.`}
           buttons={[
             {
-              text: formatMessage(core.cancel),
+              text: core.cancel,
               onClick: () => setModalVisible(undefined),
               variant: 'ghost',
             },
@@ -617,7 +742,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
           text={`Máli ${workingCase.courtCaseNumber} verður lokið án fullnustu gagnvart ákærða ${modalVisible.defendant.name}.\nAthugið að ekki er hægt að afturkalla þessa aðgerð.`}
           buttons={[
             {
-              text: formatMessage(core.cancel),
+              text: core.cancel,
               onClick: () => setModalVisible(undefined),
               variant: 'ghost',
             },
@@ -659,6 +784,27 @@ const VerdictTimelineCard: FC<Props> = (props) => {
           ]}
         />
       )}
+      {modalVisible?.type === 'WITHDRAW_VERDICT_APPEAL' && (
+        <Modal
+          title="Afturkalla áfrýjun"
+          text={`Áfrýjun dóms fyrir ${
+            defendant.name ?? 'dómfellda'
+          } verður afturkölluð.`}
+          buttons={[
+            {
+              text: core.cancel,
+              onClick: () => setModalVisible(undefined),
+              variant: 'ghost',
+            },
+            {
+              text: 'Afturkalla',
+              onClick: () => withdrawVerdictAppeal(modalVisible.appealCaseId),
+              colorScheme: 'destructive',
+              isLoading: isTransitioningAppealCase,
+            },
+          ]}
+        />
+      )}
       {modalVisible?.type === 'CONFIRM_APPEAL_AFTER_DEADLINE' && (
         <Modal
           title="Áfrýjun eftir að fresti lauk"
@@ -669,7 +815,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
           )}.\nViltu skrá áfrýjunina?`}
           buttons={[
             {
-              text: formatMessage(core.cancel),
+              text: core.cancel,
               onClick: () => setModalVisible(undefined),
               variant: 'ghost',
             },

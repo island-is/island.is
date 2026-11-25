@@ -2,7 +2,7 @@ import { Box, Button, SkeletonLoader, Tabs } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyTable,
-  HEALTH_DIRECTORATE_SLUG,
+  STAFRAEN_HEILSA_SLUG,
   IntroWrapper,
   LinkButton,
 } from '@island.is/portals/my-pages/core'
@@ -49,8 +49,8 @@ export const VaccinationsWrapper = () => {
       title={formatMessage(m.vaccinations)}
       intro={formatMessage(m.vaccinationsIntro)}
       serviceProvider={{
-        slug: HEALTH_DIRECTORATE_SLUG,
-        tooltip: formatMessage(m.landlaeknirVaccinationsTooltip),
+        slug: STAFRAEN_HEILSA_SLUG,
+        tooltip: formatMessage(m.stafraenHeilsaVaccinationsTooltip),
       }}
       buttonGroup={{
         actions: [

@@ -30,7 +30,6 @@ import {
   CourtDocument as TCourtDocument,
   CourtSessionType,
   IndictmentDecision,
-  RequestSharedWithDefender,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
@@ -145,46 +144,6 @@ export class Case extends Model {
   @HasMany(() => Defendant, 'caseId')
   @ApiPropertyOptional({ type: () => Defendant, isArray: true })
   defendants?: Defendant[]
-
-  /**********
-   * The name of the accused's defender - optional
-   **********/
-  @Column({ type: DataType.STRING, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  defenderName?: string
-
-  /**********
-   * The national of the accused's defender - optional
-   **********/
-  @Column({ type: DataType.STRING, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  defenderNationalId?: string
-
-  /**********
-   * The email address of the accused's defender - optional
-   **********/
-  @Column({ type: DataType.STRING, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  defenderEmail?: string
-
-  /**********
-   * The phone number of the accused's defender - optional
-   **********/
-  @Column({ type: DataType.STRING, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  defenderPhoneNumber?: string
-
-  /**********
-   * Indicates whether, and if so when, the prosecutor's request should become accessible to the accused's
-   * defender - optional
-   **********/
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(RequestSharedWithDefender),
-  })
-  @ApiPropertyOptional({ enum: RequestSharedWithDefender })
-  requestSharedWithDefender?: RequestSharedWithDefender
 
   /**********
    * Indicates whether the security level of the case has been heightened -
@@ -840,6 +799,21 @@ export class Case extends Model {
   @BelongsTo(() => User, 'indictmentReviewerId')
   @ApiPropertyOptional({ type: User })
   indictmentReviewer?: User
+
+  /**********
+   * The surrogate key of the appeal prosecutor at Ríkissaksóknari
+   **********/
+  @ForeignKey(() => User)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  appealProsecutorId?: string
+
+  /**********
+   * The appeal prosecutor at Ríkissaksóknari assigned to the case
+   **********/
+  @BelongsTo(() => User, 'appealProsecutorId')
+  @ApiPropertyOptional({ type: User })
+  appealProsecutor?: User
 
   /**********
    * The judge's pending decision in indictment cases - example: POSTPONING

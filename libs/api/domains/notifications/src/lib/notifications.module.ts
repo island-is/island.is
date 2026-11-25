@@ -1,4 +1,5 @@
 import { UserNotificationClientModule } from '@island.is/clients/user-notification'
+import { UserProfileClientModule } from '@island.is/clients/user-profile'
 
 import { Module } from '@nestjs/common'
 
@@ -10,9 +11,11 @@ import {
 import { NotificationsService } from './notifications.service'
 import { NotificationsAdminResolver } from './notificationsAdmin.resolver'
 import { NotificationsAdminService } from './notificationsAdmin.service'
+import { NotificationSettingsResolver } from './notificationSettings.resolver'
+import { NotificationSettingsService } from './notificationSettings.service'
 
 @Module({
-  imports: [UserNotificationClientModule],
+  imports: [UserNotificationClientModule, UserProfileClientModule],
   providers: [
     NotificationsResolver,
     NotificationsListResolver,
@@ -20,6 +23,8 @@ import { NotificationsAdminService } from './notificationsAdmin.service'
     NotificationsAdminResolver,
     NotificationsService,
     NotificationsAdminService,
+    NotificationSettingsResolver,
+    NotificationSettingsService,
   ],
   exports: [],
 })

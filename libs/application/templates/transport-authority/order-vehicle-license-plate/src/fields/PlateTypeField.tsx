@@ -17,7 +17,12 @@ import {
 import { information } from '../lib/messages'
 import { getSelectedVehicle } from '../utils'
 import { useFormContext, useWatch } from 'react-hook-form'
-import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
+import {
+  getErrorViaPath,
+  getValueViaPath,
+  YES,
+} from '@island.is/application/core'
+import { VSK_PLATE_TYPE_CODE } from '../shared'
 
 interface PlateOptionType {
   plateTypeCode?: string | null
@@ -35,6 +40,7 @@ export const PlateTypeField: FC<React.PropsWithChildren<FieldBaseProps>> = (
     control,
     name: 'plateType.regGroup',
   })
+  const isVskPlateType = selectedPlateType === VSK_PLATE_TYPE_CODE
 
   const vehicle = getSelectedVehicle(
     application.externalData,
@@ -95,6 +101,12 @@ export const PlateTypeField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   useEffect(() => {
     setFieldLoadingState?.(loading)
   }, [loading, setFieldLoadingState])
+
+  useEffect(() => {
+    if (isVskPlateType) {
+      setValue('plateDelivery.deliveryMethodIsDeliveryStation', YES)
+    }
+  }, [isVskPlateType, setValue])
 
   return (
     <Box paddingTop={2}>
@@ -161,7 +173,7 @@ export const PlateTypeField: FC<React.PropsWithChildren<FieldBaseProps>> = (
               />
             )}
           </Box>
-          {selectedPlateType === 'N5' && (
+          {isVskPlateType && (
             <Box marginBottom={2}>
               <AlertMessage
                 type="info"

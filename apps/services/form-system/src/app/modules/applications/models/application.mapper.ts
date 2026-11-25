@@ -54,6 +54,7 @@ export class ApplicationMapper {
       dependencies: application.dependencies,
       completed: application.completed,
       status: application.status,
+      pruned: application.pruned,
       formId: form.id,
       modified: application.modified,
       slug: form.slug,
@@ -125,7 +126,8 @@ export class ApplicationMapper {
                   screenId: field.screenId,
                   name: field.name,
                   displayOrder: field.displayOrder,
-                  description: field.description,
+                  informationText: field.informationText,
+                  tooltip: field.tooltip,
                   isPartOfMultiset: field.isPartOfMultiset,
                   fieldType: field.fieldType,
                   isRequired: field.isRequired,
@@ -167,6 +169,7 @@ export class ApplicationMapper {
       dependencies: application.dependencies,
       completed: application.completed,
       status: application.status,
+      pruned: application.pruned,
       formId: form?.id,
       slug: form?.slug,
       formName: form?.name,
@@ -245,9 +248,17 @@ export class ApplicationMapper {
     if (field.fieldType === FieldTypesEnum.APPLICANT) {
       settings.applicantType = field.fieldSettings?.applicantType
     }
+    if (field.fieldType === FieldTypesEnum.ASSETS) {
+      settings.assetType = field.fieldSettings?.assetType
+    }
+    if (field.fieldType === FieldTypesEnum.FAMILY) {
+      settings.familyType = field.fieldSettings?.familyType
+    }
     if (
       settings.isDecimal !== undefined ||
-      settings.applicantType !== undefined
+      settings.applicantType !== undefined ||
+      settings.assetType !== undefined ||
+      settings.familyType !== undefined
     ) {
       jsonField.fieldSettings = settings
     }

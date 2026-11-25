@@ -105,6 +105,16 @@ export class UpdateFormDto {
   @IsBoolean()
   @IsOptional()
   @ApiPropertyOptional()
+  validateEligibility?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional()
+  enableApplicationPdfDownload?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional()
   hasSummaryScreen?: boolean
 
   @ValidateNested()

@@ -24,6 +24,7 @@ import {
   GridRow,
   Hidden,
   Inline,
+  LinkV2,
   Select,
   Stack,
   Tag,
@@ -69,8 +70,9 @@ import { DebouncedDatePicker } from './components/DebouncedDatePicker'
 import { m } from './translations.strings'
 import * as styles from './CourtAgendas.css'
 
-const ITEMS_PER_PAGE = 10
+const ITEMS_PER_PAGE = 20
 const DEBOUNCE_TIME_IN_MS = 500
+const COURTS_FRONTPAGE_HREF = '/s/domstolar'
 
 const ALL_COURTS_TAG = ''
 const DEFAULT_DISTRICT_COURT_TAG = 'Héraðsdómstólar'
@@ -502,9 +504,12 @@ const Filters = ({
     : {}
 
   return (
-    <Stack space={2}>
+    <Stack space={3}>
       {whiteBackground && (
-        <Box display="flex" justifyContent="flexEnd">
+        <Inline justifyContent="spaceBetween" alignY="center" space={2}>
+          <Text variant="h5">
+            {formatMessage(m.listPage.sidebarFilterHeading)}
+          </Text>
           <Button
             variant="text"
             icon={openFiltersToggle ? 'add' : 'remove'}
@@ -522,7 +527,7 @@ const Filters = ({
                 : m.listPage.closeAllFiltersLabel,
             )}
           </Button>
-        </Box>
+        </Inline>
       )}
       <Box {...boxProps}>
         <Accordion
@@ -999,11 +1004,13 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                       paddingTop={2}
                       paddingBottom={2}
                     >
-                      <img
-                        src="/assets/skjaldarmerki.svg"
-                        alt=""
-                        className={styles.logo}
-                      />
+                      <LinkV2 href={COURTS_FRONTPAGE_HREF}>
+                        <img
+                          src="/assets/skjaldarmerki.svg"
+                          alt={formatMessage(m.listPage.courtsFrontpageLinkAlt)}
+                          className={styles.logo}
+                        />
+                      </LinkV2>
                     </Box>
                   </Hidden>
                 </GridColumn>
@@ -1409,43 +1416,20 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
             hiddenOnTablet={true}
             isSticky={false}
             sidebarContent={
-              <Stack space={3}>
-                <Text variant="h5">
-                  {formatMessage(m.listPage.sidebarFilterHeading)}
-                </Text>
-                <Filters
-                  renderKey={renderKey}
-                  startExpanded={true}
-                  queryState={queryState}
-                  updateQueryState={updateQueryState}
-                  updateRenderKey={updateRenderKey}
-                  whiteBackground={true}
-                  lawyerOptions={lawyerOptions}
-                  scheduleTypesOptions={scheduleTypesOptions}
-                  caseTypesOptions={caseTypesOptions}
-                  showScheduleTypeFilter={showScheduleTypeFilter}
-                  minDateFrom={props.minDateFrom}
-                  minDateTo={props.minDateTo}
-                />
-                <Box
-                  background="blue100"
-                  width="full"
-                  display="flex"
-                  flexDirection="row"
-                  alignItems="center"
-                  justifyContent="center"
-                  style={{ height: 72 }}
-                >
-                  <Button
-                    variant="text"
-                    icon="reload"
-                    size="small"
-                    onClick={resetQueryState}
-                  >
-                    {formatMessage(m.listPage.clearAllFiltersLabel)}
-                  </Button>
-                </Box>
-              </Stack>
+              <Filters
+                renderKey={renderKey}
+                startExpanded={true}
+                queryState={queryState}
+                updateQueryState={updateQueryState}
+                updateRenderKey={updateRenderKey}
+                whiteBackground={true}
+                lawyerOptions={lawyerOptions}
+                scheduleTypesOptions={scheduleTypesOptions}
+                caseTypesOptions={caseTypesOptions}
+                showScheduleTypeFilter={showScheduleTypeFilter}
+                minDateFrom={props.minDateFrom}
+                minDateTo={props.minDateTo}
+              />
             }
           >
             <Stack space={3}>
@@ -1463,16 +1447,30 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                 </Inline>
               )}
               <Inline justifyContent="spaceBetween" alignY="center" space={2}>
-                <Text>
-                  <strong>{data.total}</strong>{' '}
-                  {formatMessage(
-                    m.listPage[
-                      data.total === 1
-                        ? 'courtAgendasFoundSingular'
-                        : 'courtAgendasFoundPlural'
-                    ],
+                <Inline alignY="center" space={3}>
+                  <Text>
+                    <strong>{data.total}</strong>{' '}
+                    {formatMessage(
+                      m.listPage[
+                        data.total === 1
+                          ? 'courtAgendasFoundSingular'
+                          : 'courtAgendasFoundPlural'
+                      ],
+                    )}
+                  </Text>
+                  {(filterTags.length > 0 || selectedCourts.length > 0) && (
+                    <Hidden below="lg">
+                      <Button
+                        variant="text"
+                        icon="reload"
+                        size="small"
+                        onClick={resetQueryState}
+                      >
+                        {formatMessage(m.listPage.clearAllFiltersLabel)}
+                      </Button>
+                    </Hidden>
                   )}
-                </Text>
+                </Inline>
                 <Hidden above="md">
                   <Filter
                     resultCount={data.total}

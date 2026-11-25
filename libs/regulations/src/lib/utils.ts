@@ -129,4 +129,35 @@ export const useShortState = <S>(
 // ---------------------------------------------------------------------------
 
 export * from './buildRegulationApiPath'
-export * from '@dmr.is/regulations-tools/utils'
+// Named re-exports because regulations-tools is CommonJS, and Vite's dev
+// server drops named exports passed through `export *` from a CJS module.
+export {
+  asDiv,
+  assertISODate,
+  assertNameSlug,
+  assertPosInt,
+  assertRegName,
+  base64ToBlob,
+  combineTextAppendixesComments,
+  convertFileToBlobInfo,
+  document_base_url,
+  ensureISODate,
+  ensureNameSlug,
+  ensurePosInt,
+  ensureReasonableYear,
+  ensureRegName,
+  ensureRegType,
+  ensureURLString,
+  formatdate,
+  getTexts,
+  isDate,
+  isNonNull,
+  nameToSlug,
+  newURL,
+  prettyName,
+  slugToName,
+  styleValueToTypeAttrMap,
+  toISODate,
+  toISODateTime,
+  typeAttrToStyleValueMap,
+} from '@dmr.is/regulations-tools/utils'

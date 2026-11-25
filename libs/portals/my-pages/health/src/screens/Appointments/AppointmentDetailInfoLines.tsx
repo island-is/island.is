@@ -133,7 +133,8 @@ export const AppointmentDetailInfoLines = ({
   return (
     <InfoLineStack
       label={formatMessage(messages.appointmentMoreInfo)}
-      space={1}
+      space={[0, 0, 1]}
+      labelPadding={[1, 1, 2]}
     >
       {infoLines.map((line, index) => (
         <InfoLine key={index} {...line} />

@@ -7,6 +7,7 @@ import {
   DatePicker,
   Email,
   FieldTypesEnum,
+  FieldInformation,
   FileUpload,
   List,
   MessageWithLink,
@@ -19,6 +20,7 @@ import {
   TextInput,
   TimeInput,
   Asset,
+  Family,
 } from '@island.is/form-system/ui'
 import { Box } from '@island.is/island-ui/core'
 import { useFormContext } from 'react-hook-form'
@@ -48,6 +50,7 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.NUMBERBOX]: NumberInput,
   [FieldTypesEnum.PAYMENT_QUANTITY]: PaymentQuantity,
   [FieldTypesEnum.ASSETS]: Asset,
+  [FieldTypesEnum.FAMILY]: Family,
 } as const
 
 export const Field = ({ field, valueIndex = 0 }: Props) => {
@@ -59,8 +62,10 @@ export const Field = ({ field, valueIndex = 0 }: Props) => {
     valueIndex,
     control,
     dispatch,
+    ...(field.fieldType === FieldTypesEnum.BANK_ACCOUNT && { state }),
     ...(field.fieldType === FieldTypesEnum.ISK_SUMBOX && { state }),
     ...(field.fieldType === FieldTypesEnum.ASSETS && { state, field }),
+    ...(field.fieldType === FieldTypesEnum.FAMILY && { state, field }),
     ...(field.fieldType === FieldTypesEnum.FILE && { state }),
     ...(field.fieldType === FieldTypesEnum.DROPDOWN_LIST && {
       slug: state.application.slug,
@@ -79,6 +84,7 @@ export const Field = ({ field, valueIndex = 0 }: Props) => {
 
   return (
     <Box marginTop={4}>
+      <FieldInformation item={field} />
       {FieldComponent ? <FieldComponent {...fieldItems} /> : null}
     </Box>
   )

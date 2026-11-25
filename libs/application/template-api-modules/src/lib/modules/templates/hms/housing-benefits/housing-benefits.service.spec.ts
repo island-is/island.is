@@ -656,6 +656,22 @@ describe('HousingBenefitsService notifications', () => {
         )
     })
 
+    it('reports no tax return when the API says not filed in any of the last five years', async () => {
+      hasTaxReturnForYear.mockResolvedValue(false)
+
+      const result = await service.getPersonalTaxReturn({
+        application: createApplication(),
+        auth: createCurrentUser({ nationalId: APPLICANT_ID }),
+        currentUserLocale: 'is',
+      })
+
+      expect(result).toEqual({
+        handedInLastYear: false,
+        handedInLastFiveYears: false,
+      })
+      expect(hasTaxReturnForYear).toHaveBeenCalledTimes(5)
+    })
+
     it('returns empty mock without calling tax API when mock variant is emptySuccess', async () => {
       hasTaxReturnForYear.mockRejectedValue(new Error('HMS tax API down'))
       const application = createApplication({
@@ -710,7 +726,7 @@ describe('HousingBenefitsService notifications', () => {
       expect(hasTaxReturnForYear).not.toHaveBeenCalled()
     })
 
-    it('returns fiveYears mock without calling tax API', async () => {
+    it('throws TemplateApiError for `filedWithinFiveYears` mock without calling tax API', async () => {
       hasTaxReturnForYear.mockRejectedValue(new Error('HMS tax API down'))
       const application = createApplication({
         answers: {
@@ -724,17 +740,34 @@ describe('HousingBenefitsService notifications', () => {
       })
       const auth = createCurrentUser({ nationalId: APPLICANT_ID })
 
-      const result = await service.getPersonalTaxReturn({
-        application,
-        auth,
-        currentUserLocale: 'is',
-      })
-
-      expect(result).toEqual({
-        handedInLastYear: false,
-        handedInLastFiveYears: true,
-      })
+      await expect(
+        service.getPersonalTaxReturn({
+          application,
+          auth,
+          currentUserLocale: 'is',
+        }),
+      ).rejects.toBeInstanceOf(TemplateApiError)
       expect(hasTaxReturnForYear).not.toHaveBeenCalled()
+    })
+
+    it('throws TemplateApiError when the real API says filed within five years but not last year', async () => {
+      hasTaxReturnForYear.mockImplementation(
+        async (_auth: unknown, _nationalId: string, year: number) => {
+          const lastYear = new Date().getFullYear() - 1
+          return year !== lastYear
+        },
+      )
+
+      const application = createApplication()
+      const auth = createCurrentUser({ nationalId: APPLICANT_ID })
+
+      await expect(
+        service.getPersonalTaxReturn({
+          application,
+          auth,
+          currentUserLocale: 'is',
+        }),
+      ).rejects.toBeInstanceOf(TemplateApiError)
     })
 
     it('calls tax API on production even when mock settings are set', async () => {
@@ -776,6 +809,22 @@ describe('HousingBenefitsService notifications', () => {
         .mockImplementation((environment) =>
           actual.isRunningOnEnvironment(environment),
         )
+    })
+
+    it('reports no tax return when the API says the assignee has not filed', async () => {
+      hasTaxReturnForYear.mockResolvedValue(false)
+
+      const result = await service.getAssigneePersonalTaxReturn({
+        application: createApplication(),
+        auth: createCurrentUser({ nationalId: ASSIGNEE_A }),
+        currentUserLocale: 'is',
+      })
+
+      expect(result).toEqual({
+        handedInLastYear: false,
+        handedInLastFiveYears: false,
+      })
+      expect(hasTaxReturnForYear).toHaveBeenCalledTimes(5)
     })
 
     it('returns mock payload without calling tax API when assignee mock is enabled', async () => {
@@ -837,6 +886,53 @@ describe('HousingBenefitsService notifications', () => {
         handedInLastFiveYears: true,
       })
       expect(hasTaxReturnForYear).toHaveBeenCalled()
+    })
+
+    it('throws TemplateApiError when the real API says filed within five years but not last year', async () => {
+      hasTaxReturnForYear.mockImplementation(
+        async (_auth: unknown, _nationalId: string, year: number) => {
+          const lastYear = new Date().getFullYear() - 1
+          return year !== lastYear
+        },
+      )
+
+      const application = createApplication()
+      const auth = createCurrentUser({ nationalId: ASSIGNEE_A })
+
+      await expect(
+        service.getAssigneePersonalTaxReturn({
+          application,
+          auth,
+          currentUserLocale: 'is',
+        }),
+      ).rejects.toBeInstanceOf(TemplateApiError)
+    })
+
+    it('throws TemplateApiError when the `filedWithinFiveYears` mock variant is selected', async () => {
+      hasTaxReturnForYear.mockRejectedValue(new Error('HMS tax API down'))
+
+      const application = createApplication({
+        answers: {
+          rentalAgreement: { answer: '123' },
+          [ASSIGNEE_A]: {
+            assigneeDevMockSettings: {
+              useMock: 'yes',
+              mockTaxReturn: ['yes'],
+              mockTaxReturnVariant: 'filedWithinFiveYears',
+            },
+          },
+        },
+      })
+      const auth = createCurrentUser({ nationalId: ASSIGNEE_A })
+
+      await expect(
+        service.getAssigneePersonalTaxReturn({
+          application,
+          auth,
+          currentUserLocale: 'is',
+        }),
+      ).rejects.toBeInstanceOf(TemplateApiError)
+      expect(hasTaxReturnForYear).not.toHaveBeenCalled()
     })
   })
 
@@ -976,5 +1072,36 @@ describe('HousingBenefitsService', () => {
       acceptedDataFetch: true,
       email: 'b@test.is',
     })
+  })
+
+  it('includes contract tenants (excluding applicant) when householdMembersTableRepeater is empty', () => {
+    const model = mapApplicationToHousingBenefitsModel(
+      createApplication({
+        answers: {
+          rentalAgreement: { answer: '123' },
+          householdMembersTableRepeater: [],
+        },
+        externalData: {
+          getRentalAgreements: {
+            data: [
+              {
+                contractId: 123,
+                contractParty: [
+                  { partyTypeUseCode: 'TENANT', kennitala: APPLICANT_ID },
+                  { partyTypeUseCode: 'TENANT', kennitala: ASSIGNEE_A },
+                  { partyTypeUseCode: 'OWNER', kennitala: ASSIGNEE_B },
+                ],
+              },
+            ],
+            status: 'success',
+            date: new Date(),
+          },
+        },
+      }),
+    )
+    expect(model.householdMembers?.map((m) => m.kennitala)).toEqual([
+      APPLICANT_ID,
+      ASSIGNEE_A,
+    ])
   })
 })

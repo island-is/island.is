@@ -41,6 +41,35 @@ export const inReview = {
       description: 'Text on the go to signing button',
     },
   }),
+  assigneeInfo: defineMessages({
+    sectionName: {
+      id: 'ra.application:inReview.assigneeInfo.sectionName',
+      defaultMessage: 'Yfirlestur',
+      description: 'Name of the review section shown to other parties',
+    },
+    pageTitle: {
+      id: 'ra.application:inReview.assigneeInfo.pageTitle',
+      defaultMessage: 'Samningsdrög til yfirlestrar',
+      description: 'Title of the review page shown to other parties',
+    },
+    pageDescription: {
+      id: 'ra.application:inReview.assigneeInfo.pageDescription',
+      defaultMessage:
+        'Hér getur þú lesið yfir drög að leigusamningi sem þú ert aðili að. Aðeins sá aðili sem hóf samningsgerðina getur gert breytingar á samningnum og sent hann í rafræna undirritun.',
+      description: 'Description of the review page shown to other parties',
+    },
+    infoHeading: {
+      id: 'ra.application:inReview.assigneeInfo.infoHeading',
+      defaultMessage: 'Næsta skref',
+      description: 'Heading for the next steps info shown to other parties',
+    },
+    infoBullets: {
+      id: 'ra.application:inReview.assigneeInfo.infoBullets#markdown',
+      defaultMessage:
+        '- Ef þú hefur athugasemdir við samningsdrögin skaltu hafa samband við gagnaðila samningsins (leigusala eða leigutaka eftir því hver hóf samningsgerðina). \n- Ef þú hefur engar athugasemdir skaltu biðja þann aðila um að senda samninginn í rafræna undirritun. \n- Þegar samningurinn hefur verið sendur í undirritun færð þú SMS og tölvupóst frá HMS með beiðni um rafræna undirritun.',
+      description: 'Bullets for the next steps info shown to other parties',
+    },
+  }),
   preSignatureInfo: defineMessages({
     sectionName: {
       id: 'ra.application:inReview.preSignatureInfo.sectionName',

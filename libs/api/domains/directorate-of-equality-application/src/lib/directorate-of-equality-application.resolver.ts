@@ -22,6 +22,16 @@ import {
   DraftEmployeesWithStepsResponseModel,
 } from './dto/draftEmployeesResponse.model'
 import { EditEqualityContentInput } from './dto/editEqualityContent.input'
+import {
+  AddEqualityAttachmentInput,
+  DeleteEqualityAttachmentInput,
+  EqualityAttachmentsInput,
+  PresignEqualityAttachmentInput,
+} from './dto/equalityAttachment.input'
+import {
+  EqualityAttachmentModel,
+  PresignedUploadModel,
+} from './dto/equalityAttachment.model'
 import { SyncSalaryReportDraftInput } from './dto/syncSalaryReportDraft.input'
 import { UpdateEqualityDraftContentInput } from './dto/updateEqualityDraftContent.input'
 import { DirectorateOfEqualityApplicationService } from './directorate-of-equality-application.service'
@@ -29,7 +39,8 @@ import { DirectorateOfEqualityApplicationService } from './directorate-of-equali
 // Sync carries an arbitrary per-screen payload, and the employee list queries
 // carry a live page number — neither has a channel through defineTemplateApi
 // providers (those only take a static actionId), hence a resolver of their own.
-@Scopes(ApiScope.directorateOfEquality)
+// Each handler names its scope: the salary report and the equality report are
+// granted separately.
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.isDirectorateOfEqualityApplicationsEnabled)
 @Resolver()
@@ -42,6 +53,7 @@ export class DirectorateOfEqualityApplicationResolver {
   @Mutation(() => Boolean, {
     name: 'directorateOfEqualitySyncSalaryReportDraft',
   })
+  @Scopes(ApiScope.directorateOfEqualitySalary)
   @Audit()
   syncSalaryReportDraft(
     @Args('input') input: SyncSalaryReportDraftInput,
@@ -56,6 +68,7 @@ export class DirectorateOfEqualityApplicationResolver {
   @Query(() => DraftEmployeesResponseModel, {
     name: 'directorateOfEqualityDraftEmployees',
   })
+  @Scopes(ApiScope.directorateOfEqualitySalary)
   @Audit()
   draftEmployees(
     @Args('input') input: DraftEmployeesInput,
@@ -70,6 +83,7 @@ export class DirectorateOfEqualityApplicationResolver {
   @Query(() => DraftEmployeesWithStepsResponseModel, {
     name: 'directorateOfEqualityDraftEmployeesWithSteps',
   })
+  @Scopes(ApiScope.directorateOfEqualitySalary)
   @Audit()
   draftEmployeesWithSteps(
     @Args('input') input: DraftEmployeesInput,
@@ -84,6 +98,7 @@ export class DirectorateOfEqualityApplicationResolver {
   @Mutation(() => Boolean, {
     name: 'directorateOfEqualityUpdateEqualityDraftContent',
   })
+  @Scopes(ApiScope.directorateOfEquality)
   @Audit()
   updateEqualityDraftContent(
     @Args('input') input: UpdateEqualityDraftContentInput,
@@ -98,12 +113,76 @@ export class DirectorateOfEqualityApplicationResolver {
   @Mutation(() => Boolean, {
     name: 'directorateOfEqualityEditEqualityContent',
   })
+  @Scopes(ApiScope.directorateOfEquality)
   @Audit()
   editEqualityContent(
     @Args('input') input: EditEqualityContentInput,
     @CurrentUser() user: User,
   ) {
     return this.directorateOfEqualityApplicationService.editEqualityContent(
+      input,
+      user,
+    )
+  }
+
+  // Fylgiskjöl: metadata only. The file itself goes from the browser straight
+  // to the presigned URL, never through GraphQL.
+  @Query(() => [EqualityAttachmentModel], {
+    name: 'directorateOfEqualityEqualityAttachments',
+    nullable: true,
+  })
+  @Scopes(ApiScope.directorateOfEquality)
+  @Audit()
+  equalityAttachments(
+    @Args('input') input: EqualityAttachmentsInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.directorateOfEqualityApplicationService.listEqualityAttachments(
+      input,
+      user,
+    )
+  }
+
+  @Mutation(() => PresignedUploadModel, {
+    name: 'directorateOfEqualityPresignEqualityAttachment',
+  })
+  @Scopes(ApiScope.directorateOfEquality)
+  @Audit()
+  presignEqualityAttachment(
+    @Args('input') input: PresignEqualityAttachmentInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.directorateOfEqualityApplicationService.presignEqualityAttachment(
+      input,
+      user,
+    )
+  }
+
+  @Mutation(() => EqualityAttachmentModel, {
+    name: 'directorateOfEqualityAddEqualityAttachment',
+  })
+  @Scopes(ApiScope.directorateOfEquality)
+  @Audit()
+  addEqualityAttachment(
+    @Args('input') input: AddEqualityAttachmentInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.directorateOfEqualityApplicationService.addEqualityAttachment(
+      input,
+      user,
+    )
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'directorateOfEqualityDeleteEqualityAttachment',
+  })
+  @Scopes(ApiScope.directorateOfEquality)
+  @Audit()
+  deleteEqualityAttachment(
+    @Args('input') input: DeleteEqualityAttachmentInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.directorateOfEqualityApplicationService.deleteEqualityAttachment(
       input,
       user,
     )

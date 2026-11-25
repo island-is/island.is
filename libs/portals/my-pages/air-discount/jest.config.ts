@@ -1,4 +1,3 @@
-/* eslint-disable */
 module.exports = {
   displayName: 'my-pages-air-discount',
   preset: './jest.preset.js',

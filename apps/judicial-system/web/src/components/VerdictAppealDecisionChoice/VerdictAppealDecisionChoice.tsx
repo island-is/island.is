@@ -31,27 +31,7 @@ const VerdictAppealDecisionChoice: FC<Props> = (props) => {
       hideLegend
       className={styles.gridRow}
     >
-      <RadioButton
-        id={`defendant-${defendant.id}-verdict-appeal-decision-postpone`}
-        name={`defendant-${defendant.id}-verdict-appeal-decision`}
-        checked={verdict.appealDecision === VerdictAppealDecision.POSTPONE}
-        onChange={() => {
-          setAndSendVerdictToServer(
-            {
-              defendantId: defendant.id,
-              caseId: workingCase.id,
-              appealDecision: VerdictAppealDecision.POSTPONE,
-            },
-            setWorkingCase,
-          )
-        }}
-        large
-        backgroundColor="white"
-        label={getDefendantVerdictAppealDecisionLabel(
-          VerdictAppealDecision.POSTPONE,
-        )}
-        disabled={disabled}
-      />
+      {/* In the order the design draws them: accept, then take the appeal period. */}
       <RadioButton
         id={`defendant-${defendant.id}-verdict-appeal-decision-accept`}
         name={`defendant-${defendant.id}-verdict-appeal-decision`}
@@ -70,6 +50,27 @@ const VerdictAppealDecisionChoice: FC<Props> = (props) => {
         backgroundColor="white"
         label={getDefendantVerdictAppealDecisionLabel(
           VerdictAppealDecision.ACCEPT,
+        )}
+        disabled={disabled}
+      />
+      <RadioButton
+        id={`defendant-${defendant.id}-verdict-appeal-decision-postpone`}
+        name={`defendant-${defendant.id}-verdict-appeal-decision`}
+        checked={verdict.appealDecision === VerdictAppealDecision.POSTPONE}
+        onChange={() => {
+          setAndSendVerdictToServer(
+            {
+              defendantId: defendant.id,
+              caseId: workingCase.id,
+              appealDecision: VerdictAppealDecision.POSTPONE,
+            },
+            setWorkingCase,
+          )
+        }}
+        large
+        backgroundColor="white"
+        label={getDefendantVerdictAppealDecisionLabel(
+          VerdictAppealDecision.POSTPONE,
         )}
         disabled={disabled}
       />

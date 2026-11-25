@@ -156,6 +156,13 @@ const CarRecyclingTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: carRecyclingMessages.review.buttonsEdit,
+                  type: 'primary',
+                },
+              ],
               write: 'all',
             },
           ],

@@ -40,7 +40,13 @@ const DelegationModal: React.FC<Props> = ({
       baseId={id}
       isVisible={visible}
       initialVisibility={false}
+      onVisibilityChange={(visibility) => {
+        if (!visibility) {
+          closeModal()
+        }
+      }}
       removeOnClose
+      modalLabel={formatMessage(messages.areYouSureAboutDeletingDelegation)}
       className={styles.modal}
     >
       <Box className={styles.closeButton}>
@@ -48,13 +54,14 @@ const DelegationModal: React.FC<Props> = ({
           circle
           colorScheme="negative"
           icon="close"
+          aria-label={formatMessage(messages.closeModal)}
           onClick={() => {
             closeModal()
           }}
           size="large"
         />
       </Box>
-      <Box paddingY={8} paddingX={12}>
+      <Box paddingY={[6, 6, 8]} paddingX={[3, 6, 12]}>
         <Text variant="h3" marginBottom={1}>
           {formatMessage(messages.areYouSureAboutDeletingDelegation)}
         </Text>
@@ -76,22 +83,25 @@ const DelegationModal: React.FC<Props> = ({
             formatDate(activeDelegation?.dates?.to)
           }
         />
-        <Box display={'flex'} justifyContent="spaceBetween" marginTop={6}>
-          <Box>
-            <Button size="small" variant="ghost" onClick={closeModal}>
-              {formatMessage(messages.cancel)}
-            </Button>
-          </Box>
-          <Box>
-            <Button
-              size="small"
-              onClick={onSubmit}
-              colorScheme="destructive"
-              loading={loading}
-            >
-              {formatMessage(messages.deleteDelegation)}
-            </Button>
-          </Box>
+        <Box
+          display="flex"
+          flexDirection="row"
+          justifyContent="spaceBetween"
+          alignItems="center"
+          columnGap={2}
+          marginTop={6}
+        >
+          <Button size="small" variant="ghost" onClick={closeModal}>
+            {formatMessage(messages.cancel)}
+          </Button>
+          <Button
+            size="small"
+            onClick={onSubmit}
+            colorScheme="destructive"
+            loading={loading}
+          >
+            {formatMessage(messages.deleteDelegation)}
+          </Button>
         </Box>
       </Box>
     </ModalBase>

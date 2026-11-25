@@ -3,6 +3,7 @@ import { Application } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import * as m from '../lib/messages'
 import {
+  assigneeExternalDataKey,
   getAssigneeNationalIds,
   getCompletedAssigneeNationalIdSet,
   getHouseholdMembersOver18ExcludingApplicant,
@@ -41,7 +42,7 @@ const assigneeDisplayName = (
   if (fromHousehold?.trim()) return fromHousehold.trim()
 
   const registry = application.externalData[
-    `${key}.assigneeNationalRegistry`
+    assigneeExternalDataKey(key, 'assigneeNationalRegistry')
   ] as { data?: { fullName?: string } } | undefined
   const fromRegistry = registry?.data?.fullName?.trim()
   if (fromRegistry) return fromRegistry

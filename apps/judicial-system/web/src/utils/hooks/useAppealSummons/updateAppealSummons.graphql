@@ -1,0 +1,13 @@
+mutation UpdateAppealSummons($input: UpdateAppealSummonsInput!) {
+  updateAppealSummons(input: $input) {
+    id
+    confirmedDate
+    sentToCourtOfAppealsDate
+    defendants {
+      id
+      defendantId
+      appellantSide
+      claims
+    }
+  }
+}

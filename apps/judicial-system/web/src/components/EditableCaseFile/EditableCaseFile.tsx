@@ -1,6 +1,5 @@
 import type { FC, ReactNode } from 'react'
 import { useMemo, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import isValid from 'date-fns/isValid'
@@ -15,13 +14,13 @@ import {
   Input,
   LoadingDots,
   Text,
-  toast,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { EDITABLE_DATE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import type { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { strings } from './EditableCaseFile.strings'
 import * as styles from './EditableCaseFile.css'
@@ -77,7 +76,6 @@ const EditableCaseFile: FC<Props> = (props) => {
     onStartEditing,
     onStopEditing,
   } = props
-  const { formatMessage } = useIntl()
   const [ref, { width }] = useMeasure<HTMLDivElement>()
 
   const initialDate =
@@ -103,7 +101,7 @@ const EditableCaseFile: FC<Props> = (props) => {
 
     if (canEditName) {
       if (trimmedFilename !== undefined && trimmedFilename.length === 0) {
-        toast.error(formatMessage(strings.invalidFilenameErrorMessage))
+        toast.error(strings.invalidFilenameErrorMessage)
         return
       }
     }
@@ -112,7 +110,7 @@ const EditableCaseFile: FC<Props> = (props) => {
 
     if (canEditDate) {
       if (!trimmedDisplayDate) {
-        toast.error(formatMessage(strings.invalidDateErrorMessage))
+        toast.error(strings.invalidDateErrorMessage)
         return
       }
 
@@ -124,7 +122,7 @@ const EditableCaseFile: FC<Props> = (props) => {
       const parsedDateUtc = new Date(Date.UTC(y, m - 1, d))
 
       if (!isValid(parsedDateUtc)) {
-        toast.error(formatMessage(strings.invalidDateErrorMessage))
+        toast.error(strings.invalidDateErrorMessage)
         return
       }
 
@@ -194,9 +192,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                       <Input
                         name="fileName"
                         size="xs"
-                        placeholder={formatMessage(
-                          strings.simpleInputPlaceholder,
-                        )}
+                        placeholder={strings.simpleInputPlaceholder}
                         defaultValue={displayName ?? undefined}
                         onChange={(evt) => setEditedFilename(evt.target.value)}
                       />

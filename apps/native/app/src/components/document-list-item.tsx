@@ -8,7 +8,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
-import documentIcon from '@/assets/icons/reader.png'
+import documentIcon from '@/assets/icons/document.png'
 import attachmentIcon from '@/assets/icons/attachment.png'
 import { PressableHighlight } from '@/components/pressable-highlight/pressable-highlight'
 import { useOrganizationsStore } from '@/stores/organizations-store'
@@ -27,7 +27,7 @@ const Wrapper = styled(PressableHighlight)<{
   columnGap: theme.spacing[2],
   ...(hasTopBorder && {
     borderTopWidth: theme.border.width.standard,
-    borderTopColor: theme.color.blue200,
+    borderTopColor: theme.tokens.border.primary,
   }),
 }))
 
@@ -49,7 +49,7 @@ const IconBackground = styled.View`
   justify-content: center;
   width: 40px;
   height: 40px;
-  background-color: ${({ theme }) => theme.color.blue100};
+  background-color: ${({ theme }) => theme.tokens.background.brandMinimal};
   border-radius: ${({ theme }) => theme.border.radius.full};
 `
 
@@ -68,7 +68,26 @@ const MetaRow = styled.View`
 const MetaSeparator = styled.View`
   width: 1px;
   height: 12px;
-  background-color: ${({ theme }) => theme.color.blue200};
+  background-color: ${({ theme }) => theme.tokens.border.primary};
+`
+
+const ICON_SIZE = 16
+
+// Pins the trailing slot so the chip keeps its width when the icon is swapped
+// for the download spinner.
+const AttachmentIcon = styled.View`
+  width: ${ICON_SIZE}px;
+  height: ${ICON_SIZE}px;
+  align-items: center;
+  justify-content: center;
+`
+
+// Sits below the message body, which it clears by a full gutter. Chips stay
+// closer to each other than to the message they belong to.
+const AttachmentList = styled.View<{ $hasBody: boolean }>`
+  row-gap: ${({ theme }) => theme.spacing[1]}px;
+  margin-top: ${({ theme, $hasBody }) =>
+    $hasBody ? theme.spacing[2] : theme.spacing[1]}px;
 `
 
 const AttachmentChip = styled(TouchableOpacity)`
@@ -76,13 +95,12 @@ const AttachmentChip = styled(TouchableOpacity)`
   align-items: center;
   align-self: flex-start;
   column-gap: ${({ theme }) => theme.spacing[1]}px;
-  margin-top: ${({ theme }) => theme.spacing[1]}px;
   padding: ${({ theme }) => theme.spacing[1]}px
     ${({ theme }) => theme.spacing[2]}px;
   border-width: ${({ theme }) => theme.border.width.standard}px;
-  border-color: ${({ theme }) => theme.color.blue200};
+  border-color: ${({ theme }) => theme.tokens.border.primary};
   border-radius: ${({ theme }) => theme.border.radius.large};
-  background-color: ${({ theme }) => theme.color.white};
+  background-color: ${({ theme }) => theme.tokens.background.invert};
 `
 
 export interface DocumentListItemAttachment {
@@ -191,7 +209,7 @@ export const DocumentListItem = ({
     <Animated.View style={containerAnimatedStyle}>
       <Wrapper
         onPress={handlePress}
-        highlightColor={closeable ? theme.shade.shade100 : theme.color.white}
+        disabled={!closeable}
         hasTopBorder={hasTopBorder}
       >
         <View>
@@ -235,7 +253,7 @@ export const DocumentListItem = ({
                 source={attachmentIcon}
                 width={16}
                 height={16}
-                tintColor="dark400"
+                tintColor={theme.tokens.foreground.primary}
               />
             ) : null}
           </Host>
@@ -251,26 +269,46 @@ export const DocumentListItem = ({
                     {body}
                   </Markdown>
                 ) : null)}
-              {attachments?.map((attachment) => (
-                <AttachmentChip
-                  key={attachment.id}
-                  onPress={attachment.onPress}
-                  disabled={attachment.loading}
-                  accessibilityRole="button"
-                  accessibilityLabel={attachment.label}
-                >
-                  <Typography variant="eyebrow">{attachment.label}</Typography>
-                  {attachment.loading ? (
-                    <ActivityIndicator size="small" />
-                  ) : (
-                    <Image
-                      source={documentIcon}
-                      style={{ width: 16, height: 16 }}
-                      resizeMode="contain"
-                    />
-                  )}
-                </AttachmentChip>
-              ))}
+              {attachments && attachments.length > 0 ? (
+                <AttachmentList $hasBody={bodyContent != null || !!body}>
+                  {attachments.map((attachment) => (
+                    <AttachmentChip
+                      key={attachment.id}
+                      onPress={attachment.onPress}
+                      disabled={attachment.loading}
+                      accessibilityRole="button"
+                      accessibilityLabel={attachment.label}
+                    >
+                      {/* Shrinks so a long file name wraps inside the chip
+                          instead of pushing it past the message body. */}
+                      <Typography
+                        variant="eyebrow"
+                        maxFontSizeMultiplier={1.5}
+                        style={{ flexShrink: 1 }}
+                      >
+                        {attachment.label}
+                      </Typography>
+                      <AttachmentIcon>
+                        {attachment.loading ? (
+                          <ActivityIndicator
+                            size="small"
+                            // Lays out at 20pt; scaled to match the icon it
+                            // replaces. Transforms don't affect layout, and the
+                            // wrapper already pins that.
+                            style={{ transform: [{ scale: ICON_SIZE / 20 }] }}
+                          />
+                        ) : (
+                          <Image
+                            source={documentIcon}
+                            style={{ width: ICON_SIZE, height: ICON_SIZE }}
+                            resizeMode="contain"
+                          />
+                        )}
+                      </AttachmentIcon>
+                    </AttachmentChip>
+                  ))}
+                </AttachmentList>
+              ) : null}
             </Body>
           </Animated.View>
         </View>

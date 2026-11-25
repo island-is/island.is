@@ -33,7 +33,7 @@ import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.internal, ApiScope.internalProcuring)
 @FeatureFlag(Features.isServicePortalFarmersLandsPageEnabled)
 @Audit({ namespace: '@island.is/api/farmers' })
 @CodeOwner(CodeOwners.Hugsmidjan)

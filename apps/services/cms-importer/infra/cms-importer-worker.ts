@@ -113,6 +113,10 @@ export const cmsCleanupSetup =
       })
       .command('node')
       .args('main.cjs', '--job', 'cms-cleanup')
+      .resources({
+        limits: { cpu: '400m', memory: '4096Mi' },
+        requests: { cpu: '100m', memory: '1024Mi' },
+      })
       .schedule({
         dev: '0 0 * * 0',
         staging: '0 0 * * 0',

@@ -30,14 +30,20 @@ export const lastV6TemporaryRequest: {
   body?: Record<string, unknown>
 } = {}
 
-export const VALID_AUTH = 'Bearer OKIDOKE'
-export const INVALID_AUTH = 'Bearer NOPEDEDOPE'
+// Same capture for the v6 BE submit. BE is the one write this migration moves
+// that is live in production with no feature flag, and its v6 model was
+// reshaped (`userId` and `healthDeclarationModel` dropped, `healthDeclaration`
+// added and required). This lets a test pin the exact keys that reach RLS.
+export const lastV6BeRequest: {
+  headers?: Record<string, string | null>
+  body?: Record<string, unknown>
+} = {}
 
-export const XROAD_BASE_PATH = 'http://localhost:8081'
-export const XROAD_DRIVING_LICENSE_PATH_V5 =
-  'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v5/api/drivinglicense/v5'
-export const XROAD_DRIVING_LICENSE_PATH_V1 =
-  'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1/api'
+// Same capture for the v6 65+ submit, whose model gained a required
+// `healthDeclaration` that the 65+ flow has no answers for.
+export const lastV6Renewal65Request: {
+  body?: Record<string, unknown>
+} = {}
 
 const MOCK_HAS_QUALITY_PHOTO = {
   [MOCK_TOKEN.STUDENT]: true,
@@ -57,10 +63,6 @@ const MOCK_HAS_SIGNATURE = {
   [MOCK_TOKEN.MANY_CATEGORIES]: true,
   [MOCK_TOKEN.LICENSE_NO_PHOTO_NOR_SIGNATURE]: false,
   [MOCK_TOKEN.LICENSE_B_CATEGORY]: true,
-}
-
-const url = (path: string) => {
-  return new URL(path, XROAD_BASE_PATH).toString()
 }
 
 export const requestHandlers = [
@@ -87,40 +89,10 @@ export const requestHandlers = [
       )
     },
   ),
-  rest.get(/api\/drivinglicense\/v5\/hasqualityphoto/, (req, res, ctx) => {
-    const jwttoken = req.headers.get('jwttoken')
-
-    let mock_token: MOCK_TOKEN
-    if (jwttoken) {
-      mock_token = jwttoken as MOCK_TOKEN
-    } else {
-      return res(ctx.status(401))
-    }
-
-    return res(
-      ctx.status(200),
-      ctx.json(MOCK_HAS_QUALITY_PHOTO[mock_token] ? 1 : 0),
-    )
-  }),
-
-  rest.get(/api\/drivinglicense\/v5\/hasqualitysignature/, (req, res, ctx) => {
-    const jwttoken = req.headers.get('jwttoken')
-
-    let mock_token: MOCK_TOKEN
-    if (jwttoken) {
-      mock_token = jwttoken as MOCK_TOKEN
-    } else {
-      return res(ctx.status(401))
-    }
-
-    return res(
-      ctx.status(200),
-      ctx.json(MOCK_HAS_SIGNATURE[mock_token] ? 1 : 0),
-    )
-  }),
-
   // Captures the serialized body so tests can assert on the exact keys that
-  // reach RLS — see `lastNewCategoryRequest` above.
+  // reach RLS — see `lastNewCategoryRequest` above. Stays on the v5 path
+  // because the B-full/B-temp submits deliberately remain on v5 (see the
+  // comments on postCreateDrivingLicenseFull / ...Temporary in the service).
   rest.post(
     /api\/drivinglicense\/v5\/applications\/new\//,
     async (req, res, ctx) => {
@@ -129,17 +101,69 @@ export const requestHandlers = [
     },
   ),
 
-  rest.post(/api\/applications\/v5\/applyfor\/renewal65/, (req, res, ctx) => {
+  rest.post(/api\/applications\/v6\/applyfor\/be$/, async (req, res, ctx) => {
+    lastV6BeRequest.headers = {
+      jwttoken: req.headers.get('jwttoken'),
+      authorization: req.headers.get('authorization'),
+    }
+    lastV6BeRequest.body = await req.json()
+    return res(
+      ctx.status(200),
+      ctx.json({
+        category: 'BE',
+        result: true,
+        applicationGuid: 'be-guid-0001',
+      }),
+    )
+  }),
+
+  // v6 resolves the caller from the `jwttoken` header that apiConfiguration.ts
+  // injects; without it RLS cannot tell who is applying, so answer 401 and let
+  // the wire, not just the wrapper, prove the header was sent.
+  rest.get(/api\/imagecontroller\/v6\/hasqualityphoto$/, (req, res, ctx) => {
     const jwttoken = req.headers.get('jwttoken')
     if (!jwttoken) {
       return res(ctx.status(401))
     }
+
     return res(
       ctx.status(200),
-      ctx.json({
-        category: 'B',
-        result: true,
-      }),
+      ctx.json(MOCK_HAS_QUALITY_PHOTO[jwttoken as MOCK_TOKEN] ? 1 : 0),
     )
   }),
+
+  rest.get(
+    /api\/imagecontroller\/v6\/hasqualitysignature$/,
+    (req, res, ctx) => {
+      const jwttoken = req.headers.get('jwttoken')
+      if (!jwttoken) {
+        return res(ctx.status(401))
+      }
+
+      return res(
+        ctx.status(200),
+        ctx.json(MOCK_HAS_SIGNATURE[jwttoken as MOCK_TOKEN] ? 1 : 0),
+      )
+    },
+  ),
+
+  // Same 401 guard as the image handlers above: a renewal submit that reaches
+  // RLS without `jwttoken` has no applicant.
+  rest.post(
+    /api\/applications\/v6\/applyfor\/renewal65/,
+    async (req, res, ctx) => {
+      if (!req.headers.get('jwttoken')) {
+        return res(ctx.status(401))
+      }
+      lastV6Renewal65Request.body = await req.json()
+      return res(
+        ctx.status(200),
+        ctx.json({
+          category: 'B',
+          result: true,
+          applicationGuid: 'renewal65-guid-0001',
+        }),
+      )
+    },
+  ),
 ]

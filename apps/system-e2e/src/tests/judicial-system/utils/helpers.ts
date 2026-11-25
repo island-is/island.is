@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test'
+import { expect, Locator, Page } from '@playwright/test'
 import { verifyRequestCompletion } from '../../../support/api-tools'
 
 export const randomPoliceCaseNumber = () => {
@@ -27,6 +27,34 @@ export const getDaysFromNow = (days = 0) => {
   const daysAdded = day * days
 
   return new Date(new Date().getTime() + daysAdded).toLocaleDateString('is-IS')
+}
+
+// The defender login fixture, national id 0909090909. The backend seeders
+// put this entry in lawyer_registry (seed_lawyer_registry.js), so it is on the
+// list the advocate comboboxes fetch and no interception is needed.
+export const testDefender = {
+  name: 'Test Verjandi',
+  email: 'testverjandi@dummy.dd',
+  nationalId: '0909090909',
+}
+
+// Picks the test defender in the lawyer registry combobox. A screen with one
+// combobox per defendant passes the defendant's section as the scope.
+export const selectTestDefender = async (
+  page: Page,
+  scope: Page | Locator = page,
+) => {
+  await scope.locator('#advocateName').click()
+  await page.keyboard.type(testDefender.name)
+  await page
+    .locator('[id^="react-select-advocateName-option"]')
+    .filter({ hasText: testDefender.name })
+    .first()
+    .click()
+  // Selecting a lawyer auto-fills email and phone from the registry entry.
+  await expect(scope.getByTestId('defenderEmail')).toHaveValue(
+    testDefender.email,
+  )
 }
 
 const createFakePdf = (title: string) => {
@@ -78,4 +106,41 @@ export const uploadDocument = async (
     chooseDocument(page, clickButton, fileName),
     verifyUpload(page, isLimitedAccess),
   ])
+}
+
+// Picks the court's decision on a ruling step and waits until it is saved.
+// The pick saves the decision, and the conclusion that follows from it, in
+// the background. The court record step reloads the case as it opens and
+// only offers to continue once the case has both, so moving on before that
+// save lands leaves the next step without its continue button. Matching on
+// the operation name is not enough here: the step's own autofill saves the
+// case at the same moment, without a decision.
+export const chooseCourtDecision = async (page: Page, decisionText: string) => {
+  const [response] = await Promise.all([
+    page.waitForResponse(
+      (resp) => {
+        if (!resp.url().includes('/api/graphql')) {
+          return false
+        }
+        const body = resp.request().postDataJSON()
+        return (
+          body?.operationName === 'UpdateCase' &&
+          Boolean(body.variables?.input?.decision)
+        )
+      },
+      { timeout: 15000 },
+    ),
+    // Exact match because some decision labels are prefixes of others, e.g.
+    // 'Kröfu um gæsluvarðhald hafnað( en úrskurðað í farbann)'
+    page.getByText(decisionText, { exact: true }).click(),
+  ])
+
+  // A save that failed would otherwise surface a step later, as the missing
+  // continue button this helper exists to prevent.
+  const body = await response.json()
+  if (body.errors?.length) {
+    throw new Error(
+      `GraphQL operation UpdateCase returned errors: ${body.errors[0].message}`,
+    )
+  }
 }

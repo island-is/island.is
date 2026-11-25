@@ -13,6 +13,7 @@ import {
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
+import { LocaleEnum } from '@island.is/nest/graphql'
 import type { Locale } from '@island.is/shared/types'
 import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
@@ -23,6 +24,7 @@ import {
   GetQuestionnaireInput,
   QuestionnaireAnsweredInput,
   QuestionnaireInput,
+  QuestionnairesTreatmentListInput,
 } from './dto/questionnaire.input'
 import { QuestionnairesResponse } from './dto/response.dto'
 import { QuestionnairesService } from './questionnaires.service'
@@ -49,6 +51,24 @@ export class QuestionnairesResolver {
     @Args('locale', { type: () => String }) locale: Locale = 'is',
   ): Promise<QuestionnairesList | null> {
     return this.questionnairesService.getQuestionnaires(user, locale)
+  }
+
+  @Query(() => QuestionnairesList, {
+    name: 'questionnairesTreatmentList',
+    nullable: true,
+  })
+  @Audit()
+  async getTreatmentQuestionnaires(
+    @CurrentUser() user: User,
+    @Args('input') input: QuestionnairesTreatmentListInput,
+    @Args('locale', { type: () => LocaleEnum, nullable: true })
+    locale: LocaleEnum = LocaleEnum.Is,
+  ): Promise<QuestionnairesList | null> {
+    return this.questionnairesService.getTreatmentQuestionnaires(
+      user,
+      locale,
+      input.treatmentId,
+    )
   }
 
   @Query(() => Questionnaire, { name: 'questionnairesDetail', nullable: true })

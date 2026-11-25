@@ -16,6 +16,7 @@ import {
   IFaqList,
   ISliceConnectedComponent,
   IEmbeddedVideo,
+  ICalculator,
   ISectionWithImage,
   ITabSection,
   ITeamList,
@@ -45,6 +46,7 @@ import {
   IChart,
   IChartComponent,
   IChartNumberBox,
+  IChartNumberBoxGroup,
   IFeaturedEvents,
   IGenericList,
   ILatestGenericListItems,
@@ -83,6 +85,7 @@ import {
   mapConnectedComponent,
 } from '../models/connectedComponent.model'
 import { EmbeddedVideo, mapEmbeddedVideo } from '../models/embeddedVideo.model'
+import { Calculator, mapCalculator } from '../models/calculator.model'
 import {
   mapSectionWithImage,
   SectionWithImage,
@@ -143,6 +146,10 @@ import {
   mapChartNumberBox,
 } from '../models/chartNumberBox.model'
 import {
+  ChartNumberBoxGroup,
+  mapChartNumberBoxGroup,
+} from '../models/chartNumberBoxGroup.model'
+import {
   FeaturedEvents,
   mapFeaturedEvents,
 } from '../models/featuredEvents.model'
@@ -187,6 +194,7 @@ export type SliceTypes =
   | IFaqList
   | ISliceConnectedComponent
   | IEmbeddedVideo
+  | ICalculator
   | ISectionWithImage
   | ISectionWithVideo
   | ITabSection
@@ -216,6 +224,7 @@ export type SliceTypes =
   | IChart
   | IChartComponent
   | IChartNumberBox
+  | IChartNumberBoxGroup
   | IFeaturedEvents
   | IGenericList
   | IGrantCardsList
@@ -242,6 +251,7 @@ export const SliceUnion = createUnionType({
     FaqList,
     ConnectedComponent,
     EmbeddedVideo,
+    Calculator,
     SectionWithImage,
     SectionWithVideo,
     TabSection,
@@ -274,6 +284,7 @@ export const SliceUnion = createUnionType({
     Chart,
     ChartComponent,
     ChartNumberBox,
+    ChartNumberBoxGroup,
     FeaturedEvents,
     GenericList,
     LatestGenericListItems,
@@ -316,6 +327,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapConnectedComponent(slice as ISliceConnectedComponent)
     case 'embeddedVideo':
       return mapEmbeddedVideo(slice as IEmbeddedVideo)
+    case 'calculator':
+      return mapCalculator(slice as ICalculator)
     case 'sectionWithImage':
       return mapSectionWithImage(slice as ISectionWithImage)
     case 'sectionWithVideo':
@@ -374,6 +387,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapChartComponent(slice as IChartComponent)
     case 'chartNumberBox':
       return mapChartNumberBox(slice as IChartNumberBox)
+    case 'chartNumberBoxGroup':
+      return mapChartNumberBoxGroup(slice as IChartNumberBoxGroup)
     case 'featuredEvents':
       return mapFeaturedEvents(slice as IFeaturedEvents)
     case 'genericList':
@@ -410,7 +425,10 @@ export const safelyMapSliceUnion = (
   try {
     return mapSliceUnion(data)
   } catch (error) {
-    logger.warn('Failed to map slice', { error: error.message })
+    logger.warn('Failed to map slice', {
+      error: error.message,
+      stack: error.stack,
+    })
     return null
   }
 }

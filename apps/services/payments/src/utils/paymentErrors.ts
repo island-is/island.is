@@ -4,6 +4,7 @@ import {
   CardErrorCode,
   InvoiceErrorCode,
   BankTransferErrorCode,
+  DebtPaymentErrorCode,
   PaymentErrorCode,
 } from '@island.is/shared/constants'
 
@@ -13,6 +14,7 @@ const ERROR_ENUMS = [
   CardErrorCode,
   InvoiceErrorCode,
   BankTransferErrorCode,
+  DebtPaymentErrorCode,
 ]
 
 export const onlyReturnKnownErrorCode = (
@@ -28,7 +30,7 @@ export const onlyReturnKnownErrorCode = (
   return defaultError
 }
 
-export const mapToCardErrorCode = (originalCode: string): CardErrorCode => {
+export const mapToCardErrorCode = (originalCode?: string): CardErrorCode => {
   // Only the first two characters are used to map the error code
   const firstTwoCharacters = originalCode?.slice(0, 2)
 
@@ -56,5 +58,8 @@ export const mapToCardErrorCode = (originalCode: string): CardErrorCode => {
   }
 
   // Return the mapped value or the default
-  return errorCodeMap[firstTwoCharacters] || CardErrorCode.GenericDecline
+  return (
+    (firstTwoCharacters && errorCodeMap[firstTwoCharacters]) ||
+    CardErrorCode.GenericDecline
+  )
 }

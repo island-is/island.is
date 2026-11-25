@@ -30,7 +30,7 @@ declare global {
 }
 
 interface UseApplePayProps {
-  isEnabledForUser: boolean
+  isEnabled: boolean
   paymentFlow: GetPaymentFlowQuery['paymentsGetFlow'] | null
   productInformation: {
     amount: number
@@ -46,7 +46,7 @@ interface UseApplePayReturn {
 }
 
 export const useApplePay = ({
-  isEnabledForUser,
+  isEnabled,
   paymentFlow,
   productInformation,
   onPaymentSuccess,
@@ -62,8 +62,8 @@ export const useApplePay = ({
   // check if apple pay is available
   useEffect(() => {
     const { allowApplePay } = getPublicRuntimeEnv()
-    // if apple pay is not enabled or if apple pay is not allowed, set supports apple pay to false
-    if (allowApplePay !== 'true' || !isEnabledForUser) {
+    // if apple pay is not allowed here or not enabled, set supports apple pay to false
+    if (allowApplePay !== 'true' || !isEnabled) {
       setSupportsApplePay(false)
       return
     }
@@ -78,7 +78,7 @@ export const useApplePay = ({
         }
       }
     }
-  }, [isEnabledForUser, paymentFlow])
+  }, [isEnabled, paymentFlow])
 
   // click handler for apple pay button
   const initiateApplePay = useCallback(() => {

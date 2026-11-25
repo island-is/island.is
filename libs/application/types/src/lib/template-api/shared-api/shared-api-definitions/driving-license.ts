@@ -47,6 +47,22 @@ export const QualityPhotoAndSignatureApi = defineTemplateApi({
   namespace,
 })
 
+export interface PhotoLookupCheckParameters {
+  // Which external data entry holds the template's license registry photo
+  rlsPhotoSource: 'qualityPhoto' | 'qualityPhotoAndSignature'
+}
+
+// Runs after the photo providers (order 0) and fails the data step when a
+// photo lookup errored and no other source returned a photo. Without it a
+// failed lookup reads as "no photo" and the applicant is sent to the office.
+export const PhotoLookupCheckApi =
+  defineTemplateApi<PhotoLookupCheckParameters>({
+    action: 'photoLookupCheck',
+    namespace,
+    order: 1,
+    shouldPersistToExternalData: false,
+  })
+
 export const DrivingAssessmentApi = defineTemplateApi({
   action: 'drivingAssessment',
   namespace,

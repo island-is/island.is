@@ -223,6 +223,13 @@ export const slices = gql`
     thumbnailImageUrl
   }
 
+  fragment CalculatorFields on Calculator {
+    __typename
+    id
+    calculatorType
+    configJson
+  }
+
   fragment SectionWithImageFields on SectionWithImage {
     __typename
     id
@@ -822,6 +829,21 @@ export const slices = gql`
     maxNumberOfCards
     sorting
     alwaysDisplayResultsAsCards
+    showSearchInput
+    searchInputPlaceholder
+    alphabeticallyOrderFilterTags
+    showPagination
+    fundIds
+    filterTags {
+      id
+      title
+      slug
+      genericTagGroup {
+        id
+        title
+        slug
+      }
+    }
     resolvedGrantsList {
       total
       items {
@@ -838,13 +860,6 @@ export const slices = gql`
         status
         statusText
         categoryTags {
-          id
-          title
-          genericTagGroup {
-            title
-          }
-        }
-        typeTag {
           id
           title
           genericTagGroup {
@@ -919,6 +934,7 @@ export const slices = gql`
 
   fragment LatestEventsSliceFields on LatestEventsSlice {
     title
+    organizationSlug
     events {
       title
       slug
@@ -987,6 +1003,15 @@ export const slices = gql`
     numberBoxDate
     reduceAndRoundValue
     displayTimestamp
+  }
+
+  fragment ChartNumberBoxGroupFields on ChartNumberBoxGroup {
+    __typename
+    id
+    columnCount
+    components {
+      ...ChartNumberBoxFields
+    }
   }
 
   fragment GenericListFields on GenericList {
@@ -1158,6 +1183,7 @@ export const slices = gql`
     ...ImageFields
     ...AssetFields
     ...EmbeddedVideoFields
+    ...CalculatorFields
     ...SectionWithVideoFields
     ...TabSectionFields
     ...TeamListFields
@@ -1185,6 +1211,7 @@ export const slices = gql`
     ...LatestEventsSliceFields
     ...ChartFields
     ...ChartNumberBoxFields
+    ...ChartNumberBoxGroupFields
     ...FeaturedEventsFields
     ...GenericListFields
     ...LatestGenericListItemsFields
@@ -1214,18 +1241,7 @@ export const nestedOneColumnTextFields = gql`
   }
 `
 
-const nestedContainerFields = `
-  ... on AccordionSlice {
-    ...AccordionSliceFields
-    accordionItems {
-      ... on OneColumnText {
-        ...OneColumnTextFields
-        content {
-          ...AllSlices
-        }
-      }
-    }
-  }
+const nestedFaqListFields = `
   ... on FaqList {
     ...FaqListFields
     questions {
@@ -1237,6 +1253,22 @@ const nestedContainerFields = `
       publishDate
     }
   }
+`
+
+const nestedContainerFields = `
+  ... on AccordionSlice {
+    ...AccordionSliceFields
+    accordionItems {
+      ... on OneColumnText {
+        ...OneColumnTextFields
+        content {
+          ...AllSlices
+          ${nestedFaqListFields}
+        }
+      }
+    }
+  }
+  ${nestedFaqListFields}
   ... on TabSection {
     ...TabSectionFields
     tabs {
@@ -1247,6 +1279,7 @@ const nestedContainerFields = `
       }
       body {
         ...AllSlices
+        ${nestedFaqListFields}
       }
     }
   }
@@ -1257,6 +1290,7 @@ const nestedContainerFields = `
         ...OneColumnTextFields
         content {
           ...AllSlices
+          ${nestedFaqListFields}
         }
       }
     }

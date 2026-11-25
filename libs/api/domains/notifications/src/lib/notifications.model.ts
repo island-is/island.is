@@ -17,6 +17,27 @@ export enum NotificationChannel {
 
 registerEnumType(NotificationChannel, { name: 'NotificationChannel' })
 
+export enum NotificationPriorityType {
+  Informative = 'Informative',
+  Actionable = 'Actionable',
+  Important = 'Important',
+}
+
+registerEnumType(NotificationPriorityType, {
+  name: 'NotificationPriorityType',
+})
+
+/** Values match the source types of the user-notification service */
+export enum NotificationSourceType {
+  MAIL = 'Mail',
+  EVENT = 'Event',
+  GENERAL = 'General',
+}
+
+registerEnumType(NotificationSourceType, {
+  name: 'NotificationSourceType',
+})
+
 @ObjectType()
 export class NotificationMetadata {
   @Field(() => GraphQLISODateTime)
@@ -33,6 +54,31 @@ export class NotificationMetadata {
 
   @Field({ nullable: true })
   seen?: boolean
+
+  @Field({ nullable: true })
+  wasSent?: boolean
+
+  @Field(() => NotificationPriorityType, { nullable: true })
+  priorityType?: NotificationPriorityType
+
+  @Field(() => NotificationSourceType)
+  sourceType!: NotificationSourceType
+
+  @Field(() => GraphQLISODateTime, {
+    nullable: true,
+    description:
+      'Deadline related to the notification, for display only. An instant in time (UTC); display it in Icelandic time (Atlantic/Reykjavik).',
+  })
+  deadline?: Date
+}
+
+@ObjectType()
+export class NotificationCategory {
+  @Field(() => String, { nullable: true })
+  key?: string
+
+  @Field()
+  label!: string
 }
 
 @ObjectType()
@@ -99,6 +145,9 @@ export class Notification {
 
   @Field(() => NotificationMessage)
   message!: NotificationMessage
+
+  @Field(() => NotificationCategory)
+  category!: NotificationCategory
 }
 
 @ObjectType()

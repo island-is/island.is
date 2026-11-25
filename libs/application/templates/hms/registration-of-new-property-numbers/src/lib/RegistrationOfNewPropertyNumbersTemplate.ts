@@ -33,7 +33,6 @@ import {
 } from '../dataProviders'
 import { getChargeItems } from '../utils/getChargeItems'
 import { conclusion } from './messages'
-import { Features } from '@island.is/feature-flags'
 import { Fasteign } from '@island.is/clients/assets'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
@@ -73,7 +72,6 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.REGISTRATION_OF_NEW_PROPERTY_NUMBERS,
   name: determineMessageFromApplicationAnswers,
   codeOwner: CodeOwners.Origo,
-  featureFlag: Features.RegistrationOfNewPropertyNumbersEnabled,
   institution: m.application.institutionName,
   translationNamespaces:
     ApplicationConfigurations.RegistrationOfNewPropertyNumbers.translation,

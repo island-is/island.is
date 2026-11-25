@@ -44,4 +44,22 @@ export const ListTypes: ListType[] = [
     },
     isCommon: true,
   },
+  {
+    id: ListTypesEnum.CURRENCIES,
+    name: { is: 'Gjaldmiðlar', en: 'Currencies' },
+    description: {
+      is: 'Listi af gjaldmiðlum',
+      en: 'List of currencies',
+    },
+    isCommon: true,
+  },
+  {
+    id: ListTypesEnum.ORGANIZATIONS,
+    name: { is: 'Stofnanir', en: 'Organizations' },
+    description: {
+      is: 'Listi af stofnunum',
+      en: 'List of organizations',
+    },
+    isCommon: true,
+  },
 ]

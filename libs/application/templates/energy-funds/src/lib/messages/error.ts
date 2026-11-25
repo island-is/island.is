@@ -37,6 +37,18 @@ export const error = defineMessages({
     defaultMessage: 'Upphæð ekki gild',
     description: 'Price not valid',
   },
+  priceCapExceeded: {
+    id: 'ef.application:error.priceCapExceeded',
+    defaultMessage:
+      'Ekki er veittur styrkur fyrir kaup á bifreiðum sem kosta meira en {priceCap}.',
+    description:
+      'Purchase price is over the price cap when the application is sent',
+  },
+  confirmPriceDefinitionRequired: {
+    id: 'ef.application:error.confirmPriceDefinitionRequired',
+    defaultMessage: 'Þú þarft að staðfesta til að geta sent umsóknina',
+    description: 'Applicant has not ticked the confirmation checkbox',
+  },
   requiredValidVehicle: {
     id: 'ef.application:error.requiredValidVehicle',
     defaultMessage: 'Ökutæki þarf að vera gilt',

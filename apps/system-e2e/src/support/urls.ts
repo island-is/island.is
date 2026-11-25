@@ -27,6 +27,8 @@ export const JUDICIAL_SYSTEM_PUBLIC_PROSECUTOR_OFFICE_HOME_URL =
   '/api/auth/login?nationalId=0000007777'
 export const JUDICIAL_SYSTEM_PUBLIC_PROSECUTOR_HOME_URL =
   '/api/auth/login?nationalId=0000998888'
+export const JUDICIAL_SYSTEM_PRISON_ADMIN_HOME_URL =
+  '/api/auth/login?nationalId=0000004449'
 
 export const shouldSkipNavigation = (url: string) => {
   return [
@@ -36,6 +38,7 @@ export const shouldSkipNavigation = (url: string) => {
     JUDICIAL_SYSTEM_JUDGE_HOME_URL,
     JUDICIAL_SYSTEM_PUBLIC_PROSECUTOR_OFFICE_HOME_URL,
     JUDICIAL_SYSTEM_PUBLIC_PROSECUTOR_HOME_URL,
+    JUDICIAL_SYSTEM_PRISON_ADMIN_HOME_URL,
   ].includes(url)
 }
 
@@ -48,6 +51,28 @@ export const getEnvironmentBaseUrl = (authority: string) => {
   return `https://${prefix}${authority}`
 }
 const localUrl = `http://${BaseAuthority.local}:${process.env.PORT ?? 4200}`
+// The judicial-system suite does not follow PORT. It defaults to 4200, the
+// only origin the dev S3 upload bucket allows, and moves only when
+// JUDICIAL_SYSTEM_WEB_PORT says so - the Playwright config then turns off the
+// browser's CORS checks so that uploads still go through.
+export const judicialSystemDefaultLocalPort = 4200
+const parseJudicialSystemLocalPort = (value: string | undefined) => {
+  if (!value) {
+    return judicialSystemDefaultLocalPort
+  }
+  const port = Number(value)
+  // The web server also opens a metrics server on the next port up.
+  if (!Number.isInteger(port) || port < 1 || port > 65534) {
+    throw new Error(
+      `JUDICIAL_SYSTEM_WEB_PORT must be a port number from 1 to 65534, got "${value}"`,
+    )
+  }
+  return port
+}
+export const judicialSystemLocalPort = parseJudicialSystemLocalPort(
+  process.env.JUDICIAL_SYSTEM_WEB_PORT,
+)
+const judicialSystemLocalUrl = `http://${BaseAuthority.local}:${judicialSystemLocalPort}`
 // This set of query params is used to hide the onboarding modal as well as force locale to Icelandic.
 // Useful if you need to test something that is using icelandic labels for example.
 const icelandicAndNoPopup = {
@@ -105,7 +130,7 @@ const envs: {
     authUrl: AuthUrl.local,
     islandisBaseUrl: localUrl,
     adsBaseUrl: localUrl,
-    judicialSystemBaseUrl: localUrl,
+    judicialSystemBaseUrl: judicialSystemLocalUrl,
   },
 }
 

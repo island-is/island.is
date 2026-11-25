@@ -1,20 +1,24 @@
 import { useCallback, useContext, useEffect } from 'react'
 
-import { toast } from '@island.is/island-ui/core'
 import { CaseOrigin } from '@island.is/judicial-system/types'
-import { FormContext } from '@island.is/judicial-system-web/src/components'
+import {
+  FormContext,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+import { toast } from '@island.is/judicial-system-web/src/utils/toast'
 
 import { useDeletePoliceDigitalCaseFileMutation } from './deletePoliceDigitalCaseFile.generated'
 import { usePoliceDigitalCaseFilesQuery } from './policeDigitalCaseFiles.generated'
+import { canAccessPoliceDigitalCaseFiles } from './usePoliceDigitalCaseFile.logic'
 
 const usePoliceDigitalCaseFile = () => {
+  const { user } = useContext(UserContext)
   const { workingCase, isLoadingWorkingCase, refreshCase } =
     useContext(FormContext)
-  const { id: caseId, origin: caseOrigin, originalAncestorId } = workingCase
-  // originalAncestorId is resolved server-side (split case id for indictments,
-  // the extension's original ancestor for request cases). Fall back to caseId
-  // only to satisfy the nullable GraphQL type — the backend always sets it.
-  const effectiveCaseId = originalAncestorId ?? caseId
+  // Always ask with the case the user is looking at. Access is decided
+  // against that case, and the backend resolves the original ancestor the
+  // police digital case files live on after the guards have run.
+  const { id: caseId, origin: caseOrigin } = workingCase
 
   const handleCompleted = useCallback(
     (completedData: {
@@ -33,8 +37,11 @@ const usePoliceDigitalCaseFile = () => {
     error: digitalCaseFilesError,
     refetch,
   } = usePoliceDigitalCaseFilesQuery({
-    variables: { input: { caseId: effectiveCaseId } },
-    skip: isLoadingWorkingCase || caseOrigin !== CaseOrigin.LOKE,
+    variables: { input: { caseId } },
+    skip:
+      isLoadingWorkingCase ||
+      caseOrigin !== CaseOrigin.LOKE ||
+      !canAccessPoliceDigitalCaseFiles(user),
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
     onCompleted: handleCompleted,
@@ -56,19 +63,19 @@ const usePoliceDigitalCaseFile = () => {
   const openDigitalCaseFileUrl = useCallback(
     (policeDigitalFileId: string) => {
       window.open(
-        `/akaera/rafraen-gogn?caseId=${effectiveCaseId}&fileId=${policeDigitalFileId}`,
+        `/akaera/rafraen-gogn?caseId=${caseId}&fileId=${policeDigitalFileId}`,
         '_blank',
         'noopener',
       )
     },
-    [effectiveCaseId],
+    [caseId],
   )
 
   const deletePoliceDigitalCaseFile = useCallback(
     async (fileId: string) => {
       try {
         const { data } = await deleteMutation({
-          variables: { input: { caseId: effectiveCaseId, fileId } },
+          variables: { input: { caseId, fileId } },
         })
 
         if (data?.deletePoliceDigitalCaseFile) {
@@ -76,12 +83,12 @@ const usePoliceDigitalCaseFile = () => {
         }
 
         return Boolean(data?.deletePoliceDigitalCaseFile)
-      } catch (error) {
+      } catch {
         toast.error('Upp kom villa við að eyða hljóð- og myndupptöku')
         return false
       }
     },
-    [effectiveCaseId, deleteMutation, refetch],
+    [caseId, deleteMutation, refetch],
   )
 
   return {

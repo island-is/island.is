@@ -8,6 +8,7 @@ import { getModelToken } from '@nestjs/sequelize'
 import { Notification } from '../notification.model'
 import { ActorNotification } from '../actor-notification.model'
 import { NotificationDelivery } from '../notification-delivery.model'
+import { UserNotificationSender } from '../user-notification-sender.model'
 import { DocumentsScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 
@@ -37,6 +38,7 @@ const mockHnippTemplate: HnippTemplate = {
   clickActionUrl: 'Demo click action {{arg2}}',
   args: ['arg1', 'arg2'],
   scope: '@island.is/documents',
+  sourceType: 'General',
 }
 
 const mockTemplates = [mockHnippTemplate, mockHnippTemplate, mockHnippTemplate]
@@ -52,6 +54,7 @@ const mockCreateHnippNotificationDto: CreateHnippNotificationDto = {
 
 describe('NotificationsService', () => {
   let service: NotificationsService
+  let cmsService: CmsService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -75,6 +78,10 @@ describe('NotificationsService', () => {
           useClass: jest.fn(() => ({})),
         },
         {
+          provide: getModelToken(UserNotificationSender),
+          useClass: jest.fn(() => ({})),
+        },
+        {
           provide: CmsService,
           useValue: {
             fetchData: jest.fn(),
@@ -84,6 +91,7 @@ describe('NotificationsService', () => {
     }).compile()
 
     service = module.get<NotificationsService>(NotificationsService)
+    cmsService = module.get<CmsService>(CmsService)
   })
 
   it('should be defined', () => {
@@ -108,6 +116,46 @@ describe('NotificationsService', () => {
     expect(template).toBeInstanceOf(Object)
   })
 
+  describe('template sourceType', () => {
+    const mockCmsTemplates = (sourceTypes: (string | null)[]) =>
+      jest.spyOn(cmsService, 'fetchData').mockResolvedValue({
+        hnippTemplateCollection: {
+          items: sourceTypes.map((sourceType) => ({
+            ...mockHnippTemplate,
+            sourceType,
+          })),
+        },
+      } as never)
+
+    it.each([
+      { sourceType: 'Mail', expected: 'Mail' },
+      { sourceType: 'Event', expected: 'Event' },
+      { sourceType: 'General', expected: 'General' },
+      { sourceType: null, expected: 'General' },
+      { sourceType: 'Unknown', expected: 'General' },
+    ])(
+      'getTemplate returns $expected for a Contentful sourceType of $sourceType',
+      async ({ sourceType, expected }) => {
+        mockCmsTemplates([sourceType])
+
+        const template = await service.getTemplate(mockHnippTemplate.templateId)
+
+        expect(template.sourceType).toBe(expected)
+      },
+    )
+
+    it('getTemplates defaults a missing sourceType to General', async () => {
+      mockCmsTemplates(['Event', null])
+
+      const templates = await service.getTemplates()
+
+      expect(templates.map((template) => template.sourceType)).toEqual([
+        'Event',
+        'General',
+      ])
+    })
+  })
+
   it('should validate when all required arguments are provided', () => {
     expect(() => {
       service.validate(mockHnippTemplate, mockCreateHnippNotificationDto.args)
@@ -122,6 +170,9 @@ describe('NotificationsService', () => {
   })
 
   it('should sanitize and return only valid arguments', () => {
+    const warnSpy = jest
+      .spyOn(logger, 'warn')
+      .mockImplementation(() => undefined)
     const argsWithInvalid = [
       { key: 'arg1', value: 'hello' },
       { key: 'arg2', value: 'world' },
@@ -133,6 +184,15 @@ describe('NotificationsService', () => {
       { key: 'arg1', value: 'hello' },
       { key: 'arg2', value: 'world' },
     ])
+    expect(warnSpy).toHaveBeenCalledWith(
+      'Filtering out invalid notification argument',
+      {
+        templateId: mockHnippTemplate.templateId,
+        invalidArgKey: 'invalidArg',
+        validArgKeys: mockHnippTemplate.args,
+      },
+    )
+    warnSpy.mockRestore()
   })
 
   it('should sanitize and return empty array when no valid arguments', () => {
@@ -155,6 +215,113 @@ describe('NotificationsService', () => {
     )
     expect(template.externalBody).toEqual('Demo body hello')
     expect(template.clickActionUrl).toEqual('Demo click action world')
+  })
+
+  describe('formatAndMapNotification', () => {
+    const baseNotification = {
+      id: 1,
+      messageId: 'message-uuid',
+      senderId: '5555555555',
+      scope: '@island.is/documents',
+      created: new Date(),
+      updated: new Date(),
+      read: false,
+      seen: false,
+      wasSent: true,
+      priorityType: 'Actionable',
+      sourceType: 'Mail',
+      args: [
+        { key: 'arg1', value: 'hello' },
+        { key: 'arg2', value: 'world' },
+      ],
+    } as unknown as Notification
+
+    const format = (
+      notification: Notification,
+      template: Partial<HnippTemplate> = {},
+      locale: 'is' | 'en' = 'is',
+    ) =>
+      service.formatAndMapNotification(
+        notification,
+        mockHnippTemplate.templateId,
+        locale,
+        { ...mockHnippTemplate, ...template },
+      )
+
+    it('returns the stored priorityType and wasSent', async () => {
+      const result = await format(
+        {
+          ...baseNotification,
+          wasSent: false,
+          priorityType: 'Informative',
+        } as Notification,
+        { priorityType: 'Actionable' },
+      )
+      expect(result.wasSent).toBe(false)
+      expect(result.priorityType).toBe('Informative')
+    })
+
+    it('falls back to the template priorityType when none is stored', async () => {
+      const result = await format(
+        {
+          ...baseNotification,
+          priorityType: null,
+        } as unknown as Notification,
+        { priorityType: 'Informative' },
+      )
+      expect(result.priorityType).toBe('Informative')
+    })
+
+    it('returns the stored deadline, or null without one', async () => {
+      const deadline = new Date('2026-12-01T16:00:00Z')
+      const withDeadline = await format({
+        ...baseNotification,
+        deadline,
+      } as Notification)
+      expect(withDeadline.deadline).toEqual(deadline)
+
+      const withoutDeadline = await format(baseNotification)
+      expect(withoutDeadline.deadline).toBeNull()
+    })
+
+    it('returns the stored sourceType', async () => {
+      const result = await format(baseNotification, { sourceType: 'Event' })
+      expect(result.sourceType).toBe('Mail')
+    })
+
+    it('falls back to the template sourceType when none is stored', async () => {
+      const result = await format(
+        { ...baseNotification, sourceType: null } as unknown as Notification,
+        { sourceType: 'Event' },
+      )
+      expect(result.sourceType).toBe('Event')
+    })
+
+    it('falls back to General when neither the notification nor the template has a sourceType', async () => {
+      const result = await format(
+        { ...baseNotification, sourceType: null } as unknown as Notification,
+        { sourceType: undefined },
+      )
+      expect(result.sourceType).toBe('General')
+    })
+
+    it('returns the localized category label and the category key', async () => {
+      const result = await format(
+        baseNotification,
+        { hnippCategory: 'Health', hnippCategoryIs: 'Heilbrigðismál' },
+        'en',
+      )
+      expect(result.categoryLabel).toBe('Health')
+      expect(result.category).toBe('heilbrigdismal')
+    })
+
+    it('uses the default category when the template has none', async () => {
+      const is = await format(baseNotification)
+      const en = await format(baseNotification, {}, 'en')
+      expect(is.category).toBeNull()
+      expect(is.categoryLabel).toBe('Almennt')
+      expect(en.categoryLabel).toBe('General')
+    })
   })
 
   describe('findMany', () => {

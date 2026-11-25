@@ -88,8 +88,8 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
     mockToday.mockReturnValue(date)
     const mockUpdate = mockCaseRepositoryService.update as jest.Mock
     mockUpdate.mockResolvedValue({})
-    const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
-    mockFindOne.mockResolvedValue({})
+    const mockFindLiveById = mockCaseRepositoryService.findLiveById as jest.Mock
+    mockFindLiveById.mockResolvedValue({})
     const mockCreate = mockAppealCaseRepositoryService.create as jest.Mock
     mockCreate.mockResolvedValue(createdAppealCase)
 
@@ -187,6 +187,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
       id: caseId,
       type: CaseType.CUSTODY,
       state: CaseState.RECEIVED,
+      courtEndTime: randomDate(),
       appealCase: { id: appealCaseId, appealState: AppealCaseState.APPEALED },
       appealDecisions: [
         {
@@ -203,7 +204,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           id: uuid(),
@@ -214,6 +215,19 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
       ])
 
       await accept(theCase)
+    })
+
+    // Read twice: once to look for an out-of-court appeal, once to reconcile
+    // the in-court appellants' events.
+    it("should read the appeal case's APPEALED events in the transaction", () => {
+      expect(
+        (
+          mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
+        ).mock.calls,
+      ).toEqual([
+        [appealCaseId, { transaction }],
+        [appealCaseId, { transaction }],
+      ])
     })
 
     it('should not create or delete the appeal case', () => {
@@ -232,6 +246,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
       id: caseId,
       type: CaseType.CUSTODY,
       state: CaseState.RECEIVED,
+      courtEndTime: randomDate(),
       appealCase: { id: appealCaseId, appealState: AppealCaseState.APPEALED },
       // Corrected: the prosecutor no longer appeals, the accused now does.
       appealDecisions: [
@@ -249,7 +264,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           // Appealed in court, so correcting the record can take it away again.
@@ -291,6 +306,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
       id: caseId,
       type: CaseType.CUSTODY,
       state: CaseState.RECEIVED,
+      courtEndTime: randomDate(),
       appealCase: { id: appealCaseId, appealState: AppealCaseState.APPEALED },
       appealDecisions: [
         {
@@ -307,7 +323,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           id: uuid(),
@@ -336,6 +352,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
       id: caseId,
       type: CaseType.CUSTODY,
       state: CaseState.RECEIVED,
+      courtEndTime: randomDate(),
       // The appeal has been received by the court of appeals.
       appealCase: { id: appealCaseId, appealState: AppealCaseState.RECEIVED },
       appealDecisions: [
@@ -353,7 +370,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
 
     it('should reject the correction and delete nothing', async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           id: uuid(),
@@ -378,6 +395,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
       id: caseId,
       type: CaseType.CUSTODY,
       state: CaseState.RECEIVED,
+      courtEndTime: randomDate(),
       appealCase: { id: appealCaseId, appealState: AppealCaseState.APPEALED },
       // Nobody appealed in court - the defence postponed and then appealed
       // itself within the deadline.
@@ -396,7 +414,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
 
     beforeEach(async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           id: outOfCourtEventId,
@@ -436,6 +454,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
       id: caseId,
       type: CaseType.CUSTODY,
       state: CaseState.RECEIVED,
+      courtEndTime: randomDate(),
       appealCase: { id: appealCaseId, appealState: AppealCaseState.RECEIVED },
       appealDecisions: [
         {
@@ -454,7 +473,7 @@ describe('CaseController - Request-case appeal on (re-)completion', () => {
     // if it were.
     it('should allow the correction and keep the appeal', async () => {
       ;(
-        mockAppealEventLogRepositoryService.findAll as jest.Mock
+        mockAppealEventLogRepositoryService.findAppealedEventsForAppealCase as jest.Mock
       ).mockResolvedValue([
         {
           id: uuid(),

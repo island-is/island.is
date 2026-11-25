@@ -3,6 +3,7 @@ import { Transaction } from 'sequelize'
 
 import {
   BadRequestException,
+  ForbiddenException,
   forwardRef,
   Inject,
   NotFoundException,
@@ -11,26 +12,31 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { MessageType } from '@island.is/judicial-system/message'
 import {
-  addMessagesToQueue,
-  MessageType,
-} from '@island.is/judicial-system/message'
-import {
+  canDefendantAppealVerdict,
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   CourtSessionRulingType,
   DefendantEventType,
   IndictmentCaseNotificationType,
   isVerdictInfoChanged,
   PoliceFileTypeCode,
   type User as TUser,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 import { ServiceRequirement } from '@island.is/judicial-system/types'
 
+import { queueMessagesAfterCommit } from '../../middleware'
 import { InternalCaseService, PdfService } from '../case'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { FileService } from '../file'
-import { PoliceDocumentType, PoliceService } from '../police'
+import {
+  isFileTooLargeForPolice,
+  PoliceDocumentType,
+  PoliceService,
+} from '../police'
 import {
   Case,
   CaseRepositoryService,
@@ -43,6 +49,8 @@ import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
 import { DeliverResponse } from './models/deliver.response'
+import { getLatestVerdict } from './getLatestVerdict'
+import { validateVerdictAppealUpdate } from './verdict.helpers'
 
 type UpdateVerdict = {
   serviceDate?: Date | null
@@ -62,6 +70,11 @@ type UpdateVerdict = {
   | 'hash'
   | 'hashAlgorithm'
 >
+
+// A verdict is always created for a defendant the caller has already
+// identified; CreateVerdictDto only makes the id optional because it also
+// carries the fields of an update.
+export type CreateVerdict = CreateVerdictDto & { defendantId: string }
 
 export type VerdictServiceCertificateDelivery = {
   delivered: boolean
@@ -90,8 +103,7 @@ export class VerdictService {
     verdictId: string,
     transaction?: Transaction,
   ): Promise<Verdict> {
-    const verdict = await this.verdictRepositoryService.findOne({
-      where: { id: verdictId },
+    const verdict = await this.verdictRepositoryService.findById(verdictId, {
       transaction,
     })
 
@@ -105,9 +117,10 @@ export class VerdictService {
   async findByExternalPoliceDocumentId(
     externalPoliceDocumentId: string,
   ): Promise<Verdict> {
-    const verdict = await this.verdictRepositoryService.findOne({
-      where: { externalPoliceDocumentId },
-    })
+    const verdict =
+      await this.verdictRepositoryService.findByExternalPoliceDocumentId(
+        externalPoliceDocumentId,
+      )
 
     if (!verdict) {
       throw new NotFoundException(
@@ -120,13 +133,14 @@ export class VerdictService {
 
   async createVerdict(
     caseId: string,
-    verdict: CreateVerdictDto,
+    verdict: CreateVerdict,
     transaction: Transaction,
   ): Promise<Verdict> {
-    const currentVerdict = await this.verdictRepositoryService.findOne({
-      where: { defendantId: verdict.defendantId },
-      transaction,
-    })
+    const currentVerdict =
+      await this.verdictRepositoryService.findLatestForDefendant(
+        verdict.defendantId,
+        { transaction },
+      )
 
     if (!currentVerdict) {
       return this.verdictRepositoryService.create(
@@ -159,13 +173,19 @@ export class VerdictService {
         }
 
         // Only the latest verdict is relevant
-        const currentVerdict = currentDefendant?.verdicts?.[0]
+        const currentVerdict = getLatestVerdict(currentDefendant?.verdicts)
 
         if (currentVerdict) {
           const { defendantId, ...update } = verdict
           return this.updateVerdict(currentVerdict, update, transaction)
         } else {
-          return this.createVerdict(caseId, verdict, transaction)
+          // currentDefendant was found by its id, so it carries the very
+          // defendant id the verdict was matched on
+          return this.createVerdict(
+            caseId,
+            { ...verdict, defendantId: currentDefendant.id },
+            transaction,
+          )
         }
       }),
     )
@@ -266,7 +286,7 @@ export class VerdictService {
       isVerdictServed && defendant?.isDrivingLicenseSuspended
 
     if (shouldSendDrivingLicenseSuspensionNotification) {
-      addMessagesToQueue({
+      queueMessagesAfterCommit({
         type: MessageType.INDICTMENT_CASE_NOTIFICATION,
         caseId: theCase.id,
         body: {
@@ -288,6 +308,76 @@ export class VerdictService {
       update,
       transaction,
     )
+    return updatedVerdict
+  }
+
+  // The defender reports that the defendant accepts the verdict. It stands on
+  // the same footing as the defender's appeal, deadline included: once the
+  // appeal deadline has run out the position is no longer the defender's to
+  // register.
+  async acceptVerdictAsDefender(
+    theCase: Case,
+    defendant: Defendant,
+    verdict: Verdict,
+    user: TUser,
+    transaction: Transaction,
+  ): Promise<Verdict> {
+    if (
+      !Defendant.isConfirmedDefenderOfDefendant(user.nationalId, [defendant])
+    ) {
+      throw new ForbiddenException(
+        `Current user is not the confirmed defender of defendant ${defendant.id}`,
+      )
+    }
+
+    if (
+      theCase.indictmentRulingDecision !== CaseIndictmentRulingDecision.RULING
+    ) {
+      throw new ForbiddenException(
+        'Only a verdict of a case that ended in a ruling can be accepted',
+      )
+    }
+
+    // The same footing as an appeal: no position is taken on an
+    // útivistardómur, nor on a verdict the defendant has not been served.
+    if (!canDefendantAppealVerdict(verdict)) {
+      throw new ForbiddenException(
+        `The verdict of defendant ${defendant.id} cannot be accepted`,
+      )
+    }
+
+    if (verdict.appealDate) {
+      throw new ForbiddenException(
+        `The verdict of defendant ${defendant.id} has been appealed`,
+      )
+    }
+
+    validateVerdictAppealUpdate({
+      caseId: theCase.id,
+      indictmentRulingDecision: theCase.indictmentRulingDecision,
+      rulingDate: theCase.rulingDate,
+      verdict,
+    })
+
+    if (verdict.appealDecision === VerdictAppealDecision.ACCEPT) {
+      return verdict
+    }
+
+    const updatedVerdict = await this.updateVerdict(
+      verdict,
+      { appealDecision: VerdictAppealDecision.ACCEPT },
+      transaction,
+    )
+
+    queueMessagesAfterCommit({
+      type: MessageType.NOTIFICATION,
+      user,
+      caseId: theCase.id,
+      body: {
+        type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_ACCEPTED_BY_DEFENDER,
+      },
+    })
+
     return updatedVerdict
   }
 
@@ -458,7 +548,9 @@ export class VerdictService {
       orderByDate.setMonth(orderByDate.getMonth() + 2)
 
       const originalAncestorCaseId =
-        await this.caseRepositoryService.findOriginalAncestorId(theCase)
+        await this.caseRepositoryService.findOriginalAncestorId(theCase, {
+          transaction,
+        })
 
       // deliver the verdict by creating the document at the police
       const createdDocument = await this.policeService.createDocument({
@@ -515,6 +607,11 @@ export class VerdictService {
 
       return { delivered: true }
     } catch (error) {
+      // Do not retry an upload LÖKE will never accept
+      if (isFileTooLargeForPolice(error)) {
+        return { delivered: true }
+      }
+
       this.logger.error(
         'Error delivering verdict to the national commissioners office',
         error,
@@ -562,8 +659,7 @@ export class VerdictService {
       }
 
       // Only the latest verdict is relevant
-      const { verdicts } = defendant
-      const verdict = verdicts?.[0]
+      const verdict = getLatestVerdict(defendant.verdicts)
 
       if (!verdict) {
         this.logger.warn(
@@ -590,7 +686,7 @@ export class VerdictService {
                 } as TUser,
                 [
                   {
-                    type: PoliceDocumentType.RVBD,
+                    type: PoliceDocumentType.BRTNG_RVBD,
                     courtDocument: Base64.btoa(pdf.toString('binary')),
                   },
                 ],
@@ -603,6 +699,7 @@ export class VerdictService {
                   defendantId: defendant.id,
                   eventType:
                     DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
+                  verdictId: verdict.id,
                 },
                 transaction,
               )
@@ -633,8 +730,28 @@ export class VerdictService {
         user,
       )
 
-      if (isVerdictInfoChanged(verdictInfo, verdict)) {
-        return this.updateVerdict(verdict, verdictInfo, transaction)
+      // PoliceDocumentInfo uses defenderNationalId; the verdict row stores
+      // deliveredToDefenderNationalId — map both ways at this boundary.
+      if (
+        isVerdictInfoChanged(verdictInfo, {
+          serviceStatus: verdict.serviceStatus ?? undefined,
+          serviceDate: verdict.serviceDate ?? undefined,
+          servedBy: verdict.servedBy ?? undefined,
+          comment: verdict.comment ?? undefined,
+          defenderNationalId:
+            verdict.deliveredToDefenderNationalId ?? undefined,
+        })
+      ) {
+        return this.updateVerdict(
+          verdict,
+          {
+            serviceStatus: verdictInfo.serviceStatus,
+            serviceDate: verdictInfo.serviceDate,
+            servedBy: verdictInfo.servedBy,
+            deliveredToDefenderNationalId: verdictInfo.defenderNationalId,
+          },
+          transaction,
+        )
       }
     }
 
@@ -650,14 +767,14 @@ export class VerdictService {
 
     const queued = await Promise.all(
       defendants
-        .filter(
-          (defendant) =>
-            defendant.verdicts?.[0]?.serviceRequirement ===
-            ServiceRequirement.REQUIRED,
-        )
+        .filter((defendant) => {
+          const verdict = getLatestVerdict(defendant.verdicts)
+
+          return verdict?.serviceRequirement === ServiceRequirement.REQUIRED
+        })
         .map(async (defendant) => {
           // Only the latest verdict is relevant
-          const verdict = defendant.verdicts?.[0]
+          const verdict = getLatestVerdict(defendant.verdicts)
 
           if (verdict?.externalPoliceDocumentId) {
             // Replace the verdict if an older one has already been sent to police
@@ -669,12 +786,31 @@ export class VerdictService {
                 serviceInformationForDefendant:
                   verdict.serviceInformationForDefendant,
                 isDefaultJudgement: verdict.isDefaultJudgement,
+                // These three are the office's record of what became of the
+                // judgment, and they came against the judgment rather than
+                // against the copy of it that was served - so re-serving must
+                // not lose them. Everything that reads them asks the
+                // defendant's latest verdict, so a value left behind on the
+                // superseded row reads as if it had never been recorded: the
+                // appealed case lists and the read access that goes with them
+                // for the appeal date, "Áfrýjunarleyfi" for the leave request,
+                // and "Sýknudómar" for the acquittal.
+                //
+                // The defendant's stance, appealDecision, is deliberately not
+                // one of them. It was taken on the copy that was served, and
+                // the new copy is served afresh with a deadline of its own, so
+                // the stance is taken again.
+                appealDate: verdict.appealDate,
+                defendantHasRequestedAppeal:
+                  verdict.defendantHasRequestedAppeal,
+                isAcquittedByPublicProsecutionOffice:
+                  verdict.isAcquittedByPublicProsecutionOffice,
               },
               { transaction },
             )
           }
 
-          addMessagesToQueue({
+          queueMessagesAfterCommit({
             type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
             user,
             caseId: theCase.id,

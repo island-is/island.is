@@ -9,6 +9,13 @@ export class HealthDirectorateTreatmentDocument {
   @Field({ nullable: true })
   title?: string
 
+  @Field({
+    nullable: true,
+    description:
+      'Name of the provider group the conversation carrying the document was opened with.',
+  })
+  groupName?: string
+
   @Field(() => GraphQLISODateTime)
   sentAt!: Date
 

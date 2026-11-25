@@ -77,7 +77,7 @@ const unitsArray = (
           },
           {
             title: formatMessage(messages.size),
-            value: `${unit.displaySize} m²` || '',
+            value: `${unit.displaySize} m²`,
           },
           {
             title: formatMessage(messages.buildYear),

@@ -31,10 +31,15 @@ export const getAllGenericTagGroups = (genericTags: GenericTag[]) => {
 export const getFilterCategories = (
   genericTags: GenericTag[],
 ): FilterCategory[] => {
-  const genericTagGroups = getAllGenericTagGroups(genericTags)
+  // Tags and tag groups that haven't been translated have an empty title, so we hide them
+  const translatedTags = genericTags.filter(
+    (tag) =>
+      Boolean(tag.title?.trim()) && Boolean(tag.genericTagGroup?.title?.trim()),
+  )
+  const genericTagGroups = getAllGenericTagGroups(translatedTags)
   return genericTagGroups.map((tagGroup) => {
     const tagIds = new Set<string>()
-    const filters: { value: string; label: string }[] = genericTags
+    const filters: { value: string; label: string }[] = translatedTags
       .filter((tag) => tag.genericTagGroup?.id === tagGroup.id)
       .map((tag) => {
         if (tagIds.has(tag.id)) {

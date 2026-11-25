@@ -17,6 +17,7 @@ export const crossmark = style({
 })
 
 export const logo = style({
+  display: 'block',
   height: '162px',
   width: 'auto',
 })

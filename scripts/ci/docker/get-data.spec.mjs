@@ -392,6 +392,7 @@ describe('get-data.mjs', () => {
       let writeDataModule
       try {
         writeDataModule = await import('./write-data.mjs')
+        writeDataModule.main()
       } catch (error) {
         // If can't import, just log and continue the test
         console.log(

@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
 import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
@@ -20,7 +21,7 @@ import {
   StartDateOptions,
   States,
 } from '../../constants'
-import { useRemainingRights } from '../../hooks/useRemainingRights'
+import { usageMaxMonths } from '../../config'
 import { YES } from '@island.is/application/core'
 
 const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
@@ -40,6 +41,11 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const dob = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
   const dobDate = dob ? new Date(dob) : null
 
+  // Periods can't end later than usageMaxMonths after the birth or adoption
+  // date, so editing after that can't change anything
+  const rightsWindowClosed =
+    !!dobDate && new Date() >= addMonths(dobDate, usageMaxMonths)
+
   const canBeEdited =
     application.state === ApplicationStates.OTHER_PARENT_APPROVAL ||
     application.state === ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN ||
@@ -50,12 +56,6 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
       ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS ||
     application.state === ApplicationStates.EMPLOYER_APPROVE_EDITS ||
     application.state === ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS
-
-  const lastEndDate = new Date(periods[periods.length - 1].endDate)
-
-  const isUsedAllRights =
-    useRemainingRights(application) > 0 ||
-    lastEndDate.getTime() > new Date().getTime()
 
   const handleSubmit = async (event: string) => {
     const res = await submitApplication({
@@ -120,7 +120,7 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
           </Text>
         )}
         <Box>
-          {canBeEdited && isUsedAllRights && (
+          {canBeEdited && !rightsWindowClosed && (
             <Box display="inlineBlock">
               <Button
                 colorScheme="default"

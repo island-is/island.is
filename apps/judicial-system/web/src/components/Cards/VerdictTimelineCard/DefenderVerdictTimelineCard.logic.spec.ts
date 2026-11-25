@@ -1,18 +1,59 @@
 import { createIntl } from 'react-intl'
 
-import type { Verdict } from '@island.is/judicial-system-web/src/graphql/schema'
+import type {
+  AppealCase,
+  Verdict,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  AppealCaseState,
+  AppealEventType,
   ServiceRequirement,
+  UserRole,
   VerdictAppealDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { getDefenderVerdictTimelineItems } from './DefenderVerdictTimelineCard.logic'
+import {
+  getDefenderVerdictTimelineItems,
+  hasVerdictServiceDecision,
+} from './DefenderVerdictTimelineCard.logic'
+
+describe('hasVerdictServiceDecision', () => {
+  it('should be false until the service requirement has been decided', () => {
+    expect(hasVerdictServiceDecision(undefined)).toBe(false)
+    expect(hasVerdictServiceDecision(null)).toBe(false)
+    expect(hasVerdictServiceDecision({})).toBe(false)
+    expect(hasVerdictServiceDecision({ serviceRequirement: null })).toBe(false)
+  })
+
+  it('should be true for every decided requirement', () => {
+    for (const serviceRequirement of Object.values(ServiceRequirement)) {
+      expect(hasVerdictServiceDecision({ serviceRequirement })).toBe(true)
+    }
+  })
+})
 
 describe('getDefenderVerdictTimelineItems', () => {
   const { formatMessage } = createIntl({ locale: 'is', messages: {} })
 
-  const items = (verdict: Partial<Verdict>) =>
-    getDefenderVerdictTimelineItems(verdict as Verdict, formatMessage)
+  const items = (
+    verdict: Partial<Verdict>,
+    verdictAppealCase?: Pick<
+      AppealCase,
+      'appealState' | 'appealEventLogs' | 'statementDeadlines'
+    > | null,
+    deadlines: {
+      verdictAppealDeadline?: string | null
+      isVerdictAppealDeadlineExpired?: boolean | null
+    } = {},
+  ) =>
+    getDefenderVerdictTimelineItems({
+      defendantId: 'defendant_id',
+      verdict: verdict as Verdict,
+      verdictAppealDeadline: deadlines.verdictAppealDeadline,
+      isVerdictAppealDeadlineExpired: deadlines.isVerdictAppealDeadlineExpired,
+      verdictAppealCase,
+      formatMessage,
+    })
 
   describe('service', () => {
     it('should report the service date of a verdict that has been served', () => {
@@ -69,7 +110,7 @@ describe('getDefenderVerdictTimelineItems', () => {
         items({ ...served, appealDecision: VerdictAppealDecision.POSTPONE }),
       ).toEqual([
         { text: 'Dómur birtur 01.06.2026' },
-        { text: 'Dómfelldi tekur áfrýjunarfrest' },
+        { id: 'stance', text: 'Dómfelldi tekur áfrýjunarfrest' },
       ])
     })
 
@@ -78,7 +119,7 @@ describe('getDefenderVerdictTimelineItems', () => {
         items({ ...served, appealDecision: VerdictAppealDecision.ACCEPT }),
       ).toEqual([
         { text: 'Dómur birtur 01.06.2026' },
-        { text: 'Dómfelldi unir' },
+        { id: 'stance', text: 'Dómfelldi unir' },
       ])
     })
 
@@ -92,12 +133,179 @@ describe('getDefenderVerdictTimelineItems', () => {
         }),
       ).toEqual([
         { text: 'Dómur birtur 01.06.2026' },
-        { text: 'Dómfelldi áfrýjaði 04.06.2026', tone: 'critical' },
+        {
+          id: 'stance',
+          text: 'Dómfelldi áfrýjaði 04.06.2026',
+          tone: 'critical',
+        },
       ])
     })
 
     it('should say nothing about an appeal when no stance was recorded', () => {
       expect(items(served)).toEqual([{ text: 'Dómur birtur 01.06.2026' }])
+    })
+
+    it('should report the appeal deadline after service', () => {
+      expect(
+        items(served, null, {
+          verdictAppealDeadline: '2026-06-29T23:59:59.999Z',
+        }),
+      ).toEqual([
+        { text: 'Dómur birtur 01.06.2026' },
+        { text: 'Áfrýjunarfrestur dómfellda er til 29.06.2026' },
+      ])
+    })
+
+    it('should report an expired appeal deadline', () => {
+      expect(
+        items(served, null, {
+          verdictAppealDeadline: '2026-06-29T23:59:59.999Z',
+          isVerdictAppealDeadlineExpired: true,
+        }),
+      ).toEqual([
+        { text: 'Dómur birtur 01.06.2026' },
+        { text: 'Áfrýjunarfrestur dómfellda var til 29.06.2026' },
+      ])
+    })
+  })
+
+  // The defence is told about the prosecution's appeal too - it is the one
+  // thing on the card the defendant has no part in.
+  describe('the prosecution appeal', () => {
+    const served: Partial<Verdict> = {
+      serviceRequirement: ServiceRequirement.REQUIRED,
+      serviceDate: '2026-06-01T13:31:00.000Z',
+    }
+
+    const prosecutionAppealed = {
+      appealEventLogs: [
+        {
+          id: 'event_id',
+          created: '2026-06-10T09:00:00.000Z',
+          eventType: AppealEventType.APPEALED,
+          defendantId: 'defendant_id',
+          userRole: UserRole.PROSECUTOR,
+        },
+      ],
+    }
+
+    it('should add the appeal alongside the stance the defendant took', () => {
+      expect(
+        items(
+          { ...served, appealDecision: VerdictAppealDecision.ACCEPT },
+          prosecutionAppealed,
+        ),
+      ).toEqual([
+        { text: 'Dómur birtur 01.06.2026' },
+        { id: 'stance', text: 'Dómfelldi unir' },
+        { text: 'Ákæruvaldið áfrýjaði 10.06.2026' },
+      ])
+    })
+
+    it('should say nothing when the prosecution has not appealed', () => {
+      expect(items(served, { appealEventLogs: [] })).toEqual([
+        { text: 'Dómur birtur 01.06.2026' },
+      ])
+    })
+  })
+
+  describe('greinargerðarfrest', () => {
+    const served: Partial<Verdict> = {
+      serviceRequirement: ServiceRequirement.REQUIRED,
+      serviceDate: '2026-06-01T13:31:00.000Z',
+      appealDate: '2026-06-04T13:34:00.000Z',
+    }
+
+    it('should report an open statement deadline', () => {
+      expect(
+        items(served, {
+          appealState: AppealCaseState.RECEIVED,
+          statementDeadlines: [
+            {
+              id: 'deadline_id',
+              defendantId: 'defendant_id',
+              deadline: '2026-09-14T00:00:00.000Z',
+              isExpired: false,
+            },
+          ],
+        }),
+      ).toEqual([
+        { text: 'Dómur birtur 01.06.2026' },
+        {
+          id: 'stance',
+          text: 'Dómfelldi áfrýjaði 04.06.2026',
+          tone: 'critical',
+        },
+        { text: 'Frestur til að skila greinargerð er til 14.09.2026' },
+      ])
+    })
+
+    it('should report an expired statement deadline', () => {
+      expect(
+        items(served, {
+          appealState: AppealCaseState.RECEIVED,
+          statementDeadlines: [
+            {
+              id: 'deadline_id',
+              defendantId: 'defendant_id',
+              deadline: '2026-09-14T00:00:00.000Z',
+              isExpired: true,
+            },
+          ],
+        }),
+      ).toEqual([
+        { text: 'Dómur birtur 01.06.2026' },
+        {
+          id: 'stance',
+          text: 'Dómfelldi áfrýjaði 04.06.2026',
+          tone: 'critical',
+        },
+        { text: 'Frestur til að skila greinargerð rann út 14.09.2026' },
+      ])
+    })
+
+    it('should leave the statement deadline off a completed appeal', () => {
+      expect(
+        items(served, {
+          appealState: AppealCaseState.COMPLETED,
+          statementDeadlines: [
+            {
+              id: 'deadline_id',
+              defendantId: 'defendant_id',
+              deadline: '2026-09-14T00:00:00.000Z',
+            },
+          ],
+        }),
+      ).toEqual([
+        { text: 'Dómur birtur 01.06.2026' },
+        {
+          id: 'stance',
+          text: 'Dómfelldi áfrýjaði 04.06.2026',
+          tone: 'critical',
+        },
+      ])
+    })
+
+    it('should ignore another defendant’s statement deadline', () => {
+      expect(
+        items(served, {
+          appealState: AppealCaseState.RECEIVED,
+          statementDeadlines: [
+            {
+              id: 'other_deadline',
+              defendantId: 'other_defendant',
+              deadline: '2026-09-14T00:00:00.000Z',
+            },
+          ],
+        }),
+      ).toEqual([
+        { text: 'Dómur birtur 01.06.2026' },
+        {
+          id: 'stance',
+          text: 'Dómfelldi áfrýjaði 04.06.2026',
+          tone: 'critical',
+        },
+      ])
     })
   })
 })

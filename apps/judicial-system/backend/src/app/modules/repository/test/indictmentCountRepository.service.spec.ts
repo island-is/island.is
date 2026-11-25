@@ -53,11 +53,13 @@ describe('IndictmentCountRepositoryService', () => {
   })
 
   describe('findByIdWithOffenses', () => {
-    it('loads the count by primary key with its offenses in creation order', async () => {
+    it('loads the count by primary key with its offenses in creation order, in the caller transaction', async () => {
       const indictmentCount = { id: indictmentCountId }
       model.findByPk.mockResolvedValueOnce(indictmentCount)
 
-      const result = await service.findByIdWithOffenses(indictmentCountId)
+      const result = await service.findByIdWithOffenses(indictmentCountId, {
+        transaction,
+      })
 
       expect(model.findByPk).toHaveBeenCalledWith(indictmentCountId, {
         include: [
@@ -69,12 +71,15 @@ describe('IndictmentCountRepositoryService', () => {
             order: [['created', 'ASC']],
           },
         ],
+        transaction,
       })
       expect(result).toBe(indictmentCount)
     })
 
     it('returns null when there is no such count', async () => {
-      expect(await service.findByIdWithOffenses(indictmentCountId)).toBeNull()
+      expect(
+        await service.findByIdWithOffenses(indictmentCountId, { transaction }),
+      ).toBeNull()
     })
 
     it('rethrows when the lookup fails', async () => {
@@ -82,7 +87,7 @@ describe('IndictmentCountRepositoryService', () => {
       model.findByPk.mockRejectedValueOnce(error)
 
       await expect(
-        service.findByIdWithOffenses(indictmentCountId),
+        service.findByIdWithOffenses(indictmentCountId, { transaction }),
       ).rejects.toThrow(error)
     })
   })
@@ -270,6 +275,82 @@ describe('IndictmentCountRepositoryService', () => {
 
       await expect(
         service.deleteByIdAndCase(indictmentCountId, caseId, { transaction }),
+      ).rejects.toThrow(error)
+    })
+  })
+
+  describe('copyAllToCase', () => {
+    const newCaseId = 'some-new-case-id'
+
+    it('copies every count of the case to the new case as a new row and maps old ids to new', async () => {
+      const firstId = 'first-count-id'
+      const secondId = 'second-count-id'
+      model.findAll.mockResolvedValueOnce([
+        {
+          id: firstId,
+          toJSON: () => ({
+            id: firstId,
+            caseId,
+            incidentDescription: 'Did something',
+          }),
+        },
+        {
+          id: secondId,
+          toJSON: () => ({ id: secondId, caseId, displayOrder: 2 }),
+        },
+      ])
+      model.create
+        .mockResolvedValueOnce({ id: 'new-first-count-id' })
+        .mockResolvedValueOnce({ id: 'new-second-count-id' })
+
+      const result = await service.copyAllToCase(caseId, newCaseId, {
+        transaction,
+      })
+
+      expect(model.findAll).toHaveBeenCalledWith({
+        where: { caseId },
+        transaction,
+      })
+      expect(model.create).toHaveBeenNthCalledWith(
+        1,
+        {
+          id: undefined,
+          caseId: newCaseId,
+          incidentDescription: 'Did something',
+        },
+        { transaction },
+      )
+      expect(model.create).toHaveBeenNthCalledWith(
+        2,
+        { id: undefined, caseId: newCaseId, displayOrder: 2 },
+        { transaction },
+      )
+      expect(result).toEqual(
+        new Map([
+          [firstId, 'new-first-count-id'],
+          [secondId, 'new-second-count-id'],
+        ]),
+      )
+    })
+
+    it('returns an empty map when the case has no counts', async () => {
+      const result = await service.copyAllToCase(caseId, newCaseId, {
+        transaction,
+      })
+
+      expect(model.create).not.toHaveBeenCalled()
+      expect(result).toEqual(new Map())
+    })
+
+    it('rethrows when a copy fails', async () => {
+      const error = new Error('Some error')
+      model.findAll.mockResolvedValueOnce([
+        { id: indictmentCountId, toJSON: () => ({ id: indictmentCountId }) },
+      ])
+      model.create.mockRejectedValueOnce(error)
+
+      await expect(
+        service.copyAllToCase(caseId, newCaseId, { transaction }),
       ).rejects.toThrow(error)
     })
   })
