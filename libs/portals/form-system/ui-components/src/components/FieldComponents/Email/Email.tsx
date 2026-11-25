@@ -42,6 +42,7 @@ export const Email = ({ item, dispatch, valueIndex = 0 }: Props) => {
             type="email"
             name={field.name}
             label={item.name?.[lang] ?? ''}
+            tooltip={item.tooltip?.[lang]?.trim() || undefined}
             value={field.value ?? ''}
             onChange={(e) => {
               setShowError(false)

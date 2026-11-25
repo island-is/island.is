@@ -269,11 +269,7 @@ export const OrganizationExternalLinks: React.FC<
               (link.text.includes('Gagna') || link.text.includes('Data'))
 
             return (
-              <Link
-                href={link.url}
-                key={'organization-external-link-' + index}
-                pureChildren={true}
-              >
+              <Link href={link.url} key={'organization-external-link-' + index}>
                 <Button
                   unfocusable
                   icon={buttonHasLockIcon ? 'lockClosed' : 'open'}

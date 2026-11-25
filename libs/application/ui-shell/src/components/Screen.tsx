@@ -54,7 +54,7 @@ import { resolver } from '../validation/resolver'
 import FormRepeater from './FormRepeater'
 import FormExternalDataProvider from './FormExternalDataProvider'
 import { extractAnswersToSubmitFromScreen, findSubmitField } from '../utils'
-import ScreenFooter from './ScreenFooter'
+import ScreenFooter, { isScreenFooterVisible } from './ScreenFooter'
 import RefetchContext from '../context/RefetchContext'
 import { Locale } from '@island.is/shared/types'
 import { useUserInfo } from '@island.is/react-spa/bff'
@@ -396,6 +396,18 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     window.scrollTo(0, target)
   }, [activeScreenIndex, isMobile])
 
+  // Overview/confirmation screens keep their submit actions in view while the content is taller than the viewport
+  const stickyFooter =
+    submitField?.placement === 'footer' &&
+    submitField.stickyFooter !== false &&
+    screen.type !== FormItemTypes.EXTERNAL_DATA_PROVIDER &&
+    isScreenFooterVisible({
+      activeScreenIndex,
+      numberOfScreens,
+      renderLastScreenButton,
+      mode,
+    })
+
   const onUpdateRepeater = async (newRepeaterItems: unknown[]) => {
     if (!resolvedScreenId) {
       return {}
@@ -561,6 +573,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
           loading={loading}
           canProceed={!isLoadingOrPending}
           nextButtonText={nextButtonText}
+          sticky={stickyFooter}
         />
       </Box>
     </FormProvider>

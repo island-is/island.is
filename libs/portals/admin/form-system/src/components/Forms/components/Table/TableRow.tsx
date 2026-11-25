@@ -380,11 +380,21 @@ export const TableRow = ({
       },
     }
 
+    const showUnknownOutcome = () =>
+      toast.warning(
+        formatMessage({
+          id: 'publishChangedFormOutcomeUnknown',
+          defaultMessage:
+            'Ekki tókst að staðfesta hvort eyðublaðið var gefið út. Endurhladdu síðuna áður en þú reynir aftur.',
+        }),
+      )
+
     const publish = {
       title: formatMessage(m.publish),
       icon: 'star' as const,
       iconType: 'outline' as const,
       onClick: async () => {
+        const organizationGeneration = getOrganizationGeneration()
         const { data: formData } = await getForm({
           variables: { input: { id } },
         })
@@ -419,6 +429,17 @@ export const TableRow = ({
           )
         } catch (error) {
           console.error('Error publishing form:', error)
+          if (organizationGeneration !== getOrganizationGeneration()) return
+          try {
+            await refreshForms(organizationGeneration)
+          } catch (refreshError) {
+            if (organizationGeneration !== getOrganizationGeneration()) return
+            console.error(
+              'Error refreshing forms after publishing:',
+              refreshError,
+            )
+            showUnknownOutcome()
+          }
         }
       },
     }
@@ -429,14 +450,6 @@ export const TableRow = ({
       iconType: 'outline' as const,
       onClick: async () => {
         const organizationGeneration = getOrganizationGeneration()
-        const showUnknownOutcome = () =>
-          toast.warning(
-            formatMessage({
-              id: 'publishChangedFormOutcomeUnknown',
-              defaultMessage:
-                'Ekki tókst að staðfesta hvort eyðublaðið var gefið út. Endurhladdu síðuna áður en þú reynir aftur.',
-            }),
-          )
         let publishAttempted = false
         try {
           const { data: formData, error: loadError } = await getForm({

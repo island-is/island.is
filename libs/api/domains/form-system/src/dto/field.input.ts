@@ -52,7 +52,10 @@ export class UpdateFieldDtoInput {
   name?: LanguageTypeInput
 
   @Field(() => LanguageTypeInput, { nullable: true })
-  description?: LanguageTypeInput
+  informationText?: LanguageTypeInput
+
+  @Field(() => LanguageTypeInput, { nullable: true })
+  tooltip?: LanguageTypeInput
 
   @Field(() => Boolean, { nullable: true })
   isPartOfMultiset?: boolean
@@ -98,7 +101,10 @@ export class FieldInput {
   displayOrder?: number
 
   @Field(() => LanguageTypeInput, { nullable: true })
-  description?: LanguageTypeInput
+  informationText?: LanguageTypeInput
+
+  @Field(() => LanguageTypeInput, { nullable: true })
+  tooltip?: LanguageTypeInput
 
   @Field(() => Boolean, { nullable: true })
   isPartOfMultiset?: boolean

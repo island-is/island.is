@@ -8,6 +8,7 @@ import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { MessageType } from '@island.is/judicial-system/message'
 import {
   AppealCaseNotificationType,
+  AppealCaseState,
   AppealCaseType,
   AppealRulingType,
   CaseFileCategory,
@@ -282,6 +283,31 @@ describe('AppealCaseController - Update', () => {
 
       expect(then.error).toBeInstanceOf(BadRequestException)
       expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('a completed verdict appeal', () => {
+    const theCase = { id: caseId, type: CaseType.INDICTMENT } as Case
+    const appealCase = {
+      id: appealCaseId,
+      caseId,
+      appealType: AppealCaseType.VERDICT,
+      appealState: AppealCaseState.COMPLETED,
+    } as AppealCase
+
+    // The court can still correct what it recorded: the outcome stays with it
+    // until it is released.
+    it('should store the update', async () => {
+      const then = await givenWhenThen(theCase, appealCase, {
+        appealConclusion: 'Conclusion',
+      })
+
+      expect(then.error).toBeUndefined()
+      expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
+        appealCaseId,
+        { appealConclusion: 'Conclusion' },
+        { transaction },
+      )
     })
   })
 
