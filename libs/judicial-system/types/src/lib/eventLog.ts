@@ -56,6 +56,9 @@ export enum AppealEventType {
   // extension, which the mails word differently.
   STATEMENT_DEADLINE_SET = 'STATEMENT_DEADLINE_SET',
   STATEMENT_DEADLINE_EXTENDED = 'STATEMENT_DEADLINE_EXTENDED',
+  // The court of appeals released the outcome of a verdict appeal, completing
+  // it. An act of the court that names no party.
+  APPEAL_COMPLETED = 'APPEAL_COMPLETED',
 }
 
 export const appealEventTypes = Object.values(AppealEventType)

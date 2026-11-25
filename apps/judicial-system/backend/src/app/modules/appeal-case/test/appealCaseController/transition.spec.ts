@@ -374,13 +374,35 @@ describe('AppealCaseController - Transition', () => {
         )
       })
 
-      it('should complete the appeal, keeping its date', () => {
+      it('should complete the appeal, keeping its date and dating the release', () => {
         expect(then.error).toBeUndefined()
         expect(mockSequelize.transaction).toHaveBeenCalledTimes(1)
         expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledTimes(1)
         expect(mockAppealCaseRepositoryService.update).toHaveBeenCalledWith(
           appealCaseId,
-          { appealState: AppealCaseState.COMPLETED },
+          { appealState: AppealCaseState.COMPLETED, appealCompletedDate: now },
+          { transaction },
+        )
+      })
+
+      // The release is an act of the court, naming no party.
+      it('should record the release, with the court user as its actor', () => {
+        expect(
+          mockAppealEventLogRepositoryService.create,
+        ).toHaveBeenCalledTimes(1)
+        expect(mockAppealEventLogRepositoryService.create).toHaveBeenCalledWith(
+          {
+            caseId,
+            appealCaseId,
+            eventType: AppealEventType.APPEAL_COMPLETED,
+            appealOrigin: undefined,
+            userRole: user.role,
+            userId: user.id,
+            nationalId: user.nationalId,
+            userName: user.name,
+            userTitle: user.title,
+            institutionName: user.institution?.name,
+          },
           { transaction },
         )
       })
@@ -439,6 +461,7 @@ describe('AppealCaseController - Transition', () => {
 
       expect(then.error).toBeInstanceOf(BadRequestException)
       expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+      expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
       expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
       expect(transactionContext?.afterCommit).toHaveLength(0)
     })
@@ -476,6 +499,7 @@ describe('AppealCaseController - Transition', () => {
 
       expect(then.error).toBeInstanceOf(ForbiddenException)
       expect(mockAppealCaseRepositoryService.update).not.toHaveBeenCalled()
+      expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
       expect(queueMessagesAfterCommit).not.toHaveBeenCalled()
       expect(transactionContext?.afterCommit).toHaveLength(0)
     })
@@ -575,6 +599,10 @@ describe('AppealCaseController - Transition', () => {
         { appealState: AppealCaseState.COMPLETED, appealRulingDate: now },
         { transaction },
       )
+    })
+
+    it('should record no appeal event', () => {
+      expect(mockAppealEventLogRepositoryService.create).not.toHaveBeenCalled()
     })
 
     it('should queue delivery of the appeal ruling file', () => {

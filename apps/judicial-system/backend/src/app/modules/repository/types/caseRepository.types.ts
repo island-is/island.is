@@ -1750,6 +1750,7 @@ export interface UpdateAppealCase
     | 'caseName'
     | 'appealReceivedByCourtDate'
     | 'appealRulingDate'
+    | 'appealCompletedDate'
     | 'appealAssistantId'
     | 'appealRulingDecision'
     | 'appealConclusion'

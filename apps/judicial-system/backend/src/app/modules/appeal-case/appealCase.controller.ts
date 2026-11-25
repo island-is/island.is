@@ -57,6 +57,7 @@ import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
 import { EventService } from '../event'
 import { AppealCase, Case, CivilClaimant, Defendant } from '../repository'
 import { UserService } from '../user'
+import { CompleteVerdictAppealsDto } from './dto/completeVerdictAppeals.dto'
 import { CreateAppealCaseDto } from './dto/createAppealCase.dto'
 import { CreateAppealEventLogDto } from './dto/createAppealEventLog.dto'
 import { TransitionAppealCaseDto } from './dto/transitionAppealCase.dto'
@@ -352,6 +353,56 @@ export class AppealCaseController {
     }
 
     return result.appealCase
+  }
+
+  // The court of appeals completes many confirmed verdict appeals at once. The
+  // route names no case, so there is no case for the per-case guards to read
+  // and lock: the service reads and locks every case itself and checks the
+  // user's write access to each, as CaseExistsForUpdateGuard and
+  // CaseWriteGuard do on the per-appeal route. The rules are bare roles, so
+  // RolesGuard decides before anything is read.
+  @UseGuards(RolesGuard)
+  @RolesRules(
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
+  )
+  @Post('appealCases/complete')
+  @UseInterceptors(VerdictAppealOutcomeInterceptor)
+  @ApiCreatedResponse({
+    type: AppealCase,
+    isArray: true,
+    description: 'Completes confirmed verdict appeals, all or none of them',
+  })
+  async completeVerdictAppeals(
+    @CurrentHttpUser() user: User,
+    @Body() dto: CompleteVerdictAppealsDto,
+  ): Promise<AppealCase[]> {
+    this.logger.debug(`Completing verdict appeals ${dto.appealCaseIds}`)
+
+    // One transaction for the whole request, committed by
+    // TransactionCommitInterceptor after this handler returns, so either every
+    // appeal is completed or none is.
+    const transaction = await getOrCreateTransaction(this.sequelize)
+
+    const completed = await this.appealCaseService.completeVerdictAppeals(
+      dto.appealCaseIds,
+      user,
+      transaction,
+    )
+
+    // Each completion is announced as the per-appeal route announces it, once
+    // the transaction has committed.
+    for (const { theCase } of completed) {
+      registerAfterCommit(() =>
+        this.eventService.postEvent(
+          AppealCaseTransition.COMPLETE_APPEAL,
+          theCase,
+        ),
+      )
+    }
+
+    return completed.map(({ appealCase }) => appealCase)
   }
 
   // The public prosecution office prosecutes the appeal and is copied on the

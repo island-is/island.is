@@ -65,6 +65,50 @@ export const getVerdictAppealOutcomeOverride = (
           : {}),
       }
 
+// What the court of appeals records about how a verdict appeal ended.
+const verdictAppealOutcomeFields = [
+  'appealRulingDecision',
+  'appealRulingType',
+  'appealConclusion',
+  'appealRulingDate',
+  'appealRulingModifiedHistory',
+  'verdictAppealStatus',
+] as const
+
+type VerdictAppealOutcomeField = typeof verdictAppealOutcomeFields[number]
+
+const toComparable = (value: unknown): unknown =>
+  value instanceof Date ? value.getTime() : value ?? undefined
+
+// The outcome fields an update to a verdict appeal would change. A field the
+// update leaves out changes nothing, nor does one sent with the value already
+// stored - a form that saves every field it shows sends those back. A note in
+// the modification history is always a change: it is appended to what is
+// there.
+export const changedVerdictAppealOutcomeFields = (
+  appealCase: Pick<AppealCase, VerdictAppealOutcomeField>,
+  update: Partial<Record<VerdictAppealOutcomeField, unknown>>,
+): VerdictAppealOutcomeField[] =>
+  verdictAppealOutcomeFields.filter((field) => {
+    const value = update[field]
+
+    if (value === undefined) {
+      return false
+    }
+
+    if (field === 'appealRulingModifiedHistory') {
+      return Boolean(value)
+    }
+
+    // Dates arrive as dates or as the ISO strings they were sent as.
+    const next =
+      field === 'appealRulingDate' && typeof value === 'string'
+        ? new Date(value)
+        : value
+
+    return toComparable(next) !== toComparable(appealCase[field])
+  })
+
 // The appeal case a case file belongs to: the ruling-order appeal the file
 // carries in its rulingFileId, the verdict appeal for an appeal declaration or
 // statement and what is filed with either, or the case-level ruling appeal for

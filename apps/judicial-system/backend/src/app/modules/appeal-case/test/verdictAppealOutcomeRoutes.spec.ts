@@ -134,3 +134,13 @@ describe.each([
     )
   })
 })
+
+// Completing many verdict appeals returns them as a list, which the
+// interceptor presents one by one.
+describe('AppealCaseController completeVerdictAppeals - verdict appeal outcome', () => {
+  it('carries the verdict appeal outcome interceptor', () => {
+    expect(
+      interceptorsOf(handlerOf(AppealCaseController, 'completeVerdictAppeals')),
+    ).toContain(VerdictAppealOutcomeInterceptor)
+  })
+})

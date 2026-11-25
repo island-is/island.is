@@ -434,6 +434,10 @@ export class BackendService {
     )
   }
 
+  completeVerdictAppeals(appealCaseIds: string[]): Promise<AppealCase[]> {
+    return this.post('appealCases/complete', { appealCaseIds })
+  }
+
   createAppealEventLog(
     caseId: string,
     appealCaseId: string,
