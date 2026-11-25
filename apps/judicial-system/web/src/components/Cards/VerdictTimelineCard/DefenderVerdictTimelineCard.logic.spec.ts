@@ -342,6 +342,29 @@ describe('getDefenderVerdictTimelineItems', () => {
       ])
     })
 
+    it('should leave a filed statement off a completed appeal', () => {
+      expect(
+        items(served, {
+          appealState: AppealCaseState.COMPLETED,
+          appealEventLogs: [
+            {
+              id: 'event_id',
+              created: '2026-09-10T12:00:00.000Z',
+              eventType: AppealEventType.APPEAL_STATEMENT_SENT,
+              defendantId: 'defendant_id',
+            },
+          ],
+        }),
+      ).toEqual([
+        { text: 'Dómur birtur 01.06.2026' },
+        {
+          id: 'stance',
+          text: 'Dómfelldi áfrýjaði 04.06.2026',
+          tone: 'critical',
+        },
+      ])
+    })
+
     it('should ignore another defendant’s statement deadline', () => {
       expect(
         items(served, {
