@@ -8,6 +8,7 @@ import { FormSystemField } from '@island.is/api/schema'
 import { ApplicantTypesEnum } from '@island.is/form-system/enums'
 import { USER_PROFILE } from '@island.is/portals/my-pages/graphql'
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { InputHTMLAttributes, ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { IntlProvider } from 'react-intl'
@@ -144,6 +145,64 @@ it.each([false])(
     expect(profileRequest).not.toHaveBeenCalled()
   },
 )
+
+it.each([0, 1, 2])(
+  'fills all bank-account fields when a full number is pasted into field %s',
+  async (index) => {
+    const user = userEvent.setup()
+    const { dispatch } = renderField([], '4321-21-654321')
+    const inputs = screen.getAllByRole('textbox')
+
+    await user.click(inputs[index])
+    await user.paste('1111-11-111111')
+
+    expect(inputs.map((input) => input.getAttribute('value'))).toEqual([
+      '1111',
+      '11',
+      '111111',
+    ])
+    expect(dispatch).toHaveBeenLastCalledWith({
+      type: 'SET_BANK_ACCOUNT',
+      payload: { id: item.id, valueIndex: 0, value: '1111-11-111111' },
+    })
+  },
+)
+
+it('preserves leading zeros and trims surrounding whitespace when pasting a full account', async () => {
+  const user = userEvent.setup()
+  const { dispatch } = renderField([], undefined, undefined, undefined, {
+    fetchBankAccountFromMyPages: false,
+  })
+  const inputs = screen.getAllByRole('textbox')
+
+  await user.click(inputs[0])
+  await user.paste(' 0011-01-000111\n')
+
+  expect(inputs.map((input) => input.getAttribute('value'))).toEqual([
+    '0011',
+    '01',
+    '000111',
+  ])
+  expect(dispatch).toHaveBeenLastCalledWith({
+    type: 'SET_BANK_ACCOUNT',
+    payload: { id: item.id, valueIndex: 0, value: '0011-01-000111' },
+  })
+})
+
+it('keeps single-part pasting limited to the selected field', async () => {
+  const user = userEvent.setup()
+  renderField([], '4321-21-654321')
+  const inputs = screen.getAllByRole('textbox')
+
+  await user.clear(inputs[1])
+  await user.paste('12')
+
+  expect(inputs.map((input) => input.getAttribute('value'))).toEqual([
+    '4321',
+    '12',
+    '654321',
+  ])
+})
 
 it.each([true, undefined, null])(
   'prefills bank info when fetching is %s',

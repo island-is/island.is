@@ -69,6 +69,10 @@ preview, even when it is cached. When `fetchBankAccountFromMyPages` is enabled
 (the default), they prefill the mock bank account instead. Saved values and
 manual edits are preserved.
 
+Pasting a complete account number such as `1111-11-111111` into any bank-account
+input fills all three fields, preserving leading zeros. Pasting an individual
+part keeps the normal single-field behavior.
+
 On mobile, bank account fields show the bank and ledger inputs side by side,
 with the account number on a separate row, slightly wider than the bank input.
 Tablet and desktop layouts keep all three inputs on one row.
