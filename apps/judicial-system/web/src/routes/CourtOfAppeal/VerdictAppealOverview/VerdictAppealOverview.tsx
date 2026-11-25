@@ -82,17 +82,19 @@ const VerdictAppealOverview = () => {
               case is here the district court is finished with it, and what the
               page is about is the appeal. */}
           <Box>
-            <PageTitle marginBottom={1}>Yfirlit</PageTitle>
-            {caseNumber && (
-              <Text as="h2" variant="h2">
-                {caseNumber}
-              </Text>
-            )}
-            {headerLines.map((line) => (
-              <Text key={line} as="h5" variant="h5">
-                {line}
-              </Text>
-            ))}
+            <PageTitle marginBottom={caseNumber ? 5 : 1}>Yfirlit</PageTitle>
+            <div className={stack({ gap: 1 })}>
+              {caseNumber && (
+                <Text as="h2" variant="h2">
+                  {caseNumber}
+                </Text>
+              )}
+              {headerLines.map((line) => (
+                <Text key={line} as="h5" variant="h5">
+                  {line}
+                </Text>
+              ))}
+            </div>
           </Box>
           {/* One per defendant: each has their own verdict, their own service
               and their own deadline, so the court reads them side by side.

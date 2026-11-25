@@ -156,6 +156,7 @@ describe('VerdictAppealRulingDate', () => {
     mockReportedDates = [
       { label: 'today', date: startOfToday(), valid: true },
       { label: 'verdict day', date: new Date(2026, 4, 20), valid: true },
+      { label: 'stored day', date: new Date(storedDate), valid: true },
       { label: 'tomorrow', date: tomorrow, valid: true },
       { label: 'half typed', date: new Date(202, 10, 25), valid: true },
       {
@@ -274,6 +275,42 @@ describe('VerdictAppealRulingDate', () => {
 
       expect(screen.getByTestId('shownDate')).toHaveTextContent(storedDate)
       expect(mockPickerMounts).toBe(mountsBefore + 1)
+    })
+
+    it('saves a return to the stored date while another date is still saving', async () => {
+      const first = deferredSave()
+      const second = deferredSave()
+      mockUpdateAppealCase
+        .mockImplementationOnce(() => first.promise)
+        .mockImplementationOnce(() => second.promise)
+      renderSection()
+
+      await userEvent.click(screen.getByRole('button', { name: 'today' }))
+      await userEvent.click(screen.getByRole('button', { name: 'stored day' }))
+
+      expect(mockUpdateAppealCase).toHaveBeenCalledTimes(2)
+      expect(mockUpdateAppealCase).toHaveBeenLastCalledWith(
+        'case-id',
+        'verdict-appeal',
+        { appealRulingDate: formatDateForServer(new Date(storedDate)) },
+      )
+
+      await act(async () =>
+        first.resolve({ id: 'verdict-appeal', appealRulingDate: today }),
+      )
+      await act(async () =>
+        second.resolve({ id: 'verdict-appeal', appealRulingDate: storedDate }),
+      )
+
+      expect(screen.getByTestId('shownDate')).toHaveTextContent(storedDate)
+    })
+
+    it('still skips a pick of the stored date when nothing is being saved', async () => {
+      renderSection()
+
+      await userEvent.click(screen.getByRole('button', { name: 'stored day' }))
+
+      expect(mockUpdateAppealCase).not.toHaveBeenCalled()
     })
   })
 
