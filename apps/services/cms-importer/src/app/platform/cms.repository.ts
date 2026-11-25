@@ -346,10 +346,13 @@ export class CmsRepository {
           error,
         })
         await draft.delete().catch((deleteError) =>
-          logger.error('Failed to delete unpublished draft, remove it manually', {
-            id: draft.sys.id,
-            error: deleteError,
-          }),
+          logger.error(
+            'Failed to delete unpublished draft, remove it manually',
+            {
+              id: draft.sys.id,
+              error: deleteError,
+            },
+          ),
         )
         throw error
       }
